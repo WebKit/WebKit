@@ -37,6 +37,7 @@ WebInspector.TimelinePanel = function()
     this._overviewPane.addEventListener("window changed", this._windowChanged, this);
     this._overviewPane.addEventListener("filter changed", this._refresh, this);
     this.element.appendChild(this._overviewPane.element);
+    this.element.tabIndex = 0;
 
     this._sidebarBackgroundElement = document.createElement("div");
     this._sidebarBackgroundElement.className = "sidebar timeline-sidebar-background";
@@ -111,6 +112,11 @@ WebInspector.TimelinePanel.prototype = {
             };
         }
         return this._categories;
+    },
+
+    get defaultFocusedElement()
+    {
+        return this.element;
     },
 
     get _recordStyles()
@@ -234,8 +240,9 @@ WebInspector.TimelinePanel.prototype = {
     show: function()
     {
         WebInspector.Panel.prototype.show.call(this);
-
-        if (this._needsRefresh)
+        if (typeof this._scrollTop === "number")
+            this._containerElement.scrollTop = this._scrollTop;
+        else if (this._needsRefresh)
             this._refresh();
     },
 
@@ -313,7 +320,8 @@ WebInspector.TimelinePanel.prototype = {
         }
 
         // Calculate the visible area.
-        var visibleTop = this._containerElement.scrollTop;
+        this._scrollTop = this._containerElement.scrollTop;
+        var visibleTop = this._scrollTop;
         var visibleBottom = visibleTop + this._containerElement.clientHeight;
 
         // Define row height, should be in sync with styles for timeline graphs.
@@ -699,9 +707,9 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
 
         const recordTypes = WebInspector.TimelineAgent.RecordType;
         if (this.details) {
-            if (this.type == recordTypes.TimerInstall ||
-                this.type == recordTypes.TimerFire ||
-                this.type == recordTypes.TimerRemove) {
+            if (this.type === recordTypes.TimerInstall ||
+                this.type === recordTypes.TimerFire ||
+                this.type === recordTypes.TimerRemove) {
                 recordContentTable.appendChild(this._createRow(WebInspector.UIString("Timer Id"), this.data.timerId));
                 if (this.timeout) {
                     recordContentTable.appendChild(this._createRow(WebInspector.UIString("Timeout"), this.timeout));
@@ -711,12 +719,18 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
                     var link = WebInspector.linkifyResourceAsNode(this.callSiteScriptName, "scripts", this.callSiteScriptLine, "timeline-details");
                     recordContentTable.appendChild(this._createLinkRow(WebInspector.UIString("Call Site"), link));
                 }
-            } else if (this.type == recordTypes.FunctionCall) {
+            } else if (this.type === recordTypes.FunctionCall) {
                 var link = WebInspector.linkifyResourceAsNode(this.data.scriptName, "scripts", this.data.scriptLine, "timeline-details");
                 recordContentTable.appendChild(this._createLinkRow(WebInspector.UIString("Location"), link));
             } else if (this.type === recordTypes.ResourceSendRequest || this.type === recordTypes.ResourceReceiveResponse || this.type === recordTypes.ResourceFinish) {
                 var link = WebInspector.linkifyResourceAsNode(this.data.url, "resources", null, "timeline-details");
                 recordContentTable.appendChild(this._createLinkRow(WebInspector.UIString("Resource"), link));
+            } else if (this.type === recordTypes.EvaluateScript) {
+                var link = WebInspector.linkifyResourceAsNode(this.data.url, "scripts", null, "timeline-details");
+                recordContentTable.appendChild(this._createLinkRow(WebInspector.UIString("Script"), link));
+            } else if (this.type === recordTypes.Paint) {
+                recordContentTable.appendChild(this._createRow(WebInspector.UIString("Location"), this.data.x + "\u2009\u00d7\u2009" + this.data.y));
+                recordContentTable.appendChild(this._createRow(WebInspector.UIString("Dimensions"), this.data.width + "\u2009\u00d7\u2009" + this.data.height));
             } else
                 recordContentTable.appendChild(this._createRow(WebInspector.UIString("Details"), this.details));
         }
