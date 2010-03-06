@@ -1891,7 +1891,8 @@ bool CSSParser::parseAnimationShorthand(bool important)
                                 CSSPropertyWebkitAnimationTimingFunction,
                                 CSSPropertyWebkitAnimationDelay,
                                 CSSPropertyWebkitAnimationIterationCount,
-                                CSSPropertyWebkitAnimationDirection };
+                                CSSPropertyWebkitAnimationDirection,
+                                CSSPropertyWebkitAnimationFillMode };
     const int numProperties = sizeof(properties) / sizeof(properties[0]);
     
     ShorthandScope scope(this, CSSPropertyWebkitAnimation);

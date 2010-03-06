@@ -1,3 +1,16 @@
+2010-03-05  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35772
+        Animation fill modes should be supported in the shorthand property
+
+        Testcase for animation shorthand property (appears to be
+        the first of its kind).
+
+        * animations/animation-shorthand-expected.txt: Added.
+        * animations/animation-shorthand.html: Added.
+
 2010-03-05  Eric Seidel  <eric@webkit.org>
 
         No review.  Skipping recently regressed test to unblock the commit-queue (20 patches waiting).
