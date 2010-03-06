@@ -273,6 +273,17 @@ WebInspector.UIString = function(string)
     return String.vsprintf(string, Array.prototype.slice.call(arguments, 1));
 };
 
+// Activate window upon node search complete. This will go away once InspectorFrontendClient is landed.
+(function() {
+    var original = WebInspector.searchingForNodeWasDisabled;
+    WebInspector.searchingForNodeWasDisabled = function()
+    {
+        if (this.panels.elements._nodeSearchButton.toggled)
+            InspectorFrontendHost.activateWindow();
+        original.apply(this, arguments);
+    }
+})();
+
 
 // There is no clear way of setting frame title yet. So sniffing main resource
 // load.
