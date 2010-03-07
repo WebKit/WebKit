@@ -25,6 +25,7 @@
 
 #include "ActiveDOMObject.h"
 #include "DOMCoreException.h"
+#include "DOMObjectHashTableMap.h"
 #include "Document.h"
 #include "EventException.h"
 #include "ExceptionBase.h"
@@ -40,6 +41,7 @@
 #include "JSEventException.h"
 #include "JSExceptionBase.h"
 #include "JSNode.h"
+#include "WebCoreJSClientData.h"
 #include "JSRangeException.h"
 #include "JSXMLHttpRequestException.h"
 #include "KURL.h"
@@ -132,22 +134,6 @@ DOMObject::~DOMObject()
 
 #endif
 
-DOMWrapperWorld::DOMWrapperWorld(JSC::JSGlobalData* globalData, bool isNormal)
-    : m_globalData(globalData)
-    , m_isNormal(isNormal)
-{
-}
-
-DOMWrapperWorld::~DOMWrapperWorld()
-{
-    JSGlobalData::ClientData* clientData = m_globalData->clientData;
-    ASSERT(clientData);
-    static_cast<WebCoreJSClientData*>(clientData)->forgetWorld(this);
-
-    for (HashSet<Document*>::iterator iter = documentsWithWrappers.begin(); iter != documentsWithWrappers.end(); ++iter)
-        forgetWorldOfDOMNodesForDocument(*iter, this);
-}
-
 class JSGlobalDataWorldIterator {
 public:
     JSGlobalDataWorldIterator(JSGlobalData* globalData)
@@ -183,27 +169,6 @@ private:
     HashSet<DOMWrapperWorld*>::iterator m_pos;
     HashSet<DOMWrapperWorld*>::iterator m_end;
 };
-
-DOMWrapperWorld* normalWorld(JSC::JSGlobalData& globalData)
-{
-    JSGlobalData::ClientData* clientData = globalData.clientData;
-    ASSERT(clientData);
-    return static_cast<WebCoreJSClientData*>(clientData)->normalWorld();
-}
-
-DOMWrapperWorld* mainThreadNormalWorld()
-{
-    ASSERT(isMainThread());
-    static DOMWrapperWorld* cachedNormalWorld = normalWorld(*JSDOMWindow::commonJSGlobalData());
-    return cachedNormalWorld;
-}
-
-DOMObjectHashTableMap& DOMObjectHashTableMap::mapFor(JSGlobalData& globalData)
-{
-    JSGlobalData::ClientData* clientData = globalData.clientData;
-    ASSERT(clientData);
-    return static_cast<WebCoreJSClientData*>(clientData)->hashTableMap;
-}
 
 const JSC::HashTable* getHashTableForGlobalData(JSGlobalData& globalData, const JSC::HashTable* staticTable)
 {
@@ -315,13 +280,6 @@ void forgetAllDOMNodesForDocument(Document* document)
         delete wrappersMapIter->second;
         wrappersMapIter->first->forgetDocument(document);
     }
-}
-
-void forgetWorldOfDOMNodesForDocument(Document* document, DOMWrapperWorld* world)
-{
-    JSWrapperCache* wrappers = document->wrapperCacheMap().take(world);
-    ASSERT(wrappers); // 'world' should only know about 'document' if 'document' knows about 'world'!
-    delete wrappers;
 }
 
 static inline bool isObservableThroughDOM(JSNode* jsNode, DOMWrapperWorld* world)

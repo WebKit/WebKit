@@ -344,6 +344,10 @@ webcore_sources += \
 	WebCore/accessibility/AccessibilityTableRow.cpp \
 	WebCore/accessibility/AccessibilityTableRow.h \
 	WebCore/bindings/js/CachedScriptSourceProvider.h \
+	WebCore/bindings/js/DOMObjectHashTableMap.cpp \
+	WebCore/bindings/js/DOMObjectHashTableMap.h \
+	WebCore/bindings/js/DOMWrapperWorld.cpp \
+	WebCore/bindings/js/DOMWrapperWorld.h \
 	WebCore/bindings/js/GCController.cpp \
 	WebCore/bindings/js/GCController.h \
 	WebCore/bindings/js/JSAttrCustom.cpp \
@@ -507,6 +511,7 @@ webcore_sources += \
 	WebCore/bindings/js/SerializedScriptValue.cpp \
 	WebCore/bindings/js/SerializedScriptValue.h \
 	WebCore/bindings/js/StringSourceProvider.h \
+	WebCore/bindings/js/WebCoreJSClientData.h \
 	WebCore/bindings/ScriptControllerBase.cpp \
 	WebCore/bridge/Bridge.h \
 	WebCore/bridge/IdentifierRep.cpp \

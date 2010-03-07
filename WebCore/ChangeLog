@@ -1,3 +1,43 @@
+2010-03-06  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Dan Bernstein.
+
+        Move DOMObjectHashTableMap, DOMWrapperWorld and WebCoreJSClientData into
+        their own files.
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/DOMObjectHashTableMap.cpp: Copied from bindings/js/JSDOMBinding.cpp.
+        * bindings/js/DOMObjectHashTableMap.h: Copied from bindings/js/JSDOMBinding.h.
+        (WebCore::DOMObjectHashTableMap::~DOMObjectHashTableMap):
+        (WebCore::DOMObjectHashTableMap::get):
+        * bindings/js/DOMWrapperWorld.cpp: Copied from bindings/js/JSDOMBinding.cpp.
+        (WebCore::forgetWorldOfDOMNodesForDocument):
+        * bindings/js/DOMWrapperWorld.h: Copied from bindings/js/JSDOMBinding.h.
+        (WebCore::DOMWrapperWorld::create):
+        (WebCore::DOMWrapperWorld::rememberDocument):
+        (WebCore::DOMWrapperWorld::forgetDocument):
+        (WebCore::DOMWrapperWorld::isNormal):
+        (WebCore::debuggerWorld):
+        (WebCore::pluginWorld):
+        (WebCore::currentWorld):
+        (WebCore::Document::getWrapperCache):
+        * bindings/js/JSDOMBinding.cpp:
+        * bindings/js/JSDOMBinding.h:
+        * bindings/js/JSDOMWindowBase.cpp:
+        * bindings/js/ScriptController.cpp:
+        * bindings/js/WebCoreJSClientData.h: Copied from bindings/js/JSDOMBinding.h.
+        (WebCore::WebCoreJSClientData::WebCoreJSClientData):
+        (WebCore::WebCoreJSClientData::~WebCoreJSClientData):
+        (WebCore::WebCoreJSClientData::normalWorld):
+        (WebCore::WebCoreJSClientData::getAllWorlds):
+        (WebCore::WebCoreJSClientData::rememberWorld):
+        (WebCore::WebCoreJSClientData::forgetWorld):
+        * bindings/js/WorkerScriptController.cpp:
+
 2010-03-06  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Sam Weinig.

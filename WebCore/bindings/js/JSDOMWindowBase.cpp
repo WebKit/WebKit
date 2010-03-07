@@ -36,6 +36,7 @@
 #include "ScriptController.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
+#include "WebCoreJSClientData.h"
 
 using namespace JSC;
 

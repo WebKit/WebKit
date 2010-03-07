@@ -34208,7 +34208,23 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\DOMObjectHashTableMap.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\DOMObjectHashTableMap.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\DOMObjectWithSVGContext.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\DOMWrapperWorld.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\DOMWrapperWorld.h"
 					>
 				</File>
 				<File
@@ -40629,6 +40645,10 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\StringSourceProvider.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\WebCoreJSClientData.h"
 					>
 				</File>
 				<File

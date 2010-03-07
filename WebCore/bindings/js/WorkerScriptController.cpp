@@ -30,11 +30,11 @@
 
 #include "WorkerScriptController.h"
 
-#include "JSDOMBinding.h"
 #include "JSDedicatedWorkerContext.h"
 #include "JSSharedWorkerContext.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
+#include "WebCoreJSClientData.h"
 #include "WorkerContext.h"
 #include "WorkerObjectProxy.h"
 #include "WorkerThread.h"

@@ -266,6 +266,8 @@ SOURCES += \
     accessibility/AccessibilityTableRow.cpp \    
     accessibility/AXObjectCache.cpp \
     bindings/js/GCController.cpp \
+    bindings/js/DOMObjectHashTableMap.cpp \
+    bindings/js/DOMWrapperWorld.cpp \
     bindings/js/JSCallbackData.cpp \
     bindings/js/JSAttrCustom.cpp \
     bindings/js/JSCDATASectionCustom.cpp \
@@ -1001,6 +1003,8 @@ HEADERS += \
     accessibility/AXObjectCache.h \
     bindings/js/CachedScriptSourceProvider.h \
     bindings/js/GCController.h \
+    bindings/js/DOMObjectHashTableMap.h \
+    bindings/js/DOMWrapperWorld.h \
     bindings/js/JSCallbackData.h \
     bindings/js/JSAudioConstructor.h \
     bindings/js/JSCSSStyleDeclarationCustom.h \
@@ -1063,6 +1067,7 @@ HEADERS += \
     bindings/js/ScriptWrappable.h \
     bindings/js/SerializedScriptValue.h \
     bindings/js/StringSourceProvider.h \
+    bindings/js/WebCoreJSClientData.h \
     bindings/js/WorkerScriptController.h \
     bridge/Bridge.h \
     bridge/c/CRuntimeObject.h \

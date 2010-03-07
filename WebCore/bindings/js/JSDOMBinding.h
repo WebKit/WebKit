@@ -24,6 +24,7 @@
 
 #include "JSDOMGlobalObject.h"
 #include "JSDOMWrapper.h"
+#include "DOMWrapperWorld.h"
 #include "JSSVGContextCache.h"
 #include "Document.h"
 #include <runtime/Completion.h>
@@ -119,102 +120,6 @@ namespace WebCore {
         }
     };
 
-    typedef JSC::WeakGCMap<void*, DOMObject*> DOMObjectWrapperMap;
-    typedef JSC::WeakGCMap<StringImpl*, JSC::JSString*> JSStringCache; 
-
-    class DOMWrapperWorld : public RefCounted<DOMWrapperWorld> {
-    public:
-        static PassRefPtr<DOMWrapperWorld> create(JSC::JSGlobalData* globalData, bool isNormal)
-        {
-            return adoptRef(new DOMWrapperWorld(globalData, isNormal));
-        }
-        ~DOMWrapperWorld();
-
-        void rememberDocument(Document* document) { documentsWithWrappers.add(document); }
-        void forgetDocument(Document* document) { documentsWithWrappers.remove(document); }
-
-        // FIXME: can we make this private?
-        DOMObjectWrapperMap m_wrappers;
-        JSStringCache m_stringCache;
-
-        bool isNormal() const { return m_isNormal; }
-
-    protected:
-        DOMWrapperWorld(JSC::JSGlobalData*, bool isNormal);
-
-    private:
-        JSC::JSGlobalData* m_globalData;
-        HashSet<Document*> documentsWithWrappers;
-        bool m_isNormal;
-    };
-
-    // Map from static HashTable instances to per-GlobalData ones.
-    class DOMObjectHashTableMap {
-    public:
-        static DOMObjectHashTableMap& mapFor(JSC::JSGlobalData&);
-
-        ~DOMObjectHashTableMap()
-        {
-            HashMap<const JSC::HashTable*, JSC::HashTable>::iterator mapEnd = m_map.end();
-            for (HashMap<const JSC::HashTable*, JSC::HashTable>::iterator iter = m_map.begin(); iter != m_map.end(); ++iter)
-                iter->second.deleteTable();
-        }
-
-        const JSC::HashTable* get(const JSC::HashTable* staticTable)
-        {
-            HashMap<const JSC::HashTable*, JSC::HashTable>::iterator iter = m_map.find(staticTable);
-            if (iter != m_map.end())
-                return &iter->second;
-            return &m_map.set(staticTable, JSC::HashTable(*staticTable)).first->second;
-        }
-
-    private:
-        HashMap<const JSC::HashTable*, JSC::HashTable> m_map;
-    };
-
-    class WebCoreJSClientData : public JSC::JSGlobalData::ClientData, public Noncopyable {
-        friend class JSGlobalDataWorldIterator;
-
-    public:
-        WebCoreJSClientData(JSC::JSGlobalData* globalData)
-            : m_normalWorld(DOMWrapperWorld::create(globalData, true))
-        {
-            m_worldSet.add(m_normalWorld.get());
-        }
-
-        virtual ~WebCoreJSClientData()
-        {
-            ASSERT(m_worldSet.contains(m_normalWorld.get()));
-            ASSERT(m_worldSet.size() == 1);
-            ASSERT(m_normalWorld->hasOneRef());
-            m_normalWorld.clear();
-            ASSERT(m_worldSet.isEmpty());
-        }
-
-        DOMWrapperWorld* normalWorld() { return m_normalWorld.get(); }
-
-        void getAllWorlds(Vector<DOMWrapperWorld*>& worlds)
-        {
-            copyToVector(m_worldSet, worlds);
-        }
-
-        void rememberWorld(DOMWrapperWorld* world)
-        {
-            ASSERT(!m_worldSet.contains(world));
-            m_worldSet.add(world);
-        }
-        void forgetWorld(DOMWrapperWorld* world)
-        {
-            ASSERT(m_worldSet.contains(world));
-            m_worldSet.remove(world);
-        }
-
-        DOMObjectHashTableMap hashTableMap;
-    private:
-        HashSet<DOMWrapperWorld*> m_worldSet;
-        RefPtr<DOMWrapperWorld> m_normalWorld;
-    };
-
     DOMObject* getCachedDOMObjectWrapper(JSC::ExecState*, void* objectHandle);
     bool hasCachedDOMObjectWrapper(JSC::JSGlobalData*, void* objectHandle);
     void cacheDOMObjectWrapper(JSC::ExecState*, void* objectHandle, DOMObject* wrapper);
@@ -224,7 +129,6 @@ namespace WebCore {
     JSNode* getCachedDOMNodeWrapper(JSC::ExecState*, Document*, Node*);
     void cacheDOMNodeWrapper(JSC::ExecState*, Document*, Node*, JSNode* wrapper);
     void forgetAllDOMNodesForDocument(Document*);
-    void forgetWorldOfDOMNodesForDocument(Document*, DOMWrapperWorld*);
     void updateDOMNodeDocument(Node*, Document* oldDocument, Document* newDocument);
 
     void markDOMNodesForDocument(JSC::MarkStack&, Document*);
@@ -238,12 +142,6 @@ namespace WebCore {
     JSC::Structure* cacheDOMStructure(JSDOMGlobalObject*, NonNullPassRefPtr<JSC::Structure>, const JSC::ClassInfo*);
     JSC::Structure* getCachedDOMStructure(JSC::ExecState*, const JSC::ClassInfo*);
     JSC::Structure* cacheDOMStructure(JSC::ExecState*, NonNullPassRefPtr<JSC::Structure>, const JSC::ClassInfo*);
-
-    DOMWrapperWorld* currentWorld(JSC::ExecState*);
-    DOMWrapperWorld* normalWorld(JSC::JSGlobalData&);
-    DOMWrapperWorld* mainThreadNormalWorld();
-    inline DOMWrapperWorld* debuggerWorld() { return mainThreadNormalWorld(); }
-    inline DOMWrapperWorld* pluginWorld() { return mainThreadNormalWorld(); }
 
     JSC::JSObject* getCachedDOMConstructor(JSC::ExecState*, const JSC::ClassInfo*);
     void cacheDOMConstructor(JSC::ExecState*, const JSC::ClassInfo*, JSC::JSObject* constructor);
@@ -410,11 +308,6 @@ namespace WebCore {
     Frame* toDynamicFrame(JSC::ExecState*);
     bool processingUserGesture(JSC::ExecState*);
     KURL completeURL(JSC::ExecState*, const String& relativeURL);
-
-    inline DOMWrapperWorld* currentWorld(JSC::ExecState* exec)
-    {
-        return static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->world();
-    }
     
     inline JSC::JSValue jsString(JSC::ExecState* exec, const String& s)
     {
@@ -435,19 +328,6 @@ namespace WebCore {
     inline DOMObjectWrapperMap& domObjectWrapperMapFor(JSC::ExecState* exec)
     {
         return currentWorld(exec)->m_wrappers;
-    }
-
-
-
-    inline Document::JSWrapperCache* Document::getWrapperCache(DOMWrapperWorld* world)
-    {
-        if (world->isNormal()) {
-            if (Document::JSWrapperCache* wrapperCache = m_normalWorldWrapperCache)
-                return wrapperCache;
-            ASSERT(!m_wrapperCacheMap.contains(world));
-        } else if (Document::JSWrapperCache* wrapperCache = m_wrapperCacheMap.get(world))
-            return wrapperCache;
-        return createWrapperCache(world);
     }
 
 } // namespace WebCore
