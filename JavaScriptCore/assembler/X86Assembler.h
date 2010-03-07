@@ -26,8 +26,6 @@
 #ifndef X86Assembler_h
 #define X86Assembler_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(ASSEMBLER) && (CPU(X86) || CPU(X86_64))
 
 #include "AssemblerBuffer.h"

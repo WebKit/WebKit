@@ -33,7 +33,6 @@
 #include "JSClassRef.h"
 #include "JSGlobalObject.h"
 #include "JSObject.h"
-#include <wtf/Platform.h>
 
 #if OS(DARWIN)
 #include <mach-o/dyld.h>

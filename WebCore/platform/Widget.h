@@ -27,8 +27,6 @@
 #ifndef Widget_h
 #define Widget_h
 
-#include <wtf/Platform.h>
-
 #if PLATFORM(MAC)
 #ifdef __OBJC__
 @class NSView;

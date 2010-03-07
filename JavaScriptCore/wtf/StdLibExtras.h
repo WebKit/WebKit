@@ -26,7 +26,6 @@
 #ifndef WTF_StdLibExtras_h
 #define WTF_StdLibExtras_h
 
-#include <wtf/Platform.h>
 #include <wtf/Assertions.h>
 
 // Use these to declare and define a static local variable (static T;) so that

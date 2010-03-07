@@ -26,13 +26,11 @@
 #ifndef RegexCompiler_h
 #define RegexCompiler_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(YARR)
 
-#include <wtf/unicode/Unicode.h>
 #include "RegexParser.h"
 #include "RegexPattern.h"
+#include <wtf/unicode/Unicode.h>
 
 namespace JSC { namespace Yarr {
 

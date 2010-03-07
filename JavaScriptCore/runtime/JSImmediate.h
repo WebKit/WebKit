@@ -22,8 +22,6 @@
 #ifndef JSImmediate_h
 #define JSImmediate_h
 
-#include <wtf/Platform.h>
-
 #if !USE(JSVALUE32_64)
 
 #include <wtf/Assertions.h>

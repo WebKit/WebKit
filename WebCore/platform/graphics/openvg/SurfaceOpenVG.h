@@ -25,7 +25,6 @@
 #endif
 
 #include <wtf/Noncopyable.h>
-#include <wtf/Platform.h>
 
 namespace WebCore {
 

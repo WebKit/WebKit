@@ -55,7 +55,6 @@
 #include "XMLTokenizerScope.h"
 #include <libxml/parser.h>
 #include <libxml/parserInternals.h>
-#include <wtf/Platform.h>
 #include <wtf/StringExtras.h>
 #include <wtf/Threading.h>
 #include <wtf/UnusedParam.h>

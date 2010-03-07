@@ -29,7 +29,6 @@
 #include "JSAPIValueWrapper.h"
 #include "JSGlobalObject.h"
 #include "JSValue.h"
-#include <wtf/Platform.h>
 #include <wtf/UnusedParam.h>
 
 namespace JSC {

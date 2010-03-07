@@ -27,7 +27,6 @@
 #define ResourceHandleClient_h
 
 #include <wtf/RefCounted.h>
-#include <wtf/Platform.h>
 #include <wtf/RefPtr.h>
 
 #if USE(CFNETWORK)

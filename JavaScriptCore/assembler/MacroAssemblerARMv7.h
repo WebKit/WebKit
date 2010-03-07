@@ -26,8 +26,6 @@
 #ifndef MacroAssemblerARMv7_h
 #define MacroAssemblerARMv7_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(ASSEMBLER)
 
 #include "ARMv7Assembler.h"

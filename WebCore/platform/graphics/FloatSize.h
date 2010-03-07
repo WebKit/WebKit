@@ -30,7 +30,6 @@
 
 #include "IntSize.h"
 #include <wtf/MathExtras.h>
-#include <wtf/Platform.h>
 
 #if PLATFORM(CG)
 typedef struct CGSize CGSize;

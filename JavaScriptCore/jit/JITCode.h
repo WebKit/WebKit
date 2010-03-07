@@ -26,8 +26,6 @@
 #ifndef JITCode_h
 #define JITCode_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(JIT)
 
 #include "CallFrame.h"

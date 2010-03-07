@@ -48,7 +48,6 @@
 #include "ObjectPrototype.h"
 #include "PropertyNameArray.h"
 #include "RegExpConstructor.h"
-#include <wtf/Platform.h>
 
 using namespace JSC;
 

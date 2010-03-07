@@ -45,12 +45,9 @@
 #include <CoreFoundation/CFBundle.h>
 #endif
 
-#include <time.h>
-
-#include <wtf/Platform.h>
-#include <wtf/Vector.h>
-
 #include "PlatformString.h"
+#include <time.h>
+#include <wtf/Vector.h>
 
 typedef const struct __CFData* CFDataRef;
 

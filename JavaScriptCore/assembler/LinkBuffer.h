@@ -26,8 +26,6 @@
 #ifndef LinkBuffer_h
 #define LinkBuffer_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(ASSEMBLER)
 
 #include <MacroAssembler.h>

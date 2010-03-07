@@ -26,8 +26,6 @@
 #ifndef JIT_h
 #define JIT_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(JIT)
 
 // We've run into some problems where changing the size of the class JIT leads to

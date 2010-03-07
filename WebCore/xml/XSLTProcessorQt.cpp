@@ -32,7 +32,6 @@
 #include "loader.h"
 #include "markup.h"
 #include <wtf/Assertions.h>
-#include <wtf/Platform.h>
 #include <wtf/Vector.h>
 
 #include <qabstractmessagehandler.h>

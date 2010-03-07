@@ -26,8 +26,6 @@
 #ifndef RepatchBuffer_h
 #define RepatchBuffer_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(ASSEMBLER)
 
 #include <MacroAssembler.h>

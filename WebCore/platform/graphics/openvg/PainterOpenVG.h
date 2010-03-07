@@ -26,7 +26,6 @@
 #include <openvg.h>
 
 #include <wtf/Noncopyable.h>
-#include <wtf/Platform.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

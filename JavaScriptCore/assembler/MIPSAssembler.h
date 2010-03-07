@@ -29,8 +29,6 @@
 #ifndef MIPSAssembler_h
 #define MIPSAssembler_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(ASSEMBLER) && CPU(MIPS)
 
 #include "AssemblerBuffer.h"

@@ -28,8 +28,6 @@
 #ifndef MacroAssemblerARM_h
 #define MacroAssemblerARM_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(ASSEMBLER) && CPU(ARM_TRADITIONAL)
 
 #include "ARMAssembler.h"

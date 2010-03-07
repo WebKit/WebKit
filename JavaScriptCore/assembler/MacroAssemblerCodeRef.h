@@ -26,8 +26,6 @@
 #ifndef MacroAssemblerCodeRef_h
 #define MacroAssemblerCodeRef_h
 
-#include <wtf/Platform.h>
-
 #include "ExecutableAllocator.h"
 #include "PassRefPtr.h"
 #include "RefPtr.h"

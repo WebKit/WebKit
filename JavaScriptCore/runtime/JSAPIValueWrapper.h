@@ -23,8 +23,6 @@
 #ifndef JSAPIValueWrapper_h
 #define JSAPIValueWrapper_h
 
-#include <wtf/Platform.h>
-
 #include "JSCell.h"
 #include "CallFrame.h"
 

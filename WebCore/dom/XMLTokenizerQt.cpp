@@ -52,7 +52,6 @@
 #include "TextResourceDecoder.h"
 #include "TransformSource.h"
 #include <QDebug>
-#include <wtf/Platform.h>
 #include <wtf/StringExtras.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>

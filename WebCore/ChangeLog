@@ -1,3 +1,44 @@
+2010-03-06  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        Remove unnecessary includes of wtf/Platform.h.  This is already pulled in by config.h.
+
+        * accessibility/AccessibilityObject.h:
+        * dom/XMLTokenizer.cpp:
+        * dom/XMLTokenizerLibxml2.cpp:
+        * dom/XMLTokenizerQt.cpp:
+        * editing/TextAffinity.h:
+        * loader/FrameLoaderClient.h:
+        * page/FocusController.cpp:
+        * page/FrameTree.cpp:
+        * page/Geolocation.h:
+        * page/PositionCallback.h:
+        * page/PositionErrorCallback.h:
+        * platform/Cursor.h:
+        * platform/FileSystem.h:
+        * platform/FloatConversion.h:
+        * platform/KeyboardCodes.h:
+        * platform/PlatformKeyboardEvent.h:
+        * platform/PlatformTouchPoint.h:
+        * platform/SuddenTermination.h:
+        * platform/Widget.h:
+        * platform/graphics/Color.h:
+        * platform/graphics/FloatPoint.h:
+        * platform/graphics/FloatSize.h:
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/IntPoint.h:
+        * platform/graphics/IntRect.h:
+        * platform/graphics/IntSize.h:
+        * platform/graphics/openvg/PainterOpenVG.h:
+        * platform/graphics/openvg/SurfaceOpenVG.h:
+        * platform/network/ResourceHandleClient.h:
+        * platform/text/Base64.cpp:
+        * rendering/style/SVGRenderStyle.h:
+        * xml/XSLTProcessor.cpp:
+        * xml/XSLTProcessorLibxslt.cpp:
+        * xml/XSLTProcessorQt.cpp:
+
 2010-03-06  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.

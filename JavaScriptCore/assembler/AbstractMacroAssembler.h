@@ -26,8 +26,6 @@
 #ifndef AbstractMacroAssembler_h
 #define AbstractMacroAssembler_h
 
-#include <wtf/Platform.h>
-
 #include <MacroAssemblerCodeRef.h>
 #include <CodeLocation.h>
 #include <wtf/Noncopyable.h>

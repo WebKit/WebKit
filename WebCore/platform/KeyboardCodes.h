@@ -28,8 +28,6 @@
 #ifndef KeyboardCodes_h
 #define KeyboardCodes_h
 
-#include <wtf/Platform.h>
-
 // FIXME: We should get rid of these Chromium-related ifdefs.
 #if PLATFORM(CHROMIUM)
 

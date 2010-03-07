@@ -34,7 +34,6 @@
 #include "Range.h"
 #include "VisiblePosition.h"
 #include "VisibleSelection.h"
-#include <wtf/Platform.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 

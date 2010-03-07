@@ -26,8 +26,6 @@
 #ifndef Cursor_h
 #define Cursor_h
 
-#include <wtf/Platform.h>
-
 #if PLATFORM(WIN)
 typedef struct HICON__* HICON;
 typedef HICON HCURSOR;

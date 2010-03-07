@@ -29,8 +29,6 @@
 #ifndef JITStubs_h
 #define JITStubs_h
 
-#include <wtf/Platform.h>
-
 #include "MacroAssemblerCodeRef.h"
 #include "Register.h"
 

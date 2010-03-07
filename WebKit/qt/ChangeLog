@@ -1,3 +1,11 @@
+2010-03-06  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        Remove unnecessary includes of wtf/Platform.h.  This is already pulled in by the prefix header.
+
+        * WebCoreSupport/EditCommandQt.cpp:
+
 2010-03-02  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Simon Hausmann.

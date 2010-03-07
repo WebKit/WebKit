@@ -24,7 +24,6 @@
  */
 
 #include "config.h"
-#include <wtf/Platform.h>
 #include "JSCallbackFunction.h"
 
 #include "APIShims.h"

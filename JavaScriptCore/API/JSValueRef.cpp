@@ -26,7 +26,6 @@
 #include "config.h"
 #include "JSValueRef.h"
 
-#include <wtf/Platform.h>
 #include "APICast.h"
 #include "APIShims.h"
 #include "JSCallbackObject.h"

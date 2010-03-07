@@ -26,8 +26,6 @@
 #ifndef MacroAssemblerX86Common_h
 #define MacroAssemblerX86Common_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(ASSEMBLER)
 
 #include "X86Assembler.h"

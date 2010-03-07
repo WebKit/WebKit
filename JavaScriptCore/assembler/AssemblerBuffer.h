@@ -26,8 +26,6 @@
 #ifndef AssemblerBuffer_h
 #define AssemblerBuffer_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(ASSEMBLER)
 
 #include "stdint.h"

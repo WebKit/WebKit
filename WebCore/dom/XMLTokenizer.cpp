@@ -51,7 +51,6 @@
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
 #include "TextResourceDecoder.h"
-#include <wtf/Platform.h>
 #include <wtf/StringExtras.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>

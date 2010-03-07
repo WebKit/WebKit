@@ -18,7 +18,6 @@
 */
 
 #include "config.h"
-#include <wtf/Platform.h>
 #include "EditCommandQt.h"
 
 using namespace WebCore;

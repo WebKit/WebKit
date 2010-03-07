@@ -1,3 +1,48 @@
+2010-03-06  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        Remove unnecessary includes of wtf/Platform.h.  This is already pulled in by config.h.
+
+        * API/APICast.h:
+        * API/JSCallbackFunction.cpp:
+        * API/JSContextRef.cpp:
+        * API/JSObjectRef.cpp:
+        * API/JSValueRef.cpp:
+        * assembler/ARMAssembler.h:
+        * assembler/ARMv7Assembler.h:
+        * assembler/AbstractMacroAssembler.h:
+        * assembler/AssemblerBuffer.h:
+        * assembler/AssemblerBufferWithConstantPool.h:
+        * assembler/CodeLocation.h:
+        * assembler/LinkBuffer.h:
+        * assembler/MIPSAssembler.h:
+        * assembler/MacroAssembler.h:
+        * assembler/MacroAssemblerARM.h:
+        * assembler/MacroAssemblerARMv7.h:
+        * assembler/MacroAssemblerCodeRef.h:
+        * assembler/MacroAssemblerMIPS.h:
+        * assembler/MacroAssemblerX86.h:
+        * assembler/MacroAssemblerX86Common.h:
+        * assembler/MacroAssemblerX86_64.h:
+        * assembler/RepatchBuffer.h:
+        * assembler/X86Assembler.h:
+        * jit/JIT.h:
+        * jit/JITCode.h:
+        * jit/JITInlineMethods.h:
+        * jit/JITStubs.h:
+        * os-win32/stdint.h:
+        * runtime/JSAPIValueWrapper.h:
+        * runtime/JSImmediate.h:
+        * wtf/ASCIICType.h:
+        * wtf/StdLibExtras.h:
+        * wtf/VMTags.h:
+        * yarr/RegexCompiler.h:
+        * yarr/RegexInterpreter.h:
+        * yarr/RegexJIT.h:
+        * yarr/RegexParser.h:
+        * yarr/RegexPattern.h:
+
 2010-03-06  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Eric Seidel.

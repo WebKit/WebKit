@@ -26,7 +26,6 @@
 #ifndef PositionErrorCallback_h
 #define PositionErrorCallback_h
 
-#include <wtf/Platform.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

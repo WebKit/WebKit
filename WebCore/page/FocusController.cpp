@@ -51,7 +51,6 @@
 #include "Settings.h"
 #include "SpatialNavigation.h"
 #include "Widget.h"
-#include <wtf/Platform.h>
 
 namespace WebCore {
 

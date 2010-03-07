@@ -27,8 +27,6 @@
 #ifndef MacroAssemblerMIPS_h
 #define MacroAssemblerMIPS_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(ASSEMBLER) && CPU(MIPS)
 
 #include "AbstractMacroAssembler.h"

@@ -27,8 +27,6 @@
 #ifndef ARMAssembler_h
 #define ARMAssembler_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(ASSEMBLER) && CPU(ARM_TRADITIONAL)
 
 #include "AssemblerBufferWithConstantPool.h"

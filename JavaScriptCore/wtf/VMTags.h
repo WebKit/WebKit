@@ -26,8 +26,6 @@
 #ifndef VMTags_h
 #define VMTags_h
 
-#include <wtf/Platform.h>
-
 // On Mac OS X, the VM subsystem allows tagging memory requested from mmap and vm_map
 // in order to aid tools that inspect system memory use. 
 #if OS(DARWIN) && !defined(BUILDING_ON_TIGER)

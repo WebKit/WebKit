@@ -26,8 +26,6 @@
 #ifndef TextAffinity_h
 #define TextAffinity_h
 
-#include <wtf/Platform.h>
-
 #ifdef __OBJC__
 #include <AppKit/NSTextView.h>
 #endif

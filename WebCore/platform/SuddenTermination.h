@@ -26,8 +26,6 @@
 #ifndef SuddenTermination_h
 #define SuddenTermination_h
 
-#include <wtf/Platform.h>
-
 namespace WebCore {
 
     // Once disabled via one or more more calls to disableSuddenTermination(), fast shutdown

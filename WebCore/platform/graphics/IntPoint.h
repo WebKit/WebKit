@@ -27,7 +27,6 @@
 #define IntPoint_h
 
 #include "IntSize.h"
-#include <wtf/Platform.h>
 
 #if PLATFORM(QT)
 #include <QDataStream>

@@ -25,7 +25,6 @@
 #include "Page.h"
 #include "PageGroup.h"
 #include <stdarg.h>
-#include <wtf/Platform.h>
 #include <wtf/StringExtras.h>
 #include <wtf/Vector.h>
 

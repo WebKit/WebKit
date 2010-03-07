@@ -26,8 +26,6 @@
 #ifndef RegexJIT_h
 #define RegexJIT_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(YARR_JIT)
 
 #include "MacroAssembler.h"

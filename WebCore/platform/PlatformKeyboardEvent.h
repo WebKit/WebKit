@@ -28,7 +28,6 @@
 #define PlatformKeyboardEvent_h
 
 #include "PlatformString.h"
-#include <wtf/Platform.h>
 
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>

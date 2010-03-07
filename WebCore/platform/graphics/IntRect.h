@@ -27,7 +27,6 @@
 #define IntRect_h
 
 #include "IntPoint.h"
-#include <wtf/Platform.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(CG)

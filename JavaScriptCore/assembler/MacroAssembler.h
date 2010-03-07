@@ -26,8 +26,6 @@
 #ifndef MacroAssembler_h
 #define MacroAssembler_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(ASSEMBLER)
 
 #if CPU(ARM_THUMB2)

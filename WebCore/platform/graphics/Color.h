@@ -27,7 +27,6 @@
 #define Color_h
 
 #include <wtf/FastAllocBase.h>
-#include <wtf/Platform.h>
 
 #if PLATFORM(CG)
 typedef struct CGColor* CGColorRef;

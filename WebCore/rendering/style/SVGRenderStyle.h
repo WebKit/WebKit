@@ -30,8 +30,6 @@
 #include "SVGRenderStyleDefs.h"
 #include "ShadowData.h"
 
-#include <wtf/Platform.h>
-
 namespace WebCore {
 
 class FloatRect;
