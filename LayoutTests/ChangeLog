@@ -1,3 +1,20 @@
+2010-03-07  Dmitry Titov  <dimich@chromium.org>
+
+        Not reviewed. Revert of r55593 which caused a regression of worker-cloneports.html.
+
+        REGRESSION(55593?): fast/workers/worker-cloneport.html is timing out on Leopard
+        https://bugs.webkit.org/show_bug.cgi?id=35819
+
+        * fast/frames/resources/sandboxed-iframe-storage-allowed.html:
+        * fast/frames/resources/sandboxed-iframe-storage-disallowed.html:
+        * fast/frames/sandboxed-iframe-storage-expected.txt:
+        * storage/open-database-creation-callback-expected.txt: Removed.
+        * storage/open-database-creation-callback-isolated-world-expected.txt: Removed.
+        * storage/open-database-creation-callback-isolated-world.html: Removed.
+        * storage/open-database-creation-callback.html: Removed.
+        * platform/qt/Skipped:
+        * platform/mac-leopard/Skipped: Enable the temporarily disabled test back.
+
 2010-03-06  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
 
         Reviewed by Eric Seidel.

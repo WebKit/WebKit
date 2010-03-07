@@ -45,7 +45,6 @@ namespace WebCore {
     class Console;
     class DOMSelection;
     class Database;
-    class DatabaseCallback;
     class Document;
     class Element;
     class Event;
@@ -201,7 +200,7 @@ namespace WebCore {
 
 #if ENABLE(DATABASE)
         // HTML 5 client-side database
-        PassRefPtr<Database> openDatabase(const String& name, const String& version, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, ExceptionCode&);
+        PassRefPtr<Database> openDatabase(const String& name, const String& version, const String& displayName, unsigned long estimatedSize, ExceptionCode&);
 #endif
 
 #if ENABLE(DOM_STORAGE)

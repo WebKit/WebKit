@@ -1,3 +1,0 @@
-ALERT: undefined
-This test tests that the openDatabase() creation callback is called in the right world.
-
