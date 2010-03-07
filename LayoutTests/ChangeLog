@@ -1,3 +1,13 @@
+2010-03-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7722008> Column breaking ignores floats
+        https://bugs.webkit.org/show_bug.cgi?id=35837
+
+        * fast/multicol/float-truncation-expected.txt: Added.
+        * fast/multicol/float-truncation.html: Added.
+
 2010-03-07  Dmitry Titov  <dimich@chromium.org>
 
         Not reviewed. Revert of r55593 which caused a regression of worker-cloneports.html.

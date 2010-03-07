@@ -3182,6 +3182,32 @@ void RenderBlock::markAllDescendantsWithFloatsForLayout(RenderBox* floatToRemove
     }
 }
 
+int RenderBlock::visibleTopOfHighestFloatExtendingBelow(int bottom, int maxHeight) const
+{
+    int top = bottom;
+    if (m_floatingObjects) {
+        FloatingObject* floatingObject;
+        for (DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects); (floatingObject = it.current()); ++it) {
+            RenderBox* floatingBox = floatingObject->m_renderer;
+            IntRect visibleOverflow = floatingBox->visibleOverflowRect();
+            visibleOverflow.move(floatingBox->x(), floatingBox->y());
+            if (visibleOverflow.y() < top && visibleOverflow.bottom() > bottom && visibleOverflow.height() <= maxHeight && floatingBox->containingBlock() == this)
+                top = visibleOverflow.y();
+        }
+    }
+
+    if (!childrenInline()) {
+        for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
+            if (child->isFloatingOrPositioned() || !child->isRenderBlock())
+                continue;
+            RenderBlock* childBlock = toRenderBlock(child);
+            top = min(top, childBlock->y() + childBlock->visibleTopOfHighestFloatExtendingBelow(bottom - childBlock->y(), maxHeight));
+        }
+    }
+
+    return top;
+}
+
 int RenderBlock::getClearDelta(RenderBox* child, int yPos)
 {
     // There is no need to compute clearance if we have no floats.
@@ -3723,11 +3749,13 @@ int RenderBlock::layoutColumns(int endOfContent, int requestedColumnHeight)
 
         // This represents the real column position.
         IntRect colRect(currX, top, desiredColumnWidth, colHeight);
-        
+
+        int truncationPoint = visibleTopOfHighestFloatExtendingBelow(currY + colHeight, colHeight);
+
         // For the simulated paint, we pretend like everything is in one long strip.
-        IntRect pageRect(left, currY, desiredColumnWidth, colHeight);
+        IntRect pageRect(left, currY, desiredColumnWidth, truncationPoint - currY);
         v->setPrintRect(pageRect);
-        v->setTruncatedAt(currY + colHeight);
+        v->setTruncatedAt(truncationPoint);
         GraphicsContext context((PlatformGraphicsContext*)0);
         RenderObject::PaintInfo paintInfo(&context, pageRect, PaintPhaseForeground, false, 0, 0);
         
@@ -3742,7 +3770,7 @@ int RenderBlock::layoutColumns(int endOfContent, int requestedColumnHeight)
 
         int adjustedBottom = v->bestTruncatedAt();
         if (adjustedBottom <= currY)
-            adjustedBottom = currY + colHeight;
+            adjustedBottom = truncationPoint;
         
         colRect.setHeight(adjustedBottom - currY);
         
