@@ -23,6 +23,7 @@
 #include <JavaScriptCore/JavaScript.h>
 #include <QtCore/qnumeric.h>
 #include <QtCore/qstring.h>
+#include <QtCore/qvarlengtharray.h>
 
 extern char *qdtoa(double d, int mode, int ndigits, int *decpt, int *sign, char **rve, char **digits_str);
 
@@ -73,49 +74,58 @@ public:
         if (!value)
             return QString::fromLatin1("0");
 
-        QByteArray buf;
-        buf.reserve(24);
+        QVarLengthArray<char, 25> buf;
         int decpt;
         int sign;
         char* result = 0;
-        (void)qdtoa(value, 0, 0, &decpt, &sign, 0, &result);
+        char* endresult;
+        (void)qdtoa(value, 0, 0, &decpt, &sign, &endresult, &result);
 
         if (!result)
             return QString();
 
+        int resultLen = endresult - result;
         if (decpt <= 0 && decpt > -6) {
-            buf.fill('0', -decpt + 2 + sign);
+            buf.resize(-decpt + 2 + sign);
+            qMemSet(buf.data(), '0', -decpt + 2 + sign);
             if (sign) // fix the sign.
                 buf[0] = '-';
             buf[sign + 1] = '.';
-            buf += result;
+            buf.append(result, resultLen);
         } else {
             if (sign)
-                buf += '-';
-            buf += result;
-            int length = buf.length() - sign;
+                buf.append('-');
+            int length = buf.size() - sign + resultLen;
             if (decpt <= 21 && decpt > 0) {
-                if (length <= decpt)
-                    buf += QByteArray().fill('0', decpt - length);
-                else
-                    buf.insert(decpt + sign, '.');
+                if (length <= decpt) {
+                    const char* zeros = "0000000000000000000000000";
+                    buf.append(result, resultLen);
+                    buf.append(zeros, decpt - length);
+                } else {
+                    buf.append(result, decpt);
+                    buf.append('.');
+                    buf.append(result + decpt, resultLen - decpt);
+                }
             } else if (result[0] >= '0' && result[0] <= '9') {
-                if (length > 1)
-                    buf.insert(1 + sign, '.');
-                buf += 'e';
-                buf += (decpt >= 0) ? '+' : '-';
-                int e = decpt - 1;
-                if (e < 0)
-                    e = -e;
+                if (length > 1) {
+                    buf.append(result, 1);
+                    buf.append('.');
+                    buf.append(result + 1, resultLen - 1);
+                } else
+                    buf.append(result, resultLen);
+                buf.append('e');
+                buf.append(decpt >= 0 ? '+' : '-');
+                int e = qAbs(decpt - 1);
                 if (e >= 100)
-                    buf += '0' + e / 100;
+                    buf.append('0' + e / 100);
                 if (e >= 10)
-                    buf += '0' + (e % 100) / 10;
-                buf += '0' + e % 10;
+                    buf.append('0' + (e % 100) / 10);
+                buf.append('0' + e % 10);
             }
         }
         free(result);
-        return QString::fromLatin1(buf);
+        buf.append(0);
+        return QString::fromLatin1(buf.constData());
     }
 };
 
