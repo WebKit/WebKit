@@ -286,12 +286,14 @@ SOURCES += \
     bindings/js/JSCustomXPathNSResolver.cpp \
     bindings/js/JSDataGridColumnListCustom.cpp \
     bindings/js/JSDataGridDataSource.cpp \
+    bindings/js/JSDebugWrapperSet.cpp \
     bindings/js/JSDocumentCustom.cpp \
     bindings/js/JSDocumentFragmentCustom.cpp \
     bindings/js/JSDOMGlobalObject.cpp \
     bindings/js/JSDOMWindowBase.cpp \
     bindings/js/JSDOMWindowCustom.cpp \
     bindings/js/JSDOMWindowShell.cpp \
+    bindings/js/JSDOMWrapper.cpp \
     bindings/js/JSElementCustom.cpp \
     bindings/js/JSEventCustom.cpp \
     bindings/js/JSEventSourceConstructor.cpp \
@@ -1018,6 +1020,7 @@ HEADERS += \
     bindings/js/JSCustomXPathNSResolver.h \
     bindings/js/JSDatabaseCallback.h \
     bindings/js/JSDataGridDataSource.h \
+    bindings/js/JSDebugWrapperSet.h \
     bindings/js/JSDOMBinding.h \
     bindings/js/JSDOMGlobalObject.h \
     bindings/js/JSDOMWindowBase.h \

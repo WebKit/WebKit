@@ -35808,6 +35808,14 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSDebugWrapperSet.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSDebugWrapperSet.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSDOMBinding.cpp"
 					>
 					<FileConfiguration
@@ -36029,6 +36037,10 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSDOMWindowCustom.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSDOMWrapper.cpp"
 					>
 				</File>
 				<File

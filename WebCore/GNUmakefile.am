@@ -355,6 +355,8 @@ webcore_sources += \
 	WebCore/bindings/js/JSDataGridColumnListCustom.cpp \
 	WebCore/bindings/js/JSDataGridDataSource.cpp \
 	WebCore/bindings/js/JSDataGridDataSource.h \
+	WebCore/bindings/js/JSDebugWrapperSet.cpp \
+	WebCore/bindings/js/JSDebugWrapperSet.h \
 	WebCore/bindings/js/JSCSSRuleCustom.cpp \
 	WebCore/bindings/js/JSCSSRuleListCustom.cpp \
 	WebCore/bindings/js/JSCSSStyleDeclarationCustom.cpp \
@@ -385,6 +387,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSDOMWindowCustom.h \
 	WebCore/bindings/js/JSDOMWindowShell.cpp \
 	WebCore/bindings/js/JSDOMWindowShell.h \
+	WebCore/bindings/js/JSDOMWrapper.cpp \
 	WebCore/bindings/js/JSDOMWrapper.h \
 	WebCore/bindings/js/JSDocumentCustom.cpp \
 	WebCore/bindings/js/JSDocumentFragmentCustom.cpp \

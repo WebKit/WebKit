@@ -1,5 +1,43 @@
 2010-03-06  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Dan Bernstein.
+
+        Move debug only JS wrapper-set tracking code into its own file.
+        https://bugs.webkit.org/show_bug.cgi?id=35839
+
+        * GNUmakefile.am: Added new files.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::cacheDOMObjectWrapper):
+        (WebCore::forgetDOMObject):
+        (WebCore::forgetDOMNode):
+        (WebCore::cacheDOMNodeWrapper):
+        (WebCore::takeWrappers):
+        (WebCore::updateDOMNodeDocument):
+        Updated for new signature for willCacheWrapper and didUncacheWrapper.
+
+        * bindings/js/JSDOMWrapper.cpp: Added.
+        (WebCore::DOMObject::~DOMObject):
+        (WebCore::DOMObject::defineOwnProperty):
+        Moved from JSDOMBinding.cpp.
+
+        * bindings/js/JSDebugWrapperSet.cpp: Added.
+        (WebCore::JSDebugWrapperSet::shared):
+        (WebCore::JSDebugWrapperSet::JSDebugWrapperSet):
+        * bindings/js/JSDebugWrapperSet.h: Added.
+        (WebCore::JSDebugWrapperSet::add):
+        (WebCore::JSDebugWrapperSet::remove):
+        (WebCore::JSDebugWrapperSet::contains):
+        (WebCore::JSDebugWrapperSet::willCacheWrapper):
+        (WebCore::JSDebugWrapperSet::didUncacheWrapper):
+        Moved from JSDOMBinding.cpp.
+
+2010-03-06  Sam Weinig  <sam@webkit.org>
+
         Rubber-stamped by Dan Bernstein.
 
         Move DOMObjectHashTableMap, DOMWrapperWorld and WebCoreJSClientData into

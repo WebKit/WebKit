@@ -4263,6 +4263,9 @@
 		BC53DA481143134D000D817E /* DOMWrapperWorld.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC53DA471143134D000D817E /* DOMWrapperWorld.cpp */; };
 		BC53DA601143141A000D817E /* DOMObjectHashTableMap.h in Headers */ = {isa = PBXBuildFile; fileRef = BC53DA5F1143141A000D817E /* DOMObjectHashTableMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC53DA62114314BD000D817E /* DOMObjectHashTableMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC53DA61114314BD000D817E /* DOMObjectHashTableMap.cpp */; };
+		BC53DAC211432EEE000D817E /* JSDebugWrapperSet.h in Headers */ = {isa = PBXBuildFile; fileRef = BC53DAC111432EEE000D817E /* JSDebugWrapperSet.h */; };
+		BC53DAC511432FD9000D817E /* JSDebugWrapperSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC53DAC411432FD9000D817E /* JSDebugWrapperSet.cpp */; };
+		BC53DAC711433064000D817E /* JSDOMWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC53DAC611433064000D817E /* JSDOMWrapper.cpp */; };
 		BC56CB2110D5AC8000A77C64 /* GeolocationController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC56CB1C10D5AC8000A77C64 /* GeolocationController.cpp */; };
 		BC56CB2210D5AC8000A77C64 /* GeolocationController.h in Headers */ = {isa = PBXBuildFile; fileRef = BC56CB1D10D5AC8000A77C64 /* GeolocationController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC56CB2310D5AC8000A77C64 /* GeolocationControllerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BC56CB1E10D5AC8000A77C64 /* GeolocationControllerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9547,6 +9550,9 @@
 		BC53DA471143134D000D817E /* DOMWrapperWorld.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWrapperWorld.cpp; sourceTree = "<group>"; };
 		BC53DA5F1143141A000D817E /* DOMObjectHashTableMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMObjectHashTableMap.h; sourceTree = "<group>"; };
 		BC53DA61114314BD000D817E /* DOMObjectHashTableMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMObjectHashTableMap.cpp; sourceTree = "<group>"; };
+		BC53DAC111432EEE000D817E /* JSDebugWrapperSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDebugWrapperSet.h; sourceTree = "<group>"; };
+		BC53DAC411432FD9000D817E /* JSDebugWrapperSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDebugWrapperSet.cpp; sourceTree = "<group>"; };
+		BC53DAC611433064000D817E /* JSDOMWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMWrapper.cpp; sourceTree = "<group>"; };
 		BC56CB1C10D5AC8000A77C64 /* GeolocationController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeolocationController.cpp; sourceTree = "<group>"; };
 		BC56CB1D10D5AC8000A77C64 /* GeolocationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeolocationController.h; sourceTree = "<group>"; };
 		BC56CB1E10D5AC8000A77C64 /* GeolocationControllerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeolocationControllerClient.h; sourceTree = "<group>"; };
@@ -14696,8 +14702,8 @@
 				BC53DA2D1143121E000D817E /* DOMWrapperWorld.h */,
 				1432E8480C51493F00B1500F /* GCController.cpp */,
 				1432E8460C51493800B1500F /* GCController.h */,
-				B5D3601E112F8BA80048DEA8 /* JSDatabaseCallback.cpp */,
-				B5D3601C112F8BA00048DEA8 /* JSDatabaseCallback.h */,
+				BC53DAC411432FD9000D817E /* JSDebugWrapperSet.cpp */,
+				BC53DAC111432EEE000D817E /* JSDebugWrapperSet.h */,
 				93B70D4709EB0C7C009D8468 /* JSDOMBinding.cpp */,
 				93B70D4809EB0C7C009D8468 /* JSDOMBinding.h */,
 				E1C36CBC0EB08062007410BC /* JSDOMGlobalObject.cpp */,
@@ -14706,6 +14712,7 @@
 				BC6932720D7E293900AE44D1 /* JSDOMWindowBase.h */,
 				BCBFB53A0DCD29CF0019B3E5 /* JSDOMWindowShell.cpp */,
 				BCBFB53B0DCD29CF0019B3E5 /* JSDOMWindowShell.h */,
+				BC53DAC611433064000D817E /* JSDOMWrapper.cpp */,
 				65E0E9431133C89F00B4CB10 /* JSDOMWrapper.h */,
 				BC60901E0E91B8EC000C68B5 /* JSEventTarget.cpp */,
 				BC60901D0E91B8EC000C68B5 /* JSEventTarget.h */,
@@ -14835,20 +14842,6 @@
 				BC5825F20C0B89380053F1B5 /* JSCSSStyleDeclarationCustom.cpp */,
 				BC20FB7E0C0E8E6C00D1447F /* JSCSSValueCustom.cpp */,
 				BC20FB7E0C0E8E6C00D1447F /* JSCSSValueCustom.cpp */,
-				FE80D7A20E9C1ED2000D6F75 /* JSCustomPositionCallback.cpp */,
-				FE80D7A30E9C1ED2000D6F75 /* JSCustomPositionCallback.h */,
-				FE80D7A40E9C1ED2000D6F75 /* JSCustomPositionErrorCallback.cpp */,
-				FE80D7A50E9C1ED2000D6F75 /* JSCustomPositionErrorCallback.h */,
-				51EC925B0CE90DD400F90308 /* JSCustomSQLStatementCallback.cpp */,
-				51EC925C0CE90DD400F90308 /* JSCustomSQLStatementCallback.h */,
-				51EC925D0CE90DD400F90308 /* JSCustomSQLStatementErrorCallback.cpp */,
-				51EC925E0CE90DD400F90308 /* JSCustomSQLStatementErrorCallback.h */,
-				51EC925F0CE90DD400F90308 /* JSCustomSQLTransactionCallback.cpp */,
-				51EC92600CE90DD400F90308 /* JSCustomSQLTransactionCallback.h */,
-				51EC92610CE90DD400F90308 /* JSCustomSQLTransactionErrorCallback.cpp */,
-				51EC92620CE90DD400F90308 /* JSCustomSQLTransactionErrorCallback.h */,
-				1A3417C80CECFF250049CBDE /* JSCustomVoidCallback.cpp */,
-				1A3417C70CECFF250049CBDE /* JSCustomVoidCallback.h */,
 				BCCE58AB1061E8CF008FB35A /* JSDatabaseCustom.cpp */,
 				BC77D1510FF19C730070887B /* JSDataGridColumnListCustom.cpp */,
 				4162A453101145E300DFF3ED /* JSDedicatedWorkerContextCustom.cpp */,
@@ -15175,6 +15168,8 @@
 				1A3417C70CECFF250049CBDE /* JSCustomVoidCallback.h */,
 				E10B93C20B73C291003ED890 /* JSCustomXPathNSResolver.cpp */,
 				E10B937B0B73C00A003ED890 /* JSCustomXPathNSResolver.h */,
+				B5D3601E112F8BA80048DEA8 /* JSDatabaseCallback.cpp */,
+				B5D3601C112F8BA00048DEA8 /* JSDatabaseCallback.h */,
 				BCBCAE3A0FF19399000762AE /* JSDataGridDataSource.cpp */,
 				BCBCAE3B0FF19399000762AE /* JSDataGridDataSource.h */,
 				93B70D4D09EB0C7C009D8468 /* JSEventListener.cpp */,
@@ -15183,6 +15178,20 @@
 				935F45410F7C3B5F00D7C1FB /* JSLazyEventListener.h */,
 				BCB7735E0C17853D00132BA4 /* JSNodeFilterCondition.cpp */,
 				BCB7735F0C17853D00132BA4 /* JSNodeFilterCondition.h */,
+				FE80D7A20E9C1ED2000D6F75 /* JSCustomPositionCallback.cpp */,
+				FE80D7A30E9C1ED2000D6F75 /* JSCustomPositionCallback.h */,
+				FE80D7A40E9C1ED2000D6F75 /* JSCustomPositionErrorCallback.cpp */,
+				FE80D7A50E9C1ED2000D6F75 /* JSCustomPositionErrorCallback.h */,
+				51EC925B0CE90DD400F90308 /* JSCustomSQLStatementCallback.cpp */,
+				51EC925C0CE90DD400F90308 /* JSCustomSQLStatementCallback.h */,
+				51EC925D0CE90DD400F90308 /* JSCustomSQLStatementErrorCallback.cpp */,
+				51EC925E0CE90DD400F90308 /* JSCustomSQLStatementErrorCallback.h */,
+				51EC925F0CE90DD400F90308 /* JSCustomSQLTransactionCallback.cpp */,
+				51EC92600CE90DD400F90308 /* JSCustomSQLTransactionCallback.h */,
+				51EC92610CE90DD400F90308 /* JSCustomSQLTransactionErrorCallback.cpp */,
+				51EC92620CE90DD400F90308 /* JSCustomSQLTransactionErrorCallback.h */,
+				1A3417C80CECFF250049CBDE /* JSCustomVoidCallback.cpp */,
+				1A3417C70CECFF250049CBDE /* JSCustomVoidCallback.h */,
 			);
 			name = "Callback Objects";
 			sourceTree = "<group>";
@@ -18662,6 +18671,7 @@
 				BC53D911114310CC000D817E /* WebCoreJSClientData.h in Headers */,
 				BC53DA2E1143121E000D817E /* DOMWrapperWorld.h in Headers */,
 				BC53DA601143141A000D817E /* DOMObjectHashTableMap.h in Headers */,
+				BC53DAC211432EEE000D817E /* JSDebugWrapperSet.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -20859,6 +20869,8 @@
 				B5D3601F112F8BA80048DEA8 /* JSDatabaseCallback.cpp in Sources */,
 				BC53DA481143134D000D817E /* DOMWrapperWorld.cpp in Sources */,
 				BC53DA62114314BD000D817E /* DOMObjectHashTableMap.cpp in Sources */,
+				BC53DAC511432FD9000D817E /* JSDebugWrapperSet.cpp in Sources */,
+				BC53DAC711433064000D817E /* JSDOMWrapper.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
