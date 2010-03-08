@@ -42,8 +42,8 @@ namespace WebCore {
 class Blob : public RefCounted<Blob> {
 public:
 #if ENABLE(BLOB_SLICE)
-    static const int toEndOfFile = -1;
-    static const double doNotCheckFileChange = 0;
+    static const int toEndOfFile;
+    static const double doNotCheckFileChange;
 #endif
 
     static PassRefPtr<Blob> create(const String& path)

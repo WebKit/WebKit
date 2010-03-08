@@ -1,3 +1,10 @@
+2010-03-08  Jian Li  <jianli@chromium.org>
+
+        No review. Fix build break on Tiger intel release.
+
+        * html/Blob.cpp:
+        * html/Blob.h:
+
 2010-03-02  Adam Treat  <atreat@rim.com>
 
         Reviewed by Dave Hyatt.

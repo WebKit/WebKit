@@ -35,6 +35,11 @@
 
 namespace WebCore {
 
+#if ENABLE(BLOB_SLICE)
+const int Blob::toEndOfFile = -1;
+const double Blob::doNotCheckFileChange = 0;
+#endif
+
 Blob::Blob(const String& path)
     : m_path(path)
 #if ENABLE(BLOB_SLICE)
