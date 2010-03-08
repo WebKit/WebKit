@@ -158,6 +158,9 @@ private:
     void createLayerForMovie();
     void destroyLayerForMovie();
 
+    void setUpCookiesForQuickTime(const String& url);
+    String rfc2616DateStringFromTime(CFAbsoluteTime);
+
     MediaPlayer* m_player;
     OwnPtr<QTMovieWin> m_qtMovie;
 #if USE(ACCELERATED_COMPOSITING)

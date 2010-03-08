@@ -28,13 +28,20 @@
 #if ENABLE(VIDEO)
 #include "MediaPlayerPrivateQuickTimeWin.h"
 
+#include "Cookie.h"
+#include "CookieJar.h"
+#include "Frame.h"
+#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "KURL.h"
 #include "QTMovieWin.h"
 #include "ScrollView.h"
+#include "SoftLinking.h"
+#include "StringBuilder.h"
 #include "StringHash.h"
 #include "TimeRanges.h"
 #include "Timer.h"
+#include <Wininet.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/HashSet.h>
 #include <wtf/MathExtras.h>
@@ -58,6 +65,9 @@
 using namespace std;
 
 namespace WebCore {
+
+SOFT_LINK_LIBRARY(Wininet)
+SOFT_LINK(Wininet, InternetSetCookieExW, DWORD, WINAPI, (LPCWSTR lpszUrl, LPCWSTR lpszCookieName, LPCWSTR lpszCookieData, DWORD dwFlags, DWORD_PTR dwReserved), (lpszUrl, lpszCookieName, lpszCookieData, dwFlags, dwReserved))
 
 MediaPlayerPrivateInterface* MediaPlayerPrivate::create(MediaPlayer* player) 
 { 
@@ -159,6 +169,97 @@ void TaskTimer::fired()
     QTMovieWin::taskTimerFired();
 }
 
+String MediaPlayerPrivate::rfc2616DateStringFromTime(CFAbsoluteTime time)
+{
+    static const char* const dayStrings[] = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
+    static const char* const monthStrings[] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+    static const CFStringRef dateFormatString = CFSTR("%s, %02d %s %04d %02d:%02d:%02d GMT");
+    static CFTimeZoneRef gmtTimeZone;
+    if (!gmtTimeZone)
+        gmtTimeZone = CFTimeZoneCopyDefault();
+
+    CFGregorianDate dateValue = CFAbsoluteTimeGetGregorianDate(time, gmtTimeZone); 
+    if (!CFGregorianDateIsValid(dateValue, kCFGregorianAllUnits))
+        return String();
+
+    time = CFGregorianDateGetAbsoluteTime(dateValue, gmtTimeZone);
+    SInt32 day = CFAbsoluteTimeGetDayOfWeek(time, 0);
+
+    RetainPtr<CFStringRef> dateCFString(AdoptCF, CFStringCreateWithFormat(0, 0, dateFormatString, dayStrings[day - 1], dateValue.day, 
+        monthStrings[dateValue.month - 1], dateValue.year, dateValue.hour, dateValue.minute, (int)dateValue.second));
+    return dateCFString.get();
+}
+
+static void addCookieParam(StringBuilder& cookieBuilder, const String& name, const String& value)
+{
+    if (name.isEmpty())
+        return;
+
+    // If this isn't the first parameter added, terminate the previous one.
+    if (cookieBuilder.length())
+        cookieBuilder.append("; ");
+
+    // Add parameter name, and value if there is one.
+    cookieBuilder.append(name);
+    if (!value.isEmpty()) {
+        cookieBuilder.append("=");
+        cookieBuilder.append(value);
+    }
+}
+
+
+void MediaPlayerPrivate::setUpCookiesForQuickTime(const String& url)
+{
+    // WebCore loaded the page with the movie URL with CFNetwork but QuickTime will 
+    // use WinINet to download the movie, so we need to copy any cookies needed to
+    // download the movie into WinInet before asking QuickTime to open it.
+    Frame* frame = m_player->frameView() ? m_player->frameView()->frame() : 0;
+    if (!frame || !frame->page() || !frame->page()->cookieEnabled())
+        return;
+
+    KURL movieURL = KURL(KURL(), url);
+    Vector<Cookie> documentCookies;
+    if (!getRawCookies(frame->document(), movieURL, documentCookies))
+        return;
+
+    for (size_t ndx = 0; ndx < documentCookies.size(); ndx++) {
+        const Cookie& cookie = documentCookies[ndx];
+
+        if (cookie.name.isEmpty())
+            continue;
+
+        // Build up the cookie string with as much information as we can get so WinINet
+        // knows what to do with it.
+        StringBuilder cookieBuilder;
+        addCookieParam(cookieBuilder, cookie.name, cookie.value);
+        addCookieParam(cookieBuilder, "path", cookie.path);
+        if (cookie.expires) 
+            addCookieParam(cookieBuilder, "expires", rfc2616DateStringFromTime(cookie.expires));
+        if (cookie.httpOnly) 
+            addCookieParam(cookieBuilder, "httpOnly", String());
+        cookieBuilder.append(";");
+
+        String cookieURL;
+        if (!cookie.domain.isEmpty()) {
+            StringBuilder urlBuilder;
+
+            urlBuilder.append(movieURL.protocol());
+            urlBuilder.append("://");
+            if (cookie.domain[0] == '.')
+                urlBuilder.append(cookie.domain.substring(1));
+            else
+                urlBuilder.append(cookie.domain);
+            if (cookie.path.length() > 1)
+                urlBuilder.append(cookie.path);
+
+            cookieURL = urlBuilder.toString();
+        } else
+            cookieURL = movieURL;
+
+        InternetSetCookieExW(cookieURL.charactersWithNullTermination(), 0, cookieBuilder.toString().charactersWithNullTermination(), 0, 0);
+    }
+}
+
 void MediaPlayerPrivate::load(const String& url)
 {
     if (!QTMovieWin::initializeQuickTime()) {
@@ -180,6 +281,8 @@ void MediaPlayerPrivate::load(const String& url)
         m_player->readyStateChanged();
     }
     cancelSeek();
+
+    setUpCookiesForQuickTime(url);
 
     m_qtMovie.set(new QTMovieWin(this));
     m_qtMovie->load(url.characters(), url.length(), m_player->preservesPitch());

@@ -1,3 +1,20 @@
+2010-03-08  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        YouTube HTML5 video never starts playing on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=33954
+
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp:
+        (WebCore::MediaPlayerPrivate::rfc2616DateStringFromTime): New, create an rfc 2616 formatted
+        string for an absolute time value.
+        (WebCore::addCookieParam): New, add a cookie param and value to a string builder.
+        (WebCore::MediaPlayerPrivate::setUpCookiesForQuickTime): Copy cookies for the movie to
+            be loaded from CFNetwork into WinINet so they are available when QuickTime tries to
+            download the movie.
+        (WebCore::MediaPlayerPrivate::load): Call setupCookiesForQuickTime.
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.h:
+
 2010-03-08  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by David Levin.
