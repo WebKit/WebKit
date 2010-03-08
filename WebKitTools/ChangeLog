@@ -1,3 +1,14 @@
+2010-03-08  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Holger Freyther.
+
+        [GTK] Tests fail when running with ipv6 addresses available, on Debian systems
+        https://bugs.webkit.org/show_bug.cgi?id=35863
+
+        If running on a Debian-based system, also listen on the ipv6 address.
+
+        * Scripts/run-webkit-tests:
+
 2010-03-08  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Darin Adler.

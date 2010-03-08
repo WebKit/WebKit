@@ -1403,6 +1403,14 @@ sub configureAndOpenHTTPDIfNeeded()
         "-C", "Listen $listen"
     );
 
+    # Debian, and Debian-based distributions resolve IPV6 addresses first,
+    # and libsoup only tries the first address given to it
+    if (isDebianBased()) {
+        my $listenIPV6 = "[::1]:$httpdPort";
+        push(@args, "-C");
+        push(@args, "Listen $listenIPV6");
+    }
+
     my @defaultArgs = getDefaultConfigForTestDirectory($testDirectory);
     @args = (@defaultArgs, @args);
 

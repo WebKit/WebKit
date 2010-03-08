@@ -1,5 +1,16 @@
 2010-03-08  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        Reviewed by Holger Freyther.
+
+        [GTK] Tests fail when running with ipv6 addresses available, on Debian systems
+        https://bugs.webkit.org/show_bug.cgi?id=35863
+
+        Also listen for SSL requests on the ipv6 address.
+
+        * http/conf/apache2-debian-httpd.conf:
+
+2010-03-08  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         [GTK] DRT needs to support synthesizing double clicks
         https://bugs.webkit.org/show_bug.cgi?id=35862
 
