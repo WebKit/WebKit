@@ -98,9 +98,10 @@ public:
     ~WebPopupMenuImpl();
 
     // WebCore::HostWindow methods:
-    virtual void repaint(
-        const WebCore::IntRect&, bool contentChanged, bool immediate = false,
-        bool repaintContentOnly = false);
+    virtual void invalidateContents(const WebCore::IntRect&, bool);
+    virtual void invalidateWindow(const WebCore::IntRect&, bool);
+    virtual void invalidateContentsAndWindow(const WebCore::IntRect&, bool);
+    virtual void invalidateContentsForSlowScroll(const WebCore::IntRect&, bool);
     virtual void scroll(
         const WebCore::IntSize& scrollDelta, const WebCore::IntRect& scrollRect,
         const WebCore::IntRect& clipRect);

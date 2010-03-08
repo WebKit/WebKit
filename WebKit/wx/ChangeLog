@@ -1,3 +1,18 @@
+2010-03-02  Adam Treat  <atreat@rim.com>
+
+        Reviewed by Dave Hyatt.
+
+        Adapt the wx port to the refactoring of repaint methods.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34214
+
+        * WebKitSupport/ChromeClientWx.cpp:
+        (WebCore::ChromeClientWx::invalidateContents):
+        (WebCore::ChromeClientWx::invalidateWindow):
+        (WebCore::ChromeClientWx::invalidateContentsForSlowScroll):
+        (WebCore::ChromeClientWx::invalidateContentsAndWindow):
+        * WebKitSupport/ChromeClientWx.h:
+
 2010-03-01  Jakob Petsovits  <jpetsovits@rim.com>
 
         Reviewed by Adam Barth.

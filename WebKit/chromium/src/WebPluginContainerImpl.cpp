@@ -124,7 +124,7 @@ void WebPluginContainerImpl::invalidateRect(const IntRect& rect)
     IntRect clipRect = parent()->windowClipRect();
     damageRect.intersect(clipRect);
 
-    parent()->hostWindow()->repaint(damageRect, true);
+    parent()->hostWindow()->invalidateContentsAndWindow(damageRect, false /*immediate*/);
 }
 
 void WebPluginContainerImpl::setFocus()

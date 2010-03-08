@@ -1,3 +1,18 @@
+2010-03-02  Adam Treat  <atreat@rim.com>
+
+        Reviewed by Dave Hyatt.
+
+        Adapt the qt port to the refactoring of repaint methods.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34214
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::invalidateContents):
+        (WebCore::ChromeClientQt::invalidateWindow):
+        (WebCore::ChromeClientQt::invalidateContentsAndWindow):
+        (WebCore::ChromeClientQt::invalidateContentsForSlowScroll):
+        * WebCoreSupport/ChromeClientQt.h:
+
 2010-03-08  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by David Levin.

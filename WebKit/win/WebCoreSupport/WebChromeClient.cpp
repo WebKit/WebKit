@@ -454,10 +454,28 @@ IntRect WebChromeClient::windowResizerRect() const
     return IntRect();
 }
 
-void WebChromeClient::repaint(const IntRect& windowRect, bool contentChanged, bool immediate, bool repaintContentOnly)
+void WebChromeClient::invalidateContents(const IntRect&, bool)
 {
     ASSERT(core(m_webView->topLevelFrame()));
-    m_webView->repaint(windowRect, contentChanged, immediate, repaintContentOnly);
+    m_webView->repaint(windowRect, true /*contentChanged*/, false /*immediate*/, true /*repaintContentOnly*/);
+}
+
+void WebChromeClient::invalidateWindow(const IntRect& windowRect, bool immediate)
+{
+    ASSERT(core(m_webView->topLevelFrame()));
+    m_webView->repaint(windowRect, false /*contentChanged*/, immediate, false /*repaintContentOnly*/);
+}
+
+void WebChromeClient::invalidateContentsAndWindow(const IntRect& windowRect, bool immediate)
+{
+    ASSERT(core(m_webView->topLevelFrame()));
+    m_webView->repaint(windowRect, true /*contentChanged*/, immediate /*immediate*/, false /*repaintContentOnly*/);
+}
+
+void WebChromeClient::invalidateContentsForSlowScroll(const IntRect& windowRect, bool immediate)
+{
+    ASSERT(core(m_webView->topLevelFrame()));
+    m_webView->repaint(windowRect, true /*contentChanged*/, immediate, true /*repaintContentOnly*/);
 }
 
 void WebChromeClient::scroll(const IntSize& delta, const IntRect& scrollViewRect, const IntRect& clipRect)

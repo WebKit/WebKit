@@ -91,8 +91,12 @@ public:
     
     virtual WebCore::IntRect windowResizerRect() const;
 
-    virtual void repaint(const WebCore::IntRect&, bool contentChanged, bool immediate = false, bool repaintContentOnly = false);
+    virtual void invalidateContents(const WebCore::IntRect&, bool);
+    virtual void invalidateWindow(const WebCore::IntRect&, bool);
+    virtual void invalidateContentsAndWindow(const WebCore::IntRect&, bool);
+    virtual void invalidateContentsForSlowScroll(const WebCore::IntRect&, bool);
     virtual void scroll(const WebCore::IntSize& scrollDelta, const WebCore::IntRect& rectToScroll, const WebCore::IntRect& clipRect);
+
     virtual WebCore::IntPoint screenToWindow(const WebCore::IntPoint&) const;
     virtual WebCore::IntRect windowToScreen(const WebCore::IntRect&) const;
     virtual PlatformPageClient platformPageClient() const;

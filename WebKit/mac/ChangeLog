@@ -1,3 +1,18 @@
+2010-03-02  Adam Treat  <atreat@rim.com>
+
+        Reviewed by Dave Hyatt.
+
+        Adapt the mac port to the refactoring of repaint methods.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34214
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::invalidateContents):
+        (WebChromeClient::invalidateWindow):
+        (WebChromeClient::invalidateContentsAndWindow):
+        (WebChromeClient::invalidateContentsForSlowScroll):
+
 2010-03-08  Jian Li  <jianli@chromium.org>
 
         Reviewed by Dmitry Titov.

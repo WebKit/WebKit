@@ -35,14 +35,20 @@ class HostWindow : public Noncopyable {
 public:
     virtual ~HostWindow() { }
 
-    // The repaint method asks the host window to repaint a rect in the window's coordinate space.  The
-    // contentChanged boolean indicates whether or not the Web page content actually changed (or if a repaint
-    // of unchanged content is being requested).
-    virtual void repaint(const IntRect&, bool contentChanged, bool immediate = false, bool repaintContentOnly = false) = 0;
+    // Requests the host invalidate the contents, not the window.  If immediate is true do so synchronously, otherwise async.
+    virtual void invalidateContents(const IntRect& updateRect, bool immediate) = 0;
+
+    // Requests the host invalidate the window, not the contents.  If immediate is true do so synchronously, otherwise async.
+    virtual void invalidateWindow(const IntRect& updateRect, bool immediate) = 0;
+
+    // Requests the host invalidate the contents and the window.  If immediate is true do so synchronously, otherwise async.
+    virtual void invalidateContentsAndWindow(const IntRect& updateRect, bool immediate) = 0;
+
+    // Requests the host scroll backingstore by the specified delta, rect to scroll, and clip rect.
     virtual void scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect) = 0;
 
-    // The paint method just causes a synchronous update of the window to happen for platforms that need it (Windows).
-    void paint() { repaint(IntRect(), false, true); }
+    // Requests the host invalidate the contents, not the window.  This is the slow path for scrolling.
+    virtual void invalidateContentsForSlowScroll(const IntRect& updateRect, bool immediate) = 0;
     
     // Methods for doing coordinate conversions to and from screen coordinates.
     virtual IntPoint screenToWindow(const IntPoint&) const = 0;

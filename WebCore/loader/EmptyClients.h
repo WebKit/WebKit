@@ -113,12 +113,13 @@ public:
     virtual bool tabsToLinks() const { return false; }
 
     virtual IntRect windowResizerRect() const { return IntRect(); }
-    virtual void addToDirtyRegion(const IntRect&) { }
-    virtual void scrollBackingStore(int, int, const IntRect&, const IntRect&) { }
-    virtual void updateBackingStore() { }
 
-    virtual void repaint(const IntRect&, bool, bool, bool) { }
+    virtual void invalidateContents(const IntRect&, bool) { }
+    virtual void invalidateWindow(const IntRect&, bool) { }
+    virtual void invalidateContentsAndWindow(const IntRect&, bool) { }
+    virtual void invalidateContentsForSlowScroll(const IntRect&, bool) {};
     virtual void scroll(const IntSize&, const IntRect&, const IntRect&) { }
+
     virtual IntPoint screenToWindow(const IntPoint& p) const { return p; }
     virtual IntRect windowToScreen(const IntRect& r) const { return r; }
     virtual PlatformPageClient platformPageClient() const { return 0; }

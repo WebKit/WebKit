@@ -1,3 +1,18 @@
+2010-03-02  Adam Treat  <atreat@rim.com>
+
+        Reviewed by Dave Hyatt.
+
+        Adapt the win port to the refactoring of repaint methods.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34214
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::invalidateContents):
+        (WebChromeClient::invalidateWindow):
+        (WebChromeClient::invalidateContentsAndWindow):
+        (WebChromeClient::invalidateContentsForSlowScroll):
+        * WebCoreSupport/WebChromeClient.h:
+
 2010-03-08  Daniel Bates  <dbates@rim.com>
 
         Unreviewed, build fix.

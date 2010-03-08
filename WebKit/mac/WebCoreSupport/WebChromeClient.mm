@@ -439,18 +439,34 @@ IntRect WebChromeClient::windowResizerRect() const
     return enclosingIntRect([m_webView convertRect:rect fromView:nil]);
 }
 
-void WebChromeClient::repaint(const IntRect& rect, bool contentChanged, bool immediate, bool repaintContentOnly)
+void WebChromeClient::invalidateContents(const IntRect&, bool)
 {
-    if ([m_webView _usesDocumentViews])
-        return;
-    
-    if (contentChanged)
-        [m_webView setNeedsDisplayInRect:rect];
-    
+}
+
+void WebChromeClient::invalidateWindow(const IntRect&, bool immediate)
+{
     if (immediate) {
         [[m_webView window] displayIfNeeded];
         [[m_webView window] flushWindowIfNeeded];
     }
+}
+
+void WebChromeClient::invalidateContentsAndWindow(const IntRect& rect, bool immediate)
+{
+    if ([m_webView _usesDocumentViews])
+        return;
+
+    [m_webView setNeedsDisplayInRect:rect];
+
+    if (immediate) {
+        [[m_webView window] displayIfNeeded];
+        [[m_webView window] flushWindowIfNeeded];
+    }
+}
+
+void WebChromeClient::invalidateContentsForSlowScroll(const IntRect& rect, bool immediate)
+{
+    invalidateContentsAndWindow(rect, immediate);
 }
 
 void WebChromeClient::scroll(const IntSize&, const IntRect&, const IntRect&)

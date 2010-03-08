@@ -67,9 +67,24 @@ Chrome::~Chrome()
     m_client->chromeDestroyed();
 }
 
-void Chrome::repaint(const IntRect& windowRect, bool contentChanged, bool immediate, bool repaintContentOnly)
+void Chrome::invalidateContents(const IntRect& updateRect, bool immediate)
 {
-    m_client->repaint(windowRect, contentChanged, immediate, repaintContentOnly);
+    m_client->invalidateContents(updateRect, immediate);
+}
+
+void Chrome::invalidateWindow(const IntRect& updateRect, bool immediate)
+{
+    m_client->invalidateWindow(updateRect, immediate);
+}
+
+void Chrome::invalidateContentsAndWindow(const IntRect& updateRect, bool immediate)
+{
+    m_client->invalidateContentsAndWindow(updateRect, immediate);
+}
+
+void Chrome::invalidateContentsForSlowScroll(const IntRect& updateRect, bool immediate)
+{
+    m_client->invalidateContentsForSlowScroll(updateRect, immediate);
 }
 
 void Chrome::scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect)

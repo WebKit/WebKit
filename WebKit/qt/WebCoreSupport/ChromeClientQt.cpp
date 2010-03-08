@@ -327,21 +327,34 @@ IntRect ChromeClientQt::windowResizerRect() const
     return IntRect();
 }
 
-void ChromeClientQt::repaint(const IntRect& windowRect, bool contentChanged, bool, bool)
+void ChromeClientQt::invalidateContents(const IntRect&, bool)
+{
+    notImplemented();
+}
+
+void ChromeClientQt::invalidateWindow(const IntRect&, bool)
+{
+    notImplemented();
+}
+
+void ChromeClientQt::invalidateContentsAndWindow(const IntRect& windowRect, bool immediate)
 {
     // No double buffer, so only update the QWidget if content changed.
-    if (contentChanged) {
-        if (platformPageClient()) {
-            QRect rect(windowRect);
-            rect = rect.intersected(QRect(QPoint(0, 0), m_webPage->viewportSize()));
-            if (!rect.isEmpty())
-                platformPageClient()->update(rect);
-        }
-        emit m_webPage->repaintRequested(windowRect);
+    if (platformPageClient()) {
+        QRect rect(windowRect);
+        rect = rect.intersected(QRect(QPoint(0, 0), m_webPage->viewportSize()));
+        if (!rect.isEmpty())
+            platformPageClient()->update(rect);
     }
+    emit m_webPage->repaintRequested(windowRect);
 
     // FIXME: There is no "immediate" support for window painting.  This should be done always whenever the flag
     // is set.
+}
+
+void ChromeClientQt::invalidateContentsForSlowScroll(const IntRect& windowRect, bool immediate)
+{
+    invalidateContentsAndWindow(windowRect, immediate);
 }
 
 void ChromeClientQt::scroll(const IntSize& delta, const IntRect& scrollViewRect, const IntRect&)

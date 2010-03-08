@@ -59,7 +59,7 @@ bool FramelessScrollView::isActive() const
 void FramelessScrollView::invalidateRect(const IntRect& rect)
 {
     if (HostWindow* h = hostWindow())
-        h->repaint(rect, true);
+        h->invalidateContentsAndWindow(rect, false /*immediate*/);
 }
 
 HostWindow* FramelessScrollView::hostWindow() const

@@ -1,3 +1,18 @@
+2010-03-02  Adam Treat  <atreat@rim.com>
+
+        Reviewed by Dave Hyatt.
+
+        Adapt the haiku port to the refactoring of repaint methods.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34214
+
+        * WebCoreSupport/ChromeClientHaiku.cpp:
+        (WebCore::ChromeClientHaiku::invalidateContents):
+        (WebCore::ChromeClientHaiku::invalidateWindow):
+        (WebCore::ChromeClientHaiku::invalidateContentsAndWindow):
+        (WebCore::ChromeClient::invalidateContentsForSlowScroll):
+        * WebCoreSupport/ChromeClientHaiku.h:
+
 2010-02-23  Steve Block  <steveblock@google.com>
 
         Reviewed by Darin Adler.

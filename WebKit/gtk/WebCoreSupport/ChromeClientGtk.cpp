@@ -342,18 +342,32 @@ IntRect ChromeClient::windowResizerRect() const
     return IntRect();
 }
 
-void ChromeClient::repaint(const IntRect& windowRect, bool contentChanged, bool immediate, bool repaintContentOnly)
+void ChromeClient::invalidateContents(const IntRect&, bool)
 {
-    GdkRectangle rect = windowRect;
+    notImplemented();
+}
+
+void ChromeClient::invalidateWindow(const IntRect&, bool)
+{
+    notImplemented();
+}
+
+void ChromeClient::invalidateContentsAndWindow(const IntRect& updateRect, bool immediate)
+{
+    GdkRectangle rect = updateRect;
     GdkWindow* window = GTK_WIDGET(m_webView)->window;
 
     if (window) {
-        if (contentChanged)
-            gdk_window_invalidate_rect(window, &rect, FALSE);
+        gdk_window_invalidate_rect(window, &rect, FALSE);
         // We don't currently do immediate updates since they delay other UI elements.
         //if (immediate)
         //    gdk_window_process_updates(window, FALSE);
     }
+}
+
+void ChromeClient::invalidateContentsForSlowScroll(const IntRect& updateRect, bool immediate)
+{
+    invalidateContentsAndWindow(updateRect, immediate);
 }
 
 void ChromeClient::scroll(const IntSize& delta, const IntRect& rectToScroll, const IntRect& clipRect)

@@ -1,3 +1,40 @@
+2010-03-02  Adam Treat  <atreat@rim.com>
+
+        Reviewed by Dave Hyatt.
+
+        Refactor the HostWindow methods for repaint, scroll, invalidate and blit
+        of backingstore and window by eliminating the three bools that currently
+        exist as params of the repaint method.
+        https://bugs.webkit.org/show_bug.cgi?id=34214
+
+        I've added extra methods to provide the hosts with more semantic
+        information of what is being requested thus eliminating the need for
+        these bools.
+
+        No tests as this change should not introduce any behavior changes in any
+        of the ports.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34214
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyChromeClient::invalidateContents):
+        (WebCore::EmptyChromeClient::invalidateWindow):
+        (WebCore::EmptyChromeClient::invalidateContentsAndWindow):
+        (WebCore::EmptyChromeClient::invalidateContentsForSlowScroll):
+        * page/Chrome.cpp:
+        (WebCore::Chrome::invalidateContents):
+        (WebCore::Chrome::invalidateWindow):
+        (WebCore::Chrome::invalidateContentsAndWindow):
+        (WebCore::Chrome::invalidateContentsForSlowScroll):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::invalidateRect):
+        * platform/HostWindow.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::scrollContents):
+        (WebCore::ScrollView::wheelEvent):
+
 2010-03-08  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Nate Chapin.
