@@ -166,17 +166,9 @@ bool ResourceHandle::start(Frame* frame)
     isInitializingConnection = YES;
 #endif
 
-    id delegate;
-    
-    if (d->m_mightDownloadFromHandle) {
-        ASSERT(!d->m_proxy);
-        d->m_proxy = wkCreateNSURLConnectionDelegateProxy();
-        [d->m_proxy.get() setDelegate:ResourceHandle::delegate()];
-        [d->m_proxy.get() release];
-        
-        delegate = d->m_proxy.get();
-    } else 
-        delegate = ResourceHandle::delegate();
+    ASSERT(!d->m_proxy);
+    d->m_proxy.adoptNS(wkCreateNSURLConnectionDelegateProxy());
+    [d->m_proxy.get() setDelegate:ResourceHandle::delegate()];
 
     if ((!d->m_user.isEmpty() || !d->m_pass.isEmpty())
 #ifndef BUILDING_ON_TIGER
@@ -233,17 +225,17 @@ bool ResourceHandle::start(Frame* frame)
     
     if (d->m_shouldContentSniff || frame->settings()->localFileContentSniffingEnabled()) 
 #ifdef BUILDING_ON_TIGER
-        connection = [[NSURLConnection alloc] initWithRequest:d->m_request.nsURLRequest() delegate:delegate];
+        connection = [[NSURLConnection alloc] initWithRequest:d->m_request.nsURLRequest() delegate:d->m_proxy.get()];
 #else
-        connection = [[NSURLConnection alloc] initWithRequest:d->m_request.nsURLRequest() delegate:delegate startImmediately:NO];
+        connection = [[NSURLConnection alloc] initWithRequest:d->m_request.nsURLRequest() delegate:d->m_proxy.get() startImmediately:NO];
 #endif
     else {
         NSMutableURLRequest *request = [d->m_request.nsURLRequest() mutableCopy];
         wkSetNSURLRequestShouldContentSniff(request, NO);
 #ifdef BUILDING_ON_TIGER
-        connection = [[NSURLConnection alloc] initWithRequest:request delegate:delegate];
+        connection = [[NSURLConnection alloc] initWithRequest:request delegate:d->m_proxy.get()];
 #else
-        connection = [[NSURLConnection alloc] initWithRequest:request delegate:delegate startImmediately:NO];
+        connection = [[NSURLConnection alloc] initWithRequest:request delegate:d->m_proxy.get() startImmediately:NO];
 #endif
         [request release];
     }

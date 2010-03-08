@@ -37,18 +37,18 @@ namespace WebCore {
 static bool shouldForceContentSniffing;
 
 ResourceHandle::ResourceHandle(const ResourceRequest& request, ResourceHandleClient* client, bool defersLoading,
-         bool shouldContentSniff, bool mightDownloadFromHandle)
-    : d(new ResourceHandleInternal(this, request, client, defersLoading, shouldContentSniff, mightDownloadFromHandle))
+         bool shouldContentSniff)
+    : d(new ResourceHandleInternal(this, request, client, defersLoading, shouldContentSniff))
 {
 }
 
 PassRefPtr<ResourceHandle> ResourceHandle::create(const ResourceRequest& request, ResourceHandleClient* client,
-    Frame* frame, bool defersLoading, bool shouldContentSniff, bool mightDownloadFromHandle)
+    Frame* frame, bool defersLoading, bool shouldContentSniff)
 {
     if (shouldContentSniff)
         shouldContentSniff = shouldContentSniffURL(request.url());
 
-    RefPtr<ResourceHandle> newHandle(adoptRef(new ResourceHandle(request, client, defersLoading, shouldContentSniff, mightDownloadFromHandle)));
+    RefPtr<ResourceHandle> newHandle(adoptRef(new ResourceHandle(request, client, defersLoading, shouldContentSniff)));
 
     if (!request.url().isValid()) {
         newHandle->scheduleFailure(InvalidURLFailure);

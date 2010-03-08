@@ -81,14 +81,13 @@ namespace WebCore {
 
     class ResourceHandleInternal : public Noncopyable {
     public:
-        ResourceHandleInternal(ResourceHandle* loader, const ResourceRequest& request, ResourceHandleClient* c, bool defersLoading, bool shouldContentSniff, bool mightDownloadFromHandle)
+        ResourceHandleInternal(ResourceHandle* loader, const ResourceRequest& request, ResourceHandleClient* c, bool defersLoading, bool shouldContentSniff)
             : m_client(c)
             , m_request(request)
             , m_lastHTTPMethod(request.httpMethod())
             , status(0)
             , m_defersLoading(defersLoading)
             , m_shouldContentSniff(shouldContentSniff)
-            , m_mightDownloadFromHandle(mightDownloadFromHandle)
 #if USE(CFNETWORK)
             , m_connection(0)
 #endif
@@ -160,7 +159,6 @@ namespace WebCore {
 
         bool m_defersLoading;
         bool m_shouldContentSniff;
-        bool m_mightDownloadFromHandle;
 #if USE(CFNETWORK)
         RetainPtr<CFURLConnectionRef> m_connection;
 #elif PLATFORM(MAC)

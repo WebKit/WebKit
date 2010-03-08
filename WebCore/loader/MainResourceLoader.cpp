@@ -517,7 +517,7 @@ bool MainResourceLoader::loadNow(ResourceRequest& r)
     else if (shouldLoadEmpty || frameLoader()->representationExistsForURLScheme(url.protocol()))
         handleEmptyLoad(url, !shouldLoadEmpty);
     else
-        m_handle = ResourceHandle::create(r, this, m_frame.get(), false, true, true);
+        m_handle = ResourceHandle::create(r, this, m_frame.get(), false, true);
 
     return false;
 }

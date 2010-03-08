@@ -443,7 +443,7 @@ PassRefPtr<ResourceHandle> ApplicationCacheGroup::createResourceHandle(const KUR
         }
     }
     
-    return ResourceHandle::create(request, this, m_frame, false, true, false);
+    return ResourceHandle::create(request, this, m_frame, false, true);
 }
 
 void ApplicationCacheGroup::didReceiveResponse(ResourceHandle* handle, const ResourceResponse& response)
