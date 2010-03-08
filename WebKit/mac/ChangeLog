@@ -1,3 +1,17 @@
+2010-03-08  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Turn on HW accel on Leopard even if coreVideoHas7228836Fix() is false, when WebGL is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=35759
+
+        This allows WebGL to work on Leopard without the fix. It exposes these users to the crash
+        that happens because of the CoreVideo bug, but it limits the exposure to those who have 
+        chosen to enable WebGL.
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChangedNotification:]):
+
 2010-03-02  Adam Treat  <atreat@rim.com>
 
         Reviewed by Dave Hyatt.

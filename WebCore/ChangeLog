@@ -1,3 +1,17 @@
+2010-03-08  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Disallow WebGL when HW comp is not turned on at runtime
+        https://bugs.webkit.org/show_bug.cgi?id=35759
+
+        When HW comp is turned off with the runtime flag, WebGL would still
+        create a context, but silently fail to render. This prevents that.
+        Now if HW comp is turned off getContext('webgl') will return null.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext):
+
 2010-03-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Jon Honeycutt.

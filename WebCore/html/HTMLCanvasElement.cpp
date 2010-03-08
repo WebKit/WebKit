@@ -168,7 +168,7 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, Canvas
     }
 #if ENABLE(3D_CANVAS)    
     Settings* settings = document()->settings();
-    if (settings && settings->webGLEnabled()) {
+    if (settings && settings->webGLEnabled() && settings->acceleratedCompositingEnabled()) {
         // Accept the legacy "webkit-3d" name as well as the provisional "experimental-webgl" name.
         // Once ratified, we will also accept "webgl" as the context name.
         if ((type == "webkit-3d") ||
