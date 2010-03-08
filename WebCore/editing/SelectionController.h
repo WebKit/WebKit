@@ -37,6 +37,7 @@ namespace WebCore {
 class Frame;
 class GraphicsContext;
 class RenderObject;
+class RenderView;
 class VisiblePosition;
 
 class SelectionController : public Noncopyable {
@@ -155,6 +156,7 @@ private:
 
     void layout();
     IntRect caretRepaintRect() const;
+    bool shouldRepaintCaret(const RenderView* view) const;
 
     int xPosForVerticalArrowNavigation(EPositionType);
     

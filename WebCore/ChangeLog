@@ -1,3 +1,27 @@
+2010-03-08  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34819
+
+        Fixes an issue where we repaint the caret rectangle even if the associated
+        selection is not in a content editable element. This is extraneous since the
+        caret is only visible when the selection is in a content editable element.
+        Hence, we should only repaint the caret rectangle when the associated selection
+        is in a content editable element.
+
+        Note, we always paint the caret when caret browsing is enabled.
+
+        Test: fast/repaint/no-caret-repaint-in-non-content-editable-element.html
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::recomputeCaretRect): Modified to call method
+        SelectionController::shouldRepaintCaret.
+        (WebCore::SelectionController::shouldRepaintCaret): Added.
+        (WebCore::SelectionController::invalidateCaretRect): Modified to call method
+        SelectionController::shouldRepaintCaret.
+        * editing/SelectionController.h:
+
 2010-03-08  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Darin Adler.

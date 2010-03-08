@@ -1,0 +1,24 @@
+<html>
+<head>
+<script src="resources/repaint.js"></script>
+<script>
+if (window.layoutTestController)
+    layoutTestController.overridePreference("WebKitEnableCaretBrowsing", false);
+function repaintTest()
+{
+    if (!window.eventSender)
+        return;
+
+    var target = document.getElementById("target");
+    eventSender.mouseMoveTo(target.offsetLeft, target.offsetTop);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+window.onload = runRepaintTest;
+</script>
+</head>
+<body>
+    <p>This tests that clicking on a non-content editable element does not cause a repaint of it in whole or in part.</p>
+    <p id="target">This element is not content editable.</p>
+</body>
+</html>

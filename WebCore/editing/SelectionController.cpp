@@ -973,10 +973,19 @@ bool SelectionController::recomputeCaretRect()
     if (RenderView* view = toRenderView(m_frame->document()->renderer())) {
         // FIXME: make caret repainting container-aware.
         view->repaintRectangleInViewAndCompositedLayers(oldAbsoluteCaretRepaintBounds, false);
-        view->repaintRectangleInViewAndCompositedLayers(m_absoluteCaretRepaintBounds, false);
+        if (shouldRepaintCaret(view))
+            view->repaintRectangleInViewAndCompositedLayers(m_absoluteCaretRepaintBounds, false);
     }
 
     return true;
+}
+
+bool SelectionController::shouldRepaintCaret(const RenderView* view) const
+{
+    ASSERT(view);
+    Frame* frame = view->frameView() ? view->frameView()->frame() : 0; // The frame where the selection started.
+    bool caretBrowsing = frame && frame->settings() && frame->settings()->caretBrowsingEnabled();
+    return (caretBrowsing || isContentEditable());
 }
 
 void SelectionController::invalidateCaretRect()
@@ -1004,7 +1013,8 @@ void SelectionController::invalidateCaretRect()
     m_needsLayout = true;
 
     if (!caretRectChanged) {
-        if (RenderView* view = toRenderView(d->renderer()))
+        RenderView* view = toRenderView(d->renderer());
+        if (view && shouldRepaintCaret(view))
             view->repaintRectangleInViewAndCompositedLayers(caretRepaintRect(), false);
     }
 }

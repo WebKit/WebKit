@@ -1,3 +1,17 @@
+2010-03-08  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34819
+
+        Tests that we do not repaint the caret rectangle when the associated selection is
+        not in a content editable element.
+
+        * fast/repaint/no-caret-repaint-in-non-content-editable-element.html: Added.
+        * platform/mac/fast/repaint/no-caret-repaint-in-non-content-editable-element-expected.checksum: Added.
+        * platform/mac/fast/repaint/no-caret-repaint-in-non-content-editable-element-expected.png: Added.
+        * platform/mac/fast/repaint/no-caret-repaint-in-non-content-editable-element-expected.txt: Added.
+
 2010-03-08  Shu Chang  <Chang.Shu@nokia.com>
 
         Reviewed by Holger Freyther.
