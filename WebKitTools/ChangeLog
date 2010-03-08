@@ -1,3 +1,24 @@
+2010-03-08  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Darin Adler.
+
+        [iexploder] Automatically update htmltags.in and htmlattrs.in too
+        https://bugs.webkit.org/show_bug.cgi?id=33755
+
+        Change the update-iexploder-cssproperites script to update
+        the htmlattrs.in and htmltags.in of WebKitTools/iExploder/htdocs
+        automatically as well.
+
+        Change the reading and writing code to work with parameters
+        and extend the method that is parsing the .in files to handle
+        the HTMLTagNames.in and the HTMLAttributeNames.in files.
+
+        Remove custom code to determine the revision of files with a
+        utility of VCUtils.pm to determine the revision of the directory
+        these files are located in. This will also work with git checkout.
+
+        * Scripts/update-iexploder-cssproperties:
+
 2010-03-07  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Eric Seidel.

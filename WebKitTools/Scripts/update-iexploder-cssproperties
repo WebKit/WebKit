@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 
 # Copyright (C) 2007 Apple Inc.  All rights reserved.
+# Copyright (C) 2010 Holger Hans Peter Freyther
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -26,87 +27,103 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# This script updates WebKitTools/iExploder/htdocs/cssproperties.in based on
-# WebCore/css/CSSPropertyNames.in.
+# This script updates WebKitTools/iExploder/htdocs/*.in based on
+# WebCore/css/CSSPropertyNames.in, WebCore/html/HTMLTagNames.in
+# and WebCore/html/HTMLAttributeNames.in
 
 use warnings;
 use strict;
 
 use FindBin;
 use lib $FindBin::Bin;
+use VCSUtils;
 use webkitdirs;
 
 use File::Spec;
 
-sub generateSectionFromCSSPropertyNamesFile();
-sub readiExploderFile();
-sub svnRevision($);
-sub writeiExploderFile();
+sub generateEntityListFromFile($);
+sub readiExploderFile($);
+sub update($$);
+sub writeiExploderFile($@);
 
-my $iExploderFile = File::Spec->catfile(sourceDir(), split("/", "WebKitTools/iExploder/htdocs/cssproperties.in"));
-my $cssPropertyNamesFile = File::Spec->catfile(sourceDir(), split("/", "WebCore/css/CSSPropertyNames.in"));
-
-my @sections = readiExploderFile();
-$sections[0] = generateSectionFromCSSPropertyNamesFile();
-writeiExploderFile();
-
-print `svn stat $iExploderFile`;
+update("cssproperties.in", "css/CSSPropertyNames.in");
+update("htmlattrs.in", "html/HTMLAttributeNames.in");
+update("htmltags.in", "html/HTMLTagNames.in");
 print "Successfully updated!\n";
 
 exit 0;
 
-sub generateSectionFromCSSPropertyNamesFile()
+sub generateEntityListFromFile($)
 {
-    my $revision = svnRevision($cssPropertyNamesFile);
-    my $path = File::Spec->abs2rel($cssPropertyNamesFile, sourceDir());
+    my ($filename) = @_;
+
+    my $revision = svnRevisionForDirectory(dirname($filename));
+    my $path = File::Spec->abs2rel($filename, sourceDir());
     my $result = "# From WebKit svn r" . $revision . " (" . $path . ")\n";
 
-    my @properties = ();
+    my @entities = ();
+    my $in_namespace = 0;
 
-    open(IN, $cssPropertyNamesFile) || die "$!";
+    open(IN, $filename) || die "$!";
     while (my $l = <IN>) {
         chomp $l;
+        if ($l =~ m/^namespace=\"/) {
+            $in_namespace = 1;
+        } elsif ($in_namespace && $l =~ m/^$/) {
+            $in_namespace = 0;
+        }
+
+        next if $in_namespace;
         next if $l =~ m/^\s*#/ || $l =~ m/^\s*$/;
-        push(@properties, $l);
+
+        # For HTML Tags that can have additional information
+        if ($l =~ m/ /) {
+            my @split = split / /, $l;
+            $l = $split[0]
+        }
+
+        push(@entities, $l);
     }
     close(IN);
 
-    $result .= join("\n", sort { $a cmp $b } @properties) . "\n\n";
+    $result .= join("\n", sort { $a cmp $b } @entities) . "\n\n";
 
     return $result;
 }
 
-sub readiExploderFile()
+sub readiExploderFile($)
 {
+    my ($filename) = @_;
+
     my @sections = ();
     local $/ = "\n\n";
 
-    open(IN, $iExploderFile) || die "$!";
+    open(IN, $filename) || die "$!";
     @sections = <IN>;
     close(IN);
 
     return @sections;
 }
 
-sub svnRevision($)
+sub update($$)
 {
-    my ($file) = @_;
-    my $revision = "";
+    my ($iexploderPath, $webcorePath) = @_;
 
-    open INFO, "svn info '$file' |" or die;
-    while (<INFO>) {
-        if (/^Revision: (.+)/) {
-            $revision = $1;
-        }
-    }
-    close INFO;
+    $iexploderPath = File::Spec->catfile(sourceDir(), "WebKitTools", "iExploder", "htdocs", split("/", $iexploderPath));
+    $webcorePath = File::Spec->catfile(sourceDir(), "WebCore", split("/", $webcorePath));
 
-    return $revision ? $revision : "UNKNOWN";
+    my @sections = readiExploderFile($iexploderPath);
+    $sections[0] = generateEntityListFromFile($webcorePath);
+    writeiExploderFile($iexploderPath, @sections);
 }
 
-sub writeiExploderFile()
+
+sub writeiExploderFile($@)
 {
-    open(OUT, "> $iExploderFile") || die "$!";
+    my ($filename, @sections) = @_;
+
+    open(OUT, "> $filename") || die "$!";
     print OUT join("", @sections);
     close(OUT);
 }
+
