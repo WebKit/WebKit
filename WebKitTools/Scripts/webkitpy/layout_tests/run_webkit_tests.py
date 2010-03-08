@@ -1409,9 +1409,14 @@ def main(options, args):
         # Just clobber the actual test results directories since the other
         # files in the results directory are explicitly used for cross-run
         # tracking.
-        path = os.path.join(options.results_directory, 'LayoutTests')
-        if os.path.exists(path):
-            shutil.rmtree(path)
+        meter.update("Clobbering old results in %s" %
+                     options.results_directory)
+        layout_tests_dir = path_utils.layout_tests_dir()
+        possible_dirs = os.listdir(layout_tests_dir)
+        for dirname in possible_dirs:
+            if os.path.isdir(os.path.join(layout_tests_dir, dirname)):
+                shutil.rmtree(os.path.join(options.results_directory, dirname),
+                              ignore_errors=True)
 
     if not options.num_test_shells:
         # TODO(ojan): Investigate perf/flakiness impact of using numcores + 1.

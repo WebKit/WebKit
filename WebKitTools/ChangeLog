@@ -1,3 +1,13 @@
+2010-03-04  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Dimitry Glazkov.
+
+        Fix --clobber-old-results in new-run-webkit-tests.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35778
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2010-03-08  Brady Eidson  <beidson@apple.com>
 
         Reviewed by NOBODY (but suggested by Steve Falkenburg and fixing a boneheaded mistake on my part last week)
