@@ -1,3 +1,68 @@
+2010-03-02  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Adam Barth.
+
+        Clean up usage of m_failed in open-source image decoders, part 1.
+        https://bugs.webkit.org/show_bug.cgi?id=35411
+        
+        Makes setFailed() virtual so subclasses can override it (none do yet) to
+        do automatic cleanup on failure; makes it return a bool for easy
+        tailcalling; makes failed() the only way to access m_failed so
+        subclasses are assured setFailed() won't be bypassed.  Plus one or two
+        other tiny cleanup bits.
+
+        Overriding setFailed() is coming in a subsequent patch because it can be
+        hairy and needs close review.
+
+        No functional change, so no tests.
+
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageDecoderQt::setData):
+        (WebCore::ImageDecoderQt::frameBufferAtIndex):
+        (WebCore::ImageDecoderQt::internalDecodeSize):
+        (WebCore::ImageDecoderQt::internalReadImage):
+        (WebCore::ImageDecoderQt::internalHandleCurrentImage):
+        (WebCore::ImageDecoderQt::forceLoadEverything):
+        (WebCore::ImageDecoderQt::clearPointers):
+        * platform/graphics/qt/ImageDecoderQt.h:
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::ImageDecoder::ImageDecoder):
+        (WebCore::ImageDecoder::setData):
+        (WebCore::ImageDecoder::setSize):
+        (WebCore::ImageDecoder::setFailed):
+        (WebCore::ImageDecoder::failed):
+        * platform/image-decoders/bmp/BMPImageDecoder.cpp:
+        (WebCore::BMPImageDecoder::isSizeAvailable):
+        (WebCore::BMPImageDecoder::frameBufferAtIndex):
+        (WebCore::BMPImageDecoder::processFileHeader):
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::setData):
+        (WebCore::GIFImageDecoder::isSizeAvailable):
+        (WebCore::GIFImageDecoder::frameBufferAtIndex):
+        (WebCore::GIFImageDecoder::decode):
+        (WebCore::GIFImageDecoder::initFrameBuffer):
+        * platform/image-decoders/ico/ICOImageDecoder.cpp:
+        (WebCore::ICOImageDecoder::decodeAtIndex):
+        (WebCore::ICOImageDecoder::processDirectory):
+        (WebCore::ICOImageDecoder::processDirectoryEntries):
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::JPEGImageReader::decode):
+        (WebCore::JPEGImageDecoder::setData):
+        (WebCore::JPEGImageDecoder::isSizeAvailable):
+        (WebCore::JPEGImageDecoder::frameBufferAtIndex):
+        (WebCore::JPEGImageDecoder::outputScanlines):
+        (WebCore::JPEGImageDecoder::decode):
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::decodingFailed):
+        (WebCore::PNGImageReader::decode):
+        (WebCore::PNGImageDecoder::setData):
+        (WebCore::PNGImageDecoder::isSizeAvailable):
+        (WebCore::PNGImageDecoder::frameBufferAtIndex):
+        (WebCore::PNGImageDecoder::headerAvailable):
+        (WebCore::PNGImageDecoder::rowAvailable):
+        (WebCore::PNGImageDecoder::decode):
+        * platform/image-decoders/png/PNGImageDecoder.h:
+
 2010-03-08  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Darin Adler.

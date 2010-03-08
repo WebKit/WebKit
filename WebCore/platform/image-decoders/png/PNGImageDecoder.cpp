@@ -54,7 +54,6 @@ const unsigned long cMaxPNGSize = 1000000UL;
 // Called if the decoding of the image fails.
 static void PNGAPI decodingFailed(png_structp png, png_const_charp)
 {
-    static_cast<PNGImageDecoder*>(png_get_progressive_ptr(png))->decodingFailed();
     longjmp(png->jmpbuf, 1);
 }
 
@@ -127,14 +126,15 @@ public:
     void decode(const SharedBuffer& data, bool sizeOnly)
     {
         m_decodingSizeOnly = sizeOnly;
+        PNGImageDecoder* decoder = static_cast<PNGImageDecoder*>(png_get_progressive_ptr(m_png));
 
         // We need to do the setjmp here. Otherwise bad things will happen.
         if (setjmp(m_png->jmpbuf)) {
             close();
+            decoder->setFailed();
             return;
         }
 
-        PNGImageDecoder* decoder = static_cast<PNGImageDecoder*>(png_get_progressive_ptr(m_png));
         const char* segment;
         while (unsigned segmentLength = data.getSomeData(segment, m_readOffset)) {
             m_readOffset += segmentLength;
@@ -182,17 +182,17 @@ PNGImageDecoder::~PNGImageDecoder()
 
 void PNGImageDecoder::setData(SharedBuffer* data, bool allDataReceived)
 {
-    if (m_failed)
+    if (failed())
         return;
 
     ImageDecoder::setData(data, allDataReceived);
 
-    if (!m_reader && !m_failed)
+    if (!m_reader && !failed())
         m_reader.set(new PNGImageReader(this));
 }
 bool PNGImageDecoder::isSizeAvailable()
 {
-    if (!ImageDecoder::isSizeAvailable() && !failed() && m_reader)
+    if (!ImageDecoder::isSizeAvailable())
          decode(true);
 
     return ImageDecoder::isSizeAvailable();
@@ -207,15 +207,9 @@ RGBA32Buffer* PNGImageDecoder::frameBufferAtIndex(size_t index)
         m_frameBufferCache.resize(1);
 
     RGBA32Buffer& frame = m_frameBufferCache[0];
-    if (frame.status() != RGBA32Buffer::FrameComplete && m_reader)
-        // Decode this frame.
-        decode(false);
+    if (frame.status() != RGBA32Buffer::FrameComplete)
+        decode(false); // Decode this frame.
     return &frame;
-}
-
-void PNGImageDecoder::decodingFailed()
-{
-    m_failed = true;
 }
 
 void PNGImageDecoder::headerAvailable()
@@ -227,7 +221,6 @@ void PNGImageDecoder::headerAvailable()
     
     // Protect against large images.
     if (png->width > cMaxPNGSize || png->height > cMaxPNGSize) {
-        m_failed = true;
         longjmp(png->jmpbuf, 1);
         return;
     }
@@ -302,7 +295,6 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
     RGBA32Buffer& buffer = m_frameBufferCache[0];
     if (buffer.status() == RGBA32Buffer::FrameEmpty) {
         if (!buffer.setSize(scaledSize().width(), scaledSize().height())) {
-            static_cast<PNGImageDecoder*>(png_get_progressive_ptr(m_reader->pngPtr()))->decodingFailed();
             longjmp(m_reader->pngPtr()->jmpbuf, 1);
             return;
         }
@@ -385,12 +377,12 @@ void PNGImageDecoder::pngComplete()
 
 void PNGImageDecoder::decode(bool onlySize)
 {
-    if (m_failed)
+    if (failed() || !m_reader)
         return;
 
     m_reader->decode(*m_data, onlySize);
     
-    if (m_failed || (!m_frameBufferCache.isEmpty() && m_frameBufferCache[0].status() == RGBA32Buffer::FrameComplete))
+    if (failed() || (!m_frameBufferCache.isEmpty() && m_frameBufferCache[0].status() == RGBA32Buffer::FrameComplete))
         m_reader.clear();
 }
 

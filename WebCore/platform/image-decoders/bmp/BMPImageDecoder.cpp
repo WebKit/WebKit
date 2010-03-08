@@ -57,7 +57,7 @@ void BMPImageDecoder::setData(SharedBuffer* data, bool allDataReceived)
 
 bool BMPImageDecoder::isSizeAvailable()
 {
-    if (!ImageDecoder::isSizeAvailable() && !failed())
+    if (!ImageDecoder::isSizeAvailable())
         decode(true);
 
     return ImageDecoder::isSizeAvailable();
@@ -72,7 +72,7 @@ RGBA32Buffer* BMPImageDecoder::frameBufferAtIndex(size_t index)
         m_frameBufferCache.resize(1);
 
     RGBA32Buffer* buffer = &m_frameBufferCache.first();
-    if (buffer->status() != RGBA32Buffer::FrameComplete && !failed())
+    if (buffer->status() != RGBA32Buffer::FrameComplete)
         decode(false);
     return buffer;
 }
@@ -131,12 +131,7 @@ bool BMPImageDecoder::processFileHeader(size_t* imgDataOffset)
         BITMAPARRAY = 0x4241,  // "BA"
         */
     };
-    if (fileType != BMAP) {
-        setFailed();
-        return false;
-    }
-
-    return true;
+    return (fileType == BMAP) || setFailed();
 }
 
 } // namespace WebCore

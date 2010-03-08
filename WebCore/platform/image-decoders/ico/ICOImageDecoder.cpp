@@ -193,15 +193,10 @@ bool ICOImageDecoder::decodeAtIndex(size_t index)
     }
     // Fail if the size the PNGImageDecoder calculated does not match the size
     // in the directory.
-    if (m_pngDecoders[index]->isSizeAvailable() && (m_pngDecoders[index]->size() != dirEntry.m_size)) {
-        setFailed();
-        return false;
-    }
+    if (m_pngDecoders[index]->isSizeAvailable() && (m_pngDecoders[index]->size() != dirEntry.m_size))
+        return setFailed();
     m_frameBufferCache[index] = *m_pngDecoders[index]->frameBufferAtIndex(0);
-    if (!m_pngDecoders[index]->failed())
-      return true;
-    setFailed();
-    return false;
+    return !m_pngDecoders[index]->failed() || setFailed();
 }
 
 bool ICOImageDecoder::processDirectory()
@@ -220,10 +215,8 @@ bool ICOImageDecoder::processDirectory()
         ICON = 1,
         CURSOR = 2,
     };
-    if (((fileType != ICON) && (fileType != CURSOR)) || (!idCount)) {
-        setFailed();
-        return false;
-    }
+    if (((fileType != ICON) && (fileType != CURSOR)) || (!idCount))
+        return setFailed();
 
     // Enlarge member vectors to hold all the entries.
     m_dirEntries.resize(idCount);
@@ -244,10 +237,8 @@ bool ICOImageDecoder::processDirectoryEntries()
     // Make sure the specified image offsets are past the end of the directory
     // entries.
     for (IconDirectoryEntries::iterator i(m_dirEntries.begin()); i != m_dirEntries.end(); ++i) {
-        if (i->m_imageOffset < m_decodedOffset) {
-            setFailed();
-            return false;
-        }
+        if (i->m_imageOffset < m_decodedOffset)
+            return setFailed();
     }
 
     // Arrange frames in decreasing quality order.

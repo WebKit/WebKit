@@ -192,7 +192,6 @@ public:
                 m_info.out_color_space = JCS_CMYK;
                 break;
             default:
-                m_state = JPEG_ERROR;
                 return false;
             }
 
@@ -212,10 +211,8 @@ public:
             m_state = JPEG_START_DECOMPRESS;
 
             // We can fill in the size now that the header is available.
-            if (!m_decoder->setSize(m_info.image_width, m_info.image_height)) {
-                m_state = JPEG_ERROR;
+            if (!m_decoder->setSize(m_info.image_width, m_info.image_height))
                 return false;
-            }
 
             if (m_decodingSizeOnly) {
                 // We can stop here.  Reduce our buffer length and available
@@ -316,7 +313,8 @@ public:
             break;
 
         case JPEG_ERROR:
-            break;
+            // We can get here if the constructor failed.
+            return m_decoder->setFailed();
         }
 
         return true;
@@ -382,18 +380,18 @@ JPEGImageDecoder::~JPEGImageDecoder()
 
 void JPEGImageDecoder::setData(SharedBuffer* data, bool allDataReceived)
 {
-    if (m_failed)
+    if (failed())
         return;
 
     ImageDecoder::setData(data, allDataReceived);
 
-    if (!m_reader && !m_failed)
+    if (!m_reader && !failed())
         m_reader.set(new JPEGImageReader(this));
 }
 
 bool JPEGImageDecoder::isSizeAvailable()
 {
-    if (!ImageDecoder::isSizeAvailable() && !failed() && m_reader)
+    if (!ImageDecoder::isSizeAvailable())
          decode(true);
 
     return ImageDecoder::isSizeAvailable();
@@ -417,7 +415,7 @@ RGBA32Buffer* JPEGImageDecoder::frameBufferAtIndex(size_t index)
         m_frameBufferCache.resize(1);
 
     RGBA32Buffer& frame = m_frameBufferCache[0];
-    if (frame.status() != RGBA32Buffer::FrameComplete && m_reader)
+    if (frame.status() != RGBA32Buffer::FrameComplete)
         decode(false);
     return &frame;
 }
@@ -430,10 +428,8 @@ bool JPEGImageDecoder::outputScanlines()
     // Initialize the framebuffer if needed.
     RGBA32Buffer& buffer = m_frameBufferCache[0];
     if (buffer.status() == RGBA32Buffer::FrameEmpty) {
-        if (!buffer.setSize(scaledSize().width(), scaledSize().height())) {
-            m_failed = true;
-            return false;
-        }
+        if (!buffer.setSize(scaledSize().width(), scaledSize().height()))
+            return setFailed();
         buffer.setStatus(RGBA32Buffer::FramePartial);
         buffer.setHasAlpha(false);
 
@@ -474,8 +470,7 @@ bool JPEGImageDecoder::outputScanlines()
                 buffer.setRGBA(x, destY, jsample[0] * k / 255, jsample[1] * k / 255, jsample[2] * k / 255, 0xFF);
             } else {
                 ASSERT_NOT_REACHED();
-                m_failed = true;
-                return false;
+                return setFailed();
             }
         }
     }
@@ -495,12 +490,13 @@ void JPEGImageDecoder::jpegComplete()
 
 void JPEGImageDecoder::decode(bool onlySize)
 {
-    if (m_failed)
+    if (failed() || !m_reader)
         return;
 
-    m_failed = !m_reader->decode(m_data->buffer(), onlySize);
+    if (!m_reader->decode(m_data->buffer(), onlySize))
+        setFailed();
 
-    if (m_failed || (!m_frameBufferCache.isEmpty() && m_frameBufferCache[0].status() == RGBA32Buffer::FrameComplete))
+    if (failed() || (!m_frameBufferCache.isEmpty() && m_frameBufferCache[0].status() == RGBA32Buffer::FrameComplete))
         m_reader.clear();
 }
 

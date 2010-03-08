@@ -61,9 +61,9 @@ private:
 private:
     void internalDecodeSize();
     void internalReadImage(size_t);
-    void internalHandleCurrentImage(size_t);
+    bool internalHandleCurrentImage(size_t);
     void forceLoadEverything();
-    void failRead();
+    void clearPointers();
 
 private:
     QByteArray m_format;
