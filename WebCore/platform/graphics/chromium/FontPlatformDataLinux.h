@@ -45,6 +45,7 @@ struct HB_FaceRec_;
 namespace WebCore {
 
 class FontDescription;
+class String;
 
 // -----------------------------------------------------------------------------
 // FontPlatformData is the handle which WebKit has on a specific face. A face
