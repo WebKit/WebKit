@@ -3064,6 +3064,20 @@ class WebKitStyleTest(CppStyleTestBase):
             '}\n',
             ['More than one command on the same line in if  [whitespace/parens] [4]',
              'One line control clauses should not use braces.  [whitespace/braces] [4]'])
+        self.assert_multi_line_lint(
+            'void func()\n'
+            '{\n'
+            '    while (condition) { }\n'
+            '    return 0;\n'
+            '}\n',
+            '')
+        self.assert_multi_line_lint(
+            'void func()\n'
+            '{\n'
+            '    for (i = 0; i < 42; i++) { foobar(); }\n'
+            '    return 0;\n'
+            '}\n',
+            'More than one command on the same line in for  [whitespace/parens] [4]')
 
         # 3. An else if statement should be written as an if statement
         #    when the prior if concludes with a return statement.

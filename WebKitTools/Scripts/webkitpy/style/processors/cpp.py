@@ -1652,7 +1652,7 @@ def check_braces(clean_lines, line_number, error):
         # We check if a closed brace has started a line to see if a
         # one line control statement was previous.
         previous_line = clean_lines.elided[line_number - 2]
-        if (previous_line.find('{') > 0
+        if (previous_line.find('{') > 0 and previous_line.find('}') < 0
             and search(r'\b(if|for|foreach|while|else)\b', previous_line)):
             error(line_number, 'whitespace/braces', 4,
                   'One line control clauses should not use braces.')
