@@ -223,6 +223,12 @@ bool ResourceHandle::start(Frame* frame)
 
     d->m_needsSiteSpecificQuirks = frame->settings() && frame->settings()->needsSiteSpecificQuirks();
 
+    // If a URL already has cookies, then we'll relax the 3rd party cookie policy and accept new cookies.
+    NSHTTPCookieStorage *sharedStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+    if ([sharedStorage cookieAcceptPolicy] == NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain
+        && [[sharedStorage cookiesForURL:d->m_request.url()] count])
+        d->m_request.setFirstPartyForCookies(d->m_request.url());
+
     NSURLConnection *connection;
     
     if (d->m_shouldContentSniff || frame->settings()->localFileContentSniffingEnabled()) 
@@ -419,13 +425,22 @@ void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, S
 
     ASSERT(!request.isEmpty());
     
-    NSURLRequest *nsRequest;
+    NSMutableURLRequest *mutableRequest = nil;
     if (!shouldContentSniffURL(request.url())) {
-        NSMutableURLRequest *mutableRequest = [[request.nsURLRequest() mutableCopy] autorelease];
+        mutableRequest = [[request.nsURLRequest() mutableCopy] autorelease];
         wkSetNSURLRequestShouldContentSniff(mutableRequest, NO);
-        nsRequest = mutableRequest;
-    } else
-        nsRequest = request.nsURLRequest();
+    } 
+
+    // If a URL already has cookies, then we'll ignore the 3rd party cookie policy and accept new cookies.
+    NSHTTPCookieStorage *sharedStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+    if ([sharedStorage cookieAcceptPolicy] == NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain
+        && [[sharedStorage cookiesForURL:request.url()] count]) {
+        if (!mutableRequest)
+            mutableRequest = [[request.nsURLRequest() mutableCopy] autorelease];
+        [mutableRequest setMainDocumentURL:[mutableRequest URL]];
+    }
+    
+    NSURLRequest *nsRequest = mutableRequest ? mutableRequest : request.nsURLRequest();
             
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     

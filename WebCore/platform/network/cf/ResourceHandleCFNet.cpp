@@ -350,7 +350,16 @@ static CFURLRequestRef makeFinalRequest(const ResourceRequest& request, bool sho
 
     if (CFHTTPCookieStorageRef cookieStorage = currentCookieStorage()) {
         CFURLRequestSetHTTPCookieStorage(newRequest, cookieStorage);
-        CFURLRequestSetHTTPCookieStorageAcceptPolicy(newRequest, CFHTTPCookieStorageGetCookieAcceptPolicy(cookieStorage));
+        CFHTTPCookieStorageAcceptPolicy policy = CFHTTPCookieStorageGetCookieAcceptPolicy(cookieStorage);
+        CFURLRequestSetHTTPCookieStorageAcceptPolicy(newRequest, policy);
+
+        // If a URL already has cookies, then we'll relax the 3rd party cookie policy and accept new cookies.
+        if (policy == CFHTTPCookieStorageAcceptPolicyOnlyFromMainDocumentDomain) {
+            CFURLRef url = CFURLRequestGetURL(newRequest);
+            RetainPtr<CFArrayRef> cookies(AdoptCF, CFHTTPCookieStorageCopyCookiesForURL(cookieStorage, url, false));
+            if (CFArrayGetCount(cookies.get()))
+                CFURLRequestSetMainDocumentURL(newRequest, url);
+        }
     }
 
     return newRequest;

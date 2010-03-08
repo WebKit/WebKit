@@ -5095,3 +5095,9 @@ java
 # see https://bugs.webkit.org/show_bug.cgi?id=33180.
 # Core functionality is tested in plugins/private-browsing-mode-2.html
 plugins/private-browsing-mode.html
+
+# Qt's DRT doesn't not seem to support the layoutTestController.evaluateScriptInIsolatedWorld() call.
+storage/open-database-creation-callback-isolated-world.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=35824 - Doesn't apply to platforms that don't enforce the CFNetwork-style 3rd party cookie policy
+http/tests/cookies/third-party-cookie-relaxing.html
