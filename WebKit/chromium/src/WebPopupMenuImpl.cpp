@@ -262,6 +262,8 @@ void WebPopupMenuImpl::invalidateWindow(const IntRect&, bool)
 
 void WebPopupMenuImpl::invalidateContentsAndWindow(const IntRect& paintRect, bool /*immediate*/)
 {
+    if (paintRect.isEmpty())
+        return;
     if (m_client)
         m_client->didInvalidateRect(paintRect);
 }

@@ -478,6 +478,8 @@ void ChromeClientImpl::invalidateWindow(const IntRect&, bool)
 
 void ChromeClientImpl::invalidateContentsAndWindow(const IntRect& updateRect, bool /*immediate*/)
 {
+    if (updateRect.isEmpty())
+        return;
     if (m_webView->client())
         m_webView->client()->didInvalidateRect(updateRect);
 }

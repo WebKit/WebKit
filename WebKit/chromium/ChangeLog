@@ -1,3 +1,17 @@
+2010-03-08  Michael Nordman  <michaeln@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Quick fix for a chromium unit test failures around r55675 (repaint refactoring).
+        This change restores the tests for empty rects that were deleted.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35878
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::invalidateContentsAndWindow):
+        * src/WebPopupMenuImpl.cpp:
+        (WebKit::WebPopupMenuImpl::invalidateContentsAndWindow):
+
 2010-03-02  Adam Treat  <atreat@rim.com>
 
         Reviewed by Dave Hyatt.
