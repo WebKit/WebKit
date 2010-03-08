@@ -31,7 +31,9 @@
 
 #include "GraphicsContext.h"
 #include "ImageObserver.h"
+#include "SharedBuffer.h"
 #include <wtf/MathExtras.h>
+#include <wtf/RetainPtr.h>
 
 #if !PLATFORM(MAC)
 #include "ImageSourceCG.h"

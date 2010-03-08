@@ -1,5 +1,28 @@
 2010-03-07  Mark Rowe  <mrowe@apple.com>
 
+        Rubber-stamped by Cameron Zwarich.
+
+        Remove unnecessary includes from header files, adding them to the handful of implementation files that need them.
+
+        * loader/CachedCSSStyleSheet.cpp:
+        * loader/CachedFont.cpp:
+        * loader/CachedImage.cpp:
+        * loader/CachedResource.cpp:
+        * loader/CachedResource.h:
+        * loader/CachedScript.cpp:
+        * loader/CachedXSLStyleSheet.cpp:
+        * loader/icon/IconFetcher.cpp:
+        * loader/loader.cpp:
+        * page/Page.cpp:
+        * platform/graphics/Image.cpp:
+        * platform/graphics/Image.h:
+        * platform/graphics/cg/GraphicsContextPlatformPrivateCG.h:
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        * platform/graphics/cg/PathCG.cpp:
+        * platform/graphics/mac/ImageMac.mm:
+
+2010-03-07  Mark Rowe  <mrowe@apple.com>
+
         Chromium build fix.
 
         * platform/chromium/ChromiumDataObject.h: Include SharedBuffer.h since the inline constructor of this

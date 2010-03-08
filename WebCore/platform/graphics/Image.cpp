@@ -32,9 +32,9 @@
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include "MIMETypeRegistry.h"
-#include <wtf/StdLibExtras.h>
-
+#include "SharedBuffer.h"
 #include <math.h>
+#include <wtf/StdLibExtras.h>
 
 #if PLATFORM(CG)
 #include <CoreFoundation/CoreFoundation.h>

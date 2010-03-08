@@ -32,6 +32,7 @@
 #include "KURL.h"
 #include "PurgeableBuffer.h"
 #include "Request.h"
+#include "SharedBuffer.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
 #include <wtf/RefCountedLeakCounter.h>

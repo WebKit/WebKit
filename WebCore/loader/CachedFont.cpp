@@ -36,12 +36,14 @@
 #include "CachedResourceClientWalker.h"
 #include "DOMImplementation.h"
 #include "FontPlatformData.h"
-#ifdef STORE_FONT_CUSTOM_PLATFORM_DATA
-#include "FontCustomPlatformData.h"
-#endif
+#include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
 #include "loader.h"
 #include <wtf/Vector.h>
+
+#ifdef STORE_FONT_CUSTOM_PLATFORM_DATA
+#include "FontCustomPlatformData.h"
+#endif
 
 #if ENABLE(SVG_FONTS)
 #include "HTMLNames.h"

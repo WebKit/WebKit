@@ -32,8 +32,9 @@
 #include "GraphicsTypes.h"
 #include "ImageSource.h"
 #include "IntRect.h"
-#include "SharedBuffer.h"
+#include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 #if PLATFORM(MAC)
@@ -73,7 +74,6 @@ class FloatRect;
 class FloatSize;
 class GraphicsContext;
 class SharedBuffer;
-class String;
 class AffineTransform;
 
 // This class gets notified when an image creates or destroys decoded frames and when it advances animation frames.

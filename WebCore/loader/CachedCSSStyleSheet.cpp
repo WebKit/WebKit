@@ -31,6 +31,7 @@
 #include "CachedResourceClientWalker.h"
 #include "HTTPParsers.h"
 #include "TextResourceDecoder.h"
+#include "SharedBuffer.h"
 #include "loader.h"
 #include <wtf/Vector.h>
 

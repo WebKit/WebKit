@@ -27,7 +27,6 @@
 #include "FrameLoaderTypes.h"
 #include "PlatformString.h"
 #include "ResourceResponse.h"
-#include "SharedBuffer.h"
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>

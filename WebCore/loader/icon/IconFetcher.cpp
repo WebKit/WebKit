@@ -32,6 +32,7 @@
 #include "HTMLNames.h"
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
+#include "SharedBuffer.h"
 
 namespace WebCore {
 

@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <wtf/RetainPtr.h>
 #include <CoreGraphics/CGContext.h>
 
 namespace WebCore {

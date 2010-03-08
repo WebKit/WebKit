@@ -40,6 +40,7 @@
 #import <WebCore/IconDatabase.h>
 #import <WebCore/Image.h>
 #import <WebCore/IntSize.h>
+#import <WebCore/SharedBuffer.h>
 #import <WebCore/ThreadCheck.h>
 
 using namespace WebCore;
