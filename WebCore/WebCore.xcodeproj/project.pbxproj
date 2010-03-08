@@ -15161,8 +15161,6 @@
 				1A3417C70CECFF250049CBDE /* JSCustomVoidCallback.h */,
 				E10B93C20B73C291003ED890 /* JSCustomXPathNSResolver.cpp */,
 				E10B937B0B73C00A003ED890 /* JSCustomXPathNSResolver.h */,
-				B5D3601E112F8BA80048DEA8 /* JSDatabaseCallback.cpp */,
-				B5D3601C112F8BA00048DEA8 /* JSDatabaseCallback.h */,
 				BCBCAE3A0FF19399000762AE /* JSDataGridDataSource.cpp */,
 				BCBCAE3B0FF19399000762AE /* JSDataGridDataSource.h */,
 				93B70D4D09EB0C7C009D8468 /* JSEventListener.cpp */,
