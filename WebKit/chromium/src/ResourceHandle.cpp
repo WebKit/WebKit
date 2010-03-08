@@ -33,6 +33,7 @@
 
 #include "ResourceHandleClient.h"
 #include "ResourceRequest.h"
+#include "SharedBuffer.h"
 
 #include "WebKit.h"
 #include "WebKitClient.h"
