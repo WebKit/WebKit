@@ -33,9 +33,6 @@
 
 struct NPObject;
 
-// Temporary ifdef since this is two-sided.
-#define WEBPLUGINCONTAINER_DOESNT_MODIFY_HANDLED 1
-
 namespace WebKit {
 
 class WebString;
