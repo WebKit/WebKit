@@ -226,11 +226,6 @@ void WebSettingsImpl::setShouldPaintCustomScrollbars(bool enabled)
     m_settings->setShouldPaintCustomScrollbars(enabled);
 }
 
-void WebSettingsImpl::setDatabasesEnabled(bool enabled)
-{
-    m_settings->setDatabasesEnabled(enabled);
-}
-
 void WebSettingsImpl::setAllowUniversalAccessFromFileURLs(bool allow)
 {
     m_settings->setAllowUniversalAccessFromFileURLs(allow);

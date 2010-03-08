@@ -78,7 +78,6 @@ public:
     virtual void setEditableLinkBehaviorNeverLive();
     virtual void setFontRenderingModeNormal();
     virtual void setShouldPaintCustomScrollbars(bool);
-    virtual void setDatabasesEnabled(bool);
     virtual void setAllowUniversalAccessFromFileURLs(bool);
     virtual void setAllowFileAccessFromFileURLs(bool);
     virtual void setTextDirectionSubmenuInclusionBehaviorNeverIncluded();

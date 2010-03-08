@@ -1305,7 +1305,6 @@ static bool fastDocumentTeardownEnabled()
     settings->setMinimumFontSize([preferences minimumFontSize]);
     settings->setMinimumLogicalFontSize([preferences minimumLogicalFontSize]);
     settings->setPluginsEnabled([preferences arePlugInsEnabled]);
-    settings->setDatabasesEnabled([preferences databasesEnabled]);
 #if ENABLE(DATABASE)
     Database::setIsAvailable([preferences databasesEnabled]);
 #endif

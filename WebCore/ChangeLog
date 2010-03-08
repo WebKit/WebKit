@@ -1,3 +1,17 @@
+2010-03-08  Eric Uhrhane  <ericu@chromium.org>
+
+        Reviewed by David Levin.
+
+        Remove the now-redundant Settings fields for the Database
+        https://bugs.webkit.org/show_bug.cgi?id=35763
+
+        No new tests; this code isn't called.
+
+        * WebCore.base.exp:
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+
 2010-03-04  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Eric Seidel.

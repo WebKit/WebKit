@@ -2730,7 +2730,6 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
     settings->setDeveloperExtrasEnabled(enableDeveloperExtras);
     settings->setPrivateBrowsingEnabled(enablePrivateBrowsing);
     settings->setCaretBrowsingEnabled(enableCaretBrowsing);
-    settings->setDatabasesEnabled(enableHTML5Database);
 #if ENABLE(DATABASE)
     Database::setIsAvailable(enableHTML5Database);
 #endif
@@ -2824,7 +2823,6 @@ static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GPar
         settings->setCaretBrowsingEnabled(g_value_get_boolean(&value));
 #if ENABLE(DATABASE)
     else if (name == g_intern_string("enable-html5-database")) {
-        settings->setDatabasesEnabled(g_value_get_boolean(&value));
         Database::setIsAvailable(g_value_get_boolean(&value));
     }
 #endif
