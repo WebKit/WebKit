@@ -28,7 +28,7 @@
 #include "BitmapImage.h"
 #include "CString.h"
 #include "GOwnPtr.h"
-
+#include "SharedBuffer.h"
 #include <cairo.h>
 #include <gtk/gtk.h>
 
