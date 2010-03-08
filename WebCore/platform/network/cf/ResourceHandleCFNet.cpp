@@ -44,16 +44,14 @@
 #include "MIMETypeRegistry.h"
 #include "ResourceError.h"
 #include "ResourceResponse.h"
-
-#include <wtf/HashMap.h>
-#include <wtf/Threading.h>
-
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <process.h> // for _beginthread()
-
+#include "SharedBuffer.h"
 #include <CFNetwork/CFNetwork.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
+#include <process.h> // for _beginthread()
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <wtf/HashMap.h>
+#include <wtf/Threading.h>
 
 namespace WebCore {
 

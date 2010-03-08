@@ -1,5 +1,13 @@
 2010-03-07  Mark Rowe  <mrowe@apple.com>
 
+        Windows build fix.  Add some required includes.
+
+        * platform/graphics/win/ImageCGWin.cpp:
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        * platform/win/ClipboardWin.cpp:
+
+2010-03-07  Mark Rowe  <mrowe@apple.com>
+
         Gtk build fix.
 
         * platform/graphics/GraphicsContext.h: Include wtf/PassOwnPtr.h since some platforms use WTF::PassOwnPtr in this header.

@@ -49,14 +49,13 @@
 #include "Range.h"
 #include "RenderImage.h"
 #include "ResourceResponse.h"
+#include "SharedBuffer.h"
 #include "StringHash.h"
 #include "WCDataObject.h"
 #include "csshelper.h"
 #include "markup.h"
-
 #include <shlwapi.h>
 #include <wininet.h>
-
 #include <wtf/RefPtr.h>
 
 using namespace std;
