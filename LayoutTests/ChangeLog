@@ -1,3 +1,20 @@
+2010-03-07  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix a bug that validity.valueMissing for a radio button with required
+        in a form element always returns true.
+        https://bugs.webkit.org/show_bug.cgi?id=35472
+
+        Add tests for radio buttons in a form element, and merge an existing
+        radio button test to ValidityState-valueMissing-radio.html.
+
+        * fast/forms/ValidityState-valueMissing-007-expected.txt: Removed.
+        * fast/forms/ValidityState-valueMissing-007.html: Removed.
+        * fast/forms/ValidityState-valueMissing-radio-expected.txt: Added.
+        * fast/forms/ValidityState-valueMissing-radio.html: Added.
+        * fast/forms/script-tests/ValidityState-valueMissing-radio.js: Added.
+
 2010-03-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.

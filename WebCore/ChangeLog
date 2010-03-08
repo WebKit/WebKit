@@ -1,3 +1,18 @@
+2010-03-07  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix a bug that validity.valueMissing for a radio button with required
+        in a form element always returns true.
+        https://bugs.webkit.org/show_bug.cgi?id=35472
+
+        Test: fast/forms/ValidityState-valueMissing-radio.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::checkedRadioButtons): Move the location to be used by valueMissing().
+        (WebCore::HTMLInputElement::valueMissing):
+          Use checkedRadioButtons() instead of document()->checkedRadioButtons().
+
 2010-03-07  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Cameron Zwarich.

@@ -163,6 +163,13 @@ bool HTMLInputElement::autoComplete() const
     return true;
 }
 
+static inline CheckedRadioButtons& checkedRadioButtons(const HTMLInputElement* element)
+{
+    if (HTMLFormElement* form = element->form())
+        return form->checkedRadioButtons();
+    return element->document()->checkedRadioButtons();
+}
+
 bool HTMLInputElement::valueMissing() const
 {
     if (!isRequiredFormControl() || readOnly() || disabled())
@@ -187,7 +194,7 @@ bool HTMLInputElement::valueMissing() const
         case CHECKBOX:
             return !checked();
         case RADIO:
-            return !document()->checkedRadioButtons().checkedButtonForGroup(name());
+            return !checkedRadioButtons(this).checkedButtonForGroup(name());
         case COLOR:
             return false;
         case BUTTON:
@@ -676,14 +683,6 @@ void HTMLInputElement::stepUp(int n, ExceptionCode& ec)
 void HTMLInputElement::stepDown(int n, ExceptionCode& ec)
 {
     applyStep(-n, ec);
-}
-
-static inline CheckedRadioButtons& checkedRadioButtons(const HTMLInputElement *element)
-{
-    if (HTMLFormElement* form = element->form())
-        return form->checkedRadioButtons();
-    
-    return element->document()->checkedRadioButtons();
 }
 
 bool HTMLInputElement::isKeyboardFocusable(KeyboardEvent* event) const
