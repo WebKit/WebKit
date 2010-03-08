@@ -2,6 +2,12 @@
 
         Chromium build fix.
 
+        * src/ChromiumBridge.cpp: Include SharedBuffer.h since WebCore::SharedBuffer is being used.
+
+2010-03-07  Mark Rowe  <mrowe@apple.com>
+
+        Chromium build fix.
+
         * src/ResourceHandle.cpp: Include SharedBuffer.h since WebCore::SharedBuffer is being used.
 
 2010-03-06  Pavel Feldman  <pfeldman@chromium.org>

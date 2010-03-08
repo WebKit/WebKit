@@ -1,5 +1,11 @@
 2010-03-07  Mark Rowe  <mrowe@apple.com>
 
+        Chromium build fix.
+
+        * platform/chromium/ClipboardChromium.cpp: Include Image.h since we're using WebCore::Image.
+
+2010-03-07  Mark Rowe  <mrowe@apple.com>
+
         Gtk build fix.
 
         * platform/network/soup/ResourceHandleSoup.cpp: Include SharedBuffer.h since we're using WebCore::SharedBuffer.

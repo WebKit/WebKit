@@ -81,6 +81,7 @@
 #include "NotImplemented.h"
 #include "PlatformContextSkia.h"
 #include "PluginData.h"
+#include "SharedBuffer.h"
 #include "Worker.h"
 #include "WorkerContextProxy.h"
 #include <wtf/Assertions.h>

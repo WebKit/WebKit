@@ -36,15 +36,16 @@
 #include "FileList.h"
 #include "Frame.h"
 #include "HTMLNames.h"
-#include "NamedAttrMap.h"
+#include "Image.h"
 #include "MIMETypeRegistry.h"
-#include "markup.h"
+#include "NamedAttrMap.h"
 #include "NamedNodeMap.h"
 #include "Pasteboard.h"
 #include "PlatformString.h"
 #include "Range.h"
 #include "RenderImage.h"
 #include "StringBuilder.h"
+#include "markup.h"
 
 namespace WebCore {
 
