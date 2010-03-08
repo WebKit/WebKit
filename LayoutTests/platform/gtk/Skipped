@@ -5807,3 +5807,7 @@ fast/dom/Geolocation/permission-denied.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=35793
 media/video-preload.html
+
+# Needs double click support in DRT
+# See https://bugs.webkit.org/show_bug.cgi?id=35862
+fast/events/zoom-dblclick.html
