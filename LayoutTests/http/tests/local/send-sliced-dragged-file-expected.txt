@@ -1,0 +1,22 @@
+Test for slicing a dragged file and sending it via XMLHttpRequest.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS event.dataTransfer contains a File object on drop.
+PASS subfile.size is 4
+PASS Expected response data received: 3456
+PASS event.dataTransfer contains a File object on drop.
+PASS subfile.size is 8
+PASS Expected response data received: 34567890
+PASS event.dataTransfer contains a File object on drop.
+PASS subfile.size is 0
+PASS Expected response data received: 
+PASS event.dataTransfer contains a File object on drop.
+PASS subfile.size is 5
+PASS Expected response data received: 45678
+PASS Expected exception thrown: Error: NETWORK_ERR: XMLHttpRequest Exception 101
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

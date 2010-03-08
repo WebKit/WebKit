@@ -53,6 +53,7 @@ plugins/set-status.html
 # Failing Local tests
 http/tests/local/drag-over-remote-content.html
 http/tests/local/send-dragged-file.html
+http/tests/local/send-sliced-dragged-file.html
 
 # Failing navigation tests
 http/tests/navigation/anchor-frames.html

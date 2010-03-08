@@ -32,11 +32,20 @@ class FormDataElement {
 public:
     FormDataElement() : m_type(data) { }
     FormDataElement(const Vector<char>& array) : m_type(data), m_data(array) { }
+#if ENABLE(BLOB_SLICE)
+    FormDataElement(const String& filename, long long fileStart, long long fileLength, double expectedFileModificationTime, bool shouldGenerateFile) : m_type(encodedFile), m_filename(filename), m_fileStart(fileStart), m_fileLength(fileLength), m_expectedFileModificationTime(expectedFileModificationTime), m_shouldGenerateFile(shouldGenerateFile) { }
+#else
     FormDataElement(const String& filename, bool shouldGenerateFile) : m_type(encodedFile), m_filename(filename), m_shouldGenerateFile(shouldGenerateFile) { }
+#endif
 
     enum { data, encodedFile } m_type;
     Vector<char> m_data;
     String m_filename;
+#if ENABLE(BLOB_SLICE)
+    long long m_fileStart;
+    long long m_fileLength;
+    double m_expectedFileModificationTime;
+#endif
     String m_generatedFilename;
     bool m_shouldGenerateFile;
 };
@@ -50,7 +59,11 @@ inline bool operator==(const FormDataElement& a, const FormDataElement& b)
         return false;
     if (a.m_data != b.m_data)
         return false;
+#if ENABLE(BLOB_SLICE)
+    if (a.m_filename != b.m_filename || a.m_fileStart != b.m_fileStart || a.m_fileLength != b.m_fileLength || a.m_expectedFileModificationTime != b.m_expectedFileModificationTime)
+#else
     if (a.m_filename != b.m_filename)
+#endif
         return false;
 
     return true;
@@ -73,6 +86,9 @@ public:
     
     void appendData(const void* data, size_t);
     void appendFile(const String& filename, bool shouldGenerateFile = false);
+#if ENABLE(BLOB_SLICE)
+    void appendFileRange(const String& filename, long long start, long long length, double expectedModificationTime, bool shouldGenerateFile = false);
+#endif
 
     void flatten(Vector<char>&) const; // omits files
     String flattenToString() const; // omits files

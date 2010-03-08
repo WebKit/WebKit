@@ -449,7 +449,11 @@ void XMLHttpRequest::send(Blob* body, ExceptionCode& ec)
         // FIXME: Should we set a Content-Type if one is not set.
         // FIXME: add support for uploading bundles.
         m_requestEntityBody = FormData::create();
+#if ENABLE(BLOB_SLICE)
+        m_requestEntityBody->appendFileRange(body->path(), body->start(), body->length(), body->modificationTime());
+#else
         m_requestEntityBody->appendFile(body->path(), false);
+#endif
     }
 
     createRequest(ec);

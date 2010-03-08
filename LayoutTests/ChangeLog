@@ -1,3 +1,35 @@
+2010-03-08  Jian Li  <jianli@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Blob.slice support.
+        https://bugs.webkit.org/show_bug.cgi?id=32993
+
+        Add a new layout test to test slicing and sending a file. In addition,
+        two new scripts are introduced to create and touch the temp file.
+
+        Move some code from send-dragged-file.js to a new file
+        setup-file-input-element-for-drag.js so that it can be used by both
+        send-dragged-file.js and send-sliced-dragged-file.js to setup the input
+        element for the file dragging.
+
+        Since the Blob.slice is only enabled for Mac, we disable the new test
+        for all other platforms.
+
+        * fast/dom/Window/window-properties.html:
+        * http/tests/local/resources/file-for-drag-to-send.txt:
+        * http/tests/local/resources/send-dragged-file.js:
+        * http/tests/local/resources/send-sliced-dragged-file.js: Added.
+        * http/tests/local/resources/setup-file-input-element-for-drag.js: Added.
+        * http/tests/local/send-dragged-file.html:
+        * http/tests/local/send-sliced-dragged-file-expected.txt: Added.
+        * http/tests/local/send-sliced-dragged-file.html: Added.
+        * http/tests/resources/touch-temp-file.php: Added.
+        * http/tests/resources/write-temp-file.php: Added.
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2010-03-08  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Simon Fraser.

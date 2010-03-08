@@ -56,7 +56,7 @@ my ($threeDCanvasSupport, $threeDRenderingSupport, $channelMessagingSupport, $cl
     $javaScriptDebuggerSupport, $mathmlSupport, $offlineWebApplicationSupport, $rubySupport, $sandboxSupport, $sharedWorkersSupport,
     $svgSupport, $svgAnimationSupport, $svgAsImageSupport, $svgDOMObjCBindingsSupport, $svgFontsSupport,
     $svgForeignObjectSupport, $svgUseSupport, $videoSupport, $webSocketsSupport, $wmlSupport, $wcssSupport, $xhtmlmpSupport, $workersSupport,
-    $xpathSupport, $xsltSupport, $coverageSupport, $notificationsSupport);
+    $xpathSupport, $xsltSupport, $coverageSupport, $notificationsSupport, $blobSliceSupport);
 
 my @features = (
     { option => "3d-canvas", desc => "Toggle 3D canvas support",
@@ -64,6 +64,9 @@ my @features = (
 
     { option => "3d-rendering", desc => "Toggle 3D rendering support",
       define => "ENABLE_3D_RENDERING", default => (isAppleMacWebKit() && !isTiger()), value => \$threeDRenderingSupport },
+
+    { option => "blob-slice", desc => "Toggle Blob.slice support",
+      define => "ENABLE_BLOB_SLICE", default => (isAppleMacWebKit()), value => \$blobSliceSupport },
 
     { option => "channel-messaging", desc => "Toggle MessageChannel and MessagePort support",
       define => "ENABLE_CHANNEL_MESSAGING", default => 1, value => \$channelMessagingSupport },

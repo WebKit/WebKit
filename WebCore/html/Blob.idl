@@ -32,6 +32,10 @@ module html {
 
     interface Blob {
         readonly attribute unsigned long long size;
+        
+#if defined(ENABLE_BLOB_SLICE) && ENABLE_BLOB_SLICE
+        Blob slice(in long long start, in long long length);
+#endif
     };
 
 }

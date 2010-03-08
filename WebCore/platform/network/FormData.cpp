@@ -21,6 +21,7 @@
 #include "config.h"
 #include "FormData.h"
 
+#include "Blob.h"
 #include "CString.h"
 #include "ChromeClient.h"
 #include "FileSystem.h"
@@ -108,7 +109,11 @@ PassRefPtr<FormData> FormData::deepCopy() const
             formData->m_elements.append(FormDataElement(e.m_data));
             break;
         case FormDataElement::encodedFile:
+#if ENABLE(BLOB_SLICE)
+            formData->m_elements.append(FormDataElement(e.m_filename, e.m_fileStart, e.m_fileLength, e.m_expectedFileModificationTime, e.m_shouldGenerateFile));
+#else
             formData->m_elements.append(FormDataElement(e.m_filename, e.m_shouldGenerateFile));
+#endif
             break;
         }
     }
@@ -127,8 +132,19 @@ void FormData::appendData(const void* data, size_t size)
 
 void FormData::appendFile(const String& filename, bool shouldGenerateFile)
 {
+#if ENABLE(BLOB_SLICE)
+    m_elements.append(FormDataElement(filename, 0, Blob::toEndOfFile, Blob::doNotCheckFileChange, shouldGenerateFile));
+#else
     m_elements.append(FormDataElement(filename, shouldGenerateFile));
+#endif
 }
+
+#if ENABLE(BLOB_SLICE)
+void FormData::appendFileRange(const String& filename, long long start, long long length, double expectedModificationTime, bool shouldGenerateFile)
+{
+    m_elements.append(FormDataElement(filename, start, length, expectedModificationTime, shouldGenerateFile));
+}
+#endif
 
 void FormData::flatten(Vector<char>& data) const
 {

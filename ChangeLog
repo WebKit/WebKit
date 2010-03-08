@@ -1,3 +1,14 @@
+2010-03-08  Jian Li  <jianli@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Blob.slice support.
+        https://bugs.webkit.org/show_bug.cgi?id=32993
+
+        Add ENABLE_BLOB_SLICE feature define.
+
+        * configure.ac:
+
 2010-03-04  Fridrich Strba  <fridrich.strba@bluewin.ch>
 
         Reviewed by Holger Freyther.

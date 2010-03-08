@@ -1,3 +1,53 @@
+2010-03-08  Jian Li  <jianli@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Blob.slice support.
+        https://bugs.webkit.org/show_bug.cgi?id=32993
+        
+        The following semantic is adopted per the discussions on public-webapps:
+        1) File.slice() does a synchronous IO to capture the current size and
+           modification time and cache them in the resulting Blob.
+        2) Subsequent Blob operations, like Blob.slice and Blob.size simply
+           use the cached values.
+        3) When the underlying file data are accessed, like in XHR.send(), the
+           UA will check the cached modification time against the current
+           modification time to determine if the file has been changed or not.
+           An error or exception will be thrown if needed.
+
+        Also add ENABLE_BLOB_SLICE feature define.
+
+        Test: http/tests/local/send-sliced-dragged-file.html
+
+        * Configurations/FeatureDefines.xcconfig:
+        * GNUmakefile.am:
+        * WebCore.pri:
+        * html/Blob.cpp:
+        (WebCore::Blob::Blob):
+        (WebCore::Blob::size):
+        (WebCore::Blob::slice):
+        * html/Blob.h:
+        (WebCore::Blob::start):
+        (WebCore::Blob::length):
+        (WebCore::Blob::modificationTime):
+        * html/Blob.idl:
+        * platform/network/FormData.cpp:
+        (WebCore::FormData::deepCopy):
+        (WebCore::FormData::appendFile):
+        (WebCore::FormData::appendFileRange):
+        * platform/network/FormData.h:
+        (WebCore::FormDataElement::FormDataElement):
+        (WebCore::operator==):
+        * platform/network/mac/FormDataStreamMac.mm:
+        (WebCore::advanceCurrentStream):
+        (WebCore::openNextStream):
+        (WebCore::formCreate):
+        (WebCore::formOpen):
+        (WebCore::formRead):
+        (WebCore::setHTTPBody):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+
 2010-03-08  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Simon Fraser.
