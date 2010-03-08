@@ -1,5 +1,11 @@
 2010-03-07  Mark Rowe  <mrowe@apple.com>
 
+        Gtk build fix.
+
+        * platform/graphics/GraphicsContext.h: Include wtf/PassOwnPtr.h since some platforms use WTF::PassOwnPtr in this header.
+
+2010-03-07  Mark Rowe  <mrowe@apple.com>
+
         Qt build fix.
 
         * platform/network/qt/ResourceHandleQt.cpp: Include SharedBuffer.h since we're using WebCore::SharedBuffer.

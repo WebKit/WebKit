@@ -35,6 +35,7 @@
 #include "Path.h"
 #include "TextDirection.h"
 #include <wtf/Noncopyable.h>
+#include <wtf/PassOwnPtr.h>
 
 #if PLATFORM(CG)
 typedef struct CGContext PlatformGraphicsContext;
