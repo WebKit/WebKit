@@ -1,3 +1,39 @@
+2010-03-07  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin Adler.
+
+        TypeInfo is unnecessarily large
+        https://bugs.webkit.org/show_bug.cgi?id=35850
+
+        Reduce the size of the type and flags members to a single
+        byte each, reducing the size of Structure by 8 bytes.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::branch8):
+        (JSC::MacroAssemblerX86Common::branchTest8):
+        (JSC::MacroAssemblerX86Common::setTest8):
+          Add single byte branches, and correct setTest8 to do a
+          single byte read from memory, and actually store the result
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::):
+        (JSC::X86Assembler::cmpb_im):
+        (JSC::X86Assembler::testb_im):
+        * jit/JITCall.cpp:
+        (JSC::JIT::emit_op_construct_verify):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emit_op_jeq_null):
+        (JSC::JIT::emit_op_jneq_null):
+        (JSC::JIT::emit_op_get_pnames):
+        (JSC::JIT::emit_op_convert_this):
+        (JSC::JIT::emit_op_construct_verify):
+        (JSC::JIT::emit_op_to_jsnumber):
+        (JSC::JIT::emit_op_eq_null):
+        (JSC::JIT::emit_op_neq_null):
+        * runtime/JSTypeInfo.h:
+        (JSC::TypeInfo::TypeInfo):
+        (JSC::TypeInfo::type):
+
 2010-03-08  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by NOBODY (reverting regression).

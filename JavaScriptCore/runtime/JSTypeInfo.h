@@ -50,6 +50,8 @@ namespace JSC {
         TypeInfo(JSType type, unsigned flags = 0)
             : m_type(type)
         {
+            ASSERT(flags <= 0xFF);
+            ASSERT(type <= 0xFF);
             // ImplementsDefaultHasInstance means (ImplementsHasInstance & !OverridesHasInstance)
             if ((flags & (ImplementsHasInstance | OverridesHasInstance)) == ImplementsHasInstance)
                 m_flags = flags | ImplementsDefaultHasInstance;
@@ -57,7 +59,7 @@ namespace JSC {
                 m_flags = flags;
         }
 
-        JSType type() const { return m_type; }
+        JSType type() const { return (JSType)m_type; }
 
         bool masqueradesAsUndefined() const { return m_flags & MasqueradesAsUndefined; }
         bool implementsHasInstance() const { return m_flags & ImplementsHasInstance; }
@@ -69,8 +71,8 @@ namespace JSC {
         unsigned flags() const { return m_flags; }
 
     private:
-        JSType m_type;
-        unsigned m_flags;
+        unsigned char m_type;
+        unsigned char m_flags;
     };
 
 }
