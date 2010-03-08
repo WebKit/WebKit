@@ -47,6 +47,7 @@
 #include "Range.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
+#include "SecureTextInput.h"
 #include "Settings.h"
 #include "TextIterator.h"
 #include "TypingCommand.h"
@@ -1321,12 +1322,26 @@ void SelectionController::focusedOrActiveStateChanged()
 
     // Secure keyboard entry is set by the active frame.
     if (m_frame->document()->useSecureKeyboardEntryWhenActive())
-        m_frame->setUseSecureKeyboardEntry(activeAndFocused);
+        setUseSecureKeyboardEntry(activeAndFocused);
 }
 
 void SelectionController::pageActivationChanged()
 {
     focusedOrActiveStateChanged();
+}
+
+void SelectionController::updateSecureKeyboardEntryIfActive()
+{
+    if (m_frame->document() && isFocusedAndActive())
+        setUseSecureKeyboardEntry(m_frame->document()->useSecureKeyboardEntryWhenActive());
+}
+
+void SelectionController::setUseSecureKeyboardEntry(bool enable)
+{
+    if (enable)
+        enableSecureTextInput();
+    else
+        disableSecureTextInput();
 }
 
 void SelectionController::setFocused(bool flag)

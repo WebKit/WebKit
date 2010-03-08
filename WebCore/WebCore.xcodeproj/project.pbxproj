@@ -680,6 +680,8 @@
 		3390CA550FFC157B00921962 /* NotificationCenter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3390CA510FFC157B00921962 /* NotificationCenter.cpp */; };
 		3390CA560FFC157B00921962 /* NotificationCenter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3390CA520FFC157B00921962 /* NotificationCenter.h */; };
 		3390CA580FFC157B00921962 /* NotificationContents.h in Headers */ = {isa = PBXBuildFile; fileRef = 3390CA540FFC157B00921962 /* NotificationContents.h */; };
+		33C0CCD4112C5E6200CE057D /* SecureTextInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33C0CCD2112C5E6200CE057D /* SecureTextInput.cpp */; };
+		33C0CCD5112C5E6200CE057D /* SecureTextInput.h in Headers */ = {isa = PBXBuildFile; fileRef = 33C0CCD3112C5E6200CE057D /* SecureTextInput.h */; };
 		371F4F400D25B9AF00ECE0D5 /* FontData.h in Headers */ = {isa = PBXBuildFile; fileRef = 371F4F3E0D25B9AF00ECE0D5 /* FontData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		371F4F410D25B9AF00ECE0D5 /* FontData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 371F4F3F0D25B9AF00ECE0D5 /* FontData.cpp */; };
 		371F4FFC0D25E7F300ECE0D5 /* SegmentedFontData.h in Headers */ = {isa = PBXBuildFile; fileRef = 371F4FFA0D25E7F300ECE0D5 /* SegmentedFontData.h */; };
@@ -6051,6 +6053,8 @@
 		3390CA520FFC157B00921962 /* NotificationCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotificationCenter.h; path = notifications/NotificationCenter.h; sourceTree = "<group>"; };
 		3390CA530FFC157B00921962 /* NotificationCenter.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = NotificationCenter.idl; path = notifications/NotificationCenter.idl; sourceTree = "<group>"; };
 		3390CA540FFC157B00921962 /* NotificationContents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotificationContents.h; path = notifications/NotificationContents.h; sourceTree = "<group>"; };
+		33C0CCD2112C5E6200CE057D /* SecureTextInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SecureTextInput.cpp; sourceTree = "<group>"; };
+		33C0CCD3112C5E6200CE057D /* SecureTextInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecureTextInput.h; sourceTree = "<group>"; };
 		371F4F3E0D25B9AF00ECE0D5 /* FontData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontData.h; sourceTree = "<group>"; };
 		371F4F3F0D25B9AF00ECE0D5 /* FontData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontData.cpp; sourceTree = "<group>"; };
 		371F4FFA0D25E7F300ECE0D5 /* SegmentedFontData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SegmentedFontData.h; sourceTree = "<group>"; };
@@ -15319,6 +15323,8 @@
 				BC2441C30E8B65D00055320F /* ScrollView.cpp */,
 				BC6D6E2509AF943500F59759 /* ScrollView.h */,
 				AB7170880B3118080017123E /* SearchPopupMenu.h */,
+				33C0CCD2112C5E6200CE057D /* SecureTextInput.cpp */,
+				33C0CCD3112C5E6200CE057D /* SecureTextInput.h */,
 				1A4A954B0B4EDCCB002D8C3C /* SharedBuffer.cpp */,
 				1A4A954C0B4EDCCB002D8C3C /* SharedBuffer.h */,
 				93309EA0099EB78C0056E581 /* SharedTimer.h */,
@@ -18645,6 +18651,7 @@
 				931BCC611124DFCB00BE70DD /* MediaCanStartListener.h in Headers */,
 				9F2A322C1125A0A2003C3056 /* JavaScriptProfile.h in Headers */,
 				9F2A322E1125A0A2003C3056 /* JavaScriptProfileNode.h in Headers */,
+				33C0CCD5112C5E6200CE057D /* SecureTextInput.h in Headers */,
 				7AFD4A8B1131C2760035B883 /* ScriptBreakpoint.h in Headers */,
 				7AFD4FF4113277B60035B883 /* ScriptDebugListener.h in Headers */,
 				E169803D1133542D00894115 /* CRuntimeObject.h in Headers */,
@@ -20846,6 +20853,7 @@
 				76FF17E311235673001D61B5 /* PluginViewNone.cpp in Sources */,
 				9F2A322B1125A0A2003C3056 /* JavaScriptProfile.cpp in Sources */,
 				9F2A322D1125A0A2003C3056 /* JavaScriptProfileNode.cpp in Sources */,
+				33C0CCD4112C5E6200CE057D /* SecureTextInput.cpp in Sources */,
 				6E21C6C01126338500A7BE02 /* GraphicsContext3D.cpp in Sources */,
 				6E21C6C21126339900A7BE02 /* GraphicsContext3DCG.cpp in Sources */,
 				E16980491133644700894115 /* CRuntimeObject.cpp in Sources */,

@@ -2860,6 +2860,8 @@
             'platform/ScrollbarThemeComposite.cpp',
             'platform/ScrollbarThemeComposite.h',
             'platform/SearchPopupMenu.h',
+            'platform/SecureTextInput.cpp',
+            'platform/SecureTextInput.h',
             'platform/SharedBuffer.cpp',
             'platform/SharedBuffer.h',
             'platform/SharedTimer.h',

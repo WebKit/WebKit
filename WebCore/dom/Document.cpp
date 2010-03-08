@@ -4380,7 +4380,7 @@ void Document::setUseSecureKeyboardEntryWhenActive(bool usesSecureKeyboard)
         return;
         
     m_useSecureKeyboardEntryWhenActive = usesSecureKeyboard;
-    m_frame->updateSecureKeyboardEntryIfActive();
+    m_frame->selection()->updateSecureKeyboardEntryIfActive();
 }
 
 bool Document::useSecureKeyboardEntryWhenActive() const

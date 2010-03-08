@@ -1,3 +1,34 @@
+2010-03-08  Stuart Morgan  <stuartmorgan@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Move the details of secure text mode into WebCore/platform.
+        Move the higher-level logic for secure text mode from Frame
+        to SelectionController.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31265
+
+        No new tests: no functional changes.
+
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::setUseSecureKeyboardEntryWhenActive):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::focusedOrActiveStateChanged):
+        (WebCore::SelectionController::updateSecureKeyboardEntryIfActive):
+        (WebCore::SelectionController::setUseSecureKeyboardEntry):
+        * editing/SelectionController.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::setDocument):
+        * page/Frame.h:
+        * platform/SecureTextInput.cpp: Added.
+        (WebCore::enableSecureTextInput):
+        (WebCore::disableSecureTextInput):
+        * platform/SecureTextInput.h: Added.
+        (WebCore::enableSecureTextInput):
+        (WebCore::disableSecureTextInput):
+
 2010-03-08  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders Carlsson.

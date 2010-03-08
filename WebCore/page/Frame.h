@@ -244,8 +244,6 @@ namespace WebCore {
 
         bool isContentEditable() const; // if true, everything in frame is editable
 
-        void updateSecureKeyboardEntryIfActive();
-
         CSSMutableStyleDeclaration* typingStyle() const;
         void setTypingStyle(CSSMutableStyleDeclaration*);
         void clearTypingStyle();
@@ -258,8 +256,6 @@ namespace WebCore {
 
         void revealSelection(const ScrollAlignment& = ScrollAlignment::alignCenterIfNeeded, bool revealExtent = false);
         void setSelectionFromNone();
-
-        void setUseSecureKeyboardEntry(bool);
 
         SelectionController* dragCaretController() const;
 
