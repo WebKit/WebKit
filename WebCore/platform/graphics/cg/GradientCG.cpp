@@ -29,8 +29,8 @@
 
 #include "CSSParser.h"
 #include "GraphicsContext.h"
-
 #include <ApplicationServices/ApplicationServices.h>
+#include <wtf/RetainPtr.h>
 
 namespace WebCore {
 
