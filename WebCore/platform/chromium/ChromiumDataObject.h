@@ -33,6 +33,7 @@
 
 #include "KURL.h"
 #include "PlatformString.h"
+#include "SharedBuffer.h"
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
