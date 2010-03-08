@@ -80,15 +80,15 @@ class MediaPlayerPrivate : public MediaPlayerPrivateInterface {
 
             void setVolume(float);
             void volumeChanged();
-            void volumeChangedCallback();
+            void volumeChangedTimerFired(Timer<MediaPlayerPrivate>*);
 
             bool supportsMuting() const;
             void setMuted(bool);
             void muteChanged();
-            void muteChangedCallback();
+            void muteChangedTimerFired(Timer<MediaPlayerPrivate>*);
 
             void setPreload(MediaPlayer::Preload);
-            bool queryBufferingStats();
+            void fillTimerFired(Timer<MediaPlayerPrivate>*);
 
             MediaPlayer::NetworkState networkState() const;
             MediaPlayer::ReadyState readyState() const;
@@ -160,11 +160,9 @@ class MediaPlayerPrivate : public MediaPlayerPrivateInterface {
             bool m_seeking;
             float m_playbackRate;
             bool m_errorOccured;
-            guint m_volumeIdleId;
             gfloat m_mediaDuration;
-            guint m_muteIdleId;
             bool m_startedBuffering;
-            guint m_fillTimeoutId;
+            Timer<MediaPlayerPrivate> m_fillTimer;
             float m_maxTimeLoaded;
             gdouble m_fillStatus;
     };
