@@ -1,3 +1,15 @@
+2010-03-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Nate Chapin.
+
+        [V8] Block popups from inline script
+        https://bugs.webkit.org/show_bug.cgi?id=35474
+
+        Test that we block popups generated from <script>window.open(...)</script>.
+
+        * http/tests/security/popup-blocked-from-window-open-expected.txt: Added.
+        * http/tests/security/popup-blocked-from-window-open.html: Added.
+
 2010-03-08  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders Carlsson.

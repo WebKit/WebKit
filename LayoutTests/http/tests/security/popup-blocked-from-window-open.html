@@ -1,0 +1,13 @@
+<html> 
+<body>
+<script> 
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.setCloseRemainingWindowsWhenComplete(true);
+}
+
+win = window.open("about:blank");
+alert(win ? "FAIL" : "PASS");
+</script> 
+</body> 
+</html>
