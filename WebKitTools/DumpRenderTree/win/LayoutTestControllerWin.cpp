@@ -1189,5 +1189,6 @@ void LayoutTestController::apiTestGoToCurrentBackForwardItem()
     if (FAILED(backForwardList->currentItem(&item)))
         return;
 
-    webView->goToBackForwardItem(item.get(), 0);
+    BOOL success;
+    webView->goToBackForwardItem(item.get(), &success);
 }
