@@ -22,9 +22,10 @@ shouldBe('window.btoa("abcde")', '"YWJjZGU="');
 shouldBe('window.btoa("abcdef")', '"YWJjZGVm"');
 
 shouldBe('typeof window.btoa', '"function"');
-shouldThrow('window.btoa()');
+shouldBe('window.btoa()', '"dW5kZWZpbmVk"');
 shouldBe('window.btoa("")', '""');
 shouldBe('window.btoa(null)', '""');
+shouldBe('window.btoa(undefined)', '"dW5kZWZpbmVk"');
 shouldBe('window.btoa(window)', '"W29iamVjdCBET01XaW5kb3dd"'); // "[object DOMWindow]"
 shouldBe('window.btoa("éé")', '"6ek="');
 shouldBe('window.btoa("\\u0080\\u0081")', '"gIE="');
@@ -34,9 +35,10 @@ shouldBe('window.btoa', '0');
 shouldBe('typeof window.btoa', '"number"');
 
 shouldBe('typeof window.atob', '"function"');
-shouldThrow('window.atob()');
+shouldThrow('window.atob()'); // 'undefined' 
 shouldBe('window.atob("")', '""');
 shouldBe('window.atob(null)', '""');
+shouldThrow('window.atob(undefined)');
 shouldThrow('window.atob(" YQ==")');
 shouldThrow('window.atob("YQ==\\u000a")');
 shouldBe('window.atob("6ek=")', '"éé"');

@@ -204,9 +204,9 @@ module window {
         void clearInterval(in long handle);
 
         // Base64
-        [Custom] DOMString atob(in DOMString string)
+        DOMString atob(in [ConvertNullToNullString] DOMString string)
             raises(DOMException);
-        [Custom] DOMString btoa(in DOMString string)
+        DOMString btoa(in [ConvertNullToNullString] DOMString string)
             raises(DOMException);
 
         // Events

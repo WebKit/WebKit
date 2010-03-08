@@ -839,6 +839,9 @@ static bool isSafeToConvertCharList(const String& string)
 
 String DOMWindow::btoa(const String& stringToEncode, ExceptionCode& ec)
 {
+    if (stringToEncode.isNull())
+        return String();
+
     if (!isSafeToConvertCharList(stringToEncode)) {
         ec = INVALID_CHARACTER_ERR;
         return String();
@@ -855,6 +858,9 @@ String DOMWindow::btoa(const String& stringToEncode, ExceptionCode& ec)
 
 String DOMWindow::atob(const String& encodedString, ExceptionCode& ec)
 {
+    if (encodedString.isNull())
+        return String();
+
     if (!isSafeToConvertCharList(encodedString)) {
         ec = INVALID_CHARACTER_ERR;
         return String();

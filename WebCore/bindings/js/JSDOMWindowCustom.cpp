@@ -937,34 +937,6 @@ JSValue JSDOMWindow::setInterval(ExecState* exec, const ArgList& args)
     return jsNumber(exec, result);
 }
 
-JSValue JSDOMWindow::atob(ExecState* exec, const ArgList& args)
-{
-    if (args.size() < 1)
-        return throwError(exec, SyntaxError, "Not enough arguments");
-    if (args.at(0).isNull())
-        return jsEmptyString(exec);
-
-    ExceptionCode ec = 0;
-    String result = impl()->atob(args.at(0).toString(exec), ec);
-    setDOMException(exec, ec);
-
-    return jsString(exec, result);
-}
-
-JSValue JSDOMWindow::btoa(ExecState* exec, const ArgList& args)
-{
-    if (args.size() < 1)
-        return throwError(exec, SyntaxError, "Not enough arguments");
-    if (args.at(0).isNull())
-        return jsEmptyString(exec);
-
-    ExceptionCode ec = 0;
-    String result = impl()->btoa(args.at(0).toString(exec), ec);
-    setDOMException(exec, ec);
-
-    return jsString(exec, result);
-}
-
 JSValue JSDOMWindow::addEventListener(ExecState* exec, const ArgList& args)
 {
     Frame* frame = impl()->frame();

@@ -1,3 +1,18 @@
+2010-03-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Remove inconsistent "Too few arguments" handling for window.atob() and window.btoa()
+        https://bugs.webkit.org/show_bug.cgi?id=35848
+
+        - Take the opportunity to fully autogenerate window.atob() and window.btoa().
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::btoa):
+        (WebCore::DOMWindow::atob):
+        * page/DOMWindow.idl:
+
 2010-03-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.
