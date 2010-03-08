@@ -1,3 +1,36 @@
+2010-03-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35876
+
+        Fix minor style issues in HTMLMediaElement and classes derived from it.
+        Made many public members private and protected.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::screenRect): Got rid of a stray "const" and
+        retstructured the function to use early return and get rid of a local.
+
+        * html/HTMLMediaElement.h: Made lots of members private and some
+        protected. Also use private inheritance instead of public. Removed
+        some unneeded includes.
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::parseMappedAttribute): Use player() instead
+        of m_player; HTMLMediaElement data members are now private, not protected.
+        (WebCore::HTMLVideoElement::supportsFullscreen): Ditto.
+        (WebCore::HTMLVideoElement::videoWidth): Ditto.
+        (WebCore::HTMLVideoElement::videoHeight): Ditto.
+        (WebCore::HTMLVideoElement::hasAvailableVideoFrame): Ditto.
+        (WebCore::HTMLVideoElement::webkitEnterFullScreen): Use isFullscreen()
+        instead of m_isFullscreen; same reason.
+        (WebCore::HTMLVideoElement::webkitExitFullScreen): Ditto.
+        (WebCore::HTMLVideoElement::webkitDisplayingFullscreen): Ditto.
+
+        * html/HTMLVideoElement.h: Removed an unneeded include. Made many
+        public functions private. Got rid of unused paint function, which was
+        replaced with paintCurrentFrameInContext a while back.
+
 2010-03-08  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
 
         Reviewed by Xan Lopez.
