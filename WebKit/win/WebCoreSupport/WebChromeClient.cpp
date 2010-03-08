@@ -454,7 +454,7 @@ IntRect WebChromeClient::windowResizerRect() const
     return IntRect();
 }
 
-void WebChromeClient::invalidateContents(const IntRect&, bool)
+void WebChromeClient::invalidateContents(const IntRect& windowRect, bool)
 {
     ASSERT(core(m_webView->topLevelFrame()));
     m_webView->repaint(windowRect, true /*contentChanged*/, false /*immediate*/, true /*repaintContentOnly*/);

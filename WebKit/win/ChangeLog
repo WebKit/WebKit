@@ -1,3 +1,10 @@
+2010-03-08  Adam Treat  <atreat@rim.com>
+
+        Unreviewed build fix for Windows.
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::invalidateContents):
+
 2010-03-02  Adam Treat  <atreat@rim.com>
 
         Reviewed by Dave Hyatt.
