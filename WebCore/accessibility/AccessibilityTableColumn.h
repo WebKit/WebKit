@@ -50,7 +50,11 @@ public:
     AccessibilityObject* headerObject();
         
     virtual AccessibilityRole roleValue() const { return ColumnRole; }
+#if PLATFORM(GTK)
+    virtual bool accessibilityIsIgnored() const { return true; }
+#else
     virtual bool accessibilityIsIgnored() const { return false; }
+#endif
     virtual bool isTableColumn() const { return true; }
     
     void setColumnIndex(int columnIndex) { m_columnIndex = columnIndex; }

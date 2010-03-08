@@ -63,6 +63,10 @@ AccessibilityObjectPlatformInclusion AccessibilityObject::accessibilityPlatformI
     if (role == CellRole || role == TableRole)
         return IncludeObject;
 
+    // We at some point might have a need to expose a table row; but it's not standard Gtk+.
+    if (role == RowRole)
+        return IgnoreObject;
+
     // The object containing the text should implement AtkText itself.
     if (role == StaticTextRole)
         return IgnoreObject;

@@ -250,7 +250,12 @@ void AccessibilityTable::addChildren()
                 
                 row->setRowIndex((int)m_rows.size());        
                 m_rows.append(row);
-                m_children.append(row);
+                if (!row->accessibilityIsIgnored())
+                    m_children.append(row);
+#if PLATFORM(GTK)
+                else
+                    m_children.append(row->children());
+#endif
                 appendedRows.add(row);
             }
         }
@@ -265,11 +270,12 @@ void AccessibilityTable::addChildren()
         column->setColumnIndex((int)i);
         column->setParentTable(this);
         m_columns.append(column);
-        m_children.append(column);
+        if (!column->accessibilityIsIgnored())
+            m_children.append(column);
     }
     
     AccessibilityObject* headerContainerObject = headerContainer();
-    if (headerContainerObject)
+    if (headerContainerObject && !headerContainerObject->accessibilityIsIgnored())
         m_children.append(headerContainerObject);
 }
     

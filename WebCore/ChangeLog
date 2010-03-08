@@ -1,3 +1,26 @@
+2010-03-08  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
+
+        Reviewed by Xan Lopez.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30895
+        [Gtk] The accessible hierarchy of tables is significantly incorrect for Atk
+
+        Gives platforms the ability to exclude parts of an AccessibilityTable
+        from the accessible hierarchy.
+
+        * accessibility/gtk/AccessibilityObjectAtk.cpp:
+        (AccessibilityObject::accessibilityPlatformIncludesObject):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (AccessibilityRenderObject::determineAccessibilityRole):
+        * accessibility/AccessibilityTable.cpp:
+        (AccessibilityTable::addChildren):
+        * accessibility/AccessibilityTableColumn.h:
+        (accessibilityIsIgnored):
+        * accessibility/AccessibilityTableHeaderContainer.h:
+        (accessibilityIsIgnored):
+        * accessibility/AccessibilityTableRow.cpp:
+        (accessibilityIsIgnored):
+
 2010-03-08  Jian Li  <jianli@chromium.org>
 
         No review. Fix build break on Tiger intel release.

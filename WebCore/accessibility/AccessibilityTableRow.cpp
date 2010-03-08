@@ -76,7 +76,11 @@ bool AccessibilityTableRow::isTableRow() const
     
 bool AccessibilityTableRow::accessibilityIsIgnored() const
 {    
+#if PLATFORM(GTK)
+    if (true)
+#else
     if (!isTableRow())
+#endif
         return AccessibilityRenderObject::accessibilityIsIgnored();
 
     return false;

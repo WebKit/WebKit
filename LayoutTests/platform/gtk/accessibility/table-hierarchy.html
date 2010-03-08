@@ -21,6 +21,11 @@ var successfullyParsed = false;
 <tr><td>hello</td><td>world</td></tr>
 </tbody>
 </table>
+<table border=1>
+<tr><th>Odd</th><th>Even</th></tr>
+<tr><td><p>1</p></td><td><p>2</p></td></tr>
+<tr><td><p>3</p></td><td><p>4</p></td></tr>
+</table>
 <p id="description"></p>
 <div id="console"></div>
 <script>
@@ -36,6 +41,8 @@ var successfullyParsed = false;
         shouldBe("table2.role", "'table'");
         var table3 = webArea.childAtIndex(2);
         shouldBe("table3.role", "'table'");
+        var table4 = webArea.childAtIndex(3);
+        shouldBe("table4.role", "'table'");
 
         var children = table1.childrenCount;
         shouldBe("children", "2");
@@ -51,6 +58,11 @@ var successfullyParsed = false;
         shouldBe("children", "2");
         for (i = 0; i < children; ++i) {
             shouldBe("table3.childAtIndex(i).role", "'table cell'");
+        }
+        children = table4.childrenCount;
+        shouldBe("children", "6");
+        for (i = 0; i < children; ++i) {
+            shouldBe("table4.childAtIndex(i).role", "'table cell'");
         }
     }
     successfullyParsed = true;
