@@ -42,7 +42,7 @@ from webkitpy.scm import Git
 
 # WebKit includes a built copy of BeautifulSoup in Scripts/webkitpy
 # so this import should always succeed.
-from webkitpy.BeautifulSoup import BeautifulSoup
+from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
 
 def print_list_if_non_empty(title, list_to_print):
     if not list_to_print:
