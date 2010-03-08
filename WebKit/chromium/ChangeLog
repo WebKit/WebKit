@@ -1,3 +1,21 @@
+2010-03-08  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Pass the WebFrame into WebStorageArea::setItem so we can figure out the routing ID
+        https://bugs.webkit.org/show_bug.cgi?id=35758
+
+        This is necessary since setItem is sometimes blocked and the embedder might need
+        to display some piece of UI associated with such an event.
+
+        * public/WebStorageArea.h:
+        (WebKit::WebStorageArea::setItem):
+        * src/StorageAreaProxy.cpp:
+        (WebCore::StorageAreaProxy::setItem):
+        * src/WebStorageAreaImpl.cpp:
+        (WebKit::WebStorageAreaImpl::setItem):
+        * src/WebStorageAreaImpl.h:
+
 2010-03-07  Mark Rowe  <mrowe@apple.com>
 
         Chromium build fix.

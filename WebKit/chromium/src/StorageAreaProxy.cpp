@@ -40,6 +40,7 @@
 #include "StorageAreaImpl.h"
 #include "StorageEvent.h"
 
+#include "WebFrameImpl.h"
 #include "WebStorageArea.h"
 #include "WebString.h"
 #include "WebURL.h"
@@ -73,12 +74,13 @@ String StorageAreaProxy::getItem(const String& key) const
 
 String StorageAreaProxy::setItem(const String& key, const String& value, ExceptionCode& ec, Frame* frame)
 {
-    bool quotaException = false;
+    WebKit::WebStorageArea::Result result = WebKit::WebStorageArea::ResultOK;
     WebKit::WebString oldValue;
-    m_storageArea->setItem(key, value, frame->document()->url(), quotaException, oldValue);
-    ec = quotaException ? QUOTA_EXCEEDED_ERR : 0;
+    WebKit::WebFrame* webFrame = WebKit::WebFrameImpl::fromFrame(frame);
+    m_storageArea->setItem(key, value, frame->document()->url(), result, oldValue, webFrame);
+    ec = (result == WebKit::WebStorageArea::ResultOK) ? 0 : QUOTA_EXCEEDED_ERR;
     String oldValueString = oldValue;
-    if (oldValueString != value)
+    if (oldValueString != value && result == WebKit::WebStorageArea::ResultOK)
         storageEvent(key, oldValue, value, m_storageType, frame->document()->securityOrigin(), frame);
     return oldValue;
 }
