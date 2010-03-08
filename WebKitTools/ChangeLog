@@ -1,3 +1,22 @@
+2010-03-07  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [DRT/Chromium] Add AccessibilityController and AccessibilityUIElement
+        https://bugs.webkit.org/show_bug.cgi?id=35774
+
+        Add AccessibilityController and AccessibilityUIElement classes,
+        which are going to be used by DumpRenderTree Chromium port. These
+        files are based on:
+        - src/webkit/tools/test_shell/accessibility_controller.{cc,h} and
+        - src/webkit/tools/test_shell/accessibility_ui_element.{cc,h}
+        of Chromium rev.40492.
+
+        * DumpRenderTree/chromium/AccessibilityController.cpp: Added.
+        * DumpRenderTree/chromium/AccessibilityController.h: Added.
+        * DumpRenderTree/chromium/AccessibilityUIElement.cpp: Added.
+        * DumpRenderTree/chromium/AccessibilityUIElement.h: Added.
+
 2010-03-06  Hironori Bono  <hbono@chromium.org>
 
         Reviewed by Eric Seidel.
