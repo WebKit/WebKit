@@ -5101,3 +5101,6 @@ storage/open-database-creation-callback-isolated-world.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=35824 - Doesn't apply to platforms that don't enforce the CFNetwork-style 3rd party cookie policy
 http/tests/cookies/third-party-cookie-relaxing.html
+
+# For some reason crashes when run with all tests. Passes individually.
+fast/forms/multiple-form-submission-protection-mouse.html

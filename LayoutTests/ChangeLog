@@ -1,3 +1,13 @@
+2010-03-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Reset multiple form submission protection on mouse events.
+        https://bugs.webkit.org/show_bug.cgi?id=35128
+
+        * fast/forms/multiple-form-submission-protection-mouse-expected.txt: Copied from LayoutTests/editing/execCommand/copy-without-selection-expected.txt.
+        * fast/forms/multiple-form-submission-protection-mouse.html: Added.
+
 2010-03-08  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
 
         Reviewed by Xan Lopez.

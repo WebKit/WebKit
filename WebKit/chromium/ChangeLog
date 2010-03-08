@@ -1,3 +1,13 @@
+2010-03-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Reset multiple form submission protection on mouse events.
+        https://bugs.webkit.org/show_bug.cgi?id=35128
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::mouseDown):
+
 2010-03-08  Michael Nordman  <michaeln@google.com>
 
         Reviewed by Darin Fisher.
