@@ -1,3 +1,11 @@
+2010-03-08  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Unreviewed. Rebaseline two tests that had their expected results
+        changed.
+
+        * platform/gtk/inspector/timeline-network-resource-expected.txt:
+        * platform/gtk/svg/css/getComputedStyle-basic-expected.txt:
+
 2010-03-07  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Eric Seidel.

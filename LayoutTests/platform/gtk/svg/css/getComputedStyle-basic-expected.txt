@@ -190,6 +190,8 @@ rect: style.getPropertyValue(-webkit-animation-direction) : normal
 rect: style.getPropertyCSSValue(-webkit-animation-direction) : [object CSSValueList]
 rect: style.getPropertyValue(-webkit-animation-duration) : 0s
 rect: style.getPropertyCSSValue(-webkit-animation-duration) : [object CSSValueList]
+rect: style.getPropertyValue(-webkit-animation-fill-mode) : none
+rect: style.getPropertyCSSValue(-webkit-animation-fill-mode) : [object CSSValueList]
 rect: style.getPropertyValue(-webkit-animation-iteration-count) : 1
 rect: style.getPropertyCSSValue(-webkit-animation-iteration-count) : [object CSSValueList]
 rect: style.getPropertyValue(-webkit-animation-name) : none
@@ -602,6 +604,8 @@ g: style.getPropertyValue(-webkit-animation-direction) : normal
 g: style.getPropertyCSSValue(-webkit-animation-direction) : [object CSSValueList]
 g: style.getPropertyValue(-webkit-animation-duration) : 0s
 g: style.getPropertyCSSValue(-webkit-animation-duration) : [object CSSValueList]
+g: style.getPropertyValue(-webkit-animation-fill-mode) : none
+g: style.getPropertyCSSValue(-webkit-animation-fill-mode) : [object CSSValueList]
 g: style.getPropertyValue(-webkit-animation-iteration-count) : 1
 g: style.getPropertyCSSValue(-webkit-animation-iteration-count) : [object CSSValueList]
 g: style.getPropertyValue(-webkit-animation-name) : none
