@@ -47,4 +47,5 @@
 #define _WINSOCKAPI_ // Prevent inclusion of winsock.h in windows.h
 #endif
 
+#include <CoreFoundation/CoreFoundation.h>
 #include <WebKit/WebKit.h>
