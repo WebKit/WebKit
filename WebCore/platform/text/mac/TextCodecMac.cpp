@@ -34,6 +34,7 @@
 #include "ThreadGlobalData.h"
 #include <wtf/Assertions.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/RetainPtr.h>
 #include <wtf/Threading.h>
 
 using namespace std;

@@ -36,12 +36,10 @@
 #include "EditorClient.h"
 #include "FloatRect.h"
 #include "FocusDirection.h"
-#include "FormState.h"
 #include "FrameLoaderClient.h"
 #include "InspectorClient.h"
 #include "PluginHalterClient.h"
 #include "ResourceError.h"
-#include "SharedBuffer.h"
 
 /*
  This file holds empty Client stubs for use by WebCore.

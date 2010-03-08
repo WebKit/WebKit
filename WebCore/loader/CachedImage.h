@@ -25,7 +25,6 @@
 
 #include "CachedResource.h"
 #include "ImageObserver.h"
-#include "Image.h"
 #include "IntRect.h"
 #include "Timer.h"
 #include <wtf/Vector.h>

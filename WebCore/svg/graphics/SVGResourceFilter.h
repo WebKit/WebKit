@@ -26,8 +26,6 @@
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGResource.h"
 
-#include "Image.h"
-#include "ImageBuffer.h"
 #include "FloatRect.h"
 #include "RenderObject.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"

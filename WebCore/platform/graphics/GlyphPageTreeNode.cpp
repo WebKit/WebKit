@@ -31,6 +31,7 @@
 
 #include "CString.h"
 #include "CharacterNames.h"
+#include "PlatformString.h"
 #include "SegmentedFontData.h"
 #include "SimpleFontData.h"
 #include <stdio.h>

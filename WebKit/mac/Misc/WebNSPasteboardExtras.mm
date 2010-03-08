@@ -37,14 +37,15 @@
 #import "WebURLsWithTitles.h"
 #import "WebViewPrivate.h"
 #import <WebCore/Element.h>
+#import <WebCore/Image.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/RenderImage.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMPrivate.h>
-#import <wtf/Assertions.h>
-#import <wtf/StdLibExtras.h>
-#import <wtf/RetainPtr.h>
 #import <WebKitSystemInterface.h>
+#import <wtf/Assertions.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/StdLibExtras.h>
 
 @interface NSFilePromiseDragSource : NSObject
 - initWithSource:(id)draggingSource;

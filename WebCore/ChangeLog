@@ -1,5 +1,21 @@
 2010-03-07  Mark Rowe  <mrowe@apple.com>
 
+        Rubber-stamped by Cameron Zwarich.
+
+        Remove unnecessary includes from header files, adding them to the handful of implementation files that need them.
+
+        * bindings/objc/DOM.mm:
+        * loader/CachedImage.h:
+        * loader/EmptyClients.h:
+        * platform/graphics/GlyphPageTreeNode.cpp:
+        * platform/text/CString.h:
+        * platform/text/String.cpp:
+        * platform/text/mac/TextCodecMac.cpp:
+        * svg/graphics/SVGResourceFilter.h:
+        * svg/graphics/filters/SVGFEImage.h:
+
+2010-03-07  Mark Rowe  <mrowe@apple.com>
+
         Completely remove two files that were deleted in r55635 from the Xcode project.
 
         * WebCore.xcodeproj/project.pbxproj:

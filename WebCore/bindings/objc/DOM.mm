@@ -37,6 +37,7 @@
 #import "Frame.h"
 #import "HTMLElement.h"
 #import "HTMLNames.h"
+#import "Image.h"
 #import "NodeFilter.h"
 #import "RenderImage.h"
 #import "WebScriptObjectPrivate.h"

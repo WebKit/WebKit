@@ -24,17 +24,18 @@
 
 #include "CString.h"
 #include "FloatConversion.h"
+#include "SharedBuffer.h"
 #include "StringBuffer.h"
 #include "TextBreakIterator.h"
 #include "TextEncoding.h"
-#include <wtf/dtoa.h>
 #include <limits>
 #include <stdarg.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/StringExtras.h>
 #include <wtf/Vector.h>
-#include <wtf/unicode/Unicode.h>
+#include <wtf/dtoa.h>
 #include <wtf/unicode/UTF8.h>
+#include <wtf/unicode/Unicode.h>
 
 #if USE(JSC)
 #include <runtime/Identifier.h>
