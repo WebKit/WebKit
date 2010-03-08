@@ -1,8 +1,14 @@
 2010-03-07  Mark Rowe  <mrowe@apple.com>
 
+        Qt build fix.
+
+        * platform/network/qt/ResourceHandleQt.cpp: Include SharedBuffer.h since we're using WebCore::SharedBuffer.
+
+2010-03-07  Mark Rowe  <mrowe@apple.com>
+
         Gtk build fix.
 
-        * platform/gtk/ClipboardGtk.cpp: Include Imageh since we're using WebCore::Image.
+        * platform/gtk/ClipboardGtk.cpp: Include Image.h since we're using WebCore::Image.
 
 2010-03-07  Mark Rowe  <mrowe@apple.com>
 
