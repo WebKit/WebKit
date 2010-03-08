@@ -149,24 +149,4 @@ void URopeImpl::destructNonRecursive()
     }
 }
 
-PassRefPtr<UStringImpl> singleCharacterSubstring(UStringOrRopeImpl* impl, unsigned index)
-{
-top:
-    if (impl->isRope()) {
-        URopeImpl* rope = static_cast<URopeImpl*>(impl);
-        for (unsigned i = 0; i < rope->m_fiberCount; ++i) {
-            UStringOrRopeImpl* currentFiber = rope->fibers(i);
-            unsigned fiberLength = currentFiber->length();
-            if (index < fiberLength) {
-                impl = currentFiber;
-                goto top;
-            }
-            index -= fiberLength;
-        }
-        CRASH();
-    }
-
-    return static_cast<UStringImpl*>(impl)->singleCharacterSubstring(index);
-}
-
 } // namespace JSC
