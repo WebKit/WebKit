@@ -20,7 +20,7 @@
 #include "config.h"
 #include "DnsPrefetchHelper.h"
 
-#include "CString.h"
+#include "PlatformString.h"
 
 namespace WebCore {
 // this is called on mouse over a href and on page loading
