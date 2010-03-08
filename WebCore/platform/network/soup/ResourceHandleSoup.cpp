@@ -28,9 +28,9 @@
 #include "ResourceHandle.h"
 
 #include "Base64.h"
-#include "CookieJarSoup.h"
-#include "ChromeClient.h"
 #include "CString.h"
+#include "ChromeClient.h"
+#include "CookieJarSoup.h"
 #include "DocLoader.h"
 #include "FileSystem.h"
 #include "Frame.h"
@@ -44,6 +44,7 @@
 #include "ResourceHandleClient.h"
 #include "ResourceHandleInternal.h"
 #include "ResourceResponse.h"
+#include "SharedBuffer.h"
 #include "TextEncoding.h"
 
 #include <errno.h>
