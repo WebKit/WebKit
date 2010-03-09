@@ -418,7 +418,11 @@ class Bugzilla(object):
         return self.browser.open(bug_url)
 
     def fetch_bug_dictionary(self, bug_id):
-        return self._parse_bug_page(self._fetch_bug_page(bug_id))
+        try:
+            return self._parse_bug_page(self._fetch_bug_page(bug_id))
+        except:
+            self.authenticate()
+            return self._parse_bug_page(self._fetch_bug_page(bug_id))
 
     # FIXME: A BugzillaCache object should provide all these fetch_ methods.
 
