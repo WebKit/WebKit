@@ -2037,16 +2037,25 @@ PassRefPtr<Range> TextIterator::rangeFromLocationAndLength(Element* scope, int r
         
         // Fix textRunRange->endPosition(), but only if foundStart || foundEnd, because it is only
         // in those cases that textRunRange is used.
-        if (foundStart || foundEnd) {
+        if (foundEnd) {
             // FIXME: This is a workaround for the fact that the end of a run is often at the wrong
             // position for emitted '\n's.
             if (len == 1 && it.characters()[0] == '\n') {
-                Position runStart = textRunRange->startPosition();
-                Position runEnd = VisiblePosition(runStart).next().deepEquivalent();
-                if (runEnd.isNotNull()) {
+                scope->document()->updateLayoutIgnorePendingStylesheets();
+                it.advance();
+                if (!it.atEnd()) {
+                    RefPtr<Range> range = it.range();
                     ExceptionCode ec = 0;
-                    textRunRange->setEnd(runEnd.node(), runEnd.deprecatedEditingOffset(), ec);
+                    textRunRange->setEnd(range->startContainer(), range->startOffset(), ec);
                     ASSERT(!ec);
+                } else {
+                    Position runStart = textRunRange->startPosition();
+                    Position runEnd = VisiblePosition(runStart).next().deepEquivalent();
+                    if (runEnd.isNotNull()) {
+                        ExceptionCode ec = 0;
+                        textRunRange->setEnd(runEnd.node(), runEnd.deprecatedEditingOffset(), ec);
+                        ASSERT(!ec);
+                    }
                 }
             }
         }

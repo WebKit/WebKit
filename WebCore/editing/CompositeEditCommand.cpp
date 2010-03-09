@@ -950,6 +950,7 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     ASSERT(destination.deepEquivalent().node()->inDocument());
 
     cleanupAfterDeletion();
+    ASSERT(destination.deepEquivalent().node()->inDocument());
 
     // Add a br if pruning an empty block level element caused a collapse. For example:
     // foo^
@@ -971,6 +972,7 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     destinationIndex = TextIterator::rangeLength(startToDestinationRange.get(), true);
     
     setEndingSelection(destination);
+    ASSERT(endingSelection().isCaretOrRange());
     applyCommandToComposite(ReplaceSelectionCommand::create(document(), fragment, true, false, !preserveStyle, false, true));
     
     // If the selection is in an empty paragraph, restore styles from the old empty paragraph to the new empty paragraph.
