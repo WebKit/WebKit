@@ -1,3 +1,27 @@
+2010-03-09  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Plug-ins don't always respect the cookie accept policy.
+        <rdar://problem/7338359> and https://bugs.webkit.org/show_bug.cgi?id=26391
+
+        The problem is that the various plug-in implementations call into a ResourceLoader
+        directly instead of filtering the request through FrameLoader. This bypassed the step
+        of adding extra fields to the requests, such as the firstPartyForCookies URL.
+
+        Since plug-in code is currently so strewn about and very platform specific, I
+        think reworking it needs to be a task for domain experts. I don't know the implications
+        of adding *all* the extra fields to plug-in requests, for example.
+
+        There's no harm in this targeted fix for the hole in our cookie accept policy until
+        plug-ins can more fundamentally change.
+
+        Test: http/tests/plugins/third-party-cookie-accept-policy.html
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::load): Don't load a resource without first giving the request 
+          a firstPartyForCookies URL.
+
 2010-03-09  Andy Estes  <aestes@apple.com>
 
         Reviewed by Adele Peterson.

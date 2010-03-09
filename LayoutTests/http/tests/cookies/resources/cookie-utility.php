@@ -3,7 +3,7 @@ parse_str($_SERVER["QUERY_STRING"]);
 
 function deleteCookie($value, $name)
 {
-    setcookie($name, "deleted", time() - 86400);
+    setcookie($name, "deleted", time() - 86400, '/');
 }
 
 if ($queryfunction == "deleteCookies") {
@@ -13,14 +13,14 @@ if ($queryfunction == "deleteCookies") {
 }
 
 if ($queryfunction == "setFooCookie") {
-    setcookie("foo", "awesomevalue", time() + 86400);
+    setcookie("foo", "awesomevalue", time() + 86400, '/');
     echo "Set the foo cookie";
     return;
 }
 
 if ($queryfunction == "setFooAndBarCookie") {
-    setcookie("foo", "awesomevalue", time() + 86400);
-    setcookie("bar", "anotherawesomevalue", time() + 86400);
+    setcookie("foo", "awesomevalue", time() + 86400, '/');
+    setcookie("bar", "anotherawesomevalue", time() + 86400, '/');
     echo "Set the foo and bar cookies";
     return;
 }

@@ -1,3 +1,14 @@
+2010-03-09  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Plug-ins don't always respect the cookie accept policy.
+        <rdar://problem/7338359> and https://bugs.webkit.org/show_bug.cgi?id=26391
+
+        * http/tests/cookies/resources/cookie-utility.php:
+        * http/tests/plugins/resources/third-party-cookie-accept-policy-iframe.html: Added.
+        * http/tests/plugins/third-party-cookie-accept-policy.html: Added.
+
 2010-03-09  Andy Estes  <aestes@apple.com>
 
         Reviewed by Adele Peterson.
