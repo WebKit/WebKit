@@ -560,7 +560,18 @@ String WebHaltablePlugin::pluginName() const
     NSWindow *window = [self window];
     return !window || [window isMiniaturized] || [NSApp isHidden] || ![self isDescendantOf:[[self window] contentView]] || [self isHiddenOrHasHiddenAncestor];
 }
-    
+
+- (BOOL)inFlatteningPaint
+{
+    RenderObject* renderer = _element->renderer();
+    if (renderer && renderer->view()) {
+        if (FrameView* frameView = renderer->view()->frameView())
+            return frameView->paintBehavior() & PaintBehaviorFlattenCompositingLayers;
+    }
+
+    return NO;
+}
+
 - (BOOL)hasBeenHalted
 {
     return _hasBeenHalted;

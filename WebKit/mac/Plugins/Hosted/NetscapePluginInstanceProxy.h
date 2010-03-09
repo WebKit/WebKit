@@ -102,6 +102,7 @@ public:
     void syntheticKeyDownWithCommandModifier(int keyCode, char character);
     void flagsChanged(NSEvent *);
     void print(CGContextRef, unsigned width, unsigned height);
+    void snapshot(CGContextRef, unsigned width, unsigned height);
     
     void startTimers(bool throttleTimers);
     void stopTimers();

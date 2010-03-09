@@ -123,6 +123,7 @@ class WebHaltablePlugin;
 - (void)addWindowObservers;
 - (void)removeWindowObservers;
 - (BOOL)shouldClipOutPlugin;
+- (BOOL)inFlatteningPaint;
 
 - (BOOL)convertFromX:(double)sourceX andY:(double)sourceY space:(NPCoordinateSpace)sourceSpace
                  toX:(double *)destX andY:(double *)destY space:(NPCoordinateSpace)destSpace;

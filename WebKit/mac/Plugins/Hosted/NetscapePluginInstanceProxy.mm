@@ -498,6 +498,22 @@ void NetscapePluginInstanceProxy::print(CGContextRef context, unsigned width, un
     CGContextRestoreGState(context);
 }
 
+void NetscapePluginInstanceProxy::snapshot(CGContextRef context, unsigned width, unsigned height)
+{
+    uint32_t requestID = nextRequestID();
+    _WKPHPluginInstanceSnapshot(m_pluginHostProxy->port(), m_pluginID, requestID, width, height);
+    
+    auto_ptr<NetscapePluginInstanceProxy::BooleanAndDataReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanAndDataReply>(requestID);
+    if (!reply.get() || !reply->m_returnValue)
+        return;
+
+    RetainPtr<CGDataProvider> dataProvider(AdoptCF, CGDataProviderCreateWithCFData(reply->m_result.get()));
+    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
+    RetainPtr<CGImageRef> image(AdoptCF, CGImageCreate(width, height, 8, 32, width * 4, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host, dataProvider.get(), 0, false, kCGRenderingIntentDefault));
+
+    CGContextDrawImage(context, CGRectMake(0, 0, width, height), image.get());
+}
+
 void NetscapePluginInstanceProxy::stopTimers()
 {
     _WKPHPluginInstanceStopTimers(m_pluginHostProxy->port(), m_pluginID);

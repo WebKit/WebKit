@@ -1,3 +1,33 @@
+2010-03-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        <rdar://problem/7714340> Need to grab image snapshot of Core Animation plugins
+        
+        Allow plug-ins using the Core Animation drawing model to be captured when doing a flattening paint,
+        by sending them a drawRect event as if they were software-painting.
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::snapshot):
+        New snapshot() method that calls over to the plugin host, and then draws the image that comes back.
+        
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView drawRect:]): If we don't have a software renderer, but we're doing
+        a flattening paint, then call the snapshot method.
+        
+        * Plugins/Hosted/WebKitPluginHost.defs: Added snapshot method.
+        
+        * Plugins/WebBaseNetscapePluginView.h:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView inFlatteningPaint]):
+        New utility method that asks the FrameView whether the current paint behavior is
+        flattening.
+        
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView drawRect:]): If the plug-in is using CA but this is a flattening
+        paint, go ahead and send a drawRect event to the plug-in.
+
 2010-03-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.
