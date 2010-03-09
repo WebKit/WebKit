@@ -1,3 +1,15 @@
+2010-03-09  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Check for null renderer in scrollNode().
+        https://bugs.webkit.org/show_bug.cgi?id=34700
+
+        Test: fast/events/remove-child-onscroll.html
+
+        * page/EventHandler.cpp:
+        (WebCore::scrollNode): Return early if node->renderer() == 0
+
 2010-03-09  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Unreviewed distcheck fix.

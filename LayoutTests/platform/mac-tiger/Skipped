@@ -118,3 +118,6 @@ http/tests/media/video-referer.html
 
 # This test fails on Tiger, and when it fails, it dumps different results each time.
 java/lc3/JavaArray/ToString-001.html
+
+# We can't implement mouseScrollBy() in Tiger due to the lack of CGEventCreateScrollWheelEvent().
+fast/events/remove-child-onscroll.html

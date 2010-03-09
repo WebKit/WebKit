@@ -113,6 +113,9 @@ static inline bool scrollNode(float delta, WheelEvent::Granularity granularity, 
     if (!delta)
         return false;
     
+    if (!node->renderer())
+        return false;
+    
     // Find the nearest enclosing box.
     RenderBox* enclosingBox = node->renderer()->enclosingBox();
 
