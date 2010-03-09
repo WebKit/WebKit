@@ -134,7 +134,9 @@ BOOL replayingSavedEvents;
             || aSelector == @selector(textZoomIn)
             || aSelector == @selector(textZoomOut)
             || aSelector == @selector(zoomPageIn)
-            || aSelector == @selector(zoomPageOut))
+            || aSelector == @selector(zoomPageOut)
+            || aSelector == @selector(mouseScrollByX:andY:)
+            || aSelector == @selector(continuousMouseScrollByX:andY:))
         return NO;
     return YES;
 }
@@ -166,6 +168,10 @@ BOOL replayingSavedEvents;
         return @"mouseMoveTo";
     if (aSelector == @selector(setDragMode:))
         return @"setDragMode";
+    if (aSelector == @selector(mouseScrollByX:andY:))
+        return @"mouseScrollBy";
+    if (aSelector == @selector(continuousMouseScrollByX:andY:))
+        return @"continuousMouseScrollBy";
     return nil;
 }
 
@@ -451,6 +457,39 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
         } else
             [subView mouseMoved:event];
     }
+}
+
+- (void)mouseScrollByX:(int)x andY:(int)y continuously:(BOOL)c
+{
+    // CGEventCreateScrollWheelEvent() was introduced in 10.5
+#if !defined(BUILDING_ON_TIGER)
+    CGScrollEventUnit unit = c?kCGScrollEventUnitPixel:kCGScrollEventUnitLine;
+    CGEventRef cgScrollEvent = CGEventCreateScrollWheelEvent(NULL, unit, 2, y, x);
+    
+    // CGEvent locations are in global display coordinates.
+    CGPoint lastGlobalMousePosition = {
+        lastMousePosition.x,
+        [[NSScreen mainScreen] frame].size.height - lastMousePosition.y
+    };
+    CGEventSetLocation(cgScrollEvent, lastGlobalMousePosition);
+
+    NSEvent *scrollEvent = [NSEvent eventWithCGEvent:cgScrollEvent];
+    CFRelease(cgScrollEvent);
+
+    NSView *subView = [[mainFrame webView] hitTest:[scrollEvent locationInWindow]];
+    if (subView)
+        [subView scrollWheel:scrollEvent];
+#endif
+}
+
+- (void)continuousMouseScrollByX:(int)x andY:(int)y
+{
+    [self mouseScrollByX:x andY:y continuously:YES];
+}
+
+- (void)mouseScrollByX:(int)x andY:(int)y
+{
+    [self mouseScrollByX:x andY:y continuously:NO];
 }
 
 - (void)contextClick

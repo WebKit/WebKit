@@ -1,3 +1,27 @@
+2010-03-09  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Add the ability to dispatch scroll wheel events in DRT.  This was
+        necessary in order to write a test for
+        https://bugs.webkit.org/show_bug.cgi?id=34700.
+
+        * DumpRenderTree/mac/EventSendingController.mm: Add support for two
+        new methods to EventSender: mouseScrollBy(x, y) and
+        continuousMouseScrollBy(x, y).  The API to generate scroll events on
+        the mac was added in 10.5, so these methods are NOOPs on Tiger.
+        (+[EventSendingController isSelectorExcludedFromWebScript:]):
+        Regiester mouseScrollByX:andY: and continuousMouseScrollByX:andY:
+        (+[EventSendingController webScriptNameForSelector:]): Map JavaScript
+        method names to ObjC selectors.
+        (-[EventSendingController mouseScrollByX:andY:continuously:]): Generate
+        a scroll wheel event using CGEventCreateScrollWheelEvent() and dispatch
+        it to WebKit.
+        (-[EventSendingController continuousMouseScrollByX:andY:]): Generate a
+        continuous scrolling event by x and y pixels.
+        (-[EventSendingController mouseScrollByX:andY:]): Generate a notchy
+        scrolling event by x and y lines.
+
 2010-03-09  Chris Fleizach  <cfleizach@apple.com>
 
         DRT build fix for Tiger. No review.
