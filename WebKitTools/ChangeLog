@@ -1,3 +1,30 @@
+2010-03-09  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Simplified check-webkit-style's argument parsing code by removing
+        support for the vestigial "extra flag values" parameter.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34677
+
+        The "extra flag values" parameter was needed before WebKit
+        forked check-webkit-style from Google.  It was used to pass
+        through the option parser those command-line flags that WebKit
+        required but that Google's parser did not support (the --git-commit
+        flag in particular).
+            We can remove the parameter now because it is no longer
+        needed and unnecessarily clutters the argument-parsing code.
+
+        * Scripts/webkitpy/style/optparser.py:
+          - Removed the extra_flag_values parameter from the
+            CommandOptionValues class's constructor.
+          - Removed the extra_flags parameter from the ArgumentParser
+            class's parse() method.
+
+        * Scripts/webkitpy/style/optparser_unittest.py:
+          - Removed from the unit tests all references to the
+            extra_flag_values variable.
+
 2010-03-08  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

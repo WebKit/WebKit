@@ -118,18 +118,12 @@ class DefaultCommandOptionValues(object):
         self.verbosity = verbosity
 
 
-# FIXME: Eliminate support for "extra_flag_values".
-#
 # This class should not have knowledge of the flag key names.
 class CommandOptionValues(object):
 
     """Stores the option values passed by the user via the command line.
 
     Attributes:
-      extra_flag_values: A string-string dictionary of all flag key-value
-                         pairs that are not otherwise represented by this
-                         class.  The default is the empty dictionary.
-
       filter_rules: The list of filter rules provided by the user.
                     These rules are appended to the base rules and
                     path-specific rules and so take precedence over
@@ -148,13 +142,10 @@ class CommandOptionValues(object):
 
     """
     def __init__(self,
-                 extra_flag_values=None,
                  filter_rules=None,
                  git_commit=None,
                  output_format="emacs",
                  verbosity=1):
-        if extra_flag_values is None:
-            extra_flag_values = {}
         if filter_rules is None:
             filter_rules = []
 
@@ -168,7 +159,6 @@ class CommandOptionValues(object):
                              "value must be an integer between 1-5 inclusive. "
                              'Value given: "%s".' % verbosity)
 
-        self.extra_flag_values = extra_flag_values
         self.filter_rules = filter_rules
         self.git_commit = git_commit
         self.output_format = output_format
@@ -177,8 +167,6 @@ class CommandOptionValues(object):
     # Useful for unit testing.
     def __eq__(self, other):
         """Return whether this instance is equal to another."""
-        if self.extra_flag_values != other.extra_flag_values:
-            return False
         if self.filter_rules != other.filter_rules:
             return False
         if self.git_commit != other.git_commit:
@@ -212,8 +200,7 @@ class ArgumentPrinter(object):
           options: A CommandOptionValues instance.
 
         """
-        flags = options.extra_flag_values.copy()
-
+        flags = {}
         flags['output'] = options.output_format
         flags['verbose'] = options.verbosity
         # Only include the filter flag if user-provided rules are present.
@@ -335,15 +322,11 @@ class ArgumentParser(object):
             filters.append(filter)
         return filters
 
-    def parse(self, args, extra_flags=None):
+    def parse(self, args):
         """Parse the command line arguments to check-webkit-style.
 
         Args:
           args: A list of command-line arguments as returned by sys.argv[1:].
-          extra_flags: A list of flags whose values we want to extract, but
-                       are not supported by the CommandOptionValues class.
-                       An example flag "new_flag=". This defaults to the
-                       empty list.
 
         Returns:
           A tuple of (filenames, options)
@@ -352,21 +335,11 @@ class ArgumentParser(object):
           options: A CommandOptionValues instance.
 
         """
-        if extra_flags is None:
-            extra_flags = []
-
         output_format = self.default_options.output_format
         verbosity = self.default_options.verbosity
 
-        # The flags already supported by the CommandOptionValues class.
+        # The flags that the CommandOptionValues class supports.
         flags = ['help', 'output=', 'verbose=', 'filter=', 'git-commit=']
-
-        for extra_flag in extra_flags:
-            if extra_flag in flags:
-                raise ValueError('Flag \'%(extra_flag)s is duplicated '
-                                 'or already supported.' %
-                                 {'extra_flag': extra_flag})
-            flags.append(extra_flag)
 
         try:
             (opts, filenames) = getopt.getopt(args, '', flags)
@@ -377,7 +350,6 @@ class ArgumentParser(object):
             #        sys.exit when needing to interrupt execution.
             self._exit_with_usage('Invalid arguments.')
 
-        extra_flag_values = {}
         git_commit = None
         filter_rules = []
 
@@ -395,7 +367,7 @@ class ArgumentParser(object):
                     self._exit_with_categories()
                 filter_rules = self._parse_filter_flag(val)
             else:
-                extra_flag_values[opt] = val
+                raise ValueError('Invalid option: "%s"' % opt)
 
         # Check validity of resulting values.
         if filenames and (git_commit != None):
@@ -414,8 +386,7 @@ class ArgumentParser(object):
             raise ValueError('Invalid --verbose value %s: value must '
                              'be between 1-5.' % verbosity)
 
-        options = CommandOptionValues(extra_flag_values=extra_flag_values,
-                                 filter_rules=filter_rules,
+        options = CommandOptionValues(filter_rules=filter_rules,
                                  git_commit=git_commit,
                                  output_format=output_format,
                                  verbosity=verbosity)

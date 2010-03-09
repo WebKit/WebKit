@@ -52,19 +52,16 @@ class ArgumentPrinterTest(unittest.TestCase):
                         output_format='emacs',
                         verbosity=3,
                         filter_rules=[],
-                        git_commit=None,
-                        extra_flag_values={}):
-        return ProcessorOptions(extra_flag_values=extra_flag_values,
-                                filter_rules=filter_rules,
+                        git_commit=None):
+        return ProcessorOptions(filter_rules=filter_rules,
                                 git_commit=git_commit,
                                 output_format=output_format,
                                 verbosity=verbosity)
 
     def test_to_flag_string(self):
-        options = self._create_options('vs7', 5, ['+foo', '-bar'], 'git',
-                                       {'a': 0, 'z': 1})
-        self.assertEquals('--a=0 --filter=+foo,-bar --git-commit=git '
-                          '--output=vs7 --verbose=5 --z=1',
+        options = self._create_options('vs7', 5, ['+foo', '-bar'], 'git')
+        self.assertEquals('--filter=+foo,-bar --git-commit=git '
+                          '--output=vs7 --verbose=5',
                           self._printer.to_flag_string(options))
 
         # This is to check that --filter and --git-commit do not
@@ -134,13 +131,6 @@ class ArgumentParserTest(unittest.TestCase):
         parse(['--filter=+build']) # works
         # Pass files and git-commit at the same time.
         self.assertRaises(SystemExit, parse, ['--git-commit=', 'file.txt'])
-        # Pass an extra flag already supported.
-        self.assertRaises(ValueError, parse, [], ['filter='])
-        parse([], ['extra=']) # works
-        # Pass an extra flag with typo.
-        self.assertRaises(SystemExit, parse, ['--extratypo='], ['extra='])
-        parse(['--extra='], ['extra=']) # works
-        self.assertRaises(ValueError, parse, [], ['extra=', 'extra='])
 
 
     def test_parse_default_arguments(self):
@@ -176,14 +166,6 @@ class ArgumentParserTest(unittest.TestCase):
         self.assertEquals(options.filter_rules,
                           ["+build", "-whitespace"])
 
-        # Pass extra flag values.
-        (files, options) = parse(['--extra'], ['extra'])
-        self.assertEquals(options.extra_flag_values, {'--extra': ''})
-        (files, options) = parse(['--extra='], ['extra='])
-        self.assertEquals(options.extra_flag_values, {'--extra': ''})
-        (files, options) = parse(['--extra=x'], ['extra='])
-        self.assertEquals(options.extra_flag_values, {'--extra': 'x'})
-
     def test_parse_files(self):
         parse = self._parse()
 
@@ -203,7 +185,6 @@ class CommandOptionValuesTest(unittest.TestCase):
         """Test __init__ constructor."""
         # Check default parameters.
         options = ProcessorOptions()
-        self.assertEquals(options.extra_flag_values, {})
         self.assertEquals(options.filter_rules, [])
         self.assertEquals(options.git_commit, None)
         self.assertEquals(options.output_format, "emacs")
@@ -219,12 +200,10 @@ class CommandOptionValuesTest(unittest.TestCase):
         ProcessorOptions(verbosity=5) # works
 
         # Check attributes.
-        options = ProcessorOptions(extra_flag_values={"extra_value" : 2},
-                                   filter_rules=["+"],
+        options = ProcessorOptions(filter_rules=["+"],
                                    git_commit="commit",
                                    output_format="vs7",
                                    verbosity=3)
-        self.assertEquals(options.extra_flag_values, {"extra_value" : 2})
         self.assertEquals(options.filter_rules, ["+"])
         self.assertEquals(options.git_commit, "commit")
         self.assertEquals(options.output_format, "vs7")
@@ -236,13 +215,10 @@ class CommandOptionValuesTest(unittest.TestCase):
         self.assertTrue(ProcessorOptions() == ProcessorOptions())
 
         # Verify that a difference in any argument causes equality to fail.
-        options = ProcessorOptions(extra_flag_values={"extra_value" : 1},
-                                   filter_rules=["+"],
+        options = ProcessorOptions(filter_rules=["+"],
                                    git_commit="commit",
                                    output_format="vs7",
                                    verbosity=1)
-        self.assertFalse(options == ProcessorOptions(extra_flag_values=
-                                                     {"extra_value" : 2}))
         self.assertFalse(options == ProcessorOptions(filter_rules=["-"]))
         self.assertFalse(options == ProcessorOptions(git_commit="commit2"))
         self.assertFalse(options == ProcessorOptions(output_format="emacs"))
