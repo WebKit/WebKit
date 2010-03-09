@@ -1,5 +1,26 @@
 2010-03-08  Darin Adler  <darin@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Fix crash when you quit inside an unload handler.
+        rdar://problem/6958347
+
+        Test: manual-tests/quit-inside-unload.html
+
+        * WebView/WebView.mm:
+        (-[WebView _closeWithFastTeardown]): Removed code to set
+        _private->closed since _close now does this earlier, before
+        calling this method.
+        (-[WebView _close]): Moved code to set _private->closed to the
+        top of this method.
+        (-[WebView setHostWindow:]): Rewrote the code that forbade
+        setting the host window after closing so that it only forbids
+        non-nil host windows. That way, the code to clear away the host
+        window can run safely after setting _private->closed, yet client
+        code cannot set a new host window after closing.
+
+2010-03-08  Darin Adler  <darin@apple.com>
+
         Roll out a file I checked in by accident.
 
         * WebView/WebView.mm: Back to previous version.

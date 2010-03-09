@@ -1,5 +1,14 @@
 2010-03-08  Darin Adler  <darin@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Added a test for crash when you quit inside an unload handler.
+        rdar://problem/6958347
+
+        * manual-tests/quit-inside-unload.html: Added.
+
+2010-03-08  Darin Adler  <darin@apple.com>
+
         Reviewed by Jon Honeycutt.
 
         Don't auto-play <audio> and <video> elements loaded in background tabs
