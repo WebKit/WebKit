@@ -48,3 +48,7 @@ fast/canvas/webgl/texImage2DImageDataTest.html
 # Fails on Mac
 # https://bugs.webkit.org/show_bug.cgi?id=34331
 http/tests/media/video-referer.html
+
+# Disable test until https://bugs.webkit.org/show_bug.cgi?id=35714 is fixed
+animation/fill-mode-transform.html
+
