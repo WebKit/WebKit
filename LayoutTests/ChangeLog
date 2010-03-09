@@ -3,7 +3,7 @@
         Reviewed by Adam Barth.
 
         Implement HTML5 <hgroup> element.
-        https://bugs.webkit.org/show_bug.cgi?id=32943
+        https://bugs.webkit.org/show_bug.cgi?id=33369
 
         The new test file tests:
         - <p> closing,
