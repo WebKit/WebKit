@@ -169,7 +169,11 @@ bool WKCACFLayerRenderer::acceleratedCompositingAvailable()
     }
 
     FreeLibrary(library);
+#ifdef DEBUG_ALL
+    library = LoadLibrary(TEXT("QuartzCore_debug.dll"));
+#else
     library = LoadLibrary(TEXT("QuartzCore.dll"));
+#endif
     if (!library) {
         available = false;
         return available;

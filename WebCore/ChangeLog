@@ -1,3 +1,12 @@
+2010-03-09  Steve Falkenburg  <sfalken@apple.com>
+
+        Rubber stamped by Adam Roben.
+
+        Load debug version of graphics library in Windows Debug_All builds.
+
+        * platform/graphics/win/WKCACFLayerRenderer.cpp:
+        (WebCore::WKCACFLayerRenderer::acceleratedCompositingAvailable):
+
 2010-03-09  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.
