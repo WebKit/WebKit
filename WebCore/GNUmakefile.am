@@ -2037,8 +2037,6 @@ webcoregtk_sources += \
 	WebCore/platform/gtk/FileSystemGtk.cpp \
 	WebCore/platform/gtk/GRefPtrGtk.cpp \
 	WebCore/platform/gtk/GRefPtrGtk.h \
-	WebCore/platform/gtk/GOwnPtrGtk.cpp \
-	WebCore/platform/gtk/GOwnPtrGtk.h \
 	WebCore/platform/gtk/GtkPluginWidget.cpp \
 	WebCore/platform/gtk/GtkPluginWidget.h \
 	WebCore/platform/gtk/KURLGtk.cpp \
@@ -2095,6 +2093,8 @@ webcoregtk_sources += \
 	WebCore/platform/network/soup/ResourceResponseSoup.cpp \
 	WebCore/platform/network/soup/ResourceRequest.h \
 	WebCore/platform/network/soup/ResourceResponse.h \
+	WebCore/platform/network/soup/GOwnPtrSoup.h \
+	WebCore/platform/network/soup/GOwnPtrSoup.cpp \
 	WebCore/workers/SharedWorkerRepository.h
 
 # ----
@@ -2436,6 +2436,8 @@ webcoregtk_sources += \
 	WebCore/platform/graphics/gstreamer/VideoSinkGStreamer.h \
 	WebCore/platform/graphics/gstreamer/DataSourceGStreamer.cpp \
 	WebCore/platform/graphics/gstreamer/DataSourceGStreamer.h \
+	WebCore/platform/graphics/gstreamer/GOwnPtrGStreamer.cpp \
+	WebCore/platform/graphics/gstreamer/GOwnPtrGStreamer.h \
 	WebCore/platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp \
 	WebCore/platform/graphics/gstreamer/WebKitWebSourceGStreamer.h
 

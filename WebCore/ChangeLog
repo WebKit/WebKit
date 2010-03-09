@@ -1,3 +1,27 @@
+2010-03-09  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GStreamer] player code cleanups
+        https://bugs.webkit.org/show_bug.cgi?id=35868
+
+        Splitted GOwnPtrGtk.{cpp,h} to GOwnPtr{Soup,GStreamer}.{cpp,h}.
+
+        * GNUmakefile.am:
+        * platform/graphics/gstreamer/GOwnPtrGStreamer.cpp: Added.
+        (WTF::GstElement):
+        * platform/graphics/gstreamer/GOwnPtrGStreamer.h: Added.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        * platform/gtk/GOwnPtrGtk.cpp: Removed.
+        * platform/gtk/GOwnPtrGtk.h: Removed.
+        * platform/network/soup/CookieJarSoup.cpp:
+        * platform/network/soup/DNSSoup.cpp:
+        * platform/network/soup/GOwnPtrSoup.cpp: Added.
+        (WTF::SoupURI):
+        * platform/network/soup/GOwnPtrSoup.h: Added.
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        * platform/network/soup/ResourceRequestSoup.cpp:
+
 2010-03-09  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Eric Seidel.

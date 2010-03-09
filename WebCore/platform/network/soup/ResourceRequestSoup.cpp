@@ -22,7 +22,7 @@
 
 #include "CString.h"
 #include "GOwnPtr.h"
-#include "GOwnPtrGtk.h"
+#include "GOwnPtrSoup.h"
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
 #include "PlatformString.h"

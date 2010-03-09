@@ -34,7 +34,7 @@
 #include "DocLoader.h"
 #include "FileSystem.h"
 #include "Frame.h"
-#include "GOwnPtrGtk.h"
+#include "GOwnPtrSoup.h"
 #include "HTTPParsers.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"

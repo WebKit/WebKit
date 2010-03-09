@@ -17,17 +17,15 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-#ifndef GOwnPtrGtk_h
-#define GOwnPtrGtk_h
+#ifndef GOwnPtrGStreamer_h
+#define GOwnPtrGStreamer_h
 
 #include "GOwnPtr.h"
 
-typedef struct _SoupURI SoupURI;
 typedef struct _GstElement GstElement;
 
 namespace WTF {
 
-template<> void freeOwnedGPtr<SoupURI>(SoupURI* ptr);
 template<> void freeOwnedGPtr<GstElement>(GstElement* ptr);
 
 }
