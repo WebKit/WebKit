@@ -480,6 +480,8 @@ void InspectorController::mouseDidMoveOverElement(const HitTestResult& result, u
         return;
 
     Node* node = result.innerNode();
+    while (node && node->nodeType() == Node::TEXT_NODE)
+        node = node->parentNode();
     if (node)
         highlight(node);
 }
