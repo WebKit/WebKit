@@ -1521,6 +1521,7 @@ webcore_sources += \
 	WebCore/platform/ScrollbarThemeComposite.cpp \
 	WebCore/platform/ScrollbarThemeComposite.h \
 	WebCore/platform/SearchPopupMenu.h \
+	WebCore/platform/SecureTextInput.h \
 	WebCore/platform/SharedBuffer.cpp \
 	WebCore/platform/SharedBuffer.h \
 	WebCore/platform/SharedTimer.h \

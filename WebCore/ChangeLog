@@ -1,5 +1,11 @@
 2010-03-09  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        Unreviewed distcheck fix.
+
+        * GNUmakefile.am:
+
+2010-03-09  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         Unreviewed build fix (only exposed by make distcheck). The
         SharedWorkers files are not built, they need to be distributed.
 
