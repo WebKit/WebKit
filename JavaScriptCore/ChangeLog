@@ -1,5 +1,12 @@
 2010-03-08  Geoffrey Garen  <ggaren@apple.com>
 
+        Windows build fix: 'P' is not a type. Luckily, 'void' is.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::fastCheckConsistency):
+
+2010-03-08  Geoffrey Garen  <ggaren@apple.com>
+
         Windows build fix: export a new symbol.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:

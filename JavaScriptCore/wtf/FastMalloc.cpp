@@ -385,7 +385,7 @@ void fastCheckConsistency(const void* p)
 #if OS(DARWIN)
         ASSERT(malloc_size(p));
 #elif COMPILER(MSVC)
-        ASSERT(_msize(const_cast<P*>(p)));
+        ASSERT(_msize(const_cast<void*>(p)));
 #endif
 #endif
 }
