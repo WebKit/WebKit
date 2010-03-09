@@ -1,3 +1,14 @@
+2010-03-09  Garret Kelly  <gdk@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix send-oncancel-event. It uses js-test-post, not
+        js-test-post-function.
+        https://bugs.webkit.org/show_bug.cgi?id=35880
+
+        * fast/events/touch/script-tests/send-oncancel-event.js:
+        (touchcancelHandler):
+
 2010-03-09  Simon Fraser  <simon.fraser@apple.com>
 
         Skip media/video-source-error.html on SnowLeopard, beacuse it fails sporadically.
