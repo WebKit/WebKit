@@ -5,6 +5,21 @@
         [GStreamer] player code cleanups
         https://bugs.webkit.org/show_bug.cgi?id=35868
 
+        Cleaned up the private instance variables of the player.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::fillTimerFired):
+        (WebCore::MediaPlayerPrivate::mediaLocationChanged):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+
+2010-03-09  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GStreamer] player code cleanups
+        https://bugs.webkit.org/show_bug.cgi?id=35868
+
         Splitted GOwnPtrGtk.{cpp,h} to GOwnPtr{Soup,GStreamer}.{cpp,h}.
 
         * GNUmakefile.am:

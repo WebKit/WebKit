@@ -154,17 +154,16 @@ class MediaPlayerPrivate : public MediaPlayerPrivateInterface {
             IntSize m_size;
             GstBuffer* m_buffer;
             GstStructure* m_mediaLocations;
-            gint m_mediaLocationCurrentIndex;
+            int m_mediaLocationCurrentIndex;
             bool m_resetPipeline;
             bool m_paused;
             bool m_seeking;
             float m_playbackRate;
             bool m_errorOccured;
-            gfloat m_mediaDuration;
+            float m_mediaDuration;
             bool m_startedBuffering;
             Timer<MediaPlayerPrivate> m_fillTimer;
             float m_maxTimeLoaded;
-            gdouble m_fillStatus;
     };
 }
 

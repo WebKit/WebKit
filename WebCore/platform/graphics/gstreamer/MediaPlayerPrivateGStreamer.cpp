@@ -291,7 +291,6 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     , m_startedBuffering(false)
     , m_fillTimer(this, &MediaPlayerPrivate::fillTimerFired)
     , m_maxTimeLoaded(0)
-    , m_fillStatus(0)
 {
     if (doGstInit())
         createGSTPlayBin();
@@ -670,16 +669,15 @@ void MediaPlayerPrivate::fillTimerFired(Timer<MediaPlayerPrivate>*)
     }
 
     gint64 start, stop;
+    gdouble fillStatus = 100.0;
 
     gst_query_parse_buffering_range(query, 0, &start, &stop, 0);
     gst_query_unref(query);
 
     if (stop != -1)
-        m_fillStatus = 100.0 * stop / GST_FORMAT_PERCENT_MAX;
-    else
-        m_fillStatus = 100.0;
+        fillStatus = 100.0 * stop / GST_FORMAT_PERCENT_MAX;
 
-    LOG_VERBOSE(Media, "Download buffer filled up to %f%%", m_fillStatus);
+    LOG_VERBOSE(Media, "Download buffer filled up to %f%%", fillStatus);
 
     if (!m_mediaDuration)
         durationChanged();
@@ -687,11 +685,11 @@ void MediaPlayerPrivate::fillTimerFired(Timer<MediaPlayerPrivate>*)
     // Update maxTimeLoaded only if the media duration is
     // available. Otherwise we can't compute it.
     if (m_mediaDuration) {
-        m_maxTimeLoaded = static_cast<float>((m_fillStatus * m_mediaDuration) / 100.0);
+        m_maxTimeLoaded = static_cast<float>((fillStatus * m_mediaDuration) / 100.0);
         LOG_VERBOSE(Media, "Updated maxTimeLoaded: %f", m_maxTimeLoaded);
     }
 
-    if (m_fillStatus != 100.0) {
+    if (fillStatus != 100.0) {
         updateStates();
         return;
     }
@@ -934,7 +932,7 @@ void MediaPlayerPrivate::mediaLocationChanged(GstMessage* message)
         const GValue* locations = gst_structure_get_value(m_mediaLocations, "locations");
 
         if (locations)
-            m_mediaLocationCurrentIndex = gst_value_list_get_size(locations) -1;
+            m_mediaLocationCurrentIndex = static_cast<int>(gst_value_list_get_size(locations)) -1;
 
         loadNextLocation();
     }
