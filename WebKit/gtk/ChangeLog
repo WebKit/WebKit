@@ -1,3 +1,10 @@
+2010-03-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [GTK] Unreviewed buildfix after r55688.
+
+        * webkit/webkitdownload.cpp:
+        (webkit_download_start):
+
 2010-03-02  Adam Treat  <atreat@rim.com>
 
         Reviewed by Dave Hyatt.

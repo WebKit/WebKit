@@ -484,7 +484,7 @@ void webkit_download_start(WebKitDownload* download)
     g_return_if_fail(priv->timer == NULL);
 
     if (!priv->resourceHandle)
-        priv->resourceHandle = ResourceHandle::create(core(priv->networkRequest), priv->downloadClient, 0, false, false, false);
+        priv->resourceHandle = ResourceHandle::create(core(priv->networkRequest), priv->downloadClient, 0, false, false);
     else {
         priv->resourceHandle->setClient(priv->downloadClient);
 
