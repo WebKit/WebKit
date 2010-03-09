@@ -1,3 +1,28 @@
+2010-03-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        Don't auto-play <audio> and <video> elements loaded in background tabs
+        https://bugs.webkit.org/show_bug.cgi?id=35886
+        rdar://problem/7117745
+
+        * manual-tests/video-in-non-frontmost-tab.html: Added.
+        * manual-tests/resources/video-tab.html: Added.
+
+        * html/HTMLMediaElement.h: Added MediaCanStartListener as a base class, and
+        added the mediaCanStart function as well as a boolean,
+        m_isWaitingUntilMediaCanStart.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Initialize
+        m_isWaitingUntilMediaCanStart.
+        (WebCore::HTMLMediaElement::~HTMLMediaElement): Call
+        removeMediaCanStartListener if m_isWaitingUntilMediaCanStart is true. 
+        (WebCore::HTMLMediaElement::loadInternal): Set m_isWaitingUntilMediaCanStart
+        and call addMediaCanStartListener if canStartMedia is false.
+        (WebCore::HTMLMediaElement::mediaCanStart): Clear m_isWaitingUntilMediaCanStart
+        and call loadInternal.
+
 2010-03-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         [GTK] Unreviewed buildfix after r55688.
