@@ -1,3 +1,16 @@
+2010-03-09  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [Chromium] Should remove paddings of Win/Linux chromium's buttons
+        https://bugs.webkit.org/show_bug.cgi?id=35629
+
+        No new tests, but we may need to rebaseline bunch of expectation
+        images in chromium's tree.
+
+        * rendering/RenderThemeChromiumSkia.cpp:
+        * rendering/RenderThemeChromiumSkia.h:
+
 2010-03-08  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Adam Barth.

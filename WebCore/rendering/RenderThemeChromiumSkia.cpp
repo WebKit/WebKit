@@ -732,26 +732,6 @@ int RenderThemeChromiumSkia::popupInternalPaddingBottom(RenderStyle* style) cons
     return menuListInternalPadding(style, BottomPadding);
 }
 
-int RenderThemeChromiumSkia::buttonInternalPaddingLeft() const
-{
-    return 3;
-}
-
-int RenderThemeChromiumSkia::buttonInternalPaddingRight() const
-{
-    return 3;
-}
-
-int RenderThemeChromiumSkia::buttonInternalPaddingTop() const
-{
-    return 1;
-}
-
-int RenderThemeChromiumSkia::buttonInternalPaddingBottom() const
-{
-    return 1;
-}
-
 #if ENABLE(VIDEO)
 bool RenderThemeChromiumSkia::shouldRenderMediaControlPart(ControlPart part, Element* e)
 {
