@@ -1,5 +1,11 @@
 2010-03-08  Geoffrey Garen  <ggaren@apple.com>
 
+        Windows build fix: export a new symbol.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2010-03-08  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Maciej Stachowiak.
 
         Switching malloc implementations requires a world rebuild

@@ -34,13 +34,13 @@ EXPORTS
     ??8JSC@@YA_NABVUString@0@0@Z
     ?NaN@JSC@@3NB
     ?UTF8String@UString@JSC@@QBE?AVCString@2@_N@Z
+    ?add@Identifier@JSC@@SA?AV?$PassRefPtr@VUStringImpl@JSC@@@WTF@@PAVExecState@2@PBD@Z
+    ?add@PropertyNameArray@JSC@@QAEXPAVUStringImpl@2@@Z
     ?addPropertyTransition@Structure@JSC@@SA?AV?$PassRefPtr@VStructure@JSC@@@WTF@@PAV12@ABVIdentifier@2@IPAVJSCell@2@AAI@Z
     ?addPropertyTransitionToExistingStructure@Structure@JSC@@SA?AV?$PassRefPtr@VStructure@JSC@@@WTF@@PAV12@ABVIdentifier@2@IPAVJSCell@2@AAI@Z
     ?addPropertyWithoutTransition@Structure@JSC@@QAEIABVIdentifier@2@IPAVJSCell@2@@Z
     ?addSlowCase@Identifier@JSC@@CA?AV?$PassRefPtr@VUStringImpl@JSC@@@WTF@@PAVExecState@2@PAVUStringImpl@2@@Z
     ?addSlowCase@Identifier@JSC@@CA?AV?$PassRefPtr@VUStringImpl@JSC@@@WTF@@PAVJSGlobalData@2@PAVUStringImpl@2@@Z
-    ?add@Identifier@JSC@@SA?AV?$PassRefPtr@VUStringImpl@JSC@@@WTF@@PAVExecState@2@PBD@Z
-    ?add@PropertyNameArray@JSC@@QAEXPAVUStringImpl@2@@Z
     ?allocate@Heap@JSC@@QAEPAXI@Z
     ?allocatePropertyStorage@JSObject@JSC@@QAEXII@Z
     ?allocateStack@MarkStack@JSC@@CAPAXI@Z
@@ -120,6 +120,7 @@ EXPORTS
     ?evaluate@JSC@@YA?AVCompletion@1@PAVExecState@1@AAVScopeChain@1@ABVSourceCode@1@VJSValue@1@@Z
     ?exclude@Profile@JSC@@QAEXPBVProfileNode@2@@Z
     ?fastCalloc@WTF@@YAPAXII@Z
+    ?fastCheckConsistency@WTF@@YAXPBX@Z
     ?fastFree@WTF@@YAXPAX@Z
     ?fastMalloc@WTF@@YAPAXI@Z
     ?fastRealloc@WTF@@YAPAXPAXI@Z
@@ -134,6 +135,7 @@ EXPORTS
     ?from@UString@JSC@@SA?AV12@N@Z
     ?functionGetter@PropertySlot@JSC@@ABE?AVJSValue@2@PAVExecState@2@@Z
     ?functionName@DebuggerCallFrame@JSC@@QBEPBVUString@2@XZ
+    ?get@Structure@JSC@@QAEIPBVUStringImpl@2@AAIAAPAVJSCell@2@@Z
     ?getCallData@JSCell@JSC@@UAE?AW4CallType@2@AATCallData@2@@Z
     ?getConstructData@JSCell@JSC@@UAE?AW4ConstructType@2@AATConstructData@2@@Z
     ?getJSNumber@JSCell@JSC@@UAE?AVJSValue@2@XZ
@@ -160,7 +162,6 @@ EXPORTS
     ?getString@JSCell@JSC@@QBE?AVUString@2@PAVExecState@2@@Z
     ?getString@JSCell@JSC@@QBE_NPAVExecState@2@AAVUString@2@@Z
     ?getUInt32@JSCell@JSC@@UBE_NAAI@Z
-    ?get@Structure@JSC@@QAEIPBVUStringImpl@2@AAIAAPAVJSCell@2@@Z
     ?getter@PropertyDescriptor@JSC@@QBE?AVJSValue@2@XZ
     ?globalExec@JSGlobalObject@JSC@@UAEPAVExecState@2@XZ
     ?globalObjectCount@Heap@JSC@@QAEIXZ
