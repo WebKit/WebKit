@@ -1,3 +1,19 @@
+2010-03-09  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        AX: hit testing a list box doesn't work anymore
+        https://bugs.webkit.org/show_bug.cgi?id=35893
+
+        Since <option> elements don't have renderers, their hit testing needs
+        to be handled with a special case.
+
+        Test: platform/mac/accessibility/listbox-hit-test.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::ariaIsHidden):
+        (WebCore::AccessibilityRenderObject::doAccessibilityHitTest):
+
 2010-03-09  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

@@ -59,6 +59,12 @@ AccessibilityController::~AccessibilityController()
         JSValueUnprotect(frame->globalContext(), it->second);
 }
 
+AccessibilityUIElement AccessibilityController::elementAtPoint(int x, int y)
+{
+    // FIXME: implement
+    return 0;
+}
+
 AccessibilityUIElement AccessibilityController::focusedElement()
 {
     COMPtr<IAccessible> rootAccessible = rootElement().platformUIElement();

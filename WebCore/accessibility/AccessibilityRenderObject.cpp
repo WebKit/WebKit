@@ -1412,13 +1412,13 @@ AccessibilityObject* AccessibilityRenderObject::titleUIElement() const
     
 bool AccessibilityRenderObject::ariaIsHidden() const
 {
-    if (equalIgnoringCase(getAttribute(aria_hiddenAttr).string(), "true"))
+    if (equalIgnoringCase(getAttribute(aria_hiddenAttr), "true"))
         return true;
     
     // aria-hidden hides this object and any children
     AccessibilityObject* object = parentObject();
     while (object) {
-        if (object->isAccessibilityRenderObject() && equalIgnoringCase(static_cast<AccessibilityRenderObject*>(object)->getAttribute(aria_hiddenAttr).string(), "true"))
+        if (object->isAccessibilityRenderObject() && equalIgnoringCase(static_cast<AccessibilityRenderObject*>(object)->getAttribute(aria_hiddenAttr), "true"))
             return true;
         object = object->parentObject();
     }
@@ -2484,6 +2484,9 @@ AccessibilityObject* AccessibilityRenderObject::doAccessibilityHitTest(const Int
 
     if (node->hasTagName(areaTag)) 
         return accessibilityImageMapHitTest(static_cast<HTMLAreaElement*>(node), point);
+    
+    if (node->hasTagName(optionTag))
+        node = static_cast<HTMLOptionElement*>(node)->ownerSelectElement();
     
     RenderObject* obj = node->renderer();
     if (!obj)

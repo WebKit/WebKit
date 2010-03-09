@@ -1,3 +1,21 @@
+2010-03-09  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        AX: hit testing a list box doesn't work anymore
+        https://bugs.webkit.org/show_bug.cgi?id=35893
+
+        * DumpRenderTree/AccessibilityController.cpp:
+        (getElementAtPointCallback):
+        (AccessibilityController::getJSClass):
+        * DumpRenderTree/AccessibilityController.h:
+        * DumpRenderTree/gtk/AccessibilityControllerGtk.cpp:
+        (AccessibilityController::elementAtPoint):
+        * DumpRenderTree/mac/AccessibilityControllerMac.mm:
+        (AccessibilityController::elementAtPoint):
+        * DumpRenderTree/win/AccessibilityControllerWin.cpp:
+        (AccessibilityController::elementAtPoint):
+
 2010-03-03  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
