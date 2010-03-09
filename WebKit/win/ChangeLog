@@ -1,3 +1,14 @@
+2010-03-09  John Sullivan  <sullivan@apple.com>
+
+        Fixed localized string key collision. update-webkit-localized-strings now
+        runs without errors.
+
+        Reviewed by Adam Roben.
+
+        * WebCoreLocalizedStrings.cpp:
+        (WebCore::AXMenuListPopupActionVerb):
+        Used LPCTSTR_UI_STRING_KEY for the 2nd use of "press".
+
 2010-03-08  Adam Treat  <atreat@rim.com>
 
         Unreviewed build fix for Windows.

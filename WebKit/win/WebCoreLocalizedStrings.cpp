@@ -93,7 +93,7 @@ String WebCore::AXCheckedCheckBoxActionVerb() { return String(LPCTSTR_UI_STRING(
 String WebCore::AXUncheckedCheckBoxActionVerb() { return String(LPCTSTR_UI_STRING("check", "Verb stating the action that will occur when an unchecked checkbox is clicked, as used by accessibility")); }
 String WebCore::AXLinkActionVerb() { return String(LPCTSTR_UI_STRING("jump", "Verb stating the action that will occur when a link is clicked, as used by accessibility")); }
 String WebCore::AXMenuListActionVerb() { return String(LPCTSTR_UI_STRING("open", "Verb stating the action that will occur when a select element is clicked, as used by accessibility")); }
-String WebCore::AXMenuListPopupActionVerb() { return String(LPCTSTR_UI_STRING("press", "Verb stating the action that will occur when a select element's popup list is clicked, as used by accessibility")); }
+String WebCore::AXMenuListPopupActionVerb() { return String(LPCTSTR_UI_STRING_KEY("press", "press (select element)", "Verb stating the action that will occur when a select element's popup list is clicked, as used by accessibility")); }
 String WebCore::unknownFileSizeText() { return String(LPCTSTR_UI_STRING("Unknown", "Unknown filesize FTP directory listing item")); }
 String WebCore::uploadFileText() { return String(LPCTSTR_UI_STRING("Upload file", "(Windows) Form submit file upload dialog title")); }
 String WebCore::allFilesText() { return String(LPCTSTR_UI_STRING("All Files", "(Windows) Form submit file upload all files pop-up")); }
