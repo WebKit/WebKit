@@ -1,3 +1,21 @@
+2010-03-08  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [DRT/Chromium] Add PlainTextController and TextInputController
+        https://bugs.webkit.org/show_bug.cgi?id=35852
+
+        Add PlainTextController and TextInputController classes, which are going
+        to be used by DumpRenderTree Chromium port. These files are based on:
+        - src/webkit/tools/test_shell/plain_text_controller.{cc,h} and
+        - src/webkit/tools/test_shell/text_input_controller.{cc,h}
+        of Chromium rev.40492.
+
+        * DumpRenderTree/chromium/PlainTextController.cpp: Added.
+        * DumpRenderTree/chromium/PlainTextController.h: Added.
+        * DumpRenderTree/chromium/TextInputController.cpp: Added.
+        * DumpRenderTree/chromium/TextInputController.h: Added.
+
 2010-03-08  Dumitru Daniliuc  <dumi@chromium.org>
 
         Unreviewed, Chromium build fix.
