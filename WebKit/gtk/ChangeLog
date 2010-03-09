@@ -1,3 +1,9 @@
+2010-03-09  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Unreviewed. Documentation control files update for 1.1.23.
+
+        * docs/webkitgtk-docs.sgml:
+
 2010-03-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         [GTK] Unreviewed buildfix after r55688.

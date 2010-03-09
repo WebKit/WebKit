@@ -1,5 +1,11 @@
 2010-03-09  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        Unreviewed. Versioning for 1.1.23.
+
+        * configure.ac:
+
+2010-03-09  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         Unreviewed distcheck fix.
 
         * GNUmakefile.am:
