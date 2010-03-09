@@ -262,28 +262,29 @@ ARMWord ARMAssembler::encodeComplexImm(ARMWord imm, int dest)
 
 // Memory load/store helpers
 
-void ARMAssembler::dataTransfer32(bool isLoad, RegisterID srcDst, RegisterID base, int32_t offset)
+void ARMAssembler::dataTransfer32(bool isLoad, RegisterID srcDst, RegisterID base, int32_t offset, bool bytes)
 {
+    ARMWord transferFlag = bytes ? DT_BYTE : 0;
     if (offset >= 0) {
         if (offset <= 0xfff)
-            dtr_u(isLoad, srcDst, base, offset);
+            dtr_u(isLoad, srcDst, base, offset | transferFlag);
         else if (offset <= 0xfffff) {
             add_r(ARMRegisters::S0, base, OP2_IMM | (offset >> 12) | (10 << 8));
-            dtr_u(isLoad, srcDst, ARMRegisters::S0, offset & 0xfff);
+            dtr_u(isLoad, srcDst, ARMRegisters::S0, (offset & 0xfff) | transferFlag);
         } else {
             ARMWord reg = getImm(offset, ARMRegisters::S0);
-            dtr_ur(isLoad, srcDst, base, reg);
+            dtr_ur(isLoad, srcDst, base, reg | transferFlag);
         }
     } else {
         offset = -offset;
         if (offset <= 0xfff)
-            dtr_d(isLoad, srcDst, base, offset);
+            dtr_d(isLoad, srcDst, base, offset | transferFlag);
         else if (offset <= 0xfffff) {
             sub_r(ARMRegisters::S0, base, OP2_IMM | (offset >> 12) | (10 << 8));
-            dtr_d(isLoad, srcDst, ARMRegisters::S0, offset & 0xfff);
+            dtr_d(isLoad, srcDst, ARMRegisters::S0, (offset & 0xfff) | transferFlag);
         } else {
             ARMWord reg = getImm(offset, ARMRegisters::S0);
-            dtr_dr(isLoad, srcDst, base, reg);
+            dtr_dr(isLoad, srcDst, base, reg | transferFlag);
         }
     }
 }
