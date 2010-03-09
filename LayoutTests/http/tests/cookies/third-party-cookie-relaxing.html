@@ -1,10 +1,14 @@
 <html>
 <head>
+<script src="resources/cookies-test-pre.js"></script>
 <script>
 
 if (window.layoutTestController) {
     layoutTestController.dumpAsText();
     layoutTestController.waitUntilDone();
+    layoutTestController.setAlwaysAcceptCookies(true);
+    clearCookies();
+    layoutTestController.setAlwaysAcceptCookies(false);
 }
 
 window.onmessage = function(evt)
@@ -75,8 +79,12 @@ var functions = new Array(
 function runNextTestOrFinish()
 {
     if (currentFunction >= functions.length) {
-        if (window.layoutTestController)
+        if (window.layoutTestController) {
             layoutTestController.notifyDone();
+            layoutTestController.setAlwaysAcceptCookies(true);
+            clearCookies();
+            layoutTestController.setAlwaysAcceptCookies(false);
+        }
         return;
     }
     

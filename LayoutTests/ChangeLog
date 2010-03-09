@@ -1,5 +1,16 @@
 2010-03-09  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Alexey Proskuryakov.
+
+        Fix my layouttest failures by resetting cookies before and after these new tests.    
+        https://bugs.webkit.org/show_bug.cgi?id=26391
+
+        * http/tests/cookies/third-party-cookie-relaxing.html:
+        * http/tests/plugins/resources/third-party-cookie-accept-policy-iframe.html:
+        * http/tests/plugins/third-party-cookie-accept-policy.html:
+
+2010-03-09  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Darin Adler.
 
         Plug-ins don't always respect the cookie accept policy.
