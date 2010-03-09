@@ -1426,12 +1426,13 @@ sub openWebSocketServerIfNeeded()
 
     my @args = (
         "WebKitTools/Scripts/webkitpy/thirdparty/pywebsocket/mod_pywebsocket/standalone.py",
-        "-p", "$webSocketPort",
-        "-d", "$webSocketHandlerDir",
-        "-s", "$webSocketHandlerScanDir",
-        "-m", "$webSocketHandlerMapFile",
-        "-x", "/websocket/tests/cookies",
-        "-l", "$logFile",
+        "--server-host", "127.0.0.1",
+        "--port", "$webSocketPort",
+        "--document-root", "$webSocketHandlerDir",
+        "--scan-dir", "$webSocketHandlerScanDir",
+        "--websock-handlers-map-file", "$webSocketHandlerMapFile",
+        "--cgi-paths", "/websocket/tests",
+        "--log-file", "$logFile",
         "--strict",
     );
     # wss is disabled until all platforms support pyOpenSSL.

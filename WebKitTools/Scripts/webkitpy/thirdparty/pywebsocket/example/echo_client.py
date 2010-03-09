@@ -163,9 +163,11 @@ def main():
     sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
 
     parser = OptionParser()
-    parser.add_option('-s', '--server_host', dest='server_host', type='string',
+    parser.add_option('-s', '--server-host', '--server_host',
+                      dest='server_host', type='string',
                       default='localhost', help='server host')
-    parser.add_option('-p', '--server_port', dest='server_port', type='int',
+    parser.add_option('-p', '--server-port', '--server_port',
+                      dest='server_port', type='int',
                       default=_UNDEFINED_PORT, help='server port')
     parser.add_option('-o', '--origin', dest='origin', type='string',
                       default='http://localhost/', help='origin')
@@ -179,8 +181,8 @@ def main():
                       default=True, help='suppress messages')
     parser.add_option('-t', '--tls', dest='use_tls', action='store_true',
                       default=False, help='use TLS (wss://)')
-    parser.add_option('-k', '--socket_timeout', dest='socket_timeout',
-                      type='int', default=_TIMEOUT_SEC,
+    parser.add_option('-k', '--socket-timeout', '--socket_timeout',
+                      dest='socket_timeout', type='int', default=_TIMEOUT_SEC,
                       help='Timeout(sec) for sockets')
 
     (options, unused_args) = parser.parse_args()

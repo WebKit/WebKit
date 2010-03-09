@@ -272,9 +272,21 @@ class WebSocketRequestHandler(CGIHTTPServer.CGIHTTPRequestHandler):
     def is_cgi(self):
         """Test whether self.path corresponds to a CGI script.
 
-        Add extra check that self.path doesn't contains .."""
+        Add extra check that self.path doesn't contains ..
+        Also check if the file is a executable file or not.
+        If the file is not executable, it is handled as static file or dir
+        rather than a CGI script.
+        """
         if CGIHTTPServer.CGIHTTPRequestHandler.is_cgi(self):
             if '..' in self.path:
+                return False
+            # strip query parameter from request path
+            resource_name = self.path.split('?', 2)[0]
+            # convert resource_name into real path name in filesystem.
+            scriptfile = self.translate_path(resource_name)
+            if not os.path.isfile(scriptfile):
+                return False
+            if not self.is_executable(scriptfile):
                 return False
             return True
         return False
@@ -321,26 +333,32 @@ def _alias_handlers(dispatcher, websock_handlers_map_file):
 
 def _main():
     parser = optparse.OptionParser()
+    parser.add_option('-H', '--server-host', '--server_host',
+                      dest='server_host',
+                      default='',
+                      help='server hostname to listen to')
     parser.add_option('-p', '--port', dest='port', type='int',
                       default=handshake._DEFAULT_WEB_SOCKET_PORT,
                       help='port to listen to')
-    parser.add_option('-w', '--websock_handlers', dest='websock_handlers',
+    parser.add_option('-w', '--websock-handlers', '--websock_handlers',
+                      dest='websock_handlers',
                       default='.',
                       help='Web Socket handlers root directory.')
-    parser.add_option('-m', '--websock_handlers_map_file',
+    parser.add_option('-m', '--websock-handlers-map-file',
+                      '--websock_handlers_map_file',
                       dest='websock_handlers_map_file',
                       default=None,
                       help=('Web Socket handlers map file. '
                             'Each line consists of alias_resource_path and '
                             'existing_resource_path, separated by spaces.'))
-    parser.add_option('-s', '--scan_dir', dest='scan_dir',
+    parser.add_option('-s', '--scan-dir', '--scan_dir', dest='scan_dir',
                       default=None,
                       help=('Web Socket handlers scan directory. '
                             'Must be a directory under websock_handlers.'))
-    parser.add_option('-d', '--document_root', dest='document_root',
-                      default='.',
+    parser.add_option('-d', '--document-root', '--document_root',
+                      dest='document_root', default='.',
                       help='Document root directory.')
-    parser.add_option('-x', '--cgi_paths', dest='cgi_paths',
+    parser.add_option('-x', '--cgi-paths', '--cgi_paths', dest='cgi_paths',
                       default=None,
                       help=('CGI paths relative to document_root.'
                             'Comma-separated. (e.g -x /cgi,/htbin) '
@@ -348,21 +366,22 @@ def _main():
                             'as CGI programs. Must be executable.'))
     parser.add_option('-t', '--tls', dest='use_tls', action='store_true',
                       default=False, help='use TLS (wss://)')
-    parser.add_option('-k', '--private_key', dest='private_key',
+    parser.add_option('-k', '--private-key', '--private_key',
+                      dest='private_key',
                       default='', help='TLS private key file.')
     parser.add_option('-c', '--certificate', dest='certificate',
                       default='', help='TLS certificate file.')
-    parser.add_option('-l', '--log_file', dest='log_file',
+    parser.add_option('-l', '--log-file', '--log_file', dest='log_file',
                       default='', help='Log file.')
-    parser.add_option('--log_level', type='choice', dest='log_level',
-                      default='warn',
+    parser.add_option('--log-level', '--log_level', type='choice',
+                      dest='log_level', default='warn',
                       choices=['debug', 'info', 'warn', 'error', 'critical'],
                       help='Log level.')
-    parser.add_option('--log_max', dest='log_max', type='int',
+    parser.add_option('--log-max', '--log_max', dest='log_max', type='int',
                       default=_DEFAULT_LOG_MAX_BYTES,
                       help='Log maximum bytes')
-    parser.add_option('--log_count', dest='log_count', type='int',
-                      default=_DEFAULT_LOG_BACKUP_COUNT,
+    parser.add_option('--log-count', '--log_count', dest='log_count',
+                      type='int', default=_DEFAULT_LOG_BACKUP_COUNT,
                       help='Log backup count')
     parser.add_option('--strict', dest='strict', action='store_true',
                       default=False, help='Strictly check handshake request')
@@ -381,6 +400,18 @@ def _main():
     if options.cgi_paths:
         CGIHTTPServer.CGIHTTPRequestHandler.cgi_directories = \
             options.cgi_paths.split(',')
+        if sys.platform in ('cygwin', 'win32'):
+            cygwin_path = None
+            # For Win32 Python, it is expected that CYGWIN_PATH
+            # is set to a directory of cygwin binaries.
+            # For example, websocket_server.py in Chromium sets CYGWIN_PATH to
+            # full path of third_party/cygwin/bin.
+            if 'CYGWIN_PATH' in os.environ:
+                cygwin_path = os.environ['CYGWIN_PATH']
+            util.wrap_popen3_for_win(cygwin_path)
+            def __check_script(scriptpath):
+                return util.get_script_interp(scriptpath, cygwin_path)
+            CGIHTTPServer.executable = __check_script
 
     if options.use_tls:
         if not _HAS_OPEN_SSL:
@@ -407,7 +438,8 @@ def _main():
         WebSocketRequestHandler.options = options
         WebSocketServer.options = options
 
-        server = WebSocketServer(('', options.port), WebSocketRequestHandler)
+        server = WebSocketServer((options.server_host, options.port),
+                                 WebSocketRequestHandler)
         server.serve_forever()
     except Exception, e:
         logging.critical(str(e))

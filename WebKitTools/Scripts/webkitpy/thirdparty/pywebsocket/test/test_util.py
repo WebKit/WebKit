@@ -33,11 +33,14 @@
 """Tests for util module."""
 
 
+import os
+import sys
 import unittest
 
 import config  # This must be imported before mod_pywebsocket.
 from mod_pywebsocket import util
 
+_TEST_DATA_DIR = os.path.join(os.path.split(__file__)[0], 'testdata')
 
 class UtilTest(unittest.TestCase):
     def test_get_stack_trace(self):
@@ -54,6 +57,18 @@ class UtilTest(unittest.TestCase):
         self.assertEqual('World', str(exc))
         util.prepend_message_to_exception('Hello ', exc)
         self.assertEqual('Hello World', str(exc))
+
+    def test_get_script_interp(self):
+        cygwin_path = 'c:\\cygwin\\bin'
+        cygwin_perl = os.path.join(cygwin_path, 'perl')
+        self.assertEqual(None, util.get_script_interp(
+            os.path.join(_TEST_DATA_DIR, 'README')))
+        self.assertEqual(None, util.get_script_interp(
+            os.path.join(_TEST_DATA_DIR, 'README'), cygwin_path))
+        self.assertEqual('/usr/bin/perl -wT', util.get_script_interp(
+            os.path.join(_TEST_DATA_DIR, 'hello.pl')))
+        self.assertEqual(cygwin_perl + ' -wT', util.get_script_interp(
+            os.path.join(_TEST_DATA_DIR, 'hello.pl'), cygwin_path))
 
 
 if __name__ == '__main__':

@@ -71,11 +71,12 @@ sub openWebSocketServer()
 
     my @args = (
         "$srcDir/WebKitTools/Scripts/webkitpy/thirdparty/pywebsocket/mod_pywebsocket/standalone.py",
-        "-p", "$webSocketPort",
-        "-d", "$webSocketHandlerDir",
-        "-s", "$webSocketHandlerScanDir",
-        "-m", "$webSocketHandlerMapFile",
-        "-x", "/websocket/tests/cookies",
+        "--server-host", "127.0.0.1",
+        "--port", "$webSocketPort",
+        "--document-root", "$webSocketHandlerDir",
+        "--scan-dir", "$webSocketHandlerScanDir",
+        "--websock-handlers-map-file", "$webSocketHandlerMapFile",
+        "--cgi-paths", "/websocket/tests/cookies",
     );
 
     $ENV{"PYTHONPATH"} = $webSocketPythonPath;

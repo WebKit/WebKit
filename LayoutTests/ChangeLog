@@ -1,3 +1,18 @@
+2010-03-03  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        pywebsocket should support html and cgi in the same directory.
+        https://bugs.webkit.org/show_bug.cgi?id=34879
+
+        * websocket/tests/cookies: Removed.
+        * websocket/tests/cookies/echo-cookie_wsh.py: Removed.
+        * websocket/tests/cookies/httponly-cookie-expected.txt: Removed.
+        * websocket/tests/cookies/httponly-cookie.pl: Removed.
+        * websocket/tests/echo-cookie_wsh.py: Copied from LayoutTests/websocket/tests/cookies/echo-cookie_wsh.py.
+        * websocket/tests/httponly-cookie-expected.txt: Copied from LayoutTests/websocket/tests/cookies/httponly-cookie-expected.txt.
+        * websocket/tests/httponly-cookie.pl: Copied from LayoutTests/websocket/tests/cookies/httponly-cookie.pl.
+
 2010-03-08  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Adam Barth.

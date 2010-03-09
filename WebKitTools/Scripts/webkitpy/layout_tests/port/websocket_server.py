@@ -158,18 +158,19 @@ class PyWebSocket(http_server.Lighttpd):
             'standalone.py')
         start_cmd = [
             python_interp, pywebsocket_script,
-            '-p', str(self._port),
-            '-d', self._layout_tests,
-            '-s', self._web_socket_tests,
-            '-x', '/websocket/tests/cookies',
-            '-l', error_log,
+            '--server-host', '127.0.0.1',
+            '--port', str(self._port),
+            '--document-root', self._layout_tests,
+            '--scan-dir', self._web_socket_tests,
+            '--cgi-paths', '/websocket/tests/cookies',
+            '--log-file', error_log,
         ]
 
         handler_map_file = os.path.join(self._web_socket_tests,
                                         'handler_map.txt')
         if os.path.exists(handler_map_file):
             _log.debug('Using handler_map_file: %s' % handler_map_file)
-            start_cmd.append('-m')
+            start_cmd.append('--websock-handlers-map-file')
             start_cmd.append(handler_map_file)
         else:
             _log.warning('No handler_map_file found')

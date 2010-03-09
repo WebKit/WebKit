@@ -4,10 +4,10 @@ from the following location:
 http://code.google.com/p/pywebsocket/
 
 This directory currently contains the following version:
-FIXME: Fill in the current version here.
+0.4.9.2
 
 The following modifications have been made to this local version:
-FIXME: Fill in local modifications.
+minor updates in WebSocketRequestHandler.is_cgi
 
 More information on these local modifications can be found here:
 

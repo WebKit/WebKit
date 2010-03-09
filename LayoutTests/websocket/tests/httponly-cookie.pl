@@ -8,8 +8,8 @@ print "\r\n";
 print <<HTML
 <html>
 <head>
-<script src="../../../fast/js/resources/js-test-pre.js"></script>
-<script src="../../../fast/js/resources/js-test-post-function.js"></script>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
 </head>
 <body>
 <p>Test WebSocket sends HttpOnly cookies.</p>
@@ -31,7 +31,7 @@ function endTest()
        layoutTestController.notifyDone();
 }
 
-var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/cookies/echo-cookie");
+var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/echo-cookie");
 ws.onopen = function() {
     debug("WebSocket open");
 };
