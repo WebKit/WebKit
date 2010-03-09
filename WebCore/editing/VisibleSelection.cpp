@@ -441,7 +441,6 @@ void VisibleSelection::setWithoutValidation(const Position& base, const Position
     ASSERT(!extent.isNull());
     ASSERT(base != extent);
     ASSERT(m_affinity == DOWNSTREAM);
-    ASSERT(m_granularity == CharacterGranularity);
     m_base = base;
     m_extent = extent;
     m_baseIsFirst = comparePositions(base, extent) <= 0;

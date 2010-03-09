@@ -1,3 +1,25 @@
+2010-03-03  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        undo after smartdelete should select the deleted space
+        https://bugs.webkit.org/show_bug.cgi?id=35713
+
+        TextEdit behavior is to select the deleted space after a smartdelete.
+
+        Tests: editing/undo/undo-smart-delete-reversed-selection.html
+               editing/undo/undo-smart-delete-word.html
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::setStartingSelectionOnSmartDelete):
+        (WebCore::DeleteSelectionCommand::initializePositionData):
+        * editing/DeleteSelectionCommand.h:
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::setWithoutValidation):
+        This assert looks bogus to me. undo-smart-delete-reversed-selection.html hits it
+        but not as a result of the other changes in this patch. The granularity when
+        deleting after making a wordgranularity selection is wordgranularity, not charactergranularity.
+
 2010-03-09  Steve Falkenburg  <sfalken@apple.com>
 
         Rubber stamped by Adam Roben.
