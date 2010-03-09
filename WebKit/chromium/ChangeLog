@@ -1,3 +1,17 @@
+2010-03-09  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Use clean global object for devtools utility context instead of
+        trying to simulate inspected context. 
+    
+        https://bugs.webkit.org/show_bug.cgi?id=35923
+
+        * src/DebuggerAgentImpl.cpp:
+        * src/DebuggerAgentImpl.h:
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::resetInspectorFrontendProxy):
+
 2010-03-08  Alexey Proskuryakov  <ap@apple.com>
 
         Chromium build fix.

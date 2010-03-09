@@ -52,9 +52,6 @@ class WebViewImpl;
 
 class DebuggerAgentImpl : public DebuggerAgent {
 public:
-    // Creates utility context with injected js agent.
-    static void createUtilityContext(WebCore::Frame* frame, v8::Persistent<v8::Context>* context);
-
     DebuggerAgentImpl(WebKit::WebViewImpl* webViewImpl,
                       DebuggerAgentDelegate* delegate,
                       WebDevToolsAgentImpl* webdevtoolsAgent);

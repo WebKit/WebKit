@@ -361,7 +361,7 @@ v8::Local<v8::Object> WebDevToolsAgentImpl::createInspectorBackendV8Wrapper()
 void WebDevToolsAgentImpl::resetInspectorFrontendProxy()
 {
     disposeUtilityContext();
-    m_debuggerAgentImpl->createUtilityContext(m_webViewImpl->page()->mainFrame(), &m_utilityContext);
+    m_utilityContext = v8::Context::New();
     compileUtilityScripts();
     initDevToolsAgentHost();
 

@@ -1,3 +1,17 @@
+2010-03-09  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+ 
+        When enable resource tracking state changes use the same method as
+        location.reload for reloading inspected page.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35923
+
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::reloadPage):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::enableResourceTracking):
+
 2010-03-09  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

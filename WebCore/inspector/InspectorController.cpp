@@ -1119,7 +1119,7 @@ void InspectorController::enableResourceTracking(bool always, bool reload)
         m_frontend->resourceTrackingWasEnabled();
 
     if (reload)
-        m_inspectedPage->mainFrame()->loader()->reload();
+        m_inspectedPage->mainFrame()->redirectScheduler()->scheduleRefresh(true);
 }
 
 void InspectorController::disableResourceTracking(bool always)

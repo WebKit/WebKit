@@ -36,9 +36,6 @@
 #include "Frame.h"
 #include "Page.h"
 #include "V8Binding.h"
-#include "V8DOMWindow.h"
-#include "V8Index.h"
-#include "V8Proxy.h"
 #include "WebDevToolsAgentImpl.h"
 #include "WebViewImpl.h"
 #include <wtf/HashSet.h>
@@ -50,10 +47,6 @@ using WebCore::Document;
 using WebCore::Frame;
 using WebCore::Page;
 using WebCore::String;
-using WebCore::V8ClassIndex;
-using WebCore::V8DOMWindow;
-using WebCore::V8DOMWrapper;
-using WebCore::V8Proxy;
 
 namespace WebKit {
 
@@ -89,58 +82,6 @@ void DebuggerAgentImpl::debuggerOutput(const String& command)
 {
     m_delegate->debuggerOutput(command);
     m_webdevtoolsAgent->forceRepaint();
-}
-
-// static
-void DebuggerAgentImpl::createUtilityContext(Frame* frame, v8::Persistent<v8::Context>* context)
-{
-    v8::HandleScope scope;
-    bool canExecuteScripts = frame->script()->canExecuteScripts(WebCore::NotAboutToExecuteScript);
-
-    // Set up the DOM window as the prototype of the new global object.
-    v8::Handle<v8::Context> windowContext = V8Proxy::context(frame);
-    v8::Handle<v8::Object> windowGlobal;
-    v8::Handle<v8::Object> windowWrapper;
-    if (canExecuteScripts) {
-        // FIXME: This check prevents renderer from crashing, while providing limited capabilities for
-        // DOM inspection, Resources tracking, no scripts support, some timeline profiling. Console will
-        // result in exceptions for each evaluation. There is still some work that needs to be done in
-        // order to polish the script-less experience.
-        windowGlobal = windowContext->Global();
-        windowWrapper = V8DOMWrapper::lookupDOMWrapper(V8DOMWindow::GetTemplate(), windowGlobal);
-        ASSERT(V8DOMWindow::toNative(windowWrapper) == frame->domWindow());
-    }
-
-    v8::Handle<v8::ObjectTemplate> globalTemplate = v8::ObjectTemplate::New();
-
-    // TODO(yurys): provide a function in v8 bindings that would make the
-    // utility context more like main world context of the inspected frame,
-    // otherwise we need to manually make it satisfy various invariants
-    // that V8Proxy::getEntered and some other V8Proxy methods expect to find
-    // on v8 contexts on the contexts stack.
-    // See V8Proxy::createNewContext.
-    //
-    // Install a security handler with V8.
-    globalTemplate->SetAccessCheckCallbacks(
-        V8DOMWindow::namedSecurityCheck,
-        V8DOMWindow::indexedSecurityCheck,
-        v8::Integer::New(V8ClassIndex::DOMWINDOW));
-    // We set number of internal fields to match that in V8DOMWindow wrapper.
-    // See http://crbug.com/28961
-    globalTemplate->SetInternalFieldCount(V8DOMWindow::internalFieldCount);
-
-    *context = v8::Context::New(0 /* no extensions */, globalTemplate, v8::Handle<v8::Object>());
-    v8::Context::Scope contextScope(*context);
-    v8::Handle<v8::Object> global = (*context)->Global();
-
-    v8::Handle<v8::String> implicitProtoString = v8::String::New("__proto__");
-    if (canExecuteScripts)
-        global->Set(implicitProtoString, windowWrapper);
-
-    // Give the code running in the new context a way to get access to the
-    // original context.
-    if (canExecuteScripts)
-        global->Set(v8::String::New("contentWindow"), windowGlobal);
 }
 
 String DebuggerAgentImpl::executeUtilityFunction(
