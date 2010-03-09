@@ -55,6 +55,7 @@ h5 interfaceName=HTMLHeadingElement, createWithNew
 h6 interfaceName=HTMLHeadingElement, createWithNew
 head createWithNew
 header interfaceName=HTMLElement
+hgroup interfaceName=HTMLElement
 hr interfaceName=HTMLHRElement, createWithNew
 html createWithNew
 i interfaceName=HTMLElement

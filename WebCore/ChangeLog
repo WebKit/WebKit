@@ -1,3 +1,25 @@
+2010-03-08  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Implement HTML5 <hgroup> element.
+        https://bugs.webkit.org/show_bug.cgi?id=33369
+
+        <hgroup> should behave the same as <nav>, <section>, <article>, and <aside>.
+        <hgroup> has no specific parsing rules.
+
+        Test: fast/html/hgroup-element.html
+
+        * css/html.css: Add hgroup as a block element.
+        * editing/htmlediting.cpp:
+        (WebCore::validBlockTag): Add hgroupTag.
+        * html/HTMLElement.cpp:
+        (WebCore::createTagPriorityMap): Returns 5 for hgroupTag.
+        (WebCore::blockTagList): Add hgroupTag.
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::getNode): Add hgroupTag.
+        * html/HTMLTagNames.in: Add hgroup.
+
 2010-03-08  Tony Chang  <tony@chromium.org>
 
         Reviewed by Adam Barth.

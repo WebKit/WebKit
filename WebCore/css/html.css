@@ -72,7 +72,7 @@ layer {
     display: block
 }
 
-article, aside, footer, header, nav, section {
+article, aside, footer, header, hgroup, nav, section {
     display: block
 }
 

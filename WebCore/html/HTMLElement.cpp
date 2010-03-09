@@ -107,6 +107,7 @@ static const TagPriorityMap* createTagPriorityMap()
     map->add(centerTag.localName().impl(), 5);
     map->add(footerTag.localName().impl(), 5);
     map->add(headerTag.localName().impl(), 5);
+    map->add(hgroupTag.localName().impl(), 5);
     map->add(nobrTag.localName().impl(), 5);
     map->add(rubyTag.localName().impl(), 5);
     map->add(navTag.localName().impl(), 5);
@@ -881,6 +882,7 @@ static HashSet<AtomicStringImpl*>* blockTagList()
         tagList.add(h5Tag.localName().impl());
         tagList.add(h6Tag.localName().impl());
         tagList.add(headerTag.localName().impl());
+        tagList.add(hgroupTag.localName().impl());
         tagList.add(hrTag.localName().impl());
         tagList.add(isindexTag.localName().impl());
         tagList.add(layerTag.localName().impl());

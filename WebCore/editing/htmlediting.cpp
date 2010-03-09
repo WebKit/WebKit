@@ -489,6 +489,7 @@ bool validBlockTag(const AtomicString& blockTag)
         blockTags.add(h5Tag.localName());
         blockTags.add(h6Tag.localName());
         blockTags.add(headerTag.localName());
+        blockTags.add(hgroupTag.localName());
         blockTags.add(navTag.localName());
         blockTags.add(pTag.localName());
         blockTags.add(preTag.localName());
