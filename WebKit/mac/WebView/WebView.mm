@@ -975,6 +975,8 @@ static bool shouldEnableLoadDeferring()
     WTF::RefCountedLeakCounter::suppressMessages("At least one WebView was closed with fast teardown.");
 #endif
 
+    _private->closed = YES;
+    
     [[NSDistributedNotificationCenter defaultCenter] removeObserver:self];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
@@ -1006,8 +1008,6 @@ static bool fastDocumentTeardownEnabled()
 {
     if (!_private || _private->closed)
         return;
-
-    _private->closed = YES;
 
     [self _closingEventHandling];
 
@@ -1041,6 +1041,9 @@ static bool fastDocumentTeardownEnabled()
     [self setUIDelegate:nil];
 
     [_private->inspector webViewClosed];
+
+    // setHostWindow:nil must be called before this value is set (see 5408186)
+    _private->closed = YES;
 
     // To avoid leaks, call removeDragCaret in case it wasn't called after moveDragCaretToPoint.
     [self removeDragCaret];
@@ -3336,7 +3339,7 @@ static bool needsWebViewInitThreadWorkaround()
 
 - (void)setHostWindow:(NSWindow *)hostWindow
 {
-    if (_private->closed && hostWindow)
+    if (_private->closed)
         return;
     if (hostWindow == _private->hostWindow)
         return;
