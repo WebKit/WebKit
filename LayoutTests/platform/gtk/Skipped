@@ -5821,3 +5821,6 @@ fast/forms/multiple-form-submission-protection-mouse.html
 
 # mouseScrollBy() is not yet implemented in the GTK EventSender API.
 fast/events/remove-child-onscroll.html
+
+# Apparently a soup bug; See https://bugs.webkit.org/show_bug.cgi?id=35942
+http/tests/plugins/third-party-cookie-accept-policy.html

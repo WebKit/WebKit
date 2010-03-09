@@ -1,3 +1,13 @@
+2010-03-09  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] Fails http/tests/plugins/third-party-cookie-accept-policy.html
+        https://bugs.webkit.org/show_bug.cgi?id=35942
+
+        Unreviewed. Skip test that fails, while we look for the
+        problem. This is likely a bug in soup.
+
+        * platform/gtk/Skipped:
+
 2010-03-09  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Alexey Proskuryakov.
