@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: webkit 1.1.4\n"
 "Report-Msgid-Bugs-To: http://bugs.webkit.org/\n"
 "POT-Creation-Date: 2010-02-25 15:53-0300\n"
-"PO-Revision-Date: 2009-06-26 08:31+1000\n"
+"PO-Revision-Date: 2010-03-01 20:49+0700\n"
 "Last-Translator: Nguyễn Thái Ngọc Duy <pclouds@gmail.com>\n"
 "Language-Team: Vietnamese <vi-VN@googlegroups.com>\n"
 "MIME-Version: 1.0\n"
@@ -77,14 +77,12 @@ msgid "The network request for the URI that should be downloaded"
 msgstr "Yêu cầu mạng cho URI cần tải về"
 
 #: WebKit/gtk/webkit/webkitdownload.cpp:281
-#, fuzzy
 msgid "Network Response"
-msgstr "Yêu cầu mạng"
+msgstr "Hồi đáp mạng"
 
 #: WebKit/gtk/webkit/webkitdownload.cpp:282
-#, fuzzy
 msgid "The network response for the URI that should be downloaded"
-msgstr "Yêu cầu mạng cho URI cần tải về"
+msgstr "Hồi đáp mạng cho URI cần tải về"
 
 #: WebKit/gtk/webkit/webkitdownload.cpp:296
 msgid "Destination URI"
@@ -145,7 +143,7 @@ msgstr "Trang %s đang yêu cầu tên người dùng và mật khẩu"
 
 #: WebKit/gtk/webkit/webkitsoupauthdialog.c:278
 msgid "Server message:"
-msgstr ""
+msgstr "Thông điệp máy chủ:"
 
 #: WebKit/gtk/webkit/webkitsoupauthdialog.c:291
 msgid "Username:"
@@ -156,9 +154,8 @@ msgid "Password:"
 msgstr "Mật khẩu:"
 
 #: WebKit/gtk/webkit/webkitsoupauthdialog.c:302
-#, fuzzy
 msgid "_Remember password"
-msgstr "Nhớ mật khẩu"
+msgstr "_Nhớ mật khẩu"
 
 #: WebKit/gtk/webkit/webkitwebframe.cpp:298
 msgid "Name"
@@ -190,22 +187,20 @@ msgstr "URI hiện thời của nội dung khung đang hiển thị"
 
 #: WebKit/gtk/webkit/webkitwebframe.cpp:344
 msgid "Horizontal Scrollbar Policy"
-msgstr ""
+msgstr "Quy tắc thanh cuộn ngang"
 
 #: WebKit/gtk/webkit/webkitwebframe.cpp:345
-#, fuzzy
 msgid ""
 "Determines the current policy for the horizontal scrollbar of the frame."
-msgstr "Xác định tiến độ tải về hiện thời"
+msgstr "Xác định quy tắc hiện thời cho thanh cuộn ngang của khung."
 
 #: WebKit/gtk/webkit/webkitwebframe.cpp:362
 msgid "Vertical Scrollbar Policy"
-msgstr ""
+msgstr "Quy tắc thanh cuộn dọc"
 
 #: WebKit/gtk/webkit/webkitwebframe.cpp:363
-#, fuzzy
 msgid "Determines the current policy for the vertical scrollbar of the frame."
-msgstr "Xác định tiến độ tải về hiện thời"
+msgstr "Xác định quy tắc hiện thời cho thanh cuộn dọc của khung."
 
 #: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:147
 msgid "The title of the history item"
@@ -265,9 +260,8 @@ msgid "Profile the executed JavaScript."
 msgstr "Kiểm định JavaScript được thực thi."
 
 #: WebKit/gtk/webkit/webkitwebinspector.cpp:315
-#, fuzzy
 msgid "Enable Timeline profiling"
-msgstr "Bật kiểm định JavaScript"
+msgstr "Bật kiểm định trục thời gian"
 
 #: WebKit/gtk/webkit/webkitwebinspector.cpp:316
 msgid "Profile the WebCore instrumentation."
@@ -279,11 +273,11 @@ msgstr "Nguyên nhân"
 
 #: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:159
 msgid "The reason why this navigation is occurring"
-msgstr ""
+msgstr "Lý do duyệt gặp lỗi"
 
 #: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:174
 msgid "The URI that was requested as the target for the navigation"
-msgstr ""
+msgstr "URI được yêu cầu làm đích duyệt"
 
 #: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:188
 msgid "Button"
@@ -302,13 +296,12 @@ msgid "A bitmask representing the state of the modifier keys"
 msgstr "Bitmask đại diện trạng thái phím bổ trợ"
 
 #: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:220
-#, fuzzy
 msgid "Target frame"
-msgstr "Tên khung"
+msgstr "Khung đích"
 
 #: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:221
 msgid "The target frame for the navigation"
-msgstr ""
+msgstr "Khung đích để xem"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:237
 msgid "Default Encoding"
@@ -432,11 +425,11 @@ msgstr "Có in ảnh nền hay không."
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:383
 msgid "Enable Scripts"
-msgstr ""
+msgstr "Bật script"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:384
 msgid "Enable embedded scripting languages."
-msgstr ""
+msgstr "Bật ngôn ngữ nhúng dạng script."
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:392
 msgid "Enable Plugins"
@@ -488,153 +481,149 @@ msgstr "Bật chế độ duyệt riêng tư"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:481
 msgid "Enable Spell Checking"
-msgstr ""
+msgstr "Bật kiểm lỗi chính tả"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:482
-#, fuzzy
 msgid "Enables spell checking while typing"
-msgstr "Kiểm tra khi đang _gõ"
+msgstr "Kiểm lỗi chính tả khi đang gõ"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:505
 msgid "Languages to use for spell checking"
-msgstr ""
+msgstr "Ngôn ngữ kiểm lỗi chính tả"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:506
 msgid "Comma separated list of languages to use for spell checking"
-msgstr ""
+msgstr "Danh sách ngôn ngữ kiểm lỗi chính tả, cách nhau bằng dấu phẩy"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:520
-#, fuzzy
 msgid "Enable Caret Browsing"
-msgstr "Bật duyệt riêng tư"
+msgstr "Bật con nháy"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:521
 msgid "Whether to enable accesibility enhanced keyboard navigation"
-msgstr ""
+msgstr "Có bật khả năng duyệt tăng cường bằng bàn phím không"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:536
 msgid "Enable HTML5 Database"
-msgstr ""
+msgstr "Bật Cơ sở dữ liệu HTML5"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:537
 msgid "Whether to enable HTML5 database support"
-msgstr ""
+msgstr "Có bật hỗ trợ Cơ sở dữ liệu HTML5 không"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:552
 msgid "Enable HTML5 Local Storage"
-msgstr ""
+msgstr "Bật Kho chứa HTML5 cục bộ"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:553
 msgid "Whether to enable HTML5 Local Storage support"
-msgstr ""
+msgstr "Có bật hỗ trợ Kho chứa HTML5 cục bộ không"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:567
 msgid "Enable XSS Auditor"
-msgstr ""
+msgstr "Bật kiểm tra XSS"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:568
 msgid "Whether to enable teh XSS auditor"
-msgstr ""
+msgstr "Có bật kiểm tra XSS không"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:586
 msgid "User Agent"
-msgstr ""
+msgstr "Đại diện người dùng"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:587
 msgid "The User-Agent string used by WebKitGtk"
-msgstr ""
+msgstr "Chuỗi User-Agent WebKitGtk sẽ dùng"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:602
 msgid "JavaScript can open windows automatically"
-msgstr ""
+msgstr "JavaScript được phép mở cửa sổ"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:603
 msgid "Whether JavaScript can open windows automatically"
-msgstr ""
+msgstr "JavaScript có được phép tự động mở cửa sổ không"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:618
 msgid "Enable offline web application cache"
-msgstr ""
+msgstr "Bật lưu tạm ứng dụng web ngoại tuyến"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:619
 msgid "Whether to enable offline web application cache"
-msgstr ""
+msgstr "Có bật lưu tạm ứng dụng web ngoại tuyến không"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:646
 msgid "Editing behavior"
-msgstr ""
+msgstr "Cách sửa đổi"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:647
 msgid "The behavior mode to use in editing mode"
-msgstr ""
+msgstr "Cách sửa đổi được sử dụng trong chế độ sửa đổi"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:663
 msgid "Enable universal access from file URIs"
-msgstr ""
+msgstr "Bật truy cập thống nhất từ URI của tập tin"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:664
 msgid "Whether to allow universal access from file URIs"
-msgstr ""
+msgstr "Có cho phép truy cập thống nhất từ URI của tập tin không"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:679
 msgid "Enable DOM paste"
-msgstr ""
+msgstr "Cho dán DOM"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:680
 msgid "Whether to enable DOM paste"
-msgstr ""
+msgstr "Có cho dán DOM không"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:698
 msgid "Tab key cycles through elements"
-msgstr ""
+msgstr "Xoay vòng phím Tab qua các thành phần"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:699
 msgid "Whether the tab key cycles through elements on the page."
-msgstr ""
+msgstr "Có xoay vòng phím Tab trên các thành phần của trang không"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:719
 msgid "Enable Default Context Menu"
-msgstr ""
+msgstr "Bật menu ngữ cảnh mặc định"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:720
 msgid ""
 "Enables the handling of right-clicks for the creation of the default context "
 "menu"
-msgstr ""
+msgstr "Cho phép phím chuột phải tạo menu ngữ cảnh mặc định"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:740
 msgid "Enable Site Specific Quirks"
-msgstr ""
+msgstr "Bật khắc phục đặc thù cho các trang"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:741
 msgid "Enables the site-specific compatibility workarounds"
-msgstr ""
+msgstr "Khắc phục những nhược điểm đặc thù của một số trang web"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:763
 msgid "Enable page cache"
-msgstr ""
+msgstr "Bật page cache"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:764
-#, fuzzy
 msgid "Whether the page cache should be used"
-msgstr "Có in ảnh nền hay không."
+msgstr "Có bật tính năng page cache không"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:784
 msgid "Auto Resize Window"
-msgstr ""
+msgstr "Tự động đổi kích thước cửa sổ"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:785
 msgid "Automatically resize the toplevel window when a page requests it"
-msgstr ""
+msgstr "Tự động thay đổi kích thước cửa sổ trên cùng khi trang yêu cầu"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:817
-#, fuzzy
 msgid "Enable Java Applet"
-msgstr "Bật kiểm định JavaScript"
+msgstr "Bật tiểu dụng Java"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:818
 msgid "Whether Java Applet support through <applet> should be enabled"
-msgstr ""
+msgstr "Cho phép hỗ trợ tiểu dụng Java bằng <applet>"
 
 #: WebKit/gtk/webkit/webkitwebview.cpp:2319
 msgid "Returns the @web_view's document title"
@@ -726,11 +715,11 @@ msgstr "Bảng mã tự chọn cho khung xem Web"
 
 #: WebKit/gtk/webkit/webkitwebview.cpp:2520
 msgid "Icon URI"
-msgstr ""
+msgstr "URI biểu tượng"
 
 #: WebKit/gtk/webkit/webkitwebview.cpp:2521
 msgid "The URI for the favicon for the #WebKitWebView."
-msgstr ""
+msgstr "URI của biểu tượng trang (favicon) cho #WebKitWebView."
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:55
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:60
@@ -743,7 +732,7 @@ msgstr "Phục hồi"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:70
 msgid "This is a searchable index. Enter search keywords: "
-msgstr ""
+msgstr "Đây là chỉ mục tìm kiếm được. Hãy nhập từ khoá cần tìm: "
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:75
 msgid "Choose File"
@@ -903,108 +892,107 @@ msgstr "Không biết"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:364
 msgid "Loading..."
-msgstr ""
+msgstr "Đang nạp"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:369
 msgid "Live Broadcast"
-msgstr ""
+msgstr "Phát trực tiếp"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:375
 msgid "audio element controller"
-msgstr ""
+msgstr "bộ điều khiển phần tử âm thanh"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:377
 msgid "video element controller"
-msgstr ""
+msgstr "bộ điều khiển phần tử hình ảnh"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:379
 msgid "mute"
-msgstr ""
+msgstr "tắt tiếng"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:381
 msgid "unmute"
-msgstr ""
+msgstr "không tắt tiếng"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:383
 msgid "play"
-msgstr ""
+msgstr "phát"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:385
 msgid "pause"
-msgstr ""
+msgstr "tạm dừng"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:387
 msgid "movie time"
-msgstr ""
+msgstr "thời lượng phim"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:389
 msgid "timeline slider thumb"
-msgstr ""
+msgstr "con chạy thời gian"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:391
 msgid "back 30 seconds"
-msgstr ""
+msgstr "lùi 30 giây"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:393
 msgid "return to realtime"
-msgstr ""
+msgstr "trở về thời gian thực"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:395
 msgid "elapsed time"
-msgstr ""
+msgstr "thời gian đã qua"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:397
 msgid "remaining time"
-msgstr ""
+msgstr "thời gian còn lại"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:399
-#, fuzzy
 msgid "status"
-msgstr "Tình trạng"
+msgstr "tình trạng"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:401
 msgid "fullscreen"
-msgstr ""
+msgstr "toàn màn hình"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:403
 msgid "fast forward"
-msgstr ""
+msgstr "tới nhanh"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:405
 msgid "fast reverse"
-msgstr ""
+msgstr "lùi lại"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:407
 msgid "show closed captions"
-msgstr ""
+msgstr "xay đầu đề"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:409
 msgid "hide closed captions"
-msgstr ""
+msgstr "ẩn đầu đề"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:418
 msgid "audio element playback controls and status display"
-msgstr ""
+msgstr "bộ điều khiển phần tử phát tiếng và hiển thị tình trạng"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:420
 msgid "video element playback controls and status display"
-msgstr ""
+msgstr "bộ điều khiển phần tử phát hình và hiển thị tình trạng"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:422
 msgid "mute audio tracks"
-msgstr ""
+msgstr "tắt tiếng"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:424
 msgid "unmute audio tracks"
-msgstr ""
+msgstr "không tắt tiếng"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:426
 msgid "begin playback"
-msgstr ""
+msgstr "bắt đầu phát"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:428
 msgid "pause playback"
-msgstr ""
+msgstr "tạm dừng phát"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:430
 msgid "movie time scrubber"
@@ -1016,76 +1004,75 @@ msgstr ""
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:434
 msgid "seek movie back 30 seconds"
-msgstr ""
+msgstr "quay lùi phim 30 giây"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:436
 msgid "return streaming movie to real time"
-msgstr ""
+msgstr "trở về luồng thời gian thực"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:438
 msgid "current movie time in seconds"
-msgstr ""
+msgstr "thời gian của phim theo giây"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:440
 msgid "number of seconds of movie remaining"
-msgstr ""
+msgstr "số giây còn lại"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:442
 msgid "current movie status"
-msgstr ""
+msgstr "tình trạng phim hiện thời"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:444
 msgid "seek quickly back"
-msgstr ""
+msgstr "lùi ngược nhanh"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:446
 msgid "seek quickly forward"
-msgstr ""
+msgstr "chạy tới nhanh"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:448
 msgid "Play movie in fullscreen mode"
-msgstr ""
+msgstr "Xem phim toàn màn hình"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:450
 msgid "start displaying closed captions"
-msgstr ""
+msgstr "bắt đầu hiển thị đầu đề"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:452
 msgid "stop displaying closed captions"
-msgstr ""
+msgstr "ngưng hiển thị đầu đề"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:461
-#, fuzzy
 msgid "indefinite time"
-msgstr "định nghĩa"
+msgstr "vô hạn"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:491
 msgid "value missing"
-msgstr ""
+msgstr "thiếu giá trị"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:497
 msgid "type mismatch"
-msgstr ""
+msgstr "kiểu không khớp"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:502
 msgid "pattern mismatch"
-msgstr ""
+msgstr "mẫu không khớp"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:507
 msgid "too long"
-msgstr ""
+msgstr "quá dài"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:512
 msgid "range underflow"
-msgstr ""
+msgstr "phạm vi quá ngắn"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:517
 msgid "range overflow"
-msgstr ""
+msgstr "phạm vi quá dài"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:522
 msgid "step mismatch"
-msgstr ""
+msgstr "nhảy bước không khớp"
 
 #~ msgid "_Searchable Index"
 #~ msgstr "Chỉ mục _tìm được"
