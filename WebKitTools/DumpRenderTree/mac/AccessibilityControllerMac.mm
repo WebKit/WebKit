@@ -42,7 +42,7 @@ AccessibilityController::~AccessibilityController()
 
 AccessibilityUIElement AccessibilityController::elementAtPoint(int x, int y)
 {
-    id accessibilityObject = [[[mainFrame frameView] documentView] accessibilityHitTest:NSMakePoint((CGFloat)x, (CGFloat)y)];
+    id accessibilityObject = [[[mainFrame frameView] documentView] accessibilityHitTest:NSMakePoint(x, y)];
     return AccessibilityUIElement(accessibilityObject);    
 }
 
