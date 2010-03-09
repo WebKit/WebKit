@@ -1,3 +1,21 @@
+2010-03-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Changed FastMalloc statistics reporting to be a bit clearer. We now
+        report:
+            - Reserved VM Bytes: the VM that has been mapped into the process.
+            - Committed VM Bytes: the subset of Reserved VM Bytes actually in use.
+            - Free List Bytes: the subset of Committed VM Bytes in a free list.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::fastMallocStatistics):
+        (WTF::TCMallocStats::fastMallocStatistics): Updated to report the statistics
+        above. Standardized use of "ifdef WTF_CHANGES". Added a SpinLockHolder
+        around all statistics gathering, since it reads from the page heap.
+
+        * wtf/FastMalloc.h: Updated to report the statistics above. 
+
 2010-03-09  Gabor Loki  <loki@webkit.org>
 
         Rubber-stamped by Maciej Stachowiak.

@@ -83,10 +83,9 @@ namespace WTF {
     void releaseFastMallocFreeMemory();
     
     struct FastMallocStatistics {
-        size_t heapSize;
-        size_t freeSizeInHeap;
-        size_t freeSizeInCaches;
-        size_t returnedSize;
+        size_t reservedVMBytes;
+        size_t committedVMBytes;
+        size_t freeListBytes;
     };
     FastMallocStatistics fastMallocStatistics();
 

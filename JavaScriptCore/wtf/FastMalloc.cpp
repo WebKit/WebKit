@@ -375,7 +375,7 @@ void releaseFastMallocFreeMemory() { }
     
 FastMallocStatistics fastMallocStatistics()
 {
-    FastMallocStatistics statistics = { 0, 0, 0, 0 };
+    FastMallocStatistics statistics = { 0, 0, 0 };
     return statistics;
 }
 
@@ -432,7 +432,7 @@ extern "C" const int jscore_fastmalloc_introspection = 0;
 #include <windows.h>
 #endif
 
-#if WTF_CHANGES
+#ifdef WTF_CHANGES
 
 #if OS(DARWIN)
 #include "MallocZoneSupport.h"
@@ -4431,7 +4431,7 @@ void FastMallocZone::init()
 
 #endif
 
-#if WTF_CHANGES
+#ifdef WTF_CHANGES
 void releaseFastMallocFreeMemory()
 {
     // Flush free pages in the current thread cache back to the page heap.
@@ -4449,20 +4449,21 @@ void releaseFastMallocFreeMemory()
 FastMallocStatistics fastMallocStatistics()
 {
     FastMallocStatistics statistics;
-    {
-        SpinLockHolder lockHolder(&pageheap_lock);
-        statistics.heapSize = static_cast<size_t>(pageheap->SystemBytes());
-        statistics.freeSizeInHeap = static_cast<size_t>(pageheap->FreeBytes());
-        statistics.returnedSize = pageheap->ReturnedBytes();
-        statistics.freeSizeInCaches = 0;
-        for (TCMalloc_ThreadCache* threadCache = thread_heaps; threadCache ; threadCache = threadCache->next_)
-            statistics.freeSizeInCaches += threadCache->Size();
-    }
+
+    SpinLockHolder lockHolder(&pageheap_lock);
+    statistics.reservedVMBytes = static_cast<size_t>(pageheap->SystemBytes());
+    statistics.committedVMBytes = statistics.reservedVMBytes - pageheap->ReturnedBytes();
+
+    statistics.freeListBytes = 0;
     for (unsigned cl = 0; cl < kNumClasses; ++cl) {
         const int length = central_cache[cl].length();
         const int tc_length = central_cache[cl].tc_length();
-        statistics.freeSizeInCaches += ByteSizeForClass(cl) * (length + tc_length);
+
+        statistics.freeListBytes += ByteSizeForClass(cl) * (length + tc_length);
     }
+    for (TCMalloc_ThreadCache* threadCache = thread_heaps; threadCache ; threadCache = threadCache->next_)
+        statistics.freeListBytes += threadCache->Size();
+
     return statistics;
 }
 

@@ -1,3 +1,12 @@
+2010-03-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Updated for FastMalloc reporting changes.
+        
+        * Misc/WebCoreStatistics.mm:
+        (+[WebCoreStatistics memoryStatistics]):
+
 2010-03-08  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Mark Rowe.

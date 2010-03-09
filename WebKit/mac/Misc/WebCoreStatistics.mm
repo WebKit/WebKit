@@ -196,10 +196,9 @@ using namespace WebCore;
     JSLock lock(SilenceAssertionsOnly);
     Heap::Statistics jsHeapStatistics = JSDOMWindow::commonJSGlobalData()->heap.statistics();
     return [NSDictionary dictionaryWithObjectsAndKeys:
-                [NSNumber numberWithInt:fastMallocStatistics.heapSize], @"FastMallocHeapSize",
-                [NSNumber numberWithInt:fastMallocStatistics.freeSizeInHeap], @"FastMallocFreeSizeInHeap",
-                [NSNumber numberWithInt:fastMallocStatistics.freeSizeInCaches], @"FastMallocFreeSizeInCaches",
-                [NSNumber numberWithInt:fastMallocStatistics.returnedSize], @"FastMallocReturnedSize",
+                [NSNumber numberWithInt:fastMallocStatistics.reservedVMBytes], @"FastMallocReservedVMBytes",
+                [NSNumber numberWithInt:fastMallocStatistics.committedVMBytes], @"FastMallocCommittedVMBytes",
+                [NSNumber numberWithInt:fastMallocStatistics.freeListBytes], @"FastMallocFreeListBytes",
                 [NSNumber numberWithInt:jsHeapStatistics.size], @"JavaScriptHeapSize",
                 [NSNumber numberWithInt:jsHeapStatistics.free], @"JavaScriptFreeSize",
             nil];
