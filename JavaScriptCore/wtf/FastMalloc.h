@@ -34,6 +34,7 @@ namespace WTF {
     void* fastCalloc(size_t numElements, size_t elementSize);
     void* fastRealloc(void*, size_t);
     char* fastStrDup(const char*);
+    void fastCheckConsistency(const void*);
 
     struct TryMallocReturnValue {
         TryMallocReturnValue(void* data)

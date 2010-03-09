@@ -1,3 +1,18 @@
+2010-03-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Switching malloc implementations requires a world rebuild
+        https://bugs.webkit.org/show_bug.cgi?id=35899
+
+        * wtf/FastMalloc.cpp:
+        (WTF::fastCheckConsistency):
+        (WTF::TCMallocStats::fastCheckConsistency):
+        * wtf/FastMalloc.h:
+        * wtf/ValueCheck.h:
+        (WTF::): Moved pointer checking into a helper function in FastMalloc.cpp,
+        so you can switch malloc implementations without rebuilding the world.
+
 2010-03-07  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin Adler.

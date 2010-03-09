@@ -26,12 +26,7 @@
 #ifndef ValueCheck_h
 #define ValueCheck_h
 
-// For malloc_size and _msize.
-#if OS(DARWIN)
-#include <malloc/malloc.h>
-#elif COMPILER(MSVC)
-#include <malloc.h>
-#endif
+#include <wtf/FastMalloc.h>
 
 namespace WTF {
 
@@ -47,13 +42,7 @@ template<typename P> struct ValueCheck<P*> {
     {
         if (!p)
             return;
-#if (defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC) || !defined(NDEBUG)
-#if OS(DARWIN)
-        ASSERT(malloc_size(p));
-#elif COMPILER(MSVC)
-        ASSERT(_msize(const_cast<P*>(p)));
-#endif
-#endif
+        fastCheckConsistency(p);
         ValueCheck<P>::checkConsistency(*p);
     }
 };
