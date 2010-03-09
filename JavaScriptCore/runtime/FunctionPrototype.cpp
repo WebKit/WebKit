@@ -39,7 +39,7 @@ static JSValue JSC_HOST_CALL functionProtoFuncApply(ExecState*, JSObject*, JSVal
 static JSValue JSC_HOST_CALL functionProtoFuncCall(ExecState*, JSObject*, JSValue, const ArgList&);
 
 FunctionPrototype::FunctionPrototype(ExecState* exec, NonNullPassRefPtr<Structure> structure)
-    : InternalFunction(&exec->globalData(), structure, exec->propertyNames().emptyIdentifier)
+    : InternalFunction(&exec->globalData(), structure, exec->propertyNames().nullIdentifier)
 {
     putDirectWithoutTransition(exec->propertyNames().length, jsNumber(exec, 0), DontDelete | ReadOnly | DontEnum);
 }

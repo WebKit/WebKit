@@ -1,3 +1,26 @@
+2010-03-09  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by NOBODY (reverting r54510).
+
+        This caused a performance regression, by breaking the code
+        generator's logic to calculate the skip level for resolving
+        variables (traced by rdar:7683350)  Reverting for now.
+
+        * parser/Grammar.y:
+        * parser/NodeConstructors.h:
+        (JSC::ContinueNode::ContinueNode):
+        (JSC::BreakNode::BreakNode):
+        (JSC::ForInNode::ForInNode):
+        * runtime/CommonIdentifiers.cpp:
+        (JSC::CommonIdentifiers::CommonIdentifiers):
+        * runtime/CommonIdentifiers.h:
+        * runtime/FunctionPrototype.cpp:
+        (JSC::FunctionPrototype::FunctionPrototype):
+        * runtime/Identifier.cpp:
+        (JSC::Identifier::add):
+        * runtime/PropertyNameArray.cpp:
+        (JSC::PropertyNameArray::add):
+
 2010-03-09  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.
