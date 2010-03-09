@@ -1,5 +1,12 @@
 2010-03-09  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        Unreviewed build fix (only exposed by make distcheck). The
+        SharedWorkers files are not built, they need to be distributed.
+
+        * GNUmakefile.am:
+
+2010-03-09  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         Reviewed by Dirk Schulze.
 
         [GStreamer] Buffering logic is not correct, and does not work very well

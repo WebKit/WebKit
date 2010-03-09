@@ -2635,7 +2635,7 @@ FEATURE_DEFINES += ENABLE_SHARED_WORKERS=1
 webcore_cppflags += \
 	-DENABLE_SHARED_WORKERS=1
 
-webcore_built_sources += \
+webcore_sources += \
 	WebCore/bindings/js/JSSharedWorkerConstructor.cpp \
 	WebCore/bindings/js/JSSharedWorkerConstructor.h \
 	WebCore/bindings/js/JSSharedWorkerCustom.cpp \
