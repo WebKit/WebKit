@@ -6,6 +6,7 @@
         <li><a href="/projects/goals.html">Project Goals</a></li>
         <li><a href="/contact.html">Keeping in Touch</a></li>
         <li><a href="http://trac.webkit.org/">Trac</a></li>
+        <li><a href="/meeting/">Contributors Meeting</a></li>
 
         <li class="subtitle">Working with the Code</li>
 

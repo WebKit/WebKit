@@ -1,3 +1,12 @@
+2010-03-09  Adam Roben  <aroben@apple.com>
+
+        Add a link to the Contributors Meeting registration form in the
+        sidebar
+
+        Rubber-stamped in advance by Adele Peterson.
+
+        * nav.inc: Added a link underneath "Trac".
+
 2010-02-26  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Adele Peterson.
