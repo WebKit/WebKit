@@ -5,6 +5,28 @@
         [GStreamer] Buffering logic is not correct, and does not work very well
         https://bugs.webkit.org/show_bug.cgi?id=35706
 
+        Fix buffering to match GStreamer expectancies regarding the
+        pipeline state, so that videos which really need buffering to play
+        correctly also work, while maintaining the convenience of
+        on-disk-buffering. This required a bit of shuffling of state
+        change handling.
+
+        No behaviour change expected.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::processBufferingStats):
+        (WebCore::MediaPlayerPrivate::fillTimerFired):
+        (WebCore::MediaPlayerPrivate::updateStates):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+
+2010-03-09  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Dirk Schulze.
+
+        [GStreamer] Buffering logic is not correct, and does not work very well
+        https://bugs.webkit.org/show_bug.cgi?id=35706
+
         Do not call pause(), but set the GStreamer state directly. This is
         just a GStreamer implementation detail, and this will avoid having
         side effects in case we change the pause implementation in the

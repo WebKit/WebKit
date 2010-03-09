@@ -276,7 +276,6 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     , m_endTime(numeric_limits<float>::infinity())
     , m_networkState(MediaPlayer::Empty)
     , m_readyState(MediaPlayer::HaveNothing)
-    , m_startedPlaying(false)
     , m_isStreaming(false)
     , m_size(IntSize())
     , m_buffer(0)
@@ -285,12 +284,14 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     , m_resetPipeline(false)
     , m_paused(true)
     , m_seeking(false)
+    , m_buffering(false)
     , m_playbackRate(1)
     , m_errorOccured(false)
     , m_mediaDuration(0)
     , m_startedBuffering(false)
     , m_fillTimer(this, &MediaPlayerPrivate::fillTimerFired)
     , m_maxTimeLoaded(0)
+    , m_bufferingPercentage(0)
 {
     if (doGstInit())
         createGSTPlayBin();
@@ -646,13 +647,26 @@ PassRefPtr<TimeRanges> MediaPlayerPrivate::buffered() const
 
 void MediaPlayerPrivate::processBufferingStats(GstMessage* message)
 {
+    // This is the immediate buffering that needs to happen so we have
+    // enough to play right now.
+    m_buffering = true;
+    const GstStructure *structure = gst_message_get_structure(message);
+    gst_structure_get_int(structure, "buffer-percent", &m_bufferingPercentage);
+
+    LOG_VERBOSE(Media, "[Buffering] Buffering: %d%%.", m_bufferingPercentage);
+
     GstBufferingMode mode;
-
     gst_message_parse_buffering_stats(message, &mode, 0, 0, 0);
-    if (mode != GST_BUFFERING_DOWNLOAD)
+    if (mode != GST_BUFFERING_DOWNLOAD) {
+        updateStates();
         return;
+    }
 
+    // This is on-disk buffering, that allows us to download much more
+    // than needed for right now.
     if (!m_startedBuffering) {
+        LOG_VERBOSE(Media, "[Buffering] Starting on-disk buffering.");
+
         m_startedBuffering = true;
 
         if (m_fillTimer.isActive())
@@ -680,7 +694,7 @@ void MediaPlayerPrivate::fillTimerFired(Timer<MediaPlayerPrivate>*)
     if (stop != -1)
         fillStatus = 100.0 * stop / GST_FORMAT_PERCENT_MAX;
 
-    LOG_VERBOSE(Media, "Download buffer filled up to %f%%", fillStatus);
+    LOG_VERBOSE(Media, "[Buffering] Download buffer filled up to %f%%", fillStatus);
 
     if (!m_mediaDuration)
         durationChanged();
@@ -689,7 +703,7 @@ void MediaPlayerPrivate::fillTimerFired(Timer<MediaPlayerPrivate>*)
     // available. Otherwise we can't compute it.
     if (m_mediaDuration) {
         m_maxTimeLoaded = static_cast<float>((fillStatus * m_mediaDuration) / 100.0);
-        LOG_VERBOSE(Media, "Updated maxTimeLoaded: %f", m_maxTimeLoaded);
+        LOG_VERBOSE(Media, "[Buffering] Updated maxTimeLoaded: %f", m_maxTimeLoaded);
     }
 
     if (fillStatus != 100.0) {
@@ -770,10 +784,6 @@ void MediaPlayerPrivate::cancelLoad()
 
 void MediaPlayerPrivate::updateStates()
 {
-    // There is no (known) way to get such level of information about
-    // the state of GStreamer, therefore, when in PAUSED state,
-    // we are sure we can display the first frame and go to play
-
     if (!m_playBin)
         return;
 
@@ -797,44 +807,64 @@ void MediaPlayerPrivate::updateStates()
 
         m_resetPipeline = state <= GST_STATE_READY;
 
-        if (state == GST_STATE_READY)
+        // Try to figure out ready and network states.
+        if (state == GST_STATE_READY) {
             m_readyState = MediaPlayer::HaveNothing;
-        else if (state == GST_STATE_PAUSED)
+            m_networkState = MediaPlayer::Empty;
+        } else if (maxTimeLoaded() == duration()) {
+            m_networkState = MediaPlayer::Loaded;
             m_readyState = MediaPlayer::HaveEnoughData;
+        } else {
+            m_readyState = currentTime() < maxTimeLoaded() ? MediaPlayer::HaveFutureData : MediaPlayer::HaveCurrentData;
+            m_networkState = MediaPlayer::Loading;
+        }
 
-        if (state == GST_STATE_PLAYING) {
+        if (m_buffering && state != GST_STATE_READY) {
+            m_readyState = MediaPlayer::HaveCurrentData;
+            m_networkState = MediaPlayer::Loading;
+        }
+
+        // Now let's try to get the states in more detail using
+        // information from GStreamer, while we sync states where
+        // needed.
+        if (state == GST_STATE_PAUSED) {
+            if (m_buffering && m_bufferingPercentage == 100) {
+                m_buffering = false;
+                m_bufferingPercentage = 0;
+                m_readyState = MediaPlayer::HaveEnoughData;
+
+                LOG_VERBOSE(Media, "[Buffering] Complete.");
+
+                if (!m_paused) {
+                    LOG_VERBOSE(Media, "[Buffering] Restarting playback.");
+                    gst_element_set_state(m_playBin, GST_STATE_PLAYING);
+                }
+            } else if (!m_buffering)
+                m_paused = true;
+        } else if (state == GST_STATE_PLAYING) {
             m_readyState = MediaPlayer::HaveEnoughData;
             m_paused = false;
-            m_startedPlaying = true;
+
             if (!m_mediaDuration) {
                 float newDuration = duration();
                 if (!isinf(newDuration))
                     m_mediaDuration = newDuration;
             }
+
+            if (m_buffering) {
+                m_readyState = MediaPlayer::HaveNothing;
+                m_networkState = MediaPlayer::Loading;
+
+                LOG_VERBOSE(Media, "[Buffering] Pausing stream for buffering.");
+
+                gst_element_set_state(m_playBin, GST_STATE_PAUSED);
+            }
         } else
             m_paused = true;
 
         // Is on-disk buffering in progress?
-        if (m_fillTimer.isActive()) {
+        if (m_fillTimer.isActive())
             m_networkState = MediaPlayer::Loading;
-            // Buffering has just started, we should now have enough
-            // data to restart playback if it was internally paused by
-            // GStreamer.
-            if (m_paused && !m_startedPlaying)
-                gst_element_set_state(m_playBin, GST_STATE_PLAYING);
-        }
-
-        if (maxTimeLoaded() == duration()) {
-            m_networkState = MediaPlayer::Loaded;
-            if (state == GST_STATE_READY)
-                m_readyState = MediaPlayer::HaveNothing;
-            else if (state == GST_STATE_PAUSED)
-                m_readyState = MediaPlayer::HaveEnoughData;
-        } else
-            if (state == GST_STATE_READY)
-                m_readyState = MediaPlayer::HaveNothing;
-            else if (m_paused)
-                m_readyState = currentTime() < maxTimeLoaded() ? MediaPlayer::HaveFutureData : MediaPlayer::HaveCurrentData;
 
         if (m_changingRate) {
             m_player->rateChanged();
@@ -882,20 +912,16 @@ void MediaPlayerPrivate::updateStates()
             m_paused = true;
             // Live pipelines go in PAUSED without prerolling.
             m_isStreaming = true;
-        } else if (state == GST_STATE_PLAYING) {
-            m_startedPlaying = true;
+        } else if (state == GST_STATE_PLAYING)
             m_paused = false;
-        }
-
-        if (m_paused && !m_startedPlaying)
-            gst_element_set_state(m_playBin, GST_STATE_PLAYING);
 
         if (m_seeking) {
             shouldUpdateAfterSeek = true;
             m_seeking = false;
-            if (m_paused)
+            if (!m_paused)
                 gst_element_set_state(m_playBin, GST_STATE_PLAYING);
-        }
+        } else if (!m_paused)
+            gst_element_set_state(m_playBin, GST_STATE_PLAYING);
 
         m_networkState = MediaPlayer::Loading;
         break;

@@ -149,7 +149,6 @@ class MediaPlayerPrivate : public MediaPlayerPrivateInterface {
             bool m_isEndReached;
             MediaPlayer::NetworkState m_networkState;
             MediaPlayer::ReadyState m_readyState;
-            bool m_startedPlaying;
             mutable bool m_isStreaming;
             IntSize m_size;
             GstBuffer* m_buffer;
@@ -158,12 +157,14 @@ class MediaPlayerPrivate : public MediaPlayerPrivateInterface {
             bool m_resetPipeline;
             bool m_paused;
             bool m_seeking;
+            bool m_buffering;
             float m_playbackRate;
             bool m_errorOccured;
             float m_mediaDuration;
             bool m_startedBuffering;
             Timer<MediaPlayerPrivate> m_fillTimer;
             float m_maxTimeLoaded;
+            int m_bufferingPercentage;
     };
 }
 
