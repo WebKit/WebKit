@@ -5059,10 +5059,6 @@ fast/loader/crash-copying-backforwardlist.html
 # Because ENABLE_DASHBOARD_SUPPORT=0 is the default option. (Apple's dashboard support in OS X)
 fast/css/dashboard-regions-attr-crash.html
 
-# [Qt] perl websocket test(s) time out
-# https://bugs.webkit.org/show_bug.cgi?id=34882
-websocket/tests/cookies/httponly-cookie.pl
-
 # [Qt] REGRESSION(r54811) fast/canvas/drawImage-with-negative-source-destination.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=35005
 fast/canvas/drawImage-with-negative-source-destination.html
@@ -5095,9 +5091,6 @@ java
 # see https://bugs.webkit.org/show_bug.cgi?id=33180.
 # Core functionality is tested in plugins/private-browsing-mode-2.html
 plugins/private-browsing-mode.html
-
-# Qt's DRT doesn't not seem to support the layoutTestController.evaluateScriptInIsolatedWorld() call.
-storage/open-database-creation-callback-isolated-world.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=35824 - Doesn't apply to platforms that don't enforce the CFNetwork-style 3rd party cookie policy
 http/tests/cookies/third-party-cookie-relaxing.html

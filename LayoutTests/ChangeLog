@@ -1,3 +1,18 @@
+2010-03-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed trivial fix.
+
+        [Qt] perl websocket test(s) time out
+        https://bugs.webkit.org/show_bug.cgi?id=34879
+        It was fixed by r55719, so we can unskip websocket/tests/cookies/httponly-cookie.pl.
+
+        storage/open-database-creation-callback-isolated-world.html removed
+        from Skipped list, because it was removed from tree by r55635.
+
+        * platform/qt/Skipped:
+         - websocket/tests/cookies/httponly-cookie.pl unskipped.
+         - storage/open-database-creation-callback-isolated-world.html unskipped.
+
 2010-03-03  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
