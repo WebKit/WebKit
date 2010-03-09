@@ -70,6 +70,7 @@ media/media-fullscreen-not-in-document.html
 media/unsupported-rtsp.html
 media/video-no-audio.html
 media/video-size-intrinsic-scale.html
+media/video-source-error.html
 
 # These are occasionally timing out on SnowLeopard
 # https://bugs.webkit.org/show_bug.cgi?id=32339
