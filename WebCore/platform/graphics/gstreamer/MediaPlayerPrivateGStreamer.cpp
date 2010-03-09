@@ -344,7 +344,10 @@ void MediaPlayerPrivate::load(const String& url)
     }
 
     g_object_set(m_playBin, "uri", url.utf8().data(), NULL);
-    pause();
+
+    // GStreamer needs to have the pipeline set to a paused state to
+    // start providing anything useful.
+    gst_element_set_state(m_playBin, GST_STATE_PAUSED);
 }
 
 bool MediaPlayerPrivate::changePipelineState(GstState newState)
