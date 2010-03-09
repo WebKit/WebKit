@@ -1,5 +1,12 @@
 2010-03-08  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [GTK] Unreviewed buildfix after r55688.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::):
+
+2010-03-08  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unreviewed buildfix after r55688.
 
         * platform/network/qt/ResourceHandleQt.cpp:
