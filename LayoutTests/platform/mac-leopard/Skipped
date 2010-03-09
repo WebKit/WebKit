@@ -50,7 +50,7 @@ fast/canvas/webgl/texImage2DImageDataTest.html
 http/tests/media/video-referer.html
 
 # Disable test until https://bugs.webkit.org/show_bug.cgi?id=35714 is fixed
-animation/fill-mode-transform.html
+animations/fill-mode-transform.html
 
 # Disable tests until we can turn on HW comp as described in https://bugs.webkit.org/show_bug.cgi?id=35897
 fast/media/mq-transform-02.html
