@@ -1,3 +1,11 @@
+2010-03-09  Jakub Wieczorek  <jwieczorek@webkit.org>
+
+        Unreviewed.
+
+        Adding myself to committers.py.
+
+        * Scripts/webkitpy/committers.py:
+
 2010-03-09  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Nate Chapin.
