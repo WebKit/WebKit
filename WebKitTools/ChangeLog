@@ -2,6 +2,22 @@
 
         Reviewed by Dimitri Glazkov.
 
+        [DRT/Chromium] Add EventSender
+        https://bugs.webkit.org/show_bug.cgi?id=35859
+
+        Add EventSender classes, which are going to be used by
+        DumpRenderTree Chromium port. These files are based on:
+        - src/webkit/tools/test_shell/event_sending_controller.cc
+        - src/webkit/tools/test_shell/event_sending_controller.h
+        of Chromium rev.40492.
+
+        * DumpRenderTree/chromium/EventSender.cpp: Added.
+        * DumpRenderTree/chromium/EventSender.h: Added.
+
+2010-03-08  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
         [DRT/Chromium] Add PlainTextController and TextInputController
         https://bugs.webkit.org/show_bug.cgi?id=35852
 
