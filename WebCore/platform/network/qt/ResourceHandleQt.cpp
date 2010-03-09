@@ -193,7 +193,7 @@ PassRefPtr<SharedBuffer> ResourceHandle::bufferedData()
 void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, StoredCredentials /*storedCredentials*/, ResourceError& error, ResourceResponse& response, Vector<char>& data, Frame* frame)
 {
     WebCoreSynchronousLoader syncLoader;
-    ResourceHandle handle(request, &syncLoader, true, false, true);
+    ResourceHandle handle(request, &syncLoader, true, false);
 
     ResourceHandleInternal *d = handle.getInternal();
     if (!(d->m_user.isEmpty() || d->m_pass.isEmpty())) {
