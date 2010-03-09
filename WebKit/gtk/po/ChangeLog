@@ -1,3 +1,11 @@
+2010-03-09  Rimas Kudelis  <rq@akl.lt>
+
+        Reviewed by Gustavo Noronha.
+
+        Lithuanian translation update.
+
+        * lt.po:
+
 2010-02-25  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Updated to accomodate the change done to the localized string.
