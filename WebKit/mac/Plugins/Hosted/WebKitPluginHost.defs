@@ -125,12 +125,6 @@ simpleroutine PHPluginInstancePrint(pluginHostPort :mach_port_t;
                                     width :uint32_t;
                                     height :uint32_t);
 
-simpleroutine PHPluginInstanceSnapshot(pluginHostPort :mach_port_t;
-                                    pluginID :uint32_t;
-                                    requestID :uint32_t;
-                                    width :uint32_t;
-                                    height :uint32_t);
-
 simpleroutine PHDestroyPluginInstance(pluginHostPort :mach_port_t;
                                     pluginID :uint32_t;
                                     requestID :uint32_t);
@@ -248,3 +242,9 @@ simpleroutine PHPluginInstancePrivateBrowsingModeDidChange(pluginHostPort :mach_
 
 simpleroutine PHSyncOpenPanelReply(pluginHostPort :mach_port_t;
                                    filenames :data_t);
+
+simpleroutine PHPluginInstanceSnapshot(pluginHostPort :mach_port_t;
+                                    pluginID :uint32_t;
+                                    requestID :uint32_t;
+                                    width :uint32_t;
+                                    height :uint32_t);

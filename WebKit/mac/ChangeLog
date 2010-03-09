@@ -1,5 +1,14 @@
 2010-03-08  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Mark Rowe.
+
+        Move the new method to the end of the MIG definitions file, to avoid breaking
+        compatibility between WebKit and older versions of WebKitPluginHost.
+
+        * Plugins/Hosted/WebKitPluginHost.defs:
+
+2010-03-08  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Kevin Decker.
 
         <rdar://problem/7714340> Need to grab image snapshot of Core Animation plugins
