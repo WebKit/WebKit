@@ -1,3 +1,11 @@
+2010-03-08  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Unreviewed, Chromium build fix.
+
+        Reverting r55689.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2010-03-08  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Adam Barth.
