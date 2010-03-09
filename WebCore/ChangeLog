@@ -2,6 +2,13 @@
 
         [GTK] Unreviewed buildfix after r55688.
 
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcStart):
+
+2010-03-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [GTK] Unreviewed buildfix after r55688.
+
         * platform/network/soup/ResourceHandleSoup.cpp:
         (WebCore::):
 

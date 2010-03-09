@@ -414,7 +414,7 @@ static bool webKitWebSrcStart(WebKitWebSrc* src)
     // Needed to use DLNA streaming servers
     request.setHTTPHeaderField("transferMode.dlna", "Streaming");
 
-    priv->resourceHandle = ResourceHandle::create(request, priv->client, 0, false, false, false);
+    priv->resourceHandle = ResourceHandle::create(request, priv->client, 0, false, false);
     if (!priv->resourceHandle) {
         GST_ERROR_OBJECT(src, "Failed to create ResourceHandle");
         return false;
