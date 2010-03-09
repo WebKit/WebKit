@@ -210,14 +210,10 @@ var WebInspector = {
             this.panels.profiles = new WebInspector.ProfilesPanel();
             this.panels.profiles.registerProfileType(new WebInspector.CPUProfileType());
         }
-
         if (hiddenPanels.indexOf("storage") === -1 && hiddenPanels.indexOf("databases") === -1)
             this.panels.storage = new WebInspector.StoragePanel();
-
-        // FIXME: Uncomment when ready.
-        // if (hiddenPanels.indexOf("audits") === -1)
-        //    this.panels.audits = new WebInspector.AuditsPanel();
-
+        if (Preferences.auditsPanelEnabled && hiddenPanels.indexOf("audits") === -1)
+            this.panels.audits = new WebInspector.AuditsPanel();
         if (hiddenPanels.indexOf("console") === -1)
             this.panels.console = new WebInspector.ConsolePanel();
     },
@@ -782,22 +778,6 @@ WebInspector.documentKeyDown = function(event)
 
             break;
 
-        case "U+0041": // A key
-            if (isMac)
-                var shouldShowAuditsPanel = event.metaKey && !event.shiftKey && !event.ctrlKey && event.altKey;
-            else
-                var shouldShowAuditsPanel = event.ctrlKey && !event.shiftKey && !event.metaKey && event.altKey;
-
-            if (shouldShowAuditsPanel) {
-                if (!this.panels.audits) {
-                    this.panels.audits = new WebInspector.AuditsPanel();
-                    var toolbarElement = document.getElementById("toolbar");
-                    WebInspector.addPanelToolbarIcon(toolbarElement, this.panels.audits, this.panels.console.toolbarItem);
-                }
-                this.currentPanel = this.panels.audits;
-            }
-
-            break;
         case "U+0052": // R key
             if ((event.metaKey && isMac) || (event.ctrlKey && !isMac))
                 InspectorBackend.reloadPage();

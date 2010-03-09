@@ -42,27 +42,6 @@ WebInspector.AuditRules.CacheableResponseCodes =
     304: true // Underlying resource is cacheable
 }
 
-/**
- * @param {Array} array Array of Elements (outerHTML is used) or strings (plain value is used as innerHTML)
- */
-WebInspector.AuditRules.arrayAsUL = function(array, shouldLinkify)
-{
-    if (!array.length)
-        return "";
-    var ulElement = document.createElement("ul");
-    for (var i = 0; i < array.length; ++i) {
-        var liElement = document.createElement("li");
-        if (array[i] instanceof Element)
-            liElement.appendChild(array[i]);
-        else if (shouldLinkify)
-            liElement.appendChild(WebInspector.linkifyURLAsNode(array[i]));
-        else
-            liElement.innerHTML = array[i];
-        ulElement.appendChild(liElement);
-    }
-    return ulElement.outerHTML;
-}
-
 WebInspector.AuditRules.getDomainToResourcesMap = function(resources, types, regexp, needFullResources)
 {
     var domainToResourcesMap = {};
@@ -98,43 +77,29 @@ WebInspector.AuditRules.GzipRule = function()
 WebInspector.AuditRules.GzipRule.prototype = {
     doRun: function(resources, result, callback)
     {
-        try {
-            var commonMessage = undefined;
-            var totalSavings = 0;
-            var compressedSize = 0
-            var candidateSize = 0
-            var outputResources = [];
-            for (var i = 0, length = resources.length; i < length; ++i) {
-                var resource = resources[i];
-                if (this._shouldCompress(resource)) {
-                    var size = resource.resourceSize;
-                    candidateSize += size;
-                    if (this._isCompressed(resource)) {
-                        compressedSize += size;
-                        continue;
-                    }
-                    if (!commonMessage)
-                        commonMessage = result.appendChild("");
-                    var savings = 2 * size / 3;
-                    totalSavings += savings;
-                    outputResources.push(
-                        String.sprintf("Compressing %s could save ~%s",
-                        WebInspector.linkifyURL(resource.url), Number.bytesToString(savings)));
+        var totalSavings = 0;
+        var compressedSize = 0;
+        var candidateSize = 0;
+        var summary = result.addChild("", true);
+        for (var i = 0, length = resources.length; i < length; ++i) {
+            var resource = resources[i];
+            if (this._shouldCompress(resource)) {
+                var size = resource.resourceSize;
+                candidateSize += size;
+                if (this._isCompressed(resource)) {
+                    compressedSize += size;
+                    continue;
                 }
+                var savings = 2 * size / 3;
+                totalSavings += savings;
+                summary.addChild(String.sprintf("%s could save ~%s", WebInspector.linkifyURL(resource.url), Number.bytesToString(savings)));
+                result.violationCount++;
             }
-            if (commonMessage) {
-              commonMessage.value =
-                  String.sprintf("Compressing the following resources with gzip could reduce their " +
-                      "transfer size by about two thirds (~%s):", Number.bytesToString(totalSavings));
-              commonMessage.appendChild(WebInspector.AuditRules.arrayAsUL(outputResources));
-              result.score = 100 * compressedSize / candidateSize;
-              result.type = WebInspector.AuditRuleResult.Type.Violation;
-            }
-        } catch(e) {
-            console.log(e);
-        } finally {
-            callback(result);
         }
+        if (!totalSavings)
+            return callback(null);
+        summary.value = String.sprintf("Compressing the following resources with gzip could reduce their transfer size by about two thirds (~%s):", Number.bytesToString(totalSavings));
+        callback(result);
     },
 
     _isCompressed: function(resource)
@@ -152,98 +117,93 @@ WebInspector.AuditRules.GzipRule.prototype = {
 WebInspector.AuditRules.GzipRule.prototype.__proto__ = WebInspector.AuditRule.prototype;
 
 
-WebInspector.AuditRules.CombineExternalResourcesRule = function(id, name, type, resourceTypeName, parametersObject)
+WebInspector.AuditRules.CombineExternalResourcesRule = function(id, name, type, resourceTypeName, allowedPerDomain)
 {
-    WebInspector.AuditRule.call(this, id, name, parametersObject);
+    WebInspector.AuditRule.call(this, id, name);
     this._type = type;
     this._resourceTypeName = resourceTypeName;
+    this._allowedPerDomain = allowedPerDomain;
 }
 
 WebInspector.AuditRules.CombineExternalResourcesRule.prototype = {
     doRun: function(resources, result, callback)
     {
-        try {
-            var domainToResourcesMap = WebInspector.AuditRules.getDomainToResourcesMap(resources, [this._type], WebInspector.URLRegExp);
-            var penalizedResourceCount = 0;
-            // TODO: refactor according to the chosen i18n approach
-            for (var domain in domainToResourcesMap) {
-                var domainResources = domainToResourcesMap[domain];
-                var extraResourceCount = domainResources.length - this.getValue("AllowedPerDomain");
-                if (extraResourceCount <= 0)
-                    continue;
-                penalizedResourceCount += extraResourceCount - 1;
-                result.appendChild(
-                    String.sprintf("There are %d %s files served from %s. Consider combining them into as few files as possible.",
-                    domainResources.length, this._resourceTypeName, domain));
-            }
-            result.score = 100 - (penalizedResourceCount * this.getValue("ScorePerResource"));
-            result.type = WebInspector.AuditRuleResult.Type.Hint;
-        } catch(e) {
-            console.log(e);
-        } finally {
-            callback(result);
+        var domainToResourcesMap = WebInspector.AuditRules.getDomainToResourcesMap(resources, [this._type], WebInspector.URLRegExp);
+        var penalizedResourceCount = 0;
+        // TODO: refactor according to the chosen i18n approach
+        var summary = result.addChild("", true);
+        for (var domain in domainToResourcesMap) {
+            var domainResources = domainToResourcesMap[domain];
+            var extraResourceCount = domainResources.length - this._allowedPerDomain;
+            if (extraResourceCount <= 0)
+                continue;
+            penalizedResourceCount += extraResourceCount - 1;
+            summary.addChild(String.sprintf("%d %s resources served from %s.", domainResources.length, this._resourceTypeName, domain));
+            result.violationCount += domainResources.length;
         }
+        if (!penalizedResourceCount)
+            return callback(null);
+
+        summary.value = "There are multiple resources served from same domain. Consider combining them into as few files as possible.";
+        callback(result);
     }
-};
+}
 
 WebInspector.AuditRules.CombineExternalResourcesRule.prototype.__proto__ = WebInspector.AuditRule.prototype;
 
 
-WebInspector.AuditRules.CombineJsResourcesRule = function(parametersObject) {
-    WebInspector.AuditRules.CombineExternalResourcesRule.call(this, "page-externaljs", "Combine external JavaScript", WebInspector.Resource.Type.Script, "JS", parametersObject);
+WebInspector.AuditRules.CombineJsResourcesRule = function(allowedPerDomain) {
+    WebInspector.AuditRules.CombineExternalResourcesRule.call(this, "page-externaljs", "Combine external JavaScript", WebInspector.Resource.Type.Script, "JavaScript", allowedPerDomain);
 }
 
 WebInspector.AuditRules.CombineJsResourcesRule.prototype.__proto__ = WebInspector.AuditRules.CombineExternalResourcesRule.prototype;
 
 
-WebInspector.AuditRules.CombineCssResourcesRule = function(parametersObject) {
-    WebInspector.AuditRules.CombineExternalResourcesRule.call(this, "page-externalcss", "Combine external CSS", WebInspector.Resource.Type.Stylesheet, "CSS", parametersObject);
+WebInspector.AuditRules.CombineCssResourcesRule = function(allowedPerDomain) {
+    WebInspector.AuditRules.CombineExternalResourcesRule.call(this, "page-externalcss", "Combine external CSS", WebInspector.Resource.Type.Stylesheet, "CSS", allowedPerDomain);
 }
 
 WebInspector.AuditRules.CombineCssResourcesRule.prototype.__proto__ = WebInspector.AuditRules.CombineExternalResourcesRule.prototype;
 
 
-WebInspector.AuditRules.MinimizeDnsLookupsRule = function(parametersObject) {
-    WebInspector.AuditRule.call(this, "network-minimizelookups", "Minimize DNS lookups", parametersObject);
+WebInspector.AuditRules.MinimizeDnsLookupsRule = function(hostCountThreshold) {
+    WebInspector.AuditRule.call(this, "network-minimizelookups", "Minimize DNS lookups");
+    this._hostCountThreshold = hostCountThreshold;
 }
 
 WebInspector.AuditRules.MinimizeDnsLookupsRule.prototype = {
     doRun: function(resources, result, callback)
     {
-        try {
-            var violationDomains = [];
-            var domainToResourcesMap = WebInspector.AuditRules.getDomainToResourcesMap(resources, undefined, WebInspector.URLRegExp);
-            for (var domain in domainToResourcesMap) {
-                if (domainToResourcesMap[domain].length > 1)
-                    continue;
-                var match = domain.match(WebInspector.URLRegExp);
-                if (!match)
-                    continue;
-                if (!match[2].search(WebInspector.AuditRules.IPAddressRegexp))
-                    continue; // an IP address
-                violationDomains.push(match[2]);
-            }
-            if (violationDomains.length <= this.getValue("HostCountThreshold"))
-                return;
-            var commonMessage = result.appendChild(
-                "The following domains only serve one resource each. If possible, avoid the extra DNS " +
-                "lookups by serving these resources from existing domains.");
-            commonMessage.appendChild(WebInspector.AuditRules.arrayAsUL(violationDomains));
-            result.score = 100 - violationDomains.length * this.getValue("ViolationDomainScore");
-        } catch(e) {
-            console.log(e);
-        } finally {
-            callback(result);
+        var summary = result.addChild("");
+        var domainToResourcesMap = WebInspector.AuditRules.getDomainToResourcesMap(resources, undefined, WebInspector.URLRegExp);
+        for (var domain in domainToResourcesMap) {
+            if (domainToResourcesMap[domain].length > 1)
+                continue;
+            var match = domain.match(WebInspector.URLRegExp);
+            if (!match)
+                continue;
+            if (!match[2].search(WebInspector.AuditRules.IPAddressRegexp))
+                continue; // an IP address
+            summary.addSnippet(match[2]);
+            result.violationCount++;
         }
+        if (!summary.children || summary.children.length <= this._hostCountThreshold)
+            return callback(null);
+
+        summary.value = "The following domains only serve one resource each. If possible, avoid the extra DNS lookups by serving these resources from existing domains.";
+        callback(result);
     }
 }
 
 WebInspector.AuditRules.MinimizeDnsLookupsRule.prototype.__proto__ = WebInspector.AuditRule.prototype;
 
 
-WebInspector.AuditRules.ParallelizeDownloadRule = function(parametersObject)
+WebInspector.AuditRules.ParallelizeDownloadRule = function(optimalHostnameCount, minRequestThreshold, minBalanceThreshold)
 {
-    WebInspector.AuditRule.call(this, "network-parallelizehosts", "Parallelize downloads across hostnames", parametersObject);
+    WebInspector.AuditRule.call(this, "network-parallelizehosts", "Parallelize downloads across hostnames");
+    this._optimalHostnameCount = optimalHostnameCount;
+    this._minRequestThreshold = minRequestThreshold;
+    this._minBalanceThreshold = minBalanceThreshold;
 }
 
 
@@ -257,65 +217,50 @@ WebInspector.AuditRules.ParallelizeDownloadRule.prototype = {
             return (aCount < bCount) ? 1 : (aCount == bCount) ? 0 : -1;
         }
 
-        try {
-            var domainToResourcesMap = WebInspector.AuditRules.getDomainToResourcesMap(
-                resources,
-                [WebInspector.Resource.Type.Stylesheet, WebInspector.Resource.Type.Image],
-                WebInspector.URLRegExp,
-                true);
+        var domainToResourcesMap = WebInspector.AuditRules.getDomainToResourcesMap(
+            resources,
+            [WebInspector.Resource.Type.Stylesheet, WebInspector.Resource.Type.Image],
+            WebInspector.URLRegExp,
+            true);
 
-            var hosts = [];
-            for (var url in domainToResourcesMap)
-                hosts.push(url);
+        var hosts = [];
+        for (var url in domainToResourcesMap)
+            hosts.push(url);
 
-            if (!hosts.length)
-                return; // no hosts (local file or something)
+        if (!hosts.length)
+            return callback(null); // no hosts (local file or something)
 
-            hosts.sort(hostSorter);
+        hosts.sort(hostSorter);
 
-            var optimalHostnameCount = this.getValue("OptimalHostnameCount");
-            if (hosts.length > optimalHostnameCount)
-                hosts.splice(optimalHostnameCount);
+        var optimalHostnameCount = this._optimalHostnameCount;
+        if (hosts.length > optimalHostnameCount)
+            hosts.splice(optimalHostnameCount);
 
-            var busiestHostResourceCount = domainToResourcesMap[hosts[0]].length;
-            var resourceCountAboveThreshold = busiestHostResourceCount - this.getValue("MinRequestThreshold");
-            if (resourceCountAboveThreshold <= 0)
-                return;
+        var busiestHostResourceCount = domainToResourcesMap[hosts[0]].length;
+        var resourceCountAboveThreshold = busiestHostResourceCount - this._minRequestThreshold;
+        if (resourceCountAboveThreshold <= 0)
+            return callback(null);
 
-            var avgResourcesPerHost = 0;
-            for (var i = 0, size = hosts.length; i < size; ++i)
-                avgResourcesPerHost += domainToResourcesMap[hosts[i]].length;
+        var avgResourcesPerHost = 0;
+        for (var i = 0, size = hosts.length; i < size; ++i)
+            avgResourcesPerHost += domainToResourcesMap[hosts[i]].length;
 
-            // Assume optimal parallelization.
-            avgResourcesPerHost /= optimalHostnameCount;
+        // Assume optimal parallelization.
+        avgResourcesPerHost /= optimalHostnameCount;
+        avgResourcesPerHost = Math.max(avgResourcesPerHost, 1);
 
-            avgResourcesPerHost = Math.max(avgResourcesPerHost, 1);
+        var pctAboveAvg = (resourceCountAboveThreshold / avgResourcesPerHost) - 1.0;
+        var minBalanceThreshold = this._minBalanceThreshold;
+        if (pctAboveAvg < minBalanceThreshold)
+            return callback(null);
 
-            var pctAboveAvg = (resourceCountAboveThreshold / avgResourcesPerHost) - 1.0;
+        var resourcesOnBusiestHost = domainToResourcesMap[hosts[0]];
+        var entry = result.addChild(String.sprintf("This page makes %d parallelizable requests to %s. Increase download parallelization by distributing the following requests across multiple hostnames.", busiestHostResourceCount, hosts[0]), true);
+        for (var i = 0; i < resourcesOnBusiestHost.length; ++i)
+            entry.addURL(resourcesOnBusiestHost[i].url);
 
-            var minBalanceThreshold = this.getValue("MinBalanceThreshold");
-            if (pctAboveAvg < minBalanceThreshold) {
-                result.score = 100;
-                return;
-            }
-
-            result.score = (1 - (pctAboveAvg - minBalanceThreshold)) * 100;
-            result.type = WebInspector.AuditRuleResult.Type.Hint;
-
-            var resourcesOnBusiestHost = domainToResourcesMap[hosts[0]];
-            var commonMessage = result.appendChild(
-                String.sprintf("This page makes %d parallelizable requests to %s" +
-                ". Increase download parallelization by distributing the following" +
-                " requests across multiple hostnames.", busiestHostResourceCount, hosts[0]));
-            var outputResources = [];
-            for (var i = 0, size = resourcesOnBusiestHost.length; i < size; ++i)
-                outputResources.push(resourcesOnBusiestHost[i].url);
-            commonMessage.appendChild(WebInspector.AuditRules.arrayAsUL(outputResources, true));
-        } catch(e) {
-            console.log(e);
-        } finally {
-            callback(result);
-        }
+        result.violationCount = resourcesOnBusiestHost.length;
+        callback(result);
     }
 }
 
@@ -324,119 +269,82 @@ WebInspector.AuditRules.ParallelizeDownloadRule.prototype.__proto__ = WebInspect
 
 // The reported CSS rule size is incorrect (parsed != original in WebKit),
 // so use percentages instead, which gives a better approximation.
-WebInspector.AuditRules.UnusedCssRule = function(parametersObject)
+WebInspector.AuditRules.UnusedCssRule = function()
 {
-    WebInspector.AuditRule.call(this, "page-unusedcss", "Remove unused CSS", parametersObject);
+    WebInspector.AuditRule.call(this, "page-unusedcss", "Remove unused CSS rules");
 }
 
 WebInspector.AuditRules.UnusedCssRule.prototype = {
-    _getUnusedStylesheetRatioMessage: function(unusedLength, type, location, styleSheetLength)
-    {
-        var url = type === "href"
-            ? WebInspector.linkifyURL(location)
-            : String.sprintf("Inline block #%s", location);
-        var pctUnused = Math.round(unusedLength / styleSheetLength * 100);
-        return String.sprintf("%s: %f%% (estimated) is not used by the current page.", url, pctUnused);
-    },
-
-    _getUnusedTotalRatioMessage: function(unusedLength, totalLength)
-    {
-        var pctUnused = Math.round(unusedLength / totalLength * 100);
-        return String.sprintf("%d%% of CSS (estimated) is not used by the current page.", pctUnused);
-    },
-
     doRun: function(resources, result, callback)
     {
         var self = this;
-        function evalCallback(evalResult, isException) {
-            try {
-              if (isException)
-                  return;
+        function evalCallback(routineResult, isException) {
+            if (isException || !routineResult || !routineResult.styleSheets.length)
+                return callback(null);
 
-              var totalLength = 0;
-              var totalUnusedLength = 0;
-              var topMessage;
-              var styleSheetMessage;
-              for (var i = 0; i < evalResult.length; ) {
-                  var type = evalResult[i++];
-                  if (type === "totalLength") {
-                      totalLength = evalResult[i++];
-                      continue;
-                  }
+            var totalUnusedPercent = Math.round(100 * routineResult.unusedSize / routineResult.totalSize);
+            var summary = result.addChild(String.sprintf("%d%% of CSS (estimated) is not used by the current page.", totalUnusedPercent), true);
 
-                  var styleSheetLength = evalResult[i++];
-                  var location = evalResult[i++];
-                  var unusedRules = evalResult[i++];
-                  styleSheetMessage = undefined;
-                  if (!topMessage)
-                      topMessage = result.appendChild("");
+            for (var i = 0; i < routineResult.styleSheets.length; ++i) {
+                var stylesheet = routineResult.styleSheets[i];
 
-                  var totalUnusedRuleLength = 0;
-                  var ruleSelectors = [];
-                  for (var j = 0; j < unusedRules.length; ++j) {
-                      var rule = unusedRules[j];
-                      totalUnusedRuleLength += parseInt(rule[1]);
-                      if (!styleSheetMessage)
-                          styleSheetMessage = result.appendChild("");
-                      ruleSelectors.push(rule[0]);
-                  }
-                  styleSheetMessage.appendChild(WebInspector.AuditRules.arrayAsUL(ruleSelectors));
+                var url = stylesheet.type === "href" ? WebInspector.linkifyURL(stylesheet.location) : String.sprintf("Inline block #%s", stylesheet.location);
+                var pctUnused = Math.round(100 * stylesheet.unusedSize / stylesheet.totalSize);
+                var entry = summary.addChild(String.sprintf("%s: %d%% (estimated) is not used by the current page.", url, pctUnused));
 
-                  styleSheetMessage.value = self._getUnusedStylesheetRatioMessage(totalUnusedRuleLength, type, location, styleSheetLength);
-                  totalUnusedLength += totalUnusedRuleLength;
-              }
-              if (totalUnusedLength) {
-                  var totalUnusedPercent = totalUnusedLength / totalLength;
-                  topMessage.value = self._getUnusedTotalRatioMessage(totalUnusedLength, totalLength);
-                  var pctMultiplier = Math.log(Math.max(200, totalUnusedLength - 800)) / 7 - 0.6;
-                  result.score = (1 - totalUnusedPercent * pctMultiplier) * 100;
-                  result.type = WebInspector.AuditRuleResult.Type.Hint;
-              } else
-                  result.score = 100;
-            } catch(e) {
-                console.log(e);
-            } finally {
-                callback(result);
+                for (var j = 0; j < stylesheet.unusedRules.length; ++j)
+                    entry.addSnippet(stylesheet.unusedRules[j]);
+
+                result.violationCount += stylesheet.unusedRules.length;
             }
+
+            callback(result);
         }
 
         function routine()
         {
             var styleSheets = document.styleSheets;
             if (!styleSheets)
-                return {};
-            var styleSheetToUnusedRules = [];
+                return false;
+            var routineResult = { styleSheets: [] };
             var inlineBlockOrdinal = 0;
-            var totalCSSLength = 0;
+            var totalStylesheetSize = 0;
+            var totalUnusedStylesheetSize = 0;
             var pseudoSelectorRegexp = /:hover|:link|:active|:visited|:focus/;
             for (var i = 0; i < styleSheets.length; ++i) {
                 var styleSheet = styleSheets[i];
                 if (!styleSheet.cssRules)
                     continue;
-                var currentStyleSheetSize = 0;
+                var stylesheetSize = 0;
+                var unusedStylesheetSize = 0;
                 var unusedRules = [];
                 for (var curRule = 0; curRule < styleSheet.cssRules.length; ++curRule) {
                     var rule = styleSheet.cssRules[curRule];
                     var textLength = rule.cssText ? rule.cssText.length : 0;
-                    currentStyleSheetSize += textLength;
-                    totalCSSLength += textLength;
+                    stylesheetSize += textLength;
                     if (rule.type !== 1 || rule.selectorText.match(pseudoSelectorRegexp))
                         continue;
                     var nodes = document.querySelectorAll(rule.selectorText);
                     if (nodes && nodes.length)
                         continue;
-                    unusedRules.push([rule.selectorText, textLength]);
+                    unusedStylesheetSize += textLength;
+                    unusedRules.push(rule.selectorText);
                 }
+                totalStylesheetSize += stylesheetSize;
+                totalUnusedStylesheetSize += unusedStylesheetSize;
+
                 if (unusedRules.length) {
-                    styleSheetToUnusedRules.push(styleSheet.href ? "href" : "inline");
-                    styleSheetToUnusedRules.push(currentStyleSheetSize);
-                    styleSheetToUnusedRules.push(styleSheet.href ? styleSheet.href : ++inlineBlockOrdinal);
-                    styleSheetToUnusedRules.push(unusedRules);
+                    var entry = { type: styleSheet.href ? "href" : "inline",
+                                  totalSize: stylesheetSize,
+                                  unusedSize: unusedStylesheetSize,
+                                  location: styleSheet.href ? styleSheet.href : ++inlineBlockOrdinal,
+                                  unusedRules: unusedRules };
+                    routineResult.styleSheets.push(entry);
                 }
             }
-            styleSheetToUnusedRules.push("totalLength");
-            styleSheetToUnusedRules.push(totalCSSLength);
-            return styleSheetToUnusedRules;
+            routineResult.totalSize = totalStylesheetSize;
+            routineResult.unusedSize = totalUnusedStylesheetSize;
+            return routineResult;
         }
 
         WebInspector.AuditRules.evaluateInTargetWindow(routine, evalCallback);
@@ -446,34 +354,23 @@ WebInspector.AuditRules.UnusedCssRule.prototype = {
 WebInspector.AuditRules.UnusedCssRule.prototype.__proto__ = WebInspector.AuditRule.prototype;
 
 
-WebInspector.AuditRules.CacheControlRule = function(id, name, parametersObject)
+WebInspector.AuditRules.CacheControlRule = function(id, name)
 {
-    WebInspector.AuditRule.call(this, id, name, parametersObject);
+    WebInspector.AuditRule.call(this, id, name);
 }
 
 WebInspector.AuditRules.CacheControlRule.MillisPerMonth = 1000 * 60 * 60 * 24 * 30;
 
 WebInspector.AuditRules.CacheControlRule.prototype = {
 
-    InfoCheck: -1,
-    FailCheck: 0,
-    WarningCheck: 1,
-    SevereCheck: 2,
-
     doRun: function(resources, result, callback)
     {
-        try {
-            var cacheableAndNonCacheableResources = this._cacheableAndNonCacheableResources(resources);
-            if (cacheableAndNonCacheableResources[0].length) {
-                result.score = 100;
-                this.runChecks(cacheableAndNonCacheableResources[0], result);
-            }
-            this.handleNonCacheableResources(cacheableAndNonCacheableResources[1], result);
-        } catch(e) {
-            console.log(e);
-        } finally {
-            callback(result);
-        }
+        var cacheableAndNonCacheableResources = this._cacheableAndNonCacheableResources(resources);
+        if (cacheableAndNonCacheableResources[0].length)
+            this.runChecks(cacheableAndNonCacheableResources[0], result);
+        this.handleNonCacheableResources(cacheableAndNonCacheableResources[1], result);
+
+        callback(result);
     },
 
     handleNonCacheableResources: function()
@@ -495,36 +392,19 @@ WebInspector.AuditRules.CacheControlRule.prototype = {
         return processedResources;
     },
 
-    execCheck: function(messageText, resourceCheckFunction, resources, severity, result)
+    execCheck: function(messageText, resourceCheckFunction, resources, result)
     {
-        var topMessage;
-        var failingResources = 0;
         var resourceCount = resources.length;
-        var outputResources = [];
+        var urls = [];
         for (var i = 0; i < resourceCount; ++i) {
-            if (resourceCheckFunction.call(this, resources[i])) {
-                ++failingResources;
-                if (!topMessage)
-                    topMessage = result.appendChild(messageText);
-                outputResources.push(resources[i].url);
-            }
+            if (resourceCheckFunction.call(this, resources[i]))
+                urls.push(resources[i].url);
         }
-        if (topMessage)
-            topMessage.appendChild(WebInspector.AuditRules.arrayAsUL(outputResources, true));
-        if (failingResources) {
-            switch (severity) {
-                case this.FailCheck:
-                    result.score = 0;
-                    result.type = WebInspector.AuditRuleResult.Type.Violation;
-                    break;
-                case this.SevereCheck:
-                case this.WarningCheck:
-                    result.score -= 50 * severity * failingResources / resourceCount;
-                    result.type = WebInspector.AuditRuleResult.Type.Hint;
-                    break;
-            }
+        if (urls.length) {
+            var entry = result.addChild(messageText, true);
+            entry.addURLs(urls);
+            result.violationCount += urls.length;
         }
-        return topMessage;
     },
 
     freshnessLifetimeGreaterThan: function(resource, timeMs)
@@ -612,47 +492,34 @@ WebInspector.AuditRules.CacheControlRule.prototype = {
 WebInspector.AuditRules.CacheControlRule.prototype.__proto__ = WebInspector.AuditRule.prototype;
 
 
-WebInspector.AuditRules.BrowserCacheControlRule = function(parametersObject)
+WebInspector.AuditRules.BrowserCacheControlRule = function()
 {
-    WebInspector.AuditRules.CacheControlRule.call(this, "http-browsercache", "Leverage browser caching", parametersObject);
+    WebInspector.AuditRules.CacheControlRule.call(this, "http-browsercache", "Leverage browser caching");
 }
 
 WebInspector.AuditRules.BrowserCacheControlRule.prototype = {
     handleNonCacheableResources: function(resources, result)
     {
         if (resources.length) {
-            var message = result.appendChild(
-                "The following resources are explicitly non-cacheable. Consider making them cacheable if possible:");
-            var resourceOutput = [];
+            var entry = result.addChild("The following resources are explicitly non-cacheable. Consider making them cacheable if possible:", true);
+            result.violationCount += resources.length;
             for (var i = 0; i < resources.length; ++i)
-                resourceOutput.push(resources[i].url);
-            message.appendChild(WebInspector.AuditRules.arrayAsUL(resourceOutput, true));
+                entry.addURL(resources[i].url);
         }
     },
 
     runChecks: function(resources, result, callback)
     {
-        this.execCheck(
-            "The following resources are missing a cache expiration." +
-            " Resources that do not specify an expiration may not be" +
-            " cached by browsers:",
-            this._missingExpirationCheck, resources, this.SevereCheck, result);
-        this.execCheck(
-            "The following resources specify a \"Vary\" header that" +
-            " disables caching in most versions of Internet Explorer:",
-            this._varyCheck, resources, this.SevereCheck, result);
-        this.execCheck(
-            "The following cacheable resources have a short" +
-            " freshness lifetime:",
-            this._oneMonthExpirationCheck, resources, this.WarningCheck, result);
+        this.execCheck("The following resources are missing a cache expiration. Resources that do not specify an expiration may not be cached by browsers:",
+            this._missingExpirationCheck, resources, result);
+        this.execCheck("The following resources specify a \"Vary\" header that disables caching in most versions of Internet Explorer:",
+            this._varyCheck, resources, result);
+        this.execCheck("The following cacheable resources have a short freshness lifetime:",
+            this._oneMonthExpirationCheck, resources, result);
 
         // Unable to implement the favicon check due to the WebKit limitations.
-
-        this.execCheck(
-            "To further improve cache hit rate, specify an expiration" +
-            " one year in the future for the following cacheable" +
-            " resources:",
-            this._oneYearExpirationCheck, resources, this.InfoCheck, result);
+        this.execCheck("To further improve cache hit rate, specify an expiration one year in the future for the following cacheable resources:",
+            this._oneYearExpirationCheck, resources, result);
     },
 
     _missingExpirationCheck: function(resource)
@@ -691,26 +558,19 @@ WebInspector.AuditRules.BrowserCacheControlRule.prototype = {
 WebInspector.AuditRules.BrowserCacheControlRule.prototype.__proto__ = WebInspector.AuditRules.CacheControlRule.prototype;
 
 
-WebInspector.AuditRules.ProxyCacheControlRule = function(parametersObject) {
-    WebInspector.AuditRules.CacheControlRule.call(this, "http-proxycache", "Leverage proxy caching", parametersObject);
+WebInspector.AuditRules.ProxyCacheControlRule = function() {
+    WebInspector.AuditRules.CacheControlRule.call(this, "http-proxycache", "Leverage proxy caching");
 }
 
 WebInspector.AuditRules.ProxyCacheControlRule.prototype = {
     runChecks: function(resources, result, callback)
     {
-        this.execCheck(
-            "Resources with a \"?\" in the URL are not cached by most" +
-            " proxy caching servers:",
-            this._questionMarkCheck, resources, this.WarningCheck, result);
-        this.execCheck(
-            "Consider adding a \"Cache-Control: public\" header to the" +
-            " following resources:",
-            this._publicCachingCheck, resources, this.InfoCheck, result);
-        this.execCheck(
-            "The following publicly cacheable resources contain" +
-            " a Set-Cookie header. This security vulnerability" +
-            " can cause cookies to be shared by multiple users.",
-            this._setCookieCacheableCheck, resources, this.FailCheck, result);
+        this.execCheck("Resources with a \"?\" in the URL are not cached by most proxy caching servers:",
+            this._questionMarkCheck, resources, result);
+        this.execCheck("Consider adding a \"Cache-Control: public\" header to the following resources:",
+            this._publicCachingCheck, resources, result);
+        this.execCheck("The following publicly cacheable resources contain a Set-Cookie header. This security vulnerability can cause cookies to be shared by multiple users.",
+            this._setCookieCacheableCheck, resources, result);
     },
 
     _questionMarkCheck: function(resource)
@@ -735,9 +595,9 @@ WebInspector.AuditRules.ProxyCacheControlRule.prototype = {
 WebInspector.AuditRules.ProxyCacheControlRule.prototype.__proto__ = WebInspector.AuditRules.CacheControlRule.prototype;
 
 
-WebInspector.AuditRules.ImageDimensionsRule = function(parametersObject)
+WebInspector.AuditRules.ImageDimensionsRule = function()
 {
-    WebInspector.AuditRule.call(this, "page-imagedims", "Specify image dimensions", parametersObject);
+    WebInspector.AuditRule.call(this, "page-imagedims", "Specify image dimensions");
 }
 
 WebInspector.AuditRules.ImageDimensionsRule.prototype = {
@@ -745,31 +605,19 @@ WebInspector.AuditRules.ImageDimensionsRule.prototype = {
     {
         function evalCallback(evalResult, isException)
         {
-            try {
-                if (isException)
-                    return;
-                if (!evalResult || !evalResult.totalImages)
-                    return;
-                result.score = 100;
-                var topMessage = result.appendChild(
-                    "A width and height should be specified for all images in order to " +
-                    "speed up page display. The following image(s) are missing a width and/or height:");
-                var map = evalResult.map;
-                var outputResources = [];
-                for (var url in map) {
-                    var value = WebInspector.linkifyURL(url);
-                    if (map[url] > 1)
-                        value += " (" + map[url] + " uses)";
-                    outputResources.push(value);
-                    result.score -= this.getValue("ScorePerImageUse") * map[url];
-                    result.type = WebInspector.AuditRuleResult.Type.Hint;
-                }
-                topMessage.appendChild(WebInspector.AuditRules.arrayAsUL(outputResources));
-            } catch(e) {
-                console.log(e);
-            } finally {
-                callback(result);
+            if (isException || !evalResult || !evalResult.totalImages)
+                return callback(null);
+
+            var entry = result.addChild("A width and height should be specified for all images in order to speed up page display. The following image(s) are missing a width and/or height:", true);
+            var map = evalResult.map;
+            for (var url in map) {
+                var value = WebInspector.linkifyURL(url);
+                if (map[url] > 1)
+                    value += " (" + map[url] + " uses)";
+                entry.addChild(value);
+                result.violationCount++;
             }
+            callback(result);
         }
 
         function routine()
@@ -828,9 +676,9 @@ WebInspector.AuditRules.ImageDimensionsRule.prototype = {
 WebInspector.AuditRules.ImageDimensionsRule.prototype.__proto__ = WebInspector.AuditRule.prototype;
 
 
-WebInspector.AuditRules.CssInHeadRule = function(parametersObject)
+WebInspector.AuditRules.CssInHeadRule = function()
 {
-    WebInspector.AuditRule.call(this, "page-cssinhead", "Put CSS in the document head", parametersObject);
+    WebInspector.AuditRule.call(this, "page-cssinhead", "Put CSS in the document head");
 }
 
 WebInspector.AuditRules.CssInHeadRule.prototype = {
@@ -838,36 +686,22 @@ WebInspector.AuditRules.CssInHeadRule.prototype = {
     {
         function evalCallback(evalResult, isException)
         {
-            try {
-                if (isException)
-                    return;
-                if (!evalResult)
-                    return;
-                result.score = 100;
-                var outputMessages = [];
-                for (var url in evalResult) {
-                    var urlViolations = evalResult[url];
-                    var topMessage = result.appendChild(
-                        String.sprintf("CSS in the %s document body adversely impacts rendering performance.",
-                        WebInspector.linkifyURL(url)));
-                    if (urlViolations[0]) {
-                        outputMessages.push(
-                            String.sprintf("%s style block(s) in the body should be moved to the document head.", urlViolations[0]));
-                        result.score -= this.getValue("InlineURLScore") * urlViolations[0];
-                    }
-                    for (var i = 0; i < urlViolations[1].length; ++i) {
-                        outputMessages.push(
-                            String.sprintf("Link node %s should be moved to the document head", WebInspector.linkifyURL(urlViolations[1])));
-                    }
-                    result.score -= this.getValue("InlineStylesheetScore") * urlViolations[1];
-                    result.type = WebInspector.AuditRuleResult.Type.Hint;
-                }
-                topMessage.appendChild(WebInspector.AuditRules.arrayAsUL(outputMessages));
-            } catch(e) {
-                console.log(e);
-            } finally {
-                callback(result);
+            if (isException || !evalResult)
+                return callback(null);
+
+            var summary = result.addChild("");
+
+            var outputMessages = [];
+            for (var url in evalResult) {
+                var urlViolations = evalResult[url];
+                if (urlViolations[0])
+                    result.addChild(String.sprintf("%s style block(s) in the %s body should be moved to the document head.", urlViolations[0], WebInspector.linkifyURL(url)));
+                for (var i = 0; i < urlViolations[1].length; ++i)
+                    result.addChild(String.sprintf("Link node %s should be moved to the document head in %s", WebInspector.linkifyURL(urlViolations[1])), WebInspector.linkifyURL(url));
+                result.violationCount += urlViolations.length;
             }
+            summary.value = String.sprintf("CSS in the document body adversely impacts rendering performance.");
+            callback(result);
         }
 
         function routine()
@@ -891,23 +725,20 @@ WebInspector.AuditRules.CssInHeadRule.prototype = {
             var urlToViolationsArray = {};
             var found = false;
             for (var i = 0; i < views.length; ++i) {
-              var view = views[i];
-              if (!view.document)
-                  continue;
+                var view = views[i];
+                if (!view.document)
+                    continue;
 
-              var inlineStyles = view.document.querySelectorAll("body style");
-              var inlineStylesheets = view.document.querySelectorAll(
-                  "body link[rel~='stylesheet'][href]");
-              if (!inlineStyles.length && !inlineStylesheets.length)
-                  continue;
+                var inlineStyles = view.document.querySelectorAll("body style");
+                var inlineStylesheets = view.document.querySelectorAll("body link[rel~='stylesheet'][href]");
+                if (!inlineStyles.length && !inlineStylesheets.length)
+                    continue;
 
-              found = true;
-              var inlineStylesheetHrefs = [];
-              for (var j = 0; j < inlineStylesheets.length; ++j)
-                  inlineStylesheetHrefs.push(inlineStylesheets[j].href);
-
-              urlToViolationsArray[view.location.href] =
-                  [inlineStyles.length, inlineStylesheetHrefs];
+                found = true;
+                var inlineStylesheetHrefs = [];
+                for (var j = 0; j < inlineStylesheets.length; ++j)
+                    inlineStylesheetHrefs.push(inlineStylesheets[j].href);
+                urlToViolationsArray[view.location.href] = [inlineStyles.length, inlineStylesheetHrefs];
             }
             return found ? urlToViolationsArray : null;
         }
@@ -919,72 +750,44 @@ WebInspector.AuditRules.CssInHeadRule.prototype = {
 WebInspector.AuditRules.CssInHeadRule.prototype.__proto__ = WebInspector.AuditRule.prototype;
 
 
-WebInspector.AuditRules.StylesScriptsOrderRule = function(parametersObject)
+WebInspector.AuditRules.StylesScriptsOrderRule = function()
 {
-    WebInspector.AuditRule.call(this, "page-stylescriptorder", "Optimize the order of styles and scripts", parametersObject);
+    WebInspector.AuditRule.call(this, "page-stylescriptorder", "Optimize the order of styles and scripts");
 }
 
 WebInspector.AuditRules.StylesScriptsOrderRule.prototype = {
     doRun: function(resources, result, callback)
     {
-        function evalCallback(evalResult, isException)
+        function evalCallback(resultValue, isException)
         {
-            try {
-                if (isException)
-                    return;
-                if (!evalResult)
-                    return;
+            if (isException || !resultValue)
+                return callback(null);
 
-                result.score = 100;
-                var lateCssUrls = evalResult['late'];
-                if (lateCssUrls) {
-                    var lateMessage = result.appendChild(
-                        'The following external CSS files were included after ' +
-                        'an external JavaScript file in the document head. To ' +
-                        'ensure CSS files are downloaded in parallel, always ' +
-                        'include external CSS before external JavaScript.');
-                    lateMessage.appendChild(WebInspector.AuditRules.arrayAsUL(lateCssUrls, true));
-                    result.score -= this.getValue("InlineBetweenResourcesScore") * lateCssUrls.length;
-                    result.type = WebInspector.AuditRuleResult.Type.Violation;
-                }
-                if (evalResult['cssBeforeInlineCount']) {
-                  var count = evalResult['cssBeforeInlineCount'];
-                  result.appendChild(count + ' inline script block' +
-                      (count > 1 ? 's were' : ' was') + ' found in the head between an ' +
-                      'external CSS file and another resource. To allow parallel ' +
-                      'downloading, move the inline script before the external CSS ' +
-                      'file, or after the next resource.');
-                  result.score -= this.getValue("CSSAfterJSURLScore") * count;
-                  result.type = WebInspector.AuditRuleResult.Type.Violation;
-                }
-            } catch(e) {
-                console.log(e);
-            } finally {
-                callback(result);
+            var lateCssUrls = resultValue[0];
+            var cssBeforeInlineCount = resultValue[1];
+
+            var entry = result.addChild("The following external CSS files were included after an external JavaScript file in the document head. To ensure CSS files are downloaded in parallel, always include external CSS before external JavaScript.", true);
+            entry.addURLs(lateCssUrls);
+            result.violationCount += lateCssUrls.length;
+
+            if (cssBeforeInlineCount) {
+                result.addChild(String.sprintf(" %d inline script block%s found in the head between an external CSS file and another resource. To allow parallel downloading, move the inline script before the external CSS file, or after the next resource.", cssBeforeInlineCount, cssBeforeInlineCount > 1 ? "s were" : " was"));
+                result.violationCount += cssBeforeInlineCount;
             }
+            callback(result);
         }
 
         function routine()
         {
-            var lateStyles = document.querySelectorAll(
-                "head script[src] ~ link[rel~='stylesheet'][href]");
-            var stylesBeforeInlineScript = document.querySelectorAll(
-                "head link[rel~='stylesheet'][href] ~ script:not([src])");
+            var lateStyles = document.querySelectorAll("head script[src] ~ link[rel~='stylesheet'][href]");
+            var cssBeforeInlineCount = document.querySelectorAll("head link[rel~='stylesheet'][href] ~ script:not([src])").length;
+            if (!lateStyles.length && !cssBeforeInlineCount)
+                return null;
 
-            var resultObject;
-            if (!lateStyles.length && !stylesBeforeInlineScript.length)
-                resultObject = null;
-            else {
-                resultObject = {};
-                if (lateStyles.length) {
-                  lateStyleUrls = [];
-                  for (var i = 0; i < lateStyles.length; ++i)
-                      lateStyleUrls.push(lateStyles[i].href);
-                  resultObject["late"] = lateStyleUrls;
-                }
-                resultObject["cssBeforeInlineCount"] = stylesBeforeInlineScript.length;
-            }
-            return resultObject;
+            var lateStyleUrls = [];
+            for (var i = 0; i < lateStyles.length; ++i)
+                lateStyleUrls.push(lateStyles[i].href);
+            return [ lateStyleUrls, cssBeforeInlineCount ];
         }
 
         WebInspector.AuditRules.evaluateInTargetWindow(routine, evalCallback.bind(this));
@@ -994,9 +797,9 @@ WebInspector.AuditRules.StylesScriptsOrderRule.prototype = {
 WebInspector.AuditRules.StylesScriptsOrderRule.prototype.__proto__ = WebInspector.AuditRule.prototype;
 
 
-WebInspector.AuditRules.CookieRuleBase = function(id, name, parametersObject)
+WebInspector.AuditRules.CookieRuleBase = function(id, name)
 {
-    WebInspector.AuditRule.call(this, id, name, parametersObject);
+    WebInspector.AuditRule.call(this, id, name);
 }
 
 WebInspector.AuditRules.CookieRuleBase.prototype = {
@@ -1004,13 +807,8 @@ WebInspector.AuditRules.CookieRuleBase.prototype = {
     {
         var self = this;
         function resultCallback(receivedCookies, isAdvanced) {
-            try {
-                self.processCookies(isAdvanced ? receivedCookies : [], resources, result);
-            } catch(e) {
-                console.log(e);
-            } finally {
-                callback(result);
-            }
+            self.processCookies(isAdvanced ? receivedCookies : [], resources, result);
+            callback(result);
         }
         WebInspector.Cookies.getCookiesAsync(resultCallback);
     },
@@ -1039,9 +837,11 @@ WebInspector.AuditRules.CookieRuleBase.prototype = {
 WebInspector.AuditRules.CookieRuleBase.prototype.__proto__ = WebInspector.AuditRule.prototype;
 
 
-WebInspector.AuditRules.CookieSizeRule = function(parametersObject)
+WebInspector.AuditRules.CookieSizeRule = function(avgBytesThreshold)
 {
-    WebInspector.AuditRules.CookieRuleBase.call(this, "http-cookiesize", "Minimize cookie size", parametersObject);
+    WebInspector.AuditRules.CookieRuleBase.call(this, "http-cookiesize", "Minimize cookie size");
+    this._avgBytesThreshold = avgBytesThreshold;
+    this._maxBytesThreshold = 1000;
 }
 
 WebInspector.AuditRules.CookieSizeRule.prototype = {
@@ -1097,7 +897,6 @@ WebInspector.AuditRules.CookieSizeRule.prototype = {
         var matchingResourceData = {};
         this.mapResourceCookies(domainToResourcesMap, allCookies, collectorCallback.bind(this));
 
-        result.score = 100;
         for (var resourceDomain in cookiesPerResourceDomain) {
             var cookies = cookiesPerResourceDomain[resourceDomain];
             sortedCookieSizes.push({
@@ -1111,12 +910,9 @@ WebInspector.AuditRules.CookieSizeRule.prototype = {
         var hugeCookieDomains = [];
         sortedCookieSizes.sort(maxSizeSorter);
 
-        var maxBytesThreshold = this.getValue("MaxBytesThreshold");
-        var minBytesThreshold = this.getValue("MinBytesThreshold");
-
         for (var i = 0, len = sortedCookieSizes.length; i < len; ++i) {
             var maxCookieSize = sortedCookieSizes[i].maxCookieSize;
-            if (maxCookieSize > maxBytesThreshold)
+            if (maxCookieSize > this._maxBytesThreshold)
                 hugeCookieDomains.push(sortedCookieSizes[i].domain + ": " + Number.bytesToString(maxCookieSize));
         }
 
@@ -1125,45 +921,33 @@ WebInspector.AuditRules.CookieSizeRule.prototype = {
         for (var i = 0, len = sortedCookieSizes.length; i < len; ++i) {
             var domain = sortedCookieSizes[i].domain;
             var avgCookieSize = sortedCookieSizes[i].avgCookieSize;
-            if (avgCookieSize > minBytesThreshold && avgCookieSize < maxBytesThreshold)
+            if (avgCookieSize > this._avgBytesThreshold && avgCookieSize < this._maxBytesThreshold)
                 bigAvgCookieDomains.push(domain + ": " + Number.bytesToString(avgCookieSize));
         }
-        result.appendChild("The average cookie size for all requests on this page is " + Number.bytesToString(avgAllCookiesSize));
+        result.addChild(String.sprintf("The average cookie size for all requests on this page is %s", Number.bytesToString(avgAllCookiesSize)));
 
         var message;
         if (hugeCookieDomains.length) {
-            result.score = 75;
-            result.type = WebInspector.AuditRuleResult.Type.Violation;
-            message = result.appendChild(
-                String.sprintf("The following domains have a cookie size in excess of %d " +
-                " bytes. This is harmful because requests with cookies larger than 1KB" +
-                " typically cannot fit into a single network packet.", maxBytesThreshold));
-            message.appendChild(WebInspector.AuditRules.arrayAsUL(hugeCookieDomains));
+            var entry = result.addChild("The following domains have a cookie size in excess of 1KB. This is harmful because requests with cookies larger than 1KB typically cannot fit into a single network packet.", true);
+            entry.addURLs(hugeCookieDomains);
+            result.violationCount += hugeCookieDomains.length;
         }
 
         if (bigAvgCookieDomains.length) {
-            this.score -= Math.max(0, avgAllCookiesSize - minBytesThreshold) /
-                (minBytesThreshold - minBytesThreshold) / this.getValue("TotalPoints");
-            if (!result.type)
-                result.type = WebInspector.AuditRuleResult.Type.Hint;
-            message = result.appendChild(
-                String.sprintf("The following domains have an average cookie size in excess of %d" +
-                 " bytes. Reducing the size of cookies" +
-                 " for these domains can reduce the time it takes to send requests.", minBytesThreshold));
-            message.appendChild(WebInspector.AuditRules.arrayAsUL(bigAvgCookieDomains));
+            var entry = result.addChild(String.sprintf("The following domains have an average cookie size in excess of %d bytes. Reducing the size of cookies for these domains can reduce the time it takes to send requests.", this._avgBytesThreshold), true);
+            entry.addURLs(bigAvgCookieDomains.length);
+            result.violationCount += bigAvgCookieDomains.length;
         }
-
-        if (!bigAvgCookieDomains.length && !hugeCookieDomains.length)
-            result.score = WebInspector.AuditCategoryResult.ScoreNA;
     }
 }
 
 WebInspector.AuditRules.CookieSizeRule.prototype.__proto__ = WebInspector.AuditRules.CookieRuleBase.prototype;
 
 
-WebInspector.AuditRules.StaticCookielessRule = function(parametersObject)
+WebInspector.AuditRules.StaticCookielessRule = function(minResources)
 {
-    WebInspector.AuditRules.CookieRuleBase.call(this, "http-staticcookieless", "Serve static content from a cookieless domain", parametersObject);
+    WebInspector.AuditRules.CookieRuleBase.call(this, "http-staticcookieless", "Serve static content from a cookieless domain");
+    this._minResources = minResources;
 }
 
 WebInspector.AuditRules.StaticCookielessRule.prototype = {
@@ -1175,10 +959,9 @@ WebInspector.AuditRules.StaticCookielessRule.prototype = {
                 WebInspector.URLRegExp,
                 true);
         var totalStaticResources = 0;
-        var minResources = this.getValue("MinResources");
         for (var domain in domainToResourcesMap)
             totalStaticResources += domainToResourcesMap[domain].length;
-        if (totalStaticResources < minResources)
+        if (totalStaticResources < this._minResources)
             return;
         var matchingResourceData = {};
         this.mapResourceCookies(domainToResourcesMap, allCookies, this._collectorCallback.bind(this, matchingResourceData));
@@ -1189,19 +972,12 @@ WebInspector.AuditRules.StaticCookielessRule.prototype = {
             badUrls.push(url);
             cookieBytes += matchingResourceData[url]
         }
-        if (badUrls.length < minResources)
+        if (badUrls.length < this._minResources)
             return;
 
-        result.score = 100;
-        var badPoints = cookieBytes / 75;
-        var violationPct = Math.max(badUrls.length / totalStaticResources, 0.6);
-        badPoints *= violationPct;
-        result.score -= badPoints;
-        result.score = Math.max(result.score, 0);
-        result.type = WebInspector.AuditRuleResult.Type.Violation;
-        result.appendChild(String.sprintf("%s of cookies were sent with the following static resources.", Number.bytesToString(cookieBytes)));
-        var message = result.appendChild("Serve these static resources from a domain that does not set cookies:");
-        message.appendChild(WebInspector.AuditRules.arrayAsUL(badUrls, true));
+        var entry = result.addChild(String.sprintf("%s of cookies were sent with the following static resources. Serve these static resources from a domain that does not set cookies:", Number.bytesToString(cookieBytes)), true);
+        entry.addURLs(badUrls);
+        result.violationCount = badUrls.length;
     },
 
     _collectorCallback: function(matchingResourceData, resource, cookie)

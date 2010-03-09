@@ -37,6 +37,7 @@ WebInspector.AuditsPanel = function()
     this.createSidebar();
     this.auditsTreeElement = new WebInspector.SidebarSectionTreeElement("", {}, true);
     this.sidebarTree.appendChild(this.auditsTreeElement);
+    this.auditsTreeElement.listItemElement.addStyleClass("hidden");
     this.auditsTreeElement.expand();
 
     this.auditsItemTreeElement = new WebInspector.AuditsSidebarTreeElement();
@@ -54,6 +55,8 @@ WebInspector.AuditsPanel = function()
     this.viewsContainerElement = document.createElement("div");
     this.viewsContainerElement.id = "audit-views";
     this.element.appendChild(this.viewsContainerElement);
+
+    this._launcherView = new WebInspector.AuditLauncherView(this.categoriesById, this.initiateAudit.bind(this));
 }
 
 WebInspector.AuditsPanel.prototype = {
@@ -95,11 +98,6 @@ WebInspector.AuditsPanel.prototype = {
         return this._auditCategoriesById;
     },
 
-    get visibleView()
-    {
-        return this._visibleView;
-    },
-
     _constructCategories: function()
     {
         this._auditCategoriesById = {};
@@ -125,8 +123,8 @@ WebInspector.AuditsPanel.prototype = {
 
         function ruleResultReadyCallback(categoryResult, ruleResult)
         {
-            if (ruleResult.children)
-                categoryResult.entries.push(ruleResult);
+            if (ruleResult && ruleResult.children)
+                categoryResult.addRuleResult(ruleResult);
 
             --rulesRemaining;
 
@@ -192,14 +190,14 @@ WebInspector.AuditsPanel.prototype = {
             InspectorBackend.enableResourceTracking(false);
             this._updateLauncherViewControls(true);
         } else
-            InjectedScriptAccess.getDefault().evaluate("window.location.reload()", switchCallback);
+            InspectorBackend.reloadPage();
     },
 
     _didMainResourceLoad: function()
     {
         if (this._resourceTrackingCallback) {
             var callback = this._resourceTrackingCallback;
-            this._resourceTrackingCallback = null;
+            delete this._resourceTrackingCallback;
             callback();
         }
     },
@@ -209,35 +207,36 @@ WebInspector.AuditsPanel.prototype = {
         if (!categoryResults._resultView)
             categoryResults._resultView = new WebInspector.AuditResultView(categoryResults);
 
-        this.showView(categoryResults._resultView);
+        this.visibleView = categoryResults._resultView;
     },
 
     showLauncherView: function()
     {
-        if (!this._launcherView)
-            this._launcherView = new WebInspector.AuditLauncherView(this.categoriesById, this.initiateAudit.bind(this));
-
-        this.showView(this._launcherView);
+        this.visibleView = this._launcherView;
+    },
+    
+    get visibleView()
+    {
+        return this._visibleView;
     },
 
-    showView: function(view)
+    set visibleView(x)
     {
-        if (view) {
-            if (this._visibleView === view)
-                return;
-            this._closeVisibleView();
-            this._visibleView = view;
-        }
-        var visibleView = this.visibleView;
-        if (visibleView)
-            visibleView.show(this.viewsContainerElement);
+        if (this._visibleView === x)
+            return;
+
+        if (this._visibleView)
+            this._visibleView.hide();
+
+        this._visibleView = x;
+
+        if (x)
+            x.show(this.viewsContainerElement);
     },
 
     show: function()
     {
         WebInspector.Panel.prototype.show.call(this);
-
-        this.showView();
         this._updateLauncherViewControls(WebInspector.panels.resources.resourceTrackingEnabled);
     },
 
@@ -264,12 +263,6 @@ WebInspector.AuditsPanel.prototype = {
         this.auditsItemTreeElement.reveal();
         this.auditsItemTreeElement.select();
         this.auditResultsTreeElement.removeChildren();
-    },
-
-    _closeVisibleView: function()
-    {
-        if (this.visibleView)
-            this.visibleView.hide();
     }
 }
 
@@ -301,8 +294,9 @@ WebInspector.AuditCategory.prototype = {
         return this._rules.length;
     },
 
-    addRule: function(rule)
+    addRule: function(rule, severity)
     {
+        rule.severity = severity;
         this._rules.push(rule);
     },
 
@@ -324,11 +318,16 @@ WebInspector.AuditCategory.prototype = {
 }
 
 
-WebInspector.AuditRule = function(id, displayName, parametersObject)
+WebInspector.AuditRule = function(id, displayName)
 {
     this._id = id;
     this._displayName = displayName;
-    this._parametersObject = parametersObject;
+}
+
+WebInspector.AuditRule.Severity = {
+    Info: "info",
+    Warning: "warning",
+    Severe: "severe"
 }
 
 WebInspector.AuditRule.prototype = {
@@ -342,82 +341,71 @@ WebInspector.AuditRule.prototype = {
         return this._displayName;
     },
 
+    set severity(severity)
+    {
+        this._severity = severity;
+    },
+
     run: function(resources, callback)
     {
-        this.doRun(resources, new WebInspector.AuditRuleResult(this.displayName), callback);
+        var result = new WebInspector.AuditRuleResult(this.displayName);
+        result.severity = this._severity;
+        this.doRun(resources, result, callback);
     },
 
     doRun: function(resources, result, callback)
     {
         throw new Error("doRun() not implemented");
-    },
-
-    getValue: function(key)
-    {
-        if (key in this._parametersObject)
-            return this._parametersObject[key];
-        else
-            throw new Error(key + " not found in rule parameters");
     }
 }
-
 
 WebInspector.AuditCategoryResult = function(category)
 {
     this.title = category.displayName;
-    this.entries = [];
+    this.ruleResults = [];
 }
 
 WebInspector.AuditCategoryResult.prototype = {
-    addEntry: function(value)
+    addRuleResult: function(ruleResult)
     {
-        var entry = new WebInspector.AuditRuleResult(value);
-        this.entries.push(entry);
-        return entry;
+        this.ruleResults.push(ruleResult);
     }
 }
 
-/**
- * @param {string} value The result message HTML contents.
- */
-WebInspector.AuditRuleResult = function(value)
+WebInspector.AuditRuleResult = function(value, expanded, className)
 {
     this.value = value;
-    this.type = WebInspector.AuditRuleResult.Type.NA;
-}
-
-WebInspector.AuditRuleResult.Type = {
-    // Does not denote a discovered flaw but rather represents an informational message.
-    NA: 0,
-
-    // Denotes a minor impact on the checked metric.
-    Hint: 1,
-
-    // Denotes a major impact on the checked metric.
-    Violation: 2
+    this.className = className;
+    this.expanded = expanded;
+    this.violationCount = 0;
 }
 
 WebInspector.AuditRuleResult.prototype = {
-    appendChild: function(value)
+    addChild: function(value, expanded, className)
     {
         if (!this.children)
             this.children = [];
-        var entry = new WebInspector.AuditRuleResult(value);
+        var entry = new WebInspector.AuditRuleResult(value, expanded, className);
         this.children.push(entry);
         return entry;
     },
 
-    set type(x)
+    addURL: function(url)
     {
-        this._type = x;
+        return this.addChild(WebInspector.linkifyURL(url));
     },
 
-    get type()
+    addURLs: function(urls)
     {
-        return this._type;
+        for (var i = 0; i < urls.length; ++i)
+            this.addURL(urls[i]);
+    },
+
+    addSnippet: function(snippet)
+    {
+        return this.addChild(snippet, false, "source-code");
     }
 }
-
 
 WebInspector.AuditsSidebarTreeElement = function()
 {

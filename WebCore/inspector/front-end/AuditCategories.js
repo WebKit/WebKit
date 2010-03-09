@@ -37,9 +37,9 @@ WebInspector.AuditCategories.PagePerformance.AuditCategoryName = "Web Page Perfo
 WebInspector.AuditCategories.PagePerformance.prototype = {
     initialize: function()
     {
-        this.addRule(new WebInspector.AuditRules.UnusedCssRule());
-        this.addRule(new WebInspector.AuditRules.CssInHeadRule({InlineURLScore: 6, InlineStylesheetScore: 21}));
-        this.addRule(new WebInspector.AuditRules.StylesScriptsOrderRule({CSSAfterJSURLScore: 11, InlineBetweenResourcesScore: 21}));
+        this.addRule(new WebInspector.AuditRules.UnusedCssRule(), WebInspector.AuditRule.Severity.Warning);
+        this.addRule(new WebInspector.AuditRules.CssInHeadRule(), WebInspector.AuditRule.Severity.Severe);
+        this.addRule(new WebInspector.AuditRules.StylesScriptsOrderRule(), WebInspector.AuditRule.Severity.Severe);
     }
 }
 
@@ -54,16 +54,16 @@ WebInspector.AuditCategories.NetworkUtilization.AuditCategoryName = "Network Uti
 WebInspector.AuditCategories.NetworkUtilization.prototype = {
     initialize: function()
     {
-        this.addRule(new WebInspector.AuditRules.GzipRule());
-        this.addRule(new WebInspector.AuditRules.ImageDimensionsRule({ScorePerImageUse: 5}));
-        this.addRule(new WebInspector.AuditRules.CookieSizeRule({MinBytesThreshold: 400, MaxBytesThreshold: 1000}));
-        this.addRule(new WebInspector.AuditRules.StaticCookielessRule({MinResources: 5}));
-        this.addRule(new WebInspector.AuditRules.CombineJsResourcesRule({AllowedPerDomain: 2, ScorePerResource: 11}));
-        this.addRule(new WebInspector.AuditRules.CombineCssResourcesRule({AllowedPerDomain: 2, ScorePerResource: 11}));
-        this.addRule(new WebInspector.AuditRules.MinimizeDnsLookupsRule({HostCountThreshold: 4, ViolationDomainScore: 6}));
-        this.addRule(new WebInspector.AuditRules.ParallelizeDownloadRule({OptimalHostnameCount: 4, MinRequestThreshold: 10, MinBalanceThreshold: 0.5}));
-        this.addRule(new WebInspector.AuditRules.BrowserCacheControlRule());
-        this.addRule(new WebInspector.AuditRules.ProxyCacheControlRule());
+        this.addRule(new WebInspector.AuditRules.GzipRule(), WebInspector.AuditRule.Severity.Severe);
+        this.addRule(new WebInspector.AuditRules.ImageDimensionsRule(), WebInspector.AuditRule.Severity.Warning);
+        this.addRule(new WebInspector.AuditRules.CookieSizeRule(400), WebInspector.AuditRule.Severity.Warning);
+        this.addRule(new WebInspector.AuditRules.StaticCookielessRule(5), WebInspector.AuditRule.Severity.Warning);
+        this.addRule(new WebInspector.AuditRules.CombineJsResourcesRule(2), WebInspector.AuditRule.Severity.Severe);
+        this.addRule(new WebInspector.AuditRules.CombineCssResourcesRule(2), WebInspector.AuditRule.Severity.Severe);
+        this.addRule(new WebInspector.AuditRules.MinimizeDnsLookupsRule(4), WebInspector.AuditRule.Severity.Warning);
+        this.addRule(new WebInspector.AuditRules.ParallelizeDownloadRule(4, 10, 0.5), WebInspector.AuditRule.Severity.Warning);
+        this.addRule(new WebInspector.AuditRules.BrowserCacheControlRule(), WebInspector.AuditRule.Severity.Severe);
+        this.addRule(new WebInspector.AuditRules.ProxyCacheControlRule(), WebInspector.AuditRule.Severity.Warning);
     }
 }
 

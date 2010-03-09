@@ -40,7 +40,8 @@ var Preferences = {
     samplingCPUProfiler: false,
     showColorNicknames: true,
     debuggerAlwaysEnabled: false,
-    profilerAlwaysEnabled: false
+    profilerAlwaysEnabled: false,
+    auditsPanelEnabled: false
 }
 
 WebInspector.populateFrontendSettings = function(settingsString)

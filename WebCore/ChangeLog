@@ -16,6 +16,95 @@
 
         Reviewed by Timothy Hatcher.
 
+        Web Inspector: Refactor Audits panel presentation layer.
+        This change removes unnecessary complexity:
+          - Audit scores were not used
+          - Audit rule parameters are passed as rule constructor arguments
+          - View management aligned with the rest of the front-end
+          - Single TreeOutline is used for category results (no need to create sections for those)
+          - Rules code beautified and simplified where possible
+          - Some UI improvements applied (see attached screenshot)
+
+        https://bugs.webkit.org/show_bug.cgi?id=35860
+
+        * inspector/front-end/AuditCategories.js:
+        (WebInspector.AuditCategories.PagePerformance.prototype.initialize):
+        (WebInspector.AuditCategories.NetworkUtilization.prototype.initialize):
+        * inspector/front-end/AuditResultView.js:
+        (WebInspector.AuditResultView):
+        (WebInspector.AuditCategoryResultPane):
+        (WebInspector.AuditCategoryResultPane.prototype._appendResult):
+        * inspector/front-end/AuditRules.js:
+        (WebInspector.AuditRules.GzipRule.prototype.doRun):
+        (WebInspector.AuditRules.CombineExternalResourcesRule):
+        (WebInspector.AuditRules.CombineExternalResourcesRule.prototype.doRun):
+        (WebInspector.AuditRules.CombineJsResourcesRule):
+        (WebInspector.AuditRules.CombineCssResourcesRule):
+        (WebInspector.AuditRules.MinimizeDnsLookupsRule):
+        (WebInspector.AuditRules.MinimizeDnsLookupsRule.prototype.doRun):
+        (WebInspector.AuditRules.ParallelizeDownloadRule):
+        (WebInspector.AuditRules.ParallelizeDownloadRule.prototype.doRun):
+        (WebInspector.AuditRules.UnusedCssRule):
+        (WebInspector.AuditRules.UnusedCssRule.prototype.doRun.evalCallback):
+        (WebInspector.AuditRules.UnusedCssRule.prototype.doRun.routine):
+        (WebInspector.AuditRules.UnusedCssRule.prototype.doRun):
+        (WebInspector.AuditRules.CacheControlRule):
+        (WebInspector.AuditRules.CacheControlRule.prototype.doRun):
+        (WebInspector.AuditRules.CacheControlRule.prototype.execCheck):
+        (WebInspector.AuditRules.BrowserCacheControlRule):
+        (WebInspector.AuditRules.BrowserCacheControlRule.prototype.handleNonCacheableResources):
+        (WebInspector.AuditRules.BrowserCacheControlRule.prototype.runChecks):
+        (WebInspector.AuditRules.ProxyCacheControlRule):
+        (WebInspector.AuditRules.ProxyCacheControlRule.prototype.runChecks):
+        (WebInspector.AuditRules.ImageDimensionsRule):
+        (WebInspector.AuditRules.ImageDimensionsRule.prototype.doRun):
+        (WebInspector.AuditRules.CssInHeadRule):
+        (WebInspector.AuditRules.CssInHeadRule.prototype.doRun):
+        (WebInspector.AuditRules.CssInHeadRule.prototype.doRun.routine):
+        (WebInspector.AuditRules.StylesScriptsOrderRule):
+        (WebInspector.AuditRules.StylesScriptsOrderRule.prototype.doRun):
+        (WebInspector.AuditRules.StylesScriptsOrderRule.prototype.doRun.routine):
+        (WebInspector.AuditRules.CookieRuleBase):
+        (WebInspector.AuditRules.CookieRuleBase.prototype.doRun.resultCallback):
+        (WebInspector.AuditRules.CookieRuleBase.prototype.doRun):
+        (WebInspector.AuditRules.CookieSizeRule):
+        (WebInspector.AuditRules.CookieSizeRule.prototype.processCookies):
+        (WebInspector.AuditRules.StaticCookielessRule):
+        (WebInspector.AuditRules.StaticCookielessRule.prototype.processCookies):
+        * inspector/front-end/AuditsPanel.js:
+        (WebInspector.AuditsPanel):
+        (WebInspector.AuditsPanel.prototype._executeAudit.ruleResultReadyCallback):
+        (WebInspector.AuditsPanel.prototype._executeAudit):
+        (WebInspector.AuditsPanel.prototype._reloadResources):
+        (WebInspector.AuditsPanel.prototype._didMainResourceLoad):
+        (WebInspector.AuditsPanel.prototype.showResults):
+        (WebInspector.AuditsPanel.prototype.showLauncherView):
+        (WebInspector.AuditsPanel.prototype.get visibleView):
+        (WebInspector.AuditsPanel.prototype.set visibleView):
+        (WebInspector.AuditsPanel.prototype.show):
+        (WebInspector.AuditsPanel.prototype._clearButtonClicked):
+        (WebInspector.AuditCategory.prototype.addRule):
+        (WebInspector.AuditRule):
+        (WebInspector.AuditRule.prototype.set severity):
+        (WebInspector.AuditRule.prototype.run):
+        (WebInspector.AuditRule.prototype.doRun):
+        (WebInspector.AuditCategoryResult):
+        (WebInspector.AuditCategoryResult.prototype.addRuleResult):
+        (WebInspector.AuditRuleResult):
+        (WebInspector.AuditRuleResult.prototype.addChild):
+        (WebInspector.AuditRuleResult.prototype.addURL):
+        (WebInspector.AuditRuleResult.prototype.addURLs):
+        (WebInspector.AuditRuleResult.prototype.addSnippet):
+        * inspector/front-end/Settings.js:
+        * inspector/front-end/audits.css:
+        * inspector/front-end/inspector.js:
+        (WebInspector._createPanels):
+        (WebInspector.documentKeyDown):
+
+2010-03-09  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
         Web Inspector: highlight text node containers while searching for node.
 
         https://bugs.webkit.org/show_bug.cgi?id=35912
