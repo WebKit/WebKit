@@ -1,5 +1,9 @@
 2010-03-10  Jeremy Orlow  <jorlow@chromium.org>
 
+        Commit files that were supposed to go in with the last checkin.
+
+2010-03-10  Jeremy Orlow  <jorlow@chromium.org>
+
         Reviewed by Dimitry Glazkov.
 
         Baby steps towards IndexedDB: Start implementing callbacks.
