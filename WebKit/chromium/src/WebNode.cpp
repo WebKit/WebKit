@@ -199,4 +199,11 @@ void WebNode::removeEventListener(const WebString& eventType, WebEventListener* 
     // listenerWrapper is now deleted.
 }
 
+void WebNode::simulateClick()
+{
+    ASSERT(m_private);
+    RefPtr<Event> noEvent;
+    m_private->dispatchSimulatedClick(noEvent);
+}
+
 } // namespace WebKit

@@ -1,3 +1,17 @@
+2010-03-10  Evan Stade  <estade@chromium.org>
+
+        Reviewed by David Levin.
+
+        [chromium] add functionality to activate the focused node in a WebView
+        https://bugs.webkit.org/show_bug.cgi?id=35407
+
+        * public/WebDocument.h:
+        * public/WebNode.h:
+        * src/WebDocument.cpp:
+        (WebKit::WebDocument::focusedNode): Added
+        * src/WebNode.cpp:
+        (WebKit::WebNode::simulateClick): Added
+
 2010-03-10  John Abd-El-Malek  <jam@chromium.org>
 
         Reviewed by Darin Fisher.

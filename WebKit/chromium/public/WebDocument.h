@@ -72,6 +72,7 @@ public:
     WEBKIT_API WebElement getElementById(const WebString& id) const;
     WEBKIT_API WebNodeList getElementsByTagName(const WebString&);
     WEBKIT_API WebString applicationID() const;
+    WEBKIT_API WebNode focusedNode() const;
 
 #if WEBKIT_IMPLEMENTATION
     WebDocument(const WTF::PassRefPtr<WebCore::Document>&);
