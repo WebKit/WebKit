@@ -1,5 +1,11 @@
 2010-03-10  Geoffrey Garen  <ggaren@apple.com>
 
+        Windows build fix: added new symbol.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2010-03-10  Geoffrey Garen  <ggaren@apple.com>
+
         Windows build fix: removed old symbol.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:

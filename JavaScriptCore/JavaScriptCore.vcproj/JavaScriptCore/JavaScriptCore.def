@@ -122,6 +122,7 @@ EXPORTS
     ?fastCalloc@WTF@@YAPAXII@Z
     ?fastFree@WTF@@YAXPAX@Z
     ?fastMalloc@WTF@@YAPAXI@Z
+    ?fastMallocSize@WTF@@YAIPBX@Z
     ?fastRealloc@WTF@@YAPAXPAXI@Z
     ?fastStrDup@WTF@@YAPADPBD@Z
     ?fastZeroedMalloc@WTF@@YAPAXI@Z
