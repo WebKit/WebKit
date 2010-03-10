@@ -76,7 +76,7 @@ sub openWebSocketServer()
         "--document-root", "$webSocketHandlerDir",
         "--scan-dir", "$webSocketHandlerScanDir",
         "--websock-handlers-map-file", "$webSocketHandlerMapFile",
-        "--cgi-paths", "/websocket/tests/cookies",
+        "--cgi-paths", "/websocket/tests",
     );
 
     $ENV{"PYTHONPATH"} = $webSocketPythonPath;

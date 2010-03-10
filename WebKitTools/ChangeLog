@@ -1,3 +1,12 @@
+2010-03-09  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed.
+
+        Obvious fix for --cgi-paths of pywebsocket.
+
+        * Scripts/run-webkit-websocketserver:
+        * Scripts/webkitpy/layout_tests/port/websocket_server.py:
+
 2010-03-09  Jakub Wieczorek  <jwieczorek@webkit.org>
 
         Unreviewed.

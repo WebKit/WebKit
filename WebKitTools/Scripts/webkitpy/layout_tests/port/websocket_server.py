@@ -162,7 +162,7 @@ class PyWebSocket(http_server.Lighttpd):
             '--port', str(self._port),
             '--document-root', self._layout_tests,
             '--scan-dir', self._web_socket_tests,
-            '--cgi-paths', '/websocket/tests/cookies',
+            '--cgi-paths', '/websocket/tests',
             '--log-file', error_log,
         ]
 
