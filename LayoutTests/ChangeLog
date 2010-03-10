@@ -1,3 +1,31 @@
+2010-03-09  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21840
+        https://bugs.webkit.org/show_bug.cgi?id=23993
+
+        Fix an editing bug where replacing a selection would result in the
+        new text ending up inside nodes that were not visibly included in the
+        selection.  Instead, move our destination position out of nodes that
+        were not visibly included.
+
+        Two new tests to verify the new behavior.  Because we're now inserting
+        outside of some formatting nodes, some span tags are no longer necessary
+        for undoing formatting caused by these formatting nodes.
+
+        * editing/deleting/backspace-avoid-preceding-style-expected.txt: Added.
+        * editing/deleting/backspace-avoid-preceding-style.html: Added.
+        * editing/inserting/replace-at-visible-boundary-expected.txt: Added.
+        * editing/inserting/replace-at-visible-boundary.html: Added.
+        * platform/mac/editing/deleting/delete-3857753-fix-expected.txt:
+        * platform/mac/editing/inserting/insert-div-026-expected.txt:
+        * platform/mac/editing/pasteboard/paste-text-at-tabspan-001-expected.txt:
+        * platform/mac/editing/pasteboard/paste-text-at-tabspan-002-expected.txt:
+        * platform/mac/editing/style/font-family-with-space-expected.txt:
+        * platform/mac/editing/style/smoosh-styles-001-expected.txt:
+        * platform/mac/editing/style/style-boundary-005-expected.txt:
+
 2010-03-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] http/tests/plugins/third-party-cookie-accept-policy.html was introduced in r55738,

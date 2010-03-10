@@ -1,3 +1,22 @@
+2010-03-09  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21840
+        https://bugs.webkit.org/show_bug.cgi?id=23993
+
+        Fix an editing bug where replacing a selection would result in the
+        new text ending up inside nodes that were not visibly included in the
+        selection.  Instead, move our destination position out of nodes that
+        were not visibly included.
+
+        Tests: editing/deleting/backspace-avoid-preceding-style.html
+               editing/inserting/replace-at-visible-boundary.html
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::positionAvoidingPrecedingNodes):
+        (WebCore::ReplaceSelectionCommand::doApply):
+
 2010-03-09  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Tim Hatcher.
