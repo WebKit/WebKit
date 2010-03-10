@@ -44,8 +44,6 @@
 
 using namespace WebCore;
 
-static const char* const inspectorStartsAttachedName = "inspectorStartsAttached";
-
 @interface WebInspectorWindowController : NSWindowController <NSWindowDelegate> {
 @private
     WebView *_inspectedWebView;
@@ -327,7 +325,7 @@ void WebInspectorClient::inspectorWindowObjectCleared()
     _visible = YES;
     
     // If no preference is set - default to an attached window. This is important for inspector LayoutTests.
-    String shouldAttach = [_inspectedWebView page]->inspectorController()->setting(inspectorStartsAttachedName);
+    String shouldAttach = [_inspectedWebView page]->inspectorController()->setting(InspectorController::inspectorStartsAttachedSettingName());
     _shouldAttach = shouldAttach != "false";
     
     if (_shouldAttach && ![_inspectedWebView page]->inspectorController()->canAttachWindow())
@@ -365,7 +363,7 @@ void WebInspectorClient::inspectorWindowObjectCleared()
     if (_attachedToInspectedWebView)
         return;
 
-    [_inspectedWebView page]->inspectorController()->setSetting(inspectorStartsAttachedName, "true");
+    [_inspectedWebView page]->inspectorController()->setSetting(InspectorController::inspectorStartsAttachedSettingName(), "true");
     _movingWindows = YES;
 
     [self close];
@@ -379,7 +377,7 @@ void WebInspectorClient::inspectorWindowObjectCleared()
     if (!_attachedToInspectedWebView)
         return;
 
-    [_inspectedWebView page]->inspectorController()->setSetting(inspectorStartsAttachedName, "false");
+    [_inspectedWebView page]->inspectorController()->setSetting(InspectorController::inspectorStartsAttachedSettingName(), "false");
     _movingWindows = YES;
 
     [self close];

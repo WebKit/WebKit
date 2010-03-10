@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,8 +51,6 @@
 #include <wtf/RetainPtr.h>
 
 using namespace WebCore;
-
-static const char* const inspectorStartsAttachedName = "inspectorStartsAttached";
 
 static LPCTSTR kWebInspectorWindowClassName = TEXT("WebInspectorWindowClass");
 static ATOM registerWindowClass();
@@ -233,7 +231,7 @@ void WebInspectorClient::attachWindow()
     if (m_attached)
         return;
 
-    m_inspectedWebView->page()->inspectorController()->setSetting(inspectorStartsAttachedName, "true");
+    m_inspectedWebView->page()->inspectorController()->setSetting(InspectorController::inspectorStartsAttachedSettingName(), "true");
 
     closeWindowWithoutNotifications();
     showWindowWithoutNotifications();
@@ -244,7 +242,7 @@ void WebInspectorClient::detachWindow()
     if (!m_attached)
         return;
 
-    m_inspectedWebView->page()->inspectorController()->setSetting(inspectorStartsAttachedName, "false");
+    m_inspectedWebView->page()->inspectorController()->setSetting(InspectorController::inspectorStartsAttachedSettingName(), "false");
 
     closeWindowWithoutNotifications();
     showWindowWithoutNotifications();
@@ -350,7 +348,7 @@ void WebInspectorClient::showWindowWithoutNotifications()
     ASSERT(m_inspectedWebViewHwnd);
 
     // If no preference is set - default to an attached window. This is important for inspector LayoutTests.
-    String shouldAttach = m_inspectedWebView->page()->inspectorController()->setting(inspectorStartsAttachedName);
+    String shouldAttach = m_inspectedWebView->page()->inspectorController()->setting(InspectorController::inspectorStartsAttachedSettingName());
     m_shouldAttachWhenShown = shouldAttach != "false";
         
     if (m_shouldAttachWhenShown && !m_inspectedWebView->page()->inspectorController()->canAttachWindow())

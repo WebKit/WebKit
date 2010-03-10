@@ -1,3 +1,33 @@
+2010-03-09  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        REGRESSION: WebInspector docking busted on Windows
+        <rdar://problem/7728433> and https://bugs.webkit.org/show_bug.cgi?id=35953
+
+        First off, a bit of settings-key related cleanup. If they're shared over multiple files, these 
+        things should be properly declared Strings, not random loose char*'s.
+
+        Along with that change, we move the "inspectorStartsAttachedSettingName" from WebKit down to the
+        InspectorController in WebCore.
+
+        Finally, when the controller is ready to show the WebInspector window, it can use this newly
+        exposed settings key to call "setWindowVisible" directly instead of relying on "showWindow" to do
+        it indirectly.
+
+        * WebCore.base.exp:
+
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::saveFrontendSettings):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::frontendSettingsSettingName):
+        (WebCore::InspectorController::inspectorStartsAttachedSettingName):
+        (WebCore::InspectorController::scriptObjectReady): Using the new inspectorStartsAttachedSettingName
+          key and some "can I attach this?" logic, call setWindowVisible directly to display the inspector
+          window.
+        (WebCore::InspectorController::populateScriptObjects):
+        * inspector/InspectorController.h:
+
 2010-03-09  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Mark Rowe.

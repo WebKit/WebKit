@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -119,7 +119,18 @@ static const char* const debuggerEnabledSettingName = "debuggerEnabled";
 static const char* const profilerEnabledSettingName = "profilerEnabled";
 static const char* const inspectorAttachedHeightName = "inspectorAttachedHeight";
 static const char* const lastActivePanelSettingName = "lastActivePanel";
-const char* const InspectorController::FrontendSettingsSettingName = "frontendSettings";
+
+const String& InspectorController::frontendSettingsSettingName()
+{
+    DEFINE_STATIC_LOCAL(String, settingName, ("frontendSettings"));
+    return settingName;
+}
+
+const String& InspectorController::inspectorStartsAttachedSettingName()
+{
+    DEFINE_STATIC_LOCAL(String, settingName, ("inspectorStartsAttached"));
+    return settingName;
+}
 
 static const unsigned defaultAttachedHeight = 300;
 static const float minimumAttachedHeight = 250.0f;
@@ -554,8 +565,15 @@ void InspectorController::scriptObjectReady()
         enableProfiler();
 #endif
 
+    // If no preference is set - default to an attached window. This is important for inspector LayoutTests.
+    String shouldAttachValue = setting(inspectorStartsAttachedSettingName());
+    bool shouldAttach = shouldAttachValue != "false";
+    
+    if (shouldAttach && !canAttachWindow())
+        shouldAttach = false;
+
     // Make sure our window is visible now that the page loaded
-    showWindow();
+    setWindowVisible(true, shouldAttach);
 
     m_client->inspectorWindowObjectCleared();
 }
@@ -671,7 +689,7 @@ void InspectorController::populateScriptObjects()
     if (!m_frontend)
         return;
 
-    m_frontend->populateFrontendSettings(setting(FrontendSettingsSettingName));
+    m_frontend->populateFrontendSettings(setting(frontendSettingsSettingName()));
 
     if (m_resourceTrackingEnabled)
         m_frontend->resourceTrackingWasEnabled();

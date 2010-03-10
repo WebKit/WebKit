@@ -1,3 +1,15 @@
+2010-03-09  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        REGRESSION: WebInspector docking busted on Windows
+        <rdar://problem/7728433> and https://bugs.webkit.org/show_bug.cgi?id=35953
+
+        * WebCoreSupport/WebInspectorClient.cpp:
+        (WebInspectorClient::attachWindow): Use the InspectorController:: copy of the should attach settings key.
+        (WebInspectorClient::detachWindow): Ditto.
+        (WebInspectorClient::showWindowWithoutNotifications): Ditto.
+
 2010-03-09  John Sullivan  <sullivan@apple.com>
 
         Fixed localized string key collision. update-webkit-localized-strings now
