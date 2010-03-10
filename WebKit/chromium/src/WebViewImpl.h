@@ -446,6 +446,8 @@ private:
     NotificationPresenterImpl m_notificationPresenter;
 #endif
 
+    bool m_haveMouseCapture;
+
     static const WebInputEvent* m_currentInputEvent;
 };
 

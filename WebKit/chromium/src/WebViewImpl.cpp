@@ -245,6 +245,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     , m_suggestionsPopup(0)
     , m_isTransparent(false)
     , m_tabsToLinks(false)
+    , m_haveMouseCapture(false)
 {
     // WebKit/win/WebView.cpp does the same thing, except they call the
     // KJS specific wrapper around this method. We need to have threading
@@ -327,6 +328,7 @@ void WebViewImpl::mouseDown(const WebMouseEvent& event)
         return;
 
     m_lastMouseDownPoint = WebPoint(event.x, event.y);
+    m_haveMouseCapture = true;
 
     // If a text field that has focus is clicked again, we should display the
     // suggestions popup.
@@ -441,7 +443,6 @@ void WebViewImpl::mouseUp(const WebMouseEvent& event)
     }
 #endif
 
-    mouseCaptureLost();
     mainFrameImpl()->frame()->eventHandler()->handleMouseReleaseEvent(
         PlatformMouseEventBuilder(mainFrameImpl()->frameView(), event));
 
@@ -899,6 +900,34 @@ bool WebViewImpl::handleInputEvent(const WebInputEvent& inputEvent)
     if (m_ignoreInputEvents)
         return true;
 
+    if (m_haveMouseCapture && WebInputEvent::isMouseEventType(inputEvent.type)) {
+        Node* node = focusedWebCoreNode();
+        if (node && node->renderer() && node->renderer()->isEmbeddedObject()) {
+            AtomicString eventType;
+            switch (inputEvent.type) {
+            case WebInputEvent::MouseMove:
+                eventType = eventNames().mousemoveEvent;
+                break;
+            case WebInputEvent::MouseLeave:
+                eventType = eventNames().mouseoutEvent;
+                break;
+            case WebInputEvent::MouseDown:
+                eventType = eventNames().mousedownEvent;
+                break;
+            case WebInputEvent::MouseUp:
+                eventType = eventNames().mouseupEvent;
+                break;
+            default:
+                ASSERT_NOT_REACHED();
+            }
+
+            node->dispatchMouseEvent(
+                  PlatformMouseEventBuilder(mainFrameImpl()->frameView(), *static_cast<const WebMouseEvent*>(&inputEvent)),
+                  eventType);
+            return true;
+        }
+    }
+
     // FIXME: Remove m_currentInputEvent.
     // This only exists to allow ChromeClient::show() to know which mouse button
     // triggered a window.open event.
@@ -954,6 +983,7 @@ bool WebViewImpl::handleInputEvent(const WebInputEvent& inputEvent)
 
 void WebViewImpl::mouseCaptureLost()
 {
+    m_haveMouseCapture = false;
 }
 
 void WebViewImpl::setFocus(bool enable)

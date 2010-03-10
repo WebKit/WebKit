@@ -128,6 +128,16 @@ public:
     int modifiers;
     double timeStampSeconds;   // Seconds since epoch.
 
+    // Returns true if the WebInputEvent |type| is a mouse event.
+    static bool isMouseEventType(int type)
+    {
+        return type == MouseDown
+            || type == MouseUp
+            || type == MouseMove
+            || type == MouseEnter
+            || type == MouseLeave;
+    }
+
     // Returns true if the WebInputEvent |type| is a keyboard event.
     static bool isKeyboardEventType(int type)
     {
