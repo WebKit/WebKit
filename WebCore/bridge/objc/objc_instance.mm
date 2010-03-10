@@ -54,7 +54,7 @@ static NSMapTable *s_instanceWrapperCache;
 static NSMapTable *createInstanceWrapperCache()
 {
 #ifdef BUILDING_ON_TIGER
-    return NSCreateMapTable(NSNonRetainedObjectMapKeyCallBacks, NSNonOwnedPointerMapValueCallBacks, 0);
+    return NSCreateMapTable(NSNonOwnedPointerMapKeyCallBacks, NSNonOwnedPointerMapValueCallBacks, 0);
 #else
     // NSMapTable with zeroing weak pointers is the recommended way to build caches like this under garbage collection.
     NSPointerFunctionsOptions keyOptions = NSPointerFunctionsZeroingWeakMemory | NSPointerFunctionsOpaquePersonality;

@@ -1,5 +1,14 @@
 2010-03-09  Alexey Proskuryakov  <ap@apple.com>
 
+        Reviewed by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35951
+        <rdar://problem/7327060> Frequent crashes in Dashcode at JSC::Bindings::ObjcInstance::~ObjcInstance + 80
+
+        * bridge/objc/objc_instance.mm: (createInstanceWrapperCache): Fix Tiger code path, too.
+
+2010-03-09  Alexey Proskuryakov  <ap@apple.com>
+
         Reviewed by Oliver Hunt.
 
         https://bugs.webkit.org/show_bug.cgi?id=35951
