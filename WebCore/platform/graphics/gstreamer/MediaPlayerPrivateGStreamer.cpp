@@ -177,11 +177,31 @@ void mediaPlayerPrivateVolumeChangedCallback(GObject *element, GParamSpec *pspec
     mp->volumeChanged();
 }
 
+gboolean notifyVolumeIdleCallback(gpointer data)
+{
+    MediaPlayerPrivate* mp = reinterpret_cast<MediaPlayerPrivate*>(data);
+    mp->volumeChangedCallback();
+    return FALSE;
+}
+
 void mediaPlayerPrivateMuteChangedCallback(GObject *element, GParamSpec *pspec, gpointer data)
 {
     // This is called when playbin receives the notify::mute signal.
     MediaPlayerPrivate* mp = reinterpret_cast<MediaPlayerPrivate*>(data);
     mp->muteChanged();
+}
+
+gboolean notifyMuteIdleCallback(gpointer data)
+{
+    MediaPlayerPrivate* mp = reinterpret_cast<MediaPlayerPrivate*>(data);
+    mp->muteChangedCallback();
+    return FALSE;
+}
+
+gboolean bufferingTimeoutCallback(gpointer data)
+{
+    MediaPlayerPrivate* mp = reinterpret_cast<MediaPlayerPrivate*>(data);
+    return mp->queryBufferingStats();
 }
 
 static float playbackPosition(GstElement* playbin)
@@ -287,9 +307,11 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     , m_buffering(false)
     , m_playbackRate(1)
     , m_errorOccured(false)
+    , m_volumeIdleId(0)
     , m_mediaDuration(0)
+    , m_muteIdleId(0)
     , m_startedBuffering(false)
-    , m_fillTimer(this, &MediaPlayerPrivate::fillTimerFired)
+    , m_fillTimeoutId(0)
     , m_maxTimeLoaded(0)
     , m_bufferingPercentage(0)
 {
@@ -299,8 +321,20 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
 
 MediaPlayerPrivate::~MediaPlayerPrivate()
 {
-    if (m_fillTimer.isActive())
-        m_fillTimer.stop();
+    if (m_fillTimeoutId) {
+        g_source_remove(m_fillTimeoutId);
+        m_fillTimeoutId = 0;
+    }
+
+    if (m_volumeIdleId) {
+        g_source_remove(m_volumeIdleId);
+        m_volumeIdleId = 0;
+    }
+
+    if (m_muteIdleId) {
+        g_source_remove(m_muteIdleId);
+        m_muteIdleId = 0;
+    }
 
     if (m_buffer)
         gst_buffer_unref(m_buffer);
@@ -560,7 +594,7 @@ void MediaPlayerPrivate::setVolume(float volume)
     g_object_set(m_playBin, "volume", static_cast<double>(volume), NULL);
 }
 
-void MediaPlayerPrivate::volumeChangedTimerFired(Timer<MediaPlayerPrivate>*)
+void MediaPlayerPrivate::volumeChangedCallback()
 {
     double volume;
     g_object_get(m_playBin, "volume", &volume, NULL);
@@ -569,8 +603,9 @@ void MediaPlayerPrivate::volumeChangedTimerFired(Timer<MediaPlayerPrivate>*)
 
 void MediaPlayerPrivate::volumeChanged()
 {
-    Timer<MediaPlayerPrivate> volumeChangedTimer(this, &MediaPlayerPrivate::volumeChangedTimerFired);
-    volumeChangedTimer.startOneShot(0);
+    if (m_volumeIdleId)
+        g_source_remove(m_volumeIdleId);
+    m_volumeIdleId = g_idle_add((GSourceFunc) notifyVolumeIdleCallback, this);
 }
 
 void MediaPlayerPrivate::setRate(float rate)
@@ -669,20 +704,20 @@ void MediaPlayerPrivate::processBufferingStats(GstMessage* message)
 
         m_startedBuffering = true;
 
-        if (m_fillTimer.isActive())
-            m_fillTimer.stop();
+        if (m_fillTimeoutId > 0)
+            g_source_remove(m_fillTimeoutId);
 
-        m_fillTimer.startRepeating(0.2);
+        m_fillTimeoutId = g_timeout_add(200, (GSourceFunc) bufferingTimeoutCallback, this);
     }
 }
 
-void MediaPlayerPrivate::fillTimerFired(Timer<MediaPlayerPrivate>*)
+bool MediaPlayerPrivate::queryBufferingStats()
 {
     GstQuery* query = gst_query_new_buffering(GST_FORMAT_PERCENT);
 
     if (!gst_element_query(m_playBin, query)) {
         gst_query_unref(query);
-        return;
+        return TRUE;
     }
 
     gint64 start, stop;
@@ -708,15 +743,16 @@ void MediaPlayerPrivate::fillTimerFired(Timer<MediaPlayerPrivate>*)
 
     if (fillStatus != 100.0) {
         updateStates();
-        return;
+        return TRUE;
     }
 
     // Media is now fully loaded. It will play even if network
     // connection is cut. Buffering is done, remove the fill source
     // from the main loop.
-    m_fillTimer.stop();
+    m_fillTimeoutId = 0;
     m_startedBuffering = false;
     updateStates();
+    return FALSE;
 }
 
 float MediaPlayerPrivate::maxTimeSeekable() const
@@ -738,7 +774,7 @@ float MediaPlayerPrivate::maxTimeLoaded() const
         return 0.0;
 
     float loaded = m_maxTimeLoaded;
-    if (!loaded && !m_fillTimer.isActive())
+    if (!loaded && !m_fillTimeoutId)
         loaded = duration();
     LOG_VERBOSE(Media, "maxTimeLoaded: %f", loaded);
     return loaded;
@@ -863,7 +899,8 @@ void MediaPlayerPrivate::updateStates()
             m_paused = true;
 
         // Is on-disk buffering in progress?
-        if (m_fillTimer.isActive())
+
+        if (m_fillTimeoutId)
             m_networkState = MediaPlayer::Loading;
 
         if (m_changingRate) {
@@ -1105,7 +1142,7 @@ void MediaPlayerPrivate::setMuted(bool muted)
     g_object_set(m_playBin, "mute", muted, NULL);
 }
 
-void MediaPlayerPrivate::muteChangedTimerFired(Timer<MediaPlayerPrivate>*)
+void MediaPlayerPrivate::muteChangedCallback()
 {
     gboolean muted;
     g_object_get(m_playBin, "mute", &muted, NULL);
@@ -1114,8 +1151,10 @@ void MediaPlayerPrivate::muteChangedTimerFired(Timer<MediaPlayerPrivate>*)
 
 void MediaPlayerPrivate::muteChanged()
 {
-    Timer<MediaPlayerPrivate> muteChangedTimer(this, &MediaPlayerPrivate::muteChangedTimerFired);
-    muteChangedTimer.startOneShot(0);
+    if (m_muteIdleId)
+        g_source_remove(m_muteIdleId);
+
+    m_muteIdleId = g_idle_add((GSourceFunc) notifyMuteIdleCallback, this);
 }
 
 void MediaPlayerPrivate::loadingFailed(MediaPlayer::NetworkState error)

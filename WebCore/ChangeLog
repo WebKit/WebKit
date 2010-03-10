@@ -1,5 +1,24 @@
 2010-03-10  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        Roll-out r55657, as Xan noticed a bad degradation in playing
+        youtube HTML5 videos with it, that is fixed with it
+        reverted. Looks like we'll need to work a bit more on this.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::~MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::volumeChangedTimerFired):
+        (WebCore::MediaPlayerPrivate::volumeChanged):
+        (WebCore::MediaPlayerPrivate::processBufferingStats):
+        (WebCore::MediaPlayerPrivate::fillTimerFired):
+        (WebCore::MediaPlayerPrivate::maxTimeLoaded):
+        (WebCore::MediaPlayerPrivate::updateStates):
+        (WebCore::MediaPlayerPrivate::muteChangedTimerFired):
+        (WebCore::MediaPlayerPrivate::muteChanged):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+
+2010-03-10  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         Rubber-stamped by Xan Lopez.
 
         Fix ready state when buffering under PLAYING. We should not go
@@ -1138,29 +1157,6 @@
         * page/Settings.cpp:
         (WebCore::Settings::Settings):
         * page/Settings.h:
-
-2010-03-04  Philippe Normand  <pnormand@igalia.com>
-
-        Reviewed by Eric Seidel.
-
-        [GStreamer] replace g_idle_add / g_timeout_add calls with Timers in the gstreamer player
-        https://bugs.webkit.org/show_bug.cgi?id=35735
-
-        Replaced g_idle_add calls with Timers immediately started once
-        only. The g_timeout_add was replaced by a periodic Timer.
-
-        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
-        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate):
-        (WebCore::MediaPlayerPrivate::~MediaPlayerPrivate):
-        (WebCore::MediaPlayerPrivate::volumeChangedTimerFired):
-        (WebCore::MediaPlayerPrivate::volumeChanged):
-        (WebCore::MediaPlayerPrivate::processBufferingStats):
-        (WebCore::MediaPlayerPrivate::fillTimerFired):
-        (WebCore::MediaPlayerPrivate::maxTimeLoaded):
-        (WebCore::MediaPlayerPrivate::updateStates):
-        (WebCore::MediaPlayerPrivate::muteChangedTimerFired):
-        (WebCore::MediaPlayerPrivate::muteChanged):
-        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
 
 2010-03-07  David Levin  <levin@chromium.org>
 
