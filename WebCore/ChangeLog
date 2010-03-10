@@ -2,6 +2,16 @@
 
         Reviewed by Timothy Hatcher.
 
+        Web Inspector: REGRESSION: Tall image resources are cropped over the bottom.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34720
+
+        * inspector/front-end/inspector.css:
+
+2010-03-09  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
         Web Inspector: REGRESSION: Pressing up/down arrow key to change numeric
         value in CSS property takes focus away.
 

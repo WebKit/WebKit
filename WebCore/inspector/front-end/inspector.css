@@ -882,6 +882,7 @@ body.platform-linux .monospace, body.platform-linux .source-code {
     right: 0;
     left: 0;
     bottom: 0;
+    overflow: auto;
 }
 
 .resource-view.headers-visible .resource-view-content {
