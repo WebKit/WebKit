@@ -1,3 +1,13 @@
+2010-03-10  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add EFL port files to platform/efl.
+        http://webkit.org/b/35890
+
+        * platform/efl/ScrollbarEfl.h: Added.
+        * platform/efl/ScrollbarThemeEfl.h: Added.
+
 2010-03-10  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
