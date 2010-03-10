@@ -201,9 +201,10 @@
 #if ENABLE(INDEXED_DATABASE)
 #include "IDBDatabaseError.h"
 #include "IDBDatabaseException.h"
+#include "IDBDatabaseRequest.h"
 #include "IDBRequest.h"
 #include "IndexedDatabaseRequest.h"
-#endif // DATABASE
+#endif // INDEXED_DATABASE
 
 #if ENABLE(SVG)
 #include "SVGAngle.h"

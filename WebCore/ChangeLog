@@ -1,3 +1,33 @@
+2010-03-10  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Dimitry Glazkov.
+
+        Baby steps towards IndexedDB: Start implementing callbacks.
+        https://bugs.webkit.org/show_bug.cgi?id=35911
+
+        This patch adds some infastructure for IndexedDB callbacks in V8.
+        It also adds a stub of IDBDatabaseRequest.  In the near future,
+        I'll gut the event based implementation code, flesh out IDBReqest
+        further, and start plumbing IndexedDatabaseRequest.
+
+        Code is not testible because it doesn't work (yet).
+
+        * WebCore.gypi:
+        * bindings/v8/DOMObjectsInclude.h:
+        * bindings/v8/V8Index.cpp:
+        * bindings/v8/V8Index.h:
+        * bindings/v8/custom/V8CustomIDBCallback.h: Added.
+        (WebCore::V8CustomIDBCallback::create):
+        (WebCore::V8CustomIDBCallback::~V8CustomIDBCallback):
+        (WebCore::V8CustomIDBCallback::handleEvent):
+        (WebCore::V8CustomIDBCallback::V8CustomIDBCallback):
+        * bindings/v8/custom/V8IndexedDatabaseRequestCustom.cpp:
+        (WebCore::V8IndexedDatabaseRequest::openCallback):
+        * storage/IDBDatabaseRequest.h: Added.
+        (WebCore::IDBDatabaseRequest::request):
+        * storage/IDBDatabaseRequest.idl: Added.
+        * storage/IndexedDatabaseRequest.idl:
+
 2010-03-10  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon Hausmann.

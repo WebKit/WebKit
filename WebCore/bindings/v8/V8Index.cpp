@@ -433,6 +433,7 @@
 #if ENABLE(INDEXED_DATABASE)
 #include "V8IDBDatabaseError.h"
 #include "V8IDBDatabaseException.h"
+#include "V8IDBDatabaseRequest.h"
 #include "V8IDBRequest.h"
 #include "V8IndexedDatabaseRequest.h"
 #endif

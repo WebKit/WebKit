@@ -33,7 +33,12 @@
 #if ENABLE(INDEXED_DATABASE)
 #include "V8IndexedDatabaseRequest.h"
 
+#include "IDBDatabaseError.h"
+#include "IDBDatabaseRequest.h"
 #include "V8Binding.h"
+#include "V8CustomIDBCallback.h"
+#include "V8IDBDatabaseError.h"
+#include "V8IDBDatabaseRequest.h"
 #include "V8Proxy.h"
 
 namespace WebCore {
@@ -45,9 +50,31 @@ v8::Handle<v8::Value> V8IndexedDatabaseRequest::openCallback(const v8::Arguments
         return throwError(V8Proxy::TypeError);
     V8Parameter<> name = args[0];
     V8Parameter<> description = args[1];
+
     bool modifyDatabase = true;
-    if (args.Length() > 2)
+    if (args.Length() > 2 && !args[2]->IsUndefined() && !args[2]->IsNull())
         modifyDatabase = args[2]->BooleanValue();
+
+    Frame* frame = V8Proxy::retrieveFrameForCurrentContext();
+
+    RefPtr<V8CustomIDBCallback<IDBDatabaseError> > onerror;
+    if (args.Length() > 3 && !args[3]->IsUndefined() && !args[3]->IsNull()) {
+        if (!args[3]->IsObject())
+            return throwError("onerror callback was not the proper type");
+        if (frame)
+            onerror = V8CustomIDBCallback<IDBDatabaseError>::create(args[3], frame);
+    }
+
+    RefPtr<V8CustomIDBCallback<IDBDatabaseRequest> > onsuccess;
+    if (args.Length() > 4 && !args[4]->IsUndefined() && !args[4]->IsNull()) {
+        if (!args[4]->IsObject())
+            return throwError("onsuccess callback was not the proper type");
+        if (frame)
+            onsuccess = V8CustomIDBCallback<IDBDatabaseRequest>::create(args[4], frame);
+    }
+
+    if (!onerror && !onsuccess)
+        return throwError("Neither the onerror nor the onsuccess callbacks were set.");
 
     ExceptionCode ec = 0;
     imp->open(name, description, modifyDatabase, ec);

@@ -455,6 +455,7 @@ static const int v8DefaultWrapperInternalFieldCount = 2;
 #define DOM_OBJECT_INDEXED_DATABASE_TYPES(V)                            \
     V(IDBDATABASEERROR, IDBDatabaseError)                               \
     V(IDBDATABASEEXCEPTION, IDBDatabaseException)                       \
+    V(IDBDATABASEREQUEST, IDBDatabaseRequest)                           \
     V(IDBREQUEST, IDBRequest)                                           \
     V(INDEXEDDATABASEREQUEST, IndexedDatabaseRequest)
 #else
