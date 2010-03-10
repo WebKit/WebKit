@@ -1,3 +1,15 @@
+2010-03-10  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        <rdar://problem/7735387> input type other than text won't work with autofill
+        <https://bugs.webkit.org/show_bug.cgi?id=35963>
+
+        * WebView/WebHTMLRepresentation.mm:
+        (-[WebHTMLRepresentation elementDoesAutoComplete:]):
+        Return true for any text field that's not a password, rather than only
+        for TEXT type.
+
 2010-03-09  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Tim Hatcher.

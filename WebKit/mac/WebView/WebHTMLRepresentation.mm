@@ -302,7 +302,8 @@ static HTMLInputElement* inputElementFromDOMElement(DOMElement* element)
 {
     HTMLInputElement* inputElement = inputElementFromDOMElement(element);
     return inputElement
-        && inputElement->inputType() == HTMLInputElement::TEXT
+        && inputElement->isTextField()
+        && inputElement->inputType() != HTMLInputElement::PASSWORD
         && inputElement->autoComplete();
 }
 
