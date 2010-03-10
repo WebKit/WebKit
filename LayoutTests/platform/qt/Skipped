@@ -231,6 +231,9 @@ fast/dom/Window/window-postmessage-clone-frames.html
 
 # Missing layoutTestController.execCommand()
 editing/execCommand/delete-image-in-anchor.html 
+
+# Missing layoutTestController.setAlwaysAcceptCookies()
+http/tests/plugins/third-party-cookie-accept-policy.html
 # ============================================================================= #
 
 # ------- missing eventSender.beginDragWithFiles

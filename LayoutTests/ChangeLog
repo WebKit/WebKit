@@ -1,3 +1,11 @@
+2010-03-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] http/tests/plugins/third-party-cookie-accept-policy.html was introduced in r55738,
+        but layoutTestController.setAlwaysAcceptCookies() is missing.
+
+        * platform/qt/Skipped: http/tests/plugins/third-party-cookie-accept-policy.html skipped.
+
+
 2010-03-03  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Adam Barth.
