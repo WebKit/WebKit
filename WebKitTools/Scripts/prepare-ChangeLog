@@ -1227,7 +1227,7 @@ sub diffCommand(@)
 
     my $command;
     if ($isSVN) {
-        $command = "$SVN diff --diff-cmd diff -x -N $pathsString";
+        $command = "$SVN diff --diff-cmd diff -x -uaNpF'^[-+@]' $pathsString";
     } elsif ($isGit) {
         $command = "$GIT diff --no-ext-diff -U0 " . diffFromToString();
         $command .= " -- $pathsString" unless $gitCommit;

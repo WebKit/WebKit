@@ -1,3 +1,24 @@
+2010-03-10  Adam Roben  <aroben@apple.com>
+
+        Make svn-create-patch and prepare-ChangeLog show better section
+        headings for ObjC files
+
+        This makes the text at the end of each "@@" line in a diff actually
+        show the ObjC method or interface that contains the change, rather
+        than whatever the most-recently-defined C function was.
+
+        Fixes <http://webkit.org/b/35970>.
+
+        Reviewed by John Sullivan.
+
+        * Scripts/svn-create-patch: Pass -F'^[-+@]' to diff so that it will
+        treat any lines starting with -, +, or @ as section heading lines.
+        This works well for ObjC files, and shouldn't affect other types of
+        files.
+
+        * Scripts/prepare-ChangeLog: Changed the options passed to diff to
+        match those used in svn-create-patch.
+
 2010-03-10  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Tor Arne Vestbø.

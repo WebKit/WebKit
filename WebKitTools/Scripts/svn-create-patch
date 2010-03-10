@@ -203,7 +203,7 @@ sub generateDiff($$)
     if ($fileData->{modificationType} eq "additionWithHistory") {
         manufacturePatchForAdditionWithHistory($fileData);
     }
-    open DIFF, "svn diff --diff-cmd diff -x -uaNp '$file' |" or die;
+    open DIFF, "svn diff --diff-cmd diff -x -uaNpF'^[-+@]' '$file' |" or die;
     while (<DIFF>) {
         $patch .= $_;
     }
