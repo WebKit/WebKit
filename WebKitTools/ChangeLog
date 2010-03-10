@@ -1,3 +1,15 @@
+2010-03-10  Adam Roben  <aroben@apple.com>
+
+        Roll out the prepare-ChangeLog part of r55870
+
+        This change wasn't needed (prepare-ChangeLog calls svn-create-patch
+        when it's asked to print out diffs for the user) and was screwing up
+        its ability to find changed function names.
+
+        * Scripts/prepare-ChangeLog:
+        (diffCommand): Change the options we pass to svn-diff back to their
+        pre-r55870 form.
+
 2010-03-10  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Simon Hausmann.
