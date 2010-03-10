@@ -1,4 +1,4 @@
-# From WebKit svn r53119 (WebCore/html/HTMLAttributeNames.in)
+# From WebKit svn r55658 (WebCore/html/HTMLAttributeNames.in)
 abbr
 accept
 accept_charset
@@ -19,6 +19,7 @@ aria-dropeffect
 aria-expanded
 aria-flowto
 aria-grabbed
+aria-haspopup
 aria-hidden
 aria-label
 aria-labeledby
@@ -37,7 +38,6 @@ aria-valuemax
 aria-valuemin
 aria-valuenow
 aria-valuetext
-autobuffer
 autocomplete
 autofocus
 autoplay
@@ -83,6 +83,7 @@ disabled
 draggable
 enctype
 end
+event
 expanded
 face
 focused
@@ -198,6 +199,7 @@ onstorage
 onsubmit
 onsuspend
 ontimeupdate
+ontouchcancel
 ontouchend
 ontouchmove
 ontouchstart
@@ -216,6 +218,7 @@ playcount
 pluginurl
 poster
 precision
+preload
 primary
 profile
 progress
@@ -267,6 +270,9 @@ vlink
 vspace
 width
 wrap
+
+# Removed from WebKit between r53119 and r56558
+autobuffer
 
 # Removed from WebKit between r14011 and r53119
 left

@@ -1,3 +1,18 @@
+2010-03-10  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Rubber-stamped by Simon Hausmann.
+
+        [iExploder] Add new CSS Properties and HTML Attributes
+
+        The update-iexploder-cssproperties script was used to update
+        the various input files. The autobuffer HTML Attribute was removed
+        from WebKit and I manually added it back to the htmlattrs.in like
+        we have done it for other attributes in the past.
+
+        * iExploder/htdocs/cssproperties.in:
+        * iExploder/htdocs/htmlattrs.in:
+        * iExploder/htdocs/htmltags.in:
+
 2010-03-09  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed.

@@ -1,8 +1,9 @@
-# From WebKit svn r53119 (WebCore/css/CSSPropertyNames.in)
+# From WebKit svn r55658 (WebCore/css/CSSPropertyNames.in)
 -webkit-animation
 -webkit-animation-delay
 -webkit-animation-direction
 -webkit-animation-duration
+-webkit-animation-fill-mode
 -webkit-animation-iteration-count
 -webkit-animation-name
 -webkit-animation-play-state
