@@ -1,3 +1,14 @@
+2010-03-09  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35951
+        <rdar://problem/7327060> Frequent crashes in Dashcode at JSC::Bindings::ObjcInstance::~ObjcInstance + 80
+
+        * bridge/objc/objc_instance.mm: (createInstanceWrapperCache): It's not correct to use object
+        personality for keys, because the key can be a mutable object, so its hash can change over its
+        lifetime.
+
 2010-03-09  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Darin Adler.
