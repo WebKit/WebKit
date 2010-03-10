@@ -852,7 +852,7 @@ void MediaPlayerPrivate::updateStates()
             }
 
             if (m_buffering) {
-                m_readyState = MediaPlayer::HaveNothing;
+                m_readyState = MediaPlayer::HaveCurrentData;
                 m_networkState = MediaPlayer::Loading;
 
                 LOG_VERBOSE(Media, "[Buffering] Pausing stream for buffering.");
