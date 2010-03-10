@@ -1211,7 +1211,6 @@ WebInspector.StylePropertyTreeElement.prototype = {
         selection.removeAllRanges();
         selection.addRange(finalSelectionRange);
 
-        event.preventDefault();
         event.handled = true;
 
         if (!this.originalCSSText) {
@@ -1361,9 +1360,6 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
             if (updateInterface)
                 self.updateAll(true);
-
-            if (!section.rule)
-                WebInspector.panels.elements.treeOutline.update();
         }
 
         InjectedScriptAccess.get(this.style.injectedScriptId).applyStyleText(this.style.id, styleText.trim(), this.name, callback);
