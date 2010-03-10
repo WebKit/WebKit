@@ -1,3 +1,28 @@
+2010-03-10  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Add IndexedDatabase class and hook it up.
+        https://bugs.webkit.org/show_bug.cgi?id=35927
+
+        This change is mostly just adding the plumbing necessary for
+        the IndexedDatabaseRequest and IndexedDatabaseSync (not written
+        yet).
+
+        * WebKit.gyp:
+        * public/WebIndexedDatabase.h: Added.
+        (WebKit::WebIndexedDatabase::~WebIndexedDatabase):
+        * public/WebKitClient.h:
+        (WebKit::WebKitClient::getIndexedDatabase):
+        * src/ChromiumBridge.cpp:
+        (WebCore::ChromiumBridge::getIndexedDatabase):
+        * src/IndexedDatabaseProxy.cpp: Added.
+        (WebCore::IndexedDatabaseProxy::create):
+        (WebCore::IndexedDatabaseProxy::IndexedDatabaseProxy):
+        (WebCore::IndexedDatabaseProxy::~IndexedDatabaseProxy):
+        (WebCore::IndexedDatabaseProxy::open):
+        * src/IndexedDatabaseProxy.h: Added.
+
 2010-03-10  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.

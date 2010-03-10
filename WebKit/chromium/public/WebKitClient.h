@@ -49,6 +49,7 @@ class WebApplicationCacheHost;
 class WebApplicationCacheHostClient;
 class WebClipboard;
 class WebCookieJar;
+class WebIndexedDatabase;
 class WebMessagePortChannel;
 class WebMimeRegistry;
 class WebPluginListBuilder;
@@ -127,7 +128,7 @@ public:
     virtual bool isLinkVisited(unsigned long long linkHash) { return false; }
 
 
-    // Database ------------------------------------------------------------
+    // HTML5 Database ------------------------------------------------------
 
 #ifdef WIN32
     typedef HANDLE FileHandle;
@@ -148,6 +149,11 @@ public:
 
     // Returns the size of the given database file
     virtual long long databaseGetFileSize(const WebString& vfsFileName) { return 0; }
+
+
+    // Indexed Database ----------------------------------------------------
+
+    virtual WebIndexedDatabase* getIndexedDatabase() { return 0; }
 
 
     // Keygen --------------------------------------------------------------
