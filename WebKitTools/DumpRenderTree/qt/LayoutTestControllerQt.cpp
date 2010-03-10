@@ -56,6 +56,7 @@ extern int qt_drt_numberOfPages(QWebFrame* qFrame, float width, float height);
 extern void qt_drt_webinspector_executeScript(QWebPage* page, long callId, const QString& script);
 extern void qt_drt_webinspector_show(QWebPage *page);
 extern void qt_drt_webinspector_close(QWebPage *page);
+extern void qt_drt_enableCaretBrowsing(QWebPage* page, bool value);
 
 LayoutTestController::LayoutTestController(WebCore::DumpRenderTree* drt)
     : QObject()
@@ -462,6 +463,8 @@ void LayoutTestController::overridePreference(const QString& name, const QVarian
         settings->setFontSize(QWebSettings::DefaultFontSize, value.toInt());
     else if (name == "WebKitUsesPageCachePreferenceKey")
         QWebSettings::setMaximumPagesInCache(value.toInt());
+    else if (name == "WebKitEnableCaretBrowsing")
+        setCaretBrowsingEnabled(value.toBool());
     else
         printf("ERROR: LayoutTestController::overridePreference() does not support the '%s' preference\n",
             name.toLatin1().data());
@@ -470,6 +473,11 @@ void LayoutTestController::overridePreference(const QString& name, const QVarian
 void LayoutTestController::setUserStyleSheetLocation(const QString& url)
 {
     m_userStyleSheetLocation = QUrl(url);
+}
+
+void LayoutTestController::setCaretBrowsingEnabled(bool value)
+{
+    qt_drt_enableCaretBrowsing(m_drt->webPage(), value);
 }
 
 void LayoutTestController::setUserStyleSheetEnabled(bool enabled)

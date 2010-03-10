@@ -1,5 +1,22 @@
 2010-03-10  Robert Hogan  <robert@webkit.org>
 
+        Reviewed by Simon Hausmann.
+
+        [Qt] Add Support for WebKitEnableCaretBrowsing to Qt DRT
+
+        Unskip test fast/events/multiline-link-arrow-navigation.html
+
+        https://bugs.webkit.org/show_bug.cgi?id=35593
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::WebPage::resetSettings):
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::overridePreference):
+        (LayoutTestController::setCaretBrowsingEnabled):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+
+2010-03-10  Robert Hogan  <robert@webkit.org>
+
         Reviewed by Holger Freyther.
 
         QtLauncher: Fix typo in conditional statement in

@@ -195,6 +195,11 @@ void QWEBKIT_EXPORT qt_drt_setTimelineProfilingEnabled(QWebPage* page, bool enab
 }
 #endif
 
+void QWEBKIT_EXPORT qt_drt_enableCaretBrowsing(QWebPage* page, bool value)
+{
+    page->handle()->page->settings()->setCaretBrowsingEnabled(value);
+}
+
 class QWebPageWidgetClient : public QWebPageClient {
 public:
     QWebPageWidgetClient(QWidget* view)

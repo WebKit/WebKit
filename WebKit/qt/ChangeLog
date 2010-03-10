@@ -1,3 +1,19 @@
+2010-03-10  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Add Support for WebKitEnableCaretBrowsing to Qt DRT
+
+        Unskip test fast/events/multiline-link-arrow-navigation.html
+        Fix typo (superfluous space) in QWebSettings docs.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35593
+
+        * Api/qwebpage.cpp:
+        (qt_drt_enableCaretBrowsing):
+        * Api/qwebsettings.cpp:
+        (QWebSettingsPrivate::apply): fix typo in docs
+
 2010-03-02  Adam Treat  <atreat@rim.com>
 
         Reviewed by Dave Hyatt.

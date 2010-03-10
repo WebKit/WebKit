@@ -167,6 +167,7 @@ void WebPage::resetSettings()
     settings()->resetAttribute(QWebSettings::LinksIncludedInFocusChain);
     settings()->resetAttribute(QWebSettings::OfflineWebApplicationCacheEnabled);
     settings()->resetAttribute(QWebSettings::LocalContentCanAccessRemoteUrls);
+    m_drt->layoutTestController()->setCaretBrowsingEnabled(false);
 
     // globalSettings must be reset explicitly.
     m_drt->layoutTestController()->setXSSAuditorEnabled(false);

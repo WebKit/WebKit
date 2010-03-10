@@ -389,7 +389,7 @@ QWebSettings* QWebSettings::globalSettings()
     \value LocalStorageDatabaseEnabled \e{This enum value is deprecated.} Use
         QWebSettings::LocalStorageEnabled instead.
     \value LocalContentCanAccessRemoteUrls Specifies whether locally loaded documents are allowed to access remote urls.
-    \value LocalContentCanAccessFileUrls Specifies whether locally loaded documents are allowed to access other local  urls.
+    \value LocalContentCanAccessFileUrls Specifies whether locally loaded documents are allowed to access other local urls.
     \value XSSAuditorEnabled Specifies whether load requests should be monitored for cross-site scripting attempts.
 */
 
