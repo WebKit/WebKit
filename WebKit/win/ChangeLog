@@ -1,3 +1,16 @@
+2010-03-10  Eric Uhrhane  <ericu@chromium.org>
+
+        Reviewed by David Levin.
+
+        The build fix for my patch on bug #35763 wasn't quite right--it removed
+        the call entirely, instead of replacing it with the new API.  This adds
+        the call to Database::setIsAvailable.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35763
+
+        * WebView.cpp: Added a call to Database::setIsAvailable where change 55667 removed the old Settings API call <http://trac.webkit.org/changeset/55667>.
+        (WebView::notifyPreferencesChanged):
+
 2010-03-10  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim Hatcher.

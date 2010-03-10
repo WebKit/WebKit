@@ -73,6 +73,7 @@
 #include <WebCore/ContextMenuController.h>
 #include <WebCore/CookieStorageWin.h>
 #include <WebCore/Cursor.h>
+#include <WebCore/Database.h>
 #include <WebCore/Document.h>
 #include <WebCore/DragController.h>
 #include <WebCore/DragData.h>
@@ -4607,6 +4608,13 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     if (FAILED(hr))
         return hr;
     settings->setOfflineWebApplicationCacheEnabled(enabled);
+
+#if ENABLE(DATABASE)
+    hr = prefsPrivate->databasesEnabled(&enabled);
+    if (FAILED(hr))
+        return hr;
+    Database::setIsAvailable(enabled);
+#endif
 
     hr = prefsPrivate->localStorageEnabled(&enabled);
     if (FAILED(hr))
