@@ -1,3 +1,16 @@
+2010-03-10  Ilya Tikhonovsky  <loislo@loislo-macbookpro.local>
+
+        Reviewed by Pavel Feldman.
+
+        Sidebar resize element height was adjusted.
+        Display name for Function Call details was adjusted.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35939
+
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._refreshRecords):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._getRecordDetails):
+
 2010-03-10  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         Reviewed by George Staikos.

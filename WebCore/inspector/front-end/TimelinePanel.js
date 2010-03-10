@@ -383,6 +383,7 @@ WebInspector.TimelinePanel.prototype = {
         }
 
         this._itemsGraphsElement.insertBefore(this._graphRowsElement, this._bottomGapElement);
+        this.sidebarResizeElement.style.height = this.sidebarElement.clientHeight + "px";
         // Reserve some room for expand / collapse controls to the left for records that start at 0ms.
         var timelinePaddingLeft = this._calculator.windowLeft === 0 ? expandOffset : 0;
         if (updateBoundaries)
@@ -746,7 +747,7 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
     {
         switch (record.type) {
             case WebInspector.TimelineAgent.RecordType.FunctionCall:
-                return WebInspector.displayNameForURL(record.data.scriptName + ":" + record.data.scriptLine);
+                return WebInspector.displayNameForURL(record.data.scriptName) + ":" + record.data.scriptLine;
             case WebInspector.TimelineAgent.RecordType.EventDispatch:
                 return record.data ? record.data.type : "";
             case WebInspector.TimelineAgent.RecordType.Paint:
