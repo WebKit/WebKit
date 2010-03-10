@@ -1,3 +1,12 @@
+2010-03-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] fast/multicol/hit-test-above-or-below.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=35973
+
+        The test was introduced in r55546, it has been failing since then.
+
+        * platform/qt/Skipped: fast/multicol/hit-test-above-or-below.html skipped until fix.
+
 2010-03-07  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Darin Adler.
