@@ -1,3 +1,19 @@
+2010-03-10  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Dave Hyatt.
+        Patch by Antonio Gomes <tonikitoo@webkit.org>
+
+        Extend keyboard navigation to allow directional navigation (LayoutTests - part III)
+        https://bugs.webkit.org/show_bug.cgi?id=18662
+
+        This patch adds two LayoutTests to ensure the correctness of the "Fully aligned"
+        precedence logic implemented by Spatial Navigation algorithm, either vertically or
+        horizontally: targets whose middle falls between the top and bottom of the current
+        focused element are preferably to move focus to, even if it is not the shortest distance.
+
+        * fast/events/spatial-navigation/snav-fully-aligned-vertically.html: Added.
+        * fast/events/spatial-navigation/snav-fully-aligned-horizontally.html: Added.
+
 2010-03-05  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Sam Weinig.

@@ -1,0 +1,19 @@
+test
+test             test
+test
+test
+test
+test
+
+
+
+
+test
+test
+PASS document.activeElement.getAttribute("id") is "4"
+PASS document.activeElement.getAttribute("id") is "6"
+PASS document.activeElement.getAttribute("id") is "8"
+PASS document.activeElement.getAttribute("id") is "end"
+PASS document.activeElement.getAttribute("id") is "7"
+PASS document.activeElement.getAttribute("id") is "2"
+
