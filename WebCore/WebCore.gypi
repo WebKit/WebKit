@@ -3837,7 +3837,7 @@
             'inspector/front-end/textViewer.css',
         ],
         'webinspector_image_files': [
-
+            'inspector/front-end/Images/auditsIcon.png',
             'inspector/front-end/Images/back.png',
             'inspector/front-end/Images/breakpointBorder.png',
             'inspector/front-end/Images/breakpointConditionalBorder.png',

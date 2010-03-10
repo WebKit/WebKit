@@ -219,6 +219,10 @@ body.attached #search-results-matches {
     background-image: url(Images/profilesIcon.png);
 }
 
+.toolbar-item.audits .toolbar-icon {
+    background-image: url(Images/auditsIcon.png);
+}
+
 .toolbar-item.console .toolbar-icon {
     background-image: url(Images/consoleIcon.png);
 }

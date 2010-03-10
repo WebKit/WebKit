@@ -1,3 +1,17 @@
+2010-03-10  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Audits panel needs an icon.
+        Landing icon attached by Timothy. Enabling panel!
+
+        https://bugs.webkit.org/show_bug.cgi?id=35945
+
+        * WebCore.gypi:
+        * inspector/front-end/Images/auditsIcon.png: Added.
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.css:
+
 2010-03-10  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Roll-out r55657, as Xan noticed a bad degradation in playing

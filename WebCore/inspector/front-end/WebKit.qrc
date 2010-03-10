@@ -96,6 +96,7 @@
     <file>inspectorSyntaxHighlight.css</file>
     <file>popover.css</file>
     <file>textViewer.css</file>
+    <file>Images/auditsIcon.png</file>
     <file>Images/back.png</file>
     <file>Images/breakpointBorder.png</file>
     <file>Images/breakpointConditionalBorder.png</file>

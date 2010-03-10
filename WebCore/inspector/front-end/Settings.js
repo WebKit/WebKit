@@ -41,7 +41,7 @@ var Preferences = {
     showColorNicknames: true,
     debuggerAlwaysEnabled: false,
     profilerAlwaysEnabled: false,
-    auditsPanelEnabled: false
+    auditsPanelEnabled: true
 }
 
 WebInspector.populateFrontendSettings = function(settingsString)
