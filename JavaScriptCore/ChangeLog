@@ -1,3 +1,13 @@
+2010-03-10  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Eric Seidel.
+
+        Make global new/delete operators configurable for all ports and disable it
+        for the wx port for now.
+
+        * wtf/FastMalloc.h:
+        * wtf/Platform.h:
+
 2010-03-09  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by NOBODY (reverting r54510).

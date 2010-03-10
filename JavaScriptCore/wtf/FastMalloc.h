@@ -215,8 +215,7 @@ using WTF::fastMallocAllow;
 // debug-only code to make sure we don't use the system malloc via the default operator
 // new by accident.
 
-// We musn't customize the global operator new and delete for the Qt port.
-#if !PLATFORM(QT)
+#if ENABLE(GLOBAL_FASTMALLOC_NEW)
 
 #if COMPILER(MSVC)
 #pragma warning(push)
