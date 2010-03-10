@@ -49,7 +49,7 @@ gint getDoubleClickTime()
 {
     static GtkSettings* settings = gtk_settings_get_default();
     gint doubleClickTime = 250;
-    g_object_get(G_OBJECT(settings), "gtk-double-click-time", &doubleClickTime, 0);
+    g_object_get(G_OBJECT(settings), "gtk-double-click-time", &doubleClickTime, NULL);
     return doubleClickTime;
 }
 
