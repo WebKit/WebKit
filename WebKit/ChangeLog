@@ -1,3 +1,13 @@
+2010-03-10  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Holger Freyther.
+
+        Add EFL port files to efl/WebCoreSupport.
+        http://webkit.org/b/35913
+
+        * efl/WebCoreSupport/ChromeClientEfl.cpp: Added.
+        * efl/WebCoreSupport/ChromeClientEfl.h: Added.
+
 2010-03-09  John Sullivan  <sullivan@apple.com>
 
         Fixed localized string key collision. update-webkit-localized-strings now
