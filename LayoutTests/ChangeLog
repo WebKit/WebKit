@@ -3,6 +3,25 @@
         Reviewed by Dave Hyatt.
         Patch by Antonio Gomes <tonikitoo@webkit.org>
 
+        Extend keyboard navigation to allow directional navigation (LayoutTests - part V)
+        https://bugs.webkit.org/show_bug.cgi?id=18662
+
+        This patch adds three LayoutTests that ensure the correctness of Spatial Navigation algorithm
+        in the following iframe related traversals:
+
+        1) All focusable elements in a <iframe> should be accessible.
+        2) Focusable elements in an <iframe> should be accessible even when
+           current focused element is in another <iframe> in the same page.
+
+        * fast/events/spatial-navigation/snav-iframe-no-focusable-content.html: Added.
+        * fast/events/spatial-navigation/snav-iframe-no-scrollable-content.html: Added.
+        * fast/events/spatial-navigation/snav-iframe-with-offscreen-focusable-element.html: Added.
+
+2010-03-10  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Dave Hyatt.
+        Patch by Antonio Gomes <tonikitoo@webkit.org>
+
         Extend keyboard navigation to allow directional navigation (LayoutTests - part IV)
         https://bugs.webkit.org/show_bug.cgi?id=18662
 
