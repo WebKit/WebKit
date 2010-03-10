@@ -612,6 +612,17 @@ bool WebViewImpl::charEvent(const WebKeyboardEvent& event)
     return true;
 }
 
+#if ENABLE(TOUCH_EVENTS)
+bool WebViewImpl::touchEvent(const WebTouchEvent& event)
+{
+    if (!mainFrameImpl() || !mainFrameImpl()->frameView())
+        return false;
+
+    PlatformTouchEventBuilder touchEventBuilder(mainFrameImpl()->frameView(), event);
+    return mainFrameImpl()->frame()->eventHandler()->handleTouchEvent(touchEventBuilder);
+}
+#endif
+
 // The WebViewImpl::SendContextMenuEvent function is based on the Webkit
 // function
 // bool WebView::handleContextMenuEvent(WPARAM wParam, LPARAM lParam) in
@@ -971,6 +982,15 @@ bool WebViewImpl::handleInputEvent(const WebInputEvent& inputEvent)
     case WebInputEvent::Char:
         handled = charEvent(*static_cast<const WebKeyboardEvent*>(&inputEvent));
         break;
+
+#if ENABLE(TOUCH_EVENTS)
+    case WebInputEvent::TouchStart:
+    case WebInputEvent::TouchMove:
+    case WebInputEvent::TouchEnd:
+    case WebInputEvent::TouchCancel:
+        handled = touchEvent(*static_cast<const WebTouchEvent*>(&inputEvent));
+        break;
+#endif
 
     default:
         handled = false;

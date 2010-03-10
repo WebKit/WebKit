@@ -1,3 +1,22 @@
+2010-03-10  Garret Kelly  <gdk@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Add support for converting WebTouchEvents to PlatformTouchEvents and
+        routing them into the EventHandler for the frame in which they
+        originate.
+        https://bugs.webkit.org/show_bug.cgi?id=35874
+
+        * src/ChromeClientImpl.h:
+        (WebKit::ChromeClientImpl::needTouchEvents):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::touchEvent): Handle incoming WebTouchEvents,
+        converting them to PlatformTouchEvents and sending them to the
+        EventHandler.
+        (WebKit::WebViewImpl::handleInputEvent): Now routes WebTouchEvents to
+        the touchEvent handler.
+        * src/WebViewImpl.h:
+
 2010-03-10  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Dimitri Glazkov.
