@@ -912,6 +912,10 @@ bool WebViewImpl::handleInputEvent(const WebInputEvent& inputEvent)
         return true;
 
     if (m_haveMouseCapture && WebInputEvent::isMouseEventType(inputEvent.type)) {
+        // Not all platforms call mouseCaptureLost() directly.
+        if (inputEvent.type == WebInputEvent::MouseUp)
+            mouseCaptureLost();
+
         Node* node = focusedWebCoreNode();
         if (node && node->renderer() && node->renderer()->isEmbeddedObject()) {
             AtomicString eventType;
