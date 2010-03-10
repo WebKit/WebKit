@@ -1,0 +1,803 @@
+# Webkit'i tõlge eesti keelde.
+# Estonian translation for webkit.
+#
+# Copyright (C) 2010 The WebKitGTK+ Team
+# This file is distributed under the same license as the webkit package.
+#
+# Rene Pärts <rene87 hot ee>, 2010.
+# Priit Laes <plaes plaes org>, 2010
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: webkit 1.1.22\n"
+"Report-Msgid-Bugs-To: http://bugs.webkit.org/\n"
+"POT-Creation-Date: 2010-02-16 15:01-0200\n"
+"PO-Revision-Date: 2010-02-23 14:25+0300\n"
+"Last-Translator: Priit Laes <rene87@hot.ee>\n"
+"Language-Team: Estonian <gnome-et@linux.ee>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Upload File"
+msgstr "Faili valimine"
+
+msgid "Input _Methods"
+msgstr "Sisestus_meetodid"
+
+msgid "LRM _Left-to-right mark"
+msgstr "LRM _Vasakult paremale märk"
+
+msgid "RLM _Right-to-left mark"
+msgstr "RLM _Paremalt vasakule märk"
+
+msgid "LRE Left-to-right _embedding"
+msgstr "LRE Va_sakult paremale põimimine"
+
+msgid "RLE Right-to-left e_mbedding"
+msgstr "RLE Pa_remalt vasakule põimimine"
+
+msgid "LRO Left-to-right _override"
+msgstr "LRO Vasakult paremale ü_lekirjutamine"
+
+msgid "RLO Right-to-left o_verride"
+msgstr "RLO Paremalt vasakule üle_kirjutamine"
+
+msgid "PDF _Pop directional formatting"
+msgstr "PDF _Suundvormindus"
+
+msgid "ZWS _Zero width space"
+msgstr "ZWS _Null-laiusega tühik"
+
+msgid "ZWJ Zero width _joiner"
+msgstr "ZWJ Null-laiusega ü_hendaja"
+
+msgid "ZWNJ Zero width _non-joiner"
+msgstr "ZWJ Null-laiusega _mitteühendaja"
+
+msgid "_Insert Unicode Control Character"
+msgstr "L_isa Unicode'i juhtmärk"
+
+msgid "Network Request"
+msgstr "Võrgupäring"
+
+msgid "The network request for the URI that should be downloaded"
+msgstr "Võrgupäring allalaaditavale URI-le"
+
+msgid "Network Response"
+msgstr "Võrgu vastus"
+
+msgid "The network response for the URI that should be downloaded"
+msgstr "Võrgu vastus allalaaditavale URI-le"
+
+msgid "Destination URI"
+msgstr "Sihtkoha URI"
+
+msgid "The destination URI where to save the file"
+msgstr "Salvestatava faili sihtkoha URI"
+
+msgid "Suggested Filename"
+msgstr "Soovitatav failinimi"
+
+msgid "The filename suggested as default when saving"
+msgstr "Salvestamisel pakutav vaikimisi failinimi"
+
+msgid "Progress"
+msgstr "Edenemine"
+
+msgid "Determines the current progress of the download"
+msgstr "Tagastab allalaadimise edenemise"
+
+msgid "Status"
+msgstr "Olek"
+
+msgid "Determines the current status of the download"
+msgstr "Tagastab allalaadimise oleku"
+
+msgid "Current Size"
+msgstr "Hetkesuurus"
+
+msgid "The length of the data already downloaded"
+msgstr "Allalaetud andmete maht"
+
+msgid "Total Size"
+msgstr "Kogusuurus"
+
+msgid "The total size of the file"
+msgstr "Faili kogusuurus"
+
+msgid "User cancelled the download"
+msgstr "Allalaadimine katkestatud kasutaja poolt"
+
+#, c-format
+msgid "A username and password are being requested by the site %s"
+msgstr "Saidi %s poolt küsitakse kasutajanime ja parooli"
+
+msgid "Username:"
+msgstr "Kasutajanimi:"
+
+msgid "Password:"
+msgstr "Parool:"
+
+msgid "_Remember password"
+msgstr "_Parooli meeldejätmine"
+
+msgid "Name"
+msgstr "Nimi"
+
+msgid "The name of the frame"
+msgstr "Raami nimi"
+
+msgid "Title"
+msgstr "Pealkiri"
+
+msgid "The document title of the frame"
+msgstr "Raami dokumendi pealkiri"
+
+msgid "URI"
+msgstr "URI"
+
+msgid "The current URI of the contents displayed by the frame"
+msgstr "Raami sisu aktiivne URI"
+
+msgid "Horizontal Scrollbar Policy"
+msgstr "Horisontaalse kerimisriba kasutusreegel"
+
+msgid ""
+"Determines the current policy for the horizontal scrollbar of the frame."
+msgstr "Määrab raami horisontaalse kerimisriba kasutusreeglid."
+
+msgid "Vertical Scrollbar Policy"
+msgstr "Vertikaalse kerimisriba reegel"
+
+msgid "Determines the current policy for the vertical scrollbar of the frame."
+msgstr "Määrab raami vertikaalse kerimisriba kasutusreeglid."
+
+msgid "The title of the history item"
+msgstr "Ajalookirje pealkiri"
+
+msgid "Alternate Title"
+msgstr "Alternatiivne pealkiri"
+
+msgid "The alternate title of the history item"
+msgstr "Ajalookirje alternatiivne pealkiri"
+
+msgid "The URI of the history item"
+msgstr "Ajalookirje URI"
+
+msgid "Original URI"
+msgstr "Algne URI"
+
+msgid "The original URI of the history item"
+msgstr "Ajalookirje algne URI"
+
+msgid "Last visited Time"
+msgstr "Viimase külastuse aeg"
+
+msgid "The time at which the history item was last visited"
+msgstr "Ajalookirje viimase külastuse aeg"
+
+msgid "Web View"
+msgstr "Veebivaade"
+
+msgid "The Web View that renders the Web Inspector itself"
+msgstr "Veebiinspektorit esitav veebivaade"
+
+msgid "Inspected URI"
+msgstr "Inspekteeritav URI"
+
+msgid "The URI that is currently being inspected"
+msgstr "Hetkel inspekteeritav URI"
+
+msgid "Enable JavaScript profiling"
+msgstr "Luba JavaScript'i profileerimine"
+
+msgid "Profile the executed JavaScript."
+msgstr "Käivitatava JavaScript'i profileerimine."
+
+msgid "Enable Timeline profiling"
+msgstr "Luba ajatelje profileerimine"
+
+msgid "Profile the WebCore instrumentation."
+msgstr "WebCore'i jälgimisvihjete profileerimine"
+
+msgid "Reason"
+msgstr "Põhjus"
+
+msgid "The reason why this navigation is occurring"
+msgstr "Navigeerimistegevuse esilekutsumise põhjus"
+
+msgid "The URI that was requested as the target for the navigation"
+msgstr ""
+
+msgid "Button"
+msgstr "Nupp"
+
+msgid "The button used to click"
+msgstr "Klõpsamiseks kasutatud nupp"
+
+msgid "Modifier state"
+msgstr "Muuteklahvi olek"
+
+msgid "A bitmask representing the state of the modifier keys"
+msgstr "Muuteklahvide olekut esindav bitimask"
+
+msgid "Target frame"
+msgstr "Sihtraam"
+
+msgid "The target frame for the navigation"
+msgstr "Navigeerimise sihtraam"
+
+msgid "Default Encoding"
+msgstr "Vaikimisi kodeering"
+
+msgid "The default encoding used to display text."
+msgstr "Vaikimisi kasutatav kodeering teksti kuvamiseks."
+
+msgid "Cursive Font Family"
+msgstr "Kursiivne kirjaperekond"
+
+msgid "The default Cursive font family used to display text."
+msgstr "Teksti kuvamiseks kasutatav vaikimisi kursiivne kirjaperekond."
+
+msgid "Default Font Family"
+msgstr "Vaikimisi kirjaperekond"
+
+msgid "The default font family used to display text."
+msgstr "Teksti kuvamiseks kasutatav vaikimisi kirjaperekond."
+
+msgid "Fantasy Font Family"
+msgstr "Erikujuline kirjaperekond"
+
+msgid "The default Fantasy font family used to display text."
+msgstr "Teksti kuvamiseks kasutatav vaikimisi erikujuline kirjaperekond."
+
+msgid "Monospace Font Family"
+msgstr "Püsisammuga kirjaperekond"
+
+msgid "The default font family used to display monospace text."
+msgstr "Teksti kuvamiseks kasutatav vaikimisi püsisammuga kirjaperekond."
+
+msgid "Sans Serif Font Family"
+msgstr "Seriifideta kirjaperekond"
+
+msgid "The default Sans Serif font family used to display text."
+msgstr "Teksti kuvamiseks kasutatav vaikimisi seriifideta kirjaperekond."
+
+msgid "Serif Font Family"
+msgstr "Seriifidega kirjaperekond"
+
+msgid "The default Serif font family used to display text."
+msgstr "Teksti kuvamiseks kasutatav vaikimisi seriifidega kirjaperekond."
+
+msgid "Default Font Size"
+msgstr "Vaikimisi kirjasuurus"
+
+msgid "The default font size used to display text."
+msgstr "Vaikimisi kirjasuurus teksti kuvamiseks."
+
+msgid "Default Monospace Font Size"
+msgstr "Vaikimisi püsisammuga kirja suurus"
+
+msgid "The default font size used to display monospace text."
+msgstr "Vaikimisi kirjasuurus püsisammuga teksti kuvamiseks."
+
+msgid "Minimum Font Size"
+msgstr "Väikseim kirjasuurus"
+
+msgid "The minimum font size used to display text."
+msgstr "Väikseim kirjasuurus teksti kuvamiseks."
+
+msgid "Minimum Logical Font Size"
+msgstr "Väikseim loogilise kirjatüübi kirjasuurus"
+
+msgid "The minimum logical font size used to display text."
+msgstr "Väikseim loogilise kirjatüübi kirjasuurus teksti kuvamiseks."
+
+msgid "Enforce 96 DPI"
+msgstr "Lahutusvõime jõuga 96 DPI"
+
+msgid "Enforce a resolution of 96 DPI"
+msgstr "Pealesunnitud ekraanilahutus on 96 DPI"
+
+msgid "Auto Load Images"
+msgstr "Automaatne piltide laadimine"
+
+msgid "Load images automatically."
+msgstr "Pildid laaditakse automaatselt."
+
+msgid "Auto Shrink Images"
+msgstr "Piltide automaatne vähendamine"
+
+msgid "Automatically shrink standalone images to fit."
+msgstr "Pildid vähendatakse automaatselt sobivaks."
+
+msgid "Print Backgrounds"
+msgstr "Tausta printimine"
+
+msgid "Whether background images should be printed."
+msgstr "Kas printimisel kaasatakse taustapildid või mitte."
+
+msgid "Enable Scripts"
+msgstr "Skriptide lubamine"
+
+msgid "Enable embedded scripting languages."
+msgstr "Manus-skriptikeelte lubamine."
+
+msgid "Enable Plugins"
+msgstr "Pluginate lubamine"
+
+msgid "Enable embedded plugin objects."
+msgstr "Põimitud plugina objektide lubamine."
+
+msgid "Resizable Text Areas"
+msgstr "Muudetav tekstiväljade suurus"
+
+msgid "Whether text areas are resizable."
+msgstr "Kas teksiväljade suurus on muudetav."
+
+msgid "User Stylesheet URI"
+msgstr "Kasutaja laaditabeli URI"
+
+msgid "The URI of a stylesheet that is applied to every page."
+msgstr "Igale lehele rakendatava laaditabeli URI."
+
+msgid "Zoom Stepping Value"
+msgstr "Suurenduse samm"
+
+msgid "The value by which the zoom level is changed when zooming in or out."
+msgstr "Suurenduse muutumise samm suurendamisel ja vähendamisel."
+
+msgid "Enable Developer Extras"
+msgstr "Arendaja lisade lubamine"
+
+msgid "Enables special extensions that help developers"
+msgstr "Arendajaile mõeldud erilaienduste lubamine"
+
+msgid "Enable Private Browsing"
+msgstr "Privaatns sirvimise lubamine"
+
+msgid "Enables private browsing mode"
+msgstr "Privaatse sirvimisrežiimi lubamine"
+
+msgid "Enable Spell Checking"
+msgstr "Õigekirjakontrolli lubamine"
+
+msgid "Enables spell checking while typing"
+msgstr "Lubab trükkimisel kontrollida õigekirja"
+
+msgid "Languages to use for spell checking"
+msgstr "Õigekirjakontrollis kasutatavad keeled"
+
+msgid "Comma separated list of languages to use for spell checking"
+msgstr ""
+"Komadega eraldatud loend õigekirja kontrollimisel kasutatavatest keeltest"
+
+msgid "Enable Caret Browsing"
+msgstr "Kursoriga sirvimine lubatud"
+
+msgid "Whether to enable accesibility enhanced keyboard navigation"
+msgstr "Kas lubada klaviatuurihõlbustused navigeerimiseks"
+
+msgid "Enable HTML5 Database"
+msgstr "HTML5 andmebaasitoe lubamine"
+
+msgid "Whether to enable HTML5 database support"
+msgstr "Kas lubada HTML5 andmebaasi tugi"
+
+msgid "Enable HTML5 Local Storage"
+msgstr "HTML5 kohaliku salvesti lubamine"
+
+msgid "Whether to enable HTML5 Local Storage support"
+msgstr "Kas lubada HTML5 kohaliku salvesti tugi"
+
+msgid "Enable XSS Auditor"
+msgstr "XSS audiitori lubamine"
+
+msgid "Whether to enable teh XSS auditor"
+msgstr "Kas lubada XSS audiitor"
+
+msgid "User Agent"
+msgstr "Sirvija identiteet"
+
+msgid "The User-Agent string used by WebKitGtk"
+msgstr "WebKitGtk poolt kasutatav identiteet"
+
+msgid "JavaScript can open windows automatically"
+msgstr "JavaScript tohib aknaid automaatselt avada"
+
+msgid "Whether JavaScript can open windows automatically"
+msgstr "Kas JavaScript tohib aknaid automaatselt avada või mitte"
+
+msgid "Enable offline web application cache"
+msgstr "Ühenduseta veebirakenduste vahemälu lubamine"
+
+msgid "Whether to enable offline web application cache"
+msgstr "Kas lubada ühenduseta veebirakenduste vahemälu"
+
+msgid "Editing behavior"
+msgstr "Redigeerimisrežiimis käitumine"
+
+msgid "The behavior mode to use in editing mode"
+msgstr "Redigeerimisrežiimis kasutatava käitumisrežiim"
+
+msgid "Enable universal access from file URIs"
+msgstr "Faili URI-dele üleüldise ligipääsu lubamine"
+
+msgid "Whether to allow universal access from file URIs"
+msgstr "Kas lubada faili URI-dele üleüldine ligipääs"
+
+msgid "Enable DOM paste"
+msgstr "DOM-põhise asetamise lubamine"
+
+msgid "Whether to enable DOM paste"
+msgstr "Kas lubada DOM-põhine asetamine"
+
+msgid "Tab key cycles through elements"
+msgstr "Tabulaator liigub elementide vahel"
+
+msgid "Whether the tab key cycles through elements on the page."
+msgstr "Kas tabulaatoriga liigutakse lehe elementide vahel või mitte."
+
+msgid "Enable Default Context Menu"
+msgstr "Vaikimisi kontekstimenüü lubamine"
+
+msgid ""
+"Enables the handling of right-clicks for the creation of the default context "
+"menu"
+msgstr "Lubab parem-klõpsudel vaikimisi kontekstimenüüd luua"
+
+msgid "Enable Site Specific Quirks"
+msgstr "Lehepõhiste ümbernurgalahenduste lubamine"
+
+msgid "Enables the site-specific compatibility workarounds"
+msgstr "Lubab kasutada lehepõhiseid ümbernurgalahendusi"
+
+msgid "Enable page cache"
+msgstr "Lehtede vahemälu lubamine"
+
+msgid "Whether the page cache should be used"
+msgstr "Kas kasutada lehtede vahemälu"
+
+msgid "Auto Resize Window"
+msgstr "Akna suuruse automaatne muutmine"
+
+msgid "Automatically resize the toplevel window when a page requests it"
+msgstr "Automaatne ülemtaseme akna suuruse muutmine lehepoolsel päringul"
+
+msgid "Returns the @web_view's document title"
+msgstr "Tagastab @web_view dokumendi pealkirja"
+
+msgid "Returns the current URI of the contents displayed by the @web_view"
+msgstr "Tagastab @web_view-s kuvatava sisu aktiivse URI"
+
+msgid "Copy target list"
+msgstr "Kopeerimisoperatsiooni sihtkohtade loend"
+
+msgid "The list of targets this web view supports for clipboard copying"
+msgstr ""
+
+msgid "Paste target list"
+msgstr "Asetusoperatsiooni sihtkohtade loend"
+
+msgid "The list of targets this web view supports for clipboard pasting"
+msgstr ""
+
+msgid "Settings"
+msgstr "Seaded"
+
+msgid "An associated WebKitWebSettings instance"
+msgstr ""
+
+msgid "Web Inspector"
+msgstr "Veebiinspektor"
+
+msgid "The associated WebKitWebInspector instance"
+msgstr ""
+
+msgid "Editable"
+msgstr "Redigeeritav"
+
+msgid "Whether content can be modified by the user"
+msgstr "Kas sisu on kasutaja poolt muudetav või mitte"
+
+msgid "Transparent"
+msgstr "Läbipaistvus"
+
+msgid "Whether content has a transparent background"
+msgstr "Kas sisul on läbipaistev taust või mitte"
+
+msgid "Zoom level"
+msgstr "Suurendusaste"
+
+msgid "The level of zoom of the content"
+msgstr "Sisu suurendusaste"
+
+msgid "Full content zoom"
+msgstr ""
+
+msgid "Whether the full content is scaled when zooming"
+msgstr ""
+
+msgid "Encoding"
+msgstr "Kodeering"
+
+msgid "The default encoding of the web view"
+msgstr "Vaikimisi kodeering veebivaate jaoks"
+
+msgid "Custom Encoding"
+msgstr "Kohandatud kodeering"
+
+msgid "The custom encoding of the web view"
+msgstr "Kohandatud kodeering veebivaate jaoks"
+
+msgid "Icon URI"
+msgstr "Ikooni URI"
+
+msgid "The URI for the favicon for the #WebKitWebView."
+msgstr "Veebilehe tunnusikooni URI #WebKitWebView jaoks."
+
+msgid "Submit"
+msgstr "Saada"
+
+msgid "Reset"
+msgstr "Taasta"
+
+msgid "_Searchable Index"
+msgstr "_Otsitav indeks"
+
+msgid "Choose File"
+msgstr "Vali fail"
+
+msgid "(None)"
+msgstr "(Puudub)"
+
+msgid "Open Link in New _Window"
+msgstr "Ava link _uues aknas"
+
+msgid "_Download Linked File"
+msgstr "Salvesta _link"
+
+msgid "Copy Link Loc_ation"
+msgstr "K_opeeri lingi asukoht"
+
+msgid "Open _Image in New Window"
+msgstr "Ava _pilt uues aknas"
+
+msgid "Sa_ve Image As"
+msgstr "_Salvesta pilt"
+
+msgid "Cop_y Image"
+msgstr "_Kopeeri pilt"
+
+msgid "Open _Frame in New Window"
+msgstr "Ava _raam uues aknas"
+
+msgid "_Reload"
+msgstr "_Laadi uuesti"
+
+msgid "No Guesses Found"
+msgstr "Vastavusi ei leitud"
+
+msgid "_Ignore Spelling"
+msgstr "_Eira õigekirja"
+
+msgid "_Learn Spelling"
+msgstr "Õ_pi õigekirja"
+
+msgid "_Search the Web"
+msgstr "_Otsi veebist"
+
+msgid "_Look Up in Dictionary"
+msgstr "_Otsi sõnaraamatust"
+
+msgid "_Open Link"
+msgstr "_Ava link"
+
+msgid "Ignore _Grammar"
+msgstr "Eira _grammatikat"
+
+msgid "Spelling and _Grammar"
+msgstr "Õigekiri ja _grammatika"
+
+msgid "_Show Spelling and Grammar"
+msgstr "_Näita õigakirja ja grammatikat"
+
+msgid "_Hide Spelling and Grammar"
+msgstr "_Peida õigakiri ja grammatika"
+
+msgid "_Check Document Now"
+msgstr "_Kontrolli dokumenti"
+
+msgid "Check Spelling While _Typing"
+msgstr "Õigekirjakontroll _sisestamise ajal"
+
+msgid "Check _Grammar With Spelling"
+msgstr "Õigekirja ja _grammatika kontrollimine"
+
+msgid "_Font"
+msgstr "_Kirjatüüp"
+
+msgid "_Outline"
+msgstr "_Kontuur"
+
+msgid "Inspect _Element"
+msgstr "Uuri _elementi"
+
+msgid "No recent searches"
+msgstr "Hiljutised otsingud puuduvad"
+
+msgid "Recent searches"
+msgstr "Hiljutised otsingud"
+
+msgid "_Clear recent searches"
+msgstr "_Kustuta hiljutised otsingud"
+
+msgid "term"
+msgstr "termin"
+
+msgid "definition"
+msgstr "definitsoon"
+
+msgid "press"
+msgstr "vajuta"
+
+msgid "select"
+msgstr "vali"
+
+msgid "activate"
+msgstr "aktiveeri"
+
+msgid "uncheck"
+msgstr ""
+
+msgid "check"
+msgstr "kontrolli"
+
+msgid "jump"
+msgstr "hüppa"
+
+msgid " files"
+msgstr " faili"
+
+msgid "Unknown"
+msgstr "Tundmatu"
+
+msgid "Loading..."
+msgstr "Laadimine..."
+
+msgid "Live Broadcast"
+msgstr "Otseülekanne"
+
+msgid "audio element controller"
+msgstr "helielemendi juhtija"
+
+msgid "video element controller"
+msgstr "videoelemendi juhtija"
+
+msgid "mute"
+msgstr "vaigista"
+
+msgid "unmute"
+msgstr "taasta heli"
+
+msgid "play"
+msgstr "esita"
+
+msgid "pause"
+msgstr "paus"
+
+msgid "movie time"
+msgstr "filmi aeg"
+
+msgid "timeline slider thumb"
+msgstr ""
+
+msgid "back 30 seconds"
+msgstr "30 sekundit tagasi"
+
+msgid "return to realtime"
+msgstr "tagasta reaalajas"
+
+msgid "elapsed time"
+msgstr "aega kulunud"
+
+msgid "remaining time"
+msgstr "aega jäänud"
+
+msgid "status"
+msgstr "olek"
+
+msgid "fullscreen"
+msgstr "täisekraan"
+
+msgid "fast forward"
+msgstr "edasikerimine"
+
+msgid "fast reverse"
+msgstr "tagasikerimine"
+
+msgid "show closed captions"
+msgstr ""
+
+msgid "hide closed captions"
+msgstr ""
+
+msgid "audio element playback controls and status display"
+msgstr ""
+
+msgid "video element playback controls and status display"
+msgstr ""
+
+msgid "mute audio tracks"
+msgstr "helide vaigistamine"
+
+msgid "unmute audio tracks"
+msgstr "helide taastamine"
+
+msgid "begin playback"
+msgstr "esitamise alustamine"
+
+msgid "pause playback"
+msgstr "esitamise paus"
+
+msgid "movie time scrubber"
+msgstr ""
+
+msgid "movie time scrubber thumb"
+msgstr ""
+
+msgid "seek movie back 30 seconds"
+msgstr "filmi kerimine 30 sekundit tagasi"
+
+msgid "return streaming movie to real time"
+msgstr "filmi voogedastamine reaalajas"
+
+msgid "current movie time in seconds"
+msgstr "filmi kestus sekundites"
+
+msgid "number of seconds of movie remaining"
+msgstr "filmi lõpuni jäänud sekundite arv"
+
+msgid "current movie status"
+msgstr "filmi olek"
+
+msgid "seek quickly back"
+msgstr "kiire tagasikerimine"
+
+msgid "seek quickly forward"
+msgstr "kiire edasikerimine"
+
+msgid "Play movie in fullscreen mode"
+msgstr "Filmi esitamine täisekraanvaates"
+
+msgid "start displaying closed captions"
+msgstr "alusta suletud alapealkirjade näitamist"
+
+msgid "stop displaying closed captions"
+msgstr "lõpeta suletud alapealkirjade näitamine"
+
+msgid "indefinite time"
+msgstr "umbmäärane aeg"
+
+msgid "value missing"
+msgstr "puuduv väärtus"
+
+msgid "type mismatch"
+msgstr "tüübi sobimatus"
+
+msgid "pattern mismatch"
+msgstr "mustri sobimatus"
+
+msgid "too long"
+msgstr "liiga pikk"
+
+msgid "range underflow"
+msgstr "vahemiku alatäitumus"
+
+msgid "range overflow"
+msgstr "vahemiku ületäitumus"
+
+msgid "step mismatch"
+msgstr "astme sobimatus"
