@@ -1,3 +1,9 @@
+2010-03-10  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: added missing quote into localized strings.
+
+        * English.lproj/localizedStrings.js:
+
 2010-03-10  Jeremy Orlow  <jorlow@chromium.org>
 
         Commit files that were supposed to go in with the last checkin.
