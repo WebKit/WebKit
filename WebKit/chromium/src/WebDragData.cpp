@@ -67,13 +67,13 @@ void WebDragData::assign(const WebDragData& other)
 WebURL WebDragData::url() const
 {
     ASSERT(!isNull());
-    return m_private->url;
+    return m_private->getURL();
 }
 
 void WebDragData::setURL(const WebURL& url)
 {
     ensureMutable();
-    m_private->url = url;
+    m_private->setURL(url);
 }
 
 WebString WebDragData::urlTitle() const

@@ -237,6 +237,7 @@ http/tests/plugins/third-party-cookie-accept-policy.html
 # ============================================================================= #
 
 # ------- missing eventSender.beginDragWithFiles
+editing/pasteboard/dataTransfer-setData-getData.html
 editing/pasteboard/file-input-files-access.html
 fast/dom/Window/window-postmessage-clone.html
 fast/events/drag-to-navigate.html

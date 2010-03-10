@@ -64,8 +64,8 @@ bool DragData::containsURL() const
 String DragData::asURL(String* title) const
 {
     String url;
-    if (m_platformDragData->url.isValid())
-        url = m_platformDragData->url.string();
+    if (m_platformDragData->hasValidURL())
+        url = m_platformDragData->getURL().string();
     else if (m_platformDragData->filenames.size() == 1) {
         String fileName = m_platformDragData->filenames[0];
         fileName = ChromiumBridge::getAbsolutePath(fileName);
@@ -113,7 +113,7 @@ bool DragData::canSmartReplace() const
     // ClipboardWin::writeRange is called).  For example, dragging a link
     // should not result in a space being added.
     return !m_platformDragData->plainText.isEmpty()
-        && !m_platformDragData->url.isValid();
+        && !m_platformDragData->hasValidURL();
 }
 
 bool DragData::containsCompatibleContent() const

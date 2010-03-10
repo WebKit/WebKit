@@ -128,3 +128,6 @@ fast/events/spatial-navigation
 
 # For some reason crashes when run with all tests. Passes individually.
 fast/forms/multiple-form-submission-protection-mouse.html
+
+# event.dataTransfer.setData('text/uri-list') not correctly implemented on Mac
+editing/pasteboard/dataTransfer-setData-getData.html
