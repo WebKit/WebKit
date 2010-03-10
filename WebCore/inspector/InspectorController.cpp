@@ -312,8 +312,8 @@ void InspectorController::setWindowVisible(bool visible, bool attached)
         populateScriptObjects();
 
         if (m_showAfterVisible == CurrentPanel) {
-          String lastActivePanelSetting = setting(lastActivePanelSettingName);
-          m_showAfterVisible = specialPanelForJSName(lastActivePanelSetting);
+            String lastActivePanelSetting = setting(lastActivePanelSettingName);
+            m_showAfterVisible = specialPanelForJSName(lastActivePanelSetting);
         }
 
         if (m_nodeToFocus)
@@ -1950,6 +1950,8 @@ InspectorController::SpecialPanels InspectorController::specialPanelForJSName(co
         return ProfilesPanel;
     if (panelName == "storage" || panelName == "databases")
         return StoragePanel;
+    if (panelName == "audits")
+        return AuditsPanel;
     if (panelName == "console")
         return ConsolePanel;
     return ElementsPanel;

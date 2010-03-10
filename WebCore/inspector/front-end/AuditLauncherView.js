@@ -206,18 +206,6 @@ WebInspector.AuditLauncherView.prototype = {
             this._launchButton.textContent = WebInspector.UIString("Running...");
         else
             this._launchButton.textContent = WebInspector.UIString("Run");
-    },
-
-    show: function(parentElement)
-    {
-        WebInspector.View.prototype.show.call(this, parentElement);
-        setTimeout(this.resize(), 0);
-    },
-
-    resize: function()
-    {
-        if (this._categoriesElement)
-            this._categoriesElement.style.height = (this._buttonContainerElement.totalOffsetTop - this._categoriesElement.totalOffsetTop) + "px";
     }
 }
 

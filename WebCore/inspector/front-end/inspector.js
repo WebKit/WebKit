@@ -1045,6 +1045,11 @@ WebInspector.showConsolePanel = function()
     this.currentPanel = this.panels.console;
 }
 
+WebInspector.showAuditsPanel = function()
+{
+    this.currentPanel = this.panels.audits;
+}
+
 WebInspector.clearConsoleMessages = function()
 {
     WebInspector.console.clearMessages();

@@ -101,6 +101,7 @@ public:
     typedef HashMap<int, RefPtr<InspectorDOMStorageResource> > DOMStorageResourcesMap;
 
     typedef enum {
+        AuditsPanel,
         CurrentPanel,
         ConsolePanel,
         ElementsPanel,

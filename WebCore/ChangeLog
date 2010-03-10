@@ -1,3 +1,22 @@
+2010-03-10  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: now that audits panel is added, add it to the
+        enums (for storing last active, etc.).
+
+        https://bugs.webkit.org/show_bug.cgi?id=35980
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::setWindowVisible):
+        (WebCore::InspectorController::specialPanelForJSName):
+        * inspector/InspectorController.h:
+        (WebCore::InspectorController::):
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::showPanel):
+        * inspector/front-end/inspector.js:
+        (WebInspector.showAuditsPanel):
+
 2010-03-10  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Dimitri Glazkov.
