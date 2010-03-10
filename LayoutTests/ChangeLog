@@ -3,6 +3,27 @@
         Reviewed by Dave Hyatt.
         Patch by Antonio Gomes <tonikitoo@webkit.org>
 
+        Extend keyboard navigation to allow directional navigation (LayoutTests - part IV)
+        https://bugs.webkit.org/show_bug.cgi?id=18662
+
+        This patch adds a LayoutTest that ensures that:
+
+        1) There is no unit overflow in the Spatial Navigation algorithm while
+           calculating the best node candidate to move focus to. To test that this
+           page positions some elements 10000000 pixels far from each other (distance
+           that can considered large enough for most of the Web Pages on the
+           Internet).
+
+        2) A best focusable candidate only gets focused if it is visible in the
+           current Viewport. Scroll-in-direction is performed otherwise.
+
+        * fast/events/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html: Added.
+
+2010-03-10  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Dave Hyatt.
+        Patch by Antonio Gomes <tonikitoo@webkit.org>
+
         Extend keyboard navigation to allow directional navigation (LayoutTests - part III)
         https://bugs.webkit.org/show_bug.cgi?id=18662
 
