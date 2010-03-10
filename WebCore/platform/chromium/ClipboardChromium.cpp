@@ -249,7 +249,7 @@ bool ClipboardChromium::setData(const String& type, const String& data)
             String& line = m_dataObject->uriList[i];
             line = line.stripWhiteSpace();
             if (line.isEmpty()) {
-                m_dataObject->uriList.remove(n);
+                m_dataObject->uriList.remove(i);
                 continue;
             }
             ++i;

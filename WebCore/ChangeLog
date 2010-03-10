@@ -1,5 +1,10 @@
 2010-03-10  Roland Steiner  <rolandsteiner@chromium.org>
 
+        Unreviewed build fix. Fix variable name change that somehow didn't
+        make it into the patch.
+
+2010-03-10  Roland Steiner  <rolandsteiner@chromium.org>
+
         Reviewed by David Levin.
 
         Bug 28293 -  [Chromium] event.datatransfer.getdata("text/uri-list") is treated the same as getdata("URL")
