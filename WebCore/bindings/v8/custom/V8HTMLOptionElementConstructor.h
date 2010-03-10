@@ -31,6 +31,8 @@
 #ifndef V8HTMLOptionElementConstructor_h
 #define V8HTMLOptionElementConstructor_h
 
+#include "V8Index.h"
+
 #include <v8.h>
 
 namespace WebCore {
@@ -38,6 +40,7 @@ namespace WebCore {
 class V8HTMLOptionElementConstructor {
 public:
     static v8::Persistent<v8::FunctionTemplate> GetTemplate();
+    static WrapperTypeInfo info;
 };
 
 }

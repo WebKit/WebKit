@@ -247,10 +247,15 @@ public:
     static v8::Persistent<v8::FunctionTemplate> GetTemplate();
     static ${nativeType}* toNative(v8::Handle<v8::Object>);
     static v8::Handle<v8::Object> wrap(${nativeType}*${forceNewObjectParameter});
+    static void derefObject(void*);
+    static WrapperTypeInfo info;
 END
+    if (IsActiveDomType($implClassName)) {
+        push(@headerContent, "    static ActiveDOMObject* toActiveDOMObject(v8::Handle<v8::Object>);\n");
+    }
 
     if ($implClassName eq "DOMWindow") {
-      push(@headerContent, <<END);
+        push(@headerContent, <<END);
     static v8::Persistent<v8::ObjectTemplate> GetShadowObjectTemplate();
 END
     }
@@ -546,8 +551,8 @@ sub GenerateConstructorGetter
 static v8::Handle<v8::Value> ${implClassName}ConstructorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info) {
     INC_STATS(\"DOM.$implClassName.constructors._get\");
     v8::Handle<v8::Value> data = info.Data();
-    ASSERT(data->IsNumber());
-    V8ClassIndex::V8WrapperType type = V8ClassIndex::FromInt(data->Int32Value());
+    ASSERT(data->IsExternal() || data->IsNumber());
+    WrapperTypeInfo* type = reinterpret_cast<WrapperTypeInfo*>(v8::External::Unwrap(data));
 END
 
     if ($implClassName eq "DOMWindow") {
@@ -1179,17 +1184,17 @@ sub GenerateSingleBatchedAttribute
     }
 
     my $on_proto = "0 /* on instance */";
-    my $data = "V8ClassIndex::INVALID_CLASS_INDEX /* no data */";
+    my $data = "0 /* no data */";
 
     # Constructor
     if ($attribute->signature->type =~ /Constructor$/) {
         my $constructorType = $codeGenerator->StripModule($attribute->signature->type);
         $constructorType =~ s/Constructor$//;
-        my $constructorIndex = uc($constructorType);
+        $implIncludes{"V8${constructorType}.h"} = 1;
         if ($customAccessor) {
             $getter = "V8${customAccessor}AccessorGetter";
         } else {
-            $data = "V8ClassIndex::${constructorIndex}";
+            $data = "&V8${constructorType}::info";
             $getter = "${interfaceName}Internal::${interfaceName}ConstructorGetter";
         }
         $setter = "0";
@@ -1457,7 +1462,10 @@ sub GenerateImplementation
 
     AddIncludesForType($interfaceName);
 
-    push(@implContentDecls, "namespace WebCore {\n");
+    my $toActive = IsActiveDomType($interfaceName) ? "${className}::toActiveDOMObject" : "0";
+
+    push(@implContentDecls, "namespace WebCore {\n\n");
+    push(@implContentDecls, "WrapperTypeInfo ${className}::info = {V8ClassIndex::ToInt(V8ClassIndex::${classIndex}), ${className}::GetTemplate, ${className}::derefObject, ${toActive} };\n\n");   
     push(@implContentDecls, "namespace ${interfaceName}Internal {\n\n");
     push(@implContentDecls, "template <typename T> void V8_USE(T) { }\n\n");
 
@@ -1626,7 +1634,7 @@ END
 v8::Handle<v8::Value> ${className}::constructorCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.${interfaceName}.Contructor");
-    return V8Proxy::constructDOMObject<V8ClassIndex::${classIndex}, $interfaceName>(args);
+    return V8Proxy::constructDOMObject<$interfaceName>(args, &info);
 }
 END
    }
@@ -1880,6 +1888,18 @@ bool ${className}::HasInstance(v8::Handle<v8::Value> value)
 
 END
 
+    if (IsActiveDomType($interfaceName)) {
+        # MessagePort is handled like an active dom object even though it doesn't inherit
+        # from ActiveDOMObject, so don't try to cast it to ActiveDOMObject.
+        my $returnValue = $interfaceName eq "MessagePort" ? "0" : "toNative(object)";
+        push(@implContent, <<END);
+ActiveDOMObject* ${className}::toActiveDOMObject(v8::Handle<v8::Object> object)
+{
+    return ${returnValue};
+}      
+END
+    }
+
     if ($implClassName eq "DOMWindow") {
         push(@implContent, <<END);
 v8::Persistent<v8::ObjectTemplate> V8DOMWindow::GetShadowObjectTemplate()
@@ -1897,6 +1917,20 @@ END
     GenerateToV8Converters($dataNode, $interfaceName, $className, $nativeType);
 
     push(@implContent, <<END);
+
+void ${className}::derefObject(void* object)
+{
+END
+
+    if (IsRefPtrType($interfaceName)) {
+        push(@implContent, <<END);
+    static_cast<${nativeType}*>(object)->deref();
+END
+    }
+
+    push(@implContent, <<END);
+}
+
 } // namespace WebCore
 END
 
@@ -1961,7 +1995,7 @@ END
     }
 
     push(@implContent, <<END);
-    wrapper = V8DOMWrapper::instantiateV8Object(proxy, ${wrapperType}, impl);
+    wrapper = V8DOMWrapper::instantiateV8Object(proxy, &info, impl);
 END
 
     if (IsNodeSubType($dataNode)) {

@@ -873,7 +873,6 @@
             'bindings/v8/V8Helpers.h',
             'bindings/v8/V8HiddenPropertyName.cpp',
             'bindings/v8/V8HiddenPropertyName.h',
-            'bindings/v8/V8Index.cpp',
             'bindings/v8/V8Index.h',
             'bindings/v8/V8IsolatedContext.cpp',
             'bindings/v8/V8IsolatedContext.h',

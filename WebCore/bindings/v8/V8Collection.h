@@ -63,7 +63,7 @@ template<class Collection, class ItemType> static v8::Handle<v8::Value> getNamed
 {
     // FIXME: assert object is a collection type
     ASSERT(V8DOMWrapper::maybeDOMWrapper(object));
-    ASSERT(V8DOMWrapper::domWrapperType(object) != V8ClassIndex::NODE);
+    ASSERT(V8DOMWrapper::domWrapperType(object)->index != V8ClassIndex::NODE);
     Collection* collection = toNativeCollection<Collection>(object);
     AtomicString propertyName = toAtomicWebCoreStringWithNullCheck(name);
     return getV8Object<ItemType>(collection->namedItem(propertyName));
@@ -89,7 +89,7 @@ template<class Collection, class ItemType> static v8::Handle<v8::Value> getIndex
 {
     // FIXME: Assert that object must be a collection type.
     ASSERT(V8DOMWrapper::maybeDOMWrapper(object));
-    ASSERT(V8DOMWrapper::domWrapperType(object) != V8ClassIndex::NODE);
+    ASSERT(V8DOMWrapper::domWrapperType(object)->index != V8ClassIndex::NODE);
     Collection* collection = toNativeCollection<Collection>(object);
     return getV8Object<ItemType>(collection->item(index));
 }

@@ -63,7 +63,7 @@ v8::Handle<v8::Value> V8WebKitCSSMatrix::constructorCallback(const v8::Arguments
         throwError(ec);
 
     // Transform the holder into a wrapper object for the matrix.
-    V8DOMWrapper::setDOMWrapper(args.Holder(), V8ClassIndex::ToInt(V8ClassIndex::WEBKITCSSMATRIX), matrix.get());
+    V8DOMWrapper::setDOMWrapper(args.Holder(), &info, matrix.get());
     return toV8(matrix.release(), args.Holder());
 }
 

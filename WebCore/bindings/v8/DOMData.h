@@ -67,17 +67,17 @@ namespace WebCore {
         ThreadIdentifier owningThread() const { return m_owningThread; }
 
     private:
-        typedef WTF::HashMap<void*, V8ClassIndex::V8WrapperType> DelayedObjectMap;
+        typedef WTF::HashMap<void*, WrapperTypeInfo*> DelayedObjectMap;
 
-        void ensureDeref(V8ClassIndex::V8WrapperType type, void* domObject);
-        static void derefObject(V8ClassIndex::V8WrapperType type, void* domObject);
+        void ensureDeref(WrapperTypeInfo* type, void* domObject);
+        static void derefObject(WrapperTypeInfo* type, void* domObject);
 
         template<typename T>
         class WrapperMapObjectRemover : public WeakReferenceMap<T, v8::Object>::Visitor {
         public:
             virtual void visitDOMWrapper(T* domObject, v8::Persistent<v8::Object> v8Object)
             {
-                V8ClassIndex::V8WrapperType type = V8DOMWrapper::domWrapperType(v8Object);
+                WrapperTypeInfo* type = V8DOMWrapper::domWrapperType(v8Object);
                 derefObject(type, domObject);
                 v8Object.Dispose();
             }

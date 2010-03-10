@@ -672,10 +672,36 @@ static const int v8DefaultWrapperInternalFieldCount = 2;
             ASSERT(INVALID_CLASS_INDEX <= v && v < CLASSINDEX_END);
             return static_cast<V8WrapperType>(v);
         }
-
-        static v8::Persistent<v8::FunctionTemplate> getTemplate(V8WrapperType type);
     };
 
+    class ActiveDOMObject;
+
+    typedef v8::Persistent<v8::FunctionTemplate> (*GetTemplateFunction)();
+    typedef void (*DerefObjectFunction)(void*);
+    typedef ActiveDOMObject* (*ToActiveDOMObjectFunction)(v8::Handle<v8::Object>);
+
+    struct WrapperTypeInfo {
+
+        v8::Persistent<v8::FunctionTemplate> getTemplate() { return getTemplateFunction(); }
+
+        void derefObject(void* object)
+        {
+            if (derefObjectFunction) 
+                derefObjectFunction(object);
+        }
+
+        ActiveDOMObject* toActiveDOMObject(v8::Handle<v8::Object> object)
+        {
+            if (!toActiveDOMObjectFunction)
+                return 0;
+            return toActiveDOMObjectFunction(object);
+        }
+
+        const int index;
+        const GetTemplateFunction getTemplateFunction;
+        const DerefObjectFunction derefObjectFunction;
+        const ToActiveDOMObjectFunction toActiveDOMObjectFunction;
+    };
 }
 
 #endif // V8Index_h

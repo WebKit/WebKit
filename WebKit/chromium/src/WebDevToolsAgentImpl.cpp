@@ -337,7 +337,6 @@ void WebDevToolsAgentImpl::initDevToolsAgentHost()
 
 v8::Local<v8::Object> WebDevToolsAgentImpl::createInspectorBackendV8Wrapper()
 {
-    V8ClassIndex::V8WrapperType descriptorType = V8ClassIndex::INSPECTORBACKEND;
     v8::Handle<v8::Function> function = V8InspectorBackend::GetTemplate()->GetFunction();
     if (function.IsEmpty()) {
         // Return if allocation failed.
@@ -349,7 +348,7 @@ v8::Local<v8::Object> WebDevToolsAgentImpl::createInspectorBackendV8Wrapper()
         return v8::Local<v8::Object>();
     }
     InspectorBackend* backend = m_webViewImpl->page()->inspectorController()->inspectorBackend();
-    V8DOMWrapper::setDOMWrapper(instance, V8ClassIndex::ToInt(descriptorType), backend);
+    V8DOMWrapper::setDOMWrapper(instance, &V8InspectorBackend::info, backend);
     // Create a weak reference to the v8 wrapper of InspectorBackend to deref
     // InspectorBackend when the wrapper is garbage collected.
     backend->ref();

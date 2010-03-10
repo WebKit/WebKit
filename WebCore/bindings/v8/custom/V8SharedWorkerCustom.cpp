@@ -80,7 +80,7 @@ v8::Handle<v8::Value> V8SharedWorker::constructorCallback(const v8::Arguments& a
 
     // Setup the standard wrapper object internal fields.
     v8::Handle<v8::Object> wrapperObject = args.Holder();
-    V8DOMWrapper::setDOMWrapper(wrapperObject, V8ClassIndex::SHAREDWORKER, obj.get());
+    V8DOMWrapper::setDOMWrapper(wrapperObject, &info, obj.get());
 
     obj->ref();
     V8DOMWrapper::setJSWrapperForActiveDOMObject(obj.get(), v8::Persistent<v8::Object>::New(wrapperObject));

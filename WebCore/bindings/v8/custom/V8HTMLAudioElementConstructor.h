@@ -31,6 +31,8 @@
 #ifndef V8HTMLAudioElementConstructor_h
 #define V8HTMLAudioElementConstructor_h
 
+#include "V8Index.h"
+
 #include <v8.h>
 
 namespace WebCore {
@@ -38,6 +40,7 @@ namespace WebCore {
 class V8HTMLAudioElementConstructor {
 public:
     static v8::Persistent<v8::FunctionTemplate> GetTemplate();
+    static WrapperTypeInfo info;
 };
 
 }

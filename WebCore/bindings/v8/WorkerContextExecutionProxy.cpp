@@ -41,8 +41,10 @@
 #include "SharedWorkerContext.h"
 #include "V8Binding.h"
 #include "V8DOMMap.h"
+#include "V8DedicatedWorkerContext.h"
 #include "V8Index.h"
 #include "V8Proxy.h"
+#include "V8SharedWorkerContext.h"
 #include "V8WorkerContext.h"
 #include "Worker.h"
 #include "WorkerContext.h"
@@ -137,10 +139,10 @@ void WorkerContextExecutionProxy::initContextIfNeeded()
     v8::Handle<v8::String> implicitProtoString = v8::String::New("__proto__");
 
     // Create a new JS object and use it as the prototype for the shadow global object.
-    V8ClassIndex::V8WrapperType contextType = V8ClassIndex::DEDICATEDWORKERCONTEXT;
+    WrapperTypeInfo* contextType = &V8DedicatedWorkerContext::info;
 #if ENABLE(SHARED_WORKERS)
     if (!m_workerContext->isDedicatedWorkerContext())
-        contextType = V8ClassIndex::SHAREDWORKERCONTEXT;
+        contextType = &V8SharedWorkerContext::info;
 #endif
     v8::Handle<v8::Function> workerContextConstructor = V8DOMWrapper::getConstructorForContext(contextType, context);
     v8::Local<v8::Object> jsWorkerContext = SafeAllocation::newInstance(workerContextConstructor);
@@ -151,7 +153,7 @@ void WorkerContextExecutionProxy::initContextIfNeeded()
     }
 
     // Wrap the object.
-    V8DOMWrapper::setDOMWrapper(jsWorkerContext, V8ClassIndex::ToInt(contextType), m_workerContext);
+    V8DOMWrapper::setDOMWrapper(jsWorkerContext, contextType, m_workerContext);
 
     V8DOMWrapper::setJSWrapperForDOMObject(m_workerContext, v8::Persistent<v8::Object>::New(jsWorkerContext));
     m_workerContext->ref();

@@ -76,7 +76,7 @@ namespace WebCore {
         const char* const name;
         v8::AccessorGetter getter;
         v8::AccessorSetter setter;
-        V8ClassIndex::V8WrapperType data;
+        WrapperTypeInfo* data;
         v8::AccessControl settings;
         v8::PropertyAttribute attribute;
         bool onProto;
@@ -89,7 +89,7 @@ namespace WebCore {
         (attribute.onProto ? proto : instance)->SetAccessor(v8::String::New(attribute.name),
             attribute.getter,
             attribute.setter,
-            attribute.data == V8ClassIndex::INVALID_CLASS_INDEX ? v8::Handle<v8::Value>() : v8::Integer::New(V8ClassIndex::ToInt(attribute.data)),
+            v8::External::Wrap(attribute.data),
             attribute.settings,
             attribute.attribute);
     }
@@ -290,12 +290,8 @@ namespace WebCore {
         // Schedule an error object to be thrown.
         static v8::Handle<v8::Value> throwError(ErrorType, const char* message);
 
-        // Create an instance of a function descriptor and set to the global object
-        // as a named property. Used by v8_test_shell.
-        static void bindJsObjectToWindow(Frame*, const char* name, int type, v8::Handle<v8::FunctionTemplate>, void*);
-
-        template <int tag, typename T>
-        static v8::Handle<v8::Value> constructDOMObject(const v8::Arguments&);
+        template <typename T>
+        static v8::Handle<v8::Value> constructDOMObject(const v8::Arguments&, WrapperTypeInfo*);
 
         // Process any pending JavaScript console messages.
         static void processConsoleMessages();
@@ -410,8 +406,8 @@ namespace WebCore {
         IsolatedWorldMap m_isolatedWorlds;
     };
 
-    template <int tag, typename T>
-    v8::Handle<v8::Value> V8Proxy::constructDOMObject(const v8::Arguments& args)
+    template <typename T>
+    v8::Handle<v8::Value> V8Proxy::constructDOMObject(const v8::Arguments& args, WrapperTypeInfo* type)
     {
         if (!args.IsConstructCall())
             return throwError(V8Proxy::TypeError, "DOM object constructor cannot be called as a function.");
@@ -419,7 +415,7 @@ namespace WebCore {
         // Note: it's OK to let this RefPtr go out of scope because we also call
         // SetDOMWrapper(), which effectively holds a reference to obj.
         RefPtr<T> obj = T::create();
-        V8DOMWrapper::setDOMWrapper(args.Holder(), tag, obj.get());
+        V8DOMWrapper::setDOMWrapper(args.Holder(), type, obj.get());
         obj->ref();
         V8DOMWrapper::setJSWrapperForDOMObject(obj.get(), v8::Persistent<v8::Object>::New(args.Holder()));
         return args.Holder();

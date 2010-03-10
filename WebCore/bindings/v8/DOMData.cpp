@@ -58,7 +58,7 @@ DOMData* DOMData::getCurrent()
     return childThreadDOMData;
 }
 
-void DOMData::ensureDeref(V8ClassIndex::V8WrapperType type, void* domObject)
+void DOMData::ensureDeref(WrapperTypeInfo* type, void* domObject)
 {
     if (m_owningThread == WTF::currentThread()) {
         // No need to delay the work. We can deref right now.
@@ -78,35 +78,9 @@ void DOMData::ensureDeref(V8ClassIndex::V8WrapperType type, void* domObject)
     }
 }
 
-void DOMData::derefObject(V8ClassIndex::V8WrapperType type, void* domObject)
+void DOMData::derefObject(WrapperTypeInfo* type, void* domObject)
 {
-    switch (type) {
-    case V8ClassIndex::NODE:
-        static_cast<Node*>(domObject)->deref();
-        break;
-
-#define MakeCase(type, name)   \
-        case V8ClassIndex::type: static_cast<name*>(domObject)->deref(); break;
-    DOM_OBJECT_TYPES(MakeCase)   // This includes both active and non-active.
-#undef MakeCase
-
-#if ENABLE(SVG)
-#define MakeCase(type, name)     \
-        case V8ClassIndex::type: static_cast<name*>(domObject)->deref(); break;
-    SVG_OBJECT_TYPES(MakeCase)   // This also includes SVGElementInstance.
-#undef MakeCase
-
-#define MakeCase(type, name)     \
-        case V8ClassIndex::type:    \
-            static_cast<V8SVGPODTypeWrapper<name>*>(domObject)->deref(); break;
-    SVG_POD_NATIVE_TYPES(MakeCase)
-#undef MakeCase
-#endif
-
-    default:
-        ASSERT_NOT_REACHED();
-        break;
-    }
+    type->derefObject(domObject);
 }
 
 void DOMData::derefDelayedObjects()

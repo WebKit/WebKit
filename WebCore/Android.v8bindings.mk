@@ -72,7 +72,6 @@ LOCAL_SRC_FILES += \
 	bindings/v8/V8GCController.cpp \
 	bindings/v8/V8Helpers.cpp \
 	bindings/v8/V8HiddenPropertyName.cpp \
-	bindings/v8/V8Index.cpp \
 	bindings/v8/V8IsolatedWorld.cpp \
 	bindings/v8/V8LazyEventListener.cpp \
 	bindings/v8/V8NPObject.cpp \

@@ -47,7 +47,7 @@ v8::Handle<v8::Value> V8WebGLUnsignedShortArray::constructorCallback(const v8::A
 {
     INC_STATS("DOM.WebGLUnsignedShortArray.Contructor");
 
-    return constructWebGLArray<WebGLUnsignedShortArray, unsigned short>(args, V8ClassIndex::ToInt(V8ClassIndex::WEBGLUNSIGNEDSHORTARRAY));
+    return constructWebGLArray<WebGLUnsignedShortArray, unsigned short>(args, &info);
 }
 
 v8::Handle<v8::Value> V8WebGLUnsignedShortArray::getCallback(const v8::Arguments& args)

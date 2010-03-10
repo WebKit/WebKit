@@ -743,21 +743,6 @@ v8::Handle<v8::Value> V8Proxy::checkNewLegal(const v8::Arguments& args)
     return args.This();
 }
 
-void V8Proxy::bindJsObjectToWindow(Frame* frame, const char* name, int type, v8::Handle<v8::FunctionTemplate> descriptor, void* impl)
-{
-    // Get environment.
-    v8::Handle<v8::Context> v8Context = V8Proxy::mainWorldContext(frame);
-    if (v8Context.IsEmpty())
-        return; // JS not enabled.
-
-    v8::Context::Scope scope(v8Context);
-    v8::Handle<v8::Object> instance = descriptor->GetFunction();
-    V8DOMWrapper::setDOMWrapper(instance, type, impl);
-
-    v8::Handle<v8::Object> global = v8Context->Global();
-    global->Set(v8::String::New(name), instance);
-}
-
 void V8Proxy::processConsoleMessages()
 {
     V8ConsoleMessage::processDelayed();

@@ -112,7 +112,7 @@ static void enumerateDOMObjectMap(DOMObjectMap& wrapperMap)
 {
     for (DOMObjectMap::iterator it = wrapperMap.begin(), end = wrapperMap.end(); it != end; ++it) {
         v8::Persistent<v8::Object> wrapper(it->second);
-        V8ClassIndex::V8WrapperType type = V8DOMWrapper::domWrapperType(wrapper);
+        WrapperTypeInfo* type = V8DOMWrapper::domWrapperType(wrapper);
         void* object = it->first;
         UNUSED_PARAM(type);
         UNUSED_PARAM(object);
@@ -123,7 +123,7 @@ class DOMObjectVisitor : public DOMWrapperMap<void>::Visitor {
 public:
     void visitDOMWrapper(void* object, v8::Persistent<v8::Object> wrapper)
     {
-        V8ClassIndex::V8WrapperType type = V8DOMWrapper::domWrapperType(wrapper);
+        WrapperTypeInfo* type = V8DOMWrapper::domWrapperType(wrapper);
         UNUSED_PARAM(type);
         UNUSED_PARAM(object);
     }
@@ -181,36 +181,26 @@ class GCPrologueVisitor : public DOMWrapperMap<void>::Visitor {
 public:
     void visitDOMWrapper(void* object, v8::Persistent<v8::Object> wrapper)
     {
-        ASSERT(wrapper.IsWeak());
-        V8ClassIndex::V8WrapperType type = V8DOMWrapper::domWrapperType(wrapper);
-        switch (type) {
-#define MAKE_CASE(TYPE, NAME)                             \
-        case V8ClassIndex::TYPE: {                    \
-            NAME* impl = static_cast<NAME*>(object);  \
-            if (impl->hasPendingActivity())           \
-                wrapper.ClearWeak();                  \
-            break;                                    \
-        }
-    ACTIVE_DOM_OBJECT_TYPES(MAKE_CASE)
-    default:
-        ASSERT_NOT_REACHED();
-#undef MAKE_CASE
-        }
+        WrapperTypeInfo* typeInfo = V8DOMWrapper::domWrapperType(wrapper);  
 
-    // Additional handling of message port ensuring that entangled ports also
-    // have their wrappers entangled. This should ideally be handled when the
-    // ports are actually entangled in MessagePort::entangle, but to avoid
-    // forking MessagePort.* this is postponed to GC time. Having this postponed
-    // has the drawback that the wrappers are "entangled/unentangled" for each
-    // GC even though their entaglement most likely is still the same.
-    if (type == V8ClassIndex::MESSAGEPORT) {
-        // Mark each port as in-use if it's entangled. For simplicity's sake, we assume all ports are remotely entangled,
-        // since the Chromium port implementation can't tell the difference.
-        MessagePort* port1 = static_cast<MessagePort*>(object);
-        if (port1->isEntangled())
-            wrapper.ClearWeak();
+        // Additional handling of message port ensuring that entangled ports also
+        // have their wrappers entangled. This should ideally be handled when the
+        // ports are actually entangled in MessagePort::entangle, but to avoid
+        // forking MessagePort.* this is postponed to GC time. Having this postponed
+        // has the drawback that the wrappers are "entangled/unentangled" for each
+        // GC even though their entaglement most likely is still the same.
+        if (typeInfo->index == V8ClassIndex::MESSAGEPORT) {
+            // Mark each port as in-use if it's entangled. For simplicity's sake, we assume all ports are remotely entangled,
+            // since the Chromium port implementation can't tell the difference.
+            MessagePort* port1 = static_cast<MessagePort*>(object);
+            if (port1->isEntangled() || port1->hasPendingActivity())
+                wrapper.ClearWeak();
+        } else {
+            ActiveDOMObject* activeDOMObject = typeInfo->toActiveDOMObject(wrapper);
+            if (activeDOMObject && activeDOMObject->hasPendingActivity())
+                wrapper.ClearWeak();
+        }
     }
-}
 };
 
 class GrouperItem {
@@ -369,30 +359,20 @@ class GCEpilogueVisitor : public DOMWrapperMap<void>::Visitor {
 public:
     void visitDOMWrapper(void* object, v8::Persistent<v8::Object> wrapper)
     {
-        V8ClassIndex::V8WrapperType type = V8DOMWrapper::domWrapperType(wrapper);
-        switch (type) {
-#define MAKE_CASE(TYPE, NAME)                                                   \
-        case V8ClassIndex::TYPE: {                                              \
-          NAME* impl = static_cast<NAME*>(object);                              \
-          if (impl->hasPendingActivity()) {                                     \
-            ASSERT(!wrapper.IsWeak());                                          \
-            wrapper.MakeWeak(impl, &DOMDataStore::weakActiveDOMObjectCallback); \
-          }                                                                     \
-          break;                                                                \
-        }
-ACTIVE_DOM_OBJECT_TYPES(MAKE_CASE)
-        default:
-            ASSERT_NOT_REACHED();
-#undef MAKE_CASE
-        }
-
-        if (type == V8ClassIndex::MESSAGEPORT) {
+        WrapperTypeInfo* typeInfo = V8DOMWrapper::domWrapperType(wrapper);
+        if (typeInfo->index == V8ClassIndex::MESSAGEPORT) {
             MessagePort* port1 = static_cast<MessagePort*>(object);
             // We marked this port as reachable in GCPrologueVisitor.  Undo this now since the
             // port could be not reachable in the future if it gets disentangled (and also
             // GCPrologueVisitor expects to see all handles marked as weak).
-            if (!wrapper.IsWeak() && !wrapper.IsNearDeath())
+            if ((!wrapper.IsWeak() && !wrapper.IsNearDeath()) || port1->hasPendingActivity())
                 wrapper.MakeWeak(port1, &DOMDataStore::weakActiveDOMObjectCallback);
+        } else {
+            ActiveDOMObject* activeDOMObject = typeInfo->toActiveDOMObject(wrapper);
+            if (activeDOMObject && activeDOMObject->hasPendingActivity()) {
+                ASSERT(!wrapper.IsWeak());
+                wrapper.MakeWeak(activeDOMObject, &DOMDataStore::weakActiveDOMObjectCallback);
+            }
         }
     }
 };

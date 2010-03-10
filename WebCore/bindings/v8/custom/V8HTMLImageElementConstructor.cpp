@@ -44,6 +44,8 @@
 
 namespace WebCore {
 
+WrapperTypeInfo V8HTMLImageElementConstructor::info = {V8ClassIndex::ToInt(V8ClassIndex::IMAGE), V8HTMLImageElementConstructor::GetTemplate, 0, false };
+
 static v8::Handle<v8::Value> v8HTMLImageElementConstructorCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.HTMLImageElement.Contructor");
@@ -80,7 +82,7 @@ static v8::Handle<v8::Value> v8HTMLImageElementConstructorCallback(const v8::Arg
     }
 
     RefPtr<HTMLImageElement> image = HTMLImageElement::createForJSConstructor(document, optionalWidth, optionalHeight);
-    V8DOMWrapper::setDOMWrapper(args.Holder(), V8ClassIndex::ToInt(V8ClassIndex::IMAGE), image.get());
+    V8DOMWrapper::setDOMWrapper(args.Holder(), &V8HTMLImageElementConstructor::info, image.get());
     image->ref();
     V8DOMWrapper::setJSWrapperForDOMNode(image.get(), v8::Persistent<v8::Object>::New(args.Holder()));
     return args.Holder();

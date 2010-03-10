@@ -1,3 +1,18 @@
+2010-03-10  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Wrap and unwrap v8 objects with WrapperTypeInfo instead of V8ClassIndex::V8WrapperType.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35941
+
+        * src/WebBindings.cpp:
+        (WebKit::getRangeImpl):
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::createInspectorBackendV8Wrapper):
+        * src/WebDevToolsFrontendImpl.cpp:
+        (WebKit::WebDevToolsFrontendImpl::jsShowContextMenu):
+
 2010-03-10  Garret Kelly  <gdk@chromium.org>
 
         Reviewed by Darin Fisher.

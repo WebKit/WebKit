@@ -37,9 +37,6 @@
 namespace WebCore {
     class V8Proxy;
 
-    // Associates an NPObject with a V8 object.
-    void wrapNPObject(v8::Handle<v8::Object>, NPObject*);
-
     v8::Local<v8::Context> toV8Context(NPP, NPObject*);
 
     V8Proxy* toV8Proxy(NPObject*);
