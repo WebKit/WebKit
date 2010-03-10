@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -57,6 +57,8 @@ namespace WebCore {
         using RefCounted<AbstractWorker>::ref;
         using RefCounted<AbstractWorker>::deref;
 
+        long id() const { return m_id; }
+        virtual void contextDestroyed();
         AbstractWorker(ScriptExecutionContext*);
         virtual ~AbstractWorker();
 
@@ -69,8 +71,12 @@ namespace WebCore {
         virtual void derefEventTarget() { deref(); }
         virtual EventTargetData* eventTargetData();
         virtual EventTargetData* ensureEventTargetData();
+        void onDestroyWorker();
         
         EventTargetData m_eventTargetData;
+        long m_id;
+
+        static long s_lastId;
     };
 
 } // namespace WebCore

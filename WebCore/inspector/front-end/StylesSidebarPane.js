@@ -404,26 +404,20 @@ WebInspector.StylePropertiesSection = function(styleRule, subtitle, computedStyl
         if (WebInspector.settings.showInheritedComputedStyleProperties)
             this.element.addStyleClass("show-inherited");
 
-        var showInheritedLabel = document.createElement("label");
-        var showInheritedInput = document.createElement("input");
-        showInheritedInput.type = "checkbox";
-        showInheritedInput.checked = WebInspector.settings.showInheritedComputedStyleProperties;
-
         var computedStyleSection = this;
         var showInheritedToggleFunction = function(event) {
-            WebInspector.settings.showInheritedComputedStyleProperties = showInheritedInput.checked;
+            WebInspector.settings.showInheritedComputedStyleProperties = computedStyleSection._showInheritedCheckbox.checked();
             if (WebInspector.settings.showInheritedComputedStyleProperties)
                 computedStyleSection.element.addStyleClass("show-inherited");
             else
                 computedStyleSection.element.removeStyleClass("show-inherited");
-            event.stopPropagation();
         };
 
-        showInheritedLabel.addEventListener("click", showInheritedToggleFunction, false);
+        this._showInheritedCheckbox = new WebInspector.Checkbox(WebInspector.UIString("Show inherited"),
+                                                                showInheritedToggleFunction,
+                                                                WebInspector.settings.showInheritedComputedStyleProperties);
 
-        showInheritedLabel.appendChild(showInheritedInput);
-        showInheritedLabel.appendChild(document.createTextNode(WebInspector.UIString("Show inherited")));
-        this.subtitleElement.appendChild(showInheritedLabel);
+        this.subtitleElement.appendChild(this._showInheritedCheckbox.element);
     } else {
         if (!subtitle) {
             if (this.styleRule.parentStyleSheet && this.styleRule.parentStyleSheet.href) {

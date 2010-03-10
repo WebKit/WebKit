@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -75,7 +75,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-static ScriptObject createInjectedScript(const String& source, InjectedScriptHost* injectedScriptHost, ScriptState* scriptState, long id)
+ScriptObject InjectedScriptHost::createInjectedScript(const String& source, ScriptState* scriptState, long id)
 {
     SourceCode sourceCode = makeSource(source);
     JSLock lock(SilenceAssertionsOnly);
@@ -91,7 +91,7 @@ static ScriptObject createInjectedScript(const String& source, InjectedScriptHos
         return ScriptObject();
 
     MarkedArgumentBuffer args;
-    args.append(toJS(scriptState, globalObject, injectedScriptHost));
+    args.append(toJS(scriptState, globalObject, this));
     args.append(globalThisValue);
     args.append(jsNumber(scriptState, id));
     JSValue result = JSC::call(scriptState, functionValue, callType, callData, globalThisValue, args);
@@ -221,12 +221,11 @@ InjectedScript InjectedScriptHost::injectedScriptFor(ScriptState* scriptState)
     if (injectedScript)
         return InjectedScript(ScriptObject(scriptState, injectedScript));
 
-    ASSERT(!m_injectedScriptSource.isEmpty());
-    ScriptObject injectedScriptObject = createInjectedScript(m_injectedScriptSource, this, scriptState, m_nextInjectedScriptId);
-    globalObject->setInjectedScript(injectedScriptObject.jsObject());
-    InjectedScript result(injectedScriptObject);
-    m_idToInjectedScript.set(m_nextInjectedScriptId, result);
-    m_nextInjectedScriptId++;
+    ASSERT(!m_injectedScriptSource.isEmpty()); 
+    pair<long, ScriptObject> injectedScriptObject = injectScript(m_injectedScriptSource, scriptState);
+    globalObject->setInjectedScript(injectedScriptObject.second.jsObject());
+    InjectedScript result(injectedScriptObject.second);
+    m_idToInjectedScript.set(injectedScriptObject.first, result);
     return result;
 }
 

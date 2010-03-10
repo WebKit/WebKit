@@ -79,7 +79,7 @@ static v8::Local<v8::Object> createInjectedScriptHostV8Wrapper(InjectedScriptHos
     return instance;
 }
 
-static ScriptObject createInjectedScript(const String& scriptSource, InjectedScriptHost* injectedScriptHost, ScriptState* inspectedScriptState, long id)
+ScriptObject InjectedScriptHost::createInjectedScript(const String& scriptSource, ScriptState* inspectedScriptState, long id)
 {
     v8::HandleScope scope;
 
@@ -90,7 +90,7 @@ static ScriptObject createInjectedScript(const String& scriptSource, InjectedScr
     // instead of calling toV8() that would create the
     // wrapper in the current context.
     // FIXME: make it possible to use generic bindings factory for InjectedScriptHost.
-    v8::Local<v8::Object> scriptHostWrapper = createInjectedScriptHostV8Wrapper(injectedScriptHost);
+    v8::Local<v8::Object> scriptHostWrapper = createInjectedScriptHostV8Wrapper(this);
     if (scriptHostWrapper.IsEmpty())
         return ScriptObject();
 
@@ -240,11 +240,10 @@ InjectedScript InjectedScriptHost::injectedScriptFor(ScriptState* inspectedScrip
         return InjectedScript(ScriptObject(inspectedScriptState, v8::Local<v8::Object>::Cast(val)));
 
     ASSERT(!m_injectedScriptSource.isEmpty());
-    ScriptObject injectedScriptObject = createInjectedScript(m_injectedScriptSource, this, inspectedScriptState, m_nextInjectedScriptId);
-    InjectedScript result(injectedScriptObject);
-    m_idToInjectedScript.set(m_nextInjectedScriptId, result);
-    ++m_nextInjectedScriptId;
-    global->SetHiddenValue(key, injectedScriptObject.v8Object());
+    pair<long, ScriptObject> injectedScript = injectScript(m_injectedScriptSource, inspectedScriptState);
+    InjectedScript result(injectedScript.second);
+    m_idToInjectedScript.set(injectedScript.first, result);
+    global->SetHiddenValue(key, injectedScript.second.v8Object());
     return result;
 }
 

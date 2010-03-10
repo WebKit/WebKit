@@ -40,6 +40,7 @@
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "InspectorController.h"
 #include "MessageEvent.h"
 #include "TextEncoding.h"
 #include "WorkerContextProxy.h"
@@ -60,6 +61,10 @@ Worker::Worker(const String& url, ScriptExecutionContext* context, ExceptionCode
     m_scriptLoader = new WorkerScriptLoader();
     m_scriptLoader->loadAsynchronously(scriptExecutionContext(), scriptURL, DenyCrossOriginRequests, this);
     setPendingActivity(this);  // The worker context does not exist while loading, so we must ensure that the worker object is not collected, as well as its event listeners.
+#if ENABLE(INSPECTOR)
+    if (InspectorController* inspector = scriptExecutionContext()->inspectorController())
+        inspector->didCreateWorker(id(), scriptURL.string(), false);
+#endif
 }
 
 Worker::~Worker()

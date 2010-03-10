@@ -1329,15 +1329,6 @@ body.inactive .placard.selected {
     display: inline;
 }
 
-.section .header input[type=checkbox] {
-    height: 10px;
-    width: 10px;
-    margin-left: 0;
-    margin-top: 0;
-    margin-bottom: 0;
-    vertical-align: 2px;
-}
-
 .section .header .subtitle, .event-bar .header .subtitle {
     float: right;
     font-size: 10px;
@@ -1720,6 +1711,21 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
     background-repeat: no-repeat, repeat-x;
     background-position: center center, bottom;
     height: 5px;
+}
+
+.sidebar-pane-subtitle {
+    float: right;
+    overflow: hidden;
+}
+
+.sidebar-pane-subtitle input, .section .header input[type=checkbox] {
+    font-size: inherit;
+    hight: 1em;
+    width: 1em;
+    margin-left: 0;
+    margin-top: 0;
+    margin-bottom: 0.25em;
+    vertical-align: bottom;
 }
 
 .metrics {
@@ -3880,5 +3886,29 @@ ol.breakpoint-list {
 .timeline-details-title {
     font-weight: bold;
     white-space: nowrap;
+}
+
+.workers-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+ 
+.workers-list > li {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-left: 1em;
+    font-size: 12px;
+}
+
+a.worker-item {
+    color: rgb(33%, 33%, 33%);
+    cursor: pointer;
+    text-decoration: none;
+}
+
+a.worker-item:hover {
+    color: rgb(15%, 15%, 15%);
 }
 

@@ -34,6 +34,7 @@
 
 #include "SharedWorker.h"
 
+#include "InspectorController.h"
 #include "KURL.h"
 #include "MessageChannel.h"
 #include "MessagePort.h"
@@ -53,6 +54,10 @@ SharedWorker::SharedWorker(const String& url, const String& name, ScriptExecutio
     if (ec)
         return;
     SharedWorkerRepository::connect(this, remotePort.release(), scriptUrl, name, ec);
+#if ENABLE(INSPECTOR)
+    if (InspectorController* inspector = scriptExecutionContext()->inspectorController())
+        inspector->didCreateWorker(id(), scriptUrl.string(), true);
+#endif
 }
 
 SharedWorker::~SharedWorker()

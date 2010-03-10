@@ -38,6 +38,7 @@ if (!this.devtools)
 devtools.InspectorBackendImpl = function()
 {
     WebInspector.InspectorBackendStub.call(this);
+    this.installInspectorControllerDelegate_("addScriptToEvaluateOnLoad");
     this.installInspectorControllerDelegate_("clearMessages");
     this.installInspectorControllerDelegate_("copyNode");
     this.installInspectorControllerDelegate_("deleteCookie");
@@ -57,6 +58,7 @@ devtools.InspectorBackendImpl = function()
     this.installInspectorControllerDelegate_("highlightDOMNode");
     this.installInspectorControllerDelegate_("hideDOMNodeHighlight");
     this.installInspectorControllerDelegate_("releaseWrapperObjectGroup");
+    this.installInspectorControllerDelegate_("removeAllScriptsToEvaluateOnLoad");
     this.installInspectorControllerDelegate_("reloadPage");
     this.installInspectorControllerDelegate_("removeAttribute");
     this.installInspectorControllerDelegate_("removeDOMStorageItem");
