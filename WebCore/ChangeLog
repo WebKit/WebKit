@@ -1,3 +1,18 @@
+2010-03-10  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Dave Hyatt.
+        Patch by Antonio Gomes <tonikitoo@webkit.org>
+
+        Extend keyboard navigation to allow directional navigation (Manual tests)
+        https://bugs.webkit.org/show_bug.cgi?id=18662
+
+        Adds a manual tests for the Spatial Navigation feature comprasing varios
+        Html focusable elements (e.g. <a>, <table>, <iframe>) and much of the logic
+        provided by the feature.
+
+        * manual-tests/spatial-navigation/links.html: Added.
+        * manual-tests/spatial-navigation/spatial-navigation-test-cases.html: Added.
+
 2010-03-10  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Kenneth Rohde Christiansen.
