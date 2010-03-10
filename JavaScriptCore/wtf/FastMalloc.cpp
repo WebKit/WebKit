@@ -379,14 +379,14 @@ FastMallocStatistics fastMallocStatistics()
     return statistics;
 }
 
-void fastCheckConsistency(const void* p)
+size_t fastMallocSize(const void* p)
 {
-#if (defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC) || !defined(NDEBUG)
 #if OS(DARWIN)
-        ASSERT(malloc_size(p));
+    return malloc_size(p);
 #elif COMPILER(MSVC)
-        ASSERT(_msize(const_cast<void*>(p)));
-#endif
+    return _msize(const_cast<void*>(p));
+#else
+    return 1;
 #endif
 }
 
@@ -481,7 +481,7 @@ namespace WTF {
 #define CHECK_CONDITION ASSERT
 
 #if OS(DARWIN)
-class Span;
+struct Span;
 class TCMalloc_Central_FreeListPadded;
 class TCMalloc_PageHeap;
 class TCMalloc_ThreadCache;
@@ -1548,7 +1548,6 @@ void TCMalloc_PageHeap::scavenge()
         }
     }
 
-    ASSERT(!shouldContinueScavenging());
     pages_committed_since_last_scavenge_ = 0;
 }
 
@@ -4112,7 +4111,62 @@ void *(*__memalign_hook)(size_t, size_t, const void *) = MemalignOverride;
 
 #endif
 
-#if defined(WTF_CHANGES) && OS(DARWIN)
+#ifdef WTF_CHANGES
+void releaseFastMallocFreeMemory()
+{
+    // Flush free pages in the current thread cache back to the page heap.
+    // Low watermark mechanism in Scavenge() prevents full return on the first pass.
+    // The second pass flushes everything.
+    if (TCMalloc_ThreadCache* threadCache = TCMalloc_ThreadCache::GetCacheIfPresent()) {
+        threadCache->Scavenge();
+        threadCache->Scavenge();
+    }
+
+    SpinLockHolder h(&pageheap_lock);
+    pageheap->ReleaseFreePages();
+}
+    
+FastMallocStatistics fastMallocStatistics()
+{
+    FastMallocStatistics statistics;
+
+    SpinLockHolder lockHolder(&pageheap_lock);
+    statistics.reservedVMBytes = static_cast<size_t>(pageheap->SystemBytes());
+    statistics.committedVMBytes = statistics.reservedVMBytes - pageheap->ReturnedBytes();
+
+    statistics.freeListBytes = 0;
+    for (unsigned cl = 0; cl < kNumClasses; ++cl) {
+        const int length = central_cache[cl].length();
+        const int tc_length = central_cache[cl].tc_length();
+
+        statistics.freeListBytes += ByteSizeForClass(cl) * (length + tc_length);
+    }
+    for (TCMalloc_ThreadCache* threadCache = thread_heaps; threadCache ; threadCache = threadCache->next_)
+        statistics.freeListBytes += threadCache->Size();
+
+    return statistics;
+}
+
+size_t fastMallocSize(const void* ptr)
+{
+    const PageID p = reinterpret_cast<uintptr_t>(ptr) >> kPageShift;
+    Span* span = pageheap->GetDescriptorEnsureSafe(p);
+
+    if (!span || span->free)
+        return 0;
+
+    for (void* free = span->objects; free != NULL; free = *((void**) free)) {
+        if (ptr == free)
+            return 0;
+    }
+
+    if (size_t cl = span->sizeclass)
+        return ByteSizeForClass(cl);
+
+    return span->length << kPageShift;
+}
+
+#if OS(DARWIN)
 
 class FreeObjectFinder {
     const RemoteMemoryReader& m_reader;
@@ -4429,49 +4483,9 @@ void FastMallocZone::init()
     static FastMallocZone zone(pageheap, &thread_heaps, static_cast<TCMalloc_Central_FreeListPadded*>(central_cache), &span_allocator, &threadheap_allocator);
 }
 
-#endif
-
-#ifdef WTF_CHANGES
-void releaseFastMallocFreeMemory()
-{
-    // Flush free pages in the current thread cache back to the page heap.
-    // Low watermark mechanism in Scavenge() prevents full return on the first pass.
-    // The second pass flushes everything.
-    if (TCMalloc_ThreadCache* threadCache = TCMalloc_ThreadCache::GetCacheIfPresent()) {
-        threadCache->Scavenge();
-        threadCache->Scavenge();
-    }
-
-    SpinLockHolder h(&pageheap_lock);
-    pageheap->ReleaseFreePages();
-}
-    
-FastMallocStatistics fastMallocStatistics()
-{
-    FastMallocStatistics statistics;
-
-    SpinLockHolder lockHolder(&pageheap_lock);
-    statistics.reservedVMBytes = static_cast<size_t>(pageheap->SystemBytes());
-    statistics.committedVMBytes = statistics.reservedVMBytes - pageheap->ReturnedBytes();
-
-    statistics.freeListBytes = 0;
-    for (unsigned cl = 0; cl < kNumClasses; ++cl) {
-        const int length = central_cache[cl].length();
-        const int tc_length = central_cache[cl].tc_length();
-
-        statistics.freeListBytes += ByteSizeForClass(cl) * (length + tc_length);
-    }
-    for (TCMalloc_ThreadCache* threadCache = thread_heaps; threadCache ; threadCache = threadCache->next_)
-        statistics.freeListBytes += threadCache->Size();
-
-    return statistics;
-}
-
-void fastCheckConsistency(const void*)
-{
-}
+#endif // OS(DARWIN)
 
 } // namespace WTF
-#endif
+#endif // WTF_CHANGES
 
 #endif // FORCE_SYSTEM_MALLOC

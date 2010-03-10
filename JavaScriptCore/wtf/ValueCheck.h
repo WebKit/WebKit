@@ -42,7 +42,7 @@ template<typename P> struct ValueCheck<P*> {
     {
         if (!p)
             return;
-        fastCheckConsistency(p);
+        ASSERT(fastMallocSize(p));
         ValueCheck<P>::checkConsistency(*p);
     }
 };

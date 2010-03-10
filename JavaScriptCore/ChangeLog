@@ -1,3 +1,30 @@
+2010-03-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Alexey Proskuryakov, Darin Adler, and Sam Weinig.
+
+        Refactored fastCheckConsistency to match some review comments:
+            - renamed fastCheckConsistency to fastMallocSize, and changed ValueCheck
+              to ASSERT that a pointer's fastMallocSize is not 0.
+            - implemented a version of fastMallocSize for tcmalloc.
+            
+        Also moved some pre-existing code around to avoid a problem related to
+        mismatched #define/#undef of malloc/free in this source file.
+
+        * JavaScriptCore.exp:
+        * wtf/FastMalloc.cpp:
+        (WTF::fastMallocSize): Renamed. Fixed indentation.
+
+        (WTF::TCMalloc_PageHeap::scavenge): Removed an incorrect ASSERT that
+        got in the way of testing the tcmalloc implementation. (More information
+        on why this ASSERT is incorrect is in <rdar://problem/7165917>.)
+
+        (WTF::TCMallocStats::fastMallocSize): Implemented for tcmalloc.
+
+        * wtf/FastMalloc.h: Updated for rename.
+
+        * wtf/ValueCheck.h:
+        (WTF::): Moved the ASSERT that used to be in fastCheckConsistency here.
+
 2010-03-10  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Eric Seidel.
