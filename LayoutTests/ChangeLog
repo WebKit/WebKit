@@ -1,3 +1,11 @@
+2010-03-10  Antonio Gomes  <tonikitoo@webkit.org>
+
+        The test was introduced in r55796, it has been failing in Gtk bots since then.
+
+        Filed bug https://bugs.webkit.org/show_bug.cgi?id=35984.
+
+        * platform/gtk/Skipped: fast/events/spatial-navigation/snav-iframe-with-offscreen-focusable-element.html skipped until fix.
+
 2010-03-10  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Simon Hausmann.
