@@ -1,3 +1,11 @@
+2010-03-10  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Python code for GDB 7 to support native printing of some WebCore types.
+
+        * gdb/webcore.py: Added.
+
 2010-03-10  Adam Roben  <aroben@apple.com>
 
         Make svn-create-patch and prepare-ChangeLog show better section
