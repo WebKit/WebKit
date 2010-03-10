@@ -1,3 +1,13 @@
+2010-03-05  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Sam Weinig.
+
+        Add one more parent check during node removal.
+        https://bugs.webkit.org/show_bug.cgi?id=35818
+
+        * fast/dom/Node/mutation-blur-expected.txt: Added.
+        * fast/dom/Node/mutation-blur.html: Added.
+
 2010-03-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] fast/multicol/hit-test-above-or-below.html fails

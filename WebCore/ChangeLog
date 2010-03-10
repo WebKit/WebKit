@@ -1,3 +1,15 @@
+2010-03-05  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Sam Weinig.
+
+        Add one more parent check during node removal.
+        https://bugs.webkit.org/show_bug.cgi?id=35818
+
+        Test: fast/dom/Node/mutation-blur.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::removeChild): Added check.
+
 2010-03-10  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: added missing quote into localized strings.

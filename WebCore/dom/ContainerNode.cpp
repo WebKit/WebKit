@@ -341,6 +341,13 @@ bool ContainerNode::removeChild(Node* oldChild, ExceptionCode& ec)
 
     document()->removeFocusedNodeOfSubtree(child.get());
     
+    // Events fired when blurring currently focused node might have moved this
+    // child into a different parent.
+    if (child->parentNode() != this) {
+        ec = NOT_FOUND_ERR;
+        return false;
+    }
+
     // FIXME: After sending the mutation events, "this" could be destroyed.
     // We can prevent that by doing a "ref", but first we have to make sure
     // that no callers call with ref count == 0 and parent = 0 (as of this
