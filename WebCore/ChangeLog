@@ -1,3 +1,18 @@
+2010-03-10  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        Reviewed by George Staikos.
+
+        Fix https://bugs.webkig.org/show_bug.cgi?id=35207
+        When XHTMLMP is enabled, all xhtml documents fail to render for webkit portings wich use libxml2 tokenizer.
+
+        No new tests as all the xhtml test cases in LayoutTests/dom/xhtml fails without this fix when XHTMLMP is enabled.
+
+        * dom/Document.cpp:
+        (WebCore::Document::isXHTMLMPDocument):
+        * dom/XMLTokenizerLibxml2.cpp:
+        (WebCore::XMLTokenizer::internalSubset):
+        (WebCore::externalSubsetHandler):
+
 2010-03-10  Garret Kelly  <gdk@chromium.org>
 
         Reviewed by Darin Fisher.
