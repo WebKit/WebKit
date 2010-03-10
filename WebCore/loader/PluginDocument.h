@@ -28,13 +28,16 @@
 #include "HTMLDocument.h"
 
 namespace WebCore {
-    
+
+class Widget;
 class PluginDocument : public HTMLDocument {
 public:
     static PassRefPtr<PluginDocument> create(Frame* frame)
     {
         return adoptRef(new PluginDocument(frame));
     }
+
+    Widget* pluginWidget();
 
 private:
     PluginDocument(Frame*);

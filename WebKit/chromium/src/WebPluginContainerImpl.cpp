@@ -209,6 +209,36 @@ void WebPluginContainerImpl::setParent(ScrollView* view)
         reportGeometry();
 }
 
+bool WebPluginContainerImpl::supportsPaginatedPrint() const
+{
+    return m_webPlugin->supportsPaginatedPrint();
+}
+
+int WebPluginContainerImpl::printBegin(const IntRect& printableArea,
+                                       int printerDPI) const
+{
+    return m_webPlugin->printBegin(printableArea, printerDPI);
+}
+
+bool WebPluginContainerImpl::printPage(int pageNumber,
+                                       WebCore::GraphicsContext* gc)
+{
+    gc->save();
+#if WEBKIT_USING_SKIA
+    WebCanvas* canvas = gc->platformContext()->canvas();
+#elif WEBKIT_USING_CG
+    WebCanvas* canvas = gc->platformContext();
+#endif
+    bool ret = m_webPlugin->printPage(pageNumber, canvas);
+    gc->restore();
+    return ret;
+}
+
+void WebPluginContainerImpl::printEnd()
+{
+    return m_webPlugin->printEnd();
+}
+
 void WebPluginContainerImpl::invalidate()
 {
     Widget::invalidate();

@@ -142,7 +142,8 @@ public:
     virtual WebString selectionAsText() const;
     virtual WebString selectionAsMarkup() const;
     virtual bool selectWordAroundCaret();
-    virtual int printBegin(const WebSize& pageSize);
+    virtual int printBegin(const WebSize& pageSize, int printerDPI,
+                           bool* useBrowserOverlays);
     virtual float printPage(int pageToPrint, WebCanvas*);
     virtual float getPrintPageShrink(int page);
     virtual void printEnd();

@@ -85,6 +85,20 @@ public:
     virtual WebString executeScriptURL(const WebURL&, bool popupsAllowed);
     virtual void loadFrameRequest(const WebURLRequest&, const WebString& target, bool notifyNeeded, void* notifyData);
 
+    // Printing interface. The plugin can support custom printing
+    // (which means it controls the layout, number of pages etc).
+    // Whether the plugin supports its own paginated print. The other print
+    // interface methods are called only if this method returns true.
+    bool supportsPaginatedPrint() const;
+    // Sets up printing at the given print rect and printer DPI. printableArea
+    // is in points (a point is 1/72 of an inch).Returns the number of pages to
+    // be printed at these settings.
+    int printBegin(const WebCore::IntRect& printableArea, int printerDPI) const;
+    // Prints the page specified by pageNumber (0-based index) into the supplied canvas.
+    bool printPage(int pageNumber, WebCore::GraphicsContext* gc);
+    // Ends the print operation.
+    void printEnd();
+
     // Resource load events for the plugin's source data:
     void didReceiveResponse(const WebCore::ResourceResponse&);
     void didReceiveData(const char *data, int dataLength);

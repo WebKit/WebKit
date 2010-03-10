@@ -80,6 +80,19 @@ public:
     virtual void didFailLoadingFrameRequest(
         const WebURL&, void* notifyData, const WebURLError&) = 0;
 
+    // Printing interface.
+    // Whether the plugin supports its own paginated print. The other print
+    // interface methods are called only if this method returns true.
+    virtual bool supportsPaginatedPrint() { return false; }
+    // Sets up printing at the given print rect and printer DPI. printableArea
+    // is in points (a point is 1/72 of an inch).Returns the number of pages to
+    // be printed at these settings.
+    virtual int printBegin(const WebRect& printableArea, int printerDPI) { return 0; }
+    // Prints the page specified by pageNumber (0-based index) into the supplied canvas.
+    virtual bool printPage(int pageNumber, WebCanvas* canvas) { return false; }
+    // Ends the print operation.
+    virtual void printEnd() { }
+
 protected:
     ~WebPlugin() { }
 };

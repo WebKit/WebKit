@@ -101,6 +101,7 @@
 #include "markup.h"
 #include "Page.h"
 #include "PlatformContextSkia.h"
+#include "PluginDocument.h"
 #include "PrintContext.h"
 #include "RenderFrame.h"
 #include "RenderTreeAsText.h"
@@ -130,6 +131,7 @@
 #include "WebHistoryItem.h"
 #include "WebInputElement.h"
 #include "WebPasswordAutocompleteListener.h"
+#include "WebPluginContainerImpl.h"
 #include "WebRange.h"
 #include "WebRect.h"
 #include "WebScriptSource.h"
@@ -246,7 +248,20 @@ static void frameContentAsPlainText(size_t maxChars, Frame* frame,
     }
 }
 
-// Simple class to override some of PrintContext behavior.
+// If the frame hosts a PluginDocument, this method returns the WebPluginContainerImpl
+// that hosts the plugin.
+static WebPluginContainerImpl* pluginContainerFromFrame(Frame* frame)
+{
+    if (!frame)
+        return 0;
+    if (!frame->document() || !frame->document()->isPluginDocument())
+        return 0;
+    PluginDocument* pluginDocument = static_cast<PluginDocument*>(frame->document());
+    return static_cast<WebPluginContainerImpl *>(pluginDocument->pluginWidget());
+}
+
+// Simple class to override some of PrintContext behavior. Some of the methods
+// made virtual so that they can be overriden by ChromePluginPrintContext.
 class ChromePrintContext : public PrintContext, public Noncopyable {
 public:
     ChromePrintContext(Frame* frame)
@@ -255,14 +270,19 @@ public:
     {
     }
 
-    void begin(float width)
+    virtual void begin(float width)
     {
         ASSERT(!m_printedPageWidth);
         m_printedPageWidth = width;
         PrintContext::begin(m_printedPageWidth);
     }
 
-    float getPageShrink(int pageNumber) const
+    virtual void end()
+    {
+        PrintContext::end();
+    }
+
+    virtual float getPageShrink(int pageNumber) const
     {
         IntRect pageRect = m_pageRects[pageNumber];
         return m_printedPageWidth / pageRect.width();
@@ -271,7 +291,7 @@ public:
     // Spools the printed page, a subrect of m_frame.  Skip the scale step.
     // NativeTheme doesn't play well with scaling. Scaling is done browser side
     // instead.  Returns the scale to be applied.
-    float spoolPage(GraphicsContext& ctx, int pageNumber)
+    virtual float spoolPage(GraphicsContext& ctx, int pageNumber)
     {
         IntRect pageRect = m_pageRects[pageNumber];
         float scale = m_printedPageWidth / pageRect.width();
@@ -285,9 +305,93 @@ public:
         return scale;
     }
 
+    virtual void computePageRects(const FloatRect& printRect, float headerHeight, float footerHeight, float userScaleFactor, float& outPageHeight)
+    {
+        return PrintContext::computePageRects(printRect, headerHeight, footerHeight, userScaleFactor, outPageHeight);
+    }
+
+    virtual int pageCount() const
+    {
+        return PrintContext::pageCount();
+    }
+
+    virtual bool shouldUseBrowserOverlays() const
+    {
+        return true;
+    }
+
 private:
     // Set when printing.
     float m_printedPageWidth;
+};
+
+// Simple class to override some of PrintContext behavior. This is used when
+// the frame hosts a plugin that supports custom printing. In this case, we
+// want to delegate all printing related calls to the plugin.
+class ChromePluginPrintContext : public ChromePrintContext {
+public:
+    ChromePluginPrintContext(Frame* frame, int printerDPI)
+        : ChromePrintContext(frame), m_pageCount(0), m_printerDPI(printerDPI)
+    {
+        // This HAS to be a frame hosting a full-mode plugin
+        ASSERT(frame->document()->isPluginDocument());
+    }
+
+    virtual void begin(float width)
+    {
+    }
+
+    virtual void end()
+    {
+        WebPluginContainerImpl* pluginContainer = pluginContainerFromFrame(m_frame);
+        if (pluginContainer && pluginContainer->supportsPaginatedPrint())
+            pluginContainer->printEnd();
+        else
+            ASSERT_NOT_REACHED();
+    }
+
+    virtual float getPageShrink(int pageNumber) const
+    {
+        // We don't shrink the page (maybe we should ask the widget ??)
+        return 1.0;
+    }
+
+    virtual void computePageRects(const FloatRect& printRect, float headerHeight, float footerHeight, float userScaleFactor, float& outPageHeight)
+    {
+        WebPluginContainerImpl* pluginContainer = pluginContainerFromFrame(m_frame);
+        if (pluginContainer && pluginContainer->supportsPaginatedPrint())
+            m_pageCount = pluginContainer->printBegin(IntRect(printRect), m_printerDPI);
+        else
+            ASSERT_NOT_REACHED();
+    }
+
+    virtual int pageCount() const
+    {
+        return m_pageCount;
+    }
+
+    // Spools the printed page, a subrect of m_frame.  Skip the scale step.
+    // NativeTheme doesn't play well with scaling. Scaling is done browser side
+    // instead.  Returns the scale to be applied.
+    virtual float spoolPage(GraphicsContext& ctx, int pageNumber)
+    {
+        WebPluginContainerImpl* pluginContainer = pluginContainerFromFrame(m_frame);
+        if (pluginContainer && pluginContainer->supportsPaginatedPrint())
+            pluginContainer->printPage(pageNumber, &ctx);
+        else
+            ASSERT_NOT_REACHED();
+        return 1.0;
+    }
+
+    virtual bool shouldUseBrowserOverlays() const
+    {
+        return false;
+    }
+
+private:
+    // Set when printing.
+    int m_pageCount;
+    int m_printerDPI;
 };
 
 static WebDataSource* DataSourceForDocLoader(DocumentLoader* loader)
@@ -1092,11 +1196,17 @@ bool WebFrameImpl::selectWordAroundCaret()
     return true;
 }
 
-int WebFrameImpl::printBegin(const WebSize& pageSize)
+int WebFrameImpl::printBegin(const WebSize& pageSize, int printerDPI, bool *useBrowserOverlays)
 {
     ASSERT(!frame()->document()->isFrameSet());
+    // If this is a plugin document, check if the plugin supports its own
+    // printing. If it does, we will delegate all printing to that.
+    WebPluginContainerImpl* pluginContainer = pluginContainerFromFrame(frame());
+    if (pluginContainer && pluginContainer->supportsPaginatedPrint())
+        m_printContext.set(new ChromePluginPrintContext(frame(), printerDPI));
+    else
+        m_printContext.set(new ChromePrintContext(frame()));
 
-    m_printContext.set(new ChromePrintContext(frame()));
     FloatRect rect(0, 0, static_cast<float>(pageSize.width),
                          static_cast<float>(pageSize.height));
     m_printContext->begin(rect.width());
@@ -1104,6 +1214,9 @@ int WebFrameImpl::printBegin(const WebSize& pageSize)
     // We ignore the overlays calculation for now since they are generated in the
     // browser. pageHeight is actually an output parameter.
     m_printContext->computePageRects(rect, 0, 0, 1.0, pageHeight);
+    if (useBrowserOverlays)
+        *useBrowserOverlays = m_printContext->shouldUseBrowserOverlays();
+
     return m_printContext->pageCount();
 }
 

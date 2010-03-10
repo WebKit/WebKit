@@ -370,10 +370,14 @@ public:
 
     // Printing ------------------------------------------------------------
 
-    // Reformats the WebFrame for printing.  pageSize is the page size in
-    // pixels.  Returns the number of pages that can be printed at the
-    // given page size.
-    virtual int printBegin(const WebSize& pageSize) = 0;
+    // Reformats the WebFrame for printing. pageSize is the page size in
+    // points (a point in 1/72 of an inch). printerDPI is the user selected,
+    // DPI for the printer. Returns the number of pages that
+    // can be printed at the given page size. The out param useBrowserOverlays
+    // specifies whether the browser process should use its overlays (header,
+    // footer, margins etc) or whether the renderer controls this.
+    virtual int printBegin(const WebSize& pageSize, int printerDPI = 72,
+                           bool* useBrowserOverlays = 0) = 0;
 
     // Returns the page shrinking factor calculated by webkit (usually
     // between 1/1.25 and 1/2). Returns 0 if the page number is invalid or

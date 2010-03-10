@@ -1,3 +1,13 @@
+2010-03-10  Sanjeev Radhakrishnan  <sanjeevr@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Allow a plugin to participate in the browser's print workflow.
+        https://bugs.webkit.org/show_bug.cgi?id=35550
+
+        * loader/PluginDocument.cpp:
+        * loader/PluginDocument.h:
+
 2010-03-10  Ilya Tikhonovsky  <loislo@loislo-macbookpro.local>
 
         Reviewed by Pavel Feldman.
