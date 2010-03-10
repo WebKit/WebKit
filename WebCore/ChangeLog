@@ -1,3 +1,23 @@
+2010-03-07  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Darin Adler.
+
+        [CAIRO] DoS on iexploder test with high text stroke width.
+        https://bugs.webkit.org/show_bug.cgi?id=33759
+
+        Specifying a big text stroke width can make WebKitGTK+ spend
+        a very long time in the cairo library for stroking the path of
+        the text. The best way to prevent this from happening right now
+        is to not stroke paths with a certain width. Samuel proposed to
+        not stroke with a width that is twice the width of the text. The
+        reason to use twice the text width is that even one stroke of
+        any charachter to be drawn would cover the full width.
+
+        Test: fast/text/text-stroke-width-cairo-dos.html
+
+        * platform/graphics/cairo/FontCairo.cpp:
+        (WebCore::Font::drawGlyphs):
+
 2010-03-10  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.

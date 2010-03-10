@@ -1,3 +1,16 @@
+2010-03-07  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Darin Adler.
+
+        [CAIRO] DoS on iexploder test with high text stroke width.
+        https://bugs.webkit.org/show_bug.cgi?id=33759
+
+        Add a test case with the -webkit-text-stroke-width attribute
+        set to a high value to illustrate the issue.
+
+        * fast/text/text-stroke-width-cairo-dos-expected.txt: Added.
+        * fast/text/text-stroke-width-cairo-dos.html: Added.
+
 2010-03-10  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by David Levin.
