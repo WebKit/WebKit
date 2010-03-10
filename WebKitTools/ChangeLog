@@ -1,3 +1,13 @@
+2010-03-10  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Link QtLauncher against the WebKit library using a relative rpath.
+
+        This makes the launcher and the lib relocatable.
+
+        * QtLauncher/QtLauncher.pro:
+
 2010-03-10  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Rubber-stamped by Simon Hausmann.
