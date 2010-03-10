@@ -60,6 +60,7 @@
 #include "MouseEvent.h"
 #include "Page.h"
 #include "ScrollView.h"
+#include "WheelEvent.h"
 
 #if WEBKIT_USING_SKIA
 #include "PlatformContextSkia.h"
@@ -160,6 +161,8 @@ void WebPluginContainerImpl::handleEvent(Event* event)
     // where mozilla behaves differently than the spec.
     if (event->isMouseEvent())
         handleMouseEvent(static_cast<MouseEvent*>(event));
+    else if (event->isWheelEvent())
+        handleWheelEvent(static_cast<WheelEvent*>(event));
     else if (event->isKeyboardEvent())
         handleKeyboardEvent(static_cast<KeyboardEvent*>(event));
 }
@@ -359,8 +362,7 @@ void WebPluginContainerImpl::handleMouseEvent(MouseEvent* event)
     }
 
     WebCursorInfo cursorInfo;
-    bool handled = m_webPlugin->handleInputEvent(webEvent, cursorInfo);
-    if (handled)
+    if (m_webPlugin->handleInputEvent(webEvent, cursorInfo))
         event->setDefaultHandled();
 
     // A windowless plugin can change the cursor in response to a mouse move
@@ -374,15 +376,26 @@ void WebPluginContainerImpl::handleMouseEvent(MouseEvent* event)
     chromeClient->setCursorForPlugin(cursorInfo);
 }
 
+void WebPluginContainerImpl::handleWheelEvent(WheelEvent* event)
+{
+    FrameView* parentView = static_cast<FrameView*>(parent());
+    WebMouseWheelEventBuilder webEvent(parentView, *event);
+    if (webEvent.type == WebInputEvent::Undefined)
+        return;
+
+    WebCursorInfo cursorInfo;
+    if (m_webPlugin->handleInputEvent(webEvent, cursorInfo))
+        event->setDefaultHandled();
+}
+
 void WebPluginContainerImpl::handleKeyboardEvent(KeyboardEvent* event)
 {
     WebKeyboardEventBuilder webEvent(*event);
     if (webEvent.type == WebInputEvent::Undefined)
         return;
 
-    WebCursorInfo cursor_info;
-    bool handled = m_webPlugin->handleInputEvent(webEvent, cursor_info);
-    if (handled)
+    WebCursorInfo cursorInfo;
+    if (m_webPlugin->handleInputEvent(webEvent, cursorInfo))
         event->setDefaultHandled();
 }
 

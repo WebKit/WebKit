@@ -44,6 +44,7 @@ namespace WebCore {
 class KeyboardEvent;
 class MouseEvent;
 class ScrollView;
+class WheelEvent;
 class Widget;
 }
 
@@ -86,7 +87,7 @@ public:
 #endif
 
 // Converts a WebCore::MouseEvent to a corresponding WebMouseEvent. view is
-// the ScrollView corresponding to the event.  Returns true if successful.
+// the ScrollView corresponding to the event.
 // NOTE: This is only implemented for mousemove, mouseover, mouseout,
 // mousedown and mouseup.  If the event mapping fails, the event type will
 // be set to Undefined.
@@ -95,10 +96,16 @@ public:
     WebMouseEventBuilder(const WebCore::ScrollView*, const WebCore::MouseEvent&);
 };
 
+// Converts a WebCore::WheelEvent to a corresponding WebMouseWheelEvent.
+// If the event mapping fails, the event type will be set to Undefined.
+class WebMouseWheelEventBuilder : public WebMouseWheelEvent {
+public:
+    WebMouseWheelEventBuilder(const WebCore::ScrollView*, const WebCore::WheelEvent&);
+};
+
 // Converts a WebCore::KeyboardEvent to a corresponding WebKeyboardEvent.
-// Returns true if successful.  NOTE: This is only implemented for keydown
-// and keyup.  If the event mapping fails, the event type will be set to
-// Undefined.
+// NOTE: This is only implemented for keydown and keyup.  If the event mapping
+// fails, the event type will be set to Undefined.
 class WebKeyboardEventBuilder : public WebKeyboardEvent {
 public:
     WebKeyboardEventBuilder(const WebCore::KeyboardEvent&);

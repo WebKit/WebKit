@@ -1,3 +1,20 @@
+2010-03-10  John Abd-El-Malek  <jam@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35952
+        Propagate mouse wheel events to Pepper plugins.
+
+        * src/WebInputEventConversion.cpp:
+        (WebKit::WebMouseWheelEventBuilder::WebMouseWheelEventBuilder):
+        * src/WebInputEventConversion.h:
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::handleEvent):
+        (WebKit::WebPluginContainerImpl::handleMouseEvent):
+        (WebKit::WebPluginContainerImpl::handleWheelEvent):
+        (WebKit::WebPluginContainerImpl::handleKeyboardEvent):
+        * src/WebPluginContainerImpl.h:
+
 2010-03-10  Garret Kelly  <gdk@chromium.org>
 
         Reviewed by Darin Fisher.

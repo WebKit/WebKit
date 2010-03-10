@@ -40,6 +40,7 @@
 #include "PlatformWheelEvent.h"
 #include "ScrollView.h"
 #include "WebInputEvent.h"
+#include "WheelEvent.h"
 #include "Widget.h"
 
 using namespace WebCore;
@@ -287,6 +288,27 @@ WebMouseEventBuilder::WebMouseEventBuilder(const ScrollView* view, const MouseEv
     x = event.offsetX();
     y = event.offsetY();
     clickCount = event.detail();
+}
+
+WebMouseWheelEventBuilder::WebMouseWheelEventBuilder(const ScrollView* view, const WheelEvent& event)
+{
+    if (event.type() != eventNames().mousewheelEvent)
+        return;
+    type = WebInputEvent::MouseWheel;
+    timeStampSeconds = event.timeStamp() * 1.0e-3;
+    modifiers = getWebInputModifiers(event);
+    IntPoint p = view->contentsToWindow(IntPoint(event.pageX(), event.pageY()));
+    globalX = event.screenX();
+    globalY = event.screenY();
+    windowX = p.x();
+    windowY = p.y();
+    x = event.offsetX();
+    y = event.offsetY();
+    deltaX = static_cast<float>(event.wheelDeltaX());
+    deltaY = static_cast<float>(event.wheelDeltaY());
+    wheelTicksX = static_cast<float>(event.rawDeltaX());
+    wheelTicksY = static_cast<float>(event.rawDeltaY());
+    scrollByPage = event.granularity() == WheelEvent::Page;
 }
 
 WebKeyboardEventBuilder::WebKeyboardEventBuilder(const KeyboardEvent& event)
