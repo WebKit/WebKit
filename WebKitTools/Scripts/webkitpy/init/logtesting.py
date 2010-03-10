@@ -20,7 +20,16 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""Supports the unit-testing of logging."""
+"""Supports the unit-testing of logging code.
+
+Provides support for unit-testing messages logged using the built-in
+logging module.
+
+Use the LogTesting class for basic testing needs.  For more advanced
+needs (e.g. unit-testing methods that configure logging), see the
+UnitTestLogStream class.
+
+"""
 
 import logging
 
@@ -30,93 +39,141 @@ class UnitTestLogStream(object):
     """Represents a file-like object for unit-testing logging.
 
     This is meant for passing to the logging.StreamHandler constructor.
+    Log messages captured by instances of this object can be tested
+    using self.assertMessages() below.
 
     """
 
-    def __init__(self):
+    def __init__(self, test_case):
+        """Create an instance.
+
+        Args:
+          test_case: A unittest.TestCase instance.
+
+        """
+        self._test_case = test_case
         self.messages = []
         """A list of log messages written to the stream."""
 
+    # Python documentation says that any object passed to the StreamHandler
+    # constructor should support write() and flush():
+    #
+    # http://docs.python.org/library/logging.html#module-logging.handlers
     def write(self, message):
         self.messages.append(message)
 
     def flush(self):
         pass
 
+    def assertMessages(self, messages):
+        """Assert that the given messages match the logged messages.
 
-class UnitTestLog(object):
+        messages: A list of log message strings.
 
-    """Supports unit-testing logging.
+        """
+        self._test_case.assertEquals(messages, self.messages)
 
-    Sample usage:
 
-    # The following line should go in the setUp() method of a
-    # unittest.TestCase.  In particular, self is a TestCase instance.
-    self._log = UnitTestLog(self)
+class LogTesting(object):
 
-    # Call the following in a test method of a unittest.TestCase.
-    log = logging.getLogger("webkitpy")
-    log.info("message1")
-    log.warn("message2")
-    self._log.assertMessages(["INFO: message1\n",
-                              "WARN: message2\n"])  # Should succeed.
+    """Supports end-to-end unit-testing of log messages.
 
-    # The following line should go in the tearDown() method of
-    # unittest.TestCase.
-    self._log.tearDown()
+        Sample usage:
+
+          class SampleTest(unittest.TestCase):
+
+              def setUp(self):
+                  self._log = LogTesting.setUp(self)  # Turn logging on.
+
+              def tearDown(self):
+                  self._log.tearDown()  # Turn off and reset logging.
+
+              def test_logging_in_some_method(self):
+                  call_some_method()  # Contains calls to _log.info(), etc.
+
+                  # Check the resulting log messages.
+                  self._log.assertMessages(["INFO: expected message #1",
+                                          "WARNING: expected message #2"])
 
     """
 
-    def __init__(self, test_case, logging_level=None):
-        """Configure unit test logging, and return an instance.
+    def __init__(self, test_stream, handler):
+        """Create an instance.
 
-        This method configures the root logger to log to a testing
-        log stream.  Only messages logged at or above the given level
-        are logged to the stream.  Messages are formatted in the
-        following way, for example--
+        This method should never be called directly.  Instances should
+        instead be created using the static setUp() method.
+
+        Args:
+          test_stream: A UnitTestLogStream instance.
+          handler: The handler added to the logger.
+
+        """
+        self._test_stream = test_stream
+        self._handler = handler
+
+    @staticmethod
+    def _getLogger():
+        """Return the logger being tested."""
+        # It is possible we might want to return something other than
+        # the root logger in some special situation.  For now, the
+        # root logger seems to suffice.
+        return logging.getLogger()
+
+    @staticmethod
+    def setUp(test_case, logging_level=logging.INFO):
+        """Configure logging for unit testing.
+
+        Configures the root logger to log to a testing log stream.
+        Only messages logged at or above the given level are logged
+        to the stream.  Messages logged to the stream are formatted
+        in the following way, for example--
 
         "INFO: This is a test log message."
 
         This method should normally be called in the setUp() method
-        of a unittest.TestCase.
+        of a unittest.TestCase.  See the docstring of this class
+        for more details.
+
+        Returns:
+          A LogTesting instance.
 
         Args:
           test_case: A unittest.TestCase instance.
-          logging_level: A logging level.  Only messages logged at or
-                         above this level are written to the testing
-                         log stream.  Defaults to logging.INFO.
+          logging_level: An integer logging level that is the minimum level
+                         of log messages you would like to test.
 
         """
-        if logging_level is None:
-            logging_level = logging.INFO
-
-        stream = UnitTestLogStream()
+        stream = UnitTestLogStream(test_case)
         handler = logging.StreamHandler(stream)
+        handler.setLevel(logging_level)
         formatter = logging.Formatter("%(levelname)s: %(message)s")
         handler.setFormatter(formatter)
 
-        logger = logging.getLogger()
-        logger.setLevel(logging_level)
+        # Notice that we only change the root logger by adding a handler
+        # to it.  In particular, we do not reset its level using
+        # logger.setLevel().  This ensures that we have not interfered
+        # with how the code being tested may have configured the root
+        # logger.
+        logger = LogTesting._getLogger()
         logger.addHandler(handler)
 
-        self._handler = handler
-        self._messages = stream.messages
-        self._test_case = test_case
-
-    def _logger(self):
-        """Return the root logger used for logging."""
-        return logging.getLogger()
-
-    def assertMessages(self, messages):
-        """Assert that the given messages match the logged messages."""
-        self._test_case.assertEquals(messages, self._messages)
+        return LogTesting(stream, handler)
 
     def tearDown(self):
-        """Unconfigure unit test logging.
+        """Restore logging to its original state.
 
-        This should normally be called in the tearDown method of a
-        unittest.TestCase
+        This should normally be called in the tearDown() method of a
+        unittest.TestCase.  See the docstring of this class for more
+        details.
 
         """
-        logger = self._logger()
+        logger = LogTesting._getLogger()
         logger.removeHandler(self._handler)
+
+    def assertMessages(self, messages):
+        """Assert that the given messages match the logged messages.
+
+        messages: A list of log message strings.
+
+        """
+        self._test_stream.assertMessages(messages)

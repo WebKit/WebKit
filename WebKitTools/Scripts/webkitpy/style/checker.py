@@ -230,12 +230,12 @@ def check_webkit_style_configuration(options):
 #        This can use a formatter like the following, for example--
 #
 #        formatter = logging.Formatter("%(name)s: [%(levelname)s] %(message)s")
-def configure_logging(stream):
+def configure_logging(stream, logger=None):
     """Configure logging, and return the list of handlers added.
 
-    Configures the root logger to log INFO messages and higher.
-    Formats WARNING messages and above to display the logging level
-    and messages strictly below WARNING not to display it.
+    Configures a logger to log INFO messages and higher.  Formats WARNING
+    messages and above to display the logging level, and messages strictly
+    below WARNING not to display it.
 
     Returns:
       A list of references to the logging handlers added to the root
@@ -248,6 +248,9 @@ def configure_logging(stream):
       stream: A file-like object to which to log.  The stream must
               define an "encoding" data attribute, or else logging
               raises an error.
+      logger: A logging.logger instance to configure.  This parameter
+              should be used only in unit tests.  Defaults to the
+              root logger.
 
     """
     # If the stream does not define an "encoding" data attribute, the
@@ -265,14 +268,19 @@ def configure_logging(stream):
     formatter = logging.Formatter("%(levelname)s: %(message)s")
     error_handler.setFormatter(formatter)
 
-    # Handles records strictly below logging.WARNING.
+    # Create a logging.Filter instance that only accepts messages
+    # below WARNING (i.e. filters out anything WARNING or above).
+    non_error_filter = logging.Filter()
+    # The filter method accepts a logging.LogRecord instance.
+    non_error_filter.filter = lambda record: record.levelno < logging.WARNING
+
     non_error_handler = logging.StreamHandler(stream)
-    non_error_filter = _LevelLoggingFilter(logging.WARNING)
     non_error_handler.addFilter(non_error_filter)
     formatter = logging.Formatter("%(message)s")
     non_error_handler.setFormatter(formatter)
 
-    logger = logging.getLogger()
+    if logger is None:
+        logger = logging.getLogger()
     logger.setLevel(logging.INFO)
 
     handlers = [error_handler, non_error_handler]
@@ -281,31 +289,6 @@ def configure_logging(stream):
         logger.addHandler(handler)
 
     return handlers
-
-
-# FIXME: Consider moving this class into a module in webkitpy.init after
-#        getting more experience with its use.  We want to make sure
-#        we have the right API before doing so.  For example, we may
-#        want to provide a constructor that has both upper and lower
-#        bounds, and not just an upper bound.
-class _LevelLoggingFilter(object):
-
-    """A logging filter for blocking records at or above a certain level."""
-
-    def __init__(self, logging_level):
-        """Create a _LevelLoggingFilter.
-
-        Args:
-          logging_level: The logging level cut-off.  Logging levels at
-                         or above this level will not be logged.
-
-        """
-        self._logging_level = logging_level
-
-    # The logging module requires that this method be defined.
-    def filter(self, log_record):
-        """Return whether given the LogRecord should be logged."""
-        return log_record.levelno < self._logging_level
 
 
 # Enum-like idiom

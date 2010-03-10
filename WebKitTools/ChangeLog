@@ -1,3 +1,47 @@
+2010-03-10  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Refactored and cleaned up the code for unit-testing logging.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35845
+
+        * Scripts/webkitpy/init/logtesting.py:
+          - Added more information to the module docstring.
+          - Added an assertMessages() method to the UnitTestLogStream
+            class.  This simplifies the calling code.
+          - Renamed the UnitTestLog class to LogTesting, and reformulated
+            it as follows:
+              - Moved the logging configuration code from the __init__
+                method to a new static setUp() method.
+              - Documented the __init__ method to be private.
+              - Improved the code so that the root logger does not have
+                its logging level changed.  Instead we set the handler's
+                level.  This makes the unit testing more unintrusive.
+              - Updated the assertMessages() method to call the
+                UnitTestLogStream class's assertMessages() method.
+              - More fully documented the class.
+
+        * Scripts/webkitpy/style/checker.py:
+          - Added a logger parameter to the configure_logging() method.
+            This allows us to prevent test messages from being sent
+            to the root logger during unit testing, which may be
+            rendering to the screen, etc.
+          - Simplified the code by removing the _LevelLoggingFilter class.
+          - Replaced the _LevelLoggingFilter class with a one-line lambda
+            expression in configure_logging().
+
+        * Scripts/webkitpy/style/checker_unittest.py:
+          - Changed relative imports to absolute to comply more with PEP8.
+          - In the ConfigureLoggingTest class:
+            - Changed the setUp() method to prevent test messages from
+              being propagated to the root logger.
+            - Changed the _log() method to a data attribute.
+            - Updated to accommodate changes to logtesting.py.
+
+        * Scripts/webkitpy/style_references.py:
+          - Updated an import statement.
+
 2010-03-10  Evan Martin  <evan@chromium.org>
 
         Reviewed by Darin Adler.

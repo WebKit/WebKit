@@ -38,8 +38,8 @@ import logging
 import unittest
 
 import checker as style
-from ..style_references import UnitTestLog
-from ..style_references import UnitTestLogStream
+from webkitpy.style_references import LogTesting
+from webkitpy.style_references import UnitTestLogStream
 from checker import _BASE_FILTER_RULES
 from checker import _MAX_REPORTS_PER_CATEGORY
 from checker import _PATH_RULES_SPECIFIER as PATH_RULES_SPECIFIER
@@ -63,9 +63,19 @@ class ConfigureLoggingTest(unittest.TestCase):
     """Tests the configure_logging() function."""
 
     def setUp(self):
-        log_stream = UnitTestLogStream()
+        log_stream = UnitTestLogStream(self)
+        # Use a logger other than the root logger or one prefixed with
+        # webkit so as not to conflict with test-webkitpy logging.
+        logger = logging.getLogger("unittest")
 
-        self._handlers = configure_logging(log_stream)
+        # Configure the test logger not to pass messages along to the
+        # root logger.  This prevents test messages from being
+        # propagated to loggers used by test-webkitpy logging (e.g.
+        # the root logger).
+        logger.propagate = False
+
+        self._handlers = configure_logging(log_stream, logger)
+        self._log = logger
         self._log_stream = log_stream
 
     def tearDown(self):
@@ -75,21 +85,16 @@ class ConfigureLoggingTest(unittest.TestCase):
         for a unit test does not affect logging in other unit tests.
 
         """
-        # This should be the same as the logger configured in the
-        # configure_logging() method.
-        logger = logging.getLogger()
+        logger = self._log
         for handler in self._handlers:
             logger.removeHandler(handler)
 
-    def _log(self):
-        return logging.getLogger("webkitpy")
-
     def assert_log_messages(self, messages):
         """Assert that the logged messages equal the given messages."""
-        self.assertEquals(messages, self._log_stream.messages)
+        self._log_stream.assertMessages(messages)
 
     def test_warning_message(self):
-        self._log().warn("test message")
+        self._log.warn("test message")
         self.assert_log_messages(["WARNING: test message\n"])
 
     def test_below_warning_message(self):
@@ -97,16 +102,16 @@ class ConfigureLoggingTest(unittest.TestCase):
         # In practice, we will probably only be calling log.info(),
         # which corresponds to a logging level of 20.
         level = logging.WARNING - 1  # Equals 29.
-        self._log().log(level, "test message")
+        self._log.log(level, "test message")
         self.assert_log_messages(["test message\n"])
 
     def test_debug_message(self):
-        self._log().debug("test message")
+        self._log.debug("test message")
         self.assert_log_messages([])
 
     def test_two_messages(self):
-        self._log().info("message1")
-        self._log().info("message2")
+        self._log.info("message1")
+        self._log.info("message2")
         self.assert_log_messages(["message1\n", "message2\n"])
 
 
@@ -502,7 +507,7 @@ class StyleCheckerCheckFileTest(unittest.TestCase):
 
     """
     def setUp(self):
-        self._log = UnitTestLog(self)
+        self._log = LogTesting.setUp(self)
         self.got_file_path = None
         self.got_handle_style_error = None
         self.got_processor = None
