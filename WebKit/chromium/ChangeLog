@@ -1,3 +1,13 @@
+2010-03-10  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35956
+        Create a grd file upstream for resources that chromium uses
+        that are pulled directly from the upstream repository.
+
+        * WebKit.grd: Added.
+
 2010-03-10  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by David Levin.

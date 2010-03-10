@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grit latest_public_release="0" current_release="1">
+  <outputs>
+    <output filename="grit/webkit_chromium_resources.h" type="rc_header">
+      <emit emit_type='prepend'></emit>
+    </output>
+    <output filename="webkit_chromium_resources.rc" type="rc_all" />
+    <output filename="webkit_chromium_resources.pak" type="data_package" />
+  </outputs>
+  <release seq="1">
+    <includes>
+      <include name="IDR_DEVTOOLS_INJECT_DISPATCH_JS" file="src\js\InjectDispatch.js"  type="BINDATA"/>
+      <include name="IDR_DEVTOOLS_INJECT_WEBKIT_JS" file="..\..\WebCore\inspector\front-end\InjectedScript.js" type="BINDATA"/>
+    </includes>
+  </release>
+</grit>
