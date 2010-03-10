@@ -100,8 +100,9 @@ static void load_status_cb(WebKitWebView* webView, GParamSpec* spec, gpointer da
     KeyEventFixture* fixture = (KeyEventFixture*)data;
     WebKitLoadStatus status = webkit_web_view_get_load_status(webView);
     if (status == WEBKIT_LOAD_FINISHED) {
-        gtk_test_widget_send_key(GTK_WIDGET(fixture->webView),
-                                 gdk_unicode_to_keyval('a'), 0);
+        if (!gtk_test_widget_send_key(GTK_WIDGET(fixture->webView),
+                                      gdk_unicode_to_keyval('a'), 0))
+            g_assert_not_reached();
     }
 
 }

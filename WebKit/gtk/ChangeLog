@@ -1,3 +1,14 @@
+2010-03-09  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] testkeyevents doesn't stop if input event injection fails
+        https://bugs.webkit.org/show_bug.cgi?id=35922
+
+        * tests/testkeyevents.c:
+        (load_status_cb): Added a safeguard to exit from the test if the
+        input event injection failed.
+
 2010-03-09  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Unreviewed. Documentation control files update for 1.1.23.
