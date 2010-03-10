@@ -1,3 +1,13 @@
+2010-03-10  Ada Chan  <adachan@apple.com>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35976
+
+        Retrieve any dwItemData that's set on the context menu item in contextMenuItemByIdOrPosition().
+
+        * platform/win/ContextMenuWin.cpp:
+
 2010-03-10  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Fisher.
