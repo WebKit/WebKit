@@ -1,5 +1,7 @@
 <html>
+<script src="resetCookies.js"></script>
 <script>
+resetCookies();
 
 if (window.layoutTestController)
     layoutTestController.dumpAsText();
@@ -11,6 +13,9 @@ window.onmessage = function(evt)
         return;
     } else if (evt.data.split(" ")[0] == "sendXHR") {
         sendXHR(evt.data.split(" ")[1]);
+        return;
+    } else if (evt.data == "resetCookiesAndNotifyDone") {
+        resetCookiesAndNotifyDone();
         return;
     } else
         alert("Unknown message.");
@@ -38,6 +43,13 @@ function sendXHR(queryCommand)
         alert("xhr error");
     
     parent.window.postMessage("done", "*");    
+}
+
+function resetCookiesAndNotifyDone()
+{
+    resetCookies();
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
 }
 
 </script>

@@ -1,14 +1,12 @@
 <html>
 <head>
-<script src="../cookies/resources/cookies-test-pre.js"></script>    
+<script src="../cookies/resources/resetCookies.js"></script>
 <script>
+resetCookies();
 
 if (window.layoutTestController) {
     layoutTestController.dumpAsText();
     layoutTestController.waitUntilDone();
-    layoutTestController.setAlwaysAcceptCookies(true);
-    clearCookies();
-    layoutTestController.setAlwaysAcceptCookies(false);
 }
 
 </script>

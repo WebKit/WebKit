@@ -1,6 +1,8 @@
 <html>
 <head>
+<script src="../../cookies/resources/resetCookies.js"></script>
 <script>
+resetCookies();
 
 if (window.layoutTestController) {
     layoutTestController.dumpAsText();
@@ -30,12 +32,9 @@ function trySetCookie()
 function completeTest()
 {
    alert("Cookies should still be clear, and are: '" + document.cookie + "'");
-   if (window.layoutTestController) {
+   resetCookies();
+   if (window.layoutTestController)
        layoutTestController.notifyDone();
-       layoutTestController.setAlwaysAcceptCookies(true);
-       clearCookies();
-       layoutTestController.setAlwaysAcceptCookies(false);   
-   }
 }
 
 </script>

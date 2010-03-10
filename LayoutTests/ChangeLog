@@ -1,3 +1,26 @@
+2010-03-10  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35977
+        
+        Turns out the previous attempt to clear/reset cookies wasn't working because of the way
+        the URLs for the .js and its .cgi were being resolved.
+
+        So this is a better way to make the cookies consistent both before and after these tests.
+        
+        If this fails to make cookie-related tests reliable, then we might have to bite the bullet
+        and give DRT itself the ability to forcibly remove cookies via API methods.
+        
+        This would be bulletproof and could be automatic if a test declares itself "cookie sensitive"
+        but we'd lose the ability to reliably run these tests in the browser.  :(
+
+        * http/tests/cookies/resources/resetCookies.js: Added.
+        * http/tests/cookies/resources/third-party-cookie-relaxing-iframe.html:
+        * http/tests/cookies/third-party-cookie-relaxing.html:
+        * http/tests/plugins/resources/third-party-cookie-accept-policy-iframe.html:
+        * http/tests/plugins/third-party-cookie-accept-policy.html:
+
 2010-03-10  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Dave Hyatt.
