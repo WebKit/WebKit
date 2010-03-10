@@ -1,3 +1,20 @@
+2010-03-10  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Non animated gifs are animated in QtWebKit
+        https://bugs.webkit.org/show_bug.cgi?id=35955
+
+        Properly map Qt animated and non-animated values to WebCore's
+        understanding of animated and non-animated images. Currently
+        we can not map anything to the cAnimationLoopNone value.
+
+        * manual-tests/qt/qt-anim.gif: Added.
+        * manual-tests/qt/qt-gif-test.html: Added.
+        * manual-tests/qt/qt-noanim.gif: Added.
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageDecoderQt::repetitionCount):
+
 2010-03-07  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Darin Adler.
