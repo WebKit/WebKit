@@ -120,7 +120,6 @@ EXPORTS
     ?evaluate@JSC@@YA?AVCompletion@1@PAVExecState@1@AAVScopeChain@1@ABVSourceCode@1@VJSValue@1@@Z
     ?exclude@Profile@JSC@@QAEXPBVProfileNode@2@@Z
     ?fastCalloc@WTF@@YAPAXII@Z
-    ?fastCheckConsistency@WTF@@YAXPBX@Z
     ?fastFree@WTF@@YAXPAX@Z
     ?fastMalloc@WTF@@YAPAXI@Z
     ?fastRealloc@WTF@@YAPAXPAXI@Z
