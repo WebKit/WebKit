@@ -74,7 +74,7 @@ static void timerFired(CFRunLoopTimerRef timer, void*)
     WTF::dispatchFunctionsFromMainThread();
 }
 
-void postTimer()
+static void postTimer()
 {
     ASSERT(isMainThread());
 

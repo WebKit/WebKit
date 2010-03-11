@@ -1,5 +1,12 @@
 2010-03-10  Dmitry Titov  <dimich@chromium.org>
 
+        Not reviewed, fixing Snow Leopard build.
+
+        * wtf/mac/MainThreadMac.mm: Forgot 'static' for a new local function.
+        (WTF::postTimer):
+
+2010-03-10  Dmitry Titov  <dimich@chromium.org>
+
         Reviewed by Darin Adler.
 
         Make Document::postTask to use a single queue of tasks, to fire them in order
