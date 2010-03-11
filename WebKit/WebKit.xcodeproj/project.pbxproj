@@ -1365,6 +1365,7 @@
 				1AAF5CEC0EDDE1FE008D883D /* NetscapePluginHostProxy.h in Headers */,
 				1AAF5CEE0EDDE1FE008D883D /* NetscapePluginInstanceProxy.h in Headers */,
 				1A2DBE9F0F251E3A0036F8A6 /* ProxyInstance.h in Headers */,
+				E169836211346D1B00894115 /* ProxyRuntimeObject.h in Headers */,
 				B6CE5C25100BC5F500219936 /* WebApplicationCache.h in Headers */,
 				9398109A0824BF01008DF038 /* WebArchive.h in Headers */,
 				5DE92FEF0BD7017E0059A5FD /* WebAssertions.h in Headers */,
@@ -1552,7 +1553,6 @@
 				939810710824BF01008DF038 /* WebViewPrivate.h in Headers */,
 				0FD3B0F81076C3F700039B96 /* WebWindowAnimation.h in Headers */,
 				41F4484F10338E8C0030E55E /* WebWorkersPrivate.h in Headers */,
-				E169836211346D1B00894115 /* ProxyRuntimeObject.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1788,6 +1788,7 @@
 				939810DD0824BF01008DF038 /* npapi.mm in Sources */,
 				1CCFFD130B1F81F2002EE926 /* OldWebAssertions.c in Sources */,
 				1A2DBEA00F251E3A0036F8A6 /* ProxyInstance.mm in Sources */,
+				E169836C11346D5600894115 /* ProxyRuntimeObject.mm in Sources */,
 				B6CE5C24100BC5CE00219936 /* WebApplicationCache.mm in Sources */,
 				9398111D0824BF01008DF038 /* WebArchive.mm in Sources */,
 				939810CF0824BF01008DF038 /* WebAuthenticationPanel.m in Sources */,
@@ -1846,6 +1847,7 @@
 				939810C50824BF01008DF038 /* WebKitStatistics.m in Sources */,
 				9398110E0824BF01008DF038 /* WebKitSystemBits.m in Sources */,
 				1C0D40880AC1C8F40009C113 /* WebKitVersionChecks.m in Sources */,
+				ED5B9524111B725A00472298 /* WebLocalizableStrings.mm in Sources */,
 				5185F62810712B97007AA393 /* WebNavigationData.mm in Sources */,
 				0AB752380FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.mm in Sources */,
 				0AEBFF640F9FA8BE000D486B /* WebNetscapeContainerCheckPrivate.mm in Sources */,
@@ -1910,8 +1912,6 @@
 				939810E80824BF01008DF038 /* WebViewFactory.mm in Sources */,
 				0FD3B0F91076C3F700039B96 /* WebWindowAnimation.m in Sources */,
 				41F4485010338E8C0030E55E /* WebWorkersPrivate.mm in Sources */,
-				ED5B9524111B725A00472298 /* WebLocalizableStrings.mm in Sources */,
-				E169836C11346D5600894115 /* ProxyRuntimeObject.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

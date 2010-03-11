@@ -1,3 +1,11 @@
+2010-03-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Sort the project file.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2010-03-10  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Holger Freyther.
