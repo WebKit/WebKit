@@ -1,3 +1,24 @@
+2010-03-10  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        [Android] The platform touch events on Android are missing support
+        for key modifiers.
+        https://bugs.webkit.org/show_bug.cgi?id=35521
+
+        Add support in PlatformToucHEventAndroid for the platform supplying
+        key modifiers with touch events.
+
+        Fixes Android so it now passes basic-single-touch-events.html.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleTouchEvent): Fix two compiler warnings.
+        * platform/PlatformTouchEvent.h:
+        (WebCore::PlatformTouchEvent::PlatformTouchEvent): Add support for
+            key modifiers on Android.
+        * platform/android/PlatformTouchEventAndroid.cpp:
+        (WebCore::PlatformTouchEvent::PlatformTouchEvent): ditto.
+
 2010-03-10  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.
