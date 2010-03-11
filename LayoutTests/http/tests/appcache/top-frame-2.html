@@ -27,6 +27,15 @@ var receivedExpectedMessage = false;
 var receivedCheckingEvent = false;
 var receivedNoupdateEvent = false;
 
+function checkDone()
+{
+    if (receivedExpectedMessage && receivedCheckingEvent && receivedNoupdateEvent) {
+        log("SUCCESS");
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+}
+
 function test()
 {
     applicationCache.onnoupdate = null;
@@ -39,15 +48,6 @@ function test()
     var ifr = document.createElement("iframe");
     ifr.setAttribute("src", "resources/subframe-2.html");
     document.body.appendChild(ifr);
-}
-
-function checkDone()
-{
-    if (receivedExpectedMessage && receivedCheckingEvent && receivedNoupdateEvent) {
-        log("SUCCESS");
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
-    }
 }
 
 applicationCache.onnoupdate = function() { test() }

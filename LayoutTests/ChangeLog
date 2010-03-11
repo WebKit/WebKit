@@ -1,3 +1,20 @@
+2010-03-11  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Make appcache layouttests top-frame-*.html more robust for async checking event
+        https://bugs.webkit.org/show_bug.cgi?id=32047
+
+        Modified the tests to watch for all termination conditions, eliminating the hardcoded
+        assumed order of the events from separate async event sources.
+        Also added check for "noupdate" event.
+
+        * http/tests/appcache/top-frame-2.html: Modified to be consistent with the other 2 tests.
+        * http/tests/appcache/top-frame-3-expected.txt:
+        * http/tests/appcache/top-frame-3.html: Used logic similar to top-frame-2.html to avoid assumption of the events order.
+        * http/tests/appcache/top-frame-4-expected.txt:
+        * http/tests/appcache/top-frame-4.html: Ditto.
+
 2010-03-11  Martin Robinson  <mrobinson@webkit.org>
 
         Reviewed by Adam Barth

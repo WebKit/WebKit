@@ -16,13 +16,34 @@ function log(message)
     document.getElementById("result").innerHTML += message + "<br>";
 }
 
+function debug(message)
+{
+    // If running manually in the browser, print the sequence of events.
+    if (!window.layoutTestController)
+        log(message);
+}
+
+var receivedExpectedMessage = false;
+var receivedCheckingEventsCounter = 0;
+var receivedNoupdateEventsCounter = 0;
+
+function checkDone()
+{
+    if (receivedExpectedMessage && receivedCheckingEventsCounter == 2 && receivedNoupdateEventsCounter == 2) {
+        log("SUCCESS");
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+}
+
 function test()
 {
     applicationCache.onnoupdate = null;
     applicationCache.oncached = null;
 
     // When a new main resource is associated with the cache, an update should be started.
-    applicationCache.onchecking = function() { log("checking") }
+    applicationCache.onchecking = function() { debug("checking"); receivedCheckingEventsCounter++; checkDone() }
+    applicationCache.onnoupdate = function() { debug("noupdate"); receivedNoupdateEventsCounter++; checkDone();  }
 
     var ifr = document.createElement("iframe");
     ifr.setAttribute("src", "resources/subframe-3.html");
@@ -42,9 +63,9 @@ function test2()
 
 function test3()
 {
-    log("SUCCESS");
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    debug("message");
+    receivedExpectedMessage = true;
+    checkDone();
 }
 
 applicationCache.onnoupdate = function() { test() }

@@ -4,7 +4,5 @@ In this case, the subframe resource is NOT listed in manifest explicitly.
 
 Should say SUCCESS:
 
-checking
-checking
 SUCCESS
 
