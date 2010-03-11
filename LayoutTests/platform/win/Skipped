@@ -368,7 +368,7 @@ accessibility/aria-controls-with-tabs.html
 accessibility/aria-describedby-on-input.html
 accessibility/aria-disabled.html
 accessibility/aria-hidden.html
-accessibility/aria-hidden-with-elements-expected.txt
+accessibility/aria-hidden-with-elements.html
 accessibility/aria-label.html
 accessibility/aria-labelledby-overrides-label.html
 accessibility/aria-labelledby-on-input.html

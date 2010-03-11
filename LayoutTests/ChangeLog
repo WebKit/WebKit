@@ -5,6 +5,18 @@
         VoiceOver can navigate to hidden content in widget (WAI-ARIA)
         https://bugs.webkit.org/show_bug.cgi?id=35986
 
+        Wrong files were placed in skipped lists.
+
+        * platform/gtk/Skipped:
+        * platform/win/Skipped:
+
+2010-03-10  Chris Fleizach  <cfleizach@apple.com>
+
+        Unreviewed.
+
+        VoiceOver can navigate to hidden content in widget (WAI-ARIA)
+        https://bugs.webkit.org/show_bug.cgi?id=35986
+
         Skip this test since it uses tables and lists, which are not
         supported on Tiger/Leopard.
 
