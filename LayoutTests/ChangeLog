@@ -1,3 +1,14 @@
+2010-03-10  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Implements Geolocation maximumAge property
+        https://bugs.webkit.org/show_bug.cgi?id=30676
+
+        * fast/dom/Geolocation/resources/maximum-age.js: Added. Checks that a cached position is used only when it should be.
+        * fast/dom/Geolocation/maximum-age.html: Added. HTML wraper for above test.
+        * fast/dom/Geolocation/maximum-age-expected.txt: Added. Expected result for above test.
+
 2010-03-11  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed.

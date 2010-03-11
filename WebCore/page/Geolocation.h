@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008, 2009 Apple Inc. All Rights Reserved.
+ * Copyright 2010, The Android Open Source Project
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +27,7 @@
 #ifndef Geolocation_h
 #define Geolocation_h
 
+#include "GeolocationPositionCache.h"
 #include "GeolocationService.h"
 #include "Geoposition.h"
 #include "PositionCallback.h"
@@ -95,6 +97,8 @@ private:
         
         void setFatalError(PassRefPtr<PositionError>);
         bool hasZeroTimeout() const;
+        void setUseCachedPosition();
+        void runSuccessCallback(Geoposition*);
         void startTimerIfNeeded();
         void timerFired(Timer<GeoNotifier>*);
         
@@ -104,6 +108,7 @@ private:
         RefPtr<PositionOptions> m_options;
         Timer<GeoNotifier> m_timer;
         RefPtr<PositionError> m_fatalError;
+        bool m_useCachedPosition;
 
     private:
         GeoNotifier(Geolocation*, PassRefPtr<PositionCallback>, PassRefPtr<PositionErrorCallback>, PassRefPtr<PositionOptions>);
@@ -114,6 +119,7 @@ private:
         void set(int id, PassRefPtr<GeoNotifier>);
         void remove(int id);
         void remove(GeoNotifier*);
+        bool contains(GeoNotifier*) const;
         void clear();
         bool isEmpty() const;
         void getNotifiersVector(Vector<RefPtr<GeoNotifier> >&) const;
@@ -153,6 +159,9 @@ private:
 
     void fatalErrorOccurred(GeoNotifier*);
     void requestTimedOut(GeoNotifier*);
+    void requestUsesCachedPosition(GeoNotifier*);
+    bool haveSuitableCachedPosition(PositionOptions*);
+    void makeCachedPositionCallbacks();
 
     typedef HashSet<RefPtr<GeoNotifier> > GeoNotifierSet;
     
@@ -174,6 +183,9 @@ private:
         No
     } m_allowGeolocation;
     bool m_shouldClearCache;
+
+    OwnPtr<GeolocationPositionCache> m_positionCache;
+    GeoNotifierSet m_requestsAwaitingCachedPosition;
 };
     
 } // namespace WebCore

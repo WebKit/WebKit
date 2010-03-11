@@ -1,3 +1,27 @@
+2010-03-10  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Implements Geolocation maximumAge property
+        https://bugs.webkit.org/show_bug.cgi?id=30676
+
+        Test: fast/dom/Geolocation/maximum-age.html
+
+        * WebCore.xcodeproj/project.pbxproj: Modified. Adds GeolocationPositionCache.h to Private headers
+        * page/Geolocation.cpp: Modified.
+        (WebCore::Geolocation::GeoNotifier::setUseCachedPosition): Added.
+        (WebCore::Geolocation::GeoNotifier::runSuccessCallback): Added.
+        (WebCore::Geolocation::GeoNotifier::timerFired): Modified. Added logic to handle using a cached position
+        (WebCore::Geolocation::Watchers::contains): Added. Required to determine if a notifier is a watch request
+        (WebCore::Geolocation::startRequest): Modified. Added logic to check for a cached position
+        (WebCore::Geolocation::requestUsesCachedPosition): Added. Callback to Geolocation object when notifier uses a cached position
+        (WebCore::Geolocation::makeCachedPositionCallbacks): Added.
+        (WebCore::Geolocation::haveSuitableCachedPosition): Added.
+        (WebCore::Geolocation::setIsAllowed): Modified.
+        (WebCore::Geolocation::positionChanged): Modified. Make callbacks using cached position where appropriate
+        (WebCore::Geolocation::geolocationServiceErrorOccurred): Modified. Make callbacks using cached position where appropriate
+        * page/Geolocation.h: Modified.
+
 2010-03-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed buildfix after r55823. (To fix Qt --minimal build.)
