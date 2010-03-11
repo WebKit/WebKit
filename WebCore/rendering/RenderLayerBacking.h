@@ -46,7 +46,7 @@ class RenderLayerCompositor;
 // 
 // There is one RenderLayerBacking for each RenderLayer that is composited.
 
-class RenderLayerBacking : public GraphicsLayerClient {
+class RenderLayerBacking : public GraphicsLayerClient, public Noncopyable {
 public:
     RenderLayerBacking(RenderLayer*);
     ~RenderLayerBacking();

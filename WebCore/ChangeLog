@@ -2,6 +2,21 @@
 
         Reviewed by Simon Hausmann.
 
+        Allow custom memory allocation control for RenderLayerBacking class
+        https://bugs.webkit.org/show_bug.cgi?id=35857
+
+        Inherits the following class from Noncopyable because it is
+        instantiated by 'new' and no need to be copyable:                                     
+
+        class name    - instantiated at: WebCore/'location'
+        RenderLayerBacking - rendering/RenderLayer.cpp:3047
+
+        * rendering/RenderLayerBacking.h:
+
+2010-03-11  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
         Allow custom memory allocation control for TimingFunction struct
         https://bugs.webkit.org/show_bug.cgi?id=35855
 
