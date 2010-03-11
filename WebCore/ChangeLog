@@ -1,3 +1,46 @@
+2010-03-11  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        accessibilityIsIgnoredBase() needs to respect when platform says include
+        https://bugs.webkit.org/show_bug.cgi?id=36025
+
+        Changed accessibilityIsIgnoredBase() to return a policy instead of a yes/no
+        answer. This allows the platform to make a yes decision on an element.
+
+        * accessibility/AccessibilityList.cpp:
+        (WebCore::AccessibilityList::accessibilityIsIgnored):
+        * accessibility/AccessibilityListBox.cpp:
+        (WebCore::AccessibilityListBox::accessibilityIsIgnored):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::):
+        (WebCore::AccessibilityObject::accessibilityIgnoreAttachment):
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnoredBase):
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnored):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/AccessibilitySlider.cpp:
+        (WebCore::AccessibilitySlider::accessibilityIsIgnored):
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::accessibilityIsIgnored):
+        * accessibility/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::accessibilityIsIgnored):
+        * accessibility/AccessibilityTableRow.cpp:
+        (WebCore::AccessibilityTableRow::accessibilityIsIgnored):
+        * accessibility/chromium/AccessibilityObjectChromium.cpp:
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject):
+        * accessibility/gtk/AccessibilityObjectAtk.cpp:
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject):
+        * accessibility/mac/AccessibilityObjectMac.mm:
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject):
+        * accessibility/qt/AccessibilityObjectQt.cpp:
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject):
+        * accessibility/win/AccessibilityObjectWin.cpp:
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject):
+        * accessibility/wx/AccessibilityObjectWx.cpp:
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject):
+
 2010-03-11  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.

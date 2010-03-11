@@ -203,7 +203,7 @@ enum AccessibilityOrientation {
     AccessibilityOrientationHorizontal,
 };
     
-enum AccessibilityObjectPlatformInclusion {
+enum AccessibilityObjectInclusion {
     IncludeObject,
     IgnoreObject,
     DefaultBehavior,
@@ -534,18 +534,14 @@ public:
 #endif
 #endif
 
-    // a platform-specific method for determining if an attachment is ignored
 #if HAVE(ACCESSIBILITY)
+    // a platform-specific method for determining if an attachment is ignored
     bool accessibilityIgnoreAttachment() const;
+    // gives platforms the opportunity to indicate if and how an object should be included
+    AccessibilityObjectInclusion accessibilityPlatformIncludesObject() const;
 #else
     bool accessibilityIgnoreAttachment() const { return true; }
-#endif
-
-    // gives platforms the opportunity to indicate if and how an object should be included
-#if HAVE(ACCESSIBILITY)
-    AccessibilityObjectPlatformInclusion accessibilityPlatformIncludesObject() const;
-#else
-    AccessibilityObjectPlatformInclusion accessibilityPlatformIncludesObject() const { return DefaultBehavior; }
+    AccessibilityObjectInclusion accessibilityPlatformIncludesObject() const { return DefaultBehavior; }
 #endif
 
     // allows for an AccessibilityObject to update its render tree or perform

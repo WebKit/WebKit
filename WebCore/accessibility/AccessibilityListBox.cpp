@@ -154,7 +154,10 @@ AccessibilityObject* AccessibilityListBox::listBoxOptionAccessibilityObject(HTML
     
 bool AccessibilityListBox::accessibilityIsIgnored() const
 {
-    if (accessibilityIsIgnoredBase())
+    AccessibilityObjectInclusion decision = accessibilityIsIgnoredBase();
+    if (decision == IncludeObject)
+        return false;
+    if (decision == IgnoreObject)
         return true;
     
     return false;

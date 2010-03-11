@@ -41,7 +41,7 @@ bool AccessibilityObject::accessibilityIgnoreAttachment() const
     return [attachment accessibilityIsIgnored];
 }
 
-AccessibilityObjectPlatformInclusion AccessibilityObject::accessibilityPlatformIncludesObject() const
+AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesObject() const
 {
     if (isMenuListPopup() || isMenuListOption())
         return IgnoreObject;

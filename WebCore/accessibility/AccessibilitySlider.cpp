@@ -101,9 +101,12 @@ const AtomicString& AccessibilitySlider::getAttribute(const QualifiedName& attri
 
 bool AccessibilitySlider::accessibilityIsIgnored() const
 {
-    if (accessibilityIsIgnoredBase())
+    AccessibilityObjectInclusion decision = accessibilityIsIgnoredBase();
+    if (decision == IncludeObject)
+        return false;
+    if (decision == IgnoreObject)
         return true;
-
+    
     return false;
 }
     

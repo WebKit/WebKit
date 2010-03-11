@@ -1447,29 +1447,30 @@ bool AccessibilityRenderObject::isAllowedChildOfTree() const
     return true;
 }
     
-bool AccessibilityRenderObject::accessibilityIsIgnoredBase() const
+AccessibilityObjectInclusion AccessibilityRenderObject::accessibilityIsIgnoredBase() const
 {
     // The following cases can apply to any element that's a subclass of AccessibilityRenderObject.
     
-    // Is the platform interested in this object?
-    AccessibilityObjectPlatformInclusion decision = accessibilityPlatformIncludesObject();
-    if (decision == IncludeObject)
-        return false;
-    if (decision == IgnoreObject)
-        return true;
-    // the decision must, therefore, be DefaultBehavior.
-
-    // ignore invisible element
+    // Ignore invisible elements.
     if (!m_renderer || m_renderer->style()->visibility() != VISIBLE)
-        return true;
+        return IgnoreObject;
 
+    // Anything marked as aria-hidden or a child of something aria-hidden must be hidden.
     if (ariaIsHidden())
-        return true;
+        return IgnoreObject;
     
+    // Anything that is a presentational role must be hidden.
     if (isPresentationalChildOfAriaRole())
-        return true;
-    
-    return false;
+        return IgnoreObject;
+
+    // Allow the platform to make a decision.
+    AccessibilityObjectInclusion decision = accessibilityPlatformIncludesObject();
+    if (decision == IncludeObject)
+        return IncludeObject;
+    if (decision == IgnoreObject)
+        return IgnoreObject;
+        
+    return DefaultBehavior;
 }  
  
 bool AccessibilityRenderObject::accessibilityIsIgnored() const
@@ -1477,7 +1478,10 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
     // Check first if any of the common reasons cause this element to be ignored.
     // Then process other use cases that need to be applied to all the various roles
     // that AccessibilityRenderObjects take on.
-    if (accessibilityIsIgnoredBase())
+    AccessibilityObjectInclusion decision = accessibilityIsIgnoredBase();
+    if (decision == IncludeObject)
+        return false;
+    if (decision == IgnoreObject)
         return true;
     
     // If this element is within a parent that cannot have children, it should not be exposed.
