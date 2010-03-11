@@ -1,5 +1,17 @@
 2010-03-10  Gavin Barraclough  <barraclough@apple.com>
 
+        Rubber stamped by Oliver Hunt.
+        
+        Rename JSC::UStringImpl::data() to characters(), to match WebCore::StringImpl.
+
+        * bridge/jni/jsc/JavaStringJSC.h:
+        (JSC::Bindings::JavaStringImpl::uchars):
+        * platform/text/AtomicString.cpp:
+        (WebCore::AtomicString::add):
+        (WebCore::AtomicString::find):
+
+2010-03-10  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Mark Rowe.
 
         Fix for r55825, threadsafeCopy no longer needs to special-case for

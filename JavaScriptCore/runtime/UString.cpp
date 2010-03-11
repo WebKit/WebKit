@@ -493,7 +493,7 @@ uint32_t UString::toStrictUInt32(bool* ok) const
     unsigned len = m_rep->length();
     if (len == 0)
         return 0;
-    const UChar* p = m_rep->data();
+    const UChar* p = m_rep->characters();
     unsigned short c = p[0];
 
     // If the first digit is 0, only 0 itself is OK.
@@ -710,8 +710,8 @@ bool equal(const UString::Rep* r, const UString::Rep* b)
     unsigned length = r->length();
     if (length != b->length())
         return false;
-    const UChar* d = r->data();
-    const UChar* s = b->data();
+    const UChar* d = r->characters();
+    const UChar* s = b->characters();
     for (unsigned i = 0; i != length; ++i) {
         if (d[i] != s[i])
             return false;

@@ -163,7 +163,7 @@ public:
     }
 
     SharedUChar* sharedBuffer();
-    const UChar* data() const { return m_data; }
+    const UChar* characters() const { return m_data; }
     size_t cost()
     {
         // For substrings, return the cost of the base string.
@@ -176,9 +176,9 @@ public:
         }
         return 0;
     }
-    unsigned hash() const { if (!m_hash) m_hash = computeHash(data(), m_length); return m_hash; }
+    unsigned hash() const { if (!m_hash) m_hash = computeHash(m_data, m_length); return m_hash; }
     unsigned existingHash() const { ASSERT(m_hash); return m_hash; } // fast path for Identifiers
-    void setHash(unsigned hash) { ASSERT(hash == computeHash(data(), m_length)); m_hash = hash; } // fast path for Identifiers
+    void setHash(unsigned hash) { ASSERT(hash == computeHash(m_data, m_length)); m_hash = hash; } // fast path for Identifiers
     bool isIdentifier() const { return m_refCountAndFlags & s_refCountFlagIsIdentifier; }
     void setIsIdentifier(bool isIdentifier)
     {

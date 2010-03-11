@@ -81,7 +81,7 @@ void JSString::resolveRope(ExecState* exec) const
             UStringImpl* string = static_cast<UStringImpl*>(currentFiber);
             unsigned length = string->length();
             position -= length;
-            UStringImpl::copyChars(position, string->data(), length);
+            UStringImpl::copyChars(position, string->characters(), length);
 
             // Was this the last item in the work queue?
             if (workQueue.isEmpty()) {

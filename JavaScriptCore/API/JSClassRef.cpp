@@ -171,7 +171,7 @@ OpaqueJSClassContextData::OpaqueJSClassContextData(OpaqueJSClass* jsClass)
             ASSERT(!it->first->isIdentifier());
             // Use a local variable here to sidestep an RVCT compiler bug.
             StaticValueEntry* entry = new StaticValueEntry(it->second->getProperty, it->second->setProperty, it->second->attributes);
-            staticValues->add(UString::Rep::create(it->first->data(), it->first->length()), entry);
+            staticValues->add(UString::Rep::create(it->first->characters(), it->first->length()), entry);
         }
     } else
         staticValues = 0;
@@ -183,7 +183,7 @@ OpaqueJSClassContextData::OpaqueJSClassContextData(OpaqueJSClass* jsClass)
             ASSERT(!it->first->isIdentifier());
             // Use a local variable here to sidestep an RVCT compiler bug.
             StaticFunctionEntry* entry = new StaticFunctionEntry(it->second->callAsFunction, it->second->attributes);
-            staticFunctions->add(UString::Rep::create(it->first->data(), it->first->length()), entry);
+            staticFunctions->add(UString::Rep::create(it->first->characters(), it->first->length()), entry);
         }
             
     } else

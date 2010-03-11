@@ -3267,7 +3267,7 @@ skip_id_custom_self:
             if (value->length() != 1)
                 vPC += defaultOffset;
             else
-                vPC += callFrame->codeBlock()->characterSwitchJumpTable(tableIndex).offsetForValue(value->data()[0], defaultOffset);
+                vPC += callFrame->codeBlock()->characterSwitchJumpTable(tableIndex).offsetForValue(value->characters()[0], defaultOffset);
         }
         NEXT_INSTRUCTION();
     }

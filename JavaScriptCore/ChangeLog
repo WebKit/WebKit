@@ -1,5 +1,38 @@
 2010-03-10  Gavin Barraclough  <barraclough@apple.com>
 
+        Rubber stamped by Oliver Hunt.
+        
+        Rename JSC::UStringImpl::data() to characters(), to match WebCore::StringImpl.
+
+        * API/JSClassRef.cpp:
+        (OpaqueJSClassContextData::OpaqueJSClassContextData):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::keyForCharacterSwitch):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::processClauseList):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncToString):
+        * runtime/Identifier.cpp:
+        (JSC::Identifier::equal):
+        (JSC::Identifier::addSlowCase):
+        * runtime/JSString.cpp:
+        (JSC::JSString::resolveRope):
+        * runtime/UString.cpp:
+        (JSC::UString::toStrictUInt32):
+        (JSC::equal):
+        * runtime/UString.h:
+        (JSC::UString::data):
+        * runtime/UStringImpl.h:
+        (JSC::UStringImpl::characters):
+        (JSC::UStringImpl::hash):
+        (JSC::UStringImpl::setHash):
+
+2010-03-10  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Darin Adler, Geoffrey Garen, Maciej Stachowiak.
 
         https://bugs.webkit.org/show_bug.cgi?id=35991
