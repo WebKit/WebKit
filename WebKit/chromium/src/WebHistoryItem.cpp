@@ -37,6 +37,7 @@
 
 #include "WebHTTPBody.h"
 #include "WebPoint.h"
+#include "WebSerializedScriptValue.h"
 #include "WebString.h"
 #include "WebVector.h"
 
@@ -44,30 +45,23 @@ using namespace WebCore;
 
 namespace WebKit {
 
-class WebHistoryItemPrivate : public HistoryItem {
-};
-
 void WebHistoryItem::initialize()
 {
-    assign(static_cast<WebHistoryItemPrivate*>(HistoryItem::create().releaseRef()));
+    m_private = HistoryItem::create();
 }
 
 void WebHistoryItem::reset()
 {
-    assign(0);
+    m_private.reset();
 }
 
 void WebHistoryItem::assign(const WebHistoryItem& other)
 {
-    WebHistoryItemPrivate* p = const_cast<WebHistoryItemPrivate*>(other.m_private);
-    if (p)
-        p->ref();
-    assign(p);
+    m_private = other.m_private;
 }
 
 WebString WebHistoryItem::urlString() const
 {
-    ASSERT(!isNull());
     return m_private->urlString();
 }
 
@@ -79,7 +73,6 @@ void WebHistoryItem::setURLString(const WebString& url)
 
 WebString WebHistoryItem::originalURLString() const
 {
-    ASSERT(!isNull());
     return m_private->originalURLString();
 }
 
@@ -91,7 +84,6 @@ void WebHistoryItem::setOriginalURLString(const WebString& originalURLString)
 
 WebString WebHistoryItem::referrer() const
 {
-    ASSERT(!isNull());
     return m_private->referrer();
 }
 
@@ -103,7 +95,6 @@ void WebHistoryItem::setReferrer(const WebString& referrer)
 
 WebString WebHistoryItem::target() const
 {
-    ASSERT(!isNull());
     return m_private->target();
 }
 
@@ -115,7 +106,6 @@ void WebHistoryItem::setTarget(const WebString& target)
 
 WebString WebHistoryItem::parent() const
 {
-    ASSERT(!isNull());
     return m_private->parent();
 }
 
@@ -127,7 +117,6 @@ void WebHistoryItem::setParent(const WebString& parent)
 
 WebString WebHistoryItem::title() const
 {
-    ASSERT(!isNull());
     return m_private->title();
 }
 
@@ -139,7 +128,6 @@ void WebHistoryItem::setTitle(const WebString& title)
 
 WebString WebHistoryItem::alternateTitle() const
 {
-    ASSERT(!isNull());
     return m_private->alternateTitle();
 }
 
@@ -151,7 +139,6 @@ void WebHistoryItem::setAlternateTitle(const WebString& alternateTitle)
 
 double WebHistoryItem::lastVisitedTime() const
 {
-    ASSERT(!isNull());
     return m_private->lastVisitedTime();
 }
 
@@ -168,7 +155,6 @@ void WebHistoryItem::setLastVisitedTime(double lastVisitedTime)
 
 WebPoint WebHistoryItem::scrollOffset() const
 {
-    ASSERT(!isNull());
     return m_private->scrollPoint();
 }
 
@@ -180,7 +166,6 @@ void WebHistoryItem::setScrollOffset(const WebPoint& scrollOffset)
 
 bool WebHistoryItem::isTargetItem() const
 {
-    ASSERT(!isNull());
     return m_private->isTargetItem();
 }
 
@@ -192,7 +177,6 @@ void WebHistoryItem::setIsTargetItem(bool isTargetItem)
 
 int WebHistoryItem::visitCount() const
 {
-    ASSERT(!isNull());
     return m_private->visitCount();
 }
 
@@ -204,7 +188,6 @@ void WebHistoryItem::setVisitCount(int count)
 
 WebVector<WebString> WebHistoryItem::documentState() const
 {
-    ASSERT(!isNull());
     return m_private->documentState();
 }
 
@@ -220,7 +203,6 @@ void WebHistoryItem::setDocumentState(const WebVector<WebString>& state)
 
 long long WebHistoryItem::documentSequenceNumber() const
 {
-    ASSERT(!isNull());
     return m_private->documentSequenceNumber();
 }
 
@@ -230,9 +212,19 @@ void WebHistoryItem::setDocumentSequenceNumber(long long documentSequenceNumber)
     m_private->setDocumentSequenceNumber(documentSequenceNumber);
 }
 
+WebSerializedScriptValue WebHistoryItem::stateObject() const
+{
+    return WebSerializedScriptValue(m_private->stateObject());
+}
+
+void WebHistoryItem::setStateObject(const WebSerializedScriptValue& object)
+{
+    ensureMutable();
+    m_private->setStateObject(object);
+}
+
 WebString WebHistoryItem::httpContentType() const
 {
-    ASSERT(!isNull());
     return m_private->formContentType();
 }
 
@@ -244,7 +236,6 @@ void WebHistoryItem::setHTTPContentType(const WebString& httpContentType)
 
 WebHTTPBody WebHistoryItem::httpBody() const
 {
-    ASSERT(!isNull());
     return WebHTTPBody(m_private->formData());
 }
 
@@ -256,7 +247,6 @@ void WebHistoryItem::setHTTPBody(const WebHTTPBody& httpBody)
 
 WebVector<WebHistoryItem> WebHistoryItem::children() const
 {
-    ASSERT(!isNull());
     return m_private->children();
 }
 
@@ -275,34 +265,25 @@ void WebHistoryItem::appendToChildren(const WebHistoryItem& item)
 }
 
 WebHistoryItem::WebHistoryItem(const PassRefPtr<HistoryItem>& item)
-    : m_private(static_cast<WebHistoryItemPrivate*>(item.releaseRef()))
+    : m_private(item)
 {
 }
 
 WebHistoryItem& WebHistoryItem::operator=(const PassRefPtr<HistoryItem>& item)
 {
-    assign(static_cast<WebHistoryItemPrivate*>(item.releaseRef()));
+    m_private = item;
     return *this;
 }
 
 WebHistoryItem::operator PassRefPtr<HistoryItem>() const
 {
-    return m_private;
-}
-
-void WebHistoryItem::assign(WebHistoryItemPrivate* p)
-{
-    // p is already ref'd for us by the caller
-    if (m_private)
-        m_private->deref();
-    m_private = p;
+    return m_private.get();
 }
 
 void WebHistoryItem::ensureMutable()
 {
-    ASSERT(!isNull());
     if (!m_private->hasOneRef())
-        assign(static_cast<WebHistoryItemPrivate*>(m_private->copy().releaseRef()));
+        m_private = m_private->copy();
 }
 
 } // namespace WebKit

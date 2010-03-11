@@ -1,3 +1,23 @@
+2010-03-10  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Add API wrapper for WebCore::SerializedScriptValue
+        https://bugs.webkit.org/show_bug.cgi?id=35988
+
+        WebSerializedScriptValue is a wrapper around SerializedScriptValue.
+
+        WebPrivatePtr is used to simplify wrapping reference counted WebCore
+        types.  This class is used to cleanup WebHistoryItem, and will be used
+        to clean up other classes in the WebKit API in a follow-up patch.
+
+        * WebKit.gyp:
+        * public/WebHistoryItem.h:
+        * public/WebPrivatePtr.h: Added.
+        * public/WebSerializedScriptValue.h: Added.
+        * src/WebHistoryItem.cpp:
+        * src/WebSerializedScriptValue.cpp: Added.
+
 2010-03-10  Sanjeev Radhakrishnan  <sanjeevr@chromium.org>
 
         Reviewed by Darin Fisher.
