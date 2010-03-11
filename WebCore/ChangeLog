@@ -2,6 +2,14 @@
 
         Reviewed by Mark Rowe.
 
+        Remove duplicate entries revealed after sorting.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2010-03-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Mark Rowe.
+
         Sort the project file (also removing some bogus spaces that caused Xcode to rewrite the file
         every time you opened it).
 
