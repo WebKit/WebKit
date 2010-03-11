@@ -377,7 +377,7 @@ extern "C" {
                 _proxy->didDraw();
             } else
                 _proxy->print(reinterpret_cast<CGContextRef>([[NSGraphicsContext currentContext] graphicsPort]), [self bounds].size.width, [self bounds].size.height);
-        } else if ([self inFlatteningPaint]) {
+        } else if ([self inFlatteningPaint] && [self supportsSnapshotting]) {
             _proxy->snapshot(reinterpret_cast<CGContextRef>([[NSGraphicsContext currentContext] graphicsPort]), [self bounds].size.width, [self bounds].size.height);
         }
 

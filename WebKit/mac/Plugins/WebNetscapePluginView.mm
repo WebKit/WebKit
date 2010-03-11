@@ -1397,7 +1397,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 - (void)drawRect:(NSRect)rect
 {
-    if (drawingModel == NPDrawingModelCoreAnimation && ![self inFlatteningPaint])
+    if (drawingModel == NPDrawingModelCoreAnimation && (![self inFlatteningPaint] || ![self supportsSnapshotting]))
         return;
 
     if (!_isStarted)
