@@ -148,6 +148,15 @@ bool AccessibilityObject::press() const
     return true;
 }
     
+String AccessibilityObject::language(Node* node) const
+{
+    const AtomicString& lang = getAttribute(node, langAttr);
+    if (lang.isEmpty())
+        return AccessibilityObject::language();
+    
+    return lang;
+}
+    
 String AccessibilityObject::language() const
 {
     AccessibilityObject* parent = parentObject();

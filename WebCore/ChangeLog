@@ -1,3 +1,25 @@
+2010-03-11  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        support lang attribute on <option> elements
+        https://bugs.webkit.org/show_bug.cgi?id=36021
+
+        Allow non AccessibilityRenderObject classes to access the lang
+        attribute by moving the useful code into AccessibilityObject.
+
+        Test: platform/mac/accessibility/option-with-lang.html
+
+        * accessibility/AccessibilityListBoxOption.cpp:
+        (WebCore::AccessibilityListBoxOption::language):
+        * accessibility/AccessibilityListBoxOption.h:
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::language):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::language):
+        * accessibility/AccessibilityRenderObject.h:
+
 2010-03-11  Diego Gonzalez  <diego.gonzalez@openbossa.org>
 
         Reviewed by Simon Hausmann.

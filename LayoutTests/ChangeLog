@@ -1,3 +1,13 @@
+2010-03-11  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        support lang attribute on <option> elements
+        https://bugs.webkit.org/show_bug.cgi?id=36021
+
+        * platform/mac/accessibility/option-with-lang-expected.txt: Added.
+        * platform/mac/accessibility/option-with-lang.html: Added.
+
 2010-03-11  Diego Gonzalez  <diego.gonzalez@openbossa.org>
 
         Reviewed by Simon Hausmann.

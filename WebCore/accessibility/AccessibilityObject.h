@@ -414,6 +414,7 @@ public:
     virtual FrameView* topDocumentFrameView() const { return 0; }
     virtual FrameView* documentFrameView() const;
     virtual String language() const;
+    String language(Node*) const;
     virtual unsigned hierarchicalLevel() const { return 0; }
     
     virtual void setFocused(bool) { }
