@@ -16,17 +16,38 @@ function log(message)
     document.getElementById("result").innerHTML += message + "<br>";
 }
 
+function debug(message)
+{
+    // If running manually in the browser, print the sequence of events.
+    if (!window.layoutTestController)
+        log(message);
+}
+
+var receivedExpectedMessage = false;
+var receivedCheckingEvent = false;
+var receivedNoupdateEvent = false;
+
 function test()
 {
     applicationCache.onnoupdate = null;
     applicationCache.oncached = null;
 
     // When a new main resource is associated with the cache, an update should be started.
-    applicationCache.onchecking = function() { log("checking") }
+    applicationCache.onchecking = function() { debug("checking"); receivedCheckingEvent = true; checkDone();  }
+    applicationCache.onnoupdate = function() { debug("noupdate"); receivedNoupdateEvent = true; checkDone();  }
 
     var ifr = document.createElement("iframe");
     ifr.setAttribute("src", "resources/subframe-2.html");
     document.body.appendChild(ifr);
+}
+
+function checkDone()
+{
+    if (receivedExpectedMessage && receivedCheckingEvent && receivedNoupdateEvent) {
+        log("SUCCESS");
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
 }
 
 applicationCache.onnoupdate = function() { test() }
@@ -35,7 +56,7 @@ applicationCache.oncached = function() { test() }
 applicationCache.onupdateready = function() { log("FAIL: received unexpected updateready event") }
 applicationCache.onerror = function() { log("FAIL: received unexpected error event") }
 
-window.addEventListener("message", function() { log("SUCCESS"); if (window.layoutTestController) layoutTestController.notifyDone() }, false);
+window.addEventListener("message", function() { debug("message"); receivedExpectedMessage = true; checkDone(); }, false);
 
 </script>
 </body>

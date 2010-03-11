@@ -1,3 +1,17 @@
+2010-03-10  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Make Document::postTask to use a single queue of tasks, to fire them in order
+        https://bugs.webkit.org/show_bug.cgi?id=35943
+
+        Updated the test since the order of events coming from independent task sources has changed.
+        This is a behavior change, but is consistent with the spec (which specifically says these events may be fired
+        in any order) and the last version of FF (3.5.8) which was completing the test successfully.
+
+        * http/tests/appcache/top-frame-2-expected.txt:
+        * http/tests/appcache/top-frame-2.html:
+
 2010-03-10  Antonio Gomes  <tonikitoo@webkit.org>
 
         The test was introduced in r55796, it has been failing in Gtk bots since then.

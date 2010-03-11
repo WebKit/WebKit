@@ -1,3 +1,16 @@
+2010-03-10  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Make Document::postTask to use a single queue of tasks, to fire them in order
+        https://bugs.webkit.org/show_bug.cgi?id=35943
+
+        Test: existing worker-cloneport.html which was broken by initial patch in http://trac.webkit.org/changeset/55593.
+        Additional test which indirectly verifies the order of execution will come as part of https://bugs.webkit.org/show_bug.cgi?id=34726
+
+        * dom/Document.cpp:
+        (WebCore::Document::postTask): Always use the same task queue, independent of what thread is posting the task.
+
 2010-03-10  Sanjeev Radhakrishnan  <sanjeevr@chromium.org>
 
         Reviewed by Darin Fisher.

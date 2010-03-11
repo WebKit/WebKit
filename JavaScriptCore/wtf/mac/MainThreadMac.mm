@@ -29,8 +29,10 @@
 #import "config.h"
 #import "MainThread.h"
 
+#import <CoreFoundation/CoreFoundation.h>
 #import <Foundation/NSThread.h>
 #import <wtf/Assertions.h>
+#import <wtf/Threading.h>
 
 @interface WTFMainThreadCaller : NSObject {
 }
@@ -63,9 +65,36 @@ void initializeMainThreadPlatform()
 #endif
 }
 
+static bool isTimerPosted; // This is only accessed on the 'main' thread.
+
+static void timerFired(CFRunLoopTimerRef timer, void*)
+{
+    CFRelease(timer);
+    isTimerPosted = false;
+    WTF::dispatchFunctionsFromMainThread();
+}
+
+void postTimer()
+{
+    ASSERT(isMainThread());
+
+    if (isTimerPosted)
+        return;
+
+    isTimerPosted = true;
+    CFRunLoopAddTimer(CFRunLoopGetCurrent(), CFRunLoopTimerCreate(0, 0, 0, 0, 0, timerFired, 0), kCFRunLoopCommonModes);
+}
+
+
 void scheduleDispatchFunctionsOnMainThread()
 {
     ASSERT(staticMainThreadCaller);
+
+    if (isMainThread()) {
+        postTimer();
+        return;
+    }
+
 #if USE(WEB_THREAD)
     [staticMainThreadCaller performSelector:@selector(call) onThread:webThread withObject:nil waitUntilDone:NO];
 #else

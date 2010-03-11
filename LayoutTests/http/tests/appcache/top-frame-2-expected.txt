@@ -2,6 +2,5 @@ Test that a subframe without manifest gets picked by a relevant application cach
 
 Should say SUCCESS:
 
-checking
 SUCCESS
 

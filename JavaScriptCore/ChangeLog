@@ -1,3 +1,19 @@
+2010-03-10  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Make Document::postTask to use a single queue of tasks, to fire them in order
+        https://bugs.webkit.org/show_bug.cgi?id=35943
+
+        The patch uses CFRunLoopTimer to schedule execution of tasks instead of performSelectorOnMainThread which apparently can starve other event sources.
+        The timer is used when the schedule request is coming on the main thread itself. This happens when the task is posted on the main thread or
+        when too many tasks are posted and the queue does 'stop and re-schedule' to make sure run loop has a chance to execute other events.
+
+        * wtf/mac/MainThreadMac.mm:
+        (WTF::timerFired):
+        (WTF::postTimer):
+        (WTF::scheduleDispatchFunctionsOnMainThread): Use timer posted to the current RunLoop if scheduling the task execution while on the main thread.
+
 2010-03-10  Geoffrey Garen  <ggaren@apple.com>
 
         Windows build fix: added new symbol.
