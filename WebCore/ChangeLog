@@ -1,3 +1,27 @@
+2010-03-10  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Darin Adler, Geoffrey Garen, Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35991
+        Would be faster to not use a thread specific to implement StringImpl::empty()
+
+        Copy JavaScriptCore in making 'static' strings threadsafe, make the empty string a static,
+        shared by all threads.
+
+        ~2% progression on Dromaeo DOM core & JS lib tests.
+
+        * platform/ThreadGlobalData.cpp:
+        (WebCore::ThreadGlobalData::ThreadGlobalData):
+        (WebCore::ThreadGlobalData::~ThreadGlobalData):
+        * platform/ThreadGlobalData.h:
+        (WebCore::ThreadGlobalData::eventNames):
+        * platform/text/StringImpl.cpp:
+        (WebCore::StringImpl::StringImpl):
+        (WebCore::StringImpl::empty):
+        * platform/text/StringImpl.h:
+        (WebCore::StringImpl::deref):
+        (WebCore::StringImpl::hasOneRef):
+
 2010-03-08  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Adam Barth.

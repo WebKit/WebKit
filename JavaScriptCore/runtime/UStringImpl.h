@@ -113,12 +113,12 @@ public:
             ASSERT(vector.data());
             return adoptRef(new UStringImpl(vector.releaseBuffer(), length));
         }
-        return &empty();
+        return empty();
     }
 
-    static PassRefPtr<UStringImpl> create(const char* c);
-    static PassRefPtr<UStringImpl> create(const char* c, unsigned length);
     static PassRefPtr<UStringImpl> create(const UChar* buffer, unsigned length);
+    static PassRefPtr<UStringImpl> create(const char* c, unsigned length);
+    static PassRefPtr<UStringImpl> create(const char* c);
 
     static PassRefPtr<UStringImpl> create(PassRefPtr<UStringImpl> rep, unsigned offset, unsigned length)
     {
@@ -136,7 +136,7 @@ public:
     {
         if (!length) {
             output = 0;
-            return &empty();
+            return empty();
         }
 
         if (length > ((std::numeric_limits<size_t>::max() - sizeof(UStringImpl)) / sizeof(UChar)))
@@ -150,7 +150,7 @@ public:
     {
         if (!length) {
             output = 0;
-            return &empty();
+            return empty();
         }
 
         if (length > ((std::numeric_limits<size_t>::max() - sizeof(UStringImpl)) / sizeof(UChar)))
@@ -203,7 +203,7 @@ public:
     static unsigned computeHash(const char* s, unsigned length) { return WTF::stringHash(s, length); }
     static unsigned computeHash(const char* s) { return WTF::stringHash(s); }
 
-    static UStringImpl& empty() { return *s_empty; }
+    static UStringImpl* empty();
 
     ALWAYS_INLINE void checkConsistency() const
     {
@@ -294,8 +294,6 @@ private:
         SharedUChar* m_bufferShared;
     };
     mutable unsigned m_hash;
-
-    JS_EXPORTDATA static UStringImpl* s_empty;
 
     friend class JIT;
     friend class SmallStringsStorage;

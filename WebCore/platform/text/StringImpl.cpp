@@ -57,7 +57,7 @@ StringImpl::StringImpl()
     : m_data(0)
     , m_sharedBuffer(0)
     , m_length(0)
-    , m_refCountAndFlags(s_refCountIncrement | BufferInternal)
+    , m_refCountAndFlags(s_refCountFlagStatic | BufferInternal)
     , m_hash(0)
 {
     // Ensure that the hash is computed so that AtomicStringHash can call existingHash()
@@ -120,7 +120,8 @@ StringImpl::~StringImpl()
 
 StringImpl* StringImpl::empty()
 {
-    return threadGlobalData().emptyString();
+    DEFINE_STATIC_LOCAL(StringImpl, emptyString, ());
+    return &emptyString;
 }
 
 bool StringImpl::containsOnlyWhitespace()

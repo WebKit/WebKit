@@ -27,6 +27,7 @@
 #include "UStringImpl.h"
 
 #include "Identifier.h"
+#include "StdLibExtras.h"
 #include "UString.h"
 #include <wtf/unicode/UTF8.h>
 
@@ -35,41 +36,45 @@ using namespace std;
 
 namespace JSC {
 
-PassRefPtr<UStringImpl> UStringImpl::create(const char* c)
+UStringImpl* UStringImpl::empty()
 {
-    ASSERT(c);
-
-    if (!c[0])
-        return &UStringImpl::empty();
-
-    size_t length = strlen(c);
-    UChar* d;
-    PassRefPtr<UStringImpl> result = UStringImpl::createUninitialized(length, d);
-    for (size_t i = 0; i < length; i++)
-        d[i] = static_cast<unsigned char>(c[i]); // use unsigned char to zero-extend instead of sign-extend
-    return result;
+    // A non-null pointer at an invalid address (in page zero) so that if it were to be accessed we
+    // should catch the error with fault (however it should be impossible to access, since length is zero).
+    static const UChar* invalidNonNullUCharPtr = reinterpret_cast<UChar*>(static_cast<intptr_t>(1));
+    DEFINE_STATIC_LOCAL(UStringImpl, emptyString, (invalidNonNullUCharPtr, 0, ConstructStaticString));
+    return &emptyString;
 }
 
-PassRefPtr<UStringImpl> UStringImpl::create(const char* c, unsigned length)
+PassRefPtr<UStringImpl> UStringImpl::create(const UChar* characters, unsigned length)
 {
-    ASSERT(c);
+    if (!characters || !length)
+        return empty();
 
-    if (!length)
-        return &UStringImpl::empty();
-
-    UChar* d;
-    PassRefPtr<UStringImpl> result = UStringImpl::createUninitialized(length, d);
-    for (unsigned i = 0; i < length; i++)
-        d[i] = static_cast<unsigned char>(c[i]); // use unsigned char to zero-extend instead of sign-extend
-    return result;
+    UChar* data;
+    PassRefPtr<UStringImpl> string = createUninitialized(length, data);
+    memcpy(data, characters, length * sizeof(UChar));
+    return string;
 }
 
-PassRefPtr<UStringImpl> UStringImpl::create(const UChar* buffer, unsigned length)
+PassRefPtr<UStringImpl> UStringImpl::create(const char* characters, unsigned length)
 {
-    UChar* newBuffer;
-    PassRefPtr<UStringImpl> impl = createUninitialized(length, newBuffer);
-    copyChars(newBuffer, buffer, length);
-    return impl;
+    if (!characters || !length)
+        return empty();
+
+    UChar* data;
+    PassRefPtr<UStringImpl> string = createUninitialized(length, data);
+    for (unsigned i = 0; i != length; ++i) {
+        unsigned char c = characters[i];
+        data[i] = c;
+    }
+    return string;
+}
+
+PassRefPtr<UStringImpl> UStringImpl::create(const char* string)
+{
+    if (!string)
+        return empty();
+    return create(string, strlen(string));
 }
 
 SharedUChar* UStringImpl::baseSharedBuffer()

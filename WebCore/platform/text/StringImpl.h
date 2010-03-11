@@ -119,8 +119,8 @@ public:
     inline static unsigned computeHash(const char* data) { return WTF::stringHash(data); }
 
     StringImpl* ref() { m_refCountAndFlags += s_refCountIncrement; return this; }
-    ALWAYS_INLINE void deref() { m_refCountAndFlags -= s_refCountIncrement; if (!(m_refCountAndFlags & s_refCountMask)) delete this; }
-    ALWAYS_INLINE bool hasOneRef() const { return (m_refCountAndFlags & s_refCountMask) == s_refCountIncrement; }
+    ALWAYS_INLINE void deref() { m_refCountAndFlags -= s_refCountIncrement; if (!(m_refCountAndFlags & (s_refCountMask | s_refCountFlagStatic))) delete this; }
+    ALWAYS_INLINE bool hasOneRef() const { return (m_refCountAndFlags & (s_refCountMask | s_refCountFlagStatic)) == s_refCountIncrement; }
 
     // Returns a StringImpl suitable for use on another thread.
     PassRefPtr<StringImpl> crossThreadString();
@@ -201,8 +201,9 @@ private:
     // In this case, the m_data pointer is an "internal buffer", and does not need to be deallocated.
     BufferOwnership bufferOwnership() const { return static_cast<BufferOwnership>(m_refCountAndFlags & s_refCountMaskBufferOwnership); }
 
-    static const unsigned s_refCountMask = 0xFFFFFFF0;
-    static const unsigned s_refCountIncrement = 0x10;
+    static const unsigned s_refCountMask = 0xFFFFFFE0;
+    static const unsigned s_refCountIncrement = 0x20;
+    static const unsigned s_refCountFlagStatic = 0x10;
     static const unsigned s_refCountFlagHasTerminatingNullCharacter = 0x8;
     static const unsigned s_refCountFlagInTable = 0x4;
     static const unsigned s_refCountMaskBufferOwnership = 0x3;

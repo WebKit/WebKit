@@ -51,7 +51,6 @@ namespace WebCore {
         ~ThreadGlobalData();
 
         EventNames& eventNames() { return *m_eventNames; }
-        StringImpl* emptyString() { return m_emptyString; }
         HashSet<StringImpl*>& atomicStringTable() { return *m_atomicStringTable; }
         ThreadTimers& threadTimers() { return *m_threadTimers; }
 
@@ -64,7 +63,6 @@ namespace WebCore {
 #endif
 
     private:
-        StringImpl* m_emptyString;
         HashSet<StringImpl*>* m_atomicStringTable;
         EventNames* m_eventNames;
         ThreadTimers* m_threadTimers;

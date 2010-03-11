@@ -1,3 +1,33 @@
+2010-03-10  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Darin Adler, Geoffrey Garen, Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35991
+        Would be faster to not use a thread specific to implement StringImpl::empty()
+
+        Change JSC::UStringImpl's implementation of empty() match to match StringImpl's new implementation
+        (use a static defined within the empty() method), and change the interface to match too (return
+        a pointer not a reference). 
+
+        ~0% performance impact (possible minor progression from moving empty() from .h to .cpp).
+
+        * JavaScriptCore.exp:
+        * runtime/Identifier.cpp:
+        (JSC::Identifier::add):
+        (JSC::Identifier::addSlowCase):
+        * runtime/PropertyNameArray.cpp:
+        (JSC::PropertyNameArray::add):
+        * runtime/UString.cpp:
+        (JSC::initializeUString):
+        (JSC::UString::UString):
+        * runtime/UStringImpl.cpp:
+        (JSC::UStringImpl::empty):
+        (JSC::UStringImpl::create):
+        * runtime/UStringImpl.h:
+        (JSC::UStringImpl::adopt):
+        (JSC::UStringImpl::createUninitialized):
+        (JSC::UStringImpl::tryCreateUninitialized):
+
 2010-03-10  Dmitry Titov  <dimich@chromium.org>
 
         Not reviewed, fixing Snow Leopard build.
