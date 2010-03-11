@@ -1,3 +1,58 @@
+2010-03-08  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Adding support for the optional creation callback that could be
+        passed to openDatabase().
+
+        Tests: storage/open-database-creation-callback.html
+               storage/open-database-creation-callback-isolated-world.html
+
+        https://bugs.webkit.org/show_bug.cgi?id=34726
+
+        * Android.jscbindings.mk
+        * Android.v8bindings.mk
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::openDatabase):
+        * bindings/js/JSDatabaseCallback.cpp: Added.
+        (WebCore::JSDatabaseCallback::JSDatabaseCallback):
+        (WebCore::JSDatabaseCallback::~JSDatabaseCallback):
+        (WebCore::JSDatabaseCallback::handleEvent):
+        * bindings/js/JSDatabaseCallback.h: Added.
+        (WebCore::JSDatabaseCallback::create):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8DOMWindow::openDatabaseCallback):
+        * bindings/v8/custom/V8DatabaseCallback.cpp: Added.
+        (WebCore::V8DatabaseCallback::V8DatabaseCallback):
+        (WebCore::V8DatabaseCallback::~V8DatabaseCallback):
+        (WebCore::V8DatabaseCallback::handleEvent):
+        * bindings/v8/custom/V8DatabaseCallback.h: Added.
+        (WebCore::V8DatabaseCallback::create):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::openDatabase):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+        * storage/Database.cpp:
+        (WebCore::DatabaseCreationCallbackTask::create):
+        (WebCore::DatabaseCreationCallbackTask::performTask):
+        (WebCore::DatabaseCreationCallbackTask::DatabaseCreationCallbackTask):
+        (WebCore::Database::openDatabase):
+        (WebCore::Database::Database):
+        (WebCore::Database::performOpenAndVerify):
+        (WebCore::Database::performCreationCallback):
+        * storage/Database.h:
+        (WebCore::Database::isNew):
+        * storage/DatabaseCallback.h: Added.
+        (WebCore::DatabaseCallback::~DatabaseCallback):
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::openDatabase):
+        * workers/WorkerContext.h:
+
 2010-03-10  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Adam Barth.

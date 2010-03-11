@@ -54,6 +54,8 @@
 #include "V8BindingDOMWindow.h"
 #include "V8BindingState.h"
 #include "V8CustomEventListener.h"
+#include "V8Database.h"
+#include "V8DatabaseCallback.h"
 #include "V8GCForContextDispose.h"
 #include "V8HTMLAudioElementConstructor.h"
 #include "V8HTMLCollection.h"
@@ -771,6 +773,30 @@ v8::Handle<v8::Value> V8DOMWindow::clearIntervalCallback(const v8::Arguments& ar
     INC_STATS("DOM.DOMWindow.clearInterval");
     ClearTimeoutImpl(args);
     return v8::Undefined();
+}
+
+v8::Handle<v8::Value> V8DOMWindow::openDatabaseCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.DOMWindow.openDatabase");
+    if (args.Length() < 4)
+        return v8::Undefined();
+
+    DOMWindow* imp = V8DOMWindow::toNative(args.Holder());
+    if (!V8BindingSecurity::canAccessFrame(V8BindingState::Only(), imp->frame(), true))
+        return v8::Undefined();
+
+    ExceptionCode ec = 0;
+    String name = toWebCoreString(args[0]);
+    String version = toWebCoreString(args[1]);
+    String displayName = toWebCoreString(args[2]);
+    unsigned long estimatedSize = args[3]->IntegerValue();
+    RefPtr<DatabaseCallback> creationCallback;
+    if ((args.Length() >= 5) && args[4]->IsObject())
+        creationCallback = V8DatabaseCallback::create(args[4], imp->frame());
+
+    v8::Handle<v8::Value> result = toV8(imp->openDatabase(name, version, displayName, estimatedSize, creationCallback.release(), ec));
+    V8Proxy::setDOMException(ec);
+    return result;
 }
 
 bool V8DOMWindow::namedSecurityCheck(v8::Local<v8::Object> host, v8::Local<v8::Value> key, v8::AccessType type, v8::Local<v8::Value> data)
