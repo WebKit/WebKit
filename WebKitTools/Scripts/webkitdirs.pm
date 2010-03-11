@@ -541,6 +541,11 @@ sub builtDylibPathForName
         if (isDarwin() and -d "$configurationProductDir/lib/$libraryName.framework") {
             return "$configurationProductDir/lib/$libraryName.framework/$libraryName";
         } elsif (isWindows()) {
+            if (configuration() eq "Debug") {
+                # On Windows, there is a "d" suffix to the library name. See <http://trac.webkit.org/changeset/53924/>.
+                $libraryName .= "d";
+            }
+
             my $mkspec = `qmake -query QMAKE_MKSPECS`;
             $mkspec =~ s/[\n|\r]$//g;
             my $qtMajorVersion = retrieveQMakespecVar("$mkspec/qconfig.pri", "QT_MAJOR_VERSION");

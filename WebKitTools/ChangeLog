@@ -1,3 +1,16 @@
+2010-03-10  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Simon Hausmann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35840
+
+        Updates the subroutine builtDylibPathForName() so that it adds the "d" suffix to
+        the QtWebKit library name on Windows. This change makes run-launcher work again
+        under Windows. Moreover, this change corresponds to the change made in change-
+        set 53924 <http://trac.webkit.org/changeset/53924>.
+
+        * Scripts/webkitdirs.pm:
+
 2010-03-10  Adam Roben  <aroben@apple.com>
 
         Roll out the prepare-ChangeLog part of r55870
