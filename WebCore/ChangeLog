@@ -1,3 +1,18 @@
+2010-03-11  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        Allow custom memory allocation control for TimingFunction struct
+        https://bugs.webkit.org/show_bug.cgi?id=35855
+
+        Inherits the following struct from FastAllocBase because it is 
+        instantiated by 'new':
+
+        class name    - instantiated at: WebCore/'location'
+        TimingFuction - platform/graphics/GraphicsLayer.h:89
+
+        * platform/animation/TimingFunction.h:
+
 2010-03-10  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber stamped by Oliver Hunt.

@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-struct TimingFunction {
+struct TimingFunction : FastAllocBase {
     TimingFunction()
         : m_type(CubicBezierTimingFunction)
         , m_x1(0.25)
