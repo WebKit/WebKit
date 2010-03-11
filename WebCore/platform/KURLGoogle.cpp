@@ -1116,12 +1116,10 @@ bool protocolIs(const String& url, const char* protocol)
 {
     // Do the comparison without making a new string object.
     assertProtocolIsGood(protocol);
-    for (int i = 0; ; ++i) {
-        if (!protocol[i])
-            return url[i] == ':';
-        if (toASCIILower(url[i]) != protocol[i])
-            return false;
-    }
+
+    // Check the scheme like GURL does.
+    return url_util::FindAndCompareScheme(url.characters(), url.length(), 
+        protocol, NULL); 
 }
 
 inline bool KURL::protocolIs(const String& string, const char* protocol)

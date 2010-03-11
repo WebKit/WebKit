@@ -1,0 +1,2 @@
+This test passes if there is no alert dialog and the iframe contains a broken link.
+

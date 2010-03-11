@@ -1,3 +1,14 @@
+2010-03-10  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Make Chrome consistently handle leading format characters in URLs
+
+        https://bugs.webkit.org/show_bug.cgi?id=35948
+
+        * http/tests/security/xss-DENIED-window-open-javascript-url-leading-format-char-expected.txt: Added.
+        * http/tests/security/xss-DENIED-window-open-javascript-url-leading-format-char.html: Added.
+
 2010-03-10  Chris Fleizach  <cfleizach@apple.com>
 
         Skipping test on GTK and WIN. No Review.
