@@ -1,3 +1,19 @@
+2010-03-11  Martin Robinson  <mrobinson@webkit.org>
+
+        Reviewed by Adam Barth
+
+        Convert editing/selection/5136696.html to dumpAsText
+        https://bugs.webkit.org/show_bug.cgi?id=34306
+
+        * editing/selection/5136696-expected.txt: Added.
+        * editing/selection/5136696.html: Use dumpAsText now.
+        * platform/gtk/Skipped: Unskip this test in GTK+ now that it has expected result.
+        * platform/mac/editing/selection/5136696-expected.checksum: Removed.
+        * platform/mac/editing/selection/5136696-expected.png: Removed.
+        * platform/mac/editing/selection/5136696-expected.txt: Removed.
+        * platform/qt/editing/selection/5136696-expected.txt: Removed.
+        * platform/win/editing/selection/5136696-expected.txt: Removed.
+
 2010-03-11  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
