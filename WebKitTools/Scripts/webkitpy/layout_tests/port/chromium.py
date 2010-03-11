@@ -169,6 +169,12 @@ class ChromiumPort(base.Port):
         return self.test_base_platform_names() + ('win-xp',
             'win-vista', 'win-7')
 
+    def test_platform_name_to_name(self, test_platform_name):
+        if test_platform_name in self.test_platform_names():
+            return 'chromium-' + test_platform_name
+        raise ValueError('Unsupported test_platform_name: %s' %
+                         test_platform_name)
+
     #
     # PROTECTED METHODS
     #

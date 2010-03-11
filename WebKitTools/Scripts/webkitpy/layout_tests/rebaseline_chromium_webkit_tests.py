@@ -404,7 +404,7 @@ class Rebaseliner(object):
         for name in zip_namelist:
             _log.debug('  ' + name)
 
-        platform = self._port.name()
+        platform = self._port.test_platform_name_to_name(self._platform)
         _log.debug('Platform dir: "%s"', platform)
 
         test_no = 1
@@ -986,6 +986,11 @@ def main():
                                    ' rebaselining comparison.'))
 
     options = option_parser.parse_args()[0]
+
+    # FIXME: Setting options.chromium to True forces port.get() to only look
+    # at Chromium ports; we hard-code this because this script doesn't work
+    # on non-Chromium ports yet. We should fix that.
+    options.chromium = True
     port_obj = port.get(None, options)
 
     # Set up our logging format.

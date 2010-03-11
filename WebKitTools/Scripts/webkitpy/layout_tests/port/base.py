@@ -465,6 +465,12 @@ class Port(object):
         might return 'mac' as a test_platform name'."""
         raise NotImplementedError('Port.platforms')
 
+    def test_platform_name_to_name(self, test_platform_name):
+        """Returns the Port platform name that corresponds to the name as
+        referenced in the expectations file. E.g., "mac" returns
+        "chromium-mac" on the Chromium ports."""
+        raise NotImplementedError('Port.test_platform_name_to_name')
+
     def version(self):
         """Returns a string indicating the version of a given platform, e.g.
         '-leopard' or '-xp'.
