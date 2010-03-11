@@ -2,6 +2,19 @@
 # git config merge.changelog.driver "resolve-ChangeLogs --merge-driver %O %A %B"
 ChangeLog* merge=changelog
 
+# To enable smart diffing of ObjC[++] files, run the following commands:
+# git config diff.objcpp.xfuncname "^[-+@a-zA-Z_].*$"
+# git config diff.objcppheader.xfuncname "^[@a-zA-Z_].*$"
+*.m diff=objc
+*.mm diff=objcpp
+mac/*.h diff=objcppheader
+*/mac/*.h diff=objcppheader
+*/*/mac/*.h diff=objcppheader
+objc/*.h diff=objcppheader
+*/objc/*.h diff=objcppheader
+*/*/objc/*.h diff=objcppheader
+WebKitTools/WebKitLauncher/*.h diff=objcppheader
+
 JavaScriptCore/JavaScriptCore.vcproj/JavaScriptCore.sln -crlf
 JavaScriptCore/JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj -crlf
 JavaScriptCore/JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreCF.vsprops -crlf

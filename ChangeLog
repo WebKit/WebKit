@@ -1,3 +1,15 @@
+2010-03-11  Adam Roben  <aroben@apple.com>
+
+        Teach git about ObjC files
+
+        Fixes <http://webkit.org/b/36015>.
+
+        Reviewed by Tim Hatcher.
+
+        * .gitattributes: Set the diff attribute for .m and .mm files, and .h
+        files in Mac-specific directories. This can be used to generate
+        more-readable diffs of ObjC files.
+
 2010-03-09  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Unreviewed. Versioning for 1.1.23.
