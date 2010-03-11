@@ -1,5 +1,17 @@
 2010-03-11  Chris Fleizach  <cfleizach@apple.com>
 
+        Fixing GTK. No review.
+
+        support lang attribute on <option> elements
+        https://bugs.webkit.org/show_bug.cgi?id=36021
+ 
+        We don't need to cast to AccessibilityRenderObject to get language().
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (webkit_accessible_document_get_locale):
+
+2010-03-11  Chris Fleizach  <cfleizach@apple.com>
+
         Reviewed by Darin Adler.
 
         support lang attribute on <option> elements

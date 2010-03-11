@@ -1568,7 +1568,7 @@ static const gchar* webkit_accessible_document_get_locale(AtkDocument* document)
 {
 
     // TODO: Should we fall back on lang xml:lang when the following comes up empty?
-    String language = static_cast<AccessibilityRenderObject*>(core(document))->language();
+    String language = core(document)->language();
     if (!language.isEmpty())
         return returnString(language);
 
