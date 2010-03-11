@@ -1,3 +1,15 @@
+2010-03-11  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Fix style issues and improve comments from 
+        http://trac.webkit.org/changeset/55853.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36029
+
+        * platform/animation/TimingFunction.h:
+        (WebCore::TimingFunction::TimingFunction):
+
 2010-03-11  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
