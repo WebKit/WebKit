@@ -1,3 +1,14 @@
+2010-03-11  Chris Fleizach  <cfleizach@apple.com>
+
+        Unreviewed.
+
+        VoiceOver can navigate to hidden content in widget (WAI-ARIA)
+        https://bugs.webkit.org/show_bug.cgi?id=35986
+
+        Wrong files were placed in skipped lists.
+
+        * platform/gtk/Skipped:
+
 2010-03-10  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.

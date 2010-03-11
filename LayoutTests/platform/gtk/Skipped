@@ -48,7 +48,7 @@ accessibility/aria-checkbox-text.html
 accessibility/aria-combobox.html
 accessibility/aria-disabled.html
 accessibility/aria-hidden.html
-accessibility/aria-hidden-with-element.html
+accessibility/aria-hidden-with-elements.html
 accessibility/aria-label.html
 accessibility/aria-labelledby-overrides-label.html
 accessibility/aria-labelledby-stay-within.html
