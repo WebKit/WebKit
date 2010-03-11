@@ -1,3 +1,14 @@
+2010-03-11  Nate Chapin  <japhet@chromium.org>
+
+        Unreviewed, Chromium mac build fix.
+
+        Add an explicit copy constructor to TimingFunction.
+        http://trac.webkit.org/changeset/55835 trigged an inlining
+        bug in gcc that the copy constructor resolves.
+
+        * platform/animation/TimingFunction.h:
+        (WebCore::TimingFunction::TimingFunction):
+
 2010-03-11  Chris Fleizach  <cfleizach@apple.com>
 
         Fixing GTK. No review.
