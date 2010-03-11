@@ -49,9 +49,7 @@ public:
     virtual bool canSetSelectedChildrenAttribute() const;
     void setSelectedChildren(AccessibilityChildrenVector&);
     virtual AccessibilityRole roleValue() const { return ListBoxRole; }
-    
-    virtual bool accessibilityIsIgnored() const { return false; }
-    
+        
     virtual void selectedChildren(AccessibilityChildrenVector&);
     virtual void visibleChildren(AccessibilityChildrenVector&);
     
@@ -59,6 +57,7 @@ public:
 
 private:    
     AccessibilityObject* listBoxOptionAccessibilityObject(HTMLElement*) const;
+    virtual bool accessibilityIsIgnored() const;
 };
     
 } // namespace WebCore

@@ -80,7 +80,7 @@ void AccessibilityListBox::addChildren()
         // The cast to HTMLElement below is safe because the only other possible listItem type
         // would be a WMLElement, but WML builds don't use accessibility features at all.
         AccessibilityObject* listOption = listBoxOptionAccessibilityObject(static_cast<HTMLElement*>(listItems[i]));
-        if (listOption)
+        if (listOption && !listOption->accessibilityIsIgnored())
             m_children.append(listOption);
     }
 }
@@ -151,6 +151,14 @@ AccessibilityObject* AccessibilityListBox::listBoxOptionAccessibilityObject(HTML
     
     return listBoxObject;
 }
+    
+bool AccessibilityListBox::accessibilityIsIgnored() const
+{
+    if (accessibilityIsIgnoredBase())
+        return true;
+    
+    return false;
+}
 
 AccessibilityObject* AccessibilityListBox::doAccessibilityHitTest(const IntPoint& point) const
 {
@@ -165,15 +173,20 @@ AccessibilityObject* AccessibilityListBox::doAccessibilityHitTest(const IntPoint
     
     IntRect parentRect = boundingBoxRect();
     
-    const Vector<Element*>& listItems = static_cast<HTMLSelectElement*>(node)->listItems();
-    unsigned length = listItems.size();
+    AccessibilityObject* listBoxOption = 0;
+    unsigned length = m_children.size();
     for (unsigned i = 0; i < length; i++) {
         IntRect rect = toRenderListBox(m_renderer)->itemBoundingBoxRect(parentRect.x(), parentRect.y(), i);
         // The cast to HTMLElement below is safe because the only other possible listItem type
         // would be a WMLElement, but WML builds don't use accessibility features at all.
-        if (rect.contains(point))
-            return listBoxOptionAccessibilityObject(static_cast<HTMLElement*>(listItems[i]));
+        if (rect.contains(point)) {
+            listBoxOption = m_children[i].get();
+            break;
+        }
     }
+    
+    if (listBoxOption && !listBoxOption->accessibilityIsIgnored())
+        return listBoxOption;
     
     return axObjectCache()->getOrCreate(m_renderer);
 }

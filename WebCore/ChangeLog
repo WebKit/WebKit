@@ -1,3 +1,52 @@
+2010-03-10  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        VoiceOver can navigate to hidden content in widget (WAI-ARIA)
+        https://bugs.webkit.org/show_bug.cgi?id=35986
+
+        Elements that are subclassers of AXRenderObject have not been respecting
+        aria-hidden and other cases that would make them ignored. This applies
+        to tables, rows, cells, select boxes, sliders, and lists. Select boxes
+        also need to make sure their option elements respect aria-hidden as well.
+
+        Test: accessibility/aria-hidden-with-elements.html
+
+        * accessibility/AccessibilityList.cpp:
+        (WebCore::AccessibilityList::accessibilityIsIgnored):
+        * accessibility/AccessibilityListBox.cpp:
+        (WebCore::AccessibilityListBox::addChildren):
+        (WebCore::AccessibilityListBox::accessibilityIsIgnored):
+        (WebCore::AccessibilityListBox::doAccessibilityHitTest):
+        * accessibility/AccessibilityListBox.h:
+        * accessibility/AccessibilityListBoxOption.cpp:
+        (WebCore::AccessibilityListBoxOption::accessibilityIsIgnored):
+        * accessibility/AccessibilityListBoxOption.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnoredCommon):
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnored):
+        (WebCore::AccessibilityRenderObject::doAccessibilityHitTest):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/AccessibilitySlider.cpp:
+        (WebCore::AccessibilitySlider::accessibilityIsIgnored):
+        * accessibility/AccessibilitySlider.h:
+        (WebCore::AccessibilitySlider::roleValue):
+        (WebCore::AccessibilitySliderThumb::roleValue):
+        (WebCore::AccessibilitySliderThumb::accessibilityIsIgnored):
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::accessibilityIsIgnored):
+        * accessibility/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::accessibilityIsIgnored):
+        * accessibility/AccessibilityTableColumn.cpp:
+        (WebCore::AccessibilityTableColumn::accessibilityIsIgnored):
+        * accessibility/AccessibilityTableColumn.h:
+        (WebCore::AccessibilityTableColumn::roleValue):
+        * accessibility/AccessibilityTableHeaderContainer.cpp:
+        (WebCore::AccessibilityTableHeaderContainer::accessibilityIsIgnored):
+        * accessibility/AccessibilityTableHeaderContainer.h:
+        * accessibility/AccessibilityTableRow.cpp:
+        (WebCore::AccessibilityTableRow::accessibilityIsIgnored):
+
 2010-03-10  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Darin Adler.

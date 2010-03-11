@@ -158,6 +158,18 @@ AccessibilityObject* AccessibilityTableColumn::headerObjectForSection(RenderTabl
     return m_parentTable->axObjectCache()->getOrCreate(cell);
 }
     
+bool AccessibilityTableColumn::accessibilityIsIgnored() const
+{
+    if (!m_parentTable)
+        return true;
+    
+#if PLATFORM(GTK)
+    return true;
+#endif
+    
+    return m_parentTable->accessibilityIsIgnored();
+}
+    
 void AccessibilityTableColumn::addChildren()
 {
     ASSERT(!m_haveChildren); 

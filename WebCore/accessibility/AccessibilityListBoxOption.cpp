@@ -105,6 +105,17 @@ IntRect AccessibilityListBoxOption::elementRect() const
     return rect;
 }
 
+bool AccessibilityListBoxOption::accessibilityIsIgnored() const
+{
+    if (!m_optionElement)
+        return true;
+    
+    if (equalIgnoringCase(getAttribute(m_optionElement, aria_hiddenAttr), "true"))
+        return true;
+    
+    return parentObject()->accessibilityIsIgnored();
+}
+
 bool AccessibilityListBoxOption::canSetSelectedAttribute() const
 {
     if (!m_optionElement)

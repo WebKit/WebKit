@@ -1458,8 +1458,10 @@ bool AccessibilityRenderObject::isAllowedChildOfTree() const
     return true;
 }
     
-bool AccessibilityRenderObject::accessibilityIsIgnored() const
+bool AccessibilityRenderObject::accessibilityIsIgnoredBase() const
 {
+    // The following cases can apply to any element that's a subclass of AccessibilityRenderObject.
+    
     // Is the platform interested in this object?
     AccessibilityObjectPlatformInclusion decision = accessibilityPlatformIncludesObject();
     if (decision == IncludeObject)
@@ -1477,7 +1479,18 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
     
     if (isPresentationalChildOfAriaRole())
         return true;
-        
+    
+    return false;
+}  
+ 
+bool AccessibilityRenderObject::accessibilityIsIgnored() const
+{
+    // Check first if any of the common reasons cause this element to be ignored.
+    // Then process other use cases that need to be applied to all the various roles
+    // that AccessibilityRenderObjects take on.
+    if (accessibilityIsIgnoredBase())
+        return true;
+    
     // If this element is within a parent that cannot have children, it should not be exposed.
     if (isDescendantOfBarrenParent())
         return true;    
@@ -2494,8 +2507,12 @@ AccessibilityObject* AccessibilityRenderObject::doAccessibilityHitTest(const Int
     
     AccessibilityObject* result = obj->document()->axObjectCache()->getOrCreate(obj);
 
-    if (obj->isListBox())
-        return static_cast<AccessibilityListBox*>(result)->doAccessibilityHitTest(point);
+    if (obj->isListBox()) {
+        // Make sure the children are initialized so that hit testing finds the right element.
+        AccessibilityListBox* listBox = static_cast<AccessibilityListBox*>(result);
+        listBox->updateChildrenIfNecessary();
+        return listBox->doAccessibilityHitTest(point);
+    }
         
     if (result->accessibilityIsIgnored()) {
         // If this element is the label of a control, a hit test should return the control.

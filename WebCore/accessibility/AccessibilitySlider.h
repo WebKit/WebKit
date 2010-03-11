@@ -42,7 +42,6 @@ public:
     virtual ~AccessibilitySlider() { }
 
     virtual AccessibilityRole roleValue() const { return SliderRole; }
-    virtual bool accessibilityIsIgnored() const { return false; }
 
     virtual bool isSlider() const { return true; }
 
@@ -63,6 +62,7 @@ protected:
 
 private:
     HTMLInputElement* element() const;
+    virtual bool accessibilityIsIgnored() const;
 };
 
 class AccessibilitySliderThumb : public AccessibilityObject {
@@ -72,7 +72,6 @@ public:
     virtual ~AccessibilitySliderThumb() { }
 
     virtual AccessibilityRole roleValue() const { return SliderThumbRole; }
-    virtual bool accessibilityIsIgnored() const { return false; }
 
     void setParentObject(AccessibilitySlider* slider) { m_parentSlider = slider; }
     virtual AccessibilityObject* parentObject() const { return m_parentSlider; }
@@ -82,6 +81,7 @@ public:
 
 private:
     AccessibilitySliderThumb();
+    virtual bool accessibilityIsIgnored() const { return false; }
 
     AccessibilitySlider* m_parentSlider;
 };

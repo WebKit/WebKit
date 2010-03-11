@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<table border=1 summary="test" aria-hidden="true">
+<tr><td>cell</td><td>cell</td><td>cell</td></tr>
+<tr><td>cell</td><td>cell</td><td>cell</td></tr>
+</table>
+
+<div role="grid" aria-hidden="true">
+<div role="row"><div role="gridcell">cell</div></div>
+</div>
+
+<ul aria-hidden="true">
+<li>test
+<li>test
+</ul>
+
+<select size=10 aria-hidden="true">
+<option>option
+<option>option
+</select>
+
+<h1>heading</h1>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that aria-hidden works as expected on elements that are subclasses of AccessibilityRenderObject");
+
+    if (window.accessibilityController) {
+       var root = accessibilityController.rootElement;
+
+       // first child is an AXGroup that has no children
+       var child = root.childAtIndex(0).childAtIndex(0);
+       shouldBe("child.childrenCount", "0");
+
+       // second child is an AXGroup that has no children
+       child = root.childAtIndex(0).childAtIndex(1);
+       shouldBe("child.childrenCount", "0");
+
+       // the next child we ask for from the web area should be the heading, and we should have skipped over everything else.
+       child = root.childAtIndex(0).childAtIndex(2);
+       shouldBe("child.role", "'AXRole: AXHeading'");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

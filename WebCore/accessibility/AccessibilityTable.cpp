@@ -445,9 +445,12 @@ AccessibilityRole AccessibilityTable::roleValue() const
     
 bool AccessibilityTable::accessibilityIsIgnored() const
 {
+    if (accessibilityIsIgnoredBase())
+        return true;
+
     if (!isDataTable())
         return AccessibilityRenderObject::accessibilityIsIgnored();
-    
+        
     return false;
 }
     

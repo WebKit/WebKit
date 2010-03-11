@@ -68,6 +68,18 @@ IntSize AccessibilityTableHeaderContainer::size() const
     return elementRect().size();
 }
     
+bool AccessibilityTableHeaderContainer::accessibilityIsIgnored() const
+{
+    if (!m_parentTable)
+        return true;
+    
+#if PLATFORM(GTK)
+    return true;
+#endif
+
+    return m_parentTable->accessibilityIsIgnored();
+}
+
 void AccessibilityTableHeaderContainer::addChildren()
 {
     ASSERT(!m_haveChildren); 
