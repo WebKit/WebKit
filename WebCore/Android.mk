@@ -239,6 +239,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	\
 	html/Blob.cpp \
 	html/CollectionCache.cpp \
+	html/DOMFormData.cpp \
 	html/File.cpp \
 	html/FileList.cpp \
 	html/FormDataList.cpp \

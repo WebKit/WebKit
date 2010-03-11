@@ -55,6 +55,7 @@ public:
     };
 
     const Vector<Item>& list() const { return m_list; }
+    const TextEncoding& encoding() const { return m_encoding; }
 
 private:
     void appendString(const CString&);

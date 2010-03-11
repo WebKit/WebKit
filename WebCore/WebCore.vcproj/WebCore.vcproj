@@ -29973,6 +29973,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\DOMFormData.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\DOMFormData.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\File.cpp"
 				>
 			</File>

@@ -1008,6 +1008,8 @@ webcore_sources += \
 	WebCore/html/DateComponents.h \
 	WebCore/html/DOMDataGridDataSource.cpp \
 	WebCore/html/DOMDataGridDataSource.h \
+	WebCore/html/DOMFormData.cpp \
+	WebCore/html/DOMFormData.h \
 	WebCore/html/File.cpp \
 	WebCore/html/File.h \
 	WebCore/html/FileList.cpp \

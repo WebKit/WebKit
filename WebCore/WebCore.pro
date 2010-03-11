@@ -598,6 +598,7 @@ SOURCES += \
     html/DataGridColumnList.cpp \
     html/DateComponents.cpp \
     html/DOMDataGridDataSource.cpp \
+    html/DOMFormData.cpp \
     html/File.cpp \
     html/FileList.cpp \
     html/FormDataList.cpp \
@@ -1295,6 +1296,7 @@ HEADERS += \
     html/DataGridColumnList.h \
     html/DateComponents.h \
     html/DOMDataGridDataSource.h \
+    html/DOMFormData.h \
     html/File.h \
     html/FileList.h \
     html/FormDataList.h \

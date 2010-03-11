@@ -1412,6 +1412,8 @@
             'html/DataGridColumn.h',
             'html/DOMDataGridDataSource.cpp',
             'html/DOMDataGridDataSource.h',
+            'html/DOMFormData.cpp',
+            'html/DOMFormData.h',
             'html/DataGridColumnList.cpp',
             'html/DataGridColumnList.h',
             'html/DateComponents.cpp',
