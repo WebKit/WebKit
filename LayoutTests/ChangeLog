@@ -1,3 +1,16 @@
+2010-03-10  Chang Shu  <chang.shu@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        While calculating alpha channel, convert the floating point value to
+        an integer in [0, 256) with equal distribution.
+        Updated test results based on this new behavior.
+        https://bugs.webkit.org/show_bug.cgi?id=22150
+
+        * fast/canvas/canvas-alphaImageData-behavior-expected.txt:
+        * fast/canvas/canvas-alphaImageData-behavior.js:
+        * platform/qt/Skipped:
+
 2010-03-10  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.

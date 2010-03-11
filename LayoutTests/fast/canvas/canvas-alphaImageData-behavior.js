@@ -9,7 +9,7 @@ var imgdata = imageData.data;
 shouldBe("imgdata[4]", "0");
 shouldBe("imgdata[5]", "255");
 shouldBe("imgdata[6]", "0");
-shouldBe("imgdata[7]", "253");
+shouldBe("imgdata[7]", "254");
 
 ctx.putImageData(imageData, 0, 0);
 
@@ -18,6 +18,6 @@ imgdata = ctx.getImageData(0, 0, 200, 200).data;
 shouldBe("imgdata[4]", "0");
 shouldBe("imgdata[5]", "255");
 shouldBe("imgdata[6]", "0");
-shouldBe("imgdata[7]", "253");
+shouldBe("imgdata[7]", "254");
 
 var successfullyParsed = true;

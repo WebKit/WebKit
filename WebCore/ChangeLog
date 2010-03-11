@@ -1,3 +1,14 @@
+2010-03-10  Chang Shu  <chang.shu@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        While calculating alpha channel, convert the floating point value to
+        an integer in [0, 256) with equal distribution.
+        https://bugs.webkit.org/show_bug.cgi?id=22150
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseColorParameters):
+
 2010-03-10  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Darin Adler, Geoffrey Garen, Maciej Stachowiak.

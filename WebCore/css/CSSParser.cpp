@@ -3591,7 +3591,9 @@ bool CSSParser::parseColorParameters(CSSParserValue* value, int* colorArray, boo
         v = args->next();
         if (!validUnit(v, FNumber, true))
             return false;
-        colorArray[3] = static_cast<int>(max(0.0, min(1.0, v->fValue)) * 255);
+        // Convert the floating pointer number of alpha to an integer in the range [0, 256),
+        // with an equal distribution across all 256 values.
+        colorArray[3] = static_cast<int>(max(0.0, min(1.0, v->fValue)) * nextafter(256.0, 0.0));
     }
     return true;
 }

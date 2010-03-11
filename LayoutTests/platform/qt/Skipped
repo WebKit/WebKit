@@ -143,7 +143,6 @@ fast/workers/shared-worker-frame-lifecycle.html
 # ------- works on 64 bit but not on 32 bit
 svg/custom/path-getTotalLength.svg
 svg/custom/glyph-setting-d-attribute.svg
-fast/canvas/canvas-getImageData.html
 
 # ------- crashes
 fast/text/find-hidden-text.html
