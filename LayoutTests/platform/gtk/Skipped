@@ -5756,9 +5756,6 @@ fast/dom/Window/window-postmessage-clone-frames.html
 # Relies on WebKit API [WebView _loadBackForwardListFromOtherView:]
 fast/loader/crash-copying-backforwardlist.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=34086
-media/video-reverse-play-duration.html
-
 # Intermittently timing out on Gtk Debug Bot:
 # https://bugs.webkit.org/show_bug.cgi?id=33445
 http/tests/incremental/split-hex-entities.pl

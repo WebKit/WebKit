@@ -1,3 +1,11 @@
+2010-03-11  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed.
+
+        Unskip the fixed test that was (accidently?) re-skipped in r54205.
+
+        * platform/gtk/Skipped:
+
 2010-03-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] storage/open-database-creation-callback-isolated-world.html was introduced in r55823,
