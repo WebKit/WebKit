@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 University of Szeged
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -580,11 +581,13 @@ private:
         OP_MOV_reg_T1       = 0x4600,
         OP_BLX              = 0x4700,
         OP_BX               = 0x4700,
-        OP_LDRH_reg_T1      = 0x5A00,
         OP_STR_reg_T1       = 0x5000,
         OP_LDR_reg_T1       = 0x5800,
+        OP_LDRH_reg_T1      = 0x5A00,
+        OP_LDRB_reg_T1      = 0x5C00,
         OP_STR_imm_T1       = 0x6000,
         OP_LDR_imm_T1       = 0x6800,
+        OP_LDRB_imm_T1      = 0x7800,
         OP_LDRH_imm_T1      = 0x8800,
         OP_STR_imm_T2       = 0x9000,
         OP_LDR_imm_T2       = 0x9800,
@@ -629,12 +632,15 @@ private:
         OP_SUB_imm_T4   = 0xF2A0,
         OP_MOVT         = 0xF2C0,
         OP_NOP_T2a      = 0xF3AF,
+        OP_LDRB_imm_T3  = 0xF810,
+        OP_LDRB_reg_T2  = 0xF810,
         OP_LDRH_reg_T2  = 0xF830,
         OP_LDRH_imm_T3  = 0xF830,
         OP_STR_imm_T4   = 0xF840,
         OP_STR_reg_T2   = 0xF840,
         OP_LDR_imm_T4   = 0xF850,
         OP_LDR_reg_T2   = 0xF850,
+        OP_LDRB_imm_T2  = 0xF890,
         OP_LDRH_imm_T2  = 0xF8B0,
         OP_STR_imm_T3   = 0xF8C0,
         OP_LDR_imm_T3   = 0xF8D0,
@@ -1076,6 +1082,52 @@ public:
             m_formatter.oneWordOp7Reg3Reg3Reg3(OP_LDRH_reg_T1, rm, rn, rt);
         else
             m_formatter.twoWordOp12Reg4FourFours(OP_LDRH_reg_T2, rn, FourFours(rt, 0, shift, rm));
+    }
+
+    void ldrb(RegisterID rt, RegisterID rn, ARMThumbImmediate imm)
+    {
+        ASSERT(rn != ARMRegisters::pc); // LDR (literal)
+        ASSERT(imm.isUInt12());
+
+        if (!((rt | rn) & 8) && imm.isUInt5())
+            m_formatter.oneWordOp5Imm5Reg3Reg3(OP_LDRB_imm_T1, imm.getUInt5(), rn, rt);
+        else
+            m_formatter.twoWordOp12Reg4Reg4Imm12(OP_LDRB_imm_T2, rn, rt, imm.getUInt12());
+    }
+
+    void ldrb(RegisterID rt, RegisterID rn, int offset, bool index, bool wback)
+    {
+        ASSERT(rt != ARMRegisters::pc);
+        ASSERT(rn != ARMRegisters::pc);
+        ASSERT(index || wback);
+        ASSERT(!wback | (rt != rn));
+
+        bool add = true;
+        if (offset < 0) {
+            add = false;
+            offset = -offset;
+        }
+
+        ASSERT(!(offset & ~0xff));
+
+        offset |= (wback << 8);
+        offset |= (add   << 9);
+        offset |= (index << 10);
+        offset |= (1 << 11);
+
+        m_formatter.twoWordOp12Reg4Reg4Imm12(OP_LDRB_imm_T3, rn, rt, offset);
+    }
+
+    void ldrb(RegisterID rt, RegisterID rn, RegisterID rm, unsigned shift = 0)
+    {
+        ASSERT(rn != ARMRegisters::pc); // LDR (literal)
+        ASSERT(!BadReg(rm));
+        ASSERT(shift <= 3);
+
+        if (!shift && !((rt | rn | rm) & 8))
+            m_formatter.oneWordOp7Reg3Reg3Reg3(OP_LDRB_reg_T1, rm, rn, rt);
+        else
+            m_formatter.twoWordOp12Reg4FourFours(OP_LDRB_reg_T2, rn, FourFours(rt, 0, shift, rm));
     }
 
     void lsl(RegisterID rd, RegisterID rm, int32_t shiftAmount)

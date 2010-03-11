@@ -1,3 +1,19 @@
+2010-03-11  Gabor Loki  <loki@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        Buildfix for Thumb-2 after r55684. Add branch8 and branchTest8 functions.
+        https://bugs.webkit.org/show_bug.cgi?id=35892
+
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::):
+        (JSC::ARMv7Assembler::ldrb):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::load8):
+        (JSC::MacroAssemblerARMv7::branch8):
+        (JSC::MacroAssemblerARMv7::branchTest8):
+        (JSC::MacroAssemblerARMv7::setTest8):
+
 2010-03-10  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber stamped by Oliver Hunt.
