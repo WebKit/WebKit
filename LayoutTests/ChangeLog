@@ -1,3 +1,12 @@
+2010-03-11  Diego Gonzalez  <diego.gonzalez@openbossa.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Access key modifier should be Ctrl+Alt for Darwin derived OS and Alt for the others
+        https://bugs.webkit.org/show_bug.cgi?id=35993
+
+        * platform/qt/Skipped:
+
 2010-03-11  Chris Fleizach  <cfleizach@apple.com>
 
         Unreviewed.

@@ -462,12 +462,10 @@ fast/events/standalone-image-drag-to-editable.html
 fast/events/updateLayoutForHitTest.html
 fast/forms/input-list.html
 fast/forms/input-selectedoption.html
-fast/forms/access-key.html
 fast/forms/button-cannot-be-nested.html
 fast/forms/control-restrict-line-height.html
 fast/forms/drag-into-textarea.html
 fast/forms/focus-selection-input.html
-fast/forms/focus-selection-textarea.html
 fast/forms/input-readonly-autoscroll.html
 fast/forms/input-text-click-outside.html
 fast/forms/input-text-double-click.html
@@ -1158,7 +1156,6 @@ fast/dynamic/selection-highlight-adjust.html
 fast/encoding/char-decoding.html
 fast/encoding/frame-default-enc.html
 fast/encoding/invalid-xml.html
-fast/events/access-key-self-destruct.html
 fast/events/attempt-scroll-with-no-scrollbars.html
 fast/events/key-events-in-input-button.html
 fast/forms/input-align-image.html
@@ -1166,7 +1163,6 @@ fast/forms/input-align.html
 fast/forms/input-double-click-selection-gap-bug.html
 fast/forms/input-radio-checked-tab.html
 fast/forms/input-text-option-delete.html
-fast/forms/legend-access-key.html
 fast/forms/textarea-rows-cols.html
 fast/frames/onlyCommentInIFrame.html
 fast/inline/positionedLifetime.html
