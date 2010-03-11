@@ -1,3 +1,14 @@
+2010-03-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed buildfix after r55833.
+
+        Rename all instances of data() to characters()
+
+        * bridge/qt/qt_class.cpp:
+        (JSC::Bindings::QtClass::fieldNamed):
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::convertValueToQVariant):
+
 2010-03-11  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Simon Hausmann.
