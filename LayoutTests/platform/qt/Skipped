@@ -232,6 +232,9 @@ editing/execCommand/delete-image-in-anchor.html
 
 # Missing layoutTestController.setAlwaysAcceptCookies()
 http/tests/plugins/third-party-cookie-accept-policy.html
+
+# Missing layoutTestController.evaluateScriptInIsolatedWorld()
+storage/open-database-creation-callback-isolated-world.html
 # ============================================================================= #
 
 # ------- missing eventSender.beginDragWithFiles

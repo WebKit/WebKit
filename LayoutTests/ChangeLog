@@ -1,3 +1,10 @@
+2010-03-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] storage/open-database-creation-callback-isolated-world.html was introduced in r55823,
+        but layoutTestController.evaluateScriptInIsolatedWorld() is unimplemented now.
+
+        * platform/qt/Skipped: storage/open-database-creation-callback-isolated-world.html skipped.
+
 2010-03-10  Chris Fleizach  <cfleizach@apple.com>
 
         Unreviewed.
