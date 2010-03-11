@@ -434,6 +434,7 @@ static void resetDefaultsToConsistentValues()
     // So, turn it off for now, but we might want to turn it back on some day.
     [preferences setUsesPageCache:NO];
     [preferences setAcceleratedCompositingEnabled:YES];
+    [preferences setWebGLEnabled:NO];
 
     [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain];
 
