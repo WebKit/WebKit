@@ -1,5 +1,12 @@
 2010-03-11  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Unreviewed buildfix after r55823. (To fix Qt --minimal build.)
+        I have déjà vu, I'm sure that I did it before. (r55598)
+
+        * bindings/js/JSDOMWindowCustom.cpp: Missing #if ENABLE(DATABASE) guard added. 
+
+2010-03-11  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unreviewed buildfix after r55833.
 
         Rename all instances of data() to characters()
