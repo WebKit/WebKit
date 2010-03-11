@@ -1005,9 +1005,6 @@ PassRefPtr<StringImpl> StringImpl::createWithTerminatingNullCharacter(const Stri
 
 PassRefPtr<StringImpl> StringImpl::threadsafeCopy() const
 {
-    // Special-case empty strings to make sure that per-thread empty string instance isn't returned.
-    if (m_length == 0)
-        return adoptRef(new StringImpl);
     return create(m_data, m_length);
 }
 
