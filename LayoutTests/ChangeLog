@@ -1,3 +1,17 @@
+2010-03-10  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        http/tests/security/xss-DENIED-window-open-javascript-url.html timed out on Windows Debug Bot
+        https://bugs.webkit.org/show_bug.cgi?id=33349
+
+        Remove another test that has the same problem.  We need to find a way
+        to relaibly test what happens when you mix JavaScript URLs and
+        window.open.
+
+        * http/tests/security/xss-DENIED-window-open-javascript-url-leading-format-char-expected.txt: Removed.
+        * http/tests/security/xss-DENIED-window-open-javascript-url-leading-format-char.html: Removed.
+
 2010-03-08  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Adam Barth.
