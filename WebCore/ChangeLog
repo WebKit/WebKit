@@ -2,6 +2,14 @@
 
         Reviewed by Tor Arne Vestbø.
 
+        [Qt] Make it possible to do builds with separate debug info in packages
+
+        * WebCore.pro:
+
+2010-03-11  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
         [Qt] Avoid double-buffering with Qt image decoders
 
         Pass QIODevice::Unbuffered when opening the QBuffer that
