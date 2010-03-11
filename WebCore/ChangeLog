@@ -1,3 +1,16 @@
+2010-03-11  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Fix build breakage with ENABLE_3D_CANVAS=0
+        https://bugs.webkit.org/show_bug.cgi?id=35995
+
+        No new tests; verified in Chromium that WebGL is disabled in
+        ENABLE_3D_CANVAS=0 builds.
+
+        * bindings/v8/custom/V8DocumentCustom.cpp:
+        * bindings/v8/custom/V8HTMLCanvasElementCustom.cpp:
+
 2010-03-11  Nate Chapin  <japhet@chromium.org>
 
         Unreviewed, Chromium mac build fix.

@@ -46,7 +46,9 @@
 #include "V8IsolatedContext.h"
 #include "V8Node.h"
 #include "V8Proxy.h"
+#if ENABLE(3D_CANVAS)
 #include "V8WebGLRenderingContext.h"
+#endif
 #include "V8XPathNSResolver.h"
 #include "V8XPathResult.h"
 

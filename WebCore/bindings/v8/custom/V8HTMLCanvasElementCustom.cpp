@@ -39,7 +39,9 @@
 #include "V8CanvasRenderingContext2D.h"
 #include "V8Node.h"
 #include "V8Proxy.h"
+#if ENABLE(3D_CANVAS)
 #include "V8WebGLRenderingContext.h"
+#endif
 
 namespace WebCore {
 
