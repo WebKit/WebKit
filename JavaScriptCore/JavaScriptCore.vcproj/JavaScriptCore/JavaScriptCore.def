@@ -113,6 +113,7 @@ EXPORTS
     ?didTimeOut@TimeoutChecker@JSC@@QAE_NPAVExecState@2@@Z
     ?doubleToStringInJavaScriptFormat@WTF@@YAXNQADPAI@Z
     ?dumpSampleData@JSGlobalData@JSC@@QAEXPAVExecState@2@@Z
+    ?empty@UStringImpl@JSC@@SAPAV12@XZ
     ?enumerable@PropertyDescriptor@JSC@@QBE_NXZ
     ?equal@Identifier@JSC@@SA_NPBVUStringImpl@2@PBD@Z
     ?equal@JSC@@YA_NPBVUStringImpl@1@0@Z
