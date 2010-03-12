@@ -226,8 +226,7 @@ void GraphicsContext::clipPath(WindRule clipRule)
     if (paintingDisabled())
         return;
 
-    notImplemented();
-    UNUSED_PARAM(clipRule);
+    m_data->clipPath(*(m_data->currentPath()), PainterOpenVG::IntersectClip, clipRule);
 }
 
 void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int offset, const Color& color)
@@ -413,8 +412,7 @@ void GraphicsContext::clip(const Path& path)
     if (paintingDisabled())
         return;
 
-    notImplemented();
-    UNUSED_PARAM(path);
+    m_data->clipPath(path, PainterOpenVG::IntersectClip, m_common->state.fillRule);
 }
 
 void GraphicsContext::canvasClip(const Path& path)
@@ -427,8 +425,7 @@ void GraphicsContext::clipOut(const Path& path)
     if (paintingDisabled())
         return;
 
-    notImplemented();
-    UNUSED_PARAM(path);
+    m_data->clipPath(path, PainterOpenVG::SubtractClip, m_common->state.fillRule);
 }
 
 void GraphicsContext::scale(const FloatSize& scaleFactors)
@@ -469,8 +466,9 @@ void GraphicsContext::clipOut(const IntRect& rect)
     if (paintingDisabled())
         return;
 
-    notImplemented();
-    UNUSED_PARAM(rect);
+    Path path;
+    path.addRect(rect);
+    m_data->clipPath(path, PainterOpenVG::SubtractClip, m_common->state.fillRule);
 }
 
 void GraphicsContext::clipOutEllipseInRect(const IntRect& rect)
@@ -478,8 +476,9 @@ void GraphicsContext::clipOutEllipseInRect(const IntRect& rect)
     if (paintingDisabled())
         return;
 
-    notImplemented();
-    UNUSED_PARAM(rect);
+    Path path;
+    path.addEllipse(rect);
+    m_data->clipPath(path, PainterOpenVG::SubtractClip, m_common->state.fillRule);
 }
 
 void GraphicsContext::clipToImageBuffer(const FloatRect& rect, const ImageBuffer* imageBuffer)
@@ -497,9 +496,12 @@ void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness
     if (paintingDisabled())
         return;
 
-    notImplemented();
-    UNUSED_PARAM(rect);
-    UNUSED_PARAM(thickness);
+    Path path;
+    path.addEllipse(rect);
+    path.addEllipse(FloatRect(rect.x() + thickness, rect.y() + thickness,
+        rect.width() - (thickness * 2), rect.height() - (thickness * 2)));
+
+    m_data->clipPath(path, PainterOpenVG::IntersectClip, m_common->state.fillRule);
 }
 
 void GraphicsContext::concatCTM(const AffineTransform& transformation)

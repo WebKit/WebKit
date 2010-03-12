@@ -192,6 +192,11 @@ void SurfaceOpenVG::makeCurrent(MakeCurrentMode mode)
     ASSERT_EGL_NO_ERROR();
 
     if (currentSurface != m_eglSurface) {
+        // Save other context before switching over.
+        if (s_currentPainter && mode != DontSaveOrApplyPainterState
+            && s_currentPainter->surface()->m_eglSurface == currentSurface)
+            s_currentPainter->save(PainterOpenVG::KeepCurrentState);
+
         eglMakeCurrent(m_eglDisplay, m_eglSurface, m_eglSurface, m_eglContext);
         ASSERT_EGL_NO_ERROR();
         s_currentPainter = 0;
@@ -221,6 +226,10 @@ void SurfaceOpenVG::makeCompatibleCurrent()
             s_currentPainter = m_activePainter;
         }
     } else if (!EGLDisplayOpenVG::forDisplay(m_eglDisplay)->surfacesCompatible(currentSurface, m_eglSurface)) {
+        // Save other context before switching over.
+        if (s_currentPainter && s_currentPainter->surface()->m_eglSurface == currentSurface)
+            s_currentPainter->save(PainterOpenVG::KeepCurrentState);
+
         eglMakeCurrent(m_eglDisplay, m_eglSurface, m_eglSurface, m_eglContext);
         ASSERT_EGL_NO_ERROR();
         s_currentPainter = 0;

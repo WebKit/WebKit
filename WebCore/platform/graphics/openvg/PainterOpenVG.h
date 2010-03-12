@@ -47,7 +47,12 @@ public:
 
     enum SaveMode {
         CreateNewState,
+        KeepCurrentState,
         CreateNewStateWithPaintStateOnly // internal usage only, do not use outside PainterOpenVG
+    };
+    enum ClipOperation {
+        IntersectClip = VG_INTERSECT_MASK,
+        SubtractClip = VG_SUBTRACT_MASK
     };
 
     PainterOpenVG();
@@ -104,6 +109,7 @@ public:
     void drawPath(VGbitfield paintModes = (VG_STROKE_PATH | VG_FILL_PATH), WindRule fillRule = RULE_NONZERO);
 
     void intersectClipRect(const FloatRect&);
+    void clipPath(const Path&, PainterOpenVG::ClipOperation, WindRule clipRule = RULE_NONZERO);
 
     void save(PainterOpenVG::SaveMode saveMode = CreateNewState);
     void restore();

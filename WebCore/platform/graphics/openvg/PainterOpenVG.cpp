@@ -107,6 +107,10 @@ struct PlatformPainterState {
 
     bool scissoringEnabled;
     FloatRect scissorRect;
+#ifdef OPENVG_VERSION_1_1
+    bool maskingChangedAndEnabled;
+    VGMaskLayer mask;
+#endif
 
     Color fillColor;
     StrokeStyle strokeStyle;
@@ -124,6 +128,10 @@ struct PlatformPainterState {
         : compositeOperation(CompositeSourceOver)
         , opacity(1.0)
         , scissoringEnabled(false)
+#ifdef OPENVG_VERSION_1_1
+        , maskingChangedAndEnabled(false)
+        , mask(VG_INVALID_HANDLE)
+#endif
         , fillColor(Color::black)
         , strokeStyle(NoStroke)
         , strokeThickness(0.0)
@@ -135,13 +143,33 @@ struct PlatformPainterState {
     {
     }
 
+    ~PlatformPainterState()
+    {
+#ifdef OPENVG_VERSION_1_1
+        if (maskingChangedAndEnabled && mask != VG_INVALID_HANDLE) {
+            vgDestroyMaskLayer(mask);
+            ASSERT_VG_NO_ERROR();
+            mask = VG_INVALID_HANDLE;
+        }
+#endif
+    }
+
     PlatformPainterState(const PlatformPainterState& state)
     {
         surfaceTransformation = state.surfaceTransformation;
 
         scissoringEnabled = state.scissoringEnabled;
         scissorRect = state.scissorRect;
+#ifdef OPENVG_VERSION_1_1
+        maskingChangedAndEnabled = false;
+        mask = state.mask;
+#endif
         copyPaintState(&state);
+    }
+
+    inline bool maskingEnabled()
+    {
+        return maskingChangedAndEnabled || mask != VG_INVALID_HANDLE;
     }
 
     void copyPaintState(const PlatformPainterState* other)
@@ -184,6 +212,16 @@ struct PlatformPainterState {
 
         applyTransformation(painter);
         applyScissorRect();
+
+#ifdef OPENVG_VERSION_1_1
+        if (maskingEnabled()) {
+            vgSeti(VG_MASKING, VG_TRUE);
+            if (mask != VG_INVALID_HANDLE)
+                vgMask(mask, VG_SET_MASK, 0, 0, painter->surface()->width(), painter->surface()->height());
+        } else
+            vgSeti(VG_MASKING, VG_FALSE);
+#endif
+        ASSERT_VG_NO_ERROR();
     }
 
     void applyBlending(PainterOpenVG* painter)
@@ -334,6 +372,22 @@ struct PlatformPainterState {
     inline bool fillDisabled() const
     {
         return (compositeOperation == CompositeSourceOver && !fillColor.alpha());
+    }
+
+    void saveMaskIfNecessary(PainterOpenVG* painter)
+    {
+#ifdef OPENVG_VERSION_1_1
+        if (maskingChangedAndEnabled) {
+            if (mask != VG_INVALID_HANDLE) {
+                vgDestroyMaskLayer(mask);
+                ASSERT_VG_NO_ERROR();
+            }
+            mask = vgCreateMaskLayer(painter->surface()->width(), painter->surface()->height());
+            ASSERT(mask != VG_INVALID_HANDLE);
+            vgCopyMask(mask, 0, 0, 0, 0, painter->surface()->width(), painter->surface()->height());
+            ASSERT_VG_NO_ERROR();
+        }
+#endif
     }
 };
 
@@ -730,9 +784,43 @@ void PainterOpenVG::intersectClipRect(const FloatRect& rect)
         intersectScissorRect(effectiveScissorQuad.boundingBox());
     else {
         // The transformed scissorRect cannot be represented as FloatRect
-        // anymore, so we need to perform masking instead. Not yet implemented.
-        notImplemented();
+        // anymore, so we need to perform masking instead.
+        Path scissorRectPath;
+        scissorRectPath.addRect(rect);
+        clipPath(scissorRectPath, PainterOpenVG::IntersectClip);
     }
+}
+
+void PainterOpenVG::clipPath(const Path& path, PainterOpenVG::ClipOperation maskOp, WindRule clipRule)
+{
+#ifdef OPENVG_VERSION_1_1
+    ASSERT(m_state);
+    m_surface->makeCurrent();
+
+    if (m_state->mask != VG_INVALID_HANDLE && !m_state->maskingChangedAndEnabled) {
+        // The parent's mask has been inherited - dispose the handle so that
+        // it won't be overwritten.
+        m_state->maskingChangedAndEnabled = true;
+        m_state->mask = VG_INVALID_HANDLE;
+    } else if (!m_state->maskingEnabled()) {
+        // None of the parent painter states had a mask enabled yet.
+        m_state->maskingChangedAndEnabled = true;
+        vgSeti(VG_MASKING, VG_TRUE);
+        // Make sure not to inherit previous mask state from previously written
+        // (but disabled) masks. For VG_FILL_MASK the first argument is ignored,
+        // we pass VG_INVALID_HANDLE which is what the OpenVG spec suggests.
+        vgMask(VG_INVALID_HANDLE, VG_FILL_MASK, 0, 0, m_surface->width(), m_surface->height());
+    }
+
+    // Intersect the path from the mask, or subtract it from there.
+    // (In either case we always decrease the visible area, never increase it,
+    // which means masking never has to modify scissor rectangles.)
+    vgSeti(VG_FILL_RULE, toVGFillRule(clipRule));
+    vgRenderToMask(path.platformPath()->vgPath(), VG_FILL_PATH, (VGMaskOperation) maskOp);
+    ASSERT_VG_NO_ERROR();
+#elseif
+    notImplemented();
+#endif
 }
 
 void PainterOpenVG::drawRect(const FloatRect& rect, VGbitfield specifiedPaintModes)
@@ -993,15 +1081,18 @@ void PainterOpenVG::save(PainterOpenVG::SaveMode saveMode)
     m_surface->makeCurrent(SurfaceOpenVG::DontSaveOrApplyPainterState);
 
     if (saveMode == PainterOpenVG::CreateNewState) {
+        m_state->saveMaskIfNecessary(this);
         PlatformPainterState* state = new PlatformPainterState(*m_state);
         m_stateStack.append(state);
         m_state = m_stateStack.last();
-    } else { // if (saveMode == PainterOpenVG::CreateNewStateWithPaintStateOnly) {
+    } else if (saveMode == PainterOpenVG::CreateNewStateWithPaintStateOnly) {
+        m_state->saveMaskIfNecessary(this);
         PlatformPainterState* state = new PlatformPainterState();
         state->copyPaintState(m_state);
         m_stateStack.append(state);
         m_state = m_stateStack.last();
-    }
+    } else // if (saveMode == PainterOpenVG::KeepCurrentState)
+        m_state->saveMaskIfNecessary(this);
 }
 
 void PainterOpenVG::restore()

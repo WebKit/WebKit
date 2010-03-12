@@ -47,6 +47,7 @@ public:
     enum MakeCurrentMode {
         ApplyPainterStateOnSurfaceSwitch,
         DontApplyPainterState,
+        DontSaveOrApplyPainterState
     };
 
     static SurfaceOpenVG* currentSurface();
