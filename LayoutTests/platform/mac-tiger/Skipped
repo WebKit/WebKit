@@ -122,3 +122,7 @@ java/lc3/JavaArray/ToString-001.html
 
 # We can't implement mouseScrollBy() in Tiger due to the lack of CGEventCreateScrollWheelEvent().
 fast/events/remove-child-onscroll.html
+
+# Intermittently times out on Tiger bot.
+# https://bugs.webkit.org/show_bug.cgi?id=36039
+http/tests/local/send-sliced-dragged-file.html

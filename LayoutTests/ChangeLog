@@ -1,3 +1,9 @@
+2010-03-11  Jian Li  <jianli@chromium.org>
+
+        Unreviewed. Added the test that time out on Tiger bot to mac-tiger/Skipped.
+
+        * platform/mac-tiger/Skipped:
+
 2010-03-11  Simon Fraser  <simon.fraser@apple.com>
 
         No review.
