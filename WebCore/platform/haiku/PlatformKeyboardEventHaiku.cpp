@@ -377,5 +377,14 @@ bool PlatformKeyboardEvent::currentCapsLockState()
     return ::modifiers() & B_CAPS_LOCK;
 }
 
+void PlatformKeyboardEvent::getCurrentModifierState(bool& shiftKey, bool& ctrlKey, bool& altKey, bool& metaKey)
+{
+    unit32 modifiers = ::modifiers();
+    shiftKey = modifiers & B_SHIFT_KEY;
+    ctrlKey = modifiers & B_COMMAND_KEY;
+    altKey = modifiers & B_CONTROL_KEY;
+    metaKey = modifiers & B_OPTION_KEY;
+}
+
 } // namespace WebCore
 

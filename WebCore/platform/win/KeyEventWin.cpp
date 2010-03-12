@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -212,6 +212,14 @@ void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type, bool)
 bool PlatformKeyboardEvent::currentCapsLockState()
 {
      return GetKeyState(VK_CAPITAL) & 1;
+}
+
+void PlatformKeyboardEvent::getCurrentModifierState(bool& shiftKey, bool& ctrlKey, bool& altKey, bool& metaKey)
+{
+    shiftKey = GetKeyState(VK_SHIFT) & HIGH_BIT_MASK_SHORT;
+    ctrlKey = GetKeyState(VK_CONTROL) & HIGH_BIT_MASK_SHORT;
+    altKey = GetKeyState(VK_MENU) & HIGH_BIT_MASK_SHORT;
+    metaKey = false;
 }
 
 }

@@ -170,5 +170,13 @@ bool PlatformKeyboardEvent::currentCapsLockState()
     return false;
 }
 
-} // namespace WebCore
+void PlatformKeyboardEvent::getCurrentModifierState(bool& shiftKey, bool& ctrlKey, bool& altKey, bool& metaKey)
+{
+    notImplemented();
+    shiftKey = false;
+    ctrlKey = false;
+    altKey = false;
+    metaKey = false;
+}
 
+} // namespace WebCore

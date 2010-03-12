@@ -1,3 +1,15 @@
+2010-03-12  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7694674> Hover states not updated when overflow section scrolls under stationary mouse pointer
+        https://bugs.webkit.org/show_bug.cgi?id=35949
+
+        * fast/events/overflow-scroll-fake-mouse-move-expected.txt: Added.
+        * fast/events/overflow-scroll-fake-mouse-move.html: Added.
+        * fast/events/touch/basic-multi-touch-events.html:
+        * fast/events/touch/basic-single-touch-events.html:
+
 2010-03-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] css1/box_properties/acid_test.html failed in release mode (32 bit).

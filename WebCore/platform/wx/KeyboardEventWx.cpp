@@ -388,5 +388,13 @@ bool PlatformKeyboardEvent::currentCapsLockState()
     return wxGetKeyState(WXK_CAPITAL);
 }
 
+void PlatformKeyboardEvent::getCurrentModifierState(bool& shiftKey, bool& ctrlKey, bool& altKey, bool& metaKey)
+{
+    shiftKey = wxGetKeyState(WXK_SHIFT);
+    ctrlKey = wxGetKeyState(WXK_CONTROL);
+    altKey = wxGetKeyState(WXK_ALT);
+    metaKey = false;
+}
+
 }
 

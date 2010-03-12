@@ -50,6 +50,7 @@ class Cursor;
 class Event;
 class EventTarget;
 class FloatPoint;
+class FloatQuad;
 class Frame;
 class HitTestRequest;
 class HitTestResult;
@@ -101,6 +102,8 @@ public:
     void stopAutoscrollTimer(bool rendererIsBeingDestroyed = false);
     RenderObject* autoscrollRenderer() const;
     void updateAutoscrollRenderer();
+
+    void dispatchFakeMouseMoveEventSoonInQuad(const FloatQuad&);
 
     HitTestResult hitTestResultAtPoint(const IntPoint&, bool allowShadowContent, bool ignoreClipping = false, HitTestScrollbars scrollbars = DontHitTestScrollbars);
 
@@ -266,6 +269,9 @@ private:
     void setAutoscrollRenderer(RenderObject*);
     void autoscrollTimerFired(Timer<EventHandler>*);
 
+    void fakeMouseMoveEventTimerFired(Timer<EventHandler>*);
+    void cancelFakeMouseMoveEvent();
+
     void invalidateClick();
 
     Node* nodeUnderMouse() const;
@@ -372,6 +378,8 @@ private:
     bool m_autoscrollInProgress;
     bool m_mouseDownMayStartAutoscroll;
     bool m_mouseDownWasInSubframe;
+
+    Timer<EventHandler> m_fakeMouseMoveEventTimer;
 
 #if ENABLE(SVG)
     bool m_svgPan;

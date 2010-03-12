@@ -1,3 +1,58 @@
+2010-03-12  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7694674> Hover states not updated when overflow section scrolls under stationary mouse pointer
+        https://bugs.webkit.org/show_bug.cgi?id=35949
+
+        Test: fast/events/overflow-scroll-fake-mouse-move.html
+
+        Soon after an overflow section scrolls under the mouse pointer, dispatch
+        a fake mouse move event. This is similar to how frame scrolling is handled
+        in WebKit, and has the effect of updating hover state, dispatching DOM mouse
+        events, and updating the tool tip.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::EventHandler): Initialize m_fakeMouseMoveEventTimer.
+        (WebCore::EventHandler::~EventHandler): Assert that the timer is not active.
+        (WebCore::EventHandler::clear): Stop the timer.
+        (WebCore::EventHandler::handleMousePressEvent): Cancel pending fake mouse
+        move events.
+        (WebCore::EventHandler::handleMouseMoveEvent): Ditto.
+        (WebCore::EventHandler::dispatchFakeMouseMoveEventSoonInQuad): If the mouse
+        is in the passed-in quad, ensure that a fake mouse move event is scheduled
+        to fire soon.
+        (WebCore::EventHandler::cancelFakeMouseMoveEvent): Does what the name says.
+        (WebCore::EventHandler::fakeMouseMoveEventTimerFired): Constructs a
+        PlatformMouseEvent with the current mouse location, modifier key state and
+        time stamp and calls mouseMoved().
+        * page/EventHandler.h:
+        * platform/PlatformKeyboardEvent.h: Declared getCurrentModifierState().
+        * platform/android/KeyEventAndroid.cpp:
+        (WebCore::PlatformKeyboardEvent::getCurrentModifierState): Stubbed out.
+        * platform/brew/PlatformKeyboardEventBrew.cpp:
+        (WebCore::PlatformKeyboardEvent::getCurrentModifierState): Ditto.
+        * platform/chromium/PlatformKeyboardEventChromium.cpp:
+        (WebCore::PlatformKeyboardEvent::getCurrentModifierState): Added.
+        * platform/efl/PlatformKeyboardEventEfl.cpp:
+        (WebCore::PlatformKeyboardEvent::getCurrentModifierState): Stubbed out.
+        * platform/gtk/KeyEventGtk.cpp:
+        (WebCore::PlatformKeyboardEvent::getCurrentModifierState): Ditto.
+        * platform/haiku/PlatformKeyboardEventHaiku.cpp:
+        (WebCore::PlatformKeyboardEvent::getCurrentModifierState): Added.
+        * platform/mac/KeyEventMac.mm:
+        (WebCore::PlatformKeyboardEvent::getCurrentModifierState): Ditto.
+        * platform/qt/PlatformKeyboardEventQt.cpp:
+        (WebCore::PlatformKeyboardEvent::getCurrentModifierState): Stubbed out.
+        * platform/win/KeyEventWin.cpp:
+        (WebCore::PlatformKeyboardEvent::getCurrentModifierState): Added.
+        * platform/wx/KeyboardEventWx.cpp:
+        (WebCore::PlatformKeyboardEvent::getCurrentModifierState): Ditto.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollToOffset): Call
+        EventHandler::dispatchFakeMouseMoveEventSoonInQuad(). Moved things around
+        a little to avoid computing the repaint rect twice.
+
 2010-03-12  Kent Hansen  <kent.hansen@nokia.com>
 
         Reviewed by Darin Adler.

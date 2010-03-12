@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2007, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -874,6 +874,15 @@ void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool backwardCom
 bool PlatformKeyboardEvent::currentCapsLockState()
 {
     return GetCurrentKeyModifiers() & alphaLock;
+}
+
+void PlatformKeyboardEvent::getCurrentModifierState(bool& shiftKey, bool& ctrlKey, bool& altKey, bool& metaKey)
+{
+    UInt32 currentModifiers = GetCurrentKeyModifiers();
+    shiftKey = currentModifiers & ::shiftKey;
+    ctrlKey = currentModifiers & ::controlKey;
+    altKey = currentModifiers & ::optionKey;
+    metaKey = currentModifiers & ::cmdKey;
 }
 
 }
