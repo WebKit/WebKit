@@ -182,7 +182,6 @@ IDL_BINDINGS += \
 	WebCore/html/canvas/WebGLUnsignedShortArray.idl \
 	WebCore/html/DataGridColumn.idl \
 	WebCore/html/DataGridColumnList.idl \
-	WebCore/html/DOMFormData.idl \
 	WebCore/html/File.idl \
 	WebCore/html/FileList.idl \
 	WebCore/html/HTMLAllCollection.idl \
@@ -380,7 +379,6 @@ webcore_sources += \
 	WebCore/bindings/js/JSCustomXPathNSResolver.h \
 	WebCore/bindings/js/JSDOMBinding.cpp \
 	WebCore/bindings/js/JSDOMBinding.h \
-  WebCore/bindings/js/JSDOMFormDataCustom.cpp \
 	WebCore/bindings/js/JSDOMGlobalObject.cpp \
 	WebCore/bindings/js/JSDOMGlobalObject.h \
 	WebCore/bindings/js/JSDOMWindowBase.cpp \

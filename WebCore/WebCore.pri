@@ -307,7 +307,6 @@ IDL_BINDINGS += \
     html/canvas/WebGLUnsignedShortArray.idl \
     html/DataGridColumn.idl \
     html/DataGridColumnList.idl \
-    html/DOMFormData.idl \
     html/File.idl \
     html/FileList.idl \
     html/HTMLAllCollection.idl \

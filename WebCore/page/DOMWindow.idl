@@ -712,8 +712,6 @@ module window {
         attribute TouchEventConstructor TouchEvent;
 #endif
 
-        attribute DOMFormDataConstructor FormData;
-
 #endif // defined(LANGUAGE_JAVASCRIPT)
 
 #if defined(V8_BINDING) && V8_BINDING

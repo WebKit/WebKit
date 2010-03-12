@@ -108,7 +108,6 @@ DOM_CLASSES = \
     DedicatedWorkerContext \
     DOMApplicationCache \
     DOMCoreException \
-    DOMFormData \
     DOMImplementation \
     DOMParser \
     DOMSelection \

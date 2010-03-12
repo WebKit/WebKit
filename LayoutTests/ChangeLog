@@ -1,3 +1,28 @@
+2010-03-12  Dmitry Titov  <dimich@chromium.org>
+
+        Not reviewed, build fix.
+
+        Reverts 55920 and 55921. Landing for Jian Li.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/Window/window-property-descriptors-expected.txt:
+        * fast/dom/constructed-objects-prototypes-expected.txt:
+        * fast/dom/prototype-inheritance-2-expected.txt:
+        * fast/dom/prototype-inheritance-expected.txt:
+        * fast/js/global-constructors-expected.txt:
+        * http/tests/local/resources/send-form-data.js: Removed.
+        * http/tests/local/send-form-data-expected.txt: Removed.
+        * http/tests/local/send-form-data.html: Removed.
+        * http/tests/xmlhttprequest/resources/multipart-post-echo.php: Removed.
+        * platform/gtk/Skipped:
+        * platform/gtk/fast/dom/Window/window-properties-expected.txt:
+        * platform/qt/Skipped:
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+        * platform/qt/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/qt/fast/dom/prototype-inheritance-expected.txt:
+        * platform/qt/fast/js/global-constructors-expected.txt:
+        * platform/win/Skipped:
+
 2010-03-11  Antonio Gomes  <tonikitoo@webkit.org>
 
         Rubber-stamped by Kenneth Christiansen.

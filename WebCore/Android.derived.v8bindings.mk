@@ -513,7 +513,6 @@ $(patsubst %.h,%.cpp,$(GEN)): $(intermediates)/bindings/%.cpp : $(intermediates)
 
 # XML
 GEN := \
-    $(intermediates)/bindings/V8DOMFormData.h \
     $(intermediates)/bindings/V8DOMParser.h \
     $(intermediates)/bindings/V8XMLHttpRequest.h \
     $(intermediates)/bindings/V8XMLHttpRequestException.h \

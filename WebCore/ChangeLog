@@ -1,3 +1,29 @@
+2010-03-12  Dmitry Titov  <dimich@chromium.org>
+
+        Not reviewed, build fix.
+
+        Reverts 55920 and 55921. Landing for Jian Li.
+
+        * Android.derived.jscbindings.mk:
+        * Android.derived.v8bindings.mk:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMFormDataCustom.cpp: Removed.
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::send):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/v8/V8Index.h:
+        * bindings/v8/custom/V8DOMFormDataCustom.cpp: Removed.
+        * bindings/v8/custom/V8XMLHttpRequestCustom.cpp:
+        (WebCore::V8XMLHttpRequest::sendCallback):
+        * html/DOMFormData.idl: Removed.
+        * page/DOMWindow.idl:
+
 2010-03-12  Jakob Petsovits  <jpetsovits@rim.com>
 
         Reviewed by Dirk Schulze.
@@ -55,22 +81,6 @@
         (WebCore::SurfaceOpenVG::makeCompatibleCurrent):
         * platform/graphics/openvg/SurfaceOpenVG.h:
         (WebCore::SurfaceOpenVG::):
-
-2010-03-12  Jian Li  <jianli@chromium.org>
-
-        Reviewed by Nate Chapin.
-
-        [v8] Add V8 bindings for DOMFormData.
-        https://bugs.webkit.org/show_bug.cgi?id=36026
-
-        Test: http/tests/local/send-form-data.html
-
-        * WebCore.gypi:
-        * bindings/v8/V8Index.h:
-        * bindings/v8/custom/V8DOMFormDataCustom.cpp: Added.
-        (WebCore::V8DOMFormData::appendCallback):
-        * bindings/v8/custom/V8XMLHttpRequestCustom.cpp:
-        (WebCore::V8XMLHttpRequest::sendCallback):
 
 2010-03-12  Jian Li  <jianli@chromium.org>
 

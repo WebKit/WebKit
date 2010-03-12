@@ -663,7 +663,6 @@ fast/forms/input-selectedoption.html
 # <https://bugs.webkit.org/show_bug.cgi?id=29287>
 http/tests/local/send-dragged-file.html
 http/tests/local/send-sliced-dragged-file.html
-http/tests/local/send-form-data.html
 
 # <https://bugs.webkit.org/show_bug.cgi?id=29289>
 plugins/destroy-during-npp-new.html
