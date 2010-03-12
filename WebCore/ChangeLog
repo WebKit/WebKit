@@ -1,3 +1,14 @@
+2010-03-11  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Enable network state notifier when compiling against Qt 4.7
+        https://bugs.webkit.org/show_bug.cgi?id=35983
+
+        * WebCore.pri:
+        * platform/network/qt/NetworkStateNotifierPrivate.h:
+        * platform/network/qt/NetworkStateNotifierQt.cpp:
+
 2010-03-11  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Adam Treat.

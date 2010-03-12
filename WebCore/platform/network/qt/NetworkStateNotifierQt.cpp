@@ -23,7 +23,9 @@
 #include "NetworkStateNotifierPrivate.h"
 #include "qnetworkconfigmanager.h"
 
+#if QT_VERSION < 0x040700
 using namespace QtMobility;
+#endif
 
 namespace WebCore {
 

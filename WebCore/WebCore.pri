@@ -105,6 +105,9 @@ greaterThan(QT_MINOR_VERSION, 5) {
     }
 }
 
+# Bearer management is part of Qt 4.7
+!lessThan(QT_MINOR_VERSION, 7):!contains(DEFINES, ENABLE_QT_BEARER=.):DEFINES += ENABLE_QT_BEARER=1
+
 DEFINES += WTF_CHANGES=1
 
 # Enable touch event support with Qt 4.6
