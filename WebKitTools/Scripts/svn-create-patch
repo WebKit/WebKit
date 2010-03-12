@@ -56,12 +56,14 @@ use Time::gmtime;
 use VCSUtils;
 
 sub binarycmp($$);
+sub diffOptionsForFile($);
 sub findBaseUrl($);
 sub findMimeType($;$);
 sub findModificationType($);
 sub findSourceFileAndRevision($);
 sub generateDiff($$);
 sub generateFileList($\%);
+sub hunkHeaderLineRegExForFile($);
 sub isBinaryMimeType($);
 sub manufacturePatchForAdditionWithHistory($);
 sub numericcmp($$);
@@ -128,6 +130,19 @@ sub binarycmp($$)
 {
     my ($fileDataA, $fileDataB) = @_;
     return $fileDataA->{isBinary} <=> $fileDataB->{isBinary};
+}
+
+sub diffOptionsForFile($)
+{
+    my ($file) = @_;
+
+    my $options = "uaNp";
+
+    if (my $hunkHeaderLineRegEx = hunkHeaderLineRegExForFile($file)) {
+        $options .= "F'$hunkHeaderLineRegEx'";
+    }
+
+    return $options;
 }
 
 sub findBaseUrl($)
@@ -203,7 +218,9 @@ sub generateDiff($$)
     if ($fileData->{modificationType} eq "additionWithHistory") {
         manufacturePatchForAdditionWithHistory($fileData);
     }
-    open DIFF, "svn diff --diff-cmd diff -x -uaNpF'^[-+@]' '$file' |" or die;
+
+    my $diffOptions = diffOptionsForFile($file);
+    open DIFF, "svn diff --diff-cmd diff -x -$diffOptions '$file' |" or die;
     while (<DIFF>) {
         $patch .= $_;
     }
@@ -250,6 +267,15 @@ sub generateFileList($\%)
         }
     }
     close STAT;
+}
+
+sub hunkHeaderLineRegExForFile($)
+{
+    my ($file) = @_;
+
+    my $startOfObjCInterfaceRegEx = "@(implementation\\|interface\\|protocol)";
+    return "^[-+]\\|$startOfObjCInterfaceRegEx" if $file =~ /\.mm?$/;
+    return "^$startOfObjCInterfaceRegEx" if $file =~ /^(.*\/)?(mac|objc)\// && $file =~ /\.h$/;
 }
 
 sub isBinaryMimeType($)

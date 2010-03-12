@@ -1,3 +1,26 @@
+2010-03-12  Adam Roben  <aroben@apple.com>
+
+        Make svn-create-patch's diffs of ObjC header files more readable
+
+        Fixes <http://webkit.org/b/36055>.
+
+        Reviewed by John Sullivan.
+
+        * Scripts/svn-create-patch:
+        (diffOptionsForFile): Added. Returns the options that should be passed
+        to diff for the given file. All the options are the same for all
+        files, except for the option to specify which lines should be used as
+        hunk headers.
+        (generateDiff): Use diffOptionsForFile to get the options to pass to
+        diff.
+        (hunkHeaderLineRegExForFile): Added. Returns the regular expression
+        that should be used by diff to identify lines that should be included
+        after the "@@" in the hunk header lines of the diff. For ObjC[++]
+        source files, we use any lines starting with -, +, or
+        @implementation/@interface/@protocol. For ObjC[++] header files (which
+        we assume to be any .h files in a mac/ or objc/ directory), we use any
+        lines starting with @implementation/@interface/@protocol.
+
 2010-03-12  Jochen Eisinger  <jochen@chromium.org>
 
         Reviewed by Jeremy Orlow.
