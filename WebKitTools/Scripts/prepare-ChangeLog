@@ -89,6 +89,7 @@ sub get_function_line_ranges($$);
 sub get_function_line_ranges_for_c($$);
 sub get_function_line_ranges_for_java($$);
 sub get_function_line_ranges_for_javascript($$);
+sub get_selector_line_ranges_for_css($$);
 sub method_decl_to_selector($);
 sub processPaths(\@);
 sub reviewerAndDescriptionForGitCommit($);
@@ -474,6 +475,8 @@ sub get_function_line_ranges($$)
         return get_function_line_ranges_for_java ($file_handle, $file_name);
     } elsif ($file_name =~ /\.js$/) {
         return get_function_line_ranges_for_javascript ($file_handle, $file_name);
+    } elsif ($file_name =~ /\.css$/) {
+        return get_selector_line_ranges_for_css ($file_handle, $file_name);
     }
     return ();
 }
@@ -1173,6 +1176,41 @@ sub get_function_line_ranges_for_javascript($$)
     return @ranges;
 }
 
+# Read a file and get all the line ranges of the things that look like CSS selectors.  A selector is
+# anything before an opening brace on a line. A selector starts at the line containing the opening
+# brace and ends at the closing brace.
+# FIXME: Comments are parsed just like uncommented text.
+#
+# Result is a list of triples: [ start_line, end_line, selector ].
+
+sub get_selector_line_ranges_for_css($$)
+{
+    my ($fileHandle, $fileName) = @_;
+
+    my @ranges;
+
+    my $currentSelector = "";
+    my $start = 0;
+
+    while (<$fileHandle>) {
+        if (/^[ \t]*(.*[^ \t])[ \t]*{/) {
+            $currentSelector = $1;
+            $start = $.;
+        }
+        if (index($_, "}") >= 0) {
+            unless ($start) {
+                warn "mismatched braces in $fileName\n";
+                next;
+            }
+            push(@ranges, [$start, $., $currentSelector]);
+            $currentSelector = "";
+            $start = 0;
+            next;
+        }
+    }
+
+    return @ranges;
+}
 
 sub processPaths(\@)
 {

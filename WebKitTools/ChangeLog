@@ -1,3 +1,18 @@
+2010-03-12  Adam Roben  <aroben@apple.com>
+
+        Teach prepare-ChangeLog to find modified selectors in CSS files
+
+        Reviewed by Tim Hatcher.
+
+        Fixes <http://webkit.org/b/36064> prepare-ChangeLog should extract
+        modified selectors from CSS files
+
+        * Scripts/prepare-ChangeLog:
+        (get_function_line_ranges): Call get_selector_line_ranges_for_css for
+        .css files.
+        (get_selector_line_ranges_for_css): Added. Finds selectors and their
+        line ranges and returns them.
+
 2010-03-12  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Build fix (for EWS). Make sure the new code builds on older soup.
