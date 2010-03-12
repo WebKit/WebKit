@@ -1,3 +1,21 @@
+2010-03-12  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Content of 3D tests appears at the bottom right corner sometimes.
+        <rdar://problem/7556244>
+        <https://bugs.webkit.org/show_bug.cgi?id=36027>
+
+        * compositing/geometry/horizontal-scroll-composited.html: Added.
+        * compositing/geometry/vertical-scroll-composited.html: Added.
+        * compositing/resources/apple.jpg: Added.
+        * platform/mac/compositing/geometry/horizontal-scroll-composited-expected.checksum: Added.
+        * platform/mac/compositing/geometry/horizontal-scroll-composited-expected.png: Added.
+        * platform/mac/compositing/geometry/horizontal-scroll-composited-expected.txt: Added.
+        * platform/mac/compositing/geometry/vertical-scroll-composited-expected.checksum: Added.
+        * platform/mac/compositing/geometry/vertical-scroll-composited-expected.png: Added.
+        * platform/mac/compositing/geometry/vertical-scroll-composited-expected.txt: Added.
+
 2010-03-12  Dirk Schulze  <krit@webkit.org>
 
         Unreviewed LayoutTest update.

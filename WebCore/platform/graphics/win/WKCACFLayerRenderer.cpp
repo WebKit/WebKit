@@ -225,7 +225,9 @@ WKCACFLayerRenderer::WKCACFLayerRenderer()
     , m_renderer(0)
     , m_hostWindow(0)
     , m_renderTimer(this, &WKCACFLayerRenderer::renderTimerFired)
-    , m_scrollFrame(0, 0, 1, 1) // Default to 1 to avoid 0 size frames
+    , m_scrollPosition(0, 0)
+    , m_scrollSize(1, 1)
+    , m_backingStoreDirty(false)
 {
 #ifndef NDEBUG
     char* printTreeFlag = getenv("CA_PRINT_TREE");
@@ -243,15 +245,24 @@ WKCACFLayer* WKCACFLayerRenderer::rootLayer() const
     return m_rootLayer.get();
 }
 
-void WKCACFLayerRenderer::setScrollFrame(const IntRect& scrollFrame)
+void WKCACFLayerRenderer::setScrollFrame(const IntPoint& position, const IntSize& size)
 {
-    m_scrollFrame = scrollFrame;
-    CGRect frameBounds = bounds();
-    m_scrollLayer->setBounds(CGRectMake(0, 0, m_scrollFrame.width(), m_scrollFrame.height()));
-    m_scrollLayer->setPosition(CGPointMake(0, frameBounds.size.height));
+    m_scrollSize = size;
+    m_scrollPosition = position;
 
-    if (m_rootChildLayer)
-        m_rootChildLayer->setPosition(CGPointMake(-m_scrollFrame.x(), m_scrollFrame.height() + m_scrollFrame.y()));
+    updateScrollFrame();
+}
+
+void WKCACFLayerRenderer::updateScrollFrame()
+{
+    CGRect frameBounds = bounds();
+    m_clipLayer->setBounds(CGRectMake(0, 0, m_scrollSize.width(), m_scrollSize.height()));
+    m_clipLayer->setPosition(CGPointMake(0, frameBounds.size.height));
+    if (m_rootChildLayer) {
+        CGRect rootBounds = m_rootChildLayer->bounds();
+        m_scrollLayer->setBounds(rootBounds);
+    }
+    m_scrollLayer->setPosition(CGPointMake(-m_scrollPosition.x(), m_scrollPosition.y() + m_scrollSize.height()));
 }
 
 void WKCACFLayerRenderer::setRootContents(CGImageRef image)
@@ -270,10 +281,8 @@ void WKCACFLayerRenderer::setRootChildLayer(WKCACFLayer* layer)
     m_rootChildLayer = layer;
     if (layer) {
         m_scrollLayer->addSublayer(layer);
-
-        // Set the frame
-        layer->setAnchorPoint(CGPointMake(0, 1));
-        setScrollFrame(m_scrollFrame);
+        // Adjust the scroll frame accordingly
+        updateScrollFrame();
     }
 }
    
@@ -335,15 +344,30 @@ bool WKCACFLayerRenderer::createRenderer()
     m_renderContext = static_cast<CARenderContext*>(CACFContextGetRenderContext(m_context.get()));
     m_renderer = CARenderOGLNew(wkqcCARenderOGLCallbacks(wkqckCARenderDX9Callbacks), m_d3dDevice.get(), 0);
 
-    // Create the root hierarchy
+    // Create the root hierarchy.
+    // Under the root layer, we have a clipping layer to clip the content,
+    // that contains a scroll layer that we use for scrolling the content.
+    // The root layer is the size of the client area of the window.
+    // The clipping layer is the size of the WebView client area (window less the scrollbars).
+    // The scroll layer is the size of the root child layer.
+    // Resizing the window will change the bounds of the rootLayer and the clip layer and will not
+    // cause any repositioning.
+    // Scrolling will affect only the position of the scroll layer without affecting the bounds.
+
     m_rootLayer = WKCACFRootLayer::create(this);
     m_rootLayer->setName("WKCACFLayerRenderer rootLayer");
+
+    m_clipLayer = WKCACFLayer::create(WKCACFLayer::Layer);
+    m_clipLayer->setName("WKCACFLayerRenderer clipLayer");
+    
     m_scrollLayer = WKCACFLayer::create(WKCACFLayer::Layer);
     m_scrollLayer->setName("WKCACFLayerRenderer scrollLayer");
 
-    m_rootLayer->addSublayer(m_scrollLayer);
-    m_scrollLayer->setMasksToBounds(true);
+    m_rootLayer->addSublayer(m_clipLayer);
+    m_clipLayer->addSublayer(m_scrollLayer);
+    m_clipLayer->setMasksToBounds(true);
     m_scrollLayer->setAnchorPoint(CGPointMake(0, 1));
+    m_clipLayer->setAnchorPoint(CGPointMake(0, 1));
 
 #ifndef NDEBUG
     CGColorRef debugColor = createCGColor(Color(255, 0, 0, 204));
@@ -376,6 +400,7 @@ void WKCACFLayerRenderer::destroyRenderer()
 
     s_d3d = 0;
     m_rootLayer = 0;
+    m_clipLayer = 0;
     m_scrollLayer = 0;
     m_rootChildLayer = 0;
 
@@ -392,7 +417,7 @@ void WKCACFLayerRenderer::resize()
     if (m_rootLayer) {
         m_rootLayer->setFrame(bounds());
         WKCACFContextFlusher::shared().flushAllContexts();
-        setScrollFrame(m_scrollFrame);
+        updateScrollFrame();
     }
 }
 
@@ -437,6 +462,15 @@ void WKCACFLayerRenderer::paint()
 {
     if (!m_d3dDevice)
         return;
+
+    if (m_backingStoreDirty) {
+        // If the backing store is still dirty when we are about to draw the
+        // composited content, we need to force the window to paint into the
+        // backing store. The paint will only paint the dirty region that
+        // if being tracked in WebView.
+        UpdateWindow(m_hostWindow);
+        return;
+    }
 
     Vector<CGRect> dirtyRects;
     getDirtyRects(m_hostWindow, dirtyRects);

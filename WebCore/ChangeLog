@@ -1,3 +1,40 @@
+2010-03-12  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Content of 3D tests appears at the bottom right corner sometimes.
+        <rdar://problem/7556244>
+        <https://bugs.webkit.org/show_bug.cgi?id=36027>
+
+        There were two problems to solve here:
+        - the incorrect anchoring of the rootChildLayer that was causing the composited
+          content to be positioned incorrectly
+        - the failure to paint the non composited content into the backing store when
+          animating composited content.
+          
+        The first problem has been solved by leaving the original anchor point for the
+        rootChildLayer and splitting the tasks of clipping and scrolling using two separate layers.
+        The second problem has been solved leveraging the knowledge that WebView has of the dirty region
+        of the backing store to pass this information to the layer renderer. This allows the renderer to force
+        a paint into the backing store before moving to the compositing.
+        
+        Tests: compositing/geometry/horizontal-scroll-composited.html
+               compositing/geometry/vertical-scroll-composited.html
+
+        * manual-tests/win/horizontal-scroll-composited.html: Removed. This is now a layout test.
+        * manual-tests/win/milliondollar.html: Added.
+        * platform/graphics/win/WKCACFLayerRenderer.cpp:
+        (WebCore::WKCACFLayerRenderer::WKCACFLayerRenderer): Added initialization of dirty flag.
+        (WebCore::WKCACFLayerRenderer::setScrollFrame): 
+        (WebCore::WKCACFLayerRenderer::updateScrollFrame): Updated to resize and position the clip and scroll layers.
+        (WebCore::WKCACFLayerRenderer::setRootChildLayer):
+        (WebCore::WKCACFLayerRenderer::createRenderer): Added new layer hierarchy.
+        (WebCore::WKCACFLayerRenderer::destroyRenderer): Remove clip layer on destroy.
+        (WebCore::WKCACFLayerRenderer::resize):
+        (WebCore::WKCACFLayerRenderer::paint): Forcing paint massage to trigger paint into the backing store.
+        * platform/graphics/win/WKCACFLayerRenderer.h:
+        (WebCore::WKCACFLayerRenderer::setBackingStoreDirty): Added.
+
 2010-03-12  Robert Hogan  <robert@webkit.org>
 
         Not reviewed, build fix.

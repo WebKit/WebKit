@@ -60,16 +60,17 @@ public:
     static bool acceleratedCompositingAvailable();
     static void didFlushContext(CACFContextRef);
 
-    void setScrollFrame(const IntRect&);
+    void setScrollFrame(const IntPoint&, const IntSize&);
     void setRootContents(CGImageRef);
     void setRootChildLayer(WKCACFLayer* layer);
     void setNeedsDisplay();
     void setHostWindow(HWND window) { m_hostWindow = window; }
-
+    void setBackingStoreDirty(bool dirty) { m_backingStoreDirty = dirty; }
     bool createRenderer();
     void destroyRenderer();
     void resize();
     void renderSoon();
+    void updateScrollFrame();
 
 protected:
     WKCACFLayer* rootLayer() const;
@@ -93,13 +94,15 @@ private:
     RefPtr<WKCACFLayer> m_viewLayer;
     RefPtr<WKCACFLayer> m_scrollLayer;
     RefPtr<WKCACFLayer> m_rootChildLayer;
+    RefPtr<WKCACFLayer> m_clipLayer;
     RetainPtr<CACFContextRef> m_context;
     CARenderContext* m_renderContext;
     CARenderOGLContext* m_renderer;
     HWND m_hostWindow;
     Timer<WKCACFLayerRenderer> m_renderTimer;
-    IntRect m_scrollFrame;
-
+    IntPoint m_scrollPosition;
+    IntSize m_scrollSize;
+    bool m_backingStoreDirty;
 #ifndef NDEBUG
     bool m_printTree;
 #endif
