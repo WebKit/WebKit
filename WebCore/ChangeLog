@@ -1,3 +1,18 @@
+2010-03-12  Robert Hogan  <robert@webkit.org>
+
+        Not reviewed, build fix.
+
+        Revert http://trac.webkit.org/projects/webkit/changeset/55374 which broke
+        the !ENABLE(DATABASE) build on all platforms when attempting to fix the
+        --minimal build on Qt.
+
+        Support for SQLite now seems to be non-negotiable for the Qt build but making
+        it mandatory requires review, so re-break --minimal Qt build for now.
+
+        Qt build issue now tracked at https://bugs.webkit.org/show_bug.cgi?id=36073
+
+        * page/GeolocationPositionCache.cpp:
+
 2010-03-12  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Alexey Proskuryakov.

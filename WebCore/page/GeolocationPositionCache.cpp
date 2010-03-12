@@ -26,15 +26,12 @@
 #include "config.h"
 #include "GeolocationPositionCache.h"
 
-#if ENABLE(DATABASE)
-
 #include "Geoposition.h"
 #include "SQLValue.h"
 #include "SQLiteDatabase.h"
 #include "SQLiteFileSystem.h"
 #include "SQLiteStatement.h"
 #include "SQLiteTransaction.h"
-
 
 namespace WebCore {
 
@@ -175,5 +172,3 @@ void GeolocationPositionCache::writeToDB(const Geoposition* position)
 }
 
 } // namespace WebCore
-
-#endif //ENABLE(DATABASE)
