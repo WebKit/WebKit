@@ -1,3 +1,25 @@
+2010-03-11  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        <rdar://problem/7745082> Make it possible to build WebKit for older Mac OS X versions from the current Mac OS X version
+
+        Introduce TARGET_MAC_OS_X_VERSION_MAJOR to represent the Mac OS X version that is being targeted.  It defaults to the
+        current Mac OS X version unless otherwise specified.
+
+        Key off TARGET_MAC_OS_X_VERSION_MAJOR where we'd previously been keying off MAC_OS_X_VERSION_MAJOR.
+
+        Explicitly map from the target Mac OS X version to the preferred compiler since Xcode's default compiler choice
+        may not be usable when targetting a different Mac OS X version.
+
+        Key off TARGET_GCC_VERSION rather than MAC_OS_X_VERSION_MAJOR in locations where we'd previously been keying off
+        MAC_OS_X_VERSION_MAJOR but the decision is really related to the compiler version being used.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+        * Configurations/FeatureDefines.xcconfig:
+        * Configurations/Version.xcconfig:
+
 2010-03-11  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by David Hyatt.

@@ -355,7 +355,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if (( MAC_OS_X_VERSION_MAJOR > 1050 )); then\n   rm -rf \"$BUILT_PRODUCTS_DIR/$PUBLIC_HEADERS_FOLDER_PATH\"/*.h;\nfi;\n";
+			shellScript = "if (( TARGET_MAC_OS_X_VERSION_MAJOR > 1050 )); then\n   rm -rf \"$BUILT_PRODUCTS_DIR/$PUBLIC_HEADERS_FOLDER_PATH\"/*.h;\nfi;\n";
 		};
 		939D055E09DA033400984996 /* Check For Global Initializers */ = {
 			isa = PBXShellScriptBuildPhase;
