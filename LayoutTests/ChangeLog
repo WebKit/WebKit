@@ -1,3 +1,12 @@
+2010-03-11  Simon Fraser  <simon.fraser@apple.com>
+
+        No review.
+
+        Need to turn on WebGL explicitly for these tests for Leopard.
+
+        * compositing/webgl/webgl-background-color.html:
+        * compositing/webgl/webgl-reflection.html:
+
 2010-03-11  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Geoff Garen.

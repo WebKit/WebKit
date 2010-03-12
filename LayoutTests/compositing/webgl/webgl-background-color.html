@@ -22,6 +22,9 @@
       }
     </style>
     <script>
+        if (window.layoutTestController)
+            layoutTestController.overridePreference("WebKitWebGLEnabled", "1");
+
         function initWebGL(canvasName, vshader, fshader, attribs, clearColor, clearDepth)
         {
             var canvas = document.getElementById(canvasName);
