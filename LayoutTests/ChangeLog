@@ -1,3 +1,14 @@
+2010-03-12  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Rubber-stamped by Dirk Schulze.
+
+        Update two tests, whose pixel hash fail with --tolerance 0. No visible differences.
+
+        * platform/mac/svg/custom/dominant-baseline-hanging-expected.checksum:
+        * platform/mac/svg/custom/dominant-baseline-hanging-expected.png:
+        * platform/mac/svg/custom/gradient-stop-corner-cases-expected.checksum:
+        * platform/mac/svg/custom/gradient-stop-corner-cases-expected.png:
+
 2010-03-11  Shu Chang  <Chang.Shu@nokia.com>
 
         Reviewed by David Levin.
