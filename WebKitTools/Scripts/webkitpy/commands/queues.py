@@ -167,7 +167,7 @@ class CommitQueue(AbstractQueue, StepSequenceErrorHandler):
         try:
             self.run_webkit_patch(["build-and-test", "--force-clean", "--non-interactive", "--build-style=both", "--quiet"])
         except ScriptError, e:
-            self._update_status("Unabled to successfully build and test", None)
+            self._update_status("Unable to successfully build and test", None)
             return False
         return True
 

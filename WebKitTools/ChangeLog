@@ -1,3 +1,12 @@
+2010-03-11  Garret Kelly  <gdk@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fixing minor typo in the commit queue status page.
+        https://bugs.webkit.org/show_bug.cgi?id=35979
+
+        * Scripts/webkitpy/commands/queues.py:
+
 2010-03-11  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed.
