@@ -31,13 +31,14 @@
 #ifndef WebNotificationPresenter_h
 #define WebNotificationPresenter_h
 
+#include "WebNotificationPermissionCallback.h"
+#include "WebSecurityOrigin.h"
 #include "WebString.h"
 
 namespace WebKit {
 
 class WebDocument;
 class WebNotification;
-class WebNotificationPermissionCallback;
 class WebURL;
 
 // Provides the services to show desktop notifications to the user.
@@ -59,14 +60,35 @@ public:
     // being destroyed.  Does _not_ remove the notification if being shown, but detaches it from receiving events.
     virtual void objectDestroyed(const WebNotification&) = 0;
 
+    // Checks the permission level for the given origin.
+    // FIXME: This should become abstract when the below is removed.
+    virtual Permission checkPermission(const WebSecurityOrigin& origin)
+    {
+        return PermissionNotAllowed;
+    };
+
     // Checks the permission level for the given URL. If the URL is being displayed in a document
     // (as opposed to a worker or other ScriptExecutionContext), |document| will also be provided.
-    virtual Permission checkPermission(const WebURL& url, WebDocument* document) = 0;
+    // FIXME: This method should be removed as clients don't need WebDocument anymore.
+    virtual Permission checkPermission(const WebURL& url, WebDocument* document)
+    {
+        return PermissionNotAllowed;
+    }
 
     // Requests permission for a given origin.  This operation is asynchronous and the callback provided
     // will be invoked when the permission decision is made.  Callback pointer must remain
     // valid until called.
-    virtual void requestPermission(const WebString& origin, WebNotificationPermissionCallback* callback) = 0;
+    // FIXME: This method should be removed when clients are moved to the below.
+    virtual void requestPermission(const WebString& origin, WebNotificationPermissionCallback* callback)
+    {
+        callback->permissionRequestComplete();
+    }
+    
+    // FIXME: This method should be abstract when the above is removed.
+    virtual void requestPermission(const WebSecurityOrigin& origin, WebNotificationPermissionCallback* callback)
+    {
+        callback->permissionRequestComplete();
+    }
 };
 
 } // namespace WebKit

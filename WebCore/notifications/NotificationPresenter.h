@@ -71,10 +71,8 @@ namespace WebCore {
         // made a decision.
         virtual void requestPermission(SecurityOrigin*, PassRefPtr<VoidCallback>) = 0;
 
-        // Checks the current level of permission for the specified URL. If the
-        // URL is a document (as opposed to a worker or other ScriptExecutionContext),
-        // |document| will also be provided.
-        virtual Permission checkPermission(const KURL&, Document*) = 0;
+        // Checks the current level of permission.
+        virtual Permission checkPermission(SecurityOrigin*) = 0;
     };
 
 } // namespace WebCore

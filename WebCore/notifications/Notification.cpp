@@ -49,8 +49,7 @@ Notification::Notification(const String& url, ScriptExecutionContext* context, E
     , m_presenter(provider)
 {
     ASSERT(m_presenter);
-    Document* document = context->isDocument() ? static_cast<Document*>(context) : 0;
-    if (m_presenter->checkPermission(context->url(), document) != NotificationPresenter::PermissionAllowed) {
+    if (m_presenter->checkPermission(context->securityOrigin()) != NotificationPresenter::PermissionAllowed) {
         ec = SECURITY_ERR;
         return;
     }
@@ -70,8 +69,7 @@ Notification::Notification(const NotificationContents& contents, ScriptExecution
     , m_presenter(provider)
 {
     ASSERT(m_presenter);
-    Document* document = context->isDocument() ? static_cast<Document*>(context) : 0;
-    if (m_presenter->checkPermission(context->url(), document) != NotificationPresenter::PermissionAllowed) {
+    if (m_presenter->checkPermission(context->securityOrigin()) != NotificationPresenter::PermissionAllowed) {
         ec = SECURITY_ERR;
         return;
     }
