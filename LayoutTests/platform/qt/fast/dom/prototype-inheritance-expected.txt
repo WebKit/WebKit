@@ -87,6 +87,8 @@ PASS inner.File.isInner is true
 PASS inner.File.constructor.isInner is true
 PASS inner.FileList.isInner is true
 PASS inner.FileList.constructor.isInner is true
+PASS inner.FormData.isInner is true
+PASS inner.FormData.constructor.isInner is true
 PASS inner.HTMLAllCollection.isInner is true
 PASS inner.HTMLAllCollection.constructor.isInner is true
 PASS inner.HTMLAnchorElement.isInner is true

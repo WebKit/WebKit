@@ -30,6 +30,7 @@
 #include "JSXMLHttpRequest.h"
 
 #include "Blob.h"
+#include "DOMFormData.h"
 #include "DOMWindow.h"
 #include "Document.h"
 #include "Event.h"
@@ -37,6 +38,7 @@
 #include "FrameLoader.h"
 #include "HTMLDocument.h"
 #include "JSBlob.h"
+#include "JSDOMFormData.h"
 #include "JSDOMWindowCustom.h"
 #include "JSDocument.h"
 #include "JSEvent.h"
@@ -113,6 +115,8 @@ JSValue JSXMLHttpRequest::send(ExecState* exec, const ArgList& args)
             impl()->send(toDocument(val), ec);
         else if (val.inherits(&JSBlob::s_info))
             impl()->send(toBlob(val), ec);
+        else if (val.inherits(&JSDOMFormData::s_info))
+            impl()->send(toDOMFormData(val), ec);
         else
             impl()->send(val.toString(exec), ec);
     }

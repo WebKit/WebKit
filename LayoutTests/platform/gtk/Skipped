@@ -3422,6 +3422,7 @@ http/tests/loading/slow-parsing-subframe.html
 http/tests/loading/text-content-type-with-binary-extension.html
 http/tests/local/send-dragged-file.html
 http/tests/local/send-sliced-dragged-file.html
+http/tests/local/send-form-data.html
 http/tests/media/video-play-stall-seek.html
 http/tests/media/video-play-stall.html
 http/tests/media/video-seekable-stall.html

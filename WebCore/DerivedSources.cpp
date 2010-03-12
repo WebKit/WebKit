@@ -71,6 +71,7 @@
 #include "JSDocumentType.cpp"
 #include "JSDOMApplicationCache.cpp"
 #include "JSDOMCoreException.cpp"
+#include "JSDOMFormData.cpp"
 #include "JSDOMImplementation.cpp"
 #include "JSDOMParser.cpp"
 #include "JSDOMSelection.cpp"

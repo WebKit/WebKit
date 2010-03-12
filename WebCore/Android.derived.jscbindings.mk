@@ -153,6 +153,7 @@ $(patsubst %.h,%.cpp,$(GEN)): $(intermediates)/dom/%.cpp : $(intermediates)/dom/
 # HTML
 GEN := \
     $(intermediates)/html/JSBlob.h \
+    $(intermediates)/html/JSDOMFormData.h \
     $(intermediates)/html/JSDataGridColumn.h \
     $(intermediates)/html/JSDataGridColumnList.h \
     $(intermediates)/html/JSFile.h \
