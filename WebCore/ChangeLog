@@ -1,3 +1,14 @@
+2010-03-12  Dan Winship  <danw@gnome.org>
+
+        Reviewed by Gustavo Noronha.
+
+        Make the defaultCookieJar use a no-third-party policy. Most
+        applications set their own cookie jar, but DumpRenderTree doesn't,
+        so it was failing the new third-party-cookie test.
+
+        * platform/network/soup/CookieJarSoup.cpp:
+        (WebCore::defaultCookieJar):
+
 2010-03-11  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Laszlo Gombos.
