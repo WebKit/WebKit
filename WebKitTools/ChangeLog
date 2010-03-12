@@ -1,5 +1,16 @@
 2010-03-12  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        Build fix (for EWS). Make sure the new code builds on older soup.
+
+        Thanks to Dan Winship.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues):
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setAlwaysAcceptCookies):
+
+2010-03-12  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         Reviewed by Eric Carlson.
 
         [GTK] DRT does not handle cookie policy setting
