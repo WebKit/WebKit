@@ -38,10 +38,10 @@ class QScriptValue;
 
   Implementation of QScriptValue.
   The implementation is based on a state machine. The states names are included in
-  QScriptValuePrivate::States. Each method should check for the current state and then perform a
+  QScriptValuePrivate::State. Each method should check for the current state and then perform a
   correct action.
 
-  States:
+  State:
     Invalid -> QSVP is invalid, no assumptions should be made about class members (apart from m_value).
     CString -> QSVP is created from QString or const char* and no JSC engine has been associated yet.
         Current value is kept in m_string,
@@ -53,7 +53,7 @@ class QScriptValue;
         is kept in m_number (cast of QScriptValue::SpecialValue)
     JSValue -> QSVP is associated with engine, but there is no information about real type, the state
         have really short live cycle. Normally it is created as a function call result.
-    JSNative -> QSVP is associated with engine, and it is sure that it isn't a JavaScript object.
+    JSPrimitive -> QSVP is associated with engine, and it is sure that it isn't a JavaScript object.
     JSObject -> QSVP is associated with engine, and it is sure that it is a JavaScript object.
 
   Each state keep all necessary information to invoke all methods, if not it should be changed to
@@ -117,14 +117,14 @@ public:
 
 private:
     // Please, update class documentation when you change the enum.
-    enum States {
+    enum State {
         Invalid = 0,
         CString = 0x1000,
         CNumber,
         CBool,
         CSpecial,
         JSValue = 0x2000, // JS values are equal or higher then this value.
-        JSNative,
+        JSPrimitive,
         JSObject
     } m_state;
     QScriptEnginePtr m_engine;
@@ -136,7 +136,7 @@ private:
     inline void setValue(JSValueRef);
 
     inline bool inherits(const char*);
-    inline States refinedJSValue();
+    inline State refinedJSValue();
 
     inline bool isJSBased() const;
     inline bool isNumberBased() const;
@@ -210,7 +210,7 @@ QScriptValuePrivate::QScriptValuePrivate(QScriptValue::SpecialValue value)
 }
 
 QScriptValuePrivate::QScriptValuePrivate(const QScriptEngine* engine, bool value)
-    : m_state(JSNative)
+    : m_state(JSPrimitive)
 {
     if (!engine) {
         // slower path reinitialization
@@ -225,7 +225,7 @@ QScriptValuePrivate::QScriptValuePrivate(const QScriptEngine* engine, bool value
 }
 
 QScriptValuePrivate::QScriptValuePrivate(const QScriptEngine* engine, int value)
-    : m_state(JSNative)
+    : m_state(JSPrimitive)
 {
     if (!engine) {
         // slower path reinitialization
@@ -240,7 +240,7 @@ QScriptValuePrivate::QScriptValuePrivate(const QScriptEngine* engine, int value)
 }
 
 QScriptValuePrivate::QScriptValuePrivate(const QScriptEngine* engine, uint value)
-    : m_state(JSNative)
+    : m_state(JSPrimitive)
 {
     if (!engine) {
         // slower path reinitialization
@@ -255,7 +255,7 @@ QScriptValuePrivate::QScriptValuePrivate(const QScriptEngine* engine, uint value
 }
 
 QScriptValuePrivate::QScriptValuePrivate(const QScriptEngine* engine, qsreal value)
-    : m_state(JSNative)
+    : m_state(JSPrimitive)
 {
     if (!engine) {
         // slower path reinitialization
@@ -270,7 +270,7 @@ QScriptValuePrivate::QScriptValuePrivate(const QScriptEngine* engine, qsreal val
 }
 
 QScriptValuePrivate::QScriptValuePrivate(const QScriptEngine* engine, const QString& value)
-    : m_state(JSNative)
+    : m_state(JSPrimitive)
 {
     if (!engine) {
         // slower path reinitialization
@@ -285,7 +285,7 @@ QScriptValuePrivate::QScriptValuePrivate(const QScriptEngine* engine, const QStr
 }
 
 QScriptValuePrivate::QScriptValuePrivate(const QScriptEngine* engine, QScriptValue::SpecialValue value)
-    : m_state(JSNative)
+    : m_state(JSPrimitive)
 {
     if (!engine) {
         // slower path reinitialization
@@ -326,10 +326,10 @@ bool QScriptValuePrivate::isBool()
     case CBool:
         return true;
     case JSValue:
-        if (refinedJSValue() != JSNative)
+        if (refinedJSValue() != JSPrimitive)
             return false;
         // Fall-through.
-    case JSNative:
+    case JSPrimitive:
         return JSValueIsBoolean(context(), value());
     default:
         return false;
@@ -342,10 +342,10 @@ bool QScriptValuePrivate::isNumber()
     case CNumber:
         return true;
     case JSValue:
-        if (refinedJSValue() != JSNative)
+        if (refinedJSValue() != JSPrimitive)
             return false;
         // Fall-through.
-    case JSNative:
+    case JSPrimitive:
         return JSValueIsNumber(context(), value());
     default:
         return false;
@@ -358,10 +358,10 @@ bool QScriptValuePrivate::isNull()
     case CSpecial:
         return m_number == static_cast<int>(QScriptValue::NullValue);
     case JSValue:
-        if (refinedJSValue() != JSNative)
+        if (refinedJSValue() != JSPrimitive)
             return false;
         // Fall-through.
-    case JSNative:
+    case JSPrimitive:
         return JSValueIsNull(context(), value());
     default:
         return false;
@@ -374,10 +374,10 @@ bool QScriptValuePrivate::isString()
     case CString:
         return true;
     case JSValue:
-        if (refinedJSValue() != JSNative)
+        if (refinedJSValue() != JSPrimitive)
             return false;
         // Fall-through.
-    case JSNative:
+    case JSPrimitive:
         return JSValueIsString(context(), value());
     default:
         return false;
@@ -390,10 +390,10 @@ bool QScriptValuePrivate::isUndefined()
     case CSpecial:
         return m_number == static_cast<int>(QScriptValue::UndefinedValue);
     case JSValue:
-        if (refinedJSValue() != JSNative)
+        if (refinedJSValue() != JSPrimitive)
             return false;
         // Fall-through.
-    case JSNative:
+    case JSPrimitive:
         return JSValueIsUndefined(context(), value());
     default:
         return false;
@@ -455,7 +455,7 @@ QString QScriptValuePrivate::toString() const
     case CSpecial:
         return m_number == QScriptValue::NullValue ? QString::fromLatin1("null") : QString::fromLatin1("undefined");
     case JSValue:
-    case JSNative:
+    case JSPrimitive:
     case JSObject:
         return QScriptConverter::toString(JSValueToStringCopy(context(), value(), /* exception */ 0));
     }
@@ -468,7 +468,7 @@ qsreal QScriptValuePrivate::toNumber() const
 {
     switch (m_state) {
     case JSValue:
-    case JSNative:
+    case JSPrimitive:
     case JSObject:
         return JSValueToNumber(context(), value(), /* exception */ 0);
     case CNumber:
@@ -500,7 +500,7 @@ bool QScriptValuePrivate::toBool() const
 {
     switch (m_state) {
     case JSValue:
-    case JSNative:
+    case JSPrimitive:
         return JSValueToBoolean(context(), value());
     case JSObject:
         return true;
@@ -627,7 +627,7 @@ bool QScriptValuePrivate::assignEngine(QScriptEnginePrivate* engine)
         return false;
     }
     m_engine = engine;
-    m_state = JSNative;
+    m_state = JSPrimitive;
     setValue(value);
     return true;
 }
@@ -719,11 +719,11 @@ bool QScriptValuePrivate::inherits(const char* name)
   \internal
   Refines the state of this QScriptValuePrivate. Returns the new state.
 */
-QScriptValuePrivate::States QScriptValuePrivate::refinedJSValue()
+QScriptValuePrivate::State QScriptValuePrivate::refinedJSValue()
 {
     Q_ASSERT(m_state == JSValue);
     if (!JSValueIsObject(context(), value())) {
-        m_state = JSNative;
+        m_state = JSPrimitive;
     } else {
         m_state = JSObject;
         // We are sure that value is an JSObject, so we can const_cast safely without

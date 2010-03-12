@@ -1,3 +1,31 @@
+2010-03-11  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        The JSNative state was renamed to JSPrimitive. The new name better
+        coresponds to the ECMAScript standard.
+
+        Enum QScriptValuePrivate::States was renamed to State to obey Qt
+        coding style rules ("States" name suggests that a state could
+        mixed together with an other state using bitwise logic operators.
+
+        [Qt] QScriptValuePrivate::States has naming issues
+        https://bugs.webkit.org/show_bug.cgi?id=35968
+
+        * qt/api/qscriptvalue_p.h:
+        (QScriptValuePrivate::):
+        (QScriptValuePrivate::QScriptValuePrivate):
+        (QScriptValuePrivate::isBool):
+        (QScriptValuePrivate::isNumber):
+        (QScriptValuePrivate::isNull):
+        (QScriptValuePrivate::isString):
+        (QScriptValuePrivate::isUndefined):
+        (QScriptValuePrivate::toString):
+        (QScriptValuePrivate::toNumber):
+        (QScriptValuePrivate::toBool):
+        (QScriptValuePrivate::assignEngine):
+        (QScriptValuePrivate::refinedJSValue):
+
 2010-03-11  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by NOBODY (Windows build fix).
