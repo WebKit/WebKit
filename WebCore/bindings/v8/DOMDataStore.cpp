@@ -114,11 +114,6 @@ WTF::Mutex& DOMDataStore::allStoresMutex()
     return staticDOMDataListMutex;
 }
 
-void DOMDataStore::forgetDelayedObject(DOMData* domData, void* object)
-{
-    domData->forgetDelayedObject(object);
-}
-
 void* DOMDataStore::getDOMWrapperMap(DOMWrapperMapType type)
 {
     switch (type) {

@@ -1,3 +1,30 @@
+2010-03-11  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by David Levin.
+
+        [v8] Remove obsolete code for delayed dereferencing of DOM objects for single-heap, multithread v8 usage.
+        https://bugs.webkit.org/show_bug.cgi?id=36043
+
+        No new tests, no changes in functionality.
+
+        * bindings/v8/DOMData.cpp:
+        (WebCore::DOMData::DOMData):
+        * bindings/v8/DOMData.h:
+        (WebCore::DOMData::handleWeakObject):
+        * bindings/v8/DOMDataStore.cpp:
+        * bindings/v8/DOMDataStore.h:
+        (WebCore::DOMDataStore::domObjectMap):
+        (WebCore::DOMDataStore::activeDomObjectMap):
+        (WebCore::DOMDataStore::domSvgElementInstanceMap):
+        (WebCore::DOMDataStore::domSvgObjectWithContextMap):
+        * bindings/v8/ScopedDOMDataStore.cpp:
+        (WebCore::ScopedDOMDataStore::ScopedDOMDataStore):
+        * bindings/v8/StaticDOMDataStore.cpp:
+        (WebCore::StaticDOMDataStore::StaticDOMDataStore):
+        * bindings/v8/StaticDOMDataStore.h:
+        * bindings/v8/V8DOMMap.cpp:
+        (WebCore::removeAllDOMObjectsInCurrentThread):
+
 2010-03-11  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber stamped by Oliver Hunt.

@@ -161,22 +161,6 @@ namespace WebCore {
 #endif
         };
 
-        template <class KeyType>
-        class InternalDOMWrapperMap : public DOMWrapperMap<KeyType> {
-        public:
-            InternalDOMWrapperMap(DOMData* domData, v8::WeakReferenceCallback callback)
-                : DOMWrapperMap<KeyType>(callback), m_domData(domData) { }
-
-            virtual void forget(KeyType* object)
-            {
-                DOMWrapperMap<KeyType>::forget(object);
-                forgetDelayedObject(m_domData, object);
-            }
-
-        private:
-            DOMData* m_domData;
-        };
-
         class IntrusiveDOMWrapperMap : public AbstractWeakReferenceMap<Node, v8::Object> {
         public:
             IntrusiveDOMWrapperMap(v8::WeakReferenceCallback callback)
@@ -253,25 +237,21 @@ namespace WebCore {
         DOMDataStore(DOMData*);
         virtual ~DOMDataStore();
 
-        // A list of all DOMDataStore objects.  Traversed during GC to find a thread-specific map that
-        // contains the object - so we can schedule the object to be deleted on the thread which created it.
+        // A list of all DOMDataStore objects in the current V8 instance (thread). Normally, each World has a DOMDataStore.
         static DOMDataList& allStores();
         // Mutex to protect against concurrent access of DOMDataList.
         static WTF::Mutex& allStoresMutex();
-
-        // Helper function to avoid circular includes.
-        static void forgetDelayedObject(DOMData*, void* object);
 
         DOMData* domData() const { return m_domData; }
 
         void* getDOMWrapperMap(DOMWrapperMapType);
 
         DOMNodeMapping& domNodeMap() { return *m_domNodeMap; }
-        InternalDOMWrapperMap<void>& domObjectMap() { return *m_domObjectMap; }
-        InternalDOMWrapperMap<void>& activeDomObjectMap() { return *m_activeDomObjectMap; }
+        DOMWrapperMap<void>& domObjectMap() { return *m_domObjectMap; }
+        DOMWrapperMap<void>& activeDomObjectMap() { return *m_activeDomObjectMap; }
 #if ENABLE(SVG)
-        InternalDOMWrapperMap<SVGElementInstance>& domSvgElementInstanceMap() { return *m_domSvgElementInstanceMap; }
-        InternalDOMWrapperMap<void>& domSvgObjectWithContextMap() { return *m_domSvgObjectWithContextMap; }
+        DOMWrapperMap<SVGElementInstance>& domSvgElementInstanceMap() { return *m_domSvgElementInstanceMap; }
+        DOMWrapperMap<void>& domSvgObjectWithContextMap() { return *m_domSvgObjectWithContextMap; }
 #endif
 
         // Need by V8GCController.
@@ -287,11 +267,11 @@ namespace WebCore {
 #endif
         
         DOMNodeMapping* m_domNodeMap;
-        InternalDOMWrapperMap<void>* m_domObjectMap;
-        InternalDOMWrapperMap<void>* m_activeDomObjectMap;
+        DOMWrapperMap<void>* m_domObjectMap;
+        DOMWrapperMap<void>* m_activeDomObjectMap;
 #if ENABLE(SVG)
-        InternalDOMWrapperMap<SVGElementInstance>* m_domSvgElementInstanceMap;
-        InternalDOMWrapperMap<void>* m_domSvgObjectWithContextMap;
+        DOMWrapperMap<SVGElementInstance>* m_domSvgElementInstanceMap;
+        DOMWrapperMap<void>* m_domSvgObjectWithContextMap;
 #endif
 
     private:

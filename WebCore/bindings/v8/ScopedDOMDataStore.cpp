@@ -36,12 +36,12 @@ namespace WebCore {
 ScopedDOMDataStore::ScopedDOMDataStore(DOMData* domData)
     : DOMDataStore(domData)
 {
-    m_domNodeMap = new InternalDOMWrapperMap<Node>(domData, &DOMDataStore::weakNodeCallback);
-    m_domObjectMap = new InternalDOMWrapperMap<void>(domData, &DOMDataStore::weakDOMObjectCallback);
-    m_activeDomObjectMap = new InternalDOMWrapperMap<void>(domData, &DOMDataStore::weakActiveDOMObjectCallback);
+    m_domNodeMap = new DOMWrapperMap<Node>(&DOMDataStore::weakNodeCallback);
+    m_domObjectMap = new DOMWrapperMap<void>(&DOMDataStore::weakDOMObjectCallback);
+    m_activeDomObjectMap = new DOMWrapperMap<void>(&DOMDataStore::weakActiveDOMObjectCallback);
 #if ENABLE(SVG)
-    m_domSvgElementInstanceMap = new InternalDOMWrapperMap<SVGElementInstance>(domData, &DOMDataStore::weakSVGElementInstanceCallback);
-    m_domSvgObjectWithContextMap = new InternalDOMWrapperMap<void>(domData, &DOMDataStore::weakSVGObjectWithContextCallback);
+    m_domSvgElementInstanceMap = new DOMWrapperMap<SVGElementInstance>(&DOMDataStore::weakSVGElementInstanceCallback);
+    m_domSvgObjectWithContextMap = new DOMWrapperMap<void>(&DOMDataStore::weakSVGObjectWithContextCallback);
 #endif
 }
 

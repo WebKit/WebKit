@@ -36,11 +36,11 @@ namespace WebCore {
 StaticDOMDataStore::StaticDOMDataStore(DOMData* domData)
     : DOMDataStore(domData)
     , m_staticDomNodeMap(&DOMDataStore::weakNodeCallback)
-    , m_staticDomObjectMap(domData, &DOMDataStore::weakDOMObjectCallback)
-    , m_staticActiveDomObjectMap(domData, &DOMDataStore::weakActiveDOMObjectCallback)
+    , m_staticDomObjectMap(&DOMDataStore::weakDOMObjectCallback)
+    , m_staticActiveDomObjectMap(&DOMDataStore::weakActiveDOMObjectCallback)
 #if ENABLE(SVG)
-    , m_staticDomSvgElementInstanceMap(domData, &DOMDataStore::weakSVGElementInstanceCallback)
-    , m_staticDomSvgObjectWithContextMap(domData, &DOMDataStore::weakSVGObjectWithContextCallback)
+    , m_staticDomSvgElementInstanceMap(&DOMDataStore::weakSVGElementInstanceCallback)
+    , m_staticDomSvgObjectWithContextMap(&DOMDataStore::weakSVGObjectWithContextCallback)
 #endif
 {
     m_domNodeMap = &m_staticDomNodeMap;

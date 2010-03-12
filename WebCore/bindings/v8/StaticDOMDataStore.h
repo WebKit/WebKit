@@ -49,11 +49,11 @@ public:
 
 private:
     IntrusiveDOMWrapperMap m_staticDomNodeMap;
-    InternalDOMWrapperMap<void> m_staticDomObjectMap;
-    InternalDOMWrapperMap<void> m_staticActiveDomObjectMap;
+    DOMWrapperMap<void> m_staticDomObjectMap;
+    DOMWrapperMap<void> m_staticActiveDomObjectMap;
 #if ENABLE(SVG)
-    InternalDOMWrapperMap<SVGElementInstance> m_staticDomSvgElementInstanceMap;
-    InternalDOMWrapperMap<void> m_staticDomSvgObjectWithContextMap;
+    DOMWrapperMap<SVGElementInstance> m_staticDomSvgElementInstanceMap;
+    DOMWrapperMap<void> m_staticDomSvgObjectWithContextMap;
 #endif
 };
 
