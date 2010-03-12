@@ -1023,6 +1023,25 @@ static JSValueRef setUserStyleSheetLocationCallback(JSContextRef context, JSObje
     return JSValueMakeUndefined(context);
 }
 
+static JSValueRef setWillSendRequestClearHeaderCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    // Has mac & windows implementation
+    if (argumentCount < 1)
+        return JSValueMakeUndefined(context);
+
+    JSRetainPtr<JSStringRef> header(Adopt, JSValueToStringCopy(context, arguments[0], exception));
+    ASSERT(!*exception);
+
+    size_t maxLength = JSStringGetMaximumUTF8CStringSize(header.get());
+    char* headerBuffer = new char[maxLength + 1];
+    JSStringGetUTF8CString(header.get(), headerBuffer, maxLength + 1);
+
+    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    controller->setWillSendRequestClearHeader(headerBuffer);
+
+    return JSValueMakeUndefined(context);
+}
+
 static JSValueRef setWillSendRequestReturnsNullCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     // Has cross-platform implementation
@@ -1463,6 +1482,7 @@ JSStaticFunction* LayoutTestController::staticFunctions()
         { "setUseDashboardCompatibilityMode", setUseDashboardCompatibilityModeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setUserStyleSheetEnabled", setUserStyleSheetEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setUserStyleSheetLocation", setUserStyleSheetLocationCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "setWillSendRequestClearHeader", setWillSendRequestClearHeaderCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setWillSendRequestReturnsNull", setWillSendRequestReturnsNullCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setWillSendRequestReturnsNullOnRedirect", setWillSendRequestReturnsNullOnRedirectCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setWindowIsKey", setWindowIsKeyCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

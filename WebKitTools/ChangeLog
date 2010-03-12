@@ -1,3 +1,21 @@
+2010-03-12  Jochen Eisinger  <jochen@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Introduce setWillSendRequestClearHeader to LayoutTestController to selectively remove headers in willSendRequest. Used in http/tests/security/no-referrer.html
+        https://bugs.webkit.org/show_bug.cgi?id=35920
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (setWillSendRequestClearHeaderCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        (LayoutTestController::willSendRequestClearHeaders):
+        (LayoutTestController::setWillSendRequestClearHeader):
+        * DumpRenderTree/mac/ResourceLoadDelegate.mm:
+        (-[ResourceLoadDelegate webView:resource:willSendRequest:redirectResponse:fromDataSource:]):
+        * DumpRenderTree/win/ResourceLoadDelegate.cpp:
+        (ResourceLoadDelegate::willSendRequest):
+
 2010-03-11  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed.

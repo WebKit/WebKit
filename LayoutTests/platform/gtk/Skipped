@@ -5676,6 +5676,9 @@ fast/css/non-standard-checkbox-size.html
 # https://bugs.webkit.org/show_bug.cgi?id=33671
 media/video-loop.html
 
+# GTK+ does not have layoutTestController.setWillSendRequestClearHeader.
+http/tests/security/no-referrer.html
+
 # GTK+ does not have layoutTestController.setWillSendRequestReturnsNull.
 fast/loader/onload-willSendRequest-null-for-script.html
 

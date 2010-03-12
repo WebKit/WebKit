@@ -1,0 +1,9 @@
+<script>
+if (window.layoutTestController) {
+    layoutTestController.waitUntilDone();
+    layoutTestController.dumpAsText();
+    layoutTestController.setWillSendRequestClearHeader("Referer");
+}
+</script>
+<div id=log></div>
+<iframe src="http://127.0.0.1:8000/security/resources/no-referrer-frame.php"></iframe>

@@ -31,26 +31,33 @@
 
 #include "DumpRenderTree.h"
 #include "LayoutTestController.h"
-#include <comutil.h>
 #include <WebKit/WebKitCOMAPI.h>
+#include <comutil.h>
+#include <sstream>
+#include <tchar.h>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
-#include <sstream>
 
-
-using std::wstring;
-using std::wiostream;
+using namespace std;
 
 static inline wstring wstringFromBSTR(BSTR str)
 {
     return wstring(str, ::SysStringLen(str));
 }
 
-wstring wstringFromInt(int i)
+static inline wstring wstringFromInt(int i)
 {
-    std::wostringstream ss;
+    wostringstream ss;
     ss << i;
     return ss.str();
+}
+
+static inline BSTR BSTRFromString(const string& str)
+{
+    int length = ::MultiByteToWideChar(CP_UTF8, 0, str.c_str(), str.length(), 0, 0);
+    BSTR result = ::SysAllocStringLen(0, length);
+    ::MultiByteToWideChar(CP_UTF8, 0, str.c_str(), str.length(), result, length);
+    return result;
 }
 
 typedef HashMap<unsigned long, wstring> IdentifierMap;
@@ -254,8 +261,16 @@ HRESULT STDMETHODCALLTYPE ResourceLoadDelegate::willSendRequest(
         return S_OK;
     }
 
-    request->AddRef();
-    *newRequest = request;
+    IWebMutableURLRequest* requestCopy = 0;
+    request->mutableCopy(&requestCopy);
+    const set<string>& clearHeaders = gLayoutTestController->willSendRequestClearHeaders();
+    for (set<string>::const_iterator header = clearHeaders.begin(); header != clearHeaders.end(); ++header) {
+      BSTR bstrHeader = BSTRFromString(*header);
+      requestCopy->setValue(0, bstrHeader);
+      SysFreeString(bstrHeader);
+    }
+
+    *newRequest = requestCopy;
     return S_OK;
 }
 

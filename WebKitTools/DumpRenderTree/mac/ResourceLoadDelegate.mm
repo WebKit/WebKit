@@ -35,6 +35,8 @@
 #import <WebKit/WebTypesInternal.h>
 #import <wtf/Assertions.h>
 
+using namespace std;
+
 @interface NSURL (DRTExtras)
 - (NSString *)_drt_descriptionSuitableForTestResult;
 @end
@@ -121,10 +123,10 @@
     return @"<unknown>";
 }
 
--(NSURLRequest *)webView: (WebView *)wv resource:identifier willSendRequest: (NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse fromDataSource:(WebDataSource *)dataSource
+-(NSURLRequest *)webView: (WebView *)wv resource:identifier willSendRequest: (NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse fromDataSource:(WebDataSource *)dataSource
 {
     if (!done && gLayoutTestController->dumpResourceLoadCallbacks()) {
-        NSString *string = [NSString stringWithFormat:@"%@ - willSendRequest %@ redirectResponse %@", identifier, [newRequest _drt_descriptionSuitableForTestResult],
+        NSString *string = [NSString stringWithFormat:@"%@ - willSendRequest %@ redirectResponse %@", identifier, [request _drt_descriptionSuitableForTestResult],
             [redirectResponse _drt_descriptionSuitableForTestResult]];
         printf("%s\n", [string UTF8String]);
     }
@@ -137,7 +139,7 @@
         return nil;
     }
 
-    NSURL *url = [newRequest URL];
+    NSURL *url = [request URL];
     NSString *host = [url host];
     if (host
         && (NSOrderedSame == [[url scheme] caseInsensitiveCompare:@"http"] || NSOrderedSame == [[url scheme] caseInsensitiveCompare:@"https"])
@@ -151,7 +153,15 @@
     if (disallowedURLs && CFSetContainsValue(disallowedURLs, url))
         return nil;
 
-    return newRequest;
+    NSMutableURLRequest *newRequest = [request mutableCopy];
+    const set<string>& clearHeaders = gLayoutTestController->willSendRequestClearHeaders();
+    for (set<string>::const_iterator header = clearHeaders.begin(); header != clearHeaders.end(); ++header) {
+        NSString *nsHeader = [[NSString alloc] initWithUTF8String:header->c_str()];
+        [newRequest setValue:nil forHTTPHeaderField:nsHeader];
+        [nsHeader release];
+    }
+
+    return [newRequest autorelease];
 }
 
 - (void)webView:(WebView *)wv resource:(id)identifier didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge fromDataSource:(WebDataSource *)dataSource
