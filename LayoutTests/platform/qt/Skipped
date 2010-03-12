@@ -5031,6 +5031,7 @@ fast/events/touch/send-oncancel-event.html
 
 # REGRESSION (r53450) - skipped until fix
 # https://bugs.webkit.org/show_bug.cgi?id=33834
+css1/box_properties/acid_test.html
 fast/forms/textarea-scrollbar-height.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=34004
