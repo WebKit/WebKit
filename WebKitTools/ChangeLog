@@ -1,3 +1,20 @@
+2010-03-11  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35965
+        <rdar://problem/7742771> Crash when passing an object returned from plug-in back to the plug-in
+
+        Made rememberedObject a member of PluginObject. A plug-in must not use it's references
+        to browser NPObjects after being destroyed, but this wasn't the case with static variable.
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.cpp:
+        (pluginInvoke):
+        (pluginInvalidate):
+        (pluginAllocate):
+        (pluginDeallocate):
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.h:
+
 2010-03-11  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Oliver Hunt.

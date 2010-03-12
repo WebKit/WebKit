@@ -163,8 +163,10 @@ JSValue ProxyInstance::invoke(JSC::ExecState* exec, InvokeType type, uint64_t id
     auto_ptr<NetscapePluginInstanceProxy::BooleanAndDataReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanAndDataReply>(requestID);
     NetscapePluginInstanceProxy::moveGlobalExceptionToExecState(exec);
 
-    for (unsigned i = 0; i < args.size(); i++)
-        m_instanceProxy->releaseLocalObject(args.at(i));
+    if (m_instanceProxy) {
+        for (unsigned i = 0; i < args.size(); i++)
+            m_instanceProxy->releaseLocalObject(args.at(i));
+    }
 
     if (!reply.get() || !reply->m_returnValue)
         return jsUndefined();
@@ -429,7 +431,8 @@ void ProxyInstance::setFieldValue(ExecState* exec, const Field* field, JSValue v
                                                 m_instanceProxy->pluginID(), requestID,
                                                 m_objectID, serverIdentifier, valueData, valueLength);
     mig_deallocate(reinterpret_cast<vm_address_t>(valueData), valueLength);
-    m_instanceProxy->releaseLocalObject(value);
+    if (m_instanceProxy)
+        m_instanceProxy->releaseLocalObject(value);
     if (kr != KERN_SUCCESS)
         return;
     

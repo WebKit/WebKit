@@ -1,3 +1,13 @@
+2010-03-11  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35965
+        <rdar://problem/7742771> Crash when passing an object returned from plug-in back to the plug-in
+
+        * plugins/round-trip-npobject-expected.txt: Added.
+        * plugins/round-trip-npobject.html: Added.
+
 2010-03-11  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

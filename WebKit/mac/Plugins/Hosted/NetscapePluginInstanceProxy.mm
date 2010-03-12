@@ -1352,26 +1352,18 @@ void NetscapePluginInstanceProxy::demarshalValues(ExecState* exec, data_t values
 
 void NetscapePluginInstanceProxy::retainLocalObject(JSC::JSValue value)
 {
-    if (!value.isObject())
+    if (!value.isObject() || value.inherits(&ProxyRuntimeObject::s_info))
         return;
 
-    JSObject* object = asObject(value);
-    if (object->classInfo() == &RuntimeObject::s_info)
-        return;
-
-    m_localObjects.retain(object);
+    m_localObjects.retain(asObject(value));
 }
 
 void NetscapePluginInstanceProxy::releaseLocalObject(JSC::JSValue value)
 {
-    if (!value.isObject())
+    if (!value.isObject() || value.inherits(&ProxyRuntimeObject::s_info))
         return;
 
-    JSObject* object = asObject(value);
-    if (object->classInfo() == &RuntimeObject::s_info)
-        return;
-
-    m_localObjects.release(object);
+    m_localObjects.release(asObject(value));
 }
 
 PassRefPtr<Instance> NetscapePluginInstanceProxy::createBindingsInstance(PassRefPtr<RootObject> rootObject)
