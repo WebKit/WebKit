@@ -93,30 +93,28 @@ namespace JSC {
 
         static PassRefPtr<UString::Rep> add(ExecState* exec, UString::Rep* r)
         {
-            if (r->isIdentifier()) {
 #ifndef NDEBUG
-                checkSameIdentifierTable(exec, r);
+            checkCurrentIdentifierTable(exec);
 #endif
+            if (r->isIdentifier())
                 return r;
-            }
             return addSlowCase(exec, r);
         }
         static PassRefPtr<UString::Rep> add(JSGlobalData* globalData, UString::Rep* r)
         {
-            if (r->isIdentifier()) {
 #ifndef NDEBUG
-                checkSameIdentifierTable(globalData, r);
+            checkCurrentIdentifierTable(globalData);
 #endif
+            if (r->isIdentifier())
                 return r;
-            }
             return addSlowCase(globalData, r);
         }
 
         static PassRefPtr<UString::Rep> addSlowCase(ExecState*, UString::Rep* r);
         static PassRefPtr<UString::Rep> addSlowCase(JSGlobalData*, UString::Rep* r);
 
-        static void checkSameIdentifierTable(ExecState*, UString::Rep*);
-        static void checkSameIdentifierTable(JSGlobalData*, UString::Rep*);
+        static void checkCurrentIdentifierTable(ExecState*);
+        static void checkCurrentIdentifierTable(JSGlobalData*);
     };
     
     inline bool operator==(const Identifier& a, const Identifier& b)

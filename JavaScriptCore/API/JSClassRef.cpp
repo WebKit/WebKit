@@ -111,7 +111,8 @@ OpaqueJSClass::OpaqueJSClass(const JSClassDefinition* definition, OpaqueJSClass*
 
 OpaqueJSClass::~OpaqueJSClass()
 {
-    ASSERT(!m_className.rep()->isIdentifier());
+    // The empty string is shared across threads & is an identifier, in all other cases we should have done a deep copy in className(), below. 
+    ASSERT(!m_className.size() || !m_className.rep()->isIdentifier());
 
     if (m_staticValues) {
         OpaqueJSClassStaticValuesTable::const_iterator end = m_staticValues->end();

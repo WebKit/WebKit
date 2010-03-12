@@ -1,3 +1,16 @@
+2010-03-11  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 36075 - Clean up screwyness re static string impls & Identifiers.
+
+        * platform/text/StringImpl.cpp:
+        (WebCore::StringImpl::~StringImpl): Add ASSERT
+        (WebCore::StringImpl::sharedBuffer): Add ASSERT
+        * platform/text/StringImpl.h:
+        (WebCore::StringImpl::setHash): Add ASSERT
+        (WebCore::StringImpl::isStatic): added.
+
 2010-03-12  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Simon Fraser.

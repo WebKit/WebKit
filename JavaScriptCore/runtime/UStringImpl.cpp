@@ -41,7 +41,6 @@ static const unsigned minLengthToShare = 20;
 UStringImpl::~UStringImpl()
 {
     ASSERT(!isStatic());
-    checkConsistency();
 
     if (isIdentifier())
         Identifier::remove(this);

@@ -124,11 +124,8 @@ struct CStringTranslator {
 
 PassRefPtr<UString::Rep> Identifier::add(JSGlobalData* globalData, const char* c)
 {
-    if (!c) {
-        UString::Rep* rep = UString::null().rep();
-        rep->hash();
-        return rep;
-    }
+    if (!c)
+        return UString::null().rep();
     if (!c[0])
         return UString::Rep::empty();
     if (!c[1])
@@ -209,19 +206,18 @@ PassRefPtr<UString::Rep> Identifier::add(ExecState* exec, const UChar* s, int le
 PassRefPtr<UString::Rep> Identifier::addSlowCase(JSGlobalData* globalData, UString::Rep* r)
 {
     ASSERT(!r->isIdentifier());
+    // The empty & null strings are static singletons, and static strings are handled
+    // in ::add() in the header, so we should never get here with a zero length string.
+    ASSERT(r->length());
+
     if (r->length() == 1) {
         UChar c = r->characters()[0];
         if (c <= 0xFF)
             r = globalData->smallStrings.singleCharacterStringRep(c);
-            if (r->isIdentifier()) {
-#ifndef NDEBUG
-                checkSameIdentifierTable(globalData, r);
-#endif
+            if (r->isIdentifier())
                 return r;
-            }
     }
-    if (!r->length())
-        return UString::Rep::empty();
+
     return *globalData->identifierTable->add(r).first;
 }
 
@@ -252,25 +248,24 @@ Identifier Identifier::from(ExecState* exec, double value)
 
 #ifndef NDEBUG
 
-void Identifier::checkSameIdentifierTable(ExecState* exec, UString::Rep*)
+void Identifier::checkCurrentIdentifierTable(JSGlobalData* globalData)
 {
-    ASSERT_UNUSED(exec, exec->globalData().identifierTable == currentIdentifierTable());
+    // Check the identifier table accessible through the threadspecific matches the
+    // globalData's identifier table.
+    ASSERT_UNUSED(globalData, globalData->identifierTable == currentIdentifierTable());
 }
 
-void Identifier::checkSameIdentifierTable(JSGlobalData* globalData, UString::Rep*)
+void Identifier::checkCurrentIdentifierTable(ExecState* exec)
 {
-    ASSERT_UNUSED(globalData, globalData->identifierTable == currentIdentifierTable());
+    checkCurrentIdentifierTable(&exec->globalData());
 }
 
 #else
 
-void Identifier::checkSameIdentifierTable(ExecState*, UString::Rep*)
-{
-}
-
-void Identifier::checkSameIdentifierTable(JSGlobalData*, UString::Rep*)
-{
-}
+// These only exists so that our exports are the same for debug and release builds.
+// This would be an ASSERT_NOT_REACHED(), but we're in NDEBUG only code here!
+void Identifier::checkCurrentIdentifierTable(JSGlobalData*) { CRASH(); }
+void Identifier::checkCurrentIdentifierTable(ExecState*) { CRASH(); }
 
 #endif
 

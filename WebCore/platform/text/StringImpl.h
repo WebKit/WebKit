@@ -127,6 +127,7 @@ private:
     // For use only by AtomicString's XXXTranslator helpers.
     void setHash(unsigned hash)
     {
+        ASSERT(!isStatic());
         ASSERT(!m_hash);
         ASSERT(hash == computeHash(m_data, m_length));
         m_hash = hash;
@@ -252,6 +253,7 @@ private:
     static PassRefPtr<StringImpl> createStrippingNullCharactersSlowCase(const UChar*, unsigned length);
     
     BufferOwnership bufferOwnership() const { return static_cast<BufferOwnership>(m_refCountAndFlags & s_refCountMaskBufferOwnership); }
+    bool isStatic() const { return m_refCountAndFlags & s_refCountFlagStatic; }
 
     static const unsigned s_refCountMask = 0xFFFFFFE0;
     static const unsigned s_refCountIncrement = 0x20;

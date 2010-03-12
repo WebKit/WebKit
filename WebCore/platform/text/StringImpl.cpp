@@ -48,6 +48,8 @@ static const unsigned minLengthToShare = 20;
 
 StringImpl::~StringImpl()
 {
+    ASSERT(!isStatic());
+
     if (inTable())
         AtomicString::remove(this);
 
@@ -129,6 +131,8 @@ SharedUChar* StringImpl::sharedBuffer()
 {
     if (m_length < minLengthToShare)
         return 0;
+    // All static strings are smaller that the minimim length to share.
+    ASSERT(!isStatic());
 
     BufferOwnership ownership = bufferOwnership();
 

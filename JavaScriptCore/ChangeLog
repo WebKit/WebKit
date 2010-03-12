@@ -1,3 +1,27 @@
+2010-03-11  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 36075 - Clean up screwyness re static string impls & Identifiers.
+
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::~OpaqueJSClass): Classname may be null/empty, and these are an identifer.  This is okay, since the null/empty strings are shared across all threads.
+        * JavaScriptCore.exp:
+        * runtime/Identifier.cpp:
+        (JSC::Identifier::add): No need to explicitly hash null reps, this is done in the ststic UStringImpl constructor.
+        (JSC::Identifier::addSlowCase): UStringImpl::empty() handled & checkCurrentIdentifierTable now called in the header.
+        (JSC::Identifier::checkCurrentIdentifierTable): Replaces checkSameIdentifierTable (this no longer checked the rep since the identifierTable pointer was removed from UString::Rep long ago).
+        * runtime/Identifier.h:
+        (JSC::Identifier::add): Replace call to checkSameIdentifierTable with call to checkCurrentIdentifierTable at head of function.
+        * runtime/UStringImpl.cpp:
+        (JSC::UStringImpl::~UStringImpl): Remove call to checkConsistency - this function no longer checks anything interesting.
+        * runtime/UStringImpl.h:
+        (JSC::UStringOrRopeImpl::UStringOrRopeImpl): Set s_refCountFlagIsIdentifier in static constructor.
+        (JSC::UStringImpl::UStringImpl): remove calls to checkConsistency (see above), add new ASSERT to substring constructor.
+        (JSC::UStringImpl::setHash): ASSERT not static (static strings set the hash in their constructor, should not reach this code path).
+        (JSC::UStringImpl::create): Add missing ASSERT.
+        (JSC::UStringImpl::setIsIdentifier): ASSERT !isStatic() (static strings hash set in constructor).
+
 2010-03-12  Peter Varga  <pvarga@inf.u-szeged.hu>
 
         Reviewed by David Levin.
