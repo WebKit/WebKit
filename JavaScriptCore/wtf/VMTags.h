@@ -28,7 +28,7 @@
 
 // On Mac OS X, the VM subsystem allows tagging memory requested from mmap and vm_map
 // in order to aid tools that inspect system memory use. 
-#if OS(DARWIN) && !defined(BUILDING_ON_TIGER)
+#if OS(DARWIN) && !defined(TARGETING_TIGER)
 
 #include <mach/vm_statistics.h>
 
@@ -54,7 +54,7 @@
 #define VM_TAG_FOR_WEBCORE_PURGEABLE_MEMORY VM_MAKE_TAG(69)
 #endif // defined(VM_MEMORY_WEBCORE_PURGEABLE_BUFFERS)
 
-#else // OS(DARWIN) && !defined(BUILDING_ON_TIGER)
+#else // OS(DARWIN) && !defined(TARGETING_TIGER)
 
 #define VM_TAG_FOR_TCMALLOC_MEMORY -1
 #define VM_TAG_FOR_COLLECTOR_MEMORY -1
@@ -62,6 +62,6 @@
 #define VM_TAG_FOR_REGISTERFILE_MEMORY -1
 #define VM_TAG_FOR_WEBCORE_PURGEABLE_MEMORY -1
 
-#endif // OS(DARWIN) && !defined(BUILDING_ON_TIGER)
+#endif // OS(DARWIN) && !defined(TARGETING_TIGER)
 
 #endif // VMTags_h

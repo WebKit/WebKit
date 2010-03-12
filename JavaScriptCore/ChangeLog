@@ -1,3 +1,14 @@
+2010-03-11  Kent Hansen  <kent.hansen@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Mac OS X: Use deployment target to determine whether memory tagging should be enabled
+        https://bugs.webkit.org/show_bug.cgi?id=34888
+
+        Use TARGETING_TIGER rather than BUILDING_ON_TIGER to determine the tags.
+
+        * wtf/VMTags.h:
+
 2010-03-11  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Simon Hausmann.
