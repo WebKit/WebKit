@@ -1,3 +1,13 @@
+2010-03-11  Shu Chang  <Chang.Shu@nokia.com>
+
+        Reviewed by David Levin.
+
+        [Qt] Rebaseline the test and remove it from Skipped.
+        https://bugs.webkit.org/show_bug.cgi?id=35969
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/canvas/canvas-resize-reset-expected.txt:
+
 2010-03-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.
