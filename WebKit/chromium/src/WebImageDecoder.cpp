@@ -1,10 +1,10 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -14,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -37,6 +37,11 @@
 #include "WebData.h"
 #include "WebImage.h"
 #include "WebSize.h"
+
+#if WEBKIT_USING_SKIA
+#include <wtf/OwnPtr.h>
+#include <wtf/PassRefPtr.h>
+#endif
 
 using namespace WebCore;
 
@@ -62,8 +67,7 @@ void WebImageDecoder::init(Type type)
 void WebImageDecoder::setData(const WebData& data, bool allDataReceived)
 {
     ASSERT(m_private);
-    RefPtr<SharedBuffer> buffer(SharedBuffer::create(data.data(), data.size()));
-    m_private->setData(buffer.get(), allDataReceived);
+    m_private->setData(PassRefPtr<SharedBuffer>(data).get(), allDataReceived);
 }
 
 bool WebImageDecoder::isFailed() const
@@ -106,8 +110,10 @@ WebImage WebImageDecoder::getFrameAtIndex(int index = 0) const
     if (!frameBuffer)
         return WebImage();
 #if WEBKIT_USING_SKIA
-    return WebImage(*(frameBuffer->asNewNativeImage()));
+    OwnPtr<NativeImageSkia>image(frameBuffer->asNewNativeImage());
+    return WebImage(*image);
 #elif WEBKIT_USING_CG
+    // FIXME: Implement CG side of this.
     return WebImage(frameBuffer->asNewNativeImage());
 #endif
 }
