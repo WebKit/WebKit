@@ -1,3 +1,12 @@
+2010-03-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] DRT failing on test introduced in r55499
+        https://bugs.webkit.org/show_bug.cgi?id=35729
+
+        Now fast/events/zoom-dblclick.html passes, so we can unskip it.
+
+        * platform/qt/Skipped: fast/events/zoom-dblclick.html unskipped.
+
 2010-03-12  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         [GTK] Fails fast/dom/Geolocation/maximum-age.htm

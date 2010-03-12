@@ -96,10 +96,6 @@ http/tests/navigation/timerredirect-frames.html
 http/tests/navigation/timerredirect-goback.html
 http/tests/navigation/timerredirect-subframeload.html
 
-# DRT failing on test introduced in r55499
-# https://bugs.webkit.org/show_bug.cgi?id=35729
-fast/events/zoom-dblclick.html
-
 # Failing http multipart test
 http/tests/multipart/invalid-image-data-standalone.html
 
