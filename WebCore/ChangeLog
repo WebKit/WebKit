@@ -1,3 +1,15 @@
+2010-03-12  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        <rdar://problem/7709115> REGRESSION: toolbar is missing at http://www.glom.org/
+        https://bugs.webkit.org/show_bug.cgi?id=35507
+
+        * css/CSSImportRule.cpp:
+        (WebCore::CSSImportRule::setCSSStyleSheet): Extend the change made in
+        <http://trac.webkit.org/changeset/48818> to detect the two variants of
+        KHTMLFixes.css in @import rules as well as in <link> elements.
+
 2010-03-12  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.

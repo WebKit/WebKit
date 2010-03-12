@@ -88,7 +88,10 @@ void CSSImportRule::setCSSStyleSheet(const String& href, const KURL& baseURL, co
         // Work around <https://bugs.webkit.org/show_bug.cgi?id=28350>.
         DEFINE_STATIC_LOCAL(const String, slashKHTMLFixesDotCss, ("/KHTMLFixes.css"));
         DEFINE_STATIC_LOCAL(const String, mediaWikiKHTMLFixesStyleSheet, ("/* KHTML fix stylesheet */\n/* work around the horizontal scrollbars */\n#column-content { margin-left: 0; }\n\n"));
-        if (baseURL.string().endsWith(slashKHTMLFixesDotCss) && sheetText == mediaWikiKHTMLFixesStyleSheet) {
+        // There are two variants of KHTMLFixes.css. One is equal to mediaWikiKHTMLFixesStyleSheet,
+        // while the other lacks the second trailing newline.
+        if (baseURL.string().endsWith(slashKHTMLFixesDotCss) && !sheetText.isNull() && mediaWikiKHTMLFixesStyleSheet.startsWith(sheetText)
+                && sheetText.length() >= mediaWikiKHTMLFixesStyleSheet.length() - 1) {
             ASSERT(m_styleSheet->length() == 1);
             ExceptionCode ec;
             m_styleSheet->deleteRule(0, ec);
