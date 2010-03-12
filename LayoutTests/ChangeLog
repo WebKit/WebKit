@@ -1,5 +1,19 @@
 2010-03-11  Jian Li  <jianli@chromium.org>
 
+        Reviewed by Dmitry Titov.
+
+        Add more test cases for Blob.slice.
+        https://bugs.webkit.org/show_bug.cgi?id=36038
+
+        * http/tests/local/resources/abe.png: Copied from LayoutTests/editing/resources/abe.png.
+        * http/tests/local/resources/empty.txt: Copied from LayoutTests/http/tests/appcache/resources/empty.txt.
+        * http/tests/local/resources/send-sliced-dragged-file.js:
+        * http/tests/local/send-sliced-dragged-file-expected.txt:
+        * http/tests/resources/post-and-verify.cgi: Added.
+        * http/tests/resources/write-temp-file.php:
+
+2010-03-11  Jian Li  <jianli@chromium.org>
+
         Unreviewed. Added the test that time out on Tiger bot to mac-tiger/Skipped.
 
         * platform/mac-tiger/Skipped:

@@ -1,14 +1,13 @@
 description("Test for slicing a dragged file and sending it via XMLHttpRequest.");
 
-var originalText = "1234567890";
+var tempFileContent = "1234567890";
 var tempFileName = "send-slice-dragged-file.tmp";
-var tempFileOriginalModificationTime;
 var subfile;
 
-function uploadFile(file, expectedText, expectedException)
+function uploadFile(file, filePath, start, length, expectedException)
 {
     var xhr = new XMLHttpRequest();
-    xhr.open("POST", "http://127.0.0.1:8000/xmlhttprequest/resources/post-echo.cgi", false);
+    xhr.open("POST", "http://127.0.0.1:8000/resources/post-and-verify.cgi?path=" + filePath + "&start=" + start + "&length=" + length, false);
 
     var passed;
     var message;
@@ -18,12 +17,12 @@ function uploadFile(file, expectedText, expectedException)
             passed = false;
             message = "Unexpected response data received: " + xhr.responseText + ". Expecting exception thrown";
         } else {
-            if (xhr.responseText == expectedText) {
+            if (xhr.responseText == "OK") {
                 passed = true;
                 message = "Expected response data received: " + xhr.responseText;
             } else {
                 passed = false;
-                message = "Unexpected response data received: " + xhr.responseText + ". Expecting: " + expectedText;
+                message = "Unexpected response data received: " + xhr.responseText;
             }
         }
     } catch (ex) {
@@ -53,12 +52,12 @@ function createTempFile(fileData)
     }
 
     var values = xhr.responseText.split('\n');
-    if (values.length < 2) {
+    if (xhr.responseText.indexOf("FAIL") == 0) {
         testFailed("Unexpected response text received: " + xhr.responseText);
         return;
     }
 
-    return values;
+    return xhr.responseText;
 }
 
 function touchTempFile()
@@ -75,40 +74,50 @@ function removeTempFile()
     xhr.send();
 }
 
-function onStableFileDrop(file, start, length)
+function computeExpectedLength(fileLength, start, length)
+{
+    var expectedLength = length;
+    if (start + length > fileLength) {
+        if (start >= fileLength)
+            expectedLength = 0;
+        else
+            expectedLength = fileLength - start;
+    }
+    return expectedLength;
+}
+
+function onStableFileDrop(file, filePath, fileLength, start, length)
 {
     // Slice the file.
     subfile = file.slice(start, length);
-    var expectedText = originalText.substring(start, start + length);
-    shouldEvaluateTo("subfile.size", expectedText.length);
+    shouldEvaluateTo("subfile.size", computeExpectedLength(fileLength, start, length));
 
     // Upload the sliced file.
-    uploadFile(subfile, expectedText, false);
+    uploadFile(subfile, filePath, start, length, false);
 }
 
-function dragAndSliceStableFile(start, length)
+function dragAndSliceStableFile(filePath, fileLength, start, length)
 {
-    setFileInputDropCallback(function(file) { onStableFileDrop(file, start, length); });
-    eventSender.beginDragWithFiles(["resources/file-for-drag-to-send.txt"]);
+    setFileInputDropCallback(function(file) { onStableFileDrop(file, "../local/" + filePath, fileLength, start, length); });
+    eventSender.beginDragWithFiles([filePath]);
     moveMouseToCenterOfElement(fileInput);
     eventSender.mouseUp();
 }
 
-function onUnstableFileDrop(file, start, length)
+function onUnstableFileDrop(file, filePath, fileLength, start, length)
 {
     // Slice the file.
     subfile = file.slice(start, length);
-    var expectedText = originalText.substring(start, start + length);
-    shouldEvaluateTo("subfile.size", expectedText.length);
+    shouldEvaluateTo("subfile.size", computeExpectedLength(fileLength, start, length));
   
     // Upload the sliced file.
-    uploadFile(subfile, expectedText, false);
+    uploadFile(subfile, filePath, start, length, false);
 
     // Touch the underlying temp file.
     touchTempFile();
     
     // Upload the sliced file. We should receive an exception since the file has been changed.
-    uploadFile(subfile, null, true);
+    uploadFile(subfile, filePath, start, length, true);
 
     // Remove the temp file.
     removeTempFile();
@@ -116,15 +125,11 @@ function onUnstableFileDrop(file, start, length)
 
 function dragAndSliceUnstableFile(start, length)
 {
-    var tempFileInfo = createTempFile(originalText);
-    if (tempFileInfo.length < 2) {
-        done();
+    var tempFilePath = createTempFile(tempFileContent);
+    if (tempFilePath.length == 0)
         return;
-    }
-    var tempFilePath = tempFileInfo[0];
-    tempFileOriginalModificationTime = tempFileInfo[1];
 
-    setFileInputDropCallback(function(file) { onUnstableFileDrop(file, start, length); });
+    setFileInputDropCallback(function(file) { onUnstableFileDrop(file, tempFilePath, tempFileContent.length, start, length); });
     eventSender.beginDragWithFiles([tempFilePath]);
     moveMouseToCenterOfElement(fileInput);
     eventSender.mouseUp();
@@ -132,10 +137,21 @@ function dragAndSliceUnstableFile(start, length)
 
 function runTest()
 {
-    dragAndSliceStableFile(2, 4);
-    dragAndSliceStableFile(2, 20);
-    dragAndSliceStableFile(15, 20);
+    debug("Test slicing and sending an empty file.");
+    dragAndSliceStableFile("resources/empty.txt", 0, 0, 10);
 
+    debug("Test slicing and sending a small file.");
+    dragAndSliceStableFile("resources/file-for-drag-to-send.txt", 10, 2, 4);
+    dragAndSliceStableFile("resources/file-for-drag-to-send.txt", 10, 2, 20);
+    dragAndSliceStableFile("resources/file-for-drag-to-send.txt", 10, 15, 20);
+
+    // This is to test a file that exceeds the read buffer limit (2K in Mac).
+    debug("Test slicing and sending a big file.");
+    dragAndSliceStableFile("resources/abe.png", 12242, 10, 40);
+    dragAndSliceStableFile("resources/abe.png", 12242, 10, 3000);
+    dragAndSliceStableFile("resources/abe.png", 12242, 3000, 15000);
+
+    debug("Test slicing and sending a file that has been changed right before sending.");
     dragAndSliceUnstableFile(3, 5);
 }
 

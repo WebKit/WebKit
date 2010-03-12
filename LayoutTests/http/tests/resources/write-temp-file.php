@@ -13,8 +13,5 @@ if (!file_put_contents($tmpFile, $_GET['data'])) {
     exit();
 }
 
-$stat = stat($tmpFile);
-
-echo $tmpFile . "\n";
-echo $stat['mtime'];
+echo $tmpFile;
 ?>
