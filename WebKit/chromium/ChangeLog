@@ -1,5 +1,16 @@
 2010-03-12  Garret Kelly  <gdk@chromium.org>
 
+        Unreiviewed.
+
+        Fix Chromium Mac build. Last patch did not apply properly.
+        (Garret assures me this patch will actually work.)
+
+        * src/WebInputEventConversion.cpp:
+        (WebKit::toPlatformTouchEventType):
+        (WebKit::toPlatformTouchPointState):
+
+2010-03-12  Garret Kelly  <gdk@chromium.org>
+
         Unreviewed.
 
         Fix Chromium Mac build. This time, with actual fixing goodness.
