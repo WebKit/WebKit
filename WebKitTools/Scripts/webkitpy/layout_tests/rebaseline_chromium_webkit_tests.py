@@ -544,10 +544,10 @@ class Rebaseliner(object):
             return True
 
         if ext1 == '.PNG':
-            return image_diff.ImageDiff(self._port, self._platform,
-                '').diff_files(self._port, file1, file2)
+            return image_diff.ImageDiff(self._port,
+               '').diff_files(self._port, file1, file2)
         else:
-            return text_diff.TestTextDiff(self._port, self._platform,
+            return text_diff.TestTextDiff(self._port,
                 '').diff_files(self._port, file1, file2)
 
     def _delete_baseline(self, filename):

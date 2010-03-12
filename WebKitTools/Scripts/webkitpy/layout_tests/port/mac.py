@@ -58,6 +58,9 @@ class MacPort(base.Port):
         base.Port.__init__(self, port_name, options)
         self._cached_build_root = None
 
+    def baseline_path(self):
+        return self._webkit_baseline_path(self._name)
+
     def baseline_search_path(self):
         dirs = []
         if self._name == 'mac-tiger':

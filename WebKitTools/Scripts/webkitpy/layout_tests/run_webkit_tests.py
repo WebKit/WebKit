@@ -516,7 +516,7 @@ class TestRunner:
             # Create separate TestTypes instances for each thread.
             test_types = []
             for t in self._test_types:
-                test_types.append(t(self._port, self._options.platform,
+                test_types.append(t(self._port,
                                     self._options.results_directory))
 
             test_args, png_path, shell_args = self._get_test_shell_args(i)

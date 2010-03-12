@@ -2,6 +2,25 @@
 
         Reviewed by Adam Barth.
 
+        new-run-webkit-tests --new-baseline doesn't work at all.
+
+        It attempts to call a method that isn't defined. To fix it, I
+        removed the unnecessary and unnecessarily confusing 'platform'
+        argument to the test_type constructor and use the Port object that
+        is passed in instead, since we are only ever generating a baseline
+        from the port that is currently executing.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36046
+
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/test_types/test_type_base.py:
+
+2010-03-12  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Adam Barth.
+
         Fix new-run-webkit-tests --run-singly
 
         This script option is currently broken - the script attempts to

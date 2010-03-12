@@ -72,17 +72,15 @@ class TestTypeBase(object):
     FILENAME_SUFFIX_WDIFF = "-wdiff.html"
     FILENAME_SUFFIX_COMPARE = "-diff.png"
 
-    def __init__(self, port, platform, root_output_dir):
+    def __init__(self, port, root_output_dir):
         """Initialize a TestTypeBase object.
 
         Args:
-          platform: the platform (e.g., 'chromium-mac-leopard')
-            identifying the platform-specific results to be used.
+          port: object implementing port-specific information and methods
           root_output_dir: The unix style path to the output dir.
         """
         self._root_output_dir = root_output_dir
         self._port = port
-        self._platform = platform
 
     def _make_output_directory(self, filename):
         """Creates the output directory (if needed) for a given test
@@ -92,7 +90,7 @@ class TestTypeBase(object):
         self._port.maybe_make_directory(os.path.split(output_filename)[0])
 
     def _save_baseline_data(self, filename, data, modifier):
-        """Saves a new baseline file into the platform directory.
+        """Saves a new baseline file into the port's baseline directory.
 
         The file will be named simply "<test>-expected<modifier>", suitable for
         use as the expected results in a later run.
@@ -104,8 +102,9 @@ class TestTypeBase(object):
         """
         relative_dir = os.path.dirname(
             self._port.relative_test_filename(filename))
-        output_dir = os.path.join(
-            self._port.chromium_baseline_path(self._platform), relative_dir)
+
+        baseline_path = self._port.baseline_path()
+        output_dir = os.path.join(baseline_path, relative_dir)
         output_file = os.path.basename(os.path.splitext(filename)[0] +
             self.FILENAME_SUFFIX_EXPECTED + modifier)
 
