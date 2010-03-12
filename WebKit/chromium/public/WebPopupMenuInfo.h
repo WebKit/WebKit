@@ -41,6 +41,7 @@ struct WebPopupMenuInfo {
     // FIXME: migrate clients to WebMenuItemInfo and remove this temporary Item typedef.
     typedef WebMenuItemInfo Item;
     int itemHeight;
+    int itemFontSize;
     int selectedIndex;
     WebVector<WebMenuItemInfo> items;
 };

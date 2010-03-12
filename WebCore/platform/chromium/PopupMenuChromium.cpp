@@ -511,6 +511,11 @@ int PopupContainer::menuItemHeight() const
     return m_listBox->getRowHeight(0);
 }
 
+int PopupContainer::menuItemFontSize() const
+{
+    return m_listBox->getRowFont(0).size();
+}
+
 const WTF::Vector<PopupItem*>& PopupContainer:: popupData() const
 {
     return m_listBox->items();

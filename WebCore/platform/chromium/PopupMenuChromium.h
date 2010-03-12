@@ -166,6 +166,9 @@ namespace WebCore {
         // The height of a row in the menu.
         int menuItemHeight() const;
 
+        // The size of the font being used.
+        int menuItemFontSize() const;
+
     private:
         friend class WTF::RefCounted<PopupContainer>;
 

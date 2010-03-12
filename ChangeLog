@@ -1,3 +1,19 @@
+2010-03-12  Scott Byer  <scottbyer@chromium.org>
+
+        Reviewed by David Levin.
+
+        Popup font size needs to be exposed to clients.
+        https://bugs.webkit.org/show_bug.cgi?id=35990
+
+        Add function to expose the popup menu font size, add a field to
+        WebPopupMenuInfo that receives that information to convey that to
+        the web view client's createPopupMenu() call.
+
+        * WebCore/platform/chromium/PopupMenuChromium.cpp:
+        * WebCore/platform/chromium/PopupMenuChromium.h:
+        * WebKit/chromium/public/WebPopupMenuInfo.h:
+        * WebKit/chromium/src/ChromeClientImpl.cpp:
+
 2010-03-11  Adam Roben  <aroben@apple.com>
 
         Teach git about ObjC files
