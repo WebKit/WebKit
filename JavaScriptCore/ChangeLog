@@ -1,5 +1,13 @@
 2010-03-11  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by NOBODY (Windows build fix).
+
+        Remove export.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2010-03-11  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Oliver Hunt.
 
         https://bugs.webkit.org/show_bug.cgi?id=36041
