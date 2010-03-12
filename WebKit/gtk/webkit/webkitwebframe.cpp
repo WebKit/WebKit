@@ -942,7 +942,7 @@ static void end_print_callback(GtkPrintOperation* op, GtkPrintContext* context, 
  * @action: the #GtkPrintOperationAction to be performed
  * @error: #GError for error return
  *
- * Prints the given #WebKitFrame, using the given #GtkPrintOperation
+ * Prints the given #WebKitWebFrame, using the given #GtkPrintOperation
  * and #GtkPrintOperationAction. This function wraps a call to
  * gtk_print_operation_run() for printing the contents of the
  * #WebKitWebFrame.
@@ -980,7 +980,7 @@ GtkPrintOperationResult webkit_web_frame_print_full(WebKitWebFrame* frame, GtkPr
  * webkit_web_frame_print:
  * @frame: a #WebKitWebFrame
  *
- * Prints the given #WebKitFrame, by presenting a print dialog to the
+ * Prints the given #WebKitWebFrame, by presenting a print dialog to the
  * user. If you need more control over the printing process, see
  * webkit_web_frame_print_full().
  *

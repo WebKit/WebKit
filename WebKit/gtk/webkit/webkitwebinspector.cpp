@@ -125,7 +125,7 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* klass)
     /**
      * WebKitWebInspector::inspect-web-view:
      * @web_inspector: the object on which the signal is emitted
-     * @web_view: the #WebKitWeb which will be inspected
+     * @web_view: the #WebKitWebView which will be inspected
      * @return: a newly allocated #WebKitWebView or %NULL
      *
      * Emitted when the user activates the 'inspect' context menu item

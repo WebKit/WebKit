@@ -37,7 +37,7 @@
  *
  * A history item consists out of a title and a uri. It can be part of the
  * #WebKitWebBackForwardList and the global history. The global history is used
- * for coloring the links of visited sites.  #WebKitHistoryItem's constructed with
+ * for coloring the links of visited sites.  #WebKitWebHistoryItem's constructed with
  * #webkit_web_history_item_new and #webkit_web_history_item_new_with_data are
  * automatically added to the global history.
  *

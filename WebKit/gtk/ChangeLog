@@ -1,3 +1,23 @@
+2010-03-12  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Rubber-stamped by Kenneth Rohde Christiansen.
+
+        Misc documentation fixes. Fixes (almost) all warnings emitted by
+        the documentation build process. Only the broken references to JSC
+        objects remain.
+
+        * webkit/webkitsecurityorigin.cpp:
+        * webkit/webkitwebbackforwardlist.cpp:
+        * webkit/webkitwebdatasource.cpp:
+        * webkit/webkitwebframe.cpp:
+        * webkit/webkitwebhistoryitem.cpp:
+        * webkit/webkitwebinspector.cpp:
+        (webkit_web_inspector_class_init):
+        * webkit/webkitwebsettings.cpp:
+        (webkit_web_settings_class_init):
+        * webkit/webkitwebview.cpp:
+        (DNDContentsRequest::webkit_web_view_class_init):
+
 2010-03-11  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by David Hyatt.

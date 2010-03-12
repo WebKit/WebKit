@@ -252,7 +252,7 @@ GList* webkit_web_back_forward_list_get_back_list_with_limit(WebKitWebBackForwar
 
 /**
  * webkit_web_back_forward_list_get_back_item:
- * @web_back_forward_list: a #WebBackForwardList
+ * @web_back_forward_list: a #WebKitWebBackForwardList
  *
  * Returns the item that precedes the current item
  *
@@ -383,7 +383,7 @@ gint webkit_web_back_forward_list_get_forward_length(WebKitWebBackForwardList* w
  *
  * Returns the maximum limit of the back forward list.
  *
- * Return value: a #gint indicating the number of #WebHistoryItem the back forward list can hold
+ * Return value: a #gint indicating the number of #WebKitWebHistoryItem the back forward list can hold
  */
 gint webkit_web_back_forward_list_get_limit(WebKitWebBackForwardList* webBackForwardList)
 {

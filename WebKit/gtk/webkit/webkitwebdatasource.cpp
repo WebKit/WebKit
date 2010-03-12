@@ -418,9 +418,9 @@ G_CONST_RETURN gchar* webkit_web_data_source_get_unreachable_uri(WebKitWebDataSo
  * @data_source: a #WebKitWebDataSource
  *
  * Gives you a #GList of #WebKitWebResource objects that compose the
- * #WebView to which this #WebKitWebDataSource is attached.
+ * #WebKitWebView to which this #WebKitWebDataSource is attached.
  *
- * Return value: a #GList of #WebKitResource objects; the objects are
+ * Return value: a #GList of #WebKitWebResource objects; the objects are
  * owned by WebKit, but the GList must be freed.
  *
  * Since: 1.1.15

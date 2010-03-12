@@ -825,9 +825,9 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
    /**
     * WebKitWebSettings:enable-java-applet:
     *
-    * Enable or disable support for the Java <applet> tag. Keep in
+    * Enable or disable support for the Java &lt;applet&gt; tag. Keep in
     * mind that Java content can be still shown in the page through
-    * <object> or <embed>, which are the preferred tags for this task.
+    * &lt;object&gt; or &lt;embed&gt;, which are the preferred tags for this task.
     *
     * Since: 1.1.22
     */

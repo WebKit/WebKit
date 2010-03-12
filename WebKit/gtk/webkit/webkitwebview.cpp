@@ -1489,7 +1489,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * @web_view: the object on which the signal is emitted
      * @frame: the #WebKitWebFrame that required the navigation
      * @request: a #WebKitNetworkRequest
-     * @navigation_action: a #WebKitWebNavigation
+     * @navigation_action: a #WebKitWebNavigationAction
      * @policy_decision: a #WebKitWebPolicyDecision
      *
      * Emitted when @frame requests opening a new window. With this
@@ -1536,7 +1536,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * @web_view: the object on which the signal is emitted
      * @frame: the #WebKitWebFrame that required the navigation
      * @request: a #WebKitNetworkRequest
-     * @navigation_action: a #WebKitWebNavigation
+     * @navigation_action: a #WebKitWebNavigationAction
      * @policy_decision: a #WebKitWebPolicyDecision
      *
      * Emitted when @frame requests a navigation to another page.
@@ -2132,7 +2132,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * @uri: the URI to load
      * @param: a #GHashTable with additional attributes (strings)
      *
-     * The #WebKitWebView::create-plugin signal will be emitted to
+     * The #WebKitWebView::create-plugin-widget signal will be emitted to
      * create a plugin widget for embed or object HTML tags. This
      * allows to embed a GtkWidget as a plugin into HTML content. In
      * case of a textual selection of the GtkWidget WebCore will attempt
@@ -2159,7 +2159,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * @frame: the relevant frame
      * @database: the #WebKitWebDatabase which exceeded the quota of its #WebKitSecurityOrigin
      *
-     * The #WebKitWebView::database-exceeded-quota signal will be emitted when
+     * The #WebKitWebView::database-quota-exceeded signal will be emitted when
      * a Web Database exceeds the quota of its security origin. This signal
      * may be used to increase the size of the quota before the originating
      * operation fails.
@@ -3391,7 +3391,7 @@ gboolean webkit_web_view_search_text(WebKitWebView* webView, const gchar* string
  * @web_view: a #WebKitWebView
  * @string: a string to look for
  * @case_sensitive: whether to respect the case of text
- * @limit: the maximum number of strings to look for or %0 for all
+ * @limit: the maximum number of strings to look for or 0 for all
  *
  * Attempts to highlight all occurances of #string inside #web_view.
  *
@@ -3689,7 +3689,7 @@ void webkit_web_view_set_editable(WebKitWebView* webView, gboolean flag)
  *
  * This function returns the list of targets this #WebKitWebView can
  * provide for clipboard copying and as DND source. The targets in the list are
- * added with %info values from the #WebKitWebViewTargetInfo enum,
+ * added with values from the #WebKitWebViewTargetInfo enum,
  * using gtk_target_list_add() and
  * gtk_target_list_add_text_targets().
  *
@@ -3706,7 +3706,7 @@ GtkTargetList* webkit_web_view_get_copy_target_list(WebKitWebView* webView)
  *
  * This function returns the list of targets this #WebKitWebView can
  * provide for clipboard pasting and as DND destination. The targets in the list are
- * added with %info values from the #WebKitWebViewTargetInfo enum,
+ * added with values from the #WebKitWebViewTargetInfo enum,
  * using gtk_target_list_add() and
  * gtk_target_list_add_text_targets().
  *
