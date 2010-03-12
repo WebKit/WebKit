@@ -116,11 +116,30 @@ PassRefPtr<CSSPrimitiveValue> CSSPrimitiveValue::create(const String& value, Uni
     return adoptRef(new CSSPrimitiveValue(value, type));
 }
 
-static const char* valueOrPropertyName(int valueOrPropertyID)
+static const AtomicString& valueOrPropertyName(int valueOrPropertyID)
 {
-    if (const char* valueName = getValueName(valueOrPropertyID))
-        return valueName;
-    return getPropertyName(static_cast<CSSPropertyID>(valueOrPropertyID));
+    ASSERT_ARG(valueOrPropertyID, valueOrPropertyID >= 0);
+    ASSERT_ARG(valueOrPropertyID, valueOrPropertyID < numCSSValueKeywords || (valueOrPropertyID >= firstCSSProperty && valueOrPropertyID < firstCSSProperty + numCSSProperties));
+
+    if (valueOrPropertyID < 0)
+        return nullAtom;
+
+    if (valueOrPropertyID < numCSSValueKeywords) {
+        static AtomicString* cssValueKeywordStrings[numCSSValueKeywords];
+        if (!cssValueKeywordStrings[valueOrPropertyID])
+            cssValueKeywordStrings[valueOrPropertyID] = new AtomicString(getValueName(valueOrPropertyID));
+        return *cssValueKeywordStrings[valueOrPropertyID];
+    }
+
+    if (valueOrPropertyID >= firstCSSProperty && valueOrPropertyID < firstCSSProperty + numCSSProperties) {
+        static AtomicString* cssPropertyStrings[numCSSProperties];
+        int propertyIndex = valueOrPropertyID - firstCSSProperty;
+        if (!cssPropertyStrings[propertyIndex])
+            cssPropertyStrings[propertyIndex] = new AtomicString(getPropertyName(static_cast<CSSPropertyID>(valueOrPropertyID)));
+        return *cssPropertyStrings[propertyIndex];
+    }
+
+    return nullAtom;
 }
 
 // "ident" from the CSS tokenizer, minus backslash-escape sequences
@@ -930,7 +949,7 @@ CSSParserValue CSSPrimitiveValue::parserValue() const
             break;
         case CSS_IDENT: {
             value.id = m_value.ident;
-            String name = valueOrPropertyName(m_value.ident);
+            const AtomicString& name = valueOrPropertyName(m_value.ident);
             value.string.characters = const_cast<UChar*>(name.characters());
             value.string.length = name.length();
             break;
