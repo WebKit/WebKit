@@ -34,6 +34,7 @@
 #include "Frame.h"
 #include "V8Binding.h"
 #include "V8Blob.h"
+#include "V8DOMFormData.h"
 #include "V8Document.h"
 #include "V8HTMLDocument.h"
 #include "V8Proxy.h"
@@ -123,6 +124,11 @@ v8::Handle<v8::Value> V8XMLHttpRequest::sendCallback(const v8::Arguments& args)
             Blob* blob = V8Blob::toNative(object);
             ASSERT(blob);
             xmlHttpRequest->send(blob, ec);
+        } else if (V8DOMFormData::HasInstance(arg)) {
+            v8::Handle<v8::Object> object = v8::Handle<v8::Object>::Cast(arg);
+            DOMFormData* domFormData = V8DOMFormData::toNative(object);
+            ASSERT(domFormData);
+            xmlHttpRequest->send(domFormData, ec);
         } else
             xmlHttpRequest->send(toWebCoreStringWithNullCheck(arg), ec);
     }
