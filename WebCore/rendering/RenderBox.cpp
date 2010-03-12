@@ -146,6 +146,16 @@ void RenderBox::styleWillChange(StyleDifference diff, const RenderStyle* newStyl
                 removeFloatingOrPositionedChildFromBlockLists();
         }
     }
+    if (FrameView *frameView = view()->frameView()) {
+        bool newStyleIsFixed = newStyle && newStyle->position() == FixedPosition;
+        bool oldStyleIsFixed = style() && style()->position() == FixedPosition;
+        if (newStyleIsFixed != oldStyleIsFixed) {
+            if (newStyleIsFixed)
+                frameView->addFixedObject();
+            else
+                frameView->removeFixedObject();
+        }
+    }
 
     RenderBoxModelObject::styleWillChange(diff, newStyle);
 }

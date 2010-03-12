@@ -149,6 +149,9 @@ public:
     void addSlowRepaintObject();
     void removeSlowRepaintObject();
 
+    void addFixedObject();
+    void removeFixedObject();
+
     void beginDeferredRepaints();
     void endDeferredRepaints();
     void checkStopDelayingDeferredRepaints();
@@ -202,6 +205,9 @@ public:
 
     bool isFrameViewScrollCorner(RenderScrollbarPart* scrollCorner) const { return m_scrollCorner == scrollCorner; }
     void invalidateScrollCorner();
+
+protected:
+    virtual bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect);
 
 private:
     FrameView(Frame*);
@@ -272,6 +278,7 @@ private:
     bool m_isOverlapped;
     bool m_contentIsOpaque;
     unsigned m_slowRepaintObjectCount;
+    unsigned m_fixedObjectCount;
 
     int m_borderX, m_borderY;
 

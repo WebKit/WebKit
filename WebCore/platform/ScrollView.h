@@ -249,6 +249,9 @@ protected:
     IntRect scrollCornerRect() const;
     virtual void updateScrollCorner();
     virtual void paintScrollCorner(GraphicsContext*, const IntRect& cornerRect);
+
+    // Scroll the content by blitting the pixels
+    virtual bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect);
     
 private:
     RefPtr<Scrollbar> m_horizontalScrollbar;
