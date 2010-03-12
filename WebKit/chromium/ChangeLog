@@ -1,3 +1,18 @@
+2010-03-12  Nicolas Weber  <thakis@chromium.org>
+
+        Reviewed by David Levin.
+
+        [Chromium] Cmd-clicking submit buttons should submit in new tab 
+        https://bugs.webkit.org/show_bug.cgi?id=36023
+
+        Take modifiers into account when clicking form buttons. E.g.
+        cmd-clicking a submit button will submit in a new background tab,
+        cmd-shift-clicking in a new foreground tab, shift-clicking in a new
+        window. (On windows/linux, it's ctrl instead of cmd.)
+
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::actionSpecifiesNavigationPolicy):
+
 2010-03-12  Kavita Kanetkar  <kkanetkar@chromium.org>
 
         Reviewed by Darin Fisher.

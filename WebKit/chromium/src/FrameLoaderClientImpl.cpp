@@ -1477,10 +1477,19 @@ bool FrameLoaderClientImpl::actionSpecifiesNavigationPolicy(
     const NavigationAction& action,
     WebNavigationPolicy* policy)
 {
-    if ((action.type() != NavigationTypeLinkClicked) || !action.event()->isMouseEvent())
+    const MouseEvent* event = 0;
+    if (action.type() == NavigationTypeLinkClicked
+        && action.event()->isMouseEvent())
+        event = static_cast<const MouseEvent*>(action.event());
+    else if (action.type() == NavigationTypeFormSubmitted
+             && action.event()
+             && action.event()->underlyingEvent()
+             && action.event()->underlyingEvent()->isMouseEvent())
+        event = static_cast<const MouseEvent*>(action.event()->underlyingEvent());
+
+    if (!event)
         return false;
 
-    const MouseEvent* event = static_cast<const MouseEvent*>(action.event());
     return WebViewImpl::navigationPolicyFromMouseEvent(
         event->button(), event->ctrlKey(), event->shiftKey(), event->altKey(),
         event->metaKey(), policy);
