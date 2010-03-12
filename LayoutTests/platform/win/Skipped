@@ -792,3 +792,6 @@ fast/forms/multiple-form-submission-protection-mouse.html
 
 # mouseScrollBy() is not yet implemented in the Windows EventSender API.
 fast/events/remove-child-onscroll.html
+
+# Windows port doesn't yet support rendering of non-BMP characters even though there's a font available.
+fast/text/international/plane2.html 

@@ -267,16 +267,27 @@ const UChar* getFallbackFamily(const UChar* characters,
     if (script == USCRIPT_COMMON)
         script = getScriptBasedOnUnicodeBlock(ucs4);
 
-    // Another lame work-around to cover non-BMP characters.
     const UChar* family = getFontFamilyForScript(script, generic);
-    if (!family) {
+    // Another lame work-around to cover non-BMP characters.
+    // If the font family for script is not found or the character is
+    // not in BMP (> U+FFFF), we resort to the hard-coded list of
+    // fallback fonts for now.
+    if (!family || ucs4 > 0xFFFF) {
         int plane = ucs4 >> 16;
         switch (plane) {
         case 1:
             family = L"code2001";
             break;
         case 2:
-            family = L"simsun-extb";
+            // Use a Traditional Chinese ExtB font if in Traditional Chinese locale.
+            // Otherwise, use a Simplified Chinese ExtB font. Windows Japanese
+            // fonts do support a small subset of ExtB (that are included in JIS X 0213),
+            // but its coverage is rather sparse.
+            // Eventually, this should be controlled by lang/xml:lang.
+            if (icu::Locale::getDefault() == icu::Locale::getTraditionalChinese())
+              family = L"pmingliu-extb";
+            else
+              family = L"simsun-extb";
             break;
         default:
             family = L"lucida sans unicode";

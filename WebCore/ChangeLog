@@ -1,3 +1,19 @@
+2010-03-11  Jungshik Shin  <jshin@chromium.org>
+
+        [Chromium]: Plane 2 characters are rendered "blank" 
+         (not even empty boxes) on Windows even when there are fonts to
+         cover them. 
+
+        https://bugs.webkit.org/show_bug.cgi?id=35605
+
+        Test:LayoutTests/fast/text/international/plane2.html 
+
+        * platform/graphics/chromium/FontCacheChromiumWin.cpp:
+        (WebCore::LookupAltName): Add two ExtB fonts to the array (namePairs) that are used for Plane 2 character rendering.
+        (WebCore::FontCache::getFontDataForCharacters): Add two more fonts to the fallback font list
+        * platform/graphics/chromium/FontUtilsChromiumWin.cpp:
+        (WebCore::getFallbackFamily): Fix the fallback font lookup to cover Plane 2 (CJK ExtB).
+
 2010-03-11  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Holger Freyther.

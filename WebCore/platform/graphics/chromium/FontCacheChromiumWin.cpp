@@ -140,6 +140,9 @@ static bool LookupAltName(const String& name, String& altName)
         // 宋体, SimSun
         {L"\x5B8B\x4F53", {L"SimSun", simplifiedChineseCodepage}},
         {L"simsun", {L"\x5B8B\x4F53", simplifiedChineseCodepage}},
+        // 宋体-ExtB, SimSun-ExtB
+        {L"\x5B8B\x4F53-ExtB", {L"SimSun-ExtB", simplifiedChineseCodepage}},
+        {L"simsun-extb", {L"\x5B8B\x4F53-extb", simplifiedChineseCodepage}},
         // 黑体, SimHei
         {L"\x9ED1\x4F53", {L"SimHei", simplifiedChineseCodepage}},
         {L"simhei", {L"\x9ED1\x4F53", simplifiedChineseCodepage}},
@@ -164,9 +167,15 @@ static bool LookupAltName(const String& name, String& altName)
         // 新細明體, PMingLiu
         {L"\x65B0\x7D30\x660E\x9AD4", {L"PMingLiu", traditionalChineseCodepage}},
         {L"pmingliu", {L"\x65B0\x7D30\x660E\x9AD4", traditionalChineseCodepage}},
+        // 新細明體-ExtB, PMingLiu-ExtB
+        {L"\x65B0\x7D30\x660E\x9AD4-ExtB", {L"PMingLiu-ExtB", traditionalChineseCodepage}},
+        {L"pmingliu-extb", {L"\x65B0\x7D30\x660E\x9AD4-extb", traditionalChineseCodepage}},
         // 細明體, MingLiu
         {L"\x7D30\x660E\x9AD4", {L"MingLiu", traditionalChineseCodepage}},
         {L"mingliu", {L"\x7D30\x660E\x9AD4", traditionalChineseCodepage}},
+        // 細明體-ExtB, MingLiu-ExtB
+        {L"\x7D30\x660E\x9AD4-ExtB", {L"MingLiu-ExtB", traditionalChineseCodepage}},
+        {L"mingliu-extb", {L"x65B0\x7D30\x660E\x9AD4-extb", traditionalChineseCodepage}},
         // 微軟正黑體, Microsoft JhengHei
         {L"\x5FAE\x8EDF\x6B63\x9ED1\x9AD4", {L"Microsoft JhengHei", traditionalChineseCodepage}},
         {L"microsoft jhengHei", {L"\x5FAE\x8EDF\x6B63\x9ED1\x9AD4", traditionalChineseCodepage}},
@@ -363,8 +372,10 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, cons
         L"lucida sans unicode",
         L"microsoft sans serif",
         L"palatino linotype",
-        // Four fonts below (and code2000 at the end) are not from MS, but
+        // Six fonts below (and code2000 at the end) are not from MS, but
         // once installed, cover a very wide range of characters.
+        L"dejavu serif",
+        L"dejavu sasns",
         L"freeserif",
         L"freesans",
         L"gentium",
