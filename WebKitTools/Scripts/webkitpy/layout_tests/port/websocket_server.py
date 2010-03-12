@@ -89,7 +89,7 @@ class PyWebSocket(http_server.Lighttpd):
 
     def __init__(self, port_obj, output_dir, port=_DEFAULT_WS_PORT,
                  root=None, use_tls=False,
-                 register_cygwin=None,
+                 register_cygwin=True,
                  pidfile=None):
         """Args:
           output_dir: the absolute path to the layout test result directory
@@ -186,6 +186,8 @@ class PyWebSocket(http_server.Lighttpd):
                 self._port_obj.path_from_chromium_base('third_party',
                                                        'cygwin', 'bin'),
                 env['PATH'])
+            env['CYGWIN_PATH'] = path_utils.path_from_base('third_party',
+                                                           'cygwin', 'bin')
 
         if sys.platform == 'win32' and self._register_cygwin:
             setup_mount = self._port_obj.path_from_chromium_base(

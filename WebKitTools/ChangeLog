@@ -1,3 +1,11 @@
+2010-03-11  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed.
+
+        Fix for WebSocket layout test runner on chromium/win port.
+
+        * Scripts/webkitpy/layout_tests/port/websocket_server.py: register_cygwin and set CYGWIN_PATH
+
 2010-03-11  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by David Kilzer.
