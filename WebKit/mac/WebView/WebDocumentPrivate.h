@@ -30,6 +30,7 @@
 #import <WebKit/WebHTMLView.h>
 
 @class DOMDocument;
+@class PDFDocument;
 
 @protocol WebDocumentImage <NSObject>
 - (NSImage *)image;
@@ -62,6 +63,10 @@
 // View that draws the selection and can be made first responder. Often this is self but it could be
 // a nested view, as for example in the case of WebPDFView.
 - (NSView *)selectionView;
+@end
+
+@protocol WebDocumentPDF <WebDocumentText>
+- (PDFDocument *)PDFDocument;
 @end
 
 @protocol WebDocumentIncrementalSearching

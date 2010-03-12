@@ -32,7 +32,7 @@
 @class PDFView;
 @class WebDataSource;
 
-@interface WebPDFView : NSView <WebDocumentView, WebDocumentSearching, WebDocumentIncrementalSearching, WebMultipleTextMatches, WebDocumentSelection, WebDocumentElement, _WebDocumentViewState, _WebDocumentZooming>
+@interface WebPDFView : NSView <WebDocumentView, WebDocumentSearching, WebDocumentIncrementalSearching, WebMultipleTextMatches, WebDocumentSelection, WebDocumentElement, WebDocumentPDF, _WebDocumentViewState, _WebDocumentZooming>
 {
     NSView *previewView;
     PDFView *PDFSubview;
@@ -51,5 +51,6 @@
 + (NSBundle *)PDFKitBundle;
 
 - (void)setPDFDocument:(PDFDocument *)doc;
+- (PDFDocument *)PDFDocument;
 
 @end

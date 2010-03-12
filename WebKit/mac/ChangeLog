@@ -2,6 +2,22 @@
 
         Reviewed by Brady Eidson.
 
+        Expose WebPDFView's underlying PDFDocument.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36045
+
+        * WebView/WebDocumentPrivate.h: Create a new protocol called
+        WebDocumentPDF.
+        * WebView/WebPDFView.h: Have WebPDFView implement said protocol.
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView PDFDocument]): Expose WebPDFView's underlying
+        PDFDocument by implementing -(PDFDocument*)PDFDocument from
+        WebDocumentPDF.
+
+2010-03-12  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Brady Eidson.
+
         Remove an unused method.
 
         https://bugs.webkit.org/show_bug.cgi?id=35940

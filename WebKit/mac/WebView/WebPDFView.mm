@@ -182,6 +182,11 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     _ignoreScaleAndDisplayModeAndPageNotifications = NO;
 }
 
+- (PDFDocument *)PDFDocument
+{
+    return [PDFSubview document];
+}
+
 #pragma mark NSObject OVERRIDES
 
 - (void)dealloc
