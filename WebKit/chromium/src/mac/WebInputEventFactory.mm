@@ -861,6 +861,29 @@ static inline int modifiersFromEvent(NSEvent* event) {
     return modifiers;
 }
 
+static inline void setWebEventLocationFromEventInView(WebMouseEvent* result,
+                                                      NSEvent* event,
+                                                      NSView* view) {
+    NSPoint windowLocal = [event locationInWindow];
+
+    NSPoint screenLocal = [[view window] convertBaseToScreen:windowLocal];
+    result->globalX = screenLocal.x;
+    // Flip y.
+    NSScreen* primaryScreen = ([[NSScreen screens] count] > 0) ?
+        [[NSScreen screens] objectAtIndex:0] : nil;
+    if (primaryScreen)
+        result->globalY = [primaryScreen frame].size.height - screenLocal.y;
+    else
+        result->globalY = screenLocal.y;
+
+    NSPoint contentLocal = [view convertPoint:windowLocal fromView:nil];
+    result->x = contentLocal.x;
+    result->y = [view frame].size.height - contentLocal.y;  // Flip y.
+
+    result->windowX = result->x;
+    result->windowY = result->y;
+}
+
 WebKeyboardEvent WebInputEventFactory::keyboardEvent(NSEvent* event)
 {
     WebKeyboardEvent result;
@@ -1021,16 +1044,7 @@ WebMouseEvent WebInputEventFactory::mouseEvent(NSEvent* event, NSView* view)
         ASSERT_NOT_REACHED();
     }
 
-    NSPoint location = [NSEvent mouseLocation];  // global coordinates
-    result.globalX = location.x;
-    result.globalY = [[[view window] screen] frame].size.height - location.y;
-
-    NSPoint windowLocal = [event locationInWindow];
-    location = [view convertPoint:windowLocal fromView:nil];
-    result.y = [view frame].size.height - location.y;  // flip y
-    result.x = location.x;
-    result.windowX = result.x;
-    result.windowY = result.y;
+    setWebEventLocationFromEventInView(&result, event, view);
 
     result.modifiers = modifiersFromEvent(event);
 
@@ -1050,16 +1064,7 @@ WebMouseWheelEvent WebInputEventFactory::mouseWheelEvent(NSEvent* event, NSView*
 
     result.modifiers = modifiersFromEvent(event);
 
-    // Set coordinates by translating event coordinates from screen to client.
-    NSPoint location = [NSEvent mouseLocation];  // global coordinates
-    result.globalX = location.x;
-    result.globalY = location.y;
-    NSPoint windowLocal = [event locationInWindow];
-    location = [view convertPoint:windowLocal fromView:nil];
-    result.x = location.x;
-    result.y = [view frame].size.height - location.y;  // flip y
-    result.windowX = result.x;
-    result.windowY = result.y;
+    setWebEventLocationFromEventInView(&result, event, view);
 
     // Of Mice and Men
     // ---------------

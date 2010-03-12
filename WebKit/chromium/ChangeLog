@@ -1,3 +1,21 @@
+2010-03-11  Stuart Morgan  <stuartmorgan@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Fix the screen coordinate conversion of Chromium Mac mouse events for
+        multiple-moniter setups. Also changes the global coordinate values
+        to be computed from the event, rather than the instantaneous mouse
+        location, and reduces code duplication for location conversion.
+
+        Dual-sided patch with http://codereview.chromium.org/751002
+
+        https://bugs.webkit.org/show_bug.cgi?id=35950
+
+        * src/mac/WebInputEventFactory.mm:
+        (WebKit::setWebEventLocationFromEventInView):
+        (WebKit::WebInputEventFactory::mouseEvent):
+        (WebKit::WebInputEventFactory::mouseWheelEvent):
+
 2010-03-11  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by David Hyatt.
