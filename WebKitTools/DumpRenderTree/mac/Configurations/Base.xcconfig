@@ -57,3 +57,12 @@ GCC_VERSION = $(GCC_VERSION_$(TARGET_GCC_VERSION));
 GCC_VERSION_GCC_40 = 4.0;
 GCC_VERSION_GCC_42 = 4.2;
 GCC_VERSION_LLVM_GCC_42 = com.apple.compilers.llvmgcc42;
+
+// If the target Mac OS X version does not match the current Mac OS X version then we'll want to build using the target version's SDK.
+SDKROOT = $(SDKROOT_$(MAC_OS_X_VERSION_MAJOR)_$(TARGET_MAC_OS_X_VERSION_MAJOR));
+SDKROOT_1050_1040 = macosx10.4;
+SDKROOT_1060_1040 = macosx10.4;
+SDKROOT_1060_1050 = macosx10.5;
+SDKROOT_1070_1040 = macosx10.4;
+SDKROOT_1070_1050 = macosx10.5;
+SDKROOT_1070_1060 = macosx10.6;

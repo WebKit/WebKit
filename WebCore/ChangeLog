@@ -1,3 +1,13 @@
+2010-03-11  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by David Kilzer.
+
+        <rdar://problem/7745082> Make it possible to build WebKit for older Mac OS X versions from the current Mac OS X version
+
+        Default to using the appropriate SDK if the target Mac OS X version is not the current Mac OS X version.
+
+        * Configurations/Base.xcconfig:
+
 2010-03-11  Jungshik Shin  <jshin@chromium.org>
 
         [Chromium]: Plane 2 characters are rendered "blank" 
