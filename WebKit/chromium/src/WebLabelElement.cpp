@@ -40,6 +40,11 @@ using namespace WebCore;
 
 namespace WebKit {
 
+WebElement WebLabelElement::correspondingControl()
+{
+    return WebElement(unwrap<HTMLLabelElement>()->correspondingControl());
+}
+
 WebLabelElement::WebLabelElement(const PassRefPtr<HTMLLabelElement>& elem)
     : WebElement(elem)
 {
@@ -47,18 +52,13 @@ WebLabelElement::WebLabelElement(const PassRefPtr<HTMLLabelElement>& elem)
 
 WebLabelElement& WebLabelElement::operator=(const PassRefPtr<HTMLLabelElement>& elem)
 {
-    WebNode::assign(elem.releaseRef());
+    m_private = elem;
     return *this;
 }
 
 WebLabelElement::operator PassRefPtr<HTMLLabelElement>() const
 {
-    return PassRefPtr<HTMLLabelElement>(static_cast<HTMLLabelElement*>(m_private));
-}
-
-WebElement WebLabelElement::correspondingControl()
-{
-    return WebElement(unwrap<HTMLLabelElement>()->correspondingControl());
+    return static_cast<HTMLLabelElement*>(m_private.get());
 }
 
 } // namespace WebKit

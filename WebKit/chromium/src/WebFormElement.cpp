@@ -43,25 +43,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-class WebFormPrivate : public HTMLFormElement {
-};
-
-WebFormElement::WebFormElement(const WTF::PassRefPtr<HTMLFormElement>& e)
-    : WebElement(e)
-{
-}
-
-WebFormElement& WebFormElement::operator=(const WTF::PassRefPtr<HTMLFormElement>& e)
-{
-    WebNode::assign(e.releaseRef());
-    return *this;
-}
-
-WebFormElement::operator WTF::PassRefPtr<WebCore::HTMLFormElement>() const
-{
-    return PassRefPtr<HTMLFormElement>(static_cast<HTMLFormElement*>(m_private));
-}
-
 bool WebFormElement::autoComplete() const
 {
     return constUnwrap<HTMLFormElement>()->autoComplete();
@@ -105,6 +86,22 @@ void WebFormElement::getInputElements(WebVector<WebInputElement>& result) const
                 form->formElements[i]));
     }
     result.assign(tempVector);
+}
+
+WebFormElement::WebFormElement(const PassRefPtr<HTMLFormElement>& e)
+    : WebElement(e)
+{
+}
+
+WebFormElement& WebFormElement::operator=(const PassRefPtr<HTMLFormElement>& e)
+{
+    m_private = e;
+    return *this;
+}
+
+WebFormElement::operator PassRefPtr<HTMLFormElement>() const
+{
+    return static_cast<HTMLFormElement*>(m_private.get());
 }
 
 } // namespace WebKit

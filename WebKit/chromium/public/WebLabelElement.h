@@ -53,6 +53,7 @@ public:
     }
 
     WEBKIT_API void assign(const WebLabelElement& e) { WebElement::assign(e); }
+
     WEBKIT_API WebElement correspondingControl();
 
 #if WEBKIT_IMPLEMENTATION

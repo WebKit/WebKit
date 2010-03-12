@@ -48,31 +48,23 @@
 
 #include "markup.h"
 
-#include <wtf/PassRefPtr.h>
-
 using namespace WebCore;
 
 namespace WebKit {
 
-class WebNodePrivate : public Node {
-};
-
 void WebNode::reset()
 {
-    assign(0);
+    m_private.reset();
 }
 
 void WebNode::assign(const WebNode& other)
 {
-    WebNodePrivate* p = const_cast<WebNodePrivate*>(other.m_private);
-    if (p)
-        p->ref();
-    assign(p);
+    m_private = other.m_private;
 }
 
 bool WebNode::equals(const WebNode& n) const
 {
-    return (m_private == n.m_private);
+    return (m_private.get() == n.m_private.get());
 }
 
 WebNode::NodeType WebNode::nodeType() const
@@ -82,7 +74,7 @@ WebNode::NodeType WebNode::nodeType() const
 
 WebNode WebNode::parentNode() const
 {
-    return PassRefPtr<Node>(const_cast<Node*>(m_private->parentNode()));
+    return WebNode(const_cast<Node*>(m_private->parentNode()));
 }
 
 WebString WebNode::nodeName() const
@@ -100,30 +92,6 @@ bool WebNode::setNodeValue(const WebString& value)
     ExceptionCode exceptionCode = 0;
     m_private->setNodeValue(value, exceptionCode);
     return !exceptionCode;
-}
-
-WebNode::WebNode(const PassRefPtr<Node>& node)
-    : m_private(static_cast<WebNodePrivate*>(node.releaseRef()))
-{
-}
-
-WebNode& WebNode::operator=(const PassRefPtr<Node>& node)
-{
-    assign(static_cast<WebNodePrivate*>(node.releaseRef()));
-    return *this;
-}
-
-WebNode::operator PassRefPtr<Node>() const
-{
-    return PassRefPtr<Node>(const_cast<WebNodePrivate*>(m_private));
-}
-
-void WebNode::assign(WebNodePrivate* p)
-{
-    // p is already ref'd for us by the caller
-    if (m_private)
-        m_private->deref();
-    m_private = p;
 }
 
 WebFrame* WebNode::frame() const
@@ -168,7 +136,7 @@ WebNodeList WebNode::childNodes()
 
 WebString WebNode::createMarkup() const
 {
-    return WebCore::createMarkup(m_private);
+    return WebCore::createMarkup(m_private.get());
 }
 
 bool WebNode::isTextNode() const
@@ -184,7 +152,7 @@ bool WebNode::isElementNode() const
 void WebNode::addEventListener(const WebString& eventType, WebEventListener* listener, bool useCapture)
 {
     EventListenerWrapper* listenerWrapper =
-        listener->createEventListenerWrapper(eventType, useCapture, m_private);
+        listener->createEventListenerWrapper(eventType, useCapture, m_private.get());
     // The listenerWrapper is only referenced by the actual Node.  Once it goes
     // away, the wrapper notifies the WebEventListener so it can clear its
     // pointer to it.
@@ -194,16 +162,31 @@ void WebNode::addEventListener(const WebString& eventType, WebEventListener* lis
 void WebNode::removeEventListener(const WebString& eventType, WebEventListener* listener, bool useCapture)
 {
     EventListenerWrapper* listenerWrapper =
-        listener->getEventListenerWrapper(eventType, useCapture, m_private);
+        listener->getEventListenerWrapper(eventType, useCapture, m_private.get());
     m_private->removeEventListener(eventType, listenerWrapper, useCapture);
     // listenerWrapper is now deleted.
 }
 
 void WebNode::simulateClick()
 {
-    ASSERT(m_private);
     RefPtr<Event> noEvent;
     m_private->dispatchSimulatedClick(noEvent);
+}
+
+WebNode::WebNode(const PassRefPtr<Node>& node)
+    : m_private(node)
+{
+}
+
+WebNode& WebNode::operator=(const PassRefPtr<Node>& node)
+{
+    m_private = node;
+    return *this;
+}
+
+WebNode::operator PassRefPtr<Node>() const
+{
+    return m_private.get();
 }
 
 } // namespace WebKit

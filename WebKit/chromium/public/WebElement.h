@@ -35,7 +35,6 @@
 
 #if WEBKIT_IMPLEMENTATION
 namespace WebCore { class Element; }
-namespace WTF { template <typename T> class PassRefPtr; }
 #endif
 
 namespace WebKit {

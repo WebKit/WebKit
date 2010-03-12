@@ -40,22 +40,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebInputElement::WebInputElement(const WTF::PassRefPtr<HTMLInputElement>& elem)
-    : WebElement(elem)
-{
-}
-
-WebInputElement& WebInputElement::operator=(const WTF::PassRefPtr<HTMLInputElement>& elem)
-{
-    WebNode::assign(elem.releaseRef());
-    return *this;
-}
-
-WebInputElement::operator WTF::PassRefPtr<HTMLInputElement>() const
-{
-    return PassRefPtr<HTMLInputElement>(static_cast<HTMLInputElement*>(m_private));
-}
-
 bool WebInputElement::autoComplete() const
 {
     return constUnwrap<HTMLInputElement>()->autoComplete();
@@ -127,6 +111,22 @@ WebString WebInputElement::nameForAutofill() const
     if (!trimmedName.isEmpty())
         return trimmedName;
     return String();
+}
+
+WebInputElement::WebInputElement(const PassRefPtr<HTMLInputElement>& elem)
+    : WebElement(elem)
+{
+}
+
+WebInputElement& WebInputElement::operator=(const PassRefPtr<HTMLInputElement>& elem)
+{
+    m_private = elem;
+    return *this;
+}
+
+WebInputElement::operator PassRefPtr<HTMLInputElement>() const
+{
+    return static_cast<HTMLInputElement*>(m_private.get());
 }
 
 } // namespace WebKit

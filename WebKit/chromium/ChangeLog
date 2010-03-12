@@ -11,6 +11,58 @@
 
         Reviewed by Jeremy Orlow.
 
+        Use WebPrivatePtr for WebNode
+        https://bugs.webkit.org/show_bug.cgi?id=36005
+
+        * public/WebElement.h:
+        * public/WebFormElement.h:
+        * public/WebInputElement.h:
+        * public/WebLabelElement.h:
+        * public/WebNode.h:
+        (WebKit::WebNode::WebNode):
+        (WebKit::WebNode::isNull):
+        (WebKit::WebNode::unwrap):
+        (WebKit::WebNode::constUnwrap):
+        * public/WebPrivatePtr.h:
+        (WebKit::WebPrivatePtr::assign):
+        * src/WebDocument.cpp:
+        (WebKit::WebDocument::WebDocument):
+        (WebKit::WebDocument::operator=):
+        (WebKit::WebDocument::operator PassRefPtr<Document>):
+        * src/WebElement.cpp:
+        (WebKit::WebElement::hasTagName):
+        (WebKit::WebElement::WebElement):
+        (WebKit::WebElement::operator=):
+        (WebKit::WebElement::operator PassRefPtr<Element>):
+        * src/WebFormElement.cpp:
+        (WebKit::WebFormElement::WebFormElement):
+        (WebKit::WebFormElement::operator=):
+        (WebKit::WebFormElement::operator PassRefPtr<HTMLFormElement>):
+        * src/WebInputElement.cpp:
+        (WebKit::WebInputElement::WebInputElement):
+        (WebKit::WebInputElement::operator=):
+        (WebKit::WebInputElement::operator PassRefPtr<HTMLInputElement>):
+        * src/WebLabelElement.cpp:
+        (WebKit::WebLabelElement::correspondingControl):
+        (WebKit::WebLabelElement::operator=):
+        (WebKit::WebLabelElement::operator PassRefPtr<HTMLLabelElement>):
+        * src/WebNode.cpp:
+        (WebKit::WebNode::reset):
+        (WebKit::WebNode::assign):
+        (WebKit::WebNode::equals):
+        (WebKit::WebNode::parentNode):
+        (WebKit::WebNode::createMarkup):
+        (WebKit::WebNode::addEventListener):
+        (WebKit::WebNode::removeEventListener):
+        (WebKit::WebNode::simulateClick):
+        (WebKit::WebNode::WebNode):
+        (WebKit::WebNode::operator=):
+        (WebKit::WebNode::operator PassRefPtr<Node>):
+
+2010-03-10  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
         Add API wrapper for WebCore::SerializedScriptValue
         https://bugs.webkit.org/show_bug.cgi?id=35988
 

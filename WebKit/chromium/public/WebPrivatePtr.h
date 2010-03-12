@@ -58,14 +58,6 @@ public:
         assign(0);
     }
 
-    void assign(T* p)
-    {
-        // p is already ref'd for us by the caller
-        if (m_ptr)
-            m_ptr->deref();
-        m_ptr = p;
-    }
-
     WebPrivatePtr<T>& operator=(const WebPrivatePtr<T>& other)
     {
         T* p = other.m_ptr;
@@ -94,6 +86,16 @@ public:
 #endif
 
 private:
+#if WEBKIT_IMPLEMENTATION
+    void assign(T* p)
+    {
+        // p is already ref'd for us by the caller
+        if (m_ptr)
+            m_ptr->deref();
+        m_ptr = p;
+    }
+#endif
+
     T* m_ptr;
 };
 

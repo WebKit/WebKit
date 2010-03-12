@@ -32,12 +32,10 @@
 #define WebNode_h
 
 #include "WebCommon.h"
+#include "WebPrivatePtr.h"
 #include "WebString.h"
 
 namespace WebCore { class Node; }
-#if WEBKIT_IMPLEMENTATION
-namespace WTF { template <typename T> class PassRefPtr; }
-#endif
 
 namespace WebKit {
 class WebDocument;
@@ -51,8 +49,8 @@ class WebNode {
 public:
     virtual ~WebNode() { reset(); }
 
-    WebNode() : m_private(0) { }
-    WebNode(const WebNode& n) : m_private(0) { assign(n); }
+    WebNode() { }
+    WebNode(const WebNode& n) { assign(n); }
     WebNode& operator=(const WebNode& n)
     {
         assign(n);
@@ -64,13 +62,7 @@ public:
 
     WEBKIT_API bool equals(const WebNode&) const;
 
-    bool isNull() const { return !m_private; }
-
-#if WEBKIT_IMPLEMENTATION
-    WebNode(const WTF::PassRefPtr<WebCore::Node>&);
-    WebNode& operator=(const WTF::PassRefPtr<WebCore::Node>&);
-    operator WTF::PassRefPtr<WebCore::Node>() const;
-#endif
+    bool isNull() const { return m_private.isNull(); }
 
     enum NodeType {
         ElementNode = 1,
@@ -122,20 +114,24 @@ public:
         return res;
     }
 
+#if WEBKIT_IMPLEMENTATION
+    WebNode(const WTF::PassRefPtr<WebCore::Node>&);
+    WebNode& operator=(const WTF::PassRefPtr<WebCore::Node>&);
+    operator WTF::PassRefPtr<WebCore::Node>() const;
+#endif
+
 protected:
-    typedef WebCore::Node WebNodePrivate;
-    void assign(WebNodePrivate*);
-    WebNodePrivate* m_private;
-    
     template<typename T> T* unwrap()
     {
-        return static_cast<T*>(m_private);
+        return static_cast<T*>(m_private.get());
     }
 
     template<typename T> const T* constUnwrap() const
     {
-        return static_cast<const T*>(m_private);
+        return static_cast<const T*>(m_private.get());
     }
+
+    WebPrivatePtr<WebCore::Node> m_private;
 };
 
 inline bool operator==(const WebNode& a, const WebNode& b)

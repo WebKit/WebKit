@@ -38,6 +38,11 @@ using namespace WebCore;
 
 namespace WebKit {
 
+WebSerializedScriptValue WebSerializedScriptValue::fromString(const WebString& s)
+{
+    return SerializedScriptValue::createFromWire(s);
+}
+
 void WebSerializedScriptValue::reset()
 {
     m_private.reset();

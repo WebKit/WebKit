@@ -53,22 +53,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebDocument::WebDocument(const PassRefPtr<Document>& elem)
-    : WebNode(elem)
-{
-}
-
-WebDocument& WebDocument::operator=(const PassRefPtr<Document>& elem)
-{
-    WebNode::assign(elem.releaseRef());
-    return *this;
-}
-
-WebDocument::operator PassRefPtr<Document>() const
-{
-    return PassRefPtr<Document>(static_cast<Document*>(m_private));
-}
-
 WebFrame* WebDocument::frame() const
 {
     return WebFrameImpl::fromFrame(constUnwrap<Document>()->frame());
@@ -160,6 +144,22 @@ WebString WebDocument::applicationID() const
 WebNode WebDocument::focusedNode() const
 {
     return WebNode(constUnwrap<Document>()->focusedNode());
+}
+
+WebDocument::WebDocument(const PassRefPtr<Document>& elem)
+    : WebNode(elem)
+{
+}
+
+WebDocument& WebDocument::operator=(const PassRefPtr<Document>& elem)
+{
+    m_private = elem;
+    return *this;
+}
+
+WebDocument::operator PassRefPtr<Document>() const
+{
+    return static_cast<Document*>(m_private.get());
 }
 
 } // namespace WebKit
