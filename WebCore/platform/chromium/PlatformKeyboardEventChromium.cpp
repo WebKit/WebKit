@@ -37,6 +37,10 @@
 
 namespace WebCore {
 
+#if OS(WINDOWS)
+static const unsigned short HIGH_BIT_MASK_SHORT = 0x8000;
+#endif
+
 void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool backwardCompatibilityMode)
 {
 #if OS(WINDOWS)

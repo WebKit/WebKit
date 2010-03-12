@@ -1,5 +1,11 @@
 2010-03-12  Dan Bernstein  <mitz@apple.com>
 
+        Build fix.
+
+        * platform/chromium/PlatformKeyboardEventChromium.cpp:
+
+2010-03-12  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Darin Adler.
 
         <rdar://problem/7694674> Hover states not updated when overflow section scrolls under stationary mouse pointer
