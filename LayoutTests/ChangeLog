@@ -1,3 +1,16 @@
+2010-03-12  Alpha Lam  <hclam@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        HTMLMediaElement crash when it is used after resource loading is canceled.
+        https://bugs.webkit.org/show_bug.cgi?id=35992
+
+        Adding a test to access the duration property of a video element after
+        resource loading was canceled.
+
+        * http/tests/media/video-cancel-load-expected.txt: Added.
+        * http/tests/media/video-cancel-load.html: Added.
+
 2010-03-05  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by David Levin.

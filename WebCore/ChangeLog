@@ -1,3 +1,21 @@
+2010-03-12  Alpha Lam  <hclam@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        Fix a crash when resource loading of media element is canceled.
+        https://bugs.webkit.org/show_bug.cgi?id=35992
+
+        Use of HTMLMediaElement::duration() after resource loading was canceled
+        will cause a crash. This is because HTMLMediaElement::m_player is used
+        when NULL.
+        Test: http/tests/media/video-cancel-load.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::duration):
+        Avoid calling to m_player when it is null.
+        (WebCore::HTMLMediaElement::userCancelledLoad):
+        Set m_readyState to HAVE_NOTHING.
+
 2010-03-12  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
