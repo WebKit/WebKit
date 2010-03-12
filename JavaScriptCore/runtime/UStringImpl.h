@@ -253,12 +253,6 @@ public:
             m_refCountAndFlags &= ~s_refCountFlagIsIdentifier;
     }
 
-// SYNC SYNC SYNC
-// SYNC SYNC SYNC
-// SYNC SYNC SYNC
-// SYNC SYNC SYNC
-// SYNC SYNC SYNC
-
     unsigned hash() const { if (!m_hash) m_hash = computeHash(m_data, m_length); return m_hash; }
     unsigned existingHash() const { ASSERT(m_hash); return m_hash; }
     static unsigned computeHash(const UChar* data, unsigned length) { return WTF::stringHash(data, length); }

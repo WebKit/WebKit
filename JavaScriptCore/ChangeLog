@@ -1,5 +1,13 @@
 2010-03-11  Gavin Barraclough  <barraclough@apple.com>
 
+        Rubber stamped by Oliver Hunt.
+
+        Remove nonsense comments used in development & commited in error.
+
+        * runtime/UStringImpl.h:
+
+2010-03-11  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by NOBODY (Windows build fix).
 
         Remove export.
