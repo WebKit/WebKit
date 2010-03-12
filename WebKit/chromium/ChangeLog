@@ -1,5 +1,15 @@
 2010-03-12  Garret Kelly  <gdk@chromium.org>
 
+        Unreviewed.
+
+        Fix Chromium Mac build.
+
+        * src/WebInputEventConversion.cpp:
+        (WebKit::toPlatformTouchEventType):
+        (WebKit::toPlatformTouchPointState):
+
+2010-03-12  Garret Kelly  <gdk@chromium.org>
+
         Reviewed by Eric Seidel.
 
         Enable touch events in Chromium features gypi file.

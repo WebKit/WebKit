@@ -184,6 +184,7 @@ static inline TouchEventType toPlatformTouchEventType(const WebInputEvent::Type 
     default:
         ASSERT_NOT_REACHED();
     }
+    return WebInputEvent::Undefined;
 }
 
 static inline PlatformTouchPoint::State toPlatformTouchPointState(const WebTouchPoint::State state)
@@ -202,6 +203,7 @@ static inline PlatformTouchPoint::State toPlatformTouchPointState(const WebTouch
     case WebTouchPoint::StateUndefined:
         ASSERT_NOT_REACHED();
     }
+    return WebTouchPoint::StateUndefined;
 }
 
 PlatformTouchPointBuilder::PlatformTouchPointBuilder(Widget* widget, const WebTouchPoint& point)
