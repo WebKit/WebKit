@@ -1,3 +1,19 @@
+2010-03-12  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Fix new-run-webkit-tests --run-singly
+
+        This script option is currently broken - the script attempts to
+        dereference methods and variables that don't exist, which causes
+        the Chromium Linux valgrind bot to be quite unhappy. This has been
+        broken since r54449 when I renamed Port.start_test_driver to
+        Port.start_driver.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36042
+
+        * Scripts/webkitpy/layout_tests/layout_package/test_shell_thread.py:
+
 2010-03-12  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Fix critical being printed to stderr on every test. This is

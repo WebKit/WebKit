@@ -149,15 +149,15 @@ class SingleTestThread(threading.Thread):
         self._output_dir = output_dir
 
     def run(self):
-        driver = self._port.start_test_driver(self._image_path,
-            self._shell_args)
+        test_info = self._test_info
+        driver = self._port.start_driver(self._image_path, self._shell_args)
         start = time.time()
         crash, timeout, actual_checksum, output, error = \
             driver.run_test(test_info.uri.strip(), test_info.timeout,
                             test_info.image_hash)
         end = time.time()
         self._test_stats = process_output(self._port,
-            self._test_info, self._test_types, self._test_args,
+            test_info, self._test_types, self._test_args,
             self._target, self._output_dir, crash, timeout, end - start,
             actual_checksum, output, error)
         driver.stop()
