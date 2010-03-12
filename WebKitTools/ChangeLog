@@ -1,3 +1,11 @@
+2010-03-11  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed.
+
+        Fix typo in websocket_server.py
+
+        * Scripts/webkitpy/layout_tests/port/websocket_server.py:
+
 2010-03-11  Garret Kelly  <gdk@chromium.org>
 
         Reviewed by Darin Adler.
