@@ -1,3 +1,14 @@
+2010-03-12  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        Remove an unused method.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35940
+
+        * Plugins/WebPluginController.mm:
+        removed - (void)showURL:(NSURL *) inFrame:(NSString *)
+
 2010-03-11  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by David Kilzer.

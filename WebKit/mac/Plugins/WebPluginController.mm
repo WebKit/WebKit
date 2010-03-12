@@ -351,12 +351,6 @@ static void cancelOutstandingCheck(const void *item, void *context)
     }
 }
 
-// For compatibility only.
-- (void)showURL:(NSURL *)URL inFrame:(NSString *)target
-{
-    [self webPlugInContainerLoadRequest:[NSURLRequest requestWithURL:URL] inFrame:target];
-}
-
 - (void)webPlugInContainerShowStatus:(NSString *)message
 {
     if (!message) {
