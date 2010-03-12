@@ -1,5 +1,13 @@
 2010-03-12  Dirk Schulze  <krit@webkit.org>
 
+        Unreviewed LayoutTest update.
+
+        Result was not updated with r55930.
+
+        * platform/mac/svg/custom/dominant-baseline-hanging-expected.txt:
+
+2010-03-12  Dirk Schulze  <krit@webkit.org>
+
         Reviewed by Nikolas Zimmermann.
 
         SVG fallback color doesn't work for bogus gradients.
