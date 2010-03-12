@@ -33,7 +33,6 @@
 
 #include "CSSMutableStyleDeclaration.h"
 #include "DOMDataStore.h"
-#include "DOMObjectsInclude.h"
 #include "DocumentLoader.h"
 #include "FrameLoaderClient.h"
 #include "Notification.h"
@@ -42,6 +41,7 @@
 #include "V8Binding.h"
 #include "V8Collection.h"
 #include "V8CustomEventListener.h"
+#include "V8DedicatedWorkerContext.h"
 #include "V8DOMApplicationCache.h"
 #include "V8DOMMap.h"
 #include "V8DOMWindow.h"
@@ -54,6 +54,7 @@
 #include "V8MessageChannel.h"
 #include "V8NamedNodeMap.h"
 #include "V8Node.h"
+#include "V8NodeFilterCondition.h"
 #include "V8NodeList.h"
 #include "V8Notification.h"
 #include "V8Proxy.h"

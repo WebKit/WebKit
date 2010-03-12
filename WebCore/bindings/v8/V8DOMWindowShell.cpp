@@ -36,7 +36,6 @@
 #include "CSSMutableStyleDeclaration.h"
 #include "DateExtension.h"
 #include "DocumentLoader.h"
-#include "DOMObjectsInclude.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
 #include "InspectorTimelineAgent.h"

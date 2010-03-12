@@ -33,14 +33,16 @@
 
 #include "CSSMutableStyleDeclaration.h"
 #include "DateExtension.h"
-#include "DOMObjectsInclude.h"
 #include "DocumentLoader.h"
+#include "Frame.h"
 #include "FrameLoaderClient.h"
 #include "InspectorTimelineAgent.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "PlatformBridge.h"
+#include "SVGElement.h"
 #include "ScriptController.h"
+#include "Settings.h"
 #include "StorageNamespace.h"
 #include "V8Binding.h"
 #include "V8BindingState.h"
@@ -56,6 +58,7 @@
 #include "V8RangeException.h"
 #include "V8XMLHttpRequestException.h"
 #include "V8XPathException.h"
+#include "WorkerContext.h"
 #include "WorkerContextExecutionProxy.h"
 
 #if ENABLE(SVG)

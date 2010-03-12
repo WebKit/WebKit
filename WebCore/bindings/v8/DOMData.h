@@ -32,6 +32,7 @@
 #define DOMData_h
 
 #include "DOMDataStore.h"
+#include "V8DOMWrapper.h"
 
 namespace WebCore {
 

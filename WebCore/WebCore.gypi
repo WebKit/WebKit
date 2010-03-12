@@ -795,7 +795,6 @@
             'bindings/v8/DOMData.h',
             'bindings/v8/DOMDataStore.cpp',
             'bindings/v8/DOMDataStore.h',
-            'bindings/v8/DOMObjectsInclude.h',
             'bindings/v8/DOMWrapperWorld.cpp',
             'bindings/v8/DOMWrapperWorld.h',
             'bindings/v8/IsolatedWorld.cpp',

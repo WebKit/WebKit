@@ -1,3 +1,21 @@
+2010-03-11  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [V8] Remove DOMObjectsInclude.h and update headers accordingly.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36036
+
+        * WebCore.gypi:
+        * bindings/v8/DOMData.h:
+        * bindings/v8/DOMDataStore.h:
+        * bindings/v8/DOMObjectsInclude.h: Removed.
+        * bindings/v8/V8DOMMap.cpp:
+        * bindings/v8/V8DOMWindowShell.cpp:
+        * bindings/v8/V8DOMWrapper.cpp:
+        * bindings/v8/V8GCController.cpp:
+        * bindings/v8/V8Proxy.cpp:
+
 2010-03-11  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Mark Rowe.

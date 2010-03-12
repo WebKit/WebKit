@@ -31,7 +31,7 @@
 #ifndef DOMDataStore_h
 #define DOMDataStore_h
 
-#include "DOMObjectsInclude.h"
+#include "V8DOMMap.h"
 #include "V8Node.h"
 
 #include <v8.h>
@@ -47,6 +47,7 @@
 namespace WebCore {
 
     class DOMData;
+    class DOMDataStore;
 
     typedef WTF::Vector<DOMDataStore*> DOMDataList;
 
