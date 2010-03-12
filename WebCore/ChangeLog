@@ -1,3 +1,20 @@
+2010-03-12  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Bug 36052 - [Qt] REGRESSION(55878) 63 test cases crash
+
+        r55878 changed UStringImpl::empty()->characters() to be non-null,
+        so TextBreakIteratorQt.cpp now should check the length of strings
+        (previously was assuming all strings with a non-null data pointer
+        had a length of at least 1).
+
+        * platform/text/qt/TextBreakIteratorQt.cpp:
+        (WebCore::wordBreakIterator):
+        (WebCore::characterBreakIterator):
+        (WebCore::lineBreakIterator):
+        (WebCore::sentenceBreakIterator):
+
 2010-03-12  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

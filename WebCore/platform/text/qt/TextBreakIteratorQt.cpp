@@ -40,7 +40,7 @@ namespace WebCore {
 
     TextBreakIterator* wordBreakIterator(const UChar* string, int length)
     {
-        if (!string)
+        if (!string || !length)
             return 0;
         if (!iterator)
             iterator = new QTextBoundaryFinder;
@@ -51,7 +51,7 @@ namespace WebCore {
 
     TextBreakIterator* characterBreakIterator(const UChar* string, int length)
     {
-        if (!string)
+        if (!string || !length)
             return 0;
         if (!iterator)
             iterator = new QTextBoundaryFinder;
@@ -68,7 +68,7 @@ namespace WebCore {
     TextBreakIterator* lineBreakIterator(const UChar* string, int length)
     {
         static QTextBoundaryFinder *iterator = 0;
-        if (!string)
+        if (!string || !length)
             return 0;
         if (!iterator)
             iterator = new QTextBoundaryFinder;
@@ -79,7 +79,7 @@ namespace WebCore {
 
     TextBreakIterator* sentenceBreakIterator(const UChar* string, int length)
     {
-        if (!string)
+        if (!string || !length)
             return 0;
         if (!iterator)
             iterator = new QTextBoundaryFinder;
