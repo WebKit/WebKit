@@ -439,10 +439,6 @@ IntRect WebChromeClient::windowResizerRect() const
     return enclosingIntRect([m_webView convertRect:rect fromView:nil]);
 }
 
-void WebChromeClient::invalidateContents(const IntRect&, bool)
-{
-}
-
 void WebChromeClient::invalidateWindow(const IntRect&, bool immediate)
 {
     if (immediate) {

@@ -87,7 +87,6 @@ namespace WebKit {
 
         virtual WebCore::IntRect windowResizerRect() const;
 
-        virtual void invalidateContents(const WebCore::IntRect&, bool);
         virtual void invalidateWindow(const WebCore::IntRect&, bool);
         virtual void invalidateContentsAndWindow(const WebCore::IntRect&, bool);
         virtual void invalidateContentsForSlowScroll(const WebCore::IntRect&, bool);

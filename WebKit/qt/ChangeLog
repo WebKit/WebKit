@@ -1,3 +1,12 @@
+2010-03-11  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by David Hyatt.
+
+        Remove invalidateContents, it isn't used and it never makes sense to only invalidate the contents.
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        * WebCoreSupport/ChromeClientQt.h:
+
 2010-03-10  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Simon Hausmann.

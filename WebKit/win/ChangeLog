@@ -1,3 +1,12 @@
+2010-03-11  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by David Hyatt.
+
+        Remove invalidateContents, it isn't used and it never makes sense to only invalidate the contents.
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        * WebCoreSupport/WebChromeClient.h:
+
 2010-03-10  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by David Levin.

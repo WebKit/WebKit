@@ -336,11 +336,6 @@ IntRect ChromeClientWx::windowResizerRect() const
     return IntRect();
 }
 
-void ChromeClientWx::invalidateContents(const IntRect& rect, bool)
-{
-    notImplemented();
-}
-
 void ChromeClientWx::invalidateWindow(const IntRect& rect, bool immediate)
 {
     if (immediate)

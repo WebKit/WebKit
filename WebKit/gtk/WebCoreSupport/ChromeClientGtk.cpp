@@ -342,11 +342,6 @@ IntRect ChromeClient::windowResizerRect() const
     return IntRect();
 }
 
-void ChromeClient::invalidateContents(const IntRect&, bool)
-{
-    notImplemented();
-}
-
 void ChromeClient::invalidateWindow(const IntRect&, bool)
 {
     notImplemented();

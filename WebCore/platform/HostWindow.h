@@ -35,9 +35,6 @@ class HostWindow : public Noncopyable {
 public:
     virtual ~HostWindow() { }
 
-    // Requests the host invalidate the contents, not the window.  If immediate is true do so synchronously, otherwise async.
-    virtual void invalidateContents(const IntRect& updateRect, bool immediate) = 0;
-
     // Requests the host invalidate the window, not the contents.  If immediate is true do so synchronously, otherwise async.
     virtual void invalidateWindow(const IntRect& updateRect, bool immediate) = 0;
 

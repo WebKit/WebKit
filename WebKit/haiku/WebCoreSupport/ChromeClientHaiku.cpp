@@ -253,11 +253,6 @@ IntRect ChromeClientHaiku::windowResizerRect() const
     return IntRect();
 }
 
-void ChromeClientHaiku::invalidateContents(const IntRect&, bool)
-{
-    notImplemented();
-}
-
 void ChromeClientHaiku::invalidateWindow(const IntRect&, bool)
 {
     notImplemented();
