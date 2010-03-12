@@ -1,3 +1,13 @@
+2010-03-11  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add EFL port files to efl/WebCoreSupport.
+        http://webkit.org/b/35914
+
+        * efl/WebCoreSupport/DragClientEfl.h: Added.
+        * efl/WebCoreSupport/DragClientEfl.cpp: Added.
+
 2010-03-11  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Mark Rowe.
