@@ -1,3 +1,16 @@
+2010-03-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Applying h1 format to text node after HR tag fails to include first letter of text node.
+        https://bugs.webkit.org/show_bug.cgi?id=30148
+
+        This patch adds a test case to the above bug, which has been fixed by
+        http://trac.webkit.org/changeset/55705.
+
+        * editing/style/heading-text-after-hr-expected.txt: Added.
+        * editing/style/heading-text-after-hr.html: Added.
+
 2010-03-11  Jian Li  <jianli@chromium.org>
 
         Reviewed by Dmitry Titov.
