@@ -1,3 +1,12 @@
+2010-03-11  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Rubber-stamped by Kenneth Christiansen.
+        Patch by Antonio Gomes <tonikitoo@webkit.org>
+
+        Make the timeout in 'snav-unit-overflow-and-scroll-in-direction.html' 10x shorter (from 500ms to 50ms)
+
+        * fast/events/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html:
+
 2010-03-12  Jian Li  <jianli@chromium.org>
 
         Reviewed by Sam Weinig.
