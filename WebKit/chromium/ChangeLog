@@ -1,3 +1,12 @@
+2010-03-12  Garret Kelly  <gdk@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Enable touch events in Chromium features gypi file.
+        https://bugs.webkit.org/show_bug.cgi?id=35994
+
+        * features.gypi:
+
 2010-03-12  Darin Fisher  <darin@chromium.org>
 
         Fix Chromium build bustage.

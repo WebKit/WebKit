@@ -67,6 +67,7 @@
         'ENABLE_SVG_USE=1',
         'ENABLE_SVG_FOREIGN_OBJECT=1',
         'ENABLE_SVG_FONTS=1',
+        'ENABLE_TOUCH_EVENTS=1',
         'ENABLE_VIDEO=1',
         'ENABLE_WEB_SOCKETS=1',
         'ENABLE_WORKERS=1',
