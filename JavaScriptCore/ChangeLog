@@ -1,3 +1,12 @@
+2010-03-12  Peter Varga  <pvarga@inf.u-szeged.hu>
+
+        Reviewed by David Levin.
+
+        Two functions tryConsumeCharacter() and tryConsumeCharacterClass() are
+        removed from yarr/RegexInterpreter.cpp because they are never called.
+
+        * yarr/RegexInterpreter.cpp:
+
 2010-03-11  Kent Hansen  <kent.hansen@nokia.com>
 
         Reviewed by Simon Hausmann.
