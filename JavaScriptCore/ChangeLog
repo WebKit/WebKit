@@ -1,3 +1,35 @@
+2010-03-11  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36041
+        Remove unnecessary differences in common code between WebCore::StringImpl & JSC::UStringImpl
+
+        Much of the code in WebCore::StringImpl and JSC::UStringImpl is now very similar,
+        but has trivial and unnecessary formatting differences, such as the exact wording
+        of comments, missing ASSERTs, functions implemented in the .h vs .cpp etc.
+
+        * runtime/Identifier.cpp:
+        (JSC::Identifier::add): UStringImpl::empty() now automatically hashes, uas per WebCore strings.
+        (JSC::Identifier::addSlowCase): UStringImpl::empty() now automatically hashes, uas per WebCore strings.
+        * runtime/UStringImpl.cpp:
+        (JSC::UStringImpl::~UStringImpl): Only call bufferOwnership() once, add missing ASSERTs.
+        (JSC::UStringImpl::createUninitialized): Move from .h, not commonly called, no need to inline.
+        (JSC::UStringImpl::create): Move from .h, not commonly called, no need to inline.
+        (JSC::UStringImpl::sharedBuffer): Rewritten to more closely match WebCore implementation, remove need for separate baseSharedBuffer() method.
+        * runtime/UStringImpl.h:
+        (JSC::UStringImpl::UStringImpl): Automatically hash static strings, ASSERT m_data & m_length are non-null/non-zero in non-static strings.
+        (JSC::UStringImpl::setHash): Add missing ASSERT.
+        (JSC::UStringImpl::create): Moved to .cpp / added missing check for empty string creation.
+        (JSC::UStringImpl::adopt): Vector.size() returns size_t, not unsigned.
+        (JSC::UStringImpl::cost): Renamed m_bufferSubstring -> m_substringBuffer
+        (JSC::UStringImpl::hash): Reordered in file.
+        (JSC::UStringImpl::existingHash): Reordered in file.
+        (JSC::UStringImpl::computeHash): Reordered in file, renamed parameter.
+        (JSC::UStringImpl::checkConsistency): rewrote ASSERT.
+        (JSC::UStringImpl::bufferOwnership): Return type should be BufferOwnership.
+        (JSC::UStringImpl::): Moved friends to head of class.
+
 2010-03-11  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by David Kilzer.

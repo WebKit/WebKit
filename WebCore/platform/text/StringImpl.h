@@ -56,6 +56,8 @@ struct UCharBufferTranslator;
 
 enum TextCaseSensitivity { TextCaseSensitive, TextCaseInsensitive };
 
+typedef OwnFastMallocPtr<const UChar> SharableUChar;
+typedef CrossThreadRefCounted<SharableUChar> SharedUChar;
 typedef bool (*CharacterMatchFunctionPtr)(UChar);
 
 class StringImpl : public Noncopyable {
@@ -63,49 +65,101 @@ class StringImpl : public Noncopyable {
     friend struct HashAndCharactersTranslator;
     friend struct UCharBufferTranslator;
 private:
-    friend class ThreadGlobalData;
-
     enum BufferOwnership {
         BufferInternal,
         BufferOwned,
         BufferShared,
     };
 
-    typedef OwnFastMallocPtr<const UChar> SharableUChar;
-    typedef CrossThreadRefCounted<SharableUChar> SharedUChar;
+    // Used to construct static strings, which have an special refCount that can never hit zero.
+    // This means that the static string will never be destroyed, which is important because
+    // static strings will be shared across threads & ref-counted in a non-threadsafe manner.
+    enum StaticStringConstructType { ConstructStaticString };
+    StringImpl(const UChar* characters, unsigned length, StaticStringConstructType)
+        : m_data(characters)
+        , m_sharedBuffer(0)
+        , m_length(length)
+        , m_refCountAndFlags(s_refCountFlagStatic | BufferInternal)
+        , m_hash(0)
+    {
+        // Ensure that the hash is computed so that AtomicStringHash can call existingHash()
+        // with impunity. The empty string is special because it is never entered into
+        // AtomicString's HashKey, but still needs to compare correctly.
+        hash();
+    }
 
-    // Used to create the empty string (""), automatically hashes.
-    StringImpl();
-    // Create a StringImpl with internal storage (BufferInternal)
-    StringImpl(unsigned length);
+    // Create a normal string with internal storage (BufferInternal)
+    StringImpl(unsigned length)
+        : m_data(reinterpret_cast<const UChar*>(this + 1))
+        , m_sharedBuffer(0)
+        , m_length(length)
+        , m_refCountAndFlags(s_refCountIncrement | BufferInternal)
+        , m_hash(0)
+    {
+        ASSERT(m_data);
+        ASSERT(m_length);
+    }
+
     // Create a StringImpl adopting ownership of the provided buffer (BufferOwned)
-    StringImpl(const UChar*, unsigned length);
-    // Create a StringImpl using a shared buffer (BufferShared)
-    StringImpl(const UChar*, unsigned length, PassRefPtr<SharedUChar>);
+    StringImpl(const UChar* characters, unsigned length)
+        : m_data(characters)
+        , m_sharedBuffer(0)
+        , m_length(length)
+        , m_refCountAndFlags(s_refCountIncrement | BufferOwned)
+        , m_hash(0)
+    {
+        ASSERT(m_data);
+        ASSERT(m_length);
+    }
+
+    // Used to construct new strings sharing an existing SharedUChar (BufferShared)
+    StringImpl(const UChar* characters, unsigned length, PassRefPtr<SharedUChar> sharedBuffer)
+        : m_data(characters)
+        , m_sharedBuffer(sharedBuffer.releaseRef())
+        , m_length(length)
+        , m_refCountAndFlags(s_refCountIncrement | BufferShared)
+        , m_hash(0)
+    {
+        ASSERT(m_data);
+        ASSERT(m_length);
+    }
 
     // For use only by AtomicString's XXXTranslator helpers.
-    void setHash(unsigned hash) { ASSERT(!m_hash); m_hash = hash; }
-    
+    void setHash(unsigned hash)
+    {
+        ASSERT(!m_hash);
+        ASSERT(hash == computeHash(m_data, m_length));
+        m_hash = hash;
+    }
+
 public:
     ~StringImpl();
 
     static PassRefPtr<StringImpl> create(const UChar*, unsigned length);
     static PassRefPtr<StringImpl> create(const char*, unsigned length);
     static PassRefPtr<StringImpl> create(const char*);
-    static PassRefPtr<StringImpl> createUninitialized(unsigned length, UChar*& data);
-
-    static PassRefPtr<StringImpl> createWithTerminatingNullCharacter(const StringImpl&);
-
-    static PassRefPtr<StringImpl> createStrippingNullCharacters(const UChar*, unsigned length);
-    static PassRefPtr<StringImpl> adopt(StringBuffer&);
-    static PassRefPtr<StringImpl> adopt(Vector<UChar>&);
 #if USE(JSC)
     static PassRefPtr<StringImpl> create(const JSC::UString&);
     JSC::UString ustring();
 #endif
 
+    static PassRefPtr<StringImpl> createUninitialized(unsigned length, UChar*& data);
+    static PassRefPtr<StringImpl> createWithTerminatingNullCharacter(const StringImpl&);
+    static PassRefPtr<StringImpl> createStrippingNullCharacters(const UChar*, unsigned length);
+
+    template<size_t inlineCapacity>
+    static PassRefPtr<StringImpl> adopt(Vector<UChar, inlineCapacity>& vector)
+    {
+        if (size_t size = vector.size()) {
+            ASSERT(vector.data());
+            return adoptRef(new StringImpl(vector.releaseBuffer(), size));
+        }
+        return empty();
+    }
+    static PassRefPtr<StringImpl> adopt(StringBuffer&);
+
     SharedUChar* sharedBuffer();
-    const UChar* characters() { return m_data; }
+    const UChar* characters() const { return m_data; }
     unsigned length() { return m_length; }
 
     bool hasTerminatingNullCharacter() const { return m_refCountAndFlags & s_refCountFlagHasTerminatingNullCharacter; }
@@ -113,14 +167,22 @@ public:
     bool inTable() const { return m_refCountAndFlags & s_refCountFlagInTable; }
     void setInTable() { m_refCountAndFlags |= s_refCountFlagInTable; }
 
-    unsigned hash() { if (m_hash == 0) m_hash = computeHash(m_data, m_length); return m_hash; }
+// SYNC SYNC SYNC
+// SYNC SYNC SYNC
+// SYNC SYNC SYNC
+// SYNC SYNC SYNC
+// SYNC SYNC SYNC
+
+    unsigned hash() const { if (!m_hash) m_hash = computeHash(m_data, m_length); return m_hash; }
     unsigned existingHash() const { ASSERT(m_hash); return m_hash; }
-    inline static unsigned computeHash(const UChar* data, unsigned length) { return WTF::stringHash(data, length); }
-    inline static unsigned computeHash(const char* data) { return WTF::stringHash(data); }
+    static unsigned computeHash(const UChar* data, unsigned length) { return WTF::stringHash(data, length); }
+    static unsigned computeHash(const char* data) { return WTF::stringHash(data); }
 
     StringImpl* ref() { m_refCountAndFlags += s_refCountIncrement; return this; }
     ALWAYS_INLINE void deref() { m_refCountAndFlags -= s_refCountIncrement; if (!(m_refCountAndFlags & (s_refCountMask | s_refCountFlagStatic))) delete this; }
     ALWAYS_INLINE bool hasOneRef() const { return (m_refCountAndFlags & (s_refCountMask | s_refCountFlagStatic)) == s_refCountIncrement; }
+
+    static StringImpl* empty();
 
     // Returns a StringImpl suitable for use on another thread.
     PassRefPtr<StringImpl> crossThreadString();
@@ -178,8 +240,6 @@ public:
     PassRefPtr<StringImpl> replace(StringImpl*, StringImpl*);
     PassRefPtr<StringImpl> replace(unsigned index, unsigned len, StringImpl*);
 
-    static StringImpl* empty();
-
     Vector<char> ascii();
 
     WTF::Unicode::Direction defaultWritingDirection();
@@ -197,8 +257,6 @@ private:
 
     static PassRefPtr<StringImpl> createStrippingNullCharactersSlowCase(const UChar*, unsigned length);
     
-    // The StringImpl struct and its data may be allocated within a single heap block.
-    // In this case, the m_data pointer is an "internal buffer", and does not need to be deallocated.
     BufferOwnership bufferOwnership() const { return static_cast<BufferOwnership>(m_refCountAndFlags & s_refCountMaskBufferOwnership); }
 
     static const unsigned s_refCountMask = 0xFFFFFFE0;

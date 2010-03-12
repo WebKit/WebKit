@@ -43,7 +43,7 @@ public:
         for (HashSet<UString::Rep*>::iterator iter = m_table.begin(); iter != end; ++iter)
             (*iter)->setIsIdentifier(false);
     }
-    
+
     std::pair<HashSet<UString::Rep*>::iterator, bool> add(UString::Rep* value)
     {
         std::pair<HashSet<UString::Rep*>::iterator, bool> result = m_table.add(value);
@@ -129,10 +129,8 @@ PassRefPtr<UString::Rep> Identifier::add(JSGlobalData* globalData, const char* c
         rep->hash();
         return rep;
     }
-    if (!c[0]) {
-        UString::Rep::empty()->hash();
+    if (!c[0])
         return UString::Rep::empty();
-    }
     if (!c[1])
         return add(globalData, globalData->smallStrings.singleCharacterStringRep(static_cast<unsigned char>(c[0])));
 
@@ -193,10 +191,8 @@ PassRefPtr<UString::Rep> Identifier::add(JSGlobalData* globalData, const UChar* 
         if (c <= 0xFF)
             return add(globalData, globalData->smallStrings.singleCharacterStringRep(c));
     }
-    if (!length) {
-        UString::Rep::empty()->hash();
+    if (!length)
         return UString::Rep::empty();
-    }
     UCharBuffer buf = {s, length}; 
     pair<HashSet<UString::Rep*>::iterator, bool> addResult = globalData->identifierTable->add<UCharBuffer, UCharBufferTranslator>(buf);
 
@@ -224,10 +220,8 @@ PassRefPtr<UString::Rep> Identifier::addSlowCase(JSGlobalData* globalData, UStri
                 return r;
             }
     }
-    if (!r->length()) {
-        UString::Rep::empty()->hash();
+    if (!r->length())
         return UString::Rep::empty();
-    }
     return *globalData->identifierTable->add(r).first;
 }
 

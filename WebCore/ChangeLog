@@ -1,3 +1,28 @@
+2010-03-11  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36041
+        Remove unnecessary differences in common code between WebCore::StringImpl & JSC::UStringImpl
+
+        Much of the code in WebCore::StringImpl and JSC::UStringImpl is now very similar,
+        but has trivial and unnecessary formatting differences, such as the exact wording
+        of comments, missing ASSERTs, functions implemented in the .h vs .cpp etc.
+
+        * platform/text/StringImpl.cpp:
+        (WebCore::StringImpl::empty): Reordered in file, made empty()->characters() return a non-null value to match JSC.
+        (WebCore::StringImpl::createUninitialized): Added overflow check.
+        (WebCore::StringImpl::create): Reordered in file.
+        (WebCore::StringImpl::sharedBuffer): Reordered in file.
+        * platform/text/StringImpl.h:
+        (WebCore::StringImpl::): Remove ThreadGlobalData as friend, move SharableUChar & SharedUChar to WebCore namespace.
+        (WebCore::StringImpl::StringImpl): Made static constructor method (used to create empty string) take arguments, to match JSC & prevent accidental use.
+        (WebCore::StringImpl::setHash): Added missing ASSERT.
+        (WebCore::StringImpl::adopt): Make adpot work with Vectors with a non-zero inline capacity.
+        (WebCore::StringImpl::characters): Mark as const to match JSC.
+        (WebCore::StringImpl::hash): Use !m_hash instead of m_hash == 0.
+        (WebCore::StringImpl::computeHash): Remove redundant 'inline'.
+
 2010-03-11  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by David Kilzer.
