@@ -183,10 +183,12 @@ public:
         ASSERT(context->isWorkerContext());
         WorkerContext* workerContext = static_cast<WorkerContext*>(context);
 
+#if ENABLE(DATABASE)
         // We currently ignore any DatabasePolicy used for the document's
         // databases; if it's actually used anywhere, this should be revisited.
         DatabaseTaskSynchronizer cleanupSync;
         workerContext->stopDatabases(&cleanupSync);
+#endif
 
         workerContext->stopActiveDOMObjects();
 
@@ -195,9 +197,11 @@ public:
         workerContext->removeAllEventListeners();
         workerContext->clearScript();
 
+#if ENABLE(DATABASE)
         // We wait for the database thread to clean up all its stuff so that we
         // can do more stringent leak checks as we exit.
         cleanupSync.waitForTaskCompletion();
+#endif
 
         // Stick a shutdown command at the end of the queue, so that we deal
         // with all the cleanup tasks the databases post first.
