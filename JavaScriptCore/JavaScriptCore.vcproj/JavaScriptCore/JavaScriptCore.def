@@ -29,6 +29,7 @@ EXPORTS
     ??1RefCountedLeakCounter@WTF@@QAE@XZ
     ??1Structure@JSC@@QAE@XZ
     ??1ThreadCondition@WTF@@QAE@XZ
+    ??1UStringImpl@JSC@@QAE@XZ
     ??2JSGlobalObject@JSC@@SAPAXIPAVJSGlobalData@1@@Z
     ??8JSC@@YA_NABVUString@0@0@Z
     ?NaN@JSC@@3NB
