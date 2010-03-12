@@ -183,7 +183,7 @@ void RenderBlock::destroy()
             // that will outlast this block. In the non-anonymous block case those
             // children will be destroyed by the time we return from this function.
             if (isAnonymousBlock()) {
-                for (InlineFlowBox* box = firstLineBox(); box; box = box->nextFlowBox()) {
+                for (InlineFlowBox* box = firstLineBox(); box; box = box->nextLineBox()) {
                     while (InlineBox* childBox = box->firstChild())
                         childBox->remove();
                 }
@@ -2800,7 +2800,7 @@ int RenderBlock::rightmostPosition(bool includeOverflowInterior, bool includeSel
     if (!includeSelf) {
         right = max(right, borderLeft() + paddingLeft() + paddingRight() + relativeOffset);
         if (childrenInline()) {
-            for (InlineRunBox* currBox = firstLineBox(); currBox; currBox = currBox->nextLineBox()) {
+            for (InlineFlowBox* currBox = firstLineBox(); currBox; currBox = currBox->nextLineBox()) {
                 int childRightEdge = currBox->x() + currBox->width();
                 
                 // If this node is a root editable element, then the rightmostPosition should account for a caret at the end.
@@ -2895,7 +2895,7 @@ int RenderBlock::leftmostPosition(bool includeOverflowInterior, bool includeSelf
     }
 
     if (!includeSelf && firstLineBox()) {
-        for (InlineRunBox* currBox = firstLineBox(); currBox; currBox = currBox->nextLineBox())
+        for (InlineFlowBox* currBox = firstLineBox(); currBox; currBox = currBox->nextLineBox())
             left = min(left, (int)currBox->x() + relativeOffset);
     }
     

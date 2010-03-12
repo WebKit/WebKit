@@ -27137,10 +27137,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\rendering\InlineRunBox.h"
-				>
-			</File>
-			<File
 				RelativePath="..\rendering\InlineTextBox.cpp"
 				>
 			</File>

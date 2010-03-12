@@ -80,7 +80,7 @@ void RenderInline::destroy()
             // not have a parent that means they are either already disconnected or
             // root lines that can just be destroyed without disconnecting.
             if (firstLineBox()->parent()) {
-                for (InlineRunBox* box = firstLineBox(); box; box = box->nextLineBox())
+                for (InlineFlowBox* box = firstLineBox(); box; box = box->nextLineBox())
                     box->remove();
             }
         } else if (isInline() && parent())
@@ -410,7 +410,7 @@ void RenderInline::paint(PaintInfo& paintInfo, int tx, int ty)
 
 void RenderInline::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
 {
-    if (InlineRunBox* curr = firstLineBox()) {
+    if (InlineFlowBox* curr = firstLineBox()) {
         for (; curr; curr = curr->nextLineBox())
             rects.append(IntRect(tx + curr->x(), ty + curr->y(), curr->width(), curr->height()));
     } else
@@ -429,7 +429,7 @@ void RenderInline::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
 
 void RenderInline::absoluteQuads(Vector<FloatQuad>& quads)
 {
-    if (InlineRunBox* curr = firstLineBox()) {
+    if (InlineFlowBox* curr = firstLineBox()) {
         for (; curr; curr = curr->nextLineBox()) {
             FloatRect localRect(curr->x(), curr->y(), curr->width(), curr->height());
             quads.append(localToAbsoluteQuad(localRect));
@@ -534,7 +534,7 @@ IntRect RenderInline::linesBoundingBox() const
         // Return the width of the minimal left side and the maximal right side.
         int leftSide = 0;
         int rightSide = 0;
-        for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
+        for (InlineFlowBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
             if (curr == firstLineBox() || curr->x() < leftSide)
                 leftSide = curr->x();
             if (curr == firstLineBox() || curr->x() + curr->width() > rightSide)
@@ -557,7 +557,7 @@ IntRect RenderInline::linesVisibleOverflowBoundingBox() const
     // Return the width of the minimal left side and the maximal right side.
     int leftSide = numeric_limits<int>::max();
     int rightSide = numeric_limits<int>::min();
-    for (InlineFlowBox* curr = firstLineBox(); curr; curr = curr->nextFlowBox()) {
+    for (InlineFlowBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
         leftSide = min(leftSide, curr->leftVisibleOverflow());
         rightSide = max(rightSide, curr->rightVisibleOverflow());
     }
@@ -927,7 +927,7 @@ void RenderInline::imageChanged(WrappedImagePtr, const IntRect*)
 
 void RenderInline::addFocusRingRects(Vector<IntRect>& rects, int tx, int ty)
 {
-    for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
+    for (InlineFlowBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
         RootInlineBox* root = curr->root();
         int top = max(root->lineTop(), curr->y());
         int bottom = min(root->lineBottom(), curr->y() + curr->height());
@@ -985,7 +985,7 @@ void RenderInline::paintOutline(GraphicsContext* graphicsContext, int tx, int ty
     Vector<IntRect> rects;
 
     rects.append(IntRect());
-    for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
+    for (InlineFlowBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
         RootInlineBox* root = curr->root();
         int top = max(root->lineTop(), curr->y());
         int bottom = min(root->lineBottom(), curr->y() + curr->height());

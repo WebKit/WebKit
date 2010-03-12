@@ -48,9 +48,9 @@ InlineFlowBox* RenderSVGInline::createInlineFlowBox()
 
 void RenderSVGInline::absoluteRects(Vector<IntRect>& rects, int, int)
 {
-    InlineRunBox* firstBox = firstLineBox();
+    InlineFlowBox* firstBox = firstLineBox();
 
-    SVGRootInlineBox* rootBox = firstBox ? static_cast<SVGInlineTextBox*>(firstBox)->svgRootInlineBox() : 0;
+    RootInlineBox* rootBox = firstBox ? firstBox->root() : 0;
     RenderBox* object = rootBox ? rootBox->block() : 0;
 
     if (!object)
@@ -59,7 +59,7 @@ void RenderSVGInline::absoluteRects(Vector<IntRect>& rects, int, int)
     int xRef = object->x();
     int yRef = object->y();
 
-    for (InlineRunBox* curr = firstBox; curr; curr = curr->nextLineBox()) {
+    for (InlineFlowBox* curr = firstBox; curr; curr = curr->nextLineBox()) {
         FloatRect rect(xRef + curr->x(), yRef + curr->y(), curr->width(), curr->height());
         rects.append(enclosingIntRect(localToAbsoluteQuad(rect).boundingBox()));
     }
@@ -95,9 +95,9 @@ FloatRect RenderSVGInline::repaintRectInLocalCoordinates() const
 
 void RenderSVGInline::absoluteQuads(Vector<FloatQuad>& quads)
 {
-    InlineRunBox* firstBox = firstLineBox();
+    InlineFlowBox* firstBox = firstLineBox();
 
-    SVGRootInlineBox* rootBox = firstBox ? static_cast<SVGInlineTextBox*>(firstBox)->svgRootInlineBox() : 0;
+    RootInlineBox* rootBox = firstBox ? firstBox->root() : 0;
     RenderBox* object = rootBox ? rootBox->block() : 0;
 
     if (!object)
@@ -106,7 +106,7 @@ void RenderSVGInline::absoluteQuads(Vector<FloatQuad>& quads)
     int xRef = object->x();
     int yRef = object->y();
 
-    for (InlineRunBox* curr = firstBox; curr; curr = curr->nextLineBox()) {
+    for (InlineFlowBox* curr = firstBox; curr; curr = curr->nextLineBox()) {
         FloatRect rect(xRef + curr->x(), yRef + curr->y(), curr->width(), curr->height());
         quads.append(localToAbsoluteQuad(rect));
     }

@@ -150,9 +150,9 @@ void RenderText::extractTextBox(InlineTextBox* box)
     if (box == m_firstTextBox)
         m_firstTextBox = 0;
     if (box->prevTextBox())
-        box->prevTextBox()->setNextLineBox(0);
-    box->setPreviousLineBox(0);
-    for (InlineRunBox* curr = box; curr; curr = curr->nextLineBox())
+        box->prevTextBox()->setNextTextBox(0);
+    box->setPreviousTextBox(0);
+    for (InlineTextBox* curr = box; curr; curr = curr->nextTextBox())
         curr->setExtracted();
 
     checkConsistency();
@@ -163,8 +163,8 @@ void RenderText::attachTextBox(InlineTextBox* box)
     checkConsistency();
 
     if (m_lastTextBox) {
-        m_lastTextBox->setNextLineBox(box);
-        box->setPreviousLineBox(m_lastTextBox);
+        m_lastTextBox->setNextTextBox(box);
+        box->setPreviousTextBox(m_lastTextBox);
     } else
         m_firstTextBox = box;
     InlineTextBox* last = box;
@@ -186,9 +186,9 @@ void RenderText::removeTextBox(InlineTextBox* box)
     if (box == m_lastTextBox)
         m_lastTextBox = box->prevTextBox();
     if (box->nextTextBox())
-        box->nextTextBox()->setPreviousLineBox(box->prevTextBox());
+        box->nextTextBox()->setPreviousTextBox(box->prevTextBox());
     if (box->prevTextBox())
-        box->prevTextBox()->setNextLineBox(box->nextTextBox());
+        box->prevTextBox()->setNextTextBox(box->nextTextBox());
 
     checkConsistency();
 }
@@ -1055,8 +1055,8 @@ InlineTextBox* RenderText::createInlineTextBox()
     if (!m_firstTextBox)
         m_firstTextBox = m_lastTextBox = textBox;
     else {
-        m_lastTextBox->setNextLineBox(textBox);
-        textBox->setPreviousLineBox(m_lastTextBox);
+        m_lastTextBox->setNextTextBox(textBox);
+        textBox->setPreviousTextBox(m_lastTextBox);
         m_lastTextBox = textBox;
     }
     textBox->setIsText(true);
@@ -1074,11 +1074,11 @@ void RenderText::positionLineBox(InlineBox* box)
         if (m_firstTextBox == s)
             m_firstTextBox = s->nextTextBox();
         else
-            s->prevTextBox()->setNextLineBox(s->nextTextBox());
+            s->prevTextBox()->setNextTextBox(s->nextTextBox());
         if (m_lastTextBox == s)
             m_lastTextBox = s->prevTextBox();
         else
-            s->nextTextBox()->setPreviousLineBox(s->prevTextBox());
+            s->nextTextBox()->setPreviousTextBox(s->prevTextBox());
         s->destroy(renderArena());
         return;
     }

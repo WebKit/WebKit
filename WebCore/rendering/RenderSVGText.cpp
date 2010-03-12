@@ -128,11 +128,8 @@ void RenderSVGText::absoluteRects(Vector<IntRect>& rects, int, int)
  
     // Don't use objectBoundingBox here, as it's unites the selection rects. Makes it hard
     // to spot errors, if there are any using WebInspector. Individually feed them into 'rects'.
-    for (InlineRunBox* runBox = firstLineBox(); runBox; runBox = runBox->nextLineBox()) {
-        ASSERT(runBox->isInlineFlowBox());
-
-        InlineFlowBox* flowBox = static_cast<InlineFlowBox*>(runBox);
-        for (InlineBox* box = flowBox->firstChild(); box; box = box->nextOnLine()) {
+    for (InlineFlowBox* flow = firstLineBox(); flow; flow = flow->nextLineBox()) {
+        for (InlineBox* box = flow->firstChild(); box; box = box->nextOnLine()) {
             FloatRect boxRect(box->x(), box->y(), box->width(), box->height());
             // FIXME: crawling up the parent chain to map each rect is very inefficient
             // we should compute the absoluteTransform outside this loop first.
@@ -149,11 +146,8 @@ void RenderSVGText::absoluteQuads(Vector<FloatQuad>& quads)
  
     // Don't use objectBoundingBox here, as it's unites the selection rects. Makes it hard
     // to spot errors, if there are any using WebInspector. Individually feed them into 'rects'.
-    for (InlineRunBox* runBox = firstLineBox(); runBox; runBox = runBox->nextLineBox()) {
-        ASSERT(runBox->isInlineFlowBox());
-
-        InlineFlowBox* flowBox = static_cast<InlineFlowBox*>(runBox);
-        for (InlineBox* box = flowBox->firstChild(); box; box = box->nextOnLine()) {
+    for (InlineFlowBox* flow = firstLineBox(); flow; flow = flow->nextLineBox()) {
+        for (InlineBox* box = flow->firstChild(); box; box = box->nextOnLine()) {
             FloatRect boxRect(box->x(), box->y(), box->width(), box->height());
             // FIXME: crawling up the parent chain to map each quad is very inefficient
             // we should compute the absoluteTransform outside this loop first.
@@ -175,11 +169,8 @@ FloatRect RenderSVGText::objectBoundingBox() const
 {
     FloatRect boundingBox;
 
-    for (InlineRunBox* runBox = firstLineBox(); runBox; runBox = runBox->nextLineBox()) {
-        ASSERT(runBox->isInlineFlowBox());
-
-        InlineFlowBox* flowBox = static_cast<InlineFlowBox*>(runBox);
-        for (InlineBox* box = flowBox->firstChild(); box; box = box->nextOnLine())
+    for (InlineFlowBox* flow = firstLineBox(); flow; flow = flow->nextLineBox()) {
+        for (InlineBox* box = flow->firstChild(); box; box = box->nextOnLine())
             boundingBox.unite(FloatRect(box->x(), box->y(), box->width(), box->height()));
     }
 

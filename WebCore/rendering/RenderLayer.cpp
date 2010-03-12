@@ -2981,7 +2981,7 @@ IntRect RenderLayer::localBoundingBox() const
         int top = firstBox->topVisibleOverflow();
         int bottom = inlineFlow->lastLineBox()->bottomVisibleOverflow();
         int left = firstBox->x();
-        for (InlineRunBox* curr = firstBox->nextLineBox(); curr; curr = curr->nextLineBox())
+        for (InlineFlowBox* curr = firstBox->nextLineBox(); curr; curr = curr->nextLineBox())
             left = min(left, curr->x());
         result = IntRect(left, top, width(), bottom - top);
     } else if (renderer()->isTableRow()) {

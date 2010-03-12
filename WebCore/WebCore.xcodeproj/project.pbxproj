@@ -2936,7 +2936,6 @@
 		A8CFF0500A154F09000A4234 /* AutoTableLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8CFF04B0A154F09000A4234 /* AutoTableLayout.cpp */; };
 		A8CFF0510A154F09000A4234 /* TableLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CFF04C0A154F09000A4234 /* TableLayout.h */; };
 		A8CFF5E10A155A05000A4234 /* RootInlineBox.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CFF5DA0A155A05000A4234 /* RootInlineBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A8CFF5E20A155A05000A4234 /* InlineRunBox.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CFF5DB0A155A05000A4234 /* InlineRunBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8CFF5E30A155A05000A4234 /* InlineFlowBox.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CFF5DC0A155A05000A4234 /* InlineFlowBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8CFF5E40A155A05000A4234 /* InlineFlowBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8CFF5DD0A155A05000A4234 /* InlineFlowBox.cpp */; };
 		A8CFF5E50A155A05000A4234 /* InlineBox.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CFF5DE0A155A05000A4234 /* InlineBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8193,7 +8192,6 @@
 		A8CFF04B0A154F09000A4234 /* AutoTableLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = AutoTableLayout.cpp; sourceTree = "<group>"; };
 		A8CFF04C0A154F09000A4234 /* TableLayout.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TableLayout.h; sourceTree = "<group>"; };
 		A8CFF5DA0A155A05000A4234 /* RootInlineBox.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RootInlineBox.h; sourceTree = "<group>"; };
-		A8CFF5DB0A155A05000A4234 /* InlineRunBox.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = InlineRunBox.h; sourceTree = "<group>"; };
 		A8CFF5DC0A155A05000A4234 /* InlineFlowBox.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = InlineFlowBox.h; sourceTree = "<group>"; };
 		A8CFF5DD0A155A05000A4234 /* InlineFlowBox.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = InlineFlowBox.cpp; sourceTree = "<group>"; };
 		A8CFF5DE0A155A05000A4234 /* InlineBox.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = InlineBox.h; sourceTree = "<group>"; };
@@ -15687,7 +15685,6 @@
 				A8CFF5DD0A155A05000A4234 /* InlineFlowBox.cpp */,
 				A8CFF5DC0A155A05000A4234 /* InlineFlowBox.h */,
 				BCE789151120D6080060ECE5 /* InlineIterator.h */,
-				A8CFF5DB0A155A05000A4234 /* InlineRunBox.h */,
 				BCEA481A097D93020094C9E4 /* InlineTextBox.cpp */,
 				BCEA481B097D93020094C9E4 /* InlineTextBox.h */,
 				2D9066040BE141D400956998 /* LayoutState.cpp */,
@@ -17394,7 +17391,6 @@
 				A8CFF5E50A155A05000A4234 /* InlineBox.h in Headers */,
 				A8CFF5E30A155A05000A4234 /* InlineFlowBox.h in Headers */,
 				BCE789161120D6080060ECE5 /* InlineIterator.h in Headers */,
-				A8CFF5E20A155A05000A4234 /* InlineRunBox.h in Headers */,
 				BCEA485A097D93020094C9E4 /* InlineTextBox.h in Headers */,
 				08591AA50F085C4E009BACB1 /* InputElement.h in Headers */,
 				93309DEA099E64920056E581 /* InsertIntoTextNodeCommand.h in Headers */,

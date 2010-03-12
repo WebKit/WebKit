@@ -49,8 +49,8 @@ public:
 
     void detachEllipsisBox(RenderArena*);
 
-    RootInlineBox* nextRootBox() const { return static_cast<RootInlineBox*>(m_nextLine); }
-    RootInlineBox* prevRootBox() const { return static_cast<RootInlineBox*>(m_prevLine); }
+    RootInlineBox* nextRootBox() const { return static_cast<RootInlineBox*>(m_nextLineBox); }
+    RootInlineBox* prevRootBox() const { return static_cast<RootInlineBox*>(m_prevLineBox); }
 
     virtual void adjustPosition(int dx, int dy);
 

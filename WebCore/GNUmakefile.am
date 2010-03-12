@@ -1777,7 +1777,6 @@ webcore_sources += \
 	WebCore/rendering/InlineFlowBox.cpp \
 	WebCore/rendering/InlineFlowBox.h \
 	WebCore/rendering/InlineIterator.h \
-	WebCore/rendering/InlineRunBox.h \
 	WebCore/rendering/InlineTextBox.cpp \
 	WebCore/rendering/InlineTextBox.h \
 	WebCore/rendering/LayoutState.cpp \
