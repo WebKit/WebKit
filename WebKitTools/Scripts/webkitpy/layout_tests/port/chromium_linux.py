@@ -145,11 +145,19 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
         null.close()
 
     def _path_to_apache(self):
-        return '/usr/sbin/apache2'
+        if self._is_redhat_based():
+            return '/usr/sbin/httpd'
+        else:
+            return '/usr/sbin/apache2'
 
     def _path_to_apache_config_file(self):
+        if self._is_redhat_based():
+            config_name = 'fedora-httpd.conf'
+        else:
+            config_name = 'apache2-debian-httpd.conf'
+
         return os.path.join(self.layout_tests_dir(), 'http', 'conf',
-                            'apache2-debian-httpd.conf')
+                            config_name)
 
     def _path_to_lighttpd(self):
         return "/usr/sbin/lighttpd"
@@ -172,7 +180,13 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
         return self._build_path(self._options.target, 'image_diff')
 
     def _path_to_wdiff(self):
-        return '/usr/bin/wdiff'
+        if self._is_redhat_based():
+            return '/usr/bin/dwdiff'
+        else:
+            return '/usr/bin/wdiff'
+
+    def _is_redhat_based(self):
+        return os.path.exists(os.path.join('/etc', 'redhat-release'))
 
     def _shut_down_http_server(self, server_pid):
         """Shut down the lighttpd web server. Blocks until it's fully

@@ -1,3 +1,15 @@
+2010-03-12  Adam Langley  <agl@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [chromium]: update Linux layout test scripts for RedHat like systems.
+
+        (Tested on Fedora 12.)
+
+        https://bugs.webkit.org/show_bug.cgi?id=35867
+
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+
 2010-03-12  Adam Roben  <aroben@apple.com>
 
         Make svn-create-patch's diffs of ObjC header files more readable
