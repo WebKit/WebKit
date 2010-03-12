@@ -186,8 +186,8 @@ class PyWebSocket(http_server.Lighttpd):
                 self._port_obj.path_from_chromium_base('third_party',
                                                        'cygwin', 'bin'),
                 env['PATH'])
-            env['CYGWIN_PATH'] = self._port_obj.path_from_base('third_party',
-                                                               'cygwin', 'bin')
+            env['CYGWIN_PATH'] = self._port_obj.path_from_chromium_base(
+                'third_party', 'cygwin', 'bin')
 
         if sys.platform == 'win32' and self._register_cygwin:
             setup_mount = self._port_obj.path_from_chromium_base(

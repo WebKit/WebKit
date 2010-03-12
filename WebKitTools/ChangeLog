@@ -1,5 +1,16 @@
 2010-03-12  Dirk Pranke  <dpranke@chromium.org>
 
+        Reviewed by Dimitri Glazkov.
+
+        Fix typo in websocket_server (path_from_base instead of 
+        path_from_chromium_base).
+
+        https://bugs.webkit.org/show_bug.cgi?id=36074
+
+        * Scripts/webkitpy/layout_tests/port/websocket_server.py:
+
+2010-03-12  Dirk Pranke  <dpranke@chromium.org>
+
         Reviewed by Adam Barth.
 
         new-run-webkit-tests --new-baseline doesn't work at all.
