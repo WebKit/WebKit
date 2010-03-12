@@ -4,8 +4,12 @@
 
 <script>
 var div = document.getElementById("div");
-var sel = window.getSelection();
-sel.setPosition(div, 0);
-sel.modify("extend", "forward", "word");
+var x = div.offsetLeft;
+var y = div.offsetTop;
+eventSender.mouseMoveTo(x, y);
+eventSender.mouseDown();
+eventSender.mouseUp();
+eventSender.mouseDown();
+eventSender.mouseUp();
 document.execCommand("Delete");
 </script>

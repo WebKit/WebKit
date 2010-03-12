@@ -21,11 +21,8 @@
 <script>
 
 function editingTest() {
-    doubleClickAtSelectionStart();
-    copyCommand();
-    moveSelectionForwardByCharacterCommand();
-    moveSelectionForwardByCharacterCommand();
-    pasteCommand();
+    extendSelectionForwardByWordCommand();
+    deleteCommand();
 }
 
 </script>
@@ -38,20 +35,20 @@ function editingTest() {
 <div class="scenario">
 Tests: 
 <br>
-Smart paste when pasting after word and a space before another word.
+Non-smart delete when deleting a word selected via the keyboard.
 </div>
 <div class="expected-results">
 Expected Results:
 <br>
-A space should be added after the pasted word before the other preexisting word.  It should like this this:
+The first word should be deleted. The space following it should remain. It should look like this (currently this is broken and the space is deleted https://bugs.webkit.org/show_bug.cgi?id=35314):
 <BR>
-test test test
+" bar baz"
 </div>
 </div>
 
 <div contenteditable id="root" style="word-wrap: break-word; -khtml-nbsp-mode: space; -khtml-line-break: after-white-space;">
 <div id="test" class="editing">
-test test
+foo bar baz
 </div>
 </div>
 

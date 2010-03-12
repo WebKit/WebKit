@@ -51,7 +51,9 @@ Pasting at style boundary does not crash or produce empty style span(s).
 <div class="expected-results">
 Expected Results:
 <br>
-Should see this content in the red box below: <br><div>one two three <b>four</b> one</div>
+Should see this content in the red box below (currently there's a bug where
+there is an extra space after the bold element https://bugs.webkit.org/show_bug.cgi?id=35314):
+<br><div>one two three <b>four</b>one</div>
 </div>
 </div>
 

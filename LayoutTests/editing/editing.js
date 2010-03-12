@@ -339,6 +339,23 @@ function moveSelectionBackwardByLineBoundaryCommand() {
 
 //-------------------------------------------------------------------------------------------------------
 
+function doubleClick(x, y) {
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+function doubleClickAtSelectionStart() {
+    var rects = window.getSelection().getRangeAt(0).getClientRects();
+    var x = rects[0].left;
+    var y = rects[0].top;
+    doubleClick(x, y);
+}
+
+//-------------------------------------------------------------------------------------------------------
+
 function execBoldCommand() {
     document.execCommand("Bold");
     debugForDumpAsText("execBoldCommand");
