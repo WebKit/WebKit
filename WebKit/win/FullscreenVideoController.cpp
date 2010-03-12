@@ -226,12 +226,12 @@ void FullscreenVideoController::enterFullscreen()
 
 void FullscreenVideoController::exitFullscreen()
 {
+    SetWindowLongPtr(m_hudWindow, 0, 0);
     if (movie())
         movie()->exitFullscreen();
 
+    ASSERT(!IsWindow(m_hudWindow));
     m_videoWindow = 0;
-    SetWindowLongPtr(m_hudWindow, 0, 0);
-    DestroyWindow(m_hudWindow);
     m_hudWindow = 0;
 }
 
@@ -368,9 +368,9 @@ void FullscreenVideoController::createHUDWindow()
 
     registerHUDWindowClass();
 
-    m_hudWindow = CreateWindowEx(WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_TOPMOST | WS_EX_TOOLWINDOW, 
+    m_hudWindow = CreateWindowEx(WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW, 
         fullscreenVideeoHUDWindowClassName, 0, WS_POPUP | WS_VISIBLE,
-        m_hudPosition.x(), m_hudPosition.y(), 0, 0, 0, 0, gInstance, 0);
+        m_hudPosition.x(), m_hudPosition.y(), 0, 0, m_videoWindow, 0, gInstance, 0);
     ASSERT(::IsWindow(m_hudWindow));
     SetWindowLongPtr(m_hudWindow, 0, reinterpret_cast<LONG_PTR>(this));
 

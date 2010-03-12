@@ -1,3 +1,22 @@
+2010-03-12  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=33739 Fullscreen 
+        video HUD stays on top when switching to another window (e.g. via 
+        Alt-Tab)
+        -and corresponding-
+        <rdar://problem/7547574>
+
+        The HUD was always on top because it had the WS_EX_TOPMOST style. 
+        So I removed the style and made m_videoWindow the owner of 
+        m_hudWindow. This keeps m_hudWindow on top only when m_videoWindow 
+        is the focused window.
+
+        * FullscreenVideoController.cpp:
+        (FullscreenVideoController::exitFullscreen): ASSERT that movie()->exitFullscreen() also destroyed the hud.
+        (FullscreenVideoController::createHUDWindow):
+
 2010-03-12  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Simon Fraser.
