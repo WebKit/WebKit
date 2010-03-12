@@ -122,6 +122,7 @@ struct PlatformPainterState {
     DashArray strokeDashArray;
     float strokeDashOffset;
 
+    int textDrawingMode;
     bool antialiasingEnabled;
 
     PlatformPainterState()
@@ -139,6 +140,7 @@ struct PlatformPainterState {
         , strokeLineJoin(MiterJoin)
         , strokeMiterLimit(4.0)
         , strokeDashOffset(0.0)
+        , textDrawingMode(cTextFill)
         , antialiasingEnabled(true)
     {
     }
@@ -187,6 +189,7 @@ struct PlatformPainterState {
         strokeDashArray = other->strokeDashArray;
         strokeDashOffset = other->strokeDashOffset;
 
+        textDrawingMode = other->textDrawingMode;
         antialiasingEnabled = other->antialiasingEnabled;
     }
 
@@ -652,6 +655,18 @@ void PainterOpenVG::setFillColor(const Color& color)
     setVGSolidColor(VG_FILL_PATH, color);
 }
 
+int PainterOpenVG::textDrawingMode() const
+{
+    ASSERT(m_state);
+    return m_state->textDrawingMode;
+}
+
+void PainterOpenVG::setTextDrawingMode(int mode)
+{
+    ASSERT(m_state);
+    m_state->textDrawingMode = mode;
+}
+
 bool PainterOpenVG::antialiasingEnabled() const
 {
     ASSERT(m_state);
@@ -1069,6 +1084,58 @@ void PainterOpenVG::drawPolygon(size_t numPoints, const FloatPoint* points, VGbi
     vgDestroyPath(path);
     ASSERT_VG_NO_ERROR();
 }
+
+#ifdef OPENVG_VERSION_1_1
+void PainterOpenVG::drawText(VGFont vgFont, Vector<VGuint>& characters, VGfloat* adjustmentsX, VGfloat* adjustmentsY, const FloatPoint& point)
+{
+    ASSERT(m_state);
+
+    VGbitfield paintModes = 0;
+
+    if (m_state->textDrawingMode & cTextClip)
+        return; // unsupported for every port except CG at the time of writing
+    if (m_state->textDrawingMode & cTextFill && !m_state->fillDisabled())
+        paintModes |= VG_FILL_PATH;
+    if (m_state->textDrawingMode & cTextStroke && !m_state->strokeDisabled())
+        paintModes |= VG_STROKE_PATH;
+
+    m_surface->makeCurrent();
+
+    FloatPoint effectivePoint = m_state->surfaceTransformation.mapPoint(point);
+    FloatPoint p = point;
+    AffineTransform* originalTransformation = 0;
+
+    // In case the font isn't drawn at a pixel-exact baseline and we can easily
+    // fix that (which is the case for non-rotated affine transforms), let's
+    // align the starting point to the pixel boundary in order to prevent
+    // font rendering issues such as glyphs that appear off by a pixel.
+    // This causes us to have inconsistent spacing between baselines in a
+    // larger paragraph, but that seems to be the least of all evils.
+    if ((fmod(effectivePoint.x() + 0.01, 1.0) > 0.02 || fmod(effectivePoint.y() + 0.01, 1.0) > 0.02)
+        && isNonRotatedAffineTransformation(m_state->surfaceTransformation))
+    {
+        originalTransformation = new AffineTransform(m_state->surfaceTransformation);
+        setTransformation(AffineTransform(
+            m_state->surfaceTransformation.a(), 0,
+            0, m_state->surfaceTransformation.d(),
+            roundf(effectivePoint.x()), roundf(effectivePoint.y())));
+        p = FloatPoint();
+    }
+
+    const VGfloat vgPoint[2] = { p.x(), p.y() };
+    vgSetfv(VG_GLYPH_ORIGIN, 2, vgPoint);
+    ASSERT_VG_NO_ERROR();
+
+    vgDrawGlyphs(vgFont, characters.size(), characters.data(),
+        adjustmentsX, adjustmentsY, paintModes, VG_TRUE /* allow autohinting */);
+    ASSERT_VG_NO_ERROR();
+
+    if (originalTransformation) {
+        setTransformation(*originalTransformation);
+        delete originalTransformation;
+    }
+}
+#endif
 
 void PainterOpenVG::save(PainterOpenVG::SaveMode saveMode)
 {
