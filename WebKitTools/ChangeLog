@@ -1,3 +1,12 @@
+2010-03-12  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Fix critical being printed to stderr on every test. This is
+        because the jar is only being created when soup hits the HTTP
+        path. We should reconsider the time of its creation.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues):
+
 2010-03-12  Adam Roben  <aroben@apple.com>
 
         Teach prepare-ChangeLog to find modified selectors in CSS files
