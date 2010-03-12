@@ -210,7 +210,17 @@ void LayoutTestController::setAcceptsEditing(bool acceptsEditing)
 
 void LayoutTestController::setAlwaysAcceptCookies(bool alwaysAcceptCookies)
 {
-    // FIXME: Implement this (and restore the default value before running each test in DumpRenderTree.cpp).
+    SoupSession* session = webkit_get_default_session();
+    SoupCookieJar* jar = reinterpret_cast<SoupCookieJar*>(soup_session_get_feature(session, SOUP_TYPE_COOKIE_JAR));
+
+    SoupCookieJarAcceptPolicy policy;
+
+    if (alwaysAcceptCookies)
+        policy = SOUP_COOKIE_JAR_ACCEPT_ALWAYS;
+    else
+        policy = SOUP_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY;
+
+    g_object_set(G_OBJECT(jar), SOUP_COOKIE_JAR_ACCEPT_POLICY, policy, NULL);
 }
 
 void LayoutTestController::setCustomPolicyDelegate(bool setDelegate, bool permissive)
