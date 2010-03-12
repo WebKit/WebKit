@@ -64,6 +64,25 @@ SurfaceOpenVG::SurfaceOpenVG(const IntSize& size, const EGLDisplay& display, EGL
     EGLDisplayOpenVG::registerPlatformSurface(this);
 }
 
+SurfaceOpenVG::SurfaceOpenVG(EGLClientBuffer buffer, EGLenum bufferType, const EGLDisplay& display, EGLConfig* confPtr, EGLint* errorCode)
+    : m_activePainter(0)
+    , m_eglDisplay(display)
+    , m_eglSurface(EGL_NO_SURFACE)
+    , m_eglContext(EGL_NO_CONTEXT)
+{
+    ASSERT(m_eglDisplay != EGL_NO_DISPLAY);
+
+    EGLDisplayOpenVG* displayManager = EGLDisplayOpenVG::forDisplay(m_eglDisplay);
+    EGLConfig config = confPtr ? (*confPtr) : displayManager->defaultPbufferConfig();
+    m_eglSurface = displayManager->createPbufferFromClientBuffer(buffer, bufferType, config, errorCode);
+
+    if (m_eglSurface == EGL_NO_SURFACE)
+        return;
+
+    m_eglContext = displayManager->contextForSurface(m_eglSurface);
+    EGLDisplayOpenVG::registerPlatformSurface(this);
+}
+
 SurfaceOpenVG::SurfaceOpenVG(EGLNativeWindowType window, const EGLDisplay& display, EGLConfig* confPtr)
     : m_activePainter(0)
     , m_eglDisplay(display)

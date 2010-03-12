@@ -51,6 +51,7 @@ public:
      * If no surface could be created and errorCode is zero, this method
      * will trigger an assertion by itself. */
     EGLSurface createPbufferSurface(const IntSize&, const EGLConfig&, EGLint* errorCode = 0);
+    EGLSurface createPbufferFromClientBuffer(EGLClientBuffer, EGLenum bufferType, const EGLConfig&, EGLint* errorCode = 0);
 
     EGLSurface surfaceForWindow(EGLNativeWindowType, const EGLConfig&);
 

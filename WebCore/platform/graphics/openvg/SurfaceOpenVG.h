@@ -67,6 +67,26 @@ public:
     SurfaceOpenVG(const IntSize& size, const EGLDisplay& display, EGLConfig* config = 0, EGLint* errorCode = 0);
 
     /**
+     * Create a new EGL pbuffer surface that will be bound to the given
+     * client buffer (read: VGImage), with the specified config on the
+     * given display. If config is not specified, the display's default
+     * pbuffer config is used.
+     *
+     * After the surface is created, you will only be able to access the
+     * client buffer image if the surface is not current. The recommended way
+     * to ensure this is to call surface->sharedSurface()->makeCurrent() if you
+     * simply want to access the image's pixel contents, or if you intend to
+     * draw the image directly, making the draw target surface current.
+     *
+     * This constructor will trigger an assertion if creation of the surface
+     * fails, unless you pledge to manually process the error code by passing
+     * a non-zero pointer as errorCode parameter. The error code returned by
+     * eglGetError() will be written to that variable.
+     */
+    SurfaceOpenVG(EGLClientBuffer buffer, EGLenum bufferType,
+        const EGLDisplay& display, EGLConfig* config = 0, EGLint* errorCode = 0);
+
+    /**
      * Create a new EGL window surface with the specified native window handle
      * and config on the given display. If config is not specified, the
      * display's default window config is used.

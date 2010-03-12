@@ -263,6 +263,30 @@ EGLSurface EGLDisplayOpenVG::createPbufferSurface(const IntSize& size, const EGL
     return surface;
 }
 
+EGLSurface EGLDisplayOpenVG::createPbufferFromClientBuffer(
+    EGLClientBuffer clientBuffer, EGLenum bufferType, const EGLConfig& config, EGLint* errorCode)
+{
+    EGLSurface surface = eglCreatePbufferFromClientBuffer(m_display,
+        bufferType, clientBuffer, config, 0 /* attribList */);
+
+    if (errorCode)
+        *errorCode = eglGetError();
+    else
+        ASSERT_EGL_NO_ERROR();
+
+    if (surface == EGL_NO_SURFACE)
+        return EGL_NO_SURFACE;
+
+    EGLint surfaceConfigId;
+    EGLBoolean success = eglGetConfigAttrib(m_display, config, EGL_CONFIG_ID, &surfaceConfigId);
+    ASSERT(success == EGL_TRUE);
+    ASSERT(surfaceConfigId != EGL_BAD_ATTRIBUTE);
+
+    ASSERT(!m_surfaceConfigIds.contains(surface));
+    m_surfaceConfigIds.set(surface, surfaceConfigId);
+    return surface;
+}
+
 EGLSurface EGLDisplayOpenVG::surfaceForWindow(EGLNativeWindowType wId, const EGLConfig& config)
 {
     if (m_windowSurfaces.contains(wId))
