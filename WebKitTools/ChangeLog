@@ -1,3 +1,16 @@
+2010-03-11  Victor Wang  <victorw@chromium.org>
+
+        Reviewed by dglazkov@chromium.org.
+
+        rebaseline_chromium_webkit_tests can generate new baselines for
+        all platforms so it needs to know two ports in order to work correctly:
+        the port that the script is running on and the port that it generates
+        new baselines for. Update rebaselining tool to handle both port correctly.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36032
+
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests.py:
+
 2010-03-11  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Tim Hatcher.

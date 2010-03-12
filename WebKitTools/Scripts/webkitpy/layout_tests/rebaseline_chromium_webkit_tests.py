@@ -203,12 +203,16 @@ class Rebaseliner(object):
 
     REVISION_REGEX = r'<a href=\"(\d+)/\">'
 
-    def __init__(self, port, platform, options):
-        self._file_dir = port.path_from_chromium_base('webkit', 'tools',
-            'layout_tests')
-        self._port = port
+    def __init__(self, running_port, platform, options):
+        self._file_dir = running_port.path_from_chromium_base(
+            'webkit', 'tools', 'layout_tests')
         self._platform = platform
         self._options = options
+        # This is the port that the script is running on.
+        self._port = running_port
+        # This is the port that the rebaselining tool creates new baselines for.
+        self._rebaseline_port = port.get(
+            self._port.test_platform_name_to_name(platform), options)
         self._rebaselining_tests = []
         self._rebaselined_tests = []
 
@@ -216,9 +220,9 @@ class Rebaseliner(object):
         #   -. compile list of tests that need rebaselining.
         #   -. update the tests in test_expectations file after rebaseline
         #      is done.
-        expectations_str = self._port.test_expectations()
+        expectations_str = self._rebaseline_port.test_expectations()
         self._test_expectations = \
-            test_expectations.TestExpectations(self._port,
+            test_expectations.TestExpectations(self._rebaseline_port,
                                                None,
                                                expectations_str,
                                                self._platform,
@@ -404,7 +408,8 @@ class Rebaseliner(object):
         for name in zip_namelist:
             _log.debug('  ' + name)
 
-        platform = self._port.test_platform_name_to_name(self._platform)
+        platform = self._rebaseline_port.test_platform_name_to_name(
+            self._platform)
         _log.debug('Platform dir: "%s"', platform)
 
         test_no = 1
@@ -503,8 +508,8 @@ class Rebaseliner(object):
           False otherwise.
         """
         test_filepath = os.path.join(self._port.layout_tests_dir(), test)
-        all_baselines = self._port.expected_baselines(test_filepath,
-                                                      suffix, True)
+        all_baselines = self._rebaseline_port.expected_baselines(
+            test_filepath, suffix, True)
         for (fallback_dir, fallback_file) in all_baselines:
             if fallback_dir and fallback_file:
                 fallback_fullpath = os.path.normpath(
