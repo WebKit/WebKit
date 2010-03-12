@@ -223,13 +223,6 @@ bool SVGPaintServerGradient::setup(GraphicsContext*& context, const RenderObject
     if (boundingBoxMode()) {
 #endif
         FloatRect bbox = object->objectBoundingBox();
-        // Don't use gradients for 1d objects like horizontal/vertical 
-        // lines or rectangles without width or height.
-        if (bbox.width() == 0 || bbox.height() == 0) {
-            Color color(0, 0, 0);
-            context->setStrokeColor(color, style->colorSpace());
-            return true;
-        }
         matrix.translate(bbox.x(), bbox.y());
         matrix.scaleNonUniform(bbox.width(), bbox.height());
     }

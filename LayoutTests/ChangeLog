@@ -1,3 +1,21 @@
+2010-03-12  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG fallback color doesn't work for bogus gradients.
+        https://bugs.webkit.org/show_bug.cgi?id=35479
+
+        We now use a fallback color on ignored gradients for one dimensional objects,
+        either a given fallback color or black as default.
+        This causes a change of one LayoutTest, because it was done manually in the
+        gradient PaintServer, without respecting a given fallback color.
+
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-17-b-expected.txt:
+        * platform/mac/svg/custom/gradient-with-1d-boundingbox-expected.checksum: Added.
+        * platform/mac/svg/custom/gradient-with-1d-boundingbox-expected.png: Added.
+        * platform/mac/svg/custom/gradient-with-1d-boundingbox-expected.txt: Added.
+        * svg/custom/gradient-with-1d-boundingbox.svg: Added.
+
 2010-03-12  Dmitry Titov  <dimich@chromium.org>
 
         Not reviewed, build fix.

@@ -1,0 +1,11 @@
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<!-- Gradients can't applied on objects with a boundingBox, where either width or height is zero.
+     This test checks if we use a given alternative Color. -->
+<defs>
+<linearGradient id="gradient">
+    <stop offset="0" stop-color="red"/>
+    <stop offset="1" stop-color="green"/>
+</linearGradient>
+</defs>
+<line x1="0" x2="200" y1="50" y2="50" stroke="url(#gradient) #0f0" stroke-width="20"/>
+</svg>
