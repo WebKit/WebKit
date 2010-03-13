@@ -1,3 +1,13 @@
+2010-03-12  Enrica Casucci  <enrica@apple.com>
+
+        Fixed broken build on Windows.
+        Added contditional compilation for accelerated compositing.
+
+        * WebView.cpp:
+        (WebView::deleteBackingStore):
+        (WebView::addToDirtyRegion):
+        (WebView::updateBackingStore):
+
 2010-03-12  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Simon Fraser.
