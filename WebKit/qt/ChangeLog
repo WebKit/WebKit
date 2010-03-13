@@ -1,3 +1,13 @@
+2010-03-13  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Enable accelerated compositing by default
+        https://bugs.webkit.org/show_bug.cgi?id=35866
+
+        * Api/qwebsettings.cpp:
+        (QWebSettings::QWebSettings):
+
 2010-03-11  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by David Hyatt.
