@@ -314,8 +314,6 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     , m_fillTimeoutId(0)
     , m_maxTimeLoaded(0)
     , m_bufferingPercentage(0)
-    , m_preload(MediaPlayer::Auto)
-    , m_delayingLoad(false)
 {
     if (doGstInit())
         createGSTPlayBin();
@@ -370,22 +368,6 @@ MediaPlayerPrivate::~MediaPlayerPrivate()
 
 void MediaPlayerPrivate::load(const String& url)
 {
-    g_object_set(m_playBin, "uri", url.utf8().data(), NULL);
-
-    if (m_preload == MediaPlayer::None) {
-        m_delayingLoad = true;
-        return;
-    }
-
-    commitLoad();
-}
-
-void MediaPlayerPrivate::commitLoad()
-{
-    // GStreamer needs to have the pipeline set to a paused state to
-    // start providing anything useful.
-    gst_element_set_state(m_playBin, GST_STATE_PAUSED);
-
     LOG_VERBOSE(Media, "Load %s", url.utf8().data());
     if (m_networkState != MediaPlayer::Loading) {
         m_networkState = MediaPlayer::Loading;
@@ -395,6 +377,12 @@ void MediaPlayerPrivate::commitLoad()
         m_readyState = MediaPlayer::HaveNothing;
         m_player->readyStateChanged();
     }
+
+    g_object_set(m_playBin, "uri", url.utf8().data(), NULL);
+
+    // GStreamer needs to have the pipeline set to a paused state to
+    // start providing anything useful.
+    gst_element_set_state(m_playBin, GST_STATE_PAUSED);
 }
 
 bool MediaPlayerPrivate::changePipelineState(GstState newState)
@@ -414,14 +402,6 @@ bool MediaPlayerPrivate::changePipelineState(GstState newState)
         }
     }
     return true;
-}
-
-void MediaPlayerPrivate::prepareToPlay()
-{
-    if (m_delayingLoad) {
-        m_delayingLoad = false;
-        commitLoad();
-    }
 }
 
 void MediaPlayerPrivate::play()
@@ -1385,19 +1365,12 @@ void MediaPlayerPrivate::setPreload(MediaPlayer::Preload preload)
 {
     ASSERT(m_playBin);
 
-    m_preload = preload;
-
     GstPlayFlags flags;
     g_object_get(m_playBin, "flags", &flags, NULL);
     if (preload == MediaPlayer::None)
         g_object_set(m_playBin, "flags", flags & ~GST_PLAY_FLAG_DOWNLOAD, NULL);
     else
         g_object_set(m_playBin, "flags", flags | GST_PLAY_FLAG_DOWNLOAD, NULL);
-
-    if (m_delayingLoad && m_preload != MediaPlayer::None) {
-        m_delayingLoad = false;
-        commitLoad();
-    }
 }
 
 void MediaPlayerPrivate::createGSTPlayBin()
