@@ -2,6 +2,19 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
+        Add "Show FPS" menu option to QtLauncher.
+
+        [Qt] QtLauncher need a menu option to show/hide FPS
+        https://bugs.webkit.org/show_bug.cgi?id=35794
+
+        * QtLauncher/main.cpp:
+        (LauncherWindow::showFPS):
+        (LauncherWindow::createChrome):
+
+2010-03-13  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
         Add a "Toggle FullScreen" option to QtLauncher Menu.
 
         [Qt] QtLauncher needs an option to toggle FullScreen Mode

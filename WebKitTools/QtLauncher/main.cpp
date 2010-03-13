@@ -121,6 +121,7 @@ protected slots:
     void initializeView(bool useGraphicsView = false);
     void toggleSpatialNavigation(bool b);
     void toggleFullScreenMode(bool enable);
+    void showFPS(bool enable);
 
 public slots:
     void newWindow();
@@ -583,6 +584,16 @@ void LauncherWindow::toggleFullScreenMode(bool enable)
     }
 }
 
+void LauncherWindow::showFPS(bool enable)
+{
+    if (!isGraphicsBased())
+        return;
+
+    gShowFrameRate = enable;
+    WebViewGraphicsBased* view = static_cast<WebViewGraphicsBased*>(m_view);
+    view->setFrameRateMeasurementEnabled(enable);
+}
+
 void LauncherWindow::newWindow()
 {
     LauncherWindow* mw = new LauncherWindow(this, false);
@@ -710,6 +721,12 @@ void LauncherWindow::createChrome()
     QAction* cloneWindow = graphicsViewMenu->addAction("Clone Window", this, SLOT(cloneWindow()));
     cloneWindow->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
     cloneWindow->setEnabled(isGraphicsBased());
+
+    QAction* showFPS = graphicsViewMenu->addAction("Show FPS", this, SLOT(showFPS(bool)));
+    showFPS->setCheckable(true);
+    showFPS->setEnabled(isGraphicsBased());
+    showFPS->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
+    showFPS->setChecked(gShowFrameRate);
 }
 
 QWebPage* WebPage::createWindow(QWebPage::WebWindowType type)
