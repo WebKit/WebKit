@@ -1,5 +1,6 @@
 /**
  * Copyright (C) 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -528,22 +529,16 @@ void Font::drawTextUsingSVGFont(GraphicsContext* context, const TextRun& run,
                         glyphOrigin.setY(identifier.verticalOriginY * scale);
                     }
 
-                    context->translate(xStartOffset + currentPoint.x() + glyphOrigin.x(), currentPoint.y() + glyphOrigin.y());
-                    context->scale(FloatSize(scale, -scale));
+                    AffineTransform glyphPathTransform;
+                    glyphPathTransform.translate(xStartOffset + currentPoint.x() + glyphOrigin.x(), currentPoint.y() + glyphOrigin.y());
+                    glyphPathTransform.scale(scale, -scale);
+
+                    Path glyphPath = identifier.pathData;
+                    glyphPath.transform(glyphPathTransform);
 
                     context->beginPath();
-                    context->addPath(identifier.pathData);
-
-                    // FIXME: setup() tries to get objectBoundingBox() from run.referencingRenderObject()
-                    // which is wrong.  We need to change setup() to take a bounding box instead, or pass
-                    // a RenderObject which would return the bounding box for identifier.pathData
+                    context->addPath(glyphPath);
                     if (activePaintServer->setup(context, run.referencingRenderObject(), targetType)) {
-                        // Spec: Any properties specified on a text elements which represents a length, such as the
-                        // 'stroke-width' property, might produce surprising results since the length value will be
-                        // processed in the coordinate system of the glyph. (TODO: What other lengths? miter-limit? dash-offset?)
-                        if (targetType == ApplyToStrokeTargetType && scale != 0.0f)
-                            context->setStrokeThickness(context->strokeThickness() / scale);
-
                         activePaintServer->renderPath(context, run.referencingRenderObject(), targetType);
                         activePaintServer->teardown(context, run.referencingRenderObject(), targetType);
                     }

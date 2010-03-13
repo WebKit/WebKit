@@ -1,3 +1,18 @@
+2010-03-12  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG Glyphs - transform path not context
+        https://bugs.webkit.org/show_bug.cgi?id=36070
+
+        SVGFont should transform the path of a glyph, not the context. Modifying
+        the context causes wrong gradient transformations. This bug doesn't
+        influence CG because we generally fill or stroke texts with a mask image.
+        All other platforms provide a direct way to make the drawings.
+
+        * svg/SVGFont.cpp:
+        (WebCore::Font::drawTextUsingSVGFont):
+
 2010-03-12  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Simon Fraser.
