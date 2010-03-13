@@ -28,10 +28,10 @@
 
 import os
 
+from webkitpy.commands_references import Mock
 from webkitpy.commands.commandtest import CommandsTest
 from webkitpy.commands.queues import *
 from webkitpy.commands.queuestest import QueuesTest
-from webkitpy.mock import Mock
 from webkitpy.mock_bugzillatool import MockBugzillaTool
 from webkitpy.outputcapture import OutputCapture
 

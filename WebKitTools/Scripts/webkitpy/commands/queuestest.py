@@ -28,8 +28,8 @@
 
 import unittest
 
+from webkitpy.commands_references import Mock
 from webkitpy.bugzilla import Attachment
-from webkitpy.mock import Mock
 from webkitpy.mock_bugzillatool import MockBugzillaTool
 from webkitpy.outputcapture import OutputCapture
 

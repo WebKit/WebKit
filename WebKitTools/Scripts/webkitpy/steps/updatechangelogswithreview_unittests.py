@@ -28,8 +28,8 @@
 
 import unittest
 
+from webkitpy.steps_references import Mock
 from webkitpy.steps.updatechangelogswithreviewer import UpdateChangeLogsWithReviewer
-from webkitpy.mock import Mock
 from webkitpy.mock_bugzillatool import MockBugzillaTool
 from webkitpy.outputcapture import OutputCapture
 

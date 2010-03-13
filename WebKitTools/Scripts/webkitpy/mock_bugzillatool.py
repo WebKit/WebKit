@@ -30,8 +30,8 @@ import os
 
 from webkitpy.bugzilla import Bug, Attachment
 from webkitpy.committers import CommitterList, Reviewer
-from webkitpy.mock import Mock
 from webkitpy.scm import CommitMessage
+from webkitpy.thirdparty.mock import Mock
 from webkitpy.webkit_logging import log
 
 

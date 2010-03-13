@@ -29,8 +29,8 @@
 
 import unittest
 
-from webkitpy.mock import Mock
 from webkitpy.patchcollection import PersistentPatchCollection, PersistentPatchCollectionDelegate
+from webkitpy.thirdparty.mock import Mock
 
 
 class TestPersistentPatchCollectionDelegate(PersistentPatchCollectionDelegate):

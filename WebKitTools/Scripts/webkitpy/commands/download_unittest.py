@@ -26,9 +26,10 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from webkitpy.commands_references import Mock
 from webkitpy.commands.commandtest import CommandsTest
 from webkitpy.commands.download import *
-from webkitpy.mock import Mock
+
 
 class DownloadCommandsTest(CommandsTest):
     def _default_options(self):

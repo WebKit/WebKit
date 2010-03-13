@@ -1,3 +1,47 @@
+2010-03-13  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Moved webkitpy/mock.py into webkitpy/thirdparty since it is
+        third-party code.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35499
+
+        Updated the import statement in all of the below except where noted.
+
+        * Scripts/webkitpy/bugzilla_unittest.py:
+        * Scripts/webkitpy/commands/commandtest.py:
+        * Scripts/webkitpy/commands/download_unittest.py:
+        * Scripts/webkitpy/commands/early_warning_system_unittest.py:
+        * Scripts/webkitpy/commands/queries_unittest.py:
+        * Scripts/webkitpy/commands/queues_unittest.py:
+        * Scripts/webkitpy/commands/queuestest.py:
+        * Scripts/webkitpy/commands/upload.py:
+        * Scripts/webkitpy/commands/upload_unittest.py:
+        * Scripts/webkitpy/commands_references.py: Added.
+          - Added a file containing an absolute import of Mock so that
+            the imports in the commands folder can import from this file
+            (similar to style_references.py).  This helps limit the
+            number of affected files in future refactorings.
+
+        * Scripts/webkitpy/credentials_unittest.py:
+        * Scripts/webkitpy/mock.py: Removed.
+          - Moved to Scripts/webkitpy/thirdparty.
+
+        * Scripts/webkitpy/mock_bugzillatool.py:
+        * Scripts/webkitpy/patchcollection_unittest.py:
+        * Scripts/webkitpy/steps/closebugforlanddiff_unittest.py:
+        * Scripts/webkitpy/steps/steps_unittest.py:
+        * Scripts/webkitpy/steps/updatechangelogswithreview_unittests.py:
+        * Scripts/webkitpy/steps_references.py: Added.
+          - Added a file containing an absolute import of Mock so that
+            the imports in the steps folder can import from this file
+            (similar to style_references.py).  This helps limit the
+            number of affected files in future refactorings.
+
+        * Scripts/webkitpy/thirdparty/mock.py: Copied from WebKitTools/Scripts/webkitpy/mock.py.
+          - Also eliminated trailing white space and carriage returns.
+
 2010-03-12  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Adam Barth.

@@ -32,7 +32,7 @@ import unittest
 from webkitpy.credentials import Credentials
 from webkitpy.executive import Executive
 from webkitpy.outputcapture import OutputCapture
-from webkitpy.mock import Mock
+from webkitpy.thirdparty.mock import Mock
 
 class CredentialsTest(unittest.TestCase):
     example_security_output = """keychain: "/Users/test/Library/Keychains/login.keychain"

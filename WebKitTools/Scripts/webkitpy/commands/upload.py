@@ -38,12 +38,12 @@ from optparse import make_option
 import webkitpy.steps as steps
 
 from webkitpy.bugzilla import parse_bug_id
+from webkitpy.commands_references import Mock
 from webkitpy.commands.abstractsequencedcommand import AbstractSequencedCommand
 from webkitpy.comments import bug_comment_from_svn_revision
 from webkitpy.committers import CommitterList
 from webkitpy.grammar import pluralize, join_with_separators
 from webkitpy.webkit_logging import error, log
-from webkitpy.mock import Mock
 from webkitpy.multicommandtool import AbstractDeclarativeCommand
 from webkitpy.user import User
 

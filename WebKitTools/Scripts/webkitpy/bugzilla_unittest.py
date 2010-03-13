@@ -31,8 +31,7 @@ import unittest
 from webkitpy.committers import CommitterList, Reviewer, Committer
 from webkitpy.bugzilla import Bugzilla, BugzillaQueries, parse_bug_id, CommitterValidator
 from webkitpy.outputcapture import OutputCapture
-from webkitpy.mock import Mock
-
+from webkitpy.thirdparty.mock import Mock
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
 
 
