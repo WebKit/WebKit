@@ -43,6 +43,7 @@ namespace WebCore {
 class DOMWrapperWorld : public RefCounted<DOMWrapperWorld> {
 public:
     static PassRefPtr<DOMWrapperWorld> create() { return adoptRef(new DOMWrapperWorld()); }
+    virtual ~DOMWrapperWorld() {}
 
 protected:
     DOMWrapperWorld();

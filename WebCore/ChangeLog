@@ -1,3 +1,21 @@
+2010-03-12  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add virtual destructor to DOMWrapperWorld
+        https://bugs.webkit.org/show_bug.cgi?id=36077
+
+        DOMWrapperWorld is RefCounted<DOMWrapperWorld>.  IsolatedWorld
+        inherits from DOMWrapperWorld and has member variables
+        with destructors, so DOMWrapperWorld needs to have a declared virtual
+        d'tor to ensure that its derived class's destructors are called.
+
+        No new tests, no change in behavior
+
+        * bindings/v8/DOMWrapperWorld.h:
+        (WebCore::DOMWrapperWorld::~DOMWrapperWorld):
+
+
 2010-03-11  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
