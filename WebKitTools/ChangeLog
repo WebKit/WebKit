@@ -1,3 +1,34 @@
+2010-03-13  Victor Wang  <victorw@chromium.org>
+
+        Add appengine app to host and serve webkit layout test results.
+
+        The app allows you post test result files (json) and serve them up.
+        Chromium flakiness dashboard will first use this app to host results.json
+        and expectations.json, but the files hosted by this app are not limited
+        to chromium results or json files. It can be used to host other files if needed.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35944
+
+        * TestResultServer: Added.
+        * TestResultServer/app.yaml: Added.
+        * TestResultServer/handlers: Added.
+        * TestResultServer/handlers/__init__.py: Added.
+        * TestResultServer/handlers/menu.py: Added.
+        * TestResultServer/handlers/testfilehandler.py: Added.
+        * TestResultServer/index.yaml: Added.
+        * TestResultServer/main.py: Added.
+        * TestResultServer/model: Added.
+        * TestResultServer/model/__init__.py: Added.
+        * TestResultServer/model/testfile.py: Added.
+        * TestResultServer/stylesheets: Added.
+        * TestResultServer/stylesheets/form.css: Added.
+        * TestResultServer/stylesheets/menu.css: Added.
+        * TestResultServer/stylesheets/testfile.css: Added.
+        * TestResultServer/templates: Added.
+        * TestResultServer/templates/menu.html: Added.
+        * TestResultServer/templates/showfilelist.html: Added.
+        * TestResultServer/templates/uploadform.html: Added.
+
 2010-03-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by David Levin.

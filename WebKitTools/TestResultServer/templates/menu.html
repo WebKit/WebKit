@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Test Result Server</title>
+<link type="text/css" rel="stylesheet" href="/stylesheets/menu.css" />
+</head>
+<body>
+<h1>Test Result Server</h1>
+<div>
+    <ul>{% for title,link in menu %}
+        <li>
+            <a href="{{ link }}" >{{ title }}</a>
+        </li>{% endfor %}
+    </ul>
+</div>
+</body>
+</html>
