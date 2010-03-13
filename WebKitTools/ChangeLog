@@ -1,3 +1,19 @@
+2010-03-13  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add a "Toggle FullScreen" option to QtLauncher Menu.
+
+        [Qt] QtLauncher needs an option to toggle FullScreen Mode
+        https://bugs.webkit.org/show_bug.cgi?id=35755
+
+        * QtLauncher/main.cpp:
+        (LauncherWindow::init):
+        (LauncherWindow::eventFilter):
+        (LauncherWindow::initializeView):
+        (LauncherWindow::toggleFullScreenMode):
+        (LauncherWindow::createChrome):
+
 2010-03-12  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Dimitri Glazkov.

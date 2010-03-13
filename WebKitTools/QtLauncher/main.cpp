@@ -70,7 +70,7 @@
 void QWEBKIT_EXPORT qt_drt_garbageCollector_collect();
 #endif
 
-
+static const int gExitClickArea = 80;
 static bool gUseGraphicsView = false;
 static bool gUseCompositing = false;
 static bool gCacheWebView = false;
@@ -90,8 +90,9 @@ public:
 
 #if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     void sendTouchEvent();
-    bool eventFilter(QObject* obj, QEvent* event);
 #endif
+
+    bool eventFilter(QObject* obj, QEvent* event);
 
 protected slots:
     void loadStarted();
@@ -119,10 +120,14 @@ protected slots:
     void toggleWebGL(bool toggle);
     void initializeView(bool useGraphicsView = false);
     void toggleSpatialNavigation(bool b);
+    void toggleFullScreenMode(bool enable);
 
 public slots:
     void newWindow();
     void cloneWindow();
+
+signals:
+    void enteredFullScreenMode(bool on);
 
 private:
     void createChrome();
@@ -183,8 +188,9 @@ void LauncherWindow::init(bool useGraphicsView)
     setCentralWidget(splitter);
 
 #if defined(Q_WS_S60)
-    showMaximized();
+    setWindowState(Qt::WindowMaximized);
 #else
+    setWindowState(Qt::WindowNoState);
     resize(800, 600);
 #endif
 
@@ -194,6 +200,7 @@ void LauncherWindow::init(bool useGraphicsView)
     connect(page(), SIGNAL(loadFinished(bool)), this, SLOT(loadFinished()));
     connect(page(), SIGNAL(linkHovered(const QString&, const QString&, const QString&)),
             this, SLOT(showLinkHover(const QString&, const QString&)));
+    connect(this, SIGNAL(enteredFullScreenMode(bool)), this, SLOT(toggleFullScreenMode(bool)));
 
     if (!gInspectorUrl.isEmpty())
       page()->settings()->setInspectorUrl(gInspectorUrl);
@@ -304,9 +311,23 @@ void LauncherWindow::sendTouchEvent()
     if (m_touchPoints.size() > 1 && m_touchPoints[1].state() == Qt::TouchPointReleased)
         m_touchPoints.removeAt(1);
 }
+#endif // QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
 
 bool LauncherWindow::eventFilter(QObject* obj, QEvent* event)
 {
+    // If click pos is the bottom right corner (square with size defined by gExitClickArea)
+    // and the window is on FullScreen, the window must return to its original state.
+    if (event->type() == QEvent::MouseButtonRelease) {
+        QMouseEvent* ev = static_cast<QMouseEvent*>(event);
+        if (windowState() == Qt::WindowFullScreen
+            && ev->pos().x() > (width() - gExitClickArea)
+            && ev->pos().y() > (height() - gExitClickArea)) {
+
+            emit enteredFullScreenMode(false);
+        }
+    }
+
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     if (!m_touchMocking || obj != m_view)
         return QObject::eventFilter(obj, event);
 
@@ -368,9 +389,10 @@ bool LauncherWindow::eventFilter(QObject* obj, QEvent* event)
             m_touchPoints.last().setState(Qt::TouchPointStationary);
         }
     }
+#endif // QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
+
     return false;
 }
-#endif // QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
 
 void LauncherWindow::loadStarted()
 {
@@ -517,6 +539,9 @@ void LauncherWindow::initializeView(bool useGraphicsView)
     if (!useGraphicsView) {
         WebViewTraditional* view = new WebViewTraditional(splitter);
         view->setPage(page());
+
+        view->installEventFilter(this);
+
         m_view = view;
     } else {
         WebViewGraphicsBased* view = new WebViewGraphicsBased(splitter);
@@ -528,11 +553,14 @@ void LauncherWindow::initializeView(bool useGraphicsView)
         if (m_flipYAnimated)
             connect(m_flipYAnimated, SIGNAL(triggered()), view, SLOT(animatedYFlip()));
 
+        // The implementation of QAbstractScrollArea::eventFilter makes us need
+        // to install the event filter on the viewport of a QGraphicsView.
+        view->viewport()->installEventFilter(this);
+
         m_view = view;
     }
 
 #if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
-    m_view->installEventFilter(this);
     m_touchMocking = false;
 #endif
 }
@@ -540,6 +568,19 @@ void LauncherWindow::initializeView(bool useGraphicsView)
 void LauncherWindow::toggleSpatialNavigation(bool b)
 {
     page()->settings()->setAttribute(QWebSettings::SpatialNavigationEnabled, b);
+}
+
+void LauncherWindow::toggleFullScreenMode(bool enable)
+{
+    if (enable)
+        setWindowState(Qt::WindowFullScreen);
+    else {
+#if defined(Q_WS_S60)
+        setWindowState(Qt::WindowMaximized);
+#else
+        setWindowState(Qt::WindowNoState);
+#endif
+    }
 }
 
 void LauncherWindow::newWindow()
@@ -605,6 +646,15 @@ void LauncherWindow::createChrome()
     zoomIn->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Plus));
     zoomOut->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Minus));
     resetZoom->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_0));
+
+    QMenu* windowMenu = menuBar()->addMenu("&Window");
+    QAction* toggleFullScreen = windowMenu->addAction("Toggle FullScreen", this, SIGNAL(enteredFullScreenMode(bool)));
+    toggleFullScreen->setCheckable(true);
+    toggleFullScreen->setChecked(false);
+
+    // when exit fullscreen mode by clicking on the exit area (bottom right corner) we must
+    // uncheck the Toggle FullScreen action
+    toggleFullScreen->connect(this, SIGNAL(enteredFullScreenMode(bool)), SLOT(setChecked(bool)));
 
     QMenu* toolsMenu = menuBar()->addMenu("&Develop");
     toolsMenu->addAction("Select Elements...", this, SLOT(selectElements()));
