@@ -3,6 +3,15 @@
         Reviewed by Kenneth Rohde Christiansen.
 
         Add EFL port files to efl/ewk.
+        http://webkit.org/b/35936
+
+        * efl/ewk/ewk_view_single.c: Added.
+
+2010-03-13  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add EFL port files to efl/ewk.
         http://webkit.org/b/35929
 
         * efl/ewk/ewk_util.cpp: Added.
