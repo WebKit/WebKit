@@ -73,7 +73,10 @@ class MacPort(base.Port):
         return dirs
 
     def check_build(self, needs_http):
-        if executive.run_command([self.script_path("build-dumprendertree")],
+        build_drt_command = [self.script_path("build-dumprendertree")]
+        if self._options.target == "Debug":
+            build_drt_command.append('--debug')
+        if executive.run_command(build_drt_command,
                                  return_exit_code=True):
             return False
 
