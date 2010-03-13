@@ -2454,7 +2454,6 @@ fast/box-sizing/box-sizing.html
 fast/box-sizing/panels-one.html
 fast/box-sizing/panels-two.html
 fast/canvas/canvas-incremental-repaint.html
-fast/canvas/canvas-size-change-after-layout.html
 fast/canvas/canvas-text-alignment.html
 fast/canvas/canvas-text-baseline.html
 fast/canvas/fillrect_gradient.html

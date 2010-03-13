@@ -1,3 +1,15 @@
+2010-03-12  Shu Chang  <chang.shu@nokia.com>
+
+        Reviewed by David Levin.
+
+        [Qt] Rebaseline the test and remove it from Skipped.
+        https://bugs.webkit.org/show_bug.cgi?id=36057
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/canvas/canvas-size-change-after-layout-expected.checksum: Added.
+        * platform/qt/fast/canvas/canvas-size-change-after-layout-expected.png: Added.
+        * platform/qt/fast/canvas/canvas-size-change-after-layout-expected.txt:
+
 2010-03-12  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
