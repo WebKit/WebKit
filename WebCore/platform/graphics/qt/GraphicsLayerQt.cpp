@@ -1043,7 +1043,7 @@ protected:
 
         typename QMap<qreal, KeyframeValueQt<T> >::iterator it2 = it+1;
         if (it2 == m_keyframeValues.end())
-            it2 = m_keyframeValues.begin();
+            it2 = it;
         const KeyframeValueQt<T>& fromKeyframe = it.value();
         const KeyframeValueQt<T>& toKeyframe = it2.value();
 
