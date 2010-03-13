@@ -1134,7 +1134,14 @@ public:
 
     virtual void applyFrame(const qreal& fromValue, const qreal& toValue, qreal progress)
     {
-        m_layer.data()->setOpacity(qMin<qreal>(qMax<qreal>(fromValue + (toValue-fromValue)*progress, 0), 1));
+        qreal opacity = qBound(qreal(0), fromValue + (toValue-fromValue)*progress, qreal(1));
+
+        // FIXME: this is a hack, due to a probable QGraphicsScene bug.
+        // Without this the opacity change doesn't always have immediate effect.
+        if (!m_layer.data()->opacity() && opacity)
+            m_layer.data()->scene()->update();
+
+        m_layer.data()->setOpacity(opacity);
     }
 
     virtual void updateState(QAbstractAnimation::State newState, QAbstractAnimation::State oldState)

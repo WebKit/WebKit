@@ -2,6 +2,16 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
+        [Qt] GraphicsLayer: Opacity change from zero to non-zero doesn't always have effect with AC
+        https://bugs.webkit.org/show_bug.cgi?id=36034
+
+        * platform/graphics/qt/GraphicsLayerQt.cpp:
+        (WebCore::OpacityAnimationQt::applyFrame):
+
+2010-03-13  Kim Grönholm  <kim.gronholm@nomovok.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
         [Qt] GraphicsLayer: Opacity transitions end with begin value
         https://bugs.webkit.org/show_bug.cgi?id=36019
 
