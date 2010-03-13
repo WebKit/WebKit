@@ -1,3 +1,15 @@
+2010-03-13  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add EFL port files to efl/ewk.
+        http://webkit.org/b/35934
+
+        * efl/ewk/EWebKit.h: Added.
+        * efl/ewk/ewk_eapi.h: Added.
+        * efl/ewk/ewk_logging.h: Added.
+        * efl/ewk/ewk_private.h: Added.
+
 2010-03-11  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Gustavo Noronha Silva.
