@@ -1,3 +1,9 @@
+2010-03-12  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by NOBODY (build fix).
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2010-03-11  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
