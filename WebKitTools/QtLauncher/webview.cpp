@@ -87,7 +87,8 @@ void WebViewGraphicsBased::resizeEvent(QResizeEvent* event)
 
 void WebViewGraphicsBased::setFrameRateMeasurementEnabled(bool enabled)
 {
-    if (m_measureFps == enabled) {
+    m_measureFps = enabled;
+    if (m_measureFps) {
         m_lastConsultTime = m_startTime = QTime::currentTime();
         m_updateTimer->start();
     } else 

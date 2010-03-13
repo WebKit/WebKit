@@ -1,3 +1,14 @@
+2010-03-12  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Amend incorrect typo patch for QtLauncher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35877
+
+        * QtLauncher/webview.cpp:
+        (WebViewGraphicsBased::setFrameRateMeasurementEnabled):
+
 2010-03-13  Victor Wang  <victorw@chromium.org>
 
         Add appengine app to host and serve webkit layout test results.
