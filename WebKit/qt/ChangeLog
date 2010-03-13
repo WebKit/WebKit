@@ -1,3 +1,16 @@
+2010-03-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Enable accelerated compositing by default
+        https://bugs.webkit.org/show_bug.cgi?id=35866
+
+        Unreviewed. Roll-out r55955, because it broke 3 tests:
+        - animations/fill-mode-transform.html
+        - animations/play-state.html
+        - animations/simultaneous-start-left.html
+
+        * Api/qwebsettings.cpp:
+        (QWebSettings::QWebSettings):
+
 2010-03-13  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
