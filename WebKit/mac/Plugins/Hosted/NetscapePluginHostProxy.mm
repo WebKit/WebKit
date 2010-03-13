@@ -95,7 +95,7 @@ NetscapePluginHostProxy::NetscapePluginHostProxy(mach_port_t clientPort, mach_po
     , m_pluginHostPort(pluginHostPort)
     , m_isModal(false)
     , m_menuBarIsVisible(true)
-    , m_fullScreenWindowIsShowing(false)
+    , m_fullscreenWindowIsShowing(false)
     , m_pluginHostPSN(pluginHostPSN)
     , m_processingRequests(0)
     , m_shouldCacheMissingPropertiesAndMethods(shouldCacheMissingPropertiesAndMethods)
@@ -202,12 +202,12 @@ void NetscapePluginHostProxy::setMenuBarVisible(bool visible)
     [NSMenu setMenuBarVisible:visible];
 }
 
-void NetscapePluginHostProxy::didEnterFullScreen() const
+void NetscapePluginHostProxy::didEnterFullscreen() const
 {
     SetFrontProcess(&m_pluginHostPSN);
 }
 
-void NetscapePluginHostProxy::didExitFullScreen() const
+void NetscapePluginHostProxy::didExitFullscreen() const
 {
     // If the plug-in host is the current application then we should bring ourselves to the front when it exits full-screen mode.
 
@@ -223,16 +223,16 @@ void NetscapePluginHostProxy::didExitFullScreen() const
     SetFrontProcess(&currentProcess);
 }
 
-void NetscapePluginHostProxy::setFullScreenWindowIsShowing(bool isShowing)
+void NetscapePluginHostProxy::setFullscreenWindowIsShowing(bool isShowing)
 {
-    if (m_fullScreenWindowIsShowing == isShowing)
+    if (m_fullscreenWindowIsShowing == isShowing)
         return;
 
-    m_fullScreenWindowIsShowing = isShowing;
-    if (m_fullScreenWindowIsShowing)
-        didEnterFullScreen();
+    m_fullscreenWindowIsShowing = isShowing;
+    if (m_fullscreenWindowIsShowing)
+        didEnterFullscreen();
     else
-        didExitFullScreen();
+        didExitFullscreen();
 
 }
 
@@ -892,13 +892,13 @@ kern_return_t WKPCSetMenuBarVisible(mach_port_t clientPort, boolean_t menuBarVis
     return KERN_SUCCESS;
 }
 
-kern_return_t WKPCSetFullScreenWindowIsShowing(mach_port_t clientPort, boolean_t fullScreenWindowIsShowing)
+kern_return_t WKPCSetFullscreenWindowIsShowing(mach_port_t clientPort, boolean_t fullscreenWindowIsShowing)
 {
     NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
     if (!hostProxy)
         return KERN_FAILURE;
 
-    hostProxy->setFullScreenWindowIsShowing(fullScreenWindowIsShowing);
+    hostProxy->setFullscreenWindowIsShowing(fullscreenWindowIsShowing);
 
     return KERN_SUCCESS;
 }

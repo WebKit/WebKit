@@ -49,11 +49,16 @@ public:
     const KURL& poster() const { return m_posterURL; }
     void setPoster(const String&);
 
-// fullscreen
-    void webkitEnterFullScreen(bool isUserGesture, ExceptionCode&);
-    void webkitExitFullScreen();
+    // Fullscreen
+    void webkitEnterFullscreen(bool isUserGesture, ExceptionCode&);
+    void webkitExitFullscreen();
     bool webkitSupportsFullscreen();
     bool webkitDisplayingFullscreen();
+
+    // FIXME: Maintain "FullScreen" capitalization scheme for backwards compatibility.
+    // https://bugs.webkit.org/show_bug.cgi?id=36081
+    void webkitEnterFullScreen(bool isUserGesture, ExceptionCode& ec) { webkitEnterFullscreen(isUserGesture, ec); }
+    void webkitExitFullScreen() { webkitExitFullscreen(); }
 
     bool shouldDisplayPosterImage() const { return m_shouldDisplayPosterImage; }
 

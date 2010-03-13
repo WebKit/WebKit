@@ -234,7 +234,7 @@ simpleroutine PCBooleanAndDataReply(clientPort :mach_port_t;
 simpleroutine PCRunSyncOpenPanel(clientPort :mach_port_t;
                                  panelData :data_t);
 
-simpleroutine PCSetFullScreenWindowIsShowing(clientPort :mach_port_t;
+simpleroutine PCSetFullscreenWindowIsShowing(clientPort :mach_port_t;
                                              isShowing :boolean_t);
 
 simpleroutine PCSetException(clientPort :mach_port_t;

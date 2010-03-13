@@ -513,7 +513,7 @@ void FullscreenVideoController::timerFired(Timer<FullscreenVideoController>*)
 
 void FullscreenVideoController::onMouseDown(const IntPoint& point)
 {
-    IntPoint convertedPoint(fullScreenToHUDCoordinates(point));
+    IntPoint convertedPoint(fullscreenToHUDCoordinates(point));
 
     // Don't bother hit testing if we're outside the bounds of the window
     if (convertedPoint.x() < 0 || convertedPoint.x() >= windowWidth || convertedPoint.y() < 0 || convertedPoint.y() >= windowHeight)
@@ -552,7 +552,7 @@ void FullscreenVideoController::onMouseDown(const IntPoint& point)
 
 void FullscreenVideoController::onMouseMove(const IntPoint& point)
 {
-    IntPoint convertedPoint(fullScreenToHUDCoordinates(point));
+    IntPoint convertedPoint(fullscreenToHUDCoordinates(point));
 
     if (m_hitWidget) {
         m_hitWidget->drag(convertedPoint, false);
@@ -567,7 +567,7 @@ void FullscreenVideoController::onMouseMove(const IntPoint& point)
 
 void FullscreenVideoController::onMouseUp(const IntPoint& point)
 {
-    IntPoint convertedPoint(fullScreenToHUDCoordinates(point));
+    IntPoint convertedPoint(fullscreenToHUDCoordinates(point));
     m_movingWindow = false;
 
     if (m_hitWidget) {

@@ -346,9 +346,9 @@ static NSTextField *createTimeTextField(NSRect frame)
     static const CGFloat volumeButtonHeight = 16;
     static const CGFloat volumeUpButtonLeftMargin = 4;
     static const CGFloat volumeControlsTopMargin = 13;
-    static const CGFloat exitFullScreenButtonWidth = 25;
-    static const CGFloat exitFullScreenButtonHeight = 21;
-    static const CGFloat exitFullScreenButtonTopMargin = 11;
+    static const CGFloat exitFullscreenButtonWidth = 25;
+    static const CGFloat exitFullscreenButtonHeight = 21;
+    static const CGFloat exitFullscreenButtonTopMargin = 11;
     static const CGFloat timelineWidth = 315;
     static const CGFloat timelineHeight = 14;
     static const CGFloat timelineBottomMargin = 7;
@@ -380,8 +380,8 @@ static NSTextField *createTimeTextField(NSRect frame)
     [_playButton setAction:@selector(togglePlaying:)];
     [contentView addSubview:_playButton];
 
-    CGFloat closeToRight = windowWidth - horizontalMargin - exitFullScreenButtonWidth;
-    NSControl *exitFullscreenButton = createControlWithMediaUIControlType(WKMediaUIControlExitFullscreenButton, NSMakeRect(closeToRight, windowHeight - exitFullScreenButtonTopMargin - exitFullScreenButtonHeight, exitFullScreenButtonWidth, exitFullScreenButtonHeight));
+    CGFloat closeToRight = windowWidth - horizontalMargin - exitFullscreenButtonWidth;
+    NSControl *exitFullscreenButton = createControlWithMediaUIControlType(WKMediaUIControlExitFullscreenButton, NSMakeRect(closeToRight, windowHeight - exitFullscreenButtonTopMargin - exitFullscreenButtonHeight, exitFullscreenButtonWidth, exitFullscreenButtonHeight));
     [exitFullscreenButton setAction:@selector(exitFullscreen:)];
     [exitFullscreenButton setTarget:self];
     [contentView addSubview:exitFullscreenButton];

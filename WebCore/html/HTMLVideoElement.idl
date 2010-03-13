@@ -33,6 +33,10 @@ module html {
 
         readonly attribute boolean webkitSupportsFullscreen;
         readonly attribute boolean webkitDisplayingFullscreen;
+
+        [NeedsUserGestureCheck] void webkitEnterFullscreen()
+            raises (DOMException);
+        void webkitExitFullscreen();
     
         [NeedsUserGestureCheck] void webkitEnterFullScreen()
             raises (DOMException);

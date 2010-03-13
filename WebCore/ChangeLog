@@ -1,3 +1,26 @@
+2010-03-12  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=34942 Fullscreen 
+        API naming is inconsistent
+        -and corresponding-
+        <rdar://problem/7729165>
+
+        This patch changes all occurrences of "fullScreen" to the more 
+        popular "fullscreen." webkitEnterFullScreen and 
+        webkitExitFullScreen have been maintained for now for backwards 
+        compatibility. 
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::webkitEnterFullscreen):
+        (WebCore::HTMLVideoElement::webkitExitFullscreen):
+        * html/HTMLVideoElement.h:
+        (WebCore::HTMLVideoElement::webkitEnterFullScreen):
+        (WebCore::HTMLVideoElement::webkitExitFullScreen):
+        * html/HTMLVideoElement.idl:
+        * platform/graphics/mac/MediaPlayerProxy.h:
+
 2010-03-12  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Adam Barth.

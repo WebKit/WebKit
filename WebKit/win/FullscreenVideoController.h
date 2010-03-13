@@ -128,7 +128,7 @@ private:
     void beginScrubbing();
     void endScrubbing();
 
-    WebCore::IntPoint fullScreenToHUDCoordinates(const WebCore::IntPoint& point) const
+    WebCore::IntPoint fullscreenToHUDCoordinates(const WebCore::IntPoint& point) const
     {
         return WebCore::IntPoint(point.x()- m_hudPosition.x(), point.y() - m_hudPosition.y());
     }

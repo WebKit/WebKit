@@ -1,3 +1,31 @@
+2010-03-12  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=34942 Fullscreen 
+        API naming is inconsistent
+        -and corresponding-
+        <rdar://problem/7729165>
+
+        This patch changes all occurrences of "fullScreen" to the more 
+        popular "fullscreen."
+
+        * Plugins/Hosted/NetscapePluginHostProxy.h:
+        (WebKit::NetscapePluginHostProxy::isFullscreenWindowShowing):
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WebKit::NetscapePluginHostProxy::NetscapePluginHostProxy):
+        (WebKit::NetscapePluginHostProxy::didEnterFullscreen):
+        (WebKit::NetscapePluginHostProxy::didExitFullscreen):
+        (WebKit::NetscapePluginHostProxy::setFullscreenWindowIsShowing):
+        (WKPCSetFullscreenWindowIsShowing):
+        * Plugins/Hosted/WebKitPluginClient.defs:
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView _workaroundSilverlightFullscreenBug:]):
+        (-[WebNetscapePluginView _createPlugin]):
+        (-[WebNetscapePluginView _destroyPlugin]):
+        * WebView/WebVideoFullscreenHUDWindowController.mm:
+        (-[WebVideoFullscreenHUDWindowController windowDidLoad]):
+
 2010-03-12  Andy Estes  <aestes@apple.com>
 
         Reviewed by Brady Eidson.
