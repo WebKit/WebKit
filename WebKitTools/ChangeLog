@@ -2,6 +2,28 @@
 
         Reviewed by Adam Barth.
 
+        Changed test-webkitpy so that messages logged as a side-effect
+        of unit-testing code do not get displayed to the screen.  These
+        messages clutter up the unit test results if not filtered out.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35835
+
+        * Scripts/test-webkitpy:
+          - Adjusted the configure_logging() method to filter out any
+            log messages from webkitpy.
+          - Also added an INFO message stating that most console logging
+            is getting suppressed.
+
+        * Scripts/webkitpy/init/versioning.py:
+          - Added a log parameter to the check_version() method.
+
+        * Scripts/webkitpy/init/versioning_unittest.py:
+          - Qualified a call to check_version() with the parameter names.
+
+2010-03-13  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Adam Barth.
+
         The test-webkitpy script now warns the user if the script is
         being run using a Python version different from the minimum
         version the webkitpy package was meant to support.

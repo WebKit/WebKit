@@ -112,7 +112,7 @@ class CheckVersionTest(unittest.TestCase):
     def _check_version(self, minimum_version):
         """Call check_version()."""
         mock_sys = MockSys("2.5.3")
-        return check_version(mock_sys, minimum_version)
+        return check_version(sysmodule=mock_sys, target_version=minimum_version)
 
     def test_true_return_value(self):
         """Test the configured minimum version that webkitpy supports."""

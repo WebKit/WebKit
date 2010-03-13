@@ -38,7 +38,12 @@ _log = logging.getLogger("test-webkitpy")
 
 
 def configure_logging():
-    """Configure the root logger to log info messages and above."""
+    """Configure the root logger.
+
+    Configure the root logger not to log any messages from webkitpy,
+    and to log all other messages that are INFO and above.
+
+    """
     handler = logging.StreamHandler(sys.stderr)
     formatter = logging.Formatter("[%(levelname)s] %(name)s: %(message)s")
     handler.setFormatter(formatter)
@@ -47,12 +52,34 @@ def configure_logging():
     logger.setLevel(logging.INFO)
     logger.addHandler(handler)
 
+    # Filter out most webkitpy messages.
+    #
+    # Messages can be selectively re-enabled for this script by updating
+    # this method accordingly.
+    def filter(record):
+        """Filter out autoinstall and non-third-party webkitpy messages."""
+        # FIXME: Enable the logging of autoinstall messages once
+        #        autoinstall is adjusted.  Currently, autoinstall logs
+        #        INFO messages when importing already-downloaded packages,
+        #        which is too verbose.
+        if record.name.startswith("webkitpy"):
+            return False
+        return True
+
+    testing_filter = logging.Filter()
+    testing_filter.filter = filter
+
+    # Display a message so developers are not mystified as to why
+    # logging does not work in the unit tests.
+    _log.info("Suppressing most webkitpy logging while running unit tests.")
+    handler.addFilter(testing_filter)
+
 
 def init():
     """Execute code prior to importing from webkitpy.unittests."""
     configure_logging()
 
-    versioning.check_version()
+    versioning.check_version(log=_log)
 
     (comparison, current_version, minimum_version) = \
         versioning.compare_version()

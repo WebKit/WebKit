@@ -97,13 +97,15 @@ def compare_version(sysmodule=None, target_version=None):
 
 # FIXME: Add a logging level parameter to allow the version message
 #        to be logged at levels other than WARNING, for example CRITICAL.
-def check_version(sysmodule=None, target_version=None):
+def check_version(log=None, sysmodule=None, target_version=None):
     """Check the current Python version against a target version.
 
     Logs a warning message if the current version is less than the
     target version.
 
     Args:
+      log: A logging.logger instance to use when logging the version warning.
+           Defaults to the logger of this module.
       sysmodule: See the compare_version() docstring.
       target_version: See the compare_version() docstring.
 
@@ -112,6 +114,9 @@ def check_version(sysmodule=None, target_version=None):
       or equal to the target version.
 
     """
+    if log is None:
+        log = _log
+
     (comparison, current_version, target_version) = \
         compare_version(sysmodule, target_version)
 
@@ -122,5 +127,5 @@ def check_version(sysmodule=None, target_version=None):
     message = ("WebKit Python scripts do not support your current Python "
                "version (%s).  The minimum supported version is %s."
                % (current_version, target_version))
-    _log.warn(message)
+    log.warn(message)
     return False
