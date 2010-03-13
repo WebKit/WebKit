@@ -30,7 +30,7 @@
 
 """Runs style package unit tests."""
 
-# This module is imported by test-webkitpy.
+# This module is imported by the module that imports all webkitpy unit tests.
 
 import sys
 import unittest

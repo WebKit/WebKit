@@ -2,6 +2,53 @@
 
         Reviewed by Adam Barth.
 
+        The test-webkitpy script now warns the user if the script is
+        being run using a Python version different from the minimum
+        version the webkitpy package was meant to support.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35788
+
+        Warning developers if their Python version is too low will help
+        them understand why test-webkitpy is failing.  Secondly, warning
+        developers if their Python version is higher than the minimum will
+        help them understand that their changes may not be okay for the
+        minimum supported version, even if test-webkitpy is passing.
+
+        * Scripts/test-webkitpy:
+          - Moved the "from ..._unittest import *" lines to the new
+            file Scripts/webkitpy/unittests.py.  This will allow the
+            version-check warning to be displayed even if an error occurs
+            while interpreting (i.e. importing) the unit test code.
+          - Added configure_logging() to configur logging for test-webkitpy.
+          - Added an init() method to configure logging and check the
+            current Python version.
+
+        * Scripts/webkitpy/init/unittests.py: Added.
+          - Added a file to import all unit test modules in the
+            webkitpy.init package.
+
+        * Scripts/webkitpy/init/versioning.py: Added.
+          - Added a _MINIMUM_SUPPORTED_PYTHON_VERSION variable and set
+            it equal to 2.5.
+          - Added a compare_version() method to compare the current Python
+            version against a target version.
+          - Added a check_version() method to check the current Python
+            version against the current minimum supported version, and to
+            log a warning message if the check fails.
+
+        * Scripts/webkitpy/init/versioning_unittest.py: Added.
+          - Added unit tests for the functions in versioning.py.
+
+        * Scripts/webkitpy/style/unittests.py:
+          - Fixed/updated a code comment.
+
+        * Scripts/webkitpy/unittests.py: Added.
+          - Moved the "from ..._unittest import *" lines from test-webkitpy.
+
+2010-03-13  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Moved all code in webkitpy/__init__.py to another location.
 
         https://bugs.webkit.org/show_bug.cgi?id=35828
