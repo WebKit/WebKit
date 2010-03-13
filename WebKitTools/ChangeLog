@@ -2,6 +2,45 @@
 
         Reviewed by Adam Barth.
 
+        Moved all code in webkitpy/__init__.py to another location.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35828
+
+        Keeping webkitpy/__init__.py free of non-trivial code allows
+        calling code to import initialization code from webkitpy
+        before any errors or log messages occur due to code in
+        __init__.py.  Such initialization code can include things like
+        version checking code and logging configuration code.  This
+        also lets us move the autoinstall initialization code to a
+        location where it only executes if it is needed -- something
+        we have done in this patch.
+
+        * Scripts/webkitpy/__init__.py:
+          - Moved all executable code to the following location:
+            webkitpy/thirdparty/autoinstalled/__init__.py
+          - Added a code comment to keep this file free of non-trivial
+            code.
+
+        * Scripts/webkitpy/bugzilla.py:
+          - Updated mechanize import statement.
+
+        * Scripts/webkitpy/networktransaction.py:
+          - Updated mechanize import statement.
+
+        * Scripts/webkitpy/networktransaction_unittest.py:
+          - Updated mechanize import statement.
+
+        * Scripts/webkitpy/statusserver.py:
+          - Updated mechanize import statement.
+
+        * Scripts/webkitpy/thirdparty/autoinstalled/__init__.py: Added.
+          - Copied the code from webkitpy/__init__.py and updated it
+            as necessary.
+
+2010-03-13  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Moved webkitpy/mock.py into webkitpy/thirdparty since it is
         third-party code.
 

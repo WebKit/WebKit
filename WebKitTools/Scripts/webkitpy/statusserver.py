@@ -27,8 +27,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from webkitpy.networktransaction import NetworkTransaction
+from webkitpy.thirdparty.autoinstalled import Browser
 from webkitpy.webkit_logging import log
-from mechanize import Browser
 
 # WebKit includes a built copy of BeautifulSoup in Scripts/webkitpy/thirdparty
 # so this import should always succeed.

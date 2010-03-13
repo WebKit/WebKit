@@ -28,8 +28,8 @@
 
 import unittest
 
-from mechanize import HTTPError
 from webkitpy.networktransaction import NetworkTransaction, NetworkTimeout
+from webkitpy.thirdparty.autoinstalled import HTTPError
 
 class NetworkTransactionTest(unittest.TestCase):
     exception = Exception("Test exception")

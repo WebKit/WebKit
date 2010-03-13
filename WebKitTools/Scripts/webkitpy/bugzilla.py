@@ -39,13 +39,13 @@ from datetime import datetime # used in timestamp()
 from webkitpy.webkit_logging import error, log
 from webkitpy.committers import CommitterList
 from webkitpy.credentials import Credentials
+from webkitpy.thirdparty.autoinstalled import Browser
 from webkitpy.user import User
 
 # WebKit includes a built copy of BeautifulSoup in Scripts/webkitpy/thirdparty
 # so this import should always succeed.
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup, SoupStrainer
 
-from mechanize import Browser
 
 
 def parse_bug_id(message):

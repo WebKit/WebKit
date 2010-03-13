@@ -28,7 +28,7 @@
 
 import time
 
-from mechanize import HTTPError
+from webkitpy.thirdparty.autoinstalled import HTTPError
 from webkitpy.webkit_logging import log
 
 
