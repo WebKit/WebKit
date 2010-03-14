@@ -53,6 +53,7 @@
 #include "MoveSelectionCommand.h"
 #include "Node.h"
 #include "Page.h"
+#include "PlatformKeyboardEvent.h"
 #include "RenderFileUploadControl.h"
 #include "RenderImage.h"
 #include "RenderView.h"
@@ -70,10 +71,12 @@ namespace WebCore {
 
 static PlatformMouseEvent createMouseEvent(DragData* dragData)
 {
-    // FIXME: We should fake modifier keys here.
+    bool shiftKey, ctrlKey, altKey, metaKey;
+    shiftKey = ctrlKey = altKey = metaKey = false;
+    PlatformKeyboardEvent::getCurrentModifierState(shiftKey, ctrlKey, altKey, metaKey);
     return PlatformMouseEvent(dragData->clientPosition(), dragData->globalPosition(),
-                              LeftButton, MouseEventMoved, 0, false, false, false, false, currentTime());
-
+                              LeftButton, MouseEventMoved, 0, shiftKey, ctrlKey, altKey,
+                              metaKey, currentTime());
 }
 
 DragController::DragController(Page* page, DragClient* client)

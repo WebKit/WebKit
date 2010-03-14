@@ -1,3 +1,16 @@
+2010-03-14  Jessie Berlin  <jberlin@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        "event.ctrlKey" is always false when dragging an element with "ctrl" key down
+        https://bugs.webkit.org/show_bug.cgi?id=17113
+
+        No new tests.
+
+        * page/DragController.cpp:
+        (WebCore::createMouseEvent):
+        Use the current state of the shift, ctrl, alt, and meta keys when creating the drag mouse event.
+
 2010-03-13  Antonio Gomes  <tonikitoo@webkit.org>
 
         Not reviewed identation fix.
