@@ -61,14 +61,7 @@ void wkRestoreFontSmoothingStyle(CGContextRef cg, uint32_t oldStyle);
 void wkSetCGContextFontRenderingStyle(CGContextRef, bool isSystemFont, bool isPrinterFont, bool usePlatformNativeGlyphs);
 void wkGetGlyphAdvances(CGFontRef, const CGAffineTransform&, bool isSystemFont, bool isPrinterFont, CGGlyph, CGSize& advance);
 void wkGetGlyphs(CGFontRef, const UChar[], CGGlyph[], size_t count);
-bool wkCanCreateCGFontWithLOGFONT();
-void wkSetFontPlatformInfo(CGFontRef, LOGFONT*, void(*)(void*));
 void wkSetUpFontCache(size_t s);
-void wkAddFontsInDirectory(CFStringRef);
-void wkAddFontsAtPath(CFStringRef);
-void wkAddFontsFromRegistry();
-void wkAddFontsFromPlist(CFPropertyListRef);
-CFPropertyListRef wkCreateFontsPlist();
 
 void wkSetPatternBaseCTM(CGContextRef, CGAffineTransform);
 void wkSetPatternPhaseInUserSpace(CGContextRef, CGPoint phasePoint);

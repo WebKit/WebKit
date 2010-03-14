@@ -109,29 +109,9 @@ static CFStringRef getPostScriptName(CFStringRef faceName, HDC dc)
 
 void FontPlatformData::platformDataInit(HFONT font, float size, HDC hdc, WCHAR* faceName)
 {
-    if (wkCanCreateCGFontWithLOGFONT()) {
-        LOGFONT logfont;
-        GetObject(font, sizeof(logfont), &logfont);
-        m_cgFont.adoptCF(CGFontCreateWithPlatformFont(&logfont));
-        return;
-    }
-
-    // Try the face name first.  Windows may end up localizing this name, and CG doesn't know about
-    // the localization.  If the create fails, we'll try the PostScript name.
-    RetainPtr<CFStringRef> fullName(AdoptCF, CFStringCreateWithCharacters(NULL, (const UniChar*)faceName, wcslen(faceName)));
-    m_cgFont.adoptCF(CGFontCreateWithFontName(fullName.get()));
-    if (!m_cgFont) {
-        CFStringRef postScriptName = getPostScriptName(fullName.get(), hdc);
-        if (postScriptName) {
-            m_cgFont.adoptCF(CGFontCreateWithFontName(postScriptName));
-            ASSERT(m_cgFont);
-        }
-    }
-    if (m_useGDI) {
-        LOGFONT* logfont = static_cast<LOGFONT*>(malloc(sizeof(LOGFONT)));
-        GetObject(font, sizeof(*logfont), logfont);
-        wkSetFontPlatformInfo(m_cgFont.get(), logfont, free);
-    }
+    LOGFONT logfont;
+    GetObject(font, sizeof(logfont), &logfont);
+    m_cgFont.adoptCF(CGFontCreateWithPlatformFont(&logfont));
 }
 
 FontPlatformData::FontPlatformData(HFONT hfont, CGFontRef font, float size, bool bold, bool oblique, bool useGDI)

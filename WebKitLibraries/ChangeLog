@@ -1,3 +1,16 @@
+2010-03-14  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebKitSystemInterface part of removing support for legacy versions of Core Graphics
+
+        * win/include/WebKitSystemInterface/WebKitSystemInterface.h: Removed
+        wkCanCreateCGFontWithLOGFONT(), wkSetFontPlatformInfo(), wkAddFontsInDirectory(),
+        wkAddFontsAtPath(), wkAddFontsFromRegistry(), wkAddFontsFromPlist(), and
+        wkCreateFontsPlist().
+        * win/lib/WebKitSystemInterface.lib: Updated.
+        * win/lib/WebKitSystemInterface_debug.lib: Updated.
+
 2010-03-08  Jian Li  <jianli@chromium.org>
 
         Reviewed by Dmitry Titov.

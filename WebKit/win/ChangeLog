@@ -1,3 +1,16 @@
+2010-03-14  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebKit part of removing support for legacy versions of Core Graphics
+
+        * WebKitClassFactory.cpp:
+        (WebKitClassFactory::WebKitClassFactory): Removed call to populateFontDatabase().
+        * WebKitGraphics.cpp:
+        (makeFont): Ditto.
+        * WebTextRenderer.cpp:
+        (WebTextRenderer::registerPrivateFont): Removed call to wkAddFontsAtPath().
+
 2010-03-12  Enrica Casucci  <enrica@apple.com>
 
         Fixed broken build on Windows.

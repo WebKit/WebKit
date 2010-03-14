@@ -1,3 +1,33 @@
+2010-03-14  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebCore part of removing support for legacy versions of Core Graphics
+
+        * WebCore.vcproj/WebCore.vcproj: Removed FontDatabase.{cpp,h}
+        * platform/graphics/win/FontCGWin.cpp:
+        (WebCore::Font::drawGlyphs): Removed call to wkCanCreateCGFontWithLOGFONT(),
+        as it is now always true.
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::FontCache::createFontPlatformData): Ditto.
+        * platform/graphics/win/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::~FontCustomPlatformData): Updated for
+        the removal of m_cgFont.
+        (WebCore::FontCustomPlatformData::fontPlatformData): Removed call to
+        wkCanCreateCGFontWithLOGFONT(), as it is now always true.
+        (WebCore::createFontCustomPlatformData): Ditto. Also updated for change to
+        the FontCustomPlatformData constructor.
+        * platform/graphics/win/FontCustomPlatformData.h: Removed m_cgFont member.
+        (WebCore::FontCustomPlatformData::FontCustomPlatformData): Removed cgFont
+        parameter.
+        * platform/graphics/win/FontDatabase.cpp: Removed.
+        * platform/graphics/win/FontDatabase.h: Removed.
+        * platform/graphics/win/FontPlatformDataCGWin.cpp:
+        (WebCore::FontPlatformData::platformDataInit): Removed call to
+        wkCanCreateCGFontWithLOGFONT(), as it is now always true.
+        * platform/win/TemporaryLinkStubs.cpp:
+        (WebCore::populateFontDatabase): Removed stub.
+
 2010-03-14  Jessie Berlin  <jberlin@webkit.org>
 
         Reviewed by Sam Weinig.
