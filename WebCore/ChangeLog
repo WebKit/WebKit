@@ -1,3 +1,9 @@
+2010-03-13  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Not reviewed identation fix.
+
+        * manual-tests/spatial-navigation/spatial-navigation-test-cases.html:
+
 2010-03-13  Kim Grönholm  <kim.gronholm@nomovok.com>
 
         Reviewed by Kenneth Rohde Christiansen.
