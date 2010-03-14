@@ -1,3 +1,85 @@
+2010-03-14  Antti Koivisto  <koivisto@iki.fi>
+
+        Reviewed by Simon Hausmann.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=35146
+        Support tiled backing store
+
+        Implements a basic tiled backing store mechanism. Tiles are created and 
+        deleted on demand. The page content is cached to the tiles. Tile content
+        is kept in sync with the document. Since the backing store covers area
+        larger than the currently visible viewport, the document can be scrolled
+        quickly without having to enter rendering tree painting.
+        
+        The tile management code is platform independent. This patch has simple QPixmap
+        based tile implementation for Qt.
+        
+        The feature is behind ENABLE_TILED_BACKING_STORE flag.
+
+        * WebCore.pri:
+        * WebCore.pro:
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        (WebCore::Frame::setTiledBackingStoreEnabled):
+        (WebCore::Frame::tiledBackingStorePaintBegin):
+        (WebCore::Frame::tiledBackingStorePaint):
+        (WebCore::Frame::tiledBackingStorePaintEnd):
+        (WebCore::Frame::tiledBackingStoreContentsRect):
+        * page/Frame.h:
+        (WebCore::Frame::tiledBackingStore):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::repaintContentRectangle):
+        (WebCore::FrameView::doDeferredRepaints):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setTiledBackingStoreEnabled):
+        * page/Settings.h:
+        (WebCore::Settings::tiledBackingStoreEnabled):
+        * platform/graphics/Tile.h: Added.
+        (WebCore::Tile::create):
+        (WebCore::Tile::coordinate):
+        (WebCore::Tile::rect):
+        * platform/graphics/TiledBackingStore.cpp: Added.
+        (WebCore::TiledBackingStore::TiledBackingStore):
+        (WebCore::TiledBackingStore::~TiledBackingStore):
+        (WebCore::TiledBackingStore::invalidate):
+        (WebCore::TiledBackingStore::updateTileBuffers):
+        (WebCore::TiledBackingStore::paint):
+        (WebCore::TiledBackingStore::viewportChanged):
+        (WebCore::TiledBackingStore::setContentsScale):
+        (WebCore::TiledBackingStore::tileDistance):
+        (WebCore::TiledBackingStore::createTiles):
+        (WebCore::TiledBackingStore::dropOverhangingTiles):
+        (WebCore::TiledBackingStore::dropTilesOutsideRect):
+        (WebCore::TiledBackingStore::tileAt):
+        (WebCore::TiledBackingStore::setTile):
+        (WebCore::TiledBackingStore::removeTile):
+        (WebCore::TiledBackingStore::mapToContents):
+        (WebCore::TiledBackingStore::mapFromContents):
+        (WebCore::TiledBackingStore::contentsRect):
+        (WebCore::TiledBackingStore::tileRectForCoordinate):
+        (WebCore::TiledBackingStore::tileCoordinateForPoint):
+        (WebCore::TiledBackingStore::startTileBufferUpdateTimer):
+        (WebCore::TiledBackingStore::tileBufferUpdateTimerFired):
+        (WebCore::TiledBackingStore::startTileCreationTimer):
+        (WebCore::TiledBackingStore::tileCreationTimerFired):
+        (WebCore::TiledBackingStore::setContentsFrozen):
+        * platform/graphics/TiledBackingStore.h: Added.
+        (WebCore::TiledBackingStore::contentsScale):
+        (WebCore::TiledBackingStore::contentsFrozen):
+        * platform/graphics/TiledBackingStoreClient.h: Added.
+        * platform/graphics/qt/TileQt.cpp: Added.
+        (WebCore::checkeredPixmap):
+        (WebCore::Tile::Tile):
+        (WebCore::Tile::~Tile):
+        (WebCore::Tile::isDirty):
+        (WebCore::Tile::isReadyToPaint):
+        (WebCore::Tile::invalidate):
+        (WebCore::Tile::updateBackBuffer):
+        (WebCore::Tile::swapBackBufferToFront):
+        (WebCore::Tile::paint):
+        (WebCore::Tile::paintCheckerPattern):
+
 2010-03-14  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

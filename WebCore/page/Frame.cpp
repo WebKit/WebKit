@@ -104,6 +104,10 @@
 #include "MathMLNames.h"
 #endif
 
+#if ENABLE(TILED_BACKING_STORE)
+#include "TiledBackingStore.h"
+#endif
+
 using namespace std;
 
 namespace WebCore {
@@ -167,9 +171,13 @@ Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient*
     XMLNSNames::init();
     XMLNames::init();
 
-    if (!ownerElement)
+    if (!ownerElement) {
         page->setMainFrame(this);
-    else {
+#if ENABLE(TILED_BACKING_STORE)
+        // Top level frame only for now.
+        setTiledBackingStoreEnabled(page->settings()->tiledBackingStoreEnabled());
+#endif
+    } else {
         page->incrementFrameCount();
         // Make sure we will not end up with two frames referencing the same owner element.
         ASSERT((!(ownerElement->m_contentFrame)) || (ownerElement->m_contentFrame->ownerElement() != ownerElement));
@@ -1798,5 +1806,50 @@ void Frame::createView(const IntSize& viewportSize,
     if (HTMLFrameOwnerElement* owner = ownerElement())
         view()->setCanHaveScrollbars(owner->scrollingMode() != ScrollbarAlwaysOff);
 }
+
+#if ENABLE(TILED_BACKING_STORE)
+void Frame::setTiledBackingStoreEnabled(bool enabled)
+{
+    if (!enabled) {
+        m_tiledBackingStore.clear();
+        return;
+    }
+    if (m_tiledBackingStore)
+        return;
+    m_tiledBackingStore.set(new TiledBackingStore(this));
+}
+
+void Frame::tiledBackingStorePaintBegin()
+{
+    if (!m_view)
+        return;
+    m_view->layoutIfNeededRecursive();
+    m_view->flushDeferredRepaints();
+}
+
+void Frame::tiledBackingStorePaint(GraphicsContext* context, const IntRect& rect)
+{
+    if (!m_view)
+        return;
+    m_view->paintContents(context, rect);
+}
+
+void Frame::tiledBackingStorePaintEnd(const Vector<IntRect>& paintedArea)
+{
+    if (!m_page || !m_view)
+        return;
+    unsigned size = paintedArea.size();
+    // Request repaint from the system
+    for (int n = 0; n < size; ++n)
+        m_page->chrome()->invalidateContentsAndWindow(m_view->convertToContainingWindow(paintedArea[n]), true);
+}
+
+IntRect Frame::tiledBackingStoreContentsRect()
+{
+    if (!m_view)
+        return IntRect();
+    return IntRect(IntPoint(), m_view->contentsSize());
+}
+#endif
 
 } // namespace WebCore

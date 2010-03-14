@@ -70,6 +70,9 @@
 #include "SVGViewSpec.h"
 #endif
 
+#if ENABLE(TILED_BACKING_STORE)
+#include "TiledBackingStore.h"
+#endif
 
 namespace WebCore {
 
@@ -1083,6 +1086,12 @@ void FrameView::repaintContentRectangle(const IntRect& r, bool immediate)
     if (!immediate && isOffscreen() && !shouldUpdateWhileOffscreen())
         return;
 
+#if ENABLE(TILED_BACKING_STORE)
+    if (frame()->tiledBackingStore()) {
+        frame()->tiledBackingStore()->invalidate(r);
+        return;
+    }
+#endif
     ScrollView::repaintContentRectangle(r, immediate);
 }
 
@@ -1154,8 +1163,15 @@ void FrameView::doDeferredRepaints()
         return;
     }
     unsigned size = m_repaintRects.size();
-    for (unsigned i = 0; i < size; i++)
+    for (unsigned i = 0; i < size; i++) {
+#if ENABLE(TILED_BACKING_STORE)
+        if (frame()->tiledBackingStore()) {
+            frame()->tiledBackingStore()->invalidate(m_repaintRects[i]);
+            continue;
+        }
+#endif
         ScrollView::repaintContentRectangle(m_repaintRects[i], false);
+    }
     m_repaintRects.clear();
     m_repaintCount = 0;
     

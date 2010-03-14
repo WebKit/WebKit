@@ -44,6 +44,10 @@
 #include "FrameWin.h"
 #endif
 
+#if ENABLE(TILED_BACKING_STORE)
+#include "TiledBackingStoreClient.h"
+#endif
+
 #if PLATFORM(MAC)
 #ifndef __OBJC__
 class NSArray;
@@ -63,8 +67,13 @@ namespace WebCore {
     class CSSMutableStyleDeclaration;
     class HTMLTableCellElement;
     class RegularExpression;
+    class TiledBackingStore;
 
-    class Frame : public RefCounted<Frame> {
+    class Frame : public RefCounted<Frame>
+#if ENABLE(TILED_BACKING_STORE)
+        , public TiledBackingStoreClient
+#endif
+    {
     public:
         static PassRefPtr<Frame> create(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient* client)
         {
@@ -163,6 +172,11 @@ namespace WebCore {
         {
             return document() ? document()->displayStringModifiedByEncoding(str) : str;
         }
+
+#if ENABLE(TILED_BACKING_STORE)
+        TiledBackingStore* tiledBackingStore() const { return m_tiledBackingStore.get(); }
+        void setTiledBackingStoreEnabled(bool);
+#endif
 
     private:
         void lifeSupportTimerFired(Timer<Frame>*);
@@ -265,6 +279,15 @@ namespace WebCore {
 
         VisiblePosition visiblePositionForPoint(const IntPoint& framePoint);
         Document* documentAtPoint(const IntPoint& windowPoint);
+        
+    private:
+#if ENABLE(TILED_BACKING_STORE)
+        // TiledBackingStoreClient interface
+        virtual void tiledBackingStorePaintBegin();
+        virtual void tiledBackingStorePaint(GraphicsContext*, const IntRect&);
+        virtual void tiledBackingStorePaintEnd(const Vector<IntRect>& paintedArea);
+        virtual IntRect tiledBackingStoreContentsRect();
+#endif
 
     #if PLATFORM(MAC)
 
@@ -343,6 +366,10 @@ namespace WebCore {
         bool m_needsReapplyStyles;
         bool m_isDisconnected;
         bool m_excludeFromTextSearch;
+
+#if ENABLE(TILED_BACKING_STORE)        
+        OwnPtr<TiledBackingStore> m_tiledBackingStore;
+#endif
     };
 
 } // namespace WebCore

@@ -831,6 +831,7 @@ SOURCES += \
     platform/graphics/Pen.cpp \
     platform/graphics/SegmentedFontData.cpp \
     platform/graphics/SimpleFontData.cpp \
+    platform/graphics/TiledBackingStore.cpp \
     platform/graphics/transforms/AffineTransform.cpp \
     platform/graphics/transforms/TransformationMatrix.cpp \
     platform/graphics/transforms/MatrixTransformOperation.cpp \
@@ -1547,6 +1548,9 @@ HEADERS += \
     platform/graphics/qt/StillImageQt.h \
     platform/graphics/SegmentedFontData.h \
     platform/graphics/SimpleFontData.h \
+    platform/graphics/Tile.h \
+    platform/graphics/TiledBackingStore.h \    
+    platform/graphics/TiledBackingStoreClient.h \
     platform/graphics/transforms/Matrix3DTransformOperation.h \
     platform/graphics/transforms/MatrixTransformOperation.h \
     platform/graphics/transforms/PerspectiveTransformOperation.h \
@@ -2040,6 +2044,7 @@ SOURCES += \
     platform/graphics/qt/FontCustomPlatformDataQt.cpp \
     platform/graphics/qt/GlyphPageTreeNodeQt.cpp \
     platform/graphics/qt/SimpleFontDataQt.cpp \
+    platform/graphics/qt/TileQt.cpp \
     platform/qt/KURLQt.cpp \
     platform/qt/Localizations.cpp \
     platform/qt/MIMETypeRegistryQt.cpp \

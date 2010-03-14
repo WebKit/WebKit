@@ -125,6 +125,7 @@ Settings::Settings(Page* page)
     , m_experimentalNotificationsEnabled(false)
     , m_webGLEnabled(false)
     , m_loadDeferringEnabled(true)
+    , m_tiledBackingStoreEnabled(false)
 {
     // A Frame may not have been created yet, so we initialize the AtomicString 
     // hash before trying to use it.
@@ -571,6 +572,15 @@ void Settings::setWebGLEnabled(bool enabled)
 void Settings::setLoadDeferringEnabled(bool enabled)
 {
     m_loadDeferringEnabled = enabled;
+}
+
+void Settings::setTiledBackingStoreEnabled(bool enabled)
+{
+    m_tiledBackingStoreEnabled = enabled;
+#if ENABLE(TILED_BACKING_STORE)
+    if (m_page->mainFrame())
+        m_page->mainFrame()->setTiledBackingStoreEnabled(enabled);
+#endif
 }
 
 } // namespace WebCore

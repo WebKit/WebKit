@@ -287,6 +287,9 @@ namespace WebCore {
 
         void setLoadDeferringEnabled(bool);
         bool loadDeferringEnabled() const { return m_loadDeferringEnabled; }
+        
+        void setTiledBackingStoreEnabled(bool);
+        bool tiledBackingStoreEnabled() const { return m_tiledBackingStoreEnabled; }
 
     private:
         Page* m_page;
@@ -361,6 +364,7 @@ namespace WebCore {
         bool m_experimentalNotificationsEnabled : 1;
         bool m_webGLEnabled : 1;
         bool m_loadDeferringEnabled : 1;
+        bool m_tiledBackingStoreEnabled : 1;
 
 #if USE(SAFARI_THEME)
         static bool gShouldPaintNativeControls;
