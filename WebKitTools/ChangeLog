@@ -2,6 +2,32 @@
 
         Reviewed by Adam Barth.
 
+        The webkit-patch script now displays a warning if run using
+        a version of Python less than 2.5.  This will help users
+        understand why webkit-patch is erroring out if they are
+        using Python 2.4, for example.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31533
+
+        * Scripts/webkit-patch:
+          - Moved most of the file contents to webkitpy/patch/patcher.py
+            so the Python version can be checked before interpreting
+            any code that can cause the script to error out.
+          - Added a configure_logging() method to enable any version
+            warnings to show up.
+          - Added a main() method with calls to configure_logging(),
+            check_version(), and the main webkit patch method.
+
+        * Scripts/webkitpy/patch/__init__.py: Copied from WebKitTools/QueueStatusServer/filters/__init__.py.
+          - This file is required to make a folder a package.
+
+        * Scripts/webkitpy/patch/patcher.py: Added.
+          - Moved code from Scripts/webkit-patch.
+
+2010-03-13  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Changed test-webkitpy so that messages logged as a side-effect
         of unit-testing code do not get displayed to the screen.  These
         messages clutter up the unit test results if not filtered out.

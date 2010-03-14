@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # Copyright (c) 2009, Google Inc. All rights reserved.
 # Copyright (c) 2009 Apple Inc. All rights reserved.
+# Copyright (C) 2010 Chris Jerdonek (cjerdonek@webkit.org)
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -30,80 +31,40 @@
 #
 # A tool for automating dealing with bugzilla, posting patches, committing patches, etc.
 
+import logging
 import os
+import sys
 
-from webkitpy.bugzilla import Bugzilla
-from webkitpy.buildbot import BuildBot
-from webkitpy.commands.download import *
-from webkitpy.commands.early_warning_system import *
-from webkitpy.commands.openbugs import OpenBugs
-from webkitpy.commands.queries import *
-from webkitpy.commands.queues import *
-from webkitpy.commands.upload import *
-from webkitpy.executive import Executive
-from webkitpy.webkit_logging import log
-from webkitpy.multicommandtool import MultiCommandTool
-from webkitpy.scm import detect_scm_system
-from webkitpy.user import User
+import webkitpy.init.versioning as versioning
 
 
-class WebKitPatch(MultiCommandTool):
-    global_options = [
-        make_option("--dry-run", action="store_true", dest="dry_run", default=False, help="do not touch remote servers"),
-        make_option("--status-host", action="store", dest="status_host", type="string", nargs=1, help="Hostname (e.g. localhost or commit.webkit.org) where status updates should be posted."),
-    ]
+# FIXME: Consider logging more than just messages from the
+#        version-checking module.  For now we enable only enough
+#        for the version warning to show up.
+def configure_logging():
+    """Configure logging for the version-checker."""
+    handler = logging.StreamHandler(sys.stderr)
+    formatter = logging.Formatter("%(levelname)s: %(message)s")
+    handler.setFormatter(formatter)
 
-    def __init__(self):
-        MultiCommandTool.__init__(self)
+    logger = logging.getLogger(versioning.__name__)
+    logger.setLevel(logging.INFO)
+    logger.addHandler(handler)
 
-        self.bugs = Bugzilla()
-        self.buildbot = BuildBot()
-        self.executive = Executive()
-        self.user = User()
-        self._scm = None
-        self.status_server = StatusServer()
 
-    def scm(self):
-        # Lazily initialize SCM to not error-out before command line parsing (or when running non-scm commands).
-        original_cwd = os.path.abspath(".")
-        if not self._scm:
-            self._scm = detect_scm_system(original_cwd)
+def main():
+    configure_logging()
 
-        if not self._scm:
-            script_directory = os.path.abspath(sys.path[0])
-            webkit_directory = os.path.abspath(os.path.join(script_directory, "../.."))
-            self._scm = detect_scm_system(webkit_directory)
-            if self._scm:
-                log("The current directory (%s) is not a WebKit checkout, using %s" % (original_cwd, webkit_directory))
-            else:
-                error("FATAL: Failed to determine the SCM system for either %s or %s" % (original_cwd, webkit_directory))
+    versioning.check_version()
 
-        return self._scm
+    # Import webkit-patch code only after version-checking so that
+    # script doesn't error out before having a chance to report the
+    # version warning.
+    from webkitpy.patch.patcher import WebKitPatch
 
-    def path(self):
-        return __file__
-
-    def should_show_in_main_help(self, command):
-        if not command.show_in_main_help:
-            return False
-        if command.requires_local_commits:
-            return self.scm().supports_local_commits()
-        return True
-
-    # FIXME: This may be unnecessary since we pass global options to all commands during execute() as well.
-    def handle_global_options(self, options):
-        if options.dry_run:
-            self.scm().dryrun = True
-            self.bugs.dryrun = True
-        if options.status_host:
-            self.status_server.set_host(options.status_host)
-
-    def should_execute_command(self, command):
-        if command.requires_local_commits and not self.scm().supports_local_commits():
-            failure_reason = "%s requires local commits using %s in %s." % (command.name, self.scm().display_name(), self.scm().checkout_root)
-            return (False, failure_reason)
-        return (True, None)
+    WebKitPatch().main()
 
 
 if __name__ == "__main__":
-    WebKitPatch().main()
+
+    main()
