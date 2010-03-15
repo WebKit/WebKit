@@ -363,6 +363,7 @@ static const int v8DefaultWrapperInternalFieldCount = 2;
     V(CSSVARIABLESDECLARATION, CSSVariablesDeclaration)                 \
     V(CSSVARIABLESRULE, CSSVariablesRule)                               \
     V(DOMCOREEXCEPTION, DOMCoreException)                               \
+    V(DOMFORMDATA, DOMFormData)                                         \
     V(DOMIMPLEMENTATION, DOMImplementation)                             \
     V(DOMPARSER, DOMParser)                                             \
     V(DOMSELECTION, DOMSelection)                                       \
