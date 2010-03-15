@@ -485,6 +485,25 @@ bool DragController::canProcessDrag(DragData* dragData)
     return true;
 }
 
+static DragOperation defaultOperationForDrag(DragOperation srcOpMask)
+{
+    // This is designed to match IE's operation fallback for the case where
+    // the page calls preventDefault() in a drag event but doesn't set dropEffect.
+    if (srcOpMask == DragOperationEvery)
+        return DragOperationCopy;
+    if (srcOpMask == DragOperationNone)
+        return DragOperationNone;
+    if (srcOpMask & DragOperationMove || srcOpMask & DragOperationGeneric)
+        return DragOperationMove;
+    if (srcOpMask & DragOperationCopy)
+        return DragOperationCopy;
+    if (srcOpMask & DragOperationLink)
+        return DragOperationLink;
+    
+    // FIXME: Does IE really return "generic" even if no operations were allowed by the source?
+    return DragOperationGeneric;
+}
+
 bool DragController::tryDHTMLDrag(DragData* dragData, DragOperation& operation)
 {
     ASSERT(dragData);
@@ -506,7 +525,9 @@ bool DragController::tryDHTMLDrag(DragData* dragData, DragOperation& operation)
     }
 
     operation = clipboard->destinationOperation();
-    if (!(srcOpMask & operation)) {
+    if (clipboard->dropEffectIsUninitialized())
+        operation = defaultOperationForDrag(srcOpMask);
+    else if (!(srcOpMask & operation)) {
         // The element picked an operation which is not supported by the source
         operation = DragOperationNone;
     }

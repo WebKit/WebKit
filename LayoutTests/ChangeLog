@@ -1,3 +1,16 @@
+2010-03-14  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION(r53287): drop event is not fired if dataTransfer.dropEffect is not explicitly set
+        https://bugs.webkit.org/show_bug.cgi?id=36095
+
+        Correct this test to cover the somewhat bizarre "correct" handling
+        of undefined dropEffect
+
+        * fast/events/drag-and-drop-expected.txt:
+        * fast/events/drag-and-drop.html:
+
 2010-03-12  Shu Chang  <chang.shu@nokia.com>
 
         Reviewed by David Levin.

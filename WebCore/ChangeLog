@@ -1,3 +1,34 @@
+2010-03-14  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION(r53287): drop event is not fired if dataTransfer.dropEffect is not explicitly set
+        https://bugs.webkit.org/show_bug.cgi?id=36095
+
+        The issue here is that while dropEffect is meant to be initialized
+        to "none", the behaviour of the drag is differs between dragEffect
+        not being set and dragEffect being explicitly set to "none"
+
+        This patch corrects this behaviour by making Clipboard distinguish
+        between the initial "none" value of dropEffect and an explicit "none".
+        This alone is insufficient for correct behaviour, we also need to
+        resurrect the removed defaultOperationForDrag function, but we now
+        use the function only when dragEffect is uninitialized.  There are a
+        few tweaks to the behaviour of the defaultOperationForDrag as well
+        to ensure exactly the same set of outcomes for all cases that we
+        may hit it.
+
+        * dom/Clipboard.cpp:
+        (WebCore::Clipboard::Clipboard):
+        (WebCore::dragOpFromIEOp):
+        (WebCore::Clipboard::destinationOperation):
+        * dom/Clipboard.h:
+        (WebCore::Clipboard::dropEffect):
+        (WebCore::Clipboard::dropEffectIsUninitialized):
+        * page/DragController.cpp:
+        (WebCore::defaultOperationForDrag):
+        (WebCore::DragController::tryDHTMLDrag):
+
 2010-03-14  Antti Koivisto  <koivisto@iki.fi>
 
         Reviewed by Simon Hausmann.

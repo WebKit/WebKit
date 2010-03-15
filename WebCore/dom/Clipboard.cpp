@@ -36,7 +36,7 @@ namespace WebCore {
 
 Clipboard::Clipboard(ClipboardAccessPolicy policy, bool isForDragging) 
     : m_policy(policy)
-    , m_dropEffect("none")
+    , m_dropEffect("uninitialized")
     , m_effectAllowed("uninitialized")
     , m_dragStarted(false)
     , m_forDragging(isForDragging)
@@ -110,7 +110,7 @@ DragOperation Clipboard::sourceOperation() const
 DragOperation Clipboard::destinationOperation() const
 {
     DragOperation op = dragOpFromIEOp(m_dropEffect);
-    ASSERT(op == DragOperationCopy || op == DragOperationNone || op == DragOperationLink || op == DragOperationGeneric || op == DragOperationMove);
+    ASSERT(op == DragOperationCopy || op == DragOperationNone || op == DragOperationLink || op == DragOperationGeneric || op == DragOperationMove || op == DragOperationEvery);
     return op;
 }
 

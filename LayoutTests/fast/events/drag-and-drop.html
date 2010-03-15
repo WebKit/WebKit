@@ -108,9 +108,26 @@
             // doesn't need special cases for undefined.
             chosenEffectAllowed = "uninitialized";
         }
-        
+        expected = dropEffectElem.options[dropEffectElem.selectedIndex].value;
+        if (chosenDropEffect == "dummy") {
+            switch (chosenEffectAllowed) {
+                case "undefined":
+                case "copyLink":
+                case "uninitialized":
+                case "all":
+                    expected = "copy";
+                    break;
+                case "copyMove":
+                case "move":
+                case "linkMove":
+                    expected = "move";
+                    break;
+                default:
+                    expected = chosenEffectAllowed;
+            }
+        }
         if (isDropEffectAllowed(chosenDropEffect, chosenEffectAllowed))
-            shouldBeEqualToString('event.dataTransfer.dropEffect', dropEffectElem.options[dropEffectElem.selectedIndex].value);
+            shouldBeEqualToString('event.dataTransfer.dropEffect', expected);
         else
             shouldBeEqualToString('event.dataTransfer.dropEffect', 'none');
             
@@ -126,6 +143,8 @@
             return true;
         if (chosenDropEffect == "link" && ["link", "copyLink", "linkMove", "uninitialized", "all"].indexOf(allowedDropEffect) != -1)
             return true;
+        if (chosenDropEffect == "dummy" && ["copy", "link", "move", "copyLink", "copyMove", "linkMove", "uninitialized", "all"].indexOf(allowedDropEffect) != -1)
+            return true; 
         return false;
     }
 
