@@ -1,3 +1,31 @@
+2010-03-14  Antti Koivisto  <koivisto@iki.fi>
+
+        Reviewed by Simon Hausmann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35146
+        Support tiled backing store
+
+        Implements a basic tiled backing store mechanism. Tiles are created and 
+        deleted on demand. The page content is cached to the tiles. Tile content
+        is kept in sync with the document. Since the backing store covers area
+        larger than the currently visible viewport, the document can be scrolled
+        quickly without having to enter rendering tree painting.
+        
+        The tile management code is platform independent. This patch has simple QPixmap
+        based tile implementation for Qt.
+        
+        The feature is behind ENABLE_TILED_BACKING_STORE flag.
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebViewPrivate::visibleRect):
+        (QGraphicsWebView::paint):
+        * Api/qwebframe.cpp:
+        (QWebFramePrivate::renderContentsLayerAbsoluteCoords):
+        * Api/qwebframe.h:
+        * Api/qwebsettings.cpp:
+        (QWebSettingsPrivate::apply):
+        * Api/qwebsettings.h:
+
 2010-03-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Enable accelerated compositing by default

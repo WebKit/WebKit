@@ -72,7 +72,8 @@ public:
         AcceleratedCompositingEnabled,
         WebGLEnabled,
         SpatialNavigationEnabled,
-        LocalContentCanAccessFileUrls
+        LocalContentCanAccessFileUrls,
+        TiledBackingStoreEnabled
     };
     enum WebGraphic {
         MissingImageGraphic,

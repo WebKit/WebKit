@@ -26,7 +26,10 @@
 #include "qwebpage.h"
 #include "qwebpage_p.h"
 #include "QWebPageClient.h"
-#include <FrameView.h>
+#include "FrameView.h"
+#include "GraphicsContext.h"
+#include "IntRect.h"
+#include "TiledBackingStore.h"
 #include <QtCore/qmetaobject.h>
 #include <QtCore/qsharedpointer.h>
 #include <QtCore/qtimer.h>
@@ -35,6 +38,7 @@
 #include <QtGui/qgraphicssceneevent.h>
 #include <QtGui/qgraphicsview.h>
 #include <QtGui/qpixmapcache.h>
+#include <QtGui/qscrollbar.h>
 #include <QtGui/qstyleoption.h>
 #if defined(Q_WS_X11)
 #include <QX11Info>
@@ -120,6 +124,7 @@ public:
 #endif
     
     void updateResizesToContentsForPage();
+    QRectF visibleRect() const;
 
     void syncLayers();
     void _q_doLoadFinished(bool success);
@@ -340,6 +345,23 @@ void QGraphicsWebViewPrivate::_q_contentsSizeChanged(const QSize& size)
     q->setGeometry(QRectF(q->geometry().topLeft(), size));
 }
 
+QRectF QGraphicsWebViewPrivate::visibleRect() const
+{
+    if (!q->scene())
+        return QRectF();
+    QList<QGraphicsView*> views = q->scene()->views();
+    if (views.size() > 1) {
+        qDebug() << "QGraphicsWebView is in more than one graphics views, unable to compute the visible rect";
+        return QRectF();
+    }
+    if (views.size() < 1)
+        return QRectF();
+
+    int xPosition = views[0]->horizontalScrollBar()->value();
+    int yPosition = views[0]->verticalScrollBar()->value();
+    return q->mapRectFromScene(QRectF(QPoint(xPosition, yPosition), views[0]->viewport()->size()));
+}
+
 /*!
     \class QGraphicsWebView
     \brief The QGraphicsWebView class allows Web content to be added to a GraphicsView.
@@ -482,6 +504,17 @@ QWebPage* QGraphicsWebView::page() const
 */
 void QGraphicsWebView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget*)
 {
+#if ENABLE(TILED_BACKING_STORE)
+    // FIXME: Scrollbars could be drawn with the overlay layer when using tiling.
+    if (WebCore::TiledBackingStore* backingStore = QWebFramePrivate::core(page()->mainFrame())->tiledBackingStore()) {
+        // FIXME: We should set the backing store viewpart earlier than in paint.
+        backingStore->viewportChanged(WebCore::IntRect(d->visibleRect()));
+        // QWebFrame::render is a public API, bypass it for tiled rendering so behavior does not need to change.
+        WebCore::GraphicsContext context(painter); 
+        page()->mainFrame()->d->renderContentsLayerAbsoluteCoords(&context, option->exposedRect.toAlignedRect());
+        return;
+    } 
+#endif
 #if USE(ACCELERATED_COMPOSITING)
     page()->mainFrame()->render(painter, d->overlay ? QWebFrame::ContentsLayer : QWebFrame::AllLayers, option->exposedRect.toAlignedRect());
 #else

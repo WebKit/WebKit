@@ -222,6 +222,7 @@ Q_SIGNALS:
     void pageChanged();
 
 private:
+    friend class QGraphicsWebView;
     friend class QWebPage;
     friend class QWebPagePrivate;
     friend class QWebFramePrivate;

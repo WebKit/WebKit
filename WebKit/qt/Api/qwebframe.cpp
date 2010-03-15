@@ -58,6 +58,7 @@
 #include "SelectionController.h"
 #include "SubstituteData.h"
 #include "SVGSMILElement.h"
+#include "TiledBackingStore.h"
 #include "htmlediting.h"
 #include "markup.h"
 #include "qt_instance.h"
@@ -339,7 +340,13 @@ void QWebFramePrivate::renderContentsLayerAbsoluteCoords(GraphicsContext* contex
     QPainter* painter = context->platformContext();
 
     WebCore::FrameView* view = frame->view();
-    view->layoutIfNeededRecursive();
+    
+#if ENABLE(TILED_BACKING_STORE)
+    if (!frame->tiledBackingStore())
+        view->layoutIfNeededRecursive();
+#else
+    view->layoutIfNeededRecursive()
+#endif
 
     for (int i = 0; i < vector.size(); ++i) {
         const QRect& clipRect = vector.at(i);
@@ -348,7 +355,14 @@ void QWebFramePrivate::renderContentsLayerAbsoluteCoords(GraphicsContext* contex
         painter->setClipRect(clipRect, Qt::IntersectClip);
 
         context->save();
+#if ENABLE(TILED_BACKING_STORE)
+        if (frame->tiledBackingStore())
+            frame->tiledBackingStore()->paint(context, clipRect);
+        else
+            view->paintContents(context, clipRect);
+#else
         view->paintContents(context, clipRect);
+#endif
         context->restore();
 
         painter->restore();
