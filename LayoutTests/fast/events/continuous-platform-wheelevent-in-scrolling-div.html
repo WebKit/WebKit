@@ -8,18 +8,19 @@
             var event;
             var div;
 
-            if (window.layoutTestController)
+            if (window.layoutTestController) {
                 layoutTestController.waitUntilDone();
+            }
 
             function dispatchWheelEvent()
             {
                 var overflowElement = document.getElementById("overflow");
-                if (overflowElement) {
+                if (overflowElement)
                     overflowElement.addEventListener("mousewheel", mousewheelHandler, false);
 
-                    var wheelEvent = document.createEvent("WheelEvent");
-                    wheelEvent.initWebKitWheelEvent(-window.expectedScrollLeft, -window.expectedScrollTop, window, 0, 0, 0, 0, false, false, false, false);
-                    overflowElement.dispatchEvent(wheelEvent);
+                if (window.eventSender) {
+                    eventSender.mouseMoveTo(100, 110);
+                    eventSender.continuousMouseScrollBy(-window.expectedScrollLeft, -window.expectedScrollTop);
                 }
 
                 setTimeout('checkOffsets();', 100);

@@ -176,7 +176,7 @@ BOOL WKSupportsMultipartXMixedReplace(NSMutableURLRequest *request);
 
 BOOL WKCGContextIsBitmapContext(CGContextRef context);
 
-void WKGetWheelEventDeltas(NSEvent *, float *deltaX, float *deltaY, BOOL *continuous);
+void WKGetWheelEventDeltas(NSEvent *, float *deltaX, float *deltaY, float *wheelTicksX, float *wheelTicksY, BOOL *continuous);
 
 BOOL WKAppVersionCheckLessThan(NSString *, int, double);
 

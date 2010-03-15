@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2010 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,13 +43,9 @@ PlatformWheelEvent::PlatformWheelEvent(NSEvent* event, NSView *windowView)
     , m_metaKey([event modifierFlags] & NSCommandKeyMask)
 {
     BOOL continuous;
-    wkGetWheelEventDeltas(event, &m_deltaX, &m_deltaY, &continuous);
-    if (continuous) {
-        m_wheelTicksX = m_deltaX / static_cast<float>(Scrollbar::pixelsPerLineStep());
-        m_wheelTicksY = m_deltaY / static_cast<float>(Scrollbar::pixelsPerLineStep());
-    } else {
-        m_wheelTicksX = m_deltaX;
-        m_wheelTicksY = m_deltaY;
+    wkGetWheelEventDeltas(event, &m_deltaX, &m_deltaY, &m_wheelTicksX, &m_wheelTicksY, &continuous);
+
+    if (!continuous) {
         m_deltaX *= static_cast<float>(Scrollbar::pixelsPerLineStep());
         m_deltaY *= static_cast<float>(Scrollbar::pixelsPerLineStep());
     }

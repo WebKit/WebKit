@@ -1,3 +1,27 @@
+2010-03-15  Andy Estes  <aestes@apple.com>
+
+        Reviewed by John Sullivan.
+
+        For continuous scrolling devices on the Mac (trackpads and Mighty/Magic
+        Mice), set the number of wheel ticks equal to the atomic increment of
+        the device: a pixel.  This ensures that any scrolling action will
+        generate at least one wheel tick, regardless of the speed/length of
+        the gesture.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29601
+        <rdar://problem/7453254>
+
+        Tests: fast/events/continuous-platform-wheelevent-in-scrolling-div.html
+               fast/events/platform-wheelevent-in-scrolling-div.html
+
+        * platform/mac/WebCoreSystemInterface.h: Modify method signature.
+        * platform/mac/WebCoreSystemInterface.mm: Ditto.
+        * platform/mac/WheelEventMac.mm:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent): Call into
+        WebKitSystemInterface to determine both wheelTicksX/Y and deltaX/Y.
+        WKSI will query the event system for number of wheel ticks and
+        pixels/lines scrolled based on the device type.
+
 2010-03-15  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

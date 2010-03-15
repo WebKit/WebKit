@@ -1,3 +1,18 @@
+2010-03-15  Andy Estes  <aestes@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Added two new output arguments to WKGetWheelEventDeltas() to return
+        the number of scroll wheel ticks in the x and y directions.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29601.
+        <rdar://problem/7453254>
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+        * libWebKitSystemInterfaceTiger.a:
+
 2010-03-14  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

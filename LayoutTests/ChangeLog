@@ -1,3 +1,32 @@
+2010-03-15  Andy Estes  <aestes@apple.com>
+
+        Reviewed by John Sullivan.
+
+        These tests verify that scrollwheel events (both continuous and
+        non-continuous) generate the expected pixel deltas in scrollable
+        regions, and also generate DOM mousewheel events with expected
+        wheelDelta values.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29601
+        <rdar://problem/7453254>
+
+        * fast/events/continuous-platform-wheelevent-in-scrolling-div-expected.txt: Added.
+        * fast/events/continuous-platform-wheelevent-in-scrolling-div.html: Added.
+        * fast/events/platform-wheelevent-in-scrolling-div-expected.txt: Added.
+        * fast/events/platform-wheelevent-in-scrolling-div.html: Added.
+        * fast/events/wheelevent-in-scrolling-div-expected.txt: Rebased
+        expected results due to change in test output formatting.
+        * fast/events/wheelevent-in-scrolling-div.html: Modified to use common
+        js logging and assertion functions.
+        * platform/gtk/Skipped: DRT support needed by tests not yet implemented
+        in GTK port.  See https://bugs.webkit.org/show_bug.cgi?id=36003.
+        * platform/mac-tiger/Skipped: DRT support needed by tests not possible
+        to implement in Tiger.
+        * platform/qt/Skipped: DRT support for tests not yet implemented in Qt
+        port.  See https://bugs.webkit.org/show_bug.cgi?id=36004.
+        * platform/win/Skipped: DRT support for tests not yet implemented in
+        Windows port.  See https://bugs.webkit.org/show_bug.cgi?id=36002.
+
 2010-03-15  Jian Li  <jianli@chromium.org>
 
         Reviewed by Sam Weinig.

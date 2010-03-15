@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2008, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -406,8 +406,10 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
 {
     float deltaX;
     float deltaY;
+    float wheelTicksX;
+    float wheelTicksY;
     BOOL isContinuous;
-    WKGetWheelEventDeltas(event, &deltaX, &deltaY, &isContinuous);
+    WKGetWheelEventDeltas(event, &deltaX, &deltaY, &wheelTicksX, &wheelTicksY, &isContinuous);
 
     BOOL isLatchingEvent = WKIsLatchingWheelEvent(event);
 

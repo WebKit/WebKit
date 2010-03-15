@@ -793,8 +793,11 @@ media/video-preload.html
 # For some reason crashes when run with all tests. Passes individually.
 fast/forms/multiple-form-submission-protection-mouse.html
 
-# mouseScrollBy() is not yet implemented in the Windows EventSender API.
+# https://bugs.webkit.org/show_bug.cgi?id=36002
+# mouseScrollBy() and continuousMouseScrollBy() are not yet implemented in the Windows EventSender API.
 fast/events/remove-child-onscroll.html
+fast/events/platform-wheelevent-in-scrolling-div.html
+fast/events/continuous-platform-wheelevent-in-scrolling-div.html
 
 # Windows port doesn't yet support rendering of non-BMP characters even though there's a font available.
 fast/text/international/plane2.html 
