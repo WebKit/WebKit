@@ -36,7 +36,7 @@
 #if WEBKIT_IMPLEMENTATION
 #include "IntRect.h"
 #else
-#include <base/gfx/rect.h>
+#include <gfx/rect.h>
 #endif
 
 namespace WebKit {

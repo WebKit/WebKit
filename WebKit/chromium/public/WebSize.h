@@ -36,7 +36,7 @@
 #if WEBKIT_IMPLEMENTATION
 #include "IntSize.h"
 #else
-#include <base/gfx/rect.h>
+#include <gfx/size.h>
 #endif
 
 namespace WebKit {

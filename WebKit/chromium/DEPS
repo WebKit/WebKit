@@ -35,7 +35,7 @@ vars = {
   'chromium_deps_svn': 'http://src.chromium.org/svn/trunk/deps/third_party',
 
   # Dependencies' revisions to use:
-  'chromium_rev': '38580',
+  'chromium_rev': '41621',
   'google-url_rev': '125',
   'gtest_rev': '359',
   'gyp_rev': '790',
