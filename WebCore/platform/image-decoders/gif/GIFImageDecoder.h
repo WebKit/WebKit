@@ -45,13 +45,13 @@ namespace WebCore {
         virtual String filenameExtension() const { return "gif"; }
         virtual void setData(SharedBuffer* data, bool allDataReceived);
         virtual bool isSizeAvailable();
+        virtual bool setSize(unsigned width, unsigned height);
         virtual size_t frameCount();
         virtual int repetitionCount() const;
         virtual RGBA32Buffer* frameBufferAtIndex(size_t index);
         virtual void clearFrameBufferCache(size_t clearBeforeFrame);
 
         // Callbacks from the GIF reader.
-        bool sizeNowAvailable(unsigned width, unsigned height);
         void decodingHalted(unsigned bytesLeft);
         bool haveDecodedRow(unsigned frameIndex, unsigned char* rowBuffer, unsigned char* rowEnd, unsigned rowNumber, unsigned repeatCount, bool writeTransparentPixels);
         void frameComplete(unsigned frameIndex, unsigned frameDuration, RGBA32Buffer::FrameDisposalMethod disposalMethod);

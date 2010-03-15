@@ -1,3 +1,47 @@
+2010-03-11  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Adam Barth.
+
+        Clean up more bits of the open-source image decoders.  In addition to
+        simplifying things somewhat, this makes all the decoders the same in
+        terms of how they construct "image reader" subclasses and init scale
+        data.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36040
+
+        No functional change, so no tests.
+
+        * platform/image-decoders/ImageDecoder.h: Reorder a few declarations to try and group/order members slightly better.
+        (WebCore::ImageDecoder::ImageDecoder):
+        * platform/image-decoders/gif/GIFImageDecoder.cpp: Move reader construction into decode().  Prep scale data in setSize().  Remove useless comment.
+        (WebCore::GIFImageDecoder::setData):
+        (WebCore::GIFImageDecoder::setSize):
+        (WebCore::GIFImageDecoder::frameBufferAtIndex):
+        (WebCore::GIFImageDecoder::decode):
+        * platform/image-decoders/gif/GIFImageDecoder.h: Prep scale data in setSize().
+        * platform/image-decoders/gif/GIFImageReader.cpp: Prep scale data in setSize().
+        (GIFImageReader::read):
+        * platform/image-decoders/ico/ICOImageDecoder.cpp: Shorten code.
+        (WebCore::ICOImageDecoder::setSize):
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp: Fix style.  Move reader construction into decode().
+        (WebCore::JPEGImageReader::close):
+        (WebCore::JPEGImageReader::skipBytes):
+        (WebCore::JPEGImageDecoder::decode):
+        * platform/image-decoders/jpeg/JPEGImageDecoder.h: Move reader construction into decode().
+        (WebCore::JPEGImageDecoder::filenameExtension):
+        * platform/image-decoders/png/PNGImageDecoder.cpp: Move reader construction into decode().  Track completion on decoder, not reader.  Prep scale data in setSize().  Remove useless comment.
+        (WebCore::PNGImageReader::PNGImageReader):
+        (WebCore::PNGImageReader::close):
+        (WebCore::PNGImageReader::decode):
+        (WebCore::PNGImageDecoder::setSize):
+        (WebCore::PNGImageDecoder::frameBufferAtIndex):
+        (WebCore::PNGImageDecoder::headerAvailable):
+        (WebCore::PNGImageDecoder::pngComplete):
+        (WebCore::PNGImageDecoder::decode):
+        * platform/image-decoders/png/PNGImageDecoder.h: Move reader construction into decode().  Track completion on decoder, not reader.  Prep scale data in setSize().
+        (WebCore::PNGImageDecoder::filenameExtension):
+        (WebCore::PNGImageDecoder::isComplete):
+
 2010-03-15  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by  Gustavo Noronha Silva.

@@ -42,7 +42,6 @@ namespace WebCore {
 
         // ImageDecoder
         virtual String filenameExtension() const { return "jpg"; }
-        virtual void setData(SharedBuffer* data, bool allDataReceived);
         virtual bool isSizeAvailable();
         virtual bool setSize(unsigned width, unsigned height);
         virtual RGBA32Buffer* frameBufferAtIndex(size_t index);

@@ -41,14 +41,19 @@ namespace WebCore {
 
         // ImageDecoder
         virtual String filenameExtension() const { return "png"; }
-        virtual void setData(SharedBuffer* data, bool allDataReceived);
         virtual bool isSizeAvailable();
+        virtual bool setSize(unsigned width, unsigned height);
         virtual RGBA32Buffer* frameBufferAtIndex(size_t index);
 
         // Callbacks from libpng
         void headerAvailable();
         void rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, int interlacePass);
         void pngComplete();
+
+        bool isComplete() const
+        {
+            return !m_frameBufferCache.isEmpty() && (m_frameBufferCache.first().status() == RGBA32Buffer::FrameComplete);
+        }
 
     private:
         // Decodes the image.  If |onlySize| is true, stops decoding after

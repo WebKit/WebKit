@@ -95,7 +95,6 @@ public:
         , m_decodingSizeOnly(false)
         , m_interlaceBuffer(0)
         , m_hasAlpha(false)
-        , m_hasFinishedDecoding(false)
         , m_currentBufferSize(0)
     {
         m_png = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, decodingFailed, decodingWarning);
@@ -116,12 +115,9 @@ public:
         delete[] m_interlaceBuffer;
         m_interlaceBuffer = 0;
         m_readOffset = 0;
-        m_hasFinishedDecoding = false;
     }
 
     unsigned currentBufferSize() const { return m_currentBufferSize; }
-
-    void setComplete() { m_hasFinishedDecoding = true; }
 
     void decode(const SharedBuffer& data, bool sizeOnly)
     {
@@ -143,10 +139,10 @@ public:
             // We explicitly specify the superclass isSizeAvailable() because we
             // merely want to check if we've managed to set the size, not
             // (recursively) trigger additional decoding if we haven't.
-            if ((sizeOnly && decoder->ImageDecoder::isSizeAvailable()) || m_hasFinishedDecoding)
+            if (sizeOnly ? decoder->ImageDecoder::isSizeAvailable() : decoder->isComplete())
                 return;
         }
-        if (!m_hasFinishedDecoding && decoder->isAllDataReceived())
+        if (!decoder->isComplete() && decoder->isAllDataReceived())
             decoder->pngComplete();
     }
 
@@ -168,7 +164,6 @@ private:
     png_infop m_info;
     png_bytep m_interlaceBuffer;
     bool m_hasAlpha;
-    bool m_hasFinishedDecoding;
     unsigned m_currentBufferSize;
 };
 
@@ -180,22 +175,21 @@ PNGImageDecoder::~PNGImageDecoder()
 {
 }
 
-void PNGImageDecoder::setData(SharedBuffer* data, bool allDataReceived)
-{
-    if (failed())
-        return;
-
-    ImageDecoder::setData(data, allDataReceived);
-
-    if (!m_reader && !failed())
-        m_reader.set(new PNGImageReader(this));
-}
 bool PNGImageDecoder::isSizeAvailable()
 {
     if (!ImageDecoder::isSizeAvailable())
          decode(true);
 
     return ImageDecoder::isSizeAvailable();
+}
+
+bool PNGImageDecoder::setSize(unsigned width, unsigned height)
+{
+    if (!ImageDecoder::setSize(width, height))
+        return false;
+
+    prepareScaleDataIfNecessary();
+    return true;
 }
 
 RGBA32Buffer* PNGImageDecoder::frameBufferAtIndex(size_t index)
@@ -208,7 +202,7 @@ RGBA32Buffer* PNGImageDecoder::frameBufferAtIndex(size_t index)
 
     RGBA32Buffer& frame = m_frameBufferCache[0];
     if (frame.status() != RGBA32Buffer::FrameComplete)
-        decode(false); // Decode this frame.
+        decode(false);
     return &frame;
 }
 
@@ -226,13 +220,9 @@ void PNGImageDecoder::headerAvailable()
     }
     
     // We can fill in the size now that the header is available.
-    if (!ImageDecoder::isSizeAvailable()) {
-        if (!setSize(width, height)) {
-            // Size unreasonable, bail out.
-            longjmp(png->jmpbuf, 1);
-            return;
-        }
-        prepareScaleDataIfNecessary();
+    if (!setSize(width, height)) {
+        longjmp(png->jmpbuf, 1);
+        return;
     }
 
     int bitDepth, colorType, interlaceType, compressionType, filterType, channels;
@@ -369,20 +359,21 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
 
 void PNGImageDecoder::pngComplete()
 {
-    m_reader->setComplete();
-
     if (!m_frameBufferCache.isEmpty())
         m_frameBufferCache.first().setStatus(RGBA32Buffer::FrameComplete);
 }
 
 void PNGImageDecoder::decode(bool onlySize)
 {
-    if (failed() || !m_reader)
+    if (failed())
         return;
+
+    if (!m_reader)
+        m_reader.set(new PNGImageReader(this));
 
     m_reader->decode(*m_data, onlySize);
     
-    if (failed() || (!m_frameBufferCache.isEmpty() && m_frameBufferCache[0].status() == RGBA32Buffer::FrameComplete))
+    if (failed() || isComplete())
         m_reader.clear();
 }
 

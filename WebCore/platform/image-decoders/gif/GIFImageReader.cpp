@@ -519,7 +519,7 @@ bool GIFImageReader::read(const unsigned char *buf, unsigned len,
       screen_height = GETINT16(q + 2);
 
       // CALLBACK: Inform the decoderplugin of our size.
-      if (clientptr && !clientptr->sizeNowAvailable(screen_width, screen_height))
+      if (clientptr && !clientptr->setSize(screen_width, screen_height))
         return false;
       
       screen_bgcolor = q[5];
@@ -746,7 +746,7 @@ bool GIFImageReader::read(const unsigned char *buf, unsigned len,
         y_offset = 0;
 
         // CALLBACK: Inform the decoderplugin of our size.
-        if (clientptr && !clientptr->sizeNowAvailable(screen_width, screen_height))
+        if (clientptr && !clientptr->setSize(screen_width, screen_height))
           return false;
       }
 

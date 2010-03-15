@@ -49,9 +49,6 @@ void GIFImageDecoder::setData(SharedBuffer* data, bool allDataReceived)
 
     // We need to rescan the frame count, as the new data may have changed it.
     m_alreadyScannedThisDataForFrameCount = false;
-
-    if (!m_reader && !failed())
-        m_reader.set(new GIFImageReader(this));
 }
 
 bool GIFImageDecoder::isSizeAvailable()
@@ -60,6 +57,15 @@ bool GIFImageDecoder::isSizeAvailable()
          decode(0, GIFSizeQuery);
 
     return ImageDecoder::isSizeAvailable();
+}
+
+bool GIFImageDecoder::setSize(unsigned width, unsigned height)
+{
+    if (!ImageDecoder::setSize(width, height))
+        return false;
+
+    prepareScaleDataIfNecessary();
+    return true;
 }
 
 size_t GIFImageDecoder::frameCount()
@@ -109,7 +115,7 @@ RGBA32Buffer* GIFImageDecoder::frameBufferAtIndex(size_t index)
 
     RGBA32Buffer& frame = m_frameBufferCache[index];
     if (frame.status() != RGBA32Buffer::FrameComplete)
-        decode(index + 1, GIFFullQuery); // Decode this frame.
+        decode(index + 1, GIFFullQuery);
     return &frame;
 }
 
@@ -161,15 +167,6 @@ void GIFImageDecoder::clearFrameBufferCache(size_t clearBeforeFrame)
         if (j->status() != RGBA32Buffer::FrameEmpty)
             j->clear();
     }
-}
-
-bool GIFImageDecoder::sizeNowAvailable(unsigned width, unsigned height)
-{
-    if (!setSize(width, height))
-        return false;
-
-    prepareScaleDataIfNecessary();
-    return true;
 }
 
 void GIFImageDecoder::decodingHalted(unsigned bytesLeft)
@@ -291,8 +288,11 @@ void GIFImageDecoder::gifComplete()
 
 void GIFImageDecoder::decode(unsigned haltAtFrame, GIFQuery query)
 {
-    if (failed() || !m_reader)
+    if (failed())
         return;
+
+    if (!m_reader)
+        m_reader.set(new GIFImageReader(this));
 
     if (!m_reader->read((const unsigned char*)m_data->data() + m_readOffset, m_data->size() - m_readOffset, query, haltAtFrame))
         setFailed();

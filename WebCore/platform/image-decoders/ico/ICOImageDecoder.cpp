@@ -88,14 +88,9 @@ IntSize ICOImageDecoder::frameSizeAtIndex(size_t index) const
 
 bool ICOImageDecoder::setSize(unsigned width, unsigned height)
 {
-    if (m_frameSize.isEmpty())
-        return ImageDecoder::setSize(width, height);
-
     // The size calculated inside the BMPImageReader had better match the one in
     // the icon directory.
-    if (IntSize(width, height) != m_frameSize)
-        setFailed();
-    return !failed();
+    return m_frameSize.isEmpty() ? ImageDecoder::setSize(width, height) : ((IntSize(width, height) == m_frameSize) || setFailed());
 }
 
 size_t ICOImageDecoder::frameCount()
