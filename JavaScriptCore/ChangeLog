@@ -1,3 +1,25 @@
+2010-03-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35843
+        Re-land reverted fix to JSString::getIndex()
+
+        Calling getIndex() on a JSString in rope form may result in a JSException being thrown
+        if there is insuficient memory so value(exec) returns UString() with length zero,
+        which will be passed to jsSingleCharacterSubstring.
+        Add a slow case function to trap the error & return a safe null value, until the
+        exception is handled.
+
+        * runtime/JSString.cpp:
+        (JSC::JSString::getIndexSlowCase):
+        (JSC::JSString::getStringPropertyDescriptor):
+        * runtime/JSString.h:
+        (JSC::jsSingleCharacterSubstring):
+        (JSC::JSString::getIndex):
+        (JSC::jsSingleCharacterString):
+        (JSC::JSString::getStringPropertySlot):
+
 2010-03-04  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Adam Roben.

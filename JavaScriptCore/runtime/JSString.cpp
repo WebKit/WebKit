@@ -104,6 +104,18 @@ void JSString::resolveRope(ExecState* exec) const
     }
 }
 
+JSString* JSString::getIndexSlowCase(ExecState* exec, unsigned i)
+{
+    ASSERT(isRope());
+    resolveRope(exec);
+    // Return a safe no-value result, this should never be used, since the excetion will be thrown.
+    if (exec->exception())
+        return jsString(exec, "");
+    ASSERT(!isRope());
+    ASSERT(i < m_value.size());
+    return jsSingleCharacterSubstring(exec, m_value, i);
+}
+
 JSValue JSString::toPrimitive(ExecState*, PreferredPrimitiveType) const
 {
     return const_cast<JSString*>(this);
@@ -187,7 +199,7 @@ bool JSString::getStringPropertyDescriptor(ExecState* exec, const Identifier& pr
     bool isStrictUInt32;
     unsigned i = propertyName.toStrictUInt32(&isStrictUInt32);
     if (isStrictUInt32 && i < m_length) {
-        descriptor.setDescriptor(jsSingleCharacterSubstring(exec, value(exec), i), DontDelete | ReadOnly);
+        descriptor.setDescriptor(getIndex(exec, i), DontDelete | ReadOnly);
         return true;
     }
     
