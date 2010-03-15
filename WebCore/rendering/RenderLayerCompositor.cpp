@@ -209,8 +209,13 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
         rebuildCompositingLayerTree(updateRoot, compState, childList);
 
         // Host the document layer in the RenderView's root layer.
-        if (updateRoot == rootRenderLayer() && !childList.isEmpty())
-            m_rootPlatformLayer->setChildren(childList);
+        if (updateRoot == rootRenderLayer()) {
+            if (childList.isEmpty()) {
+                willMoveOffscreen();
+                m_rootPlatformLayer = 0;
+            } else
+                m_rootPlatformLayer->setChildren(childList);
+        }
     } else if (needGeometryUpdate) {
         // We just need to do a geometry update. This is only used for position:fixed scrolling;
         // most of the time, geometry is updated via RenderLayer::styleChanged().
@@ -563,8 +568,9 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, O
         willBeComposited = true;
     }
 
+    ASSERT(willBeComposited == needsToBeComposited(layer));
     if (layer->reflectionLayer())
-        layer->reflectionLayer()->setMustOverlapCompositedLayers(needsToBeComposited(layer));
+        layer->reflectionLayer()->setMustOverlapCompositedLayers(willBeComposited);
 
     // Subsequent layers in the parent stacking context also need to composite.
     if (childState.m_subtreeIsCompositing)
@@ -581,8 +587,16 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, O
         willBeComposited = true;
     }
 
+    // If we're back at the root, and no other layers need to be composited, and the root layer itself doesn't need
+    // to be composited, then we can drop out of compositing mode altogether.
+    if (layer->isRootLayer() && !childState.m_subtreeIsCompositing && !requiresCompositingLayer(layer)) {
+        m_compositing = false;
+        willBeComposited = false;
+    }
+    
     // If the layer is going into compositing mode, repaint its old location.
-    if (!layer->isComposited() && needsToBeComposited(layer))
+    ASSERT(willBeComposited == needsToBeComposited(layer));
+    if (!layer->isComposited() && willBeComposited)
         repaintOnCompositingChange(layer);
 
     // Update backing now, so that we can use isComposited() reliably during tree traversal in rebuildCompositingLayerTree().
@@ -934,7 +948,7 @@ bool RenderLayerCompositor::needsToBeComposited(const RenderLayer* layer) const
     if (!m_hasAcceleratedCompositing || !layer->isSelfPaintingLayer())
         return false;
 
-    return requiresCompositingLayer(layer) || layer->mustOverlapCompositedLayers();
+    return requiresCompositingLayer(layer) || layer->mustOverlapCompositedLayers() || (inCompositingMode() && layer->isRootLayer());
 }
 
 // Note: this specifies whether the RL needs a compositing layer for intrinsic reasons.
@@ -949,14 +963,13 @@ bool RenderLayerCompositor::requiresCompositingLayer(const RenderLayer* layer) c
         layer = toRenderBoxModelObject(renderer)->layer();
     }
     // The root layer always has a compositing layer, but it may not have backing.
-    return (inCompositingMode() && layer->isRootLayer()) ||
-             requiresCompositingForTransform(renderer) ||
-             requiresCompositingForVideo(renderer) ||
-             requiresCompositingForCanvas(renderer) ||
-             requiresCompositingForPlugin(renderer) ||
-             renderer->style()->backfaceVisibility() == BackfaceVisibilityHidden ||
-             clipsCompositingDescendants(layer) ||
-             requiresCompositingForAnimation(renderer);
+    return requiresCompositingForTransform(renderer)
+             || requiresCompositingForVideo(renderer)
+             || requiresCompositingForCanvas(renderer)
+             || requiresCompositingForPlugin(renderer)
+             || renderer->style()->backfaceVisibility() == BackfaceVisibilityHidden
+             || clipsCompositingDescendants(layer)
+             || requiresCompositingForAnimation(renderer);
 }
 
 // Return true if the given layer has some ancestor in the RenderLayer hierarchy that clips,

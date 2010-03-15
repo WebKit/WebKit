@@ -1,3 +1,31 @@
+2010-03-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Drop out of compositing mode when no elements need to composite
+        https://bugs.webkit.org/show_bug.cgi?id=36134
+
+        When no more elements on the page need to be composited, drop out of compositing
+        mode altogether, including removing the layer-backed view that hosts the layers.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateCompositingLayers): If the list of child layers to attach at
+        the root is empty, we have no composited layers, and can drop out of compositing mode by calling
+        willMoveOffscreen().
+        
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements): In several places,
+        use willBeComposited rather than calling needsToBeComposited(), because it avoids
+        recomputing state that we know already (but assert that we're getting it right).
+        When we're assessing the root layer in post-order, see if we have any child layers that
+        are compositing, and also whether the root itself needs to composite. If neither are
+        true, then we can drop out of compositing mode.
+        
+        (WebCore::RenderLayerCompositor::needsToBeComposited):
+        (WebCore::RenderLayerCompositor::requiresCompositingLayer): Move the
+        "inCompositingMode() && layer->isRootLayer()" test out of requiresCompositingLayer()
+        and into needsToBeComposited() so that we can call requiresCompositingLayer() separately
+        on the root layer above.
+
 2010-03-15  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Kenneth Rohde Christiansen.
