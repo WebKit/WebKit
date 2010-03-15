@@ -673,7 +673,7 @@ bool RenderThemeGtk::paintMediaPlayButton(RenderObject* o, const RenderObject::P
     if (!mediaElement)
         return false;
 
-    return paintMediaButton(paintInfo.context, r, mediaElement->canPlay() ? m_playButton.get() : m_pauseButton.get(), m_panelColor, m_mediaIconSize);
+    return paintMediaButton(paintInfo.context, r, mediaElement->paused() ? m_playButton.get() : m_pauseButton.get(), m_panelColor, m_mediaIconSize);
 }
 
 bool RenderThemeGtk::paintMediaSeekBackButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
