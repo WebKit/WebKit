@@ -1,3 +1,25 @@
+2010-03-15  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Selection.modify extends too far with 'lineboundary'.
+        https://bugs.webkit.org/show_bug.cgi?id=33413
+
+        Selection.modify() with 'lineboundary' granularity implies just
+        "Go to the end of the line", unlike selection expansion with
+        other type of granularities. This change handled LineGranularity
+        as special case, to look-up end of line with UPSTREAM affinity. 
+        Doing this prevents look-up algorithm to go next line.
+
+        Test: editing/selection/extend-selection-expected.txt
+
+        * dom/Position.cpp:
+        (WebCore::Position::getInlineBoxAndOffset):
+        Handled an edge case for node look-up with UPSTREAM.
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::modifyExtendingForward):
+        Added UPSTREAM tweak for the case for LineGranularity.
+        
 2010-03-14  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Shinichiro Hamaji.

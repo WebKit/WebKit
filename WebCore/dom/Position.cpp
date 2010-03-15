@@ -1041,7 +1041,8 @@ void Position::getInlineBoxAndOffset(EAffinity affinity, TextDirection primaryDi
                 return;
             }
 
-            if ((caretOffset == caretMinOffset) ^ (affinity == UPSTREAM))
+            if (((caretOffset == caretMaxOffset) ^ (affinity == DOWNSTREAM))
+                || ((caretOffset == caretMinOffset) ^ (affinity == UPSTREAM)))
                 break;
 
             candidate = box;

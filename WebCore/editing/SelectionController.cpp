@@ -351,7 +351,9 @@ VisiblePosition SelectionController::modifyExtendingForward(TextGranularity gran
             pos = endOfSentence(endForPlatform());
             break;
         case LineBoundary:
-            pos = logicalEndOfLine(endForPlatform());
+            pos = endForPlatform();
+            pos.setAffinity(UPSTREAM);
+            pos = logicalEndOfLine(pos);
             break;
         case ParagraphBoundary:
             pos = endOfParagraph(endForPlatform());

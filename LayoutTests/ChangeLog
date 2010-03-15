@@ -1,3 +1,16 @@
+2010-03-15  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Selection.modify extends too far with 'lineboundary'.
+        https://bugs.webkit.org/show_bug.cgi?id=33413
+
+        * editing/selection/extend-selection-expected.txt:
+        * platform/win/editing/selection/extend-selection-expected.txt: 
+        Updated result to correct expectation that described the wrong
+        behaviour for the selection expansion with 'lineboundary'
+        granularity.
+        
 2010-03-14  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Shinichiro Hamaji.
