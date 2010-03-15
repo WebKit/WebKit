@@ -44,6 +44,20 @@
 
 2010-03-15  Philippe Normand  <pnormand@igalia.com>
 
+        Reviewed by Gustavo Noronha Silva.
+
+        [GStreamer] updateStates called for all elements posting a state-change
+        https://bugs.webkit.org/show_bug.cgi?id=36115
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mediaPlayerPrivateMessageCallback): Update player state
+        only for state-change messages coming from playbin2 directly.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        (WebCore::MediaPlayerPrivate::pipeline): public accessor for the
+        playbin element.
+
+2010-03-15  Philippe Normand  <pnormand@igalia.com>
+
         Reviewed by  Gustavo Noronha Silva.
 
         [GTK] video playback position query flood when mouse over the video element

@@ -118,6 +118,7 @@ class MediaPlayerPrivate : public MediaPlayerPrivateInterface {
 
             bool supportsFullscreen() const;
 
+            GstElement* pipeline() const { return m_playBin; }
             bool pipelineReset() const { return m_resetPipeline; }
 
         private:
