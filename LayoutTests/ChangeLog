@@ -1,3 +1,15 @@
+2010-03-15  Shu Chang  <Chang.Shu@nokia.com>
+
+        Reviewed by Holger Freyther.
+
+        [Qt] Change and add expected results after the fix and also remove the test from Skipped.
+        https://bugs.webkit.org/show_bug.cgi?id=36060
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/canvas/fillrect-gradient-zero-stops-expected.checksum: Added.
+        * platform/qt/fast/canvas/fillrect-gradient-zero-stops-expected.png: Added.
+        * platform/qt/fast/canvas/fillrect-gradient-zero-stops-expected.txt:
+
 2010-03-15  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Alexey Proskuryakov.

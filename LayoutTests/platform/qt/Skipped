@@ -2457,7 +2457,6 @@ fast/canvas/canvas-incremental-repaint.html
 fast/canvas/canvas-text-alignment.html
 fast/canvas/canvas-text-baseline.html
 fast/canvas/fillrect_gradient.html
-fast/canvas/fillrect-gradient-zero-stops.html
 fast/canvas/fill-stroke-clip-reset-path.html
 fast/canvas/image-object-in-canvas.html
 fast/canvas/patternfill-repeat.html

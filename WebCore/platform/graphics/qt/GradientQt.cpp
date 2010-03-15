@@ -67,6 +67,12 @@ QGradient* Gradient::platformGradient()
         ++stopIterator;
     }
 
+    if (m_stops.isEmpty()) {
+        // The behavior of QGradient with no stops is defined differently from HTML5 spec,
+        // where the latter requires the gradient to be transparent black.
+        m_gradient->setColorAt(0.0, QColor(0, 0, 0, 0));
+    }
+
     switch (m_spreadMethod) {
     case SpreadMethodPad:
         m_gradient->setSpread(QGradient::PadSpread);

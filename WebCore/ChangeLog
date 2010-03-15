@@ -1,3 +1,15 @@
+2010-03-15  Shu Chang  <Chang.Shu@nokia.com>
+
+        Reviewed by Holger Freyther.
+
+        [Qt] The behavior of QGradient with no stops is defined differently from HTML5 spec,
+        where the latter requires the gradient to be transparent black. Explicitly added a
+        transparent black color stop to match the HTML5 behavior.
+        https://bugs.webkit.org/show_bug.cgi?id=36060
+
+        * platform/graphics/qt/GradientQt.cpp:
+        (WebCore::Gradient::platformGradient):
+
 2010-03-11  Antonio Gomes  <tonikitoo@webkit.org>
 
         Rubber-stamped by Holger Freyther.
