@@ -207,7 +207,7 @@ namespace WebCore {
 #if ENABLE(DOM_STORAGE)
         // HTML 5 key/value storage
         Storage* sessionStorage() const;
-        Storage* localStorage() const;
+        Storage* localStorage(ExceptionCode&) const;
 #endif
 
         Console* console() const;

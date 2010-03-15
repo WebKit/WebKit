@@ -14,9 +14,9 @@ TEST COMPLETE
 --------
 Frame: '<!--framePath //<!--frame0-->-->'
 --------
-PASS window.openDatabase('SandboxedIframeStorageDisallowed', '1.0', '', 1) == null is true
-PASS window.localStorage == null is true
-PASS window.sessionStorage == null is true
+PASS window.openDatabase('SandboxedIframeStorageDisallowed', '1.0', '', 1) threw exception Error: SECURITY_ERR: DOM Exception 18.
+PASS window.localStorage threw exception Error: SECURITY_ERR: DOM Exception 18.
+PASS window.sessionStorage != null is true
 
 
 --------

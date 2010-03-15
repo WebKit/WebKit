@@ -6,9 +6,9 @@
 <script>
 
 window.onload = function() {
-    shouldBeTrue("window.openDatabase('SandboxedIframeStorageDisallowed', '1.0', '', 1) == null");
-    shouldBeTrue("window.localStorage == null");
-    shouldBeTrue("window.sessionStorage == null");
+    shouldThrow("window.openDatabase('SandboxedIframeStorageDisallowed', '1.0', '', 1)", "'Error: SECURITY_ERR: DOM Exception 18'");
+    shouldThrow("window.localStorage", "'Error: SECURITY_ERR: DOM Exception 18'");
+    shouldBeTrue("window.sessionStorage != null");
 }
 
 </script>

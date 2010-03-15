@@ -1,3 +1,25 @@
+2010-03-15  Patrik Persson  <patrik.j.persson@ericsson.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32369
+
+        Revised test of storage/databases in sandboxed iframes.
+        
+        Verify that SECURITY_ERR is raised on access to
+        window.localStorage or window.openDatabase(). Also verify that
+        window.sessionStorage is now allowed in sandboxed iframes.
+
+        WebKit would previously return null references in these cases.  The
+        new behavior is in accordance with HTML5:
+
+        - http://dev.w3.org/html5/webstorage/   (sections 4.2 and 4.3)
+        - http://dev.w3.org/html5/webdatabase/  (section 4.1)
+        - http://www.mail-archive.com/whatwg@lists.whatwg.org/msg19786.html
+
+        * fast/frames/resources/sandboxed-iframe-storage-disallowed.html: expect exceptions, not null
+        * fast/frames/sandboxed-iframe-storage-expected.txt: expect exceptions, not null
+
 2010-03-15  Tony Chang  <tony@chromium.org>
 
         Reviewed by Darin Adler.

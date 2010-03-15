@@ -73,8 +73,11 @@ void StorageEventDispatcherImpl::dispatchStorageEvent(const String& key, const S
 
     // FIXME: Figure out how to pass in the document URI.
     for (unsigned i = 0; i < frames.size(); ++i) {
-        frames[i]->document()->dispatchWindowEvent(StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue,
-                                                                        url, frames[i]->domWindow()->localStorage()));
+        ExceptionCode ec = 0;
+        Storage* storage = frames[i]->domWindow()->localStorage(ec);
+        if (!ec)
+            frames[i]->document()->dispatchWindowEvent(StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue,
+                                                                            url, storage));
     }
 }
 

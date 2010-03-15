@@ -575,9 +575,6 @@ Storage* DOMWindow::sessionStorage() const
     Document* document = this->document();
     if (!document)
         return 0;
-    
-    if (!document->securityOrigin()->canAccessStorage())
-        return 0;
 
     Page* page = document->page();
     if (!page)
@@ -592,7 +589,7 @@ Storage* DOMWindow::sessionStorage() const
     return m_sessionStorage.get();
 }
 
-Storage* DOMWindow::localStorage() const
+Storage* DOMWindow::localStorage(ExceptionCode& ec) const
 {
     if (m_localStorage)
         return m_localStorage.get();
@@ -601,8 +598,10 @@ Storage* DOMWindow::localStorage() const
     if (!document)
         return 0;
     
-    if (!document->securityOrigin()->canAccessStorage())
+    if (!document->securityOrigin()->canAccessLocalStorage()) {
+        ec = SECURITY_ERR;
         return 0;
+    }
         
     Page* page = document->page();
     if (!page)
@@ -1187,8 +1186,10 @@ PassRefPtr<Database> DOMWindow::openDatabase(const String& name, const String& v
         return 0;
 
     Document* document = m_frame->document();
-    if (!document->securityOrigin()->canAccessDatabase())
+    if (!document->securityOrigin()->canAccessDatabase()) {
+        ec = SECURITY_ERR;
         return 0;
+    }
 
     return Database::openDatabase(document, name, version, displayName, estimatedSize, creationCallback, ec);
 }

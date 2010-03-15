@@ -1363,7 +1363,8 @@ void InspectorController::selectDOMStorage(Storage* storage)
         return;
 
     Frame* frame = storage->frame();
-    bool isLocalStorage = (frame->domWindow()->localStorage() == storage);
+    ExceptionCode ec = 0;
+    bool isLocalStorage = (frame->domWindow()->localStorage(ec) == storage && !ec);
     int storageResourceId = 0;
     DOMStorageResourcesMap::iterator domStorageEnd = m_domStorageResources.end();
     for (DOMStorageResourcesMap::iterator it = m_domStorageResources.begin(); it != domStorageEnd; ++it) {

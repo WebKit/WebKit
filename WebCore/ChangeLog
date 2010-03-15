@@ -1,3 +1,40 @@
+2010-03-15  Patrik Persson  <patrik.j.persson@ericsson.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32369
+
+        Revise iframe sandbox behavior to match the updated HTML5 spec.
+
+        - Enables window.sessionStorage in sandboxed iframes.
+
+        - Raises SECURITY_ERR exceptions when window.localStorage or
+          window.openDatabase() is blocked by iframe sandboxing.
+
+          Note: window.sessionStorage does not raise exceptions.
+
+        WebKit would previously return null references in these cases.  The
+        new behavior is in accordance with HTML5:
+
+          http://dev.w3.org/html5/webstorage/   (sections 4.2 and 4.3)
+          http://dev.w3.org/html5/webdatabase/  (section 4.1)
+          http://www.mail-archive.com/whatwg@lists.whatwg.org/msg19786.html
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::selectDOMStorage): exception handling
+        * inspector/InspectorDOMStorageResource.cpp:
+        (WebCore::InspectorDOMStorageResource::handleEvent): exception handling
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::sessionStorage): re-enabled in iframe sandbox
+        (WebCore::DOMWindow::localStorage): raise exception rather than return null
+        (WebCore::DOMWindow::openDatabase): raise exception rather than return null
+        * page/DOMWindow.h: added exceptions to interface
+        * page/DOMWindow.idl: added exceptions to interface
+        * page/SecurityOrigin.h:
+        (WebCore::SecurityOrigin::canAccessLocalStorage): renamed function to reflect its purpose
+        * storage/StorageEventDispatcher.cpp:
+        (WebCore::StorageEventDispatcher::dispatch): exception handling
+
 2010-03-15  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Timothy Hatcher.
