@@ -124,7 +124,7 @@ typedef enum {
 // Sets whether the scrollbars, if any, should be shown inside the document's border 
 // (thus overlapping some content) or outside the webView's border (default behavior). 
 // Changing this flag changes the size of the contentView and maintains the size of the frameView.
-- (void)setAllowScrollersToOverlapContent:(BOOL)flag;
+- (void)setAllowsScrollersToOverlapContent:(BOOL)flag;
 
 // Sets if the scrollbar is always hidden, regardless of other scrollbar visibility settings. 
 // This does not affect the scrollability of the document.

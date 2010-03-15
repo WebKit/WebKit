@@ -1282,10 +1282,10 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     return toGlobalRef(coreFrame->script()->globalObject(coreWorld)->globalExec());
 }
 
-- (void)setAllowScrollersToOverlapContent:(BOOL)flag
+- (void)setAllowsScrollersToOverlapContent:(BOOL)flag
 {
     ASSERT([[[self frameView] _scrollView] isKindOfClass:[WebDynamicScrollBarsView class]]);
-    [(WebDynamicScrollBarsView *)[[self frameView] _scrollView] setAllowScrollersToOverlapContent:flag];
+    [(WebDynamicScrollBarsView *)[[self frameView] _scrollView] setAllowsScrollersToOverlapContent:flag];
 }
 
 - (void)setAlwaysHideHorizontalScroller:(BOOL)flag

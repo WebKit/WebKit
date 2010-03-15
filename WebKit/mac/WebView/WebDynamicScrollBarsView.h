@@ -44,7 +44,7 @@ extern const int WebCoreScrollbarAlwaysOn;
     BOOL horizontallyPinnedByPreviousWheelEvent;
     unsigned inUpdateScrollersLayoutPass;
 
-    BOOL allowScrollersToOverlapContent;
+    BOOL allowsScrollersToOverlapContent;
     BOOL hideHorizontalScroller;
     BOOL hideVerticalScroller;
 }
@@ -53,7 +53,7 @@ extern const int WebCoreScrollbarAlwaysOn;
 // Perhaps it can be removed.
 - (void)setAllowsHorizontalScrolling:(BOOL)flag;
 
-- (void)setAllowScrollersToOverlapContent:(BOOL)flag;
+- (void)setAllowsScrollersToOverlapContent:(BOOL)flag;
 - (void)setAlwaysHideHorizontalScroller:(BOOL)flag;
 - (void)setAlwaysHideVerticalScroller:(BOOL)flag;
 @end
