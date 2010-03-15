@@ -1,3 +1,15 @@
+2010-03-15  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix a minor case where we'd deference a null pointer if we tried
+        to run new-run-webkit-tests on an unsupported platform (e.g.
+        Cygwin's python version).
+
+        https://bugs.webkit.org/show_bug.cgi?id=36076
+
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+
 2010-03-15  Darin Adler  <darin@apple.com>
 
         Tell Subversion about more directories that expect to have .pyc files.

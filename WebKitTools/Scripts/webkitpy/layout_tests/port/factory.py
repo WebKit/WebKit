@@ -49,6 +49,10 @@ def get(port_name=None, options=None):
             else:
                 port_to_use = 'mac'
 
+    if port_to_use is None:
+        raise NotImplementedError('unknown port; sys.platform = "%s"' %
+                                  sys.platform)
+
     if port_to_use == 'test':
         import test
         return test.TestPort(port_name, options)
