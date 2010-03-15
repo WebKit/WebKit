@@ -1,3 +1,12 @@
+2010-03-15  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add EFL port files to platform/efl.
+        http://webkit.org/b/35888
+
+        * platform/efl/SoundEfl.cpp: Added.
+
 2010-03-15  Andy Estes  <aestes@apple.com>
 
         Reviewed by John Sullivan.
