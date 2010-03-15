@@ -1,3 +1,14 @@
+2010-03-11  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Rubber-stamped by Holger Freyther.
+        Patch by Antonio Gomes <tonikitoo@webkit.org>
+
+        Some minor code clean ups in SpatialNavigation.cpp
+
+        * page/SpatialNavigation.cpp:
+        (WebCore::distanceInDirection):
+        (WebCore::deflateIfOverlapped):
+
 2010-03-13  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Timothy Hatcher.
