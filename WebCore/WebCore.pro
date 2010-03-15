@@ -289,6 +289,7 @@ SOURCES += \
     bindings/js/JSDebugWrapperSet.cpp \
     bindings/js/JSDocumentCustom.cpp \
     bindings/js/JSDocumentFragmentCustom.cpp \
+    bindings/js/JSDOMFormDataCustom.cpp \
     bindings/js/JSDOMGlobalObject.cpp \
     bindings/js/JSDOMWindowBase.cpp \
     bindings/js/JSDOMWindowCustom.cpp \

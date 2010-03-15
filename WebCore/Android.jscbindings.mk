@@ -84,6 +84,7 @@ LOCAL_SRC_FILES += \
 	bindings/js/JSDesktopNotificationsCustom.cpp \
 	bindings/js/JSDOMApplicationCacheCustom.cpp \
 	bindings/js/JSDOMBinding.cpp \
+  bindings/js/JSDOMFormDataCustom.cpp \
 	bindings/js/JSDOMGlobalObject.cpp \
 	bindings/js/JSDOMWindowBase.cpp \
 	bindings/js/JSDOMWindowCustom.cpp \

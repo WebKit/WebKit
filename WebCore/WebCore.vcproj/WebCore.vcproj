@@ -2905,6 +2905,14 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDOMFormData.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDOMFormData.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDOMImplementation.cpp"
 				>
 				<FileConfiguration
@@ -35969,6 +35977,10 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSDOMBinding.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSDOMFormDataCustom.cpp"
 					>
 				</File>
 				<File

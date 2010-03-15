@@ -144,6 +144,7 @@ sub GetVisibleClassName
     my $className = shift;
 
     return "DOMException" if $className eq "DOMCoreException";
+    return "FormData" if $className eq "DOMFormData";
     return $className;
 }
 
