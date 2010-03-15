@@ -68,20 +68,30 @@ const int WebCoreScrollbarAlwaysOn = ScrollbarAlwaysOn;
 
 - (void)setAlwaysHideHorizontalScroller:(BOOL)shouldBeHidden
 {
-    if (hideHorizontalScroller == shouldBeHidden)
+    if (alwaysHideHorizontalScroller == shouldBeHidden)
         return;
 
-    hideHorizontalScroller = shouldBeHidden;
+    alwaysHideHorizontalScroller = shouldBeHidden;
     [self updateScrollers];
 }
 
 - (void)setAlwaysHideVerticalScroller:(BOOL)shouldBeHidden
 {
-    if (hideVerticalScroller == shouldBeHidden)
+    if (alwaysHideVerticalScroller == shouldBeHidden)
         return;
         
-    hideVerticalScroller = shouldBeHidden;
+    alwaysHideVerticalScroller = shouldBeHidden;
     [self updateScrollers];
+}
+
+- (BOOL)horizontalScrollingAllowed
+{
+    return horizontalScrollingAllowedButScrollerHidden || [self hasHorizontalScroller];
+}
+
+- (BOOL)verticalScrollingAllowed
+{
+    return verticalScrollingAllowedButScrollerHidden || [self hasVerticalScroller];
 }
 
 @end
@@ -169,11 +179,16 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
         newHasHorizontalScroller = (hScroll == ScrollbarAlwaysOn);
     if (vScroll != ScrollbarAuto)
         newHasVerticalScroller = (vScroll == ScrollbarAlwaysOn);
-        
-    newHasHorizontalScroller &= !hideHorizontalScroller;
-    newHasVerticalScroller &= !hideVerticalScroller;
     
     if (!documentView || suppressLayout || suppressScrollers || (hScroll != ScrollbarAuto && vScroll != ScrollbarAuto)) {
+        horizontalScrollingAllowedButScrollerHidden = newHasHorizontalScroller && alwaysHideHorizontalScroller;
+        if (horizontalScrollingAllowedButScrollerHidden)
+            newHasHorizontalScroller = NO;
+        
+        verticalScrollingAllowedButScrollerHidden = newHasVerticalScroller && alwaysHideVerticalScroller;
+        if (verticalScrollingAllowedButScrollerHidden)
+            newHasVerticalScroller = NO;
+        
         inUpdateScrollers = YES;
         if (hasHorizontalScroller != newHasHorizontalScroller)
             [self setHasHorizontalScroller:newHasHorizontalScroller];
@@ -212,9 +227,14 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
     if (!newHasVerticalScroller && hasVerticalScroller && hScroll != ScrollbarAlwaysOn)
         newHasHorizontalScroller = NO;
 
-    newHasHorizontalScroller &= !hideHorizontalScroller;
-    newHasVerticalScroller &= !hideVerticalScroller;
-
+    horizontalScrollingAllowedButScrollerHidden = newHasHorizontalScroller && alwaysHideHorizontalScroller;
+    if (horizontalScrollingAllowedButScrollerHidden)
+        newHasHorizontalScroller = NO;
+    
+    verticalScrollingAllowedButScrollerHidden = newHasVerticalScroller && alwaysHideVerticalScroller;
+    if (verticalScrollingAllowedButScrollerHidden)
+        newHasVerticalScroller = NO;
+        
     if (hasHorizontalScroller != newHasHorizontalScroller) {
         inUpdateScrollers = YES;
         [self setHasHorizontalScroller:newHasHorizontalScroller];

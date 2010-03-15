@@ -45,15 +45,26 @@ extern const int WebCoreScrollbarAlwaysOn;
     unsigned inUpdateScrollersLayoutPass;
 
     BOOL allowsScrollersToOverlapContent;
-    BOOL hideHorizontalScroller;
-    BOOL hideVerticalScroller;
+    BOOL alwaysHideHorizontalScroller;
+    BOOL alwaysHideVerticalScroller;
+    BOOL horizontalScrollingAllowedButScrollerHidden;
+    BOOL verticalScrollingAllowedButScrollerHidden;
 }
 
 // This was originally added for Safari's benefit, but Safari has not used it for a long time.
 // Perhaps it can be removed.
 - (void)setAllowsHorizontalScrolling:(BOOL)flag;
 
+// Determines whether the scrollers should be drawn outside of the content (as in normal scroll views)
+// or should overlap the content.
 - (void)setAllowsScrollersToOverlapContent:(BOOL)flag;
+
+// These methods hide the scrollers in a way that does not prevent scrolling.
 - (void)setAlwaysHideHorizontalScroller:(BOOL)flag;
 - (void)setAlwaysHideVerticalScroller:(BOOL)flag;
+
+// These methods return YES if the scrollers are visible, or if the only reason that they are not
+// visible is that they have been suppressed by setAlwaysHideHorizontal/VerticalScroller:.
+- (BOOL)horizontalScrollingAllowed;
+- (BOOL)verticalScrollingAllowed;
 @end

@@ -30,18 +30,39 @@
 
 @interface WebFrameView (WebPrivate)
 
+// FIXME: This method was used by Safari 4.0.x and older versions, but has not been used by any other WebKit
+// clients to my knowledge, and will not be used by future versions of Safari. It can probably be removed 
+// once we no longer need to keep nightly WebKit builds working with Safari 4.0.x and earlier.
 /*!
     @method _largestChildWithScrollBars
     @abstract Of the child WebFrameViews that are displaying scroll bars, determines which has the largest area.
     @result A child WebFrameView that is displaying scroll bars, or nil if none.
-*/
+ */
 - (WebFrameView *)_largestChildWithScrollBars;
 
+// FIXME: This method was used by Safari 4.0.x and older versions, but has not been used by any other WebKit
+// clients to my knowledge, and will not be used by future versions of Safari. It can probably be removed 
+// once we no longer need to keep nightly WebKit builds working with Safari 4.0.x and earlier.
 /*!
     @method _hasScrollBars
     @result YES if at least one scroll bar is currently displayed
  */
 - (BOOL)_hasScrollBars;
+
+/*!
+    @method _largestScrollableChild
+    @abstract Of the child WebFrameViews that allow scrolling, determines which has the largest area.
+    @result A child WebFrameView that is scrollable, or nil if none.
+ */
+- (WebFrameView *)_largestScrollableChild;
+
+/*!
+    @method _isScrollable
+    @result YES if scrolling is currently possible, whether or not scroll bars are currently showing. This
+    differs from -allowsScrolling in that the latter method only checks whether scrolling has been
+    explicitly disallowed via a call to setAllowsScrolling:NO.
+ */
+- (BOOL)_isScrollable;
 
 /*!
     @method _contentView

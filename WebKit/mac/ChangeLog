@@ -1,5 +1,73 @@
 2010-03-15  John Sullivan  <sullivan@apple.com>
 
+        Reviewed by Adam Roben.
+        
+        -[WebFrame setAlwaysHideHorizontal/VerticalScroller:] prevents keyboard scrolling
+        <https://bugs.webkit.org/show_bug.cgi?id=36125>
+
+        * WebView/WebDynamicScrollBarsView.h:
+        Added instance variables horizontalScrollingAllowedButScrollerHidden and
+        verticalScrollingAllowedButScrollerHidden. Renamed instance variables 
+        hideHorizontal/VerticalScroller to alwaysHideHorizontal/VerticalScroller for clarity.
+        Declared methods -horizontalScrollingAllowed and -verticalScrollingAllowed.
+        Added comments.
+        
+        * WebView/WebDynamicScrollBarsView.mm:
+        (-[WebDynamicScrollBarsView setAlwaysHideHorizontalScroller:]):
+        Updated for instance variable renaming.
+        (-[WebDynamicScrollBarsView setAlwaysHideVerticalScroller:]):
+        Ditto.
+        (-[WebDynamicScrollBarsView horizontalScrollingAllowed]):
+        New method, returns YES if the scroller is showing or the only reason that the scroller
+        is not showing is that setAlwaysHideHorizontalScrolling has been called.
+        (-[WebDynamicScrollBarsView verticalScrollingAllowed]):
+        New method, returns YES if the scroller is showing or the only reason that the scroller
+        is not showing is that setAlwaysHideVerticalScrolling has been called.
+        (-[WebDynamicScrollBarsView updateScrollers]):
+        Updated for instance variable renamings. Now updates horizontalScrollingAllowedButScrollerHidden
+        and verticalScrollingAllowedButScrollerHidden. Now takes the always-hidden state into account
+        in the early-return code path, to avoid taking it into account twice in the regular code path.
+        
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView _scrollToBeginningOfDocument]):
+        Use _isScrollable instead of _hasScrollBars.
+        (-[WebFrameView _scrollToEndOfDocument]):
+        Ditto.
+        (-[WebFrameView scrollToBeginningOfDocument:]):
+        Use _largestScrollableChild instead of _largestChildWithScrollBars.
+        (-[WebFrameView scrollToEndOfDocument:]):
+        Ditto.
+        (-[WebFrameView _pageVertically:]):
+        Use _isScrollable and _largestScrollableChild instead of _hasScrollBars
+        and _largestChildWithScrollBars.
+        (-[WebFrameView _pageHorizontally:]):
+        Ditto.
+        (-[WebFrameView _scrollLineVertically:]):
+        Ditto.
+        (-[WebFrameView _scrollLineHorizontally:]):
+        Ditto.
+        (-[WebFrameView keyDown:]):
+        Use _largestScrollableChild instead of _largestChildWithScrollBars.
+        (-[WebFrameView _isScrollable]):
+        New method, calls -[WebDynamicScrollBarsView horizontalScrollingAllowed] and
+        -[WebDynamicScrollBarsView verticalScrollingAllowed]
+        (-[WebFrameView _largestScrollableChild]):
+        New method, like _largestChildWithScrollBars but uses _isScrollable.
+        (-[WebFrameView _hasScrollBars]):
+        Added a comment that this is no longer used by Safari, and can thus probably be
+        deleted once we no longer want to support it for nightly build compatibility with
+        old versions of Safari.
+        (-[WebFrameView _largestChildWithScrollBars]):
+        Ditto.
+        
+        * WebView/WebFrameViewPrivate.h:
+        Declared -_isScrollable and -_largestScrollableChild. Added comments to
+        _hasScrollBars and _largestChildWithScrollBars saying that they are no longer
+        used by Safari, and can thus probably be deleted once we no longer want to 
+        support them for nightly build compatibility with old versions of Safari.
+
+2010-03-15  John Sullivan  <sullivan@apple.com>
+
         Method name and parameter name mistakes from recent SPI addition
         <https://bugs.webkit.org/show_bug.cgi?id=36119>
 
