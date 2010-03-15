@@ -1,3 +1,18 @@
+2010-03-15  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        VO not able to perform a VO-spacebar on facebook links
+        https://bugs.webkit.org/show_bug.cgi?id=36132
+
+        When a label element is used as a click event handler, and it doesn't have any
+        corresponding control, it should handle the action itself.
+
+        Test: accessibility/label-element-press.html
+
+        * html/HTMLLabelElement.cpp:
+        (WebCore::HTMLLabelElement::accessKeyAction):
+
 2010-03-15  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Geoff Garen.
