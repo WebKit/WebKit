@@ -1,3 +1,15 @@
+2010-03-15  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Bug 36135 - GCController::garbageCollectNow() crashes when called from garbage collection
+        <https://bugs.webkit.org/show_bug.cgi?id=36135>
+        <rdar://problem/7752552>
+
+        * bindings/js/GCController.cpp:
+        (WebCore::GCController::garbageCollectNow): Fail silently if garbage collection is
+        active rather than hitting the CRASH() reentrancy guard.
+
 2010-03-15  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

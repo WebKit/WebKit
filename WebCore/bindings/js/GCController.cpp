@@ -71,7 +71,9 @@ void GCController::gcTimerFired(Timer<GCController>*)
 
 void GCController::garbageCollectNow()
 {
-    collect(0);
+    JSLock lock(SilenceAssertionsOnly);
+    if (!JSDOMWindow::commonJSGlobalData()->heap.isBusy())
+        collect(0);
 }
 
 void GCController::garbageCollectOnAlternateThreadForDebugging(bool waitUntilDone)
