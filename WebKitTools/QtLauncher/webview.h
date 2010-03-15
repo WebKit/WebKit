@@ -79,6 +79,8 @@ public:
     bool frameRateMeasurementEnabled() { return m_measureFps; } 
 
     virtual void paintEvent(QPaintEvent* event);
+    
+    void setResizesToContents(bool b);
 
     void setYRotation(qreal angle)
     {
@@ -113,6 +115,7 @@ private:
     QTimer* m_updateTimer;
     bool m_measureFps;
     qreal m_yRotation;
+    bool m_resizesToContents;
 };
 
 #endif

@@ -41,6 +41,7 @@ WebViewGraphicsBased::WebViewGraphicsBased(QWidget* parent)
     , m_numPaintsTotal(0)
     , m_numPaintsSinceLastMeasure(0)
     , m_measureFps(false)
+    , m_resizesToContents(false)
 {
     setScene(new QGraphicsScene(this));
     scene()->addItem(m_item);
@@ -78,9 +79,24 @@ WebViewGraphicsBased::WebViewGraphicsBased(QWidget* parent)
     connect(m_updateTimer, SIGNAL(timeout()), this, SLOT(updateFrameRate()));
 }
 
+void WebViewGraphicsBased::setResizesToContents(bool b)
+{
+    m_resizesToContents = b;
+    m_item->setResizesToContents(m_resizesToContents);
+    if (m_resizesToContents) {
+        setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+        setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    } else {
+        setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    }
+}
+
 void WebViewGraphicsBased::resizeEvent(QResizeEvent* event)
 {
     QGraphicsView::resizeEvent(event);
+    if (m_resizesToContents)
+        return;
     QRectF rect(QPoint(0, 0), event->size());
     m_item->setGeometry(rect);
 }

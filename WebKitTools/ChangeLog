@@ -1,3 +1,25 @@
+2010-03-14  Antti Koivisto  <koivisto@iki.fi>
+
+        Reviewed by Simon Hausmann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35146
+        Support tiled backing store
+
+        QtLauncher support and build flag in build-webkit.
+
+        * QtLauncher/main.cpp:
+        (LauncherWindow::applyPrefs):
+        (LauncherWindow::toggleTiledBackingStore):
+        (LauncherWindow::toggleResizesToContents):
+        (LauncherWindow::createChrome):
+        (LauncherApplication::handleUserOptions):
+        * QtLauncher/webview.cpp:
+        (WebViewGraphicsBased::WebViewGraphicsBased):
+        (WebViewGraphicsBased::setResizesToContents):
+        (WebViewGraphicsBased::resizeEvent):
+        * QtLauncher/webview.h:
+        * Scripts/build-webkit:
+
 2010-03-13  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Adam Barth.

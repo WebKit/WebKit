@@ -77,6 +77,8 @@ static bool gCacheWebView = false;
 static bool gShowFrameRate = false;
 static QGraphicsView::ViewportUpdateMode gViewportUpdateMode = QGraphicsView::MinimalViewportUpdate;
 static QUrl gInspectorUrl;
+static bool gResizesToContents = false;
+static bool gUseTiledBackingStore = false;
 
 class LauncherWindow : public MainWindow {
     Q_OBJECT
@@ -117,6 +119,9 @@ protected slots:
 
     void setTouchMocking(bool on);
     void toggleAcceleratedCompositing(bool toggle);
+    void toggleTiledBackingStore(bool toggle);
+    void toggleResizesToContents(bool toggle);
+    
     void toggleWebGL(bool toggle);
     void initializeView(bool useGraphicsView = false);
     void toggleSpatialNavigation(bool b);
@@ -235,6 +240,7 @@ void LauncherWindow::applyPrefs(LauncherWindow* source)
     QWebSettings* settings = page()->settings();
 
     applySetting(QWebSettings::AcceleratedCompositingEnabled, settings, other, gUseCompositing);
+    applySetting(QWebSettings::TiledBackingStoreEnabled, settings, other, gUseTiledBackingStore);;
     applySetting(QWebSettings::WebGLEnabled, settings, other, false);
 
     if (!isGraphicsBased())
@@ -526,6 +532,16 @@ void LauncherWindow::toggleAcceleratedCompositing(bool toggle)
     page()->settings()->setAttribute(QWebSettings::AcceleratedCompositingEnabled, toggle);
 }
 
+void LauncherWindow::toggleTiledBackingStore(bool toggle)
+{
+    page()->settings()->setAttribute(QWebSettings::TiledBackingStoreEnabled, toggle);
+}
+
+void LauncherWindow::toggleResizesToContents(bool toggle)
+{
+    static_cast<WebViewGraphicsBased*>(m_view)->setResizesToContents(toggle);
+}
+
 void LauncherWindow::toggleWebGL(bool toggle)
 {
     page()->settings()->setAttribute(QWebSettings::WebGLEnabled, toggle);
@@ -695,6 +711,18 @@ void LauncherWindow::createChrome()
     toggleAcceleratedCompositing->setChecked(settings->testAttribute(QWebSettings::AcceleratedCompositingEnabled));
     toggleAcceleratedCompositing->setEnabled(isGraphicsBased());
     toggleAcceleratedCompositing->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
+    
+    QAction* toggleResizesToContents = graphicsViewMenu->addAction("Toggle Resizes To Contents Mode", this, SLOT(toggleResizesToContents(bool)));
+    toggleResizesToContents->setCheckable(true);
+    toggleResizesToContents->setChecked(false);
+    toggleResizesToContents->setEnabled(false);
+    toggleResizesToContents->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
+    
+    QAction* toggleTiledBackingStore = graphicsViewMenu->addAction("Toggle Tiled Backing Store", this, SLOT(toggleTiledBackingStore(bool)));
+    toggleTiledBackingStore->setCheckable(true);
+    toggleTiledBackingStore->setChecked(false);
+    toggleTiledBackingStore->setEnabled(false);
+    toggleTiledBackingStore->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
 
     QAction* spatialNavigationAction = toolsMenu->addAction("Toggle Spatial Navigation", this, SLOT(toggleSpatialNavigation(bool)));
     spatialNavigationAction->setCheckable(true);
@@ -837,6 +865,8 @@ void LauncherApplication::handleUserOptions()
              << "[-show-fps]"
              << "[-r list]"
              << "[-inspector-url location]"
+             << "[-tiled-backing-store]"
+             << "[-resizes-to-contents]"
              << "URLs";
         appQuit(0);
     }
@@ -857,6 +887,16 @@ void LauncherApplication::handleUserOptions()
     if (args.contains("-cache-webview")) {
         requiresGraphicsView("-cache-webview");
         gCacheWebView = true;
+    }
+
+    if (args.contains("-tiled-backing-store")) {
+        requiresGraphicsView("-tiled-backing-store");
+        gUseTiledBackingStore = true;
+    }
+
+    if (args.contains("-resizes-to-contents")) {
+        requiresGraphicsView("-resizes-to-contents");
+        gResizesToContents = true;
     }
 
     QString arg1("-viewport-update-mode");
