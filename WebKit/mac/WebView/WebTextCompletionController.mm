@@ -84,8 +84,7 @@ using namespace std;
     NSRect scrollFrame = NSMakeRect(0, 0, 100, 100);
     NSRect tableFrame = NSZeroRect;    
     tableFrame.size = [NSScrollView contentSizeForFrameSize:scrollFrame.size hasHorizontalScroller:NO hasVerticalScroller:YES borderType:NSNoBorder];
-    // Added cast to work around problem with multiple Foundation initWithIdentifier: methods with different parameter types.
-    NSTableColumn *column = [(NSTableColumn *)[NSTableColumn alloc] initWithIdentifier:[NSNumber numberWithInt:0]];
+    NSTableColumn *column = [[NSTableColumn alloc] init];
     [column setWidth:tableFrame.size.width];
     [column setEditable:NO];
     

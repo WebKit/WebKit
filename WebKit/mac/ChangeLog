@@ -1,3 +1,14 @@
+2010-03-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Remove unneeded dependency on non-string identifier for an NSTableColumn
+        https://bugs.webkit.org/show_bug.cgi?id=36106
+
+        * WebView/WebTextCompletionController.mm:
+        (-[WebTextCompletionController _buildUI]): Use init instead of initWithIdentifier:
+        because the table has only one column and that column does not need an identifier.
+
 2010-03-12  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Simon Fraser.
