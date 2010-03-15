@@ -1,3 +1,13 @@
+2010-03-14  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        Fix the webkit-patch bots.  Turns out they need the path of the main
+        script to run properly.
+
+        * Scripts/webkit-patch:
+        * Scripts/webkitpy/patch/patcher.py:
+
 2010-03-14  Darin Adler  <darin@apple.com>
 
         Tell Subversion about more directories that expect to have .pyc files.

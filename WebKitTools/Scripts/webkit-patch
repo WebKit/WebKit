@@ -62,7 +62,7 @@ def main():
     # version warning.
     from webkitpy.patch.patcher import WebKitPatch
 
-    WebKitPatch().main()
+    WebKitPatch(__file__).main()
 
 
 if __name__ == "__main__":

@@ -53,9 +53,10 @@ class WebKitPatch(MultiCommandTool):
         make_option("--status-host", action="store", dest="status_host", type="string", nargs=1, help="Hostname (e.g. localhost or commit.webkit.org) where status updates should be posted."),
     ]
 
-    def __init__(self):
+    def __init__(self, path):
         MultiCommandTool.__init__(self)
 
+        self._path = path
         self.bugs = Bugzilla()
         self.buildbot = BuildBot()
         self.executive = Executive()
@@ -81,7 +82,7 @@ class WebKitPatch(MultiCommandTool):
         return self._scm
 
     def path(self):
-        return __file__
+        return self._path
 
     def should_show_in_main_help(self, command):
         if not command.show_in_main_help:
