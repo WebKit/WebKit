@@ -361,6 +361,9 @@ http/tests/appcache
 http/tests/xmlhttprequest/access-control-basic-non-simple-allow-async.html
 http/tests/xmlhttprequest/access-control-basic-non-simple-allow.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=36145 - AX: windows DRT needs to implement ::press
+accessibility/label-element-press.html
+
 # Accessibility tests without results or with Mac-specific results.
 accessibility/aria-checkbox-text.html
 accessibility/aria-combobox.html

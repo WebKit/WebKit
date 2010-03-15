@@ -1,5 +1,16 @@
 2010-03-15  Chris Fleizach  <cfleizach@apple.com>
 
+        Unreviewed layout test fix.
+
+        VO not able to perform a VO-spacebar on facebook links
+        https://bugs.webkit.org/show_bug.cgi?id=36132
+ 
+        This test must be skipped until https://bugs.webkit.org/show_bug.cgi?id=36145 is done.
+
+        * platform/win/Skipped:
+
+2010-03-15  Chris Fleizach  <cfleizach@apple.com>
+
         Reviewed by Beth Dakin.
 
         VO not able to perform a VO-spacebar on facebook links

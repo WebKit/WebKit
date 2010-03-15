@@ -491,7 +491,7 @@ void AccessibilityUIElement::showMenu()
 
 void AccessibilityUIElement::press()
 {
-    m_element->accDoDefaultAction(self());
+    // FIXME: implement
 }
 
 AccessibilityUIElement AccessibilityUIElement::disclosedRowAtIndex(unsigned index)
