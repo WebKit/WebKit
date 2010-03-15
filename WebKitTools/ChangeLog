@@ -1,5 +1,19 @@
 2010-03-15  Chris Fleizach  <cfleizach@apple.com>
 
+        Unreviewed. Fix break of layout tests on win and gtk.
+
+        VO not able to perform a VO-spacebar on facebook links
+        https://bugs.webkit.org/show_bug.cgi?id=36132
+
+        Attempting to implement press action for windows and gtk.
+
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (AccessibilityUIElement::press):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::press):
+
+2010-03-15  Chris Fleizach  <cfleizach@apple.com>
+
         Reviewed by Beth Dakin.
 
         VO not able to perform a VO-spacebar on facebook links
