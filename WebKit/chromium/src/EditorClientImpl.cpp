@@ -413,8 +413,10 @@ static const KeyDownEntry keyDownEntries[] = {
     { VKEY_DOWN,   0,                  "MoveDown"                             },
     { VKEY_DOWN,   ShiftKey,           "MoveDownAndModifySelection"           },
     { VKEY_NEXT,   ShiftKey,           "MovePageDownAndModifySelection"       },
+#if !OS(DARWIN)
     { VKEY_PRIOR,  0,                  "MovePageUp"                           },
     { VKEY_NEXT,   0,                  "MovePageDown"                         },
+#endif
     { VKEY_HOME,   0,                  "MoveToBeginningOfLine"                },
     { VKEY_HOME,   ShiftKey,
         "MoveToBeginningOfLineAndModifySelection"                             },
@@ -422,6 +424,8 @@ static const KeyDownEntry keyDownEntries[] = {
     { VKEY_LEFT,   CommandKey,         "MoveToBeginningOfLine"                },
     { VKEY_LEFT,   CommandKey | ShiftKey,
       "MoveToBeginningOfLineAndModifySelection"                               },
+    { VKEY_PRIOR,  OptionKey,          "MovePageUp"                           },
+    { VKEY_NEXT,   OptionKey,          "MovePageDown"                         },
 #endif
 #if OS(DARWIN)
     { VKEY_UP,     CommandKey,         "MoveToBeginningOfDocument"            },

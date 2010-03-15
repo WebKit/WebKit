@@ -1,8 +1,6 @@
 <script>
-if (window.layoutTestController) {
+if (window.layoutTestController)
     layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
-}
 
 function runTest()
 {
@@ -36,9 +34,6 @@ function runTest()
         throw "cursor should be at line 1, not " + line;
 
     document.getElementById("results").innerText = "PASS";
-
-    if (window.layoutTestController)
-        window.layoutTestController.notifyDone();
 }
 </script>
 
