@@ -1,3 +1,19 @@
+2010-03-11  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GStreamer] progressTimer never stopped after EOS
+        https://bugs.webkit.org/show_bug.cgi?id=36007
+
+        Mark the pipeline as paused only if playback hasn't ended
+        yet. When didEnd() is triggered, the pipeline is paused (but
+        paused() still returns false) and a timeupdate event is fired,
+        those 2 conditions allow the HTMLMediaElement to stop the
+        progressTimer (in updatePlayerState, via mediaPlayerTimeChanged).
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivate::updateStates):
+
 2010-03-14  Chang Shu  <chang.shu@nokia.com>
 
         Reviewed by Simon Hausmann.

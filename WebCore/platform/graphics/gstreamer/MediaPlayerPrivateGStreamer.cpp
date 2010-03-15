@@ -875,8 +875,9 @@ void MediaPlayerPrivate::updateStates()
                     LOG_VERBOSE(Media, "[Buffering] Restarting playback.");
                     gst_element_set_state(m_playBin, GST_STATE_PLAYING);
                 }
-            } else if (!m_buffering)
+            } else if (!m_buffering && (currentTime() < duration())) {
                 m_paused = true;
+            }
         } else if (state == GST_STATE_PLAYING) {
             m_readyState = MediaPlayer::HaveEnoughData;
             m_paused = false;
