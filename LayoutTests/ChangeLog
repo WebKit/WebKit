@@ -1,3 +1,31 @@
+2010-03-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
+        Update some pixel results for composting tests; some were incorrect, and others had minor
+        pixel differences.
+
+        * platform/mac/compositing/color-matching/image-color-matching-expected.checksum:
+        * platform/mac/compositing/color-matching/image-color-matching-expected.png:
+        * platform/mac/compositing/direct-image-compositing-expected.checksum:
+        * platform/mac/compositing/direct-image-compositing-expected.png:
+        * platform/mac/compositing/overflow/overflow-scroll-expected.checksum:
+        * platform/mac/compositing/overflow/overflow-scroll-expected.png:
+        * platform/mac/compositing/reflections/animation-inside-reflection-expected.checksum:
+        * platform/mac/compositing/reflections/animation-inside-reflection-expected.png:
+        * platform/mac/compositing/reflections/load-video-in-reflection-expected.checksum:
+        * platform/mac/compositing/reflections/load-video-in-reflection-expected.png:
+        * platform/mac/compositing/reflections/nested-reflection-animated-expected.checksum:
+        * platform/mac/compositing/reflections/nested-reflection-animated-expected.png:
+        * platform/mac/compositing/reflections/nested-reflection-transition-expected.checksum:
+        * platform/mac/compositing/reflections/nested-reflection-transition-expected.png:
+        * platform/mac/compositing/reflections/reflection-on-composited-expected.checksum:
+        * platform/mac/compositing/reflections/reflection-on-composited-expected.png:
+        * platform/mac/compositing/repaint/become-overlay-composited-layer-expected.checksum: Added.
+        * platform/mac/compositing/repaint/become-overlay-composited-layer-expected.png: Added.
+        * platform/mac/compositing/repaint/layer-repaint-rects-expected.checksum:
+        * platform/mac/compositing/repaint/layer-repaint-rects-expected.png:
+
 2010-03-15  Andy Estes  <aestes@apple.com>
 
         Reviewed by John Sullivan.
