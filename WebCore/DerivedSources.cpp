@@ -143,6 +143,7 @@
 #include "JSHTMLParagraphElement.cpp"
 #include "JSHTMLParamElement.cpp"
 #include "JSHTMLPreElement.cpp"
+#include "JSHTMLProgressElement.cpp"
 #include "JSHTMLQuoteElement.cpp"
 #include "JSHTMLScriptElement.cpp"
 #include "JSHTMLSelectElement.cpp"

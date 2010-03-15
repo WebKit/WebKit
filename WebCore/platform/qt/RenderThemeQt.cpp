@@ -41,11 +41,17 @@
 #include "GraphicsContext.h"
 #include "HTMLInputElement.h"
 #include "HTMLMediaElement.h"
+#if ENABLE(PROGRESS_TAG)
+#include "HTMLProgressElement.h"
+#endif
 #include "HTMLNames.h"
 #include "NotImplemented.h"
 #include "Page.h"
 #include "QWebPageClient.h"
 #include "RenderBox.h"
+#if ENABLE(PROGRESS_TAG)
+#include "RenderProgress.h"
+#endif
 #include "RenderSlider.h"
 #include "RenderTheme.h"
 #include "TimeRanges.h"
@@ -63,6 +69,9 @@
 #include <QStyleFactory>
 #include <QStyleOptionButton>
 #include <QStyleOptionFrameV2>
+#if ENABLE(PROGRESS_TAG)
+#include <QStyleOptionProgressBarV2>
+#endif
 #include <QStyleOptionSlider>
 #include <QWidget>
 
@@ -631,6 +640,42 @@ bool RenderThemeQt::paintMenuListButton(RenderObject* o, const RenderObject::Pai
 
     return false;
 }
+
+#if ENABLE(PROGRESS_TAG)
+void RenderThemeQt::adjustProgressBarStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+{
+    style->setBoxShadow(0);
+}
+
+bool RenderThemeQt::paintProgressBar(RenderObject* o, const RenderObject::PaintInfo& pi, const IntRect& r)
+{
+    StylePainter p(this, pi);
+    if (!p.isValid())
+       return true;
+
+    QStyleOptionProgressBarV2 option;
+    if (p.widget)
+       option.initFrom(p.widget);
+    initializeCommonQStyleOptions(option, o);
+
+    RenderProgress* renderProgress = toRenderProgress(o);
+    HTMLProgressElement* element = static_cast<HTMLProgressElement*>(renderProgress->node());
+    option.rect = r;
+    option.maximum = element->max();
+    option.minimum = 0;
+    option.progress = element->value();
+
+    const QPoint topLeft = r.topLeft();
+    p.painter->translate(topLeft);
+    option.rect.moveTo(QPoint(0, 0));
+    option.rect.setSize(r.size());
+
+    p.drawControl(QStyle::CE_ProgressBar, option);
+    p.painter->translate(-topLeft);
+
+    return false;
+}
+#endif
 
 bool RenderThemeQt::paintSliderTrack(RenderObject* o, const RenderObject::PaintInfo& pi,
                                      const IntRect& r)

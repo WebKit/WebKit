@@ -277,6 +277,9 @@ public:
     virtual bool isListMarker() const { return false; }
     virtual bool isMedia() const { return false; }
     virtual bool isMenuList() const { return false; }
+#if ENABLE(PROGRESS_TAG)
+    virtual bool isProgress() const { return false; }
+#endif
     virtual bool isRenderBlock() const { return false; }
     virtual bool isRenderButton() const { return false; }
     virtual bool isRenderImage() const { return false; }

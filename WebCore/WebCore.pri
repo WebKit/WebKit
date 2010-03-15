@@ -54,6 +54,7 @@ contains(DEFINES, ENABLE_SINGLE_THREADED=1) {
 !contains(DEFINES, ENABLE_VIDEO=.): DEFINES += ENABLE_VIDEO=1
 !contains(DEFINES, ENABLE_RUBY=.): DEFINES += ENABLE_RUBY=1
 !contains(DEFINES, ENABLE_SANDBOX=.): DEFINES += ENABLE_SANDBOX=1
+!contains(DEFINES, ENABLE_PROGRESS_TAG=.): DEFINES += ENABLE_PROGRESS_TAG=1
 !contains(DEFINES, ENABLE_BLOB_SLICE=.): DEFINES += ENABLE_BLOB_SLICE=0
 
 greaterThan(QT_MINOR_VERSION, 5) {
@@ -368,6 +369,7 @@ IDL_BINDINGS += \
     html/HTMLParagraphElement.idl \
     html/HTMLParamElement.idl \
     html/HTMLPreElement.idl \
+    html/HTMLProgressElement.idl \
     html/HTMLQuoteElement.idl \
     html/HTMLScriptElement.idl \
     html/HTMLSelectElement.idl \

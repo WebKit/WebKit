@@ -209,6 +209,10 @@ void RenderTheme::adjustStyle(CSSStyleSelector* selector, RenderStyle* style, El
             return adjustSearchFieldResultsDecorationStyle(selector, style, e);
         case SearchFieldResultsButtonPart:
             return adjustSearchFieldResultsButtonStyle(selector, style, e);
+#if ENABLE(PROGRESS_TAG)
+        case ProgressBarPart:
+            return adjustProgressBarStyle(selector, style, e);
+#endif
         default:
             break;
     }
@@ -267,6 +271,10 @@ bool RenderTheme::paint(RenderObject* o, const RenderObject::PaintInfo& paintInf
 #endif
         case MenulistPart:
             return paintMenuList(o, paintInfo, r);
+#if ENABLE(PROGRESS_TAG)
+        case ProgressBarPart:
+            return paintProgressBar(o, paintInfo, r);
+#endif
         case SliderHorizontalPart:
         case SliderVerticalPart:
             return paintSliderTrack(o, paintInfo, r);
@@ -357,6 +365,9 @@ bool RenderTheme::paintBorderOnly(RenderObject* o, const RenderObject::PaintInfo
         case DefaultButtonPart:
         case ButtonPart:
         case MenulistPart:
+#if ENABLE(PROGRESS_TAG)
+        case ProgressBarPart:
+#endif
         case SliderHorizontalPart:
         case SliderVerticalPart:
         case SliderThumbHorizontalPart:
@@ -392,6 +403,9 @@ bool RenderTheme::paintDecorations(RenderObject* o, const RenderObject::PaintInf
         case DefaultButtonPart:
         case ButtonPart:
         case MenulistPart:
+#if ENABLE(PROGRESS_TAG)
+        case ProgressBarPart:
+#endif
         case SliderHorizontalPart:
         case SliderVerticalPart:
         case SliderThumbHorizontalPart:
@@ -824,6 +838,12 @@ void RenderTheme::adjustTextAreaStyle(CSSStyleSelector*, RenderStyle*, Element*)
 void RenderTheme::adjustMenuListStyle(CSSStyleSelector*, RenderStyle*, Element*) const
 {
 }
+
+#if ENABLE(PROGRESS_TAG)
+void RenderTheme::adjustProgressBarStyle(CSSStyleSelector*, RenderStyle*, Element*) const
+{
+}
+#endif
 
 void RenderTheme::adjustMenuListButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const
 {

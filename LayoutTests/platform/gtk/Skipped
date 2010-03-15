@@ -5823,6 +5823,10 @@ fast/forms/multiple-form-submission-protection-mouse.html
 # mouseScrollBy() is not yet implemented in the GTK EventSender API.
 fast/events/remove-child-onscroll.html
 
+# renderTheme is not ready to draw progress element
+fast/dom/HTMLProgressElement/progress-element.html
+fast/dom/HTMLProgressElement/set-progress-properties.html
+
 # For some reason it fails on DRT, although works on GtkLauncher and other ports' DRT.
 # https://bugs.webkit.org/show_bug.cgi?id=35984
 fast/events/spatial-navigation/snav-iframe-with-offscreen-focusable-element.html

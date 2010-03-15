@@ -854,6 +854,9 @@ static HashSet<AtomicStringImpl*>* inlineTagList()
         tagList.add(rpTag.localName().impl());
         tagList.add(rtTag.localName().impl());
         tagList.add(rubyTag.localName().impl());
+#if ENABLE(PROGRESS_TAG)
+        tagList.add(progressTag.localName().impl());
+#endif
     }
     return &tagList;
 }

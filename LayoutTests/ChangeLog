@@ -1,3 +1,24 @@
+2010-03-14  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Support for HTMLProgressElement
+        https://bugs.webkit.org/show_bug.cgi?id=35937
+
+        * fast/dom/HTMLProgressElement: Added.
+        * fast/dom/HTMLProgressElement/progress-element.html: Added.
+        * fast/dom/HTMLProgressElement/script-tests: Added.
+        * fast/dom/HTMLProgressElement/script-tests/TEMPLATE.html: Added.
+        * fast/dom/HTMLProgressElement/script-tests/set-progress-properties.js: Added.
+        * fast/dom/HTMLProgressElement/set-progress-properties.html: Added.
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/fast/dom/HTMLProgressElement: Added.
+        * platform/qt/fast/dom/HTMLProgressElement/progress-element-expected.checksum: Added.
+        * platform/qt/fast/dom/HTMLProgressElement/progress-element-expected.png: Added.
+        * platform/qt/fast/dom/HTMLProgressElement/progress-element-expected.txt: Added.
+        * platform/qt/fast/dom/HTMLProgressElement/set-progress-properties-expected.txt: Added.
+
 2010-03-14  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin Adler.

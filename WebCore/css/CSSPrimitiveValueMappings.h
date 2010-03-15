@@ -275,6 +275,11 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
         case OuterSpinButtonPart:
             m_value.ident = CSSValueOuterSpinButton;
             break;
+        case ProgressBarPart:
+#if ENABLE(PROGRESS_BAR)
+            m_value.ident = CSSValueProgressBar;
+#endif
+            break;
         case SliderHorizontalPart:
             m_value.ident = CSSValueSliderHorizontal;
             break;

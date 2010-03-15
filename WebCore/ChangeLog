@@ -1,3 +1,81 @@
+2010-03-14  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Support for HTMLProgressElement
+        https://bugs.webkit.org/show_bug.cgi?id=35937
+
+        Added support for HTMLProgressElement.
+        This implementation is enabled only for Qt, because only RenderThemeQt
+        was modified to actually draw the progress element.
+        The labels attribute of the progress element will be implemented in a
+        separate patch.
+
+        Tests: fast/dom/HTMLProgressElement/progress-element.html
+               fast/dom/HTMLProgressElement/set-progress-properties.html
+
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::extractPseudoType):
+        * css/CSSValueKeywords.in:
+        * css/html.css:
+        * html/HTMLElement.cpp:
+        (WebCore::inlineTagList):
+        * html/HTMLElementsAllInOne.cpp:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::HTMLFormControlElement):
+        * html/HTMLFormControlElement.h:
+        * html/HTMLProgressElement.cpp: Added.
+        (WebCore::HTMLProgressElement::HTMLProgressElement):
+        (WebCore::HTMLProgressElement::create):
+        (WebCore::HTMLProgressElement::createRenderer):
+        (WebCore::HTMLProgressElement::formControlType):
+        (WebCore::HTMLProgressElement::parseMappedAttribute):
+        (WebCore::HTMLProgressElement::value):
+        (WebCore::HTMLProgressElement::setValue):
+        (WebCore::HTMLProgressElement::max):
+        (WebCore::HTMLProgressElement::setMax):
+        (WebCore::HTMLProgressElement::position):
+        * html/HTMLProgressElement.h: Added.
+        (WebCore::HTMLProgressElement::isOptionalFormControl):
+        * html/HTMLProgressElement.idl: Added.
+        * html/HTMLTagNames.in:
+        * page/DOMWindow.idl:
+        * platform/ThemeTypes.h:
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::adjustProgressBarStyle):
+        (WebCore::RenderThemeQt::paintProgressBar):
+        * platform/qt/RenderThemeQt.h:
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isProgress):
+        * rendering/RenderProgress.cpp: Added.
+        (WebCore::RenderProgress::RenderProgress):
+        (WebCore::RenderProgress::baselinePosition):
+        (WebCore::RenderProgress::calcPrefWidths):
+        (WebCore::RenderProgress::layout):
+        (WebCore::RenderProgress::updateFromElement):
+        * rendering/RenderProgress.h: Added.
+        (WebCore::RenderProgress::renderName):
+        (WebCore::RenderProgress::isProgress):
+        (WebCore::toRenderProgress):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+        (WebCore::RenderTheme::paint):
+        (WebCore::RenderTheme::paintBorderOnly):
+        (WebCore::RenderTheme::paintDecorations):
+        (WebCore::RenderTheme::adjustProgressBarStyle):
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::paintProgressBar):
+
 2010-03-14  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin Adler.

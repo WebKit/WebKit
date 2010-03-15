@@ -87,6 +87,7 @@
 #include "HTMLPlugInElement.cpp"
 #include "HTMLPlugInImageElement.cpp"
 #include "HTMLPreElement.cpp"
+#include "HTMLProgressElement.cpp"
 #include "HTMLQuoteElement.cpp"
 #include "HTMLScriptElement.cpp"
 #include "HTMLSelectElement.cpp"

@@ -240,6 +240,7 @@ IDL_BINDINGS += \
 	WebCore/html/HTMLParagraphElement.idl \
 	WebCore/html/HTMLParamElement.idl \
 	WebCore/html/HTMLPreElement.idl \
+	WebCore/html/HTMLProgressElement.idl \
 	WebCore/html/HTMLQuoteElement.idl \
 	WebCore/html/HTMLScriptElement.idl \
 	WebCore/html/HTMLSelectElement.idl \
@@ -1145,6 +1146,8 @@ webcore_sources += \
 	WebCore/html/HTMLPlugInImageElement.h \
 	WebCore/html/HTMLPreElement.cpp \
 	WebCore/html/HTMLPreElement.h \
+	WebCore/html/HTMLProgressElement.cpp \
+	WebCore/html/HTMLProgressElement.h \
 	WebCore/html/HTMLQuoteElement.cpp \
 	WebCore/html/HTMLQuoteElement.h \
 	WebCore/html/HTMLScriptElement.cpp \
@@ -1846,6 +1849,8 @@ webcore_sources += \
 	WebCore/rendering/RenderPart.h \
 	WebCore/rendering/RenderPartObject.cpp \
 	WebCore/rendering/RenderPartObject.h \
+	WebCore/rendering/RenderProgress.cpp \
+	WebCore/rendering/RenderProgress.h \
 	WebCore/rendering/RenderReplaced.cpp \
 	WebCore/rendering/RenderReplaced.h \
 	WebCore/rendering/RenderReplica.cpp \
@@ -2168,6 +2173,14 @@ FEATURE_DEFINES += ENABLE_DATAGRID=0
 
 webcore_cppflags += \
 	-DENABLE_DATAGRID=0
+
+# ----
+# HTML Progress Element - disable for now, since painting code is missing.
+# ----
+FEATURE_DEFINES += ENABLE_PROGRESS_TAG=0
+
+webcore_cppflags += \
+	-DENABLE_PROGRESS_TAG=0
 
 # ----
 # JavaScript Debugger/Profiler

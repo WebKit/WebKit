@@ -515,6 +515,19 @@ option {
     font-weight: normal;
 }
 
+/* progress */
+
+progress {
+    -webkit-appearance: progress-bar;
+    padding: initial;
+    border: initial;
+    margin: 2px;
+}
+
+progress::-webkit-progress-bar {
+    -webkit-appearance: progress-bar;
+}
+
 /* datagrid */
 
 datagrid {
