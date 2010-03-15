@@ -344,6 +344,12 @@ static JSValueRef showMenuCallback(JSContextRef context, JSObjectRef function, J
     return JSValueMakeUndefined(context);
 }
 
+static JSValueRef pressCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    toAXElement(thisObject)->press();
+    return JSValueMakeUndefined(context);
+}
+
 static JSValueRef takeFocusCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     toAXElement(thisObject)->takeFocus();
@@ -708,6 +714,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "increment", incrementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "decrement", decrementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "showMenu", showMenuCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "press", pressCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "disclosedRowAtIndex", disclosedRowAtIndexCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "ariaOwnsElementAtIndex", ariaOwnsElementAtIndexCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "ariaFlowToElementAtIndex", ariaFlowToElementAtIndexCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

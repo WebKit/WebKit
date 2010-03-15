@@ -747,6 +747,11 @@ void AccessibilityUIElement::showMenu()
     [m_element accessibilityPerformAction:NSAccessibilityShowMenuAction];
 }
 
+void AccessibilityUIElement::press()
+{
+    [m_element accessibilityPerformAction:NSAccessibilityPressAction];
+}
+
 JSStringRef AccessibilityUIElement::accessibilityValue() const
 {
     // FIXME: implement
