@@ -1,3 +1,20 @@
+2010-03-15  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GStreamer] duration query optimizations
+        https://bugs.webkit.org/show_bug.cgi?id=36116
+
+        Don't reattempt duration queries that previously failed and cache
+        media duration only if it's known.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::duration):
+        (WebCore::MediaPlayerPrivate::updateStates):
+        (WebCore::MediaPlayerPrivate::durationChanged):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+
 2010-03-11  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Adam Barth.

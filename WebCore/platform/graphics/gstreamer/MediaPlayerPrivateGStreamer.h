@@ -170,6 +170,7 @@ class MediaPlayerPrivate : public MediaPlayerPrivateInterface {
             int m_bufferingPercentage;
             MediaPlayer::Preload m_preload;
             bool m_delayingLoad;
+            bool m_mediaDurationKnown;
     };
 }
 

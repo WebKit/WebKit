@@ -298,6 +298,7 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     , m_bufferingPercentage(0)
     , m_preload(MediaPlayer::Auto)
     , m_delayingLoad(false)
+    , m_mediaDurationKnown(true)
 {
     if (doGstInit())
         createGSTPlayBin();
@@ -416,6 +417,10 @@ float MediaPlayerPrivate::duration() const
 
     if (m_errorOccured)
         return 0.0;
+
+    // Media duration query failed already, don't attempt new useless queries.
+    if (!m_mediaDurationKnown)
+        return numeric_limits<float>::infinity();
 
     if (m_mediaDuration)
         return m_mediaDuration;
@@ -875,7 +880,8 @@ void MediaPlayerPrivate::updateStates()
 
             if (!m_mediaDuration) {
                 float newDuration = duration();
-                if (!isinf(newDuration))
+                m_mediaDurationKnown = !isinf(newDuration);
+                if (m_mediaDurationKnown)
                     m_mediaDuration = newDuration;
             }
 
@@ -1113,7 +1119,22 @@ void MediaPlayerPrivate::durationChanged()
     m_mediaDuration = 0;
 
     // And re-cache it if possible.
+    GstState state;
+    gst_element_get_state(m_playBin, &state, 0, 0);
     float newDuration = duration();
+
+    if (state <= GST_STATE_READY) {
+        // Don't set m_mediaDurationKnown yet if the pipeline is not
+        // paused. This allows duration() query to fail at least once
+        // before playback starts and duration becomes known.
+        if (!isinf(newDuration))
+            m_mediaDuration = newDuration;
+    } else {
+        m_mediaDurationKnown = !isinf(newDuration);
+        if (m_mediaDurationKnown)
+            m_mediaDuration = newDuration;
+    }
+
     if (!isinf(newDuration))
         m_mediaDuration = newDuration;
 
