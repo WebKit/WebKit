@@ -1,3 +1,12 @@
+2010-03-04  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Add a long long version of abs() for MSVC.
+
+        * wtf/MathExtras.h:
+        (abs):
+
 2010-03-15  Gabor Loki  <loki@webkit.org>
 
         Reviewed by Gavin Barraclough.

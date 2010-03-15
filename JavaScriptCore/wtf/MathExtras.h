@@ -123,6 +123,8 @@ inline double trunc(double num) { return num > 0 ? floor(num) : ceil(num); }
 
 #if COMPILER(MSVC)
 
+inline long long abs(long long num) { return _abs64(num); }
+
 inline bool isinf(double num) { return !_finite(num) && !_isnan(num); }
 inline bool isnan(double num) { return !!_isnan(num); }
 inline bool signbit(double num) { return _copysign(1.0, num) < 0; }
