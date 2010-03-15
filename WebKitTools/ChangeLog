@@ -1,3 +1,12 @@
+2010-03-14  Darin Adler  <darin@apple.com>
+
+        Tell Subversion about more directories that expect to have .pyc files.
+
+        * Scripts/webkitpy/init: Added property svn:ignore.
+        * Scripts/webkitpy/patch: Added property svn:ignore.
+        * Scripts/webkitpy/thirdparty: Added property svn:ignore.
+        * Scripts/webkitpy/thirdparty/autoinstalled: Added property svn:ignore.
+
 2010-03-14  Antti Koivisto  <koivisto@iki.fi>
 
         Reviewed by Simon Hausmann.
