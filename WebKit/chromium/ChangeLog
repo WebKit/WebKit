@@ -1,3 +1,14 @@
+2010-03-15  Marcus Bulach  <bulach@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Send the frame URL on GeolocationServiceBridgeImpl::startUpdating.
+        https://bugs.webkit.org/show_bug.cgi?id=36012
+
+        * public/GeolocationServiceBridgeChromium.h:
+        * src/GeolocationServiceBridgeChromium.cpp:
+        (WebKit::GeolocationServiceBridgeImpl::startUpdating):
+
 2010-03-15  Patrik Persson  <patrik.j.persson@ericsson.com>
 
         Reviewed by Darin Adler.

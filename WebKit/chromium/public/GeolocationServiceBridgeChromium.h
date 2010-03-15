@@ -53,7 +53,7 @@ public:
 class WebGeolocationServiceInterface {
 public:
     virtual void requestPermissionForFrame(int bridgeId, const WebURL& url) = 0;
-    virtual void startUpdating(int bridgeId, bool hasHighAccuracy) = 0;
+    virtual void startUpdating(int bridgeId, const WebURL& url, bool enableHighAccuracy) = 0;
     virtual void stopUpdating(int bridgeId) = 0;
     virtual void suspend(int bridgeId) = 0;
     virtual void resume(int bridgeId) = 0;
