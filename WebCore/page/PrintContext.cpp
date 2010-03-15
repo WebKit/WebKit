@@ -179,13 +179,14 @@ int PrintContext::pageNumberForElement(Element* element, const FloatSize& pageSi
 
     int top = box->offsetTop();
     int left = box->offsetLeft();
-    for (int pageNumber = 0; pageNumber < printContext.pageCount(); pageNumber++) {
+    int pageNumber = 0;
+    for (; pageNumber < printContext.pageCount(); pageNumber++) {
         const IntRect& page = printContext.pageRect(pageNumber);
         if (page.x() <= left && left < page.right() && page.y() <= top && top < page.bottom())
-            return pageNumber;
+            break;
     }
     printContext.end();
-    return -1;
+    return (pageNumber < printContext.pageCount() ? pageNumber : -1);
 }
 
 int PrintContext::numberOfPages(Frame* frame, const FloatSize& pageSizeInPixels)

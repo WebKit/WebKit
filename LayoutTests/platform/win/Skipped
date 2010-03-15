@@ -432,6 +432,8 @@ accessibility/visible-elements.html
 # No support for print-to-pdf in Windows DRT
 printing/compositing-layer-printing.html
 printing/media-queries-print.html
+# Tests generating new results
+printing/return-from-printing-mode.html
 
 # No upload progress events on windows
 http/tests/xmlhttprequest/upload-onload-event.html

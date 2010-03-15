@@ -1,3 +1,21 @@
+2010-03-14  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Always call PrintContext.end() from PrintContext::pageNumberForElement().
+
+        Without this change, WebKit remains in printing mode after determining the page number if the specified element is found.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36049
+
+        * platform/gtk/Skipped:
+        * platform/mac/printing/return-from-printing-mode-expected.checksum: Added.
+        * platform/mac/printing/return-from-printing-mode-expected.png: Added.
+        * platform/mac/printing/return-from-printing-mode-expected.txt: Added.
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        * printing/return-from-printing-mode.html: Added.
+
 2010-03-14  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Darin Adler.

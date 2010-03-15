@@ -3594,8 +3594,9 @@ plugins/netscape-dom-access.html
 
 # Tests in printing/ directory
 #   Tests generating new results
-printing/media-queries-print.html
 printing/compositing-layer-printing.html
+printing/media-queries-print.html
+printing/return-from-printing-mode.html
 
 # Tests in scrollbars/ directory
 #   Tests generating new results

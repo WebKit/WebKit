@@ -3679,6 +3679,7 @@ fonts/monospace.html
 fonts/sans-serif.html
 fonts/serif.html
 plugins/embed-attributes-style.html
+printing/return-from-printing-mode.html
 scrollbars/basic-scrollbar.html
 scrollbars/disabled-scrollbar.html
 scrollbars/listbox-scrollbar-combinations.html
