@@ -3746,6 +3746,7 @@ dist_webinspector_DATA = \
 
 webinspectorimagesdir = ${datadir}/webkit-1.0/webinspector/Images
 dist_webinspectorimages_DATA = \
+	$(shell ls $(WebCore)/inspector/front-end/Images/*.gif) \
 	$(shell ls $(WebCore)/inspector/front-end/Images/*.png)
 
 webresourcesdir = ${datadir}/webkit-1.0/images

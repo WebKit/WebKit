@@ -1076,6 +1076,8 @@ WebInspector.updateResource = function(identifier, payload)
         this.resourceURLMap[resource.url] = resource;
         if (this.panels.resources)
             this.panels.resources.addResource(resource);
+        if (this.panels.audits)
+            this.panels.audits.resourceStarted(resource);
     }
 
     if (payload.didRequestChange) {
@@ -1120,6 +1122,8 @@ WebInspector.updateResource = function(identifier, payload)
     if (payload.didCompletionChange) {
         resource.failed = payload.failed;
         resource.finished = payload.finished;
+        if (this.panels.audits)
+            this.panels.audits.resourceFinished(resource);
     }
 
     if (payload.didTimingChange) {

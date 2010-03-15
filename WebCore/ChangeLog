@@ -1,3 +1,41 @@
+2010-03-15  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Implement a progress indicator in the Audits panel
+        when resources are reloading
+        https://bugs.webkit.org/show_bug.cgi?id=35971
+
+        * English.lproj/localizedStrings.js:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * inspector/front-end/AuditLauncherView.js:
+        (WebInspector.AuditLauncherView.prototype.updateResourceTrackingState):
+        (WebInspector.AuditLauncherView.prototype.get totalResources):
+        (WebInspector.AuditLauncherView.prototype.set totalResources):
+        (WebInspector.AuditLauncherView.prototype.get loadedResources):
+        (WebInspector.AuditLauncherView.prototype.set loadedResources):
+        (WebInspector.AuditLauncherView.prototype._resetResourceCount):
+        (WebInspector.AuditLauncherView.prototype.resourceStarted):
+        (WebInspector.AuditLauncherView.prototype.resourceFinished):
+        (WebInspector.AuditLauncherView.prototype.reset):
+        (WebInspector.AuditLauncherView.prototype._setAuditRunning):
+        (WebInspector.AuditLauncherView.prototype._launchButtonClicked):
+        (WebInspector.AuditLauncherView.prototype._createCategoryElement):
+        (WebInspector.AuditLauncherView.prototype._createLauncherUI):
+        (WebInspector.AuditLauncherView.prototype._updateResourceProgress):
+        (WebInspector.AuditLauncherView.prototype._updateButton):
+        * inspector/front-end/AuditsPanel.js:
+        (WebInspector.AuditsPanel.prototype.resourceStarted):
+        (WebInspector.AuditsPanel.prototype.resourceFinished):
+        (WebInspector.AuditsPanel.prototype.reset):
+        * inspector/front-end/Images/spinner.gif: Added.
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/audits.css:
+        (.audit-launcher-view .resource-progress > img):
+        * inspector/front-end/inspector.js:
+        (WebInspector.updateResource):
+
 2010-03-15  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

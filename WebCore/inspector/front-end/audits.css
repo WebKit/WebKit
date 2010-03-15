@@ -173,6 +173,12 @@ body.inactive .audit-launcher-view button, .audit-launcher-view button:disabled 
                 -webkit-gradient(linear, left top, left bottom, from(rgb(252, 252, 252)), to(rgb(223, 223, 223)));
 }
 
+.audit-launcher-view .resource-progress > img {
+    content: url(Images/spinner.gif);
+    vertical-align: text-top;
+    margin: 0 4px 0 8px;
+}
+
 .audit-result-view {
     overflow: auto;
     position: absolute;

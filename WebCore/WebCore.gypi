@@ -3942,6 +3942,7 @@
             'inspector/front-end/Images/segmentSelected.png',
             'inspector/front-end/Images/segmentSelectedEnd.png',
             'inspector/front-end/Images/sessionStorage.png',
+            'inspector/front-end/Images/spinner.gif',
             'inspector/front-end/Images/splitviewDimple.png',
             'inspector/front-end/Images/splitviewDividerBackground.png',
             'inspector/front-end/Images/statusbarBackground.png',

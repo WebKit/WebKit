@@ -98,6 +98,16 @@ WebInspector.AuditsPanel.prototype = {
         return this._auditCategoriesById;
     },
 
+    resourceStarted: function(resource)
+    {
+        this._launcherView.resourceStarted(resource);
+    },
+
+    resourceFinished: function(resource)
+    {
+        this._launcherView.resourceFinished(resource);
+    },
+
     _constructCategories: function()
     {
         this._auditCategoriesById = {};
@@ -238,6 +248,11 @@ WebInspector.AuditsPanel.prototype = {
     {
         WebInspector.Panel.prototype.show.call(this);
         this._updateLauncherViewControls(WebInspector.panels.resources.resourceTrackingEnabled);
+    },
+
+    reset: function()
+    {
+        this._launcherView.reset();
     },
 
     attach: function()

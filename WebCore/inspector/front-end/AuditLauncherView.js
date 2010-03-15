@@ -42,6 +42,8 @@ WebInspector.AuditLauncherView = function(categoriesById, runnerCallback)
     this._contentElement.className = "audit-launcher-view-content";
     this.element.appendChild(this._contentElement);
 
+    this._resetResourceCount();
+
     function categorySortFunction(a, b)
     {
         var aTitle = a.displayName || "";
@@ -67,6 +69,9 @@ WebInspector.AuditLauncherView.prototype = {
     {
         if (!this._auditPresentStateLabelElement)
             return;
+
+        this._resetResourceCount();
+
         if (isTracking) {
             this._auditPresentStateLabelElement.nodeValue = WebInspector.UIString("Audit Present State");
             this._auditPresentStateElement.disabled = false;
@@ -79,12 +84,63 @@ WebInspector.AuditLauncherView.prototype = {
         }
     },
 
+    get totalResources()
+    {
+        return this._totalResources;
+    },
+
+    set totalResources(x)
+    {
+        if (this._totalResources === x)
+            return;
+        this._totalResources = x;
+        this._updateResourceProgress();
+    },
+
+    get loadedResources()
+    {
+        return this._loadedResources;
+    },
+
+    set loadedResources(x)
+    {
+        if (this._loadedResources === x)
+            return;
+        this._loadedResources = x;
+        this._updateResourceProgress();
+    },
+
+    _resetResourceCount: function()
+    {
+        this.loadedResources = 0;
+
+        // We never receive a resourceStarted notification for the main resource
+        // (see InspectorController.willSendRequest())
+        this.totalResources = 1;
+    },
+
+    resourceStarted: function(resource)
+    {
+        ++this.totalResources;
+    },
+
+    resourceFinished: function(resource)
+    {
+        ++this.loadedResources;
+    },
+
+    reset: function()
+    {
+        this._resetResourceCount();
+    },
+
     _setAuditRunning: function(auditRunning)
     {
         if (this._auditRunning === auditRunning)
             return;
         this._auditRunning = auditRunning;
         this._updateButton();
+        this._updateResourceProgress();
     },
 
     _launchButtonClicked: function(event)
@@ -95,12 +151,8 @@ WebInspector.AuditLauncherView.prototype = {
             if (this._categoriesById[id]._checkboxElement.checked)
                 catIds.push(id);
         }
-        function profilingFinishedCallback()
-        {
-            this._setAuditRunning(false);
-        }
         this._setAuditRunning(true);
-        this._runnerCallback(catIds, this._auditPresentStateElement.checked, profilingFinishedCallback.bind(this));
+        this._runnerCallback(catIds, this._auditPresentStateElement.checked, this._setAuditRunning.bind(this, false));
     },
 
     _selectAllClicked: function(checkCategories)
@@ -121,11 +173,10 @@ WebInspector.AuditLauncherView.prototype = {
 
     _createCategoryElement: function(title, id)
     {
-        var element;
         var labelElement = document.createElement("label");
         labelElement.id = this._categoryIdPrefix + id;
 
-        element = document.createElement("input");
+        var element = document.createElement("input");
         element.type = "checkbox";
         labelElement.appendChild(element);
         labelElement.appendChild(document.createTextNode(title));
@@ -188,9 +239,18 @@ WebInspector.AuditLauncherView.prototype = {
         this._buttonContainerElement.appendChild(labelElement);
 
         this._launchButton = document.createElement("button");
-        this._launchButton.setAttribute("type", "button");
+        this._launchButton.type = "button";
+        this._launchButton.textContent = WebInspector.UIString("Run");
         this._launchButton.addEventListener("click", this._launchButtonClicked.bind(this), false);
         this._buttonContainerElement.appendChild(this._launchButton);
+
+        this._resourceProgressContainer = document.createElement("span");
+        this._resourceProgressContainer.className = "resource-progress";
+        var resourceProgressImage = document.createElement("img");
+        this._resourceProgressContainer.appendChild(resourceProgressImage);
+        this._resourceProgressTextElement = document.createElement("span");
+        this._resourceProgressContainer.appendChild(this._resourceProgressTextElement);
+        this._buttonContainerElement.appendChild(this._resourceProgressContainer);
 
         this._contentElement.appendChild(this._buttonContainerElement);
 
@@ -199,13 +259,22 @@ WebInspector.AuditLauncherView.prototype = {
         this._updateButton();
     },
 
+    _updateResourceProgress: function()
+    {
+        if (!this._resourceProgressContainer)
+            return;
+
+        if (!this._auditRunning)
+            this._resourceProgressContainer.addStyleClass("hidden");
+        else {
+            this._resourceProgressContainer.removeStyleClass("hidden");
+            this._resourceProgressTextElement.textContent = WebInspector.UIString("Loading (%d of %d)", this.loadedResources, this.totalResources);
+        }
+    },
+
     _updateButton: function()
     {
         this._launchButton.disabled = !this._currentCategoriesCount || this._auditRunning;
-        if (this._auditRunning)
-            this._launchButton.textContent = WebInspector.UIString("Running...");
-        else
-            this._launchButton.textContent = WebInspector.UIString("Run");
     }
 }
 
