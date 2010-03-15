@@ -15,6 +15,7 @@
 
                     { "name": "apple-macpro-1", "platform": "mac-snowleopard" },
                     { "name": "apple-macpro-2", "platform": "mac-snowleopard" },
+                    { "name": "apple-macpro-3", "platform": "mac-snowleopard" },
 
                     { "name": "apple-windows-1", "platform": "win"},
                     { "name": "apple-windows-2", "platform": "win"},
@@ -68,7 +69,7 @@
                     },
                     { "name": "SnowLeopard Intel Leaks", "type": "BuildAndTestLeaks", "builddir": "snowleopard-intel-leaks",
                       "platform": "mac-snowleopard", "configuration": "debug", "architectures": ["x86_64"],
-                      "slavenames": ["apple-macpro-1", "test-slave"]
+                      "slavenames": ["apple-macpro-1", "apple-macpro-3", "test-slave"]
                     },
                     {
                       "name": "Windows Release (Build)", "type": "Build", "builddir": "win-release",

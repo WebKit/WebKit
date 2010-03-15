@@ -1,3 +1,10 @@
+2010-03-15  Mark Rowe  <mrowe@apple.com>
+
+        Add a new build slave to replace the existing SnowLeopard Leaks build slave which
+        appears to be suffering a slow and painful death at the hands of its graphics hardware.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2010-03-15  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
