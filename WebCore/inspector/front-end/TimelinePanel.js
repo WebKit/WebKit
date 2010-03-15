@@ -570,11 +570,15 @@ WebInspector.TimelineRecordGraphRow = function(graphContainer, scheduleRefresh, 
 WebInspector.TimelineRecordGraphRow.prototype = {
     update: function(record, isEven, calculator, clientWidth, expandOffset, index)
     {
+        const minWidth = 5;
+        const borderWidth = 4;
+        var workingArea = clientWidth - expandOffset - minWidth - borderWidth;
         this._record = record;
         this.element.className = "timeline-graph-side timeline-category-" + record.category.name + (isEven ? " even" : "");
         var percentages = calculator.computeBarGraphPercentages(record);
-        var left = percentages.start / 100 * clientWidth;
-        var width = (percentages.end - percentages.start) / 100 * clientWidth;
+        var left = percentages.start / 100 * workingArea;
+        var width = (percentages.end - percentages.start) / 100 * workingArea;
+        width = width > minWidth ? width : minWidth;
         this._barElement.style.left = (left + expandOffset) + "px";
         this._barElement.style.width = width + "px";
 

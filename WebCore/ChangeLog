@@ -1,3 +1,15 @@
+2010-03-13  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        WebInspector: Position of GraphBar elements is calculating more carefully
+        and they fully visible at the bottom of Timeline panel.
+       
+        http://bugs.webkit.org/show_bug.cgi?id=35966
+
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelineRecordGraphRow.prototype.update):
+
 2010-03-15  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Alexey Proskuryakov.
