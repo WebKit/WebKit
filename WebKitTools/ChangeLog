@@ -1,3 +1,10 @@
+2010-03-15  Darin Adler  <darin@apple.com>
+
+        Tell Subversion about more directories that expect to have .pyc files.
+
+        * Scripts/webkitpy/layout_tests: Added property svn:ignore.
+        * Scripts/webkitpy/layout_tests/port: Added property svn:ignore.
+
 2010-03-15  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.
