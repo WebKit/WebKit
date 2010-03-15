@@ -506,7 +506,7 @@ void AccessibilityUIElement::decrement()
 
 void AccessibilityUIElement::press()
 {
-    atk_action_do_action(ATK_ACTION(ATK_OBJECT(m_element)), 0);
+    // FIXME: implement
 }
 
 void AccessibilityUIElement::showMenu()
