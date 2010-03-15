@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<body onload="doTest()">
+<pre id="output">
+</pre>
+<img src="kraken.jpg" id="image">
+<canvas id="original" width=3264 height=2448 style="width: 3264px; height: 2448px"></canvas>
+<canvas id="copy" width=3264 height=2448 style="width: 3264px; height: 2448px"></canvas>
+<canvas id="scaledUp" width=6528 height=4896 style="width: 6528px; height: 4896px"></canvas>
+<canvas id="scaledDown" width=1632 height=1224 style="width: 1632px; height: 1224px"></canvas>
+<canvas id="rotated" width=2448 height=3264 style="width: 2448px; height: 3264px; border: 1px solid red;"></canvas>
+<script>
+function doTest() {
+    var output = document.getElementById("output");
+    var image =  document.getElementById("image");
+    var original =  document.getElementById("original");
+
+    var copy =  document.getElementById("copy");
+    var scaledUp =  document.getElementById("scaledUp");
+    var scaledDown =  document.getElementById("scaledDown");
+    var rotated = document.getElementById("rotated");
+
+    original.getContext("2d").drawImage(image, 0, 0);
+
+    var startDate = new Date();
+    
+    var copyContext = copy.getContext("2d");
+    for (var i = 0; i < 2; ++i) {
+        copyContext.drawImage(original, 0, 0);
+    }
+
+    var time = (new Date()) - startDate;
+    output.innerHTML += "Direct image copy: " + (time/2) + "ms<br>";
+
+    startDate = new Date();
+    
+    var originalContext = copy.getContext("2d");
+    for (var i = 0; i < 2; ++i) {
+        var imageData = originalContext.getImageData(0, 0, 3264, 2448);
+        copyContext.putImageData(imageData, 0, 0);
+    }
+
+    time = (new Date()) - startDate;
+    output.innerHTML += "Indirect copy with (via ImageData): " + (time/2) + "ms<br>";
+
+    startDate = new Date();
+    
+    var scaledUpContext = scaledUp.getContext("2d");
+    for (var i = 0; i < 2; ++i) {
+        scaledUpContext.drawImage(original, 0, 0, 6528, 4896);
+    }
+
+    time = (new Date()) - startDate;
+    output.innerHTML += "Copy with 2x scale: " + (time/2) + "ms<br>";
+
+    startDate = new Date();
+    var scaledDownContext = scaledDown.getContext("2d");
+    for (var i = 0; i < 2; ++i) {
+        scaledDownContext.drawImage(original, 0, 0, 1632, 1224);
+    }
+
+    time = (new Date()) - startDate;
+    output.innerHTML += "Copy with 0.5x scale: " + (time/2) + "ms<br>";
+
+    startDate = new Date();
+    var rotatedContext = rotated.getContext("2d");
+    rotatedContext.rotate(Math.PI / 2);
+
+    for (var i = 0; i < 2; ++i) {
+        rotatedContext.drawImage(original, 0, -original.height);
+    }
+
+    time = (new Date()) - startDate;
+    output.innerHTML += "Copy with rotate:" + (time/2) + "ms<br>";
+}
+</script>
+
+</body>

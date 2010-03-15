@@ -1,3 +1,11 @@
+2010-03-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Added canvas perf demo for whatwg.
+
+        * demos/canvas-perf: Added.
+        * demos/canvas-perf/canvas.html: Added.
+        * demos/canvas-perf/kraken.jpg: Added.
+
 2010-03-09  Adam Roben  <aroben@apple.com>
 
         Add a link to the Contributors Meeting registration form in the
