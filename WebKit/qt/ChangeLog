@@ -1,3 +1,16 @@
+2010-03-14  Chang Shu  <chang.shu@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] [Symbian] Use Symbian native dialog providers for combo pupups.
+        https://bugs.webkit.org/show_bug.cgi?id=35919
+
+        * WebCoreSupport/QtFallbackWebPopup.cpp:
+        (WebCore::QtFallbackWebPopup::show):
+        (WebCore::ResetAndDestroy):
+        (WebCore::QtFallbackWebPopup::showS60BrowserDialog):
+        * WebCoreSupport/QtFallbackWebPopup.h:
+
 2010-03-14  Antti Koivisto  <koivisto@iki.fi>
 
         Reviewed by Simon Hausmann.

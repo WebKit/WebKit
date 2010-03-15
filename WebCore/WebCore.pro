@@ -2807,6 +2807,13 @@ SOURCES += \
 
 }
 
+contains(DEFINES, ENABLE_SYMBIAN_DIALOG_PROVIDERS) {
+    # this feature requires the S60 platform private BrowserDialogsProvider.h header file
+    # and is therefore not enabled by default but only meant for platform builds.
+    symbian {
+        LIBS += -lbrowserdialogsprovider
+    }
+}
 
 include($$PWD/../WebKit/qt/Api/headers.pri)
 include(../include/QtWebKit/classheaders.pri)

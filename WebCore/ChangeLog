@@ -1,3 +1,13 @@
+2010-03-14  Chang Shu  <chang.shu@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] [Symbian] Added block for ENABLE_SYMBIAN_DIALOG_PROVIDERS
+        on Symbian platform.
+        https://bugs.webkit.org/show_bug.cgi?id=35919
+
+        * WebCore.pro:
+
 2010-03-14  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Darin Adler.
