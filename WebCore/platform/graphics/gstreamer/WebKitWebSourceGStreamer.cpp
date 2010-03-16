@@ -553,7 +553,7 @@ static void webKitWebSrcNeedDataCb(GstAppSrc* appsrc, guint length, gpointer use
     if (priv->needDataID || !priv->paused)
         return;
 
-    priv->needDataID = g_timeout_add_full(G_PRIORITY_HIGH, 0, (GSourceFunc) webKitWebSrcNeedDataMainCb, gst_object_ref(src), (GDestroyNotify) gst_object_unref);
+    priv->needDataID = g_timeout_add_full(G_PRIORITY_DEFAULT, 0, (GSourceFunc) webKitWebSrcNeedDataMainCb, gst_object_ref(src), (GDestroyNotify) gst_object_unref);
 }
 
 static gboolean webKitWebSrcEnoughDataMainCb(WebKitWebSrc* src)
@@ -577,7 +577,7 @@ static void webKitWebSrcEnoughDataCb(GstAppSrc* appsrc, gpointer userData)
     if (priv->enoughDataID || priv->paused)
         return;
 
-    priv->enoughDataID = g_timeout_add_full(G_PRIORITY_HIGH, 0, (GSourceFunc) webKitWebSrcEnoughDataMainCb, gst_object_ref(src), (GDestroyNotify) gst_object_unref);
+    priv->enoughDataID = g_timeout_add_full(G_PRIORITY_DEFAULT, 0, (GSourceFunc) webKitWebSrcEnoughDataMainCb, gst_object_ref(src), (GDestroyNotify) gst_object_unref);
 }
 
 static gboolean webKitWebSrcSeekMainCb(WebKitWebSrc* src)
@@ -606,7 +606,7 @@ static gboolean webKitWebSrcSeekDataCb(GstAppSrc* appsrc, guint64 offset, gpoint
     priv->requestedOffset = offset;
     if (priv->seekID)
         g_source_remove(priv->seekID);
-    priv->seekID = g_timeout_add_full(G_PRIORITY_HIGH, 0, (GSourceFunc) webKitWebSrcSeekMainCb, gst_object_ref(src), (GDestroyNotify) gst_object_unref);
+    priv->seekID = g_timeout_add_full(G_PRIORITY_DEFAULT, 0, (GSourceFunc) webKitWebSrcSeekMainCb, gst_object_ref(src), (GDestroyNotify) gst_object_unref);
     
     return TRUE;
 }
