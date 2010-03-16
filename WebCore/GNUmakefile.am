@@ -2144,6 +2144,17 @@ webcore_cppflags += \
 endif # END ENABLE_CHANNEL_MESSAGING
 
 # ---
+# Fast Mobile Scrolling
+# ---
+if ENABLE_FAST_MOBILE_SCROLLING
+FEATURE_DEFINES += ENABLE_FAST_MOBILE_SCROLLING=1
+
+webcore_cppflags += \
+	-DENABLE_FAST_MOBILE_SCROLLING=1
+
+endif # END ENABLE_FAST_MOBILE_SCROLLING
+
+# ---
 # Freetype font backend
 # ---
 if USE_FREETYPE

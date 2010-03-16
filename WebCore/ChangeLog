@@ -1,3 +1,11 @@
+2010-03-16  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Add support for Fast Mobile Scrolling in the build system.
+
+        * GNUmakefile.am:
+
 2010-03-11  Yury Semikhatsky <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

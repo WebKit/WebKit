@@ -1,3 +1,11 @@
+2010-03-16  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Add support for Fast Mobile Scrolling in the build system.
+
+        * configure.ac:
+
 2010-03-16  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Add WebKitTools/TestResultServer/index.yaml to gitattributes to ignore for crlf conversion.
