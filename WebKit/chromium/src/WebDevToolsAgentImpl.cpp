@@ -362,11 +362,6 @@ void WebDevToolsAgentImpl::createInspectorFrontendProxy()
     m_utilityContext = v8::Context::New();
     compileUtilityScripts();
     initDevToolsAgentHost();
-
-    v8::HandleScope scope;
-    v8::Context::Scope contextScope(m_utilityContext);
-    ScriptState* state = ScriptState::forContext(
-        v8::Local<v8::Context>::New(m_utilityContext));
 }
 
 void WebDevToolsAgentImpl::setInspectorFrontendProxyToInspectorController()
