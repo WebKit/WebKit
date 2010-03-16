@@ -29,7 +29,9 @@
 # WebKit's Python module for interacting with WebKit's buildbot
 
 import re
+import urllib
 import urllib2
+import xmlrpclib
 
 # Import WebKit-specific modules.
 from webkitpy.webkit_logging import log
@@ -39,13 +41,63 @@ from webkitpy.webkit_logging import log
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
 
 
-class BuildBot:
+class Builder(object):
+    def __init__(self, name, buildbot):
+        self._name = unicode(name)
+        self._buildbot = buildbot
+        self._builds_cache = {}
+
+    def name(self):
+        return self._name
+
+    def url(self):
+        return "http://%s/builders/%s" % (self._buildbot.buildbot_host, urllib.quote(self._name))
+
+    def build(self, build_number):
+        cached_build = self._builds_cache.get(build_number)
+        if cached_build:
+            return cached_build
+
+        build_dictionary = self._buildbot._fetch_xmlrpc_build_dictionary(self._name, build_number)
+        if not build_dictionary:
+            return None
+        build = Build(build_dictionary, self)
+        self._builds_cache[build_number] = build
+        return build
+
+
+class Build(object):
+    def __init__(self, build_dictionary, builder):
+        self._builder = builder
+        # FIXME: Knowledge of the XMLRPC specifics should probably not go here.
+        self._revision = int(build_dictionary['revision'])
+        self._number = int(build_dictionary['number'])
+        self._is_green = (build_dictionary['results'] == 0) # Undocumented, buildbot XMLRPC
+
+    def url(self):
+        return "%s/builds/%s" % (self.builder().url(), self._number)
+
+    def builder(self):
+        return self._builder
+
+    def revision(self):
+        return self._revision
+
+    def is_green(self):
+        return self._is_green
+
+    def previous_build(self):
+        # previous_build() allows callers to avoid assuming build numbers are sequential.
+        # They may not be sequential across all master changes, or when non-trunk builds are made.
+        return self._builder.build(self._number - 1)
+
+
+class BuildBot(object):
 
     default_host = "build.webkit.org"
 
     def __init__(self, host=default_host):
         self.buildbot_host = host
-        self.buildbot_server_url = "http://%s/" % self.buildbot_host
 
         # If any Leopard builder/tester, Windows builder or Chromium builder is
         # red we should not be landing patches.  Other builders should be added
@@ -57,6 +109,8 @@ class BuildBot:
             "Chromium",
         ]
 
+    # FIXME: This should create and return Buidler and Build objects instead
+    # of a custom dictionary.
     def _parse_builder_status_from_row(self, status_row):
         # If WebKit's buildbot has an XMLRPC interface we could use, we could
         # do something more sophisticated here.  For now we just parse out the
@@ -66,9 +120,6 @@ class BuildBot:
 
         name_link = status_cells[0].find('a')
         builder['name'] = name_link.string
-        # We could generate the builder_url from the name in a future version
-        # of this code.
-        builder['builder_url'] = self.buildbot_server_url + name_link['href']
 
         status_link = status_cells[1].find('a')
         if not status_link:
@@ -86,12 +137,12 @@ class BuildBot:
                                     else None
         builder['is_green'] = not re.search('fail',
                                             status_cells[1].renderContents())
-        # We could parse out the build number instead, but for now just store
-        # the URL.
-        builder['build_url'] = self.buildbot_server_url + status_link['href']
+
+        status_link_regexp = r"builders/(?P<builder_name>.*)/builds/(?P<build_number>\d+)"
+        link_match = re.match(status_link_regexp, status_link['href'])
+        builder['build_number'] = int(link_match.group("build_number"))
 
         # We could parse out the current activity too.
-
         return builder
 
     def _builder_statuses_with_names_matching_regexps(self,
@@ -120,14 +171,29 @@ class BuildBot:
     def core_builders_are_green(self):
         return not self.red_core_builders()
 
-    def builder_statuses(self):
-        build_status_url = self.buildbot_server_url + 'one_box_per_builder'
-        page = urllib2.urlopen(build_status_url)
-        soup = BeautifulSoup(page)
+    # FIXME: These _fetch methods should move to a networking class.
+    def _fetch_xmlrpc_build_dictionary(self, builder_name, build_number):
+        # The buildbot XMLRPC API is super-limited.
+        # For one, you cannot fetch info on builds which are incomplete.
+        proxy = xmlrpclib.ServerProxy("http://%s/xmlrpc" % self.buildbot_host)
+        try:
+            return proxy.getBuild(builder_name, int(build_number))
+        except xmlrpclib.Fault, err:
+            log("Error fetching data for build %s" % build_number)
+            return None
 
+    def _fetch_one_box_per_builder(self):
+        build_status_url = "http://%s/one_box_per_builder" % self.buildbot_host
+        return urllib2.urlopen(build_status_url)
+
+    def builder_statuses(self):
         builders = []
+        soup = BeautifulSoup(self._fetch_one_box_per_builder())
         status_table = soup.find('table')
         for status_row in status_table.findAll('tr'):
             builder = self._parse_builder_status_from_row(status_row)
             builders.append(builder)
         return builders
+
+    def builder_with_name(self, name):
+        return Builder(name, self)

@@ -1,3 +1,24 @@
+2010-03-15  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add "what-broke" command for debugging when the tree broke
+        https://bugs.webkit.org/show_bug.cgi?id=36157
+
+        This is another step towards automated sheriffing of the webkit tree.
+        With this logic our scripts are able to determine what revision broke the
+        tree.  Buildbot should do this for us, but unfortunately buildbot doesn't
+        expose this kind of aggregate information.
+
+        * Scripts/webkitpy/buildbot.py:
+         - Add new Builder and Build classes (which will eventually replace the custom dictionaries previously used).
+         - Split out more network logic into _fetch methods which will eventually be their own class for mocking.
+         - Use XMLRPC to communicate with the buildbot master instead of scraping build pages.
+        * Scripts/webkitpy/buildbot_unittest.py:
+         - Test the newly added buildbot classes.
+        * Scripts/webkitpy/commands/queries.py:
+         - Add an experimental what-broke command.
+
 2010-03-15  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Eric Seidel.

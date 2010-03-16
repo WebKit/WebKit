@@ -103,6 +103,60 @@ class PatchesToReview(AbstractDeclarativeCommand):
         for patch_id in patch_ids:
             print patch_id
 
+class WhatBroke(AbstractDeclarativeCommand):
+    name = "what-broke"
+    help_text = "Print the status of the %s buildbots" % BuildBot.default_host
+    long_help = """Fetches build status from http://build.webkit.org/one_box_per_builder
+and displayes the status of each builder."""
+
+    def _longest_builder_name(self, builders):
+        return max(map(lambda builder: len(builder["name"]), builders))
+
+    def _find_green_to_red_transition(self, builder_status, look_back_limit=30):
+        # walk backwards until we find a green build
+        builder = self.tool.buildbot.builder_with_name(builder_status["name"])
+        red_build = builder.build(builder_status["build_number"])
+        green_build = None
+        look_back_count = 0
+        while True:
+            if look_back_count >= look_back_limit:
+                break
+            # Use a previous_build() method to avoid assuming build numbers are sequential.
+            before_red_build = red_build.previous_build()
+            if not before_red_build:
+                break
+            if before_red_build.is_green():
+                green_build = before_red_build
+                break
+            red_build = before_red_build
+            look_back_count += 1
+        return (green_build, red_build)
+
+    def _print_builder_line(self, builder_name, max_name_width, status_message):
+        print "%s : %s" % (builder_name.ljust(max_name_width), status_message)
+
+    def _print_status_for_builder(self, builder_status, name_width):
+        # If the builder is green, print OK, exit.
+        if builder_status["is_green"]:
+            self._print_builder_line(builder_status["name"], name_width, "ok")
+            return
+
+        (last_green_build, first_red_build) = self._find_green_to_red_transition(builder_status)
+        if not last_green_build:
+            self._print_builder_line(builder_status["name"], name_width, "FAIL (blame-list: sometime before %s?)" % first_red_build.revision())
+            return
+
+        suspect_revisions = range(first_red_build.revision(), last_green_build.revision(), -1)
+        suspect_revisions.reverse()
+        # FIXME: Parse reviewer and committer from red checkin
+        self._print_builder_line(builder_status["name"], name_width, "FAIL (blame-list: %s)" % suspect_revisions)
+
+    def execute(self, options, args, tool):
+        builders = tool.buildbot.builder_statuses()
+        longest_builder_name = self._longest_builder_name(builders)
+        for builder in builders:
+            self._print_status_for_builder(builder, name_width=longest_builder_name)
+
 
 class TreeStatus(AbstractDeclarativeCommand):
     name = "tree-status"

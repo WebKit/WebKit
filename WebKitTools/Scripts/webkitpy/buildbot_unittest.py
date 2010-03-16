@@ -32,6 +32,7 @@ from webkitpy.buildbot import BuildBot
 
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
 
+
 class BuildBotTest(unittest.TestCase):
 
     _example_one_box_status = '''
@@ -52,21 +53,18 @@ class BuildBotTest(unittest.TestCase):
 '''
     _expected_example_one_box_parsings = [
         {
-            'builder_url': u'http://build.webkit.org/builders/Windows%20Debug%20%28Tests%29',
-            'build_url': u'http://build.webkit.org/builders/Windows%20Debug%20%28Tests%29/builds/3693',
             'is_green': True,
+            'build_number' : 3693,
             'name': u'Windows Debug (Tests)',
             'built_revision': 47380
         },
         {
-            'builder_url': u'http://build.webkit.org/builders/SnowLeopard%20Intel%20Release',
             'is_green': False,
             'name': u'SnowLeopard Intel Release',
         },
         {
-            'builder_url': u'http://build.webkit.org/builders/Qt%20Linux%20Release',
-            'build_url': u'http://build.webkit.org/builders/Qt%20Linux%20Release/builds/654',
             'is_green': False,
+            'build_number' : 654,
             'name': u'Qt Linux Release',
             'built_revision': 47383
         },
@@ -150,6 +148,36 @@ class BuildBotTest(unittest.TestCase):
 
         builders = buildbot._builder_statuses_with_names_matching_regexps(example_builders, name_regexps)
         self.assertEquals(builders, expected_builders)
+
+    def test_builder_with_name(self):
+        buildbot = BuildBot()
+
+        builder = buildbot.builder_with_name("Test Builder")
+        self.assertEqual(builder.name(), "Test Builder")
+        self.assertEqual(builder.url(), "http://build.webkit.org/builders/Test%20Builder")
+
+        # Override _fetch_xmlrpc_build_dictionary function to not touch the network.
+        def mock_fetch_xmlrpc_build_dictionary(self, build_number):
+            build_dictionary = {
+                "revision" : 2 * build_number,
+                "number" : int(build_number),
+                "results" : build_number % 2, # 0 means pass
+            }
+            return build_dictionary
+        buildbot._fetch_xmlrpc_build_dictionary = mock_fetch_xmlrpc_build_dictionary
+
+        build = builder.build(10)
+        self.assertEqual(build.builder(), builder)
+        self.assertEqual(build.url(), "http://build.webkit.org/builders/Test%20Builder/builds/10")
+        self.assertEqual(build.revision(), 20)
+        self.assertEqual(build.is_green(), True)
+
+        build = build.previous_build()
+        self.assertEqual(build.builder(), builder)
+        self.assertEqual(build.url(), "http://build.webkit.org/builders/Test%20Builder/builds/9")
+        self.assertEqual(build.revision(), 18)
+        self.assertEqual(build.is_green(), False)
+
 
 if __name__ == '__main__':
     unittest.main()
