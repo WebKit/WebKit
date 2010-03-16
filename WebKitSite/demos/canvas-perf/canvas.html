@@ -21,9 +21,15 @@ function doTest() {
 
     original.getContext("2d").drawImage(image, 0, 0);
 
+    var copyContext = copy.getContext("2d");
+    var originalContext = original.getContext("2d");
+    var scaledUpContext = scaledUp.getContext("2d");
+    var scaledDownContext = scaledDown.getContext("2d");
+    var rotatedContext = rotated.getContext("2d");
+
     var startDate = new Date();
     
-    var copyContext = copy.getContext("2d");
+    copyContext.globalCompositeOperation = "copy";
     for (var i = 0; i < 2; ++i) {
         copyContext.drawImage(original, 0, 0);
     }
@@ -33,7 +39,6 @@ function doTest() {
 
     startDate = new Date();
     
-    var originalContext = copy.getContext("2d");
     for (var i = 0; i < 2; ++i) {
         var imageData = originalContext.getImageData(0, 0, 3264, 2448);
         copyContext.putImageData(imageData, 0, 0);
@@ -44,7 +49,7 @@ function doTest() {
 
     startDate = new Date();
     
-    var scaledUpContext = scaledUp.getContext("2d");
+    scaledUpContext.globalCompositeOperation = "copy";
     for (var i = 0; i < 2; ++i) {
         scaledUpContext.drawImage(original, 0, 0, 6528, 4896);
     }
@@ -53,7 +58,7 @@ function doTest() {
     output.innerHTML += "Copy with 2x scale: " + (time/2) + "ms<br>";
 
     startDate = new Date();
-    var scaledDownContext = scaledDown.getContext("2d");
+    scaledDownContext.globalCompositeOperation = "copy";
     for (var i = 0; i < 2; ++i) {
         scaledDownContext.drawImage(original, 0, 0, 1632, 1224);
     }
@@ -62,7 +67,7 @@ function doTest() {
     output.innerHTML += "Copy with 0.5x scale: " + (time/2) + "ms<br>";
 
     startDate = new Date();
-    var rotatedContext = rotated.getContext("2d");
+    rotatedContext.globalCompositeOperation = "copy";
     rotatedContext.rotate(Math.PI / 2);
 
     for (var i = 0; i < 2; ++i) {
