@@ -1253,18 +1253,26 @@ template <> class MapSelector<32> {
 // -------------------------------------------------------------------------
 
 #if USE_BACKGROUND_THREAD_TO_SCAVENGE_MEMORY
-// The central page heap collects spans of memory that have been deleted but are still committed until they are released
-// back to the system.  We use a background thread to periodically scan the list of free spans and release some back to the
-// system.  Every 5 seconds, the background thread wakes up and does the following:
-// - Check if we needed to commit memory in the last 5 seconds.  If so, skip this scavenge because it's a sign that we are short
-// of free committed pages and so we should not release them back to the system yet.
-// - Otherwise, go through the list of free spans (from largest to smallest) and release up to a fraction of the free committed pages
-// back to the system.
-// - If the number of free committed pages reaches kMinimumFreeCommittedPageCount, we can stop the scavenging and block the
-// scavenging thread until the number of free committed pages goes above kMinimumFreeCommittedPageCount.
+// The page heap maintains a free list for spans that are no longer in use by
+// the central cache or any thread caches. We use a background thread to
+// periodically scan the free list and release a percentage of it back to the OS.
 
-// Background thread wakes up every 5 seconds to scavenge as long as there is memory available to return to the system.
-static const int kScavengeTimerDelayInSeconds = 5;
+// If free_committed_pages_ exceeds kMinimumFreeCommittedPageCount, the
+// background thread:
+//     - wakes up
+//     - pauses for kScavengeDelayInSeconds
+//     - returns to the OS a percentage of the memory that remained unused during
+//       that pause (kScavengePercentage * min_free_committed_pages_since_last_scavenge_)
+// The goal of this strategy is to reduce memory pressure in a timely fashion
+// while avoiding thrashing the OS allocator.
+
+// Time delay before the page heap scavenger will consider returning pages to
+// the OS.
+static const int kScavengeDelayInSeconds = 2;
+
+// Approximate percentage of free committed pages to return to the OS in one
+// scavenge.
+static const float kScavengePercentage = .5f;
 
 // Number of free committed pages that we want to keep around.
 static const size_t kMinimumFreeCommittedPageCount = 512;
@@ -1374,8 +1382,9 @@ class TCMalloc_PageHeap {
   // Number of pages kept in free lists that are still committed.
   Length free_committed_pages_;
 
-  // Number of pages that we committed in the last scavenge wait interval.
-  Length pages_committed_since_last_scavenge_;
+  // Minimum number of free committed pages since last scavenge. (Can be 0 if
+  // we've committed new pages since the last scavenge.)
+  Length min_free_committed_pages_since_last_scavenge_;
 #endif
 
   bool GrowHeap(Length n);
@@ -1420,13 +1429,13 @@ class TCMalloc_PageHeap {
   void initializeScavenger();
   ALWAYS_INLINE void signalScavenger();
   void scavenge();
-  ALWAYS_INLINE bool shouldContinueScavenging() const;
+  ALWAYS_INLINE bool shouldScavenge() const;
 
 #if !HAVE(DISPATCH_H)
   static NO_RETURN void* runScavengerThread(void*);
   NO_RETURN void scavengerThread();
 
-  // Keeps track of whether the background thread is actively scavenging memory every kScavengeTimerDelayInSeconds, or
+  // Keeps track of whether the background thread is actively scavenging memory every kScavengeDelayInSeconds, or
   // it's blocked waiting for more pages to be deleted.
   bool m_scavengeThreadActive;
 
@@ -1452,7 +1461,7 @@ void TCMalloc_PageHeap::init()
 
 #if USE_BACKGROUND_THREAD_TO_SCAVENGE_MEMORY
   free_committed_pages_ = 0;
-  pages_committed_since_last_scavenge_ = 0;
+  min_free_committed_pages_since_last_scavenge_ = 0;
 #endif  // USE_BACKGROUND_THREAD_TO_SCAVENGE_MEMORY
 
   scavenge_counter_ = 0;
@@ -1495,7 +1504,7 @@ void* TCMalloc_PageHeap::runScavengerThread(void* context)
 
 ALWAYS_INLINE void TCMalloc_PageHeap::signalScavenger()
 {
-  if (!m_scavengeThreadActive && shouldContinueScavenging())
+  if (!m_scavengeThreadActive && shouldScavenge())
     pthread_cond_signal(&m_scavengeCondition);
 }
 
@@ -1505,15 +1514,15 @@ void TCMalloc_PageHeap::initializeScavenger()
 {
   m_scavengeQueue = dispatch_queue_create("com.apple.JavaScriptCore.FastMallocSavenger", NULL);
   m_scavengeTimer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, m_scavengeQueue);
-  dispatch_time_t startTime = dispatch_time(DISPATCH_TIME_NOW, kScavengeTimerDelayInSeconds * NSEC_PER_SEC);
-  dispatch_source_set_timer(m_scavengeTimer, startTime, kScavengeTimerDelayInSeconds * NSEC_PER_SEC, 1000 * NSEC_PER_USEC);
+  dispatch_time_t startTime = dispatch_time(DISPATCH_TIME_NOW, kScavengeDelayInSeconds * NSEC_PER_SEC);
+  dispatch_source_set_timer(m_scavengeTimer, startTime, kScavengeDelayInSeconds * NSEC_PER_SEC, 1000 * NSEC_PER_USEC);
   dispatch_source_set_event_handler(m_scavengeTimer, ^{ periodicScavenge(); });
   m_scavengingScheduled = false;
 }
 
 ALWAYS_INLINE void TCMalloc_PageHeap::signalScavenger()
 {
-  if (!m_scavengingScheduled && shouldContinueScavenging()) {
+  if (!m_scavengingScheduled && shouldScavenge()) {
     m_scavengingScheduled = true;
     dispatch_resume(m_scavengeTimer);
   }
@@ -1523,16 +1532,12 @@ ALWAYS_INLINE void TCMalloc_PageHeap::signalScavenger()
 
 void TCMalloc_PageHeap::scavenge()
 {
-    // If we've recently commited pages, our working set is growing, so now is
-    // not a good time to free pages.
-    if (pages_committed_since_last_scavenge_ > 0) {
-        pages_committed_since_last_scavenge_ = 0;
-        return;
-    }
+    size_t pagesToRelease = min_free_committed_pages_since_last_scavenge_ * kScavengePercentage;
+    size_t targetPageCount = std::max<size_t>(kMinimumFreeCommittedPageCount, free_committed_pages_ - pagesToRelease);
 
-    for (int i = kMaxPages; i >= 0 && shouldContinueScavenging(); i--) {
+    for (int i = kMaxPages; i >= 0 && free_committed_pages_ > targetPageCount; i--) {
         SpanList* slist = (static_cast<size_t>(i) == kMaxPages) ? &large_ : &free_[i];
-        if (!DLL_IsEmpty(&slist->normal)) {
+        while (!DLL_IsEmpty(&slist->normal) && free_committed_pages_ > targetPageCount) {
             // Release the last span on the normal portion of this list
             Span* s = slist->normal.prev; 
             DLL_Remove(s);
@@ -1548,10 +1553,10 @@ void TCMalloc_PageHeap::scavenge()
         }
     }
 
-    pages_committed_since_last_scavenge_ = 0;
+    min_free_committed_pages_since_last_scavenge_ = free_committed_pages_;
 }
 
-ALWAYS_INLINE bool TCMalloc_PageHeap::shouldContinueScavenging() const 
+ALWAYS_INLINE bool TCMalloc_PageHeap::shouldScavenge() const 
 {
     return free_committed_pages_ > kMinimumFreeCommittedPageCount; 
 }
@@ -1583,9 +1588,6 @@ inline Span* TCMalloc_PageHeap::New(Length n) {
     if (result->decommitted) {
         TCMalloc_SystemCommit(reinterpret_cast<void*>(result->start << kPageShift), static_cast<size_t>(n << kPageShift));
         result->decommitted = false;
-#if USE_BACKGROUND_THREAD_TO_SCAVENGE_MEMORY
-        pages_committed_since_last_scavenge_ += n;
-#endif
     }
 #if USE_BACKGROUND_THREAD_TO_SCAVENGE_MEMORY
     else {
@@ -1593,6 +1595,8 @@ inline Span* TCMalloc_PageHeap::New(Length n) {
         // free committed pages count.
         ASSERT(free_committed_pages_ >= n);
         free_committed_pages_ -= n;
+        if (free_committed_pages_ < min_free_committed_pages_since_last_scavenge_)
+            min_free_committed_pages_since_last_scavenge_ = free_committed_pages_;
     }
 #endif  // USE_BACKGROUND_THREAD_TO_SCAVENGE_MEMORY
     ASSERT(Check());
@@ -1654,9 +1658,6 @@ Span* TCMalloc_PageHeap::AllocLarge(Length n) {
     if (best->decommitted) {
         TCMalloc_SystemCommit(reinterpret_cast<void*>(best->start << kPageShift), static_cast<size_t>(n << kPageShift));
         best->decommitted = false;
-#if USE_BACKGROUND_THREAD_TO_SCAVENGE_MEMORY
-        pages_committed_since_last_scavenge_ += n;
-#endif
     }
 #if USE_BACKGROUND_THREAD_TO_SCAVENGE_MEMORY
     else {
@@ -1664,6 +1665,8 @@ Span* TCMalloc_PageHeap::AllocLarge(Length n) {
         // free committed pages count.
         ASSERT(free_committed_pages_ >= n);
         free_committed_pages_ -= n;
+        if (free_committed_pages_ < min_free_committed_pages_since_last_scavenge_)
+            min_free_committed_pages_since_last_scavenge_ = free_committed_pages_;
     }
 #endif  // USE_BACKGROUND_THREAD_TO_SCAVENGE_MEMORY
     ASSERT(Check());
@@ -1807,6 +1810,8 @@ inline void TCMalloc_PageHeap::Delete(Span* span) {
       // If the merged span is decommitted, that means we decommitted any neighboring spans that were
       // committed.  Update the free committed pages count.
       free_committed_pages_ -= neighboringCommittedSpansLength;
+      if (free_committed_pages_ < min_free_committed_pages_since_last_scavenge_)
+            min_free_committed_pages_since_last_scavenge_ = free_committed_pages_;
   } else {
       // If the merged span remains committed, add the deleted span's size to the free committed pages count.
       free_committed_pages_ += n;
@@ -1970,10 +1975,6 @@ bool TCMalloc_PageHeap::GrowHeap(Length n) {
     if (ptr == NULL) return false;
   }
   ask = actual_size >> kPageShift;
-
-#if USE_BACKGROUND_THREAD_TO_SCAVENGE_MEMORY
-  pages_committed_since_last_scavenge_ += ask;
-#endif
 
   uint64_t old_system_bytes = system_bytes_;
   system_bytes_ += (ask << kPageShift);
@@ -2372,15 +2373,15 @@ void TCMalloc_PageHeap::scavengerThread()
 #endif
 
   while (1) {
-      if (!shouldContinueScavenging()) {
+      if (!shouldScavenge()) {
           pthread_mutex_lock(&m_scavengeMutex);
           m_scavengeThreadActive = false;
-          // Block until there are enough freed pages to release back to the system.
+          // Block until there are enough free committed pages to release back to the system.
           pthread_cond_wait(&m_scavengeCondition, &m_scavengeMutex);
           m_scavengeThreadActive = true;
           pthread_mutex_unlock(&m_scavengeMutex);
       }
-      sleep(kScavengeTimerDelayInSeconds);
+      sleep(kScavengeDelayInSeconds);
       {
           SpinLockHolder h(&pageheap_lock);
           pageheap->scavenge();
@@ -2397,7 +2398,7 @@ void TCMalloc_PageHeap::periodicScavenge()
     pageheap->scavenge();
   }
 
-  if (!shouldContinueScavenging()) {
+  if (!shouldScavenge()) {
     m_scavengingScheduled = false;
     dispatch_suspend(m_scavengeTimer);
   }

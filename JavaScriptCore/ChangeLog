@@ -1,3 +1,36 @@
+2010-03-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fixed a portion of:
+        <rdar://problem/7165917> | https://bugs.webkit.org/show_bug.cgi?id=28676
+        Safari 4 does not release memory back to the operating system fast enough (28676)
+
+        Every few seconds, release a percentage of the minimum unused page count
+        during that time period.
+
+        SunSpider reports no change, command-line or in-browser, Mac or Windows.
+        
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_PageHeap::init):
+        (WTF::TCMalloc_PageHeap::signalScavenger):
+        (WTF::TCMalloc_PageHeap::initializeScavenger): Renamed shouldContinueScavenging
+        to shouldScavenge, since scavenging is no longer something that we interrupt.
+
+        (WTF::TCMalloc_PageHeap::scavenge): The new scavenging algorithm. Fixes
+        a bug where the old code would release only one item from each size class
+        per scavenge, potentially leaving large numbers of large-sized objects
+        unreleased for a long time.
+
+        (WTF::TCMalloc_PageHeap::shouldScavenge):
+        (WTF::TCMalloc_PageHeap::New):
+        (WTF::TCMalloc_PageHeap::AllocLarge):
+        (WTF::TCMalloc_PageHeap::Delete):
+        (WTF::TCMalloc_PageHeap::GrowHeap):
+        (WTF::TCMalloc_PageHeap::scavengerThread):
+        (WTF::TCMalloc_PageHeap::periodicScavenge): Updated to track the minimum
+        value of free_committed_pages_ during a given scavenge period.
+
 2010-03-15  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.
