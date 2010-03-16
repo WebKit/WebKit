@@ -63,6 +63,8 @@ deps = {
   # Basic tools
   'base':
     Var('chromium_svn')+'/base@'+Var('chromium_rev'),
+  'gfx':
+    Var('chromium_svn')+'/gfx@'+Var('chromium_rev'),
 
   # skia dependencies
   'skia':

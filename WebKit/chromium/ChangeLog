@@ -1,5 +1,11 @@
 2010-03-15  Darin Fisher  <darin@chromium.org>
 
+        Fix build bustage.  We also need to pull down "gfx"
+
+        * DEPS:
+
+2010-03-15  Darin Fisher  <darin@chromium.org>
+
         Reviewed by David Levin.
 
         https://bugs.webkit.org/show_bug.cgi?id=36131
