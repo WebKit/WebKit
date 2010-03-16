@@ -1,5 +1,13 @@
 2010-03-16  Xan Lopez  <xlopez@igalia.com>
 
+        Rubber-stamped by Gustavo Noronha.
+
+        Update library version for 1.1.90 release.
+
+        * configure.ac:
+
+2010-03-16  Xan Lopez  <xlopez@igalia.com>
+
         Reviewed by Gustavo Noronha.
 
         Bump version for 1.1.90 release.
