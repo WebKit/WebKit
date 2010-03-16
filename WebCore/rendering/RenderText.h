@@ -50,7 +50,7 @@ public:
 
     virtual void destroy();
 
-    StringImpl* text() const { return m_text.get(); }
+    StringImpl* text() const { return m_text.impl(); }
 
     InlineTextBox* createInlineTextBox();
     void dirtyLineBoxes(bool fullLayout);
@@ -63,8 +63,8 @@ public:
 
     virtual VisiblePosition positionForPoint(const IntPoint&);
 
-    const UChar* characters() const { return m_text->characters(); }
-    unsigned textLength() const { return m_text->length(); } // non virtual implementation of length()
+    const UChar* characters() const { return m_text.characters(); }
+    unsigned textLength() const { return m_text.length(); } // non virtual implementation of length()
     void positionLineBox(InlineBox*);
 
     virtual unsigned width(unsigned from, unsigned len, const Font&, int xPos, HashSet<const SimpleFontData*>* fallbackFonts = 0) const;
@@ -151,7 +151,7 @@ private:
 
     int m_minWidth; // here to minimize padding in 64-bit.
 
-    RefPtr<StringImpl> m_text;
+    String m_text;
 
     InlineTextBox* m_firstTextBox;
     InlineTextBox* m_lastTextBox;
