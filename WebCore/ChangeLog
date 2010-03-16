@@ -1,3 +1,17 @@
+2010-03-16  Brent Fulgham  <bfulgham@webkit.org>
+
+        Build fix.  No Review.
+
+        Correct missing includes in cURL network backend introduced
+        by recent changes in WebKit.
+
+        * platform/network/curl/ResourceHandleCurl.cpp: Add missing
+          includes for SharedBuffer and PassRefPtr.
+        (WebCore::ResourceHandle::loadResourceSynchronously): Correct
+          constructor signature for ResourceHandle to match @r55688.
+        * platform/network/curl/ResourceHandleManager.cpp: Add missing
+          include for RetainPtr.
+
 2010-03-16  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Darin Fisher.

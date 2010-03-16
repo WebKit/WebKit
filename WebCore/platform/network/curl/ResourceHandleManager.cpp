@@ -46,6 +46,7 @@
 
 #include <errno.h>
 #include <stdio.h>
+#include <wtf/RetainPtr.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
 
