@@ -2907,6 +2907,54 @@
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDOMFormData.cpp"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Internal|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_All|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDOMFormData.h"
@@ -20861,14 +20909,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\page\GeolocationPositionCache.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\page\GeolocationPositionCache.h"
-				>
-			</File>
-			<File
 				RelativePath="..\page\GeolocationControllerClient.h"
 				>
 			</File>
@@ -20878,6 +20918,14 @@
 			</File>
 			<File
 				RelativePath="..\page\GeolocationPosition.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\GeolocationPositionCache.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\GeolocationPositionCache.h"
 				>
 			</File>
 			<File
@@ -28649,19 +28697,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\dom\CDATASection.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\dom\CDATASection.h"
-				>
-			</File>
-			<File
 				RelativePath="..\dom\CanvasSurface.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\dom\CanvasSurface.h"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\CDATASection.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\CDATASection.h"
 				>
 			</File>
 			<File
@@ -35656,6 +35704,14 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSDebugWrapperSet.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSDebugWrapperSet.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSDedicatedWorkerContextCustom.cpp"
 					>
 					<FileConfiguration
@@ -35916,14 +35972,6 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSDebugWrapperSet.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\JSDebugWrapperSet.h"
-					>
-				</File>
-				<File
 					RelativePath="..\bindings\js\JSDOMBinding.cpp"
 					>
 					<FileConfiguration
@@ -36152,14 +36200,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSDOMWrapper.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\JSDOMWrapper.h"
-					>
-				</File>
-				<File
 					RelativePath="..\bindings\js\JSDOMWindowShell.cpp"
 					>
 					<FileConfiguration
@@ -36213,6 +36253,14 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSDOMWindowShell.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSDOMWrapper.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSDOMWrapper.h"
 					>
 				</File>
 				<File
@@ -42669,14 +42717,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\bridge\c\CRuntimeObject.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\bridge\c\CRuntimeObject.h"
-				>
-			</File>
-			<File
 				RelativePath="..\bridge\c\c_class.cpp"
 				>
 			</File>
@@ -42706,6 +42746,14 @@
 			</File>
 			<File
 				RelativePath="..\bridge\c\c_utility.h"
+				>
+			</File>
+			<File
+				RelativePath="..\bridge\c\CRuntimeObject.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\bridge\c\CRuntimeObject.h"
 				>
 			</File>
 			<File

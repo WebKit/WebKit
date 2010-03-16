@@ -1,3 +1,13 @@
+2010-03-16  Adam Roben  <aroben@apple.com>
+
+        Fix linker warnings when building WebCore on Windows
+
+        Rubber-stamped by Steve Falkenburg.
+
+        * WebCore.vcproj/WebCore.vcproj: Exclude JSDOMFormData.cpp from the
+        build, since it's already included in DerivedSources.cpp. Also let VS
+        sort this file as it saw fit.
+
 2010-03-15  Antti Koivisto  <koivisto@iki.fi>
 
         Reviewed by Simon Hausmann.
