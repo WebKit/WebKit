@@ -68,17 +68,29 @@ function frontend_dumpIFrameBackground(testController)
         // Set focus to the iframe body node and then check its style.
         WebInspector.panels.elements.focusedDOMNode = domNode;
         testController.runAfterPendingDispatches(function() {
-            for (var i = 0; i < domNode._matchedCSSRules.length; i++) {
-                var rule = domNode._matchedCSSRules[i];
-                if (rule.isUser || rule.isUserAgent)
-                    continue;
-                var bg = rule.style.getShorthandValue("background");
-                if (bg) {
-                    testController.notifyDone("background = " + bg);
+
+            function callback(styles)
+            {
+                if (!styles) {
+                    testController.notifyDone("Background property not found");
                     return;
                 }
+
+                for (var i = styles.matchedCSSRules.length - 1; i >= 0; --i) {
+                    var rule = WebInspector.CSSStyleDeclaration.parseRule(styles.matchedCSSRules[i]);
+                    if (rule.isUser || rule.isUserAgent)
+                        continue;
+                    var bg = rule.style.getShorthandValue("background");
+                    if (bg) {
+                        testController.notifyDone("background = " + bg);
+                        return;
+                    }
+                }
+                    
+                testController.notifyDone("Background property not found");
             }
-            testController.notifyDone("Background property not found");
+
+            InspectorBackend.getStyles(WebInspector.Callback.wrap(callback), domNode.id, true);
         });
     });
 }

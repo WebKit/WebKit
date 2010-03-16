@@ -1,3 +1,9 @@
+2010-03-16  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: inspector http test fix that migrates it to the new inspector api.
+
+        * http/tests/inspector/inspect-iframe-from-different-domain.html:
+
 2010-03-11  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Simon Fraser.
