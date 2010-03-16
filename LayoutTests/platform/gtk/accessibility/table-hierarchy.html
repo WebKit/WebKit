@@ -37,12 +37,20 @@ var successfullyParsed = false;
 
         var table1 = webArea.childAtIndex(0);
         shouldBe("table1.role", "'table'");
+        shouldBe("table1.rowCount", "1");
+        shouldBe("table1.columnCount", "2");
         var table2 = webArea.childAtIndex(1);
         shouldBe("table2.role", "'table'");
+        shouldBe("table2.rowCount", "3");
+        shouldBe("table2.columnCount", "2");
         var table3 = webArea.childAtIndex(2);
         shouldBe("table3.role", "'table'");
+        shouldBe("table3.rowCount", "1");
+        shouldBe("table3.columnCount", "2");
         var table4 = webArea.childAtIndex(3);
         shouldBe("table4.role", "'table'");
+        shouldBe("table4.rowCount", "3");
+        shouldBe("table4.columnCount", "2");
 
         var children = table1.childrenCount;
         shouldBe("children", "2");

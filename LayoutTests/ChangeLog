@@ -1,3 +1,15 @@
+2010-03-16  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
+
+        Reviewed by Xan Lopez.
+
+        Added layout tests to get the number of rows and columns.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35504
+        [Gtk] Evaluate and fix AtkTable for layout tables
+
+        * platform/gtk/accessibility/table-hierarchy.html:
+        * platform/gtk/accessibility/table-hierarchy-expected.txt:
+
 2010-03-16  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: inspector http test fix that migrates it to the new inspector api.

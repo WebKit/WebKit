@@ -18,9 +18,17 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS table1.role is 'table'
+PASS table1.rowCount is 1
+PASS table1.columnCount is 2
 PASS table2.role is 'table'
+PASS table2.rowCount is 3
+PASS table2.columnCount is 2
 PASS table3.role is 'table'
+PASS table3.rowCount is 1
+PASS table3.columnCount is 2
 PASS table4.role is 'table'
+PASS table4.rowCount is 3
+PASS table4.columnCount is 2
 PASS children is 2
 PASS table1.childAtIndex(i).role is 'table cell'
 PASS table1.childAtIndex(i).role is 'table cell'

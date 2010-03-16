@@ -77,14 +77,22 @@ void AccessibilityUIElement::getChildrenWithRange(Vector<AccessibilityUIElement>
 
 int AccessibilityUIElement::rowCount()
 {
-    // FIXME: implement
-    return 0;
+    if (!m_element)
+        return 0;
+
+    ASSERT(ATK_IS_TABLE(m_element));
+
+    return atk_table_get_n_rows(ATK_TABLE(m_element));
 }
 
 int AccessibilityUIElement::columnCount()
 {
-    // FIXME: implement
-    return 0;
+    if (!m_element)
+        return 0;
+
+    ASSERT(ATK_IS_TABLE(m_element));
+
+    return atk_table_get_n_columns(ATK_TABLE(m_element));
 }
 
 int AccessibilityUIElement::childrenCount()
