@@ -2,6 +2,14 @@
 
         Reviewed by Gustavo Noronha.
 
+        Bump version for 1.1.90 release.
+
+        * configure.ac:
+
+2010-03-16  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
         Add support for Fast Mobile Scrolling in the build system.
 
         * configure.ac:

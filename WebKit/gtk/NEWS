@@ -1,4 +1,41 @@
 =================
+WebKitGTK+ 1.1.90
+=================
+
+What's new in WebKitGTK+ 1.1.90?
+
+  - Display server side messages during HTTP auth, since they
+    sometimes contain important information for the authentication
+    process.
+  - Reduce creation time for WebKitWebView widgets by reusing
+    dictionary structs used for spell-checking instead of creating a
+    new one for each instance.
+  - Implement WebKitWebView::geolocation-policy-decision-requested,
+    emitted when a frame inside the WebView wants to get its position
+    through geolocation.
+  - Add WebKitWebSettings::enable-spatial-navigation to control
+    whether Spatial Navigation is enabled or not. Spatial Navigation
+    allows the user to move through the elements in a page using only
+    the keyboard; this is similar to caret browsing, but with less
+    focus on accessibility since instead of presenting the exact
+    layout of the page to the user a more "logical" way of browsing
+    through its contents is allowed. A specification of this feature
+    can be seen at
+    http://www.w3.org/TR/WICD/#current-focus-point-algorithm
+  - Add a new build option, --enable-fast-mobile-scrolling. At the
+    moment this only disables fixed backgrounds when there are no
+    other fixed elements in a page, since they generally make
+    scrolling very slow and thus are a big burden in some mobile
+    environments.
+  - GTK+ Input Method support has received a big overhaul, and most of
+    them should work pretty well now.
+  - All known redraw issues in the plugin support (especially with the
+    Java plugin) have been fixed.
+  - Various fixes to the MediaPlayer code to improve responsiveness
+    and avoid lagging on position reporting.
+  - Lots of bugfixes and other improvements.
+
+=================
 WebKitGTK+ 1.1.22
 =================
 

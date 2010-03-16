@@ -1,3 +1,11 @@
+2010-03-16  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Update for 1.1.90 release.
+
+        * NEWS:
+
 2010-03-16  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Fix one too many empty lines in documentation of
