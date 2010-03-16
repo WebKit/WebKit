@@ -246,19 +246,17 @@ NetscapePluginInstanceProxy::~NetscapePluginInstanceProxy()
 #endif
 }
 
-void NetscapePluginInstanceProxy::resize(NSRect size, NSRect clipRect, bool sync)
+void NetscapePluginInstanceProxy::resize(NSRect size, NSRect clipRect)
 {
     uint32_t requestID = 0;
     
-    if (sync)
-        requestID = nextRequestID();
+    requestID = nextRequestID();
 
     _WKPHResizePluginInstance(m_pluginHostProxy->port(), m_pluginID, requestID,
                               size.origin.x, size.origin.y, size.size.width, size.size.height,
                               clipRect.origin.x, clipRect.origin.y, clipRect.size.width, clipRect.size.height);
     
-    if (sync)
-        waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
+    waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
 }
 
 void NetscapePluginInstanceProxy::stopAllStreams()

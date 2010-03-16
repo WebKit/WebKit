@@ -89,7 +89,7 @@ public:
     
     void pluginHostDied();
     
-    void resize(NSRect size, NSRect clipRect, bool sync);
+    void resize(NSRect size, NSRect clipRect);
     void destroy();
     void focusChanged(bool hasFocus);
     void windowFocusChanged(bool hasFocus);

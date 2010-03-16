@@ -180,10 +180,9 @@ extern "C" {
     if (!shouldClipOutPlugin)
         visibleRectInWindow.origin.y = borderViewHeight - NSMaxY(visibleRectInWindow);
 
-    BOOL sizeChanged = !NSEqualSizes(_previousSize, boundsInWindow.size);
     _previousSize = boundsInWindow.size;
     
-    _proxy->resize(boundsInWindow, visibleRectInWindow, sizeChanged);
+    _proxy->resize(boundsInWindow, visibleRectInWindow);
 }
 
 - (void)windowFocusChanged:(BOOL)hasFocus

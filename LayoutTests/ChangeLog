@@ -1,3 +1,18 @@
+2010-03-16  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36184
+        YouTube video resizing doesn't work with OOP plug-ins
+
+        This test is quite fragile, as it depends on when exactly WebCore decides to do layout.
+        If WebCore logic changes, the test will just always pass without executing the code path
+        in question.
+
+        * plugins/resize-from-plugin-expected.txt: Added.
+        * plugins/resize-from-plugin.html: Added.
+        * plugins/resources/resize-from-plugin-frame.html: Added.
+
 2010-03-16  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Darin Fisher.
