@@ -1,3 +1,11 @@
+2010-03-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Fix run-webkit-httpd on Windows.
+
+        * Scripts/webkitperl/httpd.pm:
+
 2010-03-16  Alexey Proskuryakov  <ap@apple.com>
 
         Tiger build fix.

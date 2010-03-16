@@ -31,6 +31,7 @@
 use strict;
 use warnings;
 
+use File::Copy;
 use File::Path;
 use File::Spec;
 use File::Spec::Functions;
