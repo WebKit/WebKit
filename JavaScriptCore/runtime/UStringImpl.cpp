@@ -64,10 +64,15 @@ UStringImpl::~UStringImpl()
 
 UStringImpl* UStringImpl::empty()
 {
-    // A non-null pointer at an invalid address (in page zero) so that if it were to be accessed we
-    // should catch the error with fault (however it should be impossible to access, since length is zero).
-    static const UChar* invalidNonNullUCharPtr = reinterpret_cast<UChar*>(static_cast<intptr_t>(1));
-    DEFINE_STATIC_LOCAL(UStringImpl, emptyString, (invalidNonNullUCharPtr, 0, ConstructStaticString));
+    // FIXME: This works around a bug in our port of PCRE, that a regular expression
+    // run on the empty string may still perform a read from the first element, and
+    // as such we need this to be a valid pointer. No code should ever be reading
+    // from a zero length string, so this should be able to be a non-null pointer
+    // into the zero-page.
+    // Replace this with 'reinterpret_cast<UChar*>(static_cast<intptr_t>(1))' once
+    // PCRE goes away.
+    static UChar emptyUCharData = 0;
+    DEFINE_STATIC_LOCAL(UStringImpl, emptyString, (&emptyUCharData, 0, ConstructStaticString));
     return &emptyString;
 }
 

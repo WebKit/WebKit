@@ -1,3 +1,17 @@
+2010-03-16  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt, Darin Adler.
+
+        Bug 36083 - REGRESSION (r55772-r55834): Crash in JavaScriptCore RegExp code on PowerPC
+
+        The problem is a bug in our port of PCRE - that a read may take place from the first character in an
+        empty string.  For the time being, revert to using a valid pointer in the data segment rather than
+        an invalid non-null pointer into the zero-page for the empty string's data pointer.  A better fix for
+        this will be to remove PCRE.
+
+        * runtime/UStringImpl.cpp:
+        (JSC::UStringImpl::empty):
+
 2010-03-16  Darin Adler  <darin@apple.com>
 
         Rolled out r56081 since it broke the Windows build.
