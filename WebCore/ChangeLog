@@ -3,6 +3,15 @@
         Reviewed by Holger Freyther.
 
         Add EFL port files to platform/efl.
+        http://webkit.org/b/35884
+
+        * platform/efl/FileSystemEfl.cpp: Added.
+
+2010-03-15  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Holger Freyther.
+
+        Add EFL port files to platform/efl.
         http://webkit.org/b/35882
 
         * platform/efl/ContextMenuItemEfl.cpp: Added.
