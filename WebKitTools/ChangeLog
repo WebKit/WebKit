@@ -1,3 +1,22 @@
+2010-03-16  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36184
+        YouTube video resizing doesn't work with OOP plug-ins
+
+        Added a resizeTo() method, which calls resizePlugin() in JS with the same arguments,
+        and a lastSetWindowArguments property, which returns a string describing the last NPWindow
+        passed to NPN_SetWindow.
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.cpp:
+        (pluginGetProperty):
+        (testResizeTo):
+        (pluginInvoke):
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.h:
+        * DumpRenderTree/TestNetscapePlugIn.subproj/main.cpp:
+        (NPP_SetWindow):
+
 2010-03-16  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
 
         Reviewed by Xan Lopez.
