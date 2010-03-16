@@ -74,9 +74,9 @@ public:
 
     String toWireString() const { return m_data; }
 
-    // Deserializes the value (in the current context). Returns an
-    // empty handle in case of failure.
-    v8::Local<v8::Value> deserialize();
+    // Deserializes the value (in the current context). Returns a null value in
+    // case of failure.
+    v8::Handle<v8::Value> deserialize();
 
 private:
     enum StringDataMode {

@@ -199,9 +199,16 @@ public:
     // The frame's document and all of its subresources succeeded to load.
     virtual void didFinishLoad(WebFrame*) { }
 
+    // The navigation resulted in no change to the documents within the page.
+    // For example, the navigation may have just resulted in scrolling to a
+    // named anchor or a PopState event may have been dispatched.
+    virtual void didNavigateWithinPage(WebFrame*, bool isNewNavigation) { }
+
     // The navigation resulted in scrolling the page to a named anchor instead
     // of downloading a new document.
+    // FIXME: The isNewNavigation parameter is DEPRECATED.
     virtual void didChangeLocationWithinPage(WebFrame*, bool isNewNavigation) { }
+    virtual void didChangeLocationWithinPage(WebFrame*) { }
 
     // Called upon update to scroll position, document state, and other
     // non-navigational events related to the data held by WebHistoryItem.

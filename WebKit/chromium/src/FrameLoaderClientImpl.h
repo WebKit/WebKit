@@ -94,6 +94,7 @@ public:
     virtual void dispatchDidReceiveServerRedirectForProvisionalLoad();
     virtual void dispatchDidCancelClientRedirect();
     virtual void dispatchWillPerformClientRedirect(const WebCore::KURL&, double interval, double fireDate);
+    virtual void dispatchDidNavigateWithinPage();
     virtual void dispatchDidChangeLocationWithinPage();
     virtual void dispatchDidPushStateWithinPage();
     virtual void dispatchDidReplaceStateWithinPage();
@@ -205,9 +206,6 @@ private:
     // For example, a middle click means "open in background tab".
     static bool actionSpecifiesNavigationPolicy(
         const WebCore::NavigationAction& action, WebNavigationPolicy* policy);
-
-    // Called when a dummy back-forward navigation is intercepted.
-    void handleBackForwardNavigation(const WebCore::KURL&);
 
     PassOwnPtr<WebPluginLoadObserver> pluginLoadObserver();
 

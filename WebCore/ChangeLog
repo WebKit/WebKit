@@ -1,3 +1,29 @@
+2010-03-15  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36152
+        [chromium] Add support for history.pushState and history.replaceState
+
+        This is covered by the existing tests in fast/loader/stateobjects
+
+        * bindings/v8/SerializedScriptValue.cpp:
+        (WebCore::ZigZag::Deserializer::deserialize):
+        (WebCore::SerializedScriptValue::deserialize):
+        * bindings/v8/SerializedScriptValue.h:
+        Switch to returning v8::Null instead of the empty value to match JSC
+        and the spec.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadInSameDocument): Call
+        dispatchDidNavigateWithinPage just before dispatching events to the
+        page.  This ordering is important since the event handlers could
+        destroy the page or start another navigation.
+
+        * loader/FrameLoaderClient.h: Add dispatchDidNavigateWithinPage to
+        notify the client whenever a navigation occurs without changing any of
+        the documents in the page.
+
 2010-03-16  Adam Roben  <aroben@apple.com>
 
         Fix linker warnings when building WebCore on Windows

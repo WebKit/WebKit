@@ -590,15 +590,15 @@ public:
     {
     }
 
-    v8::Local<v8::Value> deserialize()
+    v8::Handle<v8::Value> deserialize()
     {
         v8::HandleScope scope;
         while (!m_reader.isEof()) {
             if (!doDeserialize())
-                return v8::Local<v8::Value>();
+                return v8::Null();
         }
         if (stackDepth() != 1)
-            return v8::Local<v8::Value>();
+            return v8::Null();
         return scope.Close(element(0));
     }
 
@@ -686,10 +686,10 @@ SerializedScriptValue::SerializedScriptValue(String data, StringDataMode mode)
     }
 }
 
-v8::Local<v8::Value> SerializedScriptValue::deserialize()
+v8::Handle<v8::Value> SerializedScriptValue::deserialize()
 {
     if (!m_data.impl())
-        return v8::Local<v8::Value>();
+        return v8::Null();
     COMPILE_ASSERT(sizeof(BufferValueType) == 2, BufferValueTypeIsTwoBytes);
     Reader reader(reinterpret_cast<const char*>(m_data.impl()->characters()), 2 * m_data.length());
     Deserializer deserializer(reader);
