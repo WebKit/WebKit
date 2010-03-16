@@ -1,3 +1,16 @@
+2010-03-16  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        noscript tag should render when @sandbox disables JavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=36092
+
+        Add missing "!" in plugin code.  Should fix plugins/embed-inside-object
+        on Gtk and Qt.
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::load):
+
 2010-03-16  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Dimitri Glazkov.
