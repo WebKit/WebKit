@@ -1,3 +1,13 @@
+2010-03-16  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add EFL port files to efl/WebCoreSupport.
+        http://webkit.org/b/35916
+
+        * efl/WebCoreSupport/ContextMenuClientEfl.cpp: Added.
+        * efl/WebCoreSupport/ContextMenuClientEfl.h: Added.
+
 2010-03-16  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
