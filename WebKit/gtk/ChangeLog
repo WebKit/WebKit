@@ -1,3 +1,48 @@
+2010-03-16  Martin Robinson  <mrobinson@webkit.org>
+
+        Reviewed by Xan Lopez.
+
+        can't input korean into lower all input box except adress input box in webkit gtk launcher
+        https://bugs.webkit.org/show_bug.cgi?id=32290
+
+        Make the GTK+ EditorClient properly handle different types of input module
+        behavior such as commit and preedit signals that happen outside of key event
+        filtering and multiple times in a row. Filter keyup events as well as keydown
+        events and call gtk_im_context_focus_{in/out} when the WebView focus changes.
+
+        Added tests for this behavior to the GTK+ unit tests.
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::imContextCommitted): Handle this signal properly when it happens outside of
+        key event filtering.
+        (WebKit::imContextPreeditChanged): Immediately update the preedit state and do not reject
+        empty preedits, so that cancellation works properly.
+        (WebKit::EditorClient::updatePendingComposition): Add this method, which handles the
+        situation where a commit signal happens when there is still a pending commit.
+        (WebKit::EditorClient::shouldBeginEditing): Clear pending composition state before editing
+        starts.
+        (WebKit::EditorClient::shouldEndEditing): Clear pending composition state before editing ends.
+        (WebKit::EditorClient::handleKeyboardEvent): No longer special case preedits which happen during
+        key event filtering. When confirming a pending composition use insertText instead of confirmComposition.
+        (WebKit::EditorClient::handleInputMethodKeydown):
+        * WebCoreSupport/EditorClientGtk.h: Make pendingComposition a member, so that multiple WebViews
+        do not share state.
+        (WebKit::EditorClient::webView): Added.
+        (WebKit::EditorClient::treatContextCommitAsKeyEvent): Added.
+        (WebKit::EditorClient::clearPendingComposition): Added.
+        * tests/testkeyevents.c:
+        (test_keypress_events_load_status_cb):
+        (map_event_cb):
+        (setup_keyevent_test):
+        (test_keypress_events):
+        (element_text_equal_to):
+        (test_ime_load_status_cb):
+        (test_ime):
+        (main):
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_key_release_event):
+        (webkit_web_view_focus_in_event):
+
 2010-03-16  Yury Semikhatsky <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

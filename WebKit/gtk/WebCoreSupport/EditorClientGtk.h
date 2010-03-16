@@ -2,6 +2,7 @@
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2006 Zack Rusin <zack@kde.org>
  * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2010 Martin Robinson <mrobinson@webkit.org>
  *
  * All rights reserved.
  *
@@ -34,8 +35,10 @@
 
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
+#include <wtf/gobject/GOwnPtr.h>
 
 typedef struct _WebKitWebView WebKitWebView;
+typedef char gchar;
 
 namespace WebCore {
     class Page;
@@ -53,6 +56,11 @@ namespace WebKit {
     public:
         EditorClient(WebKitWebView*);
         ~EditorClient();
+        WebKitWebView* webView() { return m_webView; }
+        bool treatContextCommitAsKeyEvent() { return m_treatContextCommitAsKeyEvent; }
+        void clearPendingComposition() { m_pendingComposition.set(0); }
+        bool hasPendingComposition() { return m_pendingComposition; }
+        void updatePendingComposition(const char*);
 
         // from EditorClient
         virtual void pageDestroyed();
@@ -120,6 +128,8 @@ namespace WebKit {
 
     private:
         WebKitWebView* m_webView;
+        bool m_treatContextCommitAsKeyEvent;
+        GOwnPtr<gchar> m_pendingComposition;
     };
 }
 
