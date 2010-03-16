@@ -42,7 +42,6 @@ LOCAL_SRC_FILES += \
 	bindings/v8/DateExtension.cpp \
 	bindings/v8/DOMData.cpp \
 	bindings/v8/DOMDataStore.cpp \
-	bindings/v8/DerivedSourcesAllInOne.cpp \
 	bindings/v8/MainThreadDOMData.cpp \
 	bindings/v8/NPV8Object.cpp \
 	bindings/v8/RuntimeEnabledFeatures.cpp \

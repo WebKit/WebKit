@@ -1,3 +1,14 @@
+2010-03-16  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [V8] Delete DerivedSourcesAllInOne.cpp.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33048
+
+        * Android.v8bindings.mk:
+        * bindings/v8/DerivedSourcesAllInOne.cpp: Removed.
+
 2010-03-16  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Revert r56006 as it caused functional issues. We will work on a
