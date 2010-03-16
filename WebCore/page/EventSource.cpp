@@ -250,8 +250,10 @@ void EventSource::parseEventStream()
 void EventSource::parseEventStreamLine(unsigned int bufPos, int fieldLength, int lineLength)
 {
     if (!lineLength) {
-        if (!m_data.isEmpty())
+        if (!m_data.isEmpty()) {
+            m_data.removeLast();
             dispatchEvent(createMessageEvent());
+        }
         if (!m_eventName.isEmpty())
             m_eventName = "";
     } else if (fieldLength) {
@@ -269,10 +271,9 @@ void EventSource::parseEventStreamLine(unsigned int bufPos, int fieldLength, int
         int valueLength = lineLength - step;
 
         if (field == "data") {
-            if (m_data.size() > 0)
-                m_data.append('\n');
             if (valueLength)
                 m_data.append(&m_receiveBuf[bufPos], valueLength);
+            m_data.append('\n');
         } else if (field == "event")
             m_eventName = valueLength ? String(&m_receiveBuf[bufPos], valueLength) : "";
         else if (field == "id")

@@ -12,7 +12,7 @@ data : this line will be ignored since there is a space after data
 data
 data:
 data
-: no dispatch since data buffer is empty
+: dispatch event with two newlines
 
 data: simple
 

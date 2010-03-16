@@ -12,7 +12,7 @@ if (window.layoutTestController) {
     layoutTestController.waitUntilDone();
 }
 
-var count = 0;
+var count = -1;
 var es = new EventSource("resources/event-stream.php");
 
 es.onopen = function (evt) {
@@ -24,6 +24,10 @@ es.onopen = function (evt) {
 
 es.onmessage = function (evt) {
     switch(count++) {
+        case -1:
+            if (evt.data == "\n\n")
+                log("PASS: received event with two newlines");
+            break;
         case 0:
             if (evt.data == "simple")
                 log("PASS: received event with data \"simple\"");
