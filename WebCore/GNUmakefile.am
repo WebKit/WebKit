@@ -1248,6 +1248,7 @@ webcore_sources += \
 	WebCore/inspector/InspectorResource.h \
 	WebCore/inspector/InspectorTimelineAgent.cpp \
 	WebCore/inspector/InspectorTimelineAgent.h \
+	WebCore/inspector/InspectorWorkerResource.h \
 	WebCore/inspector/JavaScriptCallFrame.cpp \
 	WebCore/inspector/JavaScriptCallFrame.h \
 	WebCore/inspector/ScriptBreakpoint.h \
