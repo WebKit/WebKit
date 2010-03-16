@@ -46,6 +46,7 @@ from webkitpy.steps.obsoletepatches import ObsoletePatches
 from webkitpy.steps.options import Options
 from webkitpy.steps.postdiff import PostDiff
 from webkitpy.steps.postdiffforcommit import PostDiffForCommit
+from webkitpy.steps.postdiffforrevert import PostDiffForRevert
 from webkitpy.steps.preparechangelogforrevert import PrepareChangeLogForRevert
 from webkitpy.steps.preparechangelog import PrepareChangeLog
 from webkitpy.steps.promptforbugortitle import PromptForBugOrTitle

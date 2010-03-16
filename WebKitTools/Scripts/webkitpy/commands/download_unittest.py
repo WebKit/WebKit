@@ -117,10 +117,14 @@ Not closing bug 42 as attachment 197 has review=+.  Assuming there are more patc
         self.assert_execute_outputs(LandFromBug(), [42], options=self._default_options(), expected_stderr=expected_stderr)
 
     def test_prepare_rollout(self):
-        expected_stderr="Updating working directory\nRunning prepare-ChangeLog\n"
+        expected_stderr="Preparing rollout for bug 12345.\nUpdating working directory\nRunning prepare-ChangeLog\n"
+        self.assert_execute_outputs(PrepareRollout(), [852, "Reason"], options=self._default_options(), expected_stderr=expected_stderr)
+
+    def test_post_rollout(self):
+        expected_stderr="Preparing rollout for bug 12345.\nUpdating working directory\nRunning prepare-ChangeLog\n"
         self.assert_execute_outputs(PrepareRollout(), [852, "Reason"], options=self._default_options(), expected_stderr=expected_stderr)
 
     def test_rollout(self):
-        expected_stderr = "Will re-open bug 12345 after rollout.\nUpdating working directory\nRunning prepare-ChangeLog\nBuilding WebKit\n"
+        expected_stderr = "Preparing rollout for bug 12345.\nUpdating working directory\nRunning prepare-ChangeLog\nBuilding WebKit\n"
         self.assert_execute_outputs(Rollout(), [852, "Reason"], options=self._default_options(), expected_stderr=expected_stderr)
 

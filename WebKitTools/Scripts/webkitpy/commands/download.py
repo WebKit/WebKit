@@ -248,7 +248,11 @@ class AbstractRolloutPrepCommand(AbstractSequencedCommand):
         return parse_bug_id(original_diff)
 
     def _bug_id_for_revision(self, revision):
-        raise NotImplementedError("subclasses must implement")
+        bug_id = self._parse_bug_id_from_revision_diff(revision)
+        if bug_id:
+            log("Preparing rollout for bug %s." % bug_id)
+            return bug_id
+        log("Unable to parse bug number from diff.")
 
     def _prepare_state(self, options, args, tool):
         revision = args[0]
@@ -273,11 +277,18 @@ Creates an appropriate rollout ChangeLog, including a trac link and bug link.
         steps.PrepareChangeLogForRevert,
     ]
 
-    def _bug_id_for_revision(self, revision):
-        bug_id = self._parse_bug_id_from_revision_diff(revision)
-        if bug_id:
-            return bug_id
-        log("Failed to parse bug number from diff.")
+
+class PostRollout(AbstractRolloutPrepCommand):
+    name = "post-rollout"
+    help_text = "Prepare a rollout of the given revision and upload it to the bug."
+    steps = [
+        steps.CleanWorkingDirectory,
+        steps.Update,
+        steps.RevertRevision,
+        steps.PrepareChangeLogForRevert,
+        # FIXME: If there's no bug number, we should make a new bug.
+        steps.PostDiffForRevert,
+    ]
 
 
 class Rollout(AbstractRolloutPrepCommand):
@@ -301,10 +312,3 @@ Commits the revert and updates the bug (including re-opening the bug if necessar
         steps.Commit,
         steps.ReopenBugAfterRollout,
     ]
-
-    def _bug_id_for_revision(self, revision):
-        bug_id = self._parse_bug_id_from_revision_diff(revision)
-        if bug_id:
-            log("Will re-open bug %s after rollout." % bug_id)
-            return bug_id
-        log("Failed to parse bug number from diff.  No bugs will be updated/reopened after the rollout.")

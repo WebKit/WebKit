@@ -2,6 +2,23 @@
 
         Reviewed by Eric Seidel.
 
+        Add webkit-patch post-rollout to upload rollouts to bugs.webkit.org for easy committing
+        https://bugs.webkit.org/show_bug.cgi?id=36154
+
+        This new command is a mashup of prepare-rollout and post.  This command
+        will be used by an experimental bot to post rollouts of patches that
+        break things to bugs.webkit.org where they can be landed with the
+        greatest of ease.
+
+        * Scripts/webkitpy/commands/download.py:
+        * Scripts/webkitpy/commands/download_unittest.py:
+        * Scripts/webkitpy/steps/__init__.py:
+        * Scripts/webkitpy/steps/postdiffforrevert.py: Added.
+
+2010-03-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         webkit-patch rollout should error out on conflicts
         https://bugs.webkit.org/show_bug.cgi?id=36151
 
