@@ -1,3 +1,13 @@
+2010-03-15  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Holger Freyther.
+
+        Add EFL port files to platform/efl.
+        http://webkit.org/b/35887
+
+        * platform/efl/ClipboardEfl.cpp: Added.
+        * platform/efl/PasteboardEfl.cpp: Added.
+
 2010-03-15  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Eric Seidel.
