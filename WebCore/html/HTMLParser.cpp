@@ -875,8 +875,8 @@ bool HTMLParser::noframesCreateErrorCheck(Token*, RefPtr<Node>&)
 bool HTMLParser::noscriptCreateErrorCheck(Token*, RefPtr<Node>&)
 {
     if (!m_isParsingFragment) {
-        Settings* settings = m_document->settings();
-        if (settings && settings->isJavaScriptEnabled())
+        Frame* frame = m_document->frame();
+        if (frame && frame->script()->canExecuteScripts(NotAboutToExecuteScript))
             setSkipMode(noscriptTag);
     }
     return true;
@@ -1061,8 +1061,8 @@ bool HTMLParser::isInline(Node* node) const
             return true;
 #if !ENABLE(XHTMLMP)
         if (e->hasLocalName(noscriptTag) && !m_isParsingFragment) {
-            Settings* settings = m_document->settings();
-            if (settings && settings->isJavaScriptEnabled())
+            Frame* frame = m_document->frame();
+            if (frame && frame->script()->canExecuteScripts(NotAboutToExecuteScript))
                 return true;
         }
 #endif

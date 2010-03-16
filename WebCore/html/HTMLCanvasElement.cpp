@@ -113,8 +113,8 @@ void HTMLCanvasElement::parseMappedAttribute(MappedAttribute* attr)
 
 RenderObject* HTMLCanvasElement::createRenderer(RenderArena* arena, RenderStyle* style)
 {
-    Settings* settings = document()->settings();
-    if (settings && settings->isJavaScriptEnabled()) {
+    Frame* frame = document()->frame();
+    if (frame && frame->script()->canExecuteScripts(NotAboutToExecuteScript)) {
         m_rendererIsCanvas = true;
         return new (arena) RenderHTMLCanvas(this);
     }

@@ -1,3 +1,16 @@
+2010-03-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        noscript tag should render when @sandbox disables JavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=36092
+
+        Test that the noscript element renders when @sandbox disables
+        JavaScript.
+
+        * fast/frames/sandboxed-iframe-noscript-expected.txt: Added.
+        * fast/frames/sandboxed-iframe-noscript.html: Added.
+
 2010-03-15  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Eric Seidel.

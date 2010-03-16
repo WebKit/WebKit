@@ -976,8 +976,8 @@ bool HTMLElement::rendererIsNeeded(RenderStyle *style)
 {
 #if !ENABLE(XHTMLMP)
     if (hasLocalName(noscriptTag)) {
-        Settings* settings = document()->settings();
-        if (settings && settings->isJavaScriptEnabled())
+        Frame* frame = document()->frame();
+        if (frame && frame->script()->canExecuteScripts(NotAboutToExecuteScript))
             return false;
     }
 #endif

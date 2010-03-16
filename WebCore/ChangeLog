@@ -1,3 +1,29 @@
+2010-03-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        noscript tag should render when @sandbox disables JavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=36092
+
+        Instead of talking to Settings directly to figure out if JavaScript is
+        enabled in a frame, we need to talk to the ScriptController.  The
+        ScriptController is better at answering that question because it knows
+        about @sandbox.
+
+        Test: fast/frames/sandboxed-iframe-noscript.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::createRenderer):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::rendererIsNeeded):
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::noscriptCreateErrorCheck):
+        (WebCore::HTMLParser::isInline):
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::load):
+
 2010-03-15  John Gregg  <johnnyg@google.com>
 
         Reviewed by David Levin.

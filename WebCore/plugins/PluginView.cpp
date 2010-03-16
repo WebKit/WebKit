@@ -533,12 +533,10 @@ NPError PluginView::load(const FrameLoadRequest& frameLoadRequest, bool sendNoti
     String jsString = scriptStringIfJavaScriptURL(url);
 
     if (!jsString.isNull()) {
-        Settings* settings = m_parentFrame->settings();
-
         // Return NPERR_GENERIC_ERROR if JS is disabled. This is what Mozilla does.
-        if (!settings || !settings->isJavaScriptEnabled())
+        if (m_parentFrame->script()->canExecuteScripts(NotAboutToExecuteScript))
             return NPERR_GENERIC_ERROR;
-        
+
         // For security reasons, only allow JS requests to be made on the frame that contains the plug-in.
         if (!targetFrameName.isNull() && m_parentFrame->tree()->find(targetFrameName) != m_parentFrame)
             return NPERR_INVALID_PARAM;
