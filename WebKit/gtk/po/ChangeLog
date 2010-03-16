@@ -1,3 +1,12 @@
+2010-03-16  António Lima  <amrlima@gmail.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Translation for pt (Portuguese)
+        https://bugs.webkit.org/show_bug.cgi?id=36148
+
+        * pt.po: Added.
+
 2010-03-10  Priit Laes  <plaes@plaes.org>
 
         Reviewed by Gustavo Noronha.
