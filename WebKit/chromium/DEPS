@@ -128,6 +128,9 @@ deps = {
   'third_party/sqlite':
     Var('chromium_svn')+'/third_party/sqlite@'+Var('chromium_rev'),
 
+  'third_party/tcmalloc':
+    Var('chromium_svn')+'/third_party/tcmalloc@'+Var('chromium_rev'),
+
   'third_party/zlib':
     Var('chromium_svn')+'/third_party/zlib@'+Var('chromium_rev'),
 }

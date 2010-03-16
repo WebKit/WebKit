@@ -1,5 +1,11 @@
 2010-03-15  Darin Fisher  <darin@chromium.org>
 
+        Fix build bustage.  We also need to pull down "third_party/tcmalloc"
+
+        * DEPS:
+
+2010-03-15  Darin Fisher  <darin@chromium.org>
+
         Fix build bustage.  We also need to pull down "gfx"
 
         * DEPS:
