@@ -1,3 +1,15 @@
+2010-03-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        webkit-patch rollout should error out on conflicts
+        https://bugs.webkit.org/show_bug.cgi?id=36151
+
+        Instead of blindingly plowing ahead, we now throw an exception if there
+        are conflicts after applying a reverse diff.
+
+        * Scripts/webkitpy/scm.py:
+
 2010-03-15  Chris Fleizach  <cfleizach@apple.com>
 
         Unreviewed layout test fix.

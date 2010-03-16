@@ -210,6 +210,9 @@ class SCM:
     def changed_files(self):
         raise NotImplementedError, "subclasses must implement"
 
+    def conflicted_files(self):
+        raise NotImplementedError, "subclasses must implement"
+
     def display_name(self):
         raise NotImplementedError, "subclasses must implement"
 
@@ -334,6 +337,13 @@ class SVN(SCM):
             status_regexp = "^(?P<status>[ACDMR]).{5} (?P<filename>.+)$"
         return self.run_status_and_extract_filenames(self.status_command(), status_regexp)
 
+    def conflicted_files(self):
+        if self.svn_version() > "1.6":
+            status_regexp = "^(?P<status>[C]).{6} (?P<filename>.+)$"
+        else:
+            status_regexp = "^(?P<status>[C]).{5} (?P<filename>.+)$"
+        return self.run_status_and_extract_filenames(self.status_command(), status_regexp)
+
     @staticmethod
     def supports_local_commits():
         return False
@@ -432,7 +442,12 @@ class Git(SCM):
         status_command = ['git', 'diff', '-r', '--name-status', '-C', '-M', 'HEAD']
         status_regexp = '^(?P<status>[ADM])\t(?P<filename>.+)$'
         return self.run_status_and_extract_filenames(status_command, status_regexp)
-    
+
+    def conflicted_files(self):
+        status_command = ['git', 'diff', '--name-status', '-C', '-M', '--diff-filter=U']
+        status_regexp = '^(?P<status>[U])\t(?P<filename>.+)$'
+        return self.run_status_and_extract_filenames(status_command, status_regexp)
+
     @staticmethod
     def supports_local_commits():
         return True
@@ -459,13 +474,16 @@ class Git(SCM):
             raise ScriptError(message='Failed to find git commit for revision %s, git svn log output: "%s"' % (revision, git_commit))
 
         # I think this will always fail due to ChangeLogs.
-        # FIXME: We need to detec specific failure conditions and handle them.
         run_command(['git', 'revert', '--no-commit', git_commit], error_handler=Executive.ignore_error)
 
         # Fix any ChangeLogs if necessary.
         changelog_paths = self.modified_changelogs()
         if len(changelog_paths):
             run_command([self.script_path('resolve-ChangeLogs')] + changelog_paths)
+
+        conflicts = self.conflicted_files()
+        if len(conflicts):
+            raise ScriptError(message="Failed to apply reverse diff for revision %s because of the following conflicts:\n%s" % (revision, "\n".join(conflicts)))
 
     def revert_files(self, file_paths):
         run_command(['git', 'checkout', 'HEAD'] + file_paths)
