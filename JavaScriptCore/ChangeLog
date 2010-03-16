@@ -1,5 +1,14 @@
 2010-03-15  Geoffrey Garen  <ggaren@apple.com>
 
+        Not reviewed.
+
+        Removed a now-incorrect comment I forgot to remove in my last check-in.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_PageHeap::scavenge):
+
+2010-03-15  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Sam Weinig.
 
         Fixed a portion of:

@@ -1538,7 +1538,6 @@ void TCMalloc_PageHeap::scavenge()
     for (int i = kMaxPages; i >= 0 && free_committed_pages_ > targetPageCount; i--) {
         SpanList* slist = (static_cast<size_t>(i) == kMaxPages) ? &large_ : &free_[i];
         while (!DLL_IsEmpty(&slist->normal) && free_committed_pages_ > targetPageCount) {
-            // Release the last span on the normal portion of this list
             Span* s = slist->normal.prev; 
             DLL_Remove(s);
             ASSERT(!s->decommitted);
