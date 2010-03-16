@@ -1,3 +1,31 @@
+2010-03-15  Antti Koivisto  <koivisto@iki.fi>
+
+        Reviewed by Simon Hausmann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36121
+        [Qt] Make WebKit scrollbars work with tiling
+        
+        - Use the scrollbar overlay (implemented for accelerated compositing) when in tiled mode. 
+        - Make overlay compile unconditionally, enable on demand. This removes bunch of unneeded ifdefs.
+        - Update the scroll position to the backing store as needed.
+        - Renamed some methods.
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebViewPrivate::):
+        (QGraphicsWebViewPrivate::createOrDeleteOverlay):
+        (QGraphicsWebViewPrivate::setRootGraphicsLayer):
+        (QGraphicsWebViewPrivate::updateCompositingScrollPosition):
+        (QGraphicsWebViewPrivate::scroll):
+        (QGraphicsWebViewPrivate::update):
+        (QGraphicsWebViewPrivate::graphicsItemVisibleRect):
+        (QGraphicsWebView::paint):
+        (QGraphicsWebView::setPage):
+        (QGraphicsWebView::updateGeometry):
+        (QGraphicsWebView::setGeometry):
+        * Api/qwebframe.cpp:
+        (QWebFramePrivate::renderFromTiledBackingStore):
+        * Api/qwebframe_p.h:
+
 2010-03-15  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Simon Hausmann.

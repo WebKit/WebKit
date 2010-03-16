@@ -1,3 +1,15 @@
+2010-03-15  Antti Koivisto  <koivisto@iki.fi>
+
+        Reviewed by Simon Hausmann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36121
+        [Qt] Make WebKit scrollbars work with tiling
+         
+        Translate coordinates correctly.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::tiledBackingStorePaintEnd):
+
 2010-03-16  Jakub Wieczorek  <jwieczorek@webkit.org>
 
         Reviewed by Eric Seidel.
