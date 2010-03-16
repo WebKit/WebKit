@@ -34,6 +34,7 @@ class OptionElement {
 public:
     virtual ~OptionElement() { }
 
+    virtual bool disabled() const = 0;
     virtual bool selected() const = 0;
     virtual void setSelectedState(bool) = 0;
 

@@ -1,3 +1,19 @@
+2010-03-15  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Don't submit disabled menu options.
+        https://bugs.webkit.org/show_bug.cgi?id=35056
+
+        Test: fast/forms/menulist-disabled-selected-option.html
+
+        * dom/OptionElement.h:
+        * dom/SelectElement.cpp:
+        (WebCore::SelectElement::appendFormData):
+         If a selected option is disabled, skip it.
+         Remove code for non-selected menulist because of compatibility with
+         other browsers.
+
 2010-03-15  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Holger Freyther.

@@ -464,27 +464,15 @@ bool SelectElement::appendFormData(SelectElementData& data, Element* element, Fo
 
     for (unsigned i = 0; i < items.size(); ++i) {
         OptionElement* optionElement = toOptionElement(items[i]);
-        if (optionElement && optionElement->selected()) {
+        if (optionElement && optionElement->selected() && !optionElement->disabled()) {
             list.appendData(name, optionElement->value());
             successful = true;
         }
     }
 
-    // FIXME: This case should not happen. Make sure that we select the first option
-    // in any case, otherwise we have no consistency with the DOM interface.
-    // We return the first one if it was a combobox select
-    if (!successful && !data.multiple() && data.size() <= 1 && items.size()) {
-        OptionElement* optionElement = toOptionElement(items[0]);
-        if (optionElement) {
-            const AtomicString& value = optionElement->value();
-            if (value.isNull())
-                list.appendData(name, optionElement->text().stripWhiteSpace());
-            else
-                list.appendData(name, value);
-            successful = true;
-        }
-    }
-
+    // It's possible that this is a menulist with multiple options and nothing
+    // will be submitted (!successful). We won't send a unselected non-disabled
+    // option as fallback. This behavior matches to other browsers.
     return successful;
 } 
 

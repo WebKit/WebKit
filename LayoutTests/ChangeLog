@@ -1,3 +1,17 @@
+2010-03-15  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Don't submit disabled menu options.
+        https://bugs.webkit.org/show_bug.cgi?id=35056
+
+        * fast/forms/menulist-disabled-selected-option-expected.txt: Added.
+        * fast/forms/menulist-disabled-selected-option.html: Added.
+        * fast/forms/menulist-submit-without-selection-expected.txt: Added.
+        * fast/forms/menulist-submit-without-selection.html: Added.
+        * fast/forms/script-tests/menulist-disabled-selected-option.js: Added.
+        * fast/forms/script-tests/menulist-submit-without-selection.js: Added.
+
 2010-03-15  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         Reviewed by Adam Barth.
