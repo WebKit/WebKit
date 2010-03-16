@@ -261,8 +261,14 @@ void RenderBlock::updateBeforeAfterContent(PseudoId pseudoId)
 void RenderBlock::addChild(RenderObject* newChild, RenderObject* beforeChild)
 {
     // Make sure we don't append things after :after-generated content if we have it.
-    if (!beforeChild && isAfterContent(lastChild()))
-        beforeChild = lastChild();
+    if (!beforeChild) {
+        RenderObject* lastRenderer = lastChild();
+
+        if (isAfterContent(lastRenderer))
+            beforeChild = lastRenderer;
+        else if (lastRenderer && lastRenderer->isAnonymousBlock() && isAfterContent(lastRenderer->lastChild()))
+            beforeChild = lastRenderer->lastChild();
+    }
 
     bool madeBoxesNonInline = false;
 

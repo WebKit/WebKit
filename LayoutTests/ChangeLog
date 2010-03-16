@@ -1,3 +1,13 @@
+2010-03-15  Valters Svabe  <vsvabe@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        :after selector displays in wrong place with nested div
+        https://bugs.webkit.org/show_bug.cgi?id=32288
+
+        * fast/css-generated-content/block-after-expected.txt: Added.
+        * fast/css-generated-content/block-after.html: Added.
+
 2010-03-15  Chris Fleizach  <cfleizach@apple.com>
 
         Unreviewed.
