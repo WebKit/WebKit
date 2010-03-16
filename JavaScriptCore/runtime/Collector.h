@@ -216,7 +216,7 @@ namespace JSC {
                     ++result;
             }
             for (size_t i = startCell >> 5; i < BITMAP_WORDS; ++i)
-                result += WTF::bitCount(bits[i]);
+                result += bitCount(bits[i]);
             return result;
         }
         size_t isEmpty() // Much more efficient than testing count() == 0.

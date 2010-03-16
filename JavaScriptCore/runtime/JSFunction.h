@@ -66,7 +66,7 @@ namespace JSC {
 
         NativeFunction nativeFunction()
         {
-            return *WTF::bitwise_cast<NativeFunction*>(m_data);
+            return *bitwise_cast<NativeFunction*>(m_data);
         }
 
         virtual ConstructType getConstructData(ConstructData&);
@@ -98,7 +98,7 @@ namespace JSC {
         ScopeChain& scopeChain()
         {
             ASSERT(!isHostFunctionNonInline());
-            return *WTF::bitwise_cast<ScopeChain*>(m_data);
+            return *bitwise_cast<ScopeChain*>(m_data);
         }
         void clearScopeChain()
         {
@@ -113,11 +113,11 @@ namespace JSC {
         void setScopeChain(const ScopeChain& sc)
         {
             ASSERT(!isHostFunctionNonInline());
-            *WTF::bitwise_cast<ScopeChain*>(m_data) = sc;
+            *bitwise_cast<ScopeChain*>(m_data) = sc;
         }
         void setNativeFunction(NativeFunction func)
         {
-            *WTF::bitwise_cast<NativeFunction*>(m_data) = func;
+            *bitwise_cast<NativeFunction*>(m_data) = func;
         }
         unsigned char m_data[sizeof(void*)];
     };

@@ -321,7 +321,7 @@ void Stringifier::appendQuotedString(StringBuilder& builder, const UString& valu
                 static const char hexDigits[] = "0123456789abcdef";
                 UChar ch = data[i];
                 UChar hex[] = { '\\', 'u', hexDigits[(ch >> 12) & 0xF], hexDigits[(ch >> 8) & 0xF], hexDigits[(ch >> 4) & 0xF], hexDigits[ch & 0xF] };
-                builder.append(hex, sizeof(hex) / sizeof(UChar));
+                builder.append(hex, arrayLength(hex));
                 break;
         }
     }
@@ -349,7 +349,7 @@ inline JSValue Stringifier::toJSON(JSValue value, const PropertyNameForFunctionC
         return value;
 
     JSValue list[] = { propertyName.value(m_exec) };
-    ArgList args(list, sizeof(list) / sizeof(JSValue));
+    ArgList args(list, arrayLength(list));
     return call(m_exec, object, callType, callData, value, args);
 }
 
@@ -363,7 +363,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
     // Call the replacer function.
     if (m_replacerCallType != CallTypeNone) {
         JSValue list[] = { propertyName.value(m_exec), value };
-        ArgList args(list, sizeof(list) / sizeof(JSValue));
+        ArgList args(list, arrayLength(list));
         value = call(m_exec, m_replacer, m_replacerCallType, m_replacerCallData, holder, args);
         if (m_exec->hadException())
             return StringifyFailed;

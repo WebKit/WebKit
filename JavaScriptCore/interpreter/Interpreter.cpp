@@ -1134,7 +1134,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         #if HAVE(COMPUTED_GOTO)
             #define LIST_OPCODE_LABEL(id, length) &&id,
                 static Opcode labels[] = { FOR_EACH_OPCODE_ID(LIST_OPCODE_LABEL) };
-                for (size_t i = 0; i < sizeof(labels) / sizeof(Opcode); ++i)
+                for (size_t i = 0; i < arrayLength(labels); ++i)
                     m_opcodeTable[i] = labels[i];
             #undef LIST_OPCODE_LABEL
         #endif // HAVE(COMPUTED_GOTO)
