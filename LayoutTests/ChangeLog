@@ -1,3 +1,13 @@
+2010-03-11  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Simon Fraser.
+        Patch by Antonio Gomes <tonikitoo@webkit.org>
+
+        Spatial Navigation: Add a scrollIntoView call when focusing an element.
+        https://bugs.webkit.org/show_bug.cgi?id=36020
+
+        * platform/gtk/Skipped: Unskip snav-iframe-with-offscreen-element.html
+
 2010-03-16  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         [GStreamer] media/video-played-collapse.html

@@ -333,7 +333,11 @@ bool FocusController::advanceFocusDirectionally(FocusDirection direction, Keyboa
     if (newDocument)
         setFocusedFrame(newDocument->frame());
 
-    static_cast<Element*>(node)->focus(false);
+    Element* element = static_cast<Element*>(node);
+    ASSERT(element);
+
+    scrollIntoView(element);
+    element->focus(false);
     return true;
 }
 

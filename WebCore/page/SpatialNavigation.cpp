@@ -465,6 +465,18 @@ bool scrollInDirection(Frame* frame, FocusDirection direction)
     return frame->eventHandler()->scrollRecursively(scrollDirection, ScrollByLine);
 }
 
+void scrollIntoView(Element* element)
+{
+    // NOTE: Element's scrollIntoView method could had been used here, but
+    // it is preferable to inflate |element|'s bounding rect a bit before
+    // scrolling it for accurate reason.
+    // Element's scrollIntoView method does not provide this flexibility.
+    static const int fudgeFactor = 2;
+    IntRect bounds = element->getRect();
+    bounds.inflate(fudgeFactor);
+    element->renderer()->enclosingLayer()->scrollRectToVisible(bounds);
+}
+
 bool isInRootDocument(Node* node)
 {
     if (!node)

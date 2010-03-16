@@ -5832,10 +5832,6 @@ fast/events/continuous-platform-wheelevent-in-scrolling-div.html
 fast/dom/HTMLProgressElement/progress-element.html
 fast/dom/HTMLProgressElement/set-progress-properties.html
 
-# For some reason it fails on DRT, although works on GtkLauncher and other ports' DRT.
-# https://bugs.webkit.org/show_bug.cgi?id=35984
-fast/events/spatial-navigation/snav-iframe-with-offscreen-focusable-element.html
-
 # Needs mock support, and build slave Geolocation service
 # See https://bugs.webkit.org/show_bug.cgi?id=36053
 fast/dom/Geolocation/maximum-age.html
