@@ -1,3 +1,14 @@
+2010-03-16  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        [GStreamer] media/video-played-collapse.html
+        https://bugs.webkit.org/show_bug.cgi?id=36165
+
+        Skip apparently unreliable test. It used to fail locally and pass
+        on the bots, but the situation is inversed now. We need to
+        investigate this properly.
+
+        * platform/gtk/Skipped:
+
 2010-03-16  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.
