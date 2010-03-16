@@ -709,7 +709,7 @@ void GraphicsContext3DInternal::reshape(int width, int height)
         }
     }
 
-    GLint internalColorFormat, colorFormat, internalDepthStencilFormat;
+    GLint internalColorFormat, colorFormat, internalDepthStencilFormat = 0;
     if (m_attrs.alpha) {
         internalColorFormat = GL_RGBA8;
         colorFormat = GL_RGBA;
