@@ -1,3 +1,10 @@
+2010-03-16  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Unreviewed. Add missing symbol to GeoLocation documentation
+        section.
+
+        * docs/webkitgtk-sections.txt:
+
 2010-03-16  Martin Robinson  <mrobinson@webkit.org>
 
         Reviewed by Xan Lopez.
