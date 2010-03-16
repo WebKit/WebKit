@@ -417,7 +417,6 @@ extern "C" const int jscore_fastmalloc_introspection = 0;
 #include <algorithm>
 #include <errno.h>
 #include <limits>
-#include <new>
 #include <pthread.h>
 #include <stdarg.h>
 #include <stddef.h>
@@ -3942,6 +3941,8 @@ static inline void* cpp_alloc(size_t size, bool nothrow) {
   }
 }
 
+#if ENABLE(GLOBAL_FASTMALLOC_NEW)
+
 void* operator new(size_t size) {
   void* p = cpp_alloc(size, false);
   // We keep this next instruction out of cpp_alloc for a reason: when
@@ -3995,6 +3996,8 @@ void operator delete[](void* p, const std::nothrow_t&) __THROW {
   MallocHook::InvokeDeleteHook(p);
   do_free(p);
 }
+
+#endif
 
 extern "C" void* memalign(size_t align, size_t size) __THROW {
   void* result = do_memalign(align, size);

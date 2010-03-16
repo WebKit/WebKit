@@ -1,3 +1,16 @@
+2010-03-16  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Remove extra <new> include and add guards to operator new/delete definitions
+        https://bugs.webkit.org/show_bug.cgi?id=35967
+
+        Remove extra <new> header include from FastAlloc.cpp since it is included in 
+        FastAlloc.h. Add ENABLE(GLOBAL_FASTMALLOC_NEW) macro guard to operator
+        new/delete/new []/delete [] definitions.
+
+        * wtf/FastMalloc.cpp:
+
 2010-03-15  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Eric Seidel.
