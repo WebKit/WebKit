@@ -18,9 +18,8 @@ shouldBeNonNull("context = create3DContext()");
 shouldBeNonNull("attribs = context.getContextAttributes()");
 shouldBe("attribs.depth", "true");
 shouldBe("attribs.alpha", "true");
-// The following two depend on whether the implementation actually supports them
-shouldBe("(attribs.stencil == true || attribs.stencil == false)", "true");
-shouldBe("(attribs.antialias == true || attribs.antialias == false)", "true");
+shouldBe("attribs.stencil", "true");
+shouldBe("attribs.antialias", "true");
 shouldBe("attribs.premultipliedAlpha", "true");
 
 debug ("Test customized values");
@@ -30,6 +29,26 @@ shouldBe("attribs.depth", "true");
 shouldBe("attribs.alpha", "true");
 shouldBe("attribs.stencil", "false");
 shouldBe("attribs.antialias", "false");
+shouldBe("attribs.premultipliedAlpha", "true");
+
+debug("Test customized values");
+// (stencil == true && depth == false) is not supported, default depth to true
+shouldBeNonNull("context = create3DContext({ depth: false, stencil: true })");
+shouldBeNonNull("attribs = context.getContextAttributes()");
+shouldBe("attribs.depth", "true");
+shouldBe("attribs.alpha", "true");
+shouldBe("attribs.stencil", "true");
+shouldBe("attribs.antialias", "true");
+shouldBe("attribs.premultipliedAlpha", "true");
+
+debug("Test customized values");
+// (premultipliedAlpha == false) is not supported, default to true
+shouldBeNonNull("context = create3DContext({ premultipliedAlpha: false })");
+shouldBeNonNull("attribs = context.getContextAttributes()");
+shouldBe("attribs.depth", "true");
+shouldBe("attribs.alpha", "true");
+shouldBe("attribs.stencil", "true");
+shouldBe("attribs.antialias", "true");
 shouldBe("attribs.premultipliedAlpha", "true");
 
 successfullyParsed = true;

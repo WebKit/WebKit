@@ -1,3 +1,14 @@
+2010-03-16  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Hook up WebGLContextAttributes to OpenGL context creation code
+        https://bugs.webkit.org/show_bug.cgi?id=33416
+
+        Test: fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html
+
+        * src/GraphicsContext3D.cpp: Hook up WebGLContextAttributes to OpenGL context creation code for Windows.
+
 2010-03-16  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed.

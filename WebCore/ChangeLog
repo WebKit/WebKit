@@ -1,3 +1,19 @@
+2010-03-16  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Hook up WebGLContextAttributes to OpenGL context creation code
+        https://bugs.webkit.org/show_bug.cgi?id=33416
+
+        Test: fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html
+
+        * bindings/v8/custom/V8HTMLCanvasElementCustom.cpp: Fix an index bug.
+        * platform/graphics/GraphicsContext3D.h: Add members/functions for multisampling/stencil buffer purpose.
+        * platform/graphics/mac/Canvas3DLayer.h: Add GraphicsContext3D as a member of Canvas3DLayer.
+        * platform/graphics/mac/Canvas3DLayer.mm: Add multisampling support.
+        * platform/graphics/mac/GraphicsContext3DMac.cpp: Hook up WebGLContextAttributes to OpenGL context creation code for Mac.
+        * platform/graphics/mac/GraphicsLayerCA.mm: Adjust to modified Canvas3DLayer init call.
+
 2010-03-16  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
 
         Reviewed by Xan Lopez.

@@ -32,16 +32,18 @@
 
 namespace WebCore {
     class GraphicsLayer;
+    class GraphicsContext3D;
 }
 
 @interface Canvas3DLayer : CAOpenGLLayer 
 {
     WebCore::GraphicsLayer* m_layerOwner;
+    WebCore::GraphicsContext3D* m_context;
     CGLContextObj m_contextObj;
     GLuint m_texture;
 }
 
-- (id)initWithContext:(CGLContextObj)context texture:(GLuint)texture;
+- (id)initWithContext:(WebCore::GraphicsContext3D*)context;
 
 - (CGImageRef)copyImageSnapshotWithColorSpace:(CGColorSpaceRef)colorSpace;
 

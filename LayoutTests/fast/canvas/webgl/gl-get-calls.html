@@ -82,7 +82,7 @@ else {
     // FIXME: Current WebKit implementation returns the wrong value (https://bugs.webkit.org/show_bug.cgi?id=31842)
     //shouldBe('context.getParameter(context.STENCIL_BACK_VALUE_MASK)', '0xFFFFFFFF');
     //shouldBe('context.getParameter(context.STENCIL_BACK_WRITEMASK)', '0xFFFFFFFF');
-    shouldBe('context.getParameter(context.STENCIL_BITS)', '0');
+    shouldBe('context.getParameter(context.STENCIL_BITS) > 0', 'true');
     shouldBe('context.getParameter(context.STENCIL_CLEAR_VALUE)', '0');
     shouldBe('context.getParameter(context.STENCIL_FAIL)', 'context.KEEP');
     shouldBe('context.getParameter(context.STENCIL_FUNC)', 'context.ALWAYS');
