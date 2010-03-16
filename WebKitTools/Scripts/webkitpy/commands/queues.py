@@ -151,7 +151,10 @@ class CommitQueue(AbstractQueue, StepSequenceErrorHandler):
         # Not using BugzillaQueries.fetch_patches_from_commit_queue() so we can reject patches with invalid committers/reviewers.
         bug_ids = self.tool.bugs.queries.fetch_bug_ids_from_commit_queue()
         all_patches = sum([self.tool.bugs.fetch_bug(bug_id).commit_queued_patches(include_invalid=True) for bug_id in bug_ids], [])
-        return self.committer_validator.patches_after_rejecting_invalid_commiters_and_reviewers(all_patches)
+        valid_patches = self.committer_validator.patches_after_rejecting_invalid_commiters_and_reviewers(all_patches)
+        if not self._builders_are_green():
+            return filter(lambda patch: patch.is_rollout(), valid_patches)
+        return valid_patches
 
     def next_work_item(self):
         patches = self._validate_patches_in_commit_queue()
@@ -180,12 +183,13 @@ class CommitQueue(AbstractQueue, StepSequenceErrorHandler):
         return True
 
     def should_proceed_with_work_item(self, patch):
-        if not self._builders_are_green():
-            return False
-        if not self._can_build_and_test():
-            return False
-        if not self._builders_are_green():
-            return False
+        if not patch.is_rollout():
+            if not self._builders_are_green():
+                return False
+            if not self._can_build_and_test():
+                return False
+            if not self._builders_are_green():
+                return False
         self._update_status("Landing patch", patch)
         return True
 

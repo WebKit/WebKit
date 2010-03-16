@@ -49,6 +49,7 @@ _patch1 = {
     "id": 197,
     "bug_id": 42,
     "url": "http://example.com/197",
+    "name": "Patch1",
     "is_obsolete": False,
     "is_patch": True,
     "review": "+",
@@ -63,6 +64,7 @@ _patch2 = {
     "id": 128,
     "bug_id": 42,
     "url": "http://example.com/128",
+    "name": "Patch2",
     "is_obsolete": False,
     "is_patch": True,
     "review": "+",
@@ -77,6 +79,7 @@ _patch3 = {
     "id": 103,
     "bug_id": 75,
     "url": "http://example.com/103",
+    "name": "Patch3",
     "is_obsolete": False,
     "is_patch": True,
     "review": "?",
@@ -88,6 +91,7 @@ _patch4 = {
     "id": 104,
     "bug_id": 77,
     "url": "http://example.com/103",
+    "name": "Patch3",
     "is_obsolete": False,
     "is_patch": True,
     "review": "+",
@@ -101,6 +105,7 @@ _patch5 = {
     "id": 105,
     "bug_id": 77,
     "url": "http://example.com/103",
+    "name": "Patch5",
     "is_obsolete": False,
     "is_patch": True,
     "review": "+",
@@ -113,6 +118,7 @@ _patch6 = { # Valid committer, but no reviewer.
     "id": 106,
     "bug_id": 77,
     "url": "http://example.com/103",
+    "name": "ROLLOUT of r3489",
     "is_obsolete": False,
     "is_patch": True,
     "commit-queue": "+",
@@ -125,6 +131,7 @@ _patch7 = { # Valid review, patch is marked obsolete.
     "id": 107,
     "bug_id": 76,
     "url": "http://example.com/103",
+    "name": "Patch7",
     "is_obsolete": True,
     "is_patch": True,
     "review": "+",
@@ -265,17 +272,25 @@ class MockBugzilla(Mock):
 
 class MockBuildBot(Mock):
 
+    def __init__(self):
+        self._tree_is_on_fire = False
+
     def builder_statuses(self):
         return [{
             "name": "Builder1",
             "is_green": True,
         }, {
             "name": "Builder2",
-            "is_green": True,
+            "is_green": not self._tree_is_on_fire,
         }]
 
     def red_core_builders_names(self):
+        if self._tree_is_on_fire:
+            return "Builder2"
         return []
+
+    def light_tree_on_fire(self):
+        self._tree_is_on_fire = True
 
 
 class MockSCM(Mock):
@@ -315,7 +330,7 @@ class MockSCM(Mock):
 
     def modified_changelogs(self):
         # Ideally we'd return something more interesting here.  The problem is
-        # that LandDiff will try to actually read the path from disk!
+        # that LandDiff will try to actually read the patch from disk!
         return []
 
 

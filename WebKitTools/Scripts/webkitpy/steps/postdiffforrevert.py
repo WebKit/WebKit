@@ -28,6 +28,7 @@
 
 import StringIO
 
+from webkitpy.bugzilla import Attachment
 from webkitpy.steps.abstractstep import AbstractStep
 
 
@@ -36,6 +37,6 @@ class PostDiffForRevert(AbstractStep):
         self._tool.bugs.add_patch_to_bug(
             state["bug_id"],
             StringIO.StringIO(self.cached_lookup(state, "diff")),
-            "ROLLOUT of r%s" % state["revision"],
+            "%s%s" % (Attachment.rollout_preamble, state["revision"]),
             mark_for_review=False,
             mark_for_commit_queue=True)

@@ -66,6 +66,8 @@ def timestamp():
 
 class Attachment(object):
 
+    rollout_preamble = "ROLLOUT of r"
+
     def __init__(self, attachment_dictionary, bug):
         self._attachment_dictionary = attachment_dictionary
         self._bug = bug
@@ -96,6 +98,9 @@ class Attachment(object):
 
     def is_obsolete(self):
         return not not self._attachment_dictionary.get("is_obsolete")
+
+    def is_rollout(self):
+        return self.name().startswith(self.rollout_preamble)
 
     def name(self):
         return self._attachment_dictionary.get("name")

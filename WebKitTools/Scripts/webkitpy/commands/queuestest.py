@@ -44,8 +44,9 @@ class MockQueueEngine(object):
 
 class QueuesTest(unittest.TestCase):
     mock_work_item = Attachment({
-        "id" : 1234,
-        "bug_id" : 345,
+        "id": 1234,
+        "bug_id": 345,
+        "name": "Patch",
         "attacher_email": "adam@example.com",
     }, None)
 
