@@ -1,5 +1,13 @@
 2010-03-16  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        Fix one too many empty lines in documentation of
+        window-obejct-cleared signal, which caused the documentation to be
+        rendered funny. Thanks to Martin Robinson for noticing.
+
+        * webkit/webkitwebview.cpp:
+
+2010-03-16  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         Unreviewed. Add missing symbol to GeoLocation documentation
         section.
 

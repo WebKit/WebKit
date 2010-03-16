@@ -1634,7 +1634,6 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * @context: the #JSGlobalContextRef holding the global object and other
      * execution state; equivalent to the return value of
      * webkit_web_frame_get_global_context(@frame)
-     *
      * @window_object: the #JSObjectRef representing the frame's JavaScript
      * window object
      *
