@@ -21,7 +21,10 @@
 <script>
 
 function editingTest() {
-    doubleClickAtSelectionStart();
+    var target = document.getElementById('test');
+    var x = target.offsetLeft;
+    var y = target.offsetTop + target.offsetHeight / 2;
+    doubleClick(x, y);
     cutCommand();
     typeCharacterCommand('.');
     typeCharacterCommand('.');

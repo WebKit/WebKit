@@ -9,7 +9,7 @@ if (window.layoutTestController)
 <script>
 if (window.layoutTestController) {
     var target = document.getElementById("target");
-    doubleClick(target.offsetLeft, target.offsetTop);
+    doubleClick(target.offsetLeft, target.offsetTop + target.offsetHeight / 2);
     layoutTestController.execCommand("DeleteForward");
 }
 </script>
