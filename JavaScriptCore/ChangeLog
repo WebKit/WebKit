@@ -1,3 +1,15 @@
+2010-03-15  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Eric Seidel.
+
+        [BREWMP] Add a function to create a BREW instance without local variable declarations.
+        https://bugs.webkit.org/show_bug.cgi?id=34705
+
+        Add a template function to create a BREW instance in one line.
+
+        * wtf/brew/ShellBrew.h: Added.
+        (WTF::createInstance):
+
 2010-03-15  Geoffrey Garen  <ggaren@apple.com>
 
         Not reviewed.
