@@ -1,3 +1,12 @@
+2010-03-16  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Revert r56006 as it caused functional issues. We will work on a
+        testcase, and rework the fix, and land when we have this a bit
+        more testable.
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::paintMediaPlayButton):
+
 2010-03-16  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
@@ -602,19 +611,6 @@
         * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
         (WebCore::MediaPlayerPrivate::pipeline): public accessor for the
         playbin element.
-
-2010-03-15  Philippe Normand  <pnormand@igalia.com>
-
-        Reviewed by  Gustavo Noronha Silva.
-
-        [GTK] video playback position query flood when mouse over the video element
-        https://bugs.webkit.org/show_bug.cgi?id=35333
-
-        Don't trigger a position query only to know which play/pause
-        button to display.
-
-        * platform/gtk/RenderThemeGtk.cpp:
-        (WebCore::RenderThemeGtk::paintMediaPlayButton):
 
 2010-03-15  Jian Li  <jianli@chromium.org>
 
