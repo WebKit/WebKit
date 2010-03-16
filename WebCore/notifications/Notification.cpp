@@ -73,9 +73,9 @@ Notification::Notification(const NotificationContents& contents, ScriptExecution
         ec = SECURITY_ERR;
         return;
     }
-    
-    KURL icon = context->completeURL(contents.icon());
-    if (!icon.isEmpty() && !icon.isValid()) {
+
+    m_iconURL = context->completeURL(contents.icon());
+    if (!m_iconURL.isEmpty() && !m_iconURL.isValid()) {
         ec = SYNTAX_ERR;
         return;
     }

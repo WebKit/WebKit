@@ -76,10 +76,17 @@ WebURL WebNotification::url() const
     return m_private->url();
 }
 
+// FIXME: remove this deprecated function once all callers use iconURL()
 WebString WebNotification::icon() const
 {
     ASSERT(!isHTML());
     return m_private->contents().icon();
+}
+
+WebURL WebNotification::iconURL() const
+{
+    ASSERT(!isHTML());
+    return m_private->iconURL();
 }
 
 WebString WebNotification::title() const
