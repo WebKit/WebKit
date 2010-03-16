@@ -1,3 +1,16 @@
+2010-03-15  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix crash in QWebView::setPage()
+
+        tst_qwebpage was crashing on setPage(0)
+
+        https://bugs.webkit.org/show_bug.cgi?id=36137
+
+        * Api/qwebview.cpp:
+        (QWebView::setPage):
+
 2010-03-16  Yury Semikhatsky <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

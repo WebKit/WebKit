@@ -395,11 +395,11 @@ void QWebView::setPage(QWebPage* page)
                 this, SLOT(updateMicroFocus()));
         connect(d->page, SIGNAL(destroyed()),
                 this, SLOT(_q_pageDestroyed()));
+#if USE(ACCELERATED_COMPOSITING)
+        d->page->d->page->settings()->setAcceleratedCompositingEnabled(false);
+#endif
     }
     setAttribute(Qt::WA_OpaquePaintEvent, d->page);
-#if USE(ACCELERATED_COMPOSITING)
-    d->page->d->page->settings()->setAcceleratedCompositingEnabled(false);
-#endif
     update();
 }
 
