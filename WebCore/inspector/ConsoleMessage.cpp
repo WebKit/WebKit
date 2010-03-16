@@ -31,9 +31,12 @@
 #include "config.h"
 #include "ConsoleMessage.h"
 
+#include "InjectedScript.h"
+#include "InjectedScriptHost.h"
 #include "InspectorFrontend.h"
 #include "ScriptCallStack.h"
 #include "ScriptObject.h"
+#include "SerializedScriptValue.h"
 
 namespace WebCore {
 
@@ -80,7 +83,7 @@ ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, S
 }
 
 #if ENABLE(INSPECTOR)
-void ConsoleMessage::addToConsole(InspectorFrontend* frontend)
+void ConsoleMessage::addToFrontend(InspectorFrontend* frontend, InjectedScriptHost* injectedScriptHost)
 {
     ScriptObject jsonObj = frontend->newScriptObject();
     jsonObj.set("source", static_cast<int>(m_source));
@@ -90,7 +93,15 @@ void ConsoleMessage::addToConsole(InspectorFrontend* frontend)
     jsonObj.set("url", m_url);
     jsonObj.set("groupLevel", static_cast<int>(m_groupLevel));
     jsonObj.set("repeatCount", static_cast<int>(m_repeatCount));
-    frontend->addConsoleMessage(jsonObj, m_frames, m_scriptState, m_arguments,  m_message);
+    Vector<RefPtr<SerializedScriptValue> > arguments;
+    if (!m_arguments.isEmpty()) {
+        InjectedScript injectedScript = injectedScriptHost->injectedScriptFor(m_scriptState);
+        for (unsigned i = 0; i < m_arguments.size(); ++i) {
+            RefPtr<SerializedScriptValue> serializedValue = injectedScript.wrapForConsole(m_arguments[i]);
+            arguments.append(serializedValue);
+        }
+    }   
+    frontend->addConsoleMessage(jsonObj, m_frames, arguments,  m_message);
 }
 
 void ConsoleMessage::updateRepeatCountInConsole(InspectorFrontend* frontend)

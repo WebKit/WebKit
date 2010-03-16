@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
- * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -30,26 +28,53 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module core {
-    interface [Conditional=INSPECTOR] InspectorFrontendHost {
-        void loaded();
-        void attach();
-        void detach();
-        void closeWindow();
-        void bringToFront();
-        void inspectedURLChanged(in DOMString newURL);
+#ifndef InspectorFrontendClientLocal_h
+#define InspectorFrontendClientLocal_h
 
-        boolean canAttachWindow();
-        void setAttachedWindowHeight(in unsigned long height);
-        void moveWindowBy(in float x, in float y);
+#include "InspectorFrontendClient.h"
+#include "ScriptState.h"
+#include <wtf/Noncopyable.h>
 
-        DOMString localizedStringsURL();
-        DOMString hiddenPanels();
-        DOMString platform();
-        DOMString port();
+namespace WebCore {
 
-        void copyText(in DOMString text);
+class FrontendMenuProvider;
+class InspectorController;
+class InspectorFrontendHost;
+class Page;
 
-        [Custom] void showContextMenu(in MouseEvent event, in DOMObject items);
-    };
-}
+class InspectorFrontendClientLocal : public InspectorFrontendClient, public Noncopyable {
+public:
+    InspectorFrontendClientLocal(InspectorController*, Page*);
+    virtual ~InspectorFrontendClientLocal();
+    
+    virtual void windowObjectCleared();
+    virtual void frontendLoaded();
+
+    virtual void moveWindowBy(float x, float y);
+
+    virtual bool canAttachWindow();
+    virtual void changeAttachedWindowHeight(unsigned);
+
+    virtual void showContextMenu(Event*, const Vector<ContextMenuItem*>&);
+    
+protected:
+    virtual void setAttachedWindowHeight(unsigned) = 0;
+
+    void setAttachedWindow(bool);
+    void restoreAttachedWindowHeight();
+
+private:
+    static unsigned constrainedAttachedWindowHeight(unsigned preferredHeight, unsigned totalWindowHeight);
+
+    friend class FrontendMenuProvider;
+    InspectorController* m_inspectorController;
+    Page* m_frontendPage;
+    ScriptState* m_frontendScriptState;
+    // TODO(yurys): this ref shouldn't be needed.
+    RefPtr<InspectorFrontendHost> m_frontendHost;
+    FrontendMenuProvider* m_menuProvider;
+};
+
+} // namespace WebCore
+
+#endif

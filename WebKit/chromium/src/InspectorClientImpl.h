@@ -45,25 +45,15 @@ public:
 
     // InspectorClient methods:
     virtual void inspectorDestroyed();
-    virtual WebCore::Page* createPage();
-    virtual WebCore::String localizedStringsURL();
-    virtual WebCore::String hiddenPanels();
-    virtual void showWindow();
-    virtual void closeWindow();
-    virtual bool windowVisible();
-    virtual void attachWindow();
-    virtual void detachWindow();
-    virtual void setAttachedWindowHeight(unsigned height);
+    virtual void openInspectorFrontend(WebCore::InspectorController*);
     virtual void highlight(WebCore::Node*);
     virtual void hideHighlight();
-    virtual void inspectedURLChanged(const WebCore::String& newURL);
     virtual void populateSetting(
         const WebCore::String& key,
         WebCore::String* value);
     virtual void storeSetting(
         const WebCore::String& key,
         const WebCore::String& value);
-    virtual void inspectorWindowObjectCleared();
 
 private:
     void loadSettings();

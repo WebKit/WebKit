@@ -1,3 +1,47 @@
+2010-03-16  Yury Semikhatsky <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Introduce InspectorFrontendClient that provides InspectorFrontend with an interface to the embedder. InspectorClient now serves as a delegate for InspectorController and does not contain methods for managing inspector frontend window. That allows to create remote InspectorFrontendHost.
+
+        Introduce InspectorFrontendClient that would provide InspectorFrontend with an interface to the embedder
+        https://bugs.webkit.org/show_bug.cgi?id=35036
+
+        * WebCoreSupport/WebInspectorClient.cpp:
+        (WebInspectorClient::WebInspectorClient):
+        (WebInspectorClient::~WebInspectorClient):
+        (WebInspectorClient::openInspectorFrontend):
+        (WebInspectorClient::highlight):
+        (WebInspectorClient::hideHighlight):
+        (WebInspectorClient::updateHighlight):
+        (WebInspectorFrontendClient::WebInspectorFrontendClient):
+        (WebInspectorFrontendClient::~WebInspectorFrontendClient):
+        (WebInspectorFrontendClient::frontendLoaded):
+        (WebInspectorFrontendClient::localizedStringsURL):
+        (WebInspectorFrontendClient::hiddenPanels):
+        (WebInspectorFrontendClient::bringToFront):
+        (WebInspectorFrontendClient::closeWindow):
+        (WebInspectorFrontendClient::attachWindow):
+        (WebInspectorFrontendClient::detachWindow):
+        (WebInspectorFrontendClient::setAttachedWindowHeight):
+        (WebInspectorFrontendClient::inspectedURLChanged):
+        (WebInspectorFrontendClient::closeWindowWithoutNotifications):
+        (WebInspectorFrontendClient::showWindowWithoutNotifications):
+        (WebInspectorFrontendClient::destroyInspectorView):
+        (WebInspectorFrontendClient::updateWindowTitle):
+        (WebInspectorFrontendClient::onGetMinMaxInfo):
+        (WebInspectorFrontendClient::onSize):
+        (WebInspectorFrontendClient::onClose):
+        (WebInspectorFrontendClient::onSetFocus):
+        (WebInspectorFrontendClient::onWebViewWindowPosChanging):
+        (WebInspectorWndProc):
+        (WebInspectorFrontendClient::windowReceivedMessage):
+        * WebCoreSupport/WebInspectorClient.h:
+        (WebInspectorClient::frontendClosing):
+        * WebInspector.cpp:
+        (WebInspector::attach):
+        (WebInspector::detach):
+
 2010-03-14  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

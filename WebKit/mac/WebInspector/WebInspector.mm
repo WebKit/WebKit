@@ -175,14 +175,10 @@ using namespace WebCore;
 
 - (void)attach:(id)sender
 {
-    if (Page* page = core(_webView))
-        page->inspectorController()->attachWindow();
 }
 
 - (void)detach:(id)sender
 {
-    if (Page* page = core(_webView))
-        page->inspectorController()->detachWindow();
 }
 
 - (void)evaluateInFrontend:(id)sender callId:(long)callId script:(NSString *)script

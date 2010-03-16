@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
- * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -30,26 +28,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module core {
-    interface [Conditional=INSPECTOR] InspectorFrontendHost {
-        void loaded();
-        void attach();
-        void detach();
-        void closeWindow();
-        void bringToFront();
-        void inspectedURLChanged(in DOMString newURL);
+#ifndef InspectorFrontendClient_h
+#define InspectorFrontendClient_h
 
-        boolean canAttachWindow();
-        void setAttachedWindowHeight(in unsigned long height);
-        void moveWindowBy(in float x, in float y);
+#include <wtf/Vector.h>
 
-        DOMString localizedStringsURL();
-        DOMString hiddenPanels();
-        DOMString platform();
-        DOMString port();
+namespace WebCore {
 
-        void copyText(in DOMString text);
+class ContextMenuItem;
+class Event;
+class String;
 
-        [Custom] void showContextMenu(in MouseEvent event, in DOMObject items);
-    };
-}
+class InspectorFrontendClient {
+public:
+    virtual ~InspectorFrontendClient() { }
+
+    virtual void windowObjectCleared() = 0;
+    virtual void frontendLoaded() = 0;
+
+    virtual void moveWindowBy(float x, float y) = 0;
+
+    virtual String localizedStringsURL() = 0;
+    virtual String hiddenPanels() = 0;
+
+    virtual void bringToFront() = 0;
+    virtual void closeWindow() = 0;
+
+    virtual bool canAttachWindow() = 0;
+    virtual void attachWindow() = 0;
+    virtual void detachWindow() = 0;
+    virtual void changeAttachedWindowHeight(unsigned) = 0;
+    
+    virtual void inspectedURLChanged(const String&) = 0;
+
+    virtual void showContextMenu(Event*, const Vector<ContextMenuItem*>&) = 0;
+};
+
+} // namespace WebCore
+
+#endif

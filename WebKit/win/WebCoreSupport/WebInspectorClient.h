@@ -31,6 +31,7 @@
 
 #include <WebCore/COMPtr.h>
 #include <WebCore/InspectorClient.h>
+#include <WebCore/InspectorFrontendClientLocal.h>
 #include <WebCore/PlatformString.h>
 #include <WebCore/WindowMessageListener.h>
 #include <wtf/OwnPtr.h>
@@ -39,43 +40,59 @@
 class WebNodeHighlight;
 class WebView;
 
-class WebInspectorClient : public WebCore::InspectorClient, WebCore::WindowMessageListener {
+class WebInspectorClient : public WebCore::InspectorClient {
 public:
     WebInspectorClient(WebView*);
 
     // InspectorClient
     virtual void inspectorDestroyed();
 
-    virtual WebCore::Page* createPage();
-
-    virtual WebCore::String localizedStringsURL();
-
-    virtual WebCore::String hiddenPanels();
-
-    virtual void showWindow();
-    virtual void closeWindow();
-    virtual bool windowVisible();
-
-    virtual void attachWindow();
-    virtual void detachWindow();
-
-    virtual void setAttachedWindowHeight(unsigned height);
+    virtual void openInspectorFrontend(WebCore::InspectorController*);
 
     virtual void highlight(WebCore::Node*);
     virtual void hideHighlight();
 
-    virtual void inspectedURLChanged(const WebCore::String& newURL);
-
     virtual void populateSetting(const WebCore::String& key, WebCore::String* value);
     virtual void storeSetting(const WebCore::String& key, const WebCore::String& value);
 
-    virtual void inspectorWindowObjectCleared();
+    void updateHighlight();
+    void frontendClosing() { m_frontendHwnd = 0; }
 
 private:
     ~WebInspectorClient();
 
+    WebView* m_inspectedWebView;
+    HWND m_inspectedWebViewHwnd;
+    HWND m_frontendHwnd;
+
+    OwnPtr<WebNodeHighlight> m_highlight;
+};
+
+class WebInspectorFrontendClient : public WebCore::InspectorFrontendClientLocal, WebCore::WindowMessageListener {
+public:
+    WebInspectorFrontendClient(WebView* inspectedWebView, HWND inspectedWebViewHwnd, HWND frontendHwnd, const COMPtr<WebView>& frotnendWebView, HWND frontendWebViewHwnd, WebInspectorClient* inspectorClient);
+
+    virtual void frontendLoaded();
+    
+    virtual WebCore::String localizedStringsURL();
+    virtual WebCore::String hiddenPanels();
+    
+    virtual void bringToFront();
+    virtual void closeWindow();
+    
+    virtual void attachWindow();
+    virtual void detachWindow();
+    
+    virtual void setAttachedWindowHeight(unsigned height);
+    virtual void inspectedURLChanged(const WebCore::String& newURL);
+
+private:
+    ~WebInspectorFrontendClient();
+
     void closeWindowWithoutNotifications();
     void showWindowWithoutNotifications();
+
+    void destroyInspectorView();
 
     void updateWindowTitle();
 
@@ -90,16 +107,16 @@ private:
 
     WebView* m_inspectedWebView;
     HWND m_inspectedWebViewHwnd;
-    HWND m_hwnd;
-    COMPtr<WebView> m_webView;
-    HWND m_webViewHwnd;
+    HWND m_frontendHwnd;
+    WebInspectorClient* m_inspectorClient;
+    COMPtr<WebView> m_frontendWebView;
+    HWND m_frontendWebViewHwnd;
 
     bool m_shouldAttachWhenShown;
     bool m_attached;
 
-    OwnPtr<WebNodeHighlight> m_highlight;
-
     WebCore::String m_inspectedURL;
+    bool m_destroyingInspectorView;
 
     static friend LRESULT CALLBACK WebInspectorWndProc(HWND, UINT, WPARAM, LPARAM);
 };

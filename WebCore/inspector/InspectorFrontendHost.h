@@ -43,27 +43,26 @@ namespace WebCore {
 class ContextMenuItem;
 class Event;
 class InspectorClient;
+class InspectorFrontendClient;
 class Node;
 
 class InspectorFrontendHost : public RefCounted<InspectorFrontendHost>
 {
 public:
-    static PassRefPtr<InspectorFrontendHost> create(InspectorController* inspectorController, InspectorClient* client)
+    static PassRefPtr<InspectorFrontendHost> create(InspectorFrontendClient* client)
     {
-        return adoptRef(new InspectorFrontendHost(inspectorController, client));
+        return adoptRef(new InspectorFrontendHost(client));
     }
 
     ~InspectorFrontendHost();
-
-    InspectorController* inspectorController() { return m_inspectorController; }
-
-    void disconnectController() { m_inspectorController = 0; }
+    void disconnectClient();
 
     void loaded();
     void attach();
     void detach();
     void closeWindow();
-    void windowUnloading();
+    void bringToFront();
+    void inspectedURLChanged(const String&);
 
     bool canAttachWindow() const;
     void setAttachedWindowHeight(unsigned height);
@@ -80,59 +79,9 @@ public:
     void showContextMenu(Event*, const Vector<ContextMenuItem*>& items);
 
 private:
-    class MenuProvider : public ContextMenuProvider {
-    public:
-        static PassRefPtr<MenuProvider> create(InspectorFrontendHost* frontendHost, const Vector<ContextMenuItem*>& items)
-        {
-            return adoptRef(new MenuProvider(frontendHost, items));
-        }
+    InspectorFrontendHost(InspectorFrontendClient* client);
 
-        virtual ~MenuProvider()
-        {
-            contextMenuCleared();
-        }
-
-        void disconnect()
-        {
-            m_frontendHost = 0;
-        }
-
-        virtual void populateContextMenu(ContextMenu* menu)
-        {
-            for (size_t i = 0; i < m_items.size(); ++i)
-                menu->appendItem(*m_items[i]);
-        }
-
-        virtual void contextMenuItemSelected(ContextMenuItem* item)
-        {
-            if (m_frontendHost)
-                m_frontendHost->contextMenuItemSelected(item);
-        }
-
-        virtual void contextMenuCleared()
-        {
-            if (m_frontendHost)
-                m_frontendHost->contextMenuCleared();
-            deleteAllValues(m_items);
-            m_items.clear();
-        }
-
-    private:
-        MenuProvider(InspectorFrontendHost* frontendHost,  const Vector<ContextMenuItem*>& items)
-            : m_frontendHost(frontendHost)
-            , m_items(items) { }
-        InspectorFrontendHost* m_frontendHost;
-        Vector<ContextMenuItem*> m_items;
-    };
-
-    InspectorFrontendHost(InspectorController* inspectorController, InspectorClient* client);
-
-    void contextMenuItemSelected(ContextMenuItem*);
-    void contextMenuCleared();
-
-    InspectorController* m_inspectorController;
-    InspectorClient* m_client;
-    RefPtr<MenuProvider> m_menuProvider;
+    InspectorFrontendClient* m_client;
 };
 
 } // namespace WebCore

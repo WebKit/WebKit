@@ -1,3 +1,108 @@
+2010-03-11  Yury Semikhatsky <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Introduce InspectorFrontendClient that provides InspectorFrontend with an interface to the embedder. InspectorClient now serves as a delegate for InspectorController and does not contain methods for managing inspector frontend window. That allows to create remote InspectorFrontendHost.
+
+        Introduce InspectorFrontendClient that would provide InspectorFrontend with an interface to the embedder
+        https://bugs.webkit.org/show_bug.cgi?id=35036
+
+        * GNUmakefile.am:
+        * WebCore.Inspector.exp:
+        * WebCore.base.exp:
+        * WebCore.gypi:
+        * WebCore.order:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/ConsoleMessage.cpp:
+        (WebCore::ConsoleMessage::addToFrontend):
+        * inspector/ConsoleMessage.h:
+        * inspector/InspectorClient.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::~InspectorController):
+        (WebCore::InspectorController::inspectedPageDestroyed):
+        (WebCore::InspectorController::windowVisible):
+        (WebCore::InspectorController::frontendReady):
+        (WebCore::InspectorController::willCloseFrontend):
+        (WebCore::InspectorController::addConsoleMessage):
+        (WebCore::InspectorController::setInspectorFrontendClient):
+        (WebCore::InspectorController::inspectedWindowScriptObjectCleared):
+        (WebCore::InspectorController::setFrontend):
+        (WebCore::InspectorController::show):
+        (WebCore::InspectorController::close):
+        (WebCore::InspectorController::releaseDOMAgent):
+        (WebCore::InspectorController::populateScriptObjects):
+        (WebCore::InspectorController::didCommitLoad):
+        (WebCore::InspectorController::getProfile):
+        (WebCore::InspectorController::enableDebugger):
+        * inspector/InspectorController.h:
+        (WebCore::InspectorController::hasInspectorFrontendClient):
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::InspectorFrontend):
+        (WebCore::InspectorFrontend::~InspectorFrontend):
+        (WebCore::InspectorFrontend::addConsoleMessage):
+        (WebCore::InspectorFrontend::bringToFront):
+        (WebCore::InspectorFrontend::inspectedURLChanged):
+        * inspector/InspectorFrontend.h:
+        * inspector/InspectorFrontendClient.h: Added.
+        (WebCore::InspectorFrontendClient::~InspectorFrontendClient):
+        * inspector/InspectorFrontendClientLocal.cpp: Added.
+        (WebCore::FrontendMenuProvider::create):
+        (WebCore::FrontendMenuProvider::disconnect):
+        (WebCore::FrontendMenuProvider::FrontendMenuProvider):
+        (WebCore::FrontendMenuProvider::~FrontendMenuProvider):
+        (WebCore::FrontendMenuProvider::populateContextMenu):
+        (WebCore::FrontendMenuProvider::contextMenuItemSelected):
+        (WebCore::FrontendMenuProvider::contextMenuCleared):
+        (WebCore::InspectorFrontendClientLocal::InspectorFrontendClientLocal):
+        (WebCore::InspectorFrontendClientLocal::~InspectorFrontendClientLocal):
+        (WebCore::InspectorFrontendClientLocal::windowObjectCleared):
+        (WebCore::InspectorFrontendClientLocal::frontendLoaded):
+        (WebCore::InspectorFrontendClientLocal::canAttachWindow):
+        (WebCore::InspectorFrontendClientLocal::changeAttachedWindowHeight):
+        (WebCore::InspectorFrontendClientLocal::moveWindowBy):
+        (WebCore::InspectorFrontendClientLocal::showContextMenu):
+        (WebCore::InspectorFrontendClientLocal::setAttachedWindow):
+        (WebCore::InspectorFrontendClientLocal::restoreAttachedWindowHeight):
+        (WebCore::InspectorFrontendClientLocal::constrainedAttachedWindowHeight):
+        * inspector/InspectorFrontendClientLocal.h: Added.
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::InspectorFrontendHost):
+        (WebCore::InspectorFrontendHost::~InspectorFrontendHost):
+        (WebCore::InspectorFrontendHost::loaded):
+        (WebCore::InspectorFrontendHost::attach):
+        (WebCore::InspectorFrontendHost::detach):
+        (WebCore::InspectorFrontendHost::closeWindow):
+        (WebCore::InspectorFrontendHost::bringToFront):
+        (WebCore::InspectorFrontendHost::inspectedURLChanged):
+        (WebCore::InspectorFrontendHost::canAttachWindow):
+        (WebCore::InspectorFrontendHost::setAttachedWindowHeight):
+        (WebCore::InspectorFrontendHost::moveWindowBy):
+        (WebCore::InspectorFrontendHost::showContextMenu):
+        * inspector/InspectorFrontendHost.h:
+        (WebCore::InspectorFrontendHost::create):
+        * inspector/InspectorFrontendHost.idl:
+        * inspector/front-end/InspectorFrontendHostStub.js:
+        (.WebInspector.InspectorFrontendHostStub.prototype.bringToFront):
+        (.WebInspector.InspectorFrontendHostStub.prototype.inspectedURLChanged):
+        * inspector/front-end/inspector.js:
+        (WebInspector.loaded):
+        (WebInspector.close):
+        (WebInspector.bringToFront):
+        (WebInspector.inspectedURLChanged):
+        * loader/EmptyClients.h:
+        (WebCore::EmptyInspectorClient::openInspectorFrontend):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::dispatchDidClearWindowObjectInWorld):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::~Page):
+        * page/Page.h:
+        * platform/ContextMenu.cpp:
+        (WebCore::ContextMenu::populate):
+        (WebCore::ContextMenu::addInspectElementItem):
+
 2010-03-16  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

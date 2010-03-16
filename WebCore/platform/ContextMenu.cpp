@@ -359,6 +359,9 @@ void ContextMenu::populate()
                 appendItem(SpeechMenuItem);
 #endif                
             } else {
+#if ENABLE(INSPECTOR)
+                if (!(frame->page() && frame->page()->inspectorController()->hasInspectorFrontendClient())) {
+#endif
 #if PLATFORM(GTK)
                 appendItem(BackItem);
                 appendItem(ForwardItem);
@@ -377,6 +380,9 @@ void ContextMenu::populate()
                     appendItem(StopItem);
                 else
                     appendItem(ReloadItem);
+#endif
+#if ENABLE(INSPECTOR)
+                }
 #endif
 
                 if (frame->page() && frame != frame->page()->mainFrame())
@@ -550,7 +556,6 @@ void ContextMenu::addInspectElementItem()
         return;
 
     ContextMenuItem InspectElementItem(ActionType, ContextMenuItemTagInspectElement, contextMenuItemTagInspectElement());
-    appendItem(*separatorItem());
     appendItem(InspectElementItem);
 }
 #endif // ENABLE(INSPECTOR)

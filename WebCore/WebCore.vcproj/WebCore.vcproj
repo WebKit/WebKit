@@ -42861,6 +42861,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\InspectorFrontendClient.h"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorFrontendClientLocal.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorFrontendClientLocal.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\InspectorFrontendHost.cpp"
 				>
 			</File>

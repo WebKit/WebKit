@@ -1,3 +1,29 @@
+2010-03-16  Yury Semikhatsky <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Introduce InspectorFrontendClient that provides InspectorFrontend with an interface to the embedder. InspectorClient now serves as a delegate for InspectorController and does not contain methods for managing inspector frontend window. That allows to create remote InspectorFrontendHost.
+
+        Introduce InspectorFrontendClient that would provide InspectorFrontend with an interface to the embedder
+        https://bugs.webkit.org/show_bug.cgi?id=35036
+
+        * src/InspectorClientImpl.cpp:
+        (WebKit::InspectorClientImpl::openInspectorFrontend):
+        * src/InspectorClientImpl.h:
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::attach):
+        (WebKit::WebDevToolsAgentImpl::didCommitProvisionalLoad):
+        (WebKit::WebDevToolsAgentImpl::createInspectorFrontendProxy):
+        (WebKit::WebDevToolsAgentImpl::setInspectorFrontendProxyToInspectorController):
+        * src/WebDevToolsAgentImpl.h:
+        * src/WebDevToolsFrontendImpl.cpp:
+        (WebKit::WebDevToolsFrontendImpl::WebDevToolsFrontendImpl):
+        (WebKit::WebDevToolsFrontendImpl::jsBringToFront):
+        (WebKit::WebDevToolsFrontendImpl::jsInspectedURLChanged):
+        * src/WebDevToolsFrontendImpl.h:
+        * src/js/InjectDispatch.js:
+        (close):
+
 2010-03-16  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: chromium tests fix.

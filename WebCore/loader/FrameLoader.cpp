@@ -3944,8 +3944,6 @@ void FrameLoader::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* world)
     if (Page* page = m_frame->page()) {
         if (InspectorController* inspector = page->inspectorController())
             inspector->inspectedWindowScriptObjectCleared(m_frame);
-        if (InspectorController* inspector = page->parentInspectorController())
-            inspector->windowScriptObjectAvailable();
     }
 #endif
 }

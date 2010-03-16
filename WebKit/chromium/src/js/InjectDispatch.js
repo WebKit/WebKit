@@ -104,3 +104,7 @@ function dispatch(method, var_args) {
     var call = JSON.stringify(args);
     DevToolsAgentHost.dispatch(call);
 };
+
+function close() {
+    // This method is called when InspectorFrontend closes in layout tests.
+}

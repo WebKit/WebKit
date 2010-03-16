@@ -69,25 +69,13 @@ static CFBundleRef getWebKitBundle()
 
 WebInspectorClient::WebInspectorClient(WebView* webView)
     : m_inspectedWebView(webView)
-    , m_hwnd(0)
-    , m_webViewHwnd(0)
-    , m_shouldAttachWhenShown(false)
-    , m_attached(false)
 {
     ASSERT(m_inspectedWebView);
-
     m_inspectedWebView->viewWindow((OLE_HANDLE*)&m_inspectedWebViewHwnd);
-
-    // FIXME: Implement window size/position save/restore
-#if 0
-    [self setWindowFrameAutosaveName:@"Web Inspector"];
-#endif
 }
 
 WebInspectorClient::~WebInspectorClient()
 {
-    if (m_hwnd)
-        ::DestroyWindow(m_hwnd);
 }
 
 void WebInspectorClient::inspectorDestroyed()
@@ -95,35 +83,30 @@ void WebInspectorClient::inspectorDestroyed()
     delete this;
 }
 
-Page* WebInspectorClient::createPage()
+void WebInspectorClient::openInspectorFrontend(InspectorController* inspectorController)
 {
     registerWindowClass();
 
-    if (m_hwnd)
-        ::DestroyWindow(m_hwnd);
-
-    m_hwnd = ::CreateWindowEx(0, kWebInspectorWindowClassName, 0, WS_OVERLAPPEDWINDOW,
+    HWND frontendHwnd = ::CreateWindowEx(0, kWebInspectorWindowClassName, 0, WS_OVERLAPPEDWINDOW,
         defaultWindowRect().x(), defaultWindowRect().y(), defaultWindowRect().width(), defaultWindowRect().height(),
         0, 0, 0, 0);
 
-    if (!m_hwnd)
-        return 0;
+    if (!frontendHwnd)
+        return;
 
-    ::SetProp(m_hwnd, kWebInspectorPointerProp, reinterpret_cast<HANDLE>(this));
+    COMPtr<WebView> frontendWebView(AdoptCOM, WebView::createInstance());
 
-    m_webView.adoptRef(WebView::createInstance());
-
-    if (FAILED(m_webView->setHostWindow((OLE_HANDLE)(ULONG64)m_hwnd)))
-        return 0;
+    if (FAILED(frontendWebView->setHostWindow((OLE_HANDLE)(ULONG64)frontendHwnd)))
+        return;
 
     RECT rect;
-    GetClientRect(m_hwnd, &rect);
-    if (FAILED(m_webView->initWithFrame(rect, 0, 0)))
-        return 0;
+    GetClientRect(frontendHwnd, &rect);
+    if (FAILED(frontendWebView->initWithFrame(rect, 0, 0)))
+        return;
 
     COMPtr<WebInspectorDelegate> delegate(AdoptCOM, WebInspectorDelegate::createInstance());
-    if (FAILED(m_webView->setUIDelegate(delegate.get())))
-        return 0;
+    if (FAILED(frontendWebView->setUIDelegate(delegate.get())))
+        return;
 
     // Keep preferences separate from the rest of the client, making sure we are using expected preference values.
     // One reason this is good is that it keeps the inspector out of history via "private browsing".
@@ -134,66 +117,126 @@ Page* WebInspectorClient::createPage()
     COMPtr<WebPreferences> tempPreferences(AdoptCOM, WebPreferences::createInstance());
     COMPtr<IWebPreferences> iPreferences;
     if (FAILED(tempPreferences->initWithIdentifier(BString(L"WebInspectorPreferences"), &iPreferences)))
-        return 0;
+        return;
     COMPtr<WebPreferences> preferences(Query, iPreferences);
     if (!preferences)
-        return 0;
+        return;
     if (FAILED(preferences->setAutosaves(FALSE)))
-        return 0;
+        return;
     if (FAILED(preferences->setPrivateBrowsingEnabled(TRUE)))
-        return 0;
+        return;
     if (FAILED(preferences->setLoadsImagesAutomatically(TRUE)))
-        return 0;
+        return;
     if (FAILED(preferences->setAuthorAndUserStylesEnabled(TRUE)))
-        return 0;
+        return;
     if (FAILED(preferences->setAllowsAnimatedImages(TRUE)))
-        return 0;
+        return;
     if (FAILED(preferences->setLoadsImagesAutomatically(TRUE)))
-        return 0;
+        return;
     if (FAILED(preferences->setPlugInsEnabled(FALSE)))
-        return 0;
+        return;
     if (FAILED(preferences->setJavaEnabled(FALSE)))
-        return 0;
+        return;
     if (FAILED(preferences->setUserStyleSheetEnabled(FALSE)))
-        return 0;
+        return;
     if (FAILED(preferences->setTabsToLinks(FALSE)))
-        return 0;
+        return;
     if (FAILED(preferences->setMinimumFontSize(0)))
-        return 0;
+        return;
     if (FAILED(preferences->setMinimumLogicalFontSize(9)))
-        return 0;
+        return;
     if (FAILED(preferences->setFixedFontFamily(BString(L"Courier New"))))
-        return 0;
+        return;
     if (FAILED(preferences->setDefaultFixedFontSize(13)))
-        return 0;
+        return;
 
-    if (FAILED(m_webView->setPreferences(preferences.get())))
-        return 0;
+    if (FAILED(frontendWebView->setPreferences(preferences.get())))
+        return;
 
-    m_webView->setProhibitsMainFrameScrolling(TRUE);
+    frontendWebView->setProhibitsMainFrameScrolling(TRUE);
 
-    if (FAILED(m_webView->viewWindow(reinterpret_cast<OLE_HANDLE*>(&m_webViewHwnd))))
-        return 0;
+    HWND frontendWebViewHwnd;
+    if (FAILED(frontendWebView->viewWindow(reinterpret_cast<OLE_HANDLE*>(&frontendWebViewHwnd))))
+        return;
 
-    COMPtr<WebMutableURLRequest> request;
-    request.adoptRef(WebMutableURLRequest::createInstance());
+    COMPtr<WebMutableURLRequest> request(AdoptCOM, WebMutableURLRequest::createInstance());
 
     RetainPtr<CFURLRef> htmlURLRef(AdoptCF, CFBundleCopyResourceURL(getWebKitBundle(), CFSTR("inspector"), CFSTR("html"), CFSTR("inspector")));
     if (!htmlURLRef)
-        return 0;
+        return;
 
     CFStringRef urlStringRef = ::CFURLGetString(htmlURLRef.get());
     if (FAILED(request->initWithURL(BString(urlStringRef), WebURLRequestUseProtocolCachePolicy, 60)))
-        return 0;
+        return;
 
-    if (FAILED(m_webView->topLevelFrame()->loadRequest(request.get())))
-        return 0;
+    if (FAILED(frontendWebView->topLevelFrame()->loadRequest(request.get())))
+        return;
 
-    return core(m_webView.get());
+    Page* page = core(frontendWebView.get());
+    page->inspectorController()->setInspectorFrontendClient(new WebInspectorFrontendClient(m_inspectedWebView, m_inspectedWebViewHwnd, frontendHwnd, frontendWebView, frontendWebViewHwnd, this));
+    m_frontendHwnd = frontendHwnd;
 }
 
+void WebInspectorClient::highlight(Node*)
+{
+    bool creatingHighlight = !m_highlight;
 
-String WebInspectorClient::localizedStringsURL()
+    if (creatingHighlight)
+        m_highlight.set(new WebNodeHighlight(m_inspectedWebView));
+
+    if (m_highlight->isShowing())
+        m_highlight->update();
+    else
+        m_highlight->setShowsWhileWebViewIsVisible(true);
+
+    if (creatingHighlight && IsWindowVisible(m_frontendHwnd))
+        m_highlight->placeBehindWindow(m_frontendHwnd);
+}
+
+void WebInspectorClient::hideHighlight()
+{
+    if (m_highlight)
+        m_highlight->setShowsWhileWebViewIsVisible(false);
+}
+
+void WebInspectorClient::updateHighlight()
+{
+    if (m_highlight && m_highlight->isShowing())
+        m_highlight->update();
+}
+
+WebInspectorFrontendClient::WebInspectorFrontendClient(WebView* inspectedWebView, HWND inspectedWebViewHwnd, HWND frontendHwnd, const COMPtr<WebView>& frontendWebView, HWND frontendWebViewHwnd, WebInspectorClient* inspectorClient)
+    : InspectorFrontendClientLocal(inspectedWebView->page()->inspectorController(),  core(frontendWebView.get()))
+    , m_inspectedWebView(inspectedWebView)
+    , m_inspectedWebViewHwnd(inspectedWebViewHwnd)
+    , m_inspectorClient(inspectorClient)
+    , m_frontendHwnd(frontendHwnd)
+    , m_frontendWebView(frontendWebView)
+    , m_frontendWebViewHwnd(frontendWebViewHwnd)
+    , m_shouldAttachWhenShown(false)
+    , m_attached(false)
+    , m_destroyingInspectorView(false)
+{
+    ::SetProp(frontendHwnd, kWebInspectorPointerProp, reinterpret_cast<HANDLE>(this));
+    // FIXME: Implement window size/position save/restore
+#if 0
+    [self setWindowFrameAutosaveName:@"Web Inspector"];
+#endif
+}
+
+WebInspectorFrontendClient::~WebInspectorFrontendClient()
+{
+    destroyInspectorView();
+}
+
+void WebInspectorFrontendClient::frontendLoaded()
+{
+    InspectorFrontendClientLocal::frontendLoaded();
+
+    setAttachedWindow(m_attached);
+}
+
+String WebInspectorFrontendClient::localizedStringsURL()
 {
     RetainPtr<CFURLRef> url(AdoptCF, CFBundleCopyResourceURL(getWebKitBundle(), CFSTR("localizedStrings"), CFSTR("js"), 0));
     if (!url)
@@ -202,31 +245,23 @@ String WebInspectorClient::localizedStringsURL()
     return CFURLGetString(url.get());
 }
 
-
-String WebInspectorClient::hiddenPanels()
+String WebInspectorFrontendClient::hiddenPanels()
 {
     // FIXME: implement this
     return String();
 }
 
-void WebInspectorClient::showWindow()
+void WebInspectorFrontendClient::bringToFront()
 {
     showWindowWithoutNotifications();
-    m_inspectedWebView->page()->inspectorController()->setWindowVisible(true, m_shouldAttachWhenShown);
 }
 
-void WebInspectorClient::closeWindow()
+void WebInspectorFrontendClient::closeWindow()
 {
-    closeWindowWithoutNotifications();
-    m_inspectedWebView->page()->inspectorController()->setWindowVisible(false, m_shouldAttachWhenShown);
+    destroyInspectorView();
 }
 
-bool WebInspectorClient::windowVisible()
-{
-    return !!::IsWindowVisible(m_hwnd);
-}
-
-void WebInspectorClient::attachWindow()
+void WebInspectorFrontendClient::attachWindow()
 {
     if (m_attached)
         return;
@@ -237,7 +272,7 @@ void WebInspectorClient::attachWindow()
     showWindowWithoutNotifications();
 }
 
-void WebInspectorClient::detachWindow()
+void WebInspectorFrontendClient::detachWindow()
 {
     if (!m_attached)
         return;
@@ -248,7 +283,7 @@ void WebInspectorClient::detachWindow()
     showWindowWithoutNotifications();
 }
 
-void WebInspectorClient::setAttachedWindowHeight(unsigned height)
+void WebInspectorFrontendClient::setAttachedWindowHeight(unsigned height)
 {
     if (!m_attached)
         return;
@@ -266,101 +301,73 @@ void WebInspectorClient::setAttachedWindowHeight(unsigned height)
     int totalHeight = hostWindowRect.bottom - hostWindowRect.top;
     int webViewWidth = inspectedRect.right - inspectedRect.left;
 
-    SetWindowPos(m_webViewHwnd, 0, 0, totalHeight - height, webViewWidth, height, SWP_NOZORDER);
+    SetWindowPos(m_frontendWebViewHwnd, 0, 0, totalHeight - height, webViewWidth, height, SWP_NOZORDER);
 
     // We want to set the inspected web view height to the totalHeight, because the height adjustment
     // of the inspected web view happens in onWebViewWindowPosChanging, not here.
     SetWindowPos(m_inspectedWebViewHwnd, 0, 0, 0, webViewWidth, totalHeight, SWP_NOZORDER);
 
-    RedrawWindow(m_webViewHwnd, 0, 0, RDW_INVALIDATE | RDW_ALLCHILDREN | RDW_UPDATENOW); 
+    RedrawWindow(m_frontendWebViewHwnd, 0, 0, RDW_INVALIDATE | RDW_ALLCHILDREN | RDW_UPDATENOW); 
     RedrawWindow(m_inspectedWebViewHwnd, 0, 0, RDW_INVALIDATE | RDW_ALLCHILDREN | RDW_UPDATENOW);
 }
 
-void WebInspectorClient::highlight(Node*)
-{
-    bool creatingHighlight = !m_highlight;
-
-    if (creatingHighlight)
-        m_highlight.set(new WebNodeHighlight(m_inspectedWebView));
-
-    if (m_highlight->isShowing())
-        m_highlight->update();
-    else
-        m_highlight->setShowsWhileWebViewIsVisible(true);
-
-    if (creatingHighlight && IsWindowVisible(m_hwnd))
-        m_highlight->placeBehindWindow(m_hwnd);
-}
-
-void WebInspectorClient::hideHighlight()
-{
-    if (m_highlight)
-        m_highlight->setShowsWhileWebViewIsVisible(false);
-}
-
-void WebInspectorClient::inspectedURLChanged(const String& newURL)
+void WebInspectorFrontendClient::inspectedURLChanged(const String& newURL)
 {
     m_inspectedURL = newURL;
     updateWindowTitle();
 }
 
-void WebInspectorClient::inspectorWindowObjectCleared()
+void WebInspectorFrontendClient::closeWindowWithoutNotifications()
 {
-    notImplemented();
-}
-
-void WebInspectorClient::closeWindowWithoutNotifications()
-{
-    if (!m_hwnd)
+    if (!m_frontendHwnd)
         return;
 
     if (!m_attached) {
-        ShowWindow(m_hwnd, SW_HIDE);
+        ShowWindow(m_frontendHwnd, SW_HIDE);
         return;
     }
 
-    ASSERT(m_webView);
+    ASSERT(m_frontendWebView);
     ASSERT(m_inspectedWebViewHwnd);
-    ASSERT(!IsWindowVisible(m_hwnd));
+    ASSERT(!IsWindowVisible(m_frontendHwnd));
 
     // Remove the Inspector's WebView from the inspected WebView's parent window.
     WindowMessageBroadcaster::removeListener(m_inspectedWebViewHwnd, this);
 
     m_attached = false;
 
-    m_webView->setHostWindow(reinterpret_cast<OLE_HANDLE>(m_hwnd));
+    m_frontendWebView->setHostWindow(reinterpret_cast<OLE_HANDLE>(m_frontendHwnd));
 
     // Make sure everything has the right size/position.
     HWND hostWindow;
     if (SUCCEEDED(m_inspectedWebView->hostWindow((OLE_HANDLE*)&hostWindow)))
         SendMessage(hostWindow, WM_SIZE, 0, 0);
 
-    if (m_highlight && m_highlight->isShowing())
-        m_highlight->update();
+    m_inspectorClient->updateHighlight();
 }
 
-void WebInspectorClient::showWindowWithoutNotifications()
+void WebInspectorFrontendClient::showWindowWithoutNotifications()
 {
-    if (!m_hwnd)
+    if (!m_frontendHwnd)
         return;
 
-    ASSERT(m_webView);
+    ASSERT(m_frontendWebView);
     ASSERT(m_inspectedWebViewHwnd);
 
     // If no preference is set - default to an attached window. This is important for inspector LayoutTests.
     String shouldAttach = m_inspectedWebView->page()->inspectorController()->setting(InspectorController::inspectorStartsAttachedSettingName());
     m_shouldAttachWhenShown = shouldAttach != "false";
         
-    if (m_shouldAttachWhenShown && !m_inspectedWebView->page()->inspectorController()->canAttachWindow())
+    if (m_shouldAttachWhenShown && !canAttachWindow())
         m_shouldAttachWhenShown = false;
     
     if (!m_shouldAttachWhenShown) {
         // Put the Inspector's WebView inside our window and show it.
-        m_webView->setHostWindow(reinterpret_cast<OLE_HANDLE>(m_hwnd));
-        SendMessage(m_hwnd, WM_SIZE, 0, 0);
+        m_frontendWebView->setHostWindow(reinterpret_cast<OLE_HANDLE>(m_frontendHwnd));
+        SendMessage(m_frontendHwnd, WM_SIZE, 0, 0);
         updateWindowTitle();
 
-        SetWindowPos(m_hwnd, HWND_TOP, 0, 0, 0, 0, SWP_SHOWWINDOW | SWP_NOMOVE | SWP_NOSIZE);
+        SetWindowPos(m_frontendHwnd, HWND_TOP, 0, 0, 0, 0, SWP_SHOWWINDOW | SWP_NOMOVE | SWP_NOSIZE);
         return;
     }
 
@@ -371,20 +378,32 @@ void WebInspectorClient::showWindowWithoutNotifications()
     if (FAILED(m_inspectedWebView->hostWindow(reinterpret_cast<OLE_HANDLE*>(&hostWindow))))
         return;
 
-    m_webView->setHostWindow(reinterpret_cast<OLE_HANDLE>(hostWindow));
+    m_frontendWebView->setHostWindow(reinterpret_cast<OLE_HANDLE>(hostWindow));
 
     // Then hide our own window.
-    ShowWindow(m_hwnd, SW_HIDE);
+    ShowWindow(m_frontendHwnd, SW_HIDE);
 
     m_attached = true;
 
     // Make sure everything has the right size/position.
     SendMessage(hostWindow, WM_SIZE, 0, 0);
-    if (m_highlight && m_highlight->isShowing())
-        m_highlight->update();
+    m_inspectorClient->updateHighlight();
 }
 
-void WebInspectorClient::updateWindowTitle()
+void WebInspectorFrontendClient::destroyInspectorView()
+{
+    if (m_destroyingInspectorView)
+        return;
+    m_destroyingInspectorView = true;
+
+    m_inspectedWebView->page()->inspectorController()->disconnectFrontend();
+
+    closeWindowWithoutNotifications();
+    m_inspectorClient->frontendClosing();
+    ::DestroyWindow(m_frontendHwnd);
+}
+
+void WebInspectorFrontendClient::updateWindowTitle()
 {
     // FIXME: The series of appends should be replaced with a call to String::format()
     // when it can be figured out how to get the unicode em-dash to show up.
@@ -392,10 +411,10 @@ void WebInspectorClient::updateWindowTitle()
     title.append((UChar)0x2014); // em-dash
     title.append(' ');
     title.append(m_inspectedURL);
-    ::SetWindowText(m_hwnd, title.charactersWithNullTermination());
+    ::SetWindowText(m_frontendHwnd, title.charactersWithNullTermination());
 }
 
-LRESULT WebInspectorClient::onGetMinMaxInfo(WPARAM, LPARAM lParam)
+LRESULT WebInspectorFrontendClient::onGetMinMaxInfo(WPARAM, LPARAM lParam)
 {
     MINMAXINFO* info = reinterpret_cast<MINMAXINFO*>(lParam);
     POINT size = {400, 400};
@@ -404,33 +423,31 @@ LRESULT WebInspectorClient::onGetMinMaxInfo(WPARAM, LPARAM lParam)
     return 0;
 }
 
-LRESULT WebInspectorClient::onSize(WPARAM, LPARAM)
+LRESULT WebInspectorFrontendClient::onSize(WPARAM, LPARAM)
 {
     RECT rect;
-    ::GetClientRect(m_hwnd, &rect);
+    ::GetClientRect(m_frontendHwnd, &rect);
 
-    ::SetWindowPos(m_webViewHwnd, 0, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_NOZORDER);
+    ::SetWindowPos(m_frontendWebViewHwnd, 0, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_NOZORDER);
 
     return 0;
 }
 
-LRESULT WebInspectorClient::onClose(WPARAM, LPARAM)
+LRESULT WebInspectorFrontendClient::onClose(WPARAM, LPARAM)
 {
-    ::ShowWindow(m_hwnd, SW_HIDE);
-    m_inspectedWebView->page()->inspectorController()->setWindowVisible(false, m_shouldAttachWhenShown);
-
-    hideHighlight();
+    ::ShowWindow(m_frontendHwnd, SW_HIDE);
+    m_inspectedWebView->page()->inspectorController()->close();
 
     return 0;
 }
 
-LRESULT WebInspectorClient::onSetFocus()
+LRESULT WebInspectorFrontendClient::onSetFocus()
 {
-    SetFocus(m_webViewHwnd);
+    SetFocus(m_frontendWebViewHwnd);
     return 0;
 }
 
-void WebInspectorClient::onWebViewWindowPosChanging(WPARAM, LPARAM lParam)
+void WebInspectorFrontendClient::onWebViewWindowPosChanging(WPARAM, LPARAM lParam)
 {
     ASSERT(m_attached);
 
@@ -441,17 +458,17 @@ void WebInspectorClient::onWebViewWindowPosChanging(WPARAM, LPARAM lParam)
         return;
 
     RECT inspectorRect;
-    GetClientRect(m_webViewHwnd, &inspectorRect);
+    GetClientRect(m_frontendWebViewHwnd, &inspectorRect);
     unsigned inspectorHeight = inspectorRect.bottom - inspectorRect.top;
 
     windowPos->cy -= inspectorHeight;
 
-    SetWindowPos(m_webViewHwnd, 0, windowPos->x, windowPos->y + windowPos->cy, windowPos->cx, inspectorHeight, SWP_NOZORDER);
+    SetWindowPos(m_frontendWebViewHwnd, 0, windowPos->x, windowPos->y + windowPos->cy, windowPos->cx, inspectorHeight, SWP_NOZORDER);
 }
 
 static LRESULT CALLBACK WebInspectorWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-    WebInspectorClient* client = reinterpret_cast<WebInspectorClient*>(::GetProp(hwnd, kWebInspectorPointerProp));
+    WebInspectorFrontendClient* client = reinterpret_cast<WebInspectorFrontendClient*>(::GetProp(hwnd, kWebInspectorPointerProp));
     if (!client)
         return ::DefWindowProc(hwnd, msg, wParam, lParam);
 
@@ -471,7 +488,7 @@ static LRESULT CALLBACK WebInspectorWndProc(HWND hwnd, UINT msg, WPARAM wParam, 
     return ::DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
-void WebInspectorClient::windowReceivedMessage(HWND, UINT msg, WPARAM wParam, LPARAM lParam)
+void WebInspectorFrontendClient::windowReceivedMessage(HWND, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg) {
         case WM_WINDOWPOSCHANGING:

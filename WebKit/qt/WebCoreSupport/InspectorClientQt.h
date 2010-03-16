@@ -31,7 +31,9 @@
 #define InspectorClientQt_h
 
 #include "InspectorClient.h"
+#include "InspectorFrontendClientLocal.h"
 #include "OwnPtr.h"
+#include "PassOwnPtr.h"
 #include <QtCore/QString>
 
 class QWebPage;
@@ -48,13 +50,29 @@ public:
 
     virtual void inspectorDestroyed();
 
-    virtual Page* createPage();
+    virtual void openInspectorFrontend(WebCore::InspectorController*);
+
+    virtual void highlight(Node*);
+    virtual void hideHighlight();
+
+    virtual void populateSetting(const String& key, String* value);
+    virtual void storeSetting(const String& key, const String& value);
+
+private:
+    QWebPage* m_inspectedWebPage;
+};
+
+class InspectorFrontendClientQt : public InspectorFrontendClientLocal {
+public:
+    InspectorFrontendClientQt(QWebPage* inspectedWebPage, PassOwnPtr<QWebView> inspectorView);
+
+    virtual void frontendLoaded();
 
     virtual String localizedStringsURL();
 
     virtual String hiddenPanels();
 
-    virtual void showWindow();
+    virtual void bringToFront();
     virtual void closeWindow();
 
     virtual void attachWindow();
@@ -62,20 +80,14 @@ public:
 
     virtual void setAttachedWindowHeight(unsigned height);
 
-    virtual void highlight(Node*);
-    virtual void hideHighlight();
     virtual void inspectedURLChanged(const String& newURL);
-
-    virtual void populateSetting(const String& key, String* value);
-    virtual void storeSetting(const String& key, const String& value);
-
-    virtual void inspectorWindowObjectCleared();
 
 private:
     void updateWindowTitle();
     QWebPage* m_inspectedWebPage;
     OwnPtr<QWebView> m_inspectorView;
     QString m_inspectedURL;
+    bool m_destroyingInspectorView;
 };
 }
 

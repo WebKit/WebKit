@@ -49,8 +49,11 @@ namespace WebCore {
 
     class InspectorFrontend : public Noncopyable {
     public:
-        InspectorFrontend(InspectorController* inspectorController, ScriptObject webInspector);
+        InspectorFrontend(ScriptObject webInspector);
         ~InspectorFrontend();
+        
+        void close();
+        void inspectedPageDestroyed();
 
         ScriptArray newScriptArray();
         ScriptObject newScriptObject();
@@ -60,7 +63,7 @@ namespace WebCore {
         void populateFrontendSettings(const String& settings);
 
         void updateConsoleMessageExpiredCount(unsigned count);
-        void addConsoleMessage(const ScriptObject& messageObj, const Vector<ScriptString>& frames, ScriptState*, const Vector<ScriptValue> arguments, const String& message);
+        void addConsoleMessage(const ScriptObject& messageObj, const Vector<ScriptString>& frames, const Vector<RefPtr<SerializedScriptValue> >& arguments, const String& message);
         void updateConsoleMessageRepeatCount(unsigned count);
         void clearConsoleMessages();
 
@@ -73,6 +76,9 @@ namespace WebCore {
         void showPanel(int panel);
         void populateInterface();
         void reset();
+        
+        void bringToFront();
+        void inspectedURLChanged(const String&);
 
         void resourceTrackingWasEnabled();
         void resourceTrackingWasDisabled();

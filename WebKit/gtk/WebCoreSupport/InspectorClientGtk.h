@@ -30,6 +30,7 @@
 #define InspectorClientGtk_h
 
 #include "InspectorClient.h"
+#include "InspectorFrontendClientLocal.h"
 #include "webkitwebview.h"
 #include "webkitwebinspector.h"
 
@@ -46,15 +47,30 @@ namespace WebKit {
         InspectorClient(WebKitWebView* webView);
 
         virtual void inspectorDestroyed();
-        void webViewDestroyed();
 
-        virtual WebCore::Page* createPage();
+        virtual void openInspectorFrontend(WebCore::InspectorController*);
+
+        virtual void highlight(WebCore::Node*);
+        virtual void hideHighlight();
+
+        virtual void populateSetting(const WebCore::String& key, WebCore::String* value);
+        virtual void storeSetting(const WebCore::String& key, const WebCore::String& value);
+
+    private:
+        WebKitWebView* m_inspectedWebView;
+    };
+
+    class InspectorFrontendClient : public WebCore::InspectorFrontendClientLocal {
+    public:
+        InspectorFrontendClient(WebKitWebView* inspectedWebView, WebKitWebView* inspectorWebView, WebKitWebInspector* webInspector, WebCore::Page* inspectorPage);
+
+        void destroyInspectorWindow();
 
         virtual WebCore::String localizedStringsURL();
 
         virtual WebCore::String hiddenPanels();
 
-        virtual void showWindow();
+        virtual void bringToFront();
         virtual void closeWindow();
 
         virtual void attachWindow();
@@ -62,17 +78,12 @@ namespace WebKit {
 
         virtual void setAttachedWindowHeight(unsigned height);
 
-        virtual void highlight(WebCore::Node*);
-        virtual void hideHighlight();
         virtual void inspectedURLChanged(const WebCore::String& newURL);
 
-        virtual void populateSetting(const WebCore::String& key, WebCore::String* value);
-        virtual void storeSetting(const WebCore::String& key, const WebCore::String& value);
-
-        virtual void inspectorWindowObjectCleared();
-
     private:
-        WebKitWebView* m_webView;
+        virtual ~InspectorFrontendClient();
+
+        WebKitWebView* m_inspectorWebView;
         WebKitWebView* m_inspectedWebView;
         WebKitWebInspector* m_webInspector;
     };

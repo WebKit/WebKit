@@ -52,5 +52,6 @@ private:
     friend class QWebPage;
     friend class QWebPagePrivate;
     friend class WebCore::InspectorClientQt;
+    friend class WebCore::InspectorFrontendClientQt;
 };
 #endif

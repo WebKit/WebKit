@@ -42,45 +42,7 @@ void InspectorClientHaiku::inspectorDestroyed()
     notImplemented();
 }
 
-Page* InspectorClientHaiku::createPage()
-{
-    notImplemented();
-    return 0;
-}
-
-String InspectorClientHaiku::localizedStringsURL()
-{
-    notImplemented();
-    return String();
-}
-
-String InspectorClientHaiku::hiddenPanels()
-{
-    notImplemented();
-    return String();
-}
-
-void InspectorClientHaiku::showWindow()
-{
-    notImplemented();
-}
-
-void InspectorClientHaiku::closeWindow()
-{
-    notImplemented();
-}
-
-void InspectorClientHaiku::attachWindow()
-{
-    notImplemented();
-}
-
-void InspectorClientHaiku::detachWindow()
-{
-    notImplemented();
-}
-
-void InspectorClientHaiku::setAttachedWindowHeight(unsigned height)
+void InspectorClientHaiku::openInspectorFrontend(WebCore::InspectorController*)
 {
     notImplemented();
 }
@@ -91,16 +53,6 @@ void InspectorClientHaiku::highlight(Node* node)
 }
 
 void InspectorClientHaiku::hideHighlight()
-{
-    notImplemented();
-}
-
-void InspectorClientHaiku::inspectedURLChanged(const String&)
-{
-    notImplemented();
-}
-
-void InspectorClientHaiku::inspectorWindowObjectCleared()
 {
     notImplemented();
 }

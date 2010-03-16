@@ -49,15 +49,26 @@
 
 namespace WebCore {
 
-InspectorFrontend::InspectorFrontend(InspectorController* inspectorController, ScriptObject webInspector)
-    : m_inspectorController(inspectorController)
-    , m_webInspector(webInspector)
+InspectorFrontend::InspectorFrontend(ScriptObject webInspector)
+    : m_webInspector(webInspector)
 {
 }
 
 InspectorFrontend::~InspectorFrontend() 
 {
     m_webInspector = ScriptObject();
+}
+
+void InspectorFrontend::close()
+{
+    ScriptFunctionCall function(m_webInspector, "close");
+    function.call();
+}
+
+void InspectorFrontend::inspectedPageDestroyed()
+{
+    ScriptFunctionCall function(m_webInspector, "inspectedPageDestroyed");
+    function.call();
 }
 
 ScriptArray InspectorFrontend::newScriptArray()
@@ -91,7 +102,7 @@ void InspectorFrontend::updateConsoleMessageExpiredCount(unsigned count)
     function.call();
 }
 
-void InspectorFrontend::addConsoleMessage(const ScriptObject& messageObj, const Vector<ScriptString>& frames, ScriptState* scriptState, const Vector<ScriptValue> arguments, const String& message)
+void InspectorFrontend::addConsoleMessage(const ScriptObject& messageObj, const Vector<ScriptString>& frames, const Vector<RefPtr<SerializedScriptValue> >& arguments, const String& message)
 {
     ScriptFunctionCall function(m_webInspector, "dispatch"); 
     function.appendArgument("addConsoleMessage");
@@ -100,10 +111,8 @@ void InspectorFrontend::addConsoleMessage(const ScriptObject& messageObj, const 
         for (unsigned i = 0; i < frames.size(); ++i)
             function.appendArgument(frames[i]);
     } else if (!arguments.isEmpty()) {
-        InjectedScript injectedScript = m_inspectorController->injectedScriptHost()->injectedScriptFor(scriptState);
         for (unsigned i = 0; i < arguments.size(); ++i) {
-            RefPtr<SerializedScriptValue> serializedValue = injectedScript.wrapForConsole(arguments[i]);
-            ScriptValue scriptValue = ScriptValue::deserialize(this->scriptState(), serializedValue.get());
+            ScriptValue scriptValue = ScriptValue::deserialize(scriptState(), arguments[i].get());
             if (scriptValue.hasNoValue()) {
                 ASSERT_NOT_REACHED();
                 return;
@@ -218,6 +227,19 @@ void InspectorFrontend::populateInterface()
 void InspectorFrontend::reset()
 {
     callSimpleFunction("reset");
+}
+
+void InspectorFrontend::bringToFront()
+{
+    callSimpleFunction("bringToFront");
+}
+
+void InspectorFrontend::inspectedURLChanged(const String& url)
+{
+    ScriptFunctionCall function(m_webInspector, "dispatch");
+    function.appendArgument("inspectedURLChanged");
+    function.appendArgument(url);
+    function.call();
 }
 
 void InspectorFrontend::resourceTrackingWasEnabled()

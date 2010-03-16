@@ -79,7 +79,7 @@ namespace WebCore {
 
         PassRefPtr<InspectorResource> appendRedirect(unsigned long identifier, const KURL& redirectURL);
         void updateScriptObject(InspectorFrontend* frontend);
-        void releaseScriptObject(InspectorFrontend* frontend, bool callRemoveResource);
+        void releaseScriptObject(InspectorFrontend* frontend);
 
         void updateRequest(const ResourceRequest&);
         void updateResponse(const ResourceResponse&);

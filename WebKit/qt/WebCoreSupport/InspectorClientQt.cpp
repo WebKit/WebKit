@@ -81,15 +81,12 @@ void InspectorClientQt::inspectorDestroyed()
     delete this;
 }
 
-Page* InspectorClientQt::createPage()
+    
+void InspectorClientQt::openInspectorFrontend(WebCore::InspectorController*)
 {
-    QWebView* inspectorView = m_inspectorView.get();
-    if (!inspectorView) {
-        inspectorView = new QWebView;
-        InspectorClientWebPage* inspectorPage = new InspectorClientWebPage(inspectorView);
-        inspectorView->setPage(inspectorPage);
-        m_inspectorView.set(inspectorView);
-    }
+    QWebView* inspectorView = new QWebView;
+    InspectorClientWebPage* inspectorPage = new InspectorClientWebPage(inspectorView);
+    inspectorView->setPage(inspectorPage);
 
     QUrl inspectorUrl = m_inspectedWebPage->settings()->inspectorUrl();
     if (!inspectorUrl.isValid())
@@ -98,50 +95,7 @@ Page* InspectorClientQt::createPage()
     m_inspectedWebPage->d->inspectorFrontend = inspectorView;
     m_inspectedWebPage->d->getOrCreateInspector()->d->setFrontend(inspectorView);
 
-    return inspectorView->page()->d->page;
-}
-
-String InspectorClientQt::localizedStringsURL()
-{
-    notImplemented();
-    return String();
-}
-
-String InspectorClientQt::hiddenPanels()
-{
-    notImplemented();
-    return String();
-}
-
-void InspectorClientQt::showWindow()
-{
-    updateWindowTitle();
-
-#if ENABLE(INSPECTOR)
-    m_inspectedWebPage->d->inspectorController()->setWindowVisible(true, true);
-#endif
-}
-
-void InspectorClientQt::closeWindow()
-{
-#if ENABLE(INSPECTOR)
-    m_inspectedWebPage->d->inspectorController()->setWindowVisible(false);
-#endif
-}
-
-void InspectorClientQt::attachWindow()
-{
-    notImplemented();
-}
-
-void InspectorClientQt::detachWindow()
-{
-    notImplemented();
-}
-
-void InspectorClientQt::setAttachedWindowHeight(unsigned)
-{
-    notImplemented();
+    inspectorView->page()->d->page->inspectorController()->setInspectorFrontendClient(new InspectorFrontendClientQt(m_inspectedWebPage, inspectorView));
 }
 
 void InspectorClientQt::highlight(Node*)
@@ -152,25 +106,6 @@ void InspectorClientQt::highlight(Node*)
 void InspectorClientQt::hideHighlight()
 {
     notImplemented();
-}
-
-void InspectorClientQt::inspectedURLChanged(const String& newURL)
-{
-    m_inspectedURL = newURL;
-    updateWindowTitle();
-}
-
-void InspectorClientQt::inspectorWindowObjectCleared()
-{
-    notImplemented();
-}
-
-void InspectorClientQt::updateWindowTitle()
-{
-    if (m_inspectedWebPage->d->inspector) {
-        QString caption = QCoreApplication::translate("QWebPage", "Web Inspector - %2").arg(m_inspectedURL);
-        m_inspectedWebPage->d->inspector->setWindowTitle(caption);
-    }
 }
 
 void InspectorClientQt::populateSetting(const String& key, String* setting)
@@ -224,6 +159,81 @@ static QVariant settingToVariant(const String& setting)
     QVariant retVal;
     retVal.setValue(static_cast<QString>(setting));
     return retVal;
+}
+
+InspectorFrontendClientQt::InspectorFrontendClientQt(QWebPage* inspectedWebPage, PassOwnPtr<QWebView> inspectorView)
+    : InspectorFrontendClientLocal(inspectedWebPage->d->page->inspectorController(), inspectorView->page()->d->page) 
+    , m_inspectedWebPage(inspectedWebPage)
+    , m_inspectorView(inspectorView)
+    , m_destroyingInspectorView(false)
+{
+}
+
+void InspectorFrontendClientQt::frontendLoaded()
+{
+    InspectorFrontendClientLocal::frontendLoaded();
+    setAttachedWindow(true);
+}
+
+String InspectorFrontendClientQt::localizedStringsURL()
+{
+    notImplemented();
+    return String();
+}
+
+String InspectorFrontendClientQt::hiddenPanels()
+{
+    notImplemented();
+    return String();
+}
+
+void InspectorFrontendClientQt::bringToFront()
+{
+    updateWindowTitle();
+}
+
+void InspectorFrontendClientQt::closeWindow()
+{
+    if (m_destroyingInspectorView)
+        return;
+    m_destroyingInspectorView = true;
+
+    // Clear reference from QWebInspector to the frontend view.
+    m_inspectedWebPage->d->getOrCreateInspector()->d->setFrontend(0);
+#if ENABLE(INSPECTOR)
+    m_inspectedWebPage->d->inspectorController()->disconnectFrontend();
+#endif
+    // Clear pointer before deleting WebView to avoid recursive calls to its destructor.
+    delete m_inspectorView.release();
+}
+
+void InspectorFrontendClientQt::attachWindow()
+{
+    notImplemented();
+}
+
+void InspectorFrontendClientQt::detachWindow()
+{
+    notImplemented();
+}
+
+void InspectorFrontendClientQt::setAttachedWindowHeight(unsigned)
+{
+    notImplemented();
+}
+
+void InspectorFrontendClientQt::inspectedURLChanged(const String& newURL)
+{
+    m_inspectedURL = newURL;
+    updateWindowTitle();
+}
+
+void InspectorFrontendClientQt::updateWindowTitle()
+{
+    if (m_inspectedWebPage->d->inspector) {
+        QString caption = QCoreApplication::translate("QWebPage", "Web Inspector - %2").arg(m_inspectedURL);
+        m_inspectedWebPage->d->inspector->setWindowTitle(caption);
+    }
 }
 
 }

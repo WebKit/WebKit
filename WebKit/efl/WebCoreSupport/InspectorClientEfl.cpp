@@ -33,45 +33,7 @@ void InspectorClientEfl::inspectorDestroyed()
     delete this;
 }
 
-Page* InspectorClientEfl::createPage()
-{
-    notImplemented();
-    return 0;
-}
-
-String InspectorClientEfl::localizedStringsURL()
-{
-    notImplemented();
-    return String();
-}
-
-String InspectorClientEfl::hiddenPanels()
-{
-    notImplemented();
-    return String();
-}
-
-void InspectorClientEfl::showWindow()
-{
-    notImplemented();
-}
-
-void InspectorClientEfl::closeWindow()
-{
-    notImplemented();
-}
-
-void InspectorClientEfl::attachWindow()
-{
-    notImplemented();
-}
-
-void InspectorClientEfl::detachWindow()
-{
-    notImplemented();
-}
-
-void InspectorClientEfl::setAttachedWindowHeight(unsigned)
+void InspectorClientEfl::openInspectorFrontend(InspectorController*)
 {
     notImplemented();
 }
@@ -86,27 +48,12 @@ void InspectorClientEfl::hideHighlight()
     notImplemented();
 }
 
-void InspectorClientEfl::inspectedURLChanged(const String&)
-{
-    notImplemented();
-}
-
-void InspectorClientEfl::inspectorWindowObjectCleared()
-{
-    notImplemented();
-}
-
 void InspectorClientEfl::populateSetting(const String&, String*)
 {
     notImplemented();
 }
 
 void InspectorClientEfl::storeSetting(const String&, const String&)
-{
-    notImplemented();
-}
-
-void InspectorClientEfl::removeSetting(const String&)
 {
     notImplemented();
 }

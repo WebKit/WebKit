@@ -478,7 +478,6 @@ WebInspector.loaded = function()
 
     this.addMainEventListeners(document);
 
-    window.addEventListener("unload", this.windowUnload.bind(this), true);
     window.addEventListener("resize", this.windowResize.bind(this), true);
 
     document.addEventListener("focus", this.focusChanged.bind(this), true);
@@ -562,11 +561,6 @@ WebInspector.dispatch = function() {
     setTimeout(delayDispatch, 0);
 }
 
-WebInspector.windowUnload = function(event)
-{
-    InspectorFrontendHost.windowUnloading();
-}
-
 WebInspector.windowResize = function(event)
 {
     if (this.currentPanel)
@@ -604,7 +598,15 @@ WebInspector.setAttachedWindow = function(attached)
 
 WebInspector.close = function(event)
 {
+    if (this._isClosing)
+        return;
+    this._isClosing = true;
     InspectorFrontendHost.closeWindow();
+}
+
+WebInspector.inspectedPageDestroyed = function()
+{
+    WebInspector.close();
 }
 
 WebInspector.documentMouseOver = function(event)
@@ -1319,6 +1321,16 @@ WebInspector.reset = function()
     delete this.mainResource;
 
     this.console.clearMessages();
+}
+
+WebInspector.bringToFront = function()
+{
+    InspectorFrontendHost.bringToFront();
+}
+
+WebInspector.inspectedURLChanged = function(url)
+{
+    InspectorFrontendHost.inspectedURLChanged(url);
 }
 
 WebInspector.resourceURLChanged = function(resource, oldURL)

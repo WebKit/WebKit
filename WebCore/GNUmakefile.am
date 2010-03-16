@@ -1239,6 +1239,9 @@ webcore_sources += \
 	WebCore/inspector/InspectorController.h \
 	WebCore/inspector/InspectorFrontend.cpp \
 	WebCore/inspector/InspectorFrontend.h \
+	WebCore/inspector/InspectorFrontendClient.h \
+	WebCore/inspector/InspectorFrontendClientLocal.cpp \
+	WebCore/inspector/InspectorFrontendClientLocal.h \
 	WebCore/inspector/InspectorFrontendHost.cpp \
 	WebCore/inspector/InspectorFrontendHost.h \
 	WebCore/inspector/InspectorResource.cpp \

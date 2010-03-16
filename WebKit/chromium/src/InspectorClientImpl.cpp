@@ -63,46 +63,8 @@ void InspectorClientImpl::inspectorDestroyed()
     // Our lifetime is bound to the WebViewImpl.
 }
 
-Page* InspectorClientImpl::createPage()
+void InspectorClientImpl::openInspectorFrontend(InspectorController*)
 {
-    // This method should never be called in Chrome as inspector front-end lives
-    // in a separate process.
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
-void InspectorClientImpl::showWindow()
-{
-    ASSERT(m_inspectedWebView->devToolsAgentPrivate());
-    m_inspectedWebView->page()->inspectorController()->setWindowVisible(true);
-}
-
-void InspectorClientImpl::closeWindow()
-{
-    if (m_inspectedWebView->page())
-        m_inspectedWebView->page()->inspectorController()->setWindowVisible(false);
-}
-
-bool InspectorClientImpl::windowVisible()
-{
-    ASSERT(m_inspectedWebView->devToolsAgentPrivate());
-    return false;
-}
-
-void InspectorClientImpl::attachWindow()
-{
-    // FIXME: Implement this
-}
-
-void InspectorClientImpl::detachWindow()
-{
-    // FIXME: Implement this
-}
-
-void InspectorClientImpl::setAttachedWindowHeight(unsigned int height)
-{
-    // FIXME: Implement this
-    notImplemented();
 }
 
 static void invalidateNodeBoundingRect(WebViewImpl* webView)
@@ -130,23 +92,6 @@ void InspectorClientImpl::hideHighlight()
     invalidateNodeBoundingRect(m_inspectedWebView);
 }
 
-void InspectorClientImpl::inspectedURLChanged(const String& newURL)
-{
-    // FIXME: Implement this
-}
-
-String InspectorClientImpl::localizedStringsURL()
-{
-    notImplemented();
-    return String();
-}
-
-String InspectorClientImpl::hiddenPanels()
-{
-    notImplemented();
-    return "";
-}
-
 void InspectorClientImpl::populateSetting(const String& key, String* value)
 {
     loadSettings();
@@ -159,11 +104,6 @@ void InspectorClientImpl::storeSetting(const String& key, const String& value)
     loadSettings();
     m_settings->set(key, value);
     saveSettings();
-}
-
-void InspectorClientImpl::inspectorWindowObjectCleared()
-{
-    notImplemented();
 }
 
 void InspectorClientImpl::loadSettings()

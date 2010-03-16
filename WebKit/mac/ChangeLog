@@ -1,3 +1,49 @@
+2010-03-16  Yury Semikhatsky <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Introduce InspectorFrontendClient that provides InspectorFrontend with an interface to the embedder. InspectorClient now serves as a delegate for InspectorController and does not contain methods for managing inspector frontend window. That allows to create remote InspectorFrontendHost.
+
+        Introduce InspectorFrontendClient that would provide InspectorFrontend with an interface to the embedder
+        https://bugs.webkit.org/show_bug.cgi?id=35036
+
+        * WebCoreSupport/WebInspectorClient.h:
+        * WebCoreSupport/WebInspectorClient.mm:
+        (WebInspectorClient::WebInspectorClient):
+        (WebInspectorClient::inspectorDestroyed):
+        (WebInspectorClient::openInspectorFrontend):
+        (WebInspectorClient::highlight):
+        (WebInspectorClient::hideHighlight):
+        (WebInspectorFrontendClient::WebInspectorFrontendClient):
+        (WebInspectorFrontendClient::frontendLoaded):
+        (WebInspectorFrontendClient::localizedStringsURL):
+        (WebInspectorFrontendClient::hiddenPanels):
+        (WebInspectorFrontendClient::bringToFront):
+        (WebInspectorFrontendClient::closeWindow):
+        (WebInspectorFrontendClient::attachWindow):
+        (WebInspectorFrontendClient::detachWindow):
+        (WebInspectorFrontendClient::setAttachedWindowHeight):
+        (WebInspectorFrontendClient::inspectedURLChanged):
+        (WebInspectorFrontendClient::updateWindowTitle):
+        (-[WebInspectorWindowController dealloc]):
+        (-[WebInspectorWindowController windowShouldClose:]):
+        (-[WebInspectorWindowController close]):
+        (-[WebInspectorWindowController showWindow:]):
+        (-[WebInspectorWindowController attach]):
+        (-[WebInspectorWindowController detach]):
+        (-[WebInspectorWindowController attached]):
+        (-[WebInspectorWindowController setFrontendClient:]):
+        (-[WebInspectorWindowController destroyInspectorView]):
+        (-[WebNodeHighlighter initWithInspectedWebView:]):
+        (-[WebNodeHighlighter dealloc]):
+        (-[WebNodeHighlighter highlightNode:]):
+        (-[WebNodeHighlighter hideHighlight]):
+        (-[WebNodeHighlighter didAttachWebNodeHighlight:]):
+        (-[WebNodeHighlighter willDetachWebNodeHighlight:]):
+        * WebInspector/WebInspector.mm:
+        (-[WebInspector attach:]):
+        (-[WebInspector detach:]):
+
 2010-03-15  Andy Estes  <aestes@apple.com>
 
         Reviewed by John Sullivan.

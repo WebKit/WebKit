@@ -1,3 +1,16 @@
+2010-03-16  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Introduce InspectorFrontendClient that provides InspectorFrontend with an interface to the embedder. InspectorClient now serves as a delegate for InspectorController and does not contain methods for managing inspector frontend window. That allows to create remote InspectorFrontendHost.
+
+        Introduce InspectorFrontendClient that would provide InspectorFrontend with an interface to the embedder
+        https://bugs.webkit.org/show_bug.cgi?id=35036
+
+        * efl/WebCoreSupport/InspectorClientEfl.cpp:
+        (WebCore::InspectorClientEfl::openInspectorFrontend):
+        * efl/WebCoreSupport/InspectorClientEfl.h:
+
 2010-03-13  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Kenneth Rohde Christiansen.

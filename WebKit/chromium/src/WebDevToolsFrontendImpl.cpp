@@ -156,8 +156,11 @@ WebDevToolsFrontendImpl::WebDevToolsFrontendImpl(
         "setSetting",
         WebDevToolsFrontendImpl::jsSetSetting);
     devToolsHost.addProtoFunction(
-        "windowUnloading",
-        WebDevToolsFrontendImpl::jsWindowUnloading);
+        "bringToFront",
+        WebDevToolsFrontendImpl::jsBringToFront);
+    devToolsHost.addProtoFunction(
+        "inspectedURLChanged",
+        WebDevToolsFrontendImpl::jsInspectedURLChanged);
     devToolsHost.addProtoFunction(
         "showContextMenu",
         WebDevToolsFrontendImpl::jsShowContextMenu);
@@ -346,9 +349,13 @@ v8::Handle<v8::Value> WebDevToolsFrontendImpl::jsDebuggerPauseScript(const v8::A
     return v8::Undefined();
 }
 
-v8::Handle<v8::Value> WebDevToolsFrontendImpl::jsWindowUnloading(const v8::Arguments& args)
+v8::Handle<v8::Value> WebDevToolsFrontendImpl::jsBringToFront(const v8::Arguments& args)
 {
-    // TODO(pfeldman): Implement this.
+    return v8::Undefined();
+}
+
+v8::Handle<v8::Value> WebDevToolsFrontendImpl::jsInspectedURLChanged(const v8::Arguments& args)
+{
     return v8::Undefined();
 }
 

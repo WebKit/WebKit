@@ -1,3 +1,32 @@
+2010-03-16  Yury Semikhatsky <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Introduce InspectorFrontendClient that provides InspectorFrontend with an interface to the embedder. InspectorClient now serves as a delegate for InspectorController and does not contain methods for managing inspector frontend window. That allows to create remote InspectorFrontendHost.
+
+        Introduce InspectorFrontendClient that would provide InspectorFrontend with an interface to the embedder
+        https://bugs.webkit.org/show_bug.cgi?id=35036
+
+        * Api/qwebinspector.cpp:
+        (QWebInspector::hideEvent):
+        (QWebInspector::closeEvent):
+        * Api/qwebinspector.h:
+        * Api/qwebpage.h:
+        * WebCoreSupport/InspectorClientQt.cpp:
+        (WebCore::InspectorClientQt::openInspectorFrontend):
+        (WebCore::InspectorFrontendClientQt::InspectorFrontendClientQt):
+        (WebCore::InspectorFrontendClientQt::frontendLoaded):
+        (WebCore::InspectorFrontendClientQt::localizedStringsURL):
+        (WebCore::InspectorFrontendClientQt::hiddenPanels):
+        (WebCore::InspectorFrontendClientQt::bringToFront):
+        (WebCore::InspectorFrontendClientQt::closeWindow):
+        (WebCore::InspectorFrontendClientQt::attachWindow):
+        (WebCore::InspectorFrontendClientQt::detachWindow):
+        (WebCore::InspectorFrontendClientQt::setAttachedWindowHeight):
+        (WebCore::InspectorFrontendClientQt::inspectedURLChanged):
+        (WebCore::InspectorFrontendClientQt::updateWindowTitle):
+        * WebCoreSupport/InspectorClientQt.h:
+
 2010-03-15  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Unreviewed.

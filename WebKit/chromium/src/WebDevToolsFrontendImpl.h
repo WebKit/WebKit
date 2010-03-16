@@ -142,7 +142,8 @@ private:
     static v8::Handle<v8::Value> jsSetting(const v8::Arguments& args);
     static v8::Handle<v8::Value> jsSetSetting(const v8::Arguments& args);
     static v8::Handle<v8::Value> jsDebuggerPauseScript(const v8::Arguments& args);
-    static v8::Handle<v8::Value> jsWindowUnloading(const v8::Arguments& args);
+    static v8::Handle<v8::Value> jsBringToFront(const v8::Arguments& args);
+    static v8::Handle<v8::Value> jsInspectedURLChanged(const v8::Arguments& args);
     static v8::Handle<v8::Value> jsShowContextMenu(const v8::Arguments& args);
     static v8::Handle<v8::Value> jsCanAttachWindow(const v8::Arguments& args);
 

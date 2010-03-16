@@ -109,7 +109,8 @@ private:
 
     void compileUtilityScripts();
     void initDevToolsAgentHost();
-    void resetInspectorFrontendProxy();
+    void createInspectorFrontendProxy();
+    void setInspectorFrontendProxyToInspectorController();
     void setApuAgentEnabled(bool enabled);
 
     WebCore::InspectorController* inspectorController();

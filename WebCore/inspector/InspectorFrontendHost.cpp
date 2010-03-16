@@ -41,8 +41,7 @@
 #include "FrameLoader.h"
 #include "HitTestResult.h"
 #include "HTMLFrameOwnerElement.h"
-#include "InspectorClient.h"
-#include "InspectorFrontend.h"
+#include "InspectorFrontendClient.h"
 #include "InspectorResource.h"
 #include "Page.h"
 #include "Pasteboard.h"
@@ -54,65 +53,74 @@ using namespace std;
 
 namespace WebCore {
 
-InspectorFrontendHost::InspectorFrontendHost(InspectorController* inspectorController, InspectorClient* client)
-    : m_inspectorController(inspectorController)
-    , m_client(client)
+InspectorFrontendHost::InspectorFrontendHost(InspectorFrontendClient* client)
+    : m_client(client)
 {
 }
 
 InspectorFrontendHost::~InspectorFrontendHost()
 {
-    if (m_menuProvider)
-        m_menuProvider->disconnect();
+    ASSERT(!m_client);
+}
+
+void InspectorFrontendHost::disconnectClient()
+{
+    m_client = 0;
 }
 
 void InspectorFrontendHost::loaded()
 {
-    if (m_inspectorController)
-        m_inspectorController->scriptObjectReady();
+    if (m_client)
+        m_client->frontendLoaded();
 }
 
 void InspectorFrontendHost::attach()
 {
-    if (m_inspectorController)
-        m_inspectorController->attachWindow();
+    if (m_client)
+        m_client->attachWindow();
 }
 
 void InspectorFrontendHost::detach()
 {
-    if (m_inspectorController)
-        m_inspectorController->detachWindow();
+    if (m_client)
+        m_client->detachWindow();
 }
 
 void InspectorFrontendHost::closeWindow()
 {
-    if (m_inspectorController)
-        m_inspectorController->closeWindow();
+    if (m_client) {
+        m_client->closeWindow();
+        disconnectClient(); // Disconnect from client.
+    }
 }
 
-void InspectorFrontendHost::windowUnloading()
+void InspectorFrontendHost::bringToFront()
 {
-    if (m_inspectorController)
-        m_inspectorController->close();
+    if (m_client)
+        m_client->bringToFront();
+}
+
+void InspectorFrontendHost::inspectedURLChanged(const String& newURL)
+{
+    if (m_client)
+        m_client->inspectedURLChanged(newURL);
 }
 
 bool InspectorFrontendHost::canAttachWindow() const
 {
-    if (m_inspectorController)
-        return m_inspectorController->canAttachWindow();
-    return false;
+    return m_client && m_client->canAttachWindow();
 }
 
 void InspectorFrontendHost::setAttachedWindowHeight(unsigned height)
 {
-    if (m_inspectorController)
-        m_inspectorController->setAttachedWindowHeight(height);
+    if (m_client)
+        m_client->changeAttachedWindowHeight(height);
 }
 
 void InspectorFrontendHost::moveWindowBy(float x, float y) const
 {
-    if (m_inspectorController)
-        m_inspectorController->moveWindowBy(x, y);
+    if (m_client)
+        m_client->moveWindowBy(x, y);
 }
 
 String InspectorFrontendHost::localizedStringsURL()
@@ -161,30 +169,8 @@ void InspectorFrontendHost::copyText(const String& text)
 
 void InspectorFrontendHost::showContextMenu(Event* event, const Vector<ContextMenuItem*>& items)
 {
-    if (!m_inspectorController)
-        return;
-    if (!m_inspectorController->windowVisible())
-        return;
-
-
-    m_menuProvider = MenuProvider::create(this, items);
-    ContextMenuController* menuController = m_inspectorController->m_page->contextMenuController();
-    menuController->showContextMenu(event, m_menuProvider);
-}
-
-void InspectorFrontendHost::contextMenuItemSelected(ContextMenuItem* item)
-{
-    if (m_inspectorController && m_inspectorController->windowVisible()) {
-        int itemNumber = item->action() - ContextMenuItemBaseCustomTag;
-        m_inspectorController->m_frontend->contextMenuItemSelected(itemNumber);
-    }
-}
-
-void InspectorFrontendHost::contextMenuCleared()
-{
-    m_menuProvider = 0;
-    if (m_inspectorController && m_inspectorController->windowVisible())
-        m_inspectorController->m_frontend->contextMenuCleared();
+    if (m_client)
+        m_client->showContextMenu(event, items);
 }
 
 } // namespace WebCore

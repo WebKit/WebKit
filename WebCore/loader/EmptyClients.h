@@ -471,29 +471,14 @@ public:
     virtual ~EmptyInspectorClient() { }
 
     virtual void inspectorDestroyed() { }
-
-    virtual Page* createPage() { return 0; };
-
-    virtual String localizedStringsURL() { return String(); }
-
-    virtual String hiddenPanels() { return String(); }
-
-    virtual void showWindow() { }
-    virtual void closeWindow() { }
-
-    virtual void attachWindow() { }
-    virtual void detachWindow() { }
-
-    virtual void setAttachedWindowHeight(unsigned) { }
+    
+    virtual void openInspectorFrontend(InspectorController*) { }
 
     virtual void highlight(Node*) { }
     virtual void hideHighlight() { }
-    virtual void inspectedURLChanged(const String&) { }
 
     virtual void populateSetting(const String&, String*) { }
     virtual void storeSetting(const String&, const String&) { }
-
-    virtual void inspectorWindowObjectCleared() { }
 };
 
 }
