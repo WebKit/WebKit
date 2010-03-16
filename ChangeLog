@@ -1,3 +1,9 @@
+2010-03-16  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Add WebKitTools/TestResultServer/index.yaml to gitattributes to ignore for crlf conversion.
+
+        * .gitattributes:
+
 2010-03-12  Scott Byer  <scottbyer@chromium.org>
 
         Reviewed by David Levin.

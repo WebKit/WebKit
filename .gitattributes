@@ -284,3 +284,4 @@ WebKitTools/WinLauncher/WinLauncher.h -crlf
 WebKitTools/WinLauncher/WinLauncher.vcproj -crlf
 WebKitTools/record-memory-win/main.cpp -crlf
 WebKitTools/record-memory-win/record-memory-win.vcproj -crlf
+WebKitTools/TestResultServer/index.yaml -crlf
