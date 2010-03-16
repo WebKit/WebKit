@@ -1,51 +1,6 @@
 2010-03-16  Darin Adler  <darin@apple.com>
 
-        Reviewed by Sam Weinig.
-
-        Added arrayLength function and used it instead of hand-written code.
-
-        * JavaScriptCore.xcodeproj/project.pbxproj:
-        Removed PtrAndFlags.h. The file was removed long ago.
-
-        * interpreter/Interpreter.cpp:
-        (JSC::Interpreter::privateExecute): Use arrayLength.
-
-        * runtime/Collector.h:
-        (JSC::CollectorBitmap::count): Remove WTF:: prefix from use
-        of bitCount. In WTF we inject things into the global namespace
-        and this is no exception.
-
-        * runtime/DatePrototype.cpp:
-        (JSC::formatLocaleDate): Use arrayLength.
-
-        * runtime/JSFunction.h:
-        (JSC::JSFunction::nativeFunction): Remove WTF:: prefix as above.
-        (JSC::JSFunction::scopeChain): Ditto.
-        (JSC::JSFunction::setScopeChain): Ditto.
-        (JSC::JSFunction::setNativeFunction): Ditto.
-
-        * runtime/JSGlobalObject.cpp:
-        (JSC::JSGlobalObject::reset): Use arrayLength.
-
-        * runtime/JSImmediate.h:
-        (JSC::reinterpretDoubleToIntptr): Remove WTF:: prefix as above.
-        (JSC::reinterpretIntptrToDouble): Ditto.
-
-        * runtime/JSONObject.cpp:
-        (JSC::Stringifier::appendQuotedString): Use arrayLength.
-        (JSC::Stringifier::toJSON): Ditto.
-        (JSC::Stringifier::appendStringifiedValue): Ditto.
-        * runtime/SmallStrings.cpp:
-        (JSC::SmallStrings::SmallStrings): Ditto.
-
-        * runtime/UString.cpp:
-        (JSC::UString::from): Use arrayLength.
-
-        * wtf/StdLibExtras.h:
-        (WTF::bitwise_cast): Marked this inline!
-        (WTF::arrayLength): Added function template (actually written by Sam).
-        Added using declarations for public things in WTF namespace defined
-        in this file.
+        Rolled out r56081 since it broke the Windows build.
 
 2010-03-16  Zoltan Horvath  <zoltan@webkit.org>
 

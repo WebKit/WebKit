@@ -47,12 +47,12 @@ namespace JSC {
 #if USE(JSVALUE64)
     inline intptr_t reinterpretDoubleToIntptr(double value)
     {
-        return bitwise_cast<intptr_t>(value);
+        return WTF::bitwise_cast<intptr_t>(value);
     }
 
     inline double reinterpretIntptrToDouble(intptr_t value)
     {
-        return bitwise_cast<double>(value);
+        return WTF::bitwise_cast<double>(value);
     }
 #endif
 

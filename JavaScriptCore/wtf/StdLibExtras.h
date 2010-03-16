@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2010 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,6 @@
 #ifndef WTF_StdLibExtras_h
 #define WTF_StdLibExtras_h
 
-#include <stdlib.h>
 #include <wtf/Assertions.h>
 
 // Use these to declare and define a static local variable (static T;) so that
@@ -54,9 +53,11 @@
 
 namespace WTF {
 
-    // C++'s idea of a reinterpret_cast lacks sufficient cojones.
+    /*
+     * C++'s idea of a reinterpret_cast lacks sufficient cojones.
+     */
     template<typename TO, typename FROM>
-    inline TO bitwise_cast(FROM from)
+    TO bitwise_cast(FROM from)
     {
         COMPILE_ASSERT(sizeof(TO) == sizeof(FROM), WTF_bitwise_cast_sizeof_casted_types_is_equal);
         union {
@@ -75,17 +76,6 @@ namespace WTF {
         return (((bits + (bits >> 4)) & 0xF0F0F0F) * 0x1010101) >> 24;
     }
 
-    // Returns the length of an array. Use instead of macros such as ARRAYSIZE.
-    template<class ElementType, size_t length>
-    inline size_t arrayLength(ElementType (&)[length])
-    {
-        return length;
-    }
-
 } // namespace WTF
-
-using WTF::arrayLength;
-using WTF::bitCount;
-using WTF::bitwise_cast;
 
 #endif

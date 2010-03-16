@@ -61,7 +61,7 @@ SmallStringsStorage::SmallStringsStorage()
 
 SmallStrings::SmallStrings()
 {
-    COMPILE_ASSERT(numCharactersToStore == arrayLength(m_singleCharacterStrings), IsNumCharactersConstInSyncWithClassUsage);
+    COMPILE_ASSERT(numCharactersToStore == sizeof(m_singleCharacterStrings) / sizeof(m_singleCharacterStrings[0]), IsNumCharactersConstInSyncWithClassUsage);
     clear();
 }
 
