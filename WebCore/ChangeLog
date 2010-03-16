@@ -1,3 +1,15 @@
+2010-03-15  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35502
+        [Gtk] Objects of ATK_ROLE_TABLE should not implement AtkText
+
+        Simple change to stop tables from implementing AtkText.
+
+        * accessibility/gtk/AccessibilityObjectAtk.cpp:
+        (getInterfaceMaskFromObject):
+
 2010-03-15  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         Reviewed by Adam Barth.

@@ -1661,7 +1661,7 @@ static guint16 getInterfaceMaskFromObject(AccessibilityObject* coreObject)
             interfaceMask |= 1 << WAI_TEXT;
             if (!coreObject->isReadOnly())
                 interfaceMask |= 1 << WAI_EDITABLE_TEXT;
-        } else if (static_cast<AccessibilityRenderObject*>(coreObject)->renderer()->childrenInline())
+        } else if (role != TableRole && static_cast<AccessibilityRenderObject*>(coreObject)->renderer()->childrenInline())
             interfaceMask |= 1 << WAI_TEXT;
 
     // Image

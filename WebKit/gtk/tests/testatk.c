@@ -38,6 +38,8 @@ static const char* contentsInParagraphAndBodySimple = "<html><body><p>This is a 
 
 static const char* contentsInParagraphAndBodyModerate = "<html><body><p>This is a test.</p>Hello world.<br /><font color='#00cc00'>This sentence is green.</font><br />This one is not.</body></html>";
 
+static const char* contentsInTable = "<html><body><table><tr><td>foo</td><td>bar</td></tr></table></body></html>";
+
 static gboolean bail_out(GMainLoop* loop)
 {
     if (g_main_loop_is_running(loop))
@@ -450,6 +452,34 @@ static void testWebkitAtkGetTextInParagraphAndBodyModerate(void)
     g_object_unref(webView);
 }
 
+static void testWebkitAtkGetTextInTable(void)
+{
+    WebKitWebView* webView;
+    AtkObject* obj;
+    GMainLoop* loop;
+
+    webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    g_object_ref_sink(webView);
+    GtkAllocation alloc = { 0, 0, 800, 600 };
+    gtk_widget_size_allocate(GTK_WIDGET(webView), &alloc);
+    webkit_web_view_load_string(webView, contentsInTable, NULL, NULL, NULL);
+    loop = g_main_loop_new(NULL, TRUE);
+
+    g_timeout_add(100, (GSourceFunc)bail_out, loop);
+    g_main_loop_run(loop);
+
+    obj = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    g_assert(obj);
+    obj = atk_object_ref_accessible_child(obj, 0);
+    g_assert(obj);
+
+    /* Tables should not implement AtkText */
+    g_assert(G_TYPE_INSTANCE_GET_INTERFACE(obj, ATK_TYPE_TEXT, AtkTextIface) == NULL);
+
+    g_object_unref(obj);
+    g_object_unref(webView);
+}
+
 int main(int argc, char** argv)
 {
     g_thread_init(NULL);
@@ -463,6 +493,7 @@ int main(int argc, char** argv)
     g_test_add_func("/webkit/atk/get_text_at_offset_text_input", test_webkit_atk_get_text_at_offset_text_input);
     g_test_add_func("/webkit/atk/getTextInParagraphAndBodySimple", testWebkitAtkGetTextInParagraphAndBodySimple);
     g_test_add_func("/webkit/atk/getTextInParagraphAndBodyModerate", testWebkitAtkGetTextInParagraphAndBodyModerate);
+    g_test_add_func("/webkit/atk/getTextInTable", testWebkitAtkGetTextInTable);
     return g_test_run ();
 }
 
