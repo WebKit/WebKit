@@ -356,6 +356,60 @@ void InspectorBackend::removeNode(long callId, long nodeId)
     frontend->didRemoveNode(callId, nodeId);
 }
 
+void InspectorBackend::getStyles(long callId, long nodeId, bool authorOnly)
+{
+    if (InspectorDOMAgent* domAgent = inspectorDOMAgent())
+        domAgent->getStyles(callId, nodeId, authorOnly);
+}
+
+void InspectorBackend::getInlineStyle(long callId, long nodeId)
+{
+    if (InspectorDOMAgent* domAgent = inspectorDOMAgent())
+        domAgent->getInlineStyle(callId, nodeId);
+}
+
+void InspectorBackend::getComputedStyle(long callId, long nodeId)
+{
+    if (InspectorDOMAgent* domAgent = inspectorDOMAgent())
+        domAgent->getComputedStyle(callId, nodeId);
+}
+
+void InspectorBackend::applyStyleText(long callId, long styleId, const String& styleText, const String& propertyName)
+{
+    if (InspectorDOMAgent* domAgent = inspectorDOMAgent())
+        domAgent->applyStyleText(callId, styleId, styleText, propertyName);
+}
+
+void InspectorBackend::setStyleText(long callId, long styleId, const String& cssText)
+{
+    if (InspectorDOMAgent* domAgent = inspectorDOMAgent())
+        domAgent->setStyleText(callId, styleId, cssText);
+}
+
+void InspectorBackend::setStyleProperty(long callId, long styleId, const String& name, const String& value)
+{
+    if (InspectorDOMAgent* domAgent = inspectorDOMAgent())
+        domAgent->setStyleProperty(callId, styleId, name, value);
+}
+
+void InspectorBackend::toggleStyleEnabled(long callId, long styleId, const String& propertyName, bool disabled)
+{
+    if (InspectorDOMAgent* domAgent = inspectorDOMAgent())
+        domAgent->toggleStyleEnabled(callId, styleId, propertyName, disabled);
+}
+
+void InspectorBackend::setRuleSelector(long callId, long ruleId, const String& selector, long selectedNodeId)
+{
+    if (InspectorDOMAgent* domAgent = inspectorDOMAgent())
+        domAgent->setRuleSelector(callId, ruleId, selector, selectedNodeId);
+}
+
+void InspectorBackend::addRule(long callId, const String& selector, long selectedNodeId)
+{
+    if (InspectorDOMAgent* domAgent = inspectorDOMAgent())
+        domAgent->addRule(callId, selector, selectedNodeId);
+}
+
 void InspectorBackend::highlightDOMNode(long nodeId)
 {
     if (Node* node = nodeForId(nodeId))

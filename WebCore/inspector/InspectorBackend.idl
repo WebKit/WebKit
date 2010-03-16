@@ -90,6 +90,16 @@ module core {
         void highlightDOMNode(in long nodeId);
         void hideDOMNodeHighlight();
 
+        void getStyles(in long callId, in long nodeId, in boolean authOnly);
+        void getInlineStyle(in long callId, in long nodeId);
+        void getComputedStyle(in long callId, in long nodeId);
+        void applyStyleText(in long callId, in long styleId, in DOMString styleText, in DOMString propertyName);
+        void setStyleText(in long callId, in long styleId, in DOMString styleText);
+        void setStyleProperty(in long callId, in long styleId, in DOMString name, in DOMString value);
+        void toggleStyleEnabled(in long callId, in long styleId, in DOMString propertyName, in boolean disabled);
+        void setRuleSelector(in long callId, in long ruleId, in DOMString selector, in long selectedNodeId);
+        void addRule(in long callId, in DOMString selector, in long selectedNodeId);
+
         void getCookies(in long callId);
         void deleteCookie(in DOMString cookieName, in DOMString domain);
 

@@ -1,3 +1,76 @@
+2010-03-16  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: migrate to native styles inspector in
+        order to inspect styles from foreighn domains.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36117
+
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::getStyles):
+        (WebCore::InspectorBackend::getInlineStyle):
+        (WebCore::InspectorBackend::getComputedStyle):
+        (WebCore::InspectorBackend::applyStyleText):
+        (WebCore::InspectorBackend::setStyleText):
+        (WebCore::InspectorBackend::setStyleProperty):
+        (WebCore::InspectorBackend::toggleStyleEnabled):
+        (WebCore::InspectorBackend::setRuleSelector):
+        (WebCore::InspectorBackend::addRule):
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorBackend.idl:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::InspectorDOMAgent):
+        (WebCore::InspectorDOMAgent::getStyles):
+        (WebCore::InspectorDOMAgent::getInlineStyle):
+        (WebCore::InspectorDOMAgent::getComputedStyle):
+        (WebCore::InspectorDOMAgent::getMatchedCSSRules):
+        (WebCore::InspectorDOMAgent::getAttributeStyles):
+        (WebCore::InspectorDOMAgent::applyStyleText):
+        (WebCore::InspectorDOMAgent::setStyleText):
+        (WebCore::InspectorDOMAgent::setStyleProperty):
+        (WebCore::InspectorDOMAgent::toggleStyleEnabled):
+        (WebCore::InspectorDOMAgent::setRuleSelector):
+        (WebCore::InspectorDOMAgent::addRule):
+        (WebCore::InspectorDOMAgent::bindStyle):
+        (WebCore::InspectorDOMAgent::bindRule):
+        (WebCore::InspectorDOMAgent::buildObjectForStyle):
+        (WebCore::InspectorDOMAgent::populateObjectWithStyleProperties):
+        (WebCore::InspectorDOMAgent::buildObjectForRule):
+        (WebCore::InspectorDOMAgent::uniqueStyleProperties):
+        (WebCore::InspectorDOMAgent::longhandProperties):
+        (WebCore::InspectorDOMAgent::shorthandPriority):
+        (WebCore::InspectorDOMAgent::ruleAffectsNode):
+        (WebCore::InspectorDOMAgent::toArray):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::didGetEventListenersForNode):
+        (WebCore::InspectorFrontend::didGetStyles):
+        (WebCore::InspectorFrontend::didGetComputedStyle):
+        (WebCore::InspectorFrontend::didGetInlineStyle):
+        (WebCore::InspectorFrontend::didApplyStyleText):
+        (WebCore::InspectorFrontend::didSetStyleText):
+        (WebCore::InspectorFrontend::didSetStyleProperty):
+        (WebCore::InspectorFrontend::didToggleStyleEnabled):
+        (WebCore::InspectorFrontend::didSetRuleSelector):
+        (WebCore::InspectorFrontend::didAddRule):
+        * inspector/InspectorFrontend.h:
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.CSSStyleDeclaration):
+        * inspector/front-end/ElementsTreeOutline.js:
+        * inspector/front-end/InjectedScript.js:
+        * inspector/front-end/MetricsSidebarPane.js:
+        (WebInspector.MetricsSidebarPane.prototype.update):
+        (WebInspector.MetricsSidebarPane.prototype.editingCommitted):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype.update):
+        (WebInspector.StylePropertiesSection.prototype.editingSelectorCommitted.callback):
+        (WebInspector.StylePropertiesSection.prototype.editingSelectorCommitted):
+        (WebInspector.BlankStylePropertiesSection.prototype.editingSelectorCommitted.callback):
+        (WebInspector.BlankStylePropertiesSection.prototype.editingSelectorCommitted):
+        (WebInspector.StylePropertyTreeElement.prototype):
+        (WebInspector.StylePropertyTreeElement.prototype.):
+
 2010-03-16  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler.

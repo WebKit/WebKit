@@ -45,6 +45,10 @@
 
 namespace WebCore {
     class ContainerNode;
+    class CSSRule;
+    class CSSStyleDeclaration;
+    class CSSStyleRule;
+    class CSSStyleSheet;
     class Element;
     class Event;
     class Document;
@@ -87,12 +91,23 @@ namespace WebCore {
 
         virtual bool operator==(const EventListener& other);
 
-        // Methods called from the frontend.
+        // Methods called from the frontend for DOM nodes inspection.
         void getChildNodes(long callId, long nodeId);
         void setAttribute(long callId, long elementId, const String& name, const String& value);
         void removeAttribute(long callId, long elementId, const String& name);
         void setTextNodeValue(long callId, long nodeId, const String& value);
         void getEventListenersForNode(long callId, long nodeId);
+
+        // Methods called from the frontend for CSS styles inspection.
+        void getStyles(long callId, long nodeId, bool authorOnly);
+        void getInlineStyle(long callId, long nodeId);
+        void getComputedStyle(long callId, long nodeId);
+        void applyStyleText(long callId, long styleId, const String& styleText, const String& propertyName);
+        void setStyleText(long callId, long styleId, const String& cssText);
+        void setStyleProperty(long callId, long styleId, const String& name, const String& value);
+        void toggleStyleEnabled(long callId, long styleId, const String& propertyName, bool disabled);
+        void setRuleSelector(long callId, long ruleId, const String& selector, long selectedNodeId);
+        void addRule(long callId, const String& selector, long selectedNodeId);
 
         // Methods called from the InspectorController.
         void setDocument(Document* document);
@@ -113,16 +128,18 @@ namespace WebCore {
 
         virtual void handleEvent(ScriptExecutionContext*, Event* event);
 
+        // Node-related methods.
         typedef HashMap<RefPtr<Node>, long> NodeToIdMap;
         long bind(Node* node, NodeToIdMap* nodesMap);
         void unbind(Node* node, NodeToIdMap* nodesMap);
 
         bool pushDocumentToFrontend();
 
+        ScriptArray getMatchedCSSRules(Element* element, bool authorOnly);
+        ScriptObject getAttributeStyles(Element* element);
         ScriptObject buildObjectForNode(Node* node, int depth, NodeToIdMap* nodesMap);
         ScriptArray buildArrayForElementAttributes(Element* element);
         ScriptArray buildArrayForContainerChildren(Node* container, int depth, NodeToIdMap* nodesMap);
-
         ScriptObject buildObjectForEventListener(const RegisteredEventListener& registeredEventListener, const AtomicString& eventType, Node* node);
 
         // We represent embedded doms as a part of the same hierarchy. Hence we treat children of frame owners differently.
@@ -136,6 +153,18 @@ namespace WebCore {
 
         Document* mainFrameDocument() const;
         String documentURLString(Document* document) const;
+
+        long bindStyle(CSSStyleDeclaration*);
+        long bindRule(CSSStyleRule*);
+        ScriptObject buildObjectForStyle(CSSStyleDeclaration*, bool bind);
+        void populateObjectWithStyleProperties(CSSStyleDeclaration*, ScriptObject& result);
+        ScriptObject buildObjectForRule(CSSStyleRule*);
+        Vector<String> uniqueStyleProperties(CSSStyleDeclaration*);
+        Vector<String> longhandProperties(CSSStyleDeclaration*, const String& shorthandProperty);
+        String shorthandPriority(CSSStyleDeclaration*, const String& shorthandProperty);
+        bool ruleAffectsNode(CSSStyleRule*, Node*);
+        ScriptArray toArray(const Vector<String>& data);
+
         void discardBindings();
 
         InspectorFrontend* m_frontend;
@@ -146,6 +175,20 @@ namespace WebCore {
         HashMap<long, NodeToIdMap*> m_idToNodesMap;
         HashSet<long> m_childrenRequested;
         long m_lastNodeId;
+
+        typedef HashMap<CSSStyleDeclaration*, long> StyleToIdMap;
+        typedef HashMap<long, RefPtr<CSSStyleDeclaration> > IdToStyleMap;
+        StyleToIdMap m_styleToId;
+        IdToStyleMap m_idToStyle;
+        typedef HashMap<CSSStyleRule*, long> RuleToIdMap;
+        typedef HashMap<long, RefPtr<CSSStyleRule> > IdToRuleMap;
+        RuleToIdMap m_ruleToId;
+        IdToRuleMap m_idToRule;
+        IdToStyleMap m_idToDisabledStyle;
+        RefPtr<CSSStyleSheet> m_inspectorStyleSheet;
+
+        long m_lastStyleId;
+        long m_lastRuleId;
         ListHashSet<RefPtr<Document> > m_documents;
     };
 

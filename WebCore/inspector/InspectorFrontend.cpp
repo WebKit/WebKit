@@ -465,13 +465,98 @@ void InspectorFrontend::didApplyDomChange(int callId, bool success)
     function.call();
 }
 
-void InspectorFrontend::didGetEventListenersForNode(int callId, int nodeId, ScriptArray& listenersArray)
+void InspectorFrontend::didGetEventListenersForNode(int callId, int nodeId, const ScriptArray& listenersArray)
 {
     ScriptFunctionCall function(m_webInspector, "dispatch"); 
     function.appendArgument("didGetEventListenersForNode");
     function.appendArgument(callId);
     function.appendArgument(nodeId);
     function.appendArgument(listenersArray);
+    function.call();
+}
+
+void InspectorFrontend::didGetStyles(long callId, const ScriptValue& styles)
+{
+    ScriptFunctionCall function(m_webInspector, "dispatch"); 
+    function.appendArgument("didGetStyles");
+    function.appendArgument(callId);
+    function.appendArgument(styles);
+    function.call();
+}
+
+void InspectorFrontend::didGetComputedStyle(long callId, const ScriptValue& style)
+{
+    ScriptFunctionCall function(m_webInspector, "dispatch"); 
+    function.appendArgument("didGetComputedStyle");
+    function.appendArgument(callId);
+    function.appendArgument(style);
+    function.call();
+}
+
+void InspectorFrontend::didGetInlineStyle(long callId, const ScriptValue& style)
+{
+    ScriptFunctionCall function(m_webInspector, "dispatch"); 
+    function.appendArgument("didGetInlineStyle");
+    function.appendArgument(callId);
+    function.appendArgument(style);
+    function.call();
+}
+
+void InspectorFrontend::didApplyStyleText(int callId, bool success, const ScriptValue& style, const ScriptArray& changedProperties)
+{
+    ScriptFunctionCall function(m_webInspector, "dispatch"); 
+    function.appendArgument("didApplyStyleText");
+    function.appendArgument(callId);
+    function.appendArgument(success);
+    function.appendArgument(style);
+    function.appendArgument(changedProperties);
+    function.call();
+}
+
+void InspectorFrontend::didSetStyleText(int callId, bool success)
+{
+    ScriptFunctionCall function(m_webInspector, "dispatch"); 
+    function.appendArgument("didSetStyleText");
+    function.appendArgument(callId);
+    function.appendArgument(success);
+    function.call();
+}
+
+void InspectorFrontend::didSetStyleProperty(int callId, bool success)
+{
+    ScriptFunctionCall function(m_webInspector, "dispatch"); 
+    function.appendArgument("didSetStyleProperty");
+    function.appendArgument(callId);
+    function.appendArgument(success);
+    function.call();
+}
+
+void InspectorFrontend::didToggleStyleEnabled(int callId, const ScriptValue& style)
+{
+    ScriptFunctionCall function(m_webInspector, "dispatch"); 
+    function.appendArgument("didToggleStyleEnabled");
+    function.appendArgument(callId);
+    function.appendArgument(style);
+    function.call();
+}
+
+void InspectorFrontend::didSetRuleSelector(int callId, const ScriptValue& rule, bool selectorAffectsNode)
+{
+    ScriptFunctionCall function(m_webInspector, "dispatch"); 
+    function.appendArgument("didSetRuleSelector");
+    function.appendArgument(callId);
+    function.appendArgument(rule);
+    function.appendArgument(selectorAffectsNode);
+    function.call();
+}
+
+void InspectorFrontend::didAddRule(int callId, const ScriptValue& rule, bool selectorAffectsNode)
+{
+    ScriptFunctionCall function(m_webInspector, "dispatch"); 
+    function.appendArgument("didAddRule");
+    function.appendArgument(callId);
+    function.appendArgument(rule);
+    function.appendArgument(selectorAffectsNode);
     function.call();
 }
 

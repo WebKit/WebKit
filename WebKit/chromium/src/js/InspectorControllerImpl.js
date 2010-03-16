@@ -71,6 +71,15 @@ devtools.InspectorBackendImpl = function()
     this.installInspectorControllerDelegate_("startTimelineProfiler");
     this.installInspectorControllerDelegate_("stopTimelineProfiler");
     this.installInspectorControllerDelegate_("storeLastActivePanel");
+
+    this.installInspectorControllerDelegate_("getStyles");
+    this.installInspectorControllerDelegate_("getComputedStyle");
+    this.installInspectorControllerDelegate_("applyStyleText");
+    this.installInspectorControllerDelegate_("setStyleText");
+    this.installInspectorControllerDelegate_("setStyleProperty");
+    this.installInspectorControllerDelegate_("toggleStyleEnabled");
+    this.installInspectorControllerDelegate_("setRuleSelector");
+    this.installInspectorControllerDelegate_("addRule");
 };
 devtools.InspectorBackendImpl.prototype.__proto__ = WebInspector.InspectorBackendStub.prototype;
 

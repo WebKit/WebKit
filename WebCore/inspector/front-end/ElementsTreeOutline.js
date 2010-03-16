@@ -1242,5 +1242,3 @@ WebInspector.ElementsTreeElement.prototype = {
 }
 
 WebInspector.ElementsTreeElement.prototype.__proto__ = TreeElement.prototype;
-
-WebInspector.didRemoveNode = WebInspector.Callback.processCallback;

@@ -125,8 +125,18 @@ namespace WebCore {
         void attributesUpdated(int id, const ScriptArray& attributes);
         void didGetChildNodes(int callId);
         void didApplyDomChange(int callId, bool success);
-        void didGetEventListenersForNode(int callId, int nodeId, ScriptArray& listenersArray);
+        void didGetEventListenersForNode(int callId, int nodeId, const ScriptArray& listenersArray);
         void didRemoveNode(int callId, int nodeId);
+
+        void didGetStyles(long callId, const ScriptValue& styles);
+        void didGetInlineStyle(long callId, const ScriptValue& style);
+        void didGetComputedStyle(long callId, const ScriptValue& style);
+        void didApplyStyleText(int callId, bool success, const ScriptValue& style, const ScriptArray& changedProperties);
+        void didSetStyleText(int callId, bool success);
+        void didSetStyleProperty(int callId, bool success);
+        void didToggleStyleEnabled(int callId, const ScriptValue& style);
+        void didSetRuleSelector(int callId, const ScriptValue& rule, bool selectorAffectsNode);
+        void didAddRule(int callId, const ScriptValue& rule, bool selectorAffectsNode);
 
         void timelineProfilerWasStarted();
         void timelineProfilerWasStopped();

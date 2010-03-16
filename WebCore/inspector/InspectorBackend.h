@@ -104,6 +104,7 @@ public:
     void dispatchOnInjectedScript(long callId, long injectedScriptId, const String& methodName, const String& arguments, bool async);
     void addScriptToEvaluateOnLoad(const String& source);
     void removeAllScriptsToEvaluateOnLoad();
+
     void getChildNodes(long callId, long nodeId);
     void setAttribute(long callId, long elementId, const String& name, const String& value);
     void removeAttribute(long callId, long elementId, const String& name);
@@ -111,6 +112,17 @@ public:
     void getEventListenersForNode(long callId, long nodeId);
     void copyNode(long nodeId);
     void removeNode(long callId, long nodeId);
+
+    void getStyles(long callId, long nodeId, bool authOnly);
+    void getInlineStyle(long callId, long nodeId);
+    void getComputedStyle(long callId, long nodeId);
+    void applyStyleText(long callId, long styleId, const String& styleText, const String& propertyName);
+    void setStyleText(long callId, long styleId, const String& cssText);
+    void setStyleProperty(long callId, long styleId, const String& name, const String& value);
+    void toggleStyleEnabled(long callId, long styleId, const String& propertyName, bool disabled);
+    void setRuleSelector(long callId, long ruleId, const String& selector, long selectedNodeId);
+    void addRule(long callId, const String& selector, long selectedNodeId);
+
     void highlightDOMNode(long nodeId);
     void hideDOMNodeHighlight();
 

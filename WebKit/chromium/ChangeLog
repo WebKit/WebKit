@@ -1,3 +1,14 @@
+2010-03-16  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: migrate to native styles inspector in order to inspect styles from foreighn domains.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36117
+
+        * src/js/InspectorControllerImpl.js:
+        (devtools.InspectorBackendImpl):
+
 2010-03-15  John Gregg  <johnnyg@google.com>
 
         Reviewed by David Levin.

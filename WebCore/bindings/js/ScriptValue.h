@@ -33,6 +33,7 @@
 
 #include "PlatformString.h"
 #include "ScriptState.h"
+#include <runtime/JSValue.h>
 #include <runtime/Protect.h>
 #include <wtf/PassRefPtr.h>
 
@@ -57,6 +58,8 @@ public:
 
     PassRefPtr<SerializedScriptValue> serialize(ScriptState*);
     static ScriptValue deserialize(ScriptState*, SerializedScriptValue*);
+
+    static ScriptValue undefined() { return ScriptValue(JSC::jsUndefined()); }
 
 private:
     JSC::ProtectedJSValue m_value;

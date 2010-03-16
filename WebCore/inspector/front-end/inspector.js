@@ -615,6 +615,8 @@ WebInspector.documentMouseOver = function(event)
     const anchor = event.target;
     if (!anchor.hasStyleClass("webkit-html-resource-link"))
         return;
+    if (anchor.href && anchor.href.indexOf("/data:") != -1)
+        return;
     if (WebInspector.canShowSourceLine(anchor.href, anchor.lineNumber, anchor.preferredPanel) || WebInspector.ProfileType.URLRegExp.exec(anchor.href)) {
         if (event.target.originalTitle)
             event.target.title = event.target.originalTitle;
