@@ -63,10 +63,7 @@ void setSharedTimerFireTime(double fireTime)
     }
 
     stopSharedTimer();
-    if (intervalInMS == 0)
-        sharedTimer = g_idle_add(timeout_cb, NULL);
-    else
-        sharedTimer = g_timeout_add_full(G_PRIORITY_DEFAULT, intervalInMS, timeout_cb, NULL, NULL);
+    sharedTimer = g_timeout_add(intervalInMS, timeout_cb, NULL);
 }
 
 void stopSharedTimer()
