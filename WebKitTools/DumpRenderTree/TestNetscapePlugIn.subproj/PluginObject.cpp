@@ -290,7 +290,7 @@ static bool pluginGetProperty(NPObject* obj, NPIdentifier name, NPVariant* resul
         return true;
     } else if (name == pluginPropertyIdentifiers[ID_LAST_SET_WINDOW_ARGUMENTS]) {
         char* buf = static_cast<char*>(browser->memalloc(256));
-        snprintf(buf, 256, "x: %d, y: %d, width: %u, height: %u, clipRect: (%u, %u, %u, %u)", (int)plugin->lastWindow.x, (int)plugin->lastWindow.y, plugin->lastWindow.width, plugin->lastWindow.height,
+        snprintf(buf, 256, "x: %d, y: %d, width: %u, height: %u, clipRect: (%u, %u, %u, %u)", (int)plugin->lastWindow.x, (int)plugin->lastWindow.y, (unsigned)plugin->lastWindow.width, (unsigned)plugin->lastWindow.height,
             plugin->lastWindow.clipRect.left, plugin->lastWindow.clipRect.top, plugin->lastWindow.clipRect.right - plugin->lastWindow.clipRect.left, plugin->lastWindow.clipRect.bottom - plugin->lastWindow.clipRect.top);
 
         STRINGZ_TO_NPVARIANT(buf, *result);
