@@ -696,7 +696,8 @@ void InspectorDOMAgent::getStyles(long callId, long nodeId, bool authorOnly)
     RefPtr<CSSStyleDeclaration> computedStyle = defaultView->getComputedStyle(element, "");
 
     ScriptObject result = m_frontend->newScriptObject();
-    result.set("inlineStyle", buildObjectForStyle(element->style(), true));
+    if (element->style())
+        result.set("inlineStyle", buildObjectForStyle(element->style(), true));
     result.set("computedStyle", buildObjectForStyle(computedStyle.get(), false));
     result.set("matchedCSSRules", getMatchedCSSRules(element, authorOnly));
     result.set("styleAttributes", getAttributeStyles(element));

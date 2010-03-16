@@ -111,17 +111,18 @@ WebInspector.StylesSidebarPane.prototype = {
         {
             if (!styles)
                 return;
-            node._setStyles(styles.computedStyle, styles.inlineStyle, styles.styleAttributes, styles.matchedCSSRules);
-            self._update(refresh, body, node, editedSection, forceUpdate);
+            self._update(refresh, node, styles, editedSection, forceUpdate);
         }
 
         InspectorBackend.getStyles(WebInspector.Callback.wrap(callback), node.id, !WebInspector.settings.showUserAgentStyles);
     },
 
-    _update: function(refresh, body, node, editedSection, forceUpdate)
+    _update: function(refresh, node, styles, editedSection, forceUpdate)
     {
+        var nodeComputedStyle = new WebInspector.CSSStyleDeclaration(styles.computedStyle);
+
         if (!refresh) {
-            body.removeChildren();
+            this.bodyElement.removeChildren();
             this.sections = [];
         }
 
@@ -133,42 +134,35 @@ WebInspector.StylesSidebarPane.prototype = {
                 if (section instanceof WebInspector.BlankStylePropertiesSection)
                     continue;
                 if (section.computedStyle)
-                    section.styleRule.style = node.ownerDocument.defaultView.getComputedStyle(node);
+                    section.styleRule.style = nodeComputedStyle;
                 var styleRule = { section: section, style: section.styleRule.style, computedStyle: section.computedStyle, rule: section.rule };
                 styleRules.push(styleRule);
             }
         } else {
-            var computedStyle = node.ownerDocument.defaultView.getComputedStyle(node);
-            styleRules.push({ computedStyle: true, selectorText: WebInspector.UIString("Computed Style"), style: computedStyle, editable: false });
+            styleRules.push({ computedStyle: true, selectorText: WebInspector.UIString("Computed Style"), style: nodeComputedStyle, editable: false });
 
-            var nodeName = node.nodeName.toLowerCase();
-            for (var i = 0; i < node.attributes.length; ++i) {
-                var attr = node.attributes[i];
-                if (attr.style) {
-                    var attrStyle = { style: attr.style, editable: false };
-                    attrStyle.subtitle = WebInspector.UIString("element’s “%s” attribute", attr.name);
-                    attrStyle.selectorText = nodeName + "[" + attr.name;
-                    if (attr.value.length)
-                        attrStyle.selectorText += "=" + attr.value;
-                    attrStyle.selectorText += "]";
-                    styleRules.push(attrStyle);
-                }
+            var styleAttributes = {};
+            for (var name in styles.styleAttributes) {
+                var attrStyle = { style: new WebInspector.CSSStyleDeclaration(styles.styleAttributes[name]), editable: false };
+                attrStyle.subtitle = WebInspector.UIString("element’s “%s” attribute", name);
+                attrStyle.selectorText = node.nodeName + "[" + name;
+                if (node.getAttribute(name))
+                    attrStyle.selectorText += "=" + node.getAttribute(name);
+                attrStyle.selectorText += "]";
+                styleRules.push(attrStyle);
             }
 
             // Always Show element's Style Attributes
-            if (node.nodeType === Node.ELEMENT_NODE) {
-                var inlineStyle = { selectorText: WebInspector.UIString("Style Attribute"), style: node.style, isAttribute: true };
+            if (styles.inlineStyle && node.nodeType === Node.ELEMENT_NODE) {
+                var inlineStyle = { selectorText: WebInspector.UIString("Style Attribute"), style: new WebInspector.CSSStyleDeclaration(styles.inlineStyle), isAttribute: true };
                 inlineStyle.subtitle = WebInspector.UIString("element’s “%s” attribute", "style");
                 styleRules.push(inlineStyle);
             }
 
-            var matchedStyleRules = node.ownerDocument.defaultView.getMatchedCSSRules(node, "", !WebInspector.settings.showUserAgentStyles);
-            if (matchedStyleRules) {
-                // Add rules in reverse order to match the cascade order.
-                for (var i = (matchedStyleRules.length - 1); i >= 0; --i) {
-                    var rule = matchedStyleRules[i];
-                    styleRules.push({ style: rule.style, selectorText: rule.selectorText, parentStyleSheet: rule.parentStyleSheet, rule: rule });
-                }
+            // Add rules in reverse order to match the cascade order.
+            for (var i = styles.matchedCSSRules.length - 1; i >= 0; --i) {
+                var rule = WebInspector.CSSStyleDeclaration.parseRule(styles.matchedCSSRules[i]);
+                styleRules.push({ style: rule.style, selectorText: rule.selectorText, parentStyleSheet: rule.parentStyleSheet, rule: rule });
             }
         }
 
@@ -311,7 +305,7 @@ WebInspector.StylesSidebarPane.prototype = {
                 else
                     section.expand(true);
 
-                body.appendChild(section.element);
+                this.bodyElement.appendChild(section.element);
                 this.sections.push(section);
             }
         }

@@ -185,6 +185,11 @@ WebInspector.MetricsSidebarPane.prototype = {
 
     editingCommitted: function(element, userInput, previousContent, context)
     {
+        if (!this._inlineStyleId) {
+            // Element has no renderer.
+            return this.editingCancelled(element, context); // nothing changed, so cancel
+        }
+
         if (userInput === previousContent)
             return this.editingCancelled(element, context); // nothing changed, so cancel
 

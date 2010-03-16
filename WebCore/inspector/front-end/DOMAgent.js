@@ -211,30 +211,6 @@ WebInspector.DOMNode.prototype = {
         };
         this._attributesMap[name] = attr;
         this.attributes.push(attr);
-    },
-
-    _setStyles: function(computedStyle, inlineStyle, styleAttributes, matchedCSSRules)
-    {
-        this._computedStyle = new WebInspector.CSSStyleDeclaration(computedStyle);
-        this.style = new WebInspector.CSSStyleDeclaration(inlineStyle);
-
-        for (var name in styleAttributes) {
-            if (this._attributesMap[name])
-                this._attributesMap[name].style = new WebInspector.CSSStyleDeclaration(styleAttributes[name]);
-        }
-
-        this._matchedCSSRules = [];
-        for (var i = 0; i < matchedCSSRules.length; i++)
-            this._matchedCSSRules.push(WebInspector.CSSStyleDeclaration.parseRule(matchedCSSRules[i]));
-    },
-
-    _clearStyles: function()
-    {
-        this.computedStyle = null;
-        this.style = null;
-        for (var name in this._attributesMap)
-            this._attributesMap[name].style = null;
-        this._matchedCSSRules = null;
     }
 }
 
@@ -308,16 +284,6 @@ WebInspector.DOMWindow.prototype = {
 
     Object: function()
     {
-    },
-
-    getComputedStyle: function(node)
-    {
-        return node._computedStyle;
-    },
-
-    getMatchedCSSRules: function(node, pseudoElement, authorOnly)
-    {
-        return node._matchedCSSRules;
     }
 }
 

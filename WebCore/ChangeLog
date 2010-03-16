@@ -1,3 +1,22 @@
+2010-03-16  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Errors when inspecting styles of non-renderable elements in XHTML.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35025
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::getStyles):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMNode.prototype._addAttribute):
+        (WebInspector.DOMWindow.prototype.Object):
+        * inspector/front-end/MetricsSidebarPane.js:
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype.update.callback):
+        (WebInspector.StylesSidebarPane.prototype.update):
+        (WebInspector.StylesSidebarPane.prototype._update):
+
 2010-03-12  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Simon Fraser.
