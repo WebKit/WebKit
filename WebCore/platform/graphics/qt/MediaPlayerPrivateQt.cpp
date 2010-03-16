@@ -86,6 +86,7 @@ MediaPlayer::SupportsType MediaPlayerPrivate::supportsType(const String& mime, c
 MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     : m_player(player)
     , m_mediaPlayer(new QMediaPlayer)
+    , m_mediaPlayerControl(0)
     , m_videoItem(new QGraphicsVideoItem)
     , m_videoScene(new QGraphicsScene)
     , m_networkState(MediaPlayer::Empty)

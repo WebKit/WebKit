@@ -1,3 +1,15 @@
+2010-03-16  Jakub Wieczorek  <jwieczorek@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] MediaPlayerPrivate: Initialize m_mediaPlayerControl to 0 to avoid crashes
+        when no media services can be found.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36142
+
+        * platform/graphics/qt/MediaPlayerPrivateQt.cpp:
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate):
+
 2010-03-16  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.
