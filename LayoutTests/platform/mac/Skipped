@@ -146,4 +146,4 @@ fast/canvas/webgl/triangle.html
 fast/canvas/webgl/viewport-unchanged-upon-resize.html
 
 # eventSender needs to propagate the event to the calling window, not the main frame always.
-plugins/plugin-document-has-focus.html
+http/tests/plugins/plugin-document-has-focus.html
