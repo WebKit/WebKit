@@ -1,3 +1,31 @@
+2010-03-17  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add a way for the bots to send messages to IRC
+        https://bugs.webkit.org/show_bug.cgi?id=36235
+
+        We'll use these classes to notify #webkit about bad SVN revisions.
+        This patch just has some skeleton code for us to play with.
+
+        * Scripts/webkitpy/irc/__init__.py: Added.
+        * Scripts/webkitpy/irc/ircbot.py: Added.
+            A bot that knows how to talk to IRC.
+        * Scripts/webkitpy/irc/ircproxy.py: Added.
+            We need to run the bot on its own thread because the irclib needs
+            its own mainloop.  This class provides an abstraction of the
+            threading.
+        * Scripts/webkitpy/irc/messagepump.py: Added.
+        * Scripts/webkitpy/irc/messagepump_unittest.py: Added.
+        * Scripts/webkitpy/irc/threadedmessagequeue.py: Added.
+            A thread-safe message queue for sending messages from the main
+            thread to the IRC thread.
+        * Scripts/webkitpy/irc/threadedmessagequeue_unittest.py: Added.
+        * Scripts/webkitpy/irc/unittests.py: Added.
+        * Scripts/webkitpy/thirdparty/autoinstalled/__init__.py:
+            Autoinstall irclib
+        * Scripts/webkitpy/unittests.py:
+
 2010-03-17  Victor Wang  <victorw@chromium.org>
 
         Reviewed by Dimitri Glazkov.

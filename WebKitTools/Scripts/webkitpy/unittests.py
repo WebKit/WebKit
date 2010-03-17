@@ -45,6 +45,7 @@ from webkitpy.credentials_unittest import *
 from webkitpy.diff_parser_unittest import *
 from webkitpy.executive_unittest import *
 from webkitpy.grammar_unittest import *
+from webkitpy.irc.unittests import *
 from webkitpy.init.unittests import *  # for the webkitpy.init package
 from webkitpy.layout_tests.port.mac_unittest import *
 from webkitpy.multicommandtool_unittest import *
