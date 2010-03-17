@@ -1,3 +1,15 @@
+2010-03-17  Shu Chang  <Chang.Shu@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Rebaseline the test and remove it from Skipped.
+        https://bugs.webkit.org/show_bug.cgi?id=36059
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/canvas/canvas-text-baseline-expected.checksum: Added.
+        * platform/qt/fast/canvas/canvas-text-baseline-expected.png: Added.
+        * platform/qt/fast/canvas/canvas-text-baseline-expected.txt: Added.
+
 2010-03-17  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Dimitri Glazkov.
