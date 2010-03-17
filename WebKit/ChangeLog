@@ -1,3 +1,12 @@
+2010-03-17  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add EFL example browser to efl/EWebLauncher.
+        http://webkit.org/b/36176
+
+        * efl/EWebLauncher/main.c: Added.
+
 2010-03-16  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Kenneth Rohde Christiansen.
