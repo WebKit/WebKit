@@ -574,7 +574,7 @@ sub builtDylibPathForName
         }
     }
 
-    die "Unsupported platform, can't determine built library locations.";
+    die "Unsupported platform, can't determine built library locations.\nTry `build-webkit --help` for more information.\n";
 }
 
 # Check to see that all the frameworks are built.
