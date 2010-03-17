@@ -1,3 +1,11 @@
+2010-03-17  Daniel Bates  <dbates@rim.com>
+
+        Rubber-stamped by David Levin.
+
+        Add myself to the list of reviewers.
+
+        * Scripts/webkitpy/committers.py:
+
 2010-03-17  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
