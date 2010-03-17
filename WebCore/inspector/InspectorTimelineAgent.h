@@ -64,6 +64,7 @@ namespace WebCore {
         ResourceReceiveResponseTimelineRecordType = 13,
         ResourceFinishTimelineRecordType = 14,
         FunctionCallTimelineRecordType = 15,
+        ReceiveResourceDataTimelineRecordType = 16,
     };
 
     class InspectorTimelineAgent : public Noncopyable {
@@ -109,9 +110,12 @@ namespace WebCore {
         void didMarkTimeline(const String&);
 
         void willSendResourceRequest(unsigned long, bool isMainResource, const ResourceRequest&);
-        void didReceiveResourceResponse(unsigned long, const ResourceResponse&);
+        void willReceiveResourceResponse(unsigned long, const ResourceResponse&);
+        void didReceiveResourceResponse();
         void didFinishLoadingResource(unsigned long, bool didFail);
-
+        void willReceiveResourceData(unsigned long identifier);
+        void didReceiveResourceData();
+        
         static int instanceCount() { return s_instanceCount; }
         static InspectorTimelineAgent* retrieve(ScriptExecutionContext*);
 

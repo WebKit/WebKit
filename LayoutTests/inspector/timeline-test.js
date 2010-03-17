@@ -136,6 +136,6 @@ function frontend_getTimelineResults() {
             addRecords(records[i].children);
         }
     }
-    addRecords(WebInspector.panels.timeline._records);
+    addRecords(WebInspector.panels.timeline._rootRecord.children);
     return result;
 }

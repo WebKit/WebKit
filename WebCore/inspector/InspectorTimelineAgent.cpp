@@ -187,12 +187,24 @@ void InspectorTimelineAgent::willSendResourceRequest(unsigned long identifier, b
     m_frontend->addRecordToTimeline(record);
 }
 
-void InspectorTimelineAgent::didReceiveResourceResponse(unsigned long identifier, const ResourceResponse& response)
+void InspectorTimelineAgent::willReceiveResourceData(unsigned long identifier)
 {
-    ScriptObject record = TimelineRecordFactory::createGenericRecord(m_frontend, currentTimeInMilliseconds());
-    record.set("data", TimelineRecordFactory::createResourceReceiveResponseData(m_frontend, identifier, response));
-    record.set("type", ResourceReceiveResponseTimelineRecordType);
-    m_frontend->addRecordToTimeline(record);
+    pushCurrentRecord(TimelineRecordFactory::createReceiveResourceData(m_frontend, identifier), ReceiveResourceDataTimelineRecordType);
+}
+
+void InspectorTimelineAgent::didReceiveResourceData()
+{
+    didCompleteCurrentRecord(ReceiveResourceDataTimelineRecordType);
+}
+    
+void InspectorTimelineAgent::willReceiveResourceResponse(unsigned long identifier, const ResourceResponse& response)
+{
+    pushCurrentRecord(TimelineRecordFactory::createResourceReceiveResponseData(m_frontend, identifier, response), ResourceReceiveResponseTimelineRecordType);
+}
+
+void InspectorTimelineAgent::didReceiveResourceResponse()
+{
+    didCompleteCurrentRecord(ResourceReceiveResponseTimelineRecordType);
 }
 
 void InspectorTimelineAgent::didFinishLoadingResource(unsigned long identifier, bool didFail)

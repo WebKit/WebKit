@@ -20,6 +20,8 @@ ResourceReceiveResponse Properties:
 +- expectedContentLength : 210
 +- url : * DEFINED *
 + }
++ children : * DEFINED *
++ endTime : * DEFINED *
 + type : 13
 
 ResourceFinish Properties:

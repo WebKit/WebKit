@@ -49,7 +49,8 @@ WebInspector.TimelineAgent.RecordType = {
     ResourceSendRequest : 12,
     ResourceReceiveResponse : 13,
     ResourceFinish : 14,
-    FunctionCall : 15
+    FunctionCall : 15,
+    ResourceReceiveData: 16
 };
 
 WebInspector.addRecordToTimeline = function(record) {

@@ -67,6 +67,8 @@ namespace WebCore {
 
         static ScriptObject createResourceReceiveResponseData(InspectorFrontend*, unsigned long identifier, const ResourceResponse&);
 
+        static ScriptObject createReceiveResourceData(InspectorFrontend*, unsigned long identifier);
+        
         static ScriptObject createResourceFinishData(InspectorFrontend*, unsigned long identifier, bool didFail);
 
         static ScriptObject createPaintData(InspectorFrontend*, const IntRect&);

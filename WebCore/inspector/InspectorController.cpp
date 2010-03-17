@@ -675,9 +675,6 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
         // resetScriptObjects should be called before database and DOM storage
         // resources are cleared so that it has a chance to unbind them.
         if (m_frontend) {
-            if (m_timelineAgent)
-                m_timelineAgent->reset();
-
             m_frontend->reset();
             m_domAgent->reset();
         }
@@ -900,9 +897,6 @@ void InspectorController::willSendRequest(unsigned long identifier, const Resour
 
 void InspectorController::didReceiveResponse(unsigned long identifier, const ResourceResponse& response)
 {
-    if (m_timelineAgent)
-        m_timelineAgent->didReceiveResourceResponse(identifier, response);
-
     RefPtr<InspectorResource> resource = getTrackedResource(identifier);
     if (!resource)
         return;

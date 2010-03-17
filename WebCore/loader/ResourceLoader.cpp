@@ -34,6 +34,7 @@
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "InspectorTimelineAgent.h"
 #include "Page.h"
 #include "ProgressTracker.h"
 #include "ResourceHandle.h"
@@ -397,16 +398,44 @@ void ResourceLoader::didSendData(ResourceHandle*, unsigned long long bytesSent, 
 
 void ResourceLoader::didReceiveResponse(ResourceHandle*, const ResourceResponse& response)
 {
+#if ENABLE(INSPECTOR)
+    if (InspectorTimelineAgent::instanceCount()) {
+        InspectorTimelineAgent* timelineAgent = m_frame->page() ? m_frame->page()->inspectorTimelineAgent() : 0;
+        if (timelineAgent)
+            timelineAgent->willReceiveResourceResponse(identifier(), response);
+    }
+#endif
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     if (documentLoader()->applicationCacheHost()->maybeLoadFallbackForResponse(this, response))
         return;
 #endif
     didReceiveResponse(response);
+#if ENABLE(INSPECTOR)
+    if (InspectorTimelineAgent::instanceCount()) {
+        InspectorTimelineAgent* timelineAgent = m_frame->page() ? m_frame->page()->inspectorTimelineAgent() : 0;
+        if (timelineAgent)
+            timelineAgent->didReceiveResourceResponse();
+    }
+#endif
 }
 
 void ResourceLoader::didReceiveData(ResourceHandle*, const char* data, int length, int lengthReceived)
 {
+#if ENABLE(INSPECTOR)
+    if (InspectorTimelineAgent::instanceCount()) {
+        InspectorTimelineAgent* timelineAgent = m_frame->page() ? m_frame->page()->inspectorTimelineAgent() : 0;
+        if (timelineAgent)
+            timelineAgent->willReceiveResourceData(identifier());
+    }
+#endif
     didReceiveData(data, length, lengthReceived, false);
+#if ENABLE(INSPECTOR)
+    if (InspectorTimelineAgent::instanceCount()) {
+        InspectorTimelineAgent* timelineAgent = m_frame->page() ? m_frame->page()->inspectorTimelineAgent() : 0;
+        if (timelineAgent)
+            timelineAgent->didReceiveResourceData();
+    }
+#endif
 }
 
 void ResourceLoader::didFinishLoading(ResourceHandle*)

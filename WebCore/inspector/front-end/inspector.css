@@ -3595,6 +3595,10 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
     pointer-events: visibleFill;
 }
 
+.timeline-graph-bar.with-children {
+    opacity: 0.3;
+}
+
 .timeline-graph-side.even {
     background-color: rgba(0, 0, 0, 0.05);
 }

@@ -1,3 +1,47 @@
+2010-03-17 Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        WebInspector: Timeline improvements - next iteration.
+
+        The top level records should be collapsed.
+        Virtually linked events should be nested in Timeline like Send Request and
+        corresponding Received Responce, Timer Install and Timer Fire etc.
+        It should be possible to see Main Resource request.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36122
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::resetScriptObjects):
+        (WebCore::InspectorController::didReceiveResponse):
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::willReceiveResourceResponse):
+        (WebCore::InspectorTimelineAgent::didReceiveResourceResponse):
+        * inspector/InspectorTimelineAgent.h:
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+        (WebInspector.TimelinePanel.prototype._createStatusbarButtons):
+        (WebInspector.TimelinePanel.prototype.addRecordToTimeline):
+        (WebInspector.TimelinePanel.prototype._findParentRecord):
+        (WebInspector.TimelinePanel.prototype._innerAddRecordToTimeline):
+        (WebInspector.TimelinePanel.prototype.resize):
+        (WebInspector.TimelinePanel.prototype._createTopLevelRecord):
+        (WebInspector.TimelinePanel.prototype.reset):
+        (WebInspector.TimelinePanel.prototype._clean):
+        (WebInspector.TimelinePanel.prototype._refresh):
+        (WebInspector.TimelinePanel.prototype._refreshRecords):
+        (WebInspector.TimelinePanel.prototype._addToRecordsWindow):
+        (WebInspector.TimelineCalculator.prototype.computeBarGraphPercentages):
+        (WebInspector.TimelineCalculator.prototype.updateBoundaries):
+        (WebInspector.TimelineRecordGraphRow):
+        (WebInspector.TimelineRecordGraphRow.prototype.update):
+        (WebInspector.TimelinePanel.FormattedRecord):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype.get children):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._generatePopupContent):
+        * inspector/front-end/inspector.css:
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::didReceiveResponse):
+
 2010-03-17  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
