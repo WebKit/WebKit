@@ -1,3 +1,18 @@
+2010-03-16  James Hawkins  <jhawkins@chromium.org>
+
+        Reviewed by David Levin.
+
+        [Chromium] Size the WebVector of forms after determining how many
+        forms are valid and will be returned.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36204
+
+        No new tests, as this is only triggered by Chromium's use of the
+        WebFormElement API.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::forms):
+
 2010-03-16  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Darin Fisher.

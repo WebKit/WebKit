@@ -657,7 +657,12 @@ void WebFrameImpl::forms(WebVector<WebFormElement>& results) const
         return;
 
     RefPtr<HTMLCollection> forms = m_frame->document()->forms();
-    size_t formCount = forms->length();
+    size_t formCount = 0;
+    for (size_t i = 0; i < forms->length(); ++i) {
+        Node* node = forms->item(i);
+        if (node && node->isHTMLElement())
+            ++formCount;
+    }
 
     WebVector<WebFormElement> temp(formCount);
     for (size_t i = 0; i < formCount; ++i) {
