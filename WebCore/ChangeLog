@@ -1,3 +1,13 @@
+2010-03-17  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Remove unused reference to InspectorController from InspectorFrontend.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36218
+
+        * inspector/InspectorFrontend.h:
+
 2010-03-17 Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.
