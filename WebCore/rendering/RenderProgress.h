@@ -31,6 +31,7 @@ class HTMLProgressElement;
 class RenderProgress : public RenderBlock {
 public:
     RenderProgress(HTMLProgressElement*);
+    int position() { return m_position; }
 
 private:
     virtual const char* renderName() const { return "RenderProgress"; }
@@ -39,6 +40,7 @@ private:
     virtual void calcPrefWidths();
     virtual void layout();
     virtual void updateFromElement();
+    int m_position;
 };
 
 inline RenderProgress* toRenderProgress(RenderObject* object)

@@ -37,6 +37,7 @@ static const int defaultProgressHeight = 20;
 
 RenderProgress::RenderProgress(HTMLProgressElement* element)
     : RenderBlock(element)
+    , m_position(-1)
 {
     setSize(IntSize(defaultProgressWidth, defaultProgressHeight));
     setReplaced(true);
@@ -95,7 +96,22 @@ void RenderProgress::layout()
 
 void RenderProgress::updateFromElement()
 {
-    setNeedsLayoutAndPrefWidthsRecalc();
+    HTMLProgressElement* element = static_cast<HTMLProgressElement*>(node());
+    double position = element->position();
+    int oldPosition = m_position;
+    bool canOptimize = theme()->getNumberOfPixelsForProgressPosition(position, m_position);
+    if (oldPosition == m_position)
+        return;
+
+    IntRect paintRect = contentBoxRect();
+    if (canOptimize) {
+        // FIXME: Need to handle indeterminate progress bar and RTL
+        int adjustedPosition = (m_position >= 0) ? m_position : 0;
+        int adjustedOldPosition = (oldPosition >= 0) ? oldPosition : 0;
+        paintRect.setX(std::min(adjustedPosition, adjustedOldPosition));
+        paintRect.setWidth(std::max(adjustedPosition, adjustedOldPosition) - paintRect.x());
+    }
+    repaintRectangle(paintRect);
 }
 
 } // namespace WebCore

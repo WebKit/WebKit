@@ -124,6 +124,13 @@ protected:
     virtual void adjustSearchFieldResultsDecorationStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintSearchFieldResultsDecoration(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
 
+#if ENABLE(PROGRESS_TAG)
+    // Helper method for optimizing the paint area of the progress bar.
+    // If supported, it returns number of pixels needed to draw the progress bar up to the progress position.
+    // progressSize is the value that is passed back to RenderTheme during drawing.
+    virtual bool getNumberOfPixelsForProgressPosition(double position, int& progressSize) const;
+#endif
+
 #if ENABLE(VIDEO)
     virtual bool paintMediaFullscreenButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
     virtual bool paintMediaPlayButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);

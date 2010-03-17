@@ -58,11 +58,13 @@ const AtomicString& HTMLProgressElement::formControlType() const
 
 void HTMLProgressElement::parseMappedAttribute(MappedAttribute* attribute)
 {
-    if (attribute->name() == valueAttr)
-        setNeedsStyleRecalc();
-    else if (attribute->name() == maxAttr)
-        setNeedsStyleRecalc();
-    else
+    if (attribute->name() == valueAttr) {
+        if (renderer())
+            renderer()->updateFromElement();
+    } else if (attribute->name() == maxAttr) {
+        if (renderer())
+            renderer()->updateFromElement();
+    } else
         HTMLFormControlElement::parseMappedAttribute(attribute);
 }
 

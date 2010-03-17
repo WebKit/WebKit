@@ -1,3 +1,30 @@
+2010-03-17  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Optimize painting for HTMLProgressElement
+        https://bugs.webkit.org/show_bug.cgi?id=36113
+        Cache the progress bar's position, so it is not required to recalculate
+        it for each repaint. 
+        Call repaintRectangle() when the position changes.
+
+        No new tests, as no new functionality introduced.
+
+        * html/HTMLProgressElement.cpp:
+        (WebCore::HTMLProgressElement::parseMappedAttribute):
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::getNumberOfPixelsForProgressPosition):
+        (WebCore::RenderThemeQt::paintProgressBar):
+        * platform/qt/RenderThemeQt.h:
+        * rendering/RenderProgress.cpp:
+        (WebCore::RenderProgress::RenderProgress):
+        (WebCore::RenderProgress::updateFromElement):
+        * rendering/RenderProgress.h:
+        (WebCore::RenderProgress::position):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::getNumberOfPixelsForProgressPosition):
+        * rendering/RenderTheme.h:
+
 2010-03-17  Antonio Gomes  <tonikitoo@webkit.org>
 
         Mac Buildfix: Using ASSERT_UNUSED instead of ASSERT.

@@ -41,9 +41,6 @@
 #include "GraphicsContext.h"
 #include "HTMLInputElement.h"
 #include "HTMLMediaElement.h"
-#if ENABLE(PROGRESS_TAG)
-#include "HTMLProgressElement.h"
-#endif
 #include "HTMLNames.h"
 #include "NotImplemented.h"
 #include "Page.h"
@@ -642,6 +639,12 @@ bool RenderThemeQt::paintMenuListButton(RenderObject* o, const RenderObject::Pai
 }
 
 #if ENABLE(PROGRESS_TAG)
+bool RenderThemeQt::getNumberOfPixelsForProgressPosition(double position, int& progressSize) const
+{
+    progressSize = 65536 * position;
+    return false;
+}
+
 void RenderThemeQt::adjustProgressBarStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
     style->setBoxShadow(0);
@@ -659,11 +662,10 @@ bool RenderThemeQt::paintProgressBar(RenderObject* o, const RenderObject::PaintI
     initializeCommonQStyleOptions(option, o);
 
     RenderProgress* renderProgress = toRenderProgress(o);
-    HTMLProgressElement* element = static_cast<HTMLProgressElement*>(renderProgress->node());
     option.rect = r;
-    option.maximum = element->max();
+    option.maximum = 65536;
     option.minimum = 0;
-    option.progress = element->value();
+    option.progress = renderProgress->position();
 
     const QPoint topLeft = r.topLeft();
     p.painter->translate(topLeft);
