@@ -71,7 +71,7 @@ jvalue convertNPVariantToJValue(NPVariant value, JNIType jniType, const char* ja
                     result.l = javaString;
                 }
             } else if (!result.l)
-                bzero(&result, sizeof(jvalue)); // Handle it the same as a void case
+                memset(&result, 0, sizeof(jvalue)); // Handle it the same as a void case
         }
         break;
 
@@ -80,7 +80,7 @@ jvalue convertNPVariantToJValue(NPVariant value, JNIType jniType, const char* ja
             if (type == NPVariantType_Bool)
                 result.z = NPVARIANT_TO_BOOLEAN(value);
             else
-                bzero(&result, sizeof(jvalue)); // as void case
+                memset(&result, 0, sizeof(jvalue)); // as void case
         }
         break;
 
@@ -89,7 +89,7 @@ jvalue convertNPVariantToJValue(NPVariant value, JNIType jniType, const char* ja
             if (type == NPVariantType_Int32)
                 result.b = static_cast<char>(NPVARIANT_TO_INT32(value));
             else
-                bzero(&result, sizeof(jvalue));
+                memset(&result, 0, sizeof(jvalue));
         }
         break;
 
@@ -98,7 +98,7 @@ jvalue convertNPVariantToJValue(NPVariant value, JNIType jniType, const char* ja
             if (type == NPVariantType_Int32)
                 result.c = static_cast<char>(NPVARIANT_TO_INT32(value));
             else
-                bzero(&result, sizeof(jvalue));
+                memset(&result, 0, sizeof(jvalue));
         }
         break;
 
@@ -107,7 +107,7 @@ jvalue convertNPVariantToJValue(NPVariant value, JNIType jniType, const char* ja
             if (type == NPVariantType_Int32)
                 result.s = static_cast<jshort>(NPVARIANT_TO_INT32(value));
             else
-                bzero(&result, sizeof(jvalue));
+                memset(&result, 0, sizeof(jvalue));
         }
         break;
 
@@ -116,7 +116,7 @@ jvalue convertNPVariantToJValue(NPVariant value, JNIType jniType, const char* ja
             if (type == NPVariantType_Int32)
                 result.i = static_cast<jint>(NPVARIANT_TO_INT32(value));
             else
-                bzero(&result, sizeof(jvalue));
+                memset(&result, 0, sizeof(jvalue));
         }
         break;
 
@@ -127,7 +127,7 @@ jvalue convertNPVariantToJValue(NPVariant value, JNIType jniType, const char* ja
             else if (type == NPVariantType_Double)
                 result.j = static_cast<jlong>(NPVARIANT_TO_DOUBLE(value));
             else
-                bzero(&result, sizeof(jvalue));
+                memset(&result, 0, sizeof(jvalue));
         }
         break;
 
@@ -138,7 +138,7 @@ jvalue convertNPVariantToJValue(NPVariant value, JNIType jniType, const char* ja
             else if (type == NPVariantType_Double)
                 result.f = static_cast<jfloat>(NPVARIANT_TO_DOUBLE(value));
             else
-                bzero(&result, sizeof(jvalue));
+                memset(&result, 0, sizeof(jvalue));
         }
         break;
 
@@ -149,7 +149,7 @@ jvalue convertNPVariantToJValue(NPVariant value, JNIType jniType, const char* ja
             else if (type == NPVariantType_Double)
                 result.d = static_cast<jdouble>(NPVARIANT_TO_DOUBLE(value));
             else
-                bzero(&result, sizeof(jvalue));
+                memset(&result, 0, sizeof(jvalue));
         }
         break;
 
@@ -159,7 +159,7 @@ jvalue convertNPVariantToJValue(NPVariant value, JNIType jniType, const char* ja
     default:
     case void_type:
         {
-            bzero(&result, sizeof(jvalue));
+            memset(&result, 0, sizeof(jvalue));
         }
         break;
     }

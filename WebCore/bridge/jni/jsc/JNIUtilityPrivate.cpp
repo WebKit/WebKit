@@ -174,7 +174,7 @@ jvalue convertValueToJValue(ExecState* exec, RootObject* rootObject, JSValue val
     JSLock lock(SilenceAssertionsOnly);
 
     jvalue result;
-    bzero(&result, sizeof(jvalue));
+    memset(&result, 0, sizeof(jvalue));
 
     switch (jniType) {
     case array_type:

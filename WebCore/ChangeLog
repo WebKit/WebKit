@@ -1,3 +1,23 @@
+2010-03-17  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Replace instances of bzero in WebCore/bridge common code with memset
+        https://bugs.webkit.org/show_bug.cgi?id=36214
+
+        Syntax change only, no new tests.
+
+        * bridge/jni/JNIUtility.cpp:
+        (JSC::Bindings::getJNIField):
+        * bridge/jni/jsc/JNIBridgeJSC.cpp:
+        (JavaField::dispatchValueFromInstance):
+        * bridge/jni/jsc/JNIUtilityPrivate.cpp:
+        (JSC::Bindings::convertValueToJValue):
+        * bridge/jni/v8/JNIUtilityPrivate.cpp:
+        (JSC::Bindings::convertNPVariantToJValue):
+        * bridge/jni/v8/JavaNPObjectV8.cpp:
+        (JSC::Bindings::AllocJavaNPObject):
+
 2010-03-17  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

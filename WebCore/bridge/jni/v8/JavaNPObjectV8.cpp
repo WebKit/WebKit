@@ -41,7 +41,7 @@ static NPObject* AllocJavaNPObject(NPP, NPClass*)
     JavaNPObject* obj = static_cast<JavaNPObject*>(malloc(sizeof(JavaNPObject)));
     if (!obj)
         return 0;
-    bzero(obj, sizeof(JavaNPObject));
+    memset(obj, 0, sizeof(JavaNPObject));
     return reinterpret_cast<NPObject*>(obj);
 }
 

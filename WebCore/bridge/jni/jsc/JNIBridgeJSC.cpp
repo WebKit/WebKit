@@ -75,7 +75,7 @@ jvalue JavaField::dispatchValueFromInstance(ExecState* exec, const JavaInstance*
     JNIEnv* env = getJNIEnv();
     jvalue result;
 
-    bzero(&result, sizeof(jvalue));
+    memset(&result, 0, sizeof(jvalue));
     jclass cls = env->GetObjectClass(fieldJInstance);
     if (cls) {
         jmethodID mid = env->GetMethodID(cls, name, sig);
