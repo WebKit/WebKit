@@ -127,6 +127,7 @@ protected slots:
     void toggleSpatialNavigation(bool b);
     void toggleFullScreenMode(bool enable);
     void showFPS(bool enable);
+    void changeViewportUpdateMode(int mode);
 
 public slots:
     void newWindow();
@@ -610,6 +611,17 @@ void LauncherWindow::showFPS(bool enable)
     view->setFrameRateMeasurementEnabled(enable);
 }
 
+void LauncherWindow::changeViewportUpdateMode(int mode)
+{
+    gViewportUpdateMode = QGraphicsView::ViewportUpdateMode(mode);
+
+    if (!isGraphicsBased())
+        return;
+
+    WebViewGraphicsBased* view = static_cast<WebViewGraphicsBased*>(m_view);
+    view->setViewportUpdateMode(gViewportUpdateMode);
+}
+
 void LauncherWindow::newWindow()
 {
     LauncherWindow* mw = new LauncherWindow(this, false);
@@ -755,6 +767,52 @@ void LauncherWindow::createChrome()
     showFPS->setEnabled(isGraphicsBased());
     showFPS->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
     showFPS->setChecked(gShowFrameRate);
+
+    QMenu* viewportUpdateMenu = graphicsViewMenu->addMenu("Change Viewport Update Mode");
+    viewportUpdateMenu->setEnabled(isGraphicsBased());
+    viewportUpdateMenu->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
+
+    QAction* fullUpdate = viewportUpdateMenu->addAction("FullViewportUpdate");
+    fullUpdate->setCheckable(true);
+    fullUpdate->setChecked((gViewportUpdateMode == QGraphicsView::FullViewportUpdate) ? true : false);
+
+    QAction* minimalUpdate = viewportUpdateMenu->addAction("MinimalViewportUpdate");
+    minimalUpdate->setCheckable(true);
+    minimalUpdate->setChecked((gViewportUpdateMode == QGraphicsView::MinimalViewportUpdate) ? true : false);
+
+    QAction* smartUpdate = viewportUpdateMenu->addAction("SmartViewportUpdate");
+    smartUpdate->setCheckable(true);
+    smartUpdate->setChecked((gViewportUpdateMode == QGraphicsView::SmartViewportUpdate) ? true : false);
+
+    QAction* boundingRectUpdate = viewportUpdateMenu->addAction("BoundingRectViewportUpdate");
+    boundingRectUpdate->setCheckable(true);
+    boundingRectUpdate->setChecked((gViewportUpdateMode == QGraphicsView::BoundingRectViewportUpdate) ? true : false);
+
+    QAction* noUpdate = viewportUpdateMenu->addAction("NoViewportUpdate");
+    noUpdate->setCheckable(true);
+    noUpdate->setChecked((gViewportUpdateMode == QGraphicsView::NoViewportUpdate) ? true : false);
+
+    QSignalMapper* signalMapper = new QSignalMapper(viewportUpdateMenu);
+    signalMapper->setMapping(fullUpdate, QGraphicsView::FullViewportUpdate);
+    signalMapper->setMapping(minimalUpdate, QGraphicsView::MinimalViewportUpdate);
+    signalMapper->setMapping(smartUpdate, QGraphicsView::SmartViewportUpdate);
+    signalMapper->setMapping(boundingRectUpdate, QGraphicsView::BoundingRectViewportUpdate);
+    signalMapper->setMapping(noUpdate, QGraphicsView::NoViewportUpdate);
+
+    connect(fullUpdate, SIGNAL(triggered()), signalMapper, SLOT(map()));
+    connect(minimalUpdate, SIGNAL(triggered()), signalMapper, SLOT(map()));
+    connect(smartUpdate, SIGNAL(triggered()), signalMapper, SLOT(map()));
+    connect(boundingRectUpdate, SIGNAL(triggered()), signalMapper, SLOT(map()));
+    connect(noUpdate, SIGNAL(triggered()), signalMapper, SLOT(map()));
+
+    connect(signalMapper, SIGNAL(mapped(int)), this, SLOT(changeViewportUpdateMode(int)));
+
+    QActionGroup* viewportUpdateModeActions = new QActionGroup(viewportUpdateMenu);
+    viewportUpdateModeActions->addAction(fullUpdate);
+    viewportUpdateModeActions->addAction(minimalUpdate);
+    viewportUpdateModeActions->addAction(smartUpdate);
+    viewportUpdateModeActions->addAction(boundingRectUpdate);
+    viewportUpdateModeActions->addAction(noUpdate);
 }
 
 QWebPage* WebPage::createWindow(QWebPage::WebWindowType type)

@@ -1,3 +1,17 @@
+2010-03-16  Diego Gonzalez  <diego.gonzalez@openbossa.org>
+
+        Reviewed by Kenneth Christiansen.
+
+        Provide to QtLauncher a way to change the ViewportUpdateMode
+        when it's in graphics based mode.
+
+        [Qt] Make QtLaucher able to select the ViewportUpdateMode
+        https://bugs.webkit.org/show_bug.cgi?id=36175
+
+        * QtLauncher/main.cpp:
+        (LauncherWindow::selectViewportUpdateMode):
+        (LauncherWindow::createChrome):
+
 2010-03-17  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Darin Adler.
