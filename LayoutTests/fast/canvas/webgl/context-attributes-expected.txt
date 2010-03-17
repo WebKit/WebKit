@@ -7,8 +7,8 @@ PASS context = create3DContext() is non-null.
 PASS attribs = context.getContextAttributes() is non-null.
 PASS attribs.depth is true
 PASS attribs.alpha is true
-PASS attribs.stencil is true
-PASS attribs.antialias is true
+PASS (attribs.stencil == true || attribs.stencil == false) is true
+PASS (attribs.antialias == true || attribs.antialias == false) is true
 PASS attribs.premultipliedAlpha is true
 Test customized values
 PASS context = create3DContext({ stencil: false, antialias: false }) is non-null.
@@ -17,22 +17,6 @@ PASS attribs.depth is true
 PASS attribs.alpha is true
 PASS attribs.stencil is false
 PASS attribs.antialias is false
-PASS attribs.premultipliedAlpha is true
-Test customized values
-PASS context = create3DContext({ depth: false, stencil: true }) is non-null.
-PASS attribs = context.getContextAttributes() is non-null.
-PASS attribs.depth is true
-PASS attribs.alpha is true
-PASS attribs.stencil is true
-PASS attribs.antialias is true
-PASS attribs.premultipliedAlpha is true
-Test customized values
-PASS context = create3DContext({ premultipliedAlpha: false }) is non-null.
-PASS attribs = context.getContextAttributes() is non-null.
-PASS attribs.depth is true
-PASS attribs.alpha is true
-PASS attribs.stencil is true
-PASS attribs.antialias is true
 PASS attribs.premultipliedAlpha is true
 PASS successfullyParsed is true
 

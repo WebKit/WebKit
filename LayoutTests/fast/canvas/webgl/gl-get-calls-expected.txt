@@ -53,7 +53,7 @@ PASS context.getParameter(context.STENCIL_BACK_FUNC) is context.ALWAYS
 PASS context.getParameter(context.STENCIL_BACK_PASS_DEPTH_FAIL) is context.KEEP
 PASS context.getParameter(context.STENCIL_BACK_PASS_DEPTH_PASS) is context.KEEP
 PASS context.getParameter(context.STENCIL_BACK_REF) is 0
-PASS context.getParameter(context.STENCIL_BITS) > 0 is true
+PASS context.getParameter(context.STENCIL_BITS) is 0
 PASS context.getParameter(context.STENCIL_CLEAR_VALUE) is 0
 PASS context.getParameter(context.STENCIL_FAIL) is context.KEEP
 PASS context.getParameter(context.STENCIL_FUNC) is context.ALWAYS

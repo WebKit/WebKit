@@ -1,3 +1,34 @@
+2010-03-17  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Revert WebGL context attributes changes 33416 / r56074 and 36200 / r56093
+        https://bugs.webkit.org/show_bug.cgi?id=36233
+
+        The patch for bug 33416, which added multisampling support to the
+        WebGL back buffer, uncovered some OpenGL driver bugs on the build
+        bots which need further investigation to determine the appropriate
+        workaround. Reverting this change, the minor build fix in 36189,
+        and the skipping of the affected tests in bug 36200.
+
+        Built and tested WebKit and Chromium and ran all WebGL layout
+        tests in both.
+
+        * bindings/v8/custom/V8HTMLCanvasElementCustom.cpp:
+        (WebCore::V8HTMLCanvasElement::getContextCallback):
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/mac/Canvas3DLayer.h:
+        * platform/graphics/mac/Canvas3DLayer.mm:
+        (-[Canvas3DLayer drawInCGLContext:pixelFormat:forLayerTime:displayTime:]):
+        * platform/graphics/mac/GraphicsContext3DMac.cpp:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+        (WebCore::GraphicsContext3D::reshape):
+        (WebCore::GraphicsContext3D::bindFramebuffer):
+        (WebCore::GraphicsContext3D::readPixels):
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::GraphicsLayerCA::setContentsToGraphicsContext3D):
+
 2010-03-17  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Darin Adler.

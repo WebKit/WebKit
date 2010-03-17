@@ -56,7 +56,7 @@ v8::Handle<v8::Value> V8HTMLCanvasElement::getContextCallback(const v8::Argument
     if (contextId == "experimental-webgl" || contextId == "webkit-3d") {
         attrs = WebGLContextAttributes::create();
         WebGLContextAttributes* webGLAttrs = static_cast<WebGLContextAttributes*>(attrs.get());
-        if (args.Length() > 1 && args[1]->IsObject()) {
+        if (args.Length() > 1 && args[0]->IsObject()) {
             v8::Handle<v8::Object> jsAttrs = args[1]->ToObject();
             v8::Handle<v8::String> alpha = v8::String::New("alpha");
             if (jsAttrs->Has(alpha))

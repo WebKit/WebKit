@@ -124,22 +124,15 @@ public:
                              unsigned long stride, unsigned long offset);
     void viewportImpl(long x, long y, unsigned long width, unsigned long height);
 
-    void readPixels(long x, long y, unsigned long width, unsigned long height, unsigned long format, unsigned long type, void* buffer);
-
     void synthesizeGLError(unsigned long error);
 
 private:
     GraphicsContext3D::Attributes m_attrs;
-    
+
     unsigned int m_texture;
     unsigned int m_fbo;
-    unsigned int m_depthStencilBuffer;
+    unsigned int m_depthBuffer;
     unsigned int m_cachedWidth, m_cachedHeight;
-
-    // For multisampling
-    unsigned int m_multisampleFBO;
-    unsigned int m_multisampleDepthStencilBuffer;
-    unsigned int m_multisampleColorBuffer;
 
     // For tracking which FBO is bound
     unsigned int m_boundFBO;
@@ -358,10 +351,7 @@ GraphicsContext3DInternal::GraphicsContext3DInternal(GraphicsContext3D::Attribut
     : m_attrs(attrs)
     , m_texture(0)
     , m_fbo(0)
-    , m_depthStencilBuffer(0)
-    , m_multisampleFBO(0)
-    , m_multisampleDepthStencilBuffer(0)
-    , m_multisampleColorBuffer(0)
+    , m_depthBuffer(0)
     , m_boundFBO(0)
 #ifdef FLIP_FRAMEBUFFER_VERTICALLY
     , m_scanline(0)
@@ -385,21 +375,14 @@ GraphicsContext3DInternal::GraphicsContext3DInternal(GraphicsContext3D::Attribut
 #error Must port to your platform
 #endif
 {
-    // Take into account the user's requested context creation attributes, in
-    // particular stencil and antialias, and determine which could and could
-    // not be honored based on the capabilities of the OpenGL implementation.
-    if (m_attrs.stencil) {
-        if (GLEW_EXT_packed_depth_stencil) {
-            if (!m_attrs.depth)
-                m_attrs.depth = true;
-        } else {
-            m_attrs.stencil = false;
-        }
-    }
-    if (m_attrs.antialias && !GLEW_EXT_framebuffer_multisample)
-        m_attrs.antialias = false;
-    // FIXME: instead of enforcing premultipliedAlpha = true, implement the
-    // correct behavior when premultipliedAlpha = false is requested.
+    // FIXME: we need to take into account the user's requested
+    // context creation attributes, in particular stencil and
+    // antialias, and determine which could and could not be honored
+    // based on the capabilities of the OpenGL implementation.
+    m_attrs.alpha = true;
+    m_attrs.depth = true;
+    m_attrs.stencil = false;
+    m_attrs.antialias = false;
     m_attrs.premultipliedAlpha = true;
 
 #if OS(WINDOWS)
@@ -589,15 +572,7 @@ GraphicsContext3DInternal::~GraphicsContext3DInternal()
 {
     makeContextCurrent();
 #ifndef RENDER_TO_DEBUGGING_WINDOW
-    if (m_attrs.antialias) {
-        glDeleteRenderbuffersEXT(1, &m_multisampleColorBuffer);
-        if (m_attrs.depth || m_attrs.stencil)
-            glDeleteRenderbuffersEXT(1, &m_multisampleDepthStencilBuffer);
-        glDeleteFramebuffersEXT(1, &m_multisampleFBO);
-    } else {
-        if (m_attrs.depth || m_attrs.stencil)
-            glDeleteRenderbuffersEXT(1, &m_depthStencilBuffer);
-    }
+    glDeleteRenderbuffersEXT(1, &m_depthBuffer);
     glDeleteTextures(1, &m_texture);
 #ifdef FLIP_FRAMEBUFFER_VERTICALLY
     if (m_scanline)
@@ -694,88 +669,23 @@ void GraphicsContext3DInternal::reshape(int width, int height)
         m_texture = createTextureObject(target);
         // Generate the framebuffer object
         glGenFramebuffersEXT(1, &m_fbo);
-        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
-        m_boundFBO = m_fbo;
-        if (m_attrs.depth || m_attrs.stencil)
-            glGenRenderbuffersEXT(1, &m_depthStencilBuffer);
-        // Generate the multisample framebuffer object
-        if (m_attrs.antialias) {
-            glGenFramebuffersEXT(1, &m_multisampleFBO);
-            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_multisampleFBO);
-            m_boundFBO = m_multisampleFBO;
-            glGenRenderbuffersEXT(1, &m_multisampleColorBuffer);
-            if (m_attrs.depth || m_attrs.stencil)
-                glGenRenderbuffersEXT(1, &m_multisampleDepthStencilBuffer);
-        }
+        // Generate the depth buffer
+        glGenRenderbuffersEXT(1, &m_depthBuffer);
     }
 
-    GLint internalColorFormat, colorFormat, internalDepthStencilFormat = 0;
-    if (m_attrs.alpha) {
-        internalColorFormat = GL_RGBA8;
-        colorFormat = GL_RGBA;
-    } else {
-        internalColorFormat = GL_RGB8;
-        colorFormat = GL_RGB;
-    }
-    if (m_attrs.stencil || m_attrs.depth) {
-        // We don't allow the logic where stencil is required and depth is not.
-        // See GraphicsContext3DInternal constructor.
-        if (m_attrs.stencil && m_attrs.depth)
-            internalDepthStencilFormat = GL_DEPTH24_STENCIL8_EXT;
-        else
-            internalDepthStencilFormat = GL_DEPTH_COMPONENT;
-    }
-
-    bool mustRestoreFBO = false;
-
-    // Resize multisampling FBO
-    if (m_attrs.antialias) {
-        GLint maxSampleCount;
-        glGetIntegerv(GL_MAX_SAMPLES_EXT, &maxSampleCount);
-        GLint sampleCount = std::min(8, maxSampleCount);
-        if (m_boundFBO != m_multisampleFBO) {
-            mustRestoreFBO = true;
-            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_multisampleFBO);
-        }
-        glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_multisampleColorBuffer);
-        glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, sampleCount, internalColorFormat, width, height);
-        glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_RENDERBUFFER_EXT, m_multisampleColorBuffer);
-        if (m_attrs.stencil || m_attrs.depth) {
-            glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_multisampleDepthStencilBuffer);
-            glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, sampleCount, internalDepthStencilFormat, width, height);
-            if (m_attrs.stencil)
-                glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_multisampleDepthStencilBuffer);
-            if (m_attrs.depth)
-                glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_multisampleDepthStencilBuffer);
-        }
-        glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0);
-        GLenum status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
-        if (status != GL_FRAMEBUFFER_COMPLETE_EXT) {
-            printf("GraphicsContext3D: multisampling framebuffer was incomplete\n");
-
-            // FIXME: cleanup.
-            notImplemented();
-        }
-    }
-
-    // Resize regular FBO
-    if (m_boundFBO != m_fbo) {
-        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
-        mustRestoreFBO = true;
-    }
+    // Reallocate the color and depth buffers
     glBindTexture(target, m_texture);
-    glTexImage2D(target, 0, internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
-    glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, target, m_texture, 0);
+    glTexImage2D(target, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
     glBindTexture(target, 0);
-    if (!m_attrs.antialias && (m_attrs.stencil || m_attrs.depth)) {
-        glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_depthStencilBuffer);
-        glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, internalDepthStencilFormat, width, height);
-        if (m_attrs.stencil)
-            glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_depthStencilBuffer);
-        if (m_attrs.depth)
-            glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_depthStencilBuffer);
-        glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0);
-    }
+
+    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
+    m_boundFBO = m_fbo;
+    glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_depthBuffer);
+    glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT, width, height);
+    glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0);
+
+    glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, target, m_texture, 0);
+    glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_depthBuffer);
     GLenum status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
     if (status != GL_FRAMEBUFFER_COMPLETE_EXT) {
         printf("GraphicsContext3D: framebuffer was incomplete\n");
@@ -783,9 +693,6 @@ void GraphicsContext3DInternal::reshape(int width, int height)
         // FIXME: cleanup.
         notImplemented();
     }
-
-    if (mustRestoreFBO)
-        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_boundFBO);
 #endif  // RENDER_TO_DEBUGGING_WINDOW
 
 #ifdef FLIP_FRAMEBUFFER_VERTICALLY
@@ -796,12 +703,7 @@ void GraphicsContext3DInternal::reshape(int width, int height)
     m_scanline = new unsigned char[width * 4];
 #endif  // FLIP_FRAMEBUFFER_VERTICALLY
 
-    GLbitfield clearMask = GL_COLOR_BUFFER_BIT;
-    if (m_attrs.stencil)
-        clearMask |= GL_STENCIL_BUFFER_BIT;
-    if (m_attrs.depth)
-        clearMask |= GL_DEPTH_BUFFER_BIT;
-    glClear(clearMask);
+    glClear(GL_COLOR_BUFFER_BIT);
 
 #if PLATFORM(CG)
     // Need to reallocate the client-side backing store.
@@ -856,19 +758,9 @@ void GraphicsContext3DInternal::beginPaint(WebGLRenderingContext* context)
     HTMLCanvasElement* canvas = context->canvas();
     ImageBuffer* imageBuffer = canvas->buffer();
     unsigned char* pixels = 0;
-    bool mustRestoreFBO;
-    if (m_attrs.antialias) {
-        glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_multisampleFBO);
-        glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, m_fbo);
-        glBlitFramebufferEXT(0, 0, m_cachedWidth, m_cachedHeight, 0, 0, m_cachedWidth, m_cachedHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+    bool mustRestoreFBO = (m_boundFBO != m_fbo);
+    if (mustRestoreFBO)
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
-        mustRestoreFBO = true;
-    } else {
-        if (m_boundFBO != m_fbo) {
-            mustRestoreFBO = true;
-            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
-        }
-    }
 #if PLATFORM(SKIA)
     const SkBitmap* canvasBitmap = imageBuffer->context()->platformContext()->bitmap();
     const SkBitmap* readbackBitmap = 0;
@@ -973,23 +865,6 @@ void GraphicsContext3DInternal::beginPaint(WebGLRenderingContext* context)
 #endif  // RENDER_TO_DEBUGGING_WINDOW
 }
 
-void GraphicsContext3DInternal::readPixels(long x, long y, unsigned long width, unsigned long height, unsigned long format, unsigned long type, void* buffer)
-{
-#ifndef RENDER_TO_DEBUGGING_WINDOW
-    if (m_attrs.antialias && m_boundFBO == m_multisampleFBO) {
-        glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_multisampleFBO);
-        glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, m_fbo);
-        glBlitFramebufferEXT(x, y, x + width, y + height, x, y, x + width, y + height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
-        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
-    }
-#endif
-    glReadPixels(x, y, width, height, format, type, buffer);
-#ifndef RENDER_TO_DEBUGGING_WINDOW
-    if (m_attrs.antialias && m_boundFBO == m_multisampleFBO)
-        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_boundFBO);
-#endif
-}
-
 void GraphicsContext3DInternal::activeTexture(unsigned long texture)
 {
     // FIXME: query number of textures available.
@@ -1017,11 +892,9 @@ void GraphicsContext3DInternal::bindFramebuffer(unsigned long target,
     makeContextCurrent();
     GLuint id = EXTRACT(framebuffer);
     if (!id)
-        id = (m_attrs.antialias ? m_multisampleFBO : m_fbo);
-    if (id != m_boundFBO) {
-        glBindFramebufferEXT(target, id);
-        m_boundFBO = id;
-    }
+        id = m_fbo;
+    glBindFramebufferEXT(target, id);
+    m_boundFBO = id;
 }
 
 // If we didn't have to hack GL_TEXTURE_WRAP_R for cube maps,
@@ -1936,18 +1809,7 @@ PassRefPtr<WebGLArray> GraphicsContext3D::readPixels(long x, long y,
 
     // FIXME: take into account pack alignment.
     RefPtr<WebGLUnsignedByteArray> array = WebGLUnsignedByteArray::create(width * height * 4);
-    m_internal->readPixels(x, y, width, height, format, type, array->baseAddress());
-#if OS(DARWIN)
-    GraphicsContext3D::Attributes attrs = m_internal->getContextAttributes();
-    if (!attrs.alpha) {
-        // If alpha is off, by default glReadPixels should set the alpha to 255 instead of 0.
-        // This is a hack until ::glReadPixels fixes its behavior.
-        GLubyte* data = reinterpret_cast<GLubyte*>(array->baseAddress());
-        unsigned byteLength = array->byteLength();
-        for (unsigned i = 3; i < byteLength; i += 4)
-            data[i] = 255;
-    }
-#endif
+    glReadPixels(x, y, width, height, format, type, array->baseAddress());
     return array;
 }
 

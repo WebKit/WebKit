@@ -425,12 +425,7 @@ namespace WebCore {
         Platform3DObject platformTexture() const { return NullPlatform3DObject; }
 #endif
         void makeContextCurrent();
-
-#if PLATFORM(MAC)
-        // With multisampling on, blit from multisampleFBO to regular FBO.
-        void prepareTexture();
-#endif
-
+        
         // Helper to return the size in bytes of OpenGL data types
         // like GL_FLOAT, GL_INT, etc.
         int sizeInBytes(int type);
@@ -722,16 +717,7 @@ namespace WebCore {
         CGLContextObj m_contextObj;
         GLuint m_texture;
         GLuint m_fbo;
-        GLuint m_depthStencilBuffer;
-
-        // For tracking which FBO is bound
-        GLuint m_boundFBO;
-
-        // For multisampling
-        GLuint m_multisampleFBO;
-        GLuint m_multisampleDepthStencilBuffer;
-        GLuint m_multisampleColorBuffer;
-
+        GLuint m_depthBuffer;
         // Errors raised by synthesizeGLError().
         ListHashSet<unsigned long> m_syntheticErrors;
 #endif        

@@ -1,3 +1,27 @@
+2010-03-17  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Revert WebGL context attributes changes 33416 / r56074 and 36200 / r56093
+        https://bugs.webkit.org/show_bug.cgi?id=36233
+
+        The patch for bug 33416, which added multisampling support to the
+        WebGL back buffer, uncovered some OpenGL driver bugs on the build
+        bots which need further investigation to determine the appropriate
+        workaround. Reverting this change, the minor build fix in 36189,
+        and the skipping of the affected tests in bug 36200.
+
+        Built and tested WebKit and Chromium and ran all WebGL layout
+        tests in both.
+
+        * src/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3DInternal::GraphicsContext3DInternal):
+        (WebCore::GraphicsContext3DInternal::~GraphicsContext3DInternal):
+        (WebCore::GraphicsContext3DInternal::reshape):
+        (WebCore::GraphicsContext3DInternal::beginPaint):
+        (WebCore::GraphicsContext3DInternal::bindFramebuffer):
+        (WebCore::GraphicsContext3D::readPixels):
+
 2010-03-16  James Hawkins  <jhawkins@chromium.org>
 
         Reviewed by David Levin.

@@ -1716,7 +1716,7 @@ void GraphicsLayerCA::setContentsToGraphicsContext3D(const GraphicsContext3D* gr
 
     if (m_platformGraphicsContext3D != NullPlatformGraphicsContext3D && m_platformTexture != NullPlatform3DObject) {
         // create the inner 3d layer
-        m_contentsLayer.adoptNS([[Canvas3DLayer alloc] initWithContext:const_cast<GraphicsContext3D*>(graphicsContext3D)]);
+        m_contentsLayer.adoptNS([[Canvas3DLayer alloc] initWithContext:static_cast<CGLContextObj>(m_platformGraphicsContext3D) texture:static_cast<GLuint>(m_platformTexture)]);
 #ifndef NDEBUG
         [m_contentsLayer.get() setName:@"3D Layer"];
 #endif
