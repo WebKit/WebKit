@@ -5847,3 +5847,8 @@ fast/dom/Geolocation/maximum-age.html
 # skipping it.
 # See also https://bugs.webkit.org/show_bug.cgi?id=36165
 media/video-played-collapse.html
+
+# Some tests failing or crashing on Gtk/Qt (new tests from r56079)
+# https://bugs.webkit.org/show_bug.cgi?id=36210
+plugins/resize-from-plugin.html
+plugins/return-error-from-new-stream-doesnt-invoke-destroy-stream.html

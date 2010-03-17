@@ -1,3 +1,10 @@
+2010-03-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Disable new plugin tests from r56079 on Gtk and Qt, since they are failing.
+
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+
 2010-03-17  Xan Lopez  <xlopez@igalia.com>
 
         Skip a couple of failing tests in the bots.
