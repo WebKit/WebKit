@@ -36,7 +36,7 @@ namespace WebCore {
 
 struct AtomicStringHash;
 
-class AtomicString {
+class AtomicString : public FastAllocBase {
 public:
     static void init();
 
