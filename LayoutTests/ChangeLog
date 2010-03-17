@@ -1,3 +1,17 @@
+2010-03-16  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r53857): Crash when tabbing to <map>
+        https://bugs.webkit.org/show_bug.cgi?id=36017
+
+        Also fix the path to js-test-post.js in tab-imagemap.html.
+
+        * fast/events/imagemap-norender-crash-expected.txt: Added.
+        * fast/events/imagemap-norender-crash.html: Added.
+        * fast/events/tab-imagemap-expected.txt:
+        * fast/events/tab-imagemap.html:
+
 2010-03-16  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Eric Seidel.

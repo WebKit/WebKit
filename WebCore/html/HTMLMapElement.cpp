@@ -79,7 +79,7 @@ bool HTMLMapElement::mapMouseEvent(int x, int y, const IntSize& size, HitTestRes
 
 HTMLImageElement* HTMLMapElement::imageElement() const
 {
-    RefPtr<HTMLCollection> coll = renderer()->document()->images();
+    RefPtr<HTMLCollection> coll = document()->images();
     for (Node* curr = coll->firstItem(); curr; curr = coll->nextItem()) {
         if (!curr->hasTagName(imgTag))
             continue;

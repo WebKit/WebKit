@@ -10,4 +10,7 @@ PASS document.activeElement.id is 'area3'
 PASS document.activeElement.id is 'area5'
 PASS document.activeElement.id is 'area6'
 PASS document.activeElement.id == 'area1' || document.activeElement.id == 'body' is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

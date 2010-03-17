@@ -1,3 +1,15 @@
+2010-03-16  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r53857): Crash when tabbing to <map>
+        https://bugs.webkit.org/show_bug.cgi?id=36017
+
+        Test: fast/events/imagemap-norender-crash.html
+
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::imageElement):
+
 2010-03-16  Brent Fulgham  <bfulgham@webkit.org>
 
         Build fix.  No Review.
