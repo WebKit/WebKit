@@ -1,5 +1,11 @@
 2010-03-17  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed: update mimetype expectations in inspector tests.
+
+        * inspector/timeline-network-resource-expected.txt:
+
+2010-03-17  Pavel Feldman  <pfeldman@chromium.org>
+
         Not reviewed: GTK tests fix - removed custom expectation that was
         added with no good reason.
 

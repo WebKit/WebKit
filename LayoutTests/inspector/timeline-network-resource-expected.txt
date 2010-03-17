@@ -16,7 +16,7 @@ ResourceReceiveResponse Properties:
 + data : {
 +- identifier : * DEFINED *
 +- statusCode : 0
-+- mimeType : application/x-javascript
++- mimeType : * DEFINED *
 +- expectedContentLength : 210
 +- url : * DEFINED *
 + }
