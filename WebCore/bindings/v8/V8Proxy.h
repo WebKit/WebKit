@@ -437,19 +437,22 @@ namespace WebCore {
     }
     inline v8::Handle<v8::Primitive> throwError(const char* message, V8Proxy::ErrorType type = V8Proxy::TypeError)
     {
-        V8Proxy::throwError(type, message);
+        if (!v8::V8::IsExecutionTerminating())
+            V8Proxy::throwError(type, message);
         return v8::Undefined();
     }
 
     inline v8::Handle<v8::Primitive> throwError(ExceptionCode ec)
     {
-        V8Proxy::setDOMException(ec);
+        if (!v8::V8::IsExecutionTerminating())
+            V8Proxy::setDOMException(ec);
         return v8::Undefined();
     }
 
     inline v8::Handle<v8::Primitive> throwError(v8::Local<v8::Value> exception)
     {
-        v8::ThrowException(exception);
+        if (!v8::V8::IsExecutionTerminating())
+            v8::ThrowException(exception);
         return v8::Undefined();
     }
 

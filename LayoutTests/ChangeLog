@@ -1,3 +1,16 @@
+2010-03-17  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [v8] Avoid reentry into v8 after TerminateExecution() on a worker thread.
+        https://bugs.webkit.org/show_bug.cgi?id=36239
+
+        * fast/workers/resources/termination-with-port-messages.js: Added.
+        (echo):
+        (onmessage):
+        * fast/workers/termination-with-port-messages-expected.txt: Added.
+        * fast/workers/termination-with-port-messages.html: Added.
+
 2010-03-17  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Darin Fisher.

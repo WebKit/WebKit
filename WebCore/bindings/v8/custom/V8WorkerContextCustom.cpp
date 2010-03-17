@@ -58,7 +58,11 @@ v8::Handle<v8::Value> SetTimeoutOrInterval(const v8::Arguments& args, bool singl
     int32_t timeout = argumentCount >= 2 ? args[1]->Int32Value() : 0;
     int timerId;
 
-    v8::Handle<v8::Context> v8Context = workerContext->script()->proxy()->context();
+    WorkerContextExecutionProxy* proxy = workerContext->script()->proxy();
+    if (!proxy)
+        return v8::Undefined();
+
+    v8::Handle<v8::Context> v8Context = proxy->context();
     if (function->IsString()) {
         WebCore::String stringFunction = toWebCoreString(function);
         timerId = DOMTimer::install(workerContext, new ScheduledAction(v8Context, stringFunction, workerContext->url()), timeout, singleShot);
@@ -131,7 +135,11 @@ v8::Handle<v8::Value> toV8(WorkerContext* impl)
     if (!impl)
         return v8::Null();
 
-    v8::Handle<v8::Object> global = impl->script()->proxy()->context()->Global();
+    WorkerContextExecutionProxy* proxy = impl->script()->proxy();
+    if (!proxy)
+        return v8::Null();
+
+    v8::Handle<v8::Object> global = proxy->context()->Global();
     ASSERT(!global.IsEmpty());
     return global;
 }

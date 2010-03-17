@@ -48,7 +48,7 @@ namespace WebCore {
         WorkerScriptController(WorkerContext*);
         ~WorkerScriptController();
 
-        WorkerContextExecutionProxy* proxy() { return m_proxy.get(); }
+        WorkerContextExecutionProxy* proxy() { return m_executionForbidden ? 0 : m_proxy.get(); }
 
         ScriptValue evaluate(const ScriptSourceCode&);
         ScriptValue evaluate(const ScriptSourceCode&, ScriptValue* exception);
