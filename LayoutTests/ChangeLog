@@ -1,5 +1,10 @@
 2010-03-17  Alexey Proskuryakov  <ap@apple.com>
 
+        * platform/gtk/Skipped: Also, resize-from-plugin.html got skipped twice tonight, removing
+        one of the lines.
+
+2010-03-17  Alexey Proskuryakov  <ap@apple.com>
+
         * platform/gtk/Skipped: Updated to reference a newly filed bug.
 
 2010-03-17  Pavel Feldman  <pfeldman@chromium.org>
