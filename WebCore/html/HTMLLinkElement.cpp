@@ -26,7 +26,6 @@
 
 #include "CSSHelper.h"
 #include "CachedCSSStyleSheet.h"
-#include "DNS.h"
 #include "DocLoader.h"
 #include "Document.h"
 #include "Frame.h"
@@ -38,6 +37,7 @@
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
 #include "Page.h"
+#include "ResourceHandle.h"
 #include "ScriptEventListener.h"
 #include "Settings.h"
 #include <wtf/StdLibExtras.h>
@@ -183,7 +183,7 @@ void HTMLLinkElement::process()
         document()->setIconURL(m_url.string(), type);
 
     if (m_isDNSPrefetch && m_url.isValid() && !m_url.isEmpty())
-        prefetchDNS(m_url.host());
+        ResourceHandle::prepareForURL(m_url);
 
     bool acceptIfTypeContainsTextCSS = document()->page() && document()->page()->settings() && document()->page()->settings()->treatsAnyTextCSSLinkAsStylesheet();
 

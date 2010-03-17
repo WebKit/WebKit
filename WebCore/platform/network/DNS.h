@@ -30,7 +30,9 @@ namespace WebCore {
 
     class String;
 
+#if !USE(SOUP)
     void prefetchDNS(const String& hostname);
+#endif
 }
 
 #endif

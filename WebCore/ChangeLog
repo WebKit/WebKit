@@ -1,3 +1,35 @@
+2010-03-17  José Millán Soto  <jmillan@igalia.com>
+
+        Reviewed by Adam Barth.
+
+        Change the way of prefetching DNS to allow prefetching function to use full URL
+        https://bugs.webkit.org/show_bug.cgi?id=35589
+
+        Creates a new function, ResourceHandle::prepareForURL, whose default implementation
+        calls prefetchDNS with the host of the given URL as the parameter.
+        Soup implementation of ResourceHandle::prepareForURL executes soup_session_prepare_for_uri.
+        Soup implementation of prefetchDNS is removed.
+        Changed various prefetchDNS calls to ResourceHandle::prepareForURL calls.
+
+        * GNUmakefile.am:
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::parseMappedAttribute):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process):
+        * page/Chrome.cpp:
+        (WebCore::Chrome::mouseDidMoveOverElement):
+        * platform/network/DNS.h:
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::prepareForURL):
+        * platform/network/ResourceHandle.h:
+        * platform/network/chromium/DNSChromium.cpp:
+        (WebCore::ResourceHandle::prepareForURL):
+        * platform/network/soup/DNSSoup.cpp: Removed.
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::prepareForURL):
+        * wml/WMLAElement.cpp:
+        (WebCore::WMLAElement::parseMappedAttribute):
+
 2010-03-17  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Darin Fisher.

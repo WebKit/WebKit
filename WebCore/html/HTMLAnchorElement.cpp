@@ -24,7 +24,6 @@
 #include "config.h"
 #include "HTMLAnchorElement.h"
 
-#include "DNS.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameLoaderTypes.h"
@@ -35,6 +34,7 @@
 #include "MouseEvent.h"
 #include "Page.h"
 #include "RenderImage.h"
+#include "ResourceHandle.h"
 #include "Settings.h"
 
 namespace WebCore {
@@ -279,7 +279,7 @@ void HTMLAnchorElement::parseMappedAttribute(MappedAttribute *attr)
             String parsedURL = deprecatedParseURL(attr->value());
             if (document()->isDNSPrefetchEnabled()) {
                 if (protocolIs(parsedURL, "http") || protocolIs(parsedURL, "https") || parsedURL.startsWith("//"))
-                    prefetchDNS(document()->completeURL(parsedURL).host());
+                    ResourceHandle::prepareForURL(document()->completeURL(parsedURL));
             }
             if (document()->page() && !document()->page()->javaScriptURLsAreAllowed() && protocolIsJavaScript(parsedURL)) {
                 setIsLink(false);
