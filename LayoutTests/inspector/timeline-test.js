@@ -10,7 +10,8 @@ var timelineNonDeterministicProps = {
     width : 1,
     callerScriptName: 1,
     callerScriptLine: 1,
-    url : 1
+    url : 1,
+    mimeType : 1
 };
 
 function printTimelineRecords(performActions, typeName, formatter)

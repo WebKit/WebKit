@@ -1,3 +1,11 @@
+2010-03-17  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: GTK tests fix - removed custom expectation that was
+        added with no good reason.
+
+        * inspector/timeline-test.js:
+        * platform/gtk/inspector/timeline-network-resource-expected.txt: Removed.
+
 2010-03-17  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.
