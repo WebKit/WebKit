@@ -153,9 +153,6 @@ public:
     bool windowVisible();
     void setFrontend(PassOwnPtr<InspectorFrontend>);
 
-    void populateScriptObjects();
-    void resetScriptObjects();
-
     void didCommitLoad(DocumentLoader*);
     void frameDetachedFromParent(Frame*);
 
@@ -258,7 +255,10 @@ private:
 
     friend class InspectorBackend;
     friend class InjectedScriptHost;
-
+                                                        
+    void populateScriptObjects();
+    void unbindAllResources();
+                                                        
     // Following are used from InspectorBackend and internally.
     void setSearchingForNode(bool enabled);
 

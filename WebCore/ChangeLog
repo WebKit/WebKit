@@ -1,3 +1,22 @@
+2010-03-17  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Mark inspector resources as changed so that they are reloaded on the next frontend connection.
+        
+        Split resetScriptObjects into code specific for page navigation and insepctor frontend disconnection.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36183
+
+        * WebCore.xcodeproj/project.pbxproj: Added InspectorWorkerResource.h to the project file.
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::disconnectFrontend):
+        (WebCore::InspectorController::unbindAllResources):
+        (WebCore::InspectorController::didCommitLoad):
+        * inspector/InspectorController.h:
+        * inspector/InspectorResource.cpp:
+        (WebCore::InspectorResource::releaseScriptObject):
+
 2010-03-17  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

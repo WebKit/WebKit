@@ -220,7 +220,8 @@ void InspectorResource::releaseScriptObject(InspectorFrontend* frontend)
     for (size_t i = 0; i < m_redirects.size(); ++i)
         m_redirects[i]->releaseScriptObject(frontend);
 
-    frontend->removeResource(m_identifier);
+    if (frontend)
+        frontend->removeResource(m_identifier);
 }
 
 CachedResource* InspectorResource::cachedResource() const

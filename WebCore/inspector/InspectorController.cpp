@@ -315,16 +315,16 @@ void InspectorController::addConsoleMessage(ScriptState* scriptState, ConsoleMes
     if (m_previousMessage && m_previousMessage->isEqual(scriptState, consoleMessage)) {
         m_previousMessage->incrementCount();
         delete consoleMessage;
-        if (windowVisible())
+        if (m_frontend)
             m_previousMessage->updateRepeatCountInConsole(m_frontend.get());
     } else {
         m_previousMessage = consoleMessage;
         m_consoleMessages.append(consoleMessage);
-        if (windowVisible())
+        if (m_frontend)
             m_previousMessage->addToFrontend(m_frontend.get(), m_injectedScriptHost.get());
     }
 
-    if (!windowVisible() && m_consoleMessages.size() >= maximumConsoleMessages) {
+    if (!m_frontend && m_consoleMessages.size() >= maximumConsoleMessages) {
         m_expiredConsoleMessageCount += expireConsoleMessagesStep;
         for (size_t i = 0; i < expireConsoleMessagesStep; ++i)
             delete m_consoleMessages[i];
@@ -524,7 +524,7 @@ void InspectorController::disconnectFrontend()
         m_attachDebuggerWhenShown = true;
 #endif
     setSearchingForNode(false);
-    resetScriptObjects();
+    unbindAllResources();
     stopTimelineProfiler();
 
     m_showAfterVisible = CurrentPanel;
@@ -609,11 +609,12 @@ void InspectorController::populateScriptObjects()
     m_pendingEvaluateTestCommands.clear();
 }
 
-void InspectorController::resetScriptObjects()
+void InspectorController::unbindAllResources()
 {
-    if (!m_frontend)
-        return;
-
+    ResourcesMap::iterator resourcesEnd = m_resources.end(); 
+    for (ResourcesMap::iterator it = m_resources.begin(); it != resourcesEnd; ++it) 
+        it->second->releaseScriptObject(0); 
+    
 #if ENABLE(DATABASE)
     DatabaseResourcesMap::iterator databasesEnd = m_databaseResources.end();
     for (DatabaseResourcesMap::iterator it = m_databaseResources.begin(); it != databasesEnd; ++it)
@@ -624,14 +625,8 @@ void InspectorController::resetScriptObjects()
     for (DOMStorageResourcesMap::iterator it = m_domStorageResources.begin(); it != domStorageEnd; ++it)
         it->second->unbind();
 #endif
-#if ENABLE(WORKERS)
-    m_workers.clear();
-#endif
     if (m_timelineAgent)
         m_timelineAgent->reset();
-
-    m_frontend->reset();
-    m_domAgent->reset();
 }
 
 void InspectorController::pruneResources(ResourcesMap* resourceMap, DocumentLoader* loaderToKeep)
@@ -679,8 +674,16 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
 #endif
         // resetScriptObjects should be called before database and DOM storage
         // resources are cleared so that it has a chance to unbind them.
-        resetScriptObjects();
+        if (m_frontend) {
+            if (m_timelineAgent)
+                m_timelineAgent->reset();
 
+            m_frontend->reset();
+            m_domAgent->reset();
+        }
+#if ENABLE(WORKERS)
+        m_workers.clear();
+#endif
 #if ENABLE(DATABASE)
         m_databaseResources.clear();
 #endif
@@ -694,8 +697,7 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
                 // We don't add the main resource until its load is committed. This is
                 // needed to keep the load for a user-entered URL from showing up in the
                 // list of resources for the page they are navigating away from.
-                if (windowVisible())
-                    m_mainResource->updateScriptObject(m_frontend.get());
+                m_mainResource->updateScriptObject(m_frontend.get());
             } else {
                 // Pages loaded from the page cache are committed before
                 // m_mainResource is the right resource for this load, so we
@@ -703,10 +705,8 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
                 // identifierForInitialRequest.
                 m_mainResource = 0;
             }
-            if (windowVisible()) {
-                m_frontend->didCommitLoad();
-                m_domAgent->setDocument(m_inspectedPage->mainFrame()->document());
-            }
+            m_frontend->didCommitLoad();
+            m_domAgent->setDocument(m_inspectedPage->mainFrame()->document());
         }
     }
 
@@ -807,7 +807,7 @@ void InspectorController::didLoadResourceFromMemoryCache(DocumentLoader* loader,
 
     addResource(resource.get());
 
-    if (windowVisible())
+    if (m_frontend)
         resource->updateScriptObject(m_frontend.get());
 }
 
@@ -831,7 +831,7 @@ void InspectorController::identifierForInitialRequest(unsigned long identifier, 
 
     addResource(resource.get());
 
-    if (windowVisible() && loader->frameLoader()->isLoadingFromCachedPage() && resource == m_mainResource)
+    if (m_frontend && loader->frameLoader()->isLoadingFromCachedPage() && resource == m_mainResource)
         resource->updateScriptObject(m_frontend.get());
 }
 
@@ -842,7 +842,7 @@ void InspectorController::mainResourceFiredDOMContentEvent(DocumentLoader* loade
 
     if (m_mainResource) {
         m_mainResource->markDOMContentEventTime();
-        if (windowVisible())
+        if (m_frontend)
             m_mainResource->updateScriptObject(m_frontend.get());
     }
 }
@@ -854,7 +854,7 @@ void InspectorController::mainResourceFiredLoadEvent(DocumentLoader* loader, con
 
     if (m_mainResource) {
         m_mainResource->markLoadEventTime();
-        if (windowVisible())
+        if (m_frontend)
             m_mainResource->updateScriptObject(m_frontend.get());
     }
 }
@@ -894,7 +894,7 @@ void InspectorController::willSendRequest(unsigned long identifier, const Resour
     resource->startTiming();
     resource->updateRequest(request);
 
-    if (resource != m_mainResource && windowVisible())
+    if (resource != m_mainResource && m_frontend)
         resource->updateScriptObject(m_frontend.get());
 }
 
@@ -910,7 +910,7 @@ void InspectorController::didReceiveResponse(unsigned long identifier, const Res
     resource->updateResponse(response);
     resource->markResponseReceivedTime();
 
-    if (resource != m_mainResource && windowVisible())
+    if (resource != m_mainResource && m_frontend)
         resource->updateScriptObject(m_frontend.get());
 }
 
@@ -922,7 +922,7 @@ void InspectorController::didReceiveContentLength(unsigned long identifier, int 
 
     resource->addLength(lengthReceived);
 
-    if (resource != m_mainResource && windowVisible())
+    if (resource != m_mainResource && m_frontend)
         resource->updateScriptObject(m_frontend.get());
 }
 
@@ -938,7 +938,7 @@ void InspectorController::didFinishLoading(unsigned long identifier)
     resource->endTiming();
 
     // No need to mute this event for main resource since it happens after did commit load.
-    if (windowVisible())
+    if (m_frontend)
         resource->updateScriptObject(m_frontend.get());
 }
 
@@ -955,7 +955,7 @@ void InspectorController::didFailLoading(unsigned long identifier, const Resourc
     resource->endTiming();
 
     // No need to mute this event for main resource since it happens after did commit load.
-    if (windowVisible())
+    if (m_frontend)
         resource->updateScriptObject(m_frontend.get());
 }
 
@@ -970,7 +970,7 @@ void InspectorController::resourceRetrievedByXMLHttpRequest(unsigned long identi
 
     resource->setXMLHttpResponseText(sourceString);
 
-    if (windowVisible())
+    if (m_frontend)
         resource->updateScriptObject(m_frontend.get());
 }
 
@@ -987,7 +987,7 @@ void InspectorController::scriptImported(unsigned long identifier, const String&
     // thing by the Inspector. They should be made into distinct types.
     resource->setXMLHttpResponseText(ScriptString(sourceString));
 
-    if (windowVisible())
+    if (m_frontend)
         resource->updateScriptObject(m_frontend.get());
 }
 
@@ -1120,7 +1120,7 @@ void InspectorController::didOpenDatabase(Database* database, const String& doma
     m_databaseResources.set(resource->id(), resource);
 
     // Resources are only bound while visible.
-    if (windowVisible())
+    if (m_frontend)
         resource->bind(m_frontend.get());
 }
 #endif
@@ -1213,7 +1213,7 @@ void InspectorController::didUseDOMStorage(StorageArea* storageArea, bool isLoca
     m_domStorageResources.set(resource->id(), resource);
 
     // Resources are only bound while visible.
-    if (windowVisible())
+    if (m_frontend)
         resource->bind(m_frontend.get());
 }
 
