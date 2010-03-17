@@ -1,3 +1,19 @@
+2010-03-17  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] GraphicsLayer: fix test regressions
+        https://bugs.webkit.org/show_bug.cgi?id=36191
+
+        Enabling accelerated compositing (AC) by default make 3 tests fail.
+        AC is more important now than these tests, so they are skipped until 
+        fix and AC is enabled.
+
+        * platform/qt/Skipped:
+         - animations/fill-mode-transform.html skipped
+         - animations/play-state.html skipped
+         - animations/simultaneous-start-left.html skipped
+
 2010-03-17  Maciej Stachowiak  <mjs@apple.com>
 
         Disable new plugin tests from r56079 on Gtk and Qt, since they are failing.
