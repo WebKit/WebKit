@@ -100,9 +100,13 @@ class Port(object):
         While this is a generic routine, we include it in the Port
         interface so that it can be overriden for testing purposes."""
         executable = self._path_to_image_diff()
-        cmd = [executable, '--diff', expected_filename, actual_filename]
+
         if diff_filename:
-            cmd.append(diff_filename)
+            cmd = [executable, '--diff', expected_filename, actual_filename,
+                   diff_filename]
+        else:
+            cmd = [executable, expected_filename, actual_filename]
+
         result = 1
         try:
             result = subprocess.call(cmd)

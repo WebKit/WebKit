@@ -1,3 +1,14 @@
+2010-03-17  Victor Wang  <victorw@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Fix image_diff syntax in webkitpy/port/base.py.
+        The syntax is wrong if diff_filename is specified.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36230
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+
 2010-03-16  Diego Gonzalez  <diego.gonzalez@openbossa.org>
 
         Reviewed by Kenneth Christiansen.
