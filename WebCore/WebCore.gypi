@@ -790,7 +790,6 @@
             'bindings/v8/custom/V8WorkerCustom.cpp',
             'bindings/v8/custom/V8XMLHttpRequestConstructor.cpp',
             'bindings/v8/custom/V8XMLHttpRequestCustom.cpp',
-            'bindings/v8/custom/V8XMLHttpRequestUploadCustom.cpp',
             'bindings/v8/custom/V8XSLTProcessorCustom.cpp',
             'bindings/v8/DateExtension.cpp',
             'bindings/v8/DateExtension.h',

@@ -265,11 +265,12 @@ END
         my $name = $function->signature->name;
         my $attrExt = $function->signature->extendedAttributes;
 
-        # FIXME: We should only be generating callback declarations for functions labeled [Custom] or [V8Custom],
-        # but we can't do that due to some mislabeled functions in the idl's (https://bugs.webkit.org/show_bug.cgi?id=33066).
-        push(@headerContent, <<END);
+        if ($attrExt->{"Custom"} || $attrExt->{"V8Custom"}) {
+            push(@headerContent, <<END);
     static v8::Handle<v8::Value> ${name}Callback(const v8::Arguments&);
 END
+        }
+
         if ($attrExt->{"EnabledAtRuntime"}) {
             push(@enabledAtRuntime, $function);
         }

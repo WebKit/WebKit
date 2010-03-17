@@ -345,40 +345,6 @@ v8::Handle<v8::Value> V8DOMWindow::postMessageCallback(const v8::Arguments& args
     return throwError(ec);
 }
 
-v8::Handle<v8::Value> V8DOMWindow::atobCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.DOMWindow.atob()");
-
-    if (args.Length() < 1)
-        return throwError("Not enough arguments", V8Proxy::SyntaxError);
-    if (args[0]->IsNull())
-        return v8String("");
-
-    DOMWindow* imp = V8DOMWindow::toNative(args.Holder());
-    ExceptionCode ec = 0;
-    String result = imp->atob(toWebCoreString(args[0]), ec);
-    throwError(ec);
-
-    return v8String(result);
-}
-
-v8::Handle<v8::Value> V8DOMWindow::btoaCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.DOMWindow.btoa()");
-
-    if (args.Length() < 1)
-        return throwError("Not enough arguments", V8Proxy::SyntaxError);
-    if (args[0]->IsNull())
-        return v8String("");
-
-    DOMWindow* imp = V8DOMWindow::toNative(args.Holder());
-    ExceptionCode ec = 0;
-    String result = imp->btoa(toWebCoreString(args[0]), ec);
-    throwError(ec);
-
-    return v8String(result);
-}
-
 // FIXME(fqian): returning string is cheating, and we should
 // fix this by calling toString function on the receiver.
 // However, V8 implements toString in JavaScript, which requires
@@ -743,36 +709,6 @@ v8::Handle<v8::Value> V8DOMWindow::setIntervalCallback(const v8::Arguments& args
 {
     INC_STATS("DOM.DOMWindow.setInterval()");
     return WindowSetTimeoutImpl(args, false);
-}
-
-
-void ClearTimeoutImpl(const v8::Arguments& args)
-{
-    int handle = toInt32(args[0]);
-
-    v8::Handle<v8::Object> holder = args.Holder();
-    DOMWindow* imp = V8DOMWindow::toNative(holder);
-    if (!V8BindingSecurity::canAccessFrame(V8BindingState::Only(), imp->frame(), true))
-        return;
-    ScriptExecutionContext* context = static_cast<ScriptExecutionContext*>(imp->document());
-    if (!context)
-        return;
-    DOMTimer::removeById(context, handle);
-}
-
-
-v8::Handle<v8::Value> V8DOMWindow::clearTimeoutCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.DOMWindow.clearTimeout");
-    ClearTimeoutImpl(args);
-    return v8::Undefined();
-}
-
-v8::Handle<v8::Value> V8DOMWindow::clearIntervalCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.DOMWindow.clearInterval");
-    ClearTimeoutImpl(args);
-    return v8::Undefined();
 }
 
 v8::Handle<v8::Value> V8DOMWindow::openDatabaseCallback(const v8::Arguments& args)

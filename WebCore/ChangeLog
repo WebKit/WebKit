@@ -1,3 +1,27 @@
+2010-03-17  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [V8] Remove custom bindings callbacks that aren't in use.
+        (The relevant .idl doesn't mark them as V8Custom or Custom).
+        
+        https://bugs.webkit.org/show_bug.cgi?id=33066
+
+        * Android.v8bindings.mk:
+        * WebCore.gypi:
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        * bindings/v8/custom/V8WebGLArrayCustom.h:
+        * bindings/v8/custom/V8WebGLByteArrayCustom.cpp:
+        * bindings/v8/custom/V8WebGLFloatArrayCustom.cpp:
+        * bindings/v8/custom/V8WebGLIntArrayCustom.cpp:
+        * bindings/v8/custom/V8WebGLShortArrayCustom.cpp:
+        * bindings/v8/custom/V8WebGLUnsignedByteArrayCustom.cpp:
+        * bindings/v8/custom/V8WebGLUnsignedIntArrayCustom.cpp:
+        * bindings/v8/custom/V8WebGLUnsignedShortArrayCustom.cpp:
+        * bindings/v8/custom/V8XMLHttpRequestCustom.cpp:
+        * bindings/v8/custom/V8XMLHttpRequestUploadCustom.cpp: Removed.
+
 2010-03-17  Steve Block  <steveblock@google.com>
 
         Reviewed by Dimitri Glazkov.

@@ -134,29 +134,6 @@ v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperType
     return toV8(array.release(), args.Holder());
 }
 
-template <class T, typename ElementType>
-v8::Handle<v8::Value> getWebGLArrayElement(const v8::Arguments& args,
-                                           V8ClassIndex::V8WrapperType wrapperType)
-{
-    if (args.Length() != 1) {
-        V8Proxy::setDOMException(SYNTAX_ERR);
-        return notHandledByInterceptor();
-    }
-    bool ok;
-    uint32_t index = toUInt32(args[0], ok);
-    if (!ok) {
-        V8Proxy::setDOMException(SYNTAX_ERR);
-        return notHandledByInterceptor();
-    }
-    T* array = reinterpret_cast<T*>(args.Holder()->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
-    if (index >= array->length())
-        return v8::Undefined();
-    ElementType result;
-    if (!array->get(index, result))
-        return v8::Undefined();
-    return v8::Number::New(result);
-}
-
 template <class T>
 v8::Handle<v8::Value> setWebGLArrayFromArray(T* webGLArray, const v8::Arguments& args)
 {

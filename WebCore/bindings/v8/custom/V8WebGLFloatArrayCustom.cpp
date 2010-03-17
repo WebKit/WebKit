@@ -50,12 +50,6 @@ v8::Handle<v8::Value> V8WebGLFloatArray::constructorCallback(const v8::Arguments
     return constructWebGLArray<WebGLFloatArray, float>(args, &info);
 }
 
-v8::Handle<v8::Value> V8WebGLFloatArray::getCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.WebGLFloatArray.get()");
-    return getWebGLArrayElement<WebGLFloatArray, float>(args, V8ClassIndex::WEBGLFLOATARRAY);
-}
-
 v8::Handle<v8::Value> V8WebGLFloatArray::setCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.WebGLFloatArray.set()");

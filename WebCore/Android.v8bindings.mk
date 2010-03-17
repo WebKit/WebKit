@@ -170,8 +170,7 @@ LOCAL_SRC_FILES += \
 	bindings/v8/custom/V8WorkerContextCustom.cpp \
 	bindings/v8/custom/V8WorkerCustom.cpp \
 	bindings/v8/custom/V8XMLHttpRequestConstructor.cpp \
-	bindings/v8/custom/V8XMLHttpRequestCustom.cpp \
-	bindings/v8/custom/V8XMLHttpRequestUploadCustom.cpp
+	bindings/v8/custom/V8XMLHttpRequestCustom.cpp
 
 LOCAL_SRC_FILES += \
 	bridge/jni/JNIBridge.cpp \

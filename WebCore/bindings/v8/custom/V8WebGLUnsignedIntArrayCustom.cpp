@@ -50,12 +50,6 @@ v8::Handle<v8::Value> V8WebGLUnsignedIntArray::constructorCallback(const v8::Arg
     return constructWebGLArray<WebGLUnsignedIntArray, unsigned int>(args, &info);
 }
 
-v8::Handle<v8::Value> V8WebGLUnsignedIntArray::getCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.WebGLUnsignedIntArray.get()");
-    return getWebGLArrayElement<WebGLUnsignedIntArray, unsigned int>(args, V8ClassIndex::WEBGLUNSIGNEDINTARRAY);
-}
-
 v8::Handle<v8::Value> V8WebGLUnsignedIntArray::setCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.WebGLUnsignedIntArray.set()");

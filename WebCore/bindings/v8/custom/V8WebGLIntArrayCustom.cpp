@@ -50,12 +50,6 @@ v8::Handle<v8::Value> V8WebGLIntArray::constructorCallback(const v8::Arguments& 
     return constructWebGLArray<WebGLIntArray, int>(args, &info);
 }
 
-v8::Handle<v8::Value> V8WebGLIntArray::getCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.WebGLIntArray.get()");
-    return getWebGLArrayElement<WebGLIntArray, int>(args, V8ClassIndex::WEBGLINTARRAY);
-}
-
 v8::Handle<v8::Value> V8WebGLIntArray::setCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.WebGLIntArray.set()");
