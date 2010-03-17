@@ -742,7 +742,7 @@ void SelectElement::listBoxDefaultEventHandler(SelectElementData& data, Element*
             // Save the selection so it can be compared to the new selection when dispatching change events immediately after making the new selection.
             saveLastSelection(data, element);
 
-            ASSERT(endIndex >= 0 && (unsigned) endIndex < listItems.size()); 
+            ASSERT_UNUSED(listItems, endIndex >= 0 && (unsigned) endIndex < listItems.size());
             setActiveSelectionEndIndex(data, endIndex);
             
             // If the anchor is unitialized, or if we're going to deselect all other options, then set the anchor index equal to the end index.

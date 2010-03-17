@@ -1,3 +1,13 @@
+2010-03-17  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Mac Buildfix: Using ASSERT_UNUSED instead of ASSERT.
+
+        Reviewed by Simon fraser.
+        Patch by Antonio Gomes <tonikitoo@webkit.org>
+
+        * dom/SelectElement.cpp:
+        (WebCore::SelectElement::listBoxDefaultEventHandler):
+
 2010-03-17  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Darin Adler.
