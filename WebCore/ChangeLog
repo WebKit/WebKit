@@ -1,3 +1,23 @@
+2010-03-16  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Antti Koivisto.
+
+        [Qt] Multiselect Popup - SelectElement refactoring.
+        https://bugs.webkit.org/show_bug.cgi?id=36124
+
+        As it is today it is not possible to the menulists popups to tell SelectElement
+        that more then one option is selected. If you select one the other ones
+        selected state will turn off.
+
+        For <select multiple> I needed to extend the API used by menulist popups. This
+        is the first step. Just refactoring SelectElement without any behavior change.
+        Separating code that will be reused in future patches.
+
+        * dom/SelectElement.cpp:
+        (WebCore::SelectElement::updateSelectedState):
+        (WebCore::SelectElement::listBoxDefaultEventHandler):
+        * dom/SelectElement.h:
+
 2010-03-17  Nate Chapin  <japhet@chromium.org>
 
         Unreviewed, Chromium build fix.

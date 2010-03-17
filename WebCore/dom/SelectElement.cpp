@@ -647,6 +647,52 @@ void SelectElement::menuListDefaultEventHandler(SelectElementData& data, Element
     }
 }
 
+void SelectElement::updateSelectedState(SelectElementData& data, Element* element, int listIndex,
+                                        bool multi, bool shift)
+{
+    ASSERT(listIndex >= 0);
+
+    // Save the selection so it can be compared to the new selection when dispatching change events during mouseup, or after autoscroll finishes.
+    saveLastSelection(data, element);
+
+    data.setActiveSelectionState(true);
+
+    bool shiftSelect = data.multiple() && shift;
+    bool multiSelect = data.multiple() && multi && !shift;
+
+    Element* clickedElement = data.listItems(element)[listIndex];
+    OptionElement* option = toOptionElement(clickedElement);
+    if (option) {
+        // Keep track of whether an active selection (like during drag selection), should select or deselect
+        if (option->selected() && multi)
+            data.setActiveSelectionState(false);
+
+        if (!data.activeSelectionState())
+            option->setSelectedState(false);
+    }
+
+    // If we're not in any special multiple selection mode, then deselect all other items, excluding the clicked option.
+    // If no option was clicked, then this will deselect all items in the list.
+    if (!shiftSelect && !multiSelect)
+        deselectItems(data, element, clickedElement);
+
+    // If the anchor hasn't been set, and we're doing a single selection or a shift selection, then initialize the anchor to the first selected index.
+    if (data.activeSelectionAnchorIndex() < 0 && !multiSelect)
+        setActiveSelectionAnchorIndex(data, element, selectedIndex(data, element));
+
+    // Set the selection state of the clicked option
+    if (option && !clickedElement->disabled())
+        option->setSelectedState(true);
+
+    // If there was no selectedIndex() for the previous initialization, or
+    // If we're doing a single selection, or a multiple selection (using cmd or ctrl), then initialize the anchor index to the listIndex that just got clicked.
+    if (data.activeSelectionAnchorIndex() < 0 || !shiftSelect)
+        setActiveSelectionAnchorIndex(data, element, listIndex);
+
+    setActiveSelectionEndIndex(data, listIndex);
+    updateListBoxSelection(data, element, !multiSelect);
+}
+
 void SelectElement::listBoxDefaultEventHandler(SelectElementData& data, Element* element, Event* event, HTMLFormElement* htmlForm)
 {
     const Vector<Element*>& listItems = data.listItems(element);
@@ -659,53 +705,11 @@ void SelectElement::listBoxDefaultEventHandler(SelectElementData& data, Element*
         IntPoint localOffset = roundedIntPoint(element->renderer()->absoluteToLocal(mouseEvent->absoluteLocation(), false, true));
         int listIndex = toRenderListBox(element->renderer())->listIndexAtOffset(localOffset.x(), localOffset.y());
         if (listIndex >= 0) {
-            // Save the selection so it can be compared to the new selection when dispatching change events during mouseup, or after autoscroll finishes.
-            saveLastSelection(data, element);
-
-            data.setActiveSelectionState(true);
-            
-            bool multiSelectKeyPressed = false;
 #if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
-            multiSelectKeyPressed = mouseEvent->metaKey();
+            updateSelectedState(data, element, listIndex, mouseEvent->metaKey(), mouseEvent->shiftKey());
 #else
-            multiSelectKeyPressed = mouseEvent->ctrlKey();
+            updateSelectedState(data, element, listIndex, mouseEvent->ctrlKey(), mouseEvent->shiftKey());
 #endif
-
-            bool shiftSelect = data.multiple() && mouseEvent->shiftKey();
-            bool multiSelect = data.multiple() && multiSelectKeyPressed && !mouseEvent->shiftKey();
-
-            Element* clickedElement = listItems[listIndex];            
-            OptionElement* option = toOptionElement(clickedElement);
-            if (option) {
-                // Keep track of whether an active selection (like during drag selection), should select or deselect
-                if (option->selected() && multiSelectKeyPressed)
-                    data.setActiveSelectionState(false);
-
-                if (!data.activeSelectionState())
-                    option->setSelectedState(false);
-            }
-            
-            // If we're not in any special multiple selection mode, then deselect all other items, excluding the clicked option.
-            // If no option was clicked, then this will deselect all items in the list.
-            if (!shiftSelect && !multiSelect)
-                deselectItems(data, element, clickedElement);
-
-            // If the anchor hasn't been set, and we're doing a single selection or a shift selection, then initialize the anchor to the first selected index.
-            if (data.activeSelectionAnchorIndex() < 0 && !multiSelect)
-                setActiveSelectionAnchorIndex(data, element, selectedIndex(data, element));
-
-            // Set the selection state of the clicked option
-            if (option && !clickedElement->disabled())
-                option->setSelectedState(true);
-            
-            // If there was no selectedIndex() for the previous initialization, or
-            // If we're doing a single selection, or a multiple selection (using cmd or ctrl), then initialize the anchor index to the listIndex that just got clicked.
-            if (listIndex >= 0 && (data.activeSelectionAnchorIndex() < 0 || !shiftSelect))
-                setActiveSelectionAnchorIndex(data, element, listIndex);
-            
-            setActiveSelectionEndIndex(data, listIndex);
-            updateListBoxSelection(data, element, !multiSelect);
-
             if (Frame* frame = element->document()->frame())
                 frame->eventHandler()->setMouseDownMayStartAutoscroll();
 
