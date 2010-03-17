@@ -198,6 +198,7 @@ v8::Local<v8::Function> V8DOMWrapper::getConstructor(WrapperTypeInfo* type, DOMW
     return getConstructorForContext(type, context);
 }
 
+#if ENABLE(WORKERS)
 v8::Local<v8::Function> V8DOMWrapper::getConstructor(WrapperTypeInfo* type, WorkerContext*)
 {
     WorkerContextExecutionProxy* proxy = WorkerContextExecutionProxy::retrieve();
@@ -210,6 +211,7 @@ v8::Local<v8::Function> V8DOMWrapper::getConstructor(WrapperTypeInfo* type, Work
 
     return getConstructorForContext(type, context);
 }
+#endif
 
 void V8DOMWrapper::setHiddenWindowReference(Frame* frame, const int internalIndex, v8::Handle<v8::Object> jsObject)
 {
@@ -281,8 +283,10 @@ v8::Local<v8::Object> V8DOMWrapper::instantiateV8Object(V8Proxy* proxy, WrapperT
             v8::Handle<v8::Object> globalPrototype = v8::Handle<v8::Object>::Cast(context->Global()->GetPrototype());
             if (globalObjectPrototypeIsDOMWindow(globalPrototype))
                 proxy = V8Proxy::retrieve(V8DOMWindow::toNative(globalPrototype)->frame());
+#if ENABLE(WORKERS)
             else
                 workerContext = V8WorkerContext::toNative(lookupDOMWrapper(V8WorkerContext::GetTemplate(), context->Global()));
+#endif
         }
     }
 

@@ -1,3 +1,17 @@
+2010-03-17  Steve Block  <steveblock@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Adds ENABLE(WORKERS) guards to V8 bindings
+        https://bugs.webkit.org/show_bug.cgi?id=36221
+
+        Build fix only, no new tests.
+
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::instantiateV8Object):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::toV8Context):
+
 2010-03-17  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
