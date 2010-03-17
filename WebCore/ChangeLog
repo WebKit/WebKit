@@ -1,5 +1,14 @@
 2010-03-17  Nate Chapin  <japhet@chromium.org>
 
+        Unreviewed, Chromium build fix.
+
+        Delete the correct file this time.
+
+        * bindings/v8/custom/V8XMLHttpRequestCustom.cpp: Copied from WebCore/bindings/v8/custom/V8XMLHttpRequestCustom.cpp.
+        * bindings/v8/custom/V8XMLHttpRequestUploadCustom.cpp: Removed.
+
+2010-03-17  Nate Chapin  <japhet@chromium.org>
+
         Reviewed by Dimitri Glazkov.
 
         [V8] Remove custom bindings callbacks that aren't in use.
