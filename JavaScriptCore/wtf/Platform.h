@@ -159,7 +159,7 @@
 
 /* CPU(SPARC) - any SPARC, true for CPU(SPARC32) and CPU(SPARC64) */
 #if CPU(SPARC32) || CPU(SPARC64)
-#define WTF_CPU_SPARC
+#define WTF_CPU_SPARC 1
 #endif
 
 /* CPU(X86) - i386 / x86 32-bit */

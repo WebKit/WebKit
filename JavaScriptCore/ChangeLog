@@ -1,3 +1,11 @@
+2010-03-17  Mike Homey  <glandium@debian.org>
+
+        Reviewed by Gustavo Noronha.
+
+        Build fix for SPARC. Fix missing macro value.
+
+        * wtf/Platform.h:
+
 2010-03-16  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt, Darin Adler.
