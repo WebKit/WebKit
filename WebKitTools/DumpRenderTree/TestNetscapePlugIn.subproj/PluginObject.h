@@ -41,6 +41,7 @@ typedef struct {
     NPStream* stream;
     NPBool testDocumentOpenInDestroyStream;
     NPBool testWindowOpen;
+    NPBool testKeyboardFocusForPlugins;
     char* onStreamLoad;
     char* onStreamDestroy;
     char* onDestroy;

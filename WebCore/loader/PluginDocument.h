@@ -29,6 +29,7 @@
 
 namespace WebCore {
 
+class Node;
 class Widget;
 class PluginDocument : public HTMLDocument {
 public:
@@ -38,6 +39,7 @@ public:
     }
 
     Widget* pluginWidget();
+    Node* pluginNode();
 
 private:
     PluginDocument(Frame*);

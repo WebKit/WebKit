@@ -1,3 +1,18 @@
+2010-03-16  John Abd-El-Malek  <jam@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Give keyboard focus to PluginDocuments by default
+        https://bugs.webkit.org/show_bug.cgi?id=36147
+
+        * http/tests/plugins/plugin-document-has-focus-expected.txt: Added.
+        * http/tests/plugins/plugin-document-has-focus.html: Added.
+        * http/tests/plugins/resources/plugin-document-has-focus.pl: Added.
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2010-03-16  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

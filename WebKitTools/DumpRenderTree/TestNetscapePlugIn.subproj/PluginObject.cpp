@@ -952,6 +952,7 @@ static NPObject *pluginAllocate(NPP npp, NPClass *theClass)
 
     newInstance->testDocumentOpenInDestroyStream = FALSE;
     newInstance->testWindowOpen = FALSE;
+    newInstance->testKeyboardFocusForPlugins = FALSE;
 
     return (NPObject*)newInstance;
 }
