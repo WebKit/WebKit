@@ -506,6 +506,15 @@ void InspectorFrontend::didGetStyles(long callId, const ScriptValue& styles)
     function.call();
 }
 
+void InspectorFrontend::didGetAllStyles(long callId, const ScriptArray& styles)
+{
+    ScriptFunctionCall function(m_webInspector, "dispatch");
+    function.appendArgument("didGetAllStyles");
+    function.appendArgument(callId);
+    function.appendArgument(styles);
+    function.call();
+}
+
 void InspectorFrontend::didGetComputedStyle(long callId, const ScriptValue& style)
 {
     ScriptFunctionCall function(m_webInspector, "dispatch"); 

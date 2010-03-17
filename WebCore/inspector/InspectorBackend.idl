@@ -91,6 +91,7 @@ module core {
         void hideDOMNodeHighlight();
 
         void getStyles(in long callId, in long nodeId, in boolean authOnly);
+        void getAllStyles(in long callId);
         void getInlineStyle(in long callId, in long nodeId);
         void getComputedStyle(in long callId, in long nodeId);
         void applyStyleText(in long callId, in long styleId, in DOMString styleText, in DOMString propertyName);

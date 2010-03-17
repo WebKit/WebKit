@@ -63,9 +63,9 @@ WebInspector.AuditRules.getDomainToResourcesMap = function(resources, types, reg
     return domainToResourcesMap;
 }
 
-WebInspector.AuditRules.evaluateInTargetWindow = function(func, callback)
+WebInspector.AuditRules.evaluateInTargetWindow = function(func, args, callback)
 {
-    InjectedScriptAccess.getDefault().evaluateOnSelf(func.toString(), callback);
+    InjectedScriptAccess.getDefault().evaluateOnSelf(func.toString(), args, callback);
 }
 
 
@@ -278,27 +278,84 @@ WebInspector.AuditRules.UnusedCssRule.prototype = {
     doRun: function(resources, result, callback)
     {
         var self = this;
-        function evalCallback(routineResult, isException) {
-            if (isException || !routineResult || !routineResult.styleSheets.length)
+        function evalCallback(styleSheets) {
+            if (!styleSheets.length)
                 return callback(null);
 
-            var totalUnusedPercent = Math.round(100 * routineResult.unusedSize / routineResult.totalSize);
-            var summary = result.addChild(String.sprintf("%d%% of CSS (estimated) is not used by the current page.", totalUnusedPercent), true);
-
-            for (var i = 0; i < routineResult.styleSheets.length; ++i) {
-                var stylesheet = routineResult.styleSheets[i];
-
-                var url = stylesheet.type === "href" ? WebInspector.linkifyURL(stylesheet.location) : String.sprintf("Inline block #%s", stylesheet.location);
-                var pctUnused = Math.round(100 * stylesheet.unusedSize / stylesheet.totalSize);
-                var entry = summary.addChild(String.sprintf("%s: %d%% (estimated) is not used by the current page.", url, pctUnused));
-
-                for (var j = 0; j < stylesheet.unusedRules.length; ++j)
-                    entry.addSnippet(stylesheet.unusedRules[j]);
-
-                result.violationCount += stylesheet.unusedRules.length;
+            var pseudoSelectorRegexp = /:hover|:link|:active|:visited|:focus|:before|:after/;
+            var selectors = [];
+            var testedSelectors = {};
+            for (var i = 0; i < styleSheets.length; ++i) {
+                var styleSheet = styleSheets[i];
+                for (var curRule = 0; curRule < styleSheet.cssRules.length; ++curRule) {
+                    var rule = styleSheet.cssRules[curRule];
+                    if (rule.selectorText.match(pseudoSelectorRegexp))
+                        continue;
+                    selectors.push(rule.selectorText);
+                    testedSelectors[rule.selectorText] = 1;
+                }
             }
 
-            callback(result);
+            function selectorsCallback(callback, styleSheets, testedSelectors, foundSelectors)
+            {
+                var inlineBlockOrdinal = 0;
+                var totalStylesheetSize = 0;
+                var totalUnusedStylesheetSize = 0;
+                var summary;
+
+                for (var i = 0; i < styleSheets.length; ++i) {
+                    var styleSheet = styleSheets[i];
+                    var stylesheetSize = 0;
+                    var unusedStylesheetSize = 0;
+                    var unusedRules = [];
+                    for (var curRule = 0; curRule < styleSheet.cssRules.length; ++curRule) {
+                        var rule = styleSheet.cssRules[curRule];
+                        var textLength = rule.cssText ? rule.cssText.length : 0;
+                        stylesheetSize += textLength;
+                        if (!testedSelectors[rule.selectorText] || foundSelectors[rule.selectorText])
+                            continue;
+                        unusedStylesheetSize += textLength;
+                        unusedRules.push(rule.selectorText);
+                    }
+                    totalStylesheetSize += stylesheetSize;
+                    totalUnusedStylesheetSize += unusedStylesheetSize;
+
+                    if (!unusedRules.length)
+                        continue;
+
+                    var url = styleSheet.href ? WebInspector.linkifyURL(styleSheet.href) : String.sprintf("Inline block #%d", ++inlineBlockOrdinal);
+                    var pctUnused = Math.round(100 * unusedStylesheetSize / stylesheetSize);
+                    if (!summary)
+                        summary = result.addChild("", true);
+                    var entry = summary.addChild(String.sprintf("%s: %d%% (estimated) is not used by the current page.", url, pctUnused));
+
+                    for (var j = 0; j < unusedRules.length; ++j)
+                        entry.addSnippet(unusedRules[j]);
+
+                    result.violationCount += unusedRules.length;
+                }
+
+                if (!totalUnusedStylesheetSize)
+                    return callback(null);
+
+                var totalUnusedPercent = Math.round(100 * totalUnusedStylesheetSize / totalStylesheetSize);
+                summary.value = String.sprintf("%d%% of CSS (estimated) is not used by the current page.", totalUnusedPercent);
+
+                callback(result);
+            }
+
+            function routine(selectorArray)
+            {
+                var result = {};
+                for (var i = 0; i < selectorArray.length; ++i) {
+                    var nodes = document.querySelectorAll(selectorArray[i]);
+                    if (nodes && nodes.length)
+                        result[selectorArray[i]] = true;
+                }
+                return result;
+            }
+
+            WebInspector.AuditRules.evaluateInTargetWindow(routine, [selectors], selectorsCallback.bind(null, callback, styleSheets, testedSelectors));
         }
 
         function routine()
@@ -306,48 +363,11 @@ WebInspector.AuditRules.UnusedCssRule.prototype = {
             var styleSheets = document.styleSheets;
             if (!styleSheets)
                 return false;
-            var routineResult = { styleSheets: [] };
-            var inlineBlockOrdinal = 0;
-            var totalStylesheetSize = 0;
-            var totalUnusedStylesheetSize = 0;
-            var pseudoSelectorRegexp = /:hover|:link|:active|:visited|:focus/;
-            for (var i = 0; i < styleSheets.length; ++i) {
-                var styleSheet = styleSheets[i];
-                if (!styleSheet.cssRules)
-                    continue;
-                var stylesheetSize = 0;
-                var unusedStylesheetSize = 0;
-                var unusedRules = [];
-                for (var curRule = 0; curRule < styleSheet.cssRules.length; ++curRule) {
-                    var rule = styleSheet.cssRules[curRule];
-                    var textLength = rule.cssText ? rule.cssText.length : 0;
-                    stylesheetSize += textLength;
-                    if (rule.type !== 1 || rule.selectorText.match(pseudoSelectorRegexp))
-                        continue;
-                    var nodes = document.querySelectorAll(rule.selectorText);
-                    if (nodes && nodes.length)
-                        continue;
-                    unusedStylesheetSize += textLength;
-                    unusedRules.push(rule.selectorText);
-                }
-                totalStylesheetSize += stylesheetSize;
-                totalUnusedStylesheetSize += unusedStylesheetSize;
 
-                if (unusedRules.length) {
-                    var entry = { type: styleSheet.href ? "href" : "inline",
-                                  totalSize: stylesheetSize,
-                                  unusedSize: unusedStylesheetSize,
-                                  location: styleSheet.href ? styleSheet.href : ++inlineBlockOrdinal,
-                                  unusedRules: unusedRules };
-                    routineResult.styleSheets.push(entry);
-                }
-            }
-            routineResult.totalSize = totalStylesheetSize;
-            routineResult.unusedSize = totalUnusedStylesheetSize;
             return routineResult;
         }
 
-        WebInspector.AuditRules.evaluateInTargetWindow(routine, evalCallback);
+        InspectorBackend.getAllStyles(WebInspector.Callback.wrap(evalCallback));
     }
 }
 
@@ -669,7 +689,7 @@ WebInspector.AuditRules.ImageDimensionsRule.prototype = {
             return found ? {totalImages: images.length, map: urlToNoDimensionCount} : null;
         }
 
-        WebInspector.AuditRules.evaluateInTargetWindow(routine, evalCallback.bind(this));
+        WebInspector.AuditRules.evaluateInTargetWindow(routine, null, evalCallback.bind(this));
     }
 }
 
@@ -743,7 +763,7 @@ WebInspector.AuditRules.CssInHeadRule.prototype = {
             return found ? urlToViolationsArray : null;
         }
 
-        WebInspector.AuditRules.evaluateInTargetWindow(routine, evalCallback);
+        WebInspector.AuditRules.evaluateInTargetWindow(routine, null, evalCallback);
     }
 }
 
@@ -790,7 +810,7 @@ WebInspector.AuditRules.StylesScriptsOrderRule.prototype = {
             return [ lateStyleUrls, cssBeforeInlineCount ];
         }
 
-        WebInspector.AuditRules.evaluateInTargetWindow(routine, evalCallback.bind(this));
+        WebInspector.AuditRules.evaluateInTargetWindow(routine, null, evalCallback.bind(this));
     }
 }
 

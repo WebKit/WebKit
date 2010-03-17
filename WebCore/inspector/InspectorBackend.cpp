@@ -362,6 +362,12 @@ void InspectorBackend::getStyles(long callId, long nodeId, bool authorOnly)
         domAgent->getStyles(callId, nodeId, authorOnly);
 }
 
+void InspectorBackend::getAllStyles(long callId)
+{
+    if (InspectorDOMAgent* domAgent = inspectorDOMAgent())
+        domAgent->getAllStyles(callId);
+}
+
 void InspectorBackend::getInlineStyle(long callId, long nodeId)
 {
     if (InspectorDOMAgent* domAgent = inspectorDOMAgent())

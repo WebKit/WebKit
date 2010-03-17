@@ -1,3 +1,37 @@
+2010-03-17  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Reimplement style-related audits using native API
+        https://bugs.webkit.org/show_bug.cgi?id=36172
+
+        * inspector/InspectorBackend.cpp:
+        (WebCore::InspectorBackend::getAllStyles):
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorBackend.idl:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::getAllStyles):
+        (WebCore::InspectorDOMAgent::getMatchedCSSRules):
+        (WebCore::InspectorDOMAgent::buildObjectForStyleSheet):
+        (WebCore::InspectorDOMAgent::buildObjectForRule):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::didGetAllStyles):
+        * inspector/InspectorFrontend.h:
+        * inspector/front-end/AuditRules.js:
+        (WebInspector.AuditRules.evaluateInTargetWindow):
+        (WebInspector.AuditRules.UnusedCssRule.prototype.doRun.evalCallback.selectorsCallback):
+        (WebInspector.AuditRules.UnusedCssRule.prototype.doRun.evalCallback.routine):
+        (WebInspector.AuditRules.UnusedCssRule.prototype.doRun.evalCallback):
+        (WebInspector.AuditRules.UnusedCssRule.prototype.doRun.routine):
+        (WebInspector.AuditRules.UnusedCssRule.prototype.doRun):
+        (WebInspector.AuditRules.ImageDimensionsRule.prototype.doRun):
+        (WebInspector.AuditRules.CssInHeadRule.prototype.doRun):
+        (WebInspector.AuditRules.StylesScriptsOrderRule.prototype.doRun):
+        * inspector/front-end/DOMAgent.js:
+        * inspector/front-end/InjectedScript.js:
+        (injectedScriptConstructor):
+
 2010-03-17  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.

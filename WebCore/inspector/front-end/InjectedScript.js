@@ -786,9 +786,10 @@ InjectedScript.createProxyObject = function(object, objectId, abbreviate)
     return result;
 }
 
-InjectedScript.evaluateOnSelf = function(funcBody)
+InjectedScript.evaluateOnSelf = function(funcBody, args)
 {
-    return window.eval("(" + funcBody + ")();");
+    var func = window.eval("(" + funcBody + ")");
+    return func.apply(this, args || []);
 }
 
 InjectedScript.CallFrameProxy = function(id, callFrame)

@@ -704,6 +704,21 @@ void InspectorDOMAgent::getStyles(long callId, long nodeId, bool authorOnly)
     m_frontend->didGetStyles(callId, result);
 }
 
+void InspectorDOMAgent::getAllStyles(long callId)
+{
+    ScriptArray result = m_frontend->newScriptArray();
+    unsigned counter = 0;
+    for (ListHashSet<RefPtr<Document> >::iterator it = m_documents.begin(); it != m_documents.end(); ++it) {
+        StyleSheetList* list = (*it)->styleSheets();
+        for (unsigned i = 0; i < list->length(); ++i) {
+            StyleSheet* styleSheet = list->item(i);
+            if (styleSheet->isCSSStyleSheet())
+                result.set(counter++, buildObjectForStyleSheet(static_cast<CSSStyleSheet*>(styleSheet)));
+        }
+    }
+    m_frontend->didGetAllStyles(callId, result);
+}
+
 void InspectorDOMAgent::getInlineStyle(long callId, long nodeId)
 {
     Node* node = nodeForId(nodeId);
@@ -734,10 +749,11 @@ ScriptArray InspectorDOMAgent::getMatchedCSSRules(Element* element, bool authorO
     DOMWindow* defaultView = element->ownerDocument()->defaultView();
     RefPtr<CSSRuleList> matchedRules = defaultView->getMatchedCSSRules(element, "", authorOnly);
     ScriptArray matchedCSSRules = m_frontend->newScriptArray();
+    unsigned counter = 0;
     for (unsigned i = 0; matchedRules.get() && i < matchedRules->length(); ++i) {
         CSSRule* rule = matchedRules->item(i);
         if (rule->type() == CSSRule::STYLE_RULE)
-            matchedCSSRules.set(i, buildObjectForRule(static_cast<CSSStyleRule*>(rule)));
+            matchedCSSRules.set(counter++, buildObjectForRule(static_cast<CSSStyleRule*>(rule)));
     }
     return matchedCSSRules;
 }
@@ -1043,12 +1059,34 @@ void InspectorDOMAgent::populateObjectWithStyleProperties(CSSStyleDeclaration* s
     result.set("uniqueStyleProperties", toArray(uniqueStyleProperties(style)));
 }
 
+ScriptObject InspectorDOMAgent::buildObjectForStyleSheet(CSSStyleSheet* styleSheet)
+{
+    ScriptObject result = m_frontend->newScriptObject();
+    result.set("disabled", styleSheet->disabled());
+    result.set("href", styleSheet->href());
+    result.set("title", styleSheet->title());
+    result.set("documentElementId", m_documentNodeToIdMap.get(styleSheet->doc()));
+    ScriptArray cssRules = m_frontend->newScriptArray();
+    result.set("cssRules", cssRules);
+    PassRefPtr<CSSRuleList> cssRuleList = CSSRuleList::create(styleSheet, true);
+    if (!cssRuleList)
+        return result;
+    unsigned counter = 0;
+    for (unsigned i = 0; i < cssRuleList->length(); ++i) {
+        CSSRule* rule = cssRuleList->item(i);
+        if (rule->isStyleRule())
+            cssRules.set(counter++, buildObjectForRule(static_cast<CSSStyleRule*>(rule)));
+    }
+    return result;
+}
+
 ScriptObject InspectorDOMAgent::buildObjectForRule(CSSStyleRule* rule)
 {
     CSSStyleSheet* parentStyleSheet = rule->parentStyleSheet();
 
     ScriptObject result = m_frontend->newScriptObject();
     result.set("selectorText", rule->selectorText());
+    result.set("cssText", rule->cssText());
     if (parentStyleSheet) {
         ScriptObject parentStyleSheetValue = m_frontend->newScriptObject();
         result.set("parentStyleSheet", parentStyleSheetValue);

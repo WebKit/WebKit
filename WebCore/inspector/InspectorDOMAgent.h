@@ -100,6 +100,7 @@ namespace WebCore {
 
         // Methods called from the frontend for CSS styles inspection.
         void getStyles(long callId, long nodeId, bool authorOnly);
+        void getAllStyles(long callId);
         void getInlineStyle(long callId, long nodeId);
         void getComputedStyle(long callId, long nodeId);
         void applyStyleText(long callId, long styleId, const String& styleText, const String& propertyName);
@@ -159,6 +160,7 @@ namespace WebCore {
         ScriptObject buildObjectForStyle(CSSStyleDeclaration*, bool bind);
         void populateObjectWithStyleProperties(CSSStyleDeclaration*, ScriptObject& result);
         ScriptObject buildObjectForRule(CSSStyleRule*);
+        ScriptObject buildObjectForStyleSheet(CSSStyleSheet*);
         Vector<String> uniqueStyleProperties(CSSStyleDeclaration*);
         Vector<String> longhandProperties(CSSStyleDeclaration*, const String& shorthandProperty);
         String shorthandPriority(CSSStyleDeclaration*, const String& shorthandProperty);

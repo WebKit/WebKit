@@ -135,6 +135,7 @@ namespace WebCore {
         void didRemoveNode(int callId, int nodeId);
 
         void didGetStyles(long callId, const ScriptValue& styles);
+        void didGetAllStyles(long callId, const ScriptArray& styles);
         void didGetInlineStyle(long callId, const ScriptValue& style);
         void didGetComputedStyle(long callId, const ScriptValue& style);
         void didApplyStyleText(int callId, bool success, const ScriptValue& style, const ScriptArray& changedProperties);
