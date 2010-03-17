@@ -10,6 +10,24 @@
 
         Reviewed by Eric Seidel.
 
+        Change post-rollout to create-rollout and have it make a new bug
+        instead of posting the rollout to the old bug.
+        https://bugs.webkit.org/show_bug.cgi?id=36250
+
+        The new bug blocks the old bug instead of adding more complexity to the
+        old bug.  One tricky question is whether to create the bug if we're
+        unable to create a rollout patch.  In this patch, we do create the bug,
+        but we might revist this question in the future.
+
+        * Scripts/webkitpy/bugzilla.py:
+        * Scripts/webkitpy/commands/download.py:
+        * Scripts/webkitpy/commands/download_unittest.py:
+        * Scripts/webkitpy/steps/createbug.py:
+
+2010-03-17  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Add a way for the bots to send messages to IRC
         https://bugs.webkit.org/show_bug.cgi?id=36235
 

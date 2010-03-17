@@ -598,6 +598,7 @@ class Bugzilla(object):
                    patch_file_object=None,
                    patch_description=None,
                    cc=None,
+                   blocked=None,
                    mark_for_review=False,
                    mark_for_commit_queue=False):
         self.authenticate()
@@ -615,11 +616,13 @@ class Bugzilla(object):
             component = "New Bugs"
         if component not in component_names:
             component = self.prompt_for_component(component_names)
-        self.browser['component'] = [component]
+        self.browser["component"] = [component]
         if cc:
-            self.browser['cc'] = cc
-        self.browser['short_desc'] = bug_title
-        self.browser['comment'] = bug_description
+            self.browser["cc"] = cc
+        if blocked:
+            self.browser["blocked"] = blocked
+        self.browser["short_desc"] = bug_title
+        self.browser["comment"] = bug_description
 
         if patch_file_object:
             self._fill_attachment_form(
