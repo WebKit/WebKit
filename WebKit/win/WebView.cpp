@@ -4689,6 +4689,16 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     settings->setAcceleratedCompositingEnabled(enabled);
 #endif
 
+    hr = prefsPrivate->showDebugBorders(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings->setShowDebugBorders(enabled);
+
+    hr = prefsPrivate->showRepaintCounter(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings->setShowRepaintCounter(enabled);
+
 #if ENABLE(3D_CANVAS)
     settings->setWebGLEnabled(true);
 #endif  // ENABLE(3D_CANVAS)

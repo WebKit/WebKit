@@ -32,6 +32,8 @@
 #include "CString.h"
 #include "FloatConversion.h"
 #include "FloatRect.h"
+#include "Font.h"
+#include "FontSelector.h"
 #include "Image.h"
 #include "PlatformString.h"
 #include "SystemTime.h"
@@ -85,24 +87,35 @@ public:
 #endif
 
         if (m_owner->showRepaintCounter()) {
-            char text[16]; // that's a lot of repaints
-            _snprintf(text, sizeof(text), "%d", m_owner->incrementRepaintCount());
+            String text = String::format("%d", m_owner->incrementRepaintCount());;
 
             CGContextSaveGState(context);
             CGContextSetRGBFillColor(context, 1.0f, 0.0f, 0.0f, 0.8f);
             
             CGRect aBounds = layerBounds;
 
-            aBounds.size.width = 10 + 12 * strlen(text);
+            aBounds.size.width = 10 + 12 * text.length();
             aBounds.size.height = 25;
             CGContextFillRect(context, aBounds);
             
-            CGContextSetRGBFillColor(context, 0.0f, 0.0f, 0.0f, 1.0f);
+            FontDescription desc;
 
-            CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1.0f, -1.0f));
-            CGContextSelectFont(context, "Helvetica", 25, kCGEncodingMacRoman);
-            CGContextShowTextAtPoint(context, aBounds.origin.x + 3.0f, aBounds.origin.y + 20.0f, text, strlen(text));
+            NONCLIENTMETRICS metrics;
+            metrics.cbSize = sizeof(metrics);
+            SystemParametersInfo(SPI_GETNONCLIENTMETRICS, metrics.cbSize, &metrics, 0);
+            FontFamily family;
+            family.setFamily(metrics.lfSmCaptionFont.lfFaceName);
+            desc.setFamily(family);
+
+            desc.setComputedSize(22);
             
+            Font font = Font(desc, 0, 0);
+            font.update(0);
+
+            GraphicsContext cg(context);
+            cg.setFillColor(Color::black, DeviceColorSpace);
+            cg.drawText(font, TextRun(text), IntPoint(aBounds.origin.x + 3, aBounds.origin.y + 20));
+
             CGContextRestoreGState(context);        
         }
 

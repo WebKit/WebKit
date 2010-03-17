@@ -1,3 +1,14 @@
+2010-03-17  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Missing support for showing compositing layers borders and repaint count on Windows.
+        <rdar://problem/7760736>
+        <https://bugs.webkit.org/show_bug.cgi?id=36197>
+
+        * platform/graphics/win/GraphicsLayerCACF.cpp:
+        (WebCore::WebLayer::drawInContext): Modified to use the correct font on Windows.
+
 2010-03-16  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Antti Koivisto.

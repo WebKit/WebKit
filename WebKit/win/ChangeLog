@@ -1,3 +1,23 @@
+2010-03-17  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Missing support for showing compositing layers borders and repaint count on Windows.
+        <rdar://problem/7760736>
+        <https://bugs.webkit.org/show_bug.cgi?id=36197>
+
+        * Interfaces/IWebPreferencesPrivate.idl:
+        * WebPreferenceKeysPrivate.h:
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+        (WebPreferences::showDebugBorders):
+        (WebPreferences::setShowDebugBorders):
+        (WebPreferences::showRepaintCounter):
+        (WebPreferences::setShowRepaintCounter):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2010-03-16  Yury Semikhatsky <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

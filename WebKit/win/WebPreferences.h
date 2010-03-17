@@ -402,7 +402,13 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setCustomDragCursorsEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE customDragCursorsEnabled(BOOL*);
 
-    // WebPreferences
+    virtual HRESULT STDMETHODCALLTYPE setShowDebugBorders(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE showDebugBorders(BOOL*);
+
+    virtual HRESULT STDMETHODCALLTYPE setShowRepaintCounter(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE showRepaintCounter(BOOL*);
+
+   // WebPreferences
 
     // This method accesses a different preference key than developerExtrasEnabled.
     // See <rdar://5343767> for the justification.

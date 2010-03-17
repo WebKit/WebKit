@@ -135,4 +135,8 @@
 
 #define WebKitAcceleratedCompositingEnabledPreferenceKey "WebKitAcceleratedCompositingEnabled"
 
+#define WebKitShowDebugBordersPreferenceKey "WebKitShowDebugBorders"
+
+#define WebKitShowRepaintCounterPreferenceKey "WebKitShowRepaintCounter"
+
 #define WebKitCustomDragCursorsEnabledPreferenceKey "WebKitCustomDragCursorsEnabled"

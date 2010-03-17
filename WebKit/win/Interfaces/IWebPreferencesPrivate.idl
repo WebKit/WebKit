@@ -103,4 +103,10 @@ interface IWebPreferencesPrivate : IUnknown
 
     HRESULT allowFileAccessFromFileURLs([out, retval] BOOL *allowAccess);
     HRESULT setAllowFileAccessFromFileURLs([in] BOOL allowAccess);
+
+    HRESULT setShowDebugBorders([in] BOOL);
+    HRESULT showDebugBorders([out, retval] BOOL*);
+
+    HRESULT setShowRepaintCounter([in] BOOL);
+    HRESULT showRepaintCounter([out, retval] BOOL*);
 }
