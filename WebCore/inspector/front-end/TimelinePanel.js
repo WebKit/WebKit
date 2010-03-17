@@ -151,15 +151,17 @@ WebInspector.TimelinePanel.prototype = {
         this.toggleTimelineButton.addEventListener("click", this._toggleTimelineButtonClicked.bind(this), false);
 
         this.clearButton = new WebInspector.StatusBarButton("", "timeline-clear-status-bar-item");
-        this.clearButton.addEventListener("click", this.reset.bind(this), false);
+        this.clearButton.addEventListener("click", this._clearPanel.bind(this), false);
     },
 
     _toggleTimelineButtonClicked: function()
     {
         if (this.toggleTimelineButton.toggled)
             InspectorBackend.stopTimelineProfiler();
-        else
+        else {
+            this._clearPanel();
             InspectorBackend.startTimelineProfiler();
+        }
     },
 
     timelineWasStarted: function()
@@ -174,6 +176,15 @@ WebInspector.TimelinePanel.prototype = {
 
     addRecordToTimeline: function(record)
     {
+        if (record.type == WebInspector.TimelineAgent.RecordType.ResourceSendRequest && record.data.isMainResource) {
+            if (this._mainResourceIdentifier != record.data.identifier) {
+                // We are loading new main resource -> clear the panel. Check above is necessary since
+                // there may be several resource loads with main resource marker upon redirects, redirects are reported with
+                // the original identifier.
+                this._mainResourceIdentifier = record.data.identifier;
+                this._clearPanel();
+            }
+        }
         this._innerAddRecordToTimeline(record, this._records);
         this._scheduleRefresh();
     },
@@ -224,7 +235,7 @@ WebInspector.TimelinePanel.prototype = {
         this._scheduleRefresh();
     },
 
-    reset: function()
+    _clearPanel: function()
     {
         this._lastRecord = null;
         this._sendRequestRecords = {};
@@ -639,7 +650,8 @@ WebInspector.TimelinePanel.FormattedRecord = function(record, recordStyles, send
             sendRequestRecord._responseReceivedFormattedTime = this.startTime;
             record.data.url = sendRequestRecord.data.url;
             this.startTime = sendRequestRecord.startTime;
-            this.details = this._getRecordDetails(sendRequestRecord, sendRequestRecords);
+            // Now that we have resource in the collection, recalculate details in order to display short url.
+            sendRequestRecord.details = this._getRecordDetails(sendRequestRecord, sendRequestRecords);
             this.callerScriptName = sendRequestRecord.callerScriptName;
             this.callerScriptLine = sendRequestRecord.callerScriptLine;
         }
