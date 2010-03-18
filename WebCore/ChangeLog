@@ -1,3 +1,27 @@
+2010-03-18  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Multiselect Popup - Listbox click simulation
+        https://bugs.webkit.org/show_bug.cgi?id=36177
+
+        Listbox popups will need to notify the corresponding select elements that a
+        selection change happened. The current HTMLSelectElement interface does not
+        allow multiple selections.
+
+        The new method  listBoxSelectItem will be used for that. I have refactored part
+        of the mouse handling code in bug 36124 and I am now reusing it here for
+        <select multiple> popups. All the other cases will handled as they were before to be
+        sure that no side effects will show up.
+
+        * dom/SelectElement.cpp:
+        (WebCore::SelectElement::updateListBoxSelection):
+        (WebCore::SelectElement::listBoxOnChange):
+        * dom/SelectElement.h:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::listBoxPopupClick):
+        * html/HTMLSelectElement.h:
+
 2010-03-12  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by David Levin.

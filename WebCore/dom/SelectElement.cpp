@@ -150,7 +150,7 @@ void SelectElement::setActiveSelectionEndIndex(SelectElementData& data, int inde
 
 void SelectElement::updateListBoxSelection(SelectElementData& data, Element* element, bool deselectOtherOptions)
 {
-    ASSERT(element->renderer() && element->renderer()->isListBox());
+    ASSERT(element->renderer() && (element->renderer()->isListBox() || data.multiple()));
     ASSERT(data.activeSelectionAnchorIndex() >= 0);
 
     unsigned start = min(data.activeSelectionAnchorIndex(), data.activeSelectionEndIndex());
@@ -176,7 +176,7 @@ void SelectElement::updateListBoxSelection(SelectElementData& data, Element* ele
 
 void SelectElement::listBoxOnChange(SelectElementData& data, Element* element)
 {
-    ASSERT(!data.usesMenuList());
+    ASSERT(!data.usesMenuList() || data.multiple());
 
     Vector<bool>& lastOnChangeSelection = data.lastOnChangeSelection(); 
     const Vector<Element*>& items = data.listItems(element);

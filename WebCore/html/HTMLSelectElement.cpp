@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
@@ -95,6 +96,17 @@ void HTMLSelectElement::setSelectedIndexByUser(int optionIndex, bool deselect, b
         return;
     
     SelectElement::setSelectedIndex(m_data, this, optionIndex, deselect, fireOnChangeNow, true);
+}
+
+void HTMLSelectElement::listBoxSelectItem(int listIndex, bool allowMultiplySelections, bool shift, bool fireOnChangeNow)
+{
+    if (!multiple())
+        setSelectedIndexByUser(listIndex, true, fireOnChangeNow);
+    else {
+        updateSelectedState(m_data, this, listIndex, allowMultiplySelections, shift);
+        if (fireOnChangeNow)
+            listBoxOnChange();
+    }
 }
 
 int HTMLSelectElement::activeSelectionStartListIndex() const
