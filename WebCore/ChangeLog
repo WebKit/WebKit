@@ -1,3 +1,22 @@
+2010-03-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7761400> Rework the fix for
+        https://bugs.webkit.org/show_bug.cgi?id=18722
+
+        Test: fast/dynamic/float-remove-above-line-2.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::removeFloatingObject): Treat 0- and less-than-0-height floats
+        as having a height of 1 so that they intersect with the line they originate on.
+        (WebCore::RenderBlock::clearFloats): Use numeric_limits.
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren): Removed the intersection checks here,
+        so that a float is always included in the float list of the line it originates on, even
+        if it does not intersect that line. This ensures that every float is accounted for, which
+        is necessary during incremental layout when adding floats from clean lines.
+
 2010-03-18  Antti Koivisto  <koivisto@iki.fi>
 
         Reviewed by Kenneth Rohde Christiansen.

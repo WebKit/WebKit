@@ -1,3 +1,13 @@
+2010-03-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Additional test for <rdar://problem/7761400>
+
+        * fast/dynamic/float-remove-above-line-2.html: Copied from LayoutTests/fast/dynamic/float-remove-above-line.html.
+        * fast/dynamic/float-remove-above-line-expected.txt: Updated.
+        * fast/dynamic/float-remove-above-line.html: Fixed inconsequential typo in end tag.
+
 2010-03-18  Alexey Proskuryakov  <ap@apple.com>
 
         Not reviewed.

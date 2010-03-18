@@ -646,7 +646,6 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
         bool endLineMatched = false;
         bool checkForEndLineMatch = endLine;
         bool checkForFloatsFromLastLine = false;
-        int lastHeight = height();
 
         bool isLineEmpty = true;
 
@@ -771,8 +770,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
                 } else
                     m_floatingObjects->first();
                 for (FloatingObject* f = m_floatingObjects->current(); f; f = m_floatingObjects->next()) {
-                    if (f->m_bottom > lastHeight)
-                        lastRootBox()->floats().append(f->m_renderer);
+                    lastRootBox()->floats().append(f->m_renderer);
                     ASSERT(f->m_renderer == floats[floatIndex].object);
                     // If a float's geometry has changed, give up on syncing with clean lines.
                     if (floats[floatIndex].rect != IntRect(f->m_left, f->m_top, f->m_width, f->m_bottom - f->m_top))
@@ -782,7 +780,6 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
                 lastFloat = m_floatingObjects->last();
             }
 
-            lastHeight = height();
             lineMidpointState.reset();
             resolver.setPosition(end);
         }
@@ -842,10 +839,8 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
                 m_floatingObjects->next();
             } else
                 m_floatingObjects->first();
-            for (FloatingObject* f = m_floatingObjects->current(); f; f = m_floatingObjects->next()) {
-                if (f->m_bottom > lastHeight)
-                    lastRootBox()->floats().append(f->m_renderer);
-            }
+            for (FloatingObject* f = m_floatingObjects->current(); f; f = m_floatingObjects->next())
+                lastRootBox()->floats().append(f->m_renderer);
             lastFloat = m_floatingObjects->last();
         }
         size_t floatCount = floats.size();
