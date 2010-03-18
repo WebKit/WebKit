@@ -1,3 +1,13 @@
+2010-03-17  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: When switching resources in the Resources panel, the Content tab is always selected
+        https://bugs.webkit.org/show_bug.cgi?id=36222
+
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.showResource):
+
 2010-03-17  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.
