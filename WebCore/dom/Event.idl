@@ -68,6 +68,7 @@ module events {
 
         // DOM Level 3 Additions.
         readonly attribute boolean defaultPrevented;
+        void stopImmediatePropagation();
 
         // IE Extensions
         readonly attribute EventTarget      srcElement;

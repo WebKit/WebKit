@@ -292,6 +292,12 @@ bool EventTarget::fireEventListeners(Event* event)
             continue;
         if (event->eventPhase() == Event::BUBBLING_PHASE && registeredListener.useCapture)
             continue;
+
+        // If stopImmediatePropagation has been called, we just break out immediately, without
+        // handling any more events on this target.
+        if (event->immediatePropagationStopped())
+            break;
+
         // To match Mozilla, the AT_TARGET phase fires both capturing and bubbling
         // event listeners, even though that violates some versions of the DOM spec.
         registeredListener.listener->handleEvent(scriptExecutionContext(), event);

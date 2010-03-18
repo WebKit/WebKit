@@ -88,8 +88,10 @@ namespace WebCore {
         bool bubbles() const { return m_canBubble; }
         bool cancelable() const { return m_cancelable; }
         DOMTimeStamp timeStamp() const { return m_createTime; }
-        void stopPropagation() { m_propagationStopped = true; }
 
+        void stopPropagation() { m_propagationStopped = true; }
+        void stopImmediatePropagation() { m_immediatePropagationStopped = true; }
+        
         // IE Extensions
         EventTarget* srcElement() const { return target(); } // MSIE extension - "the object that fired the event"
 
@@ -131,7 +133,8 @@ namespace WebCore {
 #endif
         bool fromUserGesture();
         
-        bool propagationStopped() const { return m_propagationStopped; }
+        bool propagationStopped() const { return m_propagationStopped || m_immediatePropagationStopped; }
+        bool immediatePropagationStopped() const { return m_immediatePropagationStopped; }
 
         bool defaultPrevented() const { return m_defaultPrevented; }
         void preventDefault() { if (m_cancelable) m_defaultPrevented = true; }
@@ -167,6 +170,7 @@ namespace WebCore {
         bool m_cancelable;
 
         bool m_propagationStopped;
+        bool m_immediatePropagationStopped;
         bool m_defaultPrevented;
         bool m_defaultHandled;
         bool m_cancelBubble;
