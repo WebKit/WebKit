@@ -61,6 +61,7 @@ class WebKitPatch(MultiCommandTool):
         self.bugs = Bugzilla()
         self.buildbot = BuildBot()
         self.executive = Executive()
+        self._irc = None
         self.user = User()
         self._scm = None
         self.status_server = StatusServer()
@@ -81,8 +82,23 @@ class WebKitPatch(MultiCommandTool):
 
         return self._scm
 
+    # FIXME: Add a parameter for nickname?
+    def ensure_irc_connected(self):
+        if not self._irc:
+            self._irc = IRCProxy()
+
+    def irc(self):
+        # We don't automatically construct IRCProxy here because constructing
+        # IRCProxy actually connects to IRC.  We want clients to explicitly
+        # connect to IRC.
+        return self._irc
+
     def path(self):
         return self._path
+
+    def command_completed(self):
+        if self._irc:
+            self._irc.disconnect()
 
     def should_show_in_main_help(self, command):
         if not command.show_in_main_help:

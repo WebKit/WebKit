@@ -37,7 +37,7 @@ from webkitpy.mock_bugzillatool import MockBugzillaTool, MockSCM
 from webkitpy.outputcapture import OutputCapture
 
 
-class TestQueue(AbstractQueue):
+class TestQueue(AbstractPatchQueue):
     name = "test-queue"
 
 

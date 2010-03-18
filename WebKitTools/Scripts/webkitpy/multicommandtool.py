@@ -263,6 +263,9 @@ class MultiCommandTool(object):
     def path(self):
         raise NotImplementedError, "subclasses must implement"
 
+    def command_completed(self):
+        pass
+
     def should_show_in_main_help(self, command):
         return command.show_in_main_help
 
@@ -296,4 +299,6 @@ class MultiCommandTool(object):
             log(failure_reason)
             return 0 # FIXME: Should this really be 0?
 
-        return command.check_arguments_and_execute(options, args, self)
+        result = command.check_arguments_and_execute(options, args, self)
+        self.command_completed()
+        return result

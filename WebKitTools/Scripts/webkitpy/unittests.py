@@ -40,6 +40,7 @@ from webkitpy.commands.openbugs_unittest import OpenBugsTest
 from webkitpy.commands.upload_unittest import *
 from webkitpy.commands.queries_unittest import *
 from webkitpy.commands.queues_unittest import *
+from webkitpy.commands.sheriffbot_unittest import *
 from webkitpy.committers_unittest import *
 from webkitpy.credentials_unittest import *
 from webkitpy.diff_parser_unittest import *

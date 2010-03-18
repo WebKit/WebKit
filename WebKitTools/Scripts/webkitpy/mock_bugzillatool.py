@@ -373,6 +373,15 @@ class MockUser(object):
         pass
 
 
+class MockIRC(object):
+
+    def post(self, message):
+        log("MOCK: irc.post: %s" % message)
+
+    def disconnect(self):
+        log("MOCK: irc.disconnect")
+
+
 class MockStatusServer(object):
 
     def __init__(self):
@@ -391,12 +400,20 @@ class MockBugzillaTool():
         self.bugs = MockBugzilla()
         self.buildbot = MockBuildBot()
         self.executive = Mock()
+        self._irc = None
         self.user = MockUser()
         self._scm = MockSCM()
         self.status_server = MockStatusServer()
 
     def scm(self):
         return self._scm
+
+    def ensure_irc_connected(self):
+        if not self._irc:
+            self._irc = MockIRC()
+
+    def irc(self):
+        return self._irc
 
     def path(self):
         return "echo"

@@ -69,24 +69,20 @@ class AbstractQueue(Command, QueueEngineDelegate):
             traceback.print_exc()
             log("Failed to CC watchers.")
 
-    def _update_status(self, message, patch=None, results_file=None):
-        self.tool.status_server.update_status(self.name, message, patch, results_file)
+    def run_webkit_patch(self, args):
+        webkit_patch_args = [self.tool.path()]
+        # FIXME: This is a hack, we should have a more general way to pass global options.
+        webkit_patch_args += ["--status-host=%s" % self.tool.status_server.host]
+        webkit_patch_args += map(str, args)
+        self.tool.executive.run_and_throw_if_fail(webkit_patch_args)
 
-    def _did_pass(self, patch):
-        self._update_status(self._pass_status, patch)
-
-    def _did_fail(self, patch):
-        self._update_status(self._fail_status, patch)
-
-    def _did_error(self, patch, reason):
-        message = "%s: %s" % (self._error_status, reason)
-        self._update_status(message, patch)
+    # QueueEngineDelegate methods
 
     def queue_log_path(self):
         return "%s.log" % self.name
 
-    def work_item_log_path(self, patch):
-        return os.path.join("%s-logs" % self.name, "%s.log" % patch.bug_id())
+    def work_item_log_path(self, work_item):
+        raise NotImplementedError, "subclasses must implement"
 
     def begin_work_queue(self):
         log("CAUTION: %s will discard all local changes in \"%s\"" % (self.name, self.tool.scm().checkout_root))
@@ -112,15 +108,7 @@ class AbstractQueue(Command, QueueEngineDelegate):
     def handle_unexpected_error(self, work_item, message):
         raise NotImplementedError, "subclasses must implement"
 
-    def run_webkit_patch(self, args):
-        webkit_patch_args = [self.tool.path()]
-        # FIXME: This is a hack, we should have a more general way to pass global options.
-        webkit_patch_args += ["--status-host=%s" % self.tool.status_server.host]
-        webkit_patch_args += map(str, args)
-        self.tool.executive.run_and_throw_if_fail(webkit_patch_args)
-
-    def log_progress(self, patch_ids):
-        log("%s in %s [%s]" % (pluralize("patch", len(patch_ids)), self.name, ", ".join(map(str, patch_ids))))
+    # Command methods
 
     def execute(self, options, args, tool, engine=QueueEngine):
         self.options = options
@@ -136,15 +124,36 @@ class AbstractQueue(Command, QueueEngineDelegate):
         return tool.status_server.update_status(cls.name, message, state["patch"], StringIO(output))
 
 
-class CommitQueue(AbstractQueue, StepSequenceErrorHandler):
+class AbstractPatchQueue(AbstractQueue):
+    def _update_status(self, message, patch=None, results_file=None):
+        self.tool.status_server.update_status(self.name, message, patch, results_file)
+
+    def _did_pass(self, patch):
+        self._update_status(self._pass_status, patch)
+
+    def _did_fail(self, patch):
+        self._update_status(self._fail_status, patch)
+
+    def _did_error(self, patch, reason):
+        message = "%s: %s" % (self._error_status, reason)
+        self._update_status(message, patch)
+
+    def work_item_log_path(self, patch):
+        return os.path.join("%s-logs" % self.name, "%s.log" % patch.bug_id())
+
+    def log_progress(self, patch_ids):
+        log("%s in %s [%s]" % (pluralize("patch", len(patch_ids)), self.name, ", ".join(map(str, patch_ids))))
+
+
+class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
     name = "commit-queue"
     def __init__(self):
-        AbstractQueue.__init__(self)
+        AbstractPatchQueue.__init__(self)
 
-    # AbstractQueue methods
+    # AbstractPatchQueue methods
 
     def begin_work_queue(self):
-        AbstractQueue.begin_work_queue(self)
+        AbstractPatchQueue.begin_work_queue(self)
         self.committer_validator = CommitterValidator(self.tool.bugs)
 
     def _validate_patches_in_commit_queue(self):
@@ -240,9 +249,9 @@ class CommitQueue(AbstractQueue, StepSequenceErrorHandler):
         validator.reject_patch_from_commit_queue(state["patch"].id(), cls._error_message_for_bug(tool, status_id, script_error))
 
 
-class AbstractReviewQueue(AbstractQueue, PersistentPatchCollectionDelegate, StepSequenceErrorHandler):
+class AbstractReviewQueue(AbstractPatchQueue, PersistentPatchCollectionDelegate, StepSequenceErrorHandler):
     def __init__(self, options=None):
-        AbstractQueue.__init__(self, options)
+        AbstractPatchQueue.__init__(self, options)
 
     def _review_patch(self, patch):
         raise NotImplementedError, "subclasses must implement"
@@ -261,10 +270,10 @@ class AbstractReviewQueue(AbstractQueue, PersistentPatchCollectionDelegate, Step
     def is_terminal_status(self, status):
         return status == "Pass" or status == "Fail" or status.startswith("Error:")
 
-    # AbstractQueue methods
+    # AbstractPatchQueue methods
 
     def begin_work_queue(self):
-        AbstractQueue.begin_work_queue(self)
+        AbstractPatchQueue.begin_work_queue(self)
         self._patches = PersistentPatchCollection(self)
 
     def next_work_item(self):

@@ -72,7 +72,7 @@ class TrivialTool(MultiCommandTool):
     def __init__(self, commands=None):
         MultiCommandTool.__init__(self, name="trivial-tool", commands=commands)
 
-    def path():
+    def path(self):
         return __file__
 
     def should_execute_command(self, command):

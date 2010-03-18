@@ -1,3 +1,41 @@
+2010-03-18  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        First cut at SheriffBot
+        https://bugs.webkit.org/show_bug.cgi?id=36253
+
+        This patch contains a first attempt at writing a sheriff bot.
+        Currently, we're missing the logic that actually finds the SVN revision
+        numbers to complain about, but once we have that, we'll have the rest
+        of the infrustructure to ping IRC and to file bugs.
+
+        There's a lot to fill in for the SheriffBot, but this patch give us the
+        framework in which to do it.
+
+        This patch required a bit of refactoring of AbstractQueue because
+        SheriffBot is the first bot that doesn't process patches (it processes
+        SVN revisions).  Accordingly, I've factored out AbstractPatchQueue to
+        hold the parts of AbstractQueue that are specific to dealing with
+        patches.  Some of the choices here might not be obvious yet, but we can
+        tweak them as our needs become clearer.
+
+        * Scripts/webkitpy/commands/queues.py:
+        * Scripts/webkitpy/commands/queues_unittest.py:
+        * Scripts/webkitpy/commands/sheriffbot.py: Added.
+        * Scripts/webkitpy/commands/sheriffbot_unittest.py: Added.
+        * Scripts/webkitpy/mock_bugzillatool.py:
+            Added a MockIRC object to the mock tool.
+        * Scripts/webkitpy/multicommandtool.py:
+            Added a finalize method so the tool can disconnect from IRC
+            cleanly instead of just droping the socket.
+        * Scripts/webkitpy/multicommandtool_unittest.py:
+        * Scripts/webkitpy/patch/patcher.py:
+            Added support for talking to IRC.
+        * Scripts/webkitpy/unittests.py:
+            We should add a commands/unittests.py file at some point to make
+            the commands module more self-contained.
+
 2010-03-18  Antti Koivisto  <koivisto@iki.fi>
 
         Reviewed by Kenneth Rohde Christiansen.
