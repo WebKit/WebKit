@@ -1,3 +1,14 @@
+2010-03-17  Chang Shu  <chang.shu@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36139
+        [Qt] Clean up cache while setting cache quota. This behavior matches other platforms,
+        such as mac and gtk.
+
+         * Api/qwebsettings.cpp:
+        (QWebSettings::setOfflineWebApplicationCacheQuota):
+
 2010-03-17  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

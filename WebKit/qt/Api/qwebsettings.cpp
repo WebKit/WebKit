@@ -937,6 +937,8 @@ QString QWebSettings::offlineWebApplicationCachePath()
 void QWebSettings::setOfflineWebApplicationCacheQuota(qint64 maximumSize)
 {
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    WebCore::cacheStorage().empty();
+    WebCore::cacheStorage().vacuumDatabaseFile();
     WebCore::cacheStorage().setMaximumSize(maximumSize);
 #endif
 }

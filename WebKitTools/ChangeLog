@@ -1,3 +1,14 @@
+2010-03-17  Chang Shu  <chang.shu@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36139
+        [Qt] Clean up cache each time DumpRenderTree starts. This behavior 
+        matches other platforms, such as mac and gtk.
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+
 2010-03-17  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.

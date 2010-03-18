@@ -23,7 +23,6 @@ http/tests/wml
 
 # Skip failed appcache test cases
 http/tests/appcache/auth.html
-http/tests/appcache/empty-manifest.html
 http/tests/appcache/fallback.html
 http/tests/appcache/foreign-iframe-main.html
 http/tests/appcache/manifest-redirect-2.html

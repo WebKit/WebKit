@@ -325,6 +325,10 @@ DumpRenderTree::DumpRenderTree()
     m_mainView->setPage(m_page);
     m_mainView->setContextMenuPolicy(Qt::NoContextMenu);
 
+    // clean up cache by resetting quota.
+    qint64 quota = webPage()->settings()->offlineWebApplicationCacheQuota();
+    webPage()->settings()->setOfflineWebApplicationCacheQuota(quota);
+
     // create our controllers. This has to be done before connectFrame,
     // as it exports there to the JavaScript DOM window.
     m_controller = new LayoutTestController(this);
