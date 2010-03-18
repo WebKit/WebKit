@@ -43,6 +43,11 @@ class CommittersTest(unittest.TestCase):
         self.assertEqual(committer_list.committer_by_email('two@rad.com'), reviewer)
         self.assertEqual(committer_list.reviewer_by_email('so_two@gmail.com'), reviewer)
 
+        # Test valid committer and reviewer lookup
+        self.assertEqual(committer_list.committer_by_name("Test One"), committer)
+        self.assertEqual(committer_list.committer_by_name("Test Two"), reviewer)
+        self.assertEqual(committer_list.committer_by_name("Test Three"), None)
+
         # Test that the first email is assumed to be the Bugzilla email address (for now)
         self.assertEqual(committer_list.committer_by_email('two@rad.com').bugzilla_email(), 'two@test.com')
 

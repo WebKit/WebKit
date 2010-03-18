@@ -262,6 +262,12 @@ class CommitterList:
                     self._committers_by_email[email] = committer
         return self._committers_by_email
 
+    def committer_by_name(self, name):
+        # This could be made into a hash lookup if callers need it to be fast.
+        for committer in self.committers():
+            if committer.full_name == name:
+                return committer
+
     def committer_by_email(self, email):
         return self._email_to_committer_map().get(email)
 
