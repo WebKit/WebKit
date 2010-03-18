@@ -1,3 +1,15 @@
+2010-03-18  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, build fix.
+
+        [V8] Turn npObjectTypeInfo into a function, make everyone happy.
+
+        * bindings/v8/NPV8Object.cpp:
+        (WebCore::npObjectTypeInfo): Added new function.
+        (npCreateV8ScriptObject):
+        * bindings/v8/NPV8Object.h: Turned npObjectTypeInfo into function.
+        * bindings/v8/V8NPObject.cpp: Replaced references to function
+
 2010-03-18  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser.

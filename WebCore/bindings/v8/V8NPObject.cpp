@@ -375,7 +375,7 @@ v8::Local<v8::Object> createV8ObjectForNPObject(NPObject* object, NPObject* root
     if (value.IsEmpty())
         return value;
 
-    V8DOMWrapper::setDOMWrapper(value, &npObjectTypeInfo, object);
+    V8DOMWrapper::setDOMWrapper(value, npObjectTypeInfo(), object);
 
     // KJS retains the object as part of its wrapper (see Bindings::CInstance).
     _NPN_RetainObject(object);
@@ -394,7 +394,7 @@ void forgetV8ObjectForNPObject(NPObject* object)
     if (staticNPObjectMap.contains(object)) {
         v8::HandleScope scope;
         v8::Persistent<v8::Object> handle(staticNPObjectMap.get(object));
-        V8DOMWrapper::setDOMWrapper(handle, &npObjectTypeInfo, 0);
+        V8DOMWrapper::setDOMWrapper(handle, npObjectTypeInfo(), 0);
         staticNPObjectMap.forget(object);
         _NPN_ReleaseObject(object);
     }
