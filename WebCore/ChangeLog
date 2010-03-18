@@ -1,3 +1,22 @@
+2010-03-17  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Rubber stamped by Gustavo Noronha Silva.
+
+        [Gtk+] Avoid making a copy of the HTTPHeaderMap.
+
+        ResourceRequest::httpHeaderFields() is returning a const
+        reference but we are storing it as a simple value. This
+        means that we run either the copy constructor or the assignment
+        operator and make a copy of the RefPtrs.
+
+        This extra copy can be avoided easily by storing
+        the result as a const reference.
+
+        * platform/network/soup/ResourceRequestSoup.cpp:
+        (WebCore::ResourceRequest::toSoupMessage):
+        * platform/network/soup/ResourceResponseSoup.cpp:
+        (WebCore::ResourceResponseSoup::toSoupMessage):
+
 2010-03-17  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

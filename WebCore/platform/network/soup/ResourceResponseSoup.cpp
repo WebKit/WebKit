@@ -40,7 +40,7 @@ SoupMessage* ResourceResponse::toSoupMessage() const
 
     soupMessage->status_code = httpStatusCode();
 
-    HTTPHeaderMap headers = httpHeaderFields();
+    const HTTPHeaderMap& headers = httpHeaderFields();
     SoupMessageHeaders* soupHeaders = soupMessage->response_headers;
     if (!headers.isEmpty()) {
         HTTPHeaderMap::const_iterator end = headers.end();

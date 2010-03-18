@@ -39,7 +39,7 @@ SoupMessage* ResourceRequest::toSoupMessage() const
     if (!soupMessage)
         return 0;
 
-    HTTPHeaderMap headers = httpHeaderFields();
+    const HTTPHeaderMap& headers = httpHeaderFields();
     SoupMessageHeaders* soupHeaders = soupMessage->request_headers;
     if (!headers.isEmpty()) {
         HTTPHeaderMap::const_iterator end = headers.end();
