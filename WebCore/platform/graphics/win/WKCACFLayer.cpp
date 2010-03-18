@@ -241,6 +241,7 @@ void WKCACFLayer::addSublayer(PassRefPtr<WKCACFLayer> sublayer)
 void WKCACFLayer::insertSublayer(PassRefPtr<WKCACFLayer> sublayer, size_t index)
 {
     index = min(index, numSublayers());
+    sublayer->removeFromSuperlayer();
     CACFLayerInsertSublayer(layer(), sublayer->layer(), index);
     setNeedsCommit();
 }
@@ -285,21 +286,17 @@ void WKCACFLayer::replaceSublayer(WKCACFLayer* reference, PassRefPtr<WKCACFLayer
     if (reference == newLayer)
         return;
 
-    if (!newLayer) {
-        removeSublayer(reference);
-        return;
-    }
-
-    newLayer->removeFromSuperlayer();
-
     int referenceIndex = indexOfSublayer(reference);
     ASSERT(referenceIndex != -1);
     if (referenceIndex == -1)
         return;
 
-    // FIXME: Can we make this more efficient? The current CACF API doesn't seem to give us a way to do so.
     reference->removeFromSuperlayer();
-    insertSublayer(newLayer, referenceIndex);
+
+    if (newLayer) {
+        newLayer->removeFromSuperlayer();
+        insertSublayer(newLayer, referenceIndex);
+    }
 }
 
 void WKCACFLayer::removeFromSuperlayer()
@@ -308,19 +305,8 @@ void WKCACFLayer::removeFromSuperlayer()
     if (!superlayer)
         return;
 
-    superlayer->removeSublayer(this);
     CACFLayerRemoveFromSuperlayer(layer());
     superlayer->setNeedsCommit();
-}
-
-void WKCACFLayer::removeSublayer(const WKCACFLayer* sublayer)
-{
-    int foundIndex = indexOfSublayer(sublayer);
-    if (foundIndex == -1)
-        return;
-
-    CACFLayerRemoveFromSuperlayer(sublayer->layer());
-    setNeedsCommit();
 }
 
 const WKCACFLayer* WKCACFLayer::sublayerAtIndex(int index) const
@@ -431,29 +417,18 @@ void WKCACFLayer::removeAllSublayers()
 
 void WKCACFLayer::setSublayers(const Vector<RefPtr<WKCACFLayer> >& sublayers)
 {
-    if (sublayers.isEmpty())
-        CACFLayerSetSublayers(layer(), 0);
-    else {
-        // Create a vector of CACFLayers.
-        Vector<const void*> layers;
-        for (size_t i = 0; i < sublayers.size(); i++)
-            layers.append(sublayers[i]->layer());
-    
-        RetainPtr<CFArrayRef> layersArray(AdoptCF, CFArrayCreate(0, layers.data(), layers.size(), 0));
-        CACFLayerSetSublayers(layer(), layersArray.get());
-    }
-    
+    // Remove all the current sublayers and add the passed layers
+    CACFLayerSetSublayers(layer(), 0);
+
+    // Perform removeFromSuperLayer in a separate pass. CACF requires superlayer to
+    // be null or CACFLayerInsertSublayer silently fails.
+    for (size_t i = 0; i < sublayers.size(); i++)
+        CACFLayerRemoveFromSuperlayer(sublayers[i]->layer());
+
+    for (size_t i = 0; i < sublayers.size(); i++)
+        CACFLayerInsertSublayer(layer(), sublayers[i]->layer(), i);
+
     setNeedsCommit();
-}
-
-void WKCACFLayer::moveSublayers(WKCACFLayer* fromLayer, WKCACFLayer* toLayer)
-{
-    if (!fromLayer || !toLayer)
-        return;
-
-    CACFLayerSetSublayers(toLayer->layer(), CACFLayerGetSublayers(fromLayer->layer()));
-    fromLayer->setNeedsCommit();
-    toLayer->setNeedsCommit();
 }
 
 WKCACFLayer* WKCACFLayer::superlayer() const
@@ -508,11 +483,11 @@ void WKCACFLayer::printLayer(int indent) const
     CGPoint layerAnchorPoint = anchorPoint();
     CGRect layerBounds = bounds();
     printIndent(indent);
-    fprintf(stderr, "(%s [%g %g %g] [%g %g %g %g] [%g %g %g]\n",
+    fprintf(stderr, "(%s [%g %g %g] [%g %g %g %g] [%g %g %g] superlayer=%p\n",
         isTransformLayer() ? "transform-layer" : "layer",
         layerPosition.x, layerPosition.y, zPosition(), 
         layerBounds.origin.x, layerBounds.origin.y, layerBounds.size.width, layerBounds.size.height,
-        layerAnchorPoint.x, layerAnchorPoint.y, anchorPointZ());
+        layerAnchorPoint.x, layerAnchorPoint.y, anchorPointZ(), superlayer());
 
     // Print name if needed
     String layerName = name();

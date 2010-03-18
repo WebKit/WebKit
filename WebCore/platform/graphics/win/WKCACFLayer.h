@@ -118,7 +118,6 @@ public:
     void insertSublayerBelowLayer(PassRefPtr<WKCACFLayer>, const WKCACFLayer* reference);
     void replaceSublayer(WKCACFLayer* reference, PassRefPtr<WKCACFLayer>);
     void removeFromSuperlayer();
-    static void moveSublayers(WKCACFLayer* fromLayer, WKCACFLayer* toLayer);
 
     WKCACFLayer* ancestorOrSelfWithSuperlayer(WKCACFLayer*) const;
     
