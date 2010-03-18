@@ -1,3 +1,17 @@
+2010-03-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36274
+        CSS3 :nth-child selector 'odd' keyword case sensitivity test fails
+        
+        The tests for "odd", "even" etc. for nth-child selectors should be case insensitive.
+
+        Test: fast/css/nth-child-odd-case-insensitive.html
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::RareData::parseNth):
+
 2010-03-18  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Oliver Hunt.

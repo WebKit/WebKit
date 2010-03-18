@@ -569,7 +569,7 @@ bool CSSSelector::matchNth(int count)
 // a helper function for parsing nth-arguments
 bool CSSSelector::RareData::parseNth()
 {    
-    const String& argument = m_argument;
+    const String& argument = m_argument.lower();
     
     if (argument.isEmpty())
         return false;
