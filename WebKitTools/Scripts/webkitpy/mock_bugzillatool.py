@@ -246,6 +246,20 @@ class MockBugzilla(Mock):
         self.committers = CommitterList(reviewers=[Reviewer("Foo Bar",
                                                             "foo@bar.com")])
 
+    def create_bug(self,
+                   bug_title,
+                   bug_description,
+                   component=None,
+                   patch_file_object=None,
+                   patch_description=None,
+                   cc=None,
+                   blocked=None,
+                   mark_for_review=False,
+                   mark_for_commit_queue=False):
+        log("MOCK create_bug")
+        log("bug_title: %s" % bug_title)
+        log("bug_description: %s" % bug_description)
+
     def fetch_bug(self, bug_id):
         return Bug(self.bug_cache.get(bug_id), self)
 

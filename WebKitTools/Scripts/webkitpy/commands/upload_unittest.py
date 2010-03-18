@@ -65,7 +65,8 @@ class UploadCommandsTest(CommandsTest):
         self.assert_execute_outputs(Prepare(), [42])
 
     def test_prepare(self):
-        self.assert_execute_outputs(Prepare(), [])
+        expected_stderr = "MOCK create_bug\nbug_title: Mock user response\nbug_description: Mock user response\n"
+        self.assert_execute_outputs(Prepare(), [], expected_stderr=expected_stderr)
 
     def test_upload(self):
         expected_stderr = "Running check-webkit-style\nObsoleting 2 old patches on bug 42\nMOCK: user.open_url: http://example.com/42\n"

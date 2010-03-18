@@ -301,7 +301,7 @@ class CreateRollout(AbstractRolloutPrepCommand):
         state["bug_blocked"] = state["bug_id"]
         del state["bug_id"]
         state["bug_title"] = "REGRESSION(r%s): %s" % (state["revision"], state["reason"])
-        state["bug_description"] = "%s broke the build:\n%s"
+        state["bug_description"] = "%s broke the build:\n%s" % (view_source_url(state["revision"]), state["reason"])
         # FIXME: If we had more context here, we could link to other open bugs
         #        that mention the test that regressed.
         if options.parent_command == "sheriff-bot":
@@ -313,7 +313,7 @@ test (if we don't already have one on file) and dup this bug against that bug
 so that we can track how often these flaky tests case pain.
 
 "Only you can prevent forest fires." -- Smokey the Bear
-""" % (state["reason"], view_source_url(state["revision"]))
+"""
         return state
 
 
