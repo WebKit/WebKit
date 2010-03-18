@@ -1,3 +1,19 @@
+2010-03-18  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add an overlay QGraphicsTextItem to QtLauncher so we can display FPS info
+        on the launcher and not on the terminal anymore.
+
+        [Qt] QtLauncher's FPS info should be displayed on an overlay text item
+        https://bugs.webkit.org/show_bug.cgi?id=36244
+
+        * QtLauncher/webview.cpp:
+        (WebViewGraphicsBased::WebViewGraphicsBased):
+        (WebViewGraphicsBased::setFrameRateMeasurementEnabled):
+        (WebViewGraphicsBased::updateFrameRate):
+        * QtLauncher/webview.h:
+
 2010-03-18  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

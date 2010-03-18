@@ -64,6 +64,21 @@ protected:
 };
 
 
+class GraphicsTextItem : public QGraphicsTextItem {
+    Q_OBJECT
+
+public:
+    GraphicsTextItem(const QString& text, QGraphicsItem* parent = 0) : QGraphicsTextItem(text, parent) {}
+
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *style,
+               QWidget *widget)
+    {
+        painter->fillRect(boundingRect(), QColor(0, 0, 0, 255));
+        QGraphicsTextItem::paint(painter, style, widget);
+    }
+};
+
+
 class WebViewGraphicsBased : public QGraphicsView {
     Q_OBJECT
     Q_PROPERTY(qreal yRotation READ yRotation WRITE setYRotation)
@@ -76,10 +91,10 @@ public:
     QGraphicsItem::CacheMode itemCacheMode() { return m_item->cacheMode(); }
 
     void setFrameRateMeasurementEnabled(bool enabled);
-    bool frameRateMeasurementEnabled() { return m_measureFps; } 
+    bool frameRateMeasurementEnabled() { return m_measureFps; }
 
     virtual void paintEvent(QPaintEvent* event);
-    
+
     void setResizesToContents(bool b);
 
     void setYRotation(qreal angle)
@@ -118,6 +133,7 @@ private:
     bool m_measureFps;
     qreal m_yRotation;
     bool m_resizesToContents;
+    GraphicsTextItem* m_fpsTextItem;
 };
 
 #endif
