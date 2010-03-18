@@ -51,7 +51,11 @@ class ChromiumMacPort(chromium.ChromiumPort):
         chromium.ChromiumPort.__init__(self, port_name, options)
 
     def baseline_search_path(self):
-        return [self.baseline_path(),
+        # FIXME: remove the downstream paths once we've migrated the
+        # baselines.
+        return [self._chromium_baseline_path('chromium-mac'),
+                self._webkit_baseline_path('chromium-mac'),
+                self._webkit_baseline_path('chromium'),
                 self._webkit_baseline_path('mac' + self.version()),
                 self._webkit_baseline_path('mac')]
 
