@@ -1,3 +1,14 @@
+2010-03-17  Garret Kelly  <gdk@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        PlatformTouchEventBuilder should not be resizing the touch point
+        array before appending touch points to it.
+        https://bugs.webkit.org/show_bug.cgi?id=36231
+
+        * src/WebInputEventConversion.cpp:
+        (WebKit::PlatformTouchEventBuilder::PlatformTouchEventBuilder):
+
 2010-03-17  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Dimitri Glazkov.

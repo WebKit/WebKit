@@ -222,7 +222,6 @@ PlatformTouchEventBuilder::PlatformTouchEventBuilder(Widget* widget, const WebTo
     m_shiftKey = event.modifiers & WebInputEvent::ShiftKey;
     m_metaKey = event.modifiers & WebInputEvent::MetaKey;
 
-    m_touchPoints.resize(event.touchPointsLength);
     for (int i = 0; i < event.touchPointsLength; ++i)
         m_touchPoints.append(PlatformTouchPointBuilder(widget, event.touchPoints[i]));
 }
