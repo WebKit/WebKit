@@ -53,7 +53,6 @@
 #include "V8GCForContextDispose.h"
 #include "V8HiddenPropertyName.h"
 #include "V8History.h"
-#include "V8Index.h"
 #include "V8Location.h"
 #include "V8Proxy.h"
 #include "WorkerContextExecutionProxy.h"
@@ -92,28 +91,20 @@ static void reportFatalErrorInV8(const char* location, const char* message)
 static Frame* getTargetFrame(v8::Local<v8::Object> host, v8::Local<v8::Value> data)
 {
     Frame* target = 0;
-    switch (V8ClassIndex::FromInt(data->Int32Value())) {
-    case V8ClassIndex::DOMWINDOW: {
+    WrapperTypeInfo* type = WrapperTypeInfo::unwrap(data);
+    if (V8DOMWindow::info.equals(type)) {
         v8::Handle<v8::Object> window = V8DOMWrapper::lookupDOMWrapper(V8DOMWindow::GetTemplate(), host);
         if (window.IsEmpty())
             return target;
 
         DOMWindow* targetWindow = V8DOMWindow::toNative(window);
         target = targetWindow->frame();
-        break;
-    }
-    case V8ClassIndex::LOCATION: {
+    } else if (V8History::info.equals(type)) {
         History* history = V8History::toNative(host);
         target = history->frame();
-        break;
-    }
-    case V8ClassIndex::HISTORY: {
+    } else if (V8Location::info.equals(type)) {
         Location* location = V8Location::toNative(host);
         target = location->frame();
-        break;
-    }
-    default:
-        break;
     }
     return target;
 }
@@ -140,7 +131,6 @@ bool V8DOMWindowShell::isContextInitialized()
     // m_context, m_global, and m_wrapperBoilerplates should
     // all be non-empty if if m_context is non-empty.
     ASSERT(m_context.IsEmpty() || !m_global.IsEmpty());
-    ASSERT(m_context.IsEmpty() || !m_wrapperBoilerplates.IsEmpty());
     return !m_context.IsEmpty();
 }
 
@@ -157,13 +147,13 @@ void V8DOMWindowShell::disposeContextHandles()
         V8GCForContextDispose::instance().notifyContextDisposed();
     }
 
-    if (!m_wrapperBoilerplates.IsEmpty()) {
-#ifndef NDEBUG
-        V8GCController::unregisterGlobalHandle(this, m_wrapperBoilerplates);
-#endif
-        m_wrapperBoilerplates.Dispose();
-        m_wrapperBoilerplates.Clear();
+    WrapperBoilerplateMap::iterator it = m_wrapperBoilerplates.begin();
+    for (; it != m_wrapperBoilerplates.end(); ++it) {
+        v8::Persistent<v8::Object> wrapper = it->second;
+        wrapper.Dispose();
+        wrapper.Clear();
     }
+    m_wrapperBoilerplates.clear();
 }
 
 void V8DOMWindowShell::destroyGlobal()
@@ -297,15 +287,6 @@ void V8DOMWindowShell::initContextIfNeeded()
     }
 
     installHiddenObjectPrototype(v8Context);
-    m_wrapperBoilerplates = v8::Persistent<v8::Array>::New(v8::Array::New(V8ClassIndex::WRAPPER_TYPE_COUNT));
-    // Bail out if allocation failed.
-    if (m_wrapperBoilerplates.IsEmpty()) {
-        disposeContextHandles();
-        return;
-    }
-#ifndef NDEBUG
-    V8GCController::registerGlobalHandle(PROXY, this, m_wrapperBoilerplates);
-#endif
 
     if (!installDOMWindow(v8Context, m_frame->domWindow()))
         disposeContextHandles();
@@ -534,13 +515,12 @@ void V8DOMWindowShell::installHiddenObjectPrototype(v8::Handle<v8::Context> cont
 v8::Local<v8::Object> V8DOMWindowShell::createWrapperFromCacheSlowCase(WrapperTypeInfo* type)
 {
     // Not in cache.
-    int classIndex = type->index;
     initContextIfNeeded();
     v8::Context::Scope scope(m_context);
     v8::Local<v8::Function> function = V8DOMWrapper::getConstructor(type, getHiddenObjectPrototype(m_context));
     v8::Local<v8::Object> instance = SafeAllocation::newInstance(function);
     if (!instance.IsEmpty()) {
-        m_wrapperBoilerplates->Set(v8::Integer::New(classIndex), instance);
+        m_wrapperBoilerplates.set(type, v8::Persistent<v8::Object>::New(instance));
         return instance->Clone();
     }
     return notHandledByInterceptor();

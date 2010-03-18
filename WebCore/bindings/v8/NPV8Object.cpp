@@ -36,9 +36,9 @@
 #include "ScriptController.h"
 #include "V8GCController.h"
 #include "V8Helpers.h"
-#include "V8Index.h"
 #include "V8NPUtils.h"
 #include "V8Proxy.h"
+#include "WrapperTypeInfo.h"
 #include "npruntime_impl.h"
 #include "npruntime_priv.h"
 
@@ -55,7 +55,6 @@
 using WebCore::npObjectInternalFieldCount;
 using WebCore::toV8Context;
 using WebCore::toV8Proxy;
-using WebCore::V8ClassIndex;
 using WebCore::V8DOMWrapper;
 using WebCore::V8GCController;
 using WebCore::V8Proxy;
@@ -117,7 +116,7 @@ NPObject* npCreateV8ScriptObject(NPP npp, v8::Handle<v8::Object> object, WebCore
     // Check to see if this object is already wrapped.
     if (object->InternalFieldCount() == npObjectInternalFieldCount) {
         WrapperTypeInfo* typeInfo = static_cast<WrapperTypeInfo*>(object->GetPointerFromInternalField(WebCore::v8DOMWrapperTypeIndex));
-        if (typeInfo->index == V8ClassIndex::NPOBJECT) {
+        if (typeInfo == &WebCore::npObjectTypeInfo) {
 
             NPObject* returnValue = v8ObjectToNPObject(object);
             _NPN_RetainObject(returnValue);

@@ -48,7 +48,6 @@
 #include "V8EventListenerList.h"
 #include "V8HTMLCollection.h"
 #include "V8HTMLDocument.h"
-#include "V8Index.h"
 #include "V8IsolatedContext.h"
 #include "V8Location.h"
 #include "V8MessageChannel.h"
@@ -70,6 +69,7 @@
 #include "WebGLContextAttributes.h"
 #include "WebGLUniformLocation.h"
 #include "WorkerContextExecutionProxy.h"
+#include "WrapperTypeInfo.h"
 
 #if ENABLE(SVG)
 #include "SVGElementInstance.h"
@@ -90,45 +90,6 @@ namespace WebCore {
 
 typedef HashMap<Node*, v8::Object*> DOMNodeMap;
 typedef HashMap<void*, v8::Object*> DOMObjectMap;
-
-#if ENABLE(3D_CANVAS)
-void V8DOMWrapper::setIndexedPropertiesToExternalArray(v8::Handle<v8::Object> wrapper,
-                                                       int index,
-                                                       void* address,
-                                                       int length)
-{
-    v8::ExternalArrayType array_type = v8::kExternalByteArray;
-    V8ClassIndex::V8WrapperType classIndex = V8ClassIndex::FromInt(index);
-    switch (classIndex) {
-    case V8ClassIndex::WEBGLBYTEARRAY:
-        array_type = v8::kExternalByteArray;
-        break;
-    case V8ClassIndex::WEBGLUNSIGNEDBYTEARRAY:
-        array_type = v8::kExternalUnsignedByteArray;
-        break;
-    case V8ClassIndex::WEBGLSHORTARRAY:
-        array_type = v8::kExternalShortArray;
-        break;
-    case V8ClassIndex::WEBGLUNSIGNEDSHORTARRAY:
-        array_type = v8::kExternalUnsignedShortArray;
-        break;
-    case V8ClassIndex::WEBGLINTARRAY:
-        array_type = v8::kExternalIntArray;
-        break;
-    case V8ClassIndex::WEBGLUNSIGNEDINTARRAY:
-        array_type = v8::kExternalUnsignedIntArray;
-        break;
-    case V8ClassIndex::WEBGLFLOATARRAY:
-        array_type = v8::kExternalFloatArray;
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-    }
-    wrapper->SetIndexedPropertiesToExternalArrayData(address,
-                                                     array_type,
-                                                     length);
-}
-#endif
 
 // The caller must have increased obj's ref count.
 void V8DOMWrapper::setJSWrapperForDOMObject(void* object, v8::Persistent<v8::Object> wrapper)
@@ -321,9 +282,6 @@ bool V8DOMWrapper::maybeDOMWrapper(v8::Handle<v8::Value> value)
 
     ASSERT(object->InternalFieldCount() >= v8DefaultWrapperInternalFieldCount);
 
-    WrapperTypeInfo* typeInfo = static_cast<WrapperTypeInfo*>(object->GetPointerFromInternalField(v8DOMWrapperTypeIndex));
-    ASSERT(V8ClassIndex::INVALID_CLASS_INDEX < typeInfo->index && typeInfo->index < V8ClassIndex::CLASSINDEX_END);
-
     v8::Handle<v8::Value> wrapper = object->GetInternalField(v8DOMWrapperObjectIndex);
     ASSERT(wrapper->IsNumber() || wrapper->IsExternal());
 
@@ -338,7 +296,7 @@ bool V8DOMWrapper::isValidDOMObject(v8::Handle<v8::Value> value)
     return v8::Handle<v8::Object>::Cast(value)->InternalFieldCount();
 }
 
-bool V8DOMWrapper::isWrapperOfType(v8::Handle<v8::Value> value, V8ClassIndex::V8WrapperType classType)
+bool V8DOMWrapper::isWrapperOfType(v8::Handle<v8::Value> value, WrapperTypeInfo* type)
 {
     if (!isValidDOMObject(value))
         return false;
@@ -350,9 +308,7 @@ bool V8DOMWrapper::isWrapperOfType(v8::Handle<v8::Value> value, V8ClassIndex::V8
     ASSERT(wrapper->IsNumber() || wrapper->IsExternal());
 
     WrapperTypeInfo* typeInfo = static_cast<WrapperTypeInfo*>(object->GetPointerFromInternalField(v8DOMWrapperTypeIndex));
-    ASSERT(V8ClassIndex::INVALID_CLASS_INDEX < typeInfo->index && typeInfo->index < V8ClassIndex::CLASSINDEX_END);
-
-    return V8ClassIndex::FromInt(typeInfo->index) == classType;
+    return typeInfo == type;
 }
 
 v8::Handle<v8::Object> V8DOMWrapper::getWrapper(Node* node)

@@ -33,7 +33,6 @@
 
 #include "DOMWindow.h"
 #include "NPV8Object.h"
-#include "V8Index.h"
 #include "V8Proxy.h"
 
 namespace WebCore {

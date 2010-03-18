@@ -39,9 +39,9 @@
 #include "V8CustomXPathNSResolver.h"
 #include "V8DOMMap.h"
 #include "V8Event.h"
-#include "V8Index.h"
 #include "V8Utilities.h"
 #include "V8XPathNSResolver.h"
+#include "WrapperTypeInfo.h"
 #include "XPathNSResolver.h"
 #include <v8.h>
 
@@ -119,14 +119,8 @@ namespace WebCore {
         static bool isValidDOMObject(v8::Handle<v8::Value>);
 
         // Check whether a V8 value is a wrapper of type |classType|.
-        static bool isWrapperOfType(v8::Handle<v8::Value>, V8ClassIndex::V8WrapperType);
+        static bool isWrapperOfType(v8::Handle<v8::Value>, WrapperTypeInfo*);
 
-#if ENABLE(3D_CANVAS)
-        static void setIndexedPropertiesToExternalArray(v8::Handle<v8::Object>,
-                                                        int,
-                                                        void*,
-                                                        int);
-#endif
         // Set hidden references in a DOMWindow object of a frame.
         static void setHiddenWindowReference(Frame*, const int internalIndex, v8::Handle<v8::Object>);
 

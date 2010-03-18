@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-WrapperTypeInfo V8HTMLAudioElementConstructor::info = {V8ClassIndex::ToInt(V8ClassIndex::AUDIO), V8HTMLAudioElementConstructor::GetTemplate, 0, false };
+WrapperTypeInfo V8HTMLAudioElementConstructor::info = { V8HTMLAudioElementConstructor::GetTemplate, 0, false };
 
 static v8::Handle<v8::Value> v8HTMLAudioElementConstructorCallback(const v8::Arguments& args)
 {

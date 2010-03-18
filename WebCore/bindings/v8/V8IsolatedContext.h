@@ -34,7 +34,6 @@
 #include "IsolatedWorld.h"
 #include "ScriptSourceCode.h" // for WebCore::ScriptSourceCode
 #include "V8DOMWindow.h"
-#include "V8Index.h"
 #include "V8Proxy.h"
 #include "V8Utilities.h"
 #include <v8.h>

@@ -53,7 +53,6 @@
 #include "V8DOMWindow.h"
 #include "V8EventException.h"
 #include "V8HiddenPropertyName.h"
-#include "V8Index.h"
 #include "V8IsolatedContext.h"
 #include "V8RangeException.h"
 #include "V8XMLHttpRequestException.h"

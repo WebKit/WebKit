@@ -42,13 +42,13 @@
 #include "V8Binding.h"
 #include "V8DOMMap.h"
 #include "V8DedicatedWorkerContext.h"
-#include "V8Index.h"
 #include "V8Proxy.h"
 #include "V8SharedWorkerContext.h"
 #include "V8WorkerContext.h"
 #include "Worker.h"
 #include "WorkerContext.h"
 #include "WorkerScriptController.h"
+#include "WrapperTypeInfo.h"
 
 namespace WebCore {
 

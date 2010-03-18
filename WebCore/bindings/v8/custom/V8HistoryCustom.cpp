@@ -83,17 +83,15 @@ v8::Handle<v8::Value> V8History::replaceStateCallback(const v8::Arguments& args)
     return throwError(ec);
 }
 
-bool V8History::indexedSecurityCheck(v8::Local<v8::Object> host, uint32_t index, v8::AccessType type, v8::Local<v8::Value> data)
+bool V8History::indexedSecurityCheck(v8::Local<v8::Object> host, uint32_t index, v8::AccessType type, v8::Local<v8::Value>)
 {
-    ASSERT(V8ClassIndex::FromInt(data->Int32Value()) == V8ClassIndex::HISTORY);
     // Only allow same origin access.
     History* history = V8History::toNative(host);
     return V8BindingSecurity::canAccessFrame(V8BindingState::Only(), history->frame(), false);
 }
 
-bool V8History::namedSecurityCheck(v8::Local<v8::Object> host, v8::Local<v8::Value> key, v8::AccessType type, v8::Local<v8::Value> data)
+bool V8History::namedSecurityCheck(v8::Local<v8::Object> host, v8::Local<v8::Value> key, v8::AccessType type, v8::Local<v8::Value>)
 {
-    ASSERT(V8ClassIndex::FromInt(data->Int32Value()) == V8ClassIndex::HISTORY);
     // Only allow same origin access.
     History* history = V8History::toNative(host);
     return V8BindingSecurity::canAccessFrame(V8BindingState::Only(), history->frame(), false);

@@ -33,8 +33,8 @@
 
 #include "V8Binding.h"
 #include "V8DOMWrapper.h"
-#include "V8Index.h"
 #include "V8Proxy.h"
+#include "WrapperTypeInfo.h"
 
 #include <wtf/MathExtras.h>
 

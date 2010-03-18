@@ -86,7 +86,6 @@ using WebCore::ScriptObject;
 using WebCore::ScriptState;
 using WebCore::ScriptValue;
 using WebCore::String;
-using WebCore::V8ClassIndex;
 using WebCore::V8DOMWrapper;
 using WebCore::V8InspectorBackend;
 using WebCore::V8Proxy;

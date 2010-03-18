@@ -47,13 +47,13 @@ v8::Handle<v8::Value> V8WebGLUnsignedIntArray::constructorCallback(const v8::Arg
 {
     INC_STATS("DOM.WebGLUnsignedIntArray.Contructor");
 
-    return constructWebGLArray<WebGLUnsignedIntArray, unsigned int>(args, &info);
+    return constructWebGLArray<WebGLUnsignedIntArray, unsigned int>(args, &info, v8::kExternalUnsignedIntArray);
 }
 
 v8::Handle<v8::Value> V8WebGLUnsignedIntArray::setCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.WebGLUnsignedIntArray.set()");
-    return setWebGLArray<WebGLUnsignedIntArray, V8WebGLUnsignedIntArray>(args, V8ClassIndex::WEBGLUNSIGNEDINTARRAY);
+    return setWebGLArray<WebGLUnsignedIntArray, V8WebGLUnsignedIntArray>(args);
 }
 
 v8::Handle<v8::Value> toV8(WebGLUnsignedIntArray* impl)

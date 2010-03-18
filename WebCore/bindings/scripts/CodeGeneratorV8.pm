@@ -226,7 +226,7 @@ sub GenerateHeader
     push(@headerContent, "#include <v8.h>\n");
     push(@headerContent, "#include <wtf/HashMap.h>\n");
     push(@headerContent, "#include \"StringHash.h\"\n");
-    push(@headerContent, "#include \"V8Index.h\"\n");
+    push(@headerContent, "#include \"WrapperTypeInfo.h\"\n");
     push(@headerContent, GetHeaderClassInclude($implClassName));
     push(@headerContent, "\nnamespace WebCore {\n");
     if ($podType) {
@@ -553,7 +553,7 @@ static v8::Handle<v8::Value> ${implClassName}ConstructorGetter(v8::Local<v8::Str
     INC_STATS(\"DOM.$implClassName.constructors._get\");
     v8::Handle<v8::Value> data = info.Data();
     ASSERT(data->IsExternal() || data->IsNumber());
-    WrapperTypeInfo* type = reinterpret_cast<WrapperTypeInfo*>(v8::External::Unwrap(data));
+    WrapperTypeInfo* type = WrapperTypeInfo::unwrap(data);
 END
 
     if ($implClassName eq "DOMWindow") {
@@ -979,7 +979,6 @@ sub GenerateFunctionCallback
 {
     my $function = shift;
     my $dataNode = shift;
-    my $classIndex = shift;
     my $implClassName = shift;
 
     my $interfaceName = $dataNode->name;
@@ -1312,9 +1311,8 @@ END
 END
             }
         } else {
-            my $indexerClassIndex = uc($indexerType);
             push(@implContent, <<END);
-    setCollectionIndexedGetter<${interfaceName}, ${indexerType}>(desc, V8ClassIndex::${indexerClassIndex});
+    setCollectionIndexedGetter<${interfaceName}, ${indexerType}>(desc);
 END
             # Include the header for this indexer type, because setCollectionIndexedGetter() requires toV8() for this type.
             $implIncludes{"V8${indexerType}.h"} = 1;
@@ -1340,7 +1338,7 @@ END
     push(@implContent, $hasCustomSetter ? ", V8${interfaceName}::indexedPropertySetter" : ", 0");
     push(@implContent, ", 0"); # IndexedPropertyQuery -- not being used at the moment.
     push(@implContent, $hasDeleter ? ", V8${interfaceName}::indexedPropertyDeleter" : ", 0");
-    push(@implContent, ", nodeCollectionIndexedPropertyEnumerator<${interfaceName}>, v8::Integer::New(V8ClassIndex::NODE)") if $hasEnumerator;
+    push(@implContent, ", nodeCollectionIndexedPropertyEnumerator<${interfaceName}>") if $hasEnumerator;
     push(@implContent, ");\n");
 }
 
@@ -1370,9 +1368,8 @@ sub GenerateImplementationNamedPropertyGetter
     if ($namedPropertyGetter && $namedPropertyGetter->type ne "Node" && !$namedPropertyGetter->extendedAttributes->{"Custom"} && !$hasCustomGetter) {
         $implIncludes{"V8Collection.h"} = 1;
         my $type = $namedPropertyGetter->type;
-        my $classIndex = uc($type);
         push(@implContent, <<END);
-    setCollectionNamedGetter<${interfaceName}, ${type}>(desc, V8ClassIndex::${classIndex});
+    setCollectionNamedGetter<${interfaceName}, ${type}>(desc);
 END
         return;
     }
@@ -1435,7 +1432,6 @@ sub GenerateImplementation
     my $visibleInterfaceName = GetVisibleInterfaceName($interfaceName);
     my $className = "V8$interfaceName";
     my $implClassName = $interfaceName;
-    my $classIndex = uc($codeGenerator->StripModule($interfaceName));
 
     my $hasLegacyParent = $dataNode->extendedAttributes->{"LegacyParent"};
     my $conditionalString = GenerateConditionalString($dataNode);
@@ -1466,7 +1462,7 @@ sub GenerateImplementation
     my $toActive = IsActiveDomType($interfaceName) ? "${className}::toActiveDOMObject" : "0";
 
     push(@implContentDecls, "namespace WebCore {\n\n");
-    push(@implContentDecls, "WrapperTypeInfo ${className}::info = {V8ClassIndex::ToInt(V8ClassIndex::${classIndex}), ${className}::GetTemplate, ${className}::derefObject, ${toActive} };\n\n");   
+    push(@implContentDecls, "WrapperTypeInfo ${className}::info = { ${className}::GetTemplate, ${className}::derefObject, ${toActive} };\n\n");   
     push(@implContentDecls, "namespace ${interfaceName}Internal {\n\n");
     push(@implContentDecls, "template <typename T> void V8_USE(T) { }\n\n");
 
@@ -1521,7 +1517,7 @@ sub GenerateImplementation
     # Generate methods for functions.
     foreach my $function (@{$dataNode->functions}) {
         if (!($function->signature->extendedAttributes->{"Custom"} || $function->signature->extendedAttributes->{"V8Custom"})) {
-            GenerateFunctionCallback($function, $dataNode, $classIndex, $implClassName);
+            GenerateFunctionCallback($function, $dataNode, $implClassName);
         }
 
         if ($function->signature->name eq "item") {
@@ -1642,7 +1638,7 @@ END
 
     my $access_check = "";
     if ($dataNode->extendedAttributes->{"CheckDomainSecurity"} && !($interfaceName eq "DOMWindow")) {
-        $access_check = "instance->SetAccessCheckCallbacks(V8${interfaceName}::namedSecurityCheck, V8${interfaceName}::indexedSecurityCheck, v8::Integer::New(V8ClassIndex::ToInt(V8ClassIndex::${classIndex})));";
+        $access_check = "instance->SetAccessCheckCallbacks(V8${interfaceName}::namedSecurityCheck, V8${interfaceName}::indexedSecurityCheck, v8::External::Wrap(&V8${interfaceName}::info));";
     }
 
     # For the DOMWindow interface, generate the shadow object template
@@ -1654,7 +1650,7 @@ static v8::Persistent<v8::ObjectTemplate> ConfigureShadowObjectTemplate(v8::Pers
     batchConfigureAttributes(templ, v8::Handle<v8::ObjectTemplate>(), shadow_attrs, sizeof(shadow_attrs)/sizeof(*shadow_attrs));
 
     // Install a security handler with V8.
-    templ->SetAccessCheckCallbacks(V8DOMWindow::namedSecurityCheck, V8DOMWindow::indexedSecurityCheck, v8::Integer::New(V8ClassIndex::DOMWINDOW));
+    templ->SetAccessCheckCallbacks(V8DOMWindow::namedSecurityCheck, V8DOMWindow::indexedSecurityCheck, v8::External::Wrap(&V8DOMWindow::info));
     templ->SetInternalFieldCount(V8DOMWindow::internalFieldCount);
     return templ;
 }
@@ -1714,7 +1710,7 @@ END
 END
     }
 
-    push(@implContent,  "  $access_check\n");
+    push(@implContent,  "    $access_check\n");
 
     # Setup the enable-at-runtime attrs if we have them
     foreach my $runtime_attr (@enabledAtRuntime) {
@@ -1840,7 +1836,7 @@ END
     // Set access check callbacks, but turned off initially.
     // When a context is detached from a frame, turn on the access check.
     // Turning on checks also invalidates inline caches of the object.
-    instance->SetAccessCheckCallbacks(V8DOMWindow::namedSecurityCheck, V8DOMWindow::indexedSecurityCheck, v8::Integer::New(V8ClassIndex::DOMWINDOW), false);
+    instance->SetAccessCheckCallbacks(V8DOMWindow::namedSecurityCheck, V8DOMWindow::indexedSecurityCheck, v8::External::Wrap(&V8DOMWindow::info), false);
 END
     }
     if ($interfaceName eq "Location") {
@@ -1945,7 +1941,6 @@ sub GenerateToV8Converters
     my $className = shift;
     my $nativeType = shift;
 
-    my $wrapperType = "V8ClassIndex::" . uc($interfaceName);
     my $domMapFunction = GetDomMapFunction($dataNode, $interfaceName);
     my $forceNewObjectInput = IsDOMNodeType($interfaceName) ? ", bool forceNewObject" : "";
     my $forceNewObjectCall = IsDOMNodeType($interfaceName) ? ", forceNewObject" : "";
@@ -2475,17 +2470,13 @@ sub JSValueToNative
         # return NULL.
         return "V8${type}::HasInstance($value) ? V8${type}::toNative(v8::Handle<v8::Object>::Cast($value)) : 0";
     } else {
-        # TODO: Temporary to avoid Window name conflict.
-        my $classIndex = uc($type);
-        my $implClassName = ${type};
-
         $implIncludes{"V8$type.h"} = 1;
 
         if (IsPodType($type)) {
             my $nativeType = GetNativeType($type);
             $implIncludes{"V8SVGPODTypeWrapper.h"} = 1;
 
-            return "V8SVGPODTypeUtil::toSVGPODType<${nativeType}>(V8ClassIndex::${classIndex}, $value${maybeOkParam})"
+            return "V8SVGPODTypeUtil::toSVGPODType<${nativeType}>(&V8${type}::info, $value${maybeOkParam})"
         }
 
         $implIncludes{"V8${type}.h"} = 1;

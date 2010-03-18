@@ -35,7 +35,6 @@
 #if ENABLE(WORKERS)
 
 #include "ScriptValue.h"
-#include "V8Index.h"
 #include <v8.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>

@@ -54,8 +54,6 @@ enum InvokeFunctionType {
     InvokeDefault = 3
 };
 
-static WrapperTypeInfo npObjectTypeInfo = { V8ClassIndex::ToInt(V8ClassIndex::NPOBJECT), 0, 0, false };
-
 // FIXME: need comments.
 // Params: holder could be HTMLEmbedElement or NPObject
 static v8::Handle<v8::Value> npObjectInvokeImpl(const v8::Arguments& args, InvokeFunctionType functionId)

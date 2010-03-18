@@ -1,3 +1,17 @@
+2010-03-18  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+        
+        Remove all references to V8Index.h and V8ClassIndex.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=33477
+
+        * src/WebBindings.cpp:
+        (WebKit::getRangeImpl):
+        * src/WebDevToolsAgentImpl.cpp:
+        * src/WebDevToolsFrontendImpl.cpp:
+        (WebKit::WebDevToolsFrontendImpl::jsShowContextMenu):
+
 2010-03-17  Garret Kelly  <gdk@chromium.org>
 
         Reviewed by Darin Fisher.

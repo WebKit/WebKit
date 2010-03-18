@@ -438,7 +438,7 @@ v8::Handle<v8::Value> V8CanvasRenderingContext2D::putImageDataCallback(const v8:
     // toNative() expects it to be correct. If the argument was incorrect
     // we leave it null, and putImageData() will throw the correct exception
     // (TYPE_MISMATCH_ERR).
-    if (V8DOMWrapper::isWrapperOfType(args[0], V8ClassIndex::IMAGEDATA))
+    if (V8DOMWrapper::isWrapperOfType(args[0], &V8ImageData::info))
         imageData = V8ImageData::toNative(v8::Handle<v8::Object>::Cast(args[0]));
 
     ExceptionCode ec = 0;

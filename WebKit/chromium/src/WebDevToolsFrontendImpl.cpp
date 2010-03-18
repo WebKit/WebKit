@@ -54,6 +54,7 @@
 #include "V8Binding.h"
 #include "V8DOMWrapper.h"
 #include "V8InspectorFrontendHost.h"
+#include "V8MouseEvent.h"
 #include "V8Node.h"
 #include "V8Proxy.h"
 #include "V8Utilities.h"
@@ -365,7 +366,7 @@ v8::Handle<v8::Value> WebDevToolsFrontendImpl::jsShowContextMenu(const v8::Argum
         return v8::Undefined();
 
     v8::Local<v8::Object> eventWrapper = v8::Local<v8::Object>::Cast(args[0]);
-    if (V8DOMWrapper::domWrapperType(eventWrapper)->index != V8ClassIndex::MOUSEEVENT)
+    if (!V8MouseEvent::info.equals(V8DOMWrapper::domWrapperType(eventWrapper))
         return v8::Undefined();
 
     Event* event = V8Event::toNative(eventWrapper);

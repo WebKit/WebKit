@@ -31,7 +31,7 @@
 #ifndef V8HTMLAudioElementConstructor_h
 #define V8HTMLAudioElementConstructor_h
 
-#include "V8Index.h"
+#include "WrapperTypeInfo.h"
 
 #include <v8.h>
 

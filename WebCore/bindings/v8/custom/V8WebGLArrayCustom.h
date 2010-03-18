@@ -42,7 +42,7 @@ namespace WebCore {
 
 // Template function used by the WebGLArray*Constructor callbacks.
 template<class ArrayClass, class ElementType>
-v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperTypeInfo* type)
+v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperTypeInfo* type, v8::ExternalArrayType arrayType)
 {
     if (!args.IsConstructCall())
         return throwError("DOM object constructor cannot be called as a function.");
@@ -92,10 +92,7 @@ v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperType
             return throwError("Out-of-range offset and/or length");
         // Transform the holder into a wrapper object for the array.
         V8DOMWrapper::setDOMWrapper(args.Holder(), type, array.get());
-        V8DOMWrapper::setIndexedPropertiesToExternalArray(args.Holder(),
-                                                          type->index,
-                                                          array.get()->baseAddress(),
-                                                          array.get()->length());
+        args.Holder()->SetIndexedPropertiesToExternalArrayData(array.get()->baseAddress(), arrayType, array.get()->length());
         return toV8(array.release(), args.Holder());
     }
 
@@ -127,10 +124,7 @@ v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperType
 
     // Transform the holder into a wrapper object for the array.
     V8DOMWrapper::setDOMWrapper(args.Holder(), type, array.get());
-    V8DOMWrapper::setIndexedPropertiesToExternalArray(args.Holder(),
-                                                      type->index,
-                                                      array.get()->baseAddress(),
-                                                      array.get()->length());
+    args.Holder()->SetIndexedPropertiesToExternalArrayData(array.get()->baseAddress(), arrayType, array.get()->length());
     return toV8(array.release(), args.Holder());
 }
 
@@ -158,8 +152,7 @@ v8::Handle<v8::Value> setWebGLArrayFromArray(T* webGLArray, const v8::Arguments&
 }
 
 template <class CPlusPlusArrayType, class JavaScriptWrapperArrayType>
-v8::Handle<v8::Value> setWebGLArray(const v8::Arguments& args,
-                                    V8ClassIndex::V8WrapperType wrapperType)
+v8::Handle<v8::Value> setWebGLArray(const v8::Arguments& args)
 {
     if (args.Length() < 1 || args.Length() > 2) {
         V8Proxy::setDOMException(SYNTAX_ERR);

@@ -39,7 +39,7 @@
 #include "V8DOMWindowShell.h"
 #include "V8DOMWrapper.h"
 #include "V8GCController.h"
-#include "V8Index.h"
+#include "WrapperTypeInfo.h"
 #include <v8.h>
 #include <wtf/PassRefPtr.h> // so generated bindings don't have to
 #include <wtf/Vector.h>

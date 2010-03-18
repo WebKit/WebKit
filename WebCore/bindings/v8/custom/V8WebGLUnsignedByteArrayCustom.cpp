@@ -47,13 +47,13 @@ v8::Handle<v8::Value> V8WebGLUnsignedByteArray::constructorCallback(const v8::Ar
 {
     INC_STATS("DOM.WebGLUnsignedByteArray.Contructor");
 
-    return constructWebGLArray<WebGLUnsignedByteArray, unsigned char>(args, &info);
+    return constructWebGLArray<WebGLUnsignedByteArray, unsigned char>(args, &info, v8::kExternalUnsignedByteArray);
 }
 
 v8::Handle<v8::Value> V8WebGLUnsignedByteArray::setCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.WebGLUnsignedByteArray.set()");
-    return setWebGLArray<WebGLUnsignedByteArray, V8WebGLUnsignedByteArray>(args, V8ClassIndex::WEBGLUNSIGNEDBYTEARRAY);
+    return setWebGLArray<WebGLUnsignedByteArray, V8WebGLUnsignedByteArray>(args);
 }
 
 v8::Handle<v8::Value> toV8(WebGLUnsignedByteArray* impl)

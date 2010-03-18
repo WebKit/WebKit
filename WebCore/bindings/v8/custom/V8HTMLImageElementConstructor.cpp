@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-WrapperTypeInfo V8HTMLImageElementConstructor::info = {V8ClassIndex::ToInt(V8ClassIndex::IMAGE), V8HTMLImageElementConstructor::GetTemplate, 0, false };
+WrapperTypeInfo V8HTMLImageElementConstructor::info = { V8HTMLImageElementConstructor::GetTemplate, 0, false };
 
 static v8::Handle<v8::Value> v8HTMLImageElementConstructorCallback(const v8::Arguments& args)
 {
