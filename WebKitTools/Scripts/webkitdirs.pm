@@ -63,6 +63,7 @@ my $isSymbian;
 my %qtFeatureDefaults;
 my $isGtk;
 my $isWx;
+my $isEfl;
 my @wxArgs;
 my $isChromium;
 my $isInspectorFrontend;
@@ -245,6 +246,7 @@ sub argumentsForConfiguration()
     push(@args, '--qt') if isQt();
     push(@args, '--symbian') if isSymbian();
     push(@args, '--gtk') if isGtk();
+    push(@args, '--efl') if isEfl();
     push(@args, '--wx') if isWx();
     push(@args, '--chromium') if isChromium();
     push(@args, '--inspector-frontend') if isInspectorFrontend();
@@ -270,11 +272,11 @@ sub determineConfigurationProductDir
     if (isAppleWinWebKit() && !isWx()) {
         $configurationProductDir = "$baseProductDir/bin";
     } else {
-        # [Gtk] We don't have Release/Debug configurations in straight
+        # [Gtk][Efl] We don't have Release/Debug configurations in straight
         # autotool builds (non build-webkit). In this case and if
         # WEBKITOUTPUTDIR exist, use that as our configuration dir. This will
         # allows us to run run-webkit-tests without using build-webkit.
-        if ($ENV{"WEBKITOUTPUTDIR"} && isGtk()) {
+        if ($ENV{"WEBKITOUTPUTDIR"} && (isGtk() || isEfl())) {
             $configurationProductDir = "$baseProductDir";
         } else {
             $configurationProductDir = "$baseProductDir/$configuration";
@@ -325,7 +327,7 @@ sub jscProductDir
     my $productDir = productDir();
     $productDir .= "/JavaScriptCore" if isQt();
     $productDir .= "/$configuration" if (isQt() && isWindows());
-    $productDir .= "/Programs" if isGtk();
+    $productDir .= "/Programs" if (isGtk() || isEfl());
 
     return $productDir;
 }
@@ -563,6 +565,9 @@ sub builtDylibPathForName
     if (isGtk()) {
         return "$configurationProductDir/$libraryName/../.libs/libwebkit-1.0.so";
     }
+    if (isEfl()) {
+        return "$configurationProductDir/$libraryName/../.libs/libewebkit.so";
+    }
     if (isAppleMacWebKit()) {
         return "$configurationProductDir/$libraryName.framework/Versions/A/$libraryName";
     }
@@ -662,8 +667,8 @@ sub determineIsQt()
         return;
     }
 
-    # The presence of QTDIR only means Qt if --gtk is not on the command-line
-    if (isGtk() || isWx()) {
+    # The presence of QTDIR only means Qt if --gtk or --wx or --efl are not on the command-line
+    if (isGtk() || isWx() || isEfl()) {
         $isQt = 0;
         return;
     }
@@ -681,6 +686,18 @@ sub determineIsSymbian()
     }
 
     $isSymbian = defined($ENV{'EPOCROOT'});
+}
+
+sub determineIsEfl()
+{
+    return if defined($isEfl);
+    $isEfl = checkForArgumentAndRemoveFromARGV("--efl");
+}
+
+sub isEfl()
+{
+    determineIsEfl();
+    return $isEfl;
 }
 
 sub isGtk()
@@ -774,7 +791,7 @@ sub isLinux()
 
 sub isAppleWebKit()
 {
-    return !(isQt() or isGtk() or isWx() or isChromium());
+    return !(isQt() or isGtk() or isWx() or isChromium() or isEfl());
 }
 
 sub isAppleMacWebKit()
@@ -861,7 +878,7 @@ sub relativeScriptsDir()
 sub launcherPath()
 {
     my $relativeScriptsPath = relativeScriptsDir();
-    if (isGtk() || isQt() || isWx()) {
+    if (isGtk() || isQt() || isWx() || isEfl()) {
         return "$relativeScriptsPath/run-launcher";
     } elsif (isAppleWebKit()) {
         return "$relativeScriptsPath/run-safari";
@@ -878,6 +895,8 @@ sub launcherName()
         return "wxBrowser";
     } elsif (isAppleWebKit()) {
         return "Safari";
+    } elsif (isEfl()) {
+        return "EWebLauncher";
     }
 }
 
@@ -900,7 +919,7 @@ sub checkRequiredSystemConfig
             print "http://developer.apple.com/tools/xcode\n";
             print "*************************************************************\n";
         }
-    } elsif (isGtk() or isQt() or isWx()) {
+    } elsif (isGtk() or isQt() or isWx() or isEfl()) {
         my @cmds = qw(flex bison gperf);
         my @missing = ();
         foreach my $cmd (@cmds) {
@@ -1045,6 +1064,9 @@ sub copyInspectorFrontendFiles
     } elsif (isQt() || isGtk()) {
         my $prefix = $ENV{"WebKitInstallationPrefix"};
         $inspectorResourcesDirPath = (defined($prefix) ? $prefix : "/usr/share") . "/webkit-1.0/webinspector";
+    } elsif (isEfl()) {
+        my $prefix = $ENV{"WebKitInstallationPrefix"};
+        $inspectorResourcesDirPath = (defined($prefix) ? $prefix : "/usr/share") . "/ewebkit/webinspector";
     }
 
     if (! -d $inspectorResourcesDirPath) {

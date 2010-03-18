@@ -64,6 +64,10 @@ if (isQt()) {
         $launcherPath = catdir($launcherPath, "Programs", "GtkLauncher");
     }
     
+    if (isEfl()) {
+        $launcherPath = catdir($launcherPath, "Programs", "EWebLauncher");
+    }
+    
     if (isWx()) {
         if (isDarwin()) {
             $launcherPath = catdir($launcherPath, 'wxBrowser.app', 'Contents', 'MacOS', 'wxBrowser');

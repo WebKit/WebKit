@@ -1,3 +1,13 @@
+2010-03-18  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add support to run-launcher to open the EFL example browser.
+        http://webkit.org/b/36181
+
+        * Scripts/webkitdirs.pm:
+        * Scripts/run-launcher:
+
 2010-03-18  Sergio Villar Senin  <svillar@igalia.com>
 
         Reviewed by Xan Lopez.
