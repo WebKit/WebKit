@@ -147,6 +147,8 @@ NPError NPP_SetWindow(NPP instance, NPWindow *window)
     PluginObject* obj = static_cast<PluginObject*>(instance->pdata);
 
     if (obj) {
+        obj->lastWindow = *window;
+
         if (obj->testWindowOpen) {
             testWindowOpen(instance);
             obj->testWindowOpen = FALSE;

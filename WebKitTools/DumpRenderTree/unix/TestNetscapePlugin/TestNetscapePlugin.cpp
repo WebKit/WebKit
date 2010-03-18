@@ -128,6 +128,8 @@ webkit_test_plugin_set_window(NPP instance, NPWindow *window)
     PluginObject* obj = static_cast<PluginObject*>(instance->pdata);
 
     if (obj) {
+        obj->lastWindow = *window;
+
         if (obj->logSetWindow) {
             pluginLog(instance, "NPP_SetWindow: %d %d", (int)window->width, (int)window->height);
             obj->logSetWindow = false;

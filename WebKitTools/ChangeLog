@@ -1,3 +1,18 @@
+2010-03-18  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Adam Roben and Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36210
+        plugins/resize-from-plugin.html fails on some platforms
+
+        Turns out that most platforms don't use "cross-platform" main.cpp. Copied code added for
+        the test to their versions of the file.
+
+        * DumpRenderTree/unix/TestNetscapePlugin/TestNetscapePlugin.cpp:
+        (webkit_test_plugin_set_window):
+        * DumpRenderTree/win/TestNetscapePlugin/main.cpp:
+        (NPP_SetWindow):
+
 2010-03-18  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Kenneth Rohde Christiansen.
