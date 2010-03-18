@@ -39,6 +39,9 @@ descriptorShouldBe("Math.sin", "'length'", {writable: false, enumerable: false, 
 descriptorShouldBe("Math.sin", "'name'", {writable: false, enumerable: false, configurable: false, value:"'sin'"});
 var global = this;
 descriptorShouldBe("global", "'global'", {writable: true, enumerable: true, configurable: false, value:"global"});
+descriptorShouldBe("global", "'undefined'", {writable: false, enumerable: false, configurable: false, value:"undefined"});
+descriptorShouldBe("global", "'NaN'", {writable: false, enumerable: false, configurable: false, value:"NaN"});
+descriptorShouldBe("global", "'Infinity'", {writable: false, enumerable: false, configurable: false, value:"Infinity"});
 descriptorShouldBe("global", "'window'", {writable: false, enumerable: true, configurable: false, value:"global"});
 descriptorShouldBe("global", "'XMLHttpRequest'", {writable: true, enumerable: true, configurable: false, value:"XMLHttpRequest"});
 descriptorShouldBe("global", "'length'", {writable: true, enumerable: true, configurable: false, value:"global.length"});

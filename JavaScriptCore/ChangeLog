@@ -1,3 +1,15 @@
+2010-03-17  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        undefined, NaN, and Infinity should be ReadOnly
+        https://bugs.webkit.org/show_bug.cgi?id=36263
+
+        Simply add the ReadOnly flag to these properties.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+
 2010-03-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver Hunt.
