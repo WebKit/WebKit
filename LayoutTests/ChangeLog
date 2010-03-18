@@ -1,3 +1,24 @@
+2010-03-18  Sergio Villar Senin  <svillar@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Failing tests http/tests/misc/image-blocked-src-change.html
+        & http/tests/misc/image-blocked-src-no-change.html
+        https://bugs.webkit.org/show_bug.cgi?id=36227
+
+        Removed tests from the list of Skipped:
+        http/tests/misc/image-blocked-src-no-change.html
+        http/tests/misc/image-blocked-src-change.html
+        http/tests/security/local-CSS-from-remote.html
+        http/tests/security/local-video-poster-from-remote.html
+        http/tests/security/frame-loading-via-document-write.html
+        http/tests/security/local-iFrame-from-remote.html
+        http/tests/security/local-video-src-from-remote.html
+        http/tests/security/local-image-from-remote.html
+        http/tests/security/local-JavaScript-from-remote.html
+
+        * platform/gtk/Skipped:
+
 2010-03-18  Chang Shu  <chang.shu@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -1,3 +1,15 @@
+2010-03-18  Sergio Villar Senin  <svillar@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Failing tests http/tests/misc/image-blocked-src-change.html
+        & http/tests/misc/image-blocked-src-no-change.html
+        https://bugs.webkit.org/show_bug.cgi?id=36227
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (webViewConsoleMessage): print only the file name instead of the
+        whole URI when printing messages with local URI's
+
 2010-03-18  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

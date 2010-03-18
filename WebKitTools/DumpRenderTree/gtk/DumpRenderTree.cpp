@@ -633,7 +633,26 @@ static void webViewWindowObjectCleared(WebKitWebView* view, WebKitWebFrame* fram
 
 static gboolean webViewConsoleMessage(WebKitWebView* view, const gchar* message, unsigned int line, const gchar* sourceId, gpointer data)
 {
-    fprintf(stdout, "CONSOLE MESSAGE: line %d: %s\n", line, message);
+    gchar* testMessage = 0;
+    const gchar* uriScheme;
+
+    // Tests expect only the filename part of local URIs
+    uriScheme = g_strstr_len(message, -1, "file://");
+    if (uriScheme) {
+        GString* tempString = g_string_sized_new(strlen(message));
+        gchar* filename = g_strrstr(uriScheme, G_DIR_SEPARATOR_S);
+
+        if (filename) {
+            filename += strlen(G_DIR_SEPARATOR_S);
+            tempString = g_string_append_len(tempString, message, (uriScheme - message));
+            tempString = g_string_append_len(tempString, filename, strlen(filename));
+            testMessage = g_string_free(tempString, FALSE);
+        }
+    }
+
+    fprintf(stdout, "CONSOLE MESSAGE: line %d: %s\n", line, testMessage ? testMessage : message);
+    g_free(testMessage);
+
     return TRUE;
 }
 
