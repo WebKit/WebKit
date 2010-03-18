@@ -35,13 +35,6 @@
 #include "PositionErrorCallback.h"
 #include "PositionOptions.h"
 #include "Timer.h"
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -60,26 +53,15 @@ class Geolocation : public RefCounted<Geolocation>
 public:
     static PassRefPtr<Geolocation> create(Frame* frame) { return adoptRef(new Geolocation(frame)); }
 
-    virtual ~Geolocation();
+    ~Geolocation();
 
     void disconnectFrame();
     
-    Geoposition* lastPosition();
-
     void getCurrentPosition(PassRefPtr<PositionCallback>, PassRefPtr<PositionErrorCallback>, PassRefPtr<PositionOptions>);
     int watchPosition(PassRefPtr<PositionCallback>, PassRefPtr<PositionErrorCallback>, PassRefPtr<PositionOptions>);
     void clearWatch(int watchId);
 
-    void suspend();
-    void resume();
-
     void setIsAllowed(bool);
-    bool isAllowed() const { return m_allowGeolocation == Yes; }
-    bool isDenied() const { return m_allowGeolocation == No; }
-    
-    void setShouldClearCache(bool shouldClearCache) { m_shouldClearCache = shouldClearCache; }
-    bool shouldClearCache() const { return m_shouldClearCache; }
-    Frame* frame() const { return m_frame; }
 
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
     void setPosition(GeolocationPosition*);
@@ -89,6 +71,11 @@ public:
 #endif
 
 private:
+    Geoposition* lastPosition();
+
+    bool isAllowed() const { return m_allowGeolocation == Yes; }
+    bool isDenied() const { return m_allowGeolocation == No; }
+    
     Geolocation(Frame*);
 
     class GeoNotifier : public RefCounted<GeoNotifier> {

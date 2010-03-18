@@ -26,8 +26,6 @@
 module core {
 
     interface [OmitConstructor] Geolocation {
-        readonly attribute Geoposition lastPosition;
-
         [Custom] void getCurrentPosition(in PositionCallback successCallback, in PositionErrorCallback errorCallback, in PositionOptions options);
 
         [Custom] long watchPosition(in PositionCallback successCallback, in PositionErrorCallback errorCallback, in PositionOptions options);

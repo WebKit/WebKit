@@ -29,7 +29,6 @@
 #include "Geolocation.h"
 
 #include "Chrome.h"
-#include "Document.h"
 #include "Frame.h"
 #include "Page.h"
 #include <wtf/CurrentTime.h>
@@ -232,6 +231,8 @@ void Geolocation::disconnectFrame()
 
 Geoposition* Geolocation::lastPosition()
 {
+    ASSERT(isAllowed());
+
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
     if (!m_frame)
         return 0;
@@ -377,22 +378,6 @@ void Geolocation::clearWatch(int watchId)
     
     if (!hasListeners())
         stopUpdating();
-}
-
-void Geolocation::suspend()
-{
-#if !ENABLE(CLIENT_BASED_GEOLOCATION)
-    if (hasListeners())
-        m_service->suspend();
-#endif
-}
-
-void Geolocation::resume()
-{
-#if !ENABLE(CLIENT_BASED_GEOLOCATION)
-    if (hasListeners())
-        m_service->resume();
-#endif
 }
 
 void Geolocation::setIsAllowed(bool allowed)
