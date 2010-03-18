@@ -1,3 +1,16 @@
+2010-03-18  Adam Langley  <agl@chromium.org>
+
+        Reviewed by David Levin.
+
+        [chromium] Fix inverted logic in per-strike renderer patch.
+
+        I screwed up in r55089 and got one of the conditions backwards. Thanks
+        to Roman Tsisyk for pointing it out.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35495
+
+        * platform/chromium/fast/text/chromium-linux-fontconfig-renderstyle.html: Added.
+
 2010-03-18  Sergio Villar Senin  <svillar@igalia.com>
 
         Reviewed by Xan Lopez.

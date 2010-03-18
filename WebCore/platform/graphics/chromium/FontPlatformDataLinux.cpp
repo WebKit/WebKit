@@ -197,7 +197,7 @@ HB_FaceRec_* FontPlatformData::harfbuzzFace() const
 
 void FontPlatformData::querySystemForRenderStyle()
 {
-    if (m_family.length()) {
+    if (!m_family.length()) {
         // We don't have a family for this. Probably because it's a webfont. We
         // set all the values to 'no preference' and take the defaults passed
         // in from XSETTINGS.
