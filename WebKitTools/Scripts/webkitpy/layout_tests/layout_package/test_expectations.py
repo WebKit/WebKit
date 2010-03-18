@@ -53,7 +53,8 @@ class TestExpectations:
     TEST_LIST = "test_expectations.txt"
 
     def __init__(self, port, tests, expectations, test_platform_name,
-                 is_debug_mode, is_lint_mode, tests_are_present=True):
+                 is_debug_mode, is_lint_mode, tests_are_present=True,
+                 overrides=None):
         """Loads and parses the test expectations given in the string.
         Args:
             port: handle to object containing platform-specific functionality
@@ -70,10 +71,14 @@ class TestExpectations:
                 system and can be probed for. This is useful for distinguishing
                 test files from directories, and is needed by the LTTF
                 dashboard, where the files aren't actually locally present.
+            overrides: test expectations that are allowed to override any
+                entries in |expectations|. This is used by callers
+                that need to manage two sets of expectations (e.g., upstream
+                and downstream expectations).
         """
         self._expected_failures = TestExpectationsFile(port, expectations,
             tests, test_platform_name, is_debug_mode, is_lint_mode,
-            tests_are_present=tests_are_present)
+            tests_are_present=tests_are_present, overrides=overrides)
 
     # TODO(ojan): Allow for removing skipped tests when getting the list of
     # tests to run, but not when getting metrics.
@@ -264,7 +269,7 @@ class TestExpectationsFile:
 
     def __init__(self, port, expectations, full_test_list, test_platform_name,
         is_debug_mode, is_lint_mode, suppress_errors=False,
-        tests_are_present=True):
+        tests_are_present=True, overrides=None):
         """
         expectations: Contents of the expectations file
         full_test_list: The list of all tests to be run pending processing of
@@ -278,6 +283,10 @@ class TestExpectationsFile:
         tests_are_present: Whether the test files are present in the local
             filesystem. The LTTF Dashboard uses False here to avoid having to
             keep a local copy of the tree.
+        overrides: test expectations that are allowed to override any
+            entries in |expectations|. This is used by callers
+            that need to manage two sets of expectations (e.g., upstream
+            and downstream expectations).
         """
 
         self._port = port
@@ -287,6 +296,7 @@ class TestExpectationsFile:
         self._is_debug_mode = is_debug_mode
         self._is_lint_mode = is_lint_mode
         self._tests_are_present = tests_are_present
+        self._overrides = overrides
         self._suppress_errors = suppress_errors
         self._errors = []
         self._non_fatal_errors = []
@@ -314,7 +324,50 @@ class TestExpectationsFile:
         self._timeline_to_tests = self._dict_of_sets(self.TIMELINES)
         self._result_type_to_tests = self._dict_of_sets(self.RESULT_TYPES)
 
-        self._read(self._get_iterable_expectations())
+        self._read(self._get_iterable_expectations(self._expectations),
+                   overrides_allowed=False)
+
+        # List of tests that are in the overrides file (used for checking for
+        # duplicates inside the overrides file itself). Note that just because
+        # a test is in this set doesn't mean it's necessarily overridding a
+        # expectation in the regular expectations; the test might not be
+        # mentioned in the regular expectations file at all.
+        self._overridding_tests = set()
+
+        if overrides:
+            self._read(self._get_iterable_expectations(self._overrides),
+                       overrides_allowed=True)
+
+        self._handle_any_read_errors()
+        self._process_tests_without_expectations()
+
+    def _handle_any_read_errors(self):
+        if not self._suppress_errors and (
+            len(self._errors) or len(self._non_fatal_errors)):
+            if self._is_debug_mode:
+                build_type = 'DEBUG'
+            else:
+                build_type = 'RELEASE'
+            _log.error('')
+            _log.error("FAILURES FOR PLATFORM: %s, BUILD_TYPE: %s" %
+                       (self._test_platform_name.upper(), build_type))
+
+            for error in self._non_fatal_errors:
+                _log.error(error)
+            _log.error('')
+
+            if len(self._errors):
+                raise SyntaxError('\n'.join(map(str, self._errors)))
+
+    def _process_tests_without_expectations(self):
+        expectations = set([PASS])
+        options = []
+        modifiers = []
+        if self._full_test_list:
+            for test in self._full_test_list:
+                if not test in self._test_list_paths:
+                    self._add_test(test, modifiers, expectations, options,
+                        overrides_allowed=False)
 
     def _dict_of_sets(self, strings_to_constants):
         """Takes a dict of strings->constants and returns a dict mapping
@@ -324,12 +377,11 @@ class TestExpectationsFile:
             d[c] = set()
         return d
 
-    def _get_iterable_expectations(self):
+    def _get_iterable_expectations(self, expectations_str):
         """Returns an object that can be iterated over. Allows for not caring
         about whether we're iterating over a file or a new-line separated
         string."""
-        iterable = [x + "\n" for x in
-            self._expectations.split("\n")]
+        iterable = [x + "\n" for x in expectations_str.split("\n")]
         # Strip final entry if it's empty to avoid added in an extra
         # newline.
         if iterable[-1] == "\n":
@@ -577,7 +629,7 @@ class TestExpectationsFile:
         self._all_expectations[test].append(
             ModifiersAndExpectations(options, expectations))
 
-    def _read(self, expectations):
+    def _read(self, expectations, overrides_allowed):
         """For each test in an expectations iterable, generate the
         expectations for it."""
         lineno = 0
@@ -628,33 +680,7 @@ class TestExpectationsFile:
                 tests = self._expand_tests(test_list_path)
 
             self._add_tests(tests, expectations, test_list_path, lineno,
-                           modifiers, options)
-
-        if not self._suppress_errors and (
-            len(self._errors) or len(self._non_fatal_errors)):
-            if self._is_debug_mode:
-                build_type = 'DEBUG'
-            else:
-                build_type = 'RELEASE'
-            _log.error('')
-            _log.error("FAILURES FOR PLATFORM: %s, BUILD_TYPE: %s" %
-                       (self._test_platform_name.upper(), build_type))
-
-            for error in self._non_fatal_errors:
-                _log.error(error)
-            _log.error('')
-
-            if len(self._errors):
-                raise SyntaxError('\n'.join(map(str, self._errors)))
-
-        # Now add in the tests that weren't present in the expectations file
-        expectations = set([PASS])
-        options = []
-        modifiers = []
-        if self._full_test_list:
-            for test in self._full_test_list:
-                if not test in self._test_list_paths:
-                    self._add_test(test, modifiers, expectations, options)
+                           modifiers, options, overrides_allowed)
 
     def _get_options_list(self, listString):
         return [part.strip().lower() for part in listString.strip().split(' ')]
@@ -698,15 +724,18 @@ class TestExpectationsFile:
         return path
 
     def _add_tests(self, tests, expectations, test_list_path, lineno,
-                   modifiers, options):
+                   modifiers, options, overrides_allowed):
         for test in tests:
-            if self._already_seen_test(test, test_list_path, lineno):
+            if self._already_seen_test(test, test_list_path, lineno,
+                                       overrides_allowed):
                 continue
 
             self._clear_expectations_for_test(test, test_list_path)
-            self._add_test(test, modifiers, expectations, options)
+            self._add_test(test, modifiers, expectations, options,
+                           overrides_allowed)
 
-    def _add_test(self, test, modifiers, expectations, options):
+    def _add_test(self, test, modifiers, expectations, options,
+                  overrides_allowed):
         """Sets the expected state for a given test.
 
         This routine assumes the test has not been added before. If it has,
@@ -717,7 +746,9 @@ class TestExpectationsFile:
           test: test to add
           modifiers: sequence of modifier keywords ('wontfix', 'slow', etc.)
           expectations: sequence of expectations (PASS, IMAGE, etc.)
-          options: sequence of keywords and bug identifiers."""
+          options: sequence of keywords and bug identifiers.
+          overrides_allowed: whether we're parsing the regular expectations
+              or the overridding expectations"""
         self._test_to_expectations[test] = expectations
         for expectation in expectations:
             self._expectation_to_tests[expectation].add(test)
@@ -745,6 +776,9 @@ class TestExpectationsFile:
         else:
             self._result_type_to_tests[FAIL].add(test)
 
+        if overrides_allowed:
+            self._overridding_tests.add(test)
+
     def _clear_expectations_for_test(self, test, test_list_path):
         """Remove prexisting expectations for this test.
         This happens if we are seeing a more precise path
@@ -769,7 +803,7 @@ class TestExpectationsFile:
             if test in set_of_tests:
                 set_of_tests.remove(test)
 
-    def _already_seen_test(self, test, test_list_path, lineno):
+    def _already_seen_test(self, test, test_list_path, lineno, allow_overrides):
         """Returns true if we've already seen a more precise path for this test
         than the test_list_path.
         """
@@ -778,8 +812,19 @@ class TestExpectationsFile:
 
         prev_base_path = self._test_list_paths[test]
         if (prev_base_path == os.path.normpath(test_list_path)):
-            self._add_error(lineno, 'Duplicate expectations.', test)
-            return True
+            if (not allow_overrides or test in self._overridding_tests):
+                if allow_overrides:
+                    expectation_source = "override"
+                else:
+                    expectation_source = "expectation"
+                self._add_error(lineno, 'Duplicate %s.' % expectation_source,
+                                   test)
+                return True
+            else:
+                # We have seen this path, but that's okay because its
+                # in the overrides and the earlier path was in the
+                # expectations.
+                return False
 
         # Check if we've already seen a more precise path.
         return prev_base_path.startswith(os.path.normpath(test_list_path))

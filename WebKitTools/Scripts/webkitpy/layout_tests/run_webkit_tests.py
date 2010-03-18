@@ -227,9 +227,11 @@ class TestRunner:
 
         try:
             expectations_str = self._port.test_expectations()
+            overrides_str = self._port.test_expectations_overrides()
             self._expectations = test_expectations.TestExpectations(
                 self._port, test_files, expectations_str, test_platform_name,
-                is_debug_mode, self._options.lint_test_files)
+                is_debug_mode, self._options.lint_test_files,
+                tests_are_present=True, overrides=overrides_str)
             return self._expectations
         except Exception, err:
             if self._options.lint_test_files:
@@ -1460,6 +1462,7 @@ def main(options, args):
         for platform in port_obj.test_platform_names():
             test_runner.parse_expectations(platform, is_debug_mode=True)
             test_runner.parse_expectations(platform, is_debug_mode=False)
+        meter.update("")
         print ("If there are no fail messages, errors or exceptions, then the "
             "lint succeeded.")
         sys.exit(0)

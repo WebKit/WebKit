@@ -441,6 +441,15 @@ class Port(object):
         test_expectations file. See test_expectations.py for more details."""
         raise NotImplementedError('Port.test_expectations')
 
+    def test_expectations_overrides(self):
+        """Returns an optional set of overrides for the test_expectations.
+
+        This is used by ports that have code in two repositories, and where
+        it is possible that you might need "downstream" expectations that
+        temporarily override the "upstream" expectations until the port can
+        sync up the two repos."""
+        return None
+
     def test_base_platform_names(self):
         """Return a list of the 'base' platforms on your port. The base
         platforms represent different architectures, operating systems,

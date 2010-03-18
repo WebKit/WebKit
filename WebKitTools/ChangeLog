@@ -1,3 +1,19 @@
+2010-03-17  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add the concept of an "overrides" file for expectations so that we
+        can store test_expectations both upstream and downstream for a port
+        that runs both in webkit.org and in a separate repository (like
+        Chromium). Also add some unit tests for the expectations module.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36249
+
+        * Scripts/webkitpy/layout_tests/layout_package/test_expectations.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_expectations_test.py: Added.
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2010-03-18  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.
