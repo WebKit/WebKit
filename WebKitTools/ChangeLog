@@ -1,3 +1,21 @@
+2010-03-18  Antti Koivisto  <koivisto@iki.fi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36102
+        [Qt] Scaling control API for tiled backing store
+        
+        Add animated smooth zooming to Qt launcher when in tiled mode.
+
+        * QtLauncher/main.cpp:
+        (LauncherWindow::LauncherWindow):
+        (LauncherWindow::zoomAnimationFinished):
+        (LauncherWindow::applyZoom):
+        (LauncherWindow::zoomIn):
+        (LauncherWindow::zoomOut):
+        * QtLauncher/webview.h:
+        (WebViewGraphicsBased::graphicsWebView):
+
 2010-03-18  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

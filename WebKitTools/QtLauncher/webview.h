@@ -97,6 +97,8 @@ public:
     {
         return m_yRotation;
     }
+    
+    GraphicsWebView* graphicsWebView() const { return m_item; }
 
 public slots:
     void updateFrameRate();
