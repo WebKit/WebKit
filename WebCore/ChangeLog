@@ -1,3 +1,34 @@
+2010-03-17  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        databaseIdentifiers are not filtered for slashes
+        <rdar://problem/7708789> and https://bugs.webkit.org/show_bug.cgi?id=36243
+
+        In addition to filtering for '/' and '\', to remove the directory vulnerability
+        on all platforms, it seems worth it to also escape other characters that are
+        obviously dangerous or illegal to have in a filename (mostly inspired by the 
+        Windows illegal-character list).
+
+        No new tests - It's unclear how a test could possibly work into our testing
+        infrastructure.
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::): Added a 128-bool table "needsEscaping" that has a true/false answer
+          for lower-ASCII.
+        (WebCore::SecurityOrigin::SecurityOrigin):
+        (WebCore::SecurityOrigin::createFromDatabaseIdentifier): "Unescape" the host
+          component using the KURL utility.
+        (WebCore::shouldEscapeUChar): If the char is lower-ASCII, look it up in the 
+          needsEscaping table. Otherwise, let it pass.
+        (WebCore::encodedHost): Modeled after KURL's host escaping method, but targeted 
+          for the escaping considerations for the host component. We don't use the KURL
+          version because this one is "different" enough because it operates on UTF16 and
+          has its own "is bad character?" decider.
+        (WebCore::SecurityOrigin::databaseIdentifier): Create the escaped host if needed,
+          and use it instead of the unescaped host.
+        * page/SecurityOrigin.h:
+
 2010-03-17  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Dimitri Glazkov.

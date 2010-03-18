@@ -122,6 +122,7 @@ SecurityOrigin::SecurityOrigin(const SecurityOrigin* other)
     : m_sandboxFlags(other->m_sandboxFlags)
     , m_protocol(other->m_protocol.threadsafeCopy())
     , m_host(other->m_host.threadsafeCopy())
+    , m_encodedHost(other->m_encodedHost.threadsafeCopy())
     , m_domain(other->m_domain.threadsafeCopy())
     , m_port(other->m_port)
     , m_isUnique(other->m_isUnique)
@@ -381,13 +382,92 @@ PassRefPtr<SecurityOrigin> SecurityOrigin::createFromDatabaseIdentifier(const St
     // Split out the 3 sections of data
     String protocol = databaseIdentifier.substring(0, separator1);
     String host = databaseIdentifier.substring(separator1 + 1, separator2 - separator1 - 1);
+    
+    host = decodeURLEscapeSequences(host);
     return create(KURL(KURL(), protocol + "://" + host + ":" + String::number(port)));
+}
+
+// The following lower-ASCII characters need escaping to be used in a filename
+// across all systems, including Windows:
+//     - Unprintable ASCII (00-1F)
+//     - Space             (20)
+//     - Double quote      (22)
+//     - Percent           (25) (escaped because it is our escape character)
+//     - Asterisk          (2A)
+//     - Slash             (2F)
+//     - Colon             (3A)
+//     - Less-than         (3C)
+//     - Greater-than      (3E)
+//     - Question Mark     (3F)
+//     - Backslash         (5C)
+//     - Pipe              (7C)
+//     - Delete            (7F)
+
+static const bool needsEscaping[128] = {
+    /* 00-07 */ true,  true,  true,  true,  true,  true,  true,  true, 
+    /* 08-0F */ true,  true,  true,  true,  true,  true,  true,  true, 
+
+    /* 10-17 */ true,  true,  true,  true,  true,  true,  true,  true, 
+    /* 18-1F */ true,  true,  true,  true,  true,  true,  true,  true, 
+
+    /* 20-27 */ true,  false, true,  false, false, true,  false, false, 
+    /* 28-2F */ false, false, true,  false, false, false, false, true, 
+    
+    /* 30-37 */ false, false, false, false, false, false, false, false, 
+    /* 38-3F */ false, false, true,  false, true,  false, true,  true, 
+    
+    /* 40-47 */ false, false, false, false, false, false, false, false, 
+    /* 48-4F */ false, false, false, false, false, false, false, false,
+    
+    /* 50-57 */ false, false, false, false, false, false, false, false, 
+    /* 58-5F */ false, false, false, false, true,  false, false, false,
+    
+    /* 60-67 */ false, false, false, false, false, false, false, false, 
+    /* 68-6F */ false, false, false, false, false, false, false, false,
+    
+    /* 70-77 */ false, false, false, false, false, false, false, false, 
+    /* 78-7F */ false, false, false, false, true,  false, false, true, 
+};
+
+static inline bool shouldEscapeUChar(UChar c)
+{
+    return c > 127 ? false : needsEscaping[c];
+}
+
+static const char hexDigits[17] = "0123456789ABCDEF";
+
+static String encodedHost(const String& host)
+{
+    unsigned length = host.length();
+    Vector<UChar, 512> buffer(length * 3 + 1);
+    UChar* p = buffer.data();
+
+    const UChar* str = host.characters();
+    const UChar* strEnd = str + length;
+
+    while (str < strEnd) {
+        UChar c = *str++;
+        if (shouldEscapeUChar(c)) {
+            *p++ = '%';
+            *p++ = hexDigits[(c >> 4) & 0xF];
+            *p++ = hexDigits[c & 0xF];
+        } else
+            *p++ = c;
+    }
+
+    ASSERT(p - buffer.data() <= static_cast<int>(buffer.size()));
+
+    return String(buffer.data(), p - buffer.data());
 }
 
 String SecurityOrigin::databaseIdentifier() const 
 {
     DEFINE_STATIC_LOCAL(String, separatorString, (&SeparatorCharacter, 1));
-    return m_protocol + separatorString + m_host + separatorString + String::number(m_port); 
+
+    if (m_encodedHost.isEmpty())
+        m_encodedHost = encodedHost(m_host);
+
+    return m_protocol + separatorString + m_encodedHost + separatorString + String::number(m_port); 
 }
 
 bool SecurityOrigin::equal(const SecurityOrigin* other) const 
