@@ -587,8 +587,6 @@ private:
     virtual void refEventTarget() { ref(); }
     virtual void derefEventTarget() { deref(); }
 
-    void removeAllEventListenersSlowCase();
-
     virtual NodeRareData* createRareData();
     Node* containerChildNode(unsigned index) const;
     unsigned containerChildNodeCount() const;
