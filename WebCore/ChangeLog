@@ -1,3 +1,22 @@
+2010-03-18  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36281
+
+        Make sure an exception is raised if an @import rule is inserted in the wrong place.
+        
+        Also make sure (so that this particular test case passes) that rgba(0, 0, 0, 0) is dumped
+        as transparent by getComputedStyle, since it most commonly occurs in background-color and
+        that default makes more sense than dumping rgba values.
+
+        Added fast/css/invalid-import-insertion.html
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::createColor):
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::insertRule):
+
 2010-03-18  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

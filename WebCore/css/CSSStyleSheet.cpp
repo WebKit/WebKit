@@ -96,9 +96,24 @@ unsigned CSSStyleSheet::insertRule(const String& rule, unsigned index, Exception
         return 0;
     }
 
-    // ###
-    // HIERARCHY_REQUEST_ERR: Raised if the rule cannot be inserted at the specified index e.g. if an
-    //@import rule is inserted after a standard rule set or other at-rule.
+    // Throw a HIERARCHY_REQUEST_ERR exception if the rule cannot be inserted at the specified index.  The best
+    // example of this is an @import rule inserted after regular rules.
+    if (index > 0) {
+        if (r->isImportRule()) {
+            // Check all the rules that come before this one to make sure they are only @charset and @import rules.
+            for (unsigned i = 0; i < index; ++i) {
+                if (!item(i)->isCharsetRule() && !item(i)->isImportRule()) {
+                    ec = HIERARCHY_REQUEST_ERR;
+                    return 0;
+                }
+            }
+        } else if (r->isCharsetRule()) {
+            // The @charset rule has to come first and there can be only one.
+            ec = HIERARCHY_REQUEST_ERR;
+            return 0;
+        }
+    }
+
     insert(index, r.release());
     
     styleSheetChanged();
