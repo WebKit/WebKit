@@ -225,8 +225,8 @@
           # FIXME: Eliminate dependency on platform/graphics/mac and
           # related directories.
           # platform/graphics/cg may need to stick around, though.
-          '../platform/graphics/cg',
           '../platform/graphics/mac',
+          '../platform/graphics/cg',
         ],
         'webcore_include_dirs': [
           # FIXME: Eliminate dependency on platform/mac and related

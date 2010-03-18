@@ -1,3 +1,12 @@
+2010-03-18  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, build fix.
+
+        [Chromium] Change the order of mac/ and cg/ include dirs to fix compile break
+        due to http://trac.webkit.org/changeset/56192,
+
+        * WebCore.gyp/WebCore.gyp: Changed the order.
+
 2010-03-18  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Oliver Hunt.
