@@ -2,6 +2,57 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
+        Add default theme files to efl/DefaultTheme.
+        http://webkit.org/b/36240
+
+        * efl/DefaultTheme/widget/radio/img_radio_on.png: Added.
+        * efl/DefaultTheme/radio/img_radio_off_hover.png: Added.
+        * efl/DefaultTheme/radio/img_radio_on_hover.png: Added.
+        * efl/DefaultTheme/radio/img_radio_off.png: Added.
+        * efl/DefaultTheme/radio/img_radio_off_focus.png: Added.
+        * efl/DefaultTheme/radio/img_radio_on_focus.png: Added.
+        * efl/DefaultTheme/combo/combo_normal.png: Added.
+        * efl/DefaultTheme/combo/combo_focus_button.png: Added.
+        * efl/DefaultTheme/combo/combo_hover_button.png: Added.
+        * efl/DefaultTheme/combo/combo_hover.png: Added.
+        * efl/DefaultTheme/combo/combo_focus.png: Added.
+        * efl/DefaultTheme/combo/combo_press_button.png: Added.
+        * efl/DefaultTheme/combo/combo_normal_button.png: Added.
+        * efl/DefaultTheme/combo/combo_press.png: Added.
+        * efl/DefaultTheme/combo/icon.png: Added.
+        * efl/DefaultTheme/file/file_normal.png: Added.
+        * efl/DefaultTheme/file/file_press.png: Added.
+        * efl/DefaultTheme/file/file_hover.png: Added.
+        * efl/DefaultTheme/file/file_focus.png: Added.
+        * efl/DefaultTheme/search/cancel/cancel_normal_button.png: Added.
+        * efl/DefaultTheme/search/cancel/cancel_normal_button2.png: Added.
+        * efl/DefaultTheme/search/decoration/decoration_normal_button.png: Added.
+        * efl/DefaultTheme/search/field/field_focused.png: Added.
+        * efl/DefaultTheme/search/field/field_normal.png: Added.
+        * efl/DefaultTheme/search/field/field_hovered.png: Added.
+        * efl/DefaultTheme/entry/img_normal.png: Added.
+        * efl/DefaultTheme/entry/img_hovered.png: Added.
+        * efl/DefaultTheme/entry/img_focused.png: Added.
+        * efl/DefaultTheme/check/img_check_off_hover.png: Added.
+        * efl/DefaultTheme/check/img_check_on.png: Added.
+        * efl/DefaultTheme/check/img_check_off_focus.png: Added.
+        * efl/DefaultTheme/check/img_check_on_focus.png: Added.
+        * efl/DefaultTheme/check/img_check_off.png: Added.
+        * efl/DefaultTheme/check/img_check_on_hover.png: Added.
+        * efl/DefaultTheme/scrollbar/scrollbar_knob_h.png: Added.
+        * efl/DefaultTheme/scrollbar/scrollbar_knob_v.png: Added.
+        * efl/DefaultTheme/scrollbar/scrollbar_hilight.png: Added.
+        * efl/DefaultTheme/scrollbar/scrollbar_v.png: Added.
+        * efl/DefaultTheme/scrollbar/scrollbar_h.png: Added.
+        * efl/DefaultTheme/button/img_button_normal.png: Added.
+        * efl/DefaultTheme/button/img_button_focus.png: Added.
+        * efl/DefaultTheme/button/img_button_hover.png: Added.
+        * efl/DefaultTheme/button/img_button_press.png: Added.
+
+2010-03-17  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
         Add EFL example browser to efl/EWebLauncher.
         http://webkit.org/b/36176
 
