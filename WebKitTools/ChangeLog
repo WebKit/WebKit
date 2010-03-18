@@ -1,3 +1,11 @@
+2010-03-17  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        Turns out this needs to be a string.
+
+        * Scripts/webkitpy/bugzilla.py:
+
 2010-03-17  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

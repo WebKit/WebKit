@@ -626,7 +626,7 @@ class Bugzilla(object):
         if cc:
             self.browser["cc"] = cc
         if blocked:
-            self.browser["blocked"] = blocked
+            self.browser["blocked"] = str(blocked)
         self.browser["short_desc"] = bug_title
         self.browser["comment"] = bug_description
 
