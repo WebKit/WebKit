@@ -630,9 +630,9 @@ static PassRefPtr<CSSValue> fillRepeatToCSSValue(EFillRepeat xRepeat, EFillRepea
     // if the two values are equivalent to repeat-x or repeat-y, just return the shorthand.
     if (xRepeat == yRepeat)
         return CSSPrimitiveValue::create(xRepeat);
-    if (xRepeat == CSSValueRepeat && yRepeat == CSSValueNoRepeat)
+    if (xRepeat == RepeatFill && yRepeat == NoRepeatFill)
         return CSSPrimitiveValue::createIdentifier(CSSValueRepeatX);
-    if (xRepeat == CSSValueNoRepeat && yRepeat == CSSValueRepeat)
+    if (xRepeat == NoRepeatFill && yRepeat == RepeatFill)
         return CSSPrimitiveValue::createIdentifier(CSSValueRepeatY);
 
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
