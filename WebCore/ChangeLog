@@ -118,6 +118,8 @@
 
 2010-03-18  Stephen White  <senorblanco@chromium.org>
 
+        Reviewed by Oliver Hunt.
+
         Parsing of rgb() colors in HTML canvas is still fairly slow.
         findNamedColor() was showing up as hot, so this patch attempts to
         avoid calling it by putting the rgb() check ahead of the named
