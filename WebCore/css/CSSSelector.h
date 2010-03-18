@@ -212,6 +212,13 @@ namespace WebCore {
         bool parseNth();
         bool matchNth(int count);
 
+        bool matchesPseudoElement() const 
+        { 
+            if (m_pseudoType == PseudoUnknown)
+                extractPseudoType();
+            return m_match == PseudoElement;
+        }
+
         Relation relation() const { return static_cast<Relation>(m_relation); }
 
         bool isLastInSelectorList() const { return m_isLastInSelectorList; }

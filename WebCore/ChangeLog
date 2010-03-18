@@ -1,3 +1,18 @@
+2010-03-18  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36275
+
+        Make sure :not does not allow pseudo-elements inside it. (Hooray for another pointless
+        restriction on :not.)
+
+        Added fast/css/invalid-not-with-pseudo-element.html
+
+        * css/CSSGrammar.y:
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::matchesPseudoElement):
+
 2010-03-18  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
