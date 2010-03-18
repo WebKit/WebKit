@@ -196,10 +196,26 @@ class CommitQueue(AbstractQueue, StepSequenceErrorHandler):
     def process_work_item(self, patch):
         try:
             self._cc_watchers(patch.bug_id())
-            # We pass --no-update here because we've already validated
-            # that the current revision actually builds and passes the tests.
-            # If we update, we risk moving to a revision that doesn't!
-            self.run_webkit_patch(["land-attachment", "--force-clean", "--non-interactive", "--no-update", "--parent-command=commit-queue", "--build-style=both", "--quiet", patch.id()])
+            args = [
+                "land-attachment",
+                "--force-clean",
+                "--non-interactive",
+                "--parent-command=commit-queue",
+                "--build-style=both",
+                "--quiet",
+                patch.id()
+            ]
+            if patch.is_rollout():
+                # We need to ignore the builders when landing a rollout
+                # because they're probably red.
+                args.append("--ignore-builders")
+            else:
+                # We pass --no-update in the normal (non-rollout) case
+                # because we've already validated that the current revision
+                # actually builds and passes the tests.  If we update, we risk
+                # moving to a revision that doesn't!
+                args.append("--no-update")
+            self.run_webkit_patch(args)
             self._did_pass(patch)
         except ScriptError, e:
             self._did_fail(patch)

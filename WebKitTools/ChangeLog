@@ -1,3 +1,21 @@
+2010-03-17  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Commit queue should ignore (probably red) builders when landing rollouts
+        https://bugs.webkit.org/show_bug.cgi?id=36169
+
+        When landing a rollout, the builders are probably red, so we need to
+        ignore them in the subprocess too.  Also, we might as well update the
+        working copy because we haven't validated anything about the current
+        revision prior to trying to land.
+
+        This change is testable, but it requires changing the mock executive to
+        log its arguments.  That will generate a lot of expectation changes, so
+        I'd like to do that in a separate patch.
+
+        * Scripts/webkitpy/commands/queues.py:
+
 2010-03-17  Chang Shu  <chang.shu@nokia.com>
 
         Reviewed by Laszlo Gombos.
