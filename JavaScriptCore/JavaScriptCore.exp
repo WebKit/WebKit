@@ -57,6 +57,7 @@ _JSStringIsEqual
 _JSStringIsEqualToUTF8CString
 _JSStringRelease
 _JSStringRetain
+_JSValueCreateJSONString
 _JSValueGetType
 _JSValueIsBoolean
 _JSValueIsEqual
@@ -73,6 +74,7 @@ _JSValueMakeNull
 _JSValueMakeNumber
 _JSValueMakeString
 _JSValueMakeUndefined
+_JSValueMakeFromJSONString
 _JSValueProtect
 _JSValueToBoolean
 _JSValueToNumber

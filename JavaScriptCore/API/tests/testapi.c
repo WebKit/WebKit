@@ -869,9 +869,63 @@ int main(int argc, char* argv[])
     JSStringRef EmptyObjectIString = JSStringCreateWithUTF8CString("EmptyObject");
     JSObjectSetProperty(context, globalObject, EmptyObjectIString, EmptyObject, kJSPropertyAttributeNone, NULL);
     JSStringRelease(EmptyObjectIString);
-    
-    JSValueRef exception;
 
+    JSStringRef validJSON = JSStringCreateWithUTF8CString("{\"aProperty\":true}");
+    JSValueRef jsonObject = JSValueMakeFromJSONString(context, validJSON);
+    JSStringRelease(validJSON);
+    if (!JSValueIsObject(context, jsonObject)) {
+        printf("FAIL: Did not parse valid JSON correctly\n");
+        failed = 1;
+    } else
+        printf("PASS: Parsed valid JSON string.\n");
+    JSStringRef propertyName = JSStringCreateWithUTF8CString("aProperty");
+    assertEqualsAsBoolean(JSObjectGetProperty(context, JSValueToObject(context, jsonObject, 0), propertyName, 0), true);
+    JSStringRelease(propertyName);
+    JSStringRef invalidJSON = JSStringCreateWithUTF8CString("fail!");
+    if (JSValueMakeFromJSONString(context, invalidJSON)) {
+        printf("FAIL: Should return null for invalid JSON data\n");
+        failed = 1;
+    } else
+        printf("PASS: Correctly returned null for invalid JSON data.\n");
+    JSValueRef exception;
+    JSStringRef str = JSValueCreateJSONString(context, jsonObject, 0, 0);
+    if (!JSStringIsEqualToUTF8CString(str, "{\"aProperty\":true}")) {
+        printf("FAIL: Did not correctly serialise with indent of 0.\n");
+        failed = 1;
+    } else
+        printf("PASS: Correctly serialised with indent of 0.\n");
+    JSStringRelease(str);
+
+    str = JSValueCreateJSONString(context, jsonObject, 4, 0);
+    if (!JSStringIsEqualToUTF8CString(str, "{\n    \"aProperty\": true\n}")) {
+        printf("FAIL: Did not correctly serialise with indent of 4.\n");
+        failed = 1;
+    } else
+        printf("PASS: Correctly serialised with indent of 4.\n");
+    JSStringRelease(str);
+    JSStringRef src = JSStringCreateWithUTF8CString("({get a(){ throw '';}})");
+    JSValueRef unstringifiableObj = JSEvaluateScript(context, src, NULL, NULL, 1, NULL);
+    
+    str = JSValueCreateJSONString(context, unstringifiableObj, 4, 0);
+    if (str) {
+        printf("FAIL: Didn't return null when attempting to serialize unserializable value.\n");
+        JSStringRelease(str);
+        failed = 1;
+    } else
+        printf("PASS: returned null when attempting to serialize unserializable value.\n");
+    
+    str = JSValueCreateJSONString(context, unstringifiableObj, 4, &exception);
+    if (str) {
+        printf("FAIL: Didn't return null when attempting to serialize unserializable value.\n");
+        JSStringRelease(str);
+        failed = 1;
+    } else
+        printf("PASS: returned null when attempting to serialize unserializable value.\n");
+    if (!exception) {
+        printf("FAIL: Did not set exception on serialisation error\n");
+        failed = 1;
+    } else
+        printf("PASS: set exception on serialisation error\n");
     // Conversions that throw exceptions
     exception = NULL;
     ASSERT(NULL == JSValueToObject(context, jsNull, &exception));

@@ -27,6 +27,7 @@
 #define JSValueRef_h
 
 #include <JavaScriptCore/JSBase.h>
+#include <JavaScriptCore/WebKitAvailability.h>
 
 #ifndef __cplusplus
 #include <stdbool.h>
@@ -207,6 +208,28 @@ JS_EXPORT JSValueRef JSValueMakeNumber(JSContextRef ctx, double number);
 @result         A JSValue of the string type, representing the value of string.
 */
 JS_EXPORT JSValueRef JSValueMakeString(JSContextRef ctx, JSStringRef string);
+
+/* Converting to and from JSON formatted strings */
+
+/*!
+ @function
+ @abstract       Creates a JavaScript value from a JSON formatted string.
+ @param ctx      The execution context to use.
+ @param string   The JSString containing the JSON string to be parsed.
+ @result         A JSValue containing the parsed value, or NULL if the input is invalid.
+ */
+JS_EXPORT JSValueRef JSValueMakeFromJSONString(JSContextRef ctx, JSStringRef string) AVAILABLE_AFTER_WEBKIT_VERSION_4_0;
+
+/*!
+ @function
+ @abstract       Creates a JavaScript string containing the JSON serialized representation of a JS value.
+ @param ctx      The execution context to use.
+ @param value    The value to serialize.
+ @param indent   The number of spaces to indent when nesting.  If 0, the resulting JSON will not contains newlines.  The size of the indent is clamped to 10 spaces.
+ @param exception A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
+ @result         A JSString with the result of serialization, or NULL if an exception is thrown.
+ */
+JS_EXPORT JSStringRef JSValueCreateJSONString(JSContextRef ctx, JSValueRef value, unsigned indent, JSValueRef* exception) AVAILABLE_AFTER_WEBKIT_VERSION_4_0;
 
 /* Converting to primitive values */
 

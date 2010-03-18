@@ -868,4 +868,12 @@ JSValue JSC_HOST_CALL JSONProtoFuncStringify(ExecState* exec, JSObject*, JSValue
     return Stringifier(exec, replacer, space).stringify(value);
 }
 
+UString JSONStringify(ExecState* exec, JSValue value, unsigned indent)
+{
+    JSValue result = Stringifier(exec, jsNull(), jsNumber(exec, indent)).stringify(value);
+    if (result.isUndefinedOrNull())
+        return UString();
+    return result.getString(exec);
+}
+
 } // namespace JSC

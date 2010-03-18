@@ -31,7 +31,9 @@
 #include "JSCallbackObject.h"
 
 #include <runtime/JSGlobalObject.h>
+#include <runtime/JSONObject.h>
 #include <runtime/JSString.h>
+#include <runtime/LiteralParser.h>
 #include <runtime/Operations.h>
 #include <runtime/Protect.h>
 #include <runtime/UString.h>
@@ -219,6 +221,31 @@ JSValueRef JSValueMakeString(JSContextRef ctx, JSStringRef string)
     APIEntryShim entryShim(exec);
 
     return toRef(exec, jsString(exec, string->ustring()));
+}
+
+JSValueRef JSValueMakeFromJSONString(JSContextRef ctx, JSStringRef string)
+{
+    ExecState* exec = toJS(ctx);
+    APIEntryShim entryShim(exec);
+    LiteralParser parser(exec, string->ustring(), LiteralParser::StrictJSON);
+    return toRef(exec, parser.tryLiteralParse());
+}
+
+JSStringRef JSValueCreateJSONString(JSContextRef ctx, JSValueRef apiValue, unsigned indent, JSValueRef* exception)
+{
+    ExecState* exec = toJS(ctx);
+    APIEntryShim entryShim(exec);
+    JSValue value = toJS(exec, apiValue);
+    UString result = JSONStringify(exec, value, indent);
+    if (exception)
+        *exception = 0;
+    if (exec->hadException()) {
+        if (exception)
+            *exception = toRef(exec, exec->exception());
+        exec->clearException();
+        return 0;
+    }
+    return OpaqueJSString::create(result).releaseRef();
 }
 
 bool JSValueToBoolean(JSContextRef ctx, JSValueRef value)
