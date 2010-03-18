@@ -1,0 +1,13 @@
+Please follow this link for a manual test.
+
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+
+Test for NPP_SetWindow calls sent while a plug-in resizes itself.
+
+x: 18, y: 54, width: 100, height: 100, clipRect: (0, 0, 100, 100)
+Height and width should equal 200, and the plug-in size should not change on scroll.
+
