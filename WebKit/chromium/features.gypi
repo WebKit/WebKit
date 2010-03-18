@@ -40,7 +40,7 @@
       # features_override.gypi inline documentation for more details.
       'feature_defines%': [
         'ENABLE_3D_CANVAS=0',
-        'ENABLE_BLOB_SLICE=0',
+        'ENABLE_BLOB_SLICE=1',
         'ENABLE_CHANNEL_MESSAGING=1',
         'ENABLE_DATABASE=1',
         'ENABLE_DATAGRID=0',

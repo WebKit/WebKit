@@ -290,7 +290,11 @@ bool ChromiumBridge::getFileSize(const String& path, long long& result)
 
 bool ChromiumBridge::getFileModificationTime(const String& path, time_t& result)
 {
-    return webKitClient()->getFileModificationTime(path, result);
+    double modificationTime;
+    if (!webKitClient()->getFileModificationTime(path, modificationTime))
+        return false;
+    result = static_cast<time_t>(modificationTime);
+    return true;
 }
 
 String ChromiumBridge::directoryName(const String& path)

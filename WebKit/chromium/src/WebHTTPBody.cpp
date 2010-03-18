@@ -79,17 +79,25 @@ bool WebHTTPBody::elementAt(size_t index, Element& result) const
         result.type = Element::TypeData;
         result.data.assign(element.m_data.data(), element.m_data.size());
         result.filePath.reset();
+#if ENABLE(BLOB_SLICE)
         result.fileStart = 0;
         result.fileLength = 0;
         result.fileInfo.modificationTime = 0.0;
+#endif
         break;
     case FormDataElement::encodedFile:
         result.type = Element::TypeFile;
         result.data.reset();
         result.filePath = element.m_filename;
-        result.fileStart = 0; // FIXME: to be set from FormData.
-        result.fileLength = -1; // FIXME: to be set from FormData.
-        result.fileInfo.modificationTime = 0.0; // FIXME: to be set from FormData.
+#if ENABLE(BLOB_SLICE)
+        result.fileStart = element.m_fileStart;
+        result.fileLength = element.m_fileLength;
+        result.fileInfo.modificationTime = element.m_expectedFileModificationTime;
+#else
+        result.fileStart = 0;
+        result.fileLength = -1;
+        result.fileInfo.modificationTime = 0.0;
+#endif
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -113,9 +121,12 @@ void WebHTTPBody::appendFile(const WebString& filePath)
     m_private->appendFile(filePath);
 }
 
-void WebHTTPBody::appendFile(const WebString& filePath, long long fileStart, long long fileLength, const WebFileInfo& fileInfo)
+void WebHTTPBody::appendFileRange(const WebString& filePath, long long fileStart, long long fileLength, const WebFileInfo& fileInfo)
 {
-    // FIXME: to be implemented.
+#if ENABLE(BLOB_SLICE)
+    ensureMutable();
+    m_private->appendFileRange(filePath, fileStart, fileLength, fileInfo.modificationTime);
+#endif
 }
 
 long long WebHTTPBody::identifier() const
