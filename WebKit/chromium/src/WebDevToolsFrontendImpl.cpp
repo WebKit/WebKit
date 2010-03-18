@@ -366,7 +366,7 @@ v8::Handle<v8::Value> WebDevToolsFrontendImpl::jsShowContextMenu(const v8::Argum
         return v8::Undefined();
 
     v8::Local<v8::Object> eventWrapper = v8::Local<v8::Object>::Cast(args[0]);
-    if (!V8MouseEvent::info.equals(V8DOMWrapper::domWrapperType(eventWrapper))
+    if (!V8MouseEvent::info.equals(V8DOMWrapper::domWrapperType(eventWrapper)))
         return v8::Undefined();
 
     Event* event = V8Event::toNative(eventWrapper);

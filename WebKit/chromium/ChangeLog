@@ -1,5 +1,14 @@
 2010-03-18  Nate Chapin  <japhet@chromium.org>
 
+        Unreviewed, build fix.
+
+        Left a parentheses unclosed somehow.
+
+        * src/WebDevToolsFrontendImpl.cpp:
+        (WebKit::WebDevToolsFrontendImpl::jsShowContextMenu):
+
+2010-03-18  Nate Chapin  <japhet@chromium.org>
+
         Reviewed by Dimitri Glazkov.
         
         Remove all references to V8Index.h and V8ClassIndex.
