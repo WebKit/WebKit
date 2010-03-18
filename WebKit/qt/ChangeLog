@@ -1,3 +1,12 @@
+2010-03-17  Antti Koivisto  <koivisto@iki.fi>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Fix Qt build with tiled backing store disabled.
+
+        * Api/qwebframe.cpp:
+        * Api/qwebframe_p.h:
+
 2010-03-17  Chang Shu  <chang.shu@nokia.com>
 
         Reviewed by Laszlo Gombos.
