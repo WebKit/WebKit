@@ -1,3 +1,18 @@
+2010-03-17  Drew Wilson  <atwilson@chromium.org>
+
+        Reviewed by David Levin.
+
+        Add tests for "load shared worker in iframe" case.
+        https://bugs.webkit.org/show_bug.cgi?id=36203
+
+        Makes sure that creating a worker simultaneously in a document and in
+        a child iframe works (you end up with a single instance).
+
+        * fast/workers/resources/shared-worker-count-connections.js: Added.
+        * fast/workers/resources/shared-worker-iframe.html: Added.
+        * fast/workers/shared-worker-in-iframe-expected.txt: Added.
+        * fast/workers/shared-worker-in-iframe.html: Added.
+
 2010-03-17  Shu Chang  <Chang.Shu@nokia.com>
 
         Reviewed by Eric Seidel.
