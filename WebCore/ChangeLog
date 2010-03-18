@@ -1,3 +1,18 @@
+2010-03-18  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Preserve console history between debugging sessions.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36223
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._settingsLoaded):
+        (WebInspector.ConsoleView.prototype._enterKeyPressed.printResult):
+        (WebInspector.ConsoleView.prototype._enterKeyPressed):
+        * inspector/front-end/Settings.js:
+        (WebInspector.Settings.prototype._load):
+
 2010-03-18  Kim Grönholm  <kim.gronholm@nomovok.com>
 
         Reviewed by Simon Hausmann.
