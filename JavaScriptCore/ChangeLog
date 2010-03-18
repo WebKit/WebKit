@@ -1,3 +1,18 @@
+2010-03-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Speed up Math.round a little by removing unneeded special case
+        https://bugs.webkit.org/show_bug.cgi?id=36107
+
+        Test: fast/js/math.html
+
+        * runtime/MathObject.cpp:
+        (JSC::mathProtoFuncRound): This function had a special case for numbers
+        between -0.5 and -0.0 to return -0.0. But the algorithm in the function
+        already yields -0.0 for those cases, so the extra checking and branching
+        is unneeded.
+
 2010-03-17  Mike Homey  <glandium@debian.org>
 
         Reviewed by Gustavo Noronha.

@@ -216,8 +216,6 @@ JSValue JSC_HOST_CALL mathProtoFuncRandom(ExecState* exec, JSObject*, JSValue, c
 JSValue JSC_HOST_CALL mathProtoFuncRound(ExecState* exec, JSObject*, JSValue, const ArgList& args)
 {
     double arg = args.at(0).toNumber(exec);
-    if (signbit(arg) && arg >= -0.5)
-         return jsNumber(exec, -0.0);
     double integer = ceil(arg);
     return jsNumber(exec, integer - (integer - arg > 0.5));
 }
