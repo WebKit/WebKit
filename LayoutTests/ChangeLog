@@ -1,3 +1,16 @@
+2010-03-18  Chang Shu  <chang.shu@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36220
+
+        [Qt] Unskip the tests that pass after the fix for bug 36139.
+        http/tests/appcache/foreign-iframe-main.html
+        http/tests/appcache/manifest-with-empty-file.html
+        http/tests/appcache/resource-redirect.html
+
+        * platform/qt/Skipped:
+
 2010-03-17  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
