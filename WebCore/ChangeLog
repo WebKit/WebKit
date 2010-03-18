@@ -1,3 +1,38 @@
+2010-03-18  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Antti Koivisto.
+
+        [Qt] [Performance] GraphicsLayerQt updates the scene too often
+        https://bugs.webkit.org/show_bug.cgi?id=36158
+
+        This fix makes sure that flushChanges is only called when necessary,
+        by calling the notifySync function asynchronously, which makes sure flushChanges() is called
+        after the WebCore compositor has made all its changes.
+
+        This has shown a visual improvement on several test-cases.
+
+        * Makefile:
+        * platform/graphics/qt/GraphicsLayerQt.cpp:
+        (WebCore::GraphicsLayerQtImpl::):
+        (WebCore::GraphicsLayerQtImpl::notifySyncRequired):
+        (WebCore::GraphicsLayerQtImpl::notifyChange):
+        (WebCore::GraphicsLayerQtImpl::flushChanges):
+        (WebCore::GraphicsLayerQt::setMaskLayer):
+        (WebCore::GraphicsLayerQt::setPosition):
+        (WebCore::GraphicsLayerQt::setAnchorPoint):
+        (WebCore::GraphicsLayerQt::setSize):
+        (WebCore::GraphicsLayerQt::setTransform):
+        (WebCore::GraphicsLayerQt::setChildrenTransform):
+        (WebCore::GraphicsLayerQt::setPreserves3D):
+        (WebCore::GraphicsLayerQt::setMasksToBounds):
+        (WebCore::GraphicsLayerQt::setDrawsContent):
+        (WebCore::GraphicsLayerQt::setBackgroundColor):
+        (WebCore::GraphicsLayerQt::clearBackgroundColor):
+        (WebCore::GraphicsLayerQt::setContentsOpaque):
+        (WebCore::GraphicsLayerQt::setBackfaceVisibility):
+        (WebCore::GraphicsLayerQt::setOpacity):
+        (WebCore::GraphicsLayerQt::setContentsRect):
+
 2010-03-18  Stephen White  <senorblanco@chromium.org>
 
         Parsing of rgb() colors in HTML canvas is still fairly slow.
