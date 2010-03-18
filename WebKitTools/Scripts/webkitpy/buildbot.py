@@ -58,7 +58,7 @@ class Builder(object):
         if cached_build:
             return cached_build
 
-        build_dictionary = self._buildbot._fetch_xmlrpc_build_dictionary(self._name, build_number)
+        build_dictionary = self._buildbot._fetch_xmlrpc_build_dictionary(self, build_number)
         if not build_dictionary:
             return None
         build = Build(build_dictionary, self)
@@ -74,8 +74,12 @@ class Build(object):
         self._number = int(build_dictionary['number'])
         self._is_green = (build_dictionary['results'] == 0) # Undocumented, buildbot XMLRPC
 
+    @staticmethod
+    def build_url(builder, build_number):
+        return "%s/builds/%s" % (builder.url(), build_number)
+
     def url(self):
-        return "%s/builds/%s" % (self.builder().url(), self._number)
+        return self.build_url(self.builder(), self._number)
 
     def builder(self):
         return self._builder
@@ -172,14 +176,15 @@ class BuildBot(object):
         return not self.red_core_builders()
 
     # FIXME: These _fetch methods should move to a networking class.
-    def _fetch_xmlrpc_build_dictionary(self, builder_name, build_number):
+    def _fetch_xmlrpc_build_dictionary(self, builder, build_number):
         # The buildbot XMLRPC API is super-limited.
         # For one, you cannot fetch info on builds which are incomplete.
         proxy = xmlrpclib.ServerProxy("http://%s/xmlrpc" % self.buildbot_host)
         try:
-            return proxy.getBuild(builder_name, int(build_number))
+            return proxy.getBuild(builder.name(), int(build_number))
         except xmlrpclib.Fault, err:
-            log("Error fetching data for build %s" % build_number)
+            build_url = Build.build_url(builder, build_number)
+            log("Error fetching data for %s build %s (%s)" % (builder.name(), build_number, build_url))
             return None
 
     def _fetch_one_box_per_builder(self):

@@ -34,7 +34,7 @@ import re
 import subprocess
 
 # Import WebKit-specific modules.
-from webkitpy.changelogs import ChangeLog
+from webkitpy.changelogs import ChangeLog, is_path_to_changelog
 from webkitpy.executive import Executive, run_command, ScriptError
 from webkitpy.user import User
 from webkitpy.webkit_logging import error, log
@@ -157,12 +157,7 @@ class SCM:
 
     # ChangeLog-specific code doesn't really belong in scm.py, but this function is very useful.
     def modified_changelogs(self):
-        changelog_paths = []
-        paths = self.changed_files()
-        for path in paths:
-            if os.path.basename(path) == "ChangeLog":
-                changelog_paths.append(path)
-        return changelog_paths
+        return [path for path in self.changed_files() if is_path_to_changelog(path)]
 
     # FIXME: Requires unit test
     # FIXME: commit_message_for_this_commit and modified_changelogs don't
@@ -181,7 +176,7 @@ class SCM:
             changelog_entry = ChangeLog(changelog_path).latest_entry()
             if not changelog_entry:
                 raise ScriptError(message="Failed to parse ChangeLog: " + os.path.abspath(changelog_path))
-            changelog_messages.append(changelog_entry)
+            changelog_messages.append(changelog_entry.contents())
 
         # FIXME: We should sort and label the ChangeLog messages like commit-log-editor does.
         return CommitMessage("".join(changelog_messages).splitlines())
@@ -210,6 +205,9 @@ class SCM:
     def changed_files(self):
         raise NotImplementedError, "subclasses must implement"
 
+    def changed_files_for_revision(self):
+        raise NotImplementedError, "subclasses must implement"
+
     def conflicted_files(self):
         raise NotImplementedError, "subclasses must implement"
 
@@ -217,6 +215,12 @@ class SCM:
         raise NotImplementedError, "subclasses must implement"
 
     def create_patch(self):
+        raise NotImplementedError, "subclasses must implement"
+
+    def committer_email_for_revision(self, revision):
+        raise NotImplementedError, "subclasses must implement"
+
+    def contents_at_revision(self, path, revision):
         raise NotImplementedError, "subclasses must implement"
 
     def diff_for_revision(self, revision):
@@ -228,7 +232,7 @@ class SCM:
     def revert_files(self, file_paths):
         raise NotImplementedError, "subclasses must implement"
 
-    def commit_with_message(self, message):
+    def commit_with_message(self, message, username=None):
         raise NotImplementedError, "subclasses must implement"
 
     def svn_commit_log(self, svn_revision):
@@ -330,19 +334,20 @@ class SVN(SCM):
     def status_command(self):
         return ['svn', 'status']
 
+    def _status_regexp(self, expected_types):
+        field_count = 6 if self.svn_version() > "1.6" else 5
+        return "^(?P<status>[%s]).{%s} (?P<filename>.+)$" % (expected_types, field_count)
+
     def changed_files(self):
-        if self.svn_version() > "1.6":
-            status_regexp = "^(?P<status>[ACDMR]).{6} (?P<filename>.+)$"
-        else:
-            status_regexp = "^(?P<status>[ACDMR]).{5} (?P<filename>.+)$"
-        return self.run_status_and_extract_filenames(self.status_command(), status_regexp)
+        return self.run_status_and_extract_filenames(self.status_command(), self._status_regexp("ACDMR"))
+
+    def changed_files_for_revision(self, revision):
+        # As far as I can tell svn diff --summarize output looks just like svn status output.
+        status_command = ["svn", "diff", "--summarize", "-c", str(revision)]
+        return self.run_status_and_extract_filenames(status_command, self._status_regexp("ACDMR"))
 
     def conflicted_files(self):
-        if self.svn_version() > "1.6":
-            status_regexp = "^(?P<status>[C]).{6} (?P<filename>.+)$"
-        else:
-            status_regexp = "^(?P<status>[C]).{5} (?P<filename>.+)$"
-        return self.run_status_and_extract_filenames(self.status_command(), status_regexp)
+        return self.run_status_and_extract_filenames(self.status_command(), self._status_regexp("C"))
 
     @staticmethod
     def supports_local_commits():
@@ -353,6 +358,13 @@ class SVN(SCM):
 
     def create_patch(self):
         return run_command(self.script_path("svn-create-patch"), cwd=self.checkout_root, return_stderr=False)
+
+    def committer_email_for_revision(self, revision):
+        return run_command(["svn", "propget", "svn:author", "--revprop", "-r", str(revision)]).rstrip()
+
+    def contents_at_revision(self, path, revision):
+        remote_path = "%s/%s" % (self._repository_url(), path)
+        return run_command(["svn", "cat", "-r", str(revision), remote_path])
 
     def diff_for_revision(self, revision):
         return run_command(['svn', 'diff', '-c', str(revision)])
@@ -415,7 +427,6 @@ class Git(SCM):
     def commit_success_regexp():
         return "^Committed r(?P<svn_revision>\d+)$"
 
-
     def discard_local_commits(self):
         run_command(['git', 'reset', '--hard', 'trunk'])
     
@@ -438,15 +449,23 @@ class Git(SCM):
     def status_command(self):
         return ['git', 'status']
 
+    def _status_regexp(self, expected_types):
+        return '^(?P<status>[%s])\t(?P<filename>.+)$' % expected_types
+
     def changed_files(self):
         status_command = ['git', 'diff', '-r', '--name-status', '-C', '-M', 'HEAD']
-        status_regexp = '^(?P<status>[ADM])\t(?P<filename>.+)$'
-        return self.run_status_and_extract_filenames(status_command, status_regexp)
+        return self.run_status_and_extract_filenames(status_command, self._status_regexp("ADM"))
+
+    def changed_files_for_revision(self, revision):
+        commit_id = self.git_commit_from_svn_revision(revision)
+        # --pretty="format:" makes git show not print the commit log header,
+        changed_files = run_command(["git", "show", "--pretty=format:", "--name-only", commit_id]).splitlines()
+        # instead it just prints a blank line at the top, so we skip the blank line:
+        return changed_files[1:]
 
     def conflicted_files(self):
         status_command = ['git', 'diff', '--name-status', '-C', '-M', '--diff-filter=U']
-        status_regexp = '^(?P<status>[U])\t(?P<filename>.+)$'
-        return self.run_status_and_extract_filenames(status_command, status_regexp)
+        return self.run_status_and_extract_filenames(status_command, self._status_regexp("U"))
 
     @staticmethod
     def supports_local_commits():
@@ -460,19 +479,28 @@ class Git(SCM):
 
     @classmethod
     def git_commit_from_svn_revision(cls, revision):
+        git_commit = run_command(['git', 'svn', 'find-rev', 'r%s' % revision]).rstrip()
         # git svn find-rev always exits 0, even when the revision is not found.
-        return run_command(['git', 'svn', 'find-rev', 'r%s' % revision]).rstrip()
+        if not git_commit:
+            raise ScriptError(message='Failed to find git commit for revision %s, your checkout likely needs an update.' % revision)
+        return git_commit
+
+    def contents_at_revision(self, path, revision):
+        return run_command(["git", "show", "%s:%s" % (self.git_commit_from_svn_revision(revision), path)])
 
     def diff_for_revision(self, revision):
         git_commit = self.git_commit_from_svn_revision(revision)
         return self.create_patch_from_local_commit(git_commit)
 
+    def committer_email_for_revision(self, revision):
+        git_commit = self.git_commit_from_svn_revision(revision)
+        committer_email = run_command(["git", "log", "-1", "--pretty=format:%ce", git_commit])
+        # Git adds an extra @repository_hash to the end of every committer email, remove it:
+        return committer_email.rsplit("@", 1)[0]
+
     def apply_reverse_diff(self, revision):
         # Assume the revision is an svn revision.
         git_commit = self.git_commit_from_svn_revision(revision)
-        if not git_commit:
-            raise ScriptError(message='Failed to find git commit for revision %s, git svn log output: "%s"' % (revision, git_commit))
-
         # I think this will always fail due to ChangeLogs.
         run_command(['git', 'revert', '--no-commit', git_commit], error_handler=Executive.ignore_error)
 
@@ -488,7 +516,8 @@ class Git(SCM):
     def revert_files(self, file_paths):
         run_command(['git', 'checkout', 'HEAD'] + file_paths)
 
-    def commit_with_message(self, message):
+    def commit_with_message(self, message, username=None):
+        # Username is ignored during Git commits.
         self.commit_locally_with_message(message)
         return self.push_local_commits_to_server()
 

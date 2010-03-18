@@ -100,6 +100,13 @@ class BugzillaTest(unittest.TestCase):
         'attacher_email' : 'christian.plesner.hansen@gmail.com',
     }
 
+    def test_url_creation(self):
+        # FIXME: These would be all better as doctests
+        bugs = Bugzilla()
+        self.assertEquals(None, bugs.bug_url_for_bug_id(None))
+        self.assertEquals(None, bugs.short_bug_url_for_bug_id(None))
+        self.assertEquals(None, bugs.attachment_url_for_id(None))
+
     def test_parse_bug_id(self):
         # FIXME: These would be all better as doctests
         bugs = Bugzilla()

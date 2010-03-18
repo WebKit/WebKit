@@ -72,12 +72,11 @@ class WebKitPatch(MultiCommandTool):
 
         if not self._scm:
             script_directory = os.path.abspath(sys.path[0])
-            webkit_directory = os.path.abspath(os.path.join(script_directory, "../.."))
-            self._scm = detect_scm_system(webkit_directory)
+            self._scm = detect_scm_system(script_directory)
             if self._scm:
-                log("The current directory (%s) is not a WebKit checkout, using %s" % (original_cwd, webkit_directory))
+                log("The current directory (%s) is not a WebKit checkout, using %s" % (original_cwd, self._scm.checkout_root))
             else:
-                error("FATAL: Failed to determine the SCM system for either %s or %s" % (original_cwd, webkit_directory))
+                error("FATAL: Failed to determine the SCM system for either %s or %s" % (original_cwd, script_directory))
 
         return self._scm
 

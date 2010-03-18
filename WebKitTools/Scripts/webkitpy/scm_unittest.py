@@ -28,6 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import base64
+import getpass
 import os
 import os.path
 import re
@@ -73,7 +74,7 @@ class SVNTestRepository:
         test_file = open('test_file', 'w')
         test_file.write("test1")
         test_file.flush()
-        
+
         run_command(['svn', 'add', 'test_file'])
         run_command(['svn', 'commit', '--quiet', '--message', 'initial commit'])
         
@@ -84,7 +85,9 @@ class SVNTestRepository:
         
         test_file.write("test3\n")
         test_file.flush()
-        
+        write_into_file_at_path("test_file2", "second file")
+        run_command(['svn', 'add', 'test_file2'])
+
         run_command(['svn', 'commit', '--quiet', '--message', 'third commit'])
 
         test_file.write("test4\n")
@@ -114,6 +117,10 @@ class SVNTestRepository:
     def tear_down(cls, test_object):
         run_command(['rm', '-rf', test_object.svn_repo_path])
         run_command(['rm', '-rf', test_object.svn_checkout_path])
+
+        # Now that we've deleted the checkout paths, cwddir may be invalid
+        # Change back to a valid directory so that later calls to os.getcwd() do not fail.
+        os.chdir(detect_scm_system(os.path.dirname(__file__)).checkout_root)
 
 # For testing the SCM baseclass directly.
 class SCMClassTests(unittest.TestCase):
@@ -180,7 +187,7 @@ class SCMTest(unittest.TestCase):
 
     # Tests which both GitTest and SVNTest should run.
     # FIXME: There must be a simpler way to add these w/o adding a wrapper method to both subclasses
-    def _shared_test_commit_with_message(self, username):
+    def _shared_test_commit_with_message(self, username="dbates@webkit.org"):
         write_into_file_at_path('test_file', 'more test content')
         commit_text = self.scm.commit_with_message("another test commit", username)
         self.assertEqual(self.scm.svn_revision_from_commit_text(commit_text), '5')
@@ -189,6 +196,26 @@ class SCMTest(unittest.TestCase):
         write_into_file_at_path('test_file', 'still more test content')
         commit_text = self.scm.commit_with_message("yet another test commit", username)
         self.assertEqual(self.scm.svn_revision_from_commit_text(commit_text), '0')
+
+    def _shared_test_changed_files_for_revision(self):
+        self.assertEqual(self.scm.changed_files_for_revision(2), ["test_file"])
+        self.assertEqual(sorted(self.scm.changed_files_for_revision(3)), sorted(["test_file", "test_file2"])) # Git and SVN return different orders.
+        self.assertEqual(self.scm.changed_files_for_revision(4), ["test_file"])
+
+    def _shared_test_contents_at_revision(self):
+        self.assertEqual(self.scm.contents_at_revision("test_file", 2), "test1test2")
+        self.assertEqual(self.scm.contents_at_revision("test_file", 3), "test1test2test3\n")
+        self.assertEqual(self.scm.contents_at_revision("test_file", 4), "test1test2test3\ntest4\n")
+
+        self.assertEqual(self.scm.contents_at_revision("test_file2", 3), "second file")
+        # Files which don't exist:
+        # Currently we raise instead of returning None because detecting the difference between
+        # "file not found" and any other error seems impossible with svn (git seems to expose such through the return code).
+        self.assertRaises(ScriptError, self.scm.contents_at_revision, "test_file2", 2)
+        self.assertRaises(ScriptError, self.scm.contents_at_revision, "does_not_exist", 2)
+
+    def _shared_test_committer_email_for_revision(self):
+        self.assertEqual(self.scm.committer_email_for_revision(2), getpass.getuser()) # Committer "email" will be the current user
 
     def _shared_test_reverse_diff(self):
         self._setup_webkittools_scripts_symlink(self.scm) # Git's apply_reverse_diff uses resolve-ChangeLogs
@@ -317,7 +344,7 @@ class SVNTest(SCMTest):
 
 +        Reviewed by NOBODY (OOPS!).
 +
-+        Second most awsome change ever.
++        Second most awesome change ever.
 +
 +        * scm_unittest.py:
 +
@@ -331,7 +358,7 @@ class SVNTest(SCMTest):
 
         Reviewed by REVIEWER_HERE.
 
-        Second most awsome change ever.
+        Second most awesome change ever.
 
         * scm_unittest.py:
 """
@@ -343,7 +370,7 @@ class SVNTest(SCMTest):
 
          Reviewed by Foo Bar.
 
-+        Second most awsome change ever.
++        Second most awesome change ever.
 +
 +        * scm_unittest.py:
 +
@@ -359,7 +386,7 @@ class SVNTest(SCMTest):
 
         Reviewed by Foo Bar.
 
-        Second most awsome change ever.
+        Second most awesome change ever.
 
         * scm_unittest.py:
 """
@@ -492,6 +519,16 @@ Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
     def test_svn_apply_git_patch(self):
         self._shared_test_svn_apply_git_patch()
 
+    def test_changed_files_for_revision(self):
+        self._shared_test_changed_files_for_revision()
+
+    def test_contents_at_revision(self):
+        self._shared_test_contents_at_revision()
+
+    def test_committer_email_for_revision(self):
+        self._shared_test_committer_email_for_revision()
+
+
 class GitTest(SCMTest):
 
     def _setup_git_clone_of_svn_repository(self):
@@ -613,6 +650,15 @@ class GitTest(SCMTest):
         self.assertTrue(re.search(r'\nliteral 0\n', patch_since_local_commit))
         self.assertTrue(re.search(r'\nliteral 256\n', patch_since_local_commit))
         self.assertEqual(patch_from_local_commit, patch_since_local_commit)
+
+    def test_changed_files_for_revision(self):
+        self._shared_test_changed_files_for_revision()
+
+    def test_contents_at_revision(self):
+        self._shared_test_contents_at_revision()
+
+    def test_committer_email_for_revision(self):
+        self._shared_test_committer_email_for_revision()
 
 
 if __name__ == '__main__':

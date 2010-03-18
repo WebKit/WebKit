@@ -87,8 +87,11 @@ class ChangeLogsTest(unittest.TestCase):
     def test_latest_entry_parse(self):
         changelog_contents = "%s\n%s" % (self._example_entry, self._example_changelog)
         changelog_file = StringIO(changelog_contents)
-        latest_entry = ChangeLog._parse_latest_entry_from_file(changelog_file)
-        self.assertEquals(self._example_entry, latest_entry)
+        latest_entry = ChangeLog.parse_latest_entry_from_file(changelog_file)
+        self.assertEquals(latest_entry.contents(), self._example_entry)
+        self.assertEquals(latest_entry.author_name(), "Peter Kasting")
+        self.assertEquals(latest_entry.author_email(), "pkasting@google.com")
+        self.assertEquals(latest_entry.reviewer_text(), "Steve Falkenburg")
 
     @staticmethod
     def _write_tmp_file_with_contents(contents):
@@ -169,11 +172,16 @@ class ChangeLogsTest(unittest.TestCase):
         changelog.update_for_revert(*args)
         actual_entry = changelog.latest_entry()
         os.remove(changelog_path)
-        self.assertEquals(actual_entry, expected_entry)
+        self.assertEquals(actual_entry.contents(), expected_entry)
+        self.assertEquals(actual_entry.reviewer_text(), None)
+        # These checks could be removed to allow this to work on other entries:
+        self.assertEquals(actual_entry.author_name(), "Eric Seidel")
+        self.assertEquals(actual_entry.author_email(), "eric@webkit.org")
 
     def test_update_for_revert(self):
         self._assert_update_for_revert_output([12345, "Reason"], self._revert_entry_without_bug_url)
         self._assert_update_for_revert_output([12345, "Reason", "http://example.com/123"], self._revert_entry_with_bug_url)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -295,9 +295,14 @@ class MockBuildBot(Mock):
 
 class MockSCM(Mock):
 
+    fake_checkout_root = os.path.realpath("/tmp") # realpath is needed to allow for Mac OS X's /private/tmp
+
     def __init__(self):
         Mock.__init__(self)
-        self.checkout_root = os.getcwd()
+        # FIXME: We should probably use real checkout-root detection logic here.
+        # os.getcwd() can't work here because other parts of the code assume that "checkout_root"
+        # will actually be the root.  Since getcwd() is wrong, use a globally fake root for now.
+        self.checkout_root = self.fake_checkout_root
 
     def create_patch(self):
         return "Patch1"

@@ -1,3 +1,44 @@
+2010-03-17  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add more infrastructure for sheriff-bot, including making what-broke more awesome
+        https://bugs.webkit.org/show_bug.cgi?id=36254
+
+        * Scripts/webkitpy/bugzilla.py:
+         - Made the various URL methods return None when passed None.
+        * Scripts/webkitpy/bugzilla_unittest.py:
+         - Test that the url methods work as expected.
+        * Scripts/webkitpy/buildbot.py:
+         - Add a static Build.build_url so that its possible to generate a build url without a Build object.
+         - Give users a URL in _fetch_xmlrpc_build_dictionary error message.
+        * Scripts/webkitpy/changelogs.py:
+         - Add a new ChangeLogEntry class to encapsulate entry-parsing logic.
+         - Add is_path_to_changelog to greatly simplify SCM.modified_changelogs code.
+         - Make ChangeLog.parse_latest_entry_from_file a public method.
+        * Scripts/webkitpy/changelogs_unittest.py:
+         - Add tests for new ChangeLog entry parsing.
+        * Scripts/webkitpy/commands/queries.py:
+         - Make "what-broke" not print "ok" builders, only failing ones.
+         - Print much more information on failing builders, including links and authorship/reviewer information.
+        * Scripts/webkitpy/commands/queues_unittest.py:
+         - Use a fake_checkout path since fixing the cwd (as part of fixing scm_unittests.py) was breaking tests.
+        * Scripts/webkitpy/mock_bugzillatool.py:
+         - Move MockSCM away from using os.getcwd() as that was fragile (and wrong).
+        * Scripts/webkitpy/patch/patcher.py:
+         - Remove code which was broken now that this file has moved.
+         - Code was also redundant now that SCM.find_checkout_root() exists.
+        * Scripts/webkitpy/scm.py:
+         - Greatly simplify modified_changelogs now that I understand list comprehensions.
+         - Expect ChangeLogEntry objects instead of raw strings.
+         - Add changed_files_for_revision, committer_email_for_revision and contents_at_revision
+         - Add commit_with_message argument to all sites since someone half-added it before. :(
+         - Get rid of copy/paste code using _status_regexp()
+        * Scripts/webkitpy/scm_unittest.py:
+         - Fix these tests!
+         - Add new tests for new scm code.
+         - Fix spelling of "awsome" to "awesome".
+
 2010-03-17  Daniel Bates  <dbates@rim.com>
 
         Rubber-stamped by David Levin.

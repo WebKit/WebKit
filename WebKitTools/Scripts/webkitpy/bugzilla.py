@@ -358,15 +358,21 @@ class Bugzilla(object):
     unassigned_email = "webkit-unassigned@lists.webkit.org"
 
     def bug_url_for_bug_id(self, bug_id, xml=False):
+        if not bug_id:
+            return None
         content_type = "&ctype=xml" if xml else ""
         return "%sshow_bug.cgi?id=%s%s" % (self.bug_server_url,
                                            bug_id,
                                            content_type)
 
     def short_bug_url_for_bug_id(self, bug_id):
+        if not bug_id:
+            return None
         return "http://webkit.org/b/%s" % bug_id
 
     def attachment_url_for_id(self, attachment_id, action="view"):
+        if not attachment_id:
+            return None
         action_param = ""
         if action and action != "view":
             action_param = "&action=%s" % action
