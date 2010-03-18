@@ -1,3 +1,26 @@
+2010-03-17  Stephan Aßmus  <superstippi@gmx.de>
+
+        Reviewed by Oliver Hunt.
+
+        [Haiku] Implement ImageBuffer support
+        https://bugs.webkit.org/show_bug.cgi?id=35288
+
+        Covered by existing tests.
+
+        The StillImage class implements WebCore::Image by wrapping a native
+        BBitmap. It will be needed to implement WebCore::ImageBuffer. This
+        solution is just like it's done in the Qt port.
+
+        * platform/graphics/haiku/StillImageHaiku.cpp: Added.
+        (WebCore::StillImage::StillImage):
+        (WebCore::StillImage::destroyDecodedData):
+        (WebCore::StillImage::decodedSize):
+        (WebCore::StillImage::size):
+        (WebCore::StillImage::nativeImageForCurrentFrame):
+        (WebCore::StillImage::draw):
+        * platform/graphics/haiku/StillImageHaiku.h: Added.
+        (WebCore::StillImage::create):
+
 2010-03-17  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Rubber stamped by Gustavo Noronha Silva.
