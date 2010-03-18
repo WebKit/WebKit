@@ -1,3 +1,18 @@
+2010-03-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36271
+        CSS3 :enabled on an input type=hidden element fails
+        
+        The CSS3 selectors spec now makes it clear that hidden inputs should respect
+        the :enabled and :disabled pseudo-classes.
+
+        Test: fast/forms/hidden-input-enabled.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector): Remove checks for hidden inputs.
+
 2010-03-18  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Simon Fraser.

@@ -2411,12 +2411,6 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
                 break;
             case CSSSelector::PseudoEnabled:
                 if (e && e->isFormControlElement()) {
-                    InputElement* inputElement = toInputElement(e);
-                    if (inputElement && inputElement->isInputTypeHidden())
-                        break;
-                    // The UI spec states that you can't match :enabled unless you are an object that can
-                    // "receive focus and be activated."  We will limit matching of this pseudo-class to elements
-                    // that are non-"hidden" controls.
                     return e->isEnabledFormControl();
                 }
                 break;
@@ -2427,13 +2421,6 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
                 return e && e->isDefaultButtonForForm();
             case CSSSelector::PseudoDisabled:
                 if (e && e->isFormControlElement()) {
-                    InputElement* inputElement = toInputElement(e);
-                    if (inputElement && inputElement->isInputTypeHidden())
-                        break;
-
-                    // The UI spec states that you can't match :enabled unless you are an object that can
-                    // "receive focus and be activated."  We will limit matching of this pseudo-class to elements
-                    // that are non-"hidden" controls.
                     return !e->isEnabledFormControl();
                 }
                 break;
