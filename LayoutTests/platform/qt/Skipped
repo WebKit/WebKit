@@ -5113,5 +5113,4 @@ plugins/resize-from-plugin.html
 # https://bugs.webkit.org/show_bug.cgi?id=36191
 #[Qt] GraphicsLayer: fix test regressions
 animations/fill-mode-transform.html
-animations/play-state.html
 animations/simultaneous-start-left.html

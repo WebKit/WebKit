@@ -1005,6 +1005,7 @@ public:
         , m_duration(anim->duration() * 1000)
         , m_isAlternate(anim->direction() == Animation::AnimationDirectionAlternate)
         , m_webkitPropertyID(values.property())
+        , m_webkitAnimation(anim)
         , m_keyframesName(name)
     {
     }
@@ -1025,6 +1026,9 @@ public:
     int m_duration;
     bool m_isAlternate;
     AnimatedPropertyID m_webkitPropertyID;
+
+    // we might need this in case the same animation is added again (i.e. resumed by WebCore)
+    const Animation* m_webkitAnimation;
     QString m_keyframesName;
 };
 
@@ -1153,7 +1157,7 @@ public:
             m_sourceMatrix = m_layer.data()->m_layer->transform();
             m_layer.data()->m_transformAnimationRunning = true;
             m_layer.data()->adjustCachingRecursively(true);
-        } else {
+        } else if (newState == QAbstractAnimation::Stopped) {
             m_layer.data()->m_transformAnimationRunning = false;
             m_layer.data()->adjustCachingRecursively(false);
         }
@@ -1195,32 +1199,45 @@ bool GraphicsLayerQt::addAnimation(const KeyframeValueList& values, const IntSiz
     if (!anim->duration() || !anim->iterationCount())
         return false;
 
-    QAbstractAnimation* newAnim;
+    QAbstractAnimation* newAnim = 0;
 
-    switch (values.property()) {
-    case AnimatedPropertyOpacity:
-        newAnim = new OpacityAnimationQt(m_impl.get(), values, boxSize, anim, keyframesName);
-        break;
-    case AnimatedPropertyWebkitTransform:
-        newAnim = new TransformAnimationQt(m_impl.get(), values, boxSize, anim, keyframesName);
-        break;
-    default:
-        return false;
+    // fixed: we might already have the Qt animation object associated with this WebCore::Animation object
+    for (QList<QWeakPointer<QAbstractAnimation> >::iterator it = m_impl->m_animations.begin(); it != m_impl->m_animations.end(); ++it) {
+        if (*it) {
+            AnimationQtBase* curAnimation = static_cast<AnimationQtBase*>(it->data());
+            if (curAnimation && curAnimation->m_webkitAnimation == anim)
+                newAnim = curAnimation;
+        }
     }
 
-    // we make sure WebCore::Animation and QAnimation are on the same terms
-    newAnim->setLoopCount(anim->iterationCount());
-    m_impl->m_animations.append(QWeakPointer<QAbstractAnimation>(newAnim));
-    QObject::connect(&m_impl->m_suspendTimer, SIGNAL(timeout()), newAnim, SLOT(resume()));
-    timeOffset += anim->delay();
+    if (!newAnim) {
+        switch (values.property()) {
+        case AnimatedPropertyOpacity:
+            newAnim = new OpacityAnimationQt(m_impl.get(), values, boxSize, anim, keyframesName);
+            break;
+        case AnimatedPropertyWebkitTransform:
+            newAnim = new TransformAnimationQt(m_impl.get(), values, boxSize, anim, keyframesName);
+            break;
+        default:
+            return false;
+        }
+
+        // we make sure WebCore::Animation and QAnimation are on the same terms
+        newAnim->setLoopCount(anim->iterationCount());
+        m_impl->m_animations.append(QWeakPointer<QAbstractAnimation>(newAnim));
+        QObject::connect(&m_impl->m_suspendTimer, SIGNAL(timeout()), newAnim, SLOT(resume()));
+    }
 
     // flush now or flicker...
     m_impl->flushChanges(false);
 
-    if (timeOffset)
-        QTimer::singleShot(timeOffset * 1000, newAnim, SLOT(start()));
+    if (anim->delay())
+        QTimer::singleShot(anim->delay() * 1000, newAnim, SLOT(start()));
     else
         newAnim->start();
+
+    // we synchronize the animation's clock to WebCore's timeOffset
+    newAnim->setCurrentTime(timeOffset * 1000);
 
     // we don't need to manage the animation object's lifecycle:
     // WebCore would call removeAnimations when it's time to delete.
@@ -1263,8 +1280,11 @@ void GraphicsLayerQt::pauseAnimation(const String& name, double timeOffset)
             continue;
 
         AnimationQtBase* anim = static_cast<AnimationQtBase*>((*it).data());
-        if (anim && anim->m_keyframesName == QString(name))
-            QTimer::singleShot(timeOffset * 1000, anim, SLOT(pause()));
+        if (anim && anim->m_keyframesName == QString(name)) {
+            // we synchronize the animation's clock to WebCore's timeOffset
+            anim->setCurrentTime(timeOffset * 1000);
+            anim->pause();
+        }
     }
 }
 

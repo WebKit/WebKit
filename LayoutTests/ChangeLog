@@ -1,3 +1,14 @@
+2010-03-18  Kim Grönholm  <kim.gronholm@nomovok.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] GraphicsLayer: Pausing and resuming of animations don't work as expected
+        https://bugs.webkit.org/show_bug.cgi?id=36219
+        
+        The play-state layout test now works, and can be removed from the skip list.
+
+        * platform/qt/Skipped: animations/play-state.html is removed from the skipped list
+
 2010-03-18  Adam Langley  <agl@chromium.org>
 
         Reviewed by David Levin.

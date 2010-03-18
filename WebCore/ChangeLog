@@ -1,3 +1,26 @@
+2010-03-18  Kim Grönholm  <kim.gronholm@nomovok.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] GraphicsLayer: Pausing and resuming of animations don't work as expected
+        https://bugs.webkit.org/show_bug.cgi?id=36219
+        
+        addAnimation and pauseAnimation were handling animation state changes in
+        the wrong way.
+        Apparently WebCore calls addAnimation for resuming, so we have to make 
+        sure to resume an existing animation if that happens. Also, timeOffset 
+        is now used for synchronization of the Qt animation clock with the 
+        WebCore clock, as opposed to using it as a delay timer. 
+        Both those fixes were necessary to get the layout test to work.
+        
+        LayoutTests/animations/play-state.html now passed on Qt.
+
+        * platform/graphics/qt/GraphicsLayerQt.cpp:
+        (WebCore::AnimationQtBase::AnimationQtBase):
+        (WebCore::TransformAnimationQt::updateState):
+        (WebCore::GraphicsLayerQt::addAnimation):
+        (WebCore::GraphicsLayerQt::pauseAnimation):
+
 2010-03-18  Adam Langley  <agl@chromium.org>
 
         Reviewed by David Levin.
