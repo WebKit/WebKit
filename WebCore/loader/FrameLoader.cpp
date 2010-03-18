@@ -730,8 +730,6 @@ void FrameLoader::clear(bool clearWindowProperties, bool clearScriptObjects, boo
     if (clearFrameView && m_frame->view())
         m_frame->view()->clear();
 
-    m_frame->setSelectionGranularity(CharacterGranularity);
-
     // Do not drop the document before the ScriptController and view are cleared
     // as some destructors might still try to access the document.
     m_frame->setDocument(0);

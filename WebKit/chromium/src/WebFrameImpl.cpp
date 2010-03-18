@@ -1184,11 +1184,10 @@ void WebFrameImpl::selectWordAroundPosition(Frame* frame, VisiblePosition pos)
     VisibleSelection selection(pos);
     selection.expandUsingGranularity(WordGranularity);
 
-    if (selection.isRange())
-        frame->setSelectionGranularity(WordGranularity);
-
-    if (frame->shouldChangeSelection(selection))
-        frame->selection()->setSelection(selection);
+    if (frame->shouldChangeSelection(selection)) {
+        TextGranularity granularity = selection.isRange() ? WordGranularity : CharacterGranularity;
+        frame->selection()->setSelection(selection, granularity);
+    }
 }
 
 bool WebFrameImpl::selectWordAroundCaret()

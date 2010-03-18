@@ -326,7 +326,6 @@ void DOMSelection::extend(Node* node, int offset, ExceptionCode& ec)
     }
 
     SelectionController* selection = m_frame->selection();
-    selection->expandUsingGranularity(CharacterGranularity);
     selection->setExtent(VisiblePosition(node, offset, DOWNSTREAM));
 }
 

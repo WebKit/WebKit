@@ -1,3 +1,55 @@
+2010-03-12  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by David Levin.
+
+        smartdelete should only occur after double-click
+        https://bugs.webkit.org/show_bug.cgi?id=35314
+
+        1. Consolidate all notions of selection-granularity into SelectionController.
+        2. Now only mouse-based selections store a selection-granularity. This matches NSTextView.
+
+        New tests were added in http://trac.webkit.org/changeset/55913.
+
+        * WebCore.base.exp:
+        * editing/MoveSelectionCommand.cpp:
+        (WebCore::MoveSelectionCommand::MoveSelectionCommand):
+        (WebCore::MoveSelectionCommand::doApply):
+        * editing/MoveSelectionCommand.h:
+        (WebCore::MoveSelectionCommand::create):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::SelectionController):
+        (WebCore::SelectionController::setSelection):
+        (WebCore::SelectionController::modify):
+        (WebCore::SelectionController::clear):
+        * editing/SelectionController.h:
+        (WebCore::SelectionController::setSelection):
+        (WebCore::SelectionController::granularity):
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::VisibleSelection):
+        (WebCore::VisibleSelection::expandUsingGranularity):
+        (WebCore::VisibleSelection::setStartAndEndFromBaseAndExtentRespectingGranularity):
+        (WebCore::VisibleSelection::validate):
+        * editing/VisibleSelection.h:
+        (WebCore::operator==):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::clear):
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::extend):
+        * page/DragController.cpp:
+        (WebCore::DragController::concludeEditDrag):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectClosestWordFromMouseEvent):
+        (WebCore::EventHandler::selectClosestWordOrLinkFromMouseEvent):
+        (WebCore::EventHandler::handleMousePressEventTripleClick):
+        (WebCore::EventHandler::handleMousePressEventSingleClick):
+        (WebCore::EventHandler::updateSelectionForMouseDrag):
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        (WebCore::Frame::selectionGranularity):
+        * page/Frame.h:
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::setSelectionRange):
+
 2010-03-18  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, build fix.

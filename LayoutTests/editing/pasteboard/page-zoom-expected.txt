@@ -1,10 +1,10 @@
 Copy this 16px text.
-Paste Copy this 16px text it here.
+PasteCopy this 16px text it here.
 The pasted text should have a font size of 16px.
 
 
 Copy this x-small text.
-Paste Copy this x-small it here.
+PasteCopy this x-small it here.
 The pasted text should have a font size of x-small.
 
 

@@ -29,8 +29,7 @@ function editingTest() {
 </head> 
 <body>
 <p>This tests non-smartmove drag/drop. The space should be deleted on move,
-but not reinserted on drop, resulting in "worldhello". Currently there's a bug
-(https://bugs.webkit.org/show_bug.cgi?id=35314) where the space is reinserted on drop.</p>
+but not reinserted on drop, resulting in "worldhello".</p>
 <div contenteditable="true" id="test"><span id="dragme">hello</span> world</div>
 <script>runEditingTest();</script>
 </body>

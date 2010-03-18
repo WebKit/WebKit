@@ -247,7 +247,6 @@ namespace WebCore {
 
     public:
         TextGranularity selectionGranularity() const;
-        void setSelectionGranularity(TextGranularity);
 
         bool shouldChangeSelection(const VisibleSelection&) const;
         bool shouldDeleteSelection(const VisibleSelection&) const;
@@ -344,8 +343,6 @@ namespace WebCore {
         String m_kjsDefaultStatusBarText;
 
         float m_zoomFactor;
-
-        TextGranularity m_selectionGranularity;
 
         mutable SelectionController m_selectionController;
         mutable VisibleSelection m_mark;

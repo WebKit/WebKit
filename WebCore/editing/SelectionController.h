@@ -59,7 +59,8 @@ public:
     void moveTo(const Position&, const Position&, EAffinity, bool userTriggered = false);
 
     const VisibleSelection& selection() const { return m_selection; }
-    void setSelection(const VisibleSelection&, bool closeTyping = true, bool clearTypingStyle = true, bool userTriggered = false);
+    void setSelection(const VisibleSelection&, bool closeTyping = true, bool clearTypingStyle = true, bool userTriggered = false, TextGranularity = CharacterGranularity);
+    void setSelection(const VisibleSelection& selection, TextGranularity granularity) { setSelection(selection, true, true, false, granularity); }
     bool setSelectedRange(Range*, EAffinity, bool closeTyping);
     void selectAll();
     void clear();
@@ -75,7 +76,7 @@ public:
 
     bool modify(EAlteration, EDirection, TextGranularity, bool userTriggered = false);
     bool modify(EAlteration, int verticalDistance, bool userTriggered = false);
-    bool expandUsingGranularity(TextGranularity);
+    TextGranularity granularity() const { return m_granularity; }
 
     void setBase(const VisiblePosition&, bool userTriggered = false);
     void setBase(const Position&, EAffinity, bool userTriggered = false);
@@ -178,6 +179,7 @@ private:
     int m_xPosForVerticalArrowNavigation;
 
     VisibleSelection m_selection;
+    TextGranularity m_granularity;
 
     Timer<SelectionController> m_caretBlinkTimer;
 

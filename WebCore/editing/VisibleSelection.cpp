@@ -43,7 +43,6 @@ namespace WebCore {
 
 VisibleSelection::VisibleSelection()
     : m_affinity(DOWNSTREAM)
-    , m_granularity(CharacterGranularity)
     , m_selectionType(NoSelection)
     , m_baseIsFirst(true)
 {
@@ -53,7 +52,6 @@ VisibleSelection::VisibleSelection(const Position& pos, EAffinity affinity)
     : m_base(pos)
     , m_extent(pos)
     , m_affinity(affinity)
-    , m_granularity(CharacterGranularity)
 {
     validate();
 }
@@ -62,7 +60,6 @@ VisibleSelection::VisibleSelection(const Position& base, const Position& extent,
     : m_base(base)
     , m_extent(extent)
     , m_affinity(affinity)
-    , m_granularity(CharacterGranularity)
 {
     validate();
 }
@@ -71,7 +68,6 @@ VisibleSelection::VisibleSelection(const VisiblePosition& pos)
     : m_base(pos.deepEquivalent())
     , m_extent(pos.deepEquivalent())
     , m_affinity(pos.affinity())
-    , m_granularity(CharacterGranularity)
 {
     validate();
 }
@@ -80,7 +76,6 @@ VisibleSelection::VisibleSelection(const VisiblePosition& base, const VisiblePos
     : m_base(base.deepEquivalent())
     , m_extent(extent.deepEquivalent())
     , m_affinity(base.affinity())
-    , m_granularity(CharacterGranularity)
 {
     validate();
 }
@@ -89,7 +84,6 @@ VisibleSelection::VisibleSelection(const Range* range, EAffinity affinity)
     : m_base(range->startPosition())
     , m_extent(range->endPosition())
     , m_affinity(affinity)
-    , m_granularity(CharacterGranularity)
 {
     validate();
 }
@@ -190,8 +184,7 @@ bool VisibleSelection::expandUsingGranularity(TextGranularity granularity)
     if (isNone())
         return false;
 
-    m_granularity = granularity;
-    validate();
+    validate(granularity);
     return true;
 }
 
@@ -268,7 +261,7 @@ void VisibleSelection::setBaseAndExtentToDeepEquivalents()
         m_baseIsFirst = comparePositions(m_base, m_extent) <= 0;
 }
 
-void VisibleSelection::setStartAndEndFromBaseAndExtentRespectingGranularity()
+void VisibleSelection::setStartAndEndFromBaseAndExtentRespectingGranularity(TextGranularity granularity)
 {
     if (m_baseIsFirst) {
         m_start = m_base;
@@ -278,7 +271,7 @@ void VisibleSelection::setStartAndEndFromBaseAndExtentRespectingGranularity()
         m_end = m_base;
     }
 
-    switch (m_granularity) {
+    switch (granularity) {
         case CharacterGranularity:
             // Don't do any expansion.
             break;
@@ -408,10 +401,10 @@ void VisibleSelection::updateSelectionType()
         m_affinity = DOWNSTREAM;
 }
 
-void VisibleSelection::validate()
+void VisibleSelection::validate(TextGranularity granularity)
 {
     setBaseAndExtentToDeepEquivalents();
-    setStartAndEndFromBaseAndExtentRespectingGranularity();
+    setStartAndEndFromBaseAndExtentRespectingGranularity(granularity);
     adjustSelectionToAvoidCrossingEditingBoundaries();
     updateSelectionType();
 

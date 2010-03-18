@@ -432,10 +432,11 @@ bool DragController::concludeEditDrag(DragData* dragData)
 
         m_client->willPerformDragDestinationAction(DragDestinationActionEdit, dragData);
         if (dragIsMove(innerFrame->selection())) {
-            bool smartMove = innerFrame->selectionGranularity() == WordGranularity
-                          && innerFrame->editor()->smartInsertDeleteEnabled()
-                          && dragData->canSmartReplace();
-            applyCommand(MoveSelectionCommand::create(fragment, dragCaret.base(), smartMove));
+            // NSTextView behavior is to always smart delete on moving a selection,
+            // but only to smart insert if the selection granularity is word granularity.
+            bool smartDelete = innerFrame->editor()->smartInsertDeleteEnabled();
+            bool smartInsert = smartDelete && innerFrame->selectionGranularity() == WordGranularity && dragData->canSmartReplace();
+            applyCommand(MoveSelectionCommand::create(fragment, dragCaret.base(), smartInsert, smartDelete));
         } else {
             if (setSelectionToDragCaret(innerFrame, dragCaret, range, point))
                 applyCommand(ReplaceSelectionCommand::create(m_documentUnderMouse, fragment, true, dragData->canSmartReplace(), chosePlainText));

@@ -81,8 +81,7 @@ public:
     void appendTrailingWhitespace();
 
     bool expandUsingGranularity(TextGranularity granularity);
-    TextGranularity granularity() const { return m_granularity; }
-
+    
     // We don't yet support multi-range selections, so we only ever have one range to return.
     PassRefPtr<Range> firstRange() const;
 
@@ -106,11 +105,11 @@ public:
     void setWithoutValidation(const Position&, const Position&);
 
 private:
-    void validate();
+    void validate(TextGranularity = CharacterGranularity);
 
     // Support methods for validate()
     void setBaseAndExtentToDeepEquivalents();
-    void setStartAndEndFromBaseAndExtentRespectingGranularity();
+    void setStartAndEndFromBaseAndExtentRespectingGranularity(TextGranularity);
     void adjustSelectionToAvoidCrossingEditingBoundaries();
     void updateSelectionType();
 
@@ -125,7 +124,6 @@ private:
     Position m_end;    // Rightmost position when expanded to respect granularity
 
     EAffinity m_affinity;           // the upstream/downstream affinity of the caret
-    TextGranularity m_granularity;  // granularity of start/end selection
 
     // these are cached, can be recalculated by validate()
     SelectionType m_selectionType;    // None, Caret, Range
@@ -134,7 +132,7 @@ private:
 
 inline bool operator==(const VisibleSelection& a, const VisibleSelection& b)
 {
-    return a.start() == b.start() && a.end() == b.end() && a.affinity() == b.affinity() && a.granularity() == b.granularity() && a.isBaseFirst() == b.isBaseFirst();
+    return a.start() == b.start() && a.end() == b.end() && a.affinity() == b.affinity() && a.isBaseFirst() == b.isBaseFirst();
 }
 
 inline bool operator!=(const VisibleSelection& a, const VisibleSelection& b)
