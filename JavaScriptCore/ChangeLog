@@ -1,3 +1,11 @@
+2010-03-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler and Mark Rowe.
+
+        Update WebKit availability macros for release after 4.0.
+
+        * API/WebKitAvailability.h:
+
 2010-03-17  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
