@@ -1,3 +1,26 @@
+2010-03-15  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Gustavo Noronha.
+        Patch by Antonio Gomes <tonikitoo@webkit.org>
+
+        Spatial Navigation: Add isNull() and document() convenience methods to FocusCandidate.
+        https://bugs.webkit.org/show_bug.cgi?id=36167
+
+        It turns out that Spatial Navigation related code (in FocusController.cpp for
+        instance) can be simplified and look better if FocusCandidate class offer some
+        convenience method. This patch introduces a couple of them (isNull and a Document
+        getter). It also adds another constructor that receives a Node as parameter.
+
+        A followup refactoring patch will be making use of these helper methods.
+
+        * page/SpatialNavigation.h:
+        (WebCore::FocusCandidate::FocusCandidate): Added a "Node*" parameter
+        to FocusCandidate's constructor.
+        (WebCore::FocusCandidate::isNull): In the Spatial Navigation logic, a NULL
+        FocusCandidate object is one that does not hold a valid reference to a "Node*".
+        (WebCore::FocusCandidate::document): This method returns a pointer for the FocusCandidate
+        node's document, if |node| is a valid pointer.
+
 2010-03-18  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Antti Koivisto.

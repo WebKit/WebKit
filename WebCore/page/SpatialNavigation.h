@@ -22,6 +22,7 @@
 #define SpatialNavigation_h
 
 #include "FocusDirection.h"
+#include "Node.h"
 
 #include <limits>
 
@@ -30,7 +31,6 @@ namespace WebCore {
 class Element;
 class Frame;
 class IntRect;
-class Node;
 class RenderObject;
 
 using namespace std;
@@ -98,6 +98,19 @@ struct FocusCandidate {
         , parentAlignment(None)
     {
     }
+
+    FocusCandidate(Node* n)
+        : node(n)
+        , distance(maxDistance())
+        , parentDistance(maxDistance())
+        , alignment(None)
+        , parentAlignment(None)
+    {
+    }
+
+    bool isNull() const { return !node; }
+    Document* document() const { return node ? node->document() : 0; }
+
     Node* node;
     long long distance;
     long long parentDistance;
