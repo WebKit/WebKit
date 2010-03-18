@@ -131,8 +131,11 @@ public:
 
     bool checked() const { return m_checked; }
     void setChecked(bool, bool sendChangeEvent = false);
+
+    bool allowsIndeterminate() const { return inputType() == CHECKBOX || inputType() == RADIO; }
     bool indeterminate() const { return m_indeterminate; }
     void setIndeterminate(bool);
+
     virtual int size() const;
     virtual const AtomicString& formControlType() const;
     void setType(const String&);

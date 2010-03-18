@@ -17,6 +17,18 @@
 
         Reviewed by Dave Hyatt.
 
+        https://bugs.webkit.org/show_bug.cgi?id=36273
+        CSS3 :indeterminate and input type=radio test fails
+
+        The :indeterminate pseudo-class should apply to both radio buttons and checkboxes.
+
+        * fast/forms/indeterminate-radio-expected.txt: Added.
+        * fast/forms/indeterminate-radio.html: Added.
+
+2010-03-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
+
         https://bugs.webkit.org/show_bug.cgi?id=36271
         CSS3 :enabled on an input type=hidden element fails
         

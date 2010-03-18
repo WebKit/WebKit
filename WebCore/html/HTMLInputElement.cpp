@@ -1439,8 +1439,8 @@ void HTMLInputElement::setChecked(bool nowChecked, bool sendChangeEvent)
 
 void HTMLInputElement::setIndeterminate(bool _indeterminate)
 {
-    // Only checkboxes honor indeterminate.
-    if (inputType() != CHECKBOX || indeterminate() == _indeterminate)
+    // Only checkboxes and radio buttons honor indeterminate.
+    if (!allowsIndeterminate() || indeterminate() == _indeterminate)
         return;
 
     m_indeterminate = _indeterminate;
@@ -1984,7 +1984,7 @@ void* HTMLInputElement::preDispatchEventHandler(Event *evt)
     void* result = 0; 
     if ((inputType() == CHECKBOX || inputType() == RADIO) && evt->isMouseEvent()
             && evt->type() == eventNames().clickEvent && static_cast<MouseEvent*>(evt)->button() == LeftButton) {
-        if (inputType() == CHECKBOX) {
+        if (allowsIndeterminate()) {
             // As a way to store the state, we return 0 if we were unchecked, 1 if we were checked, and 2 for
             // indeterminate.
             if (indeterminate()) {
@@ -2017,7 +2017,7 @@ void HTMLInputElement::postDispatchEventHandler(Event *evt, void* data)
 {
     if ((inputType() == CHECKBOX || inputType() == RADIO) && evt->isMouseEvent()
             && evt->type() == eventNames().clickEvent && static_cast<MouseEvent*>(evt)->button() == LeftButton) {
-        if (inputType() == CHECKBOX) {
+        if (allowsIndeterminate()) {
             // Reverse the checking we did in preDispatch.
             if (evt->defaultPrevented() || evt->defaultHandled()) {
                 if (data == (void*)0x2)
