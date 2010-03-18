@@ -1,3 +1,24 @@
+2010-03-18  Antti Koivisto  <koivisto@iki.fi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36102
+        [Qt] Scaling control API for tiled backing store
+        
+        The scale is set by passing the QGraphicsWebView scale to the backing store. The
+        only new API is the tiledBackingStoreFrozen property which allows disabling
+        all updates (for example during zoom animation).
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebViewPrivate::_q_scaleChanged):
+        (QGraphicsWebViewPrivate::updateTiledBackingStoreScale):
+        (QGraphicsWebView::QGraphicsWebView):
+        (QGraphicsWebView::isTiledBackingStoreFrozen):
+        (QGraphicsWebView::setTiledBackingStoreFrozen):
+        * Api/qgraphicswebview.h:
+        * Api/qwebframe.cpp:
+        * Api/qwebframe_p.h:
+
 2010-03-17  Antti Koivisto  <koivisto@iki.fi>
 
         Reviewed by Tor Arne Vestbø.

@@ -121,12 +121,16 @@ public:
     
     void updateResizesToContentsForPage();
     QRectF graphicsItemVisibleRect() const;
+#if ENABLE(TILED_BACKING_STORE)
+    void updateTiledBackingStoreScale();
+#endif
 
     void createOrDeleteOverlay();
 
     void syncLayers();
     void _q_doLoadFinished(bool success);
     void _q_contentsSizeChanged(const QSize&);
+    void _q_scaleChanged();
 
     QGraphicsWebView* q;
     QWebPage* page;
@@ -358,6 +362,13 @@ void QGraphicsWebViewPrivate::_q_contentsSizeChanged(const QSize& size)
     q->setGeometry(QRectF(q->geometry().topLeft(), size));
 }
 
+void QGraphicsWebViewPrivate::_q_scaleChanged()
+{
+#if ENABLE(TILED_BACKING_STORE)
+    updateTiledBackingStoreScale();
+#endif
+}
+
 QRectF QGraphicsWebViewPrivate::graphicsItemVisibleRect() const
 {
     if (!q->scene())
@@ -374,6 +385,16 @@ QRectF QGraphicsWebViewPrivate::graphicsItemVisibleRect() const
     int yPosition = views[0]->verticalScrollBar()->value();
     return q->mapRectFromScene(QRectF(QPoint(xPosition, yPosition), views[0]->viewport()->size()));
 }
+
+#if ENABLE(TILED_BACKING_STORE)
+void QGraphicsWebViewPrivate::updateTiledBackingStoreScale()
+{
+    WebCore::TiledBackingStore* backingStore = QWebFramePrivate::core(page->mainFrame())->tiledBackingStore();
+    if (!backingStore)
+        return;
+    backingStore->setContentsScale(q->scale());
+}
+#endif
 
 /*!
     \class QGraphicsWebView
@@ -468,6 +489,9 @@ QGraphicsWebView::QGraphicsWebView(QGraphicsItem* parent)
 #endif
     setFocusPolicy(Qt::StrongFocus);
     setFlag(QGraphicsItem::ItemClipsChildrenToShape, true);
+#if ENABLE(TILED_BACKING_STORE)
+    QObject::connect(this, SIGNAL(scaleChanged()), this, SLOT(_q_scaleChanged()));
+#endif
 }
 
 /*!
@@ -1026,6 +1050,48 @@ void QGraphicsWebView::setResizesToContents(bool enabled)
 bool QGraphicsWebView::resizesToContents() const
 {
     return d->resizesToContents;
+}
+
+/*!
+    \property QGraphicsWebView::tiledBackingStoreFrozen
+    \brief whether the tiled backing store updates its contents
+    \since 4.7 
+
+    If the tiled backing store is enabled using QWebSettings::TiledBackingStoreEnabled attribute, this property
+    can be used to disable backing store updates temporarily. This can be useful for example for running
+    a smooth animation that changes the scale of the QGraphicsWebView.
+ 
+    When the backing store is unfrozen, its contents will be automatically updated to match the current
+    state of the document. If the QGraphicsWebView scale was changed, the backing store is also
+    re-rendered using the new scale.
+ 
+    If the tiled backing store is not enabled, this property does nothing.
+
+    \sa QWebSettings::TiledBackingStoreEnabled
+    \sa QGraphicsObject::scale
+*/
+bool QGraphicsWebView::isTiledBackingStoreFrozen() const
+{
+#if ENABLE(TILED_BACKING_STORE)
+    WebCore::TiledBackingStore* backingStore = QWebFramePrivate::core(page()->mainFrame())->tiledBackingStore();
+    if (!backingStore)
+        return false;
+    return backingStore->contentsFrozen();
+#else
+    return false;
+#endif
+}
+
+void QGraphicsWebView::setTiledBackingStoreFrozen(bool frozen)
+{
+#if ENABLE(TILED_BACKING_STORE)
+    WebCore::TiledBackingStore* backingStore = QWebFramePrivate::core(page()->mainFrame())->tiledBackingStore();
+    if (!backingStore)
+        return;
+    backingStore->setContentsFrozen(frozen);
+#else
+    UNUSED_PARAM(frozen);
+#endif
 }
 
 /*! \reimp

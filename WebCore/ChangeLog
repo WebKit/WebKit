@@ -1,3 +1,19 @@
+2010-03-18  Antti Koivisto  <koivisto@iki.fi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36102
+        [Qt] Scaling control API for tiled backing store
+        
+        Commit the new scale synchronously after unfreeze to avoid ugliness.
+
+        * platform/graphics/TiledBackingStore.cpp:
+        (WebCore::TiledBackingStore::TiledBackingStore):
+        (WebCore::TiledBackingStore::setContentsScale):
+        (WebCore::TiledBackingStore::commitScaleChange):
+        (WebCore::TiledBackingStore::setContentsFrozen):
+        * platform/graphics/TiledBackingStore.h:
+
 2010-03-18  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser.

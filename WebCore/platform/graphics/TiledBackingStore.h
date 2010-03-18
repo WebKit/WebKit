@@ -63,6 +63,8 @@ private:
     
     void updateTileBuffers();
     void createTiles();
+    
+    void commitScaleChange();
 
     void dropOverhangingTiles();
     void dropTilesOutsideRect(const IntRect&);
@@ -95,6 +97,7 @@ private:
     
     IntRect m_viewport;
     float m_contentsScale;
+    float m_pendingScale;
 
     bool m_contentsFrozen;
 
