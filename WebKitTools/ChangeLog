@@ -1,3 +1,18 @@
+2010-03-17  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Accelerated Compositing is now default on QtWebKit so the option
+        in QtLauncher must be true as default.
+
+        [Qt] QtLauncher's Accelerated Compositing option must be true as default
+        https://bugs.webkit.org/show_bug.cgi?id=36234
+
+        * QtLauncher/main.cpp:
+        (LauncherWindow::applyPrefs):
+        (LauncherWindow::toggleAcceleratedCompositing):
+        (LauncherApplication::handleUserOptions):
+
 2010-03-17  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

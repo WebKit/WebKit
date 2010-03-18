@@ -72,7 +72,7 @@ void QWEBKIT_EXPORT qt_drt_garbageCollector_collect();
 
 static const int gExitClickArea = 80;
 static bool gUseGraphicsView = false;
-static bool gUseCompositing = false;
+static bool gUseCompositing = true;
 static bool gCacheWebView = false;
 static bool gShowFrameRate = false;
 static QGraphicsView::ViewportUpdateMode gViewportUpdateMode = QGraphicsView::MinimalViewportUpdate;
@@ -241,7 +241,7 @@ void LauncherWindow::applyPrefs(LauncherWindow* source)
     QWebSettings* settings = page()->settings();
 
     applySetting(QWebSettings::AcceleratedCompositingEnabled, settings, other, gUseCompositing);
-    applySetting(QWebSettings::TiledBackingStoreEnabled, settings, other, gUseTiledBackingStore);;
+    applySetting(QWebSettings::TiledBackingStoreEnabled, settings, other, gUseTiledBackingStore);
     applySetting(QWebSettings::WebGLEnabled, settings, other, false);
 
     if (!isGraphicsBased())
@@ -530,6 +530,7 @@ void LauncherWindow::setTouchMocking(bool on)
 
 void LauncherWindow::toggleAcceleratedCompositing(bool toggle)
 {
+    gUseCompositing = toggle;
     page()->settings()->setAttribute(QWebSettings::AcceleratedCompositingEnabled, toggle);
 }
 
@@ -917,7 +918,7 @@ void LauncherApplication::handleUserOptions()
     if (args.contains("-help")) {
         qDebug() << "Usage:" << programName.toLatin1().data()
              << "[-graphicsbased]"
-             << "[-compositing]"
+             << "[-no-compositing]"
              << QString("[-viewport-update-mode %1]").arg(formatKeys(updateModes)).toLatin1().data()
              << "[-cache-webview]"
              << "[-show-fps]"
@@ -932,9 +933,9 @@ void LauncherApplication::handleUserOptions()
     if (args.contains("-graphicsbased"))
         gUseGraphicsView = true;
 
-    if (args.contains("-compositing")) {
-        requiresGraphicsView("-compositing");
-        gUseCompositing = true;
+    if (args.contains("-no-compositing")) {
+        requiresGraphicsView("-no-compositing");
+        gUseCompositing = false;
     }
 
     if (args.contains("-show-fps")) {
