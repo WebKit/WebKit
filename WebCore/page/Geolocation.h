@@ -62,6 +62,7 @@ public:
     void clearWatch(int watchId);
 
     void setIsAllowed(bool);
+    Frame* frame() const { return m_frame; }
 
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
     void setPosition(GeolocationPosition*);
