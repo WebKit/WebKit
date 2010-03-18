@@ -1,3 +1,24 @@
+2010-03-18  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Show inherited styles for a selected DOM element
+
+        https://bugs.webkit.org/show_bug.cgi?id=28039
+
+        * English.lproj/localizedStrings.js:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::getStyles):
+        (WebCore::InspectorDOMAgent::populateObjectWithStyleProperties):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.CSSStyleDeclaration):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype._update):
+        (WebInspector.StylesSidebarPane.prototype._containsInherited):
+        (WebInspector.StylePropertiesSection):
+        (WebInspector.StylePropertiesSection.prototype.isPropertyInherited):
+        (WebInspector.StylePropertiesSection.prototype.onpopulate):
+
 2010-03-15  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Gustavo Noronha.

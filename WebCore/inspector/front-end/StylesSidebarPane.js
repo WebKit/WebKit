@@ -65,6 +65,15 @@ WebInspector.StylesSidebarPane = function()
     this.titleElement.appendChild(this.settingsSelectElement);
 }
 
+// Taken from http://www.w3.org/TR/CSS21/propidx.html.
+WebInspector.StylesSidebarPane.InheritedProperties = [
+    "azimuth", "border-collapse", "border-spacing", "caption-side", "color", "cursor", "direction", "elevation",
+    "empty-cells", "font-family", "font-size", "font-style", "font-variant", "font-weight", "font", "letter-spacing",
+    "line-height", "list-style-image", "list-style-position", "list-style-type", "list-style", "orphans", "pitch-range",
+    "pitch", "quotes", "richness", "speak-header", "speak-numeral", "speak-punctuation", "speak", "speech-rate", "stress",
+    "text-align", "text-indent", "text-transform", "visibility", "voice-family", "volume", "white-space", "widows", "word-spacing"
+].keySet();
+
 WebInspector.StylesSidebarPane.prototype = {
     _settingsLoaded: function()
     {
@@ -131,8 +140,6 @@ WebInspector.StylesSidebarPane.prototype = {
         if (refresh) {
             for (var i = 0; i < this.sections.length; ++i) {
                 var section = this.sections[i];
-                if (section instanceof WebInspector.BlankStylePropertiesSection)
-                    continue;
                 if (section.computedStyle)
                     section.styleRule.style = nodeComputedStyle;
                 var styleRule = { section: section, style: section.styleRule.style, computedStyle: section.computedStyle, rule: section.rule };
@@ -152,7 +159,7 @@ WebInspector.StylesSidebarPane.prototype = {
                 styleRules.push(attrStyle);
             }
 
-            // Always Show element's Style Attributes
+            // Show element's Style Attributes
             if (styles.inlineStyle && node.nodeType === Node.ELEMENT_NODE) {
                 var inlineStyle = { selectorText: WebInspector.UIString("Style Attribute"), style: new WebInspector.CSSStyleDeclaration(styles.inlineStyle), isAttribute: true };
                 inlineStyle.subtitle = WebInspector.UIString("element’s “%s” attribute", "style");
@@ -163,6 +170,59 @@ WebInspector.StylesSidebarPane.prototype = {
             for (var i = styles.matchedCSSRules.length - 1; i >= 0; --i) {
                 var rule = WebInspector.CSSStyleDeclaration.parseRule(styles.matchedCSSRules[i]);
                 styleRules.push({ style: rule.style, selectorText: rule.selectorText, parentStyleSheet: rule.parentStyleSheet, rule: rule });
+            }
+
+            // Collect used properties first in order to identify inherited ones.
+            var userPropertyNames = {};
+            for (var i = 0; i < styleRules.length; ++i) {
+                var styleRule = styleRules[i];
+                if (styleRule.computedStyle)
+                    continue;
+                var style = styleRule.style;
+                for (var j = 0; j < style.length; ++j)
+                    userPropertyNames[style[j]] = true;
+            }
+
+            // Walk the node structure and identify styles with inherited properties.
+            var parentStyles = styles.parent;
+            var parentNode = node.parentNode;
+            function insertInheritedNodeSeparator(node)
+            {
+                var entry = {};
+                entry.isInheritedNodeSeparator = true;
+                entry.nodeName = node.nodeName;
+                entry.nodeClass = node.getAttribute("class");
+                entry.nodeId = node.getAttribute("id");
+                styleRules.push(entry);
+            }
+
+            while (parentStyles) {
+                var separatorInserted = false;
+                if (parentStyles.inlineStyle) {
+                    if (this._containsInherited(parentStyles.inlineStyle)) {
+                        var inlineStyle = { selectorText: WebInspector.UIString("Style Attribute"), style: new WebInspector.CSSStyleDeclaration(parentStyles.inlineStyle), isAttribute: true, isInherited: true };
+                        inlineStyle.subtitle = WebInspector.UIString("element’s “%s” attribute", "style");
+                        if (!separatorInserted) {
+                            insertInheritedNodeSeparator(parentNode);
+                            separatorInserted = true;
+                        }
+                        styleRules.push(inlineStyle);
+                    }
+                }
+
+                for (var i = parentStyles.matchedCSSRules.length - 1; i >= 0; --i) {
+                    var rulePayload = parentStyles.matchedCSSRules[i];
+                    if (!this._containsInherited(rulePayload.style))
+                        continue;
+                    var rule = WebInspector.CSSStyleDeclaration.parseRule(rulePayload);
+                    if (!separatorInserted) {
+                        insertInheritedNodeSeparator(parentNode);
+                        separatorInserted = true;
+                    }
+                    styleRules.push({ style: rule.style, selectorText: rule.selectorText, parentStyleSheet: rule.parentStyleSheet, rule: rule, isInherited: true });
+                }
+                parentStyles = parentStyles.parent;
+                parentNode = parentNode.parentNode;
             }
         }
 
@@ -185,7 +245,7 @@ WebInspector.StylesSidebarPane.prototype = {
         // Walk the style rules and make a list of all used and overloaded properties.
         for (var i = 0; i < styleRules.length; ++i) {
             var styleRule = styleRules[i];
-            if (styleRule.computedStyle)
+            if (styleRule.computedStyle || styleRule.isInheritedNodeSeparator)
                 continue;
             if (styleRule.section && styleRule.section.noAffect)
                 continue;
@@ -239,13 +299,12 @@ WebInspector.StylesSidebarPane.prototype = {
 
             // Walk in reverse to match the order !important overrides.
             for (var i = (styleRules.length - 1); i >= 0; --i) {
-                if (styleRules[i].computedStyle)
+                if (styleRules[i].computedStyle || styleRules[i].isInheritedNodeSeparator)
                     continue;
 
                 var style = styleRules[i].style;
-                var uniqueProperties = style.uniqueStyleProperties;
-                for (var j = 0; j < uniqueProperties.length; ++j) {
-                    var name = uniqueProperties[j];
+                for (var j = 0; j < style.length; ++j) {
+                    var name = style[j];
                     if (style.getPropertyPriority(name).length) {
                         if (!(name in foundPriorityProperties))
                             styleRules[i].usedProperties[name] = true;
@@ -272,26 +331,26 @@ WebInspector.StylesSidebarPane.prototype = {
             // Make a property section for each style rule.
             for (var i = 0; i < styleRules.length; ++i) {
                 var styleRule = styleRules[i];
-                var subtitle = styleRule.subtitle;
-                delete styleRule.subtitle;
-
+                if (styleRule.isInheritedNodeSeparator) {
+                    var separatorElement = document.createElement("div");
+                    separatorElement.className = "styles-sidebar-separator";
+                    var title = styleRule.nodeName.toLowerCase();
+                    if (styleRule.nodeClass)
+                        title += "." + styleRule.nodeClass;
+                    if (styleRule.nodeId)
+                        title += "#" + styleRule.nodeId;
+                    separatorElement.innerText = WebInspector.UIString("Inherited from %s", title);
+                    this.bodyElement.appendChild(separatorElement);
+                    continue;
+                }
                 var computedStyle = styleRule.computedStyle;
-                delete styleRule.computedStyle;
-
-                var ruleUsedProperties = styleRule.usedProperties;
-                delete styleRule.usedProperties;
-
-                var editable = styleRule.editable;
-                delete styleRule.editable;
-
-                var isAttribute = styleRule.isAttribute;
-                delete styleRule.isAttribute;
 
                 // Default editable to true if it was omitted.
+                var editable = styleRule.editable;
                 if (typeof editable === "undefined")
                     editable = true;
 
-                var section = new WebInspector.StylePropertiesSection(styleRule, subtitle, computedStyle, (ruleUsedProperties || usedProperties), editable);
+                var section = new WebInspector.StylePropertiesSection(styleRule, styleRule.subtitle, styleRule.computedStyle, (styleRule.usedProperties || usedProperties), editable, styleRule.isInherited);
                 if (computedStyle)
                     section.disabledComputedProperties = disabledComputedProperties;
                 section.pane = this;
@@ -300,7 +359,9 @@ WebInspector.StylesSidebarPane.prototype = {
                     section.expanded = Preferences.styleRulesExpandedState[section.identifier];
                 else if (computedStyle)
                     section.collapse(true);
-                else if (isAttribute && styleRule.style.length === 0)
+                else if (styleRule.isAttribute && styleRule.style.length === 0)
+                    section.collapse(true);
+                else if (styleRule.isInherited)
                     section.collapse(true);
                 else
                     section.expand(true);
@@ -309,6 +370,20 @@ WebInspector.StylesSidebarPane.prototype = {
                 this.sections.push(section);
             }
         }
+    },
+
+    _containsInherited: function(payload)
+    {
+        var properties = [];
+        for (var i = 0; i < payload.properties.length; ++i) {
+            var property = payload.properties[i];
+            // Does this style contain non-overriden inherited property?
+            if (property.name in WebInspector.StylesSidebarPane.InheritedProperties)
+                return true;
+        }
+        if (payload.disabled && this._containsInherited(payload.disabled))
+            return true;
+        return false;
     },
 
     _changeSetting: function(event)
@@ -351,8 +426,6 @@ WebInspector.StylesSidebarPane.prototype = {
         var elementStyleSection = this.sections[1];
         this.bodyElement.insertBefore(blankSection.element, elementStyleSection.element.nextSibling);
 
-        this.sections.splice(2, 0, blankSection);
-
         return blankSection;
     },
 
@@ -369,7 +442,7 @@ WebInspector.StylesSidebarPane.prototype = {
 
 WebInspector.StylesSidebarPane.prototype.__proto__ = WebInspector.SidebarPane.prototype;
 
-WebInspector.StylePropertiesSection = function(styleRule, subtitle, computedStyle, usedProperties, editable)
+WebInspector.StylePropertiesSection = function(styleRule, subtitle, computedStyle, usedProperties, editable, isInherited)
 {
     WebInspector.PropertiesSection.call(this, styleRule.selectorText);
 
@@ -381,6 +454,7 @@ WebInspector.StylePropertiesSection = function(styleRule, subtitle, computedStyl
     this.rule = this.styleRule.rule;
     this.computedStyle = computedStyle;
     this.editable = (editable && !computedStyle);
+    this.isInherited = isInherited;
 
     // Prevent editing the user agent and user rules.
     var isUserAgent = this.rule && this.rule.isUserAgent;
@@ -427,7 +501,8 @@ WebInspector.StylePropertiesSection = function(styleRule, subtitle, computedStyl
             else
                 subtitle = WebInspector.UIString("inline stylesheet");
         }
-
+        if (isInherited)
+            this.element.addStyleClass("show-inherited");
         this.subtitle = subtitle;
     }
 
@@ -472,6 +547,12 @@ WebInspector.StylePropertiesSection.prototype = {
 
     isPropertyInherited: function(property)
     {
+        if (this.isInherited) {
+            // While rendering inherited stylesheet, reverse meaning of this property.
+            // Render truly inherited properties with black, i.e. return them as non-inherited.
+            return !(property in WebInspector.StylesSidebarPane.InheritedProperties);
+        }
+
         if (!this.computedStyle || !this._usedProperties || this.noAffect)
             return false;
         // These properties should always show for Computed Style.
@@ -534,8 +615,11 @@ WebInspector.StylePropertiesSection.prototype = {
         var style = this.styleRule.style;
 
         var foundShorthands = {};
-        var uniqueProperties = style.uniqueStyleProperties;
         var disabledProperties = style.__disabledPropertyValues || {};
+
+        var uniqueProperties = [];
+        for (var i = 0; i < style.length; ++i)
+            uniqueProperties.push(style[i]);
 
         for (var name in disabledProperties)
             uniqueProperties.push(name);

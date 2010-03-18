@@ -489,7 +489,6 @@ WebInspector.EventListeners.getEventListenersForNodeAsync = function(node, callb
 WebInspector.CSSStyleDeclaration = function(payload)
 {
     this.id = payload.id;
-    this.injectedScriptId = payload.injectedScriptId;
     this.width = payload.width;
     this.height = payload.height;
     this.__disabledProperties = {};
@@ -512,7 +511,7 @@ WebInspector.CSSStyleDeclaration = function(payload)
             this.__disabledPropertyPriorities[name] = disabledProperty.priority;
         }
     }
-    this.uniqueStyleProperties = payload.uniqueStyleProperties;
+    
     this._shorthandValues = payload.shorthandValues;
     this._propertyMap = {};
     this._longhandProperties = {};
@@ -523,12 +522,8 @@ WebInspector.CSSStyleDeclaration = function(payload)
         var name = property.name;
         this[i] = name;
         this._propertyMap[name] = property;
-    }
 
-    // Index longhand properties.
-    for (var i = 0; i < this.uniqueStyleProperties.length; ++i) {
-        var name = this.uniqueStyleProperties[i];
-        var property = this._propertyMap[name];
+        // Index longhand properties.
         if (property.shorthand) {
             var longhands = this._longhandProperties[property.shorthand];
             if (!longhands) {
@@ -549,7 +544,6 @@ WebInspector.CSSStyleDeclaration.parseRule = function(payload)
 {
     var rule = {};
     rule.id = payload.id;
-    rule.injectedScriptId = payload.injectedScriptId;
     rule.selectorText = payload.selectorText;
     rule.style = new WebInspector.CSSStyleDeclaration(payload.style);
     rule.style.parentRule = rule;

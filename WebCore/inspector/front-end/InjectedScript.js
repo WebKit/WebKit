@@ -68,10 +68,6 @@ InjectedScript.releaseWrapperObjectGroup = function(objectGroupName) {
 // Called from within InspectorController on the 'inspected page' side.
 InjectedScript.reset = function()
 {
-    InjectedScript._styles = {};
-    InjectedScript._styleRules = {};
-    InjectedScript._lastStyleId = 0;
-    InjectedScript._lastStyleRuleId = 0;
     InjectedScript._searchResults = [];
     InjectedScript._includedInSearchResultsPropertyName = "__includedInInspectorSearchResults";
 }
