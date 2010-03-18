@@ -134,7 +134,7 @@ FontPlatformData::FontPlatformData(float size, bool bold, bool italic)
 {
 }
 
-FontPlatformData::FontPlatformData(cairo_font_face_t* fontFace, int size, bool bold, bool italic)
+FontPlatformData::FontPlatformData(cairo_font_face_t* fontFace, float size, bool bold, bool italic)
     : m_pattern(0)
     , m_fallbacks(0)
     , m_size(size)

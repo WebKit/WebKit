@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="windows-1251"?>
+<?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
@@ -22995,10 +22995,6 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath="..\platform\graphics\win\FontPlatformData.h"
-						>
-					</File>
-					<File
 						RelativePath="..\platform\graphics\win\FontPlatformDataCairoWin.cpp"
 						>
 						<FileConfiguration
@@ -23359,6 +23355,10 @@
 						>
 					</File>
 					<File
+						RelativePath="..\platform\graphics\win\RefCountedHFONT.h"
+						>
+					</File>
+					<File
 						RelativePath="..\platform\graphics\win\SimpleFontDataCairoWin.cpp"
 						>
 						<FileConfiguration
@@ -23535,6 +23535,26 @@
 							>
 							<Tool
 								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\cg\FontPlatformData.h"
+						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
 							/>
 						</FileConfiguration>
 					</File>
@@ -23931,6 +23951,42 @@
 							>
 							<Tool
 								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\cairo\FontPlatformData.h"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_Internal|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug_All|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
 							/>
 						</FileConfiguration>
 					</File>
