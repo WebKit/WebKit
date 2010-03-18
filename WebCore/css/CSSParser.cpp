@@ -941,7 +941,7 @@ bool CSSParser::parseValue(int propId, bool important)
         if (id == CSSValueThin || id == CSSValueMedium || id == CSSValueThick)
             validPrimitive = true;
         else
-            validPrimitive = validUnit(value, FLength, m_strict);
+            validPrimitive = validUnit(value, FLength | FNonNeg, m_strict);
         break;
 
     case CSSPropertyLetterSpacing:       // normal | <length> | inherit
