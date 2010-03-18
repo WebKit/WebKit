@@ -1,3 +1,9 @@
+2010-03-18  Eric Seidel  <eric@webkit.org>
+
+        Just fixing missing parenthesis typo, no review.
+
+        * Scripts/webkitpy/commands/queries.py: '%' has higher precedence than 'or', use parentheses.
+
 2010-03-18  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Adam Roben and Anders Carlsson.
