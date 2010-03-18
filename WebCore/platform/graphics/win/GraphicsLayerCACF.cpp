@@ -53,6 +53,29 @@ public:
         return adoptRef(new WebLayer(layerType, owner));
     }
 
+    virtual void setNeedsDisplay(const CGRect* dirtyRect)
+    {
+        if (m_owner) {
+            if (m_owner->showRepaintCounter()) {
+                CGRect layerBounds = bounds();
+                CGRect repaintCounterRect = layerBounds;
+                // We assume a maximum of 4 digits and a font size of 22.
+                repaintCounterRect.size.width = 48;
+                repaintCounterRect.size.height = 25;
+                if (m_owner->contentsOrientation() == WebCore::GraphicsLayer::CompositingCoordinatesTopDown)
+                    repaintCounterRect.origin.y = layerBounds.size.height - (layerBounds.origin.y + repaintCounterRect.size.height);
+                WKCACFLayer::setNeedsDisplay(&repaintCounterRect);
+            }
+            if (dirtyRect && m_owner->contentsOrientation() == WebCore::GraphicsLayer::CompositingCoordinatesTopDown) {
+                CGRect flippedDirtyRect = *dirtyRect;
+                flippedDirtyRect.origin.y = bounds().size.height - (flippedDirtyRect.origin.y + flippedDirtyRect.size.height);
+                WKCACFLayer::setNeedsDisplay(&flippedDirtyRect);
+                return;
+            }
+        }
+        WKCACFLayer::setNeedsDisplay(dirtyRect);
+    }
+
     virtual void drawInContext(PlatformGraphicsContext* context)
     {
         if (!m_owner)

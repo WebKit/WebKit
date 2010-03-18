@@ -1,3 +1,19 @@
+2010-03-18  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Intro text at Star Wars demo is clipped.
+        <rdar://problem/7560979>
+        https://bugs.webkit.org/show_bug.cgi?id=33909
+        
+        Test: compositing/repaint/layer-repaint.html
+        
+        We are flipping the coordinates for drawing, therefore
+        we must flip them also when we invalidate the rectangles.
+
+        * platform/graphics/win/GraphicsLayerCACF.cpp:
+        (WebCore::WebLayer::setNeedsDisplay):
+
 2010-03-18  Nate Chapin  <japhet@chromium.org>
 
         Unreviewed, Chromium build fix.
