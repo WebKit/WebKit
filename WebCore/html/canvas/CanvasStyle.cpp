@@ -173,22 +173,12 @@ void CanvasStyle::applyFillColor(GraphicsContext* context)
         return;
     switch (m_type) {
         case ColorString: {
-            Color c = Color(m_color);
-            if (c.isValid()) {
-                context->setFillColor(c.rgb(), DeviceColorSpace);
-                break;
-            }
             RGBA32 rgba = 0; // default is transparent black
             if (CSSParser::parseColor(rgba, m_color))
                 context->setFillColor(rgba, DeviceColorSpace);
             break;
         }
         case ColorStringWithAlpha: {
-            Color c = Color(m_color);
-            if (c.isValid()) {
-                context->setFillColor(colorWithOverrideAlpha(c.rgb(), m_alpha), DeviceColorSpace);
-                break;
-            }
             RGBA32 color = 0; // default is transparent black
             if (CSSParser::parseColor(color, m_color))
                 context->setFillColor(colorWithOverrideAlpha(color, m_alpha), DeviceColorSpace);

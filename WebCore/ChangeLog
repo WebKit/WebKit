@@ -1,3 +1,25 @@
+2010-03-18  Stephen White  <senorblanco@chromium.org>
+
+        Parsing of rgb() colors in HTML canvas is still fairly slow.
+        findNamedColor() was showing up as hot, so this patch attempts to
+        avoid calling it by putting the rgb() check ahead of the named
+        colors.  It also removes a call to Color::Color() from
+        CanvasStyle, which was doing a redundant check for the hex
+        color and named colors, which CSSParser already does.  Finally, it
+        changes the ad-hoc parser to check for negative values, and clamps them
+        at zero.  This avoids the lex/yacc path for rgb() colors with
+        negative color components.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36199
+
+        Covered by fast/canvas/set-colors.html.
+
+        * css/CSSParser.cpp:
+        (WebCore::parseInt):
+        (WebCore::CSSParser::parseColor):
+        * html/canvas/CanvasStyle.cpp:
+        (WebCore::CanvasStyle::applyFillColor):
+
 2010-03-18  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/36246> Node::removeAllEventListenersSlowCase is declared but not used
