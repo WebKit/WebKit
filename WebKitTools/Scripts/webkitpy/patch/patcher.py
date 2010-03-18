@@ -51,6 +51,7 @@ class WebKitPatch(MultiCommandTool):
     global_options = [
         make_option("--dry-run", action="store_true", dest="dry_run", default=False, help="do not touch remote servers"),
         make_option("--status-host", action="store", dest="status_host", type="string", nargs=1, help="Hostname (e.g. localhost or commit.webkit.org) where status updates should be posted."),
+        make_option("--irc-password", action="store", dest="irc_password", type="string", nargs=1, help="Password to use when communicating via IRC."),
     ]
 
     def __init__(self, path):
@@ -97,6 +98,8 @@ class WebKitPatch(MultiCommandTool):
             self.bugs.dryrun = True
         if options.status_host:
             self.status_server.set_host(options.status_host)
+        if options.irc_password:
+            self._irc_password = options.irc_password
 
     def should_execute_command(self, command):
         if command.requires_local_commits and not self.scm().supports_local_commits():

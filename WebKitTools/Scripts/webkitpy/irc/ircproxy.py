@@ -32,21 +32,22 @@ from webkitpy.irc.ircbot import IRCBot
 from webkitpy.irc.threadedmessagequeue import ThreadedMessageQueue
 
 class _IRCThread(threading.Thread):
-    def __init__(self, message_queue, bot_class):
+    def __init__(self, message_queue, bot_class, password):
         threading.Thread.__init__(self)
         self.setDaemon(True)
         self._message_queue = message_queue
         self._bot_class = bot_class
+        self._password = password
 
     def run(self):
-        bot = self._bot_class(self._message_queue)
+        bot = self._bot_class(self._message_queue, password=self._password)
         bot.start()
 
 
 class IRCProxy(object):
-    def __init__(self, bot_class=IRCBot):
+    def __init__(self, bot_class=IRCBot, password=None):
         self._message_queue = ThreadedMessageQueue()
-        self._child_thread = _IRCThread(self._message_queue, bot_class)
+        self._child_thread = _IRCThread(self._message_queue, bot_class, password=password)
         self._child_thread.start()
 
     def post(self, message):

@@ -36,10 +36,11 @@ class IRCBot(ircbot.SingleServerIRCBot, MessagePumpDelegate):
                  message_queue,
                  server="irc.freenode.net",
                  port=6667,
-                 nickname="webkit-smokey",
-                 channel="#webkit-test"):
+                 nickname="sheriffbot",
+                 password=None, # sheriffbot actually needs a password.
+                 channel="#webkit"):
         self._message_queue = message_queue
-        ircbot.SingleServerIRCBot.__init__(self, [(server, port)], nickname, nickname)
+        ircbot.SingleServerIRCBot.__init__(self, [(server, port, password)], nickname, nickname)
         self._channel = channel
 
     # ircbot.SingleServerIRCBot methods

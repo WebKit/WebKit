@@ -1,3 +1,17 @@
+2010-03-18  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Support using IRC accounts with a password
+        https://bugs.webkit.org/show_bug.cgi?id=36287
+
+        Add a global option to specify an IRC password so we can use the
+        sheriffbot account (which needs a password).
+
+        * Scripts/webkitpy/irc/ircbot.py:
+        * Scripts/webkitpy/irc/ircproxy.py:
+        * Scripts/webkitpy/patch/patcher.py:
+
 2010-03-18  Eric Seidel  <eric@webkit.org>
 
         Just fixing missing parenthesis typo, no review.
