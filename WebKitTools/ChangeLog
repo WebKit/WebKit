@@ -1,3 +1,11 @@
+2010-03-19  James Hawkins  <jhawkins@chromium.org>
+
+        Unreviewed.
+
+        Add myself to the committers list.
+
+        * Scripts/webkitpy/committers.py:
+
 2010-03-19  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.
