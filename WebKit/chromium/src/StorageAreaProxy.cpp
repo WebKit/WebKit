@@ -126,7 +126,7 @@ void StorageAreaProxy::storageEvent(const String& key, const String& oldValue, c
         }
 
         for (unsigned i = 0; i < frames.size(); ++i)
-            frames[i]->document()->enqueueStorageEvent(StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, sourceFrame->document()->url(), frames[i]->domWindow()->sessionStorage()));
+            frames[i]->document()->enqueueEvent(StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, sourceFrame->document()->url(), frames[i]->domWindow()->sessionStorage()));
     } else {
         // Send events to every page.
         const HashSet<Page*>& pages = page->group().pages();
@@ -142,7 +142,7 @@ void StorageAreaProxy::storageEvent(const String& key, const String& oldValue, c
             ExceptionCode ec = 0;
             Storage* storage = frames[i]->domWindow()->localStorage(ec);
             if (!ec)
-                frames[i]->document()->enqueueStorageEvent(StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, sourceFrame->document()->url(), storage));
+                frames[i]->document()->enqueueEvent(StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, sourceFrame->document()->url(), storage));
         }
     }
 }
