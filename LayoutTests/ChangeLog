@@ -1,3 +1,9 @@
+2010-03-19  Xan Lopez  <xlopez@igalia.com>
+
+        Unreviewed, land new expected result for test.
+
+        * platform/gtk/svg/css/getComputedStyle-basic-expected.txt:
+
 2010-03-19  Dirk Pranke <dpranke@chromium.org>
 
         Reviewed by Dimitri Glazkov.

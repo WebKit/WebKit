@@ -2,7 +2,7 @@ rect: style.getPropertyValue(background-attachment) : scroll
 rect: style.getPropertyCSSValue(background-attachment) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(background-clip) : border-box
 rect: style.getPropertyCSSValue(background-clip) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(background-color) : rgba(0, 0, 0, 0)
+rect: style.getPropertyValue(background-color) : transparent
 rect: style.getPropertyCSSValue(background-color) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(background-image) : none
 rect: style.getPropertyCSSValue(background-image) : [object CSSPrimitiveValue]
@@ -416,7 +416,7 @@ g: style.getPropertyValue(background-attachment) : scroll
 g: style.getPropertyCSSValue(background-attachment) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(background-clip) : border-box
 g: style.getPropertyCSSValue(background-clip) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(background-color) : rgba(0, 0, 0, 0)
+g: style.getPropertyValue(background-color) : transparent
 g: style.getPropertyCSSValue(background-color) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(background-image) : none
 g: style.getPropertyCSSValue(background-image) : [object CSSPrimitiveValue]
