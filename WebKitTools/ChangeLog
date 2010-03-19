@@ -1,3 +1,13 @@
+2010-03-19  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Unreviewed.
+
+        Buildfix for Qt v4.5.
+
+        * QtLauncher/main.cpp:
+        (LauncherWindow::LauncherWindow):
+        (LauncherWindow::applyZoom):
+
 2010-03-19  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

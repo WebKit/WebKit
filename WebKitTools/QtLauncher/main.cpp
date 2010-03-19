@@ -152,9 +152,8 @@ private:
     QAction* m_flipAnimated;
     QAction* m_flipYAnimated;
 
-    QPropertyAnimation* m_zoomAnimation;
-
 #if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
+    QPropertyAnimation* m_zoomAnimation;
     QList<QTouchEvent::TouchPoint> m_touchPoints;
     bool m_touchMocking;
 #endif
@@ -172,7 +171,9 @@ LauncherWindow::LauncherWindow(LauncherWindow* other, bool shareScene)
     , m_formatMenuAction(0)
     , m_flipAnimated(0)
     , m_flipYAnimated(0)
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     , m_zoomAnimation(0)
+#endif
 {
     if (other) {
         init(other->isGraphicsBased());
@@ -440,6 +441,7 @@ void LauncherWindow::zoomAnimationFinished()
 
 void LauncherWindow::applyZoom()
 {
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
     if (isGraphicsBased() && page()->settings()->testAttribute(QWebSettings::TiledBackingStoreEnabled)) {
         QGraphicsWebView* view = static_cast<WebViewGraphicsBased*>(m_view)->graphicsWebView();
         view->setTiledBackingStoreFrozen(true);
@@ -457,6 +459,7 @@ void LauncherWindow::applyZoom()
         m_zoomAnimation->start();
         return;
     }
+#endif
     page()->mainFrame()->setZoomFactor(qreal(m_currentZoom) / 100.0);
 }
 

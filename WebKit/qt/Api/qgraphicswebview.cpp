@@ -54,7 +54,9 @@ class QGraphicsWebViewOverlay : public QGraphicsItem {
             , q(view)
     {
         setPos(0, 0);
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
         setFlag(QGraphicsItem::ItemUsesExtendedStyleOption, true);
+#endif
         setCacheMode(QGraphicsItem::DeviceCoordinateCache);
     }
 
