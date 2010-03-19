@@ -1,0 +1,11 @@
+\-in-body
+  
+Results
+
+We can find a backslash in EUC-JP page by finding a yen sign: PASS
+We can find a backslash in EUC-JP text control by finding a yen sign: PASS
+We can find a backslash in Shift_JIS_X0213-2000 page by finding a yen sign: PASS
+We can find a backslash in Shift_JIS_X0213-2000 text control by finding a yen sign: PASS
+We can NOT find a backslash in UTF8 page by finding a yen sign: PASS
+We can NOT find a backslash in UTF8 text control by finding a yen sign: PASS
+
