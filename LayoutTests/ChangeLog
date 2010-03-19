@@ -1,3 +1,14 @@
+2010-03-19  Xan Lopez  <xlopez@igalia.com>
+
+        Rubber-stamped by Gustavo Noronha.
+
+        r56188 removed lastPosition from the Geolocation code, but the the
+        geolocation window properties wasn't updated to reflect this. It's
+        only failing on the GTK+ port, since the other ports have it on
+        their Skipped list.
+
+        * fast/dom/Window/window-properties-geolocation-expected.txt:
+
 2010-03-19  Csaba Osztrogonác  <ossy@webkit.org>
 
        [Qt] REGRESSION (r56209): fast/media/print-restores-previous-mediatype.htm crashes
