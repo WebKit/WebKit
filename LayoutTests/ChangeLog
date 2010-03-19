@@ -1,3 +1,13 @@
+2010-03-18  Jian Li  <jianli@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Dragging a PDF image triggers assertion in DragController::startDrag()
+        https://bugs.webkit.org/show_bug.cgi?id=36247
+
+        * fast/images/drag-pdf-as-image-expected.txt: Added.
+        * fast/images/drag-pdf-as-image.html: Added.
+
 2010-03-18  Dan Bernstein  <mitz@apple.com>
 
         Add missing file from r56186.

@@ -46,6 +46,8 @@ namespace WebCore {
     private:
         virtual ~PDFDocumentImage();
 
+        virtual String filenameExtension() const;
+
         virtual bool hasSingleSecurityOrigin() const { return true; }
 
         virtual bool dataChanged(bool allDataReceived);
