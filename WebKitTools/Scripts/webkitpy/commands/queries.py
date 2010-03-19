@@ -142,6 +142,9 @@ and displayes the status of each builder."""
             commit_info = CommitInfo.commit_info_for_revision(self.tool.scm(), revision)
             self._print_blame_information_for_commit(commit_info)
 
+    def revisions_causing_failures(self, only_core_builders=True):
+        builder_statuses = tool.buildbot.builder_statuses()
+
     def execute(self, options, args, tool):
         builder_statuses = tool.buildbot.builder_statuses()
         longest_builder_name = self._longest_builder_name(builder_statuses)

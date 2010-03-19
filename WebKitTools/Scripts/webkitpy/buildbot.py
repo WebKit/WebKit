@@ -171,24 +171,22 @@ class BuildBot(object):
         # We could parse out the current activity too.
         return builder
 
-    def _builder_statuses_with_names_matching_regexps(self,
-                                                      builder_statuses,
-                                                      name_regexps):
-        builders = []
-        for builder in builder_statuses:
-            for name_regexp in name_regexps:
-                if re.match(name_regexp, builder['name']):
-                    builders.append(builder)
-        return builders
+    def _matches_regexps(self, builder_name, name_regexps):
+        for name_regexp in name_regexps:
+            if re.match(name_regexp, builder_name):
+                return True
+        return False
+
+    # FIXME: Should move onto Builder
+    def _is_core_builder(self, builder_name):
+        return self._matches_regexps(builder_name, self.core_builder_names_regexps)
+
+    # FIXME: This method needs to die, but is used by a unit test at the moment.
+    def _builder_statuses_with_names_matching_regexps(self, builder_statuses, name_regexps):
+        return [builder for builder in builder_statuses if self._matches_regexps(builder["name"], name_regexps)]
 
     def red_core_builders(self):
-        red_builders = []
-        for builder in self._builder_statuses_with_names_matching_regexps(
-                               self.builder_statuses(),
-                               self.core_builder_names_regexps):
-            if not builder['is_green']:
-                red_builders.append(builder)
-        return red_builders
+        return [builder for builder in self.builder_statuses() if not builder["is_green"] and self._is_core_builder(builder["name"])]
 
     def red_core_builders_names(self):
         red_builders = self.red_core_builders()
