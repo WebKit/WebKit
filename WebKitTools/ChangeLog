@@ -1,3 +1,17 @@
+2010-03-19  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Help sheriff-bot avoid warning about flaky tests (and add more unit testing)
+        https://bugs.webkit.org/show_bug.cgi?id=36354
+
+        * Scripts/webkitpy/buildbot.py:
+         - Make Build creation easier to Mock and test
+        * Scripts/webkitpy/buildbot_unittest.py:
+         - Test finding green to red transitions and suspect revisions
+        * Scripts/webkitpy/commands/queries.py:
+         - Make what-broke note when builders have only failed once.
+
 2010-03-19  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Dimitri Glazkov.

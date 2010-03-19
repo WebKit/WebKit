@@ -28,10 +28,45 @@
 
 import unittest
 
-from webkitpy.buildbot import BuildBot
+from webkitpy.buildbot import BuildBot, Builder, Build
 
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
 
+
+class BuilderTest(unittest.TestCase):
+
+    def setUp(self):
+        self.buildbot = BuildBot()
+        self.builder = Builder("Test Builder", self.buildbot)
+        def _mock_fetch_build(build_number):
+            return Build(
+                builder=self.builder,
+                build_number=build_number,
+                revision=build_number + 1000,
+                is_green=build_number < 4
+            )
+        self.builder._fetch_build = _mock_fetch_build
+
+    def test_find_green_to_red_transition(self):
+        (green_build, red_build) = self.builder.find_green_to_red_transition(10)
+        self.assertEqual(green_build.revision(), 1003)
+        self.assertEqual(red_build.revision(), 1004)
+
+        (green_build, red_build) = self.builder.find_green_to_red_transition(10, look_back_limit=2)
+        self.assertEqual(green_build, None)
+        self.assertEqual(red_build.revision(), 1008)
+
+    def test_suspect_revisions_for_green_to_red_transition(self):
+        self.assertEqual(self.builder.suspect_revisions_for_green_to_red_transition(10), [1004])
+        self.assertEqual(self.builder.suspect_revisions_for_green_to_red_transition(10, look_back_limit=2), [])
+        # Flakey test avoidance requires at least 2 red builds:
+        self.assertEqual(self.builder.suspect_revisions_for_green_to_red_transition(4), [])
+        self.assertEqual(self.builder.suspect_revisions_for_green_to_red_transition(4, avoid_flakey_tests=False), [1004])
+        # Green builder:
+        self.assertEqual(self.builder.suspect_revisions_for_green_to_red_transition(3), [])
+
+    def test_build_caching(self):
+        self.assertEqual(self.builder.build(10), self.builder.build(10))
 
 class BuildBotTest(unittest.TestCase):
 

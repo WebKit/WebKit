@@ -127,7 +127,7 @@ class WhatBroke(AbstractDeclarativeCommand):
 
     # FIXME: This is slightly different from Builder.suspect_revisions_for_green_to_red_transition
     # due to needing to detect the "hit the limit" case an print a special message.
-    def _print_blame_information_for_builder(self, builder_status, name_width):
+    def _print_blame_information_for_builder(self, builder_status, name_width, avoid_flakey_tests=True):
         builder = self.tool.buildbot.builder_with_name(builder_status["name"])
         (last_green_build, first_red_build) = builder.find_green_to_red_transition(builder_status["build_number"])
         if not last_green_build:
@@ -136,7 +136,10 @@ class WhatBroke(AbstractDeclarativeCommand):
 
         suspect_revisions = range(first_red_build.revision(), last_green_build.revision(), -1)
         suspect_revisions.reverse()
-        self._print_builder_line(builder.name(), name_width, "FAIL (blame-list: %s)" % suspect_revisions)
+        first_failure_message = ""
+        if (first_red_build == builder.build(builder_status["build_number"])):
+            first_failure_message = " FIRST FAILURE, possibly a flaky test"
+        self._print_builder_line(builder.name(), name_width, "FAIL (blame-list: %s%s)" % (suspect_revisions, first_failure_message))
         for revision in suspect_revisions:
             commit_info = CommitInfo.commit_info_for_revision(self.tool.scm(), revision)
             self._print_blame_information_for_commit(commit_info)

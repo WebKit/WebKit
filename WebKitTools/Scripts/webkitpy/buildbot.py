@@ -53,15 +53,23 @@ class Builder(object):
     def url(self):
         return "http://%s/builders/%s" % (self._buildbot.buildbot_host, urllib.quote(self._name))
 
+    # This provides a single place to mock
+    def _fetch_build(self, build_number):
+        build_dictionary = self._buildbot._fetch_xmlrpc_build_dictionary(self, build_number)
+        if not build_dictionary:
+            return None
+        return Build(self,
+            build_number=int(build_dictionary['number']),
+            revision=int(build_dictionary['revision']),
+            is_green=(build_dictionary['results'] == 0) # Undocumented, buildbot XMLRPC, 0 seems to mean "pass"
+        )
+
     def build(self, build_number):
         cached_build = self._builds_cache.get(build_number)
         if cached_build:
             return cached_build
 
-        build_dictionary = self._buildbot._fetch_xmlrpc_build_dictionary(self, build_number)
-        if not build_dictionary:
-            return None
-        build = Build(build_dictionary, self)
+        build = self._fetch_build(build_number)
         self._builds_cache[build_number] = build
         return build
 
@@ -87,22 +95,24 @@ class Builder(object):
             look_back_count += 1
         return (green_build, red_build)
 
-    def suspect_revisions_for_green_to_red_transition(self, red_build_number, look_back_limit=30):
+    def suspect_revisions_for_green_to_red_transition(self, red_build_number, look_back_limit=30, avoid_flakey_tests=True):
         (last_green_build, first_red_build) = self.find_green_to_red_transition(red_build_number, look_back_limit)
         if not last_green_build:
             return [] # We ran off the limit of our search
+        # if avoid_flakey_tests, require at least 2 red builds before we suspect a green to red transition.
+        if avoid_flakey_tests and first_red_build == self.build(red_build_number):
+            return []
         suspect_revisions = range(first_red_build.revision(), last_green_build.revision(), -1)
         suspect_revisions.reverse()
         return suspect_revisions
 
 
 class Build(object):
-    def __init__(self, build_dictionary, builder):
+    def __init__(self, builder, build_number, revision, is_green):
         self._builder = builder
-        # FIXME: Knowledge of the XMLRPC specifics should probably not go here.
-        self._revision = int(build_dictionary['revision'])
-        self._number = int(build_dictionary['number'])
-        self._is_green = (build_dictionary['results'] == 0) # Undocumented, buildbot XMLRPC
+        self._number = build_number
+        self._revision = revision
+        self._is_green = is_green
 
     @staticmethod
     def build_url(builder, build_number):
