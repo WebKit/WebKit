@@ -1,5 +1,15 @@
 2010-03-19  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed.
+
+        Actually import the sheriff-bot command so we can run it.  Also, move
+        the bot to #webkit-test so it doesn't cause a ruckus while we test it.
+
+        * Scripts/webkitpy/patch/patcher.py:
+        * Scripts/webkitpy/irc/ircbot.py:
+
+2010-03-19  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Second cut at SheriffBot

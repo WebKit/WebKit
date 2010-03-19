@@ -38,6 +38,7 @@ from webkitpy.commands.early_warning_system import *
 from webkitpy.commands.openbugs import OpenBugs
 from webkitpy.commands.queries import *
 from webkitpy.commands.queues import *
+from webkitpy.commands.sheriffbot import *
 from webkitpy.commands.upload import *
 from webkitpy.executive import Executive
 from webkitpy.webkit_logging import log
