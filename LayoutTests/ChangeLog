@@ -2,6 +2,16 @@
 
         Reviewed by Dimitri Glazkov.
 
+        Add test_expectations.txt file for chromium baselines
+
+        https://bugs.webkit.org/show_bug.cgi?id=28397
+
+        * platform/chromium/test_expectations.txt: Added
+
+2010-03-19  Dirk Pranke <dpranke@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
         Land remaining chromium-linux LayoutTest baselines
         (file list omitted due to length).
 
