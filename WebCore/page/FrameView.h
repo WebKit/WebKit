@@ -141,6 +141,7 @@ public:
 
     String mediaType() const;
     void setMediaType(const String&);
+    void adjustMediaTypeForPrinting(bool printing);
 
     void setUseSlowRepaints();
     void setIsOverlapped(bool);
@@ -300,7 +301,8 @@ private:
     float m_lastZoomFactor;
 
     String m_mediaType;
-    
+    String m_mediaTypeWhenNotPrinting;
+
     unsigned m_enqueueEvents;
     Vector<ScheduledEvent*> m_scheduledEvents;
     

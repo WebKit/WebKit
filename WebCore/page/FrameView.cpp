@@ -801,6 +801,19 @@ String FrameView::mediaType() const
     return m_mediaType;
 }
 
+void FrameView::adjustMediaTypeForPrinting(bool printing)
+{
+    if (printing) {
+        if (m_mediaTypeWhenNotPrinting.isNull())
+            m_mediaTypeWhenNotPrinting = mediaType();
+            setMediaType("print");
+    } else {
+        if (!m_mediaTypeWhenNotPrinting.isNull())
+            setMediaType(m_mediaTypeWhenNotPrinting);
+        m_mediaTypeWhenNotPrinting = String();
+    }
+}
+
 bool FrameView::useSlowRepaints() const
 {
     return m_useSlowRepaints || m_slowRepaintObjectCount > 0 || (platformWidget() && m_fixedObjectCount > 0) || m_isOverlapped || !m_contentIsOpaque;

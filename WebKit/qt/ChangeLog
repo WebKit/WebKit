@@ -1,3 +1,13 @@
+2010-03-18  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Make it possible for the Qt DRT to set the media type from
+        the LayoutTestController.
+
+        * Api/qwebframe.cpp:
+        (qt_drt_setMediaType):
+
 2010-03-18  Joe Ligman  <joseph.ligman@nokia.com>
 
         Reviewed by Simon Hausmann.

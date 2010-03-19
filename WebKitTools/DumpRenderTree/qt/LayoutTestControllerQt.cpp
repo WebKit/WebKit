@@ -39,6 +39,7 @@
 extern void qt_dump_editing_callbacks(bool b);
 extern void qt_dump_frame_loader(bool b);
 extern void qt_dump_resource_load_callbacks(bool b);
+extern void qt_drt_setMediaType(QWebFrame* qframe, const QString& type);
 extern void qt_drt_setFrameSetFlatteningEnabled(QWebPage*, bool);
 extern void qt_drt_setJavaScriptProfilingEnabled(QWebFrame*, bool enabled);
 extern void qt_drt_setTimelineProfilingEnabled(QWebPage*, bool enabled);
@@ -291,6 +292,10 @@ QString LayoutTestController::decodeHostName(const QString& host)
     return decoded;
 }
 
+void LayoutTestController::setMediaType(const QString& type)
+{
+    qt_drt_setMediaType(m_drt->webPage()->mainFrame(), type);
+}
 
 void LayoutTestController::closeWebInspector()
 {

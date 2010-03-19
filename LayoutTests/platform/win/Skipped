@@ -805,3 +805,6 @@ fast/events/continuous-platform-wheelevent-in-scrolling-div.html
 
 # Windows port doesn't yet support rendering of non-BMP characters even though there's a font available.
 fast/text/international/plane2.html 
+
+# Misses setMediaType() implementation
+fast/media/print-restores-previous-mediatype.html

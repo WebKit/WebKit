@@ -1,3 +1,18 @@
+2010-03-18  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Add a new method to the Qt LayoutTestController for
+        changing media type and make the DRT support dry-run printing.
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        (WebCore::DumpRenderTree::dryRunPrint):
+        * DumpRenderTree/qt/DumpRenderTreeQt.h:
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::setMediaType):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+
 2010-03-18  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Dimitri Glazkov.

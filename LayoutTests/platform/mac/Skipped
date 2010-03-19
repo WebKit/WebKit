@@ -139,3 +139,6 @@ editing/pasteboard/dataTransfer-setData-getData.html
 
 # eventSender needs to propagate the event to the calling window, not the main frame always.
 http/tests/plugins/plugin-document-has-focus.html
+
+# Misses setMediaType() and implementation
+fast/media/print-restores-previous-mediatype.html

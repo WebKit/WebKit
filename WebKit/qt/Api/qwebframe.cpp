@@ -88,6 +88,15 @@ QT_BEGIN_NAMESPACE
 extern Q_GUI_EXPORT int qt_defaultDpi();
 QT_END_NAMESPACE
 
+void QWEBKIT_EXPORT qt_drt_setMediaType(QWebFrame* qframe, const QString& type)
+{
+    WebCore::Frame* frame = QWebFramePrivate::core(qframe);
+    WebCore::FrameView* view = frame->view();
+    view->setMediaType(type);
+    frame->document()->updateStyleSelector();
+    view->forceLayout();
+}
+
 bool QWEBKIT_EXPORT qt_drt_hasDocumentElement(QWebFrame* qframe)
 {
     return QWebFramePrivate::core(qframe)->document()->documentElement();
