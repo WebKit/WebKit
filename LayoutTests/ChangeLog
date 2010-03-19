@@ -1,3 +1,11 @@
+2010-03-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        [Qt] Platform specific expected file updated after r56195
+
+        * platform/qt/fast/dom/Window/window-properties-expected.txt: updated.
+
 2010-03-18  Chris Evans  <cevans@chromium.org>
 
         Reviewed by Nikolas Zimmermann.
