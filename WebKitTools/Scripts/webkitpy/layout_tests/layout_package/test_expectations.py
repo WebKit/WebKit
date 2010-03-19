@@ -443,7 +443,7 @@ class TestExpectationsFile:
           the updated string.
         """
 
-        f_orig = self._get_iterable_expectations()
+        f_orig = self._get_iterable_expectations(self._expectations)
         f_new = []
 
         tests_removed = 0
