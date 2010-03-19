@@ -1,3 +1,12 @@
+2010-03-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Avoid taking a reference to a String owned by a temporary AtomicString.
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::RareData::parseNth):
+
 2010-03-18  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.
