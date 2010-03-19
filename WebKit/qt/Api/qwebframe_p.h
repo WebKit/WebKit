@@ -88,8 +88,6 @@ public:
     void renderFromTiledBackingStore(WebCore::GraphicsContext*, const QRegion& clip);
 #endif
 
-    bool scrollOverflow(int dx, int dy);
-
     QWebFrame *q;
     Qt::ScrollBarPolicy horizontalScrollBarPolicy;
     Qt::ScrollBarPolicy verticalScrollBarPolicy;

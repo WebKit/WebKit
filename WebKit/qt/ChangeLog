@@ -1,3 +1,21 @@
+2010-03-18  Joe Ligman  <joseph.ligman@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] New API scrollRecursively has several problems.
+        https://bugs.webkit.org/show_bug.cgi?id=35873
+
+        Remove scrollRecursively from the Qt 4.7 API
+        Update the internal API to accept a hit test position 
+        for nested scrolling
+
+        * Api/qwebframe.cpp:
+        (webframe_scrollOverflow):
+        (qtwebkit_webframe_scrollRecursively):
+        * Api/qwebframe.h:
+        * Api/qwebframe_p.h:
+        * tests/qwebframe/tst_qwebframe.cpp:
+
 2010-03-18  Antti Koivisto  <koivisto@iki.fi>
 
         Reviewed by Kenneth Rohde Christiansen.
