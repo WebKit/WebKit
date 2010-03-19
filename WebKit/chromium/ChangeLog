@@ -1,3 +1,18 @@
+2010-03-19  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [chromium] querying the current history item during a back/forward
+        navigation should not clobber the scroll offset, etc.
+        https://bugs.webkit.org/show_bug.cgi?id=36347
+
+        We should only allow the current history item to be modified if we are
+        no longer loading or if the load is a new navigation (i.e., not a
+        back/forward/reload variant).
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::currentHistoryItem):
+
 2010-03-18  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by Adam Barth.

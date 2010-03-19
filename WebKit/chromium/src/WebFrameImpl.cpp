@@ -949,7 +949,12 @@ WebHistoryItem WebFrameImpl::previousHistoryItem() const
 
 WebHistoryItem WebFrameImpl::currentHistoryItem() const
 {
-    m_frame->loader()->history()->saveDocumentAndScrollState();
+    // If we are still loading, then we don't want to clobber the current
+    // history item as this could cause us to lose the scroll position and 
+    // document state.  However, it is OK for new navigations.
+    if (m_frame->loader()->loadType() == FrameLoadTypeStandard
+        || !m_frame->loader()->activeDocumentLoader()->isLoadingInAPISense())
+        m_frame->loader()->history()->saveDocumentAndScrollState();
 
     return WebHistoryItem(m_frame->page()->backForwardList()->currentItem());
 }
