@@ -2,6 +2,16 @@
 
         Reviewed by Dimitri Glazkov.
 
+        Land remaining chromium-linux LayoutTest baselines
+        (file list omitted due to length).
+
+        https://bugs.webkit.org/show_bug.cgi?id=28397
+
+
+2010-03-19  Dirk Pranke <dpranke@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
         Land chromium-linux/fast/{block,css,forms,text} LayoutTest baselines
         (file list omitted due to length).
 

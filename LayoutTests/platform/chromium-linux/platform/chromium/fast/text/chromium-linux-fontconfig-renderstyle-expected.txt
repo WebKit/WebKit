@@ -1,0 +1,26 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 156x19
+          text run at (0,0) width 156: "On Chromium Linux with "
+        RenderInline {TT} at (0,0) size 80x16
+          RenderText {#text} at (156,3) size 80x16
+            text run at (156,3) width 80: "test_shell"
+        RenderText {#text} at (236,0) size 18x19
+          text run at (236,0) width 18: " in "
+        RenderInline {TT} at (0,0) size 104x16
+          RenderText {#text} at (254,3) size 104x16
+            text run at (254,3) width 104: "--layout-test"
+        RenderText {#text} at (358,0) size 42x19
+          text run at (358,0) width 42: " mode "
+        RenderInline {I} at (0,0) size 27x19
+          RenderText {#text} at (400,0) size 27x19
+            text run at (400,0) width 27: "only"
+        RenderText {#text} at (427,0) size 317x19
+          text run at (427,0) width 317: " the following text should render without anti-aliasing:"
+      RenderBlock {P} at (0,36) size 784x19
+        RenderText {#text} at (0,0) size 262x18
+          text run at (0,0) width 262: "Testing fontconfig render preferences."
