@@ -1987,6 +1987,16 @@ bool HTMLInputElement::storesValueSeparateFromAttribute() const
     return false;
 }
 
+struct EventHandlingState {
+    RefPtr<HTMLInputElement> m_currRadio;
+    bool m_indeterminate;
+    bool m_checked;
+    
+    EventHandlingState(bool indeterminate, bool checked)
+        : m_indeterminate(indeterminate)
+        , m_checked(checked) { }
+};
+
 void* HTMLInputElement::preDispatchEventHandler(Event *evt)
 {
     // preventDefault or "return false" are used to reverse the automatic checking/selection we do here.
@@ -1994,17 +2004,14 @@ void* HTMLInputElement::preDispatchEventHandler(Event *evt)
     void* result = 0; 
     if ((inputType() == CHECKBOX || inputType() == RADIO) && evt->isMouseEvent()
             && evt->type() == eventNames().clickEvent && static_cast<MouseEvent*>(evt)->button() == LeftButton) {
-        if (allowsIndeterminate()) {
-            // As a way to store the state, we return 0 if we were unchecked, 1 if we were checked, and 2 for
-            // indeterminate.
-            if (indeterminate()) {
-                result = (void*)0x2;
+        
+        EventHandlingState* state = new EventHandlingState(indeterminate(), checked());
+
+        if (inputType() == CHECKBOX) {
+            if (indeterminate())
                 setIndeterminate(false);
-            } else {
-                if (checked())
-                    result = (void*)0x1;
+            else
                 setChecked(!checked(), true);
-            }
         } else {
             // For radio buttons, store the current selected radio object.
             // We really want radio groups to end up in sane states, i.e., to have something checked.
@@ -2014,11 +2021,13 @@ void* HTMLInputElement::preDispatchEventHandler(Event *evt)
             if (currRadio) {
                 // We have a radio button selected that is not us.  Cache it in our result field and ref it so
                 // that it can't be destroyed.
-                currRadio->ref();
-                result = currRadio;
+                state->m_currRadio = currRadio;
             }
+            if (indeterminate())
+                setIndeterminate(false);
             setChecked(true, true);
         }
+        result = state;
     }
     return result;
 }
@@ -2027,28 +2036,30 @@ void HTMLInputElement::postDispatchEventHandler(Event *evt, void* data)
 {
     if ((inputType() == CHECKBOX || inputType() == RADIO) && evt->isMouseEvent()
             && evt->type() == eventNames().clickEvent && static_cast<MouseEvent*>(evt)->button() == LeftButton) {
-        if (allowsIndeterminate()) {
-            // Reverse the checking we did in preDispatch.
-            if (evt->defaultPrevented() || evt->defaultHandled()) {
-                if (data == (void*)0x2)
-                    setIndeterminate(true);
-                else
-                    setChecked(data);
-            }
-        } else if (data) {
-            HTMLInputElement* input = static_cast<HTMLInputElement*>(data);
-            if (evt->defaultPrevented() || evt->defaultHandled()) {
-                // Restore the original selected radio button if possible.
-                // Make sure it is still a radio button and only do the restoration if it still
-                // belongs to our group.
+        
+        if (EventHandlingState* state = reinterpret_cast<EventHandlingState*>(data)) {
+            if (inputType() == CHECKBOX) {
+                // Reverse the checking we did in preDispatch.
+                if (evt->defaultPrevented() || evt->defaultHandled()) {
+                    setIndeterminate(state->m_indeterminate);
+                    setChecked(state->m_checked);
+                }
+            } else {
+                HTMLInputElement* input = state->m_currRadio.get();
+                if (evt->defaultPrevented() || evt->defaultHandled()) {
+                    // Restore the original selected radio button if possible.
+                    // Make sure it is still a radio button and only do the restoration if it still
+                    // belongs to our group.
 
-                if (input->form() == form() && input->inputType() == RADIO && input->name() == name()) {
-                    // Ok, the old radio button is still in our form and in our group and is still a 
-                    // radio button, so it's safe to restore selection to it.
-                    input->setChecked(true);
+                    if (input && input->form() == form() && input->inputType() == RADIO && input->name() == name()) {
+                        // Ok, the old radio button is still in our form and in our group and is still a 
+                        // radio button, so it's safe to restore selection to it.
+                        input->setChecked(true);
+                    }
+                    setIndeterminate(state->m_indeterminate);
                 }
             }
-            input->deref();
+            delete state;
         }
 
         // Left clicks on radio buttons and check boxes already performed default actions in preDispatchEventHandler(). 

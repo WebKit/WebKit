@@ -1,3 +1,27 @@
+2010-03-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36387
+        REGRESSION: Can "uncheck" radio buttons by clicking on them
+        
+        My change in r56174 caused radio buttons and checkboxes to go down the same code path by virtue
+        of allowsIndeterminate(), but this broke save/restore behavior on radio buttons.
+        
+        Fix by saving and restoring both the intermediate and checked state for radio buttons
+        and checkboxes, as well as the "current radio button" state.
+
+        Test: fast/forms/radio-checkbox-restore-indeterminate.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::EventHandlingState::EventHandlingState): New struct to hold state between preDispatchEventHandler()
+        and postDispatchEventHandler().
+        (WebCore::HTMLInputElement::preDispatchEventHandler): Store intermedate and checked state
+        and the current radio button.
+        (WebCore::HTMLInputElement::postDispatchEventHandler): Restore state as appropriate.
+        * html/HTMLInputElement.h: Add a comment to clarify how 'intermediate' interacts with 'checked', according
+        to the spec.
+
 2010-03-19  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

@@ -1,3 +1,15 @@
+2010-03-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36387
+        REGRESSION: Can "uncheck" radio buttons by clicking on them
+        
+        Testcase for various combinations of checked/intermiate and click events.
+
+        * fast/forms/radio-checkbox-restore-indeterminate-expected.txt: Added.
+        * fast/forms/radio-checkbox-restore-indeterminate.html: Added.
+
 2010-03-19  Darin Fisher  <darin@chromium.org>
 
         Temporarily suppress fast/loader/frame-src-change-added-to-history.html
