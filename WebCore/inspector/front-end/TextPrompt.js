@@ -149,6 +149,7 @@ WebInspector.TextPrompt.prototype = {
             return;
 
         this._userEnteredRange.deleteContents();
+        this.element.pruneEmptyTextNodes();
 
         var userTextNode = document.createTextNode(this._userEnteredText);
         this._userEnteredRange.insertNode(userTextNode);
@@ -223,6 +224,7 @@ WebInspector.TextPrompt.prototype = {
         this._userEnteredText = fullWordRange.toString();
 
         fullWordRange.deleteContents();
+        this.element.pruneEmptyTextNodes();
 
         var finalSelectionRange = document.createRange();
 
