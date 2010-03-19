@@ -81,9 +81,8 @@
 #include "PluginDatabase.h"
 #include "PluginDocument.h"
 #include "ProgressTracker.h"
-#include "RenderPart.h"
+#include "RenderEmbeddedObject.h"
 #include "RenderView.h"
-#include "RenderWidget.h"
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
 #include "ScriptController.h"
@@ -1257,7 +1256,7 @@ String FrameLoader::encoding() const
     return settings ? settings->defaultTextEncodingName() : String();
 }
 
-bool FrameLoader::requestObject(RenderPart* renderer, const String& url, const AtomicString& frameName,
+bool FrameLoader::requestObject(RenderEmbeddedObject* renderer, const String& url, const AtomicString& frameName,
     const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
     if (url.isEmpty() && mimeType.isEmpty())
@@ -1356,7 +1355,7 @@ static HTMLPlugInElement* toPlugInElement(Node* node)
     return static_cast<HTMLPlugInElement*>(node);
 }
     
-bool FrameLoader::loadPlugin(RenderPart* renderer, const KURL& url, const String& mimeType, 
+bool FrameLoader::loadPlugin(RenderEmbeddedObject* renderer, const KURL& url, const String& mimeType, 
     const Vector<String>& paramNames, const Vector<String>& paramValues, bool useFallback)
 {
     RefPtr<Widget> widget;

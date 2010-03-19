@@ -65,7 +65,7 @@ class HTMLFrameOwnerElement;
 class IconLoader;
 class IntSize;
 class NavigationAction;
-class RenderPart;
+class RenderEmbeddedObject;
 class ResourceError;
 class ResourceLoader;
 class ResourceResponse;
@@ -291,7 +291,7 @@ public:
 
     bool isComplete() const;
 
-    bool requestObject(RenderPart* frame, const String& url, const AtomicString& frameName,
+    bool requestObject(RenderEmbeddedObject*, const String& url, const AtomicString& frameName,
         const String& serviceType, const Vector<String>& paramNames, const Vector<String>& paramValues);
 
     KURL completeURL(const String& url);
@@ -349,8 +349,8 @@ private:
     void started();
 
     bool shouldUsePlugin(const KURL&, const String& mimeType, bool hasFallback, bool& useFallback);
-    bool loadPlugin(RenderPart*, const KURL&, const String& mimeType,
-    const Vector<String>& paramNames, const Vector<String>& paramValues, bool useFallback);
+    bool loadPlugin(RenderEmbeddedObject*, const KURL&, const String& mimeType,
+        const Vector<String>& paramNames, const Vector<String>& paramValues, bool useFallback);
     
     void navigateWithinDocument(HistoryItem*);
     void navigateToDifferentDocument(HistoryItem*, FrameLoadType);

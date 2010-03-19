@@ -1,3 +1,20 @@
+2010-03-19  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Darin Adler and Brady Eidson.
+
+        First step toward:
+        https://bugs.webkit.org/show_bug.cgi?id=36328
+
+        This is the first step torward eliminating the WebKit WebNullPluginView class. The responsibility for this will soon
+        be in platform-independent code in WebCore. The plan is to change RenderEmbeddedObject and give it the capability of
+        drawing the missing plug-in text. 
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::requestObject): Renamed the renderer parameter to requestEmbeddedObject and made it
+        a RenderEmbeddedObject.
+        (WebCore::FrameLoader::loadPlugin): Likewise.
+        * loader/FrameLoader.h: Updated loadPlugin() and requestObject() method signatures accordingly. 
+
 2010-03-19  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Simon Hausmann.

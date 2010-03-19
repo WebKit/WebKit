@@ -67,6 +67,7 @@ namespace WebCore {
     class CSSMutableStyleDeclaration;
     class HTMLTableCellElement;
     class RegularExpression;
+    class RenderPart;
     class TiledBackingStore;
 
     class Frame : public RefCounted<Frame>
