@@ -73,7 +73,7 @@ private:
     bool viewSourceMode() const { return m_viewSource; }
 
     void setNameAndOpenURL();
-    void openURL();
+    void openURL(bool lockHistory = true, bool lockBackForwardList = true);
 
     static void setNameAndOpenURLCallback(Node*);
 

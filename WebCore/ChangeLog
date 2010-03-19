@@ -1,3 +1,24 @@
+2010-03-18  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        If a frame is already in the document, then setting its "src" attribute
+        should add the resultant navigation to history.
+
+        https://bugs.webkit.org/show_bug.cgi?id=9166
+
+        This behavior is specified in section 4.8.2 of the HTML5 spec.
+
+        Test: fast/loader/frame-src-change-added-to-history.html
+
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::openURL):
+        (WebCore::HTMLFrameElementBase::setLocation):
+        * html/HTMLFrameElementBase.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::requestFrame):
+        * loader/FrameLoader.h:
+
 2010-03-18  Chris Evans  <cevans@chromium.org>
 
         Reviewed by Nikolas Zimmermann.

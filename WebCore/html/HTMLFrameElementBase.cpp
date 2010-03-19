@@ -90,7 +90,7 @@ bool HTMLFrameElementBase::isURLAllowed() const
     return true;
 }
 
-void HTMLFrameElementBase::openURL()
+void HTMLFrameElementBase::openURL(bool lockHistory, bool lockBackForwardList)
 {
     ASSERT(!m_frameName.isEmpty());
 
@@ -104,7 +104,7 @@ void HTMLFrameElementBase::openURL()
     if (!parentFrame)
         return;
 
-    parentFrame->loader()->requestFrame(this, m_URL, m_frameName);
+    parentFrame->loader()->requestFrame(this, m_URL, m_frameName, lockHistory, lockBackForwardList);
     if (contentFrame())
         contentFrame()->setInViewSourceMode(viewSourceMode());
 }
@@ -231,7 +231,7 @@ void HTMLFrameElementBase::setLocation(const String& str)
     m_URL = AtomicString(str);
 
     if (inDocument())
-        openURL();
+        openURL(false, false);
 }
 
 bool HTMLFrameElementBase::supportsFocus() const

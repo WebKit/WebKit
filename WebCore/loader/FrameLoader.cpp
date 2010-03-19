@@ -352,7 +352,7 @@ void FrameLoader::urlSelected(const ResourceRequest& request, const String& pass
     m_suppressOpenerInNewFrame = false;
 }
 
-bool FrameLoader::requestFrame(HTMLFrameOwnerElement* ownerElement, const String& urlString, const AtomicString& frameName)
+bool FrameLoader::requestFrame(HTMLFrameOwnerElement* ownerElement, const String& urlString, const AtomicString& frameName, bool lockHistory, bool lockBackForwardList)
 {
     // Support for <frame src="javascript:string">
     KURL scriptURL;
@@ -365,7 +365,7 @@ bool FrameLoader::requestFrame(HTMLFrameOwnerElement* ownerElement, const String
 
     Frame* frame = ownerElement->contentFrame();
     if (frame)
-        frame->redirectScheduler()->scheduleLocationChange(url.string(), m_outgoingReferrer, true, true, isProcessingUserGesture());
+        frame->redirectScheduler()->scheduleLocationChange(url.string(), m_outgoingReferrer, lockHistory, lockBackForwardList, isProcessingUserGesture());
     else
         frame = loadSubframe(ownerElement, url, frameName, m_outgoingReferrer);
     
