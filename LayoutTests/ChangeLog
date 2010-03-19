@@ -1,3 +1,36 @@
+2010-03-19  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        <input type=range> does not validate correctly without a renderer and the tests are incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=36259
+
+        Setting value attribute on an <input type=range> to an out-of-range value fires oninput
+        https://bugs.webkit.org/show_bug.cgi?id=16990
+
+        When setting the range element's value, overflows and underflows are
+        automatically sanitized to valid values. Fixed the behavior and removed
+        tests that were testing for improper behavior.
+
+        * fast/forms/ValidityState-rangeOverflow-expected.txt:
+        * fast/forms/ValidityState-rangeUnderflow-expected.txt:
+        * fast/forms/input-stepup-stepdown-expected.txt:
+        * fast/forms/script-tests/ValidityState-rangeOverflow.js:
+        * fast/forms/script-tests/ValidityState-rangeUnderflow.js:
+        * fast/forms/script-tests/input-stepup-stepdown.js:
+        * fast/forms/script-tests/validationMessage.js:
+        * fast/forms/validationMessage-expected.txt:
+
+          Added test verifying that bug 16990 was fixed as well.
+
+        * fast/forms/range-input-dynamic-oninput-expected.txt: Added.
+        * fast/forms/range-input-dynamic-oninput.html Added.
+
+          Improved test because handling of this case changed.
+
+        * fast/forms/range-reset-expected.txt:
+        * fast/forms/range-reset.html:
+
 2010-03-19  Darin Fisher  <darin@chromium.org>
 
         Fix expected results for fast/loader/frame-src-change-added-to-history.html

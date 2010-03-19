@@ -32,24 +32,6 @@ emailInput.value = "incorrectValue";
 form.appendChild(emailInput);
 shouldBe("emailInput.validationMessage", "'type mismatch'");
 
-// A "ranged" input for "range underflow" flag
-var underInput = document.createElement("input");
-underInput.name = "underInput";
-underInput.type = "range";
-underInput.min = "2";
-underInput.value = "1";
-form.appendChild(underInput);
-shouldBe("underInput.validationMessage", "'range underflow'");
-
-// A "ranged" input for "range overflow" flag
-var overInput = document.createElement("input");
-overInput.name = "overInput";
-overInput.type = "range";
-overInput.max = "2";
-overInput.value = "3";
-form.appendChild(overInput);
-shouldBe("overInput.validationMessage", "'range overflow'");
-
 // A button can't be valited and, thus, has a blank validationMessage
 var but = document.createElement("button");
 but.name = "button";

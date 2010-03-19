@@ -5,6 +5,31 @@
         <input type=range> does not validate correctly without a renderer and the tests are incorrect
         https://bugs.webkit.org/show_bug.cgi?id=36259
 
+        Setting value attribute on an <input type=range> to an out-of-range value fires oninput
+        https://bugs.webkit.org/show_bug.cgi?id=16990
+
+        Part 2 of 2: When setting the range element's value, overflows and underflows
+        are automatically sanitized to valid values. Moved the general case
+        sanitization code out of the Renderer into HTMLInputElement::sanitizeValue.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::value): when getting a default value on reset() ensure the defaultValue is provided
+        (WebCore::HTMLInputElement::sanitizeValue): clamp the value within the max/min/step range constraints
+        * html/StepRange.cpp:
+        (WebCore::StepRange::StepRange): allow const element in the constructor
+        (WebCore::StepRange::clampValue): clamp from a String value
+        * html/StepRange.h:
+        (WebCore::StepRange::defaultValue): easy calculation of the default value for max/min/step range constraints
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::updateFromElement): no longer handle the general case sanitization in the renderer
+
+2010-03-19  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        <input type=range> does not validate correctly without a renderer and the tests are incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=36259
+
         Part 1 of 2: Refactoring the SliderRange struct out of RenderSlider
         into a more appropriate place. Changed the named to StepRange. Changed
         from a struct to a class.

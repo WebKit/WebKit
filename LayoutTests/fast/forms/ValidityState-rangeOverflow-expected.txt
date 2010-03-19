@@ -73,21 +73,6 @@ PASS The value "-99" overflows the maximum value "-100".
 PASS The value "101" overflows the maximum value "1E+2".
 PASS The value "101" overflows the maximum value "100".
 
-Type=range
-PASS The value "99" doesn't overflow the maximum value "100".
-PASS The value "-101" doesn't overflow the maximum value "-100".
-PASS The value "99" doesn't overflow the maximum value "1E+2".
-PASS The value "0.99" doesn't overflow the maximum value "1.00".
-PASS The value "abc" doesn't overflow the maximum value "100".
-PASS The value "" doesn't overflow the maximum value "-1".
-PASS The value "0.999999999999999999999999999999999999999999" doesn't overflow the maximum value "0.999999999999999999999999999999999999999998".
-PASS The value "101" doesn't overflow the maximum value "100".
-PASS The value "101" overflows the maximum value "100".
-PASS The value "-99" overflows the maximum value "-100".
-PASS The value "101" overflows the maximum value "1E+2".
-PASS The value "101" overflows the maximum value "".
-PASS The value "101" overflows the maximum value "xxx".
-
 Type=time
 PASS The value "13:16" doesn't overflow the maximum value "".
 PASS The value "13:16" doesn't overflow the maximum value "".

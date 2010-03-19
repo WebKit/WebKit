@@ -26,6 +26,7 @@
 namespace WebCore {
 
 class HTMLInputElement;
+class String;
 
 class StepRange : public Noncopyable {
 public:
@@ -34,8 +35,15 @@ public:
     double minimum;
     double maximum; // maximum must be >= minimum.
 
-    explicit StepRange(HTMLInputElement*);
+    explicit StepRange(const HTMLInputElement*);
     double clampValue(double value);
+    double clampValue(const String& stringValue);
+
+    // Clamp the middle value according to the step
+    double defaultValue()
+    {
+        return clampValue((minimum + maximum) / 2);
+    }
 
     // Map value into 0-1 range
     double proportionFromValue(double value)

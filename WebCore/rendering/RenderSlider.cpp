@@ -303,15 +303,6 @@ void RenderSlider::layout()
 
 void RenderSlider::updateFromElement()
 {
-    HTMLInputElement* element = static_cast<HTMLInputElement*>(node());
-
-    // Send the value back to the element if the range changes it.
-    StepRange range(element);
-    bool clamped;
-    double value = range.valueFromElement(element, &clamped);
-    if (clamped)
-        element->setValueFromRenderer(HTMLInputElement::serializeForNumberType(value));
-
     // Layout will take care of the thumb's size and position.
     if (!m_thumb) {
         m_thumb = new SliderThumbElement(document(), node());

@@ -3,11 +3,15 @@ description('Check stepUp() and stepDown() bahevior for type=date, datetime, dat
 var input = document.createElement('input');
 var invalidStateErr = '"Error: INVALID_STATE_ERR: DOM Exception 11"';
 
-function stepUp(value, step, max, optionalStepCount) {
-    input.value = value;
-    input.step = step;
-    input.min = null;
+function setInputAttributes(min, max, step, value) {
+    input.min = min;
     input.max = max;
+    input.step = step;
+    input.value = value;
+}
+
+function stepUp(value, step, max, optionalStepCount) {
+    setInputAttributes(null, max, step, value);
     if (typeof optionalStepCount != "undefined")
         input.stepUp(optionalStepCount);
     else
@@ -16,12 +20,30 @@ function stepUp(value, step, max, optionalStepCount) {
 }
 
 function stepDown(value, step, min, optionalStepCount) {
-    input.value = value;
-    input.step = step;
-    input.min = min;
-    input.max = null;
+    setInputAttributes(min, null, step, value);
     if (typeof optionalStepCount != "undefined")
         input.stepDown(optionalStepCount);
+    else
+        input.stepDown();
+    return input.value;
+}
+
+// Range value gets automatically shifted based on bounds,
+// So always set the min and max first to get expected behavior
+
+function stepUpExplicitBounds(min, max, step, value, stepCount) {
+    setInputAttributes(min, max, step, value);
+    if (typeof stepCount !== 'undefined')
+        input.stepUp(stepCount);
+    else
+        input.stepUp();
+    return input.value;
+}
+
+function stepDownExplicitBounds(min, max, step, value, stepCount) {
+    setInputAttributes(min, max, step, value);
+    if (typeof stepCount !== 'undefined')
+        input.stepDown(stepCount);
     else
         input.stepDown();
     return input.value;
@@ -203,60 +225,74 @@ shouldBe('for (var i = 0; i < 255; i++) { input.stepDown(); }; input.value', '"0
 debug('');
 debug('Range type');
 input.type = 'range';
-debug('Invalid value');
-shouldThrow('stepUp("", null, null)', invalidStateErr);
-shouldThrow('stepDown("", null, null)', invalidStateErr);
-debug('Non-number arguments');
-shouldBe('stepUp("0", null, null, "0")', '"0"');
-shouldBe('stepDown("0", null, null, "0")', '"0"');
-shouldBe('stepUp("0", null, null, "foo")', '"0"');
-shouldBe('stepDown("0", null, null, "foo")', '"0"');
-shouldBe('stepUp("0", null, null, null)', '"0"');
-shouldBe('stepDown("0", null, null, null)', '"0"');
+debug('function arguments are (min, max, step, value, [stepCount])');
+debug('Using the default values');
+shouldBe('stepUpExplicitBounds(null, null, null, "")', '"51"');
+shouldBe('stepDownExplicitBounds(null, null, null, "")', '"49"');
+debug('Non-number arguments (stepCount)');
+shouldBe('stepUpExplicitBounds(null, null, null, "0", "0")', '"0"');
+shouldBe('stepDownExplicitBounds(null, null, null, "0", "0")', '"0"');
+shouldBe('stepUpExplicitBounds(null, null, null, "0", "foo")', '"0"');
+shouldBe('stepDownExplicitBounds(null, null, null, "0", "foo")', '"0"');
+shouldBe('stepUpExplicitBounds(null, null, null, "0", null)', '"0"');
+shouldBe('stepDownExplicitBounds(null, null, null, "0", null)', '"0"');
 debug('Normal cases');
-shouldBe('stepUp("0", null, null)', '"1"');
-shouldBe('stepUp("1", null, null, 2)', '"3"');
-shouldBe('stepUp("3", null, null, -1)', '"2"');
-shouldBe('stepDown("2", null, "-100")', '"1"');
-shouldBe('stepDown("1", null, "-100", 2)', '"-1"');
-shouldBe('stepDown("-1", null, "-100", -1)', '"0"');
+shouldBe('stepUpExplicitBounds(null, null, null, "0")', '"1"');
+shouldBe('stepUpExplicitBounds(null, null, null, "1", 2)', '"3"');
+shouldBe('stepUpExplicitBounds(null, null, null, "3", -1)', '"2"');
+shouldBe('stepDownExplicitBounds("-100", null, null, "2")', '"1"');
+shouldBe('stepDownExplicitBounds("-100", null, null, "1", 2)', '"-1"');
+shouldBe('stepDownExplicitBounds("-100", null, null, "-1", -1)', '"0"');
 debug('Extra arguments');
-shouldBe('input.value = "0"; input.min = null; input.step = null; input.stepUp(1, 2); input.value', '"1"');
-shouldBe('input.value = "1"; input.stepDown(1, 3); input.value', '"0"');
+shouldBe('setInputAttributes(null, null, null, "0"); input.stepUp(1,2); input.value', '"1"');
+shouldBe('setInputAttributes(null, null, null, "1"); input.stepDown(1,3); input.value', '"0"');
 debug('Invalid step value');
-shouldBe('stepUp("0", "foo", null)', '"1"');
-shouldBe('stepUp("1", "0", null)', '"2"');
-shouldBe('stepUp("2", "-1", null)', '"3"');
+shouldBe('stepUpExplicitBounds(null, null, "foo", "0")', '"1"');
+shouldBe('stepUpExplicitBounds(null, null, "0", "1")', '"2"');
+shouldBe('stepUpExplicitBounds(null, null, "-1", "2")', '"3"');
+shouldBe('stepDownExplicitBounds(null, null, "foo", "1")', '"0"');
+shouldBe('stepDownExplicitBounds(null, null, "0", "2")', '"1"');
+shouldBe('stepDownExplicitBounds(null, null, "-1", "3")', '"2"');
 debug('Step=any');
-shouldThrow('stepUp("0", "any", null)', invalidStateErr);
-shouldThrow('stepDown("0", "any", null)', invalidStateErr);
+shouldThrow('stepUpExplicitBounds(null, null, "any", "1")', invalidStateErr);
+shouldThrow('stepDownExplicitBounds(null, null, "any", "1")', invalidStateErr);
 debug('Overflow/underflow');
-shouldBe('stepDown("1", "1", "0")', '"0"');
-shouldThrow('stepDown("0", "1", "0")', invalidStateErr);
-shouldThrow('stepDown("1", "1", "0", 2)', invalidStateErr);
+shouldBe('stepUpExplicitBounds(null, "100", "1", "99")', '"100"');
+shouldThrow('stepUpExplicitBounds(null, "100", "1", "100")', invalidStateErr);
+shouldBe('input.value', '"100"');
+shouldThrow('stepUpExplicitBounds(null, "100", "1", "99", "2")', invalidStateErr);
+shouldBe('input.value', '"99"');
+shouldBe('stepDownExplicitBounds("0", null, "1", "1")', '"0"');
+shouldThrow('stepDownExplicitBounds("0", null, "1", "0")', invalidStateErr);
+shouldBe('input.value', '"0"');
+shouldThrow('stepDownExplicitBounds("0", null, "1", "1", "2")', invalidStateErr);
 shouldBe('input.value', '"1"');
-shouldThrow('stepDown("1", "1.7976931348623156e+308", "", 2)', invalidStateErr);
-shouldBe('input.min = "-100"; stepUp("-1", "1", "0")', '"0"');
-shouldThrow('stepUp("0", "1", "0")', invalidStateErr);
-shouldThrow('input.min = "-100"; stepUp("-1", "1", "0", 2)', invalidStateErr);
+shouldThrow('stepDownExplicitBounds(null, null, "1.7976931348623156e+308", "1", "2")', invalidStateErr);
+shouldBe('stepUpExplicitBounds(-100, 0, 1, -1)', '"0"');
+shouldThrow('stepUpExplicitBounds(null, 0, 1, 0)', invalidStateErr);
+shouldThrow('stepUpExplicitBounds(-100, 0, 1, -1, 2)', invalidStateErr);
 shouldBe('input.value', '"-1"');
-shouldThrow('stepUp("1", "1.7976931348623156e+308", "", 2)', invalidStateErr);
+shouldThrow('stepUpExplicitBounds(null, null, "1.7976931348623156e+308", "1", "2")', invalidStateErr);
 debug('stepDown()/stepUp() for stepMismatch values');
-shouldBe('stepUp("1", "2", "")', '"4"');
+shouldBe('stepUpExplicitBounds(null, null, 2, 1)', '"4"');
 shouldBe('input.stepDown(); input.value', '"2"');
-shouldBe('input.min = "0"; stepUp("9", "10", "", 9)', '"100"');
-shouldBe('stepDown("19", "10", "0")', '"10"');
-// value + step is <= max, but rounded result would be > max.
-shouldThrow('stepUp("89", "10", "99")', invalidStateErr);
+shouldBe('stepUpExplicitBounds(0, null, 10, 9, 9)', '"100"');
+shouldBe('stepDownExplicitBounds(0, null, 10, 19)', '"10"');
+debug('value + step is <= max, but rounded result would be > max.');
+shouldThrow('stepUpExplicitBounds(null, 99, 10, 89)', invalidStateErr);
 debug('Huge value and small step');
-shouldBe('input.min = "0"; stepUp("1e+308", "1", "1e+308", 999999)', '"1e+308"');
-shouldBe('input.max = "1e+308"; input.min = "0"; input.step = "1"; input.value = "1e+308"; input.stepDown(999999); input.value', '"1e+308"');
+shouldBe('stepUpExplicitBounds(0, 1e308, 1, 1e308, 999999)', '"1e+308"');
+shouldBe('stepDownExplicitBounds(0, 1e308, 1, 1e308, 999999)', '"1e+308"');
 debug('Fractional numbers');
-shouldBe('input.min = ""; stepUp("0", "0.33333333333333333", "", 3)', '"1"');
-shouldBe('stepUp("1", "0.1", "", 10)', '"2"');
+shouldBe('stepUpExplicitBounds(null, null, 0.33333333333333333, 0, 3)', '"1"');
+shouldBe('stepUpExplicitBounds(null, null, 0.1, 1)', '"1.1"');
+shouldBe('stepUpExplicitBounds(null, null, 0.1, 1, 8)', '"1.8"');
+shouldBe('stepUpExplicitBounds(null, null, 0.1, 1, 10)', '"2"');
 shouldBe('input.stepUp(); input.stepUp(); input.stepUp(); input.stepUp(); input.stepUp(); input.stepUp(); input.stepUp(); input.stepUp(); input.stepUp(); input.stepUp(); input.value', '"3"');
-shouldBe('input.min = "0"; stepUp("0", "0.003921568627450980", "1", 255)', '"1"');
+shouldBe('stepUpExplicitBounds(0, 1, 0.003921568627450980, 0, 255)', '"1"');
 shouldBe('for (var i = 0; i < 255; i++) { input.stepDown(); }; input.value', '"0"');
+shouldBe('stepDownExplicitBounds(null, null, 0.1, 1, 8)', '"0.2"');
+shouldBe('stepDownExplicitBounds(null, null, 0.1, 1)', '"0.9"');
 
 debug('');
 debug('Time type');

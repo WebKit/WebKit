@@ -144,32 +144,6 @@ checkOverflow('101', '100');
 
 // ----------------------------------------------------------------
 debug('');
-debug('Type=range');
-input.type = 'range';
-input.min = '';
-checkNotOverflow('99', '100');  // Very normal case.
-checkNotOverflow('-101', '-100');
-checkNotOverflow('99', '1E+2');
-checkNotOverflow('0.99', '1.00');
-checkNotOverflow('abc', '100');  // Invalid value.
-checkNotOverflow('', '-1');  // No value.
-// The following case should be rangeOverflow==true ideally.  But the "double" type doesn't have enough precision.
-checkNotOverflow('0.999999999999999999999999999999999999999999', '0.999999999999999999999999999999999999999998');
-input.min = '200';  // If min > max, max is reset to min.
-checkNotOverflow('101', '100');
-input.min = '';
-
-// Overflow cases
-checkOverflow('101', '100');
-input.min = '-200';
-checkOverflow('-99', '-100');
-input.min = '';
-checkOverflow('101', '1E+2');
-checkOverflow('101', '');  // No max.
-checkOverflow('101', 'xxx');  // Invalid max.
-
-// ----------------------------------------------------------------
-debug('');
 debug('Type=time');
 input.type = 'time';
 input.min = '';

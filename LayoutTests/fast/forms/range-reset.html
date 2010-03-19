@@ -6,6 +6,8 @@
 <p id="description"></p>
 <form>
 <input id="slider" type="range" min="0" max="100" value="30">
+<input id="defaults" type="range">
+<input id="step" type="range" step="20">
 </form>
 <div id="console"></div>
 <script>
@@ -16,17 +18,31 @@ function quoteNumber(n)
     return "\"" + n + "\"";
 }
 
-var slider = document.getElementById("slider");
+var slider; // Global needed for eval in shouldBe calls.
+function testSliderReset(id)
+{
+    slider = document.getElementById(id);
+    var originalValue = quoteNumber(slider.value);
+    debug("Current value is: " + originalValue);
 
-var originalValue = quoteNumber(slider.value);
-debug("Current value is: " + originalValue);
+    slider.value = 80;
+    shouldBe("slider.value", quoteNumber(80));
 
-slider.value = 80;
-shouldBe("slider.value", quoteNumber(80));
+    debug("Resetting form");
+    document.forms[0].reset();
+    shouldBe("slider.value", originalValue);
 
-debug("Resetting form");
-document.forms[0].reset();
-shouldBe("slider.value", originalValue);
+    debug("");
+}
+
+debug("Slider with explicit limits");
+testSliderReset("slider");
+
+debug("Slider with default limits, and no explicit value");
+testSliderReset("defaults");
+
+debug("Slider with default limits, and a step value");
+testSliderReset("step");
 
 var successfullyParsed = true;
 </script>

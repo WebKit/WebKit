@@ -154,31 +154,6 @@ checkUnderflow('101', '200');
 
 // ----------------------------------------------------------------
 debug('');
-debug('Type=range');
-input.type = 'range';
-input.max = '';
-// No underflow cases
-checkNotUnderflow('101', '100');  // Very normal case.
-checkNotUnderflow('-99', '-100');
-checkNotUnderflow('101', '1E+2');
-checkNotUnderflow('1.01', '1.00');
-checkNotUnderflow('abc', '100');  // Invalid value.
-checkNotUnderflow('', '1');  // No value.
-// The following case should be rangeUnderflow==true ideally.  But the "double" type doesn't have enough precision.
-checkNotUnderflow('0.999999999999999999999999999999999999999998', '0.999999999999999999999999999999999999999999');
-input.max = '0';  // If min > max, max is reset to min and min is not changed.
-checkNotUnderflow('101', '100');
-input.max = '';
-
-// Underflow cases
-checkUnderflow('99', '100');
-checkUnderflow('-101', '-100');
-checkUnderflow('99', '1E+2');
-checkUnderflow('-1', '');  // No min.
-checkUnderflow('-1', 'xxx');  // Invalid min.
-
-// ----------------------------------------------------------------
-debug('');
 debug('Type=time');
 input.type = 'time';
 input.max = '';

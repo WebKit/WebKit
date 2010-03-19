@@ -73,21 +73,6 @@ PASS The value "-101" undeflows the minimum value "-100".
 PASS The value "99" undeflows the minimum value "1E+2".
 PASS The value "101" undeflows the minimum value "200".
 
-Type=range
-PASS The value "101" doesn't underflow the minimum value "100".
-PASS The value "-99" doesn't underflow the minimum value "-100".
-PASS The value "101" doesn't underflow the minimum value "1E+2".
-PASS The value "1.01" doesn't underflow the minimum value "1.00".
-PASS The value "abc" doesn't underflow the minimum value "100".
-PASS The value "" doesn't underflow the minimum value "1".
-PASS The value "0.999999999999999999999999999999999999999998" doesn't underflow the minimum value "0.999999999999999999999999999999999999999999".
-PASS The value "101" doesn't underflow the minimum value "100".
-PASS The value "99" undeflows the minimum value "100".
-PASS The value "-101" undeflows the minimum value "-100".
-PASS The value "99" undeflows the minimum value "1E+2".
-PASS The value "-1" undeflows the minimum value "".
-PASS The value "-1" undeflows the minimum value "xxx".
-
 Type=time
 PASS The value "13:16" doesn't underflow the minimum value "".
 PASS The value "13:16" doesn't underflow the minimum value "".
