@@ -46,6 +46,21 @@
 
         Reviewed by Adam Barth.
 
+        Add basic "who-broke-it" command and revision -> broken builder association code
+        https://bugs.webkit.org/show_bug.cgi?id=36352
+
+        The "what-broke" command prints builders and what revisions we suspect
+        broke them.  who-broke-it prints revisions and what builders we suspect
+        they broke.  The sheriff-bot needs this revision to broken builder mapping
+        so this change adds it!
+
+        * Scripts/webkitpy/buildbot.py:
+        * Scripts/webkitpy/commands/queries.py:
+
+2010-03-19  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Simplify BuildBot core builder code for easier re-use
         https://bugs.webkit.org/show_bug.cgi?id=36350
 

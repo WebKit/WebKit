@@ -108,9 +108,7 @@ class PatchesToReview(AbstractDeclarativeCommand):
 
 class WhatBroke(AbstractDeclarativeCommand):
     name = "what-broke"
-    help_text = "Print the status of the %s buildbots" % BuildBot.default_host
-    long_help = """Fetches build status from http://build.webkit.org/one_box_per_builder
-and displayes the status of each builder."""
+    help_text = "Print failing buildbots (%s) and what revisions broke them" % BuildBot.default_host
 
     def _longest_builder_name(self, builders):
         return max(map(lambda builder: len(builder["name"]), builders))
@@ -127,6 +125,8 @@ and displayes the status of each builder."""
         print "  Reviewer: %s" % (commit_info.reviewer() or commit_info.reviewer_text())
         print "  Committer: %s" % commit_info.committer()
 
+    # FIXME: This is slightly different from Builder.suspect_revisions_for_green_to_red_transition
+    # due to needing to detect the "hit the limit" case an print a special message.
     def _print_blame_information_for_builder(self, builder_status, name_width):
         builder = self.tool.buildbot.builder_with_name(builder_status["name"])
         (last_green_build, first_red_build) = builder.find_green_to_red_transition(builder_status["build_number"])
@@ -136,14 +136,10 @@ and displayes the status of each builder."""
 
         suspect_revisions = range(first_red_build.revision(), last_green_build.revision(), -1)
         suspect_revisions.reverse()
-        # FIXME: Parse reviewer and committer from red checkin
         self._print_builder_line(builder.name(), name_width, "FAIL (blame-list: %s)" % suspect_revisions)
         for revision in suspect_revisions:
             commit_info = CommitInfo.commit_info_for_revision(self.tool.scm(), revision)
             self._print_blame_information_for_commit(commit_info)
-
-    def revisions_causing_failures(self, only_core_builders=True):
-        builder_statuses = tool.buildbot.builder_statuses()
 
     def execute(self, options, args, tool):
         builder_statuses = tool.buildbot.builder_statuses()
@@ -160,6 +156,13 @@ and displayes the status of each builder."""
         else:
             print "All builders are passing!"
 
+class WhoBrokeIt(AbstractDeclarativeCommand):
+    name = "who-broke-it"
+    help_text = "Print a list of revisions causing failures on %s" % BuildBot.default_host
+
+    def execute(self, options, args, tool):
+        for revision, builders in self.tool.buildbot.revisions_causing_failures(False).items():
+            print "r%s appears to have broken %s" % (revision, [builder.name() for builder in builders])
 
 class TreeStatus(AbstractDeclarativeCommand):
     name = "tree-status"

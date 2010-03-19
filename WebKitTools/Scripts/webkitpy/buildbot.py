@@ -87,6 +87,14 @@ class Builder(object):
             look_back_count += 1
         return (green_build, red_build)
 
+    def suspect_revisions_for_green_to_red_transition(self, red_build_number, look_back_limit=30):
+        (last_green_build, first_red_build) = self.find_green_to_red_transition(red_build_number, look_back_limit)
+        if not last_green_build:
+            return [] # We ran off the limit of our search
+        suspect_revisions = range(first_red_build.revision(), last_green_build.revision(), -1)
+        suspect_revisions.reverse()
+        return suspect_revisions
+
 
 class Build(object):
     def __init__(self, build_dictionary, builder):
@@ -186,11 +194,10 @@ class BuildBot(object):
         return [builder for builder in builder_statuses if self._matches_regexps(builder["name"], name_regexps)]
 
     def red_core_builders(self):
-        return [builder for builder in self.builder_statuses() if not builder["is_green"] and self._is_core_builder(builder["name"])]
+        return [builder for builder in self.core_builder_statuses() if not builder["is_green"]]
 
     def red_core_builders_names(self):
-        red_builders = self.red_core_builders()
-        return map(lambda builder: builder['name'], red_builders)
+        return [builder["name"] for builder in self.red_core_builders()]
 
     def core_builders_are_green(self):
         return not self.red_core_builders()
@@ -212,13 +219,25 @@ class BuildBot(object):
         return urllib2.urlopen(build_status_url)
 
     def builder_statuses(self):
-        builders = []
         soup = BeautifulSoup(self._fetch_one_box_per_builder())
-        status_table = soup.find('table')
-        for status_row in status_table.findAll('tr'):
-            builder = self._parse_builder_status_from_row(status_row)
-            builders.append(builder)
-        return builders
+        return [self._parse_builder_status_from_row(status_row) for status_row in soup.find('table').findAll('tr')]
+
+    def core_builder_statuses(self):
+        return [builder for builder in self.builder_statuses() if self._is_core_builder(builder["name"])]
 
     def builder_with_name(self, name):
         return Builder(name, self)
+
+    def revisions_causing_failures(self, only_core_builders=True):
+        builder_statuses = self.core_builder_statuses() if only_core_builders else self.builder_statuses()
+        revision_to_failing_bots = {}
+        for builder_status in builder_statuses:
+            if builder_status["is_green"]:
+                continue
+            builder = self.builder_with_name(builder_status["name"])
+            revisions = builder.suspect_revisions_for_green_to_red_transition(builder_status["build_number"])
+            for revision in revisions:
+                failing_bots = revision_to_failing_bots.get(revision, [])
+                failing_bots.append(builder)
+                revision_to_failing_bots[revision] = failing_bots
+        return revision_to_failing_bots
