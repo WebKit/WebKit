@@ -1,3 +1,18 @@
+2010-03-19  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Operational tweaks to SheriffBot
+        https://bugs.webkit.org/show_bug.cgi?id=36385
+
+        These changes aren't pretty, but they're helpful to make SheriffBot
+        work operationally.  I plan to iterate in these areas, but I wanted to
+        get this patch landed so I could be running the bot against TOT.
+
+        * Scripts/webkitpy/commands/sheriffbot.py:
+        * Scripts/webkitpy/irc/ircbot.py:
+        * Scripts/webkitpy/thirdparty/autoinstalled/__init__.py:
+
 2010-03-19  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

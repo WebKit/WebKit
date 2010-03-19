@@ -13,3 +13,4 @@ autoinstall.bind("ircbot", "http://iweb.dl.sourceforge.net/project/python-irclib
 from mechanize import Browser
 from mechanize import HTTPError
 import ircbot
+import irclib

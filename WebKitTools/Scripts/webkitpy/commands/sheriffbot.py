@@ -30,6 +30,7 @@ import os
 
 from webkitpy.commands.queues import AbstractQueue
 from webkitpy.webkit_logging import log
+from webkitpy.webkitport import WebKitPort
 
 
 class SheriffBot(AbstractQueue):
@@ -62,6 +63,7 @@ class SheriffBot(AbstractQueue):
         svn_revision = failure_info["svn_revision"]
         builders = failure_info["builders"]
 
+        self.tool.executive.run_and_throw_if_fail(WebKitPort.update_webkit_command(), quiet=True)
         commit_info = self.tool.checkout().commit_info_for_revision(svn_revision)
         responsible_parties = [
             commit_info.committer(),
