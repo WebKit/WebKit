@@ -2,7 +2,7 @@ Attributes that are exposed in the CSS computed style object:
 
 background-attachment: scroll;
 background-clip: border-box;
-background-color: rgba(0, 0, 0, 0);
+background-color: transparent;
 background-image: none;
 background-origin: padding-box;
 background-position: 0% 0%;

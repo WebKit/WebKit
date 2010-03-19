@@ -1,3 +1,14 @@
+2010-03-18  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Samuel Weinig.
+
+        Update test results after r56182.  "background-color: rgba(0, 0, 0, 0)" is now reported as "background-color: transparent".
+
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/qt/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/win/fast/css/getComputedStyle/computed-style-expected.txt:
+
 2010-03-18  Jian Li  <jianli@chromium.org>
 
         Reviewed by Dmitry Titov.
