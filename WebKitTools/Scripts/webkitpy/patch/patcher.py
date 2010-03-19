@@ -41,6 +41,7 @@ from webkitpy.commands.queues import *
 from webkitpy.commands.upload import *
 from webkitpy.executive import Executive
 from webkitpy.webkit_logging import log
+from webkitpy.webkitcheckout import WebKitCheckout
 from webkitpy.multicommandtool import MultiCommandTool
 from webkitpy.scm import detect_scm_system
 from webkitpy.user import User
@@ -63,6 +64,7 @@ class WebKitPatch(MultiCommandTool):
         self._irc = None
         self.user = User()
         self._scm = None
+        self._checkout = None
         self.status_server = StatusServer()
 
     def scm(self):
@@ -80,6 +82,11 @@ class WebKitPatch(MultiCommandTool):
                 error("FATAL: Failed to determine the SCM system for either %s or %s" % (original_cwd, script_directory))
 
         return self._scm
+
+    def checkout():
+        if not self._checkout:
+            self._checkout = WebKitCheckout(self.scm())
+        return self._checkout
 
     # FIXME: Add a parameter for nickname?
     def ensure_irc_connected(self):

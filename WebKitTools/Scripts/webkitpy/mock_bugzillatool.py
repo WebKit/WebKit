@@ -29,6 +29,7 @@
 import os
 
 from webkitpy.bugzilla import Bug, Attachment
+from webkitpy.commitinfo import CommitInfo
 from webkitpy.committers import CommitterList, Reviewer
 from webkitpy.scm import CommitMessage
 from webkitpy.thirdparty.mock import Mock
@@ -181,6 +182,15 @@ _bug4 = {
 }
 
 
+class MockBuilder(object):
+
+    def name(self):
+        return "Mock builder name (Tests)"
+
+
+mock_builder = MockBuilder()
+
+
 class MockBugzillaQueries(Mock):
 
     def __init__(self, bugzilla):
@@ -284,7 +294,7 @@ class MockBugzilla(Mock):
         return "%s/%s%s" % (self.bug_server_url, attachment_id, action_param)
 
 
-class MockBuildBot(Mock):
+class MockBuildBot(object):
 
     def __init__(self):
         self._tree_is_on_fire = False
@@ -306,6 +316,10 @@ class MockBuildBot(Mock):
     def light_tree_on_fire(self):
         self._tree_is_on_fire = True
 
+    def revisions_causing_failures(self):
+        return {
+            "29837": [mock_builder]
+        }
 
 class MockSCM(Mock):
 
@@ -353,6 +367,17 @@ class MockSCM(Mock):
         return []
 
 
+class MockWebKitCheckout(object):
+
+    def commit_info_for_revision(self, svn_revision):
+        return CommitInfo(svn_revision, "eric@webkit.org", {
+            "bug_id": 42,
+            "author_name": "Adam Barth",
+            "author_email": "abarth@webkit.org",
+            "reviewer_text": "Darin Adler"
+        })
+
+
 class MockUser(object):
 
     @staticmethod
@@ -390,8 +415,14 @@ class MockStatusServer(object):
     def patch_status(self, queue_name, patch_id):
         return None
 
+    def svn_revision(self, svn_revision):
+        return None
+
     def update_status(self, queue_name, status, patch=None, results_file=None):
         return 187
+
+    def update_svn_revision(self, svn_revision, broken_bot):
+        return 191
 
 
 class MockBugzillaTool():
@@ -403,10 +434,14 @@ class MockBugzillaTool():
         self._irc = None
         self.user = MockUser()
         self._scm = MockSCM()
+        self._checkout = MockWebKitCheckout()
         self.status_server = MockStatusServer()
 
     def scm(self):
         return self._scm
+
+    def checkout(self):
+        return self._checkout
 
     def ensure_irc_connected(self):
         if not self._irc:

@@ -29,7 +29,6 @@
 import os
 
 from webkitpy.commands.queues import AbstractQueue
-from webkitpy.irc.ircproxy import IRCProxy
 from webkitpy.webkit_logging import log
 
 
@@ -42,30 +41,45 @@ class SheriffBot(AbstractQueue):
         AbstractQueue.begin_work_queue(self)
         self.tool.ensure_irc_connected()
 
-    def work_item_log_path(self, svn_revision):
-        return os.path.join("%s-logs" % self.name, "%s.log" % svn_revision)
+    def work_item_log_path(self, failure_info):
+        return os.path.join("%s-logs" % self.name, "%s.log" % failure_info["svn_revision"])
 
     def next_work_item(self):
-        # FIXME: Call methods that analyze the build bots.
-        return None # FIXME: Should be an SVN revision number.
+        for svn_revision, builders in self.tool.buildbot.revisions_causing_failures().items():
+            if self.tool.status_server.svn_revision(svn_revision):
+                continue
+            return {
+                "svn_revision": svn_revision,
+                "builders": builders
+            }
+        return None
 
-    def should_proceed_with_work_item(self, svn_revision):
+    def should_proceed_with_work_item(self, failure_info):
         # Currently, we don't have any reasons not to proceed with work items.
         return True
 
-    def process_work_item(self, svn_revision):
-        message = "r%s appears to have broken the build." % svn_revision
-        self.tool.irc().post(message)
-        # FIXME: What if run_webkit_patch throws an exception?
-        self.run_webkit_patch([
-            "create-rollout",
-            "--force-clean",
-            "--non-interactive",
-            "--parent-command=%s" % self.name,
-            # FIXME: We also need to CC the reviewer, committer, and contributor.
-            "--cc=%s" % ",".join(self.watchers),
-            svn_revision
-        ])
+    def process_work_item(self, failure_info):
+        svn_revision = failure_info["svn_revision"]
+        builders = failure_info["builders"]
 
-    def handle_unexpected_error(self, svn_revision, message):
+        commit_info = self.tool.checkout().commit_info_for_revision(svn_revision)
+        responsible_parties = [
+            commit_info.committer(),
+            commit_info.author(),
+            commit_info.reviewer()
+        ]
+        irc_nicknames = sorted(set([party.irc_nickname for party in responsible_parties if party and party.irc_nickname]))
+        irc_prefix = ": " if irc_nicknames else ""
+        irc_message = "%s%sr%s appears to have broken %s" % (
+            ", ".join(irc_nicknames),
+            irc_prefix,
+            svn_revision,
+            ", ".join([builder.name() for builder in builders]))
+
+        self.tool.irc().post(irc_message)
+
+        for builder in builders:
+            self.tool.status_server.update_svn_revision(svn_revision, builder.name())
+
+    def handle_unexpected_error(self, failure_info, message):
         log(message)
