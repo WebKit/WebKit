@@ -1,3 +1,15 @@
+2010-03-19  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Actually pass the IRC password to the IRC object
+        https://bugs.webkit.org/show_bug.cgi?id=36346
+
+        I wanted to do this before, but both patches were in flight.  This
+        patch finally closes the loop and makes the IRCProxy system complete.
+
+        * Scripts/webkitpy/patch/patcher.py:
+
 2010-03-18  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

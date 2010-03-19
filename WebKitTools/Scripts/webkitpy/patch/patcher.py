@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-# Copyright (c) 2009, Google Inc. All rights reserved.
+# Copyright (c) 2010 Google Inc. All rights reserved.
 # Copyright (c) 2009 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -85,7 +84,7 @@ class WebKitPatch(MultiCommandTool):
     # FIXME: Add a parameter for nickname?
     def ensure_irc_connected(self):
         if not self._irc:
-            self._irc = IRCProxy()
+            self._irc = IRCProxy(password=self._irc_password)
 
     def irc(self):
         # We don't automatically construct IRCProxy here because constructing
