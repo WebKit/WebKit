@@ -1,3 +1,14 @@
+2010-03-18  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/36338> Remove unused RenderReplaced::adjustOverflowForBoxShadowAndReflect() declaration
+
+        Rubber-stamped by Darin Adler.
+
+        This declaration should have been removed in r47440.
+
+        * rendering/RenderReplaced.h:
+        (WebCore::RenderReplaced::adjustOverflowForBoxShadowAndReflect): Removed.
+
 2010-03-18  Jian Li  <jianli@chromium.org>
 
         Reviewed by Dmitry Titov.
