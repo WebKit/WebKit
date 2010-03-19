@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x106
+  RenderBlock {html} at (0,0) size 800x106
+    RenderBody {body} at (8,8) size 784x90
+      RenderTable {table} at (0,0) size 600x90 [border: (1px outset #808080)]
+        RenderTableSection (anonymous) at (1,1) size 598x88
+          RenderTableRow {tr} at (0,2) size 598x84
+            RenderTableCell {td} at (2,2) size 296x84 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 292x79
+                text run at (2,2) width 292: "Cell text should be justified which means that the"
+                text run at (2,22) width 60: "right and "
+                text run at (62,22) width 232: "left margins should line up, no matter"
+                text run at (2,42) width 197: "how long the content becomes "
+                text run at (199,42) width 95: "(except the last"
+                text run at (2,62) width 198: "line which should be left aligned)."
+            RenderTableCell {td} at (300,2) size 296x84 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 292x79
+                text run at (2,2) width 292: "Cell text should be justified which means that the"
+                text run at (2,22) width 60: "right and "
+                text run at (62,22) width 232: "left margins should line up, no matter"
+                text run at (2,42) width 197: "how long the content becomes "
+                text run at (199,42) width 95: "(except the last"
+                text run at (2,62) width 198: "line which should be left aligned)."

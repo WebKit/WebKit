@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 128x30 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 126x28
+          RenderTableRow {TR} at (0,2) size 126x24
+            RenderTableCell {TD} at (2,2) size 90x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 86x19
+                text run at (2,2) width 86: "auto auto auto"
+            RenderTableCell {TD} at (94,2) size 30x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 26x19
+                text run at (2,2) width 26: "auto"
