@@ -1,3 +1,15 @@
+2010-03-19  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Added USE_SYSTEM_MALLOC flag to build-webkit
+        https://bugs.webkit.org/show_bug.cgi?id=21272
+
+        Add system-alloc flag to build-webkit. It makes easy to switch
+        between system allocator and TCmalloc.
+
+        * Scripts/build-webkit:
+
 2010-03-19  Adam Barth  <abarth@webkit.org>
 
         Unreviewed "build" fix.
