@@ -1,3 +1,10 @@
+2010-03-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+       [Qt] REGRESSION (r56209): fast/media/print-restores-previous-mediatype.htm crashes
+       https://bugs.webkit.org/show_bug.cgi?id=36386
+
+        * platform/qt/Skipped: fast/media/print-restores-previous-mediatype.html skipped until fix.
+
 2010-03-19  Dirk Pranke <dpranke@chromium.org>
 
         Reviewed by Dimitri Glazkov.

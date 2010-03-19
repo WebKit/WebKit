@@ -5109,3 +5109,7 @@ fast/multicol/hit-test-above-or-below.html
 #[Qt] GraphicsLayer: fix test regressions
 animations/fill-mode-transform.html
 animations/simultaneous-start-left.html
+
+# [Qt] REGRESSION (r56209): fast/media/print-restores-previous-mediatype.htm crashes
+# https://bugs.webkit.org/show_bug.cgi?id=36386
+fast/media/print-restores-previous-mediatype.html
