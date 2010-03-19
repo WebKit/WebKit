@@ -1,3 +1,12 @@
+2010-03-19  Darin Fisher  <darin@chromium.org>
+
+        Temporarily suppress fast/loader/frame-src-change-added-to-history.html
+        for Tiger to make the bot green.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36382
+
+        * platform/mac-tiger/Skipped:
+
 2010-03-19  Dirk Pranke <dpranke@chromium.org>
 
         Reviewed by Dimitri Glazkov.
