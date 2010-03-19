@@ -1,3 +1,16 @@
+2010-03-18  Anders Bakken  <Anders Bakken <agbakken@gmail.com>>
+
+        Reviewed by Simon Hausmann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36318
+
+        QtLauncher runs as a GuiClient by default in Qt Embedded which will
+        make it try to connect to an existing GuiServer. This patch makes it
+        run like a stand-alone app.
+
+        * QtLauncher/main.cpp:
+        (LauncherApplication::LauncherApplication):
+
 2010-03-19  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

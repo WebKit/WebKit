@@ -919,7 +919,7 @@ void LauncherApplication::applyDefaultSettings()
 }
 
 LauncherApplication::LauncherApplication(int& argc, char** argv)
-    : QApplication(argc, argv)
+    : QApplication(argc, argv, QApplication::GuiServer)
     , m_isRobotized(false)
 {
     // To allow QWebInspector's configuration persistence
