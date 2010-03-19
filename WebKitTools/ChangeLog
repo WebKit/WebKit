@@ -1,3 +1,14 @@
+2010-03-19  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        Fix SheriffBot exception lock when we can't retrieve the first build
+        from buildbot.  (I'll ask Eric to review this change after the fact,
+        but he's at lunch and I want to get the bot unlocked.)
+
+        * Scripts/webkitpy/buildbot.py:
+        * Scripts/webkitpy/buildbot_unittest.py:
+
 2010-03-19  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

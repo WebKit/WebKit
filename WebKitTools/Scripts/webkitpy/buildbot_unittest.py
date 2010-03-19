@@ -56,6 +56,12 @@ class BuilderTest(unittest.TestCase):
         self.assertEqual(green_build, None)
         self.assertEqual(red_build.revision(), 1008)
 
+    def test_none_build(self):
+        self.builder._fetch_build = lambda build_number: None
+        (green_build, red_build) = self.builder.find_green_to_red_transition(10)
+        self.assertEqual(green_build, None)
+        self.assertEqual(red_build, None)
+
     def test_suspect_revisions_for_green_to_red_transition(self):
         self.assertEqual(self.builder.suspect_revisions_for_green_to_red_transition(10), [1004])
         self.assertEqual(self.builder.suspect_revisions_for_green_to_red_transition(10, look_back_limit=2), [])

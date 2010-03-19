@@ -81,14 +81,12 @@ class Builder(object):
         red_build = self.build(red_build_number)
         green_build = None
         look_back_count = 0
-        while True:
+        while red_build:
             if look_back_count >= look_back_limit:
                 break
             # Use a previous_build() method to avoid assuming build numbers are sequential.
             before_red_build = red_build.previous_build()
-            if not before_red_build:
-                break
-            if before_red_build.is_green():
+            if before_red_build and before_red_build.is_green():
                 green_build = before_red_build
                 break
             red_build = before_red_build
