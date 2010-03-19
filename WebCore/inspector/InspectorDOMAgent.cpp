@@ -794,25 +794,18 @@ void InspectorDOMAgent::applyStyleText(long callId, long styleId, const String& 
     CSSStyleDeclaration* style = it->second.get();
     int styleTextLength = styleText.length();
 
-    // Create a new element to parse the user input CSS.
-    ExceptionCode ec = 0;
-    RefPtr<Element> parseElement = mainFrameDocument()->createElement("span", ec);
-    if (!ec)
-        parseElement->setAttribute("style", styleText, ec);
-    if (ec) {
-        m_frontend->didApplyStyleText(callId, false, ScriptValue::undefined(), m_frontend->newScriptArray());
-        return;
-    }
+    RefPtr<CSSMutableStyleDeclaration> tempMutableStyle = CSSMutableStyleDeclaration::create();
+    tempMutableStyle->parseDeclaration(styleText);
+    CSSStyleDeclaration* tempStyle = static_cast<CSSStyleDeclaration*>(tempMutableStyle.get());
 
-    CSSStyleDeclaration* tempStyle = parseElement->style();
-    if ((tempStyle && tempStyle->length()) || !styleTextLength) {
+    if (tempStyle->length() || !styleTextLength) {
         ExceptionCode ec = 0;
         // The input was parsable or the user deleted everything, so remove the
         // original property from the real style declaration. If this represents
         // a shorthand remove all the longhand properties.
         if (style->getPropertyShorthand(propertyName).isEmpty()) {
             Vector<String> longhandProps = longhandProperties(style, propertyName);
-            for (unsigned i = 0; i < longhandProps.size(); ++i)
+            for (unsigned i = 0; !ec && i < longhandProps.size(); ++i)
                 style->removeProperty(longhandProps[i], ec);
         } else
             style->removeProperty(propertyName, ec);
@@ -840,9 +833,8 @@ void InspectorDOMAgent::applyStyleText(long callId, long styleId, const String& 
     HashSet<String> foundShorthands;
     Vector<String> changedProperties;
 
-    Vector<String> uniqueProperties = uniqueStyleProperties(tempStyle);
-    for (unsigned i = 0; i < uniqueProperties.size(); ++i) {
-        String name = uniqueProperties[i];
+    for (unsigned i = 0; i < tempStyle->length(); ++i) {
+        String name = tempStyle->item(i);
         String shorthand = tempStyle->getPropertyShorthand(name);
 
         if (!shorthand.isEmpty() && foundShorthands.contains(shorthand))
@@ -851,7 +843,7 @@ void InspectorDOMAgent::applyStyleText(long callId, long styleId, const String& 
         String value;
         String priority;
         if (!shorthand.isEmpty()) {
-            value = tempStyle->getPropertyValue(shorthand);
+            value = shorthandValue(tempStyle, shorthand);
             priority = shorthandPriority(tempStyle, shorthand);
             foundShorthands.add(shorthand);
             name = shorthand;
@@ -1062,7 +1054,7 @@ void InspectorDOMAgent::populateObjectWithStyleProperties(CSSStyleDeclaration* s
         property.set("shorthand", shorthand);
         if (!shorthand.isEmpty() && !foundShorthands.contains(shorthand)) {
             foundShorthands.add(shorthand);
-            shorthandValues.set(shorthand, style->getPropertyValue(shorthand));
+            shorthandValues.set(shorthand, shorthandValue(style, shorthand));
         }
         property.set("value", style->getPropertyValue(name));
         properties.set(i, property);
@@ -1117,21 +1109,6 @@ ScriptObject InspectorDOMAgent::buildObjectForRule(CSSStyleRule* rule)
     return result;
 }
 
-Vector<String> InspectorDOMAgent::uniqueStyleProperties(CSSStyleDeclaration* style)
-{
-    Vector<String> properties;
-    HashSet<String> foundProperties;
-
-    for (unsigned i = 0; i < style->length(); ++i) {
-        String property = style->item(i);
-        if (foundProperties.contains(property))
-            continue;
-        foundProperties.add(property);
-        properties.append(property);
-    }
-    return properties;
-}
-
 Vector<String> InspectorDOMAgent::longhandProperties(CSSStyleDeclaration* style, const String& shorthandProperty)
 {
     Vector<String> properties;
@@ -1146,6 +1123,29 @@ Vector<String> InspectorDOMAgent::longhandProperties(CSSStyleDeclaration* style,
     }
 
     return properties;
+}
+
+String InspectorDOMAgent::shorthandValue(CSSStyleDeclaration* style, const String& shorthandProperty)
+{
+    String value = style->getPropertyValue(shorthandProperty);
+    if (value.isEmpty()) {
+        // Some shorthands (like border) return a null value, so compute a shorthand value.
+        // FIXME: remove this when http://bugs.webkit.org/show_bug.cgi?id=15823 is fixed.
+        for (unsigned i = 0; i < style->length(); ++i) {
+            String individualProperty = style->item(i);
+            if (style->getPropertyShorthand(individualProperty) != shorthandProperty)
+                continue;
+            if (style->isPropertyImplicit(individualProperty))
+                continue;
+            String individualValue = style->getPropertyValue(individualProperty);
+            if (individualValue == "initial")
+                continue;
+            if (value.length())
+                value.append(" ");
+            value.append(individualValue);
+        }
+    }
+    return value;
 }
 
 String InspectorDOMAgent::shorthandPriority(CSSStyleDeclaration* style, const String& shorthandProperty)

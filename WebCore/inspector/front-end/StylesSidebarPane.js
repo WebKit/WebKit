@@ -1380,7 +1380,8 @@ WebInspector.StylePropertyTreeElement.prototype = {
     {
         var section = this.treeOutline.section;
         var elementsPanel = WebInspector.panels.elements;
-        var styleTextLength = styleText.trim().length;
+        styleText = styleText.replace(/\s/g, " ").trim(); // replace &nbsp; with whitespace.
+        var styleTextLength = styleText.length;
         if (!styleTextLength && updateInterface) {
             if (this._newProperty) {
                 // The user deleted everything, so remove the tree element and update.
@@ -1426,7 +1427,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
             if (updateInterface)
                 self.updateAll(true);
         }
-        InspectorBackend.applyStyleText(WebInspector.Callback.wrap(callback), this.style.id, styleText.trim(), this.name);
+        InspectorBackend.applyStyleText(WebInspector.Callback.wrap(callback), this.style.id, styleText, this.name);
     }
 }
 

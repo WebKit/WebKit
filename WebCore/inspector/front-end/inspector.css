@@ -1572,6 +1572,10 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
     display: block;
 }
 
+.section .properties li.disabled .enabled-button {
+    display: block;
+}
+
 .section .properties .name, .event-properties .name {
     color: rgb(136, 19, 145);
 }

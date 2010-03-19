@@ -161,8 +161,8 @@ namespace WebCore {
         void populateObjectWithStyleProperties(CSSStyleDeclaration*, ScriptObject& result);
         ScriptObject buildObjectForRule(CSSStyleRule*);
         ScriptObject buildObjectForStyleSheet(CSSStyleSheet*);
-        Vector<String> uniqueStyleProperties(CSSStyleDeclaration*);
         Vector<String> longhandProperties(CSSStyleDeclaration*, const String& shorthandProperty);
+        String shorthandValue(CSSStyleDeclaration*, const String& shorthandProperty);
         String shorthandPriority(CSSStyleDeclaration*, const String& shorthandProperty);
         bool ruleAffectsNode(CSSStyleRule*, Node*);
         ScriptArray toArray(const Vector<String>& data);
