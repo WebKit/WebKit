@@ -1,3 +1,9 @@
+2010-03-19  Darin Fisher  <darin@chromium.org>
+
+        Fix expected results for fast/loader/frame-src-change-added-to-history.html
+
+        * fast/loader/frame-src-change-added-to-history-expected.txt:
+
 2010-03-19  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler.
