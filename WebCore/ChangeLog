@@ -1,3 +1,44 @@
+2010-03-19  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        3 of the new HTML5 loading events need to be asynchronous.
+
+        Laying the groundwork for:
+        https://bugs.webkit.org/show_bug.cgi?id=36201
+        https://bugs.webkit.org/show_bug.cgi?id=36202
+        https://bugs.webkit.org/show_bug.cgi?id=36334
+        https://bugs.webkit.org/show_bug.cgi?id=36335
+
+        Document already had an asynchronous event delivery mechanism for storage events, so
+        we can repurpose that for all async events.
+
+        No new tests. (No change in behavior)
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::implicitClose): Use Document::schedule* for the related events.
+        (WebCore::Document::enqueueEvent): Renamed from enqueueStorageEvent
+        (WebCore::Document::pendingEventTimerFired): Renamed from "storageEventTimerFired"
+        (WebCore::Document::statePopped): Use Document::schedulePopstateEvent
+        (WebCore::Document::enqueuePageshowEvent): All Pageshow events are piped through here.
+          This will be made asynchronous in a separate patch.
+        (WebCore::Document::enqueueHashchangeEvent): All Hashchange events are piped through here.
+          This will be made asynchronous in a separate patch.
+        (WebCore::Document::enqueuePopstateEvent): All Popstate events are piped through here.
+          This will be made asynchronous in a separate patch.
+        * dom/Document.h:
+        (WebCore::):
+
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::restore): Use Document::enqueuePageshowEvent
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadInSameDocument): Use Document::enqueueHashchangeEvent
+
+        * storage/StorageEventDispatcher.cpp:
+        (WebCore::StorageEventDispatcher::dispatch): Use Document::enqueueEvent
+
 2010-03-19  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Darin Adler and Brady Eidson.

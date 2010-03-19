@@ -1743,7 +1743,10 @@ void FrameLoader::loadInSameDocument(const KURL& url, SerializedScriptValue* sta
         history()->updateBackForwardListForFragmentScroll();
     }
     
+    String oldURL;
     bool hashChange = equalIgnoringFragmentIdentifier(url, m_URL) && url.fragmentIdentifier() != m_URL.fragmentIdentifier();
+    oldURL = m_URL;
+    
     m_URL = url;
     history()->updateForSameDocumentNavigation();
 
@@ -1778,7 +1781,7 @@ void FrameLoader::loadInSameDocument(const KURL& url, SerializedScriptValue* sta
     }
     
     if (hashChange) {
-        m_frame->document()->dispatchWindowEvent(Event::create(eventNames().hashchangeEvent, false, false));
+        m_frame->document()->enqueueHashchangeEvent(oldURL, m_URL);
         m_client->dispatchDidChangeLocationWithinPage();
     }
     

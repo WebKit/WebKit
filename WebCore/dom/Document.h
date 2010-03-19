@@ -175,6 +175,11 @@ struct FormElementKeyHashTraits : WTF::GenericHashTraits<FormElementKey> {
     static bool isDeletedValue(const FormElementKey& value) { return value.isHashTableDeletedValue(); }
 };
 
+enum PageshowEventPersistence {
+    PageshowEventNotPersisted = 0,
+    PageshowEventPersisted = 1
+};
+    
 class Document : public ContainerNode, public ScriptExecutionContext {
 public:
     static PassRefPtr<Document> create(Frame* frame)
@@ -627,9 +632,6 @@ public:
     void dispatchWindowEvent(PassRefPtr<Event>, PassRefPtr<EventTarget> = 0);
     void dispatchWindowLoadEvent();
 
-    void enqueueStorageEvent(PassRefPtr<Event>);
-    void storageEventTimerFired(Timer<Document>*);
-
     PassRefPtr<Event> createEvent(const String& eventType, ExceptionCode&);
 
     // keep track of what types of event listeners are registered, so we don't
@@ -960,6 +962,10 @@ public:
     bool containsValidityStyleRules() const { return m_containsValidityStyleRules; }
     void setContainsValidityStyleRules() { m_containsValidityStyleRules = true; }
 
+    void enqueueEvent(PassRefPtr<Event>);
+    void enqueuePageshowEvent(PageshowEventPersistence);
+    void enqueueHashchangeEvent(const String& oldURL, const String& newURL);
+
 protected:
     Document(Frame*, bool isXHTML, bool isHTML);
 
@@ -997,6 +1003,9 @@ private:
     void cacheDocumentElement() const;
 
     void createStyleSelector();
+
+    void enqueuePopstateEvent(PassRefPtr<SerializedScriptValue> stateObject);
+    void pendingEventTimerFired(Timer<Document>*);
 
     OwnPtr<CSSStyleSelector> m_styleSelector;
     bool m_didCalculateStyleSelector;
@@ -1215,8 +1224,8 @@ private:
 
     bool m_usingGeolocation;
 
-    Timer<Document> m_storageEventTimer;
-    Vector<RefPtr<Event> > m_storageEventQueue;
+    Timer<Document> m_pendingEventTimer;
+    Vector<RefPtr<Event> > m_pendingEventQueue;
 
 #if ENABLE(WML)
     bool m_containsWMLContent;

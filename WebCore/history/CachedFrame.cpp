@@ -105,7 +105,7 @@ void CachedFrameBase::restore()
     for (unsigned i = 0; i < m_childFrames.size(); ++i)
         m_childFrames[i]->open();
 
-    m_document->dispatchWindowEvent(PageTransitionEvent::create(eventNames().pageshowEvent, true), m_document);
+    m_document->enqueuePageshowEvent(PageshowEventPersisted);
 #if ENABLE(TOUCH_EVENTS)
     if (m_document->hasListenerType(Document::TOUCH_LISTENER))
         m_document->page()->chrome()->client()->needTouchEvents(true);
