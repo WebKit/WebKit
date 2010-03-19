@@ -1189,6 +1189,8 @@ webcore_sources += \
 	WebCore/html/MediaError.h \
 	WebCore/html/PreloadScanner.cpp \
 	WebCore/html/PreloadScanner.h \
+	WebCore/html/StepRange.cpp \
+	WebCore/html/StepRange.h \
 	WebCore/html/TextMetrics.h \
 	WebCore/html/ValidityState.cpp \
 	WebCore/html/ValidityState.h \

@@ -687,6 +687,7 @@ SOURCES += \
     html/HTMLViewSourceDocument.cpp \
     html/ImageData.cpp \
     html/PreloadScanner.cpp \
+    html/StepRange.cpp \
     html/ValidityState.cpp \
     inspector/ConsoleMessage.cpp \
     inspector/InjectedScript.cpp \
@@ -1394,6 +1395,7 @@ HEADERS += \
     html/HTMLViewSourceDocument.h \
     html/ImageData.h \
     html/PreloadScanner.h \
+    html/StepRange.h \
     html/TimeRanges.h \
     html/ValidityState.h \
     inspector/ConsoleMessage.h \

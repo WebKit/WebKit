@@ -1604,6 +1604,8 @@
             'html/MediaError.h',
             'html/PreloadScanner.cpp',
             'html/PreloadScanner.h',
+            'html/StepRange.cpp',
+            'html/StepRange.h',
             'html/TextMetrics.h',
             'html/TimeRanges.cpp',
             'html/TimeRanges.h',

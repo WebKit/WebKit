@@ -34385,6 +34385,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\StepRange.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\StepRange.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\TimeRanges.cpp"
 				>
 			</File>
