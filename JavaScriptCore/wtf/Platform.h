@@ -860,7 +860,10 @@
 #endif
 
 #if !defined(WTF_USE_JSVALUE64) && !defined(WTF_USE_JSVALUE32) && !defined(WTF_USE_JSVALUE32_64)
-#if (CPU(X86_64) && (OS(UNIX) || OS(WINDOWS))) || CPU(IA64) || CPU(ALPHA)
+#if (CPU(X86_64) && (OS(UNIX) || OS(WINDOWS))) \
+    || CPU(IA64)  \
+    || CPU(ALPHA) \
+    || CPU(SPARC64)
 #define WTF_USE_JSVALUE64 1
 #elif CPU(ARM) || CPU(PPC64) || CPU(MIPS)
 #define WTF_USE_JSVALUE32 1
