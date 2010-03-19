@@ -1,0 +1,23 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 51x19
+          text run at (0,0) width 51: "Test for "
+        RenderInline {I} at (0,0) size 643x19
+          RenderInline {A} at (0,0) size 305x19 [color=#0000EE]
+            RenderText {#text} at (51,0) size 305x19
+              text run at (51,0) width 305: "http://bugs.webkit.org/show_bug.cgi?id=13145"
+          RenderText {#text} at (356,0) size 338x19
+            text run at (356,0) width 4: " "
+            text run at (360,0) width 334: "Regression: Scrollbar not resizing after display none"
+        RenderText {#text} at (694,0) size 4x19
+          text run at (694,0) width 4: "."
+      RenderBlock {P} at (0,36) size 784x20
+        RenderText {#text} at (0,0) size 295x19
+          text run at (0,0) width 295: "The window should not have a vertical scroll bar."
+layer at (8,100) size 100x100
+  RenderBlock (positioned) {DIV} at (8,100) size 100x100
+    RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#008000]

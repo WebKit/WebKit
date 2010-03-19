@@ -1,0 +1,13 @@
+layer at (0,0) size 1072x585
+  RenderView at (0,0) size 800x585
+layer at (0,0) size 1072x585
+  RenderBlock {HTML} at (0,0) size 800x585
+    RenderBody {BODY} at (8,8) size 784x564
+      RenderBlock {DIV} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 28x19
+          text run at (0,0) width 28: "hello"
+      RenderBlock {PRE} at (0,33) size 784x16
+        RenderText {#text} at (0,0) size 1048x16
+          text run at (0,0) width 1048: "The null characters should be stripped out of the sting above and it should have a length of 5. And the DOM thinks the length is..."
+        RenderText {#text} at (1048,0) size 16x16
+          text run at (1048,0) width 16: "5!"

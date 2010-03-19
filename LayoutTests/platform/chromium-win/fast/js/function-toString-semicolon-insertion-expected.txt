@@ -1,0 +1,17 @@
+This test checks that functions re-string-ify in a way that is syntactically compatible with concatenation.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL (function(){return}).toString() should be function () {return;}. Was function (){return}.
+FAIL (function(){return }).toString() should be function () {return; }. Was function (){return }.
+FAIL (function(){return
+}).toString() should be function () {return;
+}. Was function (){return
+}.
+FAIL (function(){}).toString() should be function () {}. Was function (){}.
+FAIL (function(){ }).toString() should be function () { }. Was function (){ }.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

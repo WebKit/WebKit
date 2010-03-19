@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 28x19
+        text run at (0,0) width 28: "hello"
+      RenderText {#text} at (28,0) size 21x19
+        text run at (28,0) width 21: "test"
+      RenderText {#text} at (49,0) size 31x19
+        text run at (49,0) width 31: "again"

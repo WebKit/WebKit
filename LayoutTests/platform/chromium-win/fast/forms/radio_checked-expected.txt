@@ -1,0 +1,54 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 481x19
+          text run at (0,0) width 481: "This test should make sure that only one button per group, per form, is checked."
+      RenderBlock (anonymous) at (0,36) size 784x21
+        RenderText {#text} at (0,1) size 308x19
+          text run at (0,1) width 308: "These buttons are in group1 but don't have a form. "
+        RenderBlock {INPUT} at (313,3) size 13x13
+        RenderText {#text} at (329,1) size 4x19
+          text run at (329,1) width 4: " "
+        RenderBlock {INPUT} at (338,3) size 13x13
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {FORM} at (0,57) size 784x62
+        RenderBR {BR} at (0,0) size 0x19
+        RenderText {#text} at (0,21) size 274x19
+          text run at (0,21) width 274: "These buttons are in group1, in the first form. "
+        RenderBlock {INPUT} at (279,23) size 13x13
+        RenderText {#text} at (295,21) size 4x19
+          text run at (295,21) width 4: " "
+        RenderBlock {INPUT} at (304,23) size 13x13
+        RenderText {#text} at (320,21) size 4x19
+          text run at (320,21) width 4: " "
+        RenderBR {BR} at (0,0) size 0x0
+        RenderText {#text} at (0,42) size 274x19
+          text run at (0,42) width 274: "These buttons are in group2, in the first form. "
+        RenderBlock {INPUT} at (279,44) size 13x13
+        RenderText {#text} at (295,42) size 4x19
+          text run at (295,42) width 4: " "
+        RenderBlock {INPUT} at (304,44) size 13x13
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,135) size 784x21
+        RenderText {#text} at (0,1) size 308x19
+          text run at (0,1) width 308: "These buttons are in group1 but don't have a form. "
+        RenderBlock {INPUT} at (313,3) size 13x13
+        RenderText {#text} at (329,1) size 4x19
+          text run at (329,1) width 4: " "
+        RenderBlock {INPUT} at (338,3) size 13x13
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {FORM} at (0,156) size 784x41
+        RenderBR {BR} at (0,0) size 0x19
+        RenderText {#text} at (0,21) size 295x19
+          text run at (0,21) width 295: "These buttons are in group2, in the second form. "
+        RenderBlock {INPUT} at (300,23) size 13x13
+        RenderText {#text} at (316,21) size 4x19
+          text run at (316,21) width 4: " "
+        RenderBlock {INPUT} at (325,23) size 13x13
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,213) size 784x20
+        RenderText {#text} at (0,0) size 102x19
+          text run at (0,0) width 102: "TEST PASSED."

@@ -1,0 +1,10 @@
+This file documents why the various tests have been rebaselined.
+
+event-view-toString.html
+------------------------
+We differ in the name of __proto__, which is implementation-dependent.  See
+bug 870390.
+
+updateLayoutForHitTest.html
+------------------------
+We only differ in error message.

@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x36
+  RenderBlock {HTML} at (0,0) size 800x36
+    RenderBody {BODY} at (8,8) size 784x20
+      RenderText {#text} at (0,0) size 519x19
+        text run at (0,0) width 297: "You should see a 5em wide green square below. "
+        text run at (297,0) width 222: "There should be no red on the page. "
+      RenderText {#text} at (0,0) size 0x0
+layer at (8,28) size 160x240
+  RenderBlock (positioned) {DIV} at (8,28) size 160x160
+layer at (40,108) size 80x80
+  RenderBlock (positioned) {DIV} at (32,80) size 80x80 [bgcolor=#FF0000]
+layer at (40,108) size 80x80
+  RenderBlock (relative positioned) {DIV} at (32,80) size 80x80 [bgcolor=#008000]

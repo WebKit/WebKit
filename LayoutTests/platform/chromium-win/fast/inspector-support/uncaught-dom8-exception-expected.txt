@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 9: Uncaught Error: NOT_FOUND_ERR: DOM Exception 8
+This tests that we are getting the correct message for DOM Exception 8: NOT_FOUND_ERR.

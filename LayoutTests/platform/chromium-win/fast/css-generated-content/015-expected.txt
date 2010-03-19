@@ -1,0 +1,21 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {DIV} at (0,0) size 305x61
+        RenderTableSection (anonymous) at (0,0) size 305x61
+          RenderTableRow (anonymous) at (0,0) size 305x61
+            RenderTableCell (anonymous) at (0,0) size 305x61 [r=0 c=0 rs=1 cs=1]
+              RenderBlock (anonymous) at (0,0) size 305x0
+                RenderInline {FORM} at (0,0) size 0x0
+                  RenderText {#text} at (0,0) size 0x0
+              RenderBlock (anonymous) at (0,0) size 305x23
+                RenderBlock {H3} at (0,0) size 305x23
+                  RenderText {#text} at (0,0) size 305x22
+                    text run at (0,0) width 305: "There should be a fourth dot bellow..."
+              RenderBlock (anonymous) at (0,41) size 305x20
+                RenderInline {FORM} at (0,0) size 0x0
+                RenderInline (generated) at (0,0) size 4x19
+                  RenderText at (0,0) size 4x19
+                    text run at (0,0) width 4: "."

@@ -1,0 +1,26 @@
+layer at (0,0) size 785x705
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x705
+  RenderBlock {HTML} at (0,0) size 785x705
+    RenderBody {BODY} at (8,16) size 769x676
+      RenderBlock {P} at (0,0) size 769x40
+        RenderText {#text} at (0,0) size 748x39
+          text run at (0,0) width 748: "This tests that the Image JavaScript object works as expected when used in a canvas. If the test is successful, the Apple logo"
+          text run at (0,20) width 334: "should appear scaled, normal and finally tiled in a circle."
+      RenderBlock {DIV} at (0,56) size 769x155
+        RenderHTMLCanvas {CANVAS} at (0,0) size 150x150
+        RenderText {#text} at (150,135) size 110x19
+          text run at (150,135) width 110: "Using drawImage."
+      RenderBlock {DIV} at (0,211) size 769x155
+        RenderHTMLCanvas {CANVAS} at (0,0) size 150x150
+        RenderText {#text} at (150,135) size 171x19
+          text run at (150,135) width 171: "Using drawImageFromRect."
+      RenderBlock {DIV} at (0,366) size 769x155
+        RenderHTMLCanvas {CANVAS} at (0,0) size 150x150
+        RenderText {#text} at (150,135) size 122x19
+          text run at (150,135) width 122: "Using ImagePattern."
+      RenderBlock {DIV} at (0,521) size 769x155
+        RenderHTMLCanvas {CANVAS} at (0,0) size 150x150
+        RenderText {#text} at (150,135) size 198x19
+          text run at (150,135) width 198: "Using ImagePattern and rotation."
+      RenderBlock {PRE} at (0,689) size 769x0

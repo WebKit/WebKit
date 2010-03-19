@@ -1,0 +1,33 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 51x19
+          text run at (0,0) width 51: "Test for "
+        RenderInline {I} at (0,0) size 666x39
+          RenderInline {A} at (0,0) size 305x19 [color=#0000EE]
+            RenderText {#text} at (51,0) size 305x19
+              text run at (51,0) width 305: "http://bugs.webkit.org/show_bug.cgi?id=14545"
+          RenderText {#text} at (356,0) size 666x39
+            text run at (356,0) width 4: " "
+            text run at (360,0) width 306: "REGRESSION (r21854-r21869): Repro crash in"
+            text run at (0,20) width 322: "RenderBlock::updateFirstLetter @ nola.com/rose/"
+        RenderText {#text} at (322,20) size 4x19
+          text run at (322,20) width 4: "."
+      RenderBlock {P} at (0,56) size 784x20
+        RenderText {#text} at (0,0) size 229x19
+          text run at (0,0) width 229: "The following lines should be identical:"
+      RenderBlock {DIV} at (0,92) size 784x20
+        RenderInline (generated) at (0,0) size 9x19 [color=#008000]
+          RenderText {#text} at (0,0) size 9x19
+            text run at (0,0) width 9: "L"
+        RenderText {#text} at (9,0) size 72x19
+          text run at (9,0) width 72: "orem Ipsum"
+      RenderBlock {P} at (0,128) size 784x20
+        RenderInline {SPAN} at (0,0) size 9x19 [color=#008000]
+          RenderText {#text} at (0,0) size 9x19
+            text run at (0,0) width 9: "L"
+        RenderText {#text} at (9,0) size 72x19
+          text run at (9,0) width 72: "orem Ipsum"

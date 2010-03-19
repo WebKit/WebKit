@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 27: Uncaught TypeError: Cannot call method 'getVariableValue' of undefined
+FAILED
