@@ -1,3 +1,16 @@
+2010-03-19  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        Assertion failure in media/video-controls-with-mutation-event-handler.html
+        https://bugs.webkit.org/show_bug.cgi?id=36376
+
+        Fix crashing test. Underlying the media element's volume slider is a
+        range input, which sanitizes values before expected on the media control.
+
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::createVolumeSlider):
+
 2010-03-19  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.
