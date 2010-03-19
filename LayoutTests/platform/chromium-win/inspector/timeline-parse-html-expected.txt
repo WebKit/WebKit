@@ -1,0 +1,15 @@
+Tests the Timeline API instrumentation of ParseHTML
+
+ParseHTML Properties:
++ startTime : * DEFINED *
++ callerScriptName : * DEFINED *
++ callerScriptLine : * DEFINED *
++ data : {
++- length : 9
++- startLine : 0
++- endLine : 0
++ }
++ children : * DEFINED *
++ endTime : * DEFINED *
++ type : 4
+Test data

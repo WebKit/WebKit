@@ -1,0 +1,43 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 5 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of #text > B > SPAN > DIV > BODY > HTML > #document to 4 of #text > B > SPAN > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 4 of #text > B > SPAN > B > SPAN > DIV > BODY > HTML > #document to 4 of #text > B > SPAN > B > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x60
+        RenderText {#text} at (0,0) size 187x19
+          text run at (0,0) width 187: "This is a testcase for the fix for "
+        RenderInline {A} at (0,0) size 323x19 [color=#0000EE]
+          RenderText {#text} at (187,0) size 323x19
+            text run at (187,0) width 323: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7904"
+        RenderText {#text} at (510,0) size 782x59
+          text run at (510,0) width 8: ". "
+          text run at (518,0) width 252: "ReplaceSelectionCommand used to guess"
+          text run at (0,20) width 385: "whether or not nodes in the fragment to be pasted were blocks. "
+          text run at (385,20) width 141: "It now knows for sure. "
+          text run at (526,20) width 256: "Before the fix, ReplaceSelectionCommand"
+          text run at (0,40) width 402: "blew away content of the div below after copy/pasting it over itself."
+      RenderBlock {HR} at (0,68) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (0,78) size 784x40
+        RenderBlock {SPAN} at (0,0) size 784x20
+          RenderInline {B} at (0,0) size 132x19
+            RenderText {#text} at (0,0) size 132x19
+              text run at (0,0) width 132: "This is a paragraph."
+        RenderBlock {SPAN} at (0,20) size 784x20
+          RenderInline {B} at (0,0) size 175x19
+            RenderInline {SPAN} at (0,0) size 29x19
+              RenderInline {B} at (0,0) size 29x19
+                RenderText {#text} at (0,0) size 29x19
+                  text run at (0,0) width 29: "This"
+            RenderText {#text} at (29,0) size 146x19
+              text run at (29,0) width 146: " is another paragraph."
+caret: position 4 of child 0 {#text} of child 0 {B} of child 0 {SPAN} of child 0 {B} of child 2 {SPAN} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document

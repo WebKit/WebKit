@@ -1,0 +1,11 @@
+Tests the Timeline API mark feature
+
+MarkTimeline Properties:
++ startTime : * DEFINED *
++ callerScriptName : * DEFINED *
++ callerScriptLine : * DEFINED *
++ data : {
++- message : MARK TIMELINE
++ }
++ type : 11
+

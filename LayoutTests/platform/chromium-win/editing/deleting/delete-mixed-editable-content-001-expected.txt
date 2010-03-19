@@ -1,0 +1,29 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of SPAN > SPAN > DIV > BODY > HTML > #document to 1 of SPAN > SPAN > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of SPAN > SPAN > DIV > BODY > HTML > #document to 0 of SPAN > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > SPAN > SPAN > DIV > BODY > HTML > #document to 5 of #text > SPAN > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of #text > SPAN > SPAN > DIV > BODY > HTML > #document to 5 of #text > SPAN > SPAN > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of SPAN > SPAN > DIV > BODY > HTML > #document to 0 of SPAN > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 204x24 [border: (2px solid #FF0000)]
+        RenderInline {SPAN} at (0,0) size 44x19
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {SPAN} at (0,0) size 40x19
+            RenderInline {SPAN} at (0,0) size 40x19
+              RenderText {#text} at (2,2) size 40x19
+                text run at (2,2) width 40: "12345"
+          RenderText {#text} at (42,2) size 4x19
+            text run at (42,2) width 4: " "
+          RenderInline {SPAN} at (0,0) size 0x0
+            RenderBR {BR} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+caret: position 0 of child 0 {BR} of child 3 {SPAN} of child 1 {SPAN} of child 0 {DIV} of child 1 {BODY} of child 0 {HTML} of document

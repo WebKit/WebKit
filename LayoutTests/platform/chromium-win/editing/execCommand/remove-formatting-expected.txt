@@ -1,0 +1,33 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 13 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > B > DIV > BODY > HTML > #document to 3 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > DIV > BODY > HTML > #document to 9 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 312x19
+          text run at (0,0) width 312: "This is a test for execCommand(\"RemoveFormat\"). "
+        RenderInline {B} at (0,0) size 770x39
+          RenderText {#text} at (312,0) size 770x39
+            text run at (312,0) width 458: "It demonstrates a bug: everything in the editable region below should"
+            text run at (0,20) width 526: "be selected, as everything was selected before Remove Format was performed."
+      RenderBlock {DIV} at (0,56) size 784x60
+        RenderText {#text} at (0,0) size 61x19
+          text run at (0,0) width 61: "foobarbaz"
+        RenderBR {BR} at (61,15) size 0x0
+        RenderText {#text} at (0,20) size 69x19
+          text run at (0,20) width 69: "foo\x{9}bar\x{9}baz"
+        RenderBR {BR} at (69,35) size 0x0
+        RenderText {#text} at (0,40) size 61x19
+          text run at (0,40) width 61: "foobarbaz"
+      RenderBlock {UL} at (0,132) size 784x0
+selection start: position 0 of child 0 {#text} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 9 of child 4 {#text} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

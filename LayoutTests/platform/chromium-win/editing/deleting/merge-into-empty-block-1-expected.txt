@@ -1,0 +1,21 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 2 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of BLOCKQUOTE > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 784x39
+          text run at (0,0) width 784: "When a user puts the caret at the very beginning of a blockquote and hits backspace, if the line before the blockquote is empty, the"
+          text run at (0,20) width 196: "blockquote should just move up."
+      RenderBlock {DIV} at (0,56) size 784x20
+        RenderBlock {BLOCKQUOTE} at (0,0) size 784x20 [color=#0000FF] [border: (3px solid #0000FF)]
+          RenderInline {SPAN} at (0,0) size 20x19
+            RenderText {#text} at (28,0) size 20x19
+              text run at (28,0) width 20: "foo"
+caret: position 0 of child 0 {#text} of child 0 {SPAN} of child 0 {BLOCKQUOTE} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

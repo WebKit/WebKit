@@ -1,0 +1,48 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 9 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 2 of #text > SPAN > LI > OL > DIV > BODY > HTML > #document to 2 of #text > LI > OL > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 601x19
+          text run at (0,0) width 601: "This tests Insert{Un}OrderedList on a range selection that contains a mix of list and non-list content."
+      RenderBlock {DIV} at (0,36) size 784x120
+        RenderBlock (anonymous) at (0,0) size 784x0
+        RenderBlock {OL} at (0,0) size 784x120
+          RenderListItem {LI} at (40,0) size 744x20
+            RenderListMarker at (-21,0) size 16x19: "1"
+            RenderText {#text} at (0,0) size 21x19
+              text run at (0,0) width 21: "asd"
+            RenderInline {SPAN} at (0,0) size 20x19
+              RenderText {#text} at (21,0) size 20x19
+                text run at (21,0) width 20: "foo"
+          RenderListItem {LI} at (40,20) size 744x20
+            RenderListMarker at (-21,0) size 16x19: "2"
+            RenderText {#text} at (0,0) size 20x19
+              text run at (0,0) width 20: "bar"
+          RenderListItem {LI} at (40,40) size 744x20
+            RenderListMarker at (-21,0) size 16x19: "3"
+            RenderText {#text} at (0,0) size 21x19
+              text run at (0,0) width 21: "baz"
+          RenderListItem {LI} at (40,60) size 744x20
+            RenderListMarker at (-21,0) size 16x19: "4"
+            RenderText {#text} at (0,0) size 20x19
+              text run at (0,0) width 20: "foo"
+          RenderListItem {LI} at (40,80) size 744x20
+            RenderListMarker at (-21,0) size 16x19: "5"
+            RenderText {#text} at (0,0) size 20x19
+              text run at (0,0) width 20: "bar"
+          RenderListItem {LI} at (40,100) size 744x20
+            RenderListMarker at (-21,0) size 16x19: "6"
+            RenderText {#text} at (0,0) size 21x19
+              text run at (0,0) width 21: "baz"
+        RenderBlock (anonymous) at (0,136) size 784x0
+selection start: position 2 of child 0 {#text} of child 1 {SPAN} of child 0 {LI} of child 0 {OL} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 2 of child 0 {#text} of child 5 {LI} of child 0 {OL} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

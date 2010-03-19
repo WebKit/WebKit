@@ -1,0 +1,5 @@
+EXPECTED (video.currentSrc == '') OK
+EXPECTED (video.currentSrc == '') OK
+EVENT(canplaythrough)
+EXPECTED (relativeURL(video.currentSrc) == 'content/test.ogv') OK
+END OF TEST

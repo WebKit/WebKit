@@ -1,0 +1,48 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 9 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 2 of #text > DL > DIV > BODY > HTML > #document to 2 of #text > DL > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 579x19
+          text run at (0,0) width 579: "This test uses FormatBlock to apply the dl tag to a range of paragraphs with different block tags."
+      RenderBlock (anonymous) at (0,20) size 784x20
+        RenderBR {BR} at (0,0) size 0x19
+      RenderBlock {DIV} at (0,40) size 784x234 [border: (1px solid #000000)]
+        RenderBlock {DL} at (1,17) size 782x20
+          RenderText {#text} at (0,0) size 25x19
+            text run at (0,0) width 25: "Foo"
+        RenderBlock {DIV} at (1,53) size 782x92
+          RenderBlock {DL} at (0,0) size 782x20
+            RenderText {#text} at (0,0) size 20x19
+              text run at (0,0) width 20: "bar"
+          RenderBlock (anonymous) at (0,36) size 782x0
+            RenderInline {SPAN} at (0,0) size 0x0
+          RenderBlock (anonymous) at (0,36) size 782x20
+            RenderBlock {DL} at (0,0) size 782x20
+              RenderText {#text} at (0,0) size 21x19
+                text run at (0,0) width 21: "baz"
+          RenderBlock (anonymous) at (0,72) size 782x0
+            RenderInline {SPAN} at (0,0) size 0x0
+          RenderBlock {DL} at (0,72) size 782x20
+            RenderText {#text} at (0,0) size 18x19
+              text run at (0,0) width 18: "raz"
+          RenderBlock (anonymous) at (0,108) size 782x0
+        RenderBlock {DL} at (1,161) size 782x20
+          RenderText {#text} at (0,0) size 20x19
+            text run at (0,0) width 20: "dar"
+          RenderText {#text} at (20,0) size 4x19
+            text run at (20,0) width 4: " "
+        RenderBlock (anonymous) at (1,197) size 782x0
+        RenderBlock {DL} at (1,197) size 782x20
+          RenderText {#text} at (0,0) size 19x19
+            text run at (0,0) width 19: "yar"
+selection start: position 2 of child 0 {#text} of child 1 {DL} of child 4 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 2 of child 0 {#text} of child 6 {DL} of child 4 {DIV} of child 1 {BODY} of child 0 {HTML} of document

@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584 [color=#999999]
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 782x39
+          text run at (0,0) width 782: "This tests for a bug where performing the Remove Format operation on content would apply the document's style to it,"
+          text run at (0,20) width 250: "not the editable regions default style. "
+          text run at (250,20) width 365: "The text below should not be bold, and should be black."
+      RenderBlock {DIV} at (0,56) size 784x20 [color=#000000]
+        RenderText {#text} at (0,0) size 69x19
+          text run at (0,0) width 69: "foo bar baz"
+selection start: position 0 of child 0 {#text} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 11 of child 0 {#text} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

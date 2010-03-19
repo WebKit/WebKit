@@ -1,0 +1,28 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 777x39
+          text run at (0,0) width 708: "This tests dropping content into the unwanted space above a list items content when the content is wrapped in a span. "
+          text run at (708,0) width 69: "You should"
+          text run at (0,20) width 183: "see 'DragMe DropAboveMe'."
+      RenderBlock {DIV} at (0,56) size 784x44
+        RenderListItem {LI} at (0,0) size 784x24 [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 782x0
+            RenderInline {SPAN} at (0,0) size 0x0
+          RenderBlock (anonymous) at (1,1) size 782x22
+            RenderBlock {DIV} at (0,0) size 782x22 [border: (1px solid #FF0000)]
+              RenderListMarker at (0,1) size 7x19: bullet
+              RenderText {#text} at (16,1) size 94x19
+                text run at (16,1) width 94: "DropAboveMe"
+              RenderText {#text} at (110,1) size 55x19
+                text run at (110,1) width 55: " DragMe"
+          RenderBlock (anonymous) at (1,23) size 782x0
+            RenderInline {SPAN} at (0,0) size 0x0
+        RenderBlock {DIV} at (0,24) size 784x20
+          RenderBR {BR} at (0,0) size 0x19
+      RenderBlock {UL} at (0,116) size 784x0
+selection start: position 0 of child 1 {#text} of child 0 {DIV} of child 0 {SPAN} of child 1 {LI} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 7 of child 1 {#text} of child 0 {DIV} of child 0 {SPAN} of child 1 {LI} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

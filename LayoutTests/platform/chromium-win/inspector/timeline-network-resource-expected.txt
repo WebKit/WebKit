@@ -1,0 +1,37 @@
+Tests the Timeline API instrumentation of a network resource load
+
+
+ResourceSendRequest Properties:
++ startTime : * DEFINED *
++ callerScriptName : * DEFINED *
++ callerScriptLine : * DEFINED *
++ data : {
++- identifier : * DEFINED *
++- url : * DEFINED *
++- requestMethod : GET
++- isMainResource : false
++ }
++ type : 12
+
+ResourceReceiveResponse Properties:
++ startTime : * DEFINED *
++ data : {
++- identifier : * DEFINED *
++- statusCode : 0
++- mimeType : * DEFINED *
++- expectedContentLength : 210
++- url : * DEFINED *
++ }
++ children : * DEFINED *
++ endTime : * DEFINED *
++ type : 13
+
+ResourceFinish Properties:
++ startTime : * DEFINED *
++ data : {
++- identifier : * DEFINED *
++- didFail : false
++- url : * DEFINED *
++ }
++ type : 14
+Script resource loaded

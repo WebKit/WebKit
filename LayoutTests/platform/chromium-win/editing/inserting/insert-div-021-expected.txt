@@ -1,0 +1,46 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #document to 9 of BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 6 of BODY > HTML > #document to 7 of BODY > HTML > #document
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of #text > SPAN > BODY > HTML > #document to 3 of #text > SPAN > BODY > HTML > #document toDOMRange:range from 3 of #text > SPAN > BODY > HTML > #document to 3 of #text > SPAN > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of #text > SPAN > BODY > HTML > #document to 3 of #text > SPAN > BODY > HTML > #document toDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x112
+        RenderText {#text} at (0,0) size 772x55
+          text run at (0,0) width 766: "Test inserting paragraphs: should see \"foo\", then an empty blue box, then a blue"
+          text run at (766,0) width 6: " "
+          text run at (0,28) width 402: "box with with \"bar\" in it. Fix for this bug: "
+        RenderInline {A} at (0,0) size 257x27 [color=#0000EE]
+          RenderText {#text} at (402,28) size 257x27
+            text run at (402,28) width 257: "<rdar://problem/3924579>"
+        RenderText {#text} at (659,28) size 754x83
+          text run at (659,28) width 6: " "
+          text run at (0,56) width 748: "REGRESSION (Mail): After deleting, hitting return key does not insert visible"
+          text run at (748,56) width 6: " "
+          text run at (0,84) width 75: "newline"
+      RenderBlock {DIV} at (0,112) size 784x36
+      RenderBlock (anonymous) at (0,148) size 784x28
+        RenderInline {SPAN} at (0,0) size 32x27
+          RenderText {#text} at (0,0) size 32x27
+            text run at (0,0) width 32: "foo"
+      RenderBlock {DIV} at (0,176) size 784x56 [border: (2px solid #0000FF)]
+        RenderBR {BR} at (14,14) size 0x27
+      RenderBlock {DIV} at (0,232) size 784x56 [border: (2px solid #0000FF)]
+        RenderInline {SPAN} at (0,0) size 0x0
+        RenderText {#text} at (14,14) size 31x27
+          text run at (14,14) width 31: "bar"
+caret: position 0 of child 1 {#text} of child 7 {DIV} of child 1 {BODY} of child 0 {HTML} of document

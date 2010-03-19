@@ -1,0 +1,29 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of #text > TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document to 3 of #text > A > TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document to 0 of TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 364x19
+          text run at (0,0) width 364: "This tests for a crasher when deleting contents of a table cell."
+      RenderBlock {DIV} at (0,36) size 784x26
+        RenderTable {TABLE} at (0,0) size 31x26
+          RenderTableSection {TBODY} at (0,0) size 31x26
+            RenderTableRow {TR} at (0,2) size 31x22
+              RenderTableCell {TD} at (2,2) size 2x22 [r=0 c=0 rs=1 cs=1]
+                RenderBR {BR} at (1,1) size 0x19
+              RenderTableCell {TD} at (6,2) size 23x22 [r=0 c=1 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 21x19
+                  text run at (1,1) width 21: "baz"
+caret: position 0 of child 0 {BR} of child 0 {TD} of child 0 {TR} of child 0 {TBODY} of child 0 {TABLE} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

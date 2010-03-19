@@ -1,0 +1,22 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock (anonymous) at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 562x19
+          text run at (0,0) width 562: "This tests that clicking in a contenteditable div will set the caret in the right position for rtl text. "
+        RenderBR {BR} at (562,15) size 0x0
+      RenderBlock {P} at (0,36) size 784x20
+        RenderText {#text} at (0,0) size 618x19
+          text run at (0,0) width 187: "Click in the middle of the field. "
+          text run at (187,0) width 431: "The caret should be on the edge of the text closer to where you clicked."
+layer at (10,70) size 152x22
+  RenderBlock (positioned) {DIV} at (10,70) size 152x22 [border: (1px solid #000000)]
+    RenderText {#text} at (1,1) size 48x19
+      text run at (1,1) width 48 RTL: "\x{5E9}\x{5D3}\x{5D4} \x{5D1}\x{5D5}\x{5E8}"
+caret: position 0 of child 0 {#text} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document

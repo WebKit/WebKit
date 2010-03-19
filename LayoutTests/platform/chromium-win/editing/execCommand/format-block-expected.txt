@@ -1,0 +1,47 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 11 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of PRE > DIV > BODY > HTML > #document to 0 of PRE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of H1 > DIV > DIV > BODY > HTML > #document to 0 of H1 > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 409x19
+          text run at (0,0) width 409: "This test uses FormatBlock to modify three of the paragraphs below"
+      RenderBlock (anonymous) at (0,20) size 784x20
+        RenderBR {BR} at (0,0) size 0x19
+      RenderBlock {DIV} at (0,40) size 784x223 [border: (1px solid #000000)]
+        RenderBlock {PRE} at (1,14) size 782x16
+          RenderText {#text} at (0,0) size 64x16
+            text run at (0,0) width 64: "Make Pre"
+        RenderBlock (anonymous) at (1,43) size 782x20
+          RenderBR {BR} at (0,0) size 0x19
+        RenderBlock {DIV} at (1,63) size 782x119
+          RenderBlock (anonymous) at (0,0) size 782x20
+            RenderText {#text} at (0,0) size 25x19
+              text run at (0,0) width 25: "Foo"
+            RenderBR {BR} at (25,15) size 0x0
+          RenderBlock {H1} at (0,41) size 782x37
+            RenderText {#text} at (0,0) size 120x36
+              text run at (0,0) width 120: "Make h1"
+          RenderBlock (anonymous) at (0,99) size 782x20
+            RenderText {#text} at (0,0) size 21x19
+              text run at (0,0) width 21: "baz"
+        RenderBlock (anonymous) at (1,182) size 782x20
+          RenderBR {BR} at (0,0) size 0x19
+        RenderBlock {ADDRESS} at (1,202) size 782x20
+          RenderText {#text} at (0,0) size 288x19
+            text run at (0,0) width 288: "Attempt to apply the current formatting here"
+caret: position 0 of child 0 {#text} of child 9 {ADDRESS} of child 4 {DIV} of child 1 {BODY} of child 0 {HTML} of document
