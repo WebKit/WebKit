@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceClipper {clipPath} [id="nothing"] [clipPathUnits=userSpaceOnUse]
+      RenderSVGResourceClipper {clipPath} [id="emptyrect"] [clipPathUnits=userSpaceOnUse]
+        RenderPath {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [data=""]
+    RenderPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
+    RenderSVGContainer {g} at (0,0) size 100x100
+      [clipPath="nothing"] RenderSVGResourceClipper {clipPath} at (0,0) size 0x0
+      RenderPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
+    RenderSVGContainer {g} at (0,0) size 100x100
+      [clipPath="emptyrect"] RenderSVGResourceClipper {clipPath} at (0,0) size 0x0
+      RenderPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
+    RenderSVGContainer {g} at (0,115) size 431x39
+      RenderSVGText {text} at (0,130) size 274x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-15) size 274x19
+          chunk 1 text run 1 at (0.00,130.00) startOffset 0 endOffset 44 width 274.00: "Above a green rectangle should be displayed."
+      RenderSVGText {text} at (0,150) size 431x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-15) size 431x19
+          chunk 1 text run 1 at (0.00,150.00) startOffset 0 endOffset 74 width 431.00: "It tests that an empty clip path clips the referencing graphic. Bug 15289."

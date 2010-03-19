@@ -1,0 +1,9 @@
+KCanvasResource {id="MyFilter1" [type=FILTER]  [bounding box=at (0,0) size 0x0] [bounding box mode=0]}
+KCanvasResource {id="MyFilter2" [type=FILTER]  [bounding box=at (0,0) size 0x0] [bounding box mode=0]}
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderPath {rect} at (0,0) size 121x121 [fill={[type=SOLID] [color=#008000]}] [filter=MyFilter1] [data="M10.00,10.00 L110.00,10.00 L110.00,110.00 L10.00,110.00 Z"]
+    RenderPath {rect} at (120,0) size 120x121 [fill={[type=SOLID] [color=#008000]}] [filter=MyFilter2] [data="M130.00,10.00 L230.00,10.00 L230.00,110.00 L130.00,110.00 Z"]

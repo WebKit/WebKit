@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderPath {rect} at (240,1) size 239x358 [fill={[type=SOLID] [color=#000000]}] [data="M240.00,1.00 L479.00,1.00 L479.00,359.00 L240.00,359.00 Z"]
+    RenderSVGContainer {use} at (240,1) size 239x358
+      RenderSVGContainer {g} at (240,1) size 239x358
+        RenderPath {rect} at (240,1) size 239x358 [fill={[type=SOLID] [color=#008000]}] [data="M240.00,1.00 L479.00,1.00 L479.00,359.00 L240.00,359.00 Z"]
+    RenderSVGText {text} at (0,0) size 207x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,-15) size 207x19
+        chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 36 width 207.00: "Click on the grey rectangle to start"
+    RenderSVGText {text} at (0,0) size 209x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,-15) size 209x19
+        chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 32 width 209.00: "Test for correspondingUseElement"
+    RenderSVGText {text} at (0,0) size 185x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,-15) size 185x19
+        chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 29 width 185.00: "Test for correspondingElement"
+    RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

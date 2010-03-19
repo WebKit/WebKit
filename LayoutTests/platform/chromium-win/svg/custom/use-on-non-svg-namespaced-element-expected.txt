@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderForeignObject {foreignObject} at (10,10) size 480x360
+      RenderBlock {xhtml:div} at (0,0) size 480x20
+        RenderText {#text} at (0,0) size 230x19
+          text run at (0,0) width 230: "You should only see this string ONCE"
+    RenderSVGContainer {use} at (0,0) size 0x0 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(250.00,-50.00)}]
+      RenderSVGContainer {g} at (0,0) size 0x0

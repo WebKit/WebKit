@@ -1,0 +1,43 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 625x469
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderPath {rect} at (0,0) size 800x600 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M-2000.00,-2000.00 L4000.00,-2000.00 L4000.00,4000.00 L-2000.00,4000.00 Z"]
+    RenderSVGText {text} at (261,40) size 502x24 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,-19) size 502x24
+        chunk 1 (middle anchor) text run 1 at (261.00,40.00) startOffset 0 endOffset 52 width 502.00: "Demonstration of the carto.net SVG GUI slider object"
+    RenderSVGContainer {g} at (546,44) size 17x92
+      RenderPath {line} at (548,44) size 13x92 [stroke={[type=SOLID] [color=#000000] [opacity=0.00] [stroke width=15.00] [line cap=SQUARE]}] [fill={[type=SOLID] [color=#000000] [opacity=0.00]}] [data="M710.00,65.00 L710.00,165.00"]
+      RenderPath {line} at (553,50) size 4x79 [stroke={[type=SOLID] [color=#696969] [stroke width=3.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M710.00,65.00 L710.00,165.00"]
+      RenderSVGContainer {use} at (546,87) size 17x6 [transform={m=((0.00,1.00)(-1.00,0.00)) t=(710.00,115.00)}]
+        RenderSVGContainer {g} at (546,87) size 17x6
+          RenderSVGViewportContainer {svg} at (546,87) size 17x6
+            RenderPath {line} at (546,87) size 17x6 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,-10.00 L0.00,10.00"]
+    RenderSVGContainer {g} at (69,69) size 174x174
+      RenderPath {line} at (69,69) size 174x174 [stroke={[type=SOLID] [color=#000000] [opacity=0.00] [stroke width=15.00] [line cap=SQUARE]}] [fill={[type=SOLID] [color=#000000] [opacity=0.00]}] [data="M100.00,100.00 L300.00,300.00"]
+      RenderPath {line} at (76,76) size 160x160 [stroke={[type=SOLID] [color=#696969] [stroke width=3.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M100.00,100.00 L300.00,300.00"]
+      RenderSVGContainer {use} at (164,164) size 16x16 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(220.00,220.00)}]
+        RenderSVGContainer {g} at (164,164) size 16x16
+          RenderSVGViewportContainer {svg} at (164,164) size 16x16
+            RenderPath {line} at (164,164) size 16x16 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,-10.00 L0.00,10.00"]
+    RenderSVGContainer {g} at (110,70) size 92x16 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,0.00)}]
+      RenderPath {line} at (110,71) size 92x14 [stroke={[type=SOLID] [color=#000000] [opacity=0.00] [stroke width=15.00] [line cap=SQUARE]}] [fill={[type=SOLID] [color=#000000] [opacity=0.00]}] [data="M100.00,100.00 L200.00,100.00"]
+      RenderPath {line} at (117,76) size 79x4 [stroke={[type=SOLID] [color=#696969] [stroke width=3.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M100.00,100.00 L200.00,100.00"]
+      RenderSVGContainer {use} at (114,70) size 6x16 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,100.00)}]
+        RenderSVGContainer {g} at (114,70) size 6x16
+          RenderSVGViewportContainer {svg} at (114,70) size 6x16
+            RenderPath {line} at (114,70) size 6x16 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,-10.00 L0.00,10.00"]
+    RenderSVGContainer {g} at (319,232) size 123x140 [transform={m=((0.64,-0.77)(0.77,0.64)) t=(0.00,500.00)}]
+      RenderPath {line} at (321,232) size 119x140 [stroke={[type=SOLID] [color=#000000] [opacity=0.00] [stroke width=15.00] [line cap=SQUARE]}] [fill={[type=SOLID] [color=#000000] [opacity=0.00]}] [data="M300.00,300.00 L500.00,300.00"]
+      RenderPath {line} at (328,240) size 105x124 [stroke={[type=SOLID] [color=#696969] [stroke width=3.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M300.00,300.00 L500.00,300.00"]
+      RenderSVGContainer {use} at (362,307) size 17x15 [transform={m=((1.00,0.00)(0.00,1.00)) t=(380.00,300.00)}]
+        RenderSVGContainer {g} at (362,307) size 17x15
+          RenderSVGViewportContainer {svg} at (362,307) size 17x15
+            RenderPath {line} at (362,307) size 17x15 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,-10.00 L0.00,10.00"]
+    RenderSVGText {text} at (20,700) size 60x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,-15) size 60x19
+        chunk 1 text run 1 at (20.00,700.00) startOffset 0 endOffset 10 width 60.00: "Statusbar:"
+    RenderSVGText {text} at (500,600) size 288x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,-15) size 288x19
+        chunk 1 text run 1 at (500.00,600.00) startOffset 0 endOffset 50 width 288.00: "Click on this text to randomly reposition slider 4"

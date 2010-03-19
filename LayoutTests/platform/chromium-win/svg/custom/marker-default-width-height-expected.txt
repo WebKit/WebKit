@@ -1,0 +1,27 @@
+KCanvasResource {id="marker1" [type=MARKER] [angle=0.00] [ref x=5.00 y=5.00]}
+KCanvasResource {id="marker2" [type=MARKER] [angle=0.00] [ref x=5.00 y=5.00]}
+KCanvasResource {id="marker3" [type=MARKER] [angle=0.00] [ref x=5.00 y=5.00]}
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGContainer {g} at (0,0) size 615x304
+      RenderSVGText {text} at (0,20) size 369x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-15) size 369x19
+          chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 61 width 369.00: "This should show three markers on the path for start/mid/end."
+      RenderSVGText {text} at (0,40) size 350x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-15) size 350x19
+          chunk 1 text run 1 at (0.00,40.00) startOffset 0 endOffset 55 width 350.00: "Start marker has no markerWidth/markerHeight specified."
+      RenderSVGText {text} at (0,60) size 260x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-15) size 260x19
+          chunk 1 text run 1 at (0.00,60.00) startOffset 0 endOffset 40 width 260.00: "Mid marker has no markerWidth specified."
+      RenderSVGText {text} at (0,80) size 261x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-15) size 261x19
+          chunk 1 text run 1 at (0.00,80.00) startOffset 0 endOffset 41 width 261.00: "End marker has no markerHeight specified."
+      RenderSVGViewportContainer {marker} at (0,0) size 5x5
+        RenderPath {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L10.00,0.00 L10.00,10.00 L0.00,10.00 Z"]
+      RenderSVGViewportContainer {marker} at (0,0) size 5x5
+        RenderPath {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L10.00,0.00 L10.00,10.00 L0.00,10.00 Z"]
+      RenderSVGViewportContainer {marker} at (0,0) size 5x5
+        RenderPath {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L10.00,0.00 L10.00,10.00 L0.00,10.00 Z"]
+      RenderPath {path} at (196,180) size 124x124 [start marker=marker1] [middle marker=marker2] [end marker=marker3] [data="M130.00,120.00 L180.00,120.00 L180.00,170.00"]

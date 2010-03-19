@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 6: Uncaught Error: TYPE_MISMATCH_ERR: DOM Exception 17
+

@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,180) size 640x420
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderPath {path} at (80,180) size 640x240 [fill={[type=SOLID] [color=#000000]}] [data="M100.00,200.00 C200.00,100.00,300.00,0.00,400.00,100.00 C500.00,200.00,600.00,300.00,700.00,200.00 C800.00,100.00,900.00,100.00,900.00,100.00"]
+    RenderSVGContainer {use} at (79,180) size 641x240
+      RenderSVGContainer {g} at (79,180) size 641x240
+        RenderPath {path} at (79,180) size 641x240 [stroke={[type=SOLID] [color=#FF0000]}] [data="M100.00,200.00 C200.00,100.00,300.00,0.00,400.00,100.00 C500.00,200.00,600.00,300.00,700.00,200.00 C800.00,100.00,900.00,100.00,900.00,100.00"]
+    RenderSVGContainer {g} at (80,248) size 649x96
+      RenderSVGText {text} at (100,200) size 11x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-15) size 11x19
+          chunk 1 text run 1 at (100.00,200.00) startOffset 0 endOffset 1 width 11.00: "A"
+      RenderSVGText {text} at (482,178) size 11x20 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-15) size 11x20
+          chunk 1 text run 1 at (482.80,178.59) startOffset 0 endOffset 1 width 10.00: "B"
+      RenderSVGText {text} at (900,100) size 11x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-15) size 11x19
+          chunk 1 text run 1 at (900.00,100.00) startOffset 0 endOffset 1 width 11.00: "C"
