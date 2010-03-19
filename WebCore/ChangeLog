@@ -1,3 +1,15 @@
+2010-03-19  Adam Roben  <aroben@apple.com>
+
+        Windows clean build fix after r56192
+
+        * WebCore.vcproj/WebCore.vcproj: Copy headers from
+        platform/graphics/cg to $WebKitOutputDir as part of the post-build
+        event so that WebKit can use them. (The only one we currently require
+        is FontPlatformData.h.)
+
+        * platform/graphics/win/FontPlatformDataCGWin.cpp: Touched to force a
+        build.
+
 2010-03-19  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by David Kilzer.

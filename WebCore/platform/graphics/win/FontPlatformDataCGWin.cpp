@@ -1,5 +1,5 @@
 /*
- * This file is part of the internal font implementation.  It should not be included by anyone other than
+ * This file is part of the internal font implementation. It should not be included by anyone other than
  * FontMac.cpp, FontWin.cpp and Font.cpp.
  *
  * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc.
