@@ -134,7 +134,7 @@ void Font::drawComplexText(GraphicsContext* ctx, const TextRun& run, const Float
             clip.adjust(dx1, dx2, dy1, dy2);
         }
         p->save();
-        p->setClipRect(clip.toRect());
+        p->setClipRect(clip.toRect(), Qt::IntersectClip);
         QPointF pt(point.x(), point.y() - ascent);
         if (hasShadow) {
             p->save();
