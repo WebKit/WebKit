@@ -158,8 +158,10 @@ bool RenderBoxModelScaleObserver::shouldPaintBackgroundAtLowQuality(GraphicsCont
         return false;
     }
 
+    const AffineTransform& tr = data->transform();
+    bool scaleUnchanged = tr.a() == currentTransform.a() && tr.b() == currentTransform.b() && tr.c() == currentTransform.c() && tr.d() == currentTransform.d();
     // We are scaled, but we painted already at this size, so just keep using whatever mode we last painted with.
-    if ((!contextIsScaled || data->transform() == currentTransform) && data->size() == size)
+    if ((!contextIsScaled || scaleUnchanged) && data->size() == size)
         return data->useLowQualityScale();
 
     // We have data and our size just changed.  If this change happened quickly, go into low quality mode and then set a repaint
