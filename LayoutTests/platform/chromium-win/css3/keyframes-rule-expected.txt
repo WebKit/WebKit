@@ -1,0 +1,62 @@
+This tests the WebKitCSSKeyframeRule and WebKitCSSKeyframesRule interfaces.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS WEBKIT_KEYFRAME_RULE exists on Window object
+PASS WEBKIT_KEYFRAMES_RULE exists on Window object
+
+PASS keyframes1.type is window.CSSRule.WEBKIT_KEYFRAMES_RULE
+PASS keyframes1.name is 'test1'
+
+PASS rules1.length is 2
+PASS rules1.item(0).type is window.CSSRule.WEBKIT_KEYFRAME_RULE
+PASS rules1.item(0).cssText is '0% { left: 10px; }'
+PASS rules1.item(1).cssText is '100% { left: 20px; }'
+
+Insert three new rules
+PASS rules1.length is 5
+PASS rules1.item(0).cssText is '0% { left: 10px; }'
+PASS rules1.item(1).cssText is '100% { left: 20px; }'
+PASS rules1.item(2).cssText is '30% { left: 30px; }'
+PASS rules1.item(3).cssText is '60% { left: 60px; }'
+PASS rules1.item(4).cssText is '20% { left: 50px; }'
+
+PASS keyframes2.type is window.CSSRule.WEBKIT_KEYFRAMES_RULE
+PASS keyframes2.name is 'test2'
+
+PASS rules2.length is 3
+PASS rules2.item(0).type is window.CSSRule.WEBKIT_KEYFRAME_RULE
+PASS rules2.item(0).keyText is '0%'
+PASS rules2.item(1).keyText is '50%'
+PASS rules2.item(2).keyText is '100%'
+PASS rules2.item(0).cssText is '0% { left: 10px; }'
+PASS rules2.item(1).cssText is '50% { left: 30px; }'
+PASS rules2.item(2).cssText is '100% { left: 20px; }'
+
+FAIL typeof(rules2.item(0).style) should be function. Was object.
+PASS rules2.item(0).style.length is 1
+
+Find a rule
+PASS rule.type is window.CSSRule.WEBKIT_KEYFRAME_RULE
+PASS rule.cssText is '50% { left: 30px; }'
+
+Try to find a rule that doesn't exist
+PASS Non-existent rule was not found
+
+Delete a rule
+PASS rules2.length is 2
+PASS rules2.item(0).type is window.CSSRule.WEBKIT_KEYFRAME_RULE
+PASS rules2.item(0).keyText is '0%'
+PASS rules2.item(1).keyText is '100%'
+
+Delete a rule that doesn't exist
+PASS rules2.length is 2
+PASS rules2.item(0).type is window.CSSRule.WEBKIT_KEYFRAME_RULE
+PASS rules2.item(0).keyText is '0%'
+PASS rules2.item(1).keyText is '100%'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
