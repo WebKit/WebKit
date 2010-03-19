@@ -1,0 +1,43 @@
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 5 of #text > DIV > BODY > HTML > #document to 5 of #text > DIV > BODY > HTML > #document givenAction:WebViewInsertActionDropped
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of #text > DIV > BODY > HTML > #document to 5 of #text > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > A > DIV > BODY > HTML > #document to 14 of #text > A > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 505x19
+          text run at (0,0) width 505: "This test checks that links dragged into editable regions preserve their title and URL."
+      RenderBlock {DIV} at (0,20) size 784x20
+        RenderText {#text} at (0,0) size 32x19
+          text run at (0,0) width 32: "Hello"
+        RenderInline {A} at (0,0) size 74x19 [color=#0000EE]
+          RenderText {#text} at (32,0) size 74x19
+            text run at (32,0) width 74: "This is a link"
+      RenderBlock {DIV} at (0,40) size 784x0
+      RenderBlock {UL} at (0,56) size 784x53
+        RenderListItem {LI} at (40,0) size 744x20
+          RenderBlock {PRE} at (0,0) size 744x20
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,3) size 200x16
+              text run at (0,3) width 200: "Link is http://apple.com/"
+        RenderListItem {LI} at (40,33) size 744x20
+          RenderBlock {PRE} at (0,0) size 744x20
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,3) size 64x16
+              text run at (0,3) width 64: "Success!"
+      RenderBlock {DIV} at (0,125) size 784x44
+        RenderText {#text} at (0,0) size 572x19
+          text run at (0,0) width 572: "To run this test manually, drag the link into the box with 'hello' in it, and then click on the button."
+        RenderBR {BR} at (572,15) size 0x0
+        RenderButton {INPUT} at (2,22) size 49x20 [bgcolor=#DDDDDD] [border: (2px outset #DDDDDD)]
+          RenderBlock (anonymous) at (8,2) size 33x16
+            RenderText at (0,0) size 33x16
+              text run at (0,0) width 33: "Verify"
+selection start: position 0 of child 0 {#text} of child 1 {A} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 14 of child 0 {#text} of child 1 {A} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
