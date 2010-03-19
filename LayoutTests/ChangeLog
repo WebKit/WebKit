@@ -1,3 +1,10 @@
+2010-03-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Back-forward list dumping is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=36392
+
+        * platform/qt/Skipped: fast/loader/frame-src-change-added-to-history.html skipped until fix.
+
 2010-03-19  Dirk Pranke <dpranke@chromium.org>
 
         Reviewed by Dimitri Glazkov.
