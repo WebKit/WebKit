@@ -829,8 +829,10 @@ bool NetscapePluginInstanceProxy::evaluate(uint32_t objectID, const String& scri
     resultData = 0;
     resultLength = 0;
 
-    if (!m_localObjects.contains(objectID))
+    if (!m_localObjects.contains(objectID)) {
+        LOG_ERROR("NetscapePluginInstanceProxy::evaluate: local object %u doesn't exist.", objectID);
         return false;
+    }
 
     Frame* frame = core([m_pluginView webFrame]);
     if (!frame)
@@ -872,8 +874,10 @@ bool NetscapePluginInstanceProxy::invoke(uint32_t objectID, const Identifier& me
         return false;
     
     JSObject* object = m_localObjects.get(objectID);
-    if (!object)
+    if (!object) {
+        LOG_ERROR("NetscapePluginInstanceProxy::invoke: local object %u doesn't exist.", objectID);
         return false;
+    }
     
     Frame* frame = core([m_pluginView webFrame]);
     if (!frame)
@@ -906,8 +910,10 @@ bool NetscapePluginInstanceProxy::invokeDefault(uint32_t objectID, data_t argume
         return false;
 
     JSObject* object = m_localObjects.get(objectID);
-    if (!object)
+    if (!object) {
+        LOG_ERROR("NetscapePluginInstanceProxy::invokeDefault: local object %u doesn't exist.", objectID);
         return false;
+    }
     
     Frame* frame = core([m_pluginView webFrame]);
     if (!frame)
@@ -939,8 +945,10 @@ bool NetscapePluginInstanceProxy::construct(uint32_t objectID, data_t argumentsD
         return false;
 
     JSObject* object = m_localObjects.get(objectID);
-    if (!object)
+    if (!object) {
+        LOG_ERROR("NetscapePluginInstanceProxy::construct: local object %u doesn't exist.", objectID);
         return false;
+    }
     
     Frame* frame = core([m_pluginView webFrame]);
     if (!frame)
@@ -973,8 +981,10 @@ bool NetscapePluginInstanceProxy::getProperty(uint32_t objectID, const Identifie
         return false;
 
     JSObject* object = m_localObjects.get(objectID);
-    if (!object)
+    if (!object) {
+        LOG_ERROR("NetscapePluginInstanceProxy::getProperty: local object %u doesn't exist.", objectID);
         return false;
+    }
     
     Frame* frame = core([m_pluginView webFrame]);
     if (!frame)
@@ -992,8 +1002,10 @@ bool NetscapePluginInstanceProxy::getProperty(uint32_t objectID, const Identifie
 bool NetscapePluginInstanceProxy::getProperty(uint32_t objectID, unsigned propertyName, data_t& resultData, mach_msg_type_number_t& resultLength)
 {
     JSObject* object = m_localObjects.get(objectID);
-    if (!object)
+    if (!object) {
+        LOG_ERROR("NetscapePluginInstanceProxy::getProperty: local object %u doesn't exist.", objectID);
         return false;
+    }
     
     Frame* frame = core([m_pluginView webFrame]);
     if (!frame)
@@ -1014,8 +1026,10 @@ bool NetscapePluginInstanceProxy::setProperty(uint32_t objectID, const Identifie
         return false;
 
     JSObject* object = m_localObjects.get(objectID);
-    if (!object)
+    if (!object) {
+        LOG_ERROR("NetscapePluginInstanceProxy::setProperty: local object %u doesn't exist.", objectID);
         return false;
+    }
     
     Frame* frame = core([m_pluginView webFrame]);
     if (!frame)
@@ -1038,8 +1052,10 @@ bool NetscapePluginInstanceProxy::setProperty(uint32_t objectID, unsigned proper
         return false;
 
     JSObject* object = m_localObjects.get(objectID);
-    if (!object)
+    if (!object) {
+        LOG_ERROR("NetscapePluginInstanceProxy::setProperty: local object %u doesn't exist.", objectID);
         return false;
+    }
     
     Frame* frame = core([m_pluginView webFrame]);
     if (!frame)
@@ -1061,8 +1077,10 @@ bool NetscapePluginInstanceProxy::removeProperty(uint32_t objectID, const Identi
         return false;
 
     JSObject* object = m_localObjects.get(objectID);
-    if (!object)
+    if (!object) {
+        LOG_ERROR("NetscapePluginInstanceProxy::removeProperty: local object %u doesn't exist.", objectID);
         return false;
+    }
     
     Frame* frame = core([m_pluginView webFrame]);
     if (!frame)
@@ -1086,8 +1104,10 @@ bool NetscapePluginInstanceProxy::removeProperty(uint32_t objectID, unsigned pro
         return false;
 
     JSObject* object = m_localObjects.get(objectID);
-    if (!object)
+    if (!object) {
+        LOG_ERROR("NetscapePluginInstanceProxy::removeProperty: local object %u doesn't exist.", objectID);
         return false;
+    }
     
     Frame* frame = core([m_pluginView webFrame]);
     if (!frame)
@@ -1111,8 +1131,10 @@ bool NetscapePluginInstanceProxy::hasProperty(uint32_t objectID, const Identifie
         return false;
 
     JSObject* object = m_localObjects.get(objectID);
-    if (!object)
+    if (!object) {
+        LOG_ERROR("NetscapePluginInstanceProxy::hasProperty: local object %u doesn't exist.", objectID);
         return false;
+    }
     
     Frame* frame = core([m_pluginView webFrame]);
     if (!frame)
@@ -1131,8 +1153,10 @@ bool NetscapePluginInstanceProxy::hasProperty(uint32_t objectID, unsigned proper
         return false;
 
     JSObject* object = m_localObjects.get(objectID);
-    if (!object)
+    if (!object) {
+        LOG_ERROR("NetscapePluginInstanceProxy::hasProperty: local object %u doesn't exist.", objectID);
         return false;
+    }
     
     Frame* frame = core([m_pluginView webFrame]);
     if (!frame)
@@ -1151,8 +1175,10 @@ bool NetscapePluginInstanceProxy::hasMethod(uint32_t objectID, const Identifier&
         return false;
 
     JSObject* object = m_localObjects.get(objectID);
-    if (!object)
+    if (!object) {
+        LOG_ERROR("NetscapePluginInstanceProxy::hasMethod: local object %u doesn't exist.", objectID);
         return false;
+    }
 
     Frame* frame = core([m_pluginView webFrame]);
     if (!frame)
@@ -1171,8 +1197,10 @@ bool NetscapePluginInstanceProxy::enumerate(uint32_t objectID, data_t& resultDat
         return false;
 
     JSObject* object = m_localObjects.get(objectID);
-    if (!object)
+    if (!object) {
+        LOG_ERROR("NetscapePluginInstanceProxy::enumerate: local object %u doesn't exist.", objectID);
         return false;
+    }
     
     Frame* frame = core([m_pluginView webFrame]);
     if (!frame)
