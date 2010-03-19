@@ -47,6 +47,7 @@
 #include "GeolocationService.h"
 #include "GeolocationServiceBridgeChromium.h"
 #include "GeolocationServiceChromium.h"
+#include "GraphicsLayer.h"
 #include "HitTestResult.h"
 #include "IntRect.h"
 #include "Node.h"
@@ -696,5 +697,17 @@ void ChromeClientImpl::requestGeolocationPermissionForFrame(Frame* frame, Geoloc
     GeolocationServiceChromium* geolocationService = reinterpret_cast<GeolocationServiceChromium*>(geolocation->getGeolocationService());
     m_webView->client()->getGeolocationService()->requestPermissionForFrame(geolocationService->geolocationServiceBridge()->getBridgeId(), frame->document()->url());
 }
+
+#if USE(ACCELERATED_COMPOSITING)
+void ChromeClientImpl::attachRootGraphicsLayer(Frame* frame, GraphicsLayer* graphicsLayer)
+{
+    m_webView->setRootGraphicsLayer(graphicsLayer ? graphicsLayer->platformLayer() : 0);
+}
+
+void ChromeClientImpl::scheduleCompositingLayerSync()
+{
+    m_webView->setRootLayerNeedsDisplay();
+}
+#endif
 
 } // namespace WebKit

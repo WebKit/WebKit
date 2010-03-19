@@ -1752,11 +1752,23 @@ void WebFrameImpl::layout()
         view->layoutIfNeededRecursive();
 }
 
+void WebFrameImpl::paintWithContext(GraphicsContext& gc, const WebRect& rect)
+{
+    IntRect dirtyRect(rect);
+    gc.save();
+    if (m_frame->document() && frameView()) {
+        gc.clip(dirtyRect);
+        frameView()->paint(&gc, dirtyRect);
+        m_frame->page()->inspectorController()->drawNodeHighlight(gc);
+    } else
+        gc.fillRect(dirtyRect, Color::white, DeviceColorSpace);
+    gc.restore();
+}
+
 void WebFrameImpl::paint(WebCanvas* canvas, const WebRect& rect)
 {
     if (rect.isEmpty())
         return;
-    IntRect dirtyRect(rect);
 #if WEBKIT_USING_CG
     GraphicsContext gc(canvas);
     LocalCurrentGraphicsContext localContext(&gc);
@@ -1768,14 +1780,7 @@ void WebFrameImpl::paint(WebCanvas* canvas, const WebRect& rect)
 #else
     notImplemented();
 #endif
-    gc.save();
-    if (m_frame->document() && frameView()) {
-        gc.clip(dirtyRect);
-        frameView()->paint(&gc, dirtyRect);
-        m_frame->page()->inspectorController()->drawNodeHighlight(gc);
-    } else
-        gc.fillRect(dirtyRect, Color::white, DeviceColorSpace);
-    gc.restore();
+    paintWithContext(gc, rect);
 }
 
 void WebFrameImpl::createFrameView()

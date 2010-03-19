@@ -42,6 +42,7 @@
 #include "WebAnimationControllerImpl.h"
 
 namespace WebCore {
+class GraphicsContext;
 class HistoryItem;
 class KURL;
 class Node;
@@ -181,6 +182,7 @@ public:
 
     void layout();
     void paint(WebCanvas*, const WebRect&);
+    void paintWithContext(WebCore::GraphicsContext&, const WebRect&);
     void createFrameView();
 
     static WebFrameImpl* fromFrame(WebCore::Frame* frame);

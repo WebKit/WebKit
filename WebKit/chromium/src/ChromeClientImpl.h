@@ -133,6 +133,18 @@ public:
     virtual void needTouchEvents(bool needTouchEvents) { }
 #endif
 
+#if USE(ACCELERATED_COMPOSITING)
+    // Pass 0 as the GraphicsLayer to detatch the root layer.
+    virtual void attachRootGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*);
+
+    // Sets a flag to specify that the next time content is drawn to the window,
+    // the changes appear on the screen in synchrony with updates to GraphicsLayers.
+    virtual void setNeedsOneShotDrawingSynchronization() { }
+
+    // Sets a flag to specify that the view needs to be updated, so we need
+    // to do an eager layout before the drawing.
+    virtual void scheduleCompositingLayerSync();
+#endif
     // ChromeClientChromium methods:
     virtual void popupOpened(WebCore::PopupContainer* popupContainer,
                              const WebCore::IntRect& bounds,

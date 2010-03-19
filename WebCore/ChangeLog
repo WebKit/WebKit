@@ -1,3 +1,30 @@
+2010-03-18  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Implement software composited graphics layers in Chromium using the Skia library.
+        https://bugs.webkit.org/show_bug.cgi?id=35557
+        This is an initial step in the implementation. Layer compositing is functioning
+        but not optimized in any way. Subsesquent check-ins will be necessary to fine tune
+        it.
+
+        Test: No new exposed functionality so no new tests.
+
+        * WebCore.gypi:
+          Added new source files to the chromium build
+        * platform/graphics/GraphicsLayer.h:
+          Added necessary typedef's and forward declarations for Chromium.
+        * platform/graphics/skia/GraphicsLayerSkia.cpp: Added.
+        * platform/graphics/skia/GraphicsLayerSkia.h: Added.
+          Declaration and implementation of the platform-specific GraphicsLayer class.
+        * platform/graphics/skia/LayerRendererSkia.cpp: Added.
+        * platform/graphics/skia/LayerRendererSkia.h: Added.
+          Declaration and implementation of the Skia-based software compositor.
+        * platform/graphics/skia/LayerSkia.cpp: Added.
+        * platform/graphics/skia/LayerSkia.h: Added.
+          Declaration and implementation of a compositable layer that uses a Skia canvas
+          for backing store.
+
 2010-03-18  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Darin Adler.

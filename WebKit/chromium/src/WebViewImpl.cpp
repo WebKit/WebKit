@@ -246,6 +246,10 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     , m_isTransparent(false)
     , m_tabsToLinks(false)
     , m_haveMouseCapture(false)
+#if USE(ACCELERATED_COMPOSITING)
+    , m_layerRenderer(0)
+    , m_isAcceleratedCompositing(false)
+#endif
 {
     // WebKit/win/WebView.cpp does the same thing, except they call the
     // KJS specific wrapper around this method. We need to have threading
@@ -892,9 +896,30 @@ void WebViewImpl::layout()
 
 void WebViewImpl::paint(WebCanvas* canvas, const WebRect& rect)
 {
-    WebFrameImpl* webframe = mainFrameImpl();
-    if (webframe)
-        webframe->paint(canvas, rect);
+
+#if USE(ACCELERATED_COMPOSITING)
+    if (!isAcceleratedCompositing()) {
+#endif
+        WebFrameImpl* webframe = mainFrameImpl();
+        if (webframe)
+            webframe->paint(canvas, rect);
+#if USE(ACCELERATED_COMPOSITING)
+    } else {
+        // Draw the contents of the root layer.
+        updateRootLayerContents(rect);
+
+        // FIXME: Layers should not be forced to redraw their contents
+        // here but should update as needed.
+        m_layerRenderer->updateLayerContents();
+
+        // Composite everything into the canvas that's passed to us.
+        SkIRect canvasIRect;
+        canvasIRect.set(rect.x, rect.y, rect.x + rect.width, rect.y + rect.height);
+        SkRect canvasRect;
+        canvasRect.set(canvasIRect);
+        m_layerRenderer->drawLayersInCanvas(static_cast<skia::PlatformCanvas*>(canvas), canvasRect);
+    }
+#endif
 }
 
 // FIXME: m_currentInputEvent should be removed once ChromeClient::show() can
@@ -1976,5 +2001,79 @@ bool WebViewImpl::tabsToLinks() const
 {
     return m_tabsToLinks;
 }
+
+#if USE(ACCELERATED_COMPOSITING)
+void WebViewImpl::setRootGraphicsLayer(WebCore::PlatformLayer* layer)
+{
+    setAcceleratedCompositing(layer ? true : false);
+    if (m_layerRenderer)
+        m_layerRenderer->setRootLayer(layer);
+}
+
+void WebViewImpl::setAcceleratedCompositing(bool accelerated)
+{
+    if (m_isAcceleratedCompositing == accelerated)
+        return;
+
+    if (accelerated) {
+        m_layerRenderer = LayerRendererSkia::create();
+        if (m_layerRenderer)
+            m_isAcceleratedCompositing = true;
+    } else {
+        m_layerRenderer = 0;
+        m_isAcceleratedCompositing = false;
+    }
+}
+
+void WebViewImpl::updateRootLayerContents(const WebRect& rect)
+{
+    if (!isAcceleratedCompositing())
+        return;
+
+    WebFrameImpl* webframe = mainFrameImpl();
+    if (!webframe)
+        return;
+    FrameView* view = webframe->frameView();
+    if (!view)
+        return;
+
+    WebRect viewRect = view->frameRect();
+    SkIRect scrollFrame;
+    scrollFrame.set(view->scrollX(), view->scrollY(), view->layoutWidth() + view->scrollX(), view->layoutHeight() + view->scrollY());
+    m_layerRenderer->setScrollFrame(scrollFrame);
+    LayerSkia* rootLayer = m_layerRenderer->rootLayer();
+    if (rootLayer) {
+        SkIRect rootLayerBounds;
+        IntRect visibleRect = view->visibleContentRect(true);
+
+        // Set the backing store size used by the root layer to be the size of the visible
+        // area. Note that the root layer bounds could be larger than the backing store size,
+        // but there's no reason to waste memory by allocating backing store larger than the
+        // visible portion.
+        rootLayerBounds.set(0, 0, visibleRect.width(), visibleRect.height());
+        rootLayer->setBackingStoreRect(rootLayerBounds);
+        GraphicsContext* rootLayerContext = rootLayer->graphicsContext();
+        rootLayerContext->save();
+
+        webframe->paintWithContext(*(rootLayer->graphicsContext()), rect);
+        rootLayerContext->restore();
+    }
+}
+
+void WebViewImpl::setRootLayerNeedsDisplay()
+{
+    // FIXME: For now we're posting a repaint event for the entire page which is an overkill.
+    if (WebFrameImpl* webframe = mainFrameImpl()) {
+        if (FrameView* view = webframe->frameView()) {
+            IntRect visibleRect = view->visibleContentRect(true);
+            m_client->didInvalidateRect(visibleRect);
+        }
+    }
+
+    if (m_layerRenderer)
+        m_layerRenderer->setNeedsDisplay();
+}
+
+#endif
 
 } // namespace WebKit
