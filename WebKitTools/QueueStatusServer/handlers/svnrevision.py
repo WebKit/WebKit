@@ -26,33 +26,15 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from google.appengine.api import users
-from google.appengine.ext import webapp, db
-from google.appengine.ext.webapp import template
+from google.appengine.ext import webapp
 
-from handlers.updatebase import UpdateBase
-from model.attachment import Attachment
-from model.queuestatus import QueueStatus
+import model
 
-class UpdateStatus(UpdateBase):
-    def get(self):
-        self.response.out.write(template.render("templates/updatestatus.html", None))
 
-    def post(self):
-        queue_status = QueueStatus()
-
-        if users.get_current_user():
-            queue_status.author = users.get_current_user()
-
-        bug_id = self._int_from_request("bug_id")
-        patch_id = self._int_from_request("patch_id")
-        queue_name = self.request.get("queue_name")
-        queue_status.queue_name = queue_name
-        queue_status.active_bug_id = bug_id
-        queue_status.active_patch_id = patch_id
-        queue_status.message = self.request.get("status")
-        results_file = self.request.get("results_file")
-        queue_status.results_file = db.Blob(str(results_file))
-        queue_status.put()
-        Attachment.dirty(patch_id)
-        self.response.out.write(queue_status.key().id())
+class SVNRevision(webapp.RequestHandler):
+    def get(self, svn_revision_number):
+        svn_revisions = model.SVNRevision.all().filter('number =', int(svn_revision_number)).order('-date').fetch(1)
+        if not svn_revisions:
+            self.error(404)
+            return
+        self.response.out.write(svn_revisions[0].to_xml())

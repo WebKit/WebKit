@@ -40,7 +40,9 @@ from handlers.patchstatus import PatchStatus
 from handlers.recentstatus import RecentStatus
 from handlers.showresults import ShowResults
 from handlers.statusbubble import StatusBubble
+from handlers.svnrevision import SVNRevision
 from handlers.updatestatus import UpdateStatus
+from handlers.updatesvnrevision import UpdateSVNRevision
 
 webapp.template.register_template_library('filters.webkit_extras')
 
@@ -52,8 +54,10 @@ routes = [
     (r'/patch/(.*)', Patch),
     (r'/results/(.*)', ShowResults),
     (r'/status-bubble/(.*)', StatusBubble),
+    (r'/svn-revision/(.*)', SVNRevision),
     (r'/queue-status/(.*)', RecentStatus),
     ('/update-status', UpdateStatus),
+    ('/update-svn-revision', UpdateSVNRevision),
 ]
 
 application = webapp.WSGIApplication(routes, debug=True)

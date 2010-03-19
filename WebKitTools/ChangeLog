@@ -1,3 +1,25 @@
+2010-03-18  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        QueueStatusServer should be able to log broken bots
+        https://bugs.webkit.org/show_bug.cgi?id=36341
+
+        We need to add a new table to the QueueStatusServer to store persistent
+        information for the SheriffBot.  The new table will keep track of which
+        bots each SVN revision broke.
+
+        * QueueStatusServer/handlers/__init__.py:
+        * QueueStatusServer/handlers/svnrevision.py: Added.
+        * QueueStatusServer/handlers/updatebase.py: Added.
+        * QueueStatusServer/handlers/updatestatus.py:
+        * QueueStatusServer/handlers/updatesvnrevision.py: Added.
+        * QueueStatusServer/index.yaml:
+        * QueueStatusServer/main.py:
+        * QueueStatusServer/model/__init__.py:
+        * QueueStatusServer/model/svnrevision.py: Added.
+        * QueueStatusServer/templates/updatesvnrevision.html: Added.
+
 2010-03-18  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Darin Adler.
