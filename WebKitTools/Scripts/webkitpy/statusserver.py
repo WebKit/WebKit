@@ -79,7 +79,7 @@ class StatusServer:
         return self.browser.submit().read() # This is the id of the newly created status object.
 
     def _post_svn_revision_to_server(self, svn_revision_number, broken_bot):
-        update_svn_revision_url = "%s/svn-revision" % self.url
+        update_svn_revision_url = "%s/update-svn-revision" % self.url
         self.browser.open(update_svn_revision_url)
         self.browser.select_form(name="update_svn_revision")
         self.browser["number"] = str(svn_revision_number)

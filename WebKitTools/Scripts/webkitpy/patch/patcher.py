@@ -41,6 +41,7 @@ from webkitpy.commands.queues import *
 from webkitpy.commands.sheriffbot import *
 from webkitpy.commands.upload import *
 from webkitpy.executive import Executive
+from webkitpy.irc.ircproxy import IRCProxy
 from webkitpy.webkit_logging import log
 from webkitpy.webkitcheckout import WebKitCheckout
 from webkitpy.multicommandtool import MultiCommandTool
@@ -84,7 +85,7 @@ class WebKitPatch(MultiCommandTool):
 
         return self._scm
 
-    def checkout():
+    def checkout(self):
         if not self._checkout:
             self._checkout = WebKitCheckout(self.scm())
         return self._checkout

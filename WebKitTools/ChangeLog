@@ -1,5 +1,19 @@
 2010-03-19  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        Misc bug fixes to make the SheriffBot actually work
+        https://bugs.webkit.org/show_bug.cgi?id=36355
+
+        With these changes, I can actually run the sheriff-bot from start to
+        finish.
+
+        * Scripts/webkitpy/irc/ircproxy.py:
+        * Scripts/webkitpy/patch/patcher.py:
+        * Scripts/webkitpy/statusserver.py:
+
+2010-03-19  Adam Barth  <abarth@webkit.org>
+
         Unreviewed.
 
         Actually import the sheriff-bot command so we can run it.  Also, move
