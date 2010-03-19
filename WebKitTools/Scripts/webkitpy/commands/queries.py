@@ -30,11 +30,10 @@
 
 
 from optparse import make_option
-import StringIO
 
 from webkitpy.buildbot import BuildBot
-from webkitpy.bugzilla import parse_bug_id
-from webkitpy.changelogs import ChangeLog, is_path_to_changelog, view_source_url
+from webkitpy.changelogs import view_source_url
+from webkitpy.commitinfo import CommitInfo
 from webkitpy.committers import CommitterList
 from webkitpy.grammar import pluralize
 from webkitpy.webkit_logging import log
@@ -140,45 +139,14 @@ and displayes the status of each builder."""
     def _print_builder_line(self, builder_name, max_name_width, status_message):
         print "%s : %s" % (builder_name.ljust(max_name_width), status_message)
 
-    def _changelog_entries_for_revision(self, revision):
-        changed_files = self.tool.scm().changed_files_for_revision(revision)
-        changelog_paths = [path for path in changed_files if is_path_to_changelog(path)]
-        changelog_entries = []
-        for changelog_path in changelog_paths:
-            changelog_contents = self.tool.scm().contents_at_revision(changelog_path, revision)
-            changelog_file = StringIO.StringIO(changelog_contents)
-            changelog_entry = ChangeLog.parse_latest_entry_from_file(changelog_file)
-            changelog_entries.append(changelog_entry)
-        return changelog_entries
-
-    def _commit_info_for_revision(self, revision):
-        committer_email = self.tool.scm().committer_email_for_revision(revision)
-        changelog_entries = self._changelog_entries_for_revision(revision)
-        # Assume for now that the first entry has everything we need:
-        changelog_entry = changelog_entries[0]
-        committer_list = CommitterList()
-        # FIXME: This should be a CommitInfo object.
-        return {
-            "bug_id" : parse_bug_id(changelog_entry.contents()),
-            "revision" : revision,
-            "author_name" : changelog_entry.author_name(),
-            "author_email" : changelog_entry.author_email(),
-            "author" : committer_list.committer_by_email(changelog_entry.author_email()) or committer_list.committer_by_name(changelog_entry.author_name()),
-            "reviewer_text" : changelog_entry.reviewer_text(), # FIXME: Eventualy we should return an object here.
-            "reviewer" : committer_list.committer_by_name(changelog_entry.reviewer_text()),
-            "committer_email" : committer_email,
-            "committer" : committer_list.committer_by_email(committer_email) if committer_email else None
-        }
-
-    # FIXME: This should be on some CommitInfo object.
     def _print_blame_information_for_commit(self, commit_info):
-        print "r%s:" % commit_info["revision"]
-        print "  %s" % view_source_url(commit_info["revision"])
-        print "  Bug: %s (%s)" % (commit_info["bug_id"], self.tool.bugs.bug_url_for_bug_id(commit_info["bug_id"]))
-        author_line = "\"%s\" <%s>" % (commit_info["author_name"], commit_info["author_email"])
-        print "  Author: %s" % (commit_info["author"] or author_line)
-        print "  Reviewer: %s" % (commit_info["reviewer"] or commit_info["reviewer_text"])
-        print "  Committer: %s" % (commit_info["committer"] or commit_info["committer_email"])
+        print "r%s:" % commit_info.revision()
+        print "  %s" % view_source_url(commit_info.revision())
+        print "  Bug: %s (%s)" % (commit_info.bug_id(), self.tool.bugs.bug_url_for_bug_id(commit_info.bug_id()))
+        author_line = "\"%s\" <%s>" % (commit_info.author_name(), commit_info.author_email())
+        print "  Author: %s" % (commit_info.author() or author_line)
+        print "  Reviewer: %s" % (commit_info.reviewer() or commit_info.reviewer_text())
+        print "  Committer: %s" % commit_info.committer()
 
     def _print_blame_information_for_builder(self, builder_status, name_width):
         (last_green_build, first_red_build) = self._find_green_to_red_transition(builder_status)
@@ -191,7 +159,7 @@ and displayes the status of each builder."""
         # FIXME: Parse reviewer and committer from red checkin
         self._print_builder_line(builder_status["name"], name_width, "FAIL (blame-list: %s)" % suspect_revisions)
         for revision in suspect_revisions:
-            commit_info = self._commit_info_for_revision(revision)
+            commit_info = CommitInfo.commit_info_for_revision(self.tool.scm(), revision)
             self._print_blame_information_for_commit(commit_info)
 
     def execute(self, options, args, tool):
