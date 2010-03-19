@@ -2,6 +2,14 @@
 
         Unreviewed.
 
+        Add IRC nicknames for the non-reviewer committers.
+
+        * Scripts/webkitpy/committers.py:
+
+2010-03-19  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
         More reviewer IRC nicknames.
 
         * Scripts/webkitpy/committers.py:
