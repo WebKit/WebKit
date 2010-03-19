@@ -125,6 +125,7 @@ public slots:
     void setFrameSetFlatteningEnabled(bool enable);
     void setAllowUniversalAccessFromFileURLs(bool enable);
     void setAllowFileAccessFromFileURLs(bool enable);
+    void setAppCacheMaximumSize(unsigned long long quota);
     void setJavaScriptProfilingEnabled(bool enable);
     void setTimelineProfilingEnabled(bool enable);
     void setFixedContentsSize(int width, int height);
