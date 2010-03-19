@@ -1,3 +1,15 @@
+2010-03-18  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add a StatusServer front end to the SVNRevision table on QueueStatusServer
+        https://bugs.webkit.org/show_bug.cgi?id=36344
+
+        No test because Browser was too hard to mock.  :(  I couldn't figure
+        out how to make Mock be a dictionary as well as an object.
+
+        * Scripts/webkitpy/statusserver.py:
+
 2010-03-18  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

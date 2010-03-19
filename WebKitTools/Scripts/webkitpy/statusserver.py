@@ -64,7 +64,7 @@ class StatusServer:
             return
         self.browser.add_file(results_file, "text/plain", "results.txt", 'results_file')
 
-    def _post_to_server(self, queue_name, status, patch, results_file):
+    def _post_status_to_server(self, queue_name, status, patch, results_file):
         if results_file:
             # We might need to re-wind the file if we've already tried to post it.
             results_file.seek(0)
@@ -72,25 +72,40 @@ class StatusServer:
         update_status_url = "%s/update-status" % self.url
         self.browser.open(update_status_url)
         self.browser.select_form(name="update_status")
-        self.browser['queue_name'] = queue_name
+        self.browser["queue_name"] = queue_name
         self._add_patch(patch)
-        self.browser['status'] = status
+        self.browser["status"] = status
         self._add_results_file(results_file)
         return self.browser.submit().read() # This is the id of the newly created status object.
 
+    def _post_svn_revision_to_server(self, svn_revision_number, broken_bot):
+        update_svn_revision_url = "%s/svn-revision" % self.url
+        self.browser.open(update_svn_revision_url)
+        self.browser.select_form(name="update_svn_revision")
+        self.browser["number"] = str(svn_revision_number)
+        self.browser["broken_bot"] = broken_bot
+        return self.browser.submit().read()
+
     def update_status(self, queue_name, status, patch=None, results_file=None):
-        # During unit testing, host is None
-        if not self.host:
-            return
-
         log(status)
-        return NetworkTransaction().run(lambda: self._post_to_server(queue_name, status, patch, results_file))
+        return NetworkTransaction().run(lambda: self._post_status_to_server(queue_name, status, patch, results_file))
 
-    def patch_status(self, queue_name, patch_id):
-        update_status_url = "%s/patch-status/%s/%s" % (self.url, queue_name, patch_id)
+    def update_svn_revision(self, svn_revision_number, broken_bot):
+        log("SVN revision: %s broke %s" % (svn_revision_number, broken_bot))
+        return NetworkTransaction().run(lambda: self._post_svn_revision_to_server(svn_revision_number, broken_bot))
+
+    def _fetch_url(self, url):
         try:
             return urllib2.urlopen(update_status_url).read()
         except urllib2.HTTPError, e:
             if e.code == 404:
                 return None
             raise e
+
+    def patch_status(self, queue_name, patch_id):
+        update_status_url = "%s/patch-status/%s/%s" % (self.url, queue_name, patch_id)
+        return self._fetch_url(update_status_url)
+
+    def svn_revision(self, svn_revision_number):
+        svn_revision_url = "%s/svn-revision/%s" % (self.url, svn_revision_number)
+        return self._fetch_url(svn_revision_url)
