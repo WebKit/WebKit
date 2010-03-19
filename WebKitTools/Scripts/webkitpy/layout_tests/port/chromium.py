@@ -169,7 +169,7 @@ class ChromiumPort(base.Port):
         overrides_file = self.path_from_chromium_base('webkit', 'tools',
             'layout_tests', 'test_expectations.txt')
         if os.path.exists(overrides_file):
-            return file(expectations_file, "r").read()
+            return file(overrides_file, "r").read()
         else:
             return None
 

@@ -2,6 +2,15 @@
 
         Reviewed by Dimitri Glazkov.
 
+        fix typo in chromium test expectations overrides routine
+        https://bugs.webkit.org/show_bug.cgi?id=36397
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+
+2010-03-19  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
         Flip the Chromium ports to look first for the test expectations
         in LayoutTests/platform/chromium and only afterwards look in the
         Chromium repo downstream for overrides.
