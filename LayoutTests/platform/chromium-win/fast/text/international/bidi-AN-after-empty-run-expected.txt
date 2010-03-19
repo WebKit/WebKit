@@ -1,0 +1,30 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 51x19
+          text run at (0,0) width 51: "Test for "
+        RenderInline {I} at (0,0) size 394x19
+          RenderInline {A} at (0,0) size 154x19 [color=#0000EE]
+            RenderText {#text} at (51,0) size 154x19
+              text run at (51,0) width 154: "rdar://problem/6020930"
+          RenderText {#text} at (205,0) size 240x19
+            text run at (205,0) width 240: " Bidi Problem When Resizing Window"
+        RenderText {#text} at (445,0) size 4x19
+          text run at (445,0) width 4: "."
+      RenderBlock {P} at (0,36) size 784x20
+        RenderText {#text} at (0,0) size 306x19
+          text run at (0,0) width 306: "The boxes below should be identical to each other."
+      RenderBlock {DIV} at (0,72) size 90x50 [border: (1px solid #0000FF)]
+        RenderText {#text} at (5,5) size 59x39
+          text run at (5,5) width 55 RTL: "\x{627}\x{644}\x{645}\x{627}\x{626}\x{629} \x{645}\x{644}\x{64A}\x{627}\x{631}"
+          text run at (60,5) width 4: " "
+          text run at (5,25) width 18 RTL: " \x{645}\x{646}"
+          text run at (23,25) width 40: "12345"
+      RenderBlock {DIV} at (0,122) size 90x50 [border: (1px solid #0000FF)]
+        RenderText {#text} at (5,5) size 58x39
+          text run at (5,5) width 55 RTL: "\x{627}\x{644}\x{645}\x{627}\x{626}\x{629} \x{645}\x{644}\x{64A}\x{627}\x{631}"
+          text run at (5,25) width 18 RTL: " \x{645}\x{646}"
+          text run at (23,25) width 40: "12345"

@@ -1,0 +1,35 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x346
+  RenderBlock {HTML} at (0,0) size 800x346
+    RenderBody {BODY} at (8,8) size 784x330
+      RenderBlock (anonymous) at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 452x19
+          text run at (0,0) width 452: "Output of this test should match WinIE (no strict SGML comment parsing)."
+      RenderBlock {H1} at (0,41) size 784x37
+        RenderText {#text} at (0,0) size 189x36
+          text run at (0,0) width 189: "Success cases:"
+      RenderBlock {P} at (0,99) size 784x20
+        RenderText {#text} at (0,0) size 96x19
+          text run at (0,0) width 96: "basic comments"
+      RenderBlock {P} at (0,135) size 784x0
+      RenderBlock {P} at (0,135) size 784x20
+        RenderText {#text} at (0,0) size 102x19
+          text run at (0,0) width 102: "empty comments"
+      RenderBlock {P} at (0,171) size 784x0
+      RenderBlock {P} at (0,171) size 784x20
+        RenderText {#text} at (0,0) size 147x19
+          text run at (0,0) width 147: "text after comment close"
+      RenderBlock {P} at (0,207) size 784x0
+      RenderBlock {H1} at (0,212) size 784x37
+        RenderText {#text} at (0,0) size 356x36
+          text run at (0,0) width 356: "Failure cases with output:"
+      RenderBlock (anonymous) at (0,270) size 784x60
+        RenderText {#text} at (0,0) size 321x19
+          text run at (0,0) width 321: "extra comment end and markup declaration close -->"
+        RenderBR {BR} at (321,15) size 0x0
+        RenderBR {BR} at (0,20) size 0x19
+        RenderText {#text} at (0,40) size 158x19
+          text run at (0,40) width 158: "outer nested comment -->"
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0

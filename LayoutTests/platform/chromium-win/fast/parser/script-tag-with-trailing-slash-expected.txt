@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 1: Uncaught SyntaxError: Unexpected token <
+You should not see the text "inside" the following script tag: This is the text inside the script tag.

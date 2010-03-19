@@ -1,0 +1,2945 @@
+Test 1: main functionality.
+
+/the quick brown fox/
+    the quick brown fox: PASS
+    The quick brown FOX: PASS
+    What do you know about the quick brown fox?: PASS
+    What do you know about THE QUICK BROWN FOX?: PASS
+
+/The quick brown fox/i
+    the quick brown fox: PASS
+    The quick brown FOX: PASS
+    What do you know about the quick brown fox?: PASS
+    What do you know about THE QUICK BROWN FOX?: PASS
+
+/abcd\t\n\r\f\a\e\071\x3b\$\\\?caxyz/
+    abcd\t\n\r\f\a\e9;\$\\?caxyz: FAIL. Actual results: "null"
+
+/a*abc?xyz+pqr{3}ab{2,}xy{4,5}pq{0,6}AB{0,}zz/
+    abxyzpqrrrabbxyyyypqAzz: PASS
+    abxyzpqrrrabbxyyyypqAzz: PASS
+    aabxyzpqrrrabbxyyyypqAzz: PASS
+    aaabxyzpqrrrabbxyyyypqAzz: PASS
+    aaaabxyzpqrrrabbxyyyypqAzz: PASS
+    abcxyzpqrrrabbxyyyypqAzz: PASS
+    aabcxyzpqrrrabbxyyyypqAzz: PASS
+    aaabcxyzpqrrrabbxyyyypAzz: PASS
+    aaabcxyzpqrrrabbxyyyypqAzz: PASS
+    aaabcxyzpqrrrabbxyyyypqqAzz: PASS
+    aaabcxyzpqrrrabbxyyyypqqqAzz: PASS
+    aaabcxyzpqrrrabbxyyyypqqqqAzz: PASS
+    aaabcxyzpqrrrabbxyyyypqqqqqAzz: PASS
+    aaabcxyzpqrrrabbxyyyypqqqqqqAzz: PASS
+    aaaabcxyzpqrrrabbxyyyypqAzz: PASS
+    abxyzzpqrrrabbxyyyypqAzz: PASS
+    aabxyzzzpqrrrabbxyyyypqAzz: PASS
+    aaabxyzzzzpqrrrabbxyyyypqAzz: PASS
+    aaaabxyzzzzpqrrrabbxyyyypqAzz: PASS
+    abcxyzzpqrrrabbxyyyypqAzz: PASS
+    aabcxyzzzpqrrrabbxyyyypqAzz: PASS
+    aaabcxyzzzzpqrrrabbxyyyypqAzz: PASS
+    aaaabcxyzzzzpqrrrabbxyyyypqAzz: PASS
+    aaaabcxyzzzzpqrrrabbbxyyyypqAzz: PASS
+    aaaabcxyzzzzpqrrrabbbxyyyyypqAzz: PASS
+    aaabcxyzpqrrrabbxyyyypABzz: PASS
+    aaabcxyzpqrrrabbxyyyypABBzz: PASS
+    >>>aaabxyzpqrrrabbxyyyypqAzz: PASS
+    >aaaabxyzpqrrrabbxyyyypqAzz: PASS
+    >>>>abcxyzpqrrrabbxyyyypqAzz: PASS
+    *** Failers
+    abxyzpqrrabbxyyyypqAzz: PASS
+    abxyzpqrrrrabbxyyyypqAzz: PASS
+    abxyzpqrrrabxyyyypqAzz: PASS
+    aaaabcxyzzzzpqrrrabbbxyyyyyypqAzz: PASS
+    aaaabcxyzzzzpqrrrabbbxyyypqAzz: PASS
+    aaabcxyzpqrrrabbxyyyypqqqqqqqAzz: PASS
+
+/^(abc){1,2}zz/
+    abczz: PASS
+    abcabczz: PASS
+    *** Failers
+    zz: PASS
+    abcabcabczz: PASS
+    >>abczz: PASS
+
+/^(b+?|a){1,2}?c/
+    bc: PASS
+    bbc: PASS
+    bbbc: PASS
+    bac: PASS
+    bbac: PASS
+    aac: PASS
+    abbbbbbbbbbbc: PASS
+    bbbbbbbbbbbac: PASS
+    *** Failers
+    aaac: PASS
+    abbbbbbbbbbbac: PASS
+
+/^(b+|a){1,2}c/
+    bc: PASS
+    bbc: PASS
+    bbbc: PASS
+    bac: PASS
+    bbac: PASS
+    aac: PASS
+    abbbbbbbbbbbc: PASS
+    bbbbbbbbbbbac: PASS
+    *** Failers
+    aaac: PASS
+    abbbbbbbbbbbac: PASS
+
+/^(b+|a){1,2}?bc/
+    bbc: PASS
+
+/^(b*|ba){1,2}?bc/
+    babc: PASS
+    bbabc: PASS
+    bababc: PASS
+    *** Failers
+    bababbc: PASS
+    babababc: PASS
+
+/^(ba|b*){1,2}?bc/
+    babc: PASS
+    bbabc: PASS
+    bababc: PASS
+    *** Failers
+    bababbc: PASS
+    babababc: PASS
+
+/^\ca\cA\c[\c{\c:/
+FAILED TO COMPILE
+
+/^[ab\]cde]/
+    athing: PASS
+    bthing: PASS
+    ]thing: PASS
+    cthing: PASS
+    dthing: PASS
+    ething: PASS
+    *** Failers
+    fthing: PASS
+    [thing: PASS
+    \\thing: PASS
+
+/^[]cde]/
+    ]thing: FAIL. Actual results: "null"
+    cthing: FAIL. Actual results: "null"
+    dthing: FAIL. Actual results: "null"
+    ething: FAIL. Actual results: "null"
+    *** Failers
+    athing: PASS
+    fthing: PASS
+
+/^[^ab\]cde]/
+    fthing: PASS
+    [thing: PASS
+    \\thing: PASS
+    *** Failers
+    athing: PASS
+    bthing: PASS
+    ]thing: PASS
+    cthing: PASS
+    dthing: PASS
+    ething: PASS
+
+/^[^]cde]/
+    athing: FAIL. Actual results: "null"
+    fthing: FAIL. Actual results: "null"
+    *** Failers: FAIL. Actual results: "null"
+    ]thing: PASS
+    cthing: PASS
+    dthing: PASS
+    ething: PASS
+
+/^\/
+    : PASS
+
+/^ÿ/
+    ÿ: PASS
+
+/^[0-9]+$/
+    0: PASS
+    1: PASS
+    2: PASS
+    3: PASS
+    4: PASS
+    5: PASS
+    6: PASS
+    7: PASS
+    8: PASS
+    9: PASS
+    10: PASS
+    100: PASS
+    *** Failers
+    abc: PASS
+
+/^.*nter/
+    enter: PASS
+    inter: PASS
+    uponter: PASS
+
+/^xxx[0-9]+$/
+    xxx0: PASS
+    xxx1234: PASS
+    *** Failers
+    xxx: PASS
+
+/^.+[0-9][0-9][0-9]$/
+    x123: PASS
+    xx123: PASS
+    123456: PASS
+    *** Failers
+    123: PASS
+    x1234: PASS
+
+/^.+?[0-9][0-9][0-9]$/
+    x123: PASS
+    xx123: PASS
+    123456: PASS
+    *** Failers
+    123: PASS
+    x1234: PASS
+
+/^([^!]+)!(.+)=apquxz\.ixr\.zzz\.ac\.uk$/
+    abc!pqr=apquxz.ixr.zzz.ac.uk: PASS
+    *** Failers
+    !pqr=apquxz.ixr.zzz.ac.uk: PASS
+    abc!=apquxz.ixr.zzz.ac.uk: PASS
+    abc!pqr=apquxz:ixr.zzz.ac.uk: PASS
+    abc!pqr=apquxz.ixr.zzz.ac.ukk: PASS
+
+/:/
+    Well, we need a colon: somewhere: PASS
+    *** Fail if we don't: PASS
+
+/([\da-f:]+)$/i
+    0abc: PASS
+    abc: PASS
+    fed: PASS
+    E: PASS
+    ::: PASS
+    5f03:12C0::932e: PASS
+    fed def: PASS
+    Any old stuff: PASS
+    *** Failers
+    0zzz: PASS
+    gzzz: PASS
+    fed : PASS
+    Any old rubbish: PASS
+
+/^.*\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/
+    .1.2.3: PASS
+    A.12.123.0: PASS
+    *** Failers
+    .1.2.3333: PASS
+    1.2.3: PASS
+    1234.2.3: PASS
+
+/^(\d+)\s+IN\s+SOA\s+(\S+)\s+(\S+)\s*\(\s*$/
+    1 IN SOA non-sp1 non-sp2(: PASS
+    1    IN    SOA    non-sp1    non-sp2   (: PASS
+    *** Failers
+    1IN SOA non-sp1 non-sp2(: PASS
+
+/^[a-zA-Z\d][a-zA-Z\d\-]*(\.[a-zA-Z\d][a-zA-z\d\-]*)*\.$/
+    a.: FAIL. Actual results: "a.,"
+    Z.: FAIL. Actual results: "Z.,"
+    2.: FAIL. Actual results: "2.,"
+    ab-c.pq-r.: PASS
+    sxk.zzz.ac.uk.: PASS
+    x-.y-.: PASS
+    *** Failers
+    -abc.peq.: PASS
+
+/^\*\.[a-z]([a-z\-\d]*[a-z\d]+)?(\.[a-z]([a-z\-\d]*[a-z\d]+)?)*$/
+    *.a: FAIL. Actual results: "*.a,,,"
+    *.b0-a: FAIL. Actual results: "*.b0-a,0-a,,"
+    *.c3-b.c: FAIL. Actual results: "*.c3-b.c,3-b,.c,"
+    *.c-a.b-c: PASS
+    *** Failers
+    *.0: PASS
+    *.a-: PASS
+    *.a-b.c-: PASS
+    *.c-a.0-c: PASS
+
+/^(?=ab(de))(abd)(e)/
+    abde: PASS
+
+/^(?!(ab)de|x)(abd)(f)/
+    abdf: PASS
+
+/^(?=(ab(cd)))(ab)/
+    abcd: PASS
+
+/^[\da-f](\.[\da-f])*$/i
+    a.b.c.d: PASS
+    A.B.C.D: PASS
+    a.b.c.1.2.3.C: PASS
+
+/^\".*\"\s*(;.*)?$/
+    \"1234\": FAIL. Actual results: "null"
+    \"abcd\" ;: FAIL. Actual results: "null"
+    \"\" ; rhubarb: FAIL. Actual results: "null"
+    *** Failers
+    \"1234\" : things: PASS
+
+/^$/
+    \: FAIL. Actual results: "null"
+    *** Failers
+
+/   ^    a   (?# begins with a)  b\sc (?# then b c) $ (?# then end)/x
+Unsupported modifiers: x
+
+/(?x)   ^    a   (?# begins with a)  b\sc (?# then b c) $ (?# then end)/
+FAILED TO COMPILE
+
+/^   a\ b[c ]d       $/x
+Unsupported modifiers: x
+
+/^(a(b(c)))(d(e(f)))(h(i(j)))(k(l(m)))$/
+    abcdefhijklm: PASS
+
+/^(?:a(b(c)))(?:d(e(f)))(?:h(i(j)))(?:k(l(m)))$/
+    abcdefhijklm: PASS
+
+/^[\w][\W][\s][\S][\d][\D][\b][\n][\c]][\022]/
+    a+ Z0+\n: FAIL. Actual results: "null"
+
+/^[.^$|()*+?{,}]+/
+    .^\$(*+)|{?,?}: FAIL. Actual results: ".^"
+
+/^a*\w/
+    z: PASS
+    az: PASS
+    aaaz: PASS
+    a: PASS
+    aa: PASS
+    aaaa: PASS
+    a+: PASS
+    aa+: PASS
+
+/^a*?\w/
+    z: PASS
+    az: PASS
+    aaaz: PASS
+    a: PASS
+    aa: PASS
+    aaaa: PASS
+    a+: PASS
+    aa+: PASS
+
+/^a+\w/
+    az: PASS
+    aaaz: PASS
+    aa: PASS
+    aaaa: PASS
+    aa+: PASS
+
+/^a+?\w/
+    az: PASS
+    aaaz: PASS
+    aa: PASS
+    aaaa: PASS
+    aa+: PASS
+
+/^\d{8}\w{2,}/
+    1234567890: PASS
+    12345678ab: PASS
+    12345678__: PASS
+    *** Failers
+    1234567: PASS
+
+/^[aeiou\d]{4,5}$/
+    uoie: PASS
+    1234: PASS
+    12345: PASS
+    aaaaa: PASS
+    *** Failers
+    123456: PASS
+
+/^[aeiou\d]{4,5}?/
+    uoie: PASS
+    1234: PASS
+    12345: PASS
+    aaaaa: PASS
+    123456: PASS
+
+/\A(abc|def)=(\1){2,3}\Z/
+    abc=abcabc: FAIL. Actual results: "null"
+    def=defdefdef: FAIL. Actual results: "null"
+    *** Failers
+    abc=defdef: PASS
+
+/^(a)(b)(c)(d)(e)(f)(g)(h)(i)(j)(k)\11*(\3\4)\1(?#)2$/
+FAILED TO COMPILE
+
+/(cat(a(ract|tonic)|erpillar)) \1()2(3)/
+    cataract cataract23: PASS
+    catatonic catatonic23: PASS
+    caterpillar caterpillar23: PASS
+
+
+FAILED TO COMPILE
+
+/^From\s+\S+\s+([a-zA-Z]{3}\s+){2}\d{1,2}\s+\d\d:\d\d/
+    From abcd  Mon Sep 01 12:33:02 1997: PASS
+    From abcd  Mon Sep  1 12:33:02 1997: PASS
+    *** Failers
+    From abcd  Sep 01 12:33:02 1997: PASS
+
+/^12.34/s
+    12\n34: FAIL. Actual results: "null"
+    12\r34: FAIL. Actual results: "null"
+
+/\w+(?=\t)/
+    the quick brown\t fox: FAIL. Actual results: "null"
+
+/foo(?!bar)(.*)/
+    foobar is foolish see?: PASS
+
+/(?:(?!foo)...|^.{0,2})bar(.*)/
+    foobar crowbar etc: PASS
+    barrel: PASS
+    2barrel: PASS
+    A barrel: PASS
+
+/^(\D*)(?=\d)(?!123)/
+    abc456: PASS
+    *** Failers
+    abc123: PASS
+
+/^1234(?# test newlines
+  inside)/
+FAILED TO COMPILE
+
+/^1234 #comment in extended re
+  /x
+FAILED TO COMPILE
+
+/#rhubarb
+  abcd/x
+FAILED TO COMPILE
+
+/^abcd#rhubarb/x
+Unsupported modifiers: x
+
+/^(a)\1{2,3}(.)/
+    aaab: PASS
+    aaaab: PASS
+    aaaaab: PASS
+    aaaaaab: PASS
+
+/(?!^)abc/
+    the abc: PASS
+    *** Failers
+    abc: PASS
+
+/(?=^)abc/
+    abc: PASS
+    *** Failers
+    the abc: PASS
+
+/^[ab]{1,3}(ab*|b)/
+    aabbbbb: PASS
+
+/^[ab]{1,3}?(ab*|b)/
+    aabbbbb: PASS
+
+/^[ab]{1,3}?(ab*?|b)/
+    aabbbbb: PASS
+
+/^[ab]{1,3}(ab*?|b)/
+    aabbbbb: PASS
+
+/abc\0def\00pqr\000xyz\0000AB/
+    abc f qr xyz 0AB: FAIL. Actual results: "abc f qr xyz 0AB"
+    abc456 abc f qr xyz 0ABCDE: FAIL. Actual results: "abc f qr xyz 0AB"
+
+/abc\x0def\x00pqr\x000xyz\x0000AB/
+FAILED TO COMPILE
+
+/^[\000-\037]/
+     : PASS
+    : PASS
+    C: PASS
+
+/\0*/
+FAILED TO COMPILE
+
+/A\x0{2,3}Z/
+    The A x0Z: FAIL. Actual results: "null"
+    An A 0 : FAIL. Actual results: "null"
+    *** Failers
+    A : PASS
+    A 0 0Z: PASS
+
+/^(cow|)\1(bell)/
+    cowcowbell: PASS
+    bell: PASS
+    *** Failers
+    cowbell: PASS
+
+/^\s/
+     abc: PASS
+    abc: PASS
+    \nabc: FAIL. Actual results: "null"
+    \rabc: FAIL. Actual results: "null"
+    \tabc: FAIL. Actual results: "null"
+    *** Failers
+    abc: PASS
+
+/^a	b
+      c/x
+FAILED TO COMPILE
+
+/^(a|)\1*b/
+    ab: PASS
+    aaaab: PASS
+    b: PASS
+    *** Failers
+    acb: PASS
+
+/^(a|)\1+b/
+    aab: PASS
+    aaaab: PASS
+    b: PASS
+    *** Failers
+    ab: PASS
+
+/^(a|)\1?b/
+    ab: PASS
+    aab: PASS
+    b: PASS
+    *** Failers
+    acb: PASS
+
+/^(a|)\1{2}b/
+    aaab: PASS
+    b: PASS
+    *** Failers
+    ab: PASS
+    aab: PASS
+    aaaab: PASS
+
+/^(a|)\1{2,3}b/
+    aaab: PASS
+    aaaab: PASS
+    b: PASS
+    *** Failers
+    ab: PASS
+    aab: PASS
+    aaaaab: PASS
+
+/ab{1,3}bc/
+    abbbbc: PASS
+    abbbc: PASS
+    abbc: PASS
+    *** Failers
+    abc: PASS
+    abbbbbc: PASS
+
+/([^.]*)\.([^:]*):[T ]+(.*)/
+    track1.title:TBlah blah blah: PASS
+
+/([^.]*)\.([^:]*):[T ]+(.*)/i
+    track1.title:TBlah blah blah: PASS
+
+/([^.]*)\.([^:]*):[t ]+(.*)/i
+    track1.title:TBlah blah blah: PASS
+
+/^[W-c]+$/
+    WXY_^abc: PASS
+    *** Failers
+    wxy: PASS
+
+/^[W-c]+$/i
+    WXY_^abc: PASS
+    wxy_^ABC: PASS
+
+/^[\x3f-\x5F]+$/i
+    WXY_^abc: PASS
+    wxy_^ABC: PASS
+
+/^abc$/m
+    abc: PASS
+    qqq\nabc: FAIL. Actual results: "null"
+    abc\nzzz: FAIL. Actual results: "null"
+    qqq\nabc\nzzz: FAIL. Actual results: "null"
+
+/^abc$/
+    abc: PASS
+    *** Failers
+    qqq\nabc: PASS
+    abc\nzzz: PASS
+    qqq\nabc\nzzz: PASS
+
+/\Aabc\Z/m
+    abc: FAIL. Actual results: "null"
+    abc\n: FAIL. Actual results: "null"
+    *** Failers
+    qqq\nabc: PASS
+    abc\nzzz: PASS
+    qqq\nabc\nzzz: PASS
+
+/\A(.)*\Z/s
+    abc\ndef: FAIL. Actual results: "null"
+
+/\A(.)*\Z/m
+    *** Failers: FAIL. Actual results: "null"
+    abc\ndef: PASS
+
+/(?:b)|(?::+)/
+    b::c: PASS
+    c::b: PASS
+
+/[-az]+/
+    az-: PASS
+    *** Failers
+    b: PASS
+
+/[az-]+/
+    za-: PASS
+    *** Failers
+    b: PASS
+
+/[a\-z]+/
+    a-z: PASS
+    *** Failers
+    b: PASS
+
+/[a-z]+/
+    abcdxyz: PASS
+
+/[\d-]+/
+    12-34: PASS
+    *** Failers
+    aaa: PASS
+
+/[\d-z]+/
+    12-34z: PASS
+    *** Failers
+    aaa: PASS
+
+/\x5c/
+FAILED TO COMPILE
+
+/\x20Z/
+    the Zoo: PASS
+    *** Failers
+    Zulu: PASS
+
+/(abc)\1/i
+    abcabc: PASS
+    ABCabc: PASS
+    abcABC: PASS
+
+/ab{3cd/
+    ab{3cd: PASS
+
+/ab{3,cd/
+    ab{3,cd: PASS
+
+/ab{3,4a}cd/
+    ab{3,4a}cd: PASS
+
+/{4,5a}bc/
+    {4,5a}bc: PASS
+
+/abc$/
+    abc: PASS
+    abc\n: FAIL. Actual results: "null"
+    *** Failers
+    abc\ndef: PASS
+
+/(abc)\123/
+    abcS: PASS
+
+/(abc)\223/
+    abc: PASS
+
+/(abc)\323/
+    abcÓ: PASS
+
+/(abc)\100/
+    abc@: PASS
+    abc\100: FAIL. Actual results: "null"
+
+/(abc)\1000/
+    abc@0: PASS
+    abc@0: PASS
+    abc\1000: FAIL. Actual results: "null"
+    abc\1000: FAIL. Actual results: "null"
+    abc\1000: FAIL. Actual results: "null"
+    abc\100\60: FAIL. Actual results: "null"
+
+/abc\81/
+    abc : FAIL. Actual results: "null"
+    abc 381: FAIL. Actual results: "null"
+
+/abc\91/
+    abc : FAIL. Actual results: "null"
+    abc 391: FAIL. Actual results: "null"
+
+/(a)(b)(c)(d)(e)(f)(g)(h)(i)(j)(k)(l)\12\123/
+    abcdefghijkllS: PASS
+
+/(a)(b)(c)(d)(e)(f)(g)(h)(i)(j)(k)\12\123/
+    abcdefghijk\12S: FAIL. Actual results: "null"
+
+/ab\idef/
+    abidef: PASS
+
+/a{0}bc/
+    bc: PASS
+
+/(a|(bc)){0,0}?xyz/
+    xyz: FAIL. Actual results: "xyz,,"
+
+/abc[\10]de/
+    abcde: PASS
+
+/abc[\1]de/
+    abc\1de: FAIL. Actual results: "null"
+
+/(abc)[\1]de/
+    abc\1de: FAIL. Actual results: "null"
+
+/(?s)a.b/
+FAILED TO COMPILE
+
+/^([^a])([^\b])([^c]*)([^d]{3,4})/
+    baNOTccccd: PASS
+    baNOTcccd: PASS
+    baNOTccd: PASS
+    bacccd: PASS
+    *** Failers
+    anything: PASS
+    b\bc: PASS
+    baccd: PASS
+
+/[^a]/
+    Abc: PASS
+
+/[^a]/i
+    Abc: PASS
+
+/[^a]+/
+    AAAaAbc: PASS
+
+/[^a]+/i
+    AAAaAbc: PASS
+
+/[^a]+/
+    bbb\nccc: FAIL. Actual results: "bbb\nccc"
+
+/[^k]$/
+    abc: PASS
+    *** Failers
+    abk: PASS
+
+/[^k]{2,3}$/
+    abc: PASS
+    kbc: PASS
+    kabc: PASS
+    *** Failers
+    abk: PASS
+    akb: PASS
+    akk: PASS
+
+/^\d{8,}\@.+[^k]$/
+    12345678\@a.b.c.d: FAIL. Actual results: "null"
+    123456789\@x.y.z: FAIL. Actual results: "null"
+    *** Failers
+    12345678\@x.y.uk: PASS
+    1234567\@a.b.c.d: PASS
+
+/(a)\1{8,}/
+    aaaaaaaaa: PASS
+    aaaaaaaaaa: PASS
+    *** Failers
+    aaaaaaa: PASS
+
+/[^a]/
+    aaaabcd: PASS
+    aaAabcd: PASS
+
+/[^a]/i
+    aaaabcd: PASS
+    aaAabcd: PASS
+
+/[^az]/
+    aaaabcd: PASS
+    aaAabcd: PASS
+
+/[^az]/i
+    aaaabcd: PASS
+    aaAabcd: PASS
+
+/\000\001\002\003\004\005\006\007\010\011\012\013\014\015\016\017\020\021\022\023\024\025\026\027\030\031\032\033\034\035\036\037\040\041\042\043\044\045\046\047\050\051\052\053\054\055\056\057\060\061\062\063\064\065\066\067\070\071\072\073\074\075\076\077\100\101\102\103\104\105\106\107\110\111\112\113\114\115\116\117\120\121\122\123\124\125\126\127\130\131\132\133\134\135\136\137\140\141\142\143\144\145\146\147\150\151\152\153\154\155\156\157\160\161\162\163\164\165\166\167\170\171\172\173\174\175\176\177\200\201\202\203\204\205\206\207\210\211\212\213\214\215\216\217\220\221\222\223\224\225\226\227\230\231\232\233\234\235\236\237\240\241\242\243\244\245\246\247\250\251\252\253\254\255\256\257\260\261\262\263\264\265\266\267\270\271\272\273\274\275\276\277\300\301\302\303\304\305\306\307\310\311\312\313\314\315\316\317\320\321\322\323\324\325\326\327\330\331\332\333\334\335\336\337\340\341\342\343\344\345\346\347\350\351\352\353\354\355\356\357\360\361\362\363\364\365\366\367\370\371\372\373\374\375\376\377/
+FAILED TO COMPILE
+
+/P[^*]TAIRE[^*]{1,6}?LL/
+    xxxxxxxxxxxPSTAIREISLLxxxxxxxxx: PASS
+
+/P[^*]TAIRE[^*]{1,}?LL/
+    xxxxxxxxxxxPSTAIREISLLxxxxxxxxx: PASS
+
+/(\.\d\d[1-9]?)\d+/
+    1.230003938: PASS
+    1.875000282: PASS
+    1.235: PASS
+
+/(\.\d\d((?=0)|\d(?=\d)))/
+    1.230003938: PASS
+    1.875000282: PASS
+    *** Failers
+    1.235: PASS
+
+/a(?)b/
+FAILED TO COMPILE
+
+/\b(foo)\s+(\w+)/i
+    Food is on the foo table: PASS
+
+/foo(.*)bar/
+    The food is under the bar in the barn.: PASS
+
+/foo(.*?)bar/  
+    The food is under the bar in the barn.: PASS
+
+/(.*)(\d*)/
+    I have 2 numbers: 53147: PASS
+
+/(.*)(\d+)/
+    I have 2 numbers: 53147: PASS
+
+/(.*?)(\d*)/
+    I have 2 numbers: 53147: PASS
+
+/(.*?)(\d+)/
+    I have 2 numbers: 53147: PASS
+
+/(.*)(\d+)$/
+    I have 2 numbers: 53147: PASS
+
+/(.*?)(\d+)$/
+    I have 2 numbers: 53147: PASS
+
+/(.*)\b(\d+)$/
+    I have 2 numbers: 53147: PASS
+
+/(.*\D)(\d+)$/
+    I have 2 numbers: 53147: PASS
+
+/^\D*(?!123)/
+    ABC123: PASS
+
+/^(\D*)(?=\d)(?!123)/
+    ABC445: PASS
+    *** Failers
+    ABC123: PASS
+
+/^[W-]46]/
+    W46]789: PASS
+    -46]789: PASS
+    *** Failers
+    Wall: PASS
+    Zebra: PASS
+    42: PASS
+    [abcd]: PASS
+    ]abcd[: PASS
+
+/^[W-\]46]/
+    W46]789: PASS
+    Wall: PASS
+    Zebra: PASS
+    Xylophone: PASS
+    42: PASS
+    [abcd]: PASS
+    ]abcd[: PASS
+    \\backslash: PASS
+    *** Failers
+    -46]789: PASS
+    well: PASS
+
+/\d\d\/\d\d\/\d\d\d\d/
+    01/01/2000: PASS
+
+/word (?:[a-zA-Z0-9]+ ){0,10}otherword/
+  word cat dog elephant mussel cow horse canary baboon snake shark otherword: PASS
+  word cat dog elephant mussel cow horse canary baboon snake shark: PASS
+
+/word (?:[a-zA-Z0-9]+ ){0,300}otherword/
+  word cat dog elephant mussel cow horse canary baboon snake shark the quick brown fox and the lazy dog and several other words getting close to thirty by now I hope: PASS
+
+/^(a){0,0}/
+    bcd: FAIL. Actual results: ","
+    abc: FAIL. Actual results: ","
+    aab: FAIL. Actual results: ","
+
+/^(a){0,1}/
+    bcd: FAIL. Actual results: ","
+    abc: PASS
+    aab: PASS
+
+/^(a){0,2}/
+    bcd: FAIL. Actual results: ","
+    abc: PASS
+    aab: PASS
+
+/^(a){0,3}/
+    bcd: FAIL. Actual results: ","
+    abc: PASS
+    aab: PASS
+    aaa: PASS
+
+/^(a){0,}/
+    bcd: FAIL. Actual results: ","
+    abc: PASS
+    aab: PASS
+    aaa: PASS
+    aaaaaaaa: PASS
+
+/^(a){1,1}/
+    bcd: PASS
+    abc: PASS
+    aab: PASS
+
+/^(a){1,2}/
+    bcd: PASS
+    abc: PASS
+    aab: PASS
+
+/^(a){1,3}/
+    bcd: PASS
+    abc: PASS
+    aab: PASS
+    aaa: PASS
+
+/^(a){1,}/
+    bcd: PASS
+    abc: PASS
+    aab: PASS
+    aaa: PASS
+    aaaaaaaa: PASS
+
+/.*\.gif/
+    borfle\nbib.gif\nno: FAIL. Actual results: "borfle\nbib.gif"
+
+/.{0,}\.gif/
+    borfle\nbib.gif\nno: FAIL. Actual results: "borfle\nbib.gif"
+
+/.*\.gif/m
+    borfle\nbib.gif\nno: FAIL. Actual results: "borfle\nbib.gif"
+
+/.*\.gif/s
+    borfle\nbib.gif\nno: FAIL. Actual results: "borfle\nbib.gif"
+
+/.*\.gif/ms
+    borfle\nbib.gif\nno: FAIL. Actual results: "borfle\nbib.gif"
+
+/.*$/
+    borfle\nbib.gif\nno: FAIL. Actual results: "borfle\nbib.gif\nno"
+
+/.*$/m
+    borfle\nbib.gif\nno: FAIL. Actual results: "borfle\nbib.gif\nno"
+
+/.*$/s
+    borfle\nbib.gif\nno: FAIL. Actual results: "borfle\nbib.gif\nno"
+
+/.*$/ms
+    borfle\nbib.gif\nno: FAIL. Actual results: "borfle\nbib.gif\nno"
+
+/.*$/
+    borfle\nbib.gif\nno\n: FAIL. Actual results: "borfle\nbib.gif\nno\n"
+
+/.*$/m
+    borfle\nbib.gif\nno\n: FAIL. Actual results: "borfle\nbib.gif\nno\n"
+
+/.*$/s
+    borfle\nbib.gif\nno\n: FAIL. Actual results: "borfle\nbib.gif\nno\n"
+
+/.*$/ms
+    borfle\nbib.gif\nno\n: FAIL. Actual results: "borfle\nbib.gif\nno\n"
+
+/(.*X|^B)/
+    abcde\n1234Xyz: FAIL. Actual results: "abcde\n1234X,abcde\n1234X"
+    BarFoo: PASS
+    *** Failers
+    abcde\nBar: PASS
+
+/(.*X|^B)/m
+    abcde\n1234Xyz: FAIL. Actual results: "abcde\n1234X,abcde\n1234X"
+    BarFoo: PASS
+    abcde\nBar: FAIL. Actual results: "null"
+
+/(.*X|^B)/s
+    abcde\n1234Xyz: FAIL. Actual results: "abcde\n1234X,abcde\n1234X"
+    BarFoo: PASS
+    *** Failers
+    abcde\nBar: PASS
+
+/(.*X|^B)/ms
+    abcde\n1234Xyz: FAIL. Actual results: "abcde\n1234X,abcde\n1234X"
+    BarFoo: PASS
+    abcde\nBar: FAIL. Actual results: "null"
+
+/(?s)(.*X|^B)/
+FAILED TO COMPILE
+
+/(?s:.*X|^B)/
+FAILED TO COMPILE
+
+/^.*B/
+    **** Failers
+    abc\nB: FAIL. Actual results: "abc\nB"
+
+/(?s)^.*B/
+FAILED TO COMPILE
+
+/(?m)^.*B/
+FAILED TO COMPILE
+
+/(?ms)^.*B/
+FAILED TO COMPILE
+
+/(?ms)^B/
+FAILED TO COMPILE
+
+/(?s)B$/
+FAILED TO COMPILE
+
+/^[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]/
+    123456654321: PASS
+
+/^\d\d\d\d\d\d\d\d\d\d\d\d/
+    123456654321: PASS
+
+/^[\d][\d][\d][\d][\d][\d][\d][\d][\d][\d][\d][\d]/
+    123456654321: PASS
+
+/^[abc]{12}/
+    abcabcabcabc: PASS
+
+/^[a-c]{12}/
+    abcabcabcabc: PASS
+
+/^(a|b|c){12}/
+    abcabcabcabc: PASS
+
+/^[abcdefghijklmnopqrstuvwxy0123456789]/
+    n: PASS
+    *** Failers
+    z: PASS
+
+/abcde{0,0}/
+    abcd: PASS
+    *** Failers
+    abce: PASS
+
+/ab[cd]{0,0}e/
+    abe: PASS
+    *** Failers
+    abcde: PASS
+
+/ab(c){0,0}d/
+    abd: FAIL. Actual results: "abd,"
+    *** Failers
+    abcd: PASS
+
+/a(b*)/
+    a: PASS
+    ab: PASS
+    abbbb: PASS
+    *** Failers
+    bbbbb: PASS
+
+/ab\d{0}e/
+    abe: PASS
+    *** Failers
+    ab1e: PASS
+
+/"([^\\"]+|\\.)*"/
+    the \"quick\" brown fox: FAIL. Actual results: "null"
+    \"the \\\"quick\\\" brown fox\": FAIL. Actual results: "null"
+
+/.*?/g+
+Unsupported modifiers: g+
+
+/\b/g+
+Unsupported modifiers: g+
+
+/\b/+g
+Unsupported modifiers: +g
+
+//g
+    abc: PASS
+    abc: PASS
+    abc: PASS
+    abc: PASS
+
+/<tr([\w\W\s\d][^<>]{0,})><TD([\w\W\s\d][^<>]{0,})>([\d]{0,}\.)(.*)((<BR>([\w\W\s\d][^<>]{0,})|[\s]{0,}))<\/a><\/TD><TD([\w\W\s\d][^<>]{0,})>([\w\W\s\d][^<>]{0,})<\/TD><TD([\w\W\s\d][^<>]{0,})>([\w\W\s\d][^<>]{0,})<\/TD><\/TR>/is
+  <TR BGCOLOR='#DBE9E9'><TD align=left valign=top>43.<a href='joblist.cfm?JobID=94 6735&Keyword='>Word Processor<BR>(N-1286)</a></TD><TD align=left valign=top>Lega lstaff.com</TD><TD align=left valign=top>CA - Statewide</TD></TR>: PASS
+
+/a[^a]b/
+    acb: PASS
+    a\nb: FAIL. Actual results: "null"
+
+/a.b/
+    acb: PASS
+    *** Failers
+    a\nb: PASS
+
+/a[^a]b/s
+    acb: PASS
+    a\nb: FAIL. Actual results: "null"
+
+/a.b/s
+    acb: PASS
+    a\nb: FAIL. Actual results: "null"
+
+/^(b+?|a){1,2}?c/
+    bac: PASS
+    bbac: PASS
+    bbbac: PASS
+    bbbbac: PASS
+    bbbbbac: PASS
+
+/^(b+|a){1,2}?c/
+    bac: PASS
+    bbac: PASS
+    bbbac: PASS
+    bbbbac: PASS
+    bbbbbac: PASS
+
+/(?!\A)x/m
+    x\nb\n: FAIL. Actual results: "x"
+    a\bx\n: PASS
+
+/\x0{ab}/
+     b}: FAIL. Actual results: "null"
+
+/(A|B)*?CD/
+    CD: FAIL. Actual results: "CD,"
+
+/(A|B)*CD/
+    CD: FAIL. Actual results: "CD,"
+
+/(AB)*?\1/
+    ABABAB: FAIL. Actual results: ","
+
+/(AB)*\1/
+    ABABAB: PASS
+
+/(?<!bar)foo/
+FAILED TO COMPILE
+
+/\w{3}(?<!bar)foo/
+FAILED TO COMPILE
+
+/(?<=(foo)a)bar/
+FAILED TO COMPILE
+
+/\Aabc\z/m
+    abc: FAIL. Actual results: "null"
+    *** Failers
+    abc\n: PASS
+    qqq\nabc: PASS
+    abc\nzzz: PASS
+    qqq\nabc\nzzz: PASS
+
+"(?>.*/)foo"
+FAILED TO COMPILE
+
+"(?>.*/)foo"
+FAILED TO COMPILE
+
+/(?>(\.\d\d[1-9]?))\d+/
+FAILED TO COMPILE
+
+/^((?>\w+)|(?>\s+))*$/
+FAILED TO COMPILE
+
+/(\d+)(\w)/
+    12345a: PASS
+    12345+: PASS
+
+/((?>\d+))(\w)/
+FAILED TO COMPILE
+
+/(?>a+)b/
+FAILED TO COMPILE
+
+/((?>a+)b)/
+FAILED TO COMPILE
+
+/(?>(a+))b/
+FAILED TO COMPILE
+
+/(?>b)+/
+FAILED TO COMPILE
+
+/(?>a+|b+|c+)*c/
+FAILED TO COMPILE
+
+/((?>[^()]+)|\([^()]*\))+/
+FAILED TO COMPILE
+
+/\(((?>[^()]+)|\([^()]+\))+\)/ 
+FAILED TO COMPILE
+
+/a(?-i)b/i
+FAILED TO COMPILE
+
+/(a (?x)b c)d e/
+FAILED TO COMPILE
+
+/(a b(?x)c d (?-x)e f)/
+FAILED TO COMPILE
+
+/(a(?i)b)c/
+FAILED TO COMPILE
+
+/a(?i:b)c/
+FAILED TO COMPILE
+
+/a(?i:b)*c/
+FAILED TO COMPILE
+
+/a(?=b(?i)c)\w\wd/
+FAILED TO COMPILE
+
+/(?s-i:more.*than).*million/i
+FAILED TO COMPILE
+
+/(?:(?s-i)more.*than).*million/i
+FAILED TO COMPILE
+
+/(?>a(?i)b+)+c/ 
+FAILED TO COMPILE
+
+/(?=a(?i)b)\w\wc/
+FAILED TO COMPILE
+
+/(?<=a(?i)b)(\w\w)c/
+FAILED TO COMPILE
+
+/(?:(a)|b)(?(1)A|B)/
+FAILED TO COMPILE
+
+/^(a)?(?(1)a|b)+$/
+FAILED TO COMPILE
+
+/^(?(?=abc)\w{3}:|\d\d)$/
+FAILED TO COMPILE
+
+/^(?(?!abc)\d\d|\w{3}:)$/
+FAILED TO COMPILE
+
+/(?(?<=foo)bar|cat)/
+FAILED TO COMPILE
+
+/(?(?<!foo)cat|bar)/
+FAILED TO COMPILE
+
+/( \( )? [^()]+ (?(1) \) |) /x
+Unsupported modifiers: x
+
+/( \( )? [^()]+ (?(1) \) ) /x
+Unsupported modifiers: x
+
+/^(?(2)a|(1)(2))+$/
+FAILED TO COMPILE
+
+/((?i)blah)\s+\1/
+FAILED TO COMPILE
+
+/((?i)blah)\s+(?i:\1)/
+FAILED TO COMPILE
+
+/(?>a*)*/
+FAILED TO COMPILE
+
+/(abc|)+/
+    abc: PASS
+    abcabc: PASS
+    abcabcabc: PASS
+    xyz: PASS
+
+/([a]*)*/
+    a: PASS
+    aaaaa: PASS
+
+/([ab]*)*/
+    a: PASS
+    b: PASS
+    ababab: PASS
+    aaaabcde: PASS
+    bbbb: PASS
+
+/([^a]*)*/
+    b: PASS
+    bbbb: PASS
+    aaa: PASS
+
+/([^ab]*)*/
+    cccc: PASS
+    abab: PASS
+
+/([a]*?)*/
+    a: PASS
+    aaaa: PASS
+
+/([ab]*?)*/
+    a: PASS
+    b: PASS
+    abab: PASS
+    baba: PASS
+
+/([^a]*?)*/
+    b: PASS
+    bbbb: PASS
+    aaa: PASS
+
+/([^ab]*?)*/
+    c: PASS
+    cccc: PASS
+    baba: PASS
+
+/(?>a*)*/
+FAILED TO COMPILE
+
+/((?>a*))*/
+FAILED TO COMPILE
+
+/((?>a*?))*/
+FAILED TO COMPILE
+
+/(?(?=[^a-z]+[a-z])  \d{2}-[a-z]{3}-\d{2}  |  \d{2}-\d{2}-\d{2} ) /x
+Unsupported modifiers: x
+
+/(?<=(foo))bar\1/
+FAILED TO COMPILE
+
+/(?i:saturday|sunday)/
+FAILED TO COMPILE
+
+/(a(?i)bc|BB)x/
+FAILED TO COMPILE
+
+/^([ab](?i)[cd]|[ef])/
+FAILED TO COMPILE
+
+/^(ab|a(?i)[b-c](?m-i)d|x(?i)y|z)/
+FAILED TO COMPILE
+
+/(?<=foo\n)^bar/m
+FAILED TO COMPILE
+
+/(?<=(?<!foo)bar)baz/
+FAILED TO COMPILE
+
+/The case of aaaaaa is missed out below because I think Perl 5.005_02 gets/
+/it wrong; it sets $1 to aaa rather than aa. Compare the following test,/: PASS
+/where it does set $1 to aa when matching aaaaaa./: PASS
+
+/^(a\1?){4}$/
+    a: PASS
+    aa: PASS
+    aaa: PASS
+    aaaa: PASS
+    aaaaa: PASS
+    aaaaaaa: PASS
+    aaaaaaaa: PASS
+    aaaaaaaaa: PASS
+    aaaaaaaaaa: PASS
+    aaaaaaaaaaa: PASS
+    aaaaaaaaaaaa: PASS
+    aaaaaaaaaaaaa: PASS
+    aaaaaaaaaaaaaa: PASS
+    aaaaaaaaaaaaaaa: PASS
+    aaaaaaaaaaaaaaaa: PASS
+
+/^(a\1?)(a\1?)(a\2?)(a\3?)$/
+    a: PASS
+    aa: PASS
+    aaa: PASS
+    aaaa: PASS
+    aaaaa: PASS
+    aaaaaa: PASS
+    aaaaaaa: PASS
+    aaaaaaaa: PASS
+    aaaaaaaaa: PASS
+    aaaaaaaaaa: PASS
+    aaaaaaaaaaa: PASS
+    aaaaaaaaaaaa: PASS
+    aaaaaaaaaaaaa: PASS
+    aaaaaaaaaaaaaa: PASS
+    aaaaaaaaaaaaaaa: PASS
+    aaaaaaaaaaaaaaaa: PASS
+
+/The following tests are taken from the Perl 5.005 test suite; some of them/
+/are compatible with 5.004, but I'd rather not have to sort them out./: PASS
+
+/abc/
+    abc: PASS
+    xabcy: PASS
+    ababc: PASS
+    *** Failers
+    xbc: PASS
+    axc: PASS
+    abx: PASS
+
+/ab*c/
+    abc: PASS
+
+/ab*bc/
+    abc: PASS
+    abbc: PASS
+    abbbbc: PASS
+
+/.{1}/
+    abbbbc: PASS
+
+/.{3,4}/
+    abbbbc: PASS
+
+/ab{0,}bc/
+    abbbbc: PASS
+
+/ab+bc/
+    abbc: PASS
+    *** Failers
+    abc: PASS
+    abq: PASS
+
+/ab{1,}bc/
+
+/ab+bc/
+    abbbbc: PASS
+
+/ab{1,}bc/
+    abbbbc: PASS
+
+/ab{1,3}bc/
+    abbbbc: PASS
+
+/ab{3,4}bc/
+    abbbbc: PASS
+
+/ab{4,5}bc/
+    *** Failers
+    abq: PASS
+    abbbbc: PASS
+
+/ab?bc/
+    abbc: PASS
+    abc: PASS
+
+/ab{0,1}bc/
+    abc: PASS
+
+/ab?bc/
+
+/ab?c/
+    abc: PASS
+
+/ab{0,1}c/
+    abc: PASS
+
+/^abc$/
+    abc: PASS
+    *** Failers
+    abbbbc: PASS
+    abcc: PASS
+
+/^abc/
+    abcc: PASS
+
+/^abc$/
+
+/abc$/
+    aabc: PASS
+    *** Failers
+    aabc: PASS
+    aabcd: PASS
+
+/^/
+    abc: PASS
+
+/$/
+    abc: PASS
+
+/a.c/
+    abc: PASS
+    axc: PASS
+
+/a.*c/
+    axyzc: PASS
+
+/a[bc]d/
+    abd: PASS
+    *** Failers
+    axyzd: PASS
+    abc: PASS
+
+/a[b-d]e/
+    ace: PASS
+
+/a[b-d]/
+    aac: PASS
+
+/a[-b]/
+    a-: PASS
+
+/a[b-]/
+    a-: PASS
+
+/a]/
+    a]: PASS
+
+/a[]]b/
+    a]b: FAIL. Actual results: "null"
+
+/a[^bc]d/
+    aed: PASS
+    *** Failers
+    abd: PASS
+    abd: PASS
+
+/a[^-b]c/
+    adc: PASS
+
+/a[^]b]c/
+    adc: FAIL. Actual results: "null"
+    *** Failers
+    a-c: FAIL. Actual results: "null"
+    a]c: PASS
+
+/\ba\b/
+    a-: PASS
+    -a: PASS
+    -a-: PASS
+
+/\by\b/
+    *** Failers
+    xy: PASS
+    yz: PASS
+    xyz: PASS
+
+/\Ba\B/
+    *** Failers
+    a-: PASS
+    -a: PASS
+    -a-: PASS
+
+/\By\b/
+    xy: PASS
+
+/\by\B/
+    yz: PASS
+
+/\By\B/
+    xyz: PASS
+
+/\w/
+    a: PASS
+
+/\W/
+    -: PASS
+    *** Failers
+    -: PASS
+    a: PASS
+
+/a\sb/
+    a b: PASS
+
+/a\Sb/
+    a-b: PASS
+    *** Failers
+    a-b: PASS
+    a b: PASS
+
+/\d/
+    1: PASS
+
+/\D/
+    -: PASS
+    *** Failers
+    -: PASS
+    1: PASS
+
+/[\w]/
+    a: PASS
+
+/[\W]/
+    -: PASS
+    *** Failers
+    -: PASS
+    a: PASS
+
+/a[\s]b/
+    a b: PASS
+
+/a[\S]b/
+    a-b: PASS
+    *** Failers
+    a-b: PASS
+    a b: PASS
+
+/[\d]/
+    1: PASS
+
+/[\D]/
+    -: PASS
+    *** Failers
+    -: PASS
+    1: PASS
+
+/ab|cd/
+    abc: PASS
+    abcd: PASS
+
+/()ef/
+    def: PASS
+
+/$b/
+
+/a\(b/
+    a(b: PASS
+
+/a\(*b/
+    ab: PASS
+    a((b: PASS
+
+/a\\b/
+    a\b: FAIL. Actual results: "a\b"
+
+/((a))/
+    abc: PASS
+
+/(a)b(c)/
+    abc: PASS
+
+/a+b+c/
+    aabbabc: PASS
+
+/a{1,}b{1,}c/
+    aabbabc: PASS
+
+/a.+?c/
+    abcabc: PASS
+
+/(a+|b)*/
+    ab: PASS
+
+/(a+|b){0,}/
+    ab: PASS
+
+/(a+|b)+/
+    ab: PASS
+
+/(a+|b){1,}/
+    ab: PASS
+
+/(a+|b)?/
+    ab: PASS
+
+/(a+|b){0,1}/
+    ab: PASS
+
+/[^ab]*/
+    cde: PASS
+
+/abc/
+    *** Failers
+    b: PASS
+
+
+FAILED TO COMPILE
+
+
+FAILED TO COMPILE
+
+/([abc])*bcd/
+    abcd: PASS
+
+/a|b|c|d|e/
+    e: PASS
+
+/(a|b|c|d|e)f/
+    ef: PASS
+
+/abcd*efg/
+    abcdefg: PASS
+
+/ab*/
+    xabyabbbz: PASS
+    xayabbbz: PASS
+
+/(ab|cd)e/
+    abcde: PASS
+
+/[abhgefdc]ij/
+    hij: PASS
+
+/^(ab|cd)e/
+
+/(abc|)ef/
+    abcdef: PASS
+
+/(a|b)c*d/
+    abcd: PASS
+
+/(ab|ab*)bc/
+    abc: PASS
+
+/a([bc]*)c*/
+    abc: PASS
+
+/a([bc]*)(c*d)/
+    abcd: PASS
+
+/a([bc]+)(c*d)/
+    abcd: PASS
+
+/a([bc]*)(c+d)/
+    abcd: PASS
+
+/a[bcd]*dcdcde/
+    adcdcde: PASS
+
+/a[bcd]+dcdcde/
+    *** Failers
+    abcde: PASS
+    adcdcde: PASS
+
+/(ab|a)b*c/
+    abc: PASS
+
+/((a)(b)c)(d)/
+    abcd: PASS
+
+/[a-zA-Z_][a-zA-Z0-9_]*/
+    alpha: PASS
+
+/^a(bc+|b[eh])g|.h$/
+    abh: FAIL. Actual results: "bh,"
+
+/(bc+d$|ef*g.|h?i(j|k))/
+    effgz: FAIL. Actual results: "effgz,effgz,"
+    ij: PASS
+    reffgz: FAIL. Actual results: "effgz,effgz,"
+    *** Failers
+    effg: PASS
+    bcdd: PASS
+
+/((((((((((a))))))))))/
+    a: PASS
+
+/((((((((((a))))))))))\10/
+    aa: PASS
+
+/(((((((((a)))))))))/
+    a: PASS
+
+/multiple words of text/
+    *** Failers
+    aa: PASS
+    uh-uh: PASS
+
+/multiple words/
+    multiple words, yeah: PASS
+
+/(.*)c(.*)/
+    abcde: PASS
+
+/\((.*), (.*)\)/
+    (a, b): PASS
+
+/[k]/
+
+/abcd/
+    abcd: PASS
+
+/a(bc)d/
+    abcd: PASS
+
+/a[-]?c/
+    ac: PASS
+
+/(abc)\1/
+    abcabc: PASS
+
+/([a-c]*)\1/
+    abcabc: PASS
+
+/(a)|\1/
+    a: PASS
+    *** Failers: FAIL. Actual results: ","
+    ab: PASS
+    x: FAIL. Actual results: ","
+
+/(([a-c])b*?\2)*/
+    ababbbcbc: PASS
+
+/(([a-c])b*?\2){3}/
+    ababbbcbc: PASS
+
+/((\3|b)\2(a)x)+/
+    aaaxabaxbaaxbbax: FAIL. Actual results: "ax,ax,,a"
+
+/((\3|b)\2(a)){2,}/
+    bbaababbabaaaaabbaaaabba: FAIL. Actual results: "abba,bba,b,a"
+
+/abc/i
+    ABC: PASS
+    XABCY: PASS
+    ABABC: PASS
+    *** Failers
+    aaxabxbaxbbx: PASS
+    XBC: PASS
+    AXC: PASS
+    ABX: PASS
+
+/ab*c/i
+    ABC: PASS
+
+/ab*bc/i
+    ABC: PASS
+    ABBC: PASS
+
+/ab*?bc/i
+    ABBBBC: PASS
+
+/ab{0,}?bc/i
+    ABBBBC: PASS
+
+/ab+?bc/i
+    ABBC: PASS
+
+/ab+bc/i
+    *** Failers
+    ABC: PASS
+    ABQ: PASS
+
+/ab{1,}bc/i
+
+/ab+bc/i
+    ABBBBC: PASS
+
+/ab{1,}?bc/i
+    ABBBBC: PASS
+
+/ab{1,3}?bc/i
+    ABBBBC: PASS
+
+/ab{3,4}?bc/i
+    ABBBBC: PASS
+
+/ab{4,5}?bc/i
+    *** Failers
+    ABQ: PASS
+    ABBBBC: PASS
+
+/ab??bc/i
+    ABBC: PASS
+    ABC: PASS
+
+/ab{0,1}?bc/i
+    ABC: PASS
+
+/ab??bc/i
+
+/ab??c/i
+    ABC: PASS
+
+/ab{0,1}?c/i
+    ABC: PASS
+
+/^abc$/i
+    ABC: PASS
+    *** Failers
+    ABBBBC: PASS
+    ABCC: PASS
+
+/^abc/i
+    ABCC: PASS
+
+/^abc$/i
+
+/abc$/i
+    AABC: PASS
+
+/^/i
+    ABC: PASS
+
+/$/i
+    ABC: PASS
+
+/a.c/i
+    ABC: PASS
+    AXC: PASS
+
+/a.*?c/i
+    AXYZC: PASS
+
+/a.*c/i
+    *** Failers
+    AABC: PASS
+    AXYZD: PASS
+
+/a[bc]d/i
+    ABD: PASS
+
+/a[b-d]e/i
+    ACE: PASS
+    *** Failers
+    ABC: PASS
+    ABD: PASS
+
+/a[b-d]/i
+    AAC: PASS
+
+/a[-b]/i
+    A-: PASS
+
+/a[b-]/i
+    A-: PASS
+
+/a]/i
+    A]: PASS
+
+/a[]]b/i
+    A]B: FAIL. Actual results: "null"
+
+/a[^bc]d/i
+    AED: PASS
+
+/a[^-b]c/i
+    ADC: PASS
+    *** Failers
+    ABD: PASS
+    A-C: PASS
+
+/a[^]b]c/i
+    ADC: FAIL. Actual results: "null"
+
+/ab|cd/i
+    ABC: PASS
+    ABCD: PASS
+
+/()ef/i
+    DEF: PASS
+
+/$b/i
+    *** Failers
+    A]C: PASS
+    B: PASS
+
+/a\(b/i
+    A(B: PASS
+
+/a\(*b/i
+    AB: PASS
+    A((B: PASS
+
+/a\\b/i
+    A\B: FAIL. Actual results: "A\B"
+
+/((a))/i
+    ABC: PASS
+
+/(a)b(c)/i
+    ABC: PASS
+
+/a+b+c/i
+    AABBABC: PASS
+
+/a{1,}b{1,}c/i
+    AABBABC: PASS
+
+/a.+?c/i
+    ABCABC: PASS
+
+/a.*?c/i
+    ABCABC: PASS
+
+/a.{0,5}?c/i
+    ABCABC: PASS
+
+/(a+|b)*/i
+    AB: PASS
+
+/(a+|b){0,}/i
+    AB: PASS
+
+/(a+|b)+/i
+    AB: PASS
+
+/(a+|b){1,}/i
+    AB: PASS
+
+/(a+|b)?/i
+    AB: PASS
+
+/(a+|b){0,1}/i
+    AB: PASS
+
+/(a+|b){0,1}?/i
+    AB: FAIL. Actual results: ","
+
+/[^ab]*/i
+    CDE: PASS
+
+/abc/i
+
+/a*/i
+
+
+FAILED TO COMPILE
+
+/([abc])*bcd/i
+    ABCD: PASS
+
+/a|b|c|d|e/i
+    E: PASS
+
+/(a|b|c|d|e)f/i
+    EF: PASS
+
+/abcd*efg/i
+    ABCDEFG: PASS
+
+/ab*/i
+    XABYABBBZ: PASS
+    XAYABBBZ: PASS
+
+/(ab|cd)e/i
+    ABCDE: PASS
+
+/[abhgefdc]ij/i
+    HIJ: PASS
+
+/^(ab|cd)e/i
+    ABCDE: PASS
+
+/(abc|)ef/i
+    ABCDEF: PASS
+
+/(a|b)c*d/i
+    ABCD: PASS
+
+/(ab|ab*)bc/i
+    ABC: PASS
+
+/a([bc]*)c*/i
+    ABC: PASS
+
+/a([bc]*)(c*d)/i
+    ABCD: PASS
+
+/a([bc]+)(c*d)/i
+    ABCD: PASS
+
+/a([bc]*)(c+d)/i
+    ABCD: PASS
+
+/a[bcd]*dcdcde/i
+    ADCDCDE: PASS
+
+/a[bcd]+dcdcde/i
+
+/(ab|a)b*c/i
+    ABC: PASS
+
+/((a)(b)c)(d)/i
+    ABCD: PASS
+
+/[a-zA-Z_][a-zA-Z0-9_]*/i
+    ALPHA: PASS
+
+/^a(bc+|b[eh])g|.h$/i
+    ABH: FAIL. Actual results: "BH,"
+
+/(bc+d$|ef*g.|h?i(j|k))/i
+    EFFGZ: FAIL. Actual results: "EFFGZ,EFFGZ,"
+    IJ: PASS
+    REFFGZ: FAIL. Actual results: "EFFGZ,EFFGZ,"
+    *** Failers
+    ADCDCDE: PASS
+    EFFG: PASS
+    BCDD: PASS
+
+/((((((((((a))))))))))/i
+    A: PASS
+
+/((((((((((a))))))))))\10/i
+    AA: PASS
+
+/(((((((((a)))))))))/i
+    A: PASS
+
+/(?:(?:(?:(?:(?:(?:(?:(?:(?:(a))))))))))/i
+    A: PASS
+
+/(?:(?:(?:(?:(?:(?:(?:(?:(?:(a|b|c))))))))))/i
+    C: PASS
+
+/multiple words of text/i
+    *** Failers
+    AA: PASS
+    UH-UH: PASS
+
+/multiple words/i
+    MULTIPLE WORDS, YEAH: PASS
+
+/(.*)c(.*)/i
+    ABCDE: PASS
+
+/\((.*), (.*)\)/i
+    (A, B): PASS
+
+/[k]/i
+
+/abcd/i
+    ABCD: PASS
+
+/a(bc)d/i
+    ABCD: PASS
+
+/a[-]?c/i
+    AC: PASS
+
+/(abc)\1/i
+    ABCABC: PASS
+
+/([a-c]*)\1/i
+    ABCABC: PASS
+
+/a(?!b)./
+    abad: PASS
+
+/a(?=d)./
+    abad: PASS
+
+/a(?=c|d)./
+    abad: PASS
+
+/a(?:b|c|d)(.)/
+    ace: PASS
+
+/a(?:b|c|d)*(.)/
+    ace: PASS
+
+/a(?:b|c|d)+?(.)/
+    ace: PASS
+    acdbcdbe: PASS
+
+/a(?:b|c|d)+(.)/
+    acdbcdbe: PASS
+
+/a(?:b|c|d){2}(.)/
+    acdbcdbe: PASS
+
+/a(?:b|c|d){4,5}(.)/
+    acdbcdbe: PASS
+
+/a(?:b|c|d){4,5}?(.)/
+    acdbcdbe: PASS
+
+/((foo)|(bar))*/
+    foobar: PASS
+
+/a(?:b|c|d){6,7}(.)/
+    acdbcdbe: PASS
+
+/a(?:b|c|d){6,7}?(.)/
+    acdbcdbe: PASS
+
+/a(?:b|c|d){5,6}(.)/
+    acdbcdbe: PASS
+
+/a(?:b|c|d){5,6}?(.)/
+    acdbcdbe: PASS
+
+/a(?:b|c|d){5,7}(.)/
+    acdbcdbe: PASS
+
+/a(?:b|c|d){5,7}?(.)/
+    acdbcdbe: PASS
+
+/a(?:b|(c|e){1,2}?|d)+?(.)/
+    ace: PASS
+
+/^(.+)?B/
+    AB: PASS
+
+/^([^a-z])|(\^)$/
+    .: FAIL. Actual results: ".,.,"
+
+/^[<>]&/
+    <&OUT: PASS
+
+/^(a\1?){4}$/
+    aaaaaaaaaa: PASS
+    *** Failers
+    AB: PASS
+    aaaaaaaaa: PASS
+    aaaaaaaaaaa: PASS
+
+/^(a(?(1)\1)){4}$/
+FAILED TO COMPILE
+
+/(?:(f)(o)(o)|(b)(a)(r))*/
+    foobar: PASS
+
+/(?<=a)b/
+FAILED TO COMPILE
+
+/(?<!c)b/
+FAILED TO COMPILE
+
+/(?:..)*a/
+    aba: PASS
+
+/(?:..)*?a/
+    aba: PASS
+
+/^(?:b|a(?=(.)))*\1/
+    abc: PASS
+
+/^(){3,5}/
+    abc: PASS
+
+/^(a+)*ax/
+    aax: PASS
+
+/^((a|b)+)*ax/
+    aax: PASS
+
+/^((a|bc)+)*ax/
+    aax: PASS
+
+/(a|x)*ab/
+    cab: FAIL. Actual results: "ab,"
+
+/(a)*ab/
+    cab: FAIL. Actual results: "ab,"
+
+/(?:(?i)a)b/
+FAILED TO COMPILE
+
+/((?i)a)b/
+FAILED TO COMPILE
+
+/(?:(?i)a)b/
+FAILED TO COMPILE
+
+/((?i)a)b/
+FAILED TO COMPILE
+
+/(?:(?i)a)b/
+FAILED TO COMPILE
+
+/((?i)a)b/
+FAILED TO COMPILE
+
+/(?i:a)b/
+FAILED TO COMPILE
+
+/((?i:a))b/
+FAILED TO COMPILE
+
+/(?i:a)b/
+FAILED TO COMPILE
+
+/((?i:a))b/
+FAILED TO COMPILE
+
+/(?i:a)b/
+FAILED TO COMPILE
+
+/((?i:a))b/
+FAILED TO COMPILE
+
+/(?:(?-i)a)b/i
+FAILED TO COMPILE
+
+/((?-i)a)b/i
+FAILED TO COMPILE
+
+/(?:(?-i)a)b/i
+FAILED TO COMPILE
+
+/((?-i)a)b/i
+FAILED TO COMPILE
+
+/(?:(?-i)a)b/i
+FAILED TO COMPILE
+
+/((?-i)a)b/i
+FAILED TO COMPILE
+
+/(?:(?-i)a)b/i
+FAILED TO COMPILE
+
+/((?-i)a)b/i
+FAILED TO COMPILE
+
+/(?:(?-i)a)b/i
+FAILED TO COMPILE
+
+/((?-i)a)b/i
+FAILED TO COMPILE
+
+/(?-i:a)b/i
+FAILED TO COMPILE
+
+/((?-i:a))b/i
+FAILED TO COMPILE
+
+/(?-i:a)b/i
+FAILED TO COMPILE
+
+/((?-i:a))b/i
+FAILED TO COMPILE
+
+/(?-i:a)b/i
+FAILED TO COMPILE
+
+/((?-i:a))b/i
+FAILED TO COMPILE
+
+/(?-i:a)b/i
+FAILED TO COMPILE
+
+/((?-i:a))b/i
+FAILED TO COMPILE
+
+/(?-i:a)b/i
+FAILED TO COMPILE
+
+/((?-i:a))b/i
+FAILED TO COMPILE
+
+/((?-i:a.))b/i
+FAILED TO COMPILE
+
+/((?s-i:a.))b/i
+FAILED TO COMPILE
+
+/(?:c|d)(?:)(?:a(?:)(?:b)(?:b(?:))(?:b(?:)(?:b)))/
+    cabbbb: PASS
+
+/(?:c|d)(?:)(?:aaaaaaaa(?:)(?:bbbbbbbb)(?:bbbbbbbb(?:))(?:bbbbbbbb(?:)(?:bbbbbbbb)))/
+    caaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb: PASS
+
+/(ab)\d\1/i
+    Ab4ab: PASS
+    ab4Ab: PASS
+
+/foo\w*\d{4}baz/
+    foobar1234baz: PASS
+
+/x(~~)*(?:(?:F)?)?/
+    x~~: PASS
+
+/^a(?#xxx){3}c/
+FAILED TO COMPILE
+
+/^a (?#xxx) (?#yyy) {3}c/x
+Unsupported modifiers: x
+
+/(?<![cd])b/
+FAILED TO COMPILE
+
+/(?<![cd])[ab]/
+FAILED TO COMPILE
+
+/(?<!(c|d))b/
+FAILED TO COMPILE
+
+/(?<!(c|d))[ab]/
+FAILED TO COMPILE
+
+/(?<!cd)[ab]/
+FAILED TO COMPILE
+
+/^(?:a?b?)*$/
+    \: FAIL. Actual results: "null"
+    a: PASS
+    ab: PASS
+    aaa: PASS
+    *** Failers
+    dbcb: PASS
+    a--: PASS
+    aa--: PASS
+
+/((?s)^a(.))((?m)^b$)/
+FAILED TO COMPILE
+
+/((?m)^b$)/
+FAILED TO COMPILE
+
+/(?m)^b/
+FAILED TO COMPILE
+
+/(?m)^(b)/
+FAILED TO COMPILE
+
+/((?m)^b)/
+FAILED TO COMPILE
+
+/\n((?m)^b)/
+FAILED TO COMPILE
+
+/((?s).)c(?!.)/
+FAILED TO COMPILE
+
+/((?s)b.)c(?!.)/
+FAILED TO COMPILE
+
+/^b/
+
+/()^b/
+    *** Failers
+    a\nb\nc\n: PASS
+    a\nb\nc\n: PASS
+
+/((?m)^b)/
+FAILED TO COMPILE
+
+/(?(1)a|b)/
+FAILED TO COMPILE
+
+/(?(1)b|a)/
+FAILED TO COMPILE
+
+/(x)?(?(1)a|b)/
+FAILED TO COMPILE
+
+/(x)?(?(1)b|a)/
+FAILED TO COMPILE
+
+/()?(?(1)b|a)/
+FAILED TO COMPILE
+
+/()(?(1)b|a)/
+FAILED TO COMPILE
+
+/()?(?(1)a|b)/
+FAILED TO COMPILE
+
+/^(\()?blah(?(1)(\)))$/
+FAILED TO COMPILE
+
+/^(\(+)?blah(?(1)(\)))$/
+FAILED TO COMPILE
+
+/(?(?!a)a|b)/
+FAILED TO COMPILE
+
+/(?(?!a)b|a)/
+FAILED TO COMPILE
+
+/(?(?=a)b|a)/
+FAILED TO COMPILE
+
+/(?(?=a)a|b)/
+FAILED TO COMPILE
+
+/(?=(a+?))(\1ab)/
+    aaab: PASS
+
+/^(?=(a+?))\1ab/
+
+/(\w+:)+/
+    one:: PASS
+
+/$(?<=^(a))/
+FAILED TO COMPILE
+
+/(?=(a+?))(\1ab)/
+    aaab: PASS
+
+/^(?=(a+?))\1ab/
+    *** Failers
+    aaab: PASS
+    aaab: PASS
+
+/([\w:]+::)?(\w+)$/
+    abcd: PASS
+    xy:z:::abcd: PASS
+
+/^[^bcd]*(c+)/
+    aexycd: PASS
+
+/(a*)b+/
+    caab: PASS
+
+/([\w:]+::)?(\w+)$/
+    abcd: PASS
+    xy:z:::abcd: PASS
+    *** Failers
+    abcd:: PASS
+    abcd:: PASS
+
+/^[^bcd]*(c+)/
+    aexycd: PASS
+
+/(>a+)ab/
+
+/(?>a+)b/
+FAILED TO COMPILE
+
+/([[:]+)/
+    a:[b]:: PASS
+
+/([[=]+)/
+    a=[b]=: PASS
+
+/([[.]+)/
+    a.[b].: PASS
+
+/((?>a+)b)/
+FAILED TO COMPILE
+
+/(?>(a+))b/
+FAILED TO COMPILE
+
+/((?>[^()]+)|\([^()]*\))+/
+FAILED TO COMPILE
+
+/a\Z/
+    *** Failers
+    aaab: PASS
+    a\nb\n: PASS
+
+/b\Z/
+    a\nb\n: FAIL. Actual results: "null"
+
+/b\z/
+
+/b\Z/
+    a\nb: FAIL. Actual results: "null"
+
+/b\z/
+    a\nb: FAIL. Actual results: "null"
+    *** Failers
+
+/^(?>(?(1)\.|())[^\W_](?>[a-z0-9-]*[^\W_])?)+$/
+FAILED TO COMPILE
+
+/(?>.*)(?<=(abcd|wxyz))/
+FAILED TO COMPILE
+
+/word (?>(?:(?!otherword)[a-zA-Z0-9]+ ){0,30})otherword/
+FAILED TO COMPILE
+
+/word (?>[a-zA-Z0-9]+ ){0,30}otherword/
+FAILED TO COMPILE
+
+/(?<=\d{3}(?!999))foo/
+FAILED TO COMPILE
+
+/(?<=(?!...999)\d{3})foo/
+FAILED TO COMPILE
+
+/(?<=\d{3}(?!999)...)foo/
+FAILED TO COMPILE
+
+/(?<=\d{3}...)(?<!999)foo/
+FAILED TO COMPILE
+
+/<a[\s]+href[\s]*=[\s]*          # find <a href=
+ ([\"\'])?                       # find single or double quote
+ (?(1) (.*?)\1 | ([^\s]+))       # if quote found, match up to next matching
+                                 # quote, otherwise match up to next space
+/isx
+FAILED TO COMPILE
+
+/<a\s+href\s*=\s*                # find <a href=
+ (["'])?                         # find single or double quote
+ (?(1) (.*?)\1 | (\S+))          # if quote found, match up to next matching
+                                 # quote, otherwise match up to next space
+/isx
+FAILED TO COMPILE
+
+/<a\s+href(?>\s*)=(?>\s*)        # find <a href=
+ (["'])?                         # find single or double quote
+ (?(1) (.*?)\1 | (\S+))          # if quote found, match up to next matching
+                                 # quote, otherwise match up to next space
+/isx
+FAILED TO COMPILE
+
+/((Z)+|A)*/
+    ZABCDEFG: PASS
+
+/(Z()|A)*/
+    ZABCDEFG: PASS
+
+/(Z(())|A)*/
+    ZABCDEFG: PASS
+
+/((?>Z)+|A)*/
+FAILED TO COMPILE
+
+/((?>)+|A)*/
+FAILED TO COMPILE
+
+/a*/g
+    abbab: PASS
+    abbab: PASS
+    abbab: PASS
+    abbab: FAIL. Actual results: ""
+    abbab: PASS
+    abbab: PASS
+
+/^[a-\d]/
+    abcde: PASS
+    -things: PASS
+    0digit: PASS
+    *** Failers
+    bcdef: PASS
+
+/^[\d-a]/
+    abcde: PASS
+    -things: PASS
+    0digit: PASS
+    *** Failers
+    bcdef: PASS
+
+/[[:space:]]+/
+    > 	
+<: FAIL. Actual results: "null"
+
+/[[:blank:]]+/
+    > 	
+<: FAIL. Actual results: "null"
+
+/[\s]+/
+    > 	
+<: FAIL. Actual results: " 	
+"
+
+/\s+/
+    > 	
+<: FAIL. Actual results: " 	
+"
+
+/ab/x
+Unsupported modifiers: x
+
+/(?!\A)x/m
+  a\nxb\n: PASS
+
+/(?!^)x/m
+  a\nxb\n: FAIL. Actual results: "x"
+
+/abc\Qabc\Eabc/
+    abcabcabc: FAIL. Actual results: "null"
+
+/abc\Q(*+|\Eabc/
+FAILED TO COMPILE
+
+/   abc\Q abc\Eabc/x
+Unsupported modifiers: x
+
+/abc#comment
+    \Q#not comment
+    literal\E/x
+FAILED TO COMPILE
+
+/abc#comment
+    \Q#not comment
+    literal/x
+FAILED TO COMPILE
+
+/abc#comment
+    \Q#not comment
+    literal\E #more comment
+    /x
+FAILED TO COMPILE
+
+/abc#comment
+    \Q#not comment
+    literal\E #more comment/x
+FAILED TO COMPILE
+
+/\Qabc\$xyz\E/
+    abc\\\$xyz: FAIL. Actual results: "null"
+
+/\Qabc\E\$\Qxyz\E/
+    abc\$xyz: FAIL. Actual results: "null"
+
+/\Gabc/
+    abc: FAIL. Actual results: "null"
+    *** Failers
+    xyzabc: PASS
+
+/\Gabc./g
+    abc1abc2xyzabc3: FAIL. Actual results: "null"
+    abc1abc2xyzabc3: FAIL. Actual results: "null"
+
+/abc./g
+    abc1abc2xyzabc3: PASS
+    abc1abc2xyzabc3: PASS
+    abc1abc2xyzabc3: PASS
+
+/a(?x: b c )d/
+FAILED TO COMPILE
+
+/((?x)x y z | a b c)/
+FAILED TO COMPILE
+
+/(?i)AB(?-i)C/
+FAILED TO COMPILE
+
+/((?i)AB(?-i)C|D)E/
+FAILED TO COMPILE
+
+/(.*)\d+\1/
+    abc123abc: PASS
+    abc123bc: PASS
+
+/(.*)\d+\1/s
+    abc123abc: PASS
+    abc123bc: PASS
+
+/((.*))\d+\1/
+    abc123abc: PASS
+    abc123bc: PASS
+
+/-- This tests for an IPv6 address in the form where it can have up to --/
+/-- eight components, one and only one of which is empty. This must be --/: PASS
+/-- an internal component. --/: PASS
+
+/^(?!:)                       # colon disallowed at start
+  (?:                         # start of item
+    (?: [0-9a-f]{1,4} |       # 1-4 hex digits or
+    (?(1)0 | () ) )           # if null previously matched, fail; else null
+    :                         # followed by colon
+  ){1,7}                      # end item; 1-7 of them required               
+  [0-9a-f]{1,4} $             # final hex number at end of string
+  (?(1)|.)                    # check that there was an empty component
+  /xi
+FAILED TO COMPILE
+
+/[z\Qa-d]\E]/
+    z: FAIL. Actual results: "null"
+    a: FAIL. Actual results: "null"
+    -: FAIL. Actual results: "null"
+    d: FAIL. Actual results: "null"
+    ]: FAIL. Actual results: "null"
+    *** Failers: FAIL. Actual results: "null"
+    b: PASS
+
+/[\z\C]/
+    z: PASS
+    C: PASS
+
+/\M/
+    M: PASS
+
+/(a+)*b/
+    aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa: PASS
+
+/(?i)reg(?:ul(?:[aä]|ae)r|ex)/
+FAILED TO COMPILE
+
+/Åæåä[à-ÿÀ-ß]+/
+    Åæåäà: PASS
+    Åæåäÿ: PASS
+    ÅæåäÀ: PASS
+    Åæåäß: PASS
+
+/(?<=Z)X./
+FAILED TO COMPILE
+
+/ab cd (?x) de fg/
+FAILED TO COMPILE
+
+/ab cd(?x) de fg/
+FAILED TO COMPILE
+
+/(?<![^f]oo)(bar)/
+FAILED TO COMPILE
+
+/(?<![^f])X/
+FAILED TO COMPILE
+
+/(?<=[^f])X/
+FAILED TO COMPILE
+
+/^/mg
+    a\nb\nc\n: PASS
+    a\nb\nc\n: PASS
+    a\nb\nc\n: PASS
+    \: PASS
+
+/(?<=C\n)^/mg
+FAILED TO COMPILE
+
+/(?:(?(1)a|b)(X))+/
+FAILED TO COMPILE
+
+/(?:(?(1)\1a|b)(X|Y))+/
+FAILED TO COMPILE
+
+/()()()()()()()()()(?:(?(10)\10a|b)(X|Y))+/
+FAILED TO COMPILE
+
+/[[,abc,]+]/
+    abc]: PASS
+    a,b]: PASS
+    [a,b,c]: PASS
+
+/(?-x: )/x
+Unsupported modifiers: x
+
+"(?x)(?-x: \s*#\s*)"
+FAILED TO COMPILE
+
+"(?x-is)(?:(?-ixs) \s*#\s*) include"
+FAILED TO COMPILE
+
+/a*b*\w/
+    aaabbbb: PASS
+    aaaa: PASS
+    a: PASS
+
+/a*b?\w/
+    aaabbbb: PASS
+    aaaa: PASS
+    a: PASS
+
+/a*b{0,4}\w/
+    aaabbbb: PASS
+    aaaa: PASS
+    a: PASS
+
+/a*b{0,}\w/
+    aaabbbb: PASS
+    aaaa: PASS
+    a: PASS
+
+/a*\d*\w/
+    0a: PASS
+    a: PASS
+
+/a*b *\w/x
+Unsupported modifiers: x
+
+/a*b#comment
+  *\w/x
+FAILED TO COMPILE
+
+/a* b *\w/x
+Unsupported modifiers: x
+
+/^\w+=.*(\\\n.*)*/
+    abc=xyz\\\npqr: FAIL. Actual results: "abc=xyz\\\npqr,"
+
+/(?=(\w+))\1:/
+    abcd:: FAIL. Actual results: "null"
+
+/^(?=(\w+))\1:/
+    abcd:: PASS
+
+/^\Eabc/
+    abc: FAIL. Actual results: "null"
+
+/^[\Eabc]/
+    a: PASS
+    ** Failers: PASS
+    E: FAIL. Actual results: "E"
+
+/^[a-\Ec]/
+FAILED TO COMPILE
+
+/^[a\E\E-\Ec]/
+    b: FAIL. Actual results: "null"
+    ** Failers: PASS
+    -: PASS
+    E: FAIL. Actual results: "E"
+
+/^[\E\Qa\E-\Qz\E]+/
+    b: FAIL. Actual results: "null"
+    ** Failers: PASS
+    -: PASS
+
+/^[a\Q]bc\E]/
+    a: FAIL. Actual results: "null"
+    ]: FAIL. Actual results: "null"
+    c: FAIL. Actual results: "null"
+
+/^[a-\Q\E]/
+FAILED TO COMPILE
+
+/^(a()*)*/
+    aaaa: FAIL. Actual results: "a,a,"
+
+/^(?:a(?:(?:))*)*/
+    aaaa: FAIL. Actual results: "a"
+
+/^(a()+)+/
+    aaaa: PASS
+
+/^(?:a(?:(?:))+)+/
+    aaaa: PASS
+
+/(a){0,3}(?(1)b|(c|))*D/
+FAILED TO COMPILE
+
+/(a|)*\d/
+  aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa: PASS
+  aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa4: PASS
+
+/(?>a|)*\d/
+FAILED TO COMPILE
+
+/(?:a|)*\d/
+  aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa: PASS
+  aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa4: PASS
+
+/\Z/g
+  abc\n: FAIL. Actual results: "null"
+  abc\n: FAIL. Actual results: "null"
+
+/^(?s)(?>.*)(?<!\n)/
+FAILED TO COMPILE
+
+/^(?![^\n]*\n\z)/
+  abc: PASS
+  abc\n: FAIL. Actual results: ""
+
+/\z(?<!\n)/
+FAILED TO COMPILE
+
+/(.*(.)?)*/
+    abcd: FAIL. Actual results: "abcd,,"
+
+/( (A | (?(1)0|) )*   )/x
+Unsupported modifiers: x
+
+/( ( (?(1)0|) )*   )/x
+Unsupported modifiers: x
+
+/(  (?(1)0|)*   )/x
+Unsupported modifiers: x
+
+/[[:abcd:xyz]]/
+    a]: PASS
+    :]: PASS
+
+/[abc[:x\]pqr]/
+    a: PASS
+    [: PASS
+    :: PASS
+    ]: PASS
+    p: PASS
+
+DONE
+

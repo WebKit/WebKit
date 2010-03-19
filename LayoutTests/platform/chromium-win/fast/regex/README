@@ -1,0 +1,14 @@
+early-acid3-86
+------------------------
+Only differ in error message.
+
+test1
+------------------------
+/^\ca\cA\c[\c{\c:/ 
+is a syntactically invalid JavaScript regular expression according to
+the spec and we therefore reject it.
+
+malformed-escapes
+--------------------------
+The outcome of this test depends on a bug in Safari's implementation
+of regexp \c.

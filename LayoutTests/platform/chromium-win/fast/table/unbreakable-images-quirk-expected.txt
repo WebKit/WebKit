@@ -1,0 +1,72 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 83x19
+          text run at (0,0) width 83: "No line break"
+      RenderTable {TABLE} at (0,20) size 115x61 [bgcolor=#C0C0C0]
+        RenderTableSection {TBODY} at (0,0) size 115x61
+          RenderTableRow {TR} at (0,2) size 115x57
+            RenderTableCell {TD} at (2,2) size 111x57 [r=0 c=0 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 20x50 [bgcolor=#ADD8E6]
+              RenderText {#text} at (21,36) size 69x19
+                text run at (21,36) width 69: "loremipsum"
+              RenderImage {IMG} at (90,1) size 20x50 [bgcolor=#ADD8E6]
+              RenderText {#text} at (0,0) size 0x0
+      RenderBlock {HR} at (0,89) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,99) size 784x20
+        RenderText {#text} at (0,0) size 83x19
+          text run at (0,0) width 83: "No line break"
+      RenderTable {TABLE} at (0,119) size 95x61 [bgcolor=#C0C0C0]
+        RenderTableSection {TBODY} at (0,0) size 95x61
+          RenderTableRow {TR} at (0,2) size 95x57
+            RenderTableCell {TD} at (2,2) size 91x57 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,36) size 69x19
+                text run at (1,36) width 69: "loremipsum"
+              RenderImage {IMG} at (70,1) size 20x50 [bgcolor=#ADD8E6]
+              RenderText {#text} at (0,0) size 0x0
+      RenderBlock {HR} at (0,188) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,198) size 784x20
+        RenderText {#text} at (0,0) size 143x19
+          text run at (0,0) width 143: "Line break after the \"a\"."
+      RenderTable {TABLE} at (0,218) size 95x81 [bgcolor=#C0C0C0]
+        RenderTableSection {TBODY} at (0,0) size 95x81
+          RenderTableRow {TR} at (0,2) size 95x77
+            RenderTableCell {TD} at (2,2) size 91x77 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 69x74
+                text run at (1,1) width 7: "a"
+                text run at (1,56) width 69: "loremipsum"
+              RenderImage {IMG} at (70,21) size 20x50 [bgcolor=#ADD8E6]
+              RenderText {#text} at (0,0) size 0x0
+      RenderBlock {HR} at (0,307) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,317) size 784x20
+        RenderText {#text} at (0,0) size 143x19
+          text run at (0,0) width 143: "Line break after the \"a\"."
+      RenderTable {TABLE} at (0,337) size 115x81 [bgcolor=#C0C0C0]
+        RenderTableSection {TBODY} at (0,0) size 115x81
+          RenderTableRow {TR} at (0,2) size 115x77
+            RenderTableCell {TD} at (2,2) size 111x77 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 7x19
+                text run at (1,1) width 7: "a"
+              RenderImage {IMG} at (1,21) size 20x50 [bgcolor=#ADD8E6]
+              RenderText {#text} at (21,56) size 69x19
+                text run at (21,56) width 69: "loremipsum"
+              RenderImage {IMG} at (90,21) size 20x50 [bgcolor=#ADD8E6]
+              RenderText {#text} at (0,0) size 0x0
+      RenderBlock {HR} at (0,426) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,436) size 784x20
+        RenderText {#text} at (0,0) size 175x19
+          text run at (0,0) width 175: "Line break after \"wideword\"."
+      RenderTable {TABLE} at (0,456) size 115x81 [bgcolor=#C0C0C0]
+        RenderTableSection {TBODY} at (0,0) size 115x81
+          RenderTableRow {TR} at (0,2) size 115x77
+            RenderTableCell {TD} at (2,2) size 111x77 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 61x19
+                text run at (1,1) width 61: "wideword"
+              RenderImage {IMG} at (1,21) size 20x50 [bgcolor=#ADD8E6]
+              RenderText {#text} at (21,56) size 69x19
+                text run at (21,56) width 69: "loremipsum"
+              RenderImage {IMG} at (90,21) size 20x50 [bgcolor=#ADD8E6]
+              RenderText {#text} at (0,0) size 0x0

@@ -1,0 +1,28 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 164x19
+          text run at (0,0) width 164: "This is a regression test for "
+        RenderInline {I} at (0,0) size 776x39
+          RenderInline {A} at (0,0) size 350x19 [color=#0000EE]
+            RenderText {#text} at (164,0) size 350x19
+              text run at (164,0) width 350: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9652"
+          RenderText {#text} at (514,0) size 776x39
+            text run at (514,0) width 4: " "
+            text run at (518,0) width 258: "Assertion failure when changing an RTL"
+            text run at (0,20) width 160: "table cell to display:none"
+        RenderText {#text} at (160,20) size 4x19
+          text run at (160,20) width 4: "."
+      RenderBlock {HR} at (0,56) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,74) size 784x20
+        RenderText {#text} at (0,0) size 245x19
+          text run at (0,0) width 245: "No assertion failure means TEST PASS."
+      RenderTable {TABLE} at (0,110) size 48x28 [border: (1px solid #008000)]
+        RenderTableSection {TBODY} at (1,1) size 46x26
+          RenderTableRow {TR} at (0,2) size 46x22
+            RenderTableCell {TD} at (2,2) size 42x22 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 40x19
+                text run at (1,1) width 40: "Lorem"

@@ -1,0 +1,7 @@
+This file documents why the various tests have been rebaselined.
+
+002
+external-script-document-write_2
+script_extra_close
+------------------------
+Only error message differ.

@@ -1,0 +1,113 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 51x19
+          text run at (0,0) width 51: "Test for "
+        RenderInline {I} at (0,0) size 644x19
+          RenderInline {A} at (0,0) size 305x19 [color=#0000EE]
+            RenderText {#text} at (51,0) size 305x19
+              text run at (51,0) width 305: "http://bugs.webkit.org/show_bug.cgi?id=14395"
+          RenderText {#text} at (356,0) size 339x19
+            text run at (356,0) width 4: " "
+            text run at (360,0) width 335: "When a <p> is inside <li> two <BR>s are rendered"
+        RenderText {#text} at (695,0) size 4x19
+          text run at (695,0) width 4: "."
+      RenderBlock {P} at (0,36) size 784x20
+        RenderText {#text} at (0,0) size 453x19
+          text run at (0,0) width 453: "In all of the following, the bullets should be lined up with the first line of text."
+      RenderBlock {UL} at (0,72) size 784x20
+        RenderListItem {LI} at (40,0) size 744x20
+          RenderBlock (anonymous) at (0,0) size 744x0
+            RenderInline {SPAN} at (0,0) size 0x0
+              RenderText {#text} at (0,0) size 0x0
+          RenderBlock (anonymous) at (0,0) size 744x20
+            RenderBlock {DIV} at (0,0) size 744x20
+              RenderListMarker at (-18,0) size 7x19: bullet
+              RenderText {#text} at (0,0) size 25x19
+                text run at (0,0) width 25: "item"
+          RenderBlock (anonymous) at (0,20) size 744x0
+            RenderInline {SPAN} at (0,0) size 0x0
+      RenderBlock {UL} at (0,108) size 784x20
+        RenderListItem {LI} at (40,0) size 744x20
+          RenderBlock (anonymous) at (0,0) size 744x0
+            RenderInline {SPAN} at (0,0) size 0x0
+              RenderText {#text} at (0,0) size 0x0
+            RenderText {#text} at (0,0) size 0x0
+          RenderBlock {DIV} at (0,0) size 744x20
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 25x19
+              text run at (0,0) width 25: "item"
+      RenderBlock {UL} at (0,144) size 784x20
+        RenderListItem {LI} at (40,0) size 744x20
+          RenderBlock (anonymous) at (0,0) size 744x0
+            RenderInline {SPAN} at (0,0) size 0x0
+              RenderText {#text} at (0,0) size 0x0
+              RenderInline {I} at (0,0) size 0x0
+                RenderText {#text} at (0,0) size 0x0
+          RenderBlock (anonymous) at (0,0) size 744x20
+            RenderBlock {DIV} at (0,0) size 744x20
+              RenderListMarker at (-18,0) size 7x19: bullet
+              RenderText {#text} at (0,0) size 28x19
+                text run at (0,0) width 28: "item"
+          RenderBlock (anonymous) at (0,20) size 744x0
+            RenderInline {SPAN} at (0,0) size 0x0
+              RenderInline {I} at (0,0) size 0x0
+              RenderText {#text} at (0,0) size 0x0
+            RenderText {#text} at (0,0) size 0x0
+      RenderBlock {UL} at (0,180) size 784x40
+        RenderListItem {LI} at (40,0) size 744x40
+          RenderBlock (anonymous) at (0,0) size 744x20
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderInline {SPAN} at (0,0) size 39x19
+              RenderInline (generated) at (0,0) size 39x19
+                RenderText at (0,0) size 39x19
+                  text run at (0,0) width 39: "before"
+              RenderText {#text} at (0,0) size 0x0
+          RenderBlock (anonymous) at (0,20) size 744x20
+            RenderBlock {DIV} at (0,0) size 744x20
+              RenderText {#text} at (0,0) size 25x19
+                text run at (0,0) width 25: "item"
+          RenderBlock (anonymous) at (0,40) size 744x0
+            RenderInline {SPAN} at (0,0) size 0x0
+      RenderBlock {UL} at (0,236) size 784x40
+        RenderListItem {LI} at (40,0) size 744x40
+          RenderBlock (anonymous) at (0,0) size 744x0
+            RenderInline {SPAN} at (0,0) size 0x0
+          RenderBlock (anonymous) at (0,0) size 744x20
+            RenderBlock {UL} at (0,0) size 744x20
+              RenderListItem {LI} at (40,0) size 704x20
+                RenderListMarker at (-58,0) size 7x19: bullet
+                RenderListMarker at (-18,0) size 7x19: white bullet
+                RenderText {#text} at (0,0) size 25x19
+                  text run at (0,0) width 25: "item"
+          RenderBlock (anonymous) at (0,20) size 744x20
+            RenderInline {SPAN} at (0,0) size 0x0
+            RenderBR {BR} at (0,0) size 0x19
+      RenderBlock {UL} at (0,292) size 784x40
+        RenderListItem {LI} at (40,0) size 744x40
+          RenderBlock {DIV} at (0,0) size 744x20
+            RenderBlock {UL} at (0,0) size 744x20
+              RenderListItem {LI} at (40,0) size 704x20
+                RenderListMarker at (-58,0) size 7x19: bullet
+                RenderListMarker at (-18,0) size 7x19: white bullet
+                RenderText {#text} at (0,0) size 25x19
+                  text run at (0,0) width 25: "item"
+          RenderBlock (anonymous) at (0,20) size 744x20
+            RenderBR {BR} at (0,0) size 0x19
+      RenderBlock {P} at (0,348) size 784x20
+        RenderText {#text} at (0,0) size 494x19
+          text run at (0,0) width 494: "In this case, the solid bullet should be one line above the hollow bullet and the text."
+      RenderBlock {UL} at (0,384) size 784x60
+        RenderListItem {LI} at (40,0) size 744x60
+          RenderBlock (anonymous) at (0,0) size 744x20
+            RenderListMarker at (-18,0) size 7x19: bullet
+          RenderBlock {UL} at (0,20) size 744x20
+            RenderListItem {LI} at (40,0) size 704x20
+              RenderListMarker at (-18,0) size 7x19: white bullet
+              RenderText {#text} at (0,0) size 25x19
+                text run at (0,0) width 25: "item"
+          RenderBlock (anonymous) at (0,40) size 744x20
+            RenderBR {BR} at (0,0) size 0x19
