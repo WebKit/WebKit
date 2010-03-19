@@ -190,7 +190,7 @@ reviewers_list = [
     Reviewer("Darin Adler", "darin@apple.com", "darin"),
     Reviewer("Darin Fisher", ["fishd@chromium.org", "darin@chromium.org"], "fishd"),
     Reviewer("David Harrison", "harrison@apple.com", "harrison"),
-    Reviewer("David Hyatt", "hyatt@apple.com", "harrison"),
+    Reviewer("David Hyatt", "hyatt@apple.com", "hyatt"),
     Reviewer("David Kilzer", ["ddkilzer@webkit.org", "ddkilzer@apple.com"], "ddkilzer"),
     Reviewer("David Levin", "levin@chromium.org", "dave_levin"),
     Reviewer("Dimitri Glazkov", "dglazkov@chromium.org", "dglazkov"),
