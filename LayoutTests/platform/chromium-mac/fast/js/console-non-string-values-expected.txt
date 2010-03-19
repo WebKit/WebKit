@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: line 12: I am a string
+CONSOLE MESSAGE: line 13: 42
+Should see two console messages, the first a string, and the second a number.
+PASS successfullyParsed is true
+
+TEST COMPLETE

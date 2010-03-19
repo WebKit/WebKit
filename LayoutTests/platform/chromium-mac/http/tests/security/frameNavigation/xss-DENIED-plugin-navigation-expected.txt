@@ -1,0 +1,21 @@
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to initiate a navigation change for frame with URL http://127.0.0.1:8000/security/resources/cross-frame-iframe.html from frame with URL http://localhost:8000/security/frameNavigation/resources/frame-with-plugin-to-navigate.html.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to initiate a navigation change for frame with URL http://127.0.0.1:8000/security/resources/cross-frame-iframe.html from frame with URL http://localhost:8000/security/frameNavigation/resources/frame-with-plugin-to-navigate.html.
+
+ 
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+
+Frame-with-plugin-to-navigate
+
+localhost
+
+Test PASSED
+
+
+--------
+Frame: 'toNavigate'
+--------
+Inner iframe.

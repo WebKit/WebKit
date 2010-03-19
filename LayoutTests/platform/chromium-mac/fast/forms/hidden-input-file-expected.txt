@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,1) size 524x18
+        text run at (0,1) width 524: "This tests that the whole file input control is hidden when visibility is set to hidden. "
+      RenderFileUploadControl {INPUT} at (526,2) size 237x18 "No file chosen"
+        RenderButton {INPUT} at (0,0) size 78x18 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (8,2) size 62x13
+            RenderText at (0,0) size 62x13
+              text run at (0,0) width 62: "Choose File"
+      RenderText {#text} at (0,0) size 0x0

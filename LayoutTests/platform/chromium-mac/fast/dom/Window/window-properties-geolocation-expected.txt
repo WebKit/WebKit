@@ -1,0 +1,3 @@
+This test dumps all of the properties that are reachable from the window.clientInformation.geolocation object, along with their types.
+
+window.clientInformation.geolocation [undefined]

@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: line 23: Uncaught TypeError: Cannot read property 'length' of undefined
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x34
+  RenderBlock {HTML} at (0,0) size 800x34
+    RenderBody {BODY} at (8,8) size 784x18
+      RenderBlock {DIV} at (0,0) size 784x18 [color=#FF0000] [bgcolor=#FF0000]
+        RenderText {#text} at (0,0) size 362x18
+          text run at (0,0) width 167: "This text should be green. "
+          text run at (167,0) width 195: "There should be no red visible."

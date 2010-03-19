@@ -1,0 +1,6 @@
+KCanvasResource {id="filter1" [type=FILTER]  [bounding box=at (0,0) size 0x0] [bounding box mode=0]}
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 400x400
+  RenderSVGRoot {svg} at (0,0) size 400x400
+    RenderSVGContainer {g} at (0,0) size 400x400 [filter=filter1]

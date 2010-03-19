@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 9: Uncaught Error: HIERARCHY_REQUEST_ERR: DOM Exception 3
+This tests that we are getting the correct message for DOM Exception 3: HIERARCHY_REQUEST_ERR.
