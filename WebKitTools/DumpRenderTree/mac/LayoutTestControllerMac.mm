@@ -429,7 +429,7 @@ void LayoutTestController::setSelectTrailingWhitespaceEnabled(bool flag)
     [[mainFrame webView] setSelectTrailingWhitespaceEnabled:flag];
 }
 
-static const CFTimeInterval waitToDumpWatchdogInterval = 15.0;
+static const CFTimeInterval waitToDumpWatchdogInterval = 30.0;
 
 static void waitUntilDoneWatchdogFired(CFRunLoopTimerRef timer, void* info)
 {

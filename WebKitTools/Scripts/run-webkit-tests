@@ -148,8 +148,8 @@ my $tmpDir = "/tmp";
 my $testResultsDirectory = File::Spec->catfile($tmpDir, "layout-test-results");
 my $testsPerDumpTool = 1000;
 my $threaded = 0;
-# DumpRenderTree has an internal timeout of 15 seconds, so this must be > 15.
-my $timeoutSeconds = 20;
+# DumpRenderTree has an internal timeout of 30 seconds, so this must be > 30.
+my $timeoutSeconds = 35;
 my $tolerance = 0;
 my $treatSkipped = "default";
 my $useRemoteLinksToTests = 0;
