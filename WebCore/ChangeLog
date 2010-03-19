@@ -1,3 +1,18 @@
+2010-03-18  Chris Evans  <cevans@chromium.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Fix a minor crash with mismatched array sizes in SVG animation
+        elements.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35606
+
+        Test: svg/animations/keypoints-mismatch.svg
+
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::startedActiveInterval):
+        Globally apply validations relevant to all animation types.
+
 2010-03-18  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by Adam Barth.
