@@ -32,7 +32,7 @@ from committers import CommitterList, Committer, Reviewer
 class CommittersTest(unittest.TestCase):
 
     def test_committer_lookup(self):
-        committer = Committer('Test One', 'one@test.com')
+        committer = Committer('Test One', 'one@test.com', 'one')
         reviewer = Reviewer('Test Two', ['two@test.com', 'two@rad.com', 'so_two@gmail.com'])
         committer_list = CommitterList(committers=[committer], reviewers=[reviewer])
 
@@ -60,6 +60,8 @@ class CommittersTest(unittest.TestCase):
 
         # Test that emails returns a list.
         self.assertEqual(committer.emails, ['one@test.com'])
+
+        self.assertEqual(committer.irc_nickname, 'one')
 
         # Test that committers returns committers and reviewers and reviewers() just reviewers.
         self.assertEqual(committer_list.committers(), [committer, reviewer])

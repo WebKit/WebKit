@@ -31,12 +31,13 @@
 
 class Committer:
 
-    def __init__(self, name, email_or_emails):
+    def __init__(self, name, email_or_emails, irc_nickname=None):
         self.full_name = name
         if isinstance(email_or_emails, str):
             self.emails = [email_or_emails]
         else:
             self.emails = email_or_emails
+        self.irc_nickname = irc_nickname
         self.can_review = False
 
     def bugzilla_email(self):
@@ -50,8 +51,8 @@ class Committer:
 
 class Reviewer(Committer):
 
-    def __init__(self, name, email_or_emails):
-        Committer.__init__(self, name, email_or_emails)
+    def __init__(self, name, email_or_emails, irc_nickname=None):
+        Committer.__init__(self, name, email_or_emails, irc_nickname)
         self.can_review = True
 
 
