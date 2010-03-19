@@ -312,6 +312,30 @@ static void test_webkit_web_view_destroy()
     gtk_widget_destroy(window);
 }
 
+static void test_webkit_web_view_window_features()
+{
+    GtkWidget* window;
+    GtkWidget* web_view;
+    
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    web_view = webkit_web_view_new();
+    
+    gtk_container_add(GTK_CONTAINER(window), web_view);
+    
+    gtk_widget_show_all(window);
+    
+    loop = g_main_loop_new(NULL, TRUE);
+
+    g_signal_connect(window, "map-event",
+                     G_CALLBACK(map_event_cb), loop);
+    g_main_loop_run(loop);
+    
+    /* Bug #36144 */
+    g_object_set(G_OBJECT(web_view), "window-features", NULL, NULL);
+    
+    gtk_widget_destroy(window);
+}    
+
 int main(int argc, char** argv)
 {
     SoupServer* server;
@@ -339,6 +363,7 @@ int main(int argc, char** argv)
     g_test_add_func("/webkit/webview/adjustments", test_webkit_web_view_adjustments);
     g_test_add_func("/webkit/webview/destroy", test_webkit_web_view_destroy);
     g_test_add_func("/webkit/webview/grab_focus", test_webkit_web_view_grab_focus);
+    g_test_add_func("/webkit/webview/window-features", test_webkit_web_view_window_features);
 
     return g_test_run ();
 }

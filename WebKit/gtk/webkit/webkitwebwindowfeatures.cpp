@@ -422,19 +422,24 @@ WebKitWebWindowFeatures* webkit_web_window_features_new_from_core_features(const
  */
 gboolean webkit_web_window_features_equal(WebKitWebWindowFeatures* features1, WebKitWebWindowFeatures* features2)
 {
+    if (features1 == features2)
+        return TRUE;
+    if (!features1 || !features2)
+        return FALSE; 
+    
     WebKitWebWindowFeaturesPrivate* priv1 = features1->priv;
     WebKitWebWindowFeaturesPrivate* priv2 = features2->priv;
 
-    if((priv1->x == priv2->x) &&
-       (priv1->y == priv2->y) &&
-       (priv1->width == priv2->width) &&
-       (priv1->height == priv2->height) &&
-       (priv1->toolbar_visible == priv2->toolbar_visible) &&
-       (priv1->statusbar_visible == priv2->statusbar_visible) &&
-       (priv1->scrollbar_visible == priv2->scrollbar_visible) &&
-       (priv1->menubar_visible == priv2->menubar_visible) &&
-       (priv1->locationbar_visible == priv2->locationbar_visible) &&
-       (priv1->fullscreen == priv2->fullscreen))
+    if ((priv1->x == priv2->x)
+        && (priv1->y == priv2->y)
+        && (priv1->width == priv2->width)
+        && (priv1->height == priv2->height)
+        && (priv1->toolbar_visible == priv2->toolbar_visible)
+        && (priv1->statusbar_visible == priv2->statusbar_visible)
+        && (priv1->scrollbar_visible == priv2->scrollbar_visible)
+        && (priv1->menubar_visible == priv2->menubar_visible)
+        && (priv1->locationbar_visible == priv2->locationbar_visible)
+        && (priv1->fullscreen == priv2->fullscreen))
         return TRUE;
     return FALSE;
 }

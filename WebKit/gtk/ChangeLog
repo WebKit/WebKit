@@ -1,3 +1,20 @@
+2010-03-18  Philip Chimento  <philip.chimento@gmail.com>
+
+        Reviewed by Oliver Hunt.
+
+        Setting the GObject WebKitWebView property 'window-features' to NULL
+        causes a crash. 
+        https://bugs.webkit.org/show_bug.cgi?id=36144
+
+        * tests/testwebview.c: Add unit test for this bug.
+        * webkit/webkitwebview.cpp: Don't allow the 'window-features' property
+        to be set to NULL.
+        * webkit/webkitwebwindowfeatures.cpp: 
+        (webkit_web_window_features_equal): Don't examine the members of either
+        web_window_features argument if either is NULL, just return that they
+        are not equal. Additionally, if they are the same object, return that 
+        they are equal.
+
 2010-03-16  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
