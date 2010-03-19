@@ -1,3 +1,12 @@
+2010-03-19  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by Eric Seidel. 
+
+        https://bugs.webkit.org/show_bug.cgi?id=35594
+
+        * fast/loader/api-test-new-window-data-load-base-url.html: Removed.
+        * fast/loader/api-test-new-window-data-load-base-url.html-disabled: Copied from fast/loader/api-test-new-window-data-load-base-url.html.
+
 2010-03-19  Dirk Pranke <dpranke@chromium.org>
 
         Reviewed by Dimitri Glazkov.
