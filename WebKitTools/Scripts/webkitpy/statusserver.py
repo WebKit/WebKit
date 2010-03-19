@@ -96,15 +96,15 @@ class StatusServer:
 
     def _fetch_url(self, url):
         try:
-            return urllib2.urlopen(update_status_url).read()
+            return urllib2.urlopen(url).read()
         except urllib2.HTTPError, e:
             if e.code == 404:
                 return None
             raise e
 
     def patch_status(self, queue_name, patch_id):
-        update_status_url = "%s/patch-status/%s/%s" % (self.url, queue_name, patch_id)
-        return self._fetch_url(update_status_url)
+        patch_status_url = "%s/patch-status/%s/%s" % (self.url, queue_name, patch_id)
+        return self._fetch_url(patch_status_url)
 
     def svn_revision(self, svn_revision_number):
         svn_revision_url = "%s/svn-revision/%s" % (self.url, svn_revision_number)
