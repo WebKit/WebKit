@@ -115,27 +115,6 @@ and displayes the status of each builder."""
     def _longest_builder_name(self, builders):
         return max(map(lambda builder: len(builder["name"]), builders))
 
-    # FIXME: This should move onto buildbot.Builder
-    def _find_green_to_red_transition(self, builder_status, look_back_limit=30):
-        # walk backwards until we find a green build
-        builder = self.tool.buildbot.builder_with_name(builder_status["name"])
-        red_build = builder.build(builder_status["build_number"])
-        green_build = None
-        look_back_count = 0
-        while True:
-            if look_back_count >= look_back_limit:
-                break
-            # Use a previous_build() method to avoid assuming build numbers are sequential.
-            before_red_build = red_build.previous_build()
-            if not before_red_build:
-                break
-            if before_red_build.is_green():
-                green_build = before_red_build
-                break
-            red_build = before_red_build
-            look_back_count += 1
-        return (green_build, red_build)
-
     def _print_builder_line(self, builder_name, max_name_width, status_message):
         print "%s : %s" % (builder_name.ljust(max_name_width), status_message)
 
@@ -149,15 +128,16 @@ and displayes the status of each builder."""
         print "  Committer: %s" % commit_info.committer()
 
     def _print_blame_information_for_builder(self, builder_status, name_width):
-        (last_green_build, first_red_build) = self._find_green_to_red_transition(builder_status)
+        builder = self.tool.buildbot.builder_with_name(builder_status["name"])
+        (last_green_build, first_red_build) = builder.find_green_to_red_transition(builder_status["build_number"])
         if not last_green_build:
-            self._print_builder_line(builder_status["name"], name_width, "FAIL (blame-list: sometime before %s?)" % first_red_build.revision())
+            self._print_builder_line(builder.name(), name_width, "FAIL (blame-list: sometime before %s?)" % first_red_build.revision())
             return
 
         suspect_revisions = range(first_red_build.revision(), last_green_build.revision(), -1)
         suspect_revisions.reverse()
         # FIXME: Parse reviewer and committer from red checkin
-        self._print_builder_line(builder_status["name"], name_width, "FAIL (blame-list: %s)" % suspect_revisions)
+        self._print_builder_line(builder.name(), name_width, "FAIL (blame-list: %s)" % suspect_revisions)
         for revision in suspect_revisions:
             commit_info = CommitInfo.commit_info_for_revision(self.tool.scm(), revision)
             self._print_blame_information_for_commit(commit_info)

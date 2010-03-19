@@ -65,6 +65,28 @@ class Builder(object):
         self._builds_cache[build_number] = build
         return build
 
+    # FIXME: We should not have to pass a red_build_number, but rather Builder should
+    # know what its "latest_build" is.
+    # FIXME: This needs unit testing.
+    def find_green_to_red_transition(self, red_build_number, look_back_limit=30):
+        # walk backwards until we find a green build
+        red_build = self.build(red_build_number)
+        green_build = None
+        look_back_count = 0
+        while True:
+            if look_back_count >= look_back_limit:
+                break
+            # Use a previous_build() method to avoid assuming build numbers are sequential.
+            before_red_build = red_build.previous_build()
+            if not before_red_build:
+                break
+            if before_red_build.is_green():
+                green_build = before_red_build
+                break
+            red_build = before_red_build
+            look_back_count += 1
+        return (green_build, red_build)
+
 
 class Build(object):
     def __init__(self, build_dictionary, builder):
