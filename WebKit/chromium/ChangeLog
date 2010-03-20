@@ -1,3 +1,145 @@
+2010-03-19  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Add GraphicsContext3D abstraction to WebKit API
+        https://bugs.webkit.org/show_bug.cgi?id=36262
+
+        Added WebGraphicsContext3D to the WebKit API and refactored Chromium's
+        GraphicsContext3D implementation to use it. All of the OpenGL calls have
+        been moved out of WebKit/chromium/src/GraphicsContext3D.cpp and into the
+        WebGraphicsContext3D implementation. GraphicsContext3D is still
+        responsible for the transfer of rendered output from the
+        WebGraphicsContext3D to the HTMLCanvasElement.
+
+        The GraphicsContext3DInternal class, which is a data member of
+        GraphicsContext3D for the Chromium port, remains. It is possible to
+        eliminate this class and thereby one level of delegation, but this is
+        being deferred.
+
+        The needed entry point for a Chrome implementation of
+        WebGraphicsContext3D has been added to WebKitClient, but it is not being
+        called yet by GraphicsContext3D. It will be once this patch lands and
+        Chromium is rolled forward to support this entry point.
+
+        This is a large patch, but the transformation is almost entirely
+        mechanical and there is no change in functionality. Nearly all of
+        GraphicsContext3D and GraphicsContext3DInternal has been moved to
+        WebGraphicsContext3DDefaultImpl. The only area where the splitting of
+        logic is less than mechanical is GraphicsContext3D::beginPaint() and its
+        callees.
+
+        Ran all WebGL layout tests and demos from Khronos site in Chromium.
+
+        * WebKit.gyp:
+        * public/WebGraphicsContext3D.h: Added.
+        (WebKit::WebGraphicsContext3D::Attributes::Attributes):
+        (WebKit::WebGraphicsContext3D::~WebGraphicsContext3D):
+        * public/WebKitClient.h:
+        (WebKit::WebKitClient::createGraphicsContext3D):
+        * src/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3DInternal::GraphicsContext3DInternal):
+        (WebCore::GraphicsContext3DInternal::~GraphicsContext3DInternal):
+        (WebCore::GraphicsContext3DInternal::initialize):
+        (WebCore::GraphicsContext3DInternal::platformGraphicsContext3D):
+        (WebCore::GraphicsContext3DInternal::platformTexture):
+        (WebCore::GraphicsContext3DInternal::beginPaint):
+        (WebCore::GraphicsContext3DInternal::endPaint):
+        (WebCore::GraphicsContext3DInternal::reshape):
+        (WebCore::GraphicsContext3DInternal::bindAttribLocation):
+        (WebCore::GraphicsContext3DInternal::bindTexture):
+        (WebCore::GraphicsContext3DInternal::bufferData):
+        (WebCore::GraphicsContext3DInternal::bufferSubData):
+        (WebCore::GraphicsContext3DInternal::getActiveAttrib):
+        (WebCore::GraphicsContext3DInternal::getActiveUniform):
+        (WebCore::GraphicsContext3DInternal::getAttribLocation):
+        (WebCore::GraphicsContext3DInternal::getContextAttributes):
+        (WebCore::GraphicsContext3DInternal::getProgramInfoLog):
+        (WebCore::GraphicsContext3DInternal::getShaderInfoLog):
+        (WebCore::GraphicsContext3DInternal::getShaderSource):
+        (WebCore::GraphicsContext3DInternal::getString):
+        (WebCore::GraphicsContext3DInternal::getUniformLocation):
+        (WebCore::GraphicsContext3DInternal::readPixels):
+        (WebCore::GraphicsContext3DInternal::shaderSource):
+        (WebCore::GraphicsContext3DInternal::texImage2D):
+        (WebCore::GraphicsContext3DInternal::texSubImage2D):
+        (WebCore::GraphicsContext3DInternal::uniform1fv):
+        (WebCore::GraphicsContext3DInternal::uniform1iv):
+        (WebCore::GraphicsContext3DInternal::uniform2fv):
+        (WebCore::GraphicsContext3DInternal::uniform2iv):
+        (WebCore::GraphicsContext3DInternal::uniform3fv):
+        (WebCore::GraphicsContext3DInternal::uniform3iv):
+        (WebCore::GraphicsContext3DInternal::uniform4fv):
+        (WebCore::GraphicsContext3DInternal::uniform4iv):
+        (WebCore::GraphicsContext3DInternal::uniformMatrix2fv):
+        (WebCore::GraphicsContext3DInternal::uniformMatrix3fv):
+        (WebCore::GraphicsContext3DInternal::uniformMatrix4fv):
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+        (WebCore::GraphicsContext3D::create):
+        (WebCore::GraphicsContext3D::platformGraphicsContext3D):
+        (WebCore::GraphicsContext3D::platformTexture):
+        (WebCore::GraphicsContext3D::texImage2D):
+        (WebCore::GraphicsContext3D::texSubImage2D):
+        * src/WebGraphicsContext3D.cpp: Added.
+        (WebKit::WebGraphicsContext3D::createDefault):
+        * src/WebGraphicsContext3DDefaultImpl.cpp: Added.
+        (WebKit::WebGraphicsContext3DDefaultImpl::GLConnection::create):
+        (WebKit::WebGraphicsContext3DDefaultImpl::GLConnection::~GLConnection):
+        (WebKit::WebGraphicsContext3DDefaultImpl::VertexAttribPointerState::VertexAttribPointerState):
+        (WebKit::WebGraphicsContext3DDefaultImpl::WebGraphicsContext3DDefaultImpl):
+        (WebKit::WebGraphicsContext3DDefaultImpl::~WebGraphicsContext3DDefaultImpl):
+        (WebKit::WebGraphicsContext3DDefaultImpl::initialize):
+        (WebKit::WebGraphicsContext3DDefaultImpl::makeContextCurrent):
+        (WebKit::WebGraphicsContext3DDefaultImpl::width):
+        (WebKit::WebGraphicsContext3DDefaultImpl::height):
+        (WebKit::WebGraphicsContext3DDefaultImpl::sizeInBytes):
+        (WebKit::createTextureObject):
+        (WebKit::WebGraphicsContext3DDefaultImpl::reshape):
+        (WebKit::WebGraphicsContext3DDefaultImpl::flipVertically):
+        (WebKit::WebGraphicsContext3DDefaultImpl::readBackFramebuffer):
+        (WebKit::WebGraphicsContext3DDefaultImpl::activeTexture):
+        (WebKit::WebGraphicsContext3DDefaultImpl::bindBuffer):
+        (WebKit::WebGraphicsContext3DDefaultImpl::bindFramebuffer):
+        (WebKit::WebGraphicsContext3DDefaultImpl::disableVertexAttribArray):
+        (WebKit::WebGraphicsContext3DDefaultImpl::drawElements):
+        (WebKit::WebGraphicsContext3DDefaultImpl::enableVertexAttribArray):
+        (WebKit::WebGraphicsContext3DDefaultImpl::generateMipmap):
+        (WebKit::WebGraphicsContext3DDefaultImpl::getActiveAttrib):
+        (WebKit::WebGraphicsContext3DDefaultImpl::getActiveUniform):
+        (WebKit::WebGraphicsContext3DDefaultImpl::getContextAttributes):
+        (WebKit::WebGraphicsContext3DDefaultImpl::getError):
+        (WebKit::WebGraphicsContext3DDefaultImpl::getProgramInfoLog):
+        (WebKit::WebGraphicsContext3DDefaultImpl::getShaderInfoLog):
+        (WebKit::WebGraphicsContext3DDefaultImpl::getShaderSource):
+        (WebKit::WebGraphicsContext3DDefaultImpl::getString):
+        (WebKit::WebGraphicsContext3DDefaultImpl::getVertexAttribOffset):
+        (WebKit::WebGraphicsContext3DDefaultImpl::releaseShaderCompiler):
+        (WebKit::WebGraphicsContext3DDefaultImpl::shaderSource):
+        (WebKit::WebGraphicsContext3DDefaultImpl::vertexAttribPointer):
+        (WebKit::WebGraphicsContext3DDefaultImpl::createBuffer):
+        (WebKit::WebGraphicsContext3DDefaultImpl::createFramebuffer):
+        (WebKit::WebGraphicsContext3DDefaultImpl::createProgram):
+        (WebKit::WebGraphicsContext3DDefaultImpl::createRenderbuffer):
+        (WebKit::WebGraphicsContext3DDefaultImpl::createTexture):
+        (WebKit::WebGraphicsContext3DDefaultImpl::deleteBuffer):
+        (WebKit::WebGraphicsContext3DDefaultImpl::deleteFramebuffer):
+        (WebKit::WebGraphicsContext3DDefaultImpl::deleteProgram):
+        (WebKit::WebGraphicsContext3DDefaultImpl::deleteRenderbuffer):
+        (WebKit::WebGraphicsContext3DDefaultImpl::deleteShader):
+        (WebKit::WebGraphicsContext3DDefaultImpl::deleteTexture):
+        (WebKit::WebGraphicsContext3DDefaultImpl::synthesizeGLError):
+        * src/WebGraphicsContext3DDefaultImpl.h: Added.
+        (WebKit::WebGraphicsContext3DDefaultImpl::):
+        (WebKit::WebGraphicsContext3DDefaultImpl::GLConnection::chooseFBConfig):
+        (WebKit::WebGraphicsContext3DDefaultImpl::GLConnection::createNewContext):
+        (WebKit::WebGraphicsContext3DDefaultImpl::GLConnection::createPbuffer):
+        (WebKit::WebGraphicsContext3DDefaultImpl::GLConnection::destroyPbuffer):
+        (WebKit::WebGraphicsContext3DDefaultImpl::GLConnection::makeCurrent):
+        (WebKit::WebGraphicsContext3DDefaultImpl::GLConnection::destroyContext):
+        (WebKit::WebGraphicsContext3DDefaultImpl::GLConnection::getCurrentContext):
+        (WebKit::WebGraphicsContext3DDefaultImpl::GLConnection::GLConnection):
+
 2010-03-19  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, build fix.
