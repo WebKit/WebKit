@@ -1,3 +1,20 @@
+2010-03-19  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        WebCore::RenderButton::styleDidChange ReadAV@NULL (6739b7fe455ecb54a6812c0866c3b47c)
+        https://bugs.webkit.org/show_bug.cgi?id=34641
+
+        Don't dig into buttons and menu lists when finding which element
+        should be modified by :first-letter pseudo class.  Even before
+        this change, we didn't dig into inline buttons and menu lists as
+        they are replaced so this issue wasn't found long time.
+
+        Test: fast/css/first-letter-block-form-controls-crash.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateFirstLetter):
+
 2010-03-19  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Daniel Bates.
