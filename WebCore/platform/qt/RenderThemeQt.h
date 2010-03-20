@@ -45,6 +45,8 @@ private:
 public:
     static PassRefPtr<RenderTheme> create(Page*);
 
+    String extraDefaultStyleSheet();
+
     virtual bool supportsHover(const RenderStyle*) const;
     virtual bool supportsFocusRing(const RenderStyle* style) const;
 

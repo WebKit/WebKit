@@ -120,7 +120,14 @@ public:
     int size() const { return m_size; }
     void setSize(int value) { m_size = value; }
 
-    bool usesMenuList() const { return !m_multiple && m_size <= 1; }
+    bool usesMenuList() const
+    {
+#if ENABLE(NO_LISTBOX_RENDERING)
+        return true;
+#else
+        return !m_multiple && m_size <= 1;
+#endif
+    }
 
     int lastOnChangeIndex() const { return m_lastOnChangeIndex; }
     void setLastOnChangeIndex(int value) { m_lastOnChangeIndex = value; }

@@ -210,6 +210,10 @@ STYLESHEETS_EMBED = \
     $$PWD/css/mediaControls.css \
     $$PWD/css/mediaControlsQt.css
 
+contains(DEFINES, ENABLE_NO_LISTBOX_RENDERING=1) {
+    STYLESHEETS_EMBED += $$PWD/css/themeQtNoListboxes.css
+}
+
 IDL_BINDINGS += \
     css/Counter.idl \
     css/CSSCharsetRule.idl \
