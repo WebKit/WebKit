@@ -2,6 +2,16 @@
 
         Unreviewed, expectations tweak.
 
+        Remove expectations for chromium-mac editing/style/apply-through-end-of-document.html as it
+        now matches platform/mac.
+
+        * platform/chromium-mac/editing/style/apply-through-end-of-document-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt: Adjusted expectations.
+
+2010-03-20  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, expectations tweak.
+
         Mark editing/style/apply-through-end-of-document.html as failing
 
         * platform/chromium/test_expectations.txt:
