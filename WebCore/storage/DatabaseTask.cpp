@@ -117,7 +117,8 @@ DatabaseCloseTask::DatabaseCloseTask(Database* database, DatabaseTaskSynchronize
 
 void DatabaseCloseTask::doPerformTask()
 {
-    database()->close();
+    // Tell the database not to call back to the context thread; we'll handle it.
+    database()->close(Database::DoNotRemoveDatabaseFromContext);
 }
 
 #ifndef NDEBUG

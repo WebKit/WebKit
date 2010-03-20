@@ -41,6 +41,9 @@ public:
         : m_expectedUsage(0)
         , m_currentUsage(0)
     {
+#ifndef NDEBUG
+        m_thread = currentThread();
+#endif
     }
 
     DatabaseDetails(const String& databaseName, const String& displayName, unsigned long long expectedUsage, unsigned long long currentUsage)
@@ -49,19 +52,27 @@ public:
         , m_expectedUsage(expectedUsage)
         , m_currentUsage(currentUsage)
     {
+#ifndef NDEBUG
+        m_thread = currentThread();
+#endif
     }
 
     const String& name() const { return m_name; }
     const String& displayName() const { return m_displayName; }
     unsigned long long expectedUsage() const { return m_expectedUsage; }
     unsigned long long currentUsage() const { return m_currentUsage; }
+#ifndef NDEBUG
+    ThreadIdentifier thread() const { return m_thread; }
+#endif
 
 private:
     String m_name;
     String m_displayName;
     unsigned long long m_expectedUsage;
     unsigned long long m_currentUsage;
-
+#ifndef NDEBUG
+    ThreadIdentifier m_thread;
+#endif
 };
 
 } // namespace WebCore

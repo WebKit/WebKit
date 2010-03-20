@@ -462,7 +462,7 @@ static String encodedHost(const String& host)
 
 String SecurityOrigin::databaseIdentifier() const 
 {
-    DEFINE_STATIC_LOCAL(String, separatorString, (&SeparatorCharacter, 1));
+    String separatorString(&SeparatorCharacter, 1);
 
     if (m_encodedHost.isEmpty())
         m_encodedHost = encodedHost(m_host);

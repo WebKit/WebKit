@@ -389,6 +389,10 @@ void Database::markAsDeletedAndClose()
 
     m_scriptExecutionContext->databaseThread()->scheduleImmediateTask(task.release());
     synchronizer.waitForTaskCompletion();
+
+    // DatabaseCloseTask tells Database::close not to do these two removals so that we can do them here synchronously.
+    m_scriptExecutionContext->removeOpenDatabase(this);
+    DatabaseTracker::tracker().removeOpenDatabase(this);
 }
 
 class ContextRemoveOpenDatabaseTask : public ScriptExecutionContext::Task {
@@ -415,7 +419,7 @@ private:
     RefPtr<Database> m_database;
 };
 
-void Database::close()
+void Database::close(ClosePolicy policy)
 {
     RefPtr<Database> protect = this;
 
@@ -444,7 +448,8 @@ void Database::close()
     }
 
     m_scriptExecutionContext->databaseThread()->unscheduleDatabaseTasks(this);
-    m_scriptExecutionContext->postTask(ContextRemoveOpenDatabaseTask::create(this));
+    if (policy == RemoveDatabaseFromContext)
+        m_scriptExecutionContext->postTask(ContextRemoveOpenDatabaseTask::create(this));
 }
 
 void Database::stop()

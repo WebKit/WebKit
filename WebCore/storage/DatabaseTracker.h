@@ -60,9 +60,11 @@ struct SecurityOriginTraits;
 class DatabaseTracker : public Noncopyable {
 public:
     static DatabaseTracker& tracker();
-    // FIXME: Due to workers having multiple threads in a single process sharing
-    // a DatabaseTracker, this singleton will have to be synchronized or moved
-    // to TLS.
+    // This singleton will potentially be used from multiple worker threads and the page's context thread simultaneously.  To keep this safe, it's
+    // currently using 4 locks.  In order to avoid deadlock when taking multiple locks, you must take them in the correct order:
+    // originQuotaManager() before m_databaseGuard or m_openDatabaseMapGuard
+    // m_databaseGuard before m_openDatabaseMapGuard
+    // notificationMutex() is currently independent of the other locks.
 
     bool canEstablishDatabase(ScriptExecutionContext*, const String& name, const String& displayName, unsigned long estimatedSize);
     void setDatabaseDetails(SecurityOrigin*, const String& name, const String& displayName, unsigned long estimatedSize);
@@ -87,7 +89,7 @@ private:
 #if !PLATFORM(CHROMIUM)
 public:
     void setDatabaseDirectoryPath(const String&);
-    const String& databaseDirectoryPath() const;
+    String databaseDirectoryPath() const;
 
     void origins(Vector<RefPtr<SecurityOrigin> >& result);
     bool databaseNamesForOrigin(SecurityOrigin*, Vector<String>& result);
@@ -114,6 +116,13 @@ public:
     bool hasEntryForOrigin(SecurityOrigin*);
 
 private:
+    OriginQuotaManager& originQuotaManagerNoLock();
+    bool hasEntryForOriginNoLock(SecurityOrigin* origin);
+    String fullPathForDatabaseNoLock(SecurityOrigin*, const String& name, bool createIfDoesNotExist);
+    bool databaseNamesForOriginNoLock(SecurityOrigin* origin, Vector<String>& resultVector);
+    unsigned long long usageForOriginNoLock(SecurityOrigin* origin);
+    unsigned long long quotaForOriginNoLock(SecurityOrigin* origin);
+
     String trackerDatabasePath() const;
     void openTrackerDatabase(bool createIfDoesNotExist);
 
@@ -126,10 +135,11 @@ private:
 
     bool deleteDatabaseFile(SecurityOrigin*, const String& name);
 
+    // This lock protects m_database, m_quotaMap, m_proposedDatabases, m_databaseDirectoryPath, m_originsBeingDeleted, m_beingCreated, and m_beingDeleted.
+    Mutex m_databaseGuard;
     SQLiteDatabase m_database;
 
     typedef HashMap<RefPtr<SecurityOrigin>, unsigned long long, SecurityOriginHash> QuotaMap;
-    Mutex m_quotaMapGuard;
     mutable OwnPtr<QuotaMap> m_quotaMap;
 
     OwnPtr<OriginQuotaManager> m_quotaManager;
@@ -138,11 +148,27 @@ private:
 
     DatabaseTrackerClient* m_client;
 
-    std::pair<SecurityOrigin*, DatabaseDetails>* m_proposedDatabase;
+    typedef std::pair<RefPtr<SecurityOrigin>, DatabaseDetails> ProposedDatabase;
+    HashSet<ProposedDatabase*> m_proposedDatabases;
 
-#ifndef NDEBUG
-    ThreadIdentifier m_thread;
-#endif
+    typedef HashMap<String, long> NameCountMap;
+    typedef HashMap<RefPtr<SecurityOrigin>, NameCountMap*, SecurityOriginHash> CreateSet;
+    CreateSet m_beingCreated;
+    typedef HashSet<String> NameSet;
+    HashMap<RefPtr<SecurityOrigin>, NameSet*, SecurityOriginHash> m_beingDeleted;
+    HashSet<RefPtr<SecurityOrigin>, SecurityOriginHash> m_originsBeingDeleted;
+    bool canCreateDatabase(SecurityOrigin *origin, const String& name);
+    void recordCreatingDatabase(SecurityOrigin *origin, const String& name);
+    void doneCreatingDatabase(SecurityOrigin *origin, const String& name);
+    bool creatingDatabase(SecurityOrigin *origin, const String& name);
+    bool canDeleteDatabase(SecurityOrigin *origin, const String& name);
+    void recordDeletingDatabase(SecurityOrigin *origin, const String& name);
+    void doneDeletingDatabase(SecurityOrigin *origin, const String& name);
+    bool deletingDatabase(SecurityOrigin *origin, const String& name);
+    bool canDeleteOrigin(SecurityOrigin *origin);
+    bool deletingOrigin(SecurityOrigin *origin);
+    void recordDeletingOrigin(SecurityOrigin *origin);
+    void doneDeletingOrigin(SecurityOrigin *origin);
 
     static void scheduleForNotification();
     static void notifyDatabasesChanged(void*);

@@ -42,6 +42,18 @@ OriginQuotaManager::OriginQuotaManager()
 {
 }
 
+bool OriginQuotaManager::tryLock()
+{
+    bool locked = m_usageRecordGuard.tryLock();
+#ifndef NDEBUG
+    if (locked)
+        m_usageRecordGuardLocked = true;
+    else
+        ASSERT(m_usageRecordGuardLocked);
+#endif
+    return locked;
+}
+
 void OriginQuotaManager::lock()
 {
     m_usageRecordGuard.lock();
@@ -63,7 +75,7 @@ void OriginQuotaManager::trackOrigin(PassRefPtr<SecurityOrigin> origin)
     ASSERT(m_usageRecordGuardLocked);
     ASSERT(!m_usageMap.contains(origin.get()));
 
-    m_usageMap.set(origin, new OriginUsageRecord);
+    m_usageMap.set(origin->threadsafeCopy(), new OriginUsageRecord);
 }
 
 bool OriginQuotaManager::tracksOrigin(SecurityOrigin* origin) const

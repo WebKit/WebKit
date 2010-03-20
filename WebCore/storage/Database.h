@@ -109,7 +109,8 @@ public:
     void markAsDeletedAndClose();
     bool deleted() const { return m_deleted; }
 
-    void close();
+    enum ClosePolicy { DoNotRemoveDatabaseFromContext, RemoveDatabaseFromContext };
+    void close(ClosePolicy);
     bool opened() const { return m_opened; }
 
     void stop();

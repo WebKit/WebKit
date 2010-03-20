@@ -1,3 +1,114 @@
+2010-03-19  Eric Uhrhane  <ericu@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Refactor DatabaseTracker.cpp for thread safety
+        https://bugs.webkit.org/show_bug.cgi?id=34991
+
+        This enables calling into DatabaseTracker from multiple context threads,
+        as will happen once Workers can access the Database.  It required a fair
+        amount of reshuffling of locks.  I ended up splitting the public
+        interface [calls that take locks and call private functions] from the
+        implementations [calls that assert that locks are already held] in order
+        to avoid lock conflicts.  I also had to make sure we weren't sharing
+        Strings or SecurityOrigins across threads.
+
+        No new tests.
+
+        Allow access to database handles from multiple threads IFF SQLite is new enough and the user requests it.
+
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::SQLiteDatabase):
+        (WebCore::SQLiteDatabase::disableThreadingChecks):
+        * platform/sql/SQLiteDatabase.h:
+        (WebCore::SQLiteDatabase::sqlite3Handle):
+        (WebCore::SQLiteDatabase::disableThreadingChecks):
+
+        Remove an asynchronous call from Database::close back to the execution thread, so that cleanup can be more deterministic.
+
+        * storage/Database.cpp:
+        (WebCore::Database::markAsDeletedAndClose):
+        (WebCore::Database::close):
+        * storage/Database.h:
+        (WebCore::Database::):
+        * storage/DatabaseDetails.h:
+        (WebCore::DatabaseDetails::DatabaseDetails):
+        (WebCore::DatabaseDetails::thread):
+        * storage/DatabaseTask.cpp:
+        (WebCore::DatabaseCloseTask::doPerformTask):
+        * storage/DatabaseThread.cpp:
+        (WebCore::DatabaseThread::databaseThread):
+
+        Any Strings that get stored in DatabaseTracker, and any Strings returned from DatabaseTracker, are now threadsafeCopies.
+        Public functions now take all needed locks, then generally call only private functions [there are a few exceptions: deletion functions and origins()].
+        Private functions no longer take locks.
+        m_quotaMapGuard becomes m_databaseGuard, and now protects m_database, m_quotaMap, m_proposedDatabases, m_databaseDirectoryPath, m_originsBeingDeleted, m_beingCreated, and m_beingDeleted.
+        m_proposedDatabases replaces m_proposedDatabase, to account for reentrancy.
+
+        * storage/DatabaseTracker.h:
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::originQuotaManagerNoLock):
+        (WebCore::DatabaseTracker::originQuotaManager):
+        (WebCore::DatabaseTracker::DatabaseTracker):
+        (WebCore::DatabaseTracker::setDatabaseDirectoryPath):
+        (WebCore::DatabaseTracker::databaseDirectoryPath):
+        (WebCore::DatabaseTracker::trackerDatabasePath):
+        (WebCore::DatabaseTracker::openTrackerDatabase):
+        (WebCore::DatabaseTracker::canEstablishDatabase):
+        (WebCore::DatabaseTracker::hasEntryForOriginNoLock):
+        (WebCore::DatabaseTracker::hasEntryForOrigin):
+        (WebCore::DatabaseTracker::hasEntryForDatabase):
+        (WebCore::DatabaseTracker::originPath):
+        (WebCore::DatabaseTracker::fullPathForDatabaseNoLock):
+        (WebCore::DatabaseTracker::fullPathForDatabase):
+        (WebCore::DatabaseTracker::populateOrigins):
+        (WebCore::DatabaseTracker::origins):
+        (WebCore::DatabaseTracker::databaseNamesForOriginNoLock):
+        (WebCore::DatabaseTracker::databaseNamesForOrigin):
+        (WebCore::DatabaseTracker::detailsForNameAndOrigin):
+        (WebCore::DatabaseTracker::setDatabaseDetails):
+        (WebCore::DatabaseTracker::usageForDatabase):
+        (WebCore::DatabaseTracker::addOpenDatabase):
+        (WebCore::DatabaseTracker::removeOpenDatabase):
+        (WebCore::DatabaseTracker::usageForOriginNoLock):
+        (WebCore::DatabaseTracker::usageForOrigin):
+        (WebCore::DatabaseTracker::quotaForOriginNoLock):
+        (WebCore::DatabaseTracker::quotaForOrigin):
+        (WebCore::DatabaseTracker::setQuota):
+        (WebCore::DatabaseTracker::addDatabase):
+        (WebCore::DatabaseTracker::deleteAllDatabases):
+        (WebCore::DatabaseTracker::deleteOrigin):
+        (WebCore::DatabaseTracker::deleteDatabase):
+        (WebCore::DatabaseTracker::deleteDatabaseFile):
+        (WebCore::DatabaseTracker::setClient):
+        (WebCore::DatabaseTracker::scheduleNotifyDatabaseChanged):
+        (WebCore::DatabaseTracker::notifyDatabasesChanged):
+
+        These functions keep track of in-progress deletions and creations, so that we can make sure nobody every deletes a database file while a live database is using it.
+        (WebCore::DatabaseTracker::canCreateDatabase):
+        (WebCore::DatabaseTracker::recordCreatingDatabase):
+        (WebCore::DatabaseTracker::doneCreatingDatabase):
+        (WebCore::DatabaseTracker::creatingDatabase):
+        (WebCore::DatabaseTracker::canDeleteDatabase):
+        (WebCore::DatabaseTracker::recordDeletingDatabase):
+        (WebCore::DatabaseTracker::doneDeletingDatabase):
+        (WebCore::DatabaseTracker::deletingDatabase):
+        (WebCore::DatabaseTracker::canDeleteOrigin):
+        (WebCore::DatabaseTracker::deletingOrigin):
+        (WebCore::DatabaseTracker::recordDeletingOrigin):
+        (WebCore::DatabaseTracker::doneDeletingOrigin):
+
+        Any SecurityOrigins stored in OriginQuotaManager are now threadsafeCopies of inputs.  There's a new tryLock() function in addition to the existing lock().
+
+        * storage/OriginQuotaManager.cpp:
+        (WebCore::OriginQuotaManager::tryLock):
+        (WebCore::OriginQuotaManager::trackOrigin):
+        * storage/OriginQuotaManager.h:
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::databaseIdentifier):
+        Removed DEFINE_STATIC_LOCAL wrapper on a local variable; it appears to have been a small optimization, but it's not thread-safe.
+
 2010-03-19  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Antti Koivisto.

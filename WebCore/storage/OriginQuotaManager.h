@@ -45,6 +45,7 @@ class OriginQuotaManager : public Noncopyable {
 public:
     OriginQuotaManager();
 
+    bool tryLock();
     void lock();
     void unlock();
 

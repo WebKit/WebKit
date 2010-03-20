@@ -97,7 +97,7 @@ public:
     const char* lastErrorMsg();
     
     sqlite3* sqlite3Handle() const {
-        ASSERT(currentThread() == m_openingThread);
+        ASSERT(m_sharable || currentThread() == m_openingThread);
         return m_db;
     }
     
@@ -107,6 +107,14 @@ public:
     void lock();
     void unlock();
     bool isAutoCommitOn() const;
+
+    // Set this flag to allow access from multiple threads.  Not all multi-threaded accesses are safe!
+    // See http://www.sqlite.org/cvstrac/wiki?p=MultiThreading for more info.
+#ifndef NDEBUG
+    void disableThreadingChecks();
+#else
+    void disableThreadingChecks() {}
+#endif
 
 private:
     static int authorizerFunction(void*, int, const char*, const char*, const char*, const char*);
@@ -120,6 +128,7 @@ private:
     int m_pageSize;
     
     bool m_transactionInProgress;
+    bool m_sharable;
     
     Mutex m_authorizerLock;
     RefPtr<DatabaseAuthorizer> m_authorizer;

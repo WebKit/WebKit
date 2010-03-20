@@ -48,6 +48,7 @@ SQLiteDatabase::SQLiteDatabase()
     : m_db(0)
     , m_pageSize(-1)
     , m_transactionInProgress(false)
+    , m_sharable(false)
     , m_openingThread(0)
 {
 }
@@ -251,6 +252,18 @@ const char* SQLiteDatabase::lastErrorMsg()
 { 
     return sqlite3_errmsg(m_db);
 }
+
+#ifndef NDEBUG
+void SQLiteDatabase::disableThreadingChecks()
+{
+    // This doesn't guarantee that SQList was compiled with -DTHREADSAFE, or that you haven't turned off the mutexes.
+#if SQLITE_VERSION_NUMBER >= 3003001
+    m_sharable = true;
+#else
+    ASSERT(0); // Your SQLite doesn't support sharing handles across threads.
+#endif
+}
+#endif
 
 int SQLiteDatabase::authorizerFunction(void* userData, int actionCode, const char* parameter1, const char* parameter2, const char* /*databaseName*/, const char* /*trigger_or_view*/)
 {
