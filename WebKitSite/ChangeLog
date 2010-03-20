@@ -2,6 +2,19 @@
 
         Reviewed by Mark Rowe.
 
+        webkit.org should use the HTML5 doctype
+        https://bugs.webkit.org/show_bug.cgi?id=36407
+
+        * header.inc:
+        * misc/drosera/index.html:
+        * perf/slickspeed/system/index.php:
+        * perf/slickspeed/system/template.php:
+        * specs/index.html:
+
+2010-03-19  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mark Rowe.
+
         http://webkit.org/ has an HTML5 validation error
         https://bugs.webkit.org/show_bug.cgi?id=36406
 
