@@ -1,3 +1,21 @@
+2010-03-20  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        Assertion failure in media/video-controls-with-mutation-event-handler.html
+        https://bugs.webkit.org/show_bug.cgi?id=36376
+
+        Test: media/video-controls-with-mutation-event-handler.html
+
+        Break early (when not attached) in the defaultEventHandler before the
+        slider is completely set up.
+
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlTimelineElement::defaultEventHandler):
+        (WebCore::MediaControlVolumeSliderElement::defaultEventHandler):
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::createVolumeSlider):
+
 2010-03-19  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Dan Bernstein.
