@@ -166,15 +166,12 @@ class ChromiumPort(base.Port):
         return file(expectations_file, "r").read()
 
     def test_expectations_overrides(self):
-        # FIXME: uncomment this when we're convinced the upstream code
-        # is working.
-        #overrides_file = self.path_from_chromium_base('webkit', 'tools',
-        #    'layout_tests', 'test_expectations.txt')
-        #if os.path.exists(overrides_file):
-        #    return file(overrides_file, "r").read()
-        #else:
-        #    return None
-        return None
+        overrides_file = self.path_from_chromium_base('webkit', 'tools',
+            'layout_tests', 'test_expectations.txt')
+        if os.path.exists(overrides_file):
+            return file(overrides_file, "r").read()
+        else:
+            return None
 
     def test_platform_names(self):
         return self.test_base_platform_names() + ('win-xp',

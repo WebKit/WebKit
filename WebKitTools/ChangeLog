@@ -1,3 +1,14 @@
+2010-03-20  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Re-enable the downstream test_expectations overrides file that was
+        disabled in bug 36396 / r56287.
+
+        https://bugs.chromium.org/show_bug.cgi?id=36401
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+
 2010-03-19  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Dimitri Glazkov.
