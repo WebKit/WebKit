@@ -8,7 +8,7 @@
 
 <p>Before patches can land in any of the frameworks in the repository, the
 layout regression tests must pass. To run these tests, execute the
-<tt>run-webkit-tests</tt> <a href="/coding/scripts.html">script</a>.</p>
+<code>run-webkit-tests</code> <a href="/coding/scripts.html">script</a>.</p>
 
 <p>The script will dump the render trees for all of the pages and diff the results against the expected correct results.  If no
 differences are found, then the patch has passed the tests.  If any tests fail, then the patch cannot be committed until the
@@ -29,7 +29,7 @@ This is the Mozilla JavaScript test suite.</p>
 
       <table>
         <tr>
-          <td valign="top">
+          <td style="vertical-align: top">
             <ul>
               <li>Arrays</li>
               <li>Booleans</li>
@@ -37,7 +37,7 @@ This is the Mozilla JavaScript test suite.</p>
               <li>Functions</li>
             </ul>
           </td>
-          <td valign="top">
+          <td style="vertical-align: top">
             <ul>
               <li>Global Object</li>
               <li>Math</li>
@@ -45,7 +45,7 @@ This is the Mozilla JavaScript test suite.</p>
               <li>Objects</li>
             </ul>
           </td>
-          <td valign="top">
+          <td style="vertical-align: top">
             <ul>
               <li>Regular Expressions</li>
               <li>Strings</li>
@@ -60,13 +60,13 @@ This is the Mozilla JavaScript test suite.</p>
 
 <h3>How to run the tests</h3>
 
-<p>Execute the <tt>run-javascriptcore-tests</tt> <a href="/coding/scripts.html">script</a>.
+<p>Execute the <code>run-javascriptcore-tests</code> <a href="/coding/scripts.html">script</a>.
 The script will run all the tests and summarize how the results differ
 from what is currently expected.</p>
 
 <h3>What just happened</h3>
 <p>
-After all the test runs have finished the results of tests are saved to <tt>actual.html</tt>. 
+After all the test runs have finished the results of tests are saved to <code>actual.html</code>. 
 The script the compares these results from your local tree against what is expected to pass/fail from the tip of tree.
 If there are any regressions caused by your changes you'll be made aware of them.
 If you fixed a bug that caused an existing failure, you'll also be made aware of what specific test your fix affected.
@@ -81,7 +81,7 @@ If you fixed a bug that caused an existing failure, you'll also be made aware of
 <h3>What happens if I caused a regression?</h3>
 
 <p>It's not the end of the world.  Go back and fix your bug and rerun
-<tt>run-javascriptcore-tests</tt> as many times as necessary.</p>
+<code>run-javascriptcore-tests</code> as many times as necessary.</p>
 
 <?php
     include("../footer.inc");

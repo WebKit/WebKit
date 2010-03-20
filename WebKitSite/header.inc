@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <meta charset="utf-8">
     <meta name="robots" content="noodp">
 
     <title>The WebKit Open Source Project<?php if (isset($title)) { echo " - " . $title; } ?></title>
@@ -19,7 +19,7 @@
     <link rel="stylesheet" type="text/css" href="/css/ie.css">
 <![endif]-->
 
-    <script type="text/javascript">
+    <script>
         pic1 = new Image(8,9);
         pic1.src="/images/green-bullet.png";
         pic2 = new Image(8,9);

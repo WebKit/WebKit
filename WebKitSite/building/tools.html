@@ -17,24 +17,23 @@ include("../header.inc");
 <h4>Windows</h4>
 <ol>
 <li><p>If you own Visual Studio 2005 (newer versions of Visual Studio are currently unsupported):</p>
-<p>Install <a target="installtools" href="http://www.microsoft.com/downloads/details.aspx?familyid=BB4A75AB-E2D4-4C96-B39D-37BAF6B5B1DC&displaylang=en">Microsoft Visual Studio 2005 Team Suite Service Pack 1</a>.</p>
-<p>If you are building from Vista, install <a target="installtools" href="http://www.microsoft.com/downloads/details.aspx?FamilyID=90e2942d-3ad1-4873-a2ee-4acc0aace5b6&displaylang=en">Service Pack 1 Update for Windows Vista</a>.</p>
-<p>Install <a target="installtools" href="http://www.microsoft.com/downloads/details.aspx?FamilyID=7c8729dc-06a2-4538-a90d-ff9464dc0197&displaylang=en">Visual Studio 2005 Service Pack 1 ATL Security Update</a>.</p>
-<p>Install the following hotfixes to improve Visual Studio's performance and responsiveness:
+<p>Install <a target="installtools" href="http://www.microsoft.com/downloads/details.aspx?familyid=BB4A75AB-E2D4-4C96-B39D-37BAF6B5B1DC&amp;displaylang=en">Microsoft Visual Studio 2005 Team Suite Service Pack 1</a>.</p>
+<p>If you are building from Vista, install <a target="installtools" href="http://www.microsoft.com/downloads/details.aspx?FamilyID=90e2942d-3ad1-4873-a2ee-4acc0aace5b6&amp;displaylang=en">Service Pack 1 Update for Windows Vista</a>.</p>
+<p>Install <a target="installtools" href="http://www.microsoft.com/downloads/details.aspx?FamilyID=7c8729dc-06a2-4538-a90d-ff9464dc0197&amp;displaylang=en">Visual Studio 2005 Service Pack 1 ATL Security Update</a>.</p>
+<p>Install the following hotfixes to improve Visual Studio's performance and responsiveness:</p>
 <ol>
 <li><a target="installtools" href="http://code.msdn.microsoft.com/KB918559">KB918559</a></li>
 <li><a target="installtools" href="http://code.msdn.microsoft.com/KB935225">KB935225</a></li>
 <li><a target="installtools" href="http://code.msdn.microsoft.com/KB943969">KB943969</a></li>
 <li><a target="installtools" href="http://code.msdn.microsoft.com/KB947315">KB947315</a></li>
 </ol>
-</p>
 <p>Use the default options for these installations.</p>
 <li><p>If not, you can use Visual C++ Express 2005 (newer versions of Visual C++ Express Edition are currently unsupported):</p>
 <p>Install <a target="installtools" href="http://go.microsoft.com/fwlink/?LinkId=51410">Visual C++ 2005 Express</a>.</p>
 <p>Install <a target="installtools" href="http://download.microsoft.com/download/7/7/3/7737290f-98e8-45bf-9075-85cc6ae34bf1/VS80sp1-KB926748-X86-INTL.exe">Microsoft Visual C++ Express 2005 Service Pack 1</a>.</p>
-<p>If you are building from Vista, install <a target="installtools" href="http://www.microsoft.com/downloads/details.aspx?FamilyID=90e2942d-3ad1-4873-a2ee-4acc0aace5b6&displaylang=en">Service Pack 1 Update for Windows Vista</a>.</p>
-<p>Install <a target="installtools" href="http://www.microsoft.com/downloads/details.aspx?FamilyID=7c8729dc-06a2-4538-a90d-ff9464dc0197&displaylang=en">Visual Studio 2005 Service Pack 1 ATL Security Update</a>.</p>
-<p>Install the <a target="installtools" href="http://www.microsoft.com/downloads/details.aspx?familyid=0baf2b35-c656-4969-ace8-e4c0c0716adb&displaylang=en">Windows Server 2003 R2 Platform SDK</a>, then follow steps 2 and 3 of &ldquo;<a target="installtools" href="http://msdn.microsoft.com/en-us/library/ms235626(VS.80).aspx">How to: Use Visual C++ Express Edition with the Microsoft Platform SDK</a>.&rdquo;</p>
+<p>If you are building from Vista, install <a target="installtools" href="http://www.microsoft.com/downloads/details.aspx?FamilyID=90e2942d-3ad1-4873-a2ee-4acc0aace5b6&amp;displaylang=en">Service Pack 1 Update for Windows Vista</a>.</p>
+<p>Install <a target="installtools" href="http://www.microsoft.com/downloads/details.aspx?FamilyID=7c8729dc-06a2-4538-a90d-ff9464dc0197&amp;displaylang=en">Visual Studio 2005 Service Pack 1 ATL Security Update</a>.</p>
+<p>Install the <a target="installtools" href="http://www.microsoft.com/downloads/details.aspx?familyid=0baf2b35-c656-4969-ace8-e4c0c0716adb&amp;displaylang=en">Windows Server 2003 R2 Platform SDK</a>, then follow steps 2 and 3 of &ldquo;<a target="installtools" href="http://msdn.microsoft.com/en-us/library/ms235626(VS.80).aspx">How to: Use Visual C++ Express Edition with the Microsoft Platform SDK</a>.&rdquo;</p>
 <p>Use the default options for all installations.</p>
 <p>In addition to the paths specified in step 3 of the Platform SDK installation instructions, you must also add the following include path. Update the Visual C++ directories in the Projects and Solutions section in the Options dialog box:</p>
 <p style="font-size:10px">C:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Include\mfc</p>
@@ -46,9 +45,9 @@ have made a downloader available that automatically collects all of the required
 packages.
 <p>Download <a
 href="http://svn.webkit.org/repository/webkit/trunk/WebKitTools/CygwinDownloader/cygwin-downloader.zip">cygwin-downloader.zip</a>.</p>
-<p>Right-click <tt>cygwin-downloader.zip</tt> and choose <b>Extract All...</b>.
+<p>Right-click <code>cygwin-downloader.zip</code> and choose <b>Extract All...</b>.
 Keep all the default options and click <b>Next</b> until the file is extracted and the cygwin-downloader folder opens.</p>
-<p>Double-click <tt>cygwin-downloader.exe</tt>. This will download all the Cygwin packages you need.</p>
+<p>Double-click <code>cygwin-downloader.exe</code>. This will download all the Cygwin packages you need.</p>
 <p>When all the packages have finished downloading, the Cygwin installer will launch. Choose <b>Install from Local Directory</b>, then click <b>Next</b> until the install is complete. If you are running Vista, the installer won't be able to launch automatically, so you will have to manually launch Cygwin's Setup.exe.</p>
 <P>Vista may warn you that Cygwin did not install correctly. Ignore this warning and tell Vista that the install was successful.</p>
 <p>If you are running Vista, click on the Start menu, enter the following command, and press Enter:</p>

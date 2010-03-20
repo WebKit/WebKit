@@ -29,13 +29,13 @@ Later sections of this page explain each step in more detail.
     <li>Choose or create a <a href="#bugreport">bug report</a> to work on.</li>
     <li><a href="#writecode">Develop</a> your changes.</li>
     <li>Make sure your changes meet the <a href="/coding/coding-style.html">code
-        style guidelines</a>. The <tt>check-webkit-style</tt> script may be of
+        style guidelines</a>. The <code>check-webkit-style</code> script may be of
         help.</li>
-    <li>Run the layout tests using the <tt>run-webkit-tests</tt> script and make sure they all pass.
+    <li>Run the layout tests using the <code>run-webkit-tests</code> script and make sure they all pass.
         See the <a href="/quality/testwriting.html">testing page</a> for more information, as well as what you need to do if you've modified JavaScriptCore.</li>
     <li>Add any <a href="#newfiles">new files</a> to your working directory.</li>
-    <li>Prepare a change log entry. You may have to add entries to multiple ChangeLogs. The <tt>prepare-ChangeLog</tt> script will create stub entries for you.  See the <a href="#changelogs">paragraph about ChangeLogs</a> below.</li>
-    <li>Create the patch using the <tt>svn-create-patch</tt> script.</li>
+    <li>Prepare a change log entry. You may have to add entries to multiple ChangeLogs. The <code>prepare-ChangeLog</code> script will create stub entries for you.  See the <a href="#changelogs">paragraph about ChangeLogs</a> below.</li>
+    <li>Create the patch using the <code>svn-create-patch</code> script.</li>
     <li><a href="#submit">Submit</a> your patch for review to
         <a href="https://bugs.webkit.org/">bugs.webkit.org</a>.</li>
     <li>Make any changes recommended by the reviewer.</li>
@@ -72,8 +72,8 @@ copyright line for yourself or for the company on whose behalf you
 work. Below are sample copyright lines for an individual contributor
 and a company:
 
-<p><tt>Copyright (C) 2010 John Smith (jsmith@example.com)</tt></p>
-<p><tt>Copyright (C) 2010 Company Inc. All rights reserved.</tt></p>
+<p><code>Copyright (C) 2010 John Smith (jsmith@example.com)</code></p>
+<p><code>Copyright (C) 2010 Company Inc. All rights reserved.</code></p>
 
 <p>In addition, make sure that any new source code and script files
 you introduce contain license text at the beginning of the file.
@@ -92,7 +92,7 @@ to comply with the current guidelines. An exception is legacy components,
 which should not be cleaned up.</p>
 
 <h3>Regression tests</h3>
-<p>Once you have made your changes, you need to run the regression tests, which is done via the <tt>run-webkit-tests</tt> script.
+<p>Once you have made your changes, you need to run the regression tests, which is done via the <code>run-webkit-tests</code> script.
 All tests must pass.  Patches will not be landed in the tree if they break existing layout tests.</p>
 
 <p>For any feature that affects the layout engine, a new regression test must be constructed. If you provide a patch that fixes a bug,
@@ -106,31 +106,31 @@ can be found on the <a href="/quality/testwriting.html">testing page</a>.</p>
 
 <h3 id="newfiles">Add new files to your working directory</h3>
 <p>If your changes include adding new files (like new layout tests),
-use the <tt>svn add</tt> command to mark these files for addition to the
+use the <code>svn add</code> command to mark these files for addition to the
 repository. If you do not do this, the new files will be missing from
 the patch file you generate below.</p>
 
-<p>You can learn more about Subversion commands like <tt>svn add</tt>
+<p>You can learn more about Subversion commands like <code>svn add</code>
 from the online book <a class="book" href="http://svnbook.red-bean.com/">
-Version Control with Subversion</a> and by using the <tt>svn help</tt>
+Version Control with Subversion</a> and by using the <code>svn help</code>
 command.</p>
 
 <h3 id="changelogs">ChangeLog files</h3>
-<p>ChangeLogs are simple text files which provide historical documentation for all changes to the WebKit project.  All patches require an entry to the ChangeLog. The <tt>prepare-ChangeLog</tt> script will create a basic entry containing a list of all files that have been changed.  The first line contains the date, your full name, and your email address.  Use this to write up a brief summary of the changes you've made.  Don't worry about the "Reviewed by NOBODY (OOPS!)" line, the person landing your patch will fill this in.</p>
+<p>ChangeLogs are simple text files which provide historical documentation for all changes to the WebKit project.  All patches require an entry to the ChangeLog. The <code>prepare-ChangeLog</code> script will create a basic entry containing a list of all files that have been changed.  The first line contains the date, your full name, and your email address.  Use this to write up a brief summary of the changes you've made.  Don't worry about the "Reviewed by NOBODY (OOPS!)" line, the person landing your patch will fill this in.</p>
 
-<p>There is one ChangeLog per top-level directory, if you changed code and tests you will need to edit at least two ChangeLogs. The <tt>prepare-ChangeLog</tt> script will create a stub entries for you.  You should edit these stubs to describe your change, including the full url to the bug (<a href="http://trac.webkit.org/changeset/43259">example entry</a>, note that you can use <tt>--bug</tt> flag).  (You should set EMAIL_ADDRESS and CHANGE_LOG_NAME in your environment if you will be running this script frequently.)</p>
+<p>There is one ChangeLog per top-level directory, if you changed code and tests you will need to edit at least two ChangeLogs. The <code>prepare-ChangeLog</code> script will create a stub entries for you.  You should edit these stubs to describe your change, including the full url to the bug (<a href="http://trac.webkit.org/changeset/43259">example entry</a>, note that you can use <code>--bug</code> flag).  (You should set EMAIL_ADDRESS and CHANGE_LOG_NAME in your environment if you will be running this script frequently.)</p>
 
 <p>The line WARNING: NO TEST CASES ADDED OR CHANGED appears if prepare-ChangeLog did not detect the addition of test cases.  If your patch does not require test cases (or test cases are not possible), you should include a line stating such.  Otherwise all changes require test cases which should be mentioned in the ChangeLog.</p>
 
 <h3>Create the patch</h3>
-<p>WebKit uses <tt>svn-create-patch</tt> to create patches. The
-<tt>svn-create-patch</tt> script is a small wrapper around Subversion's
-<tt>diff</tt> command that better handles moved, added, and deleted files.
+<p>WebKit uses <code>svn-create-patch</code> to create patches. The
+<code>svn-create-patch</code> script is a small wrapper around Subversion's
+<code>diff</code> command that better handles moved, added, and deleted files.
 This command is best run from the top level of your checkout
 to make sure no changes are left out of your patch. It is not necessary to
 break a patch into multiple files.</p>
 
-<p>The <tt>svn-create-patch</tt> script does not create a file automatically.
+<p>The <code>svn-create-patch</code> script does not create a file automatically.
 You need to redirect the output yourself using something like--</p>
 <p class="code">svn-create-patch > MyExcellentPatch.txt</p>
 
@@ -156,7 +156,7 @@ alt='Bugzilla "Add an attachment" link'></p>
 <p><img src="images/contribute_mark_review.png"
 alt="Bugzilla patch-submission options"></p>
 
-<p>The patch checkbox and the <tt>review:?</tt> flag signal to
+<p>The patch checkbox and the <code>review:?</code> flag signal to
 WebKit reviewers that your patch is ready for review.
 Setting the review flag also sends an automatic e-mail to the
 <a href="http://lists.webkit.org/mailman/listinfo/webkit-reviews">
@@ -167,8 +167,8 @@ webkit-reviews</a> mailing list which some reviewers subscribe to.
 <p>A WebKit reviewer must approve your patch before WebKit can accept
 it into the source control repository.
 A reviewer will typically either approve your patch
-(by responding with an <tt>r=me</tt> in the bug report and marking the patch <tt>review:+</tt>) or request revisions
-to your patch (and mark the patch <tt>review:-</tt>). In rare cases a patch may be permanently rejected, meaning that the reviewer
+(by responding with an <code>r=me</code> in the bug report and marking the patch <code>review:+</code>) or request revisions
+to your patch (and mark the patch <code>review:-</code>). In rare cases a patch may be permanently rejected, meaning that the reviewer
 believes the feature should never be committed to the tree. The review process can consist of multiple iterations between you and
 the reviewer as you submit revised patches.</p>
 
@@ -181,7 +181,7 @@ the reviewer as you submit revised patches.</p>
 <p>Changes should succeed on all platforms, but it can be difficult to test on every platform WebKit supports.  Be certain that your change does not introduce new test failures on the high-traffic Mac or Windows ports by comparing the list of failing tests before and after your change.  Your change must at least compile on all platforms.</p>
 
 <h4 id="commitqueue">Optional: Use of the WebKit Commit Bot</h4>
-<p>WebKit provides an automated system (commit-queue) for landing patches for any who would like to use it.  To use the commit-queue, set the <tt>commit-queue:?</tt> flag on your patch.  A committer will set <tt>commit-queue:+</tt> and an automated process will download, build, run the layout tests, and submit your patch on your behalf.  If the <a href="http://build.webkit.org/">WebKit buildbots</a> are passing, your patch should be landed within 15 minutes after <tt>commit-queue:+</tt> is set. See the <a href="https://trac.webkit.org/wiki/CommitQueue">commit-queue documentation</a> for more information.</p>
+<p>WebKit provides an automated system (commit-queue) for landing patches for any who would like to use it.  To use the commit-queue, set the <code>commit-queue:?</code> flag on your patch.  A committer will set <code>commit-queue:+</code> and an automated process will download, build, run the layout tests, and submit your patch on your behalf.  If the <a href="http://build.webkit.org/">WebKit buildbots</a> are passing, your patch should be landed within 15 minutes after <code>commit-queue:+</code> is set. See the <a href="https://trac.webkit.org/wiki/CommitQueue">commit-queue documentation</a> for more information.</p>
 
 <h2>Obtaining Commit and Review Privileges</h2>
 <p>Our <a href="commit-review-policy.html">Committer and Reviewer policy</a> provides details on obtaining commit and review privileges.</p>

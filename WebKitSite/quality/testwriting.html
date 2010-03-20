@@ -20,19 +20,19 @@ if they do anything that changes the layout. Once we get a test rendering proper
 failed.
 </ol>
 
-<p>An example of a layout test that follows these guidelines is <tt>fast/events/event-creation.html</tt>.</p>
+<p>An example of a layout test that follows these guidelines is <code>fast/events/event-creation.html</code>.</p>
 
 
 <p>A layout test should work both in the browser itself, and in the layout test tool. The layout test tool provides an 
 additional object on the window object called the layout test controller with some methods that control test output. 
-One you should know about is the <tt>layoutTestController.dumpAsText</tt> method. Calling this from JavaScript within a test arranges 
+One you should know about is the <code>layoutTestController.dumpAsText</code> method. Calling this from JavaScript within a test arranges 
 for the output to be written out as plain text rather than as a render tree dump. 
 This is useful for tests that are testing something other than layout. The event creation test mentioned above is a good example of 
 how to do this and when it makes sense.</p>
 
 <p>Some tests require pixel-level comparisons.  For these tests, you must generate expected output for a specific
 machine type, operating system, and color profile.  When you add such a test, you can generate new expected output
-automatically using the <tt>run-webkit-tests --pixel</tt> command.  This will automatically
+automatically using the <code>run-webkit-tests --pixel</code> command.  This will automatically
 configure the color profile, and place the resulting rendered image (and checksum) in the appropriate platform
 directory for checkin.</p>
 

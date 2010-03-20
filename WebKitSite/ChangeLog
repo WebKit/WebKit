@@ -1,3 +1,35 @@
+2010-03-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Fix a bunch of HTML5 validation errors on various pages.
+        https://bugs.webkit.org/show_bug.cgi?id=36409
+
+        * building/build.html:
+        * building/checkout.html:
+        * building/debug.html:
+        * building/run.html:
+        * building/tools.html:
+        * coding/coding-style.html:
+        * coding/contributing.html:
+        * coding/major-objects.html:
+        * css/main.css:
+        (.asciiart):
+        * demos/index.html:
+        * header.inc:
+        * projects/compat/index.html:
+        * projects/css/index.html:
+        * projects/documentation/index.html:
+        * projects/goals.html:
+        * projects/index.html:
+        * projects/mathml/index.html:
+        * quality/bugpriorities.html:
+        * quality/bugwriting.html:
+        * quality/crashlogs.html:
+        * quality/lifecycle.html:
+        * quality/testing.html:
+        * quality/testwriting.html:
+
 2010-03-19  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Mark Rowe.

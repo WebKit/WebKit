@@ -205,3 +205,11 @@ dt {
     padding: 0 1em;
     margin: 1em 0;
 }
+
+.asciiart {
+    background-color: #eee;
+    padding: 1em;
+    margin-left: 2em;
+    margin-right: 2em;
+    overflow-x: auto;
+}

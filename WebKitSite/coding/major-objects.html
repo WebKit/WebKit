@@ -3,16 +3,6 @@
     include("../header.inc"); 
 ?>
 
-<style type="text/css">
-    .asciiart {
-        background-color: #eee;
-        padding: 1em;
-        margin-left: 2em;
-        margin-right: 2em;
-        overflow-x: auto;
-    }
-</style>
-
 <h1>Major Objects in WebCore</h1>
 <div>Adam Barth</div>
 <div>first draft, 2009-08-12</div>
@@ -42,22 +32,22 @@ the "detached" case and gracefully handle null pointers.</p>
 .../....|...............................................|..........
   /     |      \/  Replaced after navigation  \/        |
  /      |                                               |
-/<------|<-- Ptrs to Frame are null after navigation[1] |
+/&lt;------|&lt;-- Ptrs to Frame are null after navigation[1] |
 |       |                                               |
 | +-----+-----+         +-------------+                 |
-| | DOMWindow |<--impl--+ JSDOMWindow |<------window----+
+| | DOMWindow |&lt;--impl--+ JSDOMWindow |&lt;------window----+
 | +-----+-----+         +-------------+
 |       |
-|       |<-- Can be null for Documents created by XMLHttpRequest
+|       |&lt;-- Can be null for Documents created by XMLHttpRequest
 |       |
 | +-----+-----+         +-------------+
-+-+ Document  |<--impl--+ JSDocument  |
++-+ Document  |&lt;--impl--+ JSDocument  |
   +-----+-----+         +-------------+
         |
-        |<-- Can be null for DocumentType objects
+        |&lt;-- Can be null for DocumentType objects
         |
     +---+---+           +--------+
-    | Node  |<---impl---| JSNode |
+    | Node  |&lt;---impl---| JSNode |
     +-------+           +--------+
 </pre>
 
