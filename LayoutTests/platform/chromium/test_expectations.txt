@@ -2848,3 +2848,5 @@ BUG38706 : svg/custom/deep-dynamic-updates.svg = IMAGE+TEXT PASS
 
 // Caused by http://trac.webkit.org/changeset/56288/
 BUG_JSCHUH WIN LINUX : svg/filters/filterRes.svg = IMAGE
+// Needs rebaseline.
+BUG_DGLAZKOV MAC : editing/style/apply-through-end-of-document.html = TEXT

@@ -2,6 +2,14 @@
 
         Unreviewed, expectations tweak.
 
+        Mark editing/style/apply-through-end-of-document.html as failing
+
+        * platform/chromium/test_expectations.txt:
+
+2010-03-20  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, expectations tweak.
+
         Marked svg/filters/filterRes.svg as failing after
         http://trac.webkit.org/changeset/56288/
 
