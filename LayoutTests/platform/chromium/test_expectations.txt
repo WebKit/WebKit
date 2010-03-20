@@ -2504,7 +2504,6 @@ BUG29737 MAC : svg/filters/feMerge-wrong-input.svg = TEXT
 BUG29737 MAC : svg/custom/use-elementInstance-event-target.svg = IMAGE
 BUG29737 MAC : svg/filters/big-sized-filter.svg = IMAGE+TEXT
 BUG29737 MAC : svg/filters/filterRes.svg = IMAGE+TEXT
-BUG29737 LINUX DEBUG : svg/filters/filterRes.svg = PASS TEXT
 BUG29737 MAC : svg/W3C-SVG-1.1/struct-image-02-b.svg = IMAGE
 BUG29737 MAC : svg/filters/sourceAlpha.svg = IMAGE+TEXT
 
@@ -2846,3 +2845,6 @@ BUG38656 : fast/media/print-restores-previous-mediatype.html = TEXT
 BUG38694 MAC LINUX DEBUG : svg/custom/feDisplacementMap-01.svg = IMAGE+TEXT PASS
 BUG38704 WIN RELEASE: svg/text/text-text-06-t.svg = CRASH PASS
 BUG38706 : svg/custom/deep-dynamic-updates.svg = IMAGE+TEXT PASS
+
+// Caused by http://trac.webkit.org/changeset/56288/
+BUG_JSCHUH WIN LINUX : svg/filters/filterRes.svg = IMAGE

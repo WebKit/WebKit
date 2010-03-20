@@ -1,3 +1,12 @@
+2010-03-20  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, expectations tweak.
+
+        Marked svg/filters/filterRes.svg as failing after
+        http://trac.webkit.org/changeset/56288/
+
+        * platform/chromium/test_expectations.txt: Added expectations for svg/filters/filterRes.svg.
+
 2010-03-19  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Dan Bernstein.
