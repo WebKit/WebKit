@@ -1,3 +1,9 @@
+2010-03-19  Mark Rowe  <mrowe@apple.com>
+
+        Land a test result that should have been added along with the test in r56286.
+
+        * transitions/transition-end-event-destroy-iframe-expected.txt: Copied from LayoutTests/transitions/transition-end-event-destroy-renderer-expected.txt.
+
 2010-03-19  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Daniel Bates.
