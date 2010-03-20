@@ -48,7 +48,9 @@ CFDataRef SharedBuffer::createCFData()
         return m_cfData.get();
     }
 
-    return CFDataCreate(0, reinterpret_cast<const UInt8*>(m_buffer.data()), m_buffer.size());
+    // Internal data in SharedBuffer can be segmented. We need to get the contiguous buffer.
+    const Vector<char>& contiguousBuffer = buffer();
+    return CFDataCreate(0, reinterpret_cast<const UInt8*>(contiguousBuffer.data()), contiguousBuffer.size());
 }
 #endif
 
