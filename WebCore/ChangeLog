@@ -1,3 +1,19 @@
+2010-03-20  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Kenneth Christiansen.
+        Patch by Antonio Gomes <tonikitoo@webkit.org>
+
+        Spatial Navigation: Code simplification in FocusController.cpp and SpatialNavigation.cpp (part I)
+        https://bugs.webkit.org/show_bug.cgi?id=36168
+
+        Make use of isNull and document methods introduced in FocusCandidate class by patch in bug 36167.
+        No functionalty change.
+
+        * page/FocusController.cpp:
+        (WebCore::updateFocusCandidateIfCloser):
+        * page/SpatialNavigation.cpp:
+        (WebCore::distanceInDirection):
+
 2010-03-20  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fixes after recent changes.

@@ -76,7 +76,7 @@ long long distanceInDirection(Node* start, Node* dest, FocusDirection direction,
     // considered in order to make the algorithm to behavior in a more intuitive way.
     RectsAlignment alignment = alignmentForRects(direction, curRect, targetRect);
 
-    bool sameDocument = candidate.node && dest->document() == candidate.node->document();
+    bool sameDocument = dest->document() == candidate.document();
     if (sameDocument) {
         if (candidate.alignment > alignment || (candidate.parentAlignment && alignment > candidate.parentAlignment))
             return maxDistance();
@@ -85,9 +85,8 @@ long long distanceInDirection(Node* start, Node* dest, FocusDirection direction,
 
     // FIXME_tonikitoo: simplify the logic here !
     if (alignment != None
-        || (candidate.node && candidate.parentAlignment >= alignment
-        && (candidate.node->document() == dest->document())
-        && alignment > None)) {
+        || (!candidate.isNull() && candidate.parentAlignment >= alignment
+        && candidate.document() == dest->document())) {
 
         // If we are now in an higher precedent case, lets reset the current |candidate|'s
         // |distance| so we force it to be bigger than the result we will get from
