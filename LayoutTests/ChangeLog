@@ -1,3 +1,17 @@
+2010-03-19  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Fixed a crash with AnimationController getting deleted out from under itself.
+        
+        This test actually doesn't crash without the fix because the JS interpreter
+        protects against the Frame getting deleted prematurely. But this test is still
+        useful to make sure that protection is working. The crash actually occurs
+        when the equivalent thing is done in native code interfacing to a WebView.
+
+        * transitions/resources/transition-end-event-destroy-iframe-inner.html: Added.
+        * transitions/transition-end-event-destroy-iframe.html: Added.
+
 2010-03-19  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dimitri Glazkov.

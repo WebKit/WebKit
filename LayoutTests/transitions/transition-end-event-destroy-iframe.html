@@ -1,0 +1,37 @@
+<html>
+<head>
+  <title>Destroy and Hide Element in Transition End Event</title>
+  <style type="text/css" media="screen">
+    div {
+        border 2px solid blue;
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+    
+    function testFinished() {
+        p = document.getElementById("parent");
+        f = document.getElementById("frame");
+        p.removeChild(f);
+        if (window.GCController)
+            GCController.collect();
+        document.getElementById('results').innerHTML = 'Did not crash, so PASSED';
+        
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    };
+  </script>
+</head>
+<body>
+
+<p>Tests element removal and hiding in webkitTransitionEnd event handler. Should not crash.</p>
+
+<div id="parent">
+    <iframe id="frame" src="resources/transition-end-event-destroy-iframe-inner.html" width="400px" height="400px"></iframe>
+</div>
+<div id="results"></div>
+</body>
+</html>

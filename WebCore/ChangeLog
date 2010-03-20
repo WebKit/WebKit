@@ -1,3 +1,21 @@
+2010-03-19  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Fixed a crash with AnimationController getting deleted out from under itself.
+        
+        It's possible for the Frame that owns an AnimationController to get deleted
+        in the EndTransitionEvent (or other animation events) to get deleted in the
+        event handler. Normally this case is protected against by preventing the Frame
+        from getting deleted until the end of the runloop. But native uses of the 
+        WebView can subvert this protection. So I added a protector to the 
+        animation event dispatcher to protect it in those cases.
+
+        Test: transitions/transition-end-event-destroy-iframe.html
+
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::updateStyleIfNeededDispatcherFired):
+
 2010-03-19  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Antti Koivisto.
