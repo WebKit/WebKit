@@ -52,14 +52,7 @@ class ChromiumWinPort(chromium.ChromiumPort):
         chromium.ChromiumPort.__init__(self, port_name, options)
 
     def baseline_search_path(self):
-        # FIXME: remove the downstream paths once we've migrated the
-        # baselines.
         dirs = []
-        if self._name == 'chromium-win-xp':
-            dirs.append(self._chromium_baseline_path('chromium-win-xp'))
-        if self._name in ('chromium-win-xp', 'chromium-win-vista'):
-            dirs.append(self._chromium_baseline_path('chromium-win-vista'))
-        dirs.append(self._chromium_baseline_path('chromium-win'))
         if self._name == 'chromium-win-xp':
             dirs.append(self._webkit_baseline_path('chromium-win-xp'))
         if self._name in ('chromium-win-xp', 'chromium-win-vista'):
