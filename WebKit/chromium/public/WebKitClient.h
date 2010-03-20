@@ -49,7 +49,6 @@ class WebApplicationCacheHost;
 class WebApplicationCacheHostClient;
 class WebClipboard;
 class WebCookieJar;
-class WebGraphicsContext3D;
 class WebIndexedDatabase;
 class WebMessagePortChannel;
 class WebMimeRegistry;
@@ -269,12 +268,6 @@ public:
 
     // Callable from a background WebKit thread.
     virtual void callOnMainThread(void (*func)()) { }
-
-    // WebGL --------------------------------------------------------------
-
-    // May return null if WebGL is not supported.
-    // Returns newly allocated WebGraphicsContext3D instance.
-    virtual WebGraphicsContext3D* createGraphicsContext3D() { return 0; }
 
 protected:
     ~WebKitClient() { }

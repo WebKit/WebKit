@@ -1,3 +1,144 @@
+2010-03-20  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        No review, rolling out r56294.
+        http://trac.webkit.org/changeset/56294
+        https://bugs.webkit.org/show_bug.cgi?id=36262
+
+        Broke compile on Chromium canaries.
+
+        * WebKit.gyp:
+        * public/WebGraphicsContext3D.h: Removed.
+        * public/WebKitClient.h:
+        * src/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3DInternal::):
+        (WebCore::GraphicsContext3DInternal::GLConnection::chooseFBConfig):
+        (WebCore::GraphicsContext3DInternal::GLConnection::createNewContext):
+        (WebCore::GraphicsContext3DInternal::GLConnection::createPbuffer):
+        (WebCore::GraphicsContext3DInternal::GLConnection::destroyPbuffer):
+        (WebCore::GraphicsContext3DInternal::GLConnection::makeCurrent):
+        (WebCore::GraphicsContext3DInternal::GLConnection::destroyContext):
+        (WebCore::GraphicsContext3DInternal::GLConnection::getCurrentContext):
+        (WebCore::GraphicsContext3DInternal::GLConnection::GLConnection):
+        (WebCore::GraphicsContext3DInternal::GLConnection::create):
+        (WebCore::GraphicsContext3DInternal::GLConnection::~GLConnection):
+        (WebCore::GraphicsContext3DInternal::VertexAttribPointerState::VertexAttribPointerState):
+        (WebCore::GraphicsContext3DInternal::GraphicsContext3DInternal):
+        (WebCore::GraphicsContext3DInternal::~GraphicsContext3DInternal):
+        (WebCore::GraphicsContext3DInternal::makeContextCurrent):
+        (WebCore::GraphicsContext3DInternal::platformGraphicsContext3D):
+        (WebCore::GraphicsContext3DInternal::platformTexture):
+        (WebCore::createTextureObject):
+        (WebCore::GraphicsContext3DInternal::reshape):
+        (WebCore::GraphicsContext3DInternal::flipVertically):
+        (WebCore::GraphicsContext3DInternal::beginPaint):
+        (WebCore::GraphicsContext3DInternal::activeTexture):
+        (WebCore::GraphicsContext3DInternal::bindBuffer):
+        (WebCore::GraphicsContext3DInternal::bindFramebuffer):
+        (WebCore::GraphicsContext3DInternal::bindTexture):
+        (WebCore::GraphicsContext3DInternal::bufferDataImpl):
+        (WebCore::GraphicsContext3DInternal::disableVertexAttribArray):
+        (WebCore::GraphicsContext3DInternal::enableVertexAttribArray):
+        (WebCore::GraphicsContext3DInternal::getError):
+        (WebCore::GraphicsContext3DInternal::getContextAttributes):
+        (WebCore::GraphicsContext3DInternal::vertexAttribPointer):
+        (WebCore::GraphicsContext3DInternal::viewportImpl):
+        (WebCore::GraphicsContext3DInternal::synthesizeGLError):
+        (WebCore::GraphicsContext3D::create):
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+        (WebCore::GraphicsContext3D::platformGraphicsContext3D):
+        (WebCore::GraphicsContext3D::platformTexture):
+        (WebCore::GraphicsContext3D::makeContextCurrent):
+        (WebCore::GraphicsContext3D::reshape):
+        (WebCore::GraphicsContext3D::beginPaint):
+        (WebCore::GraphicsContext3D::endPaint):
+        (WebCore::GraphicsContext3D::sizeInBytes):
+        (WebCore::GraphicsContext3D::createBuffer):
+        (WebCore::GraphicsContext3D::createFramebuffer):
+        (WebCore::GraphicsContext3D::createProgram):
+        (WebCore::GraphicsContext3D::createRenderbuffer):
+        (WebCore::GraphicsContext3D::createShader):
+        (WebCore::GraphicsContext3D::createTexture):
+        (WebCore::GraphicsContext3D::deleteBuffer):
+        (WebCore::GraphicsContext3D::deleteFramebuffer):
+        (WebCore::GraphicsContext3D::deleteProgram):
+        (WebCore::GraphicsContext3D::deleteRenderbuffer):
+        (WebCore::GraphicsContext3D::deleteShader):
+        (WebCore::GraphicsContext3D::deleteTexture):
+        (WebCore::GraphicsContext3D::activeTexture):
+        (WebCore::GraphicsContext3D::bindAttribLocation):
+        (WebCore::GraphicsContext3D::bindBuffer):
+        (WebCore::GraphicsContext3D::bindFramebuffer):
+        (WebCore::GraphicsContext3D::bindTexture):
+        (WebCore::GraphicsContext3D::bufferData):
+        (WebCore::GraphicsContext3D::bufferSubData):
+        (WebCore::GraphicsContext3D::checkFramebufferStatus):
+        (WebCore::GraphicsContext3D::detachShader):
+        (WebCore::GraphicsContext3D::disableVertexAttribArray):
+        (WebCore::GraphicsContext3D::drawArrays):
+        (WebCore::GraphicsContext3D::drawElements):
+        (WebCore::GraphicsContext3D::enableVertexAttribArray):
+        (WebCore::GraphicsContext3D::generateMipmap):
+        (WebCore::GraphicsContext3D::getActiveAttrib):
+        (WebCore::GraphicsContext3D::getActiveUniform):
+        (WebCore::GraphicsContext3D::getAttribLocation):
+        (WebCore::GraphicsContext3D::getBooleanv):
+        (WebCore::GraphicsContext3D::getBufferParameteriv):
+        (WebCore::GraphicsContext3D::getContextAttributes):
+        (WebCore::GraphicsContext3D::getError):
+        (WebCore::GraphicsContext3D::getFloatv):
+        (WebCore::GraphicsContext3D::getFramebufferAttachmentParameteriv):
+        (WebCore::GraphicsContext3D::getIntegerv):
+        (WebCore::GraphicsContext3D::getProgramiv):
+        (WebCore::GraphicsContext3D::getProgramInfoLog):
+        (WebCore::GraphicsContext3D::getRenderbufferParameteriv):
+        (WebCore::GraphicsContext3D::getShaderiv):
+        (WebCore::GraphicsContext3D::getShaderInfoLog):
+        (WebCore::GraphicsContext3D::getShaderSource):
+        (WebCore::GraphicsContext3D::getString):
+        (WebCore::GraphicsContext3D::getTexParameterfv):
+        (WebCore::GraphicsContext3D::getTexParameteriv):
+        (WebCore::GraphicsContext3D::getUniformfv):
+        (WebCore::GraphicsContext3D::getUniformiv):
+        (WebCore::GraphicsContext3D::getUniformLocation):
+        (WebCore::GraphicsContext3D::getVertexAttribfv):
+        (WebCore::GraphicsContext3D::getVertexAttribiv):
+        (WebCore::GraphicsContext3D::getVertexAttribOffset):
+        (WebCore::GraphicsContext3D::isBuffer):
+        (WebCore::GraphicsContext3D::isEnabled):
+        (WebCore::GraphicsContext3D::isFramebuffer):
+        (WebCore::GraphicsContext3D::isProgram):
+        (WebCore::GraphicsContext3D::isRenderbuffer):
+        (WebCore::GraphicsContext3D::isShader):
+        (WebCore::GraphicsContext3D::isTexture):
+        (WebCore::GraphicsContext3D::pixelStorei):
+        (WebCore::GraphicsContext3D::readPixels):
+        (WebCore::GraphicsContext3D::releaseShaderCompiler):
+        (WebCore::GraphicsContext3D::shaderSource):
+        (WebCore::GraphicsContext3D::synthesizeGLError):
+        (WebCore::GraphicsContext3D::texImage2D):
+        (WebCore::GraphicsContext3D::texSubImage2D):
+        (WebCore::GraphicsContext3D::uniform1fv):
+        (WebCore::GraphicsContext3D::uniform1iv):
+        (WebCore::GraphicsContext3D::uniform2fv):
+        (WebCore::GraphicsContext3D::uniform2iv):
+        (WebCore::GraphicsContext3D::uniform3fv):
+        (WebCore::GraphicsContext3D::uniform3iv):
+        (WebCore::GraphicsContext3D::uniform4fv):
+        (WebCore::GraphicsContext3D::uniform4iv):
+        (WebCore::GraphicsContext3D::uniformMatrix2fv):
+        (WebCore::GraphicsContext3D::uniformMatrix3fv):
+        (WebCore::GraphicsContext3D::uniformMatrix4fv):
+        (WebCore::GraphicsContext3D::vertexAttrib1fv):
+        (WebCore::GraphicsContext3D::vertexAttrib2fv):
+        (WebCore::GraphicsContext3D::vertexAttrib3fv):
+        (WebCore::GraphicsContext3D::vertexAttrib4fv):
+        (WebCore::GraphicsContext3D::vertexAttribPointer):
+        (WebCore::GraphicsContext3D::viewport):
+        * src/WebGraphicsContext3D.cpp: Removed.
+        * src/WebGraphicsContext3DDefaultImpl.cpp: Removed.
+        * src/WebGraphicsContext3DDefaultImpl.h: Removed.
+
 2010-03-19  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Darin Fisher.
