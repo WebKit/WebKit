@@ -1,3 +1,11 @@
+2010-03-20  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fixes for new method in LayoutTestController.
+
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::setSpatialNavigationEnabled):
+        * wx/build/settings.py:
+
 2010-03-20  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, tool fix.

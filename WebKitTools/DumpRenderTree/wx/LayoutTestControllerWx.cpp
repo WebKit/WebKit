@@ -391,3 +391,8 @@ void LayoutTestController::apiTestGoToCurrentBackForwardItem()
 {
 
 }
+
+void LayoutTestController::setSpatialNavigationEnabled(bool)
+{
+
+}

@@ -1,3 +1,19 @@
+2010-03-20  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fixes after recent changes, including move of setDatabasesEnabled from Settings.
+
+        * WebFrame.cpp:
+        (wxWebFrame::RunScript):
+        * WebKitSupport/InspectorClientWx.cpp:
+        (WebCore::InspectorClientWx::openInspectorFrontend):
+        * WebSettings.cpp:
+        * WebSettings.h:
+        * WebView.cpp:
+        (wxWebView::Create):
+        (wxWebView::SetDatabasesEnabled):
+        (wxWebView::AreDatabasesEnabled):
+        * WebView.h:
+
 2010-03-16  Yury Semikhatsky <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

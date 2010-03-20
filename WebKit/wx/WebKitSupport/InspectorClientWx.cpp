@@ -47,8 +47,7 @@ void InspectorClientWx::inspectorDestroyed()
     notImplemented();
 }
 
-
-void InspectorClientWx::openInspectorFrontend(WebCore::InspectorController*);
+void InspectorClientWx::openInspectorFrontend(WebCore::InspectorController*)
 {
     notImplemented();
 }

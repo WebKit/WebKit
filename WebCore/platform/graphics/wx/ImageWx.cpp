@@ -33,6 +33,7 @@
 #include "GraphicsContext.h"
 #include "ImageObserver.h"
 #include "NotImplemented.h"
+#include "SharedBuffer.h"
 
 #include <math.h>
 #include <stdio.h>

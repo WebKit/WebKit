@@ -102,20 +102,6 @@ bool wxWebSettings::IsJavaScriptEnabled() const
     return false;
 }
     
-void wxWebSettings::SetDatabasesEnabled(bool enabled)
-{
-    if (m_settings)
-        m_settings->setDatabasesEnabled(enabled);
-}
-    
-bool wxWebSettings::AreDatabasesEnabled() const
-{
-    if (m_settings)
-        return m_settings->databasesEnabled();
-        
-    return false;
-}
-    
 void wxWebSettings::SetLocalStoragePath(const wxString& path)
 {
     if (m_settings)

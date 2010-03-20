@@ -195,6 +195,16 @@ public:
 
     static void SetDatabaseDirectory(const wxString& databaseDirectory);
     static wxString GetDatabaseDirectory();
+    
+    /**
+        Sets whether or not web pages can create databases.
+    */
+    static void SetDatabasesEnabled(bool enabled);
+    
+    /**
+        Returns whether or not the WebView runs JavaScript code.
+    */    
+    static bool AreDatabasesEnabled();
 
     static void SetProxyInfo(const wxString& host = wxEmptyString,
                              unsigned long port = 0,

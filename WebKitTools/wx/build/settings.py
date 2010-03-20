@@ -60,7 +60,7 @@ common_libpaths = []
 common_frameworks = []
 
 ports = [
-    'CF',
+    'Brew',
     'Chromium',
     'Gtk', 
     'Haiku',

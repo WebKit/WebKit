@@ -1,3 +1,10 @@
+2010-03-20  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fixes after recent changes.
+
+        * platform/graphics/wx/ImageWx.cpp:
+        * wscript:
+
 2010-03-20  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by David Kilzer.

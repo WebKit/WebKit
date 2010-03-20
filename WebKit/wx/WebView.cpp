@@ -71,6 +71,7 @@
 #include <runtime/UString.h>
 
 #if ENABLE(DATABASE)
+#include "Database.h"
 #include "DatabaseTracker.h"
 #endif
 
@@ -336,7 +337,7 @@ bool wxWebView::Create(wxWindow* parent, int id, const wxPoint& position,
     settings->setJavaScriptEnabled(true);
 
 #if ENABLE(DATABASE)
-    settings->setDatabasesEnabled(true);
+    SetDatabasesEnabled(true);
 #endif
 
     m_isInitialized = true;
@@ -936,6 +937,23 @@ wxString wxWebView::GetDatabaseDirectory()
 #else
     return wxEmptyString;
 #endif
+}
+
+/* static */
+void wxWebView::SetDatabasesEnabled(bool enabled)
+{
+#if ENABLE(DATABASE)
+    WebCore::Database::setIsAvailable(enabled);
+#endif
+}
+
+/* static */
+bool wxWebView::AreDatabasesEnabled()
+{
+#if ENABLE(DATABASE)
+    return WebCore::Database::isAvailable();
+#endif
+    return false;
 }
 
 static WebCore::ResourceHandleManager::ProxyType curlProxyType(wxProxyType type)
