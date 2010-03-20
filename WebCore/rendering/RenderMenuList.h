@@ -1,6 +1,7 @@
 /*
  * This file is part of the select element renderer in WebCore.
  *
+ * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  * Copyright (C) 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -37,7 +38,12 @@ namespace WebCore {
 class PopupMenu;
 class RenderText;
 
+#if ENABLE(NO_LISTBOX_RENDERING)
+class RenderMenuList : public RenderFlexibleBox, private ListPopupMenuClient {
+#else
 class RenderMenuList : public RenderFlexibleBox, private PopupMenuClient {
+#endif
+
 public:
     RenderMenuList(Element*);
     virtual ~RenderMenuList();
@@ -96,6 +102,11 @@ private:
     virtual FontSelector* fontSelector() const;
     virtual HostWindow* hostWindow() const;
     virtual PassRefPtr<Scrollbar> createScrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize);
+
+#if ENABLE(NO_LISTBOX_RENDERING)
+    virtual void listBoxSelectItem(int listIndex, bool allowMultiplySelections, bool shift, bool fireOnChangeNow = true);
+    virtual bool multiple();
+#endif
 
     virtual bool hasLineIfEmpty() const { return true; }
 

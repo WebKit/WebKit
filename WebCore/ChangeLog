@@ -1,3 +1,26 @@
+2010-03-19  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Antti Koivisto.
+
+        Multiselect Popup - PopupMenuClient extension
+        https://bugs.webkit.org/show_bug.cgi?id=36178
+
+        PopupMenuClient class is the interface used by combobox popup implementations.
+        It needs to be extended to handle <select multiple> needs.
+
+        A new interface named ListPopupMenuClient that inherits from PopupMenuClient was created.
+        The use of this new class instead of adding methods to PopupMenuClient avoids changes
+        in other non related implementations of PopupMenuClient.
+
+        RenderMenuList has changed to inherit ListPopupMenuClient instead of PopupMenuClient
+        and to have the new methods implemented.
+
+        * platform/PopupMenuClient.h:
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::listBoxSelectItem):
+        (WebCore::RenderMenuList::multiple):
+        * rendering/RenderMenuList.h:
+
 2010-03-19  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dimitri Glazkov.

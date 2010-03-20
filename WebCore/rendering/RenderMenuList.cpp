@@ -1,6 +1,7 @@
 /*
  * This file is part of the select element renderer in WebCore.
  *
+ * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  * Copyright (C) 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  *               2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
@@ -308,6 +309,20 @@ void RenderMenuList::valueChanged(unsigned listIndex, bool fireOnChange)
     SelectElement* select = toSelectElement(static_cast<Element*>(node()));
     select->setSelectedIndexByUser(select->listToOptionIndex(listIndex), true, fireOnChange);
 }
+
+#if ENABLE(NO_LISTBOX_RENDERING)
+void RenderMenuList::listBoxSelectItem(int listIndex, bool allowMultiplySelections, bool shift, bool fireOnChangeNow)
+{
+    SelectElement* select = toSelectElement(static_cast<Element*>(node()));
+    select->listBoxSelectItem(select->listToOptionIndex(listIndex), allowMultiplySelections, shift, fireOnChangeNow);
+}
+
+bool RenderMenuList::multiple()
+{
+    SelectElement* select = toSelectElement(static_cast<Element*>(node()));
+    return select->multiple();
+}
+#endif
 
 void RenderMenuList::didSetSelectedIndex()
 {
