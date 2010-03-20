@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: line 1: Refused to execute a JavaScript script. Source code of script found within request.
+
+This tests our parsing of the X-XSS-Protection header.
+
+
+
+--------
+Frame: 'frame'
+--------
+

@@ -55,6 +55,21 @@ static inline bool skipWhiteSpace(const String& str, int& pos, bool fromHttpEqui
     return pos != len;
 }
 
+// Returns true if the function can match the whole token (case insensitive).
+// Note: Might return pos == str.length()
+static inline bool skipToken(const String& str, int& pos, const char* token)
+{
+    int len = str.length();
+
+    while (pos != len && *token) {
+        if (toASCIILower(str[pos]) != *token++)
+            return false;
+        ++pos;
+    }
+
+    return true;
+}
+
 bool parseHTTPRefresh(const String& refresh, bool fromHttpEquivMeta, double& delay, String& url)
 {
     int len = refresh.length();
@@ -220,4 +235,32 @@ String extractCharsetFromMediaType(const String& mediaType)
     
     return String();
 }
+
+XSSProtectionDisposition parseXSSProtectionHeader(const String& header)
+{
+    String stippedHeader = header.stripWhiteSpace();
+
+    if (stippedHeader.isEmpty())
+        return XSSProtectionEnabled;
+
+    if (stippedHeader[0] == '0')
+        return XSSProtectionDisabled;
+
+    int length = (int)header.length();
+    int pos = 0;
+    if (stippedHeader[pos++] == '1'
+        && skipWhiteSpace(stippedHeader, pos, false)
+        && stippedHeader[pos++] == ';'
+        && skipWhiteSpace(stippedHeader, pos, false)
+        && skipToken(stippedHeader, pos, "mode")
+        && skipWhiteSpace(stippedHeader, pos, false)
+        && stippedHeader[pos++] == '='
+        && skipWhiteSpace(stippedHeader, pos, false)
+        && skipToken(stippedHeader, pos, "block")
+        && pos == length)
+        return XSSProtectionBlockEnabled;
+
+    return XSSProtectionEnabled;
+}
+
 }

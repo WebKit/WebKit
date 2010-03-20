@@ -5,7 +5,13 @@ use CGI;
 my $cgi = new CGI;
 
 if ($cgi->param('enable-full-block')) {
-    print "X-XSS-Protection: 12\n";
+    print "X-XSS-Protection: 1; mode=block\n";
+}
+if ($cgi->param('disable-protection')) {
+    print "X-XSS-Protection: 0\n";
+}
+if ($cgi->param('crazy-header')) {
+    print "X-XSS-Protection:   1  ;MoDe =  bLocK   \n";
 }
 if ($cgi->param('custom-header')) {
     print $cgi->param('custom-header') . "\n";

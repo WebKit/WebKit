@@ -1,3 +1,23 @@
+2010-03-19  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Daniel Bates.
+
+        Change XSSAuditor block syntax
+        https://bugs.webkit.org/show_bug.cgi?id=34436
+
+        Update tests to account for the new blocking syntax.  Added test for
+        disabling the XSS filter.
+
+        * http/tests/security/xssAuditor/malformed-xss-protection-header-expected.txt:
+        * http/tests/security/xssAuditor/malformed-xss-protection-header.html:
+        * http/tests/security/xssAuditor/no-protection-script-tag-expected.txt: Added.
+        * http/tests/security/xssAuditor/no-protection-script-tag.html: Added.
+        * http/tests/security/xssAuditor/resources/echo-head-base-href.pl:
+        * http/tests/security/xssAuditor/resources/echo-intertag-click-and-notify.pl:
+        * http/tests/security/xssAuditor/resources/echo-intertag.pl:
+        * http/tests/security/xssAuditor/xss-protection-parsing-01-expected.txt: Added.
+        * http/tests/security/xssAuditor/xss-protection-parsing-01.html: Added.
+
 2010-03-19  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Oliver Hunt.

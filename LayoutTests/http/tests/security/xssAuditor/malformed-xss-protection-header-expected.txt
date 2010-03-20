@@ -7,4 +7,4 @@ This tests that the X-XSS-Protection header is not ignored when the length of it
 --------
 Frame: 'frame'
 --------
-
+If you see this message and no JavaScript alert() then the test PASSED.
