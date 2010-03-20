@@ -33,6 +33,8 @@
 #if ENABLE(3D_CANVAS)
 #include "V8WebGLArray.h"
 
+#include "V8Binding.h"
+#include "V8Proxy.h"
 #include "V8WebGLByteArray.h"
 #include "V8WebGLFloatArray.h"
 #include "V8WebGLIntArray.h"
@@ -62,6 +64,30 @@ v8::Handle<v8::Value> toV8(WebGLArray* impl)
     if (impl->isUnsignedShortArray())
         return toV8(static_cast<WebGLUnsignedShortArray*>(impl));
     return v8::Handle<v8::Value>();
+}
+
+v8::Handle<v8::Value> V8WebGLArray::sliceCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.WebGLArray.slice");
+    // Forms:
+    // * slice(long start, long end);
+
+    WebGLArray* imp = V8WebGLArray::toNative(args.Holder());
+    int start, end;
+    switch (args.Length()) {
+    case 0:
+        start = 0;
+        end = imp->length();
+        break;
+    case 1:
+        start = toInt32(args[0]);
+        end = imp->length();
+        break;
+    default:
+        start = toInt32(args[0]);
+        end = toInt32(args[1]);
+    }
+    return toV8(imp->slice(start, end));
 }
 
 } // namespace WebCore

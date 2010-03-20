@@ -72,7 +72,10 @@ unsigned WebGLIntArray::byteLength() const {
     return m_size * sizeof(int);
 }
 
-PassRefPtr<WebGLArray> WebGLIntArray::slice(unsigned offset, unsigned length) {
+PassRefPtr<WebGLArray> WebGLIntArray::slice(int start, int end)
+{
+    unsigned offset, length;
+    calculateOffsetAndLength(start, end, m_size, &offset, &length);
     unsigned fullOffset = m_byteOffset + offset * sizeof(int);
     clampOffsetAndNumElements<int>(buffer(), &fullOffset, &length);
     return create(buffer(), fullOffset, length);

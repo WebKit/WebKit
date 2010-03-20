@@ -69,7 +69,10 @@ unsigned WebGLFloatArray::byteLength() const {
     return m_size * sizeof(float);
 }
 
-PassRefPtr<WebGLArray> WebGLFloatArray::slice(unsigned offset, unsigned length) {
+PassRefPtr<WebGLArray> WebGLFloatArray::slice(int start, int end)
+{
+    unsigned offset, length;
+    calculateOffsetAndLength(start, end, m_size, &offset, &length);
     unsigned fullOffset = m_byteOffset + offset * sizeof(float);
     clampOffsetAndNumElements<float>(buffer(), &fullOffset, &length);
     return create(buffer(), fullOffset, length);

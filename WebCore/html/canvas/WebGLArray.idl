@@ -30,6 +30,6 @@ module html {
         readonly attribute unsigned long byteLength;
         readonly attribute unsigned long length;
 
-        WebGLArray slice(in unsigned long offset, in unsigned long length);
+        [Custom] WebGLArray slice(in long start, in long end);
     };
 }

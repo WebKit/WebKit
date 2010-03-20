@@ -315,7 +315,7 @@ function testSlice(type, name) {
     for (var i = 0; i < 5; i++) {
       assertEq('Element ' + i, i, slice[i]);
     }
-    slice = array.slice(4, 6);
+    slice = array.slice(4, 10);
     assertEq('slice.length', 6, slice.length);
     for (var i = 0; i < 6; i++) {
       assertEq('Element ' + i, 4 + i, slice[i]);
@@ -330,12 +330,12 @@ function negativeTestSlice(type, name) {
   running('negativeTest ' + name + ' Slice');
   try {
     var array = new type([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
-    slice = array.slice(5, 6);
+    slice = array.slice(5, 11);
     if (slice.length != 5) {
       fail();
       return;
     }
-    slice = array.slice(10, 0);
+    slice = array.slice(10, 10);
     if (slice.length != 0) {
       fail();
       return;
@@ -427,7 +427,27 @@ function testSlicingWithOutOfRangeValues(type, name, sz) {
         shouldBe("array.length", "32 / typeSize");
         try {
             shouldBe("array.slice(4, 0x3FFFFFFF).length", "(32 / typeSize) - 4");
-            shouldBe("array.slice(4, -2147483648).length", "(32 / typeSize) - 4");
+            shouldBe("array.slice(4, -2147483648).length", "0");
+        } catch (e) {
+            testFailed("Slicing of " + name + " threw exception");
+        }
+    } catch (e) {
+        testFailed("Exception: " + e);
+    }
+}
+
+function testSlicingWithDefaultValues(type, name, sz) {
+    debug("Testing slicing with default inputs of " + name);
+    try {
+        var buffer = new WebGLArrayBuffer(32);
+        array = new type(buffer);
+        typeSize = sz;
+        shouldBe("array.length", "32 / typeSize");
+        try {
+            shouldBe("array.slice().length", "(32 / typeSize)");
+            shouldBe("array.slice(2).length", "(32 / typeSize) - 2");
+            shouldBe("array.slice(-2).length", "2");
+            shouldBe("array.slice(-2147483648).length", "(32 / typeSize)");
         } catch (e) {
             testFailed("Slicing of " + name + " threw exception");
         }
@@ -574,6 +594,7 @@ function runTests() {
     testConstructionWithNegativeOutOfRangeValues(type, name);
     testConstructionOfHugeArray(type, name, testCase.elementSizeInBytes);
     testSlicingWithOutOfRangeValues(type, name, testCase.elementSizeInBytes);
+    testSlicingWithDefaultValues(type, name, testCase.elementSizeInBytes);
     testSettingFromArrayWithOutOfRangeOffset(type, name);
     testSettingFromFakeArrayWithOutOfRangeLength(type, name);
     testSettingFromWebGLArrayWithOutOfRangeOffset(type, name);

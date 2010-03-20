@@ -71,7 +71,10 @@ unsigned WebGLShortArray::byteLength() const {
     return m_size * sizeof(short);
 }
 
-PassRefPtr<WebGLArray> WebGLShortArray::slice(unsigned offset, unsigned length) {
+PassRefPtr<WebGLArray> WebGLShortArray::slice(int start, int end)
+{
+    unsigned offset, length;
+    calculateOffsetAndLength(start, end, m_size, &offset, &length);
     unsigned fullOffset = m_byteOffset + offset * sizeof(short);
     clampOffsetAndNumElements<short>(buffer(), &fullOffset, &length);
     return create(buffer(), fullOffset, length);

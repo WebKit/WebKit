@@ -71,7 +71,7 @@ function testSlicingWithOutOfRangeValues(type, name, sz) {
         shouldBe("array.length", "32 / typeSize");
         try {
             shouldBe("array.slice(4, 0x3FFFFFFF).length", "(32 / typeSize) - 4");
-            shouldBe("array.slice(4, -2147483648).length", "(32 / typeSize) - 4");
+            shouldBe("array.slice(4, -2147483648).length", "0");
         } catch (e) {
             testFailed("Slicing of " + name + " threw exception");
         }

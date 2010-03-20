@@ -58,6 +58,23 @@ void WebGLArray::setImpl(WebGLArray* array, unsigned byteOffset, ExceptionCode& 
     memcpy(base + byteOffset, array->baseAddress(), array->byteLength());
 }
 
+void WebGLArray::calculateOffsetAndLength(int start, int end, unsigned arraySize,
+                                          unsigned* offset, unsigned* length)
+{
+    if (start < 0)
+        start += arraySize;
+    if (start < 0)
+        start = 0;
+    if (end < 0)
+        end += arraySize;
+    if (end < 0)
+        end = 0;
+    if (end < start)
+        end = start;
+    *offset = static_cast<unsigned>(start);
+    *length = static_cast<unsigned>(end - start);
+}
+
 }
 
 #endif // ENABLE(3D_CANVAS)

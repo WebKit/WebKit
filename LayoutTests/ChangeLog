@@ -1,3 +1,15 @@
+2010-03-19  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Oliver Hunt.
+
+        Update WebGLArray.slice() to new spec
+        https://bugs.webkit.org/show_bug.cgi?id-35612
+
+        * fast/canvas/webgl/array-unit-tests-expected.txt: Changed tests to reflect the new slice parameters; add new test cases for default inputs for slice.
+        * fast/canvas/webgl/array-unit-tests.html: Ditto.
+        * fast/canvas/webgl/webgl-array-invalid-ranges-expected.txt: Changed tests to reflect the new slice parameters.
+        * fast/canvas/webgl/webgl-array-invalid-ranges.html: Ditto.
+
 2010-03-19  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

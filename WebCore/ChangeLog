@@ -1,3 +1,40 @@
+2010-03-19  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Oliver Hunt.
+
+        Update WebGLArray.slice() to new spec
+        https://bugs.webkit.org/show_bug.cgi?id-35612
+
+        * bindings/js/JSWebGLArrayCustom.cpp: Adding support for default inputs.
+        (WebCore::JSWebGLArray::slice):
+        * bindings/v8/custom/V8WebGLArrayCustom.cpp: Ditto.
+        (WebCore::V8WebGLArray::sliceCallback):
+        * html/canvas/WebGLArray.cpp: Map start/end to offset/length.
+        (WebCore::WebGLArray::calculateOffsetAndLength):
+        * html/canvas/WebGLArray.h: Modified slice parameters.
+        * html/canvas/WebGLArray.idl: Define custom binding for slice().
+        * html/canvas/WebGLByteArray.cpp: Modified slice parameters.
+        (WebCore::WebGLByteArray::slice):
+        * html/canvas/WebGLByteArray.h: Ditto.
+        * html/canvas/WebGLFloatArray.cpp: Ditto.
+        (WebCore::WebGLFloatArray::slice):
+        * html/canvas/WebGLFloatArray.h: Ditto.
+        * html/canvas/WebGLIntArray.cpp: Ditto.
+        (WebCore::WebGLIntArray::slice):
+        * html/canvas/WebGLIntArray.h: Ditto.
+        * html/canvas/WebGLShortArray.cpp: Ditto.
+        (WebCore::WebGLShortArray::slice):
+        * html/canvas/WebGLShortArray.h: Ditto.
+        * html/canvas/WebGLUnsignedByteArray.cpp: Ditto.
+        (WebCore::WebGLUnsignedByteArray::slice):
+        * html/canvas/WebGLUnsignedByteArray.h: Ditto.
+        * html/canvas/WebGLUnsignedIntArray.cpp: Ditto.
+        (WebCore::WebGLUnsignedIntArray::slice):
+        * html/canvas/WebGLUnsignedIntArray.h: Ditto.
+        * html/canvas/WebGLUnsignedShortArray.cpp: Ditto.
+        (WebCore::WebGLUnsignedShortArray::slice):
+        * html/canvas/WebGLUnsignedShortArray.h: Ditto.
+
 2010-03-19  Yong Li <yong.li@torchmobile.com> and Andy Estes <aestes@apple.com>
 
         Reviewed by Darin Adler.

@@ -67,6 +67,27 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, WebGLAr
     return jsUndefined();
 }
 
+JSValue JSWebGLArray::slice(ExecState* exec, const ArgList& args)
+{
+    WebGLArray* array = reinterpret_cast<WebGLArray*>(impl());
+
+    int start, end;
+    switch (args.size()) {
+    case 0:
+        start = 0;
+        end = array->length();
+        break;
+    case 1:
+        start = args.at(0).toInt32(exec);
+        end = array->length();
+        break;
+    default:
+        start = args.at(0).toInt32(exec);
+        end = args.at(1).toInt32(exec);
+    }
+    return toJS(exec, globalObject(), array->slice(start, end));
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(3D_CANVAS)
