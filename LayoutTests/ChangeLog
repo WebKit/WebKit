@@ -1,3 +1,17 @@
+2010-03-19  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Freeze sandbox attributes on creation
+        https://bugs.webkit.org/show_bug.cgi?id=34184
+
+        Test that allow-forms is frozen on document creation.
+
+        * fast/frames/resources/sandboxed-iframe-form-dynamic-allowed.html: Added.
+        * fast/frames/resources/sandboxed-iframe-form-dynamic-disallowed.html: Added.
+        * fast/frames/sandboxed-iframe-forms-dynamic-expected.txt: Added.
+        * fast/frames/sandboxed-iframe-forms-dynamic.html: Added.
+
 2010-03-19  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Oliver Hunt.
