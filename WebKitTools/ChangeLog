@@ -55,7 +55,6 @@
 
         Reviewed by Dimitri Glazkov.
 
->>>>>>> .r56286
         Flip the Chromium ports to look first for the test expectations
         in LayoutTests/platform/chromium and only afterwards look in the
         Chromium repo downstream for overrides.
