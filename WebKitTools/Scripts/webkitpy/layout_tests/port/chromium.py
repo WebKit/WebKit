@@ -216,8 +216,7 @@ class ChromiumPort(base.Port):
     def _chromium_baseline_path(self, platform):
         if platform is None:
             platform = self.name()
-        return self.path_from_chromium_base('webkit', 'data', 'layout_tests',
-            'platform', platform, 'LayoutTests')
+        return self.path_from_webkit_base('LayoutTests', 'platform', platform)
 
 
 class ChromiumDriver(base.Driver):

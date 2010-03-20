@@ -1,3 +1,11 @@
+2010-03-20  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, tool fix.
+
+        Remove vestiges of downstream directory names to unbreak rebaselining tool.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py: Changed paths to use WebKit repo.
+
 2010-03-20  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Dimitri Glazkov.
