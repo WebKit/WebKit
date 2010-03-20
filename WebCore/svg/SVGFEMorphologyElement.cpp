@@ -92,11 +92,16 @@ void SVGFEMorphologyElement::synchronizeProperty(const QualifiedName& attrName)
 bool SVGFEMorphologyElement::build(SVGResourceFilter* filterResource)
 {
     FilterEffect* input1 = filterResource->builder()->getEffectById(in1());
+    SVGAnimatedPropertyTraits<float>::ReturnType radX = radiusX(),
+        radY = radiusY();
 
     if (!input1)
         return false;
 
-    RefPtr<FilterEffect> effect = FEMorphology::create(input1, static_cast<MorphologyOperatorType>(_operator()), radiusX(), radiusY());
+    if (radX < 0 || radY < 0)
+        return false;
+
+    RefPtr<FilterEffect> effect = FEMorphology::create(input1, static_cast<MorphologyOperatorType>(_operator()), radX, radY);
     filterResource->addFilterEffect(this, effect.release());
     
     return true;

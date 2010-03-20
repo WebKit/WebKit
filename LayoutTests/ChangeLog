@@ -1,3 +1,16 @@
+2010-03-19  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Oliver Hunt.
+
+        Security: ReadAV@NULL for negative feMorphology filter radius
+        https://bugs.webkit.org/show_bug.cgi?id=34566
+
+        Prevents building the filter if either radius is negative.
+        Catches negative radii resulting from conversions.
+
+        * svg/filters/feMorphology-invalid-radius-expected.txt: Added.
+        * svg/filters/feMorphology-invalid-radius.svg: Added.
+
 2010-03-19  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.
