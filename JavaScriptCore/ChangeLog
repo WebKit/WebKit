@@ -1,5 +1,14 @@
 2010-03-21  David Kilzer  <ddkilzer@apple.com>
 
+        Blind attempt #2 to fix the Windows build after r56314
+
+        * API/tests/testapi.c: Include JSObjectRefPrivate.h for the new
+        methods instead of declaring them locally (and non-extern).
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        Backed out previous change.
+
+2010-03-21  David Kilzer  <ddkilzer@apple.com>
+
         Blind attempt to fix the Windows build after r56314
 
         Try to fix the following errors on the Windows buildbot:
