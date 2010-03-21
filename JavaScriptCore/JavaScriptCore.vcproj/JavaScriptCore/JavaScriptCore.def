@@ -32,6 +32,8 @@ EXPORTS
     ??1UStringImpl@JSC@@QAE@XZ
     ??2JSGlobalObject@JSC@@SAPAXIPAVJSGlobalData@1@@Z
     ??8JSC@@YA_NABVUString@0@0@Z
+    ?JSObjectGetPrivateProperty@@YAPBUOpaqueJSValue@@PBUOpaqueJSContext@@PAU1@PAUOpaqueJSString@@@Z
+    ?JSObjectSetPrivateProperty@@YA_NPBUOpaqueJSContext@@PAUOpaqueJSValue@@PAUOpaqueJSString@@PBU2@@Z
     ?NaN@JSC@@3NB
     ?UTF8String@UString@JSC@@QBE?AVCString@2@_N@Z
     ?add@Identifier@JSC@@SA?AV?$PassRefPtr@VUStringImpl@JSC@@@WTF@@PAVExecState@2@PBD@Z

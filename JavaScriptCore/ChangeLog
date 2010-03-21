@@ -1,3 +1,17 @@
+2010-03-21  David Kilzer  <ddkilzer@apple.com>
+
+        Blind attempt to fix the Windows build after r56314
+
+        Try to fix the following errors on the Windows buildbot:
+
+            Linking...
+            testapi.obj : error LNK2001: unresolved external symbol "bool __cdecl JSObjectSetPrivateProperty(struct OpaqueJSContext const *,struct OpaqueJSValue *,struct OpaqueJSString *,struct OpaqueJSValue const *)" (?JSObjectSetPrivateProperty@@YA_NPBUOpaqueJSContext@@PAUOpaqueJSValue@@PAUOpaqueJSString@@PBU2@@Z)
+            testapi.obj : error LNK2001: unresolved external symbol "struct OpaqueJSValue const * __cdecl JSObjectGetPrivateProperty(struct OpaqueJSContext const *,struct OpaqueJSValue *,struct OpaqueJSString *)" (?JSObjectGetPrivateProperty@@YAPBUOpaqueJSValue@@PBUOpaqueJSContext@@PAU1@PAUOpaqueJSString@@@Z)
+            C:\cygwin\home\buildbot\slave\win-release\build\WebKitBuild\bin\testapi.exe : fatal error LNK1120: 2 unresolved externals
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def: Added
+        missing symbols to be exported.
+
 2010-03-21  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.
