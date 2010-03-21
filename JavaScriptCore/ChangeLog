@@ -1,3 +1,50 @@
+2010-03-21  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        New class; QScriptProgram.
+
+        The class should be used to evaluate the same script multiple times
+        more efficiently.
+
+        [Qt] QtScript should have QScriptProgram class
+        https://bugs.webkit.org/show_bug.cgi?id=36008
+
+        * qt/api/QtScript.pro:
+        * qt/api/qscriptengine.cpp:
+        (QScriptEngine::evaluate):
+        * qt/api/qscriptengine.h:
+        * qt/api/qscriptengine_p.cpp:
+        (QScriptEnginePrivate::evaluate):
+        * qt/api/qscriptengine_p.h:
+        (QScriptEnginePrivate::evaluate):
+        * qt/api/qscriptprogram.cpp: Added.
+        (QScriptProgram::QScriptProgram):
+        (QScriptProgram::~QScriptProgram):
+        (QScriptProgram::operator=):
+        (QScriptProgram::isNull):
+        (QScriptProgram::sourceCode):
+        (QScriptProgram::fileName):
+        (QScriptProgram::firstLineNumber):
+        (QScriptProgram::operator==):
+        (QScriptProgram::operator!=):
+        * qt/api/qscriptprogram.h: Added.
+        * qt/api/qscriptprogram_p.h: Added.
+        (QScriptProgramPrivate::get):
+        (QScriptProgramPrivate::QScriptProgramPrivate):
+        (QScriptProgramPrivate::~QScriptProgramPrivate):
+        (QScriptProgramPrivate::isNull):
+        (QScriptProgramPrivate::sourceCode):
+        (QScriptProgramPrivate::fileName):
+        (QScriptProgramPrivate::firstLineNumber):
+        (QScriptProgramPrivate::operator==):
+        (QScriptProgramPrivate::operator!=):
+        (QScriptProgramPrivate::program):
+        (QScriptProgramPrivate::file):
+        (QScriptProgramPrivate::line):
+        * qt/tests/qscriptengine/tst_qscriptengine.cpp:
+        (tst_QScriptEngine::evaluateProgram):
+
 2010-03-21  David Kilzer  <ddkilzer@apple.com>
 
         Blind attempt #2 to fix the Windows build after r56314

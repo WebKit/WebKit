@@ -18,6 +18,7 @@
 */
 
 #include "qscriptengine.h"
+#include "qscriptprogram.h"
 #include "qscriptvalue.h"
 #include <QtTest/qtest.h>
 
@@ -37,6 +38,7 @@ private slots:
     void collectGarbage();
     void nullValue();
     void undefinedValue();
+    void evaluateProgram();
 };
 
 /* Evaluating a script that throw an unhandled exception should return an invalid value. */
@@ -71,6 +73,106 @@ void tst_QScriptEngine::undefinedValue()
     QScriptValue value = engine.undefinedValue();
     QVERIFY(value.isValid());
     QVERIFY(value.isUndefined());
+}
+
+void tst_QScriptEngine::evaluateProgram()
+{
+    QScriptEngine eng;
+    {
+        QString code("1 + 2");
+        QString fileName("hello.js");
+        int lineNumber = 123;
+        QScriptProgram program(code, fileName, lineNumber);
+        QVERIFY(!program.isNull());
+        QCOMPARE(program.sourceCode(), code);
+        QCOMPARE(program.fileName(), fileName);
+        QCOMPARE(program.firstLineNumber(), lineNumber);
+
+        QScriptValue expected = eng.evaluate(code);
+        for (int x = 0; x < 10; ++x) {
+            QScriptValue ret = eng.evaluate(program);
+            QVERIFY(ret.equals(expected));
+        }
+
+        // operator=
+        QScriptProgram sameProgram = program;
+        QVERIFY(sameProgram == program);
+        QVERIFY(eng.evaluate(sameProgram).equals(expected));
+
+        // copy constructor
+        QScriptProgram sameProgram2(program);
+        QVERIFY(sameProgram2 == program);
+        QVERIFY(eng.evaluate(sameProgram2).equals(expected));
+
+        QScriptProgram differentProgram("2 + 3");
+        QVERIFY(differentProgram != program);
+        QVERIFY(!eng.evaluate(differentProgram).equals(expected));
+    }
+
+    // Program that accesses variable in the scope
+    {
+        QScriptProgram program("a");
+        QVERIFY(!program.isNull());
+        {
+            QScriptValue ret = eng.evaluate(program);
+            QVERIFY(ret.isError());
+            QCOMPARE(ret.toString(), QString::fromLatin1("ReferenceError: Can't find variable: a"));
+        }
+        {
+            QScriptValue ret = eng.evaluate(program);
+            QVERIFY(ret.isError());
+        }
+        eng.evaluate("a = 456");
+        {
+            QScriptValue ret = eng.evaluate(program);
+            QVERIFY(!ret.isError());
+            QCOMPARE(ret.toNumber(), 456.0);
+        }
+    }
+
+    // Program that creates closure
+    {
+        QScriptProgram program("(function() { var count = 0; return function() { return count++; }; })");
+        QVERIFY(!program.isNull());
+        QScriptValue createCounter = eng.evaluate(program);
+        QVERIFY(createCounter.isFunction());
+        QScriptValue counter = createCounter.call();
+        QVERIFY(counter.isFunction());
+        {
+            QScriptValue ret = counter.call();
+            QVERIFY(ret.isNumber());
+        }
+        QScriptValue counter2 = createCounter.call();
+        QVERIFY(counter2.isFunction());
+        QVERIFY(!counter2.equals(counter));
+        {
+            QScriptValue ret = counter2.call();
+            QVERIFY(ret.isNumber());
+        }
+    }
+
+    // Same program run in different engines
+    {
+        QString code("1 + 2");
+        QScriptProgram program(code);
+        QVERIFY(!program.isNull());
+        double expected = eng.evaluate(program).toNumber();
+        for (int x = 0; x < 2; ++x) {
+            QScriptEngine eng2;
+            for (int y = 0; y < 2; ++y) {
+                double ret = eng2.evaluate(program).toNumber();
+                QCOMPARE(ret, expected);
+            }
+        }
+    }
+
+    // No program
+    {
+        QScriptProgram program;
+        QVERIFY(program.isNull());
+        QScriptValue ret = eng.evaluate(program);
+        QVERIFY(!ret.isValid());
+    }
 }
 
 QTEST_MAIN(tst_QScriptEngine)

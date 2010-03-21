@@ -23,6 +23,7 @@ SOURCES +=  $$PWD/qscriptengine.cpp \
             $$PWD/qscriptengine_p.cpp \
             $$PWD/qscriptvalue.cpp \
             $$PWD/qscriptstring.cpp \
+            $$PWD/qscriptprogram.cpp \
 
 HEADERS +=  $$PWD/qtscriptglobal.h \
             $$PWD/qscriptengine.h \
@@ -32,9 +33,10 @@ HEADERS +=  $$PWD/qtscriptglobal.h \
             $$PWD/qscriptconverter_p.h \
             $$PWD/qscriptstring.h \
             $$PWD/qscriptstring_p.h \
+            $$PWD/qscriptprogram.h \
+            $$PWD/qscriptprogram_p.h \
 
 
 !static: DEFINES += QT_MAKEDLL
 
 DESTDIR = $$OUTPUT_DIR/lib
-

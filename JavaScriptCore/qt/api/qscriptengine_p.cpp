@@ -21,6 +21,7 @@
 
 #include "qscriptengine_p.h"
 
+#include "qscriptprogram_p.h"
 #include "qscriptvalue_p.h"
 
 /*!
@@ -46,9 +47,16 @@ QScriptValuePrivate* QScriptEnginePrivate::evaluate(const QString& program, cons
 {
     JSStringRef script = QScriptConverter::toString(program);
     JSStringRef file = QScriptConverter::toString(fileName);
-    JSValueRef exception;
-    JSValueRef result = JSEvaluateScript(m_context, script, /* Global Object */ 0, file, lineNumber, &exception);
-    if (!result)
-        return new QScriptValuePrivate(this, exception); // returns an exception
-    return new QScriptValuePrivate(this, result);
+    return new QScriptValuePrivate(this, evaluate(script, file, lineNumber));
+}
+
+/*!
+    Evaluates program and returns the result of the evaluation.
+    \internal
+*/
+QScriptValuePrivate* QScriptEnginePrivate::evaluate(const QScriptProgramPrivate* program)
+{
+    if (program->isNull())
+        return new QScriptValuePrivate;
+    return new QScriptValuePrivate(this, evaluate(program->program(), program->file(), program->line()));
 }
