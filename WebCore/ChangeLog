@@ -1,3 +1,17 @@
+2010-03-21  Dmitry Gorbik  <socket.h@gmail.com>
+
+        <http://webkit.org/b/14858> <col> width ignored when not tied to a single cell
+
+        Reviewed by David Kilzer.
+
+        Fixed width calculation for cells with span when <col> is defined.
+
+        Test: fast/table/col-width-span-expand.html
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::styleOrColWidth): Added the calculation of cell width
+        in case of <col> defined and span > 1.
+
 2010-03-20  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Kenneth Christiansen.

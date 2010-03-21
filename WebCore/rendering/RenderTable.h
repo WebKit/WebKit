@@ -113,6 +113,7 @@ public:
     }
 
     RenderTableCol* colElement(int col, bool* startEdge = 0, bool* endEdge = 0) const;
+    RenderTableCol* nextColElement(RenderTableCol* current) const;
 
     bool needsSectionRecalc() const { return m_needsSectionRecalc; }
     void setNeedsSectionRecalc()

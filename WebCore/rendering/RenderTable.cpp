@@ -581,6 +581,25 @@ void RenderTable::appendColumn(int span)
     setNeedsLayoutAndPrefWidthsRecalc();
 }
 
+RenderTableCol* RenderTable::nextColElement(RenderTableCol* current) const
+{
+    RenderObject* next = current->firstChild();
+    if (!next)
+        next = current->nextSibling();
+    if (!next && current->parent()->isTableCol())
+        next = current->parent()->nextSibling();
+
+    while (next) {
+        if (next->isTableCol())
+            return toRenderTableCol(next);
+        if (next != m_caption)
+            return 0;
+        next = next->nextSibling();
+    }
+    
+    return 0;
+}
+
 RenderTableCol* RenderTable::colElement(int col, bool* startEdge, bool* endEdge) const
 {
     if (!m_hasColElements)
@@ -589,32 +608,31 @@ RenderTableCol* RenderTable::colElement(int col, bool* startEdge, bool* endEdge)
     int cCol = 0;
 
     while (child) {
-        if (child->isTableCol()) {
-            RenderTableCol* colElem = toRenderTableCol(child);
-            int span = colElem->span();
-            if (!colElem->firstChild()) {
-                int startCol = cCol;
-                int endCol = cCol + span - 1;
-                cCol += span;
-                if (cCol > col) {
-                    if (startEdge)
-                        *startEdge = startCol == col;
-                    if (endEdge)
-                        *endEdge = endCol == col;
-                    return colElem;
-                }
-            }
-
-            RenderObject* next = child->firstChild();
-            if (!next)
-                next = child->nextSibling();
-            if (!next && child->parent()->isTableCol())
-                next = child->parent()->nextSibling();
-            child = next;
-        } else if (child == m_caption)
-            child = child->nextSibling();
-        else
+        if (child->isTableCol())
             break;
+        if (child != m_caption)
+            return 0;
+        child = child->nextSibling();
+    }
+    if (!child)
+        return 0;
+
+    RenderTableCol* colElem = toRenderTableCol(child);
+    while (colElem) {
+        int span = colElem->span();
+        if (!colElem->firstChild()) {
+            int startCol = cCol;
+            int endCol = cCol + span - 1;
+            cCol += span;
+            if (cCol > col) {
+                if (startEdge)
+                    *startEdge = startCol == col;
+                if (endEdge)
+                    *endEdge = endCol == col;
+                return colElem;
+            }
+        }
+        colElem = nextColElement(colElem);
     }
 
     return 0;

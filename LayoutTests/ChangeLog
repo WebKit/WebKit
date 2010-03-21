@@ -1,3 +1,14 @@
+2010-03-21  Dmitry Gorbik  <socket.h@gmail.com>
+
+        <http://webkit.org/b/14858> <col> width ignored when not tied to a single cell
+
+        Reviewed by David Kilzer.
+
+        Fixed width calculation for cells with span when <col> is defined.
+
+        * fast/table/col-width-span-expand-expected.txt: Added.
+        * fast/table/col-width-span-expand.html: Added.
+
 2010-03-20  Martin Robinson  <mrobinson@webkit.org>
 
         Reviewed by Xan Lopez

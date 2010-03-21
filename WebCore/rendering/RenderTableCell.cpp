@@ -83,18 +83,42 @@ void RenderTableCell::updateFromElement()
 Length RenderTableCell::styleOrColWidth() const
 {
     Length w = style()->width();
-    if (colSpan() > 1 || !w.isAuto())
+    if (!w.isAuto())
         return w;
+
     RenderTableCol* tableCol = table()->colElement(col());
+
     if (tableCol) {
-        w = tableCol->style()->width();
-        
+        int colSpanCount = colSpan();
+
+        Length colWidthSum = Length(0, Fixed);
+        for (int i = 1; i <= colSpanCount; i++) {
+            Length colWidth = tableCol->style()->width();
+
+            // Percentage value should be returned only for colSpan == 1.
+            // Otherwise we return original width for the cell.
+            if (!colWidth.isFixed()) {
+                if (colSpanCount > 1)
+                    return w;
+                return colWidth;
+            }
+
+            colWidthSum = Length(colWidthSum.value() + colWidth.value(), Fixed);
+
+            tableCol = table()->nextColElement(tableCol);
+            // If no next <col> tag found for the span we just return what we have for now.
+            if (!tableCol)
+                break;
+        }
+
         // Column widths specified on <col> apply to the border box of the cell.
         // Percentages don't need to be handled since they're always treated this way (even when specified on the cells).
         // See Bugzilla bug 8126 for details.
-        if (w.isFixed() && w.value() > 0)
-            w = Length(max(0, w.value() - borderLeft() - borderRight() - paddingLeft() - paddingRight()), Fixed);
+        if (colWidthSum.isFixed() && colWidthSum.value() > 0)
+            colWidthSum = Length(max(0, colWidthSum.value() - borderLeft() - borderRight() - paddingLeft() - paddingRight()), Fixed);
+        return colWidthSum;
     }
+
     return w;
 }
 
