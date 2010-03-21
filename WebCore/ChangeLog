@@ -1,3 +1,23 @@
+2010-03-21  Kim Grönholm  <kim.gronholm@nomovok.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] GraphicsLayer: matrix interpolations in transform-animations don't behave correctly
+        https://bugs.webkit.org/show_bug.cgi?id=35520
+        
+        The case where the list of source and target transform operations are 
+        not the same but have the same size needs to be special-cased in
+        GraphicsLayerQt, as well as the case where the source or target
+        operation list is empty. The URLs listed here render correctly after
+        applying the patch.
+
+        Tests: https://bug-35520-attachments.webkit.org/attachment.cgi?id=49890
+               https://bug-35520-attachments.webkit.org/attachment.cgi?id=49889
+            
+
+        * platform/graphics/qt/GraphicsLayerQt.cpp:
+        (WebCore::TransformAnimationQt::applyFrame):
+
 2010-03-21  Dmitry Gorbik  <socket.h@gmail.com>
 
         <http://webkit.org/b/14858> <col> width ignored when not tied to a single cell
