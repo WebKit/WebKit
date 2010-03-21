@@ -1,3 +1,11 @@
+2010-03-21  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Documentation fix for previous patch.
+
+        * API/JSObjectRefPrivate.h:
+
 2010-03-20  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.
