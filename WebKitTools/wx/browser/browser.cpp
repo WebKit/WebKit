@@ -61,7 +61,7 @@ bool MyApp::OnInit()
 #if __WXMSW__ || __WXMAC__
     settings.SetPluginsEnabled(true);
 #endif
-    settings.SetDatabasesEnabled(true);
+    frame->webview->SetDatabasesEnabled(true);
     settings.SetEditableLinkBehavior(wxEditableLinkOnlyLiveWithShiftKey);
     frame->CentreOnScreen();
     frame->Show(true);

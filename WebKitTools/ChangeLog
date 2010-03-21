@@ -1,3 +1,10 @@
+2010-03-20  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix after recent database API change.
+
+        * wx/browser/browser.cpp:
+        (MyApp::OnInit):
+
 2010-03-20  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Adam Barth.
