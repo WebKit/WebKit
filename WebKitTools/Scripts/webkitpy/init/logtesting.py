@@ -27,14 +27,14 @@ logging module.
 
 Use the LogTesting class for basic testing needs.  For more advanced
 needs (e.g. unit-testing methods that configure logging), see the
-UnitTestLogStream class.
+TestLogStream class.
 
 """
 
 import logging
 
 
-class UnitTestLogStream(object):
+class TestLogStream(object):
 
     """Represents a file-like object for unit-testing logging.
 
@@ -104,7 +104,7 @@ class LogTesting(object):
         instead be created using the static setUp() method.
 
         Args:
-          test_stream: A UnitTestLogStream instance.
+          test_stream: A TestLogStream instance.
           handler: The handler added to the logger.
 
         """
@@ -143,7 +143,7 @@ class LogTesting(object):
                          of log messages you would like to test.
 
         """
-        stream = UnitTestLogStream(test_case)
+        stream = TestLogStream(test_case)
         handler = logging.StreamHandler(stream)
         handler.setLevel(logging_level)
         formatter = logging.Formatter("%(levelname)s: %(message)s")

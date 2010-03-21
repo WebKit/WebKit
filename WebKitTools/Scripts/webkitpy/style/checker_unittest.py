@@ -39,7 +39,7 @@ import unittest
 
 import checker as style
 from webkitpy.style_references import LogTesting
-from webkitpy.style_references import UnitTestLogStream
+from webkitpy.style_references import TestLogStream
 from checker import _BASE_FILTER_RULES
 from checker import _MAX_REPORTS_PER_CATEGORY
 from checker import _PATH_RULES_SPECIFIER as PATH_RULES_SPECIFIER
@@ -63,7 +63,7 @@ class ConfigureLoggingTest(unittest.TestCase):
     """Tests the configure_logging() function."""
 
     def setUp(self):
-        log_stream = UnitTestLogStream(self)
+        log_stream = TestLogStream(self)
         # Use a logger other than the root logger or one prefixed with
         # webkit so as not to conflict with test-webkitpy logging.
         logger = logging.getLogger("unittest")
