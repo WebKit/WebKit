@@ -40,6 +40,7 @@
 #include <QtGui/qpixmapcache.h>
 #include <QtGui/qscrollbar.h>
 #include <QtGui/qstyleoption.h>
+#include <QtGui/qinputcontext.h>
 #if defined(Q_WS_X11)
 #include <QX11Info>
 #endif
@@ -133,6 +134,8 @@ public:
     void _q_doLoadFinished(bool success);
     void _q_contentsSizeChanged(const QSize&);
     void _q_scaleChanged();
+
+    void _q_updateMicroFocus();
 
     QGraphicsWebView* q;
     QWebPage* page;
@@ -241,6 +244,20 @@ void QGraphicsWebViewPrivate::_q_doLoadFinished(bool success)
         emit q->urlChanged(q->url());
 
     emit q->loadFinished(success);
+}
+
+void QGraphicsWebViewPrivate::_q_updateMicroFocus()
+{
+#if !defined(QT_NO_IM) && (defined(Q_WS_X11) || defined(Q_WS_QWS) || defined(Q_OS_SYMBIAN))
+    // Ideally, this should be handled by a common call to an updateMicroFocus function
+    // in QGraphicsItem. See http://bugreports.qt.nokia.com/browse/QTBUG-7578.
+    QList<QGraphicsView*> views = q->scene()->views();
+    for (int c = 0; c < views.size(); ++c) {
+        QInputContext* ic = views.at(c)->inputContext();
+        if (ic)
+            ic->update();
+    }
+#endif
 }
 
 void QGraphicsWebViewPrivate::scroll(int dx, int dy, const QRect& rectToScroll)
@@ -718,6 +735,8 @@ void QGraphicsWebView::setPage(QWebPage* page)
             this, SIGNAL(statusBarMessage(QString)));
     connect(d->page, SIGNAL(linkClicked(QUrl)),
             this, SIGNAL(linkClicked(QUrl)));
+    connect(d->page, SIGNAL(microFocusChanged()),
+            this, SLOT(_q_updateMicroFocus()));
 }
 
 /*!
