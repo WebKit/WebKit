@@ -42,6 +42,10 @@ static double nan(const char*)
 
 #endif
 
+bool JSObjectSetPrivateProperty(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName, JSValueRef value);
+JSValueRef JSObjectGetPrivateProperty(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName);
+bool JSObjectDeletePrivateProperty(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName);
+
 static JSGlobalContextRef context;
 static int failed;
 static void assertEqualsAsBoolean(JSValueRef value, bool expectedValue)
@@ -754,6 +758,8 @@ static void testInitializeFinalize()
 
 static JSValueRef jsNumberValue =  NULL;
 
+static JSObjectRef aHeapRef = NULL;
+
 static void makeGlobalNumberValue(JSContextRef context) {
     JSValueRef v = JSValueMakeNumber(context, 420);
     JSValueProtect(context, v);
@@ -869,7 +875,52 @@ int main(int argc, char* argv[])
     JSStringRef EmptyObjectIString = JSStringCreateWithUTF8CString("EmptyObject");
     JSObjectSetProperty(context, globalObject, EmptyObjectIString, EmptyObject, kJSPropertyAttributeNone, NULL);
     JSStringRelease(EmptyObjectIString);
+    
+    JSStringRef lengthStr = JSStringCreateWithUTF8CString("length");
+    aHeapRef = JSObjectMakeArray(context, 0, 0, 0);
+    JSObjectSetProperty(context, aHeapRef, lengthStr, JSValueMakeNumber(context, 10), 0, 0);
+    JSStringRef privatePropertyName = JSStringCreateWithUTF8CString("privateProperty");
+    if (!JSObjectSetPrivateProperty(context, myObject, privatePropertyName, aHeapRef)) {
+        printf("FAIL: Could not set private property.\n");
+        failed = 1;        
+    } else {
+        printf("PASS: Set private property.\n");
+    }
+    if (JSObjectSetPrivateProperty(context, aHeapRef, privatePropertyName, aHeapRef)) {
+        printf("FAIL: JSObjectSetPrivateProperty should fail on non-API objects.\n");
+        failed = 1;        
+    } else {
+        printf("PASS: Did not allow JSObjectSetPrivateProperty on a non-API object.\n");
+    }
+    if (JSObjectGetPrivateProperty(context, myObject, privatePropertyName) != aHeapRef) {
+        printf("FAIL: Could not retrieve private property.\n");
+        failed = 1;
+    } else
+        printf("PASS: Retrieved private property.\n");
+    if (JSObjectGetPrivateProperty(context, aHeapRef, privatePropertyName)) {
+        printf("FAIL: JSObjectGetPrivateProperty should return NULL when called on a non-API object.\n");
+        failed = 1;
+    } else
+        printf("PASS: JSObjectGetPrivateProperty return NULL.\n");
+    
+    if (JSObjectGetProperty(context, myObject, privatePropertyName, 0) == aHeapRef) {
+        printf("FAIL: Accessed private property through ordinary property lookup.\n");
+        failed = 1;
+    } else
+        printf("PASS: Cannot access private property through ordinary property lookup.\n");
+    
+    JSGarbageCollect(context);
+    
+    for (int i = 0; i < 10000; i++)
+        JSObjectMake(context, 0, 0);
 
+    if (JSValueToNumber(context, JSObjectGetProperty(context, aHeapRef, lengthStr, 0), 0) != 10) {
+        printf("FAIL: Private property has been collected.\n");
+        failed = 1;
+    } else
+        printf("PASS: Private property does not appear to have been collected.\n");
+    JSStringRelease(lengthStr);
+    
     JSStringRef validJSON = JSStringCreateWithUTF8CString("{\"aProperty\":true}");
     JSValueRef jsonObject = JSValueMakeFromJSONString(context, validJSON);
     JSStringRelease(validJSON);

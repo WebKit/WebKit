@@ -18,8 +18,10 @@ _JSGlobalContextRetain
 _JSObjectCallAsConstructor
 _JSObjectCallAsFunction
 _JSObjectCopyPropertyNames
+_JSObjectDeletePrivateProperty
 _JSObjectDeleteProperty
 _JSObjectGetPrivate
+_JSObjectGetPrivateProperty
 _JSObjectGetProperty
 _JSObjectGetPropertyAtIndex
 _JSObjectGetPrototype
@@ -35,6 +37,7 @@ _JSObjectMakeFunction
 _JSObjectMakeFunctionWithCallback
 _JSObjectMakeRegExp
 _JSObjectSetPrivate
+_JSObjectSetPrivateProperty
 _JSObjectSetProperty
 _JSObjectSetPropertyAtIndex
 _JSObjectSetPrototype

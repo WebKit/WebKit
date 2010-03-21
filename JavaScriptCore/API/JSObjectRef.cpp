@@ -26,6 +26,7 @@
 
 #include "config.h"
 #include "JSObjectRef.h"
+#include "JSObjectRefPrivate.h"
 
 #include "APICast.h"
 #include "CodeBlock.h"
@@ -360,6 +361,55 @@ bool JSObjectSetPrivate(JSObjectRef object, void* data)
         return true;
     }
         
+    return false;
+}
+
+JSValueRef JSObjectGetPrivateProperty(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName)
+{
+    ExecState* exec = toJS(ctx);
+    APIEntryShim entryShim(exec);
+    JSObject* jsObject = toJS(object);
+    JSValue result;
+    Identifier name(propertyName->identifier(&exec->globalData()));
+    if (jsObject->inherits(&JSCallbackObject<JSGlobalObject>::info))
+        result = static_cast<JSCallbackObject<JSGlobalObject>*>(jsObject)->getPrivateProperty(name);
+    else if (jsObject->inherits(&JSCallbackObject<JSObject>::info))
+        result = static_cast<JSCallbackObject<JSObject>*>(jsObject)->getPrivateProperty(name);
+    return toRef(exec, result);
+}
+
+bool JSObjectSetPrivateProperty(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName, JSValueRef value)
+{
+    ExecState* exec = toJS(ctx);
+    APIEntryShim entryShim(exec);
+    JSObject* jsObject = toJS(object);
+    JSValue jsValue = toJS(exec, value);
+    Identifier name(propertyName->identifier(&exec->globalData()));
+    if (jsObject->inherits(&JSCallbackObject<JSGlobalObject>::info)) {
+        static_cast<JSCallbackObject<JSGlobalObject>*>(jsObject)->setPrivateProperty(name, jsValue);
+        return true;
+    }
+    if (jsObject->inherits(&JSCallbackObject<JSObject>::info)) {
+        static_cast<JSCallbackObject<JSObject>*>(jsObject)->setPrivateProperty(name, jsValue);
+        return true;
+    }
+    return false;
+}
+
+bool JSObjectDeletePrivateProperty(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName)
+{
+    ExecState* exec = toJS(ctx);
+    APIEntryShim entryShim(exec);
+    JSObject* jsObject = toJS(object);
+    Identifier name(propertyName->identifier(&exec->globalData()));
+    if (jsObject->inherits(&JSCallbackObject<JSGlobalObject>::info)) {
+        static_cast<JSCallbackObject<JSGlobalObject>*>(jsObject)->deletePrivateProperty(name);
+        return true;
+    }
+    if (jsObject->inherits(&JSCallbackObject<JSObject>::info)) {
+        static_cast<JSCallbackObject<JSObject>*>(jsObject)->deletePrivateProperty(name);
+        return true;
+    }
     return false;
 }
 

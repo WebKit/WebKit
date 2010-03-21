@@ -1,3 +1,38 @@
+2010-03-20  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        JSC needs an API to allow custom objects to have aprivate GC-accessible properties
+        https://bugs.webkit.org/show_bug.cgi?id=36420
+
+        Add new API methods to support "private" properties on custom
+        objects.
+
+        * API/JSCallbackObject.h:
+        (JSC::JSCallbackObjectData::JSCallbackObjectData):
+        (JSC::JSCallbackObjectData::~JSCallbackObjectData):
+        (JSC::JSCallbackObjectData::getPrivateProperty):
+        (JSC::JSCallbackObjectData::setPrivateProperty):
+        (JSC::JSCallbackObjectData::deletePrivateProperty):
+        (JSC::JSCallbackObjectData::markChildren):
+        (JSC::JSCallbackObjectData::JSPrivatePropertyMap::getPrivateProperty):
+        (JSC::JSCallbackObjectData::JSPrivatePropertyMap::setPrivateProperty):
+        (JSC::JSCallbackObjectData::JSPrivatePropertyMap::deletePrivateProperty):
+        (JSC::JSCallbackObjectData::JSPrivatePropertyMap::markChildren):
+        (JSC::JSCallbackObject::getPrivateProperty):
+        (JSC::JSCallbackObject::setPrivateProperty):
+        (JSC::JSCallbackObject::deletePrivateProperty):
+        (JSC::JSCallbackObject::markChildren):
+        * API/JSObjectRef.cpp:
+        (JSObjectGetPrivateProperty):
+        (JSObjectSetPrivateProperty):
+        (JSObjectDeletePrivateProperty):
+        * API/JSObjectRefPrivate.h: Added.
+        * API/tests/testapi.c:
+        (main):
+        * JavaScriptCore.exp:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2010-03-20  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fixes after introduction of Brew files.
