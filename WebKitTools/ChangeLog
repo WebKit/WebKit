@@ -1,3 +1,14 @@
+2010-03-22 Antonio Gomes <tonikitoo@webkit.org>
+
+        Unreviewed.
+
+        Rolling out r56183: http://trac.webkit.org/changeset/56183
+
+        https://bugs.webkit.org/show_bug.cgi?id=36244
+
+        Need to roll out because this patch will be re-worked by the author
+        and other reviewers agreed on it.
+
 2010-03-22  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Adam Barth.
