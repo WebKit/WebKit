@@ -1,3 +1,20 @@
+2010-03-22  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Dirk Schulze.
+
+        Out of bounds read in SVG feColorMatrix filter
+        https://bugs.webkit.org/show_bug.cgi?id=32714
+
+        Prevents an invalid read when a valid values attribute is not
+        supplied for an feColorMatrix SVG filter. Also fixes general
+        handling of missing or invalid values attribute.
+
+        Tests: svg/filters/feColorMatrix-invalid-value.svg
+               svg/filters/feColorMatrix-values.svg
+
+        * svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::build):
+
 2010-03-22  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Eric Carlson.
