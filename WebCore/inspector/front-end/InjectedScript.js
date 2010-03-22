@@ -305,6 +305,11 @@ InjectedScript.addInspectedNode = function(nodeId)
     return true;
 }
 
+InjectedScript.getNodeId = function(node)
+{
+    return InjectedScriptHost.pushNodePathToFrontend(node, false, false);
+}
+
 InjectedScript.performSearch = function(whitespaceTrimmedQuery)
 {
     // FIXME: Few things are missing here:

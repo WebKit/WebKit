@@ -1,3 +1,17 @@
+2010-03-22  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: AuditRules still use getMatchedCSSRules as a part of the img-related audit.
+        https://bugs.webkit.org/show_bug.cgi?id=36424
+
+        * inspector/front-end/AuditRules.js:
+        (WebInspector.AuditRules.ImageDimensionsRule.prototype.doRun):
+        (WebInspector.AuditRules.ImageDimensionsRule.prototype.doRun.receivedImages):
+        (WebInspector.AuditRules.ImageDimensionsRule.prototype.doRun.pushImageNodes):
+        * inspector/front-end/InjectedScript.js:
+        (injectedScriptConstructor):
+
 2010-03-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.
