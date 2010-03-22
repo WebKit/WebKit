@@ -1,3 +1,13 @@
+2010-03-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36400
+        Add a test for r15750 (Flash crashes after it replaces itself via a document.write())
+
+        * plugins/destroy-plugin-from-callback-expected.txt: Added.
+        * plugins/destroy-plugin-from-callback.html: Added.
+
 2010-03-22  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
