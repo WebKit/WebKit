@@ -1,3 +1,8 @@
+2010-03-22  Kevin Decker  <kdecker@apple.com>
+    
+        Attempt to fix the Leopard build.
+        * rendering/RenderEmbeddedObject.cpp: Add ".f" to contants.
+
 2010-03-22  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Dirk Schulze.

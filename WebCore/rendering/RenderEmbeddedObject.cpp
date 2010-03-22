@@ -59,9 +59,9 @@ using namespace HTMLNames;
     
 static const float missingPluginRoundedRectHeight = 18;
 static const float missingPluginRoundedRectLeftRightTextMargin = 6;
-static const float missingPluginRoundedRectOpacity = 0.20;
+static const float missingPluginRoundedRectOpacity = 0.20f;
 static const float missingPluginRoundedRectRadius = 5;
-static const float missingPluginTextOpacity = 0.55;
+static const float missingPluginTextOpacity = 0.55f;
 
 RenderEmbeddedObject::RenderEmbeddedObject(Element* element)
     : RenderPartObject(element)
