@@ -1,3 +1,11 @@
+2010-03-22  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Unreviewed.
+
+        Skip new editing test that fails
+
+        * platform/qt/Skipped:
+
 2010-03-22  Dirk Schulze  <krit@webkit.org>
 
         Out of bounds read in SVG feColorMatrix filter
