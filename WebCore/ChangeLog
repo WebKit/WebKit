@@ -2,6 +2,17 @@
 
         Reviewed by Simon Hausmann.
 
+        Add EFL-specific code to platform/DragImage.h and
+        platform/DragData.h.
+        http://webkit.org/b/36310
+
+        * platform/DragImage.h:
+        * platform/DragData.h:
+
+2010-03-22  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Simon Hausmann.
+
         Add EFL-specific code to platform/FileSystem.h.
         http://webkit.org/b/36313
 
