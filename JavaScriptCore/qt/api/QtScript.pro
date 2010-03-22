@@ -24,6 +24,7 @@ SOURCES +=  $$PWD/qscriptengine.cpp \
             $$PWD/qscriptvalue.cpp \
             $$PWD/qscriptstring.cpp \
             $$PWD/qscriptprogram.cpp \
+            $$PWD/qscriptsyntaxcheckresult.cpp \
 
 HEADERS +=  $$PWD/qtscriptglobal.h \
             $$PWD/qscriptengine.h \
@@ -35,6 +36,7 @@ HEADERS +=  $$PWD/qtscriptglobal.h \
             $$PWD/qscriptstring_p.h \
             $$PWD/qscriptprogram.h \
             $$PWD/qscriptprogram_p.h \
+            $$PWD/qscriptsyntaxcheckresult.h \
 
 
 !static: DEFINES += QT_MAKEDLL

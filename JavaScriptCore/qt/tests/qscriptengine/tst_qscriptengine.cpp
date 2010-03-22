@@ -19,6 +19,7 @@
 
 #include "qscriptengine.h"
 #include "qscriptprogram.h"
+#include "qscriptsyntaxcheckresult.h"
 #include "qscriptvalue.h"
 #include <QtTest/qtest.h>
 
@@ -39,6 +40,8 @@ private slots:
     void nullValue();
     void undefinedValue();
     void evaluateProgram();
+    void checkSyntax_data();
+    void checkSyntax();
 };
 
 /* Evaluating a script that throw an unhandled exception should return an invalid value. */
@@ -174,6 +177,99 @@ void tst_QScriptEngine::evaluateProgram()
         QVERIFY(!ret.isValid());
     }
 }
+
+void tst_QScriptEngine::checkSyntax_data()
+{
+    QTest::addColumn<QString>("code");
+    QTest::addColumn<int>("expectedState");
+    QTest::addColumn<int>("errorLineNumber");
+    QTest::addColumn<int>("errorColumnNumber");
+    QTest::addColumn<QString>("errorMessage");
+
+    QTest::newRow("0")
+        << QString("0") << int(QScriptSyntaxCheckResult::Valid)
+        << -1 << -1 << "";
+    QTest::newRow("if (")
+        << QString("if (\n") << int(QScriptSyntaxCheckResult::Intermediate)
+        << 1 << 4 << "";
+    QTest::newRow("if else")
+        << QString("\nif else") << int(QScriptSyntaxCheckResult::Error)
+        << 2 << 4 << "SyntaxError: Parse error";
+    QTest::newRow("{if}")
+            << QString("{\n{\nif\n}\n") << int(QScriptSyntaxCheckResult::Error)
+        << 4 << 1 << "SyntaxError: Parse error";
+    QTest::newRow("foo[")
+        << QString("foo[") << int(QScriptSyntaxCheckResult::Error)
+        << 1 << 4 << "SyntaxError: Parse error";
+    QTest::newRow("foo['bar']")
+        << QString("foo['bar']") << int(QScriptSyntaxCheckResult::Valid)
+        << -1 << -1 << "";
+
+    QTest::newRow("/*")
+        << QString("/*") << int(QScriptSyntaxCheckResult::Intermediate)
+        << 1 << 1 << "Unclosed comment at end of file";
+    QTest::newRow("/*\nMy comment")
+        << QString("/*\nMy comment") << int(QScriptSyntaxCheckResult::Intermediate)
+        << 1 << 1 << "Unclosed comment at end of file";
+    QTest::newRow("/*\nMy comment */\nfoo = 10")
+        << QString("/*\nMy comment */\nfoo = 10") << int(QScriptSyntaxCheckResult::Valid)
+        << -1 << -1 << "";
+    QTest::newRow("foo = 10 /*")
+        << QString("foo = 10 /*") << int(QScriptSyntaxCheckResult::Intermediate)
+        << -1 << -1 << "";
+    QTest::newRow("foo = 10; /*")
+        << QString("foo = 10; /*") << int(QScriptSyntaxCheckResult::Intermediate)
+        << 1 << 11 << "Expected `end of file'";
+    QTest::newRow("foo = 10 /* My comment */")
+        << QString("foo = 10 /* My comment */") << int(QScriptSyntaxCheckResult::Valid)
+        << -1 << -1 << "";
+
+    QTest::newRow("/=/")
+        << QString("/=/") << int(QScriptSyntaxCheckResult::Valid) << -1 << -1 << "";
+    QTest::newRow("/=/g")
+        << QString("/=/g") << int(QScriptSyntaxCheckResult::Valid) << -1 << -1 << "";
+    QTest::newRow("/a/")
+        << QString("/a/") << int(QScriptSyntaxCheckResult::Valid) << -1 << -1 << "";
+    QTest::newRow("/a/g")
+        << QString("/a/g") << int(QScriptSyntaxCheckResult::Valid) << -1 << -1 << "";
+}
+
+void tst_QScriptEngine::checkSyntax()
+{
+    QFETCH(QString, code);
+    QFETCH(int, expectedState);
+    QFETCH(int, errorLineNumber);
+    QFETCH(int, errorColumnNumber);
+    QFETCH(QString, errorMessage);
+
+    QScriptSyntaxCheckResult result = QScriptEngine::checkSyntax(code);
+
+    // assignment
+    {
+        QScriptSyntaxCheckResult copy = result;
+        QCOMPARE(copy.state(), result.state());
+        QCOMPARE(copy.errorLineNumber(), result.errorLineNumber());
+        QCOMPARE(copy.errorColumnNumber(), result.errorColumnNumber());
+        QCOMPARE(copy.errorMessage(), result.errorMessage());
+    }
+    {
+        QScriptSyntaxCheckResult copy(result);
+        QCOMPARE(copy.state(), result.state());
+        QCOMPARE(copy.errorLineNumber(), result.errorLineNumber());
+        QCOMPARE(copy.errorColumnNumber(), result.errorColumnNumber());
+        QCOMPARE(copy.errorMessage(), result.errorMessage());
+    }
+
+    if (expectedState == QScriptSyntaxCheckResult::Intermediate)
+        QEXPECT_FAIL("", "QScriptSyntaxCheckResult::state() doesn't return the Intermediate state", Abort);
+    QCOMPARE(result.state(), QScriptSyntaxCheckResult::State(expectedState));
+    QCOMPARE(result.errorLineNumber(), errorLineNumber);
+    if (expectedState != QScriptSyntaxCheckResult::Valid && errorColumnNumber != 1)
+            QEXPECT_FAIL("", "QScriptSyntaxCheckResult::errorColumnNumber() doesn't return correct value", Continue);
+    QCOMPARE(result.errorColumnNumber(), errorColumnNumber);
+    QCOMPARE(result.errorMessage(), errorMessage);
+}
+
 
 QTEST_MAIN(tst_QScriptEngine)
 #include "tst_qscriptengine.moc"

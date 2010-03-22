@@ -1,3 +1,47 @@
+2010-03-22  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add support for syntax checking in the QtScript API.
+
+        New class was created; the QScriptSyntaxCheckResult which main
+        responsibility is to provide results of the ECMA Script code
+        syntax check. The class is not fully functional as the JSC C API
+        doesn't expose an error column number, but it is a good start point
+        for a future development.
+
+        [Qt] QtScript functionality should be extended by syntax checking.
+        https://bugs.webkit.org/show_bug.cgi?id=36123
+
+        * qt/api/QtScript.pro:
+        * qt/api/qscriptengine.cpp:
+        (QScriptEngine::checkSyntax):
+        * qt/api/qscriptengine.h:
+        * qt/api/qscriptengine_p.cpp:
+        (QScriptEnginePrivate::checkSyntax):
+        * qt/api/qscriptengine_p.h:
+        * qt/api/qscriptsyntaxcheckresult.cpp: Added.
+        (QScriptSyntaxCheckResult::QScriptSyntaxCheckResult):
+        (QScriptSyntaxCheckResult::~QScriptSyntaxCheckResult):
+        (QScriptSyntaxCheckResult::operator=):
+        (QScriptSyntaxCheckResult::state):
+        (QScriptSyntaxCheckResult::errorLineNumber):
+        (QScriptSyntaxCheckResult::errorColumnNumber):
+        (QScriptSyntaxCheckResult::errorMessage):
+        * qt/api/qscriptsyntaxcheckresult.h: Added.
+        * qt/api/qscriptsyntaxcheckresult_p.cpp: Added.
+        (QScriptSyntaxCheckResultPrivate::~QScriptSyntaxCheckResultPrivate):
+        (QScriptSyntaxCheckResultPrivate::errorMessage):
+        (QScriptSyntaxCheckResultPrivate::errorLineNumber):
+        * qt/api/qscriptsyntaxcheckresult_p.h: Added.
+        (QScriptSyntaxCheckResultPrivate::get):
+        (QScriptSyntaxCheckResultPrivate::QScriptSyntaxCheckResultPrivate):
+        (QScriptSyntaxCheckResultPrivate::state):
+        (QScriptSyntaxCheckResultPrivate::errorColumnNumber):
+        * qt/tests/qscriptengine/tst_qscriptengine.cpp:
+        (tst_QScriptEngine::checkSyntax_data):
+        (tst_QScriptEngine::checkSyntax):
+
 2010-03-21  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Simon Hausmann.

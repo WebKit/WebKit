@@ -23,6 +23,7 @@
 
 #include "qscriptengine_p.h"
 #include "qscriptprogram_p.h"
+#include "qscriptsyntaxcheckresult_p.h"
 #include "qscriptvalue_p.h"
 
 /*!
@@ -40,6 +41,23 @@ QScriptEngine::QScriptEngine()
 */
 QScriptEngine::~QScriptEngine()
 {
+}
+
+/*!
+  Checks the syntax of the given \a program. Returns a
+  QScriptSyntaxCheckResult object that contains the result of the check.
+*/
+QScriptSyntaxCheckResult QScriptEngine::checkSyntax(const QString &program)
+{
+    // FIXME This is not optimal.
+    // The JSC C API needs a context to perform a syntax check, it means that a QScriptEnginePrivate
+    // had to be created. This function is static so we have to create QScriptEnginePrivate for each
+    // call. We can't remove the "static" for compatibility reason, at least up to Qt5.
+    // QScriptSyntaxCheckResultPrivate takes ownership of newly created engine. The engine will be
+    // kept as long as it is needed for lazy evaluation of properties of
+    // the QScriptSyntaxCheckResultPrivate.
+    QScriptEnginePrivate* engine = new QScriptEnginePrivate(/* q_ptr */ 0);
+    return QScriptSyntaxCheckResultPrivate::get(engine->checkSyntax(program));
 }
 
 /*!

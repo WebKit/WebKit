@@ -39,6 +39,15 @@ QScriptEnginePrivate::~QScriptEnginePrivate()
     JSGlobalContextRelease(m_context);
 }
 
+QScriptSyntaxCheckResultPrivate* QScriptEnginePrivate::checkSyntax(const QString& program)
+{
+    JSValueRef exception;
+    if (JSCheckScriptSyntax(m_context, QScriptConverter::toString(program), /* url */ 0, /* starting line */ 1, &exception))
+        return new QScriptSyntaxCheckResultPrivate(this);
+    JSValueProtect(m_context, exception);
+    return new QScriptSyntaxCheckResultPrivate(this, const_cast<JSObjectRef>(exception));
+}
+
 /*!
     Evaluates program and returns the result of the evaluation.
     \internal
