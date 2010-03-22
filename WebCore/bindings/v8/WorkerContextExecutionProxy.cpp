@@ -40,6 +40,7 @@
 #include "SharedWorker.h"
 #include "SharedWorkerContext.h"
 #include "V8Binding.h"
+#include "V8ConsoleMessage.h"
 #include "V8DOMMap.h"
 #include "V8DedicatedWorkerContext.h"
 #include "V8Proxy.h"
@@ -56,6 +57,26 @@ static void reportFatalErrorInV8(const char* location, const char* message)
 {
     // FIXME: We temporarily deal with V8 internal error situations such as out-of-memory by crashing the worker.
     CRASH();
+}
+
+static void v8MessageHandler(v8::Handle<v8::Message> message, v8::Handle<v8::Value> data)
+{
+    static bool isReportingException = false;
+    // Exceptions that occur in error handler should be ignored since in that case
+    // WorkerContext::reportException will send the exception to the worker object.
+    if (isReportingException)
+        return;
+    isReportingException = true;
+
+    // During the frame teardown, there may not be a valid context.
+    if (ScriptExecutionContext* context = getScriptExecutionContext()) {
+        String errorMessage = toWebCoreString(message->Get());
+        int lineNumber = message->GetLineNumber();
+        String sourceURL = toWebCoreString(message->GetScriptResourceName());
+        context->reportException(errorMessage, lineNumber, sourceURL);
+    }
+
+    isReportingException = false;
 }
 
 WorkerContextExecutionProxy::WorkerContextExecutionProxy(WorkerContext* workerContext)
@@ -126,6 +147,12 @@ void WorkerContextExecutionProxy::initContextIfNeeded()
     // Bail out if the context has already been initialized.
     if (!m_context.IsEmpty())
         return;
+
+    // Setup the security handlers and message listener. This only has
+    // to be done once.
+    static bool isV8Initialized = false;
+    if (!isV8Initialized)
+        v8::V8::AddMessageListener(&v8MessageHandler);
 
     // Create a new environment
     v8::Persistent<v8::ObjectTemplate> globalTemplate;

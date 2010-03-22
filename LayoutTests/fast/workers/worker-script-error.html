@@ -15,6 +15,7 @@ var testCases = [
     "testScriptErrorBubbledAndHandledInWorker",
     "testScriptErrorBubbledAndReportedToUser",
     "testScriptErrorHandled",
+    "testExceptionInTimeoutCallback",
 ];
 var testIndex = 0;
 
@@ -133,6 +134,21 @@ function testScriptErrorHandled()
         worker.onmessage = function(evt) {
             log("PASS: message received from WorkerGlobalScope.onerror: " + evt.data + ".");
             runNextTest();
+        }
+    } catch (ex) {
+        log("FAIL: unexpected exception " + ex);
+        runNextTest();
+    }
+}
+
+function testExceptionInTimeoutCallback()
+{
+    try {
+        var worker = new Worker("resources/worker-exception-in-timeout-callback.js");
+        worker.onerror = function() {
+            log("PASS: onerror invoked for an exception in setTimeout callback.");
+            runNextTest();
+            return false;
         }
     } catch (ex) {
         log("FAIL: unexpected exception " + ex);

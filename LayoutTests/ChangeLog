@@ -1,3 +1,15 @@
+2010-03-22  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Test that uncaught exception thrown from setTimeout callback in a Worker is reported to the worker object.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31171
+
+        * fast/workers/resources/worker-exception-in-timeout-callback.js: Added.
+        * fast/workers/worker-script-error-expected.txt:
+        * fast/workers/worker-script-error.html:
+
 2010-03-22  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Simon Hausmann.

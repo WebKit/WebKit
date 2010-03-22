@@ -54,12 +54,7 @@ namespace WebCore {
     KURL completeURL(const String& relativeURL);
     void navigateIfAllowed(Frame*, const KURL&, bool lockHistory, bool lockBackForwardList);
 
-    ScriptExecutionContext* getScriptExecutionContext(ScriptState*);
-    inline ScriptExecutionContext* getScriptExecutionContext() {
-        return getScriptExecutionContext(0);
-    }
-
-    void reportException(ScriptState*, v8::TryCatch&);
+    ScriptExecutionContext* getScriptExecutionContext();
 
     class AllowAllocation {
     public:

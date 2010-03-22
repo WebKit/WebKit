@@ -125,7 +125,7 @@ void navigateIfAllowed(Frame* frame, const KURL& url, bool lockHistory, bool loc
         frame->redirectScheduler()->scheduleLocationChange(url.string(), callingFrame->loader()->outgoingReferrer(), lockHistory, lockBackForwardList, processingUserGesture());
 }
 
-ScriptExecutionContext* getScriptExecutionContext(ScriptState* scriptState)
+ScriptExecutionContext* getScriptExecutionContext()
 {
 #if ENABLE(WORKERS)
     WorkerContextExecutionProxy* proxy = WorkerContextExecutionProxy::retrieve();
@@ -133,46 +133,11 @@ ScriptExecutionContext* getScriptExecutionContext(ScriptState* scriptState)
         return proxy->workerContext()->scriptExecutionContext();
 #endif
 
-    Frame* frame;
-    if (scriptState) {
-        v8::HandleScope handleScope;
-        frame = V8Proxy::retrieveFrame(scriptState->context());
-    } else
-        frame = V8Proxy::retrieveFrameForCurrentContext();
-
+    Frame* frame = V8Proxy::retrieveFrameForCurrentContext();
     if (frame)
         return frame->document()->scriptExecutionContext();
 
     return 0;
-}
-
-void reportException(ScriptState* scriptState, v8::TryCatch& exceptionCatcher)
-{
-    String errorMessage;
-    int lineNumber = 0;
-    String sourceURL;
-
-    // There can be a situation that an exception is thrown without setting a message.
-    v8::Local<v8::Message> message = exceptionCatcher.Message();
-    if (message.IsEmpty()) {
-        v8::Local<v8::String> exceptionString = exceptionCatcher.Exception()->ToString();
-        // Conversion of the exception object to string can fail if an
-        // exception is thrown during conversion.
-        if (!exceptionString.IsEmpty())
-            errorMessage = toWebCoreString(exceptionString);
-    } else {
-        errorMessage = toWebCoreString(message->Get());
-        lineNumber = message->GetLineNumber();
-        sourceURL = toWebCoreString(message->GetScriptResourceName());
-    }
-
-    // Do not report the exception if the current execution context is Document because we do not want to lead to duplicate error messages in the console.
-    // FIXME (31171): need better design to solve the duplicate error message reporting problem.
-    ScriptExecutionContext* context = getScriptExecutionContext(scriptState);
-    // During the frame teardown, there may not be a valid context.
-    if (context && !context->isDocument())
-        context->reportException(errorMessage, lineNumber, sourceURL);
-    exceptionCatcher.Reset();
 }
 
 } // namespace WebCore

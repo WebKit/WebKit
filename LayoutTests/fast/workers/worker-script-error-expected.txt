@@ -8,5 +8,6 @@ PASS: onerror invoked for a script that has script error 'ReferenceError: Can't 
 PASS: onerror invoked for a script that has script error 'ReferenceError: Can't find variable: foo' at line 7.
 PASS: onerror invoked for a script that has script error 'ReferenceError: Can't find variable: foo' at line 7.
 PASS: message received from WorkerGlobalScope.onerror: onerror invoked for a script that has script error 'ReferenceError: Can't find variable: foo' at line 7.
+PASS: onerror invoked for an exception in setTimeout callback.
 DONE
 
