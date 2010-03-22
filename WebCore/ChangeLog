@@ -2,6 +2,15 @@
 
         Reviewed by Simon Hausmann.
 
+        Add EFL-specific code to platform/FileSystem.h.
+        http://webkit.org/b/36313
+
+        * platform/FileSystem.h:
+
+2010-03-22  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Simon Hausmann.
+
         Add EFL-specific code to platform/Cursor.h.
         http://webkit.org/b/36319
 
