@@ -48,6 +48,28 @@ void QtAbstractWebPopup::valueChanged(int index)
     m_popupClient->valueChanged(index);
 }
 
+void QtAbstractWebPopup::selectItem(int index, bool allowMultiplySelections, bool shift)
+{
+#if ENABLE(NO_LISTBOX_RENDERING)
+    ListPopupMenuClient* client = static_cast<ListPopupMenuClient*>(m_popupClient);
+    if (client) {
+        client->listBoxSelectItem(index, allowMultiplySelections, shift);
+        return;
+    }
+#endif
+    valueChanged(index);
+}
+
+bool QtAbstractWebPopup::multiple()
+{
+#if ENABLE(NO_LISTBOX_RENDERING)
+    ListPopupMenuClient* client = static_cast<ListPopupMenuClient*>(m_popupClient);
+    return client && client->multiple();
+#else
+    return false;
+#endif
+}
+
 QtAbstractWebPopup::ItemType QtAbstractWebPopup::itemType(int idx) const
 {
     if (m_popupClient->itemIsSeparator(idx))

@@ -1,3 +1,18 @@
+2010-03-22  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Multiselect Popup - adjusting QtAbstractWebPopup
+        https://bugs.webkit.org/show_bug.cgi?id=36186
+
+        QtAbstractWebPopup must provide new methods to be used by its descendants that
+        wish to handle <select multiple> elements.
+
+        * platform/qt/QtAbstractWebPopup.cpp:
+        (WebCore::QtAbstractWebPopup::selectItem):
+        (WebCore::QtAbstractWebPopup::multiple):
+        * platform/qt/QtAbstractWebPopup.h:
+
 2010-03-22  Alex Milowski  <alex@milowski.com>
 
         Reviewed by Kenneth Rohde Christiansen.
