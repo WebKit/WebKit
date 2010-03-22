@@ -1,3 +1,18 @@
+2010-03-22  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36328
+
+        This patch entirely WebNullPluginView.
+        
+        * Plugins/WebNetscapePluginView.mm:
+        * Plugins/WebNullPluginView.h: Removed.
+        * Plugins/WebNullPluginView.mm: Removed.
+        * Resources/nullplugin.tiff: Removed.
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::createPlugin): Invoke the resource load delegate if the plug-in failed to load.
+
 2010-03-22  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by John Sullivan.

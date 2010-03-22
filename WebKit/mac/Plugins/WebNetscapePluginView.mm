@@ -50,7 +50,6 @@
 #import "WebPluginContainerCheck.h"
 #import "WebNetscapeContainerCheckContextInfo.h"
 #import "WebNetscapePluginEventHandler.h"
-#import "WebNullPluginView.h"
 #import "WebPreferences.h"
 #import "WebPluginRequest.h"
 #import "WebViewInternal.h"

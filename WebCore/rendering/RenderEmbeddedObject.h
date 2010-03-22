@@ -34,8 +34,8 @@ public:
     virtual ~RenderEmbeddedObject();
 
     void updateWidget(bool onlyCreateNonNetscapePlugins);
-    void setShowsMissingPluginIndicator(bool showsMissingPluginIndicator) { m_setShowsMissingPluginIndicator = showsMissingPluginIndicator; }
-    bool showsMissingPluginIndicator() const { return m_setShowsMissingPluginIndicator; }
+    void setShowsMissingPluginIndicator(bool showsMissingPluginIndicator) { m_showsMissingPluginIndicator = showsMissingPluginIndicator; }
+    bool showsMissingPluginIndicator() const { return m_showsMissingPluginIndicator; }
 #if USE(ACCELERATED_COMPOSITING)
     virtual bool allowsAcceleratedCompositing() const;
 #endif
@@ -52,7 +52,7 @@ private:
 #endif
 
     virtual void layout();
-    bool m_setShowsMissingPluginIndicator;
+    bool m_showsMissingPluginIndicator;
 };
 
 inline RenderEmbeddedObject* toRenderEmbeddedObject(RenderObject* object)

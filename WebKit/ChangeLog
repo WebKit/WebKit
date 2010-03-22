@@ -1,3 +1,11 @@
+2010-03-22  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36328
+
+        * WebKit.xcodeproj/project.pbxproj: Remove WebNullPluginView and nullplugin.tiff from the project.
+
 2010-03-22  Darin Adler  <darin@apple.com>
 
         * StringsNotToBeLocalized.txt: Updated for recent changes.
