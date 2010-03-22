@@ -1,3 +1,9 @@
+2010-03-22  Darin Adler  <darin@apple.com>
+
+        * WebCoreLocalizedStrings.cpp:
+        (WebCore::missingPluginText): Fixed localization helper text to match the same
+        string from Mac WebKit.
+
 2010-03-22  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by John Sullivan.
