@@ -1,0 +1,11 @@
+main frame - has 1 onunload handler(s)
+frame "<!--framePath //<!--frame0-->-->" - has 1 onunload handler(s)
+ALERT: Navigating back...
+main frame - has 1 onunload handler(s)
+frame "<!--framePath //<!--frame0-->-->" - has 1 onunload handler(s)
+default text 
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+foo

@@ -656,15 +656,17 @@ void HistoryController::pushState(PassRefPtr<SerializedScriptValue> stateObject,
 
 void HistoryController::replaceState(PassRefPtr<SerializedScriptValue> stateObject, const String& title, const String& urlString)
 {
-    Page* page = m_frame->page();
-    ASSERT(page);
-    HistoryItem* current = page->backForwardList()->currentItem();
-    ASSERT(current);
+    // FIXME: We should always have m_currentItem here!!
+    // https://bugs.webkit.org/show_bug.cgi?id=36464
+    if (!m_currentItem) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
 
     if (!urlString.isEmpty())
-        current->setURLString(urlString);
-    current->setTitle(title);
-    current->setStateObject(stateObject);
+        m_currentItem->setURLString(urlString);
+    m_currentItem->setTitle(title);
+    m_currentItem->setStateObject(stateObject);
 }
 
 } // namespace WebCore

@@ -1,0 +1,32 @@
+<script>
+if (parent == window && window.layoutTestController) {
+  layoutTestController.dumpAsText();
+  layoutTestController.dumpChildFramesAsText();
+  layoutTestController.waitUntilDone();
+}
+
+function runTest() {
+  frames[0].history.replaceState("foo", "foo", "#foo");
+  location = "resources/navigate-back.html";
+}
+
+onpopstate = function(e) {
+  document.body.innerText = e.state;
+  if (window.layoutTestController)
+    layoutTestController.notifyDone();
+}
+
+onload = function() {
+  if (parent == window) {
+    var f = document.createElement("iframe");
+    f.src = location;
+    f.onload = function() { setTimeout(runTest, 0); };
+    document.body.appendChild(f);
+  }
+}
+
+onunload = function() {
+  // disable page cache
+}
+</script>
+<body>default text</body>
