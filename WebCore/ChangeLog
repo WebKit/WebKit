@@ -2,6 +2,15 @@
 
         Reviewed by Simon Hausmann.
 
+        Add EFL-specific code to page/EventHandler.cpp.
+        http://webkit.org/b/36306
+
+        * page/EventHandler.cpp:
+
+2010-03-22  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Simon Hausmann.
+
         Add EFL-specific code to platform/DragImage.h and
         platform/DragData.h.
         http://webkit.org/b/36310
