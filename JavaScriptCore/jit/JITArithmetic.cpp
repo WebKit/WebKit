@@ -57,8 +57,7 @@ void JIT::emit_op_negate(Instruction* currentInstruction)
 
     Jump srcNotInt = branch32(NotEqual, regT1, Imm32(JSValue::Int32Tag));
     addSlowCase(branch32(Equal, regT0, Imm32(0)));
-
-    neg32(regT0);
+    addSlowCase(branchNeg32(Overflow, regT0));
     emitStoreInt32(dst, regT0, (dst == src));
 
     Jump end = jump();
@@ -79,6 +78,7 @@ void JIT::emitSlow_op_negate(Instruction* currentInstruction, Vector<SlowCaseEnt
     unsigned dst = currentInstruction[1].u.operand;
 
     linkSlowCase(iter); // 0 check
+    linkSlowCase(iter); // overflow check
     linkSlowCase(iter); // double check
 
     JITStubCall stubCall(this, cti_op_negate);

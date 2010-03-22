@@ -1,3 +1,34 @@
+2010-03-22  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fixed <rdar://problem/7728196> REGRESSION (r46701): -(-2147483648)
+        evaluates to -2147483648 on 32 bit (35842)
+        
+        Two ways to fix the same bug:
+        
+        1. Check for overflow when negating, since negating the largest negative
+        int causes overflow.
+        
+        2. Constant-fold even when negating a negative, since, like they say in
+        high school, "math works."
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::branchNeg32):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::branchNeg32): Added a branching version
+        of the negate operator.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_negate): Use the branching version of the negate 
+        operator to check for overflow.
+
+        (JSC::JIT::emitSlow_op_negate): Link the check for overflow to a slow case.
+        (We could emit inline code for this, since we know what the result would
+        be, but that's probably just a waste of generated code.)
+
+        * parser/Grammar.y: Constant fold even when negating a negative.
+
 2010-03-22  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/36431> Clean up 'int' use in UString.cpp after r54789

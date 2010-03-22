@@ -1987,12 +1987,9 @@ static PropertyNode* makeGetterOrSetterPropertyNode(JSGlobalData* globalData, co
 static ExpressionNode* makeNegateNode(JSGlobalData* globalData, ExpressionNode* n)
 {
     if (n->isNumber()) {
-        NumberNode* number = static_cast<NumberNode*>(n);
-
-        if (number->value() > 0.0) {
-            number->setValue(-number->value());
-            return number;
-        }
+        NumberNode* numberNode = static_cast<NumberNode*>(n);
+        numberNode->setValue(-numberNode->value());
+        return numberNode;
     }
 
     return new (globalData) NegateNode(globalData, n);
