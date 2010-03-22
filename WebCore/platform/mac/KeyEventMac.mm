@@ -26,6 +26,8 @@
 #import "config.h"
 #import "PlatformKeyboardEvent.h"
 
+#if PLATFORM(MAC)
+
 #import "Logging.h"
 #import <Carbon/Carbon.h>
 #import <wtf/ASCIICType.h>
@@ -886,3 +888,5 @@ void PlatformKeyboardEvent::getCurrentModifierState(bool& shiftKey, bool& ctrlKe
 }
 
 }
+
+#endif // PLATFORM(MAC)

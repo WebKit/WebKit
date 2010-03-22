@@ -2493,6 +2493,8 @@
 		A43BF5991149290A00C643CA /* HTMLProgressElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A43BF5971149290A00C643CA /* HTMLProgressElement.h */; };
 		A43BF59C1149292800C643CA /* RenderProgress.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A43BF59A1149292800C643CA /* RenderProgress.cpp */; };
 		A43BF59D1149292800C643CA /* RenderProgress.h in Headers */ = {isa = PBXBuildFile; fileRef = A43BF59B1149292800C643CA /* RenderProgress.h */; };
+		A59E3C1E11580F510072928E /* KeyEventCodesIPhone.h in Headers */ = {isa = PBXBuildFile; fileRef = A59E3C1C11580F510072928E /* KeyEventCodesIPhone.h */; };
+		A59E3C1F11580F510072928E /* KeyEventIPhone.mm in Sources */ = {isa = PBXBuildFile; fileRef = A59E3C1D11580F510072928E /* KeyEventIPhone.mm */; };
 		A5AFB34F115151A700B045CB /* StepRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5AFB34D115151A700B045CB /* StepRange.cpp */; };
 		A5AFB350115151A700B045CB /* StepRange.h in Headers */ = {isa = PBXBuildFile; fileRef = A5AFB34E115151A700B045CB /* StepRange.h */; };
 		A718760E0B2A120100A16ECE /* DragActions.h in Headers */ = {isa = PBXBuildFile; fileRef = A718760D0B2A120100A16ECE /* DragActions.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7899,6 +7901,8 @@
 		A43BF5971149290A00C643CA /* HTMLProgressElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLProgressElement.h; sourceTree = "<group>"; };
 		A43BF59A1149292800C643CA /* RenderProgress.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderProgress.cpp; sourceTree = "<group>"; };
 		A43BF59B1149292800C643CA /* RenderProgress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderProgress.h; sourceTree = "<group>"; };
+		A59E3C1C11580F510072928E /* KeyEventCodesIPhone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyEventCodesIPhone.h; path = iphone/KeyEventCodesIPhone.h; sourceTree = "<group>"; };
+		A59E3C1D11580F510072928E /* KeyEventIPhone.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = KeyEventIPhone.mm; path = iphone/KeyEventIPhone.mm; sourceTree = "<group>"; };
 		A5AFB34D115151A700B045CB /* StepRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StepRange.cpp; sourceTree = "<group>"; };
 		A5AFB34E115151A700B045CB /* StepRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StepRange.h; sourceTree = "<group>"; };
 		A718760D0B2A120100A16ECE /* DragActions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragActions.h; sourceTree = "<group>"; };
@@ -13202,6 +13206,15 @@
 			tabWidth = 4;
 			usesTabs = 0;
 		};
+		A59E3C1B11580F340072928E /* iphone */ = {
+			isa = PBXGroup;
+			children = (
+				A59E3C1C11580F510072928E /* KeyEventCodesIPhone.h */,
+				A59E3C1D11580F510072928E /* KeyEventIPhone.mm */,
+			);
+			name = iphone;
+			sourceTree = "<group>";
+		};
 		A75E8B7F0E1DE2B0007F2481 /* filters */ = {
 			isa = PBXGroup;
 			children = (
@@ -15288,6 +15301,7 @@
 				49E912A40EFAC8E6009D0CAF /* animation */,
 				1AE42F670AA4B8CB00C8612D /* cf */,
 				B2A015910AF6CD53006BCE0E /* graphics */,
+				A59E3C1B11580F340072928E /* iphone */,
 				6582A14809999D6C00BEEB6D /* mac */,
 				59C77F101054591C00506104 /* mock */,
 				656B84D70AEA1CE900A095B4 /* network */,
@@ -18711,6 +18725,7 @@
 				A43BF59D1149292800C643CA /* RenderProgress.h in Headers */,
 				F375CC071150D300008DDB81 /* InspectorWorkerResource.h in Headers */,
 				A5AFB350115151A700B045CB /* StepRange.h in Headers */,
+				A59E3C1E11580F510072928E /* KeyEventCodesIPhone.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -20920,6 +20935,7 @@
 				A43BF5981149290A00C643CA /* HTMLProgressElement.cpp in Sources */,
 				A43BF59C1149292800C643CA /* RenderProgress.cpp in Sources */,
 				A5AFB34F115151A700B045CB /* StepRange.cpp in Sources */,
+				A59E3C1F11580F510072928E /* KeyEventIPhone.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
