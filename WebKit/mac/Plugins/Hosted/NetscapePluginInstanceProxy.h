@@ -257,8 +257,9 @@ public:
     template <typename T>
     std::auto_ptr<T> waitForReply(uint32_t requestID)
     {
+        RefPtr<NetscapePluginInstanceProxy> protect(this); // Plug-in host may crash while we are waiting for reply, releasing all instances to the instance proxy.
+
         willCallPluginFunction();
-        
         m_waitingForReply = true;
 
         Reply* reply = processRequestsAndWaitForReply(requestID);

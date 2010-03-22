@@ -1,3 +1,26 @@
+2010-03-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by John Sullivan.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36455
+        Make WebKit more resistant against plug-in crashes
+
+        No tests, because crashing on build bots isn't good, even if it's only helper processes
+        that crash.
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        (WebKit::NetscapePluginInstanceProxy::waitForReply): Protect "this", because this function
+        needs it after waiting for reply. Some callers used to do this, but not all, and we really
+        shouldn't depend on callers here.
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::wheelEvent): Don't protect the plug-in instance proxy,
+        because this function doesn't use it after waiting for reply.
+        (WebKit::NetscapePluginInstanceProxy::createBindingsInstance): Ditto.
+
+        * Plugins/Hosted/ProxyInstance.mm: (WebKit::ProxyInstance::invoke): Added an m_instanceProxy
+        null check for another code path.
+
 2010-03-22  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by John Sullivan.

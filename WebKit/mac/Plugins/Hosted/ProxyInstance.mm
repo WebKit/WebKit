@@ -155,8 +155,10 @@ JSValue ProxyInstance::invoke(JSC::ExecState* exec, InvokeType type, uint64_t id
 
     if (_WKPHNPObjectInvoke(m_instanceProxy->hostProxy()->port(), m_instanceProxy->pluginID(), requestID, m_objectID,
                             type, identifier, (char*)[arguments.get() bytes], [arguments.get() length]) != KERN_SUCCESS) {
-        for (unsigned i = 0; i < args.size(); i++)
-            m_instanceProxy->releaseLocalObject(args.at(i));
+        if (m_instanceProxy) {
+            for (unsigned i = 0; i < args.size(); i++)
+                m_instanceProxy->releaseLocalObject(args.at(i));
+        }
         return jsUndefined();
     }
     

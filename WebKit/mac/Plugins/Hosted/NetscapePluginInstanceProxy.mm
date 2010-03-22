@@ -463,9 +463,6 @@ bool NetscapePluginInstanceProxy::wheelEvent(NSView *pluginView, NSEvent *event)
                                   pluginPoint.x, pluginPoint.y, [event buttonNumber], 
                                   [event deltaX], [event deltaY], [event deltaZ]);
     
-    // Protect ourselves in case waiting for the reply causes us to be deleted.
-    RefPtr<NetscapePluginInstanceProxy> protect(this);
-
     auto_ptr<NetscapePluginInstanceProxy::BooleanReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
     if (!reply.get() || !reply->m_result)
         return false;
@@ -1399,10 +1396,6 @@ PassRefPtr<Instance> NetscapePluginInstanceProxy::createBindingsInstance(PassRef
     if (_WKPHGetScriptableNPObject(m_pluginHostProxy->port(), m_pluginID, requestID) != KERN_SUCCESS)
         return 0;
 
-    // If the plug-in host crashes while we're waiting for a reply, the last reference to the instance proxy
-    // will go away. Prevent this by protecting it here.
-    RefPtr<NetscapePluginInstanceProxy> protect(this);
-    
     auto_ptr<GetScriptableNPObjectReply> reply = waitForReply<GetScriptableNPObjectReply>(requestID);
     if (!reply.get())
         return 0;
@@ -1410,6 +1403,7 @@ PassRefPtr<Instance> NetscapePluginInstanceProxy::createBindingsInstance(PassRef
     if (!reply->m_objectID)
         return 0;
 
+    // Since the reply was non-null, "this" is still a valid pointer.
     return ProxyInstance::create(rootObject, this, reply->m_objectID);
 }
 
