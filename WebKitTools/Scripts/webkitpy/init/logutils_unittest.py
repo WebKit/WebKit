@@ -20,9 +20,33 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""Runs init package unit tests."""
+"""Unit tests for logutils.py."""
 
-# This module is imported by the module that imports all webkitpy unit tests.
+import os
+import unittest
 
-from logutils_unittest import *
-from versioning_unittest import *
+import logutils
+
+
+class GetLoggerTest(unittest.TestCase):
+
+    """Tests get_logger()."""
+
+    def test_get_logger_in_webkitpy(self):
+        logger = logutils.get_logger(__file__)
+        self.assertEquals(logger.name, "webkitpy.init.logutils_unittest")
+
+    def test_get_logger_not_in_webkitpy(self):
+        # Temporarily change the working directory so that we
+        # can test get_logger() for a path outside of webkitpy.
+        working_directory = os.getcwd()
+        root_dir = "/"
+        os.chdir(root_dir)
+
+        logger = logutils.get_logger("/WebKitTools/Scripts/test-webkitpy")
+        self.assertEquals(logger.name, "test-webkitpy")
+
+        logger = logutils.get_logger("/WebKitTools/Scripts/test-webkitpy.py")
+        self.assertEquals(logger.name, "test-webkitpy")
+
+        os.chdir(working_directory)

@@ -1,3 +1,28 @@
+2010-03-22  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Created a function for getting a module-specific logging.logger
+        based on the __file__ value of the module.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35821
+
+        This function allows us to get the module-specific logger for
+        a module without having to hard-code the fully-qualified name
+        of the module in the module itself.  The code can be the same
+        in every case: "_log = logutils.get_logger(__file__)".
+
+        * Scripts/webkitpy/init/logutils.py: Added.
+          - Added a module with a get_logger() function to return
+            a module-specific logger based on the module's __file__
+            variable.
+
+        * Scripts/webkitpy/init/logutils_unittest.py: Added.
+          - Added unit tests for logutils.py.
+
+        * Scripts/webkitpy/init/unittests.py:
+          - Added logutils_unittest to the list of imports.
+
 2010-03-22  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Simon Hausmann.
