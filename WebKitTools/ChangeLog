@@ -1,3 +1,21 @@
+2010-03-22  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] REGRESSION (r56209): fast/media/print-restores-previous-mediatype.htm crashes
+        https://bugs.webkit.org/show_bug.cgi?id=36386
+
+        Fix the regression by implementing a null printer for Qt DRT.
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::NullPrinter::NullPaintEngine::begin):
+        (WebCore::NullPrinter::NullPaintEngine::end):
+        (WebCore::NullPrinter::NullPaintEngine::type):
+        (WebCore::NullPrinter::NullPaintEngine::drawPixmap):
+        (WebCore::NullPrinter::NullPaintEngine::updateState):
+        (WebCore::NullPrinter::paintEngine):
+        (WebCore::DumpRenderTree::dryRunPrint):
+
 2010-03-20  Martin Robinson  <mrobinson@webkit.org>
 
         Reviewed by Xan Lopez.
