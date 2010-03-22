@@ -1,3 +1,23 @@
+2010-03-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        TextBreakIteratorICU.cpp is incompatible with new UBreakIterator type in ICU 4.4
+        https://bugs.webkit.org/show_bug.cgi?id=36381
+
+        * platform/text/TextBreakIteratorICU.cpp:
+        (WebCore::setUpIterator): Use reinterpret_cast instead of static_cast or relying
+        on conversion to void*.
+        (WebCore::textBreakFirst): Ditto.
+        (WebCore::textBreakLast): Ditto.
+        (WebCore::textBreakNext): Ditto.
+        (WebCore::textBreakPrevious): Ditto.
+        (WebCore::textBreakPreceding): Ditto.
+        (WebCore::textBreakFollowing): Ditto.
+        (WebCore::textBreakCurrent): Ditto.
+        (WebCore::isTextBreak): Ditto.
+        (WebCore::setUpIteratorWithRules): Ditto.
+
 2010-03-22  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Sam Weinig.
