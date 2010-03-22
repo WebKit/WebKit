@@ -1,3 +1,19 @@
+2010-03-22  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for <rdar://problem/7766437> With Web Inspector opened, a crash 
+        occurs at Webcore:getMatchedCSSRules() when navigating to a 
+        previous page
+
+        defaultView() can legitimately by null (as it is in this case), so 
+        it must be null-checked.
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::getStyles):
+        (WebCore::InspectorDOMAgent::getComputedStyle):
+        (WebCore::InspectorDOMAgent::getMatchedCSSRules):
+
 2010-03-22  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Darin.
