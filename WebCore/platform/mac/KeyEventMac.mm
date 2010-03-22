@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #import "config.h"
@@ -31,7 +31,6 @@
 #import "KeyEventCocoa.h"
 #import "Logging.h"
 #import <Carbon/Carbon.h>
-#import <wtf/ASCIICType.h>
 
 using namespace WTF;
 
@@ -73,7 +72,7 @@ static bool isKeypadEvent(NSEvent* event)
         case 92: // 9
             return true;
      }
-     
+
      return false;
 }
 
@@ -87,22 +86,22 @@ static inline bool isKeyUpEvent(NSEvent *event)
         case 54: // Right Command
         case 55: // Left Command
             return ([event modifierFlags] & NSCommandKeyMask) == 0;
-            
+
         case 57: // Capslock
             return ([event modifierFlags] & NSAlphaShiftKeyMask) == 0;
-            
+
         case 56: // Left Shift
         case 60: // Right Shift
             return ([event modifierFlags] & NSShiftKeyMask) == 0;
-            
+
         case 58: // Left Alt
         case 61: // Right Alt
             return ([event modifierFlags] & NSAlternateKeyMask) == 0;
-            
+
         case 59: // Left Ctrl
         case 62: // Right Ctrl
             return ([event modifierFlags] & NSControlKeyMask) == 0;
-            
+
         case 63: // Function
             return ([event modifierFlags] & NSFunctionKeyMask) == 0;
     }
@@ -115,13 +114,61 @@ static inline String textFromEvent(NSEvent* event)
         return "";
     return [event characters];
 }
-    
-    
+
+
 static inline String unmodifiedTextFromEvent(NSEvent* event)
 {
     if ([event type] == NSFlagsChanged)
         return "";
     return [event charactersIgnoringModifiers];
+}
+
+static String keyIdentifierForKeyEvent(NSEvent* event)
+{
+    if ([event type] == NSFlagsChanged)
+        switch ([event keyCode]) {
+            case 54: // Right Command
+            case 55: // Left Command
+                return "Meta";
+
+            case 57: // Capslock
+                return "CapsLock";
+
+            case 56: // Left Shift
+            case 60: // Right Shift
+                return "Shift";
+
+            case 58: // Left Alt
+            case 61: // Right Alt
+                return "Alt";
+
+            case 59: // Left Ctrl
+            case 62: // Right Ctrl
+                return "Control";
+
+            default:
+                ASSERT_NOT_REACHED();
+                return "";
+        }
+
+    NSString *s = [event charactersIgnoringModifiers];
+    if ([s length] != 1) {
+        LOG(Events, "received an unexpected number of characters in key event: %u", [s length]);
+        return "Unidentified";
+    }
+    return keyIdentifierForCharCode([s characterAtIndex:0]);
+}
+
+static int windowsKeyCodeForKeyEvent(NSEvent *event)
+{
+    int code = windowsKeyCodeForKeyCode([event keyCode]);
+    if (code)
+        return code;
+
+    NSString* s = [event charactersIgnoringModifiers];
+    if ([s length] != 1)
+        return 0;
+    return windowsKeyCodeForCharCode([s characterAtIndex:0]);
 }
 
 PlatformKeyboardEvent::PlatformKeyboardEvent(NSEvent *event)

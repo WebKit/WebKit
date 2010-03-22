@@ -30,45 +30,17 @@
 #import "PlatformString.h"
 #import <wtf/ASCIICType.h>
 
+#if PLATFORM(IPHONE)
+#import "KeyEventCodesIPhone.h"
+#endif
+
 using namespace WTF;
 
 namespace WebCore {
 
-String keyIdentifierForKeyEvent(NSEvent* event)
+String keyIdentifierForCharCode(unichar charCode)
 {
-    if ([event type] == NSFlagsChanged)
-        switch ([event keyCode]) {
-            case 54: // Right Command
-            case 55: // Left Command
-                return "Meta";
-
-            case 57: // Capslock
-                return "CapsLock";
-
-            case 56: // Left Shift
-            case 60: // Right Shift
-                return "Shift";
-
-            case 58: // Left Alt
-            case 61: // Right Alt
-                return "Alt";
-
-            case 59: // Left Ctrl
-            case 62: // Right Ctrl
-                return "Control";
-
-            default:
-                ASSERT_NOT_REACHED();
-                return "";
-        }
-
-    NSString *s = [event charactersIgnoringModifiers];
-    if ([s length] != 1) {
-        LOG(Events, "received an unexpected number of characters in key event: %u", [s length]);
-        return "Unidentified";
-    }
-    unichar c = [s characterAtIndex:0];
-    switch (c) {
+    switch (charCode) {
         // Each identifier listed in the DOM spec is listed here.
         // Many are simply commented out since they do not appear on standard Macintosh keyboards
         // or are on a key that doesn't have a corresponding character.
@@ -352,13 +324,13 @@ String keyIdentifierForKeyEvent(NSEvent* event)
             // FIXME: We should use something other than the vendor-area Unicode values for the above keys.
             // For now, just fall through to the default.
         default:
-            return String::format("U+%04X", toASCIIUpper(c));
+            return String::format("U+%04X", toASCIIUpper(charCode));
     }
 }
 
-int windowsKeyCodeForKeyEvent(NSEvent* event)
+int windowsKeyCodeForKeyCode(uint16_t keyCode)
 {
-    switch ([event keyCode]) {
+    switch (keyCode) {
         // VK_TAB (09) TAB key
         case 48: return 0x09;
 
@@ -425,11 +397,12 @@ int windowsKeyCodeForKeyEvent(NSEvent* event)
         case 75: return 0x6F;
      }
 
-    NSString* s = [event charactersIgnoringModifiers];
-    if ([s length] != 1)
-        return 0;
+     return 0;
+}
 
-    switch ([s characterAtIndex:0]) {
+int windowsKeyCodeForCharCode(unichar charCode)
+{
+    switch (charCode) {
         // VK_LBUTTON (01) Left mouse button
         // VK_RBUTTON (02) Right mouse button
         // VK_CANCEL (03) Control-break processing

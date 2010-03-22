@@ -1,3 +1,32 @@
+2010-03-22  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        Upstream Part of the iPhone Platform sharing code with the Mac Platform
+        https://bugs.webkit.org/show_bug.cgi?id=35870
+        <rdar://problem/7707283> and <rdar://problem/7707318>
+
+        Part 3 of 3: Shared code between iphone and mac. The shared code was
+        refactored to be usable by both platforms without platform specific
+        typing, meaning no NSEvent versus WebEvent special cases.
+
+          Shared code usable by either mac or iphone platforms.
+
+        * platform/cocoa/KeyEventCocoa.h:
+        * platform/cocoa/KeyEventCocoa.mm:
+        (WebCore::keyIdentifierForCharCode):
+        (WebCore::windowsKeyCodeForKeyCode):
+        (WebCore::windowsKeyCodeForCharCode):
+
+          Make use of the shared code. Keep anything platform specific in the
+          original file before calling the shared code.
+
+        * platform/iphone/KeyEventIPhone.mm:
+        (WebCore::keyIdentifierForKeyEvent):
+        * platform/mac/KeyEventMac.mm:
+        (WebCore::keyIdentifierForKeyEvent):
+        (WebCore::windowsKeyCodeForKeyEvent):
+
 2010-03-22  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Simon Fraser.

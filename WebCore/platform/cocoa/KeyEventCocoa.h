@@ -30,8 +30,10 @@ namespace WebCore {
 
 class String;
 
-String keyIdentifierForKeyEvent(NSEvent* event);
-int windowsKeyCodeForKeyEvent(NSEvent* event);
+String keyIdentifierForCharCode(unichar charCode);
+
+int windowsKeyCodeForKeyCode(uint16_t keyCode);
+int windowsKeyCodeForCharCode(unichar charCode);
 
 }
 
