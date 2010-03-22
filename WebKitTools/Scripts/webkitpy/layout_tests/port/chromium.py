@@ -69,7 +69,7 @@ class ChromiumPort(base.Port):
         self._chromium_base_dir = None
 
     def baseline_path(self):
-        return self._chromium_baseline_path(self._name)
+        return self._webkit_baseline_path(self._name)
 
     def check_build(self, needs_http):
         result = True
@@ -110,7 +110,11 @@ class ChromiumPort(base.Port):
         Chromium source tree and the list of path components in |*comps|."""
         if not self._chromium_base_dir:
             abspath = os.path.abspath(__file__)
-            self._chromium_base_dir = abspath[0:abspath.find('third_party')]
+            offset = abspath.find('third_party')
+            if offset == -1:
+                raise AssertionError('could not find Chromium base dir from ' +
+                                     abspath)
+            self._chromium_base_dir = abspath[0:offset]
         return os.path.join(self._chromium_base_dir, *comps)
 
     def path_to_test_expectations_file(self):

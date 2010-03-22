@@ -204,8 +204,6 @@ class Rebaseliner(object):
     REVISION_REGEX = r'<a href=\"(\d+)/\">'
 
     def __init__(self, running_port, platform, options):
-        self._file_dir = running_port.path_from_chromium_base(
-            'webkit', 'tools', 'layout_tests')
         self._platform = platform
         self._options = options
         # This is the port that the script is running on.
@@ -441,8 +439,7 @@ class Rebaseliner(object):
 
                 expected_filename = '%s-expected%s' % (test_basename, suffix)
                 expected_fullpath = os.path.join(
-                    self._port._chromium_baseline_path(platform),
-                    expected_filename)
+                    self._port.baseline_path(platform), expected_filename)
                 expected_fullpath = os.path.normpath(expected_fullpath)
                 _log.debug('  Expected file full path: "%s"',
                            expected_fullpath)

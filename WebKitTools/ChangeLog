@@ -1,3 +1,22 @@
+2010-03-22  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Change baseline_path() to point to the upstream locations for the
+        Chromium ports. Also change the reabselining scripts to use the
+        correct functions to get the baseline directories, and fix the
+        script's sys.path to pull in simplejson correctly.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36417
+
+        * Scripts/rebaseline-chromium-webkit-tests:
+          - fix sys.path to pick up simplejson properly
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+          - change baseline_path() to use webkit_baseline_path()
+          - error out correctly if we can't find the chromium base dir
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests.py:
+          - call baseline_path(), not chromium_baseline_path()
+
 2010-03-22  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Adam Barth.
