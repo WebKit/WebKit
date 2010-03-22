@@ -587,8 +587,9 @@ void FrameLoaderClientImpl::dispatchDidNavigateWithinPage()
         webView->client()->didStartLoading();
 
     // We need to classify some hash changes as client redirects.
-    bool isHashChange =
-        !m_webFrame->frame()->loader()->history()->currentItem()->stateObject();
+    // FIXME: It seems wrong that the currentItem can sometimes be null.
+    HistoryItem* currentItem = m_webFrame->frame()->loader()->history()->currentItem();
+    bool isHashChange = !currentItem || !currentItem->stateObject();
 
     WebDataSourceImpl* ds = m_webFrame->dataSourceImpl();
     ASSERT(ds);  // Should not be null when navigating to a reference fragment!

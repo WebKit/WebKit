@@ -1,3 +1,15 @@
+2010-03-22  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        [chromium] Renderer crashes when navigating to a reference fragment in
+        a frame that has no current HistoryItem.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36443
+
+        * fast/loader/crash-replacing-location-before-load-expected.txt: Added.
+        * fast/loader/crash-replacing-location-before-load.html: Added.
+
 2010-03-22  Alex Milowski  <alex@milowski.com>
 
         Reviewed by Kenneth Rohde Christiansen.
