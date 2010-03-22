@@ -108,3 +108,6 @@ function dispatch(method, var_args) {
 function close() {
     // This method is called when InspectorFrontend closes in layout tests.
 }
+
+function inspectedPageDestroyed() {
+}
