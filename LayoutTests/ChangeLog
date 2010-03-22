@@ -1,3 +1,18 @@
+2010-03-22  Alex Milowski  <alex@milowski.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Basic tests of mfrac (fractions)
+
+        * mathml/presentation/fractions.xhtml: Added.
+        * mathml/presentation/fractions-vertical-alignment.xhtml: Added
+        * platform/mac/mathml/presentation/fractions-expected.checksum: Added.
+        * platform/mac/mathml/presentation/fractions-expected.png: Added.
+        * platform/mac/mathml/presentation/fractions-expected.txt: Added.
+        * platform/mac/mathml/presentation/fractions-vertical-alignment-expected.checksum: Added.
+        * platform/mac/mathml/presentation/fractions-vertical-alignment-expected.png: Added.
+        * platform/mac/mathml/presentation/fractions-vertical-alignment-expected.txt: Added.
+
 2010-03-19  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Oliver Hunt.

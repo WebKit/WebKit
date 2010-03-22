@@ -31,6 +31,7 @@
 
 #include "MathMLNames.h"
 #include "RenderMathMLBlock.h"
+#include "RenderMathMLFraction.h"
 #include "RenderMathMLMath.h"
 #include "RenderMathMLRow.h"
 #include "RenderMathMLSubSup.h"
@@ -69,6 +70,8 @@ RenderObject* MathMLInlineContainerElement::createRenderer(RenderArena *arena, R
         object = new (arena) RenderMathMLUnderOver(this);
     else if (hasLocalName(MathMLNames::munderoverTag))
         object = new (arena) RenderMathMLUnderOver(this);
+    else if (hasLocalName(MathMLNames::mfracTag))
+        object = new (arena) RenderMathMLFraction(this);
     else
         object = new (arena) RenderMathMLBlock(this);
     object->setStyle(style);

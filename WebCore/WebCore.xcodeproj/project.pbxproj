@@ -4899,6 +4899,8 @@
 		FA654A701108ABFF002615E0 /* RenderMathMLBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = FA654A6E1108ABFF002615E0 /* RenderMathMLBlock.h */; };
 		FA7EFB051120D25400CF79C7 /* RenderMathMLUnderOver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA7EFB031120D25400CF79C7 /* RenderMathMLUnderOver.cpp */; };
 		FA7EFB061120D25400CF79C7 /* RenderMathMLUnderOver.h in Headers */ = {isa = PBXBuildFile; fileRef = FA7EFB041120D25400CF79C7 /* RenderMathMLUnderOver.h */; };
+		FAA10570114C2DF700940A01 /* RenderMathMLFraction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAA1056E114C2DF700940A01 /* RenderMathMLFraction.cpp */; };
+		FAA10571114C2DF700940A01 /* RenderMathMLFraction.h in Headers */ = {isa = PBXBuildFile; fileRef = FAA1056F114C2DF700940A01 /* RenderMathMLFraction.h */; };
 		FABE72F41059C1EB00D999DD /* MathMLElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FABE72ED1059C1EB00D999DD /* MathMLElement.cpp */; };
 		FABE72F51059C1EB00D999DD /* MathMLElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FABE72EE1059C1EB00D999DD /* MathMLElement.h */; };
 		FABE72F61059C1EB00D999DD /* MathMLInlineContainerElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FABE72EF1059C1EB00D999DD /* MathMLInlineContainerElement.cpp */; };
@@ -10277,6 +10279,8 @@
 		FA654A6E1108ABFF002615E0 /* RenderMathMLBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMathMLBlock.h; sourceTree = "<group>"; };
 		FA7EFB031120D25400CF79C7 /* RenderMathMLUnderOver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMathMLUnderOver.cpp; sourceTree = "<group>"; };
 		FA7EFB041120D25400CF79C7 /* RenderMathMLUnderOver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMathMLUnderOver.h; sourceTree = "<group>"; };
+		FAA1056E114C2DF700940A01 /* RenderMathMLFraction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMathMLFraction.cpp; sourceTree = "<group>"; };
+		FAA1056F114C2DF700940A01 /* RenderMathMLFraction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMathMLFraction.h; sourceTree = "<group>"; };
 		FABE72ED1059C1EB00D999DD /* MathMLElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLElement.cpp; sourceTree = "<group>"; };
 		FABE72EE1059C1EB00D999DD /* MathMLElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLElement.h; sourceTree = "<group>"; };
 		FABE72EF1059C1EB00D999DD /* MathMLInlineContainerElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLInlineContainerElement.cpp; sourceTree = "<group>"; };
@@ -16193,6 +16197,8 @@
 				FABE72F31059C1EB00D999DD /* mathtags.in */,
 				FA654A6D1108ABFF002615E0 /* RenderMathMLBlock.cpp */,
 				FA654A6E1108ABFF002615E0 /* RenderMathMLBlock.h */,
+				FAA1056E114C2DF700940A01 /* RenderMathMLFraction.cpp */,
+				FAA1056F114C2DF700940A01 /* RenderMathMLFraction.h */,
 				FA0B1F8211125CEE007F9839 /* RenderMathMLMath.cpp */,
 				FA0B1F8311125CEE007F9839 /* RenderMathMLMath.h */,
 				FA5FAE4011126A5D00D3750F /* RenderMathMLOperator.cpp */,
@@ -18700,6 +18706,7 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				97DD4D870FDF4D6E00ECF9A4 /* XSSAuditor.h in Headers */,
 				CE172E011136E8CE0062A533 /* ZoomMode.h in Headers */,
+				FAA10571114C2DF700940A01 /* RenderMathMLFraction.h in Headers */,
 				A43BF5991149290A00C643CA /* HTMLProgressElement.h in Headers */,
 				A43BF59D1149292800C643CA /* RenderProgress.h in Headers */,
 				F375CC071150D300008DDB81 /* InspectorWorkerResource.h in Headers */,
@@ -20909,6 +20916,7 @@
 				93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */,
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				97DD4D860FDF4D6E00ECF9A4 /* XSSAuditor.cpp in Sources */,
+				FAA10570114C2DF700940A01 /* RenderMathMLFraction.cpp in Sources */,
 				A43BF5981149290A00C643CA /* HTMLProgressElement.cpp in Sources */,
 				A43BF59C1149292800C643CA /* RenderProgress.cpp in Sources */,
 				A5AFB34F115151A700B045CB /* StepRange.cpp in Sources */,
