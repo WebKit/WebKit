@@ -640,6 +640,11 @@
     return nil;
 }
 
+- (NSString *)missingPluginText
+{
+    return UI_STRING("Missing Plug-in", "Label text to be used when a plugin is missing");
+}
+
 - (NSString *)multipleFileUploadTextForNumberOfFiles:(unsigned)numberOfFiles
 {
     return [NSString stringWithFormat:UI_STRING("%d files", "Label to describe the number of files selected in a file upload control that allows multiple files"), numberOfFiles];

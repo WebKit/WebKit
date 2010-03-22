@@ -1,3 +1,15 @@
+2010-03-22  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by John Sullivan.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36328
+
+        * page/mac/WebCoreViewFactory.h: Added -missingPluginText method 
+        * platform/LocalizedStrings.h: Added missingPluginText()
+        * platform/gtk/LocalizedStringsGtk.cpp: Likewise.
+        * platform/mac/LocalizedStringsMac.mm: Same here.
+        * platform/qt/Localizations.cpp: Ditto.
+
 2010-03-22  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

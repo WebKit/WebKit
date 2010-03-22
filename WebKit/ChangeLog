@@ -1,3 +1,11 @@
+2010-03-22  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by John Sullivan.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36328
+
+        * English.lproj/Localizable.strings: Added "Missing Plug-in" string.
+
 2010-03-18  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Kenneth Rohde Christiansen.

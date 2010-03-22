@@ -335,6 +335,11 @@ String AXMenuListActionVerb()
 {
     return String();
 }
+    
+String missingPluginText()
+{
+    return String::fromUTF8(_("Missing Plug-in"));
+}
 
 String multipleFileUploadText(unsigned numberOfFiles)
 {

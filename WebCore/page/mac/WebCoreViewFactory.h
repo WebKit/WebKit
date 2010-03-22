@@ -142,6 +142,8 @@
 - (NSString *)AXMenuListPopupActionVerb;
 - (NSString *)AXMenuListActionVerb;
 
+- (NSString *)missingPluginText;
+
 - (NSString *)multipleFileUploadTextForNumberOfFiles:(unsigned)numberOfFiles;
 // FTP Directory Related
 - (NSString *)unknownFileSizeText;
