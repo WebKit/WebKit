@@ -97,7 +97,6 @@ http/tests/multipart/invalid-image-data-standalone.html
 
 # ------- missing features
 accessibility
-media
 webarchive
 svg/webarchive
 
@@ -138,6 +137,118 @@ svg/custom/glyph-setting-d-attribute.svg
 
 # ------- crashes
 fast/text/find-hidden-text.html
+
+# failing media tests
+media/adopt-node-crash.html
+media/audio-constructor.html
+media/audio-constructor-preload.html
+media/audio-constructor-src.html
+media/audio-controls-rendering.html
+media/audio-data-url.html
+media/audio-delete-while-slider-thumb-clicked.html
+media/audio-delete-while-step-button-clicked.html
+media/audio-mpeg-supported.html
+media/audio-no-installed-engines.html
+media/audio-play-event.html
+media/before-load-member-access.html
+media/broken-video.html
+media/constructors.html
+media/controls-after-reload.html
+media/controls-css-overload.html
+media/controls-drag-timebar.html
+media/controls-right-click-on-timebar.html
+media/controls-strict.html
+media/controls-styling.html
+media/event-attributes.html
+media/fallback.html
+media/media-captions.html
+media/media-constants.html
+media/media-fullscreen-inline.html
+media/media-fullscreen-not-in-document.html
+media/media-load-event.html
+media/media-startTime.html
+media/remove-from-document.html
+media/remove-from-document-no-load.html
+media/restore-from-page-cache.html
+media/unsupported-rtsp.html
+media/unsupported-tracks.html
+media/video-append-source.html
+media/video-aspect-ratio.html
+media/video-autoplay.html
+media/video-buffered.html
+media/video-canvas.html-disabled
+media/video-canvas-source.html
+media/video-click-dblckick-standalone.html
+media/video-controls.html
+media/video-controls-rendering.html
+media/video-controls-transformed.html
+media/video-controls-visible-audio-only.html
+media/video-controls-with-mutation-event-handler.html
+media/video-controls-zoomed.html
+media/video-currentTime.html
+media/video-currentTime-set2.html
+media/video-currentTime-set.html
+media/video-display-aspect-ratio.html
+media/video-display-none-crash.html
+media/video-display-toggle.html
+media/video-document-types.html
+media/video-dom-autoplay.html
+media/video-dom-preload.html
+media/video-dom-src.html
+media/video-empty-source.html
+media/video-error-does-not-exist.html
+media/video-layer-crash.html
+media/video-load-networkState.html
+media/video-load-readyState.html
+media/video-loop.html
+media/video-muted.html
+media/video-no-audio.html
+media/video-no-autoplay.html
+media/video-pause-empty-events.html
+media/video-pause-immediately.html
+media/video-played-collapse.html
+media/video-played-ranges-1.html
+media/video-played-reset.html
+media/video-play-empty-events.html
+media/video-play-pause-events.html
+media/video-play-pause-exception.html
+media/video-poster.html
+media/video-poster-scale.html
+media/video-preload.html
+media/video-replaces-poster.html
+media/video-reverse-play-duration.html
+media/video-seekable.html
+media/video-seeking.html
+media/video-seek-no-src-exception.html
+media/video-seek-past-end-paused.html
+media/video-seek-past-end-playing.html
+media/video-size.html
+media/video-size-intrinsic-scale.html
+media/video-source-add-src.html
+media/video-source-error.html
+media/video-source-error-no-candidate.html
+media/video-source.html
+media/video-source-media.html
+media/video-source-none-supported.html
+media/video-source-type.html
+media/video-source-type-params.html
+media/video-src-change.html
+media/video-src-empty.html
+media/video-src.html
+media/video-src-invalid-remove.html
+media/video-src-none.html
+media/video-src-plus-source.html
+media/video-src-remove.html
+media/video-src-set.html
+media/video-src-source.html
+media/video-timeupdate-during-playback.html
+media/video-timeupdate-reverse-play.html
+media/video-transformed.html
+media/video-volume.html
+media/video-volume-slider.html
+media/video-width-height.html
+media/video-zoom-controls.html
+media/video-zoom.html
 
 # ========================================================================= #
 # Crashing tests due to re-enabled Phonon support in Buildbot's Qt          #
@@ -4963,9 +5074,6 @@ fast/css/namespaces/namespaces-empty.xml
 fast/dom/javascript-url-crash-function.html
 fast/dom/location-new-window-no-crash.html
 http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-window-open.html
-
-# This test requires ogg codecs
-media/media-can-play-ogg.html
 
 # Bunch of tests failing since a while on the Qt slave. Please investigate.
 css1/classification/white_space.html

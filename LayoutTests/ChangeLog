@@ -1,3 +1,15 @@
+2010-03-22  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Phonon media backend: expose supported MIME types to WebCore
+
+        https://bugs.webkit.org/show_bug.cgi?id=33453
+
+        List all skipped media tests individually and unskip two fixed by the patch.
+
+        * platform/qt/Skipped:
+
 2010-03-22  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

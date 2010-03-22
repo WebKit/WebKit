@@ -26,20 +26,22 @@
 #include "CString.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
+#include "MIMETypeRegistry.h"
 #include "NotImplemented.h"
 #include "TimeRanges.h"
 #include "Widget.h"
 #include <wtf/HashSet.h>
 
 #include <QDebug>
+#include <QEvent>
+#include <QMetaEnum>
 #include <QPainter>
 #include <QWidget>
-#include <QMetaEnum>
 #include <QUrl>
-#include <QEvent>
 
-#include <phonon/path.h>
 #include <phonon/audiooutput.h>
+#include <phonon/backendcapabilities.h>
+#include <phonon/path.h>
 #include <phonon/mediaobject.h>
 #include <phonon/videowidget.h>
 
@@ -143,15 +145,62 @@ MediaPlayerPrivate::~MediaPlayerPrivate()
     m_mediaObject = 0;
 }
 
-void MediaPlayerPrivate::getSupportedTypes(HashSet<String>&)
+HashSet<String>& MediaPlayerPrivate::supportedTypesCache()
 {
-    notImplemented();
+    static HashSet<String> supportedTypes;
+    if (!supportedTypes.isEmpty())
+        return supportedTypes;
+
+    // FIXME: we should rebuild the MIME type cache every time the backend is changed,
+    // however, this would have no effect on MIMETypeRegistry anyway, because it
+    // pulls this data only once.
+
+    QStringList types = Phonon::BackendCapabilities::availableMimeTypes();
+    foreach (const QString& type, types) {
+        QString first = type.split(QLatin1Char('/')).at(0);
+
+        // We're only interested in types which are not supported by WebCore itself.
+        if (first != QLatin1String("video")
+            && first != QLatin1String("audio")
+            && first != QLatin1String("application"))
+            continue;
+        if (MIMETypeRegistry::isSupportedNonImageMIMEType(type))
+            continue;
+
+        supportedTypes.add(String(type));
+    }
+
+    // These formats are supported by GStreamer, but not correctly advertised.
+    if (supportedTypes.contains(String("video/x-h264"))
+        || supportedTypes.contains(String("audio/x-m4a"))) {
+        supportedTypes.add(String("video/mp4"));
+        supportedTypes.add(String("audio/aac"));
+    }
+
+    if (supportedTypes.contains(String("video/x-theora")))
+        supportedTypes.add(String("video/ogg"));
+
+    if (supportedTypes.contains(String("audio/x-vorbis")))
+        supportedTypes.add(String("audio/ogg"));
+
+    if (supportedTypes.contains(String("audio/x-wav")))
+        supportedTypes.add(String("audio/wav"));
+
+    return supportedTypes;
 }
 
-MediaPlayer::SupportsType MediaPlayerPrivate::supportsType(const String&, const String&)
+void MediaPlayerPrivate::getSupportedTypes(HashSet<String>& types)
 {
-    // FIXME: do the real thing
-    notImplemented();
+    types = supportedTypesCache();
+}
+
+MediaPlayer::SupportsType MediaPlayerPrivate::supportsType(const String& type, const String& codecs)
+{
+    if (type.isEmpty())
+        return MediaPlayer::IsNotSupported;
+
+    if (supportedTypesCache().contains(type))
+        return codecs.isEmpty() ? MediaPlayer::MayBeSupported : MediaPlayer::IsSupported;
     return MediaPlayer::IsNotSupported;
 }
 

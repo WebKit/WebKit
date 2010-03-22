@@ -132,6 +132,7 @@ namespace WebCore {
 
         static void getSupportedTypes(HashSet<String>&);
         static MediaPlayer::SupportsType supportsType(const String& type, const String& codecs);
+        static HashSet<String>& supportedTypesCache();
         static bool isAvailable() { return true; }
 
         void updateStates();
