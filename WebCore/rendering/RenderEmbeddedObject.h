@@ -34,7 +34,8 @@ public:
     virtual ~RenderEmbeddedObject();
 
     void updateWidget(bool onlyCreateNonNetscapePlugins);
-
+    void setShowsMissingPluginIndicator(bool showsMissingPluginIndicator) { m_setShowsMissingPluginIndicator = showsMissingPluginIndicator; }
+    bool showsMissingPluginIndicator() const { return m_setShowsMissingPluginIndicator; }
 #if USE(ACCELERATED_COMPOSITING)
     virtual bool allowsAcceleratedCompositing() const;
 #endif
@@ -43,11 +44,15 @@ private:
     virtual const char* renderName() const { return "RenderEmbeddedObject"; }
     virtual bool isEmbeddedObject() const { return true; }
 
+    virtual void paintReplaced(PaintInfo&, int, int);
+    virtual void paint(PaintInfo& paintInfo, int, int);
+
 #if USE(ACCELERATED_COMPOSITING)
     virtual bool requiresLayer() const;
 #endif
 
     virtual void layout();
+    bool m_setShowsMissingPluginIndicator;
 };
 
 inline RenderEmbeddedObject* toRenderEmbeddedObject(RenderObject* object)

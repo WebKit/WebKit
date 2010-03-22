@@ -24,16 +24,23 @@
 #include "config.h"
 #include "RenderEmbeddedObject.h"
 
+#include "CSSValueKeywords.h"
+#include "Font.h"
+#include "FontSelector.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
+#include "GraphicsContext.h"
 #include "HTMLEmbedElement.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "HTMLParamElement.h"
+#include "LocalizedStrings.h"
 #include "MIMETypeRegistry.h"
 #include "Page.h"
+#include "Path.h"
 #include "PluginWidget.h"
+#include "RenderTheme.h"
 #include "RenderView.h"
 #include "RenderWidgetProtector.h"
 #include "Text.h"
@@ -49,9 +56,16 @@
 namespace WebCore {
 
 using namespace HTMLNames;
+    
+static const float missingPluginRoundedRectHeight = 18;
+static const float missingPluginRoundedRectLeftRightTextMargin = 6;
+static const float missingPluginRoundedRectOpacity = 0.20;
+static const float missingPluginRoundedRectRadius = 5;
+static const float missingPluginTextOpacity = 0.55;
 
 RenderEmbeddedObject::RenderEmbeddedObject(Element* element)
     : RenderPartObject(element)
+    , m_setShowsMissingPluginIndicator(false)
 {
     view()->frameView()->setIsVisuallyNonEmpty();
 }
@@ -329,6 +343,64 @@ void RenderEmbeddedObject::updateWidget(bool onlyCreateNonNetscapePlugins)
             frame->loader()->requestObject(this, url, nullAtom, serviceType, paramNames, paramValues);
     }
 #endif
+}
+
+void RenderEmbeddedObject::paint(PaintInfo& paintInfo, int tx, int ty)
+{
+    if (m_setShowsMissingPluginIndicator) {
+        RenderReplaced::paint(paintInfo, tx, ty);
+        return;
+    }
+    
+    RenderPartObject::paint(paintInfo, tx, ty);
+}
+    
+void RenderEmbeddedObject::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
+{
+    if (!m_setShowsMissingPluginIndicator)
+        return;
+
+    if (paintInfo.phase == PaintPhaseSelection)
+        return;
+    
+    GraphicsContext* context = paintInfo.context;
+    if (context->paintingDisabled())
+        return;
+    
+    FloatRect pluginRect = contentBoxRect();
+    pluginRect.move(tx, ty);
+    
+    FontDescription fontDescription;
+    RenderTheme::defaultTheme()->systemFont(CSSValueWebkitSmallControl, fontDescription);
+    fontDescription.setWeight(FontWeightBold);
+    Font font(fontDescription, 0, 0);
+    font.update(0);
+    
+    String label = missingPluginText();
+    TextRun run(label.characters(), label.length());
+    run.disableRoundingHacks();
+    float textWidth = font.floatWidth(run);
+    
+    FloatRect missingPluginRect;
+    missingPluginRect.setSize(FloatSize(textWidth + missingPluginRoundedRectLeftRightTextMargin * 2, missingPluginRoundedRectHeight));
+    missingPluginRect.setLocation(FloatPoint((pluginRect.size().width() / 2 - missingPluginRect.size().width() / 2) + pluginRect.location().x(),
+                                             (pluginRect.size().height() / 2 - missingPluginRect.size().height() / 2) + pluginRect.location().y()));
+   
+    Path path = Path::createRoundedRectangle(missingPluginRect, FloatSize(missingPluginRoundedRectRadius, missingPluginRoundedRectRadius));
+    context->save();
+    context->clip(pluginRect);
+    context->beginPath();
+    context->addPath(path);  
+    context->setAlpha(missingPluginRoundedRectOpacity);
+    context->setFillColor(Color::white, style()->colorSpace());
+    context->fillPath();
+
+    FloatPoint labelPoint(roundf(missingPluginRect.location().x() + (missingPluginRect.size().width() - textWidth) / 2),
+                          roundf(missingPluginRect.location().y()+ (missingPluginRect.size().height() - font.height()) / 2 + font.ascent()));
+    context->setAlpha(missingPluginTextOpacity);
+    context->setFillColor(Color::black, style()->colorSpace());
+    context->drawBidiText(font, run, labelPoint);
+    context->restore();
 }
 
 void RenderEmbeddedObject::layout()

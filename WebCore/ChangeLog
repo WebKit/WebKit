@@ -1,3 +1,22 @@
+2010-03-22  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Darin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36328
+        
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadPlugin): Call setShowsMissingPluginIndicator(true) in cases that fail
+        to generate a widget.
+        * rendering/RenderEmbeddedObject.cpp: Added new missing plug-in related static constants
+        (WebCore::RenderEmbeddedObject::RenderEmbeddedObject): Initialize newly boolean to false.
+        (WebCore::RenderEmbeddedObject::paint): Added.
+        (WebCore::RenderEmbeddedObject::paintReplaced): Added. Draws a subtle rounded rectangle
+        containing the text "Missing Plug-in".
+        * rendering/RenderEmbeddedObject.h: Added the following two methods below.
+        (WebCore::RenderEmbeddedObject::setShowsMissingPluginIndicator):
+        (WebCore::RenderEmbeddedObject::showsMissingPluginIndicator):
+        * rendering/RenderWidget.h: Moved paint(PaintInfo&, int, int) from private to protected.
+
 2010-03-22  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -55,11 +55,11 @@ protected:
 
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
     virtual void layout();
+    virtual void paint(PaintInfo&, int x, int y);
 
 private:
     virtual bool isWidget() const { return true; }
 
-    virtual void paint(PaintInfo&, int x, int y);
     virtual void destroy();
     virtual void setSelectionState(SelectionState);
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
