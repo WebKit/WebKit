@@ -1,3 +1,15 @@
+2010-03-22  Jakub Wieczorek  <jwieczorek@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Don't construct a QLineEdit every time when painting a text field
+        https://bugs.webkit.org/show_bug.cgi?id=36373
+
+        Add a simple benchmark covering this area.
+
+        * tests/benchmarks/painting/tst_painting.cpp:
+        (tst_Painting::textAreas):
+
 2010-03-22  Yi Shen  <shenyi2006@gmail.com>
 
         Reviewed by Simon Hausmann.

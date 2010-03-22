@@ -19,6 +19,7 @@
 
 #include <QtTest/QtTest>
 
+#include <qwebelement.h>
 #include <qwebframe.h>
 #include <qwebview.h>
 #include <qpainter.h>
@@ -59,6 +60,7 @@ public Q_SLOTS:
 private Q_SLOTS:
     void paint_data();
     void paint();
+    void textAreas();
 
 private:
     QWebView* m_view;
@@ -101,6 +103,31 @@ void tst_Painting::paint()
     QBENCHMARK {
         QPainter painter(&pixmap);
         mainFrame->render(&painter, QRect(QPoint(0, 0), m_page->viewportSize()));
+        painter.end();
+    }
+}
+
+void tst_Painting::textAreas()
+{
+    m_view->load(QUrl("data:text/html;<html><body></body></html>"));
+    ::waitForSignal(m_view, SIGNAL(loadFinished(bool)));
+
+    QWebElement bodyElement = m_page->mainFrame()->findFirstElement("body");
+
+    int count = 100;
+    while (count--) {
+        QString markup("<textarea cols='1' rows='1'></textarea>");
+        bodyElement.appendInside(markup);
+    }
+
+    /* force a layout */
+    QWebFrame* mainFrame = m_page->mainFrame();
+    mainFrame->toPlainText();
+
+    QPixmap pixmap(mainFrame->contentsSize());
+    QBENCHMARK {
+        QPainter painter(&pixmap);
+        mainFrame->render(&painter, QRect(QPoint(0, 0), mainFrame->contentsSize()));
         painter.end();
     }
 }
