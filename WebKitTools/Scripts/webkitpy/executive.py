@@ -27,6 +27,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+try:
+    # This API exists only in Python 2.6 and higher.  :(
+    import multiprocessing
+except ImportError:
+    multiprocessing = None
+
 import os
 import StringIO
 import subprocess
@@ -113,14 +119,11 @@ class Executive(object):
 
     @staticmethod
     def cpu_count():
-        # This API exists only in Python 2.6 and higher.  :(
-        try:
-            import multiprocessing
+        if multiprocessing:
             return multiprocessing.cpu_count()
-        except (ImportError, NotImplementedError):
-            # This quantity is a lie but probably a reasonable guess for modern
-            # machines.
-            return 2
+        # This quantity is a lie but probably a reasonable guess for modern
+        # machines.
+        return 2
 
     # Error handlers do not need to be static methods once all callers are
     # updated to use an Executive object.
