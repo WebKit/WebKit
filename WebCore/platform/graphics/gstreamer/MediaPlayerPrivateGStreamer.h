@@ -28,7 +28,6 @@
 #include "MediaPlayerPrivate.h"
 #include "Timer.h"
 
-#include <cairo.h>
 #include <glib.h>
 #include <gst/gst.h>
 

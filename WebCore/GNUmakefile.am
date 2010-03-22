@@ -2473,6 +2473,8 @@ webcoregtk_sources += \
 	WebCore/platform/graphics/gstreamer/DataSourceGStreamer.h \
 	WebCore/platform/graphics/gstreamer/GOwnPtrGStreamer.cpp \
 	WebCore/platform/graphics/gstreamer/GOwnPtrGStreamer.h \
+	WebCore/platform/graphics/gstreamer/ImageGStreamer.h \
+	WebCore/platform/graphics/gstreamer/ImageGStreamerCairo.cpp \
 	WebCore/platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp \
 	WebCore/platform/graphics/gstreamer/WebKitWebSourceGStreamer.h
 

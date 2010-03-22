@@ -1,3 +1,25 @@
+2010-03-22  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Eric Carlson.
+
+        [GStreamer] Use ImageBuffer API to do painting
+        https://bugs.webkit.org/show_bug.cgi?id=35783
+
+        New ImageGStreamer class abstracting the conversion of GStreamer
+        buffers to cairo surfaces. Using this makes the painting code of
+        the player more generic.
+
+        * GNUmakefile.am:
+        * platform/graphics/gstreamer/ImageGStreamer.h: Added.
+        (WebCore::ImageGStreamer::image):
+        * platform/graphics/gstreamer/ImageGStreamerCairo.cpp: Added.
+        (ImageGStreamer::createImage):
+        (ImageGStreamer::ImageGStreamer):
+        (ImageGStreamer::~ImageGStreamer):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivate::paint):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+
 2010-03-22  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.
