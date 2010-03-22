@@ -1,3 +1,16 @@
+2010-03-22  Yi Shen  <shenyi2006@gmail.com>
+
+        Reviewed by Simon Hausmann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35933  
+        [Qt] [Symbian] Can not backward select (highlight) text using virtual keyboard
+        Make sure the selection start index is smaller than the selection end index.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::inputMethodEvent):
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::inputMethods):
+
 2010-03-21  Kristian Amlie  <kristian.amlie@nokia.com>
 
         Reviewed by Simon Hausmann.

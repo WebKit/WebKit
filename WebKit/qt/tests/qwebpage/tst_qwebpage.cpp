@@ -1403,6 +1403,26 @@ void tst_QWebPage::inputMethods()
     variant = page->inputMethodQuery(Qt::ImCurrentSelection);
     QString selectionValue = variant.value<QString>();
     QCOMPARE(selectionValue, QString("eb"));
+
+    //Set selection with negative length
+    inputAttributes << QInputMethodEvent::Attribute(QInputMethodEvent::Selection, 6, -5, QVariant());
+    QInputMethodEvent eventSelection2("",inputAttributes);
+    page->event(&eventSelection2);
+
+    //ImAnchorPosition
+    variant = page->inputMethodQuery(Qt::ImAnchorPosition);
+    anchorPosition =  variant.toInt();
+    QCOMPARE(anchorPosition, 1);
+
+    //ImCursorPosition
+    variant = page->inputMethodQuery(Qt::ImCursorPosition);
+    cursorPosition =  variant.toInt();
+    QCOMPARE(cursorPosition, 6);
+
+    //ImCurrentSelection
+    variant = page->inputMethodQuery(Qt::ImCurrentSelection);
+    selectionValue = variant.value<QString>();
+    QCOMPARE(selectionValue, QString("tWebK"));
 #endif
 
     //ImSurroundingText

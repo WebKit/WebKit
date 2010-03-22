@@ -1316,8 +1316,8 @@ void QWebPagePrivate::inputMethodEvent(QInputMethodEvent *ev)
 #if QT_VERSION >= 0x040600
         case QInputMethodEvent::Selection: {
             if (renderTextControl) {
-                renderTextControl->setSelectionStart(a.start);
-                renderTextControl->setSelectionEnd(a.start + a.length);
+                renderTextControl->setSelectionStart(qMin(a.start, (a.start + a.length)));
+                renderTextControl->setSelectionEnd(qMax(a.start, (a.start + a.length)));
             }
             break;
         }
