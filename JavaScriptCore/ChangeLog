@@ -1,3 +1,19 @@
+2010-03-22  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/36431> Clean up 'int' use in UString.cpp after r54789
+
+        Reviewed by Darin Adler.
+
+        * runtime/UString.cpp:
+        (JSC::UString::from): Changed argument type from 'unsigned int'
+        to 'unsigned' to match WebKit coding style.
+        (JSC::UString::find): Changed static_cast<int>() to
+        static_cast<unsigned>() now that this method returns unsigned.
+        (JSC::UString::rfind): Ditto.
+        * runtime/UString.h:
+        (JSC::UString::from): Changed argument type from 'unsigned int'
+        to 'unsigned' to match WebKit coding style.
+
 2010-03-22  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

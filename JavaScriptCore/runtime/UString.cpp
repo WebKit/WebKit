@@ -237,7 +237,7 @@ UString UString::from(long long i)
     return UString(p, static_cast<unsigned>(end - p));
 }
 
-UString UString::from(unsigned int u)
+UString UString::from(unsigned u)
 {
     UChar buf[sizeof(u) * 3];
     UChar* end = buf + sizeof(buf) / sizeof(UChar);
@@ -543,7 +543,7 @@ unsigned UString::find(const UString& f, unsigned pos) const
         const UChar* end = data() + size();
         for (const UChar* c = data() + pos; c < end; c++) {
             if (*c == ch)
-                return static_cast<int>(c - data());
+                return static_cast<unsigned>(c - data());
         }
         return NotFound;
     }
@@ -560,7 +560,7 @@ unsigned UString::find(const UString& f, unsigned pos) const
     ++fdata;
     for (const UChar* c = data() + pos; c <= end; c++) {
         if (c[0] == fchar && !memcmp(c + 1, fdata, fsizeminusone))
-            return static_cast<int>(c - data());
+            return static_cast<unsigned>(c - data());
     }
 
     return NotFound;
@@ -571,7 +571,7 @@ unsigned UString::find(UChar ch, unsigned pos) const
     const UChar* end = data() + size();
     for (const UChar* c = data() + pos; c < end; c++) {
         if (*c == ch)
-            return static_cast<int>(c - data());
+            return static_cast<unsigned>(c - data());
     }
 
     return NotFound;
@@ -591,7 +591,7 @@ unsigned UString::rfind(const UString& f, unsigned pos) const
     const UChar* fdata = f.data();
     for (const UChar* c = data() + pos; c >= data(); c--) {
         if (*c == *fdata && !memcmp(c + 1, fdata + 1, fsizeminusone))
-            return static_cast<int>(c - data());
+            return static_cast<unsigned>(c - data());
     }
 
     return NotFound;
@@ -605,7 +605,7 @@ unsigned UString::rfind(UChar ch, unsigned pos) const
         pos = size() - 1;
     for (const UChar* c = data() + pos; c >= data(); c--) {
         if (*c == ch)
-            return static_cast<int>(c - data());
+            return static_cast<unsigned>(c - data());
     }
 
     return NotFound;
