@@ -399,7 +399,7 @@
         * Scripts/webkitpy/committers.py:
         * Scripts/webkitpy/committers_unittest.py:
 
-2010-03-18  Anders Bakken  <Anders Bakken <agbakken@gmail.com>>
+2010-03-18  Anders Bakken  <agbakken@gmail.com>
 
         Reviewed by Simon Hausmann.
 
