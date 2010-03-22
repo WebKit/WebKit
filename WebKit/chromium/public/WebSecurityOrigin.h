@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -42,6 +42,7 @@ namespace WebKit {
 
 class WebSecurityOriginPrivate;
 class WebString;
+class WebURL;
 
 class WebSecurityOrigin {
 public:
@@ -58,6 +59,7 @@ public:
     // FIXME: This should return a WebSecurityOrigin, not a pointer to one.
     WEBKIT_API static WebSecurityOrigin* createFromDatabaseIdentifier(const WebString& databaseIdentifier);
     WEBKIT_API static WebSecurityOrigin createFromString(const WebString&);
+    WEBKIT_API static WebSecurityOrigin create(const WebURL&);
 
     WEBKIT_API void reset();
     WEBKIT_API void assign(const WebSecurityOrigin&);
@@ -70,6 +72,12 @@ public:
 
     // The empty WebSecurityOrigin is the least privileged WebSecurityOrigin.
     WEBKIT_API bool isEmpty() const;
+
+    // Returns true if this SecurityOrigin can script objects in the given
+    // SecurityOrigin. For example, call this function before allowing
+    // script from one security origin to read or write objects from
+    // another SecurityOrigin.
+    WEBKIT_API bool canAccess(const WebSecurityOrigin&) const;
 
     // Returns a string representation of the WebSecurityOrigin.  The empty
     // WebSecurityOrigin is represented by "null".  The representation of a

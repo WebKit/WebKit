@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -31,8 +31,10 @@
 #include "config.h"
 #include "WebSecurityOrigin.h"
 
+#include "KURL.h"
 #include "SecurityOrigin.h"
 #include "WebString.h"
+#include "WebURL.h"
 #include <wtf/PassRefPtr.h>
 
 using namespace WebCore;
@@ -50,6 +52,11 @@ WebSecurityOrigin* WebSecurityOrigin::createFromDatabaseIdentifier(const WebStri
 WebSecurityOrigin WebSecurityOrigin::createFromString(const WebString& origin)
 {
     return WebSecurityOrigin(SecurityOrigin::createFromString(origin));
+}
+
+WebSecurityOrigin WebSecurityOrigin::create(const WebURL& url)
+{
+    return WebSecurityOrigin(SecurityOrigin::create(url));
 }
 
 void WebSecurityOrigin::reset()
@@ -87,6 +94,13 @@ bool WebSecurityOrigin::isEmpty() const
 {
     ASSERT(m_private);
     return m_private->isEmpty();
+}
+
+bool WebSecurityOrigin::canAccess(const WebSecurityOrigin& other) const
+{
+    ASSERT(m_private);
+    ASSERT(other.m_private);
+    return m_private->canAccess(other.m_private);
 }
 
 WebString WebSecurityOrigin::toString() const
