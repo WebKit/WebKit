@@ -5838,3 +5838,7 @@ plugins/return-error-from-new-stream-doesnt-invoke-destroy-stream.html
 
 # Misses setMediaType() implementation
 fast/media/print-restores-previous-mediatype.html
+
+# fast/loader/stateobjects/replacestate-in-iframe.html caused infinite loop
+# https://bugs.webkit.org/show_bug.cgi?id=36467
+fast/loader/stateobjects/replacestate-in-iframe.html

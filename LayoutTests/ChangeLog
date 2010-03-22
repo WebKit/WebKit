@@ -1,3 +1,13 @@
+2010-03-22  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed, skip new failing test.
+
+        fast/loader/stateobjects/replacestate-in-iframe.html caused infinite loop.
+        https://bugs.webkit.org/show_bug.cgi?id=36467
+
+        * platform/gtk/Skipped: fast/loader/stateobjects/replacestate-in-iframe.html skipped until fix.
+        * platform/qt/Skipped: fast/loader/stateobjects/replacestate-in-iframe.html skipped until fix.
+
 2010-03-22  Nate Chapin  <japhet@chromium.org>
 
         Unreviewed, Chromium test fixes.
