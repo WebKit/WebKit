@@ -29,7 +29,7 @@
 #include "Logging.h"
 #include <wtf/Assertions.h>
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(EFL)
     #define supressNotImplementedWarning() getenv("DISABLE_NI_WARNING")
 #elif PLATFORM(QT)
     #include <QByteArray>
