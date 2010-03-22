@@ -2848,3 +2848,6 @@ BUG38706 : svg/custom/deep-dynamic-updates.svg = IMAGE+TEXT PASS
 
 // Caused by http://trac.webkit.org/changeset/56288/
 BUG_JSCHUH WIN LINUX : svg/filters/filterRes.svg = IMAGE
+
+// Caused by http://trac.webkit.org/changeset/56329
+BUG38918 : fast/dom/error-to-string-stack-overflow.html = TEXT

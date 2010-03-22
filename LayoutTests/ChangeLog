@@ -1,3 +1,12 @@
+2010-03-22  Nate Chapin  <japhet@chromium.org>
+
+        Unreviewed, Chromium expectations tweak.
+
+        Add fast/dom/error-to-string-stack-overflow.html to expected 
+        failures due to http://trac.webkit.org/changeset/56329.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-03-22  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.
