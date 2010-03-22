@@ -82,6 +82,9 @@ namespace WebCore {
 #elif PLATFORM(GTK)
     typedef GdkCursor* PlatformCursor;
     typedef GdkCursor* PlatformCursorHandle;
+#elif PLATFORM(EFL)
+    typedef const char* PlatformCursor;
+    typedef const char* PlatformCursorHandle;
 #elif PLATFORM(QT) && !defined(QT_NO_CURSOR)
     typedef QCursor PlatformCursor;
     typedef QCursor* PlatformCursorHandle;
@@ -102,7 +105,7 @@ namespace WebCore {
     class Cursor {
     public:
         Cursor()
-#if !PLATFORM(QT)
+#if !PLATFORM(QT) && !PLATFORM(EFL)
         : m_impl(0)
 #endif
         { }
