@@ -1,3 +1,15 @@
+2010-03-22  Qi Zhang  <qi.2.zhang@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        Qt] Fix arc function in canvas
+        https://bugs.webkit.org/show_bug.cgi?id=36296
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/canvas/arc360-expected.checksum: Added.
+        * platform/qt/fast/canvas/arc360-expected.png: Added.
+        * platform/qt/fast/canvas/arc360-expected.txt: Added.
+
 2010-03-19  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Adam Barth.

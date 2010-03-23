@@ -5030,7 +5030,6 @@ fast/forms/validationMessage.html
 editing/execCommand/indent-paragraphs.html
 editing/inserting/insert-bg-font.html
 editing/selection/transformed-selection-rects.html
-fast/canvas/arc360.html
 fast/css/color-correction-backgrounds-and-text.html
 fast/css/color-correction-on-background-image.html
 fast/css/color-correction-on-backgrounds.html
