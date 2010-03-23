@@ -1,3 +1,12 @@
+2010-03-23  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] Failing fast/css/zoom-body-scroll.html - sizes are off by one after zooming out
+        https://bugs.webkit.org/show_bug.cgi?id=36491
+
+        Skipping test that fails on 32 bits bots.
+
+        * platform/gtk/Skipped:
+
 2010-03-23  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed, remove flaky tag in websocket tests.
