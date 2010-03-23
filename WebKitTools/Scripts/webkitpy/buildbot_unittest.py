@@ -74,6 +74,55 @@ class BuilderTest(unittest.TestCase):
     def test_build_caching(self):
         self.assertEqual(self.builder.build(10), self.builder.build(10))
 
+    def test_build_and_revision_for_filename(self):
+        expectations = {
+            "r47483 (1)/" : (47483, 1),
+            "r47483 (1).zip" : (47483, 1),
+        }
+        for filename, revision_and_build in expectations.items():
+            self.assertEqual(self.builder._revision_and_build_for_filename(filename), revision_and_build)
+
+
+class BuildTest(unittest.TestCase):
+    _example_results_html = """
+<html>
+<head>
+<title>Layout Test Results</title>
+</head>
+<body>
+<p>Tests that had stderr output:</p>
+<table>
+<tr>
+<td><a href="/var/lib/buildbot/build/gtk-linux-64-release/build/LayoutTests/accessibility/aria-activedescendant-crash.html">accessibility/aria-activedescendant-crash.html</a></td>
+<td><a href="accessibility/aria-activedescendant-crash-stderr.txt">stderr</a></td>
+</tr>
+<td><a href="/var/lib/buildbot/build/gtk-linux-64-release/build/LayoutTests/http/tests/security/canvas-remote-read-svg-image.html">http/tests/security/canvas-remote-read-svg-image.html</a></td>
+<td><a href="http/tests/security/canvas-remote-read-svg-image-stderr.txt">stderr</a></td>
+</tr>
+</table><p>Tests that had no expected results (probably new):</p>
+<table>
+<tr>
+<td><a href="/var/lib/buildbot/build/gtk-linux-64-release/build/LayoutTests/fast/repaint/no-caret-repaint-in-non-content-editable-element.html">fast/repaint/no-caret-repaint-in-non-content-editable-element.html</a></td>
+<td><a href="fast/repaint/no-caret-repaint-in-non-content-editable-element-actual.txt">result</a></td>
+</tr>
+</table></body>
+</html>
+"""
+
+    _expected_layout_test_results = {
+        'Tests that had stderr output:' : [
+            'accessibility/aria-activedescendant-crash.html'
+        ],
+        'Tests that had no expected results (probably new):' : [
+            'fast/repaint/no-caret-repaint-in-non-content-editable-element.html'
+        ]
+    }
+    def test_parse_layout_test_results(self):
+        build = Build(None, revision=1, build_number=1, is_green=False)
+        results = build._parse_layout_test_results(self._example_results_html)
+        self.assertEqual(self._expected_layout_test_results, results)
+
+
 class BuildBotTest(unittest.TestCase):
 
     _example_one_box_status = '''
@@ -196,6 +245,8 @@ class BuildBotTest(unittest.TestCase):
         builder = buildbot.builder_with_name("Test Builder")
         self.assertEqual(builder.name(), "Test Builder")
         self.assertEqual(builder.url(), "http://build.webkit.org/builders/Test%20Builder")
+        self.assertEqual(builder.url_encoded_name(), "Test%20Builder")
+        self.assertEqual(builder.results_url(), "http://build.webkit.org/results/Test%20Builder")
 
         # Override _fetch_xmlrpc_build_dictionary function to not touch the network.
         def mock_fetch_xmlrpc_build_dictionary(self, build_number):
@@ -210,14 +261,64 @@ class BuildBotTest(unittest.TestCase):
         build = builder.build(10)
         self.assertEqual(build.builder(), builder)
         self.assertEqual(build.url(), "http://build.webkit.org/builders/Test%20Builder/builds/10")
+        self.assertEqual(build.results_url(), "http://build.webkit.org/results/Test%20Builder/r20%20%2810%29")
         self.assertEqual(build.revision(), 20)
         self.assertEqual(build.is_green(), True)
 
         build = build.previous_build()
         self.assertEqual(build.builder(), builder)
         self.assertEqual(build.url(), "http://build.webkit.org/builders/Test%20Builder/builds/9")
+        self.assertEqual(build.results_url(), "http://build.webkit.org/results/Test%20Builder/r18%20%289%29")
         self.assertEqual(build.revision(), 18)
         self.assertEqual(build.is_green(), False)
+
+        self.assertEqual(builder.build(None), None)
+
+    _example_directory_listing = '''
+<h1>Directory listing for /results/SnowLeopard Intel Leaks/</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>Filename</th>
+            <th>Size</th>
+            <th>Content type</th>
+            <th>Content encoding</th>
+        </tr>
+    </thead>
+    <tbody>
+<tr class="odd">
+    <td><a href="r47483%20%281%29/">r47483 (1)/</a></td>
+    <td></td>
+    <td>[Directory]</td>
+    <td></td>
+</tr>
+<tr class="odd">
+    <td><a href="r47484%20%282%29.zip">r47484 (2).zip</a></td>
+    <td>89K</td>
+    <td>[application/zip]</td>
+    <td></td>
+</tr>
+'''
+    _expected_files = [
+        {
+            "filename" : "r47483 (1)/",
+            "size" : "",
+            "type" : "[Directory]",
+            "encoding" : "",
+        },
+        {
+            "filename" : "r47484 (2).zip",
+            "size" : "89K",
+            "type" : "[application/zip]",
+            "encoding" : "",
+        },
+    ]
+
+    def test_parse_build_to_revision_map(self):
+        buildbot = BuildBot()
+        files = buildbot._parse_twisted_directory_listing(self._example_directory_listing)
+        self.assertEqual(self._expected_files, files)
 
 
 if __name__ == '__main__':

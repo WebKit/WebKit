@@ -46,12 +46,19 @@ class Builder(object):
         self._name = unicode(name)
         self._buildbot = buildbot
         self._builds_cache = {}
+        self._revision_to_build_number = None
 
     def name(self):
         return self._name
 
+    def results_url(self):
+        return "http://%s/results/%s" % (self._buildbot.buildbot_host, self.url_encoded_name())
+
+    def url_encoded_name(self):
+        return urllib.quote(self._name)
+
     def url(self):
-        return "http://%s/builders/%s" % (self._buildbot.buildbot_host, urllib.quote(self._name))
+        return "http://%s/builders/%s" % (self._buildbot.buildbot_host, self.url_encoded_name())
 
     # This provides a single place to mock
     def _fetch_build(self, build_number):
@@ -65,6 +72,8 @@ class Builder(object):
         )
 
     def build(self, build_number):
+        if not build_number:
+            return None
         cached_build = self._builds_cache.get(build_number)
         if cached_build:
             return cached_build
@@ -73,9 +82,45 @@ class Builder(object):
         self._builds_cache[build_number] = build
         return build
 
+    file_name_regexp = re.compile(r"r(?P<revision>\d+) \((?P<build_number>\d+)\)")
+    def _revision_and_build_for_filename(self, filename):
+        # Example: "r47483 (1)/" or "r47483 (1).zip"
+        match = self.file_name_regexp.match(filename)
+        return (int(match.group("revision")), int(match.group("build_number")))
+
+    def _fetch_revision_to_build_map(self):
+        # All _fetch requests go through _buildbot for easier mocking
+        try:
+            # FIXME: This method is horribly slow due to the huge network load.
+            # FIXME: This is a poor way to do revision -> build mapping.
+            # Better would be to ask buildbot through some sort of API.
+            result_files = self._buildbot._fetch_twisted_directory_listing(self.results_url())
+        except urllib2.HTTPError, error:
+            if error.code != 404:
+                raise
+            result_files = []
+
+        # This assumes there was only one build per revision, which is false but we don't care for now.
+        return dict([self._revision_and_build_for_filename(file_info["filename"]) for file_info in result_files])
+
+    # This assumes there can be only one build per revision, which is false, but we don't care for now.
+    def build_for_revision(self, revision, allow_failed_lookups=False):
+        if not self._revision_to_build_number:
+            self._revision_to_build_number = self._fetch_revision_to_build_map()
+        # NOTE: This lookup will fail if that exact revision was never built.
+        build_number = self._revision_to_build_number.get(int(revision))
+        build = self.build(build_number)
+        if not build and allow_failed_lookups:
+            # Builds for old revisions with fail to lookup via buildbot's xmlrpc api.
+            build = Build(self,
+                build_number=build_number,
+                revision=revision,
+                is_green=False,
+            )
+        return build
+
     # FIXME: We should not have to pass a red_build_number, but rather Builder should
     # know what its "latest_build" is.
-    # FIXME: This needs unit testing.
     def find_green_to_red_transition(self, red_build_number, look_back_limit=30):
         # walk backwards until we find a green build
         red_build = self.build(red_build_number)
@@ -111,6 +156,7 @@ class Build(object):
         self._number = build_number
         self._revision = revision
         self._is_green = is_green
+        self._layout_test_results = None
 
     @staticmethod
     def build_url(builder, build_number):
@@ -118,6 +164,33 @@ class Build(object):
 
     def url(self):
         return self.build_url(self.builder(), self._number)
+
+    def results_url(self):
+        results_directory = "r%s (%s)" % (self.revision(), self._number)
+        return "%s/%s" % (self._builder.results_url(), urllib.quote(results_directory))
+
+    def _parse_layout_test_results(self, page):
+        layout_test_results = {}
+        tables = BeautifulSoup(page).findAll("table")
+        for table in tables:
+            table_title = table.findPreviousSibling("p").string
+            layout_test_results[table_title] = [row.find("a").string for row in table.findAll("tr")]
+
+        return layout_test_results
+
+    def _fetch_layout_test_results(self):
+        results_html = "%s/results.html" % self.results_url()
+        try:
+            page = urllib2.urlopen(results_html)
+            return self._parse_layout_test_results(page)
+        except urllib2.HTTPError, error:
+            if error.code != 404:
+                raise
+
+    def layout_test_results(self):
+        if not self._layout_test_results:
+            self._layout_test_results = self._fetch_layout_test_results()
+        return self._layout_test_results
 
     def builder(self):
         return self._builder
@@ -140,6 +213,7 @@ class BuildBot(object):
 
     def __init__(self, host=default_host):
         self.buildbot_host = host
+        self._builder_by_name = {}
 
         # If any Leopard builder/tester, Windows builder or Chromium builder is
         # red we should not be landing patches.  Other builders should be added
@@ -226,6 +300,29 @@ class BuildBot(object):
         build_status_url = "http://%s/one_box_per_builder" % self.buildbot_host
         return urllib2.urlopen(build_status_url)
 
+    def _parse_twisted_file_row(self, file_row):
+        string_or_empty = lambda string: str(string) if string else ""
+        file_cells = file_row.findAll('td')
+        return {
+            "filename" : string_or_empty(file_cells[0].find("a").string),
+            "size" : string_or_empty(file_cells[1].string),
+            "type" : string_or_empty(file_cells[2].string),
+            "encoding" : string_or_empty(file_cells[3].string),
+        }
+
+    def _parse_twisted_directory_listing(self, page):
+        soup = BeautifulSoup(page)
+        # HACK: Match only table rows with a class to ignore twisted header/footer rows.
+        file_rows = soup.find('table').findAll('tr', { "class" : True })
+        return [self._parse_twisted_file_row(file_row) for file_row in file_rows]
+
+    # FIXME: There should be a better way to get this information directly from twisted.
+    def _fetch_twisted_directory_listing(self, url):
+        return self._parse_twisted_directory_listing(urllib2.urlopen(url))
+
+    def builders(self):
+        return [self.builder_with_name(status["name"]) for status in self.builder_statuses()]
+
     def builder_statuses(self):
         soup = BeautifulSoup(self._fetch_one_box_per_builder())
         return [self._parse_builder_status_from_row(status_row) for status_row in soup.find('table').findAll('tr')]
@@ -234,7 +331,11 @@ class BuildBot(object):
         return [builder for builder in self.builder_statuses() if self._is_core_builder(builder["name"])]
 
     def builder_with_name(self, name):
-        return Builder(name, self)
+        builder = self._builder_by_name.get(name)
+        if not builder:
+            builder = Builder(name, self)
+            self._builder_by_name[name] = builder
+        return builder
 
     def revisions_causing_failures(self, only_core_builders=True):
         builder_statuses = self.core_builder_statuses() if only_core_builders else self.builder_statuses()

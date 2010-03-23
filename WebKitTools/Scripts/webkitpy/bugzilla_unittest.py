@@ -205,6 +205,7 @@ ZEZpbmlzaExvYWRXaXRoUmVhc29uOnJlYXNvbl07Cit9CisKIEBlbmQKIAogI2VuZGlmCg==
         }],
     }
 
+    # FIXME: This should move to a central location and be shared by more unit tests.
     def _assert_dictionaries_equal(self, actual, expected):
         # Make sure we aren't parsing more or less than we expect
         self.assertEquals(sorted(actual.keys()), sorted(expected.keys()))

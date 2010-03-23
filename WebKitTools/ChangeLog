@@ -1,3 +1,22 @@
+2010-03-23  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add support for revision -> build lookup in buildbot.py and layout test result parsing
+        https://bugs.webkit.org/show_bug.cgi?id=36474
+
+        * Scripts/webkitpy/bugzilla_unittest.py: Added a FIXME about sharing code.
+        * Scripts/webkitpy/buildbot.py: 
+         - Add support for looking up builds by revision number.
+         - Add support for fetching and parsing results.html files from buildbot.
+         - build_for_revision has an allow_failed_lookups option to work around the fact that
+           our buildbot's xmlrpc calls return failure on old revision numbers.
+         - Add parsing support for twisted directory listings.
+        * Scripts/webkitpy/buildbot_unittest.py:
+         - Unit test all the new code.
+        * Scripts/webkitpy/commands/queries.py:
+         - Add a new results-for command which prints all the results for a given revision (very slow due to slow revision lookup)
+
 2010-03-23  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Adam Roben.

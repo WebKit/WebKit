@@ -110,9 +110,6 @@ class WhatBroke(AbstractDeclarativeCommand):
     name = "what-broke"
     help_text = "Print failing buildbots (%s) and what revisions broke them" % BuildBot.default_host
 
-    def _longest_builder_name(self, builders):
-        return max(map(lambda builder: len(builder["name"]), builders))
-
     def _print_builder_line(self, builder_name, max_name_width, status_message):
         print "%s : %s" % (builder_name.ljust(max_name_width), status_message)
 
@@ -146,7 +143,7 @@ class WhatBroke(AbstractDeclarativeCommand):
 
     def execute(self, options, args, tool):
         builder_statuses = tool.buildbot.builder_statuses()
-        longest_builder_name = self._longest_builder_name(builder_statuses)
+        longest_builder_name = max(map(len, map(lambda builder: builder["name"], builder_statuses)))
         failing_builders = 0
         for builder_status in builder_statuses:
             # If the builder is green, print OK, exit.
@@ -159,6 +156,7 @@ class WhatBroke(AbstractDeclarativeCommand):
         else:
             print "All builders are passing!"
 
+
 class WhoBrokeIt(AbstractDeclarativeCommand):
     name = "who-broke-it"
     help_text = "Print a list of revisions causing failures on %s" % BuildBot.default_host
@@ -166,6 +164,28 @@ class WhoBrokeIt(AbstractDeclarativeCommand):
     def execute(self, options, args, tool):
         for revision, builders in self.tool.buildbot.revisions_causing_failures(False).items():
             print "r%s appears to have broken %s" % (revision, [builder.name() for builder in builders])
+
+
+class ResultsFor(AbstractDeclarativeCommand):
+    name = "results-for"
+    help_text = "Print a list of failures for the passed revision from bots on %s" % BuildBot.default_host
+
+    def _print_layout_test_results(self, results):
+        if not results:
+            print " No results."
+            return
+        for title, files in results.items():
+            print " %s" % title
+            for filename in files:
+                print "  %s" % filename
+
+    def execute(self, options, args, tool):
+        builders = self.tool.buildbot.builders()
+        for builder in builders:
+            print "%s:" % builder.name()
+            build = builder.build_for_revision(args[0], allow_failed_lookups=True)
+            self._print_layout_test_results(build.layout_test_results())
+
 
 class TreeStatus(AbstractDeclarativeCommand):
     name = "tree-status"
