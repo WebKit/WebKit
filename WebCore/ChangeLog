@@ -1,3 +1,44 @@
+2010-03-23  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add checks if setNeedsWillValidateCheck() and
+        setNeedsValidityCheck() are called correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=34924
+
+        Introduce HTMLFormControlElement::m_willValidate and
+        m_isValid. They are the caches of willValidate() and
+        isValidFormControlElement(). setNeedsWillValidateCheck() updates
+        m_willValidate and setNeedsValidityCheck() updates m_isValid.
+
+        willValidate() and isValidFormControlElement() have assertions to
+        check m_willvalidate or m_isValid has the correct state. If
+        setNeedsWillValidateCheck() or setNeedsValidityCheck() is needed
+        to be called and is not called, these assertions fail.
+
+        * html/HTMLButtonElement.h:
+        (WebCore::HTMLButtonElement::recalcWillValidate):
+        * html/HTMLFieldSetElement.h:
+        (WebCore::HTMLFieldSetElement::recalcWillValidate):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::HTMLFormControlElement):
+        (WebCore::HTMLFormControlElement::parseMappedAttribute):
+        (WebCore::HTMLFormControlElement::recalcWillValidate):
+        (WebCore::HTMLFormControlElement::willValidate):
+        (WebCore::HTMLFormControlElement::setNeedsWillValidateCheck):
+        (WebCore::HTMLFormControlElement::validationMessage):
+        (WebCore::HTMLFormControlElement::isValidFormControlElement):
+        (WebCore::HTMLFormControlElement::setNeedsValidityCheck):
+        * html/HTMLFormControlElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setInputType):
+        (WebCore::HTMLInputElement::parseMappedAttribute):
+        (WebCore::HTMLInputElement::setValue):
+        (WebCore::HTMLInputElement::recalcWillValidate):
+        * html/HTMLInputElement.h:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::setNonDirtyValue):
+
 2010-03-22  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Dave Hyatt.

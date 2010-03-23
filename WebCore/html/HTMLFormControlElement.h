@@ -106,7 +106,7 @@ public:
 
     virtual short tabIndex() const;
 
-    virtual bool willValidate() const;
+    bool willValidate() const;
     String validationMessage();
     bool checkValidity();
     // This must be called when a validation constraint or control value is changed.
@@ -125,6 +125,7 @@ protected:
     void removeFromForm();
     // This must be called any time the result of willValidate() has changed.
     void setNeedsWillValidateCheck();
+    virtual bool recalcWillValidate() const;
 
 private:
     virtual HTMLFormElement* virtualForm() const;
@@ -138,6 +139,10 @@ private:
     bool m_readOnly : 1;
     bool m_required : 1;
     bool m_valueMatchesRenderer : 1;
+    bool m_willValidate : 1;
+    // Cache of validity()->valid().
+    // "candidate for constraint validation" doesn't affect to m_isValid.
+    bool m_isValid : 1;
 };
 
 class HTMLFormControlElementWithState : public HTMLFormControlElement {

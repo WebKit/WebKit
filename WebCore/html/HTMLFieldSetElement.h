@@ -47,8 +47,8 @@ public:
     virtual bool supportsFocus() const;
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual const AtomicString& formControlType() const;
-
-    virtual bool willValidate() const { return false; }
+private:
+    virtual bool recalcWillValidate() const { return false; }
 };
 
 } //namespace

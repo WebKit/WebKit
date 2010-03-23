@@ -261,8 +261,6 @@ public:
 
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
     
-    virtual bool willValidate() const;
-
     // Converts the specified string to a floating number.
     // If the conversion fails, the return value is false. Take care that leading or trailing unnecessary characters make failures.  This returns false for an empty string input.
     // The double* parameter may be 0.
@@ -295,6 +293,7 @@ private:
 
     virtual bool isOptionalFormControl() const { return !isRequiredFormControl(); }
     virtual bool isRequiredFormControl() const;
+    virtual bool recalcWillValidate() const;
 
     PassRefPtr<HTMLFormElement> createTemporaryFormForIsIndex();
     // Helper for getAllowedValueStep();

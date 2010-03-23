@@ -57,11 +57,10 @@ public:
     String value() const;
     void setValue(const String&);
 
-    virtual bool willValidate() const { return false; }
-    
 private:
     enum Type { SUBMIT, RESET, BUTTON };
     virtual bool isOptionalFormControl() const { return true; }
+    virtual bool recalcWillValidate() const { return false; }
 
     Type m_type;
     bool m_activeSubmit;
