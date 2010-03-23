@@ -1,3 +1,14 @@
+2010-03-23  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36048
+
+        Detect if the Windows Platform SDK is missing when building with
+        Visual C++ Express Edition and inform the user to download it.
+
+        * Scripts/webkitdirs.pm:
+
 2010-03-23  Darin Adler  <darin@apple.com>
 
         Tell Subversion about more directories that expect to have .pyc files.

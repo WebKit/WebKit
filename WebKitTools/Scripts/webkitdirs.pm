@@ -72,6 +72,7 @@ my $isInspectorFrontend;
 my $vcBuildPath;
 my $windowsTmpPath;
 my $windowsSourceDir;
+my $willUseVCExpressWhenBuilding = 0;
 
 # Defined in VCSUtils.
 sub exitStatus($);
@@ -1026,6 +1027,7 @@ sub setupCygwinEnv()
             print "*************************************************************\n";
             die;
         }
+        $willUseVCExpressWhenBuilding = 1;
     }
 
     my $qtSDKPath = "$programFilesPath/QuickTime SDK";
@@ -1045,6 +1047,23 @@ sub setupCygwinEnv()
     print "Building results into: ", baseProductDir(), "\n";
     print "WEBKITOUTPUTDIR is set to: ", $ENV{"WEBKITOUTPUTDIR"}, "\n";
     print "WEBKITLIBRARIESDIR is set to: ", $ENV{"WEBKITLIBRARIESDIR"}, "\n";
+}
+
+sub dieIfWindowsPlatformSDKNotInstalled
+{
+    my $windowsPlatformSDKRegistryEntry = "/proc/registry/HKEY_LOCAL_MACHINE/SOFTWARE/Microsoft/MicrosoftSDK/InstalledSDKs/D2FF9F89-8AA2-4373-8A31-C838BF4DBBE1";
+
+    return if -e $windowsPlatformSDKRegistryEntry;
+
+    print "*************************************************************\n";
+    print "Cannot find '$windowsPlatformSDKRegistryEntry'.\n";
+    print "Please download and install the Microsoft Windows Server 2003 R2\n";
+    print "Platform SDK from <http://www.microsoft.com/downloads/details.aspx?\n";
+    print "familyid=0baf2b35-c656-4969-ace8-e4c0c0716adb&displaylang=en>.\n\n";
+    print "Then follow step 2 in the Windows section of the \"Installing Developer\n";
+    print "Tools\" instructions at <http://www.webkit.org/building/tools.html>.\n";
+    print "*************************************************************\n";
+    die;
 }
 
 sub copyInspectorFrontendFiles
@@ -1100,6 +1119,8 @@ sub buildVisualStudioProject
     setupCygwinEnv();
 
     my $config = configurationForVisualStudio();
+
+    dieIfWindowsPlatformSDKNotInstalled() if $willUseVCExpressWhenBuilding;
 
     chomp(my $winProjectPath = `cygpath -w "$project"`);
     
