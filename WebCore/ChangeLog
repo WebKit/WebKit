@@ -1,3 +1,12 @@
+2010-03-22  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed build fix for Chromim Mac at r56376
+
+        Fix initializer order  of PopupContainer.
+
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupContainer::PopupContainer):
+
 2010-03-22  Jay Campan  <jcampan@google.com>
 
         Reviewed by Darin Fisher.
