@@ -1,3 +1,37 @@
+2010-03-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Reduce and straighten internal use of DOMImplementation
+        https://bugs.webkit.org/show_bug.cgi?id=36501
+
+        * WebCore.xcodeproj/project.pbxproj: Xcode decided to
+        re-sort this file.
+
+        * dom/Clipboard.cpp: Removed unneeded include of DOMImplementation.h.
+
+        * dom/DOMImplementation.cpp: Removed unneeded createDocument and
+        createHTMLDocument functions. These should be done directly instead
+        of involving the DOMImplementation class.
+        * dom/DOMImplementation.h: Ditto.
+
+        * dom/DocumentType.cpp: Removed unneeded include of DOMImplementation.h.
+
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::createTokenizer): Don't allocate a
+        DOMImplementation object just to use a class member function.
+
+        * loader/CachedFont.cpp: Removed unneeded include of DOMImplementation.h.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::responseXML): Use Document::create to create a
+        new document instead of involving DOMImplementation.
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::createDocumentFromSource): Ditto. And in the case
+        where we do need to call DOMImplementation to interpret the MIME type,
+        don't allocate a DOMImplementation object just to use a class member
+        function.
+
 2010-03-23  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

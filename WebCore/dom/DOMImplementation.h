@@ -57,8 +57,6 @@ public:
 
     // Other methods (not part of DOM)
     static PassRefPtr<Document> createDocument(const String& MIMEType, Frame*, bool inViewSourceMode);
-    static PassRefPtr<Document> createDocument(Frame*);
-    static PassRefPtr<HTMLDocument> createHTMLDocument(Frame*);
 
     static bool isXMLMIMEType(const String& MIMEType);
     static bool isTextMIMEType(const String& MIMEType);

@@ -54,7 +54,7 @@ HTMLViewSourceDocument::HTMLViewSourceDocument(Frame* frame, const String& mimeT
 Tokenizer* HTMLViewSourceDocument::createTokenizer()
 {
     // Use HTMLTokenizer if applicable, otherwise use TextTokenizer.
-    if (m_type == "text/html" || m_type == "application/xhtml+xml" || m_type == "image/svg+xml" || implementation()->isXMLMIMEType(m_type)
+    if (m_type == "text/html" || m_type == "application/xhtml+xml" || m_type == "image/svg+xml" || DOMImplementation::isXMLMIMEType(m_type)
 #if ENABLE(XHTMLMP)
         || m_type == "application/vnd.wap.xhtml+xml"
 #endif

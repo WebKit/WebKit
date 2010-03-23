@@ -273,16 +273,6 @@ PassRefPtr<CSSStyleSheet> DOMImplementation::createCSSStyleSheet(const String&, 
     return sheet.release();
 }
 
-PassRefPtr<Document> DOMImplementation::createDocument(Frame* frame)
-{
-    return Document::create(frame);
-}
-
-PassRefPtr<HTMLDocument> DOMImplementation::createHTMLDocument(Frame* frame)
-{
-    return HTMLDocument::create(frame);
-}
-
 bool DOMImplementation::isXMLMIMEType(const String& mimeType)
 {
     if (mimeType == "text/xml" || mimeType == "application/xml" || mimeType == "text/xsl")

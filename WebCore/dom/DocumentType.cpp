@@ -23,7 +23,6 @@
 #include "config.h"
 #include "DocumentType.h"
 
-#include "DOMImplementation.h"
 #include "Document.h"
 #include "NamedNodeMap.h"
 
