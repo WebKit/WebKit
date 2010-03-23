@@ -1,3 +1,11 @@
+2010-03-23  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed build fix.
+
+        Add #include <stdio.h> to fix Chromium Linux build.
+
+        * src/WebGraphicsContext3DDefaultImpl.cpp:
+
 2010-03-23  Nate Chapin  <japhet@chromium.org>
 
         Unreviewed, revert r56376.
