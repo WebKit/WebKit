@@ -511,7 +511,7 @@ JSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec, JSObject*, JSValue t
     if (!args.size())
         return jsUndefined();
 
-    unsigned length = thisObj->get(exec, exec->propertyNames().length).toInteger(exec);
+    unsigned length = thisObj->get(exec, exec->propertyNames().length).toUInt32(exec);
     double relativeBegin = args.at(0).toInteger(exec);
     unsigned begin;
     if (relativeBegin < 0) {
