@@ -1,3 +1,16 @@
+2010-03-23  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36149
+
+        Import the GNU readline interface to modify the behavior
+        of raw_input so as to provide line editing support. In
+        particular this will prevent "delete" characters from
+        appearing in the returned value for function raw_input.
+
+        * Scripts/webkitpy/user.py:
+
 2010-03-23  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
