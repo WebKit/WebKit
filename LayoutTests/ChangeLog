@@ -1,3 +1,14 @@
+2010-03-22  David Kilzer  <ddkilzer@apple.com>
+
+        Remove http/tests/cookies/simple-cookies-expired.html from skip list after CFNetwork issue is resolved
+        <http://webkit.org/b/25861>
+        <rdar://problem/6901322>
+
+        Reviewed by Darin Adler.
+
+        * platform/win/Skipped: Removed:
+        - http/tests/cookies/simple-cookies-expired.html
+
 2010-03-22  Eric Seidel  <eric@webkit.org>
 
         Rubber-stamped by Brady Eidson.
