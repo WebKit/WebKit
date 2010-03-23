@@ -693,9 +693,9 @@ EXPORTS
 	_Z23qt_networkAccessAllowedb @ 692 NONAME
 	_Z25qt_resumeActiveDOMObjectsP9QWebFrame @ 693 NONAME
 	_Z26qt_suspendActiveDOMObjectsP9QWebFrame @ 694 NONAME
-	_Z35qtwebkit_webframe_scrollRecursivelyP9QWebFrameii @ 695 NONAME
+	_Z35qtwebkit_webframe_scrollRecursivelyP9QWebFrameii @ 695 NONAME ABSENT
 	_ZN13QWebInspector10closeEventEP11QCloseEvent @ 696 NONAME
-	_ZN9QWebFrame17scrollRecursivelyEii @ 697 NONAME
+	_ZN9QWebFrame17scrollRecursivelyEii @ 697 NONAME ABSENT
 	_ZN16QGraphicsWebView20setResizesToContentsEb @ 698 NONAME
 	_ZNK16QGraphicsWebView17resizesToContentsEv @ 699 NONAME
 	_Z20qt_drt_numberOfPagesP9QWebFrameff @ 700 NONAME
@@ -713,4 +713,4 @@ EXPORTS
 	_ZN9QWebFrame11pageChangedEv @ 712 NONAME
 	_ZN9QWebFrame14scrollToAnchorERK7QString @ 713 NONAME
 	_ZN12QWebSettings15setInspectorUrlERK4QUrl @ 714 NONAME
-
+	_Z35qtwebkit_webframe_scrollRecursivelyP9QWebFrameiiRK6QPoint @ 715 NONAME
