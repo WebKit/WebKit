@@ -292,10 +292,6 @@ public:
     // was scrolled.
     bool propagateScroll(WebCore::ScrollDirection, WebCore::ScrollGranularity);
 
-    // Notification that a popup was opened/closed.
-    void popupOpened(WebCore::PopupContainer* popupContainer);
-    void popupClosed(WebCore::PopupContainer* popupContainer);
-
     // HACK: currentInputEvent() is for ChromeClientImpl::show(), until we can
     // fix WebKit to pass enough information up into ChromeClient::show() so we
     // can decide if the window.open event was caused by a middle-mouse click
@@ -319,9 +315,6 @@ private:
     // Returns true if the event was actually processed.
     bool keyEventDefault(const WebKeyboardEvent&);
 
-    // Returns true if the select popup has consumed the event.
-    bool selectPopupHandleKeyEvent(const WebKeyboardEvent&);
-
     // Returns true if the autocomple has consumed the event.
     bool autocompleteHandleKeyEvent(const WebKeyboardEvent&);
 
@@ -332,9 +325,6 @@ private:
 
     // Returns true if the view was scrolled.
     bool scrollViewWithKeyboard(int keyCode, int modifiers);
-
-    // Hides the select popup if one is opened.
-    void hideSelectPopup();
 
     // Converts |pos| from window coordinates to contents coordinates and gets
     // the HitTestResult for it.
@@ -448,9 +438,6 @@ private:
 
     // A pointer to the current suggestions popup.  We do not own this pointer.
     WebCore::PopupContainer* m_suggestionsPopup;
-
-    // The popup associated with a select element.
-    RefPtr<WebCore::PopupContainer> m_selectPopup;
 
     // The AutoFill suggestions popup.
     RefPtr<WebCore::PopupContainer> m_autoFillPopup;

@@ -1,3 +1,24 @@
+2010-03-23  Nate Chapin  <japhet@chromium.org>
+
+        Unreviewed, revert r56376.
+
+        This revision introduced a crash in a couple of layout tests
+        on Chromium Linux.
+
+        * public/WebViewClient.h:
+        (WebKit::WebViewClient::createPopupMenu):
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::popupOpened):
+        * src/ChromeClientImpl.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::):
+        (WebKit::WebViewImpl::mouseDown):
+        (WebKit::WebViewImpl::keyEvent):
+        (WebKit::WebViewImpl::setFocus):
+        (WebKit::WebViewImpl::applyAutoFillSuggestions):
+        (WebKit::WebViewImpl::applyAutocompleteSuggestions):
+        * src/WebViewImpl.h:
+
 2010-03-23  Sergey Ulanov  <sergeyu@chromium.org>
 
         Reviewed by Dmitry Titov.

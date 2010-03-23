@@ -1,3 +1,25 @@
+2010-03-23  Nate Chapin  <japhet@chromium.org>
+
+        Unreviewed, revert r56376.
+
+        This revision introduced a crash in a couple of layout tests
+        on Chromium Linux.
+
+        * page/chromium/ChromeClientChromium.h:
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::):
+        (WebCore::PopupContainer::create):
+        (WebCore::PopupContainer::PopupContainer):
+        (WebCore::PopupContainer::showPopup):
+        (WebCore::PopupContainer::showExternal):
+        (WebCore::PopupContainer::hidePopup):
+        (WebCore::PopupMenu::show):
+        * platform/chromium/PopupMenuChromium.h:
+        (WebCore::PopupItem::):
+        (WebCore::PopupItem::PopupItem):
+        (WebCore::PopupContainerSettings::):
+        (WebCore::PopupContainer::listBox):
+
 2010-03-23  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser and Darin Adler.
