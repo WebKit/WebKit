@@ -57,7 +57,7 @@ public:
     bool suspended() const { return m_suspended; }
 
 private:
-    static const double minimumProgressEventDispatchingIntervalInSeconds = .05; // 50 ms per specification.
+    static const double minimumProgressEventDispatchingIntervalInSeconds;
 
     virtual void fired();
     void dispatchPausedEvent();

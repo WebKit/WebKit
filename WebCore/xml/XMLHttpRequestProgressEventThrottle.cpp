@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+const double XMLHttpRequestProgressEventThrottle::minimumProgressEventDispatchingIntervalInSeconds = .05; // 50 ms per specification.
+
 XMLHttpRequestProgressEventThrottle::XMLHttpRequestProgressEventThrottle(EventTarget* target)
     : m_target(target)
     , m_loaded(0)

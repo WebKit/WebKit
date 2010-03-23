@@ -1,3 +1,13 @@
+2010-03-23  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed build fix.
+
+        Try to make the window buildbot happy.
+
+        * xml/XMLHttpRequestProgressEventThrottle.cpp:
+        * xml/XMLHttpRequestProgressEventThrottle.h: Move initialization of the
+        static const in the cpp file.
+
 2010-03-23  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
