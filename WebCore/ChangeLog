@@ -1,3 +1,14 @@
+2010-03-23  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Jeremy Orlow.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36277, make sure nth-child supports the positive unary prefix (+) as well as the negative
+        one (-).
+
+        Added fast/css/nth-child-unary-prefix.html
+
+        * css/tokenizer.flex:
+
 2010-03-23  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Dmitry Titov.
