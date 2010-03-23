@@ -1,7 +1,7 @@
 @namespace "http://www.w3.org/1998/Math/MathML";
 
 math {
-    font-family: Symbol, STIXGeneral, "Times New Roman";
+    font-family: Symbol, "Times New Roman";
     display: inline-block;
     padding: 0px;
     margin: 0px;

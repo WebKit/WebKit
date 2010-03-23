@@ -6,12 +6,12 @@ layer at (0,0) size 800x54
       RenderBlock {p} at (0,0) size 784x22
         RenderText {#text} at (0,0) size 64x18
           text run at (0,0) width 64: "subscript: "
-        RenderBlock {math} at (64,2) size 13x20
-          RenderBlock {msub} at (0,0) size 13x20
+        RenderBlock {math} at (64,0) size 13x22
+          RenderBlock {msub} at (0,0) size 13x22
             RenderInline {mi} at (0,0) size 7x16
-              RenderText {#text} at (0,1) size 7x16
-                text run at (0,1) width 7: "x"
+              RenderText {#text} at (0,3) size 7x16
+                text run at (0,3) width 7: "x"
             RenderInline {mn} at (0,0) size 6x12
-              RenderText {#text} at (7,8) size 6x12
-                text run at (7,8) width 6: "1"
+              RenderText {#text} at (7,10) size 6x12
+                text run at (7,10) width 6: "1"
         RenderText {#text} at (0,0) size 0x0

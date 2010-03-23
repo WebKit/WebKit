@@ -1,3 +1,42 @@
+2010-03-23  Alex Milowski  <alex@milowski.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Updated test results from removal of use of STIX fonts.
+
+        * platform/mac/mathml/presentation/fractions-expected.checksum:
+        * platform/mac/mathml/presentation/fractions-expected.png:
+        * platform/mac/mathml/presentation/fractions-expected.txt:
+        * platform/mac/mathml/presentation/fractions-vertical-alignment-expected.checksum:
+        * platform/mac/mathml/presentation/fractions-vertical-alignment-expected.png:
+        * platform/mac/mathml/presentation/fractions-vertical-alignment-expected.txt:
+        * platform/mac/mathml/presentation/mo-expected.checksum:
+        * platform/mac/mathml/presentation/mo-expected.png:
+        * platform/mac/mathml/presentation/mo-expected.txt:
+        * platform/mac/mathml/presentation/over-expected.checksum:
+        * platform/mac/mathml/presentation/over-expected.png:
+        * platform/mac/mathml/presentation/over-expected.txt:
+        * platform/mac/mathml/presentation/row-expected.checksum:
+        * platform/mac/mathml/presentation/row-expected.png:
+        * platform/mac/mathml/presentation/row-expected.txt:
+        * platform/mac/mathml/presentation/sub-expected.checksum:
+        * platform/mac/mathml/presentation/sub-expected.png:
+        * platform/mac/mathml/presentation/sub-expected.txt:
+        * platform/mac/mathml/presentation/subsup-expected.checksum:
+        * platform/mac/mathml/presentation/subsup-expected.png:
+        * platform/mac/mathml/presentation/subsup-expected.txt:
+        * platform/mac/mathml/presentation/sup-expected.checksum:
+        * platform/mac/mathml/presentation/sup-expected.png:
+        * platform/mac/mathml/presentation/tables-expected.checksum:
+        * platform/mac/mathml/presentation/tables-expected.png:
+        * platform/mac/mathml/presentation/tables-expected.txt:
+        * platform/mac/mathml/presentation/under-expected.checksum:
+        * platform/mac/mathml/presentation/under-expected.png:
+        * platform/mac/mathml/presentation/under-expected.txt:
+        * platform/mac/mathml/presentation/underover-expected.checksum:
+        * platform/mac/mathml/presentation/underover-expected.png:
+        * platform/mac/mathml/presentation/underover-expected.txt:
+
 2010-03-23  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.
