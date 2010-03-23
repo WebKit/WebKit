@@ -142,11 +142,11 @@ void WorkerContextExecutionProxy::initV8IfNeeded()
     v8Initialized = true;
 }
 
-void WorkerContextExecutionProxy::initContextIfNeeded()
+bool WorkerContextExecutionProxy::initContextIfNeeded()
 {
     // Bail out if the context has already been initialized.
     if (!m_context.IsEmpty())
-        return;
+        return true;
 
     // Setup the security handlers and message listener. This only has
     // to be done once.
@@ -157,9 +157,12 @@ void WorkerContextExecutionProxy::initContextIfNeeded()
     // Create a new environment
     v8::Persistent<v8::ObjectTemplate> globalTemplate;
     m_context = v8::Context::New(0, globalTemplate);
+    if (m_context.IsEmpty())
+        return false;
 
     // Starting from now, use local context only.
     v8::Local<v8::Context> context = v8::Local<v8::Context>::New(m_context);
+
     v8::Context::Scope scope(context);
 
     // Allocate strings used during initialization.
@@ -176,7 +179,7 @@ void WorkerContextExecutionProxy::initContextIfNeeded()
     // Bail out if allocation failed.
     if (jsWorkerContext.IsEmpty()) {
         dispose();
-        return;
+        return false;
     }
 
     // Wrap the object.
@@ -188,6 +191,7 @@ void WorkerContextExecutionProxy::initContextIfNeeded()
     // Insert the object instance as the prototype of the shadow object.
     v8::Handle<v8::Object> globalObject = m_context->Global();
     globalObject->Set(implicitProtoString, jsWorkerContext);
+    return true;
 }
 
 bool WorkerContextExecutionProxy::forgetV8EventObject(Event* event)
@@ -203,7 +207,9 @@ ScriptValue WorkerContextExecutionProxy::evaluate(const String& script, const St
 {
     v8::HandleScope hs;
 
-    initContextIfNeeded();
+    if (!initContextIfNeeded())
+        return ScriptValue();
+
     v8::Context::Scope scope(m_context);
 
     v8::TryCatch exceptionCatcher;

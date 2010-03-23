@@ -1,7 +1,20 @@
+2010-03-22  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        [v8] Crash if the worker is terminated before its initial script is executed.
+        https://bugs.webkit.org/show_bug.cgi?id=36336
+
+        Test: fast/workers/termination-early.html
+
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::WorkerContextExecutionProxy::initContextIfNeeded): Check for 0 context. When terminated, the v8 heap initialization returns 0.
+        (WebCore::WorkerContextExecutionProxy::evaluate): Don't execute script if initialization failed.
+        * bindings/v8/WorkerContextExecutionProxy.h:
+
 2010-03-22  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.
-
 
         Support creation of fake workers before document is loaded by deferring
         attaching of fake workers iframe until document is loaded and buffering all
