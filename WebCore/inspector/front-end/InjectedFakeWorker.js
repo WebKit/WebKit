@@ -59,6 +59,10 @@ FakeWorker.prototype = {
     {
         if (this._frame != null)
             this._dispatchMessage(this._frame, bind(this._onmessageWrapper, this), msg);
+        else if (this._pendingMessages)
+            this._pendingMessages.push(msg)
+        else
+            this._pendingMessages = [ msg ];
     },
 
     terminate: function()
@@ -116,18 +120,35 @@ FakeWorker.prototype = {
         var code = this._loadScript(url.url);
         var iframeElement = document.createElement("iframe");
         iframeElement.style.display = "none";
-        document.body.appendChild(iframeElement);
-
-        var frame = window.frames[window.frames.length - 1];
 
         this._document = document;
-        this._frame = frame;
+        iframeElement.onload = bind(this._onWorkerFrameLoaded, this, iframeElement, url, code);
 
+        if (document.body)
+            this._attachWorkerFrameToDocument(iframeElement, url, code);
+        else
+            window.addEventListener("load", bind(this._attachWorkerFrameToDocument, this, iframeElement), false);
+    },
+
+    _attachWorkerFrameToDocument: function(iframeElement)
+    {
+        document.body.appendChild(iframeElement);
+    },
+
+    _onWorkerFrameLoaded: function(iframeElement, url, code)
+    {
+        var frame = iframeElement.contentWindow;
+        this._frame = frame;
         this._setupWorkerContext(frame, url);
 
         var frameContents = '(function(location, window) { ' + code + '})(__devtools.location, undefined);\n' + '//@ sourceURL=' + url.url;
 
         frame.eval(frameContents);
+        if (this._pendingMessages) {
+            for (var msg in this._pendingMessages)
+                this.postMessage(this._pendingMessages[msg]);
+            delete this._pendingMessages;
+        }
     },
 
     _setupWorkerContext: function(workerFrame, url)

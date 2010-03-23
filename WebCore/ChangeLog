@@ -1,3 +1,19 @@
+2010-03-22  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+
+        Support creation of fake workers before document is loaded by deferring
+        attaching of fake workers iframe until document is loaded and buffering all
+        messages addressed to worker.
+        https://bugs.webkit.org/show_bug.cgi?id=36445
+
+        * inspector/front-end/InjectedFakeWorker.js:
+        (InjectedFakeWorker.FakeWorker.prototype.postMessage):
+        (InjectedFakeWorker.FakeWorker.prototype._buildWorker):
+        (InjectedFakeWorker.FakeWorker.prototype._attachWorkerFrameToDocument):
+        (InjectedFakeWorker.FakeWorker.prototype._onWorkerFrameLoaded):
+
 2010-03-22  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Brady Eidson.
