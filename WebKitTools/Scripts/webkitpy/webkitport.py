@@ -52,6 +52,13 @@ class WebKitPort(object):
         # FIXME: We should default to WinPort on Windows.
         return ports.get(port_name, MacPort)
 
+    @staticmethod
+    def makeArgs():
+        args = '--makeargs="-j%s"' % Executive.cpu_count()
+        if os.environ.has_key('MAKEFLAGS'):
+            args = '--makeargs="%s"' % os.environ['MAKEFLAGS']
+        return args
+
     @classmethod
     def name(cls):
         raise NotImplementedError("subclasses must implement")
@@ -115,7 +122,7 @@ class GtkPort(WebKitPort):
     def build_webkit_command(cls, build_style=None):
         command = WebKitPort.build_webkit_command(build_style=build_style)
         command.append("--gtk")
-        command.append('--makeargs="-j%s"' % Executive.cpu_count())
+        command.append(WebKitPort.makeArgs())
         return command
 
     @classmethod
@@ -139,7 +146,7 @@ class QtPort(WebKitPort):
     def build_webkit_command(cls, build_style=None):
         command = WebKitPort.build_webkit_command(build_style=build_style)
         command.append("--qt")
-        command.append('--makeargs="-j%s"' % Executive.cpu_count())
+        command.append(WebKitPort.makeArgs())
         return command
 
 

@@ -1,3 +1,13 @@
+2010-03-22  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Make build_webkit_command() pass MAKEFLAGS environment variable to make.
+        https://bugs.webkit.org/show_bug.cgi?id=36440
+
+        * Scripts/webkitpy/webkitport.py:
+        * Scripts/webkitpy/webkitport_unittest.py:
+
 2010-03-22  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Dimitri Glazkov.
