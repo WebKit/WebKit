@@ -558,24 +558,6 @@
         * platform/mac/KeyEventMac.mm: Ensure PLATFORM(MAC)
 
 2010-03-22  Kevin Decker  <kdecker@apple.com>
-
-        Reviewed by Simon Fraser.
-
-        https://bugs.webkit.org/show_bug.cgi?id=36328
-
-        * rendering/RenderEmbeddedObject.cpp:
-        (WebCore::RenderEmbeddedObject::RenderEmbeddedObject): Fix a find/repalce mistake from my earlier patch.
-        Rename m_setShowsMissingPluginIndicator -> m_showsMissingPluginIndicator. 
-        (WebCore::RenderEmbeddedObject::updateWidget): Don't update the widget if we're showing
-        the missing plug-in indicator.
-        (WebCore::RenderEmbeddedObject::paint):Fix a find/repalce mistake from my earlier patch.
-        Rename m_setShowsMissingPluginIndicator -> m_showsMissingPluginIndicator. 
-        (WebCore::RenderEmbeddedObject::paintReplaced): Ditto.
-        * rendering/RenderEmbeddedObject.h: Ditto.
-        (WebCore::RenderEmbeddedObject::setShowsMissingPluginIndicator): Ditto.
-        (WebCore::RenderEmbeddedObject::showsMissingPluginIndicator): Ditto.
-
-2010-03-22  Kevin Decker  <kdecker@apple.com>
     
         Attempt to fix the Leopard build.
         * rendering/RenderEmbeddedObject.cpp: Add ".f" to contants.
