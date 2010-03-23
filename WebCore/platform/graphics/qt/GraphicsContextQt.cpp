@@ -412,7 +412,7 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
                     patternOffset = patWidth / 2;
             } else {
                 if (remainder)
-                    patternOffset = (patWidth - remainder)/2;
+                    patternOffset = (patWidth - remainder) / 2;
             }
         }
 
@@ -620,7 +620,16 @@ void GraphicsContext::fillRect(const FloatRect& rect)
             drawBorderlessRectShadow(this, p, rect);
         if (m_common->state.fillPattern) {
             AffineTransform affine;
-            p->fillRect(rect, QBrush(m_common->state.fillPattern->createPlatformPattern(affine)));
+            FloatRect rectM(rect);
+            QBrush brush(m_common->state.fillPattern->createPlatformPattern(affine));
+            QPixmap* image = m_common->state.fillPattern->tileImage()->nativeImageForCurrentFrame();
+
+            if (!m_common->state.fillPattern->repeatX() && image)
+                rectM.setWidth(image->width());
+            if (!m_common->state.fillPattern->repeatY() && image)
+                rectM.setHeight(image->height());
+            p->fillRect(rectM, brush);
+
         } else if (m_common->state.fillGradient) {
             QBrush brush(*m_common->state.fillGradient->platformGradient());
             brush.setTransform(m_common->state.fillGradient->gradientSpaceTransform());
@@ -1010,11 +1019,11 @@ void GraphicsContext::rotate(float radians)
     if (paintingDisabled())
         return;
 
-    m_data->p()->rotate(180/M_PI*radians);
+    m_data->p()->rotate(180 / M_PI*radians);
 
     if (!m_data->currentPath.isEmpty()) {
         QTransform matrix;
-        m_data->currentPath = m_data->currentPath * matrix.rotate(-180/M_PI*radians);
+        m_data->currentPath = m_data->currentPath * matrix.rotate(-180 / M_PI*radians);
         m_common->state.pathTransform.rotate(radians);
     }
 }

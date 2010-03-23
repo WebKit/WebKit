@@ -87,6 +87,9 @@ public:
     void setPatternSpaceTransform(const AffineTransform& patternSpaceTransformation);
     void setPlatformPatternSpaceTransform();
 
+    bool repeatX() const { return m_repeatX; }
+    bool repeatY() const { return m_repeatY; }
+
 private:
     Pattern(Image*, bool repeatX, bool repeatY);
 
