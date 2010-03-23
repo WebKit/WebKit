@@ -42,6 +42,7 @@
  * inside a GTK application.  
  */
 
+#include "GtkVersioning.h"
 #include "xembed.h"
 #include "gtk2xtbin.h"
 #include <gtk/gtk.h>
@@ -401,7 +402,7 @@ gtk_xtbin_set_position (GtkXtBin *xtbin,
   xtbin->x = x;
   xtbin->y = y;
 
-  if (GTK_WIDGET_REALIZED (xtbin))
+  if (gtk_widget_get_realized (xtbin))
     gdk_window_move (GTK_WIDGET (xtbin)->window, x, y);
 }
 
@@ -456,7 +457,7 @@ gtk_xtbin_unrealize (GtkWidget *object)
   widget = GTK_WIDGET(object);
 
   GTK_WIDGET_UNSET_FLAGS (widget, GTK_VISIBLE);
-  if (GTK_WIDGET_REALIZED (widget)) {
+  if (gtk_widget_get_realized (widget)) {
     xt_client_unrealize(&(xtbin->xtclient));
   }
 

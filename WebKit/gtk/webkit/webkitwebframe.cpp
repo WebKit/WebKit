@@ -45,6 +45,7 @@
 #include <glib/gi18n-lib.h>
 #include "GCController.h"
 #include "GraphicsContext.h"
+#include "GtkVersioning.h"
 #include "HTMLFrameOwnerElement.h"
 #include "JSDOMWindow.h"
 #include "JSLock.h"
@@ -956,11 +957,7 @@ GtkPrintOperationResult webkit_web_frame_print_full(WebKitWebFrame* frame, GtkPr
 
     GtkWidget* topLevel = gtk_widget_get_toplevel(GTK_WIDGET(webkit_web_frame_get_web_view(frame)));
 
-#if GTK_CHECK_VERSION(2, 18, 0)
     if (!gtk_widget_is_toplevel(topLevel))
-#else
-    if (!GTK_WIDGET_TOPLEVEL(topLevel))
-#endif
         topLevel = NULL;
 
     Frame* coreFrame = core(frame);
@@ -999,19 +996,11 @@ void webkit_web_frame_print(WebKitWebFrame* frame)
 
     if (error) {
         GtkWidget* window = gtk_widget_get_toplevel(GTK_WIDGET(priv->webView));
-#if GTK_CHECK_VERSION(2, 18, 0)
         GtkWidget* dialog = gtk_message_dialog_new(gtk_widget_is_toplevel(window) ? GTK_WINDOW(window) : 0,
                                                    GTK_DIALOG_DESTROY_WITH_PARENT,
                                                    GTK_MESSAGE_ERROR,
                                                    GTK_BUTTONS_CLOSE,
                                                    "%s", error->message);
-#else
-        GtkWidget* dialog = gtk_message_dialog_new(GTK_WIDGET_TOPLEVEL(window) ? GTK_WINDOW(window) : 0,
-                                                   GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                   GTK_MESSAGE_ERROR,
-                                                   GTK_BUTTONS_CLOSE,
-                                                   "%s", error->message);
-#endif
 
         g_error_free(error);
 

@@ -28,6 +28,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClientGtk.h"
+#include "GtkVersioning.h"
 #include "HitTestResult.h"
 #include "IconDatabase.h"
 #include <libintl.h>
@@ -223,11 +224,7 @@ static GtkWidget* currentToplevelCallback(WebKitSoupAuthDialog* feature, SoupMes
         return NULL;
 
     GtkWidget* toplevel =  gtk_widget_get_toplevel(GTK_WIDGET(frame->page()->chrome()->platformPageClient()));
-#if GTK_CHECK_VERSION(2, 18, 0)
     if (gtk_widget_is_toplevel(toplevel))
-#else
-    if (GTK_WIDGET_TOPLEVEL(toplevel))
-#endif
         return toplevel;
     else
         return NULL;

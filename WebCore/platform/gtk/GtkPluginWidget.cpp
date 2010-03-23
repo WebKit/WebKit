@@ -28,6 +28,7 @@
 #include "GtkPluginWidget.h"
 
 #include "GraphicsContext.h"
+#include "GtkVersioning.h"
 #include "ScrollView.h"
 
 #include <gtk/gtk.h>
@@ -43,7 +44,7 @@ GtkPluginWidget::GtkPluginWidget(GtkWidget* widget)
 void GtkPluginWidget::invalidateRect(const IntRect& _rect)
 {
     /* no need to */
-    if (GTK_WIDGET_NO_WINDOW(platformWidget()))
+    if (!gtk_widget_get_has_window(platformWidget()))
         return;
 
     GdkWindow* window = platformWidget()->window;
@@ -70,12 +71,12 @@ void GtkPluginWidget::paint(GraphicsContext* context, const IntRect& rect)
     if (!context->gdkExposeEvent())
         return;
 
-    /* only paint widgets with NO_WINDOW this way */
-    if (!GTK_WIDGET_NO_WINDOW(platformWidget()))
+    /* only paint widgets with no window this way */
+    if (gtk_widget_get_has_window(platformWidget()))
         return;
 
     GtkWidget* widget = platformWidget();
-    ASSERT(GTK_WIDGET_NO_WINDOW(widget));
+    ASSERT(!gtk_widget_get_has_window(widget));
 
     GdkEvent* event = gdk_event_new(GDK_EXPOSE);
     event->expose = *context->gdkExposeEvent();
