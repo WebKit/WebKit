@@ -67,7 +67,7 @@ FakeWorker.prototype = {
 
     terminate: function()
     {
-        InjectedScriptHost.willDestroyWorker(this._id);
+        InjectedScriptHost.didDestroyWorker(this._id);
 
         if (this._frame != null) {
             this._frame.onmessage = this._worker.onmessage = noop;

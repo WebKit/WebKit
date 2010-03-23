@@ -1057,18 +1057,57 @@ void InspectorController::stopTimelineProfiler()
 }
 
 #if ENABLE(WORKERS)
-void InspectorController::didCreateWorker(long id, const String& url, bool isSharedWorker)
+class PostWorkerNotificationToFrontendTask : public ScriptExecutionContext::Task {
+public:
+    static PassOwnPtr<PostWorkerNotificationToFrontendTask> create(PassRefPtr<InspectorWorkerResource> worker, InspectorController::WorkerAction action)
+    {
+        return new PostWorkerNotificationToFrontendTask(worker, action);
+    }
+
+private:
+    PostWorkerNotificationToFrontendTask(PassRefPtr<InspectorWorkerResource> worker, InspectorController::WorkerAction action)
+        : m_worker(worker)
+        , m_action(action)
+    {
+    }
+
+    virtual void performTask(ScriptExecutionContext* scriptContext)
+    {
+        if (InspectorController* inspector = scriptContext->inspectorController())
+            inspector->postWorkerNotificationToFrontend(*m_worker, m_action);
+    }
+
+private:
+    RefPtr<InspectorWorkerResource> m_worker;
+    InspectorController::WorkerAction m_action;
+};
+
+void InspectorController::postWorkerNotificationToFrontend(const InspectorWorkerResource& worker, InspectorController::WorkerAction action)
+{
+    if (!m_frontend)
+        return;
+    switch (action) {
+    case InspectorController::WorkerCreated:
+        m_frontend->didCreateWorker(worker);
+        break;
+    case InspectorController::WorkerDestroyed:
+        m_frontend->didDestroyWorker(worker);
+        break;
+    }
+}
+
+void InspectorController::didCreateWorker(intptr_t id, const String& url, bool isSharedWorker)
 {
     if (!enabled())
         return;
 
     RefPtr<InspectorWorkerResource> workerResource(InspectorWorkerResource::create(id, url, isSharedWorker));
     m_workers.set(id, workerResource);
-    if (m_frontend)
-        m_frontend->didCreateWorker(*workerResource);
+    if (m_inspectedPage && m_frontend)
+        m_inspectedPage->mainFrame()->document()->postTask(PostWorkerNotificationToFrontendTask::create(workerResource, InspectorController::WorkerCreated));
 }
 
-void InspectorController::willDestroyWorker(long id)
+void InspectorController::didDestroyWorker(intptr_t id)
 {
     if (!enabled())
         return;
@@ -1076,8 +1115,8 @@ void InspectorController::willDestroyWorker(long id)
     WorkersMap::iterator workerResource = m_workers.find(id);
     if (workerResource == m_workers.end())
         return;
-    if (m_frontend)
-        m_frontend->willDestroyWorker(*workerResource->second);
+    if (m_inspectedPage && m_frontend)
+        m_inspectedPage->mainFrame()->document()->postTask(PostWorkerNotificationToFrontendTask::create(workerResource->second, InspectorController::WorkerDestroyed));
     m_workers.remove(workerResource);
 }
 #endif // ENABLE(WORKERS)

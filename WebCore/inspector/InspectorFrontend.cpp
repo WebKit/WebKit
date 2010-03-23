@@ -602,10 +602,10 @@ void InspectorFrontend::didCreateWorker(const InspectorWorkerResource& worker)
     function.call();
 }
 
-void InspectorFrontend::willDestroyWorker(const InspectorWorkerResource& worker)
+void InspectorFrontend::didDestroyWorker(const InspectorWorkerResource& worker)
 {
     ScriptFunctionCall function(m_webInspector, "dispatch"); 
-    function.appendArgument("willDestroyWorker");
+    function.appendArgument("didDestroyWorker");
     function.appendArgument(worker.id());
     function.call();
 }

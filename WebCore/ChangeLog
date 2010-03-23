@@ -1,3 +1,47 @@
+2010-03-23  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Change notification sent to inspector frontend on workers creation / destruction
+        to be posted asynchronously to avoid JS reenterability problems. Also, renamed
+        willDestroyWorker to didDestroyWorker to reflect that it gets called later and got
+        rid of explicit IDs for workers (use addresses instead).
+        https://bugs.webkit.org/show_bug.cgi?id=36213
+
+        * inspector/InjectedScriptHost.cpp:
+        (WebCore::InjectedScriptHost::didDestroyWorker):
+        * inspector/InjectedScriptHost.h:
+        * inspector/InjectedScriptHost.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::PostWorkerNotificationToFrontendTask::create):
+        (WebCore::PostWorkerNotificationToFrontendTask::PostWorkerNotificationToFrontendTask):
+        (WebCore::PostWorkerNotificationToFrontendTask::performTask):
+        (WebCore::InspectorController::postWorkerNotificationToFrontend):
+        (WebCore::InspectorController::didCreateWorker):
+        (WebCore::InspectorController::didDestroyWorker):
+        * inspector/InspectorController.h:
+        (WebCore::InspectorController::):
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::didDestroyWorker):
+        * inspector/InspectorFrontend.h:
+        * inspector/InspectorWorkerResource.h:
+        (WebCore::InspectorWorkerResource::create):
+        (WebCore::InspectorWorkerResource::id):
+        (WebCore::InspectorWorkerResource::InspectorWorkerResource):
+        * inspector/front-end/InjectedFakeWorker.js:
+        (InjectedFakeWorker.FakeWorker.prototype.terminate):
+        * inspector/front-end/WorkersSidebarPane.js:
+        (WebInspector.didDestroyWorker):
+        * workers/AbstractWorker.cpp:
+        (WebCore::AbstractWorker::AbstractWorker):
+        (WebCore::AbstractWorker::onDestroyWorker):
+        * workers/AbstractWorker.h:
+        (WebCore::AbstractWorker::asID):
+        * workers/SharedWorker.cpp:
+        (WebCore::SharedWorker::SharedWorker):
+        * workers/Worker.cpp:
+        (WebCore::Worker::Worker):
+
 2010-03-22  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.

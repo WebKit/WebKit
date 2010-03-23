@@ -56,7 +56,7 @@ SharedWorker::SharedWorker(const String& url, const String& name, ScriptExecutio
     SharedWorkerRepository::connect(this, remotePort.release(), scriptUrl, name, ec);
 #if ENABLE(INSPECTOR)
     if (InspectorController* inspector = scriptExecutionContext()->inspectorController())
-        inspector->didCreateWorker(id(), scriptUrl.string(), true);
+        inspector->didCreateWorker(asID(), scriptUrl.string(), true);
 #endif
 }
 

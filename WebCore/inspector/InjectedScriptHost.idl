@@ -57,7 +57,7 @@ module core {
 
 #if defined(ENABLE_WORKERS) && ENABLE_WORKERS
         void didCreateWorker(in long id, in DOMString url, in boolean isFakeWorker);
-        void willDestroyWorker(in long id);
+        void didDestroyWorker(in long id);
         long nextWorkerId();
 #endif
         [Custom] void reportDidDispatchOnInjectedScript(in long callId, in DOMObject result, in boolean isException);

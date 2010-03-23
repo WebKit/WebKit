@@ -150,7 +150,7 @@ namespace WebCore {
 
 #if ENABLE(WORKERS)
         void didCreateWorker(const InspectorWorkerResource&);
-        void willDestroyWorker(const InspectorWorkerResource&);
+        void didDestroyWorker(const InspectorWorkerResource&);
 #endif // ENABLE(WORKER)
 
         void didGetCookies(int callId, const ScriptArray& cookies, const String& cookiesString);

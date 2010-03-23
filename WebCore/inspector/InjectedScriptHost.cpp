@@ -213,10 +213,10 @@ void InjectedScriptHost::didCreateWorker(long id, const String& url, bool isShar
         m_inspectorController->didCreateWorker(id, url, isSharedWorker);
 }
 
-void InjectedScriptHost::willDestroyWorker(long id)
+void InjectedScriptHost::didDestroyWorker(long id)
 {
     if (m_inspectorController)
-        m_inspectorController->willDestroyWorker(id);
+        m_inspectorController->didDestroyWorker(id);
 }
 #endif // ENABLE(WORKERS)
 

@@ -183,8 +183,11 @@ public:
     void didRemoveDOMNode(Node*);
     void didModifyDOMAttr(Element*);
 #if ENABLE(WORKERS)
-    void didCreateWorker(long id, const String& url, bool isSharedWorker);
-    void willDestroyWorker(long id);
+    enum WorkerAction { WorkerCreated, WorkerDestroyed };
+
+    void postWorkerNotificationToFrontend(const InspectorWorkerResource&, WorkerAction);
+    void didCreateWorker(intptr_t, const String& url, bool isSharedWorker);
+    void didDestroyWorker(intptr_t);
 #endif
     void getCookies(long callId);
 
@@ -361,7 +364,7 @@ private:
     ProfilesMap m_profiles;
 #endif
 #if ENABLE(WORKERS)
-    typedef HashMap<long, RefPtr<InspectorWorkerResource> > WorkersMap;
+    typedef HashMap<intptr_t, RefPtr<InspectorWorkerResource> > WorkersMap;
 
     WorkersMap m_workers;
 #endif

@@ -42,23 +42,23 @@ namespace WebCore {
 
 class InspectorWorkerResource : public RefCounted<InspectorWorkerResource> {
 public:
-    static PassRefPtr<InspectorWorkerResource> create(long id, const String& url, bool isSharedWorker)
+    static PassRefPtr<InspectorWorkerResource> create(intptr_t id, const String& url, bool isSharedWorker)
     {
         return adoptRef(new InspectorWorkerResource(id, url, isSharedWorker));
     }
 
-    long id() const { return m_id; }
+    intptr_t id() const { return m_id; }
     const String& url() const { return m_url; }
     bool isSharedWorker() const { return m_isSharedWorker; }
 private:
-    InspectorWorkerResource(long id, const String& url, bool isSharedWorker)
+    InspectorWorkerResource(intptr_t id, const String& url, bool isSharedWorker)
         : m_id(id)
         , m_url(url)
         , m_isSharedWorker(isSharedWorker)
     {
     }
 
-    int m_id;
+    intptr_t m_id;
     String m_url;
     bool m_isSharedWorker;
 };

@@ -57,7 +57,6 @@ namespace WebCore {
         using RefCounted<AbstractWorker>::ref;
         using RefCounted<AbstractWorker>::deref;
 
-        long id() const { return m_id; }
         virtual void contextDestroyed();
         AbstractWorker(ScriptExecutionContext*);
         virtual ~AbstractWorker();
@@ -65,6 +64,7 @@ namespace WebCore {
     protected:
         // Helper function that converts a URL to an absolute URL and checks the result for validity.
         KURL resolveURL(const String& url, ExceptionCode& ec);
+        intptr_t asID() const { return reinterpret_cast<intptr_t>(this); }
 
     private:
         virtual void refEventTarget() { ref(); }
@@ -74,9 +74,6 @@ namespace WebCore {
         void onDestroyWorker();
         
         EventTargetData m_eventTargetData;
-        long m_id;
-
-        static long s_lastId;
     };
 
 } // namespace WebCore

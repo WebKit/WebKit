@@ -107,7 +107,7 @@ WebInspector.didCreateWorker = function()
     workersPane.addWorker.apply(workersPane, arguments);
 }
 
-WebInspector.willDestroyWorker = function()
+WebInspector.didDestroyWorker = function()
 {
     var workersPane = WebInspector.panels.scripts.sidebarPanes.workers;
     workersPane.removeWorker.apply(workersPane, arguments);
