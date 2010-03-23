@@ -1,3 +1,55 @@
+2010-03-23  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        [XHR] onProgress event needs to be dispatched according to what the specification states
+        https://bugs.webkit.org/show_bug.cgi?id=18654
+
+        Test: http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch.html
+
+        * Android.mk:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        Added XMLHttpRequestProgressEventThrottle to the build systems.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::XMLHttpRequest): Created the throttle.
+        (WebCore::XMLHttpRequest::callReadyStateChangeListener): The 'readyState' event are
+        dispatched using the XMLHttpRequestProgressEventThrottle now. For the DONE state, we
+        need to flush any pending progress event as we do not want it to be dispatched after
+        the DONE readyState event.
+        (WebCore::XMLHttpRequest::createRequest): Made this event use the
+        XMLHttpRequestProgressEventThrottle for event dispatching.
+        (WebCore::XMLHttpRequest::abort): Ditto.
+        (WebCore::XMLHttpRequest::networkError): Ditto.
+        (WebCore::XMLHttpRequest::abortError): Ditto.
+        (WebCore::XMLHttpRequest::didReceiveData): Ditto. Also fixed a potential warning.
+        (WebCore::XMLHttpRequest::suspend):
+        (WebCore::XMLHttpRequest::resume): Implemented the logic for suspend / resume.
+        * xml/XMLHttpRequest.h:
+        * xml/XMLHttpRequestProgressEventThrottle.cpp: Added.
+        (WebCore::XMLHttpRequestProgressEventThrottle::XMLHttpRequestProgressEventThrottle):
+        (WebCore::XMLHttpRequestProgressEventThrottle::~XMLHttpRequestProgressEventThrottle):
+        (WebCore::XMLHttpRequestProgressEventThrottle::dispatchProgressEvent): Implemented the bulk
+        of the event throttling here: we use a timer to do so, as long as the timer is active it means
+        that events are coming faster than the throttling time and we coalesce them.
+        (WebCore::XMLHttpRequestProgressEventThrottle::dispatchEvent): Generic method to dispatch an event.
+        (WebCore::XMLHttpRequestProgressEventThrottle::flushProgressEvent): Called when we want to dispatch
+        any pending events and stopping any further dispatching.
+        (WebCore::XMLHttpRequestProgressEventThrottle::dispatchPausedEvent): Used to dispatch the event
+        that was queued due to the object being suspended.
+        (WebCore::XMLHttpRequestProgressEventThrottle::fired): Used to dispatch any coalesced event.
+        (WebCore::XMLHttpRequestProgressEventThrottle::hasEventToDispatch): Used to check if we have
+        an event to dispatch.
+        (WebCore::XMLHttpRequestProgressEventThrottle::suspend): Marked the object as suspended.
+        (WebCore::XMLHttpRequestProgressEventThrottle::resume): Dispatched the event that was queued.
+        * xml/XMLHttpRequestProgressEventThrottle.h: Added.
+        (WebCore::):
+        (WebCore::XMLHttpRequestProgressEventThrottle::suspended):
+
 2010-03-23  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

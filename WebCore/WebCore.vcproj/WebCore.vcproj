@@ -28459,6 +28459,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\xml\XMLHttpRequestProgressEventThrottle.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\xml\XMLHttpRequestProgressEventThrottle.h"
+				>
+			</File>
+			<File
 				RelativePath="..\xml\XMLHttpRequestUpload.cpp"
 				>
 			</File>

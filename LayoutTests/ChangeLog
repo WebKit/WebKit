@@ -1,3 +1,16 @@
+2010-03-23  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        [XHR] onProgress event needs to be dispatched according to what the specification states
+        https://bugs.webkit.org/show_bug.cgi?id=18654
+
+        Add a test to check that progress events are really throttled.
+
+        * http/tests/xmlhttprequest/resources/download-with-delay.php: Added.
+        * http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch-expected.txt: Added.
+        * http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch.html: Added.
+
 2010-03-23  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

@@ -988,6 +988,7 @@ SOURCES += \
     rendering/style/StyleVisualData.cpp \
     xml/DOMParser.cpp \
     xml/XMLHttpRequest.cpp \
+    xml/XMLHttpRequestProgressEventThrottle.cpp \
     xml/XMLHttpRequestUpload.cpp \
     xml/XMLSerializer.cpp 
 

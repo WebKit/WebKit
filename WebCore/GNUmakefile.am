@@ -1983,6 +1983,8 @@ webcore_sources += \
 	WebCore/xml/XMLHttpRequest.h \
 	WebCore/xml/XMLHttpRequestException.h \
 	WebCore/xml/XMLHttpRequestProgressEvent.h \
+	WebCore/xml/XMLHttpRequestProgressEventThrottle.cpp \
+	WebCore/xml/XMLHttpRequestProgressEventThrottle.h \
 	WebCore/xml/XMLHttpRequestUpload.cpp \
 	WebCore/xml/XMLHttpRequestUpload.h \
 	WebCore/xml/XMLSerializer.cpp \

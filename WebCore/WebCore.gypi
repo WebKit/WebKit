@@ -3714,6 +3714,8 @@
             'xml/XMLHttpRequest.h',
             'xml/XMLHttpRequestException.h',
             'xml/XMLHttpRequestProgressEvent.h',
+            'xml/XMLHttpRequestProgressEventThrottle.cpp',
+            'xml/XMLHttpRequestProgressEventThrottle.h',
             'xml/XMLHttpRequestUpload.cpp',
             'xml/XMLHttpRequestUpload.h',
             'xml/XMLSerializer.cpp',

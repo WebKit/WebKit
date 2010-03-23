@@ -896,5 +896,6 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	\
 	xml/DOMParser.cpp \
 	xml/XMLHttpRequest.cpp \
+	xml/XMLHttpRequestProgressEventThrottle.cpp \
 	xml/XMLHttpRequestUpload.cpp \
 	xml/XMLSerializer.cpp
