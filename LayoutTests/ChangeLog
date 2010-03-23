@@ -1,3 +1,13 @@
+2010-03-23  Nate Chapin  <japhet@chromium.org>
+
+        Unreviewed, Chromium test expectations update.
+
+        Mark fast/dom/error-to-string-stack-overflow.html as failing on
+        all Chromium platforms, and http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch.html
+        as failing on Windows.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-03-23  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Alexey Proskuryakov.

@@ -1122,9 +1122,6 @@ BUG30536 : http/tests/misc/favicon-as-image.html = FAIL
 // Has failed for Chromium since it was first checked in.  (Lighttpd related?)
 BUG10323 WIN : http/tests/xmlhttprequest/xmlhttprequest-no-content-length-onProgress.html = FAIL
 
-// Times out because this uses dom storage which we don't implement.
-BUG4360 : security/autocomplete-cleared-on-back.html = TIMEOUT
-
 // Post-MERGE failures: these will all need to be fixed one day
 
 // Linux pixeltest failure: caret is in the wrong place
@@ -2773,8 +2770,6 @@ BUG37896 : fast/events/remove-child-onscroll.html = TIMEOUT
 // This one may be an actual regression! Started being flaky after
 // http://trac.webkit.org/log/?verbose=on&rev=55742&stop_rev=55710
 BUG37896 : fast/events/standalone-image-drag-to-editable.html = IMAGE+TEXT
-// Caused by http://trac.webkit.org/changeset/55549/
-BUG37896 : fast/loader/document-with-fragment-url-4.html = TIMEOUT
 // New test, added http://trac.webkit.org/changeset/55546
 BUG37896 WIN LINUX : fast/multicol/hit-test-above-or-below.html = TEXT
 // Added in http://trac.webkit.org/changeset/55669
@@ -2844,3 +2839,9 @@ BUG_JSCHUH WIN LINUX : svg/filters/filterRes.svg = IMAGE
 
 // Caused by http://trac.webkit.org/changeset/56329
 BUG38918 : fast/dom/error-to-string-stack-overflow.html = TEXT
+
+// Caused by http://trac.webkit.org/changeset/56394.
+BUG_JAPHET WIN : http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch.html = TEXT
+
+// Caused by http://trac.webkit.org/changeset/56380
+BUG39062 : websocket/tests/long-invalid-header.html = TEXT
