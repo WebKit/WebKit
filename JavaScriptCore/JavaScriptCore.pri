@@ -16,6 +16,7 @@ CONFIG(debug, debug|release) {
 symbian: {
     # Need to guarantee this comes before system includes of /epoc32/include
     MMP_RULES += "USERINCLUDE ../JavaScriptCore/profiler"
+    LIBS += -lhal
 }
 
 INCLUDEPATH = \
@@ -32,6 +33,7 @@ INCLUDEPATH = \
     $$PWD/profiler \
     $$PWD/runtime \
     $$PWD/wtf \
+    $$PWD/wtf/symbian \
     $$PWD/wtf/unicode \
     $$PWD/yarr \
     $$PWD/API \
@@ -212,6 +214,7 @@ SOURCES += \
     wtf/qt/ThreadingQt.cpp \
     wtf/RandomNumber.cpp \
     wtf/RefCountedLeakCounter.cpp \
+    wtf/symbian/BlockAllocatorSymbian.cpp \
     wtf/ThreadingNone.cpp \
     wtf/Threading.cpp \
     wtf/TypeTraits.cpp \
