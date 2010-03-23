@@ -2,6 +2,14 @@
 
         (Not reviewed.)
 
+        Add another example.
+
+        * demos/accessible-ascii-art/butterfly-figure.html: Added.
+
+2010-03-22  Maciej Stachowiak  <mjs@apple.com>
+
+        (Not reviewed.)
+
         Add example of accessible ASCII art for HTML WG.
 
         * demos/accessible-ascii-art: Added.
