@@ -83,9 +83,7 @@ WebInspector.BreakpointsSidebarPane.prototype = {
 
         function breakpointClicked()
         {
-            var script = WebInspector.panels.scripts.scriptOrResourceForID(breakpoint.sourceID);
-            if (script)
-                WebInspector.panels.scripts.showScript(script, breakpoint.line);
+            WebInspector.panels.scripts.showSourceLine(breakpoint.url, breakpoint.line);
         }
 
         var breakpointElement = document.createElement("li");

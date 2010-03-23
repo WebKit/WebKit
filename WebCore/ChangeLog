@@ -1,3 +1,21 @@
+2010-03-23  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: render nodes in inherited style bars as links.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36486
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.BreakpointsSidebarPane.prototype._appendBreakpointElement.breakpointClicked):
+        (WebInspector.BreakpointsSidebarPane.prototype._appendBreakpointElement):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype._update.else.insertInheritedNodeSeparator):
+        (WebInspector.StylesSidebarPane.prototype._update):
+        (WebInspector.StylesSidebarPane.prototype._selectNode):
+        * inspector/front-end/inspector.js:
+
 2010-03-23  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Alexey Proskuryakov.

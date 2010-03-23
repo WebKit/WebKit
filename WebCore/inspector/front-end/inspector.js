@@ -638,6 +638,7 @@ WebInspector.documentClick = function(event)
 
     // Prevent the link from navigating, since we don't do any navigation by following links normally.
     event.preventDefault();
+    event.stopPropagation();
 
     function followLink()
     {
