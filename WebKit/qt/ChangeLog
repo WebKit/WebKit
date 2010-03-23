@@ -1,3 +1,15 @@
+2010-03-23  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        QGraphicsWebView crash when calling setView on the QWebPage...
+        https://bugs.webkit.org/show_bug.cgi?id=36436
+
+        Checking for pageClient existance before showing popups.
+
+        * WebCoreSupport/QtFallbackWebPopup.cpp:
+        (WebCore::QtFallbackWebPopup::show):
+
 2010-03-23  Anders Bakken <anders.bakken@nokia.com>, Jesus Sanchez-Palencia <jesus.palencia@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

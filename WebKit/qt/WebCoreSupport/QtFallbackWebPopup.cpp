@@ -99,6 +99,9 @@ QtFallbackWebPopup::~QtFallbackWebPopup()
 
 void QtFallbackWebPopup::show()
 {
+    if (!pageClient())
+        return;
+
 #if ENABLE(SYMBIAN_DIALOG_PROVIDERS)
     TRAP_IGNORE(showS60BrowserDialog());
 #else
