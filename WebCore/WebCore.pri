@@ -210,6 +210,10 @@ STYLESHEETS_EMBED = \
     $$PWD/css/mediaControls.css \
     $$PWD/css/mediaControlsQt.css
 
+maemo5 {
+    DEFINES += ENABLE_NO_LISTBOX_RENDERING=1
+}
+
 contains(DEFINES, ENABLE_NO_LISTBOX_RENDERING=1) {
     STYLESHEETS_EMBED += $$PWD/css/themeQtNoListboxes.css
 }
