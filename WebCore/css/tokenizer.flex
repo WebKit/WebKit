@@ -28,9 +28,9 @@ nth             (-?[0-9]*n[\+-][0-9]+)|(-?[0-9]*n)
 
 %%
 
-\/\*[^*]*\*+([^/*][^*]*\*+)*\/  /* ignore comments */
+\/\*[^*]*\*+([^/*][^*]*\*+)*\/ {countLines(); /* ignore comments */ }
 
-[ \t\r\n\f]+            {yyTok = WHITESPACE; return yyTok;}
+[ \t\r\n\f]+            {countLines(); yyTok = WHITESPACE; return yyTok;}
 
 "<!--"                  {yyTok = SGML_CD; return yyTok;}
 "-->"                   {yyTok = SGML_CD; return yyTok;}

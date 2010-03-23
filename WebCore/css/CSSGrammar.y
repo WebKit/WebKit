@@ -786,6 +786,7 @@ selector_list:
             deleteAllValues(*$$);
             $$->shrink(0);
             $$->append(p->sinkFloatingSelector($1));
+            p->updateLastSelectorLine();
         }
     }
     | selector_list ',' maybe_space selector %prec UNIMPORTANT_TOK {
@@ -793,6 +794,7 @@ selector_list:
             CSSParser* p = static_cast<CSSParser*>(parser);
             $$ = $1;
             $$->append(p->sinkFloatingSelector($4));
+            p->updateLastSelectorLine();
         } else
             $$ = 0;
     }

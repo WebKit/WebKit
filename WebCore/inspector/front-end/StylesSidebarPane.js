@@ -490,8 +490,7 @@ WebInspector.StylePropertiesSection = function(styleRule, subtitle, computedStyl
         if (!subtitle) {
             if (this.styleRule.parentStyleSheet && this.styleRule.parentStyleSheet.href) {
                 var url = this.styleRule.parentStyleSheet.href;
-                subtitle = WebInspector.linkifyURL(url, WebInspector.displayNameForURL(url));
-                this.subtitleElement.addStyleClass("file");
+                this.subtitleElement.appendChild(WebInspector.linkifyResourceAsNode(url, "resources", this.rule.sourceLine + 1));
             } else if (isUserAgent)
                 subtitle = WebInspector.UIString("user agent stylesheet");
             else if (isUser)
@@ -503,7 +502,8 @@ WebInspector.StylePropertiesSection = function(styleRule, subtitle, computedStyl
         }
         if (isInherited)
             this.element.addStyleClass("show-inherited");
-        this.subtitle = subtitle;
+        if (subtitle)
+            this.subtitle = subtitle;
     }
 
     this.identifier = styleRule.selectorText;

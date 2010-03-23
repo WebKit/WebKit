@@ -1,0 +1,7 @@
+Tests that proper source lines are reported for the parsed styles.
+
+Line:5	body, .at_line_5::before
+Line:19	body, .at_line_19
+Line:33	body, .at_line_33
+Line:40	body, .at_line_40
+

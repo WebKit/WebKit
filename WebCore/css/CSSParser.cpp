@@ -143,6 +143,8 @@ CSSParser::CSSParser(bool strictParsing)
     , m_defaultNamespace(starAtom)
     , m_data(0)
     , yy_start(1)
+    , m_line(0)
+    , m_lastSelectorLine(0)
     , m_allowImportRules(true)
     , m_allowVariablesRules(true)
     , m_allowNamespaceDeclarations(true)
@@ -4692,7 +4694,7 @@ int CSSParser::lex(void* yylvalWithoutType)
 {
     YYSTYPE* yylval = static_cast<YYSTYPE*>(yylvalWithoutType);
     int length;
-    
+
     lex();
 
     UChar* t = text(&length);
@@ -4917,6 +4919,14 @@ UChar* CSSParser::text(int *length)
     return start;
 }
 
+void CSSParser::countLines()
+{
+    for (UChar* current = yytext; current < yytext + yyleng; ++current) {
+        if (*current == '\n')
+            ++m_line;
+    }
+}
+
 CSSSelector* CSSParser::createFloatingSelector()
 {
     CSSSelector* selector = fastNew<CSSSelector>();
@@ -5086,7 +5096,7 @@ CSSRule* CSSParser::createStyleRule(Vector<CSSSelector*>* selectors)
     m_allowImportRules = m_allowNamespaceDeclarations = m_allowVariablesRules = false;
     CSSStyleRule* result = 0;
     if (selectors) {
-        RefPtr<CSSStyleRule> rule = CSSStyleRule::create(m_styleSheet);
+        RefPtr<CSSStyleRule> rule = CSSStyleRule::create(m_styleSheet, m_lastSelectorLine);
         rule->adoptSelectorVector(*selectors);
         if (m_hasFontFaceOnlyValues)
             deleteFontFaceOnlyValues();

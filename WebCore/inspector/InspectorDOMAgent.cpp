@@ -1102,6 +1102,7 @@ ScriptObject InspectorDOMAgent::buildObjectForRule(CSSStyleRule* rule)
     ScriptObject result = m_frontend->newScriptObject();
     result.set("selectorText", rule->selectorText());
     result.set("cssText", rule->cssText());
+    result.set("sourceLine", rule->sourceLine());
     if (parentStyleSheet) {
         ScriptObject parentStyleSheetValue = m_frontend->newScriptObject();
         result.set("parentStyleSheet", parentStyleSheetValue);

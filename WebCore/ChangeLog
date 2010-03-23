@@ -1,3 +1,38 @@
+2010-03-22  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        Web Inspector: display CSS selector source line in the styles sidebar pane.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36414
+
+        This change adds a sourceLine field into the CSSStyleRule that is populated
+        from within the parser. CSSParser is now keeping track of the line numbers
+        and last selector line number that is being used while creating CSSStyleRules.
+
+        Test: inspector/styles-source-lines.html
+
+        * css/CSSGrammar.y:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::CSSParser):
+        (WebCore::CSSParser::lex):
+        (WebCore::CSSParser::countLines):
+        (WebCore::CSSParser::createStyleRule):
+        * css/CSSParser.h:
+        (WebCore::CSSParser::updateLastSelectorLine):
+        * css/CSSStyleRule.cpp:
+        (WebCore::CSSStyleRule::CSSStyleRule):
+        * css/CSSStyleRule.h:
+        (WebCore::CSSStyleRule::create):
+        (WebCore::CSSStyleRule::sourceLine):
+        * css/tokenizer.flex:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForRule):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.CSSStyleDeclaration.parseRule):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertiesSection):
+
 2010-03-22  Qi Zhang  <qi.2.zhang@nokia.com>
 
         Reviewed by Laszlo Gombos.

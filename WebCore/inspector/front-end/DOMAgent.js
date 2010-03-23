@@ -550,6 +550,7 @@ WebInspector.CSSStyleDeclaration.parseRule = function(payload)
     rule.isUserAgent = payload.isUserAgent;
     rule.isUser = payload.isUser;
     rule.isViaInspector = payload.isViaInspector;
+    rule.sourceLine = payload.sourceLine;
     if (payload.parentStyleSheet)
         rule.parentStyleSheet = { href: payload.parentStyleSheet.href };
 
