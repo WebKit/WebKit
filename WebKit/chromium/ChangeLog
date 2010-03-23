@@ -1,3 +1,31 @@
+2010-03-22  Jay Campan  <jcampan@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Making Chromium select popups not steal activation from the browser.
+        Select popups are now like autocomplete popups, shown in non-activated
+        windows.
+        https://bugs.webkit.org/show_bug.cgi?id=36062
+
+        * public/WebViewClient.h:
+        (WebKit::WebViewClient::createPopupMenu):
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::popupOpened):
+        (WebKit::ChromeClientImpl::popupClosed):
+        * src/ChromeClientImpl.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::):
+        (WebKit::WebViewImpl::mouseDown):
+        (WebKit::WebViewImpl::keyEvent):
+        (WebKit::WebViewImpl::selectPopupHandleKeyEvent):
+        (WebKit::WebViewImpl::hideSelectPopup):
+        (WebKit::WebViewImpl::popupOpened):
+        (WebKit::WebViewImpl::popupClosed):
+        (WebKit::WebViewImpl::setFocus):
+        (WebKit::WebViewImpl::applyAutoFillSuggestions):
+        (WebKit::WebViewImpl::applyAutocompleteSuggestions):
+        * src/WebViewImpl.h:
+
 2010-03-22  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Nate Chapin.

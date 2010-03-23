@@ -74,7 +74,6 @@ static const TimeStamp kTypeAheadTimeoutMs = 1000;
 // The settings used for the drop down menu.
 // This is the delegate used if none is provided.
 static const PopupContainerSettings dropDownSettings = {
-    true,   // focusOnShow
     true,   // setTextOnIndexChange
     true,   // acceptOnAbandon
     false,  // loopSelectionNavigation
@@ -297,14 +296,17 @@ static PlatformWheelEvent constructRelativeWheelEvent(const PlatformWheelEvent& 
 
 // static
 PassRefPtr<PopupContainer> PopupContainer::create(PopupMenuClient* client,
+                                                  PopupType popupType,
                                                   const PopupContainerSettings& settings)
 {
-    return adoptRef(new PopupContainer(client, settings));
+    return adoptRef(new PopupContainer(client, popupType, settings));
 }
 
 PopupContainer::PopupContainer(PopupMenuClient* client,
+                               PopupType popupType,
                                const PopupContainerSettings& settings)
     : m_listBox(PopupListBox::create(client, settings))
+    , m_popupType(popupType)  
     , m_settings(settings)
 {
     setScrollbarModes(ScrollbarAlwaysOff, ScrollbarAlwaysOff);
@@ -325,8 +327,8 @@ void PopupContainer::showPopup(FrameView* view)
     // WidgetClient about it.  It should assign us a client.
     layout();
 
-    ChromeClientChromium* chromeClient = static_cast<ChromeClientChromium*>(
-        view->frame()->page()->chrome()->client());
+    m_frameView = view;
+    ChromeClientChromium* chromeClient = chromeClientChromium();
     if (chromeClient) {
         // If the popup would extend past the bottom of the screen, open upwards
         // instead.
@@ -335,7 +337,7 @@ void PopupContainer::showPopup(FrameView* view)
         if (widgetRect.bottom() > static_cast<int>(screen.bottom()))
             widgetRect.move(0, -(widgetRect.height() + selectHeight));
 
-        chromeClient->popupOpened(this, widgetRect, m_settings.focusOnShow, false);
+        chromeClient->popupOpened(this, widgetRect, false);
     }
 
     if (!m_listBox->parent())
@@ -368,9 +370,8 @@ void PopupContainer::showExternal(const IntRect& rect, FrameView* v, int index)
     IntRect popupRect(location, rect.size());
 
     // Get the ChromeClient and pass it the popup menu's listbox data.
-    ChromeClientChromium* client = static_cast<ChromeClientChromium*>(
-         v->frame()->page()->chrome()->client());
-    client->popupOpened(this, popupRect, true, true);
+    m_frameView = v;
+    chromeClientChromium()->popupOpened(this, popupRect, true);
 
     // The popup sends its "closed" notification through its parent. Set the
     // parent, even though external popups have no real on-screen widget but a
@@ -382,6 +383,7 @@ void PopupContainer::showExternal(const IntRect& rect, FrameView* v, int index)
 void PopupContainer::hidePopup()
 {
     listBox()->hidePopup();
+    chromeClientChromium()->popupClosed(this);
 }
 
 void PopupContainer::layout()
@@ -468,6 +470,11 @@ void PopupContainer::paintBorder(GraphicsContext* gc, const IntRect& rect)
 bool PopupContainer::isInterestedInEventForKey(int keyCode)
 {
     return m_listBox->isInterestedInEventForKey(keyCode);
+}
+
+ChromeClientChromium* PopupContainer::chromeClientChromium()
+{
+    return static_cast<ChromeClientChromium*>(m_frameView->frame()->page()->chrome()->client());
 }
 
 void PopupContainer::show(const IntRect& r, FrameView* v, int index)
@@ -1231,7 +1238,7 @@ PopupMenu::~PopupMenu()
 void PopupMenu::show(const IntRect& r, FrameView* v, int index)
 {
     if (!p.popup)
-        p.popup = PopupContainer::create(client(), dropDownSettings);
+        p.popup = PopupContainer::create(client(), PopupContainer::Select, dropDownSettings);
 #if OS(DARWIN)
     p.popup->showExternal(r, v, index);
 #else

@@ -595,7 +595,6 @@ void ChromeClientImpl::iconForFiles(const Vector<WebCore::String>&, PassRefPtr<W
 
 void ChromeClientImpl::popupOpened(PopupContainer* popupContainer,
                                    const IntRect& bounds,
-                                   bool activatable,
                                    bool handleExternally)
 {
     if (!m_webView->client())
@@ -606,10 +605,20 @@ void ChromeClientImpl::popupOpened(PopupContainer* popupContainer,
         WebPopupMenuInfo popupInfo;
         getPopupMenuInfo(popupContainer, &popupInfo);
         webwidget = m_webView->client()->createPopupMenu(popupInfo);
-    } else
-        webwidget = m_webView->client()->createPopupMenu(activatable);
-
+    } else {
+        webwidget = m_webView->client()->createPopupMenu();
+        if (!webwidget) {
+            // Try the deprecated method.
+            webwidget = m_webView->client()->createPopupMenu(false);
+        }    
+    }
+    m_webView->popupOpened(popupContainer);
     static_cast<WebPopupMenuImpl*>(webwidget)->Init(popupContainer, bounds);
+}
+
+void ChromeClientImpl::popupClosed(WebCore::PopupContainer* popupContainer)
+{
+    m_webView->popupClosed(popupContainer);
 }
 
 void ChromeClientImpl::setCursor(const WebCursorInfo& cursor)
