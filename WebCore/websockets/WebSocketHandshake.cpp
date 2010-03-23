@@ -258,7 +258,7 @@ int WebSocketHandshake::readServerHandshake(const char* header, size_t len)
         }
     }
     const char* p = header + sizeof(webSocketServerHandshakeHeader) - 1;
-    const char* end = header + len + 1;
+    const char* end = header + len;
 
     if (m_mode == Normal) {
         size_t headerSize = end - p;
