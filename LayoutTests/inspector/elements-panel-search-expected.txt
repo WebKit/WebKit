@@ -1,0 +1,14 @@
+Tests that elements panel search is returning proper results.
+
+FooBar
+
+====================================
+Results:
+FooBar
+FooBar
+<input value="InputVal">
+<input value="InputVal">
+<input value="InputVal">
+<input value="InputVal">
+<input value="InputVal">
+

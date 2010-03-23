@@ -310,7 +310,7 @@ InjectedScript.getNodeId = function(node)
     return InjectedScriptHost.pushNodePathToFrontend(node, false, false);
 }
 
-InjectedScript.performSearch = function(whitespaceTrimmedQuery)
+InjectedScript.performSearch = function(whitespaceTrimmedQuery, runSynchronously)
 {
     // FIXME: Few things are missing here:
     // 1) Search works with node granularity - number of matches within node is not calculated.
@@ -478,8 +478,7 @@ InjectedScript.performSearch = function(whitespaceTrimmedQuery)
         searchFunctions = [matchExactItems, matchStyleSelector, matchPartialTagNamesAndAttributeValues, matchPlainText, matchXPathQuery];
 
     // Find all frames, iframes and object elements to search their documents.
-    const querySelectorAllFunction = InjectedScript._window().Document.prototype.querySelectorAll;
-    const subdocumentResult = querySelectorAllFunction.call(mainFrameDocument, "iframe, frame, object");
+    const subdocumentResult = mainFrameDocument.querySelectorAll("iframe, frame, object");
 
     for (var i = 0; i < subdocumentResult.length; ++i) {
         var element = subdocumentResult.item(i);
@@ -508,26 +507,27 @@ InjectedScript.performSearch = function(whitespaceTrimmedQuery)
                     delete panel._currentSearchChunkIntervalIdentifier;
                 clearInterval(chunkIntervalIdentifier);
                 finishedSearching.call(panel);
-                return;
+                return false;
             }
 
             searchDocument = searchDocuments[documentIndex];
         }
-
-        if (!searchDocument || !searchFunction)
-            return;
 
         try {
             searchFunction.call(panel, searchDocument);
         } catch(err) {
             // ignore any exceptions. the query might be malformed, but we allow that.
         }
+        return true;
     }
 
-    processChunk();
-
-    chunkIntervalIdentifier = setInterval(processChunk, 25);
-    InjectedScript._currentSearchChunkIntervalIdentifier = chunkIntervalIdentifier;
+    if (runSynchronously)
+        while (processChunk()) {}
+    else {
+        processChunk();
+        chunkIntervalIdentifier = setInterval(processChunk, 25);
+        InjectedScript._currentSearchChunkIntervalIdentifier = chunkIntervalIdentifier;
+    }
     return true;
 }
 

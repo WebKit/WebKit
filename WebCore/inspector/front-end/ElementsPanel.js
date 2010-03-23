@@ -253,7 +253,7 @@ WebInspector.ElementsPanel.prototype = {
         this._matchesCountUpdateTimeout = null;
         this._searchQuery = query;
 
-        InjectedScriptAccess.getDefault().performSearch(whitespaceTrimmedQuery, function() {});
+        InjectedScriptAccess.getDefault().performSearch(whitespaceTrimmedQuery, false, function() {});
     },
 
     searchingForNodeWasEnabled: function()
