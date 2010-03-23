@@ -889,7 +889,7 @@ void QWebFrame::load(const QUrl &url)
 
   \a body is optional and is only used for POST operations.
 
-  \note The view remains the same until enough data has arrived to display the new \a url.
+  \note The view remains the same until enough data has arrived to display the new content.
 
   \sa setUrl()
 */

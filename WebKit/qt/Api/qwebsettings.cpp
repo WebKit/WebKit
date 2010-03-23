@@ -980,7 +980,7 @@ void QWebSettings::setLocalStoragePath(const QString& path)
 /*!
     \since 4.7
 
-    Specifies the location of a frontend to load with each web page when using Web Inspector.
+    Specifies the \a location of a frontend to load with each web page when using Web Inspector.
 
     \sa inspectorUrl()
 */

@@ -1057,7 +1057,7 @@ bool QGraphicsWebView::findText(const QString &subString, QWebPage::FindFlags op
     This property should be used in conjunction with the QWebPage::preferredContentsSize property.
     If not explicitly set, the preferredContentsSize is automatically set to a reasonable value.
 
-    \sa QWebPage::setPreferredContentsSize
+    \sa QWebPage::setPreferredContentsSize()
 */
 void QGraphicsWebView::setResizesToContents(bool enabled)
 {

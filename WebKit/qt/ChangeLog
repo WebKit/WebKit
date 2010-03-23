@@ -1,3 +1,14 @@
+2010-03-22  Kent Hansen  <kent.hansen@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Fix qdoc warnings
+        https://bugs.webkit.org/show_bug.cgi?id=36447
+
+        * Api/qgraphicswebview.cpp: Add missing ().
+        * Api/qwebframe.cpp: Remove reference to non-existent parameter "url".
+        * Api/qwebsettings.cpp:  Document parameter "location".
+
 2010-03-22  Jakub Wieczorek  <jwieczorek@webkit.org>
 
         Reviewed by Simon Hausmann.
