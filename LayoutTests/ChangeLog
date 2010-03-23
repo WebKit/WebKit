@@ -1,3 +1,12 @@
+2010-03-23  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed, remove flaky tag in websocket tests.
+
+        flakiness in websocket tests (http://crbug.com/38397) introducted at
+        Chromium r41818 has been fixed at r42320.
+
+        * platform/chromium/test_expectations.txt: remove BUG38397
+
 2010-03-22  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Dave Hyatt.

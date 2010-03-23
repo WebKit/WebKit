@@ -2818,13 +2818,6 @@ BUG38353 MAC LINUX : http/tests/plugins/plugin-document-has-focus.html = TIMEOUT
 
 BUG38392 : plugins/resize-from-plugin.html = TEXT
 
-// Chromium r41818 makes these flaky.
-BUG38397 : websocket/tests/url-with-credential.html = TEXT PASS
-BUG38397 : websocket/tests/url-with-empty-query.html = TEXT PASS
-BUG38397 : websocket/tests/url-with-query-for-no-query.html = TEXT PASS
-BUG38397 : websocket/tests/url-with-query.html = TEXT PASS
-BUG38397 : websocket/tests/websocket-pending-activity.html = TIMEOUT PASS
-
 // One pixel changes from gray 0x83 to gray 0x81. Valgrind is clean.
 BUG38534 LINUX : tables/mozilla/bugs/bug20804.html = IMAGE PASS
 
