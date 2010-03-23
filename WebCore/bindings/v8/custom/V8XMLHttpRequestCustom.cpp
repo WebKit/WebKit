@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -98,7 +98,7 @@ v8::Handle<v8::Value> V8XMLHttpRequest::openCallback(const v8::Arguments& args)
     return v8::Undefined();
 }
 
-static bool IsDocumentType(v8::Handle<v8::Value> value)
+static bool isDocumentType(v8::Handle<v8::Value> value)
 {
     // FIXME: add other document types.
     return V8Document::HasInstance(value) || V8HTMLDocument::HasInstance(value);
@@ -114,7 +114,9 @@ v8::Handle<v8::Value> V8XMLHttpRequest::sendCallback(const v8::Arguments& args)
         xmlHttpRequest->send(ec);
     else {
         v8::Handle<v8::Value> arg = args[0];
-        if (IsDocumentType(arg)) {
+        if (isUndefinedOrNull(arg))
+            xmlHttpRequest->send(ec);
+        else if (isDocumentType(arg)) {
             v8::Handle<v8::Object> object = v8::Handle<v8::Object>::Cast(arg);
             Document* document = V8Document::toNative(object);
             ASSERT(document);

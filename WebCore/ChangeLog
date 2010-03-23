@@ -1,3 +1,19 @@
+2010-03-23  David Levin  <levin@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        [chromium] XMLHttpRequest.send sends 'undefined' string when passed undefined value.
+        https://bugs.webkit.org/show_bug.cgi?id=36506
+
+        Test: http/tests/xmlhttprequest/send-undefined-and-null.html
+
+        * bindings/v8/custom/V8XMLHttpRequestCustom.cpp:
+        (WebCore::isDocumentType): Unrelated style fix: fixed the casing of the method.
+        (WebCore::V8XMLHttpRequest::sendCallback): Added check for null/undefined to do the send.
+        This mirrors what is done in the JSC bindings. Previously, sending 'null' worked because
+        the last case, which did "toWebCoreStringWithNullCheck", resulted in sending an empty
+        request body.
+
 2010-03-23  Chris Evans  <cevans@chromium.org>
 
         Reviewed by Darin Adler.
