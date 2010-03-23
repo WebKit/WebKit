@@ -192,6 +192,7 @@ void WebDevToolsAgentImpl::detach()
 {
     // Prevent controller from sending messages to the frontend.
     InspectorController* ic = m_webViewImpl->page()->inspectorController();
+    ic->disconnectFrontend();
     ic->hideHighlight();
     ic->close();
     disposeUtilityContext();

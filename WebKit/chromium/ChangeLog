@@ -1,3 +1,13 @@
+2010-03-23  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: TimelinePanel stays in the recording state after reopening WebInspector.
+        https://bugs.webkit.org/show_bug.cgi?id=36503
+
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::detach):
+
 2010-03-22  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Darin Fisher.
