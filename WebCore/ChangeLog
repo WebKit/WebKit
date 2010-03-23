@@ -1,3 +1,13 @@
+2010-03-22  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        Upstream iPhone KeyEvent platform code and share with Mac platform
+        https://bugs.webkit.org/show_bug.cgi?id=35870
+
+        * platform/iphone/KeyEventCodesIPhone.h: Improper comment for #endif.
+        * platform/iphone/KeyEventIPhone.mm: Fixed headers.
+
 2010-03-23  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Jeremy Orlow.

@@ -118,4 +118,4 @@ enum {
     NSDeleteCharacter = 0x007f
 };
 
-#endif !KeyEventCodesIPhone_h
+#endif // KeyEventCodesIPhone_h
