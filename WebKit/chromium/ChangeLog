@@ -1,3 +1,23 @@
+2010-03-23  Sergey Ulanov  <sergeyu@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Changes needed to implement Show/Hide Controls command for <video> in
+        chrome: (1) added Controls action in WebMediaPlayerAction that toggles
+        controls for media player, (2) added MediaHasVideo in
+        WebContextMenuData so that controls can be made toggleable only for
+        video player but not for audio.
+        https://bugs.webkit.org/show_bug.cgi?id=36460
+
+        * public/WebContextMenuData.h:
+        (WebKit::WebContextMenuData::):
+        * public/WebMediaPlayerAction.h:
+        (WebKit::WebMediaPlayerAction::):
+        * src/ContextMenuClientImpl.cpp:
+        (WebKit::ContextMenuClientImpl::getCustomMenuFromDefaultItems):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::performMediaPlayerAction):
+
 2010-03-23  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

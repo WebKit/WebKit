@@ -38,7 +38,8 @@ struct WebMediaPlayerAction {
         Unknown,
         Play,
         Mute,
-        Loop
+        Loop,
+        Controls
     };
 
     Type type;

@@ -181,6 +181,10 @@ PlatformMenuDescription ContextMenuClientImpl::getCustomMenuFromDefaultItems(
             data.mediaFlags |= WebContextMenuData::MediaCanSave;
         if (mediaElement->hasAudio())
             data.mediaFlags |= WebContextMenuData::MediaHasAudio;
+        if (mediaElement->hasVideo())
+            data.mediaFlags |= WebContextMenuData::MediaHasVideo;
+        if (mediaElement->controls())
+            data.mediaFlags |= WebContextMenuData::MediaControls;
     }
 
     data.isImageBlocked =
