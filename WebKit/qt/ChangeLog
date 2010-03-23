@@ -1,3 +1,17 @@
+2010-03-23  Anders Bakken <anders.bakken@nokia.com>, Jesus Sanchez-Palencia <jesus.palencia@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Check if q->scene() is available before actually using it
+        on QGraphicsWebViewPrivate.
+
+        QGraphicsWebView crash
+        https://bugs.webkit.org/show_bug.cgi?id=32670
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebViewPrivate::screenNumber):
+        (QGraphicsWebViewPrivate::ownerWidget):
+
 2010-03-23  David Leong  <david.leong@nokia.com>
 
         Reviewed by Laszlo Gombos.
