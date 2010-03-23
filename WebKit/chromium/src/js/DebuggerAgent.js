@@ -804,9 +804,6 @@ devtools.DebuggerAgent.prototype.handleBreakEvent_ = function(msg)
  */
 devtools.DebuggerAgent.prototype.handleExceptionEvent_ = function(msg)
 {
-    // Force scripts panel to be shown first.
-    WebInspector.currentPanel = WebInspector.panels.scripts;
-
     var body = msg.getBody();
     // No script field in the body means that v8 failed to parse the script. We
     // resume execution on parser errors automatically.
@@ -814,6 +811,9 @@ devtools.DebuggerAgent.prototype.handleExceptionEvent_ = function(msg)
         var line = devtools.DebuggerAgent.v8ToWwebkitLineNumber_(body.sourceLine);
         this.createExceptionMessage_(body.script.name, line, body.exception.text);
         this.requestBacktrace_();
+
+        // Force scripts panel to be shown.
+        WebInspector.currentPanel = WebInspector.panels.scripts;
     } else
         this.resumeExecution();
 };

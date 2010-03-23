@@ -1,3 +1,14 @@
+2010-03-23  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        When uncaught exception happens reveal Scripts panel only if reporting uncaught exceptions is on.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36498
+
+        * src/js/DebuggerAgent.js:
+        (devtools.DebuggerAgent.prototype.handleExceptionEvent_):
+
 2010-03-23  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.
