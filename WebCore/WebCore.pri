@@ -98,7 +98,7 @@ greaterThan(QT_MINOR_VERSION, 5) {
 
 # XSLT support with QtXmlPatterns
 !contains(DEFINES, ENABLE_XSLT=.) {
-    contains(QT_CONFIG, xmlpatterns):!lessThan(QT_MINOR_VERSION, 5):DEFINES += ENABLE_XSLT=1
+    contains(QT_CONFIG, xmlpatterns):DEFINES += ENABLE_XSLT=1
     else:DEFINES += ENABLE_XSLT=0
 }
 

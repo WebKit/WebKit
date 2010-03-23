@@ -67,7 +67,6 @@ void setCookies(Document* document, const KURL& url, const String& value)
         return;
 
     QList<QNetworkCookie> cookies = QNetworkCookie::parseCookies(QString(value).toAscii());
-#if QT_VERSION >= 0x040500
     QList<QNetworkCookie>::Iterator it = cookies.begin();
     while (it != cookies.end()) {
         if (it->isHttpOnly())
@@ -75,7 +74,6 @@ void setCookies(Document* document, const KURL& url, const String& value)
         else
             ++it;
     }
-#endif
     jar->setCookiesFromUrl(cookies, u);
 }
 
@@ -92,10 +90,8 @@ String cookies(const Document* document, const KURL& url)
 
     QStringList resultCookies;
     foreach (QNetworkCookie networkCookie, cookies) {
-#if QT_VERSION >= 0x040500
         if (networkCookie.isHttpOnly())
             continue;
-#endif
         resultCookies.append(QString::fromAscii(
                              networkCookie.toRawForm(QNetworkCookie::NameAndValueOnly).constData()));
     }

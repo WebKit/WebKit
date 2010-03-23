@@ -1055,10 +1055,8 @@ QWebPage::WebAction QWebPagePrivate::editorActionForKeyEvent(QKeyEvent* event)
         { QKeySequence::SelectEndOfDocument, QWebPage::SelectEndOfDocument },
         { QKeySequence::DeleteStartOfWord, QWebPage::DeleteStartOfWord },
         { QKeySequence::DeleteEndOfWord, QWebPage::DeleteEndOfWord },
-#if QT_VERSION >= 0x040500
         { QKeySequence::InsertParagraphSeparator, QWebPage::InsertParagraphSeparator },
         { QKeySequence::InsertLineSeparator, QWebPage::InsertLineSeparator },
-#endif
         { QKeySequence::SelectAll, QWebPage::SelectAll },
         { QKeySequence::UnknownKey, QWebPage::NoWebAction }
     };

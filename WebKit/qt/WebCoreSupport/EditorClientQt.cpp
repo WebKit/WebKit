@@ -384,18 +384,6 @@ void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
         } else
 #endif // QT_NO_SHORTCUT
         switch (kevent->windowsVirtualKeyCode()) {
-#if QT_VERSION < 0x040500
-            case VK_RETURN:
-#ifdef QT_WS_MAC
-                if (kevent->shiftKey() || kevent->metaKey())
-#else
-                if (kevent->shiftKey())
-#endif
-                    frame->editor()->command("InsertLineBreak").execute();
-                else
-                    frame->editor()->command("InsertNewline").execute();
-                break;
-#endif
             case VK_BACK:
                 frame->editor()->deleteWithDirection(SelectionController::BACKWARD,
                         CharacterGranularity, false, true);

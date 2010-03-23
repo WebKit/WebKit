@@ -78,11 +78,7 @@ using JSC::UString;
 #include <QPainter>
 #include "QWebPageClient.h"
 QT_BEGIN_NAMESPACE
-#if QT_VERSION < 0x040500
-extern Q_GUI_EXPORT WindowPtr qt_mac_window_for(const QWidget* w);
-#else
 extern Q_GUI_EXPORT OSWindowRef qt_mac_window_for(const QWidget* w);
-#endif
 QT_END_NAMESPACE
 #endif
 

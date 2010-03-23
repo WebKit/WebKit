@@ -114,10 +114,7 @@ int main(int argc, char* argv[])
     WebCore::DumpRenderTree::initializeFonts();
 #endif
 
-#if QT_VERSION >= 0x040500
     QApplication::setGraphicsSystem("raster");
-#endif
-
     QApplication::setStyle(new QWindowsStyle);
 
     QFont f("Sans Serif");
