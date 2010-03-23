@@ -1,3 +1,17 @@
+2010-03-23  Chris Evans  <cevans@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Add test for crash due to calling into libxml in invalid state. Note
+        that it is unlikely that this will actually crash for you in the test
+        environment because it is highly intermittent. However, adding test in
+        order to exercise the code path and prevent related regression.
+        See https://bugs.webkit.org/show_bug.cgi?id=36000
+
+        * fast/text/bad-encoding.html: Added.
+        * fast/text/bad-encoding-expected.txt: Added.
+        * fast/text/resources/bad-encoding.xml: Added.
+
 2010-03-23  Nate Chapin  <japhet@chromium.org>
 
         Unreviewed, Chromium test expectations update.
