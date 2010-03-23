@@ -102,6 +102,10 @@
 /* CPU(IA64) - Itanium / IA-64 */
 #if defined(__ia64__)
 #define WTF_CPU_IA64 1
+/* 32-bit mode on Itanium */
+#if !defined(__LP64__)
+#define WTF_CPU_IA64_32 1
+#endif
 #endif
 
 /* CPU(MIPS) - MIPS 32-bit */
@@ -861,7 +865,7 @@
 
 #if !defined(WTF_USE_JSVALUE64) && !defined(WTF_USE_JSVALUE32) && !defined(WTF_USE_JSVALUE32_64)
 #if (CPU(X86_64) && (OS(UNIX) || OS(WINDOWS))) \
-    || CPU(IA64)  \
+    || (CPU(IA64) && !CPU(IA64_32)) \
     || CPU(ALPHA) \
     || CPU(SPARC64)
 #define WTF_USE_JSVALUE64 1
