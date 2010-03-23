@@ -1,3 +1,15 @@
+2010-03-22  Eric Seidel  <eric@webkit.org>
+
+        Rubber-stamped by Brady Eidson.
+
+        fast/loader/cancel-load-during-port-block-timer.html fails on Tiger bot
+        https://bugs.webkit.org/show_bug.cgi?id=36425
+
+        This test bleeds into the next test and causes failures.  Unsure of the
+        cause.  Brady suggests we disable it for now (to match the other disabled) api test.
+
+        * fast/loader/api-test-go-to-current-back-forward-item.html-disabled: Renamed from LayoutTests/fast/loader/api-test-go-to-current-back-forward-item.html.
+
 2010-03-22  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Nate Chapin.
