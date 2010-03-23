@@ -506,14 +506,19 @@ JSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec, JSObject*, JSValue t
     // 15.4.4.12
     JSArray* resObj = constructEmptyArray(exec);
     JSValue result = resObj;
-    unsigned length = thisObj->get(exec, exec->propertyNames().length).toUInt32(exec);
+
+    // FIXME: Firefox returns an empty array.
     if (!args.size())
         return jsUndefined();
-    int begin = args.at(0).toUInt32(exec);
-    if (begin < 0)
-        begin = std::max<int>(begin + length, 0);
-    else
-        begin = std::min<int>(begin, length);
+
+    unsigned length = thisObj->get(exec, exec->propertyNames().length).toInteger(exec);
+    double relativeBegin = args.at(0).toInteger(exec);
+    unsigned begin;
+    if (relativeBegin < 0) {
+        relativeBegin += length;
+        begin = (relativeBegin < 0) ? 0 : static_cast<unsigned>(relativeBegin);
+    } else
+        begin = std::min<unsigned>(relativeBegin, length);
 
     unsigned deleteCount;
     if (args.size() > 1)
@@ -539,7 +544,7 @@ JSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec, JSObject*, JSValue t
             for (unsigned k = length; k > length - deleteCount + additionalArgs; --k)
                 thisObj->deleteProperty(exec, k - 1);
         } else {
-            for (unsigned k = length - deleteCount; (int)k > begin; --k) {
+            for (unsigned k = length - deleteCount; k > begin; --k) {
                 if (JSValue obj = getProperty(exec, thisObj, k + deleteCount - 1))
                     thisObj->put(exec, k + additionalArgs - 1, obj);
                 else

@@ -1,3 +1,17 @@
+2010-03-23  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36511
+        <rdar://problem/7753498> Safari freezes when using SPUTNIK JavaScript conformance check
+
+        Test: fast/js/sputnik-S15.4.4.12_A3_T3.html
+
+        * runtime/ArrayPrototype.cpp: (JSC::arrayProtoFuncSplice): We were incorrectly computing
+        the start offset, and iterated over (almost) all integers. Note that this can be fixed
+        without using doubles, but the code would be much more complicated, and there is no important
+        reason to stick to integers here.
+
 2010-03-23  Kent Hansen  <kent.hansen@nokia.com>
 
         Reviewed by Darin Adler.
