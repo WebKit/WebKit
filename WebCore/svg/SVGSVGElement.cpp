@@ -394,7 +394,8 @@ bool SVGSVGElement::checkEnclosure(SVGElement*, const FloatRect& rect)
 
 void SVGSVGElement::deselectAll()
 {
-    document()->frame()->selection()->clear();
+    if (Frame* frame = document()->frame())
+        frame->selection()->clear();
 }
 
 float SVGSVGElement::createSVGNumber()

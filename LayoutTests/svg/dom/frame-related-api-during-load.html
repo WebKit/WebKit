@@ -1,0 +1,22 @@
+<html>
+<head>
+<script>
+if (window.layoutTestController)
+     layoutTestController.dumpAsText();
+
+function test()
+{
+    html_document = document.implementation.createHTMLDocument();
+    svg_element = html_document.createElementNS("http://www.w3.org/2000/svg","svg");
+    // Implementations of following APIs access Frame object, which can be NULL.
+    svg_element.deselectAll();
+    svg_element.currentScale = svg_element.currentScale;
+
+    document.getElementById("console").innerHTML = "OK unless it got crashed.";
+}
+</script>
+</head>
+<body onload="test()">
+<div id="console"></div>
+</body>
+</html>

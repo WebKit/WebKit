@@ -1,3 +1,13 @@
+2010-03-23  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebCore::SelectionController::setSelection NULL pointer
+        https://bugs.webkit.org/show_bug.cgi?id=31545
+
+        * svg/dom/frame-related-api-during-load-expected.txt: Added.
+        * svg/dom/frame-related-api-during-load.html: Added.
+
 2010-03-23  Qi Zhang  <qi.2.zhang@nokia.com>
 
         Reviewed by Simon Hausmann.
