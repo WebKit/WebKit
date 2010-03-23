@@ -1,3 +1,38 @@
+2010-03-22  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36266, support DOM Level 3 focusin/focusout events.  Add support for
+        IE onfocusin/onfocusout extensions to HTML.  The old DOM level 2 names (DOMFocusIn/DOMFocusOut are still supported).
+
+        Added fast/events/focusinout.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::setFocusedNode):
+        * dom/Event.cpp:
+        (WebCore::Event::aliasedType):
+        (WebCore::Event::hasAliasedType):
+        * dom/Event.h:
+        * dom/EventNames.h:
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::fireEventListeners):
+        * dom/EventTarget.h:
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchUIEvent):
+        * html/HTMLAttributeNames.in:
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::parseMappedAttribute):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::parseMappedAttribute):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::parseMappedAttribute):
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::parseMappedAttribute):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::parseMappedAttribute):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::parseMappedAttribute):
+
 2010-03-23  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Alexey Proskuryakov.

@@ -272,10 +272,22 @@ bool EventTarget::fireEventListeners(Event* event)
         return true;
 
     EventListenerMap::iterator result = d->eventListenerMap.find(event->type());
-    if (result == d->eventListenerMap.end())
-        return false;
-    EventListenerVector& entry = *result->second;
-
+    if (result != d->eventListenerMap.end())
+        fireEventListeners(event, d, *result->second);
+    
+    // Alias DOMFocusIn/DOMFocusOut to focusin/focusout (and vice versa). Just consider them to be the
+    // same event (triggering one another's handlers).  This mechanism allows us to deprecate or change event
+    // names in the future and still make them be interoperable.
+    if (event->hasAliasedType() && !event->immediatePropagationStopped()) {
+        EventListenerMap::iterator result = d->eventListenerMap.find(event->aliasedType());
+        if (result != d->eventListenerMap.end())
+            fireEventListeners(event, d, *result->second);
+    }
+    return !event->defaultPrevented();
+}
+        
+void EventTarget::fireEventListeners(Event* event, EventTargetData* d, EventListenerVector& entry)
+{
     RefPtr<EventTarget> protect = this;
 
     // Fire all listeners registered for this event. Don't fire listeners removed
@@ -303,8 +315,6 @@ bool EventTarget::fireEventListeners(Event* event)
         registeredListener.listener->handleEvent(scriptExecutionContext(), event);
     }
     d->firingEventIterators.removeLast();
-
-    return !event->defaultPrevented();
 }
 
 const EventListenerVector& EventTarget::getEventListeners(const AtomicString& eventType)

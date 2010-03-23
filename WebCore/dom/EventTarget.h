@@ -153,6 +153,8 @@ namespace WebCore {
     private:
         virtual void refEventTarget() = 0;
         virtual void derefEventTarget() = 0;
+        
+        void fireEventListeners(Event*, EventTargetData*, EventListenerVector&);
     };
 
     #define DEFINE_ATTRIBUTE_EVENT_LISTENER(attribute) \

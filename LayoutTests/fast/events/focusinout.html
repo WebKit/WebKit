@@ -1,0 +1,52 @@
+<html onfocusin="writePass('result5')" onfocusout="writePass('result6')">
+<head>
+<script>
+if (window.layoutTestController)
+    window.layoutTestController.dumpAsText();
+
+function writePass(id)
+{
+    document.getElementById(id).innerHTML = "PASS";
+}
+
+function focusHandler(event)
+{
+    writePass('result1');
+}
+
+function blurHandler(event)
+{
+    writePass('result2');
+}
+
+function focusHandlerTwo(event)
+{
+    writePass('result3');
+}
+
+function blurHandlerTwo(event)
+{
+    writePass('result4');
+}
+</script>
+</head>
+<body onload="document.getElementById('field').focus();document.getElementById('field').blur()">
+
+<form>
+<input type=text id="field">
+</form>
+
+<div id="result1">FAIL</div>
+<div id="result2">FAIL</div>
+<div id="result3">FAIL</div>
+<div id="result4">FAIL</div>
+<div id="result5">FAIL</div>
+<div id="result6">FAIL</div>
+
+<script>
+document.documentElement.addEventListener("focusin", focusHandler, false);
+document.documentElement.addEventListener("focusout", blurHandler, false);
+document.documentElement.addEventListener("DOMFocusIn", focusHandlerTwo, false);
+document.documentElement.addEventListener("DOMFocusOut", blurHandlerTwo, false);
+</script>
+

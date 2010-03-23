@@ -163,6 +163,8 @@ onemptied
 onended
 onerror
 onfocus
+onfocusin
+onfocusout
 onhashchange
 oninput
 oninvalid

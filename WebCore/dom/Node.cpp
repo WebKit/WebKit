@@ -2723,7 +2723,8 @@ void Node::dispatchSubtreeModifiedEvent()
 void Node::dispatchUIEvent(const AtomicString& eventType, int detail, PassRefPtr<Event> underlyingEvent)
 {
     ASSERT(!eventDispatchForbidden());
-    ASSERT(eventType == eventNames().DOMFocusInEvent || eventType == eventNames().DOMFocusOutEvent || eventType == eventNames().DOMActivateEvent);
+    ASSERT(eventType == eventNames().focusinEvent || eventType == eventNames().focusoutEvent || 
+           eventType == eventNames().DOMFocusInEvent || eventType == eventNames().DOMFocusOutEvent || eventType == eventNames().DOMActivateEvent);
     
     bool cancelable = eventType == eventNames().DOMActivateEvent;
     

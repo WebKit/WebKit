@@ -60,6 +60,8 @@ namespace WebCore {
     macro(drop) \
     macro(error) \
     macro(focus) \
+    macro(focusin) \
+    macro(focusout) \
     macro(hashchange) \
     macro(input) \
     macro(invalid) \
@@ -100,10 +102,10 @@ namespace WebCore {
     macro(zoom) \
     \
     macro(DOMActivate) \
-    macro(DOMAttrModified) \
-    macro(DOMCharacterDataModified) \
     macro(DOMFocusIn) \
     macro(DOMFocusOut) \
+    macro(DOMAttrModified) \
+    macro(DOMCharacterDataModified) \
     macro(DOMNodeInserted) \
     macro(DOMNodeInsertedIntoDocument) \
     macro(DOMNodeRemoved) \
