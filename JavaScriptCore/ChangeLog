@@ -1,3 +1,21 @@
+2010-03-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Interpreter fix for <rdar://problem/7728196> REGRESSION (r46701): -(-2147483648)
+        evaluates to -2147483648 on 32 bit (35842)
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute): Only take the fast negate path if
+        a bit other than bit 31 is set. If none of bits 0-30 are set, then the
+        value we're negating can only be 0 or -2147483648, and neither can be
+        negated in int space.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_negate):
+        (JSC::JIT::emitSlow_op_negate): Updated the JIT implementation to match
+        the interpreter, since it's slightly simpler.
+
 2010-03-22  Siddharth Mathur  <siddharth.mathur@nokia.com>
 
         Reviewed by Laszlo Gombos.
