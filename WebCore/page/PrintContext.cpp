@@ -58,18 +58,18 @@ void PrintContext::computePageRects(const FloatRect& printRect, float headerHeig
     if (!m_frame->document() || !m_frame->view() || !m_frame->document()->renderer())
         return;
 
-    RenderView* root = toRenderView(m_frame->document()->renderer());
-
-    if (!root) {
-        LOG_ERROR("document to be printed has no renderer");
+    if (userScaleFactor <= 0) {
+        LOG_ERROR("userScaleFactor has bad value %.2f", userScaleFactor);
         return;
     }
+
+    RenderView* root = toRenderView(m_frame->document()->renderer());
 
     float ratio = printRect.height() / printRect.width();
 
     float pageWidth  = (float)root->rightLayoutOverflow();
     float pageHeight = pageWidth * ratio;
-    outPageHeight = pageHeight;   // this is the height of the page adjusted by margins
+    outPageHeight = pageHeight; // this is the height of the page adjusted by margins
     pageHeight -= headerHeight + footerHeight;
 
     if (pageHeight <= 0) {
@@ -77,26 +77,25 @@ void PrintContext::computePageRects(const FloatRect& printRect, float headerHeig
         return;
     }
 
-    computePageRectsWithPageSize(FloatSize(pageWidth, pageHeight), userScaleFactor);
+    computePageRectsWithPageSizeInternal(FloatSize(pageWidth / userScaleFactor, pageHeight / userScaleFactor), false);
 }
 
-void PrintContext::computePageRectsWithPageSize(const FloatSize& pageSizeInPixels, float userScaleFactor)
+void PrintContext::computePageRectsWithPageSize(const FloatSize& pageSizeInPixels, bool allowHorizontalMultiPages)
 {
+    m_pageRects.clear();
+    computePageRectsWithPageSizeInternal(pageSizeInPixels, allowHorizontalMultiPages);
+}
+
+void PrintContext::computePageRectsWithPageSizeInternal(const FloatSize& pageSizeInPixels, bool allowHorizontalMultiPages)
+{
+    if (!m_frame->document() || !m_frame->view() || !m_frame->document()->renderer())
+        return;
     RenderView* root = toRenderView(m_frame->document()->renderer());
 
-    if (!root) {
-        LOG_ERROR("document to be printed has no renderer");
-        return;
-    }
-
-    if (userScaleFactor <= 0) {
-        LOG_ERROR("userScaleFactor has bad value %.2f", userScaleFactor);
-        return;
-    }
-
-    float currPageHeight = pageSizeInPixels.height() / userScaleFactor;
-    float docHeight = root->layer()->height();
-    float currPageWidth = pageSizeInPixels.width() / userScaleFactor;
+    const float pageWidth = pageSizeInPixels.width();
+    const float docWidth = root->layer()->width();
+    const float docHeight = root->layer()->height();
+    float currPageHeight = pageSizeInPixels.height();
 
     // always return at least one page, since empty files should print a blank page
     float printedPagesHeight = 0;
@@ -104,8 +103,11 @@ void PrintContext::computePageRectsWithPageSize(const FloatSize& pageSizeInPixel
         float proposedBottom = std::min(docHeight, printedPagesHeight + pageSizeInPixels.height());
         m_frame->view()->adjustPageHeight(&proposedBottom, printedPagesHeight, proposedBottom, printedPagesHeight);
         currPageHeight = max(1.0f, proposedBottom - printedPagesHeight);
-
-        m_pageRects.append(IntRect(0, (int)printedPagesHeight, (int)currPageWidth, (int)currPageHeight));
+        if (allowHorizontalMultiPages) {
+            for (float curWidth = 0; curWidth < docWidth; curWidth += pageWidth)
+                m_pageRects.append(IntRect(curWidth, (int)printedPagesHeight, (int)pageWidth, (int)currPageHeight));
+        } else
+            m_pageRects.append(IntRect(0, (int)printedPagesHeight, (int)pageWidth, (int)currPageHeight));
         printedPagesHeight += currPageHeight;
     } while (printedPagesHeight < docHeight);
 }
@@ -175,7 +177,7 @@ int PrintContext::pageNumberForElement(Element* element, const FloatSize& pageSi
     FloatRect pageRect(FloatPoint(0, 0), pageSizeInPixels);
     PrintContext printContext(frame);
     printContext.begin(pageRect.width());
-    printContext.computePageRectsWithPageSize(pageSizeInPixels, 1);
+    printContext.computePageRectsWithPageSize(pageSizeInPixels, false);
 
     int top = box->offsetTop();
     int left = box->offsetLeft();
@@ -196,7 +198,7 @@ int PrintContext::numberOfPages(Frame* frame, const FloatSize& pageSizeInPixels)
     FloatRect pageRect(FloatPoint(0, 0), pageSizeInPixels);
     PrintContext printContext(frame);
     printContext.begin(pageRect.width());
-    printContext.computePageRectsWithPageSize(pageSizeInPixels, 1);
+    printContext.computePageRectsWithPageSize(pageSizeInPixels, false);
     printContext.end();
     return printContext.pageCount();
 }

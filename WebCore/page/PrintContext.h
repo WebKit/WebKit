@@ -42,6 +42,7 @@ public:
     const Vector<IntRect>& pageRects() const { return m_pageRects; }
 
     void computePageRects(const FloatRect& printRect, float headerHeight, float footerHeight, float userScaleFactor, float& outPageHeight);
+    void computePageRectsWithPageSize(const FloatSize& pageSizeInPixels, bool allowHorizontalMultiPages);
 
     // TODO: eliminate width param
     void begin(float width);
@@ -56,10 +57,11 @@ public:
     static int numberOfPages(Frame*, const FloatSize& pageSizeInPixels);
 
 protected:
-    void computePageRectsWithPageSize(const FloatSize& pageSizeInPixels, float userScaleFactor);
-
     Frame* m_frame;
     Vector<IntRect> m_pageRects;
+
+private:
+    void computePageRectsWithPageSizeInternal(const FloatSize& pageSizeInPixels, bool allowHorizontalMultiPages);
 };
 
 }

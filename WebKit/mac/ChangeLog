@@ -1,3 +1,15 @@
+2010-03-24  Hayato Ito  <hayato@chromium.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Refactor computePageRects so that Mac can make use of it.
+        https://bugs.webkit.org/show_bug.cgi?id=36159
+
+        Refactoring only, so no new tests.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _computePageRectsWithPrintWidthScaleFactor:printHeight:]):
+
 2010-03-24  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.

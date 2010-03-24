@@ -74,6 +74,7 @@
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/Page.h>
 #import <WebCore/PluginData.h>
+#import <WebCore/PrintContext.h>
 #import <WebCore/RenderLayer.h>
 #import <WebCore/RenderPart.h>
 #import <WebCore/RenderView.h>
@@ -582,22 +583,16 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     if (!documentView)
         return pages;
 
-    float currPageHeight = printHeight;
-    float docHeight = root->layer()->height();
     float docWidth = root->layer()->width();
-    float printWidth = docWidth/printWidthScaleFactor;
-    
-    // We need to give the part the opportunity to adjust the page height at each step.
-    for (float i = 0; i < docHeight; i += currPageHeight) {
-        float proposedBottom = min(docHeight, i + printHeight);
-        view->adjustPageHeight(&proposedBottom, i, proposedBottom, i);
-        currPageHeight = max(1.0f, proposedBottom - i);
-        for (float j = 0; j < docWidth; j += printWidth) {
-            NSValue* val = [NSValue valueWithRect: NSMakeRect(j, i, printWidth, currPageHeight)];
-            [pages addObject: val];
-        }
-    }
-    
+    float printWidth = docWidth / printWidthScaleFactor;
+
+    PrintContext printContext(_private->coreFrame);
+    printContext.computePageRectsWithPageSize(FloatSize(printWidth, printHeight), true);
+
+    const Vector<IntRect>& pageRects = printContext.pageRects();
+    const size_t pageCount = pageRects.size();
+    for (size_t pageNumber = 0; pageNumber < pageCount; ++pageNumber)
+        [pages addObject: [NSValue valueWithRect: NSRect(pageRects[pageNumber])]];
     return pages;
 }
 

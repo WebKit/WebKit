@@ -1,3 +1,21 @@
+2010-03-24  Hayato Ito  <hayato@chromium.org>
+
+        Reviewed by NOBODY (Need!).
+
+        Refactor computePageRects so that Mac can make use of it.
+        https://bugs.webkit.org/show_bug.cgi?id=36159
+
+        Refactoring only, so no new tests.
+
+        * WebCore.base.exp:
+        * page/PrintContext.cpp:
+        (WebCore::PrintContext::computePageRects):
+        (WebCore::PrintContext::computePageRectsWithPageSize):
+        (WebCore::PrintContext::computePageRectsWithPageSizeInternal):
+        (WebCore::PrintContext::pageNumberForElement):
+        (WebCore::PrintContext::numberOfPages):
+        * page/PrintContext.h:
+
 2010-03-24  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by Jeremy Orlow.
