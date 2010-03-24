@@ -1,3 +1,26 @@
+2010-03-23  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        WebCore part of
+        <rdar://problem/7197736> Plug-in clip rect does not update when overflow
+        clip changes
+        https://bugs.webkit.org/show_bug.cgi?id=36479.
+
+        * manual-tests/plugin-visible-rect-change.html: Added.
+        * platform/mac/WidgetMac.mm:
+        (WebCore::WidgetPrivate::WidgetPrivate): Added previousVisibleRect.
+        (WebCore::Widget::setFrameRect): If the visible rect changed but the
+        frame rect did not, send a -visibleRectDidChange message to the view,
+        if it responds to it.
+        (WebCore::Widget::releasePlatformWidget): Reset previousVisibleRect.
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::setWidgetGeometry): Track changes to the clip rect
+        imposed by the enclosing layer. Call Widget::setFrameRect when it changes,
+        even if the frame rect did not.
+        * rendering/RenderWidget.h:
+        (WebCore::RenderWidget::windowClipRect): Added this accessor.
+
 2010-03-23  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

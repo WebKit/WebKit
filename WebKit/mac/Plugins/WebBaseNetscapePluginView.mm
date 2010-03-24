@@ -337,13 +337,10 @@ String WebHaltablePlugin::pluginName() const
 - (NSRect)_windowClipRect
 {
     RenderObject* renderer = _element->renderer();
-    
-    if (renderer && renderer->view()) {
-        if (FrameView* frameView = renderer->view()->frameView())
-            return frameView->windowClipRectForLayer(renderer->enclosingLayer(), true);
-    }
-    
-    return NSZeroRect;
+    if (!renderer || !renderer->view())
+        return NSZeroRect;
+
+    return toRenderWidget(renderer)->windowClipRect();
 }
 
 - (NSRect)visibleRect
@@ -351,6 +348,11 @@ String WebHaltablePlugin::pluginName() const
     // WebCore may impose an additional clip (via CSS overflow or clip properties).  Fetch
     // that clip now.    
     return NSIntersectionRect([self convertRect:[self _windowClipRect] fromView:nil], [super visibleRect]);
+}
+
+- (void)visibleRectDidChange
+{
+    [self renewGState];
 }
 
 - (BOOL)acceptsFirstResponder

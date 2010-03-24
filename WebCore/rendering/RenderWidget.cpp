@@ -151,13 +151,22 @@ RenderWidget::~RenderWidget()
 bool RenderWidget::setWidgetGeometry(const IntRect& frame)
 {
     ASSERT(!widgetHierarchyUpdateSuspendCount);
-    if (!node() || m_widget->frameRect() == frame)
+    if (!node())
         return false;
+
+    IntRect windowClipRect = m_frameView ? m_frameView->windowClipRectForLayer(enclosingLayer(), true) : IntRect();
+    bool clipChanged = m_windowClipRect != windowClipRect;
+    bool boundsChanged = m_widget->frameRect() != frame;
+
+    if (!boundsChanged && !clipChanged)
+        return false;
+
+    m_windowClipRect = windowClipRect;
 
     RenderWidgetProtector protector(this);
     RefPtr<Node> protectedNode(node());
     m_widget->setFrameRect(frame);
-    return true;
+    return boundsChanged;
 }
 
 void RenderWidget::setWidget(PassRefPtr<Widget> widget)

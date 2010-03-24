@@ -1,3 +1,15 @@
+2010-03-23  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        WebKitSystemInterface part of
+        <rdar://problem/7197736> Plug-in clip rect does not update when overflow
+        clip changes
+        https://bugs.webkit.org/show_bug.cgi?id=36479.
+
+        * WebKitSystemInterface.h: Added WKSyncSurfaceToView().
+        * libWebKitSystemInterfaceSnowLeopard.a: Updated
+
 2010-03-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

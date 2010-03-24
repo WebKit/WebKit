@@ -56,12 +56,22 @@
 - (void)webPlugInSetIsSelected:(BOOL)isSelected;
 @end
 
+@interface NSView (Widget)
+- (void)visibleRectDidChange;
+@end
+
 namespace WebCore {
 
 class WidgetPrivate {
 public:
+    WidgetPrivate()
+        : previousVisibleRect(NSZeroRect)
+    {
+    }
+
     bool mustStayInWindow;
     bool removeFromSuperviewSoon;
+    NSRect previousVisibleRect;
 };
 
 static void safeRemoveFromSuperview(NSView *view)
@@ -162,11 +172,15 @@ void Widget::setFrameRect(const IntRect& rect)
     if (!v)
         return;
 
+    NSRect visibleRect = [v visibleRect];
     NSRect f = rect;
     if (!NSEqualRects(f, [v frame])) {
         [v setFrame:f];
-        [v setNeedsDisplay: NO];
-    }
+        [v setNeedsDisplay:NO];
+    } else if (!NSEqualRects(visibleRect, m_data->previousVisibleRect) && [v respondsToSelector:@selector(visibleRectDidChange)])
+        [v visibleRectDidChange];
+
+    m_data->previousVisibleRect = visibleRect;
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
@@ -339,6 +353,7 @@ IntPoint Widget::convertFromContainingWindowToRoot(const Widget* rootWidget, con
 void Widget::releasePlatformWidget()
 {
     HardRelease(m_widget);
+    m_data->previousVisibleRect = NSZeroRect;
 }
 
 void Widget::retainPlatformWidget()

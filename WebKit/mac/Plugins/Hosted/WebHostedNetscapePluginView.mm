@@ -366,6 +366,11 @@ extern "C" {
     [self invalidatePluginContentRect:[self bounds]];
 }
 
+- (void)visibleRectDidChange
+{
+    [super visibleRectDidChange];
+    WKSyncSurfaceToView(self);
+}
 
 - (void)drawRect:(NSRect)rect
 {
