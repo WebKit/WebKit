@@ -1,3 +1,16 @@
+2010-03-24  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        <rdar://problem/7785305>
+        Fix regression caused by r55576. It turned out that ensuring
+        CoreAnimation always gets a correct fill parameter caused flashing
+        as non-filled animations ended (CA briefly showed the initial animation
+        value before the style system set the final value).
+
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::GraphicsLayerCA::setupAnimation):
+
 2010-03-24  Hayato Ito  <hayato@chromium.org>
 
         Reviewed by NOBODY (Need!).

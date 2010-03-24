@@ -1862,10 +1862,10 @@ void GraphicsLayerCA::setupAnimation(CAPropertyAnimation* propertyAnim, const An
     NSString* fillMode = 0;
     switch (anim->fillMode()) {
     case AnimationFillModeNone:
-        fillMode = kCAFillModeRemoved;
+        fillMode = kCAFillModeForwards; // Use "forwards" rather than "removed" because the style system will remove the animation when it is finished. This avoids a flash.
         break;
     case AnimationFillModeBackwards:
-        fillMode = kCAFillModeBackwards;
+        fillMode = kCAFillModeBoth; // Use "both" rather than "backwards" because the style system will remove the animation when it is finished. This avoids a flash.
         break;
     case AnimationFillModeForwards:
        fillMode = kCAFillModeForwards;
