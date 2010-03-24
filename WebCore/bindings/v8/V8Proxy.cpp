@@ -765,6 +765,8 @@ void V8Proxy::createUtilityContext()
     // JavaScript stack frame.
     DEFINE_STATIC_LOCAL(const char*, frameSourceLineSource,
         ("function frameSourceLine(exec_state) {"
+        "  if (!exec_state.frameCount())"
+        "      return undefined;"
         "  return exec_state.frame(0).sourceLine();"
         "}"));
     v8::Script::Compile(v8::String::New(frameSourceLineSource))->Run();
@@ -773,6 +775,8 @@ void V8Proxy::createUtilityContext()
     // JavaScript stack frame.
     DEFINE_STATIC_LOCAL(const char*, frameSourceNameSource,
         ("function frameSourceName(exec_state) {"
+        "  if (!exec_state.frameCount())"
+        "      return undefined;"
         "  var frame = exec_state.frame(0);"
         "  if (frame.func().resolved() && "
         "      frame.func().script() && "

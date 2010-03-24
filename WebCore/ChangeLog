@@ -1,3 +1,11 @@
+2010-03-24  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed. Chromium test fix: added a frameCount check to the
+        debugger function call.
+
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::createUtilityContext):
+
 2010-03-19  Miikka Heikkinen  <miikka.heikkinen@digia.com>
 
         Reviewed by Simon Hausmann.
