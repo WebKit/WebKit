@@ -149,11 +149,7 @@ COMPILE_ASSERT_MATCHING_ENUM(DragOperationMove);
 COMPILE_ASSERT_MATCHING_ENUM(DragOperationDelete);
 COMPILE_ASSERT_MATCHING_ENUM(DragOperationEvery);
 
-// Note that focusOnShow is false so that the suggestions popup is shown not
-// activated.  We need the page to still have focus so the user can keep typing
-// while the popup is showing.
 static const PopupContainerSettings suggestionsPopupSettings = {
-    false,  // focusOnShow
     false,  // setTextOnIndexChange
     false,  // acceptOnAbandon
     true,   // loopSelectionNavigation
@@ -331,6 +327,10 @@ void WebViewImpl::mouseDown(const WebMouseEvent& event)
     if (!mainFrameImpl() || !mainFrameImpl()->frameView())
         return;
 
+    // If there is a select popup opened, close it as the user is clicking on
+    // the page (outside of the popup).
+    hideSelectPopup();
+
     m_lastMouseDownPoint = WebPoint(event.x, event.y);
     m_haveMouseCapture = true;
 
@@ -478,6 +478,10 @@ bool WebViewImpl::keyEvent(const WebKeyboardEvent& event)
     // event.
     m_suppressNextKeypressEvent = false;
 
+    // Give any select popup a chance at consuming the key event.
+    if (selectPopupHandleKeyEvent(event))
+        return true;
+
     // Give Autocomplete a chance to consume the key events it is interested in.
     if (autocompleteHandleKeyEvent(event))
         return true;
@@ -525,6 +529,14 @@ bool WebViewImpl::keyEvent(const WebKeyboardEvent& event)
     }
 
     return keyEventDefault(event);
+}
+
+bool WebViewImpl::selectPopupHandleKeyEvent(const WebKeyboardEvent& event)
+{
+    if (!m_selectPopup)
+        return false;
+    
+    return m_selectPopup->handleKeyEvent(PlatformKeyboardEventBuilder(event));
 }
 
 bool WebViewImpl::autocompleteHandleKeyEvent(const WebKeyboardEvent& event)
@@ -797,6 +809,12 @@ bool WebViewImpl::scrollViewWithKeyboard(int keyCode, int modifiers)
     return propagateScroll(scrollDirection, scrollGranularity);
 }
 
+void WebViewImpl::hideSelectPopup()
+{
+    if (m_selectPopup.get())
+        m_selectPopup->hidePopup();
+}
+
 bool WebViewImpl::propagateScroll(ScrollDirection scrollDirection,
                                   ScrollGranularity scrollGranularity)
 {
@@ -814,6 +832,22 @@ bool WebViewImpl::propagateScroll(ScrollDirection scrollDirection,
         currentFrame = currentFrame->tree()->parent();
     }
     return scrollHandled;
+}
+
+void  WebViewImpl::popupOpened(WebCore::PopupContainer* popupContainer)
+{
+    if (popupContainer->popupType() == WebCore::PopupContainer::Select) {
+        ASSERT(!m_selectPopup);
+        m_selectPopup = popupContainer;
+    }
+}
+
+void  WebViewImpl::popupClosed(WebCore::PopupContainer* popupContainer)
+{
+    if (popupContainer->popupType() == WebCore::PopupContainer::Select) {
+        ASSERT(m_selectPopup.get());
+        m_selectPopup = 0;
+    }
 }
 
 Frame* WebViewImpl::focusedWebCoreFrame()
@@ -1068,6 +1102,7 @@ void WebViewImpl::setFocus(bool enable)
         m_imeAcceptEvents = true;
     } else {
         hideSuggestionsPopup();
+        hideSelectPopup();
 
         // Clear focus on the currently focused frame if any.
         if (!m_page.get())
@@ -1696,6 +1731,7 @@ void WebViewImpl::applyAutoFillSuggestions(
 
     if (!m_autoFillPopup.get()) {
         m_autoFillPopup = PopupContainer::create(m_suggestionsPopupClient,
+                                                 PopupContainer::Suggestion,
                                                  suggestionsPopupSettings);
     }
 
@@ -1751,6 +1787,7 @@ void WebViewImpl::applyAutocompleteSuggestions(
 
     if (!m_autocompletePopup.get()) {
         m_autocompletePopup = PopupContainer::create(m_suggestionsPopupClient,
+                                                     PopupContainer::Suggestion,
                                                      suggestionsPopupSettings);
     }
 

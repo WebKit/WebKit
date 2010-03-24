@@ -48,7 +48,10 @@ public:
     // If handleExternal is true, then drawing and input handling for the
     // popup will be handled by the external embedder.
     virtual void popupOpened(PopupContainer* popupContainer, const IntRect& bounds,
-                             bool focusOnShow, bool handleExternal) = 0;
+                             bool handleExternal) = 0;
+                             
+    // Notifies the client a popup was closed.
+    virtual void popupClosed(PopupContainer* popupContainer) = 0;
 
     // Notifies embedder that the state of an accessibility object has changed.
     virtual void didChangeAccessibilityObjectState(AccessibilityObject*) = 0;

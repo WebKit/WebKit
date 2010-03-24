@@ -74,7 +74,6 @@ static const TimeStamp kTypeAheadTimeoutMs = 1000;
 // The settings used for the drop down menu.
 // This is the delegate used if none is provided.
 static const PopupContainerSettings dropDownSettings = {
-    true,   // focusOnShow
     true,   // setTextOnIndexChange
     true,   // acceptOnAbandon
     false,  // loopSelectionNavigation
@@ -141,6 +140,10 @@ public:
     // Gets the height of a row.
     int getRowHeight(int index);
 
+    void setMaxHeight(int maxHeight) { m_maxHeight = maxHeight; }
+
+    void disconnectClient() { m_popupClient = 0; }
+
     const Vector<PopupItem*>& items() const { return m_items; }
 
 private:
@@ -154,6 +157,7 @@ private:
         , m_acceptedIndexOnAbandon(-1)
         , m_visibleRows(0)
         , m_baseWidth(0)
+        , m_maxHeight(kMaxHeight)
         , m_popupClient(client)
         , m_repeatingChar(0)
         , m_lastCharTime(0)
@@ -165,8 +169,6 @@ private:
     {
         clear();
     }
-
-    void disconnectClient() { m_popupClient = 0; }
 
     // Closes the popup
     void abandon();
@@ -241,6 +243,9 @@ private:
     // Our suggested width, not including scrollbar.
     int m_baseWidth;
 
+    // The maximum height we can be without being off-screen.
+    int m_maxHeight;
+
     // A list of the options contained within the <select>
     Vector<PopupItem*> m_items;
 
@@ -297,14 +302,17 @@ static PlatformWheelEvent constructRelativeWheelEvent(const PlatformWheelEvent& 
 
 // static
 PassRefPtr<PopupContainer> PopupContainer::create(PopupMenuClient* client,
+                                                  PopupType popupType,
                                                   const PopupContainerSettings& settings)
 {
-    return adoptRef(new PopupContainer(client, settings));
+    return adoptRef(new PopupContainer(client, popupType, settings));
 }
 
 PopupContainer::PopupContainer(PopupMenuClient* client,
+                               PopupType popupType,
                                const PopupContainerSettings& settings)
     : m_listBox(PopupListBox::create(client, settings))
+    , m_popupType(popupType)  
     , m_settings(settings)
 {
     setScrollbarModes(ScrollbarAlwaysOff, ScrollbarAlwaysOff);
@@ -321,21 +329,44 @@ void PopupContainer::showPopup(FrameView* view)
     // Pre-layout, our size matches the <select> dropdown control.
     int selectHeight = frameRect().height();
 
+    // Reset the max height to its default value, it will be recomputed below
+    // if necessary.
+    m_listBox->setMaxHeight(kMaxHeight);
+
     // Lay everything out to figure out our preferred size, then tell the view's
     // WidgetClient about it.  It should assign us a client.
     layout();
 
-    ChromeClientChromium* chromeClient = static_cast<ChromeClientChromium*>(
-        view->frame()->page()->chrome()->client());
+    m_frameView = view;
+    ChromeClientChromium* chromeClient = chromeClientChromium();
     if (chromeClient) {
         // If the popup would extend past the bottom of the screen, open upwards
         // instead.
         FloatRect screen = screenAvailableRect(view);
         IntRect widgetRect = chromeClient->windowToScreen(frameRect());
-        if (widgetRect.bottom() > static_cast<int>(screen.bottom()))
-            widgetRect.move(0, -(widgetRect.height() + selectHeight));
 
-        chromeClient->popupOpened(this, widgetRect, m_settings.focusOnShow, false);
+        if (widgetRect.bottom() > static_cast<int>(screen.bottom())) {
+            if (widgetRect.y() - widgetRect.height() - selectHeight > 0) {
+                // There is enough room to open upwards.
+                widgetRect.move(0, -(widgetRect.height() + selectHeight));
+            } else {
+                // Figure whether upwards or downwards has more room and set the
+                // maximum number of items.
+                int spaceAbove = widgetRect.y() - selectHeight;
+                int spaceBelow = screen.bottom() - widgetRect.y();
+                if (spaceAbove > spaceBelow)
+                    m_listBox->setMaxHeight(spaceAbove);
+                else
+                    m_listBox->setMaxHeight(spaceBelow);
+                layout();
+                // Our size has changed, recompute the widgetRect.
+                widgetRect = chromeClient->windowToScreen(frameRect());
+                // And move upwards if necessary.
+                if (spaceAbove > spaceBelow)
+                    widgetRect.move(0, -(widgetRect.height() + selectHeight));
+            }
+        }
+        chromeClient->popupOpened(this, widgetRect, false);
     }
 
     if (!m_listBox->parent())
@@ -368,9 +399,8 @@ void PopupContainer::showExternal(const IntRect& rect, FrameView* v, int index)
     IntRect popupRect(location, rect.size());
 
     // Get the ChromeClient and pass it the popup menu's listbox data.
-    ChromeClientChromium* client = static_cast<ChromeClientChromium*>(
-         v->frame()->page()->chrome()->client());
-    client->popupOpened(this, popupRect, true, true);
+    m_frameView = v;
+    chromeClientChromium()->popupOpened(this, popupRect, true);
 
     // The popup sends its "closed" notification through its parent. Set the
     // parent, even though external popups have no real on-screen widget but a
@@ -382,6 +412,7 @@ void PopupContainer::showExternal(const IntRect& rect, FrameView* v, int index)
 void PopupContainer::hidePopup()
 {
     listBox()->hidePopup();
+    chromeClientChromium()->popupClosed(this);
 }
 
 void PopupContainer::layout()
@@ -392,6 +423,8 @@ void PopupContainer::layout()
     m_listBox->move(kBorderSize, kBorderSize);
 
     // Size ourselves to contain listbox + border.
+    int height = m_listBox->height() + kBorderSize * 2;
+
     resize(m_listBox->width() + kBorderSize * 2, m_listBox->height() + kBorderSize * 2);
 
     invalidate();
@@ -468,6 +501,11 @@ void PopupContainer::paintBorder(GraphicsContext* gc, const IntRect& rect)
 bool PopupContainer::isInterestedInEventForKey(int keyCode)
 {
     return m_listBox->isInterestedInEventForKey(keyCode);
+}
+
+ChromeClientChromium* PopupContainer::chromeClientChromium()
+{
+    return static_cast<ChromeClientChromium*>(m_frameView->frame()->page()->chrome()->client());
 }
 
 void PopupContainer::show(const IntRect& r, FrameView* v, int index)
@@ -1089,7 +1127,8 @@ void PopupListBox::hidePopup()
             container->client()->popupClosed(container);
     }
 
-    m_popupClient->popupDidHide();
+    if (m_popupClient)
+        m_popupClient->popupDidHide();
 }
 
 void PopupListBox::updateFromElement()
@@ -1156,7 +1195,7 @@ void PopupListBox::layout()
         int rowHeight = getRowHeight(i);
 #if !OS(DARWIN)
         // Only clip the window height for non-Mac platforms.
-        if (windowHeight + rowHeight > kMaxHeight) {
+        if (windowHeight + rowHeight > m_maxHeight) {
             m_visibleRows = i;
             break;
         }
@@ -1221,6 +1260,9 @@ PopupMenu::PopupMenu(PopupMenuClient* client)
 
 PopupMenu::~PopupMenu()
 {
+    // When the PopupMenu is destroyed, the client could already have been
+    // deleted.
+    p.popup->listBox()->disconnectClient();
     hide();
 }
 
@@ -1231,7 +1273,7 @@ PopupMenu::~PopupMenu()
 void PopupMenu::show(const IntRect& r, FrameView* v, int index)
 {
     if (!p.popup)
-        p.popup = PopupContainer::create(client(), dropDownSettings);
+        p.popup = PopupContainer::create(client(), PopupContainer::Select, dropDownSettings);
 #if OS(DARWIN)
     p.popup->showExternal(r, v, index);
 #else
