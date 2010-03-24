@@ -1,3 +1,21 @@
+2010-03-24  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Add some diagnostics to try to track down cause of crash in ArchiveFactory::isArchiveMimeType().
+
+        https://bugs.webkit.org/show_bug.cgi?id=36426
+
+        * src/ResourceHandle.cpp: Track state across ResourceHandle invocations.
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        (WebCore::ResourceHandleInternal::):
+        (WebCore::ResourceHandleInternal::start):
+        (WebCore::ResourceHandleInternal::cancel):
+        (WebCore::ResourceHandleInternal::didReceiveResponse):
+        (WebCore::ResourceHandleInternal::didReceiveData):
+        (WebCore::ResourceHandleInternal::didFinishLoading):
+        (WebCore::ResourceHandleInternal::didFail):
+
 2010-03-24  Jay Campan  <jcampan@google.com>
 
         Reviewed by Darin Fisher.
