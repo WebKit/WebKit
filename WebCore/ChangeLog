@@ -1,3 +1,15 @@
+2010-03-24  Dmitry Titov  <dimich@chromium.org>
+
+        Unreviewed, Chromium test fix.
+
+        Recent r56445 added CustomEvent and a test but it didn't work on Chromium bots.
+        Test crashed due to infinte recursion because the compiler did not have the right definition of toV8(CustomEvent*)
+        and was substituting toV8(Event*).
+
+        Fixing test fast/events/custom-event.html
+
+        * bindings/v8/custom/V8EventCustom.cpp:
+
 2010-03-24  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Darin Adler.

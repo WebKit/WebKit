@@ -39,6 +39,7 @@
 #include "V8Binding.h"
 #include "V8Clipboard.h"
 #include "V8CompositionEvent.h"
+#include "V8CustomEvent.h"
 #include "V8ErrorEvent.h"
 #include "V8KeyboardEvent.h"
 #include "V8MessageEvent.h"
