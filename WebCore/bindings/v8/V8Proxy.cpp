@@ -666,10 +666,12 @@ void V8Proxy::setDOMException(int exceptionCode)
         exception = toV8(XPathException::create(description));
         break;
 #endif
+    default:
+        ASSERT_NOT_REACHED();
     }
 
-    ASSERT(!exception.IsEmpty());
-    v8::ThrowException(exception);
+    if (!exception.IsEmpty())
+        v8::ThrowException(exception);
 }
 
 v8::Handle<v8::Value> V8Proxy::throwError(ErrorType type, const char* message)
