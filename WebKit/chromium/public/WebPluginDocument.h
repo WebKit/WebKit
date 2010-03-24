@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,58 +28,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebDocument_h
-#define WebDocument_h
+#ifndef WebPluginDocument_h
+#define WebPluginDocument_h
 
-#include "WebNode.h"
+#include "WebDocument.h"
 
 #if WEBKIT_IMPLEMENTATION
-namespace WebCore { class Document; }
-namespace WTF { template <typename T> class PassRefPtr; }
+namespace WebCore { class PluginDocument; }
 #endif
 
 namespace WebKit {
-class WebElement;
-class WebFrame;
-class WebNodeCollection;
-class WebNodeList;
-class WebString;
-class WebURL;
+class WebPlugin;
 
-// Provides readonly access to some properties of a DOM document.
-class WebDocument : public WebNode {
+// Wraps a WebDocument for full page plugins.
+class WebPluginDocument : public WebDocument {
 public:
-    WebDocument() { }
-    WebDocument(const WebDocument& e) : WebNode(e) { }
+    WebPluginDocument() { }
+    WebPluginDocument(const WebPluginDocument& e) : WebDocument(e) { }
 
-    WebDocument& operator=(const WebDocument& e)
+    WebPluginDocument& operator=(const WebPluginDocument& e)
     {
         WebNode::assign(e);
         return *this;
     }
-    void assign(const WebDocument& e) { WebNode::assign(e); }
+    void assign(const WebPluginDocument& d) { WebNode::assign(d); }
 
-    // Returns the frame the document belongs to or 0 if the document is frameless.
-    WEBKIT_API WebFrame* frame() const;
-    WEBKIT_API bool isHTMLDocument() const;
-    WEBKIT_API bool isPluginDocument() const;
-    WEBKIT_API WebURL baseURL() const;
-    WEBKIT_API WebURL firstPartyForCookies() const;
-    WEBKIT_API WebElement documentElement() const;
-    WEBKIT_API WebElement body() const;
-    WEBKIT_API WebElement head();
-    WEBKIT_API WebString title() const;
-    WEBKIT_API WebNodeCollection all();
-    WEBKIT_API WebURL completeURL(const WebString&) const;
-    WEBKIT_API WebElement getElementById(const WebString&) const;
-    WEBKIT_API WebNodeList getElementsByTagName(const WebString&);
-    WEBKIT_API WebString applicationID() const;
-    WEBKIT_API WebNode focusedNode() const;
+    WEBKIT_API WebPlugin* plugin();
 
 #if WEBKIT_IMPLEMENTATION
-    WebDocument(const WTF::PassRefPtr<WebCore::Document>&);
-    WebDocument& operator=(const WTF::PassRefPtr<WebCore::Document>&);
-    operator WTF::PassRefPtr<WebCore::Document>() const;
+    WebPluginDocument(const WTF::PassRefPtr<WebCore::PluginDocument>&);
+    WebPluginDocument& operator=(const WTF::PassRefPtr<WebCore::PluginDocument>&);
+    operator WTF::PassRefPtr<WebCore::PluginDocument>() const;
 #endif
 };
 

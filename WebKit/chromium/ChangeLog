@@ -1,3 +1,27 @@
+2010-03-24  John Abd-El-Malek  <jam@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium]WebKit side of adding search support to Pepper.
+        https://bugs.webkit.org/show_bug.cgi?id=36434
+
+        * WebKit.gyp:
+        * public/WebDocument.h:
+        * public/WebNode.h:
+        (WebKit::WebNode::to):
+        (WebKit::WebNode::toConst):
+        * public/WebPluginDocument.h: Added.
+        (WebKit::WebPluginDocument::WebPluginDocument):
+        (WebKit::WebPluginDocument::operator=):
+        (WebKit::WebPluginDocument::assign):
+        * src/WebDocument.cpp:
+        (WebKit::WebDocument::isPluginDocument):
+        * src/WebPluginDocument.cpp: Added.
+        (WebKit::WebPluginDocument::plugin):
+        (WebKit::WebPluginDocument::WebPluginDocument):
+        (WebKit::WebPluginDocument::operator=):
+        (WebKit::WebPluginDocument::operator PassRefPtr<PluginDocument>):
+
 2010-03-24  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by Jeremy Orlow.

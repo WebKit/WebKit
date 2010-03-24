@@ -62,6 +62,11 @@ bool WebDocument::isHTMLDocument() const
     return constUnwrap<Document>()->isHTMLDocument();
 }
 
+bool WebDocument::isPluginDocument() const
+{  
+    return constUnwrap<Document>()->isPluginDocument();
+}
+
 WebURL WebDocument::baseURL() const
 {
     return constUnwrap<Document>()->baseURL();
