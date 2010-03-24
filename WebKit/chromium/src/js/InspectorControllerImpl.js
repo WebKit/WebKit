@@ -72,6 +72,7 @@ devtools.InspectorBackendImpl = function()
     this.installInspectorControllerDelegate_("stopTimelineProfiler");
     this.installInspectorControllerDelegate_("storeLastActivePanel");
 
+    this.installInspectorControllerDelegate_("getAllStyles");
     this.installInspectorControllerDelegate_("getStyles");
     this.installInspectorControllerDelegate_("getComputedStyle");
     this.installInspectorControllerDelegate_("getInlineStyle");
