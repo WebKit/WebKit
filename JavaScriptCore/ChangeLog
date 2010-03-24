@@ -1,5 +1,9 @@
 2010-03-23  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by NOBODY (speculative windows build fix).
+
+2010-03-23  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Bug 36519 - JSGlobalContextRelease is unnecessarily slow
