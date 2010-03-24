@@ -1,5 +1,30 @@
 2010-03-24  David Kilzer  <ddkilzer@apple.com>
 
+        <http://webkit.org/b/36560> resolve-ChangeLogs: git-rebase fails when resolve-ChangeLogs can't merge
+
+        Reviewed by Eric Seidel.
+
+        When resolve-ChangeLogs fails to merge a patch while running as
+        a git merge driver, it deletes the original file, which causes
+        an internal failure and stops git mid-merge:
+
+            fatal: Failed to execute internal merge
+
+        The fix is to use the --force switch with patch so that it will
+        always attempt to apply the patch.  (The change in
+        mergeChangeLogs() for the previous commit also fixed this, but
+        adding --force also prevents any potential user interaction that
+        patch may want to display.)
+
+        * Scripts/VCSUtils.pm:
+        (mergeChangeLogs): Added --force switch to patch command.  Also
+        changed to use the exit status from the patch command to
+        determine the return value for this method.
+        * Scripts/webkitperl/VCSUtils_unittest/mergeChangeLogs.pl: Added
+        test to cover this bug.
+
+2010-03-24  David Kilzer  <ddkilzer@apple.com>
+
         <http://webkit.org/b/36560> resolve-ChangeLogs: move mergeChanges() into VCSUtils package
 
         Reviewed by Eric Seidel.

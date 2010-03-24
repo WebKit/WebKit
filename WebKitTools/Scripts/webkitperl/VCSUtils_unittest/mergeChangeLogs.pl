@@ -26,7 +26,7 @@
 
 use strict;
 
-use Test::Simple tests => 12;
+use Test::Simple tests => 16;
 use File::Temp qw(tempfile);
 use VCSUtils;
 
@@ -257,6 +257,77 @@ EOF
     $expectedContent .= $fileNewerContent;
 
     ok(readFile($fileNewer) eq $expectedContent, "$title: \$fileNewer should be patched");
+
+    unlink($fileMine, $fileOlder, $fileNewer);
+}
+
+# --------------------------------------------------------------------------------
+
+{
+    # New test
+    my $title = "mergeChangeLogs: patch fails";
+
+    my $fileMineContent = <<'EOF';
+2010-01-29  Mark Rowe  <mrowe@apple.com>
+
+        Fix the Mac build.
+
+        Disable ENABLE_INDEXED_DATABASE since it is "completely non-functional".
+
+2010-01-29  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Rubber-stamped by Maciej Stachowiak.
+
+        Fix the ARM build.
+EOF
+    my $fileMine = writeTempFile("fileMine", "", $fileMineContent);
+
+    my $fileOlderContent = <<'EOF';
+2010-01-29  Mark Rowe  <mrowe@apple.com>
+
+        Fix the Mac build.
+
+        Disable ENABLE_INDEXED_DATABASE since it is "completely non-functional".
+
+2010-01-29  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin Adler.
+
+        JSC is failing to propagate anonymous slot count on some transitions
+
+2010-01-29  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Rubber-stamped by Maciej Stachowiak.
+
+        Fix the ARM build.
+EOF
+    my $fileOlder = writeTempFile("fileOlder", "", $fileOlderContent);
+
+    my $fileNewerContent = <<'EOF';
+2010-01-29  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin Adler.
+
+        JSC is failing to propagate anonymous slot count on some transitions
+
+2010-01-29  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Rubber-stamped by Maciej Stachowiak.
+
+        Fix the ARM build.
+EOF
+    my $fileNewer = writeTempFile("fileNewer", "", $fileNewerContent);
+
+    my $exitStatus = mergeChangeLogs($fileMine, $fileOlder, $fileNewer);
+
+    # mergeChangeLogs() should return a non-zero exit status since the patch failed.
+    ok($exitStatus == 0, "$title: return non-zero exit status for failure");
+
+    ok(readFile($fileMine) eq $fileMineContent, "$title: \$fileMine should be unchanged");
+    ok(readFile($fileOlder) eq $fileOlderContent, "$title: \$fileOlder should be unchanged");
+
+    # $fileNewer should still exist unchanged because the patch failed
+    ok(readFile($fileNewer) eq $fileNewerContent, "$title: \$fileNewer should be unchanged");
 
     unlink($fileMine, $fileOlder, $fileNewer);
 }

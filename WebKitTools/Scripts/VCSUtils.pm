@@ -861,11 +861,11 @@ sub mergeChangeLogs($$$)
     unlink("${fileNewer}.orig");
     unlink("${fileNewer}.rej");
 
-    open(PATCH, "| patch --fuzz=3 --binary $fileNewer > " . File::Spec->devnull()) or die $!;
+    open(PATCH, "| patch --force --fuzz=3 --binary $fileNewer > " . File::Spec->devnull()) or die $!;
     print PATCH ($traditionalReject ? $patch : fixChangeLogPatch($patch));
     close(PATCH);
 
-    my $result;
+    my $result = !exitStatus($?);
 
     # Refuse to merge the patch if it did not apply cleanly
     if (-e "${fileNewer}.rej") {
@@ -874,10 +874,8 @@ sub mergeChangeLogs($$$)
             unlink($fileNewer);
             rename("${fileNewer}.orig", $fileNewer);
         }
-        $result = 0;
     } else {
         unlink("${fileNewer}.orig");
-        $result = 1;
     }
 
     if ($traditionalReject) {
