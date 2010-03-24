@@ -270,9 +270,9 @@ static void fixMenusReceivedFromOldClients(NSMutableArray *newMenuItems, NSMutab
 
 NSMutableArray* WebContextMenuClient::getCustomMenuFromDefaultItems(ContextMenu* defaultMenu)
 {
-//    id delegate = [m_webView UIDelegate];
+    id delegate = [m_webView UIDelegate];
     SEL selector = @selector(webView:contextMenuItemsForElement:defaultMenuItems:);
-//    if (![delegate respondsToSelector:selector])
+    if (![delegate respondsToSelector:selector])
         return defaultMenu->platformDescription();
 
     NSDictionary *element = [[[WebElementDictionary alloc] initWithHitTestResult:defaultMenu->hitTestResult()] autorelease];

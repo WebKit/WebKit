@@ -1,5 +1,12 @@
 2010-03-23  Dan Bernstein  <mitz@apple.com>
 
+        Reverted accidental change from r56429.
+
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (WebContextMenuClient::getCustomMenuFromDefaultItems):
+
+2010-03-23  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by John Sullivan.
 
         WebKit part of
