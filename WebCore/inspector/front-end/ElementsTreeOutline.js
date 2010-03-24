@@ -69,6 +69,11 @@ WebInspector.ElementsTreeOutline.prototype = {
         return this._isXMLMimeType;
     },
 
+    nodeNameToCorrectCase: function(nodeName)
+    {
+        return this.isXMLMimeType ? nodeName : nodeName.toLowerCase();
+    },
+
     get focusedDOMNode()
     {
         return this._focusedDOMNode;
@@ -576,7 +581,7 @@ WebInspector.ElementsTreeElement.prototype = {
 
         var lastChild = this.children[this.children.length - 1];
         if (this.representedObject.nodeType == Node.ELEMENT_NODE && (!lastChild || !lastChild.elementCloseTag)) {
-            var title = "<span class=\"webkit-html-tag close\">&lt;/" + this.representedObject.nodeName.toLowerCase().escapeHTML() + "&gt;</span>";
+            var title = "<span class=\"webkit-html-tag close\">&lt;/" + this.treeOutline.nodeNameToCorrectCase(this.representedObject.nodeName).escapeHTML() + "&gt;</span>";
             var item = new TreeElement(title, null, false);
             item.selectable = false;
             item.elementCloseTag = true;
@@ -1066,7 +1071,7 @@ WebInspector.ElementsTreeElement.prototype = {
                 break;
 
             case Node.ELEMENT_NODE:
-                var tagName = node.nodeName.toLowerCase().escapeHTML();
+                var tagName = this.treeOutline.nodeNameToCorrectCase(node.nodeName).escapeHTML();
                 info.title = "<span class=\"webkit-html-tag\">&lt;" + tagName;
                 
                 if (node.hasAttributes()) {
@@ -1111,18 +1116,18 @@ WebInspector.ElementsTreeElement.prototype = {
                 if (isNodeWhitespace.call(node))
                     info.title = "(whitespace)";
                 else {
-                    if (node.parentNode && node.parentNode.nodeName.toLowerCase() == "script") {
+                    if (node.parentNode && node.parentNode.nodeName.toLowerCase() === "script") {
                         var newNode = document.createElement("span");
                         newNode.textContent = node.textContent;
 
                         var javascriptSyntaxHighlighter = new WebInspector.DOMSyntaxHighlighter("text/javascript");
                         javascriptSyntaxHighlighter.syntaxHighlightNode(newNode);
-                        
+
                         info.title = "<span class=\"webkit-html-text-node webkit-html-js-node\">" + newNode.innerHTML.replace(/^[\n\r]*/, "").replace(/\s*$/, "") + "</span>";
-                    } else if (node.parentNode && node.parentNode.nodeName.toLowerCase() == "style") {
+                    } else if (node.parentNode && node.parentNode.nodeName.toLowerCase() === "style") {
                         var newNode = document.createElement("span");
                         newNode.textContent = node.textContent;
-                        
+
                         var cssSyntaxHighlighter = new WebInspector.DOMSyntaxHighlighter("text/css");
                         cssSyntaxHighlighter.syntaxHighlightNode(newNode);
                         
@@ -1132,11 +1137,11 @@ WebInspector.ElementsTreeElement.prototype = {
                     }
                 } 
                 break;
-                
+
             case Node.COMMENT_NODE:
                 info.title = "<span class=\"webkit-html-comment\">&lt;!--" + node.nodeValue.escapeHTML() + "--&gt;</span>";
                 break;
-                
+
             case Node.DOCUMENT_TYPE_NODE:
                 info.title = "<span class=\"webkit-html-doctype\">&lt;!DOCTYPE " + node.nodeName;
                 if (node.publicId) {
@@ -1150,9 +1155,9 @@ WebInspector.ElementsTreeElement.prototype = {
                 info.title += "&gt;</span>";
                 break;
             default:
-                info.title = node.nodeName.toLowerCase().collapseWhitespace().escapeHTML();
+                info.title = this.treeOutline.nodeNameToCorrectCase(node.nodeName).collapseWhitespace().escapeHTML();
         }
-        
+
         return info;
     },
 
@@ -1165,7 +1170,7 @@ WebInspector.ElementsTreeElement.prototype = {
         }
         return false;
     },
-    
+
     remove: function()
     {
         var parentElement = this.parent;

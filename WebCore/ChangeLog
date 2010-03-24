@@ -1,3 +1,18 @@
+2010-03-24  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Inspector: XML Tags should not be converted to lowercase
+        https://bugs.webkit.org/show_bug.cgi?id=28600
+
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.updateBreadcrumb):
+        (WebInspector.ElementsPanel.prototype.decorateNodeLabel):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline.prototype.nodeNameToCorrectCase):
+        (WebInspector.ElementsTreeElement.prototype._updateChildren):
+        (WebInspector.ElementsTreeElement.prototype._nodeTitleInfo):
+
 2010-03-03  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Antti Koivisto.

@@ -692,7 +692,7 @@ WebInspector.ElementsPanel.prototype = {
                     break;
 
                 default:
-                    crumbTitle = current.nodeName.toLowerCase();
+                    crumbTitle = this.treeOutline.nodeNameToCorrectCase(current.nodeName);
             }
 
             if (!crumb.childNodes.length) {
@@ -720,7 +720,7 @@ WebInspector.ElementsPanel.prototype = {
 
     decorateNodeLabel: function(node, parentElement)
     {
-        var title = node.nodeName.toLowerCase();
+        var title = this.treeOutline.nodeNameToCorrectCase(node.nodeName);
 
         var nameElement = document.createElement("span");
         nameElement.textContent = title;
