@@ -345,9 +345,8 @@ WebInspector.TimelinePanel.prototype = {
         this._boundariesAreValid = true;
     },
 
-    _refreshRecords: function(updateBoundaries)
+    _updateBoundaries: function()
     {
-        if (updateBoundaries) {
             this._calculator.reset();
             this._calculator.windowLeft = this._overviewPane.windowLeft;
             this._calculator.windowRight = this._overviewPane.windowRight;
@@ -356,8 +355,21 @@ WebInspector.TimelinePanel.prototype = {
                 this._calculator.updateBoundaries(this._rootRecord.children[i]);
 
             this._calculator.calculateWindow();
-        }
+    },
 
+    _addToRecordsWindow: function(record, recordsWindow)
+    {
+        recordsWindow.push(record);
+        if (!record.collapsed) {
+            var index = recordsWindow.length;
+            for (var i = 0; i < record.children.length; ++i)
+                this._addToRecordsWindow(record.children[i], recordsWindow);
+            record.visibleChildrenCount = recordsWindow.length - index;
+        }
+    },
+
+    _filterRecords: function()
+    {
         var recordsInWindow = [];
         for (var i = 0; i < this._rootRecord.children.length; ++i) {
             var record = this._rootRecord.children[i];
@@ -365,6 +377,15 @@ WebInspector.TimelinePanel.prototype = {
             if (percentages.start < 100 && percentages.endWithChildren >= 0 && !record.category.hidden)
                 this._addToRecordsWindow(record, recordsInWindow);
         }
+        return recordsInWindow;
+    },
+
+    _refreshRecords: function(updateBoundaries)
+    {
+        if (updateBoundaries)
+            this._updateBoundaries();
+
+        var recordsInWindow = this._filterRecords();
 
         // Calculate the visible area.
         this._scrollTop = this._containerElement.scrollTop;
@@ -377,11 +398,7 @@ WebInspector.TimelinePanel.prototype = {
 
         // Convert visible area to visible indexes. Always include top-level record for a visible nested record.
         var startIndex = Math.max(0, Math.min(Math.floor(visibleTop / rowHeight) - 1, recordsInWindow.length - 1));
-        while (startIndex > 0 && recordsInWindow[startIndex].parent)
-            startIndex--;
         var endIndex = Math.min(recordsInWindow.length, Math.ceil(visibleBottom / rowHeight));
-        while (endIndex < recordsInWindow.length - 1 && recordsInWindow[endIndex].parent)
-            endIndex++;
 
         // Resize gaps first.
         const top = (startIndex * rowHeight) + "px";
@@ -436,17 +453,6 @@ WebInspector.TimelinePanel.prototype = {
         if (updateBoundaries)
             this._timelineGrid.updateDividers(true, this._calculator, timelinePaddingLeft);
         this._adjustScrollPosition((recordsInWindow.length + 1) * rowHeight);
-    },
-
-    _addToRecordsWindow: function(record, recordsWindow)
-    {
-        recordsWindow.push(record);
-        if (!record.collapsed) {
-            var index = recordsWindow.length;
-            for (var i = 0; i < record.children.length; ++i)
-                this._addToRecordsWindow(record.children[i], recordsWindow);
-            record.visibleChildrenCount = recordsWindow.length - index;
-        }
     },
 
     _adjustScrollPosition: function(totalHeight)
