@@ -6,9 +6,12 @@ symbian: {
     TARGET.EPOCALLOWDLLDATA=1
     TARGET.EPOCHEAPSIZE = 0x20000 0x2000000 // Min 128kB, Max 32MB
     TARGET.CAPABILITY = All -Tcb
-    TARGET.UID3 = 0x200267C2
-
-    webkitlibs.sources = QtWebKit.dll
+    isEmpty(QT_LIBINFIX) {
+        TARGET.UID3 = 0x200267C2
+    } else {
+        TARGET.UID3 = 0xE00267C2
+    }
+    webkitlibs.sources = QtWebKit$${QT_LIBINFIX}.dll
     webkitlibs.path = /sys/bin
     vendorinfo = \
         "; Localised Vendor name" \

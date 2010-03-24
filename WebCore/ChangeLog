@@ -1,3 +1,15 @@
+2010-03-19  Miikka Heikkinen  <miikka.heikkinen@digia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Support for QT_LIBINFIX in Symbian builds
+
+        Configuring Qt with -qtlibinfix parameter will enable installing
+        an alternate version of Qt on devices that already have it on ROM.
+        This patch provides support for infixed builds of Webkit.
+
+        * WebCore.pro:
+
 2010-03-24  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.
