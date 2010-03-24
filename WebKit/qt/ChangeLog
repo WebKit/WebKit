@@ -1,3 +1,31 @@
+2010-03-23  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        Calling setView(0) on a QWebPage being shown by a QGraphicsWebView,
+        would uninstall the page client, deleting the QGraphicsWebViewPrivate
+        instance. If called with an argument, it would do a wrong static_cast
+        and crash.
+
+        * Api/qwebpage.cpp:
+        (QWebPageWidgetClient::QWebPageWidgetClient):
+        (QWebPageWidgetClient::isQWidgetClient):
+        (QWebPageWidgetClient::screenNumber):
+        (QWebPage::QWebPage):
+        (QWebPage::setView):
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebViewPrivate::unsetPageIfExists):
+        (QGraphicsWebView::setPage):
+        * Api/qwebpage.cpp:
+        (QWebPageWidgetClient::isQWidgetClient):
+        (QWebPageWidgetClient::screenNumber):
+        (QWebPage::QWebPage):
+        (QWebPage::setView):
+        * Api/qwebpage.h:
+        * Api/qwebview.cpp:
+        (QWebViewPrivate::unsetPageIfExists):
+        (QWebView::setPage):
+
 2010-03-24  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.

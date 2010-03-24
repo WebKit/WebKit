@@ -1,3 +1,13 @@
+2010-03-23  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        Add a way to check if the page client is making use of
+        a QWidget.
+
+        * platform/qt/QWebPageClient.h:
+        (QWebPageClient::isQWidgetClient):
+
 2010-03-24  Jay Campan  <jcampan@google.com>
 
         Reviewed by Darin Fisher.

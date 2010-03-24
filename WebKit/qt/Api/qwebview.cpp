@@ -45,6 +45,7 @@ public:
     }
 
     void _q_pageDestroyed();
+    void unsetPageIfExists();
 
     QWebView *view;
     QWebPage *page;
@@ -347,6 +348,29 @@ QWebPage *QWebView::page() const
     return d->page;
 }
 
+void QWebViewPrivate::unsetPageIfExists()
+{
+    if (!page)
+        return;
+
+    // if the page client is the special client constructed for
+    // delegating the responsibilities to a QWidget, we need
+    // to destroy it.
+
+    if (page->d->client && page->d->client->isQWidgetClient())
+        delete page->d->client;
+
+    page->d->client = 0;
+
+    // if the page was created by us, we own it and need to
+    // destroy it as well.
+
+    if (page->parent() == view)
+        delete page;
+    else
+        page->disconnect(view);
+}
+
 /*!
     Makes \a page the new web page of the web view.
 
@@ -360,14 +384,10 @@ void QWebView::setPage(QWebPage* page)
 {
     if (d->page == page)
         return;
-    if (d->page) {
-        d->page->d->client = 0; // unset the page client
-        if (d->page->parent() == this)
-            delete d->page;
-        else
-            d->page->disconnect(this);
-    }
+
+    d->unsetPageIfExists();
     d->page = page;
+
     if (d->page) {
         d->page->setView(this);
         d->page->setPalette(palette());

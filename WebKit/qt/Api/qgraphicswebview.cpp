@@ -95,6 +95,7 @@ public:
     }
 
     virtual ~QGraphicsWebViewPrivate();
+
     virtual void scroll(int dx, int dy, const QRect&);
     virtual void update(const QRect& dirtyRect);
     virtual void setInputMethodEnabled(bool enable);
@@ -121,7 +122,7 @@ public:
     virtual void markForSync(bool scheduleSync);
     void updateCompositingScrollPosition();
 #endif
-    
+
     void updateResizesToContentsForPage();
     QRectF graphicsItemVisibleRect() const;
 #if ENABLE(TILED_BACKING_STORE)
@@ -131,6 +132,9 @@ public:
     void createOrDeleteOverlay();
 
     void syncLayers();
+
+    void unsetPageIfExists();
+
     void _q_doLoadFinished(bool success);
     void _q_contentsSizeChanged(const QSize&);
     void _q_scaleChanged();
@@ -687,6 +691,29 @@ bool QGraphicsWebView::event(QEvent* event)
     return QGraphicsWidget::event(event);
 }
 
+void QGraphicsWebViewPrivate::unsetPageIfExists()
+{
+    if (!page)
+        return;
+
+    // if the page client is the special client constructed for
+    // delegating the responsibilities to a QWidget, we need
+    // to destroy it.
+
+    if (page->d->client && page->d->client->isQWidgetClient())
+        delete page->d->client;
+
+    page->d->client = 0;
+
+    // if the page was created by us, we own it and need to
+    // destroy it as well.
+
+    if (page->parent() == q)
+        delete page;
+    else
+        page->disconnect(q);
+}
+
 /*!
     Makes \a page the new web page of the web graphicsitem.
 
@@ -701,24 +728,20 @@ void QGraphicsWebView::setPage(QWebPage* page)
     if (d->page == page)
         return;
 
-    if (d->page) {
-        d->page->d->client = 0; // unset the page client
-        if (d->page->parent() == this)
-            delete d->page;
-        else
-            d->page->disconnect(this);
-    }
-
+    d->unsetPageIfExists();
     d->page = page;
+
     if (!d->page)
         return;
+
+    d->page->d->client = d; // set the page client
+
     if (d->overlay)
         d->overlay->prepareGeometryChange();
-    d->page->d->client = d; // set the page client
 
     QSize size = geometry().size().toSize();
     page->setViewportSize(size);
-    
+
     if (d->resizesToContents)
         d->updateResizesToContentsForPage();
 
