@@ -1,3 +1,19 @@
+2010-03-24  Anton Muhin  <antonm@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        Use newly introduced SetPrototype method to deal with global objects.
+        https://bugs.webkit.org/show_bug.cgi?id=36497
+
+        No new tests, should be covered by the current test infrastructure.
+
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::installDOMWindow):
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::getConstructor):
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::WorkerContextExecutionProxy::initContextIfNeeded):
+
 2010-03-24  Dmitry Titov  <dimich@chromium.org>
 
         Unreviewed, Chromium build fix.

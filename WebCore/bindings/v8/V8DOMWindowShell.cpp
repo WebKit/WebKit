@@ -344,10 +344,6 @@ v8::Persistent<v8::Context> V8DOMWindowShell::createNewContext(v8::Handle<v8::Ob
 
 bool V8DOMWindowShell::installDOMWindow(v8::Handle<v8::Context> context, DOMWindow* window)
 {
-    v8::Handle<v8::String> implicitProtoString = v8::String::New("__proto__");
-    if (implicitProtoString.IsEmpty())
-        return false;
-
     // Create a new JS window object and use it as the prototype for the  shadow global object.
     v8::Handle<v8::Function> windowConstructor = V8DOMWrapper::getConstructor(&V8DOMWindow::info, getHiddenObjectPrototype(context));
     v8::Local<v8::Object> jsWindow = SafeAllocation::newInstance(windowConstructor);
@@ -363,9 +359,9 @@ bool V8DOMWindowShell::installDOMWindow(v8::Handle<v8::Context> context, DOMWind
     V8DOMWrapper::setJSWrapperForDOMObject(window, v8::Persistent<v8::Object>::New(jsWindow));
 
     // Insert the window instance as the prototype of the shadow object.
-    v8::Handle<v8::Object> v8Global = context->Global();
-    V8DOMWrapper::setDOMWrapper(v8::Handle<v8::Object>::Cast(v8Global->GetPrototype()), &V8DOMWindow::info, window);
-    v8Global->Set(implicitProtoString, jsWindow);
+    v8::Handle<v8::Object> v8RealGlobal = v8::Handle<v8::Object>::Cast(context->Global()->GetPrototype());
+    V8DOMWrapper::setDOMWrapper(v8RealGlobal, &V8DOMWindow::info, window);
+    v8RealGlobal->SetPrototype(jsWindow);
     return true;
 }
 

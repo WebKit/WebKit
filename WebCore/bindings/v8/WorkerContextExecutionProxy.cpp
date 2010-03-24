@@ -165,9 +165,6 @@ bool WorkerContextExecutionProxy::initContextIfNeeded()
 
     v8::Context::Scope scope(context);
 
-    // Allocate strings used during initialization.
-    v8::Handle<v8::String> implicitProtoString = v8::String::New("__proto__");
-
     // Create a new JS object and use it as the prototype for the shadow global object.
     WrapperTypeInfo* contextType = &V8DedicatedWorkerContext::info;
 #if ENABLE(SHARED_WORKERS)
@@ -189,8 +186,8 @@ bool WorkerContextExecutionProxy::initContextIfNeeded()
     m_workerContext->ref();
 
     // Insert the object instance as the prototype of the shadow object.
-    v8::Handle<v8::Object> globalObject = m_context->Global();
-    globalObject->Set(implicitProtoString, jsWorkerContext);
+    v8::Handle<v8::Object> globalObject = v8::Handle<v8::Object>::Cast(m_context->Global()->GetPrototype());
+    globalObject->SetPrototype(jsWorkerContext);
     return true;
 }
 
