@@ -86,6 +86,8 @@ static const char* staticKeyIdentifiers(unsigned short keyCode)
     case VKEY_F9:
         return "F9";
     case VKEY_F10:
+        return "F10";
+    case VKEY_F11:
         return "F11";
     case VKEY_F12:
         return "F12";

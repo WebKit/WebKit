@@ -1,3 +1,13 @@
+2010-03-24  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        [Chromium] Fix VKEY_F10, VKEY_F11 translation in WebInputEvent.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=36524
+
+        * src/WebInputEvent.cpp:
+        (WebKit::staticKeyIdentifiers):
+
 2010-03-24  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.
