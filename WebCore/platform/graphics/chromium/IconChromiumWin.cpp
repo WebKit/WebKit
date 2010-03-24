@@ -52,13 +52,6 @@ Icon::~Icon()
         DestroyIcon(m_icon);
 }
 
-PassRefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
-{
-    // FIXME: We can't access icons directly from renderer processes.
-    // http://code.google.com/p/chromium/issues/detail?id=4092
-    return 0;
-}
-
 void Icon::paint(GraphicsContext* context, const IntRect& rect)
 {
     if (context->paintingDisabled())

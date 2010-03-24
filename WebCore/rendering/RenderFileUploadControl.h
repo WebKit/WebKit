@@ -61,7 +61,7 @@ private:
     void repaint() { RenderBlock::repaint(); }
     bool allowsMultipleFiles();
     String acceptTypes();
-    void iconForFiles(const Vector<String>&);
+    void chooseIconForFiles(const Vector<String>&);
 
     Chrome* chrome() const;
     int maxFilenameWidth() const;

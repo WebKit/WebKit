@@ -35,6 +35,7 @@
 #include "FloatRect.h"
 #include "Frame.h"
 #include "FrameLoadRequest.h"
+#include "Icon.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
 #include "WindowFeatures.h"
@@ -441,9 +442,9 @@ void ChromeClientWx::runOpenPanel(Frame*, PassRefPtr<FileChooser>)
     notImplemented();
 }
 
-void ChromeClientWx::iconForFiles(const Vector<String>&, PassRefPtr<FileChooser>)
+void ChromeClientWx::chooseIconForFiles(const Vector<String>& filenames, PassRefPtr<FileChooser> chooser)
 {
-    notImplemented();
+    chooser->iconLoaded(Icon::createIconForFiles(filenames));
 }
 
 bool ChromeClientWx::setCursor(PlatformCursorHandle)

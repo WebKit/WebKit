@@ -78,10 +78,8 @@ void FileChooser::chooseFiles(const Vector<String>& filenames)
 
 void FileChooser::loadIcon()
 {
-    m_icon = Icon::createIconForFiles(m_filenames);
-    // If synchronous icon loading failed, try asynchronous loading.
-    if (!m_icon && m_filenames.size() && m_client)
-        m_client->iconForFiles(m_filenames);
+    if (m_filenames.size() && m_client)
+        m_client->chooseIconForFiles(m_filenames);
 }
 
 void FileChooser::iconLoaded(PassRefPtr<Icon> icon)

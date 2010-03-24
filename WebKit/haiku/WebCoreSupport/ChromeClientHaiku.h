@@ -138,7 +138,7 @@ namespace WebCore {
         void cancelGeolocationPermissionRequestForFrame(Frame*) { }
 
         void runOpenPanel(Frame*, PassRefPtr<FileChooser>);
-        void iconForFiles(const Vector<String>&, PassRefPtr<FileChooser>);
+        void chooseIconForFiles(const Vector<String>&, PassRefPtr<FileChooser>);
 
         bool setCursor(PlatformCursorHandle);
 

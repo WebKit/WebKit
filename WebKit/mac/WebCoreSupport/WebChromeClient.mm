@@ -56,6 +56,7 @@
 #import <WebCore/Geolocation.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/HTMLNames.h>
+#import <WebCore/Icon.h>
 #import <WebCore/IntRect.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformScreen.h>
@@ -643,9 +644,9 @@ void WebChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser> chooser)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void WebChromeClient::iconForFiles(const Vector<String>&, PassRefPtr<FileChooser>)
+void WebChromeClient::chooseIconForFiles(const Vector<String>& filenames, PassRefPtr<FileChooser> chooser)
 {
-    // FIXME: Move the code of Icon::createIconForFiles() here.
+    chooser->iconLoaded(Icon::createIconForFiles(filenames));
 }
 
 KeyboardUIMode WebChromeClient::keyboardUIMode()

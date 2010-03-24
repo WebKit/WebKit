@@ -114,10 +114,10 @@ String RenderFileUploadControl::acceptTypes()
     return static_cast<HTMLInputElement*>(node())->accept();
 }
 
-void RenderFileUploadControl::iconForFiles(const Vector<String>& filenames)
+void RenderFileUploadControl::chooseIconForFiles(const Vector<String>& filenames)
 {
     if (Chrome* chromePointer = chrome())
-        chromePointer->iconForFiles(filenames, m_fileChooser);
+        chromePointer->chooseIconForFiles(filenames, m_fileChooser);
 }
 
 void RenderFileUploadControl::click()

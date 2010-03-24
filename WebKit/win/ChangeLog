@@ -1,3 +1,17 @@
+2010-03-24  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Make Icon::createIconForFiles() optional.
+        https://bugs.webkit.org/show_bug.cgi?id=35072
+
+        - Rename iconForFiles() to chooseIconForFiles().
+        - Call Icon::createIconForFiles() from chooseIconForFiles().
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::chooseIconForFiles):
+        * WebCoreSupport/WebChromeClient.h:
+
 2010-03-22  Darin Adler  <darin@apple.com>
 
         * WebCoreLocalizedStrings.cpp:

@@ -32,6 +32,7 @@
 #include "FrameLoadRequest.h"
 #include "FrameView.h"
 #include "HitTestResult.h"
+#include "Icon.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
 
@@ -356,9 +357,9 @@ void ChromeClientHaiku::runOpenPanel(Frame*, PassRefPtr<FileChooser>)
     notImplemented();
 }
 
-void ChromeClientHaiku::iconForFiles(const Vector<String>&, PassRefPtr<FileChooser>)
+void ChromeClientHaiku::chooseIconForFiles(const Vector<String>& filenames, PassRefPtr<FileChooser> chooser)
 {
-    notImplemented();
+    chooser->iconLoaded(Icon::createIconForFiles(filenames));
 }
 
 bool ChromeClientHaiku::setCursor(PlatformCursorHandle)

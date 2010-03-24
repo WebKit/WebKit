@@ -123,7 +123,7 @@ public:
 #endif
 
     virtual void runOpenPanel(WebCore::Frame*, PassRefPtr<WebCore::FileChooser>);
-    virtual void iconForFiles(const Vector<WebCore::String>&, PassRefPtr<WebCore::FileChooser>);
+    virtual void chooseIconForFiles(const Vector<WebCore::String>&, PassRefPtr<WebCore::FileChooser>);
 
     virtual bool setCursor(WebCore::PlatformCursorHandle) { return false; }
 

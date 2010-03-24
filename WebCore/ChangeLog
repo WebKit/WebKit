@@ -1,3 +1,38 @@
+2010-03-24  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Make Icon::createIconForFiles() optional.
+        https://bugs.webkit.org/show_bug.cgi?id=35072
+
+        r54923 made Icon::createIconForFiles() deprecated. However moving
+        existing icon loading code to outside of WebCore is not good.  So,
+        we assume:
+        - ChromeClient::chooseIconForFiles(), renamed from iconForFiles(), is
+          the primary API to load icons.
+        - Icon::createIconForFiles() is an optional API to help
+          implementing ChromeClient::iconForFiles().
+
+        This patch removes a call to Icon::createIconForFiles() from
+        FileChooser::loadIcon(), and ChromeClient::chooseIconForFiles() of
+        non-Chromium ports calls Icon::createIconForFiles().
+
+        * WebCore.base.exp: Export FileChooser::iconLoaded(),
+          Icon::createIconForFiles(), and Icon::~Icon().
+        * WebCore.xcodeproj/project.pbxproj: Export Icon.h
+        * loader/EmptyClient.h: Rename iconForFiles() to chooseIconForFiles().
+        * page/Chrome.cpp: ditto.
+        * page/Chrome.h: ditto.
+        * page/ChromeClient.h: ditto.
+        * platform/FileChooser.cpp:
+        (WebCore::FileChooser::loadIcon):
+        * platform/graphics/Icon.h: Remove a comment on createIconForFiles().
+        * platform/graphics/chromium/IconChromiumLinux.cpp: Remove createIconForFiles().
+        * platform/graphics/chromium/IconChromiumMac.cpp: ditto.
+        * platform/graphics/chromium/IconChromiumWin.cpp: ditto.
+        * rendering/RenderFileUploadControl.cpp: Rename iconForFiles() to chooseIconForFiles().
+        * rendering/RenderFileUploadControl.h: ditto.
+
 2010-03-23  Dan Bernstein  <mitz@apple.com>
 
         Fixed typos.

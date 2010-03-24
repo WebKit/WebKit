@@ -50,6 +50,7 @@
 #include <WebCore/GraphicsLayer.h>
 #endif
 #include <WebCore/HTMLNames.h>
+#include <WebCore/Icon.h>
 #include <WebCore/LocalizedStrings.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
@@ -749,10 +750,9 @@ void WebChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser> prpFileChoose
     // FIXME: Show some sort of error if too many files are selected and the buffer is too small.  For now, this will fail silently.
 }
 
-void WebChromeClient::iconForFiles(const Vector<WebCore::String>&, PassRefPtr<WebCore::FileChooser>)
+void WebChromeClient::chooseIconForFiles(const Vector<WebCore::String>& filenames, PassRefPtr<WebCore::FileChooser> chooser)
 {
-    // FIXME: Move the code of Icon::createIconForFiles() here.
-    notImplemented();
+    chooser->iconLoaded(Icon::createIconForFiles(filenames));
 }
 
 bool WebChromeClient::setCursor(PlatformCursorHandle cursor)

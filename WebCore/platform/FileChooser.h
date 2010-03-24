@@ -44,7 +44,7 @@ public:
     virtual void repaint() = 0;
     virtual bool allowsMultipleFiles() = 0;
     virtual String acceptTypes() = 0;
-    virtual void iconForFiles(const Vector<String>&) = 0;
+    virtual void chooseIconForFiles(const Vector<String>&) = 0;
     virtual ~FileChooserClient();
 };
 

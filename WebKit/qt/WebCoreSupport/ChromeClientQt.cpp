@@ -36,6 +36,7 @@
 #include "FrameLoaderClientQt.h"
 #include "FrameView.h"
 #include "HitTestResult.h"
+#include "Icon.h"
 #include "NotImplemented.h"
 #include "WindowFeatures.h"
 #include "DatabaseTracker.h"
@@ -471,10 +472,9 @@ void ChromeClientQt::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> prpFileC
     }
 }
 
-void ChromeClientQt::iconForFiles(const Vector<String>&, PassRefPtr<FileChooser>)
+void ChromeClientQt::chooseIconForFiles(const Vector<String>& filenames, PassRefPtr<FileChooser> chooser)
 {
-    // FIXME: Move the code of Icon::createIconForFiles() here.
-    notImplemented();
+    chooser->iconLoaded(Icon::createIconForFiles(filenames));
 }
 
 bool ChromeClientQt::setCursor(PlatformCursorHandle)

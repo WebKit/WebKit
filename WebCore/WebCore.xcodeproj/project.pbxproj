@@ -3745,7 +3745,7 @@
 		B275356B0B053814002CE64F /* FloatRect.h in Headers */ = {isa = PBXBuildFile; fileRef = B275353D0B053814002CE64F /* FloatRect.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B275356C0B053814002CE64F /* FloatSize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B275353E0B053814002CE64F /* FloatSize.cpp */; };
 		B275356D0B053814002CE64F /* FloatSize.h in Headers */ = {isa = PBXBuildFile; fileRef = B275353F0B053814002CE64F /* FloatSize.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		B275356E0B053814002CE64F /* Icon.h in Headers */ = {isa = PBXBuildFile; fileRef = B27535400B053814002CE64F /* Icon.h */; };
+		B275356E0B053814002CE64F /* Icon.h in Headers */ = {isa = PBXBuildFile; fileRef = B27535400B053814002CE64F /* Icon.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B275356F0B053814002CE64F /* Image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27535410B053814002CE64F /* Image.cpp */; };
 		B27535700B053814002CE64F /* Image.h in Headers */ = {isa = PBXBuildFile; fileRef = B27535420B053814002CE64F /* Image.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B27535710B053814002CE64F /* ImageSource.h in Headers */ = {isa = PBXBuildFile; fileRef = B27535430B053814002CE64F /* ImageSource.h */; settings = {ATTRIBUTES = (Private, ); }; };
