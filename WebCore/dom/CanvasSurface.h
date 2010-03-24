@@ -26,14 +26,72 @@
 #ifndef CanvasSurface_h
 #define CanvasSurface_h
 
+#include "AffineTransform.h"
+#include "IntSize.h"
+
+#include <wtf/OwnPtr.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
+class AffineTransform;
+class FloatPoint;
+class FloatRect;
+class FloatSize;
+class GraphicsContext;
+class ImageBuffer;
+class IntPoint;
+class String;
+
+typedef int ExceptionCode;
+
 class CanvasSurface : public Noncopyable {
 public:
+    CanvasSurface(float pageScaleFactor);
+    virtual ~CanvasSurface();
+
+    int width() const { return m_size.width(); }
+    int height() const { return m_size.height(); }
+
+    String toDataURL(const String& mimeType, ExceptionCode&);
+
+    const IntSize& size() const { return m_size; }
+
+    virtual void willDraw(const FloatRect&);
+
+    GraphicsContext* drawingContext() const;
+
+    ImageBuffer* buffer() const;
+
+    IntRect convertLogicalToDevice(const FloatRect&) const;
+    IntSize convertLogicalToDevice(const FloatSize&) const;
+    IntPoint convertLogicalToDevice(const FloatPoint&) const;
+
+    void setOriginTainted() { m_originClean = false; }
+    bool originClean() const { return m_originClean; }
+
+    AffineTransform baseTransform() const;
+
+protected:
+    void setSurfaceSize(const IntSize&);
+    bool hasCreatedImageBuffer() const { return m_hasCreatedImageBuffer; }
+
+    static const int DefaultWidth;
+    static const int DefaultHeight;
 
 private:
+    void createImageBuffer() const;
+
+    static const float MaxCanvasArea;
+
+    IntSize m_size;
+
+    float m_pageScaleFactor;
+    bool m_originClean;
+
+    // m_createdImageBuffer means we tried to malloc the buffer.  We didn't necessarily get it.
+    mutable bool m_hasCreatedImageBuffer;
+    mutable OwnPtr<ImageBuffer> m_imageBuffer;
 };
 
 } // namespace WebCore

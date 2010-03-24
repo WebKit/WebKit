@@ -1,3 +1,56 @@
+2010-03-10  David Levin  <levin@chromium.org>
+
+        Reviewed by Oliver Hunt.
+
+        Need to move items that CanvasRenderingContext2D depends on into CanvasSurface.
+        https://bugs.webkit.org/show_bug.cgi?id=35453
+
+        Prepartory changes to allow for an OffscreenCanvas which may be used in a worker
+        or outside of the DOM.
+
+        No change in functionality, so new tests.
+
+        * dom/CanvasSurface.cpp: Moved functionality that CanvasRenderingContext2D depends on
+        into this class (and removed dependencies on document/html element).
+        (WebCore::CanvasSurface::CanvasSurface):
+        (WebCore::CanvasSurface::~CanvasSurface): Put the desctructor in the cpp file
+        to avoid needing access to ~ImageBuffer in the header file.
+        (WebCore::CanvasSurface::setSurfaceSize): Does basic items needed
+        when the size changes. It is protected to force outside callers to go
+        through HTMLCanvasElement::setSize.
+        (WebCore::CanvasSurface::toDataURL): Just moved from HTMLCanvasElement and
+        made a note about a method to fix for worker usage.
+        (WebCore::CanvasSurface::willDraw): Made this virtual to allow an overide
+        which uses the renderbox and tracks a dirtyRect.
+        (WebCore::CanvasSurface::convertLogicalToDevice): Moved and changed to
+        rely on a member variable for page scale (to avoid using the document).
+        (WebCore::CanvasSurface::createImageBuffer):
+        (WebCore::CanvasSurface::drawingContext): Simple move from HTMLCanvasElement.
+        (WebCore::CanvasSurface::buffer): Ditto.
+        (WebCore::CanvasSurface::baseTransform): Ditto.
+        * dom/CanvasSurface.h:
+        (WebCore::CanvasSurface::width): Simple move from HTMLCanvasElement.
+        (WebCore::CanvasSurface::height): Ditto.
+        (WebCore::CanvasSurface::size): Ditto.
+        (WebCore::CanvasSurface::setOriginTainted): Ditto.
+        (WebCore::CanvasSurface::originClean): Ditto.
+        (WebCore::CanvasSurface::hasCreatedImageBuffer): Ditto (with small name change).
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::HTMLCanvasElement): Pass in the scale factor to CanvasSurface
+        so it doesn't need the document.
+        (WebCore::HTMLCanvasElement::willDraw): Moved the relevant portion to CanvasSurface.
+        (WebCore::HTMLCanvasElement::reset): Small changes due to refactoring.
+        (WebCore::HTMLCanvasElement::paint): Ditto.
+        * html/HTMLCanvasElement.h:
+        (WebCore::HTMLCanvasElement::setSize): Ditto.
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::MIMETypeRegistry::isSupportedImageMIMETypeForEncoding): Added assert
+        to verify that this is only called on the main thread.
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::nullImage): Ditto.
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::utiFromMIMEType): Ditto.
+
 2010-03-24  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
