@@ -49,7 +49,6 @@ sub fixMergedChangeLogs($;@);
 sub fixOneMergedChangeLog($);
 sub hasGitUnmergedFiles();
 sub isInGitFilterBranch();
-sub mergeChanges($$$);
 sub parseFixMerged($$;$);
 sub removeChangeLogArguments($);
 sub resolveChangeLog($);
@@ -130,7 +129,7 @@ if (defined $fixMerged && length($fixMerged) > 0) {
     fixMergedChangeLogs($commitRange, @changeLogFiles);
 } elsif ($mergeDriver) {
     my ($base, $theirs, $ours) = @ARGV;
-    if (mergeChanges($ours, $base, $theirs)) {
+    if (mergeChangeLogs($ours, $base, $theirs)) {
         unlink($ours);
         copy($theirs, $ours) or die $!;
     } else {
@@ -401,55 +400,6 @@ sub isInGitFilterBranch()
     return exists $ENV{MAPPED_PREVIOUS_COMMIT} && $ENV{MAPPED_PREVIOUS_COMMIT};
 }
 
-sub mergeChanges($$$)
-{
-    my ($fileMine, $fileOlder, $fileNewer) = @_;
-
-    my $traditionalReject = $fileMine =~ /\.rej$/ ? 1 : 0;
-
-    local $/ = undef;
-
-    my $patch;
-    if ($traditionalReject) {
-        open(DIFF, "<", $fileMine) or die $!;
-        $patch = <DIFF>;
-        close(DIFF);
-        rename($fileMine, "$fileMine.save");
-        rename($fileOlder, "$fileOlder.save");
-    } else {
-        open(DIFF, "-|", qw(diff -u -a --binary), $fileOlder, $fileMine) or die $!;
-        $patch = <DIFF>;
-        close(DIFF);
-    }
-
-    unlink("${fileNewer}.orig");
-    unlink("${fileNewer}.rej");
-
-    open(PATCH, "| patch --fuzz=3 --binary $fileNewer > " . File::Spec->devnull()) or die $!;
-    print PATCH fixChangeLogPatch($patch);
-    close(PATCH);
-
-    my $result;
-
-    # Refuse to merge the patch if it did not apply cleanly
-    if (-e "${fileNewer}.rej") {
-        unlink("${fileNewer}.rej");
-        unlink($fileNewer);
-        rename("${fileNewer}.orig", $fileNewer);
-        $result = 0;
-    } else {
-        unlink("${fileNewer}.orig");
-        $result = 1;
-    }
-
-    if ($traditionalReject) {
-        rename("$fileMine.save", $fileMine);
-        rename("$fileOlder.save", $fileOlder);
-    }
-
-    return $result;
-}
-
 sub parseFixMerged($$;$)
 {
     my ($switchName, $key, $value) = @_;
@@ -491,7 +441,7 @@ sub resolveChangeLog($)
 
     return unless $fileMine && $fileOlder && $fileNewer;
 
-    if (mergeChanges($fileMine, $fileOlder, $fileNewer)) {
+    if (mergeChangeLogs($fileMine, $fileOlder, $fileNewer)) {
         if ($file ne $fileNewer) {
             unlink($file);
             rename($fileNewer, $file) or die $!;

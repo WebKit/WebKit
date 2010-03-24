@@ -1,3 +1,21 @@
+2010-03-24  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/36560> resolve-ChangeLogs: move mergeChanges() into VCSUtils package
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/VCSUtils.pm:
+        (mergeChangeLogs): Copied from mergeChanges() in
+        resolve-ChangeLogs and renamed.  Added method documentation.
+        Fixed bug found by new tests where the original file to be
+        patched was deleted when cleaning up after a traditinal rejected
+        patch failed to apply.
+        * Scripts/resolve-ChangeLogs: Switched to using
+        mergeChangeLogs().
+        (mergeChanges): Moved to VCSUtils.pm and renamed to
+        mergeChangeLogs().
+        * Scripts/webkitperl/VCSUtils_unittest/mergeChangeLogs.pl: Added.
+
 2010-03-24  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

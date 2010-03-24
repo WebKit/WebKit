@@ -61,6 +61,7 @@ BEGIN {
         &isSVNDirectory
         &isSVNVersion16OrNewer
         &makeFilePathRelative
+        &mergeChangeLogs
         &normalizePath
         &parsePatch
         &pathRelativeToSVNRepositoryRootForPath
@@ -813,6 +814,78 @@ sub runPatchCommand($$$;$)
     }
 
     return $exitStatus;
+}
+
+# Merge ChangeLog patches using a three-file approach.
+#
+# This is used by resolve-ChangeLogs when it's operated as a merge driver
+# and when it's used to merge conflicts after a patch is applied or after
+# an svn update.
+#
+# It's also used for traditional rejected patches.
+#
+# Args:
+#   $fileMine:  The merged version of the file.  Also known in git as the
+#               other branch's version (%B) or "ours".
+#               For traditional patch rejects, this is the *.rej file.
+#   $fileOlder: The base version of the file.  Also known in git as the
+#               ancestor version (%O) or "base".
+#               For traditional patch rejects, this is the *.orig file.
+#   $fileNewer: The current version of the file.  Also known in git as the
+#               current version (%A) or "theirs".
+#               For traditional patch rejects, this is the original-named
+#               file.
+#
+# Returns 1 if merge was successful, else 0.
+sub mergeChangeLogs($$$)
+{
+    my ($fileMine, $fileOlder, $fileNewer) = @_;
+
+    my $traditionalReject = $fileMine =~ /\.rej$/ ? 1 : 0;
+
+    local $/ = undef;
+
+    my $patch;
+    if ($traditionalReject) {
+        open(DIFF, "<", $fileMine) or die $!;
+        $patch = <DIFF>;
+        close(DIFF);
+        rename($fileMine, "$fileMine.save");
+        rename($fileOlder, "$fileOlder.save");
+    } else {
+        open(DIFF, "-|", qw(diff -u -a --binary), $fileOlder, $fileMine) or die $!;
+        $patch = <DIFF>;
+        close(DIFF);
+    }
+
+    unlink("${fileNewer}.orig");
+    unlink("${fileNewer}.rej");
+
+    open(PATCH, "| patch --fuzz=3 --binary $fileNewer > " . File::Spec->devnull()) or die $!;
+    print PATCH ($traditionalReject ? $patch : fixChangeLogPatch($patch));
+    close(PATCH);
+
+    my $result;
+
+    # Refuse to merge the patch if it did not apply cleanly
+    if (-e "${fileNewer}.rej") {
+        unlink("${fileNewer}.rej");
+        if (-f "${fileNewer}.orig") {
+            unlink($fileNewer);
+            rename("${fileNewer}.orig", $fileNewer);
+        }
+        $result = 0;
+    } else {
+        unlink("${fileNewer}.orig");
+        $result = 1;
+    }
+
+    if ($traditionalReject) {
+        rename("$fileMine.save", $fileMine);
+        rename("$fileOlder.save", $fileOlder);
+    }
+
+    return $result;
 }
 
 sub gitConfig($)
