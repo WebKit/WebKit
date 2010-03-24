@@ -518,7 +518,7 @@ JSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec, JSObject*, JSValue t
         relativeBegin += length;
         begin = (relativeBegin < 0) ? 0 : static_cast<unsigned>(relativeBegin);
     } else
-        begin = std::min<unsigned>(relativeBegin, length);
+        begin = std::min<unsigned>(static_cast<unsigned>(relativeBegin), length);
 
     unsigned deleteCount;
     if (args.size() > 1)

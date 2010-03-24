@@ -1,3 +1,11 @@
+2010-03-23  Mark Rowe  <mrowe@apple.com>
+
+        Build fix.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncSplice): Some versions of GCC emit a warning about the implicit 64- to 32-bit truncation
+        that takes place here. An explicit cast is sufficient to silence it.
+
 2010-03-23  Alexey Proskuryakov  <ap@apple.com>
 
         Build fix.
