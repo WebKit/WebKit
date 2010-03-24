@@ -234,8 +234,8 @@ void QWebSettingsPrivate::apply()
                                       global->attributes.value(QWebSettings::LocalContentCanAccessFileUrls));
         settings->setAllowFileAccessFromFileURLs(value);
 
-        value = attributes.value(QWebSettings::XSSAuditorEnabled,
-                                      global->attributes.value(QWebSettings::XSSAuditorEnabled));
+        value = attributes.value(QWebSettings::XSSAuditingEnabled,
+                                      global->attributes.value(QWebSettings::XSSAuditingEnabled));
         settings->setXSSAuditorEnabled(value);
         
 #if ENABLE(TILED_BACKING_STORE)
@@ -396,7 +396,7 @@ QWebSettings* QWebSettings::globalSettings()
         QWebSettings::LocalStorageEnabled instead.
     \value LocalContentCanAccessRemoteUrls Specifies whether locally loaded documents are allowed to access remote urls.
     \value LocalContentCanAccessFileUrls Specifies whether locally loaded documents are allowed to access other local urls.
-    \value XSSAuditorEnabled Specifies whether load requests should be monitored for cross-site scripting attempts.
+    \value XSSAuditingEnabled Specifies whether load requests should be monitored for cross-site scripting attempts.
     \value AcceleratedCompositingEnabled This feature, when used in conjunction with
         QGraphicsWebView, accelerates animations of web content. CSS animations of the transform and
         opacity properties will be rendered by composing the cached content of the animated elements.

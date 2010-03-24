@@ -68,7 +68,7 @@ public:
 #endif
         LocalContentCanAccessRemoteUrls,
         DnsPrefetchEnabled,
-        XSSAuditorEnabled,
+        XSSAuditingEnabled,
         AcceleratedCompositingEnabled,
         WebGLEnabled,
         SpatialNavigationEnabled,

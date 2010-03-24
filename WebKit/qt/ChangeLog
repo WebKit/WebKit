@@ -1,3 +1,16 @@
+2010-03-24  Kent Hansen  <kent.hansen@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Rename QWebSettings::XSSAuditorEnabled to XSSAuditingEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=36522
+
+        For consistency with other QWebSettings attributes.
+
+        * Api/qwebsettings.cpp:
+        (QWebSettingsPrivate::apply):
+        * Api/qwebsettings.h:
+
 2010-03-23  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Simon Hausmann.
