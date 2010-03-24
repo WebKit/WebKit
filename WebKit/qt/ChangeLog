@@ -1,3 +1,12 @@
+2010-03-24  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        Auto-uppercase and predictive text need to be disabled for S60 (as for maemo)
+        https://bugs.webkit.org/show_bug.cgi?id=33176
+
+        * WebCoreSupport/EditorClientQt.cpp:
+
 2010-03-24  Kent Hansen  <kent.hansen@nokia.com>
 
         Reviewed by Simon Hausmann.
