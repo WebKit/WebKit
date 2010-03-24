@@ -140,10 +140,11 @@ class ArgumentParserTest(unittest.TestCase):
 
         self.assertEquals(files, [])
 
-        self.assertEquals(options.output_format, 'vs7')
-        self.assertEquals(options.verbosity, 3)
         self.assertEquals(options.filter_rules, [])
         self.assertEquals(options.git_commit, None)
+        self.assertEquals(options.is_debug, False)
+        self.assertEquals(options.output_format, 'vs7')
+        self.assertEquals(options.verbosity, 3)
 
     def test_parse_explicit_arguments(self):
         parse = self._parse()
@@ -155,6 +156,8 @@ class ArgumentParserTest(unittest.TestCase):
         self.assertEquals(options.verbosity, 4)
         (files, options) = parse(['--git-commit=commit'])
         self.assertEquals(options.git_commit, 'commit')
+        (files, options) = parse(['--debug'])
+        self.assertEquals(options.is_debug, True)
 
         # Pass user_rules.
         (files, options) = parse(['--filter=+build,-whitespace'])
@@ -187,6 +190,7 @@ class CommandOptionValuesTest(unittest.TestCase):
         options = ProcessorOptions()
         self.assertEquals(options.filter_rules, [])
         self.assertEquals(options.git_commit, None)
+        self.assertEquals(options.is_debug, False)
         self.assertEquals(options.output_format, "emacs")
         self.assertEquals(options.verbosity, 1)
 
@@ -202,33 +206,42 @@ class CommandOptionValuesTest(unittest.TestCase):
         # Check attributes.
         options = ProcessorOptions(filter_rules=["+"],
                                    git_commit="commit",
+                                   is_debug=True,
                                    output_format="vs7",
                                    verbosity=3)
         self.assertEquals(options.filter_rules, ["+"])
         self.assertEquals(options.git_commit, "commit")
+        self.assertEquals(options.is_debug, True)
         self.assertEquals(options.output_format, "vs7")
         self.assertEquals(options.verbosity, 3)
 
     def test_eq(self):
         """Test __eq__ equality function."""
-        # == calls __eq__.
-        self.assertTrue(ProcessorOptions() == ProcessorOptions())
+        self.assertTrue(ProcessorOptions().__eq__(ProcessorOptions()))
 
-        # Verify that a difference in any argument causes equality to fail.
-        options = ProcessorOptions(filter_rules=["+"],
-                                   git_commit="commit",
-                                   output_format="vs7",
+        # Also verify that a difference in any argument causes equality to fail.
+
+        # Explicitly create a ProcessorOptions instance with all default
+        # values.  We do this to be sure we are assuming the right default
+        # values in our self.assertFalse() calls below.
+        options = ProcessorOptions(filter_rules=[],
+                                   git_commit=None,
+                                   is_debug=False,
+                                   output_format="emacs",
                                    verbosity=1)
-        self.assertFalse(options == ProcessorOptions(filter_rules=["-"]))
-        self.assertFalse(options == ProcessorOptions(git_commit="commit2"))
-        self.assertFalse(options == ProcessorOptions(output_format="emacs"))
-        self.assertFalse(options == ProcessorOptions(verbosity=2))
+        # Verify that we created options correctly.
+        self.assertTrue(options.__eq__(ProcessorOptions()))
+
+        self.assertFalse(options.__eq__(ProcessorOptions(filter_rules=["+"])))
+        self.assertFalse(options.__eq__(ProcessorOptions(git_commit="commit")))
+        self.assertFalse(options.__eq__(ProcessorOptions(is_debug=True)))
+        self.assertFalse(options.__eq__(ProcessorOptions(output_format="vs7")))
+        self.assertFalse(options.__eq__(ProcessorOptions(verbosity=2)))
 
     def test_ne(self):
         """Test __ne__ inequality function."""
-        # != calls __ne__.
         # By default, __ne__ always returns true on different objects.
         # Thus, just check the distinguishing case to verify that the
         # code defines __ne__.
-        self.assertFalse(ProcessorOptions() != ProcessorOptions())
+        self.assertFalse(ProcessorOptions().__ne__(ProcessorOptions()))
 

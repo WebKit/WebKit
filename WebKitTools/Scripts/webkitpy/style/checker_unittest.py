@@ -58,12 +58,21 @@ from processors.cpp import CppProcessor
 from processors.text import TextProcessor
 
 
-class ConfigureLoggingTest(unittest.TestCase):
+class ConfigureLoggingTestBase(unittest.TestCase):
 
-    """Tests the configure_logging() function."""
+    """Base class for testing configure_logging().
+
+    Sub-classes should implement:
+
+      is_debug: The is_debug parameter value to pass to configure_logging().
+
+    """
 
     def setUp(self):
+        is_debug = self.is_debug
+
         log_stream = TestLogStream(self)
+
         # Use a logger other than the root logger or one prefixed with
         # webkit so as not to conflict with test-webkitpy logging.
         logger = logging.getLogger("unittest")
@@ -74,7 +83,8 @@ class ConfigureLoggingTest(unittest.TestCase):
         # the root logger).
         logger.propagate = False
 
-        self._handlers = configure_logging(log_stream, logger)
+        self._handlers = configure_logging(stream=log_stream, logger=logger,
+                                           is_debug=is_debug)
         self._log = logger
         self._log_stream = log_stream
 
@@ -92,6 +102,13 @@ class ConfigureLoggingTest(unittest.TestCase):
     def assert_log_messages(self, messages):
         """Assert that the logged messages equal the given messages."""
         self._log_stream.assertMessages(messages)
+
+
+class ConfigureLoggingTest(ConfigureLoggingTestBase):
+
+    """Tests the configure_logging() function."""
+
+    is_debug = False
 
     def test_warning_message(self):
         self._log.warn("test message")
@@ -113,6 +130,17 @@ class ConfigureLoggingTest(unittest.TestCase):
         self._log.info("message1")
         self._log.info("message2")
         self.assert_log_messages(["message1\n", "message2\n"])
+
+
+class ConfigureLoggingDebugTest(ConfigureLoggingTestBase):
+
+    """Tests the configure_logging() function for debugging."""
+
+    is_debug = True
+
+    def test_debug_message(self):
+        self._log.debug("test message")
+        self.assert_log_messages(["unittest: DEBUG    test message\n"])
 
 
 class GlobalVariablesTest(unittest.TestCase):

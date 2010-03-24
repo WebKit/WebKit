@@ -71,10 +71,17 @@ def main():
     #        sys.stderr explicitly anywhere.
     sys.stderr = stderr
 
-    checker.configure_logging(stderr)
+    args = sys.argv[1:]
+
+    # Checking for the debug flag before calling check_webkit_style_parser()
+    # lets us enable debug logging earlier.
+    is_debug = "--debug" in args
+
+    checker.configure_logging(stream=stderr, is_debug=is_debug)
+    _log.debug("Debug logging enabled.")
 
     parser = checker.check_webkit_style_parser()
-    (files, options) = parser.parse(sys.argv[1:])
+    (files, options) = parser.parse(args)
 
     configuration = checker.check_webkit_style_configuration(options)
     style_checker = checker.StyleChecker(configuration)

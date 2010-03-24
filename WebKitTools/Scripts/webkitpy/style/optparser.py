@@ -38,8 +38,8 @@ def _create_usage(default_options):
 
     """
     usage = """
-Syntax: %(program_name)s [--verbose=#] [--git-commit=<SingleCommit>] [--output=vs7]
-        [--filter=-x,+y,...] [file] ...
+Syntax: %(program_name)s [--debug] [--verbose=#] [--git-commit=<SingleCommit>]
+        [--output=vs7] [--filter=-x,+y,...] [file] ...
 
   The style guidelines this tries to follow are here:
     http://webkit.org/coding/coding-style.html
@@ -67,6 +67,9 @@ Syntax: %(program_name)s [--verbose=#] [--git-commit=<SingleCommit>] [--output=v
 
     git-commit=<SingleCommit>
       Checks the style of everything from the given commit to the local tree.
+
+    debug
+      Debug information displays if this flag is present.
 
     output=vs7
       The output format, which may be one of
@@ -124,6 +127,8 @@ class CommandOptionValues(object):
     """Stores the option values passed by the user via the command line.
 
     Attributes:
+      is_debug: A boolean value of whether the script is being debugged.
+
       filter_rules: The list of filter rules provided by the user.
                     These rules are appended to the base rules and
                     path-specific rules and so take precedence over
@@ -144,6 +149,7 @@ class CommandOptionValues(object):
     def __init__(self,
                  filter_rules=None,
                  git_commit=None,
+                 is_debug=False,
                  output_format="emacs",
                  verbosity=1):
         if filter_rules is None:
@@ -161,6 +167,7 @@ class CommandOptionValues(object):
 
         self.filter_rules = filter_rules
         self.git_commit = git_commit
+        self.is_debug = is_debug
         self.output_format = output_format
         self.verbosity = verbosity
 
@@ -170,6 +177,8 @@ class CommandOptionValues(object):
         if self.filter_rules != other.filter_rules:
             return False
         if self.git_commit != other.git_commit:
+            return False
+        if self.is_debug != other.is_debug:
             return False
         if self.output_format != other.output_format:
             return False
@@ -335,20 +344,22 @@ class ArgumentParser(object):
           options: A CommandOptionValues instance.
 
         """
+        is_debug = False
         output_format = self.default_options.output_format
         verbosity = self.default_options.verbosity
 
         # The flags that the CommandOptionValues class supports.
-        flags = ['help', 'output=', 'verbose=', 'filter=', 'git-commit=']
+        flags = ['debug', 'filter=', 'git-commit=', 'help', 'output=',
+                 'verbose=']
 
         try:
             (opts, filenames) = getopt.getopt(args, '', flags)
-        except getopt.GetoptError:
+        except getopt.GetoptError, err:
             # FIXME: Settle on an error handling approach: come up
             #        with a consistent guideline as to when and whether
             #        a ValueError should be raised versus calling
             #        sys.exit when needing to interrupt execution.
-            self._exit_with_usage('Invalid arguments.')
+            self._exit_with_usage('Invalid arguments: %s' % err)
 
         git_commit = None
         filter_rules = []
@@ -366,7 +377,11 @@ class ArgumentParser(object):
                 if not val:
                     self._exit_with_categories()
                 filter_rules = self._parse_filter_flag(val)
+            elif opt == "--debug":
+                is_debug = True
             else:
+                # We should never get here because getopt.getopt()
+                # raises an error in this case.
                 raise ValueError('Invalid option: "%s"' % opt)
 
         # Check validity of resulting values.
@@ -387,9 +402,10 @@ class ArgumentParser(object):
                              'be between 1-5.' % verbosity)
 
         options = CommandOptionValues(filter_rules=filter_rules,
-                                 git_commit=git_commit,
-                                 output_format=output_format,
-                                 verbosity=verbosity)
+                                      git_commit=git_commit,
+                                      is_debug=is_debug,
+                                      output_format=output_format,
+                                      verbosity=verbosity)
 
         return (filenames, options)
 

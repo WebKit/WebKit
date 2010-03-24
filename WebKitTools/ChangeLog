@@ -1,3 +1,40 @@
+2010-03-24  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Added to check-webkit-style support for a --debug flag.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36100
+
+        The --debug flag adjusts the logging level to DEBUG and
+        includes the logger name and level in each log message.
+
+        * Scripts/check-webkit-style:
+          - Changed the code to check for the --debug flag and pass
+            the result to the configure_logging() method.
+        * Scripts/webkitpy/style/checker.py:
+          - Added an is_debug parameter to configure_logging().
+          - Refactored configure_logging() by adding calls to
+            the following two methods: _create_log_handlers() and
+            _create_debug_log_handlers().
+        * Scripts/webkitpy/style/checker_unittest.py:
+          - Added unit tests for configure_logging() with is_debug True
+            by splitting the ConfigureLoggingTest class into
+            ConfigureLoggingTest and ConfigureLoggingTestBase, and
+            adding ConfigureLoggingDebugTest.
+        * Scripts/webkitpy/style/optparser.py:
+          - Updated the usage string.
+          - Added an is_debug data attribute to the CommandOptionValues
+            class.
+          - Added support for the --debug flag to the ArgumentParser.parse()
+            method.
+          - Also added extra error information to the parse() method in
+            the case of an invalid flag.
+        * Scripts/webkitpy/style/optparser_unittest.py:
+          - Updated the unit tests as necessary.
+          - Also fixed an issue with the CommandOptionValuesTest.test_eq()
+            unit test.
+
 2010-03-23  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

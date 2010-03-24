@@ -226,42 +226,16 @@ def check_webkit_style_configuration(options):
                verbosity=options.verbosity)
 
 
-# FIXME: Add support for more verbose logging for debug purposes.
-#        This can use a formatter like the following, for example--
-#
-#        formatter = logging.Formatter("%(name)s: [%(levelname)s] %(message)s")
-def configure_logging(stream, logger=None):
-    """Configure logging, and return the list of handlers added.
+def _create_log_handlers(stream):
+    """Create and return a default list of logging.Handler instances.
 
-    Configures a logger to log INFO messages and higher.  Formats WARNING
-    messages and above to display the logging level, and messages strictly
-    below WARNING not to display it.
-
-    Returns:
-      A list of references to the logging handlers added to the root
-      logger.  This allows the caller to later remove the handlers
-      using logger.removeHandler.  This is useful primarily during unit
-      testing where the caller may want to configure logging temporarily
-      and then undo the configuring.
+    Format WARNING messages and above to display the logging level, and
+    messages strictly below WARNING not to display it.
 
     Args:
-      stream: A file-like object to which to log.  The stream must
-              define an "encoding" data attribute, or else logging
-              raises an error.
-      logger: A logging.logger instance to configure.  This parameter
-              should be used only in unit tests.  Defaults to the
-              root logger.
+      stream: See the configure_logging() docstring.
 
     """
-    # If the stream does not define an "encoding" data attribute, the
-    # logging module can throw an error like the following:
-    #
-    # Traceback (most recent call last):
-    #   File "/System/Library/Frameworks/Python.framework/Versions/2.6/...
-    #         lib/python2.6/logging/__init__.py", line 761, in emit
-    #     self.stream.write(fs % msg.encode(self.stream.encoding))
-    # LookupError: unknown encoding: unknown
-
     # Handles logging.WARNING and above.
     error_handler = logging.StreamHandler(stream)
     error_handler.setLevel(logging.WARNING)
@@ -279,11 +253,62 @@ def configure_logging(stream, logger=None):
     formatter = logging.Formatter("%(message)s")
     non_error_handler.setFormatter(formatter)
 
+    return [error_handler, non_error_handler]
+
+
+def _create_debug_log_handlers(stream):
+    """Create and return a list of logging.Handler instances for debugging.
+
+    Args:
+      stream: See the configure_logging() docstring.
+
+    """
+    handler = logging.StreamHandler(stream)
+    formatter = logging.Formatter("%(name)s: %(levelname)-8s %(message)s")
+    handler.setFormatter(formatter)
+
+    return [handler]
+
+
+def configure_logging(stream, logger=None, is_debug=False):
+    """Configure logging, and return the list of handlers added.
+
+    Returns:
+      A list of references to the logging handlers added to the root
+      logger.  This allows the caller to later remove the handlers
+      using logger.removeHandler.  This is useful primarily during unit
+      testing where the caller may want to configure logging temporarily
+      and then undo the configuring.
+
+    Args:
+      stream: A file-like object to which to log.  The stream must
+              define an "encoding" data attribute, or else logging
+              raises an error.
+      logger: A logging.logger instance to configure.  This parameter
+              should be used only in unit tests.  Defaults to the
+              root logger.
+      is_debug: A boolean value of whether the application is being debugged.
+
+    """
+    # If the stream does not define an "encoding" data attribute, the
+    # logging module can throw an error like the following:
+    #
+    # Traceback (most recent call last):
+    #   File "/System/Library/Frameworks/Python.framework/Versions/2.6/...
+    #         lib/python2.6/logging/__init__.py", line 761, in emit
+    #     self.stream.write(fs % msg.encode(self.stream.encoding))
+    # LookupError: unknown encoding: unknown
     if logger is None:
         logger = logging.getLogger()
-    logger.setLevel(logging.INFO)
 
-    handlers = [error_handler, non_error_handler]
+    if is_debug:
+        logging_level = logging.DEBUG
+        handlers = _create_debug_log_handlers(stream)
+    else:
+        logging_level = logging.INFO
+        handlers = _create_log_handlers(stream)
+
+    logger.setLevel(logging_level)
 
     for handler in handlers:
         logger.addHandler(handler)
