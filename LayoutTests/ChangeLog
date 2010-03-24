@@ -1,3 +1,13 @@
+2010-03-03  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Antti Koivisto.
+
+        Layout test for DOM Level 3 Custom Event
+        http://www.w3.org/TR/DOM-Level-3-Events
+
+        * fast/events/custom-event-expected.txt: Added.
+        * fast/events/custom-event.html: Added.
+
 2010-03-24  Csaba Osztrogonác  <ossy@webkit.org>
 
         Rubber-stamped by Simon Hausmann and Gustavo Noronha Silva.

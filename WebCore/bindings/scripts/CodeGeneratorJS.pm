@@ -519,6 +519,7 @@ sub GenerateHeader
     # Get correct pass/store types respecting PODType flag
     my $podType = $dataNode->extendedAttributes->{"PODType"};
     my $implType = $podType ? "JSSVGPODTypeWrapper<$podType> " : $implClassName;
+
     $headerIncludes{"$podType.h"} = 1 if $podType and $podType ne "float";
 
     $headerIncludes{"JSSVGPODTypeWrapper.h"} = 1 if $podType;
@@ -1487,7 +1488,9 @@ sub GenerateImplementation
                         } elsif ($attribute->signature->type =~ /Constructor$/) {
                             my $constructorType = $attribute->signature->type;
                             $constructorType =~ s/Constructor$//;
-                            $implIncludes{"JS" . $constructorType . ".h"} = 1;
+                            if ($constructorType ne "DOMObject") {
+                                $implIncludes{"JS" . $constructorType . ".h"} = 1;
+                            }
                             push(@implContent, "    // Shadowing a built-in constructor\n");
                             push(@implContent, "    static_cast<$className*>(thisObject)->putDirect(Identifier(exec, \"$name\"), value);\n");
                         } elsif ($attribute->signature->extendedAttributes->{"Replaceable"}) {
@@ -1837,6 +1840,7 @@ sub GetNativeTypeFromSignature
 my %nativeType = (
     "CompareHow" => "Range::CompareHow",
     "DOMString" => "const UString&",
+    "DOMObject" => "ScriptValue",
     "NodeFilter" => "RefPtr<NodeFilter>",
     "SVGAngle" => "SVGAngle",
     "SVGLength" => "SVGLength",
@@ -1888,6 +1892,10 @@ sub JSValueToNative
         return "valueToStringWithNullCheck(exec, $value)" if $signature->extendedAttributes->{"ConvertNullToNullString"};
         return "valueToStringWithUndefinedOrNullCheck(exec, $value)" if $signature->extendedAttributes->{"ConvertUndefinedOrNullToNullString"};
         return "$value.toString(exec)";
+    }
+
+    if ($type eq "DOMObject") {
+        return "$value";
     }
 
     if ($type eq "SerializedScriptValue" or $type eq "any") {
@@ -1989,7 +1997,11 @@ sub NativeToJSValue
     }
 
     if ($type eq "DOMObject") {
-        $implIncludes{"JSCanvasRenderingContext2D.h"} = 1;
+        if ($implClassName eq "Document") {
+            $implIncludes{"JSCanvasRenderingContext2D.h"} = 1;
+        } else {
+            return "$value.jsValue();";
+        }
     } elsif ($type =~ /SVGPathSeg/) {
         $implIncludes{"JS$type.h"} = 1;
         $joinedName = $type;

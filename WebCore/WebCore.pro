@@ -468,6 +468,7 @@ SOURCES += \
     dom/CompositionEvent.cpp \
     dom/ContainerNode.cpp \
     dom/CSSMappedAttributeDeclaration.cpp \
+    dom/CustomEvent.cpp \
     dom/Document.cpp \
     dom/DocumentFragment.cpp \
     dom/DocumentType.cpp \
@@ -1178,6 +1179,7 @@ HEADERS += \
     dom/Comment.h \
     dom/ContainerNode.h \
     dom/CSSMappedAttributeDeclaration.h \
+    dom/CustomEvent.h \
     dom/default/PlatformMessagePortChannel.h \
     dom/DocumentFragment.h \
     dom/Document.h \

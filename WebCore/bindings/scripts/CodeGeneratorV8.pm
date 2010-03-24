@@ -2356,6 +2356,7 @@ sub GetNativeType
     return "unsigned" if $type eq "unsigned int";
     return "Node*" if $type eq "EventTarget" and $isParameter;
     return "double" if $type eq "Date";
+    return "ScriptValue" if $type eq "DOMObject";
 
     return "String" if $type eq "DOMUserData";  # FIXME: Temporary hack?
 
@@ -2437,6 +2438,11 @@ sub JSValueToNative
         return "SerializedScriptValue::create($value)";
     }
 
+    if ($type eq "DOMObject") {
+        $implIncludes{"ScriptValue.h"} = 1;
+        return "ScriptValue($value)";
+    }
+
     if ($type eq "NodeFilter") {
         return "V8DOMWrapper::wrapNativeNodeFilter($value)";
     }
@@ -2494,6 +2500,7 @@ sub GetV8HeaderName
     return "EventListener.h" if $type eq "EventListener";
     return "EventTarget.h" if $type eq "EventTarget";
     return "SerializedScriptValue.h" if $type eq "SerializedScriptValue";
+    return "ScriptValue.h" if $type eq "DOMObject";
     return "V8${type}.h";
 }
 
@@ -2570,6 +2577,7 @@ my %non_wrapper_types = (
     'SVGPaintType' => 1,
     'DOMTimeStamp' => 1,
     'JSObject' => 1,
+    'DOMObject' => 1,
     'EventTarget' => 1,
     'NodeFilter' => 1,
     'EventListener' => 1
@@ -2631,6 +2639,7 @@ sub ReturnNativeToJSValue
 
     return "return v8DateOrNull($value);" if $type eq "Date";
     return "return v8::Number::New($value)" if $codeGenerator->IsPrimitiveType($type) or $type eq "SVGPaintType";
+    return "return $value.v8Value()" if $nativeType eq "ScriptValue";
 
     if ($codeGenerator->IsStringType($type)) {
         my $conv = $signature->extendedAttributes->{"ConvertNullStringTo"};

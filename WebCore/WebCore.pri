@@ -254,6 +254,7 @@ IDL_BINDINGS += \
     dom/CDATASection.idl \
     dom/Comment.idl \
     dom/CompositionEvent.idl \
+    dom/CustomEvent.idl \
     dom/DocumentFragment.idl \
     dom/Document.idl \
     dom/DocumentType.idl \

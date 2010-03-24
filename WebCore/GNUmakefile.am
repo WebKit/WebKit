@@ -128,6 +128,7 @@ IDL_BINDINGS += \
 	WebCore/dom/Clipboard.idl \
 	WebCore/dom/Comment.idl \
 	WebCore/dom/CompositionEvent.idl \
+	Webcore/dom/CustomEvent.idl \
 	WebCore/dom/DOMCoreException.idl \
 	WebCore/dom/DOMImplementation.idl \
 	WebCore/dom/Document.idl \
@@ -728,6 +729,8 @@ webcore_sources += \
 	WebCore/dom/ContainerNode.cpp \
 	WebCore/dom/ContainerNode.h \
 	WebCore/dom/ContainerNodeAlgorithms.h \
+	WebCore/dom/CustomEvent.cpp \
+	WebCore/dom/CustomEvent.h \
 	WebCore/dom/DOMCoreException.h \
 	WebCore/dom/DOMImplementation.cpp \
 	WebCore/dom/DOMImplementation.h \

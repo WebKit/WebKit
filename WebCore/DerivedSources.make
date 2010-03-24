@@ -103,6 +103,7 @@ DOM_CLASSES = \
     Console \
     Coordinates \
     Counter \
+    CustomEvent \
     DataGridColumn \
     DataGridColumnList \
     DedicatedWorkerContext \

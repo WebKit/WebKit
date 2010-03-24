@@ -1,3 +1,39 @@
+2010-03-03  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Antti Koivisto.
+
+        Add support for DOM Level 3 Custom Event
+        http://www.w3.org/TR/DOM-Level-3-Events
+
+        V8 Generator change by Nate Chapin <japhet@chromium.org>, Thanks!
+
+        Test: fast/events/custom-event.html
+
+        * DerivedSources.cpp:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore/DerivedSources.make:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJS):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * dom/CustomEvent.cpp: Added.
+        (WebCore::CustomEvent::CustomEvent):
+        (WebCore::CustomEvent::initCustomEvent):
+        (WebCore::CustomEvent::isCustomEvent):
+        * dom/CustomEvent.h: Added.
+        (WebCore::CustomEvent::create):
+        (WebCore::CustomEvent::detail):
+        * dom/Document.cpp:
+        (WebCore::Document::createEvent):
+        * dom/Event.cpp:
+        (WebCore::Event::isCustomEvent):
+        * dom/Event.h:
+
 2010-03-24  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

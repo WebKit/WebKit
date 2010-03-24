@@ -33,6 +33,7 @@
 
 #include "Clipboard.h"
 #include "ClipboardEvent.h"
+#include "CustomEvent.h"
 #include "Event.h"
 #include "V8BeforeLoadEvent.h"
 #include "V8Binding.h"
@@ -143,6 +144,8 @@ v8::Handle<v8::Value> toV8(Event* impl)
 #endif
     if (impl->isBeforeLoadEvent())
         return toV8(static_cast<BeforeLoadEvent*>(impl));
+    if (impl->isCustomEvent())
+        return toV8(static_cast<CustomEvent*>(impl));
     return V8Event::wrap(impl);
 }
 } // namespace WebCore

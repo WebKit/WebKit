@@ -73,6 +73,11 @@ void Event::initEvent(const AtomicString& eventTypeArg, bool canBubbleArg, bool 
     m_cancelable = cancelableArg;
 }
 
+bool Event::isCustomEvent() const
+{
+    return false;
+}
+
 bool Event::isUIEvent() const
 {
     return false;
