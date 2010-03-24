@@ -33,6 +33,7 @@ WebInspector.TextEditorHighlighter = function(textModel, damageCallback)
 {
     this._textModel = textModel;
     this._tokenizer = WebInspector.SourceTokenizer.Registry.getInstance().getTokenizer("text/html");
+    this._tokenizerCondition = this._tokenizer.initialCondition;
     this._damageCallback = damageCallback;
     this._lastHighlightedLine = 0;
     this._lastHighlightedColumn = 0;

@@ -37,6 +37,14 @@ WebInspector.SourceView = function(resource)
     this._frameNeedsSetup = true;
 }
 
+// This is a map from resource.type to mime types
+// found in WebInspector.SourceTokenizer.Registry.
+WebInspector.SourceView.DefaultMIMETypeForResourceType = {
+    0: "text/html",
+    1: "text/css",
+    4: "text/javascript"
+}
+
 WebInspector.SourceView.prototype = {
     show: function(parentElement)
     {
@@ -76,8 +84,14 @@ WebInspector.SourceView.prototype = {
 
     _contentLoaded: function(content)
     {
-        this.sourceFrame.setContent(this.resource.mimeType, content, this.resource.url);
+        var mimeType = this._canonicalMimeType(this.resource);
+        this.sourceFrame.setContent(mimeType, content, this.resource.url);
         this._sourceFrameSetupFinished();
+    },
+
+    _canonicalMimeType: function(resource)
+    {
+        return WebInspector.SourceView.DefaultMIMETypeForResourceType[resource.type] || resource.mimeType;
     },
 
     _resourceLoadingFinished: function(event)
