@@ -1,3 +1,16 @@
+2010-03-24  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Darin Adler.
+
+        Refactoring: HTMLFormControlElement should not have redundant null check
+        https://bugs.webkit.org/show_bug.cgi?id=36487
+        
+        No new tests as there is no new functionality.        
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::dispatchFocusEvent):
+        (WebCore::HTMLFormControlElement::dispatchBlurEvent):
+
 2010-03-24  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

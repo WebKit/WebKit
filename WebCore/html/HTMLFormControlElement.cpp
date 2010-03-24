@@ -367,16 +367,16 @@ void HTMLFormControlElement::setCustomValidity(const String& error)
     
 void HTMLFormControlElement::dispatchFocusEvent()
 {
-    if (document()->frame() && document()->frame()->page())
-        document()->frame()->page()->chrome()->client()->formDidFocus(this);
+    if (document()->page())
+        document()->page()->chrome()->client()->formDidFocus(this);
 
     HTMLElement::dispatchFocusEvent();
 }
 
 void HTMLFormControlElement::dispatchBlurEvent()
 {
-    if (document()->frame() && document()->frame()->page())
-        document()->frame()->page()->chrome()->client()->formDidBlur(this);
+    if (document()->page())
+        document()->page()->chrome()->client()->formDidBlur(this);
 
     HTMLElement::dispatchBlurEvent();
 }
