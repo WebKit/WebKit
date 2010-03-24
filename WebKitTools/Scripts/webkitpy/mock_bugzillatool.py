@@ -141,9 +141,8 @@ _patch7 = { # Valid review, patch is marked obsolete.
 }
 
 
-# This must be defined before we define the bugs, thus we don't use
-# MockBugzilla.unassigned_email directly.
-_unassigned_email = "unassigned@example.com"
+# This matches one of Bug.unassigned_emails
+_unassigned_email = "webkit-unassigned@lists.webkit.org"
 
 
 # FIXME: The ids should be 1, 2, 3 instead of crazy numbers.
@@ -237,8 +236,6 @@ class MockBugzillaQueries(Mock):
 class MockBugzilla(Mock):
 
     bug_server_url = "http://example.com"
-
-    unassigned_email = _unassigned_email
 
     bug_cache = _id_to_object_dictionary(_bug1, _bug2, _bug3, _bug4)
 

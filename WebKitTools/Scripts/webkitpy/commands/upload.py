@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Copyright (c) 2009, Google Inc. All rights reserved.
+# Copyright (c) 2009, 2010 Google Inc. All rights reserved.
 # Copyright (c) 2009 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -97,8 +97,8 @@ class AssignToCommitter(AbstractDeclarativeCommand):
     def _assign_bug_to_last_patch_attacher(self, bug_id):
         committers = CommitterList()
         bug = self.tool.bugs.fetch_bug(bug_id)
-        assigned_to_email = bug.assigned_to_email()
-        if assigned_to_email != self.tool.bugs.unassigned_email:
+        if not bug.is_unassigned():
+            assigned_to_email = bug.assigned_to_email()
             log("Bug %s is already assigned to %s (%s)." % (bug_id, assigned_to_email, committers.committer_by_email(assigned_to_email)))
             return
 

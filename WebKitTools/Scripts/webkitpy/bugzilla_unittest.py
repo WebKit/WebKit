@@ -29,7 +29,7 @@
 import unittest
 
 from webkitpy.committers import CommitterList, Reviewer, Committer
-from webkitpy.bugzilla import Bugzilla, BugzillaQueries, parse_bug_id, CommitterValidator
+from webkitpy.bugzilla import Bugzilla, BugzillaQueries, parse_bug_id, CommitterValidator, Bug
 from webkitpy.outputcapture import OutputCapture
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
@@ -47,6 +47,16 @@ class MockBrowser(object):
 
     def submit(self):
         pass
+
+
+class BugTest(unittest.TestCase):
+    def test_is_unassigned(self):
+        for email in Bug.unassigned_emails:
+            bug = Bug({"assigned_to_email" : email}, bugzilla=None)
+            self.assertTrue(bug.is_unassigned())
+        bug = Bug({"assigned_to_email" : "test@test.com"}, bugzilla=None)
+        self.assertFalse(bug.is_unassigned())
+
 
 class CommitterValidatorTest(unittest.TestCase):
     def test_flag_permission_rejection_message(self):

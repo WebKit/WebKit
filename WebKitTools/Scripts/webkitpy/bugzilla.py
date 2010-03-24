@@ -155,6 +155,14 @@ class Bug(object):
     def assigned_to_email(self):
         return self.bug_dictionary["assigned_to_email"]
 
+    # FIXME: This information should be stored in some sort of webkit_config.py instead of here.
+    unassigned_emails = frozenset([
+        "webkit-unassigned@lists.webkit.org",
+        "webkit-qt-unassigned@trolltech.com",
+    ])
+    def is_unassigned(self):
+        return self.assigned_to_email() in self.unassigned_emails
+
     # Rarely do we actually want obsolete attachments
     def attachments(self, include_obsolete=False):
         attachments = self.bug_dictionary["attachments"]
@@ -355,7 +363,6 @@ class Bugzilla(object):
     bug_server_host = "bugs.webkit.org"
     bug_server_regex = "https?://%s/" % re.sub('\.', '\\.', bug_server_host)
     bug_server_url = "https://%s/" % bug_server_host
-    unassigned_email = "webkit-unassigned@lists.webkit.org"
 
     def bug_url_for_bug_id(self, bug_id, xml=False):
         if not bug_id:

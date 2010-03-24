@@ -1,3 +1,19 @@
+2010-03-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add support for qt's unassigned list to webkit-patch assign-to-committer
+        https://bugs.webkit.org/show_bug.cgi?id=36559
+
+        * Scripts/webkitpy/bugzilla.py:
+         - Move Bugzilla.unassigned_email into Bug and make it a set.
+        * Scripts/webkitpy/bugzilla_unittest.py:
+         - Test the new Bug.is_unassigned method
+        * Scripts/webkitpy/commands/upload.py:
+         - Use the new Bug.is_unassigned method instead of an explicit ==
+        * Scripts/webkitpy/mock_bugzillatool.py:
+         - Bugzilla.unassigned_email no longer needs mocking
+
 2010-03-24  Kent Hansen  <kent.hansen@nokia.com>
 
         Reviewed by Simon Hausmann.
