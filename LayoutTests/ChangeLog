@@ -1,3 +1,13 @@
+2010-03-24  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Rubber-stamped by Simon Hausmann and Gustavo Noronha Silva.
+
+        [Qt][GTK] http/tests/xmlhttprequest/xmlhttprequest-onProgress-open-should-zero-length.html fails after r56394
+        https://bugs.webkit.org/show_bug.cgi?id=36531
+
+        * platform/gtk/Skipped: http/tests/xmlhttprequest/xmlhttprequest-onProgress-open-should-zero-length.html skipped until fix.
+        * platform/qt/Skipped: http/tests/xmlhttprequest/xmlhttprequest-onProgress-open-should-zero-length.html skipped until fix.
+
 2010-03-23  Alexey Proskuryakov  <ap@apple.com>
 
         Skip plugins/destroy-plugin-from-callback.html, which has been failing on SL bots since it

@@ -5227,3 +5227,7 @@ fast/loader/stateobjects/replacestate-in-iframe.html
 # [Qt] websocket/tests/long-invalid-header.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=36492
 websocket/tests/long-invalid-header.html
+
+# [Qt][GTK] http/tests/xmlhttprequest/xmlhttprequest-onProgress-open-should-zero-length.html fails after r56394
+# https://bugs.webkit.org/show_bug.cgi?id=36531
+http/tests/xmlhttprequest/xmlhttprequest-onProgress-open-should-zero-length.html
