@@ -980,15 +980,15 @@ void Heap::protect(JSValue k)
     m_protectedValues.add(k.asCell());
 }
 
-void Heap::unprotect(JSValue k)
+bool Heap::unprotect(JSValue k)
 {
     ASSERT(k);
     ASSERT(JSLock::currentThreadIsHoldingLock() || !m_globalData->isSharedInstance);
 
     if (!k.isCell())
-        return;
+        return false;
 
-    m_protectedValues.remove(k.asCell());
+    return m_protectedValues.remove(k.asCell());
 }
 
 void Heap::markProtectedObjects(MarkStack& markStack)

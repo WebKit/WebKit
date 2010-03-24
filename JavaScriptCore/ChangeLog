@@ -1,3 +1,30 @@
+2010-03-23  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 36519 - JSGlobalContextRelease is unnecessarily slow
+
+        Since [ http://trac.webkit.org/changeset/35917 ], calling
+        JSGlobalContextRelease always triggers a GC heap collection
+        (if not a full destroy). As per 35917's changelog "This is
+        only really necessary when the (JSGlobalObject's) last
+        reference is released, but there is no way to determine that,
+        and no harm in collecting slightly more often."
+        
+        Well, we now know of cases of API clients who are harmed by
+        the performance penalty of collecting too often, so it's time
+        to add a way to determine whether a call to JSGlobalContextRelease
+        is removing the last protect from it's global object.  If further
+        protects are retaining the global object (likely from other
+        JSGlobalContextRefs), then don't trigger a GC collection.
+
+        * API/JSContextRef.cpp:
+        * runtime/Collector.cpp:
+        (JSC::Heap::unprotect): return a boolean indicating that the value is now unprotected.
+        * runtime/Collector.h:
+        * wtf/HashCountedSet.h:
+        (WTF::::remove): return a boolean indicating whether the value was removed from the set.
+
 2010-03-23  Mark Rowe  <mrowe@apple.com>
 
         Build fix.

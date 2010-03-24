@@ -122,14 +122,27 @@ void JSGlobalContextRelease(JSGlobalContextRef ctx)
     JSLock lock(exec);
 
     JSGlobalData& globalData = exec->globalData();
+    JSGlobalObject* dgo = exec->dynamicGlobalObject();
     IdentifierTable* savedIdentifierTable = setCurrentIdentifierTable(globalData.identifierTable);
 
-    gcUnprotect(exec->dynamicGlobalObject());
+    // One reference is held by JSGlobalObject, another added by JSGlobalContextRetain().
+    bool releasingContextGroup = globalData.refCount() == 2;
+    bool releasingGlobalObject = Heap::heap(dgo)->unprotect(dgo);
+    // If this is the last reference to a global data, it should also
+    // be the only remaining reference to the global object too!
+    ASSERT(!releasingContextGroup || releasingGlobalObject);
 
-    if (globalData.refCount() == 2) { // One reference is held by JSGlobalObject, another added by JSGlobalContextRetain().
-        // The last reference was released, this is our last chance to collect.
+    // An API 'JSGlobalContextRef' retains two things - a global object and a
+    // global data (or context group, in API terminology).
+    // * If this is the last reference to any contexts in the given context group,
+    //   call destroy on the heap (the global data is being  freed).
+    // * If this was the last reference to the global object, then unprotecting
+    //   it may  release a lot of GC memory - run the garbage collector now.
+    // * If there are more references remaining the the global object, then do nothing
+    //   (specifically that is more protects, which we assume come from other JSGlobalContextRefs).
+    if (releasingContextGroup)
         globalData.heap.destroy();
-    } else
+    else if (releasingGlobalObject)
         globalData.heap.collectAllGarbage();
 
     globalData.deref();
