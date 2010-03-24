@@ -1,3 +1,22 @@
+2010-03-24  Dmitry Titov  <dimich@chromium.org>
+
+        No review, rolling out r56453.
+        http://trac.webkit.org/changeset/56453
+        https://bugs.webkit.org/show_bug.cgi?id=36426
+
+        In Chromium port, it broke invalid-image-data-standalone.html
+        invalid-image-data.html multipart-wait-before-boundary.html
+        stop-crash.html win-boundary-crash.html
+
+        * src/ResourceHandle.cpp:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        (WebCore::ResourceHandleInternal::start):
+        (WebCore::ResourceHandleInternal::cancel):
+        (WebCore::ResourceHandleInternal::didReceiveResponse):
+        (WebCore::ResourceHandleInternal::didReceiveData):
+        (WebCore::ResourceHandleInternal::didFinishLoading):
+        (WebCore::ResourceHandleInternal::didFail):
+
 2010-03-24  John Abd-El-Malek  <jam@chromium.org>
 
         Reviewed by Darin Fisher.
