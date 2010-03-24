@@ -312,8 +312,8 @@ PopupContainer::PopupContainer(PopupMenuClient* client,
                                PopupType popupType,
                                const PopupContainerSettings& settings)
     : m_listBox(PopupListBox::create(client, settings))
-    , m_popupType(popupType)  
     , m_settings(settings)
+    , m_popupType(popupType)  
 {
     setScrollbarModes(ScrollbarAlwaysOff, ScrollbarAlwaysOff);
 }
@@ -423,8 +423,6 @@ void PopupContainer::layout()
     m_listBox->move(kBorderSize, kBorderSize);
 
     // Size ourselves to contain listbox + border.
-    int height = m_listBox->height() + kBorderSize * 2;
-
     resize(m_listBox->width() + kBorderSize * 2, m_listBox->height() + kBorderSize * 2);
 
     invalidate();

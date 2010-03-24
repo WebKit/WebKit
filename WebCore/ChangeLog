@@ -1,3 +1,11 @@
+2010-03-24  Dmitry Titov  <dimich@chromium.org>
+
+        Unreviewed, Chromium build fix.
+
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupContainer::PopupContainer): Fix order of initializers.
+        (WebCore::PopupContainer::layout): Remove unused variable.
+
 2010-03-23  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Simon Hausmann.
