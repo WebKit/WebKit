@@ -1,3 +1,14 @@
+2010-03-23  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        [chromium] use integral glyph widths
+        https://bugs.webkit.org/show_bug.cgi?id=36510
+
+        Extend a Linux Chromium layout test to also cover slight-hinted text.
+
+        * platform/chromium/fast/text/chromium-linux-fontconfig-renderstyle.html:
+
 2010-03-24  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

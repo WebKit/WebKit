@@ -1,3 +1,20 @@
+2010-03-23  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        [chromium] use integral glyph widths
+        https://bugs.webkit.org/show_bug.cgi?id=36510
+
+        Despite WebKit (and Skia, to an extent) supporting non-integral
+        glyph widths, the font code path we hit in Skia only supports
+        integral glyph positions.  This means that we would accumulate
+        offsets when drawing a sequence up non-integer-width glyphs
+        which would cause gaps when snapped to the pixel grid when drawing.
+
+        * platform/graphics/chromium/SimpleFontDataLinux.cpp:
+        (WebCore::SimpleFontData::platformWidthForGlyph):
+        round glyph widths to integers.
+
 2010-03-24  Dean Jackson  <dino@apple.com>
 
         Reviewed by Kevin Decker.

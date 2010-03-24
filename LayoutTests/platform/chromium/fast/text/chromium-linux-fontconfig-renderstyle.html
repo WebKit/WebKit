@@ -1,14 +1,23 @@
 <html>
-  <head>
-    <style>
-      p.aliased {
-        font-family: "NonAntiAliasedSans";
-      }
-    </style>
-  </head>
   <body>
-    <p>On Chromium Linux with <tt>test_shell</tt> in <tt>--layout-test</tt> mode <i>only</i> the following text should render without anti-aliasing:</p>
+    <p>This test requires Chromium Linux <tt>test_shell</tt> in
+      <tt>--layout-test</tt> mode, as that forces some rendering settings used
+      in the following tests.</p>
 
-    <p class="aliased">Testing fontconfig render preferences.</p>
+    <ol>
+      <li>
+        <p>The following text should render without anti-aliasing:</p>
+        <p style="font-family: NonAntiAliasedSans">Non anti-aliased sans.</p>
+      </li>
+      <li>
+        <p>The following text should be slightly-hinted Georgia.  The dots
+          should be equally spaced, and letters in the word "government"
+          should be naturally spaced (without an ugly space before the "e").</p>
+
+        <p style="font-family:SlightHintedGeorgia">
+          government ................................
+        </p>
+      </li>
+    </ol>
   </body>
 </html>
