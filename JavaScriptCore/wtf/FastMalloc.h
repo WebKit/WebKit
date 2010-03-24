@@ -180,16 +180,17 @@ namespace WTF {
 
 } // namespace WTF
 
-using WTF::fastMalloc;
-using WTF::fastZeroedMalloc;
 using WTF::fastCalloc;
-using WTF::fastRealloc;
-using WTF::tryFastMalloc;
-using WTF::tryFastZeroedMalloc;
-using WTF::tryFastCalloc;
-using WTF::tryFastRealloc;
 using WTF::fastFree;
+using WTF::fastMalloc;
+using WTF::fastMallocSize;
+using WTF::fastRealloc;
 using WTF::fastStrDup;
+using WTF::fastZeroedMalloc;
+using WTF::tryFastCalloc;
+using WTF::tryFastMalloc;
+using WTF::tryFastRealloc;
+using WTF::tryFastZeroedMalloc;
 
 #ifndef NDEBUG    
 using WTF::fastMallocForbid;

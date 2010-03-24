@@ -1,3 +1,10 @@
+2010-03-24  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        * wtf/FastMalloc.h: Added a using directive for fastMallocSize, like we do for all public
+        WTF symbols. Also sorted the list alphabetically.
+
 2010-03-23  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by NOBODY (speculative windows build fix part II).
