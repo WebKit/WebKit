@@ -1,3 +1,25 @@
+2010-03-23  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [DRT/Chromium] Add TestNavigationController and TestWebWorker
+        https://bugs.webkit.org/show_bug.cgi?id=36489
+
+        Add TestNavigationController and TestWebWorker classes, which are
+        going to be used by DumpRenderTree Chromium port. These files are
+        based on:
+        - src/webkit/tools/test_shell/test_navigation_controller.{cc,h}
+        - src/webkit/tools/test_shell/test_web_worker.h
+        of Chromium rev.40492.
+
+        TestNavigationController has non-style changes.
+        - Change ContentState type: binary string -> WebHistoryItem
+        - Remove TestShell dependency by introducing NavigationHost interface.
+
+        * DumpRenderTree/chromium/TestNavigationController.cpp: Added.
+        * DumpRenderTree/chromium/TestNavigationController.h: Added.
+        * DumpRenderTree/chromium/TestWebWorker.h: Added.
+
 2010-03-23  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
