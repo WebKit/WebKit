@@ -737,7 +737,10 @@ void MediaPlayerPrivate::fillTimerFired(Timer<MediaPlayerPrivate>*)
     // Update maxTimeLoaded only if the media duration is
     // available. Otherwise we can't compute it.
     if (m_mediaDuration) {
-        m_maxTimeLoaded = static_cast<float>((fillStatus * m_mediaDuration) / 100.0);
+        if (fillStatus == 100.0)
+            m_maxTimeLoaded = m_mediaDuration;
+        else
+            m_maxTimeLoaded = static_cast<float>((fillStatus * m_mediaDuration) / 100.0);
         LOG_VERBOSE(Media, "[Buffering] Updated maxTimeLoaded: %f", m_maxTimeLoaded);
     }
 

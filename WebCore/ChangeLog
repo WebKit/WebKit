@@ -1,3 +1,16 @@
+2010-03-24  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Eric Carlson.
+
+        [GStreamer] Fails to go to Loaded state because of floating point discrepancies
+        https://bugs.webkit.org/show_bug.cgi?id=35891
+
+        Use the m_fillStatus variable, which is more reliable, instead of
+        using the calculation, for the completed case.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivate::fillTimerFired):
+
 2010-03-24  Dmitry Titov  <dimich@chromium.org>
 
         Unreviewed, Chromium test fix.
@@ -6251,7 +6264,7 @@
 
         * GNUmakefile.am:
 
-2010-03-09  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+2010-03-08  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Dirk Schulze.
 
