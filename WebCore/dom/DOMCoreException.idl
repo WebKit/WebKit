@@ -28,7 +28,9 @@
 
 module core {
 
-    interface DOMCoreException {
+    interface [
+        NoStaticTables
+    ] DOMCoreException {
 
         readonly attribute unsigned short   code;
         readonly attribute DOMString        name;

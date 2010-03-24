@@ -1,3 +1,17 @@
+2010-03-24  Eric Uhrhane  <ericu@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        DOMCoreException needs NoStaticTables modifier
+        https://bugs.webkit.org/show_bug.cgi?id=36458
+
+        No new tests, but this shows up in tests of Database accesses from the
+        Worker thread that I'll be checking in soon.  The symptom is that
+        DOMCoreException.toString() returns [object DOMException] instead of
+        something more helpful.
+
+        * dom/DOMCoreException.idl:  Added NoStaticTables.
+
 2010-03-24  Drew Wilson  <atwilson@chromium.org>
 
         Reviewed by Dmitry Titov.
