@@ -1,5 +1,11 @@
 2010-03-23  Dan Bernstein  <mitz@apple.com>
 
+        Fixed typos.
+
+        * manual-tests/plugin-visible-rect-change.html:
+
+2010-03-23  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by John Sullivan.
 
         WebCore part of
