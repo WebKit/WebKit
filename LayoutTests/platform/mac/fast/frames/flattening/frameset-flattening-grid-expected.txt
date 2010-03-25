@@ -1,58 +1,53 @@
-CONSOLE MESSAGE: line 2: ReferenceError: Can't find variable: test
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderFrameSet {FRAMESET} at (0,0) size 800x600
-      RenderFrame {FRAME} at (0,0) size 400x120
-        layer at (0,0) size 385x200
-          RenderView at (0,0) size 385x120
-        layer at (0,0) size 385x120
-          RenderBlock {HTML} at (0,0) size 385x120
-            RenderBody {BODY} at (8,8) size 369x96 [bgcolor=#008000]
-              RenderBlock {P} at (0,0) size 369x36
-                RenderText {#text} at (0,0) size 340x36
-                  text run at (0,0) width 340: "Test for frameset flattening. The flattening only works"
-                  text run at (0,18) width 101: "inside the DRT."
-              RenderBlock {P} at (0,52) size 369x36
-                RenderText {#text} at (0,0) size 353x36
-                  text run at (0,0) width 353: "This frame should be 300px wide, 200px tall and not be"
-                  text run at (0,18) width 172: "scrollable (have scrollbars)."
+layer at (0,0) size 1200x800
+  RenderView at (0,0) size 785x585
+layer at (0,0) size 1200x800
+  RenderBlock {HTML} at (0,0) size 785x800
+    RenderFrameSet {FRAMESET} at (0,0) size 1200x800
+      RenderFrame {FRAME} at (0,0) size 600x200
+        layer at (0,0) size 600x200
+          RenderView at (0,0) size 600x200
+        layer at (0,0) size 600x200
+          RenderBlock {HTML} at (0,0) size 600x200
+            RenderBody {BODY} at (8,8) size 584x176 [bgcolor=#008000]
+              RenderBlock {P} at (0,0) size 584x18
+                RenderText {#text} at (0,0) size 445x18
+                  text run at (0,0) width 445: "Test for frameset flattening. The flattening only works inside the DRT."
+              RenderBlock {P} at (0,34) size 584x18
+                RenderText {#text} at (0,0) size 529x18
+                  text run at (0,0) width 529: "This frame should be 300px wide, 200px tall and not be scrollable (have scrollbars)."
         layer at (0,0) size 300x200
           RenderBlock (positioned) {DIV} at (0,0) size 300x200
-      RenderFrame {FRAME} at (400,0) size 400x120
-        layer at (0,0) size 400x120
-          RenderView at (0,0) size 400x120
-        layer at (0,0) size 400x120
-          RenderBlock {HTML} at (0,0) size 400x120
-            RenderBody {BODY} at (8,8) size 384x96 [bgcolor=#FF0000]
-              RenderBlock {P} at (0,0) size 384x36
-                RenderText {#text} at (0,0) size 353x36
-                  text run at (0,0) width 353: "This frame should be 300px wide, 200px tall and not be"
-                  text run at (0,18) width 172: "scrollable (have scrollbars)."
+      RenderFrame {FRAME} at (600,0) size 600x200
+        layer at (0,0) size 600x200
+          RenderView at (0,0) size 600x200
+        layer at (0,0) size 600x200
+          RenderBlock {HTML} at (0,0) size 600x200
+            RenderBody {BODY} at (8,8) size 584x176 [bgcolor=#FF0000]
+              RenderBlock {P} at (0,0) size 584x18
+                RenderText {#text} at (0,0) size 529x18
+                  text run at (0,0) width 529: "This frame should be 300px wide, 200px tall and not be scrollable (have scrollbars)."
         layer at (0,0) size 300x50
           RenderBlock (positioned) {DIV} at (0,0) size 300x50
-      RenderFrame {FRAME} at (0,120) size 400x480
+      RenderFrame {FRAME} at (0,200) size 600x600
         layer at (0,0) size 600x600
-          RenderView at (0,0) size 385x465
-        layer at (0,0) size 385x465
-          RenderBlock {HTML} at (0,0) size 385x465
-            RenderBody {BODY} at (8,8) size 369x441 [bgcolor=#FFFF00]
-              RenderBlock {P} at (0,0) size 369x36
-                RenderText {#text} at (0,0) size 353x36
-                  text run at (0,0) width 353: "This frame should be 600px wide, 600px tall and not be"
-                  text run at (0,18) width 172: "scrollable (have scrollbars)."
+          RenderView at (0,0) size 600x600
         layer at (0,0) size 600x600
-          RenderBlock (positioned) {DIV} at (0,0) size 600x600
-      RenderFrame {FRAME} at (400,120) size 400x480
-        layer at (0,0) size 600x600
-          RenderView at (0,0) size 385x465
-        layer at (0,0) size 385x465
-          RenderBlock {HTML} at (0,0) size 385x465
-            RenderBody {BODY} at (8,8) size 369x441 [bgcolor=#0000FF]
-              RenderBlock {P} at (0,0) size 369x36
-                RenderText {#text} at (0,0) size 353x36
-                  text run at (0,0) width 353: "This frame should be 600px wide, 600px tall and not be"
-                  text run at (0,18) width 172: "scrollable (have scrollbars)."
+          RenderBlock {HTML} at (0,0) size 600x600
+            RenderBody {BODY} at (8,8) size 584x576 [bgcolor=#FFFF00]
+              RenderBlock {P} at (0,0) size 584x18
+                RenderText {#text} at (0,0) size 529x18
+                  text run at (0,0) width 529: "This frame should be 600px wide, 600px tall and not be scrollable (have scrollbars)."
         layer at (0,0) size 600x600
           RenderBlock (positioned) {DIV} at (0,0) size 600x600
+      RenderFrame {FRAME} at (600,200) size 600x600
+        layer at (0,0) size 600x600
+          RenderView at (0,0) size 600x600
+        layer at (0,0) size 600x600
+          RenderBlock {HTML} at (0,0) size 600x600
+            RenderBody {BODY} at (8,8) size 584x576 [bgcolor=#0000FF]
+              RenderBlock {P} at (0,0) size 584x18
+                RenderText {#text} at (0,0) size 529x18
+                  text run at (0,0) width 529: "This frame should be 600px wide, 600px tall and not be scrollable (have scrollbars)."
+        layer at (0,0) size 600x600
+          RenderBlock (positioned) {DIV} at (0,0) size 600x600
+

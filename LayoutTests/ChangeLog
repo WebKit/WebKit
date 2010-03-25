@@ -1,3 +1,12 @@
+2010-03-25  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Unreview expectation result fix.
+
+        After http://trac.webkit.org/changeset/56547, the test needs new (and proper)
+        results.
+
+        * platform/mac/fast/frames/flattening/frameset-flattening-grid-expected.txt:
+
 2010-03-25  Jakub Wieczorek  <jwieczorek@webkit.org>
 
         Reviewed by Eric Seidel.
