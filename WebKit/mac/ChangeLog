@@ -1,3 +1,13 @@
+2010-03-25  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Correctness fix after r56493.
+
+        * Plugins/Hosted/NetscapePluginHostProxy.mm: (WKPCRunSyncOpenPanel): We still need to update
+        our hostProxy reference, even though we didn't use to have instanceProxy. Nothing guarantees
+        that the host proxy won't go away while the open panel is up.
+
 2010-03-24  Mark Rowe  <mrowe@apple.com>
 
         Build fix after r56474.
