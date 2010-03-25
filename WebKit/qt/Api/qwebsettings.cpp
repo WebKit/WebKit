@@ -351,6 +351,7 @@ QWebSettings* QWebSettings::globalSettings()
     \value MissingPluginGraphic The replacement graphic shown when a plugin could not be loaded.
     \value DefaultFrameIconGraphic The default icon for QWebFrame::icon().
     \value TextAreaSizeGripCornerGraphic The graphic shown for the size grip of text areas.
+    \value DeleteButtonGraphic The graphic shown for the WebKit-Editing-Delete-Button in Deletion UI.
 */
 
 /*!
