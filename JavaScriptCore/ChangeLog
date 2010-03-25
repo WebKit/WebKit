@@ -1,5 +1,9 @@
 2010-03-24  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by NOBODY (windows build fix).
+
+2010-03-24  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Sam Weinig.
 
         Switch String::latin1, String::utf8, String::fromUTF8 to
