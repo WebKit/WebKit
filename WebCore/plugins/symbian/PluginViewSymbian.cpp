@@ -52,7 +52,9 @@
 #include "npfunctions.h"
 #include "npinterface.h"
 #include "npruntime_impl.h"
+#include "qgraphicswebview.h"
 #include "runtime_root.h"
+#include <QGraphicsProxyWidget>
 #include <QKeyEvent>
 #include <QPixmap>
 #include <QRegion>
@@ -85,6 +87,7 @@ void PluginView::updatePluginWidget()
     IntRect oldClipRect = m_clipRect;
     
     m_windowRect = IntRect(frameView->contentsToWindow(frameRect().location()), frameRect().size());
+    
     m_clipRect = windowClipRect();
     m_clipRect.move(-m_windowRect.x(), -m_windowRect.y());
     if (m_windowRect == oldWindowRect && m_clipRect == oldClipRect)
@@ -387,12 +390,15 @@ bool PluginView::platformStart()
 
     if (m_isWindowed) {
         QWebPageClient* client = m_parentFrame->view()->hostWindow()->platformPageClient();
-        // FIXME this will not work for QGraphicsView.
-        // But we cannot use winId because it will create a window and on S60,
-        // QWidgets should not create a window. 
-        Q_ASSERT(qobject_cast<QWidget*>(client->pluginParent()));
-        setPlatformWidget(new PluginContainerSymbian(this, 
-            qobject_cast<QWidget*>(client->pluginParent())));
+        QGraphicsProxyWidget* proxy = 0;
+        if (QGraphicsWebView *webView = qobject_cast<QGraphicsWebView*>(client->pluginParent()))
+            proxy = new QGraphicsProxyWidget(webView);
+
+        PluginContainerSymbian* container = new PluginContainerSymbian(this, proxy ? 0 : client->ownerWidget(), proxy);
+        setPlatformWidget(container);
+        if (proxy)
+            proxy->setWidget(container);
+        
         m_npWindow.type = NPWindowTypeWindow;
         m_npWindow.window = (void*)platformPluginWidget();
 
@@ -408,7 +414,11 @@ bool PluginView::platformStart()
 
 void PluginView::platformDestroy()
 {
-    delete platformPluginWidget();
+    QWebPageClient* client = m_parentFrame->view()->hostWindow()->platformPageClient();
+    if (QGraphicsWebView *webView = qobject_cast<QGraphicsWebView*>(client->pluginParent()))
+        delete static_cast<PluginContainerSymbian*>(platformPluginWidget())->proxy();
+    else
+        delete platformPluginWidget();
 }
 
 void PluginView::halt()

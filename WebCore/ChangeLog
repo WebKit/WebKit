@@ -1,3 +1,22 @@
+2010-03-25  yael aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Windowed netscape plugins don't work with QGraphicsWebView on Symbian
+        https://bugs.webkit.org/show_bug.cgi?id=35112
+
+        Add a proxy widget when loading a QWidget based plugin in a QGraphicsWebView.
+
+        * plugins/symbian/PluginContainerSymbian.cpp:
+        (PluginContainerSymbian::PluginContainerSymbian):
+        (PluginContainerSymbian::focusInEvent):
+        * plugins/symbian/PluginContainerSymbian.h:
+        (WebCore::PluginContainerSymbian::proxy):
+        * plugins/symbian/PluginViewSymbian.cpp:
+        (WebCore::PluginView::updatePluginWidget):
+        (WebCore::PluginView::platformStart):
+        (WebCore::PluginView::platformDestroy):
+
 2010-03-25  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Adele Peterson.
