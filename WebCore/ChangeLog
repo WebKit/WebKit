@@ -1,5 +1,29 @@
 2010-03-25  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Eric Carlson.
+
+        Make calls to m_keyframeAnimations.checkConsistency() debug-only
+        https://bugs.webkit.org/show_bug.cgi?id=36555
+
+        Remove lots of calls to m_keyframeAnimations.checkConsistency(); which were left after some earlier
+        debugging. Leave one in CompositeAnimation::animate() to catch any future issues, which is OK since
+        these calls are no-ops in release builds.
+        
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::clearRenderer):
+        (WebCore::CompositeAnimation::updateKeyframeAnimations):
+        (WebCore::CompositeAnimation::getAnimatedStyle):
+        (WebCore::CompositeAnimation::setAnimating):
+        (WebCore::CompositeAnimation::timeToNextService):
+        (WebCore::CompositeAnimation::getAnimationForProperty):
+        (WebCore::CompositeAnimation::suspendAnimations):
+        (WebCore::CompositeAnimation::resumeAnimations):
+        (WebCore::CompositeAnimation::isAnimatingProperty):
+        (WebCore::CompositeAnimation::pauseAnimationAtTime):
+        (WebCore::CompositeAnimation::numberOfActiveAnimations):
+
+2010-03-25  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Geoffrey Garen.
 
         https://bugs.webkit.org/show_bug.cgi?id=36557
