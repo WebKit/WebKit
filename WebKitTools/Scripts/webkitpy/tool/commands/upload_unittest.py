@@ -29,11 +29,11 @@
 from webkitpy.tool.commands_references import Mock
 from webkitpy.tool.commands.commandtest import CommandsTest
 from webkitpy.tool.commands.upload import *
-from webkitpy.tool.mocktool import MockBugzillaTool
+from webkitpy.tool.mocktool import MockTool
 
 class UploadCommandsTest(CommandsTest):
     def test_commit_message_for_current_diff(self):
-        tool = MockBugzillaTool()
+        tool = MockTool()
         mock_commit_message_for_this_commit = Mock()
         mock_commit_message_for_this_commit.message = lambda: "Mock message"
         tool._scm.commit_message_for_this_commit = lambda: mock_commit_message_for_this_commit
@@ -44,7 +44,7 @@ class UploadCommandsTest(CommandsTest):
         self.assert_execute_outputs(CleanPendingCommit(), [])
 
     def test_assign_to_committer(self):
-        tool = MockBugzillaTool()
+        tool = MockTool()
         expected_stderr = "Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.com)\nBug 77 is already assigned to foo@foo.com (None).\nBug 76 has no non-obsolete patches, ignoring.\n"
         self.assert_execute_outputs(AssignToCommitter(), [], expected_stderr=expected_stderr, tool=tool)
         tool.bugs.reassign_bug.assert_called_with(42, "eric@webkit.org", "Attachment 128 was posted by a committer and has review+, assigning to Eric Seidel for commit.")
@@ -73,7 +73,7 @@ class UploadCommandsTest(CommandsTest):
         self.assert_execute_outputs(Upload(), [42], expected_stderr=expected_stderr)
 
     def test_mark_bug_fixed(self):
-        tool = MockBugzillaTool()
+        tool = MockTool()
         tool._scm.last_svn_commit_log = lambda: "r9876 |"
         options = Mock()
         options.bug_id = 42

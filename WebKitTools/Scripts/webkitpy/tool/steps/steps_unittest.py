@@ -28,7 +28,7 @@
 
 import unittest
 
-from webkitpy.tool.mocktool import MockBugzillaTool
+from webkitpy.tool.mocktool import MockTool
 from webkitpy.tool.steps_references import Mock
 from webkitpy.tool.steps.update import Update
 from webkitpy.tool.steps.promptforbugortitle import PromptForBugOrTitle
@@ -38,7 +38,7 @@ from webkitpy.outputcapture import OutputCapture
 class StepsTest(unittest.TestCase):
     def _run_step(self, step, tool=None, options=None, state=None):
         if not tool:
-            tool = MockBugzillaTool()
+            tool = MockTool()
         if not options:
             options = Mock()
         if not state:
@@ -51,6 +51,6 @@ class StepsTest(unittest.TestCase):
         self._run_step(Update, options)
 
     def test_prompt_for_bug_or_title_step(self):
-        tool = MockBugzillaTool()
+        tool = MockTool()
         tool.user.prompt = lambda message: 42
         self._run_step(PromptForBugOrTitle, tool=tool)

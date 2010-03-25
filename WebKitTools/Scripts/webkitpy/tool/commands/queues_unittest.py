@@ -33,7 +33,7 @@ from webkitpy.tool.commands_references import Mock
 from webkitpy.tool.commands.commandtest import CommandsTest
 from webkitpy.tool.commands.queues import *
 from webkitpy.tool.commands.queuestest import QueuesTest
-from webkitpy.tool.mocktool import MockBugzillaTool, MockSCM
+from webkitpy.tool.mocktool import MockTool, MockSCM
 from webkitpy.outputcapture import OutputCapture
 
 
@@ -56,7 +56,7 @@ class AbstractQueueTest(CommandsTest):
 
     def _assert_run_webkit_patch(self, run_args):
         queue = TestQueue()
-        tool = MockBugzillaTool()
+        tool = MockTool()
         queue.bind_to_tool(tool)
 
         queue.run_webkit_patch(run_args)
@@ -88,7 +88,7 @@ class AbstractQueueTest(CommandsTest):
 class AbstractReviewQueueTest(CommandsTest):
     def test_patch_collection_delegate_methods(self):
         queue = TestReviewQueue()
-        tool = MockBugzillaTool()
+        tool = MockTool()
         queue.bind_to_tool(tool)
         self.assertEquals(queue.collection_name(), "test-review-queue")
         self.assertEquals(queue.fetch_potential_patch_ids(), [103])
@@ -112,7 +112,7 @@ Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.c
         self.assert_queue_outputs(CommitQueue(), expected_stderr=expected_stderr)
 
     def test_rollout(self):
-        tool = MockBugzillaTool()
+        tool = MockTool()
         tool.buildbot.light_tree_on_fire()
         expected_stderr = {
             "begin_work_queue" : "CAUTION: commit-queue will discard all local changes in \"%s\"\nRunning WebKit commit-queue.\n" % MockSCM.fake_checkout_root,

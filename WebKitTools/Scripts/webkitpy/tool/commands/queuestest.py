@@ -29,7 +29,7 @@
 import unittest
 
 from webkitpy.tool.commands_references import Mock
-from webkitpy.tool.mocktool import MockBugzillaTool
+from webkitpy.tool.mocktool import MockTool
 from webkitpy.bugzilla import Attachment
 from webkitpy.outputcapture import OutputCapture
 
@@ -50,7 +50,7 @@ class QueuesTest(unittest.TestCase):
         "attacher_email": "adam@example.com",
     }, None)
 
-    def assert_queue_outputs(self, queue, args=None, work_item=None, expected_stdout=None, expected_stderr=None, options=Mock(), tool=MockBugzillaTool()):
+    def assert_queue_outputs(self, queue, args=None, work_item=None, expected_stdout=None, expected_stderr=None, options=Mock(), tool=MockTool()):
         if not expected_stdout:
             expected_stdout = {}
         if not expected_stderr:

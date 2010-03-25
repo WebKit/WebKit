@@ -426,7 +426,7 @@ class MockStatusServer(object):
         return 191
 
 
-class MockBugzillaTool():
+class MockTool():
 
     def __init__(self):
         self.bugs = MockBugzilla()

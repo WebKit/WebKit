@@ -30,7 +30,7 @@ import os
 
 from webkitpy.tool.commands.queuestest import QueuesTest
 from webkitpy.tool.commands.sheriffbot import SheriffBot
-from webkitpy.tool.mocktool import MockBugzillaTool, mock_builder
+from webkitpy.tool.mocktool import MockTool, mock_builder
 
 class SheriffBotTest(QueuesTest):
     def test_sheriff_bot(self):

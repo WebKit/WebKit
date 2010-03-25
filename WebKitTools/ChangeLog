@@ -2,6 +2,23 @@
 
         Reviewed by Adam Barth.
 
+        In webkitpy, renamed MockBugzillaTool to MockTool.
+
+        * Scripts/webkitpy/tool/commands/commandtest.py:
+        * Scripts/webkitpy/tool/commands/queries_unittest.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        * Scripts/webkitpy/tool/commands/queuestest.py:
+        * Scripts/webkitpy/tool/commands/sheriffbot_unittest.py:
+        * Scripts/webkitpy/tool/commands/upload_unittest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+        * Scripts/webkitpy/tool/steps/closebugforlanddiff_unittest.py:
+        * Scripts/webkitpy/tool/steps/steps_unittest.py:
+        * Scripts/webkitpy/tool/steps/updatechangelogswithreview_unittests.py:
+
+2010-03-25  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Adam Barth.
+
         In Scripts/webkitpy, moved webkitport.py and committers.py into
         common/config/ (also creating common/config/).
 
