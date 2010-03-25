@@ -451,6 +451,9 @@ void InspectorController::setFrontend(PassOwnPtr<InspectorFrontend> frontend)
         enableProfiler();
 #endif
 
+    // Initialize Web Inspector title.
+    m_frontend->inspectedURLChanged(m_inspectedPage->mainFrame()->loader()->url().string());
+
     populateScriptObjects();
     
     if (m_showAfterVisible == CurrentPanel) {

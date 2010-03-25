@@ -1,3 +1,14 @@
+2010-03-25  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Initialize Web Inspector title with inspected page URL when opening Web Inspector.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36534
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::setFrontend):
+
 2010-03-25  Antti Koivisto  <koivisto@iki.fi>
 
         Reviewed by Kenneth Rohde Christiansen.
