@@ -28,7 +28,7 @@
 
 import unittest
 
-from webkitpy.networktransaction import NetworkTransaction, NetworkTimeout
+from webkitpy.common.net.networktransaction import NetworkTransaction, NetworkTimeout
 from webkitpy.thirdparty.autoinstalled import HTTPError
 
 class NetworkTransactionTest(unittest.TestCase):

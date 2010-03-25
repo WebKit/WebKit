@@ -28,7 +28,7 @@
 
 import StringIO
 
-from webkitpy.bugzilla import Attachment
+from webkitpy.common.net.bugzilla import Attachment
 from webkitpy.tool.steps.abstractstep import AbstractStep
 
 

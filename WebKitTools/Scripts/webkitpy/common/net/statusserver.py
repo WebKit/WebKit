@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitpy.networktransaction import NetworkTransaction
+from webkitpy.common.net.networktransaction import NetworkTransaction
 from webkitpy.thirdparty.autoinstalled import Browser
 from webkitpy.webkit_logging import log
 

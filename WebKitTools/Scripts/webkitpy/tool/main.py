@@ -31,8 +31,9 @@
 
 import os
 
-from webkitpy.bugzilla import Bugzilla
-from webkitpy.buildbot import BuildBot
+from webkitpy.common.net.bugzilla import Bugzilla
+from webkitpy.common.net.buildbot import BuildBot
+from webkitpy.common.net.irc.ircproxy import IRCProxy
 from webkitpy.tool.commands.download import *
 from webkitpy.tool.commands.early_warning_system import *
 from webkitpy.tool.commands.openbugs import OpenBugs
@@ -42,7 +43,6 @@ from webkitpy.tool.commands.sheriffbot import *
 from webkitpy.tool.commands.upload import *
 from webkitpy.tool.multicommandtool import MultiCommandTool
 from webkitpy.executive import Executive
-from webkitpy.irc.ircproxy import IRCProxy
 from webkitpy.webkit_logging import log
 from webkitpy.webkitcheckout import WebKitCheckout
 from webkitpy.scm import detect_scm_system

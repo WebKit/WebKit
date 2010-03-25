@@ -31,9 +31,9 @@
 
 import sys
 
-from webkitpy.bugzilla_unittest import *
-from webkitpy.buildbot_unittest import *
 from webkitpy.changelogs_unittest import *
+from webkitpy.common.net.bugzilla_unittest import *
+from webkitpy.common.net.buildbot_unittest import *
 from webkitpy.tool.commands.download_unittest import *
 from webkitpy.tool.commands.early_warning_system_unittest import *
 from webkitpy.tool.commands.openbugs_unittest import OpenBugsTest
@@ -43,14 +43,14 @@ from webkitpy.tool.commands.queues_unittest import *
 from webkitpy.tool.commands.sheriffbot_unittest import *
 from webkitpy.commitinfo_unittest import *
 from webkitpy.common.config.committers_unittest import *
-from webkitpy.credentials_unittest import *
+from webkitpy.common.net.credentials_unittest import *
+from webkitpy.common.net.irc.unittests import *
+from webkitpy.common.net.networktransaction_unittest import *
 from webkitpy.diff_parser_unittest import *
 from webkitpy.executive_unittest import *
 from webkitpy.grammar_unittest import *
-from webkitpy.irc.unittests import *
 from webkitpy.init.unittests import *  # for the webkitpy.init package
 from webkitpy.layout_tests.port.mac_unittest import *
-from webkitpy.networktransaction_unittest import *
 from webkitpy.tool.bot.queueengine_unittest import *
 from webkitpy.tool.bot.patchcollection_unittest import *
 from webkitpy.tool.multicommandtool_unittest import *

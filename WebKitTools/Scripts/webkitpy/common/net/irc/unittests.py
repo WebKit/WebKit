@@ -26,38 +26,9 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import threading
+"""Runs irc package unit tests."""
 
-from webkitpy.irc.ircbot import IRCBot
-from webkitpy.irc.threadedmessagequeue import ThreadedMessageQueue
-from webkitpy.webkit_logging import log
+# This module is imported by the module that imports all webkitpy unit tests.
 
-
-class _IRCThread(threading.Thread):
-    def __init__(self, message_queue, bot_class, password):
-        threading.Thread.__init__(self)
-        self.setDaemon(True)
-        self._message_queue = message_queue
-        self._bot_class = bot_class
-        self._password = password
-
-    def run(self):
-        bot = self._bot_class(self._message_queue, password=self._password)
-        bot.start()
-
-
-class IRCProxy(object):
-    def __init__(self, bot_class=IRCBot, password=None):
-        log("Connecting to IRC")
-        self._message_queue = ThreadedMessageQueue()
-        self._child_thread = _IRCThread(self._message_queue, bot_class, password=password)
-        self._child_thread.start()
-
-    def post(self, message):
-        self._message_queue.post(message)
-
-    def disconnect(self):
-        log("Disconnecting from IRC...")
-        self._message_queue.stop()
-        self._child_thread.join()
-
+from webkitpy.common.net.irc.messagepump_unittest import *
+from webkitpy.common.net.irc.threadedmessagequeue_unittest import *

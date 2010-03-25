@@ -29,7 +29,7 @@
 import os
 import tempfile
 import unittest
-from webkitpy.credentials import Credentials
+from webkitpy.common.net.credentials import Credentials
 from webkitpy.executive import Executive
 from webkitpy.outputcapture import OutputCapture
 from webkitpy.thirdparty.mock import Mock

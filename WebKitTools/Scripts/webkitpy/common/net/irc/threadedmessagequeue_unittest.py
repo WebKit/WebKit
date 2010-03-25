@@ -27,56 +27,26 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import unittest
-from webkitpy.irc.messagepump import MessagePump, MessagePumpDelegate
-from webkitpy.irc.threadedmessagequeue import ThreadedMessageQueue
+from webkitpy.common.net.irc.threadedmessagequeue import ThreadedMessageQueue
 
-
-class TestDelegate(MessagePumpDelegate):
-    def __init__(self):
-        self.log = []
-
-    def schedule(self, interval, callback):
-        self.callback = callback
-        self.log.append("schedule")
-
-    def message_available(self, message):
-        self.log.append("message_available: %s" % message)
-
-    def final_message_delivered(self):
-        self.log.append("final_message_delivered")
-
-
-class MessagePumpTest(unittest.TestCase):
+class ThreadedMessageQueueTest(unittest.TestCase):
 
     def test_basic(self):
         queue = ThreadedMessageQueue()
-        delegate = TestDelegate()
-        pump = MessagePump(delegate, queue)
-        self.assertEqual(delegate.log, [
-            'schedule'
-        ])
-        delegate.callback()
         queue.post("Hello")
         queue.post("There")
-        delegate.callback()
-        self.assertEqual(delegate.log, [
-            'schedule',
-            'schedule',
-            'message_available: Hello',
-            'message_available: There',
-            'schedule'
-        ])
+        (messages, is_running) = queue.take_all()
+        self.assertEqual(messages, ["Hello", "There"])
+        self.assertTrue(is_running)
+        (messages, is_running) = queue.take_all()
+        self.assertEqual(messages, [])
+        self.assertTrue(is_running)
         queue.post("More")
-        queue.post("Messages")
         queue.stop()
-        delegate.callback()
-        self.assertEqual(delegate.log, [
-            'schedule',
-            'schedule',
-            'message_available: Hello',
-            'message_available: There',
-            'schedule',
-            'message_available: More',
-            'message_available: Messages',
-            'final_message_delivered'
-        ])
+        queue.post("Messages")
+        (messages, is_running) = queue.take_all()
+        self.assertEqual(messages, ["More", "Messages"])
+        self.assertFalse(is_running)
+        (messages, is_running) = queue.take_all()
+        self.assertEqual(messages, [])
+        self.assertFalse(is_running)

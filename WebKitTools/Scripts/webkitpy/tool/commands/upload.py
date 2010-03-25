@@ -37,12 +37,12 @@ from optparse import make_option
 
 import webkitpy.tool.steps as steps
 
-from webkitpy.bugzilla import parse_bug_id
+from webkitpy.common.config.committers import CommitterList
+from webkitpy.common.net.bugzilla import parse_bug_id
 from webkitpy.tool.commands_references import Mock
 from webkitpy.tool.commands.abstractsequencedcommand import AbstractSequencedCommand
 from webkitpy.tool.comments import bug_comment_from_svn_revision
 from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
-from webkitpy.common.config.committers import CommitterList
 from webkitpy.grammar import pluralize, join_with_separators
 from webkitpy.webkit_logging import error, log
 from webkitpy.user import User

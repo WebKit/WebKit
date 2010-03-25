@@ -30,9 +30,9 @@
 
 import StringIO
 
-from webkitpy.bugzilla import parse_bug_id
 from webkitpy.changelogs import ChangeLog, is_path_to_changelog
 from webkitpy.common.config.committers import CommitterList
+from webkitpy.common.net.bugzilla import parse_bug_id
 
 
 class CommitInfo(object):

@@ -1,3 +1,60 @@
+2010-03-25  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        Create webkitpy.common.net as described in
+        https://bugs.webkit.org/show_bug.cgi?id=36093
+
+        * Scripts/webkitpy/bugzilla.py: Removed.
+        * Scripts/webkitpy/bugzilla_unittest.py: Removed.
+        * Scripts/webkitpy/buildbot.py: Removed.
+        * Scripts/webkitpy/buildbot_unittest.py: Removed.
+        * Scripts/webkitpy/commitinfo.py:
+        * Scripts/webkitpy/common/net: Added.
+        * Scripts/webkitpy/common/net/__init__.py: Added.
+        * Scripts/webkitpy/common/net/bugzilla.py: Copied from Scripts/webkitpy/bugzilla.py.
+        * Scripts/webkitpy/common/net/bugzilla_unittest.py: Copied from Scripts/webkitpy/bugzilla_unittest.py.
+        * Scripts/webkitpy/common/net/buildbot.py: Copied from Scripts/webkitpy/buildbot.py.
+        * Scripts/webkitpy/common/net/buildbot_unittest.py: Copied from Scripts/webkitpy/buildbot_unittest.py.
+        * Scripts/webkitpy/common/net/credentials.py: Copied from Scripts/webkitpy/credentials.py.
+        * Scripts/webkitpy/common/net/credentials_unittest.py: Copied from Scripts/webkitpy/credentials_unittest.py.
+        * Scripts/webkitpy/common/net/irc: Copied from Scripts/webkitpy/irc.
+        * Scripts/webkitpy/common/net/irc/ircbot.py:
+        * Scripts/webkitpy/common/net/irc/ircproxy.py:
+        * Scripts/webkitpy/common/net/irc/messagepump_unittest.py:
+        * Scripts/webkitpy/common/net/irc/threadedmessagequeue_unittest.py:
+        * Scripts/webkitpy/common/net/irc/unittests.py:
+        * Scripts/webkitpy/common/net/networktransaction.py: Copied from Scripts/webkitpy/networktransaction.py.
+        * Scripts/webkitpy/common/net/networktransaction_unittest.py: Copied from Scripts/webkitpy/networktransaction_unittest.py.
+        * Scripts/webkitpy/common/net/statusserver.py: Copied from Scripts/webkitpy/statusserver.py.
+        * Scripts/webkitpy/credentials.py: Removed.
+        * Scripts/webkitpy/credentials_unittest.py: Removed.
+        * Scripts/webkitpy/irc: Removed.
+        * Scripts/webkitpy/irc/__init__.py: Removed.
+        * Scripts/webkitpy/irc/ircbot.py: Removed.
+        * Scripts/webkitpy/irc/ircproxy.py: Removed.
+        * Scripts/webkitpy/irc/messagepump.py: Removed.
+        * Scripts/webkitpy/irc/messagepump_unittest.py: Removed.
+        * Scripts/webkitpy/irc/threadedmessagequeue.py: Removed.
+        * Scripts/webkitpy/irc/threadedmessagequeue_unittest.py: Removed.
+        * Scripts/webkitpy/irc/unittests.py: Removed.
+        * Scripts/webkitpy/networktransaction.py: Removed.
+        * Scripts/webkitpy/networktransaction_unittest.py: Removed.
+        * Scripts/webkitpy/scm_unittest.py:
+        * Scripts/webkitpy/statusserver.py: Removed.
+        * Scripts/webkitpy/tool/bot/queueengine.py:
+        * Scripts/webkitpy/tool/commands/download.py:
+        * Scripts/webkitpy/tool/commands/queries.py:
+        * Scripts/webkitpy/tool/commands/queries_unittest.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        * Scripts/webkitpy/tool/commands/queuestest.py:
+        * Scripts/webkitpy/tool/commands/upload.py:
+        * Scripts/webkitpy/tool/main.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+        * Scripts/webkitpy/tool/steps/postdiffforrevert.py:
+        * Scripts/webkitpy/unittests.py:
+
 2010-03-25  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Adam Barth.

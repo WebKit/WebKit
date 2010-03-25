@@ -31,10 +31,10 @@
 
 from optparse import make_option
 
-from webkitpy.buildbot import BuildBot
+from webkitpy.common.config.committers import CommitterList
+from webkitpy.common.net.buildbot import BuildBot
 from webkitpy.changelogs import view_source_url
 from webkitpy.commitinfo import CommitInfo
-from webkitpy.common.config.committers import CommitterList
 from webkitpy.grammar import pluralize
 from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
 from webkitpy.webkit_logging import log

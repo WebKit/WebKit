@@ -28,7 +28,7 @@
 
 import os
 
-from webkitpy.bugzilla import Attachment
+from webkitpy.common.net.bugzilla import Attachment
 from webkitpy.tool.commands_references import Mock
 from webkitpy.tool.commands.commandtest import CommandsTest
 from webkitpy.tool.commands.queues import *
