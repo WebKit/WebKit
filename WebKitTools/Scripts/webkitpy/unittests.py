@@ -54,9 +54,9 @@ from webkitpy.multicommandtool_unittest import *
 from webkitpy.networktransaction_unittest import *
 from webkitpy.patchcollection_unittest import *
 from webkitpy.queueengine_unittest import *
-from webkitpy.steps.steps_unittest import *
-from webkitpy.steps.closebugforlanddiff_unittest import *
-from webkitpy.steps.updatechangelogswithreview_unittests import *
+from webkitpy.tool.steps.steps_unittest import *
+from webkitpy.tool.steps.closebugforlanddiff_unittest import *
+from webkitpy.tool.steps.updatechangelogswithreview_unittests import *
 from webkitpy.style.unittests import *  # for the webkitpy.style package
 from webkitpy.user_unittest import *
 from webkitpy.webkit_logging_unittest import *

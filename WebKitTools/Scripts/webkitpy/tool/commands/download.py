@@ -31,7 +31,7 @@ import os
 
 from optparse import make_option
 
-import webkitpy.steps as steps
+import webkitpy.tool.steps as steps
 
 from webkitpy.bugzilla import parse_bug_id
 # We could instead use from modules import buildsteps and then prefix every buildstep with "buildsteps."

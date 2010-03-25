@@ -1,3 +1,89 @@
+2010-03-24  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        In Scripts/webkitpy, moved steps_references.py and the steps
+        folder into webkitpy/patch.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36093
+
+        * Scripts/webkitpy/steps: Removed.
+        * Scripts/webkitpy/steps/__init__.py: Removed.
+        * Scripts/webkitpy/steps/abstractstep.py: Removed.
+        * Scripts/webkitpy/steps/applypatch.py: Removed.
+        * Scripts/webkitpy/steps/applypatchwithlocalcommit.py: Removed.
+        * Scripts/webkitpy/steps/build.py: Removed.
+        * Scripts/webkitpy/steps/checkstyle.py: Removed.
+        * Scripts/webkitpy/steps/cleanworkingdirectory.py: Removed.
+        * Scripts/webkitpy/steps/cleanworkingdirectorywithlocalcommits.py: Removed.
+        * Scripts/webkitpy/steps/closebug.py: Removed.
+        * Scripts/webkitpy/steps/closebugforlanddiff.py: Removed.
+        * Scripts/webkitpy/steps/closebugforlanddiff_unittest.py: Removed.
+        * Scripts/webkitpy/steps/closepatch.py: Removed.
+        * Scripts/webkitpy/steps/commit.py: Removed.
+        * Scripts/webkitpy/steps/confirmdiff.py: Removed.
+        * Scripts/webkitpy/steps/createbug.py: Removed.
+        * Scripts/webkitpy/steps/editchangelog.py: Removed.
+        * Scripts/webkitpy/steps/ensurebuildersaregreen.py: Removed.
+        * Scripts/webkitpy/steps/ensurelocalcommitifneeded.py: Removed.
+        * Scripts/webkitpy/steps/metastep.py: Removed.
+        * Scripts/webkitpy/steps/obsoletepatches.py: Removed.
+        * Scripts/webkitpy/steps/options.py: Removed.
+        * Scripts/webkitpy/steps/postdiff.py: Removed.
+        * Scripts/webkitpy/steps/postdiffforcommit.py: Removed.
+        * Scripts/webkitpy/steps/postdiffforrevert.py: Removed.
+        * Scripts/webkitpy/steps/preparechangelog.py: Removed.
+        * Scripts/webkitpy/steps/preparechangelogforrevert.py: Removed.
+        * Scripts/webkitpy/steps/promptforbugortitle.py: Removed.
+        * Scripts/webkitpy/steps/reopenbugafterrollout.py: Removed.
+        * Scripts/webkitpy/steps/revertrevision.py: Removed.
+        * Scripts/webkitpy/steps/runtests.py: Removed.
+        * Scripts/webkitpy/steps/steps_unittest.py: Removed.
+        * Scripts/webkitpy/steps/update.py: Removed.
+        * Scripts/webkitpy/steps/updatechangelogswithreview_unittests.py: Removed.
+        * Scripts/webkitpy/steps/updatechangelogswithreviewer.py: Removed.
+        * Scripts/webkitpy/steps/validatereviewer.py: Removed.
+        * Scripts/webkitpy/steps_references.py: Removed.
+        * Scripts/webkitpy/stepsequence.py:
+        * Scripts/webkitpy/tool/commands/download.py:
+        * Scripts/webkitpy/tool/commands/upload.py:
+        * Scripts/webkitpy/tool/steps: Copied from WebKitTools/Scripts/webkitpy/steps.
+        * Scripts/webkitpy/tool/steps/__init__.py:
+        * Scripts/webkitpy/tool/steps/applypatch.py:
+        * Scripts/webkitpy/tool/steps/applypatchwithlocalcommit.py:
+        * Scripts/webkitpy/tool/steps/build.py:
+        * Scripts/webkitpy/tool/steps/checkstyle.py:
+        * Scripts/webkitpy/tool/steps/cleanworkingdirectory.py:
+        * Scripts/webkitpy/tool/steps/cleanworkingdirectorywithlocalcommits.py:
+        * Scripts/webkitpy/tool/steps/closebug.py:
+        * Scripts/webkitpy/tool/steps/closebugforlanddiff.py:
+        * Scripts/webkitpy/tool/steps/closebugforlanddiff_unittest.py:
+        * Scripts/webkitpy/tool/steps/closepatch.py:
+        * Scripts/webkitpy/tool/steps/commit.py:
+        * Scripts/webkitpy/tool/steps/confirmdiff.py:
+        * Scripts/webkitpy/tool/steps/createbug.py:
+        * Scripts/webkitpy/tool/steps/editchangelog.py:
+        * Scripts/webkitpy/tool/steps/ensurebuildersaregreen.py:
+        * Scripts/webkitpy/tool/steps/ensurelocalcommitifneeded.py:
+        * Scripts/webkitpy/tool/steps/metastep.py:
+        * Scripts/webkitpy/tool/steps/obsoletepatches.py:
+        * Scripts/webkitpy/tool/steps/postdiff.py:
+        * Scripts/webkitpy/tool/steps/postdiffforcommit.py:
+        * Scripts/webkitpy/tool/steps/postdiffforrevert.py:
+        * Scripts/webkitpy/tool/steps/preparechangelog.py:
+        * Scripts/webkitpy/tool/steps/preparechangelogforrevert.py:
+        * Scripts/webkitpy/tool/steps/promptforbugortitle.py:
+        * Scripts/webkitpy/tool/steps/reopenbugafterrollout.py:
+        * Scripts/webkitpy/tool/steps/revertrevision.py:
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        * Scripts/webkitpy/tool/steps/steps_unittest.py:
+        * Scripts/webkitpy/tool/steps/update.py:
+        * Scripts/webkitpy/tool/steps/updatechangelogswithreview_unittests.py:
+        * Scripts/webkitpy/tool/steps/updatechangelogswithreviewer.py:
+        * Scripts/webkitpy/tool/steps/validatereviewer.py:
+        * Scripts/webkitpy/tool/steps_references.py: Copied from WebKitTools/Scripts/webkitpy/steps_references.py.
+        * Scripts/webkitpy/unittests.py:
+
 2010-03-24  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, build fix only.

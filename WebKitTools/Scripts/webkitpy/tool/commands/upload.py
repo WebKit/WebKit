@@ -35,7 +35,7 @@ import sys
 
 from optparse import make_option
 
-import webkitpy.steps as steps
+import webkitpy.tool.steps as steps
 
 from webkitpy.bugzilla import parse_bug_id
 from webkitpy.tool.commands_references import Mock
