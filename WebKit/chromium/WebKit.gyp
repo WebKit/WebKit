@@ -287,6 +287,7 @@
                 'src/WebBindings.cpp',
                 'src/WebCache.cpp',
                 'src/WebColor.cpp',
+                'src/WebCommon.cpp',
                 'src/WebCrossOriginPreflightResultCache.cpp',
                 'src/WebCString.cpp',
                 'src/WebCursorInfo.cpp',

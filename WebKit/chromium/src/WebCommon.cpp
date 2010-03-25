@@ -28,78 +28,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPrivatePtr_h
-#define WebPrivatePtr_h
+#include "config.h"
+#include "WebCommon.h"
 
-#if WEBKIT_IMPLEMENTATION
-#include <wtf/PassRefPtr.h>
-#endif
+#include <wtf/Assertions.h>
 
 namespace WebKit {
 
-// This class is an implementation detail of the WebKit API.  It exists
-// to help simplify the implementation of WebKit interfaces that merely
-// wrap a reference counted WebCore class.
-template <typename T>
-class WebPrivatePtr {
-public:
-    WebPrivatePtr() : m_ptr(0) { }
-    ~WebPrivatePtr() { WEBKIT_ASSERT(!m_ptr); }
-
-    bool isNull() const { return !m_ptr; }
-
-#if WEBKIT_IMPLEMENTATION
-    WebPrivatePtr(const PassRefPtr<T>& prp)
-        : m_ptr(prp.releaseRef())
-    {
-    }
-
-    void reset()
-    {
-        assign(0);
-    }
-
-    WebPrivatePtr<T>& operator=(const WebPrivatePtr<T>& other)
-    {
-        T* p = other.m_ptr;
-        if (p)
-            p->ref();
-        assign(p);
-        return *this;
-    }
-
-    WebPrivatePtr<T>& operator=(const PassRefPtr<T>& prp)
-    {
-        assign(prp.releaseRef());
-        return *this;
-    }
-
-    T* get() const
-    {
-        return m_ptr;
-    }
-
-    T* operator->() const
-    {
-        ASSERT(m_ptr);
-        return m_ptr;
-    }
-#endif
-
-private:
-#if WEBKIT_IMPLEMENTATION
-    void assign(T* p)
-    {
-        // p is already ref'd for us by the caller
-        if (m_ptr)
-            m_ptr->deref();
-        m_ptr = p;
-    }
-#endif
-
-    T* m_ptr;
-};
+void failedAssertion(const char* file, int line, const char* function, const char* assertion)
+{
+    WTFReportAssertionFailure(file, line, function, assertion);
+    CRASH();
+}
 
 } // namespace WebKit
-
-#endif

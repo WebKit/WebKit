@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -89,6 +89,21 @@ typedef wchar_t WebUChar;
 typedef unsigned short WebUChar;
 #endif
 
+// -----------------------------------------------------------------------------
+// Assertions
+
+WEBKIT_API void failedAssertion(const char* file, int line, const char* function, const char* assertion);
+
 } // namespace WebKit
+
+// Ideally, only use inside the public directory but outside of WEBKIT_IMPLEMENTATION blocks.  (Otherwise use WTF's ASSERT.)
+#if defined(NDEBUG)
+#define WEBKIT_ASSERT(assertion) ((void)0)
+#else
+#define WEBKIT_ASSERT(assertion) do { \
+    if (!(assertion)) \
+        failedAssertion(__FILE__, __LINE__, __FUNCTION__, #assertion); \
+} while (0)
+#endif
 
 #endif
