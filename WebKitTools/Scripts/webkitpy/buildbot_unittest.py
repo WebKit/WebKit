@@ -83,7 +83,7 @@ class BuilderTest(unittest.TestCase):
             self.assertEqual(self.builder._revision_and_build_for_filename(filename), revision_and_build)
 
 
-class BuildTest(unittest.TestCase):
+class LayoutTestResultsTest(unittest.TestCase):
     _example_results_html = """
 <html>
 <head>
@@ -118,8 +118,7 @@ class BuildTest(unittest.TestCase):
         ]
     }
     def test_parse_layout_test_results(self):
-        build = Build(None, revision=1, build_number=1, is_green=False)
-        results = build._parse_layout_test_results(self._example_results_html)
+        results = LayoutTestResults._parse_results_html(self._example_results_html)
         self.assertEqual(self._expected_layout_test_results, results)
 
 

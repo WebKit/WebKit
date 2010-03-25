@@ -176,7 +176,7 @@ class ResultsFor(AbstractDeclarativeCommand):
         if not results:
             print " No results."
             return
-        for title, files in results.items():
+        for title, files in results.parsed_results().items():
             print " %s" % title
             for filename in files:
                 print "  %s" % filename

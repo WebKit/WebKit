@@ -150,6 +150,44 @@ class Builder(object):
         return suspect_revisions
 
 
+class LayoutTestResults(object):
+    @classmethod
+    def _parse_results_html(cls, page):
+        parsed_results = {}
+        tables = BeautifulSoup(page).findAll("table")
+        for table in tables:
+            table_title = table.findPreviousSibling("p").string
+            # We might want to translate table titles into identifiers at some point.
+            parsed_results[table_title] = [row.find("a").string for row in table.findAll("tr")]
+
+        return parsed_results
+
+    @classmethod
+    def _fetch_results_html(cls, base_url):
+        results_html = "%s/results.html" % base_url
+        # FIXME: We need to move this sort of 404 logic into NetworkTransaction or similar.
+        try:
+            page = urllib2.urlopen(results_html)
+            return cls._parse_results_html(page)
+        except urllib2.HTTPError, error:
+            if error.code != 404:
+                raise
+
+    @classmethod
+    def results_from_url(cls, base_url):
+        parsed_results = cls._fetch_results_html(base_url)
+        if not parsed_results:
+            return None
+        return cls(base_url, parsed_results)
+
+    def __init__(self, base_url, parsed_results):
+        self._base_url = base_url
+        self._parsed_results = parsed_results
+
+    def parsed_results(self):
+        return self._parsed_results
+
+
 class Build(object):
     def __init__(self, builder, build_number, revision, is_green):
         self._builder = builder
@@ -169,27 +207,9 @@ class Build(object):
         results_directory = "r%s (%s)" % (self.revision(), self._number)
         return "%s/%s" % (self._builder.results_url(), urllib.quote(results_directory))
 
-    def _parse_layout_test_results(self, page):
-        layout_test_results = {}
-        tables = BeautifulSoup(page).findAll("table")
-        for table in tables:
-            table_title = table.findPreviousSibling("p").string
-            layout_test_results[table_title] = [row.find("a").string for row in table.findAll("tr")]
-
-        return layout_test_results
-
-    def _fetch_layout_test_results(self):
-        results_html = "%s/results.html" % self.results_url()
-        try:
-            page = urllib2.urlopen(results_html)
-            return self._parse_layout_test_results(page)
-        except urllib2.HTTPError, error:
-            if error.code != 404:
-                raise
-
     def layout_test_results(self):
         if not self._layout_test_results:
-            self._layout_test_results = self._fetch_layout_test_results()
+            self._layout_test_results = LayoutTestResults.results_from_url(self.results_url())
         return self._layout_test_results
 
     def builder(self):
@@ -208,7 +228,7 @@ class Build(object):
 
 
 class BuildBot(object):
-
+    # FIXME: This should move into some sort of webkit_config.py
     default_host = "build.webkit.org"
 
     def __init__(self, host=default_host):
