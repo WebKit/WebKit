@@ -1,3 +1,21 @@
+2010-03-25  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        In webkitpy, pushed the unit test import statements in
+        webkitpy/unittests.py into appropriate unittests.py files in the
+        new root-level packages beneath webkitpy.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36093
+
+        This is part of the master bug to reorganize webkitpy.
+
+        * Scripts/webkitpy/common/system/unittests.py:
+        * Scripts/webkitpy/common/unittests.py: Added.
+        * Scripts/webkitpy/python24/unittests.py: Added.
+        * Scripts/webkitpy/tool/unittests.py: Added.
+        * Scripts/webkitpy/unittests.py:
+
 2010-03-25  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.  Move WebKitCheckout into the webkitpy.common.checkout

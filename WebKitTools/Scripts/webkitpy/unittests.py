@@ -31,36 +31,11 @@
 
 import sys
 
-from webkitpy.common.checkout.changelog_unittest import *
-from webkitpy.common.net.bugzilla_unittest import *
-from webkitpy.common.net.buildbot_unittest import *
-from webkitpy.tool.commands.download_unittest import *
-from webkitpy.tool.commands.early_warning_system_unittest import *
-from webkitpy.tool.commands.openbugs_unittest import OpenBugsTest
-from webkitpy.tool.commands.upload_unittest import *
-from webkitpy.tool.commands.queries_unittest import *
-from webkitpy.tool.commands.queues_unittest import *
-from webkitpy.tool.commands.sheriffbot_unittest import *
-from webkitpy.common.checkout.commitinfo_unittest import *
-from webkitpy.common.checkout.diff_parser_unittest import *
-from webkitpy.common.config.committers_unittest import *
-from webkitpy.common.config.ports_unittest import *
-from webkitpy.common.net.credentials_unittest import *
-from webkitpy.common.net.irc.unittests import *
-from webkitpy.common.net.networktransaction_unittest import *
-from webkitpy.common.system.executive_unittest import *
-from webkitpy.common.system.unittests import *  # for the webkitpy.init package
-from webkitpy.common.system.user_unittest import *
+from webkitpy.common.unittests import *
 from webkitpy.layout_tests.port.mac_unittest import *
-from webkitpy.python24.versioning_unittest import *
-from webkitpy.tool.bot.queueengine_unittest import *
-from webkitpy.tool.bot.patchcollection_unittest import *
-from webkitpy.tool.grammar_unittest import *
-from webkitpy.tool.multicommandtool_unittest import *
-from webkitpy.tool.steps.steps_unittest import *
-from webkitpy.tool.steps.closebugforlanddiff_unittest import *
-from webkitpy.tool.steps.updatechangelogswithreview_unittests import *
-from webkitpy.style.unittests import *  # for the webkitpy.style package
+from webkitpy.python24.unittests import *
+from webkitpy.style.unittests import *
+from webkitpy.tool.unittests import *
 from webkitpy.webkit_logging_unittest import *
 
 # FIXME: This is a hack, but I'm tired of commenting out the test.

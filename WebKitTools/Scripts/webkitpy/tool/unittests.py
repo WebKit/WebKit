@@ -20,8 +20,21 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""Imports unit tests for webkitpy.common.system."""
+"""Imports unit tests for webkitpy.tool."""
 
-from webkitpy.common.system.logutils_unittest import *
-from webkitpy.common.system.executive_unittest import *
-from webkitpy.common.system.user_unittest import *
+# This module is imported by the module that imports all webkitpy unit tests.
+
+from webkitpy.tool.bot.patchcollection_unittest import *
+from webkitpy.tool.bot.queueengine_unittest import *
+from webkitpy.tool.commands.download_unittest import *
+from webkitpy.tool.commands.early_warning_system_unittest import *
+from webkitpy.tool.commands.openbugs_unittest import OpenBugsTest
+from webkitpy.tool.commands.queries_unittest import *
+from webkitpy.tool.commands.queues_unittest import *
+from webkitpy.tool.commands.sheriffbot_unittest import *
+from webkitpy.tool.commands.upload_unittest import *
+from webkitpy.tool.grammar_unittest import *
+from webkitpy.tool.multicommandtool_unittest import *
+from webkitpy.tool.steps.closebugforlanddiff_unittest import *
+from webkitpy.tool.steps.steps_unittest import *
+from webkitpy.tool.steps.updatechangelogswithreview_unittests import *
