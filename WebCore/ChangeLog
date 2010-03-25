@@ -25,6 +25,23 @@
 
 2010-03-25  Simon Fraser  <simon.fraser@apple.com>
 
+        Revert r56565 which was based on an incorrect premise.
+
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::clearRenderer):
+        (WebCore::CompositeAnimation::updateKeyframeAnimations):
+        (WebCore::CompositeAnimation::getAnimatedStyle):
+        (WebCore::CompositeAnimation::setAnimating):
+        (WebCore::CompositeAnimation::timeToNextService):
+        (WebCore::CompositeAnimation::getAnimationForProperty):
+        (WebCore::CompositeAnimation::suspendAnimations):
+        (WebCore::CompositeAnimation::resumeAnimations):
+        (WebCore::CompositeAnimation::isAnimatingProperty):
+        (WebCore::CompositeAnimation::pauseAnimationAtTime):
+        (WebCore::CompositeAnimation::numberOfActiveAnimations):
+
+2010-03-25  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Eric Carlson.
 
         Make calls to m_keyframeAnimations.checkConsistency() debug-only
