@@ -4,7 +4,7 @@
 <p> You should see PASSED once. </p>
 
 <script type="text/javascript">
-var count = 0;
+var resourceSize = 1461754;
 var lastPosition = 0;
 
 function log (msg)
@@ -14,7 +14,7 @@ function log (msg)
 }
 
 function onProgress(e) {
-    if (++count == 3) {
+    if (e.position >= resourceSize / 4) {
         // We want to restart the XMLHttpRequest to see if the count is updated
         var xhr = e.target;
         xhr.onprogress = onProgressTest;
@@ -30,8 +30,8 @@ function onProgressTest(e) {
 
 function onReadyStateChange() {
     if (req.readyState == 4) {
-        // Compare last position with known resource size.
-        log((lastPosition == 1461754) ? "PASSED" : ("FAILED: expected 1461754, actual " + lastPosition));
+        // Compare last position with the known resource size.
+        log((lastPosition == resourceSize) ? "PASSED" : ("FAILED: expected " + resourceSize + ", actual " + lastPosition));
         if (window.layoutTestController)
             layoutTestController.notifyDone();
     }

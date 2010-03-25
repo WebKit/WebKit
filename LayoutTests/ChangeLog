@@ -1,3 +1,22 @@
+2010-03-25  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        [Qt][GTK] http/tests/xmlhttprequest/xmlhttprequest-onProgress-open-should-zero-length.html
+        fails after r56394
+        https://bugs.webkit.org/show_bug.cgi?id=36531
+
+        The test was assuming that we would receive 3 progress events which may not be the case anymore
+        due to the event throttling added in r56394.
+
+        * http/tests/xmlhttprequest/xmlhttprequest-onProgress-open-should-zero-length.html: Removed
+        the counting as it belonged to the original version of the test and instead use the position
+        to determine when to reset the XHR.
+
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+        Removed the test from the Skipped lists now that it should pass.
+
 2010-03-24  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Adele Peterson.

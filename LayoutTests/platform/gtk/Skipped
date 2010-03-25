@@ -5846,7 +5846,3 @@ fast/loader/stateobjects/replacestate-in-iframe.html
 # Fails on the 32 bits bots with off-by-one size after zoom out
 # See https://bugs.webkit.org/show_bug.cgi?id=36491
 fast/css/zoom-body-scroll.html
-
-# [Qt][GTK] http/tests/xmlhttprequest/xmlhttprequest-onProgress-open-should-zero-length.html fails after r56394
-# https://bugs.webkit.org/show_bug.cgi?id=36531
-http/tests/xmlhttprequest/xmlhttprequest-onProgress-open-should-zero-length.html
