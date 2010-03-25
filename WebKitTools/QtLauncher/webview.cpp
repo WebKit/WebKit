@@ -107,7 +107,7 @@ void WebViewGraphicsBased::setFrameRateMeasurementEnabled(bool enabled)
     if (m_measureFps) {
         m_lastConsultTime = m_startTime = QTime::currentTime();
         m_updateTimer->start();
-    } else 
+    } else
         m_updateTimer->stop();
 }
 
@@ -121,7 +121,7 @@ void WebViewGraphicsBased::updateFrameRate()
     int average = total ? m_numPaintsTotal * 1000 / total : 0;
     int current = interval ? m_numPaintsSinceLastMeasure * 1000 / interval : 0;
 
-    qDebug("[FPS] average: %d, current: %d", average, current);
+    emit currentFPSUpdated(current);
 
     m_lastConsultTime = now;
     m_numPaintsSinceLastMeasure = 0;

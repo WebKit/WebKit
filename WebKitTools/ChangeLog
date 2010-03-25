@@ -1,3 +1,23 @@
+2010-03-22  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        Reviewed by Simon Hausmann.
+
+        Not displaying FPS info on the terminal. On S60 and Maemo the
+        Window title will be used and Status bar will used on desktop.
+
+        [Qt] QtLauncher's FPS info should not be displayed on the terminal
+        https://bugs.webkit.org/show_bug.cgi?id=36244
+
+        * QtLauncher/main.cpp:
+        (LauncherWindow::initializeView):
+        (LauncherWindow::showFPS):
+        (LauncherWindow::updateFPS):
+        * QtLauncher/webview.cpp:
+        (WebViewGraphicsBased::setFrameRateMeasurementEnabled):
+        (WebViewGraphicsBased::updateFrameRate):
+        * QtLauncher/webview.h:
+        (WebViewGraphicsBased::frameRateMeasurementEnabled):
+
 2010-03-25  Diego Gonzalez  <diego.gonzalez@openbossa.org>
 
         Reviewed by Kenneth Christiansen.

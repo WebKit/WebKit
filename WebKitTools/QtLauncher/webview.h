@@ -76,10 +76,10 @@ public:
     QGraphicsItem::CacheMode itemCacheMode() { return m_item->cacheMode(); }
 
     void setFrameRateMeasurementEnabled(bool enabled);
-    bool frameRateMeasurementEnabled() { return m_measureFps; } 
+    bool frameRateMeasurementEnabled() const { return m_measureFps; }
 
     virtual void paintEvent(QPaintEvent* event);
-    
+
     void setResizesToContents(bool b);
 
     void setYRotation(qreal angle)
@@ -97,7 +97,7 @@ public:
     {
         return m_yRotation;
     }
-    
+
     GraphicsWebView* graphicsWebView() const { return m_item; }
 
 public slots:
@@ -107,6 +107,7 @@ public slots:
 
 signals:
     void yFlipRequest();
+    void currentFPSUpdated(int fps);
 
 private:
     GraphicsWebView* m_item;
