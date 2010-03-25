@@ -1,3 +1,16 @@
+2010-03-25  Antti Koivisto  <koivisto@iki.fi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36316
+        Tiles of selected content do not update if not in viewport
+        
+        Don't clip repaints to viewport when tiling is enabled.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::setView):
+        (WebCore::Frame::setTiledBackingStoreEnabled):
+
 2010-03-25  Diego Gonzalez  <diego.gonzalez@openbossa.org>
 
         Reviewed by Eric Seidel.

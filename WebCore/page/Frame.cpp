@@ -264,6 +264,11 @@ void Frame::setView(PassRefPtr<FrameView> view)
     // Since this part may be getting reused as a result of being
     // pulled from the back/forward cache, reset this flag.
     loader()->resetMultipleFormSubmissionProtection();
+    
+#if ENABLE(TILED_BACKING_STORE)
+    if (m_view && tiledBackingStore())
+        m_view->setPaintsEntireContents(true);
+#endif
 }
 
 ScriptController* Frame::script()
@@ -1812,6 +1817,8 @@ void Frame::setTiledBackingStoreEnabled(bool enabled)
     if (m_tiledBackingStore)
         return;
     m_tiledBackingStore.set(new TiledBackingStore(this));
+    if (m_view)
+        m_view->setPaintsEntireContents(true);
 }
 
 void Frame::tiledBackingStorePaintBegin()
