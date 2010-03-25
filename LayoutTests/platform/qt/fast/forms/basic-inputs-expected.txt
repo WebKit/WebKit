@@ -32,23 +32,23 @@ layer at (0,0) size 800x600
           text run at (0,300) width 169: "button and the letter \"b\" "
         RenderBR {BR} at (169,316) size 0x0
         RenderBR {BR} at (0,320) size 0x20
-      RenderBlock {DIV} at (10,350) size 450x62 [border: (1px solid #FF0000)]
-        RenderText {#text} at (1,6) size 9x20
-          text run at (1,6) width 9: "a"
-        RenderTextControl {INPUT} at (12,3) size 175x26
-        RenderText {#text} at (189,6) size 29x20
-          text run at (189,6) width 29: "text "
-        RenderTextControl {INPUT} at (220,3) size 175x26
-        RenderText {#text} at (397,6) size 22x20
-          text run at (397,6) width 13: "b "
-          text run at (410,6) width 9: "a"
-        RenderTextControl {INPUT} at (3,33) size 175x26
-        RenderText {#text} at (180,36) size 73x20
-          text run at (180,36) width 73: "password "
-        RenderTextControl {INPUT} at (255,33) size 175x26
-        RenderText {#text} at (432,36) size 9x20
-          text run at (432,36) width 9: "b"
-      RenderBlock {DIV} at (10,422) size 450x23 [border: (1px solid #FF0000)]
+      RenderBlock {DIV} at (10,350) size 450x58 [border: (1px solid #FF0000)]
+        RenderText {#text} at (1,5) size 9x20
+          text run at (1,5) width 9: "a"
+        RenderTextControl {INPUT} at (12,3) size 175x24
+        RenderText {#text} at (189,5) size 29x20
+          text run at (189,5) width 29: "text "
+        RenderTextControl {INPUT} at (220,3) size 175x24
+        RenderText {#text} at (397,5) size 22x20
+          text run at (397,5) width 13: "b "
+          text run at (410,5) width 9: "a"
+        RenderTextControl {INPUT} at (3,31) size 175x24
+        RenderText {#text} at (180,33) size 73x20
+          text run at (180,33) width 73: "password "
+        RenderTextControl {INPUT} at (255,31) size 175x24
+        RenderText {#text} at (432,33) size 9x20
+          text run at (432,33) width 9: "b"
+      RenderBlock {DIV} at (10,418) size 450x23 [border: (1px solid #FF0000)]
         RenderText {#text} at (1,1) size 9x20
           text run at (1,1) width 9: "a"
         RenderBlock {INPUT} at (14,6) size 13x13
@@ -57,7 +57,7 @@ layer at (0,0) size 800x600
         RenderBlock {INPUT} at (107,6) size 13x13
         RenderText {#text} at (124,1) size 9x20
           text run at (124,1) width 9: "b"
-      RenderBlock {DIV} at (10,455) size 450x23 [border: (1px solid #FF0000)]
+      RenderBlock {DIV} at (10,451) size 450x23 [border: (1px solid #FF0000)]
         RenderText {#text} at (1,1) size 9x20
           text run at (1,1) width 9: "a"
         RenderBlock {INPUT} at (14,7) size 12x12
@@ -66,19 +66,19 @@ layer at (0,0) size 800x600
         RenderBlock {INPUT} at (74,7) size 12x12
         RenderText {#text} at (90,1) size 9x20
           text run at (90,1) width 9: "b"
-layer at (32,364) size 171x20 scrollWidth 215
-  RenderBlock {DIV} at (2,3) size 171x20
+layer at (32,363) size 171x20 scrollWidth 215
+  RenderBlock {DIV} at (2,2) size 171x20
     RenderText {#text} at (1,0) size 213x20
       text run at (1,0) width 213: "foobarbazfoobarbazfoobarbaz"
-layer at (240,364) size 171x20
-  RenderBlock {DIV} at (2,3) size 171x20 [color=#545454]
+layer at (240,363) size 171x20
+  RenderBlock {DIV} at (2,2) size 171x20 [color=#545454]
     RenderText {#text} at (1,0) size 22x20
       text run at (1,0) width 22: "foo"
-layer at (23,394) size 171x20
-  RenderBlock {DIV} at (2,3) size 171x20
+layer at (23,391) size 171x20
+  RenderBlock {DIV} at (2,2) size 171x20
     RenderText {#text} at (1,0) size 18x20
       text run at (1,0) width 18: "\x{2022}\x{2022}\x{2022}"
-layer at (275,394) size 171x20
-  RenderBlock {DIV} at (2,3) size 171x20 [color=#545454]
+layer at (275,391) size 171x20
+  RenderBlock {DIV} at (2,2) size 171x20 [color=#545454]
     RenderText {#text} at (1,0) size 18x20
       text run at (1,0) width 18: "\x{2022}\x{2022}\x{2022}"

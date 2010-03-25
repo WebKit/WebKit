@@ -6,12 +6,12 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 369x20
         text run at (0,0) width 369: "This tests that you can set the placeholder text color."
       RenderBR {BR} at (369,16) size 0x0
-      RenderText {#text} at (180,48) size 4x20
-        text run at (180,48) width 4: " "
-      RenderText {#text} at (364,48) size 4x20
-        text run at (364,48) width 4: " "
-      RenderText {#text} at (548,48) size 4x20
-        text run at (548,48) width 4: " "
+      RenderText {#text} at (184,52) size 4x20
+        text run at (184,52) width 4: " "
+      RenderText {#text} at (372,52) size 4x20
+        text run at (372,52) width 4: " "
+      RenderText {#text} at (560,52) size 4x20
+        text run at (560,52) width 4: " "
       RenderText {#text} at (0,0) size 0x0
 layer at (10,30) size 180x44
   RenderTextControl {TEXTAREA} at (2,22) size 180x44

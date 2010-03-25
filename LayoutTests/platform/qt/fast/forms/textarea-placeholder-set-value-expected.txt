@@ -11,7 +11,7 @@ layer at (0,0) size 800x600
             text run at (57,0) width 337: "https://bugs.webkit.org/show_bug.cgi?id=21248"
         RenderText {#text} at (394,0) size 4x20
           text run at (394,0) width 4: "."
-      RenderBlock (anonymous) at (0,36) size 784x44
+      RenderBlock (anonymous) at (0,36) size 784x48
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
