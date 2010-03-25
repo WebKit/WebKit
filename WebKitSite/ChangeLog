@@ -1,5 +1,14 @@
 2010-03-25  Joseph Pecoraro  <joepeck@webkit.org>
 
+        Reviewed by David Levin.
+
+        Asking Questions Page Grammar Fixes
+        https://bugs.webkit.org/show_bug.cgi?id=36608
+
+        * asking_questions.html:
+
+2010-03-25  Joseph Pecoraro  <joepeck@webkit.org>
+
         Reviewed by Timothy Hatcher.
 
         New Asking Questions Page is not Valid HTML5
