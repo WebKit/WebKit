@@ -1,3 +1,15 @@
+2010-03-24  Steve Block  <steveblock@google.com>
+
+        Reviewed by David Levin.
+
+        Adds a missing ENABLE(WORKERS) guards to the V8 bindings.
+        https://bugs.webkit.org/show_bug.cgi?id=36550
+
+        Build fix only, no new tests.
+
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::instantiateV8Object):
+
 2010-03-25  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Eric Seidel.
