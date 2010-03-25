@@ -33,7 +33,7 @@ from webkitpy.tool.commands.queues import AbstractReviewQueue
 from webkitpy.committers import CommitterList
 from webkitpy.executive import ScriptError
 from webkitpy.webkitport import WebKitPort
-from webkitpy.queueengine import QueueEngine
+from webkitpy.tool.bot.queueengine import QueueEngine
 
 
 class AbstractEarlyWarningSystem(AbstractReviewQueue):

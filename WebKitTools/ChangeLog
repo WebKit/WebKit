@@ -1,5 +1,17 @@
 2010-03-24  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed.  Move queueengine.py to its new home.
+
+        * Scripts/webkitpy/queueengine.py: Removed.
+        * Scripts/webkitpy/queueengine_unittest.py: Removed.
+        * Scripts/webkitpy/tool/bot/queueengine.py: Copied from Scripts/webkitpy/queueengine.py.
+        * Scripts/webkitpy/tool/bot/queueengine_unittest.py: Copied from Scripts/webkitpy/queueengine_unittest.py.
+        * Scripts/webkitpy/tool/commands/early_warning_system.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/unittests.py:
+
+2010-03-24  Adam Barth  <abarth@webkit.org>
+
         Unreviewed.  Move patchcollection.py to its new home.
 
         * Scripts/webkitpy/patchcollection.py: Removed.

@@ -33,7 +33,7 @@ import tempfile
 import unittest
 
 from webkitpy.executive import ScriptError
-from webkitpy.queueengine import QueueEngine, QueueEngineDelegate
+from webkitpy.tool.bot.queueengine import QueueEngine, QueueEngineDelegate
 
 class LoggingDelegate(QueueEngineDelegate):
     def __init__(self, test):
