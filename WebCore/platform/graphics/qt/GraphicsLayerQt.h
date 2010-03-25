@@ -63,12 +63,14 @@ public:
     virtual void setBackfaceVisibility(bool b);
     virtual void setOpacity(float opacity);
     virtual void setContentsRect(const IntRect& r);
+#ifndef QT_NO_ANIMATION
     virtual bool addAnimation(const KeyframeValueList&, const IntSize& boxSize, const Animation*, const String& keyframesName, double timeOffset);
     virtual void removeAnimationsForProperty(AnimatedPropertyID);
     virtual void removeAnimationsForKeyframes(const String& keyframesName);
     virtual void pauseAnimation(const String& keyframesName, double timeOffset);
     virtual void suspendAnimations(double time);
     virtual void resumeAnimations();
+#endif // QT_NO_ANIMATION
     virtual void setContentsToImage(Image*);
     virtual void setContentsToMedia(PlatformLayer*);
     virtual void setContentsBackgroundColor(const Color&);
