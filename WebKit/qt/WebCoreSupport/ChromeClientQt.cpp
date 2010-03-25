@@ -38,6 +38,7 @@
 #include "HitTestResult.h"
 #include "Icon.h"
 #include "NotImplemented.h"
+#include "ScrollbarTheme.h"
 #include "WindowFeatures.h"
 #include "DatabaseTracker.h"
 #include "QtFallbackWebPopup.h"
@@ -325,7 +326,35 @@ bool ChromeClientQt::tabsToLinks() const
 
 IntRect ChromeClientQt::windowResizerRect() const
 {
-    return IntRect();
+    if (!m_webPage)
+        return IntRect();
+
+    QWebPageClient* pageClient = platformPageClient();
+    if (!pageClient)
+        return IntRect();
+
+    QWidget* ownerWidget = pageClient->ownerWidget();
+    if (!ownerWidget)
+        return IntRect();
+
+    QWidget* topLevelWidget = ownerWidget->topLevelWidget();
+    QRect topLevelGeometry(topLevelWidget->geometry());
+
+    // There's no API in Qt to query for the size of the resizer, so we assume
+    // it has the same width and height as the scrollbar thickness.
+    int scollbarThickness = ScrollbarTheme::nativeTheme()->scrollbarThickness();
+
+    // There's no API in Qt to query for the position of the resizer. Sometimes
+    // it's drawn by the system, and sometimes it's a QSizeGrip. For RTL locales
+    // it might even be on the lower left side of the window, but in WebKit we
+    // always draw scrollbars on the right hand side, so we assume this to be the
+    // location when computing the resize rect to reserve for WebKit.
+    QPoint resizeCornerTopLeft = ownerWidget->mapFrom(topLevelWidget,
+            QPoint(topLevelGeometry.width(), topLevelGeometry.height())
+            - QPoint(scollbarThickness, scollbarThickness));
+
+    QRect resizeCornerRect = QRect(resizeCornerTopLeft, QSize(scollbarThickness, scollbarThickness));
+    return resizeCornerRect.intersected(pageClient->geometryRelativeToOwnerWidget());
 }
 
 void ChromeClientQt::invalidateWindow(const IntRect&, bool)

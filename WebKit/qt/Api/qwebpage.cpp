@@ -226,6 +226,7 @@ public:
     virtual QPalette palette() const;
     virtual int screenNumber() const;
     virtual QWidget* ownerWidget() const;
+    virtual QRect geometryRelativeToOwnerWidget() const;
 
     virtual QObject* pluginParent() const;
 
@@ -291,6 +292,11 @@ int QWebPageWidgetClient::screenNumber() const
 QWidget* QWebPageWidgetClient::ownerWidget() const
 {
     return view;
+}
+
+QRect QWebPageWidgetClient::geometryRelativeToOwnerWidget() const
+{
+    return view->geometry();
 }
 
 QObject* QWebPageWidgetClient::pluginParent() const

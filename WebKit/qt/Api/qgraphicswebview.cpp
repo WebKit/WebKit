@@ -112,6 +112,7 @@ public:
     virtual QPalette palette() const;
     virtual int screenNumber() const;
     virtual QWidget* ownerWidget() const;
+    virtual QRect geometryRelativeToOwnerWidget() const;
 
     virtual QObject* pluginParent() const;
 
@@ -349,6 +350,19 @@ QWidget* QGraphicsWebViewPrivate::ownerWidget() const
         return views.value(0);
     }
     return 0;
+}
+
+QRect QGraphicsWebViewPrivate::geometryRelativeToOwnerWidget() const
+{
+    if (!q->scene())
+        return QRect();
+
+    QList<QGraphicsView*> views = q->scene()->views();
+    if (views.isEmpty())
+        return QRect();
+
+    QGraphicsView* view = views.at(0);
+    return view->mapFromScene(q->boundingRect()).boundingRect();
 }
 
 QObject* QGraphicsWebViewPrivate::pluginParent() const

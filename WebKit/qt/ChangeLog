@@ -1,3 +1,22 @@
+2010-03-25  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Implement ChromeClient::windowResizerRect()
+
+        https://bugs.webkit.org/show_bug.cgi?id=21300
+
+        We assume the resize corner to be in the lower right corner of
+        the window and having the width and height of the scrollbars.
+
+        The helper function geometryRelativeToOwnerWidget() in the page
+        client is used to clip the resize rect to the actual size of the
+        viewport, not the size of the QGraphicsView.
+
+        * Api/qgraphicswebview.cpp:
+        * Api/qwebpage.cpp:
+        * WebCoreSupport/ChromeClientQt.cpp:
+
 2010-03-25  Shu Chang  <chang.shu@nokia.com>
 
         Reviewed by Simon Hausmann.
