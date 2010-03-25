@@ -28,7 +28,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import unittest
-from webkitpy.executive import Executive, run_command
+
+from webkitpy.common.system.executive import Executive, run_command
 
 class ExecutiveTest(unittest.TestCase):
 

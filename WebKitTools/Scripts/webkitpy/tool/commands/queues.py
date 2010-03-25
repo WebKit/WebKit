@@ -37,7 +37,7 @@ from StringIO import StringIO
 
 from webkitpy.common.net.bugzilla import CommitterValidator
 from webkitpy.common.net.statusserver import StatusServer
-from webkitpy.executive import ScriptError
+from webkitpy.common.system.executive import ScriptError
 from webkitpy.webkit_logging import error, log
 from webkitpy.tool.commands.stepsequence import StepSequenceErrorHandler
 from webkitpy.tool.bot.patchcollection import PersistentPatchCollection, PersistentPatchCollectionDelegate

@@ -32,7 +32,7 @@ import StringIO
 import tempfile
 import unittest
 
-from webkitpy.executive import ScriptError
+from webkitpy.common.system.executive import ScriptError
 from webkitpy.webkit_logging import *
 
 class LoggingTest(unittest.TestCase):

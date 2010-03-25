@@ -35,7 +35,7 @@ import subprocess
 
 # Import WebKit-specific modules.
 from webkitpy.common.checkout.changelog import ChangeLog, is_path_to_changelog
-from webkitpy.executive import Executive, run_command, ScriptError
+from webkitpy.common.system.executive import Executive, run_command, ScriptError
 from webkitpy.user import User
 from webkitpy.webkit_logging import error, log
 

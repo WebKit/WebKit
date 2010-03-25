@@ -31,7 +31,8 @@
 import os
 
 from optparse import make_option
-from webkitpy.executive import Executive
+
+from webkitpy.common.system.executive import Executive
 
 
 class WebKitPort(object):

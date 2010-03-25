@@ -44,7 +44,7 @@ import webbrowser
 import base
 
 import webkitpy
-from webkitpy import executive
+import webkitpy.common.system.executive as executive
 
 _log = logging.getLogger("webkitpy.layout_tests.port.mac")
 

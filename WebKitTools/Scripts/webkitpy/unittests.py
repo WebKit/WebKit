@@ -47,7 +47,7 @@ from webkitpy.common.config.committers_unittest import *
 from webkitpy.common.net.credentials_unittest import *
 from webkitpy.common.net.irc.unittests import *
 from webkitpy.common.net.networktransaction_unittest import *
-from webkitpy.executive_unittest import *
+from webkitpy.common.system.executive_unittest import *
 from webkitpy.common.system.unittests import *  # for the webkitpy.init package
 from webkitpy.layout_tests.port.mac_unittest import *
 from webkitpy.python24.versioning_unittest import *

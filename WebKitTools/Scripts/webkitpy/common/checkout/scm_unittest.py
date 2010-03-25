@@ -39,9 +39,9 @@ import unittest
 import urllib
 
 from datetime import date
-from webkitpy.executive import Executive, run_command, ScriptError
 from webkitpy.common.checkout.scm import detect_scm_system, SCM, SVN, CheckoutNeedsUpdate, commit_error_handler
 from webkitpy.common.net.bugzilla import Attachment # FIXME: This should not be needed
+from webkitpy.common.system.executive import Executive, run_command, ScriptError
 
 # Eventually we will want to write tests which work for both scms. (like update_webkit, changed_files, etc.)
 # Perhaps through some SCMTest base-class which both SVNTest and GitTest inherit from.
