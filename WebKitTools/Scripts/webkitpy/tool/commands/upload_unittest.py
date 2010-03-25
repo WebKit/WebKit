@@ -29,7 +29,7 @@
 from webkitpy.tool.commands_references import Mock
 from webkitpy.tool.commands.commandtest import CommandsTest
 from webkitpy.tool.commands.upload import *
-from webkitpy.mock_bugzillatool import MockBugzillaTool
+from webkitpy.tool.mocktool import MockBugzillaTool
 
 class UploadCommandsTest(CommandsTest):
     def test_commit_message_for_current_diff(self):

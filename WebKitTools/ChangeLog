@@ -1,3 +1,19 @@
+2010-03-25  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.  Move mock_bugzillatool.py to tool/mocktool.py.
+
+        * Scripts/webkitpy/mock_bugzillatool.py: Removed.
+        * Scripts/webkitpy/tool/commands/commandtest.py:
+        * Scripts/webkitpy/tool/commands/queries_unittest.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        * Scripts/webkitpy/tool/commands/queuestest.py:
+        * Scripts/webkitpy/tool/commands/sheriffbot_unittest.py:
+        * Scripts/webkitpy/tool/commands/upload_unittest.py:
+        * Scripts/webkitpy/tool/mocktool.py: Copied from Scripts/webkitpy/mock_bugzillatool.py.
+        * Scripts/webkitpy/tool/steps/closebugforlanddiff_unittest.py:
+        * Scripts/webkitpy/tool/steps/steps_unittest.py:
+        * Scripts/webkitpy/tool/steps/updatechangelogswithreview_unittests.py:
+
 2010-03-24  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.  Move comments.py and multicommandtool.py to their new

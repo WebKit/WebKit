@@ -33,7 +33,7 @@ from webkitpy.tool.commands_references import Mock
 from webkitpy.tool.commands.commandtest import CommandsTest
 from webkitpy.tool.commands.queues import *
 from webkitpy.tool.commands.queuestest import QueuesTest
-from webkitpy.mock_bugzillatool import MockBugzillaTool, MockSCM
+from webkitpy.tool.mocktool import MockBugzillaTool, MockSCM
 from webkitpy.outputcapture import OutputCapture
 
 

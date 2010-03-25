@@ -28,9 +28,9 @@
 
 import unittest
 
+from webkitpy.tool.mocktool import MockBugzillaTool
 from webkitpy.tool.steps_references import Mock
 from webkitpy.tool.steps.closebugforlanddiff import CloseBugForLandDiff
-from webkitpy.mock_bugzillatool import MockBugzillaTool
 from webkitpy.outputcapture import OutputCapture
 
 class CloseBugForLandDiffTest(unittest.TestCase):

@@ -30,7 +30,7 @@ from webkitpy.bugzilla import Bugzilla
 from webkitpy.tool.commands_references import Mock
 from webkitpy.tool.commands.commandtest import CommandsTest
 from webkitpy.tool.commands.queries import *
-from webkitpy.mock_bugzillatool import MockBugzillaTool
+from webkitpy.tool.mocktool import MockBugzillaTool
 
 class QueryCommandsTest(CommandsTest):
     def test_bugs_to_commit(self):

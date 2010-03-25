@@ -28,10 +28,10 @@
 
 import unittest
 
+from webkitpy.tool.mocktool import MockBugzillaTool
 from webkitpy.tool.steps_references import Mock
 from webkitpy.tool.steps.update import Update
 from webkitpy.tool.steps.promptforbugortitle import PromptForBugOrTitle
-from webkitpy.mock_bugzillatool import MockBugzillaTool
 from webkitpy.outputcapture import OutputCapture
 
 
