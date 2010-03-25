@@ -74,7 +74,10 @@ PassRefPtr<SerializedScriptValue> InjectedScript::wrapForConsole(ScriptValue val
     ScriptFunctionCall wrapFunction(m_injectedScriptObject, "wrapObject");
     wrapFunction.appendArgument(value);
     wrapFunction.appendArgument("console");
-    ScriptValue r = wrapFunction.call();
+    bool hadException = false;
+    ScriptValue r = wrapFunction.call(hadException);
+    if (hadException)
+        return SerializedScriptValue::create("<exception>");
     return r.serialize(m_injectedScriptObject.scriptState());
 }
 

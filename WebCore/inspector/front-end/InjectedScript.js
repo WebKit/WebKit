@@ -35,19 +35,23 @@ InjectedScript.idToWrappedObject = {};
 InjectedScript.objectGroups = {};
 InjectedScript.wrapObject = function(object, objectGroupName)
 {
-    var objectId;
-    if (typeof object === "object" || typeof object === "function" ||
-        (typeof object === "undefined" && object instanceof inspectedWindow.HTMLAllCollection)) { // FIXME(33716)
-        var id = InjectedScript.lastBoundObjectId++;
-        objectId = "object#" + id;
-        InjectedScript.idToWrappedObject[objectId] = object;
+    try {
+        var objectId;
+        if (typeof object === "object" || typeof object === "function" || InjectedScript._isHTMLAllCollection(object)) {
+            var id = InjectedScript.lastBoundObjectId++;
+            objectId = "object#" + id;
+            InjectedScript.idToWrappedObject[objectId] = object;
 
-        var group = InjectedScript.objectGroups[objectGroupName];
-        if (!group) {
-            group = [];
-            InjectedScript.objectGroups[objectGroupName] = group;
+            var group = InjectedScript.objectGroups[objectGroupName];
+            if (!group) {
+                group = [];
+                InjectedScript.objectGroups[objectGroupName] = group;
+            }
+            group.push(objectId);
         }
-        group.push(objectId);
+        return InjectedScript.createProxyObject(object, objectId);
+    } catch (e) {
+        return InjectedScript.createProxyObject("[ Exception: " + e.toString() + " ]");
     }
     return InjectedScript.createProxyObject(object, objectId);
 };
@@ -873,7 +877,13 @@ InjectedScript.executeSql = function(callId, databaseId, query)
 
 InjectedScript._isDefined = function(object)
 {
-    return object || object instanceof inspectedWindow.HTMLAllCollection;
+    return object || InjectedScript._isHTMLAllCollection(object);
+}
+
+InjectedScript._isHTMLAllCollection = function(object)
+{
+    // document.all is reported as undefined, but we still want to process it.
+    return (typeof object === "undefined") && inspectedWindow.HTMLAllCollection && object instanceof inspectedWindow.HTMLAllCollection;
 }
 
 InjectedScript._type = function(obj)
@@ -882,7 +892,7 @@ InjectedScript._type = function(obj)
         return "null";
 
     // FIXME(33716): typeof document.all is always 'undefined'.
-    if (obj instanceof inspectedWindow.HTMLAllCollection)
+    if (InjectedScript._isHTMLAllCollection(obj))
         return "array";
 
     var type = typeof obj;
@@ -907,7 +917,7 @@ InjectedScript._type = function(obj)
         return "regexp";
     if (obj instanceof win.NodeList)
         return "array";
-    if (obj instanceof win.HTMLCollection || obj instanceof win.HTMLAllCollection)
+    if (obj instanceof win.HTMLCollection)
         return "array";
     if (obj instanceof win.Error)
         return "error";
