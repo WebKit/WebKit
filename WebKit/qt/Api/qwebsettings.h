@@ -73,7 +73,8 @@ public:
         WebGLEnabled,
         SpatialNavigationEnabled,
         LocalContentCanAccessFileUrls,
-        TiledBackingStoreEnabled
+        TiledBackingStoreEnabled,
+        FrameFlatteningEnabled
     };
     enum WebGraphic {
         MissingImageGraphic,

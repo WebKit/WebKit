@@ -1,3 +1,17 @@
+2010-03-24  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add the FrameFlatteningEnabled WebAttribute to QWebSettings.
+
+        [Qt] Missing QWebSettings for Frame Flattening
+        https://bugs.webkit.org/show_bug.cgi?id=36553
+
+        * Api/qwebsettings.cpp:
+        (QWebSettingsPrivate::apply):
+        (QWebSettings::QWebSettings):
+        * Api/qwebsettings.h:
+
 2010-03-24  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
 
         Reviewed by Laszlo Gombos.

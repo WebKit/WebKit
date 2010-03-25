@@ -195,6 +195,10 @@ void QWebSettingsPrivate::apply()
                                       global->attributes.value(QWebSettings::DeveloperExtrasEnabled));
         settings->setDeveloperExtrasEnabled(value);
 
+        value = attributes.value(QWebSettings::FrameFlatteningEnabled,
+                                      global->attributes.value(QWebSettings::FrameFlatteningEnabled));
+        settings->setFrameSetFlatteningEnabled(value);
+
         QUrl location = !userStyleSheetLocation.isEmpty() ? userStyleSheetLocation : global->userStyleSheetLocation;
         settings->setUserStyleSheetLocation(WebCore::KURL(location));
 
@@ -401,6 +405,12 @@ QWebSettings* QWebSettings::globalSettings()
         QGraphicsWebView, accelerates animations of web content. CSS animations of the transform and
         opacity properties will be rendered by composing the cached content of the animated elements.
         This feature is enabled by default
+    \value FrameFlatteningEnabled With this setting each subframe is expanded to its contents.
+        On touch devices, it is desired to not have any scrollable sub parts of the page
+        as it results in a confusing user experience, with scrolling sometimes scrolling sub parts
+        and at other times scrolling the page itself. For this reason iframes and framesets are
+        barely usable on touch devices. This will flatten all the frames to become one scrollable page.
+        Disabled by default.
 */
 
 /*!
@@ -435,6 +445,7 @@ QWebSettings::QWebSettings()
     d->attributes.insert(QWebSettings::LocalContentCanAccessFileUrls, true);
     d->attributes.insert(QWebSettings::AcceleratedCompositingEnabled, true);
     d->attributes.insert(QWebSettings::WebGLEnabled, false);
+    d->attributes.insert(QWebSettings::FrameFlatteningEnabled, false);
     d->offlineStorageDefaultQuota = 5 * 1024 * 1024;
     d->defaultTextEncoding = QLatin1String("iso-8859-1");
 }
