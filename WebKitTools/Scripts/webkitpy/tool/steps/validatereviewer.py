@@ -45,4 +45,9 @@ class ValidateReviewer(AbstractStep):
                 continue
             if re.search("unreviewed", changelog_entry.contents(), re.IGNORECASE):
                 continue
-            error('%s neither lists a valid reviewer nor contains the string "Unreviewed" (case insensitive).' % changelog_path)
+            if re.search("rubber stamp", changelog_entry.contents(), re.IGNORECASE):
+                continue
+            reviewer_text = changelog_entry.reviewer_text()
+            if reviewer_text:
+                log("%s does not appear to be a valid reviewer according to committers.py.")
+            error('%s neither lists a valid reviewer nor contains the string "Unreviewed" or "Rubber stamp" (case insensitive).' % changelog_path)

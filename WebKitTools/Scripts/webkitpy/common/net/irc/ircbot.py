@@ -39,7 +39,7 @@ class IRCBot(ircbot.SingleServerIRCBot, MessagePumpDelegate):
                  port=6667,
                  nickname="sheriffbot",
                  password=None, # sheriffbot actually needs a password.
-                 channel="#webkit-test"):
+                 channel="#webkit"):
         self._message_queue = message_queue
         ircbot.SingleServerIRCBot.__init__(self, [(server, port, password)], nickname, nickname)
         self._channel = channel

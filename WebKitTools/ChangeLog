@@ -1,3 +1,17 @@
+2010-03-25  Adam Barth  <abarth@webkit.org>
+
+        Rubber stamped by Eric Seidel.
+
+        Tweaks to sheriffbot to improve latency by keeping the working copy up
+        to date even when there's no build break.  Also, officially move
+        sheriffbot to #webkit.
+
+        (Also teach ValidateReviewer to understand rubber stamps.)
+
+        * Scripts/webkitpy/common/net/irc/ircbot.py:
+        * Scripts/webkitpy/tool/commands/sheriffbot.py:
+        * Scripts/webkitpy/tool/steps/validatereviewer.py:
+
 2010-03-22  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         Reviewed by Simon Hausmann.
