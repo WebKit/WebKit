@@ -36,6 +36,7 @@ from webkitpy.common.net.bugzilla import Bugzilla
 from webkitpy.common.net.buildbot import BuildBot
 from webkitpy.common.net.irc.ircproxy import IRCProxy
 from webkitpy.common.system.executive import Executive
+from webkitpy.common.system.user import User
 from webkitpy.tool.commands.download import *
 from webkitpy.tool.commands.early_warning_system import *
 from webkitpy.tool.commands.openbugs import OpenBugs
@@ -46,7 +47,6 @@ from webkitpy.tool.commands.upload import *
 from webkitpy.tool.multicommandtool import MultiCommandTool
 from webkitpy.webkit_logging import log
 from webkitpy.webkitcheckout import WebKitCheckout
-from webkitpy.user import User
 
 
 class WebKitPatch(MultiCommandTool):

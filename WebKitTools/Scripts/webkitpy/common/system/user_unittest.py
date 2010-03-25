@@ -27,7 +27,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import unittest
-from webkitpy.user import User
+
+from webkitpy.common.system.user import User
 
 class UserTest(unittest.TestCase):
 

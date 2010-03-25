@@ -44,11 +44,13 @@ from webkitpy.tool.commands.sheriffbot_unittest import *
 from webkitpy.common.checkout.commitinfo_unittest import *
 from webkitpy.common.checkout.diff_parser_unittest import *
 from webkitpy.common.config.committers_unittest import *
+from webkitpy.common.config.ports_unittest import *
 from webkitpy.common.net.credentials_unittest import *
 from webkitpy.common.net.irc.unittests import *
 from webkitpy.common.net.networktransaction_unittest import *
 from webkitpy.common.system.executive_unittest import *
 from webkitpy.common.system.unittests import *  # for the webkitpy.init package
+from webkitpy.common.system.user_unittest import *
 from webkitpy.layout_tests.port.mac_unittest import *
 from webkitpy.python24.versioning_unittest import *
 from webkitpy.tool.bot.queueengine_unittest import *
@@ -59,9 +61,7 @@ from webkitpy.tool.steps.steps_unittest import *
 from webkitpy.tool.steps.closebugforlanddiff_unittest import *
 from webkitpy.tool.steps.updatechangelogswithreview_unittests import *
 from webkitpy.style.unittests import *  # for the webkitpy.style package
-from webkitpy.user_unittest import *
 from webkitpy.webkit_logging_unittest import *
-from webkitpy.common.config.ports_unittest import *
 
 # FIXME: This is a hack, but I'm tired of commenting out the test.
 #        See https://bugs.webkit.org/show_bug.cgi?id=31818

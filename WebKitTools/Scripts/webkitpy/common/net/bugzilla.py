@@ -39,8 +39,8 @@ from datetime import datetime # used in timestamp()
 from webkitpy.webkit_logging import error, log
 from webkitpy.common.config.committers import CommitterList
 from webkitpy.common.net.credentials import Credentials
+from webkitpy.common.system.user import User
 from webkitpy.thirdparty.autoinstalled import Browser
-from webkitpy.user import User
 
 # WebKit includes a built copy of BeautifulSoup in Scripts/webkitpy/thirdparty
 # so this import should always succeed.

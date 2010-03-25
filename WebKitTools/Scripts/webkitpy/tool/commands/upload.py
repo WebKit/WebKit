@@ -39,13 +39,13 @@ import webkitpy.tool.steps as steps
 
 from webkitpy.common.config.committers import CommitterList
 from webkitpy.common.net.bugzilla import parse_bug_id
+from webkitpy.common.system.user import User
 from webkitpy.tool.commands_references import Mock
 from webkitpy.tool.commands.abstractsequencedcommand import AbstractSequencedCommand
 from webkitpy.tool.grammar import pluralize, join_with_separators
 from webkitpy.tool.comments import bug_comment_from_svn_revision
 from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
 from webkitpy.webkit_logging import error, log
-from webkitpy.user import User
 
 class CommitMessageForCurrentDiff(AbstractDeclarativeCommand):
     name = "commit-message"
