@@ -49,7 +49,7 @@ from webkitpy.common.net.irc.unittests import *
 from webkitpy.common.net.networktransaction_unittest import *
 from webkitpy.executive_unittest import *
 from webkitpy.grammar_unittest import *
-from webkitpy.init.unittests import *  # for the webkitpy.init package
+from webkitpy.common.system.unittests import *  # for the webkitpy.init package
 from webkitpy.layout_tests.port.mac_unittest import *
 from webkitpy.python24.versioning_unittest import *
 from webkitpy.tool.bot.queueengine_unittest import *

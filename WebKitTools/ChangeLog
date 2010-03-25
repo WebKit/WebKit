@@ -1,3 +1,26 @@
+2010-03-25  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        In webkitpy, moved init/ to common/system/.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36093
+
+        This is part of the master bug to reorganize webkitpy.
+
+        * Scripts/webkitpy/common/system: Copied from WebKitTools/Scripts/webkitpy/init.
+        * Scripts/webkitpy/common/system/logutils.py:
+        * Scripts/webkitpy/common/system/logutils_unittest.py:
+        * Scripts/webkitpy/init: Removed.
+        * Scripts/webkitpy/init/__init__.py: Removed.
+        * Scripts/webkitpy/init/logtesting.py: Removed.
+        * Scripts/webkitpy/init/logutils.py: Removed.
+        * Scripts/webkitpy/init/logutils_unittest.py: Removed.
+        * Scripts/webkitpy/init/unittests.py: Removed.
+        * Scripts/webkitpy/python24/versioning_unittest.py:
+        * Scripts/webkitpy/style_references.py:
+        * Scripts/webkitpy/unittests.py:
+
 2010-03-25  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.  Move stepsequence to webkitpy.tool.commands.

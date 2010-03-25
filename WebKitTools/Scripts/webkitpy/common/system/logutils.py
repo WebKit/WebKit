@@ -76,7 +76,7 @@ def get_logger(path):
 
     Sample usage:
 
-      import webkitpy.init.logutils as logutils
+      import webkitpy.common.system.logutils as logutils
 
       _log = logutils.get_logger(__file__)
 
@@ -108,7 +108,7 @@ def get_logger(path):
                 break
             parts.insert(0, tail)
 
-        logger_name = ".".join(parts)  # For example, webkitpy.init.logutils.
+        logger_name = ".".join(parts)  # For example, webkitpy.common.system.logutils.
     else:
         # The path is outside of webkitpy.  Default to the basename
         # without the extension.

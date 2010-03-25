@@ -40,10 +40,10 @@
 
 import os
 
-from common.checkout.diff_parser import DiffParser
-from init.logtesting import LogTesting
-from init.logtesting import TestLogStream
-from common.checkout.scm import detect_scm_system
+from webkitpy.common.checkout.diff_parser import DiffParser
+from webkitpy.common.system.logtesting import LogTesting
+from webkitpy.common.system.logtesting import TestLogStream
+from webkitpy.common.checkout.scm import detect_scm_system
 
 
 def parse_patch(patch_string):
