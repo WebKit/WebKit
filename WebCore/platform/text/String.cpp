@@ -27,7 +27,6 @@
 #include "SharedBuffer.h"
 #include "StringBuffer.h"
 #include "TextBreakIterator.h"
-#include "TextEncoding.h"
 #include <limits>
 #include <stdarg.h>
 #include <wtf/ASCIICType.h>
@@ -666,26 +665,101 @@ Vector<char> String::ascii() const
 
 CString String::latin1() const
 {
-    return Latin1Encoding().encode(characters(), length(), QuestionMarksForUnencodables);
-}
-    
-CString String::utf8() const
-{
-    return UTF8Encoding().encode(characters(), length(), QuestionMarksForUnencodables);
+    // Basic Latin1 (ISO) encoding - Unicode characters 0..255 are
+    // preserved, characters outside of this range are converted to '?'.
+
+    unsigned length = this->length();
+    const UChar* characters = this->characters();
+
+    char* characterBuffer;
+    CString result = CString::newUninitialized(length, characterBuffer);
+
+    for (unsigned i = 0; i < length; ++i) {
+        UChar ch = characters[i];
+        characterBuffer[i] = ch > 255 ? '?' : ch;
+    }
+
+    return result;
 }
 
-String String::fromUTF8(const char* string, size_t size)
+// Helper to write a three-byte UTF-8 code point to the buffer, caller must check room is available.
+static inline void putUTF8triple(char*& buffer, UChar ch)
 {
-    if (!string)
+    ASSERT(ch >= 0x0800);
+    *buffer++ = (char)(((ch >> 12) & 0x0F) | 0xE0);
+    *buffer++ = (char)(((ch >> 6) & 0x3F) | 0x80);
+    *buffer++ = (char)((ch & 0x3F) | 0x80);
+}
+
+CString String::utf8() const
+{
+    unsigned length = this->length();
+    const UChar* characters = this->characters();
+
+    // Allocate a buffer big enough to hold all the characters
+    // (an individual UTF-16 UChar can only expand to 3 UTF-8 bytes).
+    // Optimization ideas, if we find this function is hot:
+    //  * We could speculatively create a CStringBuffer to contain 'length' 
+    //    characters, and resize if necessary (i.e. if the buffer contains
+    //    non-ascii characters). (Alternatively, scan the buffer first for
+    //    ascii characters, so we know this will be sufficient).
+    //  * We could allocate a CStringBuffer with an appropriate size to
+    //    have a good chance of being able to write the string into the
+    //    buffer without reallocing (say, 1.5 x length).
+    Vector<char, 1024> bufferVector(length * 3);
+
+    char* buffer = bufferVector.data();
+    ConversionResult result = convertUTF16ToUTF8(&characters, characters + length, &buffer, buffer + bufferVector.size(), false);
+    ASSERT(result != sourceIllegal); // Only produced from strict conversion.
+    ASSERT(result != targetExhausted); // (length * 3) should be sufficient for any conversion
+
+    // If a high surrogate is left unconverted, treat it the same was as an unpaired high surrogate
+    // would have been handled in the middle of a string with non-strict conversion - which is to say,
+    // simply encode it to UTF-8.
+    if (result == sourceExhausted) {
+        // This should be one unpaired high surrogate.
+        ASSERT((characters + 1) == (characters + length));
+        ASSERT((*characters >= 0xD800) && (*characters <= 0xDBFF));
+        // There should be room left, since one UChar hasn't been converted.
+        ASSERT((buffer + 3) <= (buffer + bufferVector.size()));
+        putUTF8triple(buffer, *characters);
+    }
+
+    return CString(bufferVector.data(), buffer - bufferVector.data());
+}
+
+String String::fromUTF8(const char* stringStart, size_t length)
+{
+    if (!stringStart)
         return String();
-    return UTF8Encoding().decode(string, size);
+
+    // We'll use a StringImpl as a buffer; if the source string only contains ascii this should be
+    // the right length, if there are any multi-byte sequences this buffer will be too large.
+    UChar* buffer;
+    String stringBuffer(StringImpl::createUninitialized(length, buffer));
+    UChar* bufferEnd = buffer + length;
+
+    // Try converting into the buffer.
+    const char* stringCurrent = stringStart;
+    if (convertUTF8ToUTF16(&stringCurrent, stringStart + length, &buffer, bufferEnd) != conversionOK)
+        return String();
+
+    // stringBuffer is full (the input must have been all ascii) so just return it!
+    if (buffer == bufferEnd)
+        return stringBuffer;
+
+    // stringBuffer served its purpose as a buffer, copy the contents out into a new string.
+    unsigned utf16Length = buffer - stringBuffer.characters();
+    ASSERT(utf16Length < length);
+    return String(stringBuffer.characters(), utf16Length);
 }
 
 String String::fromUTF8(const char* string)
 {
     if (!string)
         return String();
-    return UTF8Encoding().decode(string, strlen(string));
+
+    return fromUTF8(string, strlen(string));
 }
 
 String String::fromUTF8WithLatin1Fallback(const char* string, size_t size)
