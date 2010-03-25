@@ -17,6 +17,18 @@
 
 2010-03-25  Diego Gonzalez  <diego.gonzalez@openbossa.org>
 
+        Reviewed by Kenneth Christiansen.
+
+        Added missing frame flattening activation on
+        fast/frames/flattening/frameset-flattening-grid.html;
+        removed unnecessary CONSOLE MESSAGE from the expected file;
+        reset the setFrameSetFlatteningEnabled for each test.
+
+        * fast/frames/flattening/frameset-flattening-grid.html:
+        * platform/qt/fast/frames/flattening/frameset-flattening-grid-expected.txt:
+
+2010-03-25  Diego Gonzalez  <diego.gonzalez@openbossa.org>
+
         Reviewed by Eric Seidel.
 
         Missing forward ENABLE_DATALIST macro to JavaScript enabled features macros
