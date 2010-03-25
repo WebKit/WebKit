@@ -1,3 +1,24 @@
+2010-03-25  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        This is a follow up of:
+        https://bugs.webkit.org/show_bug.cgi?id=30055
+        Bad DOM performance in large SVG files
+
+        Just save and restore the GraphicsContext, if we realy modify it.
+        (Cairo)Path::contains checks if a point is in the boundingBox
+        as a heuristic. The intention was to make the process faster for
+        points outside of this rect, but it rather causes the
+        opposite.
+
+        No new test cases added. No change in functionality.
+
+        * platform/graphics/cairo/PathCairo.cpp:
+        (WebCore::Path::contains):
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::paint):
+
 2010-03-25  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by David Levin.

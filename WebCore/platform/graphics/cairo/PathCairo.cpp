@@ -267,9 +267,6 @@ FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier)
 
 bool Path::contains(const FloatPoint& point, WindRule rule) const
 {
-    if (!boundingRect().contains(point))
-        return false;
-
     cairo_t* cr = platformPath()->m_cr;
     cairo_fill_rule_t cur = cairo_get_fill_rule(cr);
     cairo_set_fill_rule(cr, rule == RULE_EVENODD ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
