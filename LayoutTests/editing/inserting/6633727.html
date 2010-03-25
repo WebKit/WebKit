@@ -1,19 +1,13 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
-    <head>
-        <script>
-            function test() {
-                var s = window.getSelection();
-                s.setPosition(document.getElementById('anchor'), 1);
-                document.execCommand("InsertParagraph");
-                document.execCommand("InsertText", false, "2");
-            }
-        </script>
-    </head>
-    <body onload="test()">
-        This tests the fix for &lt;rdar://problem/6633727&gt; Hitting return at the end of a line with an anchor jumps me to the bottom of the message<br>
-        If the test has passed, the numbers should be in order, and only "1" should be a link.<br>
-        <div contenteditable>
-            <a href="#" id="anchor">1</a><div>3</div>
-        </div>
-    </body>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script src="script-tests/6633727.js"></script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
+</html>
