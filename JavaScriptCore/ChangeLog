@@ -1,3 +1,14 @@
+2010-03-25  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by nobody, build fix.
+
+        [Qt] Build fix on MSVC. Reverts r55633 for stdint.h
+
+        This file gets included in generated moc files which don't
+        include the prefix header.
+
+        * os-win32/stdint.h:
+
 2010-03-24  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by NOBODY (windows build fix).
