@@ -27,11 +27,13 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import unittest
-from changelogs import *
-
 import os
 import tempfile
+
 from StringIO import StringIO
+
+from webkitpy.common.checkout.changelog import *
+
 
 class ChangeLogsTest(unittest.TestCase):
 

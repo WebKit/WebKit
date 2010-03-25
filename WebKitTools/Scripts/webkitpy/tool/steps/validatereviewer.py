@@ -29,7 +29,7 @@
 import os
 import re
 
-from webkitpy.changelogs import ChangeLog
+from webkitpy.common.checkout.changelog import ChangeLog
 from webkitpy.tool.steps.abstractstep import AbstractStep
 from webkitpy.webkit_logging import error
 

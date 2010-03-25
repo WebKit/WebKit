@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitpy.commitinfo import CommitInfo
+from webkitpy.common.checkout.commitinfo import CommitInfo
 
 
 # This class represents the WebKit-specific parts of the checkout (like

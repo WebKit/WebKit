@@ -1,3 +1,41 @@
+2010-03-25  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.  Create webkitpy.common.checkout as described in
+        https://bugs.webkit.org/show_bug.cgi?id=36093
+
+        * Scripts/webkitpy/changelogs.py: Removed.
+        * Scripts/webkitpy/changelogs_unittest.py: Removed.
+        * Scripts/webkitpy/commitinfo.py: Removed.
+        * Scripts/webkitpy/commitinfo_unittest.py: Removed.
+        * Scripts/webkitpy/common/checkout: Added.
+        * Scripts/webkitpy/common/checkout/__init__.py: Copied from Scripts/webkitpy/common/__init__.py.
+        * Scripts/webkitpy/common/checkout/changelog.py: Copied from Scripts/webkitpy/changelogs.py.
+        * Scripts/webkitpy/common/checkout/changelog_unittest.py: Copied from Scripts/webkitpy/changelogs_unittest.py.
+        * Scripts/webkitpy/common/checkout/commitinfo.py: Copied from Scripts/webkitpy/commitinfo.py.
+        * Scripts/webkitpy/common/checkout/commitinfo_unittest.py: Copied from Scripts/webkitpy/commitinfo_unittest.py.
+        * Scripts/webkitpy/common/checkout/diff_parser.py: Copied from Scripts/webkitpy/diff_parser.py.
+        * Scripts/webkitpy/common/checkout/diff_parser_unittest.py: Copied from Scripts/webkitpy/diff_parser_unittest.py.
+        * Scripts/webkitpy/common/checkout/scm.py: Copied from Scripts/webkitpy/scm.py.
+        * Scripts/webkitpy/common/checkout/scm_unittest.py: Copied from Scripts/webkitpy/scm_unittest.py.
+        * Scripts/webkitpy/common/net/credentials.py:
+        * Scripts/webkitpy/diff_parser.py: Removed.
+        * Scripts/webkitpy/diff_parser_unittest.py: Removed.
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/scm.py: Removed.
+        * Scripts/webkitpy/scm_unittest.py: Removed.
+        * Scripts/webkitpy/stepsequence.py:
+        * Scripts/webkitpy/style_references.py:
+        * Scripts/webkitpy/tool/commands/download.py:
+        * Scripts/webkitpy/tool/commands/queries.py:
+        * Scripts/webkitpy/tool/comments.py:
+        * Scripts/webkitpy/tool/main.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+        * Scripts/webkitpy/tool/steps/preparechangelogforrevert.py:
+        * Scripts/webkitpy/tool/steps/updatechangelogswithreviewer.py:
+        * Scripts/webkitpy/tool/steps/validatereviewer.py:
+        * Scripts/webkitpy/unittests.py:
+        * Scripts/webkitpy/webkitcheckout.py:
+
 2010-03-25  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Adam Barth.

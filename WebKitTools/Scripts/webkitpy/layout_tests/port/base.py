@@ -280,7 +280,7 @@ class Port(object):
         used by run-chromium-webkit-tests."""
         raise NotImplementedError('Port.num_cores')
 
-    # FIXME: This could be replaced by functions in webkitpy.scm.
+    # FIXME: This could be replaced by functions in webkitpy.common.checkout.scm.
     def path_from_webkit_base(self, *comps):
         """Returns the full path to path made by joining the top of the
         WebKit source tree and the list of path components in |*comps|."""

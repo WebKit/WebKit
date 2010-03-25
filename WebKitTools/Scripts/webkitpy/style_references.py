@@ -40,10 +40,10 @@
 
 import os
 
-from diff_parser import DiffParser
+from common.checkout.diff_parser import DiffParser
 from init.logtesting import LogTesting
 from init.logtesting import TestLogStream
-from scm import detect_scm_system
+from common.checkout.scm import detect_scm_system
 
 
 def parse_patch(patch_string):

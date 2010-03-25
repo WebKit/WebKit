@@ -29,9 +29,9 @@
 import os
 
 from webkitpy.common.config.committers import CommitterList, Reviewer
+from webkitpy.common.checkout.commitinfo import CommitInfo
+from webkitpy.common.checkout.scm import CommitMessage
 from webkitpy.common.net.bugzilla import Bug, Attachment
-from webkitpy.commitinfo import CommitInfo
-from webkitpy.scm import CommitMessage
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.webkit_logging import log
 

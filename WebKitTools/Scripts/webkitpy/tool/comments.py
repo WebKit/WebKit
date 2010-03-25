@@ -30,7 +30,7 @@
 # A tool for automating dealing with bugzilla, posting patches, committing
 # patches, etc.
 
-from webkitpy.changelogs import view_source_url
+from webkitpy.common.checkout.changelog import view_source_url
 
 
 def bug_comment_from_svn_revision(svn_revision):

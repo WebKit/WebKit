@@ -31,7 +31,7 @@
 import logging
 import re
 
-_log = logging.getLogger("webkitpy.diff_parser")
+_log = logging.getLogger("webkitpy.common.checkout.diff_parser")
 
 _regexp_compile_cache = {}
 

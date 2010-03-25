@@ -31,7 +31,7 @@
 
 import sys
 
-from webkitpy.changelogs_unittest import *
+from webkitpy.common.checkout.changelog_unittest import *
 from webkitpy.common.net.bugzilla_unittest import *
 from webkitpy.common.net.buildbot_unittest import *
 from webkitpy.tool.commands.download_unittest import *
@@ -41,12 +41,12 @@ from webkitpy.tool.commands.upload_unittest import *
 from webkitpy.tool.commands.queries_unittest import *
 from webkitpy.tool.commands.queues_unittest import *
 from webkitpy.tool.commands.sheriffbot_unittest import *
-from webkitpy.commitinfo_unittest import *
+from webkitpy.common.checkout.commitinfo_unittest import *
+from webkitpy.common.checkout.diff_parser_unittest import *
 from webkitpy.common.config.committers_unittest import *
 from webkitpy.common.net.credentials_unittest import *
 from webkitpy.common.net.irc.unittests import *
 from webkitpy.common.net.networktransaction_unittest import *
-from webkitpy.diff_parser_unittest import *
 from webkitpy.executive_unittest import *
 from webkitpy.grammar_unittest import *
 from webkitpy.init.unittests import *  # for the webkitpy.init package
@@ -67,4 +67,4 @@ from webkitpy.common.config.ports_unittest import *
 #        See https://bugs.webkit.org/show_bug.cgi?id=31818
 if len(sys.argv) > 1 and sys.argv[1] == "--all":
     sys.argv.remove("--all")
-    from webkitpy.scm_unittest import *
+    from webkitpy.common.checkout.scm_unittest import *

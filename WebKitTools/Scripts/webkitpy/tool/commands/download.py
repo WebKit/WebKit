@@ -33,7 +33,7 @@ from optparse import make_option
 
 import webkitpy.tool.steps as steps
 
-from webkitpy.changelogs import ChangeLog, view_source_url
+from webkitpy.common.checkout.changelog import ChangeLog, view_source_url
 from webkitpy.common.net.bugzilla import parse_bug_id
 from webkitpy.tool.commands.abstractsequencedcommand import AbstractSequencedCommand
 from webkitpy.tool.comments import bug_comment_from_commit_text

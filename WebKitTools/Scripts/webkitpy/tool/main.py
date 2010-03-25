@@ -31,6 +31,7 @@
 
 import os
 
+from webkitpy.common.checkout.scm import detect_scm_system
 from webkitpy.common.net.bugzilla import Bugzilla
 from webkitpy.common.net.buildbot import BuildBot
 from webkitpy.common.net.irc.ircproxy import IRCProxy
@@ -45,7 +46,6 @@ from webkitpy.tool.multicommandtool import MultiCommandTool
 from webkitpy.executive import Executive
 from webkitpy.webkit_logging import log
 from webkitpy.webkitcheckout import WebKitCheckout
-from webkitpy.scm import detect_scm_system
 from webkitpy.user import User
 
 
