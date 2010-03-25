@@ -1,3 +1,14 @@
+2010-03-25  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        svn-create-patch prints a warning for large patches
+        https://bugs.webkit.org/show_bug.cgi?id=32582
+
+        svn-create-patch prints a warning message for larger patches than 20k.
+
+        * Scripts/svn-create-patch:
+
 2010-03-25  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.  Renamed early_warning_system.py to earlywarningsystem.py.

@@ -101,9 +101,16 @@ for my $path (keys %paths) {
 my $svnRoot = determineSVNRoot();
 my $prefix = chdirReturningRelativePath($svnRoot);
 
+my $patchSize = 0;
+
 # Generate the diffs, in a order chosen for easy reviewing.
 for my $path (sort patchpathcmp values %diffFiles) {
-    generateDiff($path, $prefix);
+    $patchSize += generateDiff($path, $prefix);
+}
+
+if ($patchSize > 20480) {
+    print STDERR "WARNING: Patch's size is " . int($patchSize/1024) . " kbytes.\n";
+    print STDERR "Patches 20k or smaller are more likely to be reviewed. Larger patches may sit unreviewed for a long time.\n";
 }
 
 exit 0;
@@ -231,6 +238,7 @@ sub generateDiff($$)
         print "\n" if ($patch && $patch =~ m/\n\S+$/m);
         outputBinaryContent($file);
     }
+    return length($patch);
 }
 
 sub generateFileList($\%)
