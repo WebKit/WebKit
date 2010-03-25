@@ -1,3 +1,18 @@
+2010-03-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Move Bugzilla.prompt_for_component to User.prompt_with_list for re-use
+        https://bugs.webkit.org/show_bug.cgi?id=36577
+
+        * Scripts/webkitpy/bugzilla.py:
+         - Move prompt_for_component to User
+        * Scripts/webkitpy/commands/queries.py:
+         - Add a missing argument_names declaration.
+        * Scripts/webkitpy/user.py:
+         - Add prompt_with_list
+         - Make staticmethods classmethods for easier mocking
+
 2010-03-24  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/36572> commit-log-editor: thinks mergeChangeLogs.pl is a ChangeLog file

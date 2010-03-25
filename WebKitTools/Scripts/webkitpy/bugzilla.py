@@ -576,15 +576,6 @@ class Bugzilla(object):
             self.browser['comment'] = comment_text
         self.browser.submit()
 
-    def prompt_for_component(self, components):
-        log("Please pick a component:")
-        i = 0
-        for name in components:
-            i += 1
-            log("%2d. %s" % (i, name))
-        result = int(User.prompt("Enter a number: ")) - 1
-        return components[result]
-
     def _check_create_bug_response(self, response_html):
         match = re.search("<title>Bug (?P<bug_id>\d+) Submitted</title>",
                           response_html)
@@ -628,7 +619,7 @@ class Bugzilla(object):
         if not component:
             component = "New Bugs"
         if component not in component_names:
-            component = self.prompt_for_component(component_names)
+            component = User.prompt_with_list("Please pick a component:", component_names)
         self.browser["component"] = [component]
         if cc:
             self.browser["cc"] = cc

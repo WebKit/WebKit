@@ -33,13 +33,24 @@ import subprocess
 import webbrowser
 
 class User(object):
-    @staticmethod
-    def prompt(message, repeat=1, raw_input=raw_input):
+    # FIXME: These are @classmethods because scm.py and bugzilla.py don't have a Tool object (thus no User instance).
+    @classmethod
+    def prompt(cls, message, repeat=1, raw_input=raw_input):
         response = None
         while (repeat and not response):
             repeat -= 1
             response = raw_input(message)
         return response
+
+    @classmethod
+    def prompt_with_list(cls, list_title, list_items):
+        print list_title
+        i = 0
+        for item in list_items:
+            i += 1
+            print "%2d. %s" % (i, item)
+        result = int(cls.prompt("Enter a number: ")) - 1
+        return list_items[result]
 
     def edit(self, files):
         editor = os.environ.get("EDITOR") or "vi"

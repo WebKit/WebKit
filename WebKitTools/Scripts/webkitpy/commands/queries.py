@@ -106,6 +106,7 @@ class PatchesToReview(AbstractDeclarativeCommand):
         for patch_id in patch_ids:
             print patch_id
 
+
 class WhatBroke(AbstractDeclarativeCommand):
     name = "what-broke"
     help_text = "Print failing buildbots (%s) and what revisions broke them" % BuildBot.default_host
@@ -169,6 +170,7 @@ class WhoBrokeIt(AbstractDeclarativeCommand):
 class ResultsFor(AbstractDeclarativeCommand):
     name = "results-for"
     help_text = "Print a list of failures for the passed revision from bots on %s" % BuildBot.default_host
+    argument_names = "REVISION"
 
     def _print_layout_test_results(self, results):
         if not results:
