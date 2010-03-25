@@ -142,8 +142,8 @@ CString& CString::operator=(const CString& str)
 
 bool operator==(const CString& c1, const CString& c2)
 {
-    size_t len = c1.size();
-    return len == c2.size() && (len == 0 || memcmp(c1.c_str(), c2.c_str(), len) == 0);
+    size_t len = c1.length();
+    return len == c2.length() && (len == 0 || memcmp(c1.data(), c2.data(), len) == 0);
 }
 
 // The null string is immutable, except for refCount.
@@ -292,29 +292,6 @@ UString UString::from(double d)
     return UString(buffer, length);
 }
 
-bool UString::getCString(CStringBuffer& buffer) const
-{
-    unsigned length = size();
-    unsigned neededSize = length + 1;
-    buffer.resize(neededSize);
-    char* buf = buffer.data();
-
-    UChar ored = 0;
-    const UChar* p = data();
-    char* q = buf;
-    const UChar* limit = p + length;
-    while (p != limit) {
-        UChar c = p[0];
-        ored |= c;
-        *q = static_cast<char>(c);
-        ++p;
-        ++q;
-    }
-    *q = '\0';
-
-    return !(ored & 0xFF00);
-}
-
 char* UString::ascii() const
 {
     static char* asciiBuffer = 0;
@@ -368,11 +345,7 @@ double UString::toDouble(bool tolerateTrailingJunk, bool tolerateEmptyString) co
         return NaN;
     }
 
-    // FIXME: If tolerateTrailingJunk is true, then we want to tolerate non-8-bit junk
-    // after the number, so this is too strict a check.
-    CStringBuffer s;
-    if (!getCString(s))
-        return NaN;
+    CString s = UTF8String();
     const char* c = s.data();
 
     // skip leading white space

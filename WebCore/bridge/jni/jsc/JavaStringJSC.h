@@ -62,11 +62,11 @@ public:
 
     const char* UTF8String() const
     {
-        if (!m_utf8String.c_str()) {
+        if (!m_utf8String.data()) {
             JSLock lock(SilenceAssertionsOnly);
             m_utf8String = UString(m_rep).UTF8String();
         }
-        return m_utf8String.c_str();
+        return m_utf8String.data();
     }
     const jchar* uchars() const { return (const jchar*)m_rep->characters(); }
     int length() const { return m_rep->length(); }
