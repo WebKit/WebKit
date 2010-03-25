@@ -39,7 +39,7 @@ from webkitpy.common.net.irc.ircproxy import IRCProxy
 from webkitpy.common.system.executive import Executive
 from webkitpy.common.system.user import User
 from webkitpy.tool.commands.download import *
-from webkitpy.tool.commands.early_warning_system import *
+from webkitpy.tool.commands.earlywarningsystem import *
 from webkitpy.tool.commands.openbugs import OpenBugs
 from webkitpy.tool.commands.queries import *
 from webkitpy.tool.commands.queues import *

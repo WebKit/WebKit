@@ -1,3 +1,15 @@
+2010-03-25  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.  Renamed early_warning_system.py to earlywarningsystem.py.
+        https://bugs.webkit.org/show_bug.cgi?id=36093
+
+        * Scripts/webkitpy/tool/commands/early_warning_system.py: Removed.
+        * Scripts/webkitpy/tool/commands/early_warning_system_unittest.py: Removed.
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py: Copied from Scripts/webkitpy/tool/commands/early_warning_system.py.
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py: Copied from Scripts/webkitpy/tool/commands/early_warning_system_unittest.py.
+        * Scripts/webkitpy/tool/main.py:
+        * Scripts/webkitpy/tool/unittests.py:
+
 2010-03-25  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Adam Barth.
