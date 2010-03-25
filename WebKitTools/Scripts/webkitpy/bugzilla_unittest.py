@@ -28,7 +28,7 @@
 
 import unittest
 
-from webkitpy.committers import CommitterList, Reviewer, Committer
+from webkitpy.common.config.committers import CommitterList, Reviewer, Committer
 from webkitpy.bugzilla import Bugzilla, BugzillaQueries, parse_bug_id, CommitterValidator, Bug
 from webkitpy.outputcapture import OutputCapture
 from webkitpy.thirdparty.mock import Mock

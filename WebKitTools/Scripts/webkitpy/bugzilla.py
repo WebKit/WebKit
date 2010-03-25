@@ -37,7 +37,7 @@ from datetime import datetime # used in timestamp()
 
 # Import WebKit-specific modules.
 from webkitpy.webkit_logging import error, log
-from webkitpy.committers import CommitterList
+from webkitpy.common.config.committers import CommitterList
 from webkitpy.credentials import Credentials
 from webkitpy.thirdparty.autoinstalled import Browser
 from webkitpy.user import User

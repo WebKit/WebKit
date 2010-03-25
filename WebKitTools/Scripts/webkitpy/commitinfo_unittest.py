@@ -28,8 +28,8 @@
 
 import unittest
 
-from committers import CommitterList, Committer, Reviewer
-from commitinfo import CommitInfo
+from webkitpy.common.config.committers import CommitterList, Committer, Reviewer
+from webkitpy.commitinfo import CommitInfo
 
 class CommitInfoTest(unittest.TestCase):
 

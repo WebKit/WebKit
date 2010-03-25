@@ -34,7 +34,7 @@ import re
 import textwrap
 
 from webkitpy.webkit_logging import log
-from webkitpy.committers import CommitterList
+from webkitpy.common.config.committers import CommitterList
 
 def view_source_url(revision_number):
     # FIMXE: This doesn't really belong in this file, but we don't have a

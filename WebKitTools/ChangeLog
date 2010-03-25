@@ -1,3 +1,40 @@
+2010-03-25  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        In Scripts/webkitpy, moved webkitport.py and committers.py into
+        common/config/ (also creating common/config/).
+
+        https://bugs.webkit.org/show_bug.cgi?id=36093
+
+        This is part of the master bug to reorganize webkitpy.
+
+        * Scripts/validate-committer-lists:
+        * Scripts/webkitpy/bugzilla.py:
+        * Scripts/webkitpy/bugzilla_unittest.py:
+        * Scripts/webkitpy/changelogs.py:
+        * Scripts/webkitpy/commitinfo.py:
+        * Scripts/webkitpy/commitinfo_unittest.py:
+        * Scripts/webkitpy/committers.py: Removed.
+        * Scripts/webkitpy/committers_unittest.py: Removed.
+        * Scripts/webkitpy/common: Added.
+        * Scripts/webkitpy/common/__init__.py: Copied from WebKitTools/Scripts/webkitpy/style/__init__.py.
+        * Scripts/webkitpy/common/config: Added.
+        * Scripts/webkitpy/common/config/__init__.py: Copied from WebKitTools/Scripts/webkitpy/style/__init__.py.
+        * Scripts/webkitpy/common/config/committers.py: Copied from WebKitTools/Scripts/webkitpy/committers.py.
+        * Scripts/webkitpy/common/config/committers_unittest.py: Copied from WebKitTools/Scripts/webkitpy/committers_unittest.py.
+        * Scripts/webkitpy/common/config/ports.py: Copied from WebKitTools/Scripts/webkitpy/webkitport.py.
+        * Scripts/webkitpy/common/config/ports_unittest.py: Copied from WebKitTools/Scripts/webkitpy/webkitport_unittest.py.
+        * Scripts/webkitpy/mock_bugzillatool.py:
+        * Scripts/webkitpy/tool/commands/early_warning_system.py:
+        * Scripts/webkitpy/tool/commands/queries.py:
+        * Scripts/webkitpy/tool/commands/sheriffbot.py:
+        * Scripts/webkitpy/tool/commands/upload.py:
+        * Scripts/webkitpy/tool/steps/abstractstep.py:
+        * Scripts/webkitpy/unittests.py:
+        * Scripts/webkitpy/webkitport.py: Removed.
+        * Scripts/webkitpy/webkitport_unittest.py: Removed.
+
 2010-03-25  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.  Move mock_bugzillatool.py to tool/mocktool.py.

@@ -27,7 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from webkitpy.webkit_logging import log
-from webkitpy.webkitport import WebKitPort
+from webkitpy.common.config.ports import WebKitPort
 
 
 class AbstractStep(object):

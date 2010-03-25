@@ -42,7 +42,7 @@ from webkitpy.tool.commands.queries_unittest import *
 from webkitpy.tool.commands.queues_unittest import *
 from webkitpy.tool.commands.sheriffbot_unittest import *
 from webkitpy.commitinfo_unittest import *
-from webkitpy.committers_unittest import *
+from webkitpy.common.config.committers_unittest import *
 from webkitpy.credentials_unittest import *
 from webkitpy.diff_parser_unittest import *
 from webkitpy.executive_unittest import *
@@ -60,7 +60,7 @@ from webkitpy.tool.steps.updatechangelogswithreview_unittests import *
 from webkitpy.style.unittests import *  # for the webkitpy.style package
 from webkitpy.user_unittest import *
 from webkitpy.webkit_logging_unittest import *
-from webkitpy.webkitport_unittest import *
+from webkitpy.common.config.ports_unittest import *
 
 # FIXME: This is a hack, but I'm tired of commenting out the test.
 #        See https://bugs.webkit.org/show_bug.cgi?id=31818

@@ -30,9 +30,9 @@
 from StringIO import StringIO
 
 from webkitpy.tool.commands.queues import AbstractReviewQueue
-from webkitpy.committers import CommitterList
+from webkitpy.common.config.committers import CommitterList
 from webkitpy.executive import ScriptError
-from webkitpy.webkitport import WebKitPort
+from webkitpy.common.config.ports import WebKitPort
 from webkitpy.tool.bot.queueengine import QueueEngine
 
 

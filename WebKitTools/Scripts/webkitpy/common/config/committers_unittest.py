@@ -27,7 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import unittest
-from committers import CommitterList, Committer, Reviewer
+from webkitpy.common.config.committers import CommitterList, Committer, Reviewer
 
 class CommittersTest(unittest.TestCase):
 

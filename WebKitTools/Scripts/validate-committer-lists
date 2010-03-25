@@ -36,7 +36,7 @@ import subprocess
 import re
 import urllib2
 from datetime import date, datetime, timedelta
-from webkitpy.committers import CommitterList
+from webkitpy.common.config.committers import CommitterList
 from webkitpy.webkit_logging import log, error
 from webkitpy.scm import Git
 

@@ -30,7 +30,7 @@ import os
 
 from webkitpy.tool.commands.queues import AbstractQueue
 from webkitpy.webkit_logging import log
-from webkitpy.webkitport import WebKitPort
+from webkitpy.common.config.ports import WebKitPort
 
 
 class SheriffBot(AbstractQueue):
