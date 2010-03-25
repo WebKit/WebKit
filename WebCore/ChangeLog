@@ -1,3 +1,14 @@
+2010-03-25  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Eric Seidel.
+
+        Add EFL-specific code to platform/ScrollView.cpp and
+        platform/Scrollbar.cpp.
+        http://webkit.org/b/36305
+
+        * platform/ScrollView.cpp:
+        * platform/Scrollbar.cpp:
+
 2010-03-25  Tasuku Suzuki  <tasuku.suzuki@nokia.com>
 
         Reviewed by Eric Seidel.
