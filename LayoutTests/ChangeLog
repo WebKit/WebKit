@@ -1,3 +1,15 @@
+2010-03-25  Diego Gonzalez  <diego.gonzalez@openbossa.org>
+
+        Reviewed by Eric Seidel.
+
+        Missing forward ENABLE_DATALIST macro to JavaScript enabled features macros
+        on WebKit.pri
+
+        [Qt] Forward ENABLE_DATALIST macro to JavaScript enabled macros
+        https://bugs.webkit.org/show_bug.cgi?id=36547
+
+        * platform/qt/Skipped:
+
 2010-03-25  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
 
         Reviewed by Eric Seidel.

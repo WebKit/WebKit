@@ -567,7 +567,6 @@ fast/events/ondragenter.html
 fast/events/reveal-link-when-focused.html
 fast/events/standalone-image-drag-to-editable.html
 fast/events/updateLayoutForHitTest.html
-fast/forms/input-list.html
 fast/forms/input-selectedoption.html
 fast/forms/button-cannot-be-nested.html
 fast/forms/control-restrict-line-height.html
