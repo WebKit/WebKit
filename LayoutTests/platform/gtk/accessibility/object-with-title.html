@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<div>
+  <ul><li>one</li><li>two</li></ul>
+</div>
+<div title="Include Me">
+  <ul><li>one</li><li>two</li></ul>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("This tests the inclusion of objects with a title attribute.");
+    if (window.accessibilityController) {
+        layoutTestController.dumpAsText();
+        document.getElementById("body").focus();
+        var webArea = accessibilityController.focusedElement;
+
+        var child = webArea.childAtIndex(0);
+        shouldBe("child.role", "'list'");
+
+        child = webArea.childAtIndex(1);
+        shouldBe("child.role", "'section'");
+
+        child = child.childAtIndex(0);
+        shouldBe("child.role", "'list'");
+    }
+    successfullyParsed = true;
+</script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

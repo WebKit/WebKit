@@ -1,3 +1,13 @@
+2010-03-25  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36371
+        [Gtk] Elements with a title attribute should not be ignored
+
+        * platform/gtk/accessibility/object-with-title.html: Added
+        * platform/gtk/accessibility/object-with-title-expected.txt: Added
+
 2010-03-25  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Eric Seidel.

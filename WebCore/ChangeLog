@@ -1,3 +1,13 @@
+2010-03-25  Joanmarie Diggs  <joanmarie.diggs@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36371
+        [Gtk] Elements with a title attribute should not be ignored
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (AccessibilityRenderObject::accessibilityIsIgnored):
+
 2010-03-24  Steve Block  <steveblock@google.com>
 
         Reviewed by David Levin.
