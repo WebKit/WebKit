@@ -1,3 +1,13 @@
+2010-03-25  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Unreviewed, build fix.
+
+        [Qt] Fix QtLauncher guards.
+
+        * QtLauncher/main.cpp:
+        (LauncherWindow::showFPS):
+        (LauncherWindow::updateFPS):
+
 2010-03-25  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
