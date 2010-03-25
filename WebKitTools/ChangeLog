@@ -1,3 +1,19 @@
+2010-03-25  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        commit-log-editor can call itself in an infinite loop
+        https://bugs.webkit.org/show_bug.cgi?id=35291
+
+        if $editor ends up being commit-log-editor, the script will exec itself
+        in an infinite loop.
+
+        To avoid this, we now check that the $editor variable is not
+        commit-log-editor to avoid this case.
+
+        * Scripts/commit-log-editor: Added an isCommitLogEditor method and
+        reworked the $editor setting to add this check.
+
 2010-03-25  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -40,6 +40,7 @@ use webkitdirs;
 
 sub normalizeLineEndings($$);
 sub removeLongestCommonPrefixEndingInDoubleNewline(\%);
+sub isCommitLogEditor($);
 
 sub usage
 {
@@ -61,23 +62,26 @@ if (!$log) {
 my $baseDir = baseProductDir();
 
 my $editor = $ENV{SVN_LOG_EDITOR};
-if (!$editor) {
+if (!$editor || isCommitLogEditor($editor)) {
     $editor = $ENV{CVS_LOG_EDITOR};
 }
-if (!$editor) {
+if (!$editor || isCommitLogEditor($editor)) {
     my $builtEditorApplication = "$baseDir/Release/Commit Log Editor.app/Contents/MacOS/Commit Log Editor";
     $editor = $builtEditorApplication if -x $builtEditorApplication;
 }
-if (!$editor) {
+if (!$editor || isCommitLogEditor($editor)) {
     my $builtEditorApplication = "$baseDir/Debug/Commit Log Editor.app/Contents/MacOS/Commit Log Editor";
     $editor = $builtEditorApplication if -x $builtEditorApplication;
 }
-if (!$editor) {
+if (!$editor || isCommitLogEditor($editor)) {
     my $installedEditorApplication = "$ENV{HOME}/Applications/Commit Log Editor.app/Contents/MacOS/Commit Log Editor";
     $editor = $installedEditorApplication if -x $installedEditorApplication;
 }
-if (!$editor) {
-    $editor = $ENV{EDITOR} || "/usr/bin/vi";
+if (!$editor || isCommitLogEditor($editor)) {
+    $editor = $ENV{EDITOR};
+}
+if (!$editor || isCommitLogEditor($editor)) {
+    $editor = "/usr/bin/vi";
 }
 
 my $inChangesToBeCommitted = !isGit();
@@ -306,4 +310,11 @@ sub removeLongestCommonPrefixEndingInDoubleNewline(\%)
         $hashOfStrings->{$key} = substr($hashOfStrings->{$key}, $lastDoubleNewline);
     }
     return substr($prefix, 0, $lastDoubleNewline + 2);
+}
+
+sub isCommitLogEditor($)
+{
+    my $editor = shift;
+    printf $editor . "\n";
+    return $editor =~ m/commit-log-editor/;
 }
