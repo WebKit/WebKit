@@ -49,7 +49,6 @@ namespace WebCore {
 
 bool DatabaseObserver::canEstablishDatabase(ScriptExecutionContext* scriptExecutionContext, const String& name, const String& displayName, unsigned long estimatedSize)
 {
-    ASSERT(isMainThread());
     ASSERT(scriptExecutionContext->isDocument() || scriptExecutionContext->isWorkerContext());
     if (scriptExecutionContext->isDocument()) {
         Document* document = static_cast<Document*>(scriptExecutionContext);
