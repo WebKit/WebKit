@@ -942,10 +942,6 @@ void WebViewImpl::paint(WebCanvas* canvas, const WebRect& rect)
         // Draw the contents of the root layer.
         updateRootLayerContents(rect);
 
-        // FIXME: Layers should not be forced to redraw their contents
-        // here but should update as needed.
-        m_layerRenderer->updateLayerContents();
-
         // Composite everything into the canvas that's passed to us.
         SkIRect canvasIRect;
         canvasIRect.set(rect.x, rect.y, rect.x + rect.width, rect.y + rect.height);

@@ -109,6 +109,8 @@ void LayerRendererSkia::drawLayerInCanvasRecursive(skia::PlatformCanvas* canvas,
     // we need to adjust our transform.
     canvas->translate(-0.5f * bounds.width(), -0.5f * bounds.height());
 
+    layer->drawDebugBorder();
+
     SkPaint opacityPaint;
     opacity *= layer->opacity();
     opacityPaint.setAlpha(opacity * 255);

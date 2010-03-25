@@ -113,9 +113,10 @@ void LayerSkia::updateContents()
 
     if (backing && !backing->paintingGoesToWindow())
         m_owner->paintGraphicsLayerContents(*m_graphicsContext, IntRect(0, 0, m_bounds.width(), m_bounds.height()));
+}
 
-    // Paint the debug border.
-    // FIXME: Add a flag to check if debug borders are used.
+void LayerSkia::drawDebugBorder()
+{
     m_graphicsContext->setStrokeColor(m_borderColor, DeviceColorSpace);
     m_graphicsContext->setStrokeThickness(m_borderWidth);
     m_graphicsContext->drawLine(IntPoint(0, 0), IntPoint(m_bounds.width(), 0));
@@ -193,6 +194,10 @@ void LayerSkia::setBounds(const SkIRect& rect)
     // Re-create the canvas and associated contexts.
     updateGraphicsContext(m_bounds);
 
+    // Layer contents need to be redrawn as the backing surface
+    // was recreated above.
+    updateContents();
+
     setNeedsCommit();
 }
 
@@ -235,7 +240,9 @@ LayerSkia* LayerSkia::superlayer() const
 
 void LayerSkia::setNeedsDisplay(const SkRect& dirtyRect)
 {
-    // FIXME: implement
+    // Redraw the contents of the layer.
+    updateContents();
+
     setNeedsCommit();
 }
 

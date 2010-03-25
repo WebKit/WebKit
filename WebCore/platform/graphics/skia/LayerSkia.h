@@ -159,6 +159,8 @@ public:
 
     void setBackingStoreRect(const SkIRect&);
 
+    void drawDebugBorder();
+
 private:
     LayerSkia(LayerType, GraphicsLayerSkia* owner);
 

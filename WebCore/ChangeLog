@@ -1,3 +1,26 @@
+2010-03-24  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Removing unecessary redraws of LayerSkia contents:
+        https://bugs.webkit.org/show_bug.cgi?id=36470
+
+        Test: No new functionality added, no tests.
+
+        * platform/graphics/skia/LayerRendererSkia.cpp:
+        (WebCore::LayerRendererSkia::drawLayerInCanvasRecursive):
+        Debug borders now rendered at composite time rather than update time.
+        * platform/graphics/skia/LayerSkia.cpp:
+        (WebCore::LayerSkia::updateContents):
+        (WebCore::LayerSkia::drawDebugBorder):
+        Debug border drawing removed from updateContents and split into a separate method that
+        can be called at composite time.
+        (WebCore::LayerSkia::setBounds):
+        Resetting the bounds causes the layer to redraw its contents.
+        (WebCore::LayerSkia::setNeedsDisplay):
+        * platform/graphics/skia/LayerSkia.h:
+        Added declaration for drawDebugBorders method.
+
 2010-03-24  Mark Rowe  <mrowe@apple.com>
 
         Revert the portion of r56489 that dealt with port zero as it introduced some test failures.
