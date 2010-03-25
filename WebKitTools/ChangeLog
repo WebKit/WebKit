@@ -1,5 +1,12 @@
 2010-03-24  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed.  Fixup one import statement I didn't find because the .pyc
+        masked the error.
+
+        * Scripts/webkitpy/stepsequence.py:
+
+2010-03-24  Adam Barth  <abarth@webkit.org>
+
         Unreviewed.  Move queueengine.py to its new home.
 
         * Scripts/webkitpy/queueengine.py: Removed.
