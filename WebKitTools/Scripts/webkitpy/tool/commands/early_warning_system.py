@@ -29,7 +29,7 @@
 
 from StringIO import StringIO
 
-from webkitpy.commands.queues import AbstractReviewQueue
+from webkitpy.tool.commands.queues import AbstractReviewQueue
 from webkitpy.committers import CommitterList
 from webkitpy.executive import ScriptError
 from webkitpy.webkitport import WebKitPort

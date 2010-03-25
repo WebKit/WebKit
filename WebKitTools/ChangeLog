@@ -1,3 +1,52 @@
+2010-03-24  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        In Scripts/webkitpy, moved commands_references.py and the commands
+        folder into webkitpy/patch.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36483
+
+        This is part of master bug 36093 to organize webkitpy.
+
+        * Scripts/webkitpy/commands: Removed.
+        * Scripts/webkitpy/commands/__init__.py: Removed.
+        * Scripts/webkitpy/commands/abstractsequencedcommand.py: Removed.
+        * Scripts/webkitpy/commands/commandtest.py: Removed.
+        * Scripts/webkitpy/commands/download.py: Removed.
+        * Scripts/webkitpy/commands/download_unittest.py: Removed.
+        * Scripts/webkitpy/commands/early_warning_system.py: Removed.
+        * Scripts/webkitpy/commands/early_warning_system_unittest.py: Removed.
+        * Scripts/webkitpy/commands/openbugs.py: Removed.
+        * Scripts/webkitpy/commands/openbugs_unittest.py: Removed.
+        * Scripts/webkitpy/commands/queries.py: Removed.
+        * Scripts/webkitpy/commands/queries_unittest.py: Removed.
+        * Scripts/webkitpy/commands/queues.py: Removed.
+        * Scripts/webkitpy/commands/queues_unittest.py: Removed.
+        * Scripts/webkitpy/commands/queuestest.py: Removed.
+        * Scripts/webkitpy/commands/sheriffbot.py: Removed.
+        * Scripts/webkitpy/commands/sheriffbot_unittest.py: Removed.
+        * Scripts/webkitpy/commands/upload.py: Removed.
+        * Scripts/webkitpy/commands/upload_unittest.py: Removed.
+        * Scripts/webkitpy/commands_references.py: Removed.
+        * Scripts/webkitpy/tool/commands: Copied from WebKitTools/Scripts/webkitpy/commands.
+        * Scripts/webkitpy/tool/commands/commandtest.py:
+        * Scripts/webkitpy/tool/commands/download.py:
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        * Scripts/webkitpy/tool/commands/early_warning_system.py:
+        * Scripts/webkitpy/tool/commands/early_warning_system_unittest.py:
+        * Scripts/webkitpy/tool/commands/openbugs_unittest.py:
+        * Scripts/webkitpy/tool/commands/queries_unittest.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        * Scripts/webkitpy/tool/commands/queuestest.py:
+        * Scripts/webkitpy/tool/commands/sheriffbot.py:
+        * Scripts/webkitpy/tool/commands/sheriffbot_unittest.py:
+        * Scripts/webkitpy/tool/commands/upload.py:
+        * Scripts/webkitpy/tool/commands/upload_unittest.py:
+        * Scripts/webkitpy/tool/commands_references.py: Copied from WebKitTools/Scripts/webkitpy/commands_references.py.
+        * Scripts/webkitpy/tool/main.py:
+        * Scripts/webkitpy/unittests.py:
+
 2010-03-24  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

@@ -26,9 +26,9 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitpy.commands_references import Mock
-from webkitpy.commands.commandtest import CommandsTest
-from webkitpy.commands.upload import *
+from webkitpy.tool.commands_references import Mock
+from webkitpy.tool.commands.commandtest import CommandsTest
+from webkitpy.tool.commands.upload import *
 from webkitpy.mock_bugzillatool import MockBugzillaTool
 
 class UploadCommandsTest(CommandsTest):

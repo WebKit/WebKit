@@ -27,9 +27,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from webkitpy.bugzilla import Bugzilla
-from webkitpy.commands_references import Mock
-from webkitpy.commands.commandtest import CommandsTest
-from webkitpy.commands.queries import *
+from webkitpy.tool.commands_references import Mock
+from webkitpy.tool.commands.commandtest import CommandsTest
+from webkitpy.tool.commands.queries import *
 from webkitpy.mock_bugzillatool import MockBugzillaTool
 
 class QueryCommandsTest(CommandsTest):

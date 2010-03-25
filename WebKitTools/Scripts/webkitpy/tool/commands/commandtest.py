@@ -26,25 +26,13 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitpy.commands.commandtest import CommandsTest
-from webkitpy.commands.openbugs import OpenBugs
+import unittest
 
-class OpenBugsTest(CommandsTest):
+from webkitpy.tool.commands_references import Mock
+from webkitpy.mock_bugzillatool import MockBugzillaTool
+from webkitpy.outputcapture import OutputCapture
 
-    find_bugs_in_string_expectations = [
-        ["123", []],
-        ["1234", ["1234"]],
-        ["12345", ["12345"]],
-        ["123456", ["123456"]],
-        ["1234567", []],
-        [" 123456 234567", ["123456", "234567"]],
-    ]
-
-    def test_find_bugs_in_string(self):
-        openbugs = OpenBugs()
-        for expectation in self.find_bugs_in_string_expectations:
-            self.assertEquals(openbugs._find_bugs_in_string(expectation[0]), expectation[1])
-
-    def test_args_parsing(self):
-        expected_stderr = "2 bugs found in input.\nMOCK: user.open_url: http://example.com/12345\nMOCK: user.open_url: http://example.com/23456\n"
-        self.assert_execute_outputs(OpenBugs(), ["12345\n23456"], expected_stderr=expected_stderr)
+class CommandsTest(unittest.TestCase):
+    def assert_execute_outputs(self, command, args, expected_stdout="", expected_stderr="", options=Mock(), tool=MockBugzillaTool()):
+        command.bind_to_tool(tool)
+        OutputCapture().assert_outputs(self, command.execute, [options, args, tool], expected_stdout=expected_stdout, expected_stderr=expected_stderr)

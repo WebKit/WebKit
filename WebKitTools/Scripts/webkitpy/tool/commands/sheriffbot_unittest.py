@@ -28,8 +28,8 @@
 
 import os
 
-from webkitpy.commands.queuestest import QueuesTest
-from webkitpy.commands.sheriffbot import SheriffBot
+from webkitpy.tool.commands.queuestest import QueuesTest
+from webkitpy.tool.commands.sheriffbot import SheriffBot
 from webkitpy.mock_bugzillatool import MockBugzillaTool, mock_builder
 
 class SheriffBotTest(QueuesTest):

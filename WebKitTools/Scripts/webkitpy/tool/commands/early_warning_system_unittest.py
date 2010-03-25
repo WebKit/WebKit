@@ -28,9 +28,9 @@
 
 import os
 
-from webkitpy.commands_references import Mock
-from webkitpy.commands.early_warning_system import *
-from webkitpy.commands.queuestest import QueuesTest
+from webkitpy.tool.commands_references import Mock
+from webkitpy.tool.commands.early_warning_system import *
+from webkitpy.tool.commands.queuestest import QueuesTest
 
 class EarlyWarningSytemTest(QueuesTest):
     def test_chromium_ews(self):

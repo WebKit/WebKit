@@ -20,6 +20,6 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""Contains intra-package references used by webkitpy.commands."""
+"""Contains intra-package references used by webkitpy.tool.commands."""
 
 from webkitpy.thirdparty.mock import Mock
