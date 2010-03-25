@@ -57,7 +57,8 @@ using std::binary_search;
 
 namespace WebCore {
 
-static const unsigned invalidPortNumber = 0xFFFF;
+static const int maximumValidPortNumber = 0xFFFE;
+static const int invalidPortNumber = 0xFFFF;
 
 // Wraps WebCore's text encoding in a character set converter for the
 // canonicalizer.
@@ -493,18 +494,21 @@ String KURL::host() const
     return m_url.componentString(m_url.m_parsed.host);
 }
 
-// Returns 0 when there is no port or it is invalid.
+// Returns 0 when there is no port.
 //
 // We treat URL's with out-of-range port numbers as invalid URLs, and they will
 // be rejected by the canonicalizer. KURL.cpp will allow them in parsing, but
-// return 0 from this port() function, so we mirror that behavior here.
+// return invalidPortNumber from this port() function, so we mirror that behavior here.
 unsigned short KURL::port() const
 {
     if (!m_url.m_isValid || m_url.m_parsed.port.len <= 0)
-        return invalidPortNumber;
-    int port = url_parse::ParsePort(m_url.utf8String().data(), m_url.m_parsed.port);
-    if (port == url_parse::PORT_UNSPECIFIED)
         return 0;
+    int port = url_parse::ParsePort(m_url.utf8String().data(), m_url.m_parsed.port);
+    ASSERT(port != url_parse::PORT_UNSPECIFIED); // Checked port.len <= 0 before.
+
+    if (port == url_parse::PORT_INVALID || port > maximumValidPortNumber) // Mimic KURL::port()
+        port = invalidPortNumber;
+
     return static_cast<unsigned short>(port);
 }
 

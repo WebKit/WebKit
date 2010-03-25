@@ -1,3 +1,13 @@
+2010-03-25  Dmitry Titov  <dimich@chromium.org>
+
+        Unreviewed, fix Chromium tests.
+
+        Recent http://trac.webkit.org/changeset/56489 made all urls in Chromium that
+        have unspecified port to return invalidPortNumber from KURL::port().
+
+        * platform/KURLGoogle.cpp: Return 0 for unspecified ports, mimic WebKit KURL behavior for invalid ports.
+        (WebCore::KURL::port):
+
 2010-03-25  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
