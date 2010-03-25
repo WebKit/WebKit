@@ -231,6 +231,7 @@ public:
     bool isGeolocationPermissionSet() const { return m_isGeolocationPermissionSet; }
     bool geolocationPermission() const { return m_geolocationPermission; }
 
+    void setDeveloperExtrasEnabled(bool);
     void showWebInspector();
     void closeWebInspector();
     void setTimelineProfilingEnabled(bool enabled);

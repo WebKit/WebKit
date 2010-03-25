@@ -455,15 +455,25 @@ static bool isWebInspectorTest(const QUrl& url)
     return false;
 }
 
+static bool shouldEnableDeveloperExtras(const QUrl& url)
+{
+    return isWebInspectorTest(url) || url.path().contains("inspector-enabled/");
+}
+
 void DumpRenderTree::open(const QUrl& url)
 {
     resetToConsistentStateBeforeTesting();
 
-    if (isWebInspectorTest(m_page->mainFrame()->url()))
+    if (shouldEnableDeveloperExtras(m_page->mainFrame()->url())) {
         layoutTestController()->closeWebInspector();
+        layoutTestController()->setDeveloperExtrasEnabled(false);
+    }
 
-    if (isWebInspectorTest(url))
-        layoutTestController()->showWebInspector();
+    if (shouldEnableDeveloperExtras(url)) {
+        layoutTestController()->setDeveloperExtrasEnabled(true);
+        if (isWebInspectorTest(url))
+            layoutTestController()->showWebInspector();
+    }
 
     // W3C SVG tests expect to be 480x360
     bool isW3CTest = url.toString().contains("svg/W3C-SVG-1.1");

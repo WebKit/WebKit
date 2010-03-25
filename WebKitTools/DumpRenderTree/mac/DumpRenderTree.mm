@@ -1133,6 +1133,11 @@ static bool shouldOpenWebInspector(const char* pathOrURL)
     return strstr(pathOrURL, "inspector/");
 }
 
+static bool shouldEnableDeveloperExtras(const char* pathOrURL)
+{
+    return shouldOpenWebInspector(pathOrURL) || strstr(pathOrURL, "inspector-enabled/");
+}
+
 static void resetWebViewToConsistentStateBeforeTesting()
 {
     WebView *webView = [mainFrame webView];
@@ -1211,8 +1216,11 @@ static void runTest(const string& testPathOrURL)
     else
         [[mainFrame webView] setHistoryDelegate:nil];
 
-    if (shouldOpenWebInspector(pathOrURL.c_str()))
-        gLayoutTestController->showWebInspector();
+    if (shouldEnableDeveloperExtras(pathOrURL.c_str())) {
+        gLayoutTestController->setDeveloperExtrasEnabled(true);
+        if (shouldOpenWebInspector(pathOrURL.c_str()))
+            gLayoutTestController->showWebInspector();
+    }
 
     if ([WebHistory optionalSharedHistory])
         [WebHistory setOptionalSharedHistory:nil];
@@ -1263,7 +1271,8 @@ static void runTest(const string& testPathOrURL)
         }
     }
 
-    if (shouldOpenWebInspector(pathOrURL.c_str()))
+    // If developer extras enabled Web Inspector may have been open by the test.
+    if (shouldEnableDeveloperExtras(pathOrURL.c_str()))
         gLayoutTestController->closeWebInspector();
 
     resetWebViewToConsistentStateBeforeTesting();

@@ -411,8 +411,7 @@ void LayoutTestController::setJavaScriptProfilingEnabled(bool flag)
     WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
     ASSERT(view);
 
-    WebKitWebSettings* settings = webkit_web_view_get_settings(view);
-    g_object_set(G_OBJECT(settings), "enable-developer-extras", flag, NULL);
+    setDeveloperExtrasEnabled(flag);
 
     WebKitWebInspector* inspector = webkit_web_view_get_inspector(view);
     g_object_set(G_OBJECT(inspector), "javascript-profiling-enabled", flag, NULL);
@@ -577,24 +576,28 @@ void LayoutTestController::addUserStyleSheet(JSStringRef source)
     printf("LayoutTestController::addUserStyleSheet not implemented.\n");
 }
 
-void LayoutTestController::showWebInspector()
+void LayoutTestController::setDeveloperExtrasEnabled(bool enabled)
 {
     WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);
     WebKitWebSettings* webSettings = webkit_web_view_get_settings(webView);
+
+    g_object_set(webSettings, "enable-developer-extras", enabled, NULL);
+}
+
+void LayoutTestController::showWebInspector()
+{
+    WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);
     WebKitWebInspector* inspector = webkit_web_view_get_inspector(webView);
 
-    g_object_set(webSettings, "enable-developer-extras", TRUE, NULL);
     webkit_web_inspector_show(inspector);
 }
 
 void LayoutTestController::closeWebInspector()
 {
     WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);
-    WebKitWebSettings* webSettings = webkit_web_view_get_settings(webView);
     WebKitWebInspector* inspector = webkit_web_view_get_inspector(webView);
 
     webkit_web_inspector_close(inspector);
-    g_object_set(webSettings, "enable-developer-extras", FALSE, NULL);
 }
 
 void LayoutTestController::evaluateInWebInspector(long callId, JSStringRef script)

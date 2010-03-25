@@ -300,12 +300,15 @@ void LayoutTestController::setMediaType(const QString& type)
 void LayoutTestController::closeWebInspector()
 {
     qt_drt_webinspector_close(m_drt->webPage());
-    m_drt->webPage()->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, false);
+}
+
+void LayoutTestController::setDeveloperExtrasEnabled(bool enabled)
+{
+    m_drt->webPage()->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, enabled);
 }
 
 void LayoutTestController::showWebInspector()
 {
-    m_drt->webPage()->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
     qt_drt_webinspector_show(m_drt->webPage());
 }
 
@@ -336,7 +339,7 @@ void LayoutTestController::setAppCacheMaximumSize(unsigned long long quota)
 
 void LayoutTestController::setJavaScriptProfilingEnabled(bool enable)
 {
-    m_topLoadingFrame->page()->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
+    setDeveloperExtrasEnabled(enable);
     qt_drt_setJavaScriptProfilingEnabled(m_topLoadingFrame, enable);
 }
 

@@ -117,6 +117,7 @@ public slots:
     QString encodeHostName(const QString& host);
     QString decodeHostName(const QString& host);
     void dumpSelectionRect() const {}
+    void setDeveloperExtrasEnabled(bool);
     void showWebInspector();
     void closeWebInspector();
     void evaluateInWebInspector(long callId, const QString& script);

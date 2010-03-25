@@ -302,7 +302,7 @@ void LayoutTestController::setIconDatabaseEnabled(bool iconDatabaseEnabled)
 
 void LayoutTestController::setJavaScriptProfilingEnabled(bool profilingEnabled)
 {
-    [[[mainFrame webView] preferences] setDeveloperExtrasEnabled:profilingEnabled];
+    setDeveloperExtrasEnabled(profilingEnabled);
     [[[mainFrame webView] inspector] setJavaScriptProfilingEnabled:profilingEnabled];
 }
 
@@ -571,16 +571,19 @@ void LayoutTestController::addUserStyleSheet(JSStringRef source)
     [WebView _addUserStyleSheetToGroup:@"org.webkit.DumpRenderTree" world:[WebScriptWorld world] source:sourceNS url:nil whitelist:nil blacklist:nil];
 }
 
+void LayoutTestController::setDeveloperExtrasEnabled(bool enabled)
+{
+    [[[mainFrame webView] preferences] setDeveloperExtrasEnabled:enabled];
+}
+
 void LayoutTestController::showWebInspector()
 {
-    [[[mainFrame webView] preferences] setDeveloperExtrasEnabled:true];
     [[[mainFrame webView] inspector] show:nil];
 }
 
 void LayoutTestController::closeWebInspector()
 {
     [[[mainFrame webView] inspector] close:nil];
-    [[[mainFrame webView] preferences] setDeveloperExtrasEnabled:false];
 }
 
 void LayoutTestController::evaluateInWebInspector(long callId, JSStringRef script)
