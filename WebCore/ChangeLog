@@ -1,3 +1,19 @@
+2010-03-25  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] websocket/tests/long-invalid-header.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=36492
+
+        trim message at most 128 bytes from the current position.
+        I believe it's enough data to investigate the error reason and
+        it makes test not depend on buffered size.
+
+        * websockets/WebSocketHandshake.cpp:
+        (WebCore::trimConsoleMessage):
+        (WebCore::WebSocketHandshake::readServerHandshake):
+        (WebCore::WebSocketHandshake::readHTTPHeaders):
+
 2010-03-24  Jon Honeycutt  <jhoneycutt@apple.com>
 
         <rdar://problem/7780798> Missing plug-ins should be represented by text
