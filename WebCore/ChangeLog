@@ -1,3 +1,17 @@
+2010-03-24  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebKit should treat port numbers outside the valid range as being blacklisted
+        <http://webkit.org/b/36571> / <rdar://problem/7790908>
+
+        * platform/KURL.cpp:
+        (WebCore::KURL::port): Map invalid port numbers to invalidPortNumber.
+        (WebCore::portAllowed): Add invalidPortNumber to the blacklist.
+        * platform/KURLGoogle.cpp:  invalid port numbers to invalidPortNumber.
+        (WebCore::KURL::port): Add invalidPortNumber to the blacklist.
+        Also bring this in to sync with KURL.  Having this identical code in two places is stupid.
+
 2010-03-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.

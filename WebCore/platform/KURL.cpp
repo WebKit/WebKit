@@ -215,6 +215,9 @@ static const unsigned char characterClassTable[256] = {
     /* 252 */ BadChar, /* 253 */ BadChar, /* 254 */ BadChar, /* 255 */ BadChar
 };
 
+static const unsigned maximumValidPortNumber = 0xFFFE;
+static const unsigned invalidPortNumber = 0xFFFF;
+
 static int copyPathRemovingDots(char* dst, const char* src, int srcStart, int srcEnd);
 static void encodeRelativeString(const String& rel, const TextEncoding&, CharBuffer& ouput);
 static String substituteBackslashes(const String&);
@@ -576,9 +579,10 @@ unsigned short KURL::port() const
     if (m_hostEnd == m_portEnd)
         return 0;
 
-    int number = m_string.substring(m_hostEnd + 1, m_portEnd - m_hostEnd - 1).toInt();
-    if (number < 0 || number > 0xFFFF)
-        return 0;
+    const UChar* stringData = m_string.characters();
+    unsigned number = charactersToUIntStrict(stringData + m_hostEnd + 1, m_portEnd - m_hostEnd - 1);
+    if (!number || number > maximumValidPortNumber)
+        return invalidPortNumber;
     return number;
 }
 
@@ -1757,7 +1761,7 @@ bool portAllowed(const KURL& url)
         6667, // Standard IRC [Apple addition]
         6668, // Alternate IRC [Apple addition]
         6669, // Alternate IRC [Apple addition]
-
+        invalidPortNumber, // Used to block all invalid port numbers
     };
     const unsigned short* const blockedPortListEnd = blockedPortList + sizeof(blockedPortList) / sizeof(blockedPortList[0]);
 

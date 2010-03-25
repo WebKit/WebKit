@@ -1,3 +1,13 @@
+2010-03-24  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebKit should treat port numbers outside the valid range as being blacklisted
+        <http://webkit.org/b/36571> / <rdar://problem/7790908>
+
+        * platform/mac/security/block-test-expected.txt:
+        * security/block-test.html: Add tests of a few invalid port numbers.
+
 2010-03-24  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Eric Seidel.

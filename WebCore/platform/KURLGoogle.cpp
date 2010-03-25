@@ -57,6 +57,8 @@ using std::binary_search;
 
 namespace WebCore {
 
+static const unsigned invalidPortNumber = 0xFFFF;
+
 // Wraps WebCore's text encoding in a character set converter for the
 // canonicalizer.
 class KURLCharsetConverter : public url_canon::CharsetConverter {
@@ -499,7 +501,7 @@ String KURL::host() const
 unsigned short KURL::port() const
 {
     if (!m_url.m_isValid || m_url.m_parsed.port.len <= 0)
-        return 0;
+        return invalidPortNumber;
     int port = url_parse::ParsePort(m_url.utf8String().data(), m_url.m_parsed.port);
     if (port == url_parse::PORT_UNSPECIFIED)
         return 0;
@@ -853,6 +855,12 @@ bool portAllowed(const KURL& url)
         3659, // apple-sasl / PasswordServer [Apple addition]
         4045, // lockd
         6000, // X11
+        6665, // Alternate IRC [Apple addition]
+        6666, // Alternate IRC [Apple addition]
+        6667, // Standard IRC [Apple addition]
+        6668, // Alternate IRC [Apple addition]
+        6669, // Alternate IRC [Apple addition]
+        invalidPortNumber, // Used to block all invalid port numbers
     };
     const unsigned short* const blockedPortListEnd = blockedPortList + sizeof(blockedPortList) / sizeof(blockedPortList[0]);
 
