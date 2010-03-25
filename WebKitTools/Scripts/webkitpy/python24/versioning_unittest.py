@@ -25,9 +25,9 @@
 import logging
 import unittest
 
-from logtesting import LogTesting
-from versioning import check_version
-from versioning import compare_version
+from webkitpy.init.logtesting import LogTesting
+from webkitpy.python24.versioning import check_version
+from webkitpy.python24.versioning import compare_version
 
 class MockSys(object):
 

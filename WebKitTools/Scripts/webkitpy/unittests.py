@@ -51,6 +51,7 @@ from webkitpy.executive_unittest import *
 from webkitpy.grammar_unittest import *
 from webkitpy.init.unittests import *  # for the webkitpy.init package
 from webkitpy.layout_tests.port.mac_unittest import *
+from webkitpy.python24.versioning_unittest import *
 from webkitpy.tool.bot.queueengine_unittest import *
 from webkitpy.tool.bot.patchcollection_unittest import *
 from webkitpy.tool.multicommandtool_unittest import *

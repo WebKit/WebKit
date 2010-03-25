@@ -35,7 +35,7 @@ import logging
 import os
 import sys
 
-import webkitpy.init.versioning as versioning
+import webkitpy.python24.versioning as versioning
 
 
 # FIXME: Consider logging more than just messages from the

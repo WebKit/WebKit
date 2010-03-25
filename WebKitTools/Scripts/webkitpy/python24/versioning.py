@@ -25,7 +25,7 @@
 import logging
 import sys
 
-_log = logging.getLogger("webkitpy.init.versioning")
+_log = logging.getLogger("webkitpy.python24.versioning")
 
 # The minimum Python version the webkitpy package supports.
 _MINIMUM_SUPPORTED_PYTHON_VERSION = "2.5"

@@ -32,7 +32,7 @@ import logging
 import sys
 import unittest
 
-import webkitpy.init.versioning as versioning
+import webkitpy.python24.versioning as versioning
 
 _log = logging.getLogger("test-webkitpy")
 

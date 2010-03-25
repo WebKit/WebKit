@@ -1,3 +1,24 @@
+2010-03-25  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        In webkitpy, moved init/versioning.py to python24/.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36093
+
+        This is part of the master bug to reorganize webkitpy.
+
+        * Scripts/test-webkitpy:
+        * Scripts/webkit-patch:
+        * Scripts/webkitpy/init/unittests.py:
+        * Scripts/webkitpy/init/versioning.py: Removed.
+        * Scripts/webkitpy/init/versioning_unittest.py: Removed.
+        * Scripts/webkitpy/python24: Added.
+        * Scripts/webkitpy/python24/__init__.py: Copied from WebKitTools/Scripts/webkitpy/tool/__init__.py.
+        * Scripts/webkitpy/python24/versioning.py: Copied from WebKitTools/Scripts/webkitpy/init/versioning.py.
+        * Scripts/webkitpy/python24/versioning_unittest.py: Copied from WebKitTools/Scripts/webkitpy/init/versioning_unittest.py.
+        * Scripts/webkitpy/unittests.py:
+
 2010-03-25  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.
