@@ -1,6 +1,6 @@
 2010-03-24  David Kilzer  <ddkilzer@apple.com>
 
-        <htp://webkit.org/b/36572> commit-log-editor: thinks mergeChangeLogs.pl is a ChangeLog file
+        <http://webkit.org/b/36572> commit-log-editor: thinks mergeChangeLogs.pl is a ChangeLog file
 
         Reviewed by Eric Seidel.
 
