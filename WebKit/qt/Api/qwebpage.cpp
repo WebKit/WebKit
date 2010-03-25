@@ -547,7 +547,10 @@ static QWebPage::WebAction webActionForContextMenuAction(WebCore::ContextMenuAct
 QMenu *QWebPagePrivate::createContextMenu(const WebCore::ContextMenu *webcoreMenu,
         const QList<WebCore::ContextMenuItem> *items, QBitArray *visitedWebActions)
 {
-    QMenu* menu = new QMenu(q->view());
+    if (!client)
+        return 0;
+
+    QMenu* menu = new QMenu(client->ownerWidget());
     for (int i = 0; i < items->count(); ++i) {
         const ContextMenuItem &item = items->at(i);
         switch (item.type()) {
@@ -1081,8 +1084,8 @@ void QWebPagePrivate::keyPressEvent(QKeyEvent *ev)
     if (!handled) {
         handled = true;
         QFont defaultFont;
-        if (q->view())
-            defaultFont = q->view()->font();
+        if (client)
+            defaultFont = client->ownerWidget()->font();
         QFontMetrics fm(defaultFont);
         if (!handleScrolling(ev, frame)) {
             switch (ev->key()) {
@@ -1926,7 +1929,8 @@ void QWebPage::javaScriptAlert(QWebFrame *frame, const QString& msg)
 {
     Q_UNUSED(frame)
 #ifndef QT_NO_MESSAGEBOX
-    QMessageBox::information(view(), tr("JavaScript Alert - %1").arg(mainFrame()->url().host()), Qt::escape(msg), QMessageBox::Ok);
+    QWidget* parent = (d->client) ? d->client->ownerWidget() : 0;
+    QMessageBox::information(parent, tr("JavaScript Alert - %1").arg(mainFrame()->url().host()), Qt::escape(msg), QMessageBox::Ok);
 #endif
 }
 
@@ -1942,7 +1946,8 @@ bool QWebPage::javaScriptConfirm(QWebFrame *frame, const QString& msg)
 #ifdef QT_NO_MESSAGEBOX
     return true;
 #else
-    return QMessageBox::Yes == QMessageBox::information(view(), tr("JavaScript Confirm - %1").arg(mainFrame()->url().host()), Qt::escape(msg), QMessageBox::Yes, QMessageBox::No);
+    QWidget* parent = (d->client) ? d->client->ownerWidget() : 0;
+    return QMessageBox::Yes == QMessageBox::information(parent, tr("JavaScript Confirm - %1").arg(mainFrame()->url().host()), Qt::escape(msg), QMessageBox::Yes, QMessageBox::No);
 #endif
 }
 
@@ -1961,7 +1966,8 @@ bool QWebPage::javaScriptPrompt(QWebFrame *frame, const QString& msg, const QStr
     Q_UNUSED(frame)
     bool ok = false;
 #ifndef QT_NO_INPUTDIALOG
-    QString x = QInputDialog::getText(view(), tr("JavaScript Prompt - %1").arg(mainFrame()->url().host()), Qt::escape(msg), QLineEdit::Normal, defaultValue, &ok);
+    QWidget* parent = (d->client) ? d->client->ownerWidget() : 0;
+    QString x = QInputDialog::getText(parent, tr("JavaScript Prompt - %1").arg(mainFrame()->url().host()), Qt::escape(msg), QLineEdit::Normal, defaultValue, &ok);
     if (ok && result)
         *result = x;
 #endif
@@ -1986,7 +1992,8 @@ bool QWebPage::shouldInterruptJavaScript()
 #ifdef QT_NO_MESSAGEBOX
     return false;
 #else
-    return QMessageBox::Yes == QMessageBox::information(view(), tr("JavaScript Problem - %1").arg(mainFrame()->url().host()), tr("The script on this page appears to have a problem. Do you want to stop the script?"), QMessageBox::Yes, QMessageBox::No);
+    QWidget* parent = (d->client) ? d->client->ownerWidget() : 0;
+    return QMessageBox::Yes == QMessageBox::information(parent, tr("JavaScript Problem - %1").arg(mainFrame()->url().host()), tr("The script on this page appears to have a problem. Do you want to stop the script?"), QMessageBox::Yes, QMessageBox::No);
 #endif
 }
 
@@ -2005,7 +2012,7 @@ bool QWebPage::shouldInterruptJavaScript()
 */
 QWebPage *QWebPage::createWindow(WebWindowType type)
 {
-    QWebView *webView = qobject_cast<QWebView *>(view());
+    QWebView *webView = qobject_cast<QWebView*>(view());
     if (webView) {
         QWebView *newView = webView->createWindow(type);
         if (newView)
@@ -2289,7 +2296,7 @@ QAction *QWebPage::action(WebAction action) const
 
     QString text;
     QIcon icon;
-    QStyle *style = view() ? view()->style() : qApp->style();
+    QStyle *style = d->client ? d->client->style() : qApp->style();
     bool checkable = false;
 
     switch (action) {
@@ -2986,7 +2993,8 @@ bool QWebPage::extension(Extension extension, const ExtensionOption *option, Ext
     if (extension == ChooseMultipleFilesExtension) {
         // FIXME: do not ignore suggestedFiles
         QStringList suggestedFiles = static_cast<const ChooseMultipleFilesExtensionOption*>(option)->suggestedFileNames;
-        QStringList names = QFileDialog::getOpenFileNames(view(), QString::null);
+        QWidget* parent = (d->client) ? d->client->ownerWidget() : 0;
+        QStringList names = QFileDialog::getOpenFileNames(parent, QString::null);
         static_cast<ChooseMultipleFilesExtensionReturn*>(output)->fileNames = names;
         return true;
     }
@@ -3068,7 +3076,8 @@ QString QWebPage::chooseFile(QWebFrame *parentFrame, const QString& suggestedFil
 {
     Q_UNUSED(parentFrame)
 #ifndef QT_NO_FILEDIALOG
-    return QFileDialog::getOpenFileName(view(), QString::null, suggestedFile);
+    QWidget* parent = (d->client) ? d->client->ownerWidget() : 0;
+    return QFileDialog::getOpenFileName(parent, QString::null, suggestedFile);
 #else
     return QString::null;
 #endif
@@ -3346,8 +3355,8 @@ QString QWebPage::userAgentForUrl(const QUrl& url) const
 
     // Language
     QLocale locale;
-    if (view())
-        locale = view()->locale();
+    if (d->client)
+        locale = d->client->ownerWidget()->locale();
     QString name = locale.name();
     name[2] = QLatin1Char('-');
     ua.append(name);

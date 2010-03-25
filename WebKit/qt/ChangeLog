@@ -1,3 +1,23 @@
+2010-03-25  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Make QWebPage not depend on view() but use the client->ownerWidget()
+        instead. Also, handle the case where there is not page client.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::createContextMenu):
+        (QWebPagePrivate::keyPressEvent):
+        (QWebPage::javaScriptAlert):
+        (QWebPage::javaScriptConfirm):
+        (QWebPage::javaScriptPrompt):
+        (QWebPage::shouldInterruptJavaScript):
+        (QWebPage::createWindow):
+        (QWebPage::action):
+        (QWebPage::extension):
+        (QWebPage::chooseFile):
+        (QWebPage::userAgentForUrl):
+
 2010-03-24  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.
