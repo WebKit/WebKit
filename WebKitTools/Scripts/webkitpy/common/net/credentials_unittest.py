@@ -31,7 +31,7 @@ import tempfile
 import unittest
 from webkitpy.common.net.credentials import Credentials
 from webkitpy.common.system.executive import Executive
-from webkitpy.outputcapture import OutputCapture
+from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.thirdparty.mock import Mock
 
 class CredentialsTest(unittest.TestCase):

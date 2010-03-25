@@ -28,11 +28,11 @@
 
 import unittest
 
+from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.mocktool import MockTool
 from webkitpy.tool.steps_references import Mock
 from webkitpy.tool.steps.update import Update
 from webkitpy.tool.steps.promptforbugortitle import PromptForBugOrTitle
-from webkitpy.outputcapture import OutputCapture
 
 
 class StepsTest(unittest.TestCase):

@@ -1,5 +1,22 @@
 2010-03-25  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed.  Move OutputCapture to webkitpy.common.system.
+        https://bugs.webkit.org/show_bug.cgi?id=36093
+
+        * Scripts/webkitpy/common/net/bugzilla_unittest.py:
+        * Scripts/webkitpy/common/net/credentials_unittest.py:
+        * Scripts/webkitpy/common/system/outputcapture.py: Copied from Scripts/webkitpy/outputcapture.py.
+        * Scripts/webkitpy/outputcapture.py: Removed.
+        * Scripts/webkitpy/tool/commands/commandtest.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        * Scripts/webkitpy/tool/commands/queuestest.py:
+        * Scripts/webkitpy/tool/multicommandtool_unittest.py:
+        * Scripts/webkitpy/tool/steps/closebugforlanddiff_unittest.py:
+        * Scripts/webkitpy/tool/steps/steps_unittest.py:
+        * Scripts/webkitpy/tool/steps/updatechangelogswithreview_unittests.py:
+
+2010-03-25  Adam Barth  <abarth@webkit.org>
+
         Unreviewed.  Move user.py to webkitpy.common.system.
 
         * Scripts/webkitpy/common/checkout/scm.py:

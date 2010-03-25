@@ -28,10 +28,10 @@
 
 import unittest
 
+from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.mocktool import MockTool
 from webkitpy.tool.steps_references import Mock
 from webkitpy.tool.steps.closebugforlanddiff import CloseBugForLandDiff
-from webkitpy.outputcapture import OutputCapture
 
 class CloseBugForLandDiffTest(unittest.TestCase):
     def test_empty_state(self):

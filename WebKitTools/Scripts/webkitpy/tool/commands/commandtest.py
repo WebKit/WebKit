@@ -28,9 +28,9 @@
 
 import unittest
 
+from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.mocktool import MockTool
 from webkitpy.tool.commands_references import Mock
-from webkitpy.outputcapture import OutputCapture
 
 class CommandsTest(unittest.TestCase):
     def assert_execute_outputs(self, command, args, expected_stdout="", expected_stderr="", options=Mock(), tool=MockTool()):

@@ -28,10 +28,10 @@
 
 import unittest
 
+from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.mocktool import MockTool
 from webkitpy.tool.steps_references import Mock
 from webkitpy.tool.steps.updatechangelogswithreviewer import UpdateChangeLogsWithReviewer
-from webkitpy.outputcapture import OutputCapture
 
 class UpdateChangeLogsWithReviewerTest(unittest.TestCase):
     def test_guess_reviewer_from_bug(self):
