@@ -22,6 +22,7 @@
 
 """Imports unit tests for webkitpy.common.system."""
 
-from webkitpy.common.system.logutils_unittest import *
+from webkitpy.common.system.deprecated_logging_unittest import *
 from webkitpy.common.system.executive_unittest import *
+from webkitpy.common.system.logutils_unittest import *
 from webkitpy.common.system.user_unittest import *

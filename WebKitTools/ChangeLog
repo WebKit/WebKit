@@ -2,6 +2,20 @@
 
         Reviewed by Adam Barth.
 
+        Moved deprecated_logging unit test import statement from
+        webkitpy/unittests.py to webkitpy/common/system/unittests.py.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36093
+
+        This is part of the master bug to reorganize webkitpy.
+
+        * Scripts/webkitpy/common/system/unittests.py:
+        * Scripts/webkitpy/unittests.py:
+
+2010-03-25  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Moved webkit_logging.py to common/system/deprecated_logging.py
         inside webkitpy.
 

@@ -36,7 +36,6 @@ from webkitpy.layout_tests.port.mac_unittest import *
 from webkitpy.python24.unittests import *
 from webkitpy.style.unittests import *
 from webkitpy.tool.unittests import *
-from webkitpy.common.system.deprecated_logging_unittest import *
 
 # FIXME: This is a hack, but I'm tired of commenting out the test.
 #        See https://bugs.webkit.org/show_bug.cgi?id=31818
