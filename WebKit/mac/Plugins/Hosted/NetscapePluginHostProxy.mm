@@ -89,6 +89,8 @@ static PluginProxyMap& pluginProxyMap()
     return pluginProxyMap;
 }
 
+unsigned NetscapePluginHostProxy::s_processingRequests;
+
 NetscapePluginHostProxy::NetscapePluginHostProxy(mach_port_t clientPort, mach_port_t pluginHostPort, const ProcessSerialNumber& pluginHostPSN, bool shouldCacheMissingPropertiesAndMethods)
     : m_clientPort(clientPort)
     , m_portSet(MACH_PORT_NULL)
@@ -97,7 +99,6 @@ NetscapePluginHostProxy::NetscapePluginHostProxy(mach_port_t clientPort, mach_po
     , m_menuBarIsVisible(true)
     , m_fullscreenWindowIsShowing(false)
     , m_pluginHostPSN(pluginHostPSN)
-    , m_processingRequests(0)
     , m_shouldCacheMissingPropertiesAndMethods(shouldCacheMissingPropertiesAndMethods)
 {
     pluginProxyMap().add(m_clientPort, this);
@@ -184,7 +185,9 @@ void NetscapePluginHostProxy::removePluginInstance(NetscapePluginInstanceProxy* 
 
 NetscapePluginInstanceProxy* NetscapePluginHostProxy::pluginInstance(uint32_t pluginID)
 {
-    return m_instances.get(pluginID).get();
+    NetscapePluginInstanceProxy* result = m_instances.get(pluginID).get();
+    ASSERT(!result || result->hostProxy() == this);
+    return result;
 }
 
 void NetscapePluginHostProxy::deadNameNotificationCallback(CFMachPortRef port, void *msg, CFIndex size, void *info)
@@ -294,7 +297,7 @@ void NetscapePluginHostProxy::setModal(bool modal)
     
 bool NetscapePluginHostProxy::processRequests()
 {
-    m_processingRequests++;
+    s_processingRequests++;
 
    if (!m_portSet) {
         mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_PORT_SET, &m_portSet);
@@ -310,7 +313,7 @@ bool NetscapePluginHostProxy::processRequests()
     
     if (kr != KERN_SUCCESS) {
         LOG_ERROR("Could not receive mach message, error %x", kr);
-        m_processingRequests--;
+        s_processingRequests--;
         return false;
     }
     
@@ -323,24 +326,24 @@ bool NetscapePluginHostProxy::processRequests()
             
             if (kr != KERN_SUCCESS) {
                 LOG_ERROR("Could not send mach message, error %x", kr);
-                m_processingRequests--;
+                s_processingRequests--;
                 return false;
             }
         }
         
-        m_processingRequests--;
+        s_processingRequests--;
         return true;
     }
     
     if (msg->msgh_local_port == CFMachPortGetPort(m_deadNameNotificationPort.get())) {
         ASSERT(msg->msgh_id == MACH_NOTIFY_DEAD_NAME);
         pluginHostDied();
-        m_processingRequests--;
+        s_processingRequests--;
         return false;
     }
     
     ASSERT_NOT_REACHED();
-    m_processingRequests--;
+    s_processingRequests--;
     return false;
 }
 
@@ -578,7 +581,11 @@ kern_return_t WKPCEvaluate(mach_port_t clientPort, uint32_t pluginID, uint32_t r
     data_t resultData = 0;
     mach_msg_type_number_t resultLength = 0;
     boolean_t returnValue = instanceProxy->evaluate(objectID, script, resultData, resultLength, allowPopups);
-    
+
+    hostProxy = instanceProxy->hostProxy();
+    if (!hostProxy)
+        return KERN_FAILURE;
+
     _WKPHBooleanAndDataReply(hostProxy->port(), instanceProxy->pluginID(), requestID, returnValue, resultData, resultLength);
     if (resultData)
         mig_deallocate(reinterpret_cast<vm_address_t>(resultData), resultLength);
@@ -637,7 +644,11 @@ kern_return_t WKPCInvoke(mach_port_t clientPort, uint32_t pluginID, uint32_t req
     data_t resultData = 0;
     mach_msg_type_number_t resultLength = 0;
     boolean_t returnValue = instanceProxy->invoke(objectID, methodNameIdentifier, argumentsData, argumentsLength, resultData, resultLength);
-    
+
+    hostProxy = instanceProxy->hostProxy();
+    if (!hostProxy)
+        return KERN_FAILURE;
+
     _WKPHBooleanAndDataReply(hostProxy->port(), instanceProxy->pluginID(), requestID, returnValue, resultData, resultLength);
     if (resultData)
         mig_deallocate(reinterpret_cast<vm_address_t>(resultData), resultLength);
@@ -663,7 +674,11 @@ kern_return_t WKPCInvokeDefault(mach_port_t clientPort, uint32_t pluginID, uint3
     data_t resultData = 0;
     mach_msg_type_number_t resultLength = 0;
     boolean_t returnValue = instanceProxy->invokeDefault(objectID, argumentsData, argumentsLength, resultData, resultLength);
-    
+
+    hostProxy = instanceProxy->hostProxy();
+    if (!hostProxy)
+        return KERN_FAILURE;
+
     _WKPHBooleanAndDataReply(hostProxy->port(), instanceProxy->pluginID(), requestID, returnValue, resultData, resultLength);
     if (resultData)
         mig_deallocate(reinterpret_cast<vm_address_t>(resultData), resultLength);
@@ -701,7 +716,7 @@ kern_return_t WKPCGetProperty(mach_port_t clientPort, uint32_t pluginID, uint32_
     NetscapePluginInstanceProxy* instanceProxy = hostProxy->pluginInstance(pluginID);
     if (!instanceProxy)
         return KERN_FAILURE;
-    
+
     IdentifierRep* identifier = reinterpret_cast<IdentifierRep*>(serverIdentifier);
     if (!IdentifierRep::isValid(identifier))
         return KERN_FAILURE;
@@ -717,7 +732,11 @@ kern_return_t WKPCGetProperty(mach_port_t clientPort, uint32_t pluginID, uint32_
         returnValue = instanceProxy->getProperty(objectID, propertyNameIdentifier, resultData, resultLength);
     } else 
         returnValue = instanceProxy->setProperty(objectID, identifier->number(), resultData, resultLength);
-    
+
+    hostProxy = instanceProxy->hostProxy();
+    if (!hostProxy)
+        return KERN_FAILURE;
+
     _WKPHBooleanAndDataReply(hostProxy->port(), instanceProxy->pluginID(), requestID, returnValue, resultData, resultLength);
     if (resultData)
         mig_deallocate(reinterpret_cast<vm_address_t>(resultData), resultLength);
@@ -750,6 +769,10 @@ kern_return_t WKPCSetProperty(mach_port_t clientPort, uint32_t pluginID, uint32_
     } else 
         result = instanceProxy->setProperty(objectID, identifier->number(), valueData, valueLength);
 
+    hostProxy = instanceProxy->hostProxy();
+    if (!hostProxy)
+        return KERN_FAILURE;
+
     _WKPHBooleanReply(hostProxy->port(), instanceProxy->pluginID(), requestID, result);
 
     return KERN_SUCCESS;
@@ -778,6 +801,10 @@ kern_return_t WKPCRemoveProperty(mach_port_t clientPort, uint32_t pluginID, uint
     } else 
         result = instanceProxy->removeProperty(objectID, identifier->number());
 
+    hostProxy = instanceProxy->hostProxy();
+    if (!hostProxy)
+        return KERN_FAILURE;
+
     _WKPHBooleanReply(hostProxy->port(), instanceProxy->pluginID(), requestID, result);
 
     return KERN_SUCCESS;
@@ -805,7 +832,11 @@ kern_return_t WKPCHasProperty(mach_port_t clientPort, uint32_t pluginID, uint32_
         returnValue = instanceProxy->hasProperty(objectID, propertyNameIdentifier);
     } else 
         returnValue = instanceProxy->hasProperty(objectID, identifier->number());
-    
+
+    hostProxy = instanceProxy->hostProxy();
+    if (!hostProxy)
+        return KERN_FAILURE;
+
     _WKPHBooleanReply(hostProxy->port(), instanceProxy->pluginID(), requestID, returnValue);
     
     return KERN_SUCCESS;
@@ -829,6 +860,10 @@ kern_return_t WKPCHasMethod(mach_port_t clientPort, uint32_t pluginID, uint32_t 
     
     Identifier methodNameIdentifier = identifierFromIdentifierRep(identifier);        
     boolean_t returnValue = instanceProxy->hasMethod(objectID, methodNameIdentifier);
+
+    hostProxy = instanceProxy->hostProxy();
+    if (!hostProxy)
+        return KERN_FAILURE;
 
     _WKPHBooleanReply(hostProxy->port(), instanceProxy->pluginID(), requestID, returnValue);
 
@@ -872,7 +907,11 @@ kern_return_t WKPCEnumerate(mach_port_t clientPort, uint32_t pluginID, uint32_t 
     data_t resultData = 0;
     mach_msg_type_number_t resultLength = 0;
     boolean_t returnValue = instanceProxy->enumerate(objectID, resultData, resultLength);
-    
+
+    hostProxy = instanceProxy->hostProxy();
+    if (!hostProxy)
+        return KERN_FAILURE;
+
     _WKPHBooleanAndDataReply(hostProxy->port(), instanceProxy->pluginID(), requestID, returnValue, resultData, resultLength);
     
     if (resultData)
@@ -1114,7 +1153,11 @@ kern_return_t WKPCRunSyncOpenPanel(mach_port_t clientPort, data_t panelData, mac
     [sheet setRequiredFileType:[panelState objectForKey:@"requiredFileType"]];    
     [sheet setTitle:[panelState objectForKey:@"title"]];
     [sheet runModal];
-    
+
+    hostProxy = instanceProxy->hostProxy();
+    if (!hostProxy)
+        return KERN_FAILURE;
+
     NSDictionary *ret = [NSDictionary dictionaryWithObjectsAndKeys:
                          [sheet filenames], @"filenames",
                          WKNoteOpenPanelFiles([sheet filenames]), @"extensions",

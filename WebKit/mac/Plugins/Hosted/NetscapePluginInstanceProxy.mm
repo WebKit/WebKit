@@ -777,9 +777,15 @@ NPError NetscapePluginInstanceProxy::loadRequest(NSURLRequest *request, const ch
 NetscapePluginInstanceProxy::Reply* NetscapePluginInstanceProxy::processRequestsAndWaitForReply(uint32_t requestID)
 {
     Reply* reply = 0;
-    
+
+    ASSERT(m_pluginHostProxy);
     while (!(reply = m_replies.take(requestID))) {
         if (!m_pluginHostProxy->processRequests())
+            return 0;
+
+        // The host proxy can be destroyed while executing a nested processRequests() call, in which case it's normal
+        // to get a success result, but be unable to keep looping.
+        if (!m_pluginHostProxy)
             return 0;
     }
     

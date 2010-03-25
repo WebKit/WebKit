@@ -1,3 +1,38 @@
+2010-03-24  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36563
+        A plug-in makes Safari crash on http://www.itscodingtime.com/
+
+        * Plugins/Hosted/NetscapePluginHostProxy.h:
+        (WebKit::NetscapePluginHostProxy::port): Assert that the object is still alive. This isn't
+        beautifully systemic, but helped catch a bug, and may help catch more.
+        (WebKit::NetscapePluginHostProxy::clientPort): Ditto.
+        (WebKit::NetscapePluginHostProxy::isProcessingRequests): Changed m_processingRequests to a
+        static. This doesn't change behavior much, but helps avoid writing into deallocated memory.
+
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WebKit::NetscapePluginHostProxy::NetscapePluginHostProxy): Changed m_processingRequests
+        to a static.
+        (WebKit::NetscapePluginHostProxy::processRequests): Ditto. Changing m_processingRequests
+        after destroying the object in pluginHostDied() was wrong, but reasonably harmless, as there
+        wasn't much time for some other object to be allocated at this address.
+        (WKPCEvaluate): Refetch host proxy, as it may have been destroyed.
+        (WKPCInvoke): Ditto.
+        (WKPCInvokeDefault): Ditto.
+        (WKPCGetProperty): Ditto.
+        (WKPCSetProperty): Ditto.
+        (WKPCRemoveProperty): Ditto.
+        (WKPCHasProperty): Ditto.
+        (WKPCHasMethod): Ditto.
+        (WKPCEnumerate): Ditto.
+        (WKPCRunSyncOpenPanel): Ditto.
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::processRequestsAndWaitForReply): Bail out of the 
+        "event loop" if host proxy went away while processing a request.
+
 2010-03-24  Hayato Ito  <hayato@chromium.org>
 
         Reviewed by Shinichiro Hamaji.
