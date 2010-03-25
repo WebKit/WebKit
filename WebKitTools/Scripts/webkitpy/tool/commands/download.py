@@ -36,12 +36,12 @@ import webkitpy.tool.steps as steps
 from webkitpy.common.checkout.changelog import ChangeLog, view_source_url
 from webkitpy.common.net.bugzilla import parse_bug_id
 from webkitpy.tool.commands.abstractsequencedcommand import AbstractSequencedCommand
+from webkitpy.tool.commands.stepsequence import StepSequence
 from webkitpy.tool.comments import bug_comment_from_commit_text
 from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
 from webkitpy.executive import ScriptError
 from webkitpy.grammar import pluralize
 from webkitpy.webkit_logging import error, log
-from webkitpy.stepsequence import StepSequence
 
 
 class Build(AbstractSequencedCommand):

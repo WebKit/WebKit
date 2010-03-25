@@ -1,5 +1,16 @@
 2010-03-25  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed.  Move stepsequence to webkitpy.tool.commands.
+        https://bugs.webkit.org/show_bug.cgi?id=36093
+
+        * Scripts/webkitpy/stepsequence.py: Removed.
+        * Scripts/webkitpy/tool/commands/abstractsequencedcommand.py:
+        * Scripts/webkitpy/tool/commands/download.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/stepsequence.py: Copied from Scripts/webkitpy/stepsequence.py.
+
+2010-03-25  Adam Barth  <abarth@webkit.org>
+
         Unreviewed.  Create webkitpy.common.checkout as described in
         https://bugs.webkit.org/show_bug.cgi?id=36093
 
