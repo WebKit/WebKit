@@ -74,6 +74,7 @@ class Land(AbstractSequencedCommand):
     steps = [
         steps.EnsureBuildersAreGreen,
         steps.UpdateChangeLogsWithReviewer,
+        steps.ValidateReviewer,
         steps.EnsureBuildersAreGreen,
         steps.Build,
         steps.RunTests,
@@ -209,6 +210,7 @@ class AbstractPatchLandingCommand(AbstractPatchSequencingCommand):
         steps.CleanWorkingDirectory,
         steps.Update,
         steps.ApplyPatch,
+        steps.ValidateReviewer,
         steps.EnsureBuildersAreGreen,
         steps.Build,
         steps.RunTests,

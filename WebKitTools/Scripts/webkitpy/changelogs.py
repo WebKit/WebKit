@@ -34,6 +34,7 @@ import re
 import textwrap
 
 from webkitpy.webkit_logging import log
+from webkitpy.committers import CommitterList
 
 def view_source_url(revision_number):
     # FIMXE: This doesn't really belong in this file, but we don't have a
@@ -50,8 +51,9 @@ class ChangeLogEntry(object):
     # e.g. 2009-06-03  Eric Seidel  <eric@webkit.org>
     date_line_regexp = r'^(?P<date>\d{4}-\d{2}-\d{2})\s+(?P<name>.+?)\s+<(?P<email>[^<>]+)>$'
 
-    def __init__(self, contents):
+    def __init__(self, contents, committer_list=CommitterList()):
         self._contents = contents
+        self._committer_list = committer_list
         self._parse_entry()
 
     def _parse_entry(self):
@@ -66,16 +68,25 @@ class ChangeLogEntry(object):
         match = re.search("^\s+Reviewed by (?P<reviewer>.*?)[\.,]?\s*$", self._contents, re.MULTILINE) # Discard everything after the first period
         self._reviewer_text = match.group("reviewer") if match else None
 
+        self._reviewer = self._committer_list.committer_by_name(self._reviewer_text)
+        self._author = self._committer_list.committer_by_email(self._author_email) or self._committer_list.committer_by_name(self._author_name)
+
     def author_name(self):
         return self._author_name
 
     def author_email(self):
         return self._author_email
 
+    def author(self):
+        return self._author # Might be None
+
     # FIXME: Eventually we would like to map reviwer names to reviewer objects.
     # See https://bugs.webkit.org/show_bug.cgi?id=26533
     def reviewer_text(self):
         return self._reviewer_text
+
+    def reviewer(self):
+        return self._reviewer # Might be None
 
     def contents(self):
         return self._contents

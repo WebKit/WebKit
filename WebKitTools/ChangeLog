@@ -1,3 +1,22 @@
+2010-03-24  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        webkit-patch or pre-commit hook should validate reviewer lines before committing
+        https://bugs.webkit.org/show_bug.cgi?id=26927
+
+        Validate that patches have valid reivewers listed in their ChangeLogs
+        before landing.  For patches without reviewers can be landed if their
+        ChangeLogs state that they are unreviewed.
+
+        * Scripts/webkitpy/changelogs.py:
+        * Scripts/webkitpy/commands/download.py:
+        * Scripts/webkitpy/commitinfo.py:
+        * Scripts/webkitpy/commitinfo_unittest.py:
+        * Scripts/webkitpy/mock_bugzillatool.py:
+        * Scripts/webkitpy/steps/__init__.py:
+        * Scripts/webkitpy/steps/validatereviewer.py: Added.
+
 2010-03-19  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by David Levin.

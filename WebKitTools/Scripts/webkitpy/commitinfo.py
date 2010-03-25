@@ -53,10 +53,12 @@ class CommitInfo(object):
         # Assume for now that the first entry has everything we need:
         changelog_entry = changelog_entries[0]
         changelog_data = {
-            "bug_id" : parse_bug_id(changelog_entry.contents()),
-            "author_name" : changelog_entry.author_name(),
-            "author_email" : changelog_entry.author_email(),
-            "reviewer_text" : changelog_entry.reviewer_text(),
+            "bug_id": parse_bug_id(changelog_entry.contents()),
+            "author_name": changelog_entry.author_name(),
+            "author_email": changelog_entry.author_email(),
+            "author": changelog_entry.author(),
+            "reviewer_text": changelog_entry.reviewer_text(),
+            "reviewer": changelog_entry.reviewer(),
         }
         # We could pass the changelog_entry instead of a dictionary here, but that makes
         # mocking slightly more involved, and would make aggregating data from multiple
@@ -69,11 +71,11 @@ class CommitInfo(object):
         self._bug_id = changelog_data["bug_id"]
         self._author_name = changelog_data["author_name"]
         self._author_email = changelog_data["author_email"]
+        self._author = changelog_data["author"]
         self._reviewer_text = changelog_data["reviewer_text"]
+        self._reviewer = changelog_data["reviewer"]
 
         # Derived values:
-        self._reviewer = committer_list.committer_by_name(self._reviewer_text)
-        self._author = committer_list.committer_by_email(self._author_email) or committer_list.committer_by_name(self._author_name)
         self._committer = committer_list.committer_by_email(committer_email)
 
     def revision(self):

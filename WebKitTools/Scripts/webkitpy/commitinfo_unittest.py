@@ -32,7 +32,7 @@ from committers import CommitterList, Committer, Reviewer
 from commitinfo import CommitInfo
 
 class CommitInfoTest(unittest.TestCase):
-    
+
     def test_commit_info_creation(self):
         author = Committer("Author", "author@example.com")
         committer = Committer("Committer", "committer@example.com")
@@ -40,13 +40,15 @@ class CommitInfoTest(unittest.TestCase):
         committer_list = CommitterList(committers=[author, committer], reviewers=[reviewer])
 
         changelog_data = {
-            "bug_id" : 1234,
-            "author_name" : "Committer",
-            "author_email" : "author@example.com",
-            "reviewer_text" : "Reviewer",
+            "bug_id": 1234,
+            "author_name": "Committer",
+            "author_email": "author@example.com",
+            "author": author,
+            "reviewer_text": "Reviewer",
+            "reviewer": reviewer,
         }
         commit = CommitInfo(123, "committer@example.com", changelog_data, committer_list)
-        
+
         self.assertEqual(commit.revision(), 123)
         self.assertEqual(commit.bug_id(), 1234)
         self.assertEqual(commit.author_name(), "Committer")

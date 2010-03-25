@@ -55,3 +55,4 @@ from webkitpy.steps.revertrevision import RevertRevision
 from webkitpy.steps.runtests import RunTests
 from webkitpy.steps.updatechangelogswithreviewer import UpdateChangeLogsWithReviewer
 from webkitpy.steps.update import Update
+from webkitpy.steps.validatereviewer import ValidateReviewer

@@ -366,12 +366,16 @@ class MockSCM(Mock):
 
 class MockWebKitCheckout(object):
 
+    _committer_list = CommitterList()
+
     def commit_info_for_revision(self, svn_revision):
         return CommitInfo(svn_revision, "eric@webkit.org", {
             "bug_id": 42,
             "author_name": "Adam Barth",
             "author_email": "abarth@webkit.org",
-            "reviewer_text": "Darin Adler"
+            "author": self._committer_list.committer_by_email("abarth@webkit.org"),
+            "reviewer_text": "Darin Adler",
+            "reviewer": self._committer_list.committer_by_name("Darin Adler"),
         })
 
 
