@@ -1,3 +1,15 @@
+2010-03-25  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Needs a "LinuxEditingBehavior", perhaps with a better name
+        https://bugs.webkit.org/show_bug.cgi?id=36627
+
+        Skipping tests that started failing after 56567. We need to figure
+        out a proper fix, that may involve adding a new editing behavior
+        for our platform.
+
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+
 2010-03-25  Andrew Scherkus  <scherkus@chromium.org>
 
         Unreviewed, expectations tweak.

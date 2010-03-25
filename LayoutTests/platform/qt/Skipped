@@ -5226,3 +5226,7 @@ fast/loader/stateobjects/replacestate-in-iframe.html
 # [Qt] websocket/tests/long-invalid-header.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=36492
 websocket/tests/long-invalid-header.html
+
+# [Qt] REGRESSION: editing/selection/shrink-selection-after-shift-pagedown.html fails after 56567
+# https://bugs.webkit.org/show_bug.cgi?id=36628
+editing/selection/shrink-selection-after-shift-pagedown.html

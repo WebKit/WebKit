@@ -5846,3 +5846,8 @@ fast/loader/stateobjects/replacestate-in-iframe.html
 # Fails on the 32 bits bots with off-by-one size after zoom out
 # See https://bugs.webkit.org/show_bug.cgi?id=36491
 fast/css/zoom-body-scroll.html
+
+# Fails on GTK+ since https://bugs.webkit.org/show_bug.cgi?id=25195 got in
+# See https://bugs.webkit.org/show_bug.cgi?id=36627 for what's needed
+# for a real fix.
+editing/selection/extend-after-mouse-selection.html
