@@ -80,6 +80,13 @@ static QUrl gInspectorUrl;
 static bool gResizesToContents = false;
 static bool gUseTiledBackingStore = false;
 
+#ifdef Q_WS_MAEMO_5 || defined(Q_WS_S60)
+static bool gUseFrameFlattening = true;
+#else
+static bool gUseFrameFlattening = false;
+#endif
+
+
 class LauncherWindow : public MainWindow {
     Q_OBJECT
 
@@ -129,6 +136,7 @@ protected slots:
     void toggleFullScreenMode(bool enable);
     void showFPS(bool enable);
     void changeViewportUpdateMode(int mode);
+    void toggleFrameFlattening(bool toggle);
 
 public slots:
     void newWindow();
@@ -249,6 +257,7 @@ void LauncherWindow::applyPrefs(LauncherWindow* source)
     applySetting(QWebSettings::AcceleratedCompositingEnabled, settings, other, gUseCompositing);
     applySetting(QWebSettings::TiledBackingStoreEnabled, settings, other, gUseTiledBackingStore);
     applySetting(QWebSettings::WebGLEnabled, settings, other, false);
+    applySetting(QWebSettings::FrameFlatteningEnabled, settings, other, gUseFrameFlattening);
 
     if (!isGraphicsBased())
         return;
@@ -661,6 +670,12 @@ void LauncherWindow::changeViewportUpdateMode(int mode)
     view->setViewportUpdateMode(gViewportUpdateMode);
 }
 
+void LauncherWindow::toggleFrameFlattening(bool toggle)
+{
+    gUseFrameFlattening = toggle;
+    page()->settings()->setAttribute(QWebSettings::FrameFlatteningEnabled, toggle);
+}
+
 void LauncherWindow::newWindow()
 {
     LauncherWindow* mw = new LauncherWindow(this, false);
@@ -778,6 +793,10 @@ void LauncherWindow::createChrome()
     QAction* spatialNavigationAction = toolsMenu->addAction("Toggle Spatial Navigation", this, SLOT(toggleSpatialNavigation(bool)));
     spatialNavigationAction->setCheckable(true);
     spatialNavigationAction->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_S));
+
+    QAction* toggleFrameFlattening = toolsMenu->addAction("Toggle Frame Flattening", this, SLOT(toggleFrameFlattening(bool)));
+    toggleFrameFlattening->setCheckable(true);
+    toggleFrameFlattening->setChecked(settings->testAttribute(QWebSettings::FrameFlatteningEnabled));
 
     graphicsViewMenu->addSeparator();
 

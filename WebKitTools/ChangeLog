@@ -1,3 +1,18 @@
+2010-03-25  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add a Toggle Frame Flattening option to QtLauncher.
+        It will be enabled by default on Maemo5 and S60 platforms.
+
+        [Qt] Add enable/disable Frame Flattening option to QtLauncher
+        https://bugs.webkit.org/show_bug.cgi?id=36558
+
+        * QtLauncher/main.cpp:
+        (LauncherWindow::applyPrefs):
+        (LauncherWindow::toggleFrameFlattening):
+        (LauncherWindow::createChrome):
+
 2010-03-25  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Eric Seidel.
