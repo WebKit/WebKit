@@ -1,3 +1,17 @@
+2010-03-24  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        <rdar://problem/7780798> Missing plug-ins should be represented by text
+        only, instead of lego block
+
+        https://bugs.webkit.org/show_bug.cgi?id=36583
+
+        Reviewed by Dan Bernstein.
+
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::paintReplaced):
+        Set the font rendering mode and the computed size, so that the text will
+        draw properly on Windows.
+
 2010-03-24  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by Dimitri Glazkov.
