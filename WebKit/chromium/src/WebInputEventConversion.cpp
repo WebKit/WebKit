@@ -305,10 +305,11 @@ WebMouseWheelEventBuilder::WebMouseWheelEventBuilder(const ScrollView* view, con
     windowY = p.y();
     x = event.offsetX();
     y = event.offsetY();
-    deltaX = static_cast<float>(event.wheelDeltaX());
-    deltaY = static_cast<float>(event.wheelDeltaY());
-    wheelTicksX = static_cast<float>(event.rawDeltaX());
-    wheelTicksY = static_cast<float>(event.rawDeltaY());
+    deltaX = static_cast<float>(event.rawDeltaX());
+    deltaY = static_cast<float>(event.rawDeltaY());
+    // The 120 is from WheelEvent::initWheelEvent().
+    wheelTicksX = static_cast<float>(event.wheelDeltaX()) / 120;
+    wheelTicksY = static_cast<float>(event.wheelDeltaY()) / 120;
     scrollByPage = event.granularity() == WheelEvent::Page;
 }
 

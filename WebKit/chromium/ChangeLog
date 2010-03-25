@@ -1,3 +1,12 @@
+2010-03-10  John Abd-El-Malek  <jam@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Fix up WebMouseWheelEventBuilder to properly calculate the units
+        https://bugs.webkit.org/show_bug.cgi?id=35989
+
+        * src/WebInputEventConversion.cpp:
+
 2010-03-24  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by Dimitri Glazkov.
