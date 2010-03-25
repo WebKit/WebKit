@@ -1,5 +1,28 @@
 2010-03-24  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed.  Move comments.py and multicommandtool.py to their new
+        home.
+
+        * Scripts/webkitpy/comments.py: Removed.
+        * Scripts/webkitpy/multicommandtool.py: Removed.
+        * Scripts/webkitpy/multicommandtool_unittest.py: Removed.
+        * Scripts/webkitpy/tool/commands/abstractsequencedcommand.py:
+        * Scripts/webkitpy/tool/commands/download.py:
+        * Scripts/webkitpy/tool/commands/openbugs.py:
+        * Scripts/webkitpy/tool/commands/queries.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/upload.py:
+        * Scripts/webkitpy/tool/comments.py: Copied from Scripts/webkitpy/comments.py.
+        * Scripts/webkitpy/tool/main.py:
+        * Scripts/webkitpy/tool/multicommandtool.py: Copied from Scripts/webkitpy/multicommandtool.py.
+        * Scripts/webkitpy/tool/multicommandtool_unittest.py: Copied from Scripts/webkitpy/multicommandtool_unittest.py.
+        * Scripts/webkitpy/tool/steps/closebugforlanddiff.py:
+        * Scripts/webkitpy/tool/steps/closepatch.py:
+        * Scripts/webkitpy/tool/steps/reopenbugafterrollout.py:
+        * Scripts/webkitpy/unittests.py:
+
+2010-03-24  Adam Barth  <abarth@webkit.org>
+
         Unreviewed.  Fixup one import statement I didn't find because the .pyc
         masked the error.
 

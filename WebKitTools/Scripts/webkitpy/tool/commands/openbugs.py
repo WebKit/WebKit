@@ -29,7 +29,7 @@
 import re
 import sys
 
-from webkitpy.multicommandtool import AbstractDeclarativeCommand
+from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
 from webkitpy.webkit_logging import log
 
 

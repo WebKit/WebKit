@@ -37,11 +37,11 @@ from webkitpy.bugzilla import parse_bug_id
 # We could instead use from modules import buildsteps and then prefix every buildstep with "buildsteps."
 from webkitpy.changelogs import ChangeLog, view_source_url
 from webkitpy.tool.commands.abstractsequencedcommand import AbstractSequencedCommand
-from webkitpy.comments import bug_comment_from_commit_text
+from webkitpy.tool.comments import bug_comment_from_commit_text
+from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
 from webkitpy.executive import ScriptError
 from webkitpy.grammar import pluralize
 from webkitpy.webkit_logging import error, log
-from webkitpy.multicommandtool import AbstractDeclarativeCommand
 from webkitpy.stepsequence import StepSequence
 
 

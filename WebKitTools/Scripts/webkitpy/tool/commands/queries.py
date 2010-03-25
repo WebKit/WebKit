@@ -36,8 +36,8 @@ from webkitpy.changelogs import view_source_url
 from webkitpy.commitinfo import CommitInfo
 from webkitpy.committers import CommitterList
 from webkitpy.grammar import pluralize
+from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
 from webkitpy.webkit_logging import log
-from webkitpy.multicommandtool import AbstractDeclarativeCommand
 
 
 class BugsToCommit(AbstractDeclarativeCommand):

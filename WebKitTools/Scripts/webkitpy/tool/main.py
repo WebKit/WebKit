@@ -40,11 +40,11 @@ from webkitpy.tool.commands.queries import *
 from webkitpy.tool.commands.queues import *
 from webkitpy.tool.commands.sheriffbot import *
 from webkitpy.tool.commands.upload import *
+from webkitpy.tool.multicommandtool import MultiCommandTool
 from webkitpy.executive import Executive
 from webkitpy.irc.ircproxy import IRCProxy
 from webkitpy.webkit_logging import log
 from webkitpy.webkitcheckout import WebKitCheckout
-from webkitpy.multicommandtool import MultiCommandTool
 from webkitpy.scm import detect_scm_system
 from webkitpy.user import User
 

@@ -26,8 +26,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitpy.multicommandtool import AbstractDeclarativeCommand
 from webkitpy.stepsequence import StepSequence
+from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
 
 
 class AbstractSequencedCommand(AbstractDeclarativeCommand):
