@@ -69,9 +69,11 @@ typedef HMODULE PlatformModule;
 #elif PLATFORM(QT)
 #if defined(Q_WS_MAC)
 typedef CFBundleRef PlatformModule;
-#else
+#elif !defined(QT_NO_LIBRARY)
 typedef QLibrary* PlatformModule;
-#endif // defined(Q_WS_MAC)
+#else
+typedef void* PlatformModule;
+#endif
 #elif PLATFORM(GTK)
 typedef GModule* PlatformModule;
 #elif PLATFORM(CF)
