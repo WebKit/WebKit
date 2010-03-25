@@ -1,3 +1,13 @@
+2010-03-24  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        * platform/text/String.cpp:
+        (WebCore::putUTF8Triple): Correct capitalization of function name.
+        (WebCore::String::utf8): Fix C-style casts.
+        (WebCore::String::fromUTF8): Remove unnecessary newline.
+        (WebCore::String::fromUTF8WithLatin1Fallback): Use early return.
+
 2010-03-24  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Darin Adler.

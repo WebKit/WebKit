@@ -683,12 +683,12 @@ CString String::latin1() const
 }
 
 // Helper to write a three-byte UTF-8 code point to the buffer, caller must check room is available.
-static inline void putUTF8triple(char*& buffer, UChar ch)
+static inline void putUTF8Triple(char*& buffer, UChar ch)
 {
     ASSERT(ch >= 0x0800);
-    *buffer++ = (char)(((ch >> 12) & 0x0F) | 0xE0);
-    *buffer++ = (char)(((ch >> 6) & 0x3F) | 0x80);
-    *buffer++ = (char)((ch & 0x3F) | 0x80);
+    *buffer++ = static_cast<char>(((ch >> 12) & 0x0F) | 0xE0);
+    *buffer++ = static_cast<char>(((ch >> 6) & 0x3F) | 0x80);
+    *buffer++ = static_cast<char>((ch & 0x3F) | 0x80);
 }
 
 CString String::utf8() const
@@ -722,7 +722,7 @@ CString String::utf8() const
         ASSERT((*characters >= 0xD800) && (*characters <= 0xDBFF));
         // There should be room left, since one UChar hasn't been converted.
         ASSERT((buffer + 3) <= (buffer + bufferVector.size()));
-        putUTF8triple(buffer, *characters);
+        putUTF8Triple(buffer, *characters);
     }
 
     return CString(bufferVector.data(), buffer - bufferVector.data());
@@ -758,17 +758,15 @@ String String::fromUTF8(const char* string)
 {
     if (!string)
         return String();
-
     return fromUTF8(string, strlen(string));
 }
 
 String String::fromUTF8WithLatin1Fallback(const char* string, size_t size)
 {
-    String result = fromUTF8(string, size);
-    if (!result)
-        result = String(string, size);
-    
-    return result;
+    String utf8 = fromUTF8(string, size);
+    if (!utf8)
+        return String(string, size);
+    return utf8;
 }
 
 #if USE(JSC)
