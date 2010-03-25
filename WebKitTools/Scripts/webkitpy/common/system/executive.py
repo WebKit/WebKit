@@ -38,7 +38,7 @@ import StringIO
 import subprocess
 import sys
 
-from webkitpy.webkit_logging import tee
+from webkitpy.common.system.deprecated_logging import tee
 
 
 class ScriptError(Exception):

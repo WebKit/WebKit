@@ -31,7 +31,7 @@ import webkitpy.tool.steps as steps
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.checkout.scm import CheckoutNeedsUpdate
 from webkitpy.tool.bot.queueengine import QueueEngine
-from webkitpy.webkit_logging import log
+from webkitpy.common.system.deprecated_logging import log
 
 
 class StepSequenceErrorHandler():

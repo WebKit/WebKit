@@ -30,7 +30,7 @@ import re
 import sys
 
 from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
-from webkitpy.webkit_logging import log
+from webkitpy.common.system.deprecated_logging import log
 
 
 class OpenBugs(AbstractDeclarativeCommand):

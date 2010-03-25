@@ -36,7 +36,7 @@ import subprocess
 from datetime import datetime # used in timestamp()
 
 # Import WebKit-specific modules.
-from webkitpy.webkit_logging import error, log
+from webkitpy.common.system.deprecated_logging import error, log
 from webkitpy.common.config.committers import CommitterList
 from webkitpy.common.net.credentials import Credentials
 from webkitpy.common.system.user import User

@@ -37,7 +37,7 @@ from webkitpy.common.config.committers import CommitterList
 from webkitpy.common.net.buildbot import BuildBot
 from webkitpy.tool.grammar import pluralize
 from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
-from webkitpy.webkit_logging import log
+from webkitpy.common.system.deprecated_logging import log
 
 
 class BugsToCommit(AbstractDeclarativeCommand):

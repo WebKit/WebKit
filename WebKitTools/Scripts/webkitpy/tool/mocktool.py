@@ -33,7 +33,7 @@ from webkitpy.common.checkout.commitinfo import CommitInfo
 from webkitpy.common.checkout.scm import CommitMessage
 from webkitpy.common.net.bugzilla import Bug, Attachment
 from webkitpy.thirdparty.mock import Mock
-from webkitpy.webkit_logging import log
+from webkitpy.common.system.deprecated_logging import log
 
 
 def _id_to_object_dictionary(*objects):

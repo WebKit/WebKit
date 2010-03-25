@@ -33,7 +33,7 @@ import tempfile
 import unittest
 
 from webkitpy.common.system.executive import ScriptError
-from webkitpy.webkit_logging import *
+from webkitpy.common.system.deprecated_logging import *
 
 class LoggingTest(unittest.TestCase):
 

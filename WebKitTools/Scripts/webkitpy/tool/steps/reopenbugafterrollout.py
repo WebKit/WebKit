@@ -28,7 +28,7 @@
 
 from webkitpy.tool.comments import bug_comment_from_commit_text
 from webkitpy.tool.steps.abstractstep import AbstractStep
-from webkitpy.webkit_logging import log
+from webkitpy.common.system.deprecated_logging import log
 
 
 class ReopenBugAfterRollout(AbstractStep):

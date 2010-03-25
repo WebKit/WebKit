@@ -34,7 +34,7 @@ import urllib2
 import xmlrpclib
 
 # Import WebKit-specific modules.
-from webkitpy.webkit_logging import log
+from webkitpy.common.system.deprecated_logging import log
 
 # WebKit includes a built copy of BeautifulSoup in Scripts/webkitpy/thirdparty
 # so this import should always succeed.

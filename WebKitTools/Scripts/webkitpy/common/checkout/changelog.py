@@ -33,7 +33,7 @@ import os.path
 import re
 import textwrap
 
-from webkitpy.webkit_logging import log
+from webkitpy.common.system.deprecated_logging import log
 from webkitpy.common.config.committers import CommitterList
 
 def view_source_url(revision_number):

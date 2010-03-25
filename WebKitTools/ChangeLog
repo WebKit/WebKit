@@ -1,3 +1,58 @@
+2010-03-25  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Moved webkit_logging.py to common/system/deprecated_logging.py
+        inside webkitpy.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36093
+
+        This is part of the master bug to reorganize webkitpy.
+
+        * Scripts/validate-committer-lists:
+        * Scripts/webkitpy/common/checkout/changelog.py:
+        * Scripts/webkitpy/common/checkout/scm.py:
+        * Scripts/webkitpy/common/net/bugzilla.py:
+        * Scripts/webkitpy/common/net/buildbot.py:
+        * Scripts/webkitpy/common/net/credentials.py:
+        * Scripts/webkitpy/common/net/irc/ircproxy.py:
+        * Scripts/webkitpy/common/net/networktransaction.py:
+        * Scripts/webkitpy/common/net/statusserver.py:
+        * Scripts/webkitpy/common/system/deprecated_logging.py: Copied from WebKitTools/Scripts/webkitpy/webkit_logging.py.
+        * Scripts/webkitpy/common/system/deprecated_logging_unittest.py: Copied from WebKitTools/Scripts/webkitpy/webkit_logging_unittest.py.
+        * Scripts/webkitpy/common/system/executive.py:
+        * Scripts/webkitpy/tool/bot/queueengine.py:
+        * Scripts/webkitpy/tool/commands/download.py:
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+        * Scripts/webkitpy/tool/commands/openbugs.py:
+        * Scripts/webkitpy/tool/commands/queries.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/sheriffbot.py:
+        * Scripts/webkitpy/tool/commands/stepsequence.py:
+        * Scripts/webkitpy/tool/commands/upload.py:
+        * Scripts/webkitpy/tool/main.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+        * Scripts/webkitpy/tool/multicommandtool.py:
+        * Scripts/webkitpy/tool/steps/abstractstep.py:
+        * Scripts/webkitpy/tool/steps/applypatch.py:
+        * Scripts/webkitpy/tool/steps/build.py:
+        * Scripts/webkitpy/tool/steps/checkstyle.py:
+        * Scripts/webkitpy/tool/steps/closebug.py:
+        * Scripts/webkitpy/tool/steps/closebugforlanddiff.py:
+        * Scripts/webkitpy/tool/steps/confirmdiff.py:
+        * Scripts/webkitpy/tool/steps/ensurebuildersaregreen.py:
+        * Scripts/webkitpy/tool/steps/ensurelocalcommitifneeded.py:
+        * Scripts/webkitpy/tool/steps/obsoletepatches.py:
+        * Scripts/webkitpy/tool/steps/preparechangelog.py:
+        * Scripts/webkitpy/tool/steps/reopenbugafterrollout.py:
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        * Scripts/webkitpy/tool/steps/update.py:
+        * Scripts/webkitpy/tool/steps/updatechangelogswithreviewer.py:
+        * Scripts/webkitpy/tool/steps/validatereviewer.py:
+        * Scripts/webkitpy/unittests.py:
+        * Scripts/webkitpy/webkit_logging.py: Removed.
+        * Scripts/webkitpy/webkit_logging_unittest.py: Removed.
+
 2010-03-25  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

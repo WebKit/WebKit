@@ -45,7 +45,7 @@ from webkitpy.tool.commands.abstractsequencedcommand import AbstractSequencedCom
 from webkitpy.tool.grammar import pluralize, join_with_separators
 from webkitpy.tool.comments import bug_comment_from_svn_revision
 from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
-from webkitpy.webkit_logging import error, log
+from webkitpy.common.system.deprecated_logging import error, log
 
 class CommitMessageForCurrentDiff(AbstractDeclarativeCommand):
     name = "commit-message"

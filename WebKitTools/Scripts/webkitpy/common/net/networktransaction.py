@@ -29,7 +29,7 @@
 import time
 
 from webkitpy.thirdparty.autoinstalled import HTTPError
-from webkitpy.webkit_logging import log
+from webkitpy.common.system.deprecated_logging import log
 
 
 class NetworkTimeout(Exception):

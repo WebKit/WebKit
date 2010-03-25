@@ -29,7 +29,7 @@
 from webkitpy.tool.grammar import pluralize
 from webkitpy.tool.steps.abstractstep import AbstractStep
 from webkitpy.tool.steps.options import Options
-from webkitpy.webkit_logging import log
+from webkitpy.common.system.deprecated_logging import log
 
 
 class ObsoletePatches(AbstractStep):

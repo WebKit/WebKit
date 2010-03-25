@@ -37,7 +37,7 @@ import subprocess
 from webkitpy.common.checkout.changelog import ChangeLog, is_path_to_changelog
 from webkitpy.common.system.executive import Executive, run_command, ScriptError
 from webkitpy.common.system.user import User
-from webkitpy.webkit_logging import error, log
+from webkitpy.common.system.deprecated_logging import error, log
 
 def detect_scm_system(path):
     if SVN.in_working_directory(path):

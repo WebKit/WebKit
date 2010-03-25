@@ -29,7 +29,7 @@
 import os
 
 from webkitpy.tool.commands_references import Mock
-from webkitpy.tool.commands.early_warning_system import *
+from webkitpy.tool.commands.earlywarningsystem import *
 from webkitpy.tool.commands.queuestest import QueuesTest
 
 class EarlyWarningSytemTest(QueuesTest):

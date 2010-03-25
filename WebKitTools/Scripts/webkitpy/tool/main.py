@@ -46,7 +46,7 @@ from webkitpy.tool.commands.queues import *
 from webkitpy.tool.commands.sheriffbot import *
 from webkitpy.tool.commands.upload import *
 from webkitpy.tool.multicommandtool import MultiCommandTool
-from webkitpy.webkit_logging import log
+from webkitpy.common.system.deprecated_logging import log
 
 
 class WebKitPatch(MultiCommandTool):

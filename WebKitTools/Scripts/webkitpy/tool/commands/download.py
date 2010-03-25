@@ -41,7 +41,7 @@ from webkitpy.tool.commands.stepsequence import StepSequence
 from webkitpy.tool.comments import bug_comment_from_commit_text
 from webkitpy.tool.grammar import pluralize
 from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
-from webkitpy.webkit_logging import error, log
+from webkitpy.common.system.deprecated_logging import error, log
 
 
 class Build(AbstractSequencedCommand):

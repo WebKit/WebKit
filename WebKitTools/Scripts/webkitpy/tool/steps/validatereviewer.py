@@ -31,7 +31,7 @@ import re
 
 from webkitpy.common.checkout.changelog import ChangeLog
 from webkitpy.tool.steps.abstractstep import AbstractStep
-from webkitpy.webkit_logging import error
+from webkitpy.common.system.deprecated_logging import error
 
 
 class ValidateReviewer(AbstractStep):
