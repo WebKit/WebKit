@@ -1,3 +1,22 @@
+2010-03-24  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Changing the V8 and JSC implementations of
+        SQLStatementErrorCallback to interpret as false all results that
+        could be converted to a false boolean. Pretty much a revert of
+        r54981.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36569
+
+        * bindings/js/JSCustomSQLStatementErrorCallback.cpp:
+        (WebCore::JSCustomSQLStatementErrorCallback::handleEvent):
+        * bindings/v8/custom/V8CustomSQLStatementErrorCallback.cpp:
+        (WebCore::V8CustomSQLStatementErrorCallback::handleEvent):
+        * bindings/v8/custom/V8CustomVoidCallback.cpp:
+        (WebCore::invokeCallback):
+        * bindings/v8/custom/V8CustomVoidCallback.h:
+
 2010-03-25  Dmitry Titov  <dimich@chromium.org>
 
         Unreviewed, fix Chromium tests.

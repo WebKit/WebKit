@@ -15,37 +15,42 @@ function finishTest()
 }
 
 var txCallbackCount = 0;
-var NUMBER_OF_TRANSACTIONS = 7;
+var NUMBER_OF_TRANSACTIONS = 10;
 var database;
 
-function transactionErrorFunction(error)
-{
-    log("PASS - the transaction error callback was invoked.");
-    if (++txCallbackCount == NUMBER_OF_TRANSACTIONS)
-        finishTest();
-}
-
-function transactionSuccessFunction(message)
-{
-    log("FAIL - the transaction success callback should not be invoked.");
-    if (++txCallbackCount == NUMBER_OF_TRANSACTIONS)
-        finishTest();
-}
-
-function runTransactionExpectedToFail(statementErrorCallback)
+function runTransaction(expectedToFail, statementErrorCallback)
 {
     database.transaction(function(tx) {
-        tx.executeSql("CREATE TABLE IF NOT EXISTS StatementErrorCallbackTest (randomData)");
-        tx.executeSql("INSERT INTO StatementErrorCallbackTest (randomData) VALUES (?)", ['test']);
+        tx.executeSql("CREATE TABLE IF NOT EXISTS TestTable (RandomData TEXT)");
+        tx.executeSql("INSERT INTO TestTable VALUES (?)", ['test']);
         tx.executeSql("THIS STATEMENT WILL FAIL", [],
             function(tx, data) {
                 log("FAIL - this statement should have failed");
                 finishTest();
             }, statementErrorCallback);
-        tx.executeSql("INSERT INTO StatementErrorCallbackTest (randomData) VALUES (?)", ['test1'],
-            function(error) { log("FAIL - This statement should not have been executed"); },
-            function() { log("FAIL - This statement should not have been executed"); });
-    }, transactionErrorFunction, transactionSuccessFunction);
+        tx.executeSql("INSERT INTO TestTable VALUES (?)", ['test1'],
+            function(error) {
+                if (expectedToFail)
+                    log("FAIL - This statement should not have been executed");
+            }, function() {
+                if (expectedToFail)
+                    log("FAIL - This statement should not have been executed");
+            });
+    }, function(error) {
+        if (expectedToFail)
+            log("PASS - the transaction error callback was invoked.");
+        else
+            log("FAIL - the transaction error callback should not have been invoked.");
+        if (++txCallbackCount == NUMBER_OF_TRANSACTIONS)
+            finishTest();
+    }, function() {
+        if (expectedToFail)
+            log("FAIL - the transaction success callback should not have been invoked.");
+        else
+            log("PASS - the transaction success callback was invoked.");
+        if (++txCallbackCount == NUMBER_OF_TRANSACTIONS)
+            finishTest();
+    });
 }
 
 function runTest()
@@ -56,28 +61,18 @@ function runTest()
         layoutTestController.waitUntilDone();
     }
 
-    database = openDatabase("bug-28872", "1.0", "statement error callback test", 1024);
-    database.transaction(function(tx) {
-        tx.executeSql("CREATE TABLE IF NOT EXISTS StatementErrorCallbackTest (randomData)");
-        tx.executeSql("INSERT INTO StatementErrorCallbackTest (randomData) VALUES (?)", ['test']);
-        tx.executeSql("THIS STATEMENT WILL FAIL", [],
-            function(tx, data) {
-                log("FAIL - this statement should have failed");
-                finishTest();
-            }, function(tx, error) { return false; });
-        tx.executeSql("INSERT INTO StatementErrorCallbackTest (randomData) VALUES (?)", ['test1'],
-            function(tx, data) { },
-            function(tx, error) { log("FAIL - This statement should not have caused an error"); });
-    }, function(error) { log("FAIL - The transaction error callback should not have been invoked"); },
-    function() { });
+    database = openDatabase("StatementErrorCallbackTest", "1.0", "statement error callback test", 1024);
 
-    runTransactionExpectedToFail(function(error) { return true; });
-    runTransactionExpectedToFail(function(error) { throw "Exception in statement error callback"; return false; });
-    runTransactionExpectedToFail(function(error) {});
-    runTransactionExpectedToFail(function(error) { return null; });
-    runTransactionExpectedToFail(function(error) { return "some string"; });
-    runTransactionExpectedToFail(function(error) { return 1234; });
-    runTransactionExpectedToFail(function(error) { return {a: 2, b: "abc"}; });
+    runTransaction(true, function(error) { return true; });
+    runTransaction(true, function(error) { throw "Exception in statement error callback"; return false; });
+    runTransaction(true, function(error) { return "some string"; });
+    runTransaction(true, function(error) { return 1234; });
+    runTransaction(true, function(error) { return {a: 2, b: "abc"}; });
+    runTransaction(true, function(error) { return "false"; });
+    runTransaction(false, function(error) {});
+    runTransaction(false, function(error) { return false; });
+    runTransaction(false, function(error) { return 0; });
+    runTransaction(false, function(error) { return null; });
 }
 
 </script>
