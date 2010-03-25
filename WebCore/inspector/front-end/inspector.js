@@ -784,8 +784,10 @@ WebInspector.documentKeyDown = function(event)
             break;
 
         case "U+0052": // R key
-            if ((event.metaKey && isMac) || (event.ctrlKey && !isMac))
+            if ((event.metaKey && isMac) || (event.ctrlKey && !isMac)) {
                 InspectorBackend.reloadPage();
+                event.preventDefault();
+            }
             break;
         case "F5":
             if (!isMac)

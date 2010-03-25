@@ -1,3 +1,13 @@
+2010-03-25  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: reloading debug target window with cmd-R from inspector window produces beep.
+        https://bugs.webkit.org/show_bug.cgi?id=36554
+
+        * inspector/front-end/inspector.js:
+        (WebInspector.documentKeyDown): prevent the default behavior, if handled, which would result in a system beep.
+
 2010-03-25  Jochen Eisinger  <jochen@chromium.org>
 
         Reviewed by Jeremy Orlow.
