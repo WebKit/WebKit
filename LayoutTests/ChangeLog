@@ -1,3 +1,11 @@
+2010-03-25  Andrew Scherkus  <scherkus@chromium.org>
+
+        Unreviewed, expectations tweak.
+
+        Reorganized and updated comments for media test expectations.
+
+        * platform/chromium/test_expectations.txt: Tweaked.
+
 2010-03-24  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Dimitri Glazkov.

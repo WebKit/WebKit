@@ -826,6 +826,52 @@ BUG16779 WONTFIX SKIP : media/video-size-intrinsic-scale.html = FAIL TIMEOUT
 // Skipped to reduce crashiness during a test run.
 BUG38444 SKIP : media/video-append-source.html = CRASH PASS TIMEOUT
 
+// We haven't implemented the WebKit fullscreen extension.
+BUG16735 : media/media-fullscreen-inline.html = TIMEOUT
+BUG16735 : media/media-fullscreen-not-in-document.html = TIMEOUT
+
+// We haven't implemented the WebKit captioning extension.
+BUG28301 : media/media-captions.html = TIMEOUT
+
+// We haven't implemented reverse audio/video playback.
+BUG33099 : media/video-reverse-play-duration.html = TIMEOUT
+BUG33099 : media/video-timeupdate-reverse-play.html = TIMEOUT
+
+// FFmpeg roll breaks these
+BUG35492 MAC LINUX : media/video-played-ranges-1.html = FAIL PASS
+BUG35492 : media/video-played-reset.html = FAIL
+BUG35492 : media/video-display-toggle.html = CRASH FAIL PASS
+BUG35492 : media/controls-drag-timebar.html = FAIL TIMEOUT
+BUG35492 : media/video-currentTime-set.html = FAIL TIMEOUT
+// Previous to FFmpeg roll expectations
+//BUG9798 BUG13907 SLOW LINUX MAC RELEASE : media/video-played-ranges-1.html = FAIL
+//BUG9798 BUG13907 SLOW WIN RELEASE : media/video-played-ranges-1.html = FAIL
+//BUG9798 BUG13907 WIN DEBUG : media/controls-drag-timebar.html = TEXT TIMEOUT
+//BUG9798 BUG13907 RELEASE : media/controls-drag-timebar.html = TEXT
+//BUG9798 BUG13907 LINUX MAC DEBUG : media/controls-drag-timebar.html = TEXT
+//BUG9798 BUG13907 SLOW WIN RELEASE : media/video-played-ranges-1.html = PASS FAIL
+//BUG9798 BUG13907 SLOW MAC WIN RELEASE : media/video-played-reset.html = PASS
+//BUG9798 BUG13907 SLOW LINUX DEBUG : media/video-played-reset.html = PASS
+//BUG9798 BUG13907 : media/video-currentTime-set.html = PASS FAIL
+
+// The test was added in WebKit r54766 and timeouts in Chromium.
+BUG13907 : media/video-display-aspect-ratio.html = TIMEOUT PASS
+
+// Not known when these started failing.
+BUG9798 WIN DEBUG : media/video-empty-source.html = IMAGE PASS
+BUG29748 LINUX : media/video-controls-rendering.html = IMAGE
+BUG35858 MAC LINUX DEBUG : media/remove-from-document.html = CRASH PASS
+BUG35858 MAC RELEASE : media/remove-from-document.html = CRASH PASS TIMEOUT
+BUG35858 MAC : media/video-source.html = CRASH PASS
+BUG35858 LINUX DEBUG : media/video-source.html = CRASH PASS
+BUG35858 MAC LINUX : media/video-source-type.html = CRASH PASS
+BUG35858 MAC : media/video-src.html = CRASH PASS
+BUG35858 MAC : media/video-src-source.html = CRASH PASS
+BUG35858 MAC : media/video-timeupdate-during-playback.html = CRASH PASS
+BUG37710 MAC SKIP : media/video-src-change.html = CRASH PASS 
+BUG35922 : media/video-replaces-poster.html = IMAGE
+BUG37896 : media/video-preload.html = TEXT
+
 // Function arguments object is copied for each access.
 BUG24194 : fast/js/kde/function_arguments.html = FAIL
 
@@ -2281,7 +2327,6 @@ BUG26291 MAC : fast/text/drawBidiText.html = IMAGE
 BUG26291 MAC : transforms/2d/hindi-rotated.html = IMAGE
 
 // Flaky since at least WebKit 50258.
-BUG9798 WIN DEBUG : media/video-empty-source.html = IMAGE PASS
 BUG32098 : fast/dom/defaultView.html = MISSING PASS
 BUG9798 WIN RELEASE : http/tests/navigation/no-referrer-reset.html = TIMEOUT PASS
 
@@ -2316,10 +2361,6 @@ BUG27551 WIN : fast/css/shadow-multiple.html = IMAGE
 // WebKit merge 50756:50820, possibly due to WebKit r50808/r50786 and Chromium r31715
 BUG27553 WIN MAC : fast/text/atsui-partial-selection.html = IMAGE
 
-// WebKit merge 50840:50929
-BUG27555 : media/media-fullscreen-inline.html = TIMEOUT
-BUG27555 : media/media-fullscreen-not-in-document.html = TIMEOUT
-
 BUG22700 WIN LINUX : fast/canvas/canvas-shadow.html = TEXT
 
 
@@ -2339,9 +2380,6 @@ BUG28092 WIN : http/tests/xmlhttprequest/redirect-cross-origin-post.html = PASS 
 
 // Need to add Chromium localized strings for the feature. Upstream r51172
 BUG28264 : fast/forms/validationMessage.html = FAIL
-
-// Video Captions are added upsteram (r51191), need to implement.
-BUG28301 : media/media-captions.html = TIMEOUT
 
 // Started failing with move from Lighttpd to Apache.
 // Since we have some bots on Lighttpd and some on Apache, mark it as flaky for
@@ -2435,7 +2473,6 @@ BUG29748 LINUX : fast/repaint/overflow-scroll-delete.html = IMAGE
 BUG29748 LINUX : http/tests/navigation/error404-frames.html = IMAGE
 BUG29748 LINUX : http/tests/navigation/post-frames.html = IMAGE
 BUG29748 LINUX : http/tests/navigation/postredirect-frames.html = IMAGE
-BUG29748 LINUX : media/video-controls-rendering.html = IMAGE
 BUG29748 LINUX : tables/mozilla/bugs/bug137388-2.html = IMAGE
 BUG29748 LINUX : tables/mozilla/bugs/bug2479-1.html = IMAGE
 BUG29748 LINUX : tables/mozilla/bugs/bug2479-4.html = IMAGE
@@ -2659,10 +2696,6 @@ BUG32900 WIN LINUX : http/tests/misc/slow-loading-mask.html = IMAGE+TEXT
 // WebKit roll 53704 -> 53747
 BUG32949 WIN LINUX MAC : fast/dom/Window/invalid-protocol.html = TEXT
 
-// WebKit roll 53704:53787.  Not going to fix for now.
-BUG33099 : media/video-reverse-play-duration.html = TIMEOUT
-BUG33099 : media/video-timeupdate-reverse-play.html = TIMEOUT
-
 BUG21852 DEFER SKIP LINUX WIN : fast/canvas/webgl = CRASH
 
 // Disabled until we get history.{back,forward,go} changed to always be
@@ -2708,40 +2741,8 @@ BUG35237 : fast/events/multiline-link-arrow-navigation.html = TEXT
 // WebKit roll 54596:54648
 BUG35387 : platform/win/plugins/plugin-delayed-destroy.html = TIMEOUT
 
-// FFmpeg roll breaks these
-BUG35492 MAC LINUX : media/video-played-ranges-1.html = FAIL PASS
-BUG35492 : media/video-played-reset.html = FAIL
-BUG35492 : media/video-display-toggle.html = CRASH FAIL PASS
-BUG35492 : media/controls-drag-timebar.html = FAIL TIMEOUT
-BUG35492 : media/video-currentTime-set.html = FAIL TIMEOUT
-// Previous to FFmpeg roll expectations
-//BUG9798 BUG13907 SLOW LINUX MAC RELEASE : media/video-played-ranges-1.html = FAIL
-//BUG9798 BUG13907 SLOW WIN RELEASE : media/video-played-ranges-1.html = FAIL
-//BUG9798 BUG13907 WIN DEBUG : media/controls-drag-timebar.html = TEXT TIMEOUT
-//BUG9798 BUG13907 RELEASE : media/controls-drag-timebar.html = TEXT
-//BUG9798 BUG13907 LINUX MAC DEBUG : media/controls-drag-timebar.html = TEXT
-//BUG9798 BUG13907 SLOW WIN RELEASE : media/video-played-ranges-1.html = PASS FAIL
-//BUG9798 BUG13907 SLOW MAC WIN RELEASE : media/video-played-reset.html = PASS
-//BUG9798 BUG13907 SLOW LINUX DEBUG : media/video-played-reset.html = PASS
-//BUG9798 BUG13907 : media/video-currentTime-set.html = PASS FAIL
-// The test was added in WebKit r54766 and timeouts in Chromium
-BUG13907 : media/video-display-aspect-ratio.html = TIMEOUT PASS
-
 // New test added in WebKit r54783
 BUG35822 : plugins/netscape-browser-object-identity.html = TEXT
-
-// Not known when these started failing.
-BUG35858 MAC LINUX DEBUG : media/remove-from-document.html = CRASH PASS
-BUG35858 MAC RELEASE : media/remove-from-document.html = CRASH PASS TIMEOUT
-BUG35858 MAC : media/video-source.html = CRASH PASS
-BUG35858 LINUX DEBUG : media/video-source.html = CRASH PASS
-BUG35858 MAC LINUX : media/video-source-type.html = CRASH PASS
-BUG35858 MAC : media/video-src.html = CRASH PASS
-BUG35858 MAC : media/video-src-source.html = CRASH PASS
-BUG35858 MAC : media/video-timeupdate-during-playback.html = CRASH PASS
-
-// Newly added in r54826.
-BUG35922 : media/video-replaces-poster.html = IMAGE
 
 // Started failing during roll from 54848 -> 54898
 // Started failing with 54865. No rebaselines upstream but they don't run pixel tests.
@@ -2758,7 +2759,6 @@ BUG37463 MAC DEBUG : svg/custom/transform-ignore-after-invalid.svg = PASS CRASH
 // WebKit roll 55512:55584
 BUG37540 MAC SKIP : inspector/console-dir.html = CRASH TEXT PASS
 
-BUG37710 MAC SKIP : media/video-src-change.html = CRASH PASS 
 
 // WebKit roll 55654 -> 55670
 BUG_JIANLI :  http/tests/local/send-sliced-dragged-file.html = FAIL
@@ -2777,7 +2777,6 @@ BUG37896 : fast/repaint/no-caret-repaint-in-non-content-editable-element.html = 
 BUG37896 WIN DEBUG : fast/text/firstline/001.html = PASS CRASH
 BUG37896 LINUX MAC DEBUG : fast/text/firstline/001.html = PASS CRASH TIMEOUT
 // Added in http://trac.webkit.org/changeset/55587
-BUG37896 : media/video-preload.html = TEXT
 BUG37896 LINUX DEBUG : fast/images/svg-as-background.html = TIMEOUT
 BUG37869 LINUX : fast/images/animated-svg-as-image.html = IMAGE
 BUG37869 MAC LINUX SKIP : inspector/timeline-network-resource.html = CRASH
