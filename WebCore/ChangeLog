@@ -1,3 +1,27 @@
+2010-03-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36557
+        Animations use the wrong timing-function sometimes
+        
+        Fix an issue where animations picked the wrong style for their "unanimated" value.
+        
+        Previously, the "unanimated" style was considered to be the style before the animation
+        was applied. This caused us to pick up stale values for animation timing functions, for
+        blending when a property is missing from the first keyframe, and for resuming transitions
+        once an animation ends.
+        
+        Instead, we need to use the "current" style, which is the one that causes the animation
+        to kick off.
+
+        Tests: animations/longhand-timing-function.html
+               animations/transition-and-animation-3.html
+               animations/unanimated-style.html
+
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::updateKeyframeAnimations):
+
 2010-03-25  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.

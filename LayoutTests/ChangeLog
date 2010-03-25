@@ -1,3 +1,26 @@
+2010-03-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36557
+        Animations use the wrong timing-function sometimes
+        
+        Various files that test which style is used as the "unanimated" style for a keyframe
+        animation.
+
+        * animations/longhand-timing-function-expected.txt: Added.
+        * animations/longhand-timing-function.html: Added.
+          Tests that a single longhand property (which creates a default animation in the style) doesn't cause
+          the applied animation to use the wrong timing function.
+        
+        * animations/transition-and-animation-3-expected.txt: Added.
+        * animations/transition-and-animation-3.html: Added.
+          Tests that the style used when a transition resumes after an animation has finished is the correct one.
+        
+        * animations/unanimated-style-expected.txt: Added.
+        * animations/unanimated-style.html: Added.
+          Tests which style is used when animating properties that are missing from the first keyframe.
+
 2010-03-25  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed expected file fix.
