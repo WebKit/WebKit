@@ -48,12 +48,12 @@ from webkitpy.common.net.credentials_unittest import *
 from webkitpy.common.net.irc.unittests import *
 from webkitpy.common.net.networktransaction_unittest import *
 from webkitpy.executive_unittest import *
-from webkitpy.grammar_unittest import *
 from webkitpy.common.system.unittests import *  # for the webkitpy.init package
 from webkitpy.layout_tests.port.mac_unittest import *
 from webkitpy.python24.versioning_unittest import *
 from webkitpy.tool.bot.queueengine_unittest import *
 from webkitpy.tool.bot.patchcollection_unittest import *
+from webkitpy.tool.grammar_unittest import *
 from webkitpy.tool.multicommandtool_unittest import *
 from webkitpy.tool.steps.steps_unittest import *
 from webkitpy.tool.steps.closebugforlanddiff_unittest import *

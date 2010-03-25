@@ -27,7 +27,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import unittest
-from webkitpy.grammar import join_with_separators
+
+from webkitpy.tool.grammar import join_with_separators
 
 class GrammarTest(unittest.TestCase):
 

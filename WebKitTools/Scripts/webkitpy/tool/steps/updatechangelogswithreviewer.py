@@ -29,7 +29,7 @@
 import os
 
 from webkitpy.common.checkout.changelog import ChangeLog
-from webkitpy.grammar import pluralize
+from webkitpy.tool.grammar import pluralize
 from webkitpy.tool.steps.abstractstep import AbstractStep
 from webkitpy.tool.steps.options import Options
 from webkitpy.webkit_logging import log, error

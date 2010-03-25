@@ -1,3 +1,21 @@
+2010-03-25  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.  Move grammary.py into webkitpy.tool.
+        https://bugs.webkit.org/show_bug.cgi?id=36093
+
+        * Scripts/webkitpy/grammar.py: Removed.
+        * Scripts/webkitpy/grammar_unittest.py: Removed.
+        * Scripts/webkitpy/tool/commands/download.py:
+        * Scripts/webkitpy/tool/commands/queries.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/upload.py:
+        * Scripts/webkitpy/tool/grammar.py: Copied from Scripts/webkitpy/grammar.py.
+        * Scripts/webkitpy/tool/grammar_unittest.py: Copied from Scripts/webkitpy/grammar_unittest.py.
+        * Scripts/webkitpy/tool/multicommandtool.py:
+        * Scripts/webkitpy/tool/steps/obsoletepatches.py:
+        * Scripts/webkitpy/tool/steps/updatechangelogswithreviewer.py:
+        * Scripts/webkitpy/unittests.py:
+
 2010-03-25  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Adam Barth.
