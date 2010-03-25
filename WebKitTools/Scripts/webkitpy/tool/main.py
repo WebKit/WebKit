@@ -31,6 +31,7 @@
 
 import os
 
+from webkitpy.common.checkout.api import Checkout
 from webkitpy.common.checkout.scm import detect_scm_system
 from webkitpy.common.net.bugzilla import Bugzilla
 from webkitpy.common.net.buildbot import BuildBot
@@ -46,7 +47,6 @@ from webkitpy.tool.commands.sheriffbot import *
 from webkitpy.tool.commands.upload import *
 from webkitpy.tool.multicommandtool import MultiCommandTool
 from webkitpy.webkit_logging import log
-from webkitpy.webkitcheckout import WebKitCheckout
 
 
 class WebKitPatch(MultiCommandTool):
@@ -87,7 +87,7 @@ class WebKitPatch(MultiCommandTool):
 
     def checkout(self):
         if not self._checkout:
-            self._checkout = WebKitCheckout(self.scm())
+            self._checkout = Checkout(self.scm())
         return self._checkout
 
     # FIXME: Add a parameter for nickname?

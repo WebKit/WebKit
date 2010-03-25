@@ -32,7 +32,7 @@ from webkitpy.common.checkout.commitinfo import CommitInfo
 # This class represents the WebKit-specific parts of the checkout (like
 # ChangeLogs).
 # FIXME: Move a bunch of ChangeLog-specific processing from SCM to this object.
-class WebKitCheckout(object):
+class Checkout(object):
     def __init__(self, scm):
         self._scm = scm
 

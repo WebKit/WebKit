@@ -364,7 +364,7 @@ class MockSCM(Mock):
         return []
 
 
-class MockWebKitCheckout(object):
+class MockCheckout(object):
 
     _committer_list = CommitterList()
 
@@ -435,7 +435,7 @@ class MockTool():
         self._irc = None
         self.user = MockUser()
         self._scm = MockSCM()
-        self._checkout = MockWebKitCheckout()
+        self._checkout = MockCheckout()
         self.status_server = MockStatusServer()
 
     def scm(self):

@@ -1,5 +1,16 @@
 2010-03-25  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed.  Move WebKitCheckout into the webkitpy.common.checkout
+        package.
+        https://bugs.webkit.org/show_bug.cgi?id=36093
+
+        * Scripts/webkitpy/common/checkout/api.py: Copied from Scripts/webkitpy/webkitcheckout.py.
+        * Scripts/webkitpy/tool/main.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+        * Scripts/webkitpy/webkitcheckout.py: Removed.
+
+2010-03-25  Adam Barth  <abarth@webkit.org>
+
         Unreviewed.  Move OutputCapture to webkitpy.common.system.
         https://bugs.webkit.org/show_bug.cgi?id=36093
 
