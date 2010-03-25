@@ -1,3 +1,22 @@
+2010-03-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35714
+        Computed style on delayed transform animations is incorrect
+        
+        When fetching computed style while a delayed accelerated animation is in effect,
+        we would get the value form the first keyframe, rather than getting the current
+        style.
+        
+        Fix by checking to see whether we've in the delay phase (with no backwards-fill)
+        in KeyframeAnimation::getAnimatedStyle().
+
+        Test: compositing/animation/computed-style-during-delay.html
+
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::getAnimatedStyle):
+
 2010-03-25  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

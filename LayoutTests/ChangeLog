@@ -1,3 +1,20 @@
+2010-03-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35714
+        Computed style on delayed transform animations is incorrect
+        
+        Test that fetches computed style for a transform animation during the delay phase.
+        
+        Also remove animations/fill-mode-transform.html from the Mac skipped lists,
+        now that it passes.
+
+        * compositing/animation/computed-style-during-delay-expected.txt: Added.
+        * compositing/animation/computed-style-during-delay.html: Added.
+        * platform/mac-leopard/Skipped:
+        * platform/mac-snowleopard/Skipped:
+
 2010-03-25  Diego Gonzalez  <diego.gonzalez@openbossa.org>
 
         Reviewed by Eric Seidel.

@@ -165,6 +165,11 @@ void KeyframeAnimation::animate(CompositeAnimation*, RenderObject*, const Render
 
 void KeyframeAnimation::getAnimatedStyle(RefPtr<RenderStyle>& animatedStyle)
 {
+    // If we're in the delay phase and we're not backwards filling, tell the caller
+    // to use the current style.
+    if (waitingToStart() && m_animation->delay() > 0 && !m_animation->fillsBackwards())
+        return;
+
     // Get the from/to styles and progress between
     const RenderStyle* fromStyle = 0;
     const RenderStyle* toStyle = 0;
