@@ -403,7 +403,9 @@ QRectF QGraphicsWebViewPrivate::graphicsItemVisibleRect() const
         return QRectF();
     QList<QGraphicsView*> views = q->scene()->views();
     if (views.size() > 1) {
+#ifndef QT_NO_DEBUG_STREAM
         qDebug() << "QGraphicsWebView is in more than one graphics views, unable to compute the visible rect";
+#endif
         return QRectF();
     }
     if (views.size() < 1)
