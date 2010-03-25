@@ -34,10 +34,12 @@
 
         var result;
         var selectedText = getSelection().toString();
-        if (selectedText == "a paragraph")
-            result = "SUCCESS: The selection was extended to the left of the word.";
+        var onMacPlatform = navigator.userAgent.search(/\bMac OS X\b/) != -1;
+        var expectedText = onMacPlatform ? "a paragraph" : "paragra";
+        if (selectedText == expectedText)
+            result = "SUCCESS";
         else
-            result = "FAILURE: The selected text is \"" + selectedText + "\".";
+            result = "FAILURE: The selected text is \"" + selectedText + "\" and should be \"" + expectedText + "\".";
         document.getElementById("result").firstChild.data = result;
     }
 </script>
@@ -49,7 +51,7 @@
     It uses the event sender to do mouse clicks.
     To run it manually, double click on the blue "g", then press shift-left-arrow twice.
     Then repeat those steps again.
-    The selection should include the words "a paragraph".
+    The selection should include the words "a paragraph" on mac and "paragra" on win/linux..
 </p>
 <p>This is a para<span style="color:blue" id="start">g</span>raph.</p>
 <p id="result">TEST HAS NOT RUN</p>

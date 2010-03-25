@@ -70,13 +70,13 @@ SelectionController::SelectionController(Frame* frame, bool isDragCaretControlle
     , m_caretBlinkTimer(this, &SelectionController::caretBlinkTimerFired)
     , m_needsLayout(true)
     , m_absCaretBoundsDirty(true)
-    , m_lastChangeWasHorizontalExtension(false)
     , m_isDragCaretController(isDragCaretController)
     , m_isCaretBlinkingSuspended(false)
     , m_focused(frame && frame->page() && frame->page()->focusController()->focusedFrame() == frame)
     , m_caretVisible(isDragCaretController)
     , m_caretPaint(true)
 {
+    setIsDirectional(false);
 }
 
 void SelectionController::moveTo(const VisiblePosition &pos, bool userTriggered)
@@ -109,7 +109,7 @@ void SelectionController::setSelection(const VisibleSelection& s, bool closeTypi
 {
     m_granularity = granularity;
 
-    m_lastChangeWasHorizontalExtension = false;
+    setIsDirectional(false);
 
     if (m_isDragCaretController) {
         invalidateCaretRect();
@@ -232,18 +232,35 @@ void SelectionController::nodeWillBeRemoved(Node *node)
     if (clearDOMTreeSelection)
         setSelection(VisibleSelection(), false, false);
 }
+    
+void SelectionController::setIsDirectional(bool isDirectional)
+{
+    Settings* settings = m_frame ? m_frame->settings() : 0;
+    m_isDirectional = !settings || (settings->editingBehavior() == EditingMacBehavior && isDirectional);
+}
 
 void SelectionController::willBeModified(EAlteration alter, EDirection direction)
 {
     if (alter != EXTEND)
         return;
-    if (m_lastChangeWasHorizontalExtension)
-        return;
 
     Position start = m_selection.start();
     Position end = m_selection.end();
-    // FIXME: This is probably not correct for right and left when the direction is RTL.
-    switch (direction) {
+
+    if (m_isDirectional) {
+        // Make base and extent match start and end so we extend the user-visible selection.
+        // This only matters for cases where base and extend point to different positions than
+        // start and end (e.g. after a double-click to select a word).
+        if (m_selection.isBaseFirst()) {
+            m_selection.setBase(start);
+            m_selection.setExtent(end);            
+        } else {
+            m_selection.setBase(end);
+            m_selection.setExtent(start);
+        }
+    } else {
+        // FIXME: This is probably not correct for right and left when the direction is RTL.
+        switch (direction) {
         case RIGHT:
         case FORWARD:
             m_selection.setBase(start);
@@ -254,6 +271,7 @@ void SelectionController::willBeModified(EAlteration alter, EDirection direction
             m_selection.setBase(end);
             m_selection.setExtent(start);
             break;
+        }
     }
 }
 
@@ -597,7 +615,7 @@ bool SelectionController::modify(EAlteration alter, EDirection dir, TextGranular
     if (userTriggered) {
         SelectionController trialSelectionController;
         trialSelectionController.setSelection(m_selection);
-        trialSelectionController.setLastChangeWasHorizontalExtension(m_lastChangeWasHorizontalExtension);
+        trialSelectionController.setIsDirectional(m_isDirectional);
         trialSelectionController.modify(alter, dir, granularity, false);
 
         bool change = m_frame->shouldChangeSelection(trialSelectionController.selection());
@@ -662,7 +680,7 @@ bool SelectionController::modify(EAlteration alter, EDirection dir, TextGranular
 
     setNeedsLayout();
 
-    m_lastChangeWasHorizontalExtension = alter == EXTEND;
+    setIsDirectional(alter == EXTEND);
 
     return true;
 }
@@ -685,7 +703,7 @@ bool SelectionController::modify(EAlteration alter, int verticalDistance, bool u
     if (userTriggered) {
         SelectionController trialSelectionController;
         trialSelectionController.setSelection(m_selection);
-        trialSelectionController.setLastChangeWasHorizontalExtension(m_lastChangeWasHorizontalExtension);
+        trialSelectionController.setIsDirectional(m_isDirectional);
         trialSelectionController.modify(alter, verticalDistance, false);
 
         bool change = m_frame->shouldChangeSelection(trialSelectionController.selection());
@@ -755,7 +773,7 @@ bool SelectionController::modify(EAlteration alter, int verticalDistance, bool u
     if (userTriggered)
         m_granularity = CharacterGranularity;
 
-    m_lastChangeWasHorizontalExtension = alter == EXTEND;
+    setIsDirectional(alter == EXTEND);
 
     return true;
 }

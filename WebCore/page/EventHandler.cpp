@@ -356,7 +356,7 @@ bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestR
     TextGranularity granularity = CharacterGranularity;
 
     if (extendSelection && newSelection.isCaretOrRange()) {
-        m_frame->selection()->setLastChangeWasHorizontalExtension(false);
+        m_frame->selection()->setIsDirectional(false);
         
         // See <rdar://problem/3668157> REGRESSION (Mail): shift-click deselects when selection 
         // was created right-to-left
@@ -591,7 +591,7 @@ void EventHandler::updateSelectionForMouseDrag(Node* targetNode, const IntPoint&
         newSelection.expandUsingGranularity(m_frame->selectionGranularity());
 
     if (m_frame->shouldChangeSelection(newSelection)) {
-        m_frame->selection()->setLastChangeWasHorizontalExtension(false);
+        m_frame->selection()->setIsDirectional(false);
         m_frame->selection()->setSelection(newSelection, m_frame->selectionGranularity());
     }
 }
