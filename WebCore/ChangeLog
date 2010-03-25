@@ -1,3 +1,12 @@
+2010-03-24  Mark Rowe  <mrowe@apple.com>
+
+        Revert the portion of r56489 that dealt with port zero as it introduced some test failures.
+
+        * platform/KURL.cpp:
+        (WebCore::KURL::port): Use the "ok" argument to charactersToUIntStrict to determine whether
+        it was able to successfully parse the string as an unsigned integer, rather than relying on
+        the fact it returned zero when it failed.
+
 2010-03-24  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.

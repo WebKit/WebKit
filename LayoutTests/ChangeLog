@@ -1,5 +1,12 @@
 2010-03-24  Mark Rowe  <mrowe@apple.com>
 
+        Revert the portion of r56489 that dealt with port zero as it introduced some test failures.
+
+        * platform/mac/security/block-test-expected.txt:
+        * security/block-test.html:
+
+2010-03-24  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Darin Adler.
 
         WebKit should treat port numbers outside the valid range as being blacklisted
