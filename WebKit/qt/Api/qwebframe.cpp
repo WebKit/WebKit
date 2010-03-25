@@ -865,6 +865,8 @@ QString QWebFrame::frameName() const
 
 /*!
   The web page that contains this frame.
+
+  \sa pageChanged()
 */
 QWebPage *QWebFrame::page() const
 {
@@ -1627,6 +1629,15 @@ QWebFrame* QWebFramePrivate::kit(WebCore::Frame* coreFrame)
     \a ok will indicate whether the load was successful or any error occurred.
 
     \sa loadStarted()
+*/
+
+/*!
+    \fn void QWebFrame::pageChanged()
+    \since 4.7
+
+    This signal is emitted when this frame has been moved to a different QWebPage.
+
+    \sa page()
 */
 
 /*!
