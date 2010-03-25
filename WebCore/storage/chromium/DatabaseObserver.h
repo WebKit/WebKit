@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -34,11 +34,14 @@
 namespace WebCore {
 
 class Database;
+class ScriptExecutionContext;
+class String;
 
 // The implementation of this class is in the WebKit API (Chromium source tree)
-// in webkit/api/src/DatabaseObserver.cpp.
+// in WebKit/chromium/src/DatabaseObserver.cpp.
 class DatabaseObserver {
 public:
+    static bool canEstablishDatabase(ScriptExecutionContext*, const String&, const String&, unsigned long);
     static void databaseOpened(Database*);
     static void databaseModified(Database*);
     static void databaseClosed(Database*);

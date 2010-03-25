@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -32,12 +32,36 @@
 #include "DatabaseObserver.h"
 
 #include "Database.h"
+#include "Document.h"
+#include "ScriptExecutionContext.h"
 #include "WebDatabase.h"
 #include "WebDatabaseObserver.h"
+#include "WebFrameClient.h"
+#include "WebFrameImpl.h"
+#include "WebSecurityOrigin.h"
+#include "WebWorkerImpl.h"
+#include "WorkerContext.h"
+#include "WorkerThread.h"
 
 using namespace WebKit;
 
 namespace WebCore {
+
+bool DatabaseObserver::canEstablishDatabase(ScriptExecutionContext* scriptExecutionContext, const String& name, const String& displayName, unsigned long estimatedSize)
+{
+    ASSERT(isMainThread());
+    ASSERT(scriptExecutionContext->isDocument() || scriptExecutionContext->isWorkerContext());
+    if (scriptExecutionContext->isDocument()) {
+        Document* document = static_cast<Document*>(scriptExecutionContext);
+        WebFrameImpl* webFrame = WebFrameImpl::fromFrame(document->frame());
+        return webFrame->client()->allowDatabase(WebSecurityOrigin(scriptExecutionContext->securityOrigin()), name, displayName, estimatedSize);
+    } else {
+        WorkerContext* worker = static_cast<WorkerContext*>(scriptExecutionContext);
+        WorkerLoaderProxy* workerLoaderProxy = &worker->thread()->workerLoaderProxy();
+        WebWorkerImpl* webWorker = reinterpret_cast<WebWorkerImpl*>(workerLoaderProxy);
+        return webWorker->allowDatabase(WebSecurityOrigin(scriptExecutionContext->securityOrigin()), name, displayName, estimatedSize);
+    }
+}
 
 void DatabaseObserver::databaseOpened(Database* database)
 {

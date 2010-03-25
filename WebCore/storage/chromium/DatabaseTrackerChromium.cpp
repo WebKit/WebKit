@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -57,11 +57,9 @@ DatabaseTracker::DatabaseTracker()
     SQLiteFileSystem::registerSQLiteVFS();
 }
 
-bool DatabaseTracker::canEstablishDatabase(ScriptExecutionContext*, const String&, const String&, unsigned long)
+bool DatabaseTracker::canEstablishDatabase(ScriptExecutionContext* scriptExecutionContext, const String& name, const String& displayName, unsigned long estimatedSize)
 {
-    // In Chromium, a database can always be established (even though we might not
-    // be able to write anything to it if the quota for this origin was exceeded)
-    return true;
+    return DatabaseObserver::canEstablishDatabase(scriptExecutionContext, name, displayName, estimatedSize);
 }
 
 void DatabaseTracker::setDatabaseDetails(SecurityOrigin*, const String&, const String&, unsigned long)

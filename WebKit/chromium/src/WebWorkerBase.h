@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -45,8 +45,11 @@ class WorkerThread;
 
 namespace WebKit {
 class WebCommonWorkerClient;
+class WebSecurityOrigin;
+class WebString;
 class WebURL;
 class WebView;
+class WebWorker;
 class WebWorkerClient;
 
 // Base class for WebSharedWorkerImpl and WebWorkerImpl. It contains common
@@ -76,6 +79,9 @@ public:
     virtual void postTaskToLoader(PassOwnPtr<WebCore::ScriptExecutionContext::Task>);
     virtual void postTaskForModeToWorkerContext(
         PassOwnPtr<WebCore::ScriptExecutionContext::Task>, const WebCore::String& mode);
+
+    // Controls whether access to Web Databases is allowed for this worker.
+    virtual bool allowDatabase(const WebSecurityOrigin&, const WebString&, const WebString&, unsigned long) { return true; }
 
     // Executes the given task on the main thread.
     static void dispatchTaskToMainThread(PassOwnPtr<WebCore::ScriptExecutionContext::Task>);
