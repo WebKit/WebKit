@@ -1,9 +1,15 @@
 <html>
     <head>
+        <script src=media-file.js></script>
         <script>
             if (window.layoutTestController)
                 layoutTestController.waitUntilDone();
     
+            function start()
+            {
+                setSrcByTagName("video", findMediaFile("video", "content/counting"));
+            }
+
             function finish()
             {
                 if (window.layoutTestController)
@@ -11,8 +17,8 @@
             }
         </script>
     </head>
-    <body>
+    <body onload="start()">
         <p>Movie with no audio track. The volume button should not render.</p>
-        <video src="content/scaled-matrix.mov" controls onload="finish()"></video>
+        <video controls oncanplaythrough="finish()"></video>
     </body>
 </html>

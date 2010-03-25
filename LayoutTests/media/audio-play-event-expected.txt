@@ -1,6 +1,6 @@
 Test that a 'play' event listener is triggered when fired by a new audio element.
 
-RUN(mediaElement.src = 'content/silence.mpg')
+RUN(mediaElement.src = findMediaFile('audio', 'content/test'))
 RUN(mediaElement.volume = 1)
 RUN(mediaElement.play())
 EVENT(play)

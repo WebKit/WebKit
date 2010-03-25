@@ -1,9 +1,11 @@
 <html>
 <body>
+    <script src=media-file.js></script>
     <script src=video-test.js></script>
 
     <video controls>
         <source src=content/test.mp4 type="video/mpeg; codecs=&quot;avc1.4D400C&quot;">
+        <source src=content/test.ogv type="video/ogg; codecs=&quot;theora,vorbis&quot;">
     </video>
 
     <script>
@@ -13,7 +15,7 @@
         function checkLoad() 
         { 
             consoleWrite("");
-            testExpected("relativeURL(video.currentSrc)", "content/test.mp4");
+            testExpected("relativeURL(video.currentSrc)", findMediaFile("video", "content/test"));
             if (++counter == 2)
                 endTest();
             run("video.src = 'content/silence.mpg'");
