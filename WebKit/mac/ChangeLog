@@ -1,3 +1,12 @@
+2010-03-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Build fix: no review.
+        
+        Another c_str() -> data().
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::enumerate):
+
 2010-03-25  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Mark Rowe.
