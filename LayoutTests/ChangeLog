@@ -1,3 +1,13 @@
+2010-03-24  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36517
+        svg/dom/frame-related-api-during-load.html shoud be more self-descriptive.
+
+        * svg/dom/frame-related-api-during-load-expected.txt:
+        * svg/dom/frame-related-api-during-load.html:
+
 2010-03-24  Andrew Scherkus  <scherkus@chromium.org>
 
         Reviewed by Eric Carlson, Eric Seidel and David Levin.
