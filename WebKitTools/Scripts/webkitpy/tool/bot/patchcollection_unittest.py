@@ -29,7 +29,7 @@
 
 import unittest
 
-from webkitpy.patchcollection import PersistentPatchCollection, PersistentPatchCollectionDelegate
+from webkitpy.tool.bot.patchcollection import PersistentPatchCollection, PersistentPatchCollectionDelegate
 from webkitpy.thirdparty.mock import Mock
 
 

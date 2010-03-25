@@ -40,9 +40,9 @@ from webkitpy.executive import ScriptError
 from webkitpy.grammar import pluralize
 from webkitpy.webkit_logging import error, log
 from webkitpy.multicommandtool import Command
-from webkitpy.patchcollection import PersistentPatchCollection, PersistentPatchCollectionDelegate
 from webkitpy.statusserver import StatusServer
 from webkitpy.stepsequence import StepSequenceErrorHandler
+from webkitpy.tool.bot.patchcollection import PersistentPatchCollection, PersistentPatchCollectionDelegate
 from webkitpy.queueengine import QueueEngine, QueueEngineDelegate
 
 class AbstractQueue(Command, QueueEngineDelegate):

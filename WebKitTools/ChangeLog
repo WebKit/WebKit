@@ -1,3 +1,16 @@
+2010-03-24  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.  Move patchcollection.py to its new home.
+
+        * Scripts/webkitpy/patchcollection.py: Removed.
+        * Scripts/webkitpy/patchcollection_unittest.py: Removed.
+        * Scripts/webkitpy/tool/bot: Added.
+        * Scripts/webkitpy/tool/bot/__init__.py: Added.
+        * Scripts/webkitpy/tool/bot/patchcollection.py: Copied from WebKitTools/Scripts/webkitpy/patchcollection.py.
+        * Scripts/webkitpy/tool/bot/patchcollection_unittest.py: Copied from WebKitTools/Scripts/webkitpy/patchcollection_unittest.py.
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/unittests.py:
+
 2010-03-24  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Adam Barth.
