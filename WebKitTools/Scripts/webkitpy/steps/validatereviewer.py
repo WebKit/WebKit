@@ -43,6 +43,6 @@ class ValidateReviewer(AbstractStep):
             changelog_entry = ChangeLog(changelog_path).latest_entry()
             if changelog_entry.reviewer():
                 continue
-            if re.match("unreviewed", changelog_entry.contents(), re.IGNORECASE):
+            if re.search("unreviewed", changelog_entry.contents(), re.IGNORECASE):
                 continue
             error('%s neither lists a valid reviewer nor contains the string "Unreviewed" (case insensitive).' % changelog_path)

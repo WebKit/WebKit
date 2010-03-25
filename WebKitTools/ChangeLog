@@ -1,3 +1,9 @@
+2010-03-24  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.  Fix a stray comma to test landing an patch without review.
+
+        * Scripts/webkitpy/commitinfo.py:
+
 2010-03-24  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Adam Barth.
