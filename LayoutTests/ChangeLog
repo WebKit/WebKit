@@ -1,3 +1,16 @@
+2010-03-25  Jakub Wieczorek  <jwieczorek@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] RenderTheme: fix size adjustment for text fields
+        https://bugs.webkit.org/show_bug.cgi?id=36413
+
+        Update test results after RenderTheme changes.
+
+        * platform/qt/fast/forms/textarea-placeholder-pseudo-style-expected.txt:
+        * platform/qt/fast/forms/textarea-placeholder-set-attribute-expected.txt:
+        * platform/qt/fast/forms/textarea-placeholder-set-value-expected.txt:
+
 2010-03-25  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Alexey Proskuryakov.

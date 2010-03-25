@@ -1,3 +1,18 @@
+2010-03-25  Jakub Wieczorek  <jwieczorek@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] RenderTheme: fix size adjustment for text fields
+        https://bugs.webkit.org/show_bug.cgi?id=36413
+
+        To match other ports, remove the hardcoded dimensions for text fields so that
+        the default ones from WebCore can be used.
+        Properly apply the correct padding to text areas - this fixes their appearance
+        with the Oxygen style.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::computeSizeBasedOnStyle):
+
 2010-03-25  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.

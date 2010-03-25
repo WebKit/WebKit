@@ -313,13 +313,28 @@ int RenderThemeQt::minimumMenuListSize(RenderStyle*) const
 
 void RenderThemeQt::computeSizeBasedOnStyle(RenderStyle* renderStyle) const
 {
-    // If the width and height are both specified, then we have nothing to do.
-    if (!renderStyle->width().isIntrinsicOrAuto() && !renderStyle->height().isAuto())
-        return;
-
     QSize size(0, 0);
     const QFontMetrics fm(renderStyle->font().font());
     QStyle* style = qStyle();
+
+    switch (renderStyle->appearance()) {
+    case TextAreaPart:
+    case TextFieldPart: {
+        int padding = findFrameLineWidth(style);
+
+        renderStyle->setPaddingLeft(Length(padding, Fixed));
+        renderStyle->setPaddingRight(Length(padding, Fixed));
+        renderStyle->setPaddingTop(Length(padding, Fixed));
+        renderStyle->setPaddingBottom(Length(padding, Fixed));
+        break;
+    }
+    default:
+        break;
+    }
+
+    // If the width and height are both specified, then we have nothing to do.
+    if (!renderStyle->width().isIntrinsicOrAuto() && !renderStyle->height().isAuto())
+        return;
 
     switch (renderStyle->appearance()) {
     case CheckboxPart: {
@@ -363,23 +378,6 @@ void RenderThemeQt::computeSizeBasedOnStyle(RenderStyle* renderStyle) const
         QSize menuListSize = style->sizeFromContents(QStyle::CT_ComboBox,
                                                      &styleOption, QSize(0, contentHeight), 0);
         size.setHeight(menuListSize.height());
-        break;
-    }
-    case TextFieldPart: {
-        const int verticalMargin = 1;
-        const int horizontalMargin = 2;
-        int h = qMax(fm.lineSpacing(), 14) + 2*verticalMargin;
-        int w = fm.width(QLatin1Char('x')) * 17 + 2*horizontalMargin;
-        QStyleOptionFrameV2 opt;
-        opt.lineWidth = findFrameLineWidth(style);
-        QSize sz = style->sizeFromContents(QStyle::CT_LineEdit,
-                                           &opt,
-                                           QSize(w, h).expandedTo(QApplication::globalStrut()),
-                                           0);
-        size.setHeight(sz.height());
-
-        renderStyle->setPaddingLeft(Length(opt.lineWidth, Fixed));
-        renderStyle->setPaddingRight(Length(opt.lineWidth, Fixed));
         break;
     }
     default:

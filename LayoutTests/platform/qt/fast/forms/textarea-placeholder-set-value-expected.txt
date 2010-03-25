@@ -15,8 +15,8 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-layer at (10,46) size 176x40
-  RenderTextControl {TEXTAREA} at (2,2) size 176x40
-    RenderBlock {DIV} at (0,0) size 176x20
+layer at (10,46) size 180x44
+  RenderTextControl {TEXTAREA} at (2,2) size 180x44
+    RenderBlock {DIV} at (2,2) size 176x20
       RenderText {#text} at (0,0) size 62x20
         text run at (0,0) width 62: "New text"
