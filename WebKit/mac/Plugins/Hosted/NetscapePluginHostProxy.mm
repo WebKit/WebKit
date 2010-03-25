@@ -1154,10 +1154,6 @@ kern_return_t WKPCRunSyncOpenPanel(mach_port_t clientPort, data_t panelData, mac
     [sheet setTitle:[panelState objectForKey:@"title"]];
     [sheet runModal];
 
-    hostProxy = instanceProxy->hostProxy();
-    if (!hostProxy)
-        return KERN_FAILURE;
-
     NSDictionary *ret = [NSDictionary dictionaryWithObjectsAndKeys:
                          [sheet filenames], @"filenames",
                          WKNoteOpenPanelFiles([sheet filenames]), @"extensions",

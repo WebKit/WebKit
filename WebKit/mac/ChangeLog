@@ -1,3 +1,10 @@
+2010-03-24  Mark Rowe  <mrowe@apple.com>
+
+        Build fix after r56474.
+
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCRunSyncOpenPanel):
+
 2010-03-24  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Anders Carlsson.
