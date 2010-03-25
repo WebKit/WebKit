@@ -133,7 +133,7 @@ if (defined $fixMerged && length($fixMerged) > 0) {
         unlink($ours);
         copy($theirs, $ours) or die $!;
     } else {
-        exit 1;
+        exec qw(git merge-file -L THEIRS -L BASE -L OURS), $theirs, $base, $ours;
     }
 } elsif (@changeLogFiles) {
     for my $file (@changeLogFiles) {
