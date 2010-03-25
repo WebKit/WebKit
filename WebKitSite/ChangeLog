@@ -1,3 +1,19 @@
+2010-03-25  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by David Levin.
+
+        Add a page on how to ask questions
+        https://bugs.webkit.org/show_bug.cgi?id=35223
+
+        * asking_questions.html: Added.
+        Add a page on how to ask questions based on Ariya Hidayat's mail: how
+        to get help effectively
+        (http://article.gmane.org/gmane.os.opendarwin.webkit.user/145/match=get+help+effectively)
+
+        * contact.html: Tweaked the wording to make it more clear what the
+        mailing list are used for. Also changed the formatting to better
+        underline the different mailing lists.
+
 2010-03-24  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Anders Carlsson..
