@@ -1,3 +1,19 @@
+2010-03-25  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33697
+        Have dragOpFromIEOp("move") return DragOperationGeneric | DragOperationMove
+        because only returning Generic doesn't work for platforms that don't
+        have a generic operation.
+
+        Covered by existing tests (fast/events/drag-and-drop.html).
+
+        * dom/Clipboard.cpp:
+        (WebCore::dragOpFromIEOp):
+        (WebCore::Clipboard::destinationOperation):
+        (WebCore::Clipboard::setDestinationOperation):
+
 2010-03-25  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Eric Seidel.
