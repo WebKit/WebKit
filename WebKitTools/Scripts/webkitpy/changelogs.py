@@ -57,7 +57,7 @@ class ChangeLogEntry(object):
     def _parse_entry(self):
         match = re.match(self.date_line_regexp, self._contents, re.MULTILINE)
         if not match:
-            log("WARNING: Creating invalid ChangeLogEntry:\n%s" % contents)
+            log("WARNING: Creating invalid ChangeLogEntry:\n%s" % self._contents)
 
         # FIXME: group("name") does not seem to be Unicode?  Probably due to self._contents not being unicode.
         self._author_name = match.group("name") if match else None

@@ -238,7 +238,7 @@ class CppStyleTestBase(unittest.TestCase):
             if re.search(expected_message_re, message):
                 return
 
-        self.assertEquals(expected_message, messages)
+        self.assertEquals(expected_message_re, messages)
 
     def assert_multi_line_lint(self, code, expected_message, file_name='foo.h'):
         file_extension = file_name[file_name.rfind('.') + 1:]

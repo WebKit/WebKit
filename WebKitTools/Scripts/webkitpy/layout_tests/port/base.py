@@ -36,6 +36,7 @@ import errno
 import os
 import subprocess
 import sys
+import time
 
 import apache_http_server
 import http_server
@@ -331,7 +332,7 @@ class Port(object):
                 win32 = False
 
             def remove_with_retry(rmfunc, path):
-                os.chmod(path, stat.S_IWRITE)
+                os.chmod(path, os.stat.S_IWRITE)
                 if win32:
                     win32api.SetFileAttributes(path,
                                               win32con.FILE_ATTRIBUTE_NORMAL)

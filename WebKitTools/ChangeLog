@@ -1,3 +1,18 @@
+2010-03-19  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by David Levin.
+
+        Undefined names reported by pyflakes in python scripts
+        https://bugs.webkit.org/show_bug.cgi?id=36403
+
+        Attempt to use names that exist or can exist in the lexical
+        scope instead of not being available at all.
+
+        * Scripts/webkitpy/changelogs.py: Use self._content.
+        * Scripts/webkitpy/layout_tests/port/base.py: Use os.stat
+        * Scripts/webkitpy/layout_tests/test_types/fuzzy_image_diff.py: Use self._port
+        * Scripts/webkitpy/style/processors/cpp_unittest.py: Use expected_message_re
+
 2010-03-24  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/36560> resolve-ChangeLogs: git-rebase fails when resolve-ChangeLogs can't merge
