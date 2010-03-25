@@ -1,3 +1,9 @@
+2010-03-25  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed expected file fix.
+
+        * platform/mac/fast/frames/flattening/frameset-flattening-grid-expected.txt: Needless newline removed.
+
 2010-03-25  Jakub Wieczorek  <jwieczorek@webkit.org>
 
         Rubber-stamped by Tor Arne Vestbø.

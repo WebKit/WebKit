@@ -50,4 +50,3 @@ layer at (0,0) size 1200x800
                   text run at (0,0) width 529: "This frame should be 600px wide, 600px tall and not be scrollable (have scrollbars)."
         layer at (0,0) size 600x600
           RenderBlock (positioned) {DIV} at (0,0) size 600x600
-
