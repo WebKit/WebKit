@@ -266,6 +266,54 @@ static void test_webkit_web_back_forward_list_add_item(void)
     g_object_unref(webView);
 }
 
+static void test_webkit_web_back_forward_list_clear(void)
+{
+    WebKitWebView* webView;
+    WebKitWebBackForwardList* webBackForwardList;
+    WebKitWebHistoryItem* addItem;
+    g_test_bug("36173");
+
+    webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    g_object_ref_sink(webView);
+
+    webBackForwardList = webkit_web_view_get_back_forward_list(webView);
+    g_assert(webBackForwardList);
+
+    // Check that there is no item.
+    g_assert_cmpint(webkit_web_back_forward_list_get_forward_length(webBackForwardList), ==, 0);
+    g_assert_cmpint(webkit_web_back_forward_list_get_back_length(webBackForwardList), ==, 0);
+    g_assert(!webkit_web_back_forward_list_get_current_item(webBackForwardList));
+    g_assert(!webkit_web_view_can_go_forward(webView));
+    g_assert(!webkit_web_view_can_go_back(webView));
+
+    // Check that clearing the empty list does not modify counters
+    webkit_web_back_forward_list_clear(webBackForwardList);
+    g_assert_cmpint(webkit_web_back_forward_list_get_forward_length(webBackForwardList), ==, 0);
+    g_assert_cmpint(webkit_web_back_forward_list_get_back_length(webBackForwardList), ==, 0);
+    g_assert(!webkit_web_back_forward_list_get_current_item(webBackForwardList));
+    g_assert(!webkit_web_view_can_go_forward(webView));
+    g_assert(!webkit_web_view_can_go_back(webView));
+
+    // Add a new item
+    addItem = webkit_web_history_item_new_with_data("http://example.com/", "Added site");
+    webkit_web_back_forward_list_add_item(webBackForwardList, addItem);
+    g_object_unref(addItem);
+    g_assert(webkit_web_back_forward_list_contains_item(webBackForwardList, addItem));
+
+    // Check that after clearing the list the added item is no longer in the list
+    webkit_web_back_forward_list_clear(webBackForwardList);
+    g_assert(!webkit_web_back_forward_list_contains_item(webBackForwardList, addItem));
+
+    // Check that after clearing it, the list is empty
+    g_assert_cmpint(webkit_web_back_forward_list_get_forward_length(webBackForwardList), ==, 0);
+    g_assert_cmpint(webkit_web_back_forward_list_get_back_length(webBackForwardList), ==, 0);
+    g_assert(!webkit_web_back_forward_list_get_current_item(webBackForwardList));
+    g_assert(!webkit_web_view_can_go_forward(webView));
+    g_assert(!webkit_web_view_can_go_back(webView));
+
+    g_object_unref(webView);
+}
+
 int main(int argc, char** argv)
 {
     g_thread_init(NULL);
@@ -275,6 +323,7 @@ int main(int argc, char** argv)
     g_test_add_func("/webkit/webbackforwardlist/add_item", test_webkit_web_back_forward_list_add_item);
     g_test_add_func("/webkit/webbackforwardlist/list_order", test_webkit_web_back_forward_list_order);
     g_test_add_func("/webkit/webhistoryitem/lifetime", test_webkit_web_history_item_lifetime);
+    g_test_add_func("/webkit/webbackforwardlist/clear", test_webkit_web_back_forward_list_clear);
     return g_test_run ();
 }
 

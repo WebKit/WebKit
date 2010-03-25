@@ -110,6 +110,8 @@ webkit_web_back_forward_list_set_limit                   (WebKitWebBackForwardLi
 WEBKIT_API void
 webkit_web_back_forward_list_add_item                    (WebKitWebBackForwardList *web_back_forward_list,
                                                           WebKitWebHistoryItem     *history_item);
+WEBKIT_API void
+webkit_web_back_forward_list_clear                       (WebKitWebBackForwardList *web_back_forward_list);
 
 G_END_DECLS
 

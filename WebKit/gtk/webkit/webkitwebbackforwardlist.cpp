@@ -438,6 +438,29 @@ void webkit_web_back_forward_list_add_item(WebKitWebBackForwardList *webBackForw
     backForwardList->addItem(historyItem);
 }
 
+/**
+ * webkit_web_back_forward_list_clear:
+ * @webBackForwardList:  a #WebKitWebBackForwardList
+ *
+ * Clears the @webBackForwardList by removing all its elements. Note that not even
+ * the current page is kept in list when cleared so you would have to add it later.
+ *
+ * Since: 1.1.30
+ **/
+void webkit_web_back_forward_list_clear(WebKitWebBackForwardList* webBackForwardList)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_BACK_FORWARD_LIST(webBackForwardList));
+
+    WebCore::BackForwardList* backForwardList = core(webBackForwardList);
+    if (!backForwardList || !backForwardList->enabled() || !backForwardList->entries().size())
+        return;
+
+    // Clear the current list by setting capacity to 0
+    int capacity = backForwardList->capacity();
+    backForwardList->setCapacity(0);
+    backForwardList->setCapacity(capacity);
+}
+
 WebCore::BackForwardList* WebKit::core(WebKitWebBackForwardList* webBackForwardList)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_BACK_FORWARD_LIST(webBackForwardList), NULL);

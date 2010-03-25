@@ -1,3 +1,21 @@
+2010-03-25  Sergio Villar Senín  <svillar@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        Added new API webkit_web_back_forward_list_clear. This function
+        clears the back forward list
+
+        [GTK] http/history tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=36173
+
+        * tests/testwebbackforwardlist.c:
+        (test_webkit_web_back_forward_list_clear):
+        (main): added new unit test for the new API
+        * webkit/webkitwebbackforwardlist.cpp:
+        (webkit_web_back_forward_list_clear):
+        * webkit/webkitwebbackforwardlist.h: new function that clears the
+        back forward list
+
 2010-03-24  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.
