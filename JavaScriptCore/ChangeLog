@@ -1,3 +1,16 @@
+2010-03-24  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Switch String::latin1, String::utf8, String::fromUTF8 to
+        use WTF's Unicode conversion methods rather than TextEncoder.
+        These methods only perform simple conversion, and don't need
+        really require TextEncoder's full capability (to look up arbitrary
+        encodings by name), switching to only be dependent on WTF will
+        make it easier if we chose to move WebCore::String to WTF.
+
+        * JavaScriptCore.exp:
+
 2010-03-24  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Geoff Garen.
