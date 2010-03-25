@@ -1,5 +1,24 @@
 2010-03-24  David Kilzer  <ddkilzer@apple.com>
 
+        <htp://webkit.org/b/36572> commit-log-editor: thinks mergeChangeLogs.pl is a ChangeLog file
+
+        Reviewed by Eric Seidel.
+
+        Fixes the following error when committing a file with
+        "ChangeLog" in the name that isn't a ChangeLog (like
+        mergeChangeLogs.pl from r56471 and r56472):
+
+            $ git commit .
+            Can't open WebKitTools/Scripts/webkitperl/VCSUtils_unittest/mergeChangeLog at commit-log-editor line 132.
+            error: There was a problem with the editor 'commit-log-editor'.
+            Please supply the message using either -m or -F option.
+
+        * Scripts/commit-log-editor: Added '$' to anchor "ChangeLog" to
+        the end of the file name when searching for ChangeLog files in a
+        commit.
+
+2010-03-24  David Kilzer  <ddkilzer@apple.com>
+
         <http://webkit.org/b/36570> resolve-ChangeLogs: fall back to git-merge-file if ChangeLog can't be merged
 
         Reviewed by Eric Seidel.
