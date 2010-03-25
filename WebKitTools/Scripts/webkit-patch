@@ -60,7 +60,7 @@ def main():
     # Import webkit-patch code only after version-checking so that
     # script doesn't error out before having a chance to report the
     # version warning.
-    from webkitpy.patch.patcher import WebKitPatch
+    from webkitpy.tool.main import WebKitPatch
 
     WebKitPatch(__file__).main()
 
