@@ -1,3 +1,26 @@
+2010-03-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7728903> Support color bitmap fonts
+
+        Test: platform/mac/fonts/color-bitmap.html
+
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::showGlyphsWithAdvances): Added. Calls CGContextShowGlyphsWithAdvances()
+        or CTFontShowGlyphs() depending on whether the font is a color bitmap font.
+        (WebCore::Font::drawGlyphs): Use showGlyphsWithAdvances(). Don’t include the font’s matrix in
+        the context’s text matrix when drawing with a color bitmap font, because CTFontShowGlyphs()
+        factors it in.
+        * platform/graphics/mac/FontPlatformData.h:
+        (WebCore::FontPlatformData::FontPlatformData): Added m_isColorBitmapFont member
+        and initialized it in constructors.
+        (WebCore::FontPlatformData::isColorBitmapFont): Added this getter.
+        * platform/graphics/mac/FontPlatformDataMac.mm:
+        (WebCore::FontPlatformData::FontPlatformData): Initialize m_isColorBitmapFont.
+        (WebCore::FontPlatformData::operator=): Copy m_isColorBitmapFont.
+        (WebCore::FontPlatformData::setFont): Set m_isColorBitmapFont.
+
 2010-03-25  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.

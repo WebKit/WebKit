@@ -1,3 +1,17 @@
+2010-03-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7728903> Support color bitmap fonts
+
+        * platform/mac-leopard/Skipped:
+        * platform/mac-snowleopard/Skipped:
+        * platform/mac-tiger/Skipped:
+        * platform/mac/fonts/color-bitmap-expected.checksum: Added.
+        * platform/mac/fonts/color-bitmap-expected.png: Added.
+        * platform/mac/fonts/color-bitmap-expected.txt: Added.
+        * platform/mac/fonts/color-bitmap.html: Added.
+
 2010-03-25  Dmitry Titov  <dimich@chromium.org>
 
         Unreviewed, another attempt to unblock Chromium Win test bot.

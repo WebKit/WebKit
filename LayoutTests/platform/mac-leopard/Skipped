@@ -53,3 +53,6 @@ http/tests/media/video-referer.html
 # Disable tests until we can turn on HW comp as described in https://bugs.webkit.org/show_bug.cgi?id=35897
 fast/media/mq-transform-02.html
 fast/media/mq-transform-03.html
+
+# Color bitmap fonts not supported on Leopard
+platform/mac/fonts/color-bitmap.html

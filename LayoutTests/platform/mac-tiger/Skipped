@@ -132,3 +132,6 @@ http/tests/local/send-sliced-dragged-file.html
 # Times out on Tiger bot.
 # https://bugs.webkit.org/show_bug.cgi?id=36382
 fast/loader/frame-src-change-added-to-history.html
+
+# Color bitmap fonts not supported on Tiger
+platform/mac/fonts/color-bitmap.html

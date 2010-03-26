@@ -1,3 +1,16 @@
+2010-03-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7728903> Support color bitmap fonts
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj: Added ColorBits.ttf
+        and ColorBits-A.png.
+        * DumpRenderTree/fonts/ColorBits-A.png: Copied from WebCore/inspector/front-end/Images/successGreenDot.png.
+        * DumpRenderTree/fonts/ColorBits.ttf: Added.
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (activateFonts): Activate ColorBits.ttf.
+
 2010-03-25  Mark Rowe  <mrowe@apple.com>
 
         Remove a printf that was causing commit-log-editor to spew the name of the editor

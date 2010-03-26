@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2006, 2007, 2008, 2009, 2010 Apple Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -45,6 +45,28 @@ namespace WebCore {
 bool Font::canReturnFallbackFontsForComplexText()
 {
     return true;
+}
+
+static void showGlyphsWithAdvances(const FontPlatformData& font, CGContextRef context, const CGGlyph* glyphs, const CGSize* advances, size_t count)
+{
+    if (!font.isColorBitmapFont())
+        CGContextShowGlyphsWithAdvances(context, glyphs, advances, count);
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    else {
+        if (!count)
+            return;
+
+        Vector<CGPoint, 256> positions(count);
+        CGAffineTransform matrix = CGAffineTransformInvert(CGContextGetTextMatrix(context));
+        positions[0] = CGPointZero;
+        for (size_t i = 1; i < count; ++i) {
+            CGSize advance = CGSizeApplyAffineTransform(advances[i - 1], matrix);
+            positions[i].x = positions[i - 1].x + advance.width;
+            positions[i].y = positions[i - 1].y + advance.height;
+        }
+        CTFontDrawGlyphs(toCTFontRef(font.font()), glyphs, positions.data(), count, context);
+    }
+#endif
 }
 
 void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, const GlyphBuffer& glyphBuffer, int from, int numGlyphs, const FloatPoint& point) const
@@ -98,7 +120,7 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
     CGContextSetFont(cgContext, platformData.cgFont());
 
     CGAffineTransform matrix = CGAffineTransformIdentity;
-    if (drawFont)
+    if (drawFont && !platformData.isColorBitmapFont())
         memcpy(&matrix, [drawFont matrix], sizeof(matrix));
     matrix.b = -matrix.b;
     matrix.d = -matrix.d;
@@ -112,6 +134,8 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
     } else
         CGContextSetFontSize(cgContext, platformData.m_size);
 
+
+#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
     IntSize shadowSize;
     int shadowBlur;
     Color shadowColor;
@@ -126,23 +150,26 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
         Color shadowFillColor(shadowColor.red(), shadowColor.green(), shadowColor.blue(), shadowColor.alpha() * fillColor.alpha() / 255);
         context->setFillColor(shadowFillColor, fillColorSpace);
         CGContextSetTextPosition(cgContext, point.x() + shadowSize.width(), point.y() + shadowSize.height());
-        CGContextShowGlyphsWithAdvances(cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
+        showGlyphsWithAdvances(platformData, cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
         if (font->syntheticBoldOffset()) {
             CGContextSetTextPosition(cgContext, point.x() + shadowSize.width() + font->syntheticBoldOffset(), point.y() + shadowSize.height());
-            CGContextShowGlyphsWithAdvances(cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
+            showGlyphsWithAdvances(platformData, cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
         }
         context->setFillColor(fillColor, fillColorSpace);
     }
+#endif
 
     CGContextSetTextPosition(cgContext, point.x(), point.y());
-    CGContextShowGlyphsWithAdvances(cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
+    showGlyphsWithAdvances(platformData, cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
     if (font->syntheticBoldOffset()) {
         CGContextSetTextPosition(cgContext, point.x() + font->syntheticBoldOffset(), point.y());
-        CGContextShowGlyphsWithAdvances(cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
+        showGlyphsWithAdvances(platformData, cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
     }
 
+#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
     if (hasSimpleShadow)
         context->setShadow(shadowSize, shadowBlur, shadowColor, fillColorSpace);
+#endif
 
     if (originalShouldUseFontSmoothing != newShouldUseFontSmoothing)
         CGContextSetShouldSmoothFonts(cgContext, originalShouldUseFontSmoothing);
