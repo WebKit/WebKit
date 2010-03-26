@@ -1,3 +1,16 @@
+2010-03-26  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed build fix.
+
+        FontPlatformDataPango.cpp: prototype for
+        'WebCore::FontPlatformData::FontPlatformData(cairo_font_face_t*, int, bool, bool)'
+        does not match any in class
+        https://bugs.webkit.org/show_bug.cgi?id=36496
+
+        * platform/graphics/gtk/FontPlatformDataPango.cpp:
+        (WebCore::FontPlatformData::FontPlatformData): The 'size' parameter
+        should be a float to match the declaration and the other definitions.
+
 2010-03-26  Shu Chang  <chang.shu@nokia.com>
 
         Reviewed by Eric Seidel.
