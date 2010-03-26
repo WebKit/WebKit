@@ -1,3 +1,13 @@
+2010-03-25  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Unreviewed, Chromium build fix.
+
+        V8CustomVoidCallback should not check if a return value is a
+        boolean. It should only convert the value to a boolean.
+
+        * bindings/v8/custom/V8CustomVoidCallback.cpp:
+        (WebCore::invokeCallback):
+
 2010-03-25  Dmitry Titov  <dimich@chromium.org>
 
         No review, rolling out r56585.

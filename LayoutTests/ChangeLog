@@ -1,3 +1,12 @@
+2010-03-25  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Unreviewed, Chromium build fix.
+
+        Update the expectations for statement-error-callback.html for Chromium.
+
+        * platform/chromium-mac/storage/statement-error-callback-expected.txt:
+        * platform/chromium-win/storage/statement-error-callback-expected.txt:
+
 2010-03-25  Dmitry Titov  <dimich@chromium.org>
 
         Not reviewed, update pixel results for Chromium bots.
