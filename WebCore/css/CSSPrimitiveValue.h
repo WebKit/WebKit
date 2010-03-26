@@ -211,7 +211,6 @@ private:
         Pair* pair;
         DashboardRegion* region;
     } m_value;
-    mutable String m_cachedCSSText;
 };
 
 } // namespace WebCore

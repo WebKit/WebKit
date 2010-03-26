@@ -1,3 +1,12 @@
+2010-03-26  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; build fix.
+
+        Rolling out 56620; too many layout test failures.
+
+        * fast/css/cssText-cache-expected.txt: Removed.
+        * fast/css/cssText-cache.html: Removed.
+
 2010-03-26  Philippe Normand  <pnormand@igalia.com>
 
         fast/parser/xml-declaration-missing-ending-mark.html crashed on Gtk bot
