@@ -1,3 +1,17 @@
+2010-03-26  Olivier Goffart  <ogoffart@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix compilation on Windows
+
+        For some reason, the MSVC compiler choose the
+        operator+(const QString &, const QString &) instead of
+        operator+(const WebCore::String &, const WebCore::String &)
+        resulting in errors when QT_USE_FAST_OPERATOR_PLUS is used.
+
+        * dom/XMLTokenizerQt.cpp:
+        (WebCore::handleElementNamespaces):
+
 2010-03-24  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Darin Adler.
