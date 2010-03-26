@@ -83,9 +83,6 @@
     QtWebKit is based on the Open Source WebKit engine. More information about
     WebKit itself can be found on the \l{WebKit Open Source Project} Web site.
 
-    The QtWebKit module is part of the \l{Qt Full Framework Edition}, and the
-    \l{Open Source Versions of Qt}.
-
     \note Building the QtWebKit module with debugging symbols is problematic
     on many platforms due to the size of the WebKit engine. We recommend
     building the module only in release mode for embedded platforms.

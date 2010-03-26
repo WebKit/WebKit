@@ -1,3 +1,11 @@
+2010-03-26  David Boddie  <dboddie@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Doc: Simplified Commercial Editions for Qt 4.7.
+
+        * docs/qtwebkit.qdoc:
+
 2010-03-26  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Symbian build fix.
