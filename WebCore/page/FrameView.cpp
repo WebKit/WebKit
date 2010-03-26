@@ -1468,20 +1468,30 @@ bool FrameView::updateWidgets()
     if (m_nestedLayoutCount > 1 || !m_widgetUpdateSet || m_widgetUpdateSet->isEmpty())
         return true;
     
-    Vector<RenderEmbeddedObject*> objectVector;
-    copyToVector(*m_widgetUpdateSet, objectVector);
-    size_t size = objectVector.size();
-    for (size_t i = 0; i < size; ++i) {
-        RenderEmbeddedObject* object = objectVector[i];
-        object->updateWidget(false);
-        
-        // updateWidget() can destroy the RenderPartObject, so we need to make sure it's
-        // alive by checking if it's still in m_widgetUpdateSet.
-        if (m_widgetUpdateSet->contains(object)) {
-            object->updateWidgetPosition();
-            m_widgetUpdateSet->remove(object);
-        }
+    size_t size = m_widgetUpdateSet->size();
+
+    Vector<RenderEmbeddedObject*> objects;
+    objects.reserveCapacity(size);
+
+    RenderEmbeddedObjectSet::const_iterator end = m_widgetUpdateSet->end();
+    for (RenderEmbeddedObjectSet::const_iterator it = m_widgetUpdateSet->begin(); it != end; ++it) {
+        objects.uncheckedAppend(*it);
+        (*it)->ref();
     }
+
+    for (size_t i = 0; i < size; ++i) {
+        RenderEmbeddedObject* object = objects[i];
+
+        // The object may have been destroyed, but our manual ref() keeps the object from being deleted.
+        object->updateWidget(false);
+        object->updateWidgetPosition();
+
+        m_widgetUpdateSet->remove(object);
+    }
+
+    RenderArena* arena = m_frame->document()->renderArena();
+    for (size_t i = 0; i < size; ++i)
+        objects[i]->deref(arena);
     
     return m_widgetUpdateSet->isEmpty();
 }

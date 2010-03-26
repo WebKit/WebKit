@@ -1,3 +1,19 @@
+2010-03-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein, Darin Adler.
+
+        Re-entrant layout via plug-ins may cause crashes with bad RenderWidgets
+        https://bugs.webkit.org/show_bug.cgi?id=36675
+        <rdar://problem/7787617>
+        
+        Two tests that make use of the setWindow script in the TestNestscapePlugin to run script when widgets are being
+        updated, to test for crashes caused by re-entering layout and widget updates.
+
+        * plugins/reentrant-update-widget-positions-expected.txt: Copied from LayoutTests/fast/forms/select-change-popup-to-listbox-in-event-handler-expected.txt.
+        * plugins/reentrant-update-widget-positions.html: Added.
+        * plugins/update-widgets-crash-expected.txt: Copied from LayoutTests/fast/forms/select-change-popup-to-listbox-in-event-handler-expected.txt.
+        * plugins/update-widgets-crash.html: Added.
+
 2010-03-26  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.

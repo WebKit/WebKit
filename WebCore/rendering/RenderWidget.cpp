@@ -313,7 +313,7 @@ void RenderWidget::deref(RenderArena *arena)
 
 void RenderWidget::updateWidgetPosition()
 {
-    if (!m_widget)
+    if (!m_widget || !node()) // Check the node in case destroy() has been called.
         return;
 
     // FIXME: This doesn't work correctly with transforms.

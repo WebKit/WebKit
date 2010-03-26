@@ -1,3 +1,31 @@
+2010-03-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein, Darin Adler.
+
+        Re-entrant layout via plug-ins may cause crashes with bad RenderWidgets
+        https://bugs.webkit.org/show_bug.cgi?id=36675
+        <rdar://problem/7787617>
+        
+        Fix two places in the code where RenderWidgets can get destroyed while being iterated over.
+        This can happen when plug-ins execute script from NPP_SetWindow, and that script makes a change
+        to the page that destroys a RenderWidget.
+
+        Tests: plugins/reentrant-update-widget-positions.html
+               plugins/update-widgets-crash.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateWidgets): ref() the RenderEmbeddedObjects that are put into the
+        vector before iterating of them, and deref() them at the end. Rather than checking the m_widgetUpdateSet
+        to see if the RenderWidget is still live, test object->node().
+        
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::RenderView): Initialize some data members to make it more obvious in the debugger
+        that the object is not garbage.
+        (WebCore::RenderView::updateWidgetPositions): Use a Vector of RenderWidget* to keep the RenderWidgets
+        alive during iteration, by reffing and dereffing them.
+        * rendering/RenderWidget.h:
+        (WebCore::RenderWidget::ref): Make this and deref() public.
+
 2010-03-26 Beth Dakin <bdakin@apple.com>
 
         Reviewed by Darin Adler.

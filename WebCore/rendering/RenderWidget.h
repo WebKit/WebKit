@@ -47,6 +47,9 @@ public:
     static void suspendWidgetHierarchyUpdates();
     static void resumeWidgetHierarchyUpdates();
 
+    RenderArena* ref() { ++m_refCount; return renderArena(); }
+    void deref(RenderArena*);
+
 protected:
     RenderWidget(Node*);
 
@@ -67,10 +70,6 @@ private:
     virtual void setOverlapTestResult(bool);
 
     bool setWidgetGeometry(const IntRect&);
-
-    friend class RenderWidgetProtector;
-    RenderArena* ref() { ++m_refCount; return renderArena(); }
-    void deref(RenderArena*);
 
     RefPtr<Widget> m_widget;
     RefPtr<Image> m_substituteImage;
