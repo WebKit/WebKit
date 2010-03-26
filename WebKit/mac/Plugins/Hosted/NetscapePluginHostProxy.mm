@@ -1130,10 +1130,6 @@ kern_return_t WKPCRunSyncOpenPanel(mach_port_t clientPort, data_t panelData, mac
     if (!hostProxy)
         return KERN_FAILURE;
 
-    NetscapePluginInstanceProxy* instanceProxy = hostProxy->pluginInstance(pluginID);
-    if (!instanceProxy)
-        return KERN_FAILURE;
-
     NSOpenPanel *sheet = [NSOpenPanel openPanel];
     NSDictionary *panelState = [NSPropertyListSerialization propertyListFromData:[NSData dataWithBytes:panelData length:panelDataLength]
                                                                 mutabilityOption:NSPropertyListImmutable
@@ -1158,8 +1154,8 @@ kern_return_t WKPCRunSyncOpenPanel(mach_port_t clientPort, data_t panelData, mac
     [sheet setTitle:[panelState objectForKey:@"title"]];
     [sheet runModal];
 
-    hostProxy = instanceProxy->hostProxy();
-    if (!hostProxy)
+    NetscapePluginHostProxy* newHostProxy = pluginProxyMap().get(clientPort);
+    if (newHostProxy != hostProxy)
         return KERN_FAILURE;
 
     NSDictionary *ret = [NSDictionary dictionaryWithObjectsAndKeys:

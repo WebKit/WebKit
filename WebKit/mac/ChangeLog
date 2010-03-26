@@ -1,3 +1,10 @@
+2010-03-25  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        * Plugins/Hosted/NetscapePluginHostProxy.mm: (WKPCRunSyncOpenPanel): Re-fetch host proxy in
+        a way that works in a function that doesn't have a pluginID argument for some reason.
+
 2010-03-25  Simon Fraser  <simon.fraser@apple.com>
 
         Build fix: no review.
