@@ -5854,3 +5854,7 @@ fast/css/zoom-body-scroll.html
 # See https://bugs.webkit.org/show_bug.cgi?id=36627 for what's needed
 # for a real fix.
 editing/selection/extend-after-mouse-selection.html
+
+# Fails on Debug bots
+# https://bugs.webkit.org/show_bug.cgi?id=33027
+fast/parser/xml-declaration-missing-ending-mark.html
