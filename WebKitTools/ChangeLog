@@ -1,3 +1,19 @@
+2010-03-26  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [DRT/Chromium] Add TestNavigationController and TestWebWorker
+        https://bugs.webkit.org/show_bug.cgi?id=36520
+
+        Add LayoutTestController class, which is going to be used by
+        DumpRenderTree Chromium port. These files are based on:
+        - src/webkit/tools/test_shell/layout_test_controller.cc
+        - src/webkit/tools/test_shell/layout_test_controller.h
+        of Chromium rev.40492.
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp: Added.
+        * DumpRenderTree/chromium/LayoutTestController.h: Added.
+
 2010-03-25  Charlie Reis  <creis@chromium.org>
 
         Reviewed by Adam Barth.
