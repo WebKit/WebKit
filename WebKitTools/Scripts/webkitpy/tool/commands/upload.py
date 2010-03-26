@@ -53,7 +53,7 @@ class CommitMessageForCurrentDiff(AbstractDeclarativeCommand):
 
     def execute(self, options, args, tool):
         os.chdir(tool.scm().checkout_root)
-        print "%s" % tool.scm().commit_message_for_this_commit().message()
+        print "%s" % tool.checkout().commit_message_for_this_commit().message()
 
 class CleanPendingCommit(AbstractDeclarativeCommand):
     name = "clean-pending-commit"
@@ -415,7 +415,7 @@ class CreateBug(AbstractDeclarativeCommand):
         if options.prompt:
             (bug_title, comment_text) = self.prompt_for_bug_title_and_comment()
         else:
-            commit_message = tool.scm().commit_message_for_this_commit()
+            commit_message = tool.checkout().commit_message_for_this_commit()
             bug_title = commit_message.description(lstrip=True, strip_url=True)
             comment_text = commit_message.body(lstrip=True)
 

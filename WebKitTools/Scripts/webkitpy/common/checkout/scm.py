@@ -33,7 +33,6 @@ import os
 import re
 import subprocess
 
-# Import WebKit-specific modules.
 from webkitpy.common.checkout.changelog import ChangeLog, is_path_to_changelog
 from webkitpy.common.system.executive import Executive, run_command, ScriptError
 from webkitpy.common.system.user import User
@@ -158,28 +157,6 @@ class SCM:
     # ChangeLog-specific code doesn't really belong in scm.py, but this function is very useful.
     def modified_changelogs(self):
         return [path for path in self.changed_files() if is_path_to_changelog(path)]
-
-    # FIXME: Requires unit test
-    # FIXME: commit_message_for_this_commit and modified_changelogs don't
-    #        really belong here.  We should have a separate module for
-    #        handling ChangeLogs.
-    def commit_message_for_this_commit(self):
-        changelog_paths = self.modified_changelogs()
-        if not len(changelog_paths):
-            raise ScriptError(message="Found no modified ChangeLogs, cannot create a commit message.\n"
-                              "All changes require a ChangeLog.  See:\n"
-                              "http://webkit.org/coding/contributing.html")
-
-        changelog_messages = []
-        for changelog_path in changelog_paths:
-            log("Parsing ChangeLog: %s" % changelog_path)
-            changelog_entry = ChangeLog(changelog_path).latest_entry()
-            if not changelog_entry:
-                raise ScriptError(message="Failed to parse ChangeLog: " + os.path.abspath(changelog_path))
-            changelog_messages.append(changelog_entry.contents())
-
-        # FIXME: We should sort and label the ChangeLog messages like commit-log-editor does.
-        return CommitMessage("".join(changelog_messages).splitlines())
 
     @staticmethod
     def in_working_directory(path):

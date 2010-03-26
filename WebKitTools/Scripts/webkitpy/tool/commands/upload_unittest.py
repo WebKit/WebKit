@@ -36,7 +36,7 @@ class UploadCommandsTest(CommandsTest):
         tool = MockTool()
         mock_commit_message_for_this_commit = Mock()
         mock_commit_message_for_this_commit.message = lambda: "Mock message"
-        tool._scm.commit_message_for_this_commit = lambda: mock_commit_message_for_this_commit
+        tool._checkout.commit_message_for_this_commit = lambda: mock_commit_message_for_this_commit
         expected_stdout = "Mock message\n"
         self.assert_execute_outputs(CommitMessageForCurrentDiff(), [], expected_stdout=expected_stdout, tool=tool)
 

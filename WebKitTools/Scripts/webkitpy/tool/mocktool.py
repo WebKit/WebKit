@@ -378,6 +378,9 @@ class MockCheckout(object):
             "reviewer": self._committer_list.committer_by_name("Darin Adler"),
         })
 
+    def commit_message_for_this_commit(self):
+        return Mock()
+
 
 class MockUser(object):
 
