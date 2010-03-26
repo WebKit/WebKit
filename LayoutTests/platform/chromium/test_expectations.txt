@@ -926,7 +926,6 @@ BUG20507 : http/tests/uri/resolve-encoding-relative.html = FAIL
 
 // Flaky: fails about 5% of the time.
 BUG31342 WIN RELEASE : security/block-test-no-port.html = TEXT PASS
-BUG31342 WIN RELEASE : security/block-test.html = TEXT PASS
 
 // Fails in debug. Windows used to be only flaky, but now fails consistently
 // starting with the 52554->52633 merge.
@@ -2860,4 +2859,5 @@ BUG_WK36630 LINUX WIN : editing/unsupported-content/list-delete-001.html = IMAGE
 BUG_WK36630 LINUX WIN : editing/unsupported-content/list-delete-003.html = IMAGE+TEXT
 
 // Due to the differences in iniialization checks in KURL and googleurl.
+// Note: this test was also marked as flaky on WIN RELESE above, BUG31342.
 BUG_39423 : security/block-test.html = TIMEOUT

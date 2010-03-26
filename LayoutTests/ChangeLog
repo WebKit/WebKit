@@ -1,5 +1,11 @@
 2010-03-25  Dmitry Titov  <dimich@chromium.org>
 
+        Unreviewed, another attempt to unblock Chromium Win test bot.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-03-25  Dmitry Titov  <dimich@chromium.org>
+
         Unreviewed, removing stale expectation file for Chromium.
 
         The test was updated by http://trac.webkit.org/changeset/56506 to a script test.
