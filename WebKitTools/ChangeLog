@@ -1,3 +1,15 @@
+2010-03-26  Sergio Villar Senin  <svillar@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        Print didFinishLoadForFrame outcome in DRT
+
+        [GTK] Improve reporting of frame loader callbacks in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=36454
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (webViewLoadCommitted):
+
 2010-03-26  Eric Seidel  <eric@webkit.org>
 
         Unreviewed test fix.

@@ -590,6 +590,12 @@ static char* getFrameNameSuitableForTestResult(WebKitWebView* view, WebKitWebFra
 
 static void webViewLoadFinished(WebKitWebView* view, WebKitWebFrame* frame, void*)
 {
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks()) {
+        char* frameName = getFrameNameSuitableForTestResult(view, frame);
+        printf("%s - didFinishLoadForFrame\n", frameName);
+        g_free(frameName);
+    }
+
     if (frame != topLoadingFrame)
         return;
 
