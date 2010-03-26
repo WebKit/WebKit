@@ -85,7 +85,7 @@ class TestFile(db.Model):
 
         logging.info(
             "File saved, builder: %s, test_type: %s, name: %s, blob key: %s.",
-            builder, file.name, file.blob_key)
+            builder, test_type, file.name, file.blob_key)
 
         return file
 

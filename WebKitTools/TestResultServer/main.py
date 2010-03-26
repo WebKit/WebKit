@@ -33,23 +33,22 @@ use_library('django', '1.1')
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 
-from handlers.menu import Menu
-from handlers.testfilehandler import DeleteFile
-from handlers.testfilehandler import GetFile
-from handlers.testfilehandler import GetUploadUrl
-from handlers.testfilehandler import Upload
-from handlers.testfilehandler import UploadForm
-from handlers.testfilehandler import UploadStatus
+from handlers import dashboardhandler
+from handlers import menu
+from handlers import testfilehandler
 
 routes = [
-    ('/deletefile', DeleteFile),
-    ('/getfile', GetFile),
-    ('/getuploadurl', GetUploadUrl),
-    ('/upload', Upload),
-    ('/uploadfail', UploadStatus),
-    ('/uploadform', UploadForm),
-    ('/uploadsuccess', UploadStatus),
-    ('/*|/menu', Menu),
+    ('/dashboards/delete', dashboardhandler.DeleteDashboardFile),
+    ('/dashboards/update', dashboardhandler.UpdateDashboardFile),
+    ('/dashboards/([^?]+)?', dashboardhandler.GetDashboardFile),
+    ('/testfile/delete', testfilehandler.DeleteFile),
+    ('/testfile/uploadurl', testfilehandler.GetUploadUrl),
+    ('/testfile/upload', testfilehandler.Upload),
+    ('/testfile/uploadform', testfilehandler.UploadForm),
+    ('/testfile/?', testfilehandler.GetFile),
+    ('/uploadfail', testfilehandler.UploadStatus),
+    ('/uploadsuccess', testfilehandler.UploadStatus),
+    ('/*|/menu', menu.Menu),
 ]
 
 application = webapp.WSGIApplication(routes, debug=True)

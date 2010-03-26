@@ -29,6 +29,7 @@
 import logging
 import urllib
 
+from google.appengine.api import users
 from google.appengine.ext import blobstore
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import blobstore_handlers
@@ -60,14 +61,14 @@ class DeleteFile(webapp.RequestHandler):
         TestFile.delete_file(key, builder, test_type, name, 100)
 
         # Display file list after deleting the file.
-        self.redirect("/getfile?builder=%s&testtype=%s&name=%s"
+        self.redirect("/testfile?builder=%s&testtype=%s&name=%s"
             % (builder, test_type, name))
 
 
 class GetFile(blobstore_handlers.BlobstoreDownloadHandler):
     """Get file content or list of files for given builder and name."""
 
-    def get_file_list(self, builder, test_type, name):
+    def _get_file_list(self, builder, test_type, name):
         """Get and display a list of files that matches builder and file name.
 
         Args:
@@ -84,6 +85,7 @@ class GetFile(blobstore_handlers.BlobstoreDownloadHandler):
             return
 
         template_values = {
+            "admin": users.is_current_user_admin(),
             "builder": builder,
             "test_type": test_type,
             "name": name,
@@ -92,7 +94,7 @@ class GetFile(blobstore_handlers.BlobstoreDownloadHandler):
         self.response.out.write(template.render("templates/showfilelist.html",
                                                 template_values))
 
-    def get_file_content(self, builder, test_type, name):
+    def _get_file_content(self, builder, test_type, name):
         """Return content of the file that matches builder and file name.
 
         Args:
@@ -126,16 +128,16 @@ class GetFile(blobstore_handlers.BlobstoreDownloadHandler):
         # specified in the request, return list of files, otherwise, return
         # file content.
         if dir or not builder or not name:
-            return self.get_file_list(builder, test_type, name)
+            return self._get_file_list(builder, test_type, name)
         else:
-            return self.get_file_content(builder, test_type, name)
+            return self._get_file_content(builder, test_type, name)
 
 
 class GetUploadUrl(webapp.RequestHandler):
     """Get an url for uploading file to blobstore. A special url is required for each blobsotre upload."""
 
     def get(self):
-        upload_url = blobstore.create_upload_url("/upload")
+        upload_url = blobstore.create_upload_url("/testfile/upload")
         logging.info("Getting upload url: %s.", upload_url)
         self.response.out.write(upload_url)
 
@@ -194,7 +196,7 @@ class UploadForm(webapp.RequestHandler):
     """Show a form so user can submit a file to blobstore."""
 
     def get(self):
-        upload_url = blobstore.create_upload_url("/upload")
+        upload_url = blobstore.create_upload_url("/testfile/upload")
         template_values = {
             "upload_url": upload_url,
         }
@@ -205,13 +207,15 @@ class UploadStatus(webapp.RequestHandler):
     """Return status of file uploading"""
 
     def get(self):
+        logging.debug("Update status")
+
         if self.request.path == "/uploadsuccess":
             self.response.set_status(200)
             self.response.out.write("OK")
         else:
             errors = self.request.params.getall("error")
             if errors:
-                messages = "FAIL: " + "\n".join(errors)
+                messages = "FAIL: " + "; ".join(errors)
                 logging.warning(messages)
-                self.response.out.write(messages)
-                self.response.set_status(500)
+                self.response.set_status(500, messages)
+                self.response.out.write("FAIL")

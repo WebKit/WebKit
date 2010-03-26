@@ -10,6 +10,12 @@ indexes:
 # automatically uploaded to the admin console when you next deploy
 # your application using appcfg.py.
 
+- kind: DashboardFile
+  properties:
+  - name: name
+  - name: date
+    direction: desc
+
 - kind: TestFile
   properties:
   - name: builder
@@ -28,13 +34,6 @@ indexes:
   - name: builder
   - name: name
   - name: test_type
-  - name: date
-    direction: desc
-
-- kind: TestFile
-  properties:
-  - name: builder=
-  - name: name=
   - name: date
     direction: desc
 

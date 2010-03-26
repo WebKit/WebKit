@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Dashboard Files</title>
+<link type="text/css" rel="stylesheet" href="/stylesheets/dashboardfile.css" />
+</head>
+<body>
+<h1>Dashboard Files
+</h1>
+<div>
+    <table>
+        <tr>
+            <th>File</th>
+            <th>Date</th>
+            {% if admin %}
+            <th></th>
+            {% endif %}
+        {% for file in files %}
+        <tr>{% if file.name %}
+            <td><a href="/dashboards/{{ file.name }}" >
+                {{ file.name }}
+                </a>
+            </td>
+            <td>{{ file.date|date:"d-M-Y H:i:s" }}
+            </td>
+            {% if admin %}
+            <td><a href="/dashboards/delete?file={{ file.name }}" >
+                Delete
+                </a>
+            </td>
+            {% endif %}
+        {% endif %}
+        </tr>
+    {% endfor %}
+    </table>
+</div>
+</body>
+</html>

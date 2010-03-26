@@ -6,7 +6,7 @@
 </head>
 <body>
 <h1>Upload Test Result File</h1>
-<form accept="text/html" action="{{ upload_url }}" enctype="multipart/form-data" method="post">
+<form id="uploadForm" name="test_result_upload" accept="text/html" action="{{ upload_url }}" enctype="multipart/form-data" method="post">
     <br>
     <table>
     <tr>
@@ -18,7 +18,7 @@
         <td><input class=inputtext type="text" name="testtype" value=""/></td>
     </tr>
     </table>
-    <div><input class=button type="file" name="file"></div>
+    <div><input class=button type="file" name="file" multiple></div>
     <br>
     <div><input class=button type="submit" value="Upload"></div>
 </form>

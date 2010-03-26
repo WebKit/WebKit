@@ -30,10 +30,12 @@ from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 
 menu = [
-    ["List of files", "/getfile"],
-    ["List of results.json files", "/getfile?name=results.json"],
-    ["List of expectations.json files", "/getfile?name=expectations.json"],
-    ["Upload file", "/uploadform"],
+    ["List of test files", "/testfile"],
+    ["List of results.json files", "/testfile?name=results.json"],
+    ["List of expectations.json files", "/testfile?name=expectations.json"],
+    ["Upload test file", "/testfile/uploadform"],
+    ["List of dashboard files", "/dashboards/"],
+    ["Update dashboard files", "/dashboards/update"],
 ]
 
 
