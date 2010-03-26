@@ -1,3 +1,16 @@
+2010-03-25  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        REGRESSION: plugins/netscape-construct.html and plugins/mouse-events-fixedpos.html failing on Snow Leopard Bot
+        https://bugs.webkit.org/show_bug.cgi?id=36462
+
+        Adding tests to the Skipped list per Alexey's recommendation
+        until someone from Apple can update the version of Safari
+        on the Snow Leopard bot.
+
+        * platform/mac-snowleopard/Skipped:
+
 2010-03-25  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by David Levin.
