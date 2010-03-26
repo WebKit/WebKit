@@ -714,3 +714,5 @@ EXPORTS
 	_ZN9QWebFrame14scrollToAnchorERK7QString @ 713 NONAME
 	_ZN12QWebSettings15setInspectorUrlERK4QUrl @ 714 NONAME
 	_Z35qtwebkit_webframe_scrollRecursivelyP9QWebFrameiiRK6QPoint @ 715 NONAME
+	_ZN16QGraphicsWebView26setTiledBackingStoreFrozenEb @ 716 NONAME
+	_ZNK16QGraphicsWebView25isTiledBackingStoreFrozenEv @ 717 NONAME
