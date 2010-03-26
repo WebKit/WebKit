@@ -1,3 +1,15 @@
+2010-03-26  Mads Ager  <ager@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Tweak Chromium test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=36651
+
+        fast/js/large-expressions.html started failing on Linux in release
+        mode occassionally.  Also fails on other platforms.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-03-26  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed, removing websocket/tests/long-invalid-header.html from Chromium test_expectations.txt
