@@ -1,3 +1,15 @@
+2010-03-26  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        [Chromium-Win] websocket_server.py failed to start
+        https://bugs.webkit.org/show_bug.cgi?id=36586
+        
+        subproess.Popen() on Python 2.4/Windows with stdout,stdout, but no stdin will fail, because it uses return value of GetStdHandle(STD_INPUT_HANDLE), but DuplicateHandle requires integer, not the handle.
+        We don't need stdin, so use devnull as stdin.
+
+        * Scripts/webkitpy/layout_tests/port/websocket_server.py: open os.devnull for stdin
+
 2010-03-26  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

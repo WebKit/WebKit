@@ -200,7 +200,9 @@ class PyWebSocket(http_server.Lighttpd):
         _log.debug('Starting %s server on %d.' % (
                    self._server_name, self._port))
         _log.debug('cmdline: %s' % ' '.join(start_cmd))
-        self._process = subprocess.Popen(start_cmd, stdout=self._wsout,
+        self._process = subprocess.Popen(start_cmd,
+                                         stdin=open(os.devnull, 'r'),
+                                         stdout=self._wsout,
                                          stderr=subprocess.STDOUT,
                                          env=env)
 
