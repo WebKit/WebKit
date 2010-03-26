@@ -2838,9 +2838,6 @@ BUG38918 : fast/dom/error-to-string-stack-overflow.html = TEXT
 // Caused by http://trac.webkit.org/changeset/56394.
 BUG_JAPHET WIN : http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch.html = TEXT
 
-// Caused by http://trac.webkit.org/changeset/56380
-BUG39062 : websocket/tests/long-invalid-header.html = TEXT
-
 // Due to the differences in iniialization checks in KURL and googleurl.
 // Note: this test was also marked as flaky on WIN RELESE above, BUG31342.
 BUG_39423 : security/block-test.html = TIMEOUT
