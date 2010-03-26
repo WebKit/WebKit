@@ -1,3 +1,29 @@
+2010-03-26  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        Generated run-in Content is Mistakenly Getting Deleted
+        https://bugs.webkit.org/show_bug.cgi?id=36505
+        <rdar://problem/7767161>
+
+          Test dynamic update of the inner block, containing the generated
+          run-in, but not owning it with the :before rule, and owners.
+
+        * fast/runin/generated2.html: Added.
+        * platform/mac/fast/runin/generated2-expected.txt: Added.
+
+          Test dynamic update of the outer block, this block owns the
+          generated run-in, but it is actually contained in a child block.
+
+        * fast/runin/generated3.html: Added.
+        * platform/mac/fast/runin/generated3-expected.txt: Added.
+
+          Test dynamic updates affecting generated run-ins both
+          in relation to and not in relation to list markers.
+
+        * fast/runin/generated4.html: Added.
+        * platform/mac/fast/runin/generated4-expected.txt: Added.
+
 2010-03-25  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Darin Adler.

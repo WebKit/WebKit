@@ -1,3 +1,23 @@
+2010-03-26  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        Generated run-in Content is Mistakenly Getting Deleted
+        https://bugs.webkit.org/show_bug.cgi?id=36505
+        <rdar://problem/7767161>
+
+        Test: fast/runin/generated2.html
+        Test: fast/runin/generated3.html
+        Test: fast/runin/generated4.html
+
+        Do not destroy :before/:after generated content with display run-in
+        when relaying out different nodes. Have their real owners correctly
+        handle them.
+
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::updateBeforeAfterContent): simplified logic
+        (WebCore::RenderObjectChildList::beforeAfterContainer): skip generated run-ins when checking children, check for them in grandchildren
+
 2010-03-25  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Darin Adler.
