@@ -1,3 +1,21 @@
+2010-03-25  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Fix build if NPAPI support is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=36621
+
+        No new tests, this is a build fix.
+
+        * plugins/PluginView.cpp: Guard getValueStatic() with
+        NETSCAPE_PLUGIN_API
+        (WebCore::PluginView::getValue):
+        * plugins/PluginView.h: Guard getValue() with NETSCAPE_PLUGIN_API
+        * plugins/PluginViewNone.cpp: Guard platformGetValue() and
+        platformGetValueStatic with NETSCAPE_PLUGIN_API;
+        Guard privateBrowsingStateChanged() and setJavaScriptPaused() with
+        PLATFORM(MAC)
+
 2010-03-25  Drew Wilson  <atwilson@chromium.org>
 
         Reviewed by Nate Chapin.
