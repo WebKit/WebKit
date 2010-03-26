@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,40 +28,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebElement_h
-#define WebElement_h
+#include "config.h"
+#include "WebSelectElement.h"
 
-#include "WebNode.h"
+#include "HTMLSelectElement.h"
+#include "WebString.h"
+#include <wtf/PassRefPtr.h>
 
-#if WEBKIT_IMPLEMENTATION
-namespace WebCore { class Element; }
-#endif
+using namespace WebCore;
 
 namespace WebKit {
-    // Provides access to some properties of a DOM element node.
-    class WebElement : public WebNode {
-    public:
-        WebElement() : WebNode() { }
-        WebElement(const WebElement& e) : WebNode(e) { }
 
-        WebElement& operator=(const WebElement& e) { WebNode::assign(e); return *this; }
-        void assign(const WebElement& e) { WebNode::assign(e); }
+void WebSelectElement::setValue(const WebString& value)
+{
+    unwrap<HTMLSelectElement>()->setValue(value);
+}
 
-        WEBKIT_API bool isFormControlElement() const;
-        WEBKIT_API WebString tagName() const;
-        WEBKIT_API bool hasTagName(const WebString&) const;
-        WEBKIT_API bool hasAttribute(const WebString&) const;
-        WEBKIT_API WebString getAttribute(const WebString&) const;
-        WEBKIT_API bool setAttribute(const WebString& name, const WebString& value);
-        WEBKIT_API WebString innerText() const;
+WebString WebSelectElement::value()
+{
+    return unwrap<HTMLSelectElement>()->value();
+}
 
-#if WEBKIT_IMPLEMENTATION
-        WebElement(const WTF::PassRefPtr<WebCore::Element>&);
-        WebElement& operator=(const WTF::PassRefPtr<WebCore::Element>&);
-        operator WTF::PassRefPtr<WebCore::Element>() const;
-#endif
-    };
+WebSelectElement::WebSelectElement(const PassRefPtr<HTMLSelectElement>& elem)
+    : WebFormControlElement(elem)
+{
+}
+
+WebSelectElement& WebSelectElement::operator=(const PassRefPtr<HTMLSelectElement>& elem)
+{
+    m_private = elem;
+    return *this;
+}
+
+WebSelectElement::operator PassRefPtr<HTMLSelectElement>() const
+{
+    return static_cast<HTMLSelectElement*>(m_private.get());
+}
 
 } // namespace WebKit
-
-#endif

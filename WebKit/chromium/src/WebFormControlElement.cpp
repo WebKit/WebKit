@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,40 +28,58 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebElement_h
-#define WebElement_h
+#include "config.h"
+#include "WebFormControlElement.h"
 
-#include "WebNode.h"
+#include "HTMLFormControlElement.h"
+#include <wtf/PassRefPtr.h>
 
-#if WEBKIT_IMPLEMENTATION
-namespace WebCore { class Element; }
-#endif
+using namespace WebCore;
 
 namespace WebKit {
-    // Provides access to some properties of a DOM element node.
-    class WebElement : public WebNode {
-    public:
-        WebElement() : WebNode() { }
-        WebElement(const WebElement& e) : WebNode(e) { }
 
-        WebElement& operator=(const WebElement& e) { WebNode::assign(e); return *this; }
-        void assign(const WebElement& e) { WebNode::assign(e); }
+bool WebFormControlElement::isEnabled() const
+{
+    return constUnwrap<HTMLFormControlElement>()->isEnabledFormControl();
+}
 
-        WEBKIT_API bool isFormControlElement() const;
-        WEBKIT_API WebString tagName() const;
-        WEBKIT_API bool hasTagName(const WebString&) const;
-        WEBKIT_API bool hasAttribute(const WebString&) const;
-        WEBKIT_API WebString getAttribute(const WebString&) const;
-        WEBKIT_API bool setAttribute(const WebString& name, const WebString& value);
-        WEBKIT_API WebString innerText() const;
+WebString WebFormControlElement::formControlName() const
+{
+    return constUnwrap<HTMLFormControlElement>()->formControlName();
+}
 
-#if WEBKIT_IMPLEMENTATION
-        WebElement(const WTF::PassRefPtr<WebCore::Element>&);
-        WebElement& operator=(const WTF::PassRefPtr<WebCore::Element>&);
-        operator WTF::PassRefPtr<WebCore::Element>() const;
-#endif
-    };
+WebString WebFormControlElement::formControlType() const
+{
+    return constUnwrap<HTMLFormControlElement>()->formControlType();
+}
+
+WebString WebFormControlElement::nameForAutofill() const
+{
+    String name = constUnwrap<HTMLFormControlElement>()->name();
+    String trimmedName = name.stripWhiteSpace();
+    if (!trimmedName.isEmpty())
+        return trimmedName;
+    name = constUnwrap<HTMLFormControlElement>()->getAttribute(HTMLNames::idAttr);
+    trimmedName = name.stripWhiteSpace();
+    if (!trimmedName.isEmpty())
+        return trimmedName;
+    return String();
+}
+
+WebFormControlElement::WebFormControlElement(const PassRefPtr<HTMLFormControlElement>& elem)
+    : WebElement(elem)
+{
+}
+
+WebFormControlElement& WebFormControlElement::operator=(const PassRefPtr<HTMLFormControlElement>& elem)
+{
+    m_private = elem;
+    return *this;
+}
+
+WebFormControlElement::operator PassRefPtr<HTMLFormControlElement>() const
+{
+    return static_cast<HTMLFormControlElement*>(m_private.get());
+}
 
 } // namespace WebKit
-
-#endif

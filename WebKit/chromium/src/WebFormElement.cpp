@@ -35,6 +35,8 @@
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "WebFormControlElement.h"
+#include "WebInputElement.h"
 #include "WebString.h"
 #include "WebURL.h"
 #include <wtf/PassRefPtr.h>
@@ -84,6 +86,18 @@ void WebFormElement::getInputElements(WebVector<WebInputElement>& result) const
         if (form->formElements[i]->hasLocalName(HTMLNames::inputTag))
             tempVector.append(static_cast<HTMLInputElement*>(
                 form->formElements[i]));
+    }
+    result.assign(tempVector);
+}
+
+void WebFormElement::getFormControlElements(WebVector<WebFormControlElement>& result) const
+{
+    const HTMLFormElement* form = constUnwrap<HTMLFormElement>();
+    Vector<RefPtr<HTMLFormControlElement> > tempVector;
+    for (size_t i = 0; i < form->formElements.size(); i++) {
+        if (form->formElements[i]->hasLocalName(HTMLNames::inputTag)
+            || form->formElements[i]->hasLocalName(HTMLNames::selectTag))
+            tempVector.append(form->formElements[i]);
     }
     result.assign(tempVector);
 }

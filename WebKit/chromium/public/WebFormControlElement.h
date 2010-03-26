@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,39 +28,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebElement_h
-#define WebElement_h
+#ifndef WebFormControlElement_h
+#define WebFormControlElement_h
 
-#include "WebNode.h"
+#include "WebElement.h"
+#include "WebString.h"
 
 #if WEBKIT_IMPLEMENTATION
-namespace WebCore { class Element; }
+namespace WebCore { class HTMLFormControlElement; }
 #endif
 
 namespace WebKit {
-    // Provides access to some properties of a DOM element node.
-    class WebElement : public WebNode {
-    public:
-        WebElement() : WebNode() { }
-        WebElement(const WebElement& e) : WebNode(e) { }
 
-        WebElement& operator=(const WebElement& e) { WebNode::assign(e); return *this; }
-        void assign(const WebElement& e) { WebNode::assign(e); }
+// Provides readonly access to some properties of a DOM form control element node.
+class WebFormControlElement : public WebElement {
+public:
+    WebFormControlElement() : WebElement() { }
+    WebFormControlElement(const WebFormControlElement& e) : WebElement(e) { }
 
-        WEBKIT_API bool isFormControlElement() const;
-        WEBKIT_API WebString tagName() const;
-        WEBKIT_API bool hasTagName(const WebString&) const;
-        WEBKIT_API bool hasAttribute(const WebString&) const;
-        WEBKIT_API WebString getAttribute(const WebString&) const;
-        WEBKIT_API bool setAttribute(const WebString& name, const WebString& value);
-        WEBKIT_API WebString innerText() const;
+    WebFormControlElement& operator=(const WebFormControlElement& e)
+    {
+        WebElement::assign(e);
+        return *this;
+    }
+    WEBKIT_API void assign(const WebFormControlElement& e) { WebElement::assign(e); }
+
+    WEBKIT_API bool isEnabled() const;
+    WEBKIT_API WebString formControlName() const;
+    WEBKIT_API WebString formControlType() const;
+
+    // Returns the name that should be used for the specified |element| when
+    // storing autofill data.  This is either the field name or its id, an empty
+    // string if it has no name and no id.
+    WEBKIT_API WebString nameForAutofill() const;
 
 #if WEBKIT_IMPLEMENTATION
-        WebElement(const WTF::PassRefPtr<WebCore::Element>&);
-        WebElement& operator=(const WTF::PassRefPtr<WebCore::Element>&);
-        operator WTF::PassRefPtr<WebCore::Element>() const;
+    WebFormControlElement(const WTF::PassRefPtr<WebCore::HTMLFormControlElement>&);
+    WebFormControlElement& operator=(const WTF::PassRefPtr<WebCore::HTMLFormControlElement>&);
+    operator WTF::PassRefPtr<WebCore::HTMLFormControlElement>() const;
 #endif
-    };
+};
 
 } // namespace WebKit
 

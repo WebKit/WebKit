@@ -1,3 +1,30 @@
+2010-03-24  James Hawkins  <jhawkins@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Implement WebFormControlElement and WebSelectElement.  Add
+        a getFormControlElements method to WebFormElement.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36562
+
+        * WebKit.gyp:
+        * public/WebElement.h:
+        * public/WebFormControlElement.h: Added.
+        * public/WebFormElement.h:
+        * public/WebInputElement.h:
+        (WebKit::WebInputElement::WebInputElement):
+        (WebKit::WebInputElement::operator=):
+        (WebKit::WebInputElement::assign):
+        * public/WebSelectElement.h: Added.
+        * src/WebElement.cpp:
+        (WebKit::WebElement::isFormControlElement):
+        * src/WebFormControlElement.cpp: Added.
+        * src/WebFormElement.cpp:
+        (WebKit::WebFormElement::getFormControlElements):
+        * src/WebInputElement.cpp:
+        (WebKit::WebInputElement::WebInputElement):
+        * src/WebSelectElement.cpp: Added.
+
 2010-03-26  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.

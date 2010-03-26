@@ -31,7 +31,7 @@
 #ifndef WebFormElement_h
 #define WebFormElement_h
 
-#include "WebInputElement.h"
+#include "WebElement.h"
 #include "WebVector.h"
 
 #if WEBKIT_IMPLEMENTATION
@@ -39,6 +39,10 @@ namespace WebCore { class HTMLFormElement; }
 #endif
 
 namespace WebKit {
+
+    class WebInputElement;
+    class WebFormControlElement;
+
     // A container for passing around a reference to a form element.  Provides
     // some information about the form.
     class WebFormElement : public WebElement {
@@ -62,7 +66,9 @@ namespace WebKit {
         WEBKIT_API void submit();
         // FIXME: Deprecate and replace with WebVector<WebElement>.
         WEBKIT_API void getNamedElements(const WebString&, WebVector<WebNode>&);
+        // DEPRECATED: Replaced by getFormControlElements.
         WEBKIT_API void getInputElements(WebVector<WebInputElement>&) const;
+        WEBKIT_API void getFormControlElements(WebVector<WebFormControlElement>&) const;
 
 #if WEBKIT_IMPLEMENTATION
         WebFormElement(const WTF::PassRefPtr<WebCore::HTMLFormElement>&);

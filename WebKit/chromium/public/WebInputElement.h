@@ -31,7 +31,7 @@
 #ifndef WebInputElement_h
 #define WebInputElement_h
 
-#include "WebElement.h"
+#include "WebFormControlElement.h"
 
 #if WEBKIT_IMPLEMENTATION
 namespace WebCore { class HTMLInputElement; }
@@ -40,13 +40,17 @@ namespace WebCore { class HTMLInputElement; }
 namespace WebKit {
 
     // Provides readonly access to some properties of a DOM input element node.
-    class WebInputElement : public WebElement {
+    class WebInputElement : public WebFormControlElement {
     public:
-        WebInputElement() : WebElement() { }
-        WebInputElement(const WebInputElement& n) : WebElement(n) { }
+        WebInputElement() : WebFormControlElement() { }
+        WebInputElement(const WebInputElement& e) : WebFormControlElement(e) { }
 
-        WebInputElement& operator=(const WebInputElement& n) { WebElement::assign(n); return *this; }
-        WEBKIT_API void assign(const WebInputElement& n) { WebElement::assign(n); }
+        WebInputElement& operator=(const WebInputElement& e)
+        {
+            WebFormControlElement::assign(e);
+            return *this;
+        }
+        WEBKIT_API void assign(const WebInputElement& e) { WebFormControlElement::assign(e); }
 
         enum InputType {
             Text = 0,
@@ -78,7 +82,6 @@ namespace WebKit {
         WEBKIT_API bool autoComplete() const;
         WEBKIT_API bool isEnabledFormControl() const;
         WEBKIT_API InputType inputType() const;
-        WEBKIT_API WebString formControlType() const;
         WEBKIT_API bool isActivatedSubmit() const;
         WEBKIT_API void setActivatedSubmit(bool);
         WEBKIT_API void setValue(const WebString& value);
@@ -86,10 +89,11 @@ namespace WebKit {
         WEBKIT_API void setAutofilled(bool);
         WEBKIT_API void dispatchFormControlChangeEvent();
         WEBKIT_API void setSelectionRange(int, int);
+        // DEPRECATED: The following two methods have been moved to WebFormControlElement.
         WEBKIT_API WebString name() const;
         // Returns the name that should be used for the specified |element| when
-        // storing autofill data.  This is either the field name or its id, an empty
-        // string if it has no name and no id.
+        // storing AutoFill data.  This is either the field name or its id, an
+        // empty string if it has no name and no id.
         WEBKIT_API WebString nameForAutofill() const;
 
 #if WEBKIT_IMPLEMENTATION
