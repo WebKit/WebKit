@@ -2846,15 +2846,15 @@ BUG_JAPHET WIN : http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch
 BUG39062 : websocket/tests/long-invalid-header.html = TEXT
 
 // Caused by http://trac.webkit.org/changeset/56567
-WK36630 LINUX WIN : editing/selection/5195166-1.html = TEXT
-WK36630 LINUX WIN : editing/selection/extend-after-mouse-selection.html = TEXT
-WK36630 LINUX WIN : editing/selection/extend-selection-after-double-click.html = TEXT
-WK36630 LINUX WIN : editing/selection/extend-selection.html = TEXT
-WK36630 LINUX WIN : editing/selection/shrink-selection-after-shift-pagedown.html = TEXT
-WK36630 LINUX WIN : editing/deleting/delete-line-009.html = IMAGE+TEXT
-WK36630 LINUX WIN : editing/deleting/delete-line-010.html = IMAGE+TEXT
-WK36630 LINUX WIN : editing/selection/5195166-2.html = IMAGE+TEXT
-WK36630 LINUX WIN : editing/selection/extend-by-character-004.html = IMAGE+TEXT
-WK36630 LINUX WIN : editing/selection/extend-by-character-005.html = IMAGE+TEXT
-WK36630 LINUX WIN : editing/unsupported-content/list-delete-001.html = IMAGE+TEXT
-WK36630 LINUX WIN : editing/unsupported-content/list-delete-003.html = IMAGE+TEXT
+BUG_WK36630 LINUX WIN : editing/selection/5195166-1.html = TEXT
+BUG_WK36630 LINUX WIN : editing/selection/extend-after-mouse-selection.html = TEXT
+BUG_WK36630 LINUX WIN : editing/selection/extend-selection-after-double-click.html = TEXT
+BUG_WK36630 LINUX WIN : editing/selection/extend-selection.html = TEXT
+BUG_WK36630 LINUX WIN : editing/selection/shrink-selection-after-shift-pagedown.html = TEXT
+BUG_WK36630 LINUX WIN : editing/deleting/delete-line-009.html = IMAGE+TEXT
+BUG_WK36630 LINUX WIN : editing/deleting/delete-line-010.html = IMAGE+TEXT
+BUG_WK36630 LINUX WIN : editing/selection/5195166-2.html = IMAGE+TEXT
+BUG_WK36630 LINUX WIN : editing/selection/extend-by-character-004.html = IMAGE+TEXT
+BUG_WK36630 LINUX WIN : editing/selection/extend-by-character-005.html = IMAGE+TEXT
+BUG_WK36630 LINUX WIN : editing/unsupported-content/list-delete-001.html = IMAGE+TEXT
+BUG_WK36630 LINUX WIN : editing/unsupported-content/list-delete-003.html = IMAGE+TEXT

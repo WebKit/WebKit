@@ -1,5 +1,18 @@
 2010-03-25  Dmitry Titov  <dimich@chromium.org>
 
+        Not reviewed, update pixel results for Chromium bots.
+
+        The rendering of these tests was changed by http://trac.webkit.org/changeset/56507.
+        Also updated Chromium's test_expectations.txt.
+
+        * platform/chromium-linux/fast/dynamic/flash-replacement-test-expected.checksum:
+        * platform/chromium-linux/fast/dynamic/flash-replacement-test-expected.png:
+        * platform/chromium-linux/plugins/embed-attributes-style-expected.checksum:
+        * platform/chromium-linux/plugins/embed-attributes-style-expected.png:
+        * platform/chromium/test_expectations.txt: Use BUG_WKXXXX instead of WKXXXX notation to appease validation on the bot.
+
+2010-03-25  Dmitry Titov  <dimich@chromium.org>
+
         Unreviewed, fixing Chromium test bots.
 
         [chromium] REGRESSION: Some LayoutTests fail after r56567
