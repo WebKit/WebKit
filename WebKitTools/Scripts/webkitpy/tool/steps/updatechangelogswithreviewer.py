@@ -67,5 +67,5 @@ class UpdateChangeLogsWithReviewer(AbstractStep):
             return
 
         os.chdir(self._tool.scm().checkout_root)
-        for changelog_path in self._tool.scm().modified_changelogs():
+        for changelog_path in self._tool.checkout().modified_changelogs():
             ChangeLog(changelog_path).set_reviewer(reviewer)

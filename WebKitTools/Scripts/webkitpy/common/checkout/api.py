@@ -28,8 +28,8 @@
 
 import subprocess
 
+from webkitpy.common.checkout.changelog import ChangeLog, is_path_to_changelog
 from webkitpy.common.checkout.commitinfo import CommitInfo
-from webkitpy.common.checkout.changelog import ChangeLog
 from webkitpy.common.checkout.scm import CommitMessage
 from webkitpy.common.system.executive import Executive, run_command, ScriptError
 from webkitpy.common.system.deprecated_logging import log
@@ -45,12 +45,12 @@ class Checkout(object):
     def commit_info_for_revision(self, svn_revision):
         return CommitInfo.commit_info_for_revision(self._scm, svn_revision)
 
+    def modified_changelogs(self):
+        return [path for path in self._scm.changed_files() if is_path_to_changelog(path)]
+
     # FIXME: Requires unit test
-    # FIXME: commit_message_for_this_commit and modified_changelogs don't
-    #        really belong here.  We should have a separate module for
-    #        handling ChangeLogs.
     def commit_message_for_this_commit(self):
-        changelog_paths = self._scm.modified_changelogs()
+        changelog_paths = self.modified_changelogs()
         if not len(changelog_paths):
             raise ScriptError(message="Found no modified ChangeLogs, cannot create a commit message.\n"
                               "All changes require a ChangeLog.  See:\n"
@@ -80,3 +80,16 @@ class Checkout(object):
             args.append('--force')
 
         run_command(args, input=curl_process.stdout)
+
+    def apply_reverse_diff(self, revision):
+        self._scm.apply_reverse_diff(revision)
+
+        # Fix any ChangeLogs if necessary.
+        changelog_paths = self.modified_changelogs()
+        if len(changelog_paths):
+            # FIXME: Move _scm.script_path here once we get rid of all the dependencies.
+            run_command([self._scm.script_path('resolve-ChangeLogs')] + changelog_paths)
+
+        conflicts = self._scm.conflicted_files()
+        if len(conflicts):
+            raise ScriptError(message="Failed to apply reverse diff for revision %s because of the following conflicts:\n%s" % (revision, "\n".join(conflicts)))

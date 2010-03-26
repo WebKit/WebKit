@@ -50,7 +50,7 @@ class AbstractStep(object):
 
     _well_known_keys = {
         "diff" : lambda self: self._tool.scm().create_patch(),
-        "changelogs" : lambda self: self._tool.scm().modified_changelogs(),
+        "changelogs" : lambda self: self._tool.checkout().modified_changelogs(),
     }
 
     def cached_lookup(self, state, key, promise=None):

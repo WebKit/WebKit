@@ -39,7 +39,7 @@ class ValidateReviewer(AbstractStep):
         # FIXME: We should figure out how to handle the current working
         #        directory issue more globally.
         os.chdir(self._tool.scm().checkout_root)
-        for changelog_path in self._tool.scm().modified_changelogs():
+        for changelog_path in self._tool.checkout().modified_changelogs():
             changelog_entry = ChangeLog(changelog_path).latest_entry()
             if changelog_entry.reviewer():
                 continue

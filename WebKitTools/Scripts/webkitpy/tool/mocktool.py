@@ -358,11 +358,6 @@ class MockSCM(Mock):
     def svn_revision_from_commit_text(self, commit_text):
         return "49824"
 
-    def modified_changelogs(self):
-        # Ideally we'd return something more interesting here.  The problem is
-        # that LandDiff will try to actually read the patch from disk!
-        return []
-
 
 class MockCheckout(object):
 
@@ -378,12 +373,19 @@ class MockCheckout(object):
             "reviewer": self._committer_list.committer_by_name("Darin Adler"),
         })
 
+    def modified_changelogs(self):
+        # Ideally we'd return something more interesting here.  The problem is
+        # that LandDiff will try to actually read the patch from disk!
+        return []
+
     def commit_message_for_this_commit(self):
         return Mock()
 
     def apply_patch(self, patch, force=False):
         pass
 
+    def apply_reverse_diff(self, revision):
+        pass
 
 class MockUser(object):
 

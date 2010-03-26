@@ -32,7 +32,6 @@
 import os
 import re
 
-from webkitpy.common.checkout.changelog import ChangeLog, is_path_to_changelog
 from webkitpy.common.system.executive import Executive, run_command, ScriptError
 from webkitpy.common.system.user import User
 from webkitpy.common.system.deprecated_logging import error, log
@@ -139,10 +138,6 @@ class SCM:
     def svn_revision_from_commit_text(self, commit_text):
         match = re.search(self.commit_success_regexp(), commit_text, re.MULTILINE)
         return match.group('svn_revision')
-
-    # ChangeLog-specific code doesn't really belong in scm.py, but this function is very useful.
-    def modified_changelogs(self):
-        return [path for path in self.changed_files() if is_path_to_changelog(path)]
 
     @staticmethod
     def in_working_directory(path):
@@ -466,15 +461,6 @@ class Git(SCM):
         git_commit = self.git_commit_from_svn_revision(revision)
         # I think this will always fail due to ChangeLogs.
         run_command(['git', 'revert', '--no-commit', git_commit], error_handler=Executive.ignore_error)
-
-        # Fix any ChangeLogs if necessary.
-        changelog_paths = self.modified_changelogs()
-        if len(changelog_paths):
-            run_command([self.script_path('resolve-ChangeLogs')] + changelog_paths)
-
-        conflicts = self.conflicted_files()
-        if len(conflicts):
-            raise ScriptError(message="Failed to apply reverse diff for revision %s because of the following conflicts:\n%s" % (revision, "\n".join(conflicts)))
 
     def revert_files(self, file_paths):
         run_command(['git', 'checkout', 'HEAD'] + file_paths)

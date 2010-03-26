@@ -36,7 +36,7 @@ class PrepareChangeLogForRevert(AbstractStep):
     def run(self, state):
         # First, discard the ChangeLog changes from the rollout.
         os.chdir(self._tool.scm().checkout_root)
-        changelog_paths = self._tool.scm().modified_changelogs()
+        changelog_paths = self._tool.checkout().modified_changelogs()
         self._tool.scm().revert_files(changelog_paths)
 
         # Second, make new ChangeLog entries for this rollout.
