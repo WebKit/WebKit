@@ -168,16 +168,17 @@ bool DatabaseTracker::canEstablishDatabase(ScriptExecutionContext* context, cons
     }
     // Drop all locks before calling out; we don't know what they'll do.
     context->databaseExceededQuota(name);
-    {
-        MutexLocker lockDatabase(m_databaseGuard);
-        m_proposedDatabases.remove(&details);
-    }
+
+    MutexLocker lockDatabase(m_databaseGuard);
+
+    m_proposedDatabases.remove(&details);
 
     // If the database will fit now, allow its creation.
-    if (requirement <= quotaForOrigin(origin))
+    if (requirement <= quotaForOriginNoLock(origin))
         return true;
 
     doneCreatingDatabase(origin, name);
+
     return false;
 }
 

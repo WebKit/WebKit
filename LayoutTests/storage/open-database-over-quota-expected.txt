@@ -1,0 +1,2 @@
+This tests that calling openDatabase with a size over 5MB doesn't assert on debug builds.
+PASS

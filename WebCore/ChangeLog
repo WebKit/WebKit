@@ -1,3 +1,15 @@
+2010-03-25  Eric Uhrhane  <ericu@chromium.org>
+
+        Reviewed by David Levin.
+
+        Missing lock in call to doneCreatingDatabase
+        https://bugs.webkit.org/show_bug.cgi?id=36473
+
+        Added new test storage/open-database-over-quota.html.
+
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::canEstablishDatabase):  Added missing lock call.
+
 2010-03-25  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Eric Seidel.
