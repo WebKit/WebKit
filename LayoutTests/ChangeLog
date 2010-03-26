@@ -1,3 +1,12 @@
+2010-03-25  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [chromium] REGRESSION: Some LayoutTests fail after r56567
+        https://bugs.webkit.org/show_bug.cgi?id=36630
+
+        * platform/chromium/test_expectations.txt:
+
 2010-03-25  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

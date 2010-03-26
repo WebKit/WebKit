@@ -236,7 +236,7 @@ void SelectionController::nodeWillBeRemoved(Node *node)
 void SelectionController::setIsDirectional(bool isDirectional)
 {
     Settings* settings = m_frame ? m_frame->settings() : 0;
-    m_isDirectional = !settings || (settings->editingBehavior() == EditingMacBehavior && isDirectional);
+    m_isDirectional = !settings || settings->editingBehavior() != EditingMacBehavior || isDirectional;
 }
 
 void SelectionController::willBeModified(EAlteration alter, EDirection direction)
