@@ -1,3 +1,16 @@
+2010-03-26  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Build JavaScriptCore as a static library.
+        https://bugs.webkit.org/show_bug.cgi?id=36590
+
+        This patch takes what was left of the unused JavaScriptCore.pro
+        and moved the compilation logic from JavaScriptCore.pri to
+        JavaScriptCore.pro.
+
+        * WebCore.pro:
+
 2010-03-26  Olivier Goffart  <ogoffart@trolltech.com>
 
         Reviewed by Simon Hausmann.

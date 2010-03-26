@@ -15,7 +15,9 @@ CONFIG(debug, debug|release) {
 
 isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../../..
 include($$PWD/../../../WebKit.pri)
+
 include($$PWD/../../JavaScriptCore.pri)
+addJavaScriptCoreLib(../..)
 
 INCLUDEPATH += $$PWD/../../API
 

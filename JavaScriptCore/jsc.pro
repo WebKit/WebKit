@@ -22,9 +22,7 @@ CONFIG(debug, debug|release) {
 }
 OBJECTS_DIR_WTR = $$OBJECTS_DIR$${QMAKE_DIR_SEP}
 include($$PWD/JavaScriptCore.pri)
-
-*-g++*:QMAKE_CXXFLAGS_RELEASE -= -O2
-*-g++*:QMAKE_CXXFLAGS_RELEASE += -O3
+addJavaScriptCoreLib(.)
 
 symbian {
     TARGET.CAPABILITY = ReadUserData WriteUserData NetworkServices

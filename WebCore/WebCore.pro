@@ -98,7 +98,6 @@ win32-msvc2005|win32-msvc2008:{
     QMAKE_CXXFLAGS_RELEASE -= -GL
 }
 
-win32-*: DEFINES += _HAS_TR1=0
 wince* {
 #    DEFINES += ENABLE_SVG=0 ENABLE_XPATH=0 ENABLE_XBL=0 \
 #               ENABLE_SVG_ANIMATION=0 ENABLE_SVG_USE=0  \
@@ -133,6 +132,7 @@ maemo5|symbian|embedded {
 }
 
 include($$PWD/../JavaScriptCore/JavaScriptCore.pri)
+addJavaScriptCoreLib(../JavaScriptCore)
 
 
 # HTML5 Media Support
@@ -2128,7 +2128,6 @@ SOURCES += \
     win32-* {
         LIBS += -lgdi32
         LIBS += -luser32
-        LIBS += -lwinmm
     }
     wince*: LIBS += -lmmtimer
 

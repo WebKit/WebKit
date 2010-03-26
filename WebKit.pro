@@ -4,6 +4,7 @@ CONFIG += ordered
 include(WebKit.pri)
 
 SUBDIRS += \
+        JavaScriptCore \
         WebCore \
         WebKitTools/QtLauncher
 
