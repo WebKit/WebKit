@@ -3626,6 +3626,33 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
     background-position-y: 72px;
 }
 
+.timeline-details {
+    -webkit-user-select: text;
+}
+
+.timeline-details-row-title {
+    font-weight: bold;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.timeline-details-row-data {
+    white-space: nowrap;
+}
+
+.timeline-details-title {
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.timeline-filter-status-bar-item .glyph {
+    -webkit-mask-image: url(Images/largerResourcesButtonGlyph.png);
+}
+
+.timeline-filter-status-bar-item.toggled-on .glyph {
+    background-color: rgb(66, 129, 235) !important;
+}
+
 /* Profiler Style */
 
 #profile-views {
@@ -3886,25 +3913,6 @@ ol.breakpoint-list {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
-}
-
-.timeline-details {
-    -webkit-user-select: text;
-}
-
-.timeline-details-row-title {
-    font-weight: bold;
-    text-align: right;
-    white-space: nowrap;
-}
-
-.timeline-details-row-data {
-    white-space: nowrap;
-}
-
-.timeline-details-title {
-    font-weight: bold;
-    white-space: nowrap;
 }
 
 .workers-list {

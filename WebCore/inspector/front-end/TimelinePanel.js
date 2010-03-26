@@ -83,10 +83,15 @@ WebInspector.TimelinePanel = function()
     this._timerRecords = {};
 
     this._calculator = new WebInspector.TimelineCalculator();
+    this._calculator._showShortEvents = false;
     this._boundariesAreValid = true;
     this._scrollTop = 0;
 
     this._popoverHelper = new WebInspector.PopoverHelper(this._containerElement, this._getPopoverAnchor.bind(this), this._showPopover.bind(this), true);
+
+    // Disable short events filter by default.
+    this.toggleFilterButton.toggled = true;
+    this._calculator._showShortEvents = this.toggleFilterButton.toggled;
 }
 
 WebInspector.TimelinePanel.prototype = {
@@ -99,7 +104,7 @@ WebInspector.TimelinePanel.prototype = {
 
     get statusBarItems()
     {
-        return [this.toggleTimelineButton.element, this.clearButton.element];
+        return [this.toggleFilterButton.element, this.toggleTimelineButton.element, this.clearButton.element];
     },
 
     get categories()
@@ -148,11 +153,14 @@ WebInspector.TimelinePanel.prototype = {
 
     _createStatusbarButtons: function()
     {
-        this.toggleTimelineButton = new WebInspector.StatusBarButton("", "record-profile-status-bar-item");
+        this.toggleTimelineButton = new WebInspector.StatusBarButton(WebInspector.UIString("Record"), "record-profile-status-bar-item");
         this.toggleTimelineButton.addEventListener("click", this._toggleTimelineButtonClicked.bind(this), false);
 
-        this.clearButton = new WebInspector.StatusBarButton("", "timeline-clear-status-bar-item");
+        this.clearButton = new WebInspector.StatusBarButton(WebInspector.UIString("Clear"), "timeline-clear-status-bar-item");
         this.clearButton.addEventListener("click", this._clearPanel.bind(this), false);
+
+        this.toggleFilterButton = new WebInspector.StatusBarButton(WebInspector.UIString("Show short records"), "timeline-filter-status-bar-item");
+        this.toggleFilterButton.addEventListener("click", this._toggleFilterButtonClicked.bind(this), false);
     },
 
     _toggleTimelineButtonClicked: function()
@@ -163,6 +171,13 @@ WebInspector.TimelinePanel.prototype = {
             this._clearPanel();
             InspectorBackend.startTimelineProfiler();
         }
+    },
+
+    _toggleFilterButtonClicked: function()
+    {
+        this.toggleFilterButton.toggled = !this.toggleFilterButton.toggled;
+        this._calculator._showShortEvents = this.toggleFilterButton.toggled;
+        this._scheduleRefresh(true);
     },
 
     timelineWasStarted: function()
@@ -218,22 +233,10 @@ WebInspector.TimelinePanel.prototype = {
         if (parentRecord === this._rootRecord)
             formattedRecord.collapsed = true;
 
-        // Glue subsequent records with same category and title together if they are closer than 100ms to each other.
-        var lastRecord = parentRecord._lastRecord;
-        if (lastRecord && (!record.children || !record.children.length) &&
-                lastRecord.category == formattedRecord.category &&
-                lastRecord.title == formattedRecord.title &&
-                lastRecord.details == formattedRecord.details &&
-                lastRecord.callerScriptName == formattedRecord.callerScriptName &&
-                lastRecord.callerScriptLine == formattedRecord.callerScriptLine &&
-                formattedRecord.startTime - lastRecord.endTime < 0.1) {
-            lastRecord.endTime = formattedRecord.endTime;
-            lastRecord.count++;
-        } else {
-            for (var i = 0; record.children && i < record.children.length; ++i)
-                this._innerAddRecordToTimeline(record.children[i], formattedRecord);
-            parentRecord._lastRecord = record.children && record.children.length ? null : formattedRecord;
-        }
+        var hasLongChildrenEvents = false;
+        for (var i = 0; record.children && i < record.children.length; ++i)
+            hasLongChildrenEvents |= this._innerAddRecordToTimeline(record.children[i], formattedRecord);
+        formattedRecord._hasLongChildrenEvents = hasLongChildrenEvents;
 
         if (connectedToOldRecord) {
             var record = formattedRecord;
@@ -241,7 +244,18 @@ WebInspector.TimelinePanel.prototype = {
                 record.parent._lastChildEndTime = record._lastChildEndTime;
                 record = record.parent;
             }
+            // We have attached a fresh event record received from Timeline Agent to some old event record.
+            // If that old parent record haven't had long children events and new child record has it
+            // then we want to propagate _hasLongChildrenEvents flag to parent, grand-parent etc.
+            if (record._isLongEvent()) {
+                record = formattedRecord;
+                while (record.parent && !record.parent._isLongEvent()) {
+                    record = record.parent;
+                    record._hasLongChildrenEvents = true;
+                }
+            }
         }
+        return hasLongChildrenEvents || formattedRecord._isLongEvent();
     },
 
     setSidebarWidth: function(width)
@@ -268,7 +282,6 @@ WebInspector.TimelinePanel.prototype = {
     {
         var rootRecord = {};
         rootRecord.children = [];
-        rootRecord._lastRecord = null;
         return rootRecord;
     },
 
@@ -359,13 +372,16 @@ WebInspector.TimelinePanel.prototype = {
 
     _addToRecordsWindow: function(record, recordsWindow)
     {
+        if (!this._calculator._showShortEvents && !record._isLongEvent())
+            return;
+
         recordsWindow.push(record);
+        var index = recordsWindow.length;
         if (!record.collapsed) {
-            var index = recordsWindow.length;
             for (var i = 0; i < record.children.length; ++i)
                 this._addToRecordsWindow(record.children[i], recordsWindow);
-            record.visibleChildrenCount = recordsWindow.length - index;
         }
+        record.visibleChildrenCount = recordsWindow.length - index;
     },
 
     _filterRecords: function()
@@ -651,7 +667,7 @@ WebInspector.TimelineRecordGraphRow.prototype = {
         this._barElement.style.left = barPosition.left + expandOffset + "px";
         this._barElement.style.width =  barPosition.width + "px";
 
-        if (record.children.length) {
+        if (record.visibleChildrenCount || record._hasLongChildrenEvents || (calculator._showShortEvents && record.children.length)) {
             this._expandElement.style.top = index * this._rowHeight + "px";
             this._expandElement.style.left = barPosition.left + "px";
             this._expandElement.style.width = Math.max(12, barPosition.width + 25) + "px";
@@ -737,6 +753,12 @@ WebInspector.TimelinePanel.FormattedRecord = function(record, parentRecord, reco
 }
 
 WebInspector.TimelinePanel.FormattedRecord.prototype = {
+    _isLongEvent: function()
+    {
+        const shortEventLength = 0.015;
+        return (this._lastChildEndTime - this.startTime) > shortEventLength;
+    },
+
     _createCell: function(content, styleName)
     {
         var text = document.createElement("label");
