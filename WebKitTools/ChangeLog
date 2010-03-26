@@ -1,3 +1,27 @@
+2010-03-26  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Implement pixel tests (image diff) properly on the Mac port.
+
+        This change introduces a new "ServerPocess" class that can be used
+        to manage processes that the run-webkit-tests harness forks off and
+        expects to stay up for longer than a single request/response session.
+        Both DumpRenderTree and ImageDiff use this style of communication,
+        although the current code forks off a new ImageDiff for each diff
+        (We need to restructure other parts of the code to be able to do this
+        safely in a multi-threaded environment).
+
+        Also, now that the ServerProcess abstraction exists, we can probably
+        clean up and simplify some of the thread management logic in
+        test_shell_thread as well.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34826
+
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        * Scripts/webkitpy/layout_tests/port/server_process.py:
+        * Scripts/webkitpy/layout_tests/test_types/image_diff.py:
+
 2010-03-26  Sergio Villar Senin  <svillar@igalia.com>
 
         Reviewed by Eric Seidel.

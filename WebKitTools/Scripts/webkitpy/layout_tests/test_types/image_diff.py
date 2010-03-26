@@ -90,6 +90,7 @@ class ImageDiff(test_type_base.TestTypeBase):
         Args:
           filename: the name of the test
           target: Debug or Release
+        Returns True if the files are different, False if they match
         """
         diff_filename = self.output_filename(filename,
           self.FILENAME_SUFFIX_COMPARE)
@@ -98,6 +99,7 @@ class ImageDiff(test_type_base.TestTypeBase):
         expected_filename = self.output_filename(filename,
           self.FILENAME_SUFFIX_EXPECTED + '.png')
 
+        result = True
         try:
             _compare_available = True
             result = port.diff_image(expected_filename, actual_filename,
@@ -165,18 +167,16 @@ class ImageDiff(test_type_base.TestTypeBase):
         self._copy_output_png(filename, test_args.png_path, '-actual.png')
         self._copy_output_png(filename, expected_png_file, '-expected.png')
 
-        # Even though we only use result in one codepath below but we
+        # Even though we only use the result in one codepath below but we
         # still need to call CreateImageDiff for other codepaths.
-        result = self._create_image_diff(port, filename, target)
+        images_are_different = self._create_image_diff(port, filename, target)
         if expected_hash == '':
             failures.append(test_failures.FailureMissingImageHash(self))
         elif test_args.hash != expected_hash:
-            # Hashes don't match, so see if the images match. If they do, then
-            # the hash is wrong.
-            if result == 0:
-                failures.append(test_failures.FailureImageHashIncorrect(self))
-            else:
+            if images_are_different:
                 failures.append(test_failures.FailureImageHashMismatch(self))
+            else:
+                failures.append(test_failures.FailureImageHashIncorrect(self))
 
         return failures
 
@@ -190,10 +190,7 @@ class ImageDiff(test_type_base.TestTypeBase):
           True if two files are different.
           False otherwise.
         """
-
         try:
-            result = port.diff_image(file1, file2)
+            return port.diff_image(file1, file2)
         except ValueError, e:
             return True
-
-        return result == 1

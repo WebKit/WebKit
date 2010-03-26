@@ -29,12 +29,12 @@
 
 """WebKit Mac implementation of the Port interface."""
 
-import fcntl
 import logging
 import os
 import pdb
 import platform
-import select
+import re
+import shutil
 import signal
 import subprocess
 import sys
@@ -42,6 +42,7 @@ import time
 import webbrowser
 
 import base
+import server_process
 
 import webkitpy
 import webkitpy.common.system.executive as executive
@@ -85,10 +86,73 @@ class MacPort(base.Port):
             _log.error("DumpRenderTree was not found at %s" % driver_path)
             return False
 
-        # This should also validate that the ImageDiff path is valid
-        # (once this script knows how to use ImageDiff).
-        # https://bugs.webkit.org/show_bug.cgi?id=34826
+        image_diff_path = self._path_to_image_diff()
+        if not os.path.exists(image_diff_path):
+            _log.error("ImageDiff was not found at %s" % image_diff_path)
+            return False
+
         return True
+
+    def diff_image(self, expected_filename, actual_filename,
+                   diff_filename=None):
+        """Return True if the two files are different. Also write a delta
+        image of the two images into |diff_filename| if it is not None."""
+
+        # Handle the case where the test didn't actually generate an image.
+        actual_length = os.stat(actual_filename).st_size
+        if actual_length == 0:
+            if diff_filename:
+                shutil.copyfile(actual_filename, expected_filename)
+            return True
+
+        sp = self._diff_image_request(expected_filename, actual_filename)
+        return self._diff_image_reply(sp, expected_filename, diff_filename)
+
+    def _diff_image_request(self, expected_filename, actual_filename):
+        # FIXME: either expose the tolerance argument as a command-line
+        # parameter, or make it go away and aways use exact matches.
+        cmd = [self._path_to_image_diff(), '--tolerance', '0.1']
+        sp = server_process.ServerProcess(self, 'ImageDiff', cmd)
+
+        actual_length = os.stat(actual_filename).st_size
+        actual_file = open(actual_filename).read()
+        expected_length = os.stat(expected_filename).st_size
+        expected_file = open(expected_filename).read()
+        sp.write('Content-Length: %d\n%sContent-Length: %d\n%s' %
+                 (actual_length, actual_file, expected_length, expected_file))
+
+        return sp
+
+    def _diff_image_reply(self, sp, expected_filename, diff_filename):
+        timeout = 2.0
+        deadline = time.time() + timeout
+        output = sp.read_line(timeout)
+        while not sp.timed_out and not sp.crashed and output:
+            if output.startswith('Content-Length'):
+                m = re.match('Content-Length: (\d+)', output)
+                content_length = int(m.group(1))
+                timeout = deadline - time.time()
+                output = sp.read(timeout, content_length)
+                break
+            elif output.startswith('diff'):
+                break
+            else:
+                timeout = deadline - time.time()
+                output = sp.read_line(deadline)
+
+        result = True
+        if output.startswith('diff'):
+            m = re.match('diff: (.+)% (passed|failed)', output)
+            if m.group(2) == 'passed':
+                result = False
+        elif output and diff_filename:
+            open(diff_filename, 'w').write(output)
+        elif sp.timed_out:
+            _log.error("ImageDiff timed out on %s" % expected_filename)
+        elif sp.crashed:
+            _log.error("ImageDiff crashed")
+        sp.stop()
+        return result
 
     def num_cores(self):
         return int(os.popen2("sysctl -n hw.ncpu")[1].read())
@@ -253,7 +317,7 @@ class MacPort(base.Port):
         return None
 
     def _path_to_image_diff(self):
-        return self._build_path('image_diff') # FIXME: This is wrong and should be "ImageDiff", but having the correct path causes other parts of the script to hang.
+        return self._build_path('ImageDiff')
 
     def _path_to_wdiff(self):
         return 'wdiff' # FIXME: This does not exist on a default Mac OS X Leopard install.
@@ -288,13 +352,7 @@ class MacDriver(base.Driver):
     def __init__(self, port, image_path, driver_options):
         self._port = port
         self._driver_options = driver_options
-        self._target = port._options.target
         self._image_path = image_path
-        self._stdout_fd = None
-        self._cmd = None
-        self._env = None
-        self._proc = None
-        self._read_buffer = ''
 
         cmd = []
         # Hook for injecting valgrind or other runtime instrumentation,
@@ -308,49 +366,28 @@ class MacDriver(base.Driver):
             # practice it shouldn't come up and the --help output warns
             # about it anyway.
             cmd += self._options.wrapper.split()
-        # FIXME: Using arch here masks any possible file-not-found errors from a non-existant driver executable.
+
         cmd += ['arch', '-i386', port._path_to_driver(), '-']
 
-        # FIXME: This is a hack around our lack of ImageDiff support for now.
-        if not self._port._options.no_pixel_tests:
-            _log.warn("This port does not yet support pixel tests.")
-            self._port._options.no_pixel_tests = True
-            #cmd.append('--pixel-tests')
-
-        #if driver_options:
-        #    cmd += driver_options
+        if image_path:
+            cmd.append('--pixel-tests')
         env = os.environ
         env['DYLD_FRAMEWORK_PATH'] = self._port._build_path()
-        self._cmd = cmd
-        self._env = env
-        self.restart()
+        self._sproc = server_process.ServerProcess(self._port,
+            "DumpRenderTree", cmd, env)
 
     def poll(self):
-        return self._proc.poll()
+        return self._sproc.poll()
 
     def restart(self):
-        self.stop()
-        # We need to pass close_fds=True to work around Python bug #2320
-        # (otherwise we can hang when we kill test_shell when we are running
-        # multiple threads). See http://bugs.python.org/issue2320 .
-        self._proc = subprocess.Popen(self._cmd, stdin=subprocess.PIPE,
-                                      stdout=subprocess.PIPE,
-                                      stderr=subprocess.PIPE,
-                                      env=self._env,
-                                      close_fds=True)
+        self._sproc.stop()
+        self._sproc.start()
+        return
 
     def returncode(self):
-        return self._proc.returncode
+        return self._proc.returncode()
 
     def run_test(self, uri, timeoutms, image_hash):
-        output = []
-        error = []
-        image = ''
-        crash = False
-        timeout = False
-        actual_uri = None
-        actual_image_hash = None
-
         if uri.startswith("file:///"):
             cmd = uri[7:]
         else:
@@ -360,130 +397,51 @@ class MacDriver(base.Driver):
             cmd += "'" + image_hash
         cmd += "\n"
 
-        self._proc.stdin.write(cmd)
-        self._stdout_fd = self._proc.stdout.fileno()
-        fl = fcntl.fcntl(self._stdout_fd, fcntl.F_GETFL)
-        fcntl.fcntl(self._stdout_fd, fcntl.F_SETFL, fl | os.O_NONBLOCK)
+        # pdb.set_trace()
+        sp = self._sproc
+        sp.write(cmd)
 
-        stop_time = time.time() + (int(timeoutms) / 1000.0)
-        resp = ''
-        (timeout, line) = self._read_line(timeout, stop_time)
-        resp += line
         have_seen_content_type = False
-        while not timeout and line.rstrip() != "#EOF":
-            # Make sure we haven't crashed.
-            if line == '' and self.poll() is not None:
-                # This is hex code 0xc000001d, which is used for abrupt
-                # termination. This happens if we hit ctrl+c from the prompt
-                # and we happen to be waiting on the test_shell.
-                # sdoyon: Not sure for which OS and in what circumstances the
-                # above code is valid. What works for me under Linux to detect
-                # ctrl+c is for the subprocess returncode to be negative
-                # SIGINT. And that agrees with the subprocess documentation.
-                if (-1073741510 == self.returncode() or
-                    - signal.SIGINT == self.returncode()):
-                    raise KeyboardInterrupt
-                crash = True
-                break
+        actual_image_hash = None
+        output = ''
+        image = ''
 
-            elif (line.startswith('Content-Type:') and not
-                  have_seen_content_type):
+        timeout = int(timeoutms) / 1000.0
+        deadline = time.time() + timeout
+        line = sp.read_line(timeout)
+        while not sp.timed_out and not sp.crashed and line.rstrip() != "#EOF":
+            if (line.startswith('Content-Type:') and not
+                have_seen_content_type):
                 have_seen_content_type = True
-                pass
             else:
-                output.append(line)
-
-            (timeout, line) = self._read_line(timeout, stop_time)
-            resp += line
+                output += line
+            line = sp.read_line(timeout)
+            timeout = deadline - time.time()
 
         # Now read a second block of text for the optional image data
-        image_length = 0
-        (timeout, line) = self._read_line(timeout, stop_time)
-        resp += line
+        remaining_length = -1
         HASH_HEADER = 'ActualHash: '
         LENGTH_HEADER = 'Content-Length: '
-        while not timeout and not crash and line.rstrip() != "#EOF":
-            if line == '' and self.poll() is not None:
-                if (-1073741510 == self.returncode() or
-                    - signal.SIGINT == self.returncode()):
-                    raise KeyboardInterrupt
-                crash = True
-                break
-            elif line.startswith(HASH_HEADER):
+        line = sp.read_line(timeout)
+        while not sp.timed_out and not sp.crashed and line.rstrip() != "#EOF":
+            if line.startswith(HASH_HEADER):
                 actual_image_hash = line[len(HASH_HEADER):].strip()
             elif line.startswith('Content-Type:'):
                 pass
             elif line.startswith(LENGTH_HEADER):
-                image_length = int(line[len(LENGTH_HEADER):])
-            elif image_length:
-                image += line
-
-            (timeout, line) = self._read_line(timeout, stop_time, image_length)
-            resp += line
-
-        if timeout:
-            self.restart()
+                timeout = deadline - time.time()
+                content_length = int(line[len(LENGTH_HEADER):])
+                image = sp.read(timeout, content_length)
+            timeout = deadline - time.time()
+            line = sp.read_line(timeout)
 
         if self._image_path and len(self._image_path):
             image_file = file(self._image_path, "wb")
             image_file.write(image)
             image_file.close()
-
-        return (crash, timeout, actual_image_hash,
-                ''.join(output), ''.join(error))
+        return (sp.crashed, sp.timed_out, actual_image_hash, output, sp.error)
 
     def stop(self):
-        if self._proc:
-            self._proc.stdin.close()
-            self._proc.stdout.close()
-            if self._proc.stderr:
-                self._proc.stderr.close()
-            if sys.platform not in ('win32', 'cygwin'):
-                # Closing stdin/stdout/stderr hangs sometimes on OS X,
-                # (see restart(), above), and anyway we don't want to hang
-                # the harness if test_shell is buggy, so we wait a couple
-                # seconds to give test_shell a chance to clean up, but then
-                # force-kill the process if necessary.
-                KILL_TIMEOUT = 3.0
-                timeout = time.time() + KILL_TIMEOUT
-                while self._proc.poll() is None and time.time() < timeout:
-                    time.sleep(0.1)
-                if self._proc.poll() is None:
-                    _log.warning('stopping test driver timed out, '
-                                 'killing it')
-                    null = open(os.devnull, "w")
-                    subprocess.Popen(["kill", "-9",
-                                     str(self._proc.pid)], stderr=null)
-                    null.close()
-
-    def _read_line(self, timeout, stop_time, image_length=0):
-        now = time.time()
-        read_fds = []
-
-        # first check to see if we have a line already read or if we've
-        # read the entire image
-        if image_length and len(self._read_buffer) >= image_length:
-            out = self._read_buffer[0:image_length]
-            self._read_buffer = self._read_buffer[image_length:]
-            return (timeout, out)
-
-        idx = self._read_buffer.find('\n')
-        if not image_length and idx != -1:
-            out = self._read_buffer[0:idx + 1]
-            self._read_buffer = self._read_buffer[idx + 1:]
-            return (timeout, out)
-
-        # If we've timed out, return just what we have, if anything
-        if timeout or now >= stop_time:
-            out = self._read_buffer
-            self._read_buffer = ''
-            return (True, out)
-
-        (read_fds, write_fds, err_fds) = select.select(
-            [self._stdout_fd], [], [], stop_time - now)
-        try:
-            if timeout or len(read_fds) == 1:
-                self._read_buffer += self._proc.stdout.read()
-        except IOError, e:
-            read = []
-        return self._read_line(timeout, stop_time)
+        if self._sproc:
+            self._sproc.stop()
+            self._sproc = None
