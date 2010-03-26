@@ -1,3 +1,25 @@
+2010-03-26  Adam Barth  <abarth@webkit.org>
+
+        Rubber stamped by Eric Seidel.
+
+        Move the threading code into its own module.  (It has nothing to do with IRC.)
+
+        * Scripts/webkitpy/common/net/irc/ircbot.py:
+        * Scripts/webkitpy/common/net/irc/ircproxy.py:
+        * Scripts/webkitpy/common/net/irc/messagepump.py: Removed.
+        * Scripts/webkitpy/common/net/irc/messagepump_unittest.py: Removed.
+        * Scripts/webkitpy/common/net/irc/threadedmessagequeue.py: Removed.
+        * Scripts/webkitpy/common/net/irc/threadedmessagequeue_unittest.py: Removed.
+        * Scripts/webkitpy/common/net/irc/unittests.py:
+        * Scripts/webkitpy/common/thread: Added.
+        * Scripts/webkitpy/common/thread/__init__.py: Added.
+        * Scripts/webkitpy/common/thread/messagepump.py: Copied from Scripts/webkitpy/common/net/irc/messagepump.py.
+        * Scripts/webkitpy/common/thread/messagepump_unittest.py: Copied from Scripts/webkitpy/common/net/irc/messagepump_unittest.py.
+        * Scripts/webkitpy/common/thread/threadedmessagequeue.py: Copied from Scripts/webkitpy/common/net/irc/threadedmessagequeue.py.
+        * Scripts/webkitpy/common/thread/threadedmessagequeue_unittest.py: Copied from Scripts/webkitpy/common/net/irc/threadedmessagequeue_unittest.py.
+        * Scripts/webkitpy/common/thread/unittests.py: Added.
+        * Scripts/webkitpy/common/unittests.py:
+
 2010-03-26  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

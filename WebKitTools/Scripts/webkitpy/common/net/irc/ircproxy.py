@@ -29,7 +29,7 @@
 import threading
 
 from webkitpy.common.net.irc.ircbot import IRCBot
-from webkitpy.common.net.irc.threadedmessagequeue import ThreadedMessageQueue
+from webkitpy.common.thread.threadedmessagequeue import ThreadedMessageQueue
 from webkitpy.common.system.deprecated_logging import log
 
 

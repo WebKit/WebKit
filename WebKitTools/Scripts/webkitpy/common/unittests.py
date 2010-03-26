@@ -36,3 +36,4 @@ from webkitpy.common.net.credentials_unittest import *
 from webkitpy.common.net.irc.unittests import *
 from webkitpy.common.net.networktransaction_unittest import *
 from webkitpy.common.system.unittests import *
+from webkitpy.common.thread.unittests import *

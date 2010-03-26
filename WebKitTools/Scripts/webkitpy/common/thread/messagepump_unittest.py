@@ -27,8 +27,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import unittest
-from webkitpy.common.net.irc.messagepump import MessagePump, MessagePumpDelegate
-from webkitpy.common.net.irc.threadedmessagequeue import ThreadedMessageQueue
+
+from webkitpy.common.thread.messagepump import MessagePump, MessagePumpDelegate
+from webkitpy.common.thread.threadedmessagequeue import ThreadedMessageQueue
 
 
 class TestDelegate(MessagePumpDelegate):

@@ -26,8 +26,9 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""Runs irc package unit tests."""
+"""Runs thread package unit tests."""
 
 # This module is imported by the module that imports all webkitpy unit tests.
 
-# No tests yet!  :(
+from webkitpy.common.thread.messagepump_unittest import *
+from webkitpy.common.thread.threadedmessagequeue_unittest import *
