@@ -1,3 +1,26 @@
+2010-03-24  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        In order to speed up multiple calls to CSSPrimitiveValue::cssText(),
+        this CL caches the String result.  When m_value is changed, the
+        cached string is cleared.  This gives a good speedup on benchmarks
+        which do a lot of CSS property gets, such as Peacekeeper.
+        The processing cost should be negligible, since the strings are 
+        refcounted.  The memory cost is an additional 4 bytes per
+        CSSPrimitiveValue, and the extended lifetime of the computed string
+        (potentially, the same as the lifetime of the CSSPrimitiveValue).
+
+        https://bugs.webkit.org/show_bug.cgi?id=36556
+
+        Covered by fast/css/large-number-round-trip.html, and more.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::cleanup):
+        (WebCore::CSSPrimitiveValue::cssText):
+        * css/CSSPrimitiveValue.h:
+
 2010-03-26  Qi Zhang  <qi.2.zhang@nokia.com>
 
         Reviewed by Laszlo Gombos.
