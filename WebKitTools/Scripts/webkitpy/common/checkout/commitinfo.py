@@ -30,41 +30,11 @@
 
 import StringIO
 
-from webkitpy.common.checkout.changelog import ChangeLog, is_path_to_changelog
 from webkitpy.common.config.committers import CommitterList
 from webkitpy.common.net.bugzilla import parse_bug_id
 
 
 class CommitInfo(object):
-    @classmethod
-    def _latest_entry_for_changelog_at_revision(cls, scm, changelog_path, revision):
-        changelog_contents = scm.contents_at_revision(changelog_path, revision)
-        return ChangeLog.parse_latest_entry_from_file(StringIO.StringIO(changelog_contents))
-
-    @classmethod
-    def _changelog_entries_for_revision(cls, scm, revision):
-        changed_files = scm.changed_files_for_revision(revision)
-        return [cls._latest_entry_for_changelog_at_revision(scm, path, revision) for path in changed_files if is_path_to_changelog(path)]
-
-    @classmethod
-    def commit_info_for_revision(cls, scm, revision):
-        committer_email = scm.committer_email_for_revision(revision)
-        changelog_entries = cls._changelog_entries_for_revision(scm, revision)
-        # Assume for now that the first entry has everything we need:
-        changelog_entry = changelog_entries[0]
-        changelog_data = {
-            "bug_id": parse_bug_id(changelog_entry.contents()),
-            "author_name": changelog_entry.author_name(),
-            "author_email": changelog_entry.author_email(),
-            "author": changelog_entry.author(),
-            "reviewer_text": changelog_entry.reviewer_text(),
-            "reviewer": changelog_entry.reviewer(),
-        }
-        # We could pass the changelog_entry instead of a dictionary here, but that makes
-        # mocking slightly more involved, and would make aggregating data from multiple
-        # entries more difficult to wire in if we need to do that in the future.
-        return cls(revision, committer_email, changelog_data)
-
     def __init__(self, revision, committer_email, changelog_data, committer_list=CommitterList()):
         self._revision = revision
         self._committer_email = committer_email

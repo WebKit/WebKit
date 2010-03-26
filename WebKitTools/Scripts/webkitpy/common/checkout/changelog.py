@@ -42,10 +42,6 @@ def view_source_url(revision_number):
     # Maybe eventually a webkit_config.py?
     return "http://trac.webkit.org/changeset/%s" % revision_number
 
-# Used by Checkout.modified_changelogs()
-def is_path_to_changelog(path):
-    return os.path.basename(path) == "ChangeLog"
-
 
 class ChangeLogEntry(object):
     # e.g. 2009-06-03  Eric Seidel  <eric@webkit.org>

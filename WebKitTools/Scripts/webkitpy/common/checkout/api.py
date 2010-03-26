@@ -26,9 +26,10 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import os
 import subprocess
 
-from webkitpy.common.checkout.changelog import ChangeLog, is_path_to_changelog
+from webkitpy.common.checkout.changelog import ChangeLog
 from webkitpy.common.checkout.commitinfo import CommitInfo
 from webkitpy.common.checkout.scm import CommitMessage
 from webkitpy.common.system.executive import Executive, run_command, ScriptError
@@ -42,11 +43,37 @@ class Checkout(object):
     def __init__(self, scm):
         self._scm = scm
 
-    def commit_info_for_revision(self, svn_revision):
-        return CommitInfo.commit_info_for_revision(self._scm, svn_revision)
+    def _is_path_to_changelog(self, path):
+        return os.path.basename(path) == "ChangeLog"
+
+    def _latest_entry_for_changelog_at_revision(self, changelog_path, revision):
+        changelog_contents = self._scm.contents_at_revision(changelog_path, revision)
+        return ChangeLog.parse_latest_entry_from_file(StringIO.StringIO(changelog_contents))
+
+    def changelog_entries_for_revision(self, revision):
+        changed_files = self._scm.changed_files_for_revision(revision)
+        return [self._latest_entry_for_changelog_at_revision(path, revision) for path in changed_files if self._is_path_to_changelog(path)]
+
+    def commit_info_for_revision(self, revision):
+        committer_email = self._scm.committer_email_for_revision(revision)
+        changelog_entries = self.changelog_entries_for_revision(revision)
+        # Assume for now that the first entry has everything we need:
+        changelog_entry = changelog_entries[0]
+        changelog_data = {
+            "bug_id": parse_bug_id(changelog_entry.contents()),
+            "author_name": changelog_entry.author_name(),
+            "author_email": changelog_entry.author_email(),
+            "author": changelog_entry.author(),
+            "reviewer_text": changelog_entry.reviewer_text(),
+            "reviewer": changelog_entry.reviewer(),
+        }
+        # We could pass the changelog_entry instead of a dictionary here, but that makes
+        # mocking slightly more involved, and would make aggregating data from multiple
+        # entries more difficult to wire in if we need to do that in the future.
+        return CommitInfo(revision, committer_email, changelog_data)
 
     def modified_changelogs(self):
-        return [path for path in self._scm.changed_files() if is_path_to_changelog(path)]
+        return [path for path in self._scm.changed_files() if self._is_path_to_changelog(path)]
 
     # FIXME: Requires unit test
     def commit_message_for_this_commit(self):

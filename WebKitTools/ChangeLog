@@ -1,3 +1,18 @@
+2010-03-26  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove some evil statics from CommitInfo
+        https://bugs.webkit.org/show_bug.cgi?id=36637
+
+        These methods should really be on checkout.  You can tell because they
+        know about ChangeLogs and take an SCM as an argument.  :)
+
+        * Scripts/webkitpy/common/checkout/api.py:
+        * Scripts/webkitpy/common/checkout/changelog.py:
+        * Scripts/webkitpy/common/checkout/commitinfo.py:
+        * Scripts/webkitpy/tool/commands/queries.py:
+
 2010-03-23  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         Reviewed by Simon Hausmann.

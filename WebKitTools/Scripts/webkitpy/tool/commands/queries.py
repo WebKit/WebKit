@@ -146,7 +146,7 @@ class WhatBroke(AbstractDeclarativeCommand):
             first_failure_message = " FIRST FAILURE, possibly a flaky test"
         self._print_builder_line(builder.name(), name_width, "FAIL (blame-list: %s%s)" % (suspect_revisions, first_failure_message))
         for revision in suspect_revisions:
-            commit_info = CommitInfo.commit_info_for_revision(self.tool.scm(), revision)
+            commit_info = self.tool.checkout().commit_info_for_revision(revision)
             self._print_blame_information_for_commit(commit_info)
 
     def execute(self, options, args, tool):
