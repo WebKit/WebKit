@@ -38,6 +38,7 @@ class Frame;
 class GraphicsContext;
 class RenderObject;
 class RenderView;
+class Settings;
 class VisiblePosition;
 
 class SelectionController : public Noncopyable {
@@ -78,6 +79,9 @@ public:
     bool modify(EAlteration, int verticalDistance, bool userTriggered = false);
     TextGranularity granularity() const { return m_granularity; }
 
+    void setStart(const VisiblePosition &, bool userTriggered = false);
+    void setEnd(const VisiblePosition &, bool userTriggered = false);
+    
     void setBase(const VisiblePosition&, bool userTriggered = false);
     void setBase(const Position&, EAffinity, bool userTriggered = false);
     void setExtent(const VisiblePosition&, bool userTriggered = false);
@@ -147,6 +151,8 @@ private:
     VisiblePosition positionForPlatform(bool isGetStart) const;
     VisiblePosition startForPlatform() const;
     VisiblePosition endForPlatform() const;
+
+    bool modify(EAlteration, EDirection, TextGranularity, bool userTriggered, Settings*);
 
     VisiblePosition modifyExtendingRight(TextGranularity);
     VisiblePosition modifyExtendingForward(TextGranularity);

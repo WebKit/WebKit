@@ -1,3 +1,15 @@
+2010-03-25  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        shift+home/end and cmd+shift+left/right don't extend the selection correctly
+        https://bugs.webkit.org/show_bug.cgi?id=36539
+
+        * WebCore.base.exp:
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::modify):
+        * editing/SelectionController.h:
+
 2010-03-26  Janne Koskinen  <janne.p.koskinen@digia.com>
 
         Reviewed by Laszlo Gombos.

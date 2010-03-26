@@ -49,20 +49,16 @@ function editingTest() {
 
     extendSelectionForwardByLineBoundaryCommand();
 
-    if (onMacPlatform) {
-        // FIXME: This encodes what TextEdit does. Currently WebKit does the wrong thing.
-        // The selection should go from the beginning of startTarget to the end of the line that endTarget is on.
+    if (onMacPlatform)
         assertSelectionAt(endTarget.nextSibling, 1, startTarget.firstChild, 0);
-    } else
+    else
         assertSelectionAt(startTarget.firstChild, 0, endTarget.nextSibling, 1);
 
     extendSelectionBackwardByLineBoundaryCommand();
 
-    if (onMacPlatform) {
-        // FIXME: This encodes what TextEdit does. Currently WebKit does the wrong thing.
-        // The selection should contain the both entire lines that endTarget and startTarget are on.
+    if (onMacPlatform)
         assertSelectionAt(endTarget.nextSibling, 1, startTarget.previousSibling, 0);
-    } else
+    else
         assertSelectionAt(startTarget.firstChild, 0, document.getElementById('test'), 4);
 }
 
