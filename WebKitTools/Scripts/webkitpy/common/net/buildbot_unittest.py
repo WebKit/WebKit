@@ -319,6 +319,45 @@ class BuildBotTest(unittest.TestCase):
         files = buildbot._parse_twisted_directory_listing(self._example_directory_listing)
         self.assertEqual(self._expected_files, files)
 
+    # Revision, is_green
+    # Ordered from newest (highest number) to oldest.
+    fake_builder1 = [
+        [2, False],
+        [1, True],
+    ]
+    fake_builder2 = [
+        [2, False],
+        [1, True],
+    ]
+    fake_builders = [
+        fake_builder1,
+        fake_builder2,
+    ]
+    def _build_from_fake(self, fake_builder, index):
+        if index >= len(fake_builder):
+            return None
+        fake_build = fake_builder[index]
+        build = Build(
+            builder=fake_builder,
+            build_number=index,
+            revision=fake_build[0],
+            is_green=fake_build[1],
+        )
+        def mock_previous_build():
+            return self._build_from_fake(fake_builder, index + 1)
+        build.previous_build = mock_previous_build
+        return build
+
+    def _fake_builds_at_index(self, index):
+        return [self._build_from_fake(builder, index) for builder in self.fake_builders]
+
+    def test_last_green_revision(self):
+        buildbot = BuildBot()
+        def mock_builds_from_builders(only_core_builders):
+            return self._fake_builds_at_index(0)
+        buildbot._latest_builds_from_builders = mock_builds_from_builders
+        self.assertEqual(buildbot.last_green_revision(), 1)
+
 
 if __name__ == '__main__':
     unittest.main()

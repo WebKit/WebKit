@@ -106,6 +106,14 @@ class PatchesToReview(AbstractDeclarativeCommand):
             print patch_id
 
 
+class LastGreenRevision(AbstractDeclarativeCommand):
+    name = "last-green-revision"
+    help_text = "Prints the last known good revision"
+
+    def execute(self, options, args, tool):
+        print self.tool.buildbot.last_green_revision()
+
+
 class WhatBroke(AbstractDeclarativeCommand):
     name = "what-broke"
     help_text = "Print failing buildbots (%s) and what revisions broke them" % BuildBot.default_host

@@ -28,6 +28,7 @@
 #
 # WebKit's Python module for interacting with WebKit's buildbot
 
+import operator
 import re
 import urllib
 import urllib2
@@ -370,3 +371,35 @@ class BuildBot(object):
                 failing_bots.append(builder)
                 revision_to_failing_bots[revision] = failing_bots
         return revision_to_failing_bots
+
+    # FIXME: This is a hack around lack of Builder.latest_build() support
+    def _latest_builds_from_builders(self, only_core_builders=True):
+        builder_statuses = self.core_builder_statuses() if only_core_builders else self.builder_statuses()
+        return [self.builder_with_name(status["name"]).build(status["build_number"]) for status in builder_statuses]
+
+    def _build_at_or_before_revision(self, build, revision):
+        while build:
+            if build.revision() <= revision:
+                return build
+            build = build.previous_build()
+
+    def last_green_revision(self, only_core_builders=True):
+        builds = self._latest_builds_from_builders(only_core_builders)
+        target_revision = builds[0].revision()
+        # An alternate way to do this would be to start at one revision and walk backwards
+        # checking builder.build_for_revision, however build_for_revision is very slow on first load.
+        while True:
+            # Make builds agree on revision
+            builds = [self._build_at_or_before_revision(build, target_revision) for build in builds]
+            if None in builds: # One of the builds failed to load from the server.
+                return None
+            min_revision = min(map(lambda build: build.revision(), builds))
+            if min_revision != target_revision:
+                target_revision = min_revision
+                continue # Builds don't all agree on revision, keep searching
+            # Check to make sure they're all green
+            all_are_green = reduce(operator.and_, map(lambda build: build.is_green(), builds))
+            if not all_are_green:
+                target_revision -= 1
+                continue
+            return min_revision
