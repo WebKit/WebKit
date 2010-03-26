@@ -381,6 +381,9 @@ class MockCheckout(object):
     def commit_message_for_this_commit(self):
         return Mock()
 
+    def apply_patch(self, patch, force=False):
+        pass
+
 
 class MockUser(object):
 

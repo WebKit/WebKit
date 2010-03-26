@@ -31,7 +31,6 @@
 
 import os
 import re
-import subprocess
 
 from webkitpy.common.checkout.changelog import ChangeLog, is_path_to_changelog
 from webkitpy.common.system.executive import Executive, run_command, ScriptError
@@ -119,19 +118,6 @@ class SCM:
         if not force:
             error("Working directory has local commits, pass --force-clean to continue.")
         self.discard_local_commits()
-
-    def apply_patch(self, patch, force=False):
-        # It's possible that the patch was not made from the root directory.
-        # We should detect and handle that case.
-        # FIXME: scm.py should not deal with fetching Attachment data.  Attachment should just have a .data() accessor.
-        curl_process = subprocess.Popen(['curl', '--location', '--silent', '--show-error', patch.url()], stdout=subprocess.PIPE)
-        args = [self.script_path('svn-apply')]
-        if patch.reviewer():
-            args += ['--reviewer', patch.reviewer().full_name]
-        if force:
-            args.append('--force')
-
-        run_command(args, input=curl_process.stdout)
 
     def run_status_and_extract_filenames(self, status_command, status_regexp):
         filenames = []

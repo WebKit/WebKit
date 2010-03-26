@@ -1,3 +1,18 @@
+2010-03-25  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Move apply_patch from scm to checkout
+        https://bugs.webkit.org/show_bug.cgi?id=36635
+
+        SCM shouldn't have any knowledge of WebKit scripts.
+
+        * Scripts/webkitpy/common/checkout/api.py:
+        * Scripts/webkitpy/common/checkout/scm.py:
+        * Scripts/webkitpy/common/checkout/scm_unittest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+        * Scripts/webkitpy/tool/steps/applypatch.py:
+
 2010-03-25  Eric Seidel  <eric@webkit.org>
 
         Unreviewed build fix to un-break webkit-patch land.

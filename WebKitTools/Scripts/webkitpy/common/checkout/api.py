@@ -26,10 +26,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import subprocess
+
 from webkitpy.common.checkout.commitinfo import CommitInfo
 from webkitpy.common.checkout.changelog import ChangeLog
 from webkitpy.common.checkout.scm import CommitMessage
-from webkitpy.common.system.executive import ScriptError
+from webkitpy.common.system.executive import Executive, run_command, ScriptError
 from webkitpy.common.system.deprecated_logging import log
 
 
@@ -64,3 +66,17 @@ class Checkout(object):
 
         # FIXME: We should sort and label the ChangeLog messages like commit-log-editor does.
         return CommitMessage("".join(changelog_messages).splitlines())
+
+    def apply_patch(self, patch, force=False):
+        # It's possible that the patch was not made from the root directory.
+        # We should detect and handle that case.
+        # FIXME: Use Executive instead of subprocess here.
+        curl_process = subprocess.Popen(['curl', '--location', '--silent', '--show-error', patch.url()], stdout=subprocess.PIPE)
+        # FIXME: Move _scm.script_path here once we get rid of all the dependencies.
+        args = [self._scm.script_path('svn-apply')]
+        if patch.reviewer():
+            args += ['--reviewer', patch.reviewer().full_name]
+        if force:
+            args.append('--force')
+
+        run_command(args, input=curl_process.stdout)

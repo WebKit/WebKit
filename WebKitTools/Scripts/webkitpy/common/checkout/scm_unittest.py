@@ -39,6 +39,7 @@ import unittest
 import urllib
 
 from datetime import date
+from webkitpy.common.checkout.api import Checkout
 from webkitpy.common.checkout.scm import detect_scm_system, SCM, SVN, CheckoutNeedsUpdate, commit_error_handler
 from webkitpy.common.net.bugzilla import Attachment # FIXME: This should not be needed
 from webkitpy.common.system.executive import Executive, run_command, ScriptError
@@ -254,14 +255,14 @@ literal 0
 HcmV?d00001
 
 """
-        self.scm.apply_patch(self._create_patch(git_binary_addition))
+        self.checkout.apply_patch(self._create_patch(git_binary_addition))
         added = read_from_path('fizzbuzz7.gif')
         self.assertEqual(512, len(added))
         self.assertTrue(added.startswith('GIF89a'))
         self.assertTrue('fizzbuzz7.gif' in self.scm.changed_files())
 
         # The file already exists.
-        self.assertRaises(ScriptError, self.scm.apply_patch, self._create_patch(git_binary_addition))
+        self.assertRaises(ScriptError, self.checkout.apply_patch, self._create_patch(git_binary_addition))
 
         git_binary_modification = """diff --git a/fizzbuzz7.gif b/fizzbuzz7.gif
 index 64a9532e7794fcd791f6f12157406d9060151690..323fae03f4606ea9991df8befbb2fca7
@@ -282,13 +283,13 @@ z{89I|WPyD!*M?gv?q`;L=2YFeXrJQNti4?}s!zFo=5CzeBxC69xA<zrjP<wUcCRh4
 ptUl-ZG<%a~#LwkIWv&q!KSCH7tQ8cJDiw+|GV?MN)RjY50RTb-xvT&H
 
 """
-        self.scm.apply_patch(self._create_patch(git_binary_modification))
+        self.checkout.apply_patch(self._create_patch(git_binary_modification))
         modified = read_from_path('fizzbuzz7.gif')
         self.assertEqual('foobar\n', modified)
         self.assertTrue('fizzbuzz7.gif' in self.scm.changed_files())
 
         # Applying the same modification should fail.
-        self.assertRaises(ScriptError, self.scm.apply_patch, self._create_patch(git_binary_modification))
+        self.assertRaises(ScriptError, self.checkout.apply_patch, self._create_patch(git_binary_modification))
 
         git_binary_deletion = """diff --git a/fizzbuzz7.gif b/fizzbuzz7.gif
 deleted file mode 100644
@@ -301,12 +302,12 @@ literal 7
 OcmYex&reD$;sO8*F9L)B
 
 """
-        self.scm.apply_patch(self._create_patch(git_binary_deletion))
+        self.checkout.apply_patch(self._create_patch(git_binary_deletion))
         self.assertFalse(os.path.exists('fizzbuzz7.gif'))
         self.assertFalse('fizzbuzz7.gif' in self.scm.changed_files())
 
         # Cannot delete again.
-        self.assertRaises(ScriptError, self.scm.apply_patch, self._create_patch(git_binary_deletion))
+        self.assertRaises(ScriptError, self.checkout.apply_patch, self._create_patch(git_binary_deletion))
 
 
 class SVNTest(SCMTest):
@@ -401,12 +402,12 @@ class SVNTest(SCMTest):
         run_command(['svn', 'commit', '--quiet', '--message', 'Intermediate commit'])
 
         self._setup_webkittools_scripts_symlink(self.scm)
-        self.scm.apply_patch(self._create_patch(one_line_overlap_patch))
+        self.checkout.apply_patch(self._create_patch(one_line_overlap_patch))
         expected_changelog_contents = "%s\n%s" % (self._set_date_and_reviewer(one_line_overlap_entry), changelog_contents)
         self.assertEquals(read_from_path('ChangeLog'), expected_changelog_contents)
 
         self.scm.revert_files(['ChangeLog'])
-        self.scm.apply_patch(self._create_patch(two_line_overlap_patch))
+        self.checkout.apply_patch(self._create_patch(two_line_overlap_patch))
         expected_changelog_contents = "%s\n%s" % (self._set_date_and_reviewer(two_line_overlap_entry), changelog_contents)
         self.assertEquals(read_from_path('ChangeLog'), expected_changelog_contents)
 
@@ -414,6 +415,8 @@ class SVNTest(SCMTest):
         SVNTestRepository.setup(self)
         os.chdir(self.svn_checkout_path)
         self.scm = detect_scm_system(self.svn_checkout_path)
+        # For historical reasons, we test some checkout code here too.
+        self.checkout = Checkout(self.scm)
 
     def tearDown(self):
         SVNTestRepository.tear_down(self)
@@ -462,7 +465,7 @@ Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
         expected_contents = base64.b64decode("Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==")
         self._setup_webkittools_scripts_symlink(self.scm)
         patch_file = self._create_patch(patch_contents)
-        self.scm.apply_patch(patch_file)
+        self.checkout.apply_patch(patch_file)
         actual_contents = read_from_path("test_file.swf")
         self.assertEqual(actual_contents, expected_contents)
 
@@ -470,13 +473,13 @@ Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
         scm = detect_scm_system(self.svn_checkout_path)
         patch = self._create_patch(run_command(['svn', 'diff', '-r4:3']))
         self._setup_webkittools_scripts_symlink(scm)
-        scm.apply_patch(patch)
+        Checkout(scm).apply_patch(patch)
 
     def test_apply_svn_patch_force(self):
         scm = detect_scm_system(self.svn_checkout_path)
         patch = self._create_patch(run_command(['svn', 'diff', '-r2:4']))
         self._setup_webkittools_scripts_symlink(scm)
-        self.assertRaises(ScriptError, scm.apply_patch, patch, force=True)
+        self.assertRaises(ScriptError, Checkout(scm).apply_patch, patch, force=True)
 
     def test_commit_logs(self):
         # Commits have dates and usernames in them, so we can't just direct compare.
@@ -544,6 +547,8 @@ class GitTest(SCMTest):
         self._setup_git_clone_of_svn_repository()
         os.chdir(self.git_checkout_path)
         self.scm = detect_scm_system(self.git_checkout_path)
+        # For historical reasons, we test some checkout code here too.
+        self.checkout = Checkout(self.scm)
 
     def tearDown(self):
         SVNTestRepository.tear_down(self)
@@ -601,13 +606,13 @@ class GitTest(SCMTest):
         scm = detect_scm_system(self.git_checkout_path)
         patch = self._create_patch(run_command(['git', 'diff', 'HEAD..HEAD^']))
         self._setup_webkittools_scripts_symlink(scm)
-        scm.apply_patch(patch)
+        Checkout(scm).apply_patch(patch)
 
     def test_apply_git_patch_force(self):
         scm = detect_scm_system(self.git_checkout_path)
         patch = self._create_patch(run_command(['git', 'diff', 'HEAD~2..HEAD']))
         self._setup_webkittools_scripts_symlink(scm)
-        self.assertRaises(ScriptError, scm.apply_patch, patch, force=True)
+        self.assertRaises(ScriptError, Checkout(scm).apply_patch, patch, force=True)
 
     def test_commit_text_parsing(self):
         self._shared_test_commit_with_message()
@@ -636,7 +641,7 @@ class GitTest(SCMTest):
         # Check if we can apply the created patch.
         run_command(['git', 'rm', '-f', test_file_name])
         self._setup_webkittools_scripts_symlink(scm)
-        self.scm.apply_patch(self._create_patch(patch))
+        self.checkout.apply_patch(self._create_patch(patch))
         self.assertEqual(file_contents, read_from_path(test_file_path))
 
         # Check if we can create a patch from a local commit.
