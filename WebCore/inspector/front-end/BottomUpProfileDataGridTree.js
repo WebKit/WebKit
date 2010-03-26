@@ -74,6 +74,7 @@ WebInspector.BottomUpProfileDataGridNode.prototype = {
             this._merge(child, true);
     },
 
+<<<<<<< HEAD
     _restore: function()
     {
         WebInspector.ProfileDataGridNode.prototype._restore();
@@ -82,6 +83,8 @@ WebInspector.BottomUpProfileDataGridNode.prototype = {
             this.hasChildren = this._willHaveChildren();
     },
 
+=======
+>>>>>>> 2009-10-20  Mikhail Naganov  <mnaganov@chromium.org>
     _merge: function(/*ProfileDataGridNode*/ child, /*Boolean*/ shouldAbsorb)
     {
         this.selfTime -= child.selfTime;
@@ -132,6 +135,7 @@ WebInspector.BottomUpProfileDataGridNode.prototype = {
         }
 
         delete this._remainingNodeInfos;
+<<<<<<< HEAD
     },
 
     _willHaveChildren: function(profileNode)
@@ -140,6 +144,8 @@ WebInspector.BottomUpProfileDataGridNode.prototype = {
         // In bottom up mode, our parents are our children since we display an inverted tree.
         // However, we don't want to show the very top parent since it is redundant.
         return !!(profileNode.parent && profileNode.parent.parent);
+=======
+>>>>>>> 2009-10-20  Mikhail Naganov  <mnaganov@chromium.org>
     }
 }
 
