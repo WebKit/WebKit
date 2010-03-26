@@ -95,10 +95,12 @@ static SandboxFlags parseSandboxAttribute(MappedAttribute* attribute)
             flags &= ~SandboxForms;
         else if (equalIgnoringCase(sandboxToken, "allow-scripts"))
             flags &= ~SandboxScripts;
+        else if (equalIgnoringCase(sandboxToken, "allow-top-navigation"))
+            flags &= ~SandboxTopNavigation;
 
         start = end + 1;
     }
-    
+
     return flags;
 }
 #endif

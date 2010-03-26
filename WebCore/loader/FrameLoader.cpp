@@ -264,7 +264,11 @@ Frame* FrameLoader::createWindow(FrameLoader* frameLoaderForFrameLookup, const F
             return frame;
         }
     }
-    
+
+    // Sandboxed frames cannot open new auxiliary browsing contexts.
+    if (isDocumentSandboxed(SandboxNavigation))
+        return 0;
+
     // FIXME: Setting the referrer should be the caller's responsibility.
     FrameLoadRequest requestWithReferrer = request;
     requestWithReferrer.resourceRequest().setHTTPReferrer(m_outgoingReferrer);
@@ -2254,15 +2258,15 @@ bool FrameLoader::shouldAllowNavigation(Frame* targetFrame) const
     if (m_frame == targetFrame)
         return true;
 
-    // A sandboxed frame can only navigate itself and its descendants.
-    if (isDocumentSandboxed(SandboxNavigation) && !targetFrame->tree()->isDescendantOf(m_frame))
-        return false;
-
     // Let a frame navigate the top-level window that contains it.  This is
     // important to allow because it lets a site "frame-bust" (escape from a
     // frame created by another web site).
-    if (targetFrame == m_frame->tree()->top())
+    if (!isDocumentSandboxed(SandboxTopNavigation) && targetFrame == m_frame->tree()->top())
         return true;
+
+    // A sandboxed frame can only navigate itself and its descendants.
+    if (isDocumentSandboxed(SandboxNavigation) && !targetFrame->tree()->isDescendantOf(m_frame))
+        return false;
 
     // Let a frame navigate its opener if the opener is a top-level window.
     if (!targetFrame->tree()->parent() && m_frame->loader()->opener() == targetFrame)

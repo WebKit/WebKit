@@ -69,12 +69,6 @@ Frame* BindingDOMWindow<Binding>::createWindow(State<Binding>* state,
     ASSERT(callingFrame);
     ASSERT(enteredFrame);
 
-    if (Document* callingDocument = callingFrame->document()) {
-        // Sandboxed iframes cannot open new auxiliary browsing contexts.
-        if (callingDocument->securityOrigin()->isSandboxed(SandboxNavigation))
-            return 0;
-    }
-
     ResourceRequest request;
 
     // For whatever reason, Firefox uses the entered frame to determine

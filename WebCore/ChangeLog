@@ -1,3 +1,39 @@
+2010-03-25  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Implement allow-top-navigation for HTML5 sandbox attribute
+        https://bugs.webkit.org/show_bug.cgi?id=36549
+
+        Tests: fast/frames/sandboxed-iframe-navigation-top-by-constant-name.html
+               fast/frames/sandboxed-iframe-navigation-top-by-constant-name2.html
+               fast/frames/sandboxed-iframe-navigation-top-by-name-denied.html
+               fast/frames/sandboxed-iframe-navigation-top-by-name.html
+               fast/frames/sandboxed-iframe-navigation-top-denied.html
+               fast/frames/sandboxed-iframe-navigation-top.html
+
+        * bindings/generic/BindingDOMWindow.h:
+        (WebCore::::createWindow):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::createWindow):
+          Moved the security check to FrameLoader because we need to allow
+          window.open navigation to succeed sometimes when the
+          SandboxNavigation bit is set.
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::parseSandboxAttribute):
+          Added allow-top-navigation to the parser.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::createWindow):
+          The SandboxNavigation check now occurs after we search for the frame
+          by name.  Notice that the named frame navigation case is caught by
+          the generic navigation access check.
+        (WebCore::FrameLoader::shouldAllowNavigation):
+          Update the navigation access check to allow navigating of top unless
+          it's forbidden.
+        * loader/FrameLoaderTypes.h:
+          Introduce a bit for SandboxedTopNavigation.
+        (WebCore::):
+
 2010-03-25  Dumitru Daniliuc  <dumi@chromium.org>
 
         Unreviewed, Chromium build fix.

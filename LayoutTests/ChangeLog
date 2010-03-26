@@ -1,3 +1,35 @@
+2010-03-25  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Implement allow-top-navigation for HTML5 sandbox attribute
+        https://bugs.webkit.org/show_bug.cgi?id=36549
+
+        Test various cases relating to navigating top level frames and the
+        allow-top-navigation directive.  This feature is tricky to test
+        exhaustively because there are a lot of permutations.
+
+        * fast/frames/resources/fail-and-notify-done.html: Added.
+        * fast/frames/resources/navigate-top-by-constant-name-to-pass.html: Added.
+        * fast/frames/resources/navigate-top-by-constant-name2-to-pass.html: Added.
+        * fast/frames/resources/navigate-top-by-name-to-fail.html: Added.
+        * fast/frames/resources/navigate-top-by-name-to-pass.html: Added.
+        * fast/frames/resources/navigate-top-to-fail.html: Added.
+        * fast/frames/resources/navigate-top-to-pass.html: Added.
+        * fast/frames/resources/pass-and-notify-done.html: Added.
+        * fast/frames/sandboxed-iframe-navigation-top-by-constant-name-expected.txt: Added.
+        * fast/frames/sandboxed-iframe-navigation-top-by-constant-name.html: Added.
+        * fast/frames/sandboxed-iframe-navigation-top-by-constant-name2-expected.txt: Added.
+        * fast/frames/sandboxed-iframe-navigation-top-by-constant-name2.html: Added.
+        * fast/frames/sandboxed-iframe-navigation-top-by-name-denied-expected.txt: Added.
+        * fast/frames/sandboxed-iframe-navigation-top-by-name-denied.html: Added.
+        * fast/frames/sandboxed-iframe-navigation-top-by-name-expected.txt: Added.
+        * fast/frames/sandboxed-iframe-navigation-top-by-name.html: Added.
+        * fast/frames/sandboxed-iframe-navigation-top-denied-expected.txt: Added.
+        * fast/frames/sandboxed-iframe-navigation-top-denied.html: Added.
+        * fast/frames/sandboxed-iframe-navigation-top-expected.txt: Added.
+        * fast/frames/sandboxed-iframe-navigation-top.html: Added.
+
 2010-03-25  Dumitru Daniliuc  <dumi@chromium.org>
 
         Unreviewed, Chromium build fix.
