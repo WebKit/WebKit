@@ -1,3 +1,25 @@
+2010-03-26  Diego Gonzalez  <diego.gonzalez@openbossa.org>
+
+        [Qt] User Agent Switcher on QtLauncher
+        https://bugs.webkit.org/show_bug.cgi?id=36451
+
+        Patch by Diego Gonzalez <diego.gonzalez@openbossa.org> on 2010-03-26
+        Reviewed by Simon Hausmann.
+
+        Make possible to change the QtLauncher user agent via
+        a predefined list.
+
+        * QtLauncher/QtLauncher.pro:
+        * QtLauncher/QtLauncher.qrc: Added.
+        * QtLauncher/main.cpp:
+        (LauncherWindow::showUserAgentDialog):
+        (LauncherWindow::createChrome):
+        * QtLauncher/useragentlist.txt: Added.
+        * QtLauncher/webpage.cpp:
+        (WebPage::userAgentForUrl):
+        * QtLauncher/webpage.h:
+        (WebPage::setUserAgent):
+
 2010-03-26  Victor Wang  <victorw@chromium.org>
 
         Reviewed by Adam Barth.

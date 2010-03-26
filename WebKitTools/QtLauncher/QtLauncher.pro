@@ -51,3 +51,6 @@ contains(QT_CONFIG, opengl) {
     QT += opengl
     DEFINES += QT_CONFIGURED_WITH_OPENGL
 }
+
+RESOURCES += \
+    QtLauncher.qrc

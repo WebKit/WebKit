@@ -103,4 +103,9 @@ void WebPage::openUrlInDefaultBrowser(const QUrl& url)
         QDesktopServices::openUrl(url);
 }
 
-
+QString WebPage::userAgentForUrl(const QUrl& url) const
+{
+    if (!m_userAgent.isEmpty())
+        return m_userAgent;
+    return QWebPage::userAgentForUrl(url);
+}

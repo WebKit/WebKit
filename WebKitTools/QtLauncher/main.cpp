@@ -151,6 +151,8 @@ protected slots:
     void toggleQGLWidgetViewport(bool enable);
 #endif
 
+    void showUserAgentDialog();
+
 public slots:
     void newWindow();
     void cloneWindow();
@@ -713,6 +715,39 @@ void LauncherWindow::toggleQGLWidgetViewport(bool enable)
 }
 #endif
 
+void LauncherWindow::showUserAgentDialog()
+{
+    QStringList items;
+    QFile file(":/useragentlist.txt");
+    if (file.open(QIODevice::ReadOnly)) {
+         while (!file.atEnd())
+            items << file.readLine().trimmed();
+        file.close();
+    }
+
+    QDialog* dialog = new QDialog(this);
+    dialog->setWindowTitle("Change User Agent");
+
+    QVBoxLayout* layout = new QVBoxLayout(dialog);
+    dialog->setLayout(layout);
+
+    QComboBox* combo = new QComboBox(dialog);
+    combo->setMaximumWidth(size().width() * 0.7);
+    combo->insertItems(0, items);
+    layout->addWidget(combo);
+
+    QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok
+            | QDialogButtonBox::Cancel, Qt::Horizontal, dialog);
+    connect(buttonBox, SIGNAL(accepted()), dialog, SLOT(accept()));
+    connect(buttonBox, SIGNAL(rejected()), dialog, SLOT(reject()));
+    layout->addWidget(buttonBox);
+
+    if (dialog->exec() && !combo->currentText().isEmpty())
+        page()->setUserAgent(combo->currentText());
+
+    delete dialog;
+}
+
 void LauncherWindow::newWindow()
 {
     LauncherWindow* mw = new LauncherWindow(this, false);
@@ -853,6 +888,9 @@ void LauncherWindow::createChrome()
     toggleQGLWidgetViewport->setEnabled(isGraphicsBased());
     toggleQGLWidgetViewport->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
 #endif
+
+    QAction* userAgentAction = toolsMenu->addAction("Change User Agent", this, SLOT(showUserAgentDialog()));
+    userAgentAction->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_U));
 
     graphicsViewMenu->addSeparator();
 
