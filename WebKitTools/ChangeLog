@@ -1,3 +1,22 @@
+2010-03-25  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.  Fix some copyright lines to remove extraneous comma and
+        python directive.
+
+        * Scripts/webkitpy/tool/bot/patchcollection.py:
+        * Scripts/webkitpy/tool/bot/patchcollection_unittest.py:
+        * Scripts/webkitpy/tool/bot/queueengine.py:
+        * Scripts/webkitpy/tool/bot/queueengine_unittest.py:
+        * Scripts/webkitpy/tool/commands/download.py:
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        * Scripts/webkitpy/tool/commands/queries.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/sheriffbot.py:
+        * Scripts/webkitpy/tool/comments.py:
+        * Scripts/webkitpy/tool/grammar.py:
+        * Scripts/webkitpy/tool/multicommandtool.py:
+        * Scripts/webkitpy/tool/multicommandtool_unittest.py:
+
 2010-03-25  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler, Alexey Proskuryakov.
