@@ -1,3 +1,10 @@
+2010-03-25  Mark Rowe  <mrowe@apple.com>
+
+        Remove a printf that was causing commit-log-editor to spew the name of the editor
+        to the terminal many times during a commit.
+
+        * Scripts/commit-log-editor:
+
 2010-03-25  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

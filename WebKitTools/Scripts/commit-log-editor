@@ -315,6 +315,5 @@ sub removeLongestCommonPrefixEndingInDoubleNewline(\%)
 sub isCommitLogEditor($)
 {
     my $editor = shift;
-    printf $editor . "\n";
     return $editor =~ m/commit-log-editor/;
 }
