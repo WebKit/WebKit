@@ -1,3 +1,16 @@
+2010-03-25  Drew Wilson  <atwilson@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        [v8] Error in getScriptExecutionContext() when worker context is terminating
+        https://bugs.webkit.org/show_bug.cgi?id=36565
+
+        Test: Existing worker tests suffice.
+
+        * src/WebWorkerClientImpl.cpp:
+        (WebKit::WebWorkerClientImpl::createWorkerContextProxy):
+        Changed to use WorkerScriptController::controllerForContext() instead of WorkerScriptExecutionProxy::retrieve().
+
 2010-03-25  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Fisher.

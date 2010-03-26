@@ -162,7 +162,8 @@ v8::Local<v8::Function> V8DOMWrapper::getConstructor(WrapperTypeInfo* type, DOMW
 #if ENABLE(WORKERS)
 v8::Local<v8::Function> V8DOMWrapper::getConstructor(WrapperTypeInfo* type, WorkerContext*)
 {
-    WorkerContextExecutionProxy* proxy = WorkerContextExecutionProxy::retrieve();
+    WorkerScriptController* controller = WorkerScriptController::controllerForContext();
+    WorkerContextExecutionProxy* proxy = controller ? controller->proxy() : 0;
     if (!proxy)
         return v8::Local<v8::Function>();
 

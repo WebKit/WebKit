@@ -1,3 +1,31 @@
+2010-03-25  Drew Wilson  <atwilson@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        [v8] Error in getScriptExecutionContext() when worker context is terminating.
+        https://bugs.webkit.org/show_bug.cgi?id=36565
+
+        Removed WorkerScriptExecutionProxy::retrieve() and added WorkerScriptController::controllerForContext(). This allows
+        callers to differentiate between "the current context is shutting down" vs "the current context is not a worker context".
+
+        Test: Existing worker tests suffice.
+
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::getConstructor):
+        Changed to use WorkerScriptController::controllerForContext() instead of WorkerScriptExecutionProxy::retrieve().
+        * bindings/v8/V8Utilities.cpp:
+        (WebCore::getScriptExecutionContext):
+        Changed to use WorkerScriptController::controllerForContext() instead of WorkerScriptExecutionProxy::retrieve().
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        Removed WorkerScriptExecutionProxy::retrieve().
+        * bindings/v8/WorkerContextExecutionProxy.h:
+        Removed WorkerScriptExecutionProxy::retrieve().
+        * bindings/v8/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::controllerForContext):
+        Added helper function to get the WorkerScriptController for the current context.
+        * bindings/v8/WorkerScriptController.h:
+        Added declaration for controllerForContext().
+
 2010-03-25  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

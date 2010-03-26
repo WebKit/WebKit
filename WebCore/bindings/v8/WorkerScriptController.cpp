@@ -41,6 +41,7 @@
 #include "DOMTimer.h"
 #include "V8DOMMap.h"
 #include "V8Proxy.h"
+#include "V8WorkerContext.h"
 #include "WorkerContext.h"
 #include "WorkerContextExecutionProxy.h"
 #include "WorkerObjectProxy.h"
@@ -96,6 +97,21 @@ void WorkerScriptController::forbidExecution()
 void WorkerScriptController::setException(ScriptValue exception)
 {
     throwError(*exception.v8Value());
+}
+
+WorkerScriptController* WorkerScriptController::controllerForContext()
+{
+    // Happens on frame destruction, check otherwise GetCurrent() will crash.
+    if (!v8::Context::InContext())
+        return 0;
+    v8::Handle<v8::Context> context = v8::Context::GetCurrent();
+    v8::Handle<v8::Object> global = context->Global();
+    global = V8DOMWrapper::lookupDOMWrapper(V8WorkerContext::GetTemplate(), global);
+    // Return 0 if the current executing context is not the worker context.
+    if (global.IsEmpty())
+        return 0;
+    WorkerContext* workerContext = V8WorkerContext::toNative(global);
+    return workerContext->script();
 }
 
 } // namespace WebCore

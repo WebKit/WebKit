@@ -45,6 +45,7 @@
 #include "Worker.h"
 #include "WorkerContext.h"
 #include "WorkerContextExecutionProxy.h"
+#include "WorkerScriptController.h"
 #include "WorkerMessagingProxy.h"
 #include <wtf/Threading.h>
 
@@ -94,8 +95,8 @@ WorkerContextProxy* WebWorkerClientImpl::createWorkerContextProxy(Worker* worker
         WebFrameImpl* webFrame = WebFrameImpl::fromFrame(document->frame());
         webWorker = webFrame->client()->createWorker(webFrame, proxy);
     } else {
-        WorkerContextExecutionProxy* currentContext =
-        WorkerContextExecutionProxy::retrieve();
+        WorkerScriptController* controller = WorkerScriptController::controllerForContext();
+        WorkerContextExecutionProxy* currentContext = controller ? controller->proxy() : 0;
         if (!currentContext) {
             ASSERT_NOT_REACHED();
             return 0;

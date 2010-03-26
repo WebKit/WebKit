@@ -74,9 +74,6 @@ namespace WebCore {
         // Returns WorkerContext object.
         WorkerContext* workerContext() { return m_workerContext; }
 
-        // Returns WorkerContextExecutionProxy object of the currently executing context. 0 will be returned if the current executing context is not the worker context.
-        static WorkerContextExecutionProxy* retrieve();
-
     private:
         void initV8IfNeeded();
         bool initContextIfNeeded();
