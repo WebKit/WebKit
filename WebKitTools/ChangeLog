@@ -1,5 +1,16 @@
 2010-03-25  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        REGRESSION: webkit-patch land can't land "rubber-stamped" patches
+        https://bugs.webkit.org/show_bug.cgi?id=36582
+
+        Allow a "-" in rubber stamped.
+
+        * Scripts/webkitpy/tool/steps/validatereviewer.py:
+
+2010-03-25  Adam Barth  <abarth@webkit.org>
+
         Unreviewed.  Fix some copyright lines to remove extraneous comma and
         python directive.
 

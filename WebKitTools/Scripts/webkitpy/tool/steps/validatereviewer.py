@@ -45,7 +45,7 @@ class ValidateReviewer(AbstractStep):
                 continue
             if re.search("unreviewed", changelog_entry.contents(), re.IGNORECASE):
                 continue
-            if re.search("rubber stamp", changelog_entry.contents(), re.IGNORECASE):
+            if re.search("rubber[ -]stamp", changelog_entry.contents(), re.IGNORECASE):
                 continue
             reviewer_text = changelog_entry.reviewer_text()
             if reviewer_text:
