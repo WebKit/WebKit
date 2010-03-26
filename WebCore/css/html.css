@@ -519,9 +519,10 @@ option {
 
 progress {
     -webkit-appearance: progress-bar;
-    padding: initial;
-    border: initial;
-    margin: 2px;
+    display: inline-block;
+    height: 1em;
+    width: 10em;
+    vertical-align: -0.2em;
 }
 
 progress::-webkit-progress-bar {

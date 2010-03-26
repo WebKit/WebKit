@@ -677,9 +677,9 @@ bool RenderThemeQt::paintProgressBar(RenderObject* o, const RenderObject::PaintI
 
     RenderProgress* renderProgress = toRenderProgress(o);
     option.rect = r;
-    option.maximum = 65536;
+    option.maximum = std::numeric_limits<int>::max();
     option.minimum = 0;
-    option.progress = renderProgress->position();
+    option.progress = (renderProgress->position() * std::numeric_limits<int>::max());
 
     const QPoint topLeft = r.topLeft();
     p.painter->translate(topLeft);

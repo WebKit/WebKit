@@ -1,3 +1,22 @@
+2010-03-26  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Antti Koivisto.
+
+        Fix the rendering of HTMLProgressElement
+        https://bugs.webkit.org/show_bug.cgi?id=36206
+
+        Update the rendering and css to conform to
+        http://www.whatwg.org/specs/web-apps/current-work/complete.html#the-progress-element-0.
+        Updated the tests and the expected results accordingly.
+
+        * css/html.css:
+        (progress):
+        * rendering/RenderProgress.cpp:
+        (WebCore::RenderProgress::RenderProgress):
+        (WebCore::RenderProgress::updateFromElement):
+        * rendering/RenderProgress.h:
+        (WebCore::RenderProgress::isProgress):
+
 2010-03-26  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed build fix.

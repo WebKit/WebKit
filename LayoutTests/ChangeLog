@@ -1,3 +1,16 @@
+2010-03-26  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Antti Koivisto.
+
+        Fix the rendering of HTMLProgressElement
+        https://bugs.webkit.org/show_bug.cgi?id=36206
+        Add dir=rtl test and update the expected results.
+
+        * fast/dom/HTMLProgressElement/progress-element.html:
+        * platform/qt/fast/dom/HTMLProgressElement/progress-element-expected.checksum:
+        * platform/qt/fast/dom/HTMLProgressElement/progress-element-expected.png:
+        * platform/qt/fast/dom/HTMLProgressElement/progress-element-expected.txt:
+
 2010-03-26  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; build fix.
