@@ -1,3 +1,27 @@
+2010-03-25  Charlie Reis  <creis@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        onbeforeunload not called at window close + frame or iframe focused
+        https://bugs.webkit.org/show_bug.cgi?id=27481
+
+        Adds a callShouldCloseOnWebView method to LayoutTestController,
+        to allow automated testing for bug 27481.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (callShouldCloseOnWebViewCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::callShouldCloseOnWebView):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::callShouldCloseOnWebView):
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::callShouldCloseOnWebView):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::callShouldCloseOnWebView):
+
 2010-03-25  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

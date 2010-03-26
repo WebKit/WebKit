@@ -1,3 +1,19 @@
+2010-03-25  Charlie Reis  <creis@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        onbeforeunload not called at window close + frame or iframe focused
+        https://bugs.webkit.org/show_bug.cgi?id=27481
+
+        Adds a layout test for bug 27481.  Requires calling shouldClose on
+        the WebView, which is done with a new method on LayoutTestController.
+
+        * fast/events/onbeforeunload-focused-iframe-expected.txt: Added.
+        * fast/events/onbeforeunload-focused-iframe.html: Added.
+        * fast/events/resources/onbeforeunload-focused-iframe-frame.html: Added.
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+
 2010-03-25  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

@@ -527,5 +527,11 @@ int LayoutTestController::numberOfPages(float width, float height)
     return qt_drt_numberOfPages(m_drt->webPage()->mainFrame(), width, height);
 }
 
+bool LayoutTestController::callShouldCloseOnWebView()
+{
+    // FIXME: Implement for testing fix for https://bugs.webkit.org/show_bug.cgi?id=27481
+    return false;
+}
+
 const unsigned LayoutTestController::maxViewWidth = 800;
 const unsigned LayoutTestController::maxViewHeight = 600;

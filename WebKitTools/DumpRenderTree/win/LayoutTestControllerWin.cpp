@@ -110,6 +110,21 @@ void LayoutTestController::clearBackForwardList()
     backForwardList->goToItem(item.get());
 }
 
+bool LayoutTestController::callShouldCloseOnWebView()
+{
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return false;
+
+    COMPtr<IWebViewPrivate> viewPrivate;
+    if (FAILED(webView->QueryInterface(&viewPrivate)))
+        return false;
+
+    BOOL result;
+    viewPrivate->shouldClose(&result);
+    return result;
+}
+
 JSStringRef LayoutTestController::copyDecodedHostName(JSStringRef name)
 {
     // FIXME: Implement!

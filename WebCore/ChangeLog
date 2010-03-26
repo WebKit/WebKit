@@ -1,3 +1,17 @@
+2010-03-25  Charlie Reis  <creis@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        onbeforeunload not called at window close + frame or iframe focused
+        https://bugs.webkit.org/show_bug.cgi?id=27481
+
+        Test: fast/events/onbeforeunload-focused-iframe.html
+
+        Replaces initial manual tests with a layout test.
+
+        * manual-tests/onbeforeunload-focused-iframe.html: Removed.
+        * manual-tests/resources/focused-iframe.html: Removed.
+
 2010-03-25  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by David Levin.

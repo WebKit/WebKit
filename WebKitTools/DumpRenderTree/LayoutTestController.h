@@ -47,6 +47,7 @@ public:
     void clearAllDatabases();
     void clearBackForwardList();
     void clearPersistentUserStyleSheet();
+    bool callShouldCloseOnWebView();
     JSStringRef copyDecodedHostName(JSStringRef name);
     JSStringRef copyEncodedHostName(JSStringRef name);
     void disableImageLoading();

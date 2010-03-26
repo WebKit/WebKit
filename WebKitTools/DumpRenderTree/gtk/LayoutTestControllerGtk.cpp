@@ -620,6 +620,12 @@ void LayoutTestController::removeAllVisitedLinks()
     // FIXME: Implement this.
 }
 
+bool LayoutTestController::callShouldCloseOnWebView()
+{
+    // FIXME: Implement for testing fix for https://bugs.webkit.org/show_bug.cgi?id=27481
+    return false;
+}
+
 void LayoutTestController::apiTestNewWindowDataLoadBaseURL(JSStringRef utf8Data, JSStringRef baseURL)
 {
 

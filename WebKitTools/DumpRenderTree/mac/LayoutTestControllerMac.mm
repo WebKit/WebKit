@@ -115,6 +115,11 @@ void LayoutTestController::addDisallowedURL(JSStringRef url)
     CFSetAddValue(disallowedURLs, [request URL]);
 }
 
+bool LayoutTestController::callShouldCloseOnWebView()
+{
+    return [[mainFrame webView] shouldClose];
+}
+
 void LayoutTestController::clearAllDatabases()
 {
     [[WebDatabaseManager sharedWebDatabaseManager] deleteAllDatabases];
