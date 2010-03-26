@@ -1,3 +1,16 @@
+2010-03-25  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
+        Update WebCoreSQLite3 to SQLite v3.6.12.
+
+        * WebCoreSQLite3/sqlite3.h:
+        * WebCoreSQLite3/sqlite3ext.h:
+        * libWebCoreSQLite3.a:
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+        * libWebKitSystemInterfaceTiger.a:
+
 2010-03-23  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.
