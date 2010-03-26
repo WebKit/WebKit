@@ -28,6 +28,7 @@
 
 from webkitpy.common.checkout.commitinfo import CommitInfo
 from webkitpy.common.checkout.changelog import ChangeLog
+from webkitpy.common.checkout.scm import CommitMessage
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.deprecated_logging import log
 
