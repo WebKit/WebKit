@@ -46,6 +46,7 @@
 namespace WebCore {
     class ContainerNode;
     class CSSRule;
+    class CSSRuleList;
     class CSSStyleDeclaration;
     class CSSStyleRule;
     class CSSStyleSheet;
@@ -136,8 +137,10 @@ namespace WebCore {
 
         bool pushDocumentToFrontend();
 
-        ScriptArray getMatchedCSSRules(Element* element, bool authorOnly);
-        ScriptObject getAttributeStyles(Element* element);
+        ScriptObject buildObjectForAttributeStyles(Element* element);
+        ScriptArray buildArrayForCSSRules(CSSRuleList*);
+        ScriptArray buildArrayForPseudoElements(Element* element, bool authorOnly);
+
         ScriptObject buildObjectForNode(Node* node, int depth, NodeToIdMap* nodesMap);
         ScriptArray buildArrayForElementAttributes(Element* element);
         ScriptArray buildArrayForContainerChildren(Node* container, int depth, NodeToIdMap* nodesMap);

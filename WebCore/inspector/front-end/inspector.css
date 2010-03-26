@@ -3883,6 +3883,9 @@ ol.breakpoint-list {
     border-bottom: 1px solid rgb(189, 189, 189);
     color: rgb(110, 110, 110);
     text-shadow: white 0 1px 0;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .timeline-details {

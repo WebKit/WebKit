@@ -1,3 +1,55 @@
+2010-03-25  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Implement CSSStyleSelector::pseudoStyleForElement and use it in the InspectorDOMAgent.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36509
+
+        This change provides pseudo elements information into the inspector styles sidebar pane.
+        Changes applied:
+        - CSSStyleSelector::pseudoStyleRulesForElement implemented. I changed the signature to accept
+          PseudoId instead of a String since it better reflected the needs;
+        - Accompanied elementStyle checks with m_collectRulesOnly checks;
+        - Removed pseudoStyleRulesForElement usage from DOMWindow::getMatchedCSSRules. It was anyways
+          returning 0, while I would need to convert String to PseudoId in order to leave the call in place;
+        - Needed to introduce AFTER_LAST_INTERNAL_PSEUDOID marker const in RenderStyleConstants' PseudoId enum
+        - InspectorDOMAgent is now iterating over all pseudo ids to get all styles (including internal ones).
+        - Brushed up front-end code so that proper overriding took place locally within pseudo id categories.
+
+        * English.lproj/localizedStrings.js:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::styleRulesForElement):
+        (WebCore::CSSStyleSelector::pseudoStyleRulesForElement):
+        (WebCore::CSSStyleSelector::SelectorChecker::checkSelector):
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector):
+        * css/CSSStyleSelector.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::getStyles):
+        (WebCore::InspectorDOMAgent::buildObjectForAttributeStyles):
+        (WebCore::InspectorDOMAgent::buildArrayForCSSRules):
+        (WebCore::InspectorDOMAgent::buildArrayForPseudoElements):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype.update.callback):
+        (WebInspector.StylesSidebarPane.prototype.update):
+        (WebInspector.StylesSidebarPane.prototype._update):
+        (WebInspector.StylesSidebarPane.prototype._refreshStyleRules):
+        (WebInspector.StylesSidebarPane.prototype._rebuildStyleRules.insertInheritedNodeSeparator):
+        (WebInspector.StylesSidebarPane.prototype._rebuildStyleRules):
+        (WebInspector.StylesSidebarPane.prototype._markUsedProperties):
+        (WebInspector.StylesSidebarPane.prototype._refreshSectionsForStyleRules):
+        (WebInspector.StylesSidebarPane.prototype._rebuildSectionsForStyleRules):
+        (WebInspector.StylesSidebarPane.prototype._changeColorFormat):
+        (WebInspector.StylesSidebarPane.prototype.addBlankSection):
+        (WebInspector.StylesSidebarPane.prototype.removeSection):
+        * inspector/front-end/inspector.css:
+        (.styles-sidebar-separator):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::getMatchedCSSRules):
+        * rendering/style/RenderStyleConstants.h:
+        (WebCore::):
+
 2010-03-25  Charlie Reis  <creis@chromium.org>
 
         Reviewed by Adam Barth.
