@@ -46,3 +46,8 @@ symbian {
     TARGET.UID3 = 0xA000E543
     TARGET.CAPABILITY = ReadUserData WriteUserData NetworkServices
 }
+
+contains(QT_CONFIG, opengl) {
+    QT += opengl
+    DEFINES += QT_CONFIGURED_WITH_OPENGL
+}

@@ -1,3 +1,18 @@
+2010-03-23  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        Reviewed by Simon Hausmann.
+
+        Add an option to QtLauncher to enable/disable a QGLWidget as Viewport
+        of the QGraphicsView when the launcher is running on graphicsview mode.
+
+        [Qt] QtLauncher needs an option to Enable/Disable a QGLWidget as Viewport
+        https://bugs.webkit.org/show_bug.cgi?id=36270
+
+        * QtLauncher/QtLauncher.pro:
+        * QtLauncher/main.cpp:
+        (LauncherWindow::toggleQGLWidgetViewport):
+        (LauncherWindow::createChrome):
+
 2010-03-26  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Shinichiro Hamaji.

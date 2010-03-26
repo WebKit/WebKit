@@ -32,6 +32,11 @@
 
 #include <QtGui>
 #include <QtNetwork/QNetworkRequest>
+
+#if defined(QT_CONFIGURED_WITH_OPENGL)
+#include <QtOpenGL/QGLWidget>
+#endif
+
 #if !defined(QT_NO_PRINTER)
 #include <QPrintPreviewDialog>
 #endif
@@ -86,6 +91,10 @@ static bool gUseFrameFlattening = true;
 static bool gUseFrameFlattening = false;
 #endif
 
+#if defined(QT_CONFIGURED_WITH_OPENGL)
+static bool gUseQGLWidgetViewport = false;
+#endif
+
 
 class LauncherWindow : public MainWindow {
     Q_OBJECT
@@ -129,7 +138,7 @@ protected slots:
     void toggleAcceleratedCompositing(bool toggle);
     void toggleTiledBackingStore(bool toggle);
     void toggleResizesToContents(bool toggle);
-    
+
     void toggleWebGL(bool toggle);
     void initializeView(bool useGraphicsView = false);
     void toggleSpatialNavigation(bool b);
@@ -137,6 +146,10 @@ protected slots:
     void showFPS(bool enable);
     void changeViewportUpdateMode(int mode);
     void toggleFrameFlattening(bool toggle);
+
+#if defined(QT_CONFIGURED_WITH_OPENGL)
+    void toggleQGLWidgetViewport(bool enable);
+#endif
 
 public slots:
     void newWindow();
@@ -489,7 +502,7 @@ void LauncherWindow::zoomOut()
     Q_ASSERT(i >= 0);
     if (i > 0)
         m_currentZoom = m_zoomLevels[i - 1];
-    
+
     applyZoom();
 }
 
@@ -687,6 +700,19 @@ void LauncherWindow::toggleFrameFlattening(bool toggle)
     page()->settings()->setAttribute(QWebSettings::FrameFlatteningEnabled, toggle);
 }
 
+#if defined(QT_CONFIGURED_WITH_OPENGL)
+void LauncherWindow::toggleQGLWidgetViewport(bool enable)
+{
+    if (!isGraphicsBased())
+        return;
+
+    gUseQGLWidgetViewport = enable;
+    WebViewGraphicsBased* view = static_cast<WebViewGraphicsBased*>(m_view);
+
+    view->setViewport(enable ? new QGLWidget() : 0);
+}
+#endif
+
 void LauncherWindow::newWindow()
 {
     LauncherWindow* mw = new LauncherWindow(this, false);
@@ -799,13 +825,13 @@ void LauncherWindow::createChrome()
     toggleAcceleratedCompositing->setChecked(settings->testAttribute(QWebSettings::AcceleratedCompositingEnabled));
     toggleAcceleratedCompositing->setEnabled(isGraphicsBased());
     toggleAcceleratedCompositing->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
-    
+
     QAction* toggleResizesToContents = graphicsViewMenu->addAction("Toggle Resizes To Contents Mode", this, SLOT(toggleResizesToContents(bool)));
     toggleResizesToContents->setCheckable(true);
     toggleResizesToContents->setChecked(false);
     toggleResizesToContents->setEnabled(false);
     toggleResizesToContents->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
-    
+
     QAction* toggleTiledBackingStore = graphicsViewMenu->addAction("Toggle Tiled Backing Store", this, SLOT(toggleTiledBackingStore(bool)));
     toggleTiledBackingStore->setCheckable(true);
     toggleTiledBackingStore->setChecked(false);
@@ -819,6 +845,14 @@ void LauncherWindow::createChrome()
     QAction* toggleFrameFlattening = toolsMenu->addAction("Toggle Frame Flattening", this, SLOT(toggleFrameFlattening(bool)));
     toggleFrameFlattening->setCheckable(true);
     toggleFrameFlattening->setChecked(settings->testAttribute(QWebSettings::FrameFlatteningEnabled));
+
+#if defined(QT_CONFIGURED_WITH_OPENGL)
+    QAction* toggleQGLWidgetViewport = graphicsViewMenu->addAction("Toggle use of QGLWidget Viewport", this, SLOT(toggleQGLWidgetViewport(bool)));
+    toggleQGLWidgetViewport->setCheckable(true);
+    toggleQGLWidgetViewport->setChecked(gUseQGLWidgetViewport);
+    toggleQGLWidgetViewport->setEnabled(isGraphicsBased());
+    toggleQGLWidgetViewport->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
+#endif
 
     graphicsViewMenu->addSeparator();
 
