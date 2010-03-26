@@ -805,3 +805,6 @@ fast/text/international/plane2.html
 
 # Misses setMediaType() implementation
 fast/media/print-restores-previous-mediatype.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=35973
+fast/multicol/hit-test-above-or-below.html

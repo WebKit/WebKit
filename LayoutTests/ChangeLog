@@ -1,3 +1,10 @@
+2010-03-26  Brian Weinstein  <bweinstein@apple.com>
+
+        Add fast/multicol/hit-test-above-or-below.html, this is failing in the same way as Qt, and is being
+        tracked by the same bug (https://bugs.webkit.org/show_bug.cgi?id=35973).
+
+        * platform/win/Skipped:
+
 2010-03-26  David Levin  <levin@chromium.org>
 
         Rubber-stamped by Nate Chapin.
