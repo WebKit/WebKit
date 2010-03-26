@@ -1,3 +1,13 @@
+2010-03-26  Olivier Goffart  <ogoffart@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Compile with QT_USE_FAST_OPERATOR_PLUS
+
+        * WebCoreSupport/InspectorClientQt.cpp:
+        (WebCore::InspectorClientQt::populateSetting):
+        (WebCore::InspectorClientQt::storeSetting):
+
 2010-03-26  David Boddie  <dboddie@trolltech.com>
 
         Reviewed by Simon Hausmann.
