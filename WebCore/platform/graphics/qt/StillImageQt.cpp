@@ -57,8 +57,43 @@ void StillImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
 
     ctxt->save();
     ctxt->setCompositeOperation(op);
+
+    // To support width or height is negative
+    float sx = src.x();
+    float sy = src.y();
+    float sw = src.width();
+    float sh = src.height();
+
+    if (sw < 0) {
+        sx = sx + sw;
+        sw = -sw;
+    }
+
+    if (sh < 0) {
+        sy = sy + sh;
+        sh = -sh;
+    }
+
+    float dx = dst.x();
+    float dy = dst.y();
+    float dw = dst.width();
+    float dh = dst.height();
+
+    if (dw < 0) {
+        dx = dx + dw;
+        dw = -dw;
+    }
+
+    if (dh < 0) {
+        dy = dy + dh;
+        dh = -dh;
+    }
+
+    FloatRect srcM(sx, sy, sw, sh);
+    FloatRect dstM(dx, dy, dw, dh);
     QPainter* painter(ctxt->platformContext());
-    painter->drawPixmap(dst, m_pixmap, src);
+
+    painter->drawPixmap(dstM, m_pixmap, srcM);
     ctxt->restore();
 }
 

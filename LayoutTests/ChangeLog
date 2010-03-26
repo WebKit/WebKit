@@ -1,3 +1,14 @@
+2010-03-26  Qi Zhang  <qi.2.zhang@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] fast/canvas/drawImage-with-negative-source-destination.html failed
+        https://bugs.webkit.org/show_bug.cgi?id=35005
+
+        Enable fast/canvas/drawImage-with-negative-source-destination.html
+
+        * platform/qt/Skipped:
+
 2010-03-26  Mads Ager  <ager@chromium.org>
 
         Reviewed by Jeremy Orlow.
