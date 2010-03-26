@@ -129,7 +129,7 @@ FloatRect RenderSVGResourceClipper::resourceBoundingBox(const FloatRect& objectB
             continue;
         SVGStyledTransformableElement* styled = static_cast<SVGStyledTransformableElement*>(childNode);
         RenderStyle* style = styled->renderer() ? styled->renderer()->style() : 0;
-        if (!style || style->display() == NONE || styled->toClipPath().isEmpty())
+        if (!style || style->display() == NONE)
             continue;
         clipRect.unite(styled->renderer()->objectBoundingBox());
     }

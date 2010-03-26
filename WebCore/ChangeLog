@@ -1,3 +1,21 @@
+2010-03-26 Beth Dakin <bdakin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Partial fix for https://bugs.webkit.org/show_bug.cgi?id=36564 
+        Performance regression for setting content of <text> in SVG
+        -and corresponding-
+        <rdar://problem/7693963>
+
+        toClipPath() is extremely inefficient, so this patch removes the 
+        call to it from RenderSVGResourceClipper::resourceBoundingBox() 
+        which is very hot code in SVG with clip-paths. It is sufficient to 
+        call unite with the objectBoundingBox(), which will return early if 
+        objectBoundingBox() is empty.
+
+        * rendering/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::resourceBoundingBox):
+
 2010-03-26  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Dave Hyatt.
