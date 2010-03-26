@@ -1296,6 +1296,7 @@ void PluginView::keepAlive(NPP instance)
 
     view->keepAlive();
 }
+#endif
 
 NPError PluginView::getValueStatic(NPNVariable variable, void* value)
 {
@@ -1320,6 +1321,7 @@ NPError PluginView::getValue(NPNVariable variable, void* value)
         return result;
 
     switch (variable) {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     case NPNVWindowNPObject: {
         if (m_isJavaScriptPaused)
             return NPERR_GENERIC_ERROR;
@@ -1354,6 +1356,7 @@ NPError PluginView::getValue(NPNVariable variable, void* value)
 
         return NPERR_NO_ERROR;
     }
+#endif
 
     case NPNVprivateModeBool: {
         Page* page = m_parentFrame->page();
@@ -1367,7 +1370,6 @@ NPError PluginView::getValue(NPNVariable variable, void* value)
         return NPERR_GENERIC_ERROR;
     }
 }
-#endif
 
 void PluginView::privateBrowsingStateChanged(bool privateBrowsingEnabled)
 {
