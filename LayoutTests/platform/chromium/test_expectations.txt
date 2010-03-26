@@ -2840,5 +2840,9 @@ BUG38918 : fast/dom/error-to-string-stack-overflow.html = TEXT
 BUG_JAPHET WIN : http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch.html = TEXT
 
 // Due to the differences in iniialization checks in KURL and googleurl.
-// Note: this test was also marked as flaky on WIN RELESE above, BUG31342.
+// Note: this test was also marked as flaky on WIN RELEASE above, BUG31342.
 BUG_39423 : security/block-test.html = TIMEOUT
+
+BUGWK36666 : storage/open-database-over-quota.html = TEXT
+BUG39485 : fast/events/onbeforeunload-focused-iframe.html = TIMEOUT
+
