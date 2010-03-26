@@ -1,5 +1,13 @@
 2010-03-25  Dmitry Titov  <dimich@chromium.org>
 
+        Unreviewed, removing stale expectation file for Chromium.
+
+        The test was updated by http://trac.webkit.org/changeset/56506 to a script test.
+
+        * platform/chromium-win/editing/inserting/6633727-expected.txt: Removed.
+
+2010-03-25  Dmitry Titov  <dimich@chromium.org>
+
         Unreviewed, temporarily disabling test on Chromium bots.
 
         http://crbug.com/39423
