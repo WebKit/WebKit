@@ -262,8 +262,8 @@ InspectorResource::Type InspectorResource::cachedResourceType() const
 
 InspectorResource::Type InspectorResource::type() const
 {
-    if (!m_xmlHttpResponseText.isNull())
-        return XHR;
+    if (!m_overrideContent.isNull())
+        return m_overrideContentType;
 
     if (m_requestURL == m_loader->requestURL()) {
         InspectorResource::Type resourceType = cachedResourceType();
@@ -279,16 +279,17 @@ InspectorResource::Type InspectorResource::type() const
     return cachedResourceType();
 }
 
-void InspectorResource::setXMLHttpResponseText(const ScriptString& data)
+void InspectorResource::setOverrideContent(const ScriptString& data, Type type)
 {
-    m_xmlHttpResponseText = data;
+    m_overrideContent = data;
+    m_overrideContentType = type;
     m_changes.set(TypeChange);
 }
 
 String InspectorResource::sourceString() const
 {
-    if (!m_xmlHttpResponseText.isNull())
-        return String(m_xmlHttpResponseText);
+    if (!m_overrideContent.isNull())
+        return String(m_overrideContent);
 
     String textEncodingName;
     RefPtr<SharedBuffer> buffer = resourceData(&textEncodingName);

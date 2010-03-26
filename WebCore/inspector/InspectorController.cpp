@@ -965,7 +965,7 @@ void InspectorController::resourceRetrievedByXMLHttpRequest(unsigned long identi
     if (!resource)
         return;
 
-    resource->setXMLHttpResponseText(sourceString);
+    resource->setOverrideContent(sourceString, InspectorResource::XHR);
 
     if (m_frontend)
         resource->updateScriptObject(m_frontend.get());
@@ -980,9 +980,7 @@ void InspectorController::scriptImported(unsigned long identifier, const String&
     if (!resource)
         return;
     
-    // FIXME: imported script and XHR response are currently viewed as the same
-    // thing by the Inspector. They should be made into distinct types.
-    resource->setXMLHttpResponseText(ScriptString(sourceString));
+    resource->setOverrideContent(ScriptString(sourceString), InspectorResource::Script);
 
     if (m_frontend)
         resource->updateScriptObject(m_frontend.get());

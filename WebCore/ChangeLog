@@ -1,3 +1,25 @@
+2010-03-26  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+
+        Send worker resource content to inspector to enable display of web
+        workers in inspector's resource tab.
+        https://bugs.webkit.org/show_bug.cgi?id=36658
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::resourceRetrievedByXMLHttpRequest):
+        (WebCore::InspectorController::scriptImported):
+        * inspector/InspectorResource.cpp:
+        (WebCore::InspectorResource::type):
+        (WebCore::InspectorResource::setOverrideContent):
+        (WebCore::InspectorResource::sourceString):
+        * inspector/InspectorResource.h:
+        * workers/DefaultSharedWorkerRepository.cpp:
+        (WebCore::SharedWorkerScriptLoader::notifyFinished):
+        * workers/Worker.cpp:
+        (WebCore::Worker::notifyFinished):
+
 2010-03-26  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Antti Koivisto.

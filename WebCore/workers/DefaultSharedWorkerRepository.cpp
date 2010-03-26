@@ -37,6 +37,7 @@
 #include "ActiveDOMObject.h"
 #include "Document.h"
 #include "GenericWorkerTask.h"
+#include "InspectorController.h"
 #include "MessageEvent.h"
 #include "MessagePort.h"
 #include "NotImplemented.h"
@@ -289,9 +290,13 @@ void SharedWorkerScriptLoader::notifyFinished()
     // Hand off the just-loaded code to the repository to start up the worker thread.
     if (m_scriptLoader->failed())
         m_worker->dispatchEvent(Event::create(eventNames().errorEvent, false, true));
-    else
+    else {
+#if ENABLE(INSPECTOR)
+        if (InspectorController* inspector = m_worker->scriptExecutionContext()->inspectorController())
+            inspector->scriptImported(m_scriptLoader->identifier(), m_scriptLoader->script());
+#endif
         DefaultSharedWorkerRepository::instance().workerScriptLoaded(*m_proxy, m_worker->scriptExecutionContext()->userAgent(m_scriptLoader->url()), m_scriptLoader->script(), m_port.release());
-
+    }
     m_worker->unsetPendingActivity(m_worker.get());
     this->deref(); // This frees this object - must be the last action in this function.
 }
