@@ -1,3 +1,16 @@
+2010-03-26  Shu Chang  <chang.shu@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Prevent referring d->m_job in the future because calling abort()
+        deletes the instance itself.
+        https://bugs.webkit.org/show_bug.cgi?id=36618
+
+        Test: http/tests/appcache/fallback.html
+
+        * platform/network/qt/ResourceHandleQt.cpp:
+        (WebCore::ResourceHandle::cancel):
+
 2010-03-26  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; build fix.

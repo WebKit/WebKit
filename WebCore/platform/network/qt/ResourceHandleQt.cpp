@@ -144,8 +144,10 @@ bool ResourceHandle::start(Frame* frame)
 
 void ResourceHandle::cancel()
 {
-    if (d->m_job)
+    if (d->m_job) {
         d->m_job->abort();
+        d->m_job = 0;
+    }
 }
 
 bool ResourceHandle::loadsBlocked()
