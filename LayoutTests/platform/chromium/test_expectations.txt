@@ -2791,9 +2791,6 @@ BUG_JIANLI MAC : fast/forms/select-style.html = IMAGE PASS
 BUG38375 : plugins/round-trip-npobject.html = TEXT
 BUG38376 WIN : editing/deleting/5390681-2.html = IMAGE+TEXT
 
-// WebKit roll 55940 -> 56004
-BUG38228 : fast/events/drag-and-drop.html = TEXT
-
 // HTMLProgressElement related tests deferred due to r55980.
 BUG38227 DEFER : fast/dom/HTMLProgressElement/progress-element.html = MISSING
 BUG38227 DEFER : fast/dom/HTMLProgressElement/set-progress-properties.html = MISSING

@@ -1,3 +1,18 @@
+2010-03-25  Tony Chang  <tony@chromium.org>
+
+        Reviewed by David Levin.
+
+        [chromium] correctly handle move drag operations
+        https://bugs.webkit.org/show_bug.cgi?id=36484
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::dragTargetDragEnter):
+        (WebKit::WebViewImpl::dragTargetDragOver):
+        (WebKit::WebViewImpl::dragTargetDragEnterOrOver): Combine common code into a helper method
+            and properly mask against the drag effect.
+        (WebKit::WebViewImpl::createUniqueIdentifierForRequest):
+        * src/WebViewImpl.h:
+
 2010-03-25  Drew Wilson  <atwilson@chromium.org>
 
         Reviewed by Nate Chapin.
