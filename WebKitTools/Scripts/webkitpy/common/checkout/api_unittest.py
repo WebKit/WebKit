@@ -108,9 +108,8 @@ class CommitMessageForThisCommitTest(unittest.TestCase):
     # FIXME: This should not need to touch the file system, however
     # ChangeLog is difficult to mock at current.
     def test_commit_message_for_this_commit(self):
-        mock_scm = Mock()
-        mock_scm.modified_changelogs = lambda: ["ChangeLog1", "ChangeLog2"]
-        checkout = Checkout(mock_scm)
+        checkout = Checkout(None)
+        checkout.modified_changelogs = lambda: ["ChangeLog1", "ChangeLog2"]
         output = OutputCapture()
         expected_stderr = "Parsing ChangeLog: ChangeLog1\nParsing ChangeLog: ChangeLog2\n"
         commit_message = output.assert_outputs(self, checkout.commit_message_for_this_commit, expected_stderr=expected_stderr)

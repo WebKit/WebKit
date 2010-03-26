@@ -1,3 +1,14 @@
+2010-03-26  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed test fix.
+        My change conflicted with one of Adam's causing test-webkitpy to fail.
+
+        Move commit_message_for_this_commit from scm to checkout
+        https://bugs.webkit.org/show_bug.cgi?id=36629
+
+        * Scripts/webkitpy/common/checkout/api_unittest.py:
+         - modified_changelogs is now on Checkout instead of scm.
+
 2010-03-26  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
