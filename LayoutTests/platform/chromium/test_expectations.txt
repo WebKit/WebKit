@@ -2858,3 +2858,6 @@ BUG_WK36630 LINUX WIN : editing/selection/extend-by-character-004.html = IMAGE+T
 BUG_WK36630 LINUX WIN : editing/selection/extend-by-character-005.html = IMAGE+TEXT
 BUG_WK36630 LINUX WIN : editing/unsupported-content/list-delete-001.html = IMAGE+TEXT
 BUG_WK36630 LINUX WIN : editing/unsupported-content/list-delete-003.html = IMAGE+TEXT
+
+// Due to the differences in iniialization checks in KURL and googleurl.
+BUG_39423 : security/block-test.html = TIMEOUT

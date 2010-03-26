@@ -1,3 +1,11 @@
+2010-03-25  Dmitry Titov  <dimich@chromium.org>
+
+        Unreviewed, temporarily disabling test on Chromium bots.
+
+        http://crbug.com/39423
+
+        * platform/chromium/test_expectations.txt:
+
 2010-03-25  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.
