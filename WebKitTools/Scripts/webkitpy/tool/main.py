@@ -90,10 +90,9 @@ class WebKitPatch(MultiCommandTool):
             self._checkout = Checkout(self.scm())
         return self._checkout
 
-    # FIXME: Add a parameter for nickname?
-    def ensure_irc_connected(self):
+    def ensure_irc_connected(self, irc_delegate):
         if not self._irc:
-            self._irc = IRCProxy(password=self._irc_password)
+            self._irc = IRCProxy(irc_delegate)
 
     def irc(self):
         # We don't automatically construct IRCProxy here because constructing
@@ -123,7 +122,7 @@ class WebKitPatch(MultiCommandTool):
         if options.status_host:
             self.status_server.set_host(options.status_host)
         if options.irc_password:
-            self._irc_password = options.irc_password
+            self.irc_password = options.irc_password
 
     def should_execute_command(self, command):
         if command.requires_local_commits and not self.scm().supports_local_commits():

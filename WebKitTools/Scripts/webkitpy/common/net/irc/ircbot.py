@@ -26,23 +26,41 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import webkitpy.common.config as config
+
 from webkitpy.common.thread.messagepump import MessagePump, MessagePumpDelegate
 from webkitpy.thirdparty.autoinstalled import ircbot
 from webkitpy.thirdparty.autoinstalled import irclib
+
+
+class IRCBotDelegate(object):
+    def irc_message_received(self, message):
+        raise NotImplementedError, "subclasses must implement"
+
+    def irc_nickname(self):
+        raise NotImplementedError, "subclasses must implement"
+
+    def irc_password(self):
+        raise NotImplementedError, "subclasses must implement"
 
 
 class IRCBot(ircbot.SingleServerIRCBot, MessagePumpDelegate):
     # FIXME: We should get this information from a config file.
     def __init__(self,
                  message_queue,
-                 server="irc.freenode.net",
-                 port=6667,
-                 nickname="sheriffbot",
-                 password=None, # sheriffbot actually needs a password.
-                 channel="#webkit"):
+                 delegate):
         self._message_queue = message_queue
-        ircbot.SingleServerIRCBot.__init__(self, [(server, port, password)], nickname, nickname)
-        self._channel = channel
+        self._delegate = delegate
+        ircbot.SingleServerIRCBot.__init__(
+            self,
+            [(
+                config.irc.server,
+                config.irc.port,
+                self._delegate.irc_password()
+            )],
+            self._delegate.irc_nickname,
+            self._delegate.irc_nickname)
+        self._channel = config.irc.channel
 
     # ircbot.SingleServerIRCBot methods
 
@@ -54,9 +72,11 @@ class IRCBot(ircbot.SingleServerIRCBot, MessagePumpDelegate):
         self._message_pump = MessagePump(self, self._message_queue)
 
     def on_pubmsg(self, connection, event):
-        salute = event.arguments()[0].split(":", 1)
-        if len(salute) > 1 and irclib.irc_lower(salute[0]) == irclib.irc_lower(self.connection.get_nickname()):
-            connection.privmsg(self._channel, '"Only you can prevent forest fires." -- Smokey the Bear')
+        request = event.arguments()[0].split(":", 1)
+        if len(request) > 1 and irclib.irc_lower(request[0]) == irclib.irc_lower(self.connection.get_nickname()):
+            response = self._delegate.irc_message_received(request[1])
+            if response:
+                connection.privmsg(self._channel, response)
 
     # MessagePumpDelegate methods
 

@@ -28,10 +28,10 @@
 
 import os
 
-from webkitpy.tool.commands.queues import AbstractQueue
 from webkitpy.common.system.deprecated_logging import log
 from webkitpy.common.config.ports import WebKitPort
-
+from webkitpy.tool.bot.sheriffircbot import SheriffIRCBot
+from webkitpy.tool.commands.queues import AbstractQueue
 
 class SheriffBot(AbstractQueue):
     name = "sheriff-bot"
@@ -43,7 +43,8 @@ class SheriffBot(AbstractQueue):
 
     def begin_work_queue(self):
         AbstractQueue.begin_work_queue(self)
-        self.tool.ensure_irc_connected()
+        self._irc_delegate = SheriffIRCBot(self.tool.irc_password)
+        self.tool.ensure_irc_connected(self._irc_delegate)
 
     def work_item_log_path(self, failure_info):
         return os.path.join("%s-logs" % self.name, "%s.log" % failure_info["svn_revision"])

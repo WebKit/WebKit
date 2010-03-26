@@ -1,5 +1,25 @@
 2010-03-26  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        Refactor IRCBot controller logic to allow for commands
+        https://bugs.webkit.org/show_bug.cgi?id=36676
+
+        We need to move the controller logic into the tool package so it can
+        know about commands.  The changes to queueengine could go in a
+        different patch, but we're going to need it anyway.
+
+        * Scripts/webkitpy/common/config/irc.py: Added.
+        * Scripts/webkitpy/common/net/irc/ircbot.py:
+        * Scripts/webkitpy/common/net/irc/ircproxy.py:
+        * Scripts/webkitpy/tool/bot/queueengine.py:
+        * Scripts/webkitpy/tool/bot/sheriffircbot.py: Added.
+        * Scripts/webkitpy/tool/commands/sheriffbot.py:
+        * Scripts/webkitpy/tool/main.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+
+2010-03-26  Adam Barth  <abarth@webkit.org>
+
         Rubber stamped by Eric Seidel.
 
         Move the threading code into its own module.  (It has nothing to do with IRC.)

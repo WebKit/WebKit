@@ -445,6 +445,7 @@ class MockTool():
         self._scm = MockSCM()
         self._checkout = MockCheckout()
         self.status_server = MockStatusServer()
+        self.irc_password = "MOCK irc password"
 
     def scm(self):
         return self._scm
@@ -452,7 +453,7 @@ class MockTool():
     def checkout(self):
         return self._checkout
 
-    def ensure_irc_connected(self):
+    def ensure_irc_connected(self, delegate):
         if not self._irc:
             self._irc = MockIRC()
 
