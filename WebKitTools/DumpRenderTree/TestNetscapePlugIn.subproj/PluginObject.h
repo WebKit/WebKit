@@ -46,6 +46,7 @@ typedef struct {
     char* onStreamDestroy;
     char* onDestroy;
     char* onURLNotify;
+    char* onSetWindow;
     char* firstUrl;
     char* firstHeaders;
     char* lastUrl;

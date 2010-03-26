@@ -93,6 +93,8 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16 mode, int16 argc, ch
         else if (strcasecmp(argn[i], "src") == 0 &&
                  strcasecmp(argv[i], "data:application/x-webkit-test-netscape,returnerrorfromnewstream") == 0)
             obj->returnErrorFromNewStream = TRUE;
+        else if (strcasecmp(argn[i], "onSetWindow") == 0 && !obj->onSetWindow)
+            obj->onSetWindow = strdup(argv[i]);
         else if (strcasecmp(argn[i], "logfirstsetwindow") == 0)
             obj->logSetWindow = TRUE;
         else if (strcasecmp(argn[i], "testnpruntime") == 0)
@@ -162,6 +164,9 @@ NPError NPP_Destroy(NPP instance, NPSavedData **save)
 
         if (obj->onURLNotify)
             free(obj->onURLNotify);
+
+        if (obj->onSetWindow)
+            free(obj->onSetWindow);
         
         if (obj->logDestroy)
             pluginLog(instance, "NPP_Destroy");
@@ -182,6 +187,9 @@ NPError NPP_SetWindow(NPP instance, NPWindow *window)
             pluginLog(instance, "NPP_SetWindow: %d %d", (int)window->width, (int)window->height);
             obj->logSetWindow = FALSE;
         }
+
+        if (obj->onSetWindow)
+            executeScript(obj, obj->onSetWindow);
 
         if (obj->testWindowOpen) {
             testWindowOpen(instance);
