@@ -175,7 +175,9 @@
 #if OS(SYMBIAN)
 #undef WIN32
 #undef _WIN32
+#if COMPILER(WINSCW)
 #undef SKIP_STATIC_CONSTRUCTORS_ON_GCC
+#endif
 #define USE_SYSTEM_MALLOC 1
 #define U_HAVE_INT8_T 0
 #define U_HAVE_INT16_T 0

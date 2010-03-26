@@ -1,3 +1,16 @@
+2010-03-26  Janne Koskinen  <janne.p.koskinen@digia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        Don't undefine SKIP_STATIC_CONSTRUCTORS_ON_GCC for Symbian HW targets.
+        https://bugs.webkit.org/show_bug.cgi?id=34081
+
+        Defining StringImpl instances as globals will cause a crash on process exit as 
+        StringImpl::Remove expects TLS which was already deleted at time of exiting main and ends up
+        constructing one exiting thread.
+
+        * config.h:
+
 2010-03-26  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.
