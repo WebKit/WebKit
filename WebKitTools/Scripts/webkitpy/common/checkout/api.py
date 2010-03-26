@@ -75,7 +75,6 @@ class Checkout(object):
     def modified_changelogs(self):
         return [path for path in self._scm.changed_files() if self._is_path_to_changelog(path)]
 
-    # FIXME: Requires unit test
     def commit_message_for_this_commit(self):
         changelog_paths = self.modified_changelogs()
         if not len(changelog_paths):
@@ -88,7 +87,7 @@ class Checkout(object):
             log("Parsing ChangeLog: %s" % changelog_path)
             changelog_entry = ChangeLog(changelog_path).latest_entry()
             if not changelog_entry:
-                raise ScriptError(message="Failed to parse ChangeLog: " + os.path.abspath(changelog_path))
+                raise ScriptError(message="Failed to parse ChangeLog: %s" % os.path.abspath(changelog_path))
             changelog_messages.append(changelog_entry.contents())
 
         # FIXME: We should sort and label the ChangeLog messages like commit-log-editor does.

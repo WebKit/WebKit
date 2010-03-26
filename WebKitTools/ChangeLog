@@ -1,3 +1,16 @@
+2010-03-26  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Move commit_message_for_this_commit from scm to checkout
+        https://bugs.webkit.org/show_bug.cgi?id=36629
+
+        Finally add some basic unit testing for Checkout.commit_message_for_this_commit
+
+        * Scripts/webkitpy/common/checkout/api.py:
+        * Scripts/webkitpy/common/checkout/api_unittest.py: Added.
+        * Scripts/webkitpy/common/unittests.py:
+
 2010-03-26  Diego Gonzalez  <diego.gonzalez@openbossa.org>
 
         [Qt] User Agent Switcher on QtLauncher

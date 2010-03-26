@@ -24,6 +24,7 @@
 
 # This module is imported by the module that imports all webkitpy unit tests.
 
+from webkitpy.common.checkout.api_unittest import *
 from webkitpy.common.checkout.changelog_unittest import *
 from webkitpy.common.checkout.commitinfo_unittest import *
 from webkitpy.common.checkout.diff_parser_unittest import *
