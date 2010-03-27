@@ -1,5 +1,13 @@
 2010-03-26  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed.  Add a missing "_".
+
+        * Scripts/webkitpy/common/net/irc/ircproxy.py:
+        * Scripts/webkitpy/common/net/irc/ircproxy_unittest.py: Added.
+        * Scripts/webkitpy/common/net/irc/unittests.py:
+
+2010-03-26  Adam Barth  <abarth@webkit.org>
+
         Unreviewed.  Fix a the commit queue after my recent change.
 
         * Scripts/webkitpy/tool/bot/queueengine.py:

@@ -30,4 +30,4 @@
 
 # This module is imported by the module that imports all webkitpy unit tests.
 
-# No tests yet!  :(
+from webkitpy.common.net.irc.ircproxy_unittest import *
