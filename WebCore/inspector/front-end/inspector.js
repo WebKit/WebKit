@@ -1516,7 +1516,20 @@ WebInspector.displayNameForURL = function(url)
     var resource = this.resourceURLMap[url];
     if (resource)
         return resource.displayName;
-    return url.trimURL(WebInspector.mainResource ? WebInspector.mainResource.domain : "");
+
+    if (!WebInspector.mainResource)
+        return url.trimURL("");
+
+    var lastPathComponent = WebInspector.mainResource.lastPathComponent;
+    var index = WebInspector.mainResource.url.indexOf(lastPathComponent);
+    if (index !== -1 && index + lastPathComponent.length === WebInspector.mainResource.url.length) {
+        var baseURL = WebInspector.mainResource.url.substring(0, index);
+        if (url.indexOf(baseURL) === 0) {
+            return url.substring(index);
+        }
+    }
+
+    return url.trimURL(WebInspector.mainResource.domain);
 }
 
 WebInspector.resourceForURL = function(url)

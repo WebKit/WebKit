@@ -39,15 +39,12 @@ function frontend_selectElement(testController)
 
 function frontend_selectElementContinuation(testController)
 {
-    var innerMapping = WebInspector.domAgent._idToDOMNode;
-    for (var nodeId in innerMapping) {
-        var node = innerMapping[nodeId];
-        if (node.nodeName === "P" && node.getAttribute("id") === "test-topic") {
-            WebInspector.panels.elements.treeOutline.revealAndSelectNode(node);
-            window.refreshCalled = true;
-            testController.notifyDone("reload");
-            return;
-        }
+    var node = frontend_nodeForId("test-topic");
+    if (node) {
+        WebInspector.panels.elements.treeOutline.revealAndSelectNode(node);
+        window.refreshCalled = true;
+        testController.notifyDone("reload");
+        return;
     }
     testController.notifyDone("FAIL");
 }

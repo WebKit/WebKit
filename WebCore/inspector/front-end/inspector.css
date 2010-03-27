@@ -979,7 +979,7 @@ body.platform-linux .monospace, body.platform-linux .source-code {
     position: absolute;
     top: 0;
     left: 0;
-    right: 225px;
+    right: 300px;
     bottom: 0;
 }
 
@@ -988,7 +988,7 @@ body.platform-linux .monospace, body.platform-linux .source-code {
     top: 0;
     right: 0;
     bottom: 0;
-    width: 225px;
+    width: 300px;
     background-color: rgb(245, 245, 245);
     border-left: 1px solid rgb(64%, 64%, 64%);
     cursor: default;

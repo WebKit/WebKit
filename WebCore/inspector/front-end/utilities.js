@@ -370,7 +370,7 @@ String.prototype.collapseWhitespace = function()
 
 String.prototype.trimURL = function(baseURLDomain)
 {
-    var result = this.replace(/^https?:\/\//i, "");
+    var result = this.replace(/^(https|http|file):\/\//i, "");
     if (baseURLDomain)
         result = result.replace(new RegExp("^" + baseURLDomain.escapeForRegExp(), "i"), "");
     return result;

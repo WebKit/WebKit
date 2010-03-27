@@ -1,0 +1,98 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="resources/elements-panel-styles.css">
+<script src="../http/tests/inspector/inspector-test.js"></script>
+<script src="elements-tests.js"></script>
+<script>
+
+function doit()
+{
+    function callback(result)
+    {
+        if (result instanceof Array) {
+            for (var i = 0; i < result.length; ++i) {
+                output(result[i]);
+            }
+        } else
+            output(result);
+        notifyDone();
+    }
+    evaluateInWebInspector("frontend_dumpStyles", callback);
+}
+
+// Frontend functions.
+
+function frontend_dumpStyles(testController)
+{
+    testController.waitUntilDone();
+
+    frontend_expandDOMSubtree(WebInspector.domAgent.document);
+    testController.runAfterPendingDispatches(function() {
+        frontend_selectElementContinuation(testController);
+    });
+}
+
+function frontend_selectElementContinuation(testController)
+{
+    var node = frontend_nodeForId("foo");
+    if (!node) {
+        testController.notifyDone("No node found.");
+        return;
+    }
+
+    WebInspector.updateFocusedNode(node.id);
+    testController.runAfterPendingDispatches(function() {
+        frontend_dumpSelectedNodeStyles(testController);
+    });
+}
+
+function frontend_dumpSelectedNodeStyles(testController)
+{
+    var result = [];
+    var styleSections = WebInspector.panels.elements.sidebarPanes.styles.sections;
+    for (var pseudoId in styleSections) {
+        var pseudoName = WebInspector.StylesSidebarPane.PseudoIdNames[pseudoId];
+        var sections = styleSections[pseudoId];
+        for (var i = 0; i < sections.length; ++i) {
+            var section = sections[i];
+            if (section.element.previousSibling && section.element.previousSibling.className === "styles-sidebar-separator")
+                result.push("======== " + section.element.previousSibling.textContent + " ========");
+            result.push((section.expanded ? "[expanded] " : "[collapsed] ") + section.titleElement.textContent + " (" + section.subtitleElement.textContent + ")");
+            section.expand();
+            frontend_dumpTreeItem(section.propertiesTreeOutline, result, "");
+            result.push("");
+        }
+        result.push("");
+    }
+    testController.notifyDone(result);
+}
+
+function frontend_dumpTreeItem(treeItem, result, prefix)
+{
+    var children = treeItem.children;
+    for (var i = 0; i < children.length; ++i) {
+        var treeItem = children[i];
+        if (treeItem.listItemElement.hasStyleClass("inherited"))
+            continue;
+        var overloadedPrefix = "";
+        if (treeItem.listItemElement.hasStyleClass("overloaded"))
+            overloadedPrefix = "/-- overloaded --/ ";
+        result.push(prefix + overloadedPrefix + treeItem.listItemElement.textContent);
+        treeItem.expand();
+        frontend_dumpTreeItem(treeItem, result, prefix + "> ");
+    }
+}
+</script>
+</head>
+
+<body onload="onload()">
+<p>
+Tests that elements panel shows proper styles in the sidebar panel.
+</p>
+
+<div id="container">
+    <div id="foo" class="foo" style="display:none">Foo</div>
+</div>
+
+</body>
+</html>

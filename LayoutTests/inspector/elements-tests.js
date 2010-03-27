@@ -9,3 +9,14 @@ function frontend_expandDOMSubtree(node)
     }
     WebInspector.domAgent.getChildNodesAsync(node, processChildren);
 }
+
+function frontend_nodeForId(idValue)
+{
+    var innerMapping = WebInspector.domAgent._idToDOMNode;
+    for (var nodeId in innerMapping) {
+        var node = innerMapping[nodeId];
+        if (node.getAttribute("id") === idValue)
+            return node;
+    }
+    return null;
+}

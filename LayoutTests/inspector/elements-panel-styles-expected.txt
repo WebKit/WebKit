@@ -1,0 +1,62 @@
+Tests that elements panel shows proper styles in the sidebar panel.
+
+[collapsed] Computed Style (Show inherited)
+color: blue;
+display: none;
+font-family: serif;
+font-size: 14px;
+height: auto;
+margin-bottom: 2px;
+margin-left: 0px;
+margin-right: 0px;
+margin-top: 10px;
+width: auto;
+
+[expanded] Style Attribute (element’s “style” attribute)
+display: none;
+
+[expanded] .foo, .foo::before (resources/elements-panel-styles.css:15)
+color: blue;
+content: '[before Foo]';
+
+[expanded] .foo (resources/elements-panel-styles.css:10)
+/-- overloaded --/ color: black;
+margin: 10px 0px 2px;
+> margin-top: 10px;
+> margin-right: 0px;
+> margin-bottom: 2px;
+> margin-left: 0px;
+
+[expanded] div (user agent stylesheet)
+/-- overloaded --/ display: block;
+
+======== Inherited from div#container ========
+[collapsed] #container (resources/elements-panel-styles.css:5)
+font-family: serif;
+font-size: 14px;
+
+======== Inherited from body ========
+[collapsed] body (resources/elements-panel-styles.css:1)
+/-- overloaded --/ font-size: 12px;
+
+
+======== Pseudo ::before element ========
+[expanded] .foo::before (resources/elements-panel-styles.css:20)
+color: red;
+
+[expanded] .foo, .foo::before (resources/elements-panel-styles.css:15)
+/-- overloaded --/ color: blue;
+content: '[before Foo]';
+
+
+======== Pseudo ::after element ========
+[expanded] .foo::after (resources/elements-panel-styles.css:28)
+content: '[after Foo 2]';
+font-family: courier;
+
+[expanded] .foo::after (resources/elements-panel-styles.css:24)
+color: green;
+/-- overloaded --/ content: '[after Foo]';
+
+
+
