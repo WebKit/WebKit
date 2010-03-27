@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import webkitpy.common.config as config
+import webkitpy.common.config.irc as config_irc
 
 from webkitpy.common.thread.messagepump import MessagePump, MessagePumpDelegate
 from webkitpy.thirdparty.autoinstalled import ircbot
@@ -54,13 +54,13 @@ class IRCBot(ircbot.SingleServerIRCBot, MessagePumpDelegate):
         ircbot.SingleServerIRCBot.__init__(
             self,
             [(
-                config.irc.server,
-                config.irc.port,
+                config_irc.server,
+                config_irc.port,
                 self._delegate.irc_password()
             )],
-            self._delegate.irc_nickname,
-            self._delegate.irc_nickname)
-        self._channel = config.irc.channel
+            self._delegate.irc_nickname(),
+            self._delegate.irc_nickname())
+        self._channel = config_irc.channel
 
     # ircbot.SingleServerIRCBot methods
 

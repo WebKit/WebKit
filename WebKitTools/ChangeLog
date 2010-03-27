@@ -1,5 +1,13 @@
 2010-03-26  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed.  More errors in the IRC module.  I have no idea how to test
+        ircbot.py, which is too bad.  Hopefully we've abstracted it away enough
+        that we don't have to touch it very much after this patch.
+
+        * Scripts/webkitpy/common/net/irc/ircbot.py:
+
+2010-03-26  Adam Barth  <abarth@webkit.org>
+
         Unreviewed.  Add a missing "_".
 
         * Scripts/webkitpy/common/net/irc/ircproxy.py:
