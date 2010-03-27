@@ -134,8 +134,8 @@ class QueueEngine:
             self._work_log = None
 
     def _sleep_message(self, message):
-        wake_time = datetime.now() + timedelta(seconds=cls.seconds_to_sleep)
-        return "%s Sleeping until %s (%s)." % (message, wake_time.strftime(cls.log_date_format), cls.sleep_duration_text)
+        wake_time = datetime.now() + timedelta(seconds=self.seconds_to_sleep)
+        return "%s Sleeping until %s (%s)." % (message, wake_time.strftime(self.log_date_format), self.sleep_duration_text)
 
     def _sleep(self, message):
         log(self._sleep_message(message))

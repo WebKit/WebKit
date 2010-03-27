@@ -1,3 +1,9 @@
+2010-03-26  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.  Fix a the commit queue after my recent change.
+
+        * Scripts/webkitpy/tool/bot/queueengine.py:
+
 2010-03-26  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed fix.
