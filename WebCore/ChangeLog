@@ -1,3 +1,18 @@
+2010-03-27  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin Adler.
+
+        CSSPrimitiveValue::setFloatValue/setStringValue should throw an exception if passed an incorrect unit type.
+        <http://webkit.org/b/36680> / <rdar://problem/7801016>
+
+        Test: fast/dom/setPrimitiveValue-exceptions.html
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::setFloatValue): Throw an INVALID_ACCESS_ERR if either of our type or the passed-in
+        type is not a numeric type.
+        (WebCore::CSSPrimitiveValue::setStringValue): Throw an INVALID_ACCESS_ERR if either of our type or the passed-in
+        type is not a string type.
+
 2010-03-27  Robert Hogan  <robert@webkit.org>
 
         Reviewed by nobody, fix typo in previous commit.

@@ -1,3 +1,14 @@
+2010-03-27  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin Adler.
+
+        CSSPrimitiveValue::setFloatValue/setStringValue should throw an exception if passed an incorrect unit type.
+        <http://webkit.org/b/36680> / <rdar://problem/7801016>
+
+        * fast/dom/script-tests/setPrimitiveValue-exceptions.js: Added.
+        * fast/dom/setPrimitiveValue-exceptions-expected.txt: Added.
+        * fast/dom/setPrimitiveValue-exceptions.html: Copied from LayoutTests/fast/dom/event-attribute-availability.html.
+
 2010-03-26  Robert Hogan  <robert@roberthogan.net>
 
         Reviewed by Simon Hausmann.
