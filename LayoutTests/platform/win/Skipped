@@ -808,3 +808,7 @@ fast/media/print-restores-previous-mediatype.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=35973
 fast/multicol/hit-test-above-or-below.html
+
+# renderTheme is not ready to draw progress element
+fast/dom/HTMLProgressElement/progress-element.html
+fast/dom/HTMLProgressElement/set-progress-properties.html
