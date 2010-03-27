@@ -30,6 +30,7 @@
 # A tool for automating dealing with bugzilla, posting patches, committing patches, etc.
 
 import os
+import threading
 
 from webkitpy.common.checkout.api import Checkout
 from webkitpy.common.checkout.scm import detect_scm_system
@@ -60,6 +61,7 @@ class WebKitPatch(MultiCommandTool):
         MultiCommandTool.__init__(self)
 
         self._path = path
+        self.wakeup_event = threading.Event()
         self.bugs = Bugzilla()
         self.buildbot = BuildBot()
         self.executive = Executive()

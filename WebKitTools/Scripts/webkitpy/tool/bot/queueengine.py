@@ -65,10 +65,10 @@ class QueueEngineDelegate:
 
 
 class QueueEngine:
-    def __init__(self, name, delegate, message_queue=None):
+    def __init__(self, name, delegate, wakeup_event):
         self._name = name
         self._delegate = delegate
-        self._message_queue = message_queue
+        self._wakeup_event = wakeup_event
         self._output_tee = OutputTee()
 
     log_date_format = "%Y-%m-%d %H:%M:%S"
@@ -139,7 +139,5 @@ class QueueEngine:
 
     def _sleep(self, message):
         log(self._sleep_message(message))
-        if self._message_queue:
-            self._message_queue.wait(self.seconds_to_sleep)
-        else:
-            time.sleep(self.seconds_to_sleep)
+        if self._wakeup_event.wait(self.seconds_to_sleep):
+            self._wakeup_event.clear()

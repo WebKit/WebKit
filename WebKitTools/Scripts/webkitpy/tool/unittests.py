@@ -26,6 +26,7 @@
 
 from webkitpy.tool.bot.patchcollection_unittest import *
 from webkitpy.tool.bot.queueengine_unittest import *
+from webkitpy.tool.bot.sheriffircbot_unittest import *
 from webkitpy.tool.commands.download_unittest import *
 from webkitpy.tool.commands.earlywarningsystem_unittest import *
 from webkitpy.tool.commands.openbugs_unittest import OpenBugsTest

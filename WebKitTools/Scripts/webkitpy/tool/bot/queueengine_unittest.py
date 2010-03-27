@@ -29,6 +29,7 @@
 import os
 import shutil
 import tempfile
+import threading
 import unittest
 
 from webkitpy.common.system.executive import ScriptError
@@ -110,7 +111,7 @@ class NotSafeToProceedDelegate(LoggingDelegate):
 
 class FastQueueEngine(QueueEngine):
     def __init__(self, delegate):
-        QueueEngine.__init__(self, "fast-queue", delegate)
+        QueueEngine.__init__(self, "fast-queue", delegate, threading.Event())
 
     # No sleep for the wicked.
     seconds_to_sleep = 0
@@ -122,7 +123,7 @@ class FastQueueEngine(QueueEngine):
 class QueueEngineTest(unittest.TestCase):
     def test_trivial(self):
         delegate = LoggingDelegate(self)
-        work_queue = QueueEngine("trivial-queue", delegate)
+        work_queue = QueueEngine("trivial-queue", delegate, threading.Event())
         work_queue.run()
         self.assertEquals(delegate._callbacks, LoggingDelegate.expected_callbacks)
         self.assertTrue(os.path.exists(os.path.join(self.temp_dir, "queue_log_path")))
@@ -130,7 +131,7 @@ class QueueEngineTest(unittest.TestCase):
 
     def test_unexpected_error(self):
         delegate = ThrowErrorDelegate(self, 3)
-        work_queue = QueueEngine("error-queue", delegate)
+        work_queue = QueueEngine("error-queue", delegate, threading.Event())
         work_queue.run()
         expected_callbacks = LoggingDelegate.expected_callbacks[:]
         work_item_index = expected_callbacks.index('process_work_item')
@@ -141,7 +142,7 @@ class QueueEngineTest(unittest.TestCase):
 
     def test_handled_error(self):
         delegate = ThrowErrorDelegate(self, QueueEngine.handled_error_code)
-        work_queue = QueueEngine("handled-error-queue", delegate)
+        work_queue = QueueEngine("handled-error-queue", delegate, threading.Event())
         work_queue.run()
         self.assertEquals(delegate._callbacks, LoggingDelegate.expected_callbacks)
 

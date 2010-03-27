@@ -112,7 +112,7 @@ class AbstractQueue(Command, QueueEngineDelegate):
     def execute(self, options, args, tool, engine=QueueEngine):
         self.options = options
         self.tool = tool
-        return engine(self.name, self).run()
+        return engine(self.name, self, self.tool.wakeup_event).run()
 
     @classmethod
     def _update_status_for_script_error(cls, tool, state, script_error, is_error=False):

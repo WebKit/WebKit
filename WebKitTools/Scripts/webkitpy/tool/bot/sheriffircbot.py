@@ -26,19 +26,58 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitpy.common.net.irc.ircbot import IRCBotDelegate
+import webkitpy.tool.bot.irc_command as irc_command
 
-class SheriffIRCBot(IRCBotDelegate):
-    def __init__(self, password):
+from webkitpy.common.net.irc.ircbot import IRCBotDelegate
+from webkitpy.common.thread.threadedmessagequeue import ThreadedMessageQueue
+
+
+class _IRCThreadTearoff(object):
+    def __init__(self, password, message_queue, wakeup_event):
         self._password = password
+        self._message_queue = message_queue
+        self._wakeup_event = wakeup_event
 
     # IRCBotDelegate methods
 
     def irc_message_received(self, message):
-        return '"Only you can prevent forest fires." -- Smokey the Bear'
+        self._message_queue.post(message)
+        self._wakeup_event.set()
 
     def irc_nickname(self):
         return "sheriffbot"
 
     def irc_password(self):
         return self._password
+
+
+class SheriffIRCBot(IRCBotDelegate):
+    # FIXME: Lame.  We should have an auto-registering CommandCenter.
+    commands = {
+        "last-green-revision": irc_command.LastGreenRevision,
+        "hi": irc_command.Hi,
+    }
+
+    def __init__(self, tool):
+        self._tool = tool
+        self._message_queue = ThreadedMessageQueue()
+
+    def irc_delegate(self):
+        return _IRCThreadTearoff(self._tool.irc_password, self._message_queue, self._tool.wakeup_event)
+
+    def process_message(self, message):
+        tokenized_message = message.strip().split(" ")
+        if not tokenized_message:
+            return
+        command = self.commands.get(tokenized_message[0])
+        if not command:
+            self._tool.irc().post("Available commands: %s" % ", ".join(self.commands.keys()))
+            return
+        response = command().execute(tokenized_message[1:], self._tool)
+        if response:
+            self._tool.irc().post(response)
+
+    def process_pending_messages(self):
+        (messages, is_running) = self._message_queue.take_all()
+        for message in messages:
+            self.process_message(message)

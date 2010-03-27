@@ -27,6 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import threading
 
 from webkitpy.common.config.committers import CommitterList, Reviewer
 from webkitpy.common.checkout.commitinfo import CommitInfo
@@ -310,6 +311,9 @@ class MockBuildBot(object):
             return "Builder2"
         return []
 
+    def last_green_revision(self):
+        return 9479
+
     def light_tree_on_fire(self):
         self._tree_is_on_fire = True
 
@@ -317,6 +321,7 @@ class MockBuildBot(object):
         return {
             "29837": [mock_builder]
         }
+
 
 class MockSCM(Mock):
 
@@ -437,6 +442,7 @@ class MockStatusServer(object):
 class MockTool():
 
     def __init__(self):
+        self.wakeup_event = threading.Event()
         self.bugs = MockBugzilla()
         self.buildbot = MockBuildBot()
         self.executive = Mock()

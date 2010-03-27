@@ -43,8 +43,8 @@ class SheriffBot(AbstractQueue):
 
     def begin_work_queue(self):
         AbstractQueue.begin_work_queue(self)
-        self._irc_delegate = SheriffIRCBot(self.tool.irc_password)
-        self.tool.ensure_irc_connected(self._irc_delegate)
+        self._irc_bot = SheriffIRCBot(self.tool)
+        self.tool.ensure_irc_connected(self._irc_bot.irc_delegate())
 
     def work_item_log_path(self, failure_info):
         return os.path.join("%s-logs" % self.name, "%s.log" % failure_info["svn_revision"])
