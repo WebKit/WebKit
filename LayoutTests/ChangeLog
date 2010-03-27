@@ -1,5 +1,11 @@
 2010-03-27  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed: added missing test resource file.
+
+        * inspector/resources/elements-panel-styles.css: Added.
+
+2010-03-27  Pavel Feldman  <pfeldman@chromium.org>
+
         Reviewed by Timothy Hatcher.
 
         Web Inspector: add layout test for styles panel.
