@@ -1,3 +1,18 @@
+2010-03-26  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Converge Inspector ids to be long, not ints
+        https://bugs.webkit.org/show_bug.cgi?id=36706
+
+          Part 1: Converge on `long` for callIds, nodeIds, and other Ids.
+
+        * inspector/InspectorController.cpp:
+        * inspector/InspectorController.h:
+        * inspector/InspectorDOMAgent.cpp:
+        * inspector/InspectorFrontend.cpp:
+        * inspector/InspectorFrontend.h:
+
 2010-03-27  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

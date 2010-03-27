@@ -189,7 +189,7 @@ void InspectorDOMAgent::unbind(Node* node, NodeToIdMap* nodesMap)
         stopListening(frameOwner->contentDocument());
     }
 
-    int id = nodesMap->get(node);
+    long id = nodesMap->get(node);
     if (!id)
         return;
     m_idToNode.remove(id);

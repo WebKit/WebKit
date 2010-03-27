@@ -68,7 +68,7 @@ namespace WebCore {
 
         bool updateResource(unsigned long identifier, const ScriptObject& resourceObj);
         void removeResource(unsigned long identifier);
-        void didGetResourceContent(int callId, const String& content);
+        void didGetResourceContent(long callId, const String& content);
 
         void updateFocusedNode(long nodeId);
         void setAttachedWindow(bool attached);
@@ -102,47 +102,47 @@ namespace WebCore {
         void profilerWasDisabled();
         void addProfileHeader(const ScriptValue& profile);
         void setRecordingProfile(bool isProfiling);
-        void didGetProfileHeaders(int callId, const ScriptArray& headers);
-        void didGetProfile(int callId, const ScriptValue& profile);
+        void didGetProfileHeaders(long callId, const ScriptArray& headers);
+        void didGetProfile(long callId, const ScriptValue& profile);
 #endif
 
 #if ENABLE(DATABASE)
         bool addDatabase(const ScriptObject& dbObj);
         void selectDatabase(int databaseId);
-        void didGetDatabaseTableNames(int callId, const ScriptArray& tableNames);
+        void didGetDatabaseTableNames(long callId, const ScriptArray& tableNames);
 #endif
         
 #if ENABLE(DOM_STORAGE)
         bool addDOMStorage(const ScriptObject& domStorageObj);
-        void selectDOMStorage(int storageId);
-        void didGetDOMStorageEntries(int callId, const ScriptArray& entries);
-        void didSetDOMStorageItem(int callId, bool success);
-        void didRemoveDOMStorageItem(int callId, bool success);
-        void updateDOMStorage(int storageId);
+        void selectDOMStorage(long storageId);
+        void didGetDOMStorageEntries(long callId, const ScriptArray& entries);
+        void didSetDOMStorageItem(long callId, bool success);
+        void didRemoveDOMStorageItem(long callId, bool success);
+        void updateDOMStorage(long storageId);
 #endif
 
         void setDocument(const ScriptObject& root);
         void setDetachedRoot(const ScriptObject& root);
-        void setChildNodes(int parentId, const ScriptArray& nodes);
-        void childNodeCountUpdated(int id, int newValue);
-        void childNodeInserted(int parentId, int prevId, const ScriptObject& node);
-        void childNodeRemoved(int parentId, int id);
-        void attributesUpdated(int id, const ScriptArray& attributes);
-        void didGetChildNodes(int callId);
-        void didApplyDomChange(int callId, bool success);
-        void didGetEventListenersForNode(int callId, int nodeId, const ScriptArray& listenersArray);
-        void didRemoveNode(int callId, int nodeId);
+        void setChildNodes(long parentId, const ScriptArray& nodes);
+        void childNodeCountUpdated(long id, int newValue);
+        void childNodeInserted(long parentId, long prevId, const ScriptObject& node);
+        void childNodeRemoved(long parentId, long id);
+        void attributesUpdated(long id, const ScriptArray& attributes);
+        void didGetChildNodes(long callId);
+        void didApplyDomChange(long callId, bool success);
+        void didGetEventListenersForNode(long callId, long nodeId, const ScriptArray& listenersArray);
+        void didRemoveNode(long callId, long nodeId);
 
         void didGetStyles(long callId, const ScriptValue& styles);
         void didGetAllStyles(long callId, const ScriptArray& styles);
         void didGetInlineStyle(long callId, const ScriptValue& style);
         void didGetComputedStyle(long callId, const ScriptValue& style);
-        void didApplyStyleText(int callId, bool success, const ScriptValue& style, const ScriptArray& changedProperties);
-        void didSetStyleText(int callId, bool success);
-        void didSetStyleProperty(int callId, bool success);
-        void didToggleStyleEnabled(int callId, const ScriptValue& style);
-        void didSetRuleSelector(int callId, const ScriptValue& rule, bool selectorAffectsNode);
-        void didAddRule(int callId, const ScriptValue& rule, bool selectorAffectsNode);
+        void didApplyStyleText(long callId, bool success, const ScriptValue& style, const ScriptArray& changedProperties);
+        void didSetStyleText(long callId, bool success);
+        void didSetStyleProperty(long callId, bool success);
+        void didToggleStyleEnabled(long callId, const ScriptValue& style);
+        void didSetRuleSelector(long callId, const ScriptValue& rule, bool selectorAffectsNode);
+        void didAddRule(long callId, const ScriptValue& rule, bool selectorAffectsNode);
 
         void timelineProfilerWasStarted();
         void timelineProfilerWasStopped();
@@ -153,8 +153,8 @@ namespace WebCore {
         void didDestroyWorker(const InspectorWorkerResource&);
 #endif // ENABLE(WORKER)
 
-        void didGetCookies(int callId, const ScriptArray& cookies, const String& cookiesString);
-        void didDispatchOnInjectedScript(int callId, SerializedScriptValue* result, bool isException);
+        void didGetCookies(long callId, const ScriptArray& cookies, const String& cookiesString);
+        void didDispatchOnInjectedScript(long callId, SerializedScriptValue* result, bool isException);
 
         void addNodesToSearchResult(const String& nodeIds);
 
@@ -163,7 +163,7 @@ namespace WebCore {
 
         ScriptState* scriptState() const { return m_webInspector.scriptState(); }
 
-        void evaluateForTestInFrontend(int callId, const String& script);
+        void evaluateForTestInFrontend(long callId, const String& script);
     private:
         void callSimpleFunction(const String& functionName);
         ScriptObject m_webInspector;

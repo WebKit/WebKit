@@ -1136,7 +1136,7 @@ void InspectorController::selectDatabase(Database* database)
     }
 }
 
-Database* InspectorController::databaseForId(int databaseId)
+Database* InspectorController::databaseForId(long databaseId)
 {
     DatabaseResourcesMap::iterator it = m_databaseResources.find(databaseId);
     if (it == m_databaseResources.end())
@@ -1260,7 +1260,7 @@ void InspectorController::selectDOMStorage(Storage* storage)
     Frame* frame = storage->frame();
     ExceptionCode ec = 0;
     bool isLocalStorage = (frame->domWindow()->localStorage(ec) == storage && !ec);
-    int storageResourceId = 0;
+    long storageResourceId = 0;
     DOMStorageResourcesMap::iterator domStorageEnd = m_domStorageResources.end();
     for (DOMStorageResourcesMap::iterator it = m_domStorageResources.begin(); it != domStorageEnd; ++it) {
         if (it->second->isSameHostAndType(frame, isLocalStorage)) {
@@ -1272,7 +1272,7 @@ void InspectorController::selectDOMStorage(Storage* storage)
         m_frontend->selectDOMStorage(storageResourceId);
 }
 
-void InspectorController::getDOMStorageEntries(int callId, int storageId)
+void InspectorController::getDOMStorageEntries(long callId, long storageId)
 {
     if (!m_frontend)
         return;
@@ -1323,7 +1323,7 @@ void InspectorController::removeDOMStorageItem(long callId, long storageId, cons
     m_frontend->didRemoveDOMStorageItem(callId, success);
 }
 
-InspectorDOMStorageResource* InspectorController::getDOMStorageResourceForId(int storageId)
+InspectorDOMStorageResource* InspectorController::getDOMStorageResourceForId(long storageId)
 {
     DOMStorageResourcesMap::iterator it = m_domStorageResources.find(storageId);
     if (it == m_domStorageResources.end())

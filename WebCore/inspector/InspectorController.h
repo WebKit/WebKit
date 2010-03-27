@@ -197,7 +197,7 @@ public:
 #if ENABLE(DOM_STORAGE)
     void didUseDOMStorage(StorageArea* storageArea, bool isLocalStorage, Frame* frame);
     void selectDOMStorage(Storage* storage);
-    void getDOMStorageEntries(int callId, int storageId);
+    void getDOMStorageEntries(long callId, long storageId);
     void setDOMStorageItem(long callId, long storageId, const String& key, const String& value);
     void removeDOMStorageItem(long callId, long storageId, const String& key);
 #endif
@@ -287,10 +287,10 @@ private:
 #endif
 #if ENABLE(DATABASE)
     void selectDatabase(Database* database);
-    Database* databaseForId(int databaseId);
+    Database* databaseForId(long databaseId);
 #endif
 #if ENABLE(DOM_STORAGE)
-    InspectorDOMStorageResource* getDOMStorageResourceForId(int storageId);
+    InspectorDOMStorageResource* getDOMStorageResourceForId(long storageId);
 #endif
                                                         
     ScriptObject buildObjectForCookie(const Cookie&);
