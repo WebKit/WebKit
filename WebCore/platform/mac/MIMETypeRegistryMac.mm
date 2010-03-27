@@ -56,4 +56,9 @@ String MIMETypeRegistry::getPreferredExtensionForMIMEType(const String& type)
     return wkGetPreferredExtensionForMIMEType(type);
 }
 
+bool MIMETypeRegistry::isApplicationPluginMIMEType(const String&)
+{
+    return false;
+}
+
 }

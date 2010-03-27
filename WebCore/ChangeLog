@@ -1,3 +1,53 @@
+2010-03-26  Robert Hogan  <robert@roberthogan.net>
+
+        Reviewed by Simon Hausmann.
+
+        Allow plugins implemented by the application, such as mimetype 'x-qt-plugin',
+         when pluginsEnabled is false.
+
+        The purpose of disabling plugins is to prevent the execution of third-party code
+        that may be untrustworthy. Qt plugins are implemented by the client rather than
+        loaded from an external source, so the client should have the opportunity to
+        consider them separately from other plugins.
+
+        Add a function MimeTypeRegistry::isApplicationPluginMIMEType() that WebKit
+        uses in conjunction with arePluginsEnabled() to determine if it should attempt
+        to load a plugin. If isApplicationPluginMIMEType() returns true, WebKit will load
+        the plugin even if arePluginsEnabled() is false.
+
+        Currently, only Qt has application-implemented plugins: these use the mimetype
+        'x-qt-plugin' and 'x-qt-styled-widget'. This patch permits Qt clients'
+        reimplementation of QWebPage::createPlugin() to decide whether or not
+        to create a Qt plugin, even when arePluginsEnabled is false.
+
+        For all platforms apart from Qt, isApplicationPluginMIMEType() returns false.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32196
+
+        Test: plugins/application-plugin-plugins-disabled.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::requestObject):
+        * platform/MIMETypeRegistry.h:
+        * platform/brew/MIMETypeRegistryBrew.cpp:
+        (WebCore::MIMETypeRegistry::isApplicationPluginMIMEType):
+        * platform/chromium/MIMETypeRegistryChromium.cpp:
+        (WebCore::MIMETypeRegistry::isApplicationPluginMIMEType):
+        * platform/gtk/MIMETypeRegistryGtk.cpp:
+        (WebCore::MIMETypeRegistry::isApplicationPluginMIMEType):
+        * platform/haiku/MIMETypeRegistryHaiku.cpp:
+        (WebCore::MIMETypeRegistry::isApplicationPluginMIMEType):
+        * platform/mac/MIMETypeRegistryMac.mm:
+        (WebCore::MIMETypeRegistry::isApplicationPluginMIMEType):
+        * platform/qt/MIMETypeRegistryQt.cpp:
+        (WebCore::MIMETypeRegistry::isApplicationPluginMIMEType):
+        * platform/win/MIMETypeRegistryWin.cpp:
+        (WebCore::MIMETypeRegistry::isApplicationPluginMIMEType):
+        * platform/wince/MIMETypeRegistryWince.cpp:
+        (WebCore::MIMETypeRegistry::isApplicationPluginMIMEType):
+        * platform/wx/MimeTypeRegistryWx.cpp:
+        (WebCore::MIMETypeRegistry::isApplicationPluginMIMEType):
+
 2010-03-27  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Mark Rowe.

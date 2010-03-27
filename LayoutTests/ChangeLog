@@ -1,3 +1,18 @@
+2010-03-26  Robert Hogan  <robert@roberthogan.net>
+
+        Reviewed by Simon Hausmann.
+
+        Allow plugins implemented by the application, such as mimetype 'x-qt-plugin',
+         when pluginsEnabled is false.
+
+        For all platforms apart from Qt, isApplicationPluginMIMEType() returns false.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32196
+
+        * platform/qt/plugins/application-plugin-plugins-disabled-expected.txt: Added.
+        * plugins/application-plugin-plugins-disabled-expected.txt: Added.
+        * plugins/application-plugin-plugins-disabled.html: Added.
+
 2010-03-27  Yael Aharon  <yael.aharon@nokia.com>
 
         Unreviewed.

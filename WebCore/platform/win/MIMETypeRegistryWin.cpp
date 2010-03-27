@@ -103,4 +103,9 @@ String MIMETypeRegistry::getMIMETypeForExtension(const String &ext)
     return result;
 }
 
+bool MIMETypeRegistry::isApplicationPluginMIMEType(const String&)
+{
+    return false;
+}
+
 }

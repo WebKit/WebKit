@@ -76,5 +76,10 @@ String MIMETypeRegistry::getMIMETypeForExtension(const String &ext)
     return "text/plain";
 }
 
+bool MIMETypeRegistry::isApplicationPluginMIMEType(const String&)
+{
+    return false;
+}
+
 } // namespace WebCore
 

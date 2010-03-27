@@ -67,6 +67,10 @@ public:
     // Check to see if a mime type is a valid Java applet mime type
     static bool isJavaAppletMIMEType(const String& mimeType);
 
+    // Check to see if a mime type is a plugin implemented by the
+    // browser (e.g. a Qt Plugin).
+    static bool isApplicationPluginMIMEType(const String& mimeType);
+
     static HashSet<String>& getSupportedImageMIMETypes();
     static HashSet<String>& getSupportedImageResourceMIMETypes();
     static HashSet<String>& getSupportedImageMIMETypesForEncoding();

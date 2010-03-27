@@ -341,6 +341,7 @@ static void resetDefaultsToConsistentValues()
                  "enable-page-cache", FALSE,
                  "auto-resize-window", TRUE,
                  "enable-java-applet", FALSE,
+                 "enable-plugins", TRUE,
                  NULL);
 
     webkit_web_frame_clear_main_frame_name(mainFrame);
