@@ -102,7 +102,7 @@ static void createAndAppendFontSubMenu(const HitTestResult& result, ContextMenuI
     fontMenuItem.setSubMenu(&fontMenu);
 }
 
-#ifndef BUILDING_ON_TIGER
+#if !defined(BUILDING_ON_TIGER) && !PLATFORM(GTK)
 static void createAndAppendSpellingAndGrammarSubMenu(const HitTestResult& result, ContextMenuItem& spellingAndGrammarMenuItem)
 {
     ContextMenu spellingAndGrammarMenu(result);
