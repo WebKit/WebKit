@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,6 +37,10 @@
 #include "GraphicsLayer.h"
 #include "HitTestResult.h"
 #include "HTMLCanvasElement.h"
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+#include "HTMLMediaElement.h"
+#include "HTMLNames.h"
+#endif
 #include "Page.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderLayerBacking.h"
@@ -1038,6 +1042,19 @@ bool RenderLayerCompositor::requiresCompositingForVideo(RenderObject* renderer) 
         RenderVideo* video = toRenderVideo(renderer);
         return canAccelerateVideoRendering(video);
     }
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    else if (renderer->isRenderPart()) {
+        if (!m_hasAcceleratedCompositing)
+            return false;
+
+        Node* node = renderer->node();
+        if (!node || (!node->hasTagName(HTMLNames::videoTag) && !node->hasTagName(HTMLNames::audioTag)))
+            return false;
+
+        HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(node);
+        return mediaElement->player() ? mediaElement->player()->supportsAcceleratedRendering() : false;
+    }
+#endif // ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 #else
     UNUSED_PARAM(renderer);
 #endif

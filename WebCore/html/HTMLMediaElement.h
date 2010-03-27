@@ -32,6 +32,10 @@
 #include "MediaCanStartListener.h"
 #include "MediaPlayer.h"
 
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+#include "MediaPlayerProxy.h"
+#endif
+
 namespace WebCore {
 
 class Event;
@@ -39,6 +43,9 @@ class HTMLSourceElement;
 class MediaError;
 class KURL;
 class TimeRanges;
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+class Widget;
+#endif
 
 // FIXME: The inheritance from MediaPlayerClient here should be private inheritance.
 // But it can't be until the Chromium WebMediaPlayerClientImpl class is fixed so it
@@ -57,6 +64,8 @@ public:
 
     // Eventually overloaded in HTMLVideoElement
     virtual bool supportsFullscreen() const { return false; };
+    virtual const KURL poster() const { return KURL(); }
+
     virtual bool supportsSave() const;
     
     PlatformMedia platformMedia() const;
@@ -139,11 +148,13 @@ public:
     float percentLoaded() const;
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    void allocateMediaPlayerIfNecessary();
     void setNeedWidgetUpdate(bool needWidgetUpdate) { m_needWidgetUpdate = needWidgetUpdate; }
-    void deliverNotification(MediaPlayerProxyNotificationType);
-    void setMediaPlayerProxy(WebMediaPlayerProxy*);
-    String initialURL();
+    void deliverNotification(MediaPlayerProxyNotificationType notification);
+    void setMediaPlayerProxy(WebMediaPlayerProxy* proxy);
+    void getPluginProxyParams(KURL& url, Vector<String>& names, Vector<String>& values);
     virtual void finishParsingChildren();
+    void createMediaPlayerProxy();
 #endif
 
     bool hasSingleSecurityOrigin() const { return !m_player || m_player->hasSingleSecurityOrigin(); }
@@ -307,6 +318,9 @@ private:
     HTMLSourceElement* m_currentSourceNode;
     
     OwnPtr<MediaPlayer> m_player;
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    RefPtr<Widget> m_proxyWidget;
+#endif
 
     BehaviorRestrictions m_restrictions;
     

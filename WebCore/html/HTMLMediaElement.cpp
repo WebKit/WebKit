@@ -101,6 +101,9 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* doc)
     , m_loadState(WaitingForSource)
     , m_currentSourceNode(0)
     , m_player(0)
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    , m_proxyWidget(0)
+#endif
     , m_restrictions(NoRestrictions)
     , m_preload(MediaPlayer::Auto)
     , m_playing(false)
@@ -275,7 +278,11 @@ bool HTMLMediaElement::rendererIsNeeded(RenderStyle* style)
 RenderObject* HTMLMediaElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    return new (arena) RenderEmbeddedObject(this);
+    // Setup the renderer if we already have a proxy widget.
+    RenderEmbeddedObject* mediaRenderer = new (arena) RenderEmbeddedObject(this);
+    if (m_proxyWidget)
+        mediaRenderer->setWidget(m_proxyWidget);
+    return mediaRenderer;
 #else
     return new (arena) RenderMedia(this);
 #endif
@@ -321,6 +328,10 @@ void HTMLMediaElement::recalcStyle(StyleChange change)
 
 void HTMLMediaElement::scheduleLoad()
 {
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    createMediaPlayerProxy();
+#endif
+
     if (m_loadTimer.isActive())
         return;
     prepareForLoad();
@@ -613,8 +624,7 @@ void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& content
 #if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     m_player = MediaPlayer::create(this);
 #else
-    if (!m_player)
-        m_player = MediaPlayer::create(this);
+    createMediaPlayerProxy();
 #endif
 
     if (!autoplay())
@@ -625,7 +635,7 @@ void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& content
     m_player->load(m_currentSrc, contentType);
 
     if (isVideo() && m_player->canLoadPoster()) {
-        KURL posterUrl = static_cast<HTMLVideoElement*>(this)->poster();
+        KURL posterUrl = poster();
         if (!posterUrl.isEmpty())
             m_player->setPoster(posterUrl);
     }
@@ -1868,6 +1878,12 @@ bool HTMLMediaElement::processingUserGesture() const
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 
+void HTMLMediaElement::ensureMediaPlayer()
+{
+    if (!m_player)
+        m_player = MediaPlayer::create(this);
+}
+
 void HTMLMediaElement::deliverNotification(MediaPlayerProxyNotificationType notification)
 {
     if (notification == MediaPlayerNotificationPlayPauseButtonPressed) {
@@ -1881,34 +1897,76 @@ void HTMLMediaElement::deliverNotification(MediaPlayerProxyNotificationType noti
 
 void HTMLMediaElement::setMediaPlayerProxy(WebMediaPlayerProxy* proxy)
 {
-    if (m_player)
-        m_player->setMediaPlayerProxy(proxy);
+    ensureMediaPlayer();
+    m_player->setMediaPlayerProxy(proxy);
 }
 
-String HTMLMediaElement::initialURL()
+void HTMLMediaElement::getPluginProxyParams(KURL& url, Vector<String>& names, Vector<String>& values)
 {
-    KURL initialSrc = document()->completeURL(getAttribute(srcAttr));
-    
-    if (!initialSrc.isValid())
-        initialSrc = selectNextSourceChild(0, DoNothing);
+    Frame* frame = document()->frame();
+    FrameLoader* loader = frame ? frame->loader() : 0;
 
-    m_currentSrc = initialSrc.string();
+    if (isVideo()) {
+        String poster = poster();
+        if (!poster.isEmpty() && loader) {
+            KURL posterURL = loader->completeURL(poster);
+            if (posterURL.isValid() && loader->willLoadMediaElementURL(posterURL)) {
+                names.append("_media_element_poster_");
+                values.append(posterURL.string());
+            }
+        }
+    }
 
-    return initialSrc;
+    if (controls()) {
+        names.append("_media_element_controls_");
+        values.append("true");
+    }
+
+    url = src();
+    if (!url.isValid() || !isSafeToLoadURL(url, Complain))
+        url = selectNextSourceChild(0, DoNothing);
+
+    m_currentSrc = url.string();
+    if (url.isValid() && loader && loader->willLoadMediaElementURL(url)) {
+        names.append("_media_element_src_");
+        values.append(m_currentSrc);
+    }
 }
 
 void HTMLMediaElement::finishParsingChildren()
 {
     HTMLElement::finishParsingChildren();
-    if (!m_player)
-        m_player = MediaPlayer::create(this);
-    
     document()->updateStyleIfNeeded();
-    if (m_needWidgetUpdate && renderer())
-        toRenderEmbeddedObject(renderer())->updateWidget(true);
+    createMediaPlayerProxy();
 }
 
-#endif
+void HTMLMediaElement::createMediaPlayerProxy()
+{
+    ensureMediaPlayer();
+
+    if (!inDocument() && m_proxyWidget)
+        return;
+    if (inDocument() && !m_needWidgetUpdate)
+        return;
+
+    Frame* frame = document()->frame();
+    FrameLoader* loader = frame ? frame->loader() : 0;
+    if (!loader)
+        return;
+
+    KURL url;
+    Vector<String> paramNames;
+    Vector<String> paramValues;
+
+    getPluginProxyParams(url, paramNames, paramValues);
+    
+    // Hang onto the proxy widget so it won't be destroyed if the plug-in is set to
+    // display:none
+    m_proxyWidget = loader->loadMediaPlayerProxyPlugin(this, url, paramNames, paramValues);
+    if (m_proxyWidget)
+        m_needWidgetUpdate = false;
+}
+#endif // ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 
 void HTMLMediaElement::enterFullscreen()
 {

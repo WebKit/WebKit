@@ -1,3 +1,49 @@
+2010-03-26  Eric Carlson  <eric.carlson@apple.com>
+
+        <rdar://problem/7320584> 
+        https://bugs.webkit.org/show_bug.cgi?id=36681
+        "new Audio()" doesn't work with plug-in backed media engine.
+
+        Don't require plug-in backed <video> and <audio> elements to be in the document to play.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Initialize m_proxyWidget
+        (WebCore::HTMLMediaElement::createRenderer): Set renderer widget if it has already been
+        allocated.
+        (WebCore::HTMLMediaElement::scheduleLoad): Call createMediaPlayerProxy to make sure we
+        have a plug-in proxy.
+        (WebCore::HTMLMediaElement::loadResource): Ditto.
+        (WebCore::HTMLMediaElement::ensureMediaPlayer): Allocate media player.
+        (WebCore::HTMLMediaElement::setMediaPlayerProxy): Call ensureMediaPlayer.
+        (WebCore::HTMLMediaElement::getPluginProxyParams): New, return the url and params vectors.
+        (WebCore::HTMLMediaElement::finishParsingChildren): Call createMediaPlayerProxy.
+        (WebCore::HTMLMediaElement::createMediaPlayerProxy): New, allocate the proxy widget if necessary.
+        * html/HTMLMediaElement.h:
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyFrameLoaderClient::createMediaPlayerProxyPlugin): Add declaration.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::toPlugInElement): Don't allow an audio or video element to be cast to a plug-in element.
+        (WebCore::FrameLoader::loadPlugin):
+        (WebCore::FrameLoader::loadMediaPlayerProxyPlugin): New, allocate a media player proxy plug-in.
+
+        * loader/FrameLoader.h: Declare loadMediaPlayerProxyPlugin.
+
+        * loader/FrameLoaderClient.h: Declare createMediaPlayerProxyPlugin.
+
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::updateWidget): Call loadMediaPlayerProxyPlugin when passed an
+        audio or video node.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingForVideo):
+
+         * rendering/RenderVideo.cpp:
+         (WebCore::RenderVideo::RenderVideo): Get default width and height from defaultSize.
+         (WebCore::RenderVideo::defaultSize): New, return the spec defined default width and height.
+         * rendering/RenderVideo.h:
+
 2010-03-26  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein, Darin Adler.

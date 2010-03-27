@@ -324,27 +324,11 @@ void RenderEmbeddedObject::updateWidget(bool onlyCreateNonNetscapePlugins)
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)        
     else if (node()->hasTagName(videoTag) || node()->hasTagName(audioTag)) {
         HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(node());
+        KURL kurl;
 
+        mediaElement->getPluginProxyParams(kurl, paramNames, paramValues);
         mediaElement->setNeedWidgetUpdate(false);
-        if (node()->hasTagName(videoTag)) {
-            HTMLVideoElement* vid = static_cast<HTMLVideoElement*>(node());
-            String poster = vid->poster();
-            if (!poster.isEmpty()) {
-                paramNames.append("_media_element_poster_");
-                paramValues.append(poster);
-            }
-        }
-
-        url = mediaElement->initialURL();
-        if (!url.isEmpty()) {
-            paramNames.append("_media_element_src_");
-            paramValues.append(url);
-        }
-
-        serviceType = "application/x-media-element-proxy-plugin";
-        
-        if (mediaElement->dispatchBeforeLoadEvent(url))
-            frame->loader()->requestObject(this, url, nullAtom, serviceType, paramNames, paramValues);
+        frame->loader()->loadMediaPlayerProxyPlugin(node(), kurl, paramNames, paramValues);
     }
 #endif
 }

@@ -46,7 +46,7 @@ public:
     unsigned videoWidth() const;
     unsigned videoHeight() const;
     
-    const KURL& poster() const { return m_posterURL; }
+    virtual const KURL poster() const { return m_posterURL; }
     void setPoster(const String&);
 
     // Fullscreen

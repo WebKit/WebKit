@@ -65,6 +65,9 @@ class HTMLFrameOwnerElement;
 class IconLoader;
 class IntSize;
 class NavigationAction;
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+class Node;
+#endif
 class RenderEmbeddedObject;
 class ResourceError;
 class ResourceLoader;
@@ -319,6 +322,10 @@ public:
     bool shouldInterruptLoadForXFrameOptions(const String&, const KURL&);
 
     void open(CachedFrameBase&);
+
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    PassRefPtr<Widget> loadMediaPlayerProxyPlugin(Node*, const KURL&, const Vector<String>& paramNames, const Vector<String>& paramValues);
+#endif
 
     // FIXME: Should these really be public?
     void completed();
