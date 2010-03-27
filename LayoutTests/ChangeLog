@@ -1,3 +1,148 @@
+2010-03-26  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by David Levin.
+
+        Update a bunch of incorrect image checksums, and suppress all of the
+        remaining IMAGE failures in platform/mac/test_expectations.txt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36620
+
+        * platform/mac-leopard/compositing/geometry/root-layer-update-expected.checksum:
+        * platform/mac-leopard/compositing/overflow/overflow-positioning-expected.checksum:
+        * platform/mac-leopard/compositing/repaint/become-overlay-composited-layer-expected.checksum:
+        * platform/mac-leopard/compositing/repaint/layer-repaint-rects-expected.checksum:
+        * platform/mac-leopard/media/video-zoom-controls-expected.checksum:
+        * platform/mac/animations/3d/change-transform-in-end-event-expected.checksum:
+        * platform/mac/animations/3d/state-at-end-event-transform-expected.checksum:
+        * platform/mac/animations/state-at-end-event-expected.checksum:
+        * platform/mac/compositing/animation/state-at-end-event-transform-layer-expected.checksum:
+        * platform/mac/compositing/color-matching/pdf-image-match-expected.checksum:
+        * platform/mac/compositing/compositing-visible-descendant-expected.checksum:
+        * platform/mac/compositing/generated-content-expected.checksum:
+        * platform/mac/compositing/geometry/abs-position-inside-opacity-expected.checksum:
+        * platform/mac/compositing/geometry/fixed-position-expected.checksum:
+        * platform/mac/compositing/geometry/horizontal-scroll-composited-expected.checksum:
+        * platform/mac/compositing/geometry/outline-change-expected.checksum:
+        * platform/mac/compositing/geometry/partial-layout-update-expected.checksum:
+        * platform/mac/compositing/geometry/root-layer-update-expected.checksum:
+        * platform/mac/compositing/geometry/transfrom-origin-on-zero-size-layer-expected.checksum:
+        * platform/mac/compositing/masks/direct-image-mask-expected.checksum:
+        * platform/mac/compositing/masks/masked-ancestor-expected.checksum:
+        * platform/mac/compositing/masks/multiple-masks-expected.checksum:
+        * platform/mac/compositing/masks/simple-composited-mask-expected.checksum:
+        * platform/mac/compositing/overflow/ancestor-overflow-expected.checksum:
+        * platform/mac/compositing/overflow/fixed-position-ancestor-clip-expected.checksum:
+        * platform/mac/compositing/overflow/overflow-positioning-expected.checksum:
+        * platform/mac/compositing/overflow/parent-overflow-expected.checksum:
+        * platform/mac/compositing/overflow/scrollbar-painting-expected.checksum:
+        * platform/mac/compositing/reflections/reflection-in-composited-expected.checksum:
+        * platform/mac/compositing/reflections/reflection-ordering-expected.checksum:
+        * platform/mac/compositing/reflections/simple-composited-reflections-expected.checksum:
+        * platform/mac/compositing/repaint/become-overlay-composited-layer-expected.checksum:
+        * platform/mac/compositing/repaint/content-into-overflow-expected.checksum:
+        * platform/mac/compositing/repaint/layer-repaint-expected.checksum:
+        * platform/mac/compositing/repaint/layer-repaint-rects-expected.checksum:
+        * platform/mac/compositing/repaint/opacity-between-absolute-expected.checksum:
+        * platform/mac/compositing/repaint/opacity-between-absolute2-expected.checksum:
+        * platform/mac/compositing/repaint/overflow-into-content-expected.checksum:
+        * platform/mac/compositing/sibling-positioning-expected.checksum:
+        * platform/mac/compositing/transitions/singular-scale-transition-expected.checksum:
+        * platform/mac/css2.1/t0905-c5525-flthw-00-c-g-expected.checksum:
+        * platform/mac/css2.1/t0905-c5526-flthw-00-c-g-expected.checksum:
+        * platform/mac/editing/deleting/delete-to-select-table-expected.checksum:
+        * platform/mac/editing/deleting/type-delete-after-quote-expected.checksum:
+        * platform/mac/editing/inserting/5418891-expected.checksum:
+        * platform/mac/editing/selection/4960116-expected.checksum:
+        * platform/mac/editing/selection/caret-rtl-2-expected.checksum:
+        * platform/mac/editing/selection/extend-by-word-002-expected.checksum:
+        * platform/mac/editing/selection/select-all-002-expected.checksum:
+        * platform/mac/editing/selection/select-text-overflow-ellipsis-expected.checksum:
+        * platform/mac/editing/selection/transformed-selection-rects-expected.checksum:
+        * platform/mac/fast/backgrounds/background-clip-text-expected.checksum:
+        * platform/mac/fast/backgrounds/quirks-mode-line-box-backgrounds-expected.checksum:
+        * platform/mac/fast/backgrounds/repeat/mask-negative-offset-repeat-expected.checksum:
+        * platform/mac/fast/backgrounds/size/backgroundSize15-expected.checksum:
+        * platform/mac/fast/backgrounds/size/backgroundSize16-expected.checksum:
+        * platform/mac/fast/backgrounds/size/contain-and-cover-expected.checksum: Added.
+        * platform/mac/fast/backgrounds/svg-as-background-3-expected.checksum:
+        * platform/mac/fast/backgrounds/svg-as-background-5-expected.checksum:
+        * platform/mac/fast/backgrounds/svg-as-background-6-expected.checksum:
+        * platform/mac/fast/backgrounds/svg-as-mask-expected.checksum:
+        * platform/mac/fast/block/float/avoidance-percent-width-compat-expected.checksum:
+        * platform/mac/fast/block/float/avoidance-percent-width-strict-expected.checksum:
+        * platform/mac/fast/block/margin-collapse/103-expected.checksum:
+        * platform/mac/fast/box-shadow/basic-shadows-expected.checksum:
+        * platform/mac/fast/box-shadow/transform-fringing-expected.checksum:
+        * platform/mac/fast/css/apple-prefix-expected.checksum:
+        * platform/mac/fast/css/color-correction-backgrounds-and-text-expected.checksum:
+        * platform/mac/fast/css/color-correction-expected.checksum:
+        * platform/mac/fast/css/color-correction-on-background-image-expected.checksum:
+        * platform/mac/fast/css/color-correction-on-backgrounds-expected.checksum:
+        * platform/mac/fast/css/color-correction-on-box-shadow-expected.checksum:
+        * platform/mac/fast/css/color-correction-on-text-expected.checksum:
+        * platform/mac/fast/css/color-correction-on-text-shadow-expected.checksum:
+        * platform/mac/fast/css/color-correction-untagged-images-expected.checksum:
+        * platform/mac/fast/css/namespaces/namespaces-comments-expected.checksum:
+        * platform/mac/fast/css/namespaces/namespaces-empty-expected.checksum:
+        * platform/mac/fast/css/namespaces/namespaces-escapes-expected.checksum:
+        * platform/mac/fast/css/namespaces/namespaces-invalid-at-expected.checksum:
+        * platform/mac/fast/css/variables/misplaced-import-test-expected.checksum:
+        * platform/mac/fast/encoding/invalid-UTF-8-expected.checksum:
+        * platform/mac/fast/events/standalone-image-drag-to-editable-expected.checksum:
+        * platform/mac/fast/fast-mobile-scrolling/fixed-position-element-expected.checksum:
+        * platform/mac/fast/fast-mobile-scrolling/no-fixed-position-elements-expected.checksum:
+        * platform/mac/fast/forms/001-expected.checksum:
+        * platform/mac/fast/forms/menulist-clip-expected.checksum:
+        * platform/mac/fast/forms/menulist-narrow-width-expected.checksum:
+        * platform/mac/fast/forms/menulist-option-wrap-expected.checksum:
+        * platform/mac/fast/forms/menulist-restrict-line-height-expected.checksum:
+        * platform/mac/fast/forms/menulist-style-color-expected.checksum:
+        * platform/mac/fast/forms/select-baseline-expected.checksum:
+        * platform/mac/fast/forms/textarea-scrollbar-expected.checksum:
+        * platform/mac/fast/frames/viewsource-attribute-expected.checksum:
+        * platform/mac/fast/inline/long-wrapped-line-expected.checksum:
+        * platform/mac/fast/lists/anonymous-items-expected.checksum:
+        * platform/mac/fast/lists/markers-in-selection-expected.checksum:
+        * platform/mac/fast/multicol/client-rects-expected.checksum: Added.
+        * platform/mac/fast/multicol/float-multicol-expected.checksum:
+        * platform/mac/fast/overflow/line-clamp-expected.checksum:
+        * platform/mac/fast/overflow/position-fixed-transform-clipping-expected.checksum:
+        * platform/mac/fast/reflections/abs-position-in-reflection-expected.checksum:
+        * platform/mac/fast/reflections/opacity-reflection-transform-expected.checksum:
+        * platform/mac/fast/repaint/backgroundSizeRepaint-expected.checksum:
+        * platform/mac/fast/repaint/box-shadow-h-expected.checksum:
+        * platform/mac/fast/repaint/box-shadow-v-expected.checksum:
+        * platform/mac/fast/repaint/line-in-scrolled-clipped-block-expected.checksum:
+        * platform/mac/fast/repaint/no-caret-repaint-in-non-content-editable-element-expected.checksum:
+        * platform/mac/fast/repaint/rel-positioned-inline-with-overflow-expected.checksum:
+        * platform/mac/fast/repaint/selection-gap-overflow-scroll-2-expected.checksum:
+        * platform/mac/fast/repaint/subtree-layoutstate-transform-expected.checksum:
+        * platform/mac/fast/repaint/table-outer-border-expected.checksum:
+        * platform/mac/fast/table/fixed-table-with-percent-inside-percent-table-expected.checksum:
+        * platform/mac/fast/table/fixed-table-with-percent-width-inside-auto-table-expected.checksum:
+        * platform/mac/fast/table/fixed-table-with-percent-width-inside-div-expected.checksum:
+        * platform/mac/fast/table/fixed-table-with-percent-width-inside-extra-large-div-expected.checksum:
+        * platform/mac/fast/table/fixed-table-with-percent-width-inside-fixed-width-table-expected.checksum:
+        * platform/mac/fast/table/fixed-table-with-small-percent-width-expected.checksum:
+        * platform/mac/fast/text/atsui-partial-selection-expected.checksum:
+        * platform/mac/fast/text/capitalize-boundaries-expected.checksum:
+        * platform/mac/fast/text/drawBidiText-expected.checksum:
+        * platform/mac/fast/text/line-breaking-with-kerning-expected.checksum:
+        * platform/mac/fast/text/sticky-typesetting-features-expected.checksum:
+        * platform/mac/fast/transforms/shadows-expected.checksum:
+        * platform/mac/http/tests/misc/slow-loading-mask-expected.checksum:
+        * platform/mac/media/video-zoom-controls-expected.checksum:
+        * platform/mac/plugins/embed-attributes-style-expected.checksum:
+        * platform/mac/plugins/qt-qwidget-plugin-expected.checksum:
+        * platform/mac/tables/mozilla/bugs/bug106158-1-expected.checksum:
+        * platform/mac/tables/mozilla/bugs/bug106158-2-expected.checksum:
+        * platform/mac/tables/mozilla/bugs/bug34176-expected.checksum:
+        * platform/mac/tables/mozilla/bugs/bug6674-expected.checksum:
+        * platform/mac/test_expectations.txt:
+        * platform/mac/transforms/2d/transform-fixed-container-expected.checksum:
+        * platform/mac/transitions/move-after-transition-expected.checksum:
+        * platform/mac/transitions/transition-end-event-rendering-expected.checksum:
+
 2010-03-25  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Eric Seidel.
