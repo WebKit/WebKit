@@ -157,6 +157,10 @@ class MacPort(base.Port):
     def num_cores(self):
         return int(os.popen2("sysctl -n hw.ncpu")[1].read())
 
+    def path_to_test_expectations_file(self):
+        return self.path_from_webkit_base('LayoutTests', 'platform',
+           'mac', 'test_expectations.txt')
+
     def results_directory(self):
         return ('/tmp/run-chromium-webkit-tests-' +
                 self._options.results_directory)
@@ -239,28 +243,35 @@ class MacPort(base.Port):
         return tests_to_skip
 
     def test_expectations(self):
-        # The WebKit mac port uses 'Skipped' files at the moment. Each
-        # file contains a list of files or directories to be skipped during
-        # the test run. The total list of tests to skipped is given by the
-        # contents of the generic Skipped file found in platform/X plus
-        # a version-specific file found in platform/X-version. Duplicate
-        # entries are allowed. This routine reads those files and turns
-        # contents into the format expected by test_expectations.
-        tests_to_skip = set(self._expectations_from_skipped_files()) # Use a set to allow duplicates
+        # The WebKit mac port uses a combination of a test_expectations file
+        # and 'Skipped' files.
+        expectations_file = self.path_to_test_expectations_file()
+        expectations = file(expectations_file, "r").read()
+        return expectations + self._skips()
+
+    def _skips(self):
+        # Each Skipped file contains a list of files
+        # or directories to be skipped during the test run. The total list
+        # of tests to skipped is given by the contents of the generic
+        # Skipped file found in platform/X plus a version-specific file
+        # found in platform/X-version. Duplicate entries are allowed.
+        # This routine reads those files and turns contents into the
+        # format expected by test_expectations.
+
+        # Use a set to allow duplicates
+        tests_to_skip = set(self._expectations_from_skipped_files())
+
         tests_to_skip.update(self._tests_for_other_platforms())
         tests_to_skip.update(self._tests_for_disabled_features())
-        expectations = map(lambda test_path: "BUG_SKIPPED SKIP : %s = FAIL" % test_path, tests_to_skip)
-        return "\n".join(expectations)
+        skip_lines = map(lambda test_path: "BUG_SKIPPED SKIP : %s = FAIL" %
+                                test_path, tests_to_skip)
+        return "\n".join(skip_lines)
 
     def test_platform_name(self):
-        # At the moment we don't use test platform names, but we have
-        # to return something.
-        return 'mac'
+        return 'mac' + self.version()
 
     def test_platform_names(self):
-        # At the moment we don't use test platform names, but we have
-        # to return something.
-        return ('mac',)
+        return ('mac', 'mac-tiger', 'mac-leopard', 'mac-snowleopard')
 
     def version(self):
         os_version_string = platform.mac_ver()[0]  # e.g. "10.5.6"

@@ -1,3 +1,14 @@
+2010-03-25  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Add a test_expectations.txt file for the mac platform so
+        new-run-webkit-tests can track IMAGE failures.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36619
+
+        * platform/mac/test_expectations.txt: Added.
+
 2010-03-26  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein, Darin Adler.
