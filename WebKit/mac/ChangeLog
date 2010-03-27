@@ -1,3 +1,16 @@
+2010-03-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        WebKit NSFileManager methods don't handle broken symlinks correctly.
+        Part of <rdar://problem/7574046>.
+
+        * Misc/WebNSFileManagerExtras.h: Removed unused defines and methods.
+        * Misc/WebNSFileManagerExtras.m: Removed unused methods.
+        (fileExists): Added. For use instead of fileExistsAtPath: for cases where we'd like
+        to treat a broken symlink as a file that does indeed exist.
+        (-[NSFileManager _webkit_pathWithUniqueFilenameForPath:]): Use fileExists.
+
 2010-03-25  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Mark Rowe.

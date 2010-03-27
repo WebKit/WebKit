@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,73 +30,12 @@
 
 #import "WebKitNSStringExtras.h"
 #import "WebNSURLExtras.h"
+#import <JavaScriptCore/Assertions.h>
 #import <WebCore/FoundationExtras.h>
 #import <WebKitSystemInterface.h>
-#import <pthread.h>
-#import <sys/mount.h>
-#import <JavaScriptCore/Assertions.h>
+#import <sys/stat.h>
 
 @implementation NSFileManager (WebNSFileManagerExtras)
-
-- (BOOL)_webkit_removeFileOnlyAtPath:(NSString *)path
-{
-    struct statfs buf;
-    BOOL result = unlink([path fileSystemRepresentation]) == 0;
-
-    // For mysterious reasons, MNT_DOVOLFS is the flag for "supports resource fork"
-    if ((statfs([path fileSystemRepresentation], &buf) == 0) && !(buf.f_flags & MNT_DOVOLFS)) {
-        NSString *lastPathComponent = [path lastPathComponent];
-        if ([lastPathComponent length] != 0 && ![lastPathComponent isEqualToString:@"/"]) {
-            NSString *resourcePath = [[path stringByDeletingLastPathComponent] stringByAppendingString:[@"._" stringByAppendingString:lastPathComponent]];
-            if (unlink([resourcePath fileSystemRepresentation]) != 0) {
-                result = NO;
-            }
-        }
-    }
-
-    return result;
-}
-
-- (void)_webkit_backgroundRemoveFileAtPath:(NSString *)path
-{
-    NSFileManager *manager;
-    NSString *moveToSubpath;
-    NSString *moveToPath;
-    int i;
-    
-    manager = [NSFileManager defaultManager];
-    
-    i = 0;
-    moveToSubpath = [path stringByDeletingLastPathComponent];
-    do {
-        moveToPath = [NSString stringWithFormat:@"%@/.tmp%d", moveToSubpath, i];
-        i++;
-    } while ([manager fileExistsAtPath:moveToPath]);
-
-    if ([manager moveItemAtPath:path toPath:moveToPath error:NULL])
-        [NSThread detachNewThreadSelector:@selector(_performRemoveFileAtPath:) toTarget:self withObject:moveToPath];
-}
-
-- (void)_webkit_backgroundRemoveLeftoverFiles:(NSString *)path
-{
-    NSFileManager *manager;
-    NSString *leftoverSubpath;
-    NSString *leftoverPath;
-    int i;
-    
-    manager = [NSFileManager defaultManager];
-    leftoverSubpath = [path stringByDeletingLastPathComponent];
-    
-    i = 0;
-    while (1) {
-        leftoverPath = [NSString stringWithFormat:@"%@/.tmp%d", leftoverSubpath, i];
-        if (![manager fileExistsAtPath:leftoverPath]) {
-            break;
-        }
-        [NSThread detachNewThreadSelector:@selector(_performRemoveFileAtPath:) toTarget:self withObject:leftoverPath];
-        i++;
-    }
-}
 
 - (NSString *)_webkit_carbonPathForPath:(NSString *)posixPath
 {
@@ -199,14 +138,22 @@ static void *setMetaData(void* context)
     return [path substringToIndex:[path length]-1];
 }
 
+// -[NSFileManager fileExistsAtPath:] returns NO if there is a broken symlink at the path.
+// So we use this function instead, which returns YES if there is anything there, including
+// a broken symlink.
+static BOOL fileExists(NSString *path)
+{
+    struct stat statBuffer;
+    return !lstat([path fileSystemRepresentation], &statBuffer);
+}
+
 - (NSString *)_webkit_pathWithUniqueFilenameForPath:(NSString *)path
 {
     // "Fix" the filename of the path.
     NSString *filename = [[path lastPathComponent] _webkit_filenameByFixingIllegalCharacters];
     path = [[path stringByDeletingLastPathComponent] stringByAppendingPathComponent:filename];
 
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    if ([fileManager fileExistsAtPath:path]) {
+    if (!fileExists(path)) {
         // Don't overwrite existing file by appending "-n", "-n.ext" or "-n.ext.ext" to the filename.
         NSString *extensions = nil;
         NSString *pathWithoutExtensions;
@@ -221,15 +168,11 @@ static void *setMetaData(void* context)
             pathWithoutExtensions = [[path stringByDeletingLastPathComponent] stringByAppendingPathComponent:lastPathComponent];
         }
 
-        NSString *pathWithAppendedNumber;
-        unsigned i;
-
-        for (i = 1; 1; i++) {
-            pathWithAppendedNumber = [NSString stringWithFormat:@"%@-%d", pathWithoutExtensions, i];
+        for (unsigned i = 1; ; i++) {
+            NSString *pathWithAppendedNumber = [NSString stringWithFormat:@"%@-%d", pathWithoutExtensions, i];
             path = [extensions length] ? [pathWithAppendedNumber stringByAppendingPathExtension:extensions] : pathWithAppendedNumber;
-            if (![fileManager fileExistsAtPath:path]) {
+            if (!fileExists(path))
                 break;
-            }
         }
     }
 
@@ -238,8 +181,8 @@ static void *setMetaData(void* context)
 
 @end
 
-
 #ifdef BUILDING_ON_TIGER
+
 @implementation NSFileManager (WebNSFileManagerTigerForwardCompatibility)
 
 - (NSArray *)contentsOfDirectoryAtPath:(NSString *)path error:(NSError **)error
@@ -293,4 +236,5 @@ static void *setMetaData(void* context)
 }
 
 @end
+
 #endif
