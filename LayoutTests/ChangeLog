@@ -1,3 +1,11 @@
+2010-03-27  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
+        Fix the newly-added test to not trip over a bug that causes some subsequent tests to fail.
+
+        * fast/dom/script-tests/setPrimitiveValue-exceptions.js:
+
 2010-03-27  Robert Hogan  <robert@webkit.org>
 
         Unreviewed skip failing test.

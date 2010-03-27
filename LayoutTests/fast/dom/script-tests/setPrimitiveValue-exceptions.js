@@ -18,6 +18,9 @@ shouldBe("left.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "25");
 left.setFloatValue(CSSPrimitiveValue.CSS_DIMENSION, 25);
 shouldBe("left.getFloatValue(CSSPrimitiveValue.CSS_DIMENSION)", "25");
 
+// Work around <http://webkit.org/b/31223> / <rdar://problem/7374538>.
+left.setFloatValue(CSSPrimitiveValue.CSS_PX, 10);
+
 shouldThrow("left.setFloatValue(CSSPrimitiveValue.CSS_UNKNOWN, 25)");
 shouldThrow("left.setFloatValue(CSSPrimitiveValue.CSS_STRING, 25)");
 shouldThrow("left.getFloatValue(CSSPrimitiveValue.CSS_UNKNOWN)");
