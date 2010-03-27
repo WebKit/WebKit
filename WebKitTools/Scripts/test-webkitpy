@@ -30,7 +30,6 @@
 
 import logging
 import sys
-import unittest
 
 import webkitpy.python24.versioning as versioning
 
@@ -62,6 +61,8 @@ def configure_logging():
         #        autoinstall is adjusted.  Currently, autoinstall logs
         #        INFO messages when importing already-downloaded packages,
         #        which is too verbose.
+        if record.name.startswith("webkitpy.test"):
+            return True
         if record.name.startswith("webkitpy"):
             return False
         return True
@@ -102,7 +103,6 @@ if __name__ == "__main__":
     # logging to be configured prior to importing -- for example to
     # enable the display of autoinstall logging.log messages while
     # running the unit tests.
-    from webkitpy.unittests import *
+    from webkitpy.test.main import Tester
 
-    # Runs the unit tests.
-    unittest.main()
+    Tester().run_tests(sys.argv)

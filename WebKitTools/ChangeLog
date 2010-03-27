@@ -1,3 +1,28 @@
+2010-03-26  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        The test-webkitpy script now automatically detects all unit-test
+        files in webkitpy/.  This lets us eliminate the need to have and
+        maintain all of the unittests.py files.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36591
+
+        * Scripts/test-webkitpy:
+          - Replaced the "from webkitpy.unittests import *" with a call
+            to webkitpy.test.main.Tester().run_tests().
+
+        * Scripts/webkitpy/test/__init__.py: Copied from WebKitTools/QueueStatusServer/filters/__init__.py.
+          - Required file for the new webkitpy/test/ directory.
+
+        * Scripts/webkitpy/test/main.py: Added.
+          - Added a Tester class that contains the following methods:
+            - _find_unittest_files() to detect all the unit-test files.
+            - _modules_from_paths() to convert the paths to the unit-test
+              files to fully-qualified module names.
+            - run_tests() which calls the above two methods and then passes
+              the module names to Python's unittest module.
+
 2010-03-27  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Simon Fraser.
