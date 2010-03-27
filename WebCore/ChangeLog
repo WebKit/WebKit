@@ -1,3 +1,18 @@
+2010-03-27  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by nobody, fix typo in previous commit.
+
+        Allow plugins implemented by the application, such as mimetype 'x-qt-plugin',
+         when pluginsEnabled is false
+
+        Fix parentheses typo in r56661. This happened while rebasing and was not present
+        in the reviewed patch, so committing unreviewed.
+
+        https://bugs.webkit.org/attachment.cgi?id=49515
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::requestObject):
+
 2010-03-26  Robert Hogan  <robert@roberthogan.net>
 
         Reviewed by Simon Hausmann.
