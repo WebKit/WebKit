@@ -6,7 +6,7 @@
  redistribute this Apple software.
  
  In consideration of your agreement to abide by the following terms, and subject to these 
- terms, Apple grants you a personal, non-exclusive license, under AppleÕs copyrights in 
+ terms, Apple grants you a personal, non-exclusive license, under Apple's copyrights in
  this original Apple software (the "Apple Software"), to use, reproduce, modify and 
  redistribute the Apple Software, with or without modifications, in source and/or binary 
  forms; provided that if you redistribute the Apple Software in its entirety and without 
@@ -108,6 +108,8 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16 mode, int16 argc, ch
                 obj->testDocumentOpenInDestroyStream = TRUE;
               else if (_stricmp(argn[i], "testwindowopen") == 0)
                 obj->testWindowOpen = TRUE;
+            else if (_stricmp(argn[i], "onSetWindow") == 0 && !obj->onSetWindow)
+                obj->onSetWindow = strdup(argv[i]);
         }
 
         browser->getvalue(instance, NPNVprivateModeBool, (void *)&obj->cachedPrivateBrowsingMode);
@@ -137,6 +139,9 @@ NPError NPP_Destroy(NPP instance, NPSavedData **save)
         if (obj->logDestroy)
             printf("PLUGIN: NPP_Destroy\n");
 
+        if (obj->onSetWindow)
+            free(obj->onSetWindow);
+
         browser->releaseobject(&obj->header);
     }
     return NPERR_NO_ERROR;
@@ -148,6 +153,9 @@ NPError NPP_SetWindow(NPP instance, NPWindow *window)
 
     if (obj) {
         obj->lastWindow = *window;
+
+        if (obj->onSetWindow)
+            executeScript(obj, obj->onSetWindow);
 
         if (obj->testWindowOpen) {
             testWindowOpen(instance);

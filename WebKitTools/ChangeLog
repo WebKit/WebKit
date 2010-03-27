@@ -1,3 +1,20 @@
+2010-03-27  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        [Qt/Win] Add support to unix and windows NS plugin for executing scripts on setWindow.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36701
+
+        * DumpRenderTree/unix/TestNetscapePlugin/TestNetscapePlugin.cpp:
+        (webkit_test_plugin_new_instance): Add onSetWindow.
+        (webkit_test_plugin_destroy_instance): Add onSetWindow.
+        (webkit_test_plugin_set_window): Add onSetWindow.
+        * DumpRenderTree/win/TestNetscapePlugin/main.cpp:
+        (NPP_New): Add onSetWindow.
+        (NPP_Destroy): Add onSetWindow.
+        (NPP_SetWindow): Add onSetWindow.
+
 2010-03-26  Robert Hogan  <robert@roberthogan.net>
 
         Reviewed by Simon Hausmann.
