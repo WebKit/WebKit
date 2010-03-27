@@ -1,5 +1,11 @@
 2010-03-27  Darin Adler  <darin@apple.com>
 
+        * Misc/WebNSFileManagerExtras.m:
+        (-[NSFileManager _webkit_pathWithUniqueFilenameForPath:]):
+        Removed stray "!". How did that get in there?
+
+2010-03-27  Darin Adler  <darin@apple.com>
+
         Reviewed by Mark Rowe.
 
         WebKit NSFileManager methods don't handle broken symlinks correctly.

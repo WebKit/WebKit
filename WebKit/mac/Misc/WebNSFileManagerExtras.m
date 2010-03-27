@@ -153,7 +153,7 @@ static BOOL fileExists(NSString *path)
     NSString *filename = [[path lastPathComponent] _webkit_filenameByFixingIllegalCharacters];
     path = [[path stringByDeletingLastPathComponent] stringByAppendingPathComponent:filename];
 
-    if (!fileExists(path)) {
+    if (fileExists(path)) {
         // Don't overwrite existing file by appending "-n", "-n.ext" or "-n.ext.ext" to the filename.
         NSString *extensions = nil;
         NSString *pathWithoutExtensions;
