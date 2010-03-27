@@ -94,7 +94,7 @@ class Port(object):
                    diff_filename=None):
         """Compare two image files and produce a delta image file.
 
-        Return 1 if the two files are different, 0 if they are the same.
+        Return True if the two files are different, False if they are the same.
         Also produce a delta image of the two images and write that into
         |diff_filename| if it is not None.
 
@@ -108,9 +108,10 @@ class Port(object):
         else:
             cmd = [executable, expected_filename, actual_filename]
 
-        result = 1
+        result = True
         try:
-            result = subprocess.call(cmd)
+            if subprocess.call(cmd) == 0:
+                return False
         except OSError, e:
             if e.errno == errno.ENOENT or e.errno == errno.EACCES:
                 _compare_available = False

@@ -1,5 +1,14 @@
 2010-03-26  Dirk Pranke  <dpranke@chromium.org>
 
+        Unreviewed fix.
+
+        Fix the return value for port/base.diff_image (changed from 1/0 to
+        True/False in bug 34826.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+
+2010-03-26  Dirk Pranke  <dpranke@chromium.org>
+
         Reviewed by Eric Seidel.
 
         Change the Mac port of new-run-webkit-tests to look for a
