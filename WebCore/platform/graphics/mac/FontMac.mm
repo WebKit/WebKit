@@ -135,14 +135,13 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
         CGContextSetFontSize(cgContext, platformData.m_size);
 
 
-#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
     IntSize shadowSize;
     int shadowBlur;
     Color shadowColor;
     ColorSpace fillColorSpace = context->fillColorSpace();
     context->getShadow(shadowSize, shadowBlur, shadowColor);
 
-    bool hasSimpleShadow = context->textDrawingMode() == cTextFill && shadowColor.isValid() && !shadowBlur;
+    bool hasSimpleShadow = context->textDrawingMode() == cTextFill && shadowColor.isValid() && !shadowBlur && !platformData.isColorBitmapFont();
     if (hasSimpleShadow) {
         // Paint simple shadows ourselves instead of relying on CG shadows, to avoid losing subpixel antialiasing.
         context->clearShadow();
@@ -157,7 +156,6 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
         }
         context->setFillColor(fillColor, fillColorSpace);
     }
-#endif
 
     CGContextSetTextPosition(cgContext, point.x(), point.y());
     showGlyphsWithAdvances(platformData, cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
@@ -166,10 +164,8 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
         showGlyphsWithAdvances(platformData, cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
     }
 
-#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
     if (hasSimpleShadow)
         context->setShadow(shadowSize, shadowBlur, shadowColor, fillColorSpace);
-#endif
 
     if (originalShouldUseFontSmoothing != newShouldUseFontSmoothing)
         CGContextSetShouldSmoothFonts(cgContext, originalShouldUseFontSmoothing);

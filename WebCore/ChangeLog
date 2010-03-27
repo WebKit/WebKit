@@ -1,3 +1,13 @@
+2010-03-27  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Fix Acid3 text-shadow rendering regression introduced in r56597.
+
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::Font::drawGlyphs): Revert to using the simple shadow logic for zero-blur shadows,
+        except for color bitmap fonts.
+
 2010-03-26  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Beth Dakin.
