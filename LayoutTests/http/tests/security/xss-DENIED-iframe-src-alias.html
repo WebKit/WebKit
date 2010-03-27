@@ -1,0 +1,47 @@
+<html>
+<head>
+<script>
+window.onload = function()
+{
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+    }
+
+    var alert = 'javascript:alert("FAIL")';
+    // Test different ways of aliasing iframe.src
+    var aliasTests = [
+        function(iFrame) { iFrame.attributes['src'].textContent = alert;},
+        function(iFrame) { iFrame.attributes['src'].nodeValue = alert;},
+        function(iFrame) { iFrame.attributes[0].textContent = alert;},
+        function(iFrame) { iFrame.attributes[0].nodeValue = alert;},
+        function(iFrame) { iFrame.attributes.item(0).textContent = alert;},
+        function(iFrame) { iFrame.attributes.item(0).nodeValue = alert;}
+    ];
+
+    function makeOnloadHandler (idx, tgtFrame) {
+        return function() {
+            tgtFrame.onload = null;
+            try {
+                aliasTests[idx](tgtFrame);
+            } catch (e) {}
+        }
+    }
+
+    for (var i = 0; i < aliasTests.length; i++) {
+        aFrame = document.createElement('iframe');
+        aFrame.src = 'http://localhost:8080/security/resources/innocent-victim.html';
+        aFrame.onload = makeOnloadHandler(i, aFrame);
+        aFrame.width = 700;
+        document.body.appendChild(aFrame);
+        document.body.appendChild(document.createElement('br'));
+    }
+}
+
+</script>
+</head>
+<body>
+<p>This script tests if iframe.src can be set to a JavaScript URL via an alias 
+   (such as Attr.textContent or Attr.nodeValue). The test is successful if no 
+   alerts appear and the page finishes loading.</p>
+</body>
+</html>

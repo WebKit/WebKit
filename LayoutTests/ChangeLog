@@ -1,3 +1,16 @@
+2010-03-26  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Security: iFrame.src accepts JavaScript URL via nodeValue or textContent
+        https://bugs.webkit.org/show_bug.cgi?id=36502
+
+        Overrode inherited nodeValue and textContent in Attr.idl so they proxy
+        to value, which performs a security check.
+
+        * http/tests/security/xss-DENIED-iframe-src-alias-expected.txt: Added.
+        * http/tests/security/xss-DENIED-iframe-src-alias.html: Added.
+
 2010-03-26  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by David Levin.

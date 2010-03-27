@@ -59,6 +59,27 @@ void JSAttr::setValue(ExecState* exec, JSValue value)
     setDOMException(exec, ec);
 }
 
+JSC::JSValue JSAttr::nodeValue(JSC::ExecState* exec) const
+{
+    Attr* imp = this->impl();
+    return jsStringOrNull(exec, imp->value());
+}
+
+void JSAttr::setNodeValue(JSC::ExecState* exec, JSC::JSValue value)
+{
+    setValue(exec, value);
+}
+
+JSC::JSValue JSAttr::textContent(JSC::ExecState* exec) const
+{
+    return nodeValue(exec);
+}
+
+void JSAttr::setTextContent(JSC::ExecState* exec, JSC::JSValue value)
+{
+    setValue(exec, value);
+}
+
 void JSAttr::markChildren(MarkStack& markStack)
 {
     Base::markChildren(markStack);

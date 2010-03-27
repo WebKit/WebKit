@@ -28,9 +28,16 @@ module core {
         // DOM Level 1
 
         readonly attribute [ConvertNullStringTo=Null] DOMString name;
+
         readonly attribute boolean specified;
+
                  attribute [ConvertNullStringTo=Null, ConvertNullToNullString, CustomSetter] DOMString value 
                      setter raises(DOMException);
+
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT  // Used for JavaScript iFrame src check.
+                 attribute [ConvertNullStringTo=Null, ConvertNullToNullString, Custom] DOMString nodeValue
+                     setter raises(DOMException);
+#endif
 
         // DOM Level 2
 
@@ -39,6 +46,11 @@ module core {
         // DOM Level 3
 
         readonly attribute boolean isId;
+
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT  // Used for JavaScript iFrame src check.
+                 attribute [ConvertNullStringTo=Null, ConvertNullToNullString, Custom] DOMString textContent
+                     setter raises(DOMException);
+#endif
 
         // extensions
         readonly attribute CSSStyleDeclaration style;

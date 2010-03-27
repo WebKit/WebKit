@@ -55,4 +55,24 @@ void V8Attr::valueAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value
         throwError(ec);
 }
 
+void V8Attr::nodeValueAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    valueAccessorSetter(name, value, info);
+}
+v8::Handle<v8::Value> V8Attr::nodeValueAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    Attr* imp = V8Attr::toNative(info.Holder());
+    return v8StringOrNull(imp->value());
+}
+
+void V8Attr::textContentAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    valueAccessorSetter(name, value, info);
+}
+
+v8::Handle<v8::Value> V8Attr::textContentAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    return nodeValueAccessorGetter(name, info);
+}
+
 } // namespace WebCore
