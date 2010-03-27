@@ -101,6 +101,8 @@ public:
 
     bool hasVisibleOverflow() const { return m_overflow; }
 
+    virtual bool adjustBackgroundImagePosition(const RenderObject* backgroundObject, const IntRect& clipRect, const IntSize& tileSize, int& xPosition, int& yPosition);
+
 protected:
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);

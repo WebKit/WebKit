@@ -895,4 +895,86 @@ void RenderTableCell::paintMask(PaintInfo& paintInfo, int tx, int ty)
     paintMaskImages(paintInfo, tx, ty, w, h);
 }
 
+bool RenderTableCell::adjustBackgroundImagePosition(const RenderObject* backgroundObject, const IntRect& clipRect, const IntSize& tileSize, int& xPosition, int& yPosition)
+{
+    if (!backgroundObject)
+        return false;
+
+    // Initially, the xPosition, yPosition represent the background offset with
+    // respect to the absolute content box of backgroundObject. We adjust these
+    // offsets so that they are with respect to this table cell.
+    //
+    // The clipRect describes how the background image is positioned inside
+    // this table cell. Moreover, it is the rectangle that will be painted with
+    // the background image.
+    int absClipRectX = clipRect.x();
+    int absClipRectY = clipRect.y();
+
+    // Notice that the clipRect is contained within the absolute content box of the table.
+    // So, to work out the offsets relative to the content box of the table we take the
+    // difference between the location of the absolute content box of the table and the
+    // location of the clipRect.
+    IntRect absTableContentBox = table()->absoluteContentBox();
+    int absTableX = absTableContentBox.x();
+    int absTableY = absTableContentBox.y();
+
+    if (backgroundObject->isTableCol() && backgroundObject->style()->display() == TABLE_COLUMN_GROUP) {
+        // Adjust background for table column group.
+        // Each column group extends from the top of the cells in the top row to the bottom of the
+        // cells on the bottom row and from the left edge of its leftmost column to the right edge
+        // of its rightmost column. The background covers exactly the full area of all cells that
+        // originate in the column group, even if they span outside the column group, but this
+        // difference in area does not affect background image positioning.
+        yPosition = tileSize.height() + yPosition - absClipRectY + absTableY;
+
+        RenderTable* tableElement = table();
+        bool foundFirstColInColGroup = false; // i.e. leftmost column.
+        int c = col();
+        for (; !foundFirstColInColGroup && c >= 0; --c)
+            tableElement->colElement(c, &foundFirstColInColGroup, 0);
+        c += 1;
+        ASSERT(foundFirstColInColGroup);
+
+        int colX = tableElement->columnPositions()[c]; // relative to the width of the table.
+        xPosition = tileSize.width() + xPosition - absClipRectX + absTableX + colX;
+        return true;
+    }
+    if (backgroundObject->isTableCol()) {
+        // Adjust background for table column.
+        // Each column is as tall as the column groups and as wide as a normal (single-column-spanning)
+        // cell in the column. The background covers exactly the full area of all cells that originate
+        // in the column, even if they span outside the column, but this difference in area does not
+        // affect background image positioning.
+        xPosition = tileSize.width() + xPosition;
+        yPosition = tileSize.height() + yPosition - absClipRectY + absTableY;
+        return true;
+    }
+    if (backgroundObject->isTableSection()) {
+        // Adjust background for table row group.
+        // Each row group extends from the top left corner of its topmost cell in the first
+        // column to the bottom right corner of its bottommost cell in the last column.
+        const RenderTableSection* section = toRenderTableSection(backgroundObject);
+        if (RenderTableCell* topMostCellInFirstCol = section->cellAt(0, 0).cell) {
+            // Notice, the absolute bounding box for topMostCellInFirstCol takes into
+            // account the location of the table (i.e., absTableX, absTableY).
+            int absTopMostCellInFirstColX = topMostCellInFirstCol->absoluteBoundingBoxRect().x();
+            int absTopMostCellInFirstColY = topMostCellInFirstCol->absoluteBoundingBoxRect().y();
+            xPosition = tileSize.width() + xPosition - absClipRectX + absTopMostCellInFirstColX;
+            yPosition = tileSize.height() + yPosition - absClipRectY + absTopMostCellInFirstColY;
+        }
+        return true;
+    }    
+    if (backgroundObject->isTableRow()) {
+        // Adjust background for table row.
+        // Each row is as wide as the row groups and as tall as a normal (single-row-spanning) cell
+        // in the row. As with columns, the background covers exactly the full area of all cells that
+        // originate in the row, even if they span outside the row, but this difference in area does
+        // not affect background image positioning.
+        xPosition = tileSize.width() + xPosition - absClipRectX + absTableX;
+        yPosition = tileSize.height() + yPosition - absClipRectY + absTableY;
+        return true;
+    }
+    return false;
+}
+
 } // namespace WebCore

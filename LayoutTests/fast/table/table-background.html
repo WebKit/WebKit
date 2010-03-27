@@ -1,0 +1,20 @@
+<html>
+<head>
+<style>
+    td {font-family: Times; text-align: center}
+</style>
+</head>
+<body>
+<p>This tests that the background-image of a table covers exactly the full area of all cells in the table as implied in <a href="http://www.w3.org/TR/CSS2/tables.html#table-layers">section 17.5.1 of the CSS 2.1 spec</a>. This test PASSED if you do not see the word FAIL.</p>
+<table style="width: 100px; border-collapse: collapse; background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAIAAAD/gAIDAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAALBJREFUeNrs0MEJADAMxLAEuv/EgesM/aUgT2DUVal9ZXrhVcOCBQsWLFiwYMGCBQsWLFiwYMGCBQsWLFiwYMGCBQsWLFiwYMGCBQsWLFiwYMGCBQsWLFiwYMGCBQsWLFiwYMF6wMrUxq0TWLBgwYIFCxYsWLBgwYIFCxYsWLBgwYIFCxYsWLBgwYIFCxYsWLBgwYIFCxYsWLBgwYIFCxYsWLBgwYIFCxYsWH9jXQEGAAJGK0jbjHF8AAAAAElFTkSuQmCC')">
+    <tr style="height: 50px">
+        <td style="color: blue">FAIL</td>
+        <td style="color: yellow">FAIL</td>
+    </tr>
+    <tr style="height: 50px">
+        <td style="color: yellow">FAIL</td>
+        <td style="color: blue">FAIL</td>
+    </tr>
+</table>
+</body>
+</html>

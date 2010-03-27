@@ -1,3 +1,54 @@
+2010-03-26  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Beth Dakin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=9268
+
+        As per sections 14.2 (http://www.w3.org/TR/CSS2/colors.html#background)
+        and 17.5.1 (http://www.w3.org/TR/CSS2/tables.html#table-layers) of the
+        CSS 2.1 spec., the background-image of a table-row should span the
+        entire area of the table-row (i.e cover all the <td>'s). Moreover,
+        fixes background image painting with respect to row-groups, columns
+        and column-groups (*).
+
+        Currently, the background-image of a table row, row-group, and column-group
+        is inherited by the table cells. This directly contradicts section 14.2.
+        Instead, the background-image should cover the entire area of the table row,
+        row-group, column, or column-group, respectively as described in section 17.5.1.
+
+        (*) A follow up patch to compute the absolute content box of a column, and
+        column-group is needed so that background image positioning for these table
+        elements works. See bug #36104.
+
+        Tests: fast/table/table-background.html
+               fast/table/table-cell-border-draws-on-top-of-col-background.html
+               fast/table/table-cell-border-draws-on-top-of-col-group-background.html
+               fast/table/table-cell-border-draws-on-top-of-row-background.html
+               fast/table/table-cell-border-draws-on-top-of-row-group-background.html
+               fast/table/table-cell-overrides-row-background.html
+               fast/table/table-col-background.html
+               fast/table/table-col-group-background.html
+               fast/table/table-col-group-col-span-background.html
+               fast/table/table-col-group-span-background.html
+               fast/table/table-col-span-background.html
+               fast/table/table-row-background-left-50px.html
+               fast/table/table-row-background-right-100percent.html
+               fast/table/table-row-background-right-50px.html
+               fast/table/table-row-background.html
+               fast/table/table-row-group-background-positioned.html
+               fast/table/table-row-group-background.html
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        (WebCore::RenderBoxModelObject::calculateBackgroundImageGeometry): Modified
+        to call RenderObject::adjustBackgroundImagePosition.
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::adjustBackgroundImagePosition): Added.
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::adjustBackgroundImagePosition): Added.
+        * rendering/RenderTableCell.h:
+
 2010-03-26  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Unreviewed, minor build fix.

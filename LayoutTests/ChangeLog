@@ -1,3 +1,86 @@
+2010-03-26  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Beth Dakin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=9268
+
+        Tests that background-image support for table, table-cell, table-row,
+        row-group, table-column and column-group (*) conform to section 17.5.1
+        of the CSS 2.1 spec.
+
+        (*) A follow up patch to compute the absolute content box of a column, and
+        column-group is needed so that background image positioning for these table
+        elements works. See bug #36104.
+
+        * fast/table/table-background.html: Added.
+        * fast/table/table-cell-border-draws-on-top-of-col-background.html: Added.
+        * fast/table/table-cell-border-draws-on-top-of-col-group-background.html: Added.
+        * fast/table/table-cell-border-draws-on-top-of-row-background.html: Added.
+        * fast/table/table-cell-border-draws-on-top-of-row-group-background.html: Added.
+        * fast/table/table-cell-overrides-row-background.html: Added.
+        * fast/table/table-col-background.html: Added.
+        * fast/table/table-col-group-background.html: Added.
+        * fast/table/table-col-group-col-span-background.html: Added.
+        * fast/table/table-col-group-span-background.html: Added.
+        * fast/table/table-col-span-background.html: Added.
+        * fast/table/table-row-background-left-50px.html: Added.
+        * fast/table/table-row-background-right-100percent.html: Added.
+        * fast/table/table-row-background-right-50px.html: Added.
+        * fast/table/table-row-background.html: Added.
+        * fast/table/table-row-group-background-positioned.html: Added.
+        * fast/table/table-row-group-background.html: Added.
+        * platform/mac/fast/table/table-background-expected.checksum: Added.
+        * platform/mac/fast/table/table-background-expected.png: Added.
+        * platform/mac/fast/table/table-background-expected.txt: Added.
+        * platform/mac/fast/table/table-cell-border-draws-on-top-of-col-background-expected.checksum: Added.
+        * platform/mac/fast/table/table-cell-border-draws-on-top-of-col-background-expected.png: Added.
+        * platform/mac/fast/table/table-cell-border-draws-on-top-of-col-background-expected.txt: Added.
+        * platform/mac/fast/table/table-cell-border-draws-on-top-of-col-group-background-expected.checksum: Added.
+        * platform/mac/fast/table/table-cell-border-draws-on-top-of-col-group-background-expected.png: Added.
+        * platform/mac/fast/table/table-cell-border-draws-on-top-of-col-group-background-expected.txt: Added.
+        * platform/mac/fast/table/table-cell-border-draws-on-top-of-row-background-expected.checksum: Added.
+        * platform/mac/fast/table/table-cell-border-draws-on-top-of-row-background-expected.png: Added.
+        * platform/mac/fast/table/table-cell-border-draws-on-top-of-row-background-expected.txt: Added.
+        * platform/mac/fast/table/table-cell-border-draws-on-top-of-row-group-background-expected.checksum: Added.
+        * platform/mac/fast/table/table-cell-border-draws-on-top-of-row-group-background-expected.png: Added.
+        * platform/mac/fast/table/table-cell-border-draws-on-top-of-row-group-background-expected.txt: Added.
+        * platform/mac/fast/table/table-cell-overrides-row-background-expected.checksum: Added.
+        * platform/mac/fast/table/table-cell-overrides-row-background-expected.png: Added.
+        * platform/mac/fast/table/table-cell-overrides-row-background-expected.txt: Added.
+        * platform/mac/fast/table/table-col-background-expected.checksum: Added.
+        * platform/mac/fast/table/table-col-background-expected.png: Added.
+        * platform/mac/fast/table/table-col-background-expected.txt: Added.
+        * platform/mac/fast/table/table-col-group-background-expected.checksum: Added.
+        * platform/mac/fast/table/table-col-group-background-expected.png: Added.
+        * platform/mac/fast/table/table-col-group-background-expected.txt: Added.
+        * platform/mac/fast/table/table-col-group-col-span-background-expected.checksum: Added.
+        * platform/mac/fast/table/table-col-group-col-span-background-expected.png: Added.
+        * platform/mac/fast/table/table-col-group-col-span-background-expected.txt: Added.
+        * platform/mac/fast/table/table-col-group-span-background-expected.checksum: Added.
+        * platform/mac/fast/table/table-col-group-span-background-expected.png: Added.
+        * platform/mac/fast/table/table-col-group-span-background-expected.txt: Added.
+        * platform/mac/fast/table/table-col-span-background-expected.checksum: Added.
+        * platform/mac/fast/table/table-col-span-background-expected.png: Added.
+        * platform/mac/fast/table/table-col-span-background-expected.txt: Added.
+        * platform/mac/fast/table/table-row-background-expected.checksum: Added.
+        * platform/mac/fast/table/table-row-background-expected.png: Added.
+        * platform/mac/fast/table/table-row-background-expected.txt: Added.
+        * platform/mac/fast/table/table-row-background-left-50px-expected.checksum: Added.
+        * platform/mac/fast/table/table-row-background-left-50px-expected.png: Added.
+        * platform/mac/fast/table/table-row-background-left-50px-expected.txt: Added.
+        * platform/mac/fast/table/table-row-background-right-100percent-expected.checksum: Added.
+        * platform/mac/fast/table/table-row-background-right-100percent-expected.png: Added.
+        * platform/mac/fast/table/table-row-background-right-100percent-expected.txt: Added.
+        * platform/mac/fast/table/table-row-background-right-50px-expected.checksum: Added.
+        * platform/mac/fast/table/table-row-background-right-50px-expected.png: Added.
+        * platform/mac/fast/table/table-row-background-right-50px-expected.txt: Added.
+        * platform/mac/fast/table/table-row-group-background-expected.checksum: Added.
+        * platform/mac/fast/table/table-row-group-background-expected.png: Added.
+        * platform/mac/fast/table/table-row-group-background-expected.txt: Added.
+        * platform/mac/fast/table/table-row-group-background-positioned-expected.checksum: Added.
+        * platform/mac/fast/table/table-row-group-background-positioned-expected.png: Added.
+        * platform/mac/fast/table/table-row-group-background-positioned-expected.txt: Added.
+
 2010-03-26  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Adam Barth.

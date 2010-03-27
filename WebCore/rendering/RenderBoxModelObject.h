@@ -101,7 +101,7 @@ public:
     void highQualityRepaintTimerFired(Timer<RenderBoxModelObject>*);
 
 protected:
-    void calculateBackgroundImageGeometry(const FillLayer*, int tx, int ty, int w, int h, IntRect& destRect, IntPoint& phase, IntSize& tileSize);
+    void calculateBackgroundImageGeometry(const FillLayer*, int tx, int ty, int w, int h, IntRect& destRect, IntPoint& phase, IntSize& tileSize, RenderObject* backgroundObject = 0);
 
 private:
     virtual bool isBoxModelObject() const { return true; }
