@@ -589,6 +589,16 @@ static char* getFrameNameSuitableForTestResult(WebKitWebView* view, WebKitWebFra
     return frameName;
 }
 
+static void webViewLoadCommitted(WebKitWebView* view, WebKitWebFrame* frame, void*)
+{
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks()) {
+        char* frameName = getFrameNameSuitableForTestResult(view, frame);
+        printf("%s - didCommitLoadForFrame\n", frameName);
+        g_free(frameName);
+    }
+}
+
+
 static void webViewLoadFinished(WebKitWebView* view, WebKitWebFrame* frame, void*)
 {
     if (!done && gLayoutTestController->dumpFrameLoadCallbacks()) {
@@ -845,6 +855,7 @@ static WebKitWebView* createWebView()
     g_object_connect(G_OBJECT(view),
                      "signal::load-started", webViewLoadStarted, 0,
                      "signal::load-finished", webViewLoadFinished, 0,
+                     "signal::load-committed", webViewLoadCommitted, 0,
                      "signal::window-object-cleared", webViewWindowObjectCleared, 0,
                      "signal::console-message", webViewConsoleMessage, 0,
                      "signal::script-alert", webViewScriptAlert, 0,

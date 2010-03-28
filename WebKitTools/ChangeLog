@@ -2,6 +2,20 @@
 
         Reviewed by Eric Seidel.
 
+        Print didCommitLoadForFrame in the callback of signal::load-committed
+
+        [GTK] Improve reporting of frame loader callbacks in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=36454
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (webViewLoadCommitted):
+        (createWebView): added connection to sinal::load-committed and
+        signal callback
+
+2010-03-27  Sergio Villar Senin  <svillar@igalia.com>
+
+        Reviewed by Eric Seidel.
+
         Print didStartProvisionalLoadForFrame in the callback of
         notify::load-status property change notification
 
