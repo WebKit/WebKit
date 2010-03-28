@@ -1,3 +1,15 @@
+2010-03-27  Sergio Villar Senin  <svillar@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        Add a CR after printing didFinishDocumentLoadForFrame
+
+        [GTK] Improve reporting of frame loader callbacks in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=36454
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (webViewLoadFinished):
+
 2010-03-27  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Rubber-stamped by Adam Barth.
