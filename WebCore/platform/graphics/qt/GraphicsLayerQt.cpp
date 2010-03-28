@@ -971,18 +971,18 @@ static inline double solveCubicBezierFunction(qreal p1x, qreal p1y, qreal p2x, q
 
 // we want the timing function to be as close as possible to what the web-developer intended, so we're using the same function used by WebCore when compositing is disabled
 // Using easing-curves would probably work for some of the cases, but wouldn't really buy us anything as we'd have to convert the bezier function back to an easing curve
-static inline qreal applyTimingFunction(const TimingFunction& timingFunction, qreal progress, int duration)
+static inline qreal applyTimingFunction(const TimingFunction& timingFunction, qreal progress, double duration)
 {
-        if (timingFunction.type() == LinearTimingFunction)
-            return progress;
-        if (timingFunction.type() == CubicBezierTimingFunction) {
-            return solveCubicBezierFunction(timingFunction.x1(),
-                                            timingFunction.y1(),
-                                            timingFunction.x2(),
-                                            timingFunction.y2(),
-                                            double(progress), double(duration) / 1000);
-        }
+    if (timingFunction.type() == LinearTimingFunction)
         return progress;
+    if (timingFunction.type() == CubicBezierTimingFunction) {
+        return solveCubicBezierFunction(timingFunction.x1(),
+                                        timingFunction.y1(),
+                                        timingFunction.x2(),
+                                        timingFunction.y2(),
+                                        double(progress), double(duration) / 1000);
+    }
+    return progress;
 }
 
 // helper functions to safely get a value out of WebCore's AnimationValue*
@@ -1055,6 +1055,8 @@ public:
             KeyframeValueQt<T> keyframeValue;
             if (animationValue->timingFunction())
                 keyframeValue.timingFunction = *animationValue->timingFunction();
+            else
+                keyframeValue.timingFunction = anim->timingFunction();
             webkitAnimationToQtAnimationValue(animationValue, keyframeValue.value);
             m_keyframeValues[animationValue->keyTime()] = keyframeValue;
         }
@@ -1103,7 +1105,7 @@ protected:
         // we can now process the progress and apply the frame
         progress = (!progress || progress == 1 || it.key() == it2.key())
                                          ? progress
-                                         : applyTimingFunction(timingFunc, (progress - it.key()) / (it2.key() - it.key()), duration() / 1000);
+                                         : applyTimingFunction(timingFunc, (progress - it.key()) / (it2.key() - it.key()), duration());
         applyFrame(fromValue, toValue, progress);
     }
 

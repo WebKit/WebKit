@@ -1,3 +1,24 @@
+2010-03-28  Kim Grönholm  <kim.gronholm@nomovok.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] GraphicsLayer: Timing functions don't work with transitions
+        https://bugs.webkit.org/show_bug.cgi?id=36589
+
+        If the animation value doesn't have timing function set, we need to
+        use the animation's timing function.
+        
+        Fixed also a bug in passing the duration to solveCubicBezierFunction.
+        The duration was divided two times by 1000 and meanwhile casted to int.
+        It needs to be kept as double and divided by 1000 only once.
+
+        Test case: https://bugs.webkit.org/attachment.cgi?id=51619
+
+        * platform/graphics/qt/GraphicsLayerQt.cpp:
+        (WebCore::applyTimingFunction):
+        (WebCore::AnimationQt:::AnimationQtBase):
+        (WebCore::AnimationQt::updateCurrentTime):
+
 2010-03-27  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Pavel Feldman.
