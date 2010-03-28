@@ -619,15 +619,6 @@ WebInspector.documentMouseOver = function(event)
         return;
     if (anchor.href && anchor.href.indexOf("/data:") != -1)
         return;
-    if (WebInspector.canShowSourceLine(anchor.href, anchor.lineNumber, anchor.preferredPanel) || WebInspector.ProfileType.URLRegExp.exec(anchor.href)) {
-        if (event.target.originalTitle)
-            event.target.title = event.target.originalTitle;
-        return;
-    }
-
-    if (!event.target.originalTitle)
-        event.target.originalTitle = event.target.title;
-    event.target.title = WebInspector.UIString("Cannot open this link. Make sure that resource tracking is enabled in the Resources panel.");
 }
 
 WebInspector.documentClick = function(event)
@@ -668,6 +659,8 @@ WebInspector.documentClick = function(event)
             }
             return;
         }
+
+        WebInspector.showResourcesPanel();
     }
 
     if (WebInspector.followLinkTimeout)
