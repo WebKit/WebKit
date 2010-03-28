@@ -1,5 +1,6 @@
 # Copyright (C) 2009 Google Inc. All rights reserved.
 # Copyright (C) 2010 Chris Jerdonek (chris.jerdonek@gmail.com)
+# Copyright (C) 2010 ProFUSION embedded systems
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -581,6 +582,43 @@ class StyleChecker(object):
         lines = carriage_return_processor.process(lines)
 
         processor.process(lines)
+
+    def check_paths(self, paths, mock_check_file=None, mock_os=None):
+        """Check style in the given files or directories.
+
+        Args:
+          paths: A list of file paths and directory paths.
+          mock_check_file: A mock of self.check_file for unit testing.
+          mock_os: A mock os for unit testing.
+
+        """
+        check_file = self.check_file if mock_check_file is None else \
+                     mock_check_file
+        os_module = os if mock_os is None else mock_os
+
+        for path in paths:
+            if os_module.path.isdir(path):
+                self._check_directory(directory=path,
+                                      check_file=check_file,
+                                      mock_os_walk=os_module.walk)
+            else:
+                check_file(path)
+
+    def _check_directory(self, directory, check_file, mock_os_walk=None):
+        """Check style in all files in a directory, recursively.
+
+        Args:
+          directory: A path to a directory.
+          check_file: The function to use in place of self.check_file().
+          mock_os_walk: A mock os.walk for unit testing.
+
+        """
+        os_walk = os.walk if mock_os_walk is None else mock_os_walk
+
+        for dir_path, dir_names, file_names in os_walk(directory):
+            for file_name in file_names:
+                file_path = os.path.join(dir_path, file_name)
+                check_file(file_path)
 
     def check_file(self, file_path, handle_style_error=None, process_file=None):
         """Check style in the given file.

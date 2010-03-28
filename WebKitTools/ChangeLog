@@ -2,6 +2,31 @@
 
         Reviewed by Shinichiro Hamaji.
 
+        Add to check-webkit-style support for checking directories.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35234
+
+        * Scripts/check-webkit-style:
+          - Replaced the call to check_file() with a call to check_paths().
+
+        * Scripts/webkitpy/style/checker.py:
+          - In the StyleChecker class:
+            - Added a check_paths() method that accepts a list of paths
+              to files and directories.
+            - Added a _check_directory() method that checks the files
+              in a directory.
+
+        * Scripts/webkitpy/style/checker_unittest.py:
+          - Added a StyleCheckerCheckPathsTest to unit-test the new
+            check_paths() method.
+
+        * Scripts/webkitpy/style/optparser.py:
+          - Updated the usage string.
+
+2010-03-28  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Shinichiro Hamaji.
+
         Changed check-webkit-style to convert paths to paths relative to
         the checkout root when invoking check-webkit-style with path
         arguments.  Also added warning messages where appropriate.

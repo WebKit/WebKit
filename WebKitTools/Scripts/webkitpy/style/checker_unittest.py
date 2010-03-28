@@ -35,6 +35,7 @@
 """Unit tests for style.py."""
 
 import logging
+import os
 import unittest
 
 import checker as style
@@ -644,6 +645,54 @@ class StyleCheckerCheckFileTest(unittest.TestCase):
                                self.mock_handle_style_error,
                                expected_processor,
                                "")
+
+
+class StyleCheckerCheckPathsTest(unittest.TestCase):
+
+    """Test the check_paths() method of the StyleChecker class."""
+
+    class MockOs(object):
+
+        class MockPath(object):
+
+            """A mock os.path."""
+
+            def isdir(self, path):
+                return path == "directory"
+
+        def __init__(self):
+            self.path = self.MockPath()
+
+        def walk(self, directory):
+            """A mock of os.walk."""
+            if directory == "directory":
+                dirs = [("dir_path1", [], ["file1", "file2"]),
+                        ("dir_path2", [], ["file3"])]
+                return dirs
+            return None
+
+    def setUp(self):
+        self._checked_files = []
+
+    def _mock_check_file(self, file):
+        self._checked_files.append(file)
+
+    def test_check_paths(self):
+        """Test StyleChecker.check_paths()."""
+        checker = StyleChecker(configuration=None)
+        mock_check_file = self._mock_check_file
+        mock_os = self.MockOs()
+
+        # Confirm that checked files is empty at the outset.
+        self.assertEquals(self._checked_files, [])
+        checker.check_paths(["path1", "directory"],
+                            mock_check_file=mock_check_file,
+                            mock_os=mock_os)
+        self.assertEquals(self._checked_files,
+                          ["path1",
+                           os.path.join("dir_path1", "file1"),
+                           os.path.join("dir_path1", "file2"),
+                           os.path.join("dir_path2", "file3")])
 
 
 if __name__ == '__main__':

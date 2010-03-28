@@ -42,7 +42,7 @@ def _create_usage(default_options):
     """
     usage = """
 Syntax: %(program_name)s [--debug] [--verbose=#] [--git-commit=<SingleCommit>]
-        [--output=vs7] [--filter=-x,+y,...] [file] ...
+        [--output=vs7] [--filter=-x,+y,...] [file or directory] ...
 
   The style guidelines this tries to follow are here:
     http://webkit.org/coding/coding-style.html
