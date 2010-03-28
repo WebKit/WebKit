@@ -470,6 +470,15 @@ void InspectorFrontend::didRemoveNode(long callId, long nodeId)
     function.call();
 }
 
+void InspectorFrontend::didChangeTagName(long callId, long nodeId)
+{
+    ScriptFunctionCall function(m_webInspector, "dispatch"); 
+    function.appendArgument("didChangeTagName");
+    function.appendArgument(callId);
+    function.appendArgument(nodeId);
+    function.call();
+}
+
 void InspectorFrontend::didGetChildNodes(long callId)
 {
     ScriptFunctionCall function(m_webInspector, "dispatch"); 

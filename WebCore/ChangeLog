@@ -1,3 +1,49 @@
+2010-03-27  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Edit Tag Names
+        https://bugs.webkit.org/show_bug.cgi?id=36481
+        
+        Allow editing an Element's Tag Name by double clicking
+        on the tag name in the Element's Tree Hierarchy.
+        
+          The usual asynchronous InspectorBackend, InspectorDOMAgent, InspectorFrontend flow.
+
+        * inspector/InspectorBackend.cpp: moved DOM manipulation to InspectorDOMAgent
+        (WebCore::InspectorBackend::removeNode):
+        (WebCore::InspectorBackend::changeTagName):
+        * inspector/InspectorBackend.h:
+        * inspector/InspectorBackend.idl:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::removeNode):
+        (WebCore::InspectorDOMAgent::changeTagName):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::didChangeTagName):
+        * inspector/InspectorFrontend.h:
+
+        * inspector/front-end/DOMAgent.js:
+
+          Handle the UI for editing an Element's tag name.
+
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._startEditingFromEvent): allow editing from double click.
+        (WebInspector.ElementsTreeElement.prototype._startEditingTagName.keyupListener): update the closing tag
+        (WebInspector.ElementsTreeElement.prototype._startEditingTagName.editingComitted): remove extra listener and commit
+        (WebInspector.ElementsTreeElement.prototype._startEditingTagName.editingCancelled): remove extra listener and cancel
+        (WebInspector.ElementsTreeElement.prototype._startEditingTagName):
+        (WebInspector.ElementsTreeElement.prototype._tagNameEditingCommitted.cancel):
+        (WebInspector.ElementsTreeElement.prototype._tagNameEditingCommitted.moveToNextAttributeIfNeeded):
+        (WebInspector.ElementsTreeElement.prototype._tagNameEditingCommitted.editTagNameCallback):
+        (WebInspector.ElementsTreeElement.prototype._tagNameEditingCommitted):
+        (WebInspector.ElementsTreeElement.prototype._distinctClosingTagElement): get the closing tag for an opening tag
+        (WebInspector.ElementsTreeElement.prototype._nodeTitleInfo): wrap the tagName in span.webkit-html-tag-name
+
+          Miscellaneous updates.
+
+        * inspector/front-end/treeoutline.js: fixed a typo.
+
 2010-03-27  Dmitry Gorbik  <socket.h@gmail.com>
 
         Reviewed by Pavel Feldman.

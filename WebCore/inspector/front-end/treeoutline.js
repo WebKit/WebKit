@@ -287,7 +287,7 @@ TreeOutline.prototype.findTreeElement = function(representedObject, isAncestor, 
     if (cachedElement)
         return cachedElement;
 
-    // The representedObject isn't know, so we start at the top of the tree and work down to find the first
+    // The representedObject isn't known, so we start at the top of the tree and work down to find the first
     // tree element that represents representedObject or one of its ancestors.
     var item;
     var found = false;

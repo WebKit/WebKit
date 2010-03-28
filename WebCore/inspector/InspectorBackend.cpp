@@ -326,34 +326,17 @@ void InspectorBackend::copyNode(long nodeId)
     String markup = createMarkup(node);
     Pasteboard::generalPasteboard()->writePlainText(markup);
 }
-    
+
 void InspectorBackend::removeNode(long callId, long nodeId)
 {
-    InspectorFrontend* frontend = inspectorFrontend();
-    if (!frontend)
-        return;
+    if (InspectorDOMAgent* domAgent = inspectorDOMAgent())
+        domAgent->removeNode(callId, nodeId);
+}
 
-    Node* node = nodeForId(nodeId);
-    if (!node) {
-        // Use -1 to denote an error condition.
-        frontend->didRemoveNode(callId, -1);
-        return;
-    }
-
-    Node* parentNode = node->parentNode();
-    if (!parentNode) {
-        frontend->didRemoveNode(callId, -1);
-        return;
-    }
-
-    ExceptionCode code;
-    parentNode->removeChild(node, code);
-    if (code) {
-        frontend->didRemoveNode(callId, -1);
-        return;
-    }
-
-    frontend->didRemoveNode(callId, nodeId);
+void InspectorBackend::changeTagName(long callId, long nodeId, const AtomicString& tagName, bool expanded)
+{
+    if (InspectorDOMAgent* domAgent = inspectorDOMAgent())
+        domAgent->changeTagName(callId, nodeId, tagName, expanded);
 }
 
 void InspectorBackend::getStyles(long callId, long nodeId, bool authorOnly)

@@ -352,6 +352,74 @@ void InspectorDOMAgent::removeAttribute(long callId, long elementId, const Strin
     }
 }
 
+void InspectorDOMAgent::removeNode(long callId, long nodeId)
+{
+    Node* node = nodeForId(nodeId);
+    if (!node) {
+        // Use -1 to denote an error condition.
+        m_frontend->didRemoveNode(callId, -1);
+        return;
+    }
+
+    Node* parentNode = node->parentNode();
+    if (!parentNode) {
+        m_frontend->didRemoveNode(callId, -1);
+        return;
+    }
+
+    ExceptionCode code;
+    parentNode->removeChild(node, code);
+    if (code) {
+        m_frontend->didRemoveNode(callId, -1);
+        return;
+    }
+
+    m_frontend->didRemoveNode(callId, nodeId);
+}
+
+void InspectorDOMAgent::changeTagName(long callId, long nodeId, const AtomicString& tagName, bool expanded)
+{
+    Node* oldNode = nodeForId(nodeId);
+    if (!oldNode || !oldNode->isElementNode()) {
+        // Use -1 to denote an error condition.
+        m_frontend->didChangeTagName(callId, -1);
+        return;
+    }
+
+    ExceptionCode code = 0;
+    RefPtr<Element> newElem = oldNode->document()->createElement(tagName, code);
+    if (code) {
+        m_frontend->didChangeTagName(callId, -1);
+        return;
+    }
+
+    // Copy over the original node's attributes.
+    Element* oldElem = static_cast<Element*>(oldNode);
+    newElem->copyNonAttributeProperties(oldElem);
+    if (oldElem->attributes())
+        newElem->attributes()->setAttributes(*(oldElem->attributes(true)));
+
+    // Copy over the original node's children.
+    Node* child;
+    while ((child = oldNode->firstChild()))
+        newElem->appendChild(child, code);
+
+    // Replace the old node with the new node
+    Node* parent = oldNode->parentNode();
+    parent->insertBefore(newElem, oldNode->nextSibling(), code);
+    parent->removeChild(oldNode, code);
+
+    if (code) {
+        m_frontend->didChangeTagName(callId, -1);
+        return;
+    }
+
+    long newId = pushNodePathToFrontend(newElem.get());
+    if (expanded)
+        pushChildNodesToFrontend(newId);
+    m_frontend->didChangeTagName(callId, newId);
+}
+
 void InspectorDOMAgent::setTextNodeValue(long callId, long nodeId, const String& value)
 {
     Node* node = nodeForId(nodeId);

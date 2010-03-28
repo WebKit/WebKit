@@ -96,6 +96,8 @@ namespace WebCore {
         void getChildNodes(long callId, long nodeId);
         void setAttribute(long callId, long elementId, const String& name, const String& value);
         void removeAttribute(long callId, long elementId, const String& name);
+        void removeNode(long callId, long nodeId);
+        void changeTagName(long callId, long nodeId, const AtomicString& tagName, bool expanded);
         void setTextNodeValue(long callId, long nodeId, const String& value);
         void getEventListenersForNode(long callId, long nodeId);
 

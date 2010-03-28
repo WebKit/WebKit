@@ -87,6 +87,7 @@ module core {
         void getEventListenersForNode(in long callId, in long nodeId);
         void copyNode(in long nodeId);
         void removeNode(in long callId, in long nodeId);
+        void changeTagName(in long callId, in long nodeId, in DOMString newTagName, in boolean expanded);
         void highlightDOMNode(in long nodeId);
         void hideDOMNodeHighlight();
 
