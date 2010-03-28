@@ -337,6 +337,11 @@ WebInspector.ElementsTreeElement.ForbiddenClosingTagElements = [
     "hr", "img", "input", "isindex", "keygen", "link", "meta", "param", "source"
 ].keySet();
 
+// These tags we do not allow editing their tag name.
+WebInspector.ElementsTreeElement.EditTagBlacklist = [
+    "html", "head", "body"
+].keySet();
+
 WebInspector.ElementsTreeElement.prototype = {
     highlightSearchResults: function(searchQuery)
     {
@@ -723,11 +728,9 @@ WebInspector.ElementsTreeElement.prototype = {
         if (attribute)
             return this._startEditingAttribute(attribute, event.target);
 
-        if (this.treeOutline.isXMLMimeType || !WebInspector.ElementsTreeElement.EditTagBlacklist[this.representedObject.localName]) {
-            var tagName = event.target.enclosingNodeOrSelfWithClass("webkit-html-tag-name");
-            if (tagName)
-                return this._startEditingTagName(tagName);
-        }
+        var tagName = event.target.enclosingNodeOrSelfWithClass("webkit-html-tag-name");
+        if (tagName)
+            return this._startEditingTagName(tagName);
 
         var newAttribute = event.target.enclosingNodeOrSelfWithClass("add-attribute");
         if (newAttribute)
@@ -872,7 +875,11 @@ WebInspector.ElementsTreeElement.prototype = {
             if (!tagNameElement)
                 return false;
         }
- 
+
+        var tagName = tagNameElement.textContent;
+        if (WebInspector.ElementsTreeElement.EditTagBlacklist[tagName.toLowerCase()])
+            return false;
+
         if (WebInspector.isBeingEdited(tagNameElement))
             return true;
 
@@ -900,7 +907,7 @@ WebInspector.ElementsTreeElement.prototype = {
 
         tagNameElement.addEventListener('keyup', keyupListener, false);
 
-        WebInspector.startEditing(tagNameElement, editingComitted.bind(this), editingCancelled.bind(this), tagNameElement.textContent);
+        WebInspector.startEditing(tagNameElement, editingComitted.bind(this), editingCancelled.bind(this), tagName);
         window.getSelection().setBaseAndExtent(tagNameElement, 0, tagNameElement, 1);
         return true;
     },
@@ -982,7 +989,7 @@ WebInspector.ElementsTreeElement.prototype = {
                     } else if (moveDirection === "forward") {
                         if (i === attributes.length - 1)
                             moveToNewAttribute = true;
-                        else 
+                        else
                             moveToAttribute = attributes[i + 1].name;
                     }
                 }
@@ -1398,5 +1405,3 @@ WebInspector.ElementsTreeElement.prototype = {
 }
 
 WebInspector.ElementsTreeElement.prototype.__proto__ = TreeElement.prototype;
-
-WebInspector.ElementsTreeElement.EditTagBlacklist = ["html", "head", "body"].keySet();
