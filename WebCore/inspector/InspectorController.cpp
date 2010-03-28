@@ -58,7 +58,6 @@
 #include "InspectorBackend.h"
 #include "InspectorClient.h"
 #include "InspectorFrontendClient.h"
-#include "InspectorDOMAgent.h"
 #include "InspectorDOMStorageResource.h"
 #include "InspectorDatabaseResource.h"
 #include "InspectorFrontend.h"

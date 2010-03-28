@@ -1001,21 +1001,21 @@ void InspectorDOMAgent::toggleStyleEnabled(long callId, long styleId, const Stri
     }
     CSSStyleDeclaration* style = it->second.get();
 
-    IdToStyleMap::iterator disabledIt = m_idToDisabledStyle.find(styleId);
+    IdToDisabledStyleMap::iterator disabledIt = m_idToDisabledStyle.find(styleId);
     if (disabledIt == m_idToDisabledStyle.end())
-        disabledIt = m_idToDisabledStyle.set(styleId, CSSMutableStyleDeclaration::create()).first;
-    CSSStyleDeclaration* disabledStyle = disabledIt->second.get();
+        disabledIt = m_idToDisabledStyle.set(styleId, DisabledStyleDeclaration()).first;
 
     // TODO: make sure this works with shorthands right.
     ExceptionCode ec = 0;
     if (disabled) {
-        disabledStyle->setProperty(propertyName, style->getPropertyValue(propertyName), style->getPropertyPriority(propertyName), ec);
+        disabledIt->second.set(propertyName, std::make_pair(style->getPropertyValue(propertyName), style->getPropertyPriority(propertyName)));
         if (!ec)
             style->removeProperty(propertyName, ec);
-    } else {
-        style->setProperty(propertyName, disabledStyle->getPropertyValue(propertyName), disabledStyle->getPropertyPriority(propertyName), ec);
+    } else if (disabledIt->second.contains(propertyName)) {
+        PropertyValueAndPriority valueAndPriority = disabledIt->second.get(propertyName);
+        style->setProperty(propertyName, valueAndPriority.first, valueAndPriority.second, ec);
         if (!ec)
-            disabledStyle->removeProperty(propertyName, ec);
+            disabledIt->second.remove(propertyName);
     }
     if (ec) {
         m_frontend->didToggleStyleEnabled(callId, ScriptValue::undefined());
@@ -1128,12 +1128,9 @@ ScriptObject InspectorDOMAgent::buildObjectForStyle(CSSStyleDeclaration* style, 
         long styleId = bindStyle(style);
         result.set("id", styleId);
 
-        IdToStyleMap::iterator disabledIt = m_idToDisabledStyle.find(styleId);
-        if (disabledIt != m_idToDisabledStyle.end()) {
-            ScriptObject disabledStyle = m_frontend->newScriptObject();
-            populateObjectWithStyleProperties(disabledIt->second.get(), disabledStyle);
-            result.set("disabled", disabledStyle);
-        }
+        IdToDisabledStyleMap::iterator disabledIt = m_idToDisabledStyle.find(styleId);
+        if (disabledIt != m_idToDisabledStyle.end())
+            result.set("disabled", buildArrayForDisabledStyleProperties(disabledIt->second));
     }
     result.set("width", style->getPropertyValue("width"));
     result.set("height", style->getPropertyValue("height"));
@@ -1164,6 +1161,20 @@ void InspectorDOMAgent::populateObjectWithStyleProperties(CSSStyleDeclaration* s
         property.set("value", style->getPropertyValue(name));
         properties.set(i, property);
     }
+}
+
+ScriptArray InspectorDOMAgent::buildArrayForDisabledStyleProperties(DisabledStyleDeclaration& declaration)
+{
+    int counter = 0;
+    ScriptArray properties = m_frontend->newScriptArray();
+    for (DisabledStyleDeclaration::iterator it = declaration.begin(); it != declaration.end(); ++it) {
+        ScriptObject property = m_frontend->newScriptObject();
+        property.set("name", it->first);
+        property.set("value", it->second.first);
+        property.set("priority", it->second.second);
+        properties.set(counter++, property);
+    }
+    return properties;
 }
 
 ScriptObject InspectorDOMAgent::buildObjectForStyleSheet(CSSStyleSheet* styleSheet)

@@ -495,23 +495,14 @@ WebInspector.CSSStyleDeclaration = function(payload)
     this.__disabledPropertyValues = {};
     this.__disabledPropertyPriorities = {};
     if (payload.disabled) {
-        var disabledProperties = payload.disabled.properties;
-        var shorthandValues = payload.disabled.shorthandValues;
-        for (var name in shorthandValues) {
-            this.__disabledProperties[name] = true;
-            this.__disabledPropertyValues[name] = shorthandValues[name];
-        }
-        for (var i = 0; i < disabledProperties.length; ++i) {
-            var disabledProperty = disabledProperties[i];
-            if (disabledProperty.shorthand)
-                continue;
-            var name = disabledProperty.name;
-            this.__disabledProperties[name] = true;
-            this.__disabledPropertyValues[name] = disabledProperty.value;
-            this.__disabledPropertyPriorities[name] = disabledProperty.priority;
+        for (var i = 0; i < payload.disabled.length; ++i) {
+            var property = payload.disabled[i];
+            this.__disabledProperties[property.name] = true;
+            this.__disabledPropertyValues[property.name] = property.value;
+            this.__disabledPropertyPriorities[property.name] = property.priority;
         }
     }
-    
+
     this._shorthandValues = payload.shorthandValues;
     this._propertyMap = {};
     this._longhandProperties = {};

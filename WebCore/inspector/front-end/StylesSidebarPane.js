@@ -212,7 +212,7 @@ WebInspector.StylesSidebarPane.prototype = {
         for (var name in styles.styleAttributes) {
             var attrStyle = { style: new WebInspector.CSSStyleDeclaration(styles.styleAttributes[name]), editable: false };
             attrStyle.subtitle = WebInspector.UIString("element’s “%s” attribute", name);
-            attrStyle.selectorText = node.nodeName + "[" + name;
+            attrStyle.selectorText = WebInspector.panels.elements.treeOutline.nodeNameToCorrectCase(node.nodeName) + "[" + name;
             if (node.getAttribute(name))
                 attrStyle.selectorText += "=" + node.getAttribute(name);
             attrStyle.selectorText += "]";
