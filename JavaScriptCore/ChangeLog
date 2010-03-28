@@ -1,3 +1,22 @@
+2010-03-28  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        QScriptEngine API was enriched by globalObject() method
+        which give an access to the global object.
+
+        [Qt] QScriptEngine doesn't give an access to global object
+        https://bugs.webkit.org/show_bug.cgi?id=36603
+
+        * qt/api/qscriptengine.cpp:
+        (QScriptEngine::globalObject):
+        * qt/api/qscriptengine.h:
+        * qt/api/qscriptengine_p.cpp:
+        (QScriptEnginePrivate::globalObject):
+        * qt/api/qscriptengine_p.h:
+        * qt/tests/qscriptengine/tst_qscriptengine.cpp:
+        (tst_QScriptEngine::globalObject):
+
 2010-03-26  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Simon Hausmann.

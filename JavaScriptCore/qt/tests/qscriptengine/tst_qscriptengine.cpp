@@ -35,6 +35,7 @@ public slots:
     void cleanup() {}
 
 private slots:
+    void globalObject();
     void evaluate();
     void collectGarbage();
     void nullValue();
@@ -50,6 +51,17 @@ void tst_QScriptEngine::evaluate()
     QScriptEngine engine;
     QVERIFY2(engine.evaluate("1+1").isValid(), "the expression should be evaluated and an valid result should be returned");
     QVERIFY2(engine.evaluate("ping").isValid(), "Script throwing an unhandled exception should return an exception value");
+}
+
+void tst_QScriptEngine::globalObject()
+{
+    QScriptEngine engine;
+    QScriptValue global = engine.globalObject();
+    QScriptValue self = engine.evaluate("this");
+    QVERIFY(global.isObject());
+    QVERIFY(engine.globalObject().equals(engine.evaluate("this")));
+    QEXPECT_FAIL("", "strictlyEquals is broken - bug 36600 in bugs.webkit.org", Continue);
+    QVERIFY(engine.globalObject().strictlyEquals(self));
 }
 
 /* Test garbage collection, at least try to not crash. */

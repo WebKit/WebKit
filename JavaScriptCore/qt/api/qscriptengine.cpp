@@ -143,3 +143,18 @@ QScriptValue QScriptEngine::undefinedValue()
 {
     return QScriptValue(this, QScriptValue::UndefinedValue);
 }
+
+/*!
+  Returns this engine's Global Object.
+
+  By default, the Global Object contains the built-in objects that are
+  part of \l{ECMA-262}, such as Math, Date and String. Additionally,
+  you can set properties of the Global Object to make your own
+  extensions available to all script code. Non-local variables in
+  script code will be created as properties of the Global Object, as
+  well as local variables in global code.
+*/
+QScriptValue QScriptEngine::globalObject() const
+{
+    return QScriptValuePrivate::get(d_ptr->globalObject());
+}
