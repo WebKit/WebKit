@@ -234,7 +234,7 @@ InjectedScript.getCompletions = function(expression, includeInspectorCommandLine
             if (!callFrame)
                 return props;
             if (expression)
-                expressionResult = InjectedScript._evaluateOn(callFrame.evaluate, callFrame, expression);
+                expressionResult = InjectedScript._evaluateOn(callFrame.evaluate, callFrame, expression, true);
             else {
                 // Evaluate into properties in scope of the selected call frame.
                 var scopeChain = callFrame.scopeChain;
@@ -262,11 +262,11 @@ InjectedScript.evaluate = function(expression, objectGroup)
     return InjectedScript._evaluateAndWrap(InjectedScript._window().eval, InjectedScript._window(), expression, objectGroup);
 }
 
-InjectedScript._evaluateAndWrap = function(evalFunction, object, expression, objectGroup)
+InjectedScript._evaluateAndWrap = function(evalFunction, object, expression, objectGroup, dontUseCommandLineAPI)
 {
     var result = {};
     try {
-        result.value = InjectedScript.wrapObject(InjectedScript._evaluateOn(evalFunction, object, expression), objectGroup);
+        result.value = InjectedScript.wrapObject(InjectedScript._evaluateOn(evalFunction, object, expression, dontUseCommandLineAPI), objectGroup);
 
         // Handle error that might have happened while describing result.
         if (result.value.errorText) {
@@ -280,12 +280,14 @@ InjectedScript._evaluateAndWrap = function(evalFunction, object, expression, obj
     return result;
 }
 
-InjectedScript._evaluateOn = function(evalFunction, object, expression)
+InjectedScript._evaluateOn = function(evalFunction, object, expression, dontUseCommandLineAPI)
 {
     InjectedScript._ensureCommandLineAPIInstalled(evalFunction, object);
     // Surround the expression in with statements to inject our command line API so that
     // the window object properties still take more precedent than our API functions.
-    expression = "with (window.console._inspectorCommandLineAPI) { with (window) {\n" + expression + "\n} }";
+    if (!dontUseCommandLineAPI)
+        expression = "with (window.console._inspectorCommandLineAPI) { with (window) {\n" + expression + "\n} }";
+
     var value = evalFunction.call(object, expression);
 
     // When evaluating on call frame error is not thrown, but returned as a value.
@@ -583,7 +585,7 @@ InjectedScript.evaluateInCallFrame = function(callFrameId, code, objectGroup)
     var callFrame = InjectedScript._callFrameForId(callFrameId);
     if (!callFrame)
         return false;
-    return InjectedScript._evaluateAndWrap(callFrame.evaluate, callFrame, code, objectGroup);
+    return InjectedScript._evaluateAndWrap(callFrame.evaluate, callFrame, code, objectGroup, true);
 }
 
 InjectedScript._callFrameForId = function(id)

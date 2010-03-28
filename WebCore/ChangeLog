@@ -1,3 +1,14 @@
+2010-03-27  Dmitry Gorbik  <socket.h@gmail.com>
+
+        Reviewed by Pavel Feldman.
+
+        Fix the regression caused by r28078: a global variable
+        definition masks a local one in an inspector console
+        https://bugs.webkit.org/show_bug.cgi?id=32442
+
+        * inspector/front-end/InjectedScript.js:
+        (injectedScriptConstructor):
+
 2010-03-27  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
