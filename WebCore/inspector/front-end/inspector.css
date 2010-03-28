@@ -1497,6 +1497,10 @@ body.inactive .placard.selected {
     text-decoration: none !important;
 }
 
+.editing br {
+    display: none;
+}
+
 .elements-tree-editor {
     -webkit-user-select: text;
     -webkit-user-modify: read-write-plaintext-only;

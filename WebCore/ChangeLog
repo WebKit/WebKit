@@ -4,6 +4,23 @@
 
         Web Inspector: Edit Tag Names
         https://bugs.webkit.org/show_bug.cgi?id=36481
+
+        Allow tabbing back and forth between the tag name and element
+        attributes when editing. Also, fixed a number of minor issues with
+        editing attributes and tabbing.
+
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._startEditingTagName): find the tag name if it wasn't provided.
+        (WebInspector.ElementsTreeElement.prototype._attributeEditingCommitted): fix tabbing issues, enable tab to tag name.
+        (WebInspector.ElementsTreeElement.prototype._attributeEditingCommitted.regenerateStyledAttribute): cleanup styles when tabbing.
+        * inspector/front-end/inspector.css: do not display <br>s while editing
+
+2010-03-27  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Edit Tag Names
+        https://bugs.webkit.org/show_bug.cgi?id=36481
         
         Allow editing an Element's Tag Name by double clicking
         on the tag name in the Element's Tree Hierarchy.

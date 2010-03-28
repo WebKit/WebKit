@@ -810,7 +810,7 @@ WebInspector.ElementsTreeElement.prototype = {
                         continue;
 
                     if (elem.hasStyleClass("webkit-html-attribute-value"))
-                        return this._startEditingAttribute(attributeElements[i].parentNode, elem);
+                        return this._startEditingAttribute(elem.parentNode, elem);
                 }
             }
         }
@@ -867,6 +867,12 @@ WebInspector.ElementsTreeElement.prototype = {
 
     _startEditingTagName: function(tagNameElement)
     {
+        if (!tagNameElement) {
+            tagNameElement = this.listItemElement.getElementsByClassName("webkit-html-tag-name")[0];
+            if (!tagNameElement)
+                return false;
+        }
+ 
         if (WebInspector.isBeingEdited(tagNameElement))
             return true;
 
@@ -959,34 +965,62 @@ WebInspector.ElementsTreeElement.prototype = {
 
         // Before we do anything, determine where we should move
         // next based on the current element's settings
-        var moveToAttribute;
-        var newAttribute;
+        var moveToAttribute, moveToTagName, moveToNewAttribute;
         if (moveDirection) {
             var found = false;
+
+            // Search for the attribute's position, and then decide where to move to.
             var attributes = this.representedObject.attributes;
-            for (var i = 0, len = attributes.length; i < len; ++i) {
+            for (var i = 0; i < attributes.length; ++i) {
                 if (attributes[i].name === attributeName) {
                     found = true;
-                    if (moveDirection === "backward" && i > 0)
-                        moveToAttribute = attributes[i - 1].name;
-                    else if (moveDirection === "forward" && i < attributes.length - 1)
-                        moveToAttribute = attributes[i + 1].name;
-                    else if (moveDirection === "forward" && i === attributes.length - 1)
-                        newAttribute = true;
+                    if (moveDirection === "backward") {
+                        if (i === 0)
+                            moveToTagName = true;
+                        else
+                            moveToAttribute = attributes[i - 1].name;
+                    } else if (moveDirection === "forward") {
+                        if (i === attributes.length - 1)
+                            moveToNewAttribute = true;
+                        else 
+                            moveToAttribute = attributes[i + 1].name;
+                    }
                 }
             }
 
-            if (!found && moveDirection === "backward" && attributes.length > 0)
-                moveToAttribute = attributes[attributes.length - 1].name;
-            else if (!found && moveDirection === "forward" && !/^\s*$/.test(newText))
-                newAttribute = true;
+            // Moving From the "New Attribute" position.
+            if (!found) {
+                if (moveDirection === "backward" && attributes.length > 0)
+                    moveToAttribute = attributes[attributes.length - 1].name;
+                else if (moveDirection === "forward" && !/^\s*$/.test(newText))
+                    moveToNewAttribute = true;
+            }
         }
 
-        function moveToNextAttributeIfNeeded() {
+        function moveToNextAttributeIfNeeded()
+        {
+            // Cleanup empty new attribute sections.
+            if (element.textContent.trim().length === 0)
+                element.parentNode.removeChild(element);
+
+            // Make the move.
             if (moveToAttribute)
                 this._triggerEditAttribute(moveToAttribute);
-            else if (newAttribute)
+            else if (moveToNewAttribute)
                 this._addNewAttribute();
+            else if (moveToTagName)
+                this._startEditingTagName();
+        }
+
+        function regenerateStyledAttribute(name, value)
+        {
+            var previous = element.previousSibling;
+            if (!previous || previous.nodeType !== Node.TEXT_NODE)
+                element.parentNode.insertBefore(document.createTextNode(" "), element);
+            element.outerHTML = "<span class=\"webkit-html-attribute\">" +
+                                  "<span class=\"webkit-html-attribute-name\">" + attr.name.escapeHTML() + "</span>=&#8203;\"" +
+                                  "<span class=\"webkit-html-attribute-value\">" + attr.value.escapeHTML() + "</span>&#8203;\"" +
+                                "</span>";
         }
 
         var parseContainerElement = document.createElement("span");
@@ -1011,6 +1045,7 @@ WebInspector.ElementsTreeElement.prototype = {
             foundOriginalAttribute = foundOriginalAttribute || attr.name === attributeName;
             try {
                 this.representedObject.setAttribute(attr.name, attr.value);
+                regenerateStyledAttribute(attr.name, attr.value);
             } catch(e) {} // ignore invalid attribute (innerHTML doesn't throw errors, but this can)
         }
 
