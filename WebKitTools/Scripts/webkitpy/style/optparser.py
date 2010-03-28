@@ -41,8 +41,8 @@ def _create_usage(default_options):
 
     """
     usage = """
-Syntax: %(program_name)s [--debug] [--verbose=#] [--git-commit=<SingleCommit>]
-        [--output=vs7] [--filter=-x,+y,...] [file or directory] ...
+Syntax: %(program_name)s [--filter=-x,+y,...] [--git-commit=<SingleCommit>]
+        [--min-confidence=#] [--output=vs7] [--verbose] [file or directory] ...
 
   The style guidelines this tries to follow are here:
     http://webkit.org/coding/coding-style.html
@@ -62,23 +62,6 @@ Syntax: %(program_name)s [--debug] [--verbose=#] [--git-commit=<SingleCommit>]
   by your source control management system.
 
   Flags:
-
-    verbose=#
-      A number 1-5 that restricts output to errors with a confidence
-      score at or above this value. In particular, the value 1 displays
-      all errors. The default is %(default_verbosity)s.
-
-    git-commit=<SingleCommit>
-      Checks the style of everything from the given commit to the local tree.
-
-    debug
-      Debug information displays if this flag is present.
-
-    output=vs7
-      The output format, which may be one of
-        emacs : to ease emacs parsing
-        vs7   : compatible with Visual Studio
-      Defaults to "%(default_output_format)s". Other formats are unsupported.
 
     filter=-x,+y,...
       A comma-separated list of boolean filter rules used to filter
@@ -101,6 +84,23 @@ Syntax: %(program_name)s [--debug] [--verbose=#] [--git-commit=<SingleCommit>]
       %(program_name)s, along with which are enabled by default, pass
       the empty filter as follows:
          --filter=
+
+    git-commit=<SingleCommit>
+      Checks the style of everything from the given commit to the local tree.
+
+    min-confidence=#
+      An integer between 1 and 5 inclusive that is the minimum confidence
+      level of style errors to report.  In particular, the value 1 displays
+      all errors.  The default is %(default_min_confidence)s.
+
+    output=vs7
+      The output format, which may be one of
+        emacs : to ease emacs parsing
+        vs7   : compatible with Visual Studio
+      Defaults to "%(default_output_format)s". Other formats are unsupported.
+
+    verbose
+      Logging is verbose if this flag is present.
 
 Path considerations:
 
@@ -134,7 +134,7 @@ Path considerations:
   to the source root and so will not need to be converted.
 
 """ % {'program_name': os.path.basename(sys.argv[0]),
-       'default_verbosity': default_options.verbosity,
+       'default_min_confidence': default_options.min_confidence,
        'default_output_format': default_options.output_format}
 
     return usage
@@ -147,13 +147,13 @@ class DefaultCommandOptionValues(object):
 
     Attributes:
       output_format: A string that is the default output format.
-      verbosity: An integer that is the default verbosity level.
+      min_confidence: An integer that is the default minimum confidence level.
 
     """
 
-    def __init__(self, output_format, verbosity):
+    def __init__(self, min_confidence, output_format):
+        self.min_confidence = min_confidence
         self.output_format = output_format
-        self.verbosity = verbosity
 
 
 # This class should not have knowledge of the flag key names.
@@ -162,7 +162,7 @@ class CommandOptionValues(object):
     """Stores the option values passed by the user via the command line.
 
     Attributes:
-      is_debug: A boolean value of whether the script is being debugged.
+      is_verbose: A boolean value of whether verbose logging is enabled.
 
       filter_rules: The list of filter rules provided by the user.
                     These rules are appended to the base rules and
@@ -172,39 +172,39 @@ class CommandOptionValues(object):
       git_commit: A string representing the git commit to check.
                   The default is None.
 
+      min_confidence: An integer between 1 and 5 inclusive that is the
+                      minimum confidence level of style errors to report.
+                      The default is 1, which reports all errors.
+
       output_format: A string that is the output format.  The supported
                      output formats are "emacs" which emacs can parse
                      and "vs7" which Microsoft Visual Studio 7 can parse.
-
-      verbosity: An integer between 1-5 inclusive that restricts output
-                 to errors with a confidence score at or above this value.
-                 The default is 1, which reports all errors.
 
     """
     def __init__(self,
                  filter_rules=None,
                  git_commit=None,
-                 is_debug=False,
-                 output_format="emacs",
-                 verbosity=1):
+                 is_verbose=False,
+                 min_confidence=1,
+                 output_format="emacs"):
         if filter_rules is None:
             filter_rules = []
+
+        if (min_confidence < 1) or (min_confidence > 5):
+            raise ValueError('Invalid "min_confidence" parameter: value '
+                             "must be an integer between 1 and 5 inclusive. "
+                             'Value given: "%s".' % min_confidence)
 
         if output_format not in ("emacs", "vs7"):
             raise ValueError('Invalid "output_format" parameter: '
                              'value must be "emacs" or "vs7". '
                              'Value given: "%s".' % output_format)
 
-        if (verbosity < 1) or (verbosity > 5):
-            raise ValueError('Invalid "verbosity" parameter: '
-                             "value must be an integer between 1-5 inclusive. "
-                             'Value given: "%s".' % verbosity)
-
         self.filter_rules = filter_rules
         self.git_commit = git_commit
-        self.is_debug = is_debug
+        self.is_verbose = is_verbose
+        self.min_confidence = min_confidence
         self.output_format = output_format
-        self.verbosity = verbosity
 
     # Useful for unit testing.
     def __eq__(self, other):
@@ -213,11 +213,11 @@ class CommandOptionValues(object):
             return False
         if self.git_commit != other.git_commit:
             return False
-        if self.is_debug != other.is_debug:
+        if self.is_verbose != other.is_verbose:
+            return False
+        if self.min_confidence != other.min_confidence:
             return False
         if self.output_format != other.output_format:
-            return False
-        if self.verbosity != other.verbosity:
             return False
 
         return True
@@ -245,8 +245,8 @@ class ArgumentPrinter(object):
 
         """
         flags = {}
+        flags['min-confidence'] = options.min_confidence
         flags['output'] = options.output_format
-        flags['verbose'] = options.verbosity
         # Only include the filter flag if user-provided rules are present.
         filter_rules = options.filter_rules
         if filter_rules:
@@ -381,13 +381,13 @@ class ArgumentParser(object):
           options: A CommandOptionValues instance.
 
         """
-        is_debug = False
+        is_verbose = False
+        min_confidence = self.default_options.min_confidence
         output_format = self.default_options.output_format
-        verbosity = self.default_options.verbosity
 
         # The flags that the CommandOptionValues class supports.
-        flags = ['debug', 'filter=', 'git-commit=', 'help', 'output=',
-                 'verbose=']
+        flags = ['filter=', 'git-commit=', 'help', 'min-confidence=',
+                 'output=', 'verbose']
 
         try:
             (opts, paths) = getopt.getopt(args, '', flags)
@@ -402,20 +402,21 @@ class ArgumentParser(object):
         filter_rules = []
 
         for (opt, val) in opts:
+            # Process --help first (out of alphabetical order).
             if opt == '--help':
                 self._exit_with_usage()
-            elif opt == '--output':
-                output_format = val
-            elif opt == '--verbose':
-                verbosity = val
-            elif opt == '--git-commit':
-                git_commit = val
             elif opt == '--filter':
                 if not val:
                     self._exit_with_categories()
                 filter_rules = self._parse_filter_flag(val)
-            elif opt == "--debug":
-                is_debug = True
+            elif opt == '--git-commit':
+                git_commit = val
+            elif opt == '--min-confidence':
+                min_confidence = val
+            elif opt == '--output':
+                output_format = val
+            elif opt == "--verbose":
+                is_verbose = True
             else:
                 # We should never get here because getopt.getopt()
                 # raises an error in this case.
@@ -439,16 +440,16 @@ class ArgumentParser(object):
 
         validate_filter_rules(filter_rules, self._all_categories)
 
-        verbosity = int(verbosity)
-        if (verbosity < 1) or (verbosity > 5):
-            raise ValueError('Invalid --verbose value %s: value must '
-                             'be between 1-5.' % verbosity)
+        min_confidence = int(min_confidence)
+        if (min_confidence < 1) or (min_confidence > 5):
+            raise ValueError('Invalid --min-confidence value %s: value must '
+                             'be between 1 and 5 inclusive.' % min_confidence)
 
         options = CommandOptionValues(filter_rules=filter_rules,
                                       git_commit=git_commit,
-                                      is_debug=is_debug,
-                                      output_format=output_format,
-                                      verbosity=verbosity)
+                                      is_verbose=is_verbose,
+                                      min_confidence=min_confidence,
+                                      output_format=output_format)
 
         return (paths, options)
 

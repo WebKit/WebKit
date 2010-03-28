@@ -40,10 +40,10 @@ Methods:
       line_number: The integer line number of the line containing the error.
       category: The name of the category of the error, for example
                 "whitespace/newline".
-      confidence: An integer between 1-5 that represents the level of
-                  confidence in the error. The value 5 means that we are
-                  certain of the problem, and the value 1 means that it
-                  could be a legitimate construct.
+      confidence: An integer between 1 and 5 inclusive that represents the
+                  application's level of confidence in the error. The value
+                  5 means that we are certain of the problem, and the
+                  value 1 means that it could be a legitimate construct.
       message: The error message to report.
 
 """
@@ -114,7 +114,7 @@ class DefaultStyleErrorHandler(object):
             return
 
         self._configuration.write_style_error(category=category,
-                                              confidence=confidence,
+                                              confidence_in_error=confidence,
                                               file_path=self._file_path,
                                               line_number=line_number,
                                               message=message)

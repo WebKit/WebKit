@@ -1,5 +1,50 @@
 2010-03-28  Chris Jerdonek  <cjerdonek@webkit.org>
 
+        Reviewed by Shinichiro Hamaji.
+
+        Renamed check-webkit-style's --debug flag to --verbose to be more
+        in line with other WebKit scripts.  Also renamed the current
+        --verbose flag to --min-confidence to allow the --debug rename.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36521
+
+        We also renamed the internal "verbose" variables to "confidence" or
+        "min_confidence," as appropriate, to avoid confusion with the
+        --verbose flag, and because the new names are more accurate.
+
+        * Scripts/check-webkit-style:
+          - Renamed is_debug to is_verbose.
+
+        * Scripts/webkitpy/style/checker.py:
+          - Renamed _DEFAULT_VERBOSITY to _DEFAULT_CONFIDENCE.
+          - Renamed "verbosity" parameters to "min_confidence" throughout.
+          - Renamed configure_logging()'s is_debug parameter to is_verbose.
+
+        * Scripts/webkitpy/style/checker_unittest.py:
+          - Updated the unit tests as necessary.
+
+        * Scripts/webkitpy/style/error_handlers.py:
+          - Updated the call to StyleCheckerConfiguration.write_style_error().
+
+        * Scripts/webkitpy/style/error_handlers_unittest.py:
+          - Updated the unit tests as necessary.
+
+        * Scripts/webkitpy/style/optparser.py:
+          - Updated the usage string with the new flag names.
+          - Renamed the verbosity parameter to min_confidence throughout.
+          - Renamed the is_debug parameter to is_verbose throughout.
+
+        * Scripts/webkitpy/style/optparser_unittest.py:
+          - Updated the unit tests as necessary.
+
+        * Scripts/webkitpy/style/processors/cpp.py:
+          - Renamed the verbosity parameter to min_confidence throughout.
+
+        * Scripts/webkitpy/style/processors/cpp_unittest.py:
+          - Updated the unit tests as necessary.
+
+2010-03-28  Chris Jerdonek  <cjerdonek@webkit.org>
+
         Unreviewed.
 
         Added back a line that accidentally got deleted in r56690.

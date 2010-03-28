@@ -49,7 +49,7 @@ from processors.text import TextProcessor
 _log = logging.getLogger("webkitpy.style.checker")
 
 # These are default option values for the command-line option parser.
-_DEFAULT_VERBOSITY = 1
+_DEFAULT_MIN_CONFIDENCE = 1
 _DEFAULT_OUTPUT_FORMAT = 'emacs'
 
 
@@ -195,8 +195,8 @@ def _all_categories():
 
 def _check_webkit_style_defaults():
     """Return the default command-line options for check-webkit-style."""
-    return DefaultCommandOptionValues(output_format=_DEFAULT_OUTPUT_FORMAT,
-                                      verbosity=_DEFAULT_VERBOSITY)
+    return DefaultCommandOptionValues(min_confidence=_DEFAULT_MIN_CONFIDENCE,
+                                      output_format=_DEFAULT_OUTPUT_FORMAT)
 
 
 # This function assists in optparser not having to import from checker.
@@ -222,9 +222,9 @@ def check_webkit_style_configuration(options):
 
     return StyleCheckerConfiguration(filter_configuration=filter_configuration,
                max_reports_per_category=_MAX_REPORTS_PER_CATEGORY,
+               min_confidence=options.min_confidence,
                output_format=options.output_format,
-               stderr_write=sys.stderr.write,
-               verbosity=options.verbosity)
+               stderr_write=sys.stderr.write)
 
 
 def _create_log_handlers(stream):
@@ -271,7 +271,7 @@ def _create_debug_log_handlers(stream):
     return [handler]
 
 
-def configure_logging(stream, logger=None, is_debug=False):
+def configure_logging(stream, logger=None, is_verbose=False):
     """Configure logging, and return the list of handlers added.
 
     Returns:
@@ -288,7 +288,7 @@ def configure_logging(stream, logger=None, is_debug=False):
       logger: A logging.logger instance to configure.  This parameter
               should be used only in unit tests.  Defaults to the
               root logger.
-      is_debug: A boolean value of whether the application is being debugged.
+      is_verbose: A boolean value of whether logging should be verbose.
 
     """
     # If the stream does not define an "encoding" data attribute, the
@@ -302,7 +302,7 @@ def configure_logging(stream, logger=None, is_debug=False):
     if logger is None:
         logger = logging.getLogger()
 
-    if is_debug:
+    if is_verbose:
         logging_level = logging.DEBUG
         handlers = _create_debug_log_handlers(stream)
     else:
@@ -385,13 +385,15 @@ class ProcessorDispatcher(object):
         else:
             return FileType.NONE
 
-    def _create_processor(self, file_type, file_path, handle_style_error, verbosity):
+    def _create_processor(self, file_type, file_path, handle_style_error,
+                          min_confidence):
         """Instantiate and return a style processor based on file type."""
         if file_type == FileType.NONE:
             processor = None
         elif file_type == FileType.CPP:
             file_extension = self._file_extension(file_path)
-            processor = CppProcessor(file_path, file_extension, handle_style_error, verbosity)
+            processor = CppProcessor(file_path, file_extension,
+                                     handle_style_error, min_confidence)
         elif file_type == FileType.TEXT:
             processor = TextProcessor(file_path, handle_style_error)
         else:
@@ -404,14 +406,14 @@ class ProcessorDispatcher(object):
 
         return processor
 
-    def dispatch_processor(self, file_path, handle_style_error, verbosity):
+    def dispatch_processor(self, file_path, handle_style_error, min_confidence):
         """Instantiate and return a style processor based on file path."""
         file_type = self._file_type(file_path)
 
         processor = self._create_processor(file_type,
                                            file_path,
                                            handle_style_error,
-                                           verbosity)
+                                           min_confidence)
         return processor
 
 
@@ -422,23 +424,23 @@ class StyleCheckerConfiguration(object):
     """Stores configuration values for the StyleChecker class.
 
     Attributes:
+      min_confidence: An integer between 1 and 5 inclusive that is the
+                      minimum confidence level of style errors to report.
+
       max_reports_per_category: The maximum number of errors to report
                                 per category, per file.
 
       stderr_write: A function that takes a string as a parameter and
                     serves as stderr.write.
 
-      verbosity: An integer between 1-5 inclusive that restricts output
-                 to errors with a confidence score at or above this value.
-
     """
 
     def __init__(self,
                  filter_configuration,
                  max_reports_per_category,
+                 min_confidence,
                  output_format,
-                 stderr_write,
-                 verbosity):
+                 stderr_write):
         """Create a StyleCheckerConfiguration instance.
 
         Args:
@@ -449,6 +451,10 @@ class StyleCheckerConfiguration(object):
           max_reports_per_category: The maximum number of errors to report
                                     per category, per file.
 
+          min_confidence: An integer between 1 and 5 inclusive that is the
+                          minimum confidence level of style errors to report.
+                          The default is 1, which reports all style errors.
+
           output_format: A string that is the output format.  The supported
                          output formats are "emacs" which emacs can parse
                          and "vs7" which Microsoft Visual Studio 7 can parse.
@@ -456,42 +462,37 @@ class StyleCheckerConfiguration(object):
           stderr_write: A function that takes a string as a parameter and
                         serves as stderr.write.
 
-          verbosity: An integer between 1-5 inclusive that restricts output
-                     to errors with a confidence score at or above this value.
-                     The default is 1, which reports all errors.
-
         """
         self._filter_configuration = filter_configuration
         self._output_format = output_format
 
         self.max_reports_per_category = max_reports_per_category
+        self.min_confidence = min_confidence
         self.stderr_write = stderr_write
-        self.verbosity = verbosity
 
     def is_reportable(self, category, confidence_in_error, file_path):
         """Return whether an error is reportable.
 
         An error is reportable if both the confidence in the error is
-        at least the current verbosity level and the current filter
+        at least the minimum confidence level and the current filter
         says the category should be checked for the given path.
 
         Args:
           category: A string that is a style category.
-          confidence_in_error: An integer between 1 and 5, inclusive, that
-                               represents the application's confidence in
-                               the error.  A higher number signifies greater
-                               confidence.
+          confidence_in_error: An integer between 1 and 5 inclusive that is
+                               the application's confidence in the error.
+                               A higher number means greater confidence.
           file_path: The path of the file being checked
 
         """
-        if confidence_in_error < self.verbosity:
+        if confidence_in_error < self.min_confidence:
             return False
 
         return self._filter_configuration.should_check(category, file_path)
 
     def write_style_error(self,
                           category,
-                          confidence,
+                          confidence_in_error,
                           file_path,
                           line_number,
                           message):
@@ -505,7 +506,7 @@ class StyleCheckerConfiguration(object):
                                            line_number,
                                            message,
                                            category,
-                                           confidence))
+                                           confidence_in_error))
 
 
 class StyleChecker(object):
@@ -657,10 +658,10 @@ class StyleChecker(object):
                       % file_path)
             return
 
-        verbosity = self._configuration.verbosity
+        min_confidence = self._configuration.min_confidence
         processor = dispatcher.dispatch_processor(file_path,
                                                   handle_style_error,
-                                                  verbosity)
+                                                  min_confidence)
         if processor is None:
             # Display a warning so as not to give an impression that this
             # was checked.

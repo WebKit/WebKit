@@ -119,20 +119,21 @@ class CppStyleTestBase(unittest.TestCase):
     """Provides some useful helper functions for cpp_style tests.
 
     Attributes:
-      verbosity: An integer that is the current verbosity level for
-                 the tests.
+      min_confidence: An integer that is the current minimum confidence
+                      level for the tests.
 
     """
 
-    # FIXME: Refactor the unit tests so the verbosity level is passed
+    # FIXME: Refactor the unit tests so the confidence level is passed
     #        explicitly, just like it is in the real code.
-    verbosity = 1;
+    min_confidence = 1;
 
-    # Helper function to avoid needing to explicitly pass verbosity
+    # Helper function to avoid needing to explicitly pass confidence
     # in all the unit test calls to cpp_style.process_file_data().
     def process_file_data(self, filename, file_extension, lines, error):
-        """Call cpp_style.process_file_data() with the current verbosity."""
-        return cpp_style.process_file_data(filename, file_extension, lines, error, self.verbosity)
+        """Call cpp_style.process_file_data() with the min_confidence."""
+        return cpp_style.process_file_data(filename, file_extension, lines,
+                                           error, self.min_confidence)
 
     # Perform lint on single line of input and return the error message.
     def perform_single_line_lint(self, code, file_name):
@@ -141,7 +142,7 @@ class CppStyleTestBase(unittest.TestCase):
         cpp_style.remove_multi_line_comments(lines, error_collector)
         clean_lines = cpp_style.CleansedLines(lines)
         include_state = cpp_style._IncludeState()
-        function_state = cpp_style._FunctionState(self.verbosity)
+        function_state = cpp_style._FunctionState(self.min_confidence)
         ext = file_name[file_name.rfind('.') + 1:]
         class_state = cpp_style._ClassState()
         file_state = cpp_style._FileState()
@@ -199,7 +200,7 @@ class CppStyleTestBase(unittest.TestCase):
           The accumulated errors.
         """
         error_collector = ErrorCollector(self.assert_)
-        function_state = cpp_style._FunctionState(self.verbosity)
+        function_state = cpp_style._FunctionState(self.min_confidence)
         lines = code.split('\n')
         cpp_style.remove_multi_line_comments(lines, error_collector)
         lines = cpp_style.CleansedLines(lines)
@@ -2228,11 +2229,11 @@ class CheckForFunctionLengthsTest(CppStyleTestBase):
         cpp_style._FunctionState._TEST_TRIGGER = self.old_test_trigger
 
     # FIXME: Eliminate the need for this function.
-    def set_verbosity(self, verbosity):
-        """Set new test verbosity and return old test verbosity."""
-        old_verbosity = self.verbosity
-        self.verbosity = verbosity
-        return old_verbosity
+    def set_min_confidence(self, min_confidence):
+        """Set new test confidence and return old test confidence."""
+        old_min_confidence = self.min_confidence
+        self.min_confidence = min_confidence
+        return old_min_confidence
 
     def assert_function_lengths_check(self, code, expected_message):
         """Check warnings for long function bodies are as expected.
@@ -2273,7 +2274,7 @@ class CheckForFunctionLengthsTest(CppStyleTestBase):
           lines: Number of lines to generate.
           error_level:  --v setting for cpp_style.
         """
-        trigger_level = self.trigger_lines(self.verbosity)
+        trigger_level = self.trigger_lines(self.min_confidence)
         self.assert_function_lengths_check(
             'void test(int x)' + self.function_body(lines),
             ('Small and focused functions are preferred: '
@@ -2356,29 +2357,29 @@ class CheckForFunctionLengthsTest(CppStyleTestBase):
             '')
 
     def test_function_length_check_definition_below_severity0(self):
-        old_verbosity = self.set_verbosity(0)
+        old_min_confidence = self.set_min_confidence(0)
         self.assert_function_length_check_definition_ok(self.trigger_lines(0) - 1)
-        self.set_verbosity(old_verbosity)
+        self.set_min_confidence(old_min_confidence)
 
     def test_function_length_check_definition_at_severity0(self):
-        old_verbosity = self.set_verbosity(0)
+        old_min_confidence = self.set_min_confidence(0)
         self.assert_function_length_check_definition_ok(self.trigger_lines(0))
-        self.set_verbosity(old_verbosity)
+        self.set_min_confidence(old_min_confidence)
 
     def test_function_length_check_definition_above_severity0(self):
-        old_verbosity = self.set_verbosity(0)
+        old_min_confidence = self.set_min_confidence(0)
         self.assert_function_length_check_above_error_level(0)
-        self.set_verbosity(old_verbosity)
+        self.set_min_confidence(old_min_confidence)
 
     def test_function_length_check_definition_below_severity1v0(self):
-        old_verbosity = self.set_verbosity(0)
+        old_min_confidence = self.set_min_confidence(0)
         self.assert_function_length_check_below_error_level(1)
-        self.set_verbosity(old_verbosity)
+        self.set_min_confidence(old_min_confidence)
 
     def test_function_length_check_definition_at_severity1v0(self):
-        old_verbosity = self.set_verbosity(0)
+        old_min_confidence = self.set_min_confidence(0)
         self.assert_function_length_check_at_error_level(1)
-        self.set_verbosity(old_verbosity)
+        self.set_min_confidence(old_min_confidence)
 
     def test_function_length_check_definition_below_severity1(self):
         self.assert_function_length_check_definition_ok(self.trigger_lines(1) - 1)
@@ -2392,7 +2393,7 @@ class CheckForFunctionLengthsTest(CppStyleTestBase):
     def test_function_length_check_definition_severity1_plus_blanks(self):
         error_level = 1
         error_lines = self.trigger_lines(error_level) + 1
-        trigger_level = self.trigger_lines(self.verbosity)
+        trigger_level = self.trigger_lines(self.min_confidence)
         self.assert_function_lengths_check(
             'void test_blanks(int x)' + self.function_body(error_lines),
             ('Small and focused functions are preferred: '
@@ -2404,7 +2405,7 @@ class CheckForFunctionLengthsTest(CppStyleTestBase):
     def test_function_length_check_complex_definition_severity1(self):
         error_level = 1
         error_lines = self.trigger_lines(error_level) + 1
-        trigger_level = self.trigger_lines(self.verbosity)
+        trigger_level = self.trigger_lines(self.min_confidence)
         self.assert_function_lengths_check(
             ('my_namespace::my_other_namespace::MyVeryLongTypeName*\n'
              'my_namespace::my_other_namespace::MyFunction(int arg1, char* arg2)'
@@ -2419,7 +2420,7 @@ class CheckForFunctionLengthsTest(CppStyleTestBase):
     def test_function_length_check_definition_severity1_for_test(self):
         error_level = 1
         error_lines = self.trigger_test_lines(error_level) + 1
-        trigger_level = self.trigger_test_lines(self.verbosity)
+        trigger_level = self.trigger_test_lines(self.min_confidence)
         self.assert_function_lengths_check(
             'TEST_F(Test, Mutator)' + self.function_body(error_lines),
             ('Small and focused functions are preferred: '
@@ -2431,7 +2432,7 @@ class CheckForFunctionLengthsTest(CppStyleTestBase):
     def test_function_length_check_definition_severity1_for_split_line_test(self):
         error_level = 1
         error_lines = self.trigger_test_lines(error_level) + 1
-        trigger_level = self.trigger_test_lines(self.verbosity)
+        trigger_level = self.trigger_test_lines(self.min_confidence)
         self.assert_function_lengths_check(
             ('TEST_F(GoogleUpdateRecoveryRegistryProtectedTest,\n'
              '    FixGoogleUpdate_AllValues_MachineApp)'  # note: 4 spaces
@@ -2446,7 +2447,7 @@ class CheckForFunctionLengthsTest(CppStyleTestBase):
     def test_function_length_check_definition_severity1_for_bad_test_doesnt_break(self):
         error_level = 1
         error_lines = self.trigger_test_lines(error_level) + 1
-        trigger_level = self.trigger_test_lines(self.verbosity)
+        trigger_level = self.trigger_test_lines(self.min_confidence)
         self.assert_function_lengths_check(
             ('TEST_F('
              + self.function_body(error_lines)),
@@ -2459,7 +2460,7 @@ class CheckForFunctionLengthsTest(CppStyleTestBase):
     def test_function_length_check_definition_severity1_with_embedded_no_lints(self):
         error_level = 1
         error_lines = self.trigger_lines(error_level) + 1
-        trigger_level = self.trigger_lines(self.verbosity)
+        trigger_level = self.trigger_lines(self.min_confidence)
         self.assert_function_lengths_check(
             'void test(int x)' + self.function_body_with_no_lints(error_lines),
             ('Small and focused functions are preferred: '
@@ -3668,7 +3669,7 @@ class CppProcessorTest(unittest.TestCase):
         self.assertEquals(processor.file_extension, "h")
         self.assertEquals(processor.file_path, "foo")
         self.assertEquals(processor.handle_style_error, self.mock_handle_style_error)
-        self.assertEquals(processor.verbosity, 3)
+        self.assertEquals(processor.min_confidence, 3)
 
     def test_eq(self):
         """Test __eq__ equality function."""

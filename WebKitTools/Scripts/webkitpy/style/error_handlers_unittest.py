@@ -51,9 +51,9 @@ class StyleErrorHandlerTestBase(unittest.TestCase):
         return StyleCheckerConfiguration(
                    filter_configuration=filter_configuration,
                    max_reports_per_category={"whitespace/tab": 2},
+                   min_confidence=3,
                    output_format="vs7",
-                   stderr_write=self._mock_stderr_write,
-                   verbosity=3)
+                   stderr_write=self._mock_stderr_write)
 
 
 class DefaultStyleErrorHandlerTest(StyleErrorHandlerTestBase):
