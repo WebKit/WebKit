@@ -1,5 +1,14 @@
 2010-03-27  Dan Bernstein  <mitz@apple.com>
 
+        More updated results for r56673.
+
+        * platform/chromium-mac/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/chromium-win/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/gtk/svg/css/getComputedStyle-basic-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
+2010-03-27  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Darin Adler.
 
         Updated results and one test for
@@ -15,7 +24,6 @@
         * platform/mac/fast/css/getComputedStyle/computed-style-expected.txt:
         * platform/qt/fast/css/getComputedStyle/computed-style-expected.txt:
         * platform/win/fast/css/getComputedStyle/computed-style-expected.txt:
-        * svg/css/getComputedStyle-basic-expected.txt:
 
 2010-03-27  Mark Rowe  <mrowe@apple.com>
 
