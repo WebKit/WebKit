@@ -5852,3 +5852,24 @@ editing/selection/extend-after-mouse-selection.html
 # Fails on Debug bots
 # https://bugs.webkit.org/show_bug.cgi?id=33027
 fast/parser/xml-declaration-missing-ending-mark.html
+
+editing/deleting/non-smart-delete.html
+editing/pasteboard/smart-drag-drop.html
+fast/repaint/no-caret-repaint-in-non-content-editable-element.html
+fast/runin/generated2.html
+fast/runin/generated3.html
+fast/runin/generated4.html
+fast/table/table-background.html
+fast/table/table-cell-border-draws-on-top-of-col-background.html
+fast/table/table-cell-border-draws-on-top-of-col-group-background.html
+fast/table/table-cell-border-draws-on-top-of-row-background.html
+fast/table/table-cell-border-draws-on-top-of-row-group-background.html
+fast/table/table-cell-overrides-row-background.html
+fast/table/table-col-background.html
+fast/table/table-col-group-background.html
+fast/table/table-col-group-col-span-background.html
+fast/table/table-col-group-span-background.html
+fast/table/table-col-span-background.html
+fast/table/table-row-background-left-50px.html
+fast/table/table-row-background-right-50px.html
+fast/table/table-row-background-right-100percent.html
