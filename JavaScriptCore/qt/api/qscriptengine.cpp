@@ -105,10 +105,36 @@ QScriptValue QScriptEngine::evaluate(const QScriptProgram& program)
     when the QScriptEngine decides that it's wise to do so (i.e. when a certain number of new objects
     have been created). However, you can call this function to explicitly request that garbage
     collection should be performed as soon as possible.
+
+    \sa reportAdditionalMemoryCost()
 */
 void QScriptEngine::collectGarbage()
 {
     d_ptr->collectGarbage();
+}
+
+/*!
+  Reports an additional memory cost of the given \a size, measured in
+  bytes, to the garbage collector.
+
+  This function can be called to indicate that a JavaScript object has
+  memory associated with it that isn't managed by Qt Script itself.
+  Reporting the additional cost makes it more likely that the garbage
+  collector will be triggered.
+
+  Note that if the additional memory is shared with objects outside
+  the scripting environment, the cost should not be reported, since
+  collecting the JavaScript object would not cause the memory to be
+  freed anyway.
+
+  Negative \a size values are ignored, i.e. this function can't be
+  used to report that the additional memory has been deallocated.
+
+  \sa collectGarbage()
+*/
+void QScriptEngine::reportAdditionalMemoryCost(int cost)
+{
+    d_ptr->reportAdditionalMemoryCost(cost);
 }
 
 /*!

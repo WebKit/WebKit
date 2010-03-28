@@ -38,6 +38,7 @@ private slots:
     void globalObject();
     void evaluate();
     void collectGarbage();
+    void reportAdditionalMemoryCost();
     void nullValue();
     void undefinedValue();
     void evaluateProgram();
@@ -72,6 +73,26 @@ void tst_QScriptEngine::collectGarbage()
     QVERIFY(foo.isFunction());
     engine.collectGarbage();
     QCOMPARE(foo.call().toString(), QString::fromAscii("pong"));
+}
+
+void tst_QScriptEngine::reportAdditionalMemoryCost()
+{
+    // There isn't any easy way to test the responsiveness of the GC;
+    // just try to call the function a few times with various sizes.
+    QScriptEngine eng;
+    for (int i = 0; i < 100; ++i) {
+        eng.reportAdditionalMemoryCost(0);
+        eng.reportAdditionalMemoryCost(10);
+        eng.reportAdditionalMemoryCost(1000);
+        eng.reportAdditionalMemoryCost(10000);
+        eng.reportAdditionalMemoryCost(100000);
+        eng.reportAdditionalMemoryCost(1000000);
+        eng.reportAdditionalMemoryCost(10000000);
+        eng.reportAdditionalMemoryCost(-1);
+        eng.reportAdditionalMemoryCost(-1000);
+        QScriptValue obj = eng.evaluate("new Object");
+        eng.collectGarbage();
+    }
 }
 
 void tst_QScriptEngine::nullValue()

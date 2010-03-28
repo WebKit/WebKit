@@ -1,3 +1,18 @@
+2010-03-28  Kent Hansen  <kent.hansen@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Add API for reporting additional memory cost of JavaScript objects
+        https://bugs.webkit.org/show_bug.cgi?id=36650
+
+        * qt/api/qscriptengine.cpp:
+        (QScriptEngine::reportAdditionalMemoryCost):
+        * qt/api/qscriptengine.h:
+        * qt/api/qscriptengine_p.h:
+        (QScriptEnginePrivate::reportAdditionalMemoryCost):
+        * qt/tests/qscriptengine/tst_qscriptengine.cpp:
+        (tst_QScriptEngine::reportAdditionalMemoryCost):
+
 2010-03-28  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Simon Hausmann.

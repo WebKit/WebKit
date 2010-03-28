@@ -41,7 +41,9 @@ public:
     static QScriptSyntaxCheckResult checkSyntax(const QString& program);
     QScriptValue evaluate(const QString& program, const QString& fileName = QString(), int lineNumber = 1);
     QScriptValue evaluate(const QScriptProgram& program);
+
     void collectGarbage();
+    void reportAdditionalMemoryCost(int cost);
 
     QScriptString toStringHandle(const QString& str);
 

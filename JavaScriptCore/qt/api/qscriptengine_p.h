@@ -26,6 +26,7 @@
 #include "qscriptsyntaxcheckresult_p.h"
 #include "qscriptvalue.h"
 #include <JavaScriptCore/JavaScript.h>
+#include <JSBasePrivate.h>
 #include <QtCore/qshareddata.h>
 #include <QtCore/qstring.h>
 
@@ -44,7 +45,9 @@ public:
     QScriptValuePrivate* evaluate(const QString& program, const QString& fileName, int lineNumber);
     QScriptValuePrivate* evaluate(const QScriptProgramPrivate* program);
     inline JSValueRef evaluate(JSStringRef program, JSStringRef fileName, int lineNumber);
+
     inline void collectGarbage();
+    inline void reportAdditionalMemoryCost(int cost);
 
     inline JSValueRef makeJSValue(double number) const;
     inline JSValueRef makeJSValue(int number) const;
@@ -76,6 +79,12 @@ JSValueRef QScriptEnginePrivate::evaluate(JSStringRef program, JSStringRef fileN
 void QScriptEnginePrivate::collectGarbage()
 {
     JSGarbageCollect(m_context);
+}
+
+void QScriptEnginePrivate::reportAdditionalMemoryCost(int cost)
+{
+    if (cost > 0)
+        JSReportExtraMemoryCost(m_context, cost);
 }
 
 JSValueRef QScriptEnginePrivate::makeJSValue(double number) const
