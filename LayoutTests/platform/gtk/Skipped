@@ -5873,3 +5873,12 @@ fast/table/table-col-span-background.html
 fast/table/table-row-background-left-50px.html
 fast/table/table-row-background-right-50px.html
 fast/table/table-row-background-right-100percent.html
+
+# Tests that need didStartProvisionalLoadForFrame reporting
+# See https://bugs.webkit.org/show_bug.cgi?id=36454
+http/tests/loading/basic.html
+http/tests/loading/load-javascript-after-many-xhrs.html
+http/tests/loading/location-hash-reload-cycle.html
+http/tests/loading/onload-vs-immediate-refresh.pl
+http/tests/loading/redirect-with-no-location-crash.html
+http/tests/loading/state-object-security-exception.html

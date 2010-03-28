@@ -1,5 +1,15 @@
 2010-03-28  Gustavo Noronha Silva  <gns@gnome.org>
 
+        [GTK] Improve reporting of frame loader callbacks in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=36454
+
+        Skip tests that need more load notifications than we provide in
+        our DRT currently.
+
+        * platform/gtk/Skipped:
+
+2010-03-28  Gustavo Noronha Silva  <gns@gnome.org>
+
         Skipping new tests.
 
         * platform/gtk/Skipped:
