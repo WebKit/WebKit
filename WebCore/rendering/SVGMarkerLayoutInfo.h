@@ -28,17 +28,17 @@
 namespace WebCore {
 
 class Path;
-class SVGResourceMarker;
+class RenderSVGResourceMarker;
 
 struct MarkerLayout {
-    MarkerLayout(SVGResourceMarker* markerObj = 0, AffineTransform matrixObj = AffineTransform())
+    MarkerLayout(RenderSVGResourceMarker* markerObj = 0, AffineTransform matrixObj = AffineTransform())
         : marker(markerObj)
         , matrix(matrixObj)
     {
         ASSERT(marker);
     }
 
-    SVGResourceMarker* marker;
+    RenderSVGResourceMarker* marker;
     AffineTransform matrix;
 };
 
@@ -47,17 +47,17 @@ public:
     SVGMarkerLayoutInfo();
     ~SVGMarkerLayoutInfo();
 
-    FloatRect calculateBoundaries(SVGResourceMarker* startMarker, SVGResourceMarker* midMarker, SVGResourceMarker* endMarker, float strokeWidth, const Path&);
+    FloatRect calculateBoundaries(RenderSVGResourceMarker* startMarker, RenderSVGResourceMarker* midMarker, RenderSVGResourceMarker* endMarker, float strokeWidth, const Path&);
     void drawMarkers(RenderObject::PaintInfo&);
 
     // Used by static inline helper functions in SVGMarkerLayoutInfo.cpp
     SVGMarkerData& markerData() { return m_markerData; }
-    SVGResourceMarker* midMarker() const { return m_midMarker; }
+    RenderSVGResourceMarker* midMarker() const { return m_midMarker; }
     int& elementIndex() { return m_elementIndex; }
-    void addLayoutedMarker(SVGResourceMarker*, const FloatPoint& origin, float angle);
+    void addLayoutedMarker(RenderSVGResourceMarker*, const FloatPoint& origin, float angle);
 
 private:
-    SVGResourceMarker* m_midMarker;
+    RenderSVGResourceMarker* m_midMarker;
 
     // Used while layouting markers
     int m_elementIndex;
@@ -70,5 +70,5 @@ private:
 
 }
 
-#endif // ENABLE(SVG)
-#endif // SVGMarkerLayoutInfo_h
+#endif
+#endif

@@ -102,7 +102,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int, int)
 
 void RenderSVGImage::destroy()
 {
-    SVGRenderBase::deregisterFromResources(this);
+    deregisterFromResources(this);
     RenderImage::destroy();
 }
 

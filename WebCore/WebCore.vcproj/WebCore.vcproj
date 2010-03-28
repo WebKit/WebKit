@@ -27861,6 +27861,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\RenderSVGResourceMarker.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderSVGResourceMarker.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\RenderSVGResourceMasker.cpp"
 				>
 			</File>
@@ -42149,14 +42157,6 @@
 				</File>
 				<File
 					RelativePath="..\svg\graphics\SVGResourceListener.h"
-					>
-				</File>
-				<File
-					RelativePath="..\svg\graphics\SVGResourceMarker.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\svg\graphics\SVGResourceMarker.h"
 					>
 				</File>
 				<Filter

@@ -26,8 +26,7 @@
 #if ENABLE(SVG)
 #include "SVGMarkerLayoutInfo.h"
 
-#include "RenderSVGViewportContainer.h"
-#include "SVGResourceMarker.h"
+#include "RenderSVGResourceMarker.h"
 
 namespace WebCore {
 
@@ -52,7 +51,7 @@ static inline void processStartAndMidMarkers(void* infoPtr, const PathElement* e
     markerData.updateOutslope(element->points[0]);
 
     // Draw the marker for the previous element
-    SVGResourceMarker* marker = markerData.marker();
+    RenderSVGResourceMarker* marker = markerData.marker();
     if (elementIndex > 0 && marker)
         info.addLayoutedMarker(marker, markerData.origin(), markerData.currentAngle());
 
@@ -66,7 +65,7 @@ static inline void processStartAndMidMarkers(void* infoPtr, const PathElement* e
     ++elementIndex;
 }
 
-FloatRect SVGMarkerLayoutInfo::calculateBoundaries(SVGResourceMarker* startMarker, SVGResourceMarker* midMarker, SVGResourceMarker* endMarker, float strokeWidth, const Path& path)
+FloatRect SVGMarkerLayoutInfo::calculateBoundaries(RenderSVGResourceMarker* startMarker, RenderSVGResourceMarker* midMarker, RenderSVGResourceMarker* endMarker, float strokeWidth, const Path& path)
 {
     m_layout.clear();
     m_midMarker = midMarker;
@@ -90,7 +89,7 @@ FloatRect SVGMarkerLayoutInfo::calculateBoundaries(SVGResourceMarker* startMarke
     for (; it != end; ++it) {
         MarkerLayout& layout = *it;
 
-        RenderSVGViewportContainer* markerContent = layout.marker->renderer();
+        RenderSVGResourceMarker* markerContent = layout.marker;
         ASSERT(markerContent);
 
         bounds.unite(markerContent->markerBoundaries(layout.matrix));
@@ -113,7 +112,7 @@ void SVGMarkerLayoutInfo::drawMarkers(RenderObject::PaintInfo& paintInfo)
     }
 }
 
-void SVGMarkerLayoutInfo::addLayoutedMarker(SVGResourceMarker* marker, const FloatPoint& origin, float angle)
+void SVGMarkerLayoutInfo::addLayoutedMarker(RenderSVGResourceMarker* marker, const FloatPoint& origin, float angle)
 {
     ASSERT(marker);
     m_layout.append(MarkerLayout(marker, marker->markerTransformation(origin, angle, m_strokeWidth)));

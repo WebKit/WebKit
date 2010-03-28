@@ -34,13 +34,6 @@ class RenderSVGViewportContainer : public RenderSVGContainer {
 public:
     RenderSVGViewportContainer(SVGStyledElement*);
 
-    // Calculates marker boundaries, mapped to the target element's coordinate space
-    FloatRect markerBoundaries(const AffineTransform& markerTransformation) const;
-
-    // Generates a transformation matrix usable to render marker content. Handles scaling the marker content
-    // acording to SVGs markerUnits="strokeWidth" concept, when a strokeWidth value != -1 is passed in.
-    AffineTransform markerContentTransformation(const AffineTransform& contentTransformation, const FloatPoint& origin, float strokeWidth = -1) const;
-
 private:
     virtual bool isSVGContainer() const { return true; }
     virtual const char* renderName() const { return "RenderSVGViewportContainer"; }

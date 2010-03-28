@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2004, 2005, 2006, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
+    Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -25,7 +26,7 @@
 
 #include "MappedAttribute.h"
 #include "PlatformString.h"
-#include "RenderSVGViewportContainer.h"
+#include "RenderSVGResourceMarker.h"
 #include "SVGFitToViewBox.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
@@ -103,21 +104,14 @@ void SVGMarkerElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     SVGStyledElement::svgAttributeChanged(attrName);
 
-    if (!m_marker)
-        return;
-
     if (attrName == SVGNames::markerUnitsAttr || attrName == SVGNames::refXAttr ||
         attrName == SVGNames::refYAttr || attrName == SVGNames::markerWidthAttr ||
         attrName == SVGNames::markerHeightAttr || attrName == SVGNames::orientAttr ||
         SVGLangSpace::isKnownAttribute(attrName) ||
         SVGExternalResourcesRequired::isKnownAttribute(attrName) ||
         SVGFitToViewBox::isKnownAttribute(attrName) ||
-        SVGStyledElement::isKnownAttribute(attrName)) {
-        if (renderer())
-            renderer()->setNeedsLayout(true);
-
-        m_marker->invalidate();
-    }
+        SVGStyledElement::isKnownAttribute(attrName))
+        invalidateCanvasResources();
 }
 
 void SVGMarkerElement::synchronizeProperty(const QualifiedName& attrName)
@@ -163,13 +157,7 @@ void SVGMarkerElement::childrenChanged(bool changedByParser, Node* beforeChange,
 {
     SVGStyledElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 
-    if (!m_marker)
-        return;
-
-    if (renderer())
-        renderer()->setNeedsLayout(true);
-
-    m_marker->invalidate();
+    invalidateCanvasResources();
 }
 
 void SVGMarkerElement::setOrientToAuto()
@@ -177,13 +165,7 @@ void SVGMarkerElement::setOrientToAuto()
     setOrientTypeBaseValue(SVG_MARKER_ORIENT_AUTO);
     setOrientAngleBaseValue(SVGAngle());
 
-    if (!m_marker)
-        return;
-
-    if (renderer())
-        renderer()->setNeedsLayout(true);
-
-    m_marker->invalidate();
+    invalidateCanvasResources();
 }
 
 void SVGMarkerElement::setOrientToAngle(const SVGAngle& angle)
@@ -191,41 +173,14 @@ void SVGMarkerElement::setOrientToAngle(const SVGAngle& angle)
     setOrientTypeBaseValue(SVG_MARKER_ORIENT_ANGLE);
     setOrientAngleBaseValue(angle);
 
-    if (!m_marker)
-        return;
-
-    if (renderer())
-        renderer()->setNeedsLayout(true);
-
-    m_marker->invalidate();
-}
-
-SVGResource* SVGMarkerElement::canvasResource(const RenderObject*)
-{
-    if (!m_marker)
-        m_marker = SVGResourceMarker::create();
-
-    ASSERT(renderer());
-    m_marker->setRenderer(toRenderSVGViewportContainer(renderer()));
-
-    if (orientType() == SVG_MARKER_ORIENT_ANGLE)
-        m_marker->setAngle(orientAngle().value());
-    else
-        m_marker->setAutoAngle();
-
-    m_marker->setReferencePoint(FloatPoint(refX().value(this), refY().value(this)));
-    m_marker->setUseStrokeWidth(markerUnits() == SVG_MARKERUNITS_STROKEWIDTH);
-
-    return m_marker.get();
+    invalidateCanvasResources();
 }
 
 RenderObject* SVGMarkerElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    RenderSVGViewportContainer* markerContainer = new (arena) RenderSVGViewportContainer(this);
-    markerContainer->setDrawsContents(false); // Marker contents will be explicitly drawn.
-    return markerContainer;
+    return new (arena) RenderSVGResourceMarker(this);
 }
 
 }
 
-#endif // ENABLE(SVG)
+#endif

@@ -1331,6 +1331,8 @@
 		845E72FC0FD2623900A87D79 /* SVGFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 845E72FA0FD2623900A87D79 /* SVGFilter.h */; };
 		84801954108BAFB300CB2B1F /* FEGaussianBlur.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84801952108BAFB300CB2B1F /* FEGaussianBlur.cpp */; };
 		84801955108BAFB300CB2B1F /* FEGaussianBlur.h in Headers */ = {isa = PBXBuildFile; fileRef = 84801953108BAFB300CB2B1F /* FEGaussianBlur.h */; };
+		8499A514115FB33000F566E3 /* RenderSVGResourceMarker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8499A512115FB33000F566E3 /* RenderSVGResourceMarker.cpp */; };
+		8499A515115FB33000F566E3 /* RenderSVGResourceMarker.h in Headers */ = {isa = PBXBuildFile; fileRef = 8499A513115FB33000F566E3 /* RenderSVGResourceMarker.h */; };
 		849F77760EFEC6200090849D /* StrokeStyleApplier.h in Headers */ = {isa = PBXBuildFile; fileRef = 849F77750EFEC6200090849D /* StrokeStyleApplier.h */; };
 		84A81F3D0FC7DFF000955300 /* SourceAlpha.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84A81F3B0FC7DFF000955300 /* SourceAlpha.cpp */; };
 		84A81F3E0FC7DFF000955300 /* SourceAlpha.h in Headers */ = {isa = PBXBuildFile; fileRef = 84A81F3C0FC7DFF000955300 /* SourceAlpha.h */; };
@@ -3720,8 +3722,6 @@
 		B25599B60D00D8BA00BB825C /* SVGResourceFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B255991E0D00D8B900BB825C /* SVGResourceFilter.cpp */; };
 		B25599B70D00D8BA00BB825C /* SVGResourceFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = B255991F0D00D8B900BB825C /* SVGResourceFilter.h */; };
 		B25599B80D00D8BA00BB825C /* SVGResourceListener.h in Headers */ = {isa = PBXBuildFile; fileRef = B25599200D00D8B900BB825C /* SVGResourceListener.h */; };
-		B25599B90D00D8BA00BB825C /* SVGResourceMarker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B25599210D00D8B900BB825C /* SVGResourceMarker.cpp */; };
-		B25599BA0D00D8BA00BB825C /* SVGResourceMarker.h in Headers */ = {isa = PBXBuildFile; fileRef = B25599220D00D8B900BB825C /* SVGResourceMarker.h */; };
 		B25DFAAF0B2E2929000E6510 /* JSSVGMatrixCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B25DFAAE0B2E2929000E6510 /* JSSVGMatrixCustom.cpp */; };
 		B262B8040D1F32D000158F09 /* SVGFont.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B262B8030D1F32D000158F09 /* SVGFont.cpp */; };
 		B26554EA0B80D74900A50EC3 /* RenderSVGTextPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B26554E80B80D74900A50EC3 /* RenderSVGTextPath.cpp */; };
@@ -6822,6 +6822,8 @@
 		845E72FA0FD2623900A87D79 /* SVGFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGFilter.h; sourceTree = "<group>"; };
 		84801952108BAFB300CB2B1F /* FEGaussianBlur.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FEGaussianBlur.cpp; path = filters/FEGaussianBlur.cpp; sourceTree = "<group>"; };
 		84801953108BAFB300CB2B1F /* FEGaussianBlur.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FEGaussianBlur.h; path = filters/FEGaussianBlur.h; sourceTree = "<group>"; };
+		8499A512115FB33000F566E3 /* RenderSVGResourceMarker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGResourceMarker.cpp; sourceTree = "<group>"; };
+		8499A513115FB33000F566E3 /* RenderSVGResourceMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGResourceMarker.h; sourceTree = "<group>"; };
 		849F77750EFEC6200090849D /* StrokeStyleApplier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StrokeStyleApplier.h; sourceTree = "<group>"; };
 		84A81F3B0FC7DFF000955300 /* SourceAlpha.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SourceAlpha.cpp; path = filters/SourceAlpha.cpp; sourceTree = "<group>"; };
 		84A81F3C0FC7DFF000955300 /* SourceAlpha.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SourceAlpha.h; path = filters/SourceAlpha.h; sourceTree = "<group>"; };
@@ -9026,8 +9028,6 @@
 		B255991E0D00D8B900BB825C /* SVGResourceFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGResourceFilter.cpp; sourceTree = "<group>"; };
 		B255991F0D00D8B900BB825C /* SVGResourceFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGResourceFilter.h; sourceTree = "<group>"; };
 		B25599200D00D8B900BB825C /* SVGResourceListener.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGResourceListener.h; sourceTree = "<group>"; };
-		B25599210D00D8B900BB825C /* SVGResourceMarker.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGResourceMarker.cpp; sourceTree = "<group>"; };
-		B25599220D00D8B900BB825C /* SVGResourceMarker.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGResourceMarker.h; sourceTree = "<group>"; };
 		B25DFAAE0B2E2929000E6510 /* JSSVGMatrixCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGMatrixCustom.cpp; sourceTree = "<group>"; };
 		B262B8030D1F32D000158F09 /* SVGFont.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFont.cpp; sourceTree = "<group>"; };
 		B26554E80B80D74900A50EC3 /* RenderSVGTextPath.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGTextPath.cpp; sourceTree = "<group>"; };
@@ -14454,8 +14454,6 @@
 				B255991E0D00D8B900BB825C /* SVGResourceFilter.cpp */,
 				B255991F0D00D8B900BB825C /* SVGResourceFilter.h */,
 				B25599200D00D8B900BB825C /* SVGResourceListener.h */,
-				B25599210D00D8B900BB825C /* SVGResourceMarker.cpp */,
-				B25599220D00D8B900BB825C /* SVGResourceMarker.h */,
 			);
 			path = graphics;
 			sourceTree = "<group>";
@@ -15756,6 +15754,8 @@
 		F523D2F302DE443B018635CA /* rendering */ = {
 			isa = PBXGroup;
 			children = (
+				8499A512115FB33000F566E3 /* RenderSVGResourceMarker.cpp */,
+				8499A513115FB33000F566E3 /* RenderSVGResourceMarker.h */,
 				A43BF59A1149292800C643CA /* RenderProgress.cpp */,
 				A43BF59B1149292800C643CA /* RenderProgress.h */,
 				BC8C8FAA0DDCD2F200B592F4 /* style */,
@@ -18506,7 +18506,6 @@
 				B25599B30D00D8BA00BB825C /* SVGResource.h in Headers */,
 				B25599B70D00D8BA00BB825C /* SVGResourceFilter.h in Headers */,
 				B25599B80D00D8BA00BB825C /* SVGResourceListener.h in Headers */,
-				B25599BA0D00D8BA00BB825C /* SVGResourceMarker.h in Headers */,
 				853CA9E90AEEC608002372DC /* SVGRootInlineBox.h in Headers */,
 				B2227AA30D00BF220071B782 /* SVGScriptElement.h in Headers */,
 				B2227AA60D00BF220071B782 /* SVGSetElement.h in Headers */,
@@ -18765,6 +18764,7 @@
 				A513B3D7114B1666001C429B /* KeyEventCocoa.h in Headers */,
 				62CD325A1157E57C0063B0A7 /* CustomEvent.h in Headers */,
 				E4778B80115A581A00B5D372 /* JSCustomEvent.h in Headers */,
+				8499A515115FB33000F566E3 /* RenderSVGResourceMarker.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -20758,7 +20758,6 @@
 				B2EBDC9C0AF77E3400AE4A68 /* SVGRenderTreeAsText.cpp in Sources */,
 				B25599B20D00D8BA00BB825C /* SVGResource.cpp in Sources */,
 				B25599B60D00D8BA00BB825C /* SVGResourceFilter.cpp in Sources */,
-				B25599B90D00D8BA00BB825C /* SVGResourceMarker.cpp in Sources */,
 				853CA9E80AEEC608002372DC /* SVGRootInlineBox.cpp in Sources */,
 				B2227AA20D00BF220071B782 /* SVGScriptElement.cpp in Sources */,
 				B2227AA50D00BF220071B782 /* SVGSetElement.cpp in Sources */,
@@ -20980,6 +20979,7 @@
 				A513B3D8114B166A001C429B /* KeyEventCocoa.mm in Sources */,
 				62CD32591157E57C0063B0A7 /* CustomEvent.cpp in Sources */,
 				E4778B7F115A581A00B5D372 /* JSCustomEvent.cpp in Sources */,
+				8499A514115FB33000F566E3 /* RenderSVGResourceMarker.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

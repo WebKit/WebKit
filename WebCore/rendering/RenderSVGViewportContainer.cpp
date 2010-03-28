@@ -3,6 +3,7 @@
                   2004, 2005, 2007 Rob Buis <buis@kde.org>
                   2007 Eric Seidel <eric@webkit.org>
                   2009 Google, Inc.
+    Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -26,9 +27,7 @@
 #include "RenderSVGViewportContainer.h"
 
 #include "GraphicsContext.h"
-
 #include "RenderView.h"
-#include "SVGMarkerElement.h"
 #include "SVGSVGElement.h"
 
 namespace WebCore {
@@ -36,29 +35,6 @@ namespace WebCore {
 RenderSVGViewportContainer::RenderSVGViewportContainer(SVGStyledElement* node)
     : RenderSVGContainer(node)
 {
-}
-
-FloatRect RenderSVGViewportContainer::markerBoundaries(const AffineTransform& markerTransformation) const
-{
-    FloatRect coordinates = repaintRectInLocalCoordinates();
-
-    // Map repaint rect into parent coordinate space, in which the marker boundaries have to be evaluated
-    coordinates = localToParentTransform().mapRect(coordinates);
-
-    return markerTransformation.mapRect(coordinates);
-}
-
-AffineTransform RenderSVGViewportContainer::markerContentTransformation(const AffineTransform& contentTransformation, const FloatPoint& origin, float strokeWidth) const
-{
-    // The 'origin' coordinate maps to SVGs refX/refY, given in coordinates relative to the viewport established by the marker
-    FloatPoint mappedOrigin = viewportTransform().mapPoint(origin);
-
-    AffineTransform transformation = contentTransformation;
-    if (strokeWidth != -1)
-        transformation.scaleNonUniform(strokeWidth, strokeWidth);
-
-    transformation.translate(-mappedOrigin.x(), -mappedOrigin.y());
-    return transformation;
 }
 
 void RenderSVGViewportContainer::applyViewportClip(PaintInfo& paintInfo)
@@ -81,14 +57,6 @@ void RenderSVGViewportContainer::calcViewport()
         float w = svg->width().value(svg);
         float h = svg->height().value(svg);
         m_viewport = FloatRect(x, y, w, h);
-    } else if (svgelem->hasTagName(SVGNames::markerTag)) {
-        if (!selfNeedsLayout())
-            return;
-
-        SVGMarkerElement* svg = static_cast<SVGMarkerElement*>(node());
-        float w = svg->markerWidth().value(svg);
-        float h = svg->markerHeight().value(svg);
-        m_viewport = FloatRect(0, 0, w, h);
     }
 }
 
@@ -97,9 +65,6 @@ AffineTransform RenderSVGViewportContainer::viewportTransform() const
     if (node()->hasTagName(SVGNames::svgTag)) {
         SVGSVGElement* svg = static_cast<SVGSVGElement*>(node());
         return svg->viewBoxToViewTransform(m_viewport.width(), m_viewport.height());
-    } else if (node()->hasTagName(SVGNames::markerTag)) {
-        SVGMarkerElement* marker = static_cast<SVGMarkerElement*>(node());
-        return marker->viewBoxToViewTransform(m_viewport.width(), m_viewport.height());
     }
 
     return AffineTransform();

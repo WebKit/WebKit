@@ -1,3 +1,88 @@
+2010-03-28  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVGResourceMarker needs to be moved to RenderersSVGResourceMarker
+        https://bugs.webkit.org/show_bug.cgi?id=36185
+
+        This moves SVGResourceMarker to RenderersSVGResourceMarker. This follows other
+        SVG resources like masker and clipper and makes DRT results more readable and
+        adds additonal informations.
+        Some marker specific code also moved out from RenderSVGViewportContainer to 
+        RenderersSVGResourceMarker.
+
+        * Android.mk:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::calculateMarkerBoundsIfNeeded):
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::destroy):
+        * rendering/RenderSVGResource.h:
+        (WebCore::):
+        * rendering/RenderSVGResourceMarker.cpp: Added.
+        (WebCore::RenderSVGResourceMarker::RenderSVGResourceMarker):
+        (WebCore::RenderSVGResourceMarker::~RenderSVGResourceMarker):
+        (WebCore::RenderSVGResourceMarker::layout):
+        (WebCore::RenderSVGResourceMarker::addClient):
+        (WebCore::RenderSVGResourceMarker::invalidateClients):
+        (WebCore::RenderSVGResourceMarker::invalidateClient):
+        (WebCore::RenderSVGResourceMarker::applyViewportClip):
+        (WebCore::RenderSVGResourceMarker::markerBoundaries):
+        (WebCore::RenderSVGResourceMarker::localToParentTransform):
+        (WebCore::RenderSVGResourceMarker::referencePoint):
+        (WebCore::RenderSVGResourceMarker::angle):
+        (WebCore::RenderSVGResourceMarker::markerTransformation):
+        (WebCore::RenderSVGResourceMarker::draw):
+        (WebCore::RenderSVGResourceMarker::markerContentTransformation):
+        (WebCore::RenderSVGResourceMarker::viewportTransform):
+        (WebCore::RenderSVGResourceMarker::calcViewport):
+        * rendering/RenderSVGResourceMarker.h: Added.
+        (WebCore::RenderSVGResourceMarker::renderName):
+        (WebCore::RenderSVGResourceMarker::applyResource):
+        (WebCore::RenderSVGResourceMarker::resourceBoundingBox):
+        (WebCore::RenderSVGResourceMarker::markerUnits):
+        (WebCore::RenderSVGResourceMarker::resourceType):
+        * rendering/RenderSVGViewportContainer.cpp:
+        (WebCore::RenderSVGViewportContainer::calcViewport):
+        (WebCore::RenderSVGViewportContainer::viewportTransform):
+        * rendering/RenderSVGViewportContainer.h:
+        * rendering/SVGMarkerData.h:
+        (WebCore::SVGMarkerData::SVGMarkerData):
+        (WebCore::SVGMarkerData::marker):
+        (WebCore::SVGMarkerData::updateTypeAndMarker):
+        * rendering/SVGMarkerLayoutInfo.cpp:
+        (WebCore::processStartAndMidMarkers):
+        (WebCore::SVGMarkerLayoutInfo::calculateBoundaries):
+        (WebCore::SVGMarkerLayoutInfo::addLayoutedMarker):
+        * rendering/SVGMarkerLayoutInfo.h:
+        (WebCore::MarkerLayout::MarkerLayout):
+        (WebCore::SVGMarkerLayoutInfo::midMarker):
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::deregisterFromResources):
+        * rendering/SVGRenderSupport.h:
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::operator<<):
+        (WebCore::writeSVGResource):
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::svgAttributeChanged):
+        (WebCore::SVGMarkerElement::childrenChanged):
+        (WebCore::SVGMarkerElement::setOrientToAuto):
+        (WebCore::SVGMarkerElement::setOrientToAngle):
+        (WebCore::SVGMarkerElement::createRenderer):
+        * svg/SVGMarkerElement.h:
+        (WebCore::SVGMarkerElement::):
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::invalidateResources):
+        * svg/graphics/SVGResource.h:
+        (WebCore::):
+        (WebCore::SVGResource::isFilter):
+        * svg/graphics/SVGResourceMarker.cpp: Removed.
+        * svg/graphics/SVGResourceMarker.h: Removed.
+
 2010-03-28  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Pavel Feldman.

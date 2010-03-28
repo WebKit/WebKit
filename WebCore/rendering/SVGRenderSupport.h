@@ -73,8 +73,6 @@ protected:
     // Used to share the "walk all the children" logic between objectBoundingBox
     // and repaintRectInLocalCoordinates in RenderSVGRoot and RenderSVGContainer
     static FloatRect computeContainerBoundingBox(const RenderObject* container, bool includeAllPaintedContent);
-
-    static void deregisterFromResources(RenderObject*);
 };
 
 // FIXME: This should move to RenderObject or PaintInfo
@@ -84,6 +82,7 @@ void applyTransformToPaintInfo(RenderObject::PaintInfo&, const AffineTransform& 
 // This offers a way to render parts of a WebKit rendering tree into a ImageBuffer.
 void renderSubtreeToImage(ImageBuffer*, RenderObject*);
 
+void deregisterFromResources(RenderObject*);
 void clampImageBufferSizeToViewport(FrameView*, IntSize& imageBufferSize);
 
 const RenderObject* findTextRootObject(const RenderObject* start);

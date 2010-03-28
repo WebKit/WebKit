@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-class SVGResourceMarker;
+class RenderSVGResourceMarker;
 
 class SVGMarkerData {
 public:
@@ -38,14 +38,14 @@ public:
         End
     };
 
-    SVGMarkerData(const Type& type = Unknown, SVGResourceMarker* marker = 0)
+    SVGMarkerData(const Type& type = Unknown, RenderSVGResourceMarker* marker = 0)
         : m_type(type)
         , m_marker(marker)
     {
     }
 
     FloatPoint origin() const { return m_origin; }
-    SVGResourceMarker* marker() const { return m_marker; }
+    RenderSVGResourceMarker* marker() const { return m_marker; }
 
     float currentAngle() const
     {
@@ -74,7 +74,7 @@ public:
         return narrowPrecisionToFloat(angle);
     }
 
-    void updateTypeAndMarker(const Type& type, SVGResourceMarker* marker)
+    void updateTypeAndMarker(const Type& type, RenderSVGResourceMarker* marker)
     {
         m_type = type;
         m_marker = marker;
@@ -121,7 +121,7 @@ private:
     }
 
     Type m_type;
-    SVGResourceMarker* m_marker;
+    RenderSVGResourceMarker* m_marker;
     FloatPoint m_origin;
     FloatPoint m_subpathStart;
     FloatPoint m_inslopePoints[2];

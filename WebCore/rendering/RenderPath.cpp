@@ -31,10 +31,10 @@
 #include "GraphicsContext.h"
 #include "PointerEventsHitRules.h"
 #include "RenderSVGContainer.h"
+#include "RenderSVGResourceMarker.h"
 #include "StrokeStyleApplier.h"
 #include "SVGPaintServer.h"
 #include "SVGRenderSupport.h"
-#include "SVGResourceMarker.h"
 #include "SVGStyledTransformableElement.h"
 #include "SVGTransformList.h"
 #include "SVGURIReference.h"
@@ -300,24 +300,24 @@ void RenderPath::calculateMarkerBoundsIfNeeded() const
     AtomicString midMarkerId(svgStyle->midMarker());
     AtomicString endMarkerId(svgStyle->endMarker());
 
-    SVGResourceMarker* startMarker = getMarkerById(doc, startMarkerId, this);
-    SVGResourceMarker* midMarker = getMarkerById(doc, midMarkerId, this);
-    SVGResourceMarker* endMarker = getMarkerById(doc, endMarkerId, this);
+    RenderSVGResourceMarker* startMarker = getRenderSVGResourceById<RenderSVGResourceMarker>(doc, startMarkerId);
+    RenderSVGResourceMarker* midMarker = getRenderSVGResourceById<RenderSVGResourceMarker>(doc, midMarkerId);
+    RenderSVGResourceMarker* endMarker = getRenderSVGResourceById<RenderSVGResourceMarker>(doc, endMarkerId);
 
     if (!startMarker && !startMarkerId.isEmpty())
         svgElement->document()->accessSVGExtensions()->addPendingResource(startMarkerId, styledElement);
     else if (startMarker)
-        startMarker->addClient(styledElement);
+        startMarker->addClient(this);
 
     if (!midMarker && !midMarkerId.isEmpty())
         svgElement->document()->accessSVGExtensions()->addPendingResource(midMarkerId, styledElement);
     else if (midMarker)
-        midMarker->addClient(styledElement);
+        midMarker->addClient(this);
 
     if (!endMarker && !endMarkerId.isEmpty())
         svgElement->document()->accessSVGExtensions()->addPendingResource(endMarkerId, styledElement);
     else if (endMarker)
-        endMarker->addClient(styledElement);
+        endMarker->addClient(this);
 
     if (!startMarker && !midMarker && !endMarker)
         return;
