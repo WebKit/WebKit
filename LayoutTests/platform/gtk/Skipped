@@ -3411,13 +3411,10 @@ http/tests/history/redirect-meta-refresh-2-seconds.html
 http/tests/incremental/slow-utf8-text.pl
 http/tests/loading/bad-scheme-subframe.html
 http/tests/loading/bad-server-subframe.html
-http/tests/loading/basic.html
 # Needed to cover the fix for <rdar://problem/6727495>
 http/tests/loading/deleted-host-in-resource-load-delegate-callback.html
 http/tests/loading/empty-subframe.html
 http/tests/loading/gmail-assert-on-load.html
-http/tests/loading/location-hash-reload-cycle.html
-http/tests/loading/onload-vs-immediate-refresh.pl
 http/tests/loading/preload-img-test.html
 http/tests/loading/slow-parsing-subframe.html
 http/tests/loading/text-content-type-with-binary-extension.html
@@ -5625,10 +5622,7 @@ editing/selection/5825350-2.html
 
 # Need proper frame loader callbacks reporting
 # See https://bugs.webkit.org/show_bug.cgi?id=32170
-http/tests/loading/state-object-security-exception.html
 http/tests/security/mixedContent/empty-url-plugin-in-frame.html
-# Seems to be the same issue as above.
-http/tests/loading/load-javascript-after-many-xhrs.html
 
 # Fails because of new behaviour enforced by libsoup
 # See: https://bugzilla.gnome.org/show_bug.cgi?id=603825

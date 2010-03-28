@@ -637,6 +637,15 @@ static void webViewDocumentLoadFinished(WebKitWebView* view, WebKitWebFrame* fra
     }
 }
 
+static void webViewOnloadEvent(WebKitWebView* view, WebKitWebFrame* frame, void*)
+{
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks()) {
+        char* frameName = getFrameNameSuitableForTestResult(view, frame);
+        printf("%s - didHandleOnloadEventsForFrame\n", frameName);
+        g_free(frameName);
+    }
+}
+
 static void webViewWindowObjectCleared(WebKitWebView* view, WebKitWebFrame* frame, JSGlobalContextRef context, JSObjectRef windowObject, gpointer data)
 {
     JSValueRef exception = 0;
@@ -869,6 +878,7 @@ static WebKitWebView* createWebView()
                      "signal::database-quota-exceeded", databaseQuotaExceeded, 0,
                      "signal::document-load-finished", webViewDocumentLoadFinished, 0,
                      "signal::geolocation-policy-decision-requested", geolocationPolicyDecisionRequested, 0,
+                     "signal::onload-event", webViewOnloadEvent, 0,
                      NULL);
 
     g_signal_connect(view,

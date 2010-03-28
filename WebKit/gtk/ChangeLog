@@ -1,3 +1,18 @@
+2010-03-27  Sergio Villar Senin  <svillar@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        FrameLoader emits onload-event when handling
+        dispatchDidHandleOnloadEvents
+
+        [GTK] Improve reporting of frame loader callbacks in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=36454
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::dispatchDidHandleOnloadEvents):
+        implemented, now it emits onload-event signal
+        * webkit/webkitwebview.cpp: added onload-event signal
+
 2010-03-25  Sergio Villar Senín  <svillar@igalia.com>
 
         Reviewed by Xan Lopez.

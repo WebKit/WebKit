@@ -662,7 +662,7 @@ void FrameLoaderClient::detachedFromParent3()
 
 void FrameLoaderClient::dispatchDidHandleOnloadEvents()
 {
-    notImplemented();
+    g_signal_emit_by_name(getViewFromFrame(m_frame), "onload-event", m_frame);
 }
 
 void FrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad()

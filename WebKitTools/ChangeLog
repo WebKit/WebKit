@@ -2,6 +2,21 @@
 
         Reviewed by Eric Seidel.
 
+        Print didHandleOnloadEventsForFrame in the callback of
+        onload-event signal comming from frame loader
+
+        [GTK] Improve reporting of frame loader callbacks in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=36454
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (webViewOnloadEvent):
+        (createWebView): added connection to signal::onload-event and
+        signal callback
+
+2010-03-27  Sergio Villar Senin  <svillar@igalia.com>
+
+        Reviewed by Eric Seidel.
+
         Print didCommitLoadForFrame in the callback of signal::load-committed
 
         [GTK] Improve reporting of frame loader callbacks in DRT

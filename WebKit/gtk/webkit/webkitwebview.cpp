@@ -164,6 +164,7 @@ enum {
     DOCUMENT_LOAD_FINISHED,
     GEOLOCATION_POLICY_DECISION_REQUESTED,
     GEOLOCATION_POLICY_DECISION_CANCELLED,
+    ONLOAD_EVENT,
     LAST_SIGNAL
 };
 
@@ -1776,6 +1777,23 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * Deprecated: Use the "load-status" property instead.
      */
     webkit_web_view_signals[LOAD_FINISHED] = g_signal_new("load-finished",
+            G_TYPE_FROM_CLASS(webViewClass),
+            (GSignalFlags)G_SIGNAL_RUN_LAST,
+            0,
+            NULL,
+            NULL,
+            g_cclosure_marshal_VOID__OBJECT,
+            G_TYPE_NONE, 1,
+            WEBKIT_TYPE_WEB_FRAME);
+
+    /**
+     * WebKitWebView::onload-event:
+     * @web_view: the object on which the signal is emitted
+     * @frame: the frame
+     *
+     * When a #WebKitWebFrame receives an onload event this signal is emitted.
+     */
+    webkit_web_view_signals[LOAD_STARTED] = g_signal_new("onload-event",
             G_TYPE_FROM_CLASS(webViewClass),
             (GSignalFlags)G_SIGNAL_RUN_LAST,
             0,

@@ -1,3 +1,14 @@
+2010-03-27  Sergio Villar Senin  <svillar@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        Removed 5 http/history tests from Skipped file
+
+        [GTK] Improve reporting of frame loader callbacks in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=36454
+
+        * platform/gtk/Skipped:
+
 2010-03-27  Dan Bernstein  <mitz@apple.com>
 
         More updated results for r56673.
