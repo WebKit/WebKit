@@ -1,5 +1,16 @@
 2010-03-28  Chris Jerdonek  <cjerdonek@webkit.org>
 
+        Unreviewed.
+
+        Fixed typo in deprecated_logging_unittest.py, which is masking
+        sys.stderr while running test-webkitpy.
+
+        See also-- https://bugs.webkit.org/show_bug.cgi?id=36725#c3
+
+        * Scripts/webkitpy/common/system/deprecated_logging_unittest.py:
+
+2010-03-28  Chris Jerdonek  <cjerdonek@webkit.org>
+
         Reviewed by Shinichiro Hamaji.
 
         Renamed check-webkit-style's --debug flag to --verbose to be more
