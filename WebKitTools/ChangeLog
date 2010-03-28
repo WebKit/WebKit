@@ -1,5 +1,13 @@
 2010-03-28  Chris Jerdonek  <cjerdonek@webkit.org>
 
+        Unreviewed.
+
+        Added back a line that accidentally got deleted in r56690.
+
+        * Scripts/check-webkit-style:
+
+2010-03-28  Chris Jerdonek  <cjerdonek@webkit.org>
+
         Reviewed by Shinichiro Hamaji.
 
         Add to check-webkit-style support for checking directories.

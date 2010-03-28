@@ -99,6 +99,8 @@ def main():
     configuration = checker.check_webkit_style_configuration(options)
     style_checker = checker.StyleChecker(configuration)
 
+    paths = change_directory(checkout_root=checkout_root, paths=paths)
+
     if paths:
         style_checker.check_paths(paths)
     else:
