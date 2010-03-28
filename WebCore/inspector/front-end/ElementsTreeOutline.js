@@ -786,17 +786,13 @@ WebInspector.ElementsTreeElement.prototype = {
 
     _addNewAttribute: function()
     {
-        var attr = document.createElement("span");
-        attr.className = "webkit-html-attribute";
+        // Cannot just convert the textual html into an element without
+        // a parent node. Use a temporary span container for the HTML.
+        var container = document.createElement("span");
+        container.innerHTML = this._attributeHTML(" ", "");
+        var attr = container.firstChild;
         attr.style.marginLeft = "2px"; // overrides the .editing margin rule
         attr.style.marginRight = "2px"; // overrides the .editing margin rule
-        var name = document.createElement("span");
-        name.className = "webkit-html-attribute-name new-attribute";
-        name.textContent = " ";
-        var value = document.createElement("span");
-        value.className = "webkit-html-attribute-value";
-        attr.appendChild(name);
-        attr.appendChild(value);
 
         var tag = this.listItemElement.getElementsByClassName("webkit-html-tag")[0];
         this._insertInLastAttributePosition(tag, attr);
@@ -1024,10 +1020,7 @@ WebInspector.ElementsTreeElement.prototype = {
             var previous = element.previousSibling;
             if (!previous || previous.nodeType !== Node.TEXT_NODE)
                 element.parentNode.insertBefore(document.createTextNode(" "), element);
-            element.outerHTML = "<span class=\"webkit-html-attribute\">" +
-                                  "<span class=\"webkit-html-attribute-name\">" + attr.name.escapeHTML() + "</span>=&#8203;\"" +
-                                  "<span class=\"webkit-html-attribute-value\">" + attr.value.escapeHTML() + "</span>&#8203;\"" +
-                                "</span>";
+            element.outerHTML = this._attributeHTML(name, value);
         }
 
         var parseContainerElement = document.createElement("span");
@@ -1052,7 +1045,7 @@ WebInspector.ElementsTreeElement.prototype = {
             foundOriginalAttribute = foundOriginalAttribute || attr.name === attributeName;
             try {
                 this.representedObject.setAttribute(attr.name, attr.value);
-                regenerateStyledAttribute(attr.name, attr.value);
+                regenerateStyledAttribute.call(this, attr.name, attr.value);
             } catch(e) {} // ignore invalid attribute (innerHTML doesn't throw errors, but this can)
         }
 
@@ -1214,6 +1207,29 @@ WebInspector.ElementsTreeElement.prototype = {
         return hrefValue;
     },
 
+    _attributeHTML: function(name, value, node, linkify, tooltipText)
+    {
+        var hasText = (value.length > 0);
+        var html = "<span class=\"webkit-html-attribute\"><span class=\"webkit-html-attribute-name\">" + name.escapeHTML() + "</span>";
+
+        if (hasText)
+            html += "=&#8203;\"";
+
+        if (linkify && (name === "src" || name === "href")) {
+            value = value.replace(/([\/;:\)\]\}])/g, "$1\u200B");
+            html += linkify(this._rewriteAttrHref(node, value), value, "webkit-html-attribute-value", node.nodeName.toLowerCase() === "a", tooltipText);
+        } else {
+            value = value.escapeHTML().replace(/([\/;:\)\]\}])/g, "$1&#8203;");
+            html += "<span class=\"webkit-html-attribute-value\">" + value + "</span>";
+        }
+
+        if (hasText)
+            html += "\"";
+
+        html += "</span>";
+        return html;
+    },
+
     _nodeTitleInfo: function(linkify, tooltipText)
     {
         var node = this.representedObject;
@@ -1235,18 +1251,7 @@ WebInspector.ElementsTreeElement.prototype = {
                 if (node.hasAttributes()) {
                     for (var i = 0; i < node.attributes.length; ++i) {
                         var attr = node.attributes[i];
-                        info.title += " <span class=\"webkit-html-attribute\"><span class=\"webkit-html-attribute-name\">" + attr.name.escapeHTML() + "</span>=&#8203;\"";
-
-                        var value = attr.value;
-                        if (linkify && (attr.name === "src" || attr.name === "href")) {
-                            var value = value.replace(/([\/;:\)\]\}])/g, "$1\u200B");
-                            info.title += linkify(this._rewriteAttrHref(node, attr.value), value, "webkit-html-attribute-value", node.nodeName.toLowerCase() == "a", tooltipText);
-                        } else {
-                            var value = value.escapeHTML();
-                            value = value.replace(/([\/;:\)\]\}])/g, "$1&#8203;");
-                            info.title += "<span class=\"webkit-html-attribute-value\">" + value + "</span>";
-                        }
-                        info.title += "\"</span>";
+                        info.title += " " + this._attributeHTML(attr.name, attr.value, node, linkify, tooltipText);
                     }
                 }
                 info.title += "&gt;</span>&#8203;";
