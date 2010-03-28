@@ -1164,7 +1164,6 @@
 		626CDE0F1140424C001E5A68 /* SpatialNavigation.h in Headers */ = {isa = PBXBuildFile; fileRef = 626CDE0D1140424C001E5A68 /* SpatialNavigation.h */; };
 		62CD32591157E57C0063B0A7 /* CustomEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 62CD32561157E57C0063B0A7 /* CustomEvent.cpp */; };
 		62CD325A1157E57C0063B0A7 /* CustomEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 62CD32571157E57C0063B0A7 /* CustomEvent.h */; };
-		62CD325B1157E57C0063B0A7 /* CustomEvent.idl in Resources */ = {isa = PBXBuildFile; fileRef = 62CD32581157E57C0063B0A7 /* CustomEvent.idl */; };
 		63189AE30E83A33300012E41 /* NodeRareData.h in Headers */ = {isa = PBXBuildFile; fileRef = 63189AE20E83A33300012E41 /* NodeRareData.h */; settings = {ATTRIBUTES = (); }; };
 		63D7B32D0E78CD3F00F7617C /* NodeRenderStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 63D7B32C0E78CD3F00F7617C /* NodeRenderStyle.h */; };
 		63F5D4F70E8C4B7100C0BD04 /* ElementRareData.h in Headers */ = {isa = PBXBuildFile; fileRef = 637B7ADE0E8767B800E32194 /* ElementRareData.h */; };
@@ -6629,9 +6628,9 @@
 		5DCF836C0D59159800953BC6 /* PluginInfoStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginInfoStore.h; sourceTree = "<group>"; };
 		626CDE0C1140424C001E5A68 /* SpatialNavigation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpatialNavigation.cpp; sourceTree = "<group>"; };
 		626CDE0D1140424C001E5A68 /* SpatialNavigation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpatialNavigation.h; sourceTree = "<group>"; };
-		62CD32561157E57C0063B0A7 /* CustomEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CustomEvent.cpp; path = dom/CustomEvent.cpp; sourceTree = "<group>"; };
-		62CD32571157E57C0063B0A7 /* CustomEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomEvent.h; path = dom/CustomEvent.h; sourceTree = "<group>"; };
-		62CD32581157E57C0063B0A7 /* CustomEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CustomEvent.idl; path = dom/CustomEvent.idl; sourceTree = "<group>"; };
+		62CD32561157E57C0063B0A7 /* CustomEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CustomEvent.cpp; sourceTree = "<group>"; };
+		62CD32571157E57C0063B0A7 /* CustomEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomEvent.h; sourceTree = "<group>"; };
+		62CD32581157E57C0063B0A7 /* CustomEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CustomEvent.idl; sourceTree = "<group>"; };
 		63189AE20E83A33300012E41 /* NodeRareData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeRareData.h; sourceTree = "<group>"; };
 		637B7ADE0E8767B800E32194 /* ElementRareData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementRareData.h; sourceTree = "<group>"; };
 		63D7B32C0E78CD3F00F7617C /* NodeRenderStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeRenderStyle.h; sourceTree = "<group>"; };
@@ -10383,9 +10382,6 @@
 		0867D691FE84028FC02AAC07 /* WebKit */ = {
 			isa = PBXGroup;
 			children = (
-				62CD32561157E57C0063B0A7 /* CustomEvent.cpp */,
-				62CD32571157E57C0063B0A7 /* CustomEvent.h */,
-				62CD32581157E57C0063B0A7 /* CustomEvent.idl */,
 				65C97AF208EA908800ACD273 /* config.h */,
 				EDEC98020AED7E170059137F /* WebCorePrefix.h */,
 				9307061309E0CA8200B17FE4 /* DerivedSources.make */,
@@ -15754,10 +15750,6 @@
 		F523D2F302DE443B018635CA /* rendering */ = {
 			isa = PBXGroup;
 			children = (
-				8499A512115FB33000F566E3 /* RenderSVGResourceMarker.cpp */,
-				8499A513115FB33000F566E3 /* RenderSVGResourceMarker.h */,
-				A43BF59A1149292800C643CA /* RenderProgress.cpp */,
-				A43BF59B1149292800C643CA /* RenderProgress.h */,
 				BC8C8FAA0DDCD2F200B592F4 /* style */,
 				A8CFF04B0A154F09000A4234 /* AutoTableLayout.cpp */,
 				A8CFF0490A154F09000A4234 /* AutoTableLayout.h */,
@@ -15861,6 +15853,8 @@
 				A871DECD0A1530C700B12A68 /* RenderPartObject.h */,
 				853CA9EE0AEEC657002372DC /* RenderPath.cpp */,
 				853CA9EF0AEEC657002372DC /* RenderPath.h */,
+				A43BF59A1149292800C643CA /* RenderProgress.cpp */,
+				A43BF59B1149292800C643CA /* RenderProgress.h */,
 				A871DFDE0A15376B00B12A68 /* RenderReplaced.cpp */,
 				A871DFDF0A15376B00B12A68 /* RenderReplaced.h */,
 				BCA846D40DC67A350026C309 /* RenderReplica.cpp */,
@@ -15901,6 +15895,8 @@
 				083192A7112B43050083C3B9 /* RenderSVGResource.h */,
 				84BDA16911358D2A00DBF64C /* RenderSVGResourceClipper.cpp */,
 				84BDA16A11358D2A00DBF64C /* RenderSVGResourceClipper.h */,
+				8499A512115FB33000F566E3 /* RenderSVGResourceMarker.cpp */,
+				8499A513115FB33000F566E3 /* RenderSVGResourceMarker.h */,
 				083192A8112B43050083C3B9 /* RenderSVGResourceMasker.cpp */,
 				083192A9112B43050083C3B9 /* RenderSVGResourceMasker.h */,
 				AA31B5B20C1DFD1000AE7083 /* RenderSVGRoot.cpp */,
@@ -16037,6 +16033,9 @@
 				E1A1470711102B1500EEC0F3 /* ContainerNodeAlgorithms.h */,
 				A8C4A7F809D563270003AC8D /* CSSMappedAttributeDeclaration.cpp */,
 				A8C4A7F709D563270003AC8D /* CSSMappedAttributeDeclaration.h */,
+				62CD32561157E57C0063B0A7 /* CustomEvent.cpp */,
+				62CD32571157E57C0063B0A7 /* CustomEvent.h */,
+				62CD32581157E57C0063B0A7 /* CustomEvent.idl */,
 				A8185F3409765765005826D9 /* Document.cpp */,
 				A8185F3809765765005826D9 /* Document.h */,
 				6548E24809E1E04D00AF8020 /* Document.idl */,
@@ -18868,7 +18867,6 @@
 				1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */,
 				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
 				2E0888C4114883A900AF4265 /* DOMFormData.idl in Resources */,
-				62CD325B1157E57C0063B0A7 /* CustomEvent.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

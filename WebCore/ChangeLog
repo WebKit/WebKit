@@ -1,3 +1,11 @@
+2010-03-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Clean up the Xcode project a bit.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2010-03-28  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
