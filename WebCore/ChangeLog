@@ -1,3 +1,14 @@
+2010-03-27  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7801598> REGRESSION (r56182): iWeb shadow drawn around image rectangle, not around opaque part of the image
+        https://bugs.webkit.org/show_bug.cgi?id=36700
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::createColor): Reverted to returning an RGB color value rather than an
+        identifier for the transparent color.
+
 2010-03-26  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Pavel Feldman.

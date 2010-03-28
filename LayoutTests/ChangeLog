@@ -1,3 +1,22 @@
+2010-03-27  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Updated results and one test for
+        <rdar://problem/7801598> REGRESSION (r56182): iWeb shadow drawn around image rectangle, not around opaque part of the image
+        https://bugs.webkit.org/show_bug.cgi?id=36700
+
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/invalid-import-rule-insertion.html:
+        * http/tests/mime/standard-mode-does-not-load-stylesheet-with-text-plain-and-css-extension-expected.txt:
+        * http/tests/mime/standard-mode-does-not-load-stylesheet-with-text-plain-expected.txt:
+        * http/tests/security/cross-origin-css-expected.txt:
+        * http/tests/security/cross-origin-css-in-xml-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/qt/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/win/fast/css/getComputedStyle/computed-style-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2010-03-27  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Dan Bernstein.

@@ -20,7 +20,7 @@
         }
         catch(e)
         {
-            if(window.getComputedStyle(document.body, "").getPropertyValue("background-color") == "transparent" && document.styleSheets[0].cssRules.length == 2)
+            if(window.getComputedStyle(document.body, "").getPropertyValue("background-color") == "rgba(0, 0, 0, 0)" && document.styleSheets[0].cssRules.length == 2)
             {
                 document.getElementById("testresult").innerHTML = "Pass";
             }

@@ -1,7 +1,7 @@
 Attributes that are exposed in the CSS computed style object:
 
 background-attachment: scroll;
-background-color: transparent;
+background-color: rgba(0, 0, 0, 0);
 background-image: none;
 background-position: 0% 0%;
 background-repeat: repeat;
