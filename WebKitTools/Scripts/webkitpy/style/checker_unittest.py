@@ -180,7 +180,9 @@ class GlobalVariablesTest(unittest.TestCase):
                                 default_options=default_options)
         # No need to test the return value here since we test parse()
         # on valid arguments elsewhere.
-        parser.parse([]) # arguments valid: no error or SystemExit
+        #
+        # The default options are valid: no error or SystemExit.
+        parser.parse(args=[], found_checkout=True)
 
     def test_path_rules_specifier(self):
         all_categories = self._all_categories()

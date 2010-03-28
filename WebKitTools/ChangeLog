@@ -1,3 +1,65 @@
+2010-03-28  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Changed check-webkit-style to convert paths to paths relative to
+        the checkout root when invoking check-webkit-style with path
+        arguments.  Also added warning messages where appropriate.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35498
+
+        Converting paths to paths relative to the checkout root ensures
+        that style checking will behave as expected (since path-specific
+        rules assume input paths are relative to a source root).
+
+        * Scripts/check-webkit-style:
+          - Added debug logging of whether the current directory was found
+            to be in a WebKit checkout.
+          - Added the found_checkout parameter to the call to parser.parse().
+          - Renamed the files variable to paths.
+          - Added a call to change_directory() prior to checking style.
+
+        * Scripts/webkitpy/style/checker.py:
+          - For StyleChecker.check_file():
+            - Updated the docstring.
+            - Added two log messages.
+
+        * Scripts/webkitpy/style/checker_unittest.py:
+          - Updated a call to parser.parse() with the found_checkout parameter.
+
+        * Scripts/webkitpy/style/main.py: Added.
+          - Added a new file so the code in this patch could be unit-tested,
+            as opposed to adding new code to check-webkit-style.
+          - Added the method _rel_path() as a substitute for os.path.relpath(),
+            which is available only in Python 2.6.
+          - Added the method change_directory(), which contains most of the
+            new functionality in this patch.
+
+        * Scripts/webkitpy/style/main_unittest.py: Added.
+          - Added RelPathTest to test main._rel_path().
+          - Added ChangeDirectoryTest to test main.change_directory().
+
+        * Scripts/webkitpy/style/optparser.py:
+          - Updated check-webkit-style's usage string.
+          - For the ArgumentParser.parse() method:
+            - Added a found_checkout parameter.
+            - Renamed filenames to paths.
+            - Added logic so that an error is raised if no paths are passed
+              if found_checkout is False.
+
+        * Scripts/webkitpy/style/optparser_unittest.py:
+          - Updated the ArgumentParser.parse() unit tests to include
+            coverage for the new found_checkout parameter.
+
+        * Scripts/webkitpy/style/unittests.py:
+          - Added an import statement for main_unittest.
+
+        * Scripts/webkitpy/style_references.py:
+          - Renamed SimpleScm to WebKitCheckout.
+          - Added a detect_checkout() function to allow returning None
+            instead of a WebKitCheckout instance if no checkout is found.
+          - Renamed checkout_root to root_path.
+
 2010-03-27  Sergio Villar Senin  <svillar@igalia.com>
 
         Reviewed by Eric Seidel.

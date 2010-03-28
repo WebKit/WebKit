@@ -23,11 +23,14 @@
 """Supports the parsing of command-line options for check-webkit-style."""
 
 import getopt
+import logging
 import os.path
 import sys
 
 from filter import validate_filter_rules
 # This module should not import anything from checker.py.
+
+_log = logging.getLogger(__name__)
 
 
 def _create_usage(default_options):
@@ -98,6 +101,38 @@ Syntax: %(program_name)s [--debug] [--verbose=#] [--git-commit=<SingleCommit>]
       %(program_name)s, along with which are enabled by default, pass
       the empty filter as follows:
          --filter=
+
+Path considerations:
+
+  Certain style-checking behavior depends on the paths relative to
+  the WebKit source root of the files being checked.  For example,
+  certain types of errors may be handled differently for files in
+  WebKit/gtk/webkit/ (e.g. by suppressing "readability/naming" errors
+  for files in this directory).
+
+  Consequently, if the path relative to the source root cannot be
+  determined for a file being checked, then style checking may not
+  work correctly for that file.  This can occur, for example, if no
+  WebKit checkout can be found, or if the source root can be detected,
+  but one of the files being checked lies outside the source tree.
+
+  If a WebKit checkout can be detected and all files being checked
+  are in the source tree, then all paths will automatically be
+  converted to paths relative to the source root prior to checking.
+  This is also useful for display purposes.
+
+  Currently, this command can detect the source root only if the
+  command is run from within a WebKit checkout (i.e. if the current
+  working directory is below the root of a checkout).  In particular,
+  it is not recommended to run this script from a directory outside
+  a checkout.
+
+  Running this script from a top-level WebKit source directory and
+  checking only files in the source tree will ensure that all style
+  checking behaves correctly -- whether or not a checkout can be
+  detected.  This is because all file paths will already be relative
+  to the source root and so will not need to be converted.
+
 """ % {'program_name': os.path.basename(sys.argv[0]),
        'default_verbosity': default_options.verbosity,
        'default_output_format': default_options.output_format}
@@ -331,16 +366,18 @@ class ArgumentParser(object):
             filters.append(filter)
         return filters
 
-    def parse(self, args):
+    def parse(self, args, found_checkout):
         """Parse the command line arguments to check-webkit-style.
 
         Args:
           args: A list of command-line arguments as returned by sys.argv[1:].
+          found_checkout: A boolean value of whether the current working
+                          directory was found to be inside a WebKit checkout.
 
         Returns:
-          A tuple of (filenames, options)
+          A tuple of (paths, options)
 
-          filenames: The list of filenames to check.
+          paths: The list of paths to check.
           options: A CommandOptionValues instance.
 
         """
@@ -353,7 +390,7 @@ class ArgumentParser(object):
                  'verbose=']
 
         try:
-            (opts, filenames) = getopt.getopt(args, '', flags)
+            (opts, paths) = getopt.getopt(args, '', flags)
         except getopt.GetoptError, err:
             # FIXME: Settle on an error handling approach: come up
             #        with a consistent guideline as to when and whether
@@ -385,7 +422,13 @@ class ArgumentParser(object):
                 raise ValueError('Invalid option: "%s"' % opt)
 
         # Check validity of resulting values.
-        if filenames and (git_commit != None):
+        if not found_checkout and not paths:
+            _log.error("WebKit checkout not found: You must run this script "
+                       "from inside a WebKit checkout if you are not passing "
+                       "specific paths to check.")
+            sys.exit(1)
+
+        if paths and (git_commit != None):
             self._exit_with_usage('It is not possible to check files and a '
                                   'specific commit at the same time.')
 
@@ -407,5 +450,5 @@ class ArgumentParser(object):
                                       output_format=output_format,
                                       verbosity=verbosity)
 
-        return (filenames, options)
+        return (paths, options)
 

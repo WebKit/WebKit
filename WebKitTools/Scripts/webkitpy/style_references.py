@@ -46,6 +46,14 @@ from webkitpy.common.system.logtesting import TestLogStream
 from webkitpy.common.checkout.scm import detect_scm_system
 
 
+def detect_checkout():
+    """Return a WebKitCheckout instance, or None if it cannot be found."""
+    cwd = os.path.abspath(os.curdir)
+    scm = detect_scm_system(cwd)
+
+    return None if scm is None else WebKitCheckout(scm)
+
+
 def parse_patch(patch_string):
 
     """Parse a patch string and return the affected files."""
@@ -54,16 +62,15 @@ def parse_patch(patch_string):
     return patch.files
 
 
-class SimpleScm(object):
+class WebKitCheckout(object):
 
-    """Simple facade to SCM for use by style package."""
+    """Simple facade to the SCM class for use by style package."""
 
-    def __init__(self):
-        cwd = os.path.abspath('.')
-        self._scm = detect_scm_system(cwd)
+    def __init__(self, scm):
+        self._scm = scm
 
-    def checkout_root(self):
-        """Return the source control root as an absolute path."""
+    def root_path(self):
+        """Return the checkout root as an absolute path."""
         return self._scm.checkout_root
 
     def create_patch(self):

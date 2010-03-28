@@ -48,11 +48,14 @@ import os
 import os.path
 import sys
 
+from webkitpy.style_references import detect_checkout
+from webkitpy.style.main import change_directory
 import webkitpy.style.checker as checker
-from webkitpy.style_references import SimpleScm
 
 _log = logging.getLogger("check-webkit-style")
 
+
+# FIXME: Move this code to style.main.
 def main():
     # Change stderr to write with replacement characters so we don't die
     # if we try to print something containing non-ASCII characters.
@@ -80,21 +83,28 @@ def main():
     checker.configure_logging(stream=stderr, is_debug=is_debug)
     _log.debug("Debug logging enabled.")
 
+    checkout = detect_checkout()
+
+    if checkout is None:
+        checkout_root = None
+        _log.debug("WebKit checkout not found for current directory.")
+    else:
+        checkout_root = checkout.root_path()
+        _log.debug("WebKit checkout found with root: %s" % checkout_root)
+
     parser = checker.check_webkit_style_parser()
-    (files, options) = parser.parse(args)
+    found_checkout = checkout is not None
+    (paths, options) = parser.parse(args, found_checkout=found_checkout)
 
     configuration = checker.check_webkit_style_configuration(options)
     style_checker = checker.StyleChecker(configuration)
 
-    if files:
-        for filename in files:
-            style_checker.check_file(filename)
+    paths = change_directory(checkout_root=checkout_root, paths=paths)
 
+    if paths:
+        for path in paths:
+            style_checker.check_file(path)
     else:
-        scm = SimpleScm()
-
-        os.chdir(scm.checkout_root())
-
         if options.git_commit:
             commit = options.git_commit
             if '..' in commit:
@@ -103,9 +113,9 @@ def main():
                 commit = commit[:commit.find('..')]
                 _log.warn("Ranges are not supported for --git-commit. "
                           "Checking all changes since %s." % commit)
-            patch = scm.create_patch_since_local_commit(commit)
+            patch = checkout.create_patch_since_local_commit(commit)
         else:
-            patch = scm.create_patch()
+            patch = checkout.create_patch()
         style_checker.check_patch(patch)
 
     error_count = style_checker.error_count

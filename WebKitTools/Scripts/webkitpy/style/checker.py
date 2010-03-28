@@ -586,7 +586,9 @@ class StyleChecker(object):
         """Check style in the given file.
 
         Args:
-          file_path: A string that is the path of the file to process.
+          file_path: The path of the file to process.  If possible, the path
+                     should be relative to the source root.  Otherwise,
+                     path-specific logic may not behave as expected.
           handle_style_error: The function to call when a style error
                               occurs. This parameter is meant for internal
                               use within this class. Defaults to a
@@ -596,6 +598,7 @@ class StyleChecker(object):
                         Defaults to the file processing method of this class.
 
         """
+        _log.debug("Checking: " + file_path)
         if handle_style_error is None:
             handle_style_error = DefaultStyleErrorHandler(
                                      configuration=self._configuration,
@@ -621,7 +624,14 @@ class StyleChecker(object):
                                                   handle_style_error,
                                                   verbosity)
         if processor is None:
+            # Display a warning so as not to give an impression that this
+            # was checked.
+            _log.info('File not a recognized type to check. Skipping: "%s"'
+                      % file_path)
             return
+
+
+        _log.debug("Using class: " + processor.__class__.__name__)
 
         process_file(processor, file_path, handle_style_error)
 

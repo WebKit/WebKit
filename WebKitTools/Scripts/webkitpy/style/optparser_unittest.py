@@ -29,6 +29,7 @@ from optparser import ArgumentParser
 from optparser import ArgumentPrinter
 from optparser import CommandOptionValues as ProcessorOptions
 from optparser import DefaultCommandOptionValues
+from webkitpy.style_references import LogTesting
 
 
 class CreateUsageTest(unittest.TestCase):
@@ -75,9 +76,17 @@ class ArgumentParserTest(unittest.TestCase):
 
     """Test the ArgumentParser class."""
 
-    def _parse(self):
-        """Return a default parse() function for testing."""
-        return self._create_parser().parse
+    def setUp(self):
+        self._log = LogTesting.setUp(self)
+
+    def tearDown(self):
+        self._log.tearDown()
+
+    # We will put the tests for found_scm False in a common location.
+    def _parse(self, args, found_scm=True):
+        """Call a test parser.parse()."""
+        parser = self._create_parser()
+        return parser.parse(args, found_scm)
 
     def _create_defaults(self):
         """Return a DefaultCommandOptionValues instance for testing."""
@@ -101,7 +110,7 @@ class ArgumentParserTest(unittest.TestCase):
                               stderr_write=stderr_write)
 
     def test_parse_documentation(self):
-        parse = self._parse()
+        parse = self._parse
 
         # FIXME: Test both the printing of the usage string and the
         #        filter categories help.
@@ -112,7 +121,7 @@ class ArgumentParserTest(unittest.TestCase):
         self.assertRaises(SystemExit, parse, ['--filter='])
 
     def test_parse_bad_values(self):
-        parse = self._parse()
+        parse = self._parse
 
         # Pass an unsupported argument.
         self.assertRaises(SystemExit, parse, ['--bad'])
@@ -132,9 +141,16 @@ class ArgumentParserTest(unittest.TestCase):
         # Pass files and git-commit at the same time.
         self.assertRaises(SystemExit, parse, ['--git-commit=', 'file.txt'])
 
+        # Paths must be passed when found_scm is False.
+        self.assertRaises(SystemExit, parse, [], found_scm=False)
+        messages = ["ERROR: WebKit checkout not found: You must run this "
+                    "script from inside a WebKit checkout if you are not "
+                    "passing specific paths to check.\n"]
+        self._log.assertMessages(messages)
+        self.assertRaises(SystemExit, parse, ['--verbose=3'], found_scm=False)
 
     def test_parse_default_arguments(self):
-        parse = self._parse()
+        parse = self._parse
 
         (files, options) = parse([])
 
@@ -147,7 +163,7 @@ class ArgumentParserTest(unittest.TestCase):
         self.assertEquals(options.verbosity, 3)
 
     def test_parse_explicit_arguments(self):
-        parse = self._parse()
+        parse = self._parse
 
         # Pass non-default explicit values.
         (files, options) = parse(['--output=emacs'])
@@ -170,7 +186,7 @@ class ArgumentParserTest(unittest.TestCase):
                           ["+build", "-whitespace"])
 
     def test_parse_files(self):
-        parse = self._parse()
+        parse = self._parse
 
         (files, options) = parse(['foo.cpp'])
         self.assertEquals(files, ['foo.cpp'])
