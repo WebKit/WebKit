@@ -1,5 +1,18 @@
 2010-03-28  Dirk Schulze  <krit@webkit.org>
 
+        Unreviewed test update.
+
+        SVGResourceMarker needs to be moved to RenderersSVGResourceMarker
+        https://bugs.webkit.org/show_bug.cgi?id=36185
+
+        Marker results update for Qt port.
+
+        * platform/qt/svg/custom/marker-opacity-expected.txt:
+        * platform/qt/svg/custom/marker-referencePoint-expected.txt:
+        * platform/qt/svg/custom/marker-strokeWidth-changes-expected.txt:
+
+2010-03-28  Dirk Schulze  <krit@webkit.org>
+
         Reviewed by Nikolas Zimmermann.
 
         SVGResourceMarker needs to be moved to RenderersSVGResourceMarker
