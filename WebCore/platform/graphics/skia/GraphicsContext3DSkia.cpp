@@ -33,6 +33,8 @@
 #include "Image.h"
 #include "NativeImageSkia.h"
 
+#include <algorithm>
+
 namespace WebCore {
 
 bool GraphicsContext3D::getImageData(Image* image,
@@ -59,13 +61,17 @@ bool GraphicsContext3D::getImageData(Image* image,
     ASSERT(rowBytes == width * 4);
     uint8_t* pixels = reinterpret_cast<uint8_t*>(skiaImage->getPixels());
     outputVector.resize(rowBytes * height);
-    memcpy(outputVector.data(), pixels, rowBytes * height);
+    int size = rowBytes * height;
+    memcpy(outputVector.data(), pixels, size);
     *hasAlphaChannel = true;
     if (!premultiplyAlpha)
         // FIXME: must fetch the image data before the premultiplication step
         *neededAlphaOp = kAlphaDoUnmultiply;
-    // FIXME: remove this dependency on desktop OpenGL
-    *format = 0x80E1; // GL_BGRA
+    // Convert from BGRA to RGBA. FIXME: add GL_BGRA extension support
+    // to all underlying OpenGL implementations.
+    for (int i = 0; i < size; i += 4)
+        std::swap(outputVector[i], outputVector[i + 2]);
+    *format = RGBA;
     return true;
 }
 
