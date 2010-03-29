@@ -1,3 +1,62 @@
+2010-03-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Platform specific expected file added for tests introduced in r56655,
+        because they pass. Compared to png file and Mac expected file.
+
+        * platform/qt/fast/table/table-background-expected.checksum: Added.
+        * platform/qt/fast/table/table-background-expected.png: Added.
+        * platform/qt/fast/table/table-background-expected.txt: Added.
+        * platform/qt/fast/table/table-cell-border-draws-on-top-of-col-background-expected.checksum: Added.
+        * platform/qt/fast/table/table-cell-border-draws-on-top-of-col-background-expected.png: Added.
+        * platform/qt/fast/table/table-cell-border-draws-on-top-of-col-background-expected.txt: Added.
+        * platform/qt/fast/table/table-cell-border-draws-on-top-of-col-group-background-expected.checksum: Added.
+        * platform/qt/fast/table/table-cell-border-draws-on-top-of-col-group-background-expected.png: Added.
+        * platform/qt/fast/table/table-cell-border-draws-on-top-of-col-group-background-expected.txt: Added.
+        * platform/qt/fast/table/table-cell-border-draws-on-top-of-row-background-expected.checksum: Added.
+        * platform/qt/fast/table/table-cell-border-draws-on-top-of-row-background-expected.png: Added.
+        * platform/qt/fast/table/table-cell-border-draws-on-top-of-row-background-expected.txt: Added.
+        * platform/qt/fast/table/table-cell-border-draws-on-top-of-row-group-background-expected.checksum: Added.
+        * platform/qt/fast/table/table-cell-border-draws-on-top-of-row-group-background-expected.png: Added.
+        * platform/qt/fast/table/table-cell-border-draws-on-top-of-row-group-background-expected.txt: Added.
+        * platform/qt/fast/table/table-cell-overrides-row-background-expected.checksum: Added.
+        * platform/qt/fast/table/table-cell-overrides-row-background-expected.png: Added.
+        * platform/qt/fast/table/table-cell-overrides-row-background-expected.txt: Added.
+        * platform/qt/fast/table/table-col-background-expected.checksum: Added.
+        * platform/qt/fast/table/table-col-background-expected.png: Added.
+        * platform/qt/fast/table/table-col-background-expected.txt: Added.
+        * platform/qt/fast/table/table-col-group-background-expected.checksum: Added.
+        * platform/qt/fast/table/table-col-group-background-expected.png: Added.
+        * platform/qt/fast/table/table-col-group-background-expected.txt: Added.
+        * platform/qt/fast/table/table-col-group-col-span-background-expected.checksum: Added.
+        * platform/qt/fast/table/table-col-group-col-span-background-expected.png: Added.
+        * platform/qt/fast/table/table-col-group-col-span-background-expected.txt: Added.
+        * platform/qt/fast/table/table-col-group-span-background-expected.checksum: Added.
+        * platform/qt/fast/table/table-col-group-span-background-expected.png: Added.
+        * platform/qt/fast/table/table-col-group-span-background-expected.txt: Added.
+        * platform/qt/fast/table/table-col-span-background-expected.checksum: Added.
+        * platform/qt/fast/table/table-col-span-background-expected.png: Added.
+        * platform/qt/fast/table/table-col-span-background-expected.txt: Added.
+        * platform/qt/fast/table/table-row-background-expected.checksum: Added.
+        * platform/qt/fast/table/table-row-background-expected.png: Added.
+        * platform/qt/fast/table/table-row-background-expected.txt: Added.
+        * platform/qt/fast/table/table-row-background-left-50px-expected.checksum: Added.
+        * platform/qt/fast/table/table-row-background-left-50px-expected.png: Added.
+        * platform/qt/fast/table/table-row-background-left-50px-expected.txt: Added.
+        * platform/qt/fast/table/table-row-background-right-100percent-expected.checksum: Added.
+        * platform/qt/fast/table/table-row-background-right-100percent-expected.png: Added.
+        * platform/qt/fast/table/table-row-background-right-100percent-expected.txt: Added.
+        * platform/qt/fast/table/table-row-background-right-50px-expected.checksum: Added.
+        * platform/qt/fast/table/table-row-background-right-50px-expected.png: Added.
+        * platform/qt/fast/table/table-row-background-right-50px-expected.txt: Added.
+        * platform/qt/fast/table/table-row-group-background-expected.checksum: Added.
+        * platform/qt/fast/table/table-row-group-background-expected.png: Added.
+        * platform/qt/fast/table/table-row-group-background-expected.txt: Added.
+        * platform/qt/fast/table/table-row-group-background-positioned-expected.checksum: Added.
+        * platform/qt/fast/table/table-row-group-background-positioned-expected.png: Added.
+        * platform/qt/fast/table/table-row-group-background-positioned-expected.txt: Added.
+
 2010-03-29  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
