@@ -1,3 +1,19 @@
+2010-03-29  Marcus Bulach  <bulach@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36315
+
+        Remove obsolete Geolocation::m_currentPosition
+        (follow up on https://bugs.webkit.org/show_bug.cgi?id=30676)
+
+        * page/Geolocation.cpp:
+        (WebCore::Geolocation::positionChanged):
+        (WebCore::Geolocation::makeSuccessCallbacks):
+        * page/Geolocation.h:
+        * platform/chromium/GeolocationServiceChromium.cpp:
+        (WebCore::GeolocationServiceChromium::GeolocationServiceChromium):
+
 2010-03-29  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Simon Hausmann.

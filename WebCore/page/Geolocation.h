@@ -162,7 +162,6 @@ private:
     RefPtr<GeoNotifier> m_startRequestPermissionNotifier;
 #endif
     RefPtr<Geoposition> m_lastPosition;
-    RefPtr<Geoposition> m_currentPosition;
 
     enum {
         Unknown,

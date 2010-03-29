@@ -39,7 +39,6 @@ GeolocationServiceChromium::GeolocationServiceChromium(GeolocationServiceClient*
         : GeolocationService(c),
           m_geolocation(reinterpret_cast<Geolocation*>(c)),
           m_geolocationServiceBridge(ChromiumBridge::createGeolocationServiceBridge(this)),
-          m_lastPosition(Geoposition::create(Coordinates::create(0.0, 0.0, false, 0.0, 0.0, false, 0.0, false, 0.0, false, 0.0), 0)),
           m_lastError(PositionError::create(PositionError::POSITION_UNAVAILABLE, ""))
 {
 }
