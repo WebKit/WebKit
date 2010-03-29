@@ -601,7 +601,7 @@ WebInspector.CPUProfileType.prototype = {
 
     get welcomeMessage()
     {
-        return WebInspector.UIString("Start CPU profiling by pressing<br>the %s button on the status bar.");
+        return WebInspector.UIString("Control CPU profiling by pressing the %s button on the status bar.");
     },
 
     setRecordingProfile: function(isProfiling)

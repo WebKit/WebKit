@@ -239,7 +239,6 @@ WebInspector.ProfilesPanel.prototype = {
             container.appendChild(part1);
      
             var button = new WebInspector.StatusBarButton(profileType.buttonTooltip, profileType.buttonStyle, profileType.buttonCaption);
-            button.element.addEventListener("click", profileType.buttonClicked.bind(profileType), false);
             container.appendChild(button.element);
        
             var part2 = document.createElement("span");

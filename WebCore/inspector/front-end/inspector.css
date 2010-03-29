@@ -2306,7 +2306,6 @@ button.show-all-nodes {
 .panel-enabler-view.welcome .instructions {
     display: inline-block;
     vertical-align: middle;
-    width: 330px;
     margin: 0;
     white-space: normal;
     line-height: 175%;
@@ -2317,7 +2316,8 @@ button.show-all-nodes {
 }
 
 .panel-enabler-view.welcome button.status-bar-item {
-    vertical-align: middle;
+    background-image: none;
+    vertical-align: top;
 }
 
 .pane button {

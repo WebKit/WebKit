@@ -1,3 +1,22 @@
+2010-03-29  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Remove a possibility of confusion from Profiles panel Welcome screen
+        by turning buttons into non-clickable glyphs. Also, span instructions
+        alongside panel width.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34319
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/ProfileView.js:
+        (WebInspector.CPUProfileType.prototype.get welcomeMessage):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype._addWelcomeMessage):
+        * inspector/front-end/inspector.css:
+        (.panel-enabler-view.welcome .instructions):
+        (.panel-enabler-view.welcome button.status-bar-item):
+
 2010-03-26  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Eric Seidel.
