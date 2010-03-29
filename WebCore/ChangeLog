@@ -2,6 +2,16 @@
 
         Reviewed by Simon Hausmann.
 
+        [Qt] Make it possible to build using both Windows and Linux for Symbian
+        https://bugs.webkit.org/show_bug.cgi?id=36748
+
+        * WebCore.pro: don't assume Windows buildsystem is the only one
+        and exclude the windows-only setters from the linux builds.
+
+2010-03-29  Thomas Zander  <t.zander@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
         https://bugs.webkit.org/show_bug.cgi?id=36745
 
         [Qt] Fix def file builds with Qt 4.7.

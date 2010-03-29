@@ -30,10 +30,12 @@ symbian: {
     # Need to guarantee that these come before system includes of /epoc32/include
     MMP_RULES += "USERINCLUDE rendering"
     MMP_RULES += "USERINCLUDE platform/text"
-    # RO text (code) section in qtwebkit.dll exceeds allocated space for gcce udeb target.
-    # Move RW-section base address to start from 0xE00000 instead of the toolchain default 0x400000.
-    QMAKE_LFLAGS.ARMCC += --rw-base 0xE00000
-    MMP_RULES += ALWAYS_BUILD_AS_ARM
+    symbian-abld|symbian-sbsv2 {
+        # RO text (code) section in qtwebkit.dll exceeds allocated space for gcce udeb target.
+        # Move RW-section base address to start from 0xE00000 instead of the toolchain default 0x400000.
+        QMAKE_LFLAGS.ARMCC += --rw-base 0xE00000
+        MMP_RULES += ALWAYS_BUILD_AS_ARM
+    }
     CONFIG(release, debug|release): QMAKE_CXXFLAGS.ARMCC += -OTime -O3
 }
 
