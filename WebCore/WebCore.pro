@@ -2830,29 +2830,29 @@ contains(DEFINES, ENABLE_SYMBIAN_DIALOG_PROVIDERS) {
     }
 }
 
-include($$PWD/../WebKit/qt/Api/headers.pri)
-include(../include/QtWebKit/classheaders.pri)
-HEADERS += $$WEBKIT_API_HEADERS
-WEBKIT_INSTALL_HEADERS = $$WEBKIT_API_HEADERS $$WEBKIT_CLASS_HEADERS
-
-!symbian {
-    headers.files = $$WEBKIT_INSTALL_HEADERS
-    headers.path = $$[QT_INSTALL_HEADERS]/QtWebKit
-    target.path = $$[QT_INSTALL_LIBS]
-
-    INSTALLS += target headers
-} else {
-    # INSTALLS is not implemented in qmake's s60 generators, copy headers manually
-    inst_headers.commands = $$QMAKE_COPY ${QMAKE_FILE_NAME} ${QMAKE_FILE_OUT}
-    inst_headers.input = WEBKIT_INSTALL_HEADERS
-    inst_headers.output = $$[QT_INSTALL_HEADERS]/QtWebKit/${QMAKE_FILE_BASE}${QMAKE_FILE_EXT}
-    QMAKE_EXTRA_COMPILERS += inst_headers
-
-    install.depends += compiler_inst_headers_make_all
-    QMAKE_EXTRA_TARGETS += install
-}
-
 !CONFIG(QTDIR_build) {
+    include($$PWD/../WebKit/qt/Api/headers.pri)
+    exists(../include/QtWebKit/classheaders.pri):include(../include/QtWebKit/classheaders.pri)
+    HEADERS += $$WEBKIT_API_HEADERS
+    WEBKIT_INSTALL_HEADERS = $$WEBKIT_API_HEADERS $$WEBKIT_CLASS_HEADERS
+
+    !symbian {
+        headers.files = $$WEBKIT_INSTALL_HEADERS
+        headers.path = $$[QT_INSTALL_HEADERS]/QtWebKit
+        target.path = $$[QT_INSTALL_LIBS]
+
+        INSTALLS += target headers
+    } else {
+        # INSTALLS is not implemented in qmake's s60 generators, copy headers manually
+        inst_headers.commands = $$QMAKE_COPY ${QMAKE_FILE_NAME} ${QMAKE_FILE_OUT}
+        inst_headers.input = WEBKIT_INSTALL_HEADERS
+        inst_headers.output = $$[QT_INSTALL_HEADERS]/QtWebKit/${QMAKE_FILE_BASE}${QMAKE_FILE_EXT}
+        QMAKE_EXTRA_COMPILERS += inst_headers
+
+        install.depends += compiler_inst_headers_make_all
+        QMAKE_EXTRA_TARGETS += install
+    }
+
     win32-*|wince* {
         DLLDESTDIR = $$OUTPUT_DIR/bin
         TARGET = $$qtLibraryTarget($$TARGET)
