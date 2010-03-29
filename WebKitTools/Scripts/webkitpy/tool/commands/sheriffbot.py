@@ -88,13 +88,13 @@ class SheriffBot(AbstractQueue):
         builder_names = [builder.name() for builder in builders]
         return "Caused builders %s to fail." % join_with_separators(builder_names)
 
-    def _post_rollout_patch(self, commit_info, rollout_reason):
+    def _post_rollout_patch(self, svn_revision, rollout_reason):
         args = [
             "create-rollout",
             "--force-clean",
             "--non-interactive",
             "--parent-command=%s" % self.name,
-            commit_info.revision(),
+            svn_revision,
             rollout_reason,
         ]
         try:
