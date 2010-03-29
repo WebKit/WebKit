@@ -92,7 +92,7 @@ WebInspector.AuditRules.GzipRule.prototype = {
                 }
                 var savings = 2 * size / 3;
                 totalSavings += savings;
-                summary.addChild(String.sprintf("%s could save ~%s", WebInspector.linkifyURL(resource.url), Number.bytesToString(savings)));
+                summary.addChild(String.sprintf("%s could save ~%s", WebInspector.AuditRuleResult.linkifyDisplayName(resource.url), Number.bytesToString(savings)));
                 result.violationCount++;
             }
         }
@@ -138,7 +138,7 @@ WebInspector.AuditRules.CombineExternalResourcesRule.prototype = {
             if (extraResourceCount <= 0)
                 continue;
             penalizedResourceCount += extraResourceCount - 1;
-            summary.addChild(String.sprintf("%d %s resources served from %s.", domainResources.length, this._resourceTypeName, domain));
+            summary.addChild(String.sprintf("%d %s resources served from %s.", domainResources.length, this._resourceTypeName, WebInspector.AuditRuleResult.resourceDomain(domain)));
             result.violationCount += domainResources.length;
         }
         if (!penalizedResourceCount)
@@ -323,7 +323,7 @@ WebInspector.AuditRules.UnusedCssRule.prototype = {
                     if (!unusedRules.length)
                         continue;
 
-                    var url = styleSheet.href ? WebInspector.linkifyURL(styleSheet.href) : String.sprintf("Inline block #%d", ++inlineBlockOrdinal);
+                    var url = styleSheet.href ? WebInspector.AuditRuleResult.linkifyDisplayName(styleSheet.href) : String.sprintf("Inline block #%d", ++inlineBlockOrdinal);
                     var pctUnused = Math.round(100 * unusedStylesheetSize / stylesheetSize);
                     if (!summary)
                         summary = result.addChild("", true);
@@ -628,7 +628,7 @@ WebInspector.AuditRules.ImageDimensionsRule.prototype = {
             var map = context.urlToNoDimensionCount;
             for (var url in map) {
                 var entry = entry || result.addChild("A width and height should be specified for all images in order to speed up page display. The following image(s) are missing a width and/or height:", true);
-                var value = WebInspector.linkifyURL(url);
+                var value = WebInspector.AuditRuleResult.linkifyDisplayName(url);
                 if (map[url] > 1)
                     value += String.sprintf(" (%d uses)", map[url]);
                 entry.addChild(value);
@@ -728,11 +728,13 @@ WebInspector.AuditRules.CssInHeadRule.prototype = {
             var outputMessages = [];
             for (var url in evalResult) {
                 var urlViolations = evalResult[url];
-                if (urlViolations[0])
-                    result.addChild(String.sprintf("%s style block(s) in the %s body should be moved to the document head.", urlViolations[0], WebInspector.linkifyURL(url)));
+                if (urlViolations[0]) {
+                    result.addChild(String.sprintf("%s style block(s) in the %s body should be moved to the document head.", urlViolations[0], WebInspector.AuditRuleResult.linkifyDisplayName(url)));
+                    result.violationCount += urlViolations[0];
+                }
                 for (var i = 0; i < urlViolations[1].length; ++i)
-                    result.addChild(String.sprintf("Link node %s should be moved to the document head in %s", WebInspector.linkifyURL(urlViolations[1])), WebInspector.linkifyURL(url));
-                result.violationCount += urlViolations.length;
+                    result.addChild(String.sprintf("Link node %s should be moved to the document head in %s", WebInspector.AuditRuleResult.linkifyDisplayName(urlViolations[1])), WebInspector.AuditRuleResult.linkifyDisplayName(url));
+                result.violationCount += urlViolations[1].length;
             }
             summary.value = String.sprintf("CSS in the document body adversely impacts rendering performance.");
             callback(result);
@@ -947,7 +949,7 @@ WebInspector.AuditRules.CookieSizeRule.prototype = {
         for (var i = 0, len = sortedCookieSizes.length; i < len; ++i) {
             var maxCookieSize = sortedCookieSizes[i].maxCookieSize;
             if (maxCookieSize > this._maxBytesThreshold)
-                hugeCookieDomains.push(sortedCookieSizes[i].domain + ": " + Number.bytesToString(maxCookieSize));
+                hugeCookieDomains.push(WebInspector.AuditRuleResult.resourceDomain(sortedCookieSizes[i].domain) + ": " + Number.bytesToString(maxCookieSize));
         }
 
         var bigAvgCookieDomains = [];
@@ -956,7 +958,7 @@ WebInspector.AuditRules.CookieSizeRule.prototype = {
             var domain = sortedCookieSizes[i].domain;
             var avgCookieSize = sortedCookieSizes[i].avgCookieSize;
             if (avgCookieSize > this._avgBytesThreshold && avgCookieSize < this._maxBytesThreshold)
-                bigAvgCookieDomains.push(domain + ": " + Number.bytesToString(avgCookieSize));
+                bigAvgCookieDomains.push(WebInspector.AuditRuleResult.resourceDomain(domain) + ": " + Number.bytesToString(avgCookieSize));
         }
         result.addChild(String.sprintf("The average cookie size for all requests on this page is %s", Number.bytesToString(avgAllCookiesSize)));
 
@@ -969,7 +971,7 @@ WebInspector.AuditRules.CookieSizeRule.prototype = {
 
         if (bigAvgCookieDomains.length) {
             var entry = result.addChild(String.sprintf("The following domains have an average cookie size in excess of %d bytes. Reducing the size of cookies for these domains can reduce the time it takes to send requests.", this._avgBytesThreshold), true);
-            entry.addURLs(bigAvgCookieDomains.length);
+            entry.addURLs(bigAvgCookieDomains);
             result.violationCount += bigAvgCookieDomains.length;
         }
     }

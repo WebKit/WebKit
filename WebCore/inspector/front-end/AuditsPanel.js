@@ -345,6 +345,12 @@ WebInspector.AuditRule.Severity = {
     Severe: "severe"
 }
 
+WebInspector.AuditRule.SeverityOrder = {
+    "info": 3,
+    "warning": 2,
+    "severe": 1
+}
+
 WebInspector.AuditRule.prototype = {
     get id()
     {
@@ -395,6 +401,16 @@ WebInspector.AuditRuleResult = function(value, expanded, className)
     this.violationCount = 0;
 }
 
+WebInspector.AuditRuleResult.linkifyDisplayName = function(url)
+{
+    return WebInspector.linkifyURL(url, WebInspector.displayNameForURL(url));
+}
+
+WebInspector.AuditRuleResult.resourceDomain = function(domain)
+{
+    return domain || WebInspector.UIString("[empty domain]");
+}
+
 WebInspector.AuditRuleResult.prototype = {
     addChild: function(value, expanded, className)
     {
@@ -407,7 +423,7 @@ WebInspector.AuditRuleResult.prototype = {
 
     addURL: function(url)
     {
-        return this.addChild(WebInspector.linkifyURL(url));
+        return this.addChild(WebInspector.AuditRuleResult.linkifyDisplayName(url));
     },
 
     addURLs: function(urls)

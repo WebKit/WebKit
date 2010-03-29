@@ -1517,9 +1517,8 @@ WebInspector.displayNameForURL = function(url)
     var index = WebInspector.mainResource.url.indexOf(lastPathComponent);
     if (index !== -1 && index + lastPathComponent.length === WebInspector.mainResource.url.length) {
         var baseURL = WebInspector.mainResource.url.substring(0, index);
-        if (url.indexOf(baseURL) === 0) {
+        if (url.indexOf(baseURL) === 0)
             return url.substring(index);
-        }
     }
 
     return url.trimURL(WebInspector.mainResource.domain);

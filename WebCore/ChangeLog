@@ -1,3 +1,33 @@
+2010-03-29  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Cover the Audits panel with tests
+        https://bugs.webkit.org/show_bug.cgi?id=36613
+
+        Sort results, add a few drive-by fixes and refactorings to improve testability.
+
+        Test: inspector/audits-panel-functional.html
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/AuditResultView.js:
+        (WebInspector.AuditResultView):
+        (WebInspector.AuditCategoryResultPane.ruleSorter):
+        (WebInspector.AuditCategoryResultPane):
+        * inspector/front-end/AuditRules.js:
+        (WebInspector.AuditRules.GzipRule.prototype.doRun):
+        (WebInspector.AuditRules.CombineExternalResourcesRule.prototype.doRun):
+        (WebInspector.AuditRules.UnusedCssRule.prototype.doRun.evalCallback.selectorsCallback):
+        (WebInspector.AuditRules.ImageDimensionsRule.prototype.doRun):
+        (WebInspector.AuditRules.CssInHeadRule.prototype.doRun):
+        (WebInspector.AuditRules.CookieSizeRule.prototype.processCookies):
+        * inspector/front-end/AuditsPanel.js:
+        (WebInspector.AuditRuleResult.linkifyDisplayName):
+        (WebInspector.AuditRuleResult.resourceDomain):
+        (WebInspector.AuditRuleResult.prototype.addURL):
+        * inspector/front-end/inspector.js:
+        (WebInspector.displayNameForURL):
+
 2010-03-29  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by nobody, build fix.

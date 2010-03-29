@@ -33,6 +33,10 @@ WebInspector.AuditResultView = function(categoryResults)
     WebInspector.View.call(this);
     this.element.className = "audit-result-view";
 
+    function categorySorter(a, b) {
+        return (a.title || "").localeCompare(b.title || "");
+    }
+    categoryResults.sort(categorySorter);
     for (var i = 0; i < categoryResults.length; ++i)
         this.element.appendChild(new WebInspector.AuditCategoryResultPane(categoryResults[i]).element);
 }
@@ -49,6 +53,17 @@ WebInspector.AuditCategoryResultPane = function(categoryResult)
 
     this._treeOutline = new TreeOutline(treeOutlineElement);
     this._treeOutline.expandTreeElementsWhenArrowing = true;
+
+    function ruleSorter(a, b)
+    {
+        var result = WebInspector.AuditRule.SeverityOrder[a.severity || 0] - WebInspector.AuditRule.SeverityOrder[b.severity || 0];
+        if (!result)
+            result = (a.value || "").localeCompare(b.value || "");
+        return result;
+    }
+
+    categoryResult.ruleResults.sort(ruleSorter);
+
     for (var i = 0; i < categoryResult.ruleResults.length; ++i) {
         var ruleResult = categoryResult.ruleResults[i];
         var treeElement = this._appendResult(this._treeOutline, ruleResult);

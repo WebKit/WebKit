@@ -2,6 +2,22 @@
 
         Reviewed by Pavel Feldman.
 
+        Web Inspector: Cover the Audits panel with tests
+        https://bugs.webkit.org/show_bug.cgi?id=36613
+
+        * inspector/audits-panel-functional-expected.txt: Added.
+        * inspector/audits-panel-functional.html: Added.
+        * inspector/resources/audits-script1.js: Added.
+        (foo1):
+        * inspector/resources/audits-script2.js: Added.
+        (foo2):
+        * inspector/resources/audits-script3.js: Added.
+        (foo3):
+
+2010-03-29  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
         Web Inspector should highlight when clicking a node's closing tag
         https://bugs.webkit.org/show_bug.cgi?id=16258
 
