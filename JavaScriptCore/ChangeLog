@@ -1,3 +1,13 @@
+2010-03-29  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Use the -l syntax for linking against JavaScriptCore on Windows.
+        This allow qmake to extract dependencies correctly when generating VS
+        solutions.
+
+        * JavaScriptCore.pri:
+
 2010-03-29  Thomas Zander  <t.zander@nokia.com>
 
         Reviewed by Simon Hausmann.

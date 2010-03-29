@@ -63,7 +63,8 @@ defineTest(addJavaScriptCoreLib) {
     CONFIG(debug_and_release):CONFIG(release, debug|release): pathToJavaScriptCoreOutput = $$pathToJavaScriptCoreOutput/release
 
     win32-msvc* {
-        LIBS += $$pathToJavaScriptCoreOutput/$${JAVASCRIPTCORE_TARGET}.lib
+        LIBS += -L$$pathToJavaScriptCoreOutput
+        LIBS += -l$$JAVASCRIPTCORE_TARGET
     } else:symbian {
         LIBS += -l$${JAVASCRIPTCORE_TARGET}.lib
     } else {
