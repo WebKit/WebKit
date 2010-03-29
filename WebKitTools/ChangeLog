@@ -1,3 +1,17 @@
+2010-03-29  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Eliminate explicit slash characters from check-webkit-style's
+        _rel_path() method to make its implementation more platform
+        independent.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36759
+
+        * Scripts/webkitpy/style/main.py:
+          - Changed to use os.sep instead of slash_chars "/\\".  This can
+            be done since os.path.abspath() converts slashes to os.sep.
+
 2010-03-29  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Dimitri Glazkov.

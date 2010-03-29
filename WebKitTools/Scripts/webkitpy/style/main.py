@@ -49,11 +49,14 @@ def _rel_path(path, start_path, os_path_abspath=None):
     if os_path_abspath is None:
         os_path_abspath = os.path.abspath
 
-    # Calling os_path_abspath() also removes any trailing slashes.
+    # Since os_path_abspath() calls os.path.normpath()--
+    #
+    # (see http://docs.python.org/library/os.path.html#os.path.abspath )
+    #
+    # it also removes trailing slashes and converts forward and backward
+    # slashes to the preferred slash os.sep.
     start_path = os_path_abspath(start_path)
     path = os_path_abspath(path)
-
-    slash_chars = "/\\"
 
     if not path.lower().startswith(start_path.lower()):
         # Then path is outside the directory given by start_path.
@@ -61,16 +64,21 @@ def _rel_path(path, start_path, os_path_abspath=None):
 
     rel_path = path[len(start_path):]
 
-    if rel_path and rel_path[0] not in slash_chars:
-        # Then we are in the case typified by the following example:
+    if not rel_path:
+        # Then the paths are the same.
+        pass
+    elif rel_path[0] == os.sep:
+        # It is probably sufficient to remove just the first character
+        # since os.path.normpath() collapses separators, but we use
+        # lstrip() just to be sure.
+        rel_path = rel_path.lstrip(os.sep)
+    else:
+        # We are in the case typified by the following example:
         #
         # start_path = "/tmp/foo"
         # path = "/tmp/foobar"
         # rel_path = "bar"
         return None
-    # Otherwise rel_path is "" or begins with a slash.
-
-    rel_path = rel_path.lstrip(slash_chars)
 
     return rel_path
 
