@@ -100,13 +100,11 @@
 #include "WebViewClient.h"
 
 #if OS(WINDOWS)
-#include "KeyboardCodesWin.h"
 #include "RenderThemeChromiumWin.h"
 #else
 #if OS(LINUX)
 #include "RenderThemeChromiumLinux.h"
 #endif
-#include "KeyboardCodesPosix.h"
 #include "RenderTheme.h"
 #endif
 
