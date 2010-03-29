@@ -1,3 +1,13 @@
+2010-03-29  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Reformat port/mac.py to fit witin 80 columns for PEP-8 compliance.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36691
+
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+
 2010-03-29  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

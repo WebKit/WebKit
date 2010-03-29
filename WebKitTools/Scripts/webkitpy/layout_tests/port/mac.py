@@ -188,7 +188,8 @@ class MacPort(base.Port):
         return ('mac',)
 
     def _skipped_file_paths(self):
-        # FIXME: This method will need to be made work for non-mac platforms and moved into base.Port.
+        # FIXME: This method will need to be made work for non-mac
+        # platforms and moved into base.Port.
         skipped_files = []
         if self._name in ('mac-tiger', 'mac-leopard', 'mac-snowleopard'):
             skipped_files.append(os.path.join(
@@ -198,9 +199,12 @@ class MacPort(base.Port):
         return skipped_files
 
     def _tests_for_other_platforms(self):
-        # The original run-webkit-tests builds up a "whitelist" of tests to run, and passes that to DumpRenderTree.
-        # run-chromium-webkit-tests assumes we run *all* tests and test_expectations.txt functions as a blacklist.
-        # FIXME: This list could be dynamic based on platform name and pushed into base.Port.
+        # The original run-webkit-tests builds up a "whitelist" of tests to
+        # run, and passes that to DumpRenderTree. new-run-webkit-tests assumes
+        # we run *all* tests and test_expectations.txt functions as a
+        # blacklist.
+        # FIXME: This list could be dynamic based on platform name and
+        # pushed into base.Port.
         return [
             "platform/chromium",
             "platform/gtk",
@@ -209,16 +213,20 @@ class MacPort(base.Port):
         ]
 
     def _tests_for_disabled_features(self):
-        # FIXME: This should use the feature detection from webkitperl/features.pm to match run-webkit-tests.
-        # For now we hard-code a list of features known to be disabled on the Mac platform.
+        # FIXME: This should use the feature detection from
+        # webkitperl/features.pm to match run-webkit-tests.
+        # For now we hard-code a list of features known to be disabled on
+        # the Mac platform.
         disabled_feature_tests = [
             "fast/xhtmlmp",
             "http/tests/wml",
             "mathml",
             "wml",
         ]
-        # FIXME: webarchive tests expect to read-write from -expected.webarchive files instead of .txt files.
-        # This script doesn't know how to do that yet, so pretend they're just "disabled".
+        # FIXME: webarchive tests expect to read-write from
+        # -expected.webarchive files instead of .txt files.
+        # This script doesn't know how to do that yet, so pretend they're
+        # just "disabled".
         webarchive_tests = [
             "webarchive",
             "svg/webarchive",
@@ -297,8 +305,11 @@ class MacPort(base.Port):
 
     def _build_path(self, *comps):
         if not self._cached_build_root:
-            self._cached_build_root = executive.run_command([self.script_path("webkit-build-directory"), "--top-level"]).rstrip()
-        return os.path.join(self._cached_build_root, self._options.target, *comps)
+            self._cached_build_root = executive.run_command(
+                [self.script_path("webkit-build-directory"),
+                 "--top-level"]).rstrip()
+        return os.path.join(self._cached_build_root, self._options.target,
+                            *comps)
 
     def _kill_process(self, pid):
         """Forcefully kill the process.
@@ -336,7 +347,8 @@ class MacPort(base.Port):
         return self._build_path('ImageDiff')
 
     def _path_to_wdiff(self):
-        return 'wdiff' # FIXME: This does not exist on a default Mac OS X Leopard install.
+        # FIXME: This does not exist on a default Mac OS X Leopard install.
+        return 'wdiff'
 
     def _shut_down_http_server(self, server_pid):
         """Shut down the lighttpd web server. Blocks until it's fully
