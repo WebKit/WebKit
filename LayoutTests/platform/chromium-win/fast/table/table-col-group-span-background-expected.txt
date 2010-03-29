@@ -1,0 +1,38 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 776x39
+          text run at (0,0) width 776: "This tests that the background-image of a table column group with a span > 1 \"covers exactly the full area of all cells that originate"
+          text run at (0,20) width 168: "in the column group\" as per "
+        RenderInline {A} at (0,0) size 213x19 [color=#0000EE]
+          RenderText {#text} at (168,20) size 213x19
+            text run at (168,20) width 213: "section 17.5.1 of the CSS 2.1 spec"
+        RenderText {#text} at (381,20) size 324x19
+          text run at (381,20) width 324: ". This test PASSED if you do not see the word FAIL."
+      RenderTable {TABLE} at (0,56) size 150x100
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+        RenderTableSection {TBODY} at (0,0) size 150x100
+          RenderTableRow {TR} at (0,0) size 150x50
+            RenderTableCell {TD} at (0,14) size 50x22 [color=#0000FF] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (8,1) size 34x19
+                text run at (8,1) width 34: "FAIL"
+            RenderTableCell {TD} at (50,14) size 50x22 [color=#FFFF00] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (8,1) size 34x19
+                text run at (8,1) width 34: "FAIL"
+            RenderTableCell {TD} at (100,14) size 50x22 [color=#0000FF] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (8,1) size 34x19
+                text run at (8,1) width 34: "FAIL"
+          RenderTableRow {TR} at (0,50) size 150x50
+            RenderTableCell {TD} at (0,64) size 50x22 [color=#FFFF00] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (8,1) size 34x19
+                text run at (8,1) width 34: "FAIL"
+            RenderTableCell {TD} at (50,64) size 50x22 [color=#0000FF] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (8,1) size 34x19
+                text run at (8,1) width 34: "FAIL"
+            RenderTableCell {TD} at (100,64) size 50x22 [color=#FFFF00] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (8,1) size 34x19
+                text run at (8,1) width 34: "FAIL"
