@@ -796,7 +796,7 @@ static void resetDefaultsToConsistentValues(IWebPreferences* preferences)
         prefsPrivate->setExperimentalNotificationsEnabled(TRUE);
         prefsPrivate->setShouldPaintNativeControls(FALSE); // FIXME - need to make DRT pass with Windows native controls <http://bugs.webkit.org/show_bug.cgi?id=25592>
         prefsPrivate->setXSSAuditorEnabled(FALSE);
-        prefsPrivate->setFrameSetFlatteningEnabled(FALSE);
+        prefsPrivate->setFrameFlatteningEnabled(FALSE);
         prefsPrivate->setOfflineWebApplicationCacheEnabled(TRUE);
     }
     setAlwaysAcceptCookies(false);

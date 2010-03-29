@@ -387,7 +387,7 @@ void LayoutTestController::setXSSAuditorEnabled(bool enabled)
     prefsPrivate->setXSSAuditorEnabled(enabled);
 }
 
-void LayoutTestController::setFrameSetFlatteningEnabled(bool enabled)
+void LayoutTestController::setFrameFlatteningEnabled(bool enabled)
 {
     COMPtr<IWebView> webView;
     if (FAILED(frame->webView(&webView)))
@@ -401,7 +401,7 @@ void LayoutTestController::setFrameSetFlatteningEnabled(bool enabled)
     if (!prefsPrivate)
         return;
 
-    prefsPrivate->setFrameSetFlatteningEnabled(enabled);
+    prefsPrivate->setFrameFlatteningEnabled(enabled);
 }
 
 void LayoutTestController::setSpatialNavigationEnabled(bool enabled)

@@ -707,7 +707,7 @@ EXPORTS
 	_Z31qt_drt_pageNumberForElementByIdP9QWebFrameRK7QStringff @ 706 NONAME
 	_Z33qt_drt_webinspector_executeScriptP8QWebPagelRK7QString @ 707 NONAME
 	_Z34qt_drt_setTimelineProfilingEnabledP8QWebPageb @ 708 NONAME
-	_Z35qt_drt_setFrameSetFlatteningEnabledP8QWebPageb @ 709 NONAME
+	_Z35qt_drt_setFrameFlatteningEnabledP8QWebPageb @ 709 NONAME
 	_Z36qt_drt_evaluateScriptInIsolatedWorldP9QWebFrameiRK7QString @ 710 NONAME
 	_Z47qt_drt_setDomainRelaxationForbiddenForURLSchemebRK7QString @ 711 NONAME
 	_ZN9QWebFrame11pageChangedEv @ 712 NONAME

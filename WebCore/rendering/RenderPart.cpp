@@ -24,8 +24,10 @@
 #include "config.h"
 #include "RenderPart.h"
 
+#include "RenderView.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "HTMLFrameElement.h"
 
 namespace WebCore {
 
@@ -53,6 +55,63 @@ void RenderPart::setWidget(PassRefPtr<Widget> widget)
     // ### find better fix
     viewCleared();
 }
+
+void RenderPart::layoutWithFlattening(bool fixedWidth, bool fixedHeight)
+{
+    FrameView* childFrameView = static_cast<FrameView*>(widget());
+    RenderView* childRoot = childFrameView ? static_cast<RenderView*>(childFrameView->frame()->contentRenderer()) : 0;
+    HTMLFrameElement* element = static_cast<HTMLFrameElement*>(node());
+
+    // suppress scrollbars as we might have fixed width or height
+    childFrameView->setScrollbarsSuppressed(true, true);
+
+    // Do not expand frames which has zero width or height
+    if (!width() || !height() || !childRoot) {
+        updateWidgetPosition();
+        if (childFrameView)
+            childFrameView->layout();
+        setNeedsLayout(false);
+        return;
+    }
+
+    // need to update to calculate min/max correctly
+    updateWidgetPosition();
+    if (childRoot->prefWidthsDirty())
+        childRoot->calcPrefWidths();
+
+    // if scrollbars are off, and the width or height are fixed
+    // we obey them and do not expand. With frame flattening
+    // no subframe much ever become scrollable.
+
+    bool isScrollable = element->scrollingMode() != ScrollbarAlwaysOff;
+
+    // make sure minimum preferred width is enforced
+    if (isScrollable || !fixedWidth)
+        setWidth(max(width(), childRoot->minPrefWidth()));
+
+    // update again to pass the width to the child frame
+    updateWidgetPosition();
+    childFrameView->layout();
+
+    // expand the frame by setting frame height = content height
+    if (isScrollable || !fixedHeight || childRoot->isFrameSet())
+        setHeight(max(height(), childFrameView->contentsHeight()));
+    if (isScrollable || !fixedWidth || childRoot->isFrameSet())
+        setWidth(max(width(), childFrameView->contentsWidth()));
+
+    // make room for the inset border
+    setWidth(width() + borderLeft() + borderRight());
+    setHeight(height() + borderTop() + borderBottom());
+
+    updateWidgetPosition();
+
+    ASSERT(!childFrameView->layoutPending());
+    ASSERT(!childRoot->needsLayout());
+    ASSERT(!childRoot->firstChild() || !childRoot->firstChild()->firstChild() || !childRoot->firstChild()->firstChild()->needsLayout());
+
+    setNeedsLayout(false);
+}
+
 
 void RenderPart::viewCleared()
 {

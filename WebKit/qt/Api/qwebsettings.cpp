@@ -197,7 +197,7 @@ void QWebSettingsPrivate::apply()
 
         value = attributes.value(QWebSettings::FrameFlatteningEnabled,
                                       global->attributes.value(QWebSettings::FrameFlatteningEnabled));
-        settings->setFrameSetFlatteningEnabled(value);
+        settings->setFrameFlatteningEnabled(value);
 
         QUrl location = !userStyleSheetLocation.isEmpty() ? userStyleSheetLocation : global->userStyleSheetLocation;
         settings->setUserStyleSheetLocation(WebCore::KURL(location));
@@ -241,7 +241,7 @@ void QWebSettingsPrivate::apply()
         value = attributes.value(QWebSettings::XSSAuditingEnabled,
                                       global->attributes.value(QWebSettings::XSSAuditingEnabled));
         settings->setXSSAuditorEnabled(value);
-        
+
 #if ENABLE(TILED_BACKING_STORE)
         value = attributes.value(QWebSettings::TiledBackingStoreEnabled,
                                       global->attributes.value(QWebSettings::TiledBackingStoreEnabled));

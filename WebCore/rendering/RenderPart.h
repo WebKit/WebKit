@@ -35,11 +35,13 @@ class RenderPart : public RenderWidget {
 public:
     RenderPart(Element*);
     virtual ~RenderPart();
-    
+
     bool hasFallbackContent() const { return m_hasFallbackContent; }
 
     virtual void setWidget(PassRefPtr<Widget>);
     virtual void viewCleared();
+
+    void layoutWithFlattening(bool fixedWidth, bool fixedHeight);
 
 protected:
     bool m_hasFallbackContent;

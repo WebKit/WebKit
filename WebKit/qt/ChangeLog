@@ -1,3 +1,15 @@
+2010-03-26  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Antti Koivisto.
+
+        Change due to renaming of frame flattening setting.
+
+        * Api/qwebpage.cpp:
+        (qt_drt_setFrameFlatteningEnabled):
+        * Api/qwebsettings.cpp:
+        (QWebSettingsPrivate::apply):
+        * symbian/eabi/QtWebKitu.def:
+
 2010-03-28  Alexey Proskuryakov  <ap@apple.com>
 
         Build fix. Include WindowsKeyboardCodes.h instead of KeyboardCodes.h.

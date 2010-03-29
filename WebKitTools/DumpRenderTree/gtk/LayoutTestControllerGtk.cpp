@@ -347,7 +347,7 @@ void LayoutTestController::setXSSAuditorEnabled(bool flag)
     g_object_set(G_OBJECT(settings), "enable-xss-auditor", flag, NULL);
 }
 
-void LayoutTestController::setFrameSetFlatteningEnabled(bool flag)
+void LayoutTestController::setFrameFlatteningEnabled(bool flag)
 {
     // FIXME: implement
 }

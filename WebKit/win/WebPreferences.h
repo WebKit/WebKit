@@ -386,10 +386,10 @@ public:
     virtual HRESULT STDMETHODCALLTYPE pluginAllowedRunTime(
     /* [retval][out] */ UINT* allowedRunTime);
 
-    virtual HRESULT STDMETHODCALLTYPE isFrameSetFlatteningEnabled(
+    virtual HRESULT STDMETHODCALLTYPE isFrameFlatteningEnabled(
     /* [retval][out] */ BOOL* enabled);
 
-    virtual HRESULT STDMETHODCALLTYPE setFrameSetFlatteningEnabled(
+    virtual HRESULT STDMETHODCALLTYPE setFrameFlatteningEnabled(
     /* [in] */ BOOL enabled);
 
     virtual HRESULT STDMETHODCALLTYPE setPreferenceForTest(

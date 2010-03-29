@@ -646,7 +646,7 @@ void RenderFrameSet::positionFramesWithFlattening()
 
 bool RenderFrameSet::flattenFrameSet() const
 {
-    return document()->frame() && document()->frame()->settings()->frameSetFlatteningEnabled();
+    return document()->frame() && document()->frame()->settings()->frameFlatteningEnabled();
 }
 
 void RenderFrameSet::startResizing(GridAxis& axis, int position)

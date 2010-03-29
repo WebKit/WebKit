@@ -1,3 +1,38 @@
+2010-03-26  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Antti Koivisto.
+
+        Implement flattening for iframes.
+
+        Refactoring of frameset flattening code to reuse it for
+        iframe flattening.
+
+        Tests: fast/frames/flattening/iframe-flattening-simple.html
+
+        * WebCore.base.exp:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::scheduleRelayout):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setFrameFlatteningEnabled):
+        * page/Settings.h:
+        (WebCore::Settings::frameFlatteningEnabled):
+        * rendering/RenderFrame.cpp:
+        * rendering/RenderFrame.h:
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::flattenFrameSet):
+        * rendering/RenderFrameSet.h:
+        * rendering/RenderPart.cpp:
+        (WebCore::RenderPart::layoutWithFlattening):
+        * rendering/RenderPart.h:
+        * rendering/RenderPartObject.cpp:
+        (WebCore::RenderPartObject::flattenFrame):
+        (WebCore::RenderPartObject::calcHeight):
+        (WebCore::RenderPartObject::calcWidth):
+        (WebCore::RenderPartObject::layout):
+        * rendering/RenderPartObject.h:
+
 2010-03-29  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Adam Barth.

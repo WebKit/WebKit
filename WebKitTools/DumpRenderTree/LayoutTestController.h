@@ -93,7 +93,7 @@ public:
     void setUserStyleSheetEnabled(bool flag);
     void setUserStyleSheetLocation(JSStringRef path);
     void setXSSAuditorEnabled(bool flag);
-    void setFrameSetFlatteningEnabled(bool enable);
+    void setFrameFlatteningEnabled(bool enable);
     void setSpatialNavigationEnabled(bool enable);
 
     void waitForPolicyDelegate();

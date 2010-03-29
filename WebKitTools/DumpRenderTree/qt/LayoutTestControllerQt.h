@@ -123,7 +123,7 @@ public slots:
     void evaluateInWebInspector(long callId, const QString& script);
 
     void setMediaType(const QString& type);
-    void setFrameSetFlatteningEnabled(bool enable);
+    void setFrameFlatteningEnabled(bool enable);
     void setAllowUniversalAccessFromFileURLs(bool enable);
     void setAllowFileAccessFromFileURLs(bool enable);
     void setAppCacheMaximumSize(unsigned long long quota);

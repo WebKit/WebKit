@@ -329,9 +329,9 @@ void LayoutTestController::setXSSAuditorEnabled(bool enabled)
     [[[mainFrame webView] preferences] setXSSAuditorEnabled:enabled];
 }
 
-void LayoutTestController::setFrameSetFlatteningEnabled(bool enabled)
+void LayoutTestController::setFrameFlatteningEnabled(bool enabled)
 {
-    [[[mainFrame webView] preferences] setFrameSetFlatteningEnabled:enabled];
+    [[[mainFrame webView] preferences] setFrameFlatteningEnabled:enabled];
 }
 
 void LayoutTestController::setSpatialNavigationEnabled(bool enabled)

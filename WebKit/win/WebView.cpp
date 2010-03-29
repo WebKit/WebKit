@@ -4677,10 +4677,10 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings->setPluginAllowedRunTime(runTime);
 
-    hr = prefsPrivate->isFrameSetFlatteningEnabled(&enabled);
+    hr = prefsPrivate->isFrameFlatteningEnabled(&enabled);
     if (FAILED(hr))
         return hr;
-    settings->setFrameSetFlatteningEnabled(enabled);
+    settings->setFrameFlatteningEnabled(enabled);
 
 #if USE(ACCELERATED_COMPOSITING)
     hr = prefsPrivate->acceleratedCompositingEnabled(&enabled);

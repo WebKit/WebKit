@@ -1,3 +1,20 @@
+2010-03-26  Kenneth Rohde Christiansen  <kenneth@webkit.org>, Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Antti Koivisto.
+
+        Add new iframe flattening test and change existing frameset
+        flattening tests to use the new LayoutTestController method.
+
+       * fast/frames/flattening/frameset-flattening-advanced.html:
+        * fast/frames/flattening/frameset-flattening-grid.html:
+        * fast/frames/flattening/frameset-flattening-simple.html:
+        * fast/frames/flattening/frameset-flattening-subframe-resize.html:
+        * fast/frames/flattening/frameset-flattening-subframesets.html:
+        * fast/frames/flattening/iframe-flattening-simple.html: Added.
+        * platform/qt/fast/frames/flattening/iframe-flattening-simple-expected.txt: Added.
+        * platform/qt/fast/frames/flattening/frameset-flattening-subframe-resize-expected.txt:
+        * platform/qt/fast/frames/flattening/iframe-flattening-simple-expected.txt:
+
 2010-03-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

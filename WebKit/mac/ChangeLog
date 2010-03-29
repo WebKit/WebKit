@@ -1,3 +1,19 @@
+2010-03-26  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Antti Koivisto.
+
+        Change method name due to it dealing with both flattening
+        of frame sets and inner frames.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences isFrameFlatteningEnabled]):
+        (-[WebPreferences setFrameFlatteningEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChangedNotification:]):
+
 2010-03-27  Darin Adler  <darin@apple.com>
 
         * Misc/WebNSFileManagerExtras.m:

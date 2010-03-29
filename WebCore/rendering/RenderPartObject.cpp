@@ -35,6 +35,7 @@
 #include "Page.h"
 #include "RenderView.h"
 #include "RenderWidgetProtector.h"
+#include "Settings.h"
 #include "Text.h"
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
@@ -50,12 +51,46 @@ RenderPartObject::RenderPartObject(Element* element)
 {
 }
 
+bool RenderPartObject::flattenFrame() const
+{
+    if (!node() || !node()->hasTagName(iframeTag))
+        return false;
+
+    HTMLIFrameElement* element = static_cast<HTMLIFrameElement*>(node());
+    if (element->scrollingMode() == ScrollbarAlwaysOff
+        || style()->width().isFixed()
+        || style()->height().isFixed())
+        return false;
+
+    Document* document = element ? element->document() : 0;
+    return document->frame() && document->frame()->settings()->frameFlatteningEnabled();
+}
+
+void RenderPartObject::calcHeight()
+{
+    RenderPart::calcHeight();
+    if (flattenFrame())
+        setHeight(max(height(), static_cast<FrameView*>(widget())->contentsHeight()));
+}
+
+void RenderPartObject::calcWidth()
+{
+    RenderPart::calcWidth();
+    if (flattenFrame())
+        setWidth(max(width(), static_cast<FrameView*>(widget())->contentsWidth()));
+}
+
 void RenderPartObject::layout()
 {
     ASSERT(needsLayout());
 
     calcWidth();
     calcHeight();
+
+    if (flattenFrame()) {
+        layoutWithFlattening(style()->width().isFixed(), style()->height().isFixed());
+        return;
+    }
 
     RenderPart::layout();
 
