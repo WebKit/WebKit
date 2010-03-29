@@ -1,3 +1,12 @@
+2010-03-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Rubber-stamped by Kenneth Rohde Christiansen.
+
+        Add support for iframe flattening
+        https://bugs.webkit.org/show_bug.cgi?id=36662
+
+        * platform/mac/fast/frames/flattening/frameset-flattening-subframe-resize-expected.txt: updated after r56718.
+
 2010-03-26  Kenneth Rohde Christiansen  <kenneth@webkit.org>, Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Antti Koivisto.
@@ -5,7 +14,7 @@
         Add new iframe flattening test and change existing frameset
         flattening tests to use the new LayoutTestController method.
 
-       * fast/frames/flattening/frameset-flattening-advanced.html:
+        * fast/frames/flattening/frameset-flattening-advanced.html:
         * fast/frames/flattening/frameset-flattening-grid.html:
         * fast/frames/flattening/frameset-flattening-simple.html:
         * fast/frames/flattening/frameset-flattening-subframe-resize.html:
