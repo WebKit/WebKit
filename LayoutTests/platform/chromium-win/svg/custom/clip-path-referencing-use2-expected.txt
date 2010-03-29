@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
-CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
@@ -15,8 +13,8 @@ layer at (0,0) size 800x600
             RenderSVGContainer {g} at (0,0) size 50x50
               RenderPath {rect} at (0,0) size 50x50 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L50.00,0.00 L50.00,50.00 L0.00,50.00 Z"]
     RenderPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
-    RenderSVGContainer {g} at (0,0) size 100x100
-      [clipPath="clip"] RenderSVGResourceClipper {clipPath} at (0,0) size 0x0
+    RenderSVGContainer {g} at (0,0) size 50x50
+      [clipPath="clip"] RenderSVGResourceClipper {clipPath} at (0,0) size 50x50
       RenderPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
     RenderSVGText {text} at (10,120) size 360x19 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-15) size 360x19
@@ -24,22 +22,4 @@ layer at (0,0) size 800x600
     RenderSVGText {text} at (10,140) size 559x19 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-15) size 559x19
         chunk 1 text run 1 at (10.00,140.00) startOffset 0 endOffset 96 width 559.00: "The red rectangle should not show since it uses a clipping path that uses an indirect reference."
-CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
-CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
-CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
-CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
-CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
-CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
-CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
-CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
-CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
-CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
-CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
-CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
-CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
-CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
-CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
-CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
-CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
-CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>
 CONSOLE MESSAGE: line 1: Error: Not allowed to use indirect reference in <clip-path>

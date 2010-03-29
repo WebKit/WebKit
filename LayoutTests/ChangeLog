@@ -41,6 +41,84 @@
 
         Rubber-stamped by Dmitry Titov.
 
+        [Chromium] pixel layout test fixes.
+
+        r56655 caused runin test which needed separate results for each platform.
+        r56673 caused computed-style-expected.
+        r56655 cause the fast/table changes (and we need linux specific results).
+        r56644 caused clip-path-referencing-use2-expected.
+        r56693 caused painting-marker-01-f-expected. 
+
+        * platform/chromium-linux/fast/runin/generated2-expected.checksum: Added.
+        * platform/chromium-linux/fast/runin/generated2-expected.png: Added.
+        * platform/chromium-linux/fast/runin/generated2-expected.txt: Added.
+        * platform/chromium-linux/fast/runin/generated3-expected.checksum: Added.
+        * platform/chromium-linux/fast/runin/generated3-expected.png: Added.
+        * platform/chromium-linux/fast/runin/generated3-expected.txt: Added.
+        * platform/chromium-linux/fast/runin/generated4-expected.checksum: Added.
+        * platform/chromium-linux/fast/runin/generated4-expected.png: Added.
+        * platform/chromium-linux/fast/runin/generated4-expected.txt: Added.
+        * platform/chromium-linux/fast/table/table-background-expected.checksum: Added.
+        * platform/chromium-linux/fast/table/table-background-expected.png: Added.
+        * platform/chromium-linux/fast/table/table-cell-border-draws-on-top-of-col-background-expected.checksum: Added.
+        * platform/chromium-linux/fast/table/table-cell-border-draws-on-top-of-col-background-expected.png: Added.
+        * platform/chromium-linux/fast/table/table-cell-border-draws-on-top-of-col-group-background-expected.checksum: Added.
+        * platform/chromium-linux/fast/table/table-cell-border-draws-on-top-of-col-group-background-expected.png: Added.
+        * platform/chromium-linux/fast/table/table-cell-border-draws-on-top-of-row-background-expected.checksum: Added.
+        * platform/chromium-linux/fast/table/table-cell-border-draws-on-top-of-row-background-expected.png: Added.
+        * platform/chromium-linux/fast/table/table-cell-border-draws-on-top-of-row-group-background-expected.checksum: Added.
+        * platform/chromium-linux/fast/table/table-cell-border-draws-on-top-of-row-group-background-expected.png: Added.
+        * platform/chromium-linux/fast/table/table-cell-overrides-row-background-expected.checksum: Added.
+        * platform/chromium-linux/fast/table/table-cell-overrides-row-background-expected.png: Added.
+        * platform/chromium-linux/fast/table/table-col-background-expected.checksum: Added.
+        * platform/chromium-linux/fast/table/table-col-background-expected.png: Added.
+        * platform/chromium-linux/fast/table/table-col-group-background-expected.checksum: Added.
+        * platform/chromium-linux/fast/table/table-col-group-background-expected.png: Added.
+        * platform/chromium-linux/fast/table/table-col-group-col-span-background-expected.checksum: Added.
+        * platform/chromium-linux/fast/table/table-col-group-col-span-background-expected.png: Added.
+        * platform/chromium-linux/fast/table/table-col-group-span-background-expected.checksum: Added.
+        * platform/chromium-linux/fast/table/table-col-group-span-background-expected.png: Added.
+        * platform/chromium-linux/fast/table/table-col-span-background-expected.checksum: Added.
+        * platform/chromium-linux/fast/table/table-col-span-background-expected.png: Added.
+        * platform/chromium-linux/fast/table/table-row-background-expected.checksum: Added.
+        * platform/chromium-linux/fast/table/table-row-background-expected.png: Added.
+        * platform/chromium-linux/fast/table/table-row-background-left-50px-expected.checksum: Added.
+        * platform/chromium-linux/fast/table/table-row-background-left-50px-expected.png: Added.
+        * platform/chromium-linux/fast/table/table-row-background-right-100percent-expected.checksum: Added.
+        * platform/chromium-linux/fast/table/table-row-background-right-100percent-expected.png: Added.
+        * platform/chromium-linux/fast/table/table-row-background-right-50px-expected.checksum: Added.
+        * platform/chromium-linux/fast/table/table-row-background-right-50px-expected.png: Added.
+        * platform/chromium-linux/fast/table/table-row-group-background-expected.checksum: Added.
+        * platform/chromium-linux/fast/table/table-row-group-background-expected.png: Added.
+        * platform/chromium-linux/fast/table/table-row-group-background-positioned-expected.checksum: Added.
+        * platform/chromium-linux/fast/table/table-row-group-background-positioned-expected.png: Added.
+        * platform/chromium-mac/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/chromium-mac/fast/runin/generated2-expected.checksum: Renamed from LayoutTests/platform/chromium/fast/runin/generated2-expected.checksum.
+        * platform/chromium-mac/fast/runin/generated2-expected.png: Renamed from LayoutTests/platform/chromium/fast/runin/generated2-expected.png.
+        * platform/chromium-mac/fast/runin/generated3-expected.checksum: Renamed from LayoutTests/platform/chromium/fast/runin/generated3-expected.checksum.
+        * platform/chromium-mac/fast/runin/generated3-expected.png: Renamed from LayoutTests/platform/chromium/fast/runin/generated3-expected.png.
+        * platform/chromium-mac/fast/runin/generated4-expected.checksum: Renamed from LayoutTests/platform/chromium/fast/runin/generated4-expected.checksum.
+        * platform/chromium-mac/fast/runin/generated4-expected.png: Renamed from LayoutTests/platform/chromium/fast/runin/generated4-expected.png.
+        * platform/chromium-mac/svg/custom/clip-path-referencing-use2-expected.txt:
+        * platform/chromium-win/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/chromium-win/fast/runin/generated2-expected.checksum: Added.
+        * platform/chromium-win/fast/runin/generated2-expected.png: Added.
+        * platform/chromium-win/fast/runin/generated2-expected.txt: Added.
+        * platform/chromium-win/fast/runin/generated3-expected.checksum: Added.
+        * platform/chromium-win/fast/runin/generated3-expected.png: Added.
+        * platform/chromium-win/fast/runin/generated3-expected.txt: Added.
+        * platform/chromium-win/fast/runin/generated4-expected.checksum: Added.
+        * platform/chromium-win/fast/runin/generated4-expected.png: Added.
+        * platform/chromium-win/fast/runin/generated4-expected.txt: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1/painting-marker-01-f-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/painting-marker-02-f-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/painting-marker-03-f-expected.txt:
+        * platform/chromium-win/svg/custom/clip-path-referencing-use2-expected.txt:
+
+2010-03-29  David Levin  <levin@chromium.org>
+
+        Rubber-stamped by Dmitry Titov.
+
         Add chromium specific baselines for table tests added in r56641
         and for runin tests added in r56655.
 
