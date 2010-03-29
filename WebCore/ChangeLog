@@ -2,6 +2,18 @@
 
         Reviewed by Eric Seidel.
 
+        [GStreamer] define static variables with DEFINE_STATIC_LOCAL macro
+        https://bugs.webkit.org/show_bug.cgi?id=36653
+
+        Defined the static variables using DEFINE_STATIC_GLOBAL.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mimeTypeCache):
+
+2010-03-26  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Eric Seidel.
+
         [GStreamer] player header cleanups
         https://bugs.webkit.org/show_bug.cgi?id=36656
 
