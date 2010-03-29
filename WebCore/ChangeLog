@@ -1,3 +1,15 @@
+2010-03-29  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Bug 36735 - Live regions don't send out notifications when the element changing is the live region
+        https://bugs.webkit.org/show_bug.cgi?id=36735
+
+        Test: platform/mac/accessibility/aria-liveregion-on-image.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::contentChanged):
+
 2010-03-29  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Dave Hyatt.
