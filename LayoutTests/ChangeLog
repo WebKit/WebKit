@@ -1,3 +1,16 @@
+2010-03-29  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Test for Ensuring Pseudo Class's are Respected on Dynamic Changes
+        https://bugs.webkit.org/show_bug.cgi?id=36765
+
+        This tests elements affected by a CSS pseudo class selector is updated
+        after a dynamic DOM change.
+
+        * fast/css/dynamic-pseudo-class-expected.txt: Added.
+        * fast/css/dynamic-pseudo-class.html: Added.
+
 2010-03-29  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
