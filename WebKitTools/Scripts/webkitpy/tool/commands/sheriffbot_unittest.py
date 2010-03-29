@@ -42,7 +42,7 @@ class SheriffBotTest(QueuesTest):
         expected_stderr = {
             "begin_work_queue": "CAUTION: sheriff-bot will discard all local changes in \"%s\"\nRunning WebKit sheriff-bot.\n" % os.getcwd(),
             "next_work_item": "",
-            "process_work_item": "MOCK: irc.post: abarth, darin, eseidel: r29837 appears to have broken Mock builder name (Tests)\n",
+            "process_work_item": "MOCK: irc.post: abarth, darin, eseidel: http://trac.webkit.org/changeset/29837 appears to have broken Mock builder name (Tests)\n",
             "handle_unexpected_error": "Mock error message\n"
         }
         self.assert_queue_outputs(SheriffBot(), work_item=mock_work_item, expected_stderr=expected_stderr)

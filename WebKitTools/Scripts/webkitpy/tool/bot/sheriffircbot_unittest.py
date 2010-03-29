@@ -50,5 +50,5 @@ class SheriffIRCBotTest(unittest.TestCase):
         OutputCapture().assert_outputs(self, run, args=["bogus"], expected_stderr=expected_stderr)
 
     def test_lgr(self):
-        expected_stderr = "MOCK: irc.post: 9479\n"
+        expected_stderr = "MOCK: irc.post: http://trac.webkit.org/changeset/9479\n"
         OutputCapture().assert_outputs(self, run, args=["last-green-revision"], expected_stderr=expected_stderr)

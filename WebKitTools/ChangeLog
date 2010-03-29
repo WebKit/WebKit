@@ -1,5 +1,12 @@
 2010-03-29  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed.  Update expected results for unit tests.
+
+        * Scripts/webkitpy/tool/bot/sheriffircbot_unittest.py:
+        * Scripts/webkitpy/tool/commands/sheriffbot_unittest.py:
+
+2010-03-29  Adam Barth  <abarth@webkit.org>
+
         Unreviewed.  I think Eric meant svn_revision.
 
         * Scripts/webkitpy/tool/commands/sheriffbot.py:
