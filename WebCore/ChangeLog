@@ -1,3 +1,15 @@
+2010-03-26  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        [GStreamer] player header cleanups
+        https://bugs.webkit.org/show_bug.cgi?id=36656
+
+        Destructor made private and added missing
+        mediaPlayerPrivateMuteChangedCallback declaration.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+
 2010-03-29  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
