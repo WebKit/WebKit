@@ -182,9 +182,16 @@ WebInspector.ElementsTreeOutline.prototype = {
         return null;
     },
 
+    set suppressRevealAndSelect(x)
+    {
+        if (this._suppressRevealAndSelect === x)
+            return;
+        this._suppressRevealAndSelect = x;
+    },
+
     revealAndSelectNode: function(node)
     {
-        if (!node)
+        if (!node || this._suppressRevealAndSelect)
             return;
 
         var treeElement = this.createTreeElementFor(node);
@@ -230,6 +237,9 @@ WebInspector.ElementsTreeOutline.prototype = {
 
         if (event.keyCode === WebInspector.KeyboardShortcut.KeyCodes.Backspace ||
                 event.keyCode === WebInspector.KeyboardShortcut.KeyCodes.Delete) {
+            var startTagTreeElement = this.findTreeElement(selectedElement.representedObject);
+            if (selectedElement !== startTagTreeElement)
+                selectedElement = startTagTreeElement;
             selectedElement.remove();
             event.preventDefault();
             event.stopPropagation();
@@ -272,12 +282,12 @@ WebInspector.ElementsTreeOutline.prototype = {
             delete this._previousHoveredElement;
         }
 
-        if (element && !element.elementCloseTag) {
+        if (element) {
             element.hovered = true;
             this._previousHoveredElement = element;
         }
 
-        WebInspector.hoveredDOMNode = (element && !element.elementCloseTag ? element.representedObject : null);
+        WebInspector.hoveredDOMNode = (element ? element.representedObject : null);
     },
 
     _onmouseout: function(event)
@@ -314,14 +324,15 @@ WebInspector.ElementsTreeOutline.prototype = {
 
 WebInspector.ElementsTreeOutline.prototype.__proto__ = TreeOutline.prototype;
 
-WebInspector.ElementsTreeElement = function(node)
+WebInspector.ElementsTreeElement = function(node, elementCloseTag)
 {
-    var hasChildrenOverride = node.hasChildNodes() && !this._showInlineText(node);
+    this._elementCloseTag = elementCloseTag;
+    var hasChildrenOverride = !elementCloseTag && node.hasChildNodes() && !this._showInlineText(node);
 
     // The title will be updated in onattach.
     TreeElement.call(this, "", node, hasChildrenOverride);
 
-    if (this.representedObject.nodeType == Node.ELEMENT_NODE)
+    if (this.representedObject.nodeType == Node.ELEMENT_NODE && !elementCloseTag)
         this._canAddAttributes = true;
     this._searchQuery = null;
     this._expandedChildrenLimit = WebInspector.ElementsTreeElement.InitialChildrenLimit;
@@ -392,7 +403,7 @@ WebInspector.ElementsTreeElement.prototype = {
     get expandedChildCount()
     {
         var count = this.children.length;
-        if (count && this.children[count - 1].elementCloseTag)
+        if (count && this.children[count - 1]._elementCloseTag)
             count--;
         if (count && this.children[count - 1].expandAllButton)
             count--;
@@ -401,6 +412,9 @@ WebInspector.ElementsTreeElement.prototype = {
 
     showChild: function(index)
     {
+        if (this._elementCloseTag)
+            return;
+
         if (index >= this.expandedChildrenLimit) {
             this._expandedChildrenLimit = index + 1;
             this._updateChildren(true);
@@ -412,6 +426,9 @@ WebInspector.ElementsTreeElement.prototype = {
 
     createTooltipForImageNode: function(node, callback)
     {
+        if (this._elementCloseTag)
+            return;
+
         function createTooltipThenCallback(properties)
         {
             if (!properties) {
@@ -477,7 +494,7 @@ WebInspector.ElementsTreeElement.prototype = {
 
     onpopulate: function()
     {
-        if (this.children.length || this._showInlineText(this.representedObject))
+        if (this.children.length || this._showInlineText(this.representedObject) || this._elementCloseTag)
             return;
 
         this.updateChildren();
@@ -485,12 +502,15 @@ WebInspector.ElementsTreeElement.prototype = {
 
     updateChildren: function(fullRefresh)
     {
+        if (this._elementCloseTag)
+            return;
+
         WebInspector.domAgent.getChildNodesAsync(this.representedObject, this._updateChildren.bind(this, fullRefresh));
     },
 
-    insertChildElement: function(child, index)
+    insertChildElement: function(child, index, closingTag)
     {
-        var newElement = new WebInspector.ElementsTreeElement(child);
+        var newElement = new WebInspector.ElementsTreeElement(child, closingTag);
         newElement.selectable = this.treeOutline.selectEnabled;
         this.insertChild(newElement, index);
         return newElement;
@@ -499,10 +519,10 @@ WebInspector.ElementsTreeElement.prototype = {
     moveChild: function(child, targetIndex)
     {
         var wasSelected = child.selected;
-        treeElement.removeChild(child);
-        treeElement.insertChild(child, targetIndex);
+        this.removeChild(child);
+        this.insertChild(child, targetIndex);
         if (wasSelected)
-            existingTreeElement.select();
+            child.select();
     },
 
     _updateChildren: function(fullRefresh)
@@ -564,9 +584,6 @@ WebInspector.ElementsTreeElement.prototype = {
 
         // Remove any tree elements that no longer have this node (or this node's contentDocument) as their parent.
         for (var i = (this.children.length - 1); i >= 0; --i) {
-            if ("elementCloseTag" in this.children[i])
-                continue;
-
             var currentChild = this.children[i];
             var currentNode = currentChild.representedObject;
             var currentParentNode = currentNode.parentNode;
@@ -585,13 +602,8 @@ WebInspector.ElementsTreeElement.prototype = {
         this.adjustCollapsedRange(false);
 
         var lastChild = this.children[this.children.length - 1];
-        if (this.representedObject.nodeType == Node.ELEMENT_NODE && (!lastChild || !lastChild.elementCloseTag)) {
-            var title = "<span class=\"webkit-html-tag close\">&lt;/" + this.treeOutline.nodeNameToCorrectCase(this.representedObject.nodeName).escapeHTML() + "&gt;</span>";
-            var item = new TreeElement(title, null, false);
-            item.selectable = false;
-            item.elementCloseTag = true;
-            this.appendChild(item);
-        }
+        if (this.representedObject.nodeType == Node.ELEMENT_NODE && (!lastChild || !lastChild._elementCloseTag))
+            this.insertChildElement(this.representedObject, this.children.length, true);
 
         // We want to restore the original selection and tree scroll position after a full refresh, if possible.
         if (fullRefresh && elementToSelect) {
@@ -645,12 +657,18 @@ WebInspector.ElementsTreeElement.prototype = {
 
     onexpand: function()
     {
+        if (this._elementCloseTag)
+            return;
+
         this.updateTitle();
         this.treeOutline.updateSelection();
     },
 
     oncollapse: function()
     {
+        if (this._elementCloseTag)
+            return;
+
         this.updateTitle();
         this.treeOutline.updateSelection();
     },
@@ -663,8 +681,10 @@ WebInspector.ElementsTreeElement.prototype = {
 
     onselect: function()
     {
+        this.treeOutline.suppressRevealAndSelect = true;
         this.treeOutline.focusedDOMNode = this.representedObject;
         this.updateSelection();
+        this.treeOutline.suppressRevealAndSelect = false;
     },
 
     onmousedown: function(event)
@@ -687,7 +707,7 @@ WebInspector.ElementsTreeElement.prototype = {
 
     ondblclick: function(event)
     {
-        if (this._editing)
+        if (this._editing || this._elementCloseTag)
             return;
 
         if (this._startEditingFromEvent(event))
@@ -1230,6 +1250,22 @@ WebInspector.ElementsTreeElement.prototype = {
         return html;
     },
 
+    _tagHTML: function(tagName, isClosingTag, isDistinctTreeElement, linkify, tooltipText)
+    {
+        var node = this.representedObject;
+        var result = "<span class=\"webkit-html-tag" + (isClosingTag && isDistinctTreeElement ? " close" : "")  + "\">&lt;";
+        result += "<span class=\"webkit-html-tag-name\">" + (isClosingTag ? "/" : "") + tagName + "</span>";
+        if (!isClosingTag && node.hasAttributes()) {
+            for (var i = 0; i < node.attributes.length; ++i) {
+                var attr = node.attributes[i];
+                result += " " + this._attributeHTML(attr.name, attr.value, node, linkify, tooltipText);
+            }
+        }
+        result += "&gt;</span>&#8203;";
+
+        return result;
+    },
+
     _nodeTitleInfo: function(linkify, tooltipText)
     {
         var node = this.representedObject;
@@ -1246,31 +1282,28 @@ WebInspector.ElementsTreeElement.prototype = {
 
             case Node.ELEMENT_NODE:
                 var tagName = this.treeOutline.nodeNameToCorrectCase(node.nodeName).escapeHTML();
-                info.title = "<span class=\"webkit-html-tag\">&lt;";
-                info.title += "<span class=\"webkit-html-tag-name\">" + tagName + "</span>";
-                if (node.hasAttributes()) {
-                    for (var i = 0; i < node.attributes.length; ++i) {
-                        var attr = node.attributes[i];
-                        info.title += " " + this._attributeHTML(attr.name, attr.value, node, linkify, tooltipText);
-                    }
+                if (this._elementCloseTag) {
+                    info.title = this._tagHTML(tagName, true, true);
+                    info.hasChildren = false;
+                    break;
                 }
-                info.title += "&gt;</span>&#8203;";
 
-                const closingTagHTML = "<span class=\"webkit-html-tag\">&lt;/" + tagName + "&gt;</span>&#8203;";
+                info.title = this._tagHTML(tagName, false, false, linkify, tooltipText);
+
                 var textChild = onlyTextChild.call(node);
                 var showInlineText = textChild && textChild.textContent.length < Preferences.maxInlineTextChildLength;
 
                 if (!this.expanded && (!showInlineText && (this.treeOutline.isXMLMimeType || !WebInspector.ElementsTreeElement.ForbiddenClosingTagElements[tagName]))) {
                     if (this.hasChildren)
                         info.title += "<span class=\"webkit-html-text-node\">&#8230;</span>&#8203;";
-                    info.title += closingTagHTML;
+                    info.title += this._tagHTML(tagName, true, false);
                 }
 
                 // If this element only has a single child that is a text node,
                 // just show that text and the closing tag inline rather than
                 // create a subtree for them
                 if (showInlineText) {
-                    info.title += "<span class=\"webkit-html-text-node\">" + textChild.nodeValue.escapeHTML() + "</span>&#8203;" + closingTagHTML;
+                    info.title += "<span class=\"webkit-html-text-node\">" + textChild.nodeValue.escapeHTML() + "</span>&#8203;" + this._tagHTML(tagName, true, false);
                     info.hasChildren = false;
                 }
                 break;

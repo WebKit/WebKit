@@ -1,3 +1,28 @@
+2010-03-29  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector should highlight when clicking a node's closing tag
+        https://bugs.webkit.org/show_bug.cgi?id=16258
+
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline.prototype.set suppressRevealAndSelect):
+        (WebInspector.ElementsTreeOutline.prototype.revealAndSelectNode):
+        (WebInspector.ElementsTreeOutline.prototype._keyDown):
+        (WebInspector.ElementsTreeOutline.prototype._onmousemove):
+        (WebInspector.ElementsTreeElement):
+        (WebInspector.ElementsTreeElement.prototype.showChild):
+        (WebInspector.ElementsTreeElement.prototype.onpopulate):
+        (WebInspector.ElementsTreeElement.prototype.updateChildren):
+        (WebInspector.ElementsTreeElement.prototype.insertChildElement):
+        (WebInspector.ElementsTreeElement.prototype.moveChild):
+        (WebInspector.ElementsTreeElement.prototype._updateChildren):
+        (WebInspector.ElementsTreeElement.prototype.onexpand):
+        (WebInspector.ElementsTreeElement.prototype.oncollapse):
+        (WebInspector.ElementsTreeElement.prototype.onselect):
+        (WebInspector.ElementsTreeElement.prototype.ondblclick):
+        ():
+
 2010-03-29  Marcus Bulach  <bulach@chromium.org>
 
         Reviewed by Jeremy Orlow.

@@ -42,7 +42,10 @@ function doit()
         var dataElement = document.getElementById("data");
         dataElement.appendChild(document.createElement("a"));
         dataElement.removeChild(document.getElementById("id2"));
-        dataElement.insertBefore(document.createElement("a"), document.getElementById("id1"));
+        var aElement = document.createElement("a");
+        dataElement.insertBefore(aElement, document.getElementById("id1"));
+        dataElement.appendChild(aElement);
+        dataElement.insertBefore(aElement, document.getElementById("id1"));
         evaluateInWebInspector("frontend_dumpNode", nodeDumpBeforeCallback);
     }
 
