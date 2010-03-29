@@ -25,37 +25,48 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef IndexedDatabase_h
-#define IndexedDatabase_h
 
-#include "ExceptionCode.h"
-#include "IDBCallbacks.h"
-#include "PlatformString.h"
-#include <wtf/Threading.h>
+#ifndef WebIDBDatabaseError_h
+#define WebIDBDatabaseError_h
 
-#if ENABLE(INDEXED_DATABASE)
+#include "WebCommon.h"
+#include "WebPrivatePtr.h"
+#include "WebString.h"
 
-namespace WebCore {
+namespace WebCore { class IDBDatabaseError; }
 
-class IDBDatabase;
+namespace WebKit {
 
-typedef IDBCallbacks<IDBDatabase> IDBDatabaseCallbacks;
-
-// This class is shared by IndexedDatabaseRequest (async) and IndexedDatabaseSync (sync).
-// This is implemented by IndexedDatabaseImpl and optionally others (in order to proxy
-// calls across process barriers). All calls to these classes should be non-blocking and
-// trigger work on a background thread if necessary.
-class IndexedDatabase : public ThreadSafeShared<IndexedDatabase> {
+// See comment in WebIndexedDatabase for a high level overview these classes.
+class WebIDBDatabaseError {
 public:
-    static PassRefPtr<IndexedDatabase> get();
-    virtual ~IndexedDatabase() { }
+    ~WebIDBDatabaseError();
 
-    virtual void open(const String& name, const String& description, bool modifyDatabase, ExceptionCode&, PassRefPtr<IDBDatabaseCallbacks>) = 0;
-};
+    WebIDBDatabaseError(unsigned short code, const WebString& message) { assign(code, message); }
+    WebIDBDatabaseError(const WebIDBDatabaseError& e) { assign(e); }
+    WebIDBDatabaseError& operator=(const WebIDBDatabaseError& e)
+    {
+        assign(e);
+        return *this;
+    }
 
-} // namespace WebCore
+    WEBKIT_API void assign(const WebIDBDatabaseError&);
 
+    WEBKIT_API unsigned short code() const;
+    WEBKIT_API WebString message() const;
+
+#if WEBKIT_IMPLEMENTATION
+    WebIDBDatabaseError(const WTF::PassRefPtr<WebCore::IDBDatabaseError>&);
+    WebIDBDatabaseError& operator=(const WTF::PassRefPtr<WebCore::IDBDatabaseError>&);
+    operator WTF::PassRefPtr<WebCore::IDBDatabaseError>() const;
 #endif
 
-#endif // IndexedDatabase_h
+private:
+    WEBKIT_API void assign(unsigned short code, const WebString& message);
 
+    WebPrivatePtr<WebCore::IDBDatabaseError> m_private;
+};
+
+} // namespace WebKit
+
+#endif // WebIDBDatabaseError_h

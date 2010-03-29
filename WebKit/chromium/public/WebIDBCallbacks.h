@@ -25,37 +25,32 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef IndexedDatabase_h
-#define IndexedDatabase_h
 
-#include "ExceptionCode.h"
-#include "IDBCallbacks.h"
-#include "PlatformString.h"
-#include <wtf/Threading.h>
+#ifndef WebIDBCallbacks_h
+#define WebIDBCallbacks_h
 
-#if ENABLE(INDEXED_DATABASE)
+#include "WebCommon.h"
 
-namespace WebCore {
+namespace WebKit {
 
-class IDBDatabase;
+class WebIDBDatabaseError;
 
-typedef IDBCallbacks<IDBDatabase> IDBDatabaseCallbacks;
-
-// This class is shared by IndexedDatabaseRequest (async) and IndexedDatabaseSync (sync).
-// This is implemented by IndexedDatabaseImpl and optionally others (in order to proxy
-// calls across process barriers). All calls to these classes should be non-blocking and
-// trigger work on a background thread if necessary.
-class IndexedDatabase : public ThreadSafeShared<IndexedDatabase> {
+// Every IndexedDB method takes in a pair of callbacks for error/success which
+// implement this class.  Either 0 or 1 of these methods will be called and the
+// callback class may be deleted any time after the callback is called.
+template <typename ResultType>
+class WebIDBCallbacks {
 public:
-    static PassRefPtr<IndexedDatabase> get();
-    virtual ~IndexedDatabase() { }
+    virtual ~WebIDBCallbacks() { }
 
-    virtual void open(const String& name, const String& description, bool modifyDatabase, ExceptionCode&, PassRefPtr<IDBDatabaseCallbacks>) = 0;
+    // If the method was a success, this method is called with the result.  The
+    // result is a pointer that the callback takes ownership of.
+    virtual void onSuccess(ResultType*) = 0;
+
+    // Called in the event of an error.
+    virtual void onError(const WebIDBDatabaseError&) = 0;
 };
 
-} // namespace WebCore
+} // namespace WebKit
 
-#endif
-
-#endif // IndexedDatabase_h
-
+#endif // WebIDBCallbacks_h

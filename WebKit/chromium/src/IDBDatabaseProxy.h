@@ -25,37 +25,37 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef IndexedDatabase_h
-#define IndexedDatabase_h
 
-#include "ExceptionCode.h"
-#include "IDBCallbacks.h"
-#include "PlatformString.h"
-#include <wtf/Threading.h>
+#ifndef IDBDatabaseProxy_h
+#define IDBDatabaseProxy_h
+
+#include "IDBDatabase.h"
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
+#include <wtf/PassRefPtr.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
+namespace WebKit { class WebIDBDatabase; }
+
 namespace WebCore {
 
-class IDBDatabase;
-
-typedef IDBCallbacks<IDBDatabase> IDBDatabaseCallbacks;
-
-// This class is shared by IndexedDatabaseRequest (async) and IndexedDatabaseSync (sync).
-// This is implemented by IndexedDatabaseImpl and optionally others (in order to proxy
-// calls across process barriers). All calls to these classes should be non-blocking and
-// trigger work on a background thread if necessary.
-class IndexedDatabase : public ThreadSafeShared<IndexedDatabase> {
+class IDBDatabaseProxy : public IDBDatabase {
 public:
-    static PassRefPtr<IndexedDatabase> get();
-    virtual ~IndexedDatabase() { }
+    static PassRefPtr<IDBDatabase> create(PassOwnPtr<WebKit::WebIDBDatabase>);
+    virtual ~IDBDatabaseProxy();
 
-    virtual void open(const String& name, const String& description, bool modifyDatabase, ExceptionCode&, PassRefPtr<IDBDatabaseCallbacks>) = 0;
+    // FIXME: Add other methods.
+
+private:
+    IDBDatabaseProxy(PassOwnPtr<WebKit::WebIDBDatabase>);
+
+    OwnPtr<WebKit::WebIDBDatabase> m_webIDBDatabase;
 };
 
 } // namespace WebCore
 
 #endif
 
-#endif // IndexedDatabase_h
+#endif // IDBDatabaseProxy_h
 

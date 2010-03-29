@@ -25,37 +25,22 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef IndexedDatabase_h
-#define IndexedDatabase_h
 
-#include "ExceptionCode.h"
-#include "IDBCallbacks.h"
-#include "PlatformString.h"
-#include <wtf/Threading.h>
+#ifndef WebIDBDatabase_h
+#define WebIDBDatabase_h
 
-#if ENABLE(INDEXED_DATABASE)
+#include "WebCommon.h"
 
-namespace WebCore {
+namespace WebKit {
 
-class IDBDatabase;
-
-typedef IDBCallbacks<IDBDatabase> IDBDatabaseCallbacks;
-
-// This class is shared by IndexedDatabaseRequest (async) and IndexedDatabaseSync (sync).
-// This is implemented by IndexedDatabaseImpl and optionally others (in order to proxy
-// calls across process barriers). All calls to these classes should be non-blocking and
-// trigger work on a background thread if necessary.
-class IndexedDatabase : public ThreadSafeShared<IndexedDatabase> {
+// See comment in WebIndexedDatabase for a high level overview these classes.
+class WebIDBDatabase {
 public:
-    static PassRefPtr<IndexedDatabase> get();
-    virtual ~IndexedDatabase() { }
+    virtual ~WebIDBDatabase() { }
 
-    virtual void open(const String& name, const String& description, bool modifyDatabase, ExceptionCode&, PassRefPtr<IDBDatabaseCallbacks>) = 0;
+    // FIXME: Implement.
 };
 
-} // namespace WebCore
+} // namespace WebKit
 
-#endif
-
-#endif // IndexedDatabase_h
-
+#endif // WebIDBDatabase_h

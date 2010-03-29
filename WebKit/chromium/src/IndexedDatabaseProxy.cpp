@@ -25,9 +25,15 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #include "config.h"
 #include "IndexedDatabaseProxy.h"
 
+#include "IDBCallbacksProxy.h"
+#include "IDBDatabaseError.h"
+#include "IDBDatabaseProxy.h"
+#include "WebIDBDatabase.h"
+#include "WebIDBDatabaseError.h"
 #include "WebIndexedDatabase.h"
 #include "WebKit.h"
 #include "WebKitClient.h"
@@ -42,7 +48,7 @@ PassRefPtr<IndexedDatabase> IndexedDatabaseProxy::create()
 }
 
 IndexedDatabaseProxy::IndexedDatabaseProxy()
-    : m_webIndexedDatabase(WebKit::webKitClient()->getIndexedDatabase())
+    : m_webIndexedDatabase(WebKit::webKitClient()->indexedDatabase())
 {
 }
 
@@ -50,9 +56,10 @@ IndexedDatabaseProxy::~IndexedDatabaseProxy()
 {
 }
 
-void IndexedDatabaseProxy::open(const String& name, const String& description, bool modifyDatabase, ExceptionCode& ec)
+void IndexedDatabaseProxy::open(const String& name, const String& description, bool modifyDatabase, ExceptionCode& ec, PassRefPtr<IDBDatabaseCallbacks> callbacks)
 {
-    m_webIndexedDatabase->open(name, description, modifyDatabase, ec);
+    m_webIndexedDatabase->open(name, description, modifyDatabase, ec,
+                               new IDBCallbacksProxy<WebKit::WebIDBDatabase, IDBDatabase, IDBDatabaseProxy>(callbacks));
 }
 
 } // namespace WebCore

@@ -25,37 +25,33 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef IndexedDatabase_h
-#define IndexedDatabase_h
 
-#include "ExceptionCode.h"
-#include "IDBCallbacks.h"
-#include "PlatformString.h"
-#include <wtf/Threading.h>
+#include "config.h"
+#include "IDBDatabaseProxy.h"
+
+#include "IDBDatabaseError.h"
+#include "WebIDBDatabase.h"
+#include "WebIDBDatabaseError.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
-class IDBDatabase;
+PassRefPtr<IDBDatabase> IDBDatabaseProxy::create(PassOwnPtr<WebKit::WebIDBDatabase> database)
+{
+    return adoptRef(new IDBDatabaseProxy(database));
+}
 
-typedef IDBCallbacks<IDBDatabase> IDBDatabaseCallbacks;
+IDBDatabaseProxy::IDBDatabaseProxy(PassOwnPtr<WebKit::WebIDBDatabase> database)
+    : m_webIDBDatabase(database)
+{
+}
 
-// This class is shared by IndexedDatabaseRequest (async) and IndexedDatabaseSync (sync).
-// This is implemented by IndexedDatabaseImpl and optionally others (in order to proxy
-// calls across process barriers). All calls to these classes should be non-blocking and
-// trigger work on a background thread if necessary.
-class IndexedDatabase : public ThreadSafeShared<IndexedDatabase> {
-public:
-    static PassRefPtr<IndexedDatabase> get();
-    virtual ~IndexedDatabase() { }
-
-    virtual void open(const String& name, const String& description, bool modifyDatabase, ExceptionCode&, PassRefPtr<IDBDatabaseCallbacks>) = 0;
-};
+IDBDatabaseProxy::~IDBDatabaseProxy()
+{
+}
 
 } // namespace WebCore
 
-#endif
-
-#endif // IndexedDatabase_h
+#endif // ENABLE(INDEXED_DATABASE)
 

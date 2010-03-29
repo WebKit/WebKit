@@ -29,9 +29,11 @@
 #define WebIndexedDatabase_h
 
 #include "WebCommon.h"
+#include "WebIDBCallbacks.h"
 
 namespace WebKit {
 
+class WebIDBDatabase;
 class WebString;
 
 // The entry point into the IndexedDatabase API.  These classes match their _____Request and
@@ -43,10 +45,9 @@ public:
 
     virtual ~WebIndexedDatabase() { }
 
-    // FIXME: This should return an AsyncReturn<> object.
-    virtual void open(const WebString& name, const WebString& description, bool modifyDatabase, int& exceptionCode) = 0;
+    virtual void open(const WebString& name, const WebString& description, bool modifyDatabase, int& exceptionCode, WebIDBCallbacks<WebIDBDatabase>* callbacks) = 0;
 };
 
 } // namespace WebKit
 
-#endif // WebStorageNamespace_h
+#endif // WebIndexedDatabase_h

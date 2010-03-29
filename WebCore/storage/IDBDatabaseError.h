@@ -38,19 +38,20 @@ namespace WebCore {
 
 class IDBDatabaseError : public RefCounted<IDBDatabaseError> {
 public:
-    static PassRefPtr<IDBDatabaseError> create()
+    static PassRefPtr<IDBDatabaseError> create(unsigned short code, const String& message)
     {
-        return adoptRef(new IDBDatabaseError());
+        return adoptRef(new IDBDatabaseError(code, message));
     }
     ~IDBDatabaseError() { }
 
     unsigned short code() const { return m_code; }
     void setCode(unsigned short value) { m_code = value; }
-    String message() const { return m_message; }
+    const String& message() const { return m_message; }
     void setMessage(const String& value) { m_message = value; }
 
 private:
-    IDBDatabaseError() { }
+    IDBDatabaseError(unsigned short code, const String& message)
+        : m_code(code), m_message(message) { }
 
     unsigned short m_code;
     String m_message;

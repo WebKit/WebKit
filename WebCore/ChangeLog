@@ -1,3 +1,36 @@
+2010-03-24  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        A few more steps towards IndexedDB
+        https://bugs.webkit.org/show_bug.cgi?id=36546
+
+        Add a callback interface to be used by all async methods.
+        Add the first fragments of IDBDatabase.
+        Clean up on IDBDatabaseError.
+        Flesh out IndexedDatabase further.
+
+        Not enough hooked up yet to test.  Soon though...
+
+        * WebCore.gypi:
+        * storage/IDBCallbacks.h: Added.
+        (WebCore::IDBCallbacks::~IDBCallbacks):
+        * storage/IDBDatabase.cpp: Added.
+        * storage/IDBDatabase.h: Added.
+        (WebCore::IDBDatabase::~IDBDatabase):
+        * storage/IDBDatabaseError.h:
+        (WebCore::IDBDatabaseError::create):
+        (WebCore::IDBDatabaseError::message):
+        (WebCore::IDBDatabaseError::IDBDatabaseError):
+        * storage/IndexedDatabase.h:
+        * storage/IndexedDatabaseImpl.cpp:
+        (WebCore::IndexedDatabaseImpl::IndexedDatabaseImpl):
+        (WebCore::IndexedDatabaseImpl::~IndexedDatabaseImpl):
+        (WebCore::IndexedDatabaseImpl::open):
+        * storage/IndexedDatabaseImpl.h:
+        * storage/IndexedDatabaseRequest.cpp:
+        (WebCore::IndexedDatabaseRequest::open):
+
 2010-03-29  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.

@@ -25,37 +25,27 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef IndexedDatabase_h
-#define IndexedDatabase_h
 
-#include "ExceptionCode.h"
-#include "IDBCallbacks.h"
-#include "PlatformString.h"
-#include <wtf/Threading.h>
+#ifndef IDBCallbacks_h
+#define IDBCallbacks_h
 
-#if ENABLE(INDEXED_DATABASE)
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class IDBDatabase;
+class IDBDatabaseError;
 
-typedef IDBCallbacks<IDBDatabase> IDBDatabaseCallbacks;
-
-// This class is shared by IndexedDatabaseRequest (async) and IndexedDatabaseSync (sync).
-// This is implemented by IndexedDatabaseImpl and optionally others (in order to proxy
-// calls across process barriers). All calls to these classes should be non-blocking and
-// trigger work on a background thread if necessary.
-class IndexedDatabase : public ThreadSafeShared<IndexedDatabase> {
+template <typename ResultType>
+class IDBCallbacks : public RefCounted<IDBCallbacks<ResultType> > {
 public:
-    static PassRefPtr<IndexedDatabase> get();
-    virtual ~IndexedDatabase() { }
+    virtual ~IDBCallbacks() { }
 
-    virtual void open(const String& name, const String& description, bool modifyDatabase, ExceptionCode&, PassRefPtr<IDBDatabaseCallbacks>) = 0;
+    virtual void onSuccess(PassRefPtr<ResultType>) = 0;
+    virtual void onError(PassRefPtr<IDBDatabaseError>) = 0;
 };
 
 } // namespace WebCore
 
-#endif
-
-#endif // IndexedDatabase_h
+#endif // IDBCallbacks_h
 

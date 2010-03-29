@@ -1,3 +1,47 @@
+2010-03-24  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        More IndexedDB plumbing
+        https://bugs.webkit.org/show_bug.cgi?id=36546
+
+        Plumbing work towards the goal of making IndexedDatabase::open work.
+
+        * WebKit.gyp:
+        * public/WebIDBCallbacks.h: Added.
+        (WebKit::WebIDBCallbacks::~WebIDBCallbacks):
+        * public/WebIDBDatabase.h: Added.
+        (WebKit::WebIDBDatabase::~WebIDBDatabase):
+        * public/WebIDBDatabaseError.h: Added.
+        (WebKit::WebIDBDatabaseError::WebIDBDatabaseError):
+        (WebKit::WebIDBDatabaseError::operator=):
+        * public/WebIndexedDatabase.h:
+        * public/WebKitClient.h:
+        (WebKit::WebKitClient::indexedDatabase):
+        * public/WebSerializedScriptValue.h:
+        * src/IDBCallbacksProxy.h: Added.
+        (WebCore::IDBCallbacksProxy::IDBCallbacksProxy):
+        (WebCore::IDBCallbacksProxy::~IDBCallbacksProxy):
+        (WebCore::IDBCallbacksProxy::onSuccess):
+        (WebCore::IDBCallbacksProxy::onError):
+        * src/IDBDatabaseProxy.cpp: Added.
+        (WebCore::IDBDatabaseProxy::create):
+        (WebCore::IDBDatabaseProxy::IDBDatabaseProxy):
+        (WebCore::IDBDatabaseProxy::~IDBDatabaseProxy):
+        * src/IDBDatabaseProxy.h: Added.
+        * src/IndexedDatabaseProxy.cpp:
+        (WebCore::IndexedDatabaseProxy::IndexedDatabaseProxy):
+        (WebCore::IndexedDatabaseProxy::open):
+        * src/IndexedDatabaseProxy.h:
+        * src/WebIDBDatabaseError.cpp: Added.
+        (WebKit::WebIDBDatabaseError::~WebIDBDatabaseError):
+        (WebKit::WebIDBDatabaseError::WebIDBDatabaseError):
+        (WebKit::WebIDBDatabaseError::assign):
+        (WebKit::WebIDBDatabaseError::code):
+        (WebKit::WebIDBDatabaseError::message):
+        (WebKit::WebIDBDatabaseError::operator=):
+        (WebKit::WebIDBDatabaseError::operator PassRefPtr<IDBDatabaseError>):
+
 2010-03-29  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.

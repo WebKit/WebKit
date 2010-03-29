@@ -25,37 +25,49 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef IndexedDatabase_h
-#define IndexedDatabase_h
 
-#include "ExceptionCode.h"
+#ifndef IDBCallbacksProxy_h
+#define IDBCallbacksProxy_h
+
 #include "IDBCallbacks.h"
-#include "PlatformString.h"
-#include <wtf/Threading.h>
+#include "IDBDatabaseError.h"
+#include "WebIDBCallbacks.h"
+#include "WebIDBDatabaseError.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
-class IDBDatabase;
-
-typedef IDBCallbacks<IDBDatabase> IDBDatabaseCallbacks;
-
-// This class is shared by IndexedDatabaseRequest (async) and IndexedDatabaseSync (sync).
-// This is implemented by IndexedDatabaseImpl and optionally others (in order to proxy
-// calls across process barriers). All calls to these classes should be non-blocking and
-// trigger work on a background thread if necessary.
-class IndexedDatabase : public ThreadSafeShared<IndexedDatabase> {
+template <typename WebKitClass, typename WebCoreClass, typename WebCoreProxy>
+class IDBCallbacksProxy : public WebKit::WebIDBCallbacks<WebKitClass> {
 public:
-    static PassRefPtr<IndexedDatabase> get();
-    virtual ~IndexedDatabase() { }
+    IDBCallbacksProxy(PassRefPtr<IDBCallbacks<WebCoreClass> > callbacks)
+        : m_callbacks(callbacks) { }
 
-    virtual void open(const String& name, const String& description, bool modifyDatabase, ExceptionCode&, PassRefPtr<IDBDatabaseCallbacks>) = 0;
+    virtual ~IDBCallbacksProxy() { }
+
+    virtual void onSuccess(WebKitClass* webKitInstance)
+    {
+        RefPtr<WebCoreClass> proxy = WebCoreProxy::create(webKitInstance);
+        m_callbacks->onSuccess(proxy);
+        m_callbacks.clear();
+    }
+
+    virtual void onError(const WebKit::WebIDBDatabaseError& error)
+    {
+        m_callbacks->onError(error);
+        m_callbacks.clear();
+    }
+
+private:
+    PassRefPtr<IDBCallbacks<WebCoreClass> > m_callbacks;
 };
+
 
 } // namespace WebCore
 
 #endif
 
-#endif // IndexedDatabase_h
-
+#endif // IDBCallbacksProxy_h

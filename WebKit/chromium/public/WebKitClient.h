@@ -154,7 +154,7 @@ public:
 
     // Indexed Database ----------------------------------------------------
 
-    virtual WebIndexedDatabase* getIndexedDatabase() { return 0; }
+    virtual WebIndexedDatabase* indexedDatabase() { return 0; }
 
 
     // Keygen --------------------------------------------------------------
