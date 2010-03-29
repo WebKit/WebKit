@@ -33,6 +33,7 @@ from webkitpy.common.checkout.changelog import view_source_url
 from webkitpy.common.config.ports import WebKitPort
 from webkitpy.tool.bot.sheriffircbot import SheriffIRCBot
 from webkitpy.tool.commands.queues import AbstractQueue
+from webkitpy.tool.grammar import join_with_separators
 
 class SheriffBot(AbstractQueue):
     name = "sheriff-bot"
@@ -55,10 +56,13 @@ class SheriffBot(AbstractQueue):
         self.update()
         for svn_revision, builders in self.tool.buildbot.revisions_causing_failures().items():
             if self.tool.status_server.svn_revision(svn_revision):
+                # FIXME: We should re-process the work item after some time delay.
+                # https://bugs.webkit.org/show_bug.cgi?id=36581
                 continue
             return {
                 "svn_revision": svn_revision,
-                "builders": builders
+                "builders": builders,
+                # FIXME: _rollout_reason needs Build objects which we could pass here.
             }
         return None
 
@@ -66,26 +70,51 @@ class SheriffBot(AbstractQueue):
         # Currently, we don't have any reasons not to proceed with work items.
         return True
 
+    def _post_irc_warning(self, commit_info, builders):
+        irc_nicknames = sorted([party.irc_nickname for party in commit_info.responsible_parties() if party.irc_nickname])
+        irc_prefix = ": " if irc_nicknames else ""
+        irc_message = "%s%s%s appears to have broken %s" % (
+            ", ".join(irc_nicknames),
+            irc_prefix,
+            view_source_url(commit_info.revision()),
+            join_with_separators([builder.name() for builder in builders]))
+
+        self.tool.irc().post(irc_message)
+
+    def _rollout_reason(self, builders):
+        # FIXME: This should explain which layout tests failed
+        # however, that would require Build objects here, either passed
+        # in through failure_info, or through Builder.latest_build.
+        builder_names = [builder.name() for builder in builders]
+        return "Caused builders %s to fail." % join_with_separators(builder_names)
+
+    def _post_rollout_patch(self, commit_info, rollout_reason):
+        args = [
+            "create-rollout",
+            "--force-clean",
+            "--non-interactive",
+            "--parent-command=%s" % self.name,
+            commit_info.revision(),
+            rollout_reason,
+        ]
+        try:
+            self.run_webkit_patch(args)
+        except:
+            log("Failed to create-rollout.")
+
     def process_work_item(self, failure_info):
         svn_revision = failure_info["svn_revision"]
         builders = failure_info["builders"]
 
         self.update()
         commit_info = self.tool.checkout().commit_info_for_revision(svn_revision)
-        responsible_parties = [
-            commit_info.committer(),
-            commit_info.author(),
-            commit_info.reviewer()
-        ]
-        irc_nicknames = sorted(set([party.irc_nickname for party in responsible_parties if party and party.irc_nickname]))
-        irc_prefix = ": " if irc_nicknames else ""
-        irc_message = "%s%s%s appears to have broken %s" % (
-            ", ".join(irc_nicknames),
-            irc_prefix,
-            view_source_url(svn_revision),
-            ", ".join([builder.name() for builder in builders]))
+        self._post_irc_warning(commit_info, builders)
 
-        self.tool.irc().post(irc_message)
+        # For now we're only posting rollout patches for commit-queue'd patches.
+        commit_bot_email = "eseidel@chromium.org"
+        if commit_bot_email in commit_info.committer().emails:
+            rollout_reason = self._rollout_reason(builders)
+            self._post_rollout_patch(self, svn_revision, rollout_reason)
 
         for builder in builders:
             self.tool.status_server.update_svn_revision(svn_revision, builder.name())

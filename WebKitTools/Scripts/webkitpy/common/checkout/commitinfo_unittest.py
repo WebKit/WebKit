@@ -58,3 +58,4 @@ class CommitInfoTest(unittest.TestCase):
         self.assertEqual(commit.reviewer(), reviewer)
         self.assertEqual(commit.committer(), committer)
         self.assertEqual(commit.committer_email(), "committer@example.com")
+        self.assertEqual(commit.responsible_parties(), set([author, committer, reviewer]))

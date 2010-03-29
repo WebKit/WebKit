@@ -28,6 +28,7 @@
 
 import os
 
+from webkitpy.common.net.buildbot import Builder
 from webkitpy.tool.commands.queuestest import QueuesTest
 from webkitpy.tool.commands.sheriffbot import SheriffBot
 from webkitpy.tool.mocktool import MockTool, mock_builder
@@ -45,3 +46,12 @@ class SheriffBotTest(QueuesTest):
             "handle_unexpected_error": "Mock error message\n"
         }
         self.assert_queue_outputs(SheriffBot(), work_item=mock_work_item, expected_stderr=expected_stderr)
+
+    def test_rollout_reason(self):
+        bot = SheriffBot()
+        builders = [
+            Builder("Foo", None),
+            Builder("Bar", None),
+        ]
+        reason = "Caused builders Foo and Bar to fail."
+        self.assertEquals(bot._rollout_reason(builders), reason)

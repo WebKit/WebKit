@@ -74,3 +74,11 @@ class CommitInfo(object):
 
     def reviewer_text(self):
         return self._reviewer_text # May be None
+
+    def responsible_parties(self):
+        responsible_parties = [
+            self.committer(),
+            self.author(),
+            self.reviewer(),
+        ]
+        return set([party for party in responsible_parties if party]) # Filter out None
