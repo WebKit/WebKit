@@ -1,3 +1,17 @@
+2010-03-29  Thomas Zander  <t.zander@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Shadowbuilds of WebCore with Qt on Symbian fails.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36749
+
+        Doing a 'make sis' expects the dll in the libdir, so place it
+        there. This fixes out-of-source building to always put the dll
+        in the expected dir.
+
+        * WebCore.pro: Fix for shadow builds inside Qt.
+
 2010-03-26  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Antti Koivisto.
