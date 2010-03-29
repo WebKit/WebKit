@@ -1,3 +1,31 @@
+2010-03-29  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Adam Barth.
+
+        Page Cache does not work on Android with V8
+        https://bugs.webkit.org/show_bug.cgi?id=36665
+
+        No new tests, existing tests should suffice, this is platform code.
+
+        This implementation simply saves the context and the global object
+        just before the frame is navigated to a new url. At restore time,
+        the global object is reattached to the context and the context
+        is attached to the window shell of the frame.
+
+        Note that isolated worlds are not taken into account in any way,
+        as Android does not use them.
+
+        * bindings/v8/ScriptCachedFrameData.cpp: Added.
+        (WebCore::ScriptCachedFrameData::ScriptCachedFrameData):
+        (WebCore::ScriptCachedFrameData::domWindow):
+        (WebCore::ScriptCachedFrameData::~ScriptCachedFrameData):
+        (WebCore::ScriptCachedFrameData::restore):
+        (WebCore::ScriptCachedFrameData::clear):
+        * bindings/v8/ScriptCachedFrameData.h:
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::setContext):
+        * bindings/v8/V8DOMWindowShell.h:
+
 2010-03-29  Thomas Zander  <t.zander@nokia.com>
 
         Reviewed by Simon Hausmann.
