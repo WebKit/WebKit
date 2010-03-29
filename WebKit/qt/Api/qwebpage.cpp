@@ -3558,7 +3558,11 @@ quint64 QWebPage::bytesReceived() const
 /*!
     \fn void QWebPage::unsupportedContent(QNetworkReply *reply)
 
-    This signal is emitted when WebKit cannot handle a link the user navigated to.
+    This signal is emitted when WebKit cannot handle a link the user navigated to or a
+    web server's response includes a "Content-Disposition" header with the 'attachment' 
+    directive. If "Content-Disposition" is present in \a reply, the web server is indicating
+    that the client should prompt the user to save the content regardless of content-type. 
+    See RFC 2616 sections 19.5.1 for details about Content-Disposition.
 
     At signal emission time the meta-data of the QNetworkReply \a reply is available.
 

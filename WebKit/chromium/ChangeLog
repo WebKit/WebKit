@@ -1,3 +1,16 @@
+2010-03-29  Dawit Alemayehu  <adawit@kde.org>
+
+        Reviewed by Simon Hausmann.
+
+        Factored out the 'ShouldTreatAsAttachment' function to HTTPParsers.*
+        and replacted local version with the factored out version.
+
+        The code was factored out to make possible its use in other implementations
+        such as QtWebKit.
+
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::dispatchDecidePolicyForMIMEType):
+
 2010-03-29  Jochen Eisinger  <jochen@chromium.org>
 
         Reviewed by Darin Fisher.

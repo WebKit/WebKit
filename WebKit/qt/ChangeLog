@@ -1,3 +1,19 @@
+2010-03-29  Dawit Alemayehu  <adawit@kde.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Added support for handling the HTTP "Content-Disposition" header.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36395
+
+        Whenever a server response contains a "Content-Disposition: attachment..." header, 
+        treat the request as a download and emit the unsupportedContent signal.
+
+        * Api/qwebpage.cpp:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::download):
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForMIMEType):
+
 2010-03-22  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Simon Fraser.

@@ -38,6 +38,7 @@
 #include "FormState.h"
 #include "FrameLoader.h"
 #include "FrameLoadRequest.h"
+#include "HTTPParsers.h"
 #include "HistoryItem.h"
 #include "HitTestResult.h"
 #include "HTMLAppletElement.h"
@@ -828,38 +829,6 @@ void FrameLoaderClientImpl::dispatchShow()
         webView->client()->show(webView->initialNavigationPolicy());
 }
 
-static bool shouldTreatAsAttachment(const ResourceResponse& response)
-{
-    const String& contentDisposition =
-        response.httpHeaderField("Content-Disposition");
-    if (contentDisposition.isEmpty())
-        return false;
-
-    // Some broken sites just send
-    // Content-Disposition: ; filename="file"
-    // screen those out here.
-    if (contentDisposition.startsWith(";"))
-        return false;
-
-    if (contentDisposition.startsWith("inline", false))
-        return false;
-
-    // Some broken sites just send
-    // Content-Disposition: filename="file"
-    // without a disposition token... screen those out.
-    if (contentDisposition.startsWith("filename", false))
-        return false;
-
-    // Also in use is Content-Disposition: name="file"
-    if (contentDisposition.startsWith("name", false))
-        return false;
-
-    // We have a content-disposition of "attachment" or unknown.
-    // RFC 2183, section 2.8 says that an unknown disposition
-    // value should be treated as "attachment"
-    return true;
-}
-
 void FrameLoaderClientImpl::dispatchDecidePolicyForMIMEType(
      FramePolicyFunction function,
      const String& mimeType,
@@ -874,7 +843,7 @@ void FrameLoaderClientImpl::dispatchDecidePolicyForMIMEType(
     if (statusCode == 204 || statusCode == 205) {
         // The server does not want us to replace the page contents.
         action = PolicyIgnore;
-    } else if (shouldTreatAsAttachment(response)) {
+    } else if (WebCore::shouldTreatAsAttachment(response)) {
         // The server wants us to download instead of replacing the page contents.
         // Downloading is handled by the embedder, but we still get the initial
         // response so that we can ignore it and clean up properly.

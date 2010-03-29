@@ -2,6 +2,7 @@
  * Copyright (C) 2006 Alexey Proskuryakov (ap@webkit.org)
  * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Torch Mobile Inc. http://www.torchmobile.com/
+ * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +31,7 @@
 
 #include "config.h"
 #include "HTTPParsers.h"
+#include "ResourceResponseBase.h"
 
 #include "CString.h"
 #include "PlatformString.h"
@@ -68,6 +70,38 @@ static inline bool skipToken(const String& str, int& pos, const char* token)
     }
 
     return true;
+}
+
+bool shouldTreatAsAttachment(const ResourceResponseBase& response)
+{
+    const String& contentDisposition = response.httpHeaderField("Content-Disposition");
+    
+    if (contentDisposition.isEmpty())
+        return false;
+
+    // Some broken sites just send
+    // Content-Disposition: ; filename="file"
+    // screen those out here.
+    if (contentDisposition.startsWith(";"))
+        return false;
+
+    if (contentDisposition.startsWith("inline", false))
+        return false;
+
+    // Some broken sites just send
+    // Content-Disposition: filename="file"
+    // without a disposition token... screen those out.
+    if (contentDisposition.startsWith("filename", false))
+        return false;
+
+    // Also in use is Content-Disposition: name="file"
+    if (contentDisposition.startsWith("name", false))
+        return false;
+
+    // We have a content-disposition of "attachment" or unknown.
+    // RFC 2183, section 2.8 says that an unknown disposition
+    // value should be treated as "attachment"
+    return true;  
 }
 
 bool parseHTTPRefresh(const String& refresh, bool fromHttpEquivMeta, double& delay, String& url)

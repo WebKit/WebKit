@@ -1,3 +1,22 @@
+2010-03-29  Dawit Alemayehu  <adawit@kde.org>
+
+        Reviewed by Simon Hausmann.
+
+        Added a function, WebCore::shouldTreatAsAttachment, to HTTPParsers.*
+
+        https://bugs.webkit.org/show_bug.cgi?id=36395
+
+        This function, which was moved from WebKit/chromium/src/FrameClientImpl.cpp,
+        is used to check whether or not a request is supposed to be rendered or
+        simply downloaded based on the "Content-Disposition" header sent by the
+        web server. The intent of code refactoring is to avoid code duplication
+        so that this piece of code can be used by other implementations such as
+        QtWebKit.
+
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::shouldTreatAsAttachment):
+        * platform/network/HTTPParsers.h:
+
 2010-03-29  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
