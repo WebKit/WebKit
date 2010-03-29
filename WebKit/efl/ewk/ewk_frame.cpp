@@ -34,7 +34,6 @@
 #include "HTMLPlugInElement.h"
 #include "HitTestResult.h"
 #include "KURL.h"
-#include "KeyboardCodes.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformWheelEvent.h"
@@ -45,6 +44,7 @@
 #include "ScriptValue.h"
 #include "SharedBuffer.h"
 #include "SubstituteData.h"
+#include "WindowsKeyboardCodes.h"
 #include "ewk_private.h"
 
 #include <Eina.h>

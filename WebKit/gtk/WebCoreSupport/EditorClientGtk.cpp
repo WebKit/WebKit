@@ -33,12 +33,12 @@
 #include "FocusController.h"
 #include "Frame.h"
 #include <glib.h>
-#include "KeyboardCodes.h"
 #include "KeyboardEvent.h"
 #include "NotImplemented.h"
 #include "Page.h"
 #include "PasteboardHelperGtk.h"
 #include "PlatformKeyboardEvent.h"
+#include "WindowsKeyboardCodes.h"
 #include "markup.h"
 #include "webkitprivate.h"
 

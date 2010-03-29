@@ -1,3 +1,9 @@
+2010-03-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Build fix. Include WindowsKeyboardCodes.h instead of KeyboardCodes.h.
+
+        * efl/ewk/ewk_frame.cpp:
+
 2010-03-22  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Simon Fraser.

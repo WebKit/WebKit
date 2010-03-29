@@ -1,3 +1,9 @@
+2010-03-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Build fix. Include WindowsKeyboardCodes.h instead of KeyboardCodes.h.
+
+        * WebCoreSupport/EditorClientQt.cpp:
+
 2010-03-26  Olivier Goffart  <ogoffart@trolltech.com>
 
         Reviewed by Simon Hausmann.

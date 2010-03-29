@@ -43,7 +43,6 @@
 #include "HTMLElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
-#include "KeyboardCodes.h"
 #include "KeyboardEvent.h"
 #include "NotImplemented.h"
 #include "Page.h"
@@ -51,6 +50,7 @@
 #include "PlatformKeyboardEvent.h"
 #include "QWebPageClient.h"
 #include "Range.h"
+#include "WindowsKeyboardCodes.h"
 
 #include <stdio.h>
 
