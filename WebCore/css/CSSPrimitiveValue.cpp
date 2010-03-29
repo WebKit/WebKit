@@ -336,6 +336,7 @@ void CSSPrimitiveValue::cleanup()
     }
 
     m_type = 0;
+    m_cachedCSSText = String();
 }
 
 int CSSPrimitiveValue::computeLengthInt(RenderStyle* style, RenderStyle* rootStyle)
@@ -703,6 +704,9 @@ String CSSPrimitiveValue::cssText() const
 {
     // FIXME: return the original value instead of a generated one (e.g. color
     // name if it was specified) - check what spec says about this
+    if (!m_cachedCSSText.isNull())
+        return m_cachedCSSText;
+
     String text;
     switch (m_type) {
         case CSS_UNKNOWN:
@@ -788,7 +792,8 @@ String CSSPrimitiveValue::cssText() const
             append(result, m_value.string);
             result.uncheckedAppend(')');
 
-            return String::adopt(result);
+            text = String::adopt(result);
+            break;
         }
         case CSS_COUNTER:
             text = "counter(";
@@ -816,7 +821,8 @@ String CSSPrimitiveValue::cssText() const
             append(result, rectVal->left()->cssText());
             result.append(')');
 
-            return String::adopt(result);
+            text = String::adopt(result);
+            break;
         }
         case CSS_RGBCOLOR:
         case CSS_PARSER_HEXCOLOR: {
@@ -849,7 +855,8 @@ String CSSPrimitiveValue::cssText() const
             }
 
             result.append(')');
-            return String::adopt(result);
+            text = String::adopt(result);
+            break;
         }
         case CSS_PAIR:
             text = m_value.pair->first()->cssText();
@@ -901,6 +908,7 @@ String CSSPrimitiveValue::cssText() const
             text = quoteStringIfNeeded(m_value.string);
             break;
     }
+    m_cachedCSSText = text;
     return text;
 }
 
