@@ -1,3 +1,14 @@
+2010-03-29  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] unit tests don't compile inside of Qt
+
+        https://bugs.webkit.org/show_bug.cgi?id=36756
+
+        * tests/tests.pri: Don't do the target substitution inside Qt and find the sources
+        through VPATH instead of relying on the location of the .pro file exclusively.
+
 2010-03-26  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Antti Koivisto.

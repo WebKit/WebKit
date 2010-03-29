@@ -1,8 +1,9 @@
 TEMPLATE = app
 CONFIG -= app_bundle
 
-TARGET = tst_$$TARGET
-SOURCES += $$_PRO_FILE_PWD_/$${TARGET}.cpp
+VPATH += $$_PRO_FILE_PWD_
+!CONFIG(QTDIR_build):TARGET = tst_$$TARGET
+SOURCES += $${TARGET}.cpp
 INCLUDEPATH += \
     $$PWD \
     $$PWD/../Api
