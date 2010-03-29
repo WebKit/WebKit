@@ -2830,10 +2830,11 @@ contains(DEFINES, ENABLE_SYMBIAN_DIALOG_PROVIDERS) {
     }
 }
 
+include($$PWD/../WebKit/qt/Api/headers.pri)
+HEADERS += $$WEBKIT_API_HEADERS
+
 !CONFIG(QTDIR_build) {
-    include($$PWD/../WebKit/qt/Api/headers.pri)
     exists(../include/QtWebKit/classheaders.pri):include(../include/QtWebKit/classheaders.pri)
-    HEADERS += $$WEBKIT_API_HEADERS
     WEBKIT_INSTALL_HEADERS = $$WEBKIT_API_HEADERS $$WEBKIT_CLASS_HEADERS
 
     !symbian {
