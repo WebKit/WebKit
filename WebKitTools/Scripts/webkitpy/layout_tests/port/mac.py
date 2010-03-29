@@ -77,8 +77,7 @@ class MacPort(base.Port):
         build_drt_command = [self.script_path("build-dumprendertree")]
         if self._options.target == "Debug":
             build_drt_command.append('--debug')
-        if executive.run_command(build_drt_command,
-                                 return_exit_code=True):
+        if executive.run_command(build_drt_command, return_exit_code=True):
             return False
 
         driver_path = self._path_to_driver()
@@ -89,6 +88,12 @@ class MacPort(base.Port):
         image_diff_path = self._path_to_image_diff()
         if not os.path.exists(image_diff_path):
             _log.error("ImageDiff was not found at %s" % image_diff_path)
+            return False
+
+        java_tests_path = os.path.join(self.layout_tests_dir(), "java")
+        build_java = ["/usr/bin/make", "-C", java_tests_path]
+        if executive.run_command(build_java, return_exit_code=True):
+            _log.error("Failed to build Java support files: %s" % build_java)
             return False
 
         return True

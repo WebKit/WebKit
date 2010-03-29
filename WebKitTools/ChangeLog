@@ -1,3 +1,14 @@
+2010-03-29  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        new-run-webkit-tests fails java/lc3 on a clean checkout
+        https://bugs.webkit.org/show_bug.cgi?id=36078
+
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+         - Build the java support files in check_build
+         - Unwrap a line which would still fit under 80col
+
 2010-02-26  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Simon Fraser.
