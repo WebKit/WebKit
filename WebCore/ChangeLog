@@ -1,3 +1,84 @@
+2010-03-26  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Eric Carlson.
+
+        It should be possible to use GStreamer in addition to another media engine
+        https://bugs.webkit.org/show_bug.cgi?id=36654
+
+        Renamed gstreamer player and added a WTF_USE_GSTREAMER
+        define. Made the MediaPlayer register the GStreamer backend only
+        if it's enabled (true by default on WebKitGTK+).
+
+        * GNUmakefile.am:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::installedMediaEngines):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mediaPlayerPrivateMessageCallback):
+        (WebCore::mediaPlayerPrivateSourceChangedCallback):
+        (WebCore::mediaPlayerPrivateVolumeChangedCallback):
+        (WebCore::mediaPlayerPrivateMuteChangedCallback):
+        (WebCore::mediaPlayerPrivateRepaintCallback):
+        (WebCore::MediaPlayerPrivateGStreamer::create):
+        (WebCore::MediaPlayerPrivateGStreamer::registerMediaEngine):
+        (WebCore::MediaPlayerPrivateGStreamer::isAvailable):
+        (WebCore::MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer):
+        (WebCore::MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer):
+        (WebCore::MediaPlayerPrivateGStreamer::load):
+        (WebCore::MediaPlayerPrivateGStreamer::commitLoad):
+        (WebCore::MediaPlayerPrivateGStreamer::changePipelineState):
+        (WebCore::MediaPlayerPrivateGStreamer::prepareToPlay):
+        (WebCore::MediaPlayerPrivateGStreamer::play):
+        (WebCore::MediaPlayerPrivateGStreamer::pause):
+        (WebCore::MediaPlayerPrivateGStreamer::duration):
+        (WebCore::MediaPlayerPrivateGStreamer::currentTime):
+        (WebCore::MediaPlayerPrivateGStreamer::seek):
+        (WebCore::MediaPlayerPrivateGStreamer::startEndPointTimerIfNeeded):
+        (WebCore::MediaPlayerPrivateGStreamer::cancelSeek):
+        (WebCore::MediaPlayerPrivateGStreamer::endPointTimerFired):
+        (WebCore::MediaPlayerPrivateGStreamer::paused):
+        (WebCore::MediaPlayerPrivateGStreamer::seeking):
+        (WebCore::MediaPlayerPrivateGStreamer::naturalSize):
+        (WebCore::MediaPlayerPrivateGStreamer::hasVideo):
+        (WebCore::MediaPlayerPrivateGStreamer::hasAudio):
+        (WebCore::MediaPlayerPrivateGStreamer::setVolume):
+        (WebCore::MediaPlayerPrivateGStreamer::volumeChangedTimerFired):
+        (WebCore::MediaPlayerPrivateGStreamer::volumeChanged):
+        (WebCore::MediaPlayerPrivateGStreamer::setRate):
+        (WebCore::MediaPlayerPrivateGStreamer::networkState):
+        (WebCore::MediaPlayerPrivateGStreamer::readyState):
+        (WebCore::MediaPlayerPrivateGStreamer::buffered):
+        (WebCore::MediaPlayerPrivateGStreamer::processBufferingStats):
+        (WebCore::MediaPlayerPrivateGStreamer::fillTimerFired):
+        (WebCore::MediaPlayerPrivateGStreamer::maxTimeSeekable):
+        (WebCore::MediaPlayerPrivateGStreamer::maxTimeLoaded):
+        (WebCore::MediaPlayerPrivateGStreamer::bytesLoaded):
+        (WebCore::MediaPlayerPrivateGStreamer::totalBytes):
+        (WebCore::MediaPlayerPrivateGStreamer::cancelLoad):
+        (WebCore::MediaPlayerPrivateGStreamer::updateStates):
+        (WebCore::MediaPlayerPrivateGStreamer::mediaLocationChanged):
+        (WebCore::MediaPlayerPrivateGStreamer::loadNextLocation):
+        (WebCore::MediaPlayerPrivateGStreamer::loadStateChanged):
+        (WebCore::MediaPlayerPrivateGStreamer::sizeChanged):
+        (WebCore::MediaPlayerPrivateGStreamer::timeChanged):
+        (WebCore::MediaPlayerPrivateGStreamer::didEnd):
+        (WebCore::MediaPlayerPrivateGStreamer::durationChanged):
+        (WebCore::MediaPlayerPrivateGStreamer::supportsMuting):
+        (WebCore::MediaPlayerPrivateGStreamer::setMuted):
+        (WebCore::MediaPlayerPrivateGStreamer::muteChangedTimerFired):
+        (WebCore::MediaPlayerPrivateGStreamer::muteChanged):
+        (WebCore::MediaPlayerPrivateGStreamer::loadingFailed):
+        (WebCore::MediaPlayerPrivateGStreamer::setSize):
+        (WebCore::MediaPlayerPrivateGStreamer::setVisible):
+        (WebCore::MediaPlayerPrivateGStreamer::repaint):
+        (WebCore::MediaPlayerPrivateGStreamer::paint):
+        (WebCore::MediaPlayerPrivateGStreamer::getSupportedTypes):
+        (WebCore::MediaPlayerPrivateGStreamer::supportsType):
+        (WebCore::MediaPlayerPrivateGStreamer::hasSingleSecurityOrigin):
+        (WebCore::MediaPlayerPrivateGStreamer::supportsFullscreen):
+        (WebCore::MediaPlayerPrivateGStreamer::setPreload):
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+
 2010-03-28  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Sam Weinig.

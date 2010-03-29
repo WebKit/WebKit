@@ -159,7 +159,14 @@ static Vector<MediaPlayerFactory*>& installedMediaEngines()
 
     if (!enginesQueried) {
         enginesQueried = true;
+#if USE(GSTREAMER)
+        MediaPlayerPrivateGStreamer::registerMediaEngine(addMediaEngine);
+#else
+        // FIXME: currently all the MediaEngines are named
+        // MediaPlayerPrivate. This code will need an update when bug
+        // 36663 is adressed.
         MediaPlayerPrivate::registerMediaEngine(addMediaEngine);
+#endif
 
         // register additional engines here
     }

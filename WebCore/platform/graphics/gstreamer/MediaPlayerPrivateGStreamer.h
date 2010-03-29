@@ -48,14 +48,14 @@ gboolean mediaPlayerPrivateMessageCallback(GstBus* bus, GstMessage* message, gpo
 void mediaPlayerPrivateVolumeChangedCallback(GObject* element, GParamSpec* pspec, gpointer data);
 void mediaPlayerPrivateSourceChangedCallback(GObject* element, GParamSpec* pspec, gpointer data);
 
-class MediaPlayerPrivate : public MediaPlayerPrivateInterface {
+class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
         friend gboolean mediaPlayerPrivateMessageCallback(GstBus* bus, GstMessage* message, gpointer data);
-        friend void mediaPlayerPrivateRepaintCallback(WebKitVideoSink*, GstBuffer* buffer, MediaPlayerPrivate* playerPrivate);
+        friend void mediaPlayerPrivateRepaintCallback(WebKitVideoSink*, GstBuffer* buffer, MediaPlayerPrivateGStreamer* playerPrivate);
         friend void mediaPlayerPrivateSourceChangedCallback(GObject* element, GParamSpec* pspec, gpointer data);
 
         public:
             static void registerMediaEngine(MediaEngineRegistrar);
-            ~MediaPlayerPrivate();
+            ~MediaPlayerPrivateGStreamer();
 
             IntSize naturalSize() const;
             bool hasVideo() const;
@@ -81,15 +81,15 @@ class MediaPlayerPrivate : public MediaPlayerPrivateInterface {
 
             void setVolume(float);
             void volumeChanged();
-            void volumeChangedTimerFired(Timer<MediaPlayerPrivate>*);
+            void volumeChangedTimerFired(Timer<MediaPlayerPrivateGStreamer>*);
 
             bool supportsMuting() const;
             void setMuted(bool);
             void muteChanged();
-            void muteChangedTimerFired(Timer<MediaPlayerPrivate>*);
+            void muteChangedTimerFired(Timer<MediaPlayerPrivateGStreamer>*);
 
             void setPreload(MediaPlayer::Preload);
-            void fillTimerFired(Timer<MediaPlayerPrivate>*);
+            void fillTimerFired(Timer<MediaPlayerPrivateGStreamer>*);
 
             MediaPlayer::NetworkState networkState() const;
             MediaPlayer::ReadyState readyState() const;
@@ -121,7 +121,7 @@ class MediaPlayerPrivate : public MediaPlayerPrivateInterface {
             bool pipelineReset() const { return m_resetPipeline; }
 
         private:
-            MediaPlayerPrivate(MediaPlayer*);
+            MediaPlayerPrivateGStreamer(MediaPlayer*);
             static MediaPlayerPrivateInterface* create(MediaPlayer* player);
 
             static void getSupportedTypes(HashSet<String>&);
@@ -130,7 +130,7 @@ class MediaPlayerPrivate : public MediaPlayerPrivateInterface {
 
             void updateStates();
             void cancelSeek();
-            void endPointTimerFired(Timer<MediaPlayerPrivate>*);
+            void endPointTimerFired(Timer<MediaPlayerPrivateGStreamer>*);
             float maxTimeLoaded() const;
             void startEndPointTimerIfNeeded();
 
@@ -164,7 +164,7 @@ class MediaPlayerPrivate : public MediaPlayerPrivateInterface {
             bool m_errorOccured;
             gfloat m_mediaDuration;
             bool m_startedBuffering;
-            Timer<MediaPlayerPrivate> m_fillTimer;
+            Timer<MediaPlayerPrivateGStreamer> m_fillTimer;
             float m_maxTimeLoaded;
             int m_bufferingPercentage;
             MediaPlayer::Preload m_preload;

@@ -93,7 +93,7 @@ gboolean mediaPlayerPrivateMessageCallback(GstBus* bus, GstMessage* message, gpo
     GOwnPtr<GError> err;
     GOwnPtr<gchar> debug;
     MediaPlayer::NetworkState error;
-    MediaPlayerPrivate* mp = reinterpret_cast<MediaPlayerPrivate*>(data);
+    MediaPlayerPrivateGStreamer* mp = reinterpret_cast<MediaPlayerPrivateGStreamer*>(data);
     bool issueError = true;
     bool attemptNextLocation = false;
     GstElement* pipeline = mp->pipeline();
@@ -163,7 +163,7 @@ gboolean mediaPlayerPrivateMessageCallback(GstBus* bus, GstMessage* message, gpo
 
 void mediaPlayerPrivateSourceChangedCallback(GObject *object, GParamSpec *pspec, gpointer data)
 {
-    MediaPlayerPrivate* mp = reinterpret_cast<MediaPlayerPrivate*>(data);
+    MediaPlayerPrivateGStreamer* mp = reinterpret_cast<MediaPlayerPrivateGStreamer*>(data);
     GOwnPtr<GstElement> element;
 
     g_object_get(mp->m_playBin, "source", &element.outPtr(), NULL);
@@ -180,14 +180,14 @@ void mediaPlayerPrivateSourceChangedCallback(GObject *object, GParamSpec *pspec,
 void mediaPlayerPrivateVolumeChangedCallback(GObject *element, GParamSpec *pspec, gpointer data)
 {
     // This is called when playbin receives the notify::volume signal.
-    MediaPlayerPrivate* mp = reinterpret_cast<MediaPlayerPrivate*>(data);
+    MediaPlayerPrivateGStreamer* mp = reinterpret_cast<MediaPlayerPrivateGStreamer*>(data);
     mp->volumeChanged();
 }
 
 void mediaPlayerPrivateMuteChangedCallback(GObject *element, GParamSpec *pspec, gpointer data)
 {
     // This is called when playbin receives the notify::mute signal.
-    MediaPlayerPrivate* mp = reinterpret_cast<MediaPlayerPrivate*>(data);
+    MediaPlayerPrivateGStreamer* mp = reinterpret_cast<MediaPlayerPrivateGStreamer*>(data);
     mp->muteChanged();
 }
 
@@ -219,19 +219,19 @@ static float playbackPosition(GstElement* playbin)
 }
 
 
-void mediaPlayerPrivateRepaintCallback(WebKitVideoSink*, GstBuffer *buffer, MediaPlayerPrivate* playerPrivate)
+void mediaPlayerPrivateRepaintCallback(WebKitVideoSink*, GstBuffer *buffer, MediaPlayerPrivateGStreamer* playerPrivate)
 {
     g_return_if_fail(GST_IS_BUFFER(buffer));
     gst_buffer_replace(&playerPrivate->m_buffer, buffer);
     playerPrivate->repaint();
 }
 
-MediaPlayerPrivateInterface* MediaPlayerPrivate::create(MediaPlayer* player)
+MediaPlayerPrivateInterface* MediaPlayerPrivateGStreamer::create(MediaPlayer* player)
 {
-    return new MediaPlayerPrivate(player);
+    return new MediaPlayerPrivateGStreamer(player);
 }
 
-void MediaPlayerPrivate::registerMediaEngine(MediaEngineRegistrar registrar)
+void MediaPlayerPrivateGStreamer::registerMediaEngine(MediaEngineRegistrar registrar)
 {
     if (isAvailable())
         registrar(create, getSupportedTypes, supportsType);
@@ -259,7 +259,7 @@ static bool doGstInit()
     return gstInitialized;
 }
 
-bool MediaPlayerPrivate::isAvailable()
+bool MediaPlayerPrivateGStreamer::isAvailable()
 {
     if (!doGstInit())
         return false;
@@ -272,7 +272,7 @@ bool MediaPlayerPrivate::isAvailable()
     return false;
 }
 
-MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
+MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
     : m_player(player)
     , m_playBin(0)
     , m_videoSink(0)
@@ -296,7 +296,7 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     , m_errorOccured(false)
     , m_mediaDuration(0)
     , m_startedBuffering(false)
-    , m_fillTimer(this, &MediaPlayerPrivate::fillTimerFired)
+    , m_fillTimer(this, &MediaPlayerPrivateGStreamer::fillTimerFired)
     , m_maxTimeLoaded(0)
     , m_bufferingPercentage(0)
     , m_preload(MediaPlayer::Auto)
@@ -307,7 +307,7 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
         createGSTPlayBin();
 }
 
-MediaPlayerPrivate::~MediaPlayerPrivate()
+MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
 {
     if (m_fillTimer.isActive())
         m_fillTimer.stop();
@@ -342,7 +342,7 @@ MediaPlayerPrivate::~MediaPlayerPrivate()
     }
 }
 
-void MediaPlayerPrivate::load(const String& url)
+void MediaPlayerPrivateGStreamer::load(const String& url)
 {
     g_object_set(m_playBin, "uri", url.utf8().data(), NULL);
 
@@ -357,7 +357,7 @@ void MediaPlayerPrivate::load(const String& url)
     commitLoad();
 }
 
-void MediaPlayerPrivate::commitLoad()
+void MediaPlayerPrivateGStreamer::commitLoad()
 {
     // GStreamer needs to have the pipeline set to a paused state to
     // start providing anything useful.
@@ -374,7 +374,7 @@ void MediaPlayerPrivate::commitLoad()
     }
 }
 
-bool MediaPlayerPrivate::changePipelineState(GstState newState)
+bool MediaPlayerPrivateGStreamer::changePipelineState(GstState newState)
 {
     ASSERT(newState == GST_STATE_PLAYING || newState == GST_STATE_PAUSED);
 
@@ -393,7 +393,7 @@ bool MediaPlayerPrivate::changePipelineState(GstState newState)
     return true;
 }
 
-void MediaPlayerPrivate::prepareToPlay()
+void MediaPlayerPrivateGStreamer::prepareToPlay()
 {
     if (m_delayingLoad) {
         m_delayingLoad = false;
@@ -401,19 +401,19 @@ void MediaPlayerPrivate::prepareToPlay()
     }
 }
 
-void MediaPlayerPrivate::play()
+void MediaPlayerPrivateGStreamer::play()
 {
     if (changePipelineState(GST_STATE_PLAYING))
         LOG_VERBOSE(Media, "Play");
 }
 
-void MediaPlayerPrivate::pause()
+void MediaPlayerPrivateGStreamer::pause()
 {
     if (changePipelineState(GST_STATE_PAUSED))
         LOG_VERBOSE(Media, "Pause");
 }
 
-float MediaPlayerPrivate::duration() const
+float MediaPlayerPrivateGStreamer::duration() const
 {
     if (!m_playBin)
         return 0.0;
@@ -442,7 +442,7 @@ float MediaPlayerPrivate::duration() const
     // FIXME: handle 3.14.9.5 properly
 }
 
-float MediaPlayerPrivate::currentTime() const
+float MediaPlayerPrivateGStreamer::currentTime() const
 {
     if (!m_playBin)
         return 0;
@@ -457,7 +457,7 @@ float MediaPlayerPrivate::currentTime() const
 
 }
 
-void MediaPlayerPrivate::seek(float time)
+void MediaPlayerPrivateGStreamer::seek(float time)
 {
     // Avoid useless seeking.
     if (time == playbackPosition(m_playBin))
@@ -483,33 +483,33 @@ void MediaPlayerPrivate::seek(float time)
     }
 }
 
-void MediaPlayerPrivate::startEndPointTimerIfNeeded()
+void MediaPlayerPrivateGStreamer::startEndPointTimerIfNeeded()
 {
     notImplemented();
 }
 
-void MediaPlayerPrivate::cancelSeek()
+void MediaPlayerPrivateGStreamer::cancelSeek()
 {
     notImplemented();
 }
 
-void MediaPlayerPrivate::endPointTimerFired(Timer<MediaPlayerPrivate>*)
+void MediaPlayerPrivateGStreamer::endPointTimerFired(Timer<MediaPlayerPrivateGStreamer>*)
 {
     notImplemented();
 }
 
-bool MediaPlayerPrivate::paused() const
+bool MediaPlayerPrivateGStreamer::paused() const
 {
     return m_paused;
 }
 
-bool MediaPlayerPrivate::seeking() const
+bool MediaPlayerPrivateGStreamer::seeking() const
 {
     return m_seeking;
 }
 
 // Returns the size of the video
-IntSize MediaPlayerPrivate::naturalSize() const
+IntSize MediaPlayerPrivateGStreamer::naturalSize() const
 {
     if (!hasVideo())
         return IntSize();
@@ -571,7 +571,7 @@ IntSize MediaPlayerPrivate::naturalSize() const
     return IntSize(width, height);
 }
 
-bool MediaPlayerPrivate::hasVideo() const
+bool MediaPlayerPrivateGStreamer::hasVideo() const
 {
     gint currentVideo = -1;
     if (m_playBin)
@@ -579,7 +579,7 @@ bool MediaPlayerPrivate::hasVideo() const
     return currentVideo > -1;
 }
 
-bool MediaPlayerPrivate::hasAudio() const
+bool MediaPlayerPrivateGStreamer::hasAudio() const
 {
     gint currentAudio = -1;
     if (m_playBin)
@@ -587,7 +587,7 @@ bool MediaPlayerPrivate::hasAudio() const
     return currentAudio > -1;
 }
 
-void MediaPlayerPrivate::setVolume(float volume)
+void MediaPlayerPrivateGStreamer::setVolume(float volume)
 {
     if (!m_playBin)
         return;
@@ -595,20 +595,20 @@ void MediaPlayerPrivate::setVolume(float volume)
     g_object_set(m_playBin, "volume", static_cast<double>(volume), NULL);
 }
 
-void MediaPlayerPrivate::volumeChangedTimerFired(Timer<MediaPlayerPrivate>*)
+void MediaPlayerPrivateGStreamer::volumeChangedTimerFired(Timer<MediaPlayerPrivateGStreamer>*)
 {
     double volume;
     g_object_get(m_playBin, "volume", &volume, NULL);
     m_player->volumeChanged(static_cast<float>(volume));
 }
 
-void MediaPlayerPrivate::volumeChanged()
+void MediaPlayerPrivateGStreamer::volumeChanged()
 {
-    Timer<MediaPlayerPrivate> volumeChangedTimer(this, &MediaPlayerPrivate::volumeChangedTimerFired);
+    Timer<MediaPlayerPrivateGStreamer> volumeChangedTimer(this, &MediaPlayerPrivateGStreamer::volumeChangedTimerFired);
     volumeChangedTimer.startOneShot(0);
 }
 
-void MediaPlayerPrivate::setRate(float rate)
+void MediaPlayerPrivateGStreamer::setRate(float rate)
 {
     // Avoid useless playback rate update.
     if (m_playbackRate == rate)
@@ -661,17 +661,17 @@ void MediaPlayerPrivate::setRate(float rate)
         g_object_set(m_playBin, "mute", mute, NULL);
 }
 
-MediaPlayer::NetworkState MediaPlayerPrivate::networkState() const
+MediaPlayer::NetworkState MediaPlayerPrivateGStreamer::networkState() const
 {
     return m_networkState;
 }
 
-MediaPlayer::ReadyState MediaPlayerPrivate::readyState() const
+MediaPlayer::ReadyState MediaPlayerPrivateGStreamer::readyState() const
 {
     return m_readyState;
 }
 
-PassRefPtr<TimeRanges> MediaPlayerPrivate::buffered() const
+PassRefPtr<TimeRanges> MediaPlayerPrivateGStreamer::buffered() const
 {
     RefPtr<TimeRanges> timeRanges = TimeRanges::create();
     float loaded = maxTimeLoaded();
@@ -680,7 +680,7 @@ PassRefPtr<TimeRanges> MediaPlayerPrivate::buffered() const
     return timeRanges.release();
 }
 
-void MediaPlayerPrivate::processBufferingStats(GstMessage* message)
+void MediaPlayerPrivateGStreamer::processBufferingStats(GstMessage* message)
 {
     // This is the immediate buffering that needs to happen so we have
     // enough to play right now.
@@ -711,7 +711,7 @@ void MediaPlayerPrivate::processBufferingStats(GstMessage* message)
     }
 }
 
-void MediaPlayerPrivate::fillTimerFired(Timer<MediaPlayerPrivate>*)
+void MediaPlayerPrivateGStreamer::fillTimerFired(Timer<MediaPlayerPrivateGStreamer>*)
 {
     GstQuery* query = gst_query_new_buffering(GST_FORMAT_PERCENT);
 
@@ -757,7 +757,7 @@ void MediaPlayerPrivate::fillTimerFired(Timer<MediaPlayerPrivate>*)
     updateStates();
 }
 
-float MediaPlayerPrivate::maxTimeSeekable() const
+float MediaPlayerPrivateGStreamer::maxTimeSeekable() const
 {
     if (m_errorOccured)
         return 0.0;
@@ -770,7 +770,7 @@ float MediaPlayerPrivate::maxTimeSeekable() const
     return maxTimeLoaded();
 }
 
-float MediaPlayerPrivate::maxTimeLoaded() const
+float MediaPlayerPrivateGStreamer::maxTimeLoaded() const
 {
     if (m_errorOccured)
         return 0.0;
@@ -782,7 +782,7 @@ float MediaPlayerPrivate::maxTimeLoaded() const
     return loaded;
 }
 
-unsigned MediaPlayerPrivate::bytesLoaded() const
+unsigned MediaPlayerPrivateGStreamer::bytesLoaded() const
 {
     if (!m_playBin)
         return 0;
@@ -795,7 +795,7 @@ unsigned MediaPlayerPrivate::bytesLoaded() const
     return loaded;
 }
 
-unsigned MediaPlayerPrivate::totalBytes() const
+unsigned MediaPlayerPrivateGStreamer::totalBytes() const
 {
     if (!m_source)
         return 0;
@@ -811,7 +811,7 @@ unsigned MediaPlayerPrivate::totalBytes() const
     return length;
 }
 
-void MediaPlayerPrivate::cancelLoad()
+void MediaPlayerPrivateGStreamer::cancelLoad()
 {
     if (m_networkState < MediaPlayer::Loading || m_networkState == MediaPlayer::Loaded)
         return;
@@ -820,7 +820,7 @@ void MediaPlayerPrivate::cancelLoad()
         gst_element_set_state(m_playBin, GST_STATE_NULL);
 }
 
-void MediaPlayerPrivate::updateStates()
+void MediaPlayerPrivateGStreamer::updateStates()
 {
     if (!m_playBin)
         return;
@@ -988,7 +988,7 @@ void MediaPlayerPrivate::updateStates()
     }
 }
 
-void MediaPlayerPrivate::mediaLocationChanged(GstMessage* message)
+void MediaPlayerPrivateGStreamer::mediaLocationChanged(GstMessage* message)
 {
     if (m_mediaLocations)
         gst_structure_free(m_mediaLocations);
@@ -1007,7 +1007,7 @@ void MediaPlayerPrivate::mediaLocationChanged(GstMessage* message)
     }
 }
 
-bool MediaPlayerPrivate::loadNextLocation()
+bool MediaPlayerPrivateGStreamer::loadNextLocation()
 {
     if (!m_mediaLocations)
         return false;
@@ -1087,23 +1087,23 @@ bool MediaPlayerPrivate::loadNextLocation()
 
 }
 
-void MediaPlayerPrivate::loadStateChanged()
+void MediaPlayerPrivateGStreamer::loadStateChanged()
 {
     updateStates();
 }
 
-void MediaPlayerPrivate::sizeChanged()
+void MediaPlayerPrivateGStreamer::sizeChanged()
 {
     notImplemented();
 }
 
-void MediaPlayerPrivate::timeChanged()
+void MediaPlayerPrivateGStreamer::timeChanged()
 {
     updateStates();
     m_player->timeChanged();
 }
 
-void MediaPlayerPrivate::didEnd()
+void MediaPlayerPrivateGStreamer::didEnd()
 {
     // EOS was reached but in case of reverse playback the position is
     // not always 0. So to not confuse the HTMLMediaElement we
@@ -1119,7 +1119,7 @@ void MediaPlayerPrivate::didEnd()
     timeChanged();
 }
 
-void MediaPlayerPrivate::durationChanged()
+void MediaPlayerPrivateGStreamer::durationChanged()
 {
     // Reset cached media duration
     m_mediaDuration = 0;
@@ -1147,12 +1147,12 @@ void MediaPlayerPrivate::durationChanged()
     m_player->durationChanged();
 }
 
-bool MediaPlayerPrivate::supportsMuting() const
+bool MediaPlayerPrivateGStreamer::supportsMuting() const
 {
     return true;
 }
 
-void MediaPlayerPrivate::setMuted(bool muted)
+void MediaPlayerPrivateGStreamer::setMuted(bool muted)
 {
     if (!m_playBin)
         return;
@@ -1160,20 +1160,20 @@ void MediaPlayerPrivate::setMuted(bool muted)
     g_object_set(m_playBin, "mute", muted, NULL);
 }
 
-void MediaPlayerPrivate::muteChangedTimerFired(Timer<MediaPlayerPrivate>*)
+void MediaPlayerPrivateGStreamer::muteChangedTimerFired(Timer<MediaPlayerPrivateGStreamer>*)
 {
     gboolean muted;
     g_object_get(m_playBin, "mute", &muted, NULL);
     m_player->muteChanged(static_cast<bool>(muted));
 }
 
-void MediaPlayerPrivate::muteChanged()
+void MediaPlayerPrivateGStreamer::muteChanged()
 {
-    Timer<MediaPlayerPrivate> muteChangedTimer(this, &MediaPlayerPrivate::muteChangedTimerFired);
+    Timer<MediaPlayerPrivateGStreamer> muteChangedTimer(this, &MediaPlayerPrivateGStreamer::muteChangedTimerFired);
     muteChangedTimer.startOneShot(0);
 }
 
-void MediaPlayerPrivate::loadingFailed(MediaPlayer::NetworkState error)
+void MediaPlayerPrivateGStreamer::loadingFailed(MediaPlayer::NetworkState error)
 {
     m_errorOccured = true;
     if (m_networkState != error) {
@@ -1186,21 +1186,21 @@ void MediaPlayerPrivate::loadingFailed(MediaPlayer::NetworkState error)
     }
 }
 
-void MediaPlayerPrivate::setSize(const IntSize& size)
+void MediaPlayerPrivateGStreamer::setSize(const IntSize& size)
 {
     m_size = size;
 }
 
-void MediaPlayerPrivate::setVisible(bool visible)
+void MediaPlayerPrivateGStreamer::setVisible(bool visible)
 {
 }
 
-void MediaPlayerPrivate::repaint()
+void MediaPlayerPrivateGStreamer::repaint()
 {
     m_player->repaint();
 }
 
-void MediaPlayerPrivate::paint(GraphicsContext* context, const IntRect& rect)
+void MediaPlayerPrivateGStreamer::paint(GraphicsContext* context, const IntRect& rect)
 {
     if (context->paintingDisabled())
         return;
@@ -1321,12 +1321,12 @@ static HashSet<String> mimeTypeCache()
     return cache;
 }
 
-void MediaPlayerPrivate::getSupportedTypes(HashSet<String>& types)
+void MediaPlayerPrivateGStreamer::getSupportedTypes(HashSet<String>& types)
 {
     types = mimeTypeCache();
 }
 
-MediaPlayer::SupportsType MediaPlayerPrivate::supportsType(const String& type, const String& codecs)
+MediaPlayer::SupportsType MediaPlayerPrivateGStreamer::supportsType(const String& type, const String& codecs)
 {
     if (type.isNull() || type.isEmpty())
         return MediaPlayer::IsNotSupported;
@@ -1337,17 +1337,17 @@ MediaPlayer::SupportsType MediaPlayerPrivate::supportsType(const String& type, c
     return MediaPlayer::IsNotSupported;
 }
 
-bool MediaPlayerPrivate::hasSingleSecurityOrigin() const
+bool MediaPlayerPrivateGStreamer::hasSingleSecurityOrigin() const
 {
     return true;
 }
 
-bool MediaPlayerPrivate::supportsFullscreen() const
+bool MediaPlayerPrivateGStreamer::supportsFullscreen() const
 {
     return true;
 }
 
-void MediaPlayerPrivate::setPreload(MediaPlayer::Preload preload)
+void MediaPlayerPrivateGStreamer::setPreload(MediaPlayer::Preload preload)
 {
     ASSERT(m_playBin);
 
@@ -1366,7 +1366,7 @@ void MediaPlayerPrivate::setPreload(MediaPlayer::Preload preload)
     }
 }
 
-void MediaPlayerPrivate::createGSTPlayBin()
+void MediaPlayerPrivateGStreamer::createGSTPlayBin()
 {
     ASSERT(!m_playBin);
     m_playBin = gst_element_factory_make("playbin2", "play");
