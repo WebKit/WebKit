@@ -1,3 +1,13 @@
+2010-03-29  Thomas Zander  <t.zander@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36742
+
+        gcc for Symbian doesn't support gcc extensions like atomicity.h - disable
+
+        * wtf/Threading.h: also detect os symbian
+
 2010-03-28  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Simon Hausmann.
