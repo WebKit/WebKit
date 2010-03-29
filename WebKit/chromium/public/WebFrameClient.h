@@ -264,7 +264,7 @@ public:
     virtual bool allowScript(WebFrame*, bool enabledPerSettings) { return enabledPerSettings; }
 
     // Controls whether access to Web Databases is allowed for this frame.
-    virtual bool allowDatabase(const WebSecurityOrigin&, const WebString&, const WebString&, unsigned long) { return true; }
+    virtual bool allowDatabase(WebFrame*, const WebString& name, const WebString& displayName, unsigned long estimatedSize) { return true; }
 
     // Notifies the client that the frame would have executed script if script were enabled.
     virtual void didNotAllowScript(WebFrame*) { }

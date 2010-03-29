@@ -1,3 +1,15 @@
+2010-03-29  Jochen Eisinger  <jochen@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Pass a WebFrame to WebFrameClient::allowDatabase instead of a WebSecurityOrigin
+        https://bugs.webkit.org/show_bug.cgi?id=36743
+
+        * public/WebFrameClient.h:
+        (WebKit::WebFrameClient::allowDatabase):
+        * src/DatabaseObserver.cpp:
+        (WebCore::DatabaseObserver::canEstablishDatabase):
+
 2010-03-24  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Fisher.

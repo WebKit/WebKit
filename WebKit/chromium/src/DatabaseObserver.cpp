@@ -49,11 +49,12 @@ namespace WebCore {
 
 bool DatabaseObserver::canEstablishDatabase(ScriptExecutionContext* scriptExecutionContext, const String& name, const String& displayName, unsigned long estimatedSize)
 {
+    ASSERT(scriptExecutionContext->isContextThread());
     ASSERT(scriptExecutionContext->isDocument() || scriptExecutionContext->isWorkerContext());
     if (scriptExecutionContext->isDocument()) {
         Document* document = static_cast<Document*>(scriptExecutionContext);
         WebFrameImpl* webFrame = WebFrameImpl::fromFrame(document->frame());
-        return webFrame->client()->allowDatabase(WebSecurityOrigin(scriptExecutionContext->securityOrigin()), name, displayName, estimatedSize);
+        return webFrame->client()->allowDatabase(webFrame, name, displayName, estimatedSize);
     } else {
         WorkerContext* worker = static_cast<WorkerContext*>(scriptExecutionContext);
         WorkerLoaderProxy* workerLoaderProxy = &worker->thread()->workerLoaderProxy();
