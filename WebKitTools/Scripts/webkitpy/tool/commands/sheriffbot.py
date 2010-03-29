@@ -29,6 +29,7 @@
 import os
 
 from webkitpy.common.system.deprecated_logging import log
+from webkitpy.common.checkout.changelog import view_source_url
 from webkitpy.common.config.ports import WebKitPort
 from webkitpy.tool.bot.sheriffircbot import SheriffIRCBot
 from webkitpy.tool.commands.queues import AbstractQueue
@@ -50,6 +51,7 @@ class SheriffBot(AbstractQueue):
         return os.path.join("%s-logs" % self.name, "%s.log" % failure_info["svn_revision"])
 
     def next_work_item(self):
+        self._irc_bot.process_pending_messages()
         self.update()
         for svn_revision, builders in self.tool.buildbot.revisions_causing_failures().items():
             if self.tool.status_server.svn_revision(svn_revision):
@@ -77,10 +79,10 @@ class SheriffBot(AbstractQueue):
         ]
         irc_nicknames = sorted(set([party.irc_nickname for party in responsible_parties if party and party.irc_nickname]))
         irc_prefix = ": " if irc_nicknames else ""
-        irc_message = "%s%sr%s appears to have broken %s" % (
+        irc_message = "%s%s%s appears to have broken %s" % (
             ", ".join(irc_nicknames),
             irc_prefix,
-            svn_revision,
+            view_source_url(svn_revision),
             ", ".join([builder.name() for builder in builders]))
 
         self.tool.irc().post(irc_message)

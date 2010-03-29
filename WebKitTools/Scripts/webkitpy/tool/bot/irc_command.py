@@ -26,6 +26,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from webkitpy.common.checkout.changelog import view_source_url
+
 # FIXME: Merge with Command?
 class IRCCommand(object):
     def execute(self, args, tool):
@@ -34,7 +36,7 @@ class IRCCommand(object):
 
 class LastGreenRevision(IRCCommand):
     def execute(self, args, tool):
-        return tool.buildbot.last_green_revision()
+        return view_source_url(tool.buildbot.last_green_revision())
 
 
 class Hi(IRCCommand):

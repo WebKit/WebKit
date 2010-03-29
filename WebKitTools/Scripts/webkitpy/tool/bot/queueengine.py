@@ -139,5 +139,5 @@ class QueueEngine:
 
     def _sleep(self, message):
         log(self._sleep_message(message))
-        if self._wakeup_event.wait(self.seconds_to_sleep):
-            self._wakeup_event.clear()
+        self._wakeup_event.wait(self.seconds_to_sleep)
+        self._wakeup_event.clear()
