@@ -1,3 +1,15 @@
+2010-03-29  Thomas Zander  <t.zander@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36745
+
+        [Qt] Fix def file builds with Qt 4.7.
+
+        Switched to using DEF_FILE, which is the official variable.
+
+        * WebCore.pro: Use DEF_FILE
+
 2010-03-24  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Fisher.

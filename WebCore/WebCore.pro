@@ -2932,6 +2932,8 @@ SOURCES += \
 symbian {
     shared {
         contains(CONFIG, def_files) {
+            DEF_FILE=../WebKit/qt/symbian
+            ; defFilePath is for Qt4.6 compatibility
             defFilePath=../WebKit/qt/symbian
         } else {
             MMP_RULES += EXPORTUNFROZEN
