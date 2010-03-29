@@ -1,0 +1,17 @@
+CONSOLE MESSAGE: line 5: 2010
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/inspector-enabled/resources/console-log-frame-after-navigation.html from frame with URL http://127.0.0.1:8000/inspector-enabled/resources/console-log-frame-before-navigation.html. Domains, protocols and ports must match.
+
+Tests that Web Inspector won't crash if there are messages written to console from a frame which has already navigated to a page from a different domain.
+
+
+Showing Web Inspector...
+Received console messages:
+Message[0]:
+URL: 
+Message: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/inspector-enabled/resources/console-log-frame-after-navigation.html from frame with URL http://127.0.0.1:8000/inspector-enabled/resources/console-log-frame-before-navigation.html. Domains, protocols and ports must match.
+
+Message[1]:
+URL: http://127.0.0.1:8000/inspector-enabled/resources/console-log-frame-before-navigation.html
+Message: 2010
+TEST COMPLETE.
+

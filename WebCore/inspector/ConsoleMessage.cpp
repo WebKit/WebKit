@@ -95,7 +95,7 @@ void ConsoleMessage::addToFrontend(InspectorFrontend* frontend, InjectedScriptHo
     jsonObj.set("repeatCount", static_cast<int>(m_repeatCount));
     Vector<RefPtr<SerializedScriptValue> > arguments;
     if (!m_arguments.isEmpty()) {
-        InjectedScript injectedScript = injectedScriptHost->injectedScriptFor(m_scriptState);
+        InjectedScript injectedScript = injectedScriptHost->injectedScriptFor(m_scriptState.get());
         for (unsigned i = 0; i < m_arguments.size(); ++i) {
             RefPtr<SerializedScriptValue> serializedValue = injectedScript.wrapForConsole(m_arguments[i]);
             arguments.append(serializedValue);

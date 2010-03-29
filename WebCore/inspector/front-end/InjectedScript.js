@@ -85,7 +85,7 @@ InjectedScript.dispatch = function(methodName, args, callId)
         argsArray.splice(0, 0, callId);  // Methods that run asynchronously have a call back id parameter.
     var result = InjectedScript[methodName].apply(InjectedScript, argsArray);
     if (typeof result === "undefined") {
-        InjectedScript._window().console.error("Web Inspector error: InjectedScript.%s returns undefined", methodName);
+        inspectedWindow.console.error("Web Inspector error: InjectedScript.%s returns undefined", methodName);
         result = null;
     }
     return result;
@@ -166,13 +166,13 @@ InjectedScript.setPropertyValue = function(objectProxy, propertyName, expression
         // There is a regression introduced here: eval is now happening against global object,
         // not call frame while on a breakpoint.
         // TODO: bring evaluation against call frame back.
-        var result = InjectedScript._window().eval("(" + expression + ")");
+        var result = inspectedWindow.eval("(" + expression + ")");
         // Store the result in the property.
         object[propertyName] = result;
         return true;
     } catch(e) {
         try {
-            var result = InjectedScript._window().eval("\"" + InjectedScript._escapeCharacters(expression, "\"") + "\"");
+            var result = inspectedWindow.eval("\"" + InjectedScript._escapeCharacters(expression, "\"") + "\"");
             object[propertyName] = result;
             return true;
         } catch(e) {
@@ -244,12 +244,12 @@ InjectedScript.getCompletions = function(expression, includeInspectorCommandLine
         } else {
             if (!expression)
                 expression = "this";
-            expressionResult = InjectedScript._evaluateOn(InjectedScript._window().eval, InjectedScript._window(), expression);
+            expressionResult = InjectedScript._evaluateOn(inspectedWindow.eval, inspectedWindow, expression);
         }
         if (typeof expressionResult == "object")
             InjectedScript._populatePropertyNames(expressionResult, props);
         if (includeInspectorCommandLineAPI)
-            for (var prop in InjectedScript._window().console._inspectorCommandLineAPI)
+            for (var prop in inspectedWindow.console._inspectorCommandLineAPI)
                 if (prop.charAt(0) !== '_')
                     props[prop] = true;
     } catch(e) {
@@ -259,7 +259,7 @@ InjectedScript.getCompletions = function(expression, includeInspectorCommandLine
 
 InjectedScript.evaluate = function(expression, objectGroup)
 {
-    return InjectedScript._evaluateAndWrap(InjectedScript._window().eval, InjectedScript._window(), expression, objectGroup);
+    return InjectedScript._evaluateAndWrap(inspectedWindow.eval, inspectedWindow, expression, objectGroup);
 }
 
 InjectedScript._evaluateAndWrap = function(evalFunction, object, expression, objectGroup, dontUseCommandLineAPI)
@@ -303,8 +303,8 @@ InjectedScript.addInspectedNode = function(nodeId)
     if (!node)
         return false;
 
-    InjectedScript._ensureCommandLineAPIInstalled(InjectedScript._window().eval, InjectedScript._window());
-    var inspectedNodes = InjectedScript._window().console._inspectorCommandLineAPI._inspectedNodes;
+    InjectedScript._ensureCommandLineAPIInstalled(inspectedWindow.eval, inspectedWindow);
+    var inspectedNodes = inspectedWindow.console._inspectorCommandLineAPI._inspectedNodes;
     inspectedNodes.unshift(node);
     if (inspectedNodes.length >= 5)
         inspectedNodes.pop();
@@ -465,7 +465,7 @@ InjectedScript.performSearch = function(whitespaceTrimmedQuery, runSynchronously
             delete InjectedScript._searchResults[i][searchResultsProperty];
     }
 
-    const mainFrameDocument = InjectedScript._window().document;
+    const mainFrameDocument = inspectedWindow.document;
     const searchDocuments = [mainFrameDocument];
     var searchFunctions;
     if (tagNameQuery && startTagFound && endTagFound)
@@ -561,7 +561,7 @@ InjectedScript.openInInspectedWindow = function(url)
 {
     // Don't call window.open on wrapper - popup blocker mutes it.
     // URIs should have no double quotes.
-    InjectedScript._window().eval("window.open(\"" + url + "\")");
+    inspectedWindow.eval("window.open(\"" + url + "\")");
     return true;
 }
 
@@ -723,13 +723,6 @@ InjectedScript._resolveObject = function(objectProxy)
     return object;
 }
 
-InjectedScript._window = function()
-{
-    // TODO: replace with 'return window;' once this script is injected into
-    // the page's context.
-    return inspectedWindow;
-}
-
 InjectedScript._nodeForId = function(nodeId)
 {
     if (!nodeId)
@@ -826,9 +819,9 @@ InjectedScript.CallFrameProxy.prototype = {
                     scopeObjectProxy.isClosure = true;
                 foundLocalScope = true;
                 scopeObjectProxy.isLocal = true;
-            } else if (foundLocalScope && scopeObject instanceof InjectedScript._window().Element)
+            } else if (foundLocalScope && scopeObject instanceof inspectedWindow.Element)
                 scopeObjectProxy.isElement = true;
-            else if (foundLocalScope && scopeObject instanceof InjectedScript._window().Document)
+            else if (foundLocalScope && scopeObject instanceof inspectedWindow.Document)
                 scopeObjectProxy.isDocument = true;
             else if (!foundLocalScope)
                 scopeObjectProxy.isWithBlock = true;
@@ -893,35 +886,38 @@ InjectedScript._type = function(obj)
     if (obj === null)
         return "null";
 
-    // FIXME(33716): typeof document.all is always 'undefined'.
-    if (InjectedScript._isHTMLAllCollection(obj))
-        return "array";
-
     var type = typeof obj;
-    if (type !== "object" && type !== "function")
+    if (type !== "object" && type !== "function") {
+        // FIXME(33716): typeof document.all is always 'undefined'.
+        if (InjectedScript._isHTMLAllCollection(obj))
+            return "array";
+        return type;
+    }
+
+    // If owning frame has navigated to somewhere else window properties will be undefined.
+    // In this case just return result of the typeof.
+    if (!inspectedWindow.document)
         return type;
 
-    var win = InjectedScript._window();
-
-    if (obj instanceof win.Node)
+    if (obj instanceof inspectedWindow.Node)
         return (obj.nodeType === undefined ? type : "node");
-    if (obj instanceof win.String)
+    if (obj instanceof inspectedWindow.String)
         return "string";
-    if (obj instanceof win.Array)
+    if (obj instanceof inspectedWindow.Array)
         return "array";
-    if (obj instanceof win.Boolean)
+    if (obj instanceof inspectedWindow.Boolean)
         return "boolean";
-    if (obj instanceof win.Number)
+    if (obj instanceof inspectedWindow.Number)
         return "number";
-    if (obj instanceof win.Date)
+    if (obj instanceof inspectedWindow.Date)
         return "date";
-    if (obj instanceof win.RegExp)
+    if (obj instanceof inspectedWindow.RegExp)
         return "regexp";
-    if (obj instanceof win.NodeList)
+    if (obj instanceof inspectedWindow.NodeList)
         return "array";
-    if (obj instanceof win.HTMLCollection)
+    if (obj instanceof inspectedWindow.HTMLCollection)
         return "array";
-    if (obj instanceof win.Error)
+    if (obj instanceof inspectedWindow.Error)
         return "error";
     return type;
 }
@@ -943,20 +939,27 @@ InjectedScript._describe = function(obj, abbreviated)
             return "\"" + obj.substring(0, 100) + "\u2026\"";
         return "\"" + obj + "\"";
     case "function":
-        var objectText = String(obj);
+        var objectText = InjectedScript._toString(obj);
         if (!/^function /.test(objectText))
             objectText = (type2 == "object") ? type1 : type2;
         else if (abbreviated)
             objectText = /.*/.exec(obj)[0].replace(/ +$/g, "");
         return objectText;
     default:
-        return String(obj);
+        return InjectedScript._toString(obj);
     }
+}
+
+InjectedScript._toString = function(obj)
+{
+    // We don't use String(obj) because inspectedWindow.String is undefined if owning frame navigated to another page.
+    return "" + obj;
 }
 
 InjectedScript._className = function(obj)
 {
-    return Object.prototype.toString.call(obj).replace(/^\[object (.*)\]$/i, "$1")
+    var str = inspectedWindow.Object ? inspectedWindow.Object.prototype.toString.call(obj) : InjectedScript._toString(obj);
+    return str.replace(/^\[object (.*)\]$/i, "$1");
 }
 
 InjectedScript._escapeCharacters = function(str, chars)

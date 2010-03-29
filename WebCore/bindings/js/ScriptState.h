@@ -33,23 +33,39 @@
 #define ScriptState_h
 
 #include "JSDOMBinding.h"
+#include <runtime/Protect.h>
+#include <wtf/Noncopyable.h>
 
 namespace WebCore {
-    class DOMWrapperWorld;
-    class Frame;
-    class Node;
-    class Page;
+class DOMWrapperWorld;
+class Frame;
+class Node;
+class Page;
 
-    // The idea is to expose "state-like" methods (hadException, and any other
-    // methods where ExecState just dips into globalData) of JSC::ExecState as a
-    // separate abstraction.
-    // For now, the separation is purely by convention.
-    typedef JSC::ExecState ScriptState;
+// The idea is to expose "state-like" methods (hadException, and any other
+// methods where ExecState just dips into globalData) of JSC::ExecState as a
+// separate abstraction.
+// For now, the separation is purely by convention.
+typedef JSC::ExecState ScriptState;
 
-    ScriptState* mainWorldScriptState(Frame*);
+class ScriptStateProtectedPtr : public Noncopyable {
+public:
+    ScriptStateProtectedPtr() { }
+    ScriptStateProtectedPtr(ScriptState* scriptState) : m_globalObject(scriptState->lexicalGlobalObject()) { }
+    ScriptState* get()
+    {
+        if (m_globalObject)
+            return m_globalObject->globalExec();
+        return 0;
+    }
+private:
+    JSC::ProtectedPtr<JSC::JSGlobalObject> m_globalObject;
+};
 
-    ScriptState* scriptStateFromNode(DOMWrapperWorld*, Node*);
-    ScriptState* scriptStateFromPage(DOMWrapperWorld*, Page*);
+ScriptState* mainWorldScriptState(Frame*);
+
+ScriptState* scriptStateFromNode(DOMWrapperWorld*, Node*);
+ScriptState* scriptStateFromPage(DOMWrapperWorld*, Page*);
 
 } // namespace WebCore
 

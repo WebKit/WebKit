@@ -1,3 +1,21 @@
+2010-03-29  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: don't crash when there are messages in console from previous iframe content.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36612
+
+        * http/tests/inspector-enabled/console-log-before-frame-navigation-expected.txt: Added.
+        * http/tests/inspector-enabled/console-log-before-frame-navigation.html: Added.
+        * http/tests/inspector-enabled/resources/console-log-before-frame-navigation.js: Added.
+        (doit.callback):
+        (doit):
+        (receiveMessage):
+        (frontend_dumpConsoleMessages):
+        * http/tests/inspector-enabled/resources/console-log-frame-after-navigation.html: Added.
+        * http/tests/inspector-enabled/resources/console-log-frame-before-navigation.html: Added.
+
 2010-03-28  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] Improve reporting of frame loader callbacks in DRT

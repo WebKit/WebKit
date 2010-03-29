@@ -1,0 +1,17 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../js-test-resources/js-test-style.css">
+<script src="../../js-test-resources/js-test-pre.js"></script>
+<script src="../inspector/inspector-test.js"></script>
+<script src="resources/console-log-before-frame-navigation.js"></script>
+</head>
+<body onload="onload()">
+<p>
+Tests that Web Inspector won't crash if there are messages written to console from a frame which has already navigated to a page from a different domain.
+</p>
+<iframe id="theFrame" src="resources/console-log-frame-before-navigation.html"></iframe>
+<p id="description"></p>
+<div id="console"></div>
+</body>
+</html>
