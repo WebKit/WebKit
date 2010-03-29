@@ -1,3 +1,21 @@
+2010-03-29  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        ValidateReviewer step is draconian and un-tested
+        https://bugs.webkit.org/show_bug.cgi?id=36792
+
+        ValidateReviewer logic was commented out in
+        http://trac.webkit.org/changeset/56744
+        That was a symptom of the fact that validatereviewer.py
+        is too inflexible to be used when real humans are driving webkit-patch.
+        For now we just disable ValidateReviewer when humans are at the keyboard.
+
+        * Scripts/webkitpy/tool/steps/validatereviewer.py:
+         - Only run when in non-interactive mode.
+        * Scripts/webkitpy/tool/steps/validatereviewer_unittest.py: Added.
+         - Test our validation logic to make sure it's sane.
+
 2010-03-29  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Shinichiro Hamaji.
