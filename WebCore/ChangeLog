@@ -1,3 +1,18 @@
+2010-03-29  Antti Koivisto  <koivisto@iki.fi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36703
+        Timer restart loop during page loading
+        
+        Fix regression introduced in http://trac.webkit.org/changeset/54526. 
+        Restarting the request timer unconditionally from the timer callback is a bad idea. 
+        Instead, start the timer when a non-cached request completes.
+
+        * loader/loader.cpp:
+        (WebCore::Loader::Host::nonCacheRequestComplete):
+        (WebCore::Loader::Host::servePendingRequests):
+
 2010-03-29  Thomas Zander  <t.zander@nokia.com>
 
         Reviewed by Simon Hausmann.
