@@ -29,6 +29,7 @@
 #include "MediaQueryEvaluator.h"
 
 #include "Chrome.h"
+#include "ChromeClient.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSStyleSelector.h"
 #include "CSSValueList.h"
@@ -493,6 +494,29 @@ static bool transform_3dMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* f
     }
     return returnValueIfNoParameter;
 }
+
+#if ENABLE(WIDGETS_10_SUPPORT)
+static bool view_modeMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame, MediaFeaturePrefix op)
+{
+    if (value) {
+        String mode = static_cast<CSSPrimitiveValue*>(value)->getStringValue();
+        if (ChromeClient* client = frame->page()->chrome()->client()) {
+            if (mode == "all")
+                return true;
+            if (mode == "mini" && client->isDocked())
+                return true;
+            if (mode == "floating" && client->isFloating())
+                return true;
+            if (mode == "application" && client->isApplication())
+                return true;
+            if (mode == "fullscreen" && client->isFullscreen())
+                return true;
+            return false;
+        }
+    }
+    return false;
+}
+#endif
 
 static void createFunctionMap()
 {

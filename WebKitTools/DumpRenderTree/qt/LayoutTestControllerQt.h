@@ -139,6 +139,7 @@ public slots:
     void setMainFrameIsFirstResponder(bool isFirst);
     void setXSSAuditorEnabled(bool enable);
     void setCaretBrowsingEnabled(bool enable);
+    void setViewModeMediaFeature(const QString& mode);
 
     bool pauseAnimationAtTimeOnElementWithId(const QString& animationName, double time, const QString& elementId);
     bool pauseTransitionAtTimeOnElementWithId(const QString& propertyName, double time, const QString& elementId);

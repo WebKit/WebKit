@@ -1,3 +1,25 @@
+2010-03-22  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Add support for Widgets 1.0: View Mode Media Feature
+        https://bugs.webkit.org/show_bug.cgi?id=35446
+
+        When enabling Web Widgets, add support for the view-mode media
+        feature (http://www.w3.org/TR/widgets-vmmf/).
+
+        Test: fast/media/media-feature-wgt-view-mode.html
+
+        * css/CSSValueKeywords.in:
+        * css/MediaFeatureNames.h:
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::view_modeMediaFeatureEval):
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::isDocked):
+        (WebCore::ChromeClient::isFloating):
+        (WebCore::ChromeClient::isApplication):
+        (WebCore::ChromeClient::isFullscreen):
+
 2010-03-29  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Darin Fisher.

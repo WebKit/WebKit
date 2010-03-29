@@ -119,6 +119,15 @@
 
 using namespace WebCore;
 
+void QWEBKIT_EXPORT qt_wrt_setViewMode(QWebPage* page, const QString& mode)
+{
+    QWebPagePrivate::priv(page)->viewMode = mode;
+    WebCore::Frame* frame = QWebFramePrivate::core(page->mainFrame());
+    WebCore::FrameView* view = frame->view();
+    frame->document()->updateStyleSelector();
+    view->forceLayout();
+}
+
 void QWEBKIT_EXPORT qt_drt_overwritePluginDirectories()
 {
     PluginDatabase* db = PluginDatabase::installedPlugins(/* populate */ false);
@@ -497,6 +506,11 @@ QWebPagePrivate::~QWebPagePrivate()
 WebCore::Page* QWebPagePrivate::core(QWebPage* page)
 {
     return page->d->page;
+}
+
+QWebPagePrivate* QWebPagePrivate::priv(QWebPage* page)
+{
+    return page->d;
 }
 
 bool QWebPagePrivate::acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &request, QWebPage::NavigationType type)

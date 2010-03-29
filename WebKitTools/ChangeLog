@@ -1,3 +1,16 @@
+2010-02-26  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Add support for Widgets 1.0: View Mode Media Feature
+        https://bugs.webkit.org/show_bug.cgi?id=35446
+
+        Add hooks to the Qt DRT for testing the view mode media feature.
+
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::setViewModeMediaFeature):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+
 2010-03-29  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.  Update expected results for unit tests.

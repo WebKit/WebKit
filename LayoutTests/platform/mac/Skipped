@@ -142,3 +142,6 @@ http/tests/plugins/plugin-document-has-focus.html
 
 # Misses setMediaType() and implementation
 fast/media/print-restores-previous-mediatype.html
+
+# No Widgets 1.0 support
+fast/media/media-feature-wgt-view-mode.html

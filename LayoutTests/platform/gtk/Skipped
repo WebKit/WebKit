@@ -5882,3 +5882,6 @@ http/tests/loading/location-hash-reload-cycle.html
 http/tests/loading/onload-vs-immediate-refresh.pl
 http/tests/loading/redirect-with-no-location-crash.html
 http/tests/loading/state-object-security-exception.html
+
+# No Widgets 1.0 support
+fast/media/media-feature-wgt-view-mode.html

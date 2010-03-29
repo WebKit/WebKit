@@ -1,3 +1,24 @@
+2010-03-22  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Add support for Widgets 1.0: View Mode Media Feature
+        https://bugs.webkit.org/show_bug.cgi?id=35446
+
+        Add an internal Qt API for changing the view mode media feature
+        (http://www.w3.org/TR/widgets-vmmf/).
+
+        * Api/qwebpage.cpp:
+        (qt_wrt_setViewMode):
+        (QWebPagePrivate::priv):
+        * Api/qwebpage_p.h:
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::isDocked):
+        (WebCore::ChromeClientQt::isFloating):
+        (WebCore::ChromeClientQt::isApplication):
+        (WebCore::ChromeClientQt::isFullscreen):
+        * WebCoreSupport/ChromeClientQt.h:
+
 2010-03-29  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Antti Koivisto.

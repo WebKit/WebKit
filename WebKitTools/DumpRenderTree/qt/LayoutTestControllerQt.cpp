@@ -36,6 +36,7 @@
 #include <QLocale>
 #include <qwebsettings.h>
 
+extern void qt_wrt_setViewMode(QWebPage*, const QString& mode);
 extern void qt_dump_editing_callbacks(bool b);
 extern void qt_dump_frame_loader(bool b);
 extern void qt_dump_resource_load_callbacks(bool b);
@@ -144,6 +145,11 @@ void LayoutTestController::waitUntilDone()
 QString LayoutTestController::counterValueForElementById(const QString& id)
 {
     return qt_drt_counterValueForElementById(m_drt->webPage()->mainFrame(), id);
+}
+
+void LayoutTestController::setViewModeMediaFeature(const QString& mode)
+{
+    qt_wrt_setViewMode(m_drt->webPage(), mode);
 }
 
 int LayoutTestController::webHistoryItemCount()

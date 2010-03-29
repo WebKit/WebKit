@@ -812,3 +812,6 @@ fast/multicol/hit-test-above-or-below.html
 # renderTheme is not ready to draw progress element
 fast/dom/HTMLProgressElement/progress-element.html
 fast/dom/HTMLProgressElement/set-progress-properties.html
+
+# No Widgets 1.0 support
+fast/media/media-feature-wgt-view-mode.html

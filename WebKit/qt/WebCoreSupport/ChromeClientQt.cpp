@@ -545,4 +545,26 @@ QtAbstractWebPopup* ChromeClientQt::createSelectPopup()
     return new QtFallbackWebPopup;
 }
 
+#if ENABLE(WIDGETS_10_SUPPORT)
+bool ChromeClientQt::isDocked()
+{
+    return m_webPage->d->viewMode == "mini";
+}
+
+bool ChromeClientQt::isFloating()
+{
+    return m_webPage->d->viewMode == "floating";
+}
+
+bool ChromeClientQt::isApplication()
+{
+    return m_webPage->d->viewMode == "application";
+}
+
+bool ChromeClientQt::isFullscreen()
+{
+    return m_webPage->d->viewMode == "fullscreen";
+}
+#endif
+
 }

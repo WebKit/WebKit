@@ -64,6 +64,7 @@ public:
     ~QWebPagePrivate();
 
     static WebCore::Page* core(QWebPage*);
+    static QWebPagePrivate* priv(QWebPage*);
 
     void createMainFrame();
 #ifndef QT_NO_CONTEXTMENU
@@ -184,6 +185,8 @@ public:
     QWebInspector* inspector;
     bool inspectorIsInternalOnly; // True if created through the Inspect context menu action
     Qt::DropAction m_lastDropAction;
+
+    QString viewMode;
 
     static bool drtRun;
 };

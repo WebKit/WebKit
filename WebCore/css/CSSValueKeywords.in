@@ -709,3 +709,10 @@ geometricPrecision
 # -webkit-color-correction
 #default
 sRGB
+
+# (-webkit-view-mode:) media feature:
+mini
+floating
+application
+fullscreen
+#all
