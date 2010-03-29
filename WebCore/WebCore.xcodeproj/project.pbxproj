@@ -4802,6 +4802,7 @@
 		E1CA5CD30E8CDE8000E8EF90 /* JSWorkerConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = E1CA5CD20E8CDE8000E8EF90 /* JSWorkerConstructor.h */; };
 		E1CA5CD60E8CDEE900E8EF90 /* JSWorkerConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1CA5CD50E8CDEE900E8EF90 /* JSWorkerConstructor.cpp */; };
 		E1CAA5C60E8BD23600A73ECA /* JSWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = E1CAA5C50E8BD23600A73ECA /* JSWorker.h */; };
+		E1E1BF00115FF6FB006F52CA /* WindowsKeyboardCodes.h in Headers */ = {isa = PBXBuildFile; fileRef = E1E1BEFF115FF6FB006F52CA /* WindowsKeyboardCodes.h */; };
 		E1E6EEA40B628DA8005F2F70 /* JSHTMLSelectElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1E6EEA30B628DA8005F2F70 /* JSHTMLSelectElement.cpp */; };
 		E1E6EEA80B628DB3005F2F70 /* JSHTMLSelectElement.h in Headers */ = {isa = PBXBuildFile; fileRef = E1E6EEA70B628DB3005F2F70 /* JSHTMLSelectElement.h */; };
 		E1EBBBD40AAC9B87001FE8E2 /* CSSCharsetRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EBBBD30AAC9B87001FE8E2 /* CSSCharsetRule.cpp */; };
@@ -10151,6 +10152,7 @@
 		E1CA5CD20E8CDE8000E8EF90 /* JSWorkerConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWorkerConstructor.h; sourceTree = "<group>"; };
 		E1CA5CD50E8CDEE900E8EF90 /* JSWorkerConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWorkerConstructor.cpp; sourceTree = "<group>"; };
 		E1CAA5C50E8BD23600A73ECA /* JSWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWorker.h; sourceTree = "<group>"; };
+		E1E1BEFF115FF6FB006F52CA /* WindowsKeyboardCodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WindowsKeyboardCodes.h; sourceTree = "<group>"; };
 		E1E6EEA30B628DA8005F2F70 /* JSHTMLSelectElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLSelectElement.cpp; sourceTree = "<group>"; };
 		E1E6EEA70B628DB3005F2F70 /* JSHTMLSelectElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = JSHTMLSelectElement.h; sourceTree = "<group>"; };
 		E1EBBBD30AAC9B87001FE8E2 /* CSSCharsetRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSCharsetRule.cpp; sourceTree = "<group>"; };
@@ -15422,6 +15424,7 @@
 				1419D2C40CEA6F6100FF507A /* TreeShared.h */,
 				9380F47109A11AB4001FDB34 /* Widget.cpp */,
 				9380F47209A11AB4001FDB34 /* Widget.h */,
+				E1E1BEFF115FF6FB006F52CA /* WindowsKeyboardCodes.h */,
 			);
 			path = platform;
 			sourceTree = "<group>";
@@ -18763,6 +18766,7 @@
 				A513B3D7114B1666001C429B /* KeyEventCocoa.h in Headers */,
 				62CD325A1157E57C0063B0A7 /* CustomEvent.h in Headers */,
 				E4778B80115A581A00B5D372 /* JSCustomEvent.h in Headers */,
+				E1E1BF00115FF6FB006F52CA /* WindowsKeyboardCodes.h in Headers */,
 				8499A515115FB33000F566E3 /* RenderSVGResourceMarker.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

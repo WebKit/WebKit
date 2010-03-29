@@ -33,10 +33,10 @@
 #include "PlatformKeyboardEvent.h"
 
 #include "CString.h"
-#include "KeyboardCodes.h"
 #include "NotImplemented.h"
 #include "StringHash.h"
 #include "TextEncoding.h"
+#include "WindowsKeyboardCodes.h"
 
 #include <stdio.h>
 #include <wtf/HashMap.h>

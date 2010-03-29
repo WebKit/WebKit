@@ -119,9 +119,6 @@
 // On MSW, wx headers need to be included before windows.h is.
 // The only way we can always ensure this is if we include wx here.
 #if PLATFORM(WX)
-// The defines in KeyboardCodes.h conflict with Windows as well, and the only way I've found
-// to address the problem is include KeyboarddCodes.h before windows.h, so do it here.
-#include "KeyboardCodes.h"
 #include <wx/defs.h>
 #endif
 

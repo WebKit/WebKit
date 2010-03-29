@@ -31,8 +31,8 @@
 #include "PlatformKeyboardEvent.h"
 
 #include "CString.h"
-#include "KeyboardCodes.h"
 #include "NotImplemented.h"
+#include "WindowsKeyboardCodes.h"
 #include <InterfaceDefs.h>
 #include <Message.h>
 #include <String.h>

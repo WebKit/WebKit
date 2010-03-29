@@ -26,8 +26,7 @@
 #include "config.h"
 #include "PlatformKeyboardEvent.h"
 
-#include "KeyboardCodes.h"
-
+#include "WindowsKeyboardCodes.h"
 #include <wx/defs.h>
 #include <wx/event.h>
 

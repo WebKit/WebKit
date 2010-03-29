@@ -1497,7 +1497,6 @@ webcore_sources += \
 	WebCore/platform/GeolocationService.cpp \
 	WebCore/platform/GeolocationService.h \
 	WebCore/platform/HostWindow.h \
-	WebCore/platform/KeyboardCodes.h \
 	WebCore/platform/KURL.cpp \
 	WebCore/platform/KURL.h \
 	WebCore/platform/KURLHash.h \
@@ -1556,6 +1555,7 @@ webcore_sources += \
 	WebCore/platform/TreeShared.h \
 	WebCore/platform/Widget.cpp \
 	WebCore/platform/Widget.h \
+	WebCore/platform/WindowsKeyboardCodes.h \
 	WebCore/platform/animation/Animation.cpp \
 	WebCore/platform/animation/Animation.h \
 	WebCore/platform/animation/AnimationList.cpp \

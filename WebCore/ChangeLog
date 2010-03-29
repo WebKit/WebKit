@@ -1,3 +1,49 @@
+2010-03-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36733
+        Use a common header for Windows virtual key codes on all platforms
+
+        No change in functionality, so no new tests.
+
+        * platform/WindowsKeyboardCodes.h: Added. Define VK_* key codes as macros, matching Windows.
+
+        * platform/KeyboardCodes.h: Removed.
+        * platform/android/KeyboardCodes.h: Removed.
+        * platform/chromium/KeyboardCodesPosix.h: Removed.
+        * platform/chromium/KeyboardCodesWin.h: Removed.
+        * platform/haiku/KeyboardCodes.h: Removed.
+        * platform/wx/KeyboardCodes.h: Removed.
+        Removed platform specific attempts to do the same thing. In fact, platform/KeyboardCodes.h
+        was supposed to be cross-platform, but it didn't have a sufficiently descriptive name, and
+        its name was the same as platform-specific versions, so I chose a new one.
+
+        * platform/chromium/KeyboardCodes.h: Copied from WebCore/platform/chromium/KeyboardCodesWin.h.
+        Chromium redefines Windows constants to different names; keeping the header doing that to
+        avoid breaking Chromium code.
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        Replaced KeyboardCodes.h with WindowsKeyboardCodes.h.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/cocoa/KeyEventCocoa.mm:
+        (WebCore::windowsKeyCodeForKeyCode):
+        (WebCore::windowsKeyCodeForCharCode):
+        Mac used to hardcode the key codes; changed to use VK_* macros.
+
+        * config.h: Removed a hack to include KeyboardCodes.h, it shouldn't be necessary any more.
+
+        * platform/android/KeyEventAndroid.cpp:
+        * platform/brew/PlatformKeyboardEventBrew.cpp:
+        * platform/efl/PlatformKeyboardEventEfl.cpp:
+        * platform/gtk/KeyEventGtk.cpp:
+        * platform/haiku/PlatformKeyboardEventHaiku.cpp:
+        * platform/qt/PlatformKeyboardEventQt.cpp:
+        * platform/wx/KeyboardEventWx.cpp:
+        Changed to include WindowsKeyboardCodes.h.
+
 2010-03-28  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Simon Hausmann.

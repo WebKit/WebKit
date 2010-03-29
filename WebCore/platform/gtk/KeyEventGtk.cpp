@@ -30,9 +30,9 @@
 #include "config.h"
 #include "PlatformKeyboardEvent.h"
 
-#include "KeyboardCodes.h"
 #include "NotImplemented.h"
 #include "TextEncoding.h"
+#include "WindowsKeyboardCodes.h"
 
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>

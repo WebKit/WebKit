@@ -26,8 +26,8 @@
 #include "config.h"
 #include "PlatformKeyboardEvent.h"
 
-#include "KeyboardCodes.h"
 #include "NotImplemented.h"
+#include "WindowsKeyboardCodes.h"
 
 #include <AEEEvent.h>
 #include <AEEStdDef.h>
