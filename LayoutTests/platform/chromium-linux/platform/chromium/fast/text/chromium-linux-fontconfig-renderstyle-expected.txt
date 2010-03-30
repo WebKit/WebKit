@@ -18,7 +18,7 @@ layer at (0,0) size 800x600
           text run at (412,0) width 306: " mode, as that forces some rendering settings used "
           text run at (718,0) width 32: "in the"
           text run at (0,20) width 89: "following tests."
-      RenderBlock {OL} at (0,56) size 784x145
+      RenderBlock {OL} at (0,56) size 784x235
         RenderListItem {LI} at (40,0) size 744x55
           RenderBlock {P} at (0,0) size 744x20
             RenderListMarker at (-21,0) size 16x19: "1"
@@ -39,3 +39,14 @@ layer at (0,0) size 800x600
           RenderBlock {P} at (0,56) size 744x18
             RenderText {#text} at (0,0) size 218x18
               text run at (0,0) width 218: "government ................................"
+        RenderListItem {LI} at (40,161) size 744x74
+          RenderBlock {P} at (0,0) size 744x40
+            RenderListMarker at (-21,0) size 16x19: "3"
+            RenderText {#text} at (0,0) size 738x39
+              text run at (0,0) width 377: "The following text should be unhinted Verdana. The fontconfig "
+              text run at (377,0) width 361: "configuration for this is contradictory, setting both full-hinting"
+              text run at (0,20) width 245: "and no-hinting. The latter should win out."
+          RenderBlock {P} at (0,56) size 744x18
+            RenderText {#text} at (0,0) size 632x18
+              text run at (0,0) width 444: "Here is Tigger doing what tiggers do best \x{2026} operating "
+              text run at (444,0) width 188: "hydraulic exoskeletons."
