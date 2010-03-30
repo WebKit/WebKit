@@ -309,12 +309,12 @@ class BuildBot(object):
     def _fetch_xmlrpc_build_dictionary(self, builder, build_number):
         # The buildbot XMLRPC API is super-limited.
         # For one, you cannot fetch info on builds which are incomplete.
-        proxy = xmlrpclib.ServerProxy("http://%s/xmlrpc" % self.buildbot_host)
+        proxy = xmlrpclib.ServerProxy("http://%s/xmlrpc" % self.buildbot_host, allow_none=True)
         try:
             return proxy.getBuild(builder.name(), int(build_number))
         except xmlrpclib.Fault, err:
             build_url = Build.build_url(builder, build_number)
-            log("Error fetching data for %s build %s (%s)" % (builder.name(), build_number, build_url))
+            log("Error fetching data for %s build %s (%s): %s" % (builder.name(), build_number, build_url, err))
             return None
 
     def _fetch_one_box_per_builder(self):

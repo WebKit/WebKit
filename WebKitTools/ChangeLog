@@ -1,3 +1,18 @@
+2010-03-29  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        sheriff-bot fails to get information about certain builds
+        https://bugs.webkit.org/show_bug.cgi?id=36768
+
+        This seems to be caused by:
+        http://buildbot.net/trac/ticket/753
+        I have no work-around, but for now at least we're logging
+        the error better.  I also added allow_none to our ServerProxy
+        creation in case that fixes things for other versions of python.
+
+        * Scripts/webkitpy/common/net/buildbot.py:
+
 2010-03-29  Victor Wang  <victorw@chromium.org>
 
         Reviewed by Adam Barth.
