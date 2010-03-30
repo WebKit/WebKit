@@ -135,6 +135,9 @@ class WhatBroke(AbstractDeclarativeCommand):
     def _print_blame_information_for_builder(self, builder_status, name_width, avoid_flakey_tests=True):
         builder = self.tool.buildbot.builder_with_name(builder_status["name"])
         (last_green_build, first_red_build) = builder.find_green_to_red_transition(builder_status["build_number"])
+        if not first_red_build:
+            self._print_builder_line(builder.name(), name_width, "FAIL (error loading build information)")
+            return
         if not last_green_build:
             self._print_builder_line(builder.name(), name_width, "FAIL (blame-list: sometime before %s?)" % first_red_build.revision())
             return

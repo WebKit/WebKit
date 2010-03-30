@@ -28,10 +28,12 @@
 
 import os
 import subprocess
+import StringIO
 
 from webkitpy.common.checkout.changelog import ChangeLog
 from webkitpy.common.checkout.commitinfo import CommitInfo
 from webkitpy.common.checkout.scm import CommitMessage
+from webkitpy.common.net.bugzilla import parse_bug_id
 from webkitpy.common.system.executive import Executive, run_command, ScriptError
 from webkitpy.common.system.deprecated_logging import log
 
@@ -58,6 +60,7 @@ class Checkout(object):
         committer_email = self._scm.committer_email_for_revision(revision)
         changelog_entries = self.changelog_entries_for_revision(revision)
         # Assume for now that the first entry has everything we need:
+        # FIXME: This will throw an exception if there were no ChangeLogs.
         changelog_entry = changelog_entries[0]
         changelog_data = {
             "bug_id": parse_bug_id(changelog_entry.contents()),

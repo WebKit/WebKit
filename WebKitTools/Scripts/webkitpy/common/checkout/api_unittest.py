@@ -43,8 +43,7 @@ def write_into_file_at_path(file_path, contents):
     new_file.close()
 
 
-class CommitMessageForThisCommitTest(unittest.TestCase):
-    changelog1 = """2010-03-25  Eric Seidel  <eric@webkit.org>
+_changelog1entry1 = """2010-03-25  Eric Seidel  <eric@webkit.org>
 
         Unreviewed build fix to un-break webkit-patch land.
 
@@ -52,8 +51,8 @@ class CommitMessageForThisCommitTest(unittest.TestCase):
         https://bugs.webkit.org/show_bug.cgi?id=36629
 
         * Scripts/webkitpy/common/checkout/api.py: import scm.CommitMessage
-
-2010-03-25  Adam Barth  <abarth@webkit.org>
+"""
+_changelog1entry2 = """2010-03-25  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
 
@@ -62,7 +61,8 @@ class CommitMessageForThisCommitTest(unittest.TestCase):
 
         * Scripts/webkitpy/common/checkout/api.py:
 """
-    changelog2 = """2010-03-25  Eric Seidel  <eric@webkit.org>
+_changelog1 = "\n".join([_changelog1entry1, _changelog1entry2])
+_changelog2 = """2010-03-25  Eric Seidel  <eric@webkit.org>
 
         Unreviewed build fix to un-break webkit-patch land.
 
@@ -77,6 +77,7 @@ class CommitMessageForThisCommitTest(unittest.TestCase):
         Filler change.
 """
 
+class CommitMessageForThisCommitTest(unittest.TestCase):
     expected_commit_message = """2010-03-25  Eric Seidel  <eric@webkit.org>
 
         Unreviewed build fix to un-break webkit-patch land.
@@ -98,8 +99,8 @@ class CommitMessageForThisCommitTest(unittest.TestCase):
         self.temp_dir = tempfile.mkdtemp(suffix="changelogs")
         self.old_cwd = os.getcwd()
         os.chdir(self.temp_dir)
-        write_into_file_at_path("ChangeLog1", self.changelog1)
-        write_into_file_at_path("ChangeLog2", self.changelog2)
+        write_into_file_at_path("ChangeLog1", _changelog1)
+        write_into_file_at_path("ChangeLog2", _changelog2)
 
     def tearDown(self):
         shutil.rmtree(self.temp_dir, ignore_errors=True)
@@ -114,3 +115,30 @@ class CommitMessageForThisCommitTest(unittest.TestCase):
         expected_stderr = "Parsing ChangeLog: ChangeLog1\nParsing ChangeLog: ChangeLog2\n"
         commit_message = output.assert_outputs(self, checkout.commit_message_for_this_commit, expected_stderr=expected_stderr)
         self.assertEqual(commit_message.message(), self.expected_commit_message)
+
+
+class CheckoutTest(unittest.TestCase):
+    def test_latest_entry_for_changelog_at_revision(self):
+        scm = Mock()
+        def mock_contents_at_revision(changelog_path, revision):
+            self.assertEqual(changelog_path, "foo")
+            self.assertEqual(revision, "bar")
+            return _changelog1
+        scm.contents_at_revision = mock_contents_at_revision
+        checkout = Checkout(scm)
+        entry = checkout._latest_entry_for_changelog_at_revision("foo", "bar")
+        self.assertEqual(entry.contents(), _changelog1entry1)
+
+    def test_commit_info_for_revision(self):
+        scm = Mock()
+        scm.committer_email_for_revision = lambda revision: "committer@example.com"
+        checkout = Checkout(scm)
+        checkout.changelog_entries_for_revision = lambda revision: ChangeLogEntry(_changelog1entry1)
+        commitinfo = checkout.commit_info_for_revision(4)
+        self.assertEqual(commitinfo.bug_id(), 36629)
+        self.assertEqual(commitinfo.author_name(), "Eric Seidel")
+        self.assertEqual(commitinfo.author_email(), "eric@webkit.org")
+        self.assertEqual(commitinfo.reviewer_text(), None)
+        self.assertEqual(commitinfo.reviewer(), None)
+        self.assertEqual(commitinfo.committer_email(), "committer@example.com")
+        self.assertEqual(commitinfo.committer(), None)
