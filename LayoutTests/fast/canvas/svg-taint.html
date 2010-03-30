@@ -1,0 +1,46 @@
+<html>
+<head>
+<script>
+if (window.layoutTestController) {
+  layoutTestController.dumpAsText();
+  layoutTestController.waitUntilDone();
+}
+
+function log(message) {
+  var console = document.getElementById('log');
+  console.appendChild(document.createTextNode(message));
+  console.appendChild(document.createElement('br'));
+}
+
+function loaded() {
+  var canvas = document.getElementById('canvas');
+  var ctx = canvas.getContext("2d");
+  var img = document.getElementById('img');
+  log('Starting...');
+
+  // This should taint the canvas by rendering an SVG on to it via the pattern
+  // route.
+  var p = ctx.createPattern(img, 'repeat');
+  ctx.fillStyle = p;
+  ctx.fillRect(0, 0, 100, 100);
+
+  try {
+    // This should fail as the canvas should be tainted.
+    var data = ctx.getImageData(0, 0, 10, 10);
+    log('Oh dear -- missing exception!');
+  } catch (e) {
+    log('Exception: ' + e.name);
+    if (window.layoutTestController)
+      layoutTestController.notifyDone();
+  }
+}
+</script>
+</head>
+<body>
+Let's check that rendering an SVG pattern to a canvas taints it!
+<p>
+See https://bugs.webkit.org/show_bug.cgi?id=36838
+<div id="log"></div>
+<canvas id="canvas" width="100" height="100"></canvas>
+<img id="img" onload="loaded()" src="resources/empty.svg"></img>
+</body>

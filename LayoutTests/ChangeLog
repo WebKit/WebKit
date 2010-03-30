@@ -1,3 +1,15 @@
+2010-03-30  Chris Evans  <cevans@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add test for SVG pattern canvas tainting.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36838
+
+        * fast/canvas/svg-taint.html: Added
+        * fast/canvas/svg-taint-expected.txt: Added
+        * fast/canvas/resources/empty.svg: Added
+
 2010-03-30  Andrew Scherkus  <scherkus@chromium.org>
 
         Reviewed by Darin Adler.
