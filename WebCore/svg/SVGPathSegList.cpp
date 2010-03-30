@@ -144,40 +144,40 @@ Path SVGPathSegList::toPathData()
     return pathData;
 }
     
-static inline float blendFunc(float from, float to, float progress)
+float adjustAnimatedValue(float from, float to, float progress)
 {
     return (to - from) * progress + from;
 }
     
 #define BLENDPATHSEG1(class, attr1) \
-    class::create(blendFunc(static_cast<class*>(from)->attr1(), static_cast<class*>(to)->attr1(), progress))
+    class::create(adjustAnimatedValue(static_cast<class*>(from)->attr1(), static_cast<class*>(to)->attr1(), progress))
     
 #define BLENDPATHSEG2(class, attr1, attr2) \
-    class::create(blendFunc(static_cast<class*>(from)->attr1(), static_cast<class*>(to)->attr1(), progress), \
-                    blendFunc(static_cast<class*>(from)->attr2(), static_cast<class*>(to)->attr2(), progress))
+    class::create(adjustAnimatedValue(static_cast<class*>(from)->attr1(), static_cast<class*>(to)->attr1(), progress), \
+                    adjustAnimatedValue(static_cast<class*>(from)->attr2(), static_cast<class*>(to)->attr2(), progress))
     
 #define BLENDPATHSEG4(class, attr1, attr2, attr3, attr4) \
-    class::create(blendFunc(static_cast<class*>(from)->attr1(), static_cast<class*>(to)->attr1(), progress), \
-                blendFunc(static_cast<class*>(from)->attr2(), static_cast<class*>(to)->attr2(), progress), \
-                blendFunc(static_cast<class*>(from)->attr3(), static_cast<class*>(to)->attr3(), progress), \
-                blendFunc(static_cast<class*>(from)->attr4(), static_cast<class*>(to)->attr4(), progress))
+    class::create(adjustAnimatedValue(static_cast<class*>(from)->attr1(), static_cast<class*>(to)->attr1(), progress), \
+                adjustAnimatedValue(static_cast<class*>(from)->attr2(), static_cast<class*>(to)->attr2(), progress), \
+                adjustAnimatedValue(static_cast<class*>(from)->attr3(), static_cast<class*>(to)->attr3(), progress), \
+                adjustAnimatedValue(static_cast<class*>(from)->attr4(), static_cast<class*>(to)->attr4(), progress))
     
 #define BLENDPATHSEG6(class, attr1, attr2, attr3, attr4, attr5, attr6) \
-    class::create(blendFunc(static_cast<class*>(from)->attr1(), static_cast<class*>(to)->attr1(), progress), \
-                blendFunc(static_cast<class*>(from)->attr2(), static_cast<class*>(to)->attr2(), progress), \
-                blendFunc(static_cast<class*>(from)->attr3(), static_cast<class*>(to)->attr3(), progress), \
-                blendFunc(static_cast<class*>(from)->attr4(), static_cast<class*>(to)->attr4(), progress), \
-                blendFunc(static_cast<class*>(from)->attr5(), static_cast<class*>(to)->attr5(), progress), \
-                blendFunc(static_cast<class*>(from)->attr6(), static_cast<class*>(to)->attr6(), progress))
+    class::create(adjustAnimatedValue(static_cast<class*>(from)->attr1(), static_cast<class*>(to)->attr1(), progress), \
+                adjustAnimatedValue(static_cast<class*>(from)->attr2(), static_cast<class*>(to)->attr2(), progress), \
+                adjustAnimatedValue(static_cast<class*>(from)->attr3(), static_cast<class*>(to)->attr3(), progress), \
+                adjustAnimatedValue(static_cast<class*>(from)->attr4(), static_cast<class*>(to)->attr4(), progress), \
+                adjustAnimatedValue(static_cast<class*>(from)->attr5(), static_cast<class*>(to)->attr5(), progress), \
+                adjustAnimatedValue(static_cast<class*>(from)->attr6(), static_cast<class*>(to)->attr6(), progress))
 
 #define BLENDPATHSEG7(class, attr1, attr2, attr3, attr4, attr5, bool1, bool2) \
-    class::create(blendFunc(static_cast<class*>(from)->attr1(), static_cast<class*>(to)->attr1(), progress), \
-                blendFunc(static_cast<class*>(from)->attr2(), static_cast<class*>(to)->attr2(), progress), \
-                blendFunc(static_cast<class*>(from)->attr3(), static_cast<class*>(to)->attr3(), progress), \
-                blendFunc(static_cast<class*>(from)->attr4(), static_cast<class*>(to)->attr4(), progress), \
-                blendFunc(static_cast<class*>(from)->attr5(), static_cast<class*>(to)->attr5(), progress), \
-                static_cast<bool>(blendFunc(static_cast<class*>(from)->bool1(), static_cast<class*>(to)->bool1(), progress)), \
-                static_cast<bool>(blendFunc(static_cast<class*>(from)->bool2(), static_cast<class*>(to)->bool2(), progress)))
+    class::create(adjustAnimatedValue(static_cast<class*>(from)->attr1(), static_cast<class*>(to)->attr1(), progress), \
+                adjustAnimatedValue(static_cast<class*>(from)->attr2(), static_cast<class*>(to)->attr2(), progress), \
+                adjustAnimatedValue(static_cast<class*>(from)->attr3(), static_cast<class*>(to)->attr3(), progress), \
+                adjustAnimatedValue(static_cast<class*>(from)->attr4(), static_cast<class*>(to)->attr4(), progress), \
+                adjustAnimatedValue(static_cast<class*>(from)->attr5(), static_cast<class*>(to)->attr5(), progress), \
+                static_cast<bool>(adjustAnimatedValue(static_cast<class*>(from)->bool1(), static_cast<class*>(to)->bool1(), progress)), \
+                static_cast<bool>(adjustAnimatedValue(static_cast<class*>(from)->bool2(), static_cast<class*>(to)->bool2(), progress)))
 
 PassRefPtr<SVGPathSegList> SVGPathSegList::createAnimated(const SVGPathSegList* fromList, const SVGPathSegList* toList, float progress)
 {

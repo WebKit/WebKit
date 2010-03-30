@@ -1,3 +1,20 @@
+2010-03-30  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Cannot animate "points" attribute for <svg:polygon>
+        https://bugs.webkit.org/show_bug.cgi?id=21371
+
+        Tests if points of a polygon are animateable.
+
+        * svg/animations/animate-points-expected.txt: Added.
+        * svg/animations/animate-points.html: Added.
+        * svg/animations/script-tests/animate-points.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (executeTest):
+
 2010-03-30  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: bring test expectation back - it still fails for some

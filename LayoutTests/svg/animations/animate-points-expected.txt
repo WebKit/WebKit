@@ -1,0 +1,18 @@
+SVG 1.1 dynamic animation tests
+
+Tests if points of a polygon are animateable.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS poly.points.getItem(2).x is 200
+PASS poly.points.getItem(2).y is 200
+PASS poly.points.getItem(2).x is 150
+PASS poly.points.getItem(2).y is 150
+PASS poly.points.getItem(2).x is almost 100, just before-end
+PASS poly.points.getItem(2).x is 200
+PASS poly.points.getItem(2).y is 200
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

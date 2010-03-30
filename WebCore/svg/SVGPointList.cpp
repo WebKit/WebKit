@@ -22,6 +22,7 @@
 
 #if ENABLE(SVG)
 #include "SVGPointList.h"
+#include "SVGPathSegList.h"
 #include "PlatformString.h"
 
 namespace WebCore {
@@ -51,6 +52,29 @@ String SVGPointList::valueAsString() const
     }
 
     return result;
+}
+
+PassRefPtr<SVGPointList> SVGPointList::createAnimated(const SVGPointList* fromList, const SVGPointList* toList, float progress)
+{
+    unsigned itemCount = fromList->numberOfItems();
+    if (!itemCount || itemCount != toList->numberOfItems())
+        return 0;
+    RefPtr<SVGPointList> result = create(fromList->associatedAttributeName());
+    ExceptionCode ec = 0;
+    for (unsigned n = 0; n < itemCount; ++n) {
+        FloatPoint from = fromList->getItem(n, ec);
+        if (ec)
+            return 0;
+        FloatPoint to = toList->getItem(n, ec);
+        if (ec)
+            return 0;
+        FloatPoint segment = FloatPoint(adjustAnimatedValue(from.x(), to.x(), progress),
+                                        adjustAnimatedValue(from.y(), to.y(), progress));
+        result->appendItem(segment, ec);
+        if (ec)
+            return 0;
+    }
+    return result.release();
 }
 
 }

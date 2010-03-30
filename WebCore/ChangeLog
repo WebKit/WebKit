@@ -1,3 +1,27 @@
+2010-03-30  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Cannot animate "points" attribute for <svg:polygon>
+        https://bugs.webkit.org/show_bug.cgi?id=21371
+
+        Add animation support for 'points' on polygons in SVG. 
+
+        Test: svg/animations/animate-points.html
+
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::SVGAnimateElement::determinePropertyType):
+        (WebCore::SVGAnimateElement::calculateAnimatedValue):
+        (WebCore::SVGAnimateElement::calculateFromAndToValues):
+        (WebCore::SVGAnimateElement::resetToBaseValue):
+        (WebCore::SVGAnimateElement::applyResultsToTarget):
+        * svg/SVGAnimateElement.h:
+        (WebCore::SVGAnimateElement::): added PropertyType PointsProperty
+        * svg/SVGPointList.cpp:
+        (WebCore::blendFunc):
+        (WebCore::SVGPointList::createAnimated): calculates animated PointList
+        * svg/SVGPointList.h:
+
 2010-03-30  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
