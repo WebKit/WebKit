@@ -1,3 +1,11 @@
+2010-03-29  Chris Evans  <cevans@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        * fast/xmlhttprequest/xmlhttprequest-no-file-access.html:
+          Check that an isolated file:// origin can access about:blank iframes
+          that it created itself.
+
 2010-03-29  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

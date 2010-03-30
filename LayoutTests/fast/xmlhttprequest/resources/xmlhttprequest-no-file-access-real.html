@@ -12,16 +12,21 @@
 
         function testXHRDenied()
         {
+            log("Checking that same-origin iframes work.");
+            var f = document.getElementById("f");
+            f.contentDocument.body.innerHTML = "Successful write into iframe";
             log("Doing an XHR to an existing file.");
             xhr = new XMLHttpRequest();
 
             try {
                 xhr.open("GET", "../xmlhttprequest-no-file-access-expected.txt", false);
                 xhr.send("");
+                log("Bad: XHR didn't throw exception");
             } catch(e) {
                 log("Exception: " + e.message);
                 try {
                     var results = window.top.document.getElementById('results');
+                    log("Bad: DOM access didn't throw exception");
                 } catch (e) {
                     log("Exception: " + e.message);
                     if (window.layoutTestController) {
@@ -33,6 +38,7 @@
         </script>
     </head>
     <body onload="testXHRDenied()">
+    <iframe id="f"></iframe>
         <p> We're checking we can't read an arbitrary file when we set each file:// URI to have a unique domain. </p>
         <div id="console"/>
     </body>

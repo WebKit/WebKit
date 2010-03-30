@@ -138,8 +138,8 @@ public:
     // addition, the SandboxOrigin flag is inherited by iframes.
     bool isUnique() const { return m_isUnique; }
 
-    // Marks an origin as being unique.
-    void makeUnique();
+    // Marks a file:// origin as being in a domain defined by its path.
+    void enforceFilePathSeparation();
 
     // Convert this SecurityOrigin into a string. The string
     // representation of a SecurityOrigin is similar to a URL, except it
@@ -201,16 +201,20 @@ private:
     SecurityOrigin(const KURL&, SandboxFlags);
     explicit SecurityOrigin(const SecurityOrigin*);
 
+    bool passesFileCheck(const SecurityOrigin* other) const;
+
     SandboxFlags m_sandboxFlags;
     String m_protocol;
     String m_host;
     mutable String m_encodedHost;
     String m_domain;
+    String m_filePath;
     unsigned short m_port;
     bool m_isUnique;
     bool m_universalAccess;
     bool m_domainWasSetInDOM;
     bool m_canLoadLocalResources;
+    bool m_enforceFilePathSeparation;
 };
 
 } // namespace WebCore
