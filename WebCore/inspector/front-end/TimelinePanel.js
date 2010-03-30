@@ -104,7 +104,7 @@ WebInspector.TimelinePanel.prototype = {
 
     get statusBarItems()
     {
-        return [this.toggleFilterButton.element, this.toggleTimelineButton.element, this.clearButton.element];
+        return [this.toggleFilterButton.element, this.toggleTimelineButton.element, this.clearButton.element, this.recordsCounter];
     },
 
     get categories()
@@ -161,6 +161,14 @@ WebInspector.TimelinePanel.prototype = {
 
         this.toggleFilterButton = new WebInspector.StatusBarButton(WebInspector.UIString("Show short records"), "timeline-filter-status-bar-item");
         this.toggleFilterButton.addEventListener("click", this._toggleFilterButtonClicked.bind(this), false);
+
+        this.recordsCounter = document.createElement("span");
+        this.recordsCounter.className = "timeline-records-counter";
+    },
+
+    _updateRecordsCounter: function()
+    {
+        this.recordsCounter.textContent = WebInspector.UIString("%d of %d captured records are visible", this._rootRecord._visibleRecordsCount, this._rootRecord._allRecordsCount);
     },
 
     _toggleTimelineButtonClicked: function()
@@ -230,6 +238,8 @@ WebInspector.TimelinePanel.prototype = {
         }
 
         var formattedRecord = new WebInspector.TimelinePanel.FormattedRecord(record, parentRecord, this._recordStyles, this._sendRequestRecords, this._timerRecords);
+        ++this._rootRecord._allRecordsCount;
+
         if (parentRecord === this._rootRecord)
             formattedRecord.collapsed = true;
 
@@ -242,17 +252,9 @@ WebInspector.TimelinePanel.prototype = {
             var record = formattedRecord;
             while (record.parent && record.parent._lastChildEndTime < record._lastChildEndTime) {
                 record.parent._lastChildEndTime = record._lastChildEndTime;
+                if (!record.parent._hasLongChildrenEvents)
+                    record.parent._hasLongChildrenEvents = record._isLongEvent();
                 record = record.parent;
-            }
-            // We have attached a fresh event record received from Timeline Agent to some old event record.
-            // If that old parent record haven't had long children events and new child record has it
-            // then we want to propagate _hasLongChildrenEvents flag to parent, grand-parent etc.
-            if (record._isLongEvent()) {
-                record = formattedRecord;
-                while (record.parent && !record.parent._isLongEvent()) {
-                    record = record.parent;
-                    record._hasLongChildrenEvents = true;
-                }
             }
         }
         return hasLongChildrenEvents || formattedRecord._isLongEvent();
@@ -282,6 +284,8 @@ WebInspector.TimelinePanel.prototype = {
     {
         var rootRecord = {};
         rootRecord.children = [];
+        rootRecord._visibleRecordsCount = 0;
+        rootRecord._allRecordsCount = 0;
         return rootRecord;
     },
 
@@ -329,8 +333,7 @@ WebInspector.TimelinePanel.prototype = {
 
     _scheduleRefresh: function(preserveBoundaries)
     {
-        if (preserveBoundaries)
-            this._closeRecordDetails();
+        this._closeRecordDetails();
         this._boundariesAreValid &= preserveBoundaries;
         if (this._needsRefresh)
             return;
@@ -355,44 +358,47 @@ WebInspector.TimelinePanel.prototype = {
         if (!this._boundariesAreValid)
             this._overviewPane.update(this._rootRecord.children);
         this._refreshRecords(!this._boundariesAreValid);
+        this._updateRecordsCounter();
         this._boundariesAreValid = true;
     },
 
     _updateBoundaries: function()
     {
-            this._calculator.reset();
-            this._calculator.windowLeft = this._overviewPane.windowLeft;
-            this._calculator.windowRight = this._overviewPane.windowRight;
+        this._calculator.reset();
+        this._calculator.windowLeft = this._overviewPane.windowLeft;
+        this._calculator.windowRight = this._overviewPane.windowRight;
 
-            for (var i = 0; i < this._rootRecord.children.length; ++i)
-                this._calculator.updateBoundaries(this._rootRecord.children[i]);
+        for (var i = 0; i < this._rootRecord.children.length; ++i)
+            this._calculator.updateBoundaries(this._rootRecord.children[i]);
 
-            this._calculator.calculateWindow();
+        this._calculator.calculateWindow();
     },
 
-    _addToRecordsWindow: function(record, recordsWindow)
+    _addToRecordsWindow: function(record, recordsWindow, parentIsCollapsed)
     {
         if (!this._calculator._showShortEvents && !record._isLongEvent())
             return;
-
-        recordsWindow.push(record);
-        var index = recordsWindow.length;
-        if (!record.collapsed) {
-            for (var i = 0; i < record.children.length; ++i)
-                this._addToRecordsWindow(record.children[i], recordsWindow);
+        var percentages = this._calculator.computeBarGraphPercentages(record);
+        if (percentages.start < 100 && percentages.endWithChildren >= 0 && !record.category.hidden) {
+            ++this._rootRecord._visibleRecordsCount;
+            ++record.parent._invisibleChildrenCount;
+            if (!parentIsCollapsed)
+                recordsWindow.push(record);
         }
-        record.visibleChildrenCount = recordsWindow.length - index;
+
+        var index = recordsWindow.length;
+        record._invisibleChildrenCount = 0;
+        for (var i = 0; i < record.children.length; ++i)
+            this._addToRecordsWindow(record.children[i], recordsWindow, parentIsCollapsed || record.collapsed);
+        record._visibleChildrenCount = recordsWindow.length - index;
     },
 
     _filterRecords: function()
     {
         var recordsInWindow = [];
-        for (var i = 0; i < this._rootRecord.children.length; ++i) {
-            var record = this._rootRecord.children[i];
-            var percentages = this._calculator.computeBarGraphPercentages(record);
-            if (percentages.start < 100 && percentages.endWithChildren >= 0 && !record.category.hidden)
-                this._addToRecordsWindow(record, recordsInWindow);
-        }
+        this._rootRecord._visibleRecordsCount = 0;
+        for (var i = 0; i < this._rootRecord.children.length; ++i)
+            this._addToRecordsWindow(this._rootRecord.children[i], recordsInWindow);
         return recordsInWindow;
     },
 
@@ -556,7 +562,9 @@ WebInspector.TimelineCalculator.prototype = {
         if (this._absoluteMinimumBoundary === -1 || lowerBound < this._absoluteMinimumBoundary)
             this._absoluteMinimumBoundary = lowerBound;
 
-        var upperBound = record._lastChildEndTime;
+        const minimumTimeFrame = 0.1;
+        const minimumDeltaForZeroSizeEvents = 0.01;
+        var upperBound = Math.max(record._lastChildEndTime + minimumDeltaForZeroSizeEvents, lowerBound + minimumTimeFrame);
         if (this._absoluteMaximumBoundary === -1 || upperBound > this._absoluteMaximumBoundary)
             this._absoluteMaximumBoundary = upperBound;
     },
@@ -667,12 +675,12 @@ WebInspector.TimelineRecordGraphRow.prototype = {
         this._barElement.style.left = barPosition.left + expandOffset + "px";
         this._barElement.style.width =  barPosition.width + "px";
 
-        if (record.visibleChildrenCount || record._hasLongChildrenEvents || (calculator._showShortEvents && record.children.length)) {
+        if (record._visibleChildrenCount || record._invisibleChildrenCount) {
             this._expandElement.style.top = index * this._rowHeight + "px";
             this._expandElement.style.left = barPosition.left + "px";
             this._expandElement.style.width = Math.max(12, barPosition.width + 25) + "px";
             if (!record.collapsed) {
-                this._expandElement.style.height = (record.visibleChildrenCount + 1) * this._rowHeight + "px";
+                this._expandElement.style.height = (record._visibleChildrenCount + 1) * this._rowHeight + "px";
                 this._expandElement.addStyleClass("timeline-expandable-expanded");
                 this._expandElement.removeStyleClass("timeline-expandable-collapsed");
             } else {
