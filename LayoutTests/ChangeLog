@@ -1,3 +1,14 @@
+2010-03-30  Alpha Lam  <hclam@chromium.org>
+
+        Reviewed by David Levin.
+
+        [chromium] Fix test_expectations for new test added in r56795
+        https://bugs.webkit.org/show_bug.cgi?id=36861
+
+        * platform/chromium/test_expectations.txt:
+        Expects svg/animations/animate-points.html to fail because a API is missing
+        in Chromium. See http://crbug.com/39904.
+
 2010-03-30  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Darin Adler.
