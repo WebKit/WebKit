@@ -331,25 +331,25 @@
             background-color:grey;
         }
         #container {
-            -webkit-transform: perspective(800) rotateY(0) rotateZ(0) translateZ(0);
+            -webkit-transform: perspective(800) translateX(0) rotateY(0) rotateZ(0) translateZ(0);
             -webkit-transition: -webkit-transform 2s;
         }
         #container.tilted {
-            -webkit-transform: perspective(800) rotateY(60deg) rotateZ(320deg) translateZ(-200px);
+            -webkit-transform: perspective(800) translateX(200px) rotateY(60deg) rotateZ(320deg) translateZ(-250px);
         }
         canvas {
-            width:90%;
-            height:90%;
+            width:800px;
+            height:600px;
         }
         #bg {
             border:4px solid #242;
             position:absolute;
-            width:90%;
-            height:90%;
+            width:800px;
+            height:600px;
         }
         #rocker {
             position:absolute;
-            top:300px;
+            top:200px;
             left:300px;
             font-size:3em;
             text-shadow: white 2px 2px 4px;
@@ -357,11 +357,11 @@
         }
         
         @-webkit-keyframes rock {
-            0% { -webkit-transform: translateX(-100px) rotate3d(0,0,1, -30deg) }
-            25% { -webkit-transform: translateX(-50px) rotate3d(0,0,1, 30deg) }
-            50% { -webkit-transform: translateX(0px) rotate3d(0,0,1, -30deg) }
+            0% { -webkit-transform: translateX(-250px) rotate3d(0,0,1, -30deg) }
+            25% { -webkit-transform: translateX(-150px) rotate3d(0,0,1, 30deg) }
+            50% { -webkit-transform: translateX(-50px) rotate3d(0,0,1, -30deg) }
             75% { -webkit-transform: translateX(50px) rotate3d(0,0,1, 30deg) }
-            100% { -webkit-transform: translateX(100px) rotate3d(0,0,1, -30deg) }
+            100% { -webkit-transform: translateX(150px) rotate3d(0,0,1, -30deg) }
         }
         
         #framerate {
@@ -378,7 +378,7 @@
     <body onload="start()">
         <div id="container">
             <img id="bg" src="resources/BambooBridge.jpg" />
-            <canvas id="example">
+            <canvas id="example" width="800px" height="600px">
                 There is supposed to be an example drawing here, but it's not important.
             </canvas>
         </div>
