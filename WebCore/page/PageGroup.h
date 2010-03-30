@@ -36,6 +36,7 @@
 namespace WebCore {
 
     class KURL;
+    class IndexedDatabase;
     class Page;
     class StorageNamespace;
 
@@ -69,6 +70,9 @@ namespace WebCore {
         StorageNamespace* localStorage();
         bool hasLocalStorage() { return m_localStorage; }
 #endif
+#if ENABLE(DOM_STORAGE)
+        IndexedDatabase* indexedDatabase();
+#endif
 
         void addUserScriptToWorld(DOMWrapperWorld*, const String& source, const KURL&, 
                                   PassOwnPtr<Vector<String> > whitelist, PassOwnPtr<Vector<String> > blacklist,
@@ -100,6 +104,9 @@ namespace WebCore {
         unsigned m_identifier;
 #if ENABLE(DOM_STORAGE)
         RefPtr<StorageNamespace> m_localStorage;
+#endif
+#if ENABLE(INDEXED_DATABASE)
+        RefPtr<IndexedDatabase> m_indexedDatabase;
 #endif
 
         OwnPtr<UserScriptMap> m_userScripts;

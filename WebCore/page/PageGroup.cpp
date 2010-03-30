@@ -30,12 +30,10 @@
 #include "ChromeClient.h"
 #include "Document.h"
 #include "Frame.h"
+#include "IndexedDatabase.h"
 #include "Page.h"
 #include "Settings.h"
-
-#if ENABLE(DOM_STORAGE)
 #include "StorageNamespace.h"
-#endif
 
 #if PLATFORM(CHROMIUM)
 #include "ChromiumBridge.h"
@@ -191,6 +189,9 @@ StorageNamespace* PageGroup::localStorage()
 {
     if (!m_localStorage) {
         // Need a page in this page group to query the settings for the local storage database path.
+        // Having these parameters attached to the page settings is unfortunate since these settings are
+        // not per-page (and, in fact, we simply grab the settings from some page at random), but
+        // at this point we're stuck with it.
         Page* page = *m_pages.begin();
         const String& path = page->settings()->localStorageDatabasePath();
         unsigned quota = page->settings()->localStorageQuota();
@@ -198,6 +199,17 @@ StorageNamespace* PageGroup::localStorage()
     }
 
     return m_localStorage.get();
+}
+#endif
+
+#if ENABLE(INDEXED_DATABASE)
+IndexedDatabase* PageGroup::indexedDatabase()
+{
+    // Do not add page setting based access control here since this object is shared by all pages in
+    // the group and having per-page controls is misleading.
+    if (!m_indexedDatabase)
+        m_indexedDatabase = IndexedDatabase::create();
+    return m_indexedDatabase.get();
 }
 #endif
 

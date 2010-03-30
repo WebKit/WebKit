@@ -40,6 +40,7 @@ class IDBDatabaseRequest : public RefCounted<IDBDatabaseRequest> {
 public:
     // FIXME: Write.
     IDBRequest* request() const { return 0; }
+    void createObjectStore(const String& name, const String& keyPath, bool autoIncrement) { }
 };
 
 } // namespace WebCore

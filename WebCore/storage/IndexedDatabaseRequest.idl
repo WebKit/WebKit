@@ -30,7 +30,6 @@ module storage {
     interface [
         Conditional=INDEXED_DATABASE
     ] IndexedDatabaseRequest {
-        readonly attribute IDBRequest request;
         [Custom] void open(in DOMString name, in DOMString description, in optional boolean modifyDatabase, IDBDatabaseErrorCallback onerror, IDBDatabaseRequestCallback onsuccess)
             raises(IDBDatabaseException);
     };

@@ -47,7 +47,7 @@ typedef IDBCallbacks<IDBDatabase> IDBDatabaseCallbacks;
 // trigger work on a background thread if necessary.
 class IndexedDatabase : public ThreadSafeShared<IndexedDatabase> {
 public:
-    static PassRefPtr<IndexedDatabase> get();
+    static PassRefPtr<IndexedDatabase> create();
     virtual ~IndexedDatabase() { }
 
     virtual void open(const String& name, const String& description, bool modifyDatabase, ExceptionCode&, PassRefPtr<IDBDatabaseCallbacks>) = 0;

@@ -333,6 +333,8 @@
                 'src/WebImageCG.cpp',
                 'src/WebImageDecoder.cpp',
                 'src/WebImageSkia.cpp',
+                'src/WebIndexedDatabaseImpl.cpp',
+                'src/WebIndexedDatabaseImpl.h',
                 'src/WebInputElement.cpp',
                 'src/WebInputEvent.cpp',
                 'src/WebInputEventConversion.cpp',

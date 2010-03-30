@@ -38,23 +38,26 @@
 
 namespace WebCore {
 
-class IDBRequest;
+class IndexedDatabase;
+class Frame;
 
 class IndexedDatabaseRequest : public RefCounted<IndexedDatabaseRequest> {
 public:
-    static PassRefPtr<IndexedDatabaseRequest> create()
+    static PassRefPtr<IndexedDatabaseRequest> create(IndexedDatabase* indexedDatabase, Frame* frame)
     {
-        return adoptRef(new IndexedDatabaseRequest());
+        return adoptRef(new IndexedDatabaseRequest(indexedDatabase, frame));
     }
     ~IndexedDatabaseRequest();
 
-    IDBRequest* request() const { return m_request.get(); }
     void open(const String& name, const String& description, bool modifyDatabase, ExceptionCode&);
 
-private:
-    IndexedDatabaseRequest();
+    void disconnectFrame() { m_frame = 0; }
 
-    PassRefPtr<IDBRequest> m_request;
+private:
+    IndexedDatabaseRequest(IndexedDatabase*, Frame*);
+
+    PassRefPtr<IndexedDatabase> m_indexedDatabase;
+    Frame* m_frame;
 };
 
 } // namespace WebCore

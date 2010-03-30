@@ -25,40 +25,21 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "config.h"
-#include "IDBRequest.h"
 
-#if ENABLE(INDEXED_DATABASE)
+#ifndef WebIndexedDatabaseImpl_h
+#define WebIndexedDatabaseImpl_h
 
-#include "IDBDatabaseError.h"
-#include "SerializedScriptValue.h"
+#include "WebIndexedDatabase.h"
 
-namespace WebCore {
+namespace WebKit {
 
-IDBRequest::IDBRequest(ScriptExecutionContext* context)
-    : ActiveDOMObject(context, this)
-{
-}
+class WebIndexedDatabaseImpl : public WebIndexedDatabase {
+public:
+    virtual ~WebIndexedDatabaseImpl();
 
-IDBRequest::~IDBRequest()
-{
-}
+    virtual void open(const WebString& name, const WebString& description, bool modifyDatabase, int& exceptionCode, WebIDBCallbacks<WebIDBDatabase>* callbacks);
+};
 
-void IDBRequest::abort()
-{
-}
+} // namespace WebKit
 
-EventTargetData* IDBRequest::eventTargetData()
-{
-    return 0;
-}
-
-EventTargetData* IDBRequest::ensureEventTargetData()
-{
-    return 0;
-}
-
-} // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)
-
+#endif // WebIndexedDatabaseImpl_h

@@ -25,6 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #ifndef WebIndexedDatabase_h
 #define WebIndexedDatabase_h
 
@@ -41,7 +42,7 @@ class WebString;
 // http://dev.w3.org/2006/webapi/WebSimpleDB/
 class WebIndexedDatabase {
 public:
-    // FIXME: Implement entry back into WebKit for this API.
+    WEBKIT_API static WebIndexedDatabase* create();
 
     virtual ~WebIndexedDatabase() { }
 

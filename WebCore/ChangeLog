@@ -1,3 +1,48 @@
+2010-03-29  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        More IndexedDB work
+        https://bugs.webkit.org/show_bug.cgi?id=36770
+
+        Add the "singleton" IndexedDatabase object to PageGroup
+        IndexedDatabase now has a create() method since PageGroup can own the instance (at least for now)
+        Rip out the IDBRequest stuff (now obsolete).
+        DOMWindow now can instantiate indexedDatabase objects on demand.
+
+        New layout tests starting with the next patch (which should make indexedDB.open() "work").
+
+        * WebCore.gypi:
+        * bindings/v8/custom/V8IDBRequestCustom.cpp: Removed.
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::indexedDB):
+        * page/DOMWindow.h:
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::indexedDatabase):
+        * page/PageGroup.h:
+        * storage/IDBDatabase.cpp:
+        * storage/IDBDatabaseRequest.h:
+        (WebCore::IDBDatabaseRequest::createObjectStore):
+        * storage/IDBDatabaseRequest.idl:
+        * storage/IDBRequest.cpp: Removed.
+        * storage/IDBRequest.h: Removed.
+        * storage/IDBRequest.idl: Removed.
+        * storage/IndexedDatabase.cpp:
+        (WebCore::IndexedDatabase::create):
+        * storage/IndexedDatabase.h:
+        * storage/IndexedDatabaseImpl.cpp:
+        (WebCore::IndexedDatabaseImpl::create):
+        (WebCore::IndexedDatabaseImpl::IndexedDatabaseImpl):
+        (WebCore::IndexedDatabaseImpl::~IndexedDatabaseImpl):
+        * storage/IndexedDatabaseImpl.h:
+        * storage/IndexedDatabaseRequest.cpp:
+        (WebCore::IndexedDatabaseRequest::IndexedDatabaseRequest):
+        * storage/IndexedDatabaseRequest.h:
+        (WebCore::IndexedDatabaseRequest::create):
+        * storage/IndexedDatabaseRequest.idl:
+        * storage/chromium/IndexedDatabase.cpp:
+        (WebCore::IndexedDatabase::create):
+
 2010-03-30  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

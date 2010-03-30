@@ -36,7 +36,7 @@ namespace WebCore {
 
 class IndexedDatabaseImpl : public IndexedDatabase {
 public:
-    static PassRefPtr<IndexedDatabaseImpl> get();
+    static PassRefPtr<IndexedDatabaseImpl> create();
     virtual ~IndexedDatabaseImpl();
 
     virtual void open(const String& name, const String& description, bool modifyDatabase, ExceptionCode&, PassRefPtr<IDBCallbacks<IDBDatabase> >);

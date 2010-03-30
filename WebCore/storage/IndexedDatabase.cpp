@@ -38,9 +38,9 @@
 
 namespace WebCore {
 
-PassRefPtr<IndexedDatabase> IndexedDatabase::get()
+PassRefPtr<IndexedDatabase> IndexedDatabase::create()
 {
-    return IndexedDatabaseImpl::get();
+    return IndexedDatabaseImpl::create();
 }
 
 } // namespace WebCore

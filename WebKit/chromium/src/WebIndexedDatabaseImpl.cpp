@@ -29,25 +29,31 @@
  */
 
 #include "config.h"
+#include "WebIndexedDatabaseImpl.h"
+
+#include "WebIDBDatabaseError.h"
+#include <wtf/OwnPtr.h>
 
 #if ENABLE(INDEXED_DATABASE)
-#include "V8IDBRequest.h"
 
-#include "SerializedScriptValue.h"
-#include "V8Proxy.h"
+namespace WebKit {
 
-namespace WebCore {
-
-v8::Handle<v8::Value> V8IDBRequest::resultAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+WebIndexedDatabase* WebIndexedDatabase::create()
 {
-    IDBRequest* request = V8IDBRequest::toNative(info.Holder());
-    SerializedScriptValue* result = request->result();
-    if (!result)
-        return v8::Null();
-
-    return result->deserialize();
+    return new WebIndexedDatabaseImpl();
 }
 
-} // namespace WebCore
+WebIndexedDatabaseImpl::~WebIndexedDatabaseImpl()
+{
+}
 
-#endif
+void WebIndexedDatabaseImpl::open(const WebString& name, const WebString& description, bool modifyDatabase, int& exceptionCode, WebIDBCallbacks<WebIDBDatabase>* callbacksPtr)
+{
+    OwnPtr<WebIDBCallbacks<WebIDBDatabase>*> callbacks(callbacksPtr);
+    callbacks->onError(WebIDBDatabaseError(0, "Not implemented"));
+    // FIXME: Implement for realz.
+}
+
+} // namespace WebKit
+
+#endif // ENABLE(INDEXED_DATABASE)
