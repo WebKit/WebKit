@@ -1,3 +1,9 @@
+2010-03-30  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: removed failure expectation from Chromium.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-03-30  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Darin Adler.
