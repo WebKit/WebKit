@@ -41,6 +41,8 @@ WebInspector.TextViewer = function(textModel, platform, url)
 
     this.element.addEventListener("scroll", this._scroll.bind(this), false);
     this.element.addEventListener("keydown", this._handleKeyDown.bind(this), false);
+    this.element.addEventListener("beforecopy", this._beforeCopy.bind(this), false);
+    this.element.addEventListener("copy", this._copy.bind(this), false);
 
     this._url = url;
 
@@ -234,6 +236,19 @@ WebInspector.TextViewer.prototype = {
             event.stopPropagation();
             this.element.scrollLeft += scrollValue;
         }
+    },
+
+    _beforeCopy: function(e)
+    {
+        e.preventDefault();
+    },
+
+    _copy: function(e)
+    {
+        var range = this._getSelection();
+        var text = this._textModel.copyRange(range);
+        InspectorFrontendHost.copyText(text);
+        e.preventDefault();
     },
 
     beginUpdates: function(enabled)
