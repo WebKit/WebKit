@@ -1,3 +1,10 @@
+2010-03-29  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by NOBODY (build fix).
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.make:
+        add JSObjectRefPrivate.h
+
 2010-03-29  Chao-ying Fu  <fu@mips.com>
 
         Reviewed by Oliver Hunt.
