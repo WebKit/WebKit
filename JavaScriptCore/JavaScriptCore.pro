@@ -14,6 +14,9 @@ CONFIG += depend_includepath
 
 contains(QT_CONFIG, embedded):CONFIG += embedded
 
+CONFIG(debug_and_release):CONFIG(debug, debug|release): DESTDIR = debug
+CONFIG(debug_and_release):CONFIG(release, debug|release): DESTDIR = release
+
 !CONFIG(QTDIR_build) {
     CONFIG(debug, debug|release) {
         OBJECTS_DIR = obj/debug
