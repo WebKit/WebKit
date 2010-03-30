@@ -2,6 +2,22 @@
 
         Reviewed by Nikolas Zimmermann.
 
+        SVG Glyph transformations wrong on use of SVGFont
+        https://bugs.webkit.org/show_bug.cgi?id=36731
+
+        Kerning on SVGFonts should be applied to the userSpace of the current Char
+        and not to the userSpace of the viewport. This means scaling the kerning
+        to match the current userSpace.
+
+        Test: svg/custom/glyph-transformation-with-hkern.svg
+
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::buildLayoutInformationForTextBox):
+
+2010-03-30  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
         SVG Animation doesn't respect 'currentColor'
         https://bugs.webkit.org/show_bug.cgi?id=36695
 

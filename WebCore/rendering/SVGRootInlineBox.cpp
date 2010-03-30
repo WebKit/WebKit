@@ -28,6 +28,7 @@
 #include "SVGRootInlineBox.h"
 
 #include "Editor.h"
+#include "FloatConversion.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
 #include "RenderBlock.h"
@@ -1413,7 +1414,7 @@ void SVGRootInlineBox::buildLayoutInformationForTextBox(SVGCharacterLayoutInfo& 
             }
         }
 
-        double kerning = 0.0;
+        float kerning = 0.0f;
 #if ENABLE(SVG_FONTS)
         SVGFontElement* svgFont = 0;
         if (style->font().isSVGFont())
@@ -1422,25 +1423,26 @@ void SVGRootInlineBox::buildLayoutInformationForTextBox(SVGCharacterLayoutInfo& 
         if (lastGlyph.isValid && style->font().isSVGFont()) {
             SVGHorizontalKerningPair kerningPair;
             if (svgFont->getHorizontalKerningPairForStringsAndGlyphs(lastGlyph.unicode, lastGlyph.glyphName, unicodeStr, glyphName, kerningPair))
-                kerning = kerningPair.kerning;
+                kerning = narrowPrecisionToFloat(kerningPair.kerning);
         }
 
         if (style->font().isSVGFont()) {
             lastGlyph.unicode = unicodeStr;
             lastGlyph.glyphName = glyphName;
             lastGlyph.isValid = true;
+            kerning *= style->font().size() / style->font().primaryFont()->unitsPerEm();
         } else
             lastGlyph.isValid = false;
 #endif
 
-        svgChar.x -= (float)kerning;
+        svgChar.x -= kerning;
 
         // Advance to new position
         if (isVerticalText) {
             svgChar.drawnSeperated = true;
             info.cury += glyphAdvance + spacing;
         } else
-            info.curx += glyphAdvance + spacing - (float)kerning;
+            info.curx += glyphAdvance + spacing - kerning;
 
         // Advance to next character group
         for (int k = 0; k < charsConsumed; ++k) {
