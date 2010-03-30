@@ -26,6 +26,7 @@
 #if ENABLE(SVG_ANIMATION)
 #include "SVGAnimationElement.h"
 
+#include "Color.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSParser.h"
 #include "CSSPropertyNames.h"
@@ -35,6 +36,7 @@
 #include "FloatConversion.h"
 #include "HTMLNames.h"
 #include "MappedAttribute.h"
+#include "RenderObject.h"
 #include "SVGElementInstance.h"
 #include "SVGNames.h"
 #include "SVGURIReference.h"
@@ -468,6 +470,14 @@ void SVGAnimationElement::currentValuesForValuesAnimation(float percent, float& 
         effectivePercent = calculatePercentForSpline(effectivePercent, index);
     }
 }
+static inline void adjustForCurrentColor(String& value, SVGElement* target)
+{
+    if (!target || !target->isStyled() || value != "currentColor")
+        return;
+
+    if (RenderObject* targetRenderer = target->renderer())
+        value = targetRenderer->style()->color().name();
+}
     
 void SVGAnimationElement::startedActiveInterval()
 {
@@ -487,20 +497,30 @@ void SVGAnimationElement::startedActiveInterval()
             return;
     }
 
+    String from = fromValue();
+    String to = toValue();
+    String by = byValue();
+    SVGElement* target = targetElement();
     AnimationMode animationMode = this->animationMode();
     if (animationMode == NoAnimation)
         return;
-    if (animationMode == FromToAnimation)
-        m_animationValid = calculateFromAndToValues(fromValue(), toValue());
-    else if (animationMode == ToAnimation) {
+    if (animationMode == FromToAnimation) {
+        adjustForCurrentColor(from, target);
+        adjustForCurrentColor(to, target);
+        m_animationValid = calculateFromAndToValues(from, to);
+    } else if (animationMode == ToAnimation) {
         // For to-animations the from value is the current accumulated value from lower priority animations.
         // The value is not static and is determined during the animation.
-        m_animationValid = calculateFromAndToValues(String(), toValue());
-    } else if (animationMode == FromByAnimation)
-        m_animationValid = calculateFromAndByValues(fromValue(), byValue());
-    else if (animationMode == ByAnimation)
-        m_animationValid = calculateFromAndByValues(String(), byValue());
-    else if (animationMode == ValuesAnimation) {
+        adjustForCurrentColor(to, target);
+        m_animationValid = calculateFromAndToValues(String(), to);
+    } else if (animationMode == FromByAnimation) {
+        adjustForCurrentColor(from, target);
+        adjustForCurrentColor(by, target);
+        m_animationValid = calculateFromAndByValues(from, by);
+    } else if (animationMode == ByAnimation) {
+        adjustForCurrentColor(by, target);
+        m_animationValid = calculateFromAndByValues(String(), by);
+    } else if (animationMode == ValuesAnimation) {
         m_animationValid = m_values.size() > 1
             && (calcMode == CalcModePaced || !hasAttribute(SVGNames::keyTimesAttr) || hasAttribute(SVGNames::keyPointsAttr) || (m_values.size() == m_keyTimes.size()))
             && (calcMode == CalcModeDiscrete || !m_keyTimes.size() || m_keyTimes.last() == 1.0)

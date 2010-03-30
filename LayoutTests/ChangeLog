@@ -1,3 +1,17 @@
+2010-03-30  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG Animation doesn't respect 'currentColor'
+        https://bugs.webkit.org/show_bug.cgi?id=36695
+
+        Check if SVG animation takes the color value of the target element as 'currentColor'.
+
+        * platform/mac/svg/custom/animation-currentColor-expected.checksum: Added.
+        * platform/mac/svg/custom/animation-currentColor-expected.png: Added.
+        * platform/mac/svg/custom/animation-currentColor-expected.txt: Added.
+        * svg/custom/animation-currentColor.svg: Added.
+
 2010-03-30  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
