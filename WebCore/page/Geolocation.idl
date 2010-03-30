@@ -25,7 +25,7 @@
 
 module core {
 
-    interface [OmitConstructor] Geolocation {
+    interface [Conditional=GEOLOCATION, OmitConstructor] Geolocation {
         [Custom] void getCurrentPosition(in PositionCallback successCallback, in PositionErrorCallback errorCallback, in PositionOptions options);
 
         [Custom] long watchPosition(in PositionCallback successCallback, in PositionErrorCallback errorCallback, in PositionOptions options);

@@ -46,7 +46,7 @@ class GeolocationError;
 #endif
 
 class Geolocation : public RefCounted<Geolocation>
-#if !ENABLE(CLIENT_BASED_GEOLOCATION)
+#if !ENABLE(CLIENT_BASED_GEOLOCATION) && ENABLE(GEOLOCATION)
     , public GeolocationServiceClient
 #endif
 {
@@ -137,7 +137,7 @@ private:
     bool startUpdating(GeoNotifier*);
     void stopUpdating();
 
-#if !ENABLE(CLIENT_BASED_GEOLOCATION)
+#if !ENABLE(CLIENT_BASED_GEOLOCATION) && ENABLE(GEOLOCATION)
     // GeolocationServiceClient
     virtual void geolocationServicePositionChanged(GeolocationService*);
     virtual void geolocationServiceErrorOccurred(GeolocationService*);
@@ -171,7 +171,9 @@ private:
     } m_allowGeolocation;
     bool m_shouldClearCache;
 
+#if ENABLE(GEOLOCATION)
     OwnPtr<GeolocationPositionCache> m_positionCache;
+#endif
     GeoNotifierSet m_requestsAwaitingCachedPosition;
 };
     

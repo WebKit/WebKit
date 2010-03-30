@@ -28,6 +28,8 @@
 #include "config.h"
 #include "Geolocation.h"
 
+#if ENABLE(GEOLOCATION)
+
 #include "Chrome.h"
 #include "Frame.h"
 #include "Page.h"
@@ -639,3 +641,19 @@ void Geolocation::stopUpdating()
 }
 
 } // namespace WebCore
+
+#else
+
+namespace WebCore {
+
+void Geolocation::disconnectFrame() {}
+
+Geolocation::Geolocation(Frame*) {}
+
+Geolocation::~Geolocation() {}
+
+void Geolocation::setIsAllowed(bool) {}
+
+}
+                                                        
+#endif // ENABLE(GEOLOCATION)

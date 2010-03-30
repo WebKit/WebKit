@@ -49,6 +49,7 @@ GeolocationService* GeolocationService::create(GeolocationServiceClient* client)
     return (*s_factoryFunction)(client);
 }
 
+#if ENABLE(GEOLOCATION)
 void GeolocationService::useMock()
 {
     s_factoryFunction = &GeolocationServiceMock::create;
@@ -69,5 +70,7 @@ void GeolocationService::errorOccurred()
 {
     m_geolocationServiceClient->geolocationServiceErrorOccurred(this);
 }
+
+#endif
 
 } // namespace WebCore

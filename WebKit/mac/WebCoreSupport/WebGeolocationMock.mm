@@ -38,6 +38,7 @@ using namespace WTF;
 
 + (void)setPosition:(double)latitude:(double)longitude:(double)accuracy
 {
+#if ENABLE(GEOLOCATION)
     RefPtr<Coordinates> coordinates = Coordinates::create(latitude,
                                                           longitude,
                                                           false, 0.0,  // altitude
@@ -47,13 +48,16 @@ using namespace WTF;
                                                           false, 0.0);  // speed
     RefPtr<Geoposition> position = Geoposition::create(coordinates.release(), currentTime() * 1000.0);
     GeolocationServiceMock::setPosition(position.release());
+#endif
 }
 
 + (void)setError:(int)code:(NSString *)message
 {
+#if ENABLE(GEOLOCATION)
     PositionError::ErrorCode codeEnum = static_cast<PositionError::ErrorCode>(code);
     RefPtr<PositionError> error = PositionError::create(codeEnum, message);
     GeolocationServiceMock::setError(error.release());
+#endif
 }
 
 @end
