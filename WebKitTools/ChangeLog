@@ -1,3 +1,23 @@
+2010-03-30  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Adjusted test-webkitpy to delete all orphaned *.pyc files
+        from webkitpy/ prior to importing any modules from webkitpy.
+        This ensures that no import statements in webkitpy falsely
+        succeed because of leftover *.pyc files.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36599
+
+        * Scripts/test-webkitpy:
+          - Added _clean_pyc_files() to delete orphaned *.pyc files
+            from a directory.
+          - Added _clean_webkitpy_with_test() to call and test
+            _clean_pyc_files().
+          - Moved the "import webkitpy.python24.versioning" statement
+            from the top of the module to the init() method -- immediately
+            after the call to _clean_webkitpy_with_test().
+
 2010-03-30  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Shinichiro Hamaji.
