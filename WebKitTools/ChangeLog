@@ -1,3 +1,17 @@
+2010-03-29  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Get the following test-webkitpy unit test working again:
+        scm_unittest.SVNTest.test_svn_apply().
+
+        https://bugs.webkit.org/show_bug.cgi?id=36696
+
+        * Scripts/webkitpy/common/checkout/scm_unittest.py:
+          - Add leading spaces to the empty lines of the ChangeLog strings.
+          - Manually set the _reviewer attribute on the Attachment object
+            to get the tests to pass.
+
 2010-03-29  Martin Robinson  <mrobinson@webkit.org>
 
         Reviewed by Holger Freyther.

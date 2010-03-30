@@ -41,6 +41,7 @@ import urllib
 from datetime import date
 from webkitpy.common.checkout.api import Checkout
 from webkitpy.common.checkout.scm import detect_scm_system, SCM, SVN, CheckoutNeedsUpdate, commit_error_handler
+from webkitpy.common.config.committers import Committer  # FIXME: This should not be needed
 from webkitpy.common.net.bugzilla import Attachment # FIXME: This should not be needed
 from webkitpy.common.system.executive import Executive, run_command, ScriptError
 
@@ -174,10 +175,14 @@ class SCMTest(unittest.TestCase):
         patch_path = os.path.join(self.svn_checkout_path, 'patch.diff')
         write_into_file_at_path(patch_path, patch_contents)
         patch = {}
-        patch['reviewer'] = 'Joe Cool'
         patch['bug_id'] = '12345'
         patch['url'] = 'file://%s' % urllib.pathname2url(patch_path)
-        return Attachment(patch, None) # FIXME: This is a hack, scm.py shouldn't be fetching attachment data.
+
+        attachment = Attachment(patch, None) # FIXME: This is a hack, scm.py shouldn't be fetching attachment data.
+        joe_cool = Committer(name="Joe Cool", email_or_emails=None)
+        attachment._reviewer = joe_cool
+
+        return attachment
 
     def _setup_webkittools_scripts_symlink(self, local_scm):
         webkit_scm = detect_scm_system(os.path.dirname(os.path.abspath(__file__)))
@@ -342,7 +347,7 @@ class SVNTest(SCMTest):
 +++ ChangeLog	(working copy)
 @@ -1,5 +1,13 @@
  2009-10-26  Eric Seidel  <eric@webkit.org>
-
+ 
 +        Reviewed by NOBODY (OOPS!).
 +
 +        Second most awesome change ever.
@@ -352,7 +357,7 @@ class SVNTest(SCMTest):
 +2009-10-26  Eric Seidel  <eric@webkit.org>
 +
          Reviewed by Foo Bar.
-
+ 
          Most awesome change ever.
 """
         one_line_overlap_entry = """DATE_HERE  Eric Seidel  <eric@webkit.org>
@@ -368,9 +373,9 @@ class SVNTest(SCMTest):
 --- ChangeLog	(revision 5)
 +++ ChangeLog	(working copy)
 @@ -2,6 +2,14 @@
-
+ 
          Reviewed by Foo Bar.
-
+ 
 +        Second most awesome change ever.
 +
 +        * scm_unittest.py:
@@ -380,7 +385,7 @@ class SVNTest(SCMTest):
 +        Reviewed by Foo Bar.
 +
          Most awesome change ever.
-
+ 
          * scm_unittest.py:
 """
         two_line_overlap_entry = """DATE_HERE  Eric Seidel  <eric@webkit.org>
