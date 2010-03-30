@@ -642,6 +642,10 @@ def get_header_guard_cpp_variable(filename):
 
     """
 
+    # Restores original filename in case that style checker is invoked from Emacs's
+    # flymake.
+    filename = re.sub(r'_flymake\.h$', '.h', filename)
+
     return sub(r'[-.\s]', '_', os.path.basename(filename))
 
 
@@ -2769,9 +2773,7 @@ def check_for_include_what_you_use(filename, clean_lines, include_state, error,
     # found.
     # e.g. If the file name is 'foo_flymake.cpp', we should search for 'foo.h'
     # instead of 'foo_flymake.h'
-    emacs_flymake_suffix = '_flymake.cpp'
-    if abs_filename.endswith(emacs_flymake_suffix):
-        abs_filename = abs_filename[:-len(emacs_flymake_suffix)] + '.cpp'
+    abs_filename = re.sub(r'_flymake\.cpp$', '.cpp', abs_filename)
 
     # include_state is modified during iteration, so we iterate over a copy of
     # the keys.

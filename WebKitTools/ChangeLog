@@ -1,3 +1,15 @@
+2010-03-29  Hayato Ito  <hayato@chromium.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Remove '_flymake' suffix from base part of file name so that
+        check-webkit-style uses a correct header guard name when it is called from Emacs's flymake.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36573
+
+        * Scripts/webkitpy/style/processors/cpp.py:
+        * Scripts/webkitpy/style/processors/cpp_unittest.py:
+
 2010-03-29  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Eric Seidel.

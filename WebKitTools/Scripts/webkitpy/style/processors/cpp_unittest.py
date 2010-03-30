@@ -1736,6 +1736,26 @@ class CppStyleTest(CppStyleTestBase):
                 '  [build/header_guard] [5]' % expected_guard),
             error_collector.result_list())
 
+        # Special case for flymake
+        error_collector = ErrorCollector(self.assert_)
+        self.process_file_data('mydir/Foo_flymake.h', 'h',
+                               ['#ifndef %s' % expected_guard,
+                                '#define %s' % expected_guard,
+                                '#endif // %s' % expected_guard],
+                               error_collector)
+        for line in error_collector.result_list():
+            if line.find('build/header_guard') != -1:
+                self.fail('Unexpected error: %s' % line)
+
+        error_collector = ErrorCollector(self.assert_)
+        self.process_file_data('mydir/Foo_flymake.h', 'h', [], error_collector)
+        self.assertEquals(
+            1,
+            error_collector.result_list().count(
+                'No #ifndef header guard found, suggested CPP variable is: %s'
+                '  [build/header_guard] [5]' % expected_guard),
+            error_collector.result_list())
+
     def test_build_printf_format(self):
         self.assert_lint(
             r'printf("\%%d", value);',
