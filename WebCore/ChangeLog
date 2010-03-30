@@ -1,3 +1,11 @@
+2010-03-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Add missing export.
+
+        * WebCore.base.exp:
+
 2010-03-30  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Darin Adler.
