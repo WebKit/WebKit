@@ -29,6 +29,7 @@
 # WebKit's Python module for understanding the various ports
 
 import os
+import platform
 
 from optparse import make_option
 
@@ -48,10 +49,15 @@ class WebKitPort(object):
             "chromium": ChromiumPort,
             "gtk": GtkPort,
             "mac": MacPort,
+            "win": WinPort,
             "qt": QtPort,
         }
-        # FIXME: We should default to WinPort on Windows.
-        return ports.get(port_name, MacPort)
+        default_port = {
+            "Windows": WinPort,
+            "Darwin": MacPort,
+        }
+        # Do we really need MacPort as the ultimate default?
+        return ports.get(port_name, default_port.get(platform.system(), MacPort))
 
     @staticmethod
     def makeArgs():
@@ -107,6 +113,18 @@ class MacPort(WebKitPort):
     @classmethod
     def flag(cls):
         return "--port=mac"
+
+
+class WinPort(WebKitPort):
+
+    @classmethod
+    def name(cls):
+        return "Win"
+
+    @classmethod
+    def flag(cls):
+        # FIXME: This is lame.  We should autogenerate this from a codename or something.
+        return "--port=win"
 
 
 class GtkPort(WebKitPort):

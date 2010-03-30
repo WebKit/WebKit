@@ -94,6 +94,11 @@ class QtEWS(AbstractEarlyWarningSystem):
     port_name = "qt"
 
 
+class WinEWS(AbstractEarlyWarningSystem):
+    name = "win-ews"
+    port_name = "win"
+
+
 class ChromiumEWS(AbstractEarlyWarningSystem):
     name = "chromium-ews"
     port_name = "chromium"
