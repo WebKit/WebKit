@@ -28,18 +28,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GeolocationServiceBridgeChromium_h
-#define GeolocationServiceBridgeChromium_h
+#ifndef WebGeolocationService_h
+#define WebGeolocationService_h
 
-#include "WebGeolocationService.h"
+#include "WebGeolocationServiceBridge.h"
 
 namespace WebKit {
 
-// DEPRECATED: remove this file, this is a temporary compatibility layer for
-// renaming WebGeolocationServiceInterface to WebGeolocationService.
-class WebGeolocationServiceInterface : public WebGeolocationService {
+class WebString;
+class WebURL;
+
+// Provides an embedder API called by WebKit.
+class WebGeolocationService {
+public:
+    virtual void requestPermissionForFrame(int bridgeId, const WebURL& url) { }
+    virtual void startUpdating(int bridgeId, const WebURL& url, bool enableHighAccuracy) { }
+    virtual void stopUpdating(int bridgeId) { }
+    virtual void suspend(int bridgeId) { }
+    virtual void resume(int bridgeId) { }
+
+    // Attaches the WebGeolocationServiceBridge to the embedder and returns its
+    // id, which should be used on subsequent calls for the methods above.
+    virtual int attachBridge(WebGeolocationServiceBridge*) { return 0; }
+
+    // Detaches the WebGeolocationServiceBridge from the embedder.
+    virtual void detachBridge(int bridgeId) { dettachBridge(bridgeId); }
+
+    // DEPRECATED: this is a temporary compatibility layer, remove this method.
+    virtual void dettachBridge(int bridgeId) { }
 };
 
 } // namespace WebKit
 
-#endif // GeolocationServiceBridgeChromium_h
+#endif // WebGeolocationService_h

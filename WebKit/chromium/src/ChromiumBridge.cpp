@@ -75,7 +75,6 @@
 #include "BitmapImage.h"
 #include "Cookie.h"
 #include "FrameView.h"
-#include "GeolocationServiceBridgeChromium.h"
 #include "GraphicsContext.h"
 #include "IndexedDatabaseProxy.h"
 #include "KURL.h"
@@ -83,6 +82,7 @@
 #include "PlatformContextSkia.h"
 #include "PluginData.h"
 #include "SharedBuffer.h"
+#include "WebGeolocationServiceBridgeImpl.h"
 #include "Worker.h"
 #include "WorkerContextProxy.h"
 #include <wtf/Assertions.h>

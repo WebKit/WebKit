@@ -31,10 +31,13 @@
 #ifndef WebViewClient_h
 #define WebViewClient_h
 
+// DEPRECATED: this is a temporary compatibility layer, remove it.
+#include "GeolocationServiceBridgeChromium.h"
 #include "WebDragOperation.h"
 #include "WebEditingAction.h"
 #include "WebFileChooserCompletion.h"
 #include "WebFileChooserParams.h"
+#include "WebGeolocationServiceBridge.h"
 #include "WebString.h"
 #include "WebTextAffinity.h"
 #include "WebTextDirection.h"
@@ -46,7 +49,6 @@ class WebAccessibilityObject;
 class WebDragData;
 class WebFileChooserCompletion;
 class WebFrame;
-class WebGeolocationServiceInterface;
 class WebNode;
 class WebNotificationPresenter;
 class WebRange;
@@ -291,6 +293,9 @@ public:
     // Geolocation ---------------------------------------------------------
 
     // Access the embedder API for geolocation services.
+    virtual WebKit::WebGeolocationService* geolocationService() { return getGeolocationService(); }
+
+    // DEPRECATED: this is a temporary compatibility layer, remove it.
     virtual WebKit::WebGeolocationServiceInterface* getGeolocationService() { return 0; }
 
 protected:

@@ -28,18 +28,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GeolocationServiceBridgeChromium_h
-#define GeolocationServiceBridgeChromium_h
+#ifndef WebGeolocationServiceBridge_h
+#define WebGeolocationServiceBridge_h
 
-#include "WebGeolocationService.h"
+namespace WebCore {
+class GeolocationServiceBridge;
+class GeolocationServiceChromium;
+}
 
 namespace WebKit {
 
-// DEPRECATED: remove this file, this is a temporary compatibility layer for
-// renaming WebGeolocationServiceInterface to WebGeolocationService.
-class WebGeolocationServiceInterface : public WebGeolocationService {
+class WebString;
+class WebURL;
+
+// Provides a WebKit API called by the embedder.
+class WebGeolocationServiceBridge {
+public:
+    virtual void setIsAllowed(bool allowed) = 0;
+    virtual void setLastPosition(double latitude, double longitude, bool providesAltitude, double altitude, double accuracy, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed, long long timestamp) = 0;
+    virtual void setLastError(int errorCode, const WebString& message) = 0;
 };
 
 } // namespace WebKit
 
-#endif // GeolocationServiceBridgeChromium_h
+#endif // WebGeolocationServiceBridge_h

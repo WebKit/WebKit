@@ -1,3 +1,17 @@
+2010-03-30  Marcus Bulach  <bulach@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Rename / tidy up Geolocation bridge
+        Uses Geoposition instead of individual params for setLastPosition.
+        https://bugs.webkit.org/show_bug.cgi?id=36535
+
+        * platform/chromium/GeolocationServiceChromium.cpp:
+        (WebCore::GeolocationServiceChromium::GeolocationServiceChromium):
+        (WebCore::GeolocationServiceChromium::setIsAllowed):
+        (WebCore::GeolocationServiceChromium::setLastPosition):
+        * platform/chromium/GeolocationServiceChromium.h:
+
 2010-03-30  Adam Langley  <agl@chromium.org>
 
         Reviewed by David Levin.

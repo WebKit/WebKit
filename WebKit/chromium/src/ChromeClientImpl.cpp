@@ -45,7 +45,7 @@
 #include "FrameView.h"
 #include "Geolocation.h"
 #include "GeolocationService.h"
-#include "GeolocationServiceBridgeChromium.h"
+#include "WebGeolocationService.h"
 #include "GeolocationServiceChromium.h"
 #include "GraphicsLayer.h"
 #include "HitTestResult.h"
@@ -704,7 +704,7 @@ NotificationPresenter* ChromeClientImpl::notificationPresenter() const
 void ChromeClientImpl::requestGeolocationPermissionForFrame(Frame* frame, Geolocation* geolocation)
 {
     GeolocationServiceChromium* geolocationService = reinterpret_cast<GeolocationServiceChromium*>(geolocation->getGeolocationService());
-    m_webView->client()->getGeolocationService()->requestPermissionForFrame(geolocationService->geolocationServiceBridge()->getBridgeId(), frame->document()->url());
+    m_webView->client()->geolocationService()->requestPermissionForFrame(geolocationService->geolocationServiceBridge()->getBridgeId(), frame->document()->url());
 }
 
 #if USE(ACCELERATED_COMPOSITING)
