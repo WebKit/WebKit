@@ -1,3 +1,22 @@
+2010-03-29  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Eric Seidel.
+
+        There is a build break due to the disabled() when wml feature is
+        enabled. This break comes from the Bug 35056 - Disabled menu options
+        are still submitted.(https://bugs.webkit.org/show_bug.cgi?id=35056)
+        The WMLOptionElement.h needs to define the disabled() as well.
+        And, there is an additional break due to Bug 36177 -  Multiselect Popup
+        - Listbox click simulation. (https://bugs.webkit.org/show_bug.cgi?id=36177)
+        virtual void listBoxSelectItem() should be added to WMLSelectElement.h as well.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36698
+
+        * wml/WMLOptionElement.h:
+        (WebCore::WMLOptionElement::disabled):
+        * wml/WMLSelectElement.h:
+        (WebCore::WMLSelectElement::listBoxSelectItem):
+
 2010-03-29  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by David Hyatt.

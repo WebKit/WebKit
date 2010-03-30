@@ -87,6 +87,7 @@ public:
 
     bool initialized() const { return m_initialized; }
 
+    virtual void listBoxSelectItem(int listIndex, bool allowMultiplySelections, bool shift, bool fireOnChangeNow = true) { return; }
 private:
     virtual void insertedIntoTree(bool);
 

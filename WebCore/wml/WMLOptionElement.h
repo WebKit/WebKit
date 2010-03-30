@@ -41,6 +41,8 @@ public:
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
     virtual void parseMappedAttribute(MappedAttribute*);
 
+    virtual bool disabled() const { return false; }
+
     virtual void attach();
     virtual void detach();
     virtual void setRenderStyle(PassRefPtr<RenderStyle>);
