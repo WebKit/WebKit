@@ -1,3 +1,27 @@
+2010-03-30  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        fast/parser/comments.html needs some clean-up
+        https://bugs.webkit.org/show_bug.cgi?id=36537
+
+        - The test is converted to dumpAsText now.
+        - The output is also made more explicit as to what is expected (adding some PASSED and FAILED).
+        - Finally some part of the test were actually commented so added some comment endings to make sure
+          we run all the part of the test.
+
+        * fast/parser/comments-expected.txt: Added.
+        * fast/parser/comments.html:
+        * platform/chromium-linux/fast/parser/comments-expected.checksum: Removed.
+        * platform/chromium-linux/fast/parser/comments-expected.png: Removed.
+        * platform/chromium-win/fast/parser/comments-expected.checksum: Removed.
+        * platform/chromium-win/fast/parser/comments-expected.png: Removed.
+        * platform/chromium-win/fast/parser/comments-expected.txt: Removed.
+        * platform/mac/fast/parser/comments-expected.checksum: Removed.
+        * platform/mac/fast/parser/comments-expected.png: Removed.
+        * platform/mac/fast/parser/comments-expected.txt: Removed.
+        * platform/qt/fast/parser/comments-expected.txt: Removed.
+
 2010-03-30  Alexander Pavlov  <apavlov@chromium.org>
 
         Unreviewed, test missing in r56732.

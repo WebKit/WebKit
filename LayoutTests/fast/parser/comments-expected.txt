@@ -1,0 +1,24 @@
+Output of this test should match WinIE (no strict SGML comment parsing).
+
+Basic comments (1 PASSED):
+PASSED
+Comment series (1 PASSED):
+PASSED
+Dash runs (3 PASSED):
+PASSED PASSED PASSED
+
+Empty comments (2 PASSED):
+PASSED PASSED
+
+Multiple lines (1 PASSED):
+PASSED
+
+Compatibility (2 PASSED):
+PASSED PASSED
+
+Tab after comment close:
+Text after comment close:
+Extra comment after markup declaration close:
+FAILED: extra comment end and markup declaration close -->
+Nested comment (1 PASSED):
+PASSED (outer nested comment) -->
