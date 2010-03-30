@@ -40,7 +40,20 @@ Worker = function(url)
     this.isFake = true;
     this.postMessage = bind(impl.postMessage, impl);
     this.terminate = bind(impl.terminate, impl);
-    this.onmessage = noop;
+
+    function onmessageGetter()
+    {
+        return impl.channel.port1.onmessage;
+    }
+    function onmessageSetter(callback)
+    {
+        impl.channel.port1.onmessage = callback;
+    }
+    this.__defineGetter__("onmessage", onmessageGetter);
+    this.__defineSetter__("onmessage", onmessageSetter);
+    this.addEventListener = bind(impl.channel.port1.addEventListener, impl.channel.port1);
+    this.removeEventListener = bind(impl.channel.port1.removeEventListener, impl.channel.port1);
+    this.dispatchEvent = bind(impl.channel.port1.dispatchEvent, impl.channel.port1);
 }
 
 function FakeWorker(worker, url)
@@ -48,71 +61,35 @@ function FakeWorker(worker, url)
     var scriptURL = this._expandURLAndCheckOrigin(document.baseURI, location.href, url);
 
     this._worker = worker;
-    this._buildWorker(scriptURL);
     this._id = InjectedScriptHost.nextWorkerId();
+    this.channel = new MessageChannel();
+    this._listeners = [];
+    this._buildWorker(scriptURL);
 
     InjectedScriptHost.didCreateWorker(this._id, scriptURL.url, false);
 }
 
 FakeWorker.prototype = {
-    postMessage: function(msg)
+    postMessage: function(msg, opt_ports)
     {
         if (this._frame != null)
-            this._dispatchMessage(this._frame, bind(this._onmessageWrapper, this), msg);
+            this.channel.port1.postMessage.apply(this.channel.port1, arguments);
         else if (this._pendingMessages)
-            this._pendingMessages.push(msg)
+            this._pendingMessages.push(arguments)
         else
-            this._pendingMessages = [ msg ];
+            this._pendingMessages = [ arguments ];
     },
 
     terminate: function()
     {
         InjectedScriptHost.didDestroyWorker(this._id);
 
-        if (this._frame != null) {
-            this._frame.onmessage = this._worker.onmessage = noop;
+        this.channel.port1.close();
+        this.channel.port2.close();
+        if (this._frame != null)
             this._frame.frameElement.parentNode.removeChild(this._frame.frameElement);
-        }
         this._frame = null;
         this._worker = null; // Break reference loop.
-    },
-
-    _onmessageWrapper: function(msg)
-    {
-        // Shortcut -- if no exception handlers installed, avoid try/catch so as not to obscure line number.
-        if (!this._frame.onerror && !this._worker.onerror) {
-            this._frame.onmessage(msg);
-            return;
-        }
-
-        try {
-            this._frame.onmessage(msg);
-        } catch (e) {
-            this._handleException(e, this._frame.onerror, this._worker.onerror);
-        }
-    },
-
-    _dispatchMessage: function(targetWindow, handler, msg)
-    {
-        var event = this._document.createEvent("MessageEvent");
-        event.initMessageEvent("MessageEvent", false, false, msg);
-        targetWindow.setTimeout(handler, 0, event);
-    },
-
-    _handleException: function(e)
-    {
-        // NB: it should be an ErrorEvent, but creating it from script is not
-        // currently supported, so emulate it on top of plain vanilla Event.
-        var errorEvent = this._document.createEvent("Event");
-        errorEvent.initEvent("Event", false, false);
-        errorEvent.message = "Uncaught exception";
-
-        for (var i = 1; i < arguments.length; ++i) {
-            if (arguments[i] && arguments[i](errorEvent))
-                return;
-        }
-
-        throw e;
     },
 
     _buildWorker: function(url)
@@ -141,12 +118,12 @@ FakeWorker.prototype = {
         this._frame = frame;
         this._setupWorkerContext(frame, url);
 
-        var frameContents = '(function(location, window) { ' + code + '})(__devtools.location, undefined);\n' + '//@ sourceURL=' + url.url;
+        var frameContents = '(function() { var location = __devtools.location; var window; ' + code + '})();\n' + '//@ sourceURL=' + url.url;
 
         frame.eval(frameContents);
         if (this._pendingMessages) {
-            for (var msg in this._pendingMessages)
-                this.postMessage(this._pendingMessages[msg]);
+            for (var msg = 0; msg < this._pendingMessages.length; ++msg)
+                this.postMessage.apply(this, this._pendingMessages[msg]);
             delete this._pendingMessages;
         }
     },
@@ -157,17 +134,86 @@ FakeWorker.prototype = {
             handleException: bind(this._handleException, this),
             location: url.mockLocation()
         };
-        var worker = this._worker;
 
-        function handler(event) // Late binding to onmessage desired, so no bind() here.
+        var self = this;
+
+        function onmessageGetter()
         {
-            worker.onmessage(event);
+            return self.channel.port2.onmessage ? self.channel.port2.onmessage.originalCallback : null;
         }
 
-        workerFrame.onmessage = noop;
-        workerFrame.postMessage = bind(this._dispatchMessage, this, window, handler);
+        function onmessageSetter(callback)
+        {
+            var wrappedCallback = bind(self._callbackWrapper, self, callback);
+            wrappedCallback.originalCallback = callback;
+            self.channel.port2.onmessage = wrappedCallback;
+        }
+
+        workerFrame.__defineGetter__("onmessage", onmessageGetter);
+        workerFrame.__defineSetter__("onmessage", onmessageSetter);
+        workerFrame.addEventListener = bind(this._addEventListener, this);
+        workerFrame.removeEventListener = bind(this._removeEventListener, this);
+        workerFrame.dispatchEvent = bind(this.channel.port2.dispatchEvent, this.channel.port2);
+        workerFrame.postMessage = bind(this.channel.port2.postMessage, this.channel.port2);
         workerFrame.importScripts = bind(this._importScripts, this, workerFrame);
         workerFrame.close = bind(this.terminate, this);
+    },
+
+    _addEventListener: function(type, callback, useCapture)
+    {
+        var wrappedCallback = bind(this._callbackWrapper, this, callback);
+        wrappedCallback.originalCallback = callback;
+        wrappedCallback.type = type;
+        wrappedCallback.useCapture = Boolean(useCapture);
+
+        this.channel.port2.addEventListener(type, wrappedCallback, useCapture);
+        this._listeners.push(wrappedCallback);
+    },
+
+    _removeEventListener: function(type, callback, useCapture)
+    {
+        var listeners = this._listeners;
+        for (var i = 0; i < listeners.length; ++i) {
+            if (listeners[i].originalCallback === callback &&
+                listeners[i].type === type && 
+                listeners[i].useCapture === Boolean(useCapture)) {
+                this.channel.port2.removeEventListener(type, listeners[i], useCapture);
+                listeners[i] = listeners[listeners.length - 1];
+                listeners.pop();
+                break;
+            }
+        }
+    },
+
+    _callbackWrapper: function(callback, msg)
+    {
+        // Shortcut -- if no exception handlers installed, avoid try/catch so as not to obscure line number.
+        if (!this._frame.onerror && !this._worker.onerror) {
+            callback(msg);
+            return;
+        }
+
+        try {
+            callback(msg);
+        } catch (e) {
+            this._handleException(e, this._frame.onerror, this._worker.onerror);
+        }
+    },
+
+    _handleException: function(e)
+    {
+        // NB: it should be an ErrorEvent, but creating it from script is not
+        // currently supported, so emulate it on top of plain vanilla Event.
+        var errorEvent = this._document.createEvent("Event");
+        errorEvent.initEvent("Event", false, false);
+        errorEvent.message = "Uncaught exception";
+
+        for (var i = 1; i < arguments.length; ++i) {
+            if (arguments[i] && arguments[i](errorEvent))
+                return;
+        }
+
+        throw e;
     },
 
     _importScripts: function(targetFrame)

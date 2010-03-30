@@ -1,3 +1,28 @@
+2010-03-30  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Support EventTarget interface in fake workers (both for Worker object
+        and WorkerContext). Use MessagePort to implement message passing to
+        support passing ports in PostMessage.
+        https://bugs.webkit.org/show_bug.cgi?id=36763
+
+        * inspector/front-end/InjectedFakeWorker.js:
+        (InjectedFakeWorker.Worker.onmessageGetter):
+        (InjectedFakeWorker.Worker.onmessageSetter):
+        (InjectedFakeWorker.Worker):
+        (InjectedFakeWorker.FakeWorker):
+        (InjectedFakeWorker.FakeWorker.prototype.postMessage):
+        (InjectedFakeWorker.FakeWorker.prototype.terminate):
+        (InjectedFakeWorker.FakeWorker.prototype._onWorkerFrameLoaded):
+        (InjectedFakeWorker.FakeWorker.prototype._setupWorkerContext.onmessageGetter):
+        (InjectedFakeWorker.FakeWorker.prototype._setupWorkerContext.onmessageSetter):
+        (InjectedFakeWorker.FakeWorker.prototype._setupWorkerContext):
+        (InjectedFakeWorker.FakeWorker.prototype._addEventListener):
+        (InjectedFakeWorker.FakeWorker.prototype._removeEventListener):
+        (InjectedFakeWorker.FakeWorker.prototype._callbackWrapper):
+        (InjectedFakeWorker.FakeWorker.prototype._handleException):
+
 2010-03-30  Kristian Monsen  <kristianm@google.com>
 
         Reviewed by David Levin.
