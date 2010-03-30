@@ -2738,8 +2738,10 @@ BUG35238 MAC : svg/overflow/overflow-on-outermost-svg-element-in-xhtml-defaults.
 // WebKit roll 54559 to 54585
 BUG35237 : fast/events/multiline-link-arrow-navigation.html = TEXT
 
-// WebKit roll 54596:54648
+// Due to not building TestNetscapePlugin.cpp.
 BUG35387 : platform/win/plugins/plugin-delayed-destroy.html = TIMEOUT
+BUG35387 : plugins/reentrant-update-widget-positions.html = TIMEOUT
+BUG35387 : plugins/update-widgets-crash.html = TIMEOUT
 
 // New test added in WebKit r54783
 BUG35822 : plugins/netscape-browser-object-identity.html = TEXT

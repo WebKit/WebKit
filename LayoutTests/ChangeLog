@@ -1,3 +1,64 @@
+2010-03-29  David Levin  <levin@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [chromium] Many new test results are needed due to recent check-ins.
+        https://bugs.webkit.org/show_bug.cgi?id=36799
+
+        r56655 changed how tables layout which causes a lot of pixels tests for
+        tables to need rebaselines.
+
+        r56693 did some svg changes.
+
+        * platform/chromium-linux/tables/mozilla/bugs/bug1296-expected.checksum: Due to r56655.
+        * platform/chromium-linux/tables/mozilla/bugs/bug1296-expected.png: Ditto.
+        * platform/chromium-linux/tables/mozilla/bugs/bug1430-expected.checksum: Ditto.
+        * platform/chromium-linux/tables/mozilla/bugs/bug1430-expected.png: Ditto.
+        * platform/chromium-linux/tables/mozilla/marvin/backgr_simple-table-column-group-expected.checksum: Ditto.
+        * platform/chromium-linux/tables/mozilla/marvin/backgr_simple-table-column-group-expected.png: Ditto.
+        * platform/chromium-linux/tables/mozilla/marvin/backgr_simple-table-row-group-expected.checksum: Ditto.
+        * platform/chromium-linux/tables/mozilla/marvin/backgr_simple-table-row-group-expected.png: Ditto.
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_border-table-column-expected.checksum: Ditto.
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_border-table-column-expected.png: Ditto.
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_border-table-column-group-expected.checksum: Ditto.
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_border-table-column-group-expected.png: Ditto.
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_border-table-row-expected.checksum: Ditto.
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_border-table-row-expected.png: Ditto.
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_fixed-bg-expected.checksum: Ditto.
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_fixed-bg-expected.png: Ditto.
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_layers-hide-expected.checksum: Ditto.
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_layers-hide-expected.png: Ditto.
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_position-table-column-expected.checksum: Ditto.
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_position-table-column-expected.png: Ditto.
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_position-table-row-group-expected.checksum: Ditto.
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_position-table-row-group-expected.png: Ditto.
+        * platform/chromium-win/svg/custom/invalid-css-expected.txt: Due to r56693.
+        * platform/chromium-win/svg/custom/marker-default-width-height-expected.txt: Ditto.
+        * platform/chromium-win/svg/custom/shapes-supporting-markers-expected.txt: Ditto.
+        * platform/chromium-win/tables/mozilla/bugs/bug1296-expected.checksum: Due to r56655.
+        * platform/chromium-win/tables/mozilla/bugs/bug1296-expected.png: Ditto.
+        * platform/chromium-win/tables/mozilla/bugs/bug1430-expected.checksum: Ditto.
+        * platform/chromium-win/tables/mozilla/bugs/bug1430-expected.png: Ditto.
+        * platform/chromium-win/tables/mozilla/marvin/backgr_simple-table-column-group-expected.checksum: Ditto.
+        * platform/chromium-win/tables/mozilla/marvin/backgr_simple-table-column-group-expected.png: Ditto.
+        * platform/chromium-win/tables/mozilla/marvin/backgr_simple-table-row-group-expected.checksum: Ditto.
+        * platform/chromium-win/tables/mozilla/marvin/backgr_simple-table-row-group-expected.png: Ditto.
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/backgr_border-table-column-expected.checksum: Ditto.
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/backgr_border-table-column-expected.png: Ditto.
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/backgr_border-table-column-group-expected.checksum: Ditto.
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/backgr_border-table-column-group-expected.png: Ditto.
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/backgr_border-table-row-expected.checksum: Ditto.
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/backgr_border-table-row-expected.png: Ditto.
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/backgr_fixed-bg-expected.checksum: Ditto.
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/backgr_fixed-bg-expected.png: Ditto.
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/backgr_layers-hide-expected.checksum: Ditto.
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/backgr_layers-hide-expected.png: Ditto.
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/backgr_position-table-column-expected.checksum: Ditto.
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/backgr_position-table-column-expected.png: Ditto.
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/backgr_position-table-row-group-expected.checksum: Ditto.
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/backgr_position-table-row-group-expected.png: Ditto.
+        * platform/chromium/test_expectations.txt: Two newly added tests are timing out (covered by http://crbug.com/35387).
+
 2010-03-29  Chris Evans  <cevans@chromium.org>
 
         Reviewed by Adam Barth.
