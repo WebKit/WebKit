@@ -1,3 +1,18 @@
+2010-03-30  Adam Roben  <aroben@apple.com>
+
+        Enable extra Direct3D debugging information in Debug builds
+
+        This makes it easier to track down memory leaks and misuses of the D3D
+        APIs in Debug builds.
+
+        Fixes <http://webkit.org/b/36820>
+
+        Reviewed by John Sullivan.
+
+        * platform/graphics/win/WKCACFLayerRenderer.cpp: Define D3D_DEBUG_INFO
+        in Debug builds before #including d3d9.h so that extra D3D debugging
+        information will be enabled.
+
 2010-03-30  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -27,6 +27,10 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
+#ifndef NDEBUG
+#define D3D_DEBUG_INFO
+#endif
+
 #include "WKCACFLayerRenderer.h"
 
 #include "WKCACFContextFlusher.h"
