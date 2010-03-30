@@ -1834,6 +1834,56 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     addPtr(Imm32(sizeof(ArgList)), stackPointerRegister);
 #endif // OS(WINCE)
 
+#elif CPU(MIPS)
+    emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, regT0);
+
+    // Allocate stack space for our arglist
+    COMPILE_ASSERT(!(sizeof(ArgList) & 0x7), ArgList_should_by_8byte_aligned);
+    subPtr(Imm32(sizeof(ArgList) + 24), stackPointerRegister);
+
+    // Set up arguments
+    subPtr(Imm32(1), regT0); // Don't include 'this' in argcount
+
+    // Push argcount to 24 + offset($sp)
+    storePtr(regT0, Address(stackPointerRegister, 24 + OBJECT_OFFSETOF(ArgList, m_argCount)));
+
+    // Calculate the start of the callframe header, and store in regT1
+    move(callFrameRegister, regT1);
+    sub32(Imm32(RegisterFile::CallFrameHeaderSize * (int32_t)sizeof(Register)), regT1);
+
+    // Calculate start of arguments as callframe header - sizeof(Register) * argcount (regT1)
+    mul32(Imm32(sizeof(Register)), regT0, regT0);
+    subPtr(regT0, regT1);
+
+    // push pointer to arguments to 24 + offset($sp)
+    storePtr(regT1, Address(stackPointerRegister, 24 + OBJECT_OFFSETOF(ArgList, m_args)));
+
+    // Setup arg3: regT1 currently points to the first argument, regT1-sizeof(Register) points to 'this'
+    loadPtr(Address(regT1, -(int32_t)sizeof(Register)), MIPSRegisters::a3);
+
+    // Setup arg2:
+    emitGetFromCallFrameHeaderPtr(RegisterFile::Callee, MIPSRegisters::a2);
+
+    // Setup arg1:
+    move(callFrameRegister, MIPSRegisters::a1);
+
+    // Setup arg4: ArgList is passed by reference.  At 16($sp), store ($sp + 24)
+    addPtr(Imm32(24), stackPointerRegister, regT2);
+    storePtr(regT2, Address(stackPointerRegister, 16));
+
+    // Setup arg0 as 20($sp) to hold the returned structure.
+    ASSERT(sizeof(JSValue) == 4);
+    addPtr(Imm32(20), stackPointerRegister, MIPSRegisters::a0);
+
+    // Call
+    call(Address(MIPSRegisters::a2, OBJECT_OFFSETOF(JSFunction, m_data)));
+
+    // Get returned value from 0($v0) which is the same as 20($sp)
+    loadPtr(Address(returnValueRegister, 0), returnValueRegister);
+
+    // Restore stack space
+    addPtr(Imm32(sizeof(ArgList) + 24), stackPointerRegister);
+
 #elif ENABLE(JIT_OPTIMIZE_NATIVE_CALL)
 #error "JIT_OPTIMIZE_NATIVE_CALL not yet supported on this platform."
 #else

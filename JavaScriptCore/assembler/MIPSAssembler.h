@@ -392,6 +392,13 @@ public:
                  | (rs << OP_SH_RS));
     }
 
+    void lbu(RegisterID rt, RegisterID rs, int offset)
+    {
+        emitInst(0x90000000 | (rt << OP_SH_RT) | (rs << OP_SH_RS)
+                 | (offset & 0xffff));
+        loadDelayNop();
+    }
+
     void lw(RegisterID rt, RegisterID rs, int offset)
     {
         emitInst(0x8c000000 | (rt << OP_SH_RT) | (rs << OP_SH_RS)
@@ -857,7 +864,7 @@ private:
                   nop
                 1:
 
-                Note: beq/bne/bc1t are converted to bne/beq/bc1f.
+                Note: beq/bne/bc1t/bc1f are converted to bne/beq/bc1f/bc1t.
             */
 
             if (*(insn + 2) == 0x10000003) {
@@ -867,6 +874,8 @@ private:
                     *insn = (*insn & 0x03ff0000) | 0x10000005; // beq
                 else if ((*insn & 0xffff0000) == 0x45010000) // bc1t
                     *insn = 0x45000005; // bc1f
+                else if ((*insn & 0xffff0000) == 0x45000000) // bc1f
+                    *insn = 0x45010005; // bc1t
                 else
                     ASSERT(0);
             }

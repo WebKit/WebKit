@@ -480,6 +480,102 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
 #define THUNK_RETURN_ADDRESS_OFFSET 32
 #define PRESERVEDR4_OFFSET          36
 
+#elif CPU(MIPS)
+
+#if USE(JIT_STUB_ARGUMENT_VA_LIST)
+#error "JIT_STUB_ARGUMENT_VA_LIST not supported on MIPS."
+#endif
+
+asm volatile(
+".text" "\n"
+".align 2" "\n"
+".set noreorder" "\n"
+".set nomacro" "\n"
+".set nomips16" "\n"
+".globl " SYMBOL_STRING(ctiTrampoline) "\n"
+".ent " SYMBOL_STRING(ctiTrampoline) "\n"
+SYMBOL_STRING(ctiTrampoline) ":" "\n"
+    "addiu $29,$29,-72" "\n"
+    "sw    $31,44($29)" "\n"
+    "sw    $18,40($29)" "\n"
+    "sw    $17,36($29)" "\n"
+    "sw    $16,32($29)" "\n"
+#if WTF_MIPS_PIC
+    "sw    $28,28($29)" "\n"
+#endif
+    "move  $16,$6       # set callFrameRegister" "\n"
+    "li    $17,512      # set timeoutCheckRegister" "\n"
+    "move  $25,$4       # move executableAddress to t9" "\n"
+    "sw    $5,52($29)   # store registerFile to current stack" "\n"
+    "sw    $6,56($29)   # store callFrame to curent stack" "\n"
+    "sw    $7,60($29)   # store exception to current stack" "\n"
+    "lw    $8,88($29)   # load enableProfilerReference from previous stack" "\n"
+    "lw    $9,92($29)   # load globalData from previous stack" "\n"
+    "sw    $8,64($29)   # store enableProfilerReference to current stack" "\n"
+    "jalr  $25" "\n"
+    "sw    $9,68($29)   # store globalData to current stack" "\n"
+    "lw    $16,32($29)" "\n"
+    "lw    $17,36($29)" "\n"
+    "lw    $18,40($29)" "\n"
+    "lw    $31,44($29)" "\n"
+    "jr    $31" "\n"
+    "addiu $29,$29,72" "\n"
+".set reorder" "\n"
+".set macro" "\n"
+".end " SYMBOL_STRING(ctiTrampoline) "\n"
+);
+
+asm volatile(
+".text" "\n"
+".align 2" "\n"
+".set noreorder" "\n"
+".set nomacro" "\n"
+".set nomips16" "\n"
+".globl " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
+".ent " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
+SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
+#if WTF_MIPS_PIC
+    "lw    $28,28($29)" "\n"
+".set macro" "\n"
+    "la    $25," SYMBOL_STRING(cti_vm_throw) "\n"
+".set nomacro" "\n"
+    "bal " SYMBOL_STRING(cti_vm_throw) "\n"
+    "move  $4,$29" "\n"
+#else
+    "jal " SYMBOL_STRING(cti_vm_throw) "\n"
+    "move  $4,$29" "\n"
+#endif
+    "lw    $16,32($29)" "\n"
+    "lw    $17,36($29)" "\n"
+    "lw    $18,40($29)" "\n"
+    "lw    $31,44($29)" "\n"
+    "jr    $31" "\n"
+    "addiu $29,$29,72" "\n"
+".set reorder" "\n"
+".set macro" "\n"
+".end " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
+);
+
+asm volatile(
+".text" "\n"
+".align 2" "\n"
+".set noreorder" "\n"
+".set nomacro" "\n"
+".set nomips16" "\n"
+".globl " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
+".ent " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
+SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
+    "lw    $16,32($29)" "\n"
+    "lw    $17,36($29)" "\n"
+    "lw    $18,40($29)" "\n"
+    "lw    $31,44($29)" "\n"
+    "jr    $31" "\n"
+    "addiu $29,$29,72" "\n"
+".set reorder" "\n"
+".set macro" "\n"
+".end " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
+);
+
 #elif COMPILER(RVCT) && CPU(ARM_TRADITIONAL)
 
 __asm EncodedJSValue ctiTrampoline(void*, RegisterFile*, CallFrame*, JSValue*, Profiler**, JSGlobalData*)
@@ -721,6 +817,20 @@ JITThunks::JITThunks(JSGlobalData* globalData)
 
     ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, thunkReturnAddress) == THUNK_RETURN_ADDRESS_OFFSET);
     ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedR4) == PRESERVEDR4_OFFSET);
+
+
+#elif CPU(MIPS)
+    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedGP) == 28);
+    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedS0) == 32);
+    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedS1) == 36);
+    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedS2) == 40);
+    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedReturnAddress) == 44);
+    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, thunkReturnAddress) == 48);
+    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, registerFile) == 52);
+    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, callFrame) == 56);
+    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, exception) == 60);
+    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, enabledProfilerReference) == 64);
+    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, globalData) == 68);
 
 #endif
 }
@@ -979,6 +1089,65 @@ static NEVER_INLINE void throwStackOverflowError(CallFrame* callFrame, JSGlobalD
         "bx lr" "\n" \
         ); \
     rtype JITStubThunked_##op(STUB_ARGS_DECLARATION) \
+
+#elif CPU(MIPS)
+#if WTF_MIPS_PIC
+#define DEFINE_STUB_FUNCTION(rtype, op) \
+    extern "C" { \
+        rtype JITStubThunked_##op(STUB_ARGS_DECLARATION); \
+    }; \
+    asm volatile( \
+        ".text" "\n" \
+        ".align 2" "\n" \
+        ".set noreorder" "\n" \
+        ".set nomacro" "\n" \
+        ".set nomips16" "\n" \
+        ".globl " SYMBOL_STRING(cti_##op) "\n" \
+        ".ent " SYMBOL_STRING(cti_##op) "\n" \
+        SYMBOL_STRING(cti_##op) ":" "\n" \
+        "lw    $28,28($29)" "\n" \
+        "sw    $31,48($29)" "\n" \
+        ".set macro" "\n" \
+        "la    $25," SYMBOL_STRING(JITStubThunked_##op) "\n" \
+        ".set nomacro" "\n" \
+        "bal " SYMBOL_STRING(JITStubThunked_##op) "\n" \
+        "nop" "\n" \
+        "lw    $31,48($29)" "\n" \
+        "jr    $31" "\n" \
+        "nop" "\n" \
+        ".set reorder" "\n" \
+        ".set macro" "\n" \
+        ".end " SYMBOL_STRING(cti_##op) "\n" \
+        ); \
+    rtype JITStubThunked_##op(STUB_ARGS_DECLARATION)
+
+#else // WTF_MIPS_PIC
+#define DEFINE_STUB_FUNCTION(rtype, op) \
+    extern "C" { \
+        rtype JITStubThunked_##op(STUB_ARGS_DECLARATION); \
+    }; \
+    asm volatile( \
+        ".text" "\n" \
+        ".align 2" "\n" \
+        ".set noreorder" "\n" \
+        ".set nomacro" "\n" \
+        ".set nomips16" "\n" \
+        ".globl " SYMBOL_STRING(cti_##op) "\n" \
+        ".ent " SYMBOL_STRING(cti_##op) "\n" \
+        SYMBOL_STRING(cti_##op) ":" "\n" \
+        "sw    $31,48($29)" "\n" \
+        "jal " SYMBOL_STRING(JITStubThunked_##op) "\n" \
+        "nop" "\n" \
+        "lw    $31,48($29)" "\n" \
+        "jr    $31" "\n" \
+        "nop" "\n" \
+        ".set reorder" "\n" \
+        ".set macro" "\n" \
+        ".end " SYMBOL_STRING(cti_##op) "\n" \
+        ); \
+    rtype JITStubThunked_##op(STUB_ARGS_DECLARATION)
+
+#endif
 
 #elif CPU(ARM_TRADITIONAL) && COMPILER(GCC)
 

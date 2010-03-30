@@ -1,3 +1,32 @@
+2010-03-29  Chao-ying Fu  <fu@mips.com>
+
+        Reviewed by Oliver Hunt.
+
+        MIPS JIT Supports
+        https://bugs.webkit.org/show_bug.cgi?id=30144
+
+        The following changes enable MIPS JIT.
+
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::lbu):
+        (JSC::MIPSAssembler::linkWithOffset):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::load8):
+        (JSC::MacroAssemblerMIPS::branch8):
+        (JSC::MacroAssemblerMIPS::branchTest8):
+        (JSC::MacroAssemblerMIPS::setTest8):
+        (JSC::MacroAssemblerMIPS::setTest32):
+        * jit/JIT.h:
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::preserveReturnAddressAfterCall):
+        (JSC::JIT::restoreReturnAddressBeforeReturn):
+        * jit/JITOpcodes.cpp:
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::JITThunks):
+        * jit/JITStubs.h:
+        (JSC::JITStackFrame::returnAddressSlot):
+        * wtf/Platform.h:
+
 2010-02-26  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Simon Fraser.

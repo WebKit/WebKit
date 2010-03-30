@@ -266,6 +266,28 @@ namespace JSC {
         static const FPRegisterID fpRegT0 = ARMRegisters::d0;
         static const FPRegisterID fpRegT1 = ARMRegisters::d1;
         static const FPRegisterID fpRegT2 = ARMRegisters::d2;
+#elif CPU(MIPS)
+        static const RegisterID returnValueRegister = MIPSRegisters::v0;
+        static const RegisterID cachedResultRegister = MIPSRegisters::v0;
+        static const RegisterID firstArgumentRegister = MIPSRegisters::a0;
+
+        // regT0 must be v0 for returning a 32-bit value.
+        static const RegisterID regT0 = MIPSRegisters::v0;
+
+        // regT1 must be v1 for returning a pair of 32-bit value.
+        static const RegisterID regT1 = MIPSRegisters::v1;
+
+        static const RegisterID regT2 = MIPSRegisters::t4;
+
+        // regT3 must be saved in the callee, so use an S register.
+        static const RegisterID regT3 = MIPSRegisters::s2;
+
+        static const RegisterID callFrameRegister = MIPSRegisters::s0;
+        static const RegisterID timeoutCheckRegister = MIPSRegisters::s1;
+
+        static const FPRegisterID fpRegT0 = MIPSRegisters::f4;
+        static const FPRegisterID fpRegT1 = MIPSRegisters::f6;
+        static const FPRegisterID fpRegT2 = MIPSRegisters::f8;
 #else
     #error "JIT not supported on this platform."
 #endif
@@ -684,6 +706,48 @@ namespace JSC {
         // sequencePutById
         static const int sequencePutByIdInstructionSpace = 28;
         static const int sequencePutByIdConstantSpace = 3;
+#elif CPU(MIPS)
+#if WTF_MIPS_ISA(1)
+        static const int patchOffsetPutByIdStructure = 16;
+        static const int patchOffsetPutByIdExternalLoad = 48;
+        static const int patchLengthPutByIdExternalLoad = 20;
+        static const int patchOffsetPutByIdPropertyMapOffset = 68;
+        static const int patchOffsetGetByIdStructure = 16;
+        static const int patchOffsetGetByIdBranchToSlowCase = 48;
+        static const int patchOffsetGetByIdExternalLoad = 48;
+        static const int patchLengthGetByIdExternalLoad = 20;
+        static const int patchOffsetGetByIdPropertyMapOffset = 68;
+        static const int patchOffsetGetByIdPutResult = 88;
+#if ENABLE(OPCODE_SAMPLING)
+        #error "OPCODE_SAMPLING is not yet supported"
+#else
+        static const int patchOffsetGetByIdSlowCaseCall = 40;
+#endif
+        static const int patchOffsetOpCallCompareToJump = 32;
+        static const int patchOffsetMethodCheckProtoObj = 32;
+        static const int patchOffsetMethodCheckProtoStruct = 56;
+        static const int patchOffsetMethodCheckPutFunction = 88;
+#else // WTF_MIPS_ISA(1)
+        static const int patchOffsetPutByIdStructure = 12;
+        static const int patchOffsetPutByIdExternalLoad = 44;
+        static const int patchLengthPutByIdExternalLoad = 16;
+        static const int patchOffsetPutByIdPropertyMapOffset = 60;
+        static const int patchOffsetGetByIdStructure = 12;
+        static const int patchOffsetGetByIdBranchToSlowCase = 44;
+        static const int patchOffsetGetByIdExternalLoad = 44;
+        static const int patchLengthGetByIdExternalLoad = 16;
+        static const int patchOffsetGetByIdPropertyMapOffset = 60;
+        static const int patchOffsetGetByIdPutResult = 76;
+#if ENABLE(OPCODE_SAMPLING)
+        #error "OPCODE_SAMPLING is not yet supported"
+#else
+        static const int patchOffsetGetByIdSlowCaseCall = 40;
+#endif
+        static const int patchOffsetOpCallCompareToJump = 32;
+        static const int patchOffsetMethodCheckProtoObj = 32;
+        static const int patchOffsetMethodCheckProtoStruct = 52;
+        static const int patchOffsetMethodCheckPutFunction = 84;
+#endif
 #endif
 #endif // USE(JSVALUE32_64)
 
