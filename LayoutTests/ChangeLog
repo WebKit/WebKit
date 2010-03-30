@@ -16,6 +16,36 @@
 
 2010-03-29  David Levin  <levin@chromium.org>
 
+        Reviewed by Shinichiro Hamaji.
+
+        [chromium] Many new test results are needed due to recent check-ins.
+        https://bugs.webkit.org/show_bug.cgi?id=36799
+        
+        Various rebaselines due to changes in layout or new tests. The revision that caused
+        each change is by the change.
+
+        * platform/chromium-mac/tables/mozilla/bugs/bug1296-expected.checksum: Added. Due to r56655.
+        * platform/chromium-mac/tables/mozilla/bugs/bug1296-expected.png: Added. Ditto.
+        * platform/chromium-mac/tables/mozilla/bugs/bug1296-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug1296-expected.txt.
+        * platform/chromium-mac/tables/mozilla/bugs/bug1430-expected.checksum: Added. Ditto.
+        * platform/chromium-mac/tables/mozilla/bugs/bug1430-expected.png: Added. Ditto.
+        * platform/chromium-mac/tables/mozilla/bugs/bug1430-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug1430-expected.txt.
+        * platform/chromium-win/fast/media/media-feature-wgt-view-mode-expected.checksum: Added. Due to r56740.
+        * platform/chromium-win/fast/media/media-feature-wgt-view-mode-expected.png: Added. Ditto.
+        * platform/chromium-win/fast/media/media-feature-wgt-view-mode-expected.txt: Added. Ditto.
+        * platform/chromium-win/svg/custom/marker-overflow-clip-expected.txt: Due to r56693.
+        * platform/chromium-win/tables/mozilla/marvin/backgr_simple-table-column-expected.checksum: Due to r56655.
+        * platform/chromium-win/tables/mozilla/marvin/backgr_simple-table-column-expected.png: Ditto.
+        * platform/chromium-win/tables/mozilla/marvin/backgr_simple-table-row-expected.checksum: Ditto.
+        * platform/chromium-win/tables/mozilla/marvin/backgr_simple-table-row-expected.png: Ditto.
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/backgr_position-table-column-group-expected.checksum: Ditto.
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/backgr_position-table-column-group-expected.png: Ditto.
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/backgr_position-table-row-expected.checksum: Ditto.
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/backgr_position-table-row-expected.png: Ditto.
+        * platform/chromium/test_expectations.txt: Added a few failures with follow up bugs.
+
+2010-03-29  David Levin  <levin@chromium.org>
+
         Reviewed by Dimitri Glazkov.
 
         [chromium] Many new test results are needed due to recent check-ins.
