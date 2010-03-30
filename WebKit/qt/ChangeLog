@@ -1,3 +1,18 @@
+2010-03-30  Joe Ligman  <joseph.ligman@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] QGraphicsScene mousePressEvent does not set the clickCausedFocus flag
+        https://bugs.webkit.org/show_bug.cgi?id=35259
+
+        The clickCausedFocus flag is not being set in method
+        mousePressEvent(QGraphicsSceneMouseEvent* ev). This flag is used 
+        in conjunction with QStyle::RSIP_OnMouseClickAndAlreadyFocused when
+        deciding to launch the software input panel.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::mousePressEvent):
+
 2010-03-30  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.
