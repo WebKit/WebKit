@@ -1,3 +1,14 @@
+2010-03-30  Kristian Monsen  <kristianm@google.com>
+
+        Reviewed by David Levin.
+
+        [v8] Add if ENABLE guard for Worker specific code.
+        https://bugs.webkit.org/show_bug.cgi?id=36597
+
+        Build fix only, no new tests.
+
+        * bindings/v8/V8DOMWrapper.h:
+
 2010-03-29  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Fisher.
