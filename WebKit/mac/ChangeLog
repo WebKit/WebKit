@@ -1,3 +1,15 @@
+2010-03-30  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36848
+        <rdar://problem/7362913>
+        Menu items appropriate only for rich-content editing can appear in plain-text contexts
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView validRequestorForSendType:returnType:]):
+        Don't return self for non-string content if _canEditRichly is false.
+
 2010-03-29  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

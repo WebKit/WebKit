@@ -2539,7 +2539,13 @@ WEBCORE_COMMAND(yankAndSelect)
 - (id)validRequestorForSendType:(NSString *)sendType returnType:(NSString *)returnType
 {
     BOOL isSendTypeOK = !sendType || ([[self pasteboardTypesForSelection] containsObject:sendType] && [self _hasSelection]);
-    BOOL isReturnTypeOK = !returnType || ([[[self class] _insertablePasteboardTypes] containsObject:returnType] && [self _isEditable]);
+    BOOL isReturnTypeOK = NO;
+    if (!returnType)
+        isReturnTypeOK = YES;
+    else if ([[[self class] _insertablePasteboardTypes] containsObject:returnType] && [self _isEditable]) {
+        // We can insert strings in any editable context.  We can insert other types, like images, only in rich edit contexts.
+        isReturnTypeOK = [returnType isEqualToString:NSStringPboardType] || [self _canEditRichly];
+    }
     if (isSendTypeOK && isReturnTypeOK)
         return self;
     return [[self nextResponder] validRequestorForSendType:sendType returnType:returnType];
