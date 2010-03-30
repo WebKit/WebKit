@@ -2,6 +2,19 @@
 
         Reviewed by Adam Barth.
 
+        sheriff-bot should comment on bugs when builders break
+        https://bugs.webkit.org/show_bug.cgi?id=36786
+
+        * Scripts/webkitpy/tool/commands/sheriffbot.py:
+         - Add a new _post_blame_comment_to_bug and all it from process_work_item
+         - Move commit-queue logic into _post_rollout_patch to make its api match the other _post commands.
+        * Scripts/webkitpy/tool/commands/sheriffbot_unittest.py:
+         - Test the new _post_blame_comment_to_bug call
+
+2010-03-29  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         sheriff-bot fails to get information about certain builds
         https://bugs.webkit.org/show_bug.cgi?id=36768
 

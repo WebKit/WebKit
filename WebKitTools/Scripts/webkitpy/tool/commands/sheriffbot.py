@@ -70,6 +70,7 @@ class SheriffBot(AbstractQueue):
         # Currently, we don't have any reasons not to proceed with work items.
         return True
 
+    # _post* methods should move onto some new class where they can share more logic and state.
     def _post_irc_warning(self, commit_info, builders):
         irc_nicknames = sorted([party.irc_nickname for party in commit_info.responsible_parties() if party.irc_nickname])
         irc_prefix = ": " if irc_nicknames else ""
@@ -88,19 +89,32 @@ class SheriffBot(AbstractQueue):
         builder_names = [builder.name() for builder in builders]
         return "Caused builders %s to fail." % join_with_separators(builder_names)
 
-    def _post_rollout_patch(self, svn_revision, rollout_reason):
+    def _post_rollout_patch(self, commit_info, rollout_reason):
+        # For now we're only posting rollout patches for commit-queue'd patches.
+        commit_bot_email = "eseidel@chromium.org"
+        if commit_bot_email not in commit_info.committer().emails:
+            return
+
         args = [
             "create-rollout",
             "--force-clean",
             "--non-interactive",
             "--parent-command=%s" % self.name,
-            svn_revision,
-            rollout_reason,
+            commit_info.revision(),
+            self._rollout_reason(builders),
         ]
         try:
             self.run_webkit_patch(args)
         except:
             log("Failed to create-rollout.")
+
+    def _post_blame_comment_on_bug(self, commit_info, builders):
+        if not commit_info.bug_id():
+            return
+        comment = "%s appears to have broken %s" % (
+            view_source_url(commit_info.revision()),
+            join_with_separators([builder.name() for builder in builders]))
+        self.tool.bugs.post_comment_to_bug(commit_info.bug_id(), comment)
 
     def process_work_item(self, failure_info):
         svn_revision = failure_info["svn_revision"]
@@ -109,12 +123,8 @@ class SheriffBot(AbstractQueue):
         self.update()
         commit_info = self.tool.checkout().commit_info_for_revision(svn_revision)
         self._post_irc_warning(commit_info, builders)
-
-        # For now we're only posting rollout patches for commit-queue'd patches.
-        commit_bot_email = "eseidel@chromium.org"
-        if commit_bot_email in commit_info.committer().emails:
-            rollout_reason = self._rollout_reason(builders)
-            self._post_rollout_patch(self, svn_revision, rollout_reason)
+        self._post_blame_comment_on_bug(commit_info, builders)
+        self._post_rollout_patch(commit_info, builders)
 
         for builder in builders:
             self.tool.status_server.update_svn_revision(svn_revision, builder.name())
