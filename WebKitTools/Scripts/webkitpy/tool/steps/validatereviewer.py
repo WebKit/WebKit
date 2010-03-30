@@ -31,7 +31,7 @@ import re
 
 from webkitpy.common.checkout.changelog import ChangeLog
 from webkitpy.tool.steps.abstractstep import AbstractStep
-from webkitpy.common.system.deprecated_logging import error
+from webkitpy.common.system.deprecated_logging import error, log
 
 
 # FIXME: Some of this logic should probably be unified with CommitterValidator?
