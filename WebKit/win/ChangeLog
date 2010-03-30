@@ -1,3 +1,13 @@
+2010-03-29  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Default value of accelerated compositing should be false for Windows
+        https://bugs.webkit.org/show_bug.cgi?id=36805
+
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+
 2010-03-29  Rafael Weinstein  <rafaelw@chromium.org>
 
         Reviewed by Adam Barth.
