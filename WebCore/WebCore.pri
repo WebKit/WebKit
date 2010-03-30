@@ -207,13 +207,8 @@ STYLESHEETS_EMBED = \
     $$PWD/css/view-source.css \
     $$PWD/css/wml.css \
     $$PWD/css/mediaControls.css \
-    $$PWD/css/mediaControlsQt.css
-
-maemo5 {
-    DEFINES += ENABLE_NO_LISTBOX_RENDERING=1
-}
-
-STYLESHEETS_EMBED += $$PWD/css/themeQtNoListboxes.css
+    $$PWD/css/mediaControlsQt.css \
+    $$PWD/css/themeQtNoListboxes.css
 
 IDL_BINDINGS += \
     css/Counter.idl \

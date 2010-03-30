@@ -134,6 +134,10 @@ maemo5|symbian|embedded {
     DEFINES += ENABLE_FAST_MOBILE_SCROLLING=1
 }
 
+maemo5 {
+    DEFINES += ENABLE_NO_LISTBOX_RENDERING=1
+}
+
 include($$PWD/../JavaScriptCore/JavaScriptCore.pri)
 addJavaScriptCoreLib(../JavaScriptCore)
 
@@ -2114,6 +2118,12 @@ SOURCES += \
     ../WebKit/qt/Api/qwebdatabase.cpp \
     ../WebKit/qt/Api/qwebinspector.cpp \
     ../WebKit/qt/Api/qwebkitversion.cpp
+
+
+maemo5 {
+    HEADERS += ../WebKit/qt/WebCoreSupport/QtMaemoWebPopup.h
+    SOURCES += ../WebKit/qt/WebCoreSupport/QtMaemoWebPopup.cpp
+}
 
 
     win32-*|wince*: SOURCES += platform/win/SystemTimeWin.cpp \
