@@ -741,6 +741,7 @@ BUG20226 DEFER : fast/forms/input-selectedoption.html = FAIL
 // Add support for inspector layout tests.
 BUG26734 LINUX MAC SKIP : inspector = PASS
 BUG26734 LINUX MAC SKIP : http/tests/inspector = PASS
+BUG26734 LINUX MAC SKIP : http/tests/inspector-enabled = PASS
 BUG26734 SKIP : inspector/console-format-collections.html = TEXT
 BUG26734 SKIP : inspector/console-format.html = TEXT
 
@@ -2852,4 +2853,3 @@ BUG39485 : fast/events/onbeforeunload-focused-iframe.html = TIMEOUT
 BUG_HAMAJI : fast/repaint/overflow-scroll-body-appear.html = IMAGE+TEXT IMAGE
 
 BUGWK36806 WIN : inspector/elements-panel-styles.html = TEXT
-BUGWK36807 : http/tests/inspector-enabled/console-log-before-frame-navigation.html = TEXT CRASH

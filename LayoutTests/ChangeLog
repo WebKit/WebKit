@@ -1,3 +1,13 @@
+2010-03-30  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Skip http/tests/inspector-enabled on Linux and Mac where LayoutTestContoller doesn't support inspector methods yet.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36807
+
+        * platform/chromium/test_expectations.txt:
+
 2010-03-30  David Levin  <levin@chromium.org>
 
         Reviewed by Adam Barth.
