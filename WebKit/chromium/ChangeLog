@@ -1,3 +1,17 @@
+2010-03-30  Jochen Eisinger  <jochen@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Remove dysfunctional implementation of canEstablishDatabase for
+        Workers. I postpone this implementation until Workers can actually
+        access Web Databases.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36795
+
+        * src/DatabaseObserver.cpp:
+        (WebCore::DatabaseObserver::canEstablishDatabase):
+        * src/WebWorkerBase.h:
+
 2010-03-29  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Fisher.

@@ -50,17 +50,15 @@ namespace WebCore {
 bool DatabaseObserver::canEstablishDatabase(ScriptExecutionContext* scriptExecutionContext, const String& name, const String& displayName, unsigned long estimatedSize)
 {
     ASSERT(scriptExecutionContext->isContextThread());
-    ASSERT(scriptExecutionContext->isDocument() || scriptExecutionContext->isWorkerContext());
+    // FIXME: add support for the case scriptExecutionContext()->isWorker() once workers implement web databases.
+    ASSERT(scriptExecutionContext->isDocument());
     if (scriptExecutionContext->isDocument()) {
         Document* document = static_cast<Document*>(scriptExecutionContext);
         WebFrameImpl* webFrame = WebFrameImpl::fromFrame(document->frame());
         return webFrame->client()->allowDatabase(webFrame, name, displayName, estimatedSize);
-    } else {
-        WorkerContext* worker = static_cast<WorkerContext*>(scriptExecutionContext);
-        WorkerLoaderProxy* workerLoaderProxy = &worker->thread()->workerLoaderProxy();
-        WebWorkerImpl* webWorker = reinterpret_cast<WebWorkerImpl*>(workerLoaderProxy);
-        return webWorker->allowDatabase(WebSecurityOrigin(scriptExecutionContext->securityOrigin()), name, displayName, estimatedSize);
     }
+
+    return true;
 }
 
 void DatabaseObserver::databaseOpened(Database* database)

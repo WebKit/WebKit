@@ -80,9 +80,6 @@ public:
     virtual void postTaskForModeToWorkerContext(
         PassOwnPtr<WebCore::ScriptExecutionContext::Task>, const WebCore::String& mode);
 
-    // Controls whether access to Web Databases is allowed for this worker.
-    virtual bool allowDatabase(const WebSecurityOrigin&, const WebString&, const WebString&, unsigned long) { return true; }
-
     // Executes the given task on the main thread.
     static void dispatchTaskToMainThread(PassOwnPtr<WebCore::ScriptExecutionContext::Task>);
 
