@@ -348,9 +348,13 @@ WebInspector.AuditRules.UnusedCssRule.prototype = {
             {
                 var result = {};
                 for (var i = 0; i < selectorArray.length; ++i) {
-                    var nodes = document.querySelectorAll(selectorArray[i]);
-                    if (nodes && nodes.length)
-                        result[selectorArray[i]] = true;
+                    try {
+                        var nodes = document.querySelectorAll(selectorArray[i]);
+                        if (nodes && nodes.length)
+                            result[selectorArray[i]] = true;
+                    } catch(e) {
+                        // ignore and mark as unused
+                    }
                 }
                 return result;
             }

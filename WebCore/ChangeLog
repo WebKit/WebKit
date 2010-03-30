@@ -1,3 +1,14 @@
+2010-03-30  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Audits: bad CSS selector results in exception inside evaluated code
+        https://bugs.webkit.org/show_bug.cgi?id=36821
+
+        * inspector/front-end/AuditRules.js:
+        (WebInspector.AuditRules.UnusedCssRule.prototype.doRun.evalCallback.routine):
+        (WebInspector.AuditRules.UnusedCssRule.prototype.doRun.evalCallback):
+
 2010-03-29  Janne Koskinen  <janne.p.koskinen@digia.com>
 
         Reviewed by Simon Hausmann.
