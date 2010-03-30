@@ -1,3 +1,9 @@
+2010-03-30  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Update Chromium test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-03-30  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: removed failure expectation from Chromium.
