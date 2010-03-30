@@ -1,3 +1,20 @@
+2010-03-29  Victor Wang  <victorw@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add sign in/out link to TestResults appengine
+
+        Add a link to main menu for sign in/out to this appengine.
+        People signed in with admin privilege could perform
+        actions that are only allowed to admins like deleting files.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36767
+
+        * TestResultServer/handlers/menu.py:
+        * TestResultServer/stylesheets/menu.css:
+        (.sign):
+        * TestResultServer/templates/menu.html:
+
 2010-03-29  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

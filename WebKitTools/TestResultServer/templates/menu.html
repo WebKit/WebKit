@@ -2,6 +2,16 @@
 <html>
 <head>
 <title>Test Result Server</title>
+<table class=login>
+    <tr>
+        <td>
+            {% if user_email %}
+            <span>{{ user_email }}</span>
+            {% endif %}
+            <span><a href="{{ login_url }}">{{ login_text }}</a></span>
+        </td>
+    </tr>
+</table>
 <link type="text/css" rel="stylesheet" href="/stylesheets/menu.css" />
 </head>
 <body>

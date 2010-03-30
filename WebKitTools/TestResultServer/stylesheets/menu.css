@@ -20,3 +20,9 @@ li {
 li:hover {
   background-color: #EEE;
 }
+.login {
+  font-size: 8pt;
+  text-align: right;
+  width: 100%;
+}
+

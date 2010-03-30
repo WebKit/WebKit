@@ -26,6 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from google.appengine.api import users
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 
@@ -41,7 +42,20 @@ menu = [
 
 class Menu(webapp.RequestHandler):
     def get(self):
+        user = users.get_current_user()
+        if user:
+            user_email = user.email()
+            login_text = "Sign out"
+            login_url = users.create_logout_url(self.request.uri)
+        else:
+            user_email = ""
+            login_text = "Sign in"
+            login_url = users.create_login_url(self.request.uri)
+
         template_values = {
+            "user_email": user_email,
+            "login_text": login_text,
+            "login_url": login_url,
             "menu": menu,
         }
 
