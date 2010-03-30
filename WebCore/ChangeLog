@@ -1,3 +1,18 @@
+2010-03-29  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        No vertical scrollbar after the CSS class change
+        https://bugs.webkit.org/show_bug.cgi?id=36461
+
+        Don't suppress scrollbar change for non-first layouts.
+        In the first layout, the scrollbar change will happen in later
+        adjustViewSize() call, but in other layouts, adjustViewSize() may
+        not be called when the size of contents doesn't change.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+
 2010-03-29  Chris Evans  <cevans@chromium.org>
 
         Reviewed by Adam Barth.

@@ -1,3 +1,19 @@
+2010-03-29  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        No vertical scrollbar after the CSS class change
+        https://bugs.webkit.org/show_bug.cgi?id=36461
+
+        * fast/repaint/overflow-scroll-body-appear.html: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/mac/fast/repaint/overflow-scroll-body-appear-expected.checksum: Added.
+        * platform/mac/fast/repaint/overflow-scroll-body-appear-expected.png: Added.
+        * platform/mac/fast/repaint/overflow-scroll-body-appear-expected.txt: Added.
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2010-03-29  David Levin  <levin@chromium.org>
 
         Reviewed by Dimitri Glazkov.

@@ -3335,6 +3335,7 @@ fast/repaint/outline-repaint-glitch.html
 fast/repaint/outline-shrinking.html
 fast/repaint/overflow-clip-subtree-layout.html
 fast/repaint/overflow-delete-line.html
+fast/repaint/overflow-scroll-body-appear.html
 fast/repaint/reflection-redraw.html
 fast/repaint/reflection-repaint-test.html
 fast/repaint/renderer-destruction-by-invalidateSelection-crash.html

@@ -2864,6 +2864,7 @@ fast/repaint/overflow-clip-subtree-layout.html
 fast/repaint/overflow-delete-line.html
 fast/repaint/overflow-into-content.html
 fast/repaint/overflow-outline-repaint.html
+fast/repaint/overflow-scroll-body-appear.html
 fast/repaint/overflow-scroll-delete.html
 fast/repaint/reflection-redraw.html
 fast/repaint/reflection-repaint-test.html

@@ -655,8 +655,9 @@ void FrameView::layout(bool allowSubtree)
         ScrollbarMode currentVMode = verticalScrollbarMode();
 
         if (m_firstLayout || (hMode != currentHMode || vMode != currentVMode)) {
-            setScrollbarsSuppressed(true);
             if (m_firstLayout) {
+                setScrollbarsSuppressed(true);
+
                 m_firstLayout = false;
                 m_firstLayoutCallbackPending = true;
                 m_lastLayoutSize = IntSize(width(), height());
@@ -668,9 +669,11 @@ void FrameView::layout(bool allowSubtree)
                 // Set the initial hMode to AlwaysOff if we're auto.
                 if (hMode == ScrollbarAuto)
                     setHorizontalScrollbarMode(ScrollbarAlwaysOff); // This causes a horizontal scrollbar to disappear.
-            }
-            setScrollbarModes(hMode, vMode);
-            setScrollbarsSuppressed(false, true);
+
+                setScrollbarModes(hMode, vMode);
+                setScrollbarsSuppressed(false, true);
+            } else
+                setScrollbarModes(hMode, vMode);
         }
 
         IntSize oldSize = m_size;
