@@ -2848,5 +2848,4 @@ BUG39485 : fast/events/onbeforeunload-focused-iframe.html = TIMEOUT
 // Need rebaseline. See https://bugs.webkit.org/show_bug.cgi?id=36461
 BUG_HAMAJI : fast/repaint/overflow-scroll-body-appear.html = IMAGE+TEXT IMAGE
 BUGWK36807 WIN : http/tests/inspector-enabled/console-log-before-frame-navigation.html = TEXT
-BUGWK36806 WIN : inspector/elements-panel-styles.html = TEXT
 

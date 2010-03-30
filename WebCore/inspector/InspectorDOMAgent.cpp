@@ -881,9 +881,12 @@ ScriptArray InspectorDOMAgent::buildArrayForPseudoElements(Element* element, boo
 
     for (PseudoId pseudoId = FIRST_PUBLIC_PSEUDOID; pseudoId < AFTER_LAST_INTERNAL_PSEUDOID; pseudoId = static_cast<PseudoId>(pseudoId + 1)) {
         RefPtr<CSSRuleList> matchedRules = selector->pseudoStyleRulesForElement(element, pseudoId, authorOnly);
-        ScriptArray matchedArray = buildArrayForCSSRules(matchedRules.get());
-        static_cast<ScriptObject>(matchedArray).set("pseudoId", static_cast<int>(pseudoId));
-        result.set(counter++, matchedArray);
+        if (matchedRules && matchedRules->length()) {
+            ScriptObject pseudoStyles = m_frontend->newScriptObject();
+            pseudoStyles.set("pseudoId", static_cast<int>(pseudoId));
+            pseudoStyles.set("rules", buildArrayForCSSRules(matchedRules.get()));
+            result.set(counter++, pseudoStyles);
+        }
     }
     return result;
 }

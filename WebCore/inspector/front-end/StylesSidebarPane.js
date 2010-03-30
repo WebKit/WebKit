@@ -164,17 +164,16 @@ WebInspector.StylesSidebarPane.prototype = {
 
             for (var i = 0; i < styles.pseudoElements.length; ++i) {
                 var pseudoElementCSSRules = styles.pseudoElements[i];
-                if (!pseudoElementCSSRules.length)
-                        continue;
 
                 styleRules = [];
                 var pseudoId = pseudoElementCSSRules.pseudoId;
+
                 var entry = { isStyleSeparator: true, pseudoId: pseudoId };
                 styleRules.push(entry);
 
                 // Add rules in reverse order to match the cascade order.
-                for (var j = pseudoElementCSSRules.length - 1; j >= 0; --j) {
-                    var rule = WebInspector.CSSStyleDeclaration.parseRule(pseudoElementCSSRules[j]);
+                for (var j = pseudoElementCSSRules.rules.length - 1; j >= 0; --j) {
+                    var rule = WebInspector.CSSStyleDeclaration.parseRule(pseudoElementCSSRules.rules[j]);
                     styleRules.push({ style: rule.style, selectorText: rule.selectorText, parentStyleSheet: rule.parentStyleSheet, rule: rule });
                 }
                 usedProperties = {};
