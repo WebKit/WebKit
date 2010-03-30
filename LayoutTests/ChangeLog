@@ -1,3 +1,10 @@
+2010-03-30  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: bring test expectation back - it still fails for some
+        reason.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-03-30  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Update Chromium test expectations.
