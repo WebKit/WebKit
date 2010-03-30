@@ -1,3 +1,22 @@
+2010-03-30  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36616
+        Dvorak-Qwerty keyboard layout gives unexpected results in javascript keydown
+
+        https://bugs.webkit.org/show_bug.cgi?id=36797
+        For non-Roman layouts, keydown Event.keyCode is always 0
+
+        * platform/cocoa/KeyEventCocoa.mm:
+        (WebCore::windowsKeyCodeForKeyCode): This is now the primary function for determining
+        Windows key code - there is no reason to round trip a virtual key code via character code to
+        get Windows virtual key code, and this can't work for non-Roman alphabets.
+        (WebCore::windowsKeyCodeForCharCode): Removed keys that are now handled in windowsKeyCodeForKeyCode(),
+        only keeping those for which we don't have known key codes (yet?).
+
+        * platform/mac/KeyEventMac.mm: (WebCore::windowsKeyCodeForKeyEvent): Added comments.
+
 2010-03-30  Marcus Bulach  <bulach@chromium.org>
 
         Reviewed by Darin Fisher.
