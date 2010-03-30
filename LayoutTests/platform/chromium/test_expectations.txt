@@ -2762,10 +2762,6 @@ BUG37463 MAC DEBUG : svg/custom/transform-ignore-after-invalid.svg = PASS CRASH
 // WebKit roll 55512:55584
 BUG37540 MAC SKIP : inspector/console-dir.html = CRASH TEXT PASS
 
-
-// WebKit roll 55654 -> 55670
-BUG_JIANLI :  http/tests/local/send-sliced-dragged-file.html = FAIL
-
 // Bugs that went unreported when we upstreamed run_webkit_tests
 BUG37896 MAC LINUX : fast/backgrounds/animated-svg-as-background.html = IMAGE
 // New test, added http://trac.webkit.org/changeset/55737
