@@ -1,0 +1,111 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<style>
+.unused {
+    color: green;
+}
+</style>
+<script src="../http/tests/inspector/inspector-test.js"></script>
+
+<!-- These scripts are needed to result in a violation of the max JS resource count from the same domain -->
+<script src="resources/audits-script1.js"></script>
+<link rel="stylesheet" href="resources/audits-style1.css" type="text/css">
+<script src="resources/audits-script2.js"></script>
+<script src="resources/audits-script3.js"></script>
+<script>
+
+function doit()
+{
+    function callback(result)
+    {
+        var output = document.getElementById("outputPre");
+        output.textContent = result;
+        notifyDone();
+    }
+    evaluateInWebInspector("frontend_runAudits", callback);
+}
+
+
+// Frontend functions.
+
+function frontend_runAudits(testController)
+{
+    if (!WebInspector.panels.resources.resourceTrackingEnabled) {
+        InspectorBackend.enableResourceTracking(false);
+        testController.notifyDone([]);
+        return;
+    }
+
+    testController.waitUntilDone();
+    WebInspector.AuditRuleResult.resourceDomain = function() {
+        return "[domain]";
+    };
+    try {
+        const launcherView = WebInspector.panels.audits._launcherView;
+        launcherView._selectAllClicked(true);
+        launcherView._auditPresentStateElement.checked = true;
+        launcherView._launchButtonClicked();
+
+        testController.runAfterPendingDispatches(function() {
+            // Audits are done, check results.
+            WebInspector.panels.audits.showResults(WebInspector.panels.audits.auditResultsTreeElement.children[0].results);
+            var liElements = WebInspector.panels.audits.visibleView.element.getElementsByTagName("li");
+            for (var j = 0; j < liElements.length; ++j) {
+                if (liElements[j].treeElement)
+                    liElements[j].treeElement.expand();
+            }
+            var output = [];
+            frontend_collectTextContent(WebInspector.panels.audits.visibleView.element, 0, output);
+            // Avoid influencing tests that required resource tracking to be disabled.
+            InspectorBackend.disableResourceTracking(false);
+            testController.runAfterPendingDispatches(function() {
+                testController.notifyDone(output.join("\n"));
+            });
+        });
+    } catch(e) {
+        testController.notifyDone("Exception: " + e.toString());
+    }
+}
+
+function frontend_collectTextContent(element, level, output)
+{
+    var nodeOutput = "";
+    var child = element.firstChild;
+    while (child) {
+        if (child.nodeType === Node.TEXT_NODE) {
+            for (var i = 0; i < level; ++i)
+                nodeOutput += " ";
+            nodeOutput += child.nodeValue;
+        } else if (child.nodeType === Node.ELEMENT_NODE) {
+            if (nodeOutput !== "") {
+                output.push(nodeOutput);
+                nodeOutput = "";
+            }
+            frontend_collectTextContent(child, level + 1, output);
+        }
+        child = child.nextSibling;
+    }
+    if (nodeOutput !== "")
+        output.push(nodeOutput);
+    return;
+}
+
+</script>
+</head>
+
+<body onload="onload()">
+Tests audit rules.
+
+<style>
+.violation { color: red; }
+</style>
+<img src="foo1.jpg">
+<img src="foo2.jpg" width=100>
+<img src="foo3.jpg" style="position: absolute">
+
+<pre id="outputPre">
+</pre>
+
+</body>
+</html>
