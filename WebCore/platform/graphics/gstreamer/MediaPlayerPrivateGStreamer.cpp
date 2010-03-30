@@ -1224,7 +1224,7 @@ static HashSet<String> mimeTypeCache()
     doGstInit();
 
     DEFINE_STATIC_LOCAL(HashSet<String>, cache, ());
-    DEFINE_STATIC_LOCAL(bool, typeListInitialized, (false));
+    static bool typeListInitialized = false;
 
     if (!typeListInitialized) {
         // Build a whitelist of mime-types known to be supported by
