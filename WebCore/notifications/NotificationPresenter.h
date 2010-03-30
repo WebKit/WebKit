@@ -72,7 +72,7 @@ namespace WebCore {
         virtual void requestPermission(SecurityOrigin*, PassRefPtr<VoidCallback>) = 0;
 
         // Checks the current level of permission.
-        virtual Permission checkPermission(SecurityOrigin*) = 0;
+        virtual Permission checkPermission(const KURL&) = 0;
     };
 
 } // namespace WebCore

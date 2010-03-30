@@ -62,7 +62,7 @@ public:
 
     // Checks the permission level for the given origin.
     // FIXME: This should become abstract when the below is removed.
-    virtual Permission checkPermission(const WebSecurityOrigin& origin)
+    virtual Permission checkPermission(const WebURL& url)
     {
         return PermissionNotAllowed;
     };

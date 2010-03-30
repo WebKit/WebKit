@@ -49,7 +49,7 @@ Notification::Notification(const String& url, ScriptExecutionContext* context, E
     , m_presenter(provider)
 {
     ASSERT(m_presenter);
-    if (m_presenter->checkPermission(context->securityOrigin()) != NotificationPresenter::PermissionAllowed) {
+    if (m_presenter->checkPermission(context->url()) != NotificationPresenter::PermissionAllowed) {
         ec = SECURITY_ERR;
         return;
     }
@@ -69,7 +69,7 @@ Notification::Notification(const NotificationContents& contents, ScriptExecution
     , m_presenter(provider)
 {
     ASSERT(m_presenter);
-    if (m_presenter->checkPermission(context->securityOrigin()) != NotificationPresenter::PermissionAllowed) {
+    if (m_presenter->checkPermission(context->url()) != NotificationPresenter::PermissionAllowed) {
         ec = SECURITY_ERR;
         return;
     }

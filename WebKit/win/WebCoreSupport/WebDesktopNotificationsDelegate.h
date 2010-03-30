@@ -51,7 +51,7 @@ public:
     virtual void notificationObjectDestroyed(WebCore::Notification* object);
     virtual void requestPermission(WebCore::SecurityOrigin* origin, PassRefPtr<WebCore::VoidCallback> callback);
     virtual WebCore::NotificationPresenter::Permission checkPermission(const KURL& url, Document* document);
-    virtual WebCore::NotificationPresenter::Permission checkPermission(const WebCore::SecurityOrigin* origin);
+    virtual WebCore::NotificationPresenter::Permission checkPermission(const KURL& url);
 
 private:
     bool hasNotificationDelegate();

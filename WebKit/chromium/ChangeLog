@@ -1,3 +1,17 @@
+2010-03-29  Rafael Weinstein  <rafaelw@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Change NotificationPresenter::checkPermission() to take the source frames full KURL,
+        rather than its SecurityOrigin. This will aid chromium in having more fine grained
+        permissions to control notification spam.
+
+        * public/WebNotificationPresenter.h:
+        (WebKit::WebNotificationPresenter::checkPermission):
+        * src/NotificationPresenterImpl.cpp:
+        (WebKit::NotificationPresenterImpl::checkPermission):
+        * src/NotificationPresenterImpl.h:
+
 2010-03-29  Dawit Alemayehu  <adawit@kde.org>
 
         Reviewed by Simon Hausmann.
