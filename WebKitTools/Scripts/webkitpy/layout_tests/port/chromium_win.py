@@ -120,6 +120,7 @@ class ChromiumWinPort(chromium.ChromiumPort):
         pid: The id of the process to be killed.
         """
         subprocess.call(('taskkill.exe', '/f', '/pid', str(pid)),
+                        stdin=open(os.devnull, 'r'),
                         stdout=subprocess.PIPE,
                         stderr=subprocess.PIPE)
 
@@ -163,8 +164,10 @@ class ChromiumWinPort(chromium.ChromiumPort):
             server_pid: The process ID of the running server.
         """
         subprocess.Popen(('taskkill.exe', '/f', '/im', 'LightTPD.exe'),
+                        stdin=open(os.devnull, 'r'),
                         stdout=subprocess.PIPE,
                         stderr=subprocess.PIPE).wait()
         subprocess.Popen(('taskkill.exe', '/f', '/im', 'httpd.exe'),
+                        stdin=open(os.devnull, 'r'),
                         stdout=subprocess.PIPE,
                         stderr=subprocess.PIPE).wait()
