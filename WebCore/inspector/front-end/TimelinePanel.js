@@ -159,7 +159,7 @@ WebInspector.TimelinePanel.prototype = {
         this.clearButton = new WebInspector.StatusBarButton(WebInspector.UIString("Clear"), "timeline-clear-status-bar-item");
         this.clearButton.addEventListener("click", this._clearPanel.bind(this), false);
 
-        this.toggleFilterButton = new WebInspector.StatusBarButton(WebInspector.UIString("Show short records"), "timeline-filter-status-bar-item");
+        this.toggleFilterButton = new WebInspector.StatusBarButton(WebInspector.UIString("Hide short records"), "timeline-filter-status-bar-item");
         this.toggleFilterButton.addEventListener("click", this._toggleFilterButtonClicked.bind(this), false);
 
         this.recordsCounter = document.createElement("span");
@@ -185,6 +185,7 @@ WebInspector.TimelinePanel.prototype = {
     {
         this.toggleFilterButton.toggled = !this.toggleFilterButton.toggled;
         this._calculator._showShortEvents = this.toggleFilterButton.toggled;
+        this.toggleFilterButton.element.title = this._calculator._showShortEvents ? WebInspector.UIString("Hide short records") : WebInspector.UIString("Show short records");
         this._scheduleRefresh(true);
     },
 
@@ -243,21 +244,16 @@ WebInspector.TimelinePanel.prototype = {
         if (parentRecord === this._rootRecord)
             formattedRecord.collapsed = true;
 
-        var hasLongChildrenEvents = false;
         for (var i = 0; record.children && i < record.children.length; ++i)
-            hasLongChildrenEvents |= this._innerAddRecordToTimeline(record.children[i], formattedRecord);
-        formattedRecord._hasLongChildrenEvents = hasLongChildrenEvents;
+            this._innerAddRecordToTimeline(record.children[i], formattedRecord);
 
         if (connectedToOldRecord) {
             var record = formattedRecord;
             while (record.parent && record.parent._lastChildEndTime < record._lastChildEndTime) {
                 record.parent._lastChildEndTime = record._lastChildEndTime;
-                if (!record.parent._hasLongChildrenEvents)
-                    record.parent._hasLongChildrenEvents = record._isLongEvent();
                 record = record.parent;
             }
         }
-        return hasLongChildrenEvents || formattedRecord._isLongEvent();
     },
 
     setSidebarWidth: function(width)

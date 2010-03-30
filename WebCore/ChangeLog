@@ -1,3 +1,16 @@
+2010-03-30  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Title for show/hide short records button was adjusted.
+        Some unused code was removed.
+        https://bugs.webkit.org/show_bug.cgi?id=36823
+
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._createStatusbarButtons):
+        (WebInspector.TimelinePanel.prototype._toggleFilterButtonClicked):
+        (WebInspector.TimelinePanel.prototype._innerAddRecordToTimeline):
+
 2010-03-30  Adam Roben  <aroben@apple.com>
 
         Enable extra Direct3D debugging information in Debug builds
