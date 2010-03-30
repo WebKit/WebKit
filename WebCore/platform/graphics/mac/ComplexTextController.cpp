@@ -394,7 +394,12 @@ void ComplexTextController::advance(unsigned offset, GlyphBuffer* glyphBuffer)
             // FIXME: Instead of dividing the glyph's advance equially between the characters, this
             // could use the glyph's "ligature carets". However, there is no Core Text API to get the
             // ligature carets.
-            m_runWidthSoFar += adjustedAdvance.width * (m_characterInCurrentGlyph - oldCharacterInCurrentGlyph) / (glyphEndOffset - glyphStartOffset);
+            if (glyphStartOffset == glyphEndOffset) {
+                // When there are multiple glyphs per character we need to advance by the full width of the glyph.
+                ASSERT(m_characterInCurrentGlyph == oldCharacterInCurrentGlyph);
+                m_runWidthSoFar += adjustedAdvance.width;
+            } else
+                m_runWidthSoFar += adjustedAdvance.width * (m_characterInCurrentGlyph - oldCharacterInCurrentGlyph) / (glyphEndOffset - glyphStartOffset);
 
             if (glyphEndOffset + complexTextRun.stringLocation() > m_currentCharacter)
                 return;

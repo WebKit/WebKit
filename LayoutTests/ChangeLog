@@ -1,3 +1,14 @@
+2010-03-30  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Incorrect insertion position after typing THAI CHARACTER SARA AM = 0E33.
+        <rdar://problem/7810749>
+        https://bugs.webkit.org/show_bug.cgi?id=36858
+
+        * fast/text/multiglyph-characters-expected.txt: Added.
+        * fast/text/multiglyph-characters.html: Added.
+
 2010-03-30  Chris Evans  <cevans@chromium.org>
 
         Reviewed by Adam Barth.
