@@ -899,10 +899,21 @@ static WebKitWebView* webViewCreate(WebKitWebView* view, WebKitWebFrame* frame)
     return newWebView;
 }
 
+static void logHandler(const gchar* domain, GLogLevelFlags level, const gchar* message, gpointer data)
+{
+    if (level < G_LOG_LEVEL_DEBUG)
+        fprintf(stderr, "%s\n", message);
+}
+
 int main(int argc, char* argv[])
 {
     g_thread_init(NULL);
     gtk_init(&argc, &argv);
+
+    // Some plugins might try to use the GLib logger for printing debug
+    // messages. This will cause tests to fail because of unexpected output.
+    // We squelch all debug messages sent to the logger.
+    g_log_set_default_handler(logHandler, 0);
 
 #if PLATFORM(X11)
     FcInit();

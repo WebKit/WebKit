@@ -1,3 +1,16 @@
+2010-03-29  Martin Robinson  <mrobinson@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        [GTK] suppress (un)desired launcher output that can make layout test to fail with stderr
+        https://bugs.webkit.org/show_bug.cgi?id=36390
+
+        Suppress debugging messages sent to the GLib logger during DRT runs.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (logHandler): Added.
+        (main): Use logHandler as the default GLib log message handler.
+
 2010-03-29  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
