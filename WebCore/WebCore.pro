@@ -4,7 +4,6 @@ CONFIG += depend_includepath
 
 symbian: {
     TARGET.EPOCALLOWDLLDATA=1
-    TARGET.EPOCHEAPSIZE = 0x20000 0x2000000 // Min 128kB, Max 32MB
     TARGET.CAPABILITY = All -Tcb
     isEmpty(QT_LIBINFIX) {
         TARGET.UID3 = 0x200267C2
@@ -55,7 +54,7 @@ CONFIG(standalone_package) {
     PRECOMPILED_HEADER = $$PWD/../WebKit/qt/WebKit_pch.h
     DEFINES *= NDEBUG
 
-    symbian: CONFIG += def_files
+    symbian: TARGET += $${QT_LIBINFIX}
 } else {
     isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = generated
     isEmpty(JSC_GENERATED_SOURCES_DIR):JSC_GENERATED_SOURCES_DIR = ../JavaScriptCore/generated

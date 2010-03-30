@@ -1,3 +1,22 @@
+2010-03-29  Janne Koskinen  <janne.p.koskinen@digia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Package build fixes for Symbian
+
+        * enable building standalone QtWebkit for Symbian using qtlibinfix configuration option
+
+        qtlibinfix adds possibility having multiple versions of Qt in Symbian devices.
+        Fix also allows unfrozen DLL exports during development.
+
+        * Removed heap size configuration. DLLs don't have a heap.
+
+        * Removed enforcement to def files for package builds. Instead inherit the setting from
+        Qt's qconfig.pri whether to use def files or not. It's still possible to override this
+        also at qmake time by passing CONFIG+=def_files.
+
+        * WebCore.pro:
+
 2010-03-30  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.
