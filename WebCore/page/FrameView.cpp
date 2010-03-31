@@ -327,6 +327,8 @@ void FrameView::setMarginHeight(int h)
 
 bool FrameView::avoidScrollbarCreation()
 {
+    ASSERT(m_frame);
+
     // with frame flattening no subframe can have scrollbars
     // but we also cannot turn scrollbars of as we determine
     // our flattening policy using that.

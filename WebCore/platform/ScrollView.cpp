@@ -81,7 +81,7 @@ void ScrollView::removeChild(Widget* child)
 
 void ScrollView::setHasHorizontalScrollbar(bool hasBar)
 {
-    if (avoidScrollbarCreation())
+    if (hasBar && avoidScrollbarCreation())
         return;
 
     if (hasBar && !m_horizontalScrollbar) {
@@ -96,7 +96,7 @@ void ScrollView::setHasHorizontalScrollbar(bool hasBar)
 
 void ScrollView::setHasVerticalScrollbar(bool hasBar)
 {
-    if (avoidScrollbarCreation())
+    if (hasBar && avoidScrollbarCreation())
         return;
 
     if (hasBar && !m_verticalScrollbar) {
