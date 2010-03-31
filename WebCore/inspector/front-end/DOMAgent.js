@@ -455,7 +455,7 @@ WebInspector.Cookies.buildCookiesFromString = function(rawCookieString)
 
 WebInspector.Cookies.cookieMatchesResourceURL = function(cookie, resourceURL)
 {
-    var match = resourceURL.match(WebInspector.URLRegExp);
+    var match = resourceURL.match(WebInspector.GenericURLRegExp);
     if (!match)
         return false;
     // See WebInspector.URLRegExp for definitions of the group index constants.

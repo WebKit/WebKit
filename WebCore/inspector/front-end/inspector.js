@@ -1094,11 +1094,10 @@ WebInspector.updateResource = function(identifier, payload)
         if (resource.mainResource)
             this.mainResource = resource;
 
-        var match = payload.documentURL.match(WebInspector.URLRegExp);
+        var match = payload.documentURL.match(WebInspector.GenericURLRegExp);
         if (match) {
             var protocol = match[1].toLowerCase();
-            if (protocol.indexOf("http") === 0 || protocol === "file")
-                this._addCookieDomain(protocol === "file" ? "" : match[2]);
+            this._addCookieDomain(match[2]);
         }
     }
 

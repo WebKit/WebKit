@@ -1,3 +1,19 @@
+2010-03-31  Mattias Nissler  <mnissler@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Allow generic resource URLs for cookie handling in the inspector. This
+        enables display of all cookies, not only those that are associated
+        with resources accessed through http, https or file.
+        https://bugs.webkit.org/show_bug.cgi?id=36877
+
+        * inspector/front-end/CookieItemsView.js:
+        (WebInspector.CookieItemsView.prototype._filterCookiesForDomain):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.Cookies.cookieMatchesResourceURL):
+        * inspector/front-end/inspector.js:
+        (WebInspector.updateResource):
+
 2010-03-30  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Nate Chapin.
