@@ -1,3 +1,15 @@
+2010-03-30  Alpha Lam  <hclam@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        [chromium] Fix test expectations for a new test added in r56779
+        https://bugs.webkit.org/show_bug.cgi?id=36868
+
+        inspector/audits-panel-functional.html is crashing on Windows. Mark it so.
+
+        * platform/chromium/test_expectations.txt:
+        Add expectation for inspector/audits-panel-functional.html to mark it as crashing.
+
 2010-03-30  Andrew Scherkus  <scherkus@chromium.org>
 
         Unreviewed, expectations tweak.
