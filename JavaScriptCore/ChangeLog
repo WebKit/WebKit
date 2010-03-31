@@ -1,5 +1,11 @@
 2010-03-31  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by NOBODY (windows build fix).
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2010-03-31  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Geoff Garen.
 
         Bug 36871 - Remove JSC::CString

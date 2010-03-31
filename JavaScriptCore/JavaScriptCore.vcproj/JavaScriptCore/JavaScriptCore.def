@@ -21,7 +21,6 @@ EXPORTS
     ??0ThreadCondition@WTF@@QAE@XZ
     ??0UString@JSC@@QAE@PBD@Z
     ??0UString@JSC@@QAE@PB_WI@Z
-    ??1CString@JSC@@QAE@XZ
     ??1ClientData@JSGlobalData@JSC@@UAE@XZ
     ??1Collator@WTF@@QAE@XZ
     ??1Debugger@JSC@@UAE@XZ
@@ -36,7 +35,6 @@ EXPORTS
     ??2JSGlobalObject@JSC@@SAPAXIPAVJSGlobalData@1@@Z
     ??8JSC@@YA_NABVUString@0@0@Z
     ?NaN@JSC@@3NB
-    ?UTF8String@UString@JSC@@QBE?AVCString@2@_N@Z
     ?add@Identifier@JSC@@SA?AV?$PassRefPtr@VUStringImpl@JSC@@@WTF@@PAVExecState@2@PBD@Z
     ?add@PropertyNameArray@JSC@@QAEXPAVUStringImpl@2@@Z
     ?addPropertyTransition@Structure@JSC@@SA?AV?$PassRefPtr@VStructure@JSC@@@WTF@@PAV12@ABVIdentifier@2@IPAVJSCell@2@AAI@Z
