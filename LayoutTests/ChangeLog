@@ -1,3 +1,10 @@
+2010-03-31  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Add missing pixel test results for svg/filters/feColorMatrix-values.svg
+
+        * platform/mac/svg/filters/feColorMatrix-values-expected.checksum: Added.
+        * platform/mac/svg/filters/feColorMatrix-values-expected.png: Added.
+
 2010-03-31  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Darin Fisher.
