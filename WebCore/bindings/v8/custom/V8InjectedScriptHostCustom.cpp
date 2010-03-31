@@ -42,6 +42,8 @@
 #include "SerializedScriptValue.h"
 
 #include "V8Binding.h"
+#include "V8BindingState.h"
+#include "V8DOMWindow.h"
 #include "V8Database.h"
 #include "V8Node.h"
 #include "V8Proxy.h"
@@ -244,6 +246,21 @@ InjectedScript InjectedScriptHost::injectedScriptFor(ScriptState* inspectedScrip
     m_idToInjectedScript.set(injectedScript.first, result);
     global->SetHiddenValue(key, injectedScript.second.v8Object());
     return result;
+}
+
+bool InjectedScriptHost::canAccessInspectedWindow(ScriptState* scriptState)
+{
+    v8::Local<v8::Context> context = scriptState->context();
+    v8::Local<v8::Object> global = context->Global();
+    if (global.IsEmpty())
+        return false;
+    v8::Handle<v8::Object> holder = V8DOMWrapper::lookupDOMWrapper(V8DOMWindow::GetTemplate(), global);
+    if (holder.IsEmpty())
+        return false;
+    Frame* frame = V8DOMWindow::toNative(holder)->frame();
+
+    v8::Context::Scope contextScope(context);
+    return V8BindingSecurity::canAccessFrame(V8BindingState::Only(), frame, false);
 }
 
 } // namespace WebCore

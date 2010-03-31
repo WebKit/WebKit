@@ -48,6 +48,7 @@
 #include "InspectorController.h"
 #include "InspectorResource.h"
 #include "JSDOMWindow.h"
+#include "JSDOMWindowCustom.h"
 #include "JSNode.h"
 #include "JSRange.h"
 #include "Node.h"
@@ -227,6 +228,15 @@ InjectedScript InjectedScriptHost::injectedScriptFor(ScriptState* scriptState)
     InjectedScript result(injectedScriptObject.second);
     m_idToInjectedScript.set(injectedScriptObject.first, result);
     return result;
+}
+
+bool InjectedScriptHost::canAccessInspectedWindow(ScriptState* scriptState)
+{
+    JSLock lock(SilenceAssertionsOnly);
+    JSDOMWindow* inspectedWindow = toJSDOMWindow(scriptState->lexicalGlobalObject());
+    if (!inspectedWindow)
+        return false;
+    return inspectedWindow->allowsAccessFromNoErrorMessage(scriptState);
 }
 
 } // namespace WebCore

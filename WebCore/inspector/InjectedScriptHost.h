@@ -93,6 +93,8 @@ public:
     void discardInjectedScripts();
     void releaseWrapperObjectGroup(long injectedScriptId, const String& objectGroup);
 
+    static bool canAccessInspectedWindow(ScriptState*);
+
 private:
     InjectedScriptHost(InspectorController* inspectorController);
     InspectorDOMAgent* inspectorDOMAgent();

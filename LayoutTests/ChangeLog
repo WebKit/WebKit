@@ -1,3 +1,14 @@
+2010-03-30  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: get rid of "Unsafe JavaScript attempt..." message when inspecting frames whose content has changed.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36828
+
+        * http/tests/inspector-enabled/console-log-before-frame-navigation-expected.txt:
+        * http/tests/inspector-enabled/resources/console-log-frame-before-navigation.html:
+
 2010-03-31  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Add missing pixel test results for svg/filters/feColorMatrix-values.svg

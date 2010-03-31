@@ -33,6 +33,17 @@ var InjectedScript = {};
 InjectedScript.lastBoundObjectId = 1;
 InjectedScript.idToWrappedObject = {};
 InjectedScript.objectGroups = {};
+
+InjectedScript.wrapObjectForConsole = function(object, canAccessInspectedWindow)
+{
+    if (canAccessInspectedWindow)
+        return InjectedScript.wrapObject(object, "console");
+    var result = {};
+    result.type = typeof object;
+    result.description = InjectedScript._toString(object);
+    return result;
+}
+
 InjectedScript.wrapObject = function(object, objectGroupName)
 {
     try {
