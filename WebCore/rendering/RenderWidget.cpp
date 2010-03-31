@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2006, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2009, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,6 +25,7 @@
 
 #include "AXObjectCache.h"
 #include "AnimationController.h"
+#include "CString.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "RenderView.h"
@@ -154,14 +155,14 @@ bool RenderWidget::setWidgetGeometry(const IntRect& frame)
     if (!node())
         return false;
 
-    IntRect windowClipRect = m_frameView ? m_frameView->windowClipRectForLayer(enclosingLayer(), true) : IntRect();
-    bool clipChanged = m_windowClipRect != windowClipRect;
+    IntRect clipRect = enclosingLayer()->childrenClipRect();
+    bool clipChanged = m_clipRect != clipRect;
     bool boundsChanged = m_widget->frameRect() != frame;
 
     if (!boundsChanged && !clipChanged)
         return false;
 
-    m_windowClipRect = windowClipRect;
+    m_clipRect = clipRect;
 
     RenderWidgetProtector protector(this);
     RefPtr<Node> protectedNode(node());
@@ -339,6 +340,14 @@ void RenderWidget::widgetPositionsUpdated()
     if (!m_widget)
         return;
     m_widget->widgetPositionsUpdated();
+}
+
+IntRect RenderWidget::windowClipRect() const
+{
+    if (!m_frameView)
+        return IntRect();
+
+    return intersection(m_frameView->contentsToWindow(m_clipRect), m_frameView->windowClipRect());
 }
 
 void RenderWidget::setSelectionState(SelectionState state)

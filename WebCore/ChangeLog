@@ -1,3 +1,23 @@
+2010-03-31  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36897
+        <rdar://problem/7804018> REGRESSION (r56429): Flash ads are clipped when main page is scrolled (boxofficemojo.com)
+
+        * manual-tests/plugin-in-iframe-scroll.html: Added.
+        * manual-tests/resources/plugin-in-iframe-scroll-iframe.html: Added.
+
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::setWidgetGeometry): This method isn't called when an iframe containing
+        the widget moves, so we should store a value that is not dependent on current scroll offset.
+        (WebCore::RenderWidget::windowClipRect): Apply scroll offset and window clip now.
+
+        * rendering/RenderWidget.h: Renamed m_windowClipRect to m_clipRect, because it is no longer
+        in window coordinates.
+
+        * WebCore.base.exp: Export RenderWidget::windowClipRect(), since it's no longer inline.
+
 2010-03-31  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Unreviewed crash fix.
