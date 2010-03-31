@@ -1,3 +1,15 @@
+2010-03-31  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Fix crash
+
+        Web Inspector: [Chromium] inspector/audits-panel-functional.html crashes test_shell
+        https://bugs.webkit.org/show_bug.cgi?id=36885
+
+        * inspector/audits-panel-functional.html:
+        * platform/chromium/test_expectations.txt:
+
 2010-03-30  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

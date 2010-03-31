@@ -2812,6 +2812,3 @@ BUGWK36807 WIN : http/tests/inspector-enabled/console-log-before-frame-navigatio
 // Caused by http://trac.webkit.org/changeset/56795
 // This is a new test but fails in Chromium because of a missing API.
 BUG39904 : svg/animations/animate-points.html = TEXT TIMEOUT
-
-// Caused by http://trac.webkit.org/changeset/56779
-BUG39927 WIN : inspector/audits-panel-functional.html = CRASH PASS TEXT

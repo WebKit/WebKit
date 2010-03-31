@@ -19,6 +19,8 @@ function doit()
 {
     function callback(result)
     {
+        if (result === "refreshing")
+            return;
         var output = document.getElementById("outputPre");
         output.textContent = result;
         notifyDone();
@@ -33,8 +35,7 @@ function frontend_runAudits(testController)
 {
     if (!WebInspector.panels.resources.resourceTrackingEnabled) {
         InspectorBackend.enableResourceTracking(false);
-        testController.notifyDone([]);
-        return;
+        return "refreshing";
     }
 
     testController.waitUntilDone();
@@ -57,7 +58,7 @@ function frontend_runAudits(testController)
             }
             var output = [];
             frontend_collectTextContent(WebInspector.panels.audits.visibleView.element, 0, output);
-            // Avoid influencing tests that required resource tracking to be disabled.
+            // Avoid influencing tests that require resource tracking to be disabled.
             InspectorBackend.disableResourceTracking(false);
             testController.runAfterPendingDispatches(function() {
                 testController.notifyDone(output.join("\n"));
