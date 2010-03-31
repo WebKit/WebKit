@@ -133,63 +133,73 @@ WebInspector.StylesSidebarPane.prototype = {
             return;
         }
 
-        var self = this;
-        function callback(styles)
+        function getStylesCallback(styles)
         {
-            if (!styles)
-                return;
-            self._update(refresh, node, styles, editedSection);
+            if (styles)
+                this._rebuildUpdate(node, styles);
         }
 
-        InspectorBackend.getStyles(WebInspector.Callback.wrap(callback), node.id, !WebInspector.settings.showUserAgentStyles);
+        function getComputedStyleCallback(computedStyle)
+        {
+            if (computedStyle)
+                this._refreshUpdate(node, computedStyle, editedSection);
+        };
+
+        if (refresh)
+            InspectorBackend.getComputedStyle(WebInspector.Callback.wrap(getComputedStyleCallback.bind(this)), node.id);
+        else
+            InspectorBackend.getStyles(WebInspector.Callback.wrap(getStylesCallback.bind(this)), node.id, !WebInspector.settings.showUserAgentStyles);
     },
 
-    _update: function(refresh, node, styles, editedSection)
+    _refreshUpdate: function(node, computedStyle, editedSection)
     {
-        if (refresh) {
-            for (var pseudoId in this.sections) {
-                var styleRules = this._refreshStyleRules(this.sections[pseudoId], styles);
-                var usedProperties = {};
-                var disabledComputedProperties = {};
-                this._markUsedProperties(styleRules, usedProperties, disabledComputedProperties);
-                this._refreshSectionsForStyleRules(styleRules, usedProperties, disabledComputedProperties, editedSection);
-            }
-        } else {
-            this.bodyElement.removeChildren();
-            var styleRules = this._rebuildStyleRules(node, styles);
+        for (var pseudoId in this.sections) {
+            var styleRules = this._refreshStyleRules(this.sections[pseudoId], computedStyle);
             var usedProperties = {};
             var disabledComputedProperties = {};
             this._markUsedProperties(styleRules, usedProperties, disabledComputedProperties);
-            this.sections[0] = this._rebuildSectionsForStyleRules(styleRules, usedProperties, disabledComputedProperties, 0);
-
-            for (var i = 0; i < styles.pseudoElements.length; ++i) {
-                var pseudoElementCSSRules = styles.pseudoElements[i];
-
-                styleRules = [];
-                var pseudoId = pseudoElementCSSRules.pseudoId;
-
-                var entry = { isStyleSeparator: true, pseudoId: pseudoId };
-                styleRules.push(entry);
-
-                // Add rules in reverse order to match the cascade order.
-                for (var j = pseudoElementCSSRules.rules.length - 1; j >= 0; --j) {
-                    var rule = WebInspector.CSSStyleDeclaration.parseRule(pseudoElementCSSRules.rules[j]);
-                    styleRules.push({ style: rule.style, selectorText: rule.selectorText, parentStyleSheet: rule.parentStyleSheet, rule: rule });
-                }
-                usedProperties = {};
-                disabledComputedProperties = {};
-                this._markUsedProperties(styleRules, usedProperties, disabledComputedProperties);
-                this.sections[pseudoId] = this._rebuildSectionsForStyleRules(styleRules, usedProperties, disabledComputedProperties, pseudoId);
-            }
+            this._refreshSectionsForStyleRules(styleRules, usedProperties, disabledComputedProperties, editedSection);
         }
     },
 
-    _refreshStyleRules: function(sections, styles)
+    _rebuildUpdate: function(node, styles)
     {
-        var nodeComputedStyle = new WebInspector.CSSStyleDeclaration(styles.computedStyle);
+        this.bodyElement.removeChildren();
+        var styleRules = this._rebuildStyleRules(node, styles);
+        var usedProperties = {};
+        var disabledComputedProperties = {};
+        this._markUsedProperties(styleRules, usedProperties, disabledComputedProperties);
+        this.sections[0] = this._rebuildSectionsForStyleRules(styleRules, usedProperties, disabledComputedProperties, 0);
+
+        for (var i = 0; i < styles.pseudoElements.length; ++i) {
+            var pseudoElementCSSRules = styles.pseudoElements[i];
+
+            styleRules = [];
+            var pseudoId = pseudoElementCSSRules.pseudoId;
+
+            var entry = { isStyleSeparator: true, pseudoId: pseudoId };
+            styleRules.push(entry);
+
+            // Add rules in reverse order to match the cascade order.
+            for (var j = pseudoElementCSSRules.rules.length - 1; j >= 0; --j) {
+                var rule = WebInspector.CSSStyleDeclaration.parseRule(pseudoElementCSSRules.rules[j]);
+                styleRules.push({ style: rule.style, selectorText: rule.selectorText, parentStyleSheet: rule.parentStyleSheet, rule: rule });
+            }
+            usedProperties = {};
+            disabledComputedProperties = {};
+            this._markUsedProperties(styleRules, usedProperties, disabledComputedProperties);
+            this.sections[pseudoId] = this._rebuildSectionsForStyleRules(styleRules, usedProperties, disabledComputedProperties, pseudoId);
+        }
+    },
+
+    _refreshStyleRules: function(sections, computedStyle)
+    {
+        var nodeComputedStyle = new WebInspector.CSSStyleDeclaration(computedStyle);
         var styleRules = [];
         for (var i = 0; sections && i < sections.length; ++i) {
             var section = sections[i];
+            if (section instanceof WebInspector.BlankStylePropertiesSection)
+                continue;
             if (section.computedStyle)
                 section.styleRule.style = nodeComputedStyle;
             var styleRule = { section: section, style: section.styleRule.style, computedStyle: section.computedStyle, rule: section.rule };
@@ -507,6 +517,8 @@ WebInspector.StylesSidebarPane.prototype = {
         var elementStyleSection = this.sections[0][1];
         this.bodyElement.insertBefore(blankSection.element, elementStyleSection.element.nextSibling);
 
+        this.sections[0].splice(2, 0, blankSection);
+
         return blankSection;
     },
 
@@ -531,6 +543,7 @@ WebInspector.StylePropertiesSection = function(styleRule, subtitle, computedStyl
     WebInspector.PropertiesSection.call(this, styleRule.selectorText);
 
     this.titleElement.addEventListener("dblclick", this._dblclickSelector.bind(this), false);
+    this.titleElement.addEventListener("click", this._clickSelector.bind(this), false);
     this.element.addEventListener("dblclick", this._dblclickEmptySpace.bind(this), false);
 
     this.styleRule = styleRule;
@@ -664,11 +677,6 @@ WebInspector.StylePropertiesSection.prototype = {
         return true;
     },
 
-    isInspectorStylesheet: function()
-    {
-        return (this.styleRule.parentStyleSheet === WebInspector.panels.elements.stylesheet);
-    },
-
     update: function(full)
     {
         if (full || this.computedStyle) {
@@ -756,8 +764,17 @@ WebInspector.StylePropertiesSection.prototype = {
 
     _dblclickEmptySpace: function(event)
     {
+        if (event.target.hasStyleClass("header")) {
+            event.stopPropagation();
+            return;
+        }
         this.expand();
         this.addNewBlankProperty().startEditing();
+    },
+
+    _clickSelector: function(event)
+    {
+        event.stopPropagation();
     },
 
     _dblclickSelector: function(event)

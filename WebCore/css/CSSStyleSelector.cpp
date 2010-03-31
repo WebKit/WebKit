@@ -710,7 +710,7 @@ void CSSStyleSelector::matchRulesForList(CSSRuleDataList* rules, int& firstRuleI
             // we really just matched a pseudo-element.
             if (m_dynamicPseudo != NOPSEUDO && m_checker.m_pseudoStyle == NOPSEUDO) {
                 if (m_checker.m_collectRulesOnly)
-                    return;
+                    continue;
                 if (m_dynamicPseudo < FIRST_INTERNAL_PSEUDOID)
                     m_style->setHasPseudoStyle(m_dynamicPseudo);
             } else {

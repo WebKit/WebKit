@@ -1,3 +1,34 @@
+2010-03-31  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: creating new style bugfixing.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36884
+
+        - InspectorDOMAgent should clear internal state upon reset (we are re-using
+          single dom agent instance throughout entire inspector controller lifetime) 
+        - Brought back blank style 'refresh' processing logic - remove it by mistake earlier
+        - Blocked couple of click handlers so that double-click to edit was not
+          expanding / collapsing the pane
+        - There is no need to reach out for matched rules upon 'refresh' update -
+          getting computed style is sufficient.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::matchRulesForList):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::discardBindings):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype.update.getStylesCallback):
+        (WebInspector.StylesSidebarPane.prototype.update.getComputedStyleCallback):
+        (WebInspector.StylesSidebarPane.prototype.update):
+        (WebInspector.StylesSidebarPane.prototype._refreshUpdate):
+        (WebInspector.StylesSidebarPane.prototype._rebuildUpdate):
+        (WebInspector.StylesSidebarPane.prototype._refreshStyleRules):
+        (WebInspector.StylesSidebarPane.prototype.addBlankSection):
+        (WebInspector.StylePropertiesSection.prototype._dblclickEmptySpace):
+        (WebInspector.StylePropertiesSection.prototype._clickSelector):
+
 2010-03-31  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Chromium build fix: create missing v8::HandleScope.

@@ -236,6 +236,12 @@ void InspectorDOMAgent::discardBindings()
     m_idToNode.clear();
     releaseDanglingNodes();
     m_childrenRequested.clear();
+    m_styleToId.clear();
+    m_idToStyle.clear();
+    m_ruleToId.clear();
+    m_idToRule.clear();
+    m_idToDisabledStyle.clear();
+    m_inspectorStyleSheet = 0;
 }
 
 Node* InspectorDOMAgent::nodeForId(long id)
