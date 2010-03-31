@@ -132,7 +132,7 @@ namespace WebCore {
         void print(Frame*);
 
         void requestGeolocationPermissionForFrame(Frame*, Geolocation*);
-        void cancelGeolocationPermissionRequestForFrame(Frame*);
+        void cancelGeolocationPermissionRequestForFrame(Frame*, Geolocation*);
 
         void runOpenPanel(Frame*, PassRefPtr<FileChooser>);
         void chooseIconForFiles(const Vector<String>&, PassRefPtr<FileChooser>);

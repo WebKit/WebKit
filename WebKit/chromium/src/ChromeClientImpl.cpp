@@ -703,8 +703,14 @@ NotificationPresenter* ChromeClientImpl::notificationPresenter() const
 
 void ChromeClientImpl::requestGeolocationPermissionForFrame(Frame* frame, Geolocation* geolocation)
 {
-    GeolocationServiceChromium* geolocationService = reinterpret_cast<GeolocationServiceChromium*>(geolocation->getGeolocationService());
+    GeolocationServiceChromium* geolocationService = static_cast<GeolocationServiceChromium*>(geolocation->getGeolocationService());
     m_webView->client()->geolocationService()->requestPermissionForFrame(geolocationService->geolocationServiceBridge()->getBridgeId(), frame->document()->url());
+}
+
+void ChromeClientImpl::cancelGeolocationPermissionRequestForFrame(Frame* frame, Geolocation* geolocation)
+{
+    GeolocationServiceChromium* geolocationService = static_cast<GeolocationServiceChromium*>(geolocation->getGeolocationService());
+    m_webView->client()->geolocationService()->cancelPermissionRequestForFrame(geolocationService->geolocationServiceBridge()->getBridgeId(), frame->document()->url());
 }
 
 #if USE(ACCELERATED_COMPOSITING)

@@ -1,3 +1,13 @@
+2010-03-31  Marcus Bulach  <bulach@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Adds Geolocation param for cancelGeolocationPermissionRequestForFrame.
+        https://bugs.webkit.org/show_bug.cgi?id=35031
+
+        * WebCoreSupport/ChromeClientHaiku.h:
+        (WebCore::ChromeClientHaiku::cancelGeolocationPermissionRequestForFrame):
+
 2010-03-28  Alexey Proskuryakov  <ap@apple.com>
 
         Build fix. Include WindowsKeyboardCodes.h instead of KeyboardCodes.h.

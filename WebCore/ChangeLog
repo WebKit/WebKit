@@ -1,3 +1,22 @@
+2010-03-31  Marcus Bulach  <bulach@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Implements cancelGeolocationPermissionRequestForFrame.
+        Similar to requestGeolocationPermissionForFrame(), passes Geolocation* to cancelGeolocationPermissionRequestForFrame(),
+        so that the embedder can identify which Geolocation object is cancelling the pending permission request.
+        Calls cancelGeolocationPermissionRequestForFrame() before stopUpdating() so it better matches the startUpdating() / requestPermission() flow.
+        https://bugs.webkit.org/show_bug.cgi?id=35031
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyChromeClient::cancelGeolocationPermissionRequestForFrame):
+        * page/Chrome.cpp:
+        (WebCore::Chrome::cancelGeolocationPermissionRequestForFrame):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * page/Geolocation.cpp:
+        (WebCore::Geolocation::disconnectFrame):
+
 2010-03-31  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Antti Koivisto.

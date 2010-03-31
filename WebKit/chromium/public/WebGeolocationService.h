@@ -42,6 +42,7 @@ class WebURL;
 class WebGeolocationService {
 public:
     virtual void requestPermissionForFrame(int bridgeId, const WebURL& url) { }
+    virtual void cancelPermissionRequestForFrame(int bridgeId, const WebURL&) { }
     virtual void startUpdating(int bridgeId, const WebURL& url, bool enableHighAccuracy) { }
     virtual void stopUpdating(int bridgeId) { }
     virtual void suspend(int bridgeId) { }

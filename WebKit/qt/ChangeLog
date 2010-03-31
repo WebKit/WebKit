@@ -1,3 +1,13 @@
+2010-03-31  Marcus Bulach  <bulach@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Adds Geolocation param for cancelGeolocationPermissionRequestForFrame.
+        https://bugs.webkit.org/show_bug.cgi?id=35031
+
+        * WebCoreSupport/ChromeClientQt.h:
+        (WebCore::ChromeClientQt::cancelGeolocationPermissionRequestForFrame):
+
 2010-03-31  Antti Koivisto  <koivisto@iki.fi>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -158,7 +158,7 @@ public:
     virtual void scrollRectIntoView(const IntRect&, const ScrollView*) const {}
 
     virtual void requestGeolocationPermissionForFrame(Frame*, Geolocation*) {}
-    virtual void cancelGeolocationPermissionRequestForFrame(Frame*) {}
+    virtual void cancelGeolocationPermissionRequestForFrame(Frame*, Geolocation*) {}
 
 #if USE(ACCELERATED_COMPOSITING)
     virtual void attachRootGraphicsLayer(Frame*, GraphicsLayer*) {};

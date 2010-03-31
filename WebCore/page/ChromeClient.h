@@ -185,7 +185,7 @@ namespace WebCore {
         // This can be either a synchronous or asynchronous call. The ChromeClient can display UI asking the user for permission
         // to use Geolocation.
         virtual void requestGeolocationPermissionForFrame(Frame*, Geolocation*) = 0;
-        virtual void cancelGeolocationPermissionRequestForFrame(Frame*) = 0;
+        virtual void cancelGeolocationPermissionRequestForFrame(Frame*, Geolocation*) = 0;
             
         virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>) = 0;
         // Asynchronous request to load an icon for specified filenames.

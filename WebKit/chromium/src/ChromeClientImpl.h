@@ -122,7 +122,7 @@ public:
     virtual WebCore::NotificationPresenter* notificationPresenter() const;
 #endif
     virtual void requestGeolocationPermissionForFrame(WebCore::Frame*, WebCore::Geolocation*);
-    virtual void cancelGeolocationPermissionRequestForFrame(WebCore::Frame*) { }
+    virtual void cancelGeolocationPermissionRequestForFrame(WebCore::Frame*, WebCore::Geolocation*);
     virtual void runOpenPanel(WebCore::Frame*, PassRefPtr<WebCore::FileChooser>);
     virtual void chooseIconForFiles(const Vector<WebCore::String>&, PassRefPtr<WebCore::FileChooser>);
     virtual bool setCursor(WebCore::PlatformCursorHandle) { return false; }

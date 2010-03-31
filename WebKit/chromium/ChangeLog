@@ -1,3 +1,16 @@
+2010-03-31  Marcus Bulach  <bulach@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Implements cancelGeolocationPermissionRequestForFrame.
+        https://bugs.webkit.org/show_bug.cgi?id=35031
+
+        * public/WebGeolocationService.h:
+        (WebKit::WebGeolocationService::cancelPermissionRequestForFrame):
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::cancelGeolocationPermissionRequestForFrame):
+        * src/ChromeClientImpl.h:
+
 2010-03-31  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed. Rolling out r56829 since it broke chromium layout tests.
