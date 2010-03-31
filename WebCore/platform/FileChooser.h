@@ -35,6 +35,7 @@
 
 namespace WebCore {
 
+class FileChooser;
 class Font;
 class Icon;
 
@@ -44,7 +45,7 @@ public:
     virtual void repaint() = 0;
     virtual bool allowsMultipleFiles() = 0;
     virtual String acceptTypes() = 0;
-    virtual void chooseIconForFiles(const Vector<String>&) = 0;
+    virtual void chooseIconForFiles(FileChooser*, const Vector<String>&) = 0;
     virtual ~FileChooserClient();
 };
 
@@ -79,6 +80,7 @@ private:
     FileChooserClient* m_client;
     Vector<String> m_filenames;
     RefPtr<Icon> m_icon;
+    bool m_isInitializing;
 };
 
 } // namespace WebCore

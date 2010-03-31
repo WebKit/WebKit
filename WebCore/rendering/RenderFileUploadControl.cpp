@@ -114,10 +114,10 @@ String RenderFileUploadControl::acceptTypes()
     return static_cast<HTMLInputElement*>(node())->accept();
 }
 
-void RenderFileUploadControl::chooseIconForFiles(const Vector<String>& filenames)
+void RenderFileUploadControl::chooseIconForFiles(FileChooser* chooser, const Vector<String>& filenames)
 {
     if (Chrome* chromePointer = chrome())
-        chromePointer->chooseIconForFiles(filenames, m_fileChooser);
+        chromePointer->chooseIconForFiles(filenames, chooser);
 }
 
 void RenderFileUploadControl::click()
@@ -195,6 +195,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, int tx, int ty)
 {
     if (style()->visibility() != VISIBLE)
         return;
+    ASSERT(m_fileChooser);
     
     // Push a clip.
     if (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseChildBlockBackgrounds) {

@@ -1,3 +1,14 @@
+2010-03-30  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Brady Eidson.
+
+        REGRESSION (r56439) - Crash when a renderer for a file upload control
+        with a selected file is recreated
+        https://bugs.webkit.org/show_bug.cgi?id=36723
+
+        * fast/forms/input-file-re-render.html:
+          Force to do re-layout to check the regression.
+
 2010-03-30  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Eric Seidel.
