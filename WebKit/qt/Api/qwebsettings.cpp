@@ -406,6 +406,13 @@ QWebSettings* QWebSettings::globalSettings()
         QGraphicsWebView, accelerates animations of web content. CSS animations of the transform and
         opacity properties will be rendered by composing the cached content of the animated elements.
         This feature is enabled by default
+    \value TiledBackingStoreEnabled This setting enables the tiled backing store feature
+        for a QGraphicsWebView. With the tiled backing store enabled, the web page contents in and around
+        the current visible area is speculatively cached to bitmap tiles. The tiles are automatically kept
+        in sync with the web page as it changes. Enabling tiling can significantly speed up painting heavy 
+        operations like scrolling. Enabling the feature increases memory consumption. It does not work well 
+        with contents using CSS fixed positioning (see also \l{QGraphicsWebView::}{resizesToContents} property).
+        \l{QGraphicsWebView::}{tiledBackingStoreFrozen} property allows application to temporarily freeze the contents of the backing store.
     \value FrameFlatteningEnabled With this setting each subframe is expanded to its contents.
         On touch devices, it is desired to not have any scrollable sub parts of the page
         as it results in a confusing user experience, with scrolling sometimes scrolling sub parts
@@ -446,6 +453,7 @@ QWebSettings::QWebSettings()
     d->attributes.insert(QWebSettings::LocalContentCanAccessFileUrls, true);
     d->attributes.insert(QWebSettings::AcceleratedCompositingEnabled, true);
     d->attributes.insert(QWebSettings::WebGLEnabled, false);
+    d->attributes.insert(QWebSettings::TiledBackingStoreEnabled, false);
     d->attributes.insert(QWebSettings::FrameFlatteningEnabled, false);
     d->offlineStorageDefaultQuota = 5 * 1024 * 1024;
     d->defaultTextEncoding = QLatin1String("iso-8859-1");

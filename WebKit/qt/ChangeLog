@@ -1,3 +1,14 @@
+2010-03-31  Antti Koivisto  <koivisto@iki.fi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36446
+        [Qt] QWebSettings::TiledBackingStoreEnabled attribute lacks documentation and default value
+
+        * Api/qgraphicswebview.cpp:
+        * Api/qwebsettings.cpp:
+        (QWebSettings::QWebSettings):
+
 2010-03-30  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber stamped by Sam Weinig.

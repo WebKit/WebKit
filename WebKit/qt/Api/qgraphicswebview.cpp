@@ -1105,7 +1105,8 @@ bool QGraphicsWebView::findText(const QString &subString, QWebPage::FindFlags op
 
     If this property is set, the QGraphicsWebView will automatically change its
     size to match the size of the main frame contents. As a result the top level frame
-    will never have scrollbars.
+    will never have scrollbars. It will also make CSS fixed positioning to behave like absolute positioning
+    with elements positioned relative to the document instead of the viewport.
 
     This property should be used in conjunction with the QWebPage::preferredContentsSize property.
     If not explicitly set, the preferredContentsSize is automatically set to a reasonable value.
