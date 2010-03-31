@@ -59,6 +59,12 @@
             'msvs_guid': '5ECEC9E5-8F23-47B6-93E0-C3B328B3BE65',
             'dependencies': [
                 '../../WebCore/WebCore.gyp/WebCore.gyp:webcore',
+                '<(chromium_src_dir)/skia/skia.gyp:skia',
+                '<(chromium_src_dir)/third_party/npapi/npapi.gyp:npapi',
+            ],
+            'export_dependent_settings': [
+                '<(chromium_src_dir)/skia/skia.gyp:skia',
+                '<(chromium_src_dir)/third_party/npapi/npapi.gyp:npapi',
             ],
             'include_dirs': [
                 'public',

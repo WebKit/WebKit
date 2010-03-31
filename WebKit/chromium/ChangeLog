@@ -1,3 +1,14 @@
+2010-03-31  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by David Levin.
+
+        [chromium] including WebKit.gyp:webkit should automatically add Skia
+        and NPAPI include paths
+
+        https://bugs.webkit.org/show_bug.cgi?id=36887
+
+        * WebKit.gyp:
+
 2010-03-31  Marcus Bulach  <bulach@chromium.org>
 
         Reviewed by Jeremy Orlow.
