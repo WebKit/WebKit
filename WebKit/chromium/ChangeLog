@@ -1,3 +1,17 @@
+2010-03-31  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Add stubs for moveWindowBy and setAttachedWindowHeight.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36842
+
+        * src/WebDevToolsFrontendImpl.cpp:
+        (WebKit::WebDevToolsFrontendImpl::WebDevToolsFrontendImpl):
+        (WebKit::WebDevToolsFrontendImpl::jsSetAttachedWindowHeight):
+        (WebKit::WebDevToolsFrontendImpl::jsMoveWindowBy):
+        * src/WebDevToolsFrontendImpl.h:
+
 2010-03-31  John Gregg  <johnnyg@google.com>
 
         Reviewed by Darin Fisher.
