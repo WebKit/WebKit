@@ -840,10 +840,14 @@ void RenderTheme::adjustMenuListStyle(CSSStyleSelector*, RenderStyle*, Element*)
 }
 
 #if ENABLE(PROGRESS_TAG)
-bool RenderTheme::getNumberOfPixelsForProgressPosition(double , int& progressSize) const
+double RenderTheme::animationRepeatIntervalForProgressBar(RenderProgress*) const
 {
-    progressSize = 0;
-    return false;
+    return 0;
+}
+
+double RenderTheme::animationDurationForProgressBar(RenderProgress*) const
+{
+    return 0;
 }
 
 void RenderTheme::adjustProgressBarStyle(CSSStyleSelector*, RenderStyle*, Element*) const

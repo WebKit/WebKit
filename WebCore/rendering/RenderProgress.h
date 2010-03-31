@@ -32,13 +32,24 @@ class RenderProgress : public RenderBlock {
 public:
     RenderProgress(HTMLProgressElement*);
     double position() { return m_position; }
+    double animationProgress();
 
 private:
     virtual const char* renderName() const { return "RenderProgress"; }
     virtual bool isProgress() const { return true; }
     virtual void layout();
     virtual void updateFromElement();
+    virtual void paint(PaintInfo&, int tx, int ty);
+
+    void animationTimerFired(Timer<RenderProgress>*);
+    void updateAnimationState();
+
     double m_position;
+    double m_animationStartTime;
+    double m_animationRepeatInterval;
+    double m_animationDuration;
+    bool m_animating;
+    Timer<RenderProgress> m_animationTimer;
 };
 
 inline RenderProgress* toRenderProgress(RenderObject* object)

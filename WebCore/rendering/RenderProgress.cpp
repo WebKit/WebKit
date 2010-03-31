@@ -35,6 +35,11 @@ using namespace HTMLNames;
 RenderProgress::RenderProgress(HTMLProgressElement* element)
     : RenderBlock(element)
     , m_position(-1)
+    , m_animationStartTime(0)
+    , m_animationRepeatInterval(0)
+    , m_animationDuration(0)
+    , m_animating(false)
+    , m_animationTimer(this, &RenderProgress::animationTimerFired)
 {
 }
 
@@ -49,6 +54,8 @@ void RenderProgress::layout()
 
     m_overflow.clear();
 
+    updateAnimationState();
+
     repainter.repaintAfterLayout();
 
     setNeedsLayout(false);
@@ -61,7 +68,46 @@ void RenderProgress::updateFromElement()
         return;
     m_position = element->position();
 
+    updateAnimationState();
+
     repaint();
+}
+
+double RenderProgress::animationProgress()
+{
+    return m_animating ? (fmod((currentTime() - m_animationStartTime), m_animationDuration) / m_animationDuration) : 0;
+}
+
+void RenderProgress::animationTimerFired(Timer<RenderProgress>*)
+{
+    repaint();
+}
+
+void RenderProgress::paint(PaintInfo& paintInfo, int tx, int ty)
+{
+    if (paintInfo.phase == PaintPhaseBlockBackground) {
+        if (!m_animationTimer.isActive() && m_animating)
+            m_animationTimer.startOneShot(m_animationRepeatInterval);
+    }
+
+    RenderBlock::paint(paintInfo, tx, ty);
+}
+
+void RenderProgress::updateAnimationState()
+{
+    m_animationDuration = theme()->animationDurationForProgressBar(this);
+    m_animationRepeatInterval = theme()->animationRepeatIntervalForProgressBar(this);
+
+    bool animating = m_animationDuration > 0;
+    if (animating == m_animating)
+        return;
+
+    m_animating = animating;
+    if (m_animating) {
+        m_animationStartTime = currentTime();
+        m_animationTimer.startOneShot(m_animationRepeatInterval);
+    } else
+        m_animationTimer.stop();
 }
 
 } // namespace WebCore

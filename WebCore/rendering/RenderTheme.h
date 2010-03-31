@@ -39,6 +39,9 @@ namespace WebCore {
 class Element;
 class PopupMenu;
 class RenderMenuList;
+#if ENABLE(PROGRESS_TAG)
+class RenderProgress;
+#endif
 class CSSStyleSheet;
 
 class RenderTheme : public RefCounted<RenderTheme> {
@@ -170,10 +173,10 @@ public:
     virtual bool paintCapsLockIndicator(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { return 0; };
 
 #if ENABLE(PROGRESS_TAG)
-    // Helper method for optimizing the paint area of the progress bar.
-    // If supported, it returns number of pixels needed to draw the progress bar up to the progress position.
-    // progressSize is the value that is passed back to RenderTheme during drawing.
-    virtual bool getNumberOfPixelsForProgressPosition(double position, int& progressSize) const;
+    // Returns the repeat interval of the animation for the progress bar.
+    virtual double animationRepeatIntervalForProgressBar(RenderProgress*) const;
+    // Returns the duration of the animation for the progress bar.
+    virtual double animationDurationForProgressBar(RenderProgress*) const;
 #endif
 
 #if ENABLE(VIDEO)

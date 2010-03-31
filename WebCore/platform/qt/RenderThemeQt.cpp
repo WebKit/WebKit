@@ -653,10 +653,26 @@ bool RenderThemeQt::paintMenuListButton(RenderObject* o, const RenderObject::Pai
 }
 
 #if ENABLE(PROGRESS_TAG)
-bool RenderThemeQt::getNumberOfPixelsForProgressPosition(double position, int& progressSize) const
+double RenderThemeQt::animationRepeatIntervalForProgressBar(RenderProgress* renderProgress) const
 {
-    progressSize = 65536 * position;
-    return false;
+    if (renderProgress->position() >= 0)
+        return 0;
+
+    // FIXME: Use hard-coded value until http://bugreports.qt.nokia.com/browse/QTBUG-9171 is fixed.
+    // Use the value from windows style which is 10 fps.
+    return 0.1;
+}
+
+double RenderThemeQt::animationDurationForProgressBar(RenderProgress* renderProgress) const
+{
+    if (renderProgress->position() >= 0)
+        return 0;
+
+    QStyleOptionProgressBarV2 option;
+    option.rect.setSize(renderProgress->size());
+    // FIXME: Until http://bugreports.qt.nokia.com/browse/QTBUG-9171 is fixed,
+    // we simulate one square animating across the progress bar.
+    return (option.rect.width() / qStyle()->pixelMetric(QStyle::PM_ProgressBarChunkWidth, &option)) * animationRepeatIntervalForProgressBar(renderProgress);
 }
 
 void RenderThemeQt::adjustProgressBarStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
@@ -686,7 +702,19 @@ bool RenderThemeQt::paintProgressBar(RenderObject* o, const RenderObject::PaintI
     option.rect.moveTo(QPoint(0, 0));
     option.rect.setSize(r.size());
 
-    p.drawControl(QStyle::CE_ProgressBar, option);
+    if (option.progress < 0) {
+        // FIXME: Until http://bugreports.qt.nokia.com/browse/QTBUG-9171 is fixed,
+        // we simulate one square animating across the progress bar.
+        p.drawControl(QStyle::CE_ProgressBarGroove, option);
+        int chunkWidth = qStyle()->pixelMetric(QStyle::PM_ProgressBarChunkWidth, &option);
+        QColor color = (option.palette.highlight() == option.palette.background()) ? option.palette.color(QPalette::Active, QPalette::Highlight) : option.palette.color(QPalette::Highlight);
+        if (renderProgress->style()->direction() == RTL)
+            p.painter->fillRect(option.rect.right() - chunkWidth  - renderProgress->animationProgress() * option.rect.width(), 0, chunkWidth, option.rect.height(), color);
+        else
+            p.painter->fillRect(renderProgress->animationProgress() * option.rect.width(), 0, chunkWidth, option.rect.height(), color);
+    } else
+        p.drawControl(QStyle::CE_ProgressBar, option);
+
     p.painter->translate(-topLeft);
 
     return false;

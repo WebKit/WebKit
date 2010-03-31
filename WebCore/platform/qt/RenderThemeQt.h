@@ -34,6 +34,9 @@ QT_END_NAMESPACE
 
 namespace WebCore {
 
+#if ENABLE(PROGRESS_TAG)
+class RenderProgress;
+#endif
 class RenderStyle;
 class HTMLMediaElement;
 class ScrollbarThemeQt;
@@ -128,10 +131,10 @@ protected:
     virtual bool paintSearchFieldResultsDecoration(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
 
 #if ENABLE(PROGRESS_TAG)
-    // Helper method for optimizing the paint area of the progress bar.
-    // If supported, it returns number of pixels needed to draw the progress bar up to the progress position.
-    // progressSize is the value that is passed back to RenderTheme during drawing.
-    virtual bool getNumberOfPixelsForProgressPosition(double position, int& progressSize) const;
+    // Returns the repeat interval of the animation for the progress bar.
+    virtual double animationRepeatIntervalForProgressBar(RenderProgress* renderProgress) const;
+    // Returns the duration of the animation for the progress bar.
+    virtual double animationDurationForProgressBar(RenderProgress* renderProgress) const;
 #endif
 
 #if ENABLE(VIDEO)

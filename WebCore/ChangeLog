@@ -1,3 +1,37 @@
+2010-03-31  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Antti Koivisto.
+
+        Add animation to progress element
+        https://bugs.webkit.org/show_bug.cgi?id=36664
+
+        Add a timer to control the animation. The timer is started after painting
+        or a state change in the progress bar, to prevent animation from running
+        when the progress bar is not visible.
+
+        * html/HTMLProgressElement.cpp:
+        (WebCore::HTMLProgressElement::createRenderer):
+        * manual-tests/dom: Added.
+        * manual-tests/dom/progressbar.html: Added.
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::animationRepeatIntervalForProgressBar):
+        (WebCore::RenderThemeQt::animationDurationForProgressBar):
+        (WebCore::RenderThemeQt::paintProgressBar):
+        * platform/qt/RenderThemeQt.h:
+        * rendering/RenderProgress.cpp:
+        (WebCore::RenderProgress::RenderProgress):
+        (WebCore::RenderProgress::layout):
+        (WebCore::RenderProgress::updateFromElement):
+        (WebCore::RenderProgress::animationProgress):
+        (WebCore::RenderProgress::animationTimerFired):
+        (WebCore::RenderProgress::paint):
+        (WebCore::RenderProgress::updateAnimationState):
+        * rendering/RenderProgress.h:
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::animationRepeatIntervalForProgressBar):
+        (WebCore::RenderTheme::animationDurationForProgressBar):
+        * rendering/RenderTheme.h:
+
 2010-03-31  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed. Rolling out r56829 since it broke chromium layout tests.

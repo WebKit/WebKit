@@ -45,7 +45,7 @@ PassRefPtr<HTMLProgressElement> HTMLProgressElement::create(const QualifiedName&
     return adoptRef(new HTMLProgressElement(tagName, document, form));
 }
 
-RenderObject* HTMLProgressElement::createRenderer(RenderArena* arena, RenderStyle* style)
+RenderObject* HTMLProgressElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     return new (arena) RenderProgress(this);
 }
