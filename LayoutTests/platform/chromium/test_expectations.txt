@@ -789,12 +789,6 @@ BUG13907 MAC : media/audio-delete-while-slider-thumb-clicked.html = FAIL
 // Test might be WONTFIX because we don't export a step button in the first place.
 BUG13907 BUG25375 SKIP : media/audio-delete-while-step-button-clicked.html = FAIL
 
-// These have been fixed and need new baselines generated.
-BUG13907 : media/audio-constructor-src.html = PASS FAIL
-BUG13907 : media/audio-play-event.html = PASS FAIL
-BUG13907 : media/video-no-audio.html = PASS FAIL
-BUG13907 : media/video-source-add-src.html = PASS FAIL
-
 // Seeks to the end of file, which results in ogg packets with no timestamps.
 BUG13907 SKIP : media/event-attributes.html = TIMEOUT
 

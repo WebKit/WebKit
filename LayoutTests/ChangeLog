@@ -1,3 +1,23 @@
+2010-03-31  Andrew Scherkus  <scherkus@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Checking in Chromium media baselines for layout tests fixed in r56481.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36860
+
+        * platform/chromium-linux/media/video-no-audio-expected.checksum: Added.
+        * platform/chromium-linux/media/video-no-audio-expected.png: Added.
+        * platform/chromium-mac/media/video-no-audio-expected.checksum: Added.
+        * platform/chromium-mac/media/video-no-audio-expected.png: Added.
+        * platform/chromium-mac/media/video-no-audio-expected.txt: Added.
+        * platform/chromium-win/media/audio-constructor-src-expected.txt: Added.
+        * platform/chromium-win/media/video-no-audio-expected.checksum: Added.
+        * platform/chromium-win/media/video-no-audio-expected.png: Added.
+        * platform/chromium-win/media/video-no-audio-expected.txt: Added.
+        * platform/chromium-win/media/video-source-add-src-expected.txt: Added.
+        * platform/chromium/test_expectations.txt: Tests are now passing.
+
 2010-03-31  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Darin Fisher.
