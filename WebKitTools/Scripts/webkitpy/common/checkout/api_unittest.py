@@ -32,6 +32,7 @@ import tempfile
 import unittest
 
 from webkitpy.common.checkout.api import Checkout
+from webkitpy.common.checkout.changelog import ChangeLogEntry
 from webkitpy.common.checkout.scm import detect_scm_system
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.thirdparty.mock import Mock
@@ -133,7 +134,7 @@ class CheckoutTest(unittest.TestCase):
         scm = Mock()
         scm.committer_email_for_revision = lambda revision: "committer@example.com"
         checkout = Checkout(scm)
-        checkout.changelog_entries_for_revision = lambda revision: ChangeLogEntry(_changelog1entry1)
+        checkout.changelog_entries_for_revision = lambda revision: [ChangeLogEntry(_changelog1entry1)]
         commitinfo = checkout.commit_info_for_revision(4)
         self.assertEqual(commitinfo.bug_id(), 36629)
         self.assertEqual(commitinfo.author_name(), "Eric Seidel")

@@ -1,3 +1,12 @@
+2010-03-31  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Unreviewed test fix for r56809.
+
+        webkit-patch what-broke throws exception
+        https://bugs.webkit.org/show_bug.cgi?id=36852
+
+        * Scripts/webkitpy/common/checkout/api_unittest.py:
+
 2010-03-30  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Rubber stamped by Dave Levin.
