@@ -1,3 +1,19 @@
+2010-03-30  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [Chromium] fast/repaint/overflow-scroll-body-appear need to be rebaselined
+        https://bugs.webkit.org/show_bug.cgi?id=36825
+
+        * platform/chromium-linux/fast/repaint/overflow-scroll-body-appear-expected.checksum: Added.
+        * platform/chromium-linux/fast/repaint/overflow-scroll-body-appear-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/overflow-scroll-body-appear-expected.checksum: Added.
+        * platform/chromium-mac/fast/repaint/overflow-scroll-body-appear-expected.png: Added.
+        * platform/chromium-win/fast/repaint/overflow-scroll-body-appear-expected.checksum: Added.
+        * platform/chromium-win/fast/repaint/overflow-scroll-body-appear-expected.png: Added.
+        * platform/chromium-win/fast/repaint/overflow-scroll-body-appear-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-03-30  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Brady Eidson.
