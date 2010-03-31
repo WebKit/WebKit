@@ -1,3 +1,24 @@
+2010-03-31  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Rubber-stamped by Kenneth Rohde Christiansen.
+
+        iframe flattening doesn't flatten
+        https://bugs.webkit.org/show_bug.cgi?id=36798
+
+        Platform specific expected files added, and updated after r56852.
+
+        * platform/mac/fast/frames/flattening/frameset-flattening-subframe-resize-expected.txt:
+        * platform/mac/fast/frames/flattening/iframe-flattening-fixed-height-expected.txt: Added.
+        * platform/mac/fast/frames/flattening/iframe-flattening-fixed-width-and-height-expected.txt: Added.
+        * platform/mac/fast/frames/flattening/iframe-flattening-fixed-width-and-height-no-scrolling-expected.txt: Added.
+        * platform/mac/fast/frames/flattening/iframe-flattening-fixed-width-expected.txt: Added.
+        * platform/mac/fast/frames/flattening/iframe-flattening-simple-expected.txt:
+        * platform/qt/fast/frames/flattening/frameset-flattening-subframe-resize-expected.txt:
+        * platform/qt/fast/frames/flattening/iframe-flattening-fixed-height-expected.txt: Added.
+        * platform/qt/fast/frames/flattening/iframe-flattening-fixed-width-and-height-expected.txt: Added.
+        * platform/qt/fast/frames/flattening/iframe-flattening-fixed-width-and-height-no-scrolling-expected.txt: Added.
+        * platform/qt/fast/frames/flattening/iframe-flattening-fixed-width-expected.txt: Added.
+
 2010-02-30  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Antti Koivisto.
