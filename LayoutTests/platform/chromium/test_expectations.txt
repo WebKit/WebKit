@@ -2811,3 +2811,7 @@ BUGWK36807 WIN : http/tests/inspector-enabled/console-log-before-frame-navigatio
 // Caused by http://trac.webkit.org/changeset/56795
 // This is a new test but fails in Chromium because of a missing API.
 BUG39904 : svg/animations/animate-points.html = TEXT TIMEOUT
+
+// Caused by http://trac.webkit.org/changeset/56824
+// This test generate strange result on Linux, the resulted image is too small.
+BUG40027 LINUX : fast/forms/input-file-re-render.html = TEXT IMAGE

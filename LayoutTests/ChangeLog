@@ -1,3 +1,16 @@
+2010-03-31  Alpha Lam  <hclam@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Update test results due to changes in r56824.
+        https://bugs.webkit.org/show_bug.cgi?id=36900
+
+        * platform/chromium-win/fast/forms/input-file-re-render-expected.checksum:
+        * platform/chromium-win/fast/forms/input-file-re-render-expected.png:
+        * platform/chromium/test_expectations.txt:
+        fast/forms/input-file-re-render.html generates incorrect results on
+        Linux, mark it so.
+
 2010-03-31  Csaba Osztrogonác  <ossy@webkit.org>
 
         Rubber-stamped by Kenneth Rohde Christiansen.
