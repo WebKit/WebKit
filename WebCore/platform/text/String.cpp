@@ -22,7 +22,6 @@
 #include "config.h"
 #include "PlatformString.h"
 
-#include "CString.h"
 #include "FloatConversion.h"
 #include "SharedBuffer.h"
 #include "StringBuffer.h"
@@ -30,6 +29,7 @@
 #include <limits>
 #include <stdarg.h>
 #include <wtf/ASCIICType.h>
+#include <wtf/text/CString.h>
 #include <wtf/StringExtras.h>
 #include <wtf/Vector.h>
 #include <wtf/dtoa.h>

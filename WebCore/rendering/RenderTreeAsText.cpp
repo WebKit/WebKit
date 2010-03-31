@@ -28,7 +28,6 @@
 
 #include "CSSMutableStyleDeclaration.h"
 #include "CharacterNames.h"
-#include "CString.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameView.h"

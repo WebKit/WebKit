@@ -25,7 +25,6 @@
 #include "config.h"
 #include "CSSParser.h"
 
-#include "CString.h"
 #include "CSSTimingFunctionValue.h"
 #include "CSSBorderImageValue.h"
 #include "CSSCanvasValue.h"

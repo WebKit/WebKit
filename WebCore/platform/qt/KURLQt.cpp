@@ -19,8 +19,8 @@
  */
 #include "config.h"
 #include "KURL.h"
-#include "CString.h"
 #include "TextEncoding.h"
+#include <wtf/text/CString.h>
 
 #include "NotImplemented.h"
 #include "qurl.h"

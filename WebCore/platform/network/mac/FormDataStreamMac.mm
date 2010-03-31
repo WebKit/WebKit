@@ -32,7 +32,6 @@
 #import "FormDataStreamMac.h"
 
 #import "Blob.h"
-#import "CString.h"
 #import "FileSystem.h"
 #import "FormData.h"
 #import "ResourceHandle.h"

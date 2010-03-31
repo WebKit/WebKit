@@ -33,7 +33,6 @@
 #include "ScriptController.h"
 
 #include "PlatformBridge.h"
-#include "CString.h"
 #include "Document.h"
 #include "DOMWindow.h"
 #include "Event.h"
@@ -59,6 +58,7 @@
 #include "Widget.h"
 #include "XSSAuditor.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 

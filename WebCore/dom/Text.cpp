@@ -22,10 +22,10 @@
 #include "config.h"
 #include "Text.h"
 
-#include "CString.h"
 #include "ExceptionCode.h"
 #include "RenderText.h"
 #include "TextBreakIterator.h"
+#include <wtf/text/CString.h>
 
 #if ENABLE(SVG)
 #include "RenderSVGInlineText.h"

@@ -29,9 +29,9 @@
 
 #include "KURL.h"
 
-#include "CString.h"
 #include "StringHash.h"
 #include "TextEncoding.h"
+#include <wtf/text/CString.h>
 #include <wtf/HashMap.h>
 #include <wtf/StdLibExtras.h>
 

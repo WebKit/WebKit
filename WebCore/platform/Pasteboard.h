@@ -57,6 +57,11 @@ typedef struct HWND__* HWND;
 #include "PasteboardPrivate.h"
 #endif
 
+namespace WTF {
+class CString;
+}
+using WTF::CString;
+
 namespace WebCore {
 
 #if PLATFORM(MAC)
@@ -67,7 +72,6 @@ extern NSString *WebURLPboardType;
 extern NSString *WebURLsWithTitlesPboardType;
 #endif
 
-class CString;
 class DocumentFragment;
 class Frame;
 class HitTestResult;

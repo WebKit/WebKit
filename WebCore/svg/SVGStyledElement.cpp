@@ -26,7 +26,6 @@
 #include "Attr.h"
 #include "CSSParser.h"
 #include "CSSStyleSelector.h"
-#include "CString.h"
 #include "Document.h"
 #include "HTMLNames.h"
 #include "MappedAttribute.h"

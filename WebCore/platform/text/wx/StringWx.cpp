@@ -26,8 +26,8 @@
 #include "config.h"
 #include "PlatformString.h"
 
-#include "CString.h"
 #include "unicode/ustring.h"
+#include <wtf/text/CString.h>
 
 #include <wx/defs.h>
 #include <wx/string.h>

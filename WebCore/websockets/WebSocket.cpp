@@ -34,7 +34,6 @@
 
 #include "WebSocket.h"
 
-#include "CString.h"
 #include "DOMWindow.h"
 #include "Event.h"
 #include "EventException.h"
@@ -46,6 +45,7 @@
 #include "StringBuilder.h"
 #include "ThreadableWebSocketChannel.h"
 #include "WebSocketChannel.h"
+#include <wtf/text/CString.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {

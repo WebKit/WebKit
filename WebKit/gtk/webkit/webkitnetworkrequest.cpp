@@ -21,10 +21,10 @@
 #include "config.h"
 #include "webkitnetworkrequest.h"
 
-#include "CString.h"
 #include "GOwnPtr.h"
 #include "ResourceRequest.h"
 #include "webkitprivate.h"
+#include <wtf/text/CString.h>
 
 #include <glib/gi18n-lib.h>
 

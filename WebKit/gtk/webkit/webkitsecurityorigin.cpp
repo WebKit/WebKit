@@ -22,9 +22,9 @@
 
 #include "webkitprivate.h"
 
-#include "CString.h"
 #include "PlatformString.h"
 #include "DatabaseTracker.h"
+#include <wtf/text/CString.h>
 
 #include <glib/gi18n-lib.h>
 

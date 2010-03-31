@@ -24,7 +24,6 @@
 
 #include "Blob.h"
 #include "Cache.h"
-#include "CString.h"
 #include "CrossOriginAccessControl.h"
 #include "DOMFormData.h"
 #include "DOMImplementation.h"
@@ -45,6 +44,7 @@
 #include "XMLHttpRequestProgressEvent.h"
 #include "XMLHttpRequestUpload.h"
 #include "markup.h"
+#include <wtf/text/CString.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/RefCountedLeakCounter.h>
 

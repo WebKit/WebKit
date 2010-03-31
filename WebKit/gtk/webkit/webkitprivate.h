@@ -46,7 +46,6 @@
 
 #include "ArchiveResource.h"
 #include "BackForwardList.h"
-#include "CString.h"
 #include <enchant.h>
 #include "GOwnPtr.h"
 #include "Geolocation.h"
@@ -61,6 +60,7 @@
 #include "ResourceResponse.h"
 #include "WindowFeatures.h"
 #include "SecurityOrigin.h"
+#include <wtf/text/CString.h>
 
 #include <atk/atk.h>
 #include <glib.h>

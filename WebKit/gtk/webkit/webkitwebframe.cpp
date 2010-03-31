@@ -35,7 +35,6 @@
 #include "AccessibilityObjectWrapperAtk.h"
 #include "AnimationController.h"
 #include "AXObjectCache.h"
-#include "CString.h"
 #include "DocumentLoader.h"
 #include "DocumentLoaderGtk.h"
 #include "FrameLoader.h"
@@ -61,6 +60,7 @@
 
 #include <atk/atk.h>
 #include <JavaScriptCore/APICast.h>
+#include <wtf/text/CString.h>
 
 /**
  * SECTION:webkitwebframe

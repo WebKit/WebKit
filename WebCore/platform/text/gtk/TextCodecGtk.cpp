@@ -29,12 +29,12 @@
 #include "config.h"
 #include "TextCodecGtk.h"
 
-#include "CString.h"
 #include "GOwnPtr.h"
 #include "Logging.h"
 #include "PlatformString.h"
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
+#include <wtf/text/CString.h>
 
 using std::min;
 

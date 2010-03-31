@@ -47,7 +47,6 @@
 #include "ContextMenuClientGtk.h"
 #include "ContextMenuController.h"
 #include "ContextMenu.h"
-#include "CString.h"
 #include "Cursor.h"
 #include "Database.h"
 #include "Document.h"
@@ -82,6 +81,7 @@
 #include "ResourceHandle.h"
 #include "ScriptValue.h"
 #include "Scrollbar.h"
+#include <wtf/text/CString.h>
 
 #include <gdk/gdkkeysyms.h>
 

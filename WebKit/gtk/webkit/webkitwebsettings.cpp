@@ -30,11 +30,11 @@
 #include "webkitprivate.h"
 #include "webkitversion.h"
 
-#include "CString.h"
 #include "FileSystem.h"
 #include "PluginDatabase.h"
 #include "Language.h"
 #include "PlatformString.h"
+#include <wtf/text/CString.h>
 
 #include <glib/gi18n-lib.h>
 #if OS(UNIX)

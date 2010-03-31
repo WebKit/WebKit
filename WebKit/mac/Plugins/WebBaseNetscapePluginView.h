@@ -41,8 +41,11 @@
 @class WebFrame;
 @class WebView;
 
-namespace WebCore {
+namespace WTF {
     class CString;
+}
+
+namespace WebCore {
     class HTMLPlugInElement;
 }
 
@@ -133,7 +136,7 @@ class WebHaltablePlugin;
 
 - (BOOL)convertFromX:(double)sourceX andY:(double)sourceY space:(NPCoordinateSpace)sourceSpace
                  toX:(double *)destX andY:(double *)destY space:(NPCoordinateSpace)destSpace;
-- (WebCore::CString)resolvedURLStringForURL:(const char*)url target:(const char*)target;
+- (WTF::CString)resolvedURLStringForURL:(const char*)url target:(const char*)target;
 
 - (void)invalidatePluginContentRect:(NSRect)rect;
 
@@ -142,11 +145,11 @@ class WebHaltablePlugin;
 
 namespace WebKit {
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
-WebCore::CString proxiesForURL(NSURL *);
+WTF::CString proxiesForURL(NSURL *);
 #endif
     
 bool getAuthenticationInfo(const char* protocolStr, const char* hostStr, int32_t port, const char* schemeStr, const char* realmStr,
-                           WebCore::CString& username, WebCore::CString& password);
+                           WTF::CString& username, WTF::CString& password);
 } 
 
 #endif

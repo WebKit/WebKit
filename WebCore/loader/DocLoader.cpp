@@ -34,7 +34,6 @@
 #include "CachedScript.h"
 #include "CachedXSLStyleSheet.h"
 #include "Console.h"
-#include "CString.h"
 #include "Document.h"
 #include "DOMWindow.h"
 #include "HTMLElement.h"
@@ -44,6 +43,7 @@
 #include "loader.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
+#include <wtf/text/CString.h>
 
 #define PRELOAD_DEBUG 0
 

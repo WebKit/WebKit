@@ -27,7 +27,6 @@
 #include "Cache.h"
 #include "CachedImage.h"
 #include "CachedResource.h"
-#include "CString.h"
 #include "DocLoader.h"
 #include "Frame.h"
 #include "FrameLoader.h"

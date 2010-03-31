@@ -32,7 +32,6 @@
 
 #include "PlatformKeyboardEvent.h"
 
-#include "CString.h"
 #include "NotImplemented.h"
 #include "StringHash.h"
 #include "TextEncoding.h"
@@ -40,6 +39,7 @@
 
 #include <stdio.h>
 #include <wtf/HashMap.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 

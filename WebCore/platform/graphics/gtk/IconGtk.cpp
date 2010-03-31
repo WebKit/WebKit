@@ -30,10 +30,10 @@
 #include "config.h"
 #include "Icon.h"
 
-#include "CString.h"
 #include "GraphicsContext.h"
 #include "MIMETypeRegistry.h"
 #include "PassRefPtr.h"
+#include <wtf/text/CString.h>
 
 #include <gtk/gtk.h>
 

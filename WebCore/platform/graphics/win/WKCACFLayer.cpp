@@ -29,9 +29,9 @@
 
 #include "WKCACFLayer.h"
 
-#include "CString.h"
 #include "WKCACFContextFlusher.h"
 #include "WKCACFLayerRenderer.h"
+#include <wtf/text/CString.h>
 
 #include <stdio.h>
 #include <QuartzCore/CACFContext.h>

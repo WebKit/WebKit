@@ -33,8 +33,8 @@
 #include "HTTPParsers.h"
 #include "ResourceResponseBase.h"
 
-#include "CString.h"
 #include "PlatformString.h"
+#include <wtf/text/CString.h>
 #include <wtf/DateMath.h>
 
 using namespace WTF;

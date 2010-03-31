@@ -33,7 +33,6 @@
 
 #if ENABLE(DATABASE)
 
-#include "CString.h"
 #include "StringHash.h"
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>

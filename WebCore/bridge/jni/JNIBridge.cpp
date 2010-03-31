@@ -29,8 +29,8 @@
 
 #if ENABLE(MAC_JAVA_BRIDGE)
 
-#include "CString.h"
 #include "StringBuilder.h"
+#include <wtf/text/CString.h>
 
 
 using namespace JSC;

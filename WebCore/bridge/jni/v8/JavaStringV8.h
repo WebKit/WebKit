@@ -26,8 +26,8 @@
 #ifndef JavaStringV8_h
 #define JavaStringV8_h
 
-#include "CString.h"
 #include "JNIUtility.h"
+#include <wtf/text/CString.h>
 
 
 namespace JSC {
@@ -42,7 +42,7 @@ public:
     {
         int size = e->GetStringLength(s);
         const char* cs = getCharactersFromJStringInEnv(e, s);
-        m_utf8String = WebCore::CString(cs, size);
+        m_utf8String = WTF::CString(cs, size);
         releaseCharactersForJStringInEnv(e, s, cs);
     }
 
@@ -51,7 +51,7 @@ public:
     int length() const { return m_utf8String.length(); }
 
 private:
-    WebCore::CString m_utf8String;
+    WTF::CString m_utf8String;
 };
 
 } // namespace Bindings

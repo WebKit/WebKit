@@ -28,7 +28,6 @@
 #ifndef PluginView_h
 #define PluginView_h
 
-#include "CString.h"
 #include "FrameLoadRequest.h"
 #include "HaltablePlugin.h"
 #include "IntRect.h"
@@ -44,6 +43,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/CString.h>
 
 #if OS(WINDOWS) && (PLATFORM(QT) || PLATFORM(WX))
 typedef struct HWND__* HWND;
@@ -296,7 +296,7 @@ namespace WebCore {
         String m_pluginsPage;
 
         String m_mimeType;
-        CString m_userAgent;
+        WTF::CString m_userAgent;
 
         NPP m_instance;
         NPP_t m_instanceStruct;

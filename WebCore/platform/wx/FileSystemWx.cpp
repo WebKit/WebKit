@@ -30,9 +30,9 @@
 #include "config.h"
 #include "FileSystem.h"
 
-#include "CString.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
+#include <wtf/text/CString.h>
 
 #include <wx/wx.h>
 #include <wx/datetime.h>

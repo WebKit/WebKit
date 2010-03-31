@@ -26,7 +26,6 @@
 #include "config.h"
 #include "SelectionController.h"
 
-#include "CString.h"
 #include "DeleteSelectionCommand.h"
 #include "Document.h"
 #include "Editor.h"
@@ -54,6 +53,7 @@
 #include "htmlediting.h"
 #include "visible_units.h"
 #include <stdio.h>
+#include <wtf/text/CString.h>
 
 #define EDIT_DEBUG 0
 

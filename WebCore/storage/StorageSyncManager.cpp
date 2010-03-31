@@ -28,7 +28,6 @@
 
 #if ENABLE(DOM_STORAGE)
 
-#include "CString.h"
 #include "EventNames.h"
 #include "FileSystem.h"
 #include "Frame.h"
@@ -38,6 +37,7 @@
 #include "Page.h"
 #include "PageGroup.h"
 #include "StorageAreaSync.h"
+#include <wtf/text/CString.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {

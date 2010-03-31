@@ -25,7 +25,6 @@
 
 #include "config.h"
 #include "BackForwardList.h"
-#include "CString.h"
 #include "Document.h"
 #include "Editor.h"
 #include "Element.h"
@@ -50,6 +49,7 @@
 #include "JSDOMBinding.h"
 #include <runtime/JSValue.h>
 #include <runtime/UString.h>
+#include <wtf/text/CString.h>
 
 #include "EditorClientWx.h"
 #include "FrameLoaderClientWx.h"

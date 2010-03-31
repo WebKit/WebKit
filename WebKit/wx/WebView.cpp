@@ -28,7 +28,6 @@
 #include "ContextMenu.h"
 #include "ContextMenuItem.h"
 #include "ContextMenuController.h"
-#include "CString.h"
 #include "Document.h"
 #include "Element.h"
 #include "Editor.h"
@@ -69,6 +68,7 @@
 #include "JSDOMBinding.h"
 #include <runtime/JSValue.h>
 #include <runtime/UString.h>
+#include <wtf/text/CString.h>
 
 #if ENABLE(DATABASE)
 #include "Database.h"

@@ -2685,8 +2685,6 @@
             'platform/text/BidiContext.cpp',
             'platform/text/BidiContext.h',
             'platform/text/BidiResolver.h',
-            'platform/text/CString.cpp',
-            'platform/text/CString.h',
             'platform/text/CharacterNames.h',
             'platform/text/ParserUtilities.h',
             'platform/text/PlatformString.h',

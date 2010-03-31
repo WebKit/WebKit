@@ -32,7 +32,6 @@
 
 #if ENABLE(INSPECTOR)
 
-#include "CString.h"
 #include "CachedResource.h"
 #include "Chrome.h"
 #include "Console.h"
@@ -83,6 +82,7 @@
 #include "SharedBuffer.h"
 #include "TextEncoding.h"
 #include "TextIterator.h"
+#include <wtf/text/CString.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/RefCounted.h>

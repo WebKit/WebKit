@@ -19,8 +19,8 @@
 #include "config.h"
 #include "SharedBuffer.h"
 
-#include "CString.h"
 #include "FileSystem.h"
+#include <wtf/text/CString.h>
 
 #include <glib.h>
 

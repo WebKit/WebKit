@@ -29,7 +29,6 @@
 #include "ResourceHandleInternal.h"
 #include "ResourceHandleWin.h"
 
-#include "CString.h"
 #include "DocLoader.h"
 #include "Document.h"
 #include "Frame.h"
@@ -37,6 +36,7 @@
 #include "Page.h"
 #include "ResourceError.h"
 #include "Timer.h"
+#include <wtf/text/CString.h>
 #include <windows.h>
 #include <wininet.h>
 

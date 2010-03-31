@@ -44,7 +44,6 @@
 #include "ContainerNode.h"
 #include "Cookie.h"
 #include "CookieJar.h"
-#include "CString.h"
 #include "DOMWindow.h"
 #include "Document.h"
 #include "DocumentType.h"
@@ -67,6 +66,7 @@
 #include "StyleSheetList.h"
 #include "Text.h"
 
+#include <wtf/text/CString.h>
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>

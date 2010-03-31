@@ -21,13 +21,13 @@
 #include "config.h"
 #include "ewk_settings.h"
 
-#include "CString.h"
 #include "EWebKit.h"
 #include "IconDatabase.h"
 #include "Image.h"
 #include "IntSize.h"
 #include "KURL.h"
 #include "ewk_private.h"
+#include <wtf/text/CString.h>
 
 #include <eina_safety_checks.h>
 #include <errno.h>

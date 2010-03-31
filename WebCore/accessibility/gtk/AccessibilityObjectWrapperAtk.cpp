@@ -42,7 +42,6 @@
 #include "AccessibilityTableColumn.h"
 #include "AccessibilityTableRow.h"
 #include "AtomicString.h"
-#include "CString.h"
 #include "Document.h"
 #include "DocumentType.h"
 #include "Editor.h"
@@ -57,6 +56,7 @@
 #include "NotImplemented.h"
 #include "RenderText.h"
 #include "TextEncoding.h"
+#include <wtf/text/CString.h>
 
 #include <atk/atk.h>
 #include <glib.h>

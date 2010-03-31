@@ -30,7 +30,6 @@
 #import "AuthenticationMac.h"
 #import "Base64.h"
 #import "BlockExceptions.h"
-#import "CString.h"
 #import "CredentialStorage.h"
 #import "DocLoader.h"
 #import "FormDataStreamMac.h"
@@ -47,6 +46,7 @@
 #import "SubresourceLoader.h"
 #import "WebCoreSystemInterface.h"
 #import "WebCoreURLResponse.h"
+#import <wtf/text/CString.h>
 #import <wtf/UnusedParam.h>
 
 #ifdef BUILDING_ON_TIGER

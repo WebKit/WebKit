@@ -1,3 +1,32 @@
+2010-03-30  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber stamped by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36866
+        Move CString to WTF
+
+        * Android.mk:
+        * GNUmakefile.am:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.pro:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/text: Added.
+        * wtf/text/CString.cpp: Copied from WebCore/platform/text/CString.cpp.
+        * wtf/text/CString.h: Copied from WebCore/platform/text/CString.h.
+        (WTF::CStringBuffer::data):
+        (WTF::CStringBuffer::length):
+        (WTF::CStringBuffer::create):
+        (WTF::CStringBuffer::CStringBuffer):
+        (WTF::CStringBuffer::mutableData):
+        (WTF::CString::CString):
+        (WTF::CString::isNull):
+        (WTF::CString::buffer):
+        (WTF::operator!=):
+
 2010-03-30  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by nobody, build break.

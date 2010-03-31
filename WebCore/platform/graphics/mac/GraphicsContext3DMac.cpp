@@ -30,7 +30,6 @@
 #include "GraphicsContext3D.h"
 
 #include "CanvasObject.h"
-#include "CString.h"
 #include "ImageBuffer.h"
 #include "NotImplemented.h"
 #include "WebGLActiveInfo.h"
@@ -46,6 +45,7 @@
 #include "WebGLUnsignedByteArray.h"
 #include <CoreGraphics/CGBitmapContext.h>
 #include <OpenGL/CGLRenderers.h>
+#include <wtf/text/CString.h>
 #include <wtf/UnusedParam.h>
 
 namespace WebCore {

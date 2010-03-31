@@ -35,7 +35,6 @@
 #include "WebSocketHandshake.h"
 
 #include "AtomicString.h"
-#include "CString.h"
 #include "Cookie.h"
 #include "CookieJar.h"
 #include "Document.h"
@@ -45,6 +44,7 @@
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "StringBuilder.h"
+#include <wtf/text/CString.h>
 #include <wtf/StringExtras.h>
 #include <wtf/Vector.h>
 

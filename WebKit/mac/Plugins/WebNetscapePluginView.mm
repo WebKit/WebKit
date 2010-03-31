@@ -58,7 +58,6 @@
 #import <runtime/JSLock.h>
 #import <WebCore/npruntime_impl.h>
 #import <WebCore/CookieJar.h>
-#import <WebCore/CString.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/Element.h>
 #import <WebCore/Frame.h> 
@@ -76,6 +75,7 @@
 #import <WebKit/WebUIDelegate.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/Assertions.h>
+#import <wtf/text/CString.h>
 #import <objc/objc-runtime.h>
 
 #define LoginWindowDidSwitchFromUserNotification    @"WebLoginWindowDidSwitchFromUserNotification"
@@ -2278,7 +2278,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 - (char*)resolveURL:(const char*)url forTarget:(const char*)target
 {
-    WebCore::CString location = [self resolvedURLStringForURL:url target:target];
+    CString location = [self resolvedURLStringForURL:url target:target];
 
     if (location.isNull())
         return 0;

@@ -31,9 +31,9 @@
 
 #include "FontDescription.h"
 #include "AtomicString.h"
-#include "CString.h"
 #include "StringImpl.h"
 #include <wtf/RefPtr.h>
+#include <wtf/text/CString.h>
 
 #include <wx/defs.h>
 #include <wx/font.h>

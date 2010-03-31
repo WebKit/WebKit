@@ -513,7 +513,6 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	platform/text/AtomicString.cpp \
 	platform/text/Base64.cpp \
 	platform/text/BidiContext.cpp \
-	platform/text/CString.cpp \
 	platform/text/RegularExpression.cpp \
 	platform/text/SegmentedString.cpp \
 	platform/text/String.cpp \

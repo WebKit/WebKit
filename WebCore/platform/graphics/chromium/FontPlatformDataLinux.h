@@ -31,10 +31,10 @@
 #ifndef FontPlatformDataLinux_h
 #define FontPlatformDataLinux_h
 
-#include "CString.h"
 #include "FontRenderStyle.h"
 #include "StringImpl.h"
 #include <wtf/RefPtr.h>
+#include <wtf/text/CString.h>
 #include <SkPaint.h>
 
 class SkTypeface;

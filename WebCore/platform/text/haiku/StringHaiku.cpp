@@ -25,8 +25,8 @@
 
 #include "config.h"
 #include "PlatformString.h"
+#include <wtf/text/CString.h>
 
-#include "CString.h"
 #include <String.h>
 
 namespace WebCore {

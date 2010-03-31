@@ -22,10 +22,10 @@
 #include "config.h"
 #include "TextBreakIteratorInternalICU.h"
 
-#include "CString.h"
 #include "Language.h"
 #include "PlatformString.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 

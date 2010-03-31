@@ -32,8 +32,8 @@
 
 #include "GDIObjectCounter.h"
 
-#include "CString.h"
 #include "Logging.h"
+#include <wtf/text/CString.h>
 
 #include <windows.h>
 

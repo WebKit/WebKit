@@ -20,7 +20,7 @@
 #include "config.h"
 #include "KURL.h"
 
-#include "CString.h"
+#include <wtf/text/CString.h>
 
 #include <AEEFile.h>
 

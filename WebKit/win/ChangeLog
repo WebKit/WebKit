@@ -1,3 +1,20 @@
+2010-03-30  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber stamped by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36866
+        Move CString to WTF
+
+        * WebDownload.cpp:
+        * WebDownloadCFNet.cpp:
+        * WebDownloadCurl.cpp:
+        * WebHistoryItem.cpp:
+        * WebLocalizableStrings.cpp:
+        * WebMutableURLRequest.cpp:
+        * WebPreferences.cpp:
+        (WebPreferences::migrateWebKitPreferencesToCFPreferences):
+        * WebView.cpp:
+
 2010-03-30  Adam Roben  <aroben@apple.com>
 
         Windows build fix

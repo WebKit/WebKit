@@ -29,9 +29,9 @@
 #include "WebLocalizableStrings.h"
 
 #pragma warning(push, 0)
-#include <WebCore/CString.h>
 #include <WebCore/PlatformString.h>
 #include <WebCore/StringHash.h>
+#include <wtf/text/CString.h>
 #pragma warning(pop)
 
 #include <wtf/Assertions.h>

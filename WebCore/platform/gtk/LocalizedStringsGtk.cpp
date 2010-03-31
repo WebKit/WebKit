@@ -30,11 +30,11 @@
 #include "config.h"
 
 #include "LocalizedStrings.h"
-#include "CString.h"
 #include "GOwnPtr.h"
 #include "IntSize.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
+#include <wtf/text/CString.h>
 
 #include <glib/gi18n-lib.h>
 #include <gtk/gtk.h>

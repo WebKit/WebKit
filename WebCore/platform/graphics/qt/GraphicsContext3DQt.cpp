@@ -20,7 +20,6 @@
 
 #include "GraphicsContext3D.h"
 
-#include "CString.h"
 #include "CanvasObject.h"
 #include "GraphicsContext.h"
 #include "HTMLCanvasElement.h"
@@ -39,6 +38,7 @@
 #include "WebGLTexture.h"
 #include "WebGLUnsignedByteArray.h"
 #include <wtf/UnusedParam.h>
+#include <wtf/text/CString.h>
 
 #if ENABLE(3D_CANVAS)
 

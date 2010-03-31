@@ -33,10 +33,10 @@
 #pragma warning(push, 0)
 #include <WebCore/BString.h>
 #include <WebCore/COMPtr.h>
-#include <WebCore/CString.h>
 #include <WebCore/FormData.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/ResourceHandle.h>
+#include <wtf/text/CString.h>
 #pragma warning(pop)
 
 #include <wtf/RetainPtr.h>

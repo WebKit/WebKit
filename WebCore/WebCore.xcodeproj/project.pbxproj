@@ -3837,8 +3837,6 @@
 		B2C3DA240D006C1D00EF6F26 /* BidiContext.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3D9F30D006C1D00EF6F26 /* BidiContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA250D006C1D00EF6F26 /* BidiResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3D9F40D006C1D00EF6F26 /* BidiResolver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA260D006C1D00EF6F26 /* CharacterNames.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3D9F50D006C1D00EF6F26 /* CharacterNames.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		B2C3DA270D006C1D00EF6F26 /* CString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D9F60D006C1D00EF6F26 /* CString.cpp */; };
-		B2C3DA280D006C1D00EF6F26 /* CString.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3D9F70D006C1D00EF6F26 /* CString.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA2A0D006C1D00EF6F26 /* CharsetData.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3D9FA0D006C1D00EF6F26 /* CharsetData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA2B0D006C1D00EF6F26 /* PlatformString.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3D9FB0D006C1D00EF6F26 /* PlatformString.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA2C0D006C1D00EF6F26 /* RegularExpression.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D9FC0D006C1D00EF6F26 /* RegularExpression.cpp */; };
@@ -9148,8 +9146,6 @@
 		B2C3D9F30D006C1D00EF6F26 /* BidiContext.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BidiContext.h; sourceTree = "<group>"; };
 		B2C3D9F40D006C1D00EF6F26 /* BidiResolver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BidiResolver.h; sourceTree = "<group>"; };
 		B2C3D9F50D006C1D00EF6F26 /* CharacterNames.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CharacterNames.h; sourceTree = "<group>"; };
-		B2C3D9F60D006C1D00EF6F26 /* CString.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CString.cpp; sourceTree = "<group>"; };
-		B2C3D9F70D006C1D00EF6F26 /* CString.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CString.h; sourceTree = "<group>"; };
 		B2C3D9FA0D006C1D00EF6F26 /* CharsetData.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CharsetData.h; sourceTree = "<group>"; };
 		B2C3D9FB0D006C1D00EF6F26 /* PlatformString.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlatformString.h; sourceTree = "<group>"; };
 		B2C3D9FC0D006C1D00EF6F26 /* RegularExpression.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RegularExpression.cpp; sourceTree = "<group>"; };
@@ -14689,8 +14685,6 @@
 				B2C3D9F30D006C1D00EF6F26 /* BidiContext.h */,
 				B2C3D9F40D006C1D00EF6F26 /* BidiResolver.h */,
 				B2C3D9F50D006C1D00EF6F26 /* CharacterNames.h */,
-				B2C3D9F60D006C1D00EF6F26 /* CString.cpp */,
-				B2C3D9F70D006C1D00EF6F26 /* CString.h */,
 				BC76AC110DD7AD5C00415F34 /* ParserUtilities.h */,
 				B2C3D9FB0D006C1D00EF6F26 /* PlatformString.h */,
 				B2C3D9FC0D006C1D00EF6F26 /* RegularExpression.cpp */,
@@ -16480,7 +16474,6 @@
 				BCCBE7B20E07159A00EAFA8E /* CSSVariableDependentValue.h in Headers */,
 				BCCBE68A0E06E60D00EAFA8E /* CSSVariablesDeclaration.h in Headers */,
 				BCCBE68C0E06E60D00EAFA8E /* CSSVariablesRule.h in Headers */,
-				B2C3DA280D006C1D00EF6F26 /* CString.h in Headers */,
 				93F1992F08245E59001E9ABC /* Cursor.h in Headers */,
 				BC2272A20E82E87C00E7F975 /* CursorData.h in Headers */,
 				BC2272AD0E82E8F300E7F975 /* CursorList.h in Headers */,
@@ -19187,7 +19180,6 @@
 				BCCBE7B50E07166900EAFA8E /* CSSVariableDependentValue.cpp in Sources */,
 				BCCBE69B0E06F51000EAFA8E /* CSSVariablesDeclaration.cpp in Sources */,
 				BCCBE68B0E06E60D00EAFA8E /* CSSVariablesRule.cpp in Sources */,
-				B2C3DA270D006C1D00EF6F26 /* CString.cpp in Sources */,
 				93F19A2608245E59001E9ABC /* CursorMac.mm in Sources */,
 				5196116A0CAC56570010A80C /* Database.cpp in Sources */,
 				51A45B570CAD7FD7000D2BE9 /* DatabaseAuthorizer.cpp in Sources */,

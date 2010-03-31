@@ -20,8 +20,8 @@
 #include "config.h"
 #include "HistoryItem.h"
 
-#include "CString.h"
 #include "FormData.h"
+#include <wtf/text/CString.h>
 
 bool WebCore::HistoryItem::restoreState(QDataStream& in, int version)
 {

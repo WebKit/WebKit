@@ -20,10 +20,10 @@
 #include "config.h"
 #include "GeolocationServiceGtk.h"
 
-#include "CString.h"
 #include "GOwnPtr.h"
 #include "NotImplemented.h"
 #include "PositionOptions.h"
+#include <wtf/text/CString.h>
 
 namespace WTF {
     template<> void freeOwnedGPtr<GeoclueAccuracy>(GeoclueAccuracy* accuracy)

@@ -28,7 +28,6 @@
 #include "ResourceHandle.h"
 
 #include "Base64.h"
-#include "CString.h"
 #include "ChromeClient.h"
 #include "CookieJarSoup.h"
 #include "DocLoader.h"
@@ -46,6 +45,7 @@
 #include "ResourceResponse.h"
 #include "SharedBuffer.h"
 #include "TextEncoding.h"
+#include <wtf/text/CString.h>
 
 #include <errno.h>
 #include <fcntl.h>

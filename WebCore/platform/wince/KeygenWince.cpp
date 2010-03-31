@@ -21,7 +21,7 @@
 #include "SSLKeyGenerator.h"
 
 #include "Base64.h"
-#include "CString.h"
+#include <wtf/text/CString.h>
 
 #include <windows.h>
 #include <wincrypt.h>

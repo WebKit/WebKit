@@ -26,7 +26,6 @@
 #include "CSSRule.h"
 #include "CSSRuleList.h"
 #include "CSSStyleRule.h"
-#include "CString.h"
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "FrameView.h"
@@ -45,6 +44,7 @@
 #include "runtime_root.h"
 #include <parser/SourceCode.h>
 #include <wtf/Vector.h>
+#include <wtf/text/CString.h>
 
 #include <QPainter>
 

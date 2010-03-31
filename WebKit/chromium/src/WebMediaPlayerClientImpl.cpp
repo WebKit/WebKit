@@ -7,7 +7,6 @@
 
 #if ENABLE(VIDEO)
 
-#include "CString.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
 #include "HTMLMediaElement.h"
@@ -36,6 +35,7 @@
 #endif
 
 #include <wtf/Assertions.h>
+#include <wtf/text/CString.h>
 
 using namespace WebCore;
 

@@ -28,11 +28,11 @@
 #include "config.h"
 #include "ImageBuffer.h"
 
-#include "CString.h"
 #include "GraphicsContext.h"
 #include "ImageData.h"
 #include "MIMETypeRegistry.h"
 #include "StillImageQt.h"
+#include <wtf/text/CString.h>
 
 #include <QBuffer>
 #include <QColor>

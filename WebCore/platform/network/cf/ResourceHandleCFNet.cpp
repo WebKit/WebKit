@@ -32,7 +32,6 @@
 #include "AuthenticationCF.h"
 #include "AuthenticationChallenge.h"
 #include "Base64.h"
-#include "CString.h"
 #include "CookieStorageWin.h"
 #include "CredentialStorage.h"
 #include "DocLoader.h"
@@ -52,6 +51,7 @@
 #include <sys/types.h>
 #include <wtf/HashMap.h>
 #include <wtf/Threading.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 

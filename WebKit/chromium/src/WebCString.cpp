@@ -31,14 +31,14 @@
 #include "config.h"
 #include "WebCString.h"
 
-#include "CString.h"
 #include "TextEncoding.h"
+#include <wtf/text/CString.h>
 
 #include "WebString.h"
 
 namespace WebKit {
 
-class WebCStringPrivate : public WebCore::CStringBuffer {
+class WebCStringPrivate : public WTF::CStringBuffer {
 };
 
 void WebCString::reset()
@@ -57,8 +57,8 @@ void WebCString::assign(const WebCString& other)
 void WebCString::assign(const char* data, size_t length)
 {
     char* newData;
-    RefPtr<WebCore::CStringBuffer> buffer =
-        WebCore::CString::newUninitialized(length, newData).buffer();
+    RefPtr<WTF::CStringBuffer> buffer =
+        WTF::CString::newUninitialized(length, newData).buffer();
     memcpy(newData, data, length);
     assign(static_cast<WebCStringPrivate*>(buffer.get()));
 }
@@ -97,20 +97,20 @@ WebCString WebCString::fromUTF16(const WebUChar* data)
     return fromUTF16(data, len);
 }
 
-WebCString::WebCString(const WebCore::CString& s)
+WebCString::WebCString(const WTF::CString& s)
     : m_private(static_cast<WebCStringPrivate*>(s.buffer()))
 {
     if (m_private)
         m_private->ref();
 }
 
-WebCString& WebCString::operator=(const WebCore::CString& s)
+WebCString& WebCString::operator=(const WTF::CString& s)
 {
     assign(static_cast<WebCStringPrivate*>(s.buffer()));
     return *this;
 }
 
-WebCString::operator WebCore::CString() const
+WebCString::operator WTF::CString() const
 {
     return m_private;
 }

@@ -29,7 +29,7 @@
 #include "config.h"
 #include "SharedBuffer.h"
 
-#include "CString.h"
+#include <wtf/text/CString.h>
 #include <stdio.h>
 #include <sys/stat.h>
 #include <sys/types.h>

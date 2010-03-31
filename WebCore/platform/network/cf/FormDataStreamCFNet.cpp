@@ -31,7 +31,6 @@
 #include "config.h"
 #include "FormDataStreamCFNet.h"
 
-#include "CString.h"
 #include "FileSystem.h"
 #include "FormData.h"
 #include <CFNetwork/CFURLRequestPriv.h>
@@ -41,6 +40,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/text/CString.h>
 
 #define USE_V1_CFSTREAM_CALLBACKS
 #ifdef USE_V1_CFSTREAM_CALLBACKS

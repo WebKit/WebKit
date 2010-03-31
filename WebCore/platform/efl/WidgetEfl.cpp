@@ -31,7 +31,6 @@
 #include "config.h"
 #include "Widget.h"
 
-#include "CString.h"
 #include "ChromeClient.h"
 #include "Cursor.h"
 #include "Frame.h"
@@ -51,6 +50,7 @@
 #endif
 
 #include <wtf/HashMap.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 

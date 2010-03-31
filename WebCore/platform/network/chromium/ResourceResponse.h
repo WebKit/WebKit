@@ -27,9 +27,9 @@
 #ifndef ResourceResponse_h
 #define ResourceResponse_h
 
-#include "CString.h"
 #include "NotImplemented.h"
 #include "ResourceResponseBase.h"
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 

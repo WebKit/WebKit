@@ -31,8 +31,8 @@
 #include "config.h"
 #include "FileSystem.h"
 
-#include "CString.h"
 #include "PlatformString.h"
+#include <wtf/text/CString.h>
 
 #include <windows.h>
 #include <wincrypt.h>

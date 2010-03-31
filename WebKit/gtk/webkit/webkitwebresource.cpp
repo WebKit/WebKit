@@ -23,13 +23,13 @@
 #include "webkitprivate.h"
 
 #include "ArchiveResource.h"
-#include "CString.h"
 #include "KURL.h"
 #include "PlatformString.h"
 #include "SharedBuffer.h"
 #include "webkitenumtypes.h"
 #include "webkitmarshal.h"
 #include "wtf/Assertions.h"
+#include <wtf/text/CString.h>
 
 #include <glib.h>
 #include <glib/gi18n-lib.h>

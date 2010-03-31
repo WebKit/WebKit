@@ -24,11 +24,11 @@
 #include "WMLErrorHandling.h"
 
 #include "Console.h"
-#include "CString.h"
 #include "Frame.h"
 #include "Document.h"
 #include "DOMWindow.h"
 #include "XMLTokenizer.h"
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 

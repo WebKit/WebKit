@@ -33,7 +33,6 @@
 
 #if ENABLE(DATABASE)
 #include "ChangeVersionWrapper.h"
-#include "CString.h"
 #include "DatabaseAuthorizer.h"
 #include "DatabaseCallback.h"
 #include "DatabaseTask.h"

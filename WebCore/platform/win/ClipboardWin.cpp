@@ -26,7 +26,6 @@
 #include "config.h"
 #include "ClipboardWin.h"
 
-#include "CString.h"
 #include "CachedImage.h"
 #include "ClipboardUtilitiesWin.h"
 #include "Document.h"
@@ -57,6 +56,7 @@
 #include <shlwapi.h>
 #include <wininet.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/CString.h>
 
 using namespace std;
 

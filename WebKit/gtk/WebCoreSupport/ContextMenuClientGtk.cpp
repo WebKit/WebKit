@@ -21,10 +21,10 @@
 #include "ContextMenu.h"
 #include "ContextMenuClientGtk.h"
 
-#include "CString.h"
 #include "HitTestResult.h"
 #include "KURL.h"
 #include "NotImplemented.h"
+#include <wtf/text/CString.h>
 
 #include <glib/gi18n-lib.h>
 #include <glib-object.h>

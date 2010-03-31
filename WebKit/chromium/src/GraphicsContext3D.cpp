@@ -34,7 +34,6 @@
 
 #include "GraphicsContext3D.h"
 
-#include "CString.h"
 #include "CachedImage.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
@@ -58,6 +57,7 @@
 
 #include <stdio.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/text/CString.h>
 
 #if PLATFORM(CG)
 #include "GraphicsContext.h"

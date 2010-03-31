@@ -1705,8 +1705,6 @@ webcore_sources += \
 	WebCore/platform/text/BidiContext.cpp \
 	WebCore/platform/text/BidiContext.h \
 	WebCore/platform/text/BidiResolver.h \
-	WebCore/platform/text/CString.cpp \
-	WebCore/platform/text/CString.h \
 	WebCore/platform/text/CharacterNames.h \
 	WebCore/platform/text/ParserUtilities.h \
 	WebCore/platform/text/PlatformString.h \

@@ -19,13 +19,13 @@
 #include "config.h"
 #include "PluginPackage.h"
 
-#include "CString.h"
 #include "MIMETypeRegistry.h"
 #include "npinterface.h"
 #include "npruntime_impl.h"
 #include "PluginDatabase.h"
 #include "PluginDebug.h"
 #include <QPluginLoader>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 

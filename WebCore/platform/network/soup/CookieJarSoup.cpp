@@ -22,10 +22,10 @@
 #include "CookieJarSoup.h"
 
 #include "Cookie.h"
-#include "CString.h"
 #include "Document.h"
 #include "GOwnPtrSoup.h"
 #include "KURL.h"
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 

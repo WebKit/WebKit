@@ -416,6 +416,8 @@
             'wtf/ThreadSpecificWin.cpp',
             'wtf/TypeTraits.cpp',
             'wtf/TypeTraits.h',
+            'wtf/text/CString.cpp',
+            'wtf/text/CString.h',
             'wtf/unicode/Collator.h',
             'wtf/unicode/CollatorDefault.cpp',
             'wtf/unicode/glib/UnicodeGLib.cpp',

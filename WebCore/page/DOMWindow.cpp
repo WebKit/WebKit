@@ -32,7 +32,6 @@
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSRuleList.h"
 #include "CSSStyleSelector.h"
-#include "CString.h"
 #include "Chrome.h"
 #include "Console.h"
 #include "Database.h"
@@ -77,6 +76,7 @@
 #include "SuddenTermination.h"
 #include "WebKitPoint.h"
 #include <algorithm>
+#include <wtf/text/CString.h>
 #include <wtf/MathExtras.h>
 
 using std::min;

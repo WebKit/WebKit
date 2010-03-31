@@ -32,7 +32,6 @@
 #include "WebNotificationCenter.h"
 #include "WebPreferenceKeysPrivate.h"
 
-#include <WebCore/CString.h>
 #include <WebCore/FileSystem.h>
 #include <WebCore/Font.h>
 #include <WebCore/PlatformString.h>
@@ -46,6 +45,7 @@
 #include <tchar.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnArrayPtr.h>
+#include <wtf/text/CString.h>
 
 #if PLATFORM(CG)
 #include <CoreGraphics/CoreGraphics.h>
@@ -422,7 +422,7 @@ void WebPreferences::migrateWebKitPreferencesToCFPreferences()
     setBoolValue(didMigrateKey, TRUE);
     m_autoSaves = oldValue;
 
-    CString path = oldPreferencesPath().utf8();
+    WTF::CString path = oldPreferencesPath().utf8();
 
     RetainPtr<CFURLRef> urlRef(AdoptCF, CFURLCreateFromFileSystemRepresentation(0, reinterpret_cast<const UInt8*>(path.data()), path.length(), false));
     if (!urlRef)

@@ -34,7 +34,6 @@
 
 #include "AXObjectCache.h"
 #include "DNS.h"
-#include "CString.h"
 #include "CachedResource.h"
 #include "CookieJar.h"
 #include "Cursor.h"
@@ -71,6 +70,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <float.h>
+#include <wtf/text/CString.h>
 
 using namespace WebCore;
 

@@ -21,11 +21,11 @@
 #include "config.h"
 #include "ResourceResponse.h"
 
-#include "CString.h"
 #include "GOwnPtr.h"
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
 #include "PlatformString.h"
+#include <wtf/text/CString.h>
 
 using namespace std;
 

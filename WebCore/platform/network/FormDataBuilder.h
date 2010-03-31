@@ -24,9 +24,13 @@
 #include "PlatformString.h"
 #include <wtf/Noncopyable.h>
 
+namespace WTF {
+class CString;
+}
+using WTF::CString;
+
 namespace WebCore {
 
-class CString;
 class Document;
 class TextEncoding;
 
@@ -54,15 +58,15 @@ public:
 
     // Helper functions used by HTMLFormElement/WMLGoElement for multi-part form data
     static Vector<char> generateUniqueBoundaryString();
-    static void beginMultiPartHeader(Vector<char>&, const CString& boundary, const CString& name);
-    static void addBoundaryToMultiPartHeader(Vector<char>&, const CString& boundary, bool isLastBoundary = false);
+    static void beginMultiPartHeader(Vector<char>&, const WTF::CString& boundary, const WTF::CString& name);
+    static void addBoundaryToMultiPartHeader(Vector<char>&, const WTF::CString& boundary, bool isLastBoundary = false);
     static void addFilenameToMultiPartHeader(Vector<char>&, const TextEncoding&, const String& filename);
-    static void addContentTypeToMultiPartHeader(Vector<char>&, const CString& mimeType);
+    static void addContentTypeToMultiPartHeader(Vector<char>&, const WTF::CString& mimeType);
     static void finishMultiPartHeader(Vector<char>&);
 
     // Helper functions used by HTMLFormElement/WMLGoElement for non multi-part form data
-    static void addKeyValuePairAsFormData(Vector<char>&, const CString& key, const CString& value);
-    static void encodeStringAsFormData(Vector<char>&, const CString&);
+    static void addKeyValuePairAsFormData(Vector<char>&, const WTF::CString& key, const WTF::CString& value);
+    static void encodeStringAsFormData(Vector<char>&, const WTF::CString&);
 
 private:
     bool m_isPostMethod;

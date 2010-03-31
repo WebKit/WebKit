@@ -17,7 +17,6 @@
 #include "config.h"
 #include "ClipboardGtk.h"
 
-#include "CString.h"
 #include "CachedImage.h"
 #include "Editor.h"
 #include "Element.h"
@@ -28,6 +27,7 @@
 #include "RenderImage.h"
 #include "StringHash.h"
 #include "markup.h"
+#include <wtf/text/CString.h>
 #include <gtk/gtk.h>
 
 namespace WebCore {

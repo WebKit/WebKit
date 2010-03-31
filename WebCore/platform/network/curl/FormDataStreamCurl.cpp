@@ -31,9 +31,9 @@
 #include "config.h"
 #include "FormDataStreamCurl.h"
 
-#include "CString.h"
 #include "FormData.h"
 #include "ResourceRequest.h"
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 

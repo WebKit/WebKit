@@ -537,6 +537,14 @@
 			>
 		</File>
 		<File
+ 			RelativePath="..\..\wtf\text\CString.cpp"
+ 			>
+ 		</File>
+ 		<File
+ 			RelativePath="..\..\wtf\text\CString.h"
+ 			>
+ 		</File>
+ 		<File
 			RelativePath="..\..\wtf\unicode\UTF8.cpp"
 			>
 		</File>

@@ -33,7 +33,6 @@
 
 #include "BackForwardList.h"
 #include "CachedPage.h"
-#include "CString.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -46,6 +45,7 @@
 #include "PageCache.h"
 #include "PageGroup.h"
 #include "Settings.h"
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 

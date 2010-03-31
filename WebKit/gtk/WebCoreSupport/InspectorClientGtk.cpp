@@ -22,10 +22,10 @@
 #include "webkitwebview.h"
 #include "webkitwebinspector.h"
 #include "webkitprivate.h"
-#include "CString.h"
 #include "InspectorController.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
+#include <wtf/text/CString.h>
 
 using namespace WebCore;
 

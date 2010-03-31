@@ -32,7 +32,6 @@
 #include "FrameLoaderClientImpl.h"
 
 #include "Chrome.h"
-#include "CString.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "FormState.h"
@@ -73,6 +72,7 @@
 #include "WindowFeatures.h"
 #include "WrappedResourceRequest.h"
 #include "WrappedResourceResponse.h"
+#include <wtf/text/CString.h>
 
 using namespace WebCore;
 

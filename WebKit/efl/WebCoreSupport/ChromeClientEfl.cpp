@@ -33,7 +33,6 @@
 #include "config.h"
 #include "ChromeClientEfl.h"
 
-#include "CString.h"
 #include "DatabaseTracker.h"
 #include "EWebKit.h"
 #include "FloatRect.h"
@@ -46,6 +45,7 @@
 #include "PlatformString.h"
 #include "WindowFeatures.h"
 #include "ewk_private.h"
+#include <wtf/text/CString.h>
 
 using namespace WebCore;
 

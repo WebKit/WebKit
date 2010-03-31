@@ -59,9 +59,12 @@ typedef struct HINSTANCE__* HINSTANCE;
 typedef HINSTANCE HMODULE;
 #endif
 
-namespace WebCore {
-
+namespace WTF {
 class CString;
+}
+using WTF::CString;
+
+namespace WebCore {
 
 // PlatformModule
 #if OS(WINDOWS)
@@ -132,12 +135,12 @@ String directoryName(const String&);
 
 Vector<String> listDirectory(const String& path, const String& filter = String());
 
-CString fileSystemRepresentation(const String&);
+WTF::CString fileSystemRepresentation(const String&);
 
 inline bool isHandleValid(const PlatformFileHandle& handle) { return handle != invalidPlatformFileHandle; }
 
 // Prefix is what the filename should be prefixed with, not the full path.
-CString openTemporaryFile(const char* prefix, PlatformFileHandle&);
+WTF::CString openTemporaryFile(const char* prefix, PlatformFileHandle&);
 void closeFile(PlatformFileHandle&);
 int writeToFile(PlatformFileHandle, const char* data, int length);
 

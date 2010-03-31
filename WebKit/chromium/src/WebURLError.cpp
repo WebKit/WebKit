@@ -31,9 +31,9 @@
 #include "config.h"
 #include "WebURLError.h"
 
-#include "CString.h"
 #include "KURL.h"
 #include "ResourceError.h"
+#include <wtf/text/CString.h>
 
 using namespace WebCore;
 

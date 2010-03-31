@@ -27,7 +27,6 @@
 #include "config.h"
 #include "PluginStream.h"
 
-#include "CString.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -35,6 +34,7 @@
 #include "SharedBuffer.h"
 #include "SubresourceLoader.h"
 #include <StringExtras.h>
+#include <wtf/text/CString.h>
 
 // We use -2 here because some plugins like to return -1 to indicate error
 // and this way we won't clash with them.

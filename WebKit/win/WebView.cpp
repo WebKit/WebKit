@@ -66,7 +66,6 @@
 #include <WebCore/BString.h>
 #include <WebCore/BackForwardList.h>
 #include <WebCore/BitmapInfo.h>
-#include <WebCore/CString.h>
 #include <WebCore/Cache.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/ContextMenu.h>
@@ -151,6 +150,7 @@
 #include <tchar.h>
 #include <windowsx.h>
 #include <wtf/HashSet.h>
+#include <wtf/text/CString.h>
 
 // Soft link functions for gestures and panning feedback
 SOFT_LINK_LIBRARY(USER32);

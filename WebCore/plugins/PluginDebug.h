@@ -28,7 +28,7 @@
 
 #include "Logging.h"
 #include "npruntime_internal.h"
-#include "CString.h"
+#include <wtf/text/CString.h>
 
 #define LOG_NPERROR(err) if (err != NPERR_NO_ERROR) LOG_VERBOSE(Plugins, "%s\n", prettyNameForNPError(err))
 #define LOG_PLUGIN_NET_ERROR() LOG_VERBOSE(Plugins, "Stream failed due to problems with network, disk I/O, lack of memory, or other problems.\n")

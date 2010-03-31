@@ -28,12 +28,12 @@
 #include "TextCodecICU.h"
 
 #include "CharacterNames.h"
-#include "CString.h"
 #include "PlatformString.h"
 #include "ThreadGlobalData.h"
 #include <unicode/ucnv.h>
 #include <unicode/ucnv_cb.h>
 #include <wtf/Assertions.h>
+#include <wtf/text/CString.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/StringExtras.h>
 #include <wtf/Threading.h>

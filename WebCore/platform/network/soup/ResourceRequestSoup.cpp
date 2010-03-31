@@ -20,12 +20,12 @@
 #include "config.h"
 #include "ResourceRequest.h"
 
-#include "CString.h"
 #include "GOwnPtr.h"
 #include "GOwnPtrSoup.h"
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
 #include "PlatformString.h"
+#include <wtf/text/CString.h>
 
 #include <libsoup/soup.h>
 

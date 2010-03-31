@@ -34,7 +34,6 @@
 #if ENABLE(3D_CANVAS)
 #import "Canvas3DLayer.h"
 #endif
-#import "CString.h"
 #import "FloatConversion.h"
 #import "FloatRect.h"
 #import "Image.h"

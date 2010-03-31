@@ -52,7 +52,6 @@
 #include "RenderPart.h"
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
-#include "CString.h"
 #include "ProgressTracker.h"
 #include "JSDOMBinding.h"
 #include "ScriptController.h"
@@ -64,6 +63,7 @@
 #include "webkitwebnavigationaction.h"
 #include "webkitwebpolicydecision.h"
 #include "webkitwebview.h"
+#include <wtf/text/CString.h>
 
 #include <JavaScriptCore/APICast.h>
 #include <gio/gio.h>

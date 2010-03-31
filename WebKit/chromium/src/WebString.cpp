@@ -32,8 +32,8 @@
 #include "WebString.h"
 
 #include "AtomicString.h"
-#include "CString.h"
 #include "PlatformString.h"
+#include <wtf/text/CString.h>
 
 #include "WebCString.h"
 

@@ -34,10 +34,10 @@
 #include "config.h"
 #include "PlatformScreen.h"
 
-#include "CString.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
 #include "Widget.h"
+#include <wtf/text/CString.h>
 
 #ifdef HAVE_ECORE_X
 #include <Ecore_X.h>

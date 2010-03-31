@@ -22,11 +22,11 @@
 #include "ewk_history.h"
 
 #include "BackForwardList.h"
-#include "CString.h"
 #include "EWebKit.h"
 #include "HistoryItem.h"
 #include "Image.h"
 #include "ewk_private.h"
+#include <wtf/text/CString.h>
 
 #include <Eina.h>
 #include <eina_safety_checks.h>

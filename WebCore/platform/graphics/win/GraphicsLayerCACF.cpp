@@ -29,7 +29,6 @@
 
 #include "GraphicsLayerCACF.h"
 
-#include "CString.h"
 #include "FloatConversion.h"
 #include "FloatRect.h"
 #include "Font.h"
@@ -41,6 +40,7 @@
 #include <QuartzCoreInterface/QuartzCoreInterface.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/StringExtras.h>
+#include <wtf/text/CString.h>
 
 using namespace std;
 

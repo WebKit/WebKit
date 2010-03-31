@@ -44,7 +44,6 @@
 #include "config.h"
 #include "RenderLayer.h"
 
-#include "CString.h"
 #include "CSSPropertyNames.h"
 #include "CSSStyleDeclaration.h"
 #include "CSSStyleSelector.h"
@@ -83,6 +82,7 @@
 #include "TransformationMatrix.h"
 #include "TransformState.h"
 #include "TranslateTransformOperation.h"
+#include <wtf/text/CString.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/UnusedParam.h>
 

@@ -31,7 +31,6 @@
 #include <wtf/Vector.h>
 
 #include "Console.h"
-#include "CString.h"
 #include "DocumentLoader.h"
 #include "DOMWindow.h"
 #include "Frame.h"
@@ -41,6 +40,7 @@
 #include "ScriptSourceCode.h"
 #include "Settings.h"
 #include "TextResourceDecoder.h"
+#include <wtf/text/CString.h>
 
 using namespace WTF;
 

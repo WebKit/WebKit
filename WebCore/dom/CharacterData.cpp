@@ -22,7 +22,6 @@
 #include "config.h"
 #include "CharacterData.h"
 
-#include "CString.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "MutationEvent.h"

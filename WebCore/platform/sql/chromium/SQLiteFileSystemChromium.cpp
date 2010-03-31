@@ -32,9 +32,9 @@
 #include "SQLiteFileSystem.h"
 
 #include "ChromiumBridge.h"
-#include "CString.h"
 #include "SQLiteDatabase.h"
 #include <sqlite3.h>
+#include <wtf/text/CString.h>
 
 #ifndef SQLITE_OPEN_FULLMUTEX
 #define SQLITE_OPEN_FULLMUTEX 0x00010000

@@ -29,7 +29,6 @@
 #include "config.h"
 #include "Console.h"
 
-#include "CString.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "ConsoleMessage.h"
@@ -45,6 +44,7 @@
 #include "ScriptProfile.h"
 #include "ScriptProfiler.h"
 #include <stdio.h>
+#include <wtf/text/CString.h>
 #include <wtf/UnusedParam.h>
 
 namespace WebCore {

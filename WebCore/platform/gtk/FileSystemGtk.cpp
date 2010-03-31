@@ -24,7 +24,7 @@
 
 #include "GOwnPtr.h"
 #include "PlatformString.h"
-#include "CString.h"
+#include <wtf/text/CString.h>
 
 #include <glib.h>
 #include <glib/gstdio.h>

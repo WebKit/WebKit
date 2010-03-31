@@ -27,7 +27,7 @@
 #include "config.h"
 #include "TextCodecQt.h"
 #include "PlatformString.h"
-#include "CString.h"
+#include <wtf/text/CString.h>
 #include <qset.h>
 // #include <QDebug>
 

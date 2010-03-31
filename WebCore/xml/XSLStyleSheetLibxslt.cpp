@@ -24,7 +24,6 @@
 
 #if ENABLE(XSLT)
 
-#include "CString.h"
 #include "Console.h"
 #include "DOMWindow.h"
 #include "DocLoader.h"
@@ -37,6 +36,7 @@
 #include "XSLImportRule.h"
 #include "XSLTProcessor.h"
 #include "loader.h"
+#include <wtf/text/CString.h>
 
 #include <libxml/uri.h>
 #include <libxslt/xsltutils.h>

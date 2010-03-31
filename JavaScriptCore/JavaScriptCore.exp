@@ -1,3 +1,11 @@
+__ZN3WTF7CString11mutableDataEv
+__ZN3WTF7CString16newUninitializedEmRPc
+__ZN3WTF7CStringC1EPKc
+__ZN3WTF7CStringC1EPKcj
+__ZN3WTFeqERKNS_7CStringES2_
+__ZNK3WTF7CString4dataEv
+__ZNK3WTF7CString6lengthEv
+
 _JSCheckScriptSyntax
 _JSClassCreate
 _JSClassRelease

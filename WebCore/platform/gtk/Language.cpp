@@ -20,9 +20,9 @@
 #include "config.h"
 #include "Language.h"
 
-#include "CString.h"
 #include "GOwnPtr.h"
 #include "PlatformString.h"
+#include <wtf/text/CString.h>
 
 #include <gtk/gtk.h>
 #include <locale.h>

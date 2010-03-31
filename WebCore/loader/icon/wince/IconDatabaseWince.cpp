@@ -22,12 +22,12 @@
 #include "IconDatabase.h"
 
 #include "AutodrainedPool.h"
-#include "CString.h"
 #include "DocumentLoader.h"
 #include "FileSystem.h"
 #include "IconDatabaseClient.h"
 #include "IconRecord.h"
 #include "Image.h"
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 

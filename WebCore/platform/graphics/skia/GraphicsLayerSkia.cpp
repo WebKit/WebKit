@@ -45,7 +45,6 @@
 
 #include "GraphicsLayerSkia.h"
 
-#include "CString.h"
 #include "FloatConversion.h"
 #include "FloatRect.h"
 #include "Image.h"
@@ -54,6 +53,7 @@
 #include "SystemTime.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/StringExtras.h>
+#include <wtf/text/CString.h>
 
 using namespace std;
 

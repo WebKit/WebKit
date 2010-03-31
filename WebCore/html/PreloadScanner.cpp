@@ -34,13 +34,13 @@
 #include "CachedResourceClient.h"
 #include "CachedScript.h"
 #include "CSSHelper.h"
-#include "CString.h"
 #include "DocLoader.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLLinkElement.h"
 #include "HTMLNames.h"
+#include <wtf/text/CString.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/unicode/Unicode.h>
 

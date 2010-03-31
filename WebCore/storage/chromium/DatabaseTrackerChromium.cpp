@@ -31,7 +31,6 @@
 #include "config.h"
 #include "DatabaseTracker.h"
 
-#include "CString.h"
 #include "Database.h"
 #include "DatabaseObserver.h"
 #include "DatabaseThread.h"
@@ -43,6 +42,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 

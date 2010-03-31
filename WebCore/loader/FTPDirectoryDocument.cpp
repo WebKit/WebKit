@@ -27,7 +27,6 @@
 #include "FTPDirectoryDocument.h"
 
 #include "CharacterNames.h"
-#include "CString.h"
 #include "HTMLNames.h"
 #include "HTMLTableElement.h"
 #include "HTMLTokenizer.h"
@@ -39,6 +38,7 @@
 #include "SharedBuffer.h"
 #include "Text.h"
 
+#include <wtf/text/CString.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/StdLibExtras.h>
 

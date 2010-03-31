@@ -33,7 +33,6 @@
 
 #if ENABLE(DATABASE)
 
-#include "CString.h"
 #include "Database.h"
 #include "SQLTransaction.h"
 #include <wtf/Deque.h>

@@ -35,7 +35,6 @@
 #include "ResourceHandleManager.h"
 
 #include "Base64.h"
-#include "CString.h"
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
 #include "NotImplemented.h"
@@ -49,6 +48,7 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
+#include <wtf/text/CString.h>
 
 #if !OS(WINDOWS)
 #include <sys/param.h>

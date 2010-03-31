@@ -31,7 +31,7 @@
 #ifndef KURLGooglePrivate_h
 #define KURLGooglePrivate_h
 
-#include "CString.h"
+#include <wtf/text/CString.h>
 
 #include <googleurl/src/url_parse.h>
 #include <googleurl/src/url_canon.h>

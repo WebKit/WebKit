@@ -27,7 +27,6 @@
 
 #include "ResourceHandle.h"
 
-#include "CString.h"
 #include "DocLoader.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
@@ -37,6 +36,7 @@
 #include "ResourceHandleClient.h"
 #include "ResourceHandleInternal.h"
 #include "ResourceLoaderAndroid.h"
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 

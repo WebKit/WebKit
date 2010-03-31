@@ -27,7 +27,6 @@
 #ifndef PluginStream_H
 #define PluginStream_H
 
-#include "CString.h"
 #include "FileSystem.h"
 #include "KURL.h"
 #include "NetscapePlugInStreamLoader.h"
@@ -42,6 +41,7 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
     class Frame;
@@ -70,7 +70,7 @@ namespace WebCore {
 
         void setLoadManually(bool loadManually) { m_loadManually = loadManually; }
 
-        void sendJavaScriptStream(const KURL& requestURL, const CString& resultString);
+        void sendJavaScriptStream(const KURL& requestURL, const WTF::CString& resultString);
         void cancelAndDestroyStream(NPReason);
 
         static NPP ownerForStream(NPStream*);
@@ -111,8 +111,8 @@ namespace WebCore {
         NPP m_instance;
         uint16 m_transferMode;
         int32 m_offset;
-        CString m_headers;
-        CString m_path;
+        WTF::CString m_headers;
+        WTF::CString m_path;
         NPReason m_reason;
         NPStream m_stream;
         PluginQuirkSet m_quirks;

@@ -23,12 +23,12 @@
 #if ENABLE(WML)
 #include "WMLPostfieldElement.h"
 
-#include "CString.h"
 #include "TextEncoding.h"
 #include "HTMLNames.h"
 #include "WMLDocument.h"
 #include "WMLGoElement.h"
 #include "WMLNames.h"
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 

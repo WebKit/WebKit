@@ -1,3 +1,22 @@
+2010-03-30  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber stamped by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36866
+        Move CString to WTF
+
+        * public/WebCString.h:
+        * src/FrameLoaderClientImpl.cpp:
+        * src/GraphicsContext3D.cpp:
+        * src/WebCString.cpp:
+        (WebKit::WebCString::assign):
+        (WebKit::WebCString::WebCString):
+        (WebKit::WebCString::operator=):
+        (WebKit::WebCString::operator WTF::CString):
+        * src/WebMediaPlayerClientImpl.cpp:
+        * src/WebString.cpp:
+        * src/WebURLError.cpp:
+
 2010-03-30  Marcus Bulach  <bulach@chromium.org>
 
         Reviewed by Darin Fisher.

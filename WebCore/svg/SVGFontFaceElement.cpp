@@ -24,7 +24,6 @@
 #if ENABLE(SVG_FONTS)
 #include "SVGFontFaceElement.h"
 
-#include "CString.h"
 #include "CSSFontFaceRule.h"
 #include "CSSFontFaceSrcValue.h"
 #include "CSSParser.h"

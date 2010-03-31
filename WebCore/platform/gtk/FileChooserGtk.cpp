@@ -27,11 +27,11 @@
 #include "config.h"
 #include "FileChooser.h"
 
-#include "CString.h"
 #include "FileSystem.h"
 #include "Icon.h"
 #include "LocalizedStrings.h"
 #include "StringTruncator.h"
+#include <wtf/text/CString.h>
 
 #include <glib.h>
 #include <gtk/gtk.h>

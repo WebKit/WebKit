@@ -26,9 +26,9 @@
 #include <glib.h>
 #include <glib/gi18n-lib.h>
 
-#include "CString.h"
 #include "HistoryItem.h"
 #include "PlatformString.h"
+#include <wtf/text/CString.h>
 
 /**
  * SECTION:webkitwebhistoryitem
@@ -54,10 +54,10 @@ using namespace WebKit;
 struct _WebKitWebHistoryItemPrivate {
     WebCore::HistoryItem* historyItem;
 
-    WebCore::CString title;
-    WebCore::CString alternateTitle;
-    WebCore::CString uri;
-    WebCore::CString originalUri;
+    WTF::CString title;
+    WTF::CString alternateTitle;
+    WTF::CString uri;
+    WTF::CString originalUri;
 
     gboolean disposed;
 };
@@ -113,10 +113,10 @@ static void webkit_web_history_item_finalize(GObject* object)
     WebKitWebHistoryItem* webHistoryItem = WEBKIT_WEB_HISTORY_ITEM(object);
     WebKitWebHistoryItemPrivate* priv = webHistoryItem->priv;
 
-    priv->title = WebCore::CString();
-    priv->alternateTitle = WebCore::CString();
-    priv->uri = WebCore::CString();
-    priv->originalUri = WebCore::CString();
+    priv->title = WTF::CString();
+    priv->alternateTitle = WTF::CString();
+    priv->uri = WTF::CString();
+    priv->originalUri = WTF::CString();
 
     G_OBJECT_CLASS(webkit_web_history_item_parent_class)->finalize(object);
 }
@@ -469,7 +469,7 @@ G_CONST_RETURN gchar* webkit_web_history_item_get_target(WebKitWebHistoryItem* w
 
     g_return_val_if_fail(item, NULL);
 
-    WebCore::CString t = item->target().utf8();
+    WTF::CString t = item->target().utf8();
     return g_strdup(t.data());
 }
 

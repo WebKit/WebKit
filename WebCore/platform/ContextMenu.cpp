@@ -34,7 +34,6 @@
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSProperty.h"
 #include "CSSPropertyNames.h"
-#include "CString.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Editor.h"
@@ -49,6 +48,7 @@
 #include "SelectionController.h"
 #include "Settings.h"
 #include "TextIterator.h"
+#include <wtf/text/CString.h>
 
 using namespace std;
 using namespace WTF;

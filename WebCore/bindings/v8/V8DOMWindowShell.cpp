@@ -31,7 +31,6 @@
 #include "config.h"
 #include "V8DOMWindowShell.h"
 
-#include "CString.h"
 #include "PlatformBridge.h"
 #include "CSSMutableStyleDeclaration.h"
 #include "DateExtension.h"
@@ -67,6 +66,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringExtras.h>
 #include <wtf/UnusedParam.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 

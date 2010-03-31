@@ -29,7 +29,6 @@
 #include "config.h"
 #include "SecurityOrigin.h"
 
-#include "CString.h"
 #include "Document.h"
 #include "KURL.h"
 #include "OriginAccessEntry.h"

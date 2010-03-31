@@ -29,12 +29,12 @@
 #include "PluginPackage.h"
 
 #include <wtf/RetainPtr.h>
-#include "CString.h"
 #include "MIMETypeRegistry.h"
 #include "npruntime_impl.h"
 #include "PluginDatabase.h"
 #include "PluginDebug.h"
 #include "WebCoreNSStringExtras.h"
+#include <wtf/text/CString.h>
 
 #include <CoreFoundation/CoreFoundation.h>
 

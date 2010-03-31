@@ -28,8 +28,8 @@
 #import "config.h"
 #import "FileSystem.h"
 
-#import "CString.h"
 #import "PlatformString.h"
+#import <wtf/text/CString.h>
 #import <wtf/RetainPtr.h>
 
 namespace WebCore {

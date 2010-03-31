@@ -33,7 +33,6 @@
 #include "config.h"
 #include "FileSystem.h"
 
-#include "CString.h"
 #include "NotImplemented.h"
 
 #include <Ecore.h>
@@ -48,6 +47,7 @@
 #include <stdio.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 

@@ -26,9 +26,9 @@
 #include "config.h"
 #include "Logging.h"
 
-#include "CString.h"
 #include "PlatformString.h"
 #include <wtf/Vector.h>
+#include <wtf/text/CString.h>
 
 #include <wx/defs.h>
 #include <wx/utils.h>

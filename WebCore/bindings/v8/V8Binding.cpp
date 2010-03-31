@@ -32,7 +32,6 @@
 #include "V8Binding.h"
 
 #include "AtomicString.h"
-#include "CString.h"
 #include "Element.h"
 #include "MathExtras.h"
 #include "PlatformString.h"
@@ -43,6 +42,7 @@
 #include "Threading.h"
 #include "V8Element.h"
 #include "V8Proxy.h"
+#include <wtf/text/CString.h>
 
 #include <v8.h>
 

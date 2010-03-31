@@ -44,7 +44,6 @@
 #import <JavaScriptCore/Error.h>
 #import <JavaScriptCore/JSLock.h>
 #import <JavaScriptCore/PropertyNameArray.h>
-#import <WebCore/CString.h>
 #import <WebCore/CookieJar.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/Frame.h>
@@ -61,6 +60,7 @@
 #import <mach/mach.h>
 #import <utility>
 #import <wtf/RefCountedLeakCounter.h>
+#import <wtf/text/CString.h>
 
 extern "C" {
 #import "WebKitPluginClientServer.h"
@@ -1493,7 +1493,7 @@ bool NetscapePluginInstanceProxy::getCookies(data_t urlData, mach_msg_type_numbe
     
     if (Frame* frame = core([m_pluginView webFrame])) {
         String cookieString = cookies(frame->document(), url); 
-        WebCore::CString cookieStringUTF8 = cookieString.utf8();
+        WTF::CString cookieStringUTF8 = cookieString.utf8();
         if (cookieStringUTF8.isNull())
             return false;
         
@@ -1535,7 +1535,7 @@ bool NetscapePluginInstanceProxy::getProxy(data_t urlData, mach_msg_type_number_
     if (!url)
         return false;
 
-    WebCore::CString proxyStringUTF8 = proxiesForURL(url);
+    WTF::CString proxyStringUTF8 = proxiesForURL(url);
 
     proxyLength = proxyStringUTF8.length();
     mig_allocate(reinterpret_cast<vm_address_t*>(&proxyData), proxyLength);
@@ -1547,8 +1547,8 @@ bool NetscapePluginInstanceProxy::getProxy(data_t urlData, mach_msg_type_number_
 bool NetscapePluginInstanceProxy::getAuthenticationInfo(data_t protocolData, data_t hostData, uint32_t port, data_t schemeData, data_t realmData, 
                                                         data_t& usernameData, mach_msg_type_number_t& usernameLength, data_t& passwordData, mach_msg_type_number_t& passwordLength)
 {
-    WebCore::CString username;
-    WebCore::CString password;
+    WTF::CString username;
+    WTF::CString password;
     
     if (!WebKit::getAuthenticationInfo(protocolData, hostData, port, schemeData, realmData, username, password))
         return false;
@@ -1618,7 +1618,7 @@ void NetscapePluginInstanceProxy::resolveURL(const char* url, const char* target
 {
     ASSERT(m_pluginView);
     
-    WebCore::CString resolvedURL = [m_pluginView resolvedURLStringForURL:url target:target];
+    WTF::CString resolvedURL = [m_pluginView resolvedURLStringForURL:url target:target];
     
     resolvedURLLength = resolvedURL.length();
     mig_allocate(reinterpret_cast<vm_address_t*>(&resolvedURLData), resolvedURLLength);

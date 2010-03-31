@@ -29,9 +29,13 @@
 #include "TextCodec.h"
 #include <wtf/unicode/Unicode.h>
 
+namespace WTF {
+class CString;
+}
+using WTF::CString;
+
 namespace WebCore {
 
-    class CString;
     class String;
 
     class TextEncoding {
@@ -71,7 +75,7 @@ namespace WebCore {
             return decode(str, length, false, ignored);
         }
         String decode(const char*, size_t length, bool stopOnError, bool& sawError) const;
-        CString encode(const UChar*, size_t length, UnencodableHandling) const;
+        WTF::CString encode(const UChar*, size_t length, UnencodableHandling) const;
 
     private:
         UChar backslashAsCurrencySymbol() const;

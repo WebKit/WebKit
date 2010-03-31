@@ -21,9 +21,9 @@
 #define ConvertToGCharPrivate_h
 
 #include "AtomicString.h"
-#include "CString.h"
 #include "KURL.h"
 #include "PlatformString.h"
+#include <wtf/text/CString.h>
 
 inline gchar* copyAsGchar(WebCore::String const& s)
 {

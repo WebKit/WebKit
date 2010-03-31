@@ -37,7 +37,6 @@
 #include "Archive.h"
 #include "ArchiveFactory.h"
 #include "BackForwardList.h"
-#include "CString.h"
 #include "Cache.h"
 #include "CachedPage.h"
 #include "Chrome.h"
@@ -108,6 +107,7 @@
 #include "XMLHttpRequest.h"
 #include "XMLTokenizer.h"
 #include "XSSAuditor.h"
+#include <wtf/text/CString.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/StdLibExtras.h>
 

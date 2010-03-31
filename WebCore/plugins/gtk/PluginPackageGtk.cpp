@@ -32,12 +32,12 @@
 #include <gio/gio.h>
 #include <stdio.h>
 
-#include "CString.h"
 #include "GOwnPtr.h"
 #include "MIMETypeRegistry.h"
 #include "NotImplemented.h"
 #include "npruntime_impl.h"
 #include "PluginDebug.h"
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 

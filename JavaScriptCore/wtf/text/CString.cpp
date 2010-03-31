@@ -29,7 +29,7 @@
 
 using std::min;
 
-namespace WebCore {
+namespace WTF {
 
 CString::CString(const char* str)
 {
@@ -99,4 +99,4 @@ bool operator==(const CString& a, const CString& b)
     return !strncmp(a.data(), b.data(), min(a.length(), b.length()));
 }
 
-} // namespace WebCore
+} // namespace WTF

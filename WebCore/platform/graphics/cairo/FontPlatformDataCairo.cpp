@@ -25,9 +25,9 @@
 #include "config.h"
 #include "FontPlatformData.h"
 
-#include "CString.h"
 #include "PlatformString.h"
 #include "FontDescription.h"
+#include <wtf/text/CString.h>
 
 #include <cairo-ft.h>
 #include <cairo.h>

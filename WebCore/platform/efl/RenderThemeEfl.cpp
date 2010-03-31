@@ -26,7 +26,6 @@
 #include "config.h"
 #include "RenderThemeEfl.h"
 
-#include "CString.h"
 #include "FileSystem.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -35,6 +34,7 @@
 #include "Page.h"
 #include "RenderBox.h"
 #include "RenderObject.h"
+#include <wtf/text/CString.h>
 
 #include <Edje.h>
 namespace WebCore {

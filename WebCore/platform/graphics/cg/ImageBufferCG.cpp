@@ -29,13 +29,13 @@
 
 #include "Base64.h"
 #include "BitmapImage.h"
-#include "CString.h"
 #include "GraphicsContext.h"
 #include "ImageData.h"
 #include "MIMETypeRegistry.h"
 #include "PlatformString.h"
 #include <ApplicationServices/ApplicationServices.h>
 #include <wtf/Assertions.h>
+#include <wtf/text/CString.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Threading.h>

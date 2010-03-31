@@ -67,7 +67,7 @@ namespace WebCore {
         }
         
         virtual String decode(const char*, size_t length, bool flush, bool stopOnError, bool& sawError) = 0;
-        virtual CString encode(const UChar*, size_t length, UnencodableHandling) = 0;
+        virtual WTF::CString encode(const UChar*, size_t length, UnencodableHandling) = 0;
 
         // Fills a null-terminated string representation of the given
         // unencodable character into the given replacement buffer. 

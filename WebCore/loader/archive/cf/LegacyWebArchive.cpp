@@ -29,7 +29,6 @@
 #include "config.h"
 #include "LegacyWebArchive.h"
 
-#include "CString.h"
 #include "Cache.h"
 #include "Document.h"
 #include "DocumentLoader.h"
@@ -47,6 +46,7 @@
 #include "Range.h"
 #include "SelectionController.h"
 #include "SharedBuffer.h"
+#include <wtf/text/CString.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/RetainPtr.h>
 

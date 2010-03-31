@@ -26,11 +26,11 @@
 #include "config.h"
 #include "ContextMenu.h"
 
-#include "CString.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "Node.h"
+#include <wtf/text/CString.h>
 #include <tchar.h>
 #include <windows.h>
 

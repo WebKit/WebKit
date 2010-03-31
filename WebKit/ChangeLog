@@ -1,3 +1,18 @@
+2010-03-30  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber stamped by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36866
+        Move CString to WTF
+
+        * efl/WebCoreSupport/ChromeClientEfl.cpp:
+        * efl/ewk/ewk_frame.cpp:
+        (ewk_frame_name_get):
+        (ewk_frame_selection_get):
+        (ewk_frame_uri_changed):
+        * efl/ewk/ewk_history.cpp:
+        * efl/ewk/ewk_settings.cpp:
+
 2010-03-28  Alexey Proskuryakov  <ap@apple.com>
 
         Build fix. Include WindowsKeyboardCodes.h instead of KeyboardCodes.h.

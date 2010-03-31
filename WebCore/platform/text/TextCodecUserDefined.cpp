@@ -26,10 +26,10 @@
 #include "config.h"
 #include "TextCodecUserDefined.h"
 
-#include "CString.h"
 #include "PlatformString.h"
 #include "StringBuffer.h"
 #include <stdio.h>
+#include <wtf/text/CString.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {

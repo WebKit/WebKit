@@ -31,7 +31,6 @@
 #include "CSSParser.h"
 #include "CSSSelectorList.h"
 #include "CSSStyleSelector.h"
-#include "CString.h"
 #include "ClientRect.h"
 #include "ClientRectList.h"
 #include "Document.h"
@@ -54,6 +53,7 @@
 #include "TextIterator.h"
 #include "XMLNames.h"
 #include "XMLTokenizer.h"
+#include <wtf/text/CString.h>
 
 #if ENABLE(SVG)
 #include "SVGNames.h"

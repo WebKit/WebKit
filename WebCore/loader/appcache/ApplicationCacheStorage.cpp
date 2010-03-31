@@ -32,11 +32,11 @@
 #include "ApplicationCacheHost.h"
 #include "ApplicationCacheGroup.h"
 #include "ApplicationCacheResource.h"
-#include "CString.h"
 #include "FileSystem.h"
 #include "KURL.h"
 #include "SQLiteStatement.h"
 #include "SQLiteTransaction.h"
+#include <wtf/text/CString.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringExtras.h>
 

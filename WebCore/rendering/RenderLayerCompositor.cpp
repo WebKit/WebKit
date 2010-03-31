@@ -54,7 +54,6 @@
 #endif
 
 #ifndef NDEBUG
-#include "CString.h"
 #include "RenderTreeAsText.h"
 #endif
 

@@ -26,7 +26,6 @@
 #include "config.h"
 #include "ClipboardUtilitiesWin.h"
 
-#include "CString.h"
 #include "DocumentFragment.h"
 #include "KURL.h"
 #include "PlatformString.h"
@@ -34,6 +33,7 @@
 #include "markup.h"
 #include <CoreFoundation/CoreFoundation.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/text/CString.h>
 #include <shlwapi.h>
 #include <wininet.h>    // for INTERNET_MAX_URL_LENGTH
 

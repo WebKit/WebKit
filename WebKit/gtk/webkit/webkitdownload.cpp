@@ -20,7 +20,6 @@
 
 #include "config.h"
 
-#include "CString.h"
 #include <glib/gi18n-lib.h>
 #include "GRefPtr.h"
 #include "Noncopyable.h"
@@ -34,6 +33,7 @@
 #include "webkitmarshal.h"
 #include "webkitnetworkresponse.h"
 #include "webkitprivate.h"
+#include <wtf/text/CString.h>
 
 #include <glib/gstdio.h>
 

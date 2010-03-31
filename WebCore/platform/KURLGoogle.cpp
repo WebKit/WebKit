@@ -40,13 +40,13 @@
 
 #include <algorithm>
 
-#include "CString.h"
 #include "StringHash.h"
 #include "NotImplemented.h"
 #include "TextEncoding.h"
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/CString.h>
 
 #include <googleurl/src/url_canon_internal.h>
 #include <googleurl/src/url_util.h>

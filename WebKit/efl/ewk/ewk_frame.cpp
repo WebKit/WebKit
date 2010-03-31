@@ -24,7 +24,6 @@
 #include "config.h"
 #include "ewk_frame.h"
 
-#include "CString.h"
 #include "EWebKit.h"
 #include "EventHandler.h"
 #include "FocusController.h"
@@ -46,6 +45,7 @@
 #include "SubstituteData.h"
 #include "WindowsKeyboardCodes.h"
 #include "ewk_private.h"
+#include <wtf/text/CString.h>
 
 #include <Eina.h>
 #include <Evas.h>
@@ -473,7 +473,7 @@ const char* ewk_frame_name_get(const Evas_Object* o)
     }
 
     WebCore::String s = sd->frame->tree()->name();
-    WebCore::CString cs = s.utf8();
+    WTF::CString cs = s.utf8();
     sd->name = eina_stringshare_add_length(cs.data(), cs.length());
     return sd->name;
 }
@@ -650,7 +650,7 @@ char* ewk_frame_selection_get(const Evas_Object* o)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, 0);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->frame, 0);
-    WebCore::CString s = sd->frame->selectedText().utf8();
+    WTF::CString s = sd->frame->selectedText().utf8();
     if (s.isNull())
         return 0;
     return strdup(s.data());
@@ -1798,7 +1798,7 @@ Eina_Bool ewk_frame_uri_changed(Evas_Object* o)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->frame, EINA_FALSE);
-    WebCore::CString uri(sd->frame->loader()->url().prettyURL().utf8());
+    WTF::CString uri(sd->frame->loader()->url().prettyURL().utf8());
 
     INF("uri=%s", uri.data());
     if (!uri.data()) {

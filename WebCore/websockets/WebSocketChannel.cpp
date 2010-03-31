@@ -34,7 +34,6 @@
 
 #include "WebSocketChannel.h"
 
-#include "CString.h"
 #include "CookieJar.h"
 #include "Document.h"
 #include "Logging.h"
@@ -46,6 +45,7 @@
 #include "WebSocketChannelClient.h"
 #include "WebSocketHandshake.h"
 
+#include <wtf/text/CString.h>
 #include <wtf/Deque.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>

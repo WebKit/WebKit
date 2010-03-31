@@ -30,12 +30,12 @@
 #include "config.h"
 #include "PlatformKeyboardEvent.h"
 
-#include "CString.h"
 #include "NotImplemented.h"
 #include "WindowsKeyboardCodes.h"
 #include <InterfaceDefs.h>
 #include <Message.h>
 #include <String.h>
+#include <wtf/text/CString.h>
 
 
 namespace WebCore {

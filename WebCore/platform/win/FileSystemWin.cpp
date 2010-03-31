@@ -30,10 +30,10 @@
 #include "config.h"
 #include "FileSystem.h"
 
-#include "CString.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
 #include <wtf/HashMap.h>
+#include <wtf/text/CString.h>
 
 #include <windows.h>
 #include <winbase.h>

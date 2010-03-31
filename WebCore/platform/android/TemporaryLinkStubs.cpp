@@ -29,7 +29,6 @@
 #define ANDROID_COMPILE_HACK
 
 #include "AXObjectCache.h"
-#include "CString.h"
 #include "CachedPage.h"
 #include "CachedResource.h"
 #include "Clipboard.h"
@@ -79,6 +78,7 @@
 #include "loader.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <wtf/text/CString.h>
 
 #if USE(JSC)
 #include "API/JSClassRef.h"

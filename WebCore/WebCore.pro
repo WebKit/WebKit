@@ -811,7 +811,6 @@ SOURCES += \
     platform/ContentType.cpp \
     platform/ContextMenu.cpp \
     platform/CrossThreadCopier.cpp \
-    platform/text/CString.cpp \
     platform/DeprecatedPtrListImpl.cpp \
     platform/DragData.cpp \
     platform/DragImage.cpp \
@@ -1620,7 +1619,6 @@ HEADERS += \
     platform/text/AtomicString.h \
     platform/text/Base64.h \
     platform/text/BidiContext.h \
-    platform/text/CString.h \
     platform/text/qt/TextCodecQt.h \
     platform/text/RegularExpression.h \
     platform/text/SegmentedString.h \

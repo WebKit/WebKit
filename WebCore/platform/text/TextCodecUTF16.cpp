@@ -26,9 +26,9 @@
 #include "config.h"
 #include "TextCodecUTF16.h"
 
-#include "CString.h"
 #include "PlatformString.h"
 #include "StringBuffer.h"
+#include <wtf/text/CString.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {

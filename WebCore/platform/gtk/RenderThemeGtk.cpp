@@ -25,7 +25,6 @@
 #include "RenderThemeGtk.h"
 
 #include "AffineTransform.h"
-#include "CString.h"
 #include "GOwnPtr.h"
 #include "Gradient.h"
 #include "GraphicsContext.h"
@@ -37,6 +36,7 @@
 #include "RenderObject.h"
 #include "UserAgentStyleSheets.h"
 #include "gtkdrawing.h"
+#include <wtf/text/CString.h>
 
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>

@@ -19,13 +19,13 @@
 #ifndef DataObjectGtk_h
 #define DataObjectGtk_h
 
-#include "CString.h"
 #include "FileList.h"
 #include <GRefPtr.h>
 #include "KURL.h"
 #include "Range.h"
 #include "StringHash.h"
 #include <wtf/RefCounted.h>
+#include <wtf/text/CString.h>
 
 typedef struct _GdkPixbuf GdkPixbuf;
 typedef struct _GdkDragContext GdkDragContext;

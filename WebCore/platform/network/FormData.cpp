@@ -22,7 +22,6 @@
 #include "FormData.h"
 
 #include "Blob.h"
-#include "CString.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DOMFormData.h"

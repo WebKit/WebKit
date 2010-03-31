@@ -26,13 +26,13 @@
 #include "config.h"
 #include "HistoryItem.h"
 
-#include "CString.h"
 #include "CachedPage.h"
 #include "Document.h"
 #include "IconDatabase.h"
 #include "PageCache.h"
 #include "ResourceRequest.h"
 #include <stdio.h>
+#include <wtf/text/CString.h>
 #include <wtf/CurrentTime.h>
 
 namespace WebCore {

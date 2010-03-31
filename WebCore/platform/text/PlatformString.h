@@ -57,9 +57,13 @@ class UString;
 }
 #endif
 
+namespace WTF {
+class CString;
+}
+using WTF::CString;
+
 namespace WebCore {
 
-class CString;
 class SharedBuffer;
 struct StringHash;
 

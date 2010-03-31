@@ -31,8 +31,8 @@
 #include "config.h"
 #include "QuotaTracker.h"
 
-#include "CString.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 

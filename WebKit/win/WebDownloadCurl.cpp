@@ -27,7 +27,6 @@
 #include "WebKitDLL.h"
 #include "WebDownload.h"
 
-#include "CString.h"
 #include "DefaultDownloadDelegate.h"
 #include "MarshallingHelpers.h"
 #include "WebError.h"
@@ -39,6 +38,7 @@
 #include "WebURLResponse.h"
 
 #include <wtf/platform.h>
+#include <wtf/text/CString.h>
 
 #include <io.h>
 #include <sys/stat.h>
