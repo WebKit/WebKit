@@ -74,7 +74,7 @@ private:
     RefPtr<Widget> m_widget;
     RefPtr<Image> m_substituteImage;
     FrameView* m_frameView;
-    IntRect m_clipRect; // The rectangle needs to remain correct after scrolling, so storing it in content view coordinates, and not clipped to window.
+    IntRect m_clipRect; // The rectangle needs to remain correct after scrolling, so it is stored in content view coordinates, and not clipped to window.
     int m_refCount;
 };
 

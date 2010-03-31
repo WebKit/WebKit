@@ -25,7 +25,6 @@
 
 #include "AXObjectCache.h"
 #include "AnimationController.h"
-#include "CString.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "RenderView.h"
