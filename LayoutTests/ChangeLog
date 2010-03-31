@@ -1,3 +1,17 @@
+2010-02-30  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Antti Koivisto.
+
+        iframe flattening doesn't flatten
+        https://bugs.webkit.org/show_bug.cgi?id=36798
+
+        Add more tests for iframe flattening
+
+        * fast/frames/flattening/iframe-flattening-fixed-height.html
+        * fast/frames/flattening/iframe-flattening-fixed-width.html
+        * fast/frames/flattening/iframe-flattening-fixed-width-and-height.html
+        * fast/frames/flattening/iframe-flattening-fixed-width-and-height-no-scrolling.html
+
 2010-03-31  Sterling Swigart  <sswigart@google.com>
 
         Reviewed by David Levin.

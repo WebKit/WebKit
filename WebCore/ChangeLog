@@ -1,3 +1,21 @@
+2010-03-30  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Antti Koivisto.
+
+        iframe flattening doesn't flatten
+        https://bugs.webkit.org/show_bug.cgi?id=36798
+
+        Fix wrongly reversing logic in frame flattening check.
+
+        Tests:
+        fast/frames/flattening/iframe-flattening-fixed-height.html
+        fast/frames/flattening/iframe-flattening-fixed-width.html
+        fast/frames/flattening/iframe-flattening-fixed-width-and-height.html
+        fast/frames/flattening/iframe-flattening-fixed-width-and-height-no-scrolling.html
+
+        * rendering/RenderPartObject.cpp:
+        (WebCore::RenderPartObject::flattenFrame):
+
 2010-03-31  Marcus Bulach  <bulach@chromium.org>
 
         Reviewed by Jeremy Orlow.
