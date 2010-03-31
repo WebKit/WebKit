@@ -262,40 +262,46 @@ class BuildBot(object):
             "Chromium",
         ]
 
-    # FIXME: This should create and return Buidler and Build objects instead
-    # of a custom dictionary.
-    def _parse_builder_status_from_row(self, status_row):
-        # If WebKit's buildbot has an XMLRPC interface we could use, we could
-        # do something more sophisticated here.  For now we just parse out the
-        # basics, enough to support basic questions like "is the tree green?"
-        status_cells = status_row.findAll('td')
-        builder = {}
+    def _parse_last_build_cell(self, builder, cell):
+        status_link = cell.find('a')
+        if status_link:
+            # Will be either a revision number or a build number
+            revision_string = status_link.string
+            # If revision_string has non-digits assume it's not a revision number.
+            builder['built_revision'] = int(revision_string) \
+                                        if not re.match('\D', revision_string) \
+                                        else None
+            builder['is_green'] = not re.search('fail', cell.renderContents())
 
-        name_link = status_cells[0].find('a')
-        builder['name'] = name_link.string
-
-        status_link = status_cells[1].find('a')
-        if not status_link:
+            status_link_regexp = r"builders/(?P<builder_name>.*)/builds/(?P<build_number>\d+)"
+            link_match = re.match(status_link_regexp, status_link['href'])
+            builder['build_number'] = int(link_match.group("build_number"))
+        else:
             # We failed to find a link in the first cell, just give up.  This
             # can happen if a builder is just-added, the first cell will just
             # be "no build"
             # Other parts of the code depend on is_green being present.
             builder['is_green'] = False
-            return builder
-        # Will be either a revision number or a build number
-        revision_string = status_link.string
-        # If revision_string has non-digits assume it's not a revision number.
-        builder['built_revision'] = int(revision_string) \
-                                    if not re.match('\D', revision_string) \
-                                    else None
-        builder['is_green'] = not re.search('fail',
-                                            status_cells[1].renderContents())
+            builder['built_revision'] = None
+            builder['build_number'] = None
 
-        status_link_regexp = r"builders/(?P<builder_name>.*)/builds/(?P<build_number>\d+)"
-        link_match = re.match(status_link_regexp, status_link['href'])
-        builder['build_number'] = int(link_match.group("build_number"))
+    def _parse_current_build_cell(self, builder, cell):
+        activity_lines = cell.renderContents().split("<br />")
+        builder["activity"] = activity_lines[0] # normally "building" or "idle"
+        # The middle lines document how long left for any current builds.
+        match = re.match("(?P<pending_builds>\d) pending", activity_lines[-1])
+        builder["pending_builds"] = int(match.group("pending_builds")) if match else 0
 
-        # We could parse out the current activity too.
+    def _parse_builder_status_from_row(self, status_row):
+        status_cells = status_row.findAll('td')
+        builder = {}
+
+        # First cell is the name
+        name_link = status_cells[0].find('a')
+        builder["name"] = name_link.string
+
+        self._parse_last_build_cell(builder, status_cells[1])
+        self._parse_current_build_cell(builder, status_cells[2])
         return builder
 
     def _matches_regexps(self, builder_name, name_regexps):
@@ -360,6 +366,7 @@ class BuildBot(object):
     def builders(self):
         return [self.builder_with_name(status["name"]) for status in self.builder_statuses()]
 
+    # This method pulls from /one_box_per_builder as an efficient way to get information about
     def builder_statuses(self):
         soup = BeautifulSoup(self._fetch_one_box_per_builder())
         return [self._parse_builder_status_from_row(status_row) for status_row in soup.find('table').findAll('tr')]

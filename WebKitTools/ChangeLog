@@ -1,3 +1,17 @@
+2010-03-31  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Teach buildbot.py how to parse builder activity from /one_box_per_builder
+        https://bugs.webkit.org/show_bug.cgi?id=36898
+
+        I also removed some obsolete FIXMEs and
+        refactored one_box_per_builder parsing into multiple
+        methods for easier reading.
+
+        * Scripts/webkitpy/common/net/buildbot.py:
+        * Scripts/webkitpy/common/net/buildbot_unittest.py:
+
 2010-03-31  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Eric Seidel.
