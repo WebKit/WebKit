@@ -36,7 +36,7 @@
 #include "IDBDatabaseError.h"
 #include "IDBDatabaseRequest.h"
 #include "V8Binding.h"
-#include "V8CustomIDBCallback.h"
+#include "V8CustomIDBCallbacks.h"
 #include "V8IDBDatabaseError.h"
 #include "V8IDBDatabaseRequest.h"
 #include "V8Proxy.h"
@@ -55,29 +55,27 @@ v8::Handle<v8::Value> V8IndexedDatabaseRequest::openCallback(const v8::Arguments
     if (args.Length() > 2 && !args[2]->IsUndefined() && !args[2]->IsNull())
         modifyDatabase = args[2]->BooleanValue();
 
-    Frame* frame = V8Proxy::retrieveFrameForCurrentContext();
-
-    RefPtr<V8CustomIDBCallback<IDBDatabaseError> > onerror;
+    v8::Local<v8::Value> onError;
+    v8::Local<v8::Value> onSuccess;
     if (args.Length() > 3 && !args[3]->IsUndefined() && !args[3]->IsNull()) {
         if (!args[3]->IsObject())
             return throwError("onerror callback was not the proper type");
-        if (frame)
-            onerror = V8CustomIDBCallback<IDBDatabaseError>::create(args[3], frame);
+        onError = args[3];
     }
-
-    RefPtr<V8CustomIDBCallback<IDBDatabaseRequest> > onsuccess;
     if (args.Length() > 4 && !args[4]->IsUndefined() && !args[4]->IsNull()) {
         if (!args[4]->IsObject())
             return throwError("onsuccess callback was not the proper type");
-        if (frame)
-            onsuccess = V8CustomIDBCallback<IDBDatabaseRequest>::create(args[4], frame);
+        onSuccess = args[4];
     }
-
-    if (!onerror && !onsuccess)
+    if (!onError->IsObject() && !onSuccess->IsObject())
         return throwError("Neither the onerror nor the onsuccess callbacks were set.");
 
+    Frame* frame = V8Proxy::retrieveFrameForCurrentContext();
+    RefPtr<V8CustomIDBCallbacks<IDBDatabase, IDBDatabaseRequest> > callbacks =
+        V8CustomIDBCallbacks<IDBDatabase, IDBDatabaseRequest>::create(onSuccess, onError, frame);
+
     ExceptionCode ec = 0;
-    imp->open(name, description, modifyDatabase, ec);
+    imp->open(name, description, modifyDatabase, ec, callbacks);
     if (ec)
         return throwError(ec);
     return v8::Handle<v8::Value>();

@@ -1,3 +1,31 @@
+2010-03-30  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        IndexedDB: Finish hooking up bindings for IndexedDatabaseRequest
+        https://bugs.webkit.org/show_bug.cgi?id=36830
+
+        Still not enough hooked up to test.  Soon!
+
+        * WebCore.gypi:
+        * bindings/v8/custom/V8CustomIDBCallback.h: Removed.
+        * bindings/v8/custom/V8CustomIDBCallbacks.h: Added.
+        (WebCore::V8CustomIDBCallbacks::create):
+        (WebCore::V8CustomIDBCallbacks::~V8CustomIDBCallbacks):
+        (WebCore::V8CustomIDBCallbacks::onSuccess):
+        (WebCore::V8CustomIDBCallbacks::onError):
+        (WebCore::V8CustomIDBCallbacks::V8CustomIDBCallbacks):
+        * bindings/v8/custom/V8IndexedDatabaseRequestCustom.cpp:
+        (WebCore::V8IndexedDatabaseRequest::openCallback):
+        * storage/IDBDatabaseRequest.cpp: Added.
+        (WebCore::IDBDatabaseRequest::IDBDatabaseRequest):
+        (WebCore::IDBDatabaseRequest::~IDBDatabaseRequest):
+        * storage/IDBDatabaseRequest.h:
+        (WebCore::IDBDatabaseRequest::create):
+        * storage/IndexedDatabaseRequest.cpp:
+        (WebCore::IndexedDatabaseRequest::open):
+        * storage/IndexedDatabaseRequest.h:
+
 2010-03-31  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Darin Fisher.

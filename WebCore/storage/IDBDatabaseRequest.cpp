@@ -25,45 +25,26 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef IndexedDatabaseRequest_h
-#define IndexedDatabaseRequest_h
 
-#include "ExceptionCode.h"
+#include "config.h"
+#include "IDBDatabaseRequest.h"
+
 #include "IndexedDatabase.h"
-#include "PlatformString.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
-class IndexedDatabase;
-class Frame;
+IDBDatabaseRequest::IDBDatabaseRequest(PassRefPtr<IDBDatabase> idbDatabase)
+    : m_idbDatabase(idbDatabase)
+{
+}
 
-class IndexedDatabaseRequest : public RefCounted<IndexedDatabaseRequest> {
-public:
-    static PassRefPtr<IndexedDatabaseRequest> create(IndexedDatabase* indexedDatabase, Frame* frame)
-    {
-        return adoptRef(new IndexedDatabaseRequest(indexedDatabase, frame));
-    }
-    ~IndexedDatabaseRequest();
-
-    void open(const String& name, const String& description, bool modifyDatabase, ExceptionCode&, PassRefPtr<IDBDatabaseCallbacks> callbacks);
-
-    void disconnectFrame() { m_frame = 0; }
-
-private:
-    IndexedDatabaseRequest(IndexedDatabase*, Frame*);
-
-    PassRefPtr<IndexedDatabase> m_indexedDatabase;
-    Frame* m_frame;
-};
+IDBDatabaseRequest::~IDBDatabaseRequest()
+{
+}
 
 } // namespace WebCore
 
-#endif
-
-#endif // IndexedDatabaseRequest_h
+#endif // ENABLE(INDEXED_DATABASE)
 

@@ -28,19 +28,31 @@
 #ifndef IDBDatabaseRequest_h
 #define IDBDatabaseRequest_h
 
+#include "IDBDatabase.h"
+#include "PlatformString.h"
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
-class IDBRequest;
-
 class IDBDatabaseRequest : public RefCounted<IDBDatabaseRequest> {
 public:
+    static PassRefPtr<IDBDatabaseRequest> create(PassRefPtr<IDBDatabase> idbDatabase)
+    {
+        return adoptRef(new IDBDatabaseRequest(idbDatabase));
+    }
+    ~IDBDatabaseRequest();
+
     // FIXME: Write.
-    IDBRequest* request() const { return 0; }
     void createObjectStore(const String& name, const String& keyPath, bool autoIncrement) { }
+
+private:
+    IDBDatabaseRequest(PassRefPtr<IDBDatabase>);
+
+    RefPtr<IDBDatabase> m_idbDatabase;
 };
 
 } // namespace WebCore

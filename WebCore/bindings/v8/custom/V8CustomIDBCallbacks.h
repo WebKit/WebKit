@@ -28,11 +28,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef V8CustomIDBCallback_h
-#define V8CustomIDBCallback_h
+#ifndef V8CustomIDBCallbacks_h
+#define V8CustomIDBCallbacks_h
 
 #include "Frame.h"
+#include "IDBDatabaseError.h"
 #include "V8CustomVoidCallback.h"
+#include "V8IDBDatabaseError.h"
 #include <v8.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -43,22 +45,24 @@
 namespace WebCore {
 
 // FIXME: Maybe split common parts into a base class.
-template <typename CallbackType>
-class V8CustomIDBCallback : public RefCounted<V8CustomIDBCallback<CallbackType> > {
+template <typename ResultType, typename ResultWrapperType>
+class V8CustomIDBCallbacks : public IDBCallbacks<ResultType> {
 public:
-    static PassRefPtr<V8CustomIDBCallback> create(v8::Local<v8::Value> value, Frame* frame)
+    static PassRefPtr<V8CustomIDBCallbacks> create(v8::Local<v8::Value> onSuccess, v8::Local<v8::Value> onError, Frame* frame)
     {
-        ASSERT(value->IsObject());
-        return adoptRef(new V8CustomIDBCallback(value->ToObject(), frame));
+        return adoptRef(new V8CustomIDBCallbacks(onSuccess, onError, frame));
     }
 
-    virtual ~V8CustomIDBCallback()
+    virtual ~V8CustomIDBCallbacks()
     {
-        m_callback.Dispose();
+        m_onSuccess.Dispose();
+        m_onError.Dispose();
     }
 
-    virtual void handleEvent(CallbackType* result)
+    virtual void onSuccess(PassRefPtr<ResultType> result)
     {
+        if (m_onSuccessNull)
+            return;
         v8::HandleScope handleScope;
         v8::Handle<v8::Context> context = V8Proxy::context(m_frame.get());
         if (context.IsEmpty())
@@ -66,22 +70,48 @@ public:
 
         v8::Context::Scope scope(context);
         v8::Handle<v8::Value> argv[] = {
-            toV8(result)
+            toV8(ResultWrapperType::create(result))
         };
         RefPtr<Frame> protector(m_frame);
         bool callbackReturnValue = false;
         // FIXME: Do we care if this thing returns true (i.e. it raised an exception)?
-        invokeCallback(m_callback, 1, argv, callbackReturnValue);
+        invokeCallback(m_onSuccess, 1, argv, callbackReturnValue);
+    }
+
+    virtual void onError(PassRefPtr<IDBDatabaseError> error)
+    {
+        if (m_onErrorNull)
+            return;
+        v8::HandleScope handleScope;
+        v8::Handle<v8::Context> context = V8Proxy::context(m_frame.get());
+        if (context.IsEmpty())
+            return;
+
+        v8::Context::Scope scope(context);
+        v8::Handle<v8::Value> argv[] = {
+            toV8(error)
+        };
+        RefPtr<Frame> protector(m_frame);
+        bool callbackReturnValue = false;
+        // FIXME: Do we care if this thing returns true (i.e. it raised an exception)?
+        invokeCallback(m_onError, 1, argv, callbackReturnValue);
     }
 
 private:
-    V8CustomIDBCallback(v8::Local<v8::Object>callback, Frame* frame)
-        : m_callback(v8::Persistent<v8::Object>::New(callback)),
-          m_frame(frame)
+    V8CustomIDBCallbacks(v8::Local<v8::Value> onSuccess, v8::Local<v8::Value> onError, Frame* frame)
+        : m_onSuccessNull(!onSuccess->IsObject())
+        , m_onSuccess(v8::Persistent<v8::Object>::New(onSuccess->ToObject()))
+        , m_onErrorNull(!onError->IsObject())
+        , m_onError(v8::Persistent<v8::Object>::New(onError->ToObject()))
+        , m_frame(frame)
     {
     }
 
-    v8::Persistent<v8::Object> m_callback;
+    // FIXME: Should these be v8::Functions?  For some reason, VoidCallback (which this copied) uses v8::Objects.
+    bool m_onSuccessNull;
+    v8::Persistent<v8::Object> m_onSuccess;
+    bool m_onErrorNull;
+    v8::Persistent<v8::Object> m_onError;
     RefPtr<Frame> m_frame;
 };
 
@@ -89,4 +119,4 @@ private:
 
 #endif
 
-#endif // V8CustomIDBCallback_h
+#endif // V8CustomIDBCallbacks_h
