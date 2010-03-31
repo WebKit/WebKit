@@ -78,6 +78,11 @@ public:
 
     virtual double caretBlinkInterval() const;
 
+#ifdef Q_WS_MAEMO_5
+    virtual bool isControlStyled(const RenderStyle*, const BorderData&, const FillLayer&, const Color& backgroundColor) const;
+    virtual int popupInternalPaddingBottom(RenderStyle*) const;
+#endif
+
 #if ENABLE(VIDEO)
     virtual String extraMediaControlsStyleSheet();
 #endif

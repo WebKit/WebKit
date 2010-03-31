@@ -1,3 +1,40 @@
+2010-03-31  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Maemo5 theme - form controls style
+        https://bugs.webkit.org/show_bug.cgi?id=36370
+
+        Adjusting Mameo5 form elements rendering.
+
+        * WebCore.pri:
+        * WebCore.pro:
+        * css/themeQtMaemo5.css: Added.
+        (select):
+        (select:disabled):
+        (select:active):
+        (select:active:disabled):
+        (textarea):
+        (textarea:disabled):
+        (textarea:active):
+        * platform/qt/Maemo5Webstyle.cpp: Added.
+        (Maemo5WebStyle::Maemo5WebStyle):
+        (drawRectangularControlBackgorund):
+        (Maemo5WebStyle::drawChecker):
+        (Maemo5WebStyle::findChecker):
+        (Maemo5WebStyle::drawRadio):
+        (Maemo5WebStyle::findRadio):
+        (Maemo5WebStyle::drawControl):
+        (Maemo5WebStyle::drawComplexControl):
+        * platform/qt/Maemo5Webstyle.h: Added.
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::RenderThemeQt):
+        (WebCore::RenderThemeQt::isControlStyled):
+        (WebCore::RenderThemeQt::popupInternalPaddingBottom):
+        (WebCore::RenderThemeQt::extraDefaultStyleSheet):
+        (WebCore::RenderThemeQt::adjustMenuListButtonStyle):
+        * platform/qt/RenderThemeQt.h:
+
 2010-03-31  Alexey Proskuryakov  <ap@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=36897

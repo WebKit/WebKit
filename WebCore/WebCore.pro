@@ -2116,10 +2116,13 @@ SOURCES += \
     ../WebKit/qt/Api/qwebinspector.cpp \
     ../WebKit/qt/Api/qwebkitversion.cpp
 
-
 maemo5 {
-    HEADERS += ../WebKit/qt/WebCoreSupport/QtMaemoWebPopup.h
-    SOURCES += ../WebKit/qt/WebCoreSupport/QtMaemoWebPopup.cpp
+    HEADERS += \
+        ../WebKit/qt/WebCoreSupport/QtMaemoWebPopup.h \
+        platform/qt/Maemo5Webstyle.h
+    SOURCES += \
+        ../WebKit/qt/WebCoreSupport/QtMaemoWebPopup.cpp \
+        platform/qt/Maemo5Webstyle.cpp
 }
 
 

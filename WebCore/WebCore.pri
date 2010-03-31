@@ -208,7 +208,8 @@ STYLESHEETS_EMBED = \
     $$PWD/css/wml.css \
     $$PWD/css/mediaControls.css \
     $$PWD/css/mediaControlsQt.css \
-    $$PWD/css/themeQtNoListboxes.css
+    $$PWD/css/themeQtNoListboxes.css \
+    $$PWD/css/themeQtMaemo5.css
 
 IDL_BINDINGS += \
     css/Counter.idl \

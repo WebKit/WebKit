@@ -42,6 +42,9 @@
 #include "HTMLInputElement.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
+#ifdef Q_WS_MAEMO_5
+#include "Maemo5webstyle.h"
+#endif
 #include "NotImplemented.h"
 #include "Page.h"
 #include "QtStyleOptionWebComboBox.h"
@@ -56,6 +59,7 @@
 #include "ScrollbarThemeQt.h"
 #include "UserAgentStyleSheets.h"
 #include "qwebpage.h"
+
 
 #include <QApplication>
 #include <QColor>
@@ -149,7 +153,11 @@ RenderThemeQt::RenderThemeQt(Page* page)
     m_buttonFontPixelSize = fontInfo.pixelSize();
 #endif
 
+#ifdef Q_WS_MAEMO_5
+    m_fallbackStyle = new Maemo5WebStyle;
+#else
     m_fallbackStyle = QStyleFactory::create(QLatin1String("windows"));
+#endif
 }
 
 RenderThemeQt::~RenderThemeQt()
@@ -157,6 +165,30 @@ RenderThemeQt::~RenderThemeQt()
     delete m_fallbackStyle;
     delete m_lineEdit;
 }
+
+#ifdef Q_WS_MAEMO_5
+bool RenderThemeQt::isControlStyled(const RenderStyle* style, const BorderData& border, const FillLayer& fill, const Color& backgroundColor) const
+{
+    switch (style->appearance()) {
+    case PushButtonPart:
+    case ButtonPart:
+    case MenulistPart:
+    case TextFieldPart:
+    case TextAreaPart:
+        return true;
+    case CheckboxPart:
+    case RadioPart:
+        return false;
+    default:
+        return RenderTheme::isControlStyled(style, border, fill, backgroundColor);
+    }
+}
+
+int RenderThemeQt::popupInternalPaddingBottom(RenderStyle* style) const
+{
+    return 1;
+}
+#endif
 
 // for some widget painting, we need to fallback to Windows style
 QStyle* RenderThemeQt::fallbackStyle() const
@@ -182,13 +214,14 @@ QStyle* RenderThemeQt::qStyle() const
 
 String RenderThemeQt::extraDefaultStyleSheet()
 {
+    String result = RenderTheme::extraDefaultStyleSheet();
 #if ENABLE(NO_LISTBOX_RENDERING)
-    return RenderTheme::extraDefaultStyleSheet() +
-           String(themeQtNoListboxesUserAgentStyleSheet,
-                  sizeof(themeQtNoListboxesUserAgentStyleSheet));
-#else
-    return RenderTheme::extraDefaultStyleSheet();
+    result += String(themeQtNoListboxesUserAgentStyleSheet, sizeof(themeQtNoListboxesUserAgentStyleSheet));
 #endif
+#ifdef Q_WS_MAEMO_5
+    result += String(themeQtMaemo5UserAgentStyleSheet, sizeof(themeQtMaemo5UserAgentStyleSheet));
+#endif
+    return result;
 }
 
 bool RenderThemeQt::supportsHover(const RenderStyle*) const
@@ -615,9 +648,11 @@ bool RenderThemeQt::paintMenuList(RenderObject* o, const RenderObject::PaintInfo
 
 void RenderThemeQt::adjustMenuListButtonStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
+#ifndef Q_WS_MAEMO_5
     // WORKAROUND because html.css specifies -webkit-border-radius for <select> so we override it here
     // see also http://bugs.webkit.org/show_bug.cgi?id=18399
     style->resetBorderRadius();
+#endif
 
     // Height is locked to auto.
     style->setHeight(Length(Auto));
