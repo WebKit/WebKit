@@ -8,6 +8,32 @@
 
 2010-03-30  Alpha Lam  <hclam@chromium.org>
 
+        Reviewed by Dmitry Titov.
+
+        [chromium] New test results due to 56776
+        https://bugs.webkit.org/show_bug.cgi?id=36857
+
+        Adding new layout test results for chromium for tests added in r56776.
+
+        * platform/chromium-linux/svg/custom/glyph-transformation-with-hkern-expected.checksum: Added.
+        * platform/chromium-linux/svg/custom/glyph-transformation-with-hkern-expected.png: Added.
+        * platform/chromium-mac/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.png: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1/fonts-kern-01-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/masking-mask-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/render-groups-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/render-groups-03-t-expected.txt:
+        * platform/chromium-win/svg/custom/glyph-transformation-with-hkern-expected.checksum: Added.
+        * platform/chromium-win/svg/custom/glyph-transformation-with-hkern-expected.png: Added.
+        * platform/chromium-win/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.txt:
+        * platform/chromium/test_expectations.txt:
+        Removed the failing expectation for
+        platform/chromium-win/svg/custom/scrolling-embedded-svg-file-image-repaint-problem.html
+        because the difference in only in the scroll bar, there is not difference in the image content.
+        Also fixed a grammar problem in last commit.
+
+2010-03-30  Alpha Lam  <hclam@chromium.org>
+
         Reviewed by David Levin.
 
         [chromium] Fix test_expectations for new test added in r56795

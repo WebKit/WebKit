@@ -39,9 +39,9 @@ layer at (0,0) size 480x360
         RenderPath {rect} at (60,225) size 200x25 [fill={[type=SOLID] [color=#FFFFFF] [opacity=0.20]}] [data="M60.00,225.00 L260.00,225.00 L260.00,250.00 L60.00,250.00 Z"]
         RenderPath {rect} at (60,250) size 200x25 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M60.00,250.00 L260.00,250.00 L260.00,275.00 L60.00,275.00 Z"]
         RenderPath {rect} at (60,275) size 200x25 [fill={[type=SOLID] [color=#FFFFFF] [opacity=0.70]}] [data="M60.00,275.00 L260.00,275.00 L260.00,300.00 L60.00,300.00 Z"]
-      RenderSVGText {text} at (60,280) size 162x110 contains 1 chunk(s)
+      RenderSVGText {text} at (60,280) size 126x110 contains 1 chunk(s)
         [masker="mask3"] RenderSVGResourceMasker {mask} at (60,200) size 200x100
-        RenderSVGInlineText {#text} at (0,-77) size 162x110
+        RenderSVGInlineText {#text} at (0,-77) size 126x110
           [masker="mask3"] RenderSVGResourceMasker {mask} at (60,200) size 200x100
           chunk 1 text run 1 at (60.00,280.00) startOffset 0 endOffset 3 width 121.33: "SVG"
       RenderSVGText {text} at (200,225) size 202x15 contains 1 chunk(s)

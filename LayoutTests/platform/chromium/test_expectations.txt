@@ -1572,7 +1572,6 @@ BUG23498 MAC DEBUG : http/tests/navigation/post-frames.html = IMAGE TIMEOUT
 BUG23498 MAC RELEASE : http/tests/navigation/post-frames.html = IMAGE
 BUG23498 MAC : http/tests/navigation/postredirect-frames.html = IMAGE
 BUG23498 MAC : svg/custom/altglyph.svg = IMAGE
-BUG23498 MAC : svg/custom/scrolling-embedded-svg-file-image-repaint-problem.html = IMAGE
 BUG23498 MAC : svg/hixie/links/003-broken.xml = IMAGE
 BUG23498 MAC : svg/text/kerning.svg = IMAGE
 BUG23498 MAC : svg/text/multichar-glyph.svg = IMAGE
@@ -2850,5 +2849,5 @@ BUG_HAMAJI : fast/repaint/overflow-scroll-body-appear.html = IMAGE+TEXT IMAGE
 BUGWK36807 WIN : http/tests/inspector-enabled/console-log-before-frame-navigation.html = TEXT
 
 // Caused by http://trac.webkit.org/changeset/56795
-// This is a new test but fails to with on Chromium because of missing API.
+// This is a new test but fails in Chromium because of a missing API.
 BUG39904 : svg/animations/animate-points.html = TEXT TIMEOUT
