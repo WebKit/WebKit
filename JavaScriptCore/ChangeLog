@@ -1,3 +1,15 @@
+2010-03-31  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Unreviewed, Symbian build fix.
+
+        Refactor JITStubs.cpp so that the list of STUB_FUNCTIONs
+        are not dependent on the JSVALUE32_64 guard.
+
+        * jit/JITStubs.cpp: Place the JSVALUE32_64 guard inside 
+        the body of cti_op_eq_strings.
+        * jit/JITStubs.h: Remove JSVALUE32_64 guard from 
+        cti_op_eq_strings stub.
+
 2010-03-30  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by NOBODY (windows build fix).

@@ -2658,10 +2658,9 @@ DEFINE_STUB_FUNCTION(int, op_eq)
 #endif // USE(JSVALUE32_64)
 }
 
-#if USE(JSVALUE32_64)
-
 DEFINE_STUB_FUNCTION(int, op_eq_strings)
 {
+#if USE(JSVALUE32_64)
     STUB_INIT_STACK_FRAME(stackFrame);
 
     JSString* string1 = stackFrame.args[0].jsString();
@@ -2670,9 +2669,11 @@ DEFINE_STUB_FUNCTION(int, op_eq_strings)
     ASSERT(string1->isString());
     ASSERT(string2->isString());
     return string1->value(stackFrame.callFrame) == string2->value(stackFrame.callFrame);
-}
-
+#else
+    ASSERT_NOT_REACHED();
+    return 0;
 #endif
+}
 
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_lshift)
 {
