@@ -1554,6 +1554,8 @@ webcore_sources += \
 	WebCore/platform/Timer.cpp \
 	WebCore/platform/Timer.h \
 	WebCore/platform/TreeShared.h \
+	WebCore/platform/UUID.cpp \
+	WebCore/platform/UUID.h \
 	WebCore/platform/Widget.cpp \
 	WebCore/platform/Widget.h \
 	WebCore/platform/WindowsKeyboardCodes.h \

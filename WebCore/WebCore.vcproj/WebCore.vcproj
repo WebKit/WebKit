@@ -22141,6 +22141,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\UUID.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\UUID.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\Widget.cpp"
 				>
 			</File>

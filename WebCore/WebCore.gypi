@@ -2897,6 +2897,8 @@
             'platform/Timer.cpp',
             'platform/Timer.h',
             'platform/TreeShared.h',
+            'platform/UUID.cpp',
+            'platform/UUID.h',
             'platform/Widget.cpp',
             'platform/Widget.h',
             'platform/WindowsKeyboardCodes.h',
