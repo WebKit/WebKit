@@ -1505,4 +1505,9 @@ PassOwnPtr<WebPluginLoadObserver> FrameLoaderClientImpl::pluginLoadObserver()
     return ds->releasePluginLoadObserver();
 }
 
+void FrameLoaderClientImpl::logCrossFramePropertyAccess(Frame* target, bool crossOrigin, const String& name, unsigned long long eventId)
+{
+    m_webFrame->client()->logCrossFramePropertyAccess(m_webFrame, WebFrameImpl::fromFrame(target), crossOrigin, name, eventId);
+}
+
 } // namespace WebKit

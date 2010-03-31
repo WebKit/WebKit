@@ -33,11 +33,15 @@
 
 #include <v8.h>
 
+#include "ChromiumBridge.h"
 #include "Document.h"
 #include "Frame.h"
+#include "FrameLoaderClient.h"
 #include "ScriptExecutionContext.h"
 #include "ScriptState.h"
 #include "V8Binding.h"
+#include "V8BindingState.h"
+#include "V8DOMWindow.h"
 #include "V8Proxy.h"
 #include "WorkerContext.h"
 #include "WorkerContextExecutionProxy.h"
@@ -140,6 +144,32 @@ ScriptExecutionContext* getScriptExecutionContext()
         return frame->document()->scriptExecutionContext();
 
     return 0;
+}
+
+void logPropertyAccess(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    Frame* target = V8DOMWindow::toNative(info.Holder())->frame();
+    Frame* active = V8BindingState::Only()->getActiveWindow()->frame();
+    if (target == active)
+        return;
+
+    bool crossSite = !V8BindingSecurity::canAccessFrame(V8BindingState::Only(), target, false);
+    String propName = toWebCoreString(name);
+
+    // For cross-site, we also want to identify the current event to record repeat accesses.
+    unsigned long long eventId = 0;
+    if (crossSite) {
+        v8::HandleScope handleScope;
+        v8::Handle<v8::Context> v8Context = V8Proxy::mainWorldContext(active);
+        if (!v8Context.IsEmpty()) {
+            v8::Context::Scope scope(v8Context);
+            v8::Handle<v8::Object> global = v8Context->Global();
+            v8::Handle<v8::Value> jsEvent = global->Get(v8::String::NewSymbol("event"));
+            if (V8DOMWrapper::isValidDOMObject(jsEvent))
+                eventId = reinterpret_cast<unsigned long long>(V8Event::toNative(v8::Handle<v8::Object>::Cast(jsEvent)));
+        }
+    }
+    active->loader()->client()->logCrossFramePropertyAccess(target, crossSite, propName, eventId);
 }
 
 } // namespace WebCore

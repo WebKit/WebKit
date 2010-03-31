@@ -1,3 +1,16 @@
+2010-03-31  John Gregg  <johnnyg@google.com>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] add logging of cross-frame property accesses for site isolation
+        https://bugs.webkit.org/show_bug.cgi?id=35773
+
+        * public/WebFrameClient.h:
+        (WebKit::WebFrameClient::logCrossFramePropertyAccess):
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::logCrossFramePropertyAccess):
+        * src/FrameLoaderClientImpl.h:
+
 2010-03-30  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber stamped by Sam Weinig.
