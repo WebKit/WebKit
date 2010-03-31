@@ -1,3 +1,30 @@
+2010-03-31  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Antti Koivisto.
+
+        iframe flattening doesn't flatten
+        https://bugs.webkit.org/show_bug.cgi?id=36798
+
+        Do not draw scrollbars for subframes when frame flattening is
+        enabled. Implemented using a virtual method in ScrollView as
+        suggested by Dave Hyatt.
+
+        Do not suppress scrollbars as that is wrong according to
+        Dave Hyatt.
+
+        Covered by current tests.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::avoidScrollbarCreation):
+        * page/FrameView.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::setHasHorizontalScrollbar):
+        (WebCore::ScrollView::setHasVerticalScrollbar):
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::avoidScrollbarCreation):
+        * rendering/RenderPart.cpp:
+        (WebCore::RenderPart::layoutWithFlattening):
+
 2010-03-30  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Antti Koivisto.

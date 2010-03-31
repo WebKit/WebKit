@@ -325,6 +325,21 @@ void FrameView::setMarginHeight(int h)
     m_margins.setHeight(h);
 }
 
+bool FrameView::avoidScrollbarCreation()
+{
+    // with frame flattening no subframe can have scrollbars
+    // but we also cannot turn scrollbars of as we determine
+    // our flattening policy using that.
+
+    if (!m_frame->ownerElement())
+        return false;
+
+    if (!m_frame->settings() || m_frame->settings()->frameFlatteningEnabled())
+        return true;
+
+    return false;
+}
+
 void FrameView::setCanHaveScrollbars(bool canHaveScrollbars)
 {
     m_canHaveScrollbars = canHaveScrollbars;

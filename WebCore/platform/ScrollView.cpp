@@ -34,6 +34,7 @@
 #include "ScrollbarTheme.h"
 #include <wtf/StdLibExtras.h>
 
+
 using std::max;
 
 namespace WebCore {
@@ -80,6 +81,9 @@ void ScrollView::removeChild(Widget* child)
 
 void ScrollView::setHasHorizontalScrollbar(bool hasBar)
 {
+    if (avoidScrollbarCreation())
+        return;
+
     if (hasBar && !m_horizontalScrollbar) {
         m_horizontalScrollbar = createScrollbar(HorizontalScrollbar);
         addChild(m_horizontalScrollbar.get());
@@ -92,6 +96,9 @@ void ScrollView::setHasHorizontalScrollbar(bool hasBar)
 
 void ScrollView::setHasVerticalScrollbar(bool hasBar)
 {
+    if (avoidScrollbarCreation())
+        return;
+
     if (hasBar && !m_verticalScrollbar) {
         m_verticalScrollbar = createScrollbar(VerticalScrollbar);
         addChild(m_verticalScrollbar.get());
