@@ -1,3 +1,17 @@
+2010-03-31  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        webkit-patch commit-queue should land patches optimistically
+        https://bugs.webkit.org/show_bug.cgi?id=34187
+
+        This patch adds an optimistic path to commit-queue and a "fail twice"
+        requirement for rejecting patches.  That means we'll land good patches
+        faster (via the optmistic first run) and we'll reject many fewer
+        patches due to flaky tests.
+
+        * Scripts/webkitpy/tool/commands/queues.py:
+
 2010-03-31  Diego Gonzalez  <diego.gonzalez@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.
