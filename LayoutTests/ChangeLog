@@ -1,3 +1,17 @@
+2010-03-31  Qi Zhang  <qi.2.zhang@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Enable LayoutTests/fast/canvas/zero-size-fill-rect.html
+        https://bugs.webkit.org/show_bug.cgi?id=36837
+
+        Remove zero-size-fill-rect.html from skipped and create expected files.
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/canvas/zero-size-fill-rect-expected.checksum: Added.
+        * platform/qt/fast/canvas/zero-size-fill-rect-expected.png: Added.
+        * platform/qt/fast/canvas/zero-size-fill-rect-expected.txt:
+
 2010-03-31  Alpha Lam  <hclam@chromium.org>
 
         Reviewed by Darin Fisher.
