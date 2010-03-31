@@ -1,3 +1,20 @@
+2010-03-31  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        path to committers.py in commit-queue rejection message is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=36865
+
+        This fix would have only been 3 lines long if we had
+        1. Had access to an SCM object or tool to give us the checkout root
+        2. Been able to depend on Python 2.6
+        Instead I've added a bunch of hack code, but at least now
+        we should never have to update this string again as the location
+        of committers.py is fully dynamically discovered. :p
+
+        * Scripts/webkitpy/common/net/bugzilla.py:
+        * Scripts/webkitpy/common/net/bugzilla_unittest.py:
+
 2010-03-31  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Unreviewed test fix for r56809.

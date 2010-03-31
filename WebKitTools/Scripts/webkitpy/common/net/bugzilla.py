@@ -30,6 +30,7 @@
 #
 # WebKit's Python module for interacting with Bugzilla
 
+import os.path
 import re
 import subprocess
 
@@ -37,7 +38,7 @@ from datetime import datetime # used in timestamp()
 
 # Import WebKit-specific modules.
 from webkitpy.common.system.deprecated_logging import error, log
-from webkitpy.common.config.committers import CommitterList
+from webkitpy.common.config import committers
 from webkitpy.common.net.credentials import Credentials
 from webkitpy.common.system.user import User
 from webkitpy.thirdparty.autoinstalled import Browser
@@ -277,23 +278,43 @@ class CommitterValidator(object):
     def _view_source_url(self, local_path):
         return "http://trac.webkit.org/browser/trunk/%s" % local_path
 
+    def _checkout_root(self):
+        # FIXME: This is a hack, we would have this from scm.checkout_root
+        # if we had any way to get to an scm object here.
+        components = __file__.split(os.sep)
+        tools_index = components.index("WebKitTools")
+        return os.sep.join(components[:tools_index])
+
+    def _relpath(self, path, start):
+        # FIXME: When we're allowed to use python 2.6 we can use the real os.path.relpath
+        path_components = os.path.realpath(path).split(os.sep)
+        start_components = os.path.realpath(start).split(os.sep)
+        if path_components[len(start_components) - 1].lower() != start_components[-1].lower():
+            raise "This os.path.relpath hack can't handle path=%s start=%s" % (path, start)
+        return os.sep.join(path_components[len(start_components):])
+
+    def _committers_py_path(self):
+        # extension can sometimes be .pyc, we always want .py
+        (path, extension) = os.path.splitext(committers.__file__)
+        path = self._relpath(path, self._checkout_root())
+        return ".".join([path, "py"])
+
     def _flag_permission_rejection_message(self, setter_email, flag_name):
-        # This could be computed from CommitterList.__file__
-        committer_list = "WebKitTools/Scripts/webkitpy/committers.py"
         # Should come from some webkit_config.py
         contribution_guidlines = "http://webkit.org/coding/contributing.html"
         # This could be queried from the status_server.
         queue_administrator = "eseidel@chromium.org"
         # This could be queried from the tool.
         queue_name = "commit-queue"
+        committers_list = self._committers_py_path()
         message = "%s does not have %s permissions according to %s." % (
                         setter_email,
                         flag_name,
-                        self._view_source_url(committer_list))
+                        self._view_source_url(committers_list))
         message += "\n\n- If you do not have %s rights please read %s for instructions on how to use bugzilla flags." % (
                         flag_name, contribution_guidlines)
         message += "\n\n- If you have %s rights please correct the error in %s by adding yourself to the file (no review needed).  " % (
-                        flag_name, committer_list)
+                        flag_name, committers_list)
         message += "Due to bug 30084 the %s will require a restart after your change.  " % queue_name
         message += "Please contact %s to request a %s restart.  " % (
                         queue_administrator, queue_name)
@@ -346,7 +367,7 @@ class CommitterValidator(object):
 
 class Bugzilla(object):
 
-    def __init__(self, dryrun=False, committers=CommitterList()):
+    def __init__(self, dryrun=False, committers=committers.CommitterList()):
         self.dryrun = dryrun
         self.authenticated = False
         self.queries = BugzillaQueries(self)

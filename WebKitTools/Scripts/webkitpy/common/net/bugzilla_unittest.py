@@ -61,11 +61,12 @@ class BugTest(unittest.TestCase):
 class CommitterValidatorTest(unittest.TestCase):
     def test_flag_permission_rejection_message(self):
         validator = CommitterValidator(bugzilla=None)
-        expected_messsage="""foo@foo.com does not have review permissions according to http://trac.webkit.org/browser/trunk/WebKitTools/Scripts/webkitpy/committers.py.
+        self.assertEqual(validator._committers_py_path(), "WebKitTools/Scripts/webkitpy/common/config/committers.py")
+        expected_messsage="""foo@foo.com does not have review permissions according to http://trac.webkit.org/browser/trunk/WebKitTools/Scripts/webkitpy/common/config/committers.py.
 
 - If you do not have review rights please read http://webkit.org/coding/contributing.html for instructions on how to use bugzilla flags.
 
-- If you have review rights please correct the error in WebKitTools/Scripts/webkitpy/committers.py by adding yourself to the file (no review needed).  Due to bug 30084 the commit-queue will require a restart after your change.  Please contact eseidel@chromium.org to request a commit-queue restart.  After restart the commit-queue will correctly respect your review rights."""
+- If you have review rights please correct the error in WebKitTools/Scripts/webkitpy/common/config/committers.py by adding yourself to the file (no review needed).  Due to bug 30084 the commit-queue will require a restart after your change.  Please contact eseidel@chromium.org to request a commit-queue restart.  After restart the commit-queue will correctly respect your review rights."""
         self.assertEqual(validator._flag_permission_rejection_message("foo@foo.com", "review"), expected_messsage)
 
 
