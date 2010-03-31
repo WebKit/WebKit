@@ -25,43 +25,8 @@
 import os
 import unittest
 
-from main import _rel_path
 from main import change_directory
 from webkitpy.style_references import LogTesting
-
-
-# Make sure the tests in this class are platform independent.
-class RelPathTest(unittest.TestCase):
-
-    """Tests _rel_path()."""
-
-    os_path_abspath = lambda self, path: path
-
-    def _rel_path(self, path, abs_start_path):
-        return _rel_path(path, abs_start_path, self.os_path_abspath)
-
-    def test_same_path(self):
-        rel_path = self._rel_path("WebKit", "WebKit")
-        self.assertEquals(rel_path, "")
-
-    def test_long_rel_path(self):
-        start_path = "WebKit"
-        expected_rel_path = os.path.join("test", "Foo.txt")
-        path = os.path.join(start_path, expected_rel_path)
-
-        rel_path = self._rel_path(path, start_path)
-        self.assertEquals(expected_rel_path, rel_path)
-
-    def test_none_rel_path(self):
-        """Test _rel_path() with None return value."""
-        start_path = "WebKit"
-        path = os.path.join("other_dir", "foo.txt")
-
-        rel_path = self._rel_path(path, start_path)
-        self.assertTrue(rel_path is None)
-
-        rel_path = self._rel_path("WebKitTools", "WebKit")
-        self.assertTrue(rel_path is None)
 
 
 class ChangeDirectoryTest(unittest.TestCase):

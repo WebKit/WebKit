@@ -40,6 +40,7 @@ from datetime import datetime # used in timestamp()
 from webkitpy.common.system.deprecated_logging import error, log
 from webkitpy.common.config import committers
 from webkitpy.common.net.credentials import Credentials
+from webkitpy.common.system.ospath import relpath
 from webkitpy.common.system.user import User
 from webkitpy.thirdparty.autoinstalled import Browser
 
@@ -285,18 +286,12 @@ class CommitterValidator(object):
         tools_index = components.index("WebKitTools")
         return os.sep.join(components[:tools_index])
 
-    def _relpath(self, path, start):
-        # FIXME: When we're allowed to use python 2.6 we can use the real os.path.relpath
-        path_components = os.path.realpath(path).split(os.sep)
-        start_components = os.path.realpath(start).split(os.sep)
-        if path_components[len(start_components) - 1].lower() != start_components[-1].lower():
-            raise "This os.path.relpath hack can't handle path=%s start=%s" % (path, start)
-        return os.sep.join(path_components[len(start_components):])
-
     def _committers_py_path(self):
         # extension can sometimes be .pyc, we always want .py
         (path, extension) = os.path.splitext(committers.__file__)
-        path = self._relpath(path, self._checkout_root())
+        # FIXME: When we're allowed to use python 2.6 we can use the real
+        # os.path.relpath
+        path = relpath(path, self._checkout_root())
         return ".".join([path, "py"])
 
     def _flag_permission_rejection_message(self, setter_email, flag_name):

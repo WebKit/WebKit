@@ -1,3 +1,29 @@
+2010-03-31  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        In webkitpy, refactored two calls to os.path.relpath() replacements
+        to use a common method.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36891
+
+        * Scripts/webkitpy/common/net/bugzilla.py:
+          - Replaced the relpath implementation with a call to
+            webkitpy.common.system.opsys.relpath().
+
+        * Scripts/webkitpy/common/system/ospath.py: Added.
+          - Moved the relpath() implementation from style/main.py.
+
+        * Scripts/webkitpy/common/system/ospath_unittest.py: Added.
+          - Moved the relpath() unit tests from style/main_unittest.py.
+
+        * Scripts/webkitpy/style/main.py:
+          - Replaced the relpath implementation with a call to
+            webkitpy.common.system.opsys.relpath().
+
+        * Scripts/webkitpy/style/main_unittest.py:
+          - Moved the relpath unit tests to opsys_unittest.py.
+
 2010-03-31  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

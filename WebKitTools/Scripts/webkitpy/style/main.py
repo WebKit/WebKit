@@ -24,63 +24,10 @@ import logging
 import os
 import sys
 
+from webkitpy.common.system.ospath import relpath as _relpath
+
 
 _log = logging.getLogger(__name__)
-
-
-# This function is a replacement for os.path.relpath(), which is only
-# available in Python 2.6.  It should behave essentially the same as
-# os.path.relpath(), except for returning None on paths not contained
-# in abs_start_path.
-def _rel_path(path, start_path, os_path_abspath=None):
-    """Return a path relative to the given start path, or None.
-
-    Returns None if the path is not contained in the directory start_path.
-
-    Args:
-      path: An absolute or relative path to convert to a relative path.
-      start_path: The path relative to which the given path should be
-                  converted.
-      os_path_abspath: A replacement function for unit testing.  This
-                       function should strip trailing slashes just like
-                       os.path.abspath().  Defaults to os.path.abspath.
-
-    """
-    if os_path_abspath is None:
-        os_path_abspath = os.path.abspath
-
-    # Since os_path_abspath() calls os.path.normpath()--
-    #
-    # (see http://docs.python.org/library/os.path.html#os.path.abspath )
-    #
-    # it also removes trailing slashes and converts forward and backward
-    # slashes to the preferred slash os.sep.
-    start_path = os_path_abspath(start_path)
-    path = os_path_abspath(path)
-
-    if not path.lower().startswith(start_path.lower()):
-        # Then path is outside the directory given by start_path.
-        return None
-
-    rel_path = path[len(start_path):]
-
-    if not rel_path:
-        # Then the paths are the same.
-        pass
-    elif rel_path[0] == os.sep:
-        # It is probably sufficient to remove just the first character
-        # since os.path.normpath() collapses separators, but we use
-        # lstrip() just to be sure.
-        rel_path = rel_path.lstrip(os.sep)
-    else:
-        # We are in the case typified by the following example:
-        #
-        # start_path = "/tmp/foo"
-        # path = "/tmp/foobar"
-        # rel_path = "bar"
-        return None
-
-    return rel_path
 
 
 def change_directory(checkout_root, paths, mock_os=None):
@@ -150,7 +97,7 @@ def change_directory(checkout_root, paths, mock_os=None):
         # the checkout root.
         rel_paths = []
         for path in paths:
-            rel_path = _rel_path(path, checkout_root)
+            rel_path = _relpath(path, checkout_root)
             if rel_path is None:
                 # Then the path is not below the checkout root.  Since all
                 # paths should be interpreted relative to the same root,
