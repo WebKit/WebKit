@@ -1,3 +1,15 @@
+2010-03-31  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Bug 36871 - Remove JSC::CString
+        Use WTF::CString instead (which until recently was WebCore::CString).
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * runtime/UString.cpp:
+        * runtime/UString.h:
+
 2010-03-31  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Unreviewed, fix after r56842.

@@ -1,3 +1,13 @@
+2010-03-31  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Bug 36871 - Remove JSC::CString
+        Use WTF::CString instead (which until recently was WebCore::CString).
+
+        * ForwardingHeaders/wtf/text: Added.
+        * ForwardingHeaders/wtf/text/CString.h: Added.
+
 2010-03-11  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by David Kilzer.

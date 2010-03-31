@@ -33,45 +33,13 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/CString.h>
 #include <wtf/unicode/Unicode.h>
 
 namespace JSC {
 
     using WTF::PlacementNewAdoptType;
     using WTF::PlacementNewAdopt;
-
-    class CString {
-    public:
-        CString()
-            : m_length(0)
-            , m_data(0)
-        {
-        }
-
-        CString(const char*);
-        CString(const char*, size_t);
-        CString(const CString&);
-
-        ~CString();
-
-        static CString adopt(char*, size_t); // buffer should be allocated with new[].
-
-        CString& append(const CString&);
-        CString& operator=(const char* c);
-        CString& operator=(const CString&);
-        CString& operator+=(const CString& c) { return append(c); }
-
-        size_t length() const { return m_length; }
-        const char* data() const { return m_data; }
-
-    private:
-        size_t m_length;
-        char* m_data;
-    };
-
-    bool operator==(const CString&, const CString&);
-
-    typedef Vector<char, 32> CStringBuffer;
 
     class UString {
         friend class JIT;
