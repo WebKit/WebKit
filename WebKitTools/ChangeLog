@@ -1,3 +1,16 @@
+2010-03-30  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Rubber stamped by Dave Levin.
+
+        Made check-webkit-style less chatty.
+
+        Examples include:
+         - https://bugs.webkit.org/show_bug.cgi?id=36866#c4
+         - https://bugs.webkit.org/show_bug.cgi?id=36472#c9
+
+        * Scripts/webkitpy/style/checker.py:
+          - Changed unrecognized file type log message from info to debug.
+
 2010-03-30  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix after new method added.

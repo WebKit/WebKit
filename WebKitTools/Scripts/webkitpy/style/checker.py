@@ -663,10 +663,8 @@ class StyleChecker(object):
                                                   handle_style_error,
                                                   min_confidence)
         if processor is None:
-            # Display a warning so as not to give an impression that this
-            # was checked.
-            _log.info('File not a recognized type to check. Skipping: "%s"'
-                      % file_path)
+            _log.debug('File not a recognized type to check. Skipping: "%s"'
+                       % file_path)
             return
 
 
