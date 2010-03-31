@@ -993,7 +993,6 @@ def main():
     # at Chromium ports; we hard-code this because this script doesn't work
     # on non-Chromium ports yet. We should fix that.
     options.chromium = True
-    port_obj = port.get(None, options)
 
     # Set up our logging format.
     log_level = logging.INFO
@@ -1003,6 +1002,18 @@ def main():
                         format=('%(asctime)s %(filename)s:%(lineno)-3d '
                                 '%(levelname)s %(message)s'),
                         datefmt='%y%m%d %H:%M:%S')
+
+    # options.target is used by port to locate image_diff binary.
+    # Check the imgage_diff release binary, if it does not exist,
+    # fallback to debug.
+    options.target = "release"
+    port_obj = port.get(None, options)
+    if not port_obj.check_image_diff(override_step=None, logging=False):
+        _log.debug('No release version image diff binary found.')
+        options.target = "debug"
+        port_obj = port.get(None, options)
+    else:
+       _log.debug('Found release version image diff binary.')
 
     # Verify 'platforms' option is valid
     if not options.platforms:

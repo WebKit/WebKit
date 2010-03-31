@@ -44,19 +44,22 @@ import websocket_server
 _log = logging.getLogger("webkitpy.layout_tests.port.chromium")
 
 
-def check_file_exists(path_to_file, file_description, override_step=None):
+def check_file_exists(path_to_file, file_description, override_step=None,
+                      logging=True):
     """Verify the file is present where expected or log an error.
 
     Args:
         file_name: The (human friendly) name or description of the file
             you're looking for (e.g., "HTTP Server"). Used for error logging.
-        override_step: An optional string to be logged if the check fails."""
+        override_step: An optional string to be logged if the check fails.
+        logging: Whether or not log the error messages."""
     if not os.path.exists(path_to_file):
-        _log.error('Unable to find %s' % file_description)
-        _log.error('    at %s' % path_to_file)
-        if override_step:
-            _log.error('    %s' % override_step)
-            _log.error('')
+        if logging:
+            _log.error('Unable to find %s' % file_description)
+            _log.error('    at %s' % path_to_file)
+            if override_step:
+                _log.error('    %s' % override_step)
+                _log.error('')
         return False
     return True
 
@@ -88,8 +91,7 @@ class ChromiumPort(base.Port):
                                        'layout test helper') and result
 
         if not self._options.no_pixel_tests:
-            image_diff_path = self._path_to_image_diff()
-            result = check_file_exists(image_diff_path, 'image diff exe',
+            result = self.check_image_diff(
                 'To override, invoke with --no-pixel-tests') and result
 
         return result
@@ -104,6 +106,11 @@ class ChromiumPort(base.Port):
             _log.error('')
             return False
         return True
+
+    def check_image_diff(self, override_step=None, logging=True):
+        image_diff_path = self._path_to_image_diff()
+        return check_file_exists(image_diff_path, 'image diff exe',
+                                 override_step, logging)
 
     def path_from_chromium_base(self, *comps):
         """Returns the full path to path made by joining the top of the

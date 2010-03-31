@@ -1,3 +1,16 @@
+2010-03-30  Victor Wang  <victorw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Update rebaseline tool to check the release image diff binary and
+        fallback to debug if the release version does not exist.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36245
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests.py:
+
 2010-03-31  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

@@ -82,6 +82,10 @@ class Port(object):
         Returns whether the system is properly configured."""
         return True
 
+    def check_image_diff(self, override_step=None, logging=True):
+        """This routine is used to check whether image_diff binary exists."""
+        raise NotImplemented('Port.check_image_diff')
+
     def compare_text(self, expected_text, actual_text):
         """Return whether or not the two strings are *not* equal. This
         routine is used to diff text output.
