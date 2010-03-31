@@ -1,3 +1,13 @@
+2010-03-31  Sterling Swigart  <sswigart@google.com>
+
+        Reviewed by David Levin.
+
+        [Chromium] Enable fast/events/onbeforeunload-focused-iframe.html
+        https://bugs.webkit.org/show_bug.cgi?id=36781
+
+        * platform/chromium/test_expectations.txt: Enable test now that callShouldCloseOnWebView
+        is implemented in test_shell.
+
 2010-03-31  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

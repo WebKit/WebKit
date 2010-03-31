@@ -2805,7 +2805,6 @@ BUG_JAPHET WIN : http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch
 BUG_39423 : security/block-test.html = TIMEOUT
 
 BUGWK36666 : storage/open-database-over-quota.html = TEXT
-BUG39485 : fast/events/onbeforeunload-focused-iframe.html = TIMEOUT
 
 BUGWK36807 WIN : http/tests/inspector-enabled/console-log-before-frame-navigation.html = TEXT
 
