@@ -1,3 +1,11 @@
+2010-03-30  Andrew Scherkus  <scherkus@chromium.org>
+
+        Unreviewed, expectations tweak.
+
+        Updating expectations to stop skipping tests that were fixed in r56481.
+
+        * platform/chromium/test_expectations.txt: Don't skip fixed tests.
+
 2010-03-30  Alpha Lam  <hclam@chromium.org>
 
         Reviewed by David Levin.
