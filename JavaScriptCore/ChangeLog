@@ -1,5 +1,14 @@
 2010-03-31  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
+        Unreviewed, fix after r56842.
+
+        Add UNUSED_PARAM a to silence warning.
+
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+
+2010-03-31  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
         Unreviewed, Symbian build fix.
 
         Refactor JITStubs.cpp so that the list of STUB_FUNCTIONs
