@@ -48,6 +48,38 @@ _log = logging.getLogger("webkitpy.layout_tests.layout_package."
 # Test expectation file update action constants
 (NO_CHANGE, REMOVE_TEST, REMOVE_PLATFORM, ADD_PLATFORMS_EXCEPT_THIS) = range(4)
 
+def result_was_expected(result, expected_results, test_needs_rebaselining,
+                        test_is_skipped):
+    """Returns whether we got a result we were expecting.
+    Args:
+        result: actual result of a test execution
+        expected_results: set of results listed in test_expectations
+        test_needs_rebaselining: whether test was marked as REBASELINE
+        test_is_skipped: whether test was marked as SKIP"""
+    if result in expected_results:
+        return True
+    if result in (IMAGE, TEXT, IMAGE_PLUS_TEXT) and FAIL in expected_results:
+        return True
+    if result == MISSING and test_needs_rebaselining:
+       return True
+    if result == SKIP and test_is_skipped:
+       return True
+    return False
+
+def remove_pixel_failures(expected_results):
+    """Returns a copy of the expected results for a test, except that we
+    drop any pixel failures and return the remaining expectations. For example,
+    if we're not running pixel tests, then tests expected to fail as IMAGE
+    will PASS."""
+    expected_results = expected_results.copy()
+    if IMAGE in expected_results:
+        expected_results.remove(IMAGE)
+        expected_results.add(PASS)
+    if IMAGE_PLUS_TEXT in expected_results:
+        expected_results.remove(IMAGE_PLUS_TEXT)
+        expected_results.add(TEXT)
+    return expected_results
+
 
 class TestExpectations:
     TEST_LIST = "test_expectations.txt"
@@ -125,14 +157,13 @@ class TestExpectations:
     def get_tests_with_timeline(self, timeline):
         return self._expected_failures.get_tests_with_timeline(timeline)
 
-    def matches_an_expected_result(self, test, result):
-        """Returns whether we got one of the expected results for this test."""
-        return (result in self._expected_failures.get_expectations(test) or
-                (result in (IMAGE, TEXT, IMAGE_PLUS_TEXT) and
-                FAIL in self._expected_failures.get_expectations(test)) or
-                result == MISSING and self.is_rebaselining(test) or
-                result == SKIP and self._expected_failures.has_modifier(test,
-                                                                        SKIP))
+    def matches_an_expected_result(self, test, result,
+                                   pixel_tests_are_disabled):
+        expected_results = self._expected_failures.get_expectations(test)
+        if pixel_tests_are_disabled:
+            expected_results = remove_pixel_failures(expected_results)
+        return result_was_expected(result, expected_results,
+            self.is_rebaselining(test), self.has_modifier(test, SKIP))
 
     def is_rebaselining(self, test):
         return self._expected_failures.has_modifier(test, REBASELINE)

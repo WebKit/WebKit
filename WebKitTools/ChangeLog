@@ -1,3 +1,23 @@
+2010-03-31  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix logging in new-run-webkit-tests so that we don't report IMAGE
+        expected failures as unexpected passes when we run with pixel tests
+        disabled.
+
+        This change splits some of the logic embedded into the TestExpectations
+        classes out into separate pure functions (result_was_expected,
+        remove_image_failures) to make them easier to test. This also adds
+        a parameter to matches_an_expected_result() to indicate whether or
+        not pixel test results should be included in the expectations.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36771
+
+        * Scripts/webkitpy/layout_tests/layout_package/test_expectations.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_expectations_test.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2010-03-31  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Eric Seidel.

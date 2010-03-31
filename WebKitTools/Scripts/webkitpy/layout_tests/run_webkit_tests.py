@@ -698,8 +698,8 @@ class TestRunner:
             try:
                 (test, fail_list) = self._result_queue.get_nowait()
                 result = test_failures.determine_result_type(fail_list)
-                expected = self._expectations.matches_an_expected_result(test,
-                                                                      result)
+                expected = self._expectations.matches_an_expected_result(test, 
+                    result, self._options.no_pixel_tests)
                 result_summary.add(test, fail_list, result, expected)
                 if (LOG_DETAILED_PROGRESS in self._options.log and
                     (self._options.experimental_fully_parallel or
