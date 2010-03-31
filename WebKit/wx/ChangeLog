@@ -1,3 +1,10 @@
+2010-03-30  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix after method name change.
+
+        * WebFrame.cpp:
+        (wxWebFrame::RunScript):
+
 2010-03-28  Alexey Proskuryakov  <ap@apple.com>
 
         Build fix. Include WindowsKeyboardCodes.h instead of KeyboardCodes.h.

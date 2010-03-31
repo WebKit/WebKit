@@ -376,4 +376,10 @@ String validationMessageStepMismatchText()
     return String();
 }
 
+String missingPluginText()
+{
+    notImplemented();
+    return String("Missing Plug-in");
+}
+
 } // namespace WebCore

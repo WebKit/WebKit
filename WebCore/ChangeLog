@@ -1,3 +1,10 @@
+2010-03-30  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix after new localized string addition.
+
+        * platform/wx/LocalizedStringsWx.cpp:
+        (WebCore::missingPluginText):
+
 2010-03-30  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

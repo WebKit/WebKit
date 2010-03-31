@@ -1,3 +1,10 @@
+2010-03-30  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix after new method added.
+
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::callShouldCloseOnWebView):
+
 2010-03-30  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
