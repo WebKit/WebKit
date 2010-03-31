@@ -1,3 +1,17 @@
+2010-03-31  Qi Zhang  <qi.2.zhang@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        [Qt] Remove LayoutTests/fast/canvas/image-object-in-canvas.html from Skipped
+        https://bugs.webkit.org/show_bug.cgi?id=36836
+
+        Enable LayoutTests/fast/canvas/image-object-in-canvas.html at LayoutTests
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/canvas/image-object-in-canvas-expected.checksum: Added.
+        * platform/qt/fast/canvas/image-object-in-canvas-expected.png: Added.
+        * platform/qt/fast/canvas/image-object-in-canvas-expected.txt:
+
 2010-03-30  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Eric Seidel.
