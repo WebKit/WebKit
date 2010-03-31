@@ -1,3 +1,13 @@
+2010-03-31  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Implement memmove behavior for WebGLArray set()
+        https://bugs.webkit.org/show_bug.cgi?id=35619
+
+        * fast/canvas/webgl/array-setters-expected.txt: Testing shared overlapping buffer set() behaviors.
+        * fast/canvas/webgl/array-setters.html: Ditto.
+
 2010-03-31  Sterling Swigart  <sswigart@google.com>
 
         Reviewed by David Levin.

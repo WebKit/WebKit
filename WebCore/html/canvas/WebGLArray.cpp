@@ -55,7 +55,7 @@ void WebGLArray::setImpl(WebGLArray* array, unsigned byteOffset, ExceptionCode& 
     }
 
     char* base = static_cast<char*>(baseAddress());
-    memcpy(base + byteOffset, array->baseAddress(), array->byteLength());
+    memmove(base + byteOffset, array->baseAddress(), array->byteLength());
 }
 
 void WebGLArray::calculateOffsetAndLength(int start, int end, unsigned arraySize,

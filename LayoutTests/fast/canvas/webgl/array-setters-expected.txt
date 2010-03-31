@@ -17,6 +17,16 @@ PASS webGLArray[0] is array[0]
 PASS webGLArray.get(0) is array[0]
 PASS webGLArray[1] is array[1]
 PASS webGLArray.get(1) is array[1]
+PASS webGLArray[2] is 88
+PASS webGLArray[3] is 99
+PASS webGLArray[1] is 88
+PASS webGLArray[2] is 99
+PASS array[0] is 99
+PASS array[1] is 99
+PASS webGLArray[3] is 99
+PASS webGLArray[4] is 77
+PASS array[0] is 99
+PASS array[1] is 99
 Testing WebGLUnsignedByteArray
 PASS webGLArray is array
 PASS webGLArray[0] is array[0]
@@ -31,6 +41,16 @@ PASS webGLArray[0] is array[0]
 PASS webGLArray.get(0) is array[0]
 PASS webGLArray[1] is array[1]
 PASS webGLArray.get(1) is array[1]
+PASS webGLArray[2] is 88
+PASS webGLArray[3] is 99
+PASS webGLArray[1] is 88
+PASS webGLArray[2] is 99
+PASS array[0] is 99
+PASS array[1] is 99
+PASS webGLArray[3] is 99
+PASS webGLArray[4] is 77
+PASS array[0] is 99
+PASS array[1] is 99
 Testing WebGLShortArray
 PASS webGLArray is array
 PASS webGLArray[0] is array[0]
@@ -45,6 +65,16 @@ PASS webGLArray[0] is array[0]
 PASS webGLArray.get(0) is array[0]
 PASS webGLArray[1] is array[1]
 PASS webGLArray.get(1) is array[1]
+PASS webGLArray[2] is 88
+PASS webGLArray[3] is 99
+PASS webGLArray[1] is 88
+PASS webGLArray[2] is 99
+PASS array[0] is 99
+PASS array[1] is 99
+PASS webGLArray[3] is 99
+PASS webGLArray[4] is 77
+PASS array[0] is 99
+PASS array[1] is 99
 Testing WebGLUnsignedShortArray
 PASS webGLArray is array
 PASS webGLArray[0] is array[0]
@@ -59,6 +89,16 @@ PASS webGLArray[0] is array[0]
 PASS webGLArray.get(0) is array[0]
 PASS webGLArray[1] is array[1]
 PASS webGLArray.get(1) is array[1]
+PASS webGLArray[2] is 88
+PASS webGLArray[3] is 99
+PASS webGLArray[1] is 88
+PASS webGLArray[2] is 99
+PASS array[0] is 99
+PASS array[1] is 99
+PASS webGLArray[3] is 99
+PASS webGLArray[4] is 77
+PASS array[0] is 99
+PASS array[1] is 99
 Testing WebGLIntArray
 PASS webGLArray is array
 PASS webGLArray[0] is array[0]
@@ -73,6 +113,16 @@ PASS webGLArray[0] is array[0]
 PASS webGLArray.get(0) is array[0]
 PASS webGLArray[1] is array[1]
 PASS webGLArray.get(1) is array[1]
+PASS webGLArray[2] is 88
+PASS webGLArray[3] is 99
+PASS webGLArray[1] is 88
+PASS webGLArray[2] is 99
+PASS array[0] is 99
+PASS array[1] is 99
+PASS webGLArray[3] is 99
+PASS webGLArray[4] is 77
+PASS array[0] is 99
+PASS array[1] is 99
 Testing WebGLUnsignedIntArray
 PASS webGLArray is array
 PASS webGLArray[0] is array[0]
@@ -87,6 +137,16 @@ PASS webGLArray[0] is array[0]
 PASS webGLArray.get(0) is array[0]
 PASS webGLArray[1] is array[1]
 PASS webGLArray.get(1) is array[1]
+PASS webGLArray[2] is 88
+PASS webGLArray[3] is 99
+PASS webGLArray[1] is 88
+PASS webGLArray[2] is 99
+PASS array[0] is 99
+PASS array[1] is 99
+PASS webGLArray[3] is 99
+PASS webGLArray[4] is 77
+PASS array[0] is 99
+PASS array[1] is 99
 Testing WebGLFloatArray
 PASS webGLArray is array
 PASS webGLArray[0] is array[0]
@@ -101,6 +161,16 @@ PASS webGLArray[0] is array[0]
 PASS webGLArray.get(0) is array[0]
 PASS webGLArray[1] is array[1]
 PASS webGLArray.get(1) is array[1]
+PASS webGLArray[2] is 88
+PASS webGLArray[3] is 99
+PASS webGLArray[1] is 88
+PASS webGLArray[2] is 99
+PASS array[0] is 99
+PASS array[1] is 99
+PASS webGLArray[3] is 99
+PASS webGLArray[4] is 77
+PASS array[0] is 99
+PASS array[1] is 99
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -39,6 +39,29 @@ function testSetters(typeName, low, high) {
     webGLArray.set(1, array[1]);
     shouldBe("webGLArray[1]", "array[1]");
     shouldBe("webGLArray.get(1)", "array[1]");
+
+    // Verify set() behaves correctly with shared underlying buffer. 
+    array = [0, 1, 2, 3, 4, 5];
+    webGLArray = new type(6);
+    webGLArray.set(array);
+    array = webGLArray.slice(2, 4);
+    array[0] = 88;
+    array[1] = 99;
+    shouldBe("webGLArray[2]", "88");
+    shouldBe("webGLArray[3]", "99");
+    // pre-overlap
+    webGLArray.set(array, 1);
+    shouldBe("webGLArray[1]", "88");
+    shouldBe("webGLArray[2]", "99");
+    shouldBe("array[0]", "99");
+    shouldBe("array[1]", "99");
+    array[1] = 77;
+    // post-overlap
+    webGLArray.set(array, 3);
+    shouldBe("webGLArray[3]", "99");
+    shouldBe("webGLArray[4]", "77");
+    shouldBe("array[0]", "99");
+    shouldBe("array[1]", "99");
 }
 
 testSetters("WebGLByteArray", -128, 127);
