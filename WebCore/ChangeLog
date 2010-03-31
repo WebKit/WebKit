@@ -1,3 +1,15 @@
+2010-03-30  Stanislav Paltis  <Stanislav.Paltis@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] qmake/symbian build failure
+        https://bugs.webkit.org/show_bug.cgi?id=36745
+
+        Fix build break in Symbian build introduced in r56714,
+        by modifying comment escape character from ";" to "#".
+
+        * WebCore.pro:
+
 2010-03-30  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix after new localized string addition.
