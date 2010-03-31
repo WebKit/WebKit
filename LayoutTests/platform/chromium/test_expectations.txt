@@ -76,7 +76,7 @@ BUG24182 SLOW WIN RELEASE : fast/dom/Window/webkitConvertPoint.html = PASS
 
 BUG24182 WIN RELEASE SLOW : http/tests/loading/redirect-methods.html = PASS
 BUG24182 WIN SLOW : svg/hixie/perf/007.xml = PASS
-BUG24182 WIN LINUX DEBUG : fast/backgrounds/size/contain-and-cover.html = PASS
+BUG24182 DEBUG : fast/backgrounds/size/contain-and-cover.html = PASS
 BUG24182 SLOW MAC RELEASE : dom/html/level2/html/HTMLImageElement01.html = PASS
 BUG24182 SLOW WIN RELEASE : http/tests/local/file-url-sent-as-referer.html = PASS
 BUG24182 SLOW WIN DEBUG : svg/carto.net/window.svg = PASS
@@ -915,7 +915,7 @@ BUG11153 WIN LINUX : fast/canvas/canvas-incremental-repaint-2.html = FAIL
 BUG11153 WIN LINUX : fast/canvas/canvas-incremental-repaint.html = FAIL
 
 // Repaint issues are revealed by these tests.
-BUG28183 : fast/repaint/box-shadow-v.html = IMAGE
+BUG28183 LINUX WIN : fast/repaint/box-shadow-v.html = IMAGE
 // The difference of positions of texts after the list markers is NOT
 // an issue. The behavior of the expectations was wrong. The real
 // problem is the change of the 'p' in italic "properly". Note that
@@ -1173,7 +1173,7 @@ BUG10323 WIN : http/tests/xmlhttprequest/xmlhttprequest-no-content-length-onProg
 // Linux pixeltest failure: caret is in the wrong place
 // Upstream WebKit also skips this test and Safari with latest WebKit shows
 // same behavior as Chromium. Not required for beta so marking as deferred.
-BUG10324 : editing/selection/caret-rtl-2.html = IMAGE
+BUG10324 LINUX WIN : editing/selection/caret-rtl-2.html = IMAGE
 
 // This test assumes we're using unix paths and looks for a file:///test
 // path.  We correctly return file:///C:/test on Windows.  We should fix
@@ -1702,7 +1702,6 @@ BUG23498 MAC : tables/mozilla_expected_failures/other/test4.html = IMAGE+TEXT IM
 BUG23498 MAC : webarchive/test-duplicate-resources.html = IMAGE
 
 // Missing "misspelled-word" dotted underline
-BUG23497 MAC : editing/deleting/delete-to-select-table.html = IMAGE
 BUG23497 MAC : editing/selection/unrendered-002.html = IMAGE
 BUG23497 MAC : editing/spelling/spellcheck-attribute.html = IMAGE
 
@@ -1756,22 +1755,9 @@ BUG23494 MAC : fast/text/monospace-width-cache.html = IMAGE
 // Broken upstream? Layout test should write a "PASS" or "FAIL" line; upstream has neither (ours is "PASS")
 BUG23492 MAC : fast/frames/frame-src-attribute.html = IMAGE
 
-// Font glyph issues?
-BUG23491 MAC : css2.1/t0905-c5525-flthw-00-c-g.html = IMAGE
-BUG23491 MAC : css2.1/t0905-c5526-flthw-00-c-g.html = IMAGE
-
 // Actual is just slightly off in color than expected
-BUG23488 MAC : editing/deleting/type-delete-after-quote.html = IMAGE
-BUG23488 MAC : editing/inserting/5418891.html = IMAGE
-BUG23488 MAC : editing/selection/extend-by-word-002.html = IMAGE
-BUG23488 MAC : fast/backgrounds/background-clip-text.html = IMAGE
-BUG23488 MAC : fast/backgrounds/repeat/mask-negative-offset-repeat.html = IMAGE
 BUG23488 MAC RELEASE : fast/backgrounds/size/backgroundSize15.html = IMAGE
 BUG23488 MAC DEBUG SLOW : fast/backgrounds/size/backgroundSize15.html = IMAGE
-BUG23488 MAC RELEASE : fast/backgrounds/size/contain-and-cover.html = IMAGE
-BUG23488 MAC DEBUG SLOW : fast/backgrounds/size/contain-and-cover.html = IMAGE
-BUG23488 MAC : fast/backgrounds/svg-as-background-3.html = IMAGE
-BUG23488 MAC : fast/block/float/avoidance-percent-width-compat.html = IMAGE
 BUG23488 MAC : fast/block/float/avoidance-percent-width-strict.html = IMAGE
 BUG23488 MAC : fast/block/float/float-avoidance.html = IMAGE
 BUG23488 MAC : fast/borders/border-image-rotate-transform.html = IMAGE
@@ -1784,7 +1770,6 @@ BUG23488 MAC : fast/css/shadow-multiple.html = IMAGE
 BUG23488 MAC : fast/forms/search-vertical-alignment.html = IMAGE
 BUG23488 MAC : fast/frames/content-opacity-1.html = IMAGE
 BUG23488 MAC : fast/frames/content-opacity-2.html = IMAGE
-BUG23488 MAC : fast/frames/viewsource-attribute.html = IMAGE
 BUG23488 MAC : fast/layers/add-layer-with-nested-stacking.html = IMAGE
 BUG23488 MAC : fast/layers/inline-dirty-z-order-lists.html = IMAGE
 BUG23488 MAC : fast/layers/layer-content-visibility-change.html = IMAGE
@@ -1792,27 +1777,12 @@ BUG23488 MAC : fast/layers/remove-layer-with-nested-stacking.html = IMAGE
 BUG23488 MAC : fast/lists/ol-start-parsing.html = IMAGE
 BUG23488 MAC : fast/multicol/positioned-with-constrained-height.html = IMAGE
 BUG23488 MAC : fast/overflow/position-fixed-transform-clipping.html = IMAGE
-BUG23488 MAC : fast/reflections/abs-position-in-reflection.html = IMAGE
-BUG23488 MAC : fast/table/fixed-table-with-percent-inside-percent-table.html = IMAGE
-BUG23488 MAC : fast/table/fixed-table-with-percent-width-inside-auto-table.html = IMAGE
-BUG23488 MAC : fast/table/fixed-table-with-percent-width-inside-div.html = IMAGE
-BUG23488 MAC : fast/table/fixed-table-with-percent-width-inside-extra-large-div.html = IMAGE
-BUG23488 MAC : fast/table/fixed-table-with-percent-width-inside-fixed-width-table.html = IMAGE
-BUG23488 MAC : fast/table/fixed-table-with-small-percent-width.html = IMAGE
 BUG23488 MAC : fast/text/shadow-no-blur.html = IMAGE
 BUG23488 MAC : fast/text/shadow-translucent-fill.html = IMAGE
 BUG23488 MAC : svg/transforms/animated-path-inside-transformed-html.xhtml = IMAGE
-BUG23488 MAC : tables/mozilla/bugs/bug106158-1.html = IMAGE
-BUG23488 MAC : tables/mozilla/bugs/bug106158-2.html = IMAGE
-BUG23488 MAC : tables/mozilla/bugs/bug34176.html = IMAGE
 BUG23488 MAC : tables/mozilla_expected_failures/bugs/bug178855.xml = IMAGE
 
 // Looks the same to me... huh. Variation of above?
-BUG23489 MAC : fast/forms/menulist-clip.html = IMAGE
-BUG23489 MAC : fast/forms/menulist-narrow-width.html = IMAGE
-BUG23489 MAC : fast/forms/menulist-option-wrap.html = IMAGE
-BUG23489 MAC : fast/forms/menulist-restrict-line-height.html = IMAGE
-BUG23489 MAC : fast/forms/select-baseline.html = IMAGE
 BUG23489 MAC : fast/table/empty-section-crash.html = IMAGE
 
 // Various drawing tests that are broken
@@ -1869,9 +1839,6 @@ BUG23473 MAC : fast/repaint/text-shadow-horizontal.html = PASS
 
 // Thicker shadow than expected
 BUG23471 MAC : fast/text/stroking.html = IMAGE
-
-// Thin lines not drawing right
-BUG23470 MAC : fast/transforms/shadows.html = IMAGE
 
 // SVG foreign object skew off by a lot
 BUG23466 MAC : svg/custom/foreign-object-skew.svg = IMAGE
@@ -2323,7 +2290,6 @@ BUG_JORLOW LINUX : fast/multicol/column-rules-stacking.html = FAIL
 
 // ==== WebKit roll 50258:50313 ====
 BUG26291 MAC : fast/text/atsui-multiple-renderers.html = IMAGE
-BUG26291 MAC : fast/text/drawBidiText.html = IMAGE
 BUG26291 MAC : transforms/2d/hindi-rotated.html = IMAGE
 
 // Flaky since at least WebKit 50258.
@@ -2345,21 +2311,19 @@ BUG27418 MAC RELEASE SLOW : http/tests/plugins/interrupted-get-url.html = PASS
 // The ColorSpace was only implemented for CG, more port implementation
 // required in order for Chromium to support color correction.
 BUG28005 : fast/css/color-correction-backgrounds-and-text.html = FAIL
-BUG28005 : fast/css/color-correction-on-backgrounds.html = FAIL
-BUG28005 : fast/css/color-correction-on-text.html = FAIL
-BUG28005 : fast/css/color-correction.html = FAIL
-BUG28005 MAC : fast/css/color-correction-on-box-shadow.html = IMAGE
+BUG28005 LINUX WIN : fast/css/color-correction-on-backgrounds.html = FAIL
+BUG28005 LINUX WIN : fast/css/color-correction-on-text.html = FAIL
+BUG28005 LINUX WIN : fast/css/color-correction.html = FAIL
 BUG28005 WIN LINUX : fast/css/color-correction-on-box-shadow.html = IMAGE+TEXT
-BUG28005 MAC : fast/css/color-correction-on-text-shadow.html = IMAGE
 BUG28005 WIN LINUX : fast/css/color-correction-on-text-shadow.html = IMAGE+TEXT
 BUG28005 : fast/css/color-correction-on-background-image.html = FAIL
-BUG28005 : fast/css/color-correction-untagged-images.html = FAIL
+BUG28005 LINUX WIN : fast/css/color-correction-untagged-images.html = FAIL
 
 // May also be related to r50760, but not as confident.
 BUG27551 WIN : fast/css/shadow-multiple.html = IMAGE
 
 // WebKit merge 50756:50820, possibly due to WebKit r50808/r50786 and Chromium r31715
-BUG27553 WIN MAC : fast/text/atsui-partial-selection.html = IMAGE
+BUG27553 WIN : fast/text/atsui-partial-selection.html = IMAGE
 
 BUG22700 WIN LINUX : fast/canvas/canvas-shadow.html = TEXT
 
@@ -2438,7 +2402,7 @@ BUG29164 WIN LINUX MAC : fast/frames/sandboxed-iframe-plugins.html = TEXT
 BUG29167 MAC DEBUG : fast/dom/replaceChild.html = IMAGE PASS
 
 // Failure from WebKit merge 51607:51613 (51608 is the cause)
-BUG29239 : fast/css/variables/misplaced-import-test.html = FAIL
+BUG29239 LINUX WIN : fast/css/variables/misplaced-import-test.html = FAIL
 
 // Failures from WebKit merge 51642:51681
 BUG29393 : fast/loader/stateobjects/pushstate-object-types.html = TEXT
@@ -2615,7 +2579,6 @@ BUG30826 WIN DEBUG : platform/win/fast/events/panScroll-event-fired.html = PASS 
 BUG30930 LINUX DEBUG : tables/mozilla/bugs/bug15933.html = IMAGE PASS
 
 // WebKit update 52372->52454
-BUG30938 MAC : fast/backgrounds/svg-as-background-6.html = IMAGE
 BUG30939 : svg/filters/filter-clip.svg = IMAGE+TEXT
 // Webkit roll 52198->52205
 // Newly added test in r52202
@@ -2767,7 +2730,7 @@ BUG37896 MAC LINUX : fast/backgrounds/animated-svg-as-background.html = IMAGE
 BUG37896 : fast/events/remove-child-onscroll.html = TIMEOUT
 // This one may be an actual regression! Started being flaky after
 // http://trac.webkit.org/log/?verbose=on&rev=55742&stop_rev=55710
-BUG37896 : fast/events/standalone-image-drag-to-editable.html = IMAGE+TEXT
+BUG37896 LINUX WIN : fast/events/standalone-image-drag-to-editable.html = IMAGE+TEXT
 // New test, added http://trac.webkit.org/changeset/55546
 BUG37896 WIN LINUX : fast/multicol/hit-test-above-or-below.html = TEXT
 // Added in http://trac.webkit.org/changeset/55669
