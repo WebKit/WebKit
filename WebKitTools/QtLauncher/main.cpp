@@ -725,6 +725,11 @@ void LauncherWindow::showUserAgentDialog()
         file.close();
     }
 
+    QSettings settings;
+    QString customUserAgent = settings.value("CustomUserAgent").toString();
+    if (!items.contains(customUserAgent) && !customUserAgent.isEmpty())
+        items << customUserAgent;
+
     QDialog* dialog = new QDialog(this);
     dialog->setWindowTitle("Change User Agent");
 
@@ -733,8 +738,12 @@ void LauncherWindow::showUserAgentDialog()
 
     QComboBox* combo = new QComboBox(dialog);
     combo->setMaximumWidth(size().width() * 0.7);
+    combo->setEditable(true);
     combo->insertItems(0, items);
     layout->addWidget(combo);
+
+    int index = combo->findText(page()->userAgentForUrl(QUrl()));
+    combo->setCurrentIndex(index);
 
     QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok
             | QDialogButtonBox::Cancel, Qt::Horizontal, dialog);
@@ -742,8 +751,11 @@ void LauncherWindow::showUserAgentDialog()
     connect(buttonBox, SIGNAL(rejected()), dialog, SLOT(reject()));
     layout->addWidget(buttonBox);
 
-    if (dialog->exec() && !combo->currentText().isEmpty())
+    if (dialog->exec() && !combo->currentText().isEmpty()) {
         page()->setUserAgent(combo->currentText());
+        if (!items.contains(combo->currentText()))
+            settings.setValue("CustomUserAgent", combo->currentText());
+    }
 
     delete dialog;
 }
