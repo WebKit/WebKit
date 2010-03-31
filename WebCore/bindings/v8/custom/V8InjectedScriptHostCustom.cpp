@@ -250,6 +250,7 @@ InjectedScript InjectedScriptHost::injectedScriptFor(ScriptState* inspectedScrip
 
 bool InjectedScriptHost::canAccessInspectedWindow(ScriptState* scriptState)
 {
+    v8::HandleScope handleScope;
     v8::Local<v8::Context> context = scriptState->context();
     v8::Local<v8::Object> global = context->Global();
     if (global.IsEmpty())

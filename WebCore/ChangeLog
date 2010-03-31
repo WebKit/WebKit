@@ -1,5 +1,14 @@
 2010-03-31  Yury Semikhatsky  <yurys@chromium.org>
 
+        Unreviewed. Chromium build fix: create missing v8::HandleScope.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36828
+
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::InjectedScriptHost::canAccessInspectedWindow):
+
+2010-03-31  Yury Semikhatsky  <yurys@chromium.org>
+
         Reviewed by Pavel Feldman.
 
         Check that injected script can still access inspected window object when wrapping console object. When the window cannot be access serialize objects as strings. Also don't call InjectedScript.dispatch if the window cannot be accessed (due to frame navigation).
