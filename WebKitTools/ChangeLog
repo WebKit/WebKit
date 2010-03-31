@@ -2,6 +2,18 @@
 
         Reviewed by Eric Seidel.
 
+        Add a Builder.force_build method
+        https://bugs.webkit.org/show_bug.cgi?id=36875
+
+        We plan to eventually use this in SheriffBot to break deadlocks created
+        by flaky tests.
+
+        * Scripts/webkitpy/common/net/buildbot.py:
+
+2010-03-31  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         webkit-patch reads wrong bug url from unified diff context
         https://bugs.webkit.org/show_bug.cgi?id=36477
 
