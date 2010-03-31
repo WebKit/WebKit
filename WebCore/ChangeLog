@@ -1,3 +1,61 @@
+2010-03-31  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Fisher.
+
+        Cleanup RedirectScheduler
+        https://bugs.webkit.org/show_bug.cgi?id=36874
+
+        Removed the nutty ScheduledRedirection struct in favor of a hierarchy
+        of classes to represent the various kinds of scheduled redirects.
+        Doing this lets us get rid of the pseudo RTTI switch statements on
+        "type" in favour of calling virtual functions.
+
+        No new tests because this change should be API identical with the
+        existing RedirectScheduler.
+
+        * loader/RedirectScheduler.cpp:
+        (WebCore::ScheduledNavigation::ScheduledNavigation):
+        (WebCore::ScheduledNavigation::~ScheduledNavigation):
+        (WebCore::ScheduledNavigation::isLocationChange):
+        (WebCore::ScheduledNavigation::shouldStartTimer):
+        (WebCore::ScheduledNavigation::didStartTimer):
+        (WebCore::ScheduledNavigation::didStopTimer):
+        (WebCore::ScheduledNavigation::delay):
+        (WebCore::ScheduledNavigation::lockHistory):
+        (WebCore::ScheduledNavigation::lockBackForwardList):
+        (WebCore::ScheduledNavigation::wasDuringLoad):
+        (WebCore::ScheduledURLNavigation::ScheduledURLNavigation):
+        (WebCore::ScheduledURLNavigation::fire):
+        (WebCore::ScheduledURLNavigation::didStartTimer):
+        (WebCore::ScheduledURLNavigation::didStopTimer):
+        (WebCore::ScheduledURLNavigation::url):
+        (WebCore::ScheduledURLNavigation::referrer):
+        (WebCore::ScheduledURLNavigation::wasUserGesture):
+        (WebCore::ScheduledRedirect::ScheduledRedirect):
+        (WebCore::ScheduledRedirect::isLocationChange):
+        (WebCore::ScheduledRedirect::shouldStartTimer):
+        (WebCore::ScheduledLocationChange::ScheduledLocationChange):
+        (WebCore::ScheduledRefresh::ScheduledRefresh):
+        (WebCore::ScheduledRefresh::fire):
+        (WebCore::ScheduledHistoryNavigation::ScheduledHistoryNavigation):
+        (WebCore::ScheduledHistoryNavigation::fire):
+        (WebCore::ScheduledFormSubmission::ScheduledFormSubmission):
+        (WebCore::ScheduledFormSubmission::fire):
+        (WebCore::RedirectScheduler::redirectScheduledDuringLoad):
+        (WebCore::RedirectScheduler::clear):
+        (WebCore::RedirectScheduler::scheduleRedirect):
+        (WebCore::RedirectScheduler::mustLockBackForwardList):
+        (WebCore::RedirectScheduler::scheduleLocationChange):
+        (WebCore::RedirectScheduler::scheduleFormSubmission):
+        (WebCore::RedirectScheduler::scheduleRefresh):
+        (WebCore::RedirectScheduler::locationChangePending):
+        (WebCore::RedirectScheduler::scheduleHistoryNavigation):
+        (WebCore::RedirectScheduler::timerFired):
+        (WebCore::RedirectScheduler::schedule):
+        (WebCore::RedirectScheduler::startTimer):
+        (WebCore::RedirectScheduler::cancel):
+        * loader/RedirectScheduler.h:
+
 2010-03-31  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Darin Fisher.

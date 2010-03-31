@@ -44,7 +44,7 @@ class Frame;
 class String;
 
 struct FrameLoadRequest;
-struct ScheduledRedirection;
+class ScheduledNavigation;
 
 class RedirectScheduler : public Noncopyable {
 public:
@@ -67,13 +67,13 @@ public:
 
 private:
     void timerFired(Timer<RedirectScheduler>*);
-    void schedule(PassOwnPtr<ScheduledRedirection>);
+    void schedule(PassOwnPtr<ScheduledNavigation>);
 
     static bool mustLockBackForwardList(Frame* targetFrame);
 
     Frame* m_frame;
     Timer<RedirectScheduler> m_timer;
-    OwnPtr<ScheduledRedirection> m_scheduledRedirection;
+    OwnPtr<ScheduledNavigation> m_redirect;
 };
 
 } // namespace WebCore
