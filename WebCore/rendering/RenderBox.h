@@ -271,9 +271,9 @@ public:
     virtual void paintMask(PaintInfo&, int tx, int ty);
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
 
-    // Called when a positioned object moves but doesn't change size.  A simplified layout is done
-    // that just updates the object's position.
-    virtual void tryLayoutDoingPositionedMovementOnly()
+    // Called when a positioned object moves but doesn't necessarily change size.  A simplified layout is attempted
+    // that just updates the object's position. If the size does change, the object remains dirty.
+    void tryLayoutDoingPositionedMovementOnly()
     {
         int oldWidth = width();
         calcWidth();
