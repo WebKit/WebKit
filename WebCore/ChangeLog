@@ -1,3 +1,7 @@
+2010-03-31  Darin Adler  <darin@apple.com>
+
+        * rendering/RenderThemeChromiumWin.h: Fix inconsistent line endings.
+
 2010-03-31  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.
