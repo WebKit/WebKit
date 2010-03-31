@@ -31,7 +31,6 @@
 import StringIO
 
 from webkitpy.common.config.committers import CommitterList
-from webkitpy.common.net.bugzilla import parse_bug_id
 
 
 class CommitInfo(object):

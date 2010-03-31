@@ -2,6 +2,23 @@
 
         Reviewed by Eric Seidel.
 
+        webkit-patch reads wrong bug url from unified diff context
+        https://bugs.webkit.org/show_bug.cgi?id=36477
+
+        Instead of trying to figure out the bug_id from the diff, we should
+        just get the information from the Checkout object, which understands
+        these concepts.
+
+        * Scripts/webkitpy/common/checkout/api.py:
+        * Scripts/webkitpy/common/checkout/commitinfo.py:
+        * Scripts/webkitpy/tool/commands/download.py:
+        * Scripts/webkitpy/tool/commands/upload.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+
+2010-03-31  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         webkit-patch commit-queue should land patches optimistically
         https://bugs.webkit.org/show_bug.cgi?id=34187
 

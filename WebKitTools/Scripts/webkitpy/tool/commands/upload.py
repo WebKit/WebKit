@@ -144,15 +144,14 @@ class AbstractPatchUploadingCommand(AbstractSequencedCommand):
         # Perfer a bug id passed as an argument over a bug url in the diff (i.e. ChangeLogs).
         bug_id = args and args[0]
         if not bug_id:
-            state["diff"] = tool.scm().create_patch()
-            bug_id = parse_bug_id(state["diff"])
+            bug_id = tool.checkout().bug_id_for_this_commit()
         return bug_id
 
     def _prepare_state(self, options, args, tool):
         state = {}
         state["bug_id"] = self._bug_id(args, tool, state)
         if not state["bug_id"]:
-            error("No bug id passed and no bug url found in diff.")
+            error("No bug id passed and no bug url found in ChangeLogs.")
         return state
 
 
@@ -288,6 +287,7 @@ class PostCommits(AbstractDeclarativeCommand):
             tool.bugs.add_patch_to_bug(bug_id, diff_file, description, comment_text, mark_for_review=options.review, mark_for_commit_queue=options.request_commit)
 
 
+# FIXME: This command needs to be brought into the modern age with steps and CommitInfo.
 class MarkBugFixed(AbstractDeclarativeCommand):
     name = "mark-bug-fixed"
     help_text = "Mark the specified bug as fixed"
@@ -301,6 +301,7 @@ class MarkBugFixed(AbstractDeclarativeCommand):
         ]
         AbstractDeclarativeCommand.__init__(self, options=options)
 
+    # FIXME: We should be using checkout().changelog_entries_for_revision(...) instead here.
     def _fetch_commit_log(self, tool, svn_revision):
         if not svn_revision:
             return tool.scm().last_svn_commit_log()

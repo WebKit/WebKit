@@ -378,6 +378,9 @@ class MockCheckout(object):
             "reviewer": self._committer_list.committer_by_name("Darin Adler"),
         })
 
+    def bug_id_for_revision(self, svn_revision):
+        return 12345
+
     def modified_changelogs(self):
         # Ideally we'd return something more interesting here.  The problem is
         # that LandDiff will try to actually read the patch from disk!
@@ -391,6 +394,7 @@ class MockCheckout(object):
 
     def apply_reverse_diff(self, revision):
         pass
+
 
 class MockUser(object):
 

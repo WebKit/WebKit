@@ -34,7 +34,6 @@ from optparse import make_option
 import webkitpy.tool.steps as steps
 
 from webkitpy.common.checkout.changelog import ChangeLog, view_source_url
-from webkitpy.common.net.bugzilla import parse_bug_id
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.tool.commands.abstractsequencedcommand import AbstractSequencedCommand
 from webkitpy.tool.commands.stepsequence import StepSequence
@@ -86,7 +85,7 @@ If a bug id is provided, or one can be found in the ChangeLog land will update t
 
     def _prepare_state(self, options, args, tool):
         return {
-            "bug_id" : (args and args[0]) or parse_bug_id(tool.scm().create_patch()),
+            "bug_id" : (args and args[0]) or tool.checkout().bug_id_for_this_commit()
         }
 
 
@@ -244,12 +243,8 @@ class LandFromBug(AbstractPatchLandingCommand, ProcessBugsMixin):
 class AbstractRolloutPrepCommand(AbstractSequencedCommand):
     argument_names = "REVISION REASON"
 
-    def _parse_bug_id_from_revision_diff(self, revision):
-        original_diff = self.tool.scm().diff_for_revision(revision)
-        return parse_bug_id(original_diff)
-
     def _bug_id_for_revision(self, revision):
-        bug_id = self._parse_bug_id_from_revision_diff(revision)
+        bug_id = self.tool.checkout().bug_id_for_revision(revision)
         if bug_id:
             log("Preparing rollout for bug %s." % bug_id)
             return bug_id

@@ -75,6 +75,9 @@ class Checkout(object):
         # entries more difficult to wire in if we need to do that in the future.
         return CommitInfo(revision, committer_email, changelog_data)
 
+    def bug_id_for_revision(self, revision):
+        return self.commit_info_for_revision(revision).bug_id()
+
     def modified_changelogs(self):
         return [path for path in self._scm.changed_files() if self._is_path_to_changelog(path)]
 
@@ -95,6 +98,12 @@ class Checkout(object):
 
         # FIXME: We should sort and label the ChangeLog messages like commit-log-editor does.
         return CommitMessage("".join(changelog_messages).splitlines())
+
+    def bug_id_for_this_commit(self):
+        try:
+            return parse_bug_id(self.commit_message_for_this_commit())
+        except ScriptError, e:
+            pass # We might not have ChangeLogs.
 
     def apply_patch(self, patch, force=False):
         # It's possible that the patch was not made from the root directory.
