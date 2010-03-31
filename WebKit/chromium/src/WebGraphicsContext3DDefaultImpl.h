@@ -264,8 +264,13 @@ private:
     bool m_initialized;
     unsigned int m_texture;
     unsigned int m_fbo;
-    unsigned int m_depthBuffer;
+    unsigned int m_depthStencilBuffer;
     unsigned int m_cachedWidth, m_cachedHeight;
+
+    // For multisampling
+    unsigned int m_multisampleFBO;
+    unsigned int m_multisampleDepthStencilBuffer;
+    unsigned int m_multisampleColorBuffer;
 
     // For tracking which FBO is bound
     unsigned int m_boundFBO;
@@ -276,6 +281,11 @@ private:
                         unsigned int width,
                         unsigned int height);
 #endif
+
+    // Take into account the user's requested context creation attributes, in
+    // particular stencil and antialias, and determine which could or could
+    // not be honored based on the capabilities of the OpenGL implementation.
+    void validateAttributes();
 
     // Note: we aren't currently using this information, but we will
     // need to in order to verify that all enabled vertex arrays have

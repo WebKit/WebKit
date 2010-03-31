@@ -41,10 +41,11 @@ using namespace WebCore;
 
 @implementation Canvas3DLayer
 
--(id)initWithContext:(CGLContextObj)context texture:(GLuint)texture
+-(id)initWithContext:(GraphicsContext3D*)context
 {
-    m_contextObj = context;
-    m_texture = texture;
+    m_context = context;
+    m_contextObj = static_cast<CGLContextObj>(context->platformGraphicsContext3D());
+    m_texture = static_cast<GLuint>(context->platformTexture());
     self = [super init];
     return self;
 }
@@ -70,8 +71,8 @@ using namespace WebCore;
 
 -(void)drawInCGLContext:(CGLContextObj)glContext pixelFormat:(CGLPixelFormatObj)pixelFormat forLayerTime:(CFTimeInterval)timeInterval displayTime:(const CVTimeStamp *)timeStamp
 {
-    CGLSetCurrentContext(m_contextObj);
-    glFinish();
+    m_context->prepareTexture();
+
     CGLSetCurrentContext(glContext);
 
     CGRect frame = [self frame];

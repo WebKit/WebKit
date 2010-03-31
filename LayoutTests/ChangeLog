@@ -1,3 +1,17 @@
+2010-03-31  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Hook up WebGLContextAttributes to OpenGL context creation code
+        https://bugs.webkit.org/show_bug.cgi?id=33416
+
+        * fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias-expected.txt: Added.
+        * fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html: Added.
+        * fast/canvas/webgl/context-attributes-expected.txt: WebGL context attributes behavior changed with this fix.
+        * fast/canvas/webgl/context-attributes.html: Ditto.
+        * fast/canvas/webgl/gl-get-calls-expected.txt: Stencil buffer is enabled, thus Stencil Bits is no longer 0.
+        * fast/canvas/webgl/gl-get-calls.html: Ditto.
+
 2010-03-31  Qi Zhang  <qi.2.zhang@nokia.com>
 
         Reviewed by Laszlo Gombos.

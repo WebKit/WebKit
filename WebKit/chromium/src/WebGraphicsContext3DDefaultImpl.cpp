@@ -124,7 +124,10 @@ WebGraphicsContext3DDefaultImpl::WebGraphicsContext3DDefaultImpl()
     : m_initialized(false)
     , m_texture(0)
     , m_fbo(0)
-    , m_depthBuffer(0)
+    , m_depthStencilBuffer(0)
+    , m_multisampleFBO(0)
+    , m_multisampleDepthStencilBuffer(0)
+    , m_multisampleColorBuffer(0)
     , m_boundFBO(0)
 #ifdef FLIP_FRAMEBUFFER_VERTICALLY
     , m_scanline(0)
@@ -152,7 +155,15 @@ WebGraphicsContext3DDefaultImpl::~WebGraphicsContext3DDefaultImpl()
     if (m_initialized) {
         makeContextCurrent();
 #ifndef RENDER_TO_DEBUGGING_WINDOW
-        glDeleteRenderbuffersEXT(1, &m_depthBuffer);
+        if (m_attributes.antialias) {
+            glDeleteRenderbuffersEXT(1, &m_multisampleColorBuffer);
+            if (m_attributes.depth || m_attributes.stencil)
+                glDeleteRenderbuffersEXT(1, &m_multisampleDepthStencilBuffer);
+            glDeleteFramebuffersEXT(1, &m_multisampleFBO);
+        } else {
+            if (m_attributes.depth || m_attributes.stencil)
+                glDeleteRenderbuffersEXT(1, &m_depthStencilBuffer);
+        }
         glDeleteTextures(1, &m_texture);
 #ifdef FLIP_FRAMEBUFFER_VERTICALLY
         if (m_scanline)
@@ -184,16 +195,6 @@ WebGraphicsContext3DDefaultImpl::~WebGraphicsContext3DDefaultImpl()
 
 bool WebGraphicsContext3DDefaultImpl::initialize(WebGraphicsContext3D::Attributes attributes)
 {
-    // FIXME: we need to take into account the user's requested
-    // context creation attributes, in particular stencil and
-    // antialias, and determine which could and could not be honored
-    // based on the capabilities of the OpenGL implementation.
-    m_attributes.alpha = true;
-    m_attributes.depth = true;
-    m_attributes.stencil = false;
-    m_attributes.antialias = false;
-    m_attributes.premultipliedAlpha = true;
-
 #if OS(WINDOWS)
     WNDCLASS wc;
     if (!GetClassInfo(GetModuleHandle(0), L"CANVASGL", &wc)) {
@@ -376,8 +377,38 @@ bool WebGraphicsContext3DDefaultImpl::initialize(WebGraphicsContext3D::Attribute
         s_initializedGLEW = true;
     }
 
+    m_attributes = attributes;
+    validateAttributes();
+
     m_initialized = true;
     return true;
+}
+
+void WebGraphicsContext3DDefaultImpl::validateAttributes()
+{
+    const char* extensions = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
+
+    if (m_attributes.stencil) {
+        if (std::strstr(extensions, "GL_EXT_packed_depth_stencil")) {
+            if (!m_attributes.depth)
+                m_attributes.depth = true;
+        } else
+            m_attributes.stencil = false;
+    }
+    if (m_attributes.antialias) {
+        bool isValidVendor = true;
+#if PLATFORM(CG)
+        // Currently in Mac we only turn on antialias if vendor is NVIDIA.
+        const char* vendor = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
+        if (!std::strstr(vendor, "NVIDIA"))
+            isValidVendor = false;
+#endif
+        if (!isValidVendor || !std::strstr(extensions, "GL_EXT_framebuffer_multisample"))
+            m_attributes.antialias = false;
+    }
+    // FIXME: instead of enforcing premultipliedAlpha = true, implement the
+    // correct behavior when premultipliedAlpha = false is requested.
+    m_attributes.premultipliedAlpha = true;
 }
 
 bool WebGraphicsContext3DDefaultImpl::makeContextCurrent()
@@ -465,23 +496,88 @@ void WebGraphicsContext3DDefaultImpl::reshape(int width, int height)
         m_texture = createTextureObject(target);
         // Generate the framebuffer object
         glGenFramebuffersEXT(1, &m_fbo);
-        // Generate the depth buffer
-        glGenRenderbuffersEXT(1, &m_depthBuffer);
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
+        m_boundFBO = m_fbo;
+        if (m_attributes.depth || m_attributes.stencil)
+            glGenRenderbuffersEXT(1, &m_depthStencilBuffer);
+        // Generate the multisample framebuffer object
+        if (m_attributes.antialias) {
+            glGenFramebuffersEXT(1, &m_multisampleFBO);
+            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_multisampleFBO);
+            m_boundFBO = m_multisampleFBO;
+            glGenRenderbuffersEXT(1, &m_multisampleColorBuffer);
+            if (m_attributes.depth || m_attributes.stencil)
+                glGenRenderbuffersEXT(1, &m_multisampleDepthStencilBuffer);
+        }
     }
 
-    // Reallocate the color and depth buffers
+    GLint internalColorFormat, colorFormat, internalDepthStencilFormat = 0;
+    if (m_attributes.alpha) {
+        internalColorFormat = GL_RGBA8;
+        colorFormat = GL_RGBA;
+    } else {
+        internalColorFormat = GL_RGB8;
+        colorFormat = GL_RGB;
+    }
+    if (m_attributes.stencil || m_attributes.depth) {
+        // We don't allow the logic where stencil is required and depth is not.
+        // See GraphicsContext3DInternal constructor.
+        if (m_attributes.stencil && m_attributes.depth)
+            internalDepthStencilFormat = GL_DEPTH24_STENCIL8_EXT;
+        else
+            internalDepthStencilFormat = GL_DEPTH_COMPONENT;
+    }
+
+    bool mustRestoreFBO = false;
+
+    // Resize multisampling FBO
+    if (m_attributes.antialias) {
+        GLint maxSampleCount;
+        glGetIntegerv(GL_MAX_SAMPLES_EXT, &maxSampleCount);
+        GLint sampleCount = std::min(8, maxSampleCount);
+        if (m_boundFBO != m_multisampleFBO) {
+            mustRestoreFBO = true;
+            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_multisampleFBO);
+        }
+        glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_multisampleColorBuffer);
+        glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, sampleCount, internalColorFormat, width, height);
+        glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_RENDERBUFFER_EXT, m_multisampleColorBuffer);
+        if (m_attributes.stencil || m_attributes.depth) {
+            glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_multisampleDepthStencilBuffer);
+            glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, sampleCount, internalDepthStencilFormat, width, height);
+            if (m_attributes.stencil)
+                glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_multisampleDepthStencilBuffer);
+            if (m_attributes.depth)
+                glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_multisampleDepthStencilBuffer);
+        }
+        glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0);
+        GLenum status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
+        if (status != GL_FRAMEBUFFER_COMPLETE_EXT) {
+            printf("GraphicsContext3D: multisampling framebuffer was incomplete\n");
+
+            // FIXME: cleanup.
+            notImplemented();
+        }
+    }
+
+    // Resize regular FBO
+    if (m_boundFBO != m_fbo) {
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
+        mustRestoreFBO = true;
+    }
     glBindTexture(target, m_texture);
-    glTexImage2D(target, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-    glBindTexture(target, 0);
-
-    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
-    m_boundFBO = m_fbo;
-    glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_depthBuffer);
-    glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT, width, height);
-    glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0);
-
+    glTexImage2D(target, 0, internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
     glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, target, m_texture, 0);
-    glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_depthBuffer);
+    glBindTexture(target, 0);
+    if (!m_attributes.antialias && (m_attributes.stencil || m_attributes.depth)) {
+        glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_depthStencilBuffer);
+        glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, internalDepthStencilFormat, width, height);
+        if (m_attributes.stencil)
+            glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_depthStencilBuffer);
+        if (m_attributes.depth)
+            glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_depthStencilBuffer);
+        glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0);
+    }
     GLenum status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
     if (status != GL_FRAMEBUFFER_COMPLETE_EXT) {
         printf("WebGraphicsContext3DDefaultImpl: framebuffer was incomplete\n");
@@ -489,6 +585,9 @@ void WebGraphicsContext3DDefaultImpl::reshape(int width, int height)
         // FIXME: cleanup.
         notImplemented();
     }
+
+    if (mustRestoreFBO)
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_boundFBO);
 #endif // RENDER_TO_DEBUGGING_WINDOW
 
 #ifdef FLIP_FRAMEBUFFER_VERTICALLY
@@ -499,8 +598,12 @@ void WebGraphicsContext3DDefaultImpl::reshape(int width, int height)
     m_scanline = new unsigned char[width * 4];
 #endif // FLIP_FRAMEBUFFER_VERTICALLY
 
-    glClear(GL_COLOR_BUFFER_BIT);
-
+    GLbitfield clearMask = GL_COLOR_BUFFER_BIT;
+    if (m_attributes.stencil)
+        clearMask |= GL_STENCIL_BUFFER_BIT;
+    if (m_attributes.depth)
+        clearMask |= GL_DEPTH_BUFFER_BIT;
+    glClear(clearMask);
 }
 
 #ifdef FLIP_FRAMEBUFFER_VERTICALLY
@@ -544,9 +647,19 @@ bool WebGraphicsContext3DDefaultImpl::readBackFramebuffer(unsigned char* pixels,
     // vertical flip is only a temporary solution anyway until Chrome
     // is fully GPU composited, it wasn't worth the complexity.
 
-    bool mustRestoreFBO = (m_boundFBO != m_fbo);
-    if (mustRestoreFBO)
+    bool mustRestoreFBO;
+    if (m_attributes.antialias) {
+        glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_multisampleFBO);
+        glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, m_fbo);
+        glBlitFramebufferEXT(0, 0, m_cachedWidth, m_cachedHeight, 0, 0, m_cachedWidth, m_cachedHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
+        mustRestoreFBO = true;
+    } else {
+        if (m_boundFBO != m_fbo) {
+            mustRestoreFBO = true;
+            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
+        }
+    }
 #if PLATFORM(SKIA)
     glReadPixels(0, 0, m_cachedWidth, m_cachedHeight, GL_BGRA, GL_UNSIGNED_BYTE, pixels);
 #elif PLATFORM(CG)
@@ -685,9 +798,11 @@ void WebGraphicsContext3DDefaultImpl::bindFramebuffer(unsigned long target, WebG
 {
     makeContextCurrent();
     if (!framebuffer)
-        framebuffer = m_fbo;
-    glBindFramebufferEXT(target, framebuffer);
-    m_boundFBO = framebuffer;
+        framebuffer = (m_attributes.antialias ? m_multisampleFBO : m_fbo);
+    if (framebuffer != m_boundFBO) {
+        glBindFramebufferEXT(target, framebuffer);
+        m_boundFBO = framebuffer;
+    }
 }
 
 DELEGATE_TO_GL_2(bindRenderbuffer, BindRenderbufferEXT, unsigned long, WebGLId)
@@ -984,7 +1099,34 @@ DELEGATE_TO_GL_2(pixelStorei, PixelStorei, unsigned long, long)
 
 DELEGATE_TO_GL_2(polygonOffset, PolygonOffset, double, double)
 
-DELEGATE_TO_GL_7(readPixels, ReadPixels, long, long, unsigned long, unsigned long, unsigned long, unsigned long, void*)
+void WebGraphicsContext3DDefaultImpl::readPixels(long x, long y, unsigned long width, unsigned long height, unsigned long format, unsigned long type, void* pixels)
+{
+#ifndef RENDER_TO_DEBUGGING_WINDOW
+    if (m_attributes.antialias && m_boundFBO == m_multisampleFBO) {
+        glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_multisampleFBO);
+        glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, m_fbo);
+        glBlitFramebufferEXT(x, y, x + width, y + height, x, y, x + width, y + height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
+    }
+#endif
+    glReadPixels(x, y, width, height, format, type, pixels);
+#if PLATFORM(CG)
+    if (!m_attributes.alpha) {
+        // If alpha is off, by default glReadPixels should set the alpha to 255 instead of 0.
+        // This is a hack until glReadPixels fixes its behavior.
+        // Pixels are stored in WebGLUnsignedByteArray, which is unsigned char array.
+        unsigned char* data = reinterpret_cast<unsigned char*>(pixels);
+        // FIXME: take into account pack alignment.
+        unsigned long byteLength = width * height * 4 * sizeof(unsigned char);
+        for (unsigned long i = 3; i < byteLength; i += 4)
+            data[i] = 255;
+    }
+#endif
+#ifndef RENDER_TO_DEBUGGING_WINDOW
+    if (m_attributes.antialias && m_boundFBO == m_multisampleFBO)
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_boundFBO);
+#endif
+}
 
 void WebGraphicsContext3DDefaultImpl::releaseShaderCompiler()
 {

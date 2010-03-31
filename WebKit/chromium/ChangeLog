@@ -1,3 +1,21 @@
+2010-03-31  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Hook up WebGLContextAttributes to OpenGL context creation code
+        https://bugs.webkit.org/show_bug.cgi?id=33416
+
+        * src/WebGraphicsContext3DDefaultImpl.cpp: Hook up WebGLContextAttributes to OpenGL context creation code for Chrome.
+        (WebKit::WebGraphicsContext3DDefaultImpl::WebGraphicsContext3DDefaultImpl):
+        (WebKit::WebGraphicsContext3DDefaultImpl::~WebGraphicsContext3DDefaultImpl):
+        (WebKit::WebGraphicsContext3DDefaultImpl::initialize):
+        (WebKit::WebGraphicsContext3DDefaultImpl::validateAttributes):
+        (WebKit::WebGraphicsContext3DDefaultImpl::reshape):
+        (WebKit::WebGraphicsContext3DDefaultImpl::readBackFramebuffer):
+        (WebKit::WebGraphicsContext3DDefaultImpl::bindFramebuffer):
+        (WebKit::WebGraphicsContext3DDefaultImpl::readPixels): Deal with wrong returned alpha values in Mac.
+        * src/WebGraphicsContext3DDefaultImpl.h: Add a function.
+
 2010-03-31  Darin Fisher  <darin@chromium.org>
 
         Reviewed by David Levin.
