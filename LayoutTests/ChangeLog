@@ -1,3 +1,21 @@
+2010-03-30  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Fix LayoutTests/fast/dom/Window/window-resize.html
+        The test failed on Mac if Dock is placed on the left or the right because the window's width
+        and horizontal position can be adjusted by the OS.
+        This patch fixes it by using window.availWidth instead of window.width as the expected
+        values and by avoid using constant expected values.
+        As a side effect, the expected values become platform independent.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36813
+
+        * fast/dom/Window/window-resize-expected.txt:
+        * fast/dom/Window/window-resize.html:
+        * platform/mac/fast/dom/Window/window-resize-expected.txt: Removed.
+        * platform/win/fast/dom/Window/window-resize-expected.txt: Removed.
+
 2010-03-30  Alpha Lam  <hclam@chromium.org>
 
         Reviewed by Dmitry Titov.

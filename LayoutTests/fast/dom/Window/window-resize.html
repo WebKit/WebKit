@@ -32,7 +32,7 @@
     y = screen.height*2;
     window.resizeTo(x, y);
     debug("Testing - resizeTo: Too Big");
-    shouldBe('window.outerWidth', 'screen.width');
+    shouldBe('window.outerWidth', 'screen.availWidth');
 
     debug('');
 
@@ -53,7 +53,7 @@
     shouldBe('window.screenY', 'screen.availTop');
     shouldBe('window.outerHeight', 'screen.availHeight');
     shouldBe('window.screenX', 'screen.availLeft');
-    shouldBe('window.outerWidth', 'screen.width');
+    shouldBe('window.outerWidth', 'screen.availWidth');
 
     debug('');
     x = 100;
@@ -67,7 +67,7 @@
     window.resizeTo(x, y);
     debug("Testing - resizeTo: Not Full Screen Out of Bounds");
     shouldBe('window.outerHeight + window.screenY - screen.availTop', 'screen.availHeight');
-    shouldBe('window.outerWidth + window.screenX - screen.availLeft', 'screen.width');
+    shouldBe('window.outerWidth + window.screenX - screen.availLeft', 'screen.availWidth');
 
     // resizeBy /////////////////////////
     debug('');
@@ -89,7 +89,7 @@
     y = screen.height*2;
     window.resizeBy(x, y);
     debug("Testing - resizeBy: Too Big");
-    shouldBe('window.outerWidth', 'screen.width');
+    shouldBe('window.outerWidth', 'screen.availWidth');
 
     window.moveTo(0,0);
     window.resizeTo(screen.width, screen.height);
@@ -122,7 +122,7 @@
     window.moveTo(x, y);
     debug("Testing - moveTo: Top Right");
     shouldBe('window.screenY', 'screen.availTop');
-    shouldBe('window.outerWidth', 'screen.width');
+    shouldBe('window.outerWidth', 'screen.availWidth');
 
     debug('');
 
@@ -131,7 +131,7 @@
     window.moveTo(x, y);
     debug("Testing - moveTo: Right");
     shouldBe('window.screenY', 'screen.availTop');
-    shouldBe('window.outerWidth', 'screen.width');
+    shouldBe('window.outerWidth', 'screen.availWidth');
 
     debug('');
 
@@ -140,7 +140,7 @@
     window.moveTo(x, y);
     debug("Testing - moveTo: Bottom Right");
     shouldBe('window.outerHeight', 'screen.availHeight');
-    shouldBe('window.outerWidth', 'screen.width');
+    shouldBe('window.outerWidth', 'screen.availWidth');
 
     debug('');
 
@@ -192,30 +192,30 @@
     y = 0;
     window.moveBy(x, y);
     debug("Testing - moveBy: Zero Zero");
-    shouldBe('window.screenY', previousScreenY.toString());
-    shouldBe('window.screenX', previousScreenX.toString());
+    shouldBeTrue('window.screenX == previousScreenX');
+    shouldBeTrue('window.screenY == previousScreenY');
 
     debug('');
 
-    previousScreenX += 1;
-
+    previousScreenX = window.screenX;
+    previousScreenY = window.screenY;
     x = 1;
     y = 0;
     window.moveBy(x, y);
     debug("Testing - moveBy: One Zero");
-    shouldBe('window.screenY', previousScreenY.toString());
-    shouldBe('window.screenX', previousScreenX.toString());
+    shouldBeTrue('window.screenX == previousScreenX + 1');
+    shouldBeTrue('window.screenY == previousScreenY');
 
     debug('');
 
-    previousScreenY += 1;
-
+    previousScreenX = window.screenX;
+    previousScreenY = window.screenY;
     x = 0;
     y = 1;
     window.moveBy(x, y);
     debug("Testing - moveBy: Zero One");
-    shouldBe('window.screenY', previousScreenY.toString());
-    shouldBe('window.screenX', previousScreenX.toString());
+    shouldBeTrue('window.screenX == previousScreenX');
+    shouldBeTrue('window.screenY == previousScreenY + 1');
 
     debug('');
 
@@ -245,7 +245,7 @@
     window.moveBy(x, y);
     debug("Testing - moveBy: Top Right");
     shouldBe('window.screenY', 'screen.availTop');
-    shouldBe('window.outerWidth', 'screen.width');
+    shouldBe('window.outerWidth', 'screen.availWidth');
 
     debug('');
 
@@ -254,7 +254,7 @@
     window.moveBy(x, y);
     debug("Testing - moveBy: Right");
     shouldBe('window.screenY', 'screen.availTop');
-    shouldBe('window.outerWidth', 'screen.width');
+    shouldBe('window.outerWidth', 'screen.availWidth');
 
     debug('');
 
@@ -263,7 +263,7 @@
     window.moveBy(x, y);
     debug("Testing - moveBy: Bottom Right");
     shouldBe('window.outerHeight', 'screen.availHeight');
-    shouldBe('window.outerWidth', 'screen.width');
+    shouldBe('window.outerWidth', 'screen.availWidth');
 
     debug('');
 
