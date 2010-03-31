@@ -1,3 +1,14 @@
+2010-03-31  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed. Rolling out r56829 since it broke chromium layout tests.
+
+        [REGRESSION] Inspector tests started crashing since r56829
+        https://bugs.webkit.org/show_bug.cgi?id=36888
+
+        * public/WebFrameClient.h:
+        * src/FrameLoaderClientImpl.cpp:
+        * src/FrameLoaderClientImpl.h:
+
 2010-03-31  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

@@ -56,8 +56,6 @@ namespace WebCore {
 
     ScriptExecutionContext* getScriptExecutionContext();
 
-    void logPropertyAccess(v8::Local<v8::String> name, const v8::AccessorInfo& info);
-
     class AllowAllocation {
     public:
         inline AllowAllocation()

@@ -199,12 +199,6 @@ public:
     virtual void didNotAllowScript();
     virtual void didNotAllowPlugins();
 
-    virtual void logCrossFramePropertyAccess(
-        WebCore::Frame* target,
-        bool crossOrigin,
-        const WebCore::String& name,
-        unsigned long long eventId);
-
 private:
     void makeDocumentView();
 

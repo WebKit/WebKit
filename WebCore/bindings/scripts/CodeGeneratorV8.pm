@@ -674,11 +674,6 @@ END
         push(@implContentDecls, "    if (!V8BindingSecurity::checkNodeSecurity(V8BindingState::Only(), imp->$attrName())) return v8::Handle<v8::Value>();\n\n");
     } elsif ($attribute->signature->extendedAttributes->{"CheckFrameSecurity"}) {
         push(@implContentDecls, "    if (!V8BindingSecurity::checkNodeSecurity(V8BindingState::Only(), imp->contentDocument())) return v8::Handle<v8::Value>();\n\n");
-    } 
-
-    if ($attrExt->{"DoNotCheckDomainSecurity"} || 
-        $attrExt->{"DoNotCheckDomainSecurityOnGet"}) {
-        push(@implContentDecls, "    logPropertyAccess(name, info);\n");
     }
 
     my $useExceptions = 1 if @{$attribute->getterExceptions} and !($isPodType);
@@ -1451,7 +1446,6 @@ sub GenerateImplementation
          "#include \"V8Binding.h\"\n" .
          "#include \"V8BindingState.h\"\n" .
          "#include \"V8DOMWrapper.h\"\n" .
-         "#include \"V8Utilities.h\"\n" .
          "#include \"V8IsolatedContext.h\"\n\n" .
          "#undef LOG\n\n");
 

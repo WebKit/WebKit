@@ -284,10 +284,6 @@ public:
     // scripts.
     virtual void didCreateIsolatedScriptContext(WebFrame*) { }
 
-    // Notifies that a cross-frame access was made to a property that allows
-    // cross-origin access.
-    virtual void logCrossFramePropertyAccess(WebFrame* active, WebFrame* target, bool crossOrigin, const WebString& property, unsigned long long eventId) { }
-
 
     // Geometry notifications ----------------------------------------------
 
