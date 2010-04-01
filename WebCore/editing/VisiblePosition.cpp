@@ -110,13 +110,7 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
         return Position();
 
     Position downstreamStart = p.downstream();
-    TextDirection primaryDirection = LTR;
-    for (RenderObject* r = p.node()->renderer(); r; r = r->parent()) {
-        if (r->isBlockFlow()) {
-            primaryDirection = r->style()->direction();
-            break;
-        }
-    }
+    TextDirection primaryDirection = p.primaryDirection();
 
     while (true) {
         InlineBox* box;
@@ -252,13 +246,7 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
         return Position();
 
     Position downstreamStart = p.downstream();
-    TextDirection primaryDirection = LTR;
-    for (RenderObject* r = p.node()->renderer(); r; r = r->parent()) {
-        if (r->isBlockFlow()) {
-            primaryDirection = r->style()->direction();
-            break;
-        }
-    }
+    TextDirection primaryDirection = p.primaryDirection();
 
     while (true) {
         InlineBox* box;

@@ -158,6 +158,8 @@ public:
     void getInlineBoxAndOffset(EAffinity, InlineBox*&, int& caretOffset) const;
     void getInlineBoxAndOffset(EAffinity, TextDirection primaryDirection, InlineBox*&, int& caretOffset) const;
 
+    TextDirection primaryDirection() const;
+
     static bool hasRenderedNonAnonymousDescendantsWithHeight(RenderObject*);
     static bool nodeIsUserSelectNone(Node*);
     
