@@ -1,3 +1,23 @@
+2010-04-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Assertion failure: !repaintContainer || repaintContainer == this
+        https://bugs.webkit.org/show_bug.cgi?id=36672
+        
+        RenderText's implementation of clippedOverflowRectForRepaint() uses containingBlock()
+        to get the renderer to use for computing the repaint rect. However, the renderer returned
+        by containingBlock() may be an ancestor of the repaintContainer, and containingBlock()
+        doesn't have the 'repaintContainerSkipped' logic that container() has.
+        
+        So in this case, check to see whether repaintContainer is actually a descendant of the
+        containing block, and in that case just repaint the entire repaintContainer.
+
+        Test: compositing/repaint/inline-repaint-container.html
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::clippedOverflowRectForRepaint):
+
 2010-04-01  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Jian Li.

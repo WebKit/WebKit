@@ -1,3 +1,15 @@
+2010-04-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Assertion failure: !repaintContainer || repaintContainer == this
+        https://bugs.webkit.org/show_bug.cgi?id=36672
+        
+        Test for repainting where the repaintContainer is a descendant of the containing block.
+
+        * compositing/repaint/inline-repaint-container-expected.txt: Added.
+        * compositing/repaint/inline-repaint-container.html: Added.
+
 2010-04-01  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
