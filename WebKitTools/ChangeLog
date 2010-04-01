@@ -1,5 +1,11 @@
 2010-04-01  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed.  Add cmarrin's IRC nickname.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
+2010-04-01  Adam Barth  <abarth@webkit.org>
+
         Unreviewed.
 
         EWS spins hot when unable to build
