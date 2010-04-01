@@ -1,3 +1,22 @@
+2010-04-01  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Unreviewed - more layout test result build fixes:
+        .) Fix expected layout test filenames for Chromium.
+        .) Add new layout test to gtk Skipped list.
+
+        Original patch review by Darin Adler (no functional change):
+
+        Bug 36803 - 'Inline-table' workaround for <ruby> broken with ruby support
+        https://bugs.webkit.org/show_bug.cgi?id=36803
+
+        * platform/chromium-linux/fast/ruby/ruby-inline-table-expected.checksum: Renamed from LayoutTests/platform/chromium-linux/fast/ruby/ruby-inline-table-actual.checksum.
+        * platform/chromium-linux/fast/ruby/ruby-inline-table-expected.png: Renamed from LayoutTests/platform/chromium-linux/fast/ruby/ruby-inline-table-actual.png.
+        * platform/chromium-linux/fast/ruby/ruby-inline-table-expected.txt: Renamed from LayoutTests/platform/chromium-linux/fast/ruby/ruby-inline-table-actual.txt.
+        * platform/chromium-win/fast/ruby/ruby-inline-table-expected.checksum: Renamed from LayoutTests/platform/chromium-win/fast/ruby/ruby-inline-table-actual.checksum.
+        * platform/chromium-win/fast/ruby/ruby-inline-table-expected.png: Renamed from LayoutTests/platform/chromium-win/fast/ruby/ruby-inline-table-actual.png.
+        * platform/chromium-win/fast/ruby/ruby-inline-table-expected.txt: Renamed from LayoutTests/platform/chromium-win/fast/ruby/ruby-inline-table-actual.txt.
+        * platform/gtk/Skipped:
+
 2010-03-31  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
