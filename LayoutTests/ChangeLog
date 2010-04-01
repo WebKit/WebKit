@@ -1,3 +1,13 @@
+2010-04-01  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Bug 36977 - aria-label doesn't work on image map area
+        https://bugs.webkit.org/show_bug.cgi?id=36977
+
+        * platform/mac/accessibility/area-with-aria-label-expected.txt: Added.
+        * platform/mac/accessibility/area-with-aria-label.html: Added.
+
 2010-04-01  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Eric Seidel.
