@@ -33,6 +33,7 @@
 #if ENABLE(3D_CANVAS)
 
 #include <stdio.h>
+#include <string.h>
 
 #include "WebGraphicsContext3DDefaultImpl.h"
 
@@ -389,7 +390,7 @@ void WebGraphicsContext3DDefaultImpl::validateAttributes()
     const char* extensions = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
 
     if (m_attributes.stencil) {
-        if (std::strstr(extensions, "GL_EXT_packed_depth_stencil")) {
+        if (strstr(extensions, "GL_EXT_packed_depth_stencil")) {
             if (!m_attributes.depth)
                 m_attributes.depth = true;
         } else
@@ -400,10 +401,10 @@ void WebGraphicsContext3DDefaultImpl::validateAttributes()
 #if PLATFORM(CG)
         // Currently in Mac we only turn on antialias if vendor is NVIDIA.
         const char* vendor = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
-        if (!std::strstr(vendor, "NVIDIA"))
+        if (!strstr(vendor, "NVIDIA"))
             isValidVendor = false;
 #endif
-        if (!isValidVendor || !std::strstr(extensions, "GL_EXT_framebuffer_multisample"))
+        if (!isValidVendor || !strstr(extensions, "GL_EXT_framebuffer_multisample"))
             m_attributes.antialias = false;
     }
     // FIXME: instead of enforcing premultipliedAlpha = true, implement the

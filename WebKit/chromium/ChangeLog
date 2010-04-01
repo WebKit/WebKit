@@ -1,3 +1,14 @@
+2010-03-31  Alpha Lam  <hclam@chromium.org>
+
+        Not reviewed. Build fix.
+
+        Fixing a build break caused by 56872. One of the Chromium bots doesn't
+        like std::strstr(). Includes string.h and use strstr() instead.
+
+        * src/WebGraphicsContext3DDefaultImpl.cpp:
+        (WebKit::WebGraphicsContext3DDefaultImpl::validateAttributes):
+        Includes string.h and use strstr().
+
 2010-03-31  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Darin Fisher.
