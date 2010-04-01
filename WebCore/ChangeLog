@@ -1,3 +1,21 @@
+2010-03-31  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Crash submitting display:none textarea in a form
+        https://bugs.webkit.org/show_bug.cgi?id=36905
+
+        Test: fast/forms/textarea-submit-crash.html
+
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::appendFormData): Do update layout before
+        asking our renderer for its text, since we can't rely on our renderer's
+        text if layout is needed.
+
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::textWithHardLineBreaks): Don't update layout
+        while being asked for our text, since doing so may delete us, causing a crash.
+
 2010-03-31  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

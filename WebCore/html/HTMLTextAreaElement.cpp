@@ -166,6 +166,8 @@ bool HTMLTextAreaElement::appendFormData(FormDataList& encoding, bool)
     if (name().isEmpty())
         return false;
 
+    document()->updateLayout();
+
     // FIXME: It's not acceptable to ignore the HardWrap setting when there is no renderer.
     // While we have no evidence this has ever been a practical problem, it would be best to fix it some day.
     RenderTextControl* control = toRenderTextControl(renderer());

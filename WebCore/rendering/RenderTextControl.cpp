@@ -368,8 +368,6 @@ String RenderTextControl::textWithHardLineBreaks()
     if (!firstChild)
         return "";
 
-    document()->updateLayout();
-
     RenderObject* renderer = firstChild->renderer();
     if (!renderer)
         return "";
