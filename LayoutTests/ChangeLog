@@ -1,3 +1,13 @@
+2010-04-01  yael aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        set-progress-properties.html expected result should not be platform specific
+        https://bugs.webkit.org/show_bug.cgi?id=36918
+
+        * fast/dom/HTMLProgressElement/set-progress-properties-expected.txt: Added.
+        * platform/qt/fast/dom/HTMLProgressElement/set-progress-properties-expected.txt: Removed.
+
 2010-04-01  Shu Chang  <chang.shu@nokia.com>
 
         Reviewed by Laszlo Gombos.
