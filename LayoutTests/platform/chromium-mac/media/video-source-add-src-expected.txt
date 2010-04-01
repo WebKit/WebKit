@@ -1,0 +1,14 @@
+EVENT(loadstart)
+EVENT(durationchange)
+EVENT(loadedmetadata)
+EVENT(loadeddata)
+EVENT(canplay)
+EVENT(canplaythrough)
+
+EXPECTED (relativeURL(video.currentSrc) == 'content/test.ogv') OK
+RUN(video.src = 'content/silence.mpg')
+
+
+EXPECTED (relativeURL(video.currentSrc) == 'content/test.ogv') OK
+END OF TEST
+Test that adding a 'src' attribute does nothing when a <source> element has already been chosen

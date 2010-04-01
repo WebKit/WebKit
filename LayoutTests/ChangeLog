@@ -1,3 +1,12 @@
+2010-04-01  Alpha Lam  <hclam@chromium.org>
+
+        Not reviewed. Build fix.
+
+        Adding test expectations missing in r56873.
+
+        * platform/chromium-mac/media/audio-constructor-src-expected.txt: Added.
+        * platform/chromium-mac/media/video-source-add-src-expected.txt: Added.
+
 2010-04-01  Roland Steiner  <rolandsteiner@chromium.org>
 
         Unreviewed - more layout test result build fixes:
