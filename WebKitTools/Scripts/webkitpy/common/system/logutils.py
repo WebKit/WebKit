@@ -22,10 +22,17 @@
 
 """Supports webkitpy logging."""
 
+# FIXME: Move this file to webkitpy/python24 since logging needs to
+#        be configured prior to running version-checking code.
+
 import logging
 import os
+import sys
 
 import webkitpy
+
+
+_log = logging.getLogger(__name__)
 
 # We set these directory paths lazily in get_logger() below.
 _scripts_dir = ""
@@ -116,3 +123,82 @@ def get_logger(path):
         logger_name = os.path.splitext(basename)[0]
 
     return logging.getLogger(logger_name)
+
+
+def _default_handlers(stream):
+    """Return a list of the default logging handlers to use.
+
+    Args:
+      stream: See the configure_logging() docstring.
+
+    """
+    # Create the filter.
+    def should_log(record):
+        """Return whether a logging.LogRecord should be logged."""
+        # FIXME: Enable the logging of autoinstall messages once
+        #        autoinstall is adjusted.  Currently, autoinstall logs
+        #        INFO messages when importing already-downloaded packages,
+        #        which is too verbose.
+        if record.name.startswith("webkitpy.thirdparty.autoinstall"):
+            return False
+        return True
+
+    logging_filter = logging.Filter()
+    logging_filter.filter = should_log
+
+    # Create the handler.
+    handler = logging.StreamHandler(stream)
+    formatter = logging.Formatter("%(name)s: [%(levelname)s] %(message)s")
+    handler.setFormatter(formatter)
+    handler.addFilter(logging_filter)
+
+    return [handler]
+
+
+def configure_logging(logging_level=logging.INFO, logger=None, stream=None,
+                      handlers=None):
+    """Configure logging for standard purposes.
+
+    Returns:
+      A list of references to the logging handlers added to the root
+      logger.  This allows the caller to later remove the handlers
+      using logger.removeHandler.  This is useful primarily during unit
+      testing where the caller may want to configure logging temporarily
+      and then undo the configuring.
+
+    Args:
+      logging_level: The minimum logging level to log.
+      logger: A logging.logger instance to configure.  This parameter
+              should be used only in unit tests.  Defaults to the
+              root logger.
+      stream: A file-like object to which to log used in creating the default
+              handlers.  The stream must define an "encoding" data attribute,
+              or else logging raises an error.  Defaults to sys.stderr.
+      handlers: A list of logging.Handler instances to add to the logger
+                being configured.  If this parameter is provided, then the
+                stream parameter is not used.
+
+    """
+    # If the stream does not define an "encoding" data attribute, the
+    # logging module can throw an error like the following:
+    #
+    # Traceback (most recent call last):
+    #   File "/System/Library/Frameworks/Python.framework/Versions/2.6/...
+    #         lib/python2.6/logging/__init__.py", line 761, in emit
+    #     self.stream.write(fs % msg.encode(self.stream.encoding))
+    # LookupError: unknown encoding: unknown
+    if logger is None:
+        logger = logging.getLogger()
+    if stream is None:
+        stream = sys.stderr
+    if handlers is None:
+        handlers = _default_handlers(stream)
+
+    logger.setLevel(logging_level)
+
+    for handler in handlers:
+        logger.addHandler(handler)
+
+    _log.debug("Debug logging enabled.")
+
+    return handlers

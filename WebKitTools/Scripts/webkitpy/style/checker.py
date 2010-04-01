@@ -35,7 +35,6 @@ import logging
 import os.path
 import sys
 
-from .. style_references import parse_patch
 from error_handlers import DefaultStyleErrorHandler
 from error_handlers import PatchStyleErrorHandler
 from filter import FilterConfiguration
@@ -45,6 +44,8 @@ from processors.common import categories as CommonCategories
 from processors.common import CarriageReturnProcessor
 from processors.cpp import CppProcessor
 from processors.text import TextProcessor
+from webkitpy.style_references import parse_patch
+from webkitpy.style_references import configure_logging as _configure_logging
 
 _log = logging.getLogger("webkitpy.style.checker")
 
@@ -309,10 +310,8 @@ def configure_logging(stream, logger=None, is_verbose=False):
         logging_level = logging.INFO
         handlers = _create_log_handlers(stream)
 
-    logger.setLevel(logging_level)
-
-    for handler in handlers:
-        logger.addHandler(handler)
+    handlers = _configure_logging(logging_level=logging_level, logger=logger,
+                                  handlers=handlers)
 
     return handlers
 

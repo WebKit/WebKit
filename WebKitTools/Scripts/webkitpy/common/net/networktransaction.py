@@ -26,10 +26,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import time
 
 from webkitpy.thirdparty.autoinstalled import HTTPError
-from webkitpy.common.system.deprecated_logging import log
+
+_log = logging.getLogger(__name__)
 
 
 class NetworkTimeout(Exception):
@@ -50,7 +52,8 @@ class NetworkTransaction(object):
                 return request()
             except HTTPError, e:
                 self._check_for_timeout()
-                log("Received HTTP status %s from server.  Retrying in %s seconds..." % (e.code, self._backoff_seconds))
+                _log.warn("Received HTTP status %s from server.  Retrying in "
+                          "%s seconds..." % (e.code, self._backoff_seconds))
                 self._sleep()
 
     def _check_for_timeout(self):

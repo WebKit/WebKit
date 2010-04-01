@@ -22,10 +22,13 @@
 
 """Unit tests for logutils.py."""
 
+import logging
 import os
 import unittest
 
-import logutils
+from webkitpy.common.system.logtesting import LogTesting
+from webkitpy.common.system.logtesting import TestLogStream
+import webkitpy.common.system.logutils as logutils
 
 
 class GetLoggerTest(unittest.TestCase):
@@ -50,3 +53,90 @@ class GetLoggerTest(unittest.TestCase):
         self.assertEquals(logger.name, "test-webkitpy")
 
         os.chdir(working_directory)
+
+
+class ConfigureLoggingTestBase(unittest.TestCase):
+
+    """Base class for configure_logging() unit tests."""
+
+    def _logging_level(self):
+        raise Exception("Not implemented.")
+
+    def setUp(self):
+        log_stream = TestLogStream(self)
+
+        # Use a logger other than the root logger or one prefixed with
+        # "webkitpy." so as not to conflict with test-webkitpy logging.
+        logger = logging.getLogger("unittest")
+
+        # Configure the test logger not to pass messages along to the
+        # root logger.  This prevents test messages from being
+        # propagated to loggers used by test-webkitpy logging (e.g.
+        # the root logger).
+        logger.propagate = False
+
+        logging_level = self._logging_level()
+        self._handlers = logutils.configure_logging(logging_level=logging_level,
+                                                    logger=logger,
+                                                    stream=log_stream)
+        self._log = logger
+        self._log_stream = log_stream
+
+    def tearDown(self):
+        """Reset logging to its original state.
+
+        This method ensures that the logging configuration set up
+        for a unit test does not affect logging in other unit tests.
+
+        """
+        logger = self._log
+        for handler in self._handlers:
+            logger.removeHandler(handler)
+
+    def _assert_log_messages(self, messages):
+        """Assert that the logged messages equal the given messages."""
+        self._log_stream.assertMessages(messages)
+
+
+class ConfigureLoggingTest(ConfigureLoggingTestBase):
+
+    """Tests configure_logging() with the default logging level."""
+
+    def _logging_level(self):
+        return None
+
+    def test_info_message(self):
+        self._log.info("test message")
+        self._assert_log_messages(["unittest: [INFO] test message\n"])
+
+    def test_below_threshold_message(self):
+        # We test the boundary case of a logging level equal to 19.
+        # In practice, we will probably only be calling log.debug(),
+        # which corresponds to a logging level of 10.
+        level = logging.INFO - 1  # Equals 19.
+        self._log.log(level, "test message")
+        self._assert_log_messages([])
+
+    def test_two_messages(self):
+        self._log.info("message1")
+        self._log.info("message2")
+        self._assert_log_messages(["unittest: [INFO] message1\n",
+                                   "unittest: [INFO] message2\n"])
+
+
+class ConfigureLoggingCustomLevelTest(ConfigureLoggingTestBase):
+
+    """Tests configure_logging() with a custom logging level."""
+
+    _level = 36
+
+    def _logging_level(self):
+        return self._level
+
+    def test_logged_message(self):
+        self._log.log(self._level, "test message")
+        self._assert_log_messages(["unittest: [Level 36] test message\n"])
+
+    def test_below_threshold_message(self):
+        self._log.log(self._level - 1, "test message")
+        self._assert_log_messages([])

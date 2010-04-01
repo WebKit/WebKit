@@ -31,25 +31,11 @@
 #
 # A tool for automating dealing with bugzilla, posting patches, committing patches, etc.
 
-import logging
 import os
 import sys
 
+from webkitpy.common.system.logutils import configure_logging
 import webkitpy.python24.versioning as versioning
-
-
-# FIXME: Consider logging more than just messages from the
-#        version-checking module.  For now we enable only enough
-#        for the version warning to show up.
-def configure_logging():
-    """Configure logging for the version-checker."""
-    handler = logging.StreamHandler(sys.stderr)
-    formatter = logging.Formatter("%(levelname)s: %(message)s")
-    handler.setFormatter(formatter)
-
-    logger = logging.getLogger(versioning.__name__)
-    logger.setLevel(logging.INFO)
-    logger.addHandler(handler)
 
 
 def main():
