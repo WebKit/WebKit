@@ -53,10 +53,7 @@ public:
     virtual int attachBridge(WebGeolocationServiceBridge*) { return 0; }
 
     // Detaches the WebGeolocationServiceBridge from the embedder.
-    virtual void detachBridge(int bridgeId) { dettachBridge(bridgeId); }
-
-    // DEPRECATED: this is a temporary compatibility layer, remove this method.
-    virtual void dettachBridge(int bridgeId) { }
+    virtual void detachBridge(int bridgeId) { }
 };
 
 } // namespace WebKit

@@ -74,7 +74,6 @@
                 'WEBKIT_IMPLEMENTATION',
             ],
             'sources': [
-                'public/GeolocationServiceBridgeChromium.h',
                 'public/gtk/WebInputEventFactory.h',
                 'public/linux/WebFontRendering.h',
                 'public/linux/WebFontRenderStyle.h',
