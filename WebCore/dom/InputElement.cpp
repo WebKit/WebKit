@@ -151,7 +151,7 @@ String InputElement::sanitizeUserInputValue(const InputElement* inputElement, co
     string.replace('\r', ' ');
     string.replace('\n', ' ');
 
-    unsigned newLength = string.numCharactersInGraphemeClusters(maxLength);
+    unsigned newLength = numCharactersInGraphemeClusters(string, maxLength);
     for (unsigned i = 0; i < newLength; ++i) {
         const UChar current = string[i];
         if (current < ' ' && current != '\t') {
@@ -170,10 +170,10 @@ void InputElement::handleBeforeTextInsertedEvent(InputElementData& data, InputEl
     // We use RenderTextControlSingleLine::text() instead of InputElement::value()
     // because they can be mismatched by sanitizeValue() in
     // RenderTextControlSingleLine::subtreeHasChanged() in some cases.
-    unsigned oldLength = toRenderTextControlSingleLine(element->renderer())->text().numGraphemeClusters();
+    unsigned oldLength = numGraphemeClusters(toRenderTextControlSingleLine(element->renderer())->text());
 
     // selection() may be a pre-edit text.
-    unsigned selectionLength = plainText(element->document()->frame()->selection()->selection().toNormalizedRange().get()).numGraphemeClusters();
+    unsigned selectionLength = numGraphemeClusters(plainText(element->document()->frame()->selection()->selection().toNormalizedRange().get()));
     ASSERT(oldLength >= selectionLength);
 
     // Selected characters will be removed by the next text event.

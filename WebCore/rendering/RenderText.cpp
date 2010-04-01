@@ -36,6 +36,7 @@
 #include "RenderBlock.h"
 #include "RenderLayer.h"
 #include "RenderView.h"
+#include "StringBuffer.h"
 #include "Text.h"
 #include "TextBreakIterator.h"
 #include "VisiblePosition.h"
@@ -47,6 +48,42 @@ using namespace WTF;
 using namespace Unicode;
 
 namespace WebCore {
+
+static void makeCapitalized(String* string, UChar previous)
+{
+    if (string->isNull())
+        return;
+
+    unsigned length = string->length();
+    const UChar* characters = string->characters();
+
+    StringBuffer stringWithPrevious(length + 1);
+    stringWithPrevious[0] = previous == noBreakSpace ? ' ' : previous;
+    for (unsigned i = 1; i < length + 1; i++) {
+        // Replace &nbsp with a real space since ICU no longer treats &nbsp as a word separator.
+        if (characters[i - 1] == noBreakSpace)
+            stringWithPrevious[i] = ' ';
+        else
+            stringWithPrevious[i] = characters[i - 1];
+    }
+
+    TextBreakIterator* boundary = wordBreakIterator(stringWithPrevious.characters(), length + 1);
+    if (!boundary)
+        return;
+
+    StringBuffer data(length);
+
+    int32_t endOfWord;
+    int32_t startOfWord = textBreakFirst(boundary);
+    for (endOfWord = textBreakNext(boundary); endOfWord != TextBreakDone; startOfWord = endOfWord, endOfWord = textBreakNext(boundary)) {
+        if (startOfWord != 0) // Ignore first char of previous string
+            data[startOfWord - 1] = characters[startOfWord - 1] == noBreakSpace ? noBreakSpace : toTitleCase(stringWithPrevious[startOfWord]);
+        for (int i = startOfWord + 1; i < endOfWord; i++)
+            data[i - 1] = characters[i - 1];
+    }
+
+    *string = String::adopt(data);
+}
 
 RenderText::RenderText(Node* node, PassRefPtr<StringImpl> str)
      : RenderObject(node)
@@ -978,7 +1015,7 @@ void RenderText::setTextInternal(PassRefPtr<StringImpl> text)
             case TTNONE:
                 break;
             case CAPITALIZE:
-                m_text.makeCapitalized(previousCharacter());
+                makeCapitalized(&m_text, previousCharacter());
                 break;
             case UPPERCASE:
                 m_text.makeUpper();

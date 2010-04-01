@@ -161,7 +161,6 @@ public:
     void makeLower() { if (m_impl) m_impl = m_impl->lower(); }
     void makeUpper() { if (m_impl) m_impl = m_impl->upper(); }
     void makeSecure(UChar aChar) { if (m_impl) m_impl = m_impl->secure(aChar); }
-    void makeCapitalized(UChar previousCharacter) { if (m_impl) m_impl = m_impl->capitalize(previousCharacter); }
 
     void truncate(unsigned len);
     void remove(unsigned pos, int len = 1);
@@ -277,14 +276,6 @@ public:
     
     // Determines the writing direction using the Unicode Bidi Algorithm rules P2 and P3.
     WTF::Unicode::Direction defaultWritingDirection() const { return m_impl ? m_impl->defaultWritingDirection() : WTF::Unicode::LeftToRight; }
-
-    // Counts the number of grapheme clusters. A surrogate pair or a sequence
-    // of a non-combining character and following combining characters is
-    // counted as 1 grapheme cluster.
-    unsigned numGraphemeClusters() const;
-    // Returns the number of characters which will be less than or equal to
-    // the specified grapheme cluster length.
-    unsigned numCharactersInGraphemeClusters(unsigned) const;
 
     bool containsOnlyASCII() const { return charactersAreAllASCII(characters(), length()); }
 
@@ -410,6 +401,13 @@ inline void appendNumber(Vector<UChar>& vector, unsigned char number)
 
 
 PassRefPtr<SharedBuffer> utf8Buffer(const String&);
+// Counts the number of grapheme clusters. A surrogate pair or a sequence
+// of a non-combining character and following combining characters is
+// counted as 1 grapheme cluster.
+unsigned numGraphemeClusters(const String& s);
+// Returns the number of characters which will be less than or equal to
+// the specified grapheme cluster length.
+unsigned numCharactersInGraphemeClusters(const String& s, unsigned);
 
 } // namespace WebCore
 

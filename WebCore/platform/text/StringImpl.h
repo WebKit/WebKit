@@ -211,7 +211,6 @@ public:
     PassRefPtr<StringImpl> lower();
     PassRefPtr<StringImpl> upper();
     PassRefPtr<StringImpl> secure(UChar aChar);
-    PassRefPtr<StringImpl> capitalize(UChar previousCharacter);
     PassRefPtr<StringImpl> foldCase();
 
     PassRefPtr<StringImpl> stripWhiteSpace();

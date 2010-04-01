@@ -26,17 +26,9 @@
 #include "StringImpl.h"
 
 #include "AtomicString.h"
-#include "CharacterNames.h"
-#include "FloatConversion.h"
 #include "StringBuffer.h"
 #include "StringHash.h"
-#include "TextBreakIterator.h"
-#include "TextEncoding.h"
 #include <runtime/UString.h>
-#include <wtf/dtoa.h>
-#include <wtf/Assertions.h>
-#include <wtf/Threading.h>
-#include <wtf/unicode/Unicode.h>
 
 using namespace WTF;
 using namespace Unicode;
@@ -384,36 +376,6 @@ PassRefPtr<StringImpl> StringImpl::simplifyWhiteSpace()
     
     data.shrink(outc);
     
-    return adopt(data);
-}
-
-PassRefPtr<StringImpl> StringImpl::capitalize(UChar previous)
-{
-    StringBuffer stringWithPrevious(m_length + 1);
-    stringWithPrevious[0] = previous == noBreakSpace ? ' ' : previous;
-    for (unsigned i = 1; i < m_length + 1; i++) {
-        // Replace &nbsp with a real space since ICU no longer treats &nbsp as a word separator.
-        if (m_data[i - 1] == noBreakSpace)
-            stringWithPrevious[i] = ' ';
-        else
-            stringWithPrevious[i] = m_data[i - 1];
-    }
-
-    TextBreakIterator* boundary = wordBreakIterator(stringWithPrevious.characters(), m_length + 1);
-    if (!boundary)
-        return this;
-
-    StringBuffer data(m_length);
-
-    int32_t endOfWord;
-    int32_t startOfWord = textBreakFirst(boundary);
-    for (endOfWord = textBreakNext(boundary); endOfWord != TextBreakDone; startOfWord = endOfWord, endOfWord = textBreakNext(boundary)) {
-        if (startOfWord != 0) // Ignore first char of previous string
-            data[startOfWord - 1] = m_data[startOfWord - 1] == noBreakSpace ? noBreakSpace : toTitleCase(stringWithPrevious[startOfWord]);
-        for (int i = startOfWord + 1; i < endOfWord; i++)
-            data[i - 1] = m_data[i - 1];
-    }
-
     return adopt(data);
 }
 

@@ -1000,11 +1000,11 @@ PassRefPtr<SharedBuffer> utf8Buffer(const String& string)
     return SharedBuffer::adoptVector(buffer);
 }
 
-unsigned String::numGraphemeClusters() const
+unsigned numGraphemeClusters(const String& s)
 {
-    TextBreakIterator* it = characterBreakIterator(characters(), length());
+    TextBreakIterator* it = characterBreakIterator(s.characters(), s.length());
     if (!it)
-        return length();
+        return s.length();
 
     unsigned num = 0;
     while (textBreakNext(it) != TextBreakDone)
@@ -1012,15 +1012,15 @@ unsigned String::numGraphemeClusters() const
     return num;
 }
 
-unsigned String::numCharactersInGraphemeClusters(unsigned numGraphemeClusters) const
+unsigned numCharactersInGraphemeClusters(const String& s, unsigned numGraphemeClusters)
 {
-    TextBreakIterator* it = characterBreakIterator(characters(), length());
+    TextBreakIterator* it = characterBreakIterator(s.characters(), s.length());
     if (!it)
-        return min(length(), numGraphemeClusters);
+        return min(s.length(), numGraphemeClusters);
 
     for (unsigned i = 0; i < numGraphemeClusters; ++i) {
         if (textBreakNext(it) == TextBreakDone)
-            return length();
+            return s.length();
     }
     return textBreakCurrent(it);
 }

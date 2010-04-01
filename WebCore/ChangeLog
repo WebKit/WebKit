@@ -1,3 +1,36 @@
+2010-03-31  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Remove dependency on TextBreakIterator from StringImpl.cpp,
+        and from member methods of String.
+
+        Make 'numGraphemeClusters' & 'numCharactersInGraphemeClusters'
+        global function defined in PlatformString.h, rather than
+        member methods on String (these can be implemented purely
+        using the characters() and length() public interface),
+        and make 'makeCapitalized' a static function in RenderText.cpp.
+
+        * dom/InputElement.cpp:
+        (WebCore::InputElement::sanitizeUserInputValue):
+        (WebCore::InputElement::handleBeforeTextInsertedEvent):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::tooLong):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::handleBeforeTextInsertedEvent):
+        (WebCore::HTMLTextAreaElement::sanitizeUserInputValue):
+        (WebCore::HTMLTextAreaElement::tooLong):
+        * platform/text/PlatformString.h:
+        (WebCore::String::makeSecure):
+        * platform/text/String.cpp:
+        (WebCore::numGraphemeClusters):
+        (WebCore::numCharactersInGraphemeClusters):
+        * platform/text/StringImpl.cpp:
+        * platform/text/StringImpl.h:
+        * rendering/RenderText.cpp:
+        (WebCore::makeCapitalized):
+        (WebCore::RenderText::setTextInternal):
+
 2010-03-31  Vitaly Repeshko  <vitalyr@chromium.org>
 
         Reviewed by David Levin.
