@@ -476,17 +476,19 @@ v8::Local<v8::Value> V8Proxy::callFunction(v8::Handle<v8::Function> function, v8
         m_frame->keepAlive();
 
 #if ENABLE(INSPECTOR)
-        InspectorTimelineAgent* timelineAgent = 0;
-        if (InspectorTimelineAgent::instanceCount()) {
-            timelineAgent = m_frame->page() ? m_frame->page()->inspectorTimelineAgent() : 0;
-            if (timelineAgent) {
+        Page* inspectedPage = InspectorTimelineAgent::instanceCount() ? m_frame->page(): 0;
+        if (inspectedPage)
+            if (InspectorTimelineAgent* timelineAgent = inspectedPage->inspectorTimelineAgent()) {
                 v8::ScriptOrigin origin = function->GetScriptOrigin();
-                if (!origin.ResourceName().IsEmpty())
-                    timelineAgent->willCallFunction(v8ValueToWebCoreString(origin.ResourceName()), function->GetScriptLineNumber() + 1);
-                else
-                    timelineAgent = 0;
-            }
-        }
+                String resourceName("undefined");
+                int lineNumber = 1;
+                if (!origin.ResourceName().IsEmpty()) {
+                    resourceName = toWebCoreString(origin.ResourceName());
+                    lineNumber = function->GetScriptLineNumber() + 1;
+                }
+                timelineAgent->willCallFunction(resourceName, lineNumber);
+            } else
+                inspectedPage = 0;
 #endif // !ENABLE(INSPECTOR)
 
         m_recursion++;
@@ -494,8 +496,9 @@ v8::Local<v8::Value> V8Proxy::callFunction(v8::Handle<v8::Function> function, v8
         m_recursion--;
 
 #if ENABLE(INSPECTOR)
-        if (timelineAgent && m_frame->page() && timelineAgent == m_frame->page()->inspectorTimelineAgent())
-            timelineAgent->didCallFunction();
+        if (inspectedPage)
+            if (InspectorTimelineAgent* timelineAgent = inspectedPage->inspectorTimelineAgent())
+                timelineAgent->didCallFunction();
 #endif // !ENABLE(INSPECTOR)
 
     }

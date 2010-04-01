@@ -1,3 +1,19 @@
+2010-04-01  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Sometimes js code can detach page from it's frame and in that case
+        Dispatch Events will stay in the TimelineAgent's events stack. Only immediate events will
+        appear at frontend.
+        https://bugs.webkit.org/show_bug.cgi?id=36890
+
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::callFunction):
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchGenericEvent):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::dispatchEvent):
+
 2010-04-01  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
