@@ -1577,27 +1577,18 @@ void HTMLInputElement::setValue(const String& value, bool sendChangeEvent)
 
     setFormControlValueMatchesRenderer(false);
     if (storesValueSeparateFromAttribute()) {
-        if (inputType() == FILE) {
+        if (inputType() == FILE)
             m_fileList->clear();
-            setNeedsValidityCheck();
-        } else {
+        else {
             m_data.setValue(sanitizeValue(value));
-            // setNeedsValidityCheck() needs to be called after updating the value,
-            // before style recalc.
-            setNeedsValidityCheck();
-            if (isTextField()) {
+            if (isTextField())
                 updatePlaceholderVisibility(false);
-                if (inDocument())
-                    document()->updateStyleIfNeeded();
-            }
         }
-        if (renderer())
-            renderer()->updateFromElement();
         setNeedsStyleRecalc();
-    } else {
+    } else
         setAttribute(valueAttr, sanitizeValue(value));
-        setNeedsValidityCheck();
-    }
+
+    setNeedsValidityCheck();
 
     if (isTextField()) {
         unsigned max = m_data.value().length();

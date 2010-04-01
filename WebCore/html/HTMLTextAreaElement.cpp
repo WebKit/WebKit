@@ -293,14 +293,11 @@ void HTMLTextAreaElement::setNonDirtyValue(const String& value)
         return;
 
     m_value = normalizedValue;
+    updatePlaceholderVisibility(false);
+    setNeedsStyleRecalc();
     setNeedsValidityCheck();
     m_isDirty = false;
     setFormControlValueMatchesRenderer(true);
-    updatePlaceholderVisibility(false);
-    if (inDocument())
-        document()->updateStyleIfNeeded();
-    if (renderer())
-        renderer()->updateFromElement();
 
     // Set the caret to the end of the text value.
     if (document()->focusedNode() == this) {
