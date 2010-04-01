@@ -1,3 +1,17 @@
+2010-04-01  Finnur Thorarinsson  <finnur.webkit@gmail.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        [chromium] FindInPage should clear the focused node when a match has
+        been found. This is because WebFrameImpl::setFocus will try to refocus
+        editable elements if it thinks they have focus, causing the page to
+        scroll.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36923
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::find):
+
 2010-04-01  Marcus Bulach  <bulach@chromium.org>
 
         Reviewed by Jeremy Orlow.

@@ -1323,6 +1323,9 @@ bool WebFrameImpl::find(int identifier,
             executeCommand(WebString::fromUTF8("Unselect"));
         }
 
+        // Make sure no node is focused. See http://crbug.com/38700.
+        frame()->document()->setFocusedNode(0);
+
         if (!options.findNext || activeSelection) {
             // This is either a Find operation or a Find-next from a new start point
             // due to a selection, so we set the flag to ask the scoping effort
