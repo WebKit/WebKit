@@ -1,3 +1,15 @@
+2010-03-31  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        fast/replaced/border-radius-clip.html failed on Snow Leopard Debug bot
+        https://bugs.webkit.org/show_bug.cgi?id=36642
+
+        This test is flaky (seemingly due to <video> load times)
+        and is thus useless until fixed.  Skipping for now.
+
+        * platform/mac/Skipped:
+
 2010-04-01  Roland Steiner  <rolandsteiner@chromium.org>
 
         Unreviewed - add missing Chromium layout test results for:
