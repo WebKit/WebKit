@@ -2,6 +2,17 @@
 
         Reviewed by Eric Seidel.
 
+        Add more tests for webkitpy.common.checkout
+        https://bugs.webkit.org/show_bug.cgi?id=36926
+
+        We don't have a great way of testing checkout, sadly.
+
+        * Scripts/webkitpy/common/checkout/api_unittest.py:
+
+2010-03-31  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         REGRESSION: EWS crashes on failure
         https://bugs.webkit.org/show_bug.cgi?id=36924
 
