@@ -1,3 +1,22 @@
+2010-04-01  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Mapping from local to container coord space in updateLayerPositions is quadratic
+        https://bugs.webkit.org/show_bug.cgi?id=33520
+
+        These tests move layers around in various ways to test that the offset caching in
+        updateLayerPositions() is correct.
+
+        * fast/layers/nested-layers-1-expected.txt: Added.
+        * fast/layers/nested-layers-1.html: Added.
+        * fast/layers/nested-layers-2-expected.txt: Added.
+        * fast/layers/nested-layers-2.html: Added.
+        * fast/layers/nested-layers-3-expected.txt: Added.
+        * fast/layers/nested-layers-3.html: Added.
+        * fast/layers/nested-layers-4-expected.txt: Added.
+        * fast/layers/nested-layers-4.html: Added.
+
 2010-04-01  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

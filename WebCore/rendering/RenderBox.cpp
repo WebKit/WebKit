@@ -325,12 +325,17 @@ FloatQuad RenderBox::absoluteContentQuad() const
     return localToAbsoluteQuad(FloatRect(rect));
 }
 
-IntRect RenderBox::outlineBoundsForRepaint(RenderBoxModelObject* repaintContainer) const
+IntRect RenderBox::outlineBoundsForRepaint(RenderBoxModelObject* repaintContainer, IntPoint* cachedOffsetToRepaintContainer) const
 {
     IntRect box = borderBoundingBox();
     adjustRectForOutlineAndShadow(box);
 
-    FloatQuad containerRelativeQuad = localToContainerQuad(FloatRect(box), repaintContainer);
+    FloatQuad containerRelativeQuad = FloatRect(box);
+    if (cachedOffsetToRepaintContainer)
+        containerRelativeQuad.move(cachedOffsetToRepaintContainer->x(), cachedOffsetToRepaintContainer->y());
+    else
+        containerRelativeQuad = localToContainerQuad(containerRelativeQuad, repaintContainer);
+
     box = containerRelativeQuad.enclosingBoundingBox();
 
     // FIXME: layoutDelta needs to be applied in parts before/after transforms and
