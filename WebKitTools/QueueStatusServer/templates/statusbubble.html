@@ -73,5 +73,10 @@ function statusDetail(patch_id) {
     title="{{ summary.mac_ews.status.date|timesince }} ago"{% endif %}>
   mac
 </div>
+<div class="status {{ summary.win_ews.state }}"{% if summary.win_ews.status %}
+    onclick="statusDetail({{ summary.attachment_id }})"
+    title="{{ summary.win_ews.status.date|timesince }} ago"{% endif %}>
+  win
+</div>
 </body>
 </html>

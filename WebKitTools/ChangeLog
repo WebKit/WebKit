@@ -1,3 +1,17 @@
+2010-03-31  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add win-ews to QueueStatusServer
+        https://bugs.webkit.org/show_bug.cgi?id=36876
+
+        The win-ews is still experimental, but it seems to be more or less
+        running.  We should show its results to the people.
+
+        * QueueStatusServer/model/queues.py:
+        * QueueStatusServer/templates/dashboard.html:
+        * QueueStatusServer/templates/statusbubble.html:
+
 2010-03-30  Victor Wang  <victorw@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -21,6 +21,7 @@ function statusDetail(patch_id) {
       <th>Chromium</th>
       <th>Qt</th>
       <th>Mac</th>
+      <th>Win</th>
       <th>Gtk</th>
       <th>Commit</th>
     </tr>
@@ -49,6 +50,10 @@ function statusDetail(patch_id) {
       <td class="status {{ summary.mac_ews.state }}"{% if summary.mac_ews.status %}
           onclick="statusDetail({{ summary.attachment_id }})"
           title="{{ summary.mac_ews.status.date|timesince }} ago"{% endif %}>
+      </td>
+      <td class="status {{ summary.win_ews.state }}"{% if summary.win_ews.status %}
+          onclick="statusDetail({{ summary.attachment_id }})"
+          title="{{ summary.win_ews.status.date|timesince }} ago"{% endif %}>
       </td>
       <td class="status {{ summary.gtk_ews.state }}"{% if summary.gtk_ews.status %}
           onclick="statusDetail({{ summary.attachment_id }})"
