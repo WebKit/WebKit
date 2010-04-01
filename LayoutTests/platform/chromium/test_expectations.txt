@@ -2800,8 +2800,6 @@ BUG_39423 : security/block-test.html = TIMEOUT
 
 BUGWK36666 : storage/open-database-over-quota.html = TEXT
 
-BUGWK36807 WIN : http/tests/inspector-enabled/console-log-before-frame-navigation.html = TEXT
-
 // Caused by http://trac.webkit.org/changeset/56795
 // This is a new test but fails in Chromium because of a missing API.
 BUG39904 : svg/animations/animate-points.html = TEXT TIMEOUT
