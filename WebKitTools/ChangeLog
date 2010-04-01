@@ -1,5 +1,24 @@
 2010-03-31  Chris Jerdonek  <cjerdonek@webkit.org>
 
+        Reviewed by Shinichiro Hamaji.
+
+        Tweak webkitpy's logtesting.LogTesting class to get more mileage out
+        of our unit tests that test log messages.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36886
+
+        This patch adds to the LogTesting class's tearDown() method a line
+        asserting that the array of remaining log messages is empty.  This
+        ensures that no extra log messages are getting logged that the caller
+        might not be aware of or may have forgotten to check for.
+
+        * Scripts/webkitpy/common/system/logtesting.py:
+          - Modified the tearDown() method as described above.
+          - Also modified the assertMessages() method to clear the array
+            of log messages after asserting.
+
+2010-03-31  Chris Jerdonek  <cjerdonek@webkit.org>
+
         Reviewed by Adam Barth.
 
         Added support for a --verbose-logging flag to test-webkitpy.

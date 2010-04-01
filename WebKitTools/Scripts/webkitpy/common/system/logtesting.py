@@ -160,20 +160,36 @@ class LogTesting(object):
         return LogTesting(stream, handler)
 
     def tearDown(self):
-        """Restore logging to its original state.
+        """Assert there are no remaining log messages, and reset logging.
 
-        This should normally be called in the tearDown() method of a
-        unittest.TestCase.  See the docstring of this class for more
-        details.
+        This method asserts that there are no more messages in the array of
+        log messages, and then restores logging to its original state.
+        This method should normally be called in the tearDown() method of a
+        unittest.TestCase.  See the docstring of this class for more details.
 
         """
+        self.assertMessages([])
         logger = LogTesting._getLogger()
         logger.removeHandler(self._handler)
 
+    # FIXME: Add a clearMessages() method for cases where the caller
+    #        deliberately doesn't want to assert every message.
+
+    # We clear the log messages after asserting since they are no longer
+    # needed after asserting.  This serves two purposes: (1) it simplifies
+    # the calling code when we want to check multiple logging calls in a
+    # single test method, and (2) it lets us check in the tearDown() method
+    # that there are no remaining log messages to be asserted.
+    #
+    # The latter ensures that no extra log messages are getting logged that
+    # the caller might not be aware of or may have forgotten to check for.
+    # This gets us a bit more mileage out of our tests without writing any
+    # additional code.
     def assertMessages(self, messages):
-        """Assert that the given messages match the logged messages.
+        """Assert the current array of log messages, and clear its contents.
 
         messages: A list of log message strings.
 
         """
         self._test_stream.assertMessages(messages)
+        self._test_stream.messages = []
