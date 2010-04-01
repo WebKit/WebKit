@@ -1,3 +1,18 @@
+2010-03-31  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        webkit-patch land fails if not run from the root directory
+        https://bugs.webkit.org/show_bug.cgi?id=35822
+
+        The root of the problem was that ChangeLog.__init__ expects a path
+        relative to the current working directory, and SCM expects to
+        return paths relative to the SCM root.  Fix it by converting from
+        SCM-relative to absolute paths in Checkout.modified_changelogs
+
+        * Scripts/webkitpy/common/checkout/api.py:
+        * Scripts/webkitpy/common/checkout/api_unittest.py:
+
 2010-03-31  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

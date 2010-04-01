@@ -156,3 +156,11 @@ class CheckoutTest(unittest.TestCase):
         checkout = Checkout(scm)
         checkout.commit_message_for_this_commit = lambda: CommitMessage(ChangeLogEntry(_changelog1entry1).contents().splitlines())
         self.assertEqual(checkout.bug_id_for_this_commit(), 36629)
+
+    def test_modified_changelogs(self):
+        scm = Mock()
+        scm.checkout_root = "/foo/bar"
+        scm.changed_files = lambda:["file1", "ChangeLog", "relative/path/ChangeLog"]
+        checkout = Checkout(scm)
+        expected_changlogs = ["/foo/bar/ChangeLog", "/foo/bar/relative/path/ChangeLog"]
+        self.assertEqual(checkout.modified_changelogs(), expected_changlogs)

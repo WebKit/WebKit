@@ -79,7 +79,12 @@ class Checkout(object):
         return self.commit_info_for_revision(revision).bug_id()
 
     def modified_changelogs(self):
-        return [path for path in self._scm.changed_files() if self._is_path_to_changelog(path)]
+        # SCM returns paths relative to scm.checkout_root
+        # Callers (especially those using the ChangeLog class) may
+        # expect absolute paths, so this method returns absolute paths.
+        changed_files = self._scm.changed_files()
+        absolute_paths = [os.path.join(self._scm.checkout_root, path) for path in changed_files]
+        return [path for path in absolute_paths if self._is_path_to_changelog(path)]
 
     def commit_message_for_this_commit(self):
         changelog_paths = self.modified_changelogs()
