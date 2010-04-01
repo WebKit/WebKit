@@ -18,6 +18,10 @@ platform/mac/fast/text/thai-combining-mark-positioning.html
 # https://bugs.webkit.org/show_bug.cgi?id=28624
 transforms/3d
 
+# Skip test that tries to print layer tree because this will fail when HW comp is turned off
+# This can be reenabled when we fix https://bugs.webkit.org/show_bug.cgi?id=36984
+compositing/geometry/preserve-3d-switching.html
+
 # These tests requires fullscreen <video> support
 media/media-fullscreen-inline.html
 media/media-fullscreen-not-in-document.html

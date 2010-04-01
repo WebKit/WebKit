@@ -456,23 +456,23 @@ if (!$testMedia) {
 
 my $supportedFeaturesResult = "";
 
-if (isCygwin()) {
-    # Collect supported features list
-    setPathForRunningWebKitApp(\%ENV);
-    my $supportedFeaturesCommand = $dumpTool . " --print-supported-features 2>&1";
-    $supportedFeaturesResult = `$supportedFeaturesCommand 2>&1`;
-}
+# Collect supported features list
+setPathForRunningWebKitApp(\%ENV);
+my $supportedFeaturesCommand = $dumpTool . " --print-supported-features 2>&1";
+$supportedFeaturesResult = `$supportedFeaturesCommand 2>&1`;
 
 my $hasAcceleratedCompositing = 0;
 my $has3DRendering = 0;
 
-if (isCygwin()) {
+print "********* supported features=" . $supportedFeaturesResult;
+
+#if (isCygwin()) {
     $hasAcceleratedCompositing = $supportedFeaturesResult =~ /AcceleratedCompositing/;
     $has3DRendering = $supportedFeaturesResult =~ /3DRendering/;
-} else {
-    $hasAcceleratedCompositing = checkWebCoreFeatureSupport("Accelerated Compositing", 0);
-    $has3DRendering = checkWebCoreFeatureSupport("3D Rendering", 0);
-}
+#} else {
+#    $hasAcceleratedCompositing = checkWebCoreFeatureSupport("Accelerated Compositing", 0);
+#    $has3DRendering = checkWebCoreFeatureSupport("3D Rendering", 0);
+#}
 
 if (!$hasAcceleratedCompositing) {
     $ignoredDirectories{'compositing'} = 1;
