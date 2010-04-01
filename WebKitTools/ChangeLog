@@ -1,3 +1,25 @@
+2010-04-01  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        webkit-patch can incorrectly think the working directory is modified
+        https://bugs.webkit.org/show_bug.cgi?id=36985
+
+        If a file's modification time is modified, but the contents are not,
+        then diff-index will think the file has been modified unless you do
+        some crazy update-index call. Instead, call diff --name-only, which
+        has the index update builtin.
+
+        Tried to write a test, but could not reproduce this in a unittest.
+        To test manually:
+            touch file-in-repo
+            git diff-index HEAD
+            git diff HEAD --name-only
+
+        The diff-index call incorrectly shows file-in-repo as modified.
+
+        * Scripts/webkitpy/common/checkout/scm.py:
+
 2010-04-01  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

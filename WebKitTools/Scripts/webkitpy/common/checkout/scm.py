@@ -395,7 +395,7 @@ class Git(SCM):
         return os.path.exists(os.path.join(self.checkout_root, '.git/rebase-apply'))
 
     def working_directory_is_clean(self):
-        return run_command(['git', 'diff-index', 'HEAD']) == ""
+        return run_command(['git', 'diff', 'HEAD', '--name-only']) == ""
 
     def clean_working_directory(self):
         # Could run git clean here too, but that wouldn't match working_directory_is_clean
