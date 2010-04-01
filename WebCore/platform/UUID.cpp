@@ -35,6 +35,9 @@
 
 #if OS(WINDOWS)
 #include <objbase.h>
+#ifndef ARRAYSIZE
+#define ARRAYSIZE(a)           (sizeof(a) / sizeof((a)[0]))
+#endif
 #elif OS(DARWIN)
 #include <CoreFoundation/CoreFoundation.h>
 #elif OS(LINUX)

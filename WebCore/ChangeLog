@@ -1,3 +1,13 @@
+2010-04-01  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Jian Li.
+
+        [Qt] REGRESSION(r56869): Windows build is broken
+        https://bugs.webkit.org/show_bug.cgi?id=36929
+
+        * WebCore.pro: LIBS += -lOle32 added.
+        * platform/UUID.cpp: Define ARRAYSIZE macro if it isn't defined before.
+
 2010-04-01  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

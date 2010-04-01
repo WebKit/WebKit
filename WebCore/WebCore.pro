@@ -2141,6 +2141,7 @@ maemo5 {
 
     win32-* {
         LIBS += -lgdi32
+        LIBS += -lOle32
         LIBS += -luser32
     }
     wince*: LIBS += -lmmtimer
