@@ -5,6 +5,7 @@
 build/
 /WebKitBuild/
 autoinstall.cache.d
+WebKitTools/Scripts/webkitpy/thirdparty/autoinstalled
 
 # Ignore Chromium projects auto-generated from .gyp files:
 JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.xcodeproj
