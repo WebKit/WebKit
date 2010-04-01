@@ -53,7 +53,10 @@ class Sheriff(object):
         output = self._sheriffbot.run_webkit_patch([
             "create-rollout",
             "--force-clean",
-            "--non-interactive",
+            # In principle, we should pass --non-interactive here, but it
+            # turns out that create-rollout doesn't need it yet.  We can't
+            # pass it prophylactically because we reject unrecongized command
+            # line switches.
             "--parent-command=sheriff-bot",
             svn_revision,
             rollout_reason,

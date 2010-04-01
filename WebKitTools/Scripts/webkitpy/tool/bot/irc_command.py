@@ -28,6 +28,7 @@
 
 from webkitpy.common.checkout.changelog import view_source_url
 from webkitpy.tool.bot.queueengine import TerminateQueue
+from webkitpy.common.net.bugzilla import parse_bug_id
 from webkitpy.common.system.executive import ScriptError
 
 # FIXME: Merge with Command?
@@ -62,6 +63,10 @@ class Rollout(IRCCommand):
         except ScriptError, e:
             tool.irc().post("Failed to create rollout patch:")
             tool.irc().post("%s" % e)
+            bug_id = parse_bug_id(e.output)
+            if bug_id:
+                tool.irc().post("Ugg...  Might have created %s" %
+                    tool.bugs.bug_url_for_bug_id(bug_id))
 
 
 class Hi(IRCCommand):
