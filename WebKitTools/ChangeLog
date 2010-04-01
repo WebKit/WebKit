@@ -1,3 +1,9 @@
+2010-03-31  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Unreviewed.
+
+        Fixed typo in WebKitTools/ChangeLog: opsys -> ospath.
+
 2010-03-31  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
@@ -96,7 +102,7 @@
 
         * Scripts/webkitpy/common/net/bugzilla.py:
           - Replaced the relpath implementation with a call to
-            webkitpy.common.system.opsys.relpath().
+            webkitpy.common.system.ospath.relpath().
 
         * Scripts/webkitpy/common/system/ospath.py: Added.
           - Moved the relpath() implementation from style/main.py.
@@ -106,10 +112,10 @@
 
         * Scripts/webkitpy/style/main.py:
           - Replaced the relpath implementation with a call to
-            webkitpy.common.system.opsys.relpath().
+            webkitpy.common.system.ospath.relpath().
 
         * Scripts/webkitpy/style/main_unittest.py:
-          - Moved the relpath unit tests to opsys_unittest.py.
+          - Moved the relpath unit tests to ospath_unittest.py.
 
 2010-03-31  Adam Barth  <abarth@webkit.org>
 
