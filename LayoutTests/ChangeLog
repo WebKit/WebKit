@@ -1,3 +1,16 @@
+2010-04-01  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Part of:
+        REGRESSION(56394):
+        http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch.html
+        fails on Tiger
+        https://bugs.webkit.org/show_bug.cgi?id=36934
+
+        * http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch.html:
+        Add more explicit failing messages to help find out what is failing.
+
 2010-04-01  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Maciej Stachowiak.

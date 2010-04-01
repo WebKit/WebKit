@@ -20,21 +20,21 @@ function log(message)
     document.getElementById("console").appendChild(document.createElement("br"));
 }
 
-function test(iteration, delay, compare)
+function test(iteration, delay, compare, testDescription)
 {
     var count = 0;
     var sawReadyStateDONE = false;
     function onProgress(e) {
         ++count;
         if (sawReadyStateDONE)
-            log("FAILED: saw 'progress' event after readystate 'DONE' event.");
+            log("FAILED: saw 'progress' event after readystate 'DONE' event for " + testDescription);
     }
 
     function onReadyState(e) {
         if (this.readyState == 4) {
             sawReadyStateDONE = true;
             var passed =  compare(count, iteration);
-            log(passed ? "PASSED" : "FAILED (count was " + count + ")");
+            log(passed ? "PASSED" : "FAILED (count was " + count + ") for " + testDescription);
         }
     }
 
@@ -45,6 +45,7 @@ function test(iteration, delay, compare)
     req.send(null);
 }
 
+try {
 // Number of chunks to send, delay between chunks
 var strictTests = [ 2, 80,
                     1, 1000,
@@ -54,6 +55,14 @@ function compareStrict(count, iteration)
     return count == iteration;
 }
 
+var i = 0;
+while (strictTests.length) {
+    var iteration = strictTests.shift();
+    var delay = strictTests.shift();
+    test(iteration, delay, compareStrict, "strict test " + ++i);
+}
+
+// Number of chunks to send, delay between chunks
 var throttledTests = [ 5, 20,
                        6, 30 ];
 function compareThrottled(count, iteration)
@@ -61,16 +70,11 @@ function compareThrottled(count, iteration)
     return count < iteration;
 }
 
-try {
-while (strictTests.length) {
-    var iteration = strictTests.shift();
-    var delay = strictTests.shift();
-    test(iteration, delay, compareStrict);
-}
+i = 0;
 while(throttledTests.length) {
     var iteration = throttledTests.shift();
     var delay = throttledTests.shift();
-    test(iteration, delay, compareThrottled);
+    test(iteration, delay, compareThrottled, "throttled test " + ++i);
 }
 } catch(e) {
     log("FAILED: exception raised: " + e.message);
