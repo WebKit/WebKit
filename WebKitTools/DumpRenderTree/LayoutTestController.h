@@ -245,6 +245,8 @@ public:
     // unit tests outside of DRT once they exist.
     void apiTestNewWindowDataLoadBaseURL(JSStringRef utf8Data, JSStringRef baseURL);
     void apiTestGoToCurrentBackForwardItem();
+    
+    JSRetainPtr<JSStringRef> layerTreeAsText() const;
 
     static const unsigned maxViewWidth;
     static const unsigned maxViewHeight;

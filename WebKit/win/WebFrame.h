@@ -265,6 +265,8 @@ public:
 
     virtual HRESULT STDMETHODCALLTYPE visibleContentRect(RECT*);
 
+    virtual HRESULT STDMETHODCALLTYPE layerTreeAsText(BSTR*);
+
     // IWebDocumentText
     virtual HRESULT STDMETHODCALLTYPE supportsTextEncoding( 
         /* [retval][out] */ BOOL* result);

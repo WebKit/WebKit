@@ -1310,6 +1310,15 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 #endif
 }
 
+- (NSString*)_layerTreeAsText
+{
+    Frame* coreFrame = _private->coreFrame;
+    if (!coreFrame)
+        return @"";
+
+    return coreFrame->layerTreeAsText();
+}
+
 @end
 
 @implementation WebFrame

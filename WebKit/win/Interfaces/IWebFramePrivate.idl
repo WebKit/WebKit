@@ -108,4 +108,6 @@ interface IWebFramePrivate : IUnknown
     HRESULT pageNumberForElementById([in] BSTR id, [in] float pageWidthInPixels, [in] float pageHeightInPixels, [out, retval] int* pageNumber);
 
     HRESULT numberOfPages([in] float pageWidthInPixels, [in] float pageHeightInPixels, [out, retval] int* pageNumber);
+
+    HRESULT layerTreeAsText([out, retval] BSTR* result);
 }

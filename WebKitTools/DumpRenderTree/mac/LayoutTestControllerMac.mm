@@ -181,6 +181,12 @@ void LayoutTestController::keepWebHistory()
     }
 }
 
+JSRetainPtr<JSStringRef> LayoutTestController::layerTreeAsText() const
+{
+    JSRetainPtr<JSStringRef> string(Adopt, JSStringCreateWithCFString((CFStringRef)[mainFrame _layerTreeAsText]));
+    return string;
+}
+
 int LayoutTestController::pageNumberForElementById(JSStringRef id, float pageWidthInPixels, float pageHeightInPixels)
 {
     RetainPtr<CFStringRef> idCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, id));

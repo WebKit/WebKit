@@ -1,3 +1,18 @@
+2010-04-01  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Added layerTreeAsText function to DRT (for Mac)
+        https://bugs.webkit.org/show_bug.cgi?id=36782
+
+        This is the WebKit side for Windows. It plumbs the
+        call from WebCore to DRT.
+
+        * Interfaces/IWebFramePrivate.idl:
+        * WebFrame.cpp:WebKit (Windows) side of plumbing
+        (WebFrame::layerTreeAsText):
+        * WebFrame.h:
+
 2010-03-31  Marcus Bulach  <bulach@chromium.org>
 
         Reviewed by Jeremy Orlow.

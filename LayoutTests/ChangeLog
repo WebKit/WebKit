@@ -1,3 +1,18 @@
+2010-04-01  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Added layerTreeAsText function to DRT (for Mac)
+        https://bugs.webkit.org/show_bug.cgi?id=36782
+
+        Sample test to show functionality. This test shows a case where the compositing
+        was corrupted on Windows. This was fixed in http://trac.webkit.org/changeset/56200.
+        Results are platform specific because the layer tree output contains positions and
+        sizes that will be different on Mac and Windows.
+
+        * compositing/geometry/preserve-3d-switching-expected.txt: Added.
+        * compositing/geometry/preserve-3d-switching.html: Added.
+
 2010-04-01  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

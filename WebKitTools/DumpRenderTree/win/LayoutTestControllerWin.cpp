@@ -173,6 +173,21 @@ void LayoutTestController::keepWebHistory()
     history->setOptionalSharedHistory(sharedHistory.get());
 }
 
+JSRetainPtr<JSStringRef> LayoutTestController::layerTreeAsText() const
+{
+    COMPtr<IWebFramePrivate> framePrivate(Query, frame);
+    if (!framePrivate)
+        return false;
+
+    BSTR textBSTR = 0;
+    HRESULT hr = framePrivate->layerTreeAsText(&textBSTR);
+
+    wstring text(textBSTR, SysStringLen(textBSTR));
+    SysFreeString(textBSTR);
+    JSRetainPtr<JSStringRef> textValueJS(Adopt, JSStringCreateWithCharacters(text.data(), text.length()));
+    return textValueJS;
+}
+
 void LayoutTestController::waitForPolicyDelegate()
 {
     // FIXME: Implement this.

@@ -1,3 +1,22 @@
+2010-04-01  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Added layerTreeAsText function to DRT (for Mac)
+        https://bugs.webkit.org/show_bug.cgi?id=36782
+
+        This is the DRT side. It exposes the call to JavaScript
+        through the LayoutTestController.
+
+        * DumpRenderTree/LayoutTestController.cpp:Platform independent JavaScript shim
+        (layerTreeAsTextCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:Mac specific plumbing to WebKit
+        (LayoutTestController::layerTreeAsText):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:Windows specific plumbing to WebKit
+        (LayoutTestController::layerTreeAsText):
+
 2010-04-01  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix after addition of JavaScriptCore/wtf/text directory.
