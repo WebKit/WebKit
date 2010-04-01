@@ -1,3 +1,12 @@
+2010-03-29  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Testing that executeSql() accepts only one-statement strings.
+
+        * storage/executesql-accepts-only-one-statement-expected.txt: Added.
+        * storage/executesql-accepts-only-one-statement.html: Added.
+
 2010-04-01  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Simon Fraser.

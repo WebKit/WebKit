@@ -1,3 +1,16 @@
+2010-03-29  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Changing SQLiteStatement::prepare() to return an error when it's
+        given a string that has more than one statement in it. Currently,
+        everything past the first statement is silently ignored.
+
+        Test: storage/executesql-accepts-only-one-statement.html
+
+        * platform/sql/SQLiteStatement.cpp:
+        (WebCore::SQLiteStatement::prepare):
+
 2010-04-01  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Simon Fraser.
