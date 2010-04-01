@@ -1,3 +1,11 @@
+2010-04-01  Jian Li  <jianli@chromium.org>
+
+        Rubber-stamped by David Levin.
+
+        Add myself to the reviewers list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-04-01  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.
