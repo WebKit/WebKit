@@ -1661,15 +1661,13 @@ void Range::formatForDebugger(char* buffer, unsigned length) const
 #undef FormatBufferSize
 #endif
 
-bool operator==(const Range& a, const Range& b)
+bool areRangesEqual(const Range* a, const Range* b)
 {
-    if (&a == &b)
+    if (a == b)
         return true;
-    // Not strictly legal C++, but in practice this can happen, and this check works
-    // fine with GCC to detect such cases and return false rather than crashing.
-    if (!&a || !&b)
+    if (!a || !b)
         return false;
-    return a.startPosition() == b.startPosition() && a.endPosition() == b.endPosition();
+    return a->startPosition() == b->startPosition() && a->endPosition() == b->endPosition();
 }
 
 PassRefPtr<Range> rangeOfContents(Node* node)

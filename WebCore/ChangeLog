@@ -1,3 +1,24 @@
+2010-04-01  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36901
+
+        Removed functions Range::operator == and Range::operator != as they
+        were using C++ code that was not sound and hence may have undefined
+        behavior.
+
+        Test case: manual-tests/crash-on-find-with-no-selection.html
+
+        * dom/Range.cpp:
+        (WebCore::areRangesEqual): Added.
+        * dom/Range.h:
+        * editing/markup.cpp:
+        (WebCore::createMarkup): Modified to call WebCore::areRangesEqual.
+        * manual-tests/crash-on-find-with-no-selection.html: Added.
+        * page/Frame.cpp:
+        (WebCore::Frame::findString): Modified to call WebCore::areRangesEqual.
+
 2010-04-01  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.
