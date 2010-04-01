@@ -35,6 +35,10 @@ import sys
 # Do not import anything from webkitpy prior to cleaning webkitpy of
 # orphaned *.pyc files.  This ensures that no orphaned *.pyc files are
 # accidentally imported during the course of this script.
+#
+# Also do not import any Python code incompatible with Python 2.4 until
+# after execution of the init() method below.
+
 
 _log = logging.getLogger("test-webkitpy")
 
@@ -81,15 +85,12 @@ def configure_logging(is_verbose_logging):
     # this method accordingly.
     def filter(record):
         """Filter out autoinstall and non-third-party webkitpy messages."""
-        # FIXME: Enable the logging of autoinstall messages even when
-        #        is_verbose_logging is false -- once autoinstall is rewritten.
-        #        Currently, autoinstall logs INFO messages when importing
-        #        already-downloaded packages, which is too verbose.
-        if is_verbose_logging and \
-            record.name == "webkitpy.thirdparty.autoinstall":
-            return True
-
-        if record.name.startswith("webkitpy.test"):
+        # FIXME: Figure out a way not to use strings here, for example by
+        #        using syntax like webkitpy.test.__name__.  We want to be
+        #        sure not to import any non-Python 2.4 code, though, until
+        #        after the version-checking code has executed.
+        if (record.name.startswith("webkitpy.common.system.autoinstall") or
+            record.name.startswith("webkitpy.test")):
             return True
         if record.name.startswith("webkitpy"):
             return False

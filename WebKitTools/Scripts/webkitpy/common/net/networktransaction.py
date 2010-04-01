@@ -29,7 +29,9 @@
 import logging
 import time
 
-from webkitpy.thirdparty.autoinstalled import HTTPError
+from webkitpy.thirdparty.autoinstalled.mechanize import HTTPError
+from webkitpy.common.system.deprecated_logging import log
+
 
 _log = logging.getLogger(__name__)
 

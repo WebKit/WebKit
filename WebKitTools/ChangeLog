@@ -1,5 +1,61 @@
 2010-03-31  Chris Jerdonek  <cjerdonek@webkit.org>
 
+        Reviewed by Dave Levin.
+
+        Rewrote autoinstall.py to support unzipping *.zip files after
+        download, unzipping and extracting *.tar.gz files after download,
+        and copying installed files to a given destination directory.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35163
+
+        These changes will let us autoinstall pep8.py from the web and put
+        our third-party autoinstalled code in an explicit directory like
+        webkitpy/thirdparty/autoinstalled. These changes should also speed
+        up the execution of autoinstalled *.zip packages slightly since
+        *.pyc files cannot be generated when importing from zipped
+        packages using the current autoinstall.
+
+        * Scripts/test-webkitpy:
+          - Addressed the FIXME to enable auto-install logging once
+            autoinstall was rewritten not to log as verbosely.
+
+        * Scripts/webkitpy/common/net/bugzilla.py:
+          - Updated mechanize import statement.
+
+        * Scripts/webkitpy/common/net/buildbot.py:
+          - Updated mechanize import statement.
+
+        * Scripts/webkitpy/common/net/irc/ircbot.py:
+          - Updated ircbot and irclib import statements.
+
+        * Scripts/webkitpy/common/net/networktransaction.py:
+          - Updated mechanize import statement.
+
+        * Scripts/webkitpy/common/net/networktransaction_unittest.py:
+          - Updated mechanize import statement.
+
+        * Scripts/webkitpy/common/net/statusserver.py:
+          - Updated mechanize import statement.
+
+        * Scripts/webkitpy/common/system/autoinstall.py: Added.
+          - Added AutoInstaller class.
+          - Added sample/testing usage to the __main__ block.
+
+        * Scripts/webkitpy/thirdparty/__init__.py:
+          - Updated the autoinstall lines to use the new autoinstall methods.
+          - Added pep8.py to the list of auto-installed packages.
+          - Added a README file to the target autoinstallation directory
+            so users know that the directory is safe to delete.
+
+        * Scripts/webkitpy/thirdparty/autoinstall.py: Removed.
+          - This is replaced by the rewritten autoinstall
+            webkitpy/common/system/autoinstall.py.
+
+        * Scripts/webkitpy/thirdparty/autoinstalled/__init__.py: Removed.
+          - The target autoinstallation directory is now auto-generated.
+
+2010-03-31  Chris Jerdonek  <cjerdonek@webkit.org>
+
         Reviewed by Shinichiro Hamaji.
 
         Tweak webkitpy's logtesting.LogTesting class to get more mileage out

@@ -37,7 +37,7 @@ import xmlrpclib
 # Import WebKit-specific modules.
 from webkitpy.common.system.deprecated_logging import log
 
-from webkitpy.thirdparty.autoinstalled import Browser
+from webkitpy.thirdparty.autoinstalled.mechanize import Browser
 # WebKit includes a built copy of BeautifulSoup in Scripts/webkitpy/thirdparty
 # so this import should always succeed.
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
