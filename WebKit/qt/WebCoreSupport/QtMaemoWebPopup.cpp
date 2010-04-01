@@ -20,7 +20,46 @@
 #include "config.h"
 #include "QtMaemoWebPopup.h"
 
+#include <QHBoxLayout>
+#include <QListWidget>
+#include <QListWidgetItem>
+#include <QPainter>
+#include <QPushButton>
+#include <QStyledItemDelegate>
+#include <QVBoxLayout>
+
+#include <libintl.h>
+
+
 namespace WebCore {
+
+static const int gMaemoListItemSize = 70;
+static const int gMaemoListPadding = 38;
+static const int gMaemoMaxVisibleItems = 5;
+
+void Maemo5Popup::populateList()
+{
+    QListWidgetItem* listItem;
+    for (int i = 0; i < m_data.itemCount(); ++i) {
+        if (m_data.itemType(i) == QtAbstractWebPopup::Option) {
+            listItem = new QListWidgetItem(m_data.itemText(i));
+            m_list->addItem(listItem);
+            listItem->setSelected(m_data.itemIsSelected(i));
+        } else if (m_data.itemType(i) == QtAbstractWebPopup::Group) {
+            listItem = new QListWidgetItem(m_data.itemText(i));
+            m_list->addItem(listItem);
+            listItem->setSelected(false);
+            listItem->setFlags(Qt::NoItemFlags);
+        }
+    }
+    connect(m_list, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(onItemSelected(QListWidgetItem*)));
+}
+
+void Maemo5Popup::onItemSelected(QListWidgetItem* item)
+{
+    if (item->flags() != Qt::NoItemFlags)
+        emit itemClicked(m_list->row(item));
+}
 
 QtMaemoWebPopup::QtMaemoWebPopup()
     : QtAbstractWebPopup()
@@ -36,10 +75,12 @@ QtMaemoWebPopup::~QtMaemoWebPopup()
 
 Maemo5Popup* QtMaemoWebPopup::createSingleSelectionPopup()
 {
+    return new Maemo5SingleSelectionPopup(*this);
 }
 
 Maemo5Popup* QtMaemoWebPopup::createMultipleSelectionPopup()
 {
+    return new Maemo5MultipleSelectionPopup(*this);
 }
 
 Maemo5Popup* QtMaemoWebPopup::createPopup()
@@ -49,7 +90,6 @@ Maemo5Popup* QtMaemoWebPopup::createPopup()
     connect(result, SIGNAL(itemClicked(int)), this, SLOT(itemClicked(int)));
     return result;
 }
-
 
 void QtMaemoWebPopup::show()
 {
@@ -81,6 +121,100 @@ void QtMaemoWebPopup::popupClosed()
 void QtMaemoWebPopup::itemClicked(int idx)
 {
     selectItem(idx, true, false);
+}
+
+Maemo5SingleSelectionPopup::Maemo5SingleSelectionPopup(QtAbstractWebPopup& data)
+    : Maemo5Popup(data)
+{
+    // we try to get the standard list title the web browser is using
+    const char* title = ::dgettext("osso-browser-ui", "weba_ti_texlist_single");
+    if (qstrcmp(title, "weba_ti_texlist_single"))
+        setWindowTitle(QString::fromUtf8(title));
+    else
+        setWindowTitle("Select item");
+
+    QHBoxLayout* hLayout = new QHBoxLayout(this);
+    hLayout->setContentsMargins(0, 0, 0, 0);
+
+    m_list = new QListWidget(this);
+    populateList();
+
+    hLayout->addSpacing(gMaemoListPadding);
+    hLayout->addWidget(m_list);
+    hLayout->addSpacing(gMaemoListPadding);
+
+    connect(m_list, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(accept()));
+
+    const int visibleItemCount = (m_list->count() > gMaemoMaxVisibleItems) ? gMaemoMaxVisibleItems : m_list->count();
+    resize(size().width(), visibleItemCount * gMaemoListItemSize);
+}
+
+
+class MultipleItemListDelegate : public QStyledItemDelegate {
+public:
+    MultipleItemListDelegate(QObject* parent = 0)
+           : QStyledItemDelegate(parent)
+    {
+        tickMark = QIcon::fromTheme("widgets_tickmark_list").pixmap(48, 48);
+    }
+
+    void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
+    {
+        QStyledItemDelegate::paint(painter, option, index);
+
+        if (option.state & QStyle::State_Selected)
+            painter->drawPixmap(option.rect.width() - tickMark.rect().width(), option.rect.y() + (option.rect.height() / 2 - tickMark.rect().height() / 2), tickMark);
+    }
+
+private:
+    QPixmap tickMark;
+};
+
+Maemo5MultipleSelectionPopup::Maemo5MultipleSelectionPopup(QtAbstractWebPopup& data)
+    : Maemo5Popup(data)
+{
+    // we try to get the standard list title the web browser is using
+    const char* title = ::dgettext("osso-browser-ui", "weba_ti_textlist_multi");
+    if (qstrcmp(title, "weba_ti_textlist_multi"))
+        setWindowTitle(QString::fromUtf8(title));
+    else
+        setWindowTitle("Select items");
+
+    QHBoxLayout* hLayout = new QHBoxLayout(this);
+    hLayout->setContentsMargins(0, 0, 0, 0);
+
+    m_list = new QListWidget(this);
+    m_list->setSelectionMode(QAbstractItemView::MultiSelection);
+    populateList();
+
+    MultipleItemListDelegate* delegate = new MultipleItemListDelegate(this);
+    m_list->setItemDelegate(delegate);
+
+    hLayout->addSpacing(gMaemoListPadding);
+    hLayout->addWidget(m_list);
+
+    QVBoxLayout* vLayout = new QVBoxLayout();
+
+    const int visibleItemCount = (m_list->count() > gMaemoMaxVisibleItems) ? gMaemoMaxVisibleItems : m_list->count();
+    vLayout->addSpacing((visibleItemCount - 1) * gMaemoListItemSize);
+
+    // we try to get the standard Done button title
+    QPushButton* done = new QPushButton(this);
+    title = ::dgettext("hildon-libs", "wdgt_bd_done");
+    if (qstrcmp(title, "wdgt_bd_done"))
+        done->setText(QString::fromUtf8(title));
+    else
+        done->setText("Done");
+
+    done->setMinimumWidth(178);
+    vLayout->addWidget(done);
+
+    hLayout->addSpacing(8);
+    hLayout->addLayout(vLayout);
+    hLayout->addSpacing(18);
+
+    connect(done, SIGNAL(clicked()), this, SLOT(accept()));
+    resize(size().width(), visibleItemCount * gMaemoListItemSize);
 }
 
 }

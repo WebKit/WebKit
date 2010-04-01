@@ -1,3 +1,23 @@
+2010-04-01  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add Single and Multiple Selection Popup for Maemo 5.
+
+        [Qt] Maemo5 theme - popup dialogs
+        https://bugs.webkit.org/show_bug.cgi?id=36789
+
+        * WebCoreSupport/QtMaemoWebPopup.cpp:
+        (WebCore::Maemo5Popup::populateList):
+        (WebCore::Maemo5Popup::onItemSelected):
+        (WebCore::QtMaemoWebPopup::createSingleSelectionPopup):
+        (WebCore::QtMaemoWebPopup::createMultipleSelectionPopup):
+        (WebCore::Maemo5SingleSelectionPopup::Maemo5SingleSelectionPopup):
+        (WebCore::MultipleItemListDelegate::MultipleItemListDelegate):
+        (WebCore::MultipleItemListDelegate::paint):
+        (WebCore::Maemo5MultipleSelectionPopup::Maemo5MultipleSelectionPopup):
+        * WebCoreSupport/QtMaemoWebPopup.h:
+
 2010-03-31  Marcus Bulach  <bulach@chromium.org>
 
         Reviewed by Jeremy Orlow.
