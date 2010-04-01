@@ -1,3 +1,13 @@
+2010-03-31  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Darin Adler.
+
+        Crash when writing into a detached TITLE element
+        https://bugs.webkit.org/show_bug.cgi?id=25567
+
+        * fast/dom/title-content-write-set-expected.txt: Added.
+        * fast/dom/title-content-write-set.html: Added.
+
 2010-04-01  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Darin Adler.

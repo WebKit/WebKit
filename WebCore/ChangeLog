@@ -1,3 +1,21 @@
+2010-03-31  MORITA Hajime  <morrita@google.com>
+        
+        Reviewed by Darin Adler.
+
+        Crash when writing into a detached TITLE element
+        https://bugs.webkit.org/show_bug.cgi?id=25567
+        
+        Document::setTitle() invoked HTMLTitleElement::setText(), which
+        contains DOM tree modification, even when setTitle() is called
+        from HTMLTitleElement::childrenChanged().  Fix to skip setText()
+        when setTitle() is called childrenChanged() to avoid cascading
+        DOM mutations between Document and HTMLTitleElement.
+
+        Test: fast/dom/title-content-write-set.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::setTitle):
+
 2010-04-01  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Darin Adler.
