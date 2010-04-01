@@ -1451,6 +1451,22 @@ sub buildChromiumVisualStudioProject($$)
     $vsInstallDir = `cygpath "$vsInstallDir"` if isCygwin();
     chomp $vsInstallDir;
     $vcBuildPath = "$vsInstallDir/Common7/IDE/devenv.com";
+    if (-e $vcBuildPath) {
+        # Visual Studio is installed; we can use pdevenv to build.
+        $vcBuildPath = File::Spec->catfile(sourceDir(), qw(WebKitTools Scripts pdevenv));
+    } else {
+        # Visual Studio not found, try VC++ Express
+        $vcBuildPath = "$vsInstallDir/Common7/IDE/VCExpress.exe";
+        if (! -e $vcBuildPath) {
+            print "*************************************************************\n";
+            print "Cannot find '$vcBuildPath'\n";
+            print "Please execute the file 'vcvars32.bat' from\n";
+            print "'$programFilesPath\\Microsoft Visual Studio 8\\VC\\bin\\'\n";
+            print "to setup the necessary environment variables.\n";
+            print "*************************************************************\n";
+            die;
+        }
+    }
 
     # Create command line and execute it.
     my @command = ($vcBuildPath, $projectPath, $action, $config);

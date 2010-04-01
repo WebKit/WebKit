@@ -1,3 +1,18 @@
+2010-04-01  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Let Chromium Windows build with Visual Studio Express
+        https://bugs.webkit.org/show_bug.cgi?id=36919
+
+        This is horrible, horrible copy/paste code, but that seems to be the
+        way of webkitdirs.pm.  :(
+
+        Someone needs to go through an cleanup this code, but I don't have the
+        heart to do it in this patch.
+
+        * Scripts/webkitdirs.pm:
+
 2010-04-01  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.
