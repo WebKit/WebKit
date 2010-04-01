@@ -39,20 +39,41 @@ import sys
 _log = logging.getLogger("test-webkitpy")
 
 
-def configure_logging():
+# Verbose logging is useful for debugging test-webkitpy code that runs
+# before the actual unit tests -- things like autoinstall downloading and
+# unit-test auto-detection logic.  This is different from verbose logging
+# of the unit tests themselves (i.e. the unittest module's --verbose flag).
+def configure_logging(is_verbose_logging):
     """Configure the root logger.
 
-    Configure the root logger not to log any messages from webkitpy,
-    and to log all other messages that are INFO and above.
+    Configure the root logger not to log any messages from webkitpy --
+    except for messages from the autoinstall module.  Also set the
+    logging level as described below.
+
+    Args:
+      is_verbose_logging: A boolean value of whether logging should be
+                          verbose.  If this parameter is true, the logging
+                          level for the handler on the root logger is set to
+                          logging.DEBUG.  Otherwise, it is set to logging.INFO.
 
     """
+    logging_level = logging.DEBUG if is_verbose_logging else logging.INFO
+
     handler = logging.StreamHandler(sys.stderr)
-    formatter = logging.Formatter("[%(levelname)s] %(name)s: %(message)s")
+    # We constrain the level on the handler rather than on the root
+    # logger itself.  This is probably better because the handler is
+    # configured and known only to this module, whereas the root logger
+    # is an object shared (and potentially modified) by many modules.
+    # Modifying the handler, then, is less intrusive and less likely to
+    # interfere with modifications made by other modules (e.g. in unit
+    # tests).
+    handler.setLevel(logging_level)
+    formatter = logging.Formatter("%(name)s: %(levelname)-8s %(message)s")
     handler.setFormatter(formatter)
 
     logger = logging.getLogger()
-    logger.setLevel(logging.INFO)
     logger.addHandler(handler)
+    logger.setLevel(logging.NOTSET)
 
     # Filter out most webkitpy messages.
     #
@@ -60,10 +81,14 @@ def configure_logging():
     # this method accordingly.
     def filter(record):
         """Filter out autoinstall and non-third-party webkitpy messages."""
-        # FIXME: Enable the logging of autoinstall messages once
-        #        autoinstall is adjusted.  Currently, autoinstall logs
-        #        INFO messages when importing already-downloaded packages,
-        #        which is too verbose.
+        # FIXME: Enable the logging of autoinstall messages even when
+        #        is_verbose_logging is false -- once autoinstall is rewritten.
+        #        Currently, autoinstall logs INFO messages when importing
+        #        already-downloaded packages, which is too verbose.
+        if is_verbose_logging and \
+            record.name == "webkitpy.thirdparty.autoinstall":
+            return True
+
         if record.name.startswith("webkitpy.test"):
             return True
         if record.name.startswith("webkitpy"):
@@ -131,9 +156,29 @@ def _clean_webkitpy_with_test():
         raise Exception("Test .pyc file not deleted: %s" % test_path)
 
 
-def init():
-    """Execute code prior to importing from webkitpy.unittests."""
-    configure_logging()
+def init(command_args):
+    """Execute code prior to importing from webkitpy.unittests.
+
+    Args:
+        command_args: The list of command-line arguments -- usually
+                      sys.argv[1:].
+
+    """
+    verbose_logging_flag = "--verbose-logging"
+    is_verbose_logging = verbose_logging_flag in command_args
+    if is_verbose_logging:
+        # Remove the flag so it doesn't cause unittest.main() to error out.
+        #
+        # FIXME: Get documentation for the --verbose-logging flag to show
+        #        up in the usage instructions, which are currently generated
+        #        by unittest.main().  It's possible that this will require
+        #        re-implementing the option parser for unittest.main()
+        #        since there may not be an easy way to modify its existing
+        #        option parser.
+        sys.argv.remove(verbose_logging_flag)
+
+    configure_logging(is_verbose_logging)
+    _log.debug("Verbose WebKit logging enabled.")
 
     # We clean orphaned *.pyc files from webkitpy prior to importing from
     # webkitpy to make sure that no import statements falsely succeed.
@@ -176,7 +221,7 @@ def init():
 
 if __name__ == "__main__":
 
-    init()
+    init(sys.argv[1:])
 
     # We import the unit test code after init() to ensure that any
     # Python version warnings are displayed in case an error occurs

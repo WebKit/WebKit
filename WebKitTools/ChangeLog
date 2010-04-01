@@ -2,6 +2,33 @@
 
         Reviewed by Adam Barth.
 
+        Added support for a --verbose-logging flag to test-webkitpy.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36429
+
+        Verbose logging is useful for debugging test-webkitpy code that
+        runs before the actual unit tests -- things like autoinstalling and
+        unit-test auto-detection logic.  This is different from verbose
+        logging of the unit tests themselves (which corresponds to the
+        unittest module's --verbose flag).
+
+        * Scripts/test-webkitpy:
+          - In the configure_logging() method--
+            - Added an is_verbose_logging parameter that sets the logging
+              level to logging.DEBUG instead of logging.INFO.
+            - Changed the method to throttle the logging level on the
+              root logger's handler instead of directly on the root logger
+              itself.
+            - Enabled logging of the autoinstall module when the flag is set.
+
+        * Scripts/webkitpy/thirdparty/autoinstalled/__init__.py:
+          - Added a work-around for a bug in Python 2.6's logging module
+            that was discovered while working on this patch.
+
+2010-03-31  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Enabled Python's logging module for webkit-patch, and replaced
         deprecated_logging with Python logging in networktransaction.py.
         This eliminates some spurious output when running test-webkitpy.

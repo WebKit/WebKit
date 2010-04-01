@@ -1,5 +1,15 @@
 # Required for Python to search this directory for module files
 
+# We import multiprocessing prior to importing autoinstall to circumvent
+# the following bug in Python 2.6:
+#
+# http://bugs.python.org/issue8200
+try:
+    import multiprocessing
+except ImportError:
+    # Bury the exception since the module is new in Python 2.6.
+    pass
+
 import webkitpy.thirdparty.autoinstall as autoinstall
 
 # List our third-party library dependencies here and where they can be

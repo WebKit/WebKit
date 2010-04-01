@@ -155,7 +155,7 @@ def _default_handlers(stream):
     return [handler]
 
 
-def configure_logging(logging_level=logging.INFO, logger=None, stream=None,
+def configure_logging(logging_level=None, logger=None, stream=None,
                       handlers=None):
     """Configure logging for standard purposes.
 
@@ -167,7 +167,8 @@ def configure_logging(logging_level=logging.INFO, logger=None, stream=None,
       and then undo the configuring.
 
     Args:
-      logging_level: The minimum logging level to log.
+      logging_level: The minimum logging level to log.  Defaults to
+                     logging.INFO.
       logger: A logging.logger instance to configure.  This parameter
               should be used only in unit tests.  Defaults to the
               root logger.
@@ -187,6 +188,8 @@ def configure_logging(logging_level=logging.INFO, logger=None, stream=None,
     #         lib/python2.6/logging/__init__.py", line 761, in emit
     #     self.stream.write(fs % msg.encode(self.stream.encoding))
     # LookupError: unknown encoding: unknown
+    if logging_level is None:
+        logging_level = logging.INFO
     if logger is None:
         logger = logging.getLogger()
     if stream is None:
