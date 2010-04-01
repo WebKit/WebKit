@@ -27,6 +27,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from webkitpy.common.checkout.changelog import view_source_url
+from webkitpy.tool.bot.queueengine import TerminateQueue
+
 
 # FIXME: Merge with Command?
 class IRCCommand(object):
@@ -37,6 +39,12 @@ class IRCCommand(object):
 class LastGreenRevision(IRCCommand):
     def execute(self, args, tool):
         return view_source_url(tool.buildbot.last_green_revision())
+
+
+class Restart(IRCCommand):
+    def execute(self, args, tool):
+        tool.irc().post("Restarting...")
+        raise TerminateQueue()
 
 
 class Hi(IRCCommand):

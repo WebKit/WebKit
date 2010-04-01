@@ -55,6 +55,7 @@ class SheriffIRCBot(IRCBotDelegate):
     # FIXME: Lame.  We should have an auto-registering CommandCenter.
     commands = {
         "last-green-revision": irc_command.LastGreenRevision,
+        "restart": irc_command.Restart,
         "hi": irc_command.Hi,
     }
 

@@ -37,6 +37,11 @@ from webkitpy.common.net.statusserver import StatusServer
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.deprecated_logging import log, OutputTee
 
+
+class TerminateQueue(Exception):
+    pass
+
+
 class QueueEngineDelegate:
     def queue_log_path(self):
         raise NotImplementedError, "subclasses must implement"
@@ -109,6 +114,9 @@ class QueueEngine:
                         continue
                     message = "Unexpected failure when landing patch!  Please file a bug against webkit-patch.\n%s" % e.message_with_output()
                     self._delegate.handle_unexpected_error(work_item, message)
+            except TerminateQueue, e:
+                log("\nTerminateQueue exception received.")
+                return 0
             except KeyboardInterrupt, e:
                 log("\nUser terminated queue.")
                 return 1
