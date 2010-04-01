@@ -1,3 +1,16 @@
+2010-03-31  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        REGRESSION: EWS crashes on failure
+        https://bugs.webkit.org/show_bug.cgi?id=36924
+
+        Turns out we need to pass one more argument.  My test is kind of lame,
+        but at least it's there.
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+
 2010-03-31  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Unreviewed.

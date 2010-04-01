@@ -84,7 +84,7 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue):
         if not self._build(patch, first_run=True):
             if not self._can_build():
                 return False
-            self._build()
+            self._build(patch)
         return True
 
     @classmethod

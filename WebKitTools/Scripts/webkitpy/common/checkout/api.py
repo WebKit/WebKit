@@ -101,7 +101,7 @@ class Checkout(object):
 
     def bug_id_for_this_commit(self):
         try:
-            return parse_bug_id(self.commit_message_for_this_commit())
+            return parse_bug_id(self.commit_message_for_this_commit().message())
         except ScriptError, e:
             pass # We might not have ChangeLogs.
 

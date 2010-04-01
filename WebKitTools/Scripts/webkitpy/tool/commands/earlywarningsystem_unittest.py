@@ -33,6 +33,12 @@ from webkitpy.tool.commands.earlywarningsystem import *
 from webkitpy.tool.commands.queuestest import QueuesTest
 
 class EarlyWarningSytemTest(QueuesTest):
+    def test_failed_builds(self):
+        ews = ChromiumEWS()
+        ews._build = lambda patch, first_run=False: False
+        ews._can_build = lambda: True
+        ews.review_patch(Mock())
+
     def test_chromium_ews(self):
         expected_stderr = {
             "begin_work_queue" : "CAUTION: chromium-ews will discard all local changes in \"%s\"\nRunning WebKit chromium-ews.\n" % os.getcwd(),
