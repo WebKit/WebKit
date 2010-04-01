@@ -106,7 +106,8 @@ class QueueEngine:
                 #        This looks fixed, no?
                 self._open_work_log(work_item)
                 try:
-                    self._delegate.process_work_item(work_item)
+                    if not self._delegate.process_work_item(work_item):
+                        self._sleep("Unable to process work item.")
                 except ScriptError, e:
                     # Use a special exit code to indicate that the error was already
                     # handled in the child process and we should just keep looping.

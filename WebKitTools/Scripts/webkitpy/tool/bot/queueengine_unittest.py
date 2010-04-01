@@ -86,6 +86,7 @@ class LoggingDelegate(QueueEngineDelegate):
     def process_work_item(self, work_item):
         self.record("process_work_item")
         self._test.assertEquals(work_item, "work_item")
+        return True
 
     def handle_unexpected_error(self, work_item, message):
         self.record("handle_unexpected_error")

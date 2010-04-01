@@ -128,6 +128,7 @@ class SheriffBot(AbstractQueue):
 
         for builder in builders:
             self.tool.status_server.update_svn_revision(svn_revision, builder.name())
+        return True
 
     def handle_unexpected_error(self, failure_info, message):
         log(message)

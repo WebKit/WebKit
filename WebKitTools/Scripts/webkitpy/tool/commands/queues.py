@@ -244,12 +244,13 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
             # that the bots were behind. To check that case, we try to build and
             # test ourselves.
             if not self._can_build_and_test():
-                return
+                return False
             # Hum, looks like the patch is actually bad. Of course, we could
             # have been bitten by a flaky test the first time around.  We try
             # to land again.  If it fails a second time, we're pretty sure its
             # a bad test and re can reject it outright.
             self._land(patch)
+        return True
 
     def handle_unexpected_error(self, patch, message):
         self.committer_validator.reject_patch_from_commit_queue(patch.id(), message)
@@ -308,8 +309,10 @@ class AbstractReviewQueue(AbstractPatchQueue, PersistentPatchCollectionDelegate,
 
     def process_work_item(self, patch):
         try:
-            if self.review_patch(patch):
-                self._did_pass(patch)
+            if not self.review_patch(patch):
+                return False
+            self._did_pass(patch)
+            return True
         except ScriptError, e:
             if e.exit_code != QueueEngine.handled_error_code:
                 self._did_fail(patch)
