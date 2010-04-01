@@ -51,7 +51,7 @@ BASE_DIR = $$PWD
 INCLUDEPATH += $$OUTPUT_DIR/include/QtWebKit
 
 CONFIG -= warn_on
-*-g++*:QMAKE_CXXFLAGS += -Wall -Wreturn-type -fno-strict-aliasing -Wcast-align -Wchar-subscripts -Wformat-security -Wreturn-type -Wno-unused-parameter -Wno-sign-compare -Wno-switch -Wno-switch-enum -Wundef -Wmissing-noreturn -Winit-self
+*-g++*:QMAKE_CXXFLAGS += -Wall -Wextra -Wreturn-type -fno-strict-aliasing -Wcast-align -Wchar-subscripts -Wformat-security -Wreturn-type -Wno-unused-parameter -Wno-sign-compare -Wno-switch -Wno-switch-enum -Wundef -Wmissing-noreturn -Winit-self
 
 # Enable GNU compiler extensions to the ARM compiler for all Qt ports using RVCT
 symbian|*-armcc {
