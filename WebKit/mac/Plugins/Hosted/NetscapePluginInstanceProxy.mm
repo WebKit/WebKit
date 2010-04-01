@@ -117,11 +117,10 @@ inline bool NetscapePluginInstanceProxy::LocalObjectMap::contains(uint32_t objec
 
 inline JSC::JSObject* NetscapePluginInstanceProxy::LocalObjectMap::get(uint32_t objectID) const
 {
-    HashMap<uint32_t, JSC::ProtectedPtr<JSC::JSObject> >::const_iterator iter = m_idToJSObjectMap.find(objectID);
-    if (iter == m_idToJSObjectMap.end())
+    if (objectID == HashTraits<uint32_t>::emptyValue() || HashTraits<uint32_t>::isDeletedValue(objectID))
         return 0;
 
-    return iter->second.get();
+    return m_idToJSObjectMap.get(objectID);
 }
 
 uint32_t NetscapePluginInstanceProxy::LocalObjectMap::idForObject(JSObject* object)
@@ -183,6 +182,11 @@ void NetscapePluginInstanceProxy::LocalObjectMap::clear()
 
 bool NetscapePluginInstanceProxy::LocalObjectMap::forget(uint32_t objectID)
 {
+    if (objectID == HashTraits<uint32_t>::emptyValue() || HashTraits<uint32_t>::isDeletedValue(objectID)) {
+        LOG_ERROR("NetscapePluginInstanceProxy::LocalObjectMap::forget: local object id %u is not valid.", objectID);
+        return true;
+    }
+
     HashMap<uint32_t, JSC::ProtectedPtr<JSC::JSObject> >::iterator iter = m_idToJSObjectMap.find(objectID);
     if (iter == m_idToJSObjectMap.end()) {
         LOG_ERROR("NetscapePluginInstanceProxy::LocalObjectMap::forget: local object %u doesn't exist.", objectID);
