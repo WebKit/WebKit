@@ -1,3 +1,16 @@
+2010-04-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Assertion failure (willBeComposited == needsToBeComposited(layer)) in
+        RenderLayerCompositor::computeCompositingRequirements() on hulu.com
+        https://bugs.webkit.org/show_bug.cgi?id=36516
+        
+        Testcase with a compositing layer and a clipping parent, which hit the assertion described by the bug.
+
+        * compositing/self-painting-layers2-expected.txt: Added.
+        * compositing/self-painting-layers2.html: Added.
+
 2010-03-29  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Dimitri Glazkov.

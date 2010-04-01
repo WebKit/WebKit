@@ -328,7 +328,7 @@ void RenderLayerCompositor::repaintOnCompositingChange(RenderLayer* layer)
 // RenderLayers that are rendered by the composited RenderLayer.
 IntRect RenderLayerCompositor::calculateCompositedBounds(const RenderLayer* layer, const RenderLayer* ancestorLayer)
 {
-    if (!layer->isSelfPaintingLayer())
+    if (!canBeComposited(layer))
         return IntRect();
 
     IntRect boundingBoxRect, unionBounds;
@@ -570,7 +570,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, O
     // If we have a software transform, and we have layers under us, we need to also
     // be composited. Also, if we have opacity < 1, then we need to be a layer so that
     // the child layers are opaque, then rendered with opacity on this layer.
-    if (!willBeComposited && childState.m_subtreeIsCompositing && requiresCompositingWhenDescendantsAreCompositing(layer->renderer())) {
+    if (!willBeComposited && canBeComposited(layer) && childState.m_subtreeIsCompositing && requiresCompositingWhenDescendantsAreCompositing(layer->renderer())) {
         layer->setMustOverlapCompositedLayers(true);
         if (overlapMap)
             addToOverlapMap(*overlapMap, layer, absBounds, haveComputedBounds);
@@ -590,7 +590,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, O
 
     // setHasCompositingDescendant() may have changed the answer to needsToBeComposited() when clipping,
     // so test that again.
-    if (!willBeComposited && clipsCompositingDescendants(layer)) {
+    if (!willBeComposited && canBeComposited(layer) && clipsCompositingDescendants(layer)) {
         if (overlapMap)
             addToOverlapMap(*overlapMap, layer, absBounds, haveComputedBounds);
         willBeComposited = true;
@@ -954,7 +954,7 @@ bool RenderLayerCompositor::has3DContent() const
 
 bool RenderLayerCompositor::needsToBeComposited(const RenderLayer* layer) const
 {
-    if (!m_hasAcceleratedCompositing || !layer->isSelfPaintingLayer())
+    if (!canBeComposited(layer))
         return false;
 
     return requiresCompositingLayer(layer) || layer->mustOverlapCompositedLayers() || (inCompositingMode() && layer->isRootLayer());
@@ -979,6 +979,11 @@ bool RenderLayerCompositor::requiresCompositingLayer(const RenderLayer* layer) c
              || renderer->style()->backfaceVisibility() == BackfaceVisibilityHidden
              || clipsCompositingDescendants(layer)
              || requiresCompositingForAnimation(renderer);
+}
+
+bool RenderLayerCompositor::canBeComposited(const RenderLayer* layer) const
+{
+    return m_hasAcceleratedCompositing && layer->isSelfPaintingLayer();
 }
 
 // Return true if the given layer has some ancestor in the RenderLayer hierarchy that clips,

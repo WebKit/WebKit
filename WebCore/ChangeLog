@@ -2,6 +2,33 @@
 
         Reviewed by Darin Adler.
 
+        Assertion failure (willBeComposited == needsToBeComposited(layer)) in
+        RenderLayerCompositor::computeCompositingRequirements() on hulu.com
+        https://bugs.webkit.org/show_bug.cgi?id=36516
+        
+        Fix assertions added in r56017. That changed replaced calls to needsToBeComposited()
+        with use of the local 'willBeComposited' variable, but that fails to take into
+        account the fact that needsToBeComposited() also tests layer->isSelfPaintingLayer().
+        
+        Fix by adding a canBeComposited() method that we call before testing
+        whether the layer should go into compositing mode.
+
+        Test: compositing/self-painting-layers2.html
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::calculateCompositedBounds): Repace use of isSelfPaintingLayer()
+        with a call to canBeComposited().
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements): Call canBeComposited() to ensure
+        that we only toggle 'willBeComposited' for layers that can.
+        (WebCore::RenderLayerCompositor::needsToBeComposited): Call canBeComposited().
+        (WebCore::RenderLayerCompositor::canBeComposited): Test if compositing is enabled, and whether
+        the layer is self-painting.
+        * rendering/RenderLayerCompositor.h: Add canBeComposited().
+
+2010-04-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
         https://bugs.webkit.org/show_bug.cgi?id=36980
         Add object addresses to debug showLayerTree() output.
         
