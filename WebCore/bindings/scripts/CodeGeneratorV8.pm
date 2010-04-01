@@ -1141,6 +1141,10 @@ sub GenerateSingleBatchedAttribute
     my $attrName = $attribute->signature->name;
     my $attrExt = $attribute->signature->extendedAttributes;
 
+    # Attributes of type SerializedScriptValue are set in the
+    # constructor and don't require callbacks.
+    return if ($attribute->signature->type eq "SerializedScriptValue");
+
     my $accessControl = "v8::DEFAULT";
     if ($attrExt->{"DoNotCheckDomainSecurityOnGet"}) {
         $accessControl = "v8::ALL_CAN_READ";
@@ -1467,6 +1471,7 @@ sub GenerateImplementation
     push(@implContentDecls, "template <typename T> void V8_USE(T) { }\n\n");
 
     my $hasConstructors = 0;
+    my $serializedAttribute;
     # Generate property accessors for attributes.
     for ($index = 0; $index < @{$dataNode->attributes}; $index++) {
         $attribute = @{$dataNode->attributes}[$index];
@@ -1484,6 +1489,15 @@ sub GenerateImplementation
 
         if ($attrType eq "EventListener" && $interfaceName eq "DOMWindow") {
             $attribute->signature->extendedAttributes->{"v8OnProto"} = 1;
+        }
+
+        # Attributes of type SerializedScriptValue are set in the
+        # constructor and don't require callbacks.
+        if ($attrType eq "SerializedScriptValue") {
+            die "Only one attribute of type SerializedScriptValue supported" if $serializedAttribute;
+            $implIncludes{"SerializedScriptValue.h"} = 1;
+            $serializedAttribute = $attribute;
+            next;
         }
 
         # Do not generate accessor if this is a custom attribute.  The
@@ -1911,7 +1925,7 @@ v8::Persistent<v8::ObjectTemplate> V8DOMWindow::GetShadowObjectTemplate()
 END
     }
 
-    GenerateToV8Converters($dataNode, $interfaceName, $className, $nativeType);
+    GenerateToV8Converters($dataNode, $interfaceName, $className, $nativeType, $serializedAttribute);
 
     push(@implContent, <<END);
 
@@ -1940,6 +1954,7 @@ sub GenerateToV8Converters
     my $interfaceName = shift;
     my $className = shift;
     my $nativeType = shift;
+    my $serializedAttribute = shift;
 
     my $domMapFunction = GetDomMapFunction($dataNode, $interfaceName);
     my $forceNewObjectInput = IsDOMNodeType($interfaceName) ? ", bool forceNewObject" : "";
@@ -1993,7 +2008,6 @@ END
     push(@implContent, <<END);
     wrapper = V8DOMWrapper::instantiateV8Object(proxy, &info, impl);
 END
-
     if (IsNodeSubType($dataNode)) {
         push(@implContent, <<END);
     // Exit the node's context if it was entered.
@@ -2007,6 +2021,22 @@ END
         return wrapper;
 END
     push(@implContent, "\n    impl->ref();\n") if IsRefPtrType($interfaceName);
+
+    # Eagerly deserialize attributes of type SerializedScriptValue
+    # while we're in the right context.
+    if ($serializedAttribute) {
+        die "Attribute of type SerializedScriptValue expected" if $serializedAttribute->signature->type ne "SerializedScriptValue";
+        my $attrName = $serializedAttribute->signature->name;
+        my $attrAttr = "v8::DontDelete";
+        if ($serializedAttribute->type =~ /^readonly/) {
+            $attrAttr .= " | v8::ReadOnly";
+        }
+        $attrAttr = "static_cast<v8::PropertyAttribute>($attrAttr)";
+        my $getterFunc = $codeGenerator->WK_lcfirst($attrName);
+        push(@implContent, <<END);
+    SerializedScriptValue::deserializeAndSetProperty(wrapper, "${attrName}", ${attrAttr}, impl->${getterFunc}());
+END
+    }
 
     if ($domMapFunction) {
         push(@implContent, <<END);

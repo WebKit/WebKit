@@ -1,3 +1,31 @@
+2010-03-31  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Reviewed by David Levin.
+
+        [V8] SerializedScriptValue must be deserialized only once and in the right context
+        https://bugs.webkit.org/show_bug.cgi?id=36892
+
+        See also https://bugs.webkit.org/show_bug.cgi?id=34227 for the
+        corresponding JSC change.
+
+        General idea: SerializedScriptValue must be deserialized only once
+        and in the context of the intended MessageEvent recepient. The
+        approach we take for now is to eagerly deserialize when a
+        JavaScript wrapper for MessageEvent is created.
+
+        A better fix would be to keep a reference to the context in
+        MessageEvent and use it when lazily deserializing. It's harder to
+        do since the API doesn't have a clean method to have such a reference.
+
+        Tested by fast/dom/Window/window-postmessage-clone-frames.html. This
+        test still fails but only for the types which we can't serialize yet.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/v8/SerializedScriptValue.h:
+        (WebCore::SerializedScriptValue::deserializeAndSetProperty):
+        * bindings/v8/custom/V8MessageEventCustom.cpp:
+        (WebCore::V8MessageEvent::initMessageEventCallback):
+
 2010-03-31  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Fisher.

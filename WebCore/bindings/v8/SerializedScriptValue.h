@@ -40,6 +40,18 @@ namespace WebCore {
 
 class SerializedScriptValue : public RefCounted<SerializedScriptValue> {
 public:
+    // Deserializes the given value and sets it as a property on the
+    // object.
+    static void deserializeAndSetProperty(v8::Handle<v8::Object> object,
+                                          const char* propertyName,
+                                          v8::PropertyAttribute attribute,
+                                          SerializedScriptValue* value)
+    {
+        ASSERT(value);
+        v8::Handle<v8::Value> deserialized = value->deserialize();
+        object->ForceSet(v8::String::NewSymbol(propertyName), deserialized, attribute);
+    }
+
     // Creates a serialized representation of the given V8 value.
     static PassRefPtr<SerializedScriptValue> create(v8::Handle<v8::Value> value)
     {
