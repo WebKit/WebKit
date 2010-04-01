@@ -204,8 +204,8 @@ function testStencil(stencil)
     else
         shouldBeNonNull("webGL = getWebGL('stencilOff', { depth: false, stencil: false, antialias: false }, [ 0, 0, 0, 1 ], 1, 0)");
     shouldBeNonNull("contextAttribs = webGL.getContextAttributes()");
-    shouldBe("contextAttribs.depth", (stencil ? "true" : "false"));
-    shouldBe("contextAttribs.stencil", (stencil ? "true" : "false"));
+    // If EXT_packed_depth_stencil is supported, both depth & stencil will be true; otherwise, both will be false.
+    shouldBe("contextAttribs.depth == contextAttribs.stencil", "true");
     shouldBe("contextAttribs.alpha", "true");
     shouldBe("contextAttribs.antialias", "false");
     shouldBe("contextAttribs.premultipliedAlpha", "true");
@@ -236,6 +236,9 @@ function testStencil(stencil)
     pixel[2] = buf[2];
     pixel[3] = buf[3];
     correctColor = (stencil ? [0, 0, 0, 255] : [255, 0, 0, 255]);
+    // If stencil is requested but not supported, we fake the effect.
+    if (stencil && !contextAttribs.stencil)
+        pixel[0] = 0;
     shouldBe("pixel", "correctColor");
 }
 

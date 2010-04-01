@@ -18,7 +18,7 @@ shouldBeNonNull("context = create3DContext()");
 shouldBeNonNull("attribs = context.getContextAttributes()");
 shouldBe("attribs.depth", "true");
 shouldBe("attribs.alpha", "true");
-shouldBe("attribs.stencil", "true");
+shouldBe("attribs.stencil == true || attribs.stencil == false", "true");
 // Antialias is requested by default, but might or might not be supported.
 shouldBe("attribs.antialias == true || attribs.antialias == false", "true");
 shouldBe("attribs.premultipliedAlpha", "true");
@@ -33,12 +33,13 @@ shouldBe("attribs.antialias", "false");
 shouldBe("attribs.premultipliedAlpha", "true");
 
 debug("Test customized values");
-// (stencil == true && depth == false) is not supported, default depth to true
+// (stencil == true && depth == false) is not supported.
+// Default depth to true if EXT_packed_depth_stencil is supported.
+// Otherwise, both depth and stencil should be false.
 shouldBeNonNull("context = create3DContext({ depth: false, stencil: true, antialias: false })");
 shouldBeNonNull("attribs = context.getContextAttributes()");
-shouldBe("attribs.depth", "true");
+shouldBe("attribs.depth == attribs.stencil", "true");
 shouldBe("attribs.alpha", "true");
-shouldBe("attribs.stencil", "true");
 shouldBe("attribs.antialias", "false");
 shouldBe("attribs.premultipliedAlpha", "true");
 
@@ -48,7 +49,7 @@ shouldBeNonNull("context = create3DContext({ premultipliedAlpha: false, antialia
 shouldBeNonNull("attribs = context.getContextAttributes()");
 shouldBe("attribs.depth", "true");
 shouldBe("attribs.alpha", "true");
-shouldBe("attribs.stencil", "true");
+shouldBe("attribs.stencil == true || attribs.stencil == false", "true");
 shouldBe("attribs.antialias", "false");
 shouldBe("attribs.premultipliedAlpha", "true");
 

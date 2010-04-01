@@ -1,3 +1,17 @@
+2010-03-31  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Fix 3 failed tests on Snow Leopard bot from 33416
+        https://bugs.webkit.org/show_bug.cgi?id=36910
+
+        * fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias-expected.txt: Considering the case where EXT_packed_depth_stencil is unsupported.
+        * fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html: Ditto.
+        * fast/canvas/webgl/context-attributes-expected.txt: Ditto.
+        * fast/canvas/webgl/context-attributes.html: Ditto.
+        * fast/canvas/webgl/gl-get-calls-expected.txt: Ditto.
+        * fast/canvas/webgl/gl-get-calls.html: Ditto.
+
 2010-03-31  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.

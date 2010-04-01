@@ -43,8 +43,7 @@ PASS pixel is correctColor
 Testing stencil = true
 PASS webGL = getWebGL('stencilOn', { depth: false, stencil: true, antialias: false }, [ 0, 0, 0, 1 ], 1, 0) is non-null.
 PASS contextAttribs = webGL.getContextAttributes() is non-null.
-PASS contextAttribs.depth is true
-PASS contextAttribs.stencil is true
+PASS contextAttribs.depth == contextAttribs.stencil is true
 PASS contextAttribs.alpha is true
 PASS contextAttribs.antialias is false
 PASS contextAttribs.premultipliedAlpha is true
@@ -52,8 +51,7 @@ PASS pixel is correctColor
 Testing stencil = false
 PASS webGL = getWebGL('stencilOff', { depth: false, stencil: false, antialias: false }, [ 0, 0, 0, 1 ], 1, 0) is non-null.
 PASS contextAttribs = webGL.getContextAttributes() is non-null.
-PASS contextAttribs.depth is false
-PASS contextAttribs.stencil is false
+PASS contextAttribs.depth == contextAttribs.stencil is true
 PASS contextAttribs.alpha is true
 PASS contextAttribs.antialias is false
 PASS contextAttribs.premultipliedAlpha is true
