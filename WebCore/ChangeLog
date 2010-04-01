@@ -1,3 +1,27 @@
+2010-03-31  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        Misc IndexedDatabase cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=36889
+
+        No functional changes.
+
+        * bindings/v8/custom/V8CustomIDBCallbacks.h:  
+        (WebCore::V8CustomIDBCallbacks::onSuccess):
+        (WebCore::V8CustomIDBCallbacks::onError):
+        (WebCore::V8CustomIDBCallbacks::V8CustomIDBCallbacks):
+            Get rid of 2 largely redundant bools
+
+        * storage/IndexedDatabase.h:
+        * storage/IndexedDatabaseImpl.cpp:
+        (WebCore::IndexedDatabaseImpl::open):
+        * storage/IndexedDatabaseImpl.h:
+        * storage/IndexedDatabaseRequest.cpp:
+        (WebCore::IndexedDatabaseRequest::open):
+        * storage/IndexedDatabaseRequest.h:
+            Plumb the Frame* and style cleanups.
+
 2010-03-31  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

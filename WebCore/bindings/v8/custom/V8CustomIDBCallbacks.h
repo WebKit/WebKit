@@ -61,7 +61,7 @@ public:
 
     virtual void onSuccess(PassRefPtr<ResultType> result)
     {
-        if (m_onSuccessNull)
+        if (m_onSuccess.IsEmpty())
             return;
         v8::HandleScope handleScope;
         v8::Handle<v8::Context> context = V8Proxy::context(m_frame.get());
@@ -80,7 +80,7 @@ public:
 
     virtual void onError(PassRefPtr<IDBDatabaseError> error)
     {
-        if (m_onErrorNull)
+        if (m_onError.IsEmpty())
             return;
         v8::HandleScope handleScope;
         v8::Handle<v8::Context> context = V8Proxy::context(m_frame.get());
@@ -99,18 +99,14 @@ public:
 
 private:
     V8CustomIDBCallbacks(v8::Local<v8::Value> onSuccess, v8::Local<v8::Value> onError, Frame* frame)
-        : m_onSuccessNull(!onSuccess->IsObject())
-        , m_onSuccess(v8::Persistent<v8::Object>::New(onSuccess->ToObject()))
-        , m_onErrorNull(!onError->IsObject())
-        , m_onError(v8::Persistent<v8::Object>::New(onError->ToObject()))
+        : m_onSuccess(onSuccess->IsObject() ? v8::Persistent<v8::Object>::New(onSuccess->ToObject()) : v8::Persistent<v8::Object>())
+        , m_onError(onError->IsObject() ? v8::Persistent<v8::Object>::New(onError->ToObject()) : v8::Persistent<v8::Object>())
         , m_frame(frame)
     {
     }
 
     // FIXME: Should these be v8::Functions?  For some reason, VoidCallback (which this copied) uses v8::Objects.
-    bool m_onSuccessNull;
     v8::Persistent<v8::Object> m_onSuccess;
-    bool m_onErrorNull;
     v8::Persistent<v8::Object> m_onError;
     RefPtr<Frame> m_frame;
 };

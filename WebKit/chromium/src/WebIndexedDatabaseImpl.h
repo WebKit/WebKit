@@ -37,7 +37,7 @@ class WebIndexedDatabaseImpl : public WebIndexedDatabase {
 public:
     virtual ~WebIndexedDatabaseImpl();
 
-    virtual void open(const WebString& name, const WebString& description, bool modifyDatabase, int& exceptionCode, WebIDBCallbacks<WebIDBDatabase>* callbacks);
+    virtual void open(const WebString& name, const WebString& description, bool modifyDatabase, int& exceptionCode, WebIDBCallbacks<WebIDBDatabase>*, WebFrame*);
 };
 
 } // namespace WebKit

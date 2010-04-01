@@ -37,6 +37,7 @@
 
 namespace WebCore {
 
+class Frame;
 class IDBDatabase;
 
 typedef IDBCallbacks<IDBDatabase> IDBDatabaseCallbacks;
@@ -50,7 +51,7 @@ public:
     static PassRefPtr<IndexedDatabase> create();
     virtual ~IndexedDatabase() { }
 
-    virtual void open(const String& name, const String& description, bool modifyDatabase, ExceptionCode&, PassRefPtr<IDBDatabaseCallbacks>) = 0;
+    virtual void open(const String& name, const String& description, bool modifyDatabase, ExceptionCode&, PassRefPtr<IDBDatabaseCallbacks>, Frame*) = 0;
 };
 
 } // namespace WebCore
