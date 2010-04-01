@@ -114,10 +114,6 @@ namespace WebCore {
 
         virtual void parseMappedAttribute(MappedAttribute*);
 
-        // 'virtual SVGLocatable' functions
-        virtual AffineTransform getCTM() const;
-        virtual AffineTransform getScreenCTM() const;
-
         virtual bool rendererIsNeeded(RenderStyle* style) { return StyledElement::rendererIsNeeded(style); }
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
@@ -149,6 +145,8 @@ namespace WebCore {
  
         virtual void documentWillBecomeInactive();
         virtual void documentDidBecomeActive();
+
+        virtual AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope) const;
 
         bool m_useCurrentView;
         RefPtr<SMILTimeContainer> m_timeContainer;

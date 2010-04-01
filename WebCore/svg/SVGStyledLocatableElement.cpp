@@ -57,12 +57,12 @@ FloatRect SVGStyledLocatableElement::getBBox() const
 
 AffineTransform SVGStyledLocatableElement::getCTM() const
 {
-    return SVGLocatable::getCTM(this);
+    return SVGLocatable::computeCTM(this, SVGLocatable::NearestViewportScope);
 }
 
 AffineTransform SVGStyledLocatableElement::getScreenCTM() const
 {
-    return SVGLocatable::getScreenCTM(this);
+    return SVGLocatable::computeCTM(this, SVGLocatable::ScreenScope);
 }
 
 }

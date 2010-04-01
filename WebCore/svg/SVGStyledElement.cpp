@@ -323,6 +323,13 @@ void SVGStyledElement::setInstanceUpdatesBlocked(bool value)
         rareSVGData()->setInstanceUpdatesBlocked(value);
 }
 
+AffineTransform SVGStyledElement::localCoordinateSpaceTransform(SVGLocatable::CTMScope) const
+{
+    // To be overriden by SVGStyledLocatableElement/SVGStyledTransformableElement (or as special case SVGTextElement)
+    ASSERT_NOT_REACHED();
+    return AffineTransform();
+}
+
 }
 
 #endif // ENABLE(SVG)

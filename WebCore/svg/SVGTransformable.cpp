@@ -35,24 +35,13 @@
 
 namespace WebCore {
 
-SVGTransformable::SVGTransformable() : SVGLocatable()
+SVGTransformable::SVGTransformable()
+    : SVGLocatable()
 {
 }
 
 SVGTransformable::~SVGTransformable()
 {
-}
-
-AffineTransform SVGTransformable::getCTM(const SVGElement* element) const
-{
-    AffineTransform ctm = SVGLocatable::getCTM(element);
-    return animatedLocalTransform() * ctm;
-}
-
-AffineTransform SVGTransformable::getScreenCTM(const SVGElement* element) const
-{
-    AffineTransform ctm = SVGLocatable::getScreenCTM(element);
-    return animatedLocalTransform() * ctm;
 }
 
 static int parseTransformParamList(const UChar*& ptr, const UChar* end, float* values, int required, int optional)

@@ -43,6 +43,8 @@ namespace WebCore {
         virtual FloatRect getBBox() const;
         virtual AffineTransform getCTM() const;
         virtual AffineTransform getScreenCTM() const;
+
+        virtual AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope mode) const { return SVGLocatable::localCoordinateSpaceTransform(mode); }
     };
 
 } // namespace WebCore

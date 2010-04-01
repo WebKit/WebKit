@@ -1,3 +1,28 @@
+2010-03-31  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        REGRESSION: document.documentElement.getScreenCTM() returns incorrect matrix.
+        https://bugs.webkit.org/show_bug.cgi?id=27183
+
+        Share code between the different svgsvgelement-ctm*.xhtm tests, placed in svg/custom/resources.
+        Add several new tests covering getCTM()/getScreenCTM() on text, inner and outer svg elements and containers.
+
+        * svg/custom/resources/svgsvgelement-ctm.js: Added.
+        (log):
+        (stringForMatrix):
+        (printCTMs):
+        * svg/custom/svgsvgelement-ctm-expected.txt:
+        * svg/custom/svgsvgelement-ctm.xhtml:
+        * svg/custom/svgsvgelement-ctm2-expected.txt: Added.
+        * svg/custom/svgsvgelement-ctm2.xhtml: Added.
+        * svg/custom/svgsvgelement-ctm3-expected.txt: Added.
+        * svg/custom/svgsvgelement-ctm3.xhtml: Added.
+        * svg/custom/svgsvgelement-ctm4-expected.txt: Added.
+        * svg/custom/svgsvgelement-ctm4.xhtml: Added.
+        * svg/custom/svgsvgelement-ctm5-expected.txt: Added.
+        * svg/custom/svgsvgelement-ctm5.xhtml: Added.
+
 2010-04-01  Alpha Lam  <hclam@chromium.org>
 
         Not reviewed. Build fix.

@@ -1,3 +1,53 @@
+2010-03-31  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        REGRESSION: document.documentElement.getScreenCTM() returns incorrect matrix.
+        https://bugs.webkit.org/show_bug.cgi?id=27183
+
+        Rewrite getCTM() / getScreenCTM() handling in an iterative way, fixing all known problems/limitations.
+        The bug mentioned above is actually not a regression, getScreenCTM() only worked before, because we
+        did not handle non-SVG CSS box parents properly. When support was added to handle those cases, the
+        getScreenCTM() handling was completly off, causing a lot of trouble in real-life SVG applications (carto.net for instance)
+
+        Tests: svg/custom/svgsvgelement-ctm.xhtml (fixed typo, missing unit identifier in CSS 'height' property, leading to incorrect results)
+               svg/custom/svgsvgelement-ctm2.xhtml
+               svg/custom/svgsvgelement-ctm3.xhtml
+               svg/custom/svgsvgelement-ctm4.xhtml
+               svg/custom/svgsvgelement-ctm5.xhtml
+
+        * svg/SVGLocatable.cpp:
+        (WebCore::SVGLocatable::getBBox):
+        (WebCore::SVGLocatable::computeCTM):
+        * svg/SVGLocatable.h:
+        (WebCore::SVGLocatable::localCoordinateSpaceTransform):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::localCoordinateSpaceTransform):
+        (WebCore::SVGSVGElement::createRenderer):
+        * svg/SVGSVGElement.h:
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::localCoordinateSpaceTransform):
+        * svg/SVGStyledElement.h:
+        * svg/SVGStyledLocatableElement.cpp:
+        (WebCore::SVGStyledLocatableElement::getCTM):
+        (WebCore::SVGStyledLocatableElement::getScreenCTM):
+        * svg/SVGStyledLocatableElement.h:
+        (WebCore::SVGStyledLocatableElement::localCoordinateSpaceTransform):
+        * svg/SVGStyledTransformableElement.cpp:
+        (WebCore::SVGStyledTransformableElement::getCTM):
+        (WebCore::SVGStyledTransformableElement::getScreenCTM):
+        * svg/SVGStyledTransformableElement.h:
+        (WebCore::SVGStyledTransformableElement::localCoordinateSpaceTransform):
+        * svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::getCTM):
+        (WebCore::SVGTextElement::getScreenCTM):
+        * svg/SVGTextElement.h:
+        (WebCore::SVGTextElement::localCoordinateSpaceTransform):
+        * svg/SVGTransformable.cpp:
+        (WebCore::SVGTransformable::SVGTransformable):
+        * svg/SVGTransformable.h:
+        (WebCore::SVGTransformable::localCoordinateSpaceTransform):
+
 2010-04-01  Vitaly Repeshko  <vitalyr@chromium.org>
 
         Reviewed by Darin Fisher.

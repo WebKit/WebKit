@@ -72,14 +72,14 @@ FloatRect SVGTextElement::getBBox() const
     return SVGTransformable::getBBox(this);
 }
 
-AffineTransform SVGTextElement::getScreenCTM() const
-{
-    return SVGTransformable::getScreenCTM(this);
-}
-
 AffineTransform SVGTextElement::getCTM() const
 {
-    return SVGTransformable::getCTM(this);
+    return SVGLocatable::computeCTM(this, SVGLocatable::NearestViewportScope);
+}
+
+AffineTransform SVGTextElement::getScreenCTM() const
+{
+    return SVGLocatable::computeCTM(this, SVGLocatable::ScreenScope);
 }
 
 AffineTransform SVGTextElement::animatedLocalTransform() const
