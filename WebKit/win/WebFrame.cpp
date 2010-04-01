@@ -1445,11 +1445,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::layerTreeAsText(BSTR* result)
     if (!frame)
         return E_FAIL;
 
-#if USE(ACCELERATED_COMPOSITING)
     String text = frame->layerTreeAsText();
-#else
-    String text;
-#endif
     *result = BString(text).release();
     return S_OK;
 }

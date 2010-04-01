@@ -123,9 +123,7 @@ namespace WebCore {
 
         void injectUserScripts(UserScriptInjectionTime);
         
-#if USE(ACCELERATED_COMPOSITING)
         String layerTreeAsText() const;
-#endif
 
     private:
         void injectUserScriptsForWorld(DOMWrapperWorld*, const UserScriptVector&, UserScriptInjectionTime);

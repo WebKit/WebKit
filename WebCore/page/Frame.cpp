@@ -64,7 +64,6 @@
 #include "Page.h"
 #include "PageGroup.h"
 #include "RegularExpression.h"
-#include "RenderLayerCompositor.h"
 #include "RenderPart.h"
 #include "RenderTableCell.h"
 #include "RenderTextControl.h"
@@ -85,6 +84,10 @@
 #include "visible_units.h"
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
+
+#if USE(ACCELERATED_COMPOSITING)
+#include "RenderLayerCompositor.h"
+#endif
 
 #if USE(JSC)
 #include "JSDOMWindowShell.h"
@@ -1856,9 +1859,9 @@ IntRect Frame::tiledBackingStoreContentsRect()
 }
 #endif
 
-#if USE(ACCELERATED_COMPOSITING)
 String Frame::layerTreeAsText() const
 {
+#if USE(ACCELERATED_COMPOSITING)
     if (!contentRenderer())
         return String();
 
@@ -1867,7 +1870,9 @@ String Frame::layerTreeAsText() const
         return String();
         
     return rootLayer->layerTreeAsText();
-}
+#else
+    return String();
 #endif
+}
 
 } // namespace WebCore
