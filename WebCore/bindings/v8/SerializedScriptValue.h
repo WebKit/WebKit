@@ -47,7 +47,8 @@ public:
                                           v8::PropertyAttribute attribute,
                                           SerializedScriptValue* value)
     {
-        ASSERT(value);
+        if (!value)
+            return;
         v8::Handle<v8::Value> deserialized = value->deserialize();
         object->ForceSet(v8::String::NewSymbol(propertyName), deserialized, attribute);
     }

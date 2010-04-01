@@ -1,3 +1,15 @@
+2010-04-01  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [V8] Quick fix for failure in SerializedScriptValue
+        https://bugs.webkit.org/show_bug.cgi?id=36943
+
+        This allows the web worker layout tests to pass again.
+
+        * bindings/v8/SerializedScriptValue.h:
+        (WebCore::SerializedScriptValue::deserializeAndSetProperty):
+
 2010-03-31  MORITA Hajime  <morrita@google.com>
         
         Reviewed by Darin Adler.
