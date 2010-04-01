@@ -1,3 +1,12 @@
+2010-04-01  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add EFL's pkg-config metadata file file to efl/.
+        http://webkit.org/b/36766
+
+        * efl/ewebkit.pc.in: Added.
+
 2010-03-30  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber stamped by Sam Weinig.
