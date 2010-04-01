@@ -576,7 +576,10 @@ String KURL::host() const
 
 unsigned short KURL::port() const
 {
-    if (m_hostEnd == m_portEnd)
+    // We return a port of 0 if there is no port specified. This can happen in two situations:
+    // 1) The URL contains no colon after the host name and before the path component of the URL.
+    // 2) The URL contains a colon but there's no port number before the path component of the URL begins.
+    if (m_hostEnd == m_portEnd || m_hostEnd == m_portEnd - 1)
         return 0;
 
     const UChar* stringData = m_string.characters();
