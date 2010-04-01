@@ -36,8 +36,8 @@ class PythonProcessor(object):
     def process(self, lines):
         # Initialize pep8.options, which is necessary for
         # Checker.check_all() to execute.
-        pep8.process_options(arglist=[self._file_path])
 
+        pep8.process_options(arglist=[self._file_path])
         checker = pep8.Checker(self._file_path)
 
         def _pep8_handle_error(line_number, offset, text, check):
@@ -46,6 +46,11 @@ class PythonProcessor(object):
             #        signature to include an optional "offset" parameter.
             pep8_code = text[:4]
             pep8_message = text[5:]
+
+            # We ignore PEP8/E501 -- line limit of 79 characters. Most of our
+            # python code fails E501 and the rest of WebKit has no wrap limit.
+            if pep8_code == "E501":
+                return
 
             category = "pep8/" + pep8_code
 
