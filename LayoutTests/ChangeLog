@@ -1,3 +1,12 @@
+2010-04-01  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Fix filter references in svg/filters/filterRes.svg, to make two filters show up in Opera.
+        Clearly shows we have a regression with filterRes + feMorphology.
+
+        * svg/filters/filterRes.svg:
+
 2010-03-31  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

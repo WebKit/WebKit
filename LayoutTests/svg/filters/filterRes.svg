@@ -30,11 +30,11 @@
 
 <image x="10" y="10" width="100" height="100" xlink:href="../W3C-SVG-1.1/resources/sphere.png" filter="url(#f1)"/>
 <rect x="130" y="10" width="100" height="100" filter="url(#over)"/>
-<g filter="url(gauss)"  transform="translate(250, 10)">
+<g filter="url(#gauss)"  transform="translate(250, 10)">
     <rect x="0" y="0" width="75" height="75" fill="red"/>
     <rect x="25" y="25" width="75" height="75" fill="blue"/>
 </g>
-<g filter="url(dilate2)"  transform="translate(370, 10)">
+<g filter="url(#dilate2)"  transform="translate(370, 10)">
     <rect x="20" y="20" width="50" height="50" style="fill:none;stroke:red;"/>
     <rect x="35" y="35" width="50" height="50" style="fill:none;stroke:blue"/>
 </g>
