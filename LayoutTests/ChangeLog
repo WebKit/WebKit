@@ -1,3 +1,19 @@
+2010-04-01  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Unreviewed - add missing Chromium layout test results for:
+        
+        Bug 36803 - 'Inline-table' workaround for <ruby> broken with ruby support
+        https://bugs.webkit.org/show_bug.cgi?id=36803
+
+        (original patch review by Darin Adler).
+
+        * platform/chromium-linux/fast/ruby/ruby-inline-table-expected.checksum: Added.
+        * platform/chromium-linux/fast/ruby/ruby-inline-table-expected.png: Added.
+        * platform/chromium-linux/fast/ruby/ruby-inline-table-expected.txt: Added.
+        * platform/chromium-win/fast/ruby/ruby-inline-table-expected.checksum: Added.
+        * platform/chromium-win/fast/ruby/ruby-inline-table-expected.png: Added.
+        * platform/chromium-win/fast/ruby/ruby-inline-table-expected.txt: Added.
+
 2010-03-31  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Darin Adler.
