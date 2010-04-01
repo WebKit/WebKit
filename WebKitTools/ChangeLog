@@ -1,3 +1,17 @@
+2010-04-01  Eric Seidel  <eric@webkit.org>
+
+        Rubber-stamped by Adam Barth.
+
+        Add Snow Leopard Release bot to the list of "core builders" (builders which stop the commit-queue when they turn red)
+        https://bugs.webkit.org/show_bug.cgi?id=33292
+
+        Just adding the "Build" builder for now.
+        We'll add the "Test" builders when the tests
+        are less flaky.
+
+        * Scripts/webkitpy/common/net/buildbot.py:
+        * Scripts/webkitpy/common/net/buildbot_unittest.py:
+
 2010-04-01  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by David Levin.

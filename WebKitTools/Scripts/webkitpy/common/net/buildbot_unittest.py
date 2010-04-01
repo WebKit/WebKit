@@ -227,12 +227,13 @@ class BuildBotTest(unittest.TestCase):
             { 'name': u'Chromium Mac Release', },
             { 'name': u'Chromium Win Release', },
         ]
-        name_regexps = [ "Leopard", "Windows.*Build", "Chromium" ]
+        name_regexps = ["SnowLeopard.*Build", "Leopard", "Windows.*Build", "Chromium"]
         expected_builders = [
             { 'name': u'Leopard Intel Release (Build)', },
             { 'name': u'Leopard Intel Release (Tests)', },
             { 'name': u'Leopard Intel Debug (Build)', },
             { 'name': u'Leopard Intel Debug (Tests)', },
+            { 'name': u'SnowLeopard Intel Release (Build)', },
             { 'name': u'Windows Release (Build)', },
             { 'name': u'Windows Debug (Build)', },
             { 'name': u'Chromium Linux Release', },
