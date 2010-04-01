@@ -737,7 +737,7 @@ WebInspector.AuditRules.CssInHeadRule.prototype = {
                     result.violationCount += urlViolations[0];
                 }
                 for (var i = 0; i < urlViolations[1].length; ++i)
-                    result.addChild(String.sprintf("Link node %s should be moved to the document head in %s", WebInspector.AuditRuleResult.linkifyDisplayName(urlViolations[1])), WebInspector.AuditRuleResult.linkifyDisplayName(url));
+                    result.addChild(String.sprintf("Link node %s should be moved to the document head in %s", WebInspector.AuditRuleResult.linkifyDisplayName(urlViolations[1][i]), WebInspector.AuditRuleResult.linkifyDisplayName(url)));
                 result.violationCount += urlViolations[1].length;
             }
             summary.value = String.sprintf("CSS in the document body adversely impacts rendering performance.");

@@ -1,3 +1,13 @@
+2010-04-01  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Audits: fix parsing of injected script-evaluated result for CssInHeadRule
+        https://bugs.webkit.org/show_bug.cgi?id=36952
+
+        * inspector/audits-panel-functional-expected.txt:
+        * inspector/audits-panel-functional.html:
+
 2010-04-01  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
