@@ -1,3 +1,16 @@
+2010-04-01  Shu Chang  <chang.shu@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] As Qt does not support dashboard compatibility mode, the red squares on
+        the second row are expected. Rebaseline and unskip test case.
+        https://bugs.webkit.org/show_bug.cgi?id=36869
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/canvas/fill-stroke-clip-reset-path-expected.checksum: Added.
+        * platform/qt/fast/canvas/fill-stroke-clip-reset-path-expected.png: Added.
+        * platform/qt/fast/canvas/fill-stroke-clip-reset-path-expected.txt:
+
 2010-04-01  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

@@ -2567,7 +2567,6 @@ fast/box-sizing/panels-one.html
 fast/box-sizing/panels-two.html
 fast/canvas/canvas-incremental-repaint.html
 fast/canvas/canvas-text-alignment.html
-fast/canvas/fill-stroke-clip-reset-path.html
 fast/clip/001.html
 fast/clip/002.html
 fast/clip/003.html
