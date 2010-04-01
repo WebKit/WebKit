@@ -1124,6 +1124,13 @@ String AccessibilityRenderObject::accessibilityDescription() const
     
     if (isWebArea()) {
         Document* document = m_renderer->document();
+        
+        // Check if the HTML element has an aria-label for the webpage.
+        Element* documentElement = document->documentElement();
+        const AtomicString& ariaLabel = AccessibilityObject::getAttribute(documentElement, aria_labelAttr);
+        if (!ariaLabel.isEmpty())
+            return ariaLabel;
+        
         Node* owner = document->ownerElement();
         if (owner) {
             if (owner->hasTagName(frameTag) || owner->hasTagName(iframeTag)) {
@@ -3175,7 +3182,24 @@ const String& AccessibilityRenderObject::actionVerb() const
         return noAction;
     }
 }
-     
+    
+void AccessibilityRenderObject::setAccessibleName(String& name)
+{
+    // Setting the accessible name can store the value in the DOM
+    if (!m_renderer)
+        return;
+
+    Node* domNode = 0;
+    // For web areas, set the aria-label on the HTML element.
+    if (isWebArea())
+        domNode = m_renderer->document()->documentElement();
+    else
+        domNode = m_renderer->node();
+
+    if (domNode && domNode->isElementNode())
+        static_cast<Element*>(domNode)->setAttribute(aria_labelAttr, name);
+}
+    
 void AccessibilityRenderObject::updateBackingStore()
 {
     if (!m_renderer)

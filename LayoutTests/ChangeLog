@@ -1,3 +1,14 @@
+2010-03-31  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Test for
+        Bug 36845 - AX: need a way to set the label of a AXWebArea through WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=36845
+
+        * platform/mac/accessibility/html-with-aria-label-expected.txt: Added.
+        * platform/mac/accessibility/html-with-aria-label.html: Added.
+
 2010-03-31  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Darin Adler.

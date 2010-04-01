@@ -1293,6 +1293,23 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     ASSERT([[[self frameView] _scrollView] isKindOfClass:[WebDynamicScrollBarsView class]]);
     [(WebDynamicScrollBarsView *)[[self frameView] _scrollView] setAlwaysHideVerticalScroller:flag];
 }
+
+- (void)setAccessibleName:(NSString *)name
+{
+#if HAVE(ACCESSIBILITY)
+    if (!AXObjectCache::accessibilityEnabled())
+        return;
+    
+    RenderView* root = toRenderView(_private->coreFrame->document()->renderer());
+    if (!root)
+        return;
+    
+    AccessibilityObject* rootObject = _private->coreFrame->document()->axObjectCache()->getOrCreate(root);
+    String strName(name);
+    rootObject->setAccessibleName(strName);
+#endif
+}
+
 @end
 
 @implementation WebFrame

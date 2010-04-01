@@ -114,6 +114,8 @@ public:
 
     virtual bool hasIntValue() const;
     
+    virtual void setAccessibleName(String&);
+    
     // Provides common logic used by all elements when determining isIgnored.
     AccessibilityObjectInclusion accessibilityIsIgnoredBase() const;
     virtual bool accessibilityIsIgnored() const;
