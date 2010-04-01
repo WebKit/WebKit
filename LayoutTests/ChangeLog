@@ -1,3 +1,18 @@
+2010-04-01  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Bug 36803 - 'Inline-table' workaround for <ruby> broken with ruby support
+        https://bugs.webkit.org/show_bug.cgi?id=36803
+        
+        Add layout test to confirm that 'inline-table' rendering is not affected
+        by ruby implementation.
+
+        * fast/ruby/ruby-inline-table.html: Added.
+        * platform/mac/fast/ruby/ruby-inline-table-expected.checksum: Added.
+        * platform/mac/fast/ruby/ruby-inline-table-expected.png: Added.
+        * platform/mac/fast/ruby/ruby-inline-table-expected.txt: Added.
+
 2010-03-31  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Eric Seidel.

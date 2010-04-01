@@ -1,3 +1,18 @@
+2010-04-01  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Bug 36803 - 'Inline-table' workaround for <ruby> broken with ruby support
+        https://bugs.webkit.org/show_bug.cgi?id=36803
+
+        Don't use ruby rendering if the underlying 'display' property has been
+        changed into a value other than 'inline' or 'block' (such as 'inline-table').
+
+        Test: fast/ruby/ruby-inline-table.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createObject):
+
 2010-03-31  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.
