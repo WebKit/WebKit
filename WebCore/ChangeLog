@@ -1,5 +1,15 @@
 2010-04-01  Simon Fraser  <simon.fraser@apple.com>
 
+        No review.
+
+        Remove some casts that I indended to remove before committing r56948.
+
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeRenderObject):
+        (WebCore::write):
+
+2010-04-01  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Darin Adler.
 
         Assertion failure (willBeComposited == needsToBeComposited(layer)) in
