@@ -2,6 +2,20 @@
 
         Reviewed by Eric Seidel.
 
+        Make the EWS go faster by being optimistic
+        https://bugs.webkit.org/show_bug.cgi?id=36916
+
+        Have the EWS be optimistic that a patch will correctly build.  This
+        should speed up the common case by not requiring two builds for every
+        patch.
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+
+2010-03-31  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Add the ability to restart sheriffbot from IRC
         https://bugs.webkit.org/show_bug.cgi?id=36909
 

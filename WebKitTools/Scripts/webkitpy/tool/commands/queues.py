@@ -235,7 +235,7 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
             if first_run:
                 return False
             self._did_fail(patch)
-            raise e
+            raise
 
     def process_work_item(self, patch):
         self._cc_watchers(patch.bug_id())
@@ -274,7 +274,7 @@ class AbstractReviewQueue(AbstractPatchQueue, PersistentPatchCollectionDelegate,
     def __init__(self, options=None):
         AbstractPatchQueue.__init__(self, options)
 
-    def _review_patch(self, patch):
+    def review_patch(self, patch):
         raise NotImplementedError, "subclasses must implement"
 
     # PersistentPatchCollectionDelegate methods
@@ -308,8 +308,8 @@ class AbstractReviewQueue(AbstractPatchQueue, PersistentPatchCollectionDelegate,
 
     def process_work_item(self, patch):
         try:
-            self._review_patch(patch)
-            self._did_pass(patch)
+            if self.review_patch(patch):
+                self._did_pass(patch)
         except ScriptError, e:
             if e.exit_code != QueueEngine.handled_error_code:
                 self._did_fail(patch)
@@ -334,8 +334,9 @@ class StyleQueue(AbstractReviewQueue):
         self._update_status("Checking style", patch)
         return True
 
-    def _review_patch(self, patch):
+    def review_patch(self, patch):
         self.run_webkit_patch(["check-style", "--force-clean", "--non-interactive", "--parent-command=style-queue", patch.id()])
+        return True
 
     @classmethod
     def handle_script_error(cls, tool, state, script_error):

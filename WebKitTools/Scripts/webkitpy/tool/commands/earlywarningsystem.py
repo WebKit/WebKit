@@ -43,30 +43,49 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue):
         self.port = WebKitPort.port(self.port_name)
 
     def should_proceed_with_work_item(self, patch):
+        return True
+
+    def _can_build(self):
         try:
             self.run_webkit_patch([
                 "build",
                 self.port.flag(),
                 "--build-style=%s" % self._build_style,
                 "--force-clean",
+                "--no-update",
                 "--quiet"])
-            self._update_status("Building", patch)
+            return True
         except ScriptError, e:
             self._update_status("Unable to perform a build")
             return False
-        return True
 
-    def _review_patch(self, patch):
-        self.run_webkit_patch([
-            "build-attachment",
-            self.port.flag(),
-            "--build-style=%s" % self._build_style,
-            "--force-clean",
-            "--quiet",
-            "--non-interactive",
-            "--parent-command=%s" % self.name,
-            "--no-update",
-            patch.id()])
+    def _build(self, patch, first_run=False):
+        try:
+            args = [
+                "build-attachment",
+                self.port.flag(),
+                "--build-style=%s" % self._build_style,
+                "--force-clean",
+                "--quiet",
+                "--non-interactive",
+                patch.id()]
+            if not first_run:
+                # See commit-queue for an explanation of what we're doing here.
+                args.append("--no-update")
+                args.append("--parent-command=%s" % self.name)
+            self.run_webkit_patch(args)
+            return True
+        except ScriptError, e:
+            if first_run:
+                return False
+            raise
+
+    def review_patch(self, patch):
+        if not self._build(patch, first_run=True):
+            if not self._can_build():
+                return False
+            self._build()
+        return True
 
     @classmethod
     def handle_script_error(cls, tool, state, script_error):
