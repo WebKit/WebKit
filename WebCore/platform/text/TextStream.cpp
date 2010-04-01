@@ -90,7 +90,7 @@ TextStream& TextStream::operator<<(const char* string)
     return *this;
 }
 
-TextStream& TextStream::operator<<(void* p)
+TextStream& TextStream::operator<<(const void* p)
 {
     char buffer[printBufferSize];
     snprintf(buffer, sizeof(buffer) - 1, "%p", p);

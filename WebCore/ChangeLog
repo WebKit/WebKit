@@ -1,3 +1,23 @@
+2010-04-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36980
+        Add object addresses to debug showLayerTree() output.
+        
+        Add the ability to print RenderLayer and RenderObject addresses in the showLayerTree()
+        output.
+
+        * platform/text/TextStream.cpp:
+        (WebCore::TextStream::operator<<):
+        * platform/text/TextStream.h:
+        * rendering/RenderLayer.cpp:
+        (showLayerTree):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeRenderObject):
+        (WebCore::write):
+        * rendering/RenderTreeAsText.h:
+
 2010-03-29  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Dimitri Glazkov.
