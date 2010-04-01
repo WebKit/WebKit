@@ -1,3 +1,13 @@
+2010-04-01  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Bug 36968 - 1 crash in Safari at com.apple.WebCore: WebCore::Element::getAttribute const
+        https://bugs.webkit.org/show_bug.cgi?id=36968
+
+        * accessibility/crash-with-noelement-selectbox-expected.txt: Added.
+        * accessibility/crash-with-noelement-selectbox.html: Added.
+
 2010-04-01  yael aharon  <yael.aharon@nokia.com>
 
         Reviewed by Laszlo Gombos.

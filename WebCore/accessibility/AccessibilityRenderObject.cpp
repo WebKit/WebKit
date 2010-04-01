@@ -884,7 +884,12 @@ String AccessibilityRenderObject::stringValue() const
         // RenderMenuList will go straight to the text() of its selected item.
         // This has to be overriden in the case where the selected item has an aria label
         SelectElement* selectNode = toSelectElement(static_cast<Element*>(m_renderer->node()));
-        Element* selectedOption = selectNode->listItems()[selectNode->selectedIndex()];
+        int selectedIndex = selectNode->selectedIndex();
+        const Vector<Element*> listItems = selectNode->listItems();
+        
+        Element* selectedOption = 0;
+        if (selectedIndex >= 0 && selectedIndex < (int)listItems.size()) 
+            selectedOption = listItems[selectedIndex];
         String overridenDescription = AccessibilityObject::getAttribute(selectedOption, aria_labelAttr);
         if (!overridenDescription.isNull())
             return overridenDescription;

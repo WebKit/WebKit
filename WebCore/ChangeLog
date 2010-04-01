@@ -1,3 +1,18 @@
+2010-04-01  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Bug 36968 - 1 crash in Safari at com.apple.WebCore: WebCore::Element::getAttribute const
+        https://bugs.webkit.org/show_bug.cgi?id=36968
+
+        Test: accessibility/crash-with-noelement-selectbox.html
+
+        When a <select> element had no options, the selectedIndex == -1 and that was being
+        used to index into an empty array.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::stringValue):
+
 2010-04-01  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Shinichiro Hamaji.
