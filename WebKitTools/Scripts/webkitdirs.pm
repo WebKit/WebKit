@@ -1451,10 +1451,7 @@ sub buildChromiumVisualStudioProject($$)
     $vsInstallDir = `cygpath "$vsInstallDir"` if isCygwin();
     chomp $vsInstallDir;
     $vcBuildPath = "$vsInstallDir/Common7/IDE/devenv.com";
-    if (-e $vcBuildPath) {
-        # Visual Studio is installed; we can use pdevenv to build.
-        $vcBuildPath = File::Spec->catfile(sourceDir(), qw(WebKitTools Scripts pdevenv));
-    } else {
+    if (! -e $vcBuildPath) {
         # Visual Studio not found, try VC++ Express
         $vcBuildPath = "$vsInstallDir/Common7/IDE/VCExpress.exe";
         if (! -e $vcBuildPath) {

@@ -1,5 +1,13 @@
 2010-04-01  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed.
+
+        Turns out the Chromium Windows bots don't have pdevenv installed.
+
+        * Scripts/webkitdirs.pm:
+
+2010-04-01  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Dimitri Glazkov.
 
         Let Chromium Windows build with Visual Studio Express
