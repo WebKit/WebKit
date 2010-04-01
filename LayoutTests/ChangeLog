@@ -1,3 +1,19 @@
+2010-04-01  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        REGRESSION(56489): security/block-test.html fails on Tiger Bot
+        https://bugs.webkit.org/show_bug.cgi?id=36932
+
+        It appears that r56489 just forgot to update the Tiger results
+        to include the new parts of the test.  Tiger has had custom
+        results for this test since r54193.
+
+        I just pulled these off the bot.  I do not have the domain knowledge
+        to know if these are right or not.  They look fine to me.
+
+        * platform/mac-tiger/security/block-test-expected.txt:
+
 2010-04-01  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Eric Seidel.
