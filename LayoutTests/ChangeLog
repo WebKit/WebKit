@@ -1,3 +1,12 @@
+2010-04-01  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Eric Seidel.
+
+        fast/canvas/webgl/index-validation.html failed on Leopard Commit Bot
+        https://bugs.webkit.org/show_bug.cgi?id=36908
+
+        * fast/canvas/webgl/script-tests/index-validation.js: Disable antialias for this test.
+
 2010-04-01  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
