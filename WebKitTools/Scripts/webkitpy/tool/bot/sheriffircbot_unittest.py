@@ -29,13 +29,16 @@
 import unittest
 
 from webkitpy.common.system.outputcapture import OutputCapture
+from webkitpy.tool.bot.sheriff import Sheriff
 from webkitpy.tool.bot.sheriffircbot import SheriffIRCBot
+from webkitpy.tool.bot.sheriff_unittest import MockSheriffBot
 from webkitpy.tool.mocktool import MockTool
+
 
 def run(message):
     tool = MockTool()
     tool.ensure_irc_connected(None)
-    bot = SheriffIRCBot(tool)
+    bot = SheriffIRCBot(tool, Sheriff(tool, MockSheriffBot()))
     bot._message_queue.post(message)
     bot.process_pending_messages()
 
@@ -46,9 +49,21 @@ class SheriffIRCBotTest(unittest.TestCase):
         OutputCapture().assert_outputs(self, run, args=["hi"], expected_stderr=expected_stderr)
 
     def test_bogus(self):
-        expected_stderr = "MOCK: irc.post: Available commands: hi, restart, last-green-revision\n"
+        expected_stderr = "MOCK: irc.post: Available commands: rollout, hi, restart, last-green-revision\n"
         OutputCapture().assert_outputs(self, run, args=["bogus"], expected_stderr=expected_stderr)
 
     def test_lgr(self):
         expected_stderr = "MOCK: irc.post: http://trac.webkit.org/changeset/9479\n"
         OutputCapture().assert_outputs(self, run, args=["last-green-revision"], expected_stderr=expected_stderr)
+
+    def test_rollout(self):
+        expected_stderr = "MOCK: irc.post: Preparing rollout for r21654...\nMOCK: irc.post: Created rollout: http://example.com/36936\n"
+        OutputCapture().assert_outputs(self, run, args=["rollout 21654 This patch broke the world"], expected_stderr=expected_stderr)
+
+    def test_rollout_bananas(self):
+        expected_stderr = "MOCK: irc.post: Usage: SVN_REVISION REASON\n"
+        OutputCapture().assert_outputs(self, run, args=["rollout bananas"], expected_stderr=expected_stderr)
+
+    def test_rollout_no_reason(self):
+        expected_stderr = "MOCK: irc.post: Usage: SVN_REVISION REASON\n"
+        OutputCapture().assert_outputs(self, run, args=["rollout 21654"], expected_stderr=expected_stderr)

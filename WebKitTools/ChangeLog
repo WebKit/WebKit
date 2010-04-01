@@ -1,3 +1,27 @@
+2010-04-01  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add rollout command to sheriffbot
+        https://bugs.webkit.org/show_bug.cgi?id=36986
+
+        This IRC command creates a new bug an attaches a rollout patch.  To
+        actually commit the rollout, a committer needs to mark the patch
+        commit-queue+ in bugs.webkit.org.
+
+        Also, factored out some of the logic from the queue into a separate
+        object for easier testing.
+
+        * Scripts/webkitpy/common/system/executive.py:
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        * Scripts/webkitpy/tool/bot/sheriff.py: Added.
+        * Scripts/webkitpy/tool/bot/sheriff_unittest.py: Added.
+        * Scripts/webkitpy/tool/bot/sheriffircbot.py:
+        * Scripts/webkitpy/tool/bot/sheriffircbot_unittest.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/sheriffbot.py:
+        * Scripts/webkitpy/tool/commands/sheriffbot_unittest.py:
+
 2010-04-01  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, only ignoring chatty style errors.

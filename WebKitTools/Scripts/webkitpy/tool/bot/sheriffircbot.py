@@ -32,7 +32,7 @@ from webkitpy.common.net.irc.ircbot import IRCBotDelegate
 from webkitpy.common.thread.threadedmessagequeue import ThreadedMessageQueue
 
 
-class _IRCThreadTearoff(object):
+class _IRCThreadTearoff(IRCBotDelegate):
     def __init__(self, password, message_queue, wakeup_event):
         self._password = password
         self._message_queue = message_queue
@@ -51,20 +51,24 @@ class _IRCThreadTearoff(object):
         return self._password
 
 
-class SheriffIRCBot(IRCBotDelegate):
+class SheriffIRCBot(object):
     # FIXME: Lame.  We should have an auto-registering CommandCenter.
     commands = {
         "last-green-revision": irc_command.LastGreenRevision,
         "restart": irc_command.Restart,
+        "rollout": irc_command.Rollout,
         "hi": irc_command.Hi,
     }
 
-    def __init__(self, tool):
+    def __init__(self, tool, sheriff):
         self._tool = tool
+        self._sheriff = sheriff
         self._message_queue = ThreadedMessageQueue()
 
     def irc_delegate(self):
-        return _IRCThreadTearoff(self._tool.irc_password, self._message_queue, self._tool.wakeup_event)
+        return _IRCThreadTearoff(self._tool.irc_password,
+                                 self._message_queue,
+                                 self._tool.wakeup_event)
 
     def process_message(self, message):
         tokenized_message = message.strip().split(" ")
@@ -72,9 +76,12 @@ class SheriffIRCBot(IRCBotDelegate):
             return
         command = self.commands.get(tokenized_message[0])
         if not command:
-            self._tool.irc().post("Available commands: %s" % ", ".join(self.commands.keys()))
+            self._tool.irc().post(
+                "Available commands: %s" % ", ".join(self.commands.keys()))
             return
-        response = command().execute(tokenized_message[1:], self._tool)
+        response = command().execute(tokenized_message[1:],
+                                     self._tool,
+                                     self._sheriff)
         if response:
             self._tool.irc().post(response)
 

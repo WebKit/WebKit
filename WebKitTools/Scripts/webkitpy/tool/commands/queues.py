@@ -73,7 +73,7 @@ class AbstractQueue(Command, QueueEngineDelegate):
         # FIXME: This is a hack, we should have a more general way to pass global options.
         webkit_patch_args += ["--status-host=%s" % self.tool.status_server.host]
         webkit_patch_args += map(str, args)
-        self.tool.executive.run_and_throw_if_fail(webkit_patch_args)
+        return self.tool.executive.run_and_throw_if_fail(webkit_patch_args)
 
     # QueueEngineDelegate methods
 

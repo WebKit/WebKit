@@ -27,22 +27,40 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import unittest
 
-from webkitpy.tool.commands.queuestest import QueuesTest
-from webkitpy.tool.commands.sheriffbot import SheriffBot
-from webkitpy.tool.mocktool import mock_builder
+from webkitpy.common.net.buildbot import Builder
+from webkitpy.thirdparty.mock import Mock
+from webkitpy.tool.bot.sheriff import Sheriff
+from webkitpy.tool.mocktool import MockTool, mock_builder
 
 
-class SheriffBotTest(QueuesTest):
-    def test_sheriff_bot(self):
-        mock_work_item = {
-            "svn_revision": 29837,
-            "builders": [mock_builder]
-        }
-        expected_stderr = {
-            "begin_work_queue": "CAUTION: sheriff-bot will discard all local changes in \"%s\"\nRunning WebKit sheriff-bot.\n" % os.getcwd(),
-            "next_work_item": "",
-            "process_work_item": "MOCK: irc.post: abarth, darin, eseidel: http://trac.webkit.org/changeset/29837 might have broken Mock builder name (Tests)\n",
-            "handle_unexpected_error": "Mock error message\n"
-        }
-        self.assert_queue_outputs(SheriffBot(), work_item=mock_work_item, expected_stderr=expected_stderr)
+class MockSheriffBot(object):
+    def run_webkit_patch(self, args):
+        return "Created bug https://bugs.webkit.org/show_bug.cgi?id=36936\n"
+
+
+class SheriffTest(unittest.TestCase):
+    def test_rollout_reason(self):
+        sheriff = Sheriff(MockTool(), MockSheriffBot())
+        builders = [
+            Builder("Foo", None),
+            Builder("Bar", None),
+        ]
+        reason = "Caused builders Foo and Bar to fail."
+        self.assertEquals(sheriff._rollout_reason(builders), reason)
+
+    def test_post_blame_comment_on_bug(self):
+        sheriff = Sheriff(MockTool(), MockSheriffBot())
+        builders = [
+            Builder("Foo", None),
+            Builder("Bar", None),
+        ]
+        commit_info = Mock()
+        commit_info.bug_id = lambda: None
+        commit_info.revision = lambda: 4321
+        # Should do nothing with no bug_id
+        sheriff.post_blame_comment_on_bug(commit_info, builders)
+        # Should try to post a comment to the bug, but MockTool.bugs does nothing.
+        commit_info.bug_id = lambda: 1234
+        sheriff.post_blame_comment_on_bug(commit_info, builders)

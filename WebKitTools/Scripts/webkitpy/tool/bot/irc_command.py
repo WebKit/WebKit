@@ -28,25 +28,42 @@
 
 from webkitpy.common.checkout.changelog import view_source_url
 from webkitpy.tool.bot.queueengine import TerminateQueue
-
+from webkitpy.common.system.executive import ScriptError
 
 # FIXME: Merge with Command?
 class IRCCommand(object):
-    def execute(self, args, tool):
+    def execute(self, args, tool, sheriff):
         raise NotImplementedError, "subclasses must implement"
 
 
 class LastGreenRevision(IRCCommand):
-    def execute(self, args, tool):
+    def execute(self, args, tool, sheriff):
         return view_source_url(tool.buildbot.last_green_revision())
 
 
 class Restart(IRCCommand):
-    def execute(self, args, tool):
+    def execute(self, args, tool, sheriff):
         tool.irc().post("Restarting...")
         raise TerminateQueue()
 
 
+class Rollout(IRCCommand):
+    def execute(self, args, tool, sheriff):
+        if len(args) < 2:
+            tool.irc().post("Usage: SVN_REVISION REASON")
+            return
+        svn_revision = args[0]
+        rollout_reason = " ".join(args[1:])
+        tool.irc().post("Preparing rollout for r%s..." % svn_revision)
+        try:
+            bug_id = sheriff.post_rollout_patch(svn_revision, rollout_reason)
+            bug_url = tool.bugs.bug_url_for_bug_id(bug_id)
+            tool.irc().post("Created rollout: %s" % bug_url)
+        except ScriptError, e:
+            tool.irc().post("Failed to create rollout patch:")
+            tool.irc().post("%s" % e)
+
+
 class Hi(IRCCommand):
-    def execute(self, args, tool):
+    def execute(self, args, tool, sheriff):
         return '"Only you can prevent forest fires." -- Smokey the Bear'

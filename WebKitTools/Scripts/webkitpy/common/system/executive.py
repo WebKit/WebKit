@@ -116,6 +116,7 @@ class Executive(object):
             raise ScriptError(script_args=args,
                               exit_code=exit_code,
                               output=child_output)
+        return child_output
 
     @staticmethod
     def cpu_count():
