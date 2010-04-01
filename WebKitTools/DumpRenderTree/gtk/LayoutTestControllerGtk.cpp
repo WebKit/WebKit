@@ -143,6 +143,13 @@ void LayoutTestController::keepWebHistory()
     // FIXME: implement
 }
 
+JSRetainPtr<JSStringRef> LayoutTestController::layerTreeAsText() const
+{
+    // FIXME: implement
+    JSRetainPtr<JSStringRef> string(Adopt, JSStringCreateWithUTF8CString(""));
+    return string;
+}
+
 int LayoutTestController::pageNumberForElementById(JSStringRef id, float pageWidth, float pageHeight)
 {
     gchar* idGChar = JSStringCopyUTF8CString(id);
