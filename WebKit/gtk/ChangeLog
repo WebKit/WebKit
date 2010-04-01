@@ -1,3 +1,22 @@
+2010-04-01  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Holger Freyther.
+
+        [GTK] webkit_get_default_session() should make sure webkit_init() is called
+        https://bugs.webkit.org/show_bug.cgi?id=36754
+
+        Make sure global functions that do not require a WebKitWebView to
+        be created call webkit_init() before doing their job. Also add an
+        API test to check for that.
+
+        * tests/testglobals.c: Added.
+        (test_globals_default_session):
+        (main):
+        * webkit/webkitwebview.cpp:
+        (webkit_get_default_session):
+        (webkit_set_cache_model):
+        (webkit_get_cache_model):
+
 2010-03-31  Marcus Bulach  <bulach@chromium.org>
 
         Reviewed by Jeremy Orlow.

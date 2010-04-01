@@ -3962,6 +3962,7 @@ void webkit_web_view_set_full_content_zoom(WebKitWebView* webView, gboolean zoom
  */
 SoupSession* webkit_get_default_session ()
 {
+    webkit_init();
     return ResourceHandle::defaultSession();
 }
 
@@ -4377,6 +4378,8 @@ G_CONST_RETURN gchar* webkit_web_view_get_icon_uri(WebKitWebView* webView)
  */
 void webkit_set_cache_model(WebKitCacheModel model)
 {
+    webkit_init();
+
     if (cacheModel == model)
         return;
 
@@ -4425,5 +4428,6 @@ void webkit_set_cache_model(WebKitCacheModel model)
  */
 WebKitCacheModel webkit_get_cache_model()
 {
+    webkit_init();
     return cacheModel;
 }

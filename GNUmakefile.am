@@ -565,6 +565,7 @@ webkit_tests_ldflags = \
 
 TEST_PROGS += Programs/unittests/testhttpbackend \
 	Programs/unittests/testloading \
+	Programs/unittests/testglobals \
 	Programs/unittests/testmimehandling \
 	Programs/unittests/testnetworkrequest \
 	Programs/unittests/testnetworkresponse \
@@ -586,6 +587,11 @@ Programs_unittests_testhttpbackend_SOURCES = WebKit/gtk/tests/testhttpbackend.c
 Programs_unittests_testhttpbackend_CFLAGS = $(webkit_tests_cflags)
 Programs_unittests_testhttpbackend_LDADD = $(webkit_tests_ldadd)
 Programs_unittests_testhttpbackend_LDFLAGS = $(webkit_tests_ldflags)
+
+Programs_unittests_testglobals_SOURCES = WebKit/gtk/tests/testglobals.c
+Programs_unittests_testglobals_CFLAGS = $(webkit_tests_cflags)
+Programs_unittests_testglobals_LDADD = $(webkit_tests_ldadd)
+Programs_unittests_testglobals_LDFLAGS = $(webkit_tests_ldflags)
 
 Programs_unittests_testloading_SOURCES = WebKit/gtk/tests/testloading.c
 Programs_unittests_testloading_CFLAGS = $(webkit_tests_cflags)
