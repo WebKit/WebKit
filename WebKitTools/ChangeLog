@@ -1,3 +1,9 @@
+2010-04-01  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix after addition of JavaScriptCore/wtf/text directory.
+
+        * wx/build/settings.py:
+
 2010-04-01  Jian Li  <jianli@chromium.org>
 
         Rubber-stamped by David Levin.
