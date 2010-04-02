@@ -125,7 +125,9 @@ def check_version(log=None, sysmodule=None, target_version=None):
         return True
 
     message = ("WebKit Python scripts do not support your current Python "
-               "version (%s).  The minimum supported version is %s."
+               "version (%s).  The minimum supported version is %s.\n"
+               "  See the following page to upgrade your Python version:\n\n"
+               "    http://trac.webkit.org/wiki/PythonGuidelines\n"
                % (current_version, target_version))
     log.warn(message)
     return False

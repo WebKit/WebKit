@@ -1,3 +1,35 @@
+2010-04-02  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        To the Python 2.4 error message, added a link to the wiki page
+        that contains instructions on how to upgrade.
+
+        * Scripts/test-webkitpy:
+          - Eliminated a use of the ternary operator in configure_logging()
+            to let the version warning display in case of Python 2.4.
+
+        * Scripts/webkitpy/python24/versioning.py:
+          - Added this link to the error text:
+            http://trac.webkit.org/wiki/PythonGuidelines
+
+        * Scripts/webkitpy/python24/versioning_unittest.py:
+          - Updated unit test text.
+
+2010-03-30  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        To the Python 2.4 error message, added a link to the wiki page
+        that contains instructions on how to upgrade.
+
+        * Scripts/webkitpy/python24/versioning.py:
+          - Added this link to the error text:
+            http://trac.webkit.org/wiki/PythonGuidelines
+
+        * Scripts/webkitpy/python24/versioning_unittest.py:
+          - Updated a unit test.
+
 2010-04-02  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

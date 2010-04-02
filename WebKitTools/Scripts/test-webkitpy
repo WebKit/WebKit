@@ -36,8 +36,8 @@ import sys
 # orphaned *.pyc files.  This ensures that no orphaned *.pyc files are
 # accidentally imported during the course of this script.
 #
-# Also do not import any Python code incompatible with Python 2.4 until
-# after execution of the init() method below.
+# Also, do not import or execute any Python code incompatible with
+# Python 2.4 until after execution of the init() method below.
 
 
 _log = logging.getLogger("test-webkitpy")
@@ -61,7 +61,12 @@ def configure_logging(is_verbose_logging):
                           logging.DEBUG.  Otherwise, it is set to logging.INFO.
 
     """
-    logging_level = logging.DEBUG if is_verbose_logging else logging.INFO
+    # Don't use the Python ternary operator here so that this method will
+    # work with Python 2.4.
+    if is_verbose_logging:
+        logging_level = logging.DEBUG
+    else:
+        logging_level = logging.INFO
 
     handler = logging.StreamHandler(sys.stderr)
     # We constrain the level on the handler rather than on the root

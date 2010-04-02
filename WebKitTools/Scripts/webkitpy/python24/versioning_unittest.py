@@ -124,8 +124,11 @@ class CheckVersionTest(unittest.TestCase):
         """Test the configured minimum version that webkitpy supports."""
         is_current = self._check_version("2.6")
         self.assertEquals(False, is_current)
-        expected_message = ("WARNING: WebKit Python scripts do not support "
-                            "your current Python version (2.5.3).  "
-                            "The minimum supported version is 2.6.\n")
+        expected_message = ('WARNING: WebKit Python scripts do not support '
+                            'your current Python version (2.5.3).  '
+                            'The minimum supported version is 2.6.\n  '
+                            'See the following page to upgrade your Python '
+                            'version:\n\n    '
+                            'http://trac.webkit.org/wiki/PythonGuidelines\n\n')
         self._log.assertMessages([expected_message])
 
