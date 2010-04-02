@@ -1,3 +1,30 @@
+2010-04-02  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [chromium] font fallback for generic fonts picks wrong font
+        https://bugs.webkit.org/show_bug.cgi?id=37033
+
+        When a page specifies the generic "monospace" font and the user's
+        browser-configured monospace font doesn't exist, we previously relied
+        on getLastResortFallbackFont to eventually pick a monospace font for us.
+
+        But that doesn't quite work: WebKit first falls back to the user's
+        "preferred standard font" before hitting the last resort code path.
+        So if the above conditions hold but this font exists, we'll end up
+        never hitting the last resort codepath.
+
+        The fix is to allow OS-level font fallback when first attempting to
+        resolve monospace.  The existing code tried to do this, but the logic
+        was wrong.  We would eventually fall back to the correct font anyway
+        so we didn't notice the logic was wrong.
+
+        This code is all handling cases where particular fonts aren't installed,
+        so I can't think of a way to test it; existing tests should still pass.
+
+        * platform/graphics/chromium/FontCacheLinux.cpp:
+        (WebCore::FontCache::createFontPlatformData):
+
 2010-04-02  Andrew Scherkus  <scherkus@chromium.org>
 
         Reviewed by Eric Carlson and Eric Seidel.
