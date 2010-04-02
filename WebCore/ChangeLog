@@ -1,3 +1,27 @@
+2010-04-02  Evan Stade  <estade@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [chromium] need DragImage implementation
+        https://bugs.webkit.org/show_bug.cgi?id=35811
+
+        Add two files that failed to get added in my previous patch.
+
+        * platform/chromium/DragImageChromiumMac.cpp: Added.
+        (WebCore::dragImageSize):
+        (WebCore::deleteDragImage):
+        (WebCore::scaleDragImage):
+        (WebCore::dissolveDragImageToFraction):
+        (WebCore::createDragImageFromImage):
+        (WebCore::createDragImageIconForCachedImage):
+        * platform/chromium/DragImageChromiumSkia.cpp: Added.
+        (WebCore::dragImageSize):
+        (WebCore::deleteDragImage):
+        (WebCore::scaleDragImage):
+        (WebCore::dissolveDragImageToFraction):
+        (WebCore::createDragImageFromImage):
+        (WebCore::createDragImageIconForCachedImage):
+
 2010-04-02  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Eric Carlson.
