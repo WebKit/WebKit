@@ -96,6 +96,7 @@ namespace WebCore {
         // Convenience method for accessors, does not NULL check m_frame.
         const VisibleSelection& visibleSelection() const;
 
+        bool isValidForPosition(Node*) const;
         Frame* m_frame;
     };
 

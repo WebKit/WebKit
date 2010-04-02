@@ -1,3 +1,28 @@
+2010-04-01  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Darin Adler.
+
+        WebCore::Document::updateLayoutIgnorePendingStylesheets NULL pointer
+        https://bugs.webkit.org/show_bug.cgi?id=31680
+        Ownerless nodes leads a crash on DOMSelection APIs
+        https://bugs.webkit.org/show_bug.cgi?id=36800
+
+        Added guards nodes from foreign documents to DOMSelection APIs.
+
+        Tests: editing/selection/DOMSelection-DocumentType.html
+               editing/selection/DOMSelection-crossing-document.html
+
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::canonicalPosition):
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::collapse):
+        (WebCore::DOMSelection::setBaseAndExtent):
+        (WebCore::DOMSelection::setPosition):
+        (WebCore::DOMSelection::extend):
+        (WebCore::DOMSelection::containsNode):
+        (WebCore::DOMSelection::isValidForPosition):
+        * page/DOMSelection.h:
+
 2010-04-01  Chris Evans  <cevans@chromium.org>
 
         Reviewed by Adam Barth.

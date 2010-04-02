@@ -1,3 +1,23 @@
+2010-04-01  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Darin Adler.
+
+        WebCore::Document::updateLayoutIgnorePendingStylesheets NULL pointer
+        https://bugs.webkit.org/show_bug.cgi?id=31680
+        Ownerless nodes leads a crash on DOMSelection APIs
+        https://bugs.webkit.org/show_bug.cgi?id=36800
+
+        * editing/selection/DOMSelection-DocumentType-expected.txt: Added.
+        * editing/selection/DOMSelection-DocumentType.html: Added.
+        * editing/selection/DOMSelection-crossing-document-expected.txt: Added.
+        * editing/selection/DOMSelection-crossing-document.html: Added.
+        * editing/selection/drag-in-iframe.html:
+          Updated to follow follow behaviour change.
+        * editing/selection/script-tests/DOMSelection-DocumentType.js: Added.
+        * editing/selection/script-tests/DOMSelection-crossing-document.js: Added.
+        (makeEditableDocument):
+        (clear):
+
 2010-04-01  Chris Evans  <cevans@chromium.org>
 
         Reviewed by Adam Barth.
