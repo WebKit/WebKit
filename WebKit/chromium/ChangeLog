@@ -1,3 +1,38 @@
+2010-04-02  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Implement InspectorFrontendClient in Chromium and remove all custom bindings for the host methods from WebDevToolsFrontendImpl. 
+
+        https://bugs.webkit.org/show_bug.cgi?id=36817
+
+        * WebKit.gyp:
+        * src/InspectorFrontendClientImpl.cpp: Added.
+        (WebKit::InspectorFrontendClientImpl::InspectorFrontendClientImpl):
+        (WebKit::InspectorFrontendClientImpl::~InspectorFrontendClientImpl):
+        (WebKit::InspectorFrontendClientImpl::windowObjectCleared):
+        (WebKit::InspectorFrontendClientImpl::frontendLoaded):
+        (WebKit::InspectorFrontendClientImpl::moveWindowBy):
+        (WebKit::InspectorFrontendClientImpl::localizedStringsURL):
+        (WebKit::InspectorFrontendClientImpl::hiddenPanels):
+        (WebKit::InspectorFrontendClientImpl::bringToFront):
+        (WebKit::InspectorFrontendClientImpl::closeWindow):
+        (WebKit::InspectorFrontendClientImpl::canAttachWindow):
+        (WebKit::InspectorFrontendClientImpl::attachWindow):
+        (WebKit::InspectorFrontendClientImpl::detachWindow):
+        (WebKit::InspectorFrontendClientImpl::changeAttachedWindowHeight):
+        (WebKit::InspectorFrontendClientImpl::inspectedURLChanged):
+        * src/InspectorFrontendClientImpl.h: Added.
+        * src/WebDevToolsFrontendImpl.cpp:
+        (WebKit::WebDevToolsFrontendImpl::WebDevToolsFrontendImpl):
+        (WebKit::WebDevToolsFrontendImpl::~WebDevToolsFrontendImpl):
+        (WebKit::WebDevToolsFrontendImpl::frontendLoaded):
+        * src/WebDevToolsFrontendImpl.h:
+        * src/js/DebuggerAgent.js:
+        (devtools.DebuggerAgent.prototype.doHandleBacktraceResponse_):
+        * src/js/DevTools.js:
+        ():
+
 2010-04-01  Jay Civelli  <jcivelli@google.com>
 
         Reviewed by David Levin.

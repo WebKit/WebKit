@@ -42,6 +42,7 @@
 #include "Frame.h"
 #include "InspectorBackend.h"
 #include "InspectorController.h"
+#include "InspectorFrontendClientImpl.h"
 #include "InspectorFrontendHost.h"
 #include "Node.h"
 #include "Page.h"
@@ -101,6 +102,9 @@ WebDevToolsFrontendImpl::WebDevToolsFrontendImpl(
     , m_applicationLocale(applicationLocale)
     , m_loaded(false)
 {
+    InspectorController* ic = m_webViewImpl->page()->inspectorController();
+    ic->setInspectorFrontendClient(new InspectorFrontendClientImpl(m_webViewImpl->page(), m_client, this));
+
     WebFrameImpl* frame = m_webViewImpl->mainFrameImpl();
     v8::HandleScope scope;
     v8::Handle<v8::Context> frameContext = V8Proxy::context(frame->frame());
@@ -118,69 +122,10 @@ WebDevToolsFrontendImpl::WebDevToolsFrontendImpl(
         "DebuggerPauseScript",
         WebDevToolsFrontendImpl::jsDebuggerPauseScript);
     debuggerCommandExecutorObj.build();
-
-    BoundObject devToolsHost(frameContext, this, "InspectorFrontendHost");
-    devToolsHost.addProtoFunction(
-        "loaded",
-        WebDevToolsFrontendImpl::jsLoaded);
-    devToolsHost.addProtoFunction(
-        "platform",
-        WebDevToolsFrontendImpl::jsPlatform);
-    devToolsHost.addProtoFunction(
-        "port",
-        WebDevToolsFrontendImpl::jsPort);
-    devToolsHost.addProtoFunction(
-        "copyText",
-        WebDevToolsFrontendImpl::jsCopyText);
-    devToolsHost.addProtoFunction(
-        "activateWindow",
-        WebDevToolsFrontendImpl::jsActivateWindow);
-    devToolsHost.addProtoFunction(
-        "closeWindow",
-        WebDevToolsFrontendImpl::jsCloseWindow);
-    devToolsHost.addProtoFunction(
-        "attach",
-        WebDevToolsFrontendImpl::jsDockWindow);
-    devToolsHost.addProtoFunction(
-        "detach",
-        WebDevToolsFrontendImpl::jsUndockWindow);
-    devToolsHost.addProtoFunction(
-        "localizedStringsURL",
-        WebDevToolsFrontendImpl::jsLocalizedStringsURL);
-    devToolsHost.addProtoFunction(
-        "hiddenPanels",
-        WebDevToolsFrontendImpl::jsHiddenPanels);
-    devToolsHost.addProtoFunction(
-        "setting",
-        WebDevToolsFrontendImpl::jsSetting);
-    devToolsHost.addProtoFunction(
-        "setSetting",
-        WebDevToolsFrontendImpl::jsSetSetting);
-    devToolsHost.addProtoFunction(
-        "bringToFront",
-        WebDevToolsFrontendImpl::jsBringToFront);
-    devToolsHost.addProtoFunction(
-        "inspectedURLChanged",
-        WebDevToolsFrontendImpl::jsInspectedURLChanged);
-    devToolsHost.addProtoFunction(
-        "showContextMenu",
-        WebDevToolsFrontendImpl::jsShowContextMenu);
-    devToolsHost.addProtoFunction(
-        "canAttachWindow",
-        WebDevToolsFrontendImpl::jsCanAttachWindow);
-    devToolsHost.addProtoFunction(
-        "setAttachedWindowHeight",
-        WebDevToolsFrontendImpl::jsSetAttachedWindowHeight);
-    devToolsHost.addProtoFunction(
-        "moveWindowBy",
-        WebDevToolsFrontendImpl::jsMoveWindowBy);
-    devToolsHost.build();
 }
 
 WebDevToolsFrontendImpl::~WebDevToolsFrontendImpl()
 {
-    if (m_menuProvider)
-        m_menuProvider->disconnect();
 }
 
 void WebDevToolsFrontendImpl::dispatchMessageFromAgent(const WebDevToolsMessageData& data)
@@ -195,6 +140,22 @@ void WebDevToolsFrontendImpl::dispatchMessageFromAgent(const WebDevToolsMessageD
         return;
     }
     executeScript(v);
+}
+
+void WebDevToolsFrontendImpl::frontendLoaded()
+{
+    m_loaded = true;
+
+    // Grant the devtools page the ability to have source view iframes.
+    SecurityOrigin* origin = m_webViewImpl->page()->mainFrame()->domWindow()->securityOrigin();
+    origin->grantUniversalAccess();
+
+    for (Vector<Vector<String> >::iterator it = m_pendingIncomingMessages.begin();
+         it != m_pendingIncomingMessages.end();
+         ++it) {
+        executeScript(*it);
+    }
+    m_pendingIncomingMessages.clear();
 }
 
 void WebDevToolsFrontendImpl::executeScript(const Vector<String>& v)
@@ -212,123 +173,9 @@ void WebDevToolsFrontendImpl::executeScript(const Vector<String>& v)
     function->Call(frameContext->Global(), args.size(), args.data());
 }
 
-void WebDevToolsFrontendImpl::dispatchOnWebInspector(const String& methodName, const String& param)
-{
-    WebFrameImpl* frame = m_webViewImpl->mainFrameImpl();
-    v8::HandleScope scope;
-    v8::Handle<v8::Context> frameContext = V8Proxy::context(frame->frame());
-    v8::Context::Scope contextScope(frameContext);
-
-    v8::Handle<v8::Value> webInspector = frameContext->Global()->Get(v8::String::New("WebInspector"));
-    ASSERT(webInspector->IsObject());
-    v8::Handle<v8::Object> webInspectorObj = v8::Handle<v8::Object>::Cast(webInspector);
-
-    v8::Handle<v8::Value> method = webInspectorObj->Get(ToV8String(methodName));
-    ASSERT(method->IsFunction());
-    v8::Handle<v8::Function> methodFunc = v8::Handle<v8::Function>::Cast(method);
-    v8::Handle<v8::Value> args[] = {
-      ToV8String(param)
-    };
-    methodFunc->Call(frameContext->Global(), 1, args);
-}
-
 void WebDevToolsFrontendImpl::sendRpcMessage(const WebDevToolsMessageData& data)
 {
     m_client->sendMessageToAgent(data);
-}
-
-void WebDevToolsFrontendImpl::contextMenuItemSelected(ContextMenuItem* item)
-{
-    int itemNumber = item->action() - ContextMenuItemBaseCustomTag;
-    dispatchOnWebInspector("contextMenuItemSelected", String::number(itemNumber));
-}
-
-void WebDevToolsFrontendImpl::contextMenuCleared()
-{
-    dispatchOnWebInspector("contextMenuCleared", "");
-}
-
-v8::Handle<v8::Value> WebDevToolsFrontendImpl::jsLoaded(const v8::Arguments& args)
-{
-    WebDevToolsFrontendImpl* frontend = static_cast<WebDevToolsFrontendImpl*>(v8::External::Cast(*args.Data())->Value());
-    frontend->m_loaded = true;
-
-    // Grant the devtools page the ability to have source view iframes.
-    Page* page = V8Proxy::retrieveFrameForEnteredContext()->page();
-    SecurityOrigin* origin = page->mainFrame()->domWindow()->securityOrigin();
-    origin->grantUniversalAccess();
-
-    for (Vector<Vector<String> >::iterator it = frontend->m_pendingIncomingMessages.begin();
-         it != frontend->m_pendingIncomingMessages.end();
-         ++it) {
-        frontend->executeScript(*it);
-    }
-    frontend->m_pendingIncomingMessages.clear();
-    return v8::Undefined();
-}
-
-// static
-v8::Handle<v8::Value> WebDevToolsFrontendImpl::jsPlatform(const v8::Arguments& args)
-{
-#if defined(OS_MACOSX)
-    return v8String("mac");
-#elif defined(OS_LINUX)
-    return v8String("linux");
-#elif defined(OS_WIN)
-    return v8String("windows");
-#else
-    return v8String("unknown");
-#endif
-}
-
-v8::Handle<v8::Value> WebDevToolsFrontendImpl::jsPort(const v8::Arguments& args)
-{
-    return v8::Undefined();
-}
-
-v8::Handle<v8::Value> WebDevToolsFrontendImpl::jsCopyText(const v8::Arguments& args)
-{
-    String text = WebCore::toWebCoreStringWithNullCheck(args[0]);
-    Pasteboard::generalPasteboard()->writePlainText(text);
-    return v8::Undefined();
-}
-
-v8::Handle<v8::Value> WebDevToolsFrontendImpl::jsActivateWindow(const v8::Arguments& args)
-{
-    WebDevToolsFrontendImpl* frontend = static_cast<WebDevToolsFrontendImpl*>(v8::External::Cast(*args.Data())->Value());
-    frontend->m_client->activateWindow();
-    return v8::Undefined();
-}
-
-v8::Handle<v8::Value> WebDevToolsFrontendImpl::jsCloseWindow(const v8::Arguments& args)
-{
-    WebDevToolsFrontendImpl* frontend = static_cast<WebDevToolsFrontendImpl*>(v8::External::Cast(*args.Data())->Value());
-    frontend->m_client->closeWindow();
-    return v8::Undefined();
-}
-
-v8::Handle<v8::Value> WebDevToolsFrontendImpl::jsDockWindow(const v8::Arguments& args)
-{
-    WebDevToolsFrontendImpl* frontend = static_cast<WebDevToolsFrontendImpl*>(v8::External::Cast(*args.Data())->Value());
-    frontend->m_client->dockWindow();
-    return v8::Undefined();
-}
-
-v8::Handle<v8::Value> WebDevToolsFrontendImpl::jsUndockWindow(const v8::Arguments& args)
-{
-    WebDevToolsFrontendImpl* frontend = static_cast<WebDevToolsFrontendImpl*>(v8::External::Cast(*args.Data())->Value());
-    frontend->m_client->undockWindow();
-    return v8::Undefined();
-}
-
-v8::Handle<v8::Value> WebDevToolsFrontendImpl::jsLocalizedStringsURL(const v8::Arguments& args)
-{
-    return v8::Undefined();
-}
-
-v8::Handle<v8::Value> WebDevToolsFrontendImpl::jsHiddenPanels(const v8::Arguments& args)
-{
-    return v8String("");
 }
 
 v8::Handle<v8::Value> WebDevToolsFrontendImpl::jsDebuggerCommand(const v8::Arguments& args)
@@ -339,87 +186,10 @@ v8::Handle<v8::Value> WebDevToolsFrontendImpl::jsDebuggerCommand(const v8::Argum
     return v8::Undefined();
 }
 
-v8::Handle<v8::Value> WebDevToolsFrontendImpl::jsSetting(const v8::Arguments& args)
-{
-    return v8::Undefined();
-}
-
-v8::Handle<v8::Value> WebDevToolsFrontendImpl::jsSetSetting(const v8::Arguments& args)
-{
-    return v8::Undefined();
-}
-
 v8::Handle<v8::Value> WebDevToolsFrontendImpl::jsDebuggerPauseScript(const v8::Arguments& args)
 {
     WebDevToolsFrontendImpl* frontend = static_cast<WebDevToolsFrontendImpl*>(v8::External::Cast(*args.Data())->Value());
     frontend->m_client->sendDebuggerPauseScript();
-    return v8::Undefined();
-}
-
-v8::Handle<v8::Value> WebDevToolsFrontendImpl::jsBringToFront(const v8::Arguments& args)
-{
-    return v8::Undefined();
-}
-
-v8::Handle<v8::Value> WebDevToolsFrontendImpl::jsInspectedURLChanged(const v8::Arguments& args)
-{
-    return v8::Undefined();
-}
-
-v8::Handle<v8::Value> WebDevToolsFrontendImpl::jsShowContextMenu(const v8::Arguments& args)
-{
-    if (args.Length() < 2)
-        return v8::Undefined();
-
-    v8::Local<v8::Object> eventWrapper = v8::Local<v8::Object>::Cast(args[0]);
-    if (!V8MouseEvent::info.equals(V8DOMWrapper::domWrapperType(eventWrapper)))
-        return v8::Undefined();
-
-    Event* event = V8Event::toNative(eventWrapper);
-    if (!args[1]->IsArray())
-        return v8::Undefined();
-
-    v8::Local<v8::Array> array = v8::Local<v8::Array>::Cast(args[1]);
-    Vector<ContextMenuItem*> items;
-
-    for (size_t i = 0; i < array->Length(); ++i) {
-        v8::Local<v8::Object> item = v8::Local<v8::Object>::Cast(array->Get(v8::Integer::New(i)));
-        v8::Local<v8::Value> label = item->Get(v8::String::New("label"));
-        v8::Local<v8::Value> id = item->Get(v8::String::New("id"));
-        if (label->IsUndefined() || id->IsUndefined()) {
-          items.append(new ContextMenuItem(SeparatorType,
-                                           ContextMenuItemTagNoAction,
-                                           String()));
-        } else {
-          ContextMenuAction typedId = static_cast<ContextMenuAction>(
-              ContextMenuItemBaseCustomTag + id->ToInt32()->Value());
-          items.append(new ContextMenuItem(ActionType,
-                                           typedId,
-                                           toWebCoreStringWithNullCheck(label)));
-        }
-    }
-
-    WebDevToolsFrontendImpl* frontend = static_cast<WebDevToolsFrontendImpl*>(v8::External::Cast(*args.Data())->Value());
-
-    frontend->m_menuProvider = MenuProvider::create(frontend, items);
-
-    ContextMenuController* menuController = frontend->m_webViewImpl->page()->contextMenuController();
-    menuController->showContextMenu(event, frontend->m_menuProvider);
-
-    return v8::Undefined();
-}
-
-v8::Handle<v8::Value> WebDevToolsFrontendImpl::jsCanAttachWindow(const v8::Arguments& args)
-{
-    return v8Boolean(true);
-}
-v8::Handle<v8::Value> WebDevToolsFrontendImpl::jsSetAttachedWindowHeight(const v8::Arguments& args)
-{
-    return v8::Undefined();
-}
-
-v8::Handle<v8::Value> WebDevToolsFrontendImpl::jsMoveWindowBy(const v8::Arguments& args)
-{
     return v8::Undefined();
 }
 

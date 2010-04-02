@@ -1,3 +1,36 @@
+2010-04-02  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Implement InspectorFrontendHost::showContextMenu for Chromium.
+ 
+        Move inspector frontend context menu code from InspectorFrontendClient to InspectorFrontendHost as it's platform independent.
+ 
+        https://bugs.webkit.org/show_bug.cgi?id=36817
+
+        * WebCore.Inspector.exp:
+        * bindings/v8/custom/V8InspectorFrontendHostCustom.cpp:
+        (WebCore::V8InspectorFrontendHost::showContextMenuCallback):
+        * inspector/InspectorFrontendClient.h:
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::InspectorFrontendClientLocal):
+        (WebCore::InspectorFrontendClientLocal::~InspectorFrontendClientLocal):
+        (WebCore::InspectorFrontendClientLocal::windowObjectCleared):
+        * inspector/InspectorFrontendClientLocal.h:
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::FrontendMenuProvider::create):
+        (WebCore::FrontendMenuProvider::disconnect):
+        (WebCore::FrontendMenuProvider::FrontendMenuProvider):
+        (WebCore::FrontendMenuProvider::~FrontendMenuProvider):
+        (WebCore::FrontendMenuProvider::populateContextMenu):
+        (WebCore::FrontendMenuProvider::contextMenuItemSelected):
+        (WebCore::FrontendMenuProvider::contextMenuCleared):
+        (WebCore::InspectorFrontendHost::InspectorFrontendHost):
+        (WebCore::InspectorFrontendHost::disconnectClient):
+        (WebCore::InspectorFrontendHost::showContextMenu):
+        * inspector/InspectorFrontendHost.h:
+        (WebCore::InspectorFrontendHost::create):
+
 2010-04-02  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.

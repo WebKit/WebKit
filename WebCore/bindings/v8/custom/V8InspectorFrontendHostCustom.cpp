@@ -35,12 +35,47 @@
 #include "InspectorFrontendHost.h"
 
 #include "V8Binding.h"
+#include "V8MouseEvent.h"
 #include "V8Proxy.h"
 
 namespace WebCore {
 
 v8::Handle<v8::Value> V8InspectorFrontendHost::showContextMenuCallback(const v8::Arguments& args)
 {
+    if (args.Length() < 2)
+        return v8::Undefined();
+
+    v8::Local<v8::Object> eventWrapper = v8::Local<v8::Object>::Cast(args[0]);
+    if (!V8MouseEvent::info.equals(V8DOMWrapper::domWrapperType(eventWrapper)))
+        return v8::Undefined();
+
+    Event* event = V8Event::toNative(eventWrapper);
+    if (!args[1]->IsArray())
+        return v8::Undefined();
+
+    v8::Local<v8::Array> array = v8::Local<v8::Array>::Cast(args[1]);
+    Vector<ContextMenuItem*> items;
+
+    for (size_t i = 0; i < array->Length(); ++i) {
+        v8::Local<v8::Object> item = v8::Local<v8::Object>::Cast(array->Get(v8::Integer::New(i)));
+        v8::Local<v8::Value> label = item->Get(v8::String::New("label"));
+        v8::Local<v8::Value> id = item->Get(v8::String::New("id"));
+        if (label->IsUndefined() || id->IsUndefined()) {
+          items.append(new ContextMenuItem(SeparatorType,
+                                           ContextMenuItemTagNoAction,
+                                           String()));
+        } else {
+          ContextMenuAction typedId = static_cast<ContextMenuAction>(
+              ContextMenuItemBaseCustomTag + id->ToInt32()->Value());
+          items.append(new ContextMenuItem(ActionType,
+                                           typedId,
+                                           toWebCoreStringWithNullCheck(label)));
+        }
+    }
+
+    InspectorFrontendHost* frontendHost = V8InspectorFrontendHost::toNative(args.Holder());
+    frontendHost->showContextMenu(event, items);
+
     return v8::Undefined();
 }
 

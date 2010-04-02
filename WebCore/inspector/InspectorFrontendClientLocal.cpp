@@ -34,10 +34,6 @@
 #if ENABLE(INSPECTOR)
 
 #include "Chrome.h"
-#include "ContextMenu.h"
-#include "ContextMenuController.h"
-#include "ContextMenuItem.h"
-#include "ContextMenuProvider.h"
 #include "FloatRect.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -51,67 +47,6 @@
 
 namespace WebCore {
 
-class FrontendMenuProvider : public ContextMenuProvider {
-public:
-    static PassRefPtr<FrontendMenuProvider> create(InspectorFrontendClientLocal* frontendClient, ScriptObject webInspector, const Vector<ContextMenuItem*>& items)
-    {
-        return adoptRef(new FrontendMenuProvider(frontendClient, webInspector, items));
-    }
-    
-    void disconnect()
-    {
-        m_webInspector = ScriptObject();
-        m_frontendClient = 0;
-    }
-    
-private:
-    FrontendMenuProvider(InspectorFrontendClientLocal* frontendClient, ScriptObject webInspector,  const Vector<ContextMenuItem*>& items)
-        : m_frontendClient(frontendClient)
-        , m_webInspector(webInspector)
-        , m_items(items)
-    {
-    }
-
-    virtual ~FrontendMenuProvider()
-    {
-        contextMenuCleared();
-    }
-    
-    virtual void populateContextMenu(ContextMenu* menu)
-    {
-        for (size_t i = 0; i < m_items.size(); ++i)
-            menu->appendItem(*m_items[i]);
-    }
-    
-    virtual void contextMenuItemSelected(ContextMenuItem* item)
-    {
-        int itemNumber = item->action() - ContextMenuItemBaseCustomTag;
-
-        ScriptFunctionCall function(m_webInspector, "dispatch");
-        function.appendArgument("contextMenuItemSelected");
-        function.appendArgument(itemNumber);
-        function.call();
-    }
-    
-    virtual void contextMenuCleared()
-    {
-
-        if (m_frontendClient) {
-            ScriptFunctionCall function(m_webInspector, "dispatch");
-            function.appendArgument("contextMenuCleared");
-            function.call();
-
-            m_frontendClient->m_menuProvider = 0;
-        }
-        deleteAllValues(m_items);
-        m_items.clear();
-    }
-
-    InspectorFrontendClientLocal* m_frontendClient;
-    ScriptObject m_webInspector;
-    Vector<ContextMenuItem*> m_items;
-};
-
 static const char* const inspectorAttachedHeightName = "inspectorAttachedHeight";
 static const unsigned defaultAttachedHeight = 300;
 static const float minimumAttachedHeight = 250.0f;
@@ -121,7 +56,6 @@ InspectorFrontendClientLocal::InspectorFrontendClientLocal(InspectorController* 
     : m_inspectorController(inspectorController)
     , m_frontendPage(frontendPage)
     , m_frontendScriptState(0)
-    , m_menuProvider(0)
 {
 }
 
@@ -129,8 +63,6 @@ InspectorFrontendClientLocal::~InspectorFrontendClientLocal()
 {
     if (m_frontendHost)
         m_frontendHost->disconnectClient();
-    if (m_menuProvider)
-        m_menuProvider->disconnect();
     m_frontendScriptState = 0;
     m_frontendPage = 0;
     m_inspectorController = 0;
@@ -143,7 +75,7 @@ void InspectorFrontendClientLocal::windowObjectCleared()
     // FIXME: don't keep reference to the script state
     m_frontendScriptState = scriptStateFromPage(debuggerWorld(), m_frontendPage);
     ScriptGlobalObject::set(m_frontendScriptState, "InspectorBackend", m_inspectorController->inspectorBackend());
-    m_frontendHost = InspectorFrontendHost::create(this);
+    m_frontendHost = InspectorFrontendHost::create(this, m_frontendPage);
     ScriptGlobalObject::set(m_frontendScriptState, "InspectorFrontendHost", m_frontendHost.get());
 }
 
@@ -181,20 +113,6 @@ void InspectorFrontendClientLocal::moveWindowBy(float x, float y)
     FloatRect frameRect = m_frontendPage->chrome()->windowRect();
     frameRect.move(x, y);
     m_frontendPage->chrome()->setWindowRect(frameRect);
-}
-
-void InspectorFrontendClientLocal::showContextMenu(Event* event, const Vector<ContextMenuItem*>& items)
-{
-    ScriptObject webInspectorObj;
-    if (!ScriptGlobalObject::get(m_frontendScriptState, "WebInspector", webInspectorObj)) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-    
-    RefPtr<FrontendMenuProvider> menuProvider = FrontendMenuProvider::create(this, webInspectorObj, items);
-    ContextMenuController* menuController = m_frontendPage->contextMenuController();
-    menuController->showContextMenu(event, menuProvider);
-    m_menuProvider = menuProvider.get();
 }
 
 void InspectorFrontendClientLocal::setAttachedWindow(bool attached)

@@ -279,7 +279,7 @@ WebInspector.UIString = function(string)
     WebInspector.searchingForNodeWasDisabled = function()
     {
         if (this.panels.elements._nodeSearchButton.toggled)
-            InspectorFrontendHost.activateWindow();
+            InspectorFrontendHost.bringToFront();
         original.apply(this, arguments);
     }
 })();

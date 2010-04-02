@@ -28,49 +28,54 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InspectorFrontendClientLocal_h
-#define InspectorFrontendClientLocal_h
+#ifndef InspectorFrontendClientImpl_h
+#define InspectorFrontendClientImpl_h
 
 #include "InspectorFrontendClient.h"
-#include "ScriptState.h"
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
-
-class InspectorController;
 class InspectorFrontendHost;
 class Page;
+}
 
-class InspectorFrontendClientLocal : public InspectorFrontendClient, public Noncopyable {
+namespace WebKit {
+
+class WebDevToolsFrontendClient;
+class WebDevToolsFrontendImpl;
+
+class InspectorFrontendClientImpl : public WebCore::InspectorFrontendClient
+                                  , public Noncopyable  {
 public:
-    InspectorFrontendClientLocal(InspectorController*, Page*);
-    virtual ~InspectorFrontendClientLocal();
-    
+    InspectorFrontendClientImpl(WebCore::Page*, WebDevToolsFrontendClient*, WebDevToolsFrontendImpl*);
+    virtual ~InspectorFrontendClientImpl();
+
+    // InspectorFrontendClient methods:
     virtual void windowObjectCleared();
     virtual void frontendLoaded();
 
     virtual void moveWindowBy(float x, float y);
 
+    virtual WebCore::String localizedStringsURL();
+    virtual WebCore::String hiddenPanels();
+
+    virtual void bringToFront();
+    virtual void closeWindow();
+
     virtual bool canAttachWindow();
+    virtual void attachWindow();
+    virtual void detachWindow();
     virtual void changeAttachedWindowHeight(unsigned);
-
-protected:
-    virtual void setAttachedWindowHeight(unsigned) = 0;
-
-    void setAttachedWindow(bool);
-    void restoreAttachedWindowHeight();
+    
+    virtual void inspectedURLChanged(const WebCore::String&);
 
 private:
-    static unsigned constrainedAttachedWindowHeight(unsigned preferredHeight, unsigned totalWindowHeight);
-
-    friend class FrontendMenuProvider;
-    InspectorController* m_inspectorController;
-    Page* m_frontendPage;
-    ScriptState* m_frontendScriptState;
-    // TODO(yurys): this ref shouldn't be needed.
-    RefPtr<InspectorFrontendHost> m_frontendHost;
+    WebCore::Page* m_frontendPage;
+    WebDevToolsFrontendClient* m_client;
+    WebDevToolsFrontendImpl* m_frontend;
+    RefPtr<WebCore::InspectorFrontendHost> m_frontendHost;
 };
 
-} // namespace WebCore
+} // namespace WebKit
 
 #endif

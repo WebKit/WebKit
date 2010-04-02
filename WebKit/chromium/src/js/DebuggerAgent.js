@@ -964,7 +964,7 @@ devtools.DebuggerAgent.prototype.doHandleBacktraceResponse_ = function(msg)
         this.callFrames_.push(this.formatCallFrame_(frames[i]));
     WebInspector.pausedScript(this.callFrames_);
     this.showPendingExceptionMessage_();
-    InspectorFrontendHost.activateWindow();
+    InspectorFrontendHost.bringToFront();
 };
 
 

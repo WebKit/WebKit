@@ -42,6 +42,7 @@ namespace WebCore {
 
 class ContextMenuItem;
 class Event;
+class FrontendMenuProvider;
 class InspectorClient;
 class InspectorFrontendClient;
 class Node;
@@ -49,9 +50,9 @@ class Node;
 class InspectorFrontendHost : public RefCounted<InspectorFrontendHost>
 {
 public:
-    static PassRefPtr<InspectorFrontendHost> create(InspectorFrontendClient* client)
+    static PassRefPtr<InspectorFrontendHost> create(InspectorFrontendClient* client, Page* frontendPage)
     {
-        return adoptRef(new InspectorFrontendHost(client));
+        return adoptRef(new InspectorFrontendHost(client, frontendPage));
     }
 
     ~InspectorFrontendHost();
@@ -79,9 +80,12 @@ public:
     void showContextMenu(Event*, const Vector<ContextMenuItem*>& items);
 
 private:
-    InspectorFrontendHost(InspectorFrontendClient* client);
+    friend class FrontendMenuProvider;
+    InspectorFrontendHost(InspectorFrontendClient* client, Page* frontendPage);
 
     InspectorFrontendClient* m_client;
+    Page* m_frontendPage;
+    FrontendMenuProvider* m_menuProvider;
 };
 
 } // namespace WebCore
