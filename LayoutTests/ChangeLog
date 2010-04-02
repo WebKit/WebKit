@@ -1,3 +1,17 @@
+2010-04-02  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        REGRESSION(56295): http/tests/security/xssAuditor/xss-protection-parsing-01.html times out on Tiger Bot
+        https://bugs.webkit.org/show_bug.cgi?id=36933
+
+        Change the test design in an attempt to get this passing on Tiger.  In
+        this variation, we use a POST request to work around possible caching
+        issues in Tiger's CFNetwork.
+
+        * http/tests/security/xssAuditor/xss-protection-parsing-01-expected.txt:
+        * http/tests/security/xssAuditor/xss-protection-parsing-01.html:
+
 2010-04-01  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Darin Adler.

@@ -9,11 +9,17 @@ if (window.layoutTestController) {
     layoutTestController.waitUntilDone();
     layoutTestController.setXSSAuditorEnabled(true);
 }
+function done()
+{
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+window.onload = function()
+{
+    sendRequestFromIFrame("http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl","crazy-header=1&q=<script>alert(/XSS/)<\/script>","POST", done);
+};
 </script>
 </head>
 <body>
-<p>This tests our parsing of the X-XSS-Protection header.</p>
-<iframe id="frame" onload="checkIfFrameLocationMatchesURLAndCallDone('frame', 'about:blank')" src="http://127.0.0.1:8000/security/xssAuditor/resources/echo-intertag.pl?crazy-header=1&q=<script>alert(/XSS/)</script><p>If you see this message then the test FAILED.</p>">
-</iframe>
 </body>
 </html>
