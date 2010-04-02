@@ -798,9 +798,9 @@ void QWebPagePrivate::mousePressEvent(QGraphicsSceneMouseEvent* ev)
         return;
 
     RefPtr<WebCore::Node> oldNode;
-    if (page->focusController()->focusedFrame()
-        && page->focusController()->focusedFrame()->document())
-        oldNode = page->focusController()->focusedFrame()->document()->focusedNode();
+    Frame* focusedFrame = page->focusController()->focusedFrame();
+    if (Document* focusedDocument = focusedFrame ? focusedFrame->document() : 0)
+        oldNode = focusedDocument->focusedNode();
 
     if (tripleClickTimer.isActive()
             && (ev->pos().toPoint() - tripleClick).manhattanLength()
@@ -817,9 +817,9 @@ void QWebPagePrivate::mousePressEvent(QGraphicsSceneMouseEvent* ev)
     ev->setAccepted(accepted);
 
     RefPtr<WebCore::Node> newNode;
-    if (page->focusController()->focusedFrame()
-        && page->focusController()->focusedFrame()->document())
-        newNode = page->focusController()->focusedFrame()->document()->focusedNode();
+    focusedFrame = page->focusController()->focusedFrame();
+    if (Document* focusedDocument = focusedFrame ? focusedFrame->document() : 0)
+        newNode = focusedDocument->focusedNode();
 
     if (newNode && oldNode != newNode)
         clickCausedFocus = true;
@@ -832,9 +832,9 @@ void QWebPagePrivate::mousePressEvent(QMouseEvent *ev)
         return;
 
     RefPtr<WebCore::Node> oldNode;
-    if (page->focusController()->focusedFrame()
-        && page->focusController()->focusedFrame()->document())
-        oldNode = page->focusController()->focusedFrame()->document()->focusedNode();
+    Frame* focusedFrame = page->focusController()->focusedFrame();
+    if (Document* focusedDocument = focusedFrame ? focusedFrame->document() : 0)
+        oldNode = focusedDocument->focusedNode();
 
     if (tripleClickTimer.isActive()
             && (ev->pos() - tripleClick).manhattanLength()
@@ -851,9 +851,9 @@ void QWebPagePrivate::mousePressEvent(QMouseEvent *ev)
     ev->setAccepted(accepted);
 
     RefPtr<WebCore::Node> newNode;
-    if (page->focusController()->focusedFrame()
-        && page->focusController()->focusedFrame()->document())
-        newNode = page->focusController()->focusedFrame()->document()->focusedNode();
+    focusedFrame = page->focusController()->focusedFrame();
+    if (Document* focusedDocument = focusedFrame ? focusedFrame->document() : 0)
+        newNode = focusedDocument->focusedNode();
 
     if (newNode && oldNode != newNode)
         clickCausedFocus = true;
