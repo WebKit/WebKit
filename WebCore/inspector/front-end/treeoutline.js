@@ -567,7 +567,7 @@ TreeElement.prototype._attach = function()
         if (this.selected)
             this._listItemNode.addStyleClass("selected");
 
-        this._listItemNode.addEventListener("mousedown", TreeElement.treeElementSelected, false);
+        this._listItemNode.addEventListener("mousedown", TreeElement.treeElementMouseDown, false);
         this._listItemNode.addEventListener("click", TreeElement.treeElementToggled, false);
         this._listItemNode.addEventListener("dblclick", TreeElement.treeElementDoubleClicked, false);
 
@@ -595,7 +595,7 @@ TreeElement.prototype._detach = function()
         this._childrenListNode.parentNode.removeChild(this._childrenListNode);
 }
 
-TreeElement.treeElementSelected = function(event)
+TreeElement.treeElementMouseDown = function(event)
 {
     var element = event.currentTarget;
     if (!element || !element.treeElement || !element.treeElement.selectable)
@@ -604,7 +604,7 @@ TreeElement.treeElementSelected = function(event)
     if (element.treeElement.isEventWithinDisclosureTriangle(event))
         return;
 
-    element.treeElement.select();
+    element.treeElement.selectOnMouseDown(event);
 }
 
 TreeElement.treeElementToggled = function(event)
@@ -765,6 +765,11 @@ TreeElement.prototype.revealed = function()
     }
 
     return true;
+}
+
+TreeElement.prototype.selectOnMouseDown = function(event)
+{
+    this.select();
 }
 
 TreeElement.prototype.select = function(supressOnSelect)

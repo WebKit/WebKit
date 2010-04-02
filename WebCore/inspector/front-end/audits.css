@@ -217,6 +217,7 @@ body.inactive .audit-launcher-view button, .audit-launcher-view button:disabled 
 .audit-result-tree {
     font-size: 11px;
     line-height: 14px;
+    -webkit-user-select: text;
 }
 
 .audit-result-tree > ol {

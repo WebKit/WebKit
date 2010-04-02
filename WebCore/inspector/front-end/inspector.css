@@ -3927,6 +3927,11 @@ ol.breakpoint-list {
     overflow: hidden;
 }
 
+.styles-selector {
+    cursor: text;
+    -webkit-user-select: text;
+}
+
 .workers-list {
     list-style: none;
     margin: 0;

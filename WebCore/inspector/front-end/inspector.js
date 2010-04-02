@@ -1896,6 +1896,10 @@ WebInspector.startEditing = function(element, committedCallback, cancelledCallba
     element.addEventListener("keydown", keyDownEventListener, true);
 
     WebInspector.currentFocusElement = element;
+    return {
+        cancel: editingCancelled.bind(element),
+        commit: editingCommitted.bind(element)
+    };
 }
 
 WebInspector._toolbarItemClicked = function(event)

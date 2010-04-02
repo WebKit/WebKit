@@ -470,8 +470,6 @@ WebInspector.ElementsTreeElement.prototype = {
 
     onattach: function()
     {
-        this.listItemElement.addEventListener("mousedown", this.onmousedown.bind(this), false);
-
         if (this._hovered) {
             this.updateSelection();
             this.listItemElement.addStyleClass("hovered");
@@ -687,12 +685,11 @@ WebInspector.ElementsTreeElement.prototype = {
         this.treeOutline.suppressRevealAndSelect = false;
     },
 
-    onmousedown: function(event)
+    selectOnMouseDown: function(event)
     {
-        if (this._editing)
-            return;
+        TreeElement.prototype.selectOnMouseDown.call(this, event);
 
-        if (this.isEventWithinDisclosureTriangle(event))
+        if (this._editing)
             return;
 
         if (this.treeOutline.showInElementsPanelEnabled) {
@@ -710,7 +707,7 @@ WebInspector.ElementsTreeElement.prototype = {
         if (this._editing || this._elementCloseTag)
             return;
 
-        if (this._startEditingFromEvent(event))
+        if (this._startEditingTarget(event.target))
             return;
 
         if (this.hasChildren && !this.expanded)
@@ -732,7 +729,7 @@ WebInspector.ElementsTreeElement.prototype = {
         this.updateSelection();
     },
 
-    _startEditingFromEvent: function(event)
+    _startEditingTarget: function(eventTarget)
     {
         if (this.treeOutline.focusedDOMNode != this.representedObject)
             return;
@@ -740,19 +737,19 @@ WebInspector.ElementsTreeElement.prototype = {
         if (this.representedObject.nodeType != Node.ELEMENT_NODE && this.representedObject.nodeType != Node.TEXT_NODE)
             return false;
 
-        var textNode = event.target.enclosingNodeOrSelfWithClass("webkit-html-text-node");
+        var textNode = eventTarget.enclosingNodeOrSelfWithClass("webkit-html-text-node");
         if (textNode)
             return this._startEditingTextNode(textNode);
 
-        var attribute = event.target.enclosingNodeOrSelfWithClass("webkit-html-attribute");
+        var attribute = eventTarget.enclosingNodeOrSelfWithClass("webkit-html-attribute");
         if (attribute)
-            return this._startEditingAttribute(attribute, event.target);
+            return this._startEditingAttribute(attribute, eventTarget);
 
-        var tagName = event.target.enclosingNodeOrSelfWithClass("webkit-html-tag-name");
+        var tagName = eventTarget.enclosingNodeOrSelfWithClass("webkit-html-tag-name");
         if (tagName)
             return this._startEditingTagName(tagName);
 
-        var newAttribute = event.target.enclosingNodeOrSelfWithClass("add-attribute");
+        var newAttribute = eventTarget.enclosingNodeOrSelfWithClass("add-attribute");
         if (newAttribute)
             return this._addNewAttribute();
 
@@ -863,9 +860,7 @@ WebInspector.ElementsTreeElement.prototype = {
         // Remove zero-width spaces that were added by nodeTitleInfo.
         removeZeroWidthSpaceRecursive(attribute);
 
-        this._editing = true;
-
-        WebInspector.startEditing(attribute, this._attributeEditingCommitted.bind(this), this._editingCancelled.bind(this), attributeName);
+        this._editing = WebInspector.startEditing(attribute, this._attributeEditingCommitted.bind(this), this._editingCancelled.bind(this), attributeName);
         window.getSelection().setBaseAndExtent(elementForSelection, 0, elementForSelection, 1);
 
         return true;
@@ -876,9 +871,7 @@ WebInspector.ElementsTreeElement.prototype = {
         if (WebInspector.isBeingEdited(textNode))
             return true;
 
-        this._editing = true;
-
-        WebInspector.startEditing(textNode, this._textNodeEditingCommitted.bind(this), this._editingCancelled.bind(this));
+        this._editing = WebInspector.startEditing(textNode, this._textNodeEditingCommitted.bind(this), this._editingCancelled.bind(this));
         window.getSelection().setBaseAndExtent(textNode, 0, textNode, 1);
 
         return true;
@@ -898,8 +891,6 @@ WebInspector.ElementsTreeElement.prototype = {
 
         if (WebInspector.isBeingEdited(tagNameElement))
             return true;
-
-        this._editing = true;
 
         var closingTagElement = this._distinctClosingTagElement();
 
@@ -923,7 +914,7 @@ WebInspector.ElementsTreeElement.prototype = {
 
         tagNameElement.addEventListener('keyup', keyupListener, false);
 
-        WebInspector.startEditing(tagNameElement, editingComitted.bind(this), editingCancelled.bind(this), tagName);
+        this._editing = WebInspector.startEditing(tagNameElement, editingComitted.bind(this), editingCancelled.bind(this), tagName);
         window.getSelection().setBaseAndExtent(tagNameElement, 0, tagNameElement, 1);
         return true;
     },
@@ -932,8 +923,6 @@ WebInspector.ElementsTreeElement.prototype = {
     {
         if (this._htmlEditElement && WebInspector.isBeingEdited(this._htmlEditElement))
             return true;
-
-        this._editing = true;
 
         this._htmlEditElement = document.createElement("div");
         this._htmlEditElement.className = "source-code elements-tree-editor";
@@ -979,7 +968,7 @@ WebInspector.ElementsTreeElement.prototype = {
             this.updateSelection();
         }
 
-        WebInspector.startEditing(this._htmlEditElement, commit.bind(this), dispose.bind(this), null, true);
+        this._editing = WebInspector.startEditing(this._htmlEditElement, commit.bind(this), dispose.bind(this), null, true);
     },
 
     _attributeEditingCommitted: function(element, newText, oldText, attributeName, moveDirection)
@@ -1254,7 +1243,7 @@ WebInspector.ElementsTreeElement.prototype = {
     {
         var node = this.representedObject;
         var result = "<span class=\"webkit-html-tag" + (isClosingTag && isDistinctTreeElement ? " close" : "")  + "\">&lt;";
-        result += "<span class=\"webkit-html-tag-name\">" + (isClosingTag ? "/" : "") + tagName + "</span>";
+        result += "<span " + (isClosingTag ? "" : "class=\"webkit-html-tag-name\"") + ">" + (isClosingTag ? "/" : "") + tagName + "</span>";
         if (!isClosingTag && node.hasAttributes()) {
             for (var i = 0; i < node.attributes.length; ++i) {
                 var attr = node.attributes[i];

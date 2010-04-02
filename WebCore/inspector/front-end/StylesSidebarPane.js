@@ -542,9 +542,9 @@ WebInspector.StylePropertiesSection = function(styleRule, subtitle, computedStyl
 {
     WebInspector.PropertiesSection.call(this, styleRule.selectorText);
 
-    this.titleElement.addEventListener("dblclick", this._dblclickSelector.bind(this), false);
-    this.titleElement.addEventListener("click", this._clickSelector.bind(this), false);
-    this.element.addEventListener("dblclick", this._dblclickEmptySpace.bind(this), false);
+    this.titleElement.addEventListener("dblclick", this._handleSelectorDoubleClick.bind(this), false);
+    this.titleElement.addEventListener("click", this._handleSelectorClick.bind(this), false);
+    this.element.addEventListener("dblclick", this._handleEmptySpaceDoubleClick.bind(this), false);
 
     this.styleRule = styleRule;
     this.rule = this.styleRule.rule;
@@ -561,6 +561,9 @@ WebInspector.StylePropertiesSection = function(styleRule, subtitle, computedStyl
         this.editable = false;
 
     this._usedProperties = usedProperties;
+
+    if (this.rule)
+        this.titleElement.addStyleClass("styles-selector");
 
     if (computedStyle) {
         this.element.addStyleClass("computed-style");
@@ -762,7 +765,7 @@ WebInspector.StylePropertiesSection.prototype = {
         return item;
     },
 
-    _dblclickEmptySpace: function(event)
+    _handleEmptySpaceDoubleClick: function(event)
     {
         if (event.target.hasStyleClass("header")) {
             event.stopPropagation();
@@ -772,12 +775,18 @@ WebInspector.StylePropertiesSection.prototype = {
         this.addNewBlankProperty().startEditing();
     },
 
-    _clickSelector: function(event)
+    _handleSelectorClick: function(event)
     {
         event.stopPropagation();
     },
 
-    _dblclickSelector: function(event)
+    _handleSelectorDoubleClick: function(event)
+    {
+        this._startEditingOnMouseEvent();
+        event.stopPropagation();
+    },
+
+    _startEditingOnMouseEvent: function()
     {
         if (!this.editable)
             return;
@@ -792,7 +801,6 @@ WebInspector.StylePropertiesSection.prototype = {
             return;
 
         this.startEditingSelector();
-        event.stopPropagation();
     },
 
     startEditingSelector: function()

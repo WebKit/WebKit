@@ -1,3 +1,36 @@
+2010-04-01  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: start editing DOM and styles on click-and-pause.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36965
+
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype.onattach):
+        (WebInspector.ElementsTreeElement.prototype.selectOnMouseDown):
+        (WebInspector.ElementsTreeElement.prototype.ondblclick):
+        (WebInspector.ElementsTreeElement.prototype._handleClickAndPause):
+        (WebInspector.ElementsTreeElement.prototype._startEditingTarget):
+        (WebInspector.ElementsTreeElement.prototype._startEditingAttribute):
+        (WebInspector.ElementsTreeElement.prototype._startEditingTextNode):
+        (WebInspector.ElementsTreeElement.prototype._startEditingTagName):
+        (WebInspector.ElementsTreeElement.prototype._startEditingAsHTML):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertiesSection.prototype._handleEmptySpaceDoubleClick):
+        (WebInspector.StylePropertiesSection.prototype._handleSelectorClick):
+        (WebInspector.StylePropertiesSection.prototype._handleSelectorClickAndPause):
+        (WebInspector.StylePropertiesSection.prototype._handleSelectorDoubleClick):
+        (WebInspector.StylePropertiesSection.prototype._startEditingOnMouseEvent):
+        (WebInspector.StylePropertyTreeElement.prototype.onattach):
+        (WebInspector.StylePropertyTreeElement.prototype):
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/inspector.js:
+        * inspector/front-end/treeoutline.js:
+        (TreeElement.prototype._attach):
+        (TreeElement.treeElementMouseDown):
+        (TreeElement.prototype.selectOnMouseDown):
+
 2010-04-02  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Unreviewed build fix when building --no-svg.
