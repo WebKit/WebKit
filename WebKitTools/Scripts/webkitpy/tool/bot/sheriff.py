@@ -52,11 +52,17 @@ class Sheriff(object):
         self._tool.irc().post(irc_message)
 
     def post_rollout_patch(self, svn_revision, rollout_reason):
-        # Ensure that svn_revision is a number (and not an option to create-rollout).
+        # Ensure that svn_revision is a number (and not an option to
+        # create-rollout).
         try:
             svn_revision = int(svn_revision)
         except:
-            raise ScriptError(message="Invalid svn revision number \"%s\"." % svn_revision)
+            raise ScriptError(message="Invalid svn revision number \"%s\"."
+                              % svn_revision)
+
+        if rollout_reason.startswith("-"):
+            raise ScriptError(message="The rollout reason may not begin "
+                              "with - (\"%s\")." % rollout_reason)
 
         output = self._sheriffbot.run_webkit_patch([
             "create-rollout",

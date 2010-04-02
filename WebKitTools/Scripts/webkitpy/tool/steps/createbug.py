@@ -44,5 +44,5 @@ class CreateBug(AbstractStep):
             return
         cc = self._options.cc
         if not cc:
-            cc = state["bug_cc"]
+            cc = state.get("bug_cc")
         state["bug_id"] = self._tool.bugs.create_bug(state["bug_title"], state["bug_description"], blocked=state.get("bug_blocked"), component=self._options.component, cc=cc)

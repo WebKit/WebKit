@@ -73,6 +73,17 @@ class SheriffIRCBotTest(unittest.TestCase):
                                              "--component=Tools 21654"],
                                        expected_stderr=expected_stderr)
 
+    def test_rollout_invalidate_reason(self):
+        expected_stderr = ("MOCK: irc.post: Preparing rollout for "
+                           "r21654...\nMOCK: irc.post: mock_nick: Failed to "
+                           "create rollout patch:\nMOCK: irc.post: The rollout"
+                           " reason may not begin with - (\"-bad (Requested "
+                           "by mock_nick on #webkit).\").\n")
+        OutputCapture().assert_outputs(self, run,
+                                       args=["rollout "
+                                             "21654 -bad"],
+                                       expected_stderr=expected_stderr)
+
     def test_rollout_no_reason(self):
         expected_stderr = "MOCK: irc.post: mock_nick: Usage: SVN_REVISION REASON\n"
         OutputCapture().assert_outputs(self, run, args=["rollout 21654"], expected_stderr=expected_stderr)
