@@ -78,7 +78,7 @@ def main():
 
     # Checking for the verbose flag before calling check_webkit_style_parser()
     # lets us enable verbose logging earlier.
-    is_verbose = "--verbose" in args
+    is_verbose = "-v" in args or "--verbose" in args
 
     checker.configure_logging(stream=stderr, is_verbose=is_verbose)
     _log.debug("Verbose logging enabled.")

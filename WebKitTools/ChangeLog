@@ -1,3 +1,13 @@
+2010-04-02  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Unreviewed.
+
+        Fixed check-webkit-style to recognize the short form of the
+        --verbose option, as stated in --help.
+
+        * Scripts/check-webkit-style:
+          - Tweaked one line.
+
 2010-04-02  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix for DumpRenderTree after addition of layerTreeAsText.
