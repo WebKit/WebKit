@@ -1,3 +1,14 @@
+2010-04-02  Rafael Weinstein  <rafaelw@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Clean up unused calls after changes to checkPermission and requestPermission argument lists.
+
+        * public/WebNotificationPresenter.h:
+        * src/NotificationPresenterImpl.cpp:
+        (WebKit::NotificationPresenterImpl::checkPermission):
+        (WebKit::NotificationPresenterImpl::requestPermission):
+
 2010-04-02  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Eric Seidel.

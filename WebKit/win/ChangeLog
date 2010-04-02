@@ -1,3 +1,13 @@
+2010-04-02  Rafael Weinstein  <rafaelw@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Clean up unused calls after changes to checkPermission and requestPermission argument lists.
+
+        * WebCoreSupport/WebDesktopNotificationsDelegate.cpp:
+        (WebDesktopNotificationsDelegate::requestPermission):
+        * WebCoreSupport/WebDesktopNotificationsDelegate.h:
+
 2010-04-01  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.
