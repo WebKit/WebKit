@@ -1,3 +1,39 @@
+2010-04-02  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Re-wrote check-webkit-style's argument parsing code to use
+        Python's optparser module and more uniform error-handling logic.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34676
+
+        * Scripts/webkitpy/style/optparser.py:
+          - Removed "option help" from check-webkit-style's usage string
+            since that is provided separately by the OptionParser class.
+          - Also changed the usage string from a function to a constant
+            string _USAGE.
+          - Added an _EPILOG string which renders after OptionParser's
+            usage string and option help.
+          - In the ArgumentParser class:
+            - Changed the constructor's stderr_write parameter to a
+              mock_stderr since the OptionParser accepts a sys.stderr
+              substitute rather than a sys.stderr.write substitute.
+            - Changed the constructor to set a _parser data attribute with
+              an OptionParser instance.
+            - Added a _create_option_parser() method which instantiates
+              the OptionParser.
+            - Updated _exit_with_help() to interact with the OptionParser's
+              help method.
+            - Updated the parse() method as necessary.  Also changed the
+              raising of ValueErrors to calls to _exit_with_help().
+
+        * Scripts/webkitpy/style/optparser_unittest.py:
+          - Removed the CreateUsageTest class since the create_usage method
+            was replaced by a constant string.
+          - Added a _MockStdErr class to the ArgumentParserTest class.
+          - Updated the unit tests as necessary.
+
+
 2010-04-02  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

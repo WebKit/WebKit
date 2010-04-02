@@ -22,7 +22,7 @@
 
 """Supports the parsing of command-line options for check-webkit-style."""
 
-import getopt
+from optparse import OptionParser
 import logging
 import os.path
 import sys
@@ -32,78 +32,42 @@ from filter import validate_filter_rules
 
 _log = logging.getLogger(__name__)
 
+_USAGE = """usage: %prog [--help] [options] [path1] [path2] ...
 
-def _create_usage(default_options):
-    """Return the usage string to display for command help.
+Overview:
+  Check coding style according to WebKit style guidelines:
 
-    Args:
-      default_options: A DefaultCommandOptionValues instance.
+      http://webkit.org/coding/coding-style.html
 
-    """
-    usage = """
-Syntax: %(program_name)s [--filter=-x,+y,...] [--git-commit=<SingleCommit>]
-        [--min-confidence=#] [--output=vs7] [--verbose] [file or directory] ...
+  Path arguments can be files and directories.  If neither a git commit nor
+  paths are passed, then all changes in your source control working directory
+  are checked.
 
-  The style guidelines this tries to follow are here:
-    http://webkit.org/coding/coding-style.html
+Style errors:
+  This script assigns to every style error a confidence score from 1-5 and
+  a category name.  A confidence score of 5 means the error is certainly
+  a problem, and 1 means it could be fine.
 
-  Every style error is given a confidence score from 1-5, with 5 meaning
-  we are certain of the problem, and 1 meaning it could be a legitimate
-  construct.  This can miss some errors and does not substitute for
-  code review.
+  Category names appear in error messages in brackets, for example
+  [whitespace/indent].  See the options section below for an option that
+  displays all available categories and which are reported by default.
 
-  To prevent specific lines from being linted, add a '// NOLINT' comment to the
-  end of the line.
+Filters:
+  Use filters to configure what errors to report.  Filters are specified using
+  a comma-separated list of boolean filter rules.  The script reports errors
+  in a category if the category passes the filter, as described below.
 
-  Linted extensions are .cpp, .c and .h.  Other file types are ignored.
+  All categories start out passing.  Boolean filter rules are then evaluated
+  from left to right, with later rules taking precedence.  For example, the
+  rule "+foo" passes any category that starts with "foo", and "-foo" fails
+  any such category.  The filter input "-whitespace,+whitespace/braces" fails
+  the category "whitespace/tab" and passes "whitespace/braces".
 
-  The file parameter is optional and accepts multiple files.  Leaving
-  out the file parameter applies the check to all files considered changed
-  by your source control management system.
+  Examples: --filter=-whitespace,+whitespace/braces
+            --filter=-whitespace,-runtime/printf,+runtime/printf_format
+            --filter=-,+build/include_what_you_use
 
-  Flags:
-
-    filter=-x,+y,...
-      A comma-separated list of boolean filter rules used to filter
-      which categories of style guidelines to check.  The script checks
-      a category if the category passes the filter rules, as follows.
-
-      Any webkit category starts out passing.  All filter rules are then
-      evaluated left to right, with later rules taking precedence.  For
-      example, the rule "+foo" passes any category that starts with "foo",
-      and "-foo" fails any such category.  The filter input "-whitespace,
-      +whitespace/braces" fails the category "whitespace/tab" and passes
-      "whitespace/braces".
-
-      Examples: --filter=-whitespace,+whitespace/braces
-                --filter=-whitespace,-runtime/printf,+runtime/printf_format
-                --filter=-,+build/include_what_you_use
-
-      Category names appear in error messages in brackets, for example
-      [whitespace/indent].  To see a list of all categories available to
-      %(program_name)s, along with which are enabled by default, pass
-      the empty filter as follows:
-         --filter=
-
-    git-commit=<SingleCommit>
-      Checks the style of everything from the given commit to the local tree.
-
-    min-confidence=#
-      An integer between 1 and 5 inclusive that is the minimum confidence
-      level of style errors to report.  In particular, the value 1 displays
-      all errors.  The default is %(default_min_confidence)s.
-
-    output=vs7
-      The output format, which may be one of
-        emacs : to ease emacs parsing
-        vs7   : compatible with Visual Studio
-      Defaults to "%(default_output_format)s". Other formats are unsupported.
-
-    verbose
-      Logging is verbose if this flag is present.
-
-Path considerations:
-
+Paths:
   Certain style-checking behavior depends on the paths relative to
   the WebKit source root of the files being checked.  For example,
   certain types of errors may be handled differently for files in
@@ -131,13 +95,10 @@ Path considerations:
   checking only files in the source tree will ensure that all style
   checking behaves correctly -- whether or not a checkout can be
   detected.  This is because all file paths will already be relative
-  to the source root and so will not need to be converted.
+  to the source root and so will not need to be converted."""
 
-""" % {'program_name': os.path.basename(sys.argv[0]),
-       'default_min_confidence': default_options.min_confidence,
-       'default_output_format': default_options.output_format}
-
-    return usage
+_EPILOG = ("This script can miss errors and does not substitute for "
+           "code review.")
 
 
 # This class should not have knowledge of the flag key names.
@@ -262,7 +223,6 @@ class ArgumentPrinter(object):
         return flag_string.strip()
 
 
-# FIXME: Replace the use of getopt.getopt() with optparse.OptionParser.
 class ArgumentParser(object):
 
     # FIXME: Move the documentation of the attributes to the __init__
@@ -287,8 +247,8 @@ class ArgumentParser(object):
                  all_categories,
                  default_options,
                  base_filter_rules=None,
-                 create_usage=None,
-                 stderr_write=None):
+                 mock_stderr=None,
+                 usage=None):
         """Create an ArgumentParser instance.
 
         Args:
@@ -310,31 +270,101 @@ class ArgumentParser(object):
         """
         if base_filter_rules is None:
             base_filter_rules = []
-        if create_usage is None:
-            create_usage = _create_usage
-        if stderr_write is None:
-            stderr_write = sys.stderr.write
+        stderr = sys.stderr if mock_stderr is None else mock_stderr
+        if usage is None:
+            usage = _USAGE
 
         self._all_categories = all_categories
         self._base_filter_rules = base_filter_rules
-        # FIXME: Rename these to reflect that they are internal.
-        self.create_usage = create_usage
-        self.default_options = default_options
-        self.stderr_write = stderr_write
 
-    def _exit_with_usage(self, error_message=''):
+        # FIXME: Rename these to reflect that they are internal.
+        self.default_options = default_options
+        self.stderr_write = stderr.write
+
+        self._parser = self._create_option_parser(stderr=stderr,
+            usage=usage,
+            default_min_confidence=self.default_options.min_confidence,
+            default_output_format=self.default_options.output_format)
+
+    def _create_option_parser(self, stderr, usage,
+                              default_min_confidence, default_output_format):
+        # Since the epilog string is short, it is not necessary to replace
+        # the epilog string with a mock epilog string when testing.
+        # For this reason, we use _EPILOG directly rather than passing it
+        # as an argument like we do for the usage string.
+        parser = OptionParser(usage=usage, epilog=_EPILOG)
+
+        filter_help = ('set a filter to control what categories of style '
+                       'errors to report.  Specify a filter using a comma-'
+                       'delimited list of boolean filter rules, for example '
+                       '"--filter -whitespace,+whitespace/braces".  To display '
+                       'all categories and which are enabled by default, pass '
+                       """no value (e.g. '-f ""' or '--filter=').""")
+        parser.add_option("-f", "--filter-rules", metavar="RULES",
+                          dest="filter_value", help=filter_help)
+
+        git_help = "check all changes after the given git commit."
+        parser.add_option("-g", "--git-commit", "--git-diff", "--git-since",
+                          metavar="COMMIT", dest="git_since", help=git_help,)
+
+        min_confidence_help = ("set the minimum confidence of style errors "
+                               "to report.  Can be an integer 1-5, with 1 "
+                               "displaying all errors.  Defaults to %default.")
+        parser.add_option("-m", "--min-confidence", metavar="INT",
+                          type="int", dest="min_confidence",
+                          default=default_min_confidence,
+                          help=min_confidence_help)
+
+        output_format_help = ('set the output format, which can be "emacs" '
+                              'or "vs7" (for Visual Studio).  '
+                              'Defaults to "%default".')
+        parser.add_option("-o", "--output-format", metavar="FORMAT",
+                          choices=["emacs", "vs7"],
+                          dest="output_format", default=default_output_format,
+                          help=output_format_help)
+
+        verbose_help = "enable verbose logging."
+        parser.add_option("-v", "--verbose", dest="is_verbose", default=False,
+                          action="store_true", help=verbose_help)
+
+        # Override OptionParser's error() method so that option help will
+        # also display when an error occurs.  Normally, just the usage
+        # string displays and not option help.
+        parser.error = self._exit_with_help
+
+        # Override OptionParser's print_help() method so that help output
+        # does not render to the screen while running unit tests.
+        print_help = parser.print_help
+        parser.print_help = lambda: print_help(file=stderr)
+
+        return parser
+
+    def _exit_with_help(self, error_message=None):
         """Exit and print a usage string with an optional error message.
 
         Args:
           error_message: A string that is an error message to print.
 
         """
-        usage = self.create_usage(self.default_options)
-        self.stderr_write(usage)
+        # The method format_help() includes both the usage string and
+        # the flag options.
+        help = self._parser.format_help()
+        # Separate help from the error message with a single blank line.
+        self.stderr_write(help + "\n")
         if error_message:
-            sys.exit('\nFATAL ERROR: ' + error_message)
-        else:
-            sys.exit(1)
+            _log.error(error_message)
+
+        # Since we are using this method to replace/override the Python
+        # module optparse's OptionParser.error() method, we match its
+        # behavior and exit with status code 2.
+        #
+        # As additional background, Python documentation says--
+        #
+        # "Unix programs generally use 2 for command line syntax errors
+        #  and 1 for all other kind of errors."
+        #
+        # (from http://docs.python.org/library/sys.html#sys.exit )
+        sys.exit(2)
 
     def _exit_with_categories(self):
         """Exit and print the style categories and default filter rules."""
@@ -381,69 +411,48 @@ class ArgumentParser(object):
           options: A CommandOptionValues instance.
 
         """
-        is_verbose = False
-        min_confidence = self.default_options.min_confidence
-        output_format = self.default_options.output_format
+        (options, paths) = self._parser.parse_args(args=args)
 
-        # The flags that the CommandOptionValues class supports.
-        flags = ['filter=', 'git-commit=', 'help', 'min-confidence=',
-                 'output=', 'verbose']
+        filter_value = options.filter_value
+        git_commit = options.git_since
+        is_verbose = options.is_verbose
+        min_confidence = options.min_confidence
+        output_format = options.output_format
 
-        try:
-            (opts, paths) = getopt.getopt(args, '', flags)
-        except getopt.GetoptError, err:
-            # FIXME: Settle on an error handling approach: come up
-            #        with a consistent guideline as to when and whether
-            #        a ValueError should be raised versus calling
-            #        sys.exit when needing to interrupt execution.
-            self._exit_with_usage('Invalid arguments: %s' % err)
+        if filter_value is not None and not filter_value:
+            # Then the user explicitly passed no filter, for
+            # example "-f ''" or "--filter=".
+            self._exit_with_categories()
 
-        git_commit = None
-        filter_rules = []
+        # Validate user-provided values.
 
-        for (opt, val) in opts:
-            # Process --help first (out of alphabetical order).
-            if opt == '--help':
-                self._exit_with_usage()
-            elif opt == '--filter':
-                if not val:
-                    self._exit_with_categories()
-                filter_rules = self._parse_filter_flag(val)
-            elif opt == '--git-commit':
-                git_commit = val
-            elif opt == '--min-confidence':
-                min_confidence = val
-            elif opt == '--output':
-                output_format = val
-            elif opt == "--verbose":
-                is_verbose = True
-            else:
-                # We should never get here because getopt.getopt()
-                # raises an error in this case.
-                raise ValueError('Invalid option: "%s"' % opt)
-
-        # Check validity of resulting values.
+        # FIXME: Move the checkout error outside of this module.  The parse
+        #        method should not need to know whether a checkout was found.
         if not found_checkout and not paths:
             _log.error("WebKit checkout not found: You must run this script "
                        "from inside a WebKit checkout if you are not passing "
                        "specific paths to check.")
             sys.exit(1)
 
-        if paths and (git_commit != None):
-            self._exit_with_usage('It is not possible to check files and a '
-                                  'specific commit at the same time.')
-
-        if output_format not in ('emacs', 'vs7'):
-            raise ValueError('Invalid --output value "%s": The only '
-                             'allowed output formats are emacs and vs7.' %
-                             output_format)
-
-        validate_filter_rules(filter_rules, self._all_categories)
+        if paths and git_commit:
+            self._exit_with_help('You cannot provide both paths and a git '
+                                 'commit at the same time.')
 
         min_confidence = int(min_confidence)
         if (min_confidence < 1) or (min_confidence > 5):
-            raise ValueError('Invalid --min-confidence value %s: value must '
-                             'be between 1 and 5 inclusive.' % min_confidence)
+            self._exit_with_help('option --min-confidence: invalid integer: '
+                                 '%s: value must be between 1 and 5'
+                                 % min_confidence)
+
+        if filter_value:
+            filter_rules = self._parse_filter_flag(filter_value)
+        else:
+            filter_rules = []
+
+        try:
+            validate_filter_rules(filter_rules, self._all_categories)
+        except ValueError, err:
+            self._exit_with_help(err)
 
         options = CommandOptionValues(filter_rules=filter_rules,
                                       git_commit=git_commit,

@@ -24,23 +24,11 @@
 
 import unittest
 
-from optparser import _create_usage
 from optparser import ArgumentParser
 from optparser import ArgumentPrinter
 from optparser import CommandOptionValues as ProcessorOptions
 from optparser import DefaultCommandOptionValues
 from webkitpy.style_references import LogTesting
-
-
-class CreateUsageTest(unittest.TestCase):
-
-    """Tests the _create_usage() function."""
-
-    def test_create_usage(self):
-        default_options = DefaultCommandOptionValues(min_confidence=3,
-                                                     output_format="vs7")
-        # Exercise the code path to make sure the function does not error out.
-        _create_usage(default_options)
 
 
 class ArgumentPrinterTest(unittest.TestCase):
@@ -76,6 +64,13 @@ class ArgumentParserTest(unittest.TestCase):
 
     """Test the ArgumentParser class."""
 
+    class _MockStdErr(object):
+
+        def write(self, message):
+            # We do not want the usage string or style categories
+            # to print during unit tests, so print nothing.
+            return
+
     def setUp(self):
         self._log = LogTesting.setUp(self)
 
@@ -96,18 +91,17 @@ class ArgumentParserTest(unittest.TestCase):
 
     def _create_parser(self):
         """Return an ArgumentParser instance for testing."""
-        def stderr_write(message):
-            # We do not want the usage string or style categories
-            # to print during unit tests, so print nothing.
-            return
-
         default_options = self._create_defaults()
 
         all_categories = ["build" ,"whitespace"]
+
+        mock_stderr = self._MockStdErr()
+
         return ArgumentParser(all_categories=all_categories,
                               base_filter_rules=[],
                               default_options=default_options,
-                              stderr_write=stderr_write)
+                              mock_stderr=mock_stderr,
+                              usage="test usage")
 
     def test_parse_documentation(self):
         parse = self._parse
@@ -125,21 +119,41 @@ class ArgumentParserTest(unittest.TestCase):
 
         # Pass an unsupported argument.
         self.assertRaises(SystemExit, parse, ['--bad'])
+        self._log.assertMessages(['ERROR: no such option: --bad\n'])
 
-        self.assertRaises(ValueError, parse, ['--min-confidence=bad'])
-        self.assertRaises(ValueError, parse, ['--min-confidence=0'])
-        self.assertRaises(ValueError, parse, ['--min-confidence=6'])
+        self.assertRaises(SystemExit, parse, ['--min-confidence=bad'])
+        self._log.assertMessages(["ERROR: option --min-confidence: invalid "
+                                  "integer value: 'bad'\n"])
+        self.assertRaises(SystemExit, parse, ['--min-confidence=0'])
+        self._log.assertMessages(['ERROR: option --min-confidence: invalid '
+                                  'integer: 0: value must be between 1 and '
+                                  '5\n'])
+        self.assertRaises(SystemExit, parse, ['--min-confidence=6'])
+        self._log.assertMessages(['ERROR: option --min-confidence: invalid '
+                                  'integer: 6: value must be between 1 and '
+                                  '5\n'])
         parse(['--min-confidence=1']) # works
         parse(['--min-confidence=5']) # works
 
-        self.assertRaises(ValueError, parse, ['--output=bad'])
+        self.assertRaises(SystemExit, parse, ['--output=bad'])
+        self._log.assertMessages(["ERROR: option --output-format: invalid "
+                                  "choice: 'bad' (choose from 'emacs', "
+                                  "'vs7')\n"])
         parse(['--output=vs7']) # works
 
         # Pass a filter rule not beginning with + or -.
-        self.assertRaises(ValueError, parse, ['--filter=build'])
+        self.assertRaises(SystemExit, parse, ['--filter=build'])
+        self._log.assertMessages(['ERROR: Invalid filter rule "build": every '
+                                  'rule must start with + or -.\n'])
         parse(['--filter=+build']) # works
         # Pass files and git-commit at the same time.
-        self.assertRaises(SystemExit, parse, ['--git-commit=', 'file.txt'])
+        self.assertRaises(SystemExit, parse, ['--git-commit=committish',
+                                              'file.txt'])
+        self._log.assertMessages(['ERROR: You cannot provide both paths and '
+                                  'a git commit at the same time.\n'])
+
+    def test_parse_no_paths_without_scm(self):
+        parse = self._parse
 
         # Paths must be passed when found_scm is False.
         self.assertRaises(SystemExit, parse, [], found_scm=False)
@@ -147,7 +161,9 @@ class ArgumentParserTest(unittest.TestCase):
                     "script from inside a WebKit checkout if you are not "
                     "passing specific paths to check.\n"]
         self._log.assertMessages(messages)
-        self.assertRaises(SystemExit, parse, ['--verbose=3'], found_scm=False)
+        # Test one more variant.
+        self.assertRaises(SystemExit, parse, ['--output=vs7'], found_scm=False)
+        self._log.assertMessages(messages)
 
     def test_parse_default_arguments(self):
         parse = self._parse
