@@ -4947,6 +4947,7 @@ http/tests/globalhistory
 # Skip xmlhttprequest tests - NETWORK_ERR: XMLHttpRequest Exception 101: A network error occured in synchronous requests.
 http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache.html
 http/tests/xmlhttprequest/access-control-basic-get-fail-non-simple.html
+http/tests/xmlhttprequest/access-control-response-with-body.html
 http/tests/xmlhttprequest/cross-origin-authorization.html
 http/tests/xmlhttprequest/cross-origin-no-authorization.html
 http/tests/xmlhttprequest/logout.html

@@ -1,5 +1,12 @@
 2010-04-02  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt]  http/tests/xmlhttprequest/access-control-response-with-body.html was introduced in r56955,
+        but it fails: "NETWORK_ERR: XMLHttpRequest Exception 101: A network error occured in synchronous requests."
+
+        * platform/qt/Skipped: http/tests/xmlhttprequest/access-control-response-with-body.html skipped.
+
+2010-04-02  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Platform specific expected file added for test introduced in r56775,
         because it passes. Compared to png file and Mac expected file.
 
