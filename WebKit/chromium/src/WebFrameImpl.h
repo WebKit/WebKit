@@ -101,6 +101,8 @@ public:
     virtual void addMessageToConsole(const WebConsoleMessage&);
     virtual void collectGarbage();
 #if WEBKIT_USING_V8
+    virtual v8::Handle<v8::Value> executeScriptAndReturnValue(
+        const WebScriptSource&);
     virtual v8::Local<v8::Context> mainWorldScriptContext() const;
 #endif
     virtual bool insertStyleText(const WebString& css, const WebString& id);

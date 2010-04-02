@@ -1,3 +1,16 @@
+2010-04-01  Jay Civelli  <jcivelli@google.com>
+
+        Reviewed by David Levin.
+
+        Adds a method to WebFrame to execute JavaScript and get the value
+        it evaluates to.
+        https://bugs.webkit.org/show_bug.cgi?id=36907
+
+        * public/WebFrame.h:
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::executeScriptAndReturnValue):
+        * src/WebFrameImpl.h:
+
 2010-04-01  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Dmitry Titov.

@@ -779,6 +779,13 @@ void WebFrameImpl::collectGarbage()
 }
 
 #if USE(V8)
+v8::Handle<v8::Value> WebFrameImpl::executeScriptAndReturnValue(
+    const WebScriptSource& source)
+{
+    return m_frame->script()->executeScript(
+        ScriptSourceCode(source.code, source.url, source.startLine)).v8Value();
+}
+
 // Returns the V8 context for this frame, or an empty handle if there is none.
 v8::Local<v8::Context> WebFrameImpl::mainWorldScriptContext() const
 {

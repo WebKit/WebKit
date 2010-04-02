@@ -39,6 +39,8 @@ struct NPObject;
 #if WEBKIT_USING_V8
 namespace v8 {
 class Context;
+class Value;
+template <class T> class Handle;
 template <class T> class Local;
 }
 #endif
@@ -225,6 +227,11 @@ public:
     virtual void collectGarbage() = 0;
 
 #if WEBKIT_USING_V8
+    // Executes script in the context of the current page and returns the value
+    // that the script evaluated to.
+    virtual v8::Handle<v8::Value> executeScriptAndReturnValue(
+        const WebScriptSource&) = 0;
+
     // Returns the V8 context for this frame, or an empty handle if there
     // is none.
     virtual v8::Local<v8::Context> mainWorldScriptContext() const = 0;
