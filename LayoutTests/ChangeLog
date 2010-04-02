@@ -1,3 +1,15 @@
+2010-04-02  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Incorrect insertion position after typing 'ำ' (THAI CHARACTER SARA AM = 0E33)
+        https://bugs.webkit.org/show_bug.cgi?id=36858
+
+        Add failing results for Tiger to make the Tiger bot green.
+        We may wish to actually fix Tiger at some point.
+
+        * platform/mac-tiger/fast/text/multiglyph-characters-expected.txt: Added.
+
 2010-04-02  Darin Fisher  <darin@chromium.org>
 
         Add chromium suppression for http/tests/xhtmlmp since we do not support
