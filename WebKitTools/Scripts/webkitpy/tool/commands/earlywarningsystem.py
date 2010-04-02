@@ -118,12 +118,21 @@ class WinEWS(AbstractEarlyWarningSystem):
     port_name = "win"
 
 
-class ChromiumEWS(AbstractEarlyWarningSystem):
-    name = "chromium-ews"
+class AbstractChromiumEWS(AbstractEarlyWarningSystem):
     port_name = "chromium"
     watchers = AbstractEarlyWarningSystem.watchers + [
         "dglazkov@chromium.org",
     ]
+
+
+class ChromiumLinuxEWS(AbstractChromiumEWS):
+    # FIXME: We should rename this command to cr-linux-ews, but that requires
+    #        a database migration. :(
+    name = "chromium-ews"
+
+
+class ChromiumWindowsEWS(AbstractChromiumEWS):
+    name = "cr-win-ews"
 
 
 # For platforms that we can't run inside a VM (like Mac OS X), we require

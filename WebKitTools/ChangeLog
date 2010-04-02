@@ -2,6 +2,20 @@
 
         Reviewed by Eric Seidel.
 
+        Add cr-win-ews
+        https://bugs.webkit.org/show_bug.cgi?id=36974
+
+        Adds support for an Early Warning System for Chromium on Linux.  The
+        interface to the Chromium port is the same on every platform, so we
+        don't need to create a new Port object for this queue.
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+
+2010-04-01  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Using a failure exit code when failing to load a required import
         https://bugs.webkit.org/show_bug.cgi?id=37000
 
