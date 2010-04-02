@@ -1,3 +1,20 @@
+2010-04-01  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Maemo5 theme - <select multiple> custom rendering
+        https://bugs.webkit.org/show_bug.cgi?id=36369
+
+        Customizing rendering of <select multiple> elements in Maemo5.
+
+        * platform/qt/Maemo5Webstyle.cpp:
+        (Maemo5WebStyle::drawMultipleComboButton):
+        (Maemo5WebStyle::drawSimpleComboButton):
+        (Maemo5WebStyle::getButtonImageSize):
+        (Maemo5WebStyle::findComboButton):
+        (Maemo5WebStyle::drawComplexControl):
+        * platform/qt/Maemo5Webstyle.h:
+
 2010-04-01  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Dmitry Titov.

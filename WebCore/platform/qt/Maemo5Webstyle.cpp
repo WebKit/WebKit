@@ -20,6 +20,8 @@
 #include "config.h"
 #include "Maemo5Webstyle.h"
 
+#include "QtStyleOptionWebComboBox.h"
+
 #include <QPainter>
 #include <QPixmapCache>
 #include <QStyleOption>
@@ -153,11 +155,89 @@ void Maemo5WebStyle::drawControl(ControlElement element, const QStyleOption* opt
     }
 }
 
+void Maemo5WebStyle::drawMultipleComboButton(QPainter* painter, const QSize& size, QColor color) const
+{
+    int rectWidth = size.width() - 1;
+    int width = qMax(2, rectWidth >> 3);
+    int distance = (rectWidth - 3 * width) >> 1;
+    int top = (size.height() - width) >> 1;
+
+    painter->setPen(color);
+    painter->setBrush(color);
+
+    painter->drawRect(0, top, width, width);
+    painter->drawRect(width + distance, top, width, width);
+    painter->drawRect(2 * (width + distance), top, width, width);
+}
+
+void Maemo5WebStyle::drawSimpleComboButton(QPainter* painter, const QSize& size, QColor color) const
+{
+    QPolygon polygon;
+    int width = size.width();
+    polygon.setPoints(3, 0, 0,  width - 1, 0,  width >> 1, size.height());
+    painter->setPen(color);
+    painter->setBrush(color);
+    painter->drawPolygon(polygon);
+}
+
+QSize Maemo5WebStyle::getButtonImageSize(const QSize& buttonSize) const
+{
+    const int border = qMax(3, buttonSize.width() >> 3) << 1;
+
+    int width = buttonSize.width() - border;
+    int height = buttonSize.height() - border;
+
+    if (width < 0 || height < 0)
+        return QSize();
+
+    if (height >= (width >> 1))
+        width = width >> 1 << 1;
+    else
+        width = height << 1;
+
+    return QSize(width + 1, width >> 1);
+}
+
+QPixmap Maemo5WebStyle::findComboButton(const QSize& size, bool multiple, bool disabled) const
+{
+    QPixmap result;
+    QSize imageSize = getButtonImageSize(size);
+
+    if (imageSize.isNull())
+        return QPixmap();
+    static const QString prefix = "$qt-maemo5-" + QLatin1String(metaObject()->className()) + "-combo-";
+    QString key = prefix + (multiple ? "multiple-" : "simple-") +
+                  QString::number(imageSize.width()) + "-" + QString::number(imageSize.height()) +
+                   + "-" + (disabled ? "disabled" : "enabled");
+    if (!QPixmapCache::find(key, result)) {
+        result = QPixmap(imageSize);
+        result.fill(Qt::transparent);
+        QPainter painter(&result);
+        if (multiple)
+            drawMultipleComboButton(&painter, imageSize, disabled ? Qt::gray : Qt::black);
+        else
+            drawSimpleComboButton(&painter, imageSize, disabled ? Qt::gray : Qt::black);
+        QPixmapCache::insert(key, result);
+    }
+    return result;
+}
+
 void Maemo5WebStyle::drawComplexControl(ComplexControl control, const QStyleOptionComplex* option, QPainter* painter, const QWidget* widget) const
 {
     switch (control) {
     case CC_ComboBox: {
-        const QStyleOptionComboBox* cmb = qstyleoption_cast<const QStyleOptionComboBox*>(option);
+
+        bool multiple = false;
+        const bool disabled = !(option->state & State_Enabled);
+
+        const QStyleOptionComboBox* cmb = 0;
+        const WebCore::QtStyleOptionWebComboBox* webCombo = static_cast<const WebCore::QtStyleOptionWebComboBox*>(option);
+
+        if (webCombo) {
+            multiple = webCombo->multiple();
+            cmb = webCombo;
+        } else
+            cmb = qstyleoption_cast<const QStyleOptionComboBox*>(option);
 
         if (!cmb) {
             QWindowsStyle::drawComplexControl(control, option, painter, widget);
@@ -167,13 +247,19 @@ void Maemo5WebStyle::drawComplexControl(ComplexControl control, const QStyleOpti
         if (!(cmb->subControls & SC_ComboBoxArrow))
             break;
 
-        QStyleOption arrowOpt(0);
-        arrowOpt.rect = subControlRect(CC_ComboBox, cmb, SC_ComboBoxArrow, widget);
+        QRect rect = subControlRect(CC_ComboBox, cmb, SC_ComboBoxArrow, widget);
+        QPixmap pic = findComboButton(rect.size(), multiple, disabled);
 
-        arrowOpt.rect.adjust(3, 3, -3, -3);
-        arrowOpt.palette = cmb->palette;
-        arrowOpt.state = State_Enabled;
-        drawPrimitive(PE_IndicatorArrowDown, &arrowOpt, painter, widget);
+        if (pic.isNull())
+            break;
+
+        int x = (rect.width() - pic.width()) >> 1;
+        int y = (rect.height() - pic.height()) >> 1;
+        painter->drawPixmap(rect.x() + x, rect.y() + y, pic);
+
+        painter->setPen(disabled ? Qt::gray : Qt::darkGray);
+        painter->drawLine(rect.left() - 2, rect.top() + 2, rect.left() - 2, rect.bottom() - 2);
+
         break;
     }
     default:

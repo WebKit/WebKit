@@ -37,6 +37,11 @@ private:
     void drawRadio(QPainter* painter, const QSize& size, bool checked, QColor color) const;
     QPixmap findRadio(const QSize& size, bool checked, bool disabled) const;
 
+    QSize getButtonImageSize(const QSize& buttonSize) const;
+    void drawSimpleComboButton(QPainter* painter, const QSize& size, QColor color) const;
+    void drawMultipleComboButton(QPainter* painter, const QSize& size, QColor color) const;
+    QPixmap findComboButton(const QSize& size, bool multiple, bool disabled) const;
+
 };
 
 #endif // Maemo5WebStyle_h
