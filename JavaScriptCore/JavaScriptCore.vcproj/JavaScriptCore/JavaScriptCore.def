@@ -294,14 +294,10 @@ EXPORTS
     ?toString@JSCell@JSC@@UBE?AVUString@2@PAVExecState@2@@Z
     ?toString@JSObject@JSC@@UBE?AVUString@2@PAVExecState@2@@Z
     ?toString@JSString@JSC@@EBE?AVUString@2@PAVExecState@2@@Z
-    ?toThisJSString@JSCell@JSC@@UAEPAVJSString@2@PAVExecState@2@@Z
-    ?toThisJSString@JSString@JSC@@EAEPAV12@PAVExecState@2@@Z
     ?toThisObject@JSCell@JSC@@UBEPAVJSObject@2@PAVExecState@2@@Z
     ?toThisObject@JSObject@JSC@@UBEPAV12@PAVExecState@2@@Z
     ?toThisObject@JSString@JSC@@EBEPAVJSObject@2@PAVExecState@2@@Z
     ?toThisObjectSlowCase@JSValue@JSC@@ABEPAVJSObject@2@PAVExecState@2@@Z
-    ?toThisString@JSCell@JSC@@UBE?AVUString@2@PAVExecState@2@@Z
-    ?toThisString@JSString@JSC@@EBE?AVUString@2@PAVExecState@2@@Z
     ?toUInt32@UString@JSC@@QBEIPA_N@Z
     ?toUInt32@UString@JSC@@QBEIPA_N_N@Z
     ?toUInt32SlowCase@JSC@@YAINAA_N@Z

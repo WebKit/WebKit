@@ -1,5 +1,11 @@
 2010-04-02  Geoffrey Garen  <ggaren@apple.com>
 
+        Build fix: updated the .def file.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2010-04-02  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Inlined toThisString and toThisJSString to avoid virtual function call overhead
