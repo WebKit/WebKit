@@ -1,3 +1,12 @@
+2010-04-02  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Unreviewed build fix when building --no-svg.
+
+        Build fix after r56941. Add ENABLE(SVG) guard.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositions):
+
 2010-04-02  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

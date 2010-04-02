@@ -266,7 +266,10 @@ void RenderLayer::updateLayerPositions(UpdateLayerPositionsFlags flags, IntPoint
     IntPoint oldCachedOffset;
     if (cachedOffset) {
         // We can't cache our offset to the repaint container if the mapping is anything more complex than a simple translation
-        bool disableOffsetCache = renderer()->isSVGRoot() || renderer()->hasColumns() || renderer()->hasTransform() || isComposited();
+        bool disableOffsetCache = renderer()->hasColumns() || renderer()->hasTransform() || isComposited();
+#if ENABLE(SVG)
+        disableOffsetCache = disableOffsetCache || renderer()->isSVGRoot();
+#endif
         if (disableOffsetCache)
             cachedOffset = 0; // If our cached offset is invalid make sure it's not passed to any of our children
         else {
