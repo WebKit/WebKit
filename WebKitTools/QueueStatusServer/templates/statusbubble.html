@@ -56,7 +56,12 @@ function statusDetail(patch_id) {
 <div class="status {{ summary.chromium_ews.state }}"{% if summary.chromium_ews.status %}
     onclick="statusDetail({{ summary.attachment_id }})"
     title="{{ summary.chromium_ews.status.date|timesince }} ago"{% endif %}>
-  chromium
+  cr-linux
+</div>
+<div class="status {{ summary.cr_win_ews.state }}"{% if summary.cr_win_ews.status %}
+    onclick="statusDetail({{ summary.attachment_id }})"
+    title="{{ summary.cr_win_ews.status.date|timesince }} ago"{% endif %}>
+  cr-win
 </div>
 <div class="status {{ summary.qt_ews.state }}"{% if summary.qt_ews.status %}
     onclick="statusDetail({{ summary.attachment_id }})"
