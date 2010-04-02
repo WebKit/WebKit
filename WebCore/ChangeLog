@@ -1,3 +1,13 @@
+2010-04-02  Nate Chapin  <japhet@chromium.org>
+
+        Rubber-stamped by Dimitri Glazkov.
+
+        http://trac.webkit.org/changeset/57004 caused
+        fast/dom/console-log-stack-overflow.html to fail for Chromium.
+        Add check for empty wrappers before using them to create a hidden reference.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+
 2010-04-01  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Dimitri Glazkov.

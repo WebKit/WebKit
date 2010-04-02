@@ -776,10 +776,11 @@ END
             push(@implContentDecls, "    v8::Handle<v8::Value> wrapper = result.get() ? ${domMapFunction}.get(result.get()) : v8::Handle<v8::Value>();\n");
             push(@implContentDecls, "    if (wrapper.IsEmpty()) {\n");
             push(@implContentDecls, "        wrapper = toV8(result.get());\n");
+            push(@implContentDecls, "        if (!wrapper.IsEmpty())\n");
             if ($dataNode->name eq "DOMWindow") {
-                push(@implContentDecls, "        V8DOMWrapper::setHiddenWindowReference(imp->frame(), wrapper);\n");
+                push(@implContentDecls, "            V8DOMWrapper::setHiddenWindowReference(imp->frame(), wrapper);\n");
             } else {
-                push(@implContentDecls, "        V8DOMWrapper::setHiddenReference(info.Holder(), wrapper);\n");
+                push(@implContentDecls, "            V8DOMWrapper::setHiddenReference(info.Holder(), wrapper);\n");
             }
             push(@implContentDecls, "    }\n");
             push(@implContentDecls, "    return wrapper;\n");
