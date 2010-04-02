@@ -1,3 +1,23 @@
+2010-04-02  Andrew Scherkus  <scherkus@chromium.org>
+
+        Reviewed by Eric Carlson and Eric Seidel.
+
+        Don't stop the playback event timer when media resource loading has suspended.
+        https://bugs.webkit.org/show_bug.cgi?id=37003
+
+        When a user agent decides to suspend media resource loading and enters the
+        NETWORK_IDLE state we are supposed to only stop the progress event timer but
+        keep the playback timer running.
+
+        Currently Chromium is the only platform that fires the suspend event
+        hence most platforms skipping this test.
+
+        * http/tests/media/video-play-suspend-expected.txt: Added.
+        * http/tests/media/video-play-suspend.html: Added.
+        * platform/gtk/Skipped: Doesn't fire a suspend event.
+        * platform/mac/Skipped: Ditto.
+        * platform/win/Skipped: Ditto.
+
 2010-04-02  David Levin  <levin@chromium.org>
 
         Reviewed by Darin Adler.

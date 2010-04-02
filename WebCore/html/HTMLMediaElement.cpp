@@ -801,7 +801,7 @@ void HTMLMediaElement::setNetworkState(MediaPlayer::NetworkState state)
 
     if (state == MediaPlayer::Idle) {
         if (m_networkState > NETWORK_IDLE) {
-            stopPeriodicTimers();
+            m_progressEventTimer.stop();
             scheduleEvent(eventNames().suspendEvent);
         }
         m_networkState = NETWORK_IDLE;
