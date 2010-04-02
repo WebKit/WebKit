@@ -1,3 +1,17 @@
+2010-04-01  Ada Chan  <adachan@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Change DatabaseTracker::deleteOrigin() to return true if there are no errors in deleting the origin.
+        Ditto for DatabaseTracker::deleteDatabase().
+        
+        https://bugs.webkit.org/show_bug.cgi?id=36988
+
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::deleteOrigin):
+        (WebCore::DatabaseTracker::deleteDatabase):
+        * storage/DatabaseTracker.h:
+
 2010-04-01  Simon Fraser  <simon.fraser@apple.com>
 
         No review.

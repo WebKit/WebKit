@@ -691,23 +691,23 @@ void DatabaseTracker::deleteAllDatabases()
 
 // It is the caller's responsibility to make sure that nobody is trying to create, delete, open, or close databases in this origin while the deletion is
 // taking place.
-void DatabaseTracker::deleteOrigin(SecurityOrigin* origin)
+bool DatabaseTracker::deleteOrigin(SecurityOrigin* origin)
 {
     Vector<String> databaseNames;
     {
         MutexLocker lockDatabase(m_databaseGuard);
         openTrackerDatabase(false);
         if (!m_database.isOpen())
-            return;
+            return false;
 
         if (!databaseNamesForOriginNoLock(origin, databaseNames)) {
             LOG_ERROR("Unable to retrieve list of database names for origin %s", origin->databaseIdentifier().ascii().data());
-            return;
+            return false;
         }
         if (!canDeleteOrigin(origin)) {
             LOG_ERROR("Tried to delete an origin (%s) while either creating database in it or already deleting it", origin->databaseIdentifier().ascii().data());
             ASSERT(false);
-            return;
+            return false;
         }
         recordDeletingOrigin(origin);
     }
@@ -730,27 +730,27 @@ void DatabaseTracker::deleteOrigin(SecurityOrigin* origin)
 
         if (statement.prepare() != SQLResultOk) {
             LOG_ERROR("Unable to prepare deletion of databases from origin %s from tracker", origin->databaseIdentifier().ascii().data());
-            return;
+            return false;
         }
 
         statement.bindText(1, origin->databaseIdentifier());
 
         if (!statement.executeCommand()) {
             LOG_ERROR("Unable to execute deletion of databases from origin %s from tracker", origin->databaseIdentifier().ascii().data());
-            return;
+            return false;
         }
 
         SQLiteStatement originStatement(m_database, "DELETE FROM Origins WHERE origin=?");
         if (originStatement.prepare() != SQLResultOk) {
             LOG_ERROR("Unable to prepare deletion of origin %s from tracker", origin->databaseIdentifier().ascii().data());
-            return;
+            return false;
         }
 
         originStatement.bindText(1, origin->databaseIdentifier());
 
         if (!originStatement.executeCommand()) {
             LOG_ERROR("Unable to execute deletion of databases from origin %s from tracker", origin->databaseIdentifier().ascii().data());
-            return;
+            return false;
         }
 
         SQLiteFileSystem::deleteEmptyDatabaseDirectory(originPath(origin));
@@ -774,6 +774,7 @@ void DatabaseTracker::deleteOrigin(SecurityOrigin* origin)
                 m_client->dispatchDidModifyDatabase(origin, databaseNames[i]);
         }
     }
+    return true;
 }
 
 bool DatabaseTracker::canCreateDatabase(SecurityOrigin *origin, const String& name)
@@ -889,17 +890,17 @@ void DatabaseTracker::doneDeletingOrigin(SecurityOrigin *origin)
     m_originsBeingDeleted.remove(origin);
 }
 
-void DatabaseTracker::deleteDatabase(SecurityOrigin* origin, const String& name)
+bool DatabaseTracker::deleteDatabase(SecurityOrigin* origin, const String& name)
 {
     {
         MutexLocker lockDatabase(m_databaseGuard);
         openTrackerDatabase(false);
         if (!m_database.isOpen())
-            return;
+            return false;
 
         if (!canDeleteDatabase(origin, name)) {
             ASSERT(FALSE);
-            return;
+            return false;
         }
         recordDeletingDatabase(origin, name);
     }
@@ -909,7 +910,7 @@ void DatabaseTracker::deleteDatabase(SecurityOrigin* origin, const String& name)
         LOG_ERROR("Unable to delete file for database %s in origin %s", name.ascii().data(), origin->databaseIdentifier().ascii().data());
         MutexLocker lockDatabase(m_databaseGuard);
         doneDeletingDatabase(origin, name);
-        return;
+        return false;
     }
 
     // To satisfy the lock hierarchy, we have to lock the originQuotaManager before m_databaseGuard if there's any chance we'll to lock both.
@@ -920,7 +921,7 @@ void DatabaseTracker::deleteDatabase(SecurityOrigin* origin, const String& name)
     if (statement.prepare() != SQLResultOk) {
         LOG_ERROR("Unable to prepare deletion of database %s from origin %s from tracker", name.ascii().data(), origin->databaseIdentifier().ascii().data());
         doneDeletingDatabase(origin, name);
-        return;
+        return false;
     }
 
     statement.bindText(1, origin->databaseIdentifier());
@@ -929,7 +930,7 @@ void DatabaseTracker::deleteDatabase(SecurityOrigin* origin, const String& name)
     if (!statement.executeCommand()) {
         LOG_ERROR("Unable to execute deletion of database %s from origin %s from tracker", name.ascii().data(), origin->databaseIdentifier().ascii().data());
         doneDeletingDatabase(origin, name);
-        return;
+        return false;
     }
 
     originQuotaManagerNoLock().removeDatabase(origin, name);
@@ -939,6 +940,8 @@ void DatabaseTracker::deleteDatabase(SecurityOrigin* origin, const String& name)
         m_client->dispatchDidModifyDatabase(origin, name);
     }
     doneDeletingDatabase(origin, name);
+    
+    return true;
 }
 
 // deleteDatabaseFile has to release locks between looking up the list of databases to close and closing them.  While this is in progress, the caller

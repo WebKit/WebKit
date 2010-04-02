@@ -107,14 +107,14 @@ NSString *WebDatabaseIdentifierKey = @"WebDatabaseIdentifierKey";
     DatabaseTracker::tracker().deleteAllDatabases();
 }
 
-- (void)deleteOrigin:(WebSecurityOrigin *)origin
+- (BOOL)deleteOrigin:(WebSecurityOrigin *)origin
 {
-    DatabaseTracker::tracker().deleteOrigin([origin _core]);
+    return DatabaseTracker::tracker().deleteOrigin([origin _core]);
 }
 
-- (void)deleteDatabase:(NSString *)databaseIdentifier withOrigin:(WebSecurityOrigin *)origin
+- (BOOL)deleteDatabase:(NSString *)databaseIdentifier withOrigin:(WebSecurityOrigin *)origin
 {
-    DatabaseTracker::tracker().deleteDatabase([origin _core], databaseIdentifier);
+    return DatabaseTracker::tracker().deleteDatabase([origin _core], databaseIdentifier);
 }
 
 @end

@@ -102,8 +102,8 @@ public:
     void setQuota(SecurityOrigin*, unsigned long long);
 
     void deleteAllDatabases();
-    void deleteOrigin(SecurityOrigin*);
-    void deleteDatabase(SecurityOrigin*, const String& name);
+    bool deleteOrigin(SecurityOrigin*);
+    bool deleteDatabase(SecurityOrigin*, const String& name);
 
     void setClient(DatabaseTrackerClient*);
 
