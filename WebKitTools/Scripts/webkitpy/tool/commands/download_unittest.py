@@ -117,14 +117,14 @@ Not closing bug 42 as attachment 197 has review=+.  Assuming there are more patc
         self.assert_execute_outputs(LandFromBug(), [42], options=self._default_options(), expected_stderr=expected_stderr)
 
     def test_prepare_rollout(self):
-        expected_stderr="Preparing rollout for bug 12345.\nUpdating working directory\nRunning prepare-ChangeLog\n"
+        expected_stderr = "Preparing rollout for bug 42.\nUpdating working directory\nRunning prepare-ChangeLog\n"
         self.assert_execute_outputs(PrepareRollout(), [852, "Reason"], options=self._default_options(), expected_stderr=expected_stderr)
 
     def test_create_rollout(self):
-        expected_stderr="Preparing rollout for bug 12345.\nMOCK create_bug\nbug_title: REGRESSION(r852): Reason\nbug_description: http://trac.webkit.org/changeset/852 broke the build:\nReason\nUpdating working directory\nRunning prepare-ChangeLog\n"
+        expected_stderr = "Preparing rollout for bug 42.\nUpdating working directory\nMOCK create_bug\nbug_title: REGRESSION(r852): Reason\nbug_description: http://trac.webkit.org/changeset/852 broke the build:\nReason\nRunning prepare-ChangeLog\n"
         self.assert_execute_outputs(CreateRollout(), [852, "Reason"], options=self._default_options(), expected_stderr=expected_stderr)
 
     def test_rollout(self):
-        expected_stderr = "Preparing rollout for bug 12345.\nUpdating working directory\nRunning prepare-ChangeLog\nBuilding WebKit\n"
+        expected_stderr = "Preparing rollout for bug 42.\nUpdating working directory\nRunning prepare-ChangeLog\nBuilding WebKit\n"
         self.assert_execute_outputs(Rollout(), [852, "Reason"], options=self._default_options(), expected_stderr=expected_stderr)
 

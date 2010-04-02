@@ -127,11 +127,10 @@ class Checkout(object):
     def apply_reverse_diff(self, revision):
         self._scm.apply_reverse_diff(revision)
 
-        # Fix any ChangeLogs if necessary.
+        # We don't want to remove the old ChangeLog entry.
         changelog_paths = self.modified_changelogs()
         if len(changelog_paths):
-            # FIXME: Move _scm.script_path here once we get rid of all the dependencies.
-            run_command([self._scm.script_path('resolve-ChangeLogs')] + changelog_paths)
+            self._scm.revert_files(changelog_paths)
 
         conflicts = self._scm.conflicted_files()
         if len(conflicts):

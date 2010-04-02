@@ -33,12 +33,14 @@ from webkitpy.common.config.ports import WebKitPort
 from webkitpy.tool.bot.sheriff import Sheriff
 from webkitpy.tool.bot.sheriffircbot import SheriffIRCBot
 from webkitpy.tool.commands.queues import AbstractQueue
+from webkitpy.tool.commands.stepsequence import StepSequenceErrorHandler
 
-class SheriffBot(AbstractQueue):
+
+class SheriffBot(AbstractQueue, StepSequenceErrorHandler):
     name = "sheriff-bot"
 
-    def update(self):
-        self.tool.executive.run_and_throw_if_fail(WebKitPort.update_webkit_command(), quiet=True)
+    def _update(self):
+        self.run_webkit_patch(["update", "--force-clean", "--quiet"])
 
     # AbstractQueue methods
 
@@ -53,7 +55,7 @@ class SheriffBot(AbstractQueue):
 
     def next_work_item(self):
         self._irc_bot.process_pending_messages()
-        self.update()
+        self._update()
         for svn_revision, builders in self.tool.buildbot.revisions_causing_failures().items():
             if self.tool.status_server.svn_revision(svn_revision):
                 # FIXME: We should re-process the work item after some time delay.
@@ -74,7 +76,7 @@ class SheriffBot(AbstractQueue):
         svn_revision = failure_info["svn_revision"]
         builders = failure_info["builders"]
 
-        self.update()
+        self._update()
         commit_info = self.tool.checkout().commit_info_for_revision(svn_revision)
         self._sheriff.post_irc_warning(commit_info, builders)
         self._sheriff.post_blame_comment_on_bug(commit_info, builders)
@@ -86,3 +88,11 @@ class SheriffBot(AbstractQueue):
 
     def handle_unexpected_error(self, failure_info, message):
         log(message)
+
+    # StepSequenceErrorHandler methods
+
+    @classmethod
+    def handle_script_error(cls, tool, state, script_error):
+        # Ideally we would post some information to IRC about what went wrong
+        # here, but we don't have the IRC password in the child process.
+        pass

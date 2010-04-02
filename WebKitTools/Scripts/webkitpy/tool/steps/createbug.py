@@ -42,4 +42,7 @@ class CreateBug(AbstractStep):
         # No need to create a bug if we already have one.
         if state.get("bug_id"):
             return
-        state["bug_id"] = self._tool.bugs.create_bug(state["bug_title"], state["bug_description"], blocked=state.get("bug_blocked"), component=self._options.component, cc=self._options.cc)
+        cc = self._options.cc
+        if not cc:
+            cc = state["bug_cc"]
+        state["bug_id"] = self._tool.bugs.create_bug(state["bug_title"], state["bug_description"], blocked=state.get("bug_blocked"), component=self._options.component, cc=cc)

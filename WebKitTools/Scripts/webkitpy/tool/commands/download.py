@@ -43,6 +43,15 @@ from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
 from webkitpy.common.system.deprecated_logging import error, log
 
 
+class Update(AbstractSequencedCommand):
+    name = "update"
+    help_text = "Update working copy (used internally)"
+    steps = [
+        steps.CleanWorkingDirectory,
+        steps.Update,
+    ]
+
+
 class Build(AbstractSequencedCommand):
     name = "build"
     help_text = "Update working copy and build"
@@ -243,19 +252,29 @@ class LandFromBug(AbstractPatchLandingCommand, ProcessBugsMixin):
 class AbstractRolloutPrepCommand(AbstractSequencedCommand):
     argument_names = "REVISION REASON"
 
-    def _bug_id_for_revision(self, revision):
-        bug_id = self.tool.checkout().bug_id_for_revision(revision)
-        if bug_id:
-            log("Preparing rollout for bug %s." % bug_id)
-            return bug_id
+    def _commit_info(self, revision):
+        commit_info = self.tool.checkout().commit_info_for_revision(revision)
+        if commit_info.bug_id():
+            # Note: Don't print a bug URL here because it will confuse the
+            #       SheriffBot because the SheriffBot just greps the output
+            #       of create-rollout for bug URLs.  It should do better
+            #       parsing instead.
+            log("Preparing rollout for bug %s." % commit_info.bug_id())
+            return commit_info
         log("Unable to parse bug number from diff.")
 
     def _prepare_state(self, options, args, tool):
         revision = args[0]
+        commit_info = self._commit_info(revision)
+        cc_list = sorted([party.bugzilla_email()
+                          for party in commit_info.responsible_parties()
+                          if party.bugzilla_email()])
         return {
-            "revision" : revision,
-            "bug_id" : self._bug_id_for_revision(revision),
-            "reason" : args[1],
+            "revision": revision,
+            "bug_id": commit_info.bug_id(),
+            # FIXME: We should used the list as the canonical representation.
+            "bug_cc": ",".join(cc_list),
+            "reason": args[1],
         }
 
 
@@ -278,10 +297,10 @@ class CreateRollout(AbstractRolloutPrepCommand):
     name = "create-rollout"
     help_text = "Creates a bug to track a broken SVN revision and uploads a rollout patch."
     steps = [
-        steps.CreateBug,
         steps.CleanWorkingDirectory,
         steps.Update,
-        steps.RevertRevision, # Notice that we still create the bug if this step fails.
+        steps.RevertRevision,
+        steps.CreateBug,
         steps.PrepareChangeLogForRevert,
         steps.PostDiffForRevert,
     ]

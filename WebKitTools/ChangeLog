@@ -1,3 +1,34 @@
+2010-04-01  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Improve the error handling in rollout a bit
+        https://bugs.webkit.org/show_bug.cgi?id=36995
+
+        This patch does a few things to make the error handling in rollout a
+        bit more robust.
+
+        * Scripts/webkitpy/common/checkout/api.py:
+            The old logic here was wrong.  We don't want to resolve the
+            ChangeLogs (that would remove the old ChangeLog entry).  Instead,
+            we want to revert the ChangeLogs so we can fill them with the new
+            message.
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+            Update test expectations because we're using a different mock object.
+        * Scripts/webkitpy/tool/commands/download.py:
+            - Added an update command to make updating from the SheriffBot more
+              robust.
+            - Now that we have CommitInfo, we can automatically CC the
+              responsible parties on the bug we create.
+            - Re-ordered the steps in create-rollout.  Our original thinking
+              was that we always wanted to create the bug, but that's not
+              really true given how things appear to be playing out.  If we
+              fail to apply the reverse diff, we don't want to create the bug.
+        * Scripts/webkitpy/tool/commands/sheriffbot.py:
+            - Use the new, more robust update command.
+        * Scripts/webkitpy/tool/steps/createbug.py:
+            Allow commands to pre-load who they want to be CCed on a new bug.
+
 2010-04-01  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.
