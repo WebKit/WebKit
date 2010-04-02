@@ -86,7 +86,10 @@ const AtomicString& HTMLTextAreaElement::formControlType() const
 
 bool HTMLTextAreaElement::saveFormControlState(String& result) const
 {
-    result = value();
+    String currentValue = value();
+    if (currentValue == defaultValue())
+        return false;
+    result = currentValue;
     return true;
 }
 

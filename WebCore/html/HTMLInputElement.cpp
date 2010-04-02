@@ -926,9 +926,13 @@ bool HTMLInputElement::saveFormControlState(String& result) const
         case TEXT:
         case TIME:
         case URL:
-        case WEEK:
-            result = value();
+        case WEEK: {
+            String currentValue = value();
+            if (currentValue == defaultValue())
+                return false;
+            result = currentValue;
             return true;
+        }
         case CHECKBOX:
         case RADIO:
             result = checked() ? "on" : "off";

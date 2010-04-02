@@ -8,6 +8,7 @@
 
             if (beenHere.value) {
                 var result = "FAIL";
+                // Button value is not restored.
                 if (input.value == "PASS") {
                     beenHere.value = "PASS";
                     result = "PASS";
@@ -27,7 +28,7 @@
 
             beenHere.value = "FAIL";
 
-            input.value = "PASS";
+            input.value = "FAIL";
 
             var form = document.getElementById("form");
             form.submit();
@@ -44,7 +45,7 @@
         Test result: <span id="result">test did not complete</span>
     </p>
     <button type="button" name="foo">Button</button>
-    <input id="input" type="button" name="foo" value="FAIL">
+    <input id="input" type="button" name="foo" value="PASS">
     <input id="beenHere">
     <form action="data:text/html,<script>history.back()</script>" method="POST" id="form"></form>
 </body>

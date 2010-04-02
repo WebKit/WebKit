@@ -2,6 +2,30 @@
 
         Reviewed by Darin Adler.
 
+        Form control state shouldn't be restored for hidden inputs.
+        https://bugs.webkit.org/show_bug.cgi?id=26241
+
+        To fix this issue, we don't save values if it is not changed from
+        the default value.
+
+        Updating the value IDL attribute of some controls such as
+        type=hidden also updates the value content attribute, and it's
+        impossible to distinguish the initial value and the current
+        value. The values of such controls are not saved. It won't be a
+        problem because we want to save and restore user-edited values.
+
+        Test: fast/forms/state-restore-to-non-edited-controls.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::saveFormControlState):
+          Do not save the value if it is same as the default value.
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::saveFormControlState): ditto.
+
+2010-04-02  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
         Forms with autocomplete=off should not consume saved state
         https://bugs.webkit.org/show_bug.cgi?id=36762
         
