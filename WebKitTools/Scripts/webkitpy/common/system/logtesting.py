@@ -25,13 +25,14 @@
 Provides support for unit-testing messages logged using the built-in
 logging module.
 
-Use the LogTesting class for basic testing needs.  For more advanced
-needs (e.g. unit-testing methods that configure logging), see the
-TestLogStream class.
+Inherit from the LoggingTestCase class for basic testing needs.  For
+more advanced needs (e.g. unit-testing methods that configure logging),
+see the TestLogStream class, and perhaps also the LogTesting class.
 
 """
 
 import logging
+import unittest
 
 
 class TestLogStream(object):
@@ -188,8 +189,58 @@ class LogTesting(object):
     def assertMessages(self, messages):
         """Assert the current array of log messages, and clear its contents.
 
-        messages: A list of log message strings.
+        Args:
+          messages: A list of log message strings.
 
         """
-        self._test_stream.assertMessages(messages)
-        self._test_stream.messages = []
+        try:
+            self._test_stream.assertMessages(messages)
+        finally:
+            # We want to clear the array of messages even in the case of
+            # an Exception (e.g. an AssertionError).  Otherwise, another
+            # AssertionError can occur in the tearDown() because the
+            # array might not have gotten emptied.
+            self._test_stream.messages = []
+
+
+# This class needs to inherit from unittest.TestCase.  Otherwise, the
+# setUp() and tearDown() methods will not get fired for test case classes
+# that inherit from this class -- even if the class inherits from *both*
+# unittest.TestCase and LoggingTestCase.
+class LoggingTestCase(unittest.TestCase):
+
+    """Supports end-to-end unit-testing of log messages.
+
+        Sample usage:
+
+          class SampleTest(LoggingTestCase):
+
+              def test_logging_in_some_method(self):
+                  call_some_method()  # Contains calls to _log.info(), etc.
+
+                  # Check the resulting log messages.
+                  self.assertLog(["INFO: expected message #1",
+                                  "WARNING: expected message #2"])
+
+    """
+
+    def setUp(self):
+        self._log = LogTesting.setUp(self)
+
+    def tearDown(self):
+        self._log.tearDown()
+
+    # FIXME: Add a clearMessages() method for cases where the caller
+    #        deliberately doesn't want to assert every message.
+
+    # See the code comments preceding LogTesting.assertMessages() for
+    # an explanation of why we clear the array of messages after
+    # asserting its contents.
+    def assertLog(self, messages):
+        """Assert the current array of log messages, and clear its contents.
+
+        Args:
+          messages: A list of log message strings.
+
+        """
+        self._log.assertMessages(messages)

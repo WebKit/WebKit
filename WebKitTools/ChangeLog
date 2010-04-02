@@ -1,5 +1,29 @@
 2010-04-02  Chris Jerdonek  <cjerdonek@webkit.org>
 
+        Reviewed by Adam Barth.
+
+        Unit-test networktransaction.py's log messages, and add a base
+        class to make unit-testing log messages even easier.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=36958
+
+        The purpose of this patch is also to provide a mini-tutorial on
+        how to unit-test Python logging.py messages.
+
+        * Scripts/webkitpy/common/net/networktransaction_unittest.py:
+          - Unit-tested the log messages in test_retry().
+
+        * Scripts/webkitpy/common/system/logtesting.py:
+          - Adjusted the LogTesting class by moving the code that clears
+            the array of log messages into a finally block.  This prevents
+            redundant AssertionErrors from getting rendered to the screen
+            while running unit tests.
+          - Added a LoggingTestCase class so the setUp() and tearDown()
+            methods do not need to be implemented in order to test logging.
+            Rather, TestCase classes can simply inherit from this class.
+
+2010-04-02  Chris Jerdonek  <cjerdonek@webkit.org>
+
         Reviewed by Shinichiro Hamaji.
 
         Re-wrote check-webkit-style's argument parsing code to use

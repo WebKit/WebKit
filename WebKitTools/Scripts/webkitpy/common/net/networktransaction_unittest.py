@@ -29,9 +29,11 @@
 import unittest
 
 from webkitpy.common.net.networktransaction import NetworkTransaction, NetworkTimeout
+from webkitpy.common.system.logtesting import LoggingTestCase
 from webkitpy.thirdparty.autoinstalled.mechanize import HTTPError
 
-class NetworkTransactionTest(unittest.TestCase):
+
+class NetworkTransactionTest(LoggingTestCase):
     exception = Exception("Test exception")
 
     def test_success(self):
@@ -65,6 +67,10 @@ class NetworkTransactionTest(unittest.TestCase):
         transaction = NetworkTransaction(initial_backoff_seconds=0)
         self.assertEqual(transaction.run(lambda: self._raise_http_error()), 42)
         self.assertEqual(self._run_count, 3)
+        self.assertLog(['WARNING: Received HTTP status 500 from server.  '
+                        'Retrying in 0 seconds...\n',
+                        'WARNING: Received HTTP status 500 from server.  '
+                        'Retrying in 0.0 seconds...\n'])
 
     def test_timeout(self):
         self._run_count = 0
