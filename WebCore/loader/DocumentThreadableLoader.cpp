@@ -217,6 +217,10 @@ void DocumentThreadableLoader::didReceiveData(SubresourceLoader* loader, const c
     ASSERT(m_client);
     ASSERT_UNUSED(loader, loader == m_loader);
 
+    // Ignore response body of preflight requests.
+    if (m_actualRequest)
+        return;
+
     m_client->didReceiveData(data, lengthReceived);
 }
 

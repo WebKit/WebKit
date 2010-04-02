@@ -1,3 +1,17 @@
+2010-04-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36854
+        <rdar://problem/7811668> REGRESSION (r47291): Body from cross origin preflight response
+        is prepended to the actual response body
+
+        * http/tests/xmlhttprequest/access-control-response-with-body-expected.txt: Added.
+        * http/tests/xmlhttprequest/access-control-response-with-body-sync-expected.txt: Added.
+        * http/tests/xmlhttprequest/access-control-response-with-body-sync.html: Added.
+        * http/tests/xmlhttprequest/access-control-response-with-body.html: Added.
+        * http/tests/xmlhttprequest/resources/access-control-allow-with-body.php: Added.
+
 2010-04-01  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.
