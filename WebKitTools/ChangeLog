@@ -2,6 +2,15 @@
 
         Reviewed by Eric Seidel.
 
+        Print an error message for readline bogosity in MacPorts
+        https://bugs.webkit.org/show_bug.cgi?id=36979
+
+        * Scripts/webkitpy/common/system/user.py:
+
+2010-04-01  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Don't pass --non-interactive to create-rollout
         https://bugs.webkit.org/show_bug.cgi?id=36989
 

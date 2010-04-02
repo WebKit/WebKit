@@ -27,10 +27,17 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
-import readline
 import shlex
 import subprocess
 import webbrowser
+
+try:
+    import readline
+except ImportError:
+    print "Unable to import readline.  If you're using MacPorts, try running:"
+    print "  sudo port install py25-readline"
+    exit(0)
+
 
 class User(object):
     # FIXME: These are @classmethods because scm.py and bugzilla.py don't have a Tool object (thus no User instance).
