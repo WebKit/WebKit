@@ -694,7 +694,7 @@ EXPORTS
 	_Z25qt_resumeActiveDOMObjectsP9QWebFrame @ 693 NONAME
 	_Z26qt_suspendActiveDOMObjectsP9QWebFrame @ 694 NONAME
 	_Z35qtwebkit_webframe_scrollRecursivelyP9QWebFrameii @ 695 NONAME ABSENT
-	_ZN13QWebInspector10closeEventEP11QCloseEvent @ 696 NONAME
+	_Z35qtwebkit_webframe_scrollRecursivelyP9QWebFrameiiRK6QPoint @ 696 NONAME
 	_ZN9QWebFrame17scrollRecursivelyEii @ 697 NONAME ABSENT
 	_ZN16QGraphicsWebView20setResizesToContentsEb @ 698 NONAME
 	_ZNK16QGraphicsWebView17resizesToContentsEv @ 699 NONAME
@@ -707,12 +707,16 @@ EXPORTS
 	_Z31qt_drt_pageNumberForElementByIdP9QWebFrameRK7QStringff @ 706 NONAME
 	_Z33qt_drt_webinspector_executeScriptP8QWebPagelRK7QString @ 707 NONAME
 	_Z34qt_drt_setTimelineProfilingEnabledP8QWebPageb @ 708 NONAME
-	_Z35qt_drt_setFrameFlatteningEnabledP8QWebPageb @ 709 NONAME
+	_Z32qt_drt_setFrameFlatteningEnabledP8QWebPageb @ 709 NONAME
 	_Z36qt_drt_evaluateScriptInIsolatedWorldP9QWebFrameiRK7QString @ 710 NONAME
 	_Z47qt_drt_setDomainRelaxationForbiddenForURLSchemebRK7QString @ 711 NONAME
 	_ZN9QWebFrame11pageChangedEv @ 712 NONAME
 	_ZN9QWebFrame14scrollToAnchorERK7QString @ 713 NONAME
 	_ZN12QWebSettings15setInspectorUrlERK4QUrl @ 714 NONAME
-	_Z35qtwebkit_webframe_scrollRecursivelyP9QWebFrameiiRK6QPoint @ 715 NONAME
+	_ZN13QWebInspector10closeEventEP11QCloseEvent @ 715 NONAME
 	_ZN16QGraphicsWebView26setTiledBackingStoreFrozenEb @ 716 NONAME
 	_ZNK16QGraphicsWebView25isTiledBackingStoreFrozenEv @ 717 NONAME
+	_Z18qt_wrt_setViewModeP8QWebPageRK7QString @ 718 NONAME
+	_Z19qt_drt_setMediaTypeP9QWebFrameRK7QString @ 719 NONAME
+	_Z26qt_drt_enableCaretBrowsingP8QWebPageb @ 720 NONAME
+	_ZNK12QWebSettings12inspectorUrlEv @ 721 NONAME

@@ -1,3 +1,20 @@
+2010-04-02  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] [Symbian] Rebaseline Symbian def file
+        https://bugs.webkit.org/show_bug.cgi?id=37038
+
+        Switch the ordinal numbers for qtwebkit_webframe_scrollRecursively
+        and QWebInspector::closeEvent to match QtWebkit 4.6 branch
+
+        Fix the signature for qt_drt_setFrameFlatteningEnabled
+        after r56718.
+
+        Add new QtWebKit API symbols introduced not listed in the file yet.
+
+        * symbian/eabi/QtWebKitu.def:
+
 2010-03-30  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Adam Treat.
