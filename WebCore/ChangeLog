@@ -1,3 +1,44 @@
+2010-04-02  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Daniel Bates.
+
+        Make XSSAuditor go fast with large POST data
+        https://bugs.webkit.org/show_bug.cgi?id=36694
+
+        There were two things slowing down this bechmark:
+
+        1) Searching the large POST data for each inline event handler.  To
+           make this faster, we now use a suffix tree to fast-reject strings
+           that don't appear as substrings of the POST data.
+
+        2) The next largest cost was flattening the form data into a string.
+           To make this fater, we now use the form data object itself as a key
+           and only flatten once.
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::CachingURLCanonicalizer::canonicalizeURL):
+        (WebCore::XSSAuditor::CachingURLCanonicalizer::clear):
+        (WebCore::XSSAuditor::XSSAuditor):
+        (WebCore::XSSAuditor::findInRequest):
+        * page/XSSAuditor.h:
+        (WebCore::XSSAuditor::CachingURLCanonicalizer::CachingURLCanonicalizer):
+        (WebCore::XSSAuditor::CachingURLCanonicalizer::generation):
+        * platform/text/SuffixTree.h: Added.
+        (WebCore::UnicodeCodebook::codeWord):
+        (WebCore::UnicodeCodebook::):
+        (WebCore::ASCIICodebook::codeWord):
+        (WebCore::ASCIICodebook::):
+        (WebCore::SuffixTree::SuffixTree):
+        (WebCore::SuffixTree::mightContain):
+        (WebCore::SuffixTree::Node::Node):
+        (WebCore::SuffixTree::Node::~Node):
+        (WebCore::SuffixTree::Node::at):
+        (WebCore::SuffixTree::build):
+
 2010-04-02  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -29,10 +29,12 @@
 
 #include "HTTPParsers.h"
 #include "PlatformString.h"
+#include "SuffixTree.h"
 #include "TextEncoding.h"
 
 namespace WebCore {
 
+    class FormData;
     class Frame;
     class ScriptSourceCode;
 
@@ -106,9 +108,15 @@ namespace WebCore {
         class CachingURLCanonicalizer
         {
         public:
-            CachingURLCanonicalizer() : m_decodeEntities(false), m_decodeURLEscapeSequencesTwice(false) { }
+            CachingURLCanonicalizer() : m_decodeEntities(false), m_decodeURLEscapeSequencesTwice(false), m_generation(0) { }
+            String canonicalizeURL(FormData*, const TextEncoding& encoding, bool decodeEntities, 
+                                   bool decodeURLEscapeSequencesTwice);
             String canonicalizeURL(const String& url, const TextEncoding& encoding, bool decodeEntities, 
                                    bool decodeURLEscapeSequencesTwice);
+
+            void clear();
+
+            int generation() const { return m_generation; }
 
         private:
             // The parameters we were called with last.
@@ -116,6 +124,10 @@ namespace WebCore {
             TextEncoding m_encoding;
             bool m_decodeEntities;
             bool m_decodeURLEscapeSequencesTwice;
+            RefPtr<FormData> m_formData;
+
+            // Incremented every time we see a new URL.
+            int m_generation;
 
             // The cached result.
             String m_cachedCanonicalizedURL;
@@ -158,6 +170,9 @@ namespace WebCore {
         // https://bugs.webkit.org/show_bug.cgi?id=35373
         mutable CachingURLCanonicalizer m_pageURLCache;
         mutable CachingURLCanonicalizer m_formDataCache;
+
+        mutable OwnPtr<SuffixTree<ASCIICodebook> > m_formDataSuffixTree;
+        mutable int m_generationOfSuffixTree;
     };
 
 } // namespace WebCore

@@ -25680,6 +25680,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\text\SuffixTree.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\graphics\StringTruncator.cpp"
 					>
 				</File>

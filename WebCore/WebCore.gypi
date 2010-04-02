@@ -2701,6 +2701,7 @@
             'platform/text/StringHash.h',
             'platform/text/StringImpl.cpp',
             'platform/text/StringImpl.h',
+            'platform/text/SuffixTree.h',
             'platform/text/TextBoundaries.h',
             'platform/text/TextBoundaries.cpp',
             'platform/text/TextBreakIterator.h',
