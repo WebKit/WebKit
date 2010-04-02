@@ -56,6 +56,7 @@
 #endif
 
 #ifdef NDEBUG
+/* Disable ASSERT* macros in release mode. */
 #define ASSERTIONS_DISABLED_DEFAULT 1
 #else
 #define ASSERTIONS_DISABLED_DEFAULT 0
@@ -148,8 +149,14 @@ void WTFLogVerbose(const char* file, int line, const char* function, WTFLogChann
 }
 #endif
 
-/* CRASH -- gets us into the debugger or the crash reporter -- signals are ignored by the crash reporter so we must do better */
+/* CRASH() - Raises a fatal error resulting in program termination and triggering either the debugger or the crash reporter.
 
+   Use CRASH() in response to known, unrecoverable errors like out-of-memory.
+   Macro is enabled in both debug and release mode.
+   To test for unknown errors and verify assumptions, use ASSERT instead, to avoid impacting performance in release builds.
+
+   Signals are ignored by the crash reporter on OS X so we must do better.
+*/
 #ifndef CRASH
 #if OS(SYMBIAN)
 #define CRASH() do { \
@@ -164,7 +171,11 @@ void WTFLogVerbose(const char* file, int line, const char* function, WTFLogChann
 #endif
 #endif
 
-/* ASSERT, ASSERT_NOT_REACHED, ASSERT_UNUSED */
+/* ASSERT, ASSERT_NOT_REACHED, ASSERT_UNUSED
+
+  These macros are compiled out of release builds.
+  Expressions inside them are evaluated in debug builds only.
+*/
 
 #if OS(WINCE) && !PLATFORM(TORCHMOBILE)
 /* FIXME: We include this here only to avoid a conflict with the ASSERT macro. */
