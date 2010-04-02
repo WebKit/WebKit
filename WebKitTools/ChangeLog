@@ -1,3 +1,9 @@
+2010-04-01  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed. Add missing license header.
+
+        * DumpRenderTree/chromium/TestShellMac.mm:
+
 2010-04-01  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
