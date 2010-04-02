@@ -1,3 +1,19 @@
+2010-04-01  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Darin Adler.
+
+        setting document.title doesn't change document.title value 
+        https://bugs.webkit.org/show_bug.cgi?id=36802
+
+        An entity of "value" argument on HTMLTitleElement::setTitle() could be
+        Document::m_title and be changed during HTMLTitleElement::setText(). 
+        Fix copying the argument to keep the original value.
+        
+        Test: fast/dom/Document/title-with-multiple-children.html
+
+        * html/HTMLTitleElement.cpp:
+        (WebCore::HTMLTitleElement::setText):
+
 2010-04-01  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -84,10 +84,15 @@ void HTMLTitleElement::setText(const String &value)
     if (numChildren == 1 && firstChild()->isTextNode())
         static_cast<Text*>(firstChild())->setData(value, ec);
     else {  
+        // We make a copy here because entity of "value" argument can be Document::m_title,
+        // which goes empty during removeChildren() invocation below,
+        // which causes HTMLTitleElement::childrenChanged(), which ends up Document::setTitle().
+        String valueCopy(value);
+
         if (numChildren > 0)
             removeChildren();
-    
-        appendChild(document()->createTextNode(value.impl()), ec);
+
+        appendChild(document()->createTextNode(valueCopy.impl()), ec);
     }
 }
 

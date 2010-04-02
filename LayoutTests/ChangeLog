@@ -1,3 +1,14 @@
+2010-04-01  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Darin Adler.
+
+        setting document.title doesn't change document.title value 
+        https://bugs.webkit.org/show_bug.cgi?id=36802
+
+        * fast/dom/Document/script-tests/title-with-multiple-children.js: Added.
+        * fast/dom/Document/title-with-multiple-children-expected.txt: Added.
+        * fast/dom/Document/title-with-multiple-children.html: Added.
+
 2010-04-01  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
