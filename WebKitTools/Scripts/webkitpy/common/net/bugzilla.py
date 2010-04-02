@@ -51,6 +51,8 @@ from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup, SoupStrainer
 
 
 def parse_bug_id(message):
+    if not message:
+        return None
     match = re.search("http\://webkit\.org/b/(?P<bug_id>\d+)", message)
     if match:
         return int(match.group('bug_id'))

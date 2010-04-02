@@ -28,6 +28,8 @@
 
 from webkitpy.common.checkout.changelog import view_source_url
 from webkitpy.common.net.bugzilla import parse_bug_id
+from webkitpy.common.system.deprecated_logging import log
+from webkitpy.common.system.executive import ScriptError
 from webkitpy.tool.grammar import join_with_separators
 
 
@@ -50,12 +52,18 @@ class Sheriff(object):
         self._tool.irc().post(irc_message)
 
     def post_rollout_patch(self, svn_revision, rollout_reason):
+        # Ensure that svn_revision is a number (and not an option to create-rollout).
+        try:
+            svn_revision = int(svn_revision)
+        except:
+            raise ScriptError(message="Invalid svn revision number \"%s\"." % svn_revision)
+
         output = self._sheriffbot.run_webkit_patch([
             "create-rollout",
             "--force-clean",
             # In principle, we should pass --non-interactive here, but it
             # turns out that create-rollout doesn't need it yet.  We can't
-            # pass it prophylactically because we reject unrecongized command
+            # pass it prophylactically because we reject unrecognized command
             # line switches.
             "--parent-command=sheriff-bot",
             svn_revision,

@@ -64,6 +64,16 @@ class SheriffIRCBotTest(unittest.TestCase):
         expected_stderr = "MOCK: irc.post: Usage: SVN_REVISION REASON\n"
         OutputCapture().assert_outputs(self, run, args=["rollout bananas"], expected_stderr=expected_stderr)
 
+    def test_rollout_invalidate_revision(self):
+        expected_stderr = ("MOCK: irc.post: Preparing rollout for "
+                           "r--component=Tools...\nMOCK: irc.post: Failed to "
+                           "create rollout patch:\nMOCK: irc.post: Invalid svn"
+                           " revision number \"--component=Tools\".\n")
+        OutputCapture().assert_outputs(self, run,
+                                       args=["rollout "
+                                             "--component=Tools 21654"],
+                                       expected_stderr=expected_stderr)
+
     def test_rollout_no_reason(self):
         expected_stderr = "MOCK: irc.post: Usage: SVN_REVISION REASON\n"
         OutputCapture().assert_outputs(self, run, args=["rollout 21654"], expected_stderr=expected_stderr)
