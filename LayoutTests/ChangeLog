@@ -1,3 +1,10 @@
+2010-04-02  Darin Fisher  <darin@chromium.org>
+
+        Add chromium suppression for http/tests/xhtmlmp since we do not support
+        this feature.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-04-02  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt]  http/tests/xmlhttprequest/access-control-response-with-body.html was introduced in r56955,

@@ -467,6 +467,7 @@ BUG20570 WONTFIX : fast/forms/get-forms-to-about-blank.html = FAIL
 // skipped on all platforms upstream.
 // We are not planning to support these.
 BUG12254 WONTFIX SKIP : fast/xhtmlmp = FAIL
+BUG12254 WONTFIX SKIP : http/tests/xhtmlmp = FAIL
 
 // This test requires LayoutTestController.setCacheModel, which we don't implement
 // because we can't emulate the cahcing behaviors it expects.
