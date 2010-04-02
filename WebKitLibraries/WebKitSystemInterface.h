@@ -191,6 +191,8 @@ int WKQTMovieGetType(QTMovie* movie);
 
 BOOL WKQTMovieHasClosedCaptions(QTMovie* movie);
 void WKQTMovieSetShowClosedCaptions(QTMovie* movie, BOOL showClosedCaptions);
+void WKQTMovieSelectPreferredAlternates(QTMovie* movie);
+void WKQTMovieSelectPreferredAlternateTrackForMediaType(QTMovie* movie, NSString* mediaType);
 
 unsigned WKQTIncludeOnlyModernMediaFileTypes(void);
 int WKQTMovieDataRate(QTMovie* movie);

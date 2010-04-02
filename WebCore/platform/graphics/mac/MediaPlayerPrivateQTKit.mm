@@ -939,6 +939,7 @@ void MediaPlayerPrivate::updateStates()
             loadState = QTMovieLoadStateError;
 
         if (loadState != QTMovieLoadStateError) {
+            wkQTMovieSelectPreferredAlternates(m_qtMovie.get());
             cacheMovieScale();
             MediaPlayer::MovieLoadType movieType = movieLoadType();
             m_isStreaming = movieType == MediaPlayer::StoredStream || movieType == MediaPlayer::LiveStream;

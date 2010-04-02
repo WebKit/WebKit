@@ -1,3 +1,16 @@
+2010-04-02  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=36624
+
+        Update WebKitSystemInterface
+
+        * WebKitSystemInterface.h: add WKQTMovieSelectPreferredAlternates.
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+        * libWebKitSystemInterfaceTiger.a:
+
 2010-04-01  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Dmitry Titov.

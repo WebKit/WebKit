@@ -1,3 +1,20 @@
+2010-04-02  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        Configure multi-language movies: when QuickTime has sufficiently loaded
+        the movie, call into wkQTMovieSelectPreferredAlternates to select the
+        movie's alternate tracks according to the user's language preferences.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36624
+
+        * WebCore.base.exp:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm: 
+        (WebCore::MediaPlayerPrivate::updateStates): If the movie is sufficiently loaded,
+        call wkQTMovieSelectPreferredAlternates to set up the alternate tracks.
+        * platform/mac/WebCoreSystemInterface.h: Declare WKQTMovieSelectPreferredAlternates.
+        * platform/mac/WebCoreSystemInterface.mm: Add WKQTMovieSelectPreferredAlternates.
+
 2010-04-02  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Darin Adler.
