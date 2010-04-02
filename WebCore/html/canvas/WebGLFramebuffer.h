@@ -39,10 +39,21 @@ namespace WebCore {
         
         static PassRefPtr<WebGLFramebuffer> create(WebGLRenderingContext*);
         
+        void setIsAttached(unsigned long attachment, bool isAttached);
+
+        bool isDepthAttached() const { return m_isDepthAttached; }
+        bool isStencilAttached() const { return m_isStencilAttached; }
+        bool isDepthStencilAttached() const { return m_isDepthStencilAttached; }
+
     protected:
         WebGLFramebuffer(WebGLRenderingContext*);
         
         virtual void _deleteObject(Platform3DObject);
+
+      private:
+        bool m_isDepthAttached;
+        bool m_isStencilAttached;
+        bool m_isDepthStencilAttached;
     };
     
 } // namespace WebCore

@@ -2,6 +2,18 @@
 
         Reviewed by Eric Seidel.
 
+        Implement and test new framebuffer object attachment behavior.
+        https://bugs.webkit.org/show_bug.cgi?id=35611
+
+        * fast/canvas/webgl/framebuffer-object-attachment-expected.txt: Added, test framebuffer object attachment behavior.
+        * fast/canvas/webgl/framebuffer-object-attachment.html: Added, framebuffer object attachment behavior.
+        * fast/canvas/webgl/script-tests/gl-object-get-calls.js: DEPTH_COMPONENT is no longer a valid input, use DEPTH_COMPONENT16 instead.
+        * platform/mac-snowleopard/Skipped: The bot does not support EXT_packed_depth_stencil, skip the framebuffer-object-attachment.html test.
+
+2010-04-02  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Eric Seidel.
+
         fast/canvas/webgl/index-validation.html failed on Leopard Commit Bot
         https://bugs.webkit.org/show_bug.cgi?id=36908
 

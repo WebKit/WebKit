@@ -885,7 +885,16 @@ DELEGATE_TO_GL(finish, Finish)
 
 DELEGATE_TO_GL(flush, Flush)
 
-DELEGATE_TO_GL_4(framebufferRenderbuffer, FramebufferRenderbufferEXT, unsigned long, unsigned long, unsigned long, WebGLId)
+void WebGraphicsContext3DDefaultImpl::framebufferRenderbuffer(unsigned long target, unsigned long attachment,
+                                                              unsigned long renderbuffertarget, WebGLId buffer)
+{
+    makeContextCurrent();
+    if (attachment == GL_DEPTH_STENCIL_ATTACHMENT) {
+        glFramebufferRenderbufferEXT(target, GL_DEPTH_ATTACHMENT, renderbuffertarget, buffer);
+        glFramebufferRenderbufferEXT(target, GL_STENCIL_ATTACHMENT, renderbuffertarget, buffer);
+    } else
+        glFramebufferRenderbufferEXT(target, attachment, renderbuffertarget, buffer);
+}
 
 DELEGATE_TO_GL_5(framebufferTexture2D, FramebufferTexture2DEXT, unsigned long, unsigned long, unsigned long, WebGLId, long)
 
@@ -985,7 +994,14 @@ unsigned long WebGraphicsContext3DDefaultImpl::getError()
 
 DELEGATE_TO_GL_2(getFloatv, GetFloatv, unsigned long, float*)
 
-DELEGATE_TO_GL_4(getFramebufferAttachmentParameteriv, GetFramebufferAttachmentParameterivEXT, unsigned long, unsigned long, unsigned long, int*)
+void WebGraphicsContext3DDefaultImpl::getFramebufferAttachmentParameteriv(unsigned long target, unsigned long attachment,
+                                                                          unsigned long pname, int* value)
+{
+    makeContextCurrent();
+    if (attachment == GL_DEPTH_STENCIL_ATTACHMENT)
+        attachment = GL_DEPTH_ATTACHMENT; // Or GL_STENCIL_ATTACHMENT, either works.
+    glGetFramebufferAttachmentParameterivEXT(target, attachment, pname, value);
+}
 
 DELEGATE_TO_GL_2(getIntegerv, GetIntegerv, unsigned long, int*)
 
@@ -1133,7 +1149,18 @@ void WebGraphicsContext3DDefaultImpl::releaseShaderCompiler()
 {
 }
 
-DELEGATE_TO_GL_4(renderbufferStorage, RenderbufferStorageEXT, unsigned long, unsigned long, unsigned long, unsigned long)
+void WebGraphicsContext3DDefaultImpl::renderbufferStorage(unsigned long target,
+                                                          unsigned long internalformat,
+                                                          unsigned long width,
+                                                          unsigned long height)
+{
+    makeContextCurrent();
+    if (internalformat == GL_DEPTH_STENCIL)
+        internalformat = GL_DEPTH24_STENCIL8_EXT;
+    else if (internalformat == GL_DEPTH_COMPONENT16)
+        internalformat = GL_DEPTH_COMPONENT;
+    glRenderbufferStorageEXT(target, internalformat, width, height);
+}
 
 DELEGATE_TO_GL_2(sampleCoverage, SampleCoverage, double, bool)
 

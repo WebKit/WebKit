@@ -52,7 +52,7 @@ var renderbuffer = gl.createRenderbuffer();
 shouldBe('gl.getError()', '0');
 gl.bindRenderbuffer(gl.RENDERBUFFER, renderbuffer);
 shouldBe('gl.getError()', '0');
-gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT, 2, 2);
+gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, 2, 2);
 shouldBe('gl.getError()', '0');
 gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, renderbuffer);
 // FIXME: on some machines (in particular the WebKit commit bots) the

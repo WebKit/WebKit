@@ -790,6 +790,45 @@ void WebGLRenderingContext::framebufferRenderbuffer(unsigned long target, unsign
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
         return;
     }
+    if (buffer->object()) {
+        bool isConflicted = false;
+        bool isDepthOrStencil = true;
+        switch (attachment) {
+        case GraphicsContext3D::DEPTH_ATTACHMENT:
+            if (m_framebufferBinding->isDepthStencilAttached() || m_framebufferBinding->isStencilAttached())
+                isConflicted = true;
+            if (buffer->getInternalformat() != GraphicsContext3D::DEPTH_COMPONENT16)
+                isConflicted = true;
+            break;
+        case GraphicsContext3D::STENCIL_ATTACHMENT:
+            if (m_framebufferBinding->isDepthStencilAttached() || m_framebufferBinding->isDepthAttached())
+                isConflicted = true;
+            if (buffer->getInternalformat() != GraphicsContext3D::STENCIL_INDEX8)
+                isConflicted = true;
+            break;
+        case GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT:
+            if (m_framebufferBinding->isDepthAttached() || m_framebufferBinding->isStencilAttached())
+                isConflicted = true;
+            if (buffer->getInternalformat() != GraphicsContext3D::DEPTH_STENCIL)
+                isConflicted = true;
+            break;
+        default:
+            isDepthOrStencil = false;
+        }
+        if (isConflicted) {
+            m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
+            return;
+        }
+        if (isDepthOrStencil)
+            m_framebufferBinding->setIsAttached(attachment, true);
+    } else { // Detach
+        switch (attachment) {
+        case GraphicsContext3D::DEPTH_ATTACHMENT:
+        case GraphicsContext3D::STENCIL_ATTACHMENT:
+        case GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT:
+            m_framebufferBinding->setIsAttached(attachment, false);
+        }
+    }
     m_context->framebufferRenderbuffer(target, attachment, renderbuffertarget, buffer);
     cleanupAfterGraphicsCall(false);
 }
@@ -897,7 +936,8 @@ WebGLGetInfo WebGLRenderingContext::getFramebufferAttachmentParameter(unsigned l
     if (target != GraphicsContext3D::FRAMEBUFFER
         || (attachment != GraphicsContext3D::COLOR_ATTACHMENT0
             && attachment != GraphicsContext3D::DEPTH_ATTACHMENT
-            && attachment != GraphicsContext3D::STENCIL_ATTACHMENT)
+            && attachment != GraphicsContext3D::STENCIL_ATTACHMENT
+            && attachment != GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT)
         || (pname != GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE
             && pname != GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_NAME
             && pname != GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL
@@ -1176,8 +1216,11 @@ WebGLGetInfo WebGLRenderingContext::getRenderbufferParameter(unsigned long targe
         m_context->getRenderbufferParameteriv(target, pname, &value);
         return WebGLGetInfo(static_cast<long>(value));
     case GraphicsContext3D::RENDERBUFFER_INTERNAL_FORMAT:
-        m_context->getRenderbufferParameteriv(target, pname, &value);
-        return WebGLGetInfo(static_cast<unsigned long>(value));
+        if (!m_renderbufferBinding) {
+            m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
+            return WebGLGetInfo();
+        }
+        return WebGLGetInfo(m_renderbufferBinding->getInternalformat());
     default:
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
         return WebGLGetInfo();
@@ -1559,8 +1602,21 @@ void WebGLRenderingContext::releaseShaderCompiler()
 
 void WebGLRenderingContext::renderbufferStorage(unsigned long target, unsigned long internalformat, unsigned long width, unsigned long height)
 {
-    m_context->renderbufferStorage(target, internalformat, width, height);
-    cleanupAfterGraphicsCall(false);
+    switch (internalformat) {
+    case GraphicsContext3D::DEPTH_COMPONENT16:
+    case GraphicsContext3D::RGBA4:
+    case GraphicsContext3D::RGB5_A1:
+    case GraphicsContext3D::RGB565:
+    case GraphicsContext3D::STENCIL_INDEX8:
+    case GraphicsContext3D::DEPTH_STENCIL:
+        m_context->renderbufferStorage(target, internalformat, width, height);
+        if (m_renderbufferBinding)
+            m_renderbufferBinding->setInternalformat(internalformat);
+        cleanupAfterGraphicsCall(false);
+        break;
+    default:
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
+    }
 }
 
 void WebGLRenderingContext::sampleCoverage(double value, bool invert)

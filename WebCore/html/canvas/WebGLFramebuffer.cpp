@@ -39,8 +39,26 @@ PassRefPtr<WebGLFramebuffer> WebGLFramebuffer::create(WebGLRenderingContext* ctx
 
 WebGLFramebuffer::WebGLFramebuffer(WebGLRenderingContext* ctx)
     : CanvasObject(ctx)
+    , m_isDepthAttached(false)
+    , m_isStencilAttached(false)
+    , m_isDepthStencilAttached(false)
 {
     setObject(context()->graphicsContext3D()->createFramebuffer());
+}
+
+void WebGLFramebuffer::setIsAttached(unsigned long attachment, bool isAttached)
+{
+    switch (attachment) {
+    case GraphicsContext3D::DEPTH_ATTACHMENT:
+        m_isDepthAttached = isAttached;
+        break;
+    case GraphicsContext3D::STENCIL_ATTACHMENT:
+        m_isStencilAttached = isAttached;
+        break;
+    case GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT:
+        m_isDepthStencilAttached = isAttached;
+        break;
+    }
 }
 
 void WebGLFramebuffer::_deleteObject(Platform3DObject object)

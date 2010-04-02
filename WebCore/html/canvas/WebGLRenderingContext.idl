@@ -423,6 +423,7 @@ module html {
         const unsigned int DEPTH_COMPONENT16              = 0x81A5;
         const unsigned int STENCIL_INDEX                  = 0x1901;
         const unsigned int STENCIL_INDEX8                 = 0x8D48;
+        const unsigned int DEPTH_STENCIL                  = 0x84F9;
 
         const unsigned int RENDERBUFFER_WIDTH             = 0x8D42;
         const unsigned int RENDERBUFFER_HEIGHT            = 0x8D43;
@@ -442,6 +443,7 @@ module html {
         const unsigned int COLOR_ATTACHMENT0              = 0x8CE0;
         const unsigned int DEPTH_ATTACHMENT               = 0x8D00;
         const unsigned int STENCIL_ATTACHMENT             = 0x8D20;
+        const unsigned int DEPTH_STENCIL_ATTACHMENT       = 0x821A;
 
         const unsigned int NONE                           = 0;
 

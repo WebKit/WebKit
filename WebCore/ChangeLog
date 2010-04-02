@@ -1,3 +1,37 @@
+2010-04-02  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Implement and test new framebuffer object attachment behavior.
+        https://bugs.webkit.org/show_bug.cgi?id=35611
+
+        Test: fast/canvas/webgl/framebuffer-object-attachment.html
+
+        * html/canvas/WebGLFramebuffer.cpp: Keep track of attached stencil/depth renderbuffers in WebGLFramebuffer.
+        (WebCore::WebGLFramebuffer::WebGLFramebuffer):
+        (WebCore::WebGLFramebuffer::setIsAttached):
+        * html/canvas/WebGLFramebuffer.h: Ditto.
+        (WebCore::WebGLFramebuffer::isDepthAttached):
+        (WebCore::WebGLFramebuffer::isStencilAttached):
+        (WebCore::WebGLFramebuffer::isDepthStencilAttached):
+        * html/canvas/WebGLRenderbuffer.cpp: Keep track of internalformat.
+        (WebCore::WebGLRenderbuffer::WebGLRenderbuffer):
+        * html/canvas/WebGLRenderbuffer.h: Ditto.
+        (WebCore::WebGLRenderbuffer::setInternalformat):
+        (WebCore::WebGLRenderbuffer::getInternalformat):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::framebufferRenderbuffer): Detect stencil/depth buffer conflicts.
+        (WebCore::WebGLRenderingContext::getFramebufferAttachmentParameter): Handling DEPTH_STENCIL case.
+        (WebCore::WebGLRenderingContext::getRenderbufferParameter): Get correct WebGL internalformat.
+        (WebCore::WebGLRenderingContext::renderbufferStorage): Detect illegal enums.
+        * html/canvas/WebGLRenderingContext.idl: Add DEPTH_STENCIL enums.
+        * platform/graphics/GraphicsContext3D.h: Add DEPTH_STENCIL enums.
+        (WebCore::GraphicsContext3D::):
+        * platform/graphics/mac/GraphicsContext3DMac.cpp: Map to correct DEPTH_STENCIL format.
+        (WebCore::GraphicsContext3D::framebufferRenderbuffer):
+        (WebCore::GraphicsContext3D::renderbufferStorage):
+        (WebCore::GraphicsContext3D::getFramebufferAttachmentParameteriv):
+
 2010-04-02  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.

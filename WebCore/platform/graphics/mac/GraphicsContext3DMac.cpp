@@ -591,7 +591,12 @@ void GraphicsContext3D::flush()
 void GraphicsContext3D::framebufferRenderbuffer(unsigned long target, unsigned long attachment, unsigned long renderbuffertarget, WebGLRenderbuffer* buffer)
 {
     ensureContext(m_contextObj);
-    ::glFramebufferRenderbufferEXT(target, attachment, renderbuffertarget, buffer ? (GLuint) buffer->object() : 0);
+    GLuint renderbuffer = (buffer ? (GLuint) buffer->object() : 0);
+    if (attachment == DEPTH_STENCIL_ATTACHMENT) {
+        ::glFramebufferRenderbufferEXT(target, DEPTH_ATTACHMENT, renderbuffertarget, renderbuffer);
+        ::glFramebufferRenderbufferEXT(target, STENCIL_ATTACHMENT, renderbuffertarget, renderbuffer);
+    } else
+        ::glFramebufferRenderbufferEXT(target, attachment, renderbuffertarget, renderbuffer);
 }
 
 void GraphicsContext3D::framebufferTexture2D(unsigned long target, unsigned long attachment, unsigned long textarget, WebGLTexture* texture, long level)
@@ -822,6 +827,10 @@ void GraphicsContext3D::releaseShaderCompiler()
 void GraphicsContext3D::renderbufferStorage(unsigned long target, unsigned long internalformat, unsigned long width, unsigned long height)
 {
     ensureContext(m_contextObj);
+    if (internalformat == DEPTH_STENCIL)
+        internalformat = GL_DEPTH24_STENCIL8_EXT;
+    else if (internalformat == DEPTH_COMPONENT16)
+        internalformat = GL_DEPTH_COMPONENT;
     ::glRenderbufferStorageEXT(target, internalformat, width, height);
 }
 
@@ -1117,6 +1126,8 @@ void GraphicsContext3D::getFloatv(unsigned long pname, float* value)
 void GraphicsContext3D::getFramebufferAttachmentParameteriv(unsigned long target, unsigned long attachment, unsigned long pname, int* value)
 {
     ensureContext(m_contextObj);
+    if (attachment == DEPTH_STENCIL_ATTACHMENT)
+        attachment = DEPTH_ATTACHMENT; // Or STENCIL_ATTACHMENT, either works.
     ::glGetFramebufferAttachmentParameterivEXT(target, attachment, pname, value);
 }
 

@@ -1,0 +1,93 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css"/>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/webgl-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+
+var gl;
+var fbo;
+var depthBuffer;
+var stencilBuffer;
+var depthStencilBuffer;
+var width = 2;
+var height = 2;
+
+function testAttachment(attachment, buffer, isConflicted)
+{
+    shouldBeNonNull("fbo = gl.createFramebuffer()");
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, attachment, gl.RENDERBUFFER, buffer);
+    shouldBe("gl.getError()", isConflicted ? "gl.INVALID_OPERATION" : "gl.NO_ERROR");
+}
+
+function testAttachments(attachment0, buffer0, attachment1, buffer1, isConflicted)
+{
+    shouldBeNonNull("fbo = gl.createFramebuffer()");
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, attachment0, gl.RENDERBUFFER, buffer0);
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, attachment1, gl.RENDERBUFFER, buffer1);
+    shouldBe("gl.getError()", isConflicted ? "gl.INVALID_OPERATION" : "gl.NO_ERROR");
+}
+
+description("Test framebuffer object attachment behaviors");
+
+debug("Create renderbuffers");
+shouldBeNonNull("gl = create3DContext()");
+shouldBeNonNull("depthBuffer = gl.createRenderbuffer()");
+gl.bindRenderbuffer(gl.RENDERBUFFER, depthBuffer);
+gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, width, height);
+shouldBe("gl.getError()", "gl.NO_ERROR");
+shouldBeNonNull("stencilBuffer = gl.createRenderbuffer()");
+gl.bindRenderbuffer(gl.RENDERBUFFER, stencilBuffer);
+gl.renderbufferStorage(gl.RENDERBUFFER, gl.STENCIL_INDEX8, width, height);
+shouldBe("gl.getError()", "gl.NO_ERROR");
+shouldBeNonNull("depthStencilBuffer = gl.createRenderbuffer()");
+gl.bindRenderbuffer(gl.RENDERBUFFER, depthStencilBuffer);
+gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_STENCIL, width, height);
+shouldBe("gl.getError()", "gl.NO_ERROR");
+
+debug("Attach depth using DEPTH_ATTACHMENT");
+testAttachment(gl.DEPTH_ATTACHMENT, depthBuffer, false);
+debug("Attach depth using STENCIL_ATTACHMENT");
+testAttachment(gl.STENCIL_ATTACHMENT, depthBuffer, true);
+debug("Attach depth using DEPTH_STENCIL_ATTACHMENT");
+testAttachment(gl.DEPTH_STENCIL_ATTACHMENT, depthBuffer, true);
+debug("Attach stencil using STENCIL_ATTACHMENT");
+testAttachment(gl.STENCIL_ATTACHMENT, stencilBuffer, false);
+debug("Attach stencil using DEPTH_ATTACHMENT");
+testAttachment(gl.DEPTH_ATTACHMENT, stencilBuffer, true);
+debug("Attach stencil using DEPTH_STENCIL_ATTACHMENT");
+testAttachment(gl.DEPTH_STENCIL_ATTACHMENT, stencilBuffer, true);
+debug("Attach depthStencil using DEPTH_STENCIL_ATTACHMENT");
+testAttachment(gl.DEPTH_STENCIL_ATTACHMENT, depthStencilBuffer, false);
+debug("Attach depthStencil using DEPTH_ATTACHMENT");
+testAttachment(gl.DEPTH_ATTACHMENT, depthStencilBuffer, true);
+debug("Attach depthStencil using STENCIL_ATTACHMENT");
+testAttachment(gl.STENCIL_ATTACHMENT, depthStencilBuffer, true);
+
+debug("Attach depth, then stencil, causing conflict");
+testAttachments(gl.DEPTH_ATTACHMENT, depthBuffer, gl.STENCIL_ATTACHMENT, stencilBuffer, true);
+debug("Attach stencil, then depth, causing conflict");
+testAttachments(gl.STENCIL_ATTACHMENT, stencilBuffer, gl.DEPTH_ATTACHMENT, depthBuffer, true);
+debug("Attach depth, then depthStencil, causing conflict");
+testAttachments(gl.DEPTH_ATTACHMENT, depthBuffer, gl.DEPTH_STENCIL_ATTACHMENT, depthStencilBuffer, true);
+debug("Attach depthStencil, then depth, causing conflict");
+testAttachments(gl.DEPTH_STENCIL_ATTACHMENT, depthStencilBuffer, gl.DEPTH_ATTACHMENT, depthBuffer, true);
+debug("Attach stencil, then depthStencil, causing conflict");
+testAttachments(gl.DEPTH_ATTACHMENT, depthBuffer, gl.DEPTH_STENCIL_ATTACHMENT, depthStencilBuffer, true);
+debug("Attach depthStencil, then stencil, causing conflict");
+testAttachments(gl.DEPTH_STENCIL_ATTACHMENT, depthStencilBuffer, gl.STENCIL_ATTACHMENT, stencilBuffer, true);
+
+successfullyParsed = true;
+</script>
+
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
