@@ -1,3 +1,21 @@
+2010-04-02  Jay Civelli  <jcivelli@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        The popup type (select or suggestion) is now passed to the
+        WebClient::createPopupMenu() method. This is required for
+        Chromium on Linux to make the select popups work correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=37013
+
+        * WebKit.gyp:
+        * public/WebPopupType.h: Added.
+        (WebKit::):
+        * public/WebViewClient.h:
+        (WebKit::WebViewClient::createPopupMenu):
+        * src/ChromeClientImpl.cpp:
+        (WebCore::convertPopupType):
+        (WebKit::ChromeClientImpl::popupOpened):
+
 2010-04-02  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

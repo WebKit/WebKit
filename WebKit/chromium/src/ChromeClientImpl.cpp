@@ -68,6 +68,7 @@
 #include "WebKit.h"
 #include "WebPopupMenuImpl.h"
 #include "WebPopupMenuInfo.h"
+#include "WebPopupType.h"
 #include "WebRect.h"
 #include "WebTextDirection.h"
 #include "WebURLRequest.h"
@@ -79,6 +80,20 @@
 using namespace WebCore;
 
 namespace WebKit {
+
+// Converts a WebCore::PopupContainerType to a WebKit::WebPopupType.
+static WebPopupType convertPopupType(PopupContainer::PopupType type)
+{
+    switch (type) {
+    case PopupContainer::Select:
+        return WebPopupTypeSelect;
+    case PopupContainer::Suggestion:
+        return WebPopupTypeSuggestion;
+    default:
+        ASSERT_NOT_REACHED();
+        return WebPopupTypeNone;
+    }
+}
 
 ChromeClientImpl::ChromeClientImpl(WebViewImpl* webView)
     : m_webView(webView)
@@ -606,11 +621,15 @@ void ChromeClientImpl::popupOpened(PopupContainer* popupContainer,
         getPopupMenuInfo(popupContainer, &popupInfo);
         webwidget = m_webView->client()->createPopupMenu(popupInfo);
     } else {
-        webwidget = m_webView->client()->createPopupMenu();
-        if (!webwidget) {
-            // Try the deprecated method.
+        webwidget = m_webView->client()->createPopupMenu(
+            convertPopupType(popupContainer->popupType()));
+        // Try the deprecated methods.
+        // FIXME: Remove the deprecated methods once the Chromium side use the
+        //        new method.
+        if (!webwidget)
+            webwidget = m_webView->client()->createPopupMenu();
+        if (!webwidget)
             webwidget = m_webView->client()->createPopupMenu(false);
-        }    
     }
     m_webView->popupOpened(popupContainer);
     static_cast<WebPopupMenuImpl*>(webwidget)->Init(popupContainer, bounds);
@@ -692,7 +711,6 @@ void ChromeClientImpl::didChangeAccessibilityObjectState(AccessibilityObject* ob
     if (obj)
         m_webView->client()->didChangeAccessibilityObjectState(WebAccessibilityObject(obj));
 }
-
 
 #if ENABLE(NOTIFICATIONS)
 NotificationPresenter* ChromeClientImpl::notificationPresenter() const

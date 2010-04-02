@@ -172,6 +172,7 @@
                 'public/WebPoint.h',
                 'public/WebPopupMenu.h',
                 'public/WebPopupMenuInfo.h',
+                'public/WebPopupType.h',
                 'public/WebPrivatePtr.h',
                 'public/WebRange.h',
                 'public/WebRect.h',

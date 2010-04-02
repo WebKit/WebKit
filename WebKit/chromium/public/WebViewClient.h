@@ -35,6 +35,7 @@
 #include "WebEditingAction.h"
 #include "WebFileChooserCompletion.h"
 #include "WebFileChooserParams.h"
+#include "WebPopupType.h"
 #include "WebString.h"
 #include "WebTextAffinity.h"
 #include "WebTextDirection.h"
@@ -73,9 +74,10 @@ public:
 
     // Create a new WebPopupMenu.  In the second form, the client is
     // responsible for rendering the contents of the popup menu.
-    virtual WebWidget* createPopupMenu() { return 0; }
+    virtual WebWidget* createPopupMenu(WebPopupType) { return 0; }
     virtual WebWidget* createPopupMenu(const WebPopupMenuInfo&) { return 0; }
-    // Deprecated method.
+    // Deprecated methods.
+    virtual WebWidget* createPopupMenu() { return 0; }
     virtual WebWidget* createPopupMenu(bool activatable) { return 0; }
 
 
