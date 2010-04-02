@@ -129,7 +129,7 @@ class ChangeLogsTest(unittest.TestCase):
         os.remove(changelog_path)
         self.assertEquals(actual_contents, expected_contents)
 
-    _revert_message = """        No review, rolling out r12345.
+    _revert_message = """        Unreviewed, rolling out r12345.
         http://trac.webkit.org/changeset/12345
         http://example.com/123
 
@@ -148,7 +148,7 @@ class ChangeLogsTest(unittest.TestCase):
 
     _revert_entry_with_bug_url = '''2009-08-19  Eric Seidel  <eric@webkit.org>
 
-        No review, rolling out r12345.
+        Unreviewed, rolling out r12345.
         http://trac.webkit.org/changeset/12345
         http://example.com/123
 
@@ -159,7 +159,7 @@ class ChangeLogsTest(unittest.TestCase):
 
     _revert_entry_without_bug_url = '''2009-08-19  Eric Seidel  <eric@webkit.org>
 
-        No review, rolling out r12345.
+        Unreviewed, rolling out r12345.
         http://trac.webkit.org/changeset/12345
 
         Reason

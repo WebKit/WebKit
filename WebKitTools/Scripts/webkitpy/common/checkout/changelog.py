@@ -141,7 +141,7 @@ class ChangeLog(object):
 
     # This probably does not belong in changelogs.py
     def _message_for_revert(self, revision, reason, bug_url):
-        message = "No review, rolling out r%s.\n" % revision
+        message = "Unreviewed, rolling out r%s.\n" % revision
         message += "%s\n" % view_source_url(revision)
         if bug_url:
             message += "%s\n" % bug_url
