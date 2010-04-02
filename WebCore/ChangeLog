@@ -1,3 +1,24 @@
+2010-04-02  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Database code falsely returns errors due to errant pointer check
+        https://bugs.webkit.org/show_bug.cgi?id=37014
+
+        r56943 introduced a check to see if there were any unprocessed
+        SQL commands after calling sqlite3_prepare16_v2.
+
+        Accessing the remaining data via pointer wasn't possible since
+        the query string is deallocated immediately after the
+        query runs. The String returned from strippedWhiteSpace
+        goes out of scope at that point.
+
+        Fix is to store the strippedWhiteSpace in a temporary String
+        so we can access it via character ptr later in the function.
+
+        * platform/sql/SQLiteStatement.cpp:
+        (WebCore::SQLiteStatement::prepare):
+
 2010-04-01  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Darin Adler.
