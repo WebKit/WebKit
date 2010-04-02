@@ -1,3 +1,18 @@
+2010-04-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Avoid doing work in FrameView::scrollPositionChanged() if there are no fixed position elements
+        https://bugs.webkit.org/show_bug.cgi?id=36994
+        
+        r55890 added knowledge to FrameView about whether it contains any fixed-position elements. We can
+        use this to avoid updating widget positions, and compositing layer positions when possible.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollPositionChanged):
+        * page/FrameView.h:
+        (WebCore::FrameView::hasFixedObjects):
+
 2010-04-02  Nate Chapin  <japhet@chromium.org>
 
         Rubber-stamped by Dimitri Glazkov.

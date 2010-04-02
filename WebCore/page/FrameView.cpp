@@ -1067,8 +1067,7 @@ void FrameView::scrollPositionChanged()
 
     // For fixed position elements, update widget positions and compositing layers after scrolling,
     // but only if we're not inside of layout.
-    // FIXME: we could skip this if we knew the page had no fixed position elements.
-    if (!m_nestedLayoutCount) {
+    if (!m_nestedLayoutCount && hasFixedObjects()) {
         if (RenderView* root = m_frame->contentRenderer()) {
             root->updateWidgetPositions();
 #if USE(ACCELERATED_COMPOSITING)
