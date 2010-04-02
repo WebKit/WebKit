@@ -200,9 +200,7 @@ static void initializeSupportedNonImageMimeTypes()
         "text/",
         "application/xml",
         "application/xhtml+xml",
-#if ENABLE(XHTMLMP)
         "application/vnd.wap.xhtml+xml",
-#endif
         "application/rss+xml",
         "application/atom+xml",
 #if ENABLE(SVG)

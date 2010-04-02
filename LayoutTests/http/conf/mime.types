@@ -324,6 +324,7 @@ application/vnd.vividence.scriptfile
 application/vnd.vsf
 application/vnd.wap.sic
 application/vnd.wap.slc
+application/vnd.wap.xhtml+xml	xhtmlmp
 application/vnd.wap.wbxml	wbxml
 application/vnd.wap.wmlc	wmlc
 application/vnd.wap.wmlscriptc	wmlsc

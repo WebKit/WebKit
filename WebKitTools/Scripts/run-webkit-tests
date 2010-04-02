@@ -34,7 +34,7 @@
 # Script to run the WebKit Open Source Project layout tests.
 
 # Run all the tests passed in on the command line.
-# If no tests are passed, find all the .html, .shtml, .xml, .xhtml, .pl, .php (and svg) files in the test directory.
+# If no tests are passed, find all the .html, .shtml, .xml, .xhtml, .xhtmlmp, .pl, .php (and svg) files in the test directory.
 
 # Run each text.
 # Compare against the existing file xxx-expected.txt.
@@ -429,7 +429,7 @@ system "ln", "-s", $testDirectory, "/tmp/LayoutTests" unless -x "/tmp/LayoutTest
 my %ignoredFiles = ( "results.html" => 1 );
 my %ignoredDirectories = map { $_ => 1 } qw(platform);
 my %ignoredLocalDirectories = map { $_ => 1 } qw(.svn _svn resources script-tests);
-my %supportedFileExtensions = map { $_ => 1 } qw(html shtml xml xhtml pl php);
+my %supportedFileExtensions = map { $_ => 1 } qw(html shtml xml xhtml xhtmlmp pl php);
 
 if (!checkWebCoreFeatureSupport("MathML", 0)) {
     $ignoredDirectories{'mathml'} = 1;

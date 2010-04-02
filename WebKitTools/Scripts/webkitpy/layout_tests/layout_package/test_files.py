@@ -38,7 +38,7 @@ import glob
 import os
 
 # When collecting test cases, we include any file with these extensions.
-_supported_file_extensions = set(['.html', '.shtml', '.xml', '.xhtml', '.pl',
+_supported_file_extensions = set(['.html', '.shtml', '.xml', '.xhtml', '.xhtmlmp', '.pl',
                                   '.php', '.svg'])
 # When collecting test cases, skip these directories
 _skipped_directories = set(['.svn', '_svn', 'resources', 'script-tests'])

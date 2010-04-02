@@ -1,3 +1,20 @@
+2010-04-02  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        Accept XHTML-MP content type as XHTML content
+        https://bugs.webkit.org/show_bug.cgi?id=34262
+
+        Add a simple test that fails if XHTML-MP mime
+        type is not accepted. 
+
+        * http/conf/mime.types: Register XHTML-MP mime
+        type with the test server
+        * http/tests/xhtmlmp: Added.
+        * http/tests/xhtmlmp/xhtml-expected.txt: Added.
+        * http/tests/xhtmlmp/xhtml.xhtmlmp: Added. Testcase
+        with the newly registered file extension.
+
 2010-04-02  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed test fix.  Follow the behavior change by r56962.
