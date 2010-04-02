@@ -1,3 +1,9 @@
+2010-04-02  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed test fix.  Follow the behavior change by r56962.
+
+        * editing/selection/4960137.html:
+
 2010-04-02  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, just updating expected results for passing tests.

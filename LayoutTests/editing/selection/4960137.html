@@ -4,6 +4,6 @@
 window.onload = function() {
     var body = frames[0].document.body;
     frames[0].focus();
-    getSelection().setBaseAndExtent(body, 0, body, body.childNodes.length);
+    frames[0].getSelection().setBaseAndExtent(body, 0, body, body.childNodes.length);
 }
 </script>
