@@ -1,3 +1,22 @@
+2010-04-02  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        WebInspector: Timeline Overview pane should support short records filtering.
+        https://bugs.webkit.org/show_bug.cgi?id=37020
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/TimelineOverviewPane.js:
+        (WebInspector.TimelineOverviewPane.prototype.update.markTimeline):
+        (WebInspector.TimelineOverviewPane.prototype.update):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+        (WebInspector.TimelinePanel.prototype._createStatusbarButtons):
+        (WebInspector.TimelinePanel.prototype._toggleFilterButtonClicked):
+        (WebInspector.TimelinePanel.prototype._refresh):
+        (WebInspector.TimelinePanel.prototype._addToRecordsWindow):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype.isLong):
+
 2010-04-02  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Eric Seidel.

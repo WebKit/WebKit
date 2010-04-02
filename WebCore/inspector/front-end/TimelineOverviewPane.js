@@ -92,7 +92,6 @@ WebInspector.TimelineOverviewPane = function(categories)
     this.windowRight = 1.0;
 }
 
-
 WebInspector.TimelineOverviewPane.prototype = {
     _onCheckboxClicked: function (category, event) {
         if (event.target.checked)
@@ -103,8 +102,9 @@ WebInspector.TimelineOverviewPane.prototype = {
         this.dispatchEventToListeners("filter changed");
     },
 
-    update: function(records)
+    update: function(records, showShortEvents)
     {
+        this._showShortEvents = showShortEvents;
         // Clear summary bars.
         var timelines = {};
         for (var category in this._categories) {
@@ -128,6 +128,8 @@ WebInspector.TimelineOverviewPane.prototype = {
 
         function markTimeline(record)
         {
+            if (!(this._showShortEvents || record.isLong()))
+                return;
             var percentages = this._overviewCalculator.computeBarGraphPercentages(record);
 
             var end = Math.round(percentages.end);

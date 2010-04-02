@@ -76,14 +76,17 @@ WebInspector.TimelinePanel = function()
     this._bottomGapElement.className = "timeline-gap";
     this._itemsGraphsElement.appendChild(this._bottomGapElement);
 
-    this._createStatusbarButtons();
-
     this._rootRecord = this._createRootRecord();
     this._sendRequestRecords = {};
     this._timerRecords = {};
 
     this._calculator = new WebInspector.TimelineCalculator();
     this._calculator._showShortEvents = false;
+    var shortRecordThresholdTitle = Number.secondsToString(WebInspector.TimelinePanel.shortRecordThreshold, WebInspector.UIString.bind(WebInspector));
+    this._showShortRecordsTitleText = WebInspector.UIString("Show the records that are shorter than %s", shortRecordThresholdTitle);
+    this._hideShortRecordsTitleText = WebInspector.UIString("Hide the records that are shorter than %s", shortRecordThresholdTitle);
+    this._createStatusbarButtons();
+
     this._boundariesAreValid = true;
     this._scrollTop = 0;
 
@@ -93,6 +96,8 @@ WebInspector.TimelinePanel = function()
     this.toggleFilterButton.toggled = true;
     this._calculator._showShortEvents = this.toggleFilterButton.toggled;
 }
+
+WebInspector.TimelinePanel.shortRecordThreshold = 0.015;
 
 WebInspector.TimelinePanel.prototype = {
     toolbarItemClass: "timeline",
@@ -159,7 +164,7 @@ WebInspector.TimelinePanel.prototype = {
         this.clearButton = new WebInspector.StatusBarButton(WebInspector.UIString("Clear"), "timeline-clear-status-bar-item");
         this.clearButton.addEventListener("click", this._clearPanel.bind(this), false);
 
-        this.toggleFilterButton = new WebInspector.StatusBarButton(WebInspector.UIString("Hide short records"), "timeline-filter-status-bar-item");
+        this.toggleFilterButton = new WebInspector.StatusBarButton(this._hideShortRecordsTitleText, "timeline-filter-status-bar-item");
         this.toggleFilterButton.addEventListener("click", this._toggleFilterButtonClicked.bind(this), false);
 
         this.recordsCounter = document.createElement("span");
@@ -185,7 +190,7 @@ WebInspector.TimelinePanel.prototype = {
     {
         this.toggleFilterButton.toggled = !this.toggleFilterButton.toggled;
         this._calculator._showShortEvents = this.toggleFilterButton.toggled;
-        this.toggleFilterButton.element.title = this._calculator._showShortEvents ? WebInspector.UIString("Hide short records") : WebInspector.UIString("Show short records");
+        this.toggleFilterButton.element.title = this._calculator._showShortEvents ? this._hideShortRecordsTitleText : this._showShortRecordsTitleText;
         this._scheduleRefresh(true);
     },
 
@@ -351,8 +356,7 @@ WebInspector.TimelinePanel.prototype = {
             delete this._refreshTimeout;
         }
 
-        if (!this._boundariesAreValid)
-            this._overviewPane.update(this._rootRecord.children);
+        this._overviewPane.update(this._rootRecord.children, this._calculator._showShortEvents);
         this._refreshRecords(!this._boundariesAreValid);
         this._updateRecordsCounter();
         this._boundariesAreValid = true;
@@ -372,7 +376,7 @@ WebInspector.TimelinePanel.prototype = {
 
     _addToRecordsWindow: function(record, recordsWindow, parentIsCollapsed)
     {
-        if (!this._calculator._showShortEvents && !record._isLongEvent())
+        if (!this._calculator._showShortEvents && !record.isLong())
             return;
         var percentages = this._calculator.computeBarGraphPercentages(record);
         if (percentages.start < 100 && percentages.endWithChildren >= 0 && !record.category.hidden) {
@@ -757,10 +761,9 @@ WebInspector.TimelinePanel.FormattedRecord = function(record, parentRecord, reco
 }
 
 WebInspector.TimelinePanel.FormattedRecord.prototype = {
-    _isLongEvent: function()
+    isLong: function()
     {
-        const shortEventLength = 0.015;
-        return (this._lastChildEndTime - this.startTime) > shortEventLength;
+        return (this._lastChildEndTime - this.startTime) > WebInspector.TimelinePanel.shortRecordThreshold;
     },
 
     _createCell: function(content, styleName)
