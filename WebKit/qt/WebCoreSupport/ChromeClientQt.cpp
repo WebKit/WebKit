@@ -41,7 +41,11 @@
 #include "ScrollbarTheme.h"
 #include "WindowFeatures.h"
 #include "DatabaseTracker.h"
+#if defined(Q_WS_MAEMO_5)
+#include "QtMaemoWebPopup.h"
+#else
 #include "QtFallbackWebPopup.h"
+#endif
 #include "QWebPageClient.h"
 #include "SecurityOrigin.h"
 
@@ -542,7 +546,11 @@ void ChromeClientQt::scheduleCompositingLayerSync()
 
 QtAbstractWebPopup* ChromeClientQt::createSelectPopup()
 {
+#if defined(Q_WS_MAEMO_5)
+    return new QtMaemoWebPopup;
+#else
     return new QtFallbackWebPopup;
+#endif
 }
 
 #if ENABLE(WIDGETS_10_SUPPORT)

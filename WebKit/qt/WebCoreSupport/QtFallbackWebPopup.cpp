@@ -108,14 +108,6 @@ void QtFallbackWebPopup::show()
     populate();
     m_combo->setCurrentIndex(currentIndex());
 
-#if defined(Q_WS_MAEMO_5)
-    // Comboboxes with Qt on Maemo 5 come up in their full width on the screen, so neither
-    // the proxy widget, nor the coordinates are needed.
-    m_combo->setParent(pageClient()->ownerWidget());
-    m_combo->showPopup();
-    return;
-#endif
-
     QRect rect = geometry();
     if (QGraphicsWebView *webView = qobject_cast<QGraphicsWebView*>(pageClient()->pluginParent())) {
         if (!m_proxy) {
@@ -131,8 +123,6 @@ void QtFallbackWebPopup::show()
 
     }
 
-    // QCursor::pos() is not a great idea for a touch screen, but as Maemo 5 is handled
-    // separately above, this should be okay.
     QMouseEvent event(QEvent::MouseButtonPress, QCursor::pos(), Qt::LeftButton,
                       Qt::LeftButton, Qt::NoModifier);
     QCoreApplication::sendEvent(m_combo, &event);
@@ -204,7 +194,7 @@ void QtFallbackWebPopup::populate()
     QStandardItemModel* model = qobject_cast<QStandardItemModel*>(m_combo->model());
     Q_ASSERT(model);
 
-#if !defined(Q_WS_S60) && !defined(Q_WS_MAEMO_5)
+#if !defined(Q_WS_S60)
     m_combo->setFont(font());
 #endif
     for (int i = 0; i < itemCount(); ++i) {
