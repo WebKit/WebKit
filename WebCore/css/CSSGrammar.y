@@ -1173,7 +1173,7 @@ pseudo:
     }
     // used by :not
     | ':' NOTFUNCTION maybe_space simple_selector maybe_space ')' {
-        if (!$4 || !$4->isSimple())
+        if (!$4 || $4->simpleSelector() || $4->tagHistory() || $4->matchesPseudoElement())
             $$ = 0;
         else {
             CSSParser* p = static_cast<CSSParser*>(parser);

@@ -566,21 +566,6 @@ bool CSSSelector::matchNth(int count)
     return m_data.m_rareData->matchNth(count);
 }
 
-bool CSSSelector::isSimple() const
-{
-    if (simpleSelector() || tagHistory() || matchesPseudoElement())
-        return false;
-    int numConditions = 0;
-    if (hasTag())
-        numConditions++;
-    if (m_match == Id || m_match == Class || m_match == PseudoClass)
-        numConditions++;
-    if (m_hasRareData && m_data.m_rareData->m_attribute != anyQName())
-        numConditions++;
-
-    return numConditions == 1;
-}
-
 // a helper function for parsing nth-arguments
 bool CSSSelector::RareData::parseNth()
 {
