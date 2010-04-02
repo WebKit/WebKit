@@ -1,3 +1,14 @@
+2010-04-01  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Add FileThread for async file operation support in FileReader and FileWriter
+        https://bugs.webkit.org/show_bug.cgi?id=36896
+
+        Add options to enable FILE_READER and FILE_WRITER support.
+
+        * Scripts/build-webkit:
+
 2010-04-01  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed. Add missing license header.

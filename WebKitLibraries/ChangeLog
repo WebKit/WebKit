@@ -1,3 +1,16 @@
+2010-04-01  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Add FileThread for async file operation support in FileReader and FileWriter
+        https://bugs.webkit.org/show_bug.cgi?id=36896
+
+        Adds ENABLE_FILE_READER and ENABLE_FILE_WRITER feature flags
+        for FileReader and FileWriter support.
+
+        * win/tools/vsprops/FeatureDefines.vsprops:
+        * win/tools/vsprops/FeatureDefinesCairo.vsprops:
+
 2010-03-25  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Dan Bernstein.

@@ -56,7 +56,8 @@ my ($threeDCanvasSupport, $threeDRenderingSupport, $channelMessagingSupport, $cl
     $javaScriptDebuggerSupport, $mathmlSupport, $offlineWebApplicationSupport, $rubySupport, $systemMallocSupport, $sandboxSupport, $sharedWorkersSupport,
     $svgSupport, $svgAnimationSupport, $svgAsImageSupport, $svgDOMObjCBindingsSupport, $svgFontsSupport,
     $svgForeignObjectSupport, $svgUseSupport, $videoSupport, $webSocketsSupport, $wmlSupport, $wcssSupport, $xhtmlmpSupport, $workersSupport,
-    $xpathSupport, $xsltSupport, $coverageSupport, $notificationsSupport, $blobSliceSupport, $tiledBackingStoreSupport);
+    $xpathSupport, $xsltSupport, $coverageSupport, $notificationsSupport, $blobSliceSupport, $tiledBackingStoreSupport,
+    $fileReaderSupport, $fileWriterSupport);
 
 my @features = (
     { option => "3d-canvas", desc => "Toggle 3D canvas support",
@@ -175,6 +176,12 @@ my @features = (
 
     { option => "xslt", desc => "Toggle XSLT support",
       define => "ENABLE_XSLT", default => 1, value => \$xsltSupport },
+
+    { option => "file-reader", desc => "Toggle FileReader support",
+      define => "ENABLE_FILE_READER", default => 0, value => \$fileReaderSupport },
+
+    { option => "file-writer", desc => "Toggle FileWriter support",
+      define => "ENABLE_FILE_WRITER", default => 0, value => \$fileWriterSupport },
 );
 
 # Update defaults from Qt's project file

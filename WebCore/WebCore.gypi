@@ -1426,6 +1426,8 @@
             'html/File.h',
             'html/FileList.cpp',
             'html/FileList.h',
+            'html/FileThread.cpp',
+            'html/FileThread.h',
             'html/FormDataList.cpp',
             'html/FormDataList.h',
             'html/HTMLAllCollection.cpp',

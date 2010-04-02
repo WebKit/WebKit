@@ -31,6 +31,9 @@
 #include "Database.h"
 #include "DatabaseTask.h"
 #include "DatabaseThread.h"
+#if ENABLE(FILE_READER) || ENABLE(FILE_WRITER)
+#include "FileThread.h"
+#endif
 #include "MessagePort.h"
 #include "SecurityOrigin.h"
 #include "WorkerContext.h"
@@ -81,6 +84,12 @@ ScriptExecutionContext::~ScriptExecutionContext()
     if (m_databaseThread) {
         ASSERT(m_databaseThread->terminationRequested());
         m_databaseThread = 0;
+    }
+#endif
+#if ENABLE(FILE_READER) || ENABLE(FILE_WRITER)
+    if (m_fileThread) {
+        m_fileThread->stop();
+        m_fileThread = 0;
     }
 #endif
 }
@@ -260,6 +269,18 @@ DOMTimer* ScriptExecutionContext::findTimeout(int timeoutId)
 {
     return m_timeouts.get(timeoutId);
 }
+
+#if ENABLE(FILE_READER) || ENABLE(FILE_WRITER)
+FileThread* ScriptExecutionContext::fileThread()
+{
+    if (!m_fileThread) {
+        m_fileThread = FileThread::create();
+        if (!m_fileThread->start())
+            m_fileThread = 0;
+    }
+    return m_fileThread.get();
+}
+#endif
 
 ScriptExecutionContext::Task::~Task()
 {

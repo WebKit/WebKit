@@ -30225,6 +30225,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\FileThread.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\FileThread.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\FormDataList.cpp"
 				>
 			</File>

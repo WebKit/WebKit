@@ -1,3 +1,48 @@
+2010-04-01  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Add FileThread for async file operation support in FileReader and FileWriter
+        https://bugs.webkit.org/show_bug.cgi?id=36896
+
+        Add FileThread for async file operation support for FileReader and
+        FileWriter.  The patch also adds ENABLE_FILE_READER or
+        ENABLE_FILE_WRITER build flags/defines.  Both flags are disabled
+        by default.
+
+        No new tests, will add ones when after adding modules which use the thread.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::~ScriptExecutionContext):
+        (WebCore::ScriptExecutionContext::fileThread):
+        * dom/ScriptExecutionContext.h:
+        * html/FileThread.cpp: Added.
+        (WebCore::FileThread::FileThread):
+        (WebCore::FileThread::~FileThread):
+        (WebCore::FileThread::start):
+        (WebCore::FileThread::stop):
+        (WebCore::FileThread::postTask):
+        (WebCore::SameFilePredicate::SameFilePredicate):
+        (WebCore::SameFilePredicate::operator()):
+        (WebCore::FileThread::removeTask):
+        (WebCore::FileThread::fileThreadStart):
+        (WebCore::FileThread::runLoop):
+        * html/FileThread.h: Added.
+        (WebCore::FileThread::create):
+        (WebCore::FileThread::Task::Task):
+        (WebCore::FileThread::Task::~Task):
+        (WebCore::FileThread::Task::fileHandle):
+        * platform/Logging.cpp:
+        (WebCore::):
+        (WebCore::getChannelFromName):
+        * platform/Logging.h:
+
 2010-04-01  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed. Rollout of http://trac.webkit.org/changeset/56930

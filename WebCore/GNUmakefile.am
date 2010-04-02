@@ -1021,6 +1021,8 @@ webcore_sources += \
 	WebCore/html/File.h \
 	WebCore/html/FileList.cpp \
 	WebCore/html/FileList.h \
+	WebCore/html/FileThread.cpp \
+	WebCore/html/FileThread.h \
 	WebCore/html/FormDataList.cpp \
 	WebCore/html/FormDataList.h \
 	WebCore/html/HTMLAllCollection.cpp \
@@ -3558,6 +3560,21 @@ FEATURE_DEFINES += ENABLE_BLOB_SLICE=1
 webcore_cppflags += -DENABLE_BLOB_SLICE=1
 endif  # END ENABLE_BLOB_SLICE
 
+# ---
+# FileReader support
+# ---
+if ENABLE_FILE_READER
+FEATURE_DEFINES += ENABLE_FILE_READER=1
+webcore_cppflags += -DENABLE_FILE_READER=1
+endif  # END ENABLE_FILE_READER
+
+# ---
+# FileWriter support
+# ---
+if ENABLE_FILE_WRITER
+FEATURE_DEFINES += ENABLE_FILE_WRITER=1
+webcore_cppflags += -DENABLE_FILE_WRITER=1
+endif  # END ENABLE_FILE_WRITER
 
 DerivedSources/CSSPropertyNames.h: $(WEBCORE_CSS_PROPERTY_NAMES) $(WebCore)/css/makeprop.pl
 	if sort $(WEBCORE_CSS_PROPERTY_NAMES) | uniq -d | grep -E '^[^#]'; then echo 'Duplicate value!'; exit 1; fi

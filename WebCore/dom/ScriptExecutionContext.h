@@ -45,6 +45,9 @@ namespace WebCore {
     class DatabaseThread;
 #endif
     class DOMTimer;
+#if ENABLE(FILE_READER) || ENABLE(FILE_WRITER)
+    class FileThread;
+#endif
     class MessagePort;
     class SecurityOrigin;
     class ScriptString;
@@ -136,6 +139,11 @@ namespace WebCore {
         JSC::JSGlobalData* globalData();
 #endif
 
+#if ENABLE(FILE_READER) || ENABLE(FILE_WRITER)
+        FileThread* fileThread();
+        void stopFileThread();
+#endif
+
     protected:
         // Explicitly override the security origin for this script context.
         // Note: It is dangerous to change the security origin of a script context
@@ -162,6 +170,10 @@ namespace WebCore {
         bool m_hasOpenDatabases; // This never changes back to false, even after the database thread is closed.
         typedef HashSet<Database* > DatabaseSet;
         OwnPtr<DatabaseSet> m_openDatabaseSet;
+#endif
+
+#if ENABLE(FILE_READER) || ENABLE(FILE_WRITER)
+        RefPtr<FileThread> m_fileThread;
 #endif
     };
 
