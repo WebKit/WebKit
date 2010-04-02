@@ -46,12 +46,6 @@
 #include "WebGLTexture.h"
 #include "WebGLShader.h"
 #include "WebGLUniformLocation.h"
-#include "HTMLCanvasElement.h"
-#include "HTMLImageElement.h"
-#include "ImageBuffer.h"
-#include "NotImplemented.h"
-#include "RenderBox.h"
-#include "RenderLayer.h"
 
 #include <wtf/ByteArray.h>
 
@@ -108,9 +102,10 @@ WebGLRenderingContext::~WebGLRenderingContext()
 void WebGLRenderingContext::markContextChanged()
 {
 #if USE(ACCELERATED_COMPOSITING)
-    if (canvas()->renderBox() && canvas()->renderBox()->hasLayer() && canvas()->renderBox()->layer()->hasAcceleratedCompositing()) {
-        canvas()->renderBox()->layer()->rendererContentChanged();
-    } else {
+    RenderBox* renderBox = canvas()->renderBox();
+    if (renderBox && renderBox->hasLayer() && renderBox->layer()->hasAcceleratedCompositing())
+        renderBox->layer()->rendererContentChanged();
+    else {
 #endif
         if (!m_markedCanvasDirty) {
             // Make sure the canvas's image buffer is allocated.
@@ -142,8 +137,9 @@ void WebGLRenderingContext::reshape(int width, int height)
 {
     if (m_needsUpdate) {
 #if USE(ACCELERATED_COMPOSITING)
-        if (canvas()->renderBox() && canvas()->renderBox()->hasLayer())
-            canvas()->renderBox()->layer()->rendererContentChanged();
+        RenderBox* renderBox = canvas()->renderBox();
+        if (renderBox && renderBox->hasLayer())
+            renderBox->layer()->rendererContentChanged();
 #endif
         m_needsUpdate = false;
     }

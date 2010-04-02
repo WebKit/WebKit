@@ -43,6 +43,11 @@ class ImageBuffer;
 class IntPoint;
 class String;
 
+class CSSStyleSelector;
+class RenderBox;
+class RenderStyle;
+class SecurityOrigin;
+
 typedef int ExceptionCode;
 
 class CanvasSurface : public Noncopyable {
@@ -71,6 +76,11 @@ public:
     bool originClean() const { return m_originClean; }
 
     AffineTransform baseTransform() const;
+
+    const SecurityOrigin& securityOrigin() const;
+    RenderBox* renderBox() const;
+    RenderStyle* computedStyle();
+    CSSStyleSelector* styleSelector();
 
 protected:
     void setSurfaceSize(const IntSize&);

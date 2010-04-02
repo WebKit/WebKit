@@ -1,3 +1,44 @@
+2010-04-02  David Levin  <levin@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        (non-generated) code should only use CanvasRenderingContext::canvas as a CanvasSurface.
+        https://bugs.webkit.org/show_bug.cgi?id=36906
+
+        * dom/CanvasSurface.cpp: Added methods for items that depended on
+        CanvasRenderingContext::canvas() being an HTMLElement(), so that this usage
+        can be dealt with in one place.
+        (WebCore::CanvasSurface::securityOrigin): Only used by methods that are
+        only run in the document context.
+        (WebCore::CanvasSurface::renderBox): Will likely return 0 in a worker context.
+        (WebCore::CanvasSurface::computedStyle): Used by setFont. Return value is TBD for
+        the worker context.
+        (WebCore::CanvasSurface::styleSelector): Ditto.
+        * dom/CanvasSurface.h:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext): Passing in information into
+        the CanvasRenderingContext2D constructor to eliminate some uses of document
+        inside of the CanvasRenderingContext2D class.
+        * html/HTMLCanvasElement.h:
+        (WebCore::HTMLCanvasElement::renderBox): Added to disambiguate between the
+        two parent class versions of the method.
+        (WebCore::HTMLCanvasElement::computedStyle): Ditto.
+        * html/canvas/CanvasRenderingContext2D.cpp: All of these changes are about
+        removing document usage either by using a bool that is set in the constructor or
+        by calling one of the new methods added to CanvasSurface.
+        (WebCore::CanvasRenderingContext2D::CanvasRenderingContext2D):
+        (WebCore::CanvasRenderingContext2D::clearPathForDashboardBackwardCompatibilityMode):
+        (WebCore::CanvasRenderingContext2D::checkOrigin):
+        (WebCore::CanvasRenderingContext2D::prepareGradientForDashboard):
+        (WebCore::CanvasRenderingContext2D::createPattern):
+        (WebCore::CanvasRenderingContext2D::setFont):
+        (WebCore::CanvasRenderingContext2D::drawTextInternal):
+        * html/canvas/CanvasRenderingContext2D.h:
+        * html/canvas/WebGLRenderingContext.cpp: Removed some duplicate includes.
+        (WebCore::WebGLRenderingContext::markContextChanged): Reduced calls to renderBox
+         as it may become slightly more expensive in the future.
+        (WebCore::WebGLRenderingContext::reshape): Ditto.
+
 2010-04-02  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Eric Seidel.

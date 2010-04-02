@@ -81,6 +81,9 @@ public:
 
     CanvasRenderingContext* renderingContext() const { return m_context.get(); }
 
+    RenderBox* renderBox() const { return HTMLElement::renderBox(); }
+    RenderStyle* computedStyle() { return HTMLElement::computedStyle(); }
+
 #if ENABLE(3D_CANVAS)    
     bool is3D() const;
 #endif

@@ -133,8 +133,14 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, Canvas
     if (type == "2d") {
         if (m_context && !m_context->is2d())
             return 0;
-        if (!m_context)
-            m_context = new CanvasRenderingContext2D(this);
+        if (!m_context) {
+            bool usesDashbardCompatibilityMode = false;
+#if ENABLE(DASHBOARD_SUPPORT)
+            if (Settings* settings = document()->settings())
+                usesDashbardCompatibilityMode = settings->usesDashboardBackwardCompatibilityMode();
+#endif
+            m_context = new CanvasRenderingContext2D(this, document()->inCompatMode(), usesDashbardCompatibilityMode);
+        }
         return m_context.get();
     }
 #if ENABLE(3D_CANVAS)    
