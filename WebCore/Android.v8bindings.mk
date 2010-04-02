@@ -85,7 +85,6 @@ LOCAL_SRC_FILES += \
 	bindings/v8/npruntime.cpp \
 	\
 	bindings/v8/custom/V8AttrCustom.cpp \
-	bindings/v8/custom/V8BarInfoCustom.cpp \
 	bindings/v8/custom/V8CSSRuleCustom.cpp \
 	bindings/v8/custom/V8CSSStyleDeclarationCustom.cpp \
 	bindings/v8/custom/V8CSSStyleSheetCustom.cpp \
@@ -104,7 +103,6 @@ LOCAL_SRC_FILES += \
 	bindings/v8/custom/V8CustomSQLTransactionErrorCallback.cpp \
 	bindings/v8/custom/V8CustomVoidCallback.cpp \
   bindings/v8/custom/V8DOMFormDataCustom.cpp \
-	bindings/v8/custom/V8DOMSelectionCustom.cpp \
 	bindings/v8/custom/V8DOMWindowCustom.cpp \
 	bindings/v8/custom/V8DataGridColumnListCustom.cpp \
 	bindings/v8/custom/V8DatabaseCallback.cpp \
@@ -145,7 +143,6 @@ LOCAL_SRC_FILES += \
 	bindings/v8/custom/V8NodeFilterCustom.cpp \
 	bindings/v8/custom/V8NodeIteratorCustom.cpp \
 	bindings/v8/custom/V8NodeListCustom.cpp \
-	bindings/v8/custom/V8ScreenCustom.cpp \
 	bindings/v8/custom/V8SQLResultSetRowListCustom.cpp \
 	bindings/v8/custom/V8SQLTransactionCustom.cpp \
 	bindings/v8/custom/V8WebSocketCustom.cpp

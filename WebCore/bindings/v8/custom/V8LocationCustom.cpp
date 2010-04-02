@@ -372,7 +372,7 @@ v8::Handle<v8::Value> toV8(Location* impl)
     if (wrapper.IsEmpty()) {
         wrapper = V8Location::wrap(impl);
         if (!wrapper.IsEmpty())
-            V8DOMWrapper::setHiddenWindowReference(impl->frame(), V8DOMWindow::locationIndex, wrapper);
+            V8DOMWrapper::setHiddenWindowReference(impl->frame(), wrapper);
     }
     return wrapper;
 }

@@ -33,6 +33,7 @@
 
 #include "NamedNodeMap.h"
 #include "V8Binding.h"
+#include "V8DOMWrapper.h"
 #include "V8Element.h"
 #include "V8Node.h"
 #include "V8Proxy.h"
@@ -80,10 +81,8 @@ v8::Handle<v8::Value> toV8(NamedNodeMap* impl)
     v8::Handle<v8::Object> wrapper = V8NamedNodeMap::wrap(impl);
     // Add a hidden reference from named node map to its owner node.
     Element* element = impl->element();
-    if (!wrapper.IsEmpty() && element) {
-        v8::Handle<v8::Value> owner = toV8(element);
-        wrapper->SetInternalField(V8NamedNodeMap::ownerNodeIndex, owner);
-    }
+    if (!wrapper.IsEmpty() && element)
+        V8DOMWrapper::setHiddenReference(wrapper, toV8(element));
     return wrapper;
 }
 

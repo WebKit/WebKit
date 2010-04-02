@@ -1,3 +1,42 @@
+2010-04-01  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [V8] Generalize (and generate!) the creation of hidden references
+        between JS wrappers.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=36777
+
+        * Android.v8bindings.mk:
+        * WebCore.gypi:
+        * bindings/scripts/CodeGeneratorV8.pm: Generate calls to setHiddenReference() in
+        attribute getters.
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::setHiddenReference): Split common logic out of hidden setHiddenWindowReference
+        (WebCore::V8DOMWrapper::setHiddenWindowReference): Now contains logic specific to putting a 
+        hidden reference on a global object.
+        (WebCore::globalObjectPrototypeIsDOMWindow): Be more thorough in the COMPILE_ASSERTs.
+        (WebCore::V8DOMWrapper::convertEventTargetToV8Object): Cleanup: Remove a duplicate if statement.
+        * bindings/v8/V8DOMWrapper.h:
+        * bindings/v8/WrapperTypeInfo.h:
+        * bindings/v8/custom/V8BarInfoCustom.cpp: Removed.
+        * bindings/v8/custom/V8CSSStyleSheetCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8DOMSelectionCustom.cpp: Removed.
+        * bindings/v8/custom/V8HistoryCustom.cpp:
+        * bindings/v8/custom/V8LocationCustom.cpp:
+        * bindings/v8/custom/V8MessageChannelConstructor.cpp:
+        (WebCore::V8MessageChannel::constructorCallback):
+        * bindings/v8/custom/V8NamedNodeMapCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8NavigatorCustom.cpp: Removed.
+        * bindings/v8/custom/V8ScreenCustom.cpp: Removed.
+        * bindings/v8/custom/V8StyleSheetCustom.cpp:
+        (WebCore::toV8):
+        * loader/appcache/DOMApplicationCache.h:
+        (WebCore::DOMApplicationCache::frame): Add frame() accessor.
+
+
 2010-04-01  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

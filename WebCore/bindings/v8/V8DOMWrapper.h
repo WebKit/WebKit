@@ -123,8 +123,10 @@ namespace WebCore {
         // Check whether a V8 value is a wrapper of type |classType|.
         static bool isWrapperOfType(v8::Handle<v8::Value>, WrapperTypeInfo*);
 
+        static void setHiddenReference(v8::Handle<v8::Object> parent, v8::Handle<v8::Value> child);
+
         // Set hidden references in a DOMWindow object of a frame.
-        static void setHiddenWindowReference(Frame*, const int internalIndex, v8::Handle<v8::Object>);
+        static void setHiddenWindowReference(Frame*, v8::Handle<v8::Value>);
 
         static v8::Local<v8::Object> instantiateV8Object(V8Proxy* proxy, WrapperTypeInfo*, void* impl);
 

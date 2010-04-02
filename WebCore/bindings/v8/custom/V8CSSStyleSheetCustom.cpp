@@ -31,6 +31,7 @@
 #include "config.h"
 #include "V8CSSStyleSheet.h"
 
+#include "V8DOMWrapper.h"
 #include "V8Node.h"
 
 namespace WebCore {
@@ -43,7 +44,7 @@ v8::Handle<v8::Value> toV8(CSSStyleSheet* impl)
     // Add a hidden reference from stylesheet object to its owner node.
     Node* ownerNode = impl->ownerNode();
     if (ownerNode && !wrapper.IsEmpty())
-        wrapper->SetInternalField(V8CSSStyleSheet::ownerNodeIndex, toV8(ownerNode));
+        V8DOMWrapper::setHiddenReference(wrapper, toV8(ownerNode));
     return wrapper;
 }
 

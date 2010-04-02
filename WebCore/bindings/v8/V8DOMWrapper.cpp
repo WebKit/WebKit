@@ -175,7 +175,18 @@ v8::Local<v8::Function> V8DOMWrapper::getConstructor(WrapperTypeInfo* type, Work
 }
 #endif
 
-void V8DOMWrapper::setHiddenWindowReference(Frame* frame, const int internalIndex, v8::Handle<v8::Object> jsObject)
+void V8DOMWrapper::setHiddenReference(v8::Handle<v8::Object> parent, v8::Handle<v8::Value> child)
+{
+    v8::Local<v8::Value> hiddenReferenceObject = parent->GetInternalField(v8DOMHiddenReferenceArrayIndex);
+    if (hiddenReferenceObject->IsNull() || hiddenReferenceObject->IsUndefined()) {
+        hiddenReferenceObject = v8::Array::New();
+        parent->SetInternalField(v8DOMHiddenReferenceArrayIndex, hiddenReferenceObject);
+    }
+    v8::Local<v8::Array> hiddenReferenceArray = v8::Local<v8::Array>::Cast(hiddenReferenceObject);
+    hiddenReferenceArray->Set(v8::Integer::New(hiddenReferenceArray->Length()), child);
+}
+
+void V8DOMWrapper::setHiddenWindowReference(Frame* frame, v8::Handle<v8::Value> jsObject)
 {
     // Get DOMWindow
     if (!frame)
@@ -184,14 +195,12 @@ void V8DOMWrapper::setHiddenWindowReference(Frame* frame, const int internalInde
     if (context.IsEmpty())
         return;
 
-    ASSERT(internalIndex < V8DOMWindow::internalFieldCount);
-
     v8::Handle<v8::Object> global = context->Global();
     // Look for real DOM wrapper.
     global = V8DOMWrapper::lookupDOMWrapper(V8DOMWindow::GetTemplate(), global);
     ASSERT(!global.IsEmpty());
-    ASSERT(global->GetInternalField(internalIndex)->IsUndefined());
-    global->SetInternalField(internalIndex, jsObject);
+
+    setHiddenReference(global, jsObject);
 }
 
 WrapperTypeInfo* V8DOMWrapper::domWrapperType(v8::Handle<v8::Object> object)
@@ -219,13 +228,18 @@ PassRefPtr<NodeFilter> V8DOMWrapper::wrapNativeNodeFilter(v8::Handle<v8::Value> 
 
 static bool globalObjectPrototypeIsDOMWindow(v8::Handle<v8::Object> objectPrototype)
 {
-#if ENABLE(SHARED_WORKERS)
     // We can identify what type of context the global object is wrapping by looking at the
     // internal field count of its prototype. This assumes WorkerContexts and DOMWindows have different numbers
-    // of internal fields, so a COMPILE_ASSERT is included to warn if this ever changes. DOMWindow has
-    // traditionally had far more internal fields than any other class.
-    COMPILE_ASSERT(V8DOMWindow::internalFieldCount != V8WorkerContext::internalFieldCount && V8DOMWindow::internalFieldCount != V8SharedWorkerContext::internalFieldCount,
+    // of internal fields, so a COMPILE_ASSERT is included to warn if this ever changes.
+#if ENABLE(WORKERS)
+    COMPILE_ASSERT(V8DOMWindow::internalFieldCount != V8WorkerContext::internalFieldCount,
         DOMWindowAndWorkerContextHaveUnequalFieldCounts);
+    COMPILE_ASSERT(V8DOMWindow::internalFieldCount != V8DedicatedWorkerContext::internalFieldCount,
+        DOMWindowAndDedicatedWorkerContextHaveUnequalFieldCounts);
+#endif
+#if ENABLE(SHARED_WORKERS)
+    COMPILE_ASSERT(V8DOMWindow::internalFieldCount != V8SharedWorkerContext::internalFieldCount,
+        DOMWindowAndSharedWorkerContextHaveUnequalFieldCounts);
 #endif
     return objectPrototype->InternalFieldCount() == V8DOMWindow::internalFieldCount;
 }
@@ -379,9 +393,6 @@ v8::Handle<v8::Value> V8DOMWrapper::convertEventTargetToV8Object(EventTarget* ta
         ASSERT(!wrapper.IsEmpty());
         return wrapper;
     }
-
-    if (XMLHttpRequest* xhr = target->toXMLHttpRequest())
-        return toV8(xhr);
 
     // MessagePort is created within its JS counterpart
     if (MessagePort* port = target->toMessagePort()) {

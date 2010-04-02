@@ -31,6 +31,7 @@
 #include "config.h"
 #include "V8StyleSheet.h"
 
+#include "V8DOMWrapper.h"
 #include "V8CSSStyleSheet.h"
 #include "V8Node.h"
 
@@ -45,10 +46,8 @@ v8::Handle<v8::Value> toV8(StyleSheet* impl)
     v8::Handle<v8::Object> wrapper = V8StyleSheet::wrap(impl);
     // Add a hidden reference from stylesheet object to its owner node.
     Node* ownerNode = impl->ownerNode();
-    if (ownerNode && !wrapper.IsEmpty()) {
-        v8::Handle<v8::Object> owner = v8::Handle<v8::Object>::Cast(toV8(ownerNode));
-        wrapper->SetInternalField(V8StyleSheet::ownerNodeIndex, owner);
-    }
+    if (ownerNode && !wrapper.IsEmpty())
+        V8DOMWrapper::setHiddenReference(wrapper, toV8(ownerNode));
     return wrapper;
 }
 
