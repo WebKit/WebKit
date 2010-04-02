@@ -2,6 +2,22 @@
 
         Reviewed by Nikolas Zimmermann.
 
+        Move some SVG mac results to the SVG base directory, to give other platforms like Gtk
+        access to them.
+        Gtk needs a platform specific result for feColorMatrix-values.
+
+        * platform/gtk/svg/filters/feColorMatrix-values-expected.txt: Added.
+        * platform/mac/svg/custom/animation-currentColor-expected.txt: Removed.
+        * platform/mac/svg/custom/glyph-transformation-with-hkern-expected.txt: Removed.
+        * platform/mac/svg/custom/gradient-with-1d-boundingbox-expected.txt: Removed.
+        * svg/custom/animation-currentColor-expected.txt: Copied from LayoutTests/platform/mac/svg/custom/animation-currentColor-expected.txt.
+        * svg/custom/glyph-transformation-with-hkern-expected.txt: Copied from LayoutTests/platform/mac/svg/custom/glyph-transformation-with-hkern-expected.txt.
+        * svg/custom/gradient-with-1d-boundingbox-expected.txt: Copied from LayoutTests/platform/mac/svg/custom/gradient-with-1d-boundingbox-expected.txt.
+
+2010-04-01  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
         This is a follow up to commit r56906. The fourth filter example,
         feMorphology, shouldn't be displayed. filterRes causes a scaling of the filter
         parameters, so that one value of 'radius' is lower than one.
