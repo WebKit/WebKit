@@ -2,6 +2,19 @@
 
         Reviewed by Eric Seidel.
 
+        The master commit-queue process should take responsibility for checking that the builders are green
+        https://bugs.webkit.org/show_bug.cgi?id=37009
+
+        We had a failure where the child process noticed that the builders were
+        red.  We've always had this race condition, but the new optimistic
+        design made it easier to trigger.
+
+        * Scripts/webkitpy/tool/commands/queues.py:
+
+2010-04-02  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Tweak rollout changelog to pass ValidateReviewer check
         https://bugs.webkit.org/show_bug.cgi?id=37019
 

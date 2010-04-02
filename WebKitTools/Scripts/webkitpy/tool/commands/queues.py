@@ -205,10 +205,17 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
 
     def _land(self, patch, first_run=False):
         try:
+            if not self._builders_are_green():
+                # We return true here because we want to return to the main
+                # QueueEngine loop as quickly as possible.
+                return True
             args = [
                 "land-attachment",
                 "--force-clean",
                 "--non-interactive",
+                # The master process is responsible for checking the status
+                # of the builders (see above call to _builders_are_green).
+                "--ignore-builders",
                 "--build-style=both",
                 "--quiet",
                 patch.id()
