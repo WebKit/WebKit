@@ -1,3 +1,20 @@
+2010-04-02  Evan Stade  <estade@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [chromium] need DragImage implementation
+        https://bugs.webkit.org/show_bug.cgi?id=35811
+
+        Use the DragImageRef that the DragController passes to us.
+
+        * public/WebViewClient.h:
+        (WebKit::WebViewClient::startDragging):
+        * src/DragClientImpl.cpp:
+        (WebKit::DragClientImpl::startDrag):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::startDragging):
+        * src/WebViewImpl.h:
+
 2010-04-02  Rafael Weinstein  <rafaelw@chromium.org>
 
         Reviewed by Adam Barth.

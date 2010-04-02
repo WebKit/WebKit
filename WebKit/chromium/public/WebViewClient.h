@@ -48,6 +48,7 @@ class WebDragData;
 class WebFileChooserCompletion;
 class WebFrame;
 class WebGeolocationService;
+class WebImage;
 class WebNode;
 class WebNotificationPresenter;
 class WebRange;
@@ -224,7 +225,7 @@ public:
 
     // Called when a drag-n-drop operation should begin.
     virtual void startDragging(
-        const WebPoint& from, const WebDragData&, WebDragOperationsMask) { }
+        const WebDragData&, WebDragOperationsMask, const WebImage&, const WebPoint&) { }
 
     // Called to determine if drag-n-drop operations may initiate a page
     // navigation.
