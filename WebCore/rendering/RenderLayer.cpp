@@ -318,7 +318,8 @@ void RenderLayer::updateLayerPositions(UpdateLayerPositionsFlags flags, IntPoint
         RenderBoxModelObject* repaintContainer = renderer()->containerForRepaint();
         IntRect newRect = renderer()->clippedOverflowRectForRepaint(repaintContainer);
         IntRect newOutlineBox = renderer()->outlineBoundsForRepaint(repaintContainer, cachedOffset);
-        ASSERT(newOutlineBox == renderer()->outlineBoundsForRepaint(repaintContainer, 0));
+        // FIXME: Should ASSERT that value calculated for newOutlineBox using the cached offset is the same
+        // as the value not using the cached offset, but we can't due to https://bugs.webkit.org/show_bug.cgi?id=37048
         if (flags & CheckForRepaint) {
             if (view && !view->printing()) {
                 if (m_needsFullRepaint) {

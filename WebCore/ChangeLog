@@ -1,3 +1,19 @@
+2010-04-02  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Remove an ASSERT that sometimes flakes due to time dependent animations
+        https://bugs.webkit.org/show_bug.cgi?id=37048
+
+        The outline repaint rectangle for a layer might change between two calls
+        if there are animations involved, even if nothing in the DOM has actually
+        changed between the calls.
+
+        No change in behavior, no new tests.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositions):
+
 2010-04-02  Evan Stade  <estade@chromium.org>
 
         Reviewed by Adam Barth.
