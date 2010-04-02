@@ -127,7 +127,8 @@ class Checkout(object):
     def apply_reverse_diff(self, revision):
         self._scm.apply_reverse_diff(revision)
 
-        # We don't want to remove the old ChangeLog entry.
+        # We revert the ChangeLogs because removing lines from a ChangeLog
+        # doesn't make sense.  ChangeLogs are append only.
         changelog_paths = self.modified_changelogs()
         if len(changelog_paths):
             self._scm.revert_files(changelog_paths)

@@ -2,6 +2,27 @@
 
         Reviewed by Eric Seidel.
 
+        create-rollout doesn't fill out ChangeLog
+        https://bugs.webkit.org/show_bug.cgi?id=37010
+
+        The contract between apply_reverse_diff and PrepareChangeLogForRevert
+        was unclear.  I broke filling out the ChangeLog during rollout earlier
+        when I changed apply_reverse_diff to revert the ChangeLogs because
+        PrepareChangeLogForRevert thought that it was supposed to do that.
+        I've now taught PrepareChangeLogsForRevert the new contract.
+
+        It's unclear to me how to test this change because it's essentially an
+        integration issue that requires the file system.  At some point we
+        should think about a testing strategy for integration.  As the system
+        becomes larger, we're running into more of these issues.
+
+        * Scripts/webkitpy/common/checkout/api.py:
+        * Scripts/webkitpy/tool/steps/preparechangelogforrevert.py:
+
+2010-04-02  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Add cr-win-ews to QueueStatusServer
         https://bugs.webkit.org/show_bug.cgi?id=37004
 
