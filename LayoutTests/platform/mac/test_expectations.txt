@@ -133,3 +133,6 @@ BUG36620 : fast/lists/w3-css3-list-styles-alphabetic.html = MISSING
 BUG36620 : fast/lists/w3-css3-list-styles-numeric.html = MISSING
 BUG36620 : svg/filters/feColorMatrix-values.svg = MISSING
 
+// These fail depending on order due to interactions with previous tests:
+BUG35006 : fast/dom/global-constructors.html = PASS TEXT
+BUG37007 : fast/tokenizer/doctype-search-reset.html = PASS TEXT

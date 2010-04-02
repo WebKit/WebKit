@@ -1,3 +1,16 @@
+2010-04-01  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, just adding flaky tests to test_expectations.
+
+        Mark fast/dom/global-constructors.html and
+        fast/tokenizer/doctype-search-reset.html as flaky when run
+        under new-run-webkit-tests.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35006
+        https://bugs.webkit.org/show_bug.cgi?id=37007
+
+        * platform/mac/test_expectations.txt:
+
 2010-04-01  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed. Rollout of http://trac.webkit.org/changeset/56930
