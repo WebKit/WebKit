@@ -122,16 +122,7 @@ BUG36620 : media/audio-controls-rendering.html = IMAGE
 BUG36620 : media/video-replaces-poster.html = IMAGE
 BUG36620 : svg/filters/filterRes.svg = IMAGE
 BUG36620 : transforms/2d/hindi-rotated.html = IMAGE
-BUG33620 : fast/block/positioning/absolute-positioning-no-scrollbar.html = MISSING
-BUG36620 : fast/css/css3-space-in-nth-and-lang.html = MISSING
-BUG36620 : fast/frames/flattening/frameset-flattening-advanced.html = MISSING
-BUG36620 : fast/frames/flattening/frameset-flattening-grid.html = MISSING
-BUG36620 : fast/frames/flattening/frameset-flattening-simple.html = MISSING
-BUG36620 : fast/frames/flattening/frameset-flattening-subframe-resize.html = MISSING
-BUG36620 : fast/frames/flattening/frameset-flattening-subframesets.html = MISSING
-BUG36620 : fast/lists/w3-css3-list-styles-alphabetic.html = MISSING
-BUG36620 : fast/lists/w3-css3-list-styles-numeric.html = MISSING
-BUG36620 : svg/filters/feColorMatrix-values.svg = MISSING
+
 
 // These fail depending on order due to interactions with previous tests:
 BUG35006 : fast/dom/global-constructors.html = PASS TEXT
