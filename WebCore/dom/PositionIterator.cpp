@@ -162,7 +162,8 @@ bool PositionIterator::isCandidate() const
                 return atStartOfNode() && !Position::nodeIsUserSelectNone(m_anchorNode);
             return m_anchorNode->isContentEditable() && !Position::nodeIsUserSelectNone(m_anchorNode) && Position(*this).atEditingBoundary();
         }
-    }
+    } else 
+        return m_anchorNode->isContentEditable() && !Position::nodeIsUserSelectNone(m_anchorNode) && Position(*this).atEditingBoundary();
 
     return false;
 }

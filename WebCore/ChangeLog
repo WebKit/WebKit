@@ -1,3 +1,24 @@
+2010-04-02  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Bug 36741 -  Duplicate, slightly divergent implementation of Position[Iterator]::isCandidate()
+        https://bugs.webkit.org/show_bug.cgi?id=36741
+        
+        Patch: change Position::isCandididate() to call the PositionIterator::isCandidate() version.
+        Update PositionIterator::isCandidate() to mirror Position::isCandidate().
+
+        Rationale: PositionIterator::isCandidate() is called in a tight loop within
+        next/previousCandidate(). Also, creation of a PositionIterator from a Position
+        is cheaper than vice-versa.
+
+        Tests: ran all tests in 'editing'.
+
+        * dom/Position.cpp:
+        (WebCore::Position::isCandidate):
+        * dom/PositionIterator.cpp:
+        (WebCore::PositionIterator::isCandidate):
+
 2010-04-02  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Dan Bernstein.
