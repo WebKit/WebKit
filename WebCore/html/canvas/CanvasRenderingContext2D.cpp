@@ -89,12 +89,12 @@ private:
     CanvasRenderingContext2D* m_canvasContext;
 };
 
-CanvasRenderingContext2D::CanvasRenderingContext2D(HTMLCanvasElement* canvas, bool usesCSSCompatibilityParseMode, bool usesDashbardCompatibilityMode)
+CanvasRenderingContext2D::CanvasRenderingContext2D(HTMLCanvasElement* canvas, bool usesCSSCompatibilityParseMode, bool usesDashboardCompatibilityMode)
     : CanvasRenderingContext(canvas)
     , m_stateStack(1)
     , m_usesCSSCompatibilityParseMode(usesCSSCompatibilityParseMode)
 #if ENABLE(DASHBOARD_SUPPORT)
-    , m_usesDashbardCompatibilityMode(usesDashbardCompatibilityMode)
+    , m_usesDashboardCompatibilityMode(usesDashboardCompatibilityMode)
 #endif
 {
 #if !ENABLE(DASHBOARD_SUPPORT)
@@ -641,7 +641,7 @@ void CanvasRenderingContext2D::rect(float x, float y, float width, float height)
 #if ENABLE(DASHBOARD_SUPPORT)
 void CanvasRenderingContext2D::clearPathForDashboardBackwardCompatibilityMode()
 {
-    if (m_usesDashbardCompatibilityMode)
+    if (m_usesDashboardCompatibilityMode)
         m_path.clear();
 }
 #endif
@@ -1165,7 +1165,7 @@ void CanvasRenderingContext2D::setCompositeOperation(const String& operation)
 void CanvasRenderingContext2D::prepareGradientForDashboard(CanvasGradient* gradient) const
 {
 #if ENABLE(DASHBOARD_SUPPORT)
-    if (m_usesDashbardCompatibilityMode)
+    if (m_usesDashboardCompatibilityMode)
         gradient->setDashboardCompatibilityMode();
 #else
     UNUSED_PARAM(gradient);

@@ -1,3 +1,11 @@
+2010-04-02  Darin Adler  <darin@apple.com>
+
+        Fix mispelling that broke the build.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        * html/canvas/CanvasRenderingContext2D.h:
+        Dashbard -> Dashboard.
+
 2010-04-02  David Levin  <levin@chromium.org>
 
         Reviewed by Darin Adler.

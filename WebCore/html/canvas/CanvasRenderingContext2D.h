@@ -57,7 +57,7 @@ namespace WebCore {
 
     class CanvasRenderingContext2D : public CanvasRenderingContext {
     public:
-        CanvasRenderingContext2D(HTMLCanvasElement*, bool usesCSSCompatibilityParseMode, bool usesDashbardCompatibilityMode);
+        CanvasRenderingContext2D(HTMLCanvasElement*, bool usesCSSCompatibilityParseMode, bool usesDashboardCompatibilityMode);
 
         virtual ~CanvasRenderingContext2D();
         
@@ -265,7 +265,7 @@ namespace WebCore {
         Vector<State, 1> m_stateStack;
         bool m_usesCSSCompatibilityParseMode;
 #if ENABLE(DASHBOARD_SUPPORT)
-        bool m_usesDashbardCompatibilityMode;
+        bool m_usesDashboardCompatibilityMode;
 #endif
     };
 
