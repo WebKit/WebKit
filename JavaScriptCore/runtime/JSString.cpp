@@ -143,16 +143,6 @@ UString JSString::toString(ExecState* exec) const
     return value(exec);
 }
 
-UString JSString::toThisString(ExecState* exec) const
-{
-    return value(exec);
-}
-
-JSString* JSString::toThisJSString(ExecState*)
-{
-    return this;
-}
-
 inline StringObject* StringObject::create(ExecState* exec, JSString* string)
 {
     return new (exec) StringObject(exec->lexicalGlobalObject()->stringObjectStructure(), string);

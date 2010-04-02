@@ -1,3 +1,28 @@
+2010-04-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Inlined toThisString and toThisJSString to avoid virtual function call overhead
+        https://bugs.webkit.org/show_bug.cgi?id=37039
+        
+        Maybe a 1% speedup on iBench JS.
+
+        * JavaScriptCore.exp: New exports.
+
+        * runtime/JSCell.cpp:
+        * runtime/JSCell.h:
+        * runtime/JSNumberCell.cpp:
+        * runtime/JSNumberCell.h:
+        * runtime/JSString.cpp:
+        * runtime/JSString.h:
+        * runtime/JSValue.h:
+        * runtime/JSZombie.h:
+        (JSC::JSZombie::toThisObject): Nixed the old virtual-type implementation.
+
+        * runtime/JSObject.h:
+        (JSC::JSValue::toThisString):
+        (JSC::JSValue::toThisJSString): Added the inlined implementation.
+
 2010-04-02  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by Geoffrey Garen.

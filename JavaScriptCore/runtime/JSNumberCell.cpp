@@ -57,11 +57,6 @@ UString JSNumberCell::toString(ExecState*) const
     return UString::from(m_value);
 }
 
-UString JSNumberCell::toThisString(ExecState*) const
-{
-    return UString::from(m_value);
-}
-
 JSObject* JSNumberCell::toObject(ExecState* exec) const
 {
     return constructNumber(exec, const_cast<JSNumberCell*>(this));

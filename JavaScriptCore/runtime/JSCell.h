@@ -107,8 +107,6 @@ namespace JSC {
         virtual bool deleteProperty(ExecState*, unsigned propertyName);
 
         virtual JSObject* toThisObject(ExecState*) const;
-        virtual UString toThisString(ExecState*) const;
-        virtual JSString* toThisJSString(ExecState*);
         virtual JSValue getJSNumber();
         void* vptr() { return *reinterpret_cast<void**>(this); }
         void setVPtr(void* vptr) { *reinterpret_cast<void**>(this) = vptr; }
@@ -299,11 +297,6 @@ namespace JSC {
         if (UNLIKELY(!isCell()))
             return true;
         return asCell()->structure()->typeInfo().needsThisConversion();
-    }
-
-    inline UString JSValue::toThisString(ExecState* exec) const
-    {
-        return isCell() ? asCell()->toThisString(exec) : toString(exec);
     }
 
     inline JSValue JSValue::getJSNumber()

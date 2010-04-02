@@ -60,8 +60,6 @@ public:
     virtual bool deleteProperty(ExecState*, const Identifier&) { ASSERT_NOT_REACHED(); return false; }
     virtual bool deleteProperty(ExecState*, unsigned) { ASSERT_NOT_REACHED(); return false; }
     virtual JSObject* toThisObject(ExecState*) const { ASSERT_NOT_REACHED(); return 0; }
-    virtual UString toThisString(ExecState*) const { ASSERT_NOT_REACHED(); return ""; }
-    virtual JSString* toThisJSString(ExecState*) { ASSERT_NOT_REACHED(); return 0; }
     virtual JSValue getJSNumber() { ASSERT_NOT_REACHED(); return jsNull(); }
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&) { ASSERT_NOT_REACHED(); return false; }
     virtual bool getOwnPropertySlot(ExecState*, unsigned, PropertySlot&) { ASSERT_NOT_REACHED(); return false; }

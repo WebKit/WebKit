@@ -297,8 +297,6 @@ namespace JSC {
         virtual UString toString(ExecState*) const;
 
         virtual JSObject* toThisObject(ExecState*) const;
-        virtual UString toThisString(ExecState*) const;
-        virtual JSString* toThisJSString(ExecState*);
 
         // Actually getPropertySlot, not getOwnPropertySlot (see JSCell).
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
@@ -484,11 +482,6 @@ namespace JSC {
     inline bool isJSString(JSGlobalData* globalData, JSValue v) { return v.isCell() && v.asCell()->vptr() == globalData->jsStringVPtr; }
 
     // --- JSValue inlines ----------------------------
-
-    inline JSString* JSValue::toThisJSString(ExecState* exec)
-    {
-        return isCell() ? asCell()->toThisJSString(exec) : jsString(exec, toString(exec));
-    }
 
     inline UString JSValue::toString(ExecState* exec) const
     {

@@ -62,7 +62,6 @@ namespace JSC {
         virtual UString toString(ExecState*) const;
         virtual JSObject* toObject(ExecState*) const;
 
-        virtual UString toThisString(ExecState*) const;
         virtual JSObject* toThisObject(ExecState*) const;
         virtual JSValue getJSNumber();
 

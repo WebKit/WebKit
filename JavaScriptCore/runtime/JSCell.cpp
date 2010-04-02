@@ -163,16 +163,6 @@ JSObject* JSCell::toThisObject(ExecState* exec) const
     return toObject(exec);
 }
 
-UString JSCell::toThisString(ExecState* exec) const
-{
-    return toThisObject(exec)->toString(exec);
-}
-
-JSString* JSCell::toThisJSString(ExecState* exec)
-{
-    return jsString(exec, toThisString(exec));
-}
-
 const ClassInfo* JSCell::classInfo() const
 {
     return 0;

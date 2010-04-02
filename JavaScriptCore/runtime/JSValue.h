@@ -188,7 +188,7 @@ namespace JSC {
         bool needsThisConversion() const;
         JSObject* toThisObject(ExecState*) const;
         UString toThisString(ExecState*) const;
-        JSString* toThisJSString(ExecState*);
+        JSString* toThisJSString(ExecState*) const;
 
         static bool equal(ExecState* exec, JSValue v1, JSValue v2);
         static bool equalSlowCase(ExecState* exec, JSValue v1, JSValue v2);
