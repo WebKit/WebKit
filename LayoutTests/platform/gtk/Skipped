@@ -3610,6 +3610,7 @@ security/block-test.html
 
 # Tests in svg/ directory
 #   Tests failing
+svg/filters/feColorMatrix-values.svg
 svg/custom/embedded-svg-disallowed-in-dashboard.xml
 svg/custom/getSubStringLength.html
 svg/custom/getscreenctm-in-mixed-content2.xhtml

@@ -1,3 +1,15 @@
+2010-04-02  Dirk Schulze  <krit@webkit.org>
+
+        Unreviewed.
+
+        [Gtk] LayoutTest feColorMatrix-value with different results over Gtk bots
+        https://bugs.webkit.org/show_bug.cgi?id=37029
+
+        Adding svg/filters/feColorMatrix-values.svg to the Gtk skip list. Opened
+        the bug report from above.
+
+        * platform/gtk/Skipped:
+
 2010-04-02  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Darin Adler.
