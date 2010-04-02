@@ -1,5 +1,19 @@
 2010-04-01  Finnur Thorarinsson  <finnur.webkit@gmail.com>
 
+        Reviewed by Eric Seidel.
+
+        [chromium] FindInPage on multi-frame pages wasn't always updating
+        tickmarks on scrollbars for the subframes. It was calling invalidateRect
+        on the View and specifying a rect that's in window coordinates, whereas
+        the invalidateRect expects frame coordinates.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36982
+        
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::invalidateArea):
+
+2010-04-01  Finnur Thorarinsson  <finnur.webkit@gmail.com>
+
         Reviewed by Dimitri Glazkov.
 
         [chromium] FindInPage should clear the focused node when a match has
