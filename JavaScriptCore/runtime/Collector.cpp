@@ -201,7 +201,7 @@ NEVER_INLINE CollectorBlock* Heap::allocateBlock()
 #elif OS(WINCE)
     void* address = VirtualAlloc(NULL, BLOCK_SIZE, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 #elif OS(WINDOWS)
-#if COMPILER(MINGW) && !defined(__MINGW64_VERSION_MAJOR)
+#if COMPILER(MINGW) && !COMPILER(MINGW64)
     void* address = __mingw_aligned_malloc(BLOCK_SIZE, BLOCK_SIZE);
 #else
     void* address = _aligned_malloc(BLOCK_SIZE, BLOCK_SIZE);
@@ -292,7 +292,7 @@ NEVER_INLINE void Heap::freeBlockPtr(CollectorBlock* block)
 #elif OS(WINCE)
     VirtualFree(block, 0, MEM_RELEASE);
 #elif OS(WINDOWS)
-#if COMPILER(MINGW) && !defined(__MINGW64_VERSION_MAJOR)
+#if COMPILER(MINGW) && !COMPILER(MINGW64)
     __mingw_aligned_free(block);
 #else
     _aligned_free(block);
