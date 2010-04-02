@@ -1,3 +1,31 @@
+2010-04-01  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [DRT/Chromium] Add TestShell and WebViewHost class, main(), and so on
+        https://bugs.webkit.org/show_bug.cgi?id=36814
+
+        This change introduces:
+        - WebViewHost class
+          It's an implementation of some delegates required by Chromium
+          WebKit API, and manages painting of a WebView. It's base on
+          src/webkit/tools/test_shell/test_webview_delegate.{cc,h} of
+          Chromium rev.40492.
+        - TestShell class
+          The TestShell instance holds global states of DumpRenderTree process.
+          Unlike TestShell class of Chromium test_shell, TestShell instance is
+          created just once.
+        - DumpRenderTree.cpp
+          The program entry.
+
+        * DumpRenderTree/chromium/DumpRenderTree.cpp: Added.
+        * DumpRenderTree/chromium/TestShell.cpp: Added.
+        * DumpRenderTree/chromium/TestShell.h: Added.
+        * DumpRenderTree/chromium/TestShellMac.mm: Added.
+        * DumpRenderTree/chromium/WebViewHost.cpp: Added.
+        * DumpRenderTree/chromium/WebViewHost.h: Added.
+        * DumpRenderTree/chromium/config.h: Added.
+
 2010-04-01  David Levin  <levin@chromium.org>
 
         Reviewed by Adam Barth.
