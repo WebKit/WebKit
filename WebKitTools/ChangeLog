@@ -1,3 +1,10 @@
+2010-04-02  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix for DumpRenderTree after addition of layerTreeAsText.
+
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::layerTreeAsText):
+
 2010-04-02  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Eric Seidel.
