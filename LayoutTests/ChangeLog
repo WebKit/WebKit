@@ -1,3 +1,15 @@
+2010-04-01  Chris Evans  <cevans@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add test for XSLT NULL crash:
+        https://bugs.webkit.org/show_bug.cgi?id=36804
+
+        * LayoutTests/fast/xsl/xslt-bad-import-uri.html: added
+        * LayoutTests/fast/xsl/xslt-bad-import-uri-expected.txt: added
+        * LayoutTests/fast/xsl/resources/xslt-bad-import-uri.xml: added
+        * LayoutTests/fast/xsl/resources/xslt-bad-import-uri.xsl: added
+
 2010-04-01  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

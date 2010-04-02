@@ -1,3 +1,22 @@
+2010-04-01  Chris Evans  <cevans@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Fix a NULL pointer crash if @import fails to load a stylesheet.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36804
+
+        Test: fast/xsl/xslt-bad-import-uri.html
+
+        * xml/XSLStyleSheetLibxslt.cpp:
+        (WebCore::XSLStyleSheet::parseString):
+          Handle an empty string gracefully. An empty string has a NULL
+          buffer, which we pass in to xmlCreateMemoryParserCtxt(). It returns
+          NULL if it is passed a NULL buffer.
+          In the top-level XSL case, the current code does not crash "by luck"
+          because the other APIs used can handle a NULL argument. In the
+          @import case, additional code runs which will deference the NULL.
+
 2010-04-01  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

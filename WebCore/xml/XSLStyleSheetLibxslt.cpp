@@ -154,6 +154,8 @@ bool XSLStyleSheet::parseString(const String& string, bool)
     int size = string.length() * sizeof(UChar);
 
     xmlParserCtxtPtr ctxt = xmlCreateMemoryParserCtxt(buffer, size);
+    if (!ctxt)
+        return 0;
 
     if (m_parentStyleSheet) {
         // The XSL transform may leave the newly-transformed document
