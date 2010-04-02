@@ -483,6 +483,11 @@ private:
     void setCollapsedBottomMargin(const MarginInfo&);
     // End helper functions and structs used by layoutBlockChildren.
 
+    // Helper functions for layoutInlineChildren()
+    bool layoutReplacedElements(bool relayoutChildren, bool fullLayout, Vector<FloatWithRect>&);
+    RootInlineBox* createLineBoxesForResolver(const InlineBidiResolver&, const InlineIterator& position, bool firstLine, bool previousLineBrokeCleanly, BidiRun* trailingSpaceRun);
+    void layoutRunsAndFloats(bool fullLayout, Vector<FloatWithRect>&, int& repaintTop, int& repaintBottom);
+
     typedef ListHashSet<RenderBox*>::const_iterator Iterator;
     DeprecatedPtrList<FloatingObject>* m_floatingObjects;
     ListHashSet<RenderBox*>* m_positionedObjects;

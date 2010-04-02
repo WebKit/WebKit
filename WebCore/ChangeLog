@@ -1,3 +1,29 @@
+2010-04-02  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Splits RenderBlock::layoutInline into smaller functions
+        https://bugs.webkit.org/show_bug.cgi?id=36921
+
+        RenderBlock::layoutInlineChildren is 351 lines long and very difficult
+        to comprehend or edit safely. This patch splits it up into a few
+        slightly smaller functions.  Most of the code is now in the 241 line
+        layoutRunsAndFloats() which is a slight improvement.
+
+        Perf neutral on the page cyclers.  This doesn't introduce any function
+        calls into the hottest layout paths inside layoutRunsAndFloats and
+        findNextLineBreak.
+
+        No change in behavior, no new tests.
+
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::FloatWithRect::FloatWithRect):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutReplacedElements):
+        (WebCore::RenderBlock::createLineBoxesForResolver):
+        (WebCore::RenderBlock::layoutRunsAndFloats):
+        (WebCore::RenderBlock::layoutInlineChildren):
+
 2010-04-02  Evan Stade  <estade@chromium.org>
 
         Reviewed by Eric Seidel.
