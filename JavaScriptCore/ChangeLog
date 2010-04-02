@@ -1,3 +1,13 @@
+2010-04-02  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Unreviewed, minor build fix.
+
+        Change the order of the member initialisation list
+        in constructor to match declaration order
+
+        * runtime/Collector.cpp:
+        (JSC::Heap::Heap):
+
 2010-04-01  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Dmitry Titov.
