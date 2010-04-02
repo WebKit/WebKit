@@ -40,8 +40,8 @@ class _IRCThreadTearoff(IRCBotDelegate):
 
     # IRCBotDelegate methods
 
-    def irc_message_received(self, message):
-        self._message_queue.post(message)
+    def irc_message_received(self, nick, message):
+        self._message_queue.post([nick, message])
         self._wakeup_event.set()
 
     def irc_nickname(self):
@@ -71,15 +71,17 @@ class SheriffIRCBot(object):
                                  self._tool.wakeup_event)
 
     def process_message(self, message):
-        tokenized_message = message.strip().split(" ")
-        if not tokenized_message:
+        (nick, request) = message
+        tokenized_request = request.strip().split(" ")
+        if not tokenized_request:
             return
-        command = self.commands.get(tokenized_message[0])
+        command = self.commands.get(tokenized_request[0])
         if not command:
-            self._tool.irc().post(
-                "Available commands: %s" % ", ".join(self.commands.keys()))
+            self._tool.irc().post("%s: Available commands: %s" % (
+                                  nick, ", ".join(self.commands.keys())))
             return
-        response = command().execute(tokenized_message[1:],
+        response = command().execute(nick,
+                                     tokenized_request[1:],
                                      self._tool,
                                      self._sheriff)
         if response:

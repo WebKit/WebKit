@@ -34,7 +34,7 @@ from webkitpy.thirdparty.autoinstalled.irc import irclib
 
 
 class IRCBotDelegate(object):
-    def irc_message_received(self, message):
+    def irc_message_received(self, nick, message):
         raise NotImplementedError, "subclasses must implement"
 
     def irc_nickname(self):
@@ -72,9 +72,10 @@ class IRCBot(ircbot.SingleServerIRCBot, MessagePumpDelegate):
         self._message_pump = MessagePump(self, self._message_queue)
 
     def on_pubmsg(self, connection, event):
+        nick = irclib.nm_to_n(event.source())
         request = event.arguments()[0].split(":", 1)
         if len(request) > 1 and irclib.irc_lower(request[0]) == irclib.irc_lower(self.connection.get_nickname()):
-            response = self._delegate.irc_message_received(request[1])
+            response = self._delegate.irc_message_received(nick, request[1])
             if response:
                 connection.privmsg(self._channel, response)
 

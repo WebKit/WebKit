@@ -39,7 +39,7 @@ def run(message):
     tool = MockTool()
     tool.ensure_irc_connected(None)
     bot = SheriffIRCBot(tool, Sheriff(tool, MockSheriffBot()))
-    bot._message_queue.post(message)
+    bot._message_queue.post(["mock_nick", message])
     bot.process_pending_messages()
 
 
@@ -49,31 +49,30 @@ class SheriffIRCBotTest(unittest.TestCase):
         OutputCapture().assert_outputs(self, run, args=["hi"], expected_stderr=expected_stderr)
 
     def test_bogus(self):
-        expected_stderr = "MOCK: irc.post: Available commands: rollout, hi, restart, last-green-revision\n"
+        expected_stderr = "MOCK: irc.post: mock_nick: Available commands: rollout, hi, restart, last-green-revision\n"
         OutputCapture().assert_outputs(self, run, args=["bogus"], expected_stderr=expected_stderr)
 
     def test_lgr(self):
-        expected_stderr = "MOCK: irc.post: http://trac.webkit.org/changeset/9479\n"
+        expected_stderr = "MOCK: irc.post: mock_nick: http://trac.webkit.org/changeset/9479\n"
         OutputCapture().assert_outputs(self, run, args=["last-green-revision"], expected_stderr=expected_stderr)
 
     def test_rollout(self):
-        expected_stderr = "MOCK: irc.post: Preparing rollout for r21654...\nMOCK: irc.post: Created rollout: http://example.com/36936\n"
+        expected_stderr = "MOCK: irc.post: Preparing rollout for r21654...\nMOCK: irc.post: mock_nick: Created rollout: http://example.com/36936\n"
         OutputCapture().assert_outputs(self, run, args=["rollout 21654 This patch broke the world"], expected_stderr=expected_stderr)
 
     def test_rollout_bananas(self):
-        expected_stderr = "MOCK: irc.post: Usage: SVN_REVISION REASON\n"
+        expected_stderr = "MOCK: irc.post: mock_nick: Usage: SVN_REVISION REASON\n"
         OutputCapture().assert_outputs(self, run, args=["rollout bananas"], expected_stderr=expected_stderr)
 
     def test_rollout_invalidate_revision(self):
-        expected_stderr = ("MOCK: irc.post: Preparing rollout for "
-                           "r--component=Tools...\nMOCK: irc.post: Failed to "
-                           "create rollout patch:\nMOCK: irc.post: Invalid svn"
-                           " revision number \"--component=Tools\".\n")
+        expected_stderr = ("MOCK: irc.post: Preparing rollout for r--component=Tools...\n"
+                           "MOCK: irc.post: mock_nick: Failed to create rollout patch:\n"
+                           "MOCK: irc.post: Invalid svn revision number \"--component=Tools\".\n")
         OutputCapture().assert_outputs(self, run,
                                        args=["rollout "
                                              "--component=Tools 21654"],
                                        expected_stderr=expected_stderr)
 
     def test_rollout_no_reason(self):
-        expected_stderr = "MOCK: irc.post: Usage: SVN_REVISION REASON\n"
+        expected_stderr = "MOCK: irc.post: mock_nick: Usage: SVN_REVISION REASON\n"
         OutputCapture().assert_outputs(self, run, args=["rollout 21654"], expected_stderr=expected_stderr)

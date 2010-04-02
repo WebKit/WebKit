@@ -1,3 +1,15 @@
+2010-04-02  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Record the IRC nick of folks who request rollouts
+        https://bugs.webkit.org/show_bug.cgi?id=36999
+
+        * Scripts/webkitpy/common/net/irc/ircbot.py:
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        * Scripts/webkitpy/tool/bot/sheriffircbot.py:
+        * Scripts/webkitpy/tool/bot/sheriffircbot_unittest.py:
+
 2010-04-01  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
