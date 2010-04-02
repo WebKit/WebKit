@@ -36,7 +36,7 @@ try:
 except ImportError:
     print "Unable to import readline.  If you're using MacPorts, try running:"
     print "  sudo port install py25-readline"
-    exit(0)
+    exit(1)
 
 
 class User(object):
