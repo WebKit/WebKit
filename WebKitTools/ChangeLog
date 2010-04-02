@@ -1,3 +1,26 @@
+2010-04-01  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Rewrote the revision (r56942) to disable the 79 character line
+        length limit Python/PEP8 style check.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33639#c39
+
+        This rewrite puts the disabling not in the PythonProcessor but
+        in the calling code's default filter rule configuration.  This
+        allows the user to check line-length style from the command-line
+        if desired.
+
+        * Scripts/webkitpy/style/checker.py:
+          - Added "-pep8/E501" to the _BASE_FILTER_RULES configuration
+            variable to disable the line-length check.
+          - Added "-pep8/E501" to the list of recognized style categories
+            to permit the category to be checked from the command line.
+
+        * Scripts/webkitpy/style/processors/python.py:
+          - Reverted r56942: http://trac.webkit.org/changeset/56942
+
 2010-04-01  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Dmitry Titov.

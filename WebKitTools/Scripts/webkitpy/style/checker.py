@@ -90,6 +90,16 @@ _BASE_FILTER_RULES = [
     '-whitespace/blank_line',
     '-whitespace/end_of_line',
     '-whitespace/labels',
+    # List Python pep8 categories last.
+    #
+    # Because much of WebKit's Python code base does not abide by the
+    # PEP8 79 character limit, we ignore the 79-character-limit category
+    # pep8/E501 for now.
+    #
+    # FIXME: Consider bringing WebKit's Python code base into conformance
+    #        with the 79 character limit, or some higher limit that is
+    #        agreeable to the WebKit project.
+    '-pep8/E501',
     ]
 
 
@@ -191,7 +201,7 @@ def _all_categories():
     #        now we add only the categories needed for the unit tests
     #        (which validate the consistency of the configuration
     #        settings against the known categories, etc).
-    categories = categories.union(["pep8/W191", "pep8/W291"])
+    categories = categories.union(["pep8/W191", "pep8/W291", "pep8/E501"])
 
     return categories
 
