@@ -25,6 +25,7 @@ gl.vertexAttribPointer(vertexLoc, 4, gl.FLOAT, false, 7 * gl.sizeInBytes(gl.FLOA
 gl.enableVertexAttribArray(vertexLoc);
 gl.vertexAttribPointer(normalLoc, 3, gl.FLOAT, false, 7 * gl.sizeInBytes(gl.FLOAT), 3 * gl.sizeInBytes(gl.FLOAT));
 gl.enableVertexAttribArray(normalLoc);
+shouldBe('gl.checkFramebufferStatus(gl.FRAMEBUFFER)', 'gl.FRAMEBUFFER_COMPLETE');
 shouldBe('gl.getError()', '0');
 shouldBeUndefined('gl.drawElements(gl.TRIANGLES, 3, gl.UNSIGNED_SHORT, 0)');
 shouldBe('gl.getError()', '0');

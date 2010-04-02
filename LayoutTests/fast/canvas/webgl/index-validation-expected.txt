@@ -2,6 +2,7 @@ Test of get calls against GL objects like getBufferParameter, etc.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
+PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
 PASS gl.getError() is 0
 PASS gl.drawElements(gl.TRIANGLES, 3, gl.UNSIGNED_SHORT, 0) is undefined.
 PASS gl.getError() is 0
