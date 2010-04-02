@@ -4210,13 +4210,15 @@ Vector<String> Document::formElementsState() const
     typedef ListHashSet<Element*>::const_iterator Iterator;
     Iterator end = m_formElementsWithState.end();
     for (Iterator it = m_formElementsWithState.begin(); it != end; ++it) {
-        Element* e = *it;
+        Element* elementWithState = *it;
         String value;
-        if (e->saveFormControlState(value)) {
-            stateVector.append(e->formControlName().string());
-            stateVector.append(e->formControlType().string());
-            stateVector.append(value);
-        }
+        if (!elementWithState->shouldSaveAndRestoreFormControlState())
+            continue;
+        if (!elementWithState->saveFormControlState(value))
+            continue;
+        stateVector.append(elementWithState->formControlName().string());
+        stateVector.append(elementWithState->formControlType().string());
+        stateVector.append(value);
     }
     return stateVector;
 }

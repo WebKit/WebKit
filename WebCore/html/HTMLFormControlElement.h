@@ -150,6 +150,8 @@ public:
     HTMLFormControlElementWithState(const QualifiedName& tagName, Document*, HTMLFormElement*);
     virtual ~HTMLFormControlElementWithState();
 
+    virtual bool autoComplete() const;
+    virtual bool shouldSaveAndRestoreFormControlState() const;
     virtual void finishParsingChildren();
 
 protected:

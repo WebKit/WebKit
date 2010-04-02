@@ -155,13 +155,7 @@ bool HTMLInputElement::autoComplete() const
 {
     if (m_autocomplete != Uninitialized)
         return m_autocomplete == On;
-    
-    // Assuming we're still in a Form, respect the Form's setting
-    if (HTMLFormElement* form = this->form())
-        return form->autoComplete();
-    
-    // The default is true
-    return true;
+    return HTMLTextFormControlElement::autoComplete();
 }
 
 static inline CheckedRadioButtons& checkedRadioButtons(const HTMLInputElement* element)
@@ -911,9 +905,6 @@ const AtomicString& HTMLInputElement::formControlType() const
 
 bool HTMLInputElement::saveFormControlState(String& result) const
 {
-    if (!autoComplete())
-        return false;
-
     switch (inputType()) {
         case BUTTON:
         case COLOR:

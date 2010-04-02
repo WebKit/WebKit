@@ -1,3 +1,13 @@
+2010-04-02  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Forms with autocomplete=off should not consume saved state
+        https://bugs.webkit.org/show_bug.cgi?id=36762
+
+        * fast/forms/state-restore-to-non-autocomplete-form-expected.txt: Added.
+        * fast/forms/state-restore-to-non-autocomplete-form.html: Added.
+
 2010-04-02  Dirk Schulze  <krit@webkit.org>
 
         Unreviewed.

@@ -1,3 +1,33 @@
+2010-04-02  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Forms with autocomplete=off should not consume saved state
+        https://bugs.webkit.org/show_bug.cgi?id=36762
+        
+        Introduce Element::shouldSaveAndRestoreFormControlState() to check
+        if we should save and restore control state.
+
+        Test: fast/forms/state-restore-to-non-autocomplete-form.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::formElementsState): Check shouldSaveAndRestoreFormControlState().
+        * dom/Element.h:
+        (WebCore::Element::shouldSaveAndRestoreFormControlState): Added. It just returns true.
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElementWithState::autoComplete):
+          Added. It return autocomplete state of the form.
+        (WebCore::HTMLFormControlElementWithState::shouldSaveAndRestoreFormControlState):
+          Added. It returns the result of autoComplete().
+        (WebCore::HTMLFormControlElementWithState::finishParsingChildren):
+          Do not restore state if shouldSaveAndRestoreFormControlState() is false.
+        * html/HTMLFormControlElement.h: Declare autoComplete() and overriding methods.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::autoComplete):
+          Reduce code by using autoComplete() of the parent class.
+        (WebCore::HTMLInputElement::saveFormControlState):
+          Remove the autoComplete() check. Document::formElementsState() does equivalent check.
+
 2010-04-02  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.

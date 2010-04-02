@@ -422,9 +422,29 @@ void HTMLFormControlElementWithState::didMoveToNewOwnerDocument()
     HTMLFormControlElement::didMoveToNewOwnerDocument();
 }
 
+bool HTMLFormControlElementWithState::autoComplete() const
+{
+    if (!form())
+        return true;
+    return form()->autoComplete();
+}
+
+bool HTMLFormControlElementWithState::shouldSaveAndRestoreFormControlState() const
+{
+    // We don't save/restore control state in a form with autocomplete=off.
+    return autoComplete();
+}
+
 void HTMLFormControlElementWithState::finishParsingChildren()
 {
     HTMLFormControlElement::finishParsingChildren();
+
+    // We don't save state of a control with shouldSaveAndRestoreFormControlState()=false.
+    // But we need to skip restoring process too because a control in another
+    // form might have the same pair of name and type and saved its state.
+    if (!shouldSaveAndRestoreFormControlState())
+        return;
+
     Document* doc = document();
     if (doc->hasStateForNewFormElements()) {
         String state;
