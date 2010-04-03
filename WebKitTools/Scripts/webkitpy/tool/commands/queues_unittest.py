@@ -45,6 +45,17 @@ class TestReviewQueue(AbstractReviewQueue):
     name = "test-review-queue"
 
 
+class MockPatch(object):
+    def is_rollout(self):
+        return True
+
+    def bug_id(self):
+        return 12345
+
+    def id(self):
+        return 76543
+
+
 class AbstractQueueTest(CommandsTest):
     def _assert_log_progress_output(self, patch_ids, progress_output):
         OutputCapture().assert_outputs(self, TestQueue().log_progress, [patch_ids], expected_stderr=progress_output)
@@ -112,7 +123,7 @@ Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.c
         self.assert_queue_outputs(CommitQueue(), expected_stderr=expected_stderr)
 
     def test_rollout(self):
-        tool = MockTool()
+        tool = MockTool(log_executive=True)
         tool.buildbot.light_tree_on_fire()
         expected_stderr = {
             "begin_work_queue" : "CAUTION: commit-queue will discard all local changes in \"%s\"\nRunning WebKit commit-queue.\n" % MockSCM.fake_checkout_root,
@@ -123,6 +134,21 @@ Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.c
 """,
         }
         self.assert_queue_outputs(CommitQueue(), tool=tool, expected_stderr=expected_stderr)
+
+    def test_rollout_lands(self):
+        tool = MockTool(log_executive=True)
+        tool.buildbot.light_tree_on_fire()
+        rollout_patch = MockPatch()
+        expected_stderr = {
+            "begin_work_queue": "CAUTION: commit-queue will discard all local changes in \"%s\"\nRunning WebKit commit-queue.\n" % MockSCM.fake_checkout_root,
+            # FIXME: The commit-queue warns about bad committers twice.  This is due to the fact that we access Attachment.reviewer() twice and it logs each time.
+            "next_work_item": """Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.com)
+Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.com)
+1 patch in commit-queue [106]
+""",
+            "process_work_item": "MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'land-attachment', '--force-clean', '--non-interactive', '--ignore-builders', '--build-style=both', '--quiet', '76543']\n",
+        }
+        self.assert_queue_outputs(CommitQueue(), tool=tool, work_item=rollout_patch, expected_stderr=expected_stderr)
 
 
 class StyleQueueTest(QueuesTest):

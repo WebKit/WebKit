@@ -445,11 +445,13 @@ class MockStatusServer(object):
 
 class MockTool():
 
-    def __init__(self):
+    def __init__(self, log_executive=False):
         self.wakeup_event = threading.Event()
         self.bugs = MockBugzilla()
         self.buildbot = MockBuildBot()
         self.executive = Mock()
+        if log_executive:
+            self.executive.run_and_throw_if_fail = lambda args: log("MOCK run_and_throw_if_fail: %s" % args)
         self._irc = None
         self.user = MockUser()
         self._scm = MockSCM()
