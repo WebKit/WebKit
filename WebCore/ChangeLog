@@ -1,3 +1,18 @@
+2010-04-02  Nayan Kumar K  <nayankk@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        Fix for WML enabled build failure.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36648
+
+        * wml/WMLOptionElement.cpp:
+        (WebCore::WMLOptionElement::disabled):
+        * wml/WMLOptionElement.h:
+        * wml/WMLSelectElement.cpp:
+        (WebCore::WMLSelectElement::listBoxSelectItem):
+        * wml/WMLSelectElement.h:
+
 2010-04-02  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Alexey Proskuryakov.

@@ -170,6 +170,12 @@ void WMLOptionElement::handleIntrinsicEventIfNeeded()
         eventHandler->triggerIntrinsicEvent(WMLIntrinsicEventOnPick);
 }
 
+bool WMLOptionElement::disabled() const
+{
+    /* Dummy implementation, as disabled() is pure virtual in OptionElement class */
+    return false;
+}
+
 }
 
 #endif

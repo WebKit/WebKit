@@ -545,6 +545,11 @@ String WMLSelectElement::ivalue() const
     return parseValueSubstitutingVariableReferences(getAttribute(ivalueAttr));
 }
 
+void WMLSelectElement::listBoxSelectItem(int listIndex, bool allowMultiplySelections, bool shift, bool fireOnChangeNow)
+{
+    /* Dummy implementation as listBoxSelectItem is pure virtual in SelectElement class */
+}
+
 }
 
 #endif

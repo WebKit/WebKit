@@ -56,6 +56,8 @@ public:
     virtual String textIndentedToRespectGroupLabel() const;
     virtual String value() const;
 
+    virtual bool disabled() const;
+
 private:
     virtual RenderStyle* nonRendererRenderStyle() const;
     void handleIntrinsicEventIfNeeded();
