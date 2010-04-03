@@ -1,3 +1,15 @@
+2010-04-03  Darin Fisher  <darin@chromium.org>
+
+        Add default implementations of WebNotificationPresenter methods to
+        repair the downstream Chromium build.
+
+        * public/WebNotificationPresenter.h:
+        (WebKit::WebNotificationPresenter::show):
+        (WebKit::WebNotificationPresenter::cancel):
+        (WebKit::WebNotificationPresenter::objectDestroyed):
+        (WebKit::WebNotificationPresenter::checkPermission):
+        (WebKit::WebNotificationPresenter::requestPermission):
+
 2010-04-02  Michael Nordman  <michaeln@google.com>
 
         Reviewed by Nate Chapin.
