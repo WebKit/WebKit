@@ -4991,6 +4991,7 @@ http/tests/security/originHeader/origin-header-for-empty.html
 http/tests/security/xssAuditor/malformed-HTML.html
 
 # Skip xmlhttprequest tests
+# Many of these tests exercise preflighted requests, which are not supported with Qt older than 4.7.
 http/tests/xmlhttprequest/XMLHttpRequestException.html
 http/tests/xmlhttprequest/abort-should-cancel-load.html
 http/tests/xmlhttprequest/access-control-and-redirects.html
@@ -5001,8 +5002,13 @@ http/tests/xmlhttprequest/access-control-basic-non-simple-allow.html
 http/tests/xmlhttprequest/access-control-basic-non-simple-deny-cached.html
 http/tests/xmlhttprequest/access-control-basic-post-fail-non-simple-content-type.html
 http/tests/xmlhttprequest/access-control-basic-whitelist-request-headers.html
+http/tests/xmlhttprequest/access-control-preflight-async-header-denied.html
+http/tests/xmlhttprequest/access-control-preflight-async-method-denied.html
 http/tests/xmlhttprequest/access-control-preflight-headers-async.html
 http/tests/xmlhttprequest/access-control-preflight-headers-sync.html
+http/tests/xmlhttprequest/access-control-preflight-sync-header-denied.html
+http/tests/xmlhttprequest/access-control-preflight-sync-method-denied.html
+http/tests/xmlhttprequest/access-control-response-with-body-sync.html
 http/tests/xmlhttprequest/cache-override.html
 http/tests/xmlhttprequest/connection-error-sync.html
 http/tests/xmlhttprequest/cookies.html
