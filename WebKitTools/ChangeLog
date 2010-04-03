@@ -1,3 +1,31 @@
+2010-04-03  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        The check-webkit-style script now logs an ERROR and exits when
+        encountering a file path that does not exist.  Previously, it failed
+        silently on such paths.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36957
+
+        * Scripts/webkitpy/common/system/logtesting.py:
+          - Added a FIXME to rename the LoggingTestCase class to
+            LoggingTestCaseBase.
+
+        * Scripts/webkitpy/style/checker.py:
+          - In the StyleChecker.check_file() method:
+            - Added a mock_os_path_exists parameter.
+            - Renamed the process_file parameter to mock_process_file.
+            - Added logic to log an error and exist if the given path does
+              not exist.
+
+        * Scripts/webkitpy/style/checker_unittest.py:
+          - Refactored the StyleCheckerCheckFileTest class slightly to
+            inherit from LoggingTestCase.
+          - Added a test method to unit-test the case of a file that
+            does not exist.
+          - Adjusted the other test methods as necessary.
+
 2010-04-03  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

@@ -636,7 +636,9 @@ class StyleChecker(object):
                 file_path = os.path.join(dir_path, file_name)
                 check_file(file_path)
 
-    def check_file(self, file_path, handle_style_error=None, process_file=None):
+    def check_file(self, file_path, handle_style_error=None,
+                   mock_os_path_exists=None,
+                   mock_process_file=None):
         """Check style in the given file.
 
         Args:
@@ -647,11 +649,24 @@ class StyleChecker(object):
                               occurs. This parameter is meant for internal
                               use within this class. Defaults to a
                               DefaultStyleErrorHandler instance.
-          process_file: The function to call to process the file. This
-                        parameter should be used only for unit tests.
-                        Defaults to the file processing method of this class.
+          mock_os_path_exists: A unit-test replacement for os.path.exists.
+                               This parameter should only be used for unit
+                               tests.
+          mock_process_file: The function to call to process the file. This
+                             parameter should be used only for unit tests.
+                             Defaults to the file processing method of this
+                             class.
 
         """
+        os_path_exists = (os.path.exists if mock_os_path_exists is None else
+                          mock_os_path_exists)
+        process_file = (self._process_file if mock_process_file is None else
+                        mock_process_file)
+
+        if not os_path_exists(file_path):
+            _log.error("File does not exist: %s" % file_path)
+            sys.exit(1)
+
         _log.debug("Checking: " + file_path)
         if handle_style_error is None:
             handle_style_error = DefaultStyleErrorHandler(
@@ -659,9 +674,6 @@ class StyleChecker(object):
                                      file_path=file_path,
                                      increment_error_count=
                                          self._increment_error_count)
-        if process_file is None:
-            process_file = self._process_file
-
         self.file_count += 1
 
         dispatcher = ProcessorDispatcher()

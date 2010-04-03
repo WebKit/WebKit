@@ -207,6 +207,10 @@ class LogTesting(object):
 # setUp() and tearDown() methods will not get fired for test case classes
 # that inherit from this class -- even if the class inherits from *both*
 # unittest.TestCase and LoggingTestCase.
+#
+# FIXME: Rename this class to LoggingTestCaseBase to be sure that
+#        the unittest module does not interpret this class as a unittest
+#        test case itself.
 class LoggingTestCase(unittest.TestCase):
 
     """Supports end-to-end unit-testing of log messages.

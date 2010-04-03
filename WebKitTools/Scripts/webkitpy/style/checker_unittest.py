@@ -58,6 +58,7 @@ from optparser import CommandOptionValues
 from processors.cpp import CppProcessor
 from processors.python import PythonProcessor
 from processors.text import TextProcessor
+from webkitpy.common.system.logtesting import LoggingTestCase
 
 
 class ConfigureLoggingTestBase(unittest.TestCase):
@@ -535,7 +536,7 @@ class StyleCheckerTest(unittest.TestCase):
         self.assertEquals(style_checker.file_count, 0)
 
 
-class StyleCheckerCheckFileTest(unittest.TestCase):
+class StyleCheckerCheckFileTest(LoggingTestCase):
 
     """Test the check_file() method of the StyleChecker class.
 
@@ -561,20 +562,22 @@ class StyleCheckerCheckFileTest(unittest.TestCase):
 
     """
     def setUp(self):
-        self._log = LogTesting.setUp(self)
+        LoggingTestCase.setUp(self)
         self.got_file_path = None
         self.got_handle_style_error = None
         self.got_processor = None
         self.warning_messages = ""
-
-    def tearDown(self):
-        self._log.tearDown()
 
     def mock_stderr_write(self, warning_message):
         self.warning_messages += warning_message
 
     def mock_handle_style_error(self):
         pass
+
+    def mock_os_path_exists(self, path):
+        # We deliberately make it so that this method returns False unless
+        # the caller has made an effort to put "does_exist" in the path.
+        return path.find("does_exist") > -1
 
     def mock_process_file(self, processor, file_path, handle_style_error):
         """A mock _process_file().
@@ -612,16 +615,30 @@ class StyleCheckerCheckFileTest(unittest.TestCase):
 
         style_checker = StyleChecker(configuration)
 
-        style_checker.check_file(file_path,
-                                 self.mock_handle_style_error,
-                                 self.mock_process_file)
+        style_checker.check_file(file_path=file_path,
+            handle_style_error=self.mock_handle_style_error,
+            mock_os_path_exists=self.mock_os_path_exists,
+            mock_process_file=self.mock_process_file)
 
-        self.assertEquals(1, style_checker.file_count)
+        file_count = 1 if self.mock_os_path_exists(file_path) else 0
+
+        self.assertEquals(file_count, style_checker.file_count)
+
+    def test_check_file_does_not_exist(self):
+        file_path = "file_does_not_exist.txt"
+
+        # Confirm that the file does not exist.
+        self.assertFalse(self.mock_os_path_exists(file_path))
+
+        # Check the outcome.
+        self.assertRaises(SystemExit, self.call_check_file, file_path)
+        self.assertLog(["ERROR: File does not exist: "
+                        "file_does_not_exist.txt\n"])
 
     def test_check_file_on_skip_without_warning(self):
         """Test check_file() for a skipped-without-warning file."""
 
-        file_path = "LayoutTests/foo.txt"
+        file_path = "LayoutTests/does_exist/foo.txt"
 
         dispatcher = ProcessorDispatcher()
         # Confirm that the input file is truly a skipped-without-warning file.
@@ -634,7 +651,7 @@ class StyleCheckerCheckFileTest(unittest.TestCase):
     def test_check_file_on_skip_with_warning(self):
         """Test check_file() for a skipped-with-warning file."""
 
-        file_path = "gtk2drawing.c"
+        file_path = "does_exist/gtk2drawing.c"
 
         dispatcher = ProcessorDispatcher()
         # Check that the input file is truly a skipped-with-warning file.
@@ -643,15 +660,15 @@ class StyleCheckerCheckFileTest(unittest.TestCase):
         # Check the outcome.
         self.call_check_file(file_path)
         self.assert_attributes(None, None, None, "")
-        self._log.assertMessages(["WARNING: File exempt from style guide. "
-                                  'Skipping: "gtk2drawing.c"\n'])
+        self.assertLog(["WARNING: File exempt from style guide. "
+                        'Skipping: "does_exist/gtk2drawing.c"\n'])
 
     def test_check_file_on_non_skipped(self):
 
         # We use a C++ file since by using a CppProcessor, we can check
         # that all of the possible information is getting passed to
         # process_file (in particular, the min_confidence parameter).
-        file_base = "foo"
+        file_base = "foo_does_exist"
         file_extension = "cpp"
         file_path = file_base + "." + file_extension
 
