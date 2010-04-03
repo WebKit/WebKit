@@ -119,7 +119,7 @@ void WebDatabase::closeDatabaseImmediately(const WebString& originIdentifier, co
         DatabaseThread* databaseThread = database->scriptExecutionContext()->databaseThread();
         if (databaseThread && !databaseThread->terminationRequested()) {
             database->stop();
-            databaseThread->scheduleTask(DatabaseCloseTask::create(database, 0));
+            databaseThread->scheduleTask(DatabaseCloseTask::create(database, Database::RemoveDatabaseFromContext, 0));
         }
     }
 }

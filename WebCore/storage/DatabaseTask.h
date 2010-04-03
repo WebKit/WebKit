@@ -29,6 +29,7 @@
 #define DatabaseTask_h
 
 #if ENABLE(DATABASE)
+#include "Database.h"
 #include "ExceptionCode.h"
 #include "PlatformString.h"
 #include <wtf/OwnPtr.h>
@@ -39,7 +40,6 @@
 
 namespace WebCore {
 
-class Database;
 class DatabaseTask;
 class DatabaseThread;
 class SQLValue;
@@ -110,18 +110,20 @@ private:
 
 class DatabaseCloseTask : public DatabaseTask {
 public:
-    static PassOwnPtr<DatabaseCloseTask> create(Database* db, DatabaseTaskSynchronizer* synchronizer)
+    static PassOwnPtr<DatabaseCloseTask> create(Database* db, Database::ClosePolicy closePolicy, DatabaseTaskSynchronizer* synchronizer)
     { 
-        return new DatabaseCloseTask(db, synchronizer);
+        return new DatabaseCloseTask(db, closePolicy, synchronizer);
     }
 
 private:
-    DatabaseCloseTask(Database*, DatabaseTaskSynchronizer*);
+    DatabaseCloseTask(Database*, Database::ClosePolicy, DatabaseTaskSynchronizer*);
 
     virtual void doPerformTask();
 #ifndef NDEBUG
     virtual const char* debugTaskName() const;
 #endif
+
+    Database::ClosePolicy m_closePolicy;
 };
 
 class DatabaseTransactionTask : public DatabaseTask {

@@ -1,3 +1,21 @@
+2010-04-02  Michael Nordman  <michaeln@google.com>
+
+        Reviewed by Nate Chapin.
+
+        Set the close policy used by the DatabaseCloseTask in a constructor argument
+        instead of hard coding it.
+        https://bugs.webkit.org/show_bug.cgi?id=37037
+
+        No new tests, new new functionality.
+
+        * storage/Database.cpp: This callsite passes in DoNotRemoveFromDatabaseContext to retain its current behavior.
+        (WebCore::Database::markAsDeletedAndClose):
+        * storage/DatabaseTask.cpp:
+        (WebCore::DatabaseCloseTask::DatabaseCloseTask):
+        (WebCore::DatabaseCloseTask::doPerformTask):
+        * storage/DatabaseTask.h:
+        (WebCore::DatabaseCloseTask::create):
+
 2010-04-02  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Simon Fraser.

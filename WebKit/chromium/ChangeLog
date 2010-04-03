@@ -1,3 +1,15 @@
+2010-04-02  Michael Nordman  <michaeln@google.com>
+
+        Reviewed by Nate Chapin.
+
+        Set the close policy used by the DatabaseCloseTask at this callsite to
+        RemoveDatabaseFromContext. This restores its behavior to what it was prior to
+        r56293.
+        https://bugs.webkit.org/show_bug.cgi?id=37037
+
+        * src/WebDatabase.cpp:
+        (WebKit::WebDatabase::closeDatabaseImmediately):
+
 2010-04-02  Evan Stade  <estade@chromium.org>
 
         Reviewed by Eric Seidel.

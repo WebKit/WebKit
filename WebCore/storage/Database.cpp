@@ -384,7 +384,7 @@ void Database::markAsDeletedAndClose()
     m_scriptExecutionContext->databaseThread()->unscheduleDatabaseTasks(this);
 
     DatabaseTaskSynchronizer synchronizer;
-    OwnPtr<DatabaseCloseTask> task = DatabaseCloseTask::create(this, &synchronizer);
+    OwnPtr<DatabaseCloseTask> task = DatabaseCloseTask::create(this, DoNotRemoveDatabaseFromContext, &synchronizer);
 
     m_scriptExecutionContext->databaseThread()->scheduleImmediateTask(task.release());
     synchronizer.waitForTaskCompletion();
