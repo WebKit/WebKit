@@ -38,6 +38,10 @@ from webkitpy.tool.commands.stepsequence import StepSequenceErrorHandler
 
 class SheriffBot(AbstractQueue, StepSequenceErrorHandler):
     name = "sheriff-bot"
+    watchers = AbstractQueue.watchers + [
+        "abarth@webkit.org",
+        "eric@webkit.org",
+    ]
 
     def _update(self):
         self.run_webkit_patch(["update", "--force-clean", "--quiet"])

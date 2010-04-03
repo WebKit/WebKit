@@ -1,5 +1,16 @@
 2010-04-02  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed.
+
+        Have Eric and Adam watch the SheriffBot
+        https://bugs.webkit.org/show_bug.cgi?id=37054
+
+        * Scripts/webkitpy/tool/bot/sheriff.py:
+        * Scripts/webkitpy/tool/bot/sheriff_unittest.py:
+        * Scripts/webkitpy/tool/commands/sheriffbot.py:
+
+2010-04-02  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Darin Adler.
 
         commit-queue should ignore builders when landing rollouts

@@ -101,4 +101,6 @@ class Sheriff(object):
         comment = "%s might have broken %s" % (
             view_source_url(commit_info.revision()),
             join_with_separators([builder.name() for builder in builders]))
-        self._tool.bugs.post_comment_to_bug(commit_info.bug_id(), comment)
+        self._tool.bugs.post_comment_to_bug(commit_info.bug_id(),
+                                            comment,
+                                            cc=self._sheriffbot.watchers)

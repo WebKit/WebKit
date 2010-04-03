@@ -36,6 +36,10 @@ from webkitpy.tool.mocktool import MockTool, mock_builder
 
 
 class MockSheriffBot(object):
+    watchers = [
+        "watcher@example.com",
+    ]
+
     def run_webkit_patch(self, args):
         return "Created bug https://bugs.webkit.org/show_bug.cgi?id=36936\n"
 
