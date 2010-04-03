@@ -1,3 +1,23 @@
+2010-04-03  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Inconsistent failure modes from uniform[Matrix]* with null WebGLUniformLocation
+        https://bugs.webkit.org/show_bug.cgi?id=36574
+
+        Fixed bugs in JavaScript bindings for uniform[Matrix]* entry
+        points causing them to throw exceptions rather than synthesize GL
+        errors. Fixed the implementations to synthesize INVALID_VALUE
+        rather than INVALID_OPERATION to comply to the WebGL spec. Updated
+        uniform-location-expected.txt to incorporate the correct error.
+        Tested in Safari and Chromium.
+
+        * fast/canvas/webgl/null-uniform-location-expected.txt: Added.
+        * fast/canvas/webgl/null-uniform-location.html: Added.
+        * fast/canvas/webgl/script-tests/null-uniform-location.js: Added.
+        (callUniformFunction):
+        * fast/canvas/webgl/uniform-location-expected.txt:
+
 2010-04-02  Andy Estes  <aestes@apple.com>
 
         Reviewed by Adam Barth.

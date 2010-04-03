@@ -1,3 +1,45 @@
+2010-04-03  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Inconsistent failure modes from uniform[Matrix]* with null WebGLUniformLocation
+        https://bugs.webkit.org/show_bug.cgi?id=36574
+
+        Fixed bugs in JavaScript bindings for uniform[Matrix]* entry
+        points causing them to throw exceptions rather than synthesize GL
+        errors. Fixed the implementations to synthesize INVALID_VALUE
+        rather than INVALID_OPERATION to comply to the WebGL spec. Updated
+        uniform-location-expected.txt to incorporate the correct error.
+        Tested in Safari and Chromium.
+
+        Test: fast/canvas/webgl/null-uniform-location.html
+
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp:
+        (WebCore::V8WebGLRenderingContext::getUniformCallback):
+        (WebCore::vertexAttribAndUniformHelperf):
+        (WebCore::uniformHelperi):
+        (WebCore::uniformMatrixHelper):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::uniform1f):
+        (WebCore::WebGLRenderingContext::uniform1fv):
+        (WebCore::WebGLRenderingContext::uniform1i):
+        (WebCore::WebGLRenderingContext::uniform1iv):
+        (WebCore::WebGLRenderingContext::uniform2f):
+        (WebCore::WebGLRenderingContext::uniform2fv):
+        (WebCore::WebGLRenderingContext::uniform2i):
+        (WebCore::WebGLRenderingContext::uniform2iv):
+        (WebCore::WebGLRenderingContext::uniform3f):
+        (WebCore::WebGLRenderingContext::uniform3fv):
+        (WebCore::WebGLRenderingContext::uniform3i):
+        (WebCore::WebGLRenderingContext::uniform3iv):
+        (WebCore::WebGLRenderingContext::uniform4f):
+        (WebCore::WebGLRenderingContext::uniform4fv):
+        (WebCore::WebGLRenderingContext::uniform4i):
+        (WebCore::WebGLRenderingContext::uniform4iv):
+        (WebCore::WebGLRenderingContext::uniformMatrix2fv):
+        (WebCore::WebGLRenderingContext::uniformMatrix3fv):
+        (WebCore::WebGLRenderingContext::uniformMatrix4fv):
+
 2010-04-02  Andy Estes  <aestes@apple.com>
 
         Reviewed by Adam Barth.

@@ -429,10 +429,6 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getUniformCallback(const v8::Argu
     bool ok = false;
     WebGLUniformLocation* location = toWebGLUniformLocation(args[1], ok);
 
-    if (!ok) {
-        V8Proxy::setDOMException(SYNTAX_ERR);
-        return notHandledByInterceptor();
-    }
     WebGLGetInfo info = context->getUniform(program, location, ec);
     if (ec) {
         V8Proxy::setDOMException(ec);
@@ -786,10 +782,6 @@ static v8::Handle<v8::Value> vertexAttribAndUniformHelperf(const v8::Arguments& 
 
     WebGLRenderingContext* context = V8WebGLRenderingContext::toNative(args.Holder());
 
-    if (!ok) {
-        V8Proxy::setDOMException(SYNTAX_ERR);
-        return notHandledByInterceptor();
-    }
     if (V8WebGLFloatArray::HasInstance(args[1])) {
         WebGLFloatArray* array = V8WebGLFloatArray::toNative(args[1]->ToObject());
         ASSERT(array != NULL);
@@ -862,10 +854,6 @@ static v8::Handle<v8::Value> uniformHelperi(const v8::Arguments& args,
     bool ok = false;
     WebGLUniformLocation* location = toWebGLUniformLocation(args[0], ok);
 
-    if (!ok) {
-        V8Proxy::setDOMException(SYNTAX_ERR);
-        return notHandledByInterceptor();
-    }
     if (V8WebGLIntArray::HasInstance(args[1])) {
         WebGLIntArray* array = V8WebGLIntArray::toNative(args[1]->ToObject());
         ASSERT(array != NULL);
@@ -979,10 +967,6 @@ static v8::Handle<v8::Value> uniformMatrixHelper(const v8::Arguments& args,
     bool ok = false;
     WebGLUniformLocation* location = toWebGLUniformLocation(args[0], ok);
     
-    if (!ok) {
-        V8Proxy::setDOMException(SYNTAX_ERR);
-        return notHandledByInterceptor();
-    }
     bool transpose = args[1]->BooleanValue();
     if (V8WebGLFloatArray::HasInstance(args[2])) {
         WebGLFloatArray* array = V8WebGLFloatArray::toNative(args[2]->ToObject());
