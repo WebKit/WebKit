@@ -133,10 +133,8 @@ fast/events/spatial-navigation
 # For some reason crashes when run with all tests. Passes individually.
 fast/forms/multiple-form-submission-protection-mouse.html
 
-
-# renderTheme is not ready to draw progress element
+# The animation causes the result of this test to depend on the speed of executing it, and that will cause it to be flaky
 fast/dom/HTMLProgressElement/progress-element.html
-fast/dom/HTMLProgressElement/set-progress-properties.html
 
 # event.dataTransfer.setData('text/uri-list') not correctly implemented on Mac
 editing/pasteboard/dataTransfer-setData-getData.html

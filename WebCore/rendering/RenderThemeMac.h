@@ -27,6 +27,8 @@
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
 
+class RenderProgress;
+
 #ifdef __OBJC__
 @class WebCoreRenderThemeNotificationObserver;
 #else
@@ -78,6 +80,13 @@ public:
     
     virtual bool paintCapsLockIndicator(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
 
+#if ENABLE(PROGRESS_TAG)
+    // Returns the repeat interval of the animation for the progress bar.
+    virtual double animationRepeatIntervalForProgressBar(RenderProgress*) const;
+    // Returns the duration of the animation for the progress bar.
+    virtual double animationDurationForProgressBar(RenderProgress*) const;
+#endif
+
     virtual Color systemColor(int cssValueId) const;
 
 protected:
@@ -94,6 +103,11 @@ protected:
 
     virtual bool paintMenuListButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
     virtual void adjustMenuListButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+
+#if ENABLE(PROGRESS_TAG)
+    virtual void adjustProgressBarStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual bool paintProgressBar(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+#endif
 
     virtual bool paintSliderTrack(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
     virtual void adjustSliderTrackStyle(CSSStyleSelector*, RenderStyle*, Element*) const;

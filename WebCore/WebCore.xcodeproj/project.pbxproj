@@ -2502,6 +2502,12 @@
 		A136A00D1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.h in Headers */ = {isa = PBXBuildFile; fileRef = A136A00B1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.h */; };
 		A17C81220F2A5CF7005DAAEB /* HTMLElementFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A17C81200F2A5CF7005DAAEB /* HTMLElementFactory.cpp */; };
 		A17C81230F2A5CF7005DAAEB /* HTMLElementFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = A17C81210F2A5CF7005DAAEB /* HTMLElementFactory.h */; };
+		A4226E5A1163D667008B8397 /* JSHTMLProgressElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A4226E591163D667008B8397 /* JSHTMLProgressElement.cpp */; };
+		A4226E5C1163D695008B8397 /* JSHTMLProgressElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A4226E5B1163D695008B8397 /* JSHTMLProgressElement.h */; };
+		A4226E951163D73A008B8397 /* DOMHTMLProgressElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A4226E921163D73A008B8397 /* DOMHTMLProgressElement.h */; };
+		A4226E961163D73A008B8397 /* DOMHTMLProgressElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = A4226E931163D73A008B8397 /* DOMHTMLProgressElement.mm */; };
+		A4226E991163D7CC008B8397 /* DOMHTMLProgressElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A4226E981163D7CC008B8397 /* DOMHTMLProgressElementInternal.h */; };
+		A4226EA61163D84D008B8397 /* HTMLProgressElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = A4226EA51163D84D008B8397 /* HTMLProgressElement.idl */; };
 		A43BF5981149290A00C643CA /* HTMLProgressElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A43BF5961149290A00C643CA /* HTMLProgressElement.cpp */; };
 		A43BF5991149290A00C643CA /* HTMLProgressElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A43BF5971149290A00C643CA /* HTMLProgressElement.h */; };
 		A43BF59C1149292800C643CA /* RenderProgress.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A43BF59A1149292800C643CA /* RenderProgress.cpp */; };
@@ -7925,6 +7931,12 @@
 		A136A00B1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLHttpRequestProgressEventThrottle.h; sourceTree = "<group>"; };
 		A17C81200F2A5CF7005DAAEB /* HTMLElementFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLElementFactory.cpp; sourceTree = "<group>"; };
 		A17C81210F2A5CF7005DAAEB /* HTMLElementFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLElementFactory.h; sourceTree = "<group>"; };
+		A4226E591163D667008B8397 /* JSHTMLProgressElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLProgressElement.cpp; sourceTree = "<group>"; };
+		A4226E5B1163D695008B8397 /* JSHTMLProgressElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLProgressElement.h; sourceTree = "<group>"; };
+		A4226E921163D73A008B8397 /* DOMHTMLProgressElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLProgressElement.h; sourceTree = "<group>"; };
+		A4226E931163D73A008B8397 /* DOMHTMLProgressElement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMHTMLProgressElement.mm; sourceTree = "<group>"; };
+		A4226E981163D7CC008B8397 /* DOMHTMLProgressElementInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLProgressElementInternal.h; sourceTree = "<group>"; };
+		A4226EA51163D84D008B8397 /* HTMLProgressElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLProgressElement.idl; sourceTree = "<group>"; };
 		A43BF5961149290A00C643CA /* HTMLProgressElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLProgressElement.cpp; sourceTree = "<group>"; };
 		A43BF5971149290A00C643CA /* HTMLProgressElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLProgressElement.h; sourceTree = "<group>"; };
 		A43BF59A1149292800C643CA /* RenderProgress.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderProgress.cpp; sourceTree = "<group>"; };
@@ -12498,6 +12510,8 @@
 				85ECBEEA0AA7626900544F0B /* DOMHTMLParamElement.mm */,
 				85183B3E0AA6926100F19FA3 /* DOMHTMLPreElement.h */,
 				85183B3F0AA6926100F19FA3 /* DOMHTMLPreElement.mm */,
+				A4226E921163D73A008B8397 /* DOMHTMLProgressElement.h */,
+				A4226E931163D73A008B8397 /* DOMHTMLProgressElement.mm */,
 				85183B400AA6926100F19FA3 /* DOMHTMLQuoteElement.h */,
 				85183B410AA6926100F19FA3 /* DOMHTMLQuoteElement.mm */,
 				85DF81930AA77E4B00486AD7 /* DOMHTMLScriptElement.h */,
@@ -12612,6 +12626,7 @@
 				85E711720AC5D5350053270F /* DOMHTMLParagraphElementInternal.h */,
 				85E711730AC5D5350053270F /* DOMHTMLParamElementInternal.h */,
 				85E711740AC5D5350053270F /* DOMHTMLPreElementInternal.h */,
+				A4226E981163D7CC008B8397 /* DOMHTMLProgressElementInternal.h */,
 				85E711750AC5D5350053270F /* DOMHTMLQuoteElementInternal.h */,
 				85E711760AC5D5350053270F /* DOMHTMLScriptElementInternal.h */,
 				85E711770AC5D5350053270F /* DOMHTMLSelectElementInternal.h */,
@@ -12936,8 +12951,6 @@
 			children = (
 				8952535011641B3400CABF00 /* FileThread.cpp */,
 				8952535111641B3400CABF00 /* FileThread.h */,
-				A43BF5961149290A00C643CA /* HTMLProgressElement.cpp */,
-				A43BF5971149290A00C643CA /* HTMLProgressElement.h */,
 				49484FAE102CF01E00187DD3 /* canvas */,
 				2EAFAF0B10E2AF2D007ED3D6 /* Blob.cpp */,
 				2EAFAF0C10E2AF2D007ED3D6 /* Blob.h */,
@@ -13158,6 +13171,9 @@
 				A8EA7C9F0A192B9C00A8EF5F /* HTMLPreElement.cpp */,
 				A8EA7CA20A192B9C00A8EF5F /* HTMLPreElement.h */,
 				1AE2AB850A1CE85000B42B25 /* HTMLPreElement.idl */,
+				A43BF5961149290A00C643CA /* HTMLProgressElement.cpp */,
+				A43BF5971149290A00C643CA /* HTMLProgressElement.h */,
+				A4226EA51163D84D008B8397 /* HTMLProgressElement.idl */,
 				A8CFF79B0A156978000A4234 /* HTMLQuoteElement.cpp */,
 				A8CFF7990A156978000A4234 /* HTMLQuoteElement.h */,
 				1AE2AEA30A1D28E800B42B25 /* HTMLQuoteElement.idl */,
@@ -13412,6 +13428,8 @@
 				1AE2ABA10A1CE90500B42B25 /* JSHTMLParamElement.h */,
 				1AE2ABA20A1CE90500B42B25 /* JSHTMLPreElement.cpp */,
 				1AE2ABA30A1CE90500B42B25 /* JSHTMLPreElement.h */,
+				A4226E591163D667008B8397 /* JSHTMLProgressElement.cpp */,
+				A4226E5B1163D695008B8397 /* JSHTMLProgressElement.h */,
 				1AE2AEC30A1D297B00B42B25 /* JSHTMLQuoteElement.cpp */,
 				1AE2AEC40A1D297B00B42B25 /* JSHTMLQuoteElement.h */,
 				1AE2ABA40A1CE90500B42B25 /* JSHTMLScriptElement.cpp */,
@@ -18782,6 +18800,9 @@
 				E4778B80115A581A00B5D372 /* JSCustomEvent.h in Headers */,
 				E1E1BF00115FF6FB006F52CA /* WindowsKeyboardCodes.h in Headers */,
 				8499A515115FB33000F566E3 /* RenderSVGResourceMarker.h in Headers */,
+				A4226E5C1163D695008B8397 /* JSHTMLProgressElement.h in Headers */,
+				A4226E951163D73A008B8397 /* DOMHTMLProgressElement.h in Headers */,
+				A4226E991163D7CC008B8397 /* DOMHTMLProgressElementInternal.h in Headers */,
 				2E3BBF081162DA1100B9409A /* UUID.h in Headers */,
 				8952535311641B3400CABF00 /* FileThread.h in Headers */,
 				97C078501165D5BE003A32EF /* SuffixTree.h in Headers */,
@@ -18889,6 +18910,7 @@
 				1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */,
 				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
 				2E0888C4114883A900AF4265 /* DOMFormData.idl in Resources */,
+				A4226EA61163D84D008B8397 /* HTMLProgressElement.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -20999,6 +21021,8 @@
 				62CD32591157E57C0063B0A7 /* CustomEvent.cpp in Sources */,
 				E4778B7F115A581A00B5D372 /* JSCustomEvent.cpp in Sources */,
 				8499A514115FB33000F566E3 /* RenderSVGResourceMarker.cpp in Sources */,
+				A4226E5A1163D667008B8397 /* JSHTMLProgressElement.cpp in Sources */,
+				A4226E961163D73A008B8397 /* DOMHTMLProgressElement.mm in Sources */,
 				2E3BBF071162DA1100B9409A /* UUID.cpp in Sources */,
 				8952535211641B3400CABF00 /* FileThread.cpp in Sources */,
 				2542F4DA1166C25A00E89A86 /* UserGestureIndicator.cpp in Sources */,

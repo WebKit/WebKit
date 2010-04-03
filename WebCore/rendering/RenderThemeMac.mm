@@ -32,6 +32,7 @@
 #import "HTMLMediaElement.h"
 #import "HTMLNames.h"
 #import "Image.h"
+#import "ImageBuffer.h"
 #import "LocalCurrentGraphicsContext.h"
 #import "MediaControlElements.h"
 #import "RenderMedia.h"
@@ -47,16 +48,25 @@
 #import <wtf/StdLibExtras.h>
 #import <math.h>
 
+#import "RenderProgress.h"
+
 #ifdef BUILDING_ON_TIGER
 typedef int NSInteger;
 typedef unsigned NSUInteger;
 #endif
 
-using std::min;
+using namespace std;
 
 // The methods in this file are specific to the Mac OS X platform.
 
 // FIXME: The platform-independent code in this class should be factored out and merged with RenderThemeSafari. 
+
+// We estimate the animation rate of a Mac OS X progress bar is 33 fps.
+// Hard code the value here because we haven't found API for it.
+const double progressAnimationFrameRate = 0.033;
+
+// Mac OS X progress bar animation seems to have 256 frames.
+const double progressAnimationNumFrames = 256;
 
 @interface WebCoreRenderThemeNotificationObserver : NSObject
 {
@@ -771,6 +781,57 @@ bool RenderThemeMac::paintMenuList(RenderObject* o, const RenderObject::PaintInf
 
     return false;
 }
+   
+#if ENABLE(PROGRESS_TAG)
+
+double RenderThemeMac::animationRepeatIntervalForProgressBar(RenderProgress*) const
+{
+    return progressAnimationFrameRate;
+}
+
+double RenderThemeMac::animationDurationForProgressBar(RenderProgress*) const
+{
+    return progressAnimationNumFrames * progressAnimationFrameRate;
+}
+
+void RenderThemeMac::adjustProgressBarStyle(CSSStyleSelector*, RenderStyle*, Element*) const
+{
+}
+
+bool RenderThemeMac::paintProgressBar(RenderObject* renderObject, const RenderObject::PaintInfo& paintInfo, const IntRect& rect)
+{
+    RenderProgress* renderProgress = toRenderProgress(renderObject);
+    HIThemeTrackDrawInfo trackInfo;
+    trackInfo.version = 0;
+    trackInfo.kind = renderProgress->position() < 0 ? kThemeLargeIndeterminateBar : kThemeLargeProgressBar;
+    trackInfo.bounds = IntRect(IntPoint(), rect.size());
+    trackInfo.min = 0;
+    trackInfo.max = numeric_limits<SInt32>::max();
+    trackInfo.value = lround(renderProgress->position() * nextafter(trackInfo.max, 0));
+    trackInfo.trackInfo.progress.phase = lround(renderProgress->animationProgress() * nextafter(progressAnimationNumFrames, 0));
+    trackInfo.attributes = kThemeTrackHorizontal;
+    trackInfo.enableState = isActive(renderObject) ? kThemeTrackActive : kThemeTrackInactive;
+    trackInfo.reserved = 0;
+    trackInfo.filler1 = 0;
+
+    OwnPtr<ImageBuffer> imageBuffer = ImageBuffer::create(rect.size());
+    if (!imageBuffer)
+        return true;
+
+    HIThemeDrawTrack(&trackInfo, 0, imageBuffer->context()->platformContext(), kHIThemeOrientationNormal);
+
+    paintInfo.context->save();
+
+    if (renderProgress->style()->direction() == RTL) {
+        paintInfo.context->translate(2 * rect.x() + rect.width(), 0);
+        paintInfo.context->scale(FloatSize(-1, 1));
+    }
+    paintInfo.context->drawImage(imageBuffer->image(), DeviceColorSpace, rect.location());
+
+    paintInfo.context->restore();
+    return false;
+}    
+#endif
 
 const float baseFontSize = 11.0f;
 const float baseArrowHeight = 4.0f;
