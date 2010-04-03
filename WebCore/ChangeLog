@@ -1,3 +1,56 @@
+2010-04-02  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Adam Barth.
+
+        The previous mechanism for testing whether an event was due to a user
+        gesture only checked the event type, not the source of the event.  This
+        allowed scripts to defeat popup blocking by programatically emitting
+        certain types of events.
+
+        Change the user gesture detection to check for a flag that is only set
+        when the event in question was generated through the platform and not
+        through the DOM.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37008
+
+        Tests: fast/events/popup-allowed-from-gesture-initiated-event.html
+               fast/events/popup-blocked-from-fake-button-click.html
+               fast/events/popup-blocked-from-fake-focus.html
+
+        * Android.mk: Add UserGestureIndicator.{cpp, h}.
+        * GNUmakefile.am: Same.
+        * WebCore.gypi: Same.
+        * WebCore.pro: Same.
+        * WebCore.vcproj/WebCore.vcproj: Same.
+        * WebCore.xcodeproj/project.pbxproj: Same.
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::processingUserGesture): Check the value of
+        UserGesureIndicator::processingUserGesture().
+        * dom/Document.cpp:
+        (WebCore::Document::createEvent): Remove call to
+        Event::setCreatedByDOM().
+        * dom/Event.cpp:
+        (WebCore::Event::Event): Remove initializers for m_createdByDOM.
+        (WebCore::Event::fromUserGesture): Check the value of
+        UserGestureIndicator::processingUserGesture().
+        * dom/Event.h: Remove m_createdByDOM.
+        * dom/UserGestureIndicator.cpp: Added.
+        (WebCore::UserGestureIndicator::UserGestureIndicator): Save the previous
+        value of s_processingUserGesture before setting it to true.
+        (WebCore::UserGestureIndicator::~UserGestureIndicator): Restore
+        s_processingUserGesture to its previous value.
+        * dom/UserGestureIndicator.h: Added.
+        (WebCore::UserGestureIndicator::processingUserGesture): Return the value
+        of s_processingUserGesture.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent): Instantiate a
+        UserGestureIndicator object on the stack to indicate a user gesture is
+        being processed.
+        (WebCore::EventHandler::handleMouseDoubleClickEvent): Same.
+        (WebCore::EventHandler::handleMouseReleaseEvent): Same.
+        (WebCore::EventHandler::keyEvent): Same.
+        (WebCore::EventHandler::handleTouchEvent): Same.
+
 2010-04-02  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

@@ -24,6 +24,7 @@
 #include "Event.h"
 
 #include "AtomicString.h"
+#include "UserGestureIndicator.h"
 #include <wtf/CurrentTime.h>
 
 namespace WebCore {
@@ -36,7 +37,6 @@ Event::Event()
     , m_defaultPrevented(false)
     , m_defaultHandled(false)
     , m_cancelBubble(false)
-    , m_createdByDOM(false)
     , m_eventPhase(0)
     , m_currentTarget(0)
     , m_createTime(static_cast<DOMTimeStamp>(currentTime() * 1000.0))
@@ -52,7 +52,6 @@ Event::Event(const AtomicString& eventType, bool canBubbleArg, bool cancelableAr
     , m_defaultPrevented(false)
     , m_defaultHandled(false)
     , m_cancelBubble(false)
-    , m_createdByDOM(false)
     , m_eventPhase(0)
     , m_currentTarget(0)
     , m_createTime(static_cast<DOMTimeStamp>(currentTime() * 1000.0))
@@ -203,7 +202,7 @@ bool Event::isTouchEvent() const
 
 bool Event::fromUserGesture()
 {
-    if (createdByDOM())
+    if (!UserGestureIndicator::processingUserGesture())
         return false;
 
     const AtomicString& type = this->type();

@@ -47,6 +47,7 @@
 #include "NPV8Object.h"
 #include "ScriptSourceCode.h"
 #include "Settings.h"
+#include "UserGestureIndicator.h"
 #include "V8Binding.h"
 #include "V8BindingState.h"
 #include "V8DOMWindow.h"
@@ -176,7 +177,7 @@ bool ScriptController::processingUserGesture(DOMWrapperWorld*) const
     // Based on code from kjs_bindings.cpp.
     // Note: This is more liberal than Firefox's implementation.
     if (event) {
-        if (event->createdByDOM())
+        if (!UserGestureIndicator::processingUserGesture())
             return false;
 
         const AtomicString& type = event->type();

@@ -29485,6 +29485,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\UserGestureIndicator.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\UserGestureIndicator.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\WebKitAnimationEvent.cpp"
 				>
 			</File>

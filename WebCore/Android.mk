@@ -173,6 +173,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	dom/TreeWalker.cpp \
 	dom/UIEvent.cpp \
 	dom/UIEventWithKeyState.cpp \
+	dom/UserGestureIndicator.cpp \
 	dom/WebKitAnimationEvent.cpp \
 	dom/WebKitTransitionEvent.cpp \
 	dom/WheelEvent.cpp \

@@ -3061,10 +3061,9 @@ PassRefPtr<Event> Document::createEvent(const String& eventType, ExceptionCode& 
     else if (eventType == "TouchEvent")
         event = TouchEvent::create();
 #endif
-    if (event) {
-        event->setCreatedByDOM(true);
+    if (event)
         return event.release();
-    }
+
     ec = NOT_SUPPORTED_ERR;
     return 0;
 }

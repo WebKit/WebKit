@@ -1,0 +1,32 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="../js/resources/js-test-style.css">
+        <script src="../js/resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <textarea id="test" width="100" onfocus="popup()" onblur="popup()"></textarea>
+        <div id="console"></div>
+
+        <script>
+            var win;
+            function popup() {
+                win = window.open("about:blank", "blank");
+                shouldBeUndefined("win");
+            }
+
+            if (window.layoutTestController) {
+                layoutTestController.dumpAsText();
+                layoutTestController.setCanOpenWindows();
+                layoutTestController.setPopupBlockingEnabled(true);
+                layoutTestController.setCloseRemainingWindowsWhenComplete(true);
+                layoutTestController.waitUntilDone();
+            }
+
+            document.getElementById("test").focus();
+            document.getElementById("test").blur();
+
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        </script>
+    </body>
+</html>

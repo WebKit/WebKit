@@ -1220,6 +1220,8 @@
             'dom/UIEvent.h',
             'dom/UIEventWithKeyState.cpp',
             'dom/UIEventWithKeyState.h',
+            'dom/UserGestureIndicator.cpp',
+            'dom/UserGestureIndicator.h',
             'dom/WebKitAnimationEvent.cpp',
             'dom/WebKitAnimationEvent.h',
             'dom/WebKitTransitionEvent.cpp',
