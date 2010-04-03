@@ -34,6 +34,10 @@
 #include "TextStream.h"
 #include <wtf/text/CString.h>
 
+#ifndef NDEBUG
+#include <stdio.h>
+#endif
+
 namespace WebCore {
 
 void KeyframeValueList::insert(const AnimationValue* value)

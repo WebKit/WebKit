@@ -1,3 +1,11 @@
+2010-04-03  Jakub Wieczorek  <jwieczorek@webkit.org>
+
+        Unreviewed.
+
+        Fix debug build with GCC >= 4.3.
+
+        * platform/graphics/GraphicsLayer.cpp: Include stdio.h explicitly.
+
 2010-04-03  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Darin Fisher.
