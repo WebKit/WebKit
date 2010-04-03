@@ -291,6 +291,7 @@ void DocumentThreadableLoader::preflightSuccess()
 
 void DocumentThreadableLoader::preflightFailure()
 {
+    m_actualRequest = 0; // Prevent didFinishLoading() from bypassing access check.
     m_client->didFail(ResourceError());
 }
 

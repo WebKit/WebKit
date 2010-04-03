@@ -1,3 +1,22 @@
+2010-04-02  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        XHR allows arbitrary XSRF across domains 
+        https://bugs.webkit.org/show_bug.cgi?id=36843
+
+        Added a one-line change to prevent bypassing the XDC check on
+        synchronous preflighted requests. Added layout tests to cover
+        variations of this problem.
+
+        Tests: http/tests/xmlhttprequest/access-control-preflight-async-header-denied.html
+               http/tests/xmlhttprequest/access-control-preflight-async-method-denied.html
+               http/tests/xmlhttprequest/access-control-preflight-sync-header-denied.html
+               http/tests/xmlhttprequest/access-control-preflight-sync-method-denied.html
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::preflightFailure):
+
 2010-04-02  Nayan Kumar K  <nayankk@gmail.com>
 
         Reviewed by Eric Seidel.
