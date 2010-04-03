@@ -1,3 +1,15 @@
+2010-04-03  Jakub Wieczorek  <jwieczorek@webkit.org>
+
+        Rubber-stamped by Daniel Bates.
+
+        Fix the fast/events/popup-allowed-from-gesture-initiated-event.html test
+        failure on the Qt and GTK+ ports.
+
+        Refactor it to not hardcode any metrics (in order to dispatch mouse events)
+        but instead calculate them from the offset* properties.
+
+        * fast/events/popup-allowed-from-gesture-initiated-event.html:
+
 2010-04-03  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Darin Fisher.
