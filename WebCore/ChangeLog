@@ -337,6 +337,25 @@
 
         Reviewed by Darin Adler.
 
+        Very bad scrolling-performance with the Trackpad at http://www.apple.com/ipad/app-store/
+        https://bugs.webkit.org/show_bug.cgi?id=36978
+
+        When we update compositing layers (which can happen on scrolling, when there are fixed position elements
+        on the page), we can end up redundantly setting images as layer contents if we have to color-correct
+        the image. This is because we call CGImageCreateCopyWithColorSpace(), which hands back a new image
+        every time.
+        
+        Avoid this by storing a reference to the original uncorrected image, which is used to then
+        avoid work if the image does not change.
+
+        * platform/graphics/mac/GraphicsLayerCA.h:
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::GraphicsLayerCA::setContentsToImage):
+
+2010-04-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
         Avoid doing work in FrameView::scrollPositionChanged() if there are no fixed position elements
         https://bugs.webkit.org/show_bug.cgi?id=36994
         

@@ -768,7 +768,17 @@ void GraphicsLayerCA::pauseAnimation(const String& keyframesName, double timeOff
 void GraphicsLayerCA::setContentsToImage(Image* image)
 {
     if (image) {
-        m_pendingContentsImage = image->nativeImageForCurrentFrame();
+        CGImageRef newImage = image->nativeImageForCurrentFrame();
+        if (!newImage)
+            return;
+
+        // Check to see if the image changed; we have to do this because the call to
+        // CGImageCreateCopyWithColorSpace() below can create a new image every time.
+        if (m_uncorrectedContentsImage && m_uncorrectedContentsImage.get() == newImage)
+            return;
+        
+        m_uncorrectedContentsImage = newImage;
+        m_pendingContentsImage = newImage;
         CGColorSpaceRef colorSpace = CGImageGetColorSpace(m_pendingContentsImage.get());
 
         static CGColorSpaceRef deviceRGB = CGColorSpaceCreateDeviceRGB();
@@ -782,6 +792,7 @@ void GraphicsLayerCA::setContentsToImage(Image* image)
         if (!m_contentsLayer)
             noteSublayersChanged();
     } else {
+        m_uncorrectedContentsImage = 0;
         m_pendingContentsImage = 0;
         m_contentsLayerPurpose = NoContentsLayer;
         if (m_contentsLayer)

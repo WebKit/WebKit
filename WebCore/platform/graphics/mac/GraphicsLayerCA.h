@@ -340,6 +340,7 @@ private:
 
     RetainPtr<WebAnimationDelegate> m_animationDelegate;
 
+    RetainPtr<CGImageRef> m_uncorrectedContentsImage;
     RetainPtr<CGImageRef> m_pendingContentsImage;
     
     struct LayerAnimation {
