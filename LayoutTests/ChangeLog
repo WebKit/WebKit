@@ -1,3 +1,15 @@
+2010-04-02  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36647
+        Make replacestate-in-frame.html less insane and hopefully no longer flaky.
+
+        * fast/loader/stateobjects/replacestate-in-iframe-expected.txt:
+        * fast/loader/stateobjects/replacestate-in-iframe.html:
+        * fast/loader/stateobjects/resources/replacestate-in-iframe-window-child.html: Added.
+        * fast/loader/stateobjects/resources/replacestate-in-iframe-window.html: Added.
+
 2010-04-02  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

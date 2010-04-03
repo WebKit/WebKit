@@ -1,32 +1,39 @@
 <script>
-if (parent == window && window.layoutTestController) {
+if (window.layoutTestController) {
   layoutTestController.dumpAsText();
-  layoutTestController.dumpChildFramesAsText();
+  layoutTestController.setCanOpenWindows();
   layoutTestController.waitUntilDone();
 }
 
-function runTest() {
-  frames[0].history.replaceState("foo", "foo", "#foo");
-  location = "resources/navigate-back.html";
-}
+// This is a test that replaceState called on an inner frame does not modify
+// the history state of the top frame.  The test asserts that the inner frame
+// remains the inner frame and is not promoted to become the top frame during
+// history traversal (on navigating back).
 
-onpopstate = function(e) {
-  document.body.innerText = e.state;
+var testWin;
+
+function notifyDone(result) {
+  testWin.close();
+  delete testWin;
+
+  document.body.innerText = result;
+
   if (window.layoutTestController)
     layoutTestController.notifyDone();
 }
 
-onload = function() {
-  if (parent == window) {
-    var f = document.createElement("iframe");
-    f.src = location;
-    f.onload = function() { setTimeout(runTest, 0); };
-    document.body.appendChild(f);
-  }
+function windowLoaded() {
+  // Allow load processing to complete before we start navigating again, so
+  // that navigating to navigate-back.html creates a new history item.
+  setTimeout(function() {
+    testWin.frames[0].history.replaceState(null, null);
+    testWin.location = "resources/navigate-back.html";
+  }, 0);
 }
 
-onunload = function() {
-  // disable page cache
+onload = function() {
+  testWin = open("resources/replacestate-in-iframe-window.html");
+  testWin.onload = windowLoaded;
 }
 </script>
-<body>default text</body>
+<body>PENDING</body>
