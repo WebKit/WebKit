@@ -93,8 +93,13 @@ def main():
         _log.debug("WebKit checkout found with root: %s" % checkout_root)
 
     parser = checker.check_webkit_style_parser()
-    found_checkout = checkout is not None
-    (paths, options) = parser.parse(args, found_checkout=found_checkout)
+    (paths, options) = parser.parse(args)
+
+    if checkout is None and not paths:
+        _log.error("WebKit checkout not found: You must run this script "
+                   "from within a WebKit checkout if you are not passing "
+                   "specific paths to check.")
+        sys.exit(1)
 
     configuration = checker.check_webkit_style_configuration(options)
     style_checker = checker.StyleChecker(configuration)
@@ -105,14 +110,7 @@ def main():
         style_checker.check_paths(paths)
     else:
         if options.git_commit:
-            commit = options.git_commit
-            if '..' in commit:
-                # FIXME: If the range is a "...", the code should find the common ancestor and
-                # start there (see git diff --help for information about how ... usually works).
-                commit = commit[:commit.find('..')]
-                _log.warn("Ranges are not supported for --git-commit. "
-                          "Checking all changes since %s." % commit)
-            patch = checkout.create_patch_since_local_commit(commit)
+            patch = checkout.create_patch_since_local_commit(options.git_commit)
         else:
             patch = checkout.create_patch()
         style_checker.check_patch(patch)

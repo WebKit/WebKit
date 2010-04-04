@@ -1,3 +1,36 @@
+2010-04-04  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Refactored check-webkit-style's option-parsing code.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37064
+
+        * Scripts/check-webkit-style:
+          - Moved the "WebKit checkout not found" check from
+            ArgumentParser.parse() to the calling code.
+          - Moved the --git-commit argument validation from the calling
+            code to ArgumentParser.parse().
+
+        * Scripts/webkitpy/style/checker_unittest.py:
+          - Updated a unit test as necessary.
+
+        * Scripts/webkitpy/style/optparser.py:
+          - Renamed ArgumentParser._exit_with_help() to _parse_error()
+            and made its error_message parameter required.
+          - Removed the found_checkout parameter from ArgumentParser.parse().
+          - Removed the "WebKit checkout not found" check and moved it
+            to the calling code.
+          - Added --git-commit argument checking.
+
+        * Scripts/webkitpy/style/optparser_unittest.py:
+          - Adjusted the import statements to be fully qualified.
+          - Changed the ArgumentParserTest class to inherit from
+            LoggingTestCase, and updated the class as necessary.
+          - Added a unit-test for the --git-commit validation.
+          - Added unit tests for the --git-diff and --git-since variants
+            of --git-commit.
+
 2010-04-03  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Shinichiro Hamaji.

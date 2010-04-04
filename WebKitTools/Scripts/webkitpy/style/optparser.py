@@ -22,8 +22,8 @@
 
 """Supports the parsing of command-line options for check-webkit-style."""
 
-from optparse import OptionParser
 import logging
+from optparse import OptionParser
 import os.path
 import sys
 
@@ -330,7 +330,7 @@ class ArgumentParser(object):
         # Override OptionParser's error() method so that option help will
         # also display when an error occurs.  Normally, just the usage
         # string displays and not option help.
-        parser.error = self._exit_with_help
+        parser.error = self._parse_error
 
         # Override OptionParser's print_help() method so that help output
         # does not render to the screen while running unit tests.
@@ -339,13 +339,8 @@ class ArgumentParser(object):
 
         return parser
 
-    def _exit_with_help(self, error_message=None):
-        """Exit and print a usage string with an optional error message.
-
-        Args:
-          error_message: A string that is an error message to print.
-
-        """
+    def _parse_error(self, error_message):
+        """Print the help string and an error message, and exit."""
         # The method format_help() includes both the usage string and
         # the flag options.
         help = self._parser.format_help()
@@ -396,13 +391,11 @@ class ArgumentParser(object):
             filters.append(filter)
         return filters
 
-    def parse(self, args, found_checkout):
+    def parse(self, args):
         """Parse the command line arguments to check-webkit-style.
 
         Args:
           args: A list of command-line arguments as returned by sys.argv[1:].
-          found_checkout: A boolean value of whether the current working
-                          directory was found to be inside a WebKit checkout.
 
         Returns:
           A tuple of (paths, options)
@@ -426,23 +419,23 @@ class ArgumentParser(object):
 
         # Validate user-provided values.
 
-        # FIXME: Move the checkout error outside of this module.  The parse
-        #        method should not need to know whether a checkout was found.
-        if not found_checkout and not paths:
-            _log.error("WebKit checkout not found: You must run this script "
-                       "from inside a WebKit checkout if you are not passing "
-                       "specific paths to check.")
-            sys.exit(1)
-
         if paths and git_commit:
-            self._exit_with_help('You cannot provide both paths and a git '
-                                 'commit at the same time.')
+            self._parse_error('You cannot provide both paths and a git '
+                              'commit at the same time.')
+
+        # FIXME: Add unit tests.
+        if git_commit and '..' in git_commit:
+            # FIXME: If the range is a "...", the code should find the common
+            #        ancestor and start there.  See git diff --help for how
+            #        "..." usually works.
+            self._parse_error('invalid --git-commit option: option does '
+                              'not support ranges "..": %s' % git_commit)
 
         min_confidence = int(min_confidence)
         if (min_confidence < 1) or (min_confidence > 5):
-            self._exit_with_help('option --min-confidence: invalid integer: '
-                                 '%s: value must be between 1 and 5'
-                                 % min_confidence)
+            self._parse_error('option --min-confidence: invalid integer: '
+                              '%s: value must be between 1 and 5'
+                              % min_confidence)
 
         if filter_value:
             filter_rules = self._parse_filter_flag(filter_value)
@@ -452,7 +445,7 @@ class ArgumentParser(object):
         try:
             validate_filter_rules(filter_rules, self._all_categories)
         except ValueError, err:
-            self._exit_with_help(err)
+            self._parse_error(err)
 
         options = CommandOptionValues(filter_rules=filter_rules,
                                       git_commit=git_commit,
