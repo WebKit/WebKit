@@ -102,9 +102,11 @@ namespace JSC {
     struct CallLinkInfo {
         CallLinkInfo()
             : callee(0)
+            , position(0)
+            , hasSeenShouldRepatch(0)
         {
         }
-    
+
         unsigned bytecodeIndex;
         CodeLocationNearCall callReturnLocation;
         CodeLocationDataLabelPtr hotPathBegin;

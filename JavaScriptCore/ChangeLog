@@ -1,3 +1,16 @@
+2010-04-03  Balazs Kelemen  <kb@inf.u-szeged.hu>
+
+        Reviewed by Oliver Hunt.
+
+        Fix uninitalised members in CallLinkInfo and BytecodeGenerator.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36816
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/CodeBlock.h:
+        (JSC::CallLinkInfo::CallLinkInfo):
+
 2010-04-03  yael aharon  <yael.aharon@nokia.com>
 
         Reviewed by Darin Adler.
