@@ -247,7 +247,6 @@ __ZN3JSC7UString4fromEd
 __ZN3JSC7UString4fromEi
 __ZN3JSC7UString4fromEj
 __ZN3JSC7UString4fromEl
-__ZN3JSC7UString9s_nullRepE
 __ZN3JSC7UStringC1EPKc
 __ZN3JSC7UStringC1EPKtj
 __ZN3JSC8Debugger23recompileAllJSFunctionsEPNS_12JSGlobalDataE

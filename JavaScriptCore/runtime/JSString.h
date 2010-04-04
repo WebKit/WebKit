@@ -116,6 +116,7 @@ namespace JSC {
             , m_value(value)
             , m_fiberCount(0)
         {
+            ASSERT(!m_value.isNull());
             Heap::heap(this)->reportExtraMemoryCost(value.cost());
         }
 
@@ -126,6 +127,7 @@ namespace JSC {
             , m_value(value)
             , m_fiberCount(0)
         {
+            ASSERT(!m_value.isNull());
         }
         JSString(JSGlobalData* globalData, PassRefPtr<UString::Rep> value, HasOtherOwnerType)
             : JSCell(globalData->stringStructure.get())
@@ -133,6 +135,7 @@ namespace JSC {
             , m_value(value)
             , m_fiberCount(0)
         {
+            ASSERT(!m_value.isNull());
         }
         JSString(JSGlobalData* globalData, PassRefPtr<Rope> rope)
             : JSCell(globalData->stringStructure.get())
@@ -202,6 +205,7 @@ namespace JSC {
             , m_value(value)
             , m_fiberCount(0)
         {
+            ASSERT(!m_value.isNull());
             // nasty hack because we can't union non-POD types
             m_other.m_finalizerCallback = finalizer;
             m_other.m_finalizerContext = context;

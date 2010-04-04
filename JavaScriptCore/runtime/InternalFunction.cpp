@@ -40,7 +40,7 @@ const ClassInfo* InternalFunction::classInfo() const
 InternalFunction::InternalFunction(JSGlobalData* globalData, NonNullPassRefPtr<Structure> structure, const Identifier& name)
     : JSObject(structure)
 {
-    putDirect(globalData->propertyNames->name, jsString(globalData, name.ustring()), DontDelete | ReadOnly | DontEnum);
+    putDirect(globalData->propertyNames->name, jsString(globalData, name.isNull() ? "" : name.ustring()), DontDelete | ReadOnly | DontEnum);
 }
 
 const UString& InternalFunction::name(ExecState* exec)

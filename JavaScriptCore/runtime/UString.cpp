@@ -58,7 +58,6 @@ extern const double NaN;
 extern const double Inf;
 
 // The null string is immutable, except for refCount.
-UString::Rep* UString::s_nullRep;
 UString* UString::s_nullUString;
 
 void initializeUString()
@@ -67,7 +66,6 @@ void initializeUString()
     // so ensure it has been initialized from here.
     UStringImpl::empty();
 
-    UString::s_nullRep = new UStringImpl(0, 0, UStringImpl::ConstructStaticString);
     UString::s_nullUString = new UString;
 }
 
