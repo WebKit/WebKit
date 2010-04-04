@@ -1,3 +1,14 @@
+2010-04-04  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: In the inherited styles, do not render non-inherited properties as overriden.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37072
+
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertiesSection.prototype.isPropertyOverloaded):
+
 2010-04-03  yael aharon  <yael.aharon@nokia.com>
 
         Reviewed by Darin Adler.

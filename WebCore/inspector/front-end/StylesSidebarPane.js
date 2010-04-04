@@ -664,6 +664,11 @@ WebInspector.StylePropertiesSection.prototype = {
         if (this.computedStyle || !this._usedProperties || this.noAffect)
             return false;
 
+        if (this.isInherited && !(property in WebInspector.StylesSidebarPane.InheritedProperties)) {
+            // In the inherited sections, only show overrides for the potentially inherited properties.
+            return false;
+        }
+
         var used = (property in this.usedProperties);
         if (used || !shorthand)
             return !used;
