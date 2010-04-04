@@ -1,3 +1,9 @@
+2010-04-04  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Unreviewed, adding my IRC nickname to committers.py
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-04-04  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Shinichiro Hamaji.
