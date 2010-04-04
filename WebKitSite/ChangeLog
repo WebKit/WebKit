@@ -1,3 +1,31 @@
+2010-04-04  Pavel Feldman  <pfeldman@chromium.org>
+
+        (Not reviewed).
+
+        Adding images for inspector blog post. Previewed by Timothy Hatcher.
+
+        * blog-files/inspector/audits_launcher.png: Added.
+        * blog-files/inspector/audits_panel.png: Added.
+        * blog-files/inspector/console_panel.png: Added.
+        * blog-files/inspector/context_menu.png: Added.
+        * blog-files/inspector/css_highlighted_line.png: Added.
+        * blog-files/inspector/css_line_number_snippet.png: Added.
+        * blog-files/inspector/css_line_numbers.png: Added.
+        * blog-files/inspector/deactivate_breakpoints.png: Added.
+        * blog-files/inspector/evaluate_on_hover.png: Added.
+        * blog-files/inspector/evaluate_on_hover_2.png: Added.
+        * blog-files/inspector/inherited_styles.png: Added.
+        * blog-files/inspector/large_dom.png: Added.
+        * blog-files/inspector/large_resources.png: Added.
+        * blog-files/inspector/pseudo_elements.png: Added.
+        * blog-files/inspector/redirect_headers.png: Added.
+        * blog-files/inspector/redirect_headers_full.png: Added.
+        * blog-files/inspector/redirects.png: Added.
+        * blog-files/inspector/redirects_full.png: Added.
+        * blog-files/inspector/timeline_overview.png: Added.
+        * blog-files/inspector/timeline_panel.png: Added.
+        * blog-files/inspector/timeline_record_details.png: Added.
+
 2010-03-25  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by David Levin.
