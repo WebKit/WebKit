@@ -144,6 +144,7 @@ committers_unable_to_review = [
     Committer("Philippe Normand", ["pnormand@igalia.com", "philn@webkit.org"], "pnormand"),
     Committer("Pierre d'Herbemont", ["pdherbemont@free.fr", "pdherbemont@apple.com"], "pdherbemont"),
     Committer("Pierre-Olivier Latour", "pol@apple.com", "pol"),
+    Committer("Robert Hogan", ["robert@webkit.org", "robert@roberthogan.net"], "mwenge"),
     Committer("Roland Steiner", "rolandsteiner@chromium.org"),
     Committer("Ryosuke Niwa", "rniwa@webkit.org", "rniwa"),
     Committer("Scott Violet", "sky@chromium.org", "sky"),
