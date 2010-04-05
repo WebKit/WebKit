@@ -154,7 +154,6 @@ namespace WebCore {
         mutable RefPtr<NotificationCenter> m_notifications;
 #endif
         bool m_closing;
-        bool m_reportingException;
         EventTargetData m_eventTargetData;
     };
 

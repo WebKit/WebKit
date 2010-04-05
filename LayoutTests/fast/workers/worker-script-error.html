@@ -81,13 +81,9 @@ function testErrorInHandlingScriptError()
 {
     try {
         var worker = new Worker("resources/worker-error-in-handling-script-error.js");
-        var errorCount = 0;
         worker.onerror = function(evt) {
             log("PASS: onerror invoked for a script that has script error '" + evt.message + "' at line " + evt.lineno + ".");
-            ++errorCount;
-            // Second error happens in the onerror handler. Run next test only when it's reported.
-            if (errorCount == 2)
-                runNextTest();
+            runNextTest();
             return false;
         }
     } catch (ex) {

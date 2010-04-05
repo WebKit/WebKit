@@ -50,11 +50,11 @@ namespace WebCore {
         }
 
         virtual void handleEvent(ScriptExecutionContext*, Event*);
-
-    protected:
-        V8WorkerContextEventListener(v8::Local<v8::Object> listener, bool isInline, const WorldContextHandle& worldContext);
+        virtual bool reportError(ScriptExecutionContext*, const String& message, const String& url, int lineNumber);
 
     private:
+        V8WorkerContextEventListener(v8::Local<v8::Object> listener, bool isInline, const WorldContextHandle& worldContext);
+
         virtual v8::Local<v8::Value> callListenerFunction(ScriptExecutionContext*, v8::Handle<v8::Value> jsEvent, Event*);
         v8::Local<v8::Object> getReceiverObject(ScriptExecutionContext*, Event*);
     };

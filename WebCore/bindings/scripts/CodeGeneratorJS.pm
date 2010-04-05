@@ -1484,12 +1484,7 @@ sub GenerateImplementation
                             $implIncludes{"JSEventListener.h"} = 1;
                             push(@implContent, "    UNUSED_PARAM(exec);\n");
                             push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(static_cast<$className*>(thisObject)->impl());\n");
-                            if ($interfaceName eq "WorkerContext" and $name eq "onerror") {
-                                $implIncludes{"JSWorkerContextErrorHandler.h"} = 1;
-                                push(@implContent, "    imp->set$implSetterFunctionName(createJSWorkerContextErrorHandler(exec, value, thisObject));\n");
-                            } else {
-                                push(@implContent, "    imp->set$implSetterFunctionName(createJSAttributeEventListener(exec, value, thisObject));\n");
-                            }
+                            push(@implContent, "    imp->set$implSetterFunctionName(createJSAttributeEventListener(exec, value, thisObject));\n");
                         } elsif ($attribute->signature->type =~ /Constructor$/) {
                             my $constructorType = $attribute->signature->type;
                             $constructorType =~ s/Constructor$//;

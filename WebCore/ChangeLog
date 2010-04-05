@@ -1,3 +1,32 @@
+2010-04-05  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed, revert r57078.
+
+        * Android.jscbindings.mk:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::reportError):
+        * bindings/js/JSEventListener.h:
+        * bindings/js/JSWorkerContextErrorHandler.cpp: Removed.
+        * bindings/js/JSWorkerContextErrorHandler.h: Removed.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/v8/V8WorkerContextErrorHandler.cpp: Removed.
+        * bindings/v8/V8WorkerContextErrorHandler.h: Removed.
+        * bindings/v8/V8WorkerContextEventListener.cpp:
+        (WebCore::V8WorkerContextEventListener::reportError):
+        * bindings/v8/V8WorkerContextEventListener.h:
+        * dom/EventListener.h:
+        (WebCore::EventListener::reportError):
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::WorkerContext):
+        (WebCore::WorkerContext::reportException):
+        * workers/WorkerContext.h:
+
 2010-04-05  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.
