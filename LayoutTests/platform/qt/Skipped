@@ -4990,6 +4990,11 @@ http/tests/security/originHeader/origin-header-for-empty.html
 # XSSAuditor test that times out. See https://bugs.webkit.org/show_bug.cgi?id=33460.
 http/tests/security/xssAuditor/malformed-HTML.html
 
+# Caused by the way Qt caches network connections using user@hostname as the key
+# See https://bugs.webkit.org/show_bug.cgi?id=37084
+http/tests/xmlhttprequest/re-login-async.html
+http/tests/xmlhttprequest/re-login.html
+
 # Skip xmlhttprequest tests
 # Many of these tests exercise preflighted requests, which are not supported with Qt older than 4.7.
 http/tests/xmlhttprequest/XMLHttpRequestException.html
@@ -5014,8 +5019,6 @@ http/tests/xmlhttprequest/connection-error-sync.html
 http/tests/xmlhttprequest/cookies.html
 http/tests/xmlhttprequest/methods-lower-case.html
 http/tests/xmlhttprequest/methods.html
-http/tests/xmlhttprequest/re-login-async.html
-http/tests/xmlhttprequest/re-login.html
 http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html
 http/tests/xmlhttprequest/state-after-network-error.html
 http/tests/xmlhttprequest/workers/methods-async.html
