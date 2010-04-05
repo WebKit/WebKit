@@ -188,12 +188,8 @@ void WorkerContext::clearInterval(int timeoutId)
     DOMTimer::removeById(scriptExecutionContext(), timeoutId);
 }
 
-void WorkerContext::importScripts(const Vector<String>& urls, const String& callerURL, int callerLine, ExceptionCode& ec)
+void WorkerContext::importScripts(const Vector<String>& urls, ExceptionCode& ec)
 {
-#if !ENABLE(INSPECTOR)
-    UNUSED_PARAM(callerURL);
-    UNUSED_PARAM(callerLine);
-#endif
     ec = 0;
     Vector<String>::const_iterator urlsEnd = urls.end();
     Vector<KURL> completedURLs;
@@ -218,9 +214,6 @@ void WorkerContext::importScripts(const Vector<String>& urls, const String& call
         }
 
         scriptExecutionContext()->scriptImported(scriptLoader.identifier(), scriptLoader.script());
-#if ENABLE(INSPECTOR)
-        scriptExecutionContext()->addMessage(InspectorControllerDestination, JSMessageSource, LogMessageType, LogMessageLevel, "Worker script imported: \"" + *it + "\".", callerLine, callerURL);
-#endif
 
         ScriptValue exception;
         m_script->evaluate(ScriptSourceCode(scriptLoader.script(), *it), &exception);

@@ -71,9 +71,9 @@ void DedicatedWorkerContext::postMessage(PassRefPtr<SerializedScriptValue> messa
     thread()->workerObjectProxy().postMessageToWorkerObject(message, channels.release());
 }
 
-void DedicatedWorkerContext::importScripts(const Vector<String>& urls, const String& callerURL, int callerLine, ExceptionCode& ec)
+void DedicatedWorkerContext::importScripts(const Vector<String>& urls, ExceptionCode& ec)
 {
-    Base::importScripts(urls, callerURL, callerLine, ec);
+    Base::importScripts(urls, ec);
     thread()->workerObjectProxy().reportPendingActivity(hasPendingActivity());
 }
 

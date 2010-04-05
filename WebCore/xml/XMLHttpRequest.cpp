@@ -872,9 +872,6 @@ void XMLHttpRequest::didFinishLoading(unsigned long identifier)
         m_responseText += m_decoder->flush();
 
     scriptExecutionContext()->resourceRetrievedByXMLHttpRequest(identifier, m_responseText);
-#if ENABLE(INSPECTOR)
-    scriptExecutionContext()->addMessage(InspectorControllerDestination, JSMessageSource, LogMessageType, LogMessageLevel, "XHR finished loading: \"" + m_url + "\".", m_lastSendLineNumber, m_lastSendURL);
-#endif
 
     bool hadLoader = m_loader;
     m_loader = 0;

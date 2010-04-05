@@ -110,13 +110,8 @@ JSValue JSWorkerContext::importScripts(ExecState* exec, const ArgList& args)
             return jsUndefined();
     }
     ExceptionCode ec = 0;
-    int signedLineNumber;
-    intptr_t sourceID;
-    UString sourceURL;
-    JSValue function;
-    exec->interpreter()->retrieveLastCaller(exec, signedLineNumber, sourceID, sourceURL, function);
 
-    impl()->importScripts(urls, sourceURL, signedLineNumber >= 0 ? signedLineNumber : 0, ec);
+    impl()->importScripts(urls, ec);
     setDOMException(exec, ec);
     return jsUndefined();
 }

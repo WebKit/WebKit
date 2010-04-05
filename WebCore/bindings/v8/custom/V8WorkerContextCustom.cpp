@@ -90,14 +90,6 @@ v8::Handle<v8::Value> V8WorkerContext::importScriptsCallback(const v8::Arguments
     if (!args.Length())
         return v8::Undefined();
 
-    String callerURL;
-    if (!V8Proxy::sourceName(callerURL))
-        return v8::Undefined();
-    int callerLine;
-    if (!V8Proxy::sourceLineNumber(callerLine))
-        return v8::Undefined();
-    callerLine += 1;
-
     Vector<String> urls;
     for (int i = 0; i < args.Length(); i++) {
         v8::TryCatch tryCatch;
@@ -110,7 +102,7 @@ v8::Handle<v8::Value> V8WorkerContext::importScriptsCallback(const v8::Arguments
     WorkerContext* workerContext = V8WorkerContext::toNative(args.Holder());
 
     ExceptionCode ec = 0;
-    workerContext->importScripts(urls, callerURL, callerLine, ec);
+    workerContext->importScripts(urls, ec);
 
     if (ec)
         return throwError(ec);

@@ -1,3 +1,24 @@
+2010-04-05  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Remove logging of successful XHR and worker's importScript()
+        to inspector console
+        https://bugs.webkit.org/show_bug.cgi?id=37078
+
+        * bindings/js/JSWorkerContextCustom.cpp:
+        (WebCore::JSWorkerContext::importScripts):
+        * bindings/v8/custom/V8WorkerContextCustom.cpp:
+        (WebCore::V8WorkerContext::importScriptsCallback):
+        * workers/DedicatedWorkerContext.cpp:
+        (WebCore::DedicatedWorkerContext::importScripts):
+        * workers/DedicatedWorkerContext.h:
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::importScripts):
+        * workers/WorkerContext.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::didFinishLoading):
+
 2010-04-04  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed. Rolling out chromium changes r57028 and r57032

@@ -51,7 +51,7 @@ namespace WebCore {
         virtual bool isDedicatedWorkerContext() const { return true; }
 
         // Overridden to allow us to check our pending activity after executing imported script.
-        virtual void importScripts(const Vector<String>& urls, const String& callerURL, int callerLine, ExceptionCode&);
+        virtual void importScripts(const Vector<String>& urls, ExceptionCode&);
 
         // EventTarget
         virtual DedicatedWorkerContext* toDedicatedWorkerContext() { return this; }
