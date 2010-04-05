@@ -3,14 +3,13 @@
 # Copyright (C) 2009 Christian Dywan <christian@twotoasts.de>, 2009.
 # Mario Blättermann <mariobl@gnome.org>, 2010.
 # Christian Kirbach <Christian.Kirbach@googlemail.com>, 2010.
-#
 msgid ""
 msgstr ""
 "Project-Id-Version: webkit 1.1.21\n"
 "Report-Msgid-Bugs-To: http://bugs.webkit.org/\n"
 "POT-Creation-Date: 2010-02-25 15:53-0300\n"
-"PO-Revision-Date: 2010-02-18 12:14+0100\n"
-"Last-Translator: Mario Blättermann <mariobl@gnome.org>\n"
+"PO-Revision-Date: 2010-03-21 21:14+0100\n"
+"Last-Translator: Christian Kirbach <Christian.Kirbach@googlemail.com>\n"
 "Language-Team: Deutsch <gnome-de@gnome.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -148,7 +147,7 @@ msgstr "Ein Benutzername und ein Passwort sind für die Seite %s erforderlich"
 
 #: WebKit/gtk/webkit/webkitsoupauthdialog.c:278
 msgid "Server message:"
-msgstr ""
+msgstr "Server-Nachricht:"
 
 #: WebKit/gtk/webkit/webkitsoupauthdialog.c:291
 msgid "Username:"
@@ -636,13 +635,12 @@ msgstr ""
 "anpassen"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:817
-#, fuzzy
 msgid "Enable Java Applet"
-msgstr "JavaScript-Profiling aktivieren"
+msgstr "Java-Applet aktivieren"
 
 #: WebKit/gtk/webkit/webkitwebsettings.cpp:818
 msgid "Whether Java Applet support through <applet> should be enabled"
-msgstr ""
+msgstr "Legt fest, ob Java-Applets mittels <applet> unterstützt werden sollen"
 
 #: WebKit/gtk/webkit/webkitwebview.cpp:2319
 msgid "Returns the @web_view's document title"
@@ -755,7 +753,7 @@ msgstr "Zurücksetzen"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:70
 msgid "This is a searchable index. Enter search keywords: "
-msgstr ""
+msgstr "Dieser Index ist durchsuchbar. Geben Sie Suchbegriffe ein: "
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:75
 msgid "Choose File"
@@ -951,7 +949,7 @@ msgstr "Filmdauer"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:389
 msgid "timeline slider thumb"
-msgstr ""
+msgstr "Rollbalken-Schieber der Zeitleiste"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:391
 msgid "back 30 seconds"
@@ -987,11 +985,11 @@ msgstr "Zurückspulen"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:407
 msgid "show closed captions"
-msgstr ""
+msgstr "geschlossene Beschriftung zeigen"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:409
 msgid "hide closed captions"
-msgstr ""
+msgstr "geschlossene Beschriftung verbergen"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:418
 msgid "audio element playback controls and status display"
@@ -1019,11 +1017,11 @@ msgstr "Wiedergabe pausieren"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:430
 msgid "movie time scrubber"
-msgstr ""
+msgstr "Zeitschieber für Filme"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:432
 msgid "movie time scrubber thumb"
-msgstr ""
+msgstr "Zeitschiebergriff für Filme"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:434
 msgid "seek movie back 30 seconds"
@@ -1059,11 +1057,11 @@ msgstr "Den momentanen Film im Vollbildmodus wiedergeben"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:450
 msgid "start displaying closed captions"
-msgstr ""
+msgstr "beginnen, geschlossene Beschriftung zu zeigen"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:452
 msgid "stop displaying closed captions"
-msgstr ""
+msgstr "beenden, geschlossene Beschriftung zu zeigen"
 
 #: WebCore/platform/gtk/LocalizedStringsGtk.cpp:461
 msgid "indefinite time"
