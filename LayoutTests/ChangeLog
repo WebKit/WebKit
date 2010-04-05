@@ -1,3 +1,13 @@
+2010-04-05  John Gregg  <johnnyg@google.com>
+
+        Reviewed by Darin Adler.
+
+        Notifications should not resolve an empty icon parameter as a relative URL
+        https://bugs.webkit.org/show_bug.cgi?id=36862
+
+        * fast/notifications/notifications-no-icon-expected.txt: Added.
+        * fast/notifications/notifications-no-icon.html-disabled: Added.
+
 2010-04-05  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r57081.

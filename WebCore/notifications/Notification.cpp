@@ -74,7 +74,8 @@ Notification::Notification(const NotificationContents& contents, ScriptExecution
         return;
     }
 
-    m_iconURL = context->completeURL(contents.icon());
+    if (!contents.icon().isEmpty())
+        m_iconURL = context->completeURL(contents.icon());
     if (!m_iconURL.isEmpty() && !m_iconURL.isValid()) {
         ec = SYNTAX_ERR;
         return;
