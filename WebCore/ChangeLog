@@ -1,3 +1,14 @@
+2010-04-05  Adam Treat  <atreat@rim.com>
+
+        Reviewed by Darin Adler.
+
+        Fix regression in pixel test for animated svg background images.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37027
+
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImageChromeClient::invalidateContentsAndWindow):
+
 2010-04-05  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Kenneth Rohde-Christiansen.
