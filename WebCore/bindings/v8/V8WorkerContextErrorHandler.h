@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,39 +28,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef V8WorkerContextEventListener_h
-#define V8WorkerContextEventListener_h
+#ifndef V8WorkerContextErrorHandler_h
+#define V8WorkerContextErrorHandler_h
 
 #if ENABLE(WORKERS)
 
-#include "V8CustomEventListener.h"
+#include "V8WorkerContextEventListener.h"
 #include <v8.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
-    class Event;
-    class WorkerContextExecutionProxy;
+class V8WorkerContextErrorHandler : public V8WorkerContextEventListener {
+public:
+    static PassRefPtr<V8WorkerContextErrorHandler> create(v8::Local<v8::Object> listener, bool isInline, const WorldContextHandle& worldContext)
+    {
+        return adoptRef(new V8WorkerContextErrorHandler(listener, isInline, worldContext));
+    }
 
-    class V8WorkerContextEventListener : public V8EventListener {
-    public:
-        static PassRefPtr<V8WorkerContextEventListener> create(v8::Local<v8::Object> listener, bool isInline, const WorldContextHandle& worldContext)
-        {
-            return adoptRef(new V8WorkerContextEventListener(listener, isInline, worldContext));
-        }
+private:
+    V8WorkerContextErrorHandler(v8::Local<v8::Object> listener, bool isInline, const WorldContextHandle& worldContext);
 
-        virtual void handleEvent(ScriptExecutionContext*, Event*);
-
-    protected:
-        V8WorkerContextEventListener(v8::Local<v8::Object> listener, bool isInline, const WorldContextHandle& worldContext);
-
-    private:
-        virtual v8::Local<v8::Value> callListenerFunction(ScriptExecutionContext*, v8::Handle<v8::Value> jsEvent, Event*);
-        v8::Local<v8::Object> getReceiverObject(ScriptExecutionContext*, Event*);
-    };
+    virtual v8::Local<v8::Value> callListenerFunction(ScriptExecutionContext*, v8::Handle<v8::Value> jsEvent, Event*);
+};
 
 } // namespace WebCore
 
 #endif // WORKERS
 
-#endif // V8WorkerContextEventListener_h
+#endif // V8WorkerContextErrorHandler_h

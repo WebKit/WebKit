@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,39 +28,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef V8WorkerContextEventListener_h
-#define V8WorkerContextEventListener_h
+#include "config.h"
 
 #if ENABLE(WORKERS)
 
-#include "V8CustomEventListener.h"
-#include <v8.h>
-#include <wtf/PassRefPtr.h>
+#include "V8WorkerContextErrorHandler.h"
+
+#include "ErrorEvent.h"
+#include "V8Binding.h"
 
 namespace WebCore {
 
-    class Event;
-    class WorkerContextExecutionProxy;
+V8WorkerContextErrorHandler::V8WorkerContextErrorHandler(v8::Local<v8::Object> listener, bool isInline, const WorldContextHandle& worldContext)
+    : V8WorkerContextEventListener(listener, isInline, worldContext)
+{
+}
 
-    class V8WorkerContextEventListener : public V8EventListener {
-    public:
-        static PassRefPtr<V8WorkerContextEventListener> create(v8::Local<v8::Object> listener, bool isInline, const WorldContextHandle& worldContext)
-        {
-            return adoptRef(new V8WorkerContextEventListener(listener, isInline, worldContext));
-        }
-
-        virtual void handleEvent(ScriptExecutionContext*, Event*);
-
-    protected:
-        V8WorkerContextEventListener(v8::Local<v8::Object> listener, bool isInline, const WorldContextHandle& worldContext);
-
-    private:
-        virtual v8::Local<v8::Value> callListenerFunction(ScriptExecutionContext*, v8::Handle<v8::Value> jsEvent, Event*);
-        v8::Local<v8::Object> getReceiverObject(ScriptExecutionContext*, Event*);
-    };
+v8::Local<v8::Value> V8WorkerContextErrorHandler::callListenerFunction(ScriptExecutionContext* context, v8::Handle<v8::Value> jsEvent, Event* event)
+{
+    ASSERT(event->isErrorEvent());
+    v8::Local<v8::Object> listener = getListenerObject(context);
+    v8::Local<v8::Value> returnValue;
+    if (!listener.IsEmpty() && listener->IsFunction()) {
+        ErrorEvent* errorEvent = static_cast<ErrorEvent*>(event);
+        v8::Local<v8::Function> callFunction = v8::Local<v8::Function>::Cast(listener);
+        v8::Local<v8::Object> thisValue = v8::Context::GetCurrent()->Global();
+        v8::Handle<v8::Value> parameters[3] = { v8String(errorEvent->message()), v8String(errorEvent->filename()), v8::Integer::New(errorEvent->lineno()) };
+        returnValue = callFunction->Call(thisValue, 3, parameters);
+        if (!returnValue.IsEmpty() && returnValue->IsBoolean() && !returnValue->BooleanValue())
+            event->preventDefault();
+    }
+    return returnValue;
+}
 
 } // namespace WebCore
 
 #endif // WORKERS
-
-#endif // V8WorkerContextEventListener_h

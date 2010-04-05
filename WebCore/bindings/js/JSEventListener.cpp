@@ -133,47 +133,6 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
     }
 }
 
-bool JSEventListener::reportError(ScriptExecutionContext* context, const String& message, const String& url, int lineNumber)
-{
-    JSLock lock(SilenceAssertionsOnly);
-
-    JSObject* jsFunction = this->jsFunction(context);
-    if (!jsFunction)
-        return false;
-
-    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(context, m_isolatedWorld.get());
-    ExecState* exec = globalObject->globalExec();
-
-    CallData callData;
-    CallType callType = jsFunction->getCallData(callData);
-
-    if (callType == CallTypeNone)
-        return false;
-
-    MarkedArgumentBuffer args;
-    args.append(jsString(exec, message));
-    args.append(jsString(exec, url));
-    args.append(jsNumber(exec, lineNumber));
-
-    JSGlobalData* globalData = globalObject->globalData();
-    DynamicGlobalObjectScope globalObjectScope(exec, globalData->dynamicGlobalObject ? globalData->dynamicGlobalObject : globalObject);    
-
-    JSValue thisValue = globalObject->toThisObject(exec);
-
-    globalData->timeoutChecker.start();
-    JSValue returnValue = JSC::call(exec, jsFunction, callType, callData, thisValue, args);
-    globalData->timeoutChecker.stop();
-
-    // If an error occurs while handling the script error, it should be bubbled up.
-    if (exec->hadException()) {
-        exec->clearException();
-        return false;
-    }
-    
-    bool bubbleEvent;
-    return returnValue.getBoolean(bubbleEvent) && !bubbleEvent;
-}
-
 bool JSEventListener::virtualisAttribute() const
 {
     return m_isAttribute;
