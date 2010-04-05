@@ -1,3 +1,12 @@
+2010-04-05  Luca Ferretti  <elle.uca@libero.it>
+
+        Reviewed by Gustavo Noronha.
+
+        Italian translation for 1.1.90
+        https://bugs.webkit.org/show_bug.cgi?id=36323
+
+        * it.po:
+
 2010-03-25  Reinout van Schouwen  <reinouts@gnome.org>
 
         Reviewed by Gustavo Noronha.
