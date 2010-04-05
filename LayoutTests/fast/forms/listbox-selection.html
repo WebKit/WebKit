@@ -150,15 +150,15 @@
             {
                 var sl = document.createElement("select");
                 var i = 0;
+                sl.size = sz;
                 while (i < sz) {
                     var opt = document.createElement("option");
                     if (i == selIndex)
                         opt.selected = true;
-                    opt.innerText = "item " + i;
+                    opt.textContent = "item " + i;
                     sl.appendChild(opt);
                     i++;
                 }
-                sl.size = sz;
                 sl.multiple = mlt;
                 sl.id = idName;
                 document.body.appendChild(sl);

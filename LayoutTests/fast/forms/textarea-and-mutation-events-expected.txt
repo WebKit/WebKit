@@ -1,0 +1,5 @@
+Tests to see if registering an empty DOMNodeInserted event handler and dirtying the tree just right can cause attach re-entrancy with textarea.
+
+Passes if doesn't crash.
+
+

@@ -1,3 +1,24 @@
+2010-04-05  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Style update done due to mutation event dispatching in textarea can be
+        used to corrupt the render tree.
+        https://bugs.webkit.org/show_bug.cgi?id=36864
+
+        Modified listbox-selection.html to correctly set the size during
+        creation. Otherwise, options added to it as a menuList, resulting
+        in a default selection of the first item.
+
+        Added a few more tests to ensure we capture correct behavior for
+        select elements and their default selection, as well as the influence
+        of when layout occurs.
+
+        * fast/forms/listbox-selection.html:
+        * fast/forms/select-change-listbox-to-popup-roundtrip.html: Added.
+        * fast/forms/select-change-popup-to-listbox-roundtrip.html: Added.
+        * fast/forms/textarea-and-mutation-events.html: Added.
+
 2010-04-05  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
