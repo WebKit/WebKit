@@ -564,6 +564,52 @@ class GitTest(SCMTest):
         self.assertEqual(scm.display_name(), "git")
         self.assertEqual(scm.supports_local_commits(), True)
 
+    def test_read_git_config(self):
+        key = 'test.git-config'
+        value = 'git-config value'
+        run_command(['git', 'config', key, value])
+        self.assertEqual(self.scm.read_git_config(key), value)
+
+    def test_local_commits(self):
+        test_file = os.path.join(self.git_checkout_path, 'test_file')
+        write_into_file_at_path(test_file, 'foo')
+        run_command(['git', 'commit', '-a', '-m', 'local commit'])
+
+        self.assertEqual(len(self.scm.local_commits()), 1)
+
+    def test_discard_local_commits(self):
+        test_file = os.path.join(self.git_checkout_path, 'test_file')
+        write_into_file_at_path(test_file, 'foo')
+        run_command(['git', 'commit', '-a', '-m', 'local commit'])
+
+        self.assertEqual(len(self.scm.local_commits()), 1)
+        self.scm.discard_local_commits()
+        self.assertEqual(len(self.scm.local_commits()), 0)
+
+    def test_delete_branch(self):
+        old_branch = run_command(['git', 'symbolic-ref', 'HEAD']).strip()
+        new_branch = 'foo'
+
+        run_command(['git', 'checkout', '-b', new_branch])
+        self.assertEqual(run_command(['git', 'symbolic-ref', 'HEAD']).strip(), 'refs/heads/' + new_branch)
+
+        run_command(['git', 'checkout', old_branch])
+        self.scm.delete_branch(new_branch)
+
+        self.assertFalse(re.search(r'foo', run_command(['git', 'branch'])))
+
+    def test_svn_merge_base(self):
+        # Diff to merge-base should include working-copy changes,
+        # which the diff to svn_branch.. doesn't.
+        test_file = os.path.join(self.git_checkout_path, 'test_file')
+        write_into_file_at_path(test_file, 'foo')
+
+        diff_to_common_base = run_command(['git', 'diff', self.scm.svn_branch_name() + '..'])
+        diff_to_merge_base = run_command(['git', 'diff', self.scm.svn_merge_base()])
+
+        self.assertFalse(re.search(r'foo', diff_to_common_base))
+        self.assertTrue(re.search(r'foo', diff_to_merge_base))
+
     def test_rebase_in_progress(self):
         svn_test_file = os.path.join(self.svn_checkout_path, 'test_file')
         write_into_file_at_path(svn_test_file, "svn_checkout")

@@ -164,12 +164,14 @@ class Executive(object):
                                    cwd=cwd)
         output = process.communicate(string_to_communicate)[0]
         exit_code = process.wait()
+
+        if return_exit_code:
+            return exit_code
+
         if exit_code:
             script_error = ScriptError(script_args=args,
                                        exit_code=exit_code,
                                        output=output,
                                        cwd=cwd)
             (error_handler or self.default_error_handler)(script_error)
-        if return_exit_code:
-            return exit_code
         return output

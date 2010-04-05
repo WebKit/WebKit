@@ -36,6 +36,7 @@ from webkitpy.common.system.executive import Executive, run_command, ScriptError
 from webkitpy.common.system.user import User
 from webkitpy.common.system.deprecated_logging import error, log
 
+
 def detect_scm_system(path):
     if SVN.in_working_directory(path):
         return SVN(cwd=path)
@@ -44,6 +45,7 @@ def detect_scm_system(path):
         return Git(cwd=path)
     
     return None
+
 
 def first_non_empty_line_after_index(lines, index=0):
     first_non_empty_line = index
@@ -89,10 +91,10 @@ def commit_error_handler(error):
 
 
 class SCM:
-    def __init__(self, cwd, dryrun=False):
+    def __init__(self, cwd):
         self.cwd = cwd
         self.checkout_root = self.find_checkout_root(self.cwd)
-        self.dryrun = dryrun
+        self.dryrun = False
 
     def scripts_directory(self):
         return os.path.join(self.checkout_root, "WebKitTools", "Scripts")
@@ -205,6 +207,9 @@ class SCM:
     def supports_local_commits():
         raise NotImplementedError, "subclasses must implement"
 
+    def svn_merge_base():
+        raise NotImplementedError, "subclasses must implement"
+
     def create_patch_from_local_commit(self, commit_id):
         error("Your source control manager does not support creating a patch from a local commit.")
 
@@ -226,8 +231,8 @@ class SVN(SCM):
     svn_server_host = "svn.webkit.org"
     svn_server_realm = "<http://svn.webkit.org:80> Mac OS Forge"
 
-    def __init__(self, cwd, dryrun=False):
-        SCM.__init__(self, cwd, dryrun)
+    def __init__(self, cwd):
+        SCM.__init__(self, cwd)
         self.cached_version = None
     
     @staticmethod
@@ -365,8 +370,8 @@ class SVN(SCM):
 
 # All git-specific logic should go here.
 class Git(SCM):
-    def __init__(self, cwd, dryrun=False):
-        SCM.__init__(self, cwd, dryrun)
+    def __init__(self, cwd):
+        SCM.__init__(self, cwd)
 
     @classmethod
     def in_working_directory(cls, path):
@@ -380,16 +385,21 @@ class Git(SCM):
         if not os.path.isabs(checkout_root): # Sometimes git returns relative paths
             checkout_root = os.path.join(path, checkout_root)
         return checkout_root
-    
+
+    @classmethod
+    def read_git_config(cls, key):
+        return run_command(["git", "config", key],
+            error_handler=Executive.ignore_error).rstrip('\n')
+
     @staticmethod
     def commit_success_regexp():
         return "^Committed r(?P<svn_revision>\d+)$"
 
     def discard_local_commits(self):
-        run_command(['git', 'reset', '--hard', 'trunk'])
+        run_command(['git', 'reset', '--hard', self.svn_branch_name()])
     
     def local_commits(self):
-        return run_command(['git', 'log', '--pretty=oneline', 'HEAD...trunk']).splitlines()
+        return run_command(['git', 'log', '--pretty=oneline', 'HEAD...' + self.svn_branch_name()]).splitlines()
 
     def rebase_in_progress(self):
         return os.path.exists(os.path.join(self.checkout_root, '.git/rebase-apply'))
@@ -414,12 +424,15 @@ class Git(SCM):
         status_command = ['git', 'diff', '-r', '--name-status', '-C', '-M', 'HEAD']
         return self.run_status_and_extract_filenames(status_command, self._status_regexp("ADM"))
 
-    def changed_files_for_revision(self, revision):
-        commit_id = self.git_commit_from_svn_revision(revision)
+    def _changes_files_for_commit(self, git_commit):
         # --pretty="format:" makes git show not print the commit log header,
-        changed_files = run_command(["git", "show", "--pretty=format:", "--name-only", commit_id]).splitlines()
+        changed_files = run_command(["git", "show", "--pretty=format:", "--name-only", git_commit]).splitlines()
         # instead it just prints a blank line at the top, so we skip the blank line:
         return changed_files[1:]
+
+    def changed_files_for_revision(self, revision):
+        commit_id = self.git_commit_from_svn_revision(revision)
+        return self._changes_files_for_commit(commit_id)
 
     def conflicted_files(self):
         status_command = ['git', 'diff', '--name-status', '-C', '-M', '--diff-filter=U']
@@ -479,6 +492,16 @@ class Git(SCM):
 
     # Git-specific methods:
 
+    def delete_branch(self, branch):
+        if run_command(['git', 'show-ref', '--quiet', '--verify', 'refs/heads/' + branch], return_exit_code=True) == 0:
+            run_command(['git', 'branch', '-D', branch])
+
+    def svn_merge_base(self):
+        return run_command(['git', 'merge-base', self.svn_branch_name(), 'HEAD']).strip()
+
+    def svn_branch_name(self):
+        return Git.read_git_config('svn-remote.svn.fetch').split(':')[1]
+
     def create_patch_from_local_commit(self, commit_id):
         return run_command(['git', 'diff', '--binary', commit_id + "^.." + commit_id])
 
@@ -487,12 +510,16 @@ class Git(SCM):
 
     def commit_locally_with_message(self, message):
         run_command(['git', 'commit', '--all', '-F', '-'], input=message)
-        
+
     def push_local_commits_to_server(self):
+        dcommit_command = ['git', 'svn', 'dcommit']
         if self.dryrun:
-            # Return a string which looks like a commit so that things which parse this output will succeed.
-            return "Dry run, no remote commit.\nCommitted r0"
-        return run_command(['git', 'svn', 'dcommit'], error_handler=commit_error_handler)
+            dcommit_command.append('--dry-run')
+        output = run_command(dcommit_command, error_handler=commit_error_handler)
+        # Return a string which looks like a commit so that things which parse this output will succeed.
+        if self.dryrun:
+            output += "\nCommitted r0"
+        return output
 
     # This function supports the following argument formats:
     # no args : rev-list trunk..HEAD
@@ -501,8 +528,7 @@ class Git(SCM):
     # A B     : [A, B]  (different from git diff, which would use "rev-list A..B")
     def commit_ids_from_commitish_arguments(self, args):
         if not len(args):
-            # FIXME: trunk is not always the remote branch name, need a way to detect the name.
-            args.append('trunk..HEAD')
+            args.append('%s..HEAD' % self.svn_branch_name())
 
         commit_ids = []
         for commitish in args:

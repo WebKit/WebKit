@@ -44,20 +44,13 @@ class Credentials(object):
 
     def __init__(self, host, git_prefix=None, executive=None, cwd=os.getcwd()):
         self.host = host
-        self.git_prefix = git_prefix
+        self.git_prefix = "%s." % git_prefix if git_prefix else ""
         self.executive = executive or Executive()
         self.cwd = cwd
 
     def _credentials_from_git(self):
-        return [self._read_git_config("username"),
-                self._read_git_config("password")]
-
-    def _read_git_config(self, key):
-        config_key = "%s.%s" % (self.git_prefix, key) if self.git_prefix \
-                                                      else key
-        return self.executive.run_command(
-                ["git", "config", "--get", config_key],
-                error_handler=Executive.ignore_error).rstrip('\n')
+        return [Git.read_git_config(self.git_prefix + "username"),
+                Git.read_git_config(self.git_prefix + "password")]
 
     def _keychain_value_with_label(self, label, source_text):
         match = re.search("%s\"(?P<value>.+)\"" % label,

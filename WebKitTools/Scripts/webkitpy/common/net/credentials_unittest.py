@@ -101,16 +101,6 @@ password: "SECRETSAUCE"
         self._assert_security_call()
         self._assert_security_call(username="foo")
 
-    def test_git_config_calls(self):
-        executive_mock = Mock()
-        credentials = Credentials("example.com", executive=executive_mock)
-        credentials._read_git_config("foo")
-        executive_mock.run_command.assert_called_with(["git", "config", "--get", "foo"], error_handler=Executive.ignore_error)
-
-        credentials = Credentials("example.com", git_prefix="test_prefix", executive=executive_mock)
-        credentials._read_git_config("foo")
-        executive_mock.run_command.assert_called_with(["git", "config", "--get", "test_prefix.foo"], error_handler=Executive.ignore_error)
-
     def test_read_credentials_without_git_repo(self):
         class FakeCredentials(Credentials):
             def _is_mac_os_x(self):
