@@ -1,3 +1,84 @@
+2010-04-05  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        [V8] Extend the set of types supported by SerializedScriptValue
+        https://bugs.webkit.org/show_bug.cgi?id=37052
+
+        New types include sparse arrays, Uint32, Date, and ImageData.
+
+        Serialization process became more flexible. A state can either
+        directly write primitive values (instead of returning them like
+        iterator) or construct a new state for serializing complex values
+        that will return to the current state when done.
+
+        Deserialization process now avoids exposing the tags using a set
+        of factory functions for complex objects instead.
+
+        Internal buffer type changed to uint8_t to be independent of
+        whether char is signed or not.
+
+        * bindings/v8/SerializedScriptValue.cpp:
+        (WebCore::):
+        (WebCore::Writer::Writer):
+        (WebCore::Writer::writeString):
+        (WebCore::Writer::writeUint32):
+        (WebCore::Writer::writeDate):
+        (WebCore::Writer::writeNumber):
+        (WebCore::Writer::writeImageData):
+        (WebCore::Writer::writeArray):
+        (WebCore::Writer::writeObject):
+        (WebCore::Writer::writeSparseArray):
+        (WebCore::Writer::doWriteUint32):
+        (WebCore::Writer::doWriteNumber):
+        (WebCore::Writer::append):
+        (WebCore::Writer::fillHole):
+        (WebCore::Writer::byteAt):
+        (WebCore::Serializer::Serializer):
+        (WebCore::Serializer::serialize):
+        (WebCore::Serializer::writeArray):
+        (WebCore::Serializer::writeObject):
+        (WebCore::Serializer::writeSparseArray):
+        (WebCore::Serializer::StateBase::StateBase):
+        (WebCore::Serializer::ErrorState::ErrorState):
+        (WebCore::Serializer::ErrorState::advance):
+        (WebCore::Serializer::State::composite):
+        (WebCore::Serializer::State::State):
+        (WebCore::Serializer::ArrayState::ArrayState):
+        (WebCore::Serializer::ArrayState::advance):
+        (WebCore::Serializer::AbstractObjectState::AbstractObjectState):
+        (WebCore::Serializer::AbstractObjectState::advance):
+        (WebCore::Serializer::ObjectState::ObjectState):
+        (WebCore::Serializer::ObjectState::objectDone):
+        (WebCore::Serializer::SparseArrayState::SparseArrayState):
+        (WebCore::Serializer::SparseArrayState::objectDone):
+        (WebCore::Serializer::push):
+        (WebCore::Serializer::pop):
+        (WebCore::Serializer::handleError):
+        (WebCore::Serializer::checkComposite):
+        (WebCore::Serializer::writeString):
+        (WebCore::Serializer::writeImageData):
+        (WebCore::Serializer::newArrayState):
+        (WebCore::Serializer::newObjectState):
+        (WebCore::Serializer::doSerialize):
+        (WebCore::Reader::Reader):
+        (WebCore::Reader::read):
+        (WebCore::Reader::readString):
+        (WebCore::Reader::readUint32):
+        (WebCore::Reader::readDate):
+        (WebCore::Reader::readNumber):
+        (WebCore::Reader::readImageData):
+        (WebCore::Reader::doReadUint32):
+        (WebCore::Reader::doReadNumber):
+        (WebCore::Deserializer::Deserializer):
+        (WebCore::Deserializer::createArray):
+        (WebCore::Deserializer::createObject):
+        (WebCore::Deserializer::createSparseArray):
+        (WebCore::Deserializer::initializeObject):
+        (WebCore::Deserializer::doDeserialize):
+        (WebCore::Deserializer::stackDepth):
+        (WebCore::SerializedScriptValue::deserialize):
+
 2010-04-05  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

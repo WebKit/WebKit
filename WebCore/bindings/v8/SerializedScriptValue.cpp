@@ -31,7 +31,11 @@
 #include "config.h"
 #include "SerializedScriptValue.h"
 
+#include "ByteArray.h"
+#include "CanvasPixelArray.h"
+#include "ImageData.h"
 #include "SharedBuffer.h"
+#include "V8ImageData.h"
 
 #include <v8.h>
 #include <wtf/Assertions.h>
@@ -40,7 +44,6 @@
 
 // FIXME:
 // - catch V8 exceptions
-// - be ready to get empty handles
 // - consider crashing in debug mode on deserialization errors
 
 namespace WebCore {
@@ -60,18 +63,14 @@ enum SerializationTag {
     FalseTag = 'F',
     StringTag = 'S',
     Int32Tag = 'I',
+    Uint32Tag = 'U',
+    DateTag = 'D',
     NumberTag = 'N',
-    ObjectTag = '{',
+    ImageDataTag = '#',
     ArrayTag = '[',
+    ObjectTag = '{',
+    SparseArrayTag = '@',
 };
-
-// Helpers to do verbose handle casts.
-
-template <typename T, typename U>
-static v8::Handle<T> handleCast(v8::Handle<U> handle) { return v8::Handle<T>::Cast(handle); }
-
-template <typename T, typename U>
-static v8::Local<T> handleCast(v8::Local<U> handle) { return v8::Local<T>::Cast(handle); }
 
 static bool shouldCheckForCycles(int depth)
 {
@@ -118,7 +117,8 @@ private:
 // information used to reconstruct composite types.
 class Writer : Noncopyable {
 public:
-    Writer() : m_position(0)
+    Writer()
+        : m_position(0)
     {
     }
 
@@ -134,9 +134,10 @@ public:
 
     void writeString(const char* data, int length)
     {
+        ASSERT(length >= 0);
         append(StringTag);
         doWriteUint32(static_cast<uint32_t>(length));
-        append(data, length);
+        append(reinterpret_cast<const uint8_t*>(data), length);
     }
 
     void writeInt32(int32_t value)
@@ -145,19 +146,50 @@ public:
         doWriteUint32(ZigZag::encode(static_cast<uint32_t>(value)));
     }
 
+    void writeUint32(uint32_t value)
+    {
+        append(Uint32Tag);
+        doWriteUint32(value);
+    }
+
+    void writeDate(double numberValue)
+    {
+        append(DateTag);
+        doWriteNumber(numberValue);
+    }
+
     void writeNumber(double number)
     {
         append(NumberTag);
-        append(reinterpret_cast<char*>(&number), sizeof(number));
+        doWriteNumber(number);
     }
 
-    // Records that a composite object can be constructed by using
-    // |length| previously stored values.
-    void endComposite(SerializationTag tag, int32_t length)
+    void writeImageData(uint32_t width, uint32_t height, const uint8_t* pixelData, uint32_t pixelDataLength)
     {
-        ASSERT(tag == ObjectTag || tag == ArrayTag);
-        append(tag);
-        doWriteUint32(static_cast<uint32_t>(length));
+        append(ImageDataTag);
+        doWriteUint32(width);
+        doWriteUint32(height);
+        doWriteUint32(pixelDataLength);
+        append(pixelData, pixelDataLength);
+    }
+
+    void writeArray(uint32_t length)
+    {
+        append(ArrayTag);
+        doWriteUint32(length);
+    }
+
+    void writeObject(uint32_t numProperties)
+    {
+        append(ObjectTag);
+        doWriteUint32(numProperties);
+    }
+
+    void writeSparseArray(uint32_t numProperties, uint32_t length)
+    {
+        append(SparseArrayTag);
+        doWriteUint32(numProperties);
+        doWriteUint32(length);
     }
 
     Vector<BufferValueType>& data()
@@ -170,7 +202,7 @@ private:
     void doWriteUint32(uint32_t value)
     {
         while (true) {
-            char b = (value & varIntMask);
+            uint8_t b = (value & varIntMask);
             value >>= varIntShift;
             if (!value) {
                 append(b);
@@ -180,21 +212,26 @@ private:
         }
     }
 
+    void doWriteNumber(double number)
+    {
+        append(reinterpret_cast<uint8_t*>(&number), sizeof(number));
+    }
+
     void append(SerializationTag tag)
     {
-        append(static_cast<char>(tag));
+        append(static_cast<uint8_t>(tag));
     }
 
-    void append(char b)
+    void append(uint8_t b)
     {
         ensureSpace(1);
-        *charAt(m_position++) = b;
+        *byteAt(m_position++) = b;
     }
 
-    void append(const char* data, int length)
+    void append(const uint8_t* data, int length)
     {
         ensureSpace(length);
-        memcpy(charAt(m_position), data, length);
+        memcpy(byteAt(m_position), data, length);
         m_position += length;
     }
 
@@ -210,41 +247,54 @@ private:
         // If the writer is at odd position in the buffer, then one of
         // the bytes in the last UChar is not initialized.
         if (m_position % 2)
-            *charAt(m_position) = static_cast<char>(PaddingTag);
+            *byteAt(m_position) = static_cast<uint8_t>(PaddingTag);
     }
 
-    char* charAt(int position) { return reinterpret_cast<char*>(m_buffer.data()) + position; }
+    uint8_t* byteAt(int position) { return reinterpret_cast<uint8_t*>(m_buffer.data()) + position; }
 
     Vector<BufferValueType> m_buffer;
     unsigned m_position;
 };
 
 class Serializer {
+    class StateBase;
 public:
     explicit Serializer(Writer& writer)
         : m_writer(writer)
-        , m_state(0)
         , m_depth(0)
+        , m_hasError(false)
     {
     }
 
     bool serialize(v8::Handle<v8::Value> value)
     {
         v8::HandleScope scope;
-        StackCleaner cleaner(&m_state);
-        if (!doSerialize(value))
-            return false;
-        while (top()) {
-            int length;
-            while (!top()->isDone(&length)) {
-                // Note that doSerialize() can change current top().
-                if (!doSerialize(top()->advance()))
-                    return false;
-            }
-            m_writer.endComposite(top()->tag(), length);
-            pop();
-        }
-        return true;
+        StateBase* state = doSerialize(value, 0);
+        while (state)
+            state = state->advance(*this);
+        return !m_hasError;
+    }
+
+    // Functions used by serialization states.
+
+    StateBase* doSerialize(v8::Handle<v8::Value> value, StateBase* next);
+
+    StateBase* writeArray(uint32_t length, StateBase* state)
+    {
+        m_writer.writeArray(length);
+        return pop(state);
+    }
+
+    StateBase* writeObject(uint32_t numProperties, StateBase* state)
+    {
+        m_writer.writeObject(numProperties);
+        return pop(state);
+    }
+
+    StateBase* writeSparseArray(uint32_t numProperties, uint32_t length, StateBase* state)
+    {
+        m_writer.writeSparseArray(numProperties, length);
+        return pop(state);
     }
 
 private:
@@ -254,221 +304,275 @@ private:
 
         // Link to the next state to form a stack.
         StateBase* nextState() { return m_next; }
-        void setNextState(StateBase* next) { m_next = next; }
 
         // Composite object we're processing in this state.
         v8::Handle<v8::Value> composite() { return m_composite; }
 
-        // Serialization tag for the current composite.
-        virtual SerializationTag tag() const = 0;
-
-        // Returns whether iteration over subobjects of the current
-        // composite object is done. If yes, |*length| is set to the
-        // number of subobjects.
-        virtual bool isDone(int* length) = 0;
-
-        // Advances to the next subobject.
-        // Requires: !this->isDone().
-        virtual v8::Local<v8::Value> advance() = 0;
+        // Serializes (a part of) the current composite and returns
+        // the next state to process or null when this is the final
+        // state.
+        virtual StateBase* advance(Serializer&) = 0;
 
     protected:
-        StateBase(v8::Handle<v8::Value> composite)
-            : m_next(0)
-            , m_composite(composite)
+        StateBase(v8::Handle<v8::Value> composite, StateBase* next)
+            : m_composite(composite)
+            , m_next(next)
         {
         }
 
     private:
-        StateBase* m_next;
         v8::Handle<v8::Value> m_composite;
+        StateBase* m_next;
     };
 
-    template <typename T, SerializationTag compositeTag>
+    // Dummy state that is used to signal serialization errors.
+    class ErrorState : public StateBase {
+    public:
+        ErrorState()
+            : StateBase(v8::Handle<v8::Value>(), 0)
+        {
+        }
+
+        virtual StateBase* advance(Serializer&)
+        {
+            delete this;
+            return 0;
+        }
+    };
+
+    template <typename T>
     class State : public StateBase {
     public:
-        v8::Handle<T> composite() { return handleCast<T>(StateBase::composite()); }
-
-        virtual SerializationTag tag() const { return compositeTag; }
+        v8::Handle<T> composite() { return v8::Handle<T>::Cast(StateBase::composite()); }
 
     protected:
-        explicit State(v8::Handle<T> composite) : StateBase(composite)
+        State(v8::Handle<T> composite, StateBase* next)
+            : StateBase(composite, next)
         {
         }
     };
 
-    // Helper to clean up the state stack in case of errors.
-    class StackCleaner : Noncopyable {
+#if 0
+    // Currently unused, see comment in newArrayState.
+    class ArrayState : public State<v8::Array> {
     public:
-        explicit StackCleaner(StateBase** stack) : m_stack(stack)
+        ArrayState(v8::Handle<v8::Array> array, StateBase* next)
+            : State<v8::Array>(array, next)
+            , m_index(-1)
         {
         }
 
-        ~StackCleaner()
+        virtual StateBase* advance(Serializer& serializer)
         {
-            StateBase* state = *m_stack;
-            while (state) {
-                StateBase* tmp = state->nextState();
-                delete state;
-                state = tmp;
+            ++m_index;
+            for (; m_index < composite()->Length(); ++m_index) {
+                if (StateBase* newState = serializer.doSerialize(composite()->Get(m_index), this))
+                    return newState;
             }
-            *m_stack = 0;
-        }
-
-    private:
-        StateBase** m_stack;
-    };
-
-    class ArrayState : public State<v8::Array, ArrayTag> {
-    public:
-        ArrayState(v8::Handle<v8::Array> array)
-            : State<v8::Array, ArrayTag>(array)
-            , m_index(0)
-        {
-        }
-
-        virtual bool isDone(int* length)
-        {
-            *length = composite()->Length();
-            return static_cast<int>(m_index) >= *length;
-        }
-
-        virtual v8::Local<v8::Value> advance()
-        {
-            ASSERT(m_index < composite()->Length());
-            v8::HandleScope scope;
-            return scope.Close(composite()->Get(v8::Integer::New(m_index++)));
+            return serializer.writeArray(composite()->Length(), this);
         }
 
     private:
         unsigned m_index;
     };
+#endif
 
-    class ObjectState : public State<v8::Object, ObjectTag> {
+    class AbstractObjectState : public State<v8::Object> {
     public:
-        ObjectState(v8::Handle<v8::Object> object)
-            : State<v8::Object, ObjectTag>(object)
+        AbstractObjectState(v8::Handle<v8::Object> object, StateBase* next)
+            : State<v8::Object>(object, next)
             , m_propertyNames(object->GetPropertyNames())
             , m_index(-1)
-            , m_length(0)
+            , m_nameDone(false)
         {
-            nextProperty();
         }
 
-        virtual bool isDone(int* length)
+        virtual StateBase* advance(Serializer& serializer)
         {
-            *length = m_length;
-            return m_index >= 2 * m_propertyNames->Length();
-        }
-
-        virtual v8::Local<v8::Value> advance()
-        {
-            ASSERT(m_index < 2 * m_propertyNames->Length());
-            if (!(m_index % 2)) {
-                ++m_index;
-                return m_propertyName;
+            ++m_index;
+            for (; m_index < m_propertyNames->Length(); ++m_index) {
+                if (m_propertyName.IsEmpty()) {
+                    v8::Local<v8::Value> propertyName = m_propertyNames->Get(m_index);
+                    if ((propertyName->IsString() && composite()->HasRealNamedProperty(propertyName.As<v8::String>()))
+                        || (propertyName->IsUint32() && composite()->HasRealIndexedProperty(propertyName->Uint32Value()))) {
+                        m_propertyName = propertyName;
+                    } else
+                        continue;
+                }
+                ASSERT(!m_propertyName.IsEmpty());
+                if (!m_nameDone) {
+                    m_nameDone = true;
+                    if (StateBase* newState = serializer.doSerialize(m_propertyName, this))
+                        return newState;
+                }
+                v8::Local<v8::Value> value = composite()->Get(m_propertyName);
+                m_nameDone = false;
+                m_propertyName.Clear();
+                if (StateBase* newState = serializer.doSerialize(value, this))
+                    return newState;
             }
-            v8::Local<v8::Value> result = composite()->Get(m_propertyName);
-            nextProperty();
-            return result;
+            return objectDone(m_index, serializer);
         }
+
+    protected:
+        virtual StateBase* objectDone(unsigned numProperties, Serializer&) = 0;
 
     private:
-        void nextProperty()
-        {
-            v8::HandleScope scope;
-            ++m_index;
-            ASSERT(!(m_index % 2));
-            for (; m_index < 2 * m_propertyNames->Length(); m_index += 2) {
-                v8::Local<v8::Value> propertyName = m_propertyNames->Get(v8::Integer::New(m_index / 2));
-                if ((propertyName->IsString() && composite()->HasRealNamedProperty(handleCast<v8::String>(propertyName)))
-                    || (propertyName->IsInt32() && composite()->HasRealIndexedProperty(propertyName->Uint32Value()))) {
-                    m_propertyName = scope.Close(propertyName);
-                    m_length += 2;
-                    return;
-                }
-            }
-        }
-
         v8::Local<v8::Array> m_propertyNames;
         v8::Local<v8::Value> m_propertyName;
         unsigned m_index;
-        unsigned m_length;
+        bool m_nameDone;
     };
 
-    bool doSerialize(v8::Handle<v8::Value> value)
-    {
-        if (value->IsUndefined())
-            m_writer.writeUndefined();
-        else if (value->IsNull())
-            m_writer.writeNull();
-        else if (value->IsTrue())
-            m_writer.writeTrue();
-        else if (value->IsFalse())
-            m_writer.writeFalse();
-        else if (value->IsInt32())
-            m_writer.writeInt32(value->Int32Value());
-        else if (value->IsNumber())
-            m_writer.writeNumber(handleCast<v8::Number>(value)->Value());
-        else if (value->IsString()) {
-            v8::String::Utf8Value stringValue(value);
-            m_writer.writeString(*stringValue, stringValue.length());
-        } else if (value->IsArray()) {
-            if (!checkComposite(value))
-                return false;
-            push(new ArrayState(handleCast<v8::Array>(value)));
-        } else if (value->IsObject()) {
-            if (!checkComposite(value))
-                return false;
-            push(new ObjectState(handleCast<v8::Object>(value)));
-            // FIXME:
-            // - check not a wrapper
-            // - support File, ImageData, etc.
+    class ObjectState : public AbstractObjectState {
+    public:
+        ObjectState(v8::Handle<v8::Object> object, StateBase* next)
+            : AbstractObjectState(object, next)
+        {
         }
-        return true;
-    }
 
-    void push(StateBase* state)
+    protected:
+        virtual StateBase* objectDone(unsigned numProperties, Serializer& serializer)
+        {
+            return serializer.writeObject(numProperties, this);
+        }
+    };
+
+    class SparseArrayState : public AbstractObjectState {
+    public:
+        SparseArrayState(v8::Handle<v8::Array> array, StateBase* next)
+            : AbstractObjectState(array, next)
+        {
+        }
+
+    protected:
+        virtual StateBase* objectDone(unsigned numProperties, Serializer& serializer)
+        {
+            return serializer.writeSparseArray(numProperties, composite().As<v8::Array>()->Length(), this);
+        }
+    };
+
+    StateBase* push(StateBase* state)
     {
-        state->setNextState(m_state);
-        m_state = state;
+        ASSERT(state);
         ++m_depth;
+        return checkComposite(state) ? state : handleError(state);
     }
 
-    StateBase* top() { return m_state; }
-
-    void pop()
+    StateBase* pop(StateBase* state)
     {
-        if (!m_state)
-            return;
-        StateBase* top = m_state;
-        m_state = top->nextState();
-        delete top;
+        ASSERT(state);
         --m_depth;
+        StateBase* next = state->nextState();
+        delete state;
+        return next;
     }
 
-    bool checkComposite(v8::Handle<v8::Value> composite)
+    StateBase* handleError(StateBase* state)
     {
+        m_hasError = true;
+        while (state) {
+            StateBase* tmp = state->nextState();
+            delete tmp;
+            state = tmp;
+        }
+        return new ErrorState;
+    }
+
+    bool checkComposite(StateBase* top)
+    {
+        ASSERT(top);
         if (m_depth > maxDepth)
             return false;
         if (!shouldCheckForCycles(m_depth))
             return true;
-        for (StateBase* state = top(); state; state = state->nextState()) {
+        v8::Handle<v8::Value> composite = top->composite();
+        for (StateBase* state = top->nextState(); state; state = state->nextState()) {
             if (state->composite() == composite)
                 return false;
         }
         return true;
     }
 
+    void writeString(v8::Handle<v8::Value> value)
+    {
+        v8::String::Utf8Value stringValue(value);
+        m_writer.writeString(*stringValue, stringValue.length());
+    }
+
+    void writeImageData(v8::Handle<v8::Value> value)
+    {
+        ImageData* imageData = V8ImageData::toNative(value.As<v8::Object>());
+        if (!imageData)
+            return;
+        WTF::ByteArray* pixelArray = imageData->data()->data();
+        m_writer.writeImageData(imageData->width(), imageData->height(), pixelArray->data(), pixelArray->length());
+    }
+
+    static StateBase* newArrayState(v8::Handle<v8::Array> array, StateBase* next)
+    {
+        // FIXME: use plain Array state when we can quickly check that
+        // an array is not sparse and has only indexed properties.
+        return new SparseArrayState(array, next);
+    }
+
+    static StateBase* newObjectState(v8::Handle<v8::Object> object, StateBase* next)
+    {
+        // FIXME:
+        // - check not a wrapper
+        // - support File, etc.
+        return new ObjectState(object, next);
+    }
+
     Writer& m_writer;
-    StateBase* m_state;
     int m_depth;
+    bool m_hasError;
+};
+
+Serializer::StateBase* Serializer::doSerialize(v8::Handle<v8::Value> value, StateBase* next)
+{
+    if (value->IsUndefined())
+        m_writer.writeUndefined();
+    else if (value->IsNull())
+        m_writer.writeNull();
+    else if (value->IsTrue())
+        m_writer.writeTrue();
+    else if (value->IsFalse())
+        m_writer.writeFalse();
+    else if (value->IsInt32())
+        m_writer.writeInt32(value->Int32Value());
+    else if (value->IsUint32())
+        m_writer.writeUint32(value->Uint32Value());
+    else if (value->IsDate())
+        m_writer.writeDate(value->NumberValue());
+    else if (value->IsNumber())
+        m_writer.writeNumber(value.As<v8::Number>()->Value());
+    else if (value->IsString())
+        writeString(value);
+    else if (value->IsArray())
+        return push(newArrayState(value.As<v8::Array>(), next));
+    else if (V8ImageData::HasInstance(value))
+        writeImageData(value);
+    else if (value->IsObject())
+        return push(newObjectState(value.As<v8::Object>(), next));
+    return 0;
+}
+
+// Interface used by Reader to create objects of composite types.
+class CompositeCreator {
+public:
+    virtual ~CompositeCreator() { }
+
+    virtual bool createArray(uint32_t length, v8::Handle<v8::Value>* value) = 0;
+    virtual bool createObject(uint32_t numProperties, v8::Handle<v8::Value>* value) = 0;
+    virtual bool createSparseArray(uint32_t numProperties, uint32_t length, v8::Handle<v8::Value>* value) = 0;
 };
 
 // Reader is responsible for deserializing primitive types and
 // restoring information about saved objects of composite types.
 class Reader {
 public:
-    Reader(const char* buffer, int length)
+    Reader(const uint8_t* buffer, int length)
         : m_buffer(buffer)
         , m_length(length)
         , m_position(0)
@@ -478,16 +582,16 @@ public:
 
     bool isEof() const { return m_position >= m_length; }
 
-    bool read(SerializationTag* tag, v8::Handle<v8::Value>* value, int* length)
+    bool read(v8::Handle<v8::Value>* value, CompositeCreator& creator)
     {
-        uint32_t rawLength;
-        if (!readTag(tag))
+        SerializationTag tag;
+        if (!readTag(&tag))
             return false;
-        switch (*tag) {
+        switch (tag) {
         case InvalidTag:
             return false;
         case PaddingTag:
-            break;
+            return true;
         case UndefinedTag:
             *value = v8::Undefined();
             break;
@@ -508,18 +612,53 @@ public:
             if (!readInt32(value))
                 return false;
             break;
+        case Uint32Tag:
+            if (!readUint32(value))
+                return false;
+            break;
+        case DateTag:
+            if (!readDate(value))
+                return false;
+            break;
         case NumberTag:
             if (!readNumber(value))
                 return false;
             break;
-        case ObjectTag:
-        case ArrayTag:
-            if (!doReadUint32(&rawLength))
+        case ImageDataTag:
+            if (!readImageData(value))
                 return false;
-            *length = rawLength;
+            break;
+        case ArrayTag: {
+            uint32_t length;
+            if (!doReadUint32(&length))
+                return false;
+            if (!creator.createArray(length, value))
+                return false;
             break;
         }
-        return true;
+        case ObjectTag: {
+            uint32_t numProperties;
+            if (!doReadUint32(&numProperties))
+                return false;
+            if (!creator.createObject(numProperties, value))
+                return false;
+            break;
+        }
+        case SparseArrayTag: {
+            uint32_t numProperties;
+            uint32_t length;
+            if (!doReadUint32(&numProperties))
+                return false;
+            if (!doReadUint32(&length))
+                return false;
+            if (!creator.createSparseArray(numProperties, length, value))
+                return false;
+            break;
+        }
+        default:
+            return false;
+        }
+        return !value->IsEmpty();
     }
 
 private:
@@ -538,7 +677,7 @@ private:
             return false;
         if (m_position + length > m_length)
             return false;
-        *value = v8::String::New(m_buffer + m_position, length);
+        *value = v8::String::New(reinterpret_cast<const char*>(m_buffer + m_position), length);
         m_position += length;
         return true;
     }
@@ -552,22 +691,60 @@ private:
         return true;
     }
 
+    bool readUint32(v8::Handle<v8::Value>* value)
+    {
+        uint32_t rawValue;
+        if (!doReadUint32(&rawValue))
+            return false;
+        *value = v8::Integer::New(rawValue);
+        return true;
+    }
+
+    bool readDate(v8::Handle<v8::Value>* value)
+    {
+        double numberValue;
+        if (!doReadNumber(&numberValue))
+            return false;
+        *value = v8::Date::New(numberValue);
+        return true;
+    }
+
     bool readNumber(v8::Handle<v8::Value>* value)
     {
-        if (m_position + sizeof(double) > m_length)
-            return false;
         double number;
-        char* numberAsByteArray = reinterpret_cast<char*>(&number);
-        for (unsigned i = 0; i < sizeof(double); ++i)
-            numberAsByteArray[i] = m_buffer[m_position++];
+        if (!doReadNumber(&number))
+            return false;
         *value = v8::Number::New(number);
+        return true;
+    }
+
+    bool readImageData(v8::Handle<v8::Value>* value)
+    {
+        uint32_t width;
+        uint32_t height;
+        uint32_t pixelDataLength;
+        if (!doReadUint32(&width))
+            return false;
+        if (!doReadUint32(&height))
+            return false;
+        if (!doReadUint32(&pixelDataLength))
+            return false;
+        if (m_position + pixelDataLength > m_length)
+            return false;
+        PassRefPtr<ImageData> imageData = ImageData::create(width, height);
+        WTF::ByteArray* pixelArray = imageData->data()->data();
+        ASSERT(pixelArray);
+        ASSERT(pixelArray->length() >= pixelDataLength);
+        memcpy(pixelArray->data(), m_buffer + m_position, pixelDataLength);
+        m_position += pixelDataLength;
+        *value = toV8(imageData);
         return true;
     }
 
     bool doReadUint32(uint32_t* value)
     {
         *value = 0;
-        char currentByte;
+        uint8_t currentByte;
         int shift = 0;
         do {
             if (m_position >= m_length)
@@ -579,14 +756,25 @@ private:
         return true;
     }
 
-    const char* m_buffer;
+    bool doReadNumber(double* number)
+    {
+        if (m_position + sizeof(double) > m_length)
+            return false;
+        uint8_t* numberAsByteArray = reinterpret_cast<uint8_t*>(number);
+        for (unsigned i = 0; i < sizeof(double); ++i)
+            numberAsByteArray[i] = m_buffer[m_position++];
+        return true;
+    }
+
+    const uint8_t* m_buffer;
     const unsigned m_length;
     unsigned m_position;
 };
 
-class Deserializer {
+class Deserializer : public CompositeCreator {
 public:
-    explicit Deserializer(Reader& reader) : m_reader(reader)
+    explicit Deserializer(Reader& reader)
+        : m_reader(reader)
     {
     }
 
@@ -602,41 +790,60 @@ public:
         return scope.Close(element(0));
     }
 
+    virtual bool createArray(uint32_t length, v8::Handle<v8::Value>* value)
+    {
+        if (length > stackDepth())
+            return false;
+        v8::Local<v8::Array> array = v8::Array::New(length);
+        if (array.IsEmpty())
+            return false;
+        const int depth = stackDepth() - length;
+        for (unsigned i = 0; i < length; ++i)
+            array->Set(i, element(depth + i));
+        pop(length);
+        *value = array;
+        return true;
+    }
+
+    virtual bool createObject(uint32_t numProperties, v8::Handle<v8::Value>* value)
+    {
+        v8::Local<v8::Object> object = v8::Object::New();
+        if (object.IsEmpty())
+            return false;
+        return initializeObject(object, numProperties, value);
+    }
+
+    virtual bool createSparseArray(uint32_t numProperties, uint32_t length, v8::Handle<v8::Value>* value)
+    {
+        v8::Local<v8::Array> array = v8::Array::New(length);
+        if (array.IsEmpty())
+            return false;
+        return initializeObject(array, numProperties, value);
+    }
+
 private:
+    bool initializeObject(v8::Handle<v8::Object> object, uint32_t numProperties, v8::Handle<v8::Value>* value)
+    {
+        unsigned length = 2 * numProperties;
+        if (length > stackDepth())
+            return false;
+        for (unsigned i = stackDepth() - length; i < stackDepth(); i += 2) {
+            v8::Local<v8::Value> propertyName = element(i);
+            v8::Local<v8::Value> propertyValue = element(i + 1);
+            object->Set(propertyName, propertyValue);
+        }
+        pop(length);
+        *value = object;
+        return true;
+    }
+
     bool doDeserialize()
     {
-        SerializationTag tag;
         v8::Local<v8::Value> value;
-        int length = 0;
-        if (!m_reader.read(&tag, &value, &length))
+        if (!m_reader.read(&value, *this))
             return false;
-        if (!value.IsEmpty()) {
+        if (!value.IsEmpty())
             push(value);
-        } else if (tag == ObjectTag) {
-            if (length > stackDepth())
-                return false;
-            v8::Local<v8::Object> object = v8::Object::New();
-            for (int i = stackDepth() - length; i < stackDepth(); i += 2) {
-                v8::Local<v8::Value> propertyName = element(i);
-                v8::Local<v8::Value> propertyValue = element(i + 1);
-                object->Set(propertyName, propertyValue);
-            }
-            pop(length);
-            push(object);
-        } else if (tag == ArrayTag) {
-            if (length > stackDepth())
-                return false;
-            v8::Local<v8::Array> array = v8::Array::New(length);
-            const int depth = stackDepth() - length;
-            {
-                v8::HandleScope scope;
-                for (int i = 0; i < length; ++i)
-                    array->Set(v8::Integer::New(i), element(depth + i));
-            }
-            pop(length);
-            push(array);
-        } else if (tag != PaddingTag)
-            return false;
         return true;
     }
 
@@ -648,7 +855,7 @@ private:
         m_stack.shrink(m_stack.size() - length);
     }
 
-    int stackDepth() const { return m_stack.size(); }
+    unsigned stackDepth() const { return m_stack.size(); }
 
     v8::Local<v8::Value> element(unsigned index)
     {
@@ -691,7 +898,7 @@ v8::Handle<v8::Value> SerializedScriptValue::deserialize()
     if (!m_data.impl())
         return v8::Null();
     COMPILE_ASSERT(sizeof(BufferValueType) == 2, BufferValueTypeIsTwoBytes);
-    Reader reader(reinterpret_cast<const char*>(m_data.impl()->characters()), 2 * m_data.length());
+    Reader reader(reinterpret_cast<const uint8_t*>(m_data.impl()->characters()), 2 * m_data.length());
     Deserializer deserializer(reader);
     return deserializer.deserialize();
 }
