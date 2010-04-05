@@ -1,3 +1,13 @@
+2010-04-05  yael aharon  <yael.aharon@nokia.com>
+
+        Unreviewed.
+        Separate test results for gtk platform because progress element is not implemented for that platform yet.
+
+        * platform/gtk/fast/dom/Window/window-property-descriptors-expected.txt: Added.
+        * platform/gtk/fast/dom/prototype-inheritance-expected.txt: Added.
+        * platform/gtk/fast/js: Added.
+        * platform/gtk/fast/js/global-constructors-expected.txt: Added.
+
 2010-04-05  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.
