@@ -2808,3 +2808,9 @@ BUG39904 : svg/animations/animate-points.html = TEXT TIMEOUT
 // Caused by http://trac.webkit.org/changeset/56824
 // This test generate strange result on Linux, the resulted image is too small.
 BUG40027 LINUX : fast/forms/input-file-re-render.html = TEXT IMAGE
+
+BUG40411 WIN LINUX : fast/repaint/line-flow-with-floats-9.html = IMAGE
+
+// Finding out what is wrong with newlines mismatch.
+BUG_PFELDMAN MAC : fast/canvas/webgl/null-object-behaviour.html = TEXT
+BUG_PFELDMAN MAC : fast/canvas/webgl/uniform-location.html = TEXT
