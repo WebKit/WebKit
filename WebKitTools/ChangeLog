@@ -1,3 +1,9 @@
+2010-04-04  John Gregg  <johnnyg@google.com>
+
+        Unreviewed, add myself to the committers list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-04-04  Robert Hogan  <robert@webkit.org>
 
         Unreviewed, add myself to the committers list.
