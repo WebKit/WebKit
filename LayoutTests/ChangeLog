@@ -1,3 +1,14 @@
+2010-04-05  yael aharon  <yael.aharon@nokia.com>
+
+        Unreviewed.
+        Separate test results for windows platform because progress element is not implemented for that platform yet.
+
+        * platform/win/fast/dom/Window/window-property-descriptors-expected.txt: Added.
+        * platform/win/fast/dom/prototype-inheritance-2-expected.txt: Added.
+        * platform/win/fast/dom/prototype-inheritance-expected.txt: Added.
+        * platform/win/fast/js: Added.
+        * platform/win/fast/js/global-constructors-expected.txt: Added.
+
 2010-04-05  Chris Fleizach  <cfleizach@apple.com>
 
         Unreviewed.
