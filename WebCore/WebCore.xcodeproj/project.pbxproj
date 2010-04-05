@@ -193,7 +193,7 @@
 		0F580CFF0F12DE9B0051D689 /* RenderLayerBacking.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F580CFB0F12DE9B0051D689 /* RenderLayerBacking.h */; };
 		0F580D000F12DE9B0051D689 /* RenderLayerBacking.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F580CFC0F12DE9B0051D689 /* RenderLayerBacking.cpp */; };
 		0F5B7A5410F65D7A00376302 /* RenderEmbeddedObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F5B7A5210F65D7A00376302 /* RenderEmbeddedObject.cpp */; };
-		0F5B7A5510F65D7A00376302 /* RenderEmbeddedObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5B7A5310F65D7A00376302 /* RenderEmbeddedObject.h */; };
+		0F5B7A5510F65D7A00376302 /* RenderEmbeddedObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5B7A5310F65D7A00376302 /* RenderEmbeddedObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F6ECD450F252F3700BDE271 /* CSSPropertyLonghand.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6ECD430F252F3700BDE271 /* CSSPropertyLonghand.h */; };
 		0F6ECD460F252F3700BDE271 /* CSSPropertyLonghand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F6ECD440F252F3700BDE271 /* CSSPropertyLonghand.cpp */; };
 		0FC705210EB1815600B90AD8 /* AtomicStringHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC705200EB1815600B90AD8 /* AtomicStringHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2925,7 +2925,7 @@
 		A871DED20A1530C700B12A68 /* RenderFrameSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871DECA0A1530C700B12A68 /* RenderFrameSet.cpp */; };
 		A871DED30A1530C700B12A68 /* RenderFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DECB0A1530C700B12A68 /* RenderFrame.h */; };
 		A871DED40A1530C700B12A68 /* RenderFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871DECC0A1530C700B12A68 /* RenderFrame.cpp */; };
-		A871DED50A1530C700B12A68 /* RenderPartObject.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DECD0A1530C700B12A68 /* RenderPartObject.h */; };
+		A871DED50A1530C700B12A68 /* RenderPartObject.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DECD0A1530C700B12A68 /* RenderPartObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A871DED60A1530C700B12A68 /* RenderPartObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871DECE0A1530C700B12A68 /* RenderPartObject.cpp */; };
 		A871DED70A1530C700B12A68 /* RenderPart.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DECF0A1530C700B12A68 /* RenderPart.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A871DFE20A15376B00B12A68 /* RenderReplaced.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871DFDE0A15376B00B12A68 /* RenderReplaced.cpp */; };

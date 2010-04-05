@@ -1389,7 +1389,7 @@ bool FrameLoader::loadPlugin(RenderEmbeddedObject* renderer, const KURL& url, co
             renderer->node()->setNeedsStyleRecalc(SyntheticStyleChange);
 #endif
         } else
-            renderer->setShowsMissingPluginIndicator(true);
+            renderer->setShowsMissingPluginIndicator();
     }
 
     return widget != 0;

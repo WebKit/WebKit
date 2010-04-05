@@ -707,6 +707,14 @@ String missingPluginText()
     return String();
 }
 
+String crashedPluginText()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] crashedPluginText];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
 String multipleFileUploadText(unsigned numberOfFiles)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;

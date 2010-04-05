@@ -98,6 +98,7 @@ String WebCore::unknownFileSizeText() { return String(LPCTSTR_UI_STRING("Unknown
 String WebCore::uploadFileText() { return String(LPCTSTR_UI_STRING("Upload file", "(Windows) Form submit file upload dialog title")); }
 String WebCore::allFilesText() { return String(LPCTSTR_UI_STRING("All Files", "(Windows) Form submit file upload all files pop-up")); }
 String WebCore::missingPluginText() { return String(LPCTSTR_UI_STRING("Missing Plug-in", "Label text to be used when a plugin is missing")); }
+String WebCore::crashedPluginText() { return String(LPCTSTR_UI_STRING("Plug-in Failure", "Label text to be used if plugin host process has crashed")); }
 String WebCore::imageTitle(const String& filename, const IntSize& size) 
 { 
     static RetainPtr<CFStringRef> format(AdoptCF, UI_STRING("%@ %d\xC3\x97%d pixels", "window title for a standalone image (uses multiplication symbol, not x)"));

@@ -41,8 +41,9 @@
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoaderTypes.h>
 #import <WebCore/HTMLPlugInElement.h>
-#import <WebCore/runtime_root.h>
+#import <WebCore/RenderEmbeddedObject.h>
 #import <WebCore/WebCoreObjCExtras.h>
+#import <WebCore/runtime_root.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/Assertions.h>
 
@@ -355,7 +356,9 @@ extern "C" {
 
 - (void)pluginHostDied
 {
-    _pluginHostDied = YES;
+    RenderEmbeddedObject* renderer = toRenderEmbeddedObject(_element->renderer());
+    if (renderer)
+        renderer->setShowsCrashedPluginIndicator();
 
     _pluginLayer = nil;
     _proxy = 0;
@@ -386,24 +389,6 @@ extern "C" {
         }
 
         return;
-    }
-    
-    if (_pluginHostDied) {
-        static NSImage *nullPlugInImage;
-        if (!nullPlugInImage) {
-            NSBundle *bundle = [NSBundle bundleForClass:[WebHostedNetscapePluginView class]];
-            nullPlugInImage = [[NSImage alloc] initWithContentsOfFile:[bundle pathForResource:@"nullplugin" ofType:@"tiff"]];
-            [nullPlugInImage setFlipped:YES];
-        }
-        
-        if (!nullPlugInImage)
-            return;
-        
-        NSSize imageSize = [nullPlugInImage size];
-        NSSize viewSize = [self bounds].size;
-        
-        NSPoint point = NSMakePoint((viewSize.width - imageSize.width) / 2.0, (viewSize.height - imageSize.height) / 2.0);
-        [nullPlugInImage drawAtPoint:point fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:1.0];
     }
 }
 
