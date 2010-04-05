@@ -1,3 +1,46 @@
+2010-04-05  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Removed the PatchStyleErrorHandler class and incorporated its
+        functionality into the DefaultStyleErrorHandler class.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37067
+
+        * Scripts/webkitpy/style/checker.py:
+          - In the StyleChecker class:
+            - Added a line_number parameter to the check_file() method.
+            - Renamed the handle_style_error parameter to
+              mock_handle_style_error to be consistent with the other mock_*
+              parameter names.
+            - Added a mock_check_file parameter to the check_patch() method
+              to facilitate unit testing the changes in this patch.
+            - Rewrote the check_patch() method with the patch-parsing logic
+              taken from the PatchStyleErrorHandler class.
+
+        * Scripts/webkitpy/style/checker_unittest.py:
+          - Added a StyleCheckerCheckFileBase class and sub-classed the
+            existing StyleCheckerCheckFileTest class from it.
+          - Added a StyleCheckerCheckPatchTest class to unit-test the
+            rewritten check_patch() method.
+          - Removed the vestigial __main__ code at the bottom of the file.
+            This is left over from when check-webkit-style was implemented
+            as a module and a wrapper module.
+
+        * Scripts/webkitpy/style/error_handlers.py:
+          - Added an optional line_numbers parameter to the
+            DefaultStyleErrorHandler class constructor and adjusted the
+            __call__() method as necessary.
+          - Removed the PatchStyleErrorHandler class.
+
+        * Scripts/webkitpy/style/error_handlers_unittest.py:
+          - Removed the PatchStyleErrorHandlerTest class which unit-tested
+            the PatchStyleErrorHandler class which is being removed in this
+            patch.
+          - Added a test_line_numbers() test method to the
+            DefaultStyleErrorHandlerTest class to test use of the
+            DefaultStyleErrorHandler's new line_numbers attribute.
+
 2010-04-05  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.

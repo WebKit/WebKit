@@ -25,10 +25,8 @@
 
 import unittest
 
-from .. style_references import parse_patch
 from checker import StyleCheckerConfiguration
 from error_handlers import DefaultStyleErrorHandler
-from error_handlers import PatchStyleErrorHandler
 from filter import FilterConfiguration
 
 class StyleErrorHandlerTestBase(unittest.TestCase):
@@ -71,14 +69,15 @@ class DefaultStyleErrorHandlerTest(StyleErrorHandlerTestBase):
         self.assertEquals(0, self._error_count)
         self.assertEquals(0, len(self._error_messages))
 
-    def _error_handler(self, configuration):
+    def _error_handler(self, configuration, line_numbers=None):
         return DefaultStyleErrorHandler(configuration=configuration,
                    file_path=self._file_path,
-                   increment_error_count=self._mock_increment_error_count)
+                   increment_error_count=self._mock_increment_error_count,
+                   line_numbers=line_numbers)
 
-    def _call_error_handler(self, handle_error, confidence):
+    def _call_error_handler(self, handle_error, confidence, line_number=100):
         """Call the given error handler with a test error."""
-        handle_error(line_number=100,
+        handle_error(line_number=line_number,
                      category=self._category,
                      confidence=confidence,
                      message="message")
@@ -132,52 +131,21 @@ class DefaultStyleErrorHandlerTest(StyleErrorHandlerTestBase):
         self.assertEquals(3, self._error_count)
         self.assertEquals(3, len(self._error_messages))
 
-
-class PatchStyleErrorHandlerTest(StyleErrorHandlerTestBase):
-
-    """Tests PatchStyleErrorHandler class."""
-
-    _file_path = "__init__.py"
-
-    _patch_string = """diff --git a/__init__.py b/__init__.py
-index ef65bee..e3db70e 100644
---- a/__init__.py
-+++ b/__init__.py
-@@ -1 +1,2 @@
- # Required for Python to search this directory for module files
-+# New line
-
-"""
-
-    def test_call(self):
-        patch_files = parse_patch(self._patch_string)
-        diff = patch_files[self._file_path]
-
+    def test_line_numbers(self):
+        """Test the line_numbers parameter."""
+        self._check_initialized()
         configuration = self._style_checker_configuration()
-
-        handle_error = PatchStyleErrorHandler(diff=diff,
-                                              file_path=self._file_path,
-                                              configuration=configuration,
-                                              increment_error_count=
-                                              self._mock_increment_error_count)
-
-        category = "whitespace/tab"
+        error_handler = self._error_handler(configuration,
+                                            line_numbers=[50])
         confidence = 5
-        message = "message"
 
-        # Confirm error is reportable.
-        self.assertTrue(configuration.is_reportable(category,
-                                                    confidence,
-                                                    self._file_path))
-
-        # Confirm error count initialized to zero.
+        # Error on non-modified line: no error.
+        self._call_error_handler(error_handler, confidence, line_number=60)
         self.assertEquals(0, self._error_count)
+        self.assertEquals([], self._error_messages)
 
-        # Test error in unmodified line (error count does not increment).
-        handle_error(1, category, confidence, message)
-        self.assertEquals(0, self._error_count)
-
-        # Test error in modified line (error count increments).
-        handle_error(2, category, confidence, message)
+        # Error on modified line: error.
+        self._call_error_handler(error_handler, confidence, line_number=50)
         self.assertEquals(1, self._error_count)
-
+        self.assertEquals(self._error_messages,
+                          ["foo.h(50):  message  [whitespace/tab] [5]\n"])

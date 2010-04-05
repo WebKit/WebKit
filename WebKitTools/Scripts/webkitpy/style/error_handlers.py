@@ -56,7 +56,8 @@ class DefaultStyleErrorHandler(object):
 
     """The default style error handler."""
 
-    def __init__(self, file_path, configuration, increment_error_count):
+    def __init__(self, file_path, configuration, increment_error_count,
+                 line_numbers=None):
         """Create a default style error handler.
 
         Args:
@@ -66,11 +67,20 @@ class DefaultStyleErrorHandler(object):
           increment_error_count: A function that takes no arguments and
                                  increments the total count of reportable
                                  errors.
+          line_numbers: An array of line numbers of the lines for which
+                        style errors should be reported, or None if errors
+                        for all lines should be reported.  When it is not
+                        None, this array normally contains the line numbers
+                        corresponding to the modified lines of a patch.
 
         """
+        if line_numbers is not None:
+            line_numbers = set(line_numbers)
+
         self._file_path = file_path
         self._configuration = configuration
         self._increment_error_count = increment_error_count
+        self._line_numbers = line_numbers
 
         # A string to integer dictionary cache of the number of reportable
         # errors per category passed to this instance.
@@ -100,6 +110,12 @@ class DefaultStyleErrorHandler(object):
         See the docstring of this module for more information.
 
         """
+        if (self._line_numbers is not None and
+            line_number not in self._line_numbers):
+            # Then the error occurred in a line that was not modified, so
+            # the error is not reportable.
+            return
+
         if not self._configuration.is_reportable(category=category,
                                                  confidence_in_error=confidence,
                                                  file_path=self._file_path):
@@ -122,56 +138,3 @@ class DefaultStyleErrorHandler(object):
         if category_total == max_reports:
             self._configuration.stderr_write("Suppressing further [%s] reports "
                                              "for this file.\n" % category)
-
-
-class PatchStyleErrorHandler(object):
-
-    """The style error function for patch files."""
-
-    def __init__(self, diff, file_path, configuration, increment_error_count):
-        """Create a patch style error handler for the given path.
-
-        Args:
-          diff: A DiffFile instance.
-          Other arguments: see the DefaultStyleErrorHandler.__init__()
-                           documentation for the other arguments.
-
-        """
-        self._diff = diff
-
-        self._default_error_handler = DefaultStyleErrorHandler(
-                                          configuration=configuration,
-                                          file_path=file_path,
-                                          increment_error_count=
-                                              increment_error_count)
-
-        # The line numbers of the modified lines. This is set lazily.
-        self._line_numbers = set()
-
-    def _get_line_numbers(self):
-        """Return the line numbers of the modified lines."""
-        if not self._line_numbers:
-            for line in self._diff.lines:
-                # When deleted line is not set, it means that
-                # the line is newly added (or modified).
-                if not line[0]:
-                    self._line_numbers.add(line[1])
-
-        return self._line_numbers
-
-    def __call__(self, line_number, category, confidence, message):
-        """Handle the occurrence of a style error.
-
-        This function does not report errors occurring in lines not
-        marked as modified or added in the patch.
-
-        See the docstring of this module for more information.
-
-        """
-        if line_number not in self._get_line_numbers():
-            # Then the error is not reportable.
-            return
-
-        self._default_error_handler(line_number, category, confidence,
-                                    message)
-

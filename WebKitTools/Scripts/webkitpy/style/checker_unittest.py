@@ -39,6 +39,7 @@ import os
 import unittest
 
 import checker as style
+from webkitpy.style_references import parse_patch
 from webkitpy.style_references import LogTesting
 from webkitpy.style_references import TestLogStream
 from checker import _BASE_FILTER_RULES
@@ -536,7 +537,25 @@ class StyleCheckerTest(unittest.TestCase):
         self.assertEquals(style_checker.file_count, 0)
 
 
-class StyleCheckerCheckFileTest(LoggingTestCase):
+class StyleCheckerCheckFileBase(LoggingTestCase):
+
+    def setUp(self):
+        LoggingTestCase.setUp(self)
+        self.warning_messages = ""
+
+    def mock_stderr_write(self, warning_message):
+        self.warning_messages += warning_message
+
+    def _style_checker_configuration(self):
+        return StyleCheckerConfiguration(
+            filter_configuration=FilterConfiguration(),
+            max_reports_per_category={"whitespace/newline": 1},
+            min_confidence=3,
+            output_format="vs7",
+            stderr_write=self.mock_stderr_write)
+
+
+class StyleCheckerCheckFileTest(StyleCheckerCheckFileBase):
 
     """Test the check_file() method of the StyleChecker class.
 
@@ -562,14 +581,10 @@ class StyleCheckerCheckFileTest(LoggingTestCase):
 
     """
     def setUp(self):
-        LoggingTestCase.setUp(self)
+        StyleCheckerCheckFileBase.setUp(self)
         self.got_file_path = None
         self.got_handle_style_error = None
         self.got_processor = None
-        self.warning_messages = ""
-
-    def mock_stderr_write(self, warning_message):
-        self.warning_messages += warning_message
 
     def mock_handle_style_error(self):
         pass
@@ -606,17 +621,12 @@ class StyleCheckerCheckFileTest(LoggingTestCase):
         # Confirm that the attributes are reset.
         self.assert_attributes(None, None, None, "")
 
-        configuration = StyleCheckerConfiguration(
-                            filter_configuration=FilterConfiguration(),
-                            max_reports_per_category={"whitespace/newline": 1},
-                            min_confidence=3,
-                            output_format="vs7",
-                            stderr_write=self.mock_stderr_write)
+        configuration = self._style_checker_configuration()
 
         style_checker = StyleChecker(configuration)
 
         style_checker.check_file(file_path=file_path,
-            handle_style_error=self.mock_handle_style_error,
+            mock_handle_style_error=self.mock_handle_style_error,
             mock_os_path_exists=self.mock_os_path_exists,
             mock_process_file=self.mock_process_file)
 
@@ -687,6 +697,61 @@ class StyleCheckerCheckFileTest(LoggingTestCase):
                                "")
 
 
+class StyleCheckerCheckPatchTest(StyleCheckerCheckFileBase):
+
+    """Test the check_patch() method of the StyleChecker class.
+
+    Internally, the check_patch() method calls StyleChecker.check_file() for
+    each file that appears in the patch string.  This class passes a mock
+    check_file() method to check_patch() to facilitate unit-testing.  The
+    "got_*" attributes of this class are the parameters that check_patch()
+    passed to check_file().  (We test only a single call.)  These attributes
+    let us check that check_patch() is calling check_file() correctly.
+
+    Attributes:
+      got_file_path: The value that check_patch() passed as the file_path
+                     parameter to the mock_check_file() function.
+      got_line_numbers: The value that check_patch() passed as the line_numbers
+                        parameter to the mock_check_file() function.
+
+    """
+
+    _file_path = "__init__.py"
+
+    # The modified line_numbers array for this patch is: [2].
+    _patch_string = """diff --git a/__init__.py b/__init__.py
+index ef65bee..e3db70e 100644
+--- a/__init__.py
++++ b/__init__.py
+@@ -1,1 +1,2 @@
+ # Required for Python to search this directory for module files
++# New line
+"""
+
+    def setUp(self):
+        StyleCheckerCheckFileBase.setUp(self)
+        self._got_file_path = None
+        self._got_line_numbers = None
+
+    def _mock_check_file(self, file_path, line_numbers):
+        self._got_file_path = file_path
+        self._got_line_numbers = line_numbers
+
+    def test_check_patch(self):
+        patch_files = parse_patch(self._patch_string)
+        diff = patch_files[self._file_path]
+
+        configuration = self._style_checker_configuration()
+
+        style_checker = StyleChecker(configuration)
+
+        style_checker.check_patch(patch_string=self._patch_string,
+                                  mock_check_file=self._mock_check_file)
+
+        self.assertEquals(self._got_file_path, "__init__.py")
+        self.assertEquals(self._got_line_numbers, set([2]))
+
+
 class StyleCheckerCheckPathsTest(unittest.TestCase):
 
     """Test the check_paths() method of the StyleChecker class."""
@@ -733,9 +798,3 @@ class StyleCheckerCheckPathsTest(unittest.TestCase):
                            os.path.join("dir_path1", "file1"),
                            os.path.join("dir_path1", "file2"),
                            os.path.join("dir_path2", "file3")])
-
-
-if __name__ == '__main__':
-    import sys
-
-    unittest.main()
