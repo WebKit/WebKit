@@ -1,3 +1,16 @@
+2010-04-05  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r57030.
+        http://trac.webkit.org/changeset/57030
+        https://bugs.webkit.org/show_bug.cgi?id=37114
+
+        Regressed fast/repaint/line-flow-with-floats-9 pixel tests in
+        chromium port (Requested by jamesr on #webkit).
+
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren):
+
 2010-04-05  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
