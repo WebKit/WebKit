@@ -341,51 +341,87 @@ bool FocusController::advanceFocusDirectionally(FocusDirection direction, Keyboa
     return true;
 }
 
-static void updateFocusCandidateIfCloser(Node* focusedNode, Node* candidate, long long distance, FocusCandidate& closestFocusCandidate)
+// FIXME: Make this method more modular, and simpler to understand and maintain.
+static void updateFocusCandidateIfCloser(Node* focusedNode, const FocusCandidate& candidate, FocusCandidate& closest)
 {
-    // Bail out if |distance| is bigger than the current closest candidate.
-    if (distance >= closestFocusCandidate.distance)
+    bool sameDocument = candidate.document() == closest.document();
+    if (sameDocument) {
+        if (closest.alignment > candidate.alignment
+            || (closest.parentAlignment && candidate.alignment > closest.parentAlignment))
+            return;
+    } else if (closest.alignment > candidate.alignment
+               && (closest.parentAlignment && candidate.alignment > closest.parentAlignment))
         return;
 
-    // If |focusedNode| and |candidate| are in the same document AND
-    // current |closestFocusCandidadte| is not in an {i}frame that is
-    // preferable to get focused.
-    if (focusedNode->document() == candidate->document()
-        && distance < closestFocusCandidate.parentDistance) {
-        closestFocusCandidate.node = candidate;
-        closestFocusCandidate.distance = distance;
-        closestFocusCandidate.parentDistance = maxDistance();
-    } else if (focusedNode->document() != candidate->document()) {
-        // If the |focusedNode| is in an inner document and the |candidate| is
-        // in a different document, we only consider to change focus if there is
-        // not another already good focusable candidate in the same document as
-        // |focusedNode|.
-        if (!((isInRootDocument(candidate) && !isInRootDocument(focusedNode))
-            && focusedNode->document() == closestFocusCandidate.document())) {
-            closestFocusCandidate.node = candidate;
-            closestFocusCandidate.distance = distance;
-        }
+    if (candidate.alignment != None
+        || (closest.parentAlignment >= candidate.alignment
+        && closest.document() == candidate.document())) {
+
+        // If we are now in an higher precedent case, lets reset the current closest's
+        // distance so we force it to be bigger than any result we will get from
+        // spatialDistance().
+        if (closest.alignment < candidate.alignment
+            && closest.parentAlignment < candidate.alignment)
+            closest.distance = maxDistance();
+
+        closest.alignment = candidate.alignment;
+    }
+
+    // Bail out if candidate's distance is larger than that of the closest candidate.
+    if (candidate.distance >= closest.distance)
+        return;
+
+    // If the focused node and the candadate are in the same document and current
+    // closest candidate is not in an {i}frame that is preferable to get focused ...
+    if (focusedNode->document() == candidate.document()
+        && candidate.distance < closest.parentDistance)
+        closest = candidate;
+    else if (focusedNode->document() != candidate.document()) {
+        // If the focusedNode is in an inner document and candidate is in a
+        // different document, we only consider to change focus if there is not
+        // another already good focusable candidate in the same document as focusedNode.
+        if (!((isInRootDocument(candidate.node) && !isInRootDocument(focusedNode))
+            && focusedNode->document() == closest.document()))
+            closest = candidate;
     }
 }
 
-void FocusController::findFocusableNodeInDirection(Document* document, Node* focusedNode, FocusDirection direction, KeyboardEvent* event, FocusCandidate& closestFocusCandidate)
+void FocusController::findFocusableNodeInDirection(Document* document, Node* focusedNode,
+                                                   FocusDirection direction, KeyboardEvent* event,
+                                                   FocusCandidate& closestFocusCandidate,
+                                                   const FocusCandidate& candidateParent)
 {
     ASSERT(document);
+    ASSERT(candidateParent.isNull() || static_cast<HTMLFrameOwnerElement*>(candidateParent.node));
 
-    // Walk all the child nodes and update focusCandidate if we find a nearer node.
+    // Walk all the child nodes and update closestFocusCandidate if we find a nearer node.
     for (Node* candidate = document->firstChild(); candidate; candidate = candidate->traverseNextNode()) {
         // Inner documents case.
+
         if (candidate->isFrameOwnerElement())
             deepFindFocusableNodeInDirection(focusedNode, candidate, direction, event, closestFocusCandidate);
         else if (candidate != focusedNode && candidate->isKeyboardFocusable(event)) {
-            long long distance = distanceInDirection(focusedNode, candidate,
-                                                     direction, closestFocusCandidate);
-            updateFocusCandidateIfCloser(focusedNode, candidate, distance, closestFocusCandidate);
+            FocusCandidate currentFocusCandidate(candidate);
+
+            // Get distance and alignment from current candidate.
+            distanceDataForNode(direction, focusedNode, currentFocusCandidate);
+
+            // If candidateParent is not null, it means that we are in a recursive call
+            // from deepFineFocusableNodeInDirection (i.e. processing an element in an iframe),
+            // and holds the distance and alignment data of the iframe element itself.
+            if (!candidateParent.isNull()) {
+                currentFocusCandidate.parentAlignment = candidateParent.alignment;
+                currentFocusCandidate.parentDistance = candidateParent.distance;
+            }
+
+            updateFocusCandidateIfCloser(focusedNode, currentFocusCandidate, closestFocusCandidate);
         }
     }
 }
 
-void FocusController::deepFindFocusableNodeInDirection(Node* focusedNode, Node* candidate, FocusDirection direction, KeyboardEvent* event, FocusCandidate& closestFocusCandidate)
+void FocusController::deepFindFocusableNodeInDirection(Node* focusedNode, Node* candidate,
+                                                       FocusDirection direction, KeyboardEvent* event,
+                                                       FocusCandidate& closestFocusCandidate)
 {
     HTMLFrameOwnerElement* owner = static_cast<HTMLFrameOwnerElement*>(candidate);
     if (!owner->contentFrame())
@@ -400,20 +436,12 @@ void FocusController::deepFindFocusableNodeInDirection(Node* focusedNode, Node* 
     else {
         // Check if the current {i}frame element itself is a good candidate
         // to move focus to. If it is, then we traverse its inner nodes.
-        // Lets pass a copy of the best candidate, to not get fooled by a
-        // frame without focusable elements.
-        FocusCandidate focusCandidateCopy = closestFocusCandidate;
-        long long distance = distanceInDirection(focusedNode, candidate, direction, focusCandidateCopy);
-        if (distance < focusCandidateCopy.distance) {
-            focusCandidateCopy.parentAlignment = focusCandidateCopy.alignment;
-            focusCandidateCopy.parentDistance = distance;
+        FocusCandidate candidateParent = FocusCandidate(candidate);
+        distanceDataForNode(direction, focusedNode, candidateParent);
 
-            findFocusableNodeInDirection(innerDocument, focusedNode, direction, event, focusCandidateCopy);
-
-            // If we really have an inner closer focus candidate node, take it.
-            if (closestFocusCandidate.node != focusCandidateCopy.node)
-                closestFocusCandidate = focusCandidateCopy;
-        }
+        // FIXME: Consider alignment?
+        if (candidateParent.distance < closestFocusCandidate.distance)
+            findFocusableNodeInDirection(innerDocument, focusedNode, direction, event, closestFocusCandidate, candidateParent);
     }
 }
 

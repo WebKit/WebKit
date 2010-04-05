@@ -1,3 +1,38 @@
+2010-03-29  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Simon Fraser.
+        Patch by Antonio Gomes <tonikitoo@webkit.org>
+
+        Spatial Navigation: Initial code simplification in FocusController.cpp and SpatialNavigation.cpp
+
+        WebCore::distanceInDirection method was handling much of the logic not
+        strictly only related to the distance between nodes acquisition. This
+        method was simplified and renamed to 'WebCore::distanceDataForNode'.
+        The latter is now responsible for only getting the distance and alignment
+        data, while all assignement logic previously in distanceInDirection method
+        was moved place to updateFocusCandidateIfCloser.
+
+        Parent document distance and alignment acquisitions, in turn, have also
+        changed location: they are both got from deepFindFocusableNodeInDirection,
+        and passed in a recursive call to findFocusableNodeInDirection via the
+        candidateParent variable (optional parameter). In addition, the need for
+        the 'focusCandidateCopy' variable in deepFindFocusableNodeInDirection method
+        was removed, making the code much cleaner.
+
+        No behaviour change at this point. Mostly moving code around to the place
+        where it should live in.
+
+        * page/FocusController.cpp:
+        (WebCore::FocusController::advanceFocusDirectionally):
+        (WebCore::updateFocusCandidateIfCloser):
+        (WebCore::FocusController::findFocusableNodeInDirection):
+        (WebCore::FocusController::deepFindFocusableNodeInDirection):
+        * page/FocusController.h:
+        * page/SpatialNavigation.cpp:
+        (WebCore::distanceDataForNode):
+        (WebCore::renderRectRelativeToRootDocument):
+        * page/SpatialNavigation.h:
+
 2010-04-04  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

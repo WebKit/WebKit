@@ -27,6 +27,7 @@
 #define FocusController_h
 
 #include "FocusDirection.h"
+#include "SpatialNavigation.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
@@ -38,7 +39,6 @@ class Frame;
 class KeyboardEvent;
 class Node;
 class Page;
-struct FocusCandidate;
 
 class FocusController : public Noncopyable {
 public:
@@ -63,7 +63,8 @@ private:
     bool advanceFocusDirectionally(FocusDirection, KeyboardEvent*);
     bool advanceFocusInDocumentOrder(FocusDirection, KeyboardEvent*, bool initialFocus);
 
-    void findFocusableNodeInDirection(Document*, Node*, FocusDirection, KeyboardEvent*, FocusCandidate&);
+    void findFocusableNodeInDirection(Document*, Node*, FocusDirection, KeyboardEvent*, FocusCandidate& closestFocusCandidate,
+                                      const FocusCandidate& parentCandidate = FocusCandidate());
     void deepFindFocusableNodeInDirection(Node*, Node*, FocusDirection, KeyboardEvent*, FocusCandidate&);
 
     Page* m_page;
