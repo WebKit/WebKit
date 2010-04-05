@@ -650,7 +650,7 @@ void KURL::setPort(unsigned short i)
     KURLGooglePrivate::Replacements replacements;
     String portStr;
     if (i) {
-        portStr = String::number(static_cast<int>(i));
+        portStr = String::number(i);
         replacements.SetPort(
             reinterpret_cast<const url_parse::UTF16Char*>(portStr.characters()),
             url_parse::Component(0, portStr.length()));

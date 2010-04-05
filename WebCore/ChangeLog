@@ -1,3 +1,20 @@
+2010-04-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Removed some unneeded type casts.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::cssText): Removed an unneeded cast.
+        * page/Location.cpp:
+        (WebCore::Location::host): Removed unneeded parentheses and cast.
+        (WebCore::Location::port): Ditto.
+        * platform/KURLGoogle.cpp:
+        (WebCore::KURL::setPort): Ditto.
+        * workers/WorkerLocation.cpp:
+        (WebCore::WorkerLocation::host): Ditto.
+        (WebCore::WorkerLocation::port): Ditto.
+
 2010-04-05  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r57081.

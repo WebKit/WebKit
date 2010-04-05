@@ -46,7 +46,7 @@ String WorkerLocation::protocol() const
 
 String WorkerLocation::host() const
 {
-    return m_url.port() ? m_url.host() + ":" + String::number((static_cast<int>(m_url.port()))) : m_url.host();
+    return m_url.port() ? m_url.host() + ":" + String::number(m_url.port()) : m_url.host();
 }
 
 String WorkerLocation::hostname() const
@@ -56,7 +56,7 @@ String WorkerLocation::hostname() const
 
 String WorkerLocation::port() const
 {
-    return m_url.port() ? String::number(static_cast<int>(m_url.port())) : "";
+    return m_url.port() ? String::number(m_url.port()) : "";
 }
 
 String WorkerLocation::pathname() const

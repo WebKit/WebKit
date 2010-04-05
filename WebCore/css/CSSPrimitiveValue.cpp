@@ -851,7 +851,7 @@ String CSSPrimitiveValue::cssText() const
             appendNumber(result, static_cast<unsigned char>(color.blue()));
             if (color.hasAlpha()) {
                 append(result, commaSpace);
-                append(result, String::number(static_cast<float>(color.alpha()) / 256.0f));
+                append(result, String::number(color.alpha() / 256.0f));
             }
 
             result.append(')');
