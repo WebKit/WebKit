@@ -1,5 +1,13 @@
 2010-04-05  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed: chromium build fix.
+
+        * bindings/v8/custom/V8InspectorFrontendHostCustom.cpp:
+        (WebCore::V8InspectorFrontendHost::platformCallback):
+        (WebCore::V8InspectorFrontendHost::portCallback):
+
+2010-04-05  Pavel Feldman  <pfeldman@chromium.org>
+
         Reviewed by Yury Semikhatsky.
 
         Web Inspector: [REGRESSION] platform detection in Chromium

@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8InspectorFrontendHost::platform(const v8::Arguments&)
+v8::Handle<v8::Value> V8InspectorFrontendHost::platformCallback(const v8::Arguments&)
 {
 #if defined(OS_MACOSX)
     return v8String("mac");
@@ -53,7 +53,7 @@ v8::Handle<v8::Value> V8InspectorFrontendHost::platform(const v8::Arguments&)
 #endif
 }
 
-v8::Handle<v8::Value> V8InspectorFrontendHost::port(const v8::Arguments&)
+v8::Handle<v8::Value> V8InspectorFrontendHost::portCallback(const v8::Arguments&)
 {
     return v8::Undefined();
 }
