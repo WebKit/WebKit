@@ -1,3 +1,10 @@
+2010-04-05  Alexey Proskuryakov  <ap@apple.com>
+
+        Updated expected pixel results for missing plug-in, now using text placeholder.
+
+        * platform/mac/plugins/qt-qwidget-plugin-expected.checksum:
+        * platform/mac/plugins/qt-qwidget-plugin-expected.png:
+
 2010-04-05  yael aharon  <yael.aharon@nokia.com>
 
         Unreviewed.
