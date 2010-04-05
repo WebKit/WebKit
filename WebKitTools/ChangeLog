@@ -1,3 +1,9 @@
+2010-04-05  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.  Update kenne's IRC nick to his registered nick.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-04-05  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Eric Seidel.

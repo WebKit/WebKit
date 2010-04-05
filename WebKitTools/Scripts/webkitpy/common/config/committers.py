@@ -213,7 +213,7 @@ reviewers_list = [
     Reviewer("Jon Honeycutt", "jhoneycutt@apple.com", "jhoneycutt"),
     Reviewer("Justin Garcia", "justin.garcia@apple.com", "justing"),
     Reviewer("Ken Kocienda", "kocienda@apple.com"),
-    Reviewer("Kenneth Rohde Christiansen", ["kenneth@webkit.org", "kenneth.christiansen@openbossa.org"], "kenneth"),
+    Reviewer("Kenneth Rohde Christiansen", ["kenneth@webkit.org", "kenneth.christiansen@openbossa.org"], "kenne"),
     Reviewer("Kevin Decker", "kdecker@apple.com", "superkevin"),
     Reviewer("Kevin McCullough", "kmccullough@apple.com", "maculloch"),
     Reviewer("Kevin Ollivier", ["kevino@theolliviers.com", "kevino@webkit.org"], "kollivier"),
