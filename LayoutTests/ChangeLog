@@ -1,5 +1,18 @@
 2010-04-05  Chris Fleizach  <cfleizach@apple.com>
 
+        Unreviewed.
+
+        Bug 37112 - aria-liveregion-notifications.html fails on leopard release bot
+        https://bugs.webkit.org/show_bug.cgi?id=37112
+
+        Disabling this test on Leopard until further investigation can reveal the answer.
+        It looks like at this point, any new test added will cause this test to fail on Leopard
+        release bot, even if it has nothing to do with live regions.
+
+        * platform/mac-leopard/Skipped:
+
+2010-04-05  Chris Fleizach  <cfleizach@apple.com>
+
         Reviewed by Darin Adler.
 
         Tests for
