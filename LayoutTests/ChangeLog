@@ -1,3 +1,14 @@
+2010-04-05  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Unreviewed layout test fix.
+
+        Update Qt results for iframe flattening.
+
+        * platform/qt/fast/frames/flattening/iframe-flattening-fixed-height-expected.txt:
+        * platform/qt/fast/frames/flattening/iframe-flattening-fixed-width-and-height-expected.txt:
+        * platform/qt/fast/frames/flattening/iframe-flattening-fixed-width-expected.txt:
+        * platform/qt/fast/frames/flattening/iframe-flattening-simple-expected.txt:
+
 2010-04-05  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed, revert r57078.
