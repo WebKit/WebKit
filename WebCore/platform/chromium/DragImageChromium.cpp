@@ -31,48 +31,43 @@
 #include "config.h"
 #include "DragImage.h"
 
-#include "Image.h"
-#include "NativeImageSkia.h"
 #include "NotImplemented.h"
-#include "RefPtr.h"
-#include "SkBitmap.h"
 
 namespace WebCore {
 
 IntSize dragImageSize(DragImageRef image)
 {
-    if (!image)
-        return IntSize();
-
-    return IntSize(image->width(), image->height());
+    notImplemented();
+    return IntSize();
 }
 
 void deleteDragImage(DragImageRef image)
 {
-    delete image;
+    notImplemented();
 }
 
 DragImageRef scaleDragImage(DragImageRef image, FloatSize scale)
 {
     notImplemented();
-    return image;
+    return 0;
 }
-
+    
 DragImageRef dissolveDragImageToFraction(DragImageRef image, float)
 {
     notImplemented();
     return image;
 }
-
-DragImageRef createDragImageFromImage(Image* image)
-{
-    return new SkBitmap(*image->nativeImageForCurrentFrame());
-}
-
-DragImageRef createDragImageIconForCachedImage(CachedImage*)
-{
+        
+DragImageRef createDragImageFromImage(Image* img)
+{    
     notImplemented();
     return 0;
 }
-
+    
+DragImageRef createDragImageIconForCachedImage(CachedImage*)
+{
+    notImplemented();
+    return 0;     
+}
+    
 } // namespace WebCore

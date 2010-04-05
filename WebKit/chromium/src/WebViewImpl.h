@@ -74,7 +74,6 @@ class SuggestionsPopupMenuClient;
 class WebAccessibilityObject;
 class WebDevToolsAgentPrivate;
 class WebFrameImpl;
-class WebImage;
 class WebKeyboardEvent;
 class WebMouseEvent;
 class WebMouseWheelEvent;
@@ -275,10 +274,9 @@ public:
 
     // Start a system drag and drop operation.
     void startDragging(
+        const WebPoint& eventPos,
         const WebDragData& dragData,
-        WebDragOperationsMask mask,
-        const WebImage& dragImage,
-        const WebPoint& dragImageOffset);
+        WebDragOperationsMask dragSourceOperationMask);
 
     void suggestionsPopupDidHide()
     {

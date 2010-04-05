@@ -1,3 +1,16 @@
+2010-04-04  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed. Rolling out chromium changes r57028 and r57032 
+        for breaking chromium layout tests.
+
+        * public/WebViewClient.h:
+        (WebKit::WebViewClient::startDragging):
+        * src/DragClientImpl.cpp:
+        (WebKit::DragClientImpl::startDrag):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::startDragging):
+        * src/WebViewImpl.h:
+
 2010-04-03  Darin Fisher  <darin@chromium.org>
 
         Add default implementations of WebNotificationPresenter methods to

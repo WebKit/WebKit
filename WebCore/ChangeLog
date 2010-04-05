@@ -1,3 +1,21 @@
+2010-04-04  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed. Rolling out chromium changes r57028 and r57032
+        for breaking chromium layout tests.
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * platform/chromium/DragImageChromium.cpp: Added.
+        (WebCore::dragImageSize):
+        (WebCore::deleteDragImage):
+        (WebCore::scaleDragImage):
+        (WebCore::dissolveDragImageToFraction):
+        (WebCore::createDragImageFromImage):
+        (WebCore::createDragImageIconForCachedImage):
+        * platform/chromium/DragImageChromiumMac.cpp: Removed.
+        * platform/chromium/DragImageChromiumSkia.cpp: Removed.
+        * platform/chromium/DragImageRef.h:
+
 2010-03-29  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Simon Fraser.

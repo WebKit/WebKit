@@ -87,7 +87,6 @@
 #include "WebDevToolsAgentPrivate.h"
 #include "WebDragData.h"
 #include "WebFrameImpl.h"
-#include "WebImage.h"
 #include "WebInputEvent.h"
 #include "WebInputEventConversion.h"
 #include "WebMediaPlayerAction.h"
@@ -1933,16 +1932,15 @@ bool WebViewImpl::navigationPolicyFromMouseEvent(unsigned short button,
     return true;
 }
 
-void WebViewImpl::startDragging(const WebDragData& dragData,
-                                WebDragOperationsMask mask,
-                                const WebImage& dragImage,
-                                const WebPoint& dragImageOffset)
+void WebViewImpl::startDragging(const WebPoint& eventPos,
+                                const WebDragData& dragData,
+                                WebDragOperationsMask mask)
 {
     if (!m_client)
         return;
     ASSERT(!m_doingDragAndDrop);
     m_doingDragAndDrop = true;
-    m_client->startDragging(dragData, mask, dragImage, dragImageOffset);
+    m_client->startDragging(eventPos, dragData, mask);
 }
 
 void WebViewImpl::setCurrentHistoryItem(HistoryItem* item)

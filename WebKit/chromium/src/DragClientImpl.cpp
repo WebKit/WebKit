@@ -30,14 +30,11 @@
 
 #include "config.h"
 #include "DragClientImpl.h"
-#include "DragImageRef.h"
+
 #include "ChromiumDataObject.h"
 #include "ClipboardChromium.h"
 #include "Frame.h"
-#include "NativeImageSkia.h"
-#include "WebCommon.h"
 #include "WebDragData.h"
-#include "WebImage.h"
 #include "WebViewClient.h"
 #include "WebViewImpl.h"
 
@@ -84,19 +81,8 @@ void DragClientImpl::startDrag(DragImageRef dragImage,
 
     DragOperation dragOperationMask = clipboard->sourceOperation();
 
-    IntSize offsetSize(eventPos - dragImageOrigin);
-    WebPoint offsetPoint(offsetSize.width(), offsetSize.height());
-#if WEBKIT_USING_SKIA
     m_webView->startDragging(
-        dragData, static_cast<WebDragOperationsMask>(dragOperationMask),
-        WebImage(*dragImage), offsetPoint);
-#else
-    // FIXME: When DragImageRef is implemented for CG, we can probably just remove
-    // this #if fork. For now, pass an empty image.
-    m_webView->startDragging(
-        dragData, static_cast<WebDragOperationsMask>(dragOperationMask),
-        WebImage(), WebPoint());
-#endif
+        eventPos, dragData, static_cast<WebDragOperationsMask>(dragOperationMask));
 }
 
 DragImageRef DragClientImpl::createDragImageForLink(KURL&, const String& label, Frame*)

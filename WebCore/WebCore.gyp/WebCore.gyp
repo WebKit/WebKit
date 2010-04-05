@@ -1064,9 +1064,6 @@
             '../platform/image-decoders/skia/ImageDecoderSkia.cpp',
             '../platform/image-decoders/xbm/XBMImageDecoder.cpp',
             '../platform/image-decoders/xbm/XBMImageDecoder.h',
-
-            # Again, Skia is not used on Mac.
-            '../platform/chromium/DragImageChromiumSkia.cpp',
           ],
           'direct_dependent_settings': {
             'include_dirs': [
