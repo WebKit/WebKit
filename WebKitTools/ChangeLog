@@ -1,3 +1,17 @@
+2010-04-05  Darin Adler  <darin@apple.com>
+
+        Ignore more files the Python tools strew about the working directory.
+
+        * Scripts/webkitpy: Added property svn:ignore.
+        * Scripts/webkitpy/common: Added property svn:ignore.
+        * Scripts/webkitpy/common/checkout: Added property svn:ignore.
+        * Scripts/webkitpy/common/config: Added property svn:ignore.
+        * Scripts/webkitpy/common/net: Added property svn:ignore.
+        * Scripts/webkitpy/common/thread: Added property svn:ignore.
+        * Scripts/webkitpy/python24: Added property svn:ignore.
+        * Scripts/webkitpy/thirdparty/autoinstalled: Modified property svn:ignore.
+        * Scripts/webkitpy/tool/bot: Added property svn:ignore.
+
 2010-04-05  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.  Add Vitaly Repeshko as a committer.
