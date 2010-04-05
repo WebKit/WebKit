@@ -1,0 +1,1089 @@
+# Czech translation for webkit.
+# Copyright (C) 2010 webkit's COPYRIGHT HOLDER
+# This file is distributed under the same license as the webkit package.
+# Lucas Lommer <llommer@svn.gnome.org>, 2010.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: webkit HEAD\n"
+"Report-Msgid-Bugs-To: http://bugs.webkit.org/\n"
+"POT-Creation-Date: 2010-02-25 15:53-0300\n"
+"PO-Revision-Date: 2010-03-31 13:07+0100\n"
+"Last-Translator: Lucas Lommer <llommer@svn.gnome.org>\n"
+"Language-Team: Czech <gnome-cs-list@gnome.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+
+#: WebKit/gtk/WebCoreSupport/ChromeClientGtk.cpp:535
+msgid "Upload File"
+msgstr "Nahrát soubor"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:61
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:143
+msgid "Input _Methods"
+msgstr "Vstupní _metody"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:78
+msgid "LRM _Left-to-right mark"
+msgstr "LRM - značka z_leva doprava"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:79
+msgid "RLM _Right-to-left mark"
+msgstr "RLM - značka zp_rava doleva"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:80
+msgid "LRE Left-to-right _embedding"
+msgstr "LRE - _zapouzdření zleva doprava"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:81
+msgid "RLE Right-to-left e_mbedding"
+msgstr "RLE - z_apouzdření zprava doleva"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:82
+msgid "LRO Left-to-right _override"
+msgstr "LRO - _přepisování zleva doprava"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:83
+msgid "RLO Right-to-left o_verride"
+msgstr "RLO - př_episování zprava doleva"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:84
+msgid "PDF _Pop directional formatting"
+msgstr "PDF - zrušení směrovaného _formátování"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:85
+msgid "ZWS _Zero width space"
+msgstr "ZWS - mezera _nulové šířky"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:86
+msgid "ZWJ Zero width _joiner"
+msgstr "ZWJ - _spojovač nulové šířky"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:87
+msgid "ZWNJ Zero width _non-joiner"
+msgstr "ZWNJ - nespojovač n_ulové šířky"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:109
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:138
+msgid "_Insert Unicode Control Character"
+msgstr "Vloži_t řídící znak Unicode"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:266
+msgid "Network Request"
+msgstr "Síťový požadavek"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:267
+msgid "The network request for the URI that should be downloaded"
+msgstr "Síťový požadavek na adresu URI, která má být stažena"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:281
+msgid "Network Response"
+msgstr "Síťová odpověď"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:282
+msgid "The network response for the URI that should be downloaded"
+msgstr "Síťová odpověď na adresu URI, která má být stažena"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:296
+msgid "Destination URI"
+msgstr "Cílová adresa URI"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:297
+msgid "The destination URI where to save the file"
+msgstr "Cílová adresa URI, kam soubor uložit"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:311
+msgid "Suggested Filename"
+msgstr "Navrhovaný název souboru"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:312
+msgid "The filename suggested as default when saving"
+msgstr "Výchozí název souboru při uložení"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:329
+msgid "Progress"
+msgstr "Průběh"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:330
+msgid "Determines the current progress of the download"
+msgstr "Údaj o aktuálním průběhu stahování"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:343
+msgid "Status"
+msgstr "Stav"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:344
+msgid "Determines the current status of the download"
+msgstr "Údaj o aktuálním stavu stahování"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:359
+msgid "Current Size"
+msgstr "Aktuální velikost"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:360
+msgid "The length of the data already downloaded"
+msgstr "Objem již stažených dat"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:374
+msgid "Total Size"
+msgstr "Celková velikost"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:375
+msgid "The total size of the file"
+msgstr "Celková velikost souboru"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:526
+msgid "User cancelled the download"
+msgstr "Stahování zrušeno uživatelem"
+
+#: WebKit/gtk/webkit/webkitsoupauthdialog.c:248
+#, c-format
+msgid "A username and password are being requested by the site %s"
+msgstr "Požadované uživatelské jméno a heslo, které je vyžadováno stránkou %s"
+
+#: WebKit/gtk/webkit/webkitsoupauthdialog.c:278
+msgid "Server message:"
+msgstr "Zpráva serveru:"
+
+#: WebKit/gtk/webkit/webkitsoupauthdialog.c:291
+msgid "Username:"
+msgstr "Uživatelské jméno:"
+
+#: WebKit/gtk/webkit/webkitsoupauthdialog.c:293
+msgid "Password:"
+msgstr "Heslo:"
+
+#: WebKit/gtk/webkit/webkitsoupauthdialog.c:302
+msgid "_Remember password"
+msgstr "Za_pamatovat si heslo"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:298
+msgid "Name"
+msgstr "Název"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:299
+msgid "The name of the frame"
+msgstr "Název rámu"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:305
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:146
+#: WebKit/gtk/webkit/webkitwebview.cpp:2318
+msgid "Title"
+msgstr "Nadpis"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:306
+msgid "The document title of the frame"
+msgstr "Nadpis dokumentu rámu"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:312
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:178
+#: WebKit/gtk/webkit/webkitwebview.cpp:2332
+msgid "URI"
+msgstr "Adresa URI"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:313
+msgid "The current URI of the contents displayed by the frame"
+msgstr "Aktuální adresa URI obsahu zobrazeného v rámci"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:344
+msgid "Horizontal Scrollbar Policy"
+msgstr "Strategie pro vodorovný posuvník"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:345
+msgid ""
+"Determines the current policy for the horizontal scrollbar of the frame."
+msgstr "Údaj o aktuální strategii horizontálního posuvníku rámce."
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:362
+msgid "Vertical Scrollbar Policy"
+msgstr "Strategie pro svislý posuvník"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:363
+msgid "Determines the current policy for the vertical scrollbar of the frame."
+msgstr "Údaj o aktuální strategii vertikálního posuvníku rámce."
+
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:147
+msgid "The title of the history item"
+msgstr "Nadpis položky historie"
+
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:162
+msgid "Alternate Title"
+msgstr "Alternativní nadpis"
+
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:163
+msgid "The alternate title of the history item"
+msgstr "Alternativní nadpis položky historie"
+
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:179
+msgid "The URI of the history item"
+msgstr "Adresa URI položky historie"
+
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:194
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:173
+msgid "Original URI"
+msgstr "Původní adresa URI"
+
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:195
+msgid "The original URI of the history item"
+msgstr "Původní adresa URI položky historie"
+
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:210
+msgid "Last visited Time"
+msgstr "Čas poslední návštěvy"
+
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:211
+msgid "The time at which the history item was last visited"
+msgstr "Čas, kdy byla položka historie naposledy navštívena"
+
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:268
+msgid "Web View"
+msgstr "Zobrazení WWW"
+
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:269
+msgid "The Web View that renders the Web Inspector itself"
+msgstr "Zobrazení WWW, které vykresluje samotné Zkoumání WWW"
+
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:282
+msgid "Inspected URI"
+msgstr "Zkoumaná adresa URI"
+
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:283
+msgid "The URI that is currently being inspected"
+msgstr "Adresa URI, která je právě zkoumána"
+
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:299
+msgid "Enable JavaScript profiling"
+msgstr "Povolit profilování jazyka JavaScript"
+
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:300
+msgid "Profile the executed JavaScript."
+msgstr "Profilovat spuštěné skripty jazyka JavaScript."
+
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:315
+msgid "Enable Timeline profiling"
+msgstr "Povolit profilování časové osy"
+
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:316
+msgid "Profile the WebCore instrumentation."
+msgstr ""
+
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:158
+msgid "Reason"
+msgstr "Důvod"
+
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:159
+msgid "The reason why this navigation is occurring"
+msgstr "Důvod, proč se objevila tato navigace"
+
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:174
+msgid "The URI that was requested as the target for the navigation"
+msgstr "Adresa URI, která byla požadována jako cíl navigace"
+
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:188
+msgid "Button"
+msgstr "Tlačítko"
+
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:189
+msgid "The button used to click"
+msgstr "Tlačítko používané ke klepnutí"
+
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:204
+msgid "Modifier state"
+msgstr "Stav modifikátoru"
+
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:205
+msgid "A bitmask representing the state of the modifier keys"
+msgstr "Bitová maska reprezentující stav modifikátorových kláves"
+
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:220
+msgid "Target frame"
+msgstr "Cílový rám"
+
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:221
+msgid "The target frame for the navigation"
+msgstr "Cílový rám navigace"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:237
+msgid "Default Encoding"
+msgstr "Výchozí kódování"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:238
+msgid "The default encoding used to display text."
+msgstr "Výchozí kódování textu použité k zobrazení textu."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:246
+msgid "Cursive Font Family"
+msgstr "Rodina písma kurzíva"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:247
+msgid "The default Cursive font family used to display text."
+msgstr "Výchozí písmo z rodiny kurzíva použité k zobrazení textu."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:255
+msgid "Default Font Family"
+msgstr "Výchozí rodina písma"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:256
+msgid "The default font family used to display text."
+msgstr "Výchozí rodina písma použitého k zobrazení textu."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:264
+msgid "Fantasy Font Family"
+msgstr "Rodina písma Fantasy"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:265
+msgid "The default Fantasy font family used to display text."
+msgstr "Výchozí rodina písma Fantasy použitého k zobrazení textu."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:273
+msgid "Monospace Font Family"
+msgstr "Rodina písma s pevnou šířkou"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:274
+msgid "The default font family used to display monospace text."
+msgstr "Výchozí rodina písma použitého k zobrazení textu s pevnou šířkou."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:282
+msgid "Sans Serif Font Family"
+msgstr "Rodina písem Sans Serif"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:283
+msgid "The default Sans Serif font family used to display text."
+msgstr "Výchozí písmo z rodiny Sans Serif použité k zobrazení textu."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:291
+msgid "Serif Font Family"
+msgstr "Rodina písma Sans Serif"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:292
+msgid "The default Serif font family used to display text."
+msgstr "Výchozí písmo z rodiny Serif použité k zobrazení textu."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:300
+msgid "Default Font Size"
+msgstr "Výchozí velikost písma"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:301
+msgid "The default font size used to display text."
+msgstr "Výchozí velikost písma použitá k zobrazení textu."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:309
+msgid "Default Monospace Font Size"
+msgstr "Výchozí velikost písma s pevnou šířkou"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:310
+msgid "The default font size used to display monospace text."
+msgstr "Výchozí velikost písma použitá k zobrazení textu s pevnou šířkou."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:318
+msgid "Minimum Font Size"
+msgstr "Minimální velikost písma"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:319
+msgid "The minimum font size used to display text."
+msgstr "Minimální velikost písma použitá k zobrazení textu."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:327
+msgid "Minimum Logical Font Size"
+msgstr "Minimální logická velikost písma"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:328
+msgid "The minimum logical font size used to display text."
+msgstr "Minimální logická velikost písma použítá k zobrazení textu."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:347
+msgid "Enforce 96 DPI"
+msgstr "Vynutit 96 DPI"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:348
+msgid "Enforce a resolution of 96 DPI"
+msgstr "Vynutit rozlišení 96 DPI"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:356
+msgid "Auto Load Images"
+msgstr "Obrázky automaticky"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:357
+msgid "Load images automatically."
+msgstr "Automatický načíst obrázky."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:365
+msgid "Auto Shrink Images"
+msgstr "Zmenšovat obrázky"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:366
+msgid "Automatically shrink standalone images to fit."
+msgstr ""
+"Automaticky zmenšovat samostatně zobrazené obrázky tak, aby se vešly na "
+"obrazovku."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:374
+msgid "Print Backgrounds"
+msgstr "Tisknout pozadí"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:375
+msgid "Whether background images should be printed."
+msgstr "Zda mají být tisknuty obrázky na pozadí."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:383
+msgid "Enable Scripts"
+msgstr "Povolit skripty"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:384
+msgid "Enable embedded scripting languages."
+msgstr "Povolit vložené skriptovací jazyky."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:392
+msgid "Enable Plugins"
+msgstr "Povolit zásuvné moduly"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:393
+msgid "Enable embedded plugin objects."
+msgstr "Povolit vložené objekty zásuvných modulů."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:401
+msgid "Resizable Text Areas"
+msgstr "Měnitelná velikost textového pole"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:402
+msgid "Whether text areas are resizable."
+msgstr "Jestli je možno měnit velikost textového pole."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:409
+msgid "User Stylesheet URI"
+msgstr "Cesta k předpisu vzhledu uživatele"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:410
+msgid "The URI of a stylesheet that is applied to every page."
+msgstr ""
+"Adresa URI, kde se nachází předpis vzhledu, který bude aplikován na každou "
+"stránku."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:425
+msgid "Zoom Stepping Value"
+msgstr "Hodnota kroků změn velikosti"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:426
+msgid "The value by which the zoom level is changed when zooming in or out."
+msgstr "Hodnota změn velikosti jednotlivých kroků při zmenšování a zvětšování."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:444
+msgid "Enable Developer Extras"
+msgstr "Povolit rozšíření pro vývojáře"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:445
+msgid "Enables special extensions that help developers"
+msgstr "Povolit zvláštní rozšíření pomáhající vývojářům"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:465
+msgid "Enable Private Browsing"
+msgstr "Povolit soukromé prohlížení"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:466
+msgid "Enables private browsing mode"
+msgstr "Povolit režim soukromého prohlížení stránek"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:481
+msgid "Enable Spell Checking"
+msgstr "Povolit kontrolu pravopisu"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:482
+msgid "Enables spell checking while typing"
+msgstr "Povolit kontrolu pravopisu při psaní"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:505
+msgid "Languages to use for spell checking"
+msgstr "Jazyk, který použít ke kontrole pravopisu"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:506
+msgid "Comma separated list of languages to use for spell checking"
+msgstr "Seznam jazyků použitých ke kontrole pravopisu, oddělený čárkami"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:520
+msgid "Enable Caret Browsing"
+msgstr "Povolit prohlížení s kurzorem"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:521
+msgid "Whether to enable accesibility enhanced keyboard navigation"
+msgstr "Jestli povolit zpřístupnění pomocí navigace klávesnicí"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:536
+msgid "Enable HTML5 Database"
+msgstr "Povolit databázi HTML5"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:537
+msgid "Whether to enable HTML5 database support"
+msgstr "Jeslti povolit podporu pro databázi HTML5"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:552
+msgid "Enable HTML5 Local Storage"
+msgstr "Povolit místní úložiště HTML5"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:553
+msgid "Whether to enable HTML5 Local Storage support"
+msgstr "Jestli má být povolena podpora místního úložiště HTML5"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:567
+msgid "Enable XSS Auditor"
+msgstr "Povolit revizi XSS"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:568
+msgid "Whether to enable teh XSS auditor"
+msgstr "Jestli povolit revizi XSS"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:586
+msgid "User Agent"
+msgstr "Identifikace prohlížeče"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:587
+msgid "The User-Agent string used by WebKitGtk"
+msgstr "Řetězec identifikace prohlížeče (User agent), který WebKitGtk použije"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:602
+msgid "JavaScript can open windows automatically"
+msgstr "JavaScript smí automaticky otevírat okna"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:603
+msgid "Whether JavaScript can open windows automatically"
+msgstr "Jestli smí JavaScript automaticky otevírat okna"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:618
+msgid "Enable offline web application cache"
+msgstr "Povolit ukládání stránek do vyrovnávací paměti"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:619
+msgid "Whether to enable offline web application cache"
+msgstr "Povolit ukládání stránek do vyrovnávací paměti k použití při odpojení"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:646
+msgid "Editing behavior"
+msgstr "Chování při úpravách"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:647
+msgid "The behavior mode to use in editing mode"
+msgstr "Režim chování v režimu úprav"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:663
+msgid "Enable universal access from file URIs"
+msgstr "Povolit univerzální přístup ze souboru s URI"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:664
+msgid "Whether to allow universal access from file URIs"
+msgstr "Povolit univerzální přístup ze souboru s adresami URI"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:679
+msgid "Enable DOM paste"
+msgstr "Povolit vkládání DOM"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:680
+msgid "Whether to enable DOM paste"
+msgstr "Jestli povolit vkládání DOM"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:698
+msgid "Tab key cycles through elements"
+msgstr "Tabulátor cyklicky prochází prvky"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:699
+msgid "Whether the tab key cycles through elements on the page."
+msgstr "Jestli klávesa tabulátoru prochází cyklicky prvky stránky."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:719
+msgid "Enable Default Context Menu"
+msgstr "Povolit výchozí kontextovou nabídku"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:720
+msgid ""
+"Enables the handling of right-clicks for the creation of the default context "
+"menu"
+msgstr ""
+"Poboluje správu tvorby výchozí kontextové nabídky při klepnutí pravým "
+"tlačítkem"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:740
+#, fuzzy
+msgid "Enable Site Specific Quirks"
+msgstr "Povolit řešení kompatibility"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:741
+msgid "Enables the site-specific compatibility workarounds"
+msgstr "Povolit řešení komapatibility specifických stránek"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:763
+msgid "Enable page cache"
+msgstr "Povolit vyrovnávací paměť stránky"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:764
+msgid "Whether the page cache should be used"
+msgstr "Jestli použít vyrovnávací paměť pro stránky"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:784
+msgid "Auto Resize Window"
+msgstr "Automatická změna velikosti okna"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:785
+msgid "Automatically resize the toplevel window when a page requests it"
+msgstr "Automaticky změnit velikost okna, pokud o to stránka požádá"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:817
+msgid "Enable Java Applet"
+msgstr "Povolit applet jazyka Java"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:818
+msgid "Whether Java Applet support through <applet> should be enabled"
+msgstr "Jestli má být povolena podpora jazyka JavaScript skrze značku <applet>"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2319
+msgid "Returns the @web_view's document title"
+msgstr "Vrací název dokumentu @web_view"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2333
+msgid "Returns the current URI of the contents displayed by the @web_view"
+msgstr "Vrací aktuální adresu URI obsahu zobrazeného pomocí @web_view"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2346
+msgid "Copy target list"
+msgstr "Seznam cílů kopírování"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2347
+msgid "The list of targets this web view supports for clipboard copying"
+msgstr ""
+"Seznam cílů, které zobrazení stránky podporuje pro operace kopírování pomocí "
+"schránky"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2360
+msgid "Paste target list"
+msgstr "Seznam cílů vkládání"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2361
+msgid "The list of targets this web view supports for clipboard pasting"
+msgstr ""
+"Seznam cílů, které zobrazení stránky podporuje pro operace vkládání pomocí "
+"schránky"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2367
+msgid "Settings"
+msgstr "Nastavení"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2368
+msgid "An associated WebKitWebSettings instance"
+msgstr "Asociovaná instance WebKitWebSettings"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2381
+msgid "Web Inspector"
+msgstr "Zkoumání WWW"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2382
+msgid "The associated WebKitWebInspector instance"
+msgstr "Asociovaná instance WebKitWebInspector"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2402
+msgid "Editable"
+msgstr "Upravitelné"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2403
+msgid "Whether content can be modified by the user"
+msgstr "Jestli uživatel může upravovat obsah"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2409
+msgid "Transparent"
+msgstr "Průhledné"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2410
+msgid "Whether content has a transparent background"
+msgstr "Jestli má obsah průhledné pozadí"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2423
+msgid "Zoom level"
+msgstr "Úroveň zvětšení"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2424
+msgid "The level of zoom of the content"
+msgstr "Úroveň zvětšení obsahu"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2439
+msgid "Full content zoom"
+msgstr "Změna velikosti celého obsahu"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2440
+msgid "Whether the full content is scaled when zooming"
+msgstr "Jestli má být prováděna změna velikosti celého obsahu"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2453
+msgid "Encoding"
+msgstr "Kódování"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2454
+msgid "The default encoding of the web view"
+msgstr "Výchozí kódování zobrazení WWW"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2467
+msgid "Custom Encoding"
+msgstr "Vlastní kódování"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2468
+msgid "The custom encoding of the web view"
+msgstr "Vlastní kódování zobrazení WWW"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2520
+msgid "Icon URI"
+msgstr "Adresa URI ikony"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2521
+msgid "The URI for the favicon for the #WebKitWebView."
+msgstr "Adresa URI ikony stránky pro #WebKitWebView."
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:55
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:60
+msgid "Submit"
+msgstr "Potvrdit"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:65
+msgid "Reset"
+msgstr "Reset"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:70
+msgid "This is a searchable index. Enter search keywords: "
+msgstr "Tento seznam lze prohledávat. Zadejte klíčová slova hledání:"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:75
+msgid "Choose File"
+msgstr "Vybrat soubor"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:80
+msgid "(None)"
+msgstr "(Nic)"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:85
+msgid "Open Link in New _Window"
+msgstr "Otevřít odkaz v novém _okně"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:90
+msgid "_Download Linked File"
+msgstr "_Uložit odkazovaný soubor"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:95
+msgid "Copy Link Loc_ation"
+msgstr "_Kopírovat adresu odkazu"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:100
+msgid "Open _Image in New Window"
+msgstr "Otevřít o_brázek v novém okně"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:105
+msgid "Sa_ve Image As"
+msgstr "_Uložit obrázek jako"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:110
+msgid "Cop_y Image"
+msgstr "Ko_pírovat obrázek"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:115
+msgid "Open _Frame in New Window"
+msgstr "Otevřít _rám v novém okně"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:166
+msgid "_Reload"
+msgstr "_Obnovit"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:183
+msgid "No Guesses Found"
+msgstr "Nebyly nalezeny žádné návrhy"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:188
+msgid "_Ignore Spelling"
+msgstr "_Ignorovat kontrolu pravopisu"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:193
+msgid "_Learn Spelling"
+msgstr "_Učit se kontrolu pravopisu"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:198
+msgid "_Search the Web"
+msgstr "_Vyhledat na WWW"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:203
+msgid "_Look Up in Dictionary"
+msgstr "Vyh_ledat ve slovníku"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:208
+msgid "_Open Link"
+msgstr "_Otevřít odkaz"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:213
+msgid "Ignore _Grammar"
+msgstr "Ignorovat _gramatiku"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:218
+msgid "Spelling and _Grammar"
+msgstr "Kontrola pravopisu a _gramatiky"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:223
+msgid "_Show Spelling and Grammar"
+msgstr "_Zobrazit kontrolu pravopisu a gramatiky"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:223
+msgid "_Hide Spelling and Grammar"
+msgstr "_Skrýt kontrolu pravopisu a gramatiky"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:228
+msgid "_Check Document Now"
+msgstr "_Zkontrolovat dokument"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:233
+msgid "Check Spelling While _Typing"
+msgstr "_Kontrola pravopisu během psaní"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:238
+msgid "Check _Grammar With Spelling"
+msgstr "Kontrolovat _gramatiku pomocí pravopisu"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:243
+msgid "_Font"
+msgstr "_Písmo"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:266
+msgid "_Outline"
+msgstr "K_ontury"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:271
+msgid "Inspect _Element"
+msgstr "Zkoumat _prvek"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:276
+msgid "No recent searches"
+msgstr "Žádná nedávná hledání"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:281
+msgid "Recent searches"
+msgstr "Nedávná hledání"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:286
+msgid "_Clear recent searches"
+msgstr "_Vymazat nedávná hledání"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:291
+msgid "term"
+msgstr "výraz"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:296
+msgid "definition"
+msgstr "definice"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:301
+msgid "press"
+msgstr "stisknutí"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:306
+msgid "select"
+msgstr "výběr"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:311
+msgid "activate"
+msgstr "aktivovat"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:316
+msgid "uncheck"
+msgstr "zrušení výběru"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:321
+msgid "check"
+msgstr "kontrola"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:326
+msgid "jump"
+msgstr "přeskočit"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:342
+msgid " files"
+msgstr " soubory"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:347
+msgid "Unknown"
+msgstr "Neznámé"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:364
+msgid "Loading..."
+msgstr "Načítá se…"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:369
+msgid "Live Broadcast"
+msgstr "Živý přenos"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:375
+msgid "audio element controller"
+msgstr "ovladač prvku zvuku"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:377
+msgid "video element controller"
+msgstr "ovladač prvku videa"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:379
+msgid "mute"
+msgstr "ztlumení"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:381
+msgid "unmute"
+msgstr "zrušit ztlumení"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:383
+msgid "play"
+msgstr "přehrát"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:385
+msgid "pause"
+msgstr "pozastavit"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:387
+msgid "movie time"
+msgstr "čas videa"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:389
+msgid "timeline slider thumb"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:391
+msgid "back 30 seconds"
+msgstr "zpět 30 sekund"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:393
+msgid "return to realtime"
+msgstr "vrátit se do reálného času"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:395
+msgid "elapsed time"
+msgstr "uplynulý čas"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:397
+msgid "remaining time"
+msgstr "zbývající čas"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:399
+msgid "status"
+msgstr "stav"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:401
+msgid "fullscreen"
+msgstr "celá obrazovka"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:403
+msgid "fast forward"
+msgstr "rychle vpřed"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:405
+msgid "fast reverse"
+msgstr "rychle zpět"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:407
+msgid "show closed captions"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:409
+msgid "hide closed captions"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:418
+msgid "audio element playback controls and status display"
+msgstr "zobrazení ovládacích prvků a stavu prvku zvuku"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:420
+msgid "video element playback controls and status display"
+msgstr "zobrazení ovládacích prvků a stavu prvku videa"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:422
+msgid "mute audio tracks"
+msgstr "ztlumit hudební stopy"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:424
+msgid "unmute audio tracks"
+msgstr "zrušit ztlumení hudebních stop"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:426
+msgid "begin playback"
+msgstr "začít přehrávání"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:428
+msgid "pause playback"
+msgstr "pozastavit přehrávání"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:430
+msgid "movie time scrubber"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:432
+msgid "movie time scrubber thumb"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:434
+msgid "seek movie back 30 seconds"
+msgstr "přeskočit ve videu 30 sekund zpět"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:436
+msgid "return streaming movie to real time"
+msgstr "vrátit se v promítání videa do reálného šasu"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:438
+msgid "current movie time in seconds"
+msgstr "čas aktuálního videa v sekundách"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:440
+msgid "number of seconds of movie remaining"
+msgstr "počet zbývajících vteřin videa"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:442
+msgid "current movie status"
+msgstr "aktuální stav videa"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:444
+msgid "seek quickly back"
+msgstr "rychlý přechod zpět"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:446
+msgid "seek quickly forward"
+msgstr "rychlý přechod vpřed"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:448
+msgid "Play movie in fullscreen mode"
+msgstr "Přehrát video na celou obrazovku"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:450
+msgid "start displaying closed captions"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:452
+msgid "stop displaying closed captions"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:461
+msgid "indefinite time"
+msgstr "Nejasný čas"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:491
+msgid "value missing"
+msgstr "chybějící hodnota"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:497
+msgid "type mismatch"
+msgstr "typ nesouhlasí"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:502
+msgid "pattern mismatch"
+msgstr "vzor nesouhlasí"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:507
+msgid "too long"
+msgstr "příliš dlouhé"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:512
+msgid "range underflow"
+msgstr "nedostatečně velký rozsah"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:517
+msgid "range overflow"
+msgstr "příliš velký rozsah"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:522
+#, fuzzy
+msgid "step mismatch"
+msgstr "krok nesouhlasí"

@@ -1,3 +1,12 @@
+2010-04-05  Lucas Lommer  <llommer@svn.gnome.org>
+
+        Reviewed by Gustavo Noronha.
+
+        Czech translation for WebKitGtk
+        https://bugs.webkit.org/show_bug.cgi?id=36879
+
+        * cs.po: Added.
+
 2010-04-05  Christian Kirbach  <Christian.Kirbach@googlemail.com>
 
         Reviewed by Gustavo Noronha.
