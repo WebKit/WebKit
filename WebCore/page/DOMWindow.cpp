@@ -1434,11 +1434,12 @@ bool DOMWindow::dispatchEvent(PassRefPtr<Event> prpEvent, PassRefPtr<EventTarget
 
 #if ENABLE(INSPECTOR)
     Page* inspectedPage = InspectorTimelineAgent::instanceCount() && frame() ? frame()->page() : 0;
-    if (inspectedPage)
+    if (inspectedPage) {
         if (InspectorTimelineAgent* timelineAgent = hasEventListeners(event->type()) ? inspectedPage->inspectorTimelineAgent() : 0)
             timelineAgent->willDispatchEvent(*event);
         else
             inspectedPage = 0;
+    }
 #endif
 
     bool result = fireEventListeners(event.get());
