@@ -1,3 +1,33 @@
+2010-04-01  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        iframe flattening doesn't flatten
+        https://bugs.webkit.org/show_bug.cgi?id=36798
+
+        Fixed to the iframe flattening code so that the iframes on
+        http://www.samisite.com/test-csb2nf/id43.htm are actually
+        flattened.
+
+        Covered by current tests.
+
+        * page/FrameView.cpp: Propagate contents changes of iframes
+        and subframes in framesets to the parent so that it is relayouted
+        (WebCore::FrameView::setContentsSize):
+        (WebCore::FrameView::adjustViewSize):
+        (WebCore::FrameView::scheduleRelayout):
+        * rendering/RenderPart.cpp: HTMLIFrameElement do not inherit from
+        HTMLFrameElement, but HTMLFrameElementBase, correct cast. Correct
+        the use of inset border values. Avoid a sometimes unnecessary
+        relayout.
+        (WebCore::RenderPart::layoutWithFlattening):
+        * rendering/RenderPartObject.cpp: Make the calcHeight and calcWidth
+        return the right values, considering scrolling and fixed width/height
+        (WebCore::RenderPartObject::flattenFrame):
+        (WebCore::RenderPartObject::calcHeight):
+        (WebCore::RenderPartObject::calcWidth):
+        (WebCore::RenderPartObject::layout):
+
 2010-04-05  Vitaly Repeshko  <vitalyr@chromium.org>
 
         Reviewed by Yury Semikhatsky.

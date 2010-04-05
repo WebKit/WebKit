@@ -56,37 +56,54 @@ bool RenderPartObject::flattenFrame() const
     if (!node() || !node()->hasTagName(iframeTag))
         return false;
 
-    HTMLIFrameElement* element = static_cast<HTMLIFrameElement*>(node());
+    HTMLIFrameElement* frame = static_cast<HTMLIFrameElement*>(node());
+    bool isScrollable = frame->scrollingMode() != ScrollbarAlwaysOff;
 
-    if (element->scrollingMode() == ScrollbarAlwaysOff
-        && style()->width().isFixed()
+    if (!isScrollable && style()->width().isFixed()
         && style()->height().isFixed())
         return false;
 
-    Document* document = element ? element->document() : 0;
-    return document->frame() && document->frame()->settings()->frameFlatteningEnabled();
+    return frame->document()->frame() && frame->document()->frame()->settings()->frameFlatteningEnabled();
 }
 
 void RenderPartObject::calcHeight()
 {
     RenderPart::calcHeight();
-    if (flattenFrame())
-        setHeight(max(height(), static_cast<FrameView*>(widget())->contentsHeight()));
+    if (!flattenFrame())
+         return;
+
+    HTMLIFrameElement* frame = static_cast<HTMLIFrameElement*>(node());
+    bool isScrollable = frame->scrollingMode() != ScrollbarAlwaysOff;
+
+    if (isScrollable || !style()->height().isFixed()) {
+        FrameView* view = static_cast<FrameView*>(widget());
+        int border = borderTop() + borderBottom();
+        setHeight(max(height(), view->contentsHeight() + border));
+    }
 }
 
 void RenderPartObject::calcWidth()
 {
     RenderPart::calcWidth();
-    if (flattenFrame())
-        setWidth(max(width(), static_cast<FrameView*>(widget())->contentsWidth()));
+    if (!flattenFrame())
+        return;
+
+    HTMLIFrameElement* frame = static_cast<HTMLIFrameElement*>(node());
+    bool isScrollable = frame->scrollingMode() != ScrollbarAlwaysOff;
+
+    if (isScrollable || !style()->width().isFixed()) {
+        FrameView* view = static_cast<FrameView*>(widget());
+        int border = borderLeft() + borderRight();
+        setWidth(max(width(), view->contentsWidth() + border));
+    }
 }
 
 void RenderPartObject::layout()
 {
     ASSERT(needsLayout());
 
-    calcWidth();
-    calcHeight();
+    RenderPart::calcWidth();
+    RenderPart::calcHeight();
 
     if (flattenFrame()) {
         layoutWithFlattening(style()->width().isFixed(), style()->height().isFixed());
