@@ -49,6 +49,34 @@ using namespace JSC;
 
 namespace WebCore {
 
+JSValue JSInspectorFrontendHost::platform(ExecState* execState, const ArgList&)
+{
+#if PLATFORM(MAC)
+    DEFINE_STATIC_LOCAL(const String, platform, ("mac"));
+#elif OS(WINDOWS)
+    DEFINE_STATIC_LOCAL(const String, platform, ("windows"));
+#elif OS(LINUX)
+    DEFINE_STATIC_LOCAL(const String, platform, ("linux"));
+#else
+    DEFINE_STATIC_LOCAL(const String, platform, ("unknown"));
+#endif
+    return jsString(execState, platform);
+}
+
+JSValue JSInspectorFrontendHost::port(ExecState* execState, const ArgList&)
+{
+#if PLATFORM(QT)
+    DEFINE_STATIC_LOCAL(const String, port, ("qt"));
+#elif PLATFORM(GTK)
+    DEFINE_STATIC_LOCAL(const String, port, ("gtk"));
+#elif PLATFORM(WX)
+    DEFINE_STATIC_LOCAL(const String, port, ("wx"));
+#else
+    DEFINE_STATIC_LOCAL(const String, port, ("unknown"));
+#endif
+    return jsString(execState, port);
+}
+
 JSValue JSInspectorFrontendHost::showContextMenu(ExecState* execState, const ArgList& args)
 {
     if (args.size() < 2)

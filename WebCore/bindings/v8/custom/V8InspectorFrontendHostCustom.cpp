@@ -40,6 +40,24 @@
 
 namespace WebCore {
 
+v8::Handle<v8::Value> V8InspectorFrontendHost::platform(const v8::Arguments&)
+{
+#if defined(OS_MACOSX)
+    return v8String("mac");
+#elif defined(OS_LINUX)
+    return v8String("linux");
+#elif defined(OS_WIN)
+    return v8String("windows");
+#else
+    return v8String("unknown");
+#endif
+}
+
+v8::Handle<v8::Value> V8InspectorFrontendHost::port(const v8::Arguments&)
+{
+    return v8::Undefined();
+}
+
 v8::Handle<v8::Value> V8InspectorFrontendHost::showContextMenuCallback(const v8::Arguments& args)
 {
     if (args.Length() < 2)

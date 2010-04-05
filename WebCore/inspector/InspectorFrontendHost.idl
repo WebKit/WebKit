@@ -45,11 +45,11 @@ module core {
 
         DOMString localizedStringsURL();
         DOMString hiddenPanels();
-        DOMString platform();
-        DOMString port();
 
         void copyText(in DOMString text);
 
+        [Custom] DOMString platform();
+        [Custom] DOMString port();
         [Custom] void showContextMenu(in MouseEvent event, in DOMObject items);
     };
 }

@@ -1,3 +1,22 @@
+2010-04-05  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: [REGRESSION] platform detection in Chromium
+        has regressed to unknown.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37081
+
+        * bindings/js/JSInspectorFrontendHostCustom.cpp:
+        (WebCore::JSInspectorFrontendHost::platform):
+        (WebCore::JSInspectorFrontendHost::port):
+        * bindings/v8/custom/V8InspectorFrontendHostCustom.cpp:
+        (WebCore::V8InspectorFrontendHost::platform):
+        (WebCore::V8InspectorFrontendHost::port):
+        * inspector/InspectorFrontendHost.cpp:
+        * inspector/InspectorFrontendHost.h:
+        * inspector/InspectorFrontendHost.idl:
+
 2010-04-05  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Yury Semikhatsky.

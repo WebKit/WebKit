@@ -201,35 +201,6 @@ String InspectorFrontendHost::hiddenPanels()
     return m_client->hiddenPanels();
 }
 
-const String& InspectorFrontendHost::platform() const
-{
-#if PLATFORM(MAC)
-    DEFINE_STATIC_LOCAL(const String, platform, ("mac"));
-#elif OS(WINDOWS)
-    DEFINE_STATIC_LOCAL(const String, platform, ("windows"));
-#elif OS(LINUX)
-    DEFINE_STATIC_LOCAL(const String, platform, ("linux"));
-#else
-    DEFINE_STATIC_LOCAL(const String, platform, ("unknown"));
-#endif
-    return platform;
-}
-
-const String& InspectorFrontendHost::port() const
-{
-#if PLATFORM(QT)
-    DEFINE_STATIC_LOCAL(const String, port, ("qt"));
-#elif PLATFORM(GTK)
-    DEFINE_STATIC_LOCAL(const String, port, ("gtk"));
-#elif PLATFORM(WX)
-    DEFINE_STATIC_LOCAL(const String, port, ("wx"));
-#else
-    DEFINE_STATIC_LOCAL(const String, port, ("unknown"));
-#endif
-
-    return port;
-}
-
 void InspectorFrontendHost::copyText(const String& text)
 {
     Pasteboard::generalPasteboard()->writePlainText(text);
