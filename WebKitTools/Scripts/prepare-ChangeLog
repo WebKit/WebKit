@@ -102,6 +102,7 @@ my $changeLogTimeZone = "PST8PDT";
 my $bugNumber;
 my $name;
 my $emailAddress;
+my $mergeBase = 0;
 my $gitCommit = 0;
 my $gitIndex = "";
 my $gitReviewer = "";
@@ -115,6 +116,7 @@ my $parseOptionsResult =
                "bug:i" => \$bugNumber,
                "name:s" => \$name,
                "email:s" => \$emailAddress,
+               "merge-base:s" => \$mergeBase,
                "git-commit:s" => \$gitCommit,
                "git-index" => \$gitIndex,
                "git-reviewer:s" => \$gitReviewer,
@@ -126,6 +128,7 @@ if (!$parseOptionsResult || $showHelp) {
     print STDERR basename($0) . " [--bug] [-d|--diff] [-h|--help] [-o|--open] [--git-commit=<committish>] [--git-reviewer=<name>] [svndir1 [svndir2 ...]]\n";
     print STDERR "  --bug          Fill in the ChangeLog bug information from the given bug.\n";
     print STDERR "  -d|--diff      Spew diff to stdout when running\n";
+    print STDERR "  --merge-base   Populate the ChangeLogs with the diff to this branch\n";
     print STDERR "  --git-commit   Populate the ChangeLogs from the specified git commit\n";
     print STDERR "  --git-index    Populate the ChangeLogs from the git index only\n";
     print STDERR "  --git-reviewer When populating the ChangeLogs from a git commit claim that the spcified name reviewed the change.\n";
@@ -1254,6 +1257,7 @@ sub diffFromToString()
     return $gitCommit if $gitCommit =~ m/.+\.\..+/;
     return "\"$gitCommit^\" \"$gitCommit\"" if $gitCommit;
     return "--cached" if $gitIndex;
+    return $mergeBase if $mergeBase;
     return "HEAD" if $isGit;
 }
 
@@ -1268,7 +1272,7 @@ sub diffCommand(@)
         $command = "$SVN diff --diff-cmd diff -x -N $pathsString";
     } elsif ($isGit) {
         $command = "$GIT diff --no-ext-diff -U0 " . diffFromToString();
-        $command .= " -- $pathsString" unless $gitCommit;
+        $command .= " -- $pathsString" unless $gitCommit or $mergeBase;
     }
 
     return $command;
