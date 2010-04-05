@@ -1,3 +1,16 @@
+2010-04-05  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        Update expected results for addition of HTMLProgressElement.  We didn't
+        see these errors until later because our dependencies are screwed up.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/Window/window-property-descriptors-expected.txt:
+        * fast/dom/prototype-inheritance-2-expected.txt:
+        * fast/dom/prototype-inheritance-expected.txt:
+        * fast/js/global-constructors-expected.txt:
+
 2010-04-05  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Kenneth Rohde-Christiansen.

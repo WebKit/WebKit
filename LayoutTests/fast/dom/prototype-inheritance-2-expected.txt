@@ -255,6 +255,7 @@ Never found HTMLOptionElement
 Never found HTMLParagraphElement
 Never found HTMLParamElement
 Never found HTMLPreElement
+Never found HTMLProgressElement
 Never found HTMLQuoteElement
 Never found HTMLScriptElement
 Never found HTMLSelectElement
