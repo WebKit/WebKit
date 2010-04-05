@@ -136,44 +136,82 @@ class Builder(object):
             )
         return build
 
-    # FIXME: We should not have to pass a red_build_number, but rather Builder should
-    # know what its "latest_build" is.
-    def find_green_to_red_transition(self, red_build_number, look_back_limit=30):
-        # walk backwards until we find a green build
-        red_build = self.build(red_build_number)
-        green_build = None
+    def find_failure_transition(self, red_build, look_back_limit=30):
+        if not red_build or red_build.is_green():
+            return (None, None)
+        common_failures = None
+        current_build = red_build
+        build_after_current_build = None
         look_back_count = 0
-        while red_build:
-            if look_back_count >= look_back_limit:
+        while current_build:
+            if current_build.is_green():
+                # current_build can't possibly have any failures in common
+                # with red_build because it's green.
                 break
-            # Use a previous_build() method to avoid assuming build numbers are sequential.
-            before_red_build = red_build.previous_build()
-            if before_red_build and before_red_build.is_green():
-                green_build = before_red_build
-                break
-            red_build = before_red_build
+            results = current_build.layout_test_results()
+            # We treat a lack of results as if all the test failed.
+            # This occurs, for example, when we can't compile at all.
+            if results:
+                failures = set(results.failing_tests())
+                if common_failures == None:
+                    common_failures = failures
+                common_failures = common_failures.intersection(failures)
+                if not common_failures:
+                    # current_build doesn't have any failures in common with
+                    # the red build we're worried about.  We assume that any
+                    # failures in current_build were due to flakiness.
+                    break
             look_back_count += 1
-        return (green_build, red_build)
+            if look_back_count > look_back_limit:
+                return (None, current_build)
+            build_after_current_build = current_build
+            current_build = current_build.previous_build()
+        # We must iterate at least once because red_build is red.
+        assert(build_after_current_build)
+        # Current build must either be green or have no failures in common
+        # with red build, so we've found our failure transition.
+        return (current_build, build_after_current_build)
 
-    def suspect_revisions_for_green_to_red_transition(self, red_build_number, look_back_limit=30, avoid_flakey_tests=True):
-        (last_green_build, first_red_build) = self.find_green_to_red_transition(red_build_number, look_back_limit)
-        if not last_green_build:
+    def blameworthy_revisions(self, red_build_number, look_back_limit=30, avoid_flakey_tests=True):
+        red_build = self.build(red_build_number)
+        (last_good_build, first_bad_build) = \
+            self.find_failure_transition(red_build, look_back_limit)
+        if not last_good_build:
             return [] # We ran off the limit of our search
-        # if avoid_flakey_tests, require at least 2 red builds before we suspect a green to red transition.
-        if avoid_flakey_tests and first_red_build == self.build(red_build_number):
+        # If avoid_flakey_tests, require at least 2 bad builds before we
+        # suspect a real failure transition.
+        if avoid_flakey_tests and first_bad_build == red_build:
             return []
-        suspect_revisions = range(first_red_build.revision(), last_green_build.revision(), -1)
+        suspect_revisions = range(first_bad_build.revision(),
+                                  last_good_build.revision(),
+                                  -1)
         suspect_revisions.reverse()
         return suspect_revisions
 
 
 class LayoutTestResults(object):
+    stderr_key = u'Tests that had stderr output:'
+    fail_key = u'Tests where results did not match expected results:'
+    timeout_key = u'Tests that timed out:'
+    crash_key = u'Tests that caused the DumpRenderTree tool to crash:'
+    missing_key = u'Tests that had no expected results (probably new):'
+
+    expected_keys = [
+        stderr_key,
+        fail_key,
+        crash_key,
+        timeout_key,
+        missing_key,
+    ]
+
     @classmethod
     def _parse_results_html(cls, page):
         parsed_results = {}
         tables = BeautifulSoup(page).findAll("table")
         for table in tables:
             table_title = table.findPreviousSibling("p").string
+            if table_title not in cls.expected_keys:
+                raise "Unhandled title: %s" % str(table_title)
             # We might want to translate table titles into identifiers at some point.
             parsed_results[table_title] = [row.find("a").string for row in table.findAll("tr")]
 
@@ -203,6 +241,10 @@ class LayoutTestResults(object):
 
     def parsed_results(self):
         return self._parsed_results
+
+    def failing_tests(self):
+        failing_keys = [self.fail_key, self.crash_key, self.timeout_key]
+        return sorted(sum([tests for key, tests in self._parsed_results.items() if key in failing_keys], []))
 
 
 class Build(object):
@@ -391,7 +433,7 @@ class BuildBot(object):
             if builder_status["is_green"]:
                 continue
             builder = self.builder_with_name(builder_status["name"])
-            revisions = builder.suspect_revisions_for_green_to_red_transition(builder_status["build_number"])
+            revisions = builder.blameworthy_revisions(builder_status["build_number"])
             for revision in revisions:
                 failing_bots = revision_to_failing_bots.get(revision, [])
                 failing_bots.append(builder)

@@ -1,3 +1,24 @@
+2010-04-05  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        Tighten SheriffBot's flaky test detector
+        https://bugs.webkit.org/show_bug.cgi?id=37063
+
+        Instead of just looking for two sequential red builds, look for two
+        sequential failures of the same test.  This should reduce sheriffbot
+        false positive substantially.
+
+        I'm landing this change unreviewed because I've noticed SheriffBot
+        triggering a lot more false positives now that we've expanded the set
+        of core builders.  I've tried to take Eric's comments on Bug 37063 into
+        account.  I'm happy to iterate on this patch tomorrow once Eric wakes
+        up.
+
+        * Scripts/webkitpy/common/net/buildbot.py:
+        * Scripts/webkitpy/common/net/buildbot_unittest.py:
+        * Scripts/webkitpy/tool/commands/queries.py:
+
 2010-04-04  John Gregg  <johnnyg@google.com>
 
         Unreviewed, add myself to the committers list.
