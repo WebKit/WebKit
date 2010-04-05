@@ -1,3 +1,20 @@
+2010-04-05  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r57081.
+        http://trac.webkit.org/changeset/57081
+        https://bugs.webkit.org/show_bug.cgi?id=37121
+
+        We think it triggered two tests to fail on Tiger because of
+        race conditions (Requested by abarth on #webkit).
+
+        * fast/forms/listbox-selection.html:
+        * fast/forms/select-change-listbox-to-popup-roundtrip-expected.txt: Removed.
+        * fast/forms/select-change-listbox-to-popup-roundtrip.html: Removed.
+        * fast/forms/select-change-popup-to-listbox-roundtrip-expected.txt: Removed.
+        * fast/forms/select-change-popup-to-listbox-roundtrip.html: Removed.
+        * fast/forms/textarea-and-mutation-events-expected.txt: Removed.
+        * fast/forms/textarea-and-mutation-events.html: Removed.
+
 2010-04-05  Alexey Proskuryakov  <ap@apple.com>
 
         Updated expected pixel results for missing plug-in, now using text placeholder.

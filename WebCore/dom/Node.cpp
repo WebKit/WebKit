@@ -2705,6 +2705,8 @@ doneWithDefault:
             timelineAgent->didDispatchEvent();
 #endif
 
+    Document::updateStyleForAllDocuments();
+
     return !event->defaultPrevented();
 }
 
