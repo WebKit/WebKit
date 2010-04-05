@@ -2639,11 +2639,25 @@ AccessibilityObject* AccessibilityRenderObject::correspondingLabelForControlElem
     return 0;
 }
 
+bool AccessibilityRenderObject::renderObjectIsObservable(RenderObject* renderer) const
+{
+    // AX clients will listen for AXValueChange on a text control.
+    if (renderer->isTextControl())
+        return true;
+    
+    // AX clients will listen for AXSelectedChildrenChanged on listboxes.
+    if (renderer->isListBox() || axObjectCache()->nodeHasRole(renderer->node(), "listbox"))
+        return true;
+    
+    return false;
+}
+    
 AccessibilityObject* AccessibilityRenderObject::observableObject() const
 {
+    // Find the object going up the parent chain that is used in accessibility to monitor certain notifications.
     for (RenderObject* renderer = m_renderer; renderer && renderer->node(); renderer = renderer->parent()) {
-        if (renderer->isTextControl())
-            return renderer->document()->axObjectCache()->getOrCreate(renderer);
+        if (renderObjectIsObservable(renderer))
+            return axObjectCache()->getOrCreate(renderer);
     }
     
     return 0;
@@ -2807,7 +2821,7 @@ bool AccessibilityRenderObject::ariaRoleHasPresentationalChildren() const
     case SliderRole:
     case ImageRole:
     case ProgressIndicatorRole:
-    //case SeparatorRole:
+    // case SeparatorRole:
         return true;
     default:
         return false;
@@ -3083,32 +3097,18 @@ void AccessibilityRenderObject::ariaSelectedRows(AccessibilityChildrenVector& re
     
 void AccessibilityRenderObject::ariaListboxSelectedChildren(AccessibilityChildrenVector& result)
 {
-    AccessibilityObject* child = firstChild();
-    
-    Element* element = static_cast<Element*>(renderer()->node());        
-    if (!element || !element->isElementNode()) // do this check to ensure safety of static_cast above
-        return;
-
     bool isMulti = isMultiSelectable();
-    
-    while (child) {
-        // every child should have aria-role option, and if so, check for selected attribute/state
-        AccessibilityRole ariaRole = child->ariaRoleAttribute();
-        RenderObject* childRenderer = 0;
-        if (child->isAccessibilityRenderObject())
-            childRenderer = static_cast<AccessibilityRenderObject*>(child)->renderer();
-        if (childRenderer && ariaRole == ListBoxOptionRole) {
-            Element* childElement = static_cast<Element*>(childRenderer->node());
-            if (childElement && childElement->isElementNode()) { // do this check to ensure safety of static_cast above
-                String selectedAttrString = childElement->getAttribute(aria_selectedAttr).string();
-                if (equalIgnoringCase(selectedAttrString, "true")) {
-                    result.append(child);
-                    if (isMulti)
-                        return;
-                }
-            }
+
+    AccessibilityChildrenVector childObjects = children();
+    unsigned childrenSize = childObjects.size();
+    for (unsigned k = 0; k < childrenSize; ++k) {
+        // Every child should have aria-role option, and if so, check for selected attribute/state.
+        AccessibilityObject* child = childObjects[k].get();
+        if (child->isSelected() && child->ariaRoleAttribute() == ListBoxOptionRole) {
+            result.append(child);
+            if (!isMulti)
+                return;
         }
-        child = child->nextSibling(); 
     }
 }
 

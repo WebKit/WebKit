@@ -121,6 +121,8 @@ public:
     void postNotification(RenderObject*, AXNotification, bool postToElement, PostType = PostAsynchronously);
     void postNotification(AccessibilityObject*, Document*, AXNotification, bool postToElement, PostType = PostAsynchronously);
 
+    bool nodeHasRole(Node*, const AtomicString& role);
+
 protected:
     void postPlatformNotification(AccessibilityObject*, AXNotification);
 
@@ -139,7 +141,6 @@ private:
     static AccessibilityObject* focusedImageMapUIElement(HTMLAreaElement*);
     
     AXID getAXID(AccessibilityObject*);
-    bool nodeIsAriaType(Node*, String role);
 };
 
 #if !HAVE(ACCESSIBILITY)

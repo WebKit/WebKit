@@ -89,7 +89,7 @@ PassRefPtr<AccessibilityObject> AccessibilityMediaControl::create(RenderObject* 
 MediaControlElementType AccessibilityMediaControl::controlType() const
 {
     if (!renderer() || !renderer()->node())
-        return MediaTimelineContainer;  // Timeline container is not accessible.
+        return MediaTimelineContainer; // Timeline container is not accessible.
 
     Node* node = renderer()->node();
 

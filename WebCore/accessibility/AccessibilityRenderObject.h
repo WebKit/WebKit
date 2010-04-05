@@ -289,7 +289,8 @@ private:
     AccessibilityObject* internalLinkElement() const;
     AccessibilityObject* accessibilityImageMapHitTest(HTMLAreaElement*, const IntPoint&) const;
     AccessibilityObject* accessibilityParentForImageMap(HTMLMapElement* map) const;
-
+    bool renderObjectIsObservable(RenderObject*) const;
+    
     void ariaSelectedRows(AccessibilityChildrenVector&);
     
     bool elementAttributeValue(const QualifiedName&) const;

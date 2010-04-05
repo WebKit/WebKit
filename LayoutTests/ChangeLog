@@ -1,3 +1,14 @@
+2010-04-05  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Tests for
+        Bug 37040 - AX: need to send selected children change notification when aria-selected changed
+        https://bugs.webkit.org/show_bug.cgi?id=37040
+
+        * platform/mac/accessibility/aria-listbox-selectedchildren-change-expected.txt: Added.
+        * platform/mac/accessibility/aria-listbox-selectedchildren-change.html: Added.
+
 2010-04-05  yael aharon  <yael.aharon@nokia.com>
 
         Unreviewed.

@@ -1,3 +1,29 @@
+2010-04-05  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 37040 - AX: need to send selected children change notification when aria-selected changed
+        https://bugs.webkit.org/show_bug.cgi?id=37040
+
+        When aria-selected is changed in the DOM, it will trigger a selected children change notification. 
+
+        Test: platform/mac/accessibility/aria-listbox-selectedchildren-change.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::selectedChildrenChanged):
+        * accessibility/AXObjectCache.h:
+        * accessibility/AccessibilityMediaControls.cpp:
+        (WebCore::AccessibilityMediaControl::controlType):
+            Remove extra whitespace before comment (webkit-style).
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::observableObject):
+            Allowed a listBox to be an observable object.
+        (WebCore::AccessibilityRenderObject::ariaRoleHasPresentationalChildren):
+        (WebCore::AccessibilityRenderObject::ariaListboxSelectedChildren):
+            Updated and streamlined existing code.
+        * dom/Element.cpp:
+        (WebCore::Element::updateAfterAttributeChanged):
+
 2010-04-05  Adam Treat  <atreat@rim.com>
 
         Reviewed by Darin Adler.
