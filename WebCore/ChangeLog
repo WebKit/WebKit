@@ -1,3 +1,18 @@
+2010-04-05  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Kenneth Rohde-Christiansen.
+
+        [Qt] Fix infinite redirection loop in QNetworkReplyHandler
+
+        Qt enters an infinite loop if a redirect response redirects to itself.
+
+        Fixes http/tests/xmlhttprequest/connection-error-sync.html
+
+        https://bugs.webkit.org/show_bug.cgi?id=37097
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::sendResponseIfNeeded):
+
 2010-04-05  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed, revert r57078.

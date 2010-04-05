@@ -335,9 +335,17 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
 
     QUrl redirection = m_reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
     if (redirection.isValid()) {
+        QUrl newUrl = m_reply->url().resolved(redirection);
+        if (newUrl == m_reply->url()) { // avoid redirecting to the same url as it causes infinite recursion
+            ResourceError error(newUrl.host(), 400 /*bad request*/,
+                                newUrl.toString(),
+                                QCoreApplication::translate("QWebPage", "Infinite recursion in redirection request"));
+            client->didFail(m_resourceHandle, error);
+            return;
+        }
+
         m_redirected = true;
 
-        QUrl newUrl = m_reply->url().resolved(redirection);
         ResourceRequest newRequest = m_resourceHandle->request();
         newRequest.setURL(newUrl);
 

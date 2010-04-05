@@ -5015,7 +5015,6 @@ http/tests/xmlhttprequest/access-control-preflight-sync-header-denied.html
 http/tests/xmlhttprequest/access-control-preflight-sync-method-denied.html
 http/tests/xmlhttprequest/access-control-response-with-body-sync.html
 http/tests/xmlhttprequest/cache-override.html
-http/tests/xmlhttprequest/connection-error-sync.html
 http/tests/xmlhttprequest/cookies.html
 http/tests/xmlhttprequest/methods-lower-case.html
 http/tests/xmlhttprequest/methods.html
