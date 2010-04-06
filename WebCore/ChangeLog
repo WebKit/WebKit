@@ -1,3 +1,12 @@
+2010-04-05  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add missing ClipboardEfl.h to platform/efl.
+        http://webkit.org/b/36242
+
+        * platform/efl/ClipboardEfl.h: Added.
+
 2010-04-05  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Darin Adler.
