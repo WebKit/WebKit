@@ -1405,6 +1405,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\API\JSWeakObjectMapRefInternal.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\API\JSWeakObjectMapRefPrivate.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\API\JSWeakObjectMapRefPrivate.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\API\JSValueRef.cpp"
 				>
 			</File>

@@ -1,5 +1,11 @@
 2010-04-05  Oliver Hunt  <oliver@apple.com>
 
+        Build fix
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+
+2010-04-05  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Gavin Barraclough.
 
         Support weak maps in JSC
