@@ -51,7 +51,9 @@
       box.className = "box box1";
     }
     
-    runTransitionTest(expectedEndEvents, setupTest);
+    // We need to pass an explicit maxTime because we use two sequential
+    // transitions that each take 0.2s.
+    runTransitionTest(expectedEndEvents, setupTest, 0.5);
     
   </script>
 </head>

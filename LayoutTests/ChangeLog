@@ -1,3 +1,25 @@
+2010-04-06  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        transitions/transition-end-event-transform.html fails intermittently on Tiger Intel Release bot
+        https://bugs.webkit.org/show_bug.cgi?id=37145
+
+        The timeout on this test is wrong because the helper library assumes
+        that we're only going to do one transition, but the test actually does
+        two in sequence.  This patch doubles the timeout to account for that.
+
+        The design of these tests are quite unfortunate because these timeout
+        behaviors don't seem like they'd be reliable on slow machines like
+        Tiger.  I'm not 100% convinced that this will fix the flakiness, but it
+        seems like an improvement.
+
+        I'll file a separate bug about DRT leaking state from one test to
+        another.
+
+        * transitions/transition-end-event-helpers.js:
+        * transitions/transition-end-event-set-none.html:
+
 2010-04-06  Krithigassree Sambamurthy  <krithigassree.sambamurthy@nokia.com>
 
         Reviewed by Laszlo Gombos.

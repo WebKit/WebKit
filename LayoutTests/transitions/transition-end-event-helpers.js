@@ -134,12 +134,13 @@ function runTransitionTest(expected, callback)
         layoutTestController.notifyDone();
   }
 
-  function startTest(expected, callback)
+  function startTest(expected, callback, maxTime)
   {
     if (callback)
       callback();
     
-    var maxTime = 0;
+    if (!maxTime)
+        maxTime = 0;
 
     for (var i=0; i < expected.length; ++i) {
       if (expected[i][3]) {
