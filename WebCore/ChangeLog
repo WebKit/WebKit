@@ -1,3 +1,15 @@
+2010-04-06  Andy Estes  <aestes@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
+        Remove non-ASCII characters from license headers to fix build errors on
+        Japanese Windows.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37008
+
+        * dom/UserGestureIndicator.cpp:
+        * dom/UserGestureIndicator.h:
+
 2010-04-06  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Dimitri Glazkov.
