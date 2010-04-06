@@ -77,11 +77,8 @@ class UploadCommandsTest(CommandsTest):
         tool._scm.last_svn_commit_log = lambda: "r9876 |"
         options = Mock()
         options.bug_id = 42
-        expected_stderr = """Bug: <http://example.com/42> Bug with two r+'d and cq+'d patches, one of which has an invalid commit-queue setter.
-Revision: 9876
-MOCK: user.open_url: http://example.com/42
-Adding comment to Bug 42.
-"""
+        options.comment = "MOCK comment"
+        expected_stderr = "Bug: <http://example.com/42> Bug with two r+'d and cq+'d patches, one of which has an invalid commit-queue setter.\nRevision: 9876\nMOCK: user.open_url: http://example.com/42\nAdding comment to Bug 42.\nMOCK bug comment: bug_id=42, cc=None\n--- Begin comment ---\\MOCK comment\n\nCommitted r9876: <http://trac.webkit.org/changeset/9876>\n--- End comment ---\n\n"
         self.assert_execute_outputs(MarkBugFixed(), [], expected_stderr=expected_stderr, tool=tool, options=options)
 
     def test_edit_changelog(self):

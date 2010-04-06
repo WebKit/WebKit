@@ -291,6 +291,10 @@ class MockBugzilla(Mock):
             action_param = "&action=%s" % action
         return "%s/%s%s" % (self.bug_server_url, attachment_id, action_param)
 
+    def post_comment_to_bug(self, bug_id, comment_text, cc=None):
+        log("MOCK bug comment: bug_id=%s, cc=%s\n--- Begin comment ---\%s\n--- End comment ---\n" % (
+            bug_id, cc, comment_text))
+
 
 class MockBuildBot(object):
 

@@ -95,12 +95,15 @@ class Sheriff(object):
         except ScriptError, e:
             log("Failed to create-rollout.")
 
-    def post_blame_comment_on_bug(self, commit_info, builders):
+    def post_blame_comment_on_bug(self, commit_info, builders, blame_list):
         if not commit_info.bug_id():
             return
         comment = "%s might have broken %s" % (
             view_source_url(commit_info.revision()),
             join_with_separators([builder.name() for builder in builders]))
+        if len(blame_list) > 1:
+            comment += "\nThe following changes are on the blame list:\n"
+            comment += "\n".join(map(view_source_url, blame_list))
         self._tool.bugs.post_comment_to_bug(commit_info.bug_id(),
                                             comment,
                                             cc=self._sheriffbot.watchers)

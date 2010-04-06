@@ -1,3 +1,21 @@
+2010-04-05  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        SheriffBot should include blamelist when posting to bugs
+        https://bugs.webkit.org/show_bug.cgi?id=37113
+
+        When posting on bugs, we should include the full list of SVN revisions
+        that caused the regression to folks have a better sense of whether they
+        are to blame.
+
+        * Scripts/webkitpy/tool/bot/sheriff.py:
+        * Scripts/webkitpy/tool/bot/sheriff_unittest.py:
+        * Scripts/webkitpy/tool/commands/sheriffbot.py:
+        * Scripts/webkitpy/tool/commands/sheriffbot_unittest.py:
+        * Scripts/webkitpy/tool/commands/upload_unittest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+
 2010-04-05  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Unreviewed after discussion with Adam, Darin, and Eric.
