@@ -52,6 +52,9 @@ typedef char GLchar;
 #define APIENTRY
 #endif
 
+typedef ptrdiff_t GLsizeiptrType;
+typedef ptrdiff_t GLintptrType;
+
 typedef void (APIENTRY* glActiveTextureType) (GLenum);
 typedef void (APIENTRY* glAttachShaderType) (GLuint, GLuint);
 typedef void (APIENTRY* glBindAttribLocationType) (GLuint, GLuint, const char*);
@@ -62,8 +65,8 @@ typedef void (APIENTRY* glBlendColorType) (GLclampf, GLclampf, GLclampf, GLclamp
 typedef void (APIENTRY* glBlendEquationType) (GLenum);
 typedef void (APIENTRY* glBlendEquationSeparateType)(GLenum, GLenum);
 typedef void (APIENTRY* glBlendFuncSeparateType)(GLenum srcRGB, GLenum dstRGB, GLenum srcAlpha, GLenum dstAlpha);
-typedef void (APIENTRY* glBufferDataType) (GLenum, GLsizeiptr, const GLvoid*, GLenum);
-typedef void (APIENTRY* glBufferSubDataType) (GLenum, GLintptr, GLsizeiptr, const GLvoid*);
+typedef void (APIENTRY* glBufferDataType) (GLenum, GLsizeiptrType, const GLvoid*, GLenum);
+typedef void (APIENTRY* glBufferSubDataType) (GLenum, GLintptrType, GLsizeiptrType, const GLvoid*);
 typedef GLenum (APIENTRY* glCheckFramebufferStatusType) (GLenum);
 typedef void (APIENTRY* glCompileShaderType) (GLuint);
 typedef GLuint (APIENTRY* glCreateProgramType) ();
@@ -148,6 +151,8 @@ public:
     ~GraphicsContext3DInternal();
 
     bool isContextValid() { return m_contextValid; }
+
+
 
     glActiveTextureType activeTexture;
     glAttachShaderType attachShader;
@@ -813,20 +818,23 @@ bool GraphicsContext3D::getActiveAttrib(WebGLProgram* program, unsigned long ind
     GLint maxLength;
     m_internal->getProgramiv(static_cast<GLuint>(program->object()), GraphicsContext3D::ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxLength);
 
-    GLchar name[maxLength]; 
+    GLchar* name = (GLchar*) fastMalloc(maxLength);
     GLsizei nameLength;
     GLint size;
     GLenum type;
 
     m_internal->getActiveAttrib(static_cast<GLuint>(program->object()), index, maxLength, &nameLength, &size, &type, name);
 
-    if (!nameLength)
+    if (!nameLength) {
+        fastFree(name);
         return false;
+    }
 
     info.name = String(name, nameLength);
     info.type = type;
     info.size = size;
 
+    fastFree(name);
     return true;
 }
     
@@ -842,20 +850,23 @@ bool GraphicsContext3D::getActiveUniform(WebGLProgram* program, unsigned long in
     GLint maxLength;
     m_internal->getProgramiv(static_cast<GLuint>(program->object()), GraphicsContext3D::ACTIVE_UNIFORM_MAX_LENGTH, &maxLength);
 
-    GLchar name[maxLength];
+    GLchar* name = (GLchar*) fastMalloc(maxLength);
     GLsizei nameLength;
     GLint size;
     GLenum type;
 
     m_internal->getActiveUniform(static_cast<GLuint>(program->object()), index, maxLength, &nameLength, &size, &type, name);
 
-    if (!nameLength)
+    if (!nameLength) {
+        fastFree(name);
         return false;
+    }
 
     info.name = String(name, nameLength);
     info.type = type;
     info.size = size;
 
+    fastFree(name);
     return true;
 }
 

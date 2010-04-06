@@ -1,3 +1,15 @@
+2010-04-06  Jarkko Sakkinen  <jarkko.j.sakkinen@gmail.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] WebKit does not build on Windows with --3d-canvas
+        https://bugs.webkit.org/show_bug.cgi?id=37026
+
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3D::getActiveAttrib):
+        (WebCore::GraphicsContext3D::getActiveUniform):
+
 2010-04-06  Abhinav Mithal <abhinav.mithal@nokia.com>
 
         Reviewed by Laszlo Gombos.
