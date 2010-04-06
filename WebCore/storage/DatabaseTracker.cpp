@@ -234,7 +234,7 @@ String DatabaseTracker::fullPathForDatabaseNoLock(SecurityOrigin* origin, const 
     ASSERT(!originQuotaManagerNoLock().tryLock());
 
     for (HashSet<ProposedDatabase*>::iterator iter = m_proposedDatabases.begin(); iter != m_proposedDatabases.end(); ++iter)
-        if ((*iter)->second.name() == name && SecurityOriginHash::hash((*iter)->first) == SecurityOriginHash::hash(origin))
+        if ((*iter)->second.name() == name && (*iter)->first->equal(origin))
             return String();
 
     String originIdentifier = origin->databaseIdentifier();

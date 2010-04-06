@@ -1,3 +1,17 @@
+2010-04-05  Eric Uhrhane  <ericu@chromium.org>
+
+        Reviewed by Brady Eidson.
+
+        window.openDatabase() always fails for new databases when using WebKit nightly with Safari 4.0.5
+        https://bugs.webkit.org/show_bug.cgi?id=36671
+
+        The previous "fix" I mistakenly compared hashes, an improvement over comparing pointers, but still not right.
+
+        No new tests.
+
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::fullPathForDatabaseNoLock): Use SecurityOrigin::equal to compare instead of SecurityOriginHash.
+
 2010-04-05  Anthony Ricaud  <rik@webkit.org>
 
         Reviewed by Timothy Hatcher.
