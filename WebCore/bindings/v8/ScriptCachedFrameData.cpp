@@ -33,13 +33,17 @@
 namespace WebCore {
 
 ScriptCachedFrameData::ScriptCachedFrameData(Frame* frame)
-    : m_domWindow(frame->domWindow())
+    : m_domWindow(0)
 {
     v8::HandleScope handleScope;
     // The context can only be the context of the main world.
     ASSERT(V8Proxy::mainWorldContext(frame) == V8Proxy::context(frame));
     m_context.set(V8Proxy::mainWorldContext(frame));
+    // The context can be 0, e.g. if JS is disabled in the browser.
+    if (m_context.get().IsEmpty())
+        return;
     m_global.set(m_context.get()->Global());
+    m_domWindow = frame->domWindow();
 }
 
 DOMWindow* ScriptCachedFrameData::domWindow() const
@@ -49,6 +53,9 @@ DOMWindow* ScriptCachedFrameData::domWindow() const
 
 void ScriptCachedFrameData::restore(Frame* frame)
 {
+    if (m_context.get().IsEmpty())
+        return;
+
     v8::HandleScope handleScope;
     v8::Context::Scope contextScope(m_context.get());
 
