@@ -173,6 +173,11 @@ void WebNode::simulateClick()
     m_private->dispatchSimulatedClick(noEvent);
 }
 
+WebNodeList WebNode::getElementsByTagName(const WebString& tag) const
+{
+    return WebNodeList(m_private->getElementsByTagName(tag));
+}
+
 WebNode::WebNode(const PassRefPtr<Node>& node)
     : m_private(node)
 {

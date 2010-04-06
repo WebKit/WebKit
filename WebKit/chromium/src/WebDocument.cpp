@@ -112,11 +112,6 @@ WebElement WebDocument::getElementById(const WebString& id) const
     return WebElement(constUnwrap<Document>()->getElementById(id));
 }
 
-WebNodeList WebDocument::getElementsByTagName(const WebString& tag)
-{
-    return WebNodeList(unwrap<Document>()->getElementsByTagName(tag));
-}
-
 WebString WebDocument::applicationID() const
 {
     return WebString();
