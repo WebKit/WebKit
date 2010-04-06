@@ -1337,13 +1337,8 @@ void Element::updateFocusAppearance(bool /*restorePreviousSelection*/)
             frame->selection()->setSelection(newSelection);
             frame->revealSelection();
         }
-    }
-    // FIXME: I'm not sure all devices will want this off, but this is
-    // currently turned off for Android.
-#if !ENABLE(DIRECTIONAL_PAD_NAVIGATION)
-    else if (renderer() && !renderer()->isWidget())
+    } else if (renderer() && !renderer()->isWidget())
         renderer()->enclosingLayer()->scrollRectToVisible(getRect());
-#endif
 }
 
 void Element::blur()
