@@ -121,7 +121,7 @@ Not closing bug 42 as attachment 197 has review=+.  Assuming there are more patc
         self.assert_execute_outputs(PrepareRollout(), [852, "Reason"], options=self._default_options(), expected_stderr=expected_stderr)
 
     def test_create_rollout(self):
-        expected_stderr = "Preparing rollout for bug 42.\nUpdating working directory\nMOCK create_bug\nbug_title: REGRESSION(r852): Reason\nbug_description: http://trac.webkit.org/changeset/852 broke the build:\nReason\nRunning prepare-ChangeLog\n"
+        expected_stderr = "Preparing rollout for bug 42.\nUpdating working directory\nMOCK create_bug\nbug_title: REGRESSION(r852): Reason\nbug_description: http://trac.webkit.org/changeset/852 broke the build:\nReason\nRunning prepare-ChangeLog\nMOCK add_patch_to_bug: bug_id=None, description=ROLLOUT of r852, mark_for_review=False, mark_for_commit_queue=True, mark_for_landing=False\n-- Begin comment --\nAny committer can land this patch automatically by marking it commit-queue+.  The commit-queue will build and test the patch before landing to ensure that the rollout will be successful.  This process takes approximately 15 minutes.\n\nIf you would like to land the rollout faster, you can use the following command:\n\n  webkit-patch land-attachment ATTACHMENT_ID --no-build --no-test --ignore-builders\n\nwhere ATTACHMENT_ID is the ID of this attachment.\n-- End comment --\n"
         self.assert_execute_outputs(CreateRollout(), [852, "Reason"], options=self._default_options(), expected_stderr=expected_stderr)
 
     def test_rollout(self):

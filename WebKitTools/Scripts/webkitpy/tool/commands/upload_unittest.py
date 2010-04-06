@@ -54,11 +54,15 @@ class UploadCommandsTest(CommandsTest):
         self.assert_execute_outputs(ObsoleteAttachments(), [42], expected_stderr=expected_stderr)
 
     def test_post(self):
-        expected_stderr = "Running check-webkit-style\nObsoleting 2 old patches on bug 42\n"
-        self.assert_execute_outputs(Post(), [42], expected_stderr=expected_stderr)
+        options = Mock()
+        options.description = "MOCK description"
+        options.request_commit = False
+        options.review = True
+        expected_stderr = "Running check-webkit-style\nObsoleting 2 old patches on bug 42\nMOCK add_patch_to_bug: bug_id=42, description=MOCK description, mark_for_review=True, mark_for_commit_queue=False, mark_for_landing=False\n-- Begin comment --\nNone\n-- End comment --\nMOCK: user.open_url: http://example.com/42\n"
+        self.assert_execute_outputs(Post(), [42], options=options, expected_stderr=expected_stderr)
 
-    def test_post(self):
-        expected_stderr = "Obsoleting 2 old patches on bug 42\n"
+    def test_land_safely(self):
+        expected_stderr = "Obsoleting 2 old patches on bug 42\nMOCK add_patch_to_bug: bug_id=42, description=Patch for landing, mark_for_review=False, mark_for_commit_queue=False, mark_for_landing=True\n-- Begin comment --\nNone\n-- End comment --\n"
         self.assert_execute_outputs(LandSafely(), [42], expected_stderr=expected_stderr)
 
     def test_prepare_diff_with_arg(self):
@@ -69,8 +73,12 @@ class UploadCommandsTest(CommandsTest):
         self.assert_execute_outputs(Prepare(), [], expected_stderr=expected_stderr)
 
     def test_upload(self):
-        expected_stderr = "Running check-webkit-style\nObsoleting 2 old patches on bug 42\nMOCK: user.open_url: http://example.com/42\n"
-        self.assert_execute_outputs(Upload(), [42], expected_stderr=expected_stderr)
+        options = Mock()
+        options.description = "MOCK description"
+        options.request_commit = False
+        options.review = True
+        expected_stderr = "Running check-webkit-style\nObsoleting 2 old patches on bug 42\nMOCK add_patch_to_bug: bug_id=42, description=MOCK description, mark_for_review=True, mark_for_commit_queue=False, mark_for_landing=False\n-- Begin comment --\nNone\n-- End comment --\nMOCK: user.open_url: http://example.com/42\n"
+        self.assert_execute_outputs(Upload(), [42], options=options, expected_stderr=expected_stderr)
 
     def test_mark_bug_fixed(self):
         tool = MockTool()

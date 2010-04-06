@@ -2,6 +2,27 @@
 
         Reviewed by Eric Seidel.
 
+        Explain how to handle rollout patches
+        https://bugs.webkit.org/show_bug.cgi?id=37139
+
+        We need to set expectations for how long landing rollout patches with
+        the commit-queue takes.  The commit-queue is optimized for safety, not
+        performance.  Also, give folks an alternative way to land patches
+        quickly.
+
+        In addition, improve our testing of add_patch_to_bug by having
+        MockBugzilla log.  This caused me to tighten a bunch of tests and
+        notice that one of our tests wasn't being run.
+
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        * Scripts/webkitpy/tool/commands/upload_unittest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+        * Scripts/webkitpy/tool/steps/postdiffforrevert.py:
+
+2010-04-06  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Turns out commit_info.committer() can be None
         https://bugs.webkit.org/show_bug.cgi?id=37106
 

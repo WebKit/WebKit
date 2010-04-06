@@ -34,9 +34,18 @@ from webkitpy.tool.steps.abstractstep import AbstractStep
 
 class PostDiffForRevert(AbstractStep):
     def run(self, state):
+        comment_text = "Any committer can land this patch automatically by \
+marking it commit-queue+.  The commit-queue will build and test \
+the patch before landing to ensure that the rollout will be \
+successful.  This process takes approximately 15 minutes.\n\n\
+If you would like to land the rollout faster, you can use the \
+following command:\n\n\
+  webkit-patch land-attachment ATTACHMENT_ID --no-build --no-test --ignore-builders\n\n\
+where ATTACHMENT_ID is the ID of this attachment."
         self._tool.bugs.add_patch_to_bug(
             state["bug_id"],
             StringIO.StringIO(self.cached_lookup(state, "diff")),
             "%s%s" % (Attachment.rollout_preamble, state["revision"]),
+            comment_text=comment_text,
             mark_for_review=False,
             mark_for_commit_queue=True)

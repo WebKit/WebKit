@@ -295,6 +295,20 @@ class MockBugzilla(Mock):
         log("MOCK bug comment: bug_id=%s, cc=%s\n--- Begin comment ---\%s\n--- End comment ---\n" % (
             bug_id, cc, comment_text))
 
+    def add_patch_to_bug(self,
+                         bug_id,
+                         patch_file_object,
+                         description,
+                         comment_text=None,
+                         mark_for_review=False,
+                         mark_for_commit_queue=False,
+                         mark_for_landing=False):
+        log("MOCK add_patch_to_bug: bug_id=%s, description=%s, mark_for_review=%s, mark_for_commit_queue=%s, mark_for_landing=%s" %
+            (bug_id, description, mark_for_review, mark_for_commit_queue, mark_for_landing))
+        log("-- Begin comment --")
+        log(comment_text)
+        log("-- End comment --")
+
 
 class MockBuilder(object):
     def __init__(self, name):
