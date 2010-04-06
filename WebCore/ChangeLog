@@ -1,3 +1,15 @@
+2010-04-05  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add EFL-specific code to platform/graphics/*.h.
+        http://webkit.org/b/36308
+
+        * platform/graphics/Icon.h:
+        * platform/graphics/IntRect.h:
+        * platform/graphics/FloatRect.h:
+        * platform/graphics/IntPoint.h:
+
 2010-04-05  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

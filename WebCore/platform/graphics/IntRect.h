@@ -51,6 +51,8 @@ QT_END_NAMESPACE
 typedef struct _GdkRectangle GdkRectangle;
 #elif PLATFORM(HAIKU)
 class BRect;
+#elif PLATFORM(EFL)
+#include <Evas.h>
 #endif
 
 #if PLATFORM(WX)
@@ -153,6 +155,9 @@ public:
 #elif PLATFORM(HAIKU)
     explicit IntRect(const BRect&);
     operator BRect() const;
+#elif PLATFORM(EFL)
+    explicit IntRect(const Eina_Rectangle&);
+    operator Eina_Rectangle() const;
 #endif
 
 #if PLATFORM(CG)

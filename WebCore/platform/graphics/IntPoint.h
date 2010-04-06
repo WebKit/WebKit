@@ -56,6 +56,8 @@ QT_END_NAMESPACE
 typedef struct _GdkPoint GdkPoint;
 #elif PLATFORM(HAIKU)
 class BPoint;
+#elif PLATFORM(EFL)
+typedef struct _Evas_Point Evas_Point;
 #endif
 
 #if PLATFORM(WX)
@@ -129,6 +131,9 @@ public:
 #elif PLATFORM(HAIKU)
     explicit IntPoint(const BPoint&);
     operator BPoint() const;
+#elif PLATFORM(EFL)
+    explicit IntPoint(const Evas_Point&);
+    operator Evas_Point() const;
 #endif
 
 #if PLATFORM(WX)

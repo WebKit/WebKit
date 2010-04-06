@@ -39,6 +39,8 @@ typedef struct HICON__* HICON;
 #include <QIcon>
 #elif PLATFORM(GTK)
 typedef struct _GdkPixbuf GdkPixbuf;
+#elif PLATFORM(EFL)
+#include <Evas.h>
 #elif PLATFORM(CHROMIUM)
 #include "PlatformIcon.h"
 #endif
@@ -74,6 +76,9 @@ private:
 #elif PLATFORM(GTK)
     Icon();
     GdkPixbuf* m_icon;
+#elif PLATFORM(EFL)
+    Icon();
+    Evas_Object* m_icon;
 #elif PLATFORM(CHROMIUM)
     Icon(const PlatformIcon&);
     PlatformIcon m_icon;

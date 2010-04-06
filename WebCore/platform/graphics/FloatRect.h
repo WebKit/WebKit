@@ -29,6 +29,10 @@
 
 #include "FloatPoint.h"
 
+#if PLATFORM(EFL)
+#include <Evas.h>
+#endif
+
 #if PLATFORM(CG)
 typedef struct CGRect CGRect;
 #endif
@@ -143,6 +147,11 @@ public:
 #if PLATFORM(QT)
     FloatRect(const QRectF&);
     operator QRectF() const;
+#endif
+
+#if PLATFORM(EFL)
+    explicit FloatRect(const Eina_Rectangle&);
+    operator Eina_Rectangle() const;
 #endif
 
 #if PLATFORM(WX) && USE(WXGC)
