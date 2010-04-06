@@ -1,3 +1,12 @@
+2010-04-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed buildfix for --minimal build.
+        Buildfix after r57134. Add ENABLE(WORKERS) guard.
+
+        original bug: https://bugs.webkit.org/show_bug.cgi?id=36375
+
+        * bindings/js/JSWorkerContextErrorHandler.cpp:
+
 2010-04-06  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Oliver Hunt.
