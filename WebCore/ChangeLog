@@ -1,3 +1,25 @@
+2010-04-06  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Reverts the incorrect fixed position fastpath scrolling logic
+        https://bugs.webkit.org/show_bug.cgi?id=33150
+
+        This code does not properly handle overflow or transforms on fixed
+        position elements, causing repaint bugs on scroll.
+
+        No new tests.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::addFixedObject):
+        (WebCore::FrameView::removeFixedObject):
+        * page/FrameView.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::scrollContents):
+        * platform/ScrollView.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::styleWillChange):
+
 2010-04-06  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix for wxMac / Cocoa on wx trunk.
