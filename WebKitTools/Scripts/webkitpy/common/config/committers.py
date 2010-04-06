@@ -164,6 +164,7 @@ committers_unable_to_review = [
     Committer("Yuzo Fujishima", "yuzo@google.com", "yuzo"),
     Committer("Zoltan Herczeg", "zherczeg@webkit.org", "zherczeg"),
     Committer("Zoltan Horvath", "zoltan@webkit.org", "zoltan"),
+    Committer("Andy Estes", "aestes@apple.com", "estes"),
 ]
 
 
