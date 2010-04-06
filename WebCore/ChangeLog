@@ -1,3 +1,15 @@
+2010-04-05  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Laszlo Gombos.
+
+        Cleaned up spatial-navigation-test-cases.html by removing the wrongly
+        used <frameset> tag.
+
+        Patch also adds a manual-test specifically to test Spatial Navigation with framesets.
+
+        * manual-tests/spatial-navigation/frameset.html: Added.
+        * manual-tests/spatial-navigation/spatial-navigation-test-cases.html:
+
 2010-04-05  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Adele Peterson.
