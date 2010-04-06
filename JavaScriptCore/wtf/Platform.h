@@ -91,6 +91,9 @@
 /* COMPILER(WINSCW) - CodeWarrior for Symbian emulator */
 #if defined(__WINSCW__)
 #define WTF_COMPILER_WINSCW 1
+/* cross-compiling, it is not really windows */
+#undef WIN32
+#undef _WIN32
 #endif
 
 
@@ -397,9 +400,6 @@
 
 /* OS(SYMBIAN) - Symbian */
 #if defined (__SYMBIAN32__)
-/* we are cross-compiling, it is not really windows */
-#undef WTF_OS_WINDOWS
-#undef WTF_PLATFORM_WIN
 #define WTF_OS_SYMBIAN 1
 #endif
 

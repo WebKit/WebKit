@@ -170,8 +170,6 @@
 #endif // PLATFORM(MAC)
 
 #if OS(SYMBIAN)
-#undef WIN32
-#undef _WIN32
 #define USE_SYSTEM_MALLOC 1
 #endif
 

@@ -1,3 +1,18 @@
+2010-04-05  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Symbian] Consolidate Symbian WINSCW environment configuration
+        https://bugs.webkit.org/show_bug.cgi?id=37100
+
+        Move the "undefinition" of WIN32 and _WIN32 from WebCore/config.h
+        to JavaScriptCore/wtf/Platform.h as it is not specific to WebCore.
+
+        PLATFORM(WIN) and OS(WIN) no longer needs to be undefined as
+        undefining WIN32 takes care of it.
+
+        * wtf/Platform.h:
+
 2010-04-03  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

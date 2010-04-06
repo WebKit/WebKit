@@ -1,3 +1,17 @@
+2010-04-05  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Symbian] Consolidate Symbian WINSCW environment configuration
+        https://bugs.webkit.org/show_bug.cgi?id=37100
+
+        Move the "undefinition" of WIN32 and _WIN32 from WebCore/config.h
+        to JavaScriptCore/wtf/Platform.h as it is not specific to WebCore.
+
+        No new tests as there is no new functionality.
+
+        * config.h:
+
 2010-04-05  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Kenneth Rohde Christiansen.
