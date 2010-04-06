@@ -2,6 +2,17 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
+        Add EFL-specific code to platform/Platform*Event.h.
+        http://webkit.org/b/36309
+
+        * platform/PlatformWheelEvent.h:
+        * platform/PlatformMouseEvent.h:
+        * platform/PlatformKeyboardEvent.h:
+
+2010-04-05  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
         Add EFL-specific code to platform/graphics/*.h.
         http://webkit.org/b/36308
 

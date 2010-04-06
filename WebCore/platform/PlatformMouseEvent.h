@@ -33,6 +33,10 @@ typedef struct _GdkEventButton GdkEventButton;
 typedef struct _GdkEventMotion GdkEventMotion;
 #endif
 
+#if PLATFORM(EFL)
+#include <Evas.h>
+#endif
+
 #if PLATFORM(QT)
 QT_BEGIN_NAMESPACE
 class QInputEvent;
@@ -118,6 +122,13 @@ namespace WebCore {
 #if PLATFORM(GTK) 
         PlatformMouseEvent(GdkEventButton*);
         PlatformMouseEvent(GdkEventMotion*);
+#endif
+
+#if PLATFORM(EFL)
+        void setClickCount(Evas_Button_Flags);
+        PlatformMouseEvent(const Evas_Event_Mouse_Down*, IntPoint);
+        PlatformMouseEvent(const Evas_Event_Mouse_Up*, IntPoint);
+        PlatformMouseEvent(const Evas_Event_Mouse_Move*, IntPoint);
 #endif
 
 #if PLATFORM(MAC)
