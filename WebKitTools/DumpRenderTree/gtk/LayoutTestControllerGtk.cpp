@@ -643,3 +643,7 @@ void LayoutTestController::apiTestGoToCurrentBackForwardItem()
 {
 
 }
+
+void LayoutTestController::setWebViewEditable(bool)
+{
+}

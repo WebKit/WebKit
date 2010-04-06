@@ -1,3 +1,14 @@
+2010-04-05  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Test case for <http://webkit.org/b/37115> / <rdar://problem/7829331>.
+        REGRESSION(r56989): Crash in Mail in WebCore::Position::isCandidate when deleting block using block deletion UI
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _updateFontPanel]): Ask the window whether it is the key window rather than doing the comparison
+        manually.  This allows DumpRenderTree's override of isKeyWindow to force this code path to be taken during tests.
+
 2010-04-05  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

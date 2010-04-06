@@ -240,7 +240,9 @@ public:
     void evaluateScriptInIsolatedWorld(unsigned worldId, JSObjectRef globalObject, JSStringRef script);
 
     void setPOSIXLocale(JSStringRef locale);
-    
+
+    void setWebViewEditable(bool);
+
     // The following API test functions should probably be moved to platform-specific 
     // unit tests outside of DRT once they exist.
     void apiTestNewWindowDataLoadBaseURL(JSStringRef utf8Data, JSStringRef baseURL);

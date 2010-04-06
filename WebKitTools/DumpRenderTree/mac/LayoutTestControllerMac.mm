@@ -711,3 +711,9 @@ void LayoutTestController::apiTestGoToCurrentBackForwardItem()
     WebView *view = [mainFrame webView];
     [view goToBackForwardItem:[[view backForwardList] currentItem]];
 }
+
+void LayoutTestController::setWebViewEditable(bool editable)
+{
+    WebView *view = [mainFrame webView];
+    [view setEditable:editable];
+}

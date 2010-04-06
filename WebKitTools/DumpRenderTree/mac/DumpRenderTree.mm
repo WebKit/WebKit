@@ -1142,6 +1142,7 @@ static bool shouldEnableDeveloperExtras(const char* pathOrURL)
 static void resetWebViewToConsistentStateBeforeTesting()
 {
     WebView *webView = [mainFrame webView];
+    [webView setEditable:NO];
     [(EditingDelegate *)[webView editingDelegate] setAcceptsEditing:YES];
     [webView makeTextStandardSize:nil];
     [webView resetPageZoom:nil];

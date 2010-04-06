@@ -397,6 +397,10 @@ void LayoutTestController::setSpatialNavigationEnabled(bool)
 
 }
 
+void LayoutTestController::setWebViewEditable(bool)
+{
+}
+
 bool LayoutTestController::callShouldCloseOnWebView()
 {
     return false;
@@ -406,4 +410,3 @@ JSRetainPtr<JSStringRef> LayoutTestController::layerTreeAsText() const
 {
     return 0;
 }
-

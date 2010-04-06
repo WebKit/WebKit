@@ -5027,22 +5027,21 @@ static BOOL writingDirectionKeyBindingsEnabled()
 {
     // FIXME: NSTextView bails out if becoming or resigning first responder, for which it has ivar flags. Not
     // sure if we need to do something similar.
-    
+
     if (![self _canEdit])
         return;
-    
+
     NSWindow *window = [self window];
     // FIXME: is this first-responder check correct? What happens if a subframe is editable and is first responder?
-    if ([NSApp keyWindow] != window || [window firstResponder] != self)
+    if (![window isKeyWindow] || [window firstResponder] != self)
         return;
-    
+
     bool multipleFonts = false;
     NSFont *font = nil;
     if (Frame* coreFrame = core([self _frame])) {
         if (const SimpleFontData* fd = coreFrame->editor()->fontForSelection(multipleFonts))
             font = fd->getNSFont();
     }
-    
 
     // FIXME: for now, return a bogus font that distinguishes the empty selection from the non-empty
     // selection. We should be able to remove this once the rest of this code works properly.

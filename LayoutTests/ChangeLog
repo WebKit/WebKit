@@ -1,3 +1,16 @@
+2010-04-05  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Test case for <http://webkit.org/b/37115> / <rdar://problem/7829331>.
+        REGRESSION(r56989): Crash in Mail in WebCore::Position::isCandidate when deleting block using block deletion UI
+
+        * platform/mac/editing/deleting/deletionUI-successful-deletion-expected.txt: Added.
+        * platform/mac/editing/deleting/deletionUI-successful-deletion.html: Added.
+        * platform/mac/editing/deleting/resources/deletionUI-helpers.js:
+        (deletionUIDeleteButtonForElement):
+        (determineDeletionUIExistence):
+
 2010-04-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
