@@ -142,16 +142,16 @@ void InspectorFrontendHost::loaded()
         m_client->frontendLoaded();
 }
 
-void InspectorFrontendHost::attach()
+void InspectorFrontendHost::requestAttachWindow()
 {
     if (m_client)
-        m_client->attachWindow();
+        m_client->requestAttachWindow();
 }
 
-void InspectorFrontendHost::detach()
+void InspectorFrontendHost::requestDetachWindow()
 {
     if (m_client)
-        m_client->detachWindow();
+        m_client->requestDetachWindow();
 }
 
 void InspectorFrontendHost::closeWindow()
@@ -172,11 +172,6 @@ void InspectorFrontendHost::inspectedURLChanged(const String& newURL)
 {
     if (m_client)
         m_client->inspectedURLChanged(newURL);
-}
-
-bool InspectorFrontendHost::canAttachWindow() const
-{
-    return m_client && m_client->canAttachWindow();
 }
 
 void InspectorFrontendHost::setAttachedWindowHeight(unsigned height)

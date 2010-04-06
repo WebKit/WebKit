@@ -1,3 +1,25 @@
+2010-04-06  Mattias Nissler  <mnissler@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Rework inspector docking to issue a request call from the frontend
+        whenever the user triggers to (un)dock the inspector window. Doing so
+        enables InspectorFrontendHost implementations to asynchronously decide
+        whether the window is docked or not. The old canAttachWindow() is not
+        required anymore, remove it.
+        https://bugs.webkit.org/show_bug.cgi?id=36944
+
+        * inspector/InspectorFrontendClient.h:
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::requestAttachWindow):
+        * inspector/InspectorFrontendClientLocal.h:
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::requestAttachWindow):
+        * inspector/InspectorFrontendHost.h:
+        * inspector/InspectorFrontendHost.idl:
+        * inspector/front-end/inspector.js:
+        (WebInspector.toggleAttach):
+
 2010-04-06  Vitaly Repeshko  <vitalyr@chromium.org>
 
         Reviewed by Yury Semikhatsky.

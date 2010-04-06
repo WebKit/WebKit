@@ -54,11 +54,10 @@ public:
     virtual void bringToFront() = 0;
     virtual void closeWindow() = 0;
 
-    virtual bool canAttachWindow() = 0;
-    virtual void attachWindow() = 0;
-    virtual void detachWindow() = 0;
+    virtual void requestAttachWindow() = 0;
+    virtual void requestDetachWindow() = 0;
     virtual void changeAttachedWindowHeight(unsigned) = 0;
-    
+
     virtual void inspectedURLChanged(const String&) = 0;
 };
 

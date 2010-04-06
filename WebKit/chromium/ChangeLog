@@ -1,3 +1,18 @@
+2010-04-06  Mattias Nissler  <mnissler@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Handle docking requests from the developer tools and forward them to
+        WebDevToolsFrontendClient.
+        https://bugs.webkit.org/show_bug.cgi?id=36944
+
+        * public/WebDevToolsFrontendClient.h:
+        (WebKit::WebDevToolsFrontendClient::requestDockWindow):
+        * src/WebDevToolsFrontendImpl.cpp:
+        (WebKit::WebDevToolsFrontendImpl::WebDevToolsFrontendImpl):
+        (WebKit::WebDevToolsFrontendImpl::jsRequestAttachWindow):
+        * src/WebDevToolsFrontendImpl.h:
+
 2010-04-06  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Yury Semikhatsky.

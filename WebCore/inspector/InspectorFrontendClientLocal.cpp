@@ -92,6 +92,20 @@ void InspectorFrontendClientLocal::frontendLoaded()
     m_inspectorController->setFrontend(new InspectorFrontend(webInspectorObj));
 }
 
+void InspectorFrontendClientLocal::requestAttachWindow()
+{
+    if (!canAttachWindow())
+        return;
+    attachWindow();
+    setAttachedWindow(true);
+}
+
+void InspectorFrontendClientLocal::requestDetachWindow()
+{
+    detachWindow();
+    setAttachedWindow(false);
+}
+
 bool InspectorFrontendClientLocal::canAttachWindow()
 {
     unsigned inspectedPageHeight = m_inspectorController->inspectedPage()->mainFrame()->view()->visibleHeight();

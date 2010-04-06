@@ -46,8 +46,8 @@ public:
 
     virtual void activateWindow() {};
     virtual void closeWindow() {};
-    virtual void dockWindow() {};
-    virtual void undockWindow() {};
+    virtual void requestDockWindow() {};
+    virtual void requestUndockWindow() {};
 
 protected:
     virtual ~WebDevToolsFrontendClient() {}

@@ -33,13 +33,12 @@
 module core {
     interface [Conditional=INSPECTOR] InspectorFrontendHost {
         void loaded();
-        void attach();
-        void detach();
         void closeWindow();
         void bringToFront();
         void inspectedURLChanged(in DOMString newURL);
 
-        boolean canAttachWindow();
+        void requestAttachWindow();
+        void requestDetachWindow();
         void setAttachedWindowHeight(in unsigned long height);
         void moveWindowBy(in float x, in float y);
 

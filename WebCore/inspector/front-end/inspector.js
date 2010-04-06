@@ -236,12 +236,10 @@ var WebInspector = {
         var body = document.body;
 
         if (x) {
-            InspectorFrontendHost.attach();
             body.removeStyleClass("detached");
             body.addStyleClass("attached");
             dockToggleButton.title = WebInspector.UIString("Undock into separate window.");
         } else {
-            InspectorFrontendHost.detach();
             body.removeStyleClass("attached");
             body.addStyleClass("detached");
             dockToggleButton.title = WebInspector.UIString("Dock to main window.");
@@ -912,11 +910,10 @@ WebInspector.focusSearchField = function()
 
 WebInspector.toggleAttach = function()
 {
-    if (!this.attached && !InspectorFrontendHost.canAttachWindow())
-        return;
-
-    this.attached = !this.attached;
-    this.drawer.resize();
+    if (!this.attached)
+        InspectorFrontendHost.requestAttachWindow();
+    else
+        InspectorFrontendHost.requestDetachWindow();
 }
 
 WebInspector.toolbarDragStart = function(event)

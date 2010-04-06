@@ -51,12 +51,16 @@ public:
 
     virtual void moveWindowBy(float x, float y);
 
-    virtual bool canAttachWindow();
+    virtual void requestAttachWindow();
+    virtual void requestDetachWindow();
     virtual void changeAttachedWindowHeight(unsigned);
+
+    virtual void attachWindow() = 0;
+    virtual void detachWindow() = 0;
+    bool canAttachWindow();
 
 protected:
     virtual void setAttachedWindowHeight(unsigned) = 0;
-
     void setAttachedWindow(bool);
     void restoreAttachedWindowHeight();
 

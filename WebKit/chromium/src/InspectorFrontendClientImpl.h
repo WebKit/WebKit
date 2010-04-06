@@ -62,11 +62,10 @@ public:
     virtual void bringToFront();
     virtual void closeWindow();
 
-    virtual bool canAttachWindow();
-    virtual void attachWindow();
-    virtual void detachWindow();
+    virtual void requestAttachWindow();
+    virtual void requestDetachWindow();
     virtual void changeAttachedWindowHeight(unsigned);
-    
+
     virtual void inspectedURLChanged(const WebCore::String&);
 
 private:
