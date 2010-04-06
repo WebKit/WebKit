@@ -1,3 +1,13 @@
+2010-04-06  Chris Evans  <cevans@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add test for javascript:window.open() popup blocker bypass.
+        https://bugs.webkit.org/show_bug.cgi?id=37138
+
+        * fast/events/popup-blocked-from-window-open.html: added
+        * fast/events/popup-blocked-from-window-open-expected.txt: added
+
 2010-04-06  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Alexey Proskuryakov.

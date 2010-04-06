@@ -192,8 +192,8 @@ bool ScriptController::processingUserGesture(DOMWrapperWorld*) const
         if (eventOk)
             return true;
     } else if (m_sourceURL && m_sourceURL->isNull() && !activeProxy->timerCallback()) {
-        // This is the <a href="javascript:window.open('...')> case -> we let it through.
-        return true;
+        // This is the javascript:window.open('...') case -> we let it through if it was a <a href> user click and not if it was window.open().
+        return UserGestureIndicator::processingUserGesture();
     }
 
     // This is the <script>window.open(...)</script> case or a timer callback -> block it.

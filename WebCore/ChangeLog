@@ -1,3 +1,16 @@
+2010-04-06  Chris Evans  <cevans@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Use the new UserGestureIndictor to process javascript:window.open()
+
+        https://bugs.webkit.org/show_bug.cgi?id=37138
+
+        * bindings/v8/ScriptController.cpp
+        (WebCore::ScriptController::processingUserGesture):
+          Use the new UserGestureIndicator when processing a
+          javascript:window.open()
+
 2010-04-06  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by Dimitri Glazkov.
