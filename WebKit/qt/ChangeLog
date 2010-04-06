@@ -1,3 +1,12 @@
+2010-04-06  Diego Gonzalez  <diego.gonzalez@openbossa.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Add mechanism to detect QtWebKit 2.0 via the preprocessor
+        https://bugs.webkit.org/show_bug.cgi?id=36538
+
+        * Api/qwebkitglobal.h:
+
 2010-04-02  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
