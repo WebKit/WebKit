@@ -1,3 +1,7 @@
+2010-04-06  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: reverting v8 change at r57079 for crashing Chromium layout tests.
+
 2010-04-05  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Darin Adler.
