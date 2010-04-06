@@ -103,6 +103,9 @@ String AccessibilityImageMapLink::accessibilityDescription() const
     if (!m_areaElement)
         return String();
 
+    const AtomicString& ariaLabel = m_areaElement->getAttribute(aria_labelAttr);
+    if (!ariaLabel.isEmpty())
+        return ariaLabel;
     const AtomicString& alt = m_areaElement->getAttribute(altAttr);
     if (!alt.isEmpty())
         return alt;
