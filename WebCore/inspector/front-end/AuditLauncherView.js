@@ -217,6 +217,10 @@ WebInspector.AuditLauncherView.prototype = {
         this._totalCategoriesCount = this._categoriesElement.childNodes.length;
         this._currentCategoriesCount = 0;
 
+        var flexibleSpaceElement = document.createElement("div");
+        flexibleSpaceElement.className = "flexible-space";
+        this._contentElement.appendChild(flexibleSpaceElement);
+
         this._buttonContainerElement = document.createElement("div");
         this._buttonContainerElement.className = "button-container";
 

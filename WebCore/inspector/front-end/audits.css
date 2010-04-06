@@ -76,6 +76,8 @@ button.clear-audit-results-status-bar-item .glyph {
     bottom: 0;
     padding: 0 0 0 16px;
     white-space: nowrap;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
 }
 
 .audit-launcher-view h1 {
@@ -94,10 +96,13 @@ button.clear-audit-results-status-bar-item .glyph {
 }
 
 .audit-launcher-view div.button-container {
-    position: absolute;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
     width: 100%;
-    bottom: 16px;
-    padding-top: 16px;
+    padding: 16px 0;
+}
+.audit-launcher-view .flexible-space {
+    -webkit-box-flex: 1;
 }
 
 .audit-launcher-view div.audit-categories-container {

@@ -1,3 +1,19 @@
+2010-04-05  Anthony Ricaud  <rik@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Audits launcher view is unusable with a small height window
+        https://bugs.webkit.org/show_bug.cgi?id=37109
+
+        Use flex box instead of absolute positioning to avoid overlapping elements.
+
+        * inspector/front-end/AuditLauncherView.js:
+        (WebInspector.AuditLauncherView.prototype._createLauncherUI):
+        * inspector/front-end/audits.css:
+        (.audit-launcher-view .audit-launcher-view-content):
+        (.audit-launcher-view div.button-container):
+        (.audit-launcher-view .flexible-space):
+
 2010-04-05  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.
