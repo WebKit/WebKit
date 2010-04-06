@@ -41,7 +41,7 @@ vars = {
   'gyp_rev': '810',
   'icu_rev': '43139',
   'openvcdiff_rev': '28',
-  'ots_rev': '28',
+  'ots_rev': '26',
   'skia_rev': '504',
   'v8_rev': '4335',
 
