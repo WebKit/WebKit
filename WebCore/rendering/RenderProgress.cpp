@@ -25,6 +25,7 @@
 
 #include "HTMLProgressElement.h"
 #include "RenderTheme.h"
+#include <wtf/CurrentTime.h>
 
 using namespace std;
 

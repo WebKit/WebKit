@@ -1,3 +1,15 @@
+2010-04-05  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Darin Adler.
+
+        RenderProgress.cpp is missing CurrentTime.h
+        https://bugs.webkit.org/show_bug.cgi?id=37080
+
+        No new tests. just fixed compilation error.
+
+        * rendering/RenderProgress.cpp:
+
+
 2010-04-05  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by Brady Eidson.
