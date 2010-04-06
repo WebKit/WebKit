@@ -1,3 +1,19 @@
+2010-04-06  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        SVG/SMIL parse failure on attribute keySplines
+        https://bugs.webkit.org/show_bug.cgi?id=37071
+
+        Test: svg/animations/animate-keySplines.html
+
+        The String in 'keySplines' can have multiple spaces between numbers
+        and delimiters. The parsing code is inspired by SVGParserUtilities
+        and respects this.
+
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::parseKeySplines):
+
 2010-04-06  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
