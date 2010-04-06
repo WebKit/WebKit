@@ -1,3 +1,26 @@
+2010-04-05  Dimitri Glazkov  <dglazkov@chromium.org> and James Robinson <jamesr@chromium.org>
+
+        Reviewed by Darin Adler and Dimitri Glazkov.
+
+        Style update done due to mutation event dispatching in textarea can be
+        used to corrupt the render tree.
+        https://bugs.webkit.org/show_bug.cgi?id=36864
+
+        Tests: fast/forms/select-change-listbox-to-popup-roundtrip.html
+               fast/forms/select-change-popup-to-listbox-roundtrip.html
+               fast/forms/textarea-and-mutation-events.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::finishedParsing): Added updateStyleIfNeeded()
+            call to ensure that object loads start before firing window load.
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchGenericEvent): Removed invocation of
+            Document::updateStyleForAllDocuments
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::parseMappedAttribute): Added explicit
+            recalc to ensure accuracy of representation, especially for
+            menuList/listBox switches.
+
 2010-04-05  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Laszlo Gombos.

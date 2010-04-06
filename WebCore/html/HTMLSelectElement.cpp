@@ -200,8 +200,13 @@ void HTMLSelectElement::parseMappedAttribute(MappedAttribute* attr)
         String attrSize = String::number(size);
         if (attrSize != attr->value())
             attr->setValue(attrSize);
+        size = max(size, 1);
 
-        m_data.setSize(max(size, 1));
+        // Ensure that we've determined selectedness of the items at least once prior to changing the size.
+        if (oldSize != size)
+            recalcListItemsIfNeeded();
+
+        m_data.setSize(size);
         if ((oldUsesMenuList != m_data.usesMenuList() || (!oldUsesMenuList && m_data.size() != oldSize)) && attached()) {
             detach();
             attach();
