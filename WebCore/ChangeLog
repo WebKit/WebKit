@@ -1,3 +1,21 @@
+2010-04-01  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Darin Adler.
+
+        Fix bug: CSS3 :not selector with ID simple selector sequence test fails
+        As per http://www.w3.org/TR/css3-selectors/#negation, :not(X) takes a simple selector as an argument.
+        WebKit was accepting a simple selector *sequence*.
+        This patch adds WebCore::CSSSelector::isSimple which judges if the selector is simple.
+        The method is used in CSSGrammar.y to decide whether to accept the selector as the argument of :not().
+        https://bugs.webkit.org/show_bug.cgi?id=36276
+
+        Test: fast/css/invalid-not-with-simple-selector-sequence.html
+
+        * css/CSSGrammar.y:
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::isSimple):
+        * css/CSSSelector.h:
+
 2010-04-06  Andy Estes  <aestes@apple.com>
 
         Rubber-stamped by Dan Bernstein.

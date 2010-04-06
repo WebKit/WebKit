@@ -1,3 +1,13 @@
+2010-04-01  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Darin Adler.
+
+        Fix bug: CSS3 :not selector with ID simple selector sequence test fails
+        https://bugs.webkit.org/show_bug.cgi?id=36276
+
+        * fast/css/invalid-not-with-simple-selector-sequence-expected.txt: Added.
+        * fast/css/invalid-not-with-simple-selector-sequence.html: Added.
+
 2010-04-06  Darin Adler  <darin@apple.com>
 
         REGRESSION (r57109): editing/pasteboard/drag-image-to-contenteditable-in-iframe.html fails on Windows

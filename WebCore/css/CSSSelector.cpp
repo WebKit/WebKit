@@ -566,6 +566,31 @@ bool CSSSelector::matchNth(int count)
     return m_data.m_rareData->matchNth(count);
 }
 
+bool CSSSelector::isSimple() const
+{
+    if (simpleSelector() || tagHistory() || matchesPseudoElement())
+        return false;
+
+    int numConditions = 0;
+
+    // hasTag() cannot be be used here because namespace may not be nullAtom.
+    // Example:
+    //     @namespace "http://www.w3.org/2000/svg";
+    //     svg:not(:root) { ...
+    if (m_tag != starAtom)
+        numConditions++;
+
+    if (m_match == Id || m_match == Class || m_match == PseudoClass)
+        numConditions++;
+
+    if (m_hasRareData && m_data.m_rareData->m_attribute != anyQName())
+        numConditions++;
+
+    // numConditions is 0 for a universal selector.
+    // numConditions is 1 for other simple selectors.
+    return numConditions <= 1;
+}
+
 // a helper function for parsing nth-arguments
 bool CSSSelector::RareData::parseNth()
 {
