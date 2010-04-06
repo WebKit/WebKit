@@ -1,5 +1,11 @@
 2010-04-05  Mark Rowe  <mrowe@apple.com>
 
+        Update a test result.
+
+        * platform/mac/editing/inserting/break-blockquote-after-delete-expected.txt:
+
+2010-04-05  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Adele Peterson.
 
         Test case for <http://webkit.org/b/37115> / <rdar://problem/7829331>.
