@@ -87,3 +87,19 @@ class SheriffTest(unittest.TestCase):
             sheriff.provoke_flaky_builders(revisions_causing_failures)
         expected_stderr = "MOCK: force_build: name=Builder2, username=mock-sheriff-bot, comments=Probe for flakiness.\n"
         OutputCapture().assert_outputs(self, run, expected_stderr=expected_stderr)
+
+    def test_post_blame_comment_on_bug(self):
+        sheriff = Sheriff(MockTool(), MockSheriffBot())
+        builders = [
+            Builder("Foo", None),
+            Builder("Bar", None),
+        ]
+        commit_info = Mock()
+        commit_info.bug_id = lambda: None
+        commit_info.revision = lambda: 4321
+        commit_info.committer = lambda: None
+        commit_info.committer_email = lambda: "foo@example.com"
+        commit_info.reviewer = lambda: None
+        commit_info.author = lambda: None
+        sheriff.post_automatic_rollout_patch(commit_info, builders)
+

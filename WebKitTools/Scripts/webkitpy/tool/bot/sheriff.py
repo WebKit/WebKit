@@ -87,13 +87,12 @@ class Sheriff(object):
     def post_automatic_rollout_patch(self, commit_info, builders):
         # For now we're only posting rollout patches for commit-queue patches.
         commit_bot_email = "eseidel@chromium.org"
-        if commit_bot_email not in commit_info.committer().emails:
-            return
-        try:
-            self.post_rollout_patch(commit_info.revision(),
-                                    self._rollout_reason(builders))
-        except ScriptError, e:
-            log("Failed to create-rollout.")
+        if commit_bot_email == commit_info.committer_email():
+            try:
+                self.post_rollout_patch(commit_info.revision(),
+                                        self._rollout_reason(builders))
+            except ScriptError, e:
+                log("Failed to create-rollout.")
 
     def post_blame_comment_on_bug(self, commit_info, builders, blame_list):
         if not commit_info.bug_id():

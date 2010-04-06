@@ -51,16 +51,16 @@ class CommitInfo(object):
         return self._revision
 
     def committer(self):
-        return self._committer # Should never be None
+        return self._committer  # None if committer isn't in committers.py
 
     def committer_email(self):
         return self._committer_email
 
     def bug_id(self):
-        return self._bug_id # May be None
+        return self._bug_id  # May be None
 
     def author(self):
-        return self._author # May be None
+        return self._author  # May be None
 
     def author_name(self):
         return self._author_name

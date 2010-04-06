@@ -128,7 +128,7 @@ class WhatBroke(AbstractDeclarativeCommand):
         author_line = "\"%s\" <%s>" % (commit_info.author_name(), commit_info.author_email())
         print "  Author: %s" % (commit_info.author() or author_line)
         print "  Reviewer: %s" % (commit_info.reviewer() or commit_info.reviewer_text())
-        print "  Committer: %s" % commit_info.committer()
+        print "  Committer: %s" % (commit_info.committer() or commit_info.committer_email())
 
     # FIXME: This is slightly different from Builder.blameworthy_revisions
     # due to needing to detect the "hit the limit" case an print a special message.
