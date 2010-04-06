@@ -12,6 +12,7 @@ PASS context.drawElements(context.TRIANGLES, -1, context.UNSIGNED_BYTE, 1) threw
 PASS context.drawElements(context.TRIANGLES, 1, context.UNSIGNED_BYTE, -1) threw exception GL error 1282 in drawElements.
 
 Test buffer with 3 byte indexes
+PASS context.checkFramebufferStatus(context.FRAMEBUFFER) is context.FRAMEBUFFER_COMPLETE
 PASS context.drawElements(context.TRIANGLES, 3, context.UNSIGNED_BYTE, 0) is undefined
 PASS context.drawElements(context.TRIANGLES, 3, context.UNSIGNED_BYTE, 2) threw exception GL error 1282 in drawElements.
 PASS context.drawElements(context.TRIANGLES, 10000, context.UNSIGNED_BYTE, 0) threw exception GL error 1282 in drawElements.

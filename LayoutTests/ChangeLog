@@ -1,3 +1,18 @@
+2010-04-05  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Darin Adler.
+
+        A few tests in fast/canvas/webgl/ failed on Leopard Release Bot randomly.
+        https://bugs.webkit.org/show_bug.cgi?id=37077
+        https://bugs.webkit.org/show_bug.cgi?id=37098
+
+        * fast/canvas/webgl/drawArraysOutOfBounds-expected.txt: Gathering more information about framebuffer status when failure happens.
+        * fast/canvas/webgl/drawArraysOutOfBounds.html: Ditto.
+        * fast/canvas/webgl/drawElementssOutOfBounds-expected.txt: Ditto.
+        * fast/canvas/webgl/drawElementssOutOfBounds.html: Ditto.
+        * fast/canvas/webgl/index-validation-copies-indices-expected.txt: Ditto.
+        * fast/canvas/webgl/index-validation-copies-indices.html: Ditto.
+
 2010-04-05  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Darin Adler.
