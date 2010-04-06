@@ -221,7 +221,8 @@ WebInspector.PopoverHelper.prototype = {
         delete this._hoverTimer;
 
         this._popup = this._showPopup(element);
-        this._popup.contentElement.addEventListener("mousemove", this._killHidePopupTimer.bind(this), true);
+        if (this._popup)
+            this._popup.contentElement.addEventListener("mousemove", this._killHidePopupTimer.bind(this), true);
     },
 
     _killHidePopupTimer: function()

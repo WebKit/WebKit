@@ -12,4 +12,6 @@ EvaluateScript Properties:
 + children : * DEFINED *
 + endTime : * DEFINED *
 + type : 10
++ usedHeapSize : * DEFINED *
++ totalHeapSize : * DEFINED *
 

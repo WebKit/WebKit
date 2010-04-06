@@ -151,6 +151,7 @@ WebInspector.TimelinePanel.prototype = {
             recordStyles[recordTypes.ResourceFinish] = { title: WebInspector.UIString("Finish Loading"), category: this.categories.loading };
             recordStyles[recordTypes.FunctionCall] = { title: WebInspector.UIString("Function Call"), category: this.categories.scripting };
             recordStyles[recordTypes.ResourceReceiveData] = { title: WebInspector.UIString("Receive Data"), category: this.categories.loading };
+            recordStyles[recordTypes.GCEvent] = { title: WebInspector.UIString("GC Event"), category: this.categories.scripting };
             this._recordStylesArray = recordStyles;
         }
         return this._recordStylesArray;
@@ -725,6 +726,8 @@ WebInspector.TimelinePanel.FormattedRecord = function(record, parentRecord, reco
     this.originalRecordForTests = record;
     this.callerScriptName = record.callerScriptName;
     this.callerScriptLine = record.callerScriptLine;
+    this.totalHeapSize = record.totalHeapSize;
+    this.usedHeapSize = record.usedHeapSize;
 
     // Make resource receive record last since request was sent; make finish record last since response received.
     if (record.type === recordTypes.ResourceSendRequest) {
@@ -817,7 +820,9 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
 
         const recordTypes = WebInspector.TimelineAgent.RecordType;
         if (this.details) {
-            if (this.type === recordTypes.TimerInstall ||
+            if (this.type === recordTypes.GCEvent )
+                recordContentTable.appendChild(this._createRow(WebInspector.UIString("Collected"), Number.bytesToString(this.data.usedHeapSizeDelta)));
+            else if (this.type === recordTypes.TimerInstall ||
                 this.type === recordTypes.TimerFire ||
                 this.type === recordTypes.TimerRemove) {
                 recordContentTable.appendChild(this._createRow(WebInspector.UIString("Timer Id"), this.data.timerId));
@@ -856,9 +861,13 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
                 recordContentTable.appendChild(this._createRow(WebInspector.UIString("Details"), this.details));
         }
 
-        if (this.callerScriptName) {
+        if (this.type !== recordTypes.GCEvent && this.callerScriptName) {
             var link = WebInspector.linkifyResourceAsNode(this.callerScriptName, "scripts", this.callerScriptLine);
             recordContentTable.appendChild(this._createLinkRow(WebInspector.UIString("Caller"), link));
+        }
+        if (this.usedHeapSize) {
+            recordContentTable.appendChild(this._createRow(WebInspector.UIString("Used Heap Size"), Number.bytesToString(this.usedHeapSize)));
+            recordContentTable.appendChild(this._createRow(WebInspector.UIString("Total Heap Size"), Number.bytesToString(this.totalHeapSize)));
         }
         return recordContentTable;
     },
@@ -866,6 +875,8 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
     _getRecordDetails: function(record, sendRequestRecords)
     {
         switch (record.type) {
+            case WebInspector.TimelineAgent.RecordType.GCEvent:
+                return WebInspector.UIString("%s collected", Number.bytesToString(record.data.usedHeapSizeDelta));
             case WebInspector.TimelineAgent.RecordType.FunctionCall:
                 return WebInspector.displayNameForURL(record.data.scriptName) + ":" + record.data.scriptLine;
             case WebInspector.TimelineAgent.RecordType.EventDispatch:

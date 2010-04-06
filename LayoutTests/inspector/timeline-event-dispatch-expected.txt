@@ -9,4 +9,6 @@ EventDispatch Properties:
 + children : * DEFINED *
 + endTime : * DEFINED *
 + type : 0
++ usedHeapSize : * DEFINED *
++ totalHeapSize : * DEFINED *
 

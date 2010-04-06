@@ -1,3 +1,37 @@
+2010-04-06  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: The JS code can be not optimal from memory usage point of view.
+        As example it can generate a lot of temp objects and GC will spend significant time to collect these objects.
+        GCRun event will show us these moments. Also each event can show us how much memory is in use.
+        https://bugs.webkit.org/show_bug.cgi?id=37025
+
+        * inspector/timeline-enum-stability-expected.txt:
+        * inspector/timeline-event-dispatch-expected.txt:
+        * inspector/timeline-layout-expected.txt:
+        * inspector/timeline-mark-timeline-expected.txt:
+        * inspector/timeline-network-resource-expected.txt:
+        * inspector/timeline-paint-expected.txt:
+        * inspector/timeline-parse-html-expected.txt:
+        * inspector/timeline-recalculate-styles-expected.txt:
+        * inspector/timeline-script-tag-1-expected.txt:
+        * inspector/timeline-script-tag-2-expected.txt:
+        * inspector/timeline-test.js:
+        * platform/chromium-win/inspector/timeline-event-dispatch-expected.txt:
+        * platform/chromium-win/inspector/timeline-mark-timeline-expected.txt:
+        * platform/chromium-win/inspector/timeline-network-resource-expected.txt:
+        * platform/chromium-win/inspector/timeline-paint-expected.txt:
+        * platform/chromium-win/inspector/timeline-parse-html-expected.txt:
+
+2010-04-06  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Update Chromium test expectations.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36375
+
+        * platform/chromium-win/fast/workers/worker-script-error-expected.txt:
+
 2010-04-06  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Update Chromium test expectations.

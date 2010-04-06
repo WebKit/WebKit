@@ -7,4 +7,6 @@ RecalculateStyles Properties:
 + children : * DEFINED *
 + endTime : * DEFINED *
 + type : 2
++ usedHeapSize : * DEFINED *
++ totalHeapSize : * DEFINED *
 Test data

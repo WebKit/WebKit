@@ -1,3 +1,45 @@
+2010-04-06  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: The JS code can be not optimal from memory usage point of view.
+        As example it can generate a lot of temp objects and GC will spend significant time to collect these objects.
+        GC event will show us these moments. Also each event can show us how much memory is in use.
+        https://bugs.webkit.org/show_bug.cgi?id=37025
+
+        * WebCore.gypi:
+        * WebCore.pro:
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::InspectorTimelineAgent):
+        (WebCore::InspectorTimelineAgent::pushGCEventRecords):
+        (WebCore::InspectorTimelineAgent::didGC):
+        (WebCore::InspectorTimelineAgent::~InspectorTimelineAgent):
+        (WebCore::InspectorTimelineAgent::didInstallTimer):
+        (WebCore::InspectorTimelineAgent::didRemoveTimer):
+        (WebCore::InspectorTimelineAgent::willSendResourceRequest):
+        (WebCore::InspectorTimelineAgent::didFinishLoadingResource):
+        (WebCore::InspectorTimelineAgent::didMarkTimeline):
+        (WebCore::InspectorTimelineAgent::addRecordToTimeline):
+        (WebCore::InspectorTimelineAgent::setHeapSizeStatistic):
+        (WebCore::InspectorTimelineAgent::didCompleteCurrentRecord):
+        (WebCore::InspectorTimelineAgent::pushCurrentRecord):
+        * inspector/InspectorTimelineAgent.h:
+        (WebCore::):
+        (WebCore::InspectorTimelineAgent::instanceCount):
+        (WebCore::InspectorTimelineAgent::TimelineRecordEntry::TimelineRecordEntry):
+        (WebCore::InspectorTimelineAgent::GCEvent::GCEvent):
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createGCEventData):
+        * inspector/TimelineRecordFactory.h:
+        * inspector/front-end/Popover.js:
+        (WebInspector.PopoverHelper.prototype._mouseHover):
+        * inspector/front-end/TimelineAgent.js:
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype.get _recordStyles):
+        (WebInspector.TimelinePanel.FormattedRecord):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._generatePopupContent):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._getRecordDetails):
+
 2010-04-05  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Laszlo Gombos.

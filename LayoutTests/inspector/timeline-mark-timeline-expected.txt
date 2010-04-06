@@ -6,4 +6,6 @@ MarkTimeline Properties:
 +- message : MARK TIMELINE
 + }
 + type : 11
++ usedHeapSize : * DEFINED *
++ totalHeapSize : * DEFINED *
 

@@ -1083,6 +1083,7 @@ HEADERS += \
     bindings/js/ScriptController.h \
     bindings/js/ScriptEventListener.h \
     bindings/js/ScriptFunctionCall.h \
+    bindings/js/ScriptGCEvent.h \
     bindings/js/ScriptObject.h \
     bindings/js/ScriptSourceCode.h \
     bindings/js/ScriptSourceProvider.h \
@@ -1429,6 +1430,7 @@ HEADERS += \
     inspector/InspectorResource.h \
     inspector/InspectorTimelineAgent.h \
     inspector/JavaScriptCallFrame.h \
+    inspector/ScriptGCEventListener.h \
     inspector/TimelineRecordFactory.h \
     loader/appcache/ApplicationCacheGroup.h \
     loader/appcache/ApplicationCacheHost.h \

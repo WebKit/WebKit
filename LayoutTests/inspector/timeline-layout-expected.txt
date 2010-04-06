@@ -7,4 +7,6 @@ Layout Properties:
 + children : * DEFINED *
 + endTime : * DEFINED *
 + type : 1
++ usedHeapSize : * DEFINED *
++ totalHeapSize : * DEFINED *
 Test data

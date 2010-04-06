@@ -11,6 +11,8 @@ var timelineNonDeterministicProps = {
     callerScriptName: 1,
     callerScriptLine: 1,
     url : 1,
+    usedHeapSize: 1,
+    totalHeapSize: 1,
     mimeType : 1
 };
 

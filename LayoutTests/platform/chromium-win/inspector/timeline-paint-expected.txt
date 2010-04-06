@@ -13,4 +13,6 @@ Paint Properties:
 + children : * DEFINED *
 + endTime : * DEFINED *
 + type : 3
++ usedHeapSize : * DEFINED *
++ totalHeapSize : * DEFINED *
 

@@ -12,6 +12,8 @@ ResourceSendRequest Properties:
 +- isMainResource : false
 + }
 + type : 12
++ usedHeapSize : * DEFINED *
++ totalHeapSize : * DEFINED *
 
 ResourceReceiveResponse Properties:
 + startTime : * DEFINED *
@@ -25,6 +27,8 @@ ResourceReceiveResponse Properties:
 + children : * DEFINED *
 + endTime : * DEFINED *
 + type : 13
++ usedHeapSize : * DEFINED *
++ totalHeapSize : * DEFINED *
 
 ResourceFinish Properties:
 + startTime : * DEFINED *
@@ -34,4 +38,6 @@ ResourceFinish Properties:
 +- url : * DEFINED *
 + }
 + type : 14
++ usedHeapSize : * DEFINED *
++ totalHeapSize : * DEFINED *
 Script resource loaded

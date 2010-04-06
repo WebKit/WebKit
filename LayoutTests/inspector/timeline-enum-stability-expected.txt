@@ -19,4 +19,5 @@ WebInspector.TimelineAgent.RecordType.ResourceReceiveResponse : 13
 WebInspector.TimelineAgent.RecordType.ResourceFinish : 14
 WebInspector.TimelineAgent.RecordType.FunctionCall : 15
 WebInspector.TimelineAgent.RecordType.ResourceReceiveData : 16
+WebInspector.TimelineAgent.RecordType.GCEvent : 17
 

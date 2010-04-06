@@ -10,4 +10,6 @@ ParseHTML Properties:
 + children : * DEFINED *
 + endTime : * DEFINED *
 + type : 4
++ usedHeapSize : * DEFINED *
++ totalHeapSize : * DEFINED *
 Test data
