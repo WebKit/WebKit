@@ -641,9 +641,10 @@ class StyleCheckerCheckFileTest(StyleCheckerCheckFileBase):
         self.assertFalse(self.mock_os_path_exists(file_path))
 
         # Check the outcome.
-        self.assertRaises(SystemExit, self.call_check_file, file_path)
-        self.assertLog(["ERROR: File does not exist: "
-                        "file_does_not_exist.txt\n"])
+        self.call_check_file(file_path)
+        self.assert_attributes(None, None, None, "")
+        self.assertLog(['WARNING: Skipping non-existent file: '
+                        'file_does_not_exist.txt\n'])
 
     def test_check_file_on_skip_without_warning(self):
         """Test check_file() for a skipped-without-warning file."""

@@ -1,3 +1,20 @@
+2010-04-05  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Fixed check-webkit-style issue where the script was prematurely
+        exiting when encountering deleted files in patches.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37122
+
+        * Scripts/webkitpy/style/checker.py:
+          - Changed non-existent file message from ERROR to WARN.
+          - StyleChecker.check_file() no longer raises an exception when
+            a file is not found.
+
+        * Scripts/webkitpy/style/checker_unittest.py:
+          - Updated unit tests as necessary.
+
 2010-04-05  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

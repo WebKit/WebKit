@@ -678,8 +678,8 @@ class StyleChecker(object):
                         mock_process_file)
 
         if not os_path_exists(file_path):
-            _log.error("File does not exist: %s" % file_path)
-            sys.exit(1)
+            _log.warn("Skipping non-existent file: %s" % file_path)
+            return
 
         _log.debug("Checking: " + file_path)
 
