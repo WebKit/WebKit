@@ -30,8 +30,6 @@ class HTMLImageLoader;
 
 class HTMLPlugInImageElement : public HTMLPlugInElement {
 public:
-    virtual ~HTMLPlugInImageElement();
-
     const String& serviceType() const { return m_serviceType; }
     const String& url() const { return m_url; }
 
@@ -43,6 +41,9 @@ protected:
     OwnPtr<HTMLImageLoader> m_imageLoader;
     String m_serviceType;
     String m_url;
+
+private:
+    virtual void willMoveToNewOwnerDocument();
 };
 
 } // namespace WebCore

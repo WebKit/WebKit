@@ -1,3 +1,36 @@
+2010-04-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Images must re-load when an image-holding element moves into a new document
+        https://bugs.webkit.org/show_bug.cgi?id=37127
+
+        Test: fast/images/move-image-to-new-document.html
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::willMoveToNewOwnerDocument): Call ImageLoader's
+        elementWillMoveToNewOwnerDocument function.
+        * html/HTMLImageElement.h: Added willMoveToNewOwnerDocument.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::willMoveToNewOwnerDocument): Ditto.
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::willMoveToNewOwnerDocument): Ditto.
+        * html/HTMLPlugInImageElement.h: Ditto.
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::willMoveToNewOwnerDocument): Ditto.
+        * html/HTMLVideoElement.h: Ditto.
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::willMoveToNewOwnerDocument): Ditto.
+        * svg/SVGImageElement.h: Ditto.
+
+        * html/HTMLMediaElement.h: Made willMoveToNewOwnerDocument protected
+        so it can be called by HTMLVideoElement.cpp.
+
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::elementWillMoveToNewOwnerDocument): Added.
+        Resets the loader by clearing out the cached image.
+        * loader/ImageLoader.h: Added it.
+
 2010-04-05  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

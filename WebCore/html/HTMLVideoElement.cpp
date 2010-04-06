@@ -245,6 +245,12 @@ bool HTMLVideoElement::webkitDisplayingFullscreen()
     return isFullscreen();
 }
 
+void HTMLVideoElement::willMoveToNewOwnerDocument()
+{
+    if (m_imageLoader)
+        m_imageLoader->elementWillMoveToNewOwnerDocument();
+    HTMLMediaElement::willMoveToNewOwnerDocument();
+}
 
 }
 #endif

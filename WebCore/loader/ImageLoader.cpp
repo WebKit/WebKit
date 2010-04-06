@@ -277,6 +277,11 @@ void ImageLoader::dispatchPendingLoadEvents()
     loadEventSender().dispatchPendingEvents();
 }
 
+void ImageLoader::elementWillMoveToNewOwnerDocument()
+{
+    setImage(0);
+}
+
 ImageEventSender::ImageEventSender(const AtomicString& eventType)
     : m_eventType(eventType)
     , m_timer(this, &ImageEventSender::timerFired)

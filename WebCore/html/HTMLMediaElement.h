@@ -173,8 +173,11 @@ protected:
     HTMLMediaElement(const QualifiedName&, Document*);
     virtual ~HTMLMediaElement();
 
-    virtual void parseMappedAttribute(MappedAttribute *);
+    virtual void parseMappedAttribute(MappedAttribute*);
     virtual void attach();
+
+    virtual void willMoveToNewOwnerDocument();
+    virtual void didMoveToNewOwnerDocument();
 
 private:
     virtual bool checkDTD(const Node* newChild);    
@@ -197,9 +200,6 @@ private:
     
     void setReadyState(MediaPlayer::ReadyState);
     void setNetworkState(MediaPlayer::NetworkState);
-
-    virtual void willMoveToNewOwnerDocument();
-    virtual void didMoveToNewOwnerDocument();
 
     virtual Document* mediaPlayerOwningDocument();
     virtual void mediaPlayerNetworkStateChanged(MediaPlayer*);

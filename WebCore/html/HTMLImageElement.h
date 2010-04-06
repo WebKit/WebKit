@@ -105,6 +105,9 @@ public:
 
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
+protected:
+    virtual void willMoveToNewOwnerDocument();
+
 private:
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();

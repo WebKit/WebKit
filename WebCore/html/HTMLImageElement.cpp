@@ -435,4 +435,10 @@ void HTMLImageElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) cons
     addSubresourceURL(urls, document()->completeURL(getAttribute(usemapAttr)));
 }
 
+void HTMLImageElement::willMoveToNewOwnerDocument()
+{
+    m_imageLoader.elementWillMoveToNewOwnerDocument();
+    HTMLElement::willMoveToNewOwnerDocument();
+}
+
 }
