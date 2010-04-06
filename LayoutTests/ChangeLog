@@ -1,3 +1,18 @@
+2010-04-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] LayoutTests/fast/canvas/canvas-text-alignment.html skipped on Qt
+        https://bugs.webkit.org/show_bug.cgi?id=36058
+
+        fast/canvas/canvas-text-alignment.html passes, so it can be unskipped.
+        Compared to png file and Mac expected file.
+
+        * platform/qt/Skipped: fast/canvas/canvas-text-alignment.html unskipped.
+        * platform/qt/fast/canvas/canvas-text-alignment-expected.checksum: Added.
+        * platform/qt/fast/canvas/canvas-text-alignment-expected.png: Added.
+        * platform/qt/fast/canvas/canvas-text-alignment-expected.txt: Added.
+
 2010-04-06  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Oliver Hunt.
