@@ -1961,8 +1961,6 @@ BUG10457 DEBUG WIN SLOW : fast/js/large-expressions.html = FAIL
 // Perhaps just needs new baseline?
 // These tests were rebaselined with failure long ago. We shouldn't do this, and
 // instead work upstream to improve tests so that they don't fail.
-// Linux-only failures
-BUG10458 LINUX : editing/inserting/6633727.html = FAIL
 // Just need rebaseline
 BUG10458 LINUX : fast/forms/textarea-width.html = FAIL
 
@@ -2720,7 +2718,7 @@ BUG37463 MAC DEBUG : svg/custom/transform-ignore-after-invalid.svg = PASS CRASH
 BUG37540 MAC SKIP : inspector/console-dir.html = CRASH TEXT PASS
 
 // Bugs that went unreported when we upstreamed run_webkit_tests
-BUG37896 MAC LINUX : fast/backgrounds/animated-svg-as-background.html = IMAGE
+BUG37896 MAC : fast/backgrounds/animated-svg-as-background.html = IMAGE
 // New test, added http://trac.webkit.org/changeset/55737
 BUG37896 : fast/events/remove-child-onscroll.html = TIMEOUT
 // This one may be an actual regression! Started being flaky after
@@ -2734,7 +2732,6 @@ BUG37896 WIN DEBUG : fast/text/firstline/001.html = PASS CRASH
 BUG37896 LINUX MAC DEBUG : fast/text/firstline/001.html = PASS CRASH TIMEOUT
 // Added in http://trac.webkit.org/changeset/55587
 BUG37896 LINUX DEBUG : fast/images/svg-as-background.html = TIMEOUT
-BUG37869 LINUX : fast/images/animated-svg-as-image.html = IMAGE
 BUG37869 MAC LINUX SKIP : inspector/timeline-network-resource.html = CRASH
 // Three flaky tests noticed during a sheriff rotation.
 BUG37962 MAC LINUX DEBUG : fast/dom/HTMLElement/bdo.html = CRASH PASS
