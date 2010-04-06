@@ -65,6 +65,7 @@
 #include "Pair.h"
 #include "Rect.h"
 #include "ShadowValue.h"
+#include "StringBuffer.h"
 #include "WebKitCSSKeyframeRule.h"
 #include "WebKitCSSKeyframesRule.h"
 #include "WebKitCSSTransformValue.h"
@@ -5398,6 +5399,120 @@ int cssValueKeywordID(const CSSParserString& string)
 
     const css_value* hashTableEntry = findValue(buffer, length);
     return hashTableEntry ? hashTableEntry->id : 0;
+}
+
+// "ident" from the CSS tokenizer, minus backslash-escape sequences
+static bool isCSSTokenizerIdentifier(const String& string)
+{
+    const UChar* p = string.characters();
+    const UChar* end = p + string.length();
+
+    // -?
+    if (p != end && p[0] == '-')
+        ++p;
+
+    // {nmstart}
+    if (p == end || !(p[0] == '_' || p[0] >= 128 || isASCIIAlpha(p[0])))
+        return false;
+    ++p;
+
+    // {nmchar}*
+    for (; p != end; ++p) {
+        if (!(p[0] == '_' || p[0] == '-' || p[0] >= 128 || isASCIIAlphanumeric(p[0])))
+            return false;
+    }
+
+    return true;
+}
+
+// "url" from the CSS tokenizer, minus backslash-escape sequences
+static bool isCSSTokenizerURL(const String& string)
+{
+    const UChar* p = string.characters();
+    const UChar* end = p + string.length();
+
+    for (; p != end; ++p) {
+        UChar c = p[0];
+        switch (c) {
+            case '!':
+            case '#':
+            case '$':
+            case '%':
+            case '&':
+                break;
+            default:
+                if (c < '*')
+                    return false;
+                if (c <= '~')
+                    break;
+                if (c < 128)
+                    return false;
+        }
+    }
+
+    return true;
+}
+
+// We use single quotes for now because markup.cpp uses double quotes.
+String quoteCSSString(const String& string)
+{
+    // For efficiency, we first pre-calculate the length of the quoted string, then we build the actual one.
+    // Please see below for the actual logic.
+    unsigned quotedStringSize = 2; // Two quotes surrounding the entire string.
+    bool afterEscape = false;
+    for (unsigned i = 0; i < string.length(); ++i) {
+        UChar ch = string[i];
+        if (ch == '\\' || ch == '\'') {
+            quotedStringSize += 2;
+            afterEscape = false;
+        } else if (ch < 0x20 || ch == 0x7F) {
+            quotedStringSize += 2 + (ch >= 0x10);
+            afterEscape = true;
+        } else {
+            quotedStringSize += 1 + (afterEscape && (isASCIIHexDigit(ch) || ch == ' '));
+            afterEscape = false;
+        }
+    }
+
+    StringBuffer buffer(quotedStringSize);
+    unsigned index = 0;
+    buffer[index++] = '\'';
+    afterEscape = false;
+    for (unsigned i = 0; i < string.length(); ++i) {
+        UChar ch = string[i];
+        if (ch == '\\' || ch == '\'') {
+            buffer[index++] = '\\';
+            buffer[index++] = ch;
+            afterEscape = false;
+        } else if (ch < 0x20 || ch == 0x7F) { // Control characters.
+            static const char hexDigits[17] = "0123456789abcdef";
+            buffer[index++] = '\\';
+            if (ch >= 0x10)
+                buffer[index++] = hexDigits[ch >> 4];
+            buffer[index++] = hexDigits[ch & 0xF];
+            afterEscape = true;
+        } else {
+            // Space character may be required to separate backslash-escape sequence and normal characters.
+            if (afterEscape && (isASCIIHexDigit(ch) || ch == ' '))
+                buffer[index++] = ' ';
+            buffer[index++] = ch;
+            afterEscape = false;
+        }
+    }
+    buffer[index++] = '\'';
+
+    ASSERT(quotedStringSize == index);
+    return String::adopt(buffer);
+}
+
+String quoteCSSStringIfNeeded(const String& string)
+{
+    return isCSSTokenizerIdentifier(string) ? string : quoteCSSString(string);
+}
+
+String quoteCSSURLIfNeeded(const String& string)
+{
+    return isCSSTokenizerURL(string) ? string : quoteCSSString(string);
 }
 
 #define YY_DECL int CSSParser::lex()

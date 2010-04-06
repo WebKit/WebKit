@@ -21,44 +21,9 @@
 #include "config.h"
 #include "FontFamilyValue.h"
 
+#include "CSSParser.h"
+
 namespace WebCore {
-
-// FIXME: This appears identical to isCSSTokenizerIdentifier from CSSPrimitiveValue.cpp, we should use a single function.
-static bool isValidCSSIdentifier(const String& string)
-{
-    unsigned length = string.length();
-    if (!length)
-        return false;
-
-    const UChar* characters = string.characters();
-    UChar c = characters[0];
-    if (!(c == '_' || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '-' || c >= 0x80))
-        return false;
-
-    for (unsigned i = 1; i < length; ++i) {
-        c = characters[i];
-        if (!(c == '_' || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '-' || c >= 0x80))
-            return false;
-    }
-
-    return true;
-}
-
-// Quotes the string if it needs quoting.
-// We use single quotes because serialization code uses double quotes, and it's nice to
-// avoid having to turn all the quote marks into &quot; as we would have to.
-static String quoteStringIfNeeded(const String& string)
-{
-    if (isValidCSSIdentifier(string))
-        return string;
-
-    // FIXME: Also need to transform control characters (00-1F) into \ sequences.
-    // FIXME: This is inefficient -- should use a Vector<UChar> instead.
-    String quotedString = string;
-    quotedString.replace('\\', "\\\\");
-    quotedString.replace('\'', "\\'");
-    return "'" + quotedString + "'";
-}
 
 FontFamilyValue::FontFamilyValue(const String& familyName)
     : CSSPrimitiveValue(String(), CSS_STRING)
@@ -101,7 +66,7 @@ void FontFamilyValue::appendSpaceSeparated(const UChar* characters, unsigned len
 
 String FontFamilyValue::cssText() const
 {
-    return quoteStringIfNeeded(m_familyName);
+    return quoteCSSStringIfNeeded(m_familyName);
 }
 
 }

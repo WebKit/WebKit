@@ -1,3 +1,26 @@
+2010-04-05  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Escape control characters in CSS string value when it is serialilzed.
+
+        When WebKit serializes a CSS string value that contains binary characters
+        ('\0\1\2' for example), it did not escape these characters. As a result,
+        users got (invisible) control characters through scripts. This change fixes
+        this issue.
+
+        As a side effect, two separate codes for escaping CSS strings are merged, and
+        become a public function (quoteCSSString).
+
+        CSS string value is not correctly serialized when it contains binary characters
+        https://bugs.webkit.org/show_bug.cgi?id=28938
+
+        * fast/css/script-tests/string-quote-binary.js: Added.
+        * fast/css/string-quote-binary-expected.txt: Added.
+        * fast/css/string-quote-binary.html: Added.
+        * fast/js/resources/js-test-pre.js:
+        (shouldBeEqualToString): Considering the case when the argument contains binary characters.
+
 2010-04-05  John Gregg  <johnnyg@google.com>
 
         Reviewed by Darin Adler.
