@@ -1466,6 +1466,12 @@ sub GenerateImplementation
                         my $putFunctionName = "setJS" . $interfaceName .  $codeGenerator->WK_ucfirst($name) . ($attribute->signature->type =~ /Constructor$/ ? "Constructor" : "");
                         my $implSetterFunctionName = $codeGenerator->WK_ucfirst($name);
 
+                        my $conditional = $attribute->signature->extendedAttributes->{"Conditional"};
+                        if ($conditional) {
+                            $conditionalString = "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
+                            push(@implContent, "#if ${conditionalString}\n");
+                        }
+
                         push(@implContent, "void ${putFunctionName}(ExecState* exec, JSObject* thisObject, JSValue value)\n");
                         push(@implContent, "{\n");
 
@@ -1534,7 +1540,13 @@ sub GenerateImplementation
                             }
                         }
                         
-                        push(@implContent, "}\n\n");
+                        push(@implContent, "}\n");
+
+                        if ($conditional) {
+                            push(@implContent, "#endif\n");
+                        }
+
+                        push(@implContent, "\n");
                     }
                 }
             }

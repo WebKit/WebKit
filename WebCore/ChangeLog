@@ -1,3 +1,15 @@
+2010-04-06  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        JS code generator does not support feature conditional attributes that are writable
+        https://bugs.webkit.org/show_bug.cgi?id=37149
+
+        Write out the feature #ifdef not only for the getter, but also for the setter
+        function.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+
 2010-04-06  Evan Stade  <estade@chromium.org>
 
         Reviewed by Dimitri Glazkov.
