@@ -23,10 +23,6 @@ http/tests/wml
 
 # Skip failed appcache test cases
 http/tests/appcache/auth.html
-http/tests/appcache/fallback.html
-http/tests/appcache/manifest-redirect-2.html
-http/tests/appcache/offline-access.html
-http/tests/appcache/resource-redirect-2.html
 
 # Failing URL test
 http/tests/uri/escaped-entity.html

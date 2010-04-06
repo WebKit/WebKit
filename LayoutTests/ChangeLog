@@ -1,3 +1,13 @@
+2010-04-06  Krithigassree Sambamurthy  <krithigassree.sambamurthy@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] These tests can be removed from the skipped list since these
+        work after the redirection loop detection implemented in qt network.
+        https://bugs.webkit.org/show_bug.cgii?id=36690
+
+        * platform/qt/Skipped:
+
 2010-04-06  Andrew Scherkus  <scherkus@chromium.org>
 
         Unreviewed, media test expectations tweak.
