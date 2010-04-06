@@ -1,3 +1,16 @@
+2010-04-06  Abhinav Mithal <abhinav.mithal@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] npapi header leaves XP_WIN flag defined even when __SYMBIAN32__ flag is found
+        https://bugs.webkit.org/show_bug.cgi?id=34614
+
+        Do not define XP_WIN if WebKit is compiled for Symbian.
+
+        No new tests as there is no new functionality.
+
+        * bridge/npapi.h:
+
 2010-04-06  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

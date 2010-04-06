@@ -50,7 +50,7 @@
 #define JRIEnv  void
 #endif
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__SYMBIAN32__)
 #    ifndef XP_WIN
 #        define XP_WIN 1
 #    endif /* XP_WIN */
