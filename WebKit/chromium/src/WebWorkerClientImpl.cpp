@@ -245,11 +245,10 @@ void WebWorkerClientImpl::postExceptionToWorkerObject(const WebString& errorMess
         return;
     }
 
-    bool handled = false;
-    handled = m_worker->dispatchEvent(ErrorEvent::create(errorMessage,
-                                                         sourceURL,
-                                                         lineNumber));
-    if (!handled)
+    bool unhandled = m_worker->dispatchEvent(ErrorEvent::create(errorMessage,
+                                                                sourceURL,
+                                                                lineNumber));
+    if (unhandled)
         m_scriptExecutionContext->reportException(errorMessage, lineNumber, sourceURL);
 }
 
