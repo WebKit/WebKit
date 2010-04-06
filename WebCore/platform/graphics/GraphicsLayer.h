@@ -65,8 +65,8 @@ typedef QGraphicsItem PlatformLayer;
 typedef QGraphicsItem* NativeLayer;
 #elif PLATFORM(CHROMIUM)
 namespace WebCore {
-class LayerSkia;
-typedef LayerSkia PlatformLayer;
+class LayerChromium;
+typedef LayerChromium PlatformLayer;
 typedef void* NativeLayer;
 }
 #else

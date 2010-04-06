@@ -1,3 +1,125 @@
+2010-04-06  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Renaming Graphics Layer related classes used by Chromium from *Skia to *Chromium and replacing wherever possible Skia-specific
+        data types with WebCore equivalents. The source files will be renamed accordingly and moved out of platform/graphics/skia
+        in a subsequent CL.
+        https://bugs.webkit.org/show_bug.cgi?id=37116
+
+        No new functionality so no new tests.
+
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/skia/GraphicsLayerSkia.cpp:
+        (WebCore::setLayerBorderColor):
+        (WebCore::clearBorderColor):
+        (WebCore::setLayerBackgroundColor):
+        (WebCore::clearLayerBackgroundColor):
+        (WebCore::GraphicsLayer::create):
+        (WebCore::GraphicsLayerChromium::GraphicsLayerChromium):
+        (WebCore::GraphicsLayerChromium::~GraphicsLayerChromium):
+        (WebCore::GraphicsLayerChromium::setName):
+        (WebCore::GraphicsLayerChromium::nativeLayer):
+        (WebCore::GraphicsLayerChromium::setChildren):
+        (WebCore::GraphicsLayerChromium::addChild):
+        (WebCore::GraphicsLayerChromium::addChildAtIndex):
+        (WebCore::GraphicsLayerChromium::addChildBelow):
+        (WebCore::GraphicsLayerChromium::addChildAbove):
+        (WebCore::GraphicsLayerChromium::replaceChild):
+        (WebCore::GraphicsLayerChromium::removeFromParent):
+        (WebCore::GraphicsLayerChromium::setPosition):
+        (WebCore::GraphicsLayerChromium::setAnchorPoint):
+        (WebCore::GraphicsLayerChromium::setSize):
+        (WebCore::GraphicsLayerChromium::setTransform):
+        (WebCore::GraphicsLayerChromium::setChildrenTransform):
+        (WebCore::GraphicsLayerChromium::setPreserves3D):
+        (WebCore::GraphicsLayerChromium::setMasksToBounds):
+        (WebCore::GraphicsLayerChromium::setDrawsContent):
+        (WebCore::GraphicsLayerChromium::setBackgroundColor):
+        (WebCore::GraphicsLayerChromium::clearBackgroundColor):
+        (WebCore::GraphicsLayerChromium::setContentsOpaque):
+        (WebCore::GraphicsLayerChromium::setBackfaceVisibility):
+        (WebCore::GraphicsLayerChromium::setOpacity):
+        (WebCore::GraphicsLayerChromium::setNeedsDisplay):
+        (WebCore::GraphicsLayerChromium::setNeedsDisplayInRect):
+        (WebCore::GraphicsLayerChromium::setContentsRect):
+        (WebCore::GraphicsLayerChromium::setContentsToImage):
+        (WebCore::GraphicsLayerChromium::setContentsToVideo):
+        (WebCore::GraphicsLayerChromium::setGeometryOrientation):
+        (WebCore::GraphicsLayerChromium::hostLayerForSublayers):
+        (WebCore::GraphicsLayerChromium::layerForSuperlayer):
+        (WebCore::GraphicsLayerChromium::platformLayer):
+        (WebCore::GraphicsLayerChromium::setDebugBackgroundColor):
+        (WebCore::GraphicsLayerChromium::setDebugBorder):
+        (WebCore::GraphicsLayerChromium::updateSublayerList):
+        (WebCore::GraphicsLayerChromium::updateLayerPosition):
+        (WebCore::GraphicsLayerChromium::updateLayerSize):
+        (WebCore::GraphicsLayerChromium::updateAnchorPoint):
+        (WebCore::GraphicsLayerChromium::updateTransform):
+        (WebCore::GraphicsLayerChromium::updateChildrenTransform):
+        (WebCore::GraphicsLayerChromium::updateMasksToBounds):
+        (WebCore::GraphicsLayerChromium::updateContentsOpaque):
+        (WebCore::GraphicsLayerChromium::updateBackfaceVisibility):
+        (WebCore::GraphicsLayerChromium::updateLayerPreserves3D):
+        (WebCore::GraphicsLayerChromium::updateLayerDrawsContent):
+        (WebCore::GraphicsLayerChromium::updateLayerBackgroundColor):
+        (WebCore::GraphicsLayerChromium::updateContentsImage):
+        (WebCore::GraphicsLayerChromium::updateContentsVideo):
+        (WebCore::GraphicsLayerChromium::updateContentsRect):
+        (WebCore::GraphicsLayerChromium::updateGeometryOrientation):
+        (WebCore::GraphicsLayerChromium::setupContentsLayer):
+        (WebCore::GraphicsLayerChromium::updateOpacityOnLayer):
+        * platform/graphics/skia/GraphicsLayerSkia.h:
+        (WebCore::GraphicsLayerChromium::primaryLayer):
+        (WebCore::GraphicsLayerChromium::contentsLayer):
+        * platform/graphics/skia/LayerRendererSkia.cpp:
+        (WebCore::LayerRendererChromium::create):
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        (WebCore::LayerRendererChromium::~LayerRendererChromium):
+        (WebCore::LayerRendererChromium::updateLayerContents):
+        (WebCore::LayerRendererChromium::drawLayersInCanvas):
+        (WebCore::LayerRendererChromium::drawLayerInCanvasRecursive):
+        (WebCore::LayerRendererChromium::updateLayerContentsRecursive):
+        * platform/graphics/skia/LayerRendererSkia.h:
+        (WebCore::LayerRendererChromium::setRootLayer):
+        (WebCore::LayerRendererChromium::rootLayer):
+        * platform/graphics/skia/LayerSkia.cpp:
+        (WebCore::LayerChromium::create):
+        (WebCore::LayerChromium::LayerChromium):
+        (WebCore::LayerChromium::~LayerChromium):
+        (WebCore::LayerChromium::updateGraphicsContext):
+        (WebCore::LayerChromium::updateContents):
+        (WebCore::LayerChromium::drawDebugBorder):
+        (WebCore::LayerChromium::setNeedsCommit):
+        (WebCore::LayerChromium::addSublayer):
+        (WebCore::LayerChromium::insertSublayer):
+        (WebCore::LayerChromium::removeFromSuperlayer):
+        (WebCore::LayerChromium::removeSublayer):
+        (WebCore::LayerChromium::indexOfSublayer):
+        (WebCore::LayerChromium::setBackingStoreRect):
+        (WebCore::LayerChromium::setBounds):
+        (WebCore::LayerChromium::setFrame):
+        (WebCore::LayerChromium::rootLayer):
+        (WebCore::LayerChromium::removeAllSublayers):
+        (WebCore::LayerChromium::setSublayers):
+        (WebCore::LayerChromium::setSuperlayer):
+        (WebCore::LayerChromium::superlayer):
+        (WebCore::LayerChromium::setNeedsDisplay):
+        * platform/graphics/skia/LayerSkia.h:
+        (WebCore::LayerChromium::setAnchorPoint):
+        (WebCore::LayerChromium::anchorPoint):
+        (WebCore::LayerChromium::borderWidth):
+        (WebCore::LayerChromium::bounds):
+        (WebCore::LayerChromium::frame):
+        (WebCore::LayerChromium::setPosition):
+        (WebCore::LayerChromium::position):
+        (WebCore::LayerChromium::zPosition):
+        (WebCore::LayerChromium::getSublayers):
+        (WebCore::LayerChromium::setSublayerTransform):
+        (WebCore::LayerChromium::sublayerTransform):
+        (WebCore::LayerChromium::setTransform):
+        (WebCore::LayerChromium::transform):
+
 2010-04-06  Jarkko Sakkinen  <jarkko.j.sakkinen@gmail.com>
 
         Reviewed by Laszlo Gombos.

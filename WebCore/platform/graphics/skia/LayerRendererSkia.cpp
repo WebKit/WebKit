@@ -40,28 +40,35 @@
 
 namespace WebCore {
 
-PassOwnPtr<LayerRendererSkia> LayerRendererSkia::create()
+PassOwnPtr<LayerRendererChromium> LayerRendererChromium::create()
 {
-    return new LayerRendererSkia();
+    return new LayerRendererChromium();
 }
 
-LayerRendererSkia::LayerRendererSkia()
+LayerRendererChromium::LayerRendererChromium()
     : m_rootLayer(0)
     , m_needsDisplay(false)
 {
 }
 
-LayerRendererSkia::~LayerRendererSkia()
+LayerRendererChromium::~LayerRendererChromium()
 {
 }
 
-void LayerRendererSkia::drawLayersInCanvas(skia::PlatformCanvas* canvas, SkRect clipRect)
+void LayerRendererChromium::updateLayerContents()
+{
+    if (m_rootLayer)
+        updateLayerContentsRecursive(m_rootLayer.get());
+}
+
+#if PLATFORM(SKIA)
+void LayerRendererChromium::drawLayersInCanvas(skia::PlatformCanvas* canvas, const IntRect& clipRect)
 {
     if (!m_rootLayer)
         return;
 
     canvas->save();
-    canvas->clipRect(clipRect);
+    canvas->clipRect(SkRect(clipRect));
 
     // First composite the root layer into the canvas.
     canvas->drawBitmap(m_rootLayer->platformCanvas()->getDevice()->accessBitmap(false), 0, 0, 0);
@@ -71,7 +78,7 @@ void LayerRendererSkia::drawLayersInCanvas(skia::PlatformCanvas* canvas, SkRect 
     canvas->translate(-m_scrollFrame.fLeft, -m_scrollFrame.fTop);
 
     float opacity = 1.0f;
-    const Vector<RefPtr<LayerSkia> >& sublayers = m_rootLayer->getSublayers();
+    const Vector<RefPtr<LayerChromium> >& sublayers = m_rootLayer->getSublayers();
     for (size_t i = 0; i < sublayers.size(); i++)
         drawLayerInCanvasRecursive(canvas, sublayers[i].get(), opacity);
 
@@ -80,26 +87,20 @@ void LayerRendererSkia::drawLayersInCanvas(skia::PlatformCanvas* canvas, SkRect 
     m_needsDisplay = false;
 }
 
-void LayerRendererSkia::updateLayerContents()
-{
-    if (m_rootLayer)
-        updateLayerContentsRecursive(m_rootLayer.get());
-}
-
-void LayerRendererSkia::drawLayerInCanvasRecursive(skia::PlatformCanvas* canvas, LayerSkia* layer, float opacity)
+void LayerRendererChromium::drawLayerInCanvasRecursive(skia::PlatformCanvas* canvas, LayerChromium* layer, float opacity)
 {
     // Guarantees that the canvas is restored to a known state on destruction.
     SkAutoCanvasRestore autoRestoreCanvas(canvas, true);
 
-    SkPoint position = layer->position();
-    SkPoint anchorPoint = layer->anchorPoint();
-    SkMatrix transform = layer->transform();
-    SkIRect bounds = layer->bounds();
+    FloatPoint position = layer->position();
+    FloatPoint anchorPoint = layer->anchorPoint();
+    SkMatrix transform = layer->transform().toAffineTransform();
+    IntSize bounds = layer->bounds();
 
-    canvas->translate(position.fX, position.fY);
+    canvas->translate(position.x(), position.y());
 
-    SkScalar tx = SkScalarMul(anchorPoint.fX, bounds.width());
-    SkScalar ty = SkScalarMul(anchorPoint.fY, bounds.height());
+    SkScalar tx = SkScalarMul(anchorPoint.x(), bounds.width());
+    SkScalar ty = SkScalarMul(anchorPoint.y(), bounds.height());
     canvas->translate(tx, ty);
     canvas->concat(transform);
     canvas->translate(-tx, -ty);
@@ -117,16 +118,17 @@ void LayerRendererSkia::drawLayerInCanvasRecursive(skia::PlatformCanvas* canvas,
 
     canvas->drawBitmap(layer->platformCanvas()->getDevice()->accessBitmap(false), 0, 0, &opacityPaint);
 
-    const Vector<RefPtr<LayerSkia> >& sublayers = layer->getSublayers();
+    const Vector<RefPtr<LayerChromium> >& sublayers = layer->getSublayers();
     for (size_t i = 0; i < sublayers.size(); i++)
         drawLayerInCanvasRecursive(canvas, sublayers[i].get(), opacity);
 }
+#endif // PLATFORM(SKIA)
 
-void LayerRendererSkia::updateLayerContentsRecursive(LayerSkia* layer)
+void LayerRendererChromium::updateLayerContentsRecursive(LayerChromium* layer)
 {
     layer->updateContents();
 
-    const Vector<RefPtr<LayerSkia> >& sublayers = layer->getSublayers();
+    const Vector<RefPtr<LayerChromium> >& sublayers = layer->getSublayers();
     for (size_t i = 0; i < sublayers.size(); i++)
         updateLayerContentsRecursive(sublayers[i].get());
 }

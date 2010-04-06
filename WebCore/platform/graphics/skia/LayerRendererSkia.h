@@ -34,6 +34,7 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
+#include "IntRect.h"
 #include "LayerSkia.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
@@ -45,29 +46,32 @@ class PlatformCanvas;
 
 namespace WebCore {
 
-class LayerRendererSkia : public Noncopyable {
+class LayerRendererChromium : public Noncopyable {
 public:
-    static PassOwnPtr<LayerRendererSkia> create();
+    static PassOwnPtr<LayerRendererChromium> create();
 
-    LayerRendererSkia();
-    ~LayerRendererSkia();
+    LayerRendererChromium();
+    ~LayerRendererChromium();
 
-    void drawLayersInCanvas(skia::PlatformCanvas*, SkRect clipRect);
-
+#if PLATFORM(SKIA)
+    void drawLayersInCanvas(skia::PlatformCanvas*, const IntRect& clipRect);
+#endif
     void updateLayerContents();
 
-    void setRootLayer(PassRefPtr<LayerSkia> layer) { m_rootLayer = layer; }
-    LayerSkia* rootLayer() { return m_rootLayer.get(); }
+    void setRootLayer(PassRefPtr<LayerChromium> layer) { m_rootLayer = layer; }
+    LayerChromium* rootLayer() { return m_rootLayer.get(); }
 
     void setNeedsDisplay() { m_needsDisplay = true; }
 
     void setScrollFrame(SkIRect& scrollFrame) { m_scrollFrame = scrollFrame; }
 
 private:
-    void drawLayerInCanvasRecursive(skia::PlatformCanvas*, LayerSkia*, float opacity);
-    void updateLayerContentsRecursive(LayerSkia*);
+#if PLATFORM(SKIA)
+    void drawLayerInCanvasRecursive(skia::PlatformCanvas*, LayerChromium*, float opacity);
+#endif
+    void updateLayerContentsRecursive(LayerChromium*);
 
-    RefPtr<LayerSkia> m_rootLayer;
+    RefPtr<LayerChromium> m_rootLayer;
 
     bool m_needsDisplay;
     SkIRect m_scrollFrame;

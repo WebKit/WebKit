@@ -42,12 +42,12 @@ namespace WebCore {
 
 using namespace std;
 
-PassRefPtr<LayerSkia> LayerSkia::create(LayerType type, GraphicsLayerSkia* owner)
+PassRefPtr<LayerChromium> LayerChromium::create(LayerType type, GraphicsLayerChromium* owner)
 {
-    return adoptRef(new LayerSkia(type, owner));
+    return adoptRef(new LayerChromium(type, owner));
 }
 
-LayerSkia::LayerSkia(LayerType type, GraphicsLayerSkia* owner)
+LayerChromium::LayerChromium(LayerType type, GraphicsLayerChromium* owner)
     : m_needsDisplayOnBoundsChange(false)
     , m_owner(owner)
     , m_layerType(type)
@@ -70,28 +70,21 @@ LayerSkia::LayerSkia(LayerType type, GraphicsLayerSkia* owner)
     , m_graphicsContext(0)
     , m_geometryFlipped(false)
 {
-    m_bounds.setEmpty();
-    m_backingStoreRect.setEmpty();
-    m_frame.setEmpty();
-    m_position.set(0, 0);
-    m_anchorPoint.set(0, 0);
-    m_transform.reset();
-    m_sublayerTransform.reset();
-
     updateGraphicsContext(m_backingStoreRect);
 }
 
-LayerSkia::~LayerSkia()
+LayerChromium::~LayerChromium()
 {
     // Our superlayer should be holding a reference to us, so there should be no way for us to be destroyed while we still have a superlayer.
     ASSERT(!superlayer());
 }
 
-void LayerSkia::updateGraphicsContext(const SkIRect& rect)
+void LayerChromium::updateGraphicsContext(const IntSize& size)
 {
+#if PLATFORM(SKIA)
     // Create new canvas and context. OwnPtr takes care of freeing up
     // the old ones.
-    m_canvas = new skia::PlatformCanvas(rect.width(), rect.height(), false);
+    m_canvas = new skia::PlatformCanvas(size.width(), size.height(), false);
     m_skiaContext = new PlatformContextSkia(m_canvas.get());
 
     // This is needed to get text to show up correctly. Without it,
@@ -100,14 +93,16 @@ void LayerSkia::updateGraphicsContext(const SkIRect& rect)
     m_skiaContext->setDrawingToImageBuffer(true);
 
     m_graphicsContext = new GraphicsContext(reinterpret_cast<PlatformGraphicsContext*>(m_skiaContext.get()));
-
+#else
+#error "Need to implement for your platform."
+#endif
     // The backing store allocated for a layer can be smaller than the layer's bounds.
     // This is mostly true for the root layer whose backing store is sized based on the visible
     // portion of the layer rather than the actual page size.
-    m_backingStoreRect = rect;
+    m_backingStoreRect = size;
 }
 
-void LayerSkia::updateContents()
+void LayerChromium::updateContents()
 {
     RenderLayerBacking* backing = static_cast<RenderLayerBacking*>(m_owner->client());
 
@@ -115,7 +110,7 @@ void LayerSkia::updateContents()
         m_owner->paintGraphicsLayerContents(*m_graphicsContext, IntRect(0, 0, m_bounds.width(), m_bounds.height()));
 }
 
-void LayerSkia::drawDebugBorder()
+void LayerChromium::drawDebugBorder()
 {
     m_graphicsContext->setStrokeColor(m_borderColor, DeviceColorSpace);
     m_graphicsContext->setStrokeThickness(m_borderWidth);
@@ -125,7 +120,7 @@ void LayerSkia::drawDebugBorder()
     m_graphicsContext->drawLine(IntPoint(0, m_bounds.height()), IntPoint(m_bounds.width(), m_bounds.height()));
 }
 
-void LayerSkia::setNeedsCommit()
+void LayerChromium::setNeedsCommit()
 {
     // Call notifySyncRequired(), which in this implementation plumbs through to
     // call setRootLayerNeedsDisplay() on the WebView, which will cause LayerRendererSkia
@@ -134,12 +129,12 @@ void LayerSkia::setNeedsCommit()
         m_owner->notifySyncRequired();
 }
 
-void LayerSkia::addSublayer(PassRefPtr<LayerSkia> sublayer)
+void LayerChromium::addSublayer(PassRefPtr<LayerChromium> sublayer)
 {
     insertSublayer(sublayer, numSublayers());
 }
 
-void LayerSkia::insertSublayer(PassRefPtr<LayerSkia> sublayer, size_t index)
+void LayerChromium::insertSublayer(PassRefPtr<LayerChromium> sublayer, size_t index)
 {
     index = min(index, m_sublayers.size());
     m_sublayers.insert(index, sublayer);
@@ -147,16 +142,16 @@ void LayerSkia::insertSublayer(PassRefPtr<LayerSkia> sublayer, size_t index)
     setNeedsCommit();
 }
 
-void LayerSkia::removeFromSuperlayer()
+void LayerChromium::removeFromSuperlayer()
 {
-    LayerSkia* superlayer = this->superlayer();
+    LayerChromium* superlayer = this->superlayer();
     if (!superlayer)
         return;
 
     superlayer->removeSublayer(this);
 }
 
-void LayerSkia::removeSublayer(LayerSkia* sublayer)
+void LayerChromium::removeSublayer(LayerChromium* sublayer)
 {
     int foundIndex = indexOfSublayer(sublayer);
     if (foundIndex == -1)
@@ -167,7 +162,7 @@ void LayerSkia::removeSublayer(LayerSkia* sublayer)
     setNeedsCommit();
 }
 
-int LayerSkia::indexOfSublayer(const LayerSkia* reference)
+int LayerChromium::indexOfSublayer(const LayerChromium* reference)
 {
     for (size_t i = 0; i < m_sublayers.size(); i++) {
         if (m_sublayers[i] == reference)
@@ -176,7 +171,7 @@ int LayerSkia::indexOfSublayer(const LayerSkia* reference)
     return -1;
 }
 
-void LayerSkia::setBackingStoreRect(const SkIRect& rect)
+void LayerChromium::setBackingStoreRect(const IntSize& rect)
 {
     if (m_backingStoreRect == rect)
         return;
@@ -184,7 +179,7 @@ void LayerSkia::setBackingStoreRect(const SkIRect& rect)
     updateGraphicsContext(rect);
 }
 
-void LayerSkia::setBounds(const SkIRect& rect)
+void LayerChromium::setBounds(const IntSize& rect)
 {
     if (rect == m_bounds)
         return;
@@ -201,7 +196,7 @@ void LayerSkia::setBounds(const SkIRect& rect)
     setNeedsCommit();
 }
 
-void LayerSkia::setFrame(const SkRect& rect)
+void LayerChromium::setFrame(const FloatRect& rect)
 {
     if (rect == m_frame)
       return;
@@ -210,35 +205,35 @@ void LayerSkia::setFrame(const SkRect& rect)
     setNeedsCommit();
 }
 
-const LayerSkia* LayerSkia::rootLayer() const
+const LayerChromium* LayerChromium::rootLayer() const
 {
-    const LayerSkia* layer = this;
-    for (LayerSkia* superlayer = layer->superlayer(); superlayer; layer = superlayer, superlayer = superlayer->superlayer()) { }
+    const LayerChromium* layer = this;
+    for (LayerChromium* superlayer = layer->superlayer(); superlayer; layer = superlayer, superlayer = superlayer->superlayer()) { }
     return layer;
 }
 
-void LayerSkia::removeAllSublayers()
+void LayerChromium::removeAllSublayers()
 {
     m_sublayers.clear();
     setNeedsCommit();
 }
 
-void LayerSkia::setSublayers(const Vector<RefPtr<LayerSkia> >& sublayers)
+void LayerChromium::setSublayers(const Vector<RefPtr<LayerChromium> >& sublayers)
 {
     m_sublayers = sublayers;
 }
 
-void LayerSkia::setSuperlayer(LayerSkia* superlayer)
+void LayerChromium::setSuperlayer(LayerChromium* superlayer)
 {
     m_superlayer = superlayer;
 }
 
-LayerSkia* LayerSkia::superlayer() const
+LayerChromium* LayerChromium::superlayer() const
 {
     return m_superlayer;
 }
 
-void LayerSkia::setNeedsDisplay(const SkRect& dirtyRect)
+void LayerChromium::setNeedsDisplay(const FloatRect& dirtyRect)
 {
     // Redraw the contents of the layer.
     updateContents();
@@ -246,7 +241,7 @@ void LayerSkia::setNeedsDisplay(const SkRect& dirtyRect)
     setNeedsCommit();
 }
 
-void LayerSkia::setNeedsDisplay()
+void LayerChromium::setNeedsDisplay()
 {
     // FIXME: implement
 }

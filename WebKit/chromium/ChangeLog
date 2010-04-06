@@ -1,3 +1,16 @@
+2010-04-06  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Changing references to Graphics Layer related classes from *Skia to *Chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=37116
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::paint):
+        (WebKit::WebViewImpl::setAcceleratedCompositing):
+        (WebKit::WebViewImpl::updateRootLayerContents):
+        * src/WebViewImpl.h:
+
 2010-04-06  James Hawkins  <jhawkins@chromium.org>
 
         Reviewed by Adam Barth.

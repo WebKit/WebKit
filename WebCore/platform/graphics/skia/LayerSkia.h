@@ -34,12 +34,10 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-
+#include "FloatPoint.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayerSkia.h"
 #include "PlatformString.h"
-#include "SkColor.h"
-#include "SkPoint.h"
 #include "StringHash.h"
 #include "TransformationMatrix.h"
 #include <wtf/OwnPtr.h>
@@ -54,25 +52,25 @@ class PlatformCanvas;
 
 namespace WebCore {
 
-class LayerSkia : public RefCounted<LayerSkia> {
+class LayerChromium : public RefCounted<LayerChromium> {
 public:
     enum LayerType { Layer, TransformLayer };
     enum FilterType { Linear, Nearest, Trilinear, Lanczos };
     enum ContentsGravityType { Center, Top, Bottom, Left, Right, TopLeft, TopRight,
                                BottomLeft, BottomRight, Resize, ResizeAspect, ResizeAspectFill };
 
-    static PassRefPtr<LayerSkia> create(LayerType, GraphicsLayerSkia* owner = 0);
+    static PassRefPtr<LayerChromium> create(LayerType, GraphicsLayerChromium* owner = 0);
 
-    ~LayerSkia();
+    ~LayerChromium();
 
     void display(PlatformGraphicsContext*);
 
-    void addSublayer(PassRefPtr<LayerSkia>);
-    void insertSublayer(PassRefPtr<LayerSkia>, size_t index);
+    void addSublayer(PassRefPtr<LayerChromium>);
+    void insertSublayer(PassRefPtr<LayerChromium>, size_t index);
     void removeFromSuperlayer();
 
-    void setAnchorPoint(const SkPoint& anchorPoint) { m_anchorPoint = anchorPoint; setNeedsCommit(); }
-    SkPoint anchorPoint() const { return m_anchorPoint; }
+    void setAnchorPoint(const FloatPoint& anchorPoint) { m_anchorPoint = anchorPoint; setNeedsCommit(); }
+    FloatPoint anchorPoint() const { return m_anchorPoint; }
 
     void setAnchorPointZ(float anchorPointZ) { m_anchorPointZ = anchorPointZ; setNeedsCommit(); }
     float anchorPointZ() const { return m_anchorPointZ; }
@@ -84,10 +82,10 @@ public:
     Color borderColor() const { return m_borderColor; }
 
     void setBorderWidth(float width) { m_borderWidth = width; setNeedsCommit(); }
-    SkScalar borderWidth() const { return m_borderWidth; }
+    float borderWidth() const { return m_borderWidth; }
 
-    void setBounds(const SkIRect&);
-    SkIRect bounds() const { return m_bounds; }
+    void setBounds(const IntSize&);
+    IntSize bounds() const { return m_bounds; }
 
     void setClearsContext(bool clears) { m_clearsContext = clears; setNeedsCommit(); }
     bool clearsContext() const { return m_clearsContext; }
@@ -101,8 +99,8 @@ public:
     void setEdgeAntialiasingMask(uint32_t mask) { m_edgeAntialiasingMask = mask; setNeedsCommit(); }
     uint32_t edgeAntialiasingMask() const { return m_edgeAntialiasingMask; }
 
-    void setFrame(const SkRect&);
-    SkRect frame() const { return m_frame; }
+    void setFrame(const FloatRect&);
+    FloatRect frame() const { return m_frame; }
 
     void setHidden(bool hidden) { m_hidden = hidden; setNeedsCommit(); }
     bool isHidden() const { return m_hidden; }
@@ -113,7 +111,7 @@ public:
     void setName(const String& name) { m_name = name; }
     String name() const { return m_name; }
 
-    void setNeedsDisplay(const SkRect& dirtyRect);
+    void setNeedsDisplay(const FloatRect& dirtyRect);
     void setNeedsDisplay();
 
     void setNeedsDisplayOnBoundsChange(bool needsDisplay) { m_needsDisplayOnBoundsChange = needsDisplay; }
@@ -124,30 +122,30 @@ public:
     void setOpaque(bool opaque) { m_opaque = opaque; setNeedsCommit(); }
     bool opaque() const { return m_opaque; }
 
-    void setPosition(const SkPoint& position) { m_position = position;  setNeedsCommit(); }
+    void setPosition(const FloatPoint& position) { m_position = position;  setNeedsCommit(); }
 
-    SkPoint position() const { return m_position; }
+    FloatPoint position() const { return m_position; }
 
     void setZPosition(float zPosition) { m_zPosition = zPosition; setNeedsCommit(); }
-    SkScalar zPosition() const {  return m_zPosition; }
+    float zPosition() const {  return m_zPosition; }
 
-    const LayerSkia* rootLayer() const;
+    const LayerChromium* rootLayer() const;
 
     void removeAllSublayers();
 
-    void setSublayers(const Vector<RefPtr<LayerSkia> >&);
+    void setSublayers(const Vector<RefPtr<LayerChromium> >&);
 
-    const Vector<RefPtr<LayerSkia> >& getSublayers() const { return m_sublayers; }
+    const Vector<RefPtr<LayerChromium> >& getSublayers() const { return m_sublayers; }
 
-    void setSublayerTransform(const SkMatrix& transform) { m_sublayerTransform = transform; setNeedsCommit(); }
-    const SkMatrix& sublayerTransform() const { return m_sublayerTransform; }
+    void setSublayerTransform(const TransformationMatrix& transform) { m_sublayerTransform = transform; setNeedsCommit(); }
+    const TransformationMatrix& sublayerTransform() const { return m_sublayerTransform; }
 
-    void setSuperlayer(LayerSkia* superlayer);
-    LayerSkia* superlayer() const;
+    void setSuperlayer(LayerChromium* superlayer);
+    LayerChromium* superlayer() const;
 
 
-    void setTransform(const SkMatrix& transform) { m_transform = transform; setNeedsCommit(); }
-    const SkMatrix& transform() const { return m_transform; }
+    void setTransform(const TransformationMatrix& transform) { m_transform = transform; setNeedsCommit(); }
+    const TransformationMatrix& transform() const { return m_transform; }
 
     void setGeometryFlipped(bool flipped) { m_geometryFlipped = flipped; setNeedsCommit(); }
     bool geometryFlipped() const { return m_geometryFlipped; }
@@ -157,12 +155,12 @@ public:
     skia::PlatformCanvas* platformCanvas() { return m_canvas.get(); }
     GraphicsContext* graphicsContext() { return m_graphicsContext.get(); }
 
-    void setBackingStoreRect(const SkIRect&);
+    void setBackingStoreRect(const IntSize&);
 
     void drawDebugBorder();
 
 private:
-    LayerSkia(LayerType, GraphicsLayerSkia* owner);
+    LayerChromium(LayerType, GraphicsLayerChromium* owner);
 
     void setNeedsCommit();
 
@@ -174,35 +172,35 @@ private:
     }
 
     // Returns the index of the sublayer or -1 if not found.
-    int indexOfSublayer(const LayerSkia*);
+    int indexOfSublayer(const LayerChromium*);
 
     // This should only be called from removeFromSuperlayer.
-    void removeSublayer(LayerSkia*);
+    void removeSublayer(LayerChromium*);
 
     // Re-create the canvas and graphics context. This method
     // must be called every time the layer is resized.
-    void updateGraphicsContext(const SkIRect&);
+    void updateGraphicsContext(const IntSize&);
 
-    Vector<RefPtr<LayerSkia> > m_sublayers;
-    LayerSkia* m_superlayer;
+    Vector<RefPtr<LayerChromium> > m_sublayers;
+    LayerChromium* m_superlayer;
 
-    GraphicsLayerSkia* m_owner;
+    GraphicsLayerChromium* m_owner;
     OwnPtr<skia::PlatformCanvas> m_canvas;
     OwnPtr<PlatformContextSkia> m_skiaContext;
     OwnPtr<GraphicsContext> m_graphicsContext;
 
     LayerType m_layerType;
 
-    SkIRect m_bounds;
-    SkIRect m_backingStoreRect;
-    SkPoint m_position;
-    SkPoint m_anchorPoint;
+    IntSize m_bounds;
+    IntSize m_backingStoreRect;
+    FloatPoint m_position;
+    FloatPoint m_anchorPoint;
     Color m_backgroundColor;
     Color m_borderColor;
 
-    SkRect m_frame;
-    SkMatrix m_transform;
-    SkMatrix m_sublayerTransform;
+    FloatRect m_frame;
+    TransformationMatrix m_transform;
+    TransformationMatrix m_sublayerTransform;
 
     uint32_t m_edgeAntialiasingMask;
     float m_opacity;

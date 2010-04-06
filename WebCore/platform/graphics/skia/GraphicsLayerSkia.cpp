@@ -59,22 +59,22 @@ using namespace std;
 
 namespace WebCore {
 
-static void setLayerBorderColor(LayerSkia& layer, const Color& color)
+static void setLayerBorderColor(LayerChromium& layer, const Color& color)
 {
     layer.setBorderColor(color);
 }
 
-static void clearBorderColor(LayerSkia& layer)
+static void clearBorderColor(LayerChromium& layer)
 {
     layer.setBorderColor(0);
 }
 
-static void setLayerBackgroundColor(LayerSkia& layer, const Color& color)
+static void setLayerBackgroundColor(LayerChromium& layer, const Color& color)
 {
     layer.setBackgroundColor(color);
 }
 
-static void clearLayerBackgroundColor(LayerSkia& layer)
+static void clearLayerBackgroundColor(LayerChromium& layer)
 {
     layer.setBackgroundColor(0);
 }
@@ -86,20 +86,20 @@ GraphicsLayer::CompositingCoordinatesOrientation GraphicsLayer::compositingCoord
 
 PassOwnPtr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerClient* client)
 {
-    return new GraphicsLayerSkia(client);
+    return new GraphicsLayerChromium(client);
 }
 
-GraphicsLayerSkia::GraphicsLayerSkia(GraphicsLayerClient* client)
+GraphicsLayerChromium::GraphicsLayerChromium(GraphicsLayerClient* client)
     : GraphicsLayer(client)
     , m_contentsLayerPurpose(NoContentsLayer)
     , m_contentsLayerHasBackgroundColor(false)
 {
-    m_layer = LayerSkia::create(LayerSkia::Layer, this);
+    m_layer = LayerChromium::create(LayerChromium::Layer, this);
 
     updateDebugIndicators();
 }
 
-GraphicsLayerSkia::~GraphicsLayerSkia()
+GraphicsLayerChromium::~GraphicsLayerChromium()
 {
     // Clean up the Skia layer.
     if (m_layer)
@@ -109,18 +109,18 @@ GraphicsLayerSkia::~GraphicsLayerSkia()
         m_transformLayer->removeFromSuperlayer();
 }
 
-void GraphicsLayerSkia::setName(const String& inName)
+void GraphicsLayerChromium::setName(const String& inName)
 {
-    String name = String::format("GraphicsLayerSkia(%p) GraphicsLayer(%p) ", m_layer.get(), this) + inName;
+    String name = String::format("GraphicsLayerChromium(%p) GraphicsLayer(%p) ", m_layer.get(), this) + inName;
     GraphicsLayer::setName(name);
 }
 
-NativeLayer GraphicsLayerSkia::nativeLayer() const
+NativeLayer GraphicsLayerChromium::nativeLayer() const
 {
     return m_layer.get();
 }
 
-bool GraphicsLayerSkia::setChildren(const Vector<GraphicsLayer*>& children)
+bool GraphicsLayerChromium::setChildren(const Vector<GraphicsLayer*>& children)
 {
     bool childrenChanged = GraphicsLayer::setChildren(children);
     // FIXME: GraphicsLayer::setChildren calls addChild() for each sublayer, which
@@ -131,31 +131,31 @@ bool GraphicsLayerSkia::setChildren(const Vector<GraphicsLayer*>& children)
     return childrenChanged;
 }
 
-void GraphicsLayerSkia::addChild(GraphicsLayer* childLayer)
+void GraphicsLayerChromium::addChild(GraphicsLayer* childLayer)
 {
     GraphicsLayer::addChild(childLayer);
     updateSublayerList();
 }
 
-void GraphicsLayerSkia::addChildAtIndex(GraphicsLayer* childLayer, int index)
+void GraphicsLayerChromium::addChildAtIndex(GraphicsLayer* childLayer, int index)
 {
     GraphicsLayer::addChildAtIndex(childLayer, index);
     updateSublayerList();
 }
 
-void GraphicsLayerSkia::addChildBelow(GraphicsLayer* childLayer, GraphicsLayer* sibling)
+void GraphicsLayerChromium::addChildBelow(GraphicsLayer* childLayer, GraphicsLayer* sibling)
 {
     GraphicsLayer::addChildBelow(childLayer, sibling);
     updateSublayerList();
 }
 
-void GraphicsLayerSkia::addChildAbove(GraphicsLayer* childLayer, GraphicsLayer *sibling)
+void GraphicsLayerChromium::addChildAbove(GraphicsLayer* childLayer, GraphicsLayer *sibling)
 {
     GraphicsLayer::addChildAbove(childLayer, sibling);
     updateSublayerList();
 }
 
-bool GraphicsLayerSkia::replaceChild(GraphicsLayer* oldChild, GraphicsLayer* newChild)
+bool GraphicsLayerChromium::replaceChild(GraphicsLayer* oldChild, GraphicsLayer* newChild)
 {
     if (GraphicsLayer::replaceChild(oldChild, newChild)) {
         updateSublayerList();
@@ -164,19 +164,19 @@ bool GraphicsLayerSkia::replaceChild(GraphicsLayer* oldChild, GraphicsLayer* new
     return false;
 }
 
-void GraphicsLayerSkia::removeFromParent()
+void GraphicsLayerChromium::removeFromParent()
 {
     GraphicsLayer::removeFromParent();
     layerForSuperlayer()->removeFromSuperlayer();
 }
 
-void GraphicsLayerSkia::setPosition(const FloatPoint& point)
+void GraphicsLayerChromium::setPosition(const FloatPoint& point)
 {
     GraphicsLayer::setPosition(point);
     updateLayerPosition();
 }
 
-void GraphicsLayerSkia::setAnchorPoint(const FloatPoint3D& point)
+void GraphicsLayerChromium::setAnchorPoint(const FloatPoint3D& point)
 {
     if (point == m_anchorPoint)
         return;
@@ -185,7 +185,7 @@ void GraphicsLayerSkia::setAnchorPoint(const FloatPoint3D& point)
     updateAnchorPoint();
 }
 
-void GraphicsLayerSkia::setSize(const FloatSize& size)
+void GraphicsLayerChromium::setSize(const FloatSize& size)
 {
     if (size == m_size)
         return;
@@ -194,7 +194,7 @@ void GraphicsLayerSkia::setSize(const FloatSize& size)
     updateLayerSize();
 }
 
-void GraphicsLayerSkia::setTransform(const TransformationMatrix& transform)
+void GraphicsLayerChromium::setTransform(const TransformationMatrix& transform)
 {
     if (transform == m_transform)
         return;
@@ -203,7 +203,7 @@ void GraphicsLayerSkia::setTransform(const TransformationMatrix& transform)
     updateTransform();
 }
 
-void GraphicsLayerSkia::setChildrenTransform(const TransformationMatrix& transform)
+void GraphicsLayerChromium::setChildrenTransform(const TransformationMatrix& transform)
 {
     if (transform == m_childrenTransform)
         return;
@@ -212,7 +212,7 @@ void GraphicsLayerSkia::setChildrenTransform(const TransformationMatrix& transfo
     updateChildrenTransform();
 }
 
-void GraphicsLayerSkia::setPreserves3D(bool preserves3D)
+void GraphicsLayerChromium::setPreserves3D(bool preserves3D)
 {
     if (preserves3D == m_preserves3D)
         return;
@@ -221,7 +221,7 @@ void GraphicsLayerSkia::setPreserves3D(bool preserves3D)
     updateLayerPreserves3D();
 }
 
-void GraphicsLayerSkia::setMasksToBounds(bool masksToBounds)
+void GraphicsLayerChromium::setMasksToBounds(bool masksToBounds)
 {
     if (masksToBounds == m_masksToBounds)
         return;
@@ -230,7 +230,7 @@ void GraphicsLayerSkia::setMasksToBounds(bool masksToBounds)
     updateMasksToBounds();
 }
 
-void GraphicsLayerSkia::setDrawsContent(bool drawsContent)
+void GraphicsLayerChromium::setDrawsContent(bool drawsContent)
 {
     if (drawsContent == m_drawsContent)
         return;
@@ -239,7 +239,7 @@ void GraphicsLayerSkia::setDrawsContent(bool drawsContent)
     updateLayerDrawsContent();
 }
 
-void GraphicsLayerSkia::setBackgroundColor(const Color& color)
+void GraphicsLayerChromium::setBackgroundColor(const Color& color)
 {
     if (m_backgroundColorSet && m_backgroundColor == color)
         return;
@@ -250,7 +250,7 @@ void GraphicsLayerSkia::setBackgroundColor(const Color& color)
     updateLayerBackgroundColor();
 }
 
-void GraphicsLayerSkia::clearBackgroundColor()
+void GraphicsLayerChromium::clearBackgroundColor()
 {
     if (!m_backgroundColorSet)
         return;
@@ -259,7 +259,7 @@ void GraphicsLayerSkia::clearBackgroundColor()
     clearLayerBackgroundColor(*m_contentsLayer);
 }
 
-void GraphicsLayerSkia::setContentsOpaque(bool opaque)
+void GraphicsLayerChromium::setContentsOpaque(bool opaque)
 {
     if (m_contentsOpaque == opaque)
         return;
@@ -268,7 +268,7 @@ void GraphicsLayerSkia::setContentsOpaque(bool opaque)
     updateContentsOpaque();
 }
 
-void GraphicsLayerSkia::setBackfaceVisibility(bool visible)
+void GraphicsLayerChromium::setBackfaceVisibility(bool visible)
 {
     if (m_backfaceVisibility == visible)
         return;
@@ -277,7 +277,7 @@ void GraphicsLayerSkia::setBackfaceVisibility(bool visible)
     updateBackfaceVisibility();
 }
 
-void GraphicsLayerSkia::setOpacity(float opacity)
+void GraphicsLayerChromium::setOpacity(float opacity)
 {
     float clampedOpacity = max(min(opacity, 1.0f), 0.0f);
 
@@ -288,19 +288,19 @@ void GraphicsLayerSkia::setOpacity(float opacity)
     primaryLayer()->setOpacity(opacity);
 }
 
-void GraphicsLayerSkia::setNeedsDisplay()
+void GraphicsLayerChromium::setNeedsDisplay()
 {
     if (drawsContent())
         m_layer->setNeedsDisplay();
 }
 
-void GraphicsLayerSkia::setNeedsDisplayInRect(const FloatRect& rect)
+void GraphicsLayerChromium::setNeedsDisplayInRect(const FloatRect& rect)
 {
     if (drawsContent())
         m_layer->setNeedsDisplay(rect);
 }
 
-void GraphicsLayerSkia::setContentsRect(const IntRect& rect)
+void GraphicsLayerChromium::setContentsRect(const IntRect& rect)
 {
     if (rect == m_contentsRect)
         return;
@@ -309,17 +309,17 @@ void GraphicsLayerSkia::setContentsRect(const IntRect& rect)
     updateContentsRect();
 }
 
-void GraphicsLayerSkia::setContentsToImage(Image* image)
+void GraphicsLayerChromium::setContentsToImage(Image* image)
 {
     // FIXME: Implement
 }
 
-void GraphicsLayerSkia::setContentsToVideo(PlatformLayer* videoLayer)
+void GraphicsLayerChromium::setContentsToVideo(PlatformLayer* videoLayer)
 {
     // FIXME: Implement
 }
 
-void GraphicsLayerSkia::setGeometryOrientation(CompositingCoordinatesOrientation orientation)
+void GraphicsLayerChromium::setGeometryOrientation(CompositingCoordinatesOrientation orientation)
 {
     if (orientation == m_geometryOrientation)
         return;
@@ -328,22 +328,22 @@ void GraphicsLayerSkia::setGeometryOrientation(CompositingCoordinatesOrientation
     updateGeometryOrientation();
 }
 
-PlatformLayer* GraphicsLayerSkia::hostLayerForSublayers() const
+PlatformLayer* GraphicsLayerChromium::hostLayerForSublayers() const
 {
     return m_transformLayer ? m_transformLayer.get() : m_layer.get();
 }
 
-PlatformLayer* GraphicsLayerSkia::layerForSuperlayer() const
+PlatformLayer* GraphicsLayerChromium::layerForSuperlayer() const
 {
     return m_transformLayer ? m_transformLayer.get() : m_layer.get();
 }
 
-PlatformLayer* GraphicsLayerSkia::platformLayer() const
+PlatformLayer* GraphicsLayerChromium::platformLayer() const
 {
     return primaryLayer();
 }
 
-void GraphicsLayerSkia::setDebugBackgroundColor(const Color& color)
+void GraphicsLayerChromium::setDebugBackgroundColor(const Color& color)
 {
     if (color.isValid())
         setLayerBackgroundColor(*m_layer, color);
@@ -351,7 +351,7 @@ void GraphicsLayerSkia::setDebugBackgroundColor(const Color& color)
         clearLayerBackgroundColor(*m_layer);
 }
 
-void GraphicsLayerSkia::setDebugBorder(const Color& color, float borderWidth)
+void GraphicsLayerChromium::setDebugBorder(const Color& color, float borderWidth)
 {
     if (color.isValid()) {
         setLayerBorderColor(*m_layer, color);
@@ -362,9 +362,9 @@ void GraphicsLayerSkia::setDebugBorder(const Color& color, float borderWidth)
     }
 }
 
-void GraphicsLayerSkia::updateSublayerList()
+void GraphicsLayerChromium::updateSublayerList()
 {
-    Vector<RefPtr<LayerSkia> > newSublayers;
+    Vector<RefPtr<LayerChromium> > newSublayers;
 
     if (m_transformLayer) {
         // Add the primary layer first. Even if we have negative z-order children, the primary layer always comes behind.
@@ -379,9 +379,9 @@ void GraphicsLayerSkia::updateSublayerList()
     const Vector<GraphicsLayer*>& childLayers = children();
     size_t numChildren = childLayers.size();
     for (size_t i = 0; i < numChildren; ++i) {
-        GraphicsLayerSkia* curChild = static_cast<GraphicsLayerSkia*>(childLayers[i]);
+        GraphicsLayerChromium* curChild = static_cast<GraphicsLayerChromium*>(childLayers[i]);
 
-        LayerSkia* childLayer = curChild->layerForSuperlayer();
+        LayerChromium* childLayer = curChild->layerForSuperlayer();
         newSublayers.append(childLayer);
     }
 
@@ -401,29 +401,26 @@ void GraphicsLayerSkia::updateSublayerList()
         m_layer->setSublayers(newSublayers);
 }
 
-void GraphicsLayerSkia::updateLayerPosition()
+void GraphicsLayerChromium::updateLayerPosition()
 {
     // Position is offset on the layer by the layer anchor point.
-    SkPoint layerPosition;
-    layerPosition.set(m_position.x() + m_anchorPoint.x() * m_size.width(),
-                      m_position.y() + m_anchorPoint.y() * m_size.height());
+    FloatPoint layerPosition(m_position.x() + m_anchorPoint.x() * m_size.width(),
+                             m_position.y() + m_anchorPoint.y() * m_size.height());
 
     primaryLayer()->setPosition(layerPosition);
 }
 
-void GraphicsLayerSkia::updateLayerSize()
+void GraphicsLayerChromium::updateLayerSize()
 {
-    SkIRect rect;
-    rect.set(0, 0, m_size.width(), m_size.height());
+    IntSize layerSize(m_size.width(), m_size.height());
     if (m_transformLayer) {
-        m_transformLayer->setBounds(rect);
+        m_transformLayer->setBounds(layerSize);
         // The anchor of the contents layer is always at 0.5, 0.5, so the position is center-relative.
-        SkPoint centerPoint;
-        centerPoint.set(m_size.width() / 2.0f, m_size.height() / 2.0f);
+        FloatPoint centerPoint(m_size.width() / 2, m_size.height() / 2);
         m_layer->setPosition(centerPoint);
     }
 
-    m_layer->setBounds(rect);
+    m_layer->setBounds(layerSize);
 
     // Note that we don't resize m_contentsLayer. It's up the caller to do that.
 
@@ -432,47 +429,45 @@ void GraphicsLayerSkia::updateLayerSize()
     updateLayerPosition();
 }
 
-void GraphicsLayerSkia::updateAnchorPoint()
+void GraphicsLayerChromium::updateAnchorPoint()
 {
-    SkPoint anchorPoint;
-    anchorPoint.set(m_anchorPoint.x(), m_anchorPoint.y());
-    primaryLayer()->setAnchorPoint(anchorPoint);
+    primaryLayer()->setAnchorPoint(FloatPoint(m_anchorPoint.x(), m_anchorPoint.y()));
     primaryLayer()->setAnchorPointZ(m_anchorPoint.z());
     updateLayerPosition();
 }
 
-void GraphicsLayerSkia::updateTransform()
+void GraphicsLayerChromium::updateTransform()
 {
-    primaryLayer()->setTransform(m_transform.toAffineTransform());
+    primaryLayer()->setTransform(m_transform);
 }
 
-void GraphicsLayerSkia::updateChildrenTransform()
+void GraphicsLayerChromium::updateChildrenTransform()
 {
     primaryLayer()->setSublayerTransform(m_childrenTransform);
 }
 
-void GraphicsLayerSkia::updateMasksToBounds()
+void GraphicsLayerChromium::updateMasksToBounds()
 {
     m_layer->setMasksToBounds(m_masksToBounds);
     updateDebugIndicators();
 }
 
-void GraphicsLayerSkia::updateContentsOpaque()
+void GraphicsLayerChromium::updateContentsOpaque()
 {
     m_layer->setOpaque(m_contentsOpaque);
 }
 
-void GraphicsLayerSkia::updateBackfaceVisibility()
+void GraphicsLayerChromium::updateBackfaceVisibility()
 {
     m_layer->setDoubleSided(m_backfaceVisibility);
 }
 
-void GraphicsLayerSkia::updateLayerPreserves3D()
+void GraphicsLayerChromium::updateLayerPreserves3D()
 {
     // FIXME: implement
 }
 
-void GraphicsLayerSkia::updateLayerDrawsContent()
+void GraphicsLayerChromium::updateLayerDrawsContent()
 {
     if (m_drawsContent)
         m_layer->setNeedsDisplay();
@@ -480,7 +475,7 @@ void GraphicsLayerSkia::updateLayerDrawsContent()
     updateDebugIndicators();
 }
 
-void GraphicsLayerSkia::updateLayerBackgroundColor()
+void GraphicsLayerChromium::updateLayerBackgroundColor()
 {
     if (!m_contentsLayer)
         return;
@@ -492,31 +487,26 @@ void GraphicsLayerSkia::updateLayerBackgroundColor()
         clearLayerBackgroundColor(*m_contentsLayer);
 }
 
-void GraphicsLayerSkia::updateContentsImage()
+void GraphicsLayerChromium::updateContentsImage()
 {
     // FIXME: Implement
 }
 
-void GraphicsLayerSkia::updateContentsVideo()
+void GraphicsLayerChromium::updateContentsVideo()
 {
     // FIXME: Implement
 }
 
-void GraphicsLayerSkia::updateContentsRect()
+void GraphicsLayerChromium::updateContentsRect()
 {
     if (!m_contentsLayer)
         return;
 
-    SkPoint point;
-    point.set(m_contentsRect.x(), m_contentsRect.y());
-    SkIRect rect;
-    rect.set(0, 0, m_contentsRect.width(), m_contentsRect.height());
-
-    m_contentsLayer->setPosition(point);
-    m_contentsLayer->setBounds(rect);
+    m_contentsLayer->setPosition(FloatPoint(m_contentsRect.x(), m_contentsRect.y()));
+    m_contentsLayer->setBounds(IntSize(m_contentsRect.width(), m_contentsRect.height()));
 }
 
-void GraphicsLayerSkia::updateGeometryOrientation()
+void GraphicsLayerChromium::updateGeometryOrientation()
 {
     switch (geometryOrientation()) {
     case CompositingCoordinatesTopDown:
@@ -531,7 +521,7 @@ void GraphicsLayerSkia::updateGeometryOrientation()
     // so is handled via setGeometryOrientation().
 }
 
-void GraphicsLayerSkia::setupContentsLayer(LayerSkia* contentsLayer)
+void GraphicsLayerChromium::setupContentsLayer(LayerChromium* contentsLayer)
 {
     if (contentsLayer == m_contentsLayer)
         return;
@@ -544,9 +534,7 @@ void GraphicsLayerSkia::setupContentsLayer(LayerSkia* contentsLayer)
     if (contentsLayer) {
         m_contentsLayer = contentsLayer;
 
-        SkPoint anchorPoint;
-        anchorPoint.set(0.0f, 0.0f);
-        m_contentsLayer->setAnchorPoint(anchorPoint);
+        m_contentsLayer->setAnchorPoint(FloatPoint(0, 0));
 
         // Insert the content layer first. Video elements require this, because they have
         // shadow content that must display in front of the video.
@@ -556,14 +544,14 @@ void GraphicsLayerSkia::setupContentsLayer(LayerSkia* contentsLayer)
 
         if (showDebugBorders()) {
             setLayerBorderColor(*m_contentsLayer, Color(0, 0, 128, 180));
-            m_contentsLayer->setBorderWidth(1.0f);
+            m_contentsLayer->setBorderWidth(1);
         }
     }
     updateDebugIndicators();
 }
 
 // This function simply mimics the operation of GraphicsLayerCA
-void GraphicsLayerSkia::updateOpacityOnLayer()
+void GraphicsLayerChromium::updateOpacityOnLayer()
 {
     primaryLayer()->setOpacity(m_opacity);
 }
