@@ -2809,8 +2809,9 @@ BUG39904 : svg/animations/animate-points.html = TEXT TIMEOUT
 // This test generate strange result on Linux, the resulted image is too small.
 BUG40027 LINUX : fast/forms/input-file-re-render.html = TEXT IMAGE
 
-BUG40411 WIN LINUX : fast/repaint/line-flow-with-floats-9.html = IMAGE
+BUGWK36983 MAC : fast/canvas/webgl/null-object-behaviour.html = TEXT
+BUGWK36983 MAC : fast/canvas/webgl/uniform-location.html = TEXT
 
-// Finding out what is wrong with newlines mismatch.
-BUG_PFELDMAN MAC : fast/canvas/webgl/null-object-behaviour.html = TEXT
-BUG_PFELDMAN MAC : fast/canvas/webgl/uniform-location.html = TEXT
+BUG_40514 WIN MAC : fast/backgrounds/size/contain-and-cover.html = IMAGE
+BUG_40515 MAC : editing/pasteboard/drag-image-to-contenteditable-in-iframe.html = IMAGE+TEXT
+BUG_40516 MAC : editing/inserting/break-blockquote-after-delete.html = TEXT

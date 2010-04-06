@@ -1,3 +1,9 @@
+2010-04-06  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: updated test expectations for Chromium roll.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-04-06  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
