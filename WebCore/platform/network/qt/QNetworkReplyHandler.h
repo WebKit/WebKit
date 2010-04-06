@@ -82,6 +82,7 @@ private:
     bool m_shouldFinish;
     bool m_shouldSendResponse;
     bool m_shouldForwardData;
+    int m_redirectionTries;
 };
 
 // Self destructing QIODevice for FormData

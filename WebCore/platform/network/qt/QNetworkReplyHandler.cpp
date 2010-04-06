@@ -48,6 +48,7 @@
 #define SIGNAL_CONN Qt::QueuedConnection
 #endif
 
+static const int gMaxRecursionLimit = 10;
 
 namespace WebCore {
 
@@ -138,6 +139,7 @@ QNetworkReplyHandler::QNetworkReplyHandler(ResourceHandle* handle, LoadMode load
     , m_shouldFinish(false)
     , m_shouldSendResponse(false)
     , m_shouldForwardData(false)
+    , m_redirectionTries(gMaxRecursionLimit)
 {
     const ResourceRequest &r = m_resourceHandle->request();
 
@@ -336,14 +338,15 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
     QUrl redirection = m_reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
     if (redirection.isValid()) {
         QUrl newUrl = m_reply->url().resolved(redirection);
-        if (newUrl == m_reply->url()) { // avoid redirecting to the same url as it causes infinite recursion
+
+        m_redirectionTries--;
+        if (m_redirectionTries == 0) { // 10 or more redirections to the same url is considered infinite recursion
             ResourceError error(newUrl.host(), 400 /*bad request*/,
                                 newUrl.toString(),
-                                QCoreApplication::translate("QWebPage", "Infinite recursion in redirection request"));
+                                QCoreApplication::translate("QWebPage", "Redirection limit reached"));
             client->didFail(m_resourceHandle, error);
             return;
         }
-
         m_redirected = true;
 
         ResourceRequest newRequest = m_resourceHandle->request();
