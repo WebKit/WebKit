@@ -1,3 +1,11 @@
+2010-04-06  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Update Chromium test expectations.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36375
+
+        * platform/chromium-win/fast/workers/worker-script-error-expected.txt:
+
 2010-04-06  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: rebaselining Chromium layout test expectations.
