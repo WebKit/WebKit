@@ -1,3 +1,53 @@
+2010-04-06  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Refactored error reporting mechanizm on Worker Global Objects.
+        Unlike other event listeners which accept single argument(Event)
+        onerror handler on worker global object should be a function
+        accepting three arguments. This error reporting was implementedas
+        EventListener::reportError method which had custom implementations
+        for v8 and JSC. This patch removes EventListener::reportError and
+        moves its functionality into custom bindings(V8WorkerContextErrorHandler
+        and JSWorkerContextErrorHandler) that implement EventListener inerface
+        for the onerror handler.
+
+        This patch also makes uncaught exceptions that happen in the onerror
+        listener be reported to the Worker's onerror handler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36375
+
+        * Android.jscbindings.mk:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSEventListener.cpp:
+        * bindings/js/JSEventListener.h:
+        * bindings/js/JSWorkerContextErrorHandler.cpp: Added.
+        (WebCore::JSWorkerContextErrorHandler::JSWorkerContextErrorHandler):
+        (WebCore::JSWorkerContextErrorHandler::~JSWorkerContextErrorHandler):
+        (WebCore::JSWorkerContextErrorHandler::handleEvent):
+        * bindings/js/JSWorkerContextErrorHandler.h: Added.
+        (WebCore::JSWorkerContextErrorHandler::create):
+        (WebCore::createJSWorkerContextErrorHandler):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/v8/V8WorkerContextErrorHandler.cpp: Added.
+        (WebCore::V8WorkerContextErrorHandler::V8WorkerContextErrorHandler):
+        (WebCore::V8WorkerContextErrorHandler::callListenerFunction):
+        * bindings/v8/V8WorkerContextErrorHandler.h: Added.
+        (WebCore::V8WorkerContextErrorHandler::create):
+        * bindings/v8/V8WorkerContextEventListener.cpp:
+        * bindings/v8/V8WorkerContextEventListener.h:
+        * dom/EventListener.h:
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::WorkerContext):
+        (WebCore::WorkerContext::reportException):
+        * workers/WorkerContext.h:
+
 2010-04-06  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: reverting v8 change at r57079 for crashing Chromium layout tests.

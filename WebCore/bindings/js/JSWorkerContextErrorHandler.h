@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,39 +28,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef V8WorkerContextEventListener_h
-#define V8WorkerContextEventListener_h
+#ifndef JSWorkerContextErrorHandler_h
+#define JSWorkerContextErrorHandler_h
 
-#if ENABLE(WORKERS)
-
-#include "V8CustomEventListener.h"
-#include <v8.h>
-#include <wtf/PassRefPtr.h>
+#include "JSEventListener.h"
 
 namespace WebCore {
 
-    class Event;
-    class WorkerContextExecutionProxy;
+class JSWorkerContextErrorHandler : public JSEventListener {
+public:
+    static PassRefPtr<JSWorkerContextErrorHandler> create(JSC::JSObject* listener, JSC::JSObject* wrapper, bool isAttribute, DOMWrapperWorld* isolatedWorld)
+    {
+        return adoptRef(new JSWorkerContextErrorHandler(listener, wrapper, isAttribute, isolatedWorld));
+    }
 
-    class V8WorkerContextEventListener : public V8EventListener {
-    public:
-        static PassRefPtr<V8WorkerContextEventListener> create(v8::Local<v8::Object> listener, bool isInline, const WorldContextHandle& worldContext)
-        {
-            return adoptRef(new V8WorkerContextEventListener(listener, isInline, worldContext));
-        }
+    virtual ~JSWorkerContextErrorHandler();
 
-        virtual void handleEvent(ScriptExecutionContext*, Event*);
+private:
+    JSWorkerContextErrorHandler(JSC::JSObject* function, JSC::JSObject* wrapper, bool isAttribute, DOMWrapperWorld* isolatedWorld);
+    virtual void handleEvent(ScriptExecutionContext*, Event*);
+};
 
-    protected:
-        V8WorkerContextEventListener(v8::Local<v8::Object> listener, bool isInline, const WorldContextHandle& worldContext);
+// Creates a JS EventListener for "onerror" event handler in worker context. It has custom implementation because
+// unlike other event listeners it accepts three parameters.
+inline PassRefPtr<JSWorkerContextErrorHandler> createJSWorkerContextErrorHandler(JSC::ExecState* exec, JSC::JSValue listener, JSC::JSObject* wrapper)
+{
+    if (!listener.isObject())
+        return 0;
 
-    private:
-        virtual v8::Local<v8::Value> callListenerFunction(ScriptExecutionContext*, v8::Handle<v8::Value> jsEvent, Event*);
-        v8::Local<v8::Object> getReceiverObject(ScriptExecutionContext*, Event*);
-    };
+    return JSWorkerContextErrorHandler::create(asObject(listener), wrapper, true, currentWorld(exec));
+}
 
 } // namespace WebCore
 
-#endif // WORKERS
-
-#endif // V8WorkerContextEventListener_h
+#endif // JSWorkerContextErrorHandler_h

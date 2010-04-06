@@ -363,6 +363,7 @@ SOURCES += \
     bindings/js/JSLazyEventListener.cpp \
     bindings/js/JSPluginElementFunctions.cpp \
     bindings/js/JSPopStateEventCustom.cpp \
+    bindings/js/JSWorkerContextErrorHandler.cpp \
     bindings/js/JavaScriptProfile.h \
     bindings/js/JavaScriptProfileNode.h \
     bindings/js/JavaScriptProfile.cpp \
@@ -1071,7 +1072,7 @@ HEADERS += \
     bindings/js/JSWebKitPointConstructor.h \
     bindings/js/JSWorkerConstructor.h \
     bindings/js/JSWorkerContextBase.h \
-    bindings/js/JSWorkerContextBase.h \
+    bindings/js/JSWorkerContextErrorHandler.h \
     bindings/js/JSXMLHttpRequestConstructor.h \
     bindings/js/JSXSLTProcessorConstructor.h \
     bindings/js/ScheduledAction.h \

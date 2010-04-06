@@ -911,7 +911,13 @@ END
         } elsif ($attribute->signature->type eq "EventListener") {
             $implIncludes{"V8AbstractEventListener.h"} = 1;
             push(@implContentDecls, "    transferHiddenDependency(info.Holder(), imp->$attrName(), value, V8${interfaceName}::eventListenerCacheIndex);\n");
-            push(@implContentDecls, "    imp->set$implSetterFunctionName(V8DOMWrapper::getEventListener(value, true, ListenerFindOrCreate)");
+            if ($interfaceName eq "WorkerContext" and $attribute->signature->name eq "onerror") {
+                $implIncludes{"V8EventListenerList.h"} = 1;
+                $implIncludes{"V8WorkerContextErrorHandler.h"} = 1;
+                push(@implContentDecls, "    imp->set$implSetterFunctionName(V8EventListenerList::findOrCreateWrapper<V8WorkerContextErrorHandler>(value, true)");
+            } else {
+                push(@implContentDecls, "    imp->set$implSetterFunctionName(V8DOMWrapper::getEventListener(value, true, ListenerFindOrCreate)");
+            }
         } else {
             push(@implContentDecls, "    imp->set$implSetterFunctionName($result");
         }

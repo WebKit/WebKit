@@ -127,6 +127,7 @@
 #include "JSWorkerConstructor.cpp"
 #include "JSWorkerContextBase.cpp"
 #include "JSWorkerContextCustom.cpp"
+#include "JSWorkerContextErrorHandler.cpp"
 #include "JSWorkerCustom.cpp"
 #include "JSXMLHttpRequestConstructor.cpp"
 #include "JSXMLHttpRequestCustom.cpp"
