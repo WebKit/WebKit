@@ -1,3 +1,10 @@
+2010-04-06  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix for wxMac / Cocoa on wx trunk.
+        
+        * platform/wx/wxcode/mac/carbon/fontprops.mm:
+        (wxFontContainsCharacters):
+
 2010-04-06  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Darin Adler.

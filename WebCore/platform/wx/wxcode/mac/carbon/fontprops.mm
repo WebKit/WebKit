@@ -96,7 +96,7 @@ bool wxFontContainsCharacters(const wxFont& font, const UChar* characters, int l
 {
 #if wxOSX_USE_COCOA
     NSString* string = [[NSString alloc] initWithCharactersNoCopy:const_cast<unichar*>(characters) length:length freeWhenDone:NO];
-    NSCharacterSet* set = [[font.GetNSFont() coveredCharacterSet] invertedSet];
+    NSCharacterSet* set = [[font.OSXGetNSFont() coveredCharacterSet] invertedSet];
     bool result = set && [string rangeOfCharacterFromSet:set].location == NSNotFound;
     [string release];
     return result;
