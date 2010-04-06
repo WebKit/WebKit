@@ -1,5 +1,11 @@
 2010-04-05  Oliver Hunt  <oliver@apple.com>
 
+        And another build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.make:
+
+2010-04-05  Oliver Hunt  <oliver@apple.com>
+
         Build fix
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
