@@ -37,6 +37,7 @@ from webkitpy.tool.mocktool import MockTool, mock_builder
 
 
 class MockSheriffBot(object):
+    name = "mock-sheriff-bot"
     watchers = [
         "watcher@example.com",
     ]
@@ -75,4 +76,14 @@ class SheriffTest(unittest.TestCase):
             sheriff.post_blame_comment_on_bug(commit_info, builders, [841, 5646])
 
         expected_stderr = u"MOCK bug comment: bug_id=1234, cc=['watcher@example.com']\n--- Begin comment ---\\http://trac.webkit.org/changeset/4321 might have broken Foo and Bar\n--- End comment ---\n\nMOCK bug comment: bug_id=1234, cc=['watcher@example.com']\n--- Begin comment ---\\http://trac.webkit.org/changeset/4321 might have broken Foo and Bar\n--- End comment ---\n\nMOCK bug comment: bug_id=1234, cc=['watcher@example.com']\n--- Begin comment ---\\http://trac.webkit.org/changeset/4321 might have broken Foo and Bar\nThe following changes are on the blame list:\nhttp://trac.webkit.org/changeset/841\nhttp://trac.webkit.org/changeset/5646\n--- End comment ---\n\n"
+        OutputCapture().assert_outputs(self, run, expected_stderr=expected_stderr)
+
+    def test_provoke_flaky_builders(self):
+        def run():
+            tool = MockTool()
+            tool.buildbot.light_tree_on_fire()
+            sheriff = Sheriff(tool, MockSheriffBot())
+            revisions_causing_failures = {}
+            sheriff.provoke_flaky_builders(revisions_causing_failures)
+        expected_stderr = "MOCK: force_build: name=Builder2, username=mock-sheriff-bot, comments=Probe for flakiness.\n"
         OutputCapture().assert_outputs(self, run, expected_stderr=expected_stderr)

@@ -107,3 +107,26 @@ class Sheriff(object):
         self._tool.bugs.post_comment_to_bug(commit_info.bug_id(),
                                             comment,
                                             cc=self._sheriffbot.watchers)
+
+    # FIXME: Should some of this logic be on BuildBot?
+    def provoke_flaky_builders(self, revisions_causing_failures):
+        # We force_build builders that are red but have not "failed" (i.e.,
+        # been red twice). We do this to avoid a deadlock situation where a
+        # flaky test blocks the commit-queue and there aren't any other
+        # patches being landed to re-spin the builder.
+        failed_builders = sum([revisions_causing_failures[key] for
+                               key in revisions_causing_failures.keys()], [])
+        failed_builder_names = \
+            set([builder.name() for builder in failed_builders])
+        idle_red_builder_names = \
+            set([builder["name"]
+                 for builder in self._tool.buildbot.idle_red_core_builders()])
+
+        # We only want to provoke these builders if they are idle and have not
+        # yet "failed" (i.e., been red twice) to avoid overloading the bots.
+        flaky_builder_names = idle_red_builder_names - failed_builder_names
+
+        for name in flaky_builder_names:
+            flaky_builder = self._tool.buildbot.builder_with_name(name)
+            flaky_builder.force_build(username=self._sheriffbot.name,
+                                      comments="Probe for flakiness.")

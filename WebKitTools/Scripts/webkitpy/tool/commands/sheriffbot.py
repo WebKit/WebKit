@@ -61,12 +61,14 @@ class SheriffBot(AbstractQueue, StepSequenceErrorHandler):
         self._irc_bot.process_pending_messages()
         self._update()
         new_failures = {}
-        for svn_revision, builders in self.tool.buildbot.revisions_causing_failures().items():
+        revisions_causing_failures = self.tool.buildbot.revisions_causing_failures()
+        for svn_revision, builders in revisions_causing_failures.items():
             if self.tool.status_server.svn_revision(svn_revision):
                 # FIXME: We should re-process the work item after some time delay.
                 # https://bugs.webkit.org/show_bug.cgi?id=36581
                 continue
             new_failures[svn_revision] = builders
+        self._sheriff.provoke_flaky_builders(revisions_causing_failures)
         return new_failures
 
     def should_proceed_with_work_item(self, new_failures):

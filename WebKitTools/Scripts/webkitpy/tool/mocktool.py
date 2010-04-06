@@ -296,30 +296,57 @@ class MockBugzilla(Mock):
             bug_id, cc, comment_text))
 
 
+class MockBuilder(object):
+    def __init__(self, name):
+        self._name = name
+
+    def force_build(self, username, comments):
+        log("MOCK: force_build: name=%s, username=%s, comments=%s" % (
+            self._name, username, comments))
+
+
 class MockBuildBot(object):
-
     def __init__(self):
-        self._tree_is_on_fire = False
-
-    def builder_statuses(self):
-        return [{
+        self._mock_builder1_status = {
             "name": "Builder1",
             "is_green": True,
-        }, {
+            "activity": "building",
+        }
+        self._mock_builder2_status = {
             "name": "Builder2",
-            "is_green": not self._tree_is_on_fire,
-        }]
+            "is_green": True,
+            "activity": "idle",
+        }
+
+    def builder_with_name(self, name):
+        return MockBuilder(name)
+
+    def builder_statuses(self):
+        return [
+            self._mock_builder1_status,
+            self._mock_builder2_status,
+        ]
 
     def red_core_builders_names(self):
-        if self._tree_is_on_fire:
-            return "Builder2"
+        if not self._mock_builder2_status["is_green"]:
+            return [self._mock_builder2_status["name"]]
+        return []
+
+    def red_core_builders(self):
+        if not self._mock_builder2_status["is_green"]:
+            return [self._mock_builder2_status]
+        return []
+
+    def idle_red_core_builders(self):
+        if not self._mock_builder2_status["is_green"]:
+            return [self._mock_builder2_status]
         return []
 
     def last_green_revision(self):
         return 9479
 
     def light_tree_on_fire(self):
-        self._tree_is_on_fire = True
+        self._mock_builder2_status["is_green"] = False
 
     def revisions_causing_failures(self):
         return {

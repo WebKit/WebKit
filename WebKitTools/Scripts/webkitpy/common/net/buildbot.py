@@ -369,6 +369,9 @@ class BuildBot(object):
     def red_core_builders_names(self):
         return [builder["name"] for builder in self.red_core_builders()]
 
+    def idle_red_core_builders(self):
+        return [builder for builder in self.red_core_builders() if builder["activity"] == "idle"]
+
     def core_builders_are_green(self):
         return not self.red_core_builders()
 

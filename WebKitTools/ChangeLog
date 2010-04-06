@@ -1,3 +1,23 @@
+2010-04-05  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        SheriffBot should force_build builders that are idle and have failed exactly once
+        https://bugs.webkit.org/show_bug.cgi?id=37059
+
+        We can get into a deadlocked state where the commit-queue is stopped
+        because the builders are red but the SheriffBot hasn't taken action
+        because the builder has failed only once.  The SheriffBot should force
+        build idle builders that have failed exactly once to either turn the
+        tree green again (if the test was flaky) or trigger the "failed twice"
+        remedies (IRC and bug posts).
+
+        * Scripts/webkitpy/common/net/buildbot.py:
+        * Scripts/webkitpy/tool/bot/sheriff.py:
+        * Scripts/webkitpy/tool/bot/sheriff_unittest.py:
+        * Scripts/webkitpy/tool/commands/sheriffbot.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+
 2010-04-05  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Shinichiro Hamaji.
