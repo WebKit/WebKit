@@ -1,3 +1,15 @@
+2010-04-05  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Unreviewed after discussion with Adam, Darin, and Eric.
+
+        Deleted the auto-install directory since it is no longer needed in
+        source control (it is auto-generated).
+
+        Also added webkitpy/thirdparty/autoinstalled to webkitpy/thirdparty's
+        svn:ignore property.
+
+        * Scripts/webkitpy/thirdparty/autoinstalled: Removed.
+
 2010-04-05  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Adele Peterson.
