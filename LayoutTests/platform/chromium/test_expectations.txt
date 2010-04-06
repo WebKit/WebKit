@@ -758,6 +758,11 @@ BUG13907 : fast/layers/video-layer.html = FAIL
 BUG29748 LINUX : media/video-controls-rendering.html = IMAGE
 
 // These tests need to be changed to be platform independent.
+BUG13907 : http/tests/media/remove-while-loading.html = TIMEOUT
+BUG13907 : http/tests/media/video-play-stall-seek.html = TIMEOUT
+BUG13907 : http/tests/media/video-play-stall.html = TIMEOUT
+BUG13907 : http/tests/media/video-referer.html = TIMEOUT
+BUG13907 : http/tests/media/video-seekable-stall.html = TIMEOUT
 BUG13907 : http/tests/security/local-video-poster-from-remote.html = PASS FAIL TIMEOUT
 BUG13907 : http/tests/security/local-video-source-from-remote.html = PASS FAIL TIMEOUT
 BUG13907 : http/tests/security/local-video-src-from-remote.html = PASS FAIL TIMEOUT

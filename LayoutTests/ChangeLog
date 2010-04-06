@@ -1,3 +1,11 @@
+2010-04-06  Andrew Scherkus  <scherkus@chromium.org>
+
+        Unreviewed, media test expectations tweak.
+
+        We now regularly run http/tests/media and have to mark a few tests as TIMEOUT.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-04-06  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
