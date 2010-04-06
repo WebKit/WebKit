@@ -76,7 +76,7 @@ BUG24182 SLOW WIN RELEASE : fast/dom/Window/webkitConvertPoint.html = PASS
 
 BUG24182 WIN RELEASE SLOW : http/tests/loading/redirect-methods.html = PASS
 BUG24182 WIN SLOW : svg/hixie/perf/007.xml = PASS
-BUG24182 DEBUG : fast/backgrounds/size/contain-and-cover.html = PASS
+// BUG24182 WIN LINUX DEBUG : fast/backgrounds/size/contain-and-cover.html = PASS
 BUG24182 SLOW MAC RELEASE : dom/html/level2/html/HTMLImageElement01.html = PASS
 BUG24182 SLOW WIN RELEASE : http/tests/local/file-url-sent-as-referer.html = PASS
 BUG24182 SLOW WIN DEBUG : svg/carto.net/window.svg = PASS
@@ -2809,9 +2809,10 @@ BUG39904 : svg/animations/animate-points.html = TEXT TIMEOUT
 // This test generate strange result on Linux, the resulted image is too small.
 BUG40027 LINUX : fast/forms/input-file-re-render.html = TEXT IMAGE
 
+// These are failing due to new-rin-webkit-tests's diff trimming line ends.
 BUGWK36983 MAC : fast/canvas/webgl/null-object-behaviour.html = TEXT
 BUGWK36983 MAC : fast/canvas/webgl/uniform-location.html = TEXT
 
-BUG_40514 WIN MAC : fast/backgrounds/size/contain-and-cover.html = IMAGE
+BUG_40514 MAC DEBUG : fast/backgrounds/size/contain-and-cover.html = IMAGE
 BUG_40515 MAC : editing/pasteboard/drag-image-to-contenteditable-in-iframe.html = IMAGE+TEXT
 BUG_40516 MAC : editing/inserting/break-blockquote-after-delete.html = TEXT
