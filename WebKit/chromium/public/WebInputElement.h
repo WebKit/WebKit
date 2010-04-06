@@ -82,6 +82,7 @@ namespace WebKit {
         WEBKIT_API bool autoComplete() const;
         WEBKIT_API bool isEnabledFormControl() const;
         WEBKIT_API InputType inputType() const;
+        WEBKIT_API int maxLength() const;
         WEBKIT_API bool isActivatedSubmit() const;
         WEBKIT_API void setActivatedSubmit(bool);
         WEBKIT_API void setValue(const WebString& value);

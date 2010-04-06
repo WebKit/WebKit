@@ -1,3 +1,14 @@
+2010-04-06  James Hawkins  <jhawkins@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [Chromium] Implement WebInputElement::maxLength.
+        https://bugs.webkit.org/show_bug.cgi?id=37172
+
+        * public/WebInputElement.h:
+        * src/WebInputElement.cpp:
+        (WebKit::WebInputElement::maxLength):
+
 2010-04-06  Evan Stade  <estade@chromium.org>
 
         Reviewed by Dimitri Glazkov.
