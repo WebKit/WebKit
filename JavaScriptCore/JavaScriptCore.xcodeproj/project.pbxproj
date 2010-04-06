@@ -273,6 +273,9 @@
 		A72701B90DADE94900E548D7 /* ExceptionHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = A72701B30DADE94900E548D7 /* ExceptionHelpers.h */; };
 		A727FF6B0DA3092200E548D7 /* JSPropertyNameIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A727FF660DA3053B00E548D7 /* JSPropertyNameIterator.cpp */; };
 		A7280A2811557E3000D56957 /* JSObjectRefPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = A79EDB0811531CD60019E912 /* JSObjectRefPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A7482B9311671147003B0712 /* JSWeakObjectMapRefPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = A7482B791166CDEA003B0712 /* JSWeakObjectMapRefPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A7482B9411671147003B0712 /* JSWeakObjectMapRefPrivate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7482B7A1166CDEA003B0712 /* JSWeakObjectMapRefPrivate.cpp */; };
+		A7482E93116A7CAD003B0712 /* JSWeakObjectMapRefInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A7482E37116A697B003B0712 /* JSWeakObjectMapRefInternal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A74B3499102A5F8E0032AB98 /* MarkStack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A74B3498102A5F8E0032AB98 /* MarkStack.cpp */; };
 		A766B44F0EE8DCD1009518CA /* ExecutableAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B48DB50EE74CFC00DCBDB6 /* ExecutableAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A76EE6590FAE59D5003F069A /* NativeFunctionWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = A76EE6580FAE59D5003F069A /* NativeFunctionWrapper.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -828,6 +831,9 @@
 		A72701B30DADE94900E548D7 /* ExceptionHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExceptionHelpers.h; sourceTree = "<group>"; };
 		A727FF650DA3053B00E548D7 /* JSPropertyNameIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPropertyNameIterator.h; sourceTree = "<group>"; };
 		A727FF660DA3053B00E548D7 /* JSPropertyNameIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPropertyNameIterator.cpp; sourceTree = "<group>"; };
+		A7482B791166CDEA003B0712 /* JSWeakObjectMapRefPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWeakObjectMapRefPrivate.h; sourceTree = "<group>"; };
+		A7482B7A1166CDEA003B0712 /* JSWeakObjectMapRefPrivate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWeakObjectMapRefPrivate.cpp; sourceTree = "<group>"; };
+		A7482E37116A697B003B0712 /* JSWeakObjectMapRefInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWeakObjectMapRefInternal.h; sourceTree = "<group>"; };
 		A74B3498102A5F8E0032AB98 /* MarkStack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MarkStack.cpp; sourceTree = "<group>"; };
 		A76EE6580FAE59D5003F069A /* NativeFunctionWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeFunctionWrapper.h; sourceTree = "<group>"; };
 		A779558F101A74D500114E55 /* MarkStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkStack.h; sourceTree = "<group>"; };
@@ -1214,6 +1220,9 @@
 				E124A8F60E555775003091F1 /* OpaqueJSString.cpp */,
 				E124A8F50E555775003091F1 /* OpaqueJSString.h */,
 				5DE3D0F40DD8DDFB00468714 /* WebKitAvailability.h */,
+				A7482B791166CDEA003B0712 /* JSWeakObjectMapRefPrivate.h */,
+				A7482B7A1166CDEA003B0712 /* JSWeakObjectMapRefPrivate.cpp */,
+				A7482E37116A697B003B0712 /* JSWeakObjectMapRefInternal.h */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -2020,6 +2029,8 @@
 				9688CB160ED12B4E001D649F /* X86Assembler.h in Headers */,
 				A7280A2811557E3000D56957 /* JSObjectRefPrivate.h in Headers */,
 				86565743115BE3DA00291F40 /* CString.h in Headers */,
+				A7482B9311671147003B0712 /* JSWeakObjectMapRefPrivate.h in Headers */,
+				A7482E93116A7CAD003B0712 /* JSWeakObjectMapRefInternal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2462,6 +2473,7 @@
 				8698BB3A10D86BAF00D8D01B /* UStringImpl.cpp in Sources */,
 				E1EF79AA0CE97BA60088D500 /* UTF8.cpp in Sources */,
 				86565742115BE3DA00291F40 /* CString.cpp in Sources */,
+				A7482B9411671147003B0712 /* JSWeakObjectMapRefPrivate.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

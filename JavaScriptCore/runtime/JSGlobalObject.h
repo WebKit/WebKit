@@ -25,6 +25,7 @@
 #include "JSArray.h"
 #include "JSGlobalData.h"
 #include "JSVariableObject.h"
+#include "JSWeakObjectMapRefInternal.h"
 #include "NativeFunctionWrapper.h"
 #include "NumberPrototype.h"
 #include "StringPrototype.h"
@@ -56,6 +57,7 @@ namespace JSC {
     class JSGlobalObject : public JSVariableObject {
     protected:
         using JSVariableObject::JSVariableObjectData;
+        typedef HashSet<RefPtr<OpaqueJSWeakObjectMap> > WeakMapSet;
 
         struct JSGlobalObjectData : public JSVariableObjectData {
             // We use an explicit destructor function pointer instead of a
@@ -153,6 +155,7 @@ namespace JSC {
             RefPtr<JSGlobalData> globalData;
 
             HashSet<GlobalCodeBlock*> codeBlocks;
+            WeakMapSet weakMaps;
         };
 
     public:
@@ -268,6 +271,16 @@ namespace JSC {
         static PassRefPtr<Structure> createStructure(JSValue prototype)
         {
             return Structure::create(prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount);
+        }
+
+        void registerWeakMap(OpaqueJSWeakObjectMap* map)
+        {
+            d()->weakMaps.add(map);
+        }
+
+        void deregisterWeakMap(OpaqueJSWeakObjectMap* map)
+        {
+            d()->weakMaps.remove(map);
         }
 
     protected:

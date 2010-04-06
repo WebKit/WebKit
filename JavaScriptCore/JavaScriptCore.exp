@@ -84,6 +84,10 @@ _JSValueToNumber
 _JSValueToObject
 _JSValueToStringCopy
 _JSValueUnprotect
+_JSWeakObjectMapClear
+_JSWeakObjectMapCreate
+_JSWeakObjectMapGet
+_JSWeakObjectMapSet
 _WTFLog
 _WTFLogVerbose
 _WTFReportArgumentAssertionFailure

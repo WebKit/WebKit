@@ -1,3 +1,26 @@
+2010-04-05  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Support weak maps in JSC
+        https://bugs.webkit.org/show_bug.cgi?id=37132
+
+        Expose an API to allow creation of a map for storing
+        weak JS references.
+
+        * API/JSWeakObjectMapRefInternal.h: Added.
+        (OpaqueJSWeakObjectMap::create):
+        (OpaqueJSWeakObjectMap::map):
+        (OpaqueJSWeakObjectMap::~OpaqueJSWeakObjectMap):
+        (OpaqueJSWeakObjectMap::OpaqueJSWeakObjectMap):
+        * API/JSWeakObjectMapRefPrivate.cpp: Added.
+        * API/JSWeakObjectMapRefPrivate.h: Added.
+        * JavaScriptCore.exp:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::registerWeakMap):
+        (JSC::JSGlobalObject::deregisterWeakMap):
+
 2010-04-05  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
