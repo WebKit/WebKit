@@ -35,22 +35,22 @@ vars = {
   'chromium_deps_svn': 'http://src.chromium.org/svn/trunk/deps/third_party',
 
   # Dependencies' revisions to use:
-  'chromium_rev': '41867',
-  'google-url_rev': '125',
-  'gtest_rev': '359',
-  'gyp_rev': '794',
-  'icu_rev': '37341',
+  'chromium_rev': '43715',
+  'google-url_rev': '127',
+  'gtest_rev': '408',
+  'gyp_rev': '810',
+  'icu_rev': '43139',
   'openvcdiff_rev': '28',
-  'ots_rev': '26',
+  'ots_rev': '28',
   'skia_rev': '504',
-  'v8_rev': '4135',
+  'v8_rev': '4335',
 
   # Windows:
   'cygwin_rev': '11984',
-  'ffmpeg_ia32_rev': '34297',
+  'ffmpeg_ia32_rev': '42726',
   'pthreads-win32_rev': '26716',
   'python_24_rev': '22967',
-  'nss_rev': '36871',
+  'nss_rev': '39612',
 }
 
 deps = {
