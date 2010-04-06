@@ -725,7 +725,38 @@ bool Position::nodeIsUserSelectNone(Node* node)
 
 bool Position::isCandidate() const
 {
-    return PositionIterator(*this).isCandidate();
+    if (isNull())
+        return false;
+        
+    RenderObject *renderer = node()->renderer();
+    if (!renderer)
+        return false;
+    
+    if (renderer->style()->visibility() != VISIBLE)
+        return false;
+
+    if (renderer->isBR())
+        return m_offset == 0 && !nodeIsUserSelectNone(node()->parent());
+
+    if (renderer->isText())
+        return inRenderedText() && !nodeIsUserSelectNone(node());
+
+    if (isTableElement(node()) || editingIgnoresContent(node()))
+        return (atFirstEditingPositionForNode() || atLastEditingPositionForNode()) && !nodeIsUserSelectNone(node()->parent());
+
+    if (m_anchorNode->hasTagName(htmlTag))
+        return false;
+        
+    if (renderer->isBlockFlow()) {
+        if (toRenderBlock(renderer)->height() || m_anchorNode->hasTagName(bodyTag)) {
+            if (!Position::hasRenderedNonAnonymousDescendantsWithHeight(renderer))
+                return atFirstEditingPositionForNode() && !Position::nodeIsUserSelectNone(node());
+            return m_anchorNode->isContentEditable() && !Position::nodeIsUserSelectNone(node()) && atEditingBoundary();
+        }
+    } else
+        return m_anchorNode->isContentEditable() && !Position::nodeIsUserSelectNone(node()) && atEditingBoundary();
+
+    return false;
 }
 
 bool Position::inRenderedText() const
