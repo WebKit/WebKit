@@ -1,3 +1,15 @@
+2010-04-06  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: rebaselining Chromium layout test expectations.
+
+        * platform/chromium-mac/editing/inserting/break-blockquote-after-delete-expected.txt: Added.
+        * platform/chromium-mac/editing/pasteboard/drag-image-to-contenteditable-in-iframe-expected.checksum: Added.
+        * platform/chromium-mac/editing/pasteboard/drag-image-to-contenteditable-in-iframe-expected.png: Added.
+        * platform/chromium-mac/editing/pasteboard/drag-image-to-contenteditable-in-iframe-expected.txt: Added.
+        * platform/chromium-mac/fast/backgrounds/size/contain-and-cover-expected.checksum: Added.
+        * platform/chromium-mac/fast/backgrounds/size/contain-and-cover-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-04-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Eric Seidel.
