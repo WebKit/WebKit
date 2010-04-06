@@ -1,5 +1,28 @@
 2010-04-06  Ilya Tikhonovsky  <loislo@chromium.org>
 
+        Unreviewed build fix.
+
+        Web Inspector: missed files were added.
+
+
+        * GNUmakefile.am:
+        * bindings/js/ScriptGCEvent.h: Added.
+        (WebCore::ScriptGCEvent::addEventListener):
+        (WebCore::ScriptGCEvent::removeEventListener):
+        (WebCore::ScriptGCEvent::getHeapSize):
+        * bindings/v8/ScriptGCEvent.cpp: Added.
+        (WebCore::ScriptGCEvent::addEventListener):
+        (WebCore::ScriptGCEvent::removeEventListener):
+        (WebCore::ScriptGCEvent::getHeapSize):
+        (WebCore::ScriptGCEvent::getUsedHeapSize):
+        (WebCore::ScriptGCEvent::gcPrologueCallback):
+        (WebCore::ScriptGCEvent::gcEpilogueCallback):
+        * bindings/v8/ScriptGCEvent.h: Added.
+        * inspector/ScriptGCEventListener.h: Added.
+        (WebCore::ScriptGCEventListener::~ScriptGCEventListener):
+
+2010-04-06  Ilya Tikhonovsky  <loislo@chromium.org>
+
         Reviewed by Pavel Feldman.
 
         Web Inspector: The JS code can be not optimal from memory usage point of view.

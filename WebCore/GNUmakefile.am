@@ -504,6 +504,7 @@ webcore_sources += \
 	WebCore/bindings/js/ScriptEventListener.h \
 	WebCore/bindings/js/ScriptFunctionCall.cpp \
 	WebCore/bindings/js/ScriptFunctionCall.h \
+	WebCore/bindings/js/ScriptGCEvent.h \
 	WebCore/bindings/js/ScriptInstance.h \
 	WebCore/bindings/js/ScriptObject.cpp \
 	WebCore/bindings/js/ScriptObject.h \
@@ -1265,6 +1266,7 @@ webcore_sources += \
 	WebCore/inspector/JavaScriptCallFrame.h \
 	WebCore/inspector/ScriptBreakpoint.h \
 	WebCore/inspector/ScriptDebugListener.h \
+	WebCore/inspector/ScriptGCEventListener.h \
 	WebCore/inspector/TimelineRecordFactory.cpp \
 	WebCore/inspector/TimelineRecordFactory.h \
 	WebCore/loader/Cache.cpp \
