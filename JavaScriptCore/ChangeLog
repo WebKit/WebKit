@@ -1,5 +1,11 @@
 2010-04-05  Oliver Hunt  <oliver@apple.com>
 
+        And another one.
+
+        * JavaScriptCore.vcproj/jsc/jscCommon.vsprops:
+
+2010-04-05  Oliver Hunt  <oliver@apple.com>
+
         And another build fix.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.make:
