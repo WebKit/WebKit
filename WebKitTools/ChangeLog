@@ -1,3 +1,22 @@
+2010-04-06  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Disable pixel tests on the mac port by default.
+
+        Also, revamp the way we check for pixel tests being enabled or
+        disabled. We now look for options.pixel_tests instead of
+        options.no_pixel_tests, and we have the "--pixel-tests" (force enable)
+        and "--no-pixel-tests" (force disable) flags.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36801
+
+        * Scripts/webkitpy/layout_tests/layout_package/test_expectations.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_expectations_test.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2010-04-06  Diego Gonzalez  <diego.gonzalez@openbossa.org>
 
         Reviewed by Laszlo Gombos.

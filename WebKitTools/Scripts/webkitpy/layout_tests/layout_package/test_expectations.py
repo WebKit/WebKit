@@ -158,9 +158,9 @@ class TestExpectations:
         return self._expected_failures.get_tests_with_timeline(timeline)
 
     def matches_an_expected_result(self, test, result,
-                                   pixel_tests_are_disabled):
+                                   pixel_tests_are_enabled):
         expected_results = self._expected_failures.get_expectations(test)
-        if pixel_tests_are_disabled:
+        if not pixel_tests_are_enabled:
             expected_results = remove_pixel_failures(expected_results)
         return result_was_expected(result, expected_results,
             self.is_rebaselining(test), self.has_modifier(test, SKIP))

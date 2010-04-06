@@ -149,21 +149,21 @@ BUG_OVERRIDE : fast/html/article-element.html = IMAGE""")
 
     def test_matches_an_expected_result(self):
 
-       def match(test, result, pixel_tests_disabled):
+       def match(test, result, pixel_tests_enabled):
            return self._exp.matches_an_expected_result(
-               self.get_test(test), result, pixel_tests_disabled)
+               self.get_test(test), result, pixel_tests_enabled)
 
        self.parse_exp(self.get_basic_expectations())
-       self.assertTrue(match('fast/html/article-element.html', TEXT, False))
        self.assertTrue(match('fast/html/article-element.html', TEXT, True))
-       self.assertFalse(match('fast/html/article-element.html', CRASH, False))
+       self.assertTrue(match('fast/html/article-element.html', TEXT, False))
        self.assertFalse(match('fast/html/article-element.html', CRASH, True))
+       self.assertFalse(match('fast/html/article-element.html', CRASH, False))
 
-       self.assertTrue(match('fast/events/tab-imagemap.html', IMAGE, False))
-       self.assertTrue(match('fast/events/tab-imagemap.html', PASS, True))
+       self.assertTrue(match('fast/events/tab-imagemap.html', IMAGE, True))
+       self.assertTrue(match('fast/events/tab-imagemap.html', PASS, False))
 
-       self.assertTrue(match('fast/html/keygen.html', SKIP, True))
-       self.assertTrue(match('fast/html/tab-order.html', PASS, True))
+       self.assertTrue(match('fast/html/keygen.html', SKIP, False))
+       self.assertTrue(match('fast/html/tab-order.html', PASS, False))
 
 if __name__ == '__main__':
     unittest.main()

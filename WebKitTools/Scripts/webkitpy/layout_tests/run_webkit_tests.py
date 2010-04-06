@@ -480,7 +480,7 @@ class TestRunner:
         shell_args = []
         test_args = test_type_base.TestArguments()
         png_path = None
-        if not self._options.no_pixel_tests:
+        if self._options.pixel_tests:
             png_path = os.path.join(self._options.results_directory,
                                     "png_result%s.png" % index)
             shell_args.append("--pixel-tests=" + png_path)
@@ -698,8 +698,8 @@ class TestRunner:
             try:
                 (test, fail_list) = self._result_queue.get_nowait()
                 result = test_failures.determine_result_type(fail_list)
-                expected = self._expectations.matches_an_expected_result(test, 
-                    result, self._options.no_pixel_tests)
+                expected = self._expectations.matches_an_expected_result(test,
+                    result, self._options.pixel_tests)
                 result_summary.add(test, fail_list, result, expected)
                 if (LOG_DETAILED_PROGRESS in self._options.log and
                     (self._options.experimental_fully_parallel or
@@ -1473,8 +1473,10 @@ def main(options, args):
     if options.new_baseline:
         write("Placing new baselines in %s" % port_obj.baseline_path())
     write("Using %s build" % options.target)
-    if options.no_pixel_tests:
-        write("Not running pixel tests")
+    if options.pixel_tests:
+        write("Pixel tests enabled")
+    else:
+        write("Pixel tests disabled")
     write("")
 
     meter.update("Parsing expectations ...")
@@ -1501,7 +1503,7 @@ def main(options, args):
     port_obj.setup_test_run()
 
     test_runner.add_test_type(text_diff.TestTextDiff)
-    if not options.no_pixel_tests:
+    if options.pixel_tests:
         test_runner.add_test_type(image_diff.ImageDiff)
         if options.fuzzy_pixel_tests:
             test_runner.add_test_type(fuzzy_image_diff.FuzzyImageDiff)
@@ -1519,8 +1521,11 @@ def parse_args(args=None):
 
     Returns a tuple of options, args from optparse"""
     option_parser = optparse.OptionParser()
-    option_parser.add_option("", "--no-pixel-tests", action="store_true",
-                             default=False,
+    option_parser.add_option("", "--pixel-tests'", action="store_true",
+                             dest="pixel_tests",
+                             help="enable pixel-to-pixel PNG comparisons")
+    option_parser.add_option("", "--no-pixel-tests", action="store_false",
+                             dest="pixel_tests",
                              help="disable pixel-to-pixel PNG comparisons")
     option_parser.add_option("", "--fuzzy-pixel-tests", action="store_true",
                              default=False,

@@ -59,6 +59,11 @@ class MacPort(base.Port):
         base.Port.__init__(self, port_name, options)
         self._cached_build_root = None
 
+        # FIXME: disable pixel tests until they are run by default on the
+        # build machines.
+        if options and options.pixel_tests is None:
+            options.pixel_tests = False
+
     def baseline_path(self):
         return self._webkit_baseline_path(self._name)
 

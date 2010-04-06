@@ -90,7 +90,7 @@ class ChromiumPort(base.Port):
             result = check_file_exists(helper_path,
                                        'layout test helper') and result
 
-        if not self._options.no_pixel_tests:
+        if self._options.pixel_tests:
             result = self.check_image_diff(
                 'To override, invoke with --no-pixel-tests') and result
 
