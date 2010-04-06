@@ -1,3 +1,17 @@
+2010-04-06  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Oliver Hunt.
+
+        REGRESSION (r57113): editing/inserting/break-blockquote-after-delete.html fails on Windows
+        <http://webkit.org/b/37156> / <rdar://problem/7832408>
+
+        Land Windows-specific results for editing/inserting/break-blockquote-after-delete.html.  <rdar://problem/7834280>
+        tracks understanding the root cause of this difference between Mac and Windows.
+
+        * platform/win/editing/inserting/break-blockquote-after-delete-expected.checksum: Copied from LayoutTests/platform/mac/editing/inserting/break-blockquote-after-delete-expected.checksum.
+        * platform/win/editing/inserting/break-blockquote-after-delete-expected.png: Copied from LayoutTests/platform/mac/editing/inserting/break-blockquote-after-delete-expected.png.
+        * platform/win/editing/inserting/break-blockquote-after-delete-expected.txt: Copied from LayoutTests/platform/chromium-mac/editing/inserting/break-blockquote-after-delete-expected.txt.
+
 2010-04-06  Chris Evans  <cevans@chromium.org>
 
         Reviewed by Adam Barth.
