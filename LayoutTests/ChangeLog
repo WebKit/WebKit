@@ -1,3 +1,11 @@
+2010-04-06  Andrew Scherkus  <scherkus@chromium.org>
+
+        Unreviewed, cleaning up media layout test expectations.
+
+        Mostly correcting bug numbers, updating comments, and fixing expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-04-01  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Darin Adler.

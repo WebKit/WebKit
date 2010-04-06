@@ -746,68 +746,56 @@ BUG26734 LINUX MAC SKIP : http/tests/inspector-enabled = PASS
 BUG26734 SKIP : inspector/console-format-collections.html = TEXT
 BUG26734 SKIP : inspector/console-format.html = TEXT
 
-// These tests are disabled until <audio> and <video> tags are supported.
-// Disable <video> and <audio> tests for mac and linux until there is
-// proper support.
-BUG13907 : fast/layers/video-layer.html = FAIL
-BUG4363 LINUX MAC SKIP : fast/media = PASS FAIL
-BUG4363 LINUX MAC SKIP : http/tests/security/local-video-poster-from-remote.html = FAIL TIMEOUT
-BUG4363 LINUX MAC SKIP : http/tests/security/local-video-src-from-remote.html = PASS FAIL
-BUG13907 SKIP : http/tests/security/local-video-source-from-remote.html = FAIL
-BUG13907 SKIP : http/tests/media = FAIL
+// Media query tests, need baselines generated.
+// NOTE: These are *not* HTML audio/video layout tests!
+BUG40503 : fast/media = PASS FAIL
 
 // Linux debug media tests have spurious timeouts and it's annoying.  We have no idea why.
 BUG13907 BUG25094 LINUX DEBUG : media = PASS FAIL TIMEOUT
 
-// These tests should be passing.  Remove them once confirmed they're not flaky.
-BUG9798 BUG13907 SLOW WIN LINUX : media/video-played-collapse.html = PASS FAIL
-BUG9798 BUG13907 SLOW MAC : media/video-played-collapse.html = PASS
+// These tests need to be rebaselined.
+BUG13907 : fast/layers/video-layer.html = FAIL
+BUG29748 LINUX : media/video-controls-rendering.html = IMAGE
 
-// We output an extra playing event and video durations are different.
-BUG13907 SKIP : media/video-loop.html = FAIL
+// These tests need to be changed to be platform independent.
+BUG13907 : http/tests/security/local-video-poster-from-remote.html = PASS FAIL TIMEOUT
+BUG13907 : http/tests/security/local-video-source-from-remote.html = PASS FAIL TIMEOUT
+BUG13907 : http/tests/security/local-video-src-from-remote.html = PASS FAIL TIMEOUT
+BUG13907 : media/video-display-aspect-ratio.html = PASS FAIL TIMEOUT
+BUG13907 : media/video-loop.html = PASS FAIL TIMEOUT
 
-// This one times out occasionally.
-BUG13907 WIN DEBUG : media/video-load-networkState.html = PASS TIMEOUT
-BUG13907 SLOW WIN RELEASE : media/video-load-networkState.html = PASS
-
-// We occasionally fail to perform the third seek.
-BUG13907 LINUX DEBUG : media/video-seeking.html = PASS FAIL
-
-// Seeking to 500s causes us to seek to 0s and continue playing (expected), but WebKit checks too fast.
-// The test uses setTimeout() and is flaky.
+// These tests need to be changed to not rely on setTimeout().
+BUG13907 SLOW WIN DEBUG : media/video-played-collapse.html = PASS FAIL
 BUG13907 : media/video-seek-past-end-playing.html = FAIL
 
 // We sometimes emit an error from the same source element twice.
-BUG9798 BUG13907 DEBUG : media/video-source-error.html = FAIL PASS
-BUG9798 BUG13907 SLOW WIN RELEASE : media/video-source-error.html = FAIL PASS
+BUG13907 : media/video-source-error.html = PASS FAIL
 
 // Failing because we sometimes emit additional timeupdate events.
 // Test may need to be rewritten or only log the first timeupdate event.
-BUG13907 LINUX WIN : media/audio-delete-while-slider-thumb-clicked.html = PASS FAIL
-BUG13907 MAC : media/audio-delete-while-slider-thumb-clicked.html = FAIL
+BUG13907 : media/audio-delete-while-slider-thumb-clicked.html = PASS FAIL
 
 // Failing because we sometimes emit additional timeupdate events.
 // Test might be WONTFIX because we don't export a step button in the first place.
 BUG13907 BUG25375 SKIP : media/audio-delete-while-step-button-clicked.html = FAIL
 
 // Seeks to the end of file, which results in ogg packets with no timestamps.
-BUG13907 SKIP : media/event-attributes.html = TIMEOUT
+BUG13907 : media/event-attributes.html = PASS FAIL TIMEOUT
 
 // The media time display isn't appearing.
-BUG13907 SKIP : media/video-zoom-controls.html = FAIL
-
-// The video appears as a white box on Windows.
-BUG13907 SKIP WIN : media/video-zoom.html = FAIL
+BUG13907 : media/video-zoom-controls.html = PASS FAIL TIMEOUT
 
 // Video has a green background, probably due to Mac repaint debugging code.
+// On Windows and Linux the slider control occasionally isn't rendered.
 BUG13907 BUG25376 MAC DEBUG : media/video-empty-source.html = FAIL
+BUG13907 WIN LINUX : media/video-empty-source.html = IMAGE PASS
 
 // The media time display is getting styled when it shouldn't be.
 BUG13907 : media/controls-styling.html = FAIL
 
 // These tests are flaky with subtle pixel differences.
-BUG9798 BUG13907 LINUX MAC : media/video-transformed.html = IMAGE PASS
-BUG9798 BUG13907 LINUX MAC : media/video-layer-crash.html = IMAGE PASS
+BUG13907 LINUX MAC : media/video-transformed.html = IMAGE PASS
+BUG13907 LINUX MAC : media/video-layer-crash.html = IMAGE PASS
 
 // These tests are failing because they use position-dependent mouse clicks.
 BUG13907 BUG25375 : media/video-controls-transformed.html = FAIL
@@ -818,9 +806,6 @@ BUG16779 WONTFIX SKIP : media/video-document-types.html = FAIL TIMEOUT
 BUG16779 WONTFIX SKIP : media/audio-mpeg-supported.html = FAIL TIMEOUT
 BUG16779 WONTFIX SKIP : media/audio-data-url.html = FAIL TIMEOUT
 BUG16779 WONTFIX SKIP : media/video-size-intrinsic-scale.html = FAIL TIMEOUT
-
-// Skipped to reduce crashiness during a test run.
-BUG38444 SKIP : media/video-append-source.html = CRASH PASS TIMEOUT
 
 // We haven't implemented the WebKit fullscreen extension.
 BUG16735 : media/media-fullscreen-inline.html = TIMEOUT
@@ -833,40 +818,26 @@ BUG28301 : media/media-captions.html = TIMEOUT
 BUG33099 : media/video-reverse-play-duration.html = TIMEOUT
 BUG33099 : media/video-timeupdate-reverse-play.html = TIMEOUT
 
-// FFmpeg roll breaks these
-BUG35492 MAC LINUX : media/video-played-ranges-1.html = FAIL PASS
-BUG35492 : media/video-played-reset.html = FAIL
-BUG35492 : media/video-display-toggle.html = CRASH FAIL PASS
-BUG35492 : media/controls-drag-timebar.html = FAIL TIMEOUT
+// We haven't implemented video preloading and it passing is a false positive.
+BUG16482 : media/video-preload.html = PASS FAIL
+
+// Updating FFmpeg broke these tests.  They all do some form of seeking so
+// our hunch is we need the VP3 seeking patch re-applied.
+BUG35492 : media/controls-drag-timebar.html = FAIL
 BUG35492 : media/video-currentTime-set.html = FAIL TIMEOUT
-// Previous to FFmpeg roll expectations
-//BUG9798 BUG13907 SLOW LINUX MAC RELEASE : media/video-played-ranges-1.html = FAIL
-//BUG9798 BUG13907 SLOW WIN RELEASE : media/video-played-ranges-1.html = FAIL
-//BUG9798 BUG13907 WIN DEBUG : media/controls-drag-timebar.html = TEXT TIMEOUT
-//BUG9798 BUG13907 RELEASE : media/controls-drag-timebar.html = TEXT
-//BUG9798 BUG13907 LINUX MAC DEBUG : media/controls-drag-timebar.html = TEXT
-//BUG9798 BUG13907 SLOW WIN RELEASE : media/video-played-ranges-1.html = PASS FAIL
-//BUG9798 BUG13907 SLOW MAC WIN RELEASE : media/video-played-reset.html = PASS
-//BUG9798 BUG13907 SLOW LINUX DEBUG : media/video-played-reset.html = PASS
-//BUG9798 BUG13907 : media/video-currentTime-set.html = PASS FAIL
+BUG35492 : media/video-replaces-poster.html = IMAGE
+BUG35492 : media/video-played-reset.html = FAIL
 
-// The test was added in WebKit r54766 and timeouts in Chromium.
-BUG13907 : media/video-display-aspect-ratio.html = TIMEOUT PASS
-
-// Not known when these started failing.
-BUG9798 WIN DEBUG : media/video-empty-source.html = IMAGE PASS
-BUG29748 LINUX : media/video-controls-rendering.html = IMAGE
-BUG35858 MAC LINUX DEBUG : media/remove-from-document.html = CRASH PASS
-BUG35858 MAC RELEASE : media/remove-from-document.html = CRASH PASS TIMEOUT
-BUG35858 MAC : media/video-source.html = CRASH PASS
-BUG35858 LINUX DEBUG : media/video-source.html = CRASH PASS
-BUG35858 MAC LINUX : media/video-source-type.html = CRASH PASS
-BUG35858 MAC : media/video-src.html = CRASH PASS
-BUG35858 MAC : media/video-src-source.html = CRASH PASS
-BUG35858 MAC : media/video-timeupdate-during-playback.html = CRASH PASS
-BUG37710 MAC SKIP : media/video-src-change.html = CRASH PASS 
-BUG35922 : media/video-replaces-poster.html = IMAGE
-BUG37896 : media/video-preload.html = TEXT
+// These crash a ton on Mac.  We have a fix arriving so we've removed SKIP.
+BUG35858 MAC : media/remove-from-document.html = CRASH PASS TIMEOUT
+BUG35858 MAC : media/video-append-source.html = CRASH PASS TIMEOUT
+BUG35858 MAC : media/video-display-toggle.html = CRASH PASS TIMEOUT
+BUG35858 MAC : media/video-source.html = CRASH PASS TIMEOUT
+BUG35858 MAC : media/video-source-type.html = CRASH PASS TIMEOUT
+BUG35858 MAC : media/video-src.html = CRASH PASS TIMEOUT
+BUG35858 MAC : media/video-src-change.html = CRASH PASS TIMEOUT
+BUG35858 MAC : media/video-src-source.html = CRASH PASS TIMEOUT
+BUG35858 MAC : media/video-timeupdate-during-playback.html = CRASH PASS TIMEOUT
 
 // Function arguments object is copied for each access.
 BUG24194 : fast/js/kde/function_arguments.html = FAIL
