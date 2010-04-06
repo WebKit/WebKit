@@ -1,3 +1,100 @@
+2010-04-05  Peter Nelson  <charn.opcode@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        Fixed style errors in DOMCoreClasses.h to bring it up to scratch
+        for https://bugs.webkit.org/show_bug.cgi?id=34979.
+
+        * DOMCoreClasses.h:
+        (DOMObject::throwException):
+        (DOMObject::callWebScriptMethod):
+        (DOMObject::evaluateWebScript):
+        (DOMObject::removeWebScriptKey):
+        (DOMObject::stringRepresentation):
+        (DOMObject::webScriptValueAtIndex):
+        (DOMObject::setWebScriptValueAtIndex):
+        (DOMObject::setException):
+        (DOMNodeList::throwException):
+        (DOMNodeList::callWebScriptMethod):
+        (DOMNodeList::evaluateWebScript):
+        (DOMNodeList::removeWebScriptKey):
+        (DOMNodeList::stringRepresentation):
+        (DOMNodeList::webScriptValueAtIndex):
+        (DOMNodeList::setWebScriptValueAtIndex):
+        (DOMNodeList::setException):
+        (DOMDocument::throwException):
+        (DOMDocument::callWebScriptMethod):
+        (DOMDocument::evaluateWebScript):
+        (DOMDocument::removeWebScriptKey):
+        (DOMDocument::stringRepresentation):
+        (DOMDocument::webScriptValueAtIndex):
+        (DOMDocument::setWebScriptValueAtIndex):
+        (DOMDocument::setException):
+        (DOMDocument::nodeName):
+        (DOMDocument::nodeValue):
+        (DOMDocument::setNodeValue):
+        (DOMDocument::nodeType):
+        (DOMDocument::parentNode):
+        (DOMDocument::childNodes):
+        (DOMDocument::firstChild):
+        (DOMDocument::lastChild):
+        (DOMDocument::previousSibling):
+        (DOMDocument::nextSibling):
+        (DOMDocument::attributes):
+        (DOMDocument::ownerDocument):
+        (DOMDocument::insertBefore):
+        (DOMDocument::replaceChild):
+        (DOMDocument::removeChild):
+        (DOMDocument::appendChild):
+        (DOMDocument::hasChildNodes):
+        (DOMDocument::cloneNode):
+        (DOMDocument::isSupported):
+        (DOMDocument::namespaceURI):
+        (DOMDocument::prefix):
+        (DOMDocument::setPrefix):
+        (DOMDocument::localName):
+        (DOMDocument::hasAttributes):
+        (DOMDocument::isSameNode):
+        (DOMDocument::isEqualNode):
+        (DOMDocument::textContent):
+        (DOMDocument::setTextContent):
+        (DOMElement::throwException):
+        (DOMElement::callWebScriptMethod):
+        (DOMElement::evaluateWebScript):
+        (DOMElement::removeWebScriptKey):
+        (DOMElement::stringRepresentation):
+        (DOMElement::webScriptValueAtIndex):
+        (DOMElement::setWebScriptValueAtIndex):
+        (DOMElement::setException):
+        (DOMElement::nodeName):
+        (DOMElement::nodeValue):
+        (DOMElement::setNodeValue):
+        (DOMElement::nodeType):
+        (DOMElement::parentNode):
+        (DOMElement::childNodes):
+        (DOMElement::firstChild):
+        (DOMElement::lastChild):
+        (DOMElement::previousSibling):
+        (DOMElement::nextSibling):
+        (DOMElement::attributes):
+        (DOMElement::ownerDocument):
+        (DOMElement::insertBefore):
+        (DOMElement::replaceChild):
+        (DOMElement::removeChild):
+        (DOMElement::appendChild):
+        (DOMElement::hasChildNodes):
+        (DOMElement::cloneNode):
+        (DOMElement::isSupported):
+        (DOMElement::namespaceURI):
+        (DOMElement::prefix):
+        (DOMElement::setPrefix):
+        (DOMElement::localName):
+        (DOMElement::hasAttributes):
+        (DOMElement::isSameNode):
+        (DOMElement::isEqualNode):
+        (DOMElement::textContent):
+        (DOMElement::setTextContent):
+
 2010-04-05  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
