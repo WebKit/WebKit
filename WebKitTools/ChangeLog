@@ -1,5 +1,16 @@
 2010-04-06  Dirk Pranke  <dpranke@chromium.org>
 
+        Reviewed by Eric Seidel.
+
+        Write stack traces into the results directory for new-run-webkit-tests,
+        instead of writing them alongside the test file.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36504
+
+        * Scripts/webkitpy/layout_tests/layout_package/test_shell_thread.py:
+
+2010-04-06  Dirk Pranke  <dpranke@chromium.org>
+
         Unreviewed build fix.
 
         Enable pixel tests by default in new-run-webkit-tests unless
