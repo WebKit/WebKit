@@ -419,18 +419,16 @@ GlyphMetrics SimpleFontData::platformMetricsForGlyph(Glyph glyph, GlyphMetricsMo
     }
     GlyphMetrics metrics;
     metrics.horizontalAdvance = advance.width + m_syntheticBoldOffset;
-#ifndef BUILDING_ON_TIGER
     if (metricsMode == GlyphBoundingBox) {
+#ifndef BUILDING_ON_TIGER
         CGRect boundingBox;
         CGFontGetGlyphBBoxes(platformData().cgFont(), &glyph, 1, &boundingBox);
         CGFloat scale = pointSize / unitsPerEm();
         metrics.boundingBox = CGRectApplyAffineTransform(boundingBox, CGAffineTransformMakeScale(scale, -scale));
         if (m_syntheticBoldOffset)
             metrics.boundingBox.setWidth(metrics.boundingBox.width() + m_syntheticBoldOffset);
-    }
-#else
-    UNUSED_PARAM(metricsMode);
 #endif
+    }
     return metrics;
 }
 
