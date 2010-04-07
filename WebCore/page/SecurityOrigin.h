@@ -203,6 +203,8 @@ private:
 
     bool passesFileCheck(const SecurityOrigin* other) const;
 
+    bool isAccessWhiteListed(const SecurityOrigin* targetOrigin) const;
+
     SandboxFlags m_sandboxFlags;
     String m_protocol;
     String m_host;

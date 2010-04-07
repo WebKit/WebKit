@@ -1,3 +1,17 @@
+2010-04-07  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Allow white listing access from origin to local origin.
+        https://bugs.webkit.org/show_bug.cgi?id=37228
+
+        This makes it possible to load a local resource from a non local
+        origin if the access has previously been white listed by calling
+        SecurityOrigin::whiteListAccessFromOrigin.
+
+        * http/tests/security/local-image-from-remote-whitelisted-expected.txt: Added.
+        * http/tests/security/local-image-from-remote-whitelisted.html: Added.
+
 2010-04-07  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

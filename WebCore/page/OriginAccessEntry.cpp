@@ -40,7 +40,6 @@ OriginAccessEntry::OriginAccessEntry(const String& protocol, const String& host,
     , m_host(host.lower())
     , m_subdomainSettings(subdomainSetting)
 {
-    ASSERT(m_protocol == "http" || m_protocol == "https");
     ASSERT(subdomainSetting == AllowSubdomains || subdomainSetting == DisallowSubdomains);
 
     // Assume that any host that ends with a digit is trying to be an IP address.

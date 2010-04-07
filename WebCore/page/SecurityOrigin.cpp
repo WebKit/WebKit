@@ -261,12 +261,8 @@ bool SecurityOrigin::canRequest(const KURL& url) const
     if (isSameSchemeHostPort(targetOrigin.get()))
         return true;
 
-    if (OriginAccessWhiteList* list = originAccessMap().get(toString())) {
-        for (size_t i = 0; i < list->size(); ++i) {
-            if (list->at(i).matchesOrigin(*targetOrigin))
-                return true;
-        }
-    }
+    if (isAccessWhiteListed(targetOrigin.get()))
+        return true;
 
     return false;
 }
@@ -288,15 +284,32 @@ bool SecurityOrigin::taintsCanvas(const KURL& url) const
     return true;
 }
 
+bool SecurityOrigin::isAccessWhiteListed(const SecurityOrigin* targetOrigin) const
+{
+    if (OriginAccessWhiteList* list = originAccessMap().get(toString())) {
+        for (size_t i = 0; i < list->size();  ++i) {
+           if (list->at(i).matchesOrigin(*targetOrigin))
+               return true;
+       }
+    }
+    return false;
+}
+  
 bool SecurityOrigin::canLoad(const KURL& url, const String& referrer, Document* document)
 {
     if (!shouldTreatURLAsLocal(url.string()))
         return true;
 
-    // If we were provided a document, we let its local file policy dictate the result,
-    // otherwise we allow local loads only if the supplied referrer is also local.
-    if (document)
-        return document->securityOrigin()->canLoadLocalResources();
+    // If we were provided a document, we first check if the access has been white listed.
+    // Then we let its local file police dictate the result.
+    // Otherwise we allow local loads only if the supplied referrer is also local.
+    if (document) {
+        SecurityOrigin* documentOrigin = document->securityOrigin();
+        RefPtr<SecurityOrigin> targetOrigin = SecurityOrigin::create(url);
+        if (documentOrigin->isAccessWhiteListed(targetOrigin.get()))
+            return true;
+        return documentOrigin->canLoadLocalResources();
+    }
     if (!referrer.isEmpty())
         return shouldTreatURLAsLocal(referrer);
     return false;
