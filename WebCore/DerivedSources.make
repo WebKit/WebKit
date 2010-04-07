@@ -401,6 +401,9 @@ DOM_CLASSES = \
     TextEvent \
     TextMetrics \
     TimeRanges \
+    Touch \
+    TouchEvent \
+    TouchList \
     TreeWalker \
     UIEvent \
     ValidityState \

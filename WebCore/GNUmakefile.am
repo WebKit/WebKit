@@ -162,6 +162,9 @@ IDL_BINDINGS += \
 	WebCore/dom/RangeException.idl \
 	WebCore/dom/Text.idl \
 	WebCore/dom/TextEvent.idl \
+	WebCore/dom/Touch.idl \
+	WebCore/dom/TouchEvent.idl \
+	WebCore/dom/TouchList.idl \
 	WebCore/dom/TreeWalker.idl \
 	WebCore/dom/UIEvent.idl \
 	WebCore/dom/WebKitAnimationEvent.idl \

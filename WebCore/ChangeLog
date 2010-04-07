@@ -1,3 +1,15 @@
+2010-04-07  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Holger Freyther.
+
+        Add the touch event related IDL files to the idl generation, so that
+        they can be safely included from generated JS bindings files. The
+        generated files have #ifdef feature guards.
+
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+
 2010-04-06  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Adam Barth.
