@@ -1029,6 +1029,9 @@ webcore_sources += \
 	WebCore/html/File.h \
 	WebCore/html/FileList.cpp \
 	WebCore/html/FileList.h \
+	WebCore/html/FileStream.cpp \
+	WebCore/html/FileStream.h \
+	WebCore/html/FileStreamClient.h \
 	WebCore/html/FileThread.cpp \
 	WebCore/html/FileThread.h \
 	WebCore/html/FormDataList.cpp \

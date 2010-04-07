@@ -28,56 +28,48 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FileThread_h
-#define FileThread_h
+#ifndef FileStream_h
+#define FileStream_h
 
-#if ENABLE(FILE_WRITER) || ENABLE(FILE_READER)
+#if ENABLE(FILE_READER) || ENABLE(FILE_WRITER)
 
-#include <wtf/MessageQueue.h>
-#include <wtf/PassOwnPtr.h>
+#include "FileStreamClient.h"
+#include "FileSystem.h"
 #include <wtf/PassRefPtr.h>
-#include <wtf/Threading.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class FileStream;
+class Blob;
+class String;
 
-class FileThread : public ThreadSafeShared<FileThread> {
+// All methods are synchronous and should be called on File or Worker thread.
+class FileStream : public RefCounted<FileStream> {
 public:
-    static PassRefPtr<FileThread> create() { return adoptRef(new FileThread()); }
-    ~FileThread();
+    static PassRefPtr<FileStream> create(FileStreamClient* client)
+    {
+        return adoptRef(new FileStream(client));
+    }
+    virtual ~FileStream();
 
-    bool start();
-    void stop();
+    void start();
 
-    class Task : public Noncopyable {
-    public:
-        virtual ~Task() { }
-        virtual void performTask() = 0;
-        FileStream* stream() const { return m_stream; }
-    protected:
-        Task(FileStream* stream) : m_stream(stream) { }
-        FileStream* m_stream;
-    };
-
-    void postTask(PassOwnPtr<Task> task);
-    void unscheduleTasks(const FileStream*);
+    void openForRead(Blob*);
+    void openForWrite(const String& path);
+    void close();
+    void read(char* buffer, int length);
+    void write(Blob* blob, long long position, int length);
+    void truncate(long long position);
 
 private:
-    FileThread();
+    FileStream(FileStreamClient*);
 
-    static void* fileThreadStart(void*);
-    void* runLoop();
-
-    ThreadIdentifier m_threadID;
-    RefPtr<FileThread> m_selfRef;
-    MessageQueue<Task> m_queue;
-
-    Mutex m_threadCreationMutex;
+    FileStreamClient* m_client;
+    PlatformFileHandle m_handle;
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(FILE_WRITER) || ENABLE(FILE_READER)
+#endif // ENABLE(FILE_READER) || ENABLE(FILE_WRITER)
 
-#endif // FileThread_h
+#endif // FileStream_h

@@ -30237,6 +30237,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\FileStream.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\FileStream.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\FileStreamClient.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\FileThread.cpp"
 				>
 			</File>

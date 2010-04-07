@@ -1,3 +1,31 @@
+2010-04-07  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Jian Li.
+
+        Add skeleton FileStream module for providing sync file operations for FileAPI
+        https://bugs.webkit.org/show_bug.cgi?id=37217
+
+        For now the module just defines an interface and is almost empty.
+        Implementation will be added.
+
+        No new tests; will be added when we have complete implementation.
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/FileStream.cpp: Added.
+        * html/FileStream.h: Added.
+        * html/FileStreamClient.h: Added.
+        * html/FileThread.cpp:
+        (WebCore::SameFilePredicate::SameFilePredicate):
+        (WebCore::SameFilePredicate::operator()):
+        (WebCore::FileThread::unscheduleTasks):
+        * html/FileThread.h:
+        (WebCore::FileThread::Task::stream):
+        (WebCore::FileThread::Task::Task):
+
 2010-04-07  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin Adler.

@@ -28,56 +28,71 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FileThread_h
-#define FileThread_h
+#include "config.h"
 
-#if ENABLE(FILE_WRITER) || ENABLE(FILE_READER)
+#if ENABLE(FILE_READER) || ENABLE(FILE_WRITER)
 
-#include <wtf/MessageQueue.h>
-#include <wtf/PassOwnPtr.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/Threading.h>
+#include "FileStream.h"
+
+#include "Blob.h"
+#include "PlatformString.h"
 
 namespace WebCore {
 
-class FileStream;
+FileStream::FileStream(FileStreamClient* client)
+    : m_client(client)
+    , m_handle(invalidPlatformFileHandle)
+{
+}
 
-class FileThread : public ThreadSafeShared<FileThread> {
-public:
-    static PassRefPtr<FileThread> create() { return adoptRef(new FileThread()); }
-    ~FileThread();
+FileStream::~FileStream()
+{
+    ASSERT(!isHandleValid(m_handle));
+}
 
-    bool start();
-    void stop();
+void FileStream::start()
+{
+    ASSERT(!isMainThread());
+    m_client->didStart();
+}
 
-    class Task : public Noncopyable {
-    public:
-        virtual ~Task() { }
-        virtual void performTask() = 0;
-        FileStream* stream() const { return m_stream; }
-    protected:
-        Task(FileStream* stream) : m_stream(stream) { }
-        FileStream* m_stream;
-    };
+void FileStream::openForRead(Blob*)
+{
+    ASSERT(!isMainThread());
+    // FIXME: to be implemented.
+}
 
-    void postTask(PassOwnPtr<Task> task);
-    void unscheduleTasks(const FileStream*);
+void FileStream::openForWrite(const String&)
+{
+    ASSERT(!isMainThread());
+    // FIXME: to be implemented.
+}
 
-private:
-    FileThread();
+void FileStream::close()
+{
+    ASSERT(!isMainThread());
+    if (isHandleValid(m_handle))
+        closeFile(m_handle);
+}
 
-    static void* fileThreadStart(void*);
-    void* runLoop();
+void FileStream::read(char*, int)
+{
+    ASSERT(!isMainThread());
+    // FIXME: to be implemented.
+}
 
-    ThreadIdentifier m_threadID;
-    RefPtr<FileThread> m_selfRef;
-    MessageQueue<Task> m_queue;
+void FileStream::write(Blob*, long long, int)
+{
+    ASSERT(!isMainThread());
+    // FIXME: to be implemented.
+}
 
-    Mutex m_threadCreationMutex;
-};
+void FileStream::truncate(long long)
+{
+    ASSERT(!isMainThread());
+    // FIXME: to be implemented.
+}
 
 } // namespace WebCore
 
-#endif // ENABLE(FILE_WRITER) || ENABLE(FILE_READER)
-
-#endif // FileThread_h
+#endif // ENABLE(FILE_WRITER) || ENABLE_FILE_READER)

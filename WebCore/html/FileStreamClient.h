@@ -28,56 +28,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FileThread_h
-#define FileThread_h
+#ifndef FileStreamClient_h
+#define FileStreamClient_h
 
-#if ENABLE(FILE_WRITER) || ENABLE(FILE_READER)
+#if ENABLE(FILE_READER) || ENABLE(FILE_WRITER)
 
-#include <wtf/MessageQueue.h>
-#include <wtf/PassOwnPtr.h>
+#include "ExceptionCode.h"
 #include <wtf/PassRefPtr.h>
-#include <wtf/Threading.h>
 
 namespace WebCore {
 
-class FileStream;
-
-class FileThread : public ThreadSafeShared<FileThread> {
+class FileStreamClient {
 public:
-    static PassRefPtr<FileThread> create() { return adoptRef(new FileThread()); }
-    ~FileThread();
+    // For reading.
+    virtual void didRead(const char*, int) { }
 
-    bool start();
-    void stop();
+    // For writing.
+    virtual void didWrite(int) { }
 
-    class Task : public Noncopyable {
-    public:
-        virtual ~Task() { }
-        virtual void performTask() = 0;
-        FileStream* stream() const { return m_stream; }
-    protected:
-        Task(FileStream* stream) : m_stream(stream) { }
-        FileStream* m_stream;
-    };
+    // For both reading and writing.
+    virtual void didStart() { }
+    virtual void didFinish() { }
+    virtual void didFail(ExceptionCode) { }
+    virtual void didGetSize(long long) { }
 
-    void postTask(PassOwnPtr<Task> task);
-    void unscheduleTasks(const FileStream*);
-
-private:
-    FileThread();
-
-    static void* fileThreadStart(void*);
-    void* runLoop();
-
-    ThreadIdentifier m_threadID;
-    RefPtr<FileThread> m_selfRef;
-    MessageQueue<Task> m_queue;
-
-    Mutex m_threadCreationMutex;
+protected:
+    virtual ~FileStreamClient() { }
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(FILE_WRITER) || ENABLE(FILE_READER)
+#endif // ENABLE(FILE_READER) || ENABLE(FILE_WRITER)
 
-#endif // FileThread_h
+#endif // FileStreamClient_h

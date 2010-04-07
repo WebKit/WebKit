@@ -614,6 +614,7 @@ SOURCES += \
     html/DOMFormData.cpp \
     html/File.cpp \
     html/FileList.cpp \
+    html/FileStream.cpp \
     html/FileThread.cpp \
     html/FormDataList.cpp \
     html/HTMLAllCollection.cpp \
@@ -1323,6 +1324,8 @@ HEADERS += \
     html/DOMFormData.h \
     html/File.h \
     html/FileList.h \
+    html/FileStream.h \
+    html/FileStreamClient.h \
     html/FileThread.h \
     html/FormDataList.h \
     html/HTMLAllCollection.h \
