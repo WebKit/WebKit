@@ -47,6 +47,15 @@ class ScriptDebugListener;
 class ScriptDebugServer : public Noncopyable {
 public:
     static ScriptDebugServer& shared();
+    
+    // Function for retrieving the source name, line number and function name for the top
+    // JavaScript stack frame.
+    //
+    // It will return true if the caller information was successfully retrieved and written
+    // into the function parameters, otherwise the function will return false. It may
+    // fail due to a stck overflow in the underlying JavaScript implentation, handling
+    // of such exception is up to the caller.
+    static bool topStackFrame(String& sourceName, int& lineNumber, String& functionName);
 
     void addListener(ScriptDebugListener*, Page*) { }
     void removeListener(ScriptDebugListener*, Page*) { }
@@ -80,6 +89,19 @@ public:
 private:
     ScriptDebugServer() { }
     ~ScriptDebugServer() { }
+
+    static void createUtilityContext();
+
+    // Returns a local handle of the utility context.
+    static v8::Local<v8::Context> utilityContext()
+    {
+      if (s_utilityContext.IsEmpty())
+          createUtilityContext();
+      return v8::Local<v8::Context>::New(s_utilityContext);
+    }
+
+    // Utility context holding JavaScript functions used internally.
+    static v8::Persistent<v8::Context> s_utilityContext;
 };
 
 } // namespace WebCore

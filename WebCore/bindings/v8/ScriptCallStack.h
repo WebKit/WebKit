@@ -47,7 +47,7 @@ namespace WebCore {
         static ScriptCallStack* create(const v8::Arguments&, unsigned skipArgumentCount = 0);
         ~ScriptCallStack();
 
-        static bool callLocation(String* sourceName, int* sourceLineNumber);
+        static bool callLocation(String* sourceName, int* sourceLineNumber, String* functionName);
 
         const ScriptCallFrame& at(unsigned) const;
         // FIXME: implement retrieving and storing call stack trace
@@ -57,7 +57,7 @@ namespace WebCore {
         ScriptState* globalState() const { return m_scriptState; }
 
     private:
-        ScriptCallStack(const v8::Arguments& arguments, unsigned skipArgumentCount, String sourceName, int sourceLineNumber);
+        ScriptCallStack(const v8::Arguments& arguments, unsigned skipArgumentCount, String sourceName, int sourceLineNumber, String funcName);
     
         ScriptCallFrame m_lastCaller;
         ScriptState* m_scriptState;

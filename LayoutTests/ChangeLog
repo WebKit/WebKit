@@ -1,3 +1,13 @@
+2010-04-07  Jaime Yap  <jaimeyap@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Adds callerFuncName to the list of nondeterministic fields in the timeline
+        layout tests.
+        https://bugs.webkit.org/show_bug.cgi?id=36839
+
+        * inspector/timeline-test.js:
+
 2010-04-06  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

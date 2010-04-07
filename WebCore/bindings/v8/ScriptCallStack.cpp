@@ -32,32 +32,33 @@
 #include "ScriptCallStack.h"
 
 #include "ScriptController.h"
+#include "ScriptDebugServer.h"
 
 #include <v8.h>
 
 #include "V8Binding.h"
-#include "V8Proxy.h"
 
 namespace WebCore {
 
 ScriptCallStack* ScriptCallStack::create(const v8::Arguments& arguments, unsigned skipArgumentCount) {
     String sourceName;
     int sourceLineNumber;
-    if (!callLocation(&sourceName, &sourceLineNumber))
+    String funcName;
+    if (!callLocation(&sourceName, &sourceLineNumber, &funcName))
       return 0;
-    return new ScriptCallStack(arguments, skipArgumentCount, sourceName, sourceLineNumber);
+    return new ScriptCallStack(arguments, skipArgumentCount, sourceName, sourceLineNumber, funcName);
 }
 
-bool ScriptCallStack::callLocation(String* sourceName, int* sourceLineNumber)
+bool ScriptCallStack::callLocation(String* sourceName, int* sourceLineNumber, String* functionName)
 {
-    if (!V8Proxy::sourceName(*sourceName) || !V8Proxy::sourceLineNumber(*sourceLineNumber))
+    if (!ScriptDebugServer::topStackFrame(*sourceName, *sourceLineNumber, *functionName))
         return false;
     *sourceLineNumber += 1;
     return true;
 }
 
-ScriptCallStack::ScriptCallStack(const v8::Arguments& arguments, unsigned skipArgumentCount, String sourceName, int sourceLineNumber)
-    : m_lastCaller(String(), sourceName, sourceLineNumber, arguments, skipArgumentCount)
+ScriptCallStack::ScriptCallStack(const v8::Arguments& arguments, unsigned skipArgumentCount, String sourceName, int sourceLineNumber, String functionName)
+    : m_lastCaller(functionName, sourceName, sourceLineNumber, arguments, skipArgumentCount)
     , m_scriptState(ScriptState::current())
 {
 }
