@@ -1,5 +1,21 @@
 2010-04-07  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        Reviewed by Laszlo Gombos.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36750
+
+        [Qt] Package build without touch support is broken
+
+        Use the conditional attribute instead of #ifdefs in the idl file for the
+        touch specific properties, to make the generated files compile with and
+        without the touch events enabled.
+
+        * dom/Document.idl: Use conditional instead of #ifdef.
+        * dom/Element.idl: Ditto.
+        * page/DOMWindow.idl: Ditto.
+
+2010-04-07  Simon Hausmann  <simon.hausmann@nokia.com>
+
         Reviewed by Holger Freyther.
 
         Add the touch event related IDL files to the idl generation, so that
