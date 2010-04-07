@@ -43,6 +43,10 @@ namespace WebCore {
 v8::Handle<v8::Value> V8WebKitPoint::constructorCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.WebKitPoint.Constructor");
+
+    if (!args.IsConstructCall())
+        return throwError("DOM object constructor cannot be called as a function.");
+
     float x = 0;
     float y = 0;
     if (args.Length() > 1) {

@@ -1,3 +1,13 @@
+2010-04-07  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Make sure that calling bindings constructors as function does not result in crash.
+
+        * fast/constructors: Added.
+        * fast/constructors/constructor-as-function-crash-expected.txt: Added.
+        * fast/constructors/constructor-as-function-crash.html: Added.
+
 2010-04-07  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Simon Fraser.
