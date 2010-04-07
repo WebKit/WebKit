@@ -1,3 +1,15 @@
+2010-04-07  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Make tests pass with tolerance=0 after r57215
+        https://bugs.webkit.org/show_bug.cgi?id=37225
+
+        * platform/mac-leopard/fast/text/complex-text-opacity-expected.checksum:
+        * platform/mac-leopard/fast/text/complex-text-opacity-expected.png:
+        * platform/mac/fast/repaint/stacked-diacritics-expected.checksum:
+        * platform/mac/fast/repaint/stacked-diacritics-expected.png:
+
 2010-04-07  Andrew Scherkus  <scherkus@chromium.org>
 
         Unreviewed, skipping fast/media/media-feature-wgt-view-mode.html for Chromium.
