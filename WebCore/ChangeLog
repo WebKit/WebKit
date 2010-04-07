@@ -1,3 +1,20 @@
+2010-04-07  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Provide a placeholder for resources with no content available
+        https://bugs.webkit.org/show_bug.cgi?id=37142
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/ImageView.js:
+        (WebInspector.ImageView):
+        (WebInspector.ImageView.prototype.contentTabSelected):
+        * inspector/front-end/ResourceView.js:
+        (WebInspector.ResourceView.prototype._innerSelectContentTab):
+        (WebInspector.ResourceView.prototype.contentTabSelected):
+        * inspector/front-end/inspector.css:
+        (.resource-content-unavailable):
+
 2010-04-07  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Laszlo Gombos.

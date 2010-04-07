@@ -3956,3 +3956,10 @@ a.worker-item:hover {
     color: rgb(15%, 15%, 15%);
 }
 
+.resource-content-unavailable {
+    color: rgb(50%, 50%, 50%);
+    font-style: italic;
+    font-size: 14px;
+    text-align: center;
+    padding: 32px;
+}

@@ -31,45 +31,48 @@ WebInspector.ImageView = function(resource)
     WebInspector.ResourceView.call(this, resource);
 
     this.element.addStyleClass("image");
-
-    var container = document.createElement("div");
-    container.className = "image";
-    this.contentElement.appendChild(container);
-
-    this.imagePreviewElement = document.createElement("img");
-    this.imagePreviewElement.addStyleClass("resource-image-view");
-    this.imagePreviewElement.setAttribute("src", this.resource.url);
-
-    container.appendChild(this.imagePreviewElement);
-
-    container = document.createElement("div");
-    container.className = "info";
-    this.contentElement.appendChild(container);
-
-    var imageNameElement = document.createElement("h1");
-    imageNameElement.className = "title";
-    imageNameElement.textContent = this.resource.displayName;
-    container.appendChild(imageNameElement);
-
-    var infoListElement = document.createElement("dl");
-    infoListElement.className = "infoList";
-
-    var imageProperties = [
-        { name: WebInspector.UIString("Dimensions"), value: WebInspector.UIString("%d × %d", this.imagePreviewElement.naturalWidth, this.imagePreviewElement.height) },
-        { name: WebInspector.UIString("File size"), value: Number.bytesToString(this.resource.resourceSize, WebInspector.UIString.bind(WebInspector)) },
-        { name: WebInspector.UIString("MIME type"), value: this.resource.mimeType }
-    ];
-
-    var listHTML = '';
-    for (var i = 0; i < imageProperties.length; ++i)
-        listHTML += "<dt>" + imageProperties[i].name + "</dt><dd>" + imageProperties[i].value + "</dd>";
-
-    infoListElement.innerHTML = listHTML;
-    container.appendChild(infoListElement);
 }
 
 WebInspector.ImageView.prototype = {
-    
+    contentTabSelected: function()
+    {
+        if (this._container)
+            return;
+        this._container = document.createElement("div");
+        this._container.className = "image";
+        this.contentElement.appendChild(this._container);
+
+        this.imagePreviewElement = document.createElement("img");
+        this.imagePreviewElement.addStyleClass("resource-image-view");
+        this.imagePreviewElement.setAttribute("src", this.resource.url);
+
+        this._container.appendChild(this.imagePreviewElement);
+
+        this._container = document.createElement("div");
+        this._container.className = "info";
+        this.contentElement.appendChild(this._container);
+
+        var imageNameElement = document.createElement("h1");
+        imageNameElement.className = "title";
+        imageNameElement.textContent = this.resource.displayName;
+        this._container.appendChild(imageNameElement);
+
+        var infoListElement = document.createElement("dl");
+        infoListElement.className = "infoList";
+
+        var imageProperties = [
+            { name: WebInspector.UIString("Dimensions"), value: WebInspector.UIString("%d × %d", this.imagePreviewElement.naturalWidth, this.imagePreviewElement.height) },
+            { name: WebInspector.UIString("File size"), value: Number.bytesToString(this.resource.resourceSize, WebInspector.UIString.bind(WebInspector)) },
+            { name: WebInspector.UIString("MIME type"), value: this.resource.mimeType }
+        ];
+
+        var listHTML = '';
+        for (var i = 0; i < imageProperties.length; ++i)
+            listHTML += "<dt>" + imageProperties[i].name + "</dt><dd>" + imageProperties[i].value + "</dd>";
+
+        infoListElement.innerHTML = listHTML;
+        this._container.appendChild(infoListElement);
+    }
 }
 
 WebInspector.ImageView.prototype.__proto__ = WebInspector.ResourceView.prototype;

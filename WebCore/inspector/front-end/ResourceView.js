@@ -183,8 +183,17 @@ WebInspector.ResourceView.prototype = {
         this.headersElement.addStyleClass("hidden");
         if ("resize" in this)
             this.resize();
-        if ("contentTabSelected" in this)
-            this.contentTabSelected();
+        this.contentTabSelected();
+    },
+
+    contentTabSelected: function()
+    {
+        if (!this._contentPlaceholderElement) {
+            this._contentPlaceholderElement = document.createElement("div");
+            this._contentPlaceholderElement.className = "resource-content-unavailable";
+            this._contentPlaceholderElement.textContent = WebInspector.UIString("No Content Available");
+            this.contentElement.appendChild(this._contentPlaceholderElement);
+        }
     },
 
     _refreshURL: function()
