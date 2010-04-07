@@ -24,8 +24,8 @@ layer at (0,0) size 800x486
             text run at (44,1) width 55: "Lorem"
             text run at (48,25) width 51: "\x{131}psum"
         RenderBlock {P} at (0,142) size 100x50 [border: (1px solid #0000FF)]
-          RenderText {#text} at (40,1) size 59x47
-            text run at (40,1) width 59: "Lore\x{1E3F}"
+          RenderText {#text} at (32,1) size 67x47
+            text run at (32,1) width 67: "Lore\x{1E3F}"
             text run at (48,25) width 51: "ipsum"
       RenderBlock (anonymous) at (0,366) size 784x20
         RenderText {#text} at (0,0) size 68x19

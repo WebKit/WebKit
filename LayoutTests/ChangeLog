@@ -1,3 +1,24 @@
+2010-04-07  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        New chromium expected results after r57215
+        https://bugs.webkit.org/show_bug.cgi?id=37239
+
+        * platform/chromium-linux/fast/repaint/stacked-diacritics-expected.checksum: Added.
+        * platform/chromium-linux/fast/text/line-breaks-expected.checksum:
+        * platform/chromium-linux/fast/text/line-breaks-expected.png:
+        * platform/chromium-linux/fast/text/line-breaks-expected.txt:
+        Our new behavior is no more broken than the old behavior. Evan says
+        he'll fix the underlying problem some day.
+
+        * platform/chromium-win/fast/repaint/stacked-diacritics-expected.checksum: Added.
+        * platform/chromium-win/fast/repaint/stacked-diacritics-expected.png: Added.
+        * platform/chromium-win/fast/repaint/stacked-diacritics-expected.txt: Added.
+        This is a new test. These are just the usual windows vs. mac font rendering differences.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-04-07  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
