@@ -33,7 +33,10 @@
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
 
+#include "DocumentLoader.h"
 #include "WebApplicationCacheHostClient.h"
+#include "WebFrameClient.h"
+#include "WebFrameImpl.h"
 #include "WebKit.h"
 #include "WebKitClient.h"
 
@@ -44,7 +47,11 @@ public:
     ApplicationCacheHostInternal(ApplicationCacheHost* host)
         : m_innerHost(host)
     {
-        m_outerHost.set(WebKit::webKitClient()->createApplicationCacheHost(this));
+        WebKit::WebFrameImpl* webFrame = WebKit::WebFrameImpl::fromFrame(host->m_documentLoader->frame());
+        ASSERT(webFrame);
+        m_outerHost.set(webFrame->client()->createApplicationCacheHost(webFrame, this));
+        if (!m_outerHost.get())
+            m_outerHost.set(WebKit::webKitClient()->createApplicationCacheHost(this));
     }
 
     virtual void notifyEventListener(WebKit::WebApplicationCacheHost::EventID eventID)

@@ -38,6 +38,8 @@
 
 namespace WebKit {
 
+class WebApplicationCacheHost;
+class WebApplicationCacheHostClient;
 class WebCookieJar;
 class WebDataSource;
 class WebFormElement;
@@ -74,6 +76,9 @@ public:
 
     // May return null.
     virtual WebMediaPlayer* createMediaPlayer(WebFrame*, WebMediaPlayerClient*) { return 0; }
+
+    // May return null.
+    virtual WebApplicationCacheHost* createApplicationCacheHost(WebFrame*, WebApplicationCacheHostClient*) { return 0; }
 
     
     // Services ------------------------------------------------------------
