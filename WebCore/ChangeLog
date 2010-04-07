@@ -1,3 +1,31 @@
+2010-04-07  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r57196.
+        http://trac.webkit.org/changeset/57196
+        https://bugs.webkit.org/show_bug.cgi?id=37196
+
+        Multiple layout test failures on Chromium (Requested by yurys
+        on #webkit).
+
+        * bindings/js/ScriptCallStack.cpp:
+        (WebCore::ScriptCallStack::callLocation):
+        * bindings/js/ScriptCallStack.h:
+        * bindings/v8/ScriptCallStack.cpp:
+        (WebCore::ScriptCallStack::create):
+        (WebCore::ScriptCallStack::callLocation):
+        (WebCore::ScriptCallStack::ScriptCallStack):
+        * bindings/v8/ScriptCallStack.h:
+        * bindings/v8/ScriptDebugServer.cpp:
+        * bindings/v8/ScriptDebugServer.h:
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::createUtilityContext):
+        (WebCore::V8Proxy::sourceLineNumber):
+        (WebCore::V8Proxy::sourceName):
+        * bindings/v8/V8Proxy.h:
+        (WebCore::V8Proxy::utilityContext):
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createGenericRecord):
+
 2010-04-07  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed, rolling out r57199.

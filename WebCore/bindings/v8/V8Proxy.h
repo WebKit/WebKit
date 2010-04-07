@@ -296,6 +296,16 @@ namespace WebCore {
         // Process any pending JavaScript console messages.
         static void processConsoleMessages();
 
+        // Function for retrieving the line number and source name for the top
+        // JavaScript stack frame.
+        //
+        // It will return true if the line number was successfully retrieved and written
+        // into the |result| parameter, otherwise the function will return false. It may
+        // fail due to a stck overflow in the underlying JavaScript implentation, handling
+        // of such exception is up to the caller.
+        static bool sourceLineNumber(int& result);
+        static bool sourceName(String& result);
+
         v8::Local<v8::Context> context();
         v8::Local<v8::Context> mainWorldContext();
 
@@ -346,10 +356,23 @@ namespace WebCore {
         static const char* svgExceptionName(int exceptionCode);
 #endif
 
+        static void createUtilityContext();
+
+        // Returns a local handle of the utility context.
+        static v8::Local<v8::Context> utilityContext()
+        {
+            if (m_utilityContext.IsEmpty())
+                createUtilityContext();
+            return v8::Local<v8::Context>::New(m_utilityContext);
+        }
+
         Frame* m_frame;
 
         // For the moment, we have one of these.  Soon we will have one per DOMWrapperWorld.
         RefPtr<V8DOMWindowShell> m_windowShell;
+        
+        // Utility context holding JavaScript functions used internally.
+        static v8::Persistent<v8::Context> m_utilityContext;
 
         int m_handlerLineNumber;
 

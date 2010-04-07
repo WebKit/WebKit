@@ -68,6 +68,7 @@
 #include <stdio.h>
 #include <utility>
 #include <v8.h>
+#include <v8-debug.h>
 #include <wtf/Assertions.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/StdLibExtras.h>
@@ -75,6 +76,8 @@
 #include <wtf/UnusedParam.h>
 
 namespace WebCore {
+
+v8::Persistent<v8::Context> V8Proxy::m_utilityContext;
 
 // Static list of registered extensions
 V8Extensions V8Proxy::m_extensions;
@@ -750,6 +753,79 @@ v8::Handle<v8::Value> V8Proxy::checkNewLegal(const v8::Arguments& args)
 void V8Proxy::processConsoleMessages()
 {
     V8ConsoleMessage::processDelayed();
+}
+
+// Create the utility context for holding JavaScript functions used internally
+// which are not visible to JavaScript executing on the page.
+void V8Proxy::createUtilityContext()
+{
+    ASSERT(m_utilityContext.IsEmpty());
+
+    v8::HandleScope scope;
+    v8::Handle<v8::ObjectTemplate> globalTemplate = v8::ObjectTemplate::New();
+    m_utilityContext = v8::Context::New(0, globalTemplate);
+    v8::Context::Scope contextScope(m_utilityContext);
+
+    // Compile JavaScript function for retrieving the source line of the top
+    // JavaScript stack frame.
+    DEFINE_STATIC_LOCAL(const char*, frameSourceLineSource,
+        ("function frameSourceLine(exec_state) {"
+        "  if (!exec_state.frameCount())"
+        "      return undefined;"
+        "  return exec_state.frame(0).sourceLine();"
+        "}"));
+    v8::Script::Compile(v8::String::New(frameSourceLineSource))->Run();
+
+    // Compile JavaScript function for retrieving the source name of the top
+    // JavaScript stack frame.
+    DEFINE_STATIC_LOCAL(const char*, frameSourceNameSource,
+        ("function frameSourceName(exec_state) {"
+        "  if (!exec_state.frameCount())"
+        "      return undefined;"
+        "  var frame = exec_state.frame(0);"
+        "  if (frame.func().resolved() && "
+        "      frame.func().script() && "
+        "      frame.func().script().name()) {"
+        "    return frame.func().script().name();"
+        "  }"
+        "}"));
+    v8::Script::Compile(v8::String::New(frameSourceNameSource))->Run();
+}
+
+bool V8Proxy::sourceLineNumber(int& result)
+{
+    v8::HandleScope scope;
+    v8::Handle<v8::Context> v8UtilityContext = V8Proxy::utilityContext();
+    if (v8UtilityContext.IsEmpty())
+        return false;
+    v8::Context::Scope contextScope(v8UtilityContext);
+    v8::Handle<v8::Function> frameSourceLine;
+    frameSourceLine = v8::Local<v8::Function>::Cast(v8UtilityContext->Global()->Get(v8::String::New("frameSourceLine")));
+    if (frameSourceLine.IsEmpty())
+        return false;
+    v8::Handle<v8::Value> value = v8::Debug::Call(frameSourceLine);
+    if (value.IsEmpty())
+        return false;
+    result = value->Int32Value();
+    return true;
+}
+
+bool V8Proxy::sourceName(String& result)
+{
+    v8::HandleScope scope;
+    v8::Handle<v8::Context> v8UtilityContext = utilityContext();
+    if (v8UtilityContext.IsEmpty())
+        return false;
+    v8::Context::Scope contextScope(v8UtilityContext);
+    v8::Handle<v8::Function> frameSourceName;
+    frameSourceName = v8::Local<v8::Function>::Cast(v8UtilityContext->Global()->Get(v8::String::New("frameSourceName")));
+    if (frameSourceName.IsEmpty())
+        return false;
+    v8::Handle<v8::Value> value = v8::Debug::Call(frameSourceName);
+    if (value.IsEmpty())
+        return false;
+    result = toWebCoreString(value);
+    return true;
 }
 
 void V8Proxy::registerExtensionWithV8(v8::Extension* extension)
