@@ -1,6 +1,6 @@
 description("Test of get calls against GL objects like getBufferParameter, etc.");
 
-var gl = create3DContext({ antialias: false });
+var gl = create3DContext();
 var program = loadStandardProgram(gl);
 
 // 3 vertices => 1 triangle, interleaved data

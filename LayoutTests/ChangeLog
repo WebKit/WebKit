@@ -1,3 +1,14 @@
+2010-04-07  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Eric Seidel.
+
+        A few tests in fast/canvas/webgl failed randomly on Leopard Commit Bot
+        https://bugs.webkit.org/show_bug.cgi?id=37098
+
+        * fast/canvas/webgl/resources/webgl-test.js: Turn off stencil/antialias by default.
+        (create3DContext):
+        * fast/canvas/webgl/script-tests/index-validation.js: By default antialias is off.
+
 2010-04-07  Jaime Yap  <jaimeyap@google.com>
 
         Reviewed by Pavel Feldman.
