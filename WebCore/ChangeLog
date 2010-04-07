@@ -1,3 +1,23 @@
+2010-04-07  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darinn Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37230
+        <rdar://problem/7813115> REGRESSION (4.0.5): Safari asks for credentials all the time when
+        authenticating to Windows IIS Server
+
+        * platform/network/ProtectionSpace.h: (WebCore::ProtectionSpaceAuthenticationScheme): Added
+        a constant for ProtectionSpaceAuthenticationSchemeUnknown.
+
+        * platform/network/cf/AuthenticationCF.cpp: (WebCore::core):
+        * platform/network/cf/SocketStreamHandleCFNet.cpp: (WebCore::authenticationSchemeFromAuthenticationMethod):
+        Return ProtectionSpaceAuthenticationSchemeUnknown for unknown scheme.
+
+        * platform/network/mac/AuthenticationMac.mm:
+        (WebCore::mac): Support NTLM on systems older than 10.6. We actually get this string from
+        NSURLConnection, even though there was no public constant.
+        (WebCore::core): Return ProtectionSpaceAuthenticationSchemeUnknown for unknown scheme.
+
 2010-04-07  Jaime Yap  <jaimeyap@google.com>
 
         Reviewed by Pavel Feldman.

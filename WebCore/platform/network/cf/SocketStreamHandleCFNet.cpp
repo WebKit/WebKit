@@ -377,7 +377,7 @@ static ProtectionSpaceAuthenticationScheme authenticationSchemeFromAuthenticatio
         return ProtectionSpaceAuthenticationSchemeNegotiate;
 #endif
     ASSERT_NOT_REACHED();
-    return ProtectionSpaceAuthenticationSchemeDefault;
+    return ProtectionSpaceAuthenticationSchemeUnknown;
 }
 
 void SocketStreamHandle::addCONNECTCredentials(CFHTTPMessageRef proxyResponse)

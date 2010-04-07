@@ -253,6 +253,7 @@ ProtectionSpace core(CFURLProtectionSpaceRef cfSpace)
         scheme = ProtectionSpaceAuthenticationSchemeNegotiate;
         break;
     default:
+        scheme = ProtectionSpaceAuthenticationSchemeUnknown;
         ASSERT_NOT_REACHED();
     }
         

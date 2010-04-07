@@ -82,6 +82,12 @@ using namespace WebCore;
 
 namespace WebCore {
 
+#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+// There is no contqnt in headers, but NTLM is supported.
+NSString * const NSURLAuthenticationMethodNTLM = @"NSURLAuthenticationMethodNTLM";
+#endif
+
+
 AuthenticationChallenge::AuthenticationChallenge(const ProtectionSpace& protectionSpace,
                                                  const Credential& proposedCredential,
                                                  unsigned previousFailureCount,
@@ -188,11 +194,9 @@ NSURLProtectionSpace *mac(const ProtectionSpace& coreSpace)
         case ProtectionSpaceAuthenticationSchemeHTMLForm:
             method = NSURLAuthenticationMethodHTMLForm;
             break;
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
         case ProtectionSpaceAuthenticationSchemeNTLM:
             method = NSURLAuthenticationMethodNTLM;
             break;
-#endif
         default:
             ASSERT_NOT_REACHED();
     }
@@ -289,12 +293,12 @@ ProtectionSpace core(NSURLProtectionSpace *macSpace)
         scheme = ProtectionSpaceAuthenticationSchemeHTTPDigest;
     else if ([method isEqualToString:NSURLAuthenticationMethodHTMLForm])
         scheme = ProtectionSpaceAuthenticationSchemeHTMLForm;
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
     else if ([method isEqualToString:NSURLAuthenticationMethodNTLM])
         scheme = ProtectionSpaceAuthenticationSchemeNTLM;
-#endif
-    else
+    else {
+        scheme = ProtectionSpaceAuthenticationSchemeUnknown;
         ASSERT_NOT_REACHED();
+    }
         
     return ProtectionSpace([macSpace host], [macSpace port], serverType, [macSpace realm], scheme);
 
