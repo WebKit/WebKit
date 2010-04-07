@@ -1,5 +1,12 @@
 2010-04-06  Mark Rowe  <mrowe@apple.com>
 
+        Add an #if in order to make Tiger happy.
+
+        * WebView/WebViewData.mm:
+        (-[WebViewPrivate init]):
+
+2010-04-06  Mark Rowe  <mrowe@apple.com>
+
         Build fix.
 
         * WebView/WebViewData.mm:
