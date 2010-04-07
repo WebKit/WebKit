@@ -1,3 +1,15 @@
+2010-04-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Rubber-stamped by Kenneth Rohde Christiansen.
+
+        Poor rendering on lala.com with frame flattening
+        https://bugs.webkit.org/show_bug.cgi?id=37164
+
+        Platform specific expected files added for test introduced in r57225.
+
+        * platform/mac/fast/frames/flattening/iframe-flattening-offscreen-expected.txt: Added.
+        * platform/qt/fast/frames/flattening/iframe-flattening-offscreen-expected.txt: Added.
+
 2010-04-07  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Adam Barth.
