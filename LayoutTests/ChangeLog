@@ -1,3 +1,19 @@
+2010-04-07  Jaime Yap  <jaimeyap@google.com>
+
+        Reviewed by Pavel Feldman.
+        Tests expectations changed due to the addition of the function symbol name for
+        the call location for records sent by the InspectorTimelineAgent.
+        https://bugs.webkit.org/show_bug.cgi?id=36839
+
+        No new tests.
+
+        * inspector/timeline-test.js:
+        * platform/chromium-win/inspector/timeline-event-dispatch-expected.txt:
+        * platform/chromium-win/inspector/timeline-mark-timeline-expected.txt:
+        * platform/chromium-win/inspector/timeline-network-resource-expected.txt:
+        * platform/chromium-win/inspector/timeline-paint-expected.txt:
+        * platform/chromium-win/inspector/timeline-parse-html-expected.txt:
+
 2010-04-07  Jay Civelli  <jcivelli@chromium.org>
 
         Reviewed by Jian Li.

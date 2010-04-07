@@ -4,6 +4,7 @@ ParseHTML Properties:
 + startTime : * DEFINED *
 + callerScriptName : * DEFINED *
 + callerScriptLine : * DEFINED *
++ callerFunctionName : * DEFINED *
 + data : {
 +- length : 9
 +- startLine : 0

@@ -4,6 +4,7 @@ MarkTimeline Properties:
 + startTime : * DEFINED *
 + callerScriptName : * DEFINED *
 + callerScriptLine : * DEFINED *
++ callerFunctionName : * DEFINED *
 + data : {
 +- message : MARK TIMELINE
 + }

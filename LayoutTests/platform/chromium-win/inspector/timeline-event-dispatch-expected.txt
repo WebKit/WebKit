@@ -5,6 +5,7 @@ EventDispatch Properties:
 + startTime : * DEFINED *
 + callerScriptName : * DEFINED *
 + callerScriptLine : * DEFINED *
++ callerFunctionName : * DEFINED *
 + data : {
 +- type : mousedown
 + }

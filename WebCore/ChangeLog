@@ -1,3 +1,31 @@
+2010-04-07  Jaime Yap  <jaimeyap@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Adds the ability to get the function symbol name when looking up the call location
+        for records sent by the InspectorTimelineAgent.
+        https://bugs.webkit.org/show_bug.cgi?id=36839
+
+        No new tests.
+
+        * bindings/js/ScriptCallStack.cpp:
+        (WebCore::ScriptCallStack::callLocation):
+        * bindings/js/ScriptCallStack.h:
+        * bindings/v8/ScriptCallStack.cpp:
+        (WebCore::ScriptCallStack::create):
+        (WebCore::ScriptCallStack::callLocation):
+        (WebCore::ScriptCallStack::ScriptCallStack):
+        * bindings/v8/ScriptCallStack.h:
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::createUtilityContext):
+        (WebCore::ScriptDebugServer::topStackFrame):
+        * bindings/v8/ScriptDebugServer.h:
+        (WebCore::ScriptDebugServer::utilityContext):
+        * bindings/v8/V8Proxy.cpp:
+        * bindings/v8/V8Proxy.h:
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createGenericRecord):
+
 2010-04-07  Jay Civelli  <jcivelli@chromium.org>
 
         Reviewed by Jian Li.

@@ -4,6 +4,7 @@ Paint Properties:
 + startTime : * DEFINED *
 + callerScriptName : * DEFINED *
 + callerScriptLine : * DEFINED *
++ callerFunctionName : * DEFINED *
 + data : {
 +- x : 0
 +- y : 0

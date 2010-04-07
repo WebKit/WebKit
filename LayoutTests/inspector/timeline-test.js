@@ -10,6 +10,7 @@ var timelineNonDeterministicProps = {
     width : 1,
     callerScriptName: 1,
     callerScriptLine: 1,
+    callerFunctionName: 1,
     url : 1,
     usedHeapSize: 1,
     totalHeapSize: 1,
