@@ -46,6 +46,9 @@
 
 namespace WebCore {
 
+static const char uuidVersionRequired = '4';
+static const int uuidVersionIdentifierIndex = 14;
+
 String createCanonicalUUIDString()
 {
 #if OS(WINDOWS)
@@ -56,14 +59,18 @@ String createCanonicalUUIDString()
     wchar_t uuidStr[40];
     int num = StringFromGUID2(uuid, reinterpret_cast<LPOLESTR>(uuidStr), ARRAYSIZE(uuidStr));
     ASSERT(num == 39);
-    return String(uuidStr + 1, num - 3).lower(); // remove opening and closing bracket and make it lower.
+    String canonicalUuidStr = String(uuidStr + 1, num - 3).lower(); // remove opening and closing bracket and make it lower.
+    ASSERT(canonicalUuidStr[uuidVersionIdentifierIndex] == uuidVersionRequired);
+    return canonicalUuidStr;
 #elif OS(DARWIN)
     CFUUIDRef uuid = CFUUIDCreate(0);
     CFStringRef uuidStrRef = CFUUIDCreateString(0, uuid);
     String uuidStr(uuidStrRef);
     CFRelease(uuidStrRef);
     CFRelease(uuid);
-    return uuidStr.lower(); // make it lower.
+    String canonicalUuidStr = uuidStr.lower(); // make it lower.
+    ASSERT(canonicalUuidStr[uuidVersionIdentifierIndex] == uuidVersionRequired);
+    return canonicalUuidStr;
 #elif OS(LINUX)
     FILE* fptr = fopen("/proc/sys/kernel/random/uuid", "r");
     if (!fptr)
@@ -71,7 +78,9 @@ String createCanonicalUUIDString()
     char uuidStr[37] = {0};
     fgets(uuidStr, sizeof(uuidStr) - 1, fptr);
     fclose(fptr);
-    return String(uuidStr).lower(); // make it lower.
+    String canonicalUuidStr = String(uuidStr).lower(); // make it lower.
+    ASSERT(canonicalUuidStr[uuidVersionIdentifierIndex] == uuidVersionRequired);
+    return canonicalUuidStr;
 #else
     notImplemented();
     return String();
