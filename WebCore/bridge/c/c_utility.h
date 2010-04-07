@@ -49,7 +49,7 @@ typedef uint16_t NPUTF16;
 WebCore::String convertNPStringToUTF16(const NPString *string);
 void convertValueToNPVariant(ExecState*, JSValue, NPVariant* result);
 JSValue convertNPVariantToValue(ExecState*, const NPVariant*, RootObject*);
-Identifier identifierFromNPIdentifier(const NPUTF8* name);
+Identifier identifierFromNPIdentifier(ExecState*, const NPUTF8* name);
 
 } }
 

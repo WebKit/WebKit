@@ -1,3 +1,25 @@
+2010-04-07  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Remove some unnecessary uses of commonJSGlobalData
+        https://bugs.webkit.org/show_bug.cgi?id=37229
+
+        Pass the ExecState down to identifierFromNPIdentifier and update call sites
+
+        * bridge/NP_jsobject.cpp:
+        (_NPN_Invoke):
+        (_NPN_GetProperty):
+        (_NPN_SetProperty):
+        (_NPN_RemoveProperty):
+        (_NPN_HasProperty):
+        (_NPN_HasMethod):
+        * bridge/c/c_instance.cpp:
+        (JSC::Bindings::CInstance::getPropertyNames):
+        * bridge/c/c_utility.cpp:
+        (JSC::Bindings::identifierFromNPIdentifier):
+        * bridge/c/c_utility.h:
+
 2010-04-07  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Darin Adler.

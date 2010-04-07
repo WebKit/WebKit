@@ -303,7 +303,7 @@ void CInstance::getPropertyNames(ExecState* exec, PropertyNameArray& nameArray)
         IdentifierRep* identifier = static_cast<IdentifierRep*>(identifiers[i]);
 
         if (identifier->isString())
-            nameArray.add(identifierFromNPIdentifier(identifier->string()));
+            nameArray.add(identifierFromNPIdentifier(exec, identifier->string()));
         else
             nameArray.add(Identifier::from(exec, identifier->number()));
     }

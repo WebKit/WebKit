@@ -230,7 +230,7 @@ bool _NPN_Invoke(NPP npp, NPObject* o, NPIdentifier methodName, const NPVariant*
             return false;
         ExecState* exec = rootObject->globalObject()->globalExec();
         JSLock lock(SilenceAssertionsOnly);
-        JSValue function = obj->imp->get(exec, identifierFromNPIdentifier(i->string()));
+        JSValue function = obj->imp->get(exec, identifierFromNPIdentifier(exec, i->string()));
         CallData callData;
         CallType callType = function.getCallData(callData);
         if (callType == CallTypeNone)
@@ -311,7 +311,7 @@ bool _NPN_GetProperty(NPP, NPObject* o, NPIdentifier propertyName, NPVariant* va
         JSLock lock(SilenceAssertionsOnly);
         JSValue result;
         if (i->isString())
-            result = obj->imp->get(exec, identifierFromNPIdentifier(i->string()));
+            result = obj->imp->get(exec, identifierFromNPIdentifier(exec, i->string()));
         else
             result = obj->imp->get(exec, i->number());
 
@@ -345,7 +345,7 @@ bool _NPN_SetProperty(NPP, NPObject* o, NPIdentifier propertyName, const NPVaria
 
         if (i->isString()) {
             PutPropertySlot slot;
-            obj->imp->put(exec, identifierFromNPIdentifier(i->string()), convertNPVariantToValue(exec, variant, rootObject), slot);
+            obj->imp->put(exec, identifierFromNPIdentifier(exec, i->string()), convertNPVariantToValue(exec, variant, rootObject), slot);
         } else
             obj->imp->put(exec, i->number(), convertNPVariantToValue(exec, variant, rootObject));
         exec->clearException();
@@ -370,7 +370,7 @@ bool _NPN_RemoveProperty(NPP, NPObject* o, NPIdentifier propertyName)
         ExecState* exec = rootObject->globalObject()->globalExec();
         IdentifierRep* i = static_cast<IdentifierRep*>(propertyName);
         if (i->isString()) {
-            if (!obj->imp->hasProperty(exec, identifierFromNPIdentifier(i->string()))) {
+            if (!obj->imp->hasProperty(exec, identifierFromNPIdentifier(exec, i->string()))) {
                 exec->clearException();
                 return false;
             }
@@ -383,7 +383,7 @@ bool _NPN_RemoveProperty(NPP, NPObject* o, NPIdentifier propertyName)
 
         JSLock lock(SilenceAssertionsOnly);
         if (i->isString())
-            obj->imp->deleteProperty(exec, identifierFromNPIdentifier(i->string()));
+            obj->imp->deleteProperty(exec, identifierFromNPIdentifier(exec, i->string()));
         else
             obj->imp->deleteProperty(exec, i->number());
 
@@ -406,7 +406,7 @@ bool _NPN_HasProperty(NPP, NPObject* o, NPIdentifier propertyName)
         IdentifierRep* i = static_cast<IdentifierRep*>(propertyName);
         JSLock lock(SilenceAssertionsOnly);
         if (i->isString()) {
-            bool result = obj->imp->hasProperty(exec, identifierFromNPIdentifier(i->string()));
+            bool result = obj->imp->hasProperty(exec, identifierFromNPIdentifier(exec, i->string()));
             exec->clearException();
             return result;
         }
@@ -437,7 +437,7 @@ bool _NPN_HasMethod(NPP, NPObject* o, NPIdentifier methodName)
 
         ExecState* exec = rootObject->globalObject()->globalExec();
         JSLock lock(SilenceAssertionsOnly);
-        JSValue func = obj->imp->get(exec, identifierFromNPIdentifier(i->string()));
+        JSValue func = obj->imp->get(exec, identifierFromNPIdentifier(exec, i->string()));
         exec->clearException();
         return !func.isUndefined();
     }

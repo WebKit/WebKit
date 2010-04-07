@@ -143,9 +143,9 @@ String convertNPStringToUTF16(const NPString* string)
     return String::fromUTF8WithLatin1Fallback(string->UTF8Characters, string->UTF8Length);
 }
 
-Identifier identifierFromNPIdentifier(const NPUTF8* name)
+Identifier identifierFromNPIdentifier(ExecState* exec, const NPUTF8* name)
 {
-    return Identifier(WebCore::JSDOMWindow::commonJSGlobalData(), convertUTF8ToUTF16WithLatin1Fallback(name, -1));
+    return Identifier(exec, convertUTF8ToUTF16WithLatin1Fallback(name, -1));
 }
 
 } }
