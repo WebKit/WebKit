@@ -1,3 +1,17 @@
+2010-04-07  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Fix two cookie tests to clean up after themselves (so they can be run repeatedly)
+        https://bugs.webkit.org/show_bug.cgi?id=37235
+
+        Tiger's CFNetwork doesn't seem to understand "max-age=-1" so we'll
+        use "expires=some date in the past" to clear cookies instead.
+        I've verified that these tests still work on Snow Leopard.
+
+        * http/tests/xmlhttprequest/resources/cross-origin-set-cookies.php:
+        * http/tests/xmlhttprequest/resources/get-set-cookie.cgi:
+
 2010-04-07  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by Adam Barth.
