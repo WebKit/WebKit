@@ -406,6 +406,10 @@ void FocusController::findFocusableNodeInDirection(Document* document, Node* foc
             // Get distance and alignment from current candidate.
             distanceDataForNode(direction, focusedNode, currentFocusCandidate);
 
+            // Bail out if distance is maximum.
+            if (currentFocusCandidate.distance == maxDistance())
+                continue;
+
             // If candidateParent is not null, it means that we are in a recursive call
             // from deepFineFocusableNodeInDirection (i.e. processing an element in an iframe),
             // and holds the distance and alignment data of the iframe element itself.

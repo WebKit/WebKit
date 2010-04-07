@@ -1,3 +1,17 @@
+2010-04-05  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Kenneth Christiansen.
+
+        Spatial Navigation: bail out as soon as algorithm finds a focus candidate is not applicable
+        https://bugs.webkit.org/show_bug.cgi?id=37135
+
+        It happens, for example, when distanceDataForNode assigns numeric_limits<long long> to
+        current focus candidate's. It means that current candidate is not in direction, or not
+        a valid target node.
+
+        * page/FocusController.cpp:
+        (WebCore::FocusController::findFocusableNodeInDirection):
+
 2010-04-07  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Yury Semikhatsky.
