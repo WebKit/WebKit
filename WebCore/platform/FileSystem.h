@@ -26,7 +26,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+
 #ifndef FileSystem_h
 #define FileSystem_h
 
@@ -122,6 +122,17 @@ typedef int PlatformFileHandle;
 const PlatformFileHandle invalidPlatformFileHandle = -1;
 #endif
 
+enum FileOpenMode {
+    OpenForRead = 0,
+    OpenForWrite
+};
+
+enum FileSeekOrigin {
+    SeekFromBeginning = 0,
+    SeekFromCurrent,
+    SeekFromEnd
+};
+
 bool fileExists(const String&);
 bool deleteFile(const String&);
 bool deleteEmptyDirectory(const String&);
@@ -141,8 +152,15 @@ inline bool isHandleValid(const PlatformFileHandle& handle) { return handle != i
 
 // Prefix is what the filename should be prefixed with, not the full path.
 WTF::CString openTemporaryFile(const char* prefix, PlatformFileHandle&);
+PlatformFileHandle openFile(const String& path, FileOpenMode);
 void closeFile(PlatformFileHandle&);
+// Returns the resulting offset from the beginning of the file if successful, -1 otherwise.
+long long seekFile(PlatformFileHandle, long long offset, FileSeekOrigin);
+bool truncateFile(PlatformFileHandle, long long offset);
+// Returns number of bytes actually read if successful, -1 otherwise.
 int writeToFile(PlatformFileHandle, const char* data, int length);
+// Returns number of bytes actually written if successful, -1 otherwise.
+int readFromFile(PlatformFileHandle, char* data, int length);
 
 // Methods for dealing with loadable modules
 bool unloadModule(PlatformModule);

@@ -1,3 +1,22 @@
+2010-04-06  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Jian Li.
+
+        Add basic FileSystem operations for FileReader/FileWriter support for POSIX (incl. Mac)
+        https://bugs.webkit.org/show_bug.cgi?id=36938
+
+        No new tests; will be added when we implement upper layers.
+
+        * platform/FileSystem.h:
+        (WebCore::):
+        * platform/posix/FileSystemPOSIX.cpp:
+        (WebCore::openFile):
+        (WebCore::closeFile):
+        (WebCore::seekFile):
+        (WebCore::truncateFile):
+        (WebCore::writeToFile):
+        (WebCore::readFromFile):
+
 2010-04-06  Nicolas Weber  <thakis@chromium.org>
 
         Reviewed by Dimitri Glazkov.
