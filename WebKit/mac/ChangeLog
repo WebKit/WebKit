@@ -1,3 +1,10 @@
+2010-04-06  Mark Rowe  <mrowe@apple.com>
+
+        Build fix.
+
+        * WebView/WebViewData.mm:
+        (-[WebViewPrivate init]): Use objc_collectingEnabled like we do elsewhere in WebKit.
+
 2010-04-05  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Adele Peterson.

@@ -65,7 +65,7 @@ int pluginDatabaseClientCount = 0;
     dashboardBehaviorAllowWheelScrolling = YES;
 #endif
 
-    shouldCloseWithWindow = objc_collecting_enabled();
+    shouldCloseWithWindow = objc_collectingEnabled();
 
     smartInsertDeleteEnabled = ![[NSUserDefaults standardUserDefaults] objectForKey:WebSmartInsertDeleteEnabled]
         || [[NSUserDefaults standardUserDefaults] boolForKey:WebSmartInsertDeleteEnabled];
