@@ -26,11 +26,16 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Cocoa/Cocoa.h>
 #import <WebKit/WebHTMLView.h>
 
 #if !defined(ENABLE_NETSCAPE_PLUGIN_API)
 #define ENABLE_NETSCAPE_PLUGIN_API 1
+#endif
+
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
+#define WebCGFloat float
+#else
+#define WebCGFloat CGFloat
 #endif
 
 @class DOMDocumentFragment;
@@ -125,8 +130,10 @@
 // directly, this method must be called before paginating, or the computed height might be incorrect.
 // Typically this would be called from inside an override of -[NSView knowsPageRange:].
 - (void)_layoutForPrinting;
-- (CGFloat)_adjustedBottomOfPageWithTop:(CGFloat)top bottom:(CGFloat)bottom limit:(CGFloat)bottomLimit;
+- (WebCGFloat)_adjustedBottomOfPageWithTop:(CGFloat)top bottom:(CGFloat)bottom limit:(CGFloat)bottomLimit;
 
 - (BOOL)_canSmartReplaceWithPasteboard:(NSPasteboard *)pasteboard;
 
 @end
+
+#undef WebCGFloat
