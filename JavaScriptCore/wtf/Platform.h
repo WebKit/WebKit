@@ -867,6 +867,10 @@
 #define ENABLE_NOTIFICATIONS 0
 #endif
 
+#if PLATFORM(IPHONE)
+#define ENABLE_TEXT_CARET 0
+#endif
+
 #if !defined(ENABLE_TEXT_CARET)
 #define ENABLE_TEXT_CARET 1
 #endif

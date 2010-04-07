@@ -660,6 +660,11 @@ void Frame::paintDragCaret(GraphicsContext* p, int tx, int ty, const IntRect& cl
     ASSERT(dragCaretController->selection().isCaret());
     if (dragCaretController->selection().start().node()->document()->frame() == this)
         dragCaretController->paintCaret(p, tx, ty, clipRect);
+#else
+    UNUSED_PARAM(p);
+    UNUSED_PARAM(tx);
+    UNUSED_PARAM(ty);
+    UNUSED_PARAM(clipRect);
 #endif
 }
 

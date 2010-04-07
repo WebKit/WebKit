@@ -1011,14 +1011,15 @@ bool SelectionController::recomputeCaretRect()
     IntRect oldAbsoluteCaretRepaintBounds = m_absoluteCaretRepaintBounds;
     // We believe that we need to inflate the local rect before transforming it to obtain the repaint bounds.
     m_absoluteCaretRepaintBounds = caretRepaintRect();
-    
+
+#if ENABLE(TEXT_CARET)    
     if (RenderView* view = toRenderView(m_frame->document()->renderer())) {
         // FIXME: make caret repainting container-aware.
         view->repaintRectangleInViewAndCompositedLayers(oldAbsoluteCaretRepaintBounds, false);
         if (shouldRepaintCaret(view))
             view->repaintRectangleInViewAndCompositedLayers(m_absoluteCaretRepaintBounds, false);
     }
-
+#endif
     return true;
 }
 
@@ -1086,6 +1087,11 @@ void SelectionController::paintCaret(GraphicsContext* context, int tx, int ty, c
     }
 
     context->fillRect(caret, caretColor, colorSpace);
+#else
+    UNUSED_PARAM(context);
+    UNUSED_PARAM(tx);
+    UNUSED_PARAM(ty);
+    UNUSED_PARAM(clipRect);
 #endif
 }
 
