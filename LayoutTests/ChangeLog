@@ -1,3 +1,14 @@
+2010-04-07  Andrew Scherkus  <scherkus@chromium.org>
+
+        Unreviewed, checking in missing image baselines for fast/layers/video-layer.html
+
+        * platform/chromium-linux/fast/layers/video-layer-expected.checksum: Added.
+        * platform/chromium-linux/fast/layers/video-layer-expected.png: Added.
+        * platform/chromium-mac/fast/layers/video-layer-expected.checksum: Added.
+        * platform/chromium-mac/fast/layers/video-layer-expected.png: Added.
+        * platform/chromium-win/fast/layers/video-layer-expected.checksum: Updated.
+        * platform/chromium-win/fast/layers/video-layer-expected.png: Updated.
+
 2010-04-06  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Dave Hyatt.
