@@ -42,7 +42,7 @@ private:
 
     virtual void viewCleared();
 
-    bool flattenFrame() const;
+    bool flattenFrame();
 };
 
 inline RenderPartObject* toRenderPartObject(RenderObject* object)

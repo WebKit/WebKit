@@ -51,19 +51,30 @@ RenderPartObject::RenderPartObject(Element* element)
 {
 }
 
-bool RenderPartObject::flattenFrame() const
+bool RenderPartObject::flattenFrame()
 {
     if (!node() || !node()->hasTagName(iframeTag))
         return false;
 
-    HTMLIFrameElement* frame = static_cast<HTMLIFrameElement*>(node());
-    bool isScrollable = frame->scrollingMode() != ScrollbarAlwaysOff;
+    HTMLIFrameElement* element = static_cast<HTMLIFrameElement*>(node());
+    bool isScrollable = element->scrollingMode() != ScrollbarAlwaysOff;
 
     if (!isScrollable && style()->width().isFixed()
         && style()->height().isFixed())
         return false;
 
-    return frame->document()->frame() && frame->document()->frame()->settings()->frameFlatteningEnabled();
+    Frame* frame = element->document()->frame();
+    bool enabled = frame && frame->settings()->frameFlatteningEnabled();
+
+    if (!enabled || !frame->page())
+        return false;
+
+    FrameView* view = frame->page()->mainFrame()->view();
+    if (!view)
+        return false;
+
+    // Do not flatten offscreen inner frames during frame flattening.
+    return absoluteBoundingBoxRect().intersects(IntRect(IntPoint(0, 0), view->contentsSize()));
 }
 
 void RenderPartObject::calcHeight()

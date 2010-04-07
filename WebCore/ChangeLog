@@ -1,3 +1,18 @@
+2010-04-07  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Poor rendering on lala.com with frame flattening
+        https://bugs.webkit.org/show_bug.cgi?id=37164
+
+        Do not flatten offscreen iframes.
+
+        Test: fast/frames/flattening/iframe-flattening-offscreen.html
+
+        * rendering/RenderPartObject.cpp:
+        (WebCore::RenderPartObject::flattenFrame):
+        * rendering/RenderPartObject.h:
+
 2010-04-07  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Adam Barth.
