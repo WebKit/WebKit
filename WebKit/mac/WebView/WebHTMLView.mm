@@ -2202,6 +2202,29 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
 #endif
 }
 
+- (CGFloat)_adjustedBottomOfPageWithTop:(CGFloat)top bottom:(CGFloat)bottom limit:(CGFloat)bottomLimit
+{
+    Frame* frame = core([self _frame]);
+    if (!frame)
+        return bottom;
+
+    FrameView* view = frame->view();
+    if (!view)
+        return bottom;
+
+    float newBottom;
+    view->adjustPageHeight(&newBottom, top, bottom, bottomLimit);
+
+#ifdef __LP64__
+    // If the new bottom is equal to the old bottom (when both are treated as floats), we just return the original
+    // bottom. This prevents rounding errors that can occur when converting newBottom to a double.
+    if (fabs(static_cast<float>(bottom) - newBottom) <= numeric_limits<float>::epsilon()) 
+        return bottom;
+    else
+#endif
+        return newBottom;
+}
+
 @end
 
 @implementation NSView (WebHTMLViewFileInternal)
@@ -3792,21 +3815,8 @@ static BOOL isInPasswordField(Frame* coreFrame)
     if (!wasInPrintingMode)
         [self _setPrinting:YES minimumPageWidth:0.0f maximumPageWidth:0.0f adjustViewSize:NO];
 
-    float newBottomFloat = *newBottom;
-    if (Frame* frame = core([self _frame])) {
-        if (FrameView* view = frame->view())
-            view->adjustPageHeight(&newBottomFloat, oldTop, oldBottom, bottomLimit);
-    }
+    *newBottom = [self _adjustedBottomOfPageWithTop:oldTop bottom:oldBottom limit:bottomLimit];
 
-#ifdef __LP64__
-    // If the new bottom is equal to the old bottom (when both are treated as floats), we just copy
-    // oldBottom over to newBottom. This prevents rounding errors that can occur when converting newBottomFloat to a double.
-    if (fabs((float)oldBottom - newBottomFloat) <= numeric_limits<float>::epsilon()) 
-        *newBottom = oldBottom;
-    else
-#endif
-        *newBottom = newBottomFloat;
-    
     if (!wasInPrintingMode) {
         NSPrintOperation *currenPrintOperation = [NSPrintOperation currentOperation];
         if (currenPrintOperation)

@@ -1,3 +1,14 @@
+2010-04-06  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig and Anders Carlsson.
+
+        Expose WebHTMLView’s page breaking logic as SPI.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _adjustedBottomOfPageWithTop:bottom:limit:]): Factored out of -adjustPageHeightNew:top:bottom:limit:
+        (-[WebHTMLView adjustPageHeightNew:top:bottom:limit:]): Call -_adjustedBottomOfPageWithTop:bottom:limit:
+        * WebView/WebHTMLViewPrivate.h: Declared -_adjustedBottomOfPageWithTop:bottom:limit:
+
 2010-04-06  Mark Rowe  <mrowe@apple.com>
 
         Add an #if in order to make Tiger happy.

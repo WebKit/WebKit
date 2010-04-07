@@ -124,6 +124,7 @@
 // directly, this method must be called before paginating, or the computed height might be incorrect.
 // Typically this would be called from inside an override of -[NSView knowsPageRange:].
 - (void)_layoutForPrinting;
+- (CGFloat)_adjustedBottomOfPageWithTop:(CGFloat)top bottom:(CGFloat)bottom limit:(CGFloat)bottomLimit;
 
 - (BOOL)_canSmartReplaceWithPasteboard:(NSPasteboard *)pasteboard;
 
