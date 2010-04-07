@@ -29,13 +29,16 @@
 #ifndef DragImageRef_h
 #define DragImageRef_h
 
+#if OS(DARWIN)
+typedef struct CGImage* CGImageRef;
+#else
 class SkBitmap;
+#endif
 
 namespace WebCore {
 
 #if OS(DARWIN)
-// FIXME: not implemented.
-typedef void* DragImageRef;
+typedef CGImageRef DragImageRef;
 #else
 typedef SkBitmap* DragImageRef;
 #endif

@@ -1,3 +1,22 @@
+2010-04-06  Nicolas Weber  <thakis@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Implement DragImage functionality for chromium/mac.
+        https://bugs.webkit.org/show_bug.cgi?id=37069
+
+        * page/chromium/DragControllerChromium.cpp:
+        (WebCore::DragController::maxDragImageSize):
+        Use a max size of 400x400 on OS X.
+        * platform/chromium/DragImageChromiumMac.cpp:
+        (WebCore::dragImageSize): Implement.
+        (WebCore::deleteDragImage): Implement.
+        (WebCore::scaleDragImage): Implement.
+        (WebCore::dissolveDragImageToFraction): Implement.
+        (WebCore::createDragImageFromImage): Implement.
+        * platform/chromium/DragImageRef.h:
+        Use CGImageRefs as DragImageRef on OS X.
+
 2010-04-06  Chris Evans  <cevans@chromium.org>
 
         Reviewed by Adam Barth.

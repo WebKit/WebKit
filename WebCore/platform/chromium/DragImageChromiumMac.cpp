@@ -31,37 +31,71 @@
 #include "config.h"
 #include "DragImage.h"
 
+#include "Image.h"
 #include "NotImplemented.h"
+
+#include <CoreGraphics/CGBitmapContext.h>
+#include <CoreGraphics/CGImage.h>
 
 namespace WebCore {
 
 IntSize dragImageSize(DragImageRef image)
 {
-    notImplemented();
-    return IntSize();
+    if (!image)
+        return IntSize();
+    return IntSize(CGImageGetWidth(image), CGImageGetHeight(image));
 }
 
 void deleteDragImage(DragImageRef image)
 {
-    notImplemented();
+    CGImageRelease(image);
 }
 
 DragImageRef scaleDragImage(DragImageRef image, FloatSize scale)
 {
-    notImplemented();
-    return 0;
+    if (!image)
+        return 0;
+    size_t width = roundf(CGImageGetWidth(image) * scale.width());
+    size_t height = roundf(CGImageGetHeight(image) * scale.height());
+    CGContextRef context = CGBitmapContextCreate(0, width, height, 8, width * 4, CGImageGetColorSpace(image), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host);
+    if (!context)
+        return 0;
+    CGContextDrawImage(context, CGRectMake(0, 0, width, height), image);
+    CGImageRelease(image);
+
+    CGImageRef scaledImage = CGBitmapContextCreateImage(context);
+    CGContextRelease(context);
+    return scaledImage;
 }
 
-DragImageRef dissolveDragImageToFraction(DragImageRef image, float)
+DragImageRef dissolveDragImageToFraction(DragImageRef image, float delta)
 {
-    notImplemented();
-    return image;
+    if (!image)
+        return 0;
+    size_t width = CGImageGetWidth(image);
+    size_t height = CGImageGetHeight(image);
+    CGContextRef context = CGBitmapContextCreate(0, width, height, 8, width * 4, CGImageGetColorSpace(image), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host);
+    if (!context)
+        return 0;
+    // From CGContext.h:
+    //     The Porter-Duff "source over" mode is called `kCGBlendModeNormal':
+    //       R = S + D*(1 - Sa)
+    //  This is the same as NSCompositeSourceOver, which is what -[NSImage dissolveToPoint:fraction:] uses.
+    CGContextSetAlpha(context, delta);
+    CGContextSetBlendMode(context, kCGBlendModeNormal);
+    CGContextDrawImage(context, CGRectMake(0, 0, width, height), image);
+    CGImageRelease(image);
+
+    CGImageRef dissolvedImage = CGBitmapContextCreateImage(context);
+    CGContextRelease(context);
+    return dissolvedImage;
 }
 
-DragImageRef createDragImageFromImage(Image* img)
+DragImageRef createDragImageFromImage(Image* image)
 {
-    notImplemented();
-    return 0;
+    if (!image)
+        return 0;
+    return CGImageCreateCopy(image->nativeImageForCurrentFrame());
 }
 
 DragImageRef createDragImageIconForCachedImage(CachedImage*)

@@ -86,17 +86,14 @@ void DragClientImpl::startDrag(DragImageRef dragImage,
 
     IntSize offsetSize(eventPos - dragImageOrigin);
     WebPoint offsetPoint(offsetSize.width(), offsetSize.height());
+    m_webView->startDragging(
+        dragData, static_cast<WebDragOperationsMask>(dragOperationMask),
 #if WEBKIT_USING_SKIA
-    m_webView->startDragging(
-        dragData, static_cast<WebDragOperationsMask>(dragOperationMask),
-        dragImage ? WebImage(*dragImage) : WebImage(), offsetPoint);
+        dragImage ? WebImage(*dragImage) : WebImage(),
 #else
-    // FIXME: When DragImageRef is implemented for CG, we can probably just remove
-    // this #if fork. For now, pass an empty image.
-    m_webView->startDragging(
-        dragData, static_cast<WebDragOperationsMask>(dragOperationMask),
-        WebImage(), WebPoint());
+        dragImage ? WebImage(dragImage) : WebImage(),
 #endif
+        offsetPoint);
 }
 
 DragImageRef DragClientImpl::createDragImageForLink(KURL&, const String& label, Frame*)

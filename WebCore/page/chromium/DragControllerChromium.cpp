@@ -66,7 +66,12 @@ bool DragController::isCopyKeyDown()
     
 const IntSize& DragController::maxDragImageSize()
 {
+#if OS(DARWIN)
+    // Match Safari's drag image size.
+    static const IntSize maxDragImageSize(400, 400);
+#else
     static const IntSize maxDragImageSize(200, 200);
+#endif
     return maxDragImageSize;
 }
 
