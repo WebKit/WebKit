@@ -36,18 +36,13 @@ import subprocess
 
 from datetime import datetime # used in timestamp()
 
-# Import WebKit-specific modules.
 from webkitpy.common.system.deprecated_logging import error, log
 from webkitpy.common.config import committers
 from webkitpy.common.net.credentials import Credentials
 from webkitpy.common.system.ospath import relpath
 from webkitpy.common.system.user import User
 from webkitpy.thirdparty.autoinstalled.mechanize import Browser
-
-# WebKit includes a built copy of BeautifulSoup in Scripts/webkitpy/thirdparty
-# so this import should always succeed.
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup, SoupStrainer
-
 
 
 def parse_bug_id(message):

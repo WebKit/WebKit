@@ -30,6 +30,7 @@
 
 import StringIO
 
+from webkitpy.common.checkout.changelog import view_source_url
 from webkitpy.common.config.committers import CommitterList
 
 
@@ -81,3 +82,14 @@ class CommitInfo(object):
             self.reviewer(),
         ]
         return set([party for party in responsible_parties if party]) # Filter out None
+
+    # FIXME: It is slightly lame that this "view" method is on this "model" class (in MVC terms)
+    def blame_string(self, bugs):
+        string = "r%s:\n" % self.revision()
+        string += "  %s\n" % view_source_url(self.revision())
+        string += "  Bug: %s (%s)\n" % (self.bug_id(), bugs.bug_url_for_bug_id(self.bug_id()))
+        author_line = "\"%s\" <%s>" % (self.author_name(), self.author_email())
+        string += "  Author: %s\n" % (self.author() or author_line)
+        string += "  Reviewer: %s\n" % (self.reviewer() or self.reviewer_text())
+        string += "  Committer: %s" % self.committer()
+        return string

@@ -34,13 +34,12 @@ import urllib
 import urllib2
 import xmlrpclib
 
-# Import WebKit-specific modules.
-from webkitpy.common.system.deprecated_logging import log
-
+from webkitpy.common.system.logutils import get_logger
 from webkitpy.thirdparty.autoinstalled.mechanize import Browser
-# WebKit includes a built copy of BeautifulSoup in Scripts/webkitpy/thirdparty
-# so this import should always succeed.
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
+
+
+_log = get_logger(__file__)
 
 
 class Builder(object):
@@ -120,12 +119,20 @@ class Builder(object):
         # This assumes there was only one build per revision, which is false but we don't care for now.
         return dict([self._revision_and_build_for_filename(file_info["filename"]) for file_info in result_files])
 
-    # This assumes there can be only one build per revision, which is false, but we don't care for now.
-    def build_for_revision(self, revision, allow_failed_lookups=False):
+    def _revision_to_build_map(self):
         if not self._revision_to_build_number:
             self._revision_to_build_number = self._fetch_revision_to_build_map()
+        return self._revision_to_build_number
+
+    def revision_build_pairs_with_results(self):
+        return self._revision_to_build_map().items()
+
+    # This assumes there can be only one build per revision, which is false, but we don't care for now.
+    def build_for_revision(self, revision, allow_failed_lookups=False):
         # NOTE: This lookup will fail if that exact revision was never built.
-        build_number = self._revision_to_build_number.get(int(revision))
+        build_number = self._revision_to_build_map().get(int(revision))
+        if not build_number:
+            return None
         build = self.build(build_number)
         if not build and allow_failed_lookups:
             # Builds for old revisions with fail to lookup via buildbot's xmlrpc api.
@@ -172,6 +179,14 @@ class Builder(object):
         # with red build, so we've found our failure transition.
         return (current_build, build_after_current_build)
 
+    # FIXME: This likely does not belong on Builder
+    def suspect_revisions_for_transition(self, last_good_build, first_bad_build):
+        suspect_revisions = range(first_bad_build.revision(),
+                                  last_good_build.revision(),
+                                  -1)
+        suspect_revisions.reverse()
+        return suspect_revisions
+
     def blameworthy_revisions(self, red_build_number, look_back_limit=30, avoid_flakey_tests=True):
         red_build = self.build(red_build_number)
         (last_good_build, first_bad_build) = \
@@ -182,13 +197,10 @@ class Builder(object):
         # suspect a real failure transition.
         if avoid_flakey_tests and first_bad_build == red_build:
             return []
-        suspect_revisions = range(first_bad_build.revision(),
-                                  last_good_build.revision(),
-                                  -1)
-        suspect_revisions.reverse()
-        return suspect_revisions
+        return self.suspect_revisions_for_transition(last_good_build, first_bad_build)
 
 
+# FIXME: This should be unified with all the layout test results code in the layout_tests package
 class LayoutTestResults(object):
     stderr_key = u'Tests that had stderr output:'
     fail_key = u'Tests where results did not match expected results:'
@@ -211,8 +223,9 @@ class LayoutTestResults(object):
         for table in tables:
             table_title = table.findPreviousSibling("p").string
             if table_title not in cls.expected_keys:
-                raise "Unhandled title: %s" % str(table_title)
-            # We might want to translate table titles into identifiers at some point.
+                # This Exception should only ever be hit if run-webkit-tests changes its results.html format.
+                raise Exception("Unhandled title: %s" % str(table_title))
+            # We might want to translate table titles into identifiers before storing.
             parsed_results[table_title] = [row.find("a").string for row in table.findAll("tr")]
 
         return parsed_results
@@ -384,7 +397,7 @@ class BuildBot(object):
             return proxy.getBuild(builder.name(), int(build_number))
         except xmlrpclib.Fault, err:
             build_url = Build.build_url(builder, build_number)
-            log("Error fetching data for %s build %s (%s): %s" % (builder.name(), build_number, build_url, err))
+            _log.error("Error fetching data for %s build %s (%s): %s" % (builder.name(), build_number, build_url, err))
             return None
 
     def _fetch_one_box_per_builder(self):
@@ -443,7 +456,8 @@ class BuildBot(object):
                 revision_to_failing_bots[revision] = failing_bots
         return revision_to_failing_bots
 
-    # FIXME: This is a hack around lack of Builder.latest_build() support
+    # This makes fewer requests than calling Builder.latest_build would.  It grabs all builder
+    # statuses in one request using self.builder_statuses (fetching /one_box_per_builder instead of builder pages).
     def _latest_builds_from_builders(self, only_core_builders=True):
         builder_statuses = self.core_builder_statuses() if only_core_builders else self.builder_statuses()
         return [self.builder_with_name(status["name"]).build(status["build_number"]) for status in builder_statuses]

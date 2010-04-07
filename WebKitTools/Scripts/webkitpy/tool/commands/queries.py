@@ -30,10 +30,10 @@
 
 from optparse import make_option
 
-from webkitpy.common.checkout.changelog import view_source_url
 from webkitpy.common.checkout.commitinfo import CommitInfo
 from webkitpy.common.config.committers import CommitterList
 from webkitpy.common.net.buildbot import BuildBot
+from webkitpy.common.system.user import User
 from webkitpy.tool.grammar import pluralize
 from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
 from webkitpy.common.system.deprecated_logging import log
@@ -121,16 +121,7 @@ class WhatBroke(AbstractDeclarativeCommand):
     def _print_builder_line(self, builder_name, max_name_width, status_message):
         print "%s : %s" % (builder_name.ljust(max_name_width), status_message)
 
-    def _print_blame_information_for_commit(self, commit_info):
-        print "r%s:" % commit_info.revision()
-        print "  %s" % view_source_url(commit_info.revision())
-        print "  Bug: %s (%s)" % (commit_info.bug_id(), self.tool.bugs.bug_url_for_bug_id(commit_info.bug_id()))
-        author_line = "\"%s\" <%s>" % (commit_info.author_name(), commit_info.author_email())
-        print "  Author: %s" % (commit_info.author() or author_line)
-        print "  Reviewer: %s" % (commit_info.reviewer() or commit_info.reviewer_text())
-        print "  Committer: %s" % (commit_info.committer() or commit_info.committer_email())
-
-    # FIXME: This is slightly different from Builder.blameworthy_revisions
+    # FIXME: This is slightly different from Builder.suspect_revisions_for_green_to_red_transition
     # due to needing to detect the "hit the limit" case an print a special message.
     def _print_blame_information_for_builder(self, builder_status, name_width, avoid_flakey_tests=True):
         builder = self.tool.buildbot.builder_with_name(builder_status["name"])
@@ -151,7 +142,7 @@ class WhatBroke(AbstractDeclarativeCommand):
         self._print_builder_line(builder.name(), name_width, "FAIL (blame-list: %s%s)" % (suspect_revisions, first_failure_message))
         for revision in suspect_revisions:
             commit_info = self.tool.checkout().commit_info_for_revision(revision)
-            self._print_blame_information_for_commit(commit_info)
+            print commit_info.blame_string(self.tool.bugs)
 
     def execute(self, options, args, tool):
         builder_statuses = tool.buildbot.builder_statuses()
@@ -199,6 +190,71 @@ class ResultsFor(AbstractDeclarativeCommand):
             build = builder.build_for_revision(args[0], allow_failed_lookups=True)
             self._print_layout_test_results(build.layout_test_results())
 
+
+class FailureReason(AbstractDeclarativeCommand):
+    name = "failure-reason"
+    help_text = "Lists revisions where individual test failures started at %s" % BuildBot.default_host
+
+    def _print_blame_information_for_transition(self, green_build, red_build, failing_tests):
+        suspect_revisions = green_build.builder().suspect_revisions_for_transition(green_build, red_build)
+        print "SUCCESS: Build %s (r%s) was the first to show failures: %s" % (red_build._number, red_build.revision(), failing_tests)
+        print "Suspect revisions:"
+        for revision in suspect_revisions:
+            commit_info = self.tool.checkout().commit_info_for_revision(revision)
+            print commit_info.blame_string(self.tool.bugs)
+
+    def _explain_failures_for_builder(self, builder, start_revision, search_limit=1000):
+        print "Examining failures for \"%s\", starting at r%s" % (builder.name(), start_revision)
+        revision_to_test = start_revision
+        build = builder.build_for_revision(revision_to_test, allow_failed_lookups=True)
+        results_to_explain = set(build.layout_test_results().failing_tests())
+        last_build_with_results = build
+        print "Starting at %s" % revision_to_test
+        while results_to_explain and revision_to_test > start_revision - search_limit:
+            revision_to_test -= 1
+            new_build = builder.build_for_revision(revision_to_test, allow_failed_lookups=True)
+            if not new_build:
+                print "No build for %s" % revision_to_test
+                continue
+            build = new_build
+            latest_results = build.layout_test_results()
+            if not latest_results:
+                print "No results build %s (r%s)" % (build._number, build.revision())
+                continue
+            failures = set(latest_results.failing_tests())
+            if len(failures) >= 20:
+                # FIXME: We may need to move this logic into the LayoutTestResults class.
+                # The buildbot stops runs after 20 failures so we don't have full results to work with here.
+                print "Too many failures in build %s (r%s), ignoring." % (build._number, build.revision())
+                continue
+            fixed_results = results_to_explain - failures
+            if not fixed_results:
+                print "No change in build %s (r%s), %s unexplained failures (%s in this build)" % (build._number, build.revision(), len(results_to_explain), len(failures))
+                last_build_with_results = build
+                continue
+            self._print_blame_information_for_transition(build, last_build_with_results, fixed_results)
+            last_build_with_results = build
+            results_to_explain -= fixed_results
+        if results_to_explain:
+            print "Failed to explain failures: %s" % results_to_explain
+        else:
+            print "Explained all results for %s" % builder.name()
+
+    def _builder_to_explain(self):
+        builder_statuses = self.tool.buildbot.builder_statuses()
+        red_statuses = [status for status in builder_statuses if not status["is_green"]]
+        print "%s failing" % (pluralize("builder", len(red_statuses)))
+        builder_choices = [status["name"] for status in red_statuses]
+        # We could offer an "All" choice here.
+        chosen_name = User.prompt_with_list("Which builder to diagnose:", builder_choices)
+        # FIXME: prompt_with_list should really take a set of objects and a set of names and then return the object.
+        for status in red_statuses:
+            if status["name"] == chosen_name:
+                return (self.tool.buildbot.builder_with_name(chosen_name), status["built_revision"])
+
+    def execute(self, options, args, tool):
+        (builder, start_revision) = self._builder_to_explain()
+        self._explain_failures_for_builder(builder, start_revision=start_revision)
 
 class TreeStatus(AbstractDeclarativeCommand):
     name = "tree-status"

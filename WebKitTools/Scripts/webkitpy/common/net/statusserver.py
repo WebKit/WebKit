@@ -29,9 +29,6 @@
 from webkitpy.common.net.networktransaction import NetworkTransaction
 from webkitpy.common.system.deprecated_logging import log
 from webkitpy.thirdparty.autoinstalled.mechanize import Browser
-
-# WebKit includes a built copy of BeautifulSoup in Scripts/webkitpy/thirdparty
-# so this import should always succeed.
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
 
 import urllib2

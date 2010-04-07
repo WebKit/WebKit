@@ -1,3 +1,31 @@
+2010-03-31  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add webkit-patch command to crawl buildbot history and find when tests
+        started to fail.
+        https://bugs.webkit.org/show_bug.cgi?id=36911
+
+        This is a very bare-bones implementation, which works, but isn't pretty.
+        We will need further re-factoring and improvement to this code, but
+        after long discussions with Adam, I think it's best that we land this
+        and iterate from there.
+
+        * Scripts/webkitpy/common/net/buildbot.py:
+         - Add revision_build_pairs_with_results for cleaner code and possible
+           optimization of this command.
+         - Return None if a build number can't be found for a revision in
+           build_for_revision
+         - Separate out suspect_revisions_for_transition for re-use by
+           FailureReason
+         - Add LayoutTestResults.failing_tests() and make our parsing code
+           explict about what tables it accepts.
+        * Scripts/webkitpy/tool/commands/queries.py:
+         - Move _print_blame_information_for_commit out of WhatBroke for re-use
+           by FailureReason.
+         - Add FailureReason command which can crawl a given builder and explain
+           why it is currently red on a per-test basis.
+
 2010-04-06  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.
