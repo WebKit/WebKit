@@ -26,6 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <Cocoa/Cocoa.h>
 #import <WebKit/WebHTMLView.h>
 
 #if !defined(ENABLE_NETSCAPE_PLUGIN_API)

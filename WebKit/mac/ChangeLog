@@ -1,3 +1,11 @@
+2010-04-06  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        Speculative build fix for Tiger.
+
+        * WebView/WebHTMLViewPrivate.h:
+
 2010-04-06  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig and Anders Carlsson.
