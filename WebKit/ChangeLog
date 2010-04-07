@@ -1,3 +1,14 @@
+2010-04-07  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add ewk_view (the high level object to acces the WebKit-EFL browser
+        component) to efl/ewk.
+        http://webkit.org/b/35932
+
+        * efl/ewk/ewk_view.cpp: Added.
+        * efl/ewk/ewk_view.h: Added.
+
 2010-04-05  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
