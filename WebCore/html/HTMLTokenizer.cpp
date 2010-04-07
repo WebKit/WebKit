@@ -67,25 +67,17 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-#if MOBILE
-// The mobile device needs to be responsive, as such the tokenizer chunk size is reduced.
 // This value is used to define how many characters the tokenizer will process before 
 // yeilding control.
-static const int defaultTokenizerChunkSize = 256;
-#else
+// To increase responsivness reduce the tokenizer chunk size.
 static const int defaultTokenizerChunkSize = 4096;
-#endif
 
-#if MOBILE
-// As the chunks are smaller (above), the tokenizer should not yield for as long a period, otherwise
-// it will take way to long to load a page.
-static const double defaultTokenizerTimeDelay = 0.300;
-#else
 // FIXME: We would like this constant to be 200ms.
 // Yielding more aggressively results in increased responsiveness and better incremental rendering.
 // It slows down overall page-load on slower machines, though, so for now we set a value of 500.
+// For smaller chunks (above) decrease the value of TimerDelay as the the tokenizer should not 
+// yield for as long a period otherwise it will take way to long to load a page.
 static const double defaultTokenizerTimeDelay = 0.500;
-#endif
 
 static const char commentStart [] = "<!--";
 static const char doctypeStart [] = "<!doctype";

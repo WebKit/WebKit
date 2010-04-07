@@ -1,3 +1,19 @@
+2010-04-06  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        Remove obsolete MOBILE flag
+        https://bugs.webkit.org/show_bug.cgi?id=37125
+
+        The MOBILE flag is no longer used by any of the ports.
+        The flag use to control some tokenizer defaults that 
+        can be changed runtime.
+
+        No new tests as there is no new functionality.
+
+        * config.h:
+        * html/HTMLTokenizer.cpp:
+
 2010-04-06  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

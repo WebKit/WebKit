@@ -43,8 +43,6 @@
 #define WEBKIT_EXPORTDATA
 #endif
 
-#define MOBILE 0
-
 #ifdef __APPLE__
 #define HAVE_FUNC_USLEEP 1
 #endif /* __APPLE__ */
