@@ -1,6 +1,6 @@
 2010-04-07  Alexey Proskuryakov  <ap@apple.com>
 
-        Reviewed by Darinn Adler.
+        Reviewed by Darin Adler.
 
         https://bugs.webkit.org/show_bug.cgi?id=37230
         <rdar://problem/7813115> REGRESSION (4.0.5): Safari asks for credentials all the time when
