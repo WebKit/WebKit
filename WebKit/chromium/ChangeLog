@@ -1,3 +1,21 @@
+2010-04-07  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Chromium: support themes in devtools window.
+
+        https://bugs.webkit.org/attachment.cgi?bugid=37216
+
+        * WebKit.gypi:
+        * src/js/DevTools.js:
+        (WebInspector.setToolbarColors):
+        (WebInspector.resetToolbarColors):
+        * src/js/Images/segmentChromium2.png: Added.
+        * src/js/Images/segmentHoverChromium2.png: Added.
+        * src/js/Images/segmentSelectedChromium2.png: Added.
+        * src/js/Images/statusbarBackgroundChromium2.png: Added.
+        * src/js/Images/statusbarMenuButtonChromium2.png: Added.
+
 2010-04-07  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Yury Semikhatsky.

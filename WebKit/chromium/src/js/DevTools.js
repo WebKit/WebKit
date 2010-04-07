@@ -417,3 +417,93 @@ WebInspector.pausedScript = function(callFrames)
 {
     this.panels.scripts.debuggerPaused(callFrames);
 };
+
+// Chromium theme support.
+WebInspector.setToolbarColors = function(backgroundColor, color)
+{
+    if (!WebInspector._themeStyleElement) {
+        WebInspector._themeStyleElement = document.createElement("style");
+        document.head.appendChild(WebInspector._themeStyleElement);
+    }
+    WebInspector._themeStyleElement.textContent =
+        "body #toolbar, body.inactive #toolbar {\
+             background-image: none !important;\
+             background-color: " + backgroundColor + " !important;\
+         }\
+         \
+         body .status-bar {\
+             background-image: url(Images/statusbarBackgroundChromium2.png) !important;\
+             background-color: " + backgroundColor + " !important;\
+         }\
+         \
+         body button.status-bar-item {\
+             background-image: none !important;\
+         }\
+         \
+         button.status-bar-item {\
+             background-image: none;\
+             border-right: 1px solid " + backgroundColor + ";\
+         }\
+         \
+         .status-bar {\
+             background-image: none;\
+             color: " + color + ";\
+         }\
+         \
+         body #drawer {\
+             background-image: none !important;\
+         }\
+         \
+         #drawer-status-bar {\
+             background-image: url(Images/statusbarBackgroundChromium2.png);\
+             background-color: " + backgroundColor + ";\
+         }\
+         \
+         \
+         body.drawer-visible #main-status-bar {\
+             background-image: url(Images/statusbarBackgroundChromium2.png) !important;\
+         }\
+         \
+         body .crumbs .crumb, body .crumbs .crumb.end {\
+             -webkit-border-image: url(Images/segmentChromium2.png) 0 12 0 2 !important;\
+             background-color: " + backgroundColor + " !important;\
+         }\
+         \
+         body .crumbs .crumb:hover, body .crumbs .crumb.dimmed:hover {\
+             -webkit-border-image: url(Images/segmentHoverChromium2.png) 0 12 0 2 !important;\
+         }\
+         \
+         body .crumbs .crumb.end {\
+             -webkit-border-image: url(Images/segmentChromium2.png) 0 12 0 2 !important;\
+         }\
+         \
+         body .crumbs .crumb.selected:hover, body .crumbs .crumb.selected.end, .crumbs .crumb.selected.end:hover {\
+             -webkit-border-image: url(Images/segmentSelectedChromium2.png) 0 12 0 2 !important;\
+         }\
+         \
+         body select.status-bar-item {\
+             -webkit-border-image: url(Images/statusbarMenuButtonChromium2.png) 0 17 0 2 !important;\
+             background-color: " + backgroundColor + " !important;\
+             text-shadow: none !important;\
+         }\
+         \
+         .glyph {\
+             background-color: " + color + ";\
+         }\
+         \
+         button.status-bar-item .glyph.shadow {\
+             display: none;\
+         }\
+         \
+         .crumbs, .crumbs .crumb:hover, #drawer .scope-bar:not(.console-filter-top) li, .toolbar-label, select.status-bar-item {\
+             text-shadow: none;\
+             color: " + color + ";\
+         }";
+}
+
+WebInspector.resetToolbarColors = function()
+{
+    if (WebInspector._themeStyleElement)
+        WebInspector._themeStyleElement.textContent = "";
+
+}
