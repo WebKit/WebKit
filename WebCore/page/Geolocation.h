@@ -169,7 +169,6 @@ private:
         Yes,
         No
     } m_allowGeolocation;
-    bool m_shouldClearCache;
 
 #if ENABLE(GEOLOCATION)
     OwnPtr<GeolocationPositionCache> m_positionCache;

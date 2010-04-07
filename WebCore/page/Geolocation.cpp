@@ -206,7 +206,6 @@ Geolocation::Geolocation(Frame* frame)
     , m_service(GeolocationService::create(this))
 #endif
     , m_allowGeolocation(Unknown)
-    , m_shouldClearCache(false)
     , m_positionCache(new GeolocationPositionCache)
 {
     if (!m_frame)
