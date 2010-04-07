@@ -1,3 +1,12 @@
+2010-04-07  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Fix incorrect white-space in WebGLRenderingContext.idl
+        https://bugs.webkit.org/show_bug.cgi?id=31339
+
+        * html/canvas/WebGLRenderingContext.idl: Remove offending extra whitespace.
+
 2010-04-07  Rodrigo Belem  <rodrigo.belem@openbossa.org>
 
         Reviewed by Simon Hausmann.
