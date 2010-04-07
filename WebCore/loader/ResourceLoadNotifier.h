@@ -55,7 +55,6 @@ public:
     void didReceiveData(ResourceLoader*, const char*, int, int lengthReceived);
     void didFinishLoad(ResourceLoader*);
     void didFailToLoad(ResourceLoader*, const ResourceError&);
-    void didLoadResourceByXMLHttpRequest(unsigned long identifier, const ScriptString& sourceString);
 
     void assignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader*, const ResourceRequest&);
     void dispatchWillSendRequest(DocumentLoader*, unsigned long identifier, ResourceRequest&, const ResourceResponse& redirectResponse);

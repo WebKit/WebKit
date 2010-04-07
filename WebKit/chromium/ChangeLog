@@ -1,3 +1,26 @@
+2010-04-07  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Removed inspector methods from ScriptExecutionContext and derived classes.
+        Removed MessageDestination parameter from console-related calls (we now always
+        log to the same destination(s)).
+        Removed redundant FrameLoaderClient::dispatchDidLoadResourceByXMLHttpRequest()
+        https://bugs.webkit.org/show_bug.cgi?id=36949
+
+        * public/WebCommonWorkerClient.h:
+        (WebKit::WebCommonWorkerClient::postConsoleMessageToWorkerObject):
+        * src/FrameLoaderClientImpl.cpp:
+        * src/FrameLoaderClientImpl.h:
+        * src/WebWorkerBase.cpp:
+        (WebKit::WebWorkerBase::postConsoleMessageToWorkerObject):
+        (WebKit::WebWorkerBase::postConsoleMessageTask):
+        * src/WebWorkerBase.h:
+        * src/WebWorkerClientImpl.cpp:
+        (WebKit::WebWorkerClientImpl::postConsoleMessageToWorkerObject):
+        (WebKit::WebWorkerClientImpl::postConsoleMessageToWorkerObjectTask):
+        * src/WebWorkerClientImpl.h:
+
 2010-04-07  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Fisher.

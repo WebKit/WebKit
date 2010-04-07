@@ -1,3 +1,13 @@
+2010-04-07  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Removed redundant FrameLoaderClient::dispatchDidLoadResourceByXMLHttpRequest()
+        https://bugs.webkit.org/show_bug.cgi?id=36949
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+
 2010-04-06  Dan Bernstein  <mitz@apple.com>
 
         Tiger build fix after r57184.

@@ -868,9 +868,7 @@ public:
     void parseDNSPrefetchControlHeader(const String&);
 
     virtual void reportException(const String& errorMessage, int lineNumber, const String& sourceURL);
-    virtual void addMessage(MessageDestination, MessageSource, MessageType, MessageLevel, const String& message, unsigned lineNumber, const String& sourceURL);
-    virtual void resourceRetrievedByXMLHttpRequest(unsigned long identifier, const ScriptString& sourceString);
-    virtual void scriptImported(unsigned long, const String&);
+    virtual void addMessage(MessageSource, MessageType, MessageLevel, const String& message, unsigned lineNumber, const String& sourceURL);
     virtual void postTask(PassOwnPtr<Task>); // Executes the task on context's thread asynchronously.
 
 #if USE(JSC)

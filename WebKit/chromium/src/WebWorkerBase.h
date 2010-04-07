@@ -68,7 +68,7 @@ public:
     virtual void postExceptionToWorkerObject(
         const WebCore::String&, int, const WebCore::String&);
     virtual void postConsoleMessageToWorkerObject(
-        WebCore::MessageDestination, WebCore::MessageSource, WebCore::MessageType,
+        WebCore::MessageSource, WebCore::MessageType,
         WebCore::MessageLevel, const WebCore::String&, int, const WebCore::String&);
     virtual void confirmMessageFromWorkerObject(bool);
     virtual void reportPendingActivity(bool);
@@ -115,7 +115,6 @@ private:
     static void postConsoleMessageTask(
         WebCore::ScriptExecutionContext* context,
         WebWorkerBase* thisPtr,
-        int destination,
         int source,
         int type,
         int level,

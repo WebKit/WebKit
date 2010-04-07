@@ -252,7 +252,7 @@ void WebWorkerClientImpl::postExceptionToWorkerObject(const WebString& errorMess
         m_scriptExecutionContext->reportException(errorMessage, lineNumber, sourceURL);
 }
 
-void WebWorkerClientImpl::postConsoleMessageToWorkerObject(int destinationId,
+void WebWorkerClientImpl::postConsoleMessageToWorkerObject(int destination,
                                                            int sourceId,
                                                            int messageType,
                                                            int messageLevel,
@@ -263,7 +263,6 @@ void WebWorkerClientImpl::postConsoleMessageToWorkerObject(int destinationId,
     if (currentThread() != m_workerThreadId) {
         m_scriptExecutionContext->postTask(createCallbackTask(&postConsoleMessageToWorkerObjectTask,
                                                               this,
-                                                              destinationId,
                                                               sourceId,
                                                               messageType,
                                                               messageLevel,
@@ -273,12 +272,21 @@ void WebWorkerClientImpl::postConsoleMessageToWorkerObject(int destinationId,
         return;
     }
 
-    m_scriptExecutionContext->addMessage(static_cast<MessageDestination>(destinationId),
-                                         static_cast<MessageSource>(sourceId),
+    m_scriptExecutionContext->addMessage(static_cast<MessageSource>(sourceId),
                                          static_cast<MessageType>(messageType),
                                          static_cast<MessageLevel>(messageLevel),
                                          String(message), lineNumber,
                                          String(sourceURL));
+}
+
+void WebWorkerClientImpl::postConsoleMessageToWorkerObject(int sourceId,
+                                                           int messageType,
+                                                           int messageLevel,
+                                                           const WebString& message,
+                                                           int lineNumber,
+                                                           const WebString& sourceURL)
+{
+    postConsoleMessageToWorkerObject(0, sourceId, messageType, messageLevel, message, lineNumber, sourceURL);
 }
 
 void WebWorkerClientImpl::confirmMessageFromWorkerObject(bool hasPendingActivity)
@@ -382,7 +390,6 @@ void WebWorkerClientImpl::postExceptionToWorkerObjectTask(
 
 void WebWorkerClientImpl::postConsoleMessageToWorkerObjectTask(ScriptExecutionContext* context,
                                                                WebWorkerClientImpl* thisPtr,
-                                                               int destinationId,
                                                                int sourceId,
                                                                int messageType,
                                                                int messageLevel,
@@ -390,8 +397,7 @@ void WebWorkerClientImpl::postConsoleMessageToWorkerObjectTask(ScriptExecutionCo
                                                                int lineNumber,
                                                                const String& sourceURL)
 {
-    thisPtr->m_scriptExecutionContext->addMessage(static_cast<MessageDestination>(destinationId),
-                                                  static_cast<MessageSource>(sourceId),
+    thisPtr->m_scriptExecutionContext->addMessage(static_cast<MessageSource>(sourceId),
                                                   static_cast<MessageType>(messageType),
                                                   static_cast<MessageLevel>(messageLevel),
                                                   message, lineNumber,

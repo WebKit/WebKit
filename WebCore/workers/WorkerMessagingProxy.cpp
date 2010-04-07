@@ -38,6 +38,7 @@
 #include "ErrorEvent.h"
 #include "ExceptionCode.h"
 #include "GenericWorkerTask.h"
+#include "InspectorController.h"
 #include "MessageEvent.h"
 #include "ScriptExecutionContext.h"
 #include "Worker.h"
@@ -278,16 +279,16 @@ void WorkerMessagingProxy::postExceptionToWorkerObject(const String& errorMessag
     m_scriptExecutionContext->postTask(WorkerExceptionTask::create(errorMessage, lineNumber, sourceURL, this));
 }
     
-static void postConsoleMessageTask(ScriptExecutionContext* context, WorkerMessagingProxy* messagingProxy, MessageDestination destination, MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceURL)
+static void postConsoleMessageTask(ScriptExecutionContext* context, WorkerMessagingProxy* messagingProxy, MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceURL)
 {
     if (messagingProxy->askedToTerminate())
         return;
-    context->addMessage(destination, source, type, level, message, lineNumber, sourceURL);
+    context->addMessage(source, type, level, message, lineNumber, sourceURL);
 }
 
-void WorkerMessagingProxy::postConsoleMessageToWorkerObject(MessageDestination destination, MessageSource source, MessageType type, MessageLevel level, const String& message, int lineNumber, const String& sourceURL)
+void WorkerMessagingProxy::postConsoleMessageToWorkerObject(MessageSource source, MessageType type, MessageLevel level, const String& message, int lineNumber, const String& sourceURL)
 {
-    m_scriptExecutionContext->postTask(createCallbackTask(&postConsoleMessageTask, this, destination, source, type, level, message, lineNumber, sourceURL));
+    m_scriptExecutionContext->postTask(createCallbackTask(&postConsoleMessageTask, this, source, type, level, message, lineNumber, sourceURL));
 }
 
 void WorkerMessagingProxy::workerThreadCreated(PassRefPtr<DedicatedWorkerThread> workerThread)

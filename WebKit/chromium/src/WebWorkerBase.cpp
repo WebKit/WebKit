@@ -199,8 +199,7 @@ void WebWorkerBase::postExceptionTask(ScriptExecutionContext* context,
                                                          sourceURL);
 }
 
-void WebWorkerBase::postConsoleMessageToWorkerObject(MessageDestination destination,
-                                                     MessageSource source,
+void WebWorkerBase::postConsoleMessageToWorkerObject(MessageSource source,
                                                      MessageType type,
                                                      MessageLevel level,
                                                      const String& message,
@@ -208,16 +207,13 @@ void WebWorkerBase::postConsoleMessageToWorkerObject(MessageDestination destinat
                                                      const String& sourceURL)
 {
     dispatchTaskToMainThread(createCallbackTask(&postConsoleMessageTask, this,
-                                                static_cast<int>(destination),
-                                                static_cast<int>(source),
-                                                static_cast<int>(type),
-                                                static_cast<int>(level),
+                                                source, type, level,
                                                 message, lineNumber, sourceURL));
 }
 
 void WebWorkerBase::postConsoleMessageTask(ScriptExecutionContext* context,
                                            WebWorkerBase* thisPtr,
-                                           int destination, int source,
+                                           int source,
                                            int type, int level,
                                            const String& message,
                                            int lineNumber,
@@ -225,7 +221,7 @@ void WebWorkerBase::postConsoleMessageTask(ScriptExecutionContext* context,
 {
     if (!thisPtr->commonClient())
         return;
-    thisPtr->commonClient()->postConsoleMessageToWorkerObject(destination, source,
+    thisPtr->commonClient()->postConsoleMessageToWorkerObject(source,
                                                               type, level, message,
                                                               lineNumber, sourceURL);
 }

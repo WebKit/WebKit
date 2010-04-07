@@ -897,11 +897,6 @@ bool FrameLoaderClientQt::dispatchDidLoadResourceFromMemoryCache(WebCore::Docume
     return false;
 }
 
-void FrameLoaderClientQt::dispatchDidLoadResourceByXMLHttpRequest(unsigned long, const WebCore::ScriptString&)
-{
-    notImplemented();
-}
-
 void FrameLoaderClientQt::callErrorPageExtension(const WebCore::ResourceError& error)
 {
     QWebPage* page = m_webFrame->page();

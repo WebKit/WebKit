@@ -62,7 +62,7 @@ namespace WebCore {
         // (Only use these methods in the worker context thread.)
         virtual void postMessageToWorkerObject(PassRefPtr<SerializedScriptValue>, PassOwnPtr<MessagePortChannelArray>);
         virtual void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, const String& sourceURL);
-        virtual void postConsoleMessageToWorkerObject(MessageDestination, MessageSource, MessageType, MessageLevel, const String& message, int lineNumber, const String& sourceURL);
+        virtual void postConsoleMessageToWorkerObject(MessageSource, MessageType, MessageLevel, const String& message, int lineNumber, const String& sourceURL);
         virtual void confirmMessageFromWorkerObject(bool hasPendingActivity);
         virtual void reportPendingActivity(bool hasPendingActivity);
         virtual void workerContextClosed();

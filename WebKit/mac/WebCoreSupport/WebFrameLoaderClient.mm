@@ -348,10 +348,6 @@ bool WebFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache(DocumentLoader
     return true;
 }
 
-void WebFrameLoaderClient::dispatchDidLoadResourceByXMLHttpRequest(unsigned long identifier, const ScriptString& sourceString)
-{
-}
-
 void WebFrameLoaderClient::assignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader* loader, const ResourceRequest& request)
 {
     WebView *webView = getWebView(m_webFrame.get());

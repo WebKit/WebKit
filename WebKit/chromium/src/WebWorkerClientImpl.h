@@ -78,8 +78,12 @@ public:
     // These are called on the main WebKit thread.
     virtual void postMessageToWorkerObject(const WebString&, const WebMessagePortChannelArray&);
     virtual void postExceptionToWorkerObject(const WebString&, int, const WebString&);
-    virtual void postConsoleMessageToWorkerObject(int, int, int, int, const WebString&,
-                                                  int, const WebString&);
+
+    // FIXME: the below is for compatibility only and should be     
+    // removed once Chromium is updated to remove message 
+    // destination parameter <http://webkit.org/b/37155>.
+    virtual void postConsoleMessageToWorkerObject(int, int, int, int, const WebString&, int, const WebString&);
+    virtual void postConsoleMessageToWorkerObject(int, int, int, const WebString&, int, const WebString&);
     virtual void confirmMessageFromWorkerObject(bool);
     virtual void reportPendingActivity(bool);
     virtual void workerContextClosed();
@@ -125,7 +129,6 @@ private:
                                                 const WebCore::String& sourceURL);
     static void postConsoleMessageToWorkerObjectTask(WebCore::ScriptExecutionContext* context,
                                                      WebWorkerClientImpl* thisPtr,
-                                                     int destinationId,
                                                      int sourceId,
                                                      int messageType,
                                                      int messageLevel,

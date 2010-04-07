@@ -945,11 +945,6 @@ void FrameLoaderClient::dispatchDidFailLoading(WebCore::DocumentLoader* loader, 
     notImplemented();
 }
 
-void FrameLoaderClient::dispatchDidLoadResourceByXMLHttpRequest(unsigned long, const ScriptString&)
-{
-    notImplemented();
-}
-
 bool FrameLoaderClient::dispatchDidLoadResourceFromMemoryCache(WebCore::DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int length)
 {
     notImplemented();

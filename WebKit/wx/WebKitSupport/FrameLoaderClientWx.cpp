@@ -733,11 +733,6 @@ bool FrameLoaderClientWx::dispatchDidLoadResourceFromMemoryCache(DocumentLoader*
     return false;
 }
 
-void FrameLoaderClientWx::dispatchDidLoadResourceByXMLHttpRequest(unsigned long, const ScriptString&)
-{
-  notImplemented();
-}
-
 void FrameLoaderClientWx::dispatchDidFailProvisionalLoad(const ResourceError&)
 {
     notImplemented();

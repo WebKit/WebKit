@@ -1,3 +1,48 @@
+2010-04-07  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Removed inspector methods from ScriptExecutionContext and derived classes.
+        Removed MessageDestination parameter from console-related calls (we now always
+        log to the same destination(s)).
+        Removed redundant FrameLoaderClient::dispatchDidLoadResourceByXMLHttpRequest()
+        https://bugs.webkit.org/show_bug.cgi?id=36949
+
+        * dom/Document.cpp:
+        (WebCore::Document::reportException):
+        (WebCore::Document::addMessage):
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.h:
+        * loader/EmptyClients.h:
+        (WebCore::EmptyFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache):
+        * loader/FrameLoaderClient.h:
+        * loader/ResourceLoadNotifier.cpp:
+        * loader/ResourceLoadNotifier.h:
+        * websockets/WebSocket.cpp:
+        (WebCore::WebSocket::connect):
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::didOpen):
+        (WebCore::WebSocketChannel::appendToBuffer):
+        * websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::readServerHandshake):
+        (WebCore::WebSocketHandshake::readHTTPHeaders):
+        (WebCore::WebSocketHandshake::checkResponseHeaders):
+        * workers/DefaultSharedWorkerRepository.cpp:
+        (WebCore::postConsoleMessageTask):
+        (WebCore::SharedWorkerProxy::postConsoleMessageToWorkerObject):
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::importScripts):
+        (WebCore::WorkerContext::addMessage):
+        * workers/WorkerContext.h:
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::postConsoleMessageTask):
+        (WebCore::WorkerMessagingProxy::postConsoleMessageToWorkerObject):
+        * workers/WorkerMessagingProxy.h:
+        * workers/WorkerReportingProxy.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::reportUnsafeUsage):
+        (WebCore::XMLHttpRequest::didFinishLoading):
+
 2010-04-07  Dawit Alemayehu  <adawit@kde.org>
 
         Reviewed by Simon Hausmann.

@@ -49,14 +49,18 @@ public:
         const WebString& errorString, int lineNumber,
         const WebString& sourceURL) = 0;
 
-    virtual void postConsoleMessageToWorkerObject(
-        int destinationIdentifier,
-        int sourceIdentifier,
-        int messageType,
-        int messageLevel,
-        const WebString& message,
-        int lineNumber,
-        const WebString& sourceURL) = 0;
+    // FIXME: the below is for compatibility only and should be   
+    // removed once Chromium is updated to remove message
+    // destination parameter <http://webkit.org/b/37155>.
+    virtual void postConsoleMessageToWorkerObject(int, int sourceIdentifier, int messageType, int messageLevel,
+                                                  const WebString& message, int lineNumber, const WebString& sourceURL) = 0;
+
+    virtual void postConsoleMessageToWorkerObject(int sourceIdentifier, int messageType, int messageLevel,
+                                                  const WebString& message, int lineNumber, const WebString& sourceURL)
+    {
+        postConsoleMessageToWorkerObject(0, sourceIdentifier, messageType, messageLevel,
+                                         message, lineNumber, sourceURL);
+    }
 
     virtual void workerContextClosed() = 0;
     virtual void workerContextDestroyed() = 0;
