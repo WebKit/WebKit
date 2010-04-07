@@ -1,3 +1,21 @@
+2010-04-07  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Fix two cookie tests to clean up after themselves (so they can be run repeatedly)
+        https://bugs.webkit.org/show_bug.cgi?id=37235
+
+        Added a ?clear=1 query parameter to the two "set cookies" cgi scripts
+        that these tests use, and call it to clear the cookies before leaving the test.
+
+        I could not resist the temptation of cleaning up the ridiculously awful copy/paste
+        in these tests, so the changes are larger than strictly necessary.
+
+        * http/tests/xmlhttprequest/cookies.html:
+        * http/tests/xmlhttprequest/cross-origin-cookie-storage.html:
+        * http/tests/xmlhttprequest/resources/cross-origin-set-cookies.php:
+        * http/tests/xmlhttprequest/resources/get-set-cookie.cgi:
+
 2010-04-07  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Eric Seidel.

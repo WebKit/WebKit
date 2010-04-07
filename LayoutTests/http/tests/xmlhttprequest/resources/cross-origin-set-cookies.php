@@ -1,5 +1,9 @@
 <?php
-header("Set-Cookie: WK-xhr-cookie-storage=MySpecialValue");
+$age_string = "";
+if ($_GET['clear']) {
+    $age_string = "max-age=-1";
+}
+header("Set-Cookie: WK-xhr-cookie-storage=MySpecialValue;$age_string");
 header("Cache-Control: no-store");
 header("Last-Modified: Thu, 19 Mar 2009 11:22:11 GMT");
 header("Access-Control-Allow-Origin: http://127.0.0.1:8000");

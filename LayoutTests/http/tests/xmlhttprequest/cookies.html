@@ -5,28 +5,44 @@ XMLHttpRequest does not handle set-cookie headers.</p>
 <div id="result">FAIL: test script didn't run.</div>
 
 <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
-    
-    try {
-    
+    function clearCookies()
+    {
+        req = new XMLHttpRequest;
+        req.open("POST", "resources/get-set-cookie.cgi?clear=1", false);
+        req.send("");
+    }
+    function getAndSetCookies()
+    {
         req = new XMLHttpRequest;
         req.open("POST", "resources/get-set-cookie.cgi", false);
         req.send("");
-        if (req.responseText && req.responseText.match(/.*WK-test=1.*/)) {
-            document.getElementById("result").firstChild.data = "FAIL: the cookie is already present. Please restart your browser to remove it.";
+        return req.responseText;
+    }
+    function setResult(result)
+    {
+        document.getElementById("result").firstChild.data = result;
+    }
+
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+    try {
+        clearCookies();
+        var response = getAndSetCookies();
+        if (response && response.match(/.*WK-test=1.*/)) {
+            setResult("FAIL: The cookie still present after clear. clearCookies() failed.  Must be a bug in the test!");
         } else {
-            req.open("POST", "resources/get-set-cookie.cgi", false);
-            req.send("");
-            if (req.responseText.match(/.*WK-test-secure=1.*/))
-                document.getElementById("result").firstChild.data = "FAIL: a secure cookie was sent via HTTP";
-            else if (req.responseText.match(/.*WK-test=1.*/))
-                document.getElementById("result").firstChild.data = "SUCCESS";
+            var response = getAndSetCookies();
+            if (response.match(/.*WK-test-secure=1.*/))
+                 setResult("FAIL: a secure cookie was sent via HTTP");
+            else if (response.match(/.*WK-test=1.*/))
+                setResult("SUCCESS");
             else
-                document.getElementById("result").firstChild.data = "FAIL: the cookie was not set";
+                setResult("FAIL: the cookie was not set");
         }
     } catch (ex) {
-        document.getElementById("result").firstChild.data = ex;
+        setResult(ex);
+    } finally {
+        clearCookies();
     }
 </script>
 <body>
