@@ -1,5 +1,17 @@
 2010-04-07  Andrew Scherkus  <scherkus@chromium.org>
 
+        Unreviewed, skipping fast/media/media-feature-wgt-view-mode.html for Chromium.
+
+        Chromium doesn't implement layoutTestController.setViewModeMediaFeature(), which is needed
+        to pass this layout test.
+
+        * platform/chromium-win/fast/media/media-feature-wgt-view-mode-expected.checksum: Removed.
+        * platform/chromium-win/fast/media/media-feature-wgt-view-mode-expected.png: Removed.
+        * platform/chromium-win/fast/media/media-feature-wgt-view-mode-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt: Skip fast/media/media-feature-wgt-view-mode.html.
+
+2010-04-07  Andrew Scherkus  <scherkus@chromium.org>
+
         Unreviewed, checking in missing image baselines for fast/layers/video-layer.html
 
         * platform/chromium-linux/fast/layers/video-layer-expected.checksum: Added.
