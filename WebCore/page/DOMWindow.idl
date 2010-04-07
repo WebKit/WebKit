@@ -293,10 +293,12 @@ module window {
 #if defined(ENABLE_ORIENTATION_EVENTS) && ENABLE_ORIENTATION_EVENTS
         attribute EventListener onorientationchange;
 #endif
-        attribute [DontEnum,Conditional=TOUCH_EVENTS] EventListener ontouchstart;
-        attribute [DontEnum,Conditional=TOUCH_EVENTS] EventListener ontouchmove;
-        attribute [DontEnum,Conditional=TOUCH_EVENTS] EventListener ontouchend;
-        attribute [DontEnum,Conditional=TOUCH_EVENTS] EventListener ontouchcancel;
+ #if defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS
+        attribute [DontEnum] EventListener ontouchstart;
+        attribute [DontEnum] EventListener ontouchmove;
+        attribute [DontEnum] EventListener ontouchend;
+        attribute [DontEnum] EventListener ontouchcancel;
+ #endif
 
         // EventTarget interface
         [Custom] void addEventListener(in DOMString type,
@@ -710,7 +712,9 @@ module window {
 #endif
 #endif
 
-        attribute [Conditional=TOUCH_EVENTS] TouchEventConstructor TouchEvent;
+#if defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS
+        attribute TouchEventConstructor TouchEvent;
+#endif
 
         attribute DOMFormDataConstructor FormData;
 

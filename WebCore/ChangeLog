@@ -1,5 +1,17 @@
 2010-04-07  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        Unreviewed, rolling out r57199.
+        http://trac.webkit.org/changeset/57199
+        https://bugs.webkit.org/show_bug.cgi?id=36750
+
+        Breaks non-touch enabled build
+
+        * dom/Document.idl:
+        * dom/Element.idl:
+        * page/DOMWindow.idl:
+
+2010-04-07  Simon Hausmann  <simon.hausmann@nokia.com>
+
         Reviewed by Laszlo Gombos.
 
         https://bugs.webkit.org/show_bug.cgi?id=36750
