@@ -83,7 +83,7 @@ using namespace WebCore;
 namespace WebCore {
 
 #if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
-// There is no contqnt in headers, but NTLM is supported.
+// There is no constant in headers, but NTLM is supported.
 NSString * const NSURLAuthenticationMethodNTLM = @"NSURLAuthenticationMethodNTLM";
 #endif
 
