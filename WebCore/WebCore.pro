@@ -2853,7 +2853,7 @@ include($$PWD/../WebKit/qt/Api/headers.pri)
 HEADERS += $$WEBKIT_API_HEADERS
 
 !CONFIG(QTDIR_build) {
-    exists(../include/QtWebKit/classheaders.pri):include(../include/QtWebKit/classheaders.pri)
+    exists($$OUTPUT_DIR/include/QtWebKit/classheaders.pri): include($$OUTPUT_DIR/include/QtWebKit/classheaders.pri)
     WEBKIT_INSTALL_HEADERS = $$WEBKIT_API_HEADERS $$WEBKIT_CLASS_HEADERS
 
     !symbian {

@@ -1,3 +1,15 @@
+2010-04-07  Rodrigo Belem  <rodrigo.belem@openbossa.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] The build system is not installing the generated headers (QGraphicsWebView, QWebDatabase, etc)
+        https://bugs.webkit.org/show_bug.cgi?id=37173
+
+        This patch sets the correct path to the classheaders.pri and then
+        fixes the installation of the generated headers.
+
+        * WebCore.pro:
+
 2010-04-05  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Kenneth Christiansen.
