@@ -1,3 +1,18 @@
+2010-04-07  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Darin Adler.
+
+        Adding static method zero() to classes IntPoint and FloatPoint.
+        https://bugs.webkit.org/show_bug.cgi?id=37220
+
+        Adding static method zero() to classes IntPoint and FloatPoint as suggested by Darin Adler.
+
+        * platform/graphics/FloatPoint.h:
+        (WebCore::FloatPoint::zero):
+        * platform/graphics/IntPoint.h:
+        (WebCore::IntPoint::zero):
+        (WebCore::IntPoint::clampNegativeToZero):
+
 2010-04-07  Alexey Proskuryakov  <ap@apple.com>
 
         * platform/network/mac/AuthenticationMac.mm: Fix a typo in comment.

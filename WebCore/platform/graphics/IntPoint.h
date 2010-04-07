@@ -81,6 +81,8 @@ public:
     IntPoint(int x, int y) : m_x(x), m_y(y) { }
     explicit IntPoint(const IntSize& size) : m_x(size.width()), m_y(size.height()) { }
 
+    static IntPoint zero() { return IntPoint(); }
+
     int x() const { return m_x; }
     int y() const { return m_y; }
 
@@ -104,7 +106,7 @@ public:
 
     void clampNegativeToZero()
     {
-        *this = expandedTo(IntPoint());
+        *this = expandedTo(zero());
     }
 
 #if PLATFORM(CG)
