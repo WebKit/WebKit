@@ -843,7 +843,7 @@ void FrameLoaderClientImpl::dispatchDecidePolicyForMIMEType(
     if (statusCode == 204 || statusCode == 205) {
         // The server does not want us to replace the page contents.
         action = PolicyIgnore;
-    } else if (WebCore::shouldTreatAsAttachment(response)) {
+    } else if (WebCore::contentDispositionType(response.httpHeaderField("Content-Disposition")) == WebCore::ContentDispositionAttachment) {
         // The server wants us to download instead of replacing the page contents.
         // Downloading is handled by the embedder, but we still get the initial
         // response so that we can ignore it and clean up properly.

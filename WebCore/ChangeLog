@@ -1,3 +1,19 @@
+2010-04-07  Dawit Alemayehu  <adawit@kde.org>
+
+        Reviewed by Simon Hausmann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36827
+
+        Replaced the 'shouldTreatAsAttachment' function with a more generic 
+        function that returns the content disposition type.
+
+        See comments 39-42 in https://bugs.webkit.org/show_bug.cgi?id=36395
+
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::contentDispositionType):
+        * platform/network/HTTPParsers.h:
+        (WebCore::):
+
 2010-04-07  Vitaly Repeshko  <vitalyr@chromium.org>
 
         Reviewed by Yury Semikhatsky.

@@ -72,36 +72,34 @@ static inline bool skipToken(const String& str, int& pos, const char* token)
     return true;
 }
 
-bool shouldTreatAsAttachment(const ResourceResponseBase& response)
-{
-    const String& contentDisposition = response.httpHeaderField("Content-Disposition");
-    
+ContentDispositionType contentDispositionType(const String& contentDisposition)
+{   
     if (contentDisposition.isEmpty())
-        return false;
+        return ContentDispositionNone;
 
     // Some broken sites just send
     // Content-Disposition: ; filename="file"
     // screen those out here.
     if (contentDisposition.startsWith(";"))
-        return false;
+        return ContentDispositionNone;
 
     if (contentDisposition.startsWith("inline", false))
-        return false;
+        return ContentDispositionInline;
 
     // Some broken sites just send
     // Content-Disposition: filename="file"
     // without a disposition token... screen those out.
     if (contentDisposition.startsWith("filename", false))
-        return false;
+        return ContentDispositionNone;
 
     // Also in use is Content-Disposition: name="file"
     if (contentDisposition.startsWith("name", false))
-        return false;
+        return ContentDispositionNone;
 
     // We have a content-disposition of "attachment" or unknown.
     // RFC 2183, section 2.8 says that an unknown disposition
     // value should be treated as "attachment"
-    return true;  
+    return ContentDispositionAttachment;  
 }
 
 bool parseHTTPRefresh(const String& refresh, bool fromHttpEquivMeta, double& delay, String& url)

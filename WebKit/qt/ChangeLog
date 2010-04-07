@@ -1,3 +1,17 @@
+2010-04-07  Dawit Alemayehu  <adawit@kde.org>
+
+        Reviewed by Simon Hausmann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36827
+
+        Updated the WebCore::shouldTreatAsAttachement function call with the
+        new more generic replacement WebCore::contentDispositionType.
+
+        See comments 39-42 in https://bugs.webkit.org/show_bug.cgi?id=36395
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForMIMEType):
+
 2010-04-07  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Simon Hausmann.
