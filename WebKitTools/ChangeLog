@@ -1,3 +1,30 @@
+2010-04-06  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [DRT/Chromium] Add DumpRenderTree.gyp, and some small fixes
+        https://bugs.webkit.org/show_bug.cgi?id=37137
+
+        - Add DumpRenderTree.gyp
+        - Remove some dependencies to base/string_util.h,
+          base/compiler_specific.h, base/file_path.h, base/file_util.h,
+          base/message_loop.h, base/sys_string_conversions.h,
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp: Added.
+        * DumpRenderTree/chromium/CppVariant.cpp:
+        (CppVariant::toStringVector):
+        * DumpRenderTree/chromium/EventSender.cpp:
+        (EventSender::EventSender):
+        (EventSender::keyDown):
+        (EventSender::scheduleAsynchronousClick):
+        (EventSender::beginDragWithFiles):
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::setUserStyleSheetLocation):
+        (LayoutTestController::pathToLocalResource):
+        * DumpRenderTree/chromium/TextInputController.cpp:
+        (TextInputController::markedRange):
+        (TextInputController::selectedRange):
+
 2010-04-06  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Eric Seidel.

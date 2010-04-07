@@ -31,10 +31,10 @@
 #include "config.h"
 #include "CppVariant.h"
 
-#include "base/string_util.h"
 #include "public/WebBindings.h"
 #include <limits>
 #include <wtf/Assertions.h>
+#include <wtf/StringExtras.h>
 
 using namespace WebKit;
 using namespace std;
@@ -276,7 +276,9 @@ Vector<string> CppVariant::toStringVector() const
     length = min(100, length);
     for (int i = 0; i < length; ++i) {
         // Get each of the items.
-        string index = StringPrintf("%d", i);
+        char indexInChar[20]; // Enough size to store 32-bit integer
+        snprintf(indexInChar, 20, "%d", i);
+        string index(indexInChar);
         NPIdentifier indexId = WebBindings::getStringIdentifier(index.c_str());
         if (!WebBindings::hasProperty(0, npValue, indexId))
             continue;

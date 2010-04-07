@@ -44,20 +44,16 @@
 #include "EventSender.h"
 
 #include "TestShell.h"
-#include "base/compiler_specific.h"
-#include "base/file_path.h"
-#include "base/file_util.h"
 #include "base/keyboard_codes.h"
-#include "base/message_loop.h"
-#include "base/string_util.h"
-#include "base/sys_string_conversions.h"
 #include "base/time.h"
 #include "public/WebDragData.h"
 #include "public/WebDragOperation.h"
 #include "public/WebPoint.h"
 #include "public/WebString.h"
 #include "public/WebView.h"
+#include "webkit/support/webkit_support.h"
 #include <wtf/Deque.h>
+#include <wtf/StringExtras.h>
 
 #if OS(WINDOWS)
 #include "public/win/WebInputEventFactory.h"
@@ -249,7 +245,7 @@ enum KeyLocationCode {
 };
 
 EventSender::EventSender(TestShell* shell)
-    : ALLOW_THIS_IN_INITIALIZER_LIST(m_methodFactory(this))
+    : m_methodFactory(this)
 {
     // Set static testShell variable since we can't do it in an initializer list.
     // We also need to be careful not to assign testShell to new windows which are
@@ -520,50 +516,51 @@ void EventSender::keyDown(const CppArgumentList& arguments, CppVariant* result)
     // FIXME: I'm not exactly sure how we should convert the string to a key
     // event. This seems to work in the cases I tested.
     // FIXME: Should we also generate a KEY_UP?
-    wstring codeStr = UTF8ToWide(arguments[0].toString());
+    string codeStr = arguments[0].toString();
 
     // Convert \n -> VK_RETURN.  Some layout tests use \n to mean "Enter", when
     // Windows uses \r for "Enter".
     int code = 0;
     int text = 0;
     bool needsShiftKeyModifier = false;
-    if (L"\n" == codeStr) {
+    if ("\n" == codeStr) {
         generateChar = true;
         text = code = base::VKEY_RETURN;
-    } else if (L"rightArrow" == codeStr)
+    } else if ("rightArrow" == codeStr)
         code = base::VKEY_RIGHT;
-    else if (L"downArrow" == codeStr)
+    else if ("downArrow" == codeStr)
         code = base::VKEY_DOWN;
-    else if (L"leftArrow" == codeStr)
+    else if ("leftArrow" == codeStr)
         code = base::VKEY_LEFT;
-    else if (L"upArrow" == codeStr)
+    else if ("upArrow" == codeStr)
         code = base::VKEY_UP;
-    else if (L"delete" == codeStr)
+    else if ("delete" == codeStr)
         code = base::VKEY_BACK;
-    else if (L"pageUp" == codeStr)
+    else if ("pageUp" == codeStr)
         code = base::VKEY_PRIOR;
-    else if (L"pageDown" == codeStr)
+    else if ("pageDown" == codeStr)
         code = base::VKEY_NEXT;
-    else if (L"home" == codeStr)
+    else if ("home" == codeStr)
         code = base::VKEY_HOME;
-    else if (L"end" == codeStr)
+    else if ("end" == codeStr)
         code = base::VKEY_END;
     else {
         // Compare the input string with the function-key names defined by the
         // DOM spec (i.e. "F1",...,"F24"). If the input string is a function-key
         // name, set its key code.
         for (int i = 1; i <= 24; ++i) {
-            wstring functionKeyName;
-            functionKeyName += L"F";
-            functionKeyName += IntToWString(i);
+            char functionChars[10];
+            snprintf(functionChars, 10, "F%d", i);
+            string functionKeyName(functionChars);
             if (functionKeyName == codeStr) {
                 code = base::VKEY_F1 + (i - 1);
                 break;
             }
         }
         if (!code) {
-            ASSERT(codeStr.length() == 1);
-            text = code = codeStr[0];
+            WebString webCodeStr = WebString::fromUTF8(codeStr.data(), codeStr.size());
+            ASSERT(webCodeStr.length() == 1);
+            text = code = webCodeStr.data()[0];
             needsShiftKeyModifier = needsShiftModifier(code);
             if ((code & 0xFF) >= 'a' && (code & 0xFF) <= 'z')
                 code -= 'a' - 'A';
@@ -613,11 +610,11 @@ void EventSender::keyDown(const CppArgumentList& arguments, CppVariant* result)
     // We just simulate the same behavior here.
     string editCommand;
     if (getEditCommand(eventDown, &editCommand))
-        testShell->delegate()->setEditCommand(editCommand, "");
+        testShell->webViewHost()->setEditCommand(editCommand, "");
 
     webview()->handleInputEvent(eventDown);
 
-    testShell->delegate()->clearEditCommand();
+    testShell->webViewHost()->clearEditCommand();
 
     if (generateChar) {
         eventChar.type = WebInputEvent::Char;
@@ -764,32 +761,18 @@ void EventSender::scheduleAsynchronousClick(const CppArgumentList& arguments, Cp
 {
     result->setNull();
 
-    MessageLoop::current()->PostTask(
-        FROM_HERE, m_methodFactory.NewRunnableMethod(
+    webkit_support::PostTaskFromHere(m_methodFactory.NewRunnableMethod(
             &EventSender::mouseDown, arguments, static_cast<CppVariant*>(0)));
-    MessageLoop::current()->PostTask(
-        FROM_HERE, m_methodFactory.NewRunnableMethod(
+    webkit_support::PostTaskFromHere(m_methodFactory.NewRunnableMethod(
             &EventSender::mouseUp, arguments, static_cast<CppVariant*>(0)));
-}
-
-static WebString filePathStringToWebString(const FilePath::StringType& pathString)
-{
-#if OS(UNIX)
-    return WideToUTF16Hack(SysNativeMBToWide(pathString));
-#elif OS(WINDOWS)
-    return WebString(pathString);
-#endif
 }
 
 void EventSender::beginDragWithFiles(const CppArgumentList& arguments, CppVariant* result)
 {
     currentDragData.initialize();
     Vector<string> files = arguments[0].toStringVector();
-    for (size_t i = 0; i < files.size(); ++i) {
-        FilePath path(files[i]);
-        file_util::AbsolutePath(&path);
-        currentDragData.appendToFileNames(filePathStringToWebString(path.value()));
-    }
+    for (size_t i = 0; i < files.size(); ++i)
+        currentDragData.appendToFileNames(webkit_support::GetAbsoluteWebStringFromUTF8Path(files[i]));
     currentDragEffectsAllowed = WebKit::WebDragOperationCopy;
 
     // Provide a drag source.

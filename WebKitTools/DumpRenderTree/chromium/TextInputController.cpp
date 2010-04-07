@@ -32,13 +32,14 @@
 #include "TextInputController.h"
 
 #include "TestShell.h"
-#include "base/string_util.h"
 #include "public/WebFrame.h"
 #include "public/WebRange.h"
 #include "public/WebString.h"
 #include "public/WebView.h"
+#include <string>
 
 using namespace WebKit;
+using namespace std;
 
 TestShell* TextInputController::testShell = 0;
 
@@ -164,7 +165,9 @@ void TextInputController::markedRange(const CppArgumentList&, CppVariant* result
         return;
 
     WebRange range = mainFrame->markedRange();
-    result->set(StringPrintf("%d,%d", range.startOffset(), range.endOffset()));
+    char buffer[30];
+    snprintf(buffer, 30, "%d,%d", range.startOffset(), range.endOffset());
+    result->set(string(buffer));
 }
 
 void TextInputController::selectedRange(const CppArgumentList&, CppVariant* result)
@@ -176,7 +179,9 @@ void TextInputController::selectedRange(const CppArgumentList&, CppVariant* resu
         return;
 
     WebRange range = mainFrame->selectionRange();
-    result->set(StringPrintf("%d,%d", range.startOffset(), range.endOffset()));
+    char buffer[30];
+    snprintf(buffer, 30, "%d,%d", range.startOffset(), range.endOffset());
+    result->set(string(buffer));
 }
 
 void TextInputController::firstRectForCharacterRange(const CppArgumentList&, CppVariant* result)
