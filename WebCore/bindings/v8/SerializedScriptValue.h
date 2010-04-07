@@ -56,7 +56,20 @@ public:
     // Creates a serialized representation of the given V8 value.
     static PassRefPtr<SerializedScriptValue> create(v8::Handle<v8::Value> value)
     {
-        return adoptRef(new SerializedScriptValue(value));
+        bool didThrow;
+        return adoptRef(new SerializedScriptValue(value, didThrow));
+    }
+
+    // Creates a serialized representation of the given V8 value.
+    //
+    // If a serialization error occurs (e.g., cyclic input value) this
+    // function returns an empty representation, schedules a V8 exception to
+    // be thrown using v8::ThrowException(), and sets |didThrow|. In this case
+    // the caller must not invoke any V8 operations until control returns to
+    // V8. When serialization is successful, |didThrow| is false.
+    static PassRefPtr<SerializedScriptValue> create(v8::Handle<v8::Value> value, bool& didThrow)
+    {
+        return adoptRef(new SerializedScriptValue(value, didThrow));
     }
 
     // Creates a serialized value with the given data obtained from a
@@ -99,7 +112,7 @@ private:
 
     SerializedScriptValue() { }
 
-    explicit SerializedScriptValue(v8::Handle<v8::Value>);
+    SerializedScriptValue(v8::Handle<v8::Value>, bool& didThrow);
 
     SerializedScriptValue(String data, StringDataMode mode);
 

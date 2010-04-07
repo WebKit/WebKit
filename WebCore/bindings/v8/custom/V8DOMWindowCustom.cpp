@@ -320,8 +320,11 @@ v8::Handle<v8::Value> V8DOMWindow::postMessageCallback(const v8::Arguments& args
     DOMWindow* source = V8Proxy::retrieveFrameForCallingContext()->domWindow();
     ASSERT(source->frame());
 
-    v8::TryCatch tryCatch;
-    RefPtr<SerializedScriptValue> message = SerializedScriptValue::create(args[0]);
+    bool didThrow = false;
+    RefPtr<SerializedScriptValue> message = SerializedScriptValue::create(args[0], didThrow);
+    if (didThrow)
+        return v8::Undefined();
+
     MessagePortArray portArray;
     String targetOrigin;
 
@@ -329,6 +332,7 @@ v8::Handle<v8::Value> V8DOMWindow::postMessageCallback(const v8::Arguments& args
     //   postMessage(message, port, targetOrigin);
     // or
     //   postMessage(message, targetOrigin);
+    v8::TryCatch tryCatch;
     if (args.Length() > 2) {
         if (!getMessagePortArray(args[1], portArray))
             return v8::Undefined();

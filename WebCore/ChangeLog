@@ -1,3 +1,40 @@
+2010-04-07  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        [V8] Throw exception in SerializedScriptValue on input errors
+        https://bugs.webkit.org/show_bug.cgi?id=37160
+
+        When cycles are detected SerializedScriptValue should throw
+        NOT_SUPPORTED_ERR. See
+        http://www.whatwg.org/specs/web-apps/2009-10-27/multipage/urls.html#structured-clone
+
+        * bindings/scripts/CodeGeneratorV8.pm: Custom processing for
+        function arguments of type SerializedScriptValue.
+
+        * bindings/v8/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+        * bindings/v8/SerializedScriptValue.h:
+        (WebCore::SerializedScriptValue::create): Added a constructor
+        function with an extra paratemer to check whether an exception was
+        thrown.
+
+        SerializedScriptValue::create callers updated to check for
+        exceptions:
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8DOMWindow::postMessageCallback):
+        * bindings/v8/custom/V8DedicatedWorkerContextCustom.cpp:
+        (WebCore::V8DedicatedWorkerContext::postMessageCallback):
+        * bindings/v8/custom/V8HistoryCustom.cpp:
+        (WebCore::V8History::pushStateCallback):
+        (WebCore::V8History::replaceStateCallback):
+        * bindings/v8/custom/V8MessagePortCustom.cpp:
+        (WebCore::V8MessagePort::postMessageCallback):
+        * bindings/v8/custom/V8PopStateEventCustom.cpp:
+        (WebCore::V8PopStateEvent::initPopStateEventCallback):
+        * bindings/v8/custom/V8WorkerCustom.cpp:
+        (WebCore::V8Worker::postMessageCallback):
+
 2010-04-07  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

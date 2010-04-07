@@ -1101,13 +1101,22 @@ END
             push(@implContentDecls, "    }\n");
         }
 
-        if (BasicTypeCanFailConversion($parameter)) {
+        if ($parameter->type eq "SerializedScriptValue") {
+            $implIncludes{"SerializedScriptValue.h"} = 1;
+            push(@implContentDecls, "    bool ${parameterName}DidThrow = false;\n");
+        } elsif (BasicTypeCanFailConversion($parameter)) {
             push(@implContentDecls, "    bool ${parameterName}Ok;\n");
         }
 
         push(@implContentDecls, "    " . GetNativeTypeFromSignature($parameter, $paramIndex) . " $parameterName = ");
-        push(@implContentDecls, JSValueToNative($parameter, "args[$paramIndex]",
-           BasicTypeCanFailConversion($parameter) ?  "${parameterName}Ok" : undef) . ";\n");
+
+        if ($parameter->type eq "SerializedScriptValue") {
+            push(@implContentDecls, "SerializedScriptValue::create(args[$paramIndex], ${parameterName}DidThrow);\n");
+            push(@implContentDecls, "    if (${parameterName}DidThrow)\n    return v8::Undefined();\n");
+        } else {
+            push(@implContentDecls, JSValueToNative($parameter, "args[$paramIndex]",
+                                                    BasicTypeCanFailConversion($parameter) ?  "${parameterName}Ok" : undef) . ";\n");
+        }
 
         if (TypeCanFailConversion($parameter)) {
             $implIncludes{"ExceptionCode.h"} = 1;
@@ -2484,10 +2493,7 @@ sub JSValueToNative
         return $value;
     }
 
-    if ($type eq "SerializedScriptValue") {
-        $implIncludes{"SerializedScriptValue.h"} = 1;
-        return "SerializedScriptValue::create($value)";
-    }
+    die "Unexpected SerializedScriptValue" if $type eq "SerializedScriptValue";
 
     if ($type eq "DOMObject") {
         $implIncludes{"ScriptValue.h"} = 1;

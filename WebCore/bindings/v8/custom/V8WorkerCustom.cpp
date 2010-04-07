@@ -91,7 +91,10 @@ v8::Handle<v8::Value> V8Worker::postMessageCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Worker.postMessage");
     Worker* worker = V8Worker::toNative(args.Holder());
-    RefPtr<SerializedScriptValue> message = SerializedScriptValue::create(args[0]);
+    bool didThrow = false;
+    RefPtr<SerializedScriptValue> message = SerializedScriptValue::create(args[0], didThrow);
+    if (didThrow)
+        return v8::Undefined();
     MessagePortArray portArray;
     if (args.Length() > 1) {
         if (!getMessagePortArray(args[1], portArray))

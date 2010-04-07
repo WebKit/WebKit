@@ -36,6 +36,7 @@
 #include "ImageData.h"
 #include "SharedBuffer.h"
 #include "V8ImageData.h"
+#include "V8Proxy.h"
 
 #include <v8.h>
 #include <wtf/Assertions.h>
@@ -869,12 +870,14 @@ private:
 
 } // namespace
 
-SerializedScriptValue::SerializedScriptValue(v8::Handle<v8::Value> value)
+SerializedScriptValue::SerializedScriptValue(v8::Handle<v8::Value> value, bool& didThrow)
 {
+    didThrow = false;
     Writer writer;
     Serializer serializer(writer);
     if (!serializer.serialize(value)) {
-        // FIXME: throw exception
+        throwError(NOT_SUPPORTED_ERR);
+        didThrow = true;
         return;
     }
     m_data = StringImpl::adopt(writer.data());
