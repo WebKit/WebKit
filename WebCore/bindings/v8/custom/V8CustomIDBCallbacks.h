@@ -31,10 +31,12 @@
 #ifndef V8CustomIDBCallbacks_h
 #define V8CustomIDBCallbacks_h
 
+#include "Document.h"
 #include "Frame.h"
 #include "IDBDatabaseError.h"
 #include "V8CustomVoidCallback.h"
 #include "V8IDBDatabaseError.h"
+#include "WorldContextHandle.h"
 #include <v8.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -48,9 +50,9 @@ namespace WebCore {
 template <typename ResultType, typename ResultWrapperType>
 class V8CustomIDBCallbacks : public IDBCallbacks<ResultType> {
 public:
-    static PassRefPtr<V8CustomIDBCallbacks> create(v8::Local<v8::Value> onSuccess, v8::Local<v8::Value> onError, Frame* frame)
+    static PassRefPtr<V8CustomIDBCallbacks> create(v8::Local<v8::Value> onSuccess, v8::Local<v8::Value> onError, ScriptExecutionContext* scriptExecutionContext)
     {
-        return adoptRef(new V8CustomIDBCallbacks(onSuccess, onError, frame));
+        return adoptRef(new V8CustomIDBCallbacks(onSuccess, onError, scriptExecutionContext));
     }
 
     virtual ~V8CustomIDBCallbacks()
@@ -61,54 +63,57 @@ public:
 
     virtual void onSuccess(PassRefPtr<ResultType> result)
     {
-        if (m_onSuccess.IsEmpty())
-            return;
-        v8::HandleScope handleScope;
-        v8::Handle<v8::Context> context = V8Proxy::context(m_frame.get());
-        if (context.IsEmpty())
-            return;
-
-        v8::Context::Scope scope(context);
-        v8::Handle<v8::Value> argv[] = {
-            toV8(ResultWrapperType::create(result))
-        };
-        RefPtr<Frame> protector(m_frame);
-        bool callbackReturnValue = false;
-        // FIXME: Do we care if this thing returns true (i.e. it raised an exception)?
-        invokeCallback(m_onSuccess, 1, argv, callbackReturnValue);
+        onEvent(m_onSuccess, ResultWrapperType::create(result));
     }
 
     virtual void onError(PassRefPtr<IDBDatabaseError> error)
     {
-        if (m_onError.IsEmpty())
+        onEvent(m_onError, error);
+    }
+
+    // FIXME: Handle suspend/resume correctly.
+
+private:
+    V8CustomIDBCallbacks(v8::Local<v8::Value> onSuccess, v8::Local<v8::Value> onError, ScriptExecutionContext* scriptExecutionContext)
+        : IDBCallbacks<ResultType>(scriptExecutionContext, this)
+        , m_onSuccess(onSuccess->IsObject() ? v8::Persistent<v8::Object>::New(onSuccess->ToObject()) : v8::Persistent<v8::Object>())
+        , m_onError(onError->IsObject() ? v8::Persistent<v8::Object>::New(onError->ToObject()) : v8::Persistent<v8::Object>())
+        , m_worldContext(UseCurrentWorld)
+    {
+    }
+
+    template <typename Type>
+    void onEvent(v8::Persistent<v8::Object> callback, PassRefPtr<Type> value)
+    {
+        if (!ActiveDOMObject::scriptExecutionContext())
             return;
+        if (callback.IsEmpty())
+            return;
+
         v8::HandleScope handleScope;
-        v8::Handle<v8::Context> context = V8Proxy::context(m_frame.get());
+        v8::Handle<v8::Context> context = toV8Context(ActiveDOMObject::scriptExecutionContext(), m_worldContext);
         if (context.IsEmpty())
             return;
 
         v8::Context::Scope scope(context);
         v8::Handle<v8::Value> argv[] = {
-            toV8(error)
+            toV8(value)
         };
-        RefPtr<Frame> protector(m_frame);
+
+        // FIXME: Make this work for workers.
+        ASSERT(ActiveDOMObject::scriptExecutionContext()->isDocument());
+        RefPtr<Frame> protector(static_cast<Document*>(ActiveDOMObject::scriptExecutionContext())->frame());
+
         bool callbackReturnValue = false;
         // FIXME: Do we care if this thing returns true (i.e. it raised an exception)?
-        invokeCallback(m_onError, 1, argv, callbackReturnValue);
+        invokeCallback(callback, 1, argv, callbackReturnValue);
     }
 
-private:
-    V8CustomIDBCallbacks(v8::Local<v8::Value> onSuccess, v8::Local<v8::Value> onError, Frame* frame)
-        : m_onSuccess(onSuccess->IsObject() ? v8::Persistent<v8::Object>::New(onSuccess->ToObject()) : v8::Persistent<v8::Object>())
-        , m_onError(onError->IsObject() ? v8::Persistent<v8::Object>::New(onError->ToObject()) : v8::Persistent<v8::Object>())
-        , m_frame(frame)
-    {
-    }
-
-    // FIXME: Should these be v8::Functions?  For some reason, VoidCallback (which this copied) uses v8::Objects.
+    // FIXME: Use OwnHandles.
     v8::Persistent<v8::Object> m_onSuccess;
     v8::Persistent<v8::Object> m_onError;
-    RefPtr<Frame> m_frame;
+
+    WorldContextHandle m_worldContext;
 };
 
 }

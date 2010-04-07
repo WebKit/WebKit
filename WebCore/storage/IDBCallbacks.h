@@ -29,6 +29,7 @@
 #ifndef IDBCallbacks_h
 #define IDBCallbacks_h
 
+#include "ActiveDOMObject.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -37,8 +38,10 @@ namespace WebCore {
 class IDBDatabaseError;
 
 template <typename ResultType>
-class IDBCallbacks : public RefCounted<IDBCallbacks<ResultType> > {
+class IDBCallbacks : public RefCounted<IDBCallbacks<ResultType> >, public ActiveDOMObject {
 public:
+    IDBCallbacks(ScriptExecutionContext* scriptExecutionContext, void* upcastPointer)
+        : ActiveDOMObject(scriptExecutionContext, upcastPointer) { }
     virtual ~IDBCallbacks() { }
 
     virtual void onSuccess(PassRefPtr<ResultType>) = 0;
