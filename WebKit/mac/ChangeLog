@@ -4,6 +4,12 @@
 
         * WebView/WebHTMLViewPrivate.h:
 
+2010-04-06  Dan Bernstein  <mitz@apple.com>
+
+        Tiger build fix after r57184.
+
+        * WebView/WebHTMLViewPrivate.h:
+
 2010-04-06  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.
