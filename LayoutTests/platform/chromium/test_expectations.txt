@@ -753,10 +753,6 @@ BUG40503 : fast/media = PASS FAIL
 // Linux debug media tests have spurious timeouts and it's annoying.  We have no idea why.
 BUG13907 BUG25094 LINUX DEBUG : media = PASS FAIL TIMEOUT
 
-// These tests need to be rebaselined.
-BUG13907 : fast/layers/video-layer.html = FAIL
-BUG29748 LINUX : media/video-controls-rendering.html = IMAGE
-
 // These tests need to be changed to be platform independent.
 BUG13907 : http/tests/media/remove-while-loading.html = TIMEOUT
 BUG13907 : http/tests/media/video-play-stall-seek.html = TIMEOUT

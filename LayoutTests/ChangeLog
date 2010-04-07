@@ -1,3 +1,16 @@
+2010-04-06  Andrew Scherkus  <scherkus@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Checking in new baselines for media/video-controls-rendering.html and fast/layers/video-layer.html.
+        https://bugs.webkit.org/show_bug.cgi?id=37180
+
+        * platform/chromium-linux/media/video-controls-rendering-expected.checksum: Wasn't rebaselined when Linux scrollbars changed.
+        * platform/chromium-linux/media/video-controls-rendering-expected.png: Ditto.
+        * platform/chromium-mac/fast/layers/video-layer-expected.txt: Wasn't rebaselined when audio/video UI was refreshed.
+        * platform/chromium-win/fast/layers/video-layer-expected.txt: Ditto.
+        * platform/chromium/test_expectations.txt: Removed expectations for the above two tests.
+
 2010-04-06  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Oliver Hunt.
