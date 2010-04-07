@@ -1,3 +1,19 @@
+2010-04-07  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] When providing a widget for the PDF mime type it will cause a crash
+
+        m_pluginView may actually be a Widget (for embedded Qt widgets),
+        so always check isPluginView() before calling PluginView specific methods.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29450
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::finishedLoading):
+        (WebCore::FrameLoaderClientQt::setMainDocumentError):
+        (WebCore::FrameLoaderClientQt::committedLoad):
+
 2010-04-06  Diego Gonzalez  <diego.gonzalez@openbossa.org>
 
         Reviewed by Simon Hausmann.

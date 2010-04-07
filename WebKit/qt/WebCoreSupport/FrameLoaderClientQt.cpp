@@ -517,7 +517,8 @@ void FrameLoaderClientQt::finishedLoading(DocumentLoader* loader)
         }
     }
     else {
-        m_pluginView->didFinishLoading();
+        if (m_pluginView->isPluginView())
+            m_pluginView->didFinishLoading();
         m_pluginView = 0;
         m_hasSentResponseToPlugin = false;
     }
@@ -706,7 +707,8 @@ void FrameLoaderClientQt::setMainDocumentError(WebCore::DocumentLoader* loader, 
             m_firstData = false;
         }
     } else {
-        m_pluginView->didFail(error);
+        if (m_pluginView->isPluginView())
+            m_pluginView->didFail(error);
         m_pluginView = 0;
         m_hasSentResponseToPlugin = false;
     }
@@ -726,7 +728,7 @@ void FrameLoaderClientQt::committedLoad(WebCore::DocumentLoader* loader, const c
     }
     
     // We re-check here as the plugin can have been created
-    if (m_pluginView) {
+    if (m_pluginView && m_pluginView->isPluginView()) {
         if (!m_hasSentResponseToPlugin) {
             m_pluginView->didReceiveResponse(loader->response());
             // didReceiveResponse sets up a new stream to the plug-in. on a full-page plug-in, a failure in
