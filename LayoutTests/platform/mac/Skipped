@@ -151,8 +151,3 @@ fast/media/media-feature-wgt-view-mode.html
 # Test is flaky and thus not useful until fixed.
 # https://bugs.webkit.org/show_bug.cgi?id=36642
 fast/replaced/border-radius-clip.html
-
-# This test is very flaky with a high failure rate (around 25%).
-# https://bugs.webkit.org/show_bug.cgi?id=36646
-fast/workers/worker-terminate.html
-

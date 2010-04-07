@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -10,7 +10,7 @@
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
  *     documentation and/or other materials provided with the distribution.
- * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
+ * 3.  Neither the name of Google Inc. ("Google") nor the names of
  *     its contributors may be used to endorse or promote products derived
  *     from this software without specific prior written permission.
  *
@@ -26,34 +26,22 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ExceptionHelpers_h
-#define ExceptionHelpers_h
-
+#ifndef Terminator_h
+#define Terminator_h
 
 namespace JSC {
 
-    class CodeBlock;
-    class ExecState;
-    class Identifier;
-    class JSGlobalData;
-    class JSNotAnObjectErrorStub;
-    class JSObject;
-    class JSValue;
-    class Node;
-    struct Instruction;
-    
-    JSValue createInterruptedExecutionException(JSGlobalData*);
-    JSValue createTerminatedExecutionException(JSGlobalData*);
-    JSValue createStackOverflowError(ExecState*);
-    JSValue createTypeError(ExecState*, const char* message);
-    JSValue createUndefinedVariableError(ExecState*, const Identifier&, unsigned bytecodeOffset, CodeBlock*);
-    JSNotAnObjectErrorStub* createNotAnObjectErrorStub(ExecState*, bool isNull);
-    JSObject* createInvalidParamError(ExecState*, const char* op, JSValue, unsigned bytecodeOffset, CodeBlock*);
-    JSObject* createNotAConstructorError(ExecState*, JSValue, unsigned bytecodeOffset, CodeBlock*);
-    JSValue createNotAFunctionError(ExecState*, JSValue, unsigned bytecodeOffset, CodeBlock*);
-    JSObject* createNotAnObjectError(ExecState*, JSNotAnObjectErrorStub*, unsigned bytecodeOffset, CodeBlock*);
-    JSValue throwOutOfMemoryError(ExecState*);
+class Terminator {
+public:
+    Terminator() : m_shouldTerminate(false) { }
+
+    void terminateSoon() { m_shouldTerminate = true; }
+    bool shouldTerminate() const { return m_shouldTerminate; }
+
+private:
+    bool m_shouldTerminate;
+};
 
 } // namespace JSC
 
-#endif // ExceptionHelpers_h
+#endif // Terminator_h

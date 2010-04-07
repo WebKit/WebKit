@@ -141,10 +141,10 @@ void WorkerScriptController::forbidExecution()
     // This function is called from another thread.
     // Mutex protection for m_executionForbidden is needed to guarantee that the value is synchronized between processors, because
     // if it were not, the worker could re-enter JSC::evaluate(), but with timeout already reset.
-    // It is not critical for Interpreter::m_timeoutTime to be synchronized, we just rely on it reaching the worker thread's processor sooner or later.
+    // It is not critical for Terminator::m_shouldTerminate to be synchronized, we just rely on it reaching the worker thread's processor sooner or later.
     MutexLocker lock(m_sharedDataMutex);
     m_executionForbidden = true;
-    m_globalData->timeoutChecker.setTimeoutInterval(1); // 1ms is the smallest timeout that can be set.
+    m_globalData->terminator.terminateSoon();
 }
 
 } // namespace WebCore

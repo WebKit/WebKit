@@ -37,6 +37,7 @@
 #include "MarkStack.h"
 #include "NumericStrings.h"
 #include "SmallStrings.h"
+#include "Terminator.h"
 #include "TimeoutChecker.h"
 #include "WeakRandom.h"
 #include <wtf/Forward.h>
@@ -116,6 +117,7 @@ namespace JSC {
         
         RefPtr<Structure> activationStructure;
         RefPtr<Structure> interruptedExecutionErrorStructure;
+        RefPtr<Structure> terminatedExecutionErrorStructure;
         RefPtr<Structure> staticScopeStructure;
         RefPtr<Structure> stringStructure;
         RefPtr<Structure> notAnObjectErrorStubStructure;
@@ -153,6 +155,7 @@ namespace JSC {
         JITThunks jitStubs;
 #endif
         TimeoutChecker timeoutChecker;
+        Terminator terminator;
         Heap heap;
 
         JSValue exception;

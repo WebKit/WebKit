@@ -1,0 +1,1 @@
+Test Worker.terminate() for a worker that tries to run forever.

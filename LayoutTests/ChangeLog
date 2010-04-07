@@ -1,3 +1,20 @@
+2010-04-06  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        REGRESSION: Worker termination via JS timeout may cause worker tests like fast/workers/worker-terminate.html fail.
+        https://bugs.webkit.org/show_bug.cgi?id=36646
+
+        * fast/workers/resources/worker-run-forever.js: Added.
+        * fast/workers/worker-terminate-forever-expected.txt: Added.
+        * fast/workers/worker-terminate-forever.html: Added.
+            - Test what happens when we terminate an infinitely running worker.
+              The essential point is that we don't spam the console with
+              nonsense about a timeout.
+        * platform/mac/Skipped:
+            - Rescue worker-terminate.html from the Skipped list now that we've
+              fixed the underlying bug that was causing the flakiness.
+
 2010-04-06  Andrew Scherkus  <scherkus@chromium.org>
 
         Reviewed by Eric Seidel.

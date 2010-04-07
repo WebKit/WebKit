@@ -46,7 +46,7 @@ public:
     {
     }
 
-    virtual bool isWatchdogException() const { return true; }
+    virtual ComplType exceptionType() const { return Interrupted; }
 
     virtual UString toString(ExecState*) const { return "JavaScript execution exceeded timeout."; }
 };
@@ -54,6 +54,23 @@ public:
 JSValue createInterruptedExecutionException(JSGlobalData* globalData)
 {
     return new (globalData) InterruptedExecutionError(globalData);
+}
+
+class TerminatedExecutionError : public JSObject {
+public:
+    TerminatedExecutionError(JSGlobalData* globalData)
+        : JSObject(globalData->terminatedExecutionErrorStructure)
+    {
+    }
+
+    virtual ComplType exceptionType() const { return Terminated; }
+
+    virtual UString toString(ExecState*) const { return "JavaScript execution terminated."; }
+};
+
+JSValue createTerminatedExecutionException(JSGlobalData* globalData)
+{
+    return new (globalData) TerminatedExecutionError(globalData);
 }
 
 static JSValue createError(ExecState* exec, ErrorType e, const char* msg)

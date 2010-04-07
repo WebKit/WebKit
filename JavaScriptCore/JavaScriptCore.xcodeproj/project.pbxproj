@@ -269,6 +269,7 @@
 		969A079A0ED1D3AE00F1F681 /* Opcode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 969A07940ED1D3AE00F1F681 /* Opcode.cpp */; };
 		969A079B0ED1D3AE00F1F681 /* Opcode.h in Headers */ = {isa = PBXBuildFile; fileRef = 969A07950ED1D3AE00F1F681 /* Opcode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		96DD73790F9DA3100027FBCC /* VMTags.h in Headers */ = {isa = PBXBuildFile; fileRef = 96DD73780F9DA3100027FBCC /* VMTags.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		971EDEA61169E0D3005E4262 /* Terminator.h in Headers */ = {isa = PBXBuildFile; fileRef = 97F6903A1169DF7F00A6BB46 /* Terminator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A72700900DAC6BBC00E548D7 /* JSNotAnObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A72700780DAC605600E548D7 /* JSNotAnObject.cpp */; };
 		A72701B90DADE94900E548D7 /* ExceptionHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = A72701B30DADE94900E548D7 /* ExceptionHelpers.h */; };
 		A727FF6B0DA3092200E548D7 /* JSPropertyNameIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A727FF660DA3053B00E548D7 /* JSPropertyNameIterator.cpp */; };
@@ -826,6 +827,7 @@
 		969A07950ED1D3AE00F1F681 /* Opcode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Opcode.h; sourceTree = "<group>"; };
 		969A09220ED1E09C00F1F681 /* Completion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Completion.cpp; sourceTree = "<group>"; };
 		96DD73780F9DA3100027FBCC /* VMTags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMTags.h; sourceTree = "<group>"; };
+		97F6903A1169DF7F00A6BB46 /* Terminator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Terminator.h; sourceTree = "<group>"; };
 		A72700770DAC605600E548D7 /* JSNotAnObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNotAnObject.h; sourceTree = "<group>"; };
 		A72700780DAC605600E548D7 /* JSNotAnObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNotAnObject.cpp; sourceTree = "<group>"; };
 		A72701B30DADE94900E548D7 /* ExceptionHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExceptionHelpers.h; sourceTree = "<group>"; };
@@ -1618,6 +1620,7 @@
 				7E4EE7080EBB7963005934AA /* StructureChain.h */,
 				BC9041470EB9250900FE26FA /* StructureTransitionTable.h */,
 				14A396A60CD2933100B5B4FF /* SymbolTable.h */,
+				97F6903A1169DF7F00A6BB46 /* Terminator.h */,
 				14A42E3D0F4F60EE00599099 /* TimeoutChecker.cpp */,
 				14A42E3E0F4F60EE00599099 /* TimeoutChecker.h */,
 				5D53726D0E1C546B0021E549 /* Tracing.d */,
@@ -2008,6 +2011,7 @@
 				18BAB55410DAE066000D945B /* ThreadIdentifierDataPthreads.h in Headers */,
 				BC18C4700E16F5CD00B34460 /* Threading.h in Headers */,
 				BC18C4710E16F5CD00B34460 /* ThreadSpecific.h in Headers */,
+				971EDEA61169E0D3005E4262 /* Terminator.h in Headers */,
 				14A42E400F4F60EE00599099 /* TimeoutChecker.h in Headers */,
 				5D53726F0E1C54880021E549 /* Tracing.h in Headers */,
 				0B4D7E630F319AC800AD7E58 /* TypeTraits.h in Headers */,

@@ -533,6 +533,9 @@ double valueToDate(ExecState* exec, JSValue value)
 
 void reportException(ExecState* exec, JSValue exception)
 {
+    if (exception.isObject() && asObject(exception)->exceptionType() == Terminated)
+        return;
+
     UString errorMessage = exception.toString(exec);
     JSObject* exceptionObject = exception.toObject(exec);
     int lineNumber = exceptionObject->get(exec, Identifier(exec, "line")).toInt32(exec);

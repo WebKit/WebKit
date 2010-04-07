@@ -209,6 +209,7 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/StructureChain.cpp \
 	JavaScriptCore/runtime/StructureChain.h \
 	JavaScriptCore/runtime/StructureTransitionTable.h \
+	JavaScriptCore/runtime/Terminator.h \
 	JavaScriptCore/runtime/TimeoutChecker.cpp \
 	JavaScriptCore/runtime/TimeoutChecker.h \
 	JavaScriptCore/runtime/JSTypeInfo.h \

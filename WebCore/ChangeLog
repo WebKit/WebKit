@@ -1,3 +1,25 @@
+2010-04-06  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        REGRESSION: Worker termination via JS timeout may cause worker tests like fast/workers/worker-terminate.html fail.
+        https://bugs.webkit.org/show_bug.cgi?id=36646
+
+        Cause the worker code to swallow termination exceptions because these
+        need not be reported to the user because they are an implementation
+        detail of how we terminate worker execution.
+
+        Test: fast/workers/worker-terminate-forever.html
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::reportException):
+            - Refuse to report termination exceptions to the user because they
+              are an implementation detail.
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::forbidExecution):
+            - Instead of using timeouts to stop run away workers, use our fancy
+              new Terminator object.
+
 2010-04-06  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Jian Li.

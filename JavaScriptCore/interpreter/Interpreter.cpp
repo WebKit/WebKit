@@ -522,8 +522,9 @@ NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSV
                 exception->putWithAttributes(callFrame, Identifier(callFrame, "sourceId"), jsNumber(callFrame, codeBlock->ownerExecutable()->sourceID()), ReadOnly | DontDelete);
                 exception->putWithAttributes(callFrame, Identifier(callFrame, "sourceURL"), jsOwnedString(callFrame, codeBlock->ownerExecutable()->sourceURL()), ReadOnly | DontDelete);
             }
-            
-            if (exception->isWatchdogException()) {
+
+            ComplType exceptionType = exception->exceptionType();
+            if (exceptionType == Interrupted || exceptionType == Terminated) {
                 while (unwindCallFrame(callFrame, exceptionValue, bytecodeOffset, codeBlock)) {
                     // Don't need handler checks or anything, we just want to unroll all the JS callframes possible.
                 }
@@ -1174,7 +1175,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
 
 #define CHECK_FOR_TIMEOUT() \
     if (!--tickCount) { \
-        if (globalData->timeoutChecker.didTimeOut(callFrame)) { \
+        if (globalData->terminator.shouldTerminate() || globalData->timeoutChecker.didTimeOut(callFrame)) { \
             exceptionValue = jsNull(); \
             goto vm_throw; \
         } \

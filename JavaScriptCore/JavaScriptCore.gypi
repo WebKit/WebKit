@@ -325,6 +325,7 @@
             'runtime/StructureChain.h',
             'runtime/StructureTransitionTable.h',
             'runtime/SymbolTable.h',
+            'runtime/Terminator.h',
             'runtime/TimeoutChecker.cpp',
             'runtime/TimeoutChecker.h',
             'runtime/Tracing.h',
