@@ -1,3 +1,17 @@
+2010-04-07  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Darin Adler.
+
+        Replace isprint with isASCIIPrintable
+        https://bugs.webkit.org/show_bug.cgi?id=37223
+
+        WebKit does not use functions in <ctype.h> as they are dependent on the current
+        locale. Use the equivalent functions in <wtf/ASCIICType.h>. isASCIIPrintable
+        replaces isprint.
+
+        * pcre/pcre_exec.cpp:
+        (pchars):
+
 2010-04-07  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Darin Adler.

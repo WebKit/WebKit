@@ -198,7 +198,7 @@ static void pchars(const UChar* p, int length, bool isSubject, const MatchData& 
         length = md.endSubject - p;
     while (length-- > 0) {
         int c;
-        if (isprint(c = *(p++)))
+        if (isASCIIPrintable(c = *(p++)))
             printf("%c", c);
         else if (c < 256)
             printf("\\x%02x", c);
