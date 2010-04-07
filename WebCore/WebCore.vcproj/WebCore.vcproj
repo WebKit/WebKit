@@ -22776,11 +22776,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\graphics\GlyphWidthMap.cpp"
+					RelativePath="..\platform\graphics\GlyphMetricsMap.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\platform\graphics\GlyphWidthMap.h"
+					RelativePath="..\platform\graphics\GlyphMetricsMap.h"
 					>
 				</File>
 				<File

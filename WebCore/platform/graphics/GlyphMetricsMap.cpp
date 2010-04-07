@@ -27,14 +27,14 @@
  */
 
 #include "config.h"
-#include "GlyphWidthMap.h"
+#include "GlyphMetricsMap.h"
 
 namespace WebCore {
 
-GlyphWidthMap::GlyphWidthPage* GlyphWidthMap::locatePageSlowCase(unsigned pageNumber)
+GlyphMetricsMap::GlyphMetricsPage* GlyphMetricsMap::locatePageSlowCase(unsigned pageNumber)
 {
-    GlyphWidthPage* page;
-    if (pageNumber == 0) {
+    GlyphMetricsPage* page;
+    if (!pageNumber) {
         ASSERT(!m_filledPrimaryPage);
         page = &m_primaryPage;
         m_filledPrimaryPage = true;
@@ -43,14 +43,18 @@ GlyphWidthMap::GlyphWidthPage* GlyphWidthMap::locatePageSlowCase(unsigned pageNu
             if ((page = m_pages->get(pageNumber)))
                 return page;
         } else
-            m_pages.set(new HashMap<int, GlyphWidthPage*>);
-        page = new GlyphWidthPage;
+            m_pages.set(new HashMap<int, GlyphMetricsPage*>);
+        page = new GlyphMetricsPage;
         m_pages->set(pageNumber, page);
     }
 
-    // Fill in the whole page with the unknown glyph width value.
-    for (unsigned i = 0; i < GlyphWidthPage::size; i++)
-        page->setWidthForIndex(i, cGlyphWidthUnknown);
+    GlyphMetrics unknownMetrics;
+    unknownMetrics.horizontalAdvance = cGlyphSizeUnknown;
+    unknownMetrics.boundingBox.setWidth(cGlyphSizeUnknown);
+    unknownMetrics.boundingBox.setHeight(cGlyphSizeUnknown);
+    // Fill in the whole page with the unknown glyph information.
+    for (unsigned i = 0; i < GlyphMetricsPage::size; i++)
+        page->setMetricsForIndex(i, unknownMetrics);
 
     return page;
 }

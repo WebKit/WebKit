@@ -157,9 +157,11 @@ void SimpleFontData::platformGlyphInit()
     // are mapped to the ZERO WIDTH SPACE glyph.
     Glyph zeroWidthSpaceGlyph = glyphPageZero->glyphDataForCharacter(0).glyph;
     if (zeroWidthSpaceGlyph) {
-        if (zeroWidthSpaceGlyph != m_spaceGlyph)
-            m_glyphToWidthMap.setWidthForGlyph(zeroWidthSpaceGlyph, 0);
-        else
+        if (zeroWidthSpaceGlyph != m_spaceGlyph) {
+            GlyphMetrics metrics;
+            metrics.horizontalAdvance = 0;
+            m_glyphToMetricsMap.setMetricsForGlyph(zeroWidthSpaceGlyph, metrics);
+        } else
             LOG_ERROR("Font maps SPACE and ZERO WIDTH SPACE to the same glyph. Glyph width not overridden.");
     }
 

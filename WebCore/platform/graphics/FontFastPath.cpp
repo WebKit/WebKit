@@ -24,17 +24,17 @@
 #include "Font.h"
 
 #include "CharacterNames.h"
+#include "FloatRect.h"
 #include "FontCache.h"
 #include "FontFallbackList.h"
-#include "FloatRect.h"
 #include "GlyphBuffer.h"
 #include "GlyphPageTreeNode.h"
 #include "IntPoint.h"
 #include "SimpleFontData.h"
 #include "WidthIterator.h"
 
-#include <wtf/unicode/Unicode.h>
 #include <wtf/MathExtras.h>
+#include <wtf/unicode/Unicode.h>
 
 using namespace WTF;
 using namespace Unicode;
@@ -232,6 +232,13 @@ bool Font::canUseGlyphCache(const TextRun& run) const
         if (c < 0x1900)     // U+1900 through U+194F Limbu (Unicode 4.0)
             continue;
         if (c <= 0x194F)
+            return false;
+
+        // FIXME: we should not use complex text path for these characters.
+        
+        if (c < 0x1E00)     // U+1E00 through U+2000 characters with diacritics and stacked diacritics
+            continue;
+        if (c <= 0x2000)
             return false;
 
         if (c < 0x20D0)     // U+20D0 through U+20FF Combining marks for symbols

@@ -503,7 +503,7 @@ void Font::drawComplexText(GraphicsContext* graphicsContext,
     context->canvas()->endPlatformPaint();
 }
 
-float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFontData*>* /* fallbackFonts */) const
+float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFontData*>* /* fallbackFonts */, GlyphOverflow* /* glyphOverflow */) const
 {
     UniscribeHelperTextRun state(run, *this);
     return static_cast<float>(state.width());

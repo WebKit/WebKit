@@ -407,17 +407,27 @@ void SimpleFontData::determinePitch()
            [name caseInsensitiveCompare:@"MonotypeCorsiva"] != NSOrderedSame;
 }
 
-float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
+GlyphMetrics SimpleFontData::platformMetricsForGlyph(Glyph glyph, GlyphMetricsMode metricsMode) const
 {
-    NSFont* font = m_platformData.font();
-    float pointSize = m_platformData.m_size;
+    NSFont* font = platformData().font();
+    float pointSize = platformData().m_size;
     CGAffineTransform m = CGAffineTransformMakeScale(pointSize, pointSize);
     CGSize advance;
-    if (!wkGetGlyphTransformedAdvances(m_platformData.cgFont(), font, &m, &glyph, &advance)) {
+    if (!wkGetGlyphTransformedAdvances(platformData().cgFont(), font, &m, &glyph, &advance)) {
         LOG_ERROR("Unable to cache glyph widths for %@ %f", [font displayName], pointSize);
         advance.width = 0;
     }
-    return advance.width + m_syntheticBoldOffset;
+    GlyphMetrics metrics;
+    metrics.horizontalAdvance = advance.width + m_syntheticBoldOffset;
+    if (metricsMode == GlyphBoundingBox) {
+        CGRect boundingBox;
+        CGFontGetGlyphBBoxes(platformData().cgFont(), &glyph, 1, &boundingBox);
+        CGFloat scale = pointSize / unitsPerEm();
+        metrics.boundingBox = CGRectApplyAffineTransform(boundingBox, CGAffineTransformMakeScale(scale, -scale));
+        if (m_syntheticBoldOffset)
+            metrics.boundingBox.setWidth(metrics.boundingBox.width() + m_syntheticBoldOffset);
+    }
+    return metrics;
 }
 
 #if USE(ATSUI)

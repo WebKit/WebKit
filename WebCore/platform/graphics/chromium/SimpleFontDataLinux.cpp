@@ -172,7 +172,7 @@ void SimpleFontData::determinePitch()
     m_treatAsFixedPitch = platformData().isFixedPitch();
 }
 
-float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
+GlyphMetrics SimpleFontData::platformMetricsForGlyph(Glyph glyph, GlyphMetricsMode /* metricsMode */) const
 {
     SkASSERT(sizeof(glyph) == 2);   // compile-time assert
 
@@ -186,7 +186,9 @@ float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
     // Though WebKit supports non-integral advances, Skia only supports them
     // for "subpixel" (distinct from LCD subpixel antialiasing) text, which
     // we don't use.
-    return round(SkScalarToFloat(width));
+    GlyphMetrics metrics;
+    metrics.horizontalAdvance = round(SkScalarToFloat(width));
+    return metrics;
 }
 
 }  // namespace WebCore

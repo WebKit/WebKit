@@ -179,16 +179,25 @@ void SimpleFontData::determinePitch()
     ReleaseDC(0, dc);
 }
 
-float SimpleFontData::widthForGDIGlyph(Glyph glyph) const
+GlyphMetrics SimpleFontData::metricsForGDIGlyph(Glyph glyph) const
 {
     HDC hdc = GetDC(0);
     SetGraphicsMode(hdc, GM_ADVANCED);
     HGDIOBJ oldFont = SelectObject(hdc, m_platformData.hfont());
-    int width;
-    GetCharWidthI(hdc, glyph, 1, 0, &width);
+
+    GLYPHMETRICS gdiMetrics;
+    static const MAT2 identity = { 0, 1,  0, 0,  0, 0,  0, 1 };
+    GetGlyphOutline(hdc, glyph, GGO_METRICS | GGO_GLYPH_INDEX, &gdiMetrics, 0, 0, &identity);
+
     SelectObject(hdc, oldFont);
     ReleaseDC(0, hdc);
-    return width + m_syntheticBoldOffset;
+
+    GlyphMetrics glyphMetrics;
+    glyphMetrics.horizontalAdvance = gdiMetrics.gmCellIncX + m_syntheticBoldOffset;
+    glyphMetrics.boundingBox = FloatRect(gdiMetrics.gmptGlyphOrigin.x, -gdiMetrics.gmptGlyphOrigin.y,
+        gdiMetrics.gmBlackBoxX + m_syntheticBoldOffset, gdiMetrics.gmBlackBoxY);
+
+    return glyphMetrics;
 }
 
 SCRIPT_FONTPROPERTIES* SimpleFontData::scriptFontProperties() const

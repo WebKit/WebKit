@@ -33,6 +33,8 @@
 #include "SimpleFontData.h"
 #include <wtf/MathExtras.h>
 
+using namespace std;
+
 namespace WebCore {
 
 FloatRect Font::selectionRectForComplexText(const TextRun& run, const IntPoint& point, int h,
@@ -83,9 +85,15 @@ void Font::drawComplexText(GraphicsContext* context, const TextRun& run, const F
     drawGlyphBuffer(context, glyphBuffer, run, startPoint);
 }
 
-float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFontData*>* fallbackFonts) const
+float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
     ComplexTextController controller(this, run, true, fallbackFonts);
+    if (glyphOverflow) {
+        glyphOverflow->top = max<int>(glyphOverflow->top, ceilf(-controller.minGlyphBoundingBoxY()) - ascent());
+        glyphOverflow->bottom = max<int>(glyphOverflow->bottom, ceilf(controller.maxGlyphBoundingBoxY()) - descent());
+        glyphOverflow->left = max<int>(0, ceilf(-controller.minGlyphBoundingBoxX()));
+        glyphOverflow->right = max<int>(0, ceilf(controller.maxGlyphBoundingBoxX() - controller.totalWidth()));
+    }
     return controller.totalWidth();
 }
 

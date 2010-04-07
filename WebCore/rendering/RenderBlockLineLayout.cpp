@@ -342,7 +342,8 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, bool
                 needsWordSpacing = !isSpaceOrNewline(rt->characters()[r->m_stop - 1]) && r->m_stop == length;          
             }
             HashSet<const SimpleFontData*> fallbackFonts;
-            r->m_box->setWidth(rt->width(r->m_start, r->m_stop - r->m_start, totWidth, firstLine, &fallbackFonts));
+            GlyphOverflow glyphOverflow;
+            r->m_box->setWidth(rt->width(r->m_start, r->m_stop - r->m_start, totWidth, firstLine, &fallbackFonts, &glyphOverflow));
             if (!fallbackFonts.isEmpty()
 #if ENABLE(SVG)
                     && !isSVGText()
@@ -350,6 +351,14 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, bool
             ) {
                 ASSERT(r->m_box->isText());
                 static_cast<InlineTextBox*>(r->m_box)->setFallbackFonts(fallbackFonts);
+            }
+            if ((glyphOverflow.top || glyphOverflow.bottom || glyphOverflow.left || glyphOverflow.right)
+#if ENABLE(SVG)
+                && !isSVGText()
+#endif
+            ) {
+                ASSERT(r->m_box->isText());
+                static_cast<InlineTextBox*>(r->m_box)->setGlyphOverflow(glyphOverflow);
             }
         } else if (!r->m_object->isRenderInline()) {
             RenderBox* renderBox = toRenderBox(r->m_object);
@@ -734,6 +743,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
 
                         // Now position our text runs vertically.
                         computeVerticalPositionsForLine(lineBox, resolver.firstRun());
+                        InlineTextBox::clearGlyphOverflowAndFallbackFontMap();
 
 #if ENABLE(SVG)
                         // Special SVG text layout code

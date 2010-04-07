@@ -26,9 +26,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GlyphWidthMap_h
-#define GlyphWidthMap_h
+#ifndef GlyphMetricsMap_h
+#define GlyphMetricsMap_h
 
+#include "FloatRect.h"
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/unicode/Unicode.h>
@@ -37,53 +38,67 @@ namespace WebCore {
 
 typedef unsigned short Glyph;
 
-const float cGlyphWidthUnknown = -1;
+const float cGlyphSizeUnknown = -1;
 
-class GlyphWidthMap : public Noncopyable {
+struct GlyphMetrics {
+    float horizontalAdvance;
+    FloatRect boundingBox;
+};
+
+class GlyphMetricsMap : public Noncopyable {
 public:
-    GlyphWidthMap() : m_filledPrimaryPage(false) { }
-    ~GlyphWidthMap() { if (m_pages) { deleteAllValues(*m_pages); } }
+    GlyphMetricsMap() : m_filledPrimaryPage(false) { }
+    ~GlyphMetricsMap()
+    { 
+        if (m_pages)
+            deleteAllValues(*m_pages);
+    }
+
+    GlyphMetrics metricsForGlyph(Glyph glyph)
+    {
+        return locatePage(glyph / GlyphMetricsPage::size)->metricsForGlyph(glyph);
+    }
 
     float widthForGlyph(Glyph glyph)
     {
-        return locatePage(glyph / GlyphWidthPage::size)->widthForGlyph(glyph);
+        return locatePage(glyph / GlyphMetricsPage::size)->metricsForGlyph(glyph).horizontalAdvance;
     }
 
-    void setWidthForGlyph(Glyph glyph, float width)
+    void setMetricsForGlyph(Glyph glyph, const GlyphMetrics& metrics)
     {
-        locatePage(glyph / GlyphWidthPage::size)->setWidthForGlyph(glyph, width);
+        locatePage(glyph / GlyphMetricsPage::size)->setMetricsForGlyph(glyph, metrics);
     }
 
 private:
-    struct GlyphWidthPage {
+    struct GlyphMetricsPage {
         static const size_t size = 256; // Usually covers Latin-1 in a single page.
-        float m_widths[size];
+        GlyphMetrics m_metrics[size];
 
-        float widthForGlyph(Glyph glyph) const { return m_widths[glyph % size]; }
-        void setWidthForGlyph(Glyph glyph, float width)
+        GlyphMetrics metricsForGlyph(Glyph glyph) const { return m_metrics[glyph % size]; }
+        void setMetricsForGlyph(Glyph glyph, const GlyphMetrics& metrics)
         {
-            setWidthForIndex(glyph % size, width);
+            setMetricsForIndex(glyph % size, metrics);
         }
-        void setWidthForIndex(unsigned index, float width)
+        void setMetricsForIndex(unsigned index, const GlyphMetrics& metrics)
         {
-            m_widths[index] = width;
+            m_metrics[index] = metrics;
         }
     };
     
-    GlyphWidthPage* locatePage(unsigned pageNumber)
+    GlyphMetricsPage* locatePage(unsigned pageNumber)
     {
         if (!pageNumber && m_filledPrimaryPage)
             return &m_primaryPage;
         return locatePageSlowCase(pageNumber);
     }
 
-    GlyphWidthPage* locatePageSlowCase(unsigned pageNumber);
+    GlyphMetricsPage* locatePageSlowCase(unsigned pageNumber);
     
     bool m_filledPrimaryPage;
-    GlyphWidthPage m_primaryPage; // We optimize for the page that contains glyph indices 0-255.
-    OwnPtr<HashMap<int, GlyphWidthPage*> > m_pages;
+    GlyphMetricsPage m_primaryPage; // We optimize for the page that contains glyph indices 0-255.
+    OwnPtr<HashMap<int, GlyphMetricsPage*> > m_pages;
 };
 
-}
+} // namespace WebCore
 
 #endif

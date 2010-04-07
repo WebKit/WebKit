@@ -119,7 +119,7 @@ void SimpleFontData::determinePitch()
     m_treatAsFixedPitch = m_platformData.isFixedPitch();
 }
 
-float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
+GlyphMetrics SimpleFontData::platformMetricsForGlyph(Glyph glyph, GlyphMetricsMode) const
 {
     ASSERT(m_platformData.m_scaledFont);
 
@@ -130,7 +130,10 @@ float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
     float w = (float)m_spaceWidth;
     if (cairo_scaled_font_status(m_platformData.m_scaledFont) == CAIRO_STATUS_SUCCESS && extents.x_advance != 0)
         w = (float)extents.x_advance;
-    return w;
+    
+    GlyphMetrics metrics;
+    metrics.horizontalAdvance = w;
+    return metrics;
 }
 
 }

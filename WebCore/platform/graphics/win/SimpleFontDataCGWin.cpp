@@ -126,10 +126,10 @@ void SimpleFontData::platformCharWidthInit()
     }
 }
 
-float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
+GlyphMetrics SimpleFontData::platformMetricsForGlyph(Glyph glyph, GlyphMetricsMode metricsMode) const
 {
     if (m_platformData.useGDI())
-       return widthForGDIGlyph(glyph);
+       return metricsForGDIGlyph(glyph);
 
     CGFontRef font = m_platformData.cgFont();
     float pointSize = m_platformData.size();
@@ -139,8 +139,18 @@ float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
     // FIXME: Need to add real support for printer fonts.
     bool isPrinterFont = false;
     wkGetGlyphAdvances(font, m, m_isSystemFont, isPrinterFont, glyph, advance);
-
-    return advance.width + m_syntheticBoldOffset;
+    GlyphMetrics metrics;
+    metrics.horizontalAdvance = advance.width + m_syntheticBoldOffset;
+    
+    if (metricsMode == GlyphBoundingBox) {
+        CGRect boundingBox;
+        CGFontGetGlyphBBoxes(font, &glyph, 1, &boundingBox);
+        CGFloat scale = pointSize / unitsPerEm();
+        metrics.boundingBox = CGRectApplyAffineTransform(boundingBox, CGAffineTransformMakeScale(scale, -scale));
+        if (m_syntheticBoldOffset)
+            metrics.boundingBox.setWidth(metrics.boundingBox.width() + m_syntheticBoldOffset);
+    }
+    return metrics;
 }
 
 }

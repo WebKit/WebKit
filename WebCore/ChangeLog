@@ -1,3 +1,133 @@
+2010-04-07  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Text repainting does not account for glyphs which draw outside the typographic bounds of the font (6274).
+        <rdar://problem/6649734>
+        <https://bugs.webkit.org/show_bug.cgi?id=6274>
+        
+        In order to be able to handle successfully this case, it is necessary to change the glyph width cache to store
+        the bounding box for the glyph instead of the simply caching the glyph width.
+        Retrieving the bounding box for the glyph is expensive, therefore we do it only
+        when we are rendering text using the complex text path to minimize the performance impact.
+        To support characters with stacked diacritics, the method canUseGlyphCache has been modified to
+        return false for the range of characters with stacked diacritics.
+        The glyph cache has been also updated to allow storing the glyph bounding box together with the
+        horizontal width. The bounding box is populated only for complex text.
+        
+        The original version of this patch has been written by Dan Bernstein.
+
+        Test: fast/repaint/stacked-diacritics.html
+
+        * Android.mk: File name change.
+        * GNUmakefile.am: File name change.
+        * WebCore.base.exp: Added parameter in exported function.
+        * WebCore.gypi: File name change.
+        * WebCore.vcproj/WebCore.vcproj: File name change.
+        * WebCore.xcodeproj/project.pbxproj: File name change.
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::floatWidth): Added glyphOverflow parameter.
+        * platform/graphics/Font.h:
+        (WebCore::GlyphOverflow::GlyphOverflow): Added.
+        (WebCore::Font::width): Added glyphOverflow parameter.
+        * platform/graphics/FontFastPath.cpp:
+        (WebCore::Font::canUseGlyphCache): Modified to render characters with stacked diacritics with complex text path.
+        * platform/graphics/GlyphMetricsMap.cpp: Copied from WebCore/platform/graphics/GlyphWidthMap.cpp.
+        (WebCore::GlyphMetricsMap::locatePageSlowCase): Class name changed to reflect new semantics.
+        * platform/graphics/GlyphMetricsMap.h: Copied from WebCore/platform/graphics/GlyphWidthMap.h.
+        (WebCore::GlyphMetricsMap::GlyphMetricsMap):
+        (WebCore::GlyphMetricsMap::~GlyphMetricsMap):
+        (WebCore::GlyphMetricsMap::metricsForGlyph):
+        (WebCore::GlyphMetricsMap::widthForGlyph):
+        (WebCore::GlyphMetricsMap::setMetricsForGlyph):
+        (WebCore::GlyphMetricsMap::GlyphMetricsPage::metricsForGlyph):
+        (WebCore::GlyphMetricsMap::GlyphMetricsPage::setMetricsForGlyph):
+        (WebCore::GlyphMetricsMap::GlyphMetricsPage::setMetricsForIndex):
+        (WebCore::GlyphMetricsMap::locatePage):
+        * platform/graphics/GlyphWidthMap.cpp: Removed.
+        * platform/graphics/GlyphWidthMap.h: Removed.
+        * platform/graphics/SimpleFontData.cpp:
+        (WebCore::SimpleFontData::platformGlyphInit):
+        * platform/graphics/SimpleFontData.h:
+        (WebCore::):
+        (WebCore::SimpleFontData::widthForGlyph):
+        (WebCore::SimpleFontData::metricsForGlyph):
+        * platform/graphics/cairo/SimpleFontDataCairo.cpp:
+        (WebCore::SimpleFontData::platformMetricsForGlyph): Name and signature change.
+        * platform/graphics/chromium/FontChromiumWin.cpp:
+        (WebCore::Font::floatWidthForComplexText): Added parameter.
+        * platform/graphics/chromium/FontLinux.cpp:
+        (WebCore::Font::floatWidthForComplexText): Added parameter.
+        * platform/graphics/chromium/SimpleFontDataChromiumWin.cpp:
+        (WebCore::SimpleFontData::platformMetricsForGlyph): Name and signature change.
+        * platform/graphics/chromium/SimpleFontDataLinux.cpp:
+        (WebCore::SimpleFontData::platformWidthForGlyph): Name and signature vachange
+        * platform/graphics/efl/FontEfl.cpp:
+        (WebCore::Font::floatWidthForComplexText): Name and signature change.
+        * platform/graphics/gtk/SimpleFontDataPango.cpp:
+        (WebCore::SimpleFontData::platformMetricsForGlyph): Name and signature change.
+        * platform/graphics/haiku/FontHaiku.cpp:
+        (WebCore::Font::floatWidthForComplexText): Added parameter.
+        * platform/graphics/haiku/SimpleFontDataHaiku.cpp:
+        (WebCore::SimpleFontData::platformMetricsForGlyph): Name and signature change.
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::ComplexTextController):
+        (WebCore::ComplexTextController::adjustGlyphsAndAdvances):
+        * platform/graphics/mac/ComplexTextController.h:
+        (WebCore::ComplexTextController::minGlyphBoundingBoxX):
+        (WebCore::ComplexTextController::maxGlyphBoundingBoxX):
+        (WebCore::ComplexTextController::minGlyphBoundingBoxY):
+        (WebCore::ComplexTextController::maxGlyphBoundingBoxY):
+        * platform/graphics/mac/FontComplexTextMac.cpp:
+        (WebCore::Font::floatWidthForComplexText): Added paramter.
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::platformMetricsForGlyph): Name and signature change.
+        * platform/graphics/qt/FontQt.cpp:
+        (WebCore::Font::floatWidthForComplexText): Added paramter.
+        * platform/graphics/win/FontWin.cpp:
+        (WebCore::Font::floatWidthForComplexText): Added parameter.
+        * platform/graphics/win/SimpleFontDataCGWin.cpp:
+        (WebCore::SimpleFontData::platformMetricsForGlyph): Name and signature change.
+        * platform/graphics/win/SimpleFontDataWin.cpp:
+        (WebCore::SimpleFontData::metricsForGDIGlyph):
+        * platform/graphics/win/UniscribeController.cpp:
+        (WebCore::UniscribeController::UniscribeController):
+        (WebCore::UniscribeController::shapeAndPlaceItem):
+        * platform/graphics/win/UniscribeController.h:
+        (WebCore::UniscribeController::minGlyphBoundingBoxX):
+        (WebCore::UniscribeController::maxGlyphBoundingBoxX):
+        (WebCore::UniscribeController::minGlyphBoundingBoxY):
+        (WebCore::UniscribeController::maxGlyphBoundingBoxY):
+        * platform/graphics/wince/FontWince.cpp:
+        (WebCore::Font::floatWidthForComplexText): Added parameter.
+        * platform/graphics/wx/FontWx.cpp:
+        (WebCore::Font::floatWidthForComplexText): Added parameter.
+        * platform/graphics/wx/SimpleFontDataWx.cpp:
+        (WebCore::SimpleFontData::platformMetricsForGlyph): Name and signature change.
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesHorizontally):
+        (WebCore::InlineFlowBox::computeLogicalBoxHeights):
+        (WebCore::InlineFlowBox::computeVerticalOverflow):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::setFallbackFonts):
+        (WebCore::InlineTextBox::fallbackFonts):
+        (WebCore::InlineTextBox::setGlyphOverflow):
+        (WebCore::InlineTextBox::glyphOverflow):
+        * rendering/InlineTextBox.h:
+        (WebCore::InlineTextBox::clearGlyphOverflowAndFallbackFontMap): Added.
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::computeHorizontalPositionsForLine):
+        (WebCore::RenderBlock::layoutInlineChildren):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::RenderText):
+        (WebCore::RenderText::styleDidChange):
+        (WebCore::RenderText::widthFromCache):
+        (WebCore::RenderText::trimmedPrefWidths):
+        (WebCore::RenderText::calcPrefWidths):
+        (WebCore::RenderText::setText):
+        (WebCore::RenderText::width):
+        * rendering/RenderText.h:
+
 2010-04-07  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Darin Adler.

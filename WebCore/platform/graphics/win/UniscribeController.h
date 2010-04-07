@@ -49,6 +49,11 @@ public:
     // Returns the width of everything we've consumed so far.
     float runWidthSoFar() const { return m_runWidthSoFar; }
 
+    float minGlyphBoundingBoxX() const { return m_minGlyphBoundingBoxX; }
+    float maxGlyphBoundingBoxX() const { return m_maxGlyphBoundingBoxX; }
+    float minGlyphBoundingBoxY() const { return m_minGlyphBoundingBoxY; }
+    float maxGlyphBoundingBoxY() const { return m_maxGlyphBoundingBoxY; }
+
 private:    
     void resetControlAndState();
 
@@ -61,6 +66,11 @@ private:
     const Font& m_font;
     const TextRun& m_run;
     HashSet<const SimpleFontData*>* m_fallbackFonts;
+    FloatPoint m_glyphOrigin;
+    float m_minGlyphBoundingBoxX;
+    float m_maxGlyphBoundingBoxX;
+    float m_minGlyphBoundingBoxY;
+    float m_maxGlyphBoundingBoxY;
 
     SCRIPT_CONTROL m_control;
     SCRIPT_STATE m_state;

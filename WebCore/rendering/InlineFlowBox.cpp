@@ -288,8 +288,10 @@ int InlineFlowBox::placeBoxesHorizontally(int xPos, bool& needsWordSpacing)
             int letterSpacing = min(0, (int)rt->style(m_firstLine)->font().letterSpacing());
             rightLayoutOverflow = max(xPos + text->width() - letterSpacing, rightLayoutOverflow);
 
-            int leftGlyphOverflow = -strokeOverflow;
-            int rightGlyphOverflow = strokeOverflow - letterSpacing;
+            GlyphOverflow* glyphOverflow = static_cast<InlineTextBox*>(curr)->glyphOverflow();
+
+            int leftGlyphOverflow = -strokeOverflow - (glyphOverflow ? glyphOverflow->left : 0);
+            int rightGlyphOverflow = strokeOverflow - letterSpacing + (glyphOverflow ? glyphOverflow->right : 0);
             
             int childOverflowLeft = leftGlyphOverflow;
             int childOverflowRight = rightGlyphOverflow;
@@ -412,35 +414,35 @@ void InlineFlowBox::computeLogicalBoxHeights(int& maxPositionTop, int& maxPositi
 
         int lineHeight;
         int baseline;
-        Vector<const SimpleFontData*> usedFonts;
+        Vector<const SimpleFontData*>* usedFonts = 0;
         if (curr->isInlineTextBox())
-            static_cast<InlineTextBox*>(curr)->takeFallbackFonts(usedFonts);
+            usedFonts = static_cast<InlineTextBox*>(curr)->fallbackFonts();
 
-        if (!usedFonts.isEmpty()) {
-            usedFonts.append(curr->renderer()->style(m_firstLine)->font().primaryFont());
+        if (usedFonts) {
+            usedFonts->append(curr->renderer()->style(m_firstLine)->font().primaryFont());
             Length parentLineHeight = curr->renderer()->parent()->style()->lineHeight();
             if (parentLineHeight.isNegative()) {
                 int baselineToBottom = 0;
                 baseline = 0;
-                for (size_t i = 0; i < usedFonts.size(); ++i) {
-                    int halfLeading = (usedFonts[i]->lineSpacing() - usedFonts[i]->ascent() - usedFonts[i]->descent()) / 2;
-                    baseline = max(baseline, halfLeading + usedFonts[i]->ascent());
-                    baselineToBottom = max(baselineToBottom, usedFonts[i]->lineSpacing() - usedFonts[i]->ascent() - usedFonts[i]->descent() - halfLeading);
+                for (size_t i = 0; i < usedFonts->size(); ++i) {
+                    int halfLeading = (usedFonts->at(i)->lineSpacing() - usedFonts->at(i)->ascent() - usedFonts->at(i)->descent()) / 2;
+                    baseline = max(baseline, halfLeading + usedFonts->at(i)->ascent());
+                    baselineToBottom = max(baselineToBottom, usedFonts->at(i)->lineSpacing() - usedFonts->at(i)->ascent() - usedFonts->at(i)->descent() - halfLeading);
                 }
                 lineHeight = baseline + baselineToBottom;
             } else if (parentLineHeight.isPercent()) {
                 lineHeight = parentLineHeight.calcMinValue(curr->renderer()->style()->fontSize());
                 baseline = 0;
-                for (size_t i = 0; i < usedFonts.size(); ++i) {
-                    int halfLeading = (lineHeight - usedFonts[i]->ascent() - usedFonts[i]->descent()) / 2;
-                    baseline = max(baseline, halfLeading + usedFonts[i]->ascent());
+                for (size_t i = 0; i < usedFonts->size(); ++i) {
+                    int halfLeading = (lineHeight - usedFonts->at(i)->ascent() - usedFonts->at(i)->descent()) / 2;
+                    baseline = max(baseline, halfLeading + usedFonts->at(i)->ascent());
                 }
             } else {
                 lineHeight = parentLineHeight.value();
                 baseline = 0;
-                for (size_t i = 0; i < usedFonts.size(); ++i) {
-                    int halfLeading = (lineHeight - usedFonts[i]->ascent() - usedFonts[i]->descent()) / 2;
-                    baseline = max(baseline, halfLeading + usedFonts[i]->ascent());
+                for (size_t i = 0; i < usedFonts->size(); ++i) {
+                    int halfLeading = (lineHeight - usedFonts->at(i)->ascent() - usedFonts->at(i)->descent()) / 2;
+                    baseline = max(baseline, halfLeading + usedFonts->at(i)->ascent());
                 }
             }
         } else {
@@ -562,10 +564,12 @@ void InlineFlowBox::computeVerticalOverflow(int lineTop, int lineBottom, bool st
                 continue;
 
             int strokeOverflow = static_cast<int>(ceilf(rt->style()->textStrokeWidth() / 2.0f));
-            
-            int topGlyphOverflow = -strokeOverflow;
-            int bottomGlyphOverflow = strokeOverflow;
-            
+
+            GlyphOverflow* glyphOverflow = static_cast<InlineTextBox*>(curr)->glyphOverflow();
+
+            int topGlyphOverflow = -strokeOverflow - (glyphOverflow ? glyphOverflow->top : 0);
+            int bottomGlyphOverflow = strokeOverflow + (glyphOverflow ? glyphOverflow->bottom : 0);
+
             int childOverflowTop = topGlyphOverflow;
             int childOverflowBottom = bottomGlyphOverflow;
             for (ShadowData* shadow = rt->style()->textShadow(); shadow; shadow = shadow->next) {

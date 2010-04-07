@@ -1614,8 +1614,8 @@ webcore_sources += \
 	WebCore/platform/graphics/GlyphBuffer.h \
 	WebCore/platform/graphics/GlyphPageTreeNode.cpp \
 	WebCore/platform/graphics/GlyphPageTreeNode.h \
-	WebCore/platform/graphics/GlyphWidthMap.cpp \
-	WebCore/platform/graphics/GlyphWidthMap.h \
+	WebCore/platform/graphics/GlyphMetricsMap.cpp \
+	WebCore/platform/graphics/GlyphMetricsMap.h \
 	WebCore/platform/graphics/Gradient.cpp \
 	WebCore/platform/graphics/Gradient.h \
 	WebCore/platform/graphics/GraphicsContext.cpp \
