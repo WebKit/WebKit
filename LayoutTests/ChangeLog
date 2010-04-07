@@ -1,3 +1,14 @@
+2010-04-07  Jay Civelli  <jcivelli@chromium.org>
+
+        Reviewed by Jian Li.
+
+        [chromium] Add test for a popup related crasher.
+        https://bugs.webkit.org/show_bug.cgi?id=37141
+
+        * platform/chromium/fast/forms: Added.
+        * platform/chromium/fast/forms/search-popup-crasher-expected.txt: Added.
+        * platform/chromium/fast/forms/search-popup-crasher.html: Added.
+
 2010-04-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         Rubber-stamped by Kenneth Rohde Christiansen.

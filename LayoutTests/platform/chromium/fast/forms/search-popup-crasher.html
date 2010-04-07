@@ -1,0 +1,26 @@
+<HTML>
+<HEAD>
+<script>
+window.onload = function()
+{
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    if (window.location.href.indexOf('formSubmitted') != -1)
+        return;
+    document.getElementById('searchBox').value= 'quentin';
+    document.getElementById('searchForm').submit();
+};
+</script>
+</HEAD>
+<BODY>
+
+<p>This page tests that a page with a search popup does not crash, as reported in <a href='https://bugs.webkit.org/show_bug.cgi?id=37141'>this bug</a>. Below is a search input that the test automatically fills then submits. Pass if this does not crash.</p><br><br>
+<FORM action="" id="searchForm">
+<INPUT autosave="my.search" id="searchBox" type="search" results="10" value=""><br>
+<INPUT type="hidden" name="state" value="formSubmitted"><br>
+<INPUT type="submit" value="Search">
+</FORM>
+
+</BODY>
+</HTML>

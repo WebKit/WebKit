@@ -1260,7 +1260,8 @@ PopupMenu::~PopupMenu()
 {
     // When the PopupMenu is destroyed, the client could already have been
     // deleted.
-    p.popup->listBox()->disconnectClient();
+    if (p.popup)
+        p.popup->listBox()->disconnectClient();
     hide();
 }
 
