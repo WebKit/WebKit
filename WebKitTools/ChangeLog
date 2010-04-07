@@ -1,5 +1,17 @@
 2010-04-06  Dirk Pranke  <dpranke@chromium.org>
 
+        Unreviewed build fix.
+
+        Enable pixel tests by default in new-run-webkit-tests unless
+        explicitly set by the port or by the command line. This was broken in
+        the fix for bug 36801 (rev. 57173).
+
+        https://bugs.webkit.org/show_bug.cgi?id=37184
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
+2010-04-06  Dirk Pranke  <dpranke@chromium.org>
+
         Reviewed by Eric Seidel.
 
         Disable pixel tests on the mac port by default.

@@ -1395,6 +1395,9 @@ def main(options, args):
 
     port_obj = port.get(options.platform, options)
 
+    if options.pixel_tests is None:
+        options.pixel_tests = True
+
     if not options.use_apache:
         options.use_apache = sys.platform in ('darwin', 'linux2')
 
