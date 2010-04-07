@@ -1,3 +1,11 @@
+2010-04-07  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Beat gcc with a clue bat -- force inlining of refIfNotNull and derefIfNotNull
+
+        * wtf/PassRefPtr.h:
+
 2010-04-07  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Darin Adler.
