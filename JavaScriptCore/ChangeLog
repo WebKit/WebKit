@@ -1,5 +1,18 @@
 2010-04-07  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Anders Carlsson.
+
+        Vector<UString> makes many needless calls to UString::UString and UString::~UString
+
+        Add a VectorTrait<UString> specialisation to allow vector to simply memset/memcpy
+        data around.  Only difference from the VectorTrait<RefPtr<T> > traits is the inability
+        to use memset to initialize data.
+
+        * runtime/UString.h:
+        (WTF::):
+
+2010-04-07  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Geoff Garen.
 
         Beat gcc with a clue bat -- force inlining of refIfNotNull and derefIfNotNull
