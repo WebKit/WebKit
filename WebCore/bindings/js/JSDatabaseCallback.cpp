@@ -35,7 +35,6 @@
 
 #include "Frame.h"
 #include "JSDatabase.h"
-#include "ScriptController.h"
 #include "ScriptExecutionContext.h"
 #include <runtime/JSLock.h>
 #include <wtf/MainThread.h>
@@ -46,7 +45,7 @@ using namespace JSC;
 
 JSDatabaseCallback::JSDatabaseCallback(JSObject* callback, JSDOMGlobalObject* globalObject)
     : m_data(new JSCallbackData(callback, globalObject))
-    , m_isolatedWorld(DOMWrapperWorld::create(globalObject->globalData(), true))
+    , m_isolatedWorld(globalObject->world())
 {
 }
 

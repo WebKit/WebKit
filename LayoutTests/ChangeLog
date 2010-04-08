@@ -1,3 +1,14 @@
+2010-04-08  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Test that the creation callback is executed in the world where it
+        was created.
+        https://bugs.webkit.org/show_bug.cgi?id=37290
+
+        * storage/open-database-creation-callback-isolated-world-expected.txt:
+        * storage/open-database-creation-callback-isolated-world.html:
+
 2010-04-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Skip new tests introduced in r57292, because of unimplemented
