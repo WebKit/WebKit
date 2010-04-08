@@ -165,7 +165,7 @@ class MacPort(base.Port):
         return result
 
     def num_cores(self):
-        ncores = int(os.popen2("sysctl -n hw.ncpu")[1].read())
+        ncores = int(executive.run_command(["sysctl", "-n", "hw.ncpu"]))
         # FIXME: new-run-webkit-tests is unstable running more than four
         # threads in parallel.
         # See https://bugs.webkit.org/show_bug.cgi?id=36622

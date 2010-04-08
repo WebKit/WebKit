@@ -1,3 +1,15 @@
+2010-04-07  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove depricated op.popen2 call in new-run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=37249
+
+        Python complains that this API is depricated.  We already solved this
+        problem in executive.py.
+
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+
 2010-04-07  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
