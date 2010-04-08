@@ -26,6 +26,7 @@
 #include <QMenu>
 #include <QPushButton>
 #include <QtTest/QtTest>
+#include <QTextCharFormat>
 #include <qgraphicsscene.h>
 #include <qgraphicsview.h>
 #include <qgraphicswebview.h>
@@ -98,6 +99,8 @@ private slots:
     void consoleOutput();
     void inputMethods_data();
     void inputMethods();
+    void inputMethodsTextFormat_data();
+    void inputMethodsTextFormat();
     void defaultTextEncoding();
     void errorPageExtension();
     void errorPageExtensionInIFrames();
@@ -1479,6 +1482,56 @@ void tst_QWebPage::inputMethods()
     delete container;
 }
 
+void tst_QWebPage::inputMethodsTextFormat_data()
+{
+    QTest::addColumn<QString>("string");
+    QTest::addColumn<int>("start");
+    QTest::addColumn<int>("length");
+
+    QTest::newRow("") << QString("") << 0 << 0;
+    QTest::newRow("Q") << QString("Q") << 0 << 1;
+    QTest::newRow("Qt") << QString("Qt") << 0 << 1;
+    QTest::newRow("Qt") << QString("Qt") << 0 << 2;
+    QTest::newRow("Qt") << QString("Qt") << 1 << 1;
+    QTest::newRow("Qt ") << QString("Qt ") << 0 << 1;
+    QTest::newRow("Qt ") << QString("Qt ") << 1 << 1;
+    QTest::newRow("Qt ") << QString("Qt ") << 2 << 1;
+    QTest::newRow("Qt ") << QString("Qt ") << 2 << -1;
+    QTest::newRow("Qt ") << QString("Qt ") << -2 << 3;
+    QTest::newRow("Qt ") << QString("Qt ") << 0 << 3;
+    QTest::newRow("Qt by") << QString("Qt by") << 0 << 1;
+    QTest::newRow("Qt by Nokia") << QString("Qt by Nokia") << 0 << 1;
+}
+
+
+void tst_QWebPage::inputMethodsTextFormat()
+{
+    QWebPage* page = new QWebPage;
+    QWebView* view = new QWebView;
+    view->setPage(page);
+    page->settings()->setFontFamily(QWebSettings::SerifFont, "FooSerifFont");
+    page->mainFrame()->setHtml("<html><body>" \
+                                            "<input type='text' id='input1' style='font-family: serif' value='' maxlength='20'/>");
+    page->mainFrame()->evaluateJavaScript("document.getElementById('input1').focus()");
+    page->mainFrame()->setFocus();
+    view->show();
+
+    QFETCH(QString, string);
+    QFETCH(int, start);
+    QFETCH(int, length);
+
+    QList<QInputMethodEvent::Attribute> attrs;
+    QTextCharFormat format;
+    format.setUnderlineStyle(QTextCharFormat::SingleUnderline);
+    format.setUnderlineColor(Qt::red);
+    attrs.append(QInputMethodEvent::Attribute(QInputMethodEvent::TextFormat, start, length, format));
+    QInputMethodEvent im(string, attrs);
+    page->event(&im);
+
+    QTest::qWait(1000);
+
+    delete view;
+}
 // import a little DRT helper function to trigger the garbage collector
 void QWEBKIT_EXPORT qt_drt_garbageCollector_collect();
 
