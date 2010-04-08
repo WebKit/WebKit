@@ -46,6 +46,7 @@ import server_process
 
 import webkitpy
 import webkitpy.common.system.executive as executive
+import webkitpy.common.system.ospath as ospath
 
 _log = logging.getLogger("webkitpy.layout_tests.port.mac")
 
@@ -310,15 +311,26 @@ class MacPort(base.Port):
             return '-snowleopard'
         return ''
 
+    def default_configuration(self):
+        # This is a bit of a hack. This state exists in a much nicer form in
+        # perl-land.
+        configuration = ospath.relpath(
+            self._webkit_build_directory(["--configuration"]),
+            self._webkit_build_directory(["--top-level"]))
+        assert(configuration == "Debug" or configuration == "Release")
+        return configuration
+
     #
     # PROTECTED METHODS
     #
 
+    def _webkit_build_directory(self, args):
+        cmd = [self.script_path("webkit-build-directory")] + args
+        return executive.run_command(cmd).rstrip()
+
     def _build_path(self, *comps):
         if not self._cached_build_root:
-            self._cached_build_root = executive.run_command(
-                [self.script_path("webkit-build-directory"),
-                 "--top-level"]).rstrip()
+            self._cached_build_root = self._webkit_build_directory(["--top-level"])
         return os.path.join(self._cached_build_root, self._options.configuration,
                             *comps)
 

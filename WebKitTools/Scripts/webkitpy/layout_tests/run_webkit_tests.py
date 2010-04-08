@@ -1387,11 +1387,10 @@ def main(options, args):
     logging.basicConfig(level=log_level, format=log_fmt, datefmt=log_datefmt,
                         stream=meter)
 
-    if not options.configuration:
-        options.configuration = "Release"
-        # FIXME: We should detect from set-webkit-configuration.
-
     port_obj = port.get(options.platform, options)
+
+    if not options.configuration:
+        options.configuration = port_obj.default_configuration()
 
     if options.pixel_tests is None:
         options.pixel_tests = True

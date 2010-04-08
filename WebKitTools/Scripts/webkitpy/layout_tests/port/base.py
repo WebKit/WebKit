@@ -553,6 +553,9 @@ class Port(object):
                 raise e
         return result
 
+    def default_configuration(self):
+        return "Release"
+
     #
     # PROTECTED ROUTINES
     #
