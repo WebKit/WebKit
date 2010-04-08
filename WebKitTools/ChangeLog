@@ -1,5 +1,14 @@
 2010-04-08  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed.
+
+        Add back the --target option because it's needed by the downstream
+        Chromium bots.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
+2010-04-08  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         new-run-webkit-tests should understand set-webkit-configuration

@@ -1579,6 +1579,8 @@ def parse_args(args=None):
     option_parser.add_option('--release', action='store_const', const='Release',
                              dest="configuration",
                              help='Set the configuration to Release')
+    option_parser.add_option("-t", "--target", dest="configuration",
+                             help="(DEPRICATED)") 
     option_parser.add_option("", "--log", action="store",
                              default="detailed-progress,unexpected",
                              help="log various types of data. The param should"
