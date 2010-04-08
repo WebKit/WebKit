@@ -1,3 +1,13 @@
+2010-04-08  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Caught by pixel tests.  I missed patching the borderRightColor() call for fieldset border painting so the
+        border stopped showing up.
+        
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::paintBorderMinusLegend):
+
 2010-04-07  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Oliver Hunt.

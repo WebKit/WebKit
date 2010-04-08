@@ -239,7 +239,7 @@ void RenderFieldset::paintBorderMinusLegend(GraphicsContext* graphicsContext, in
     }
 
     if (render_r) {
-        const Color& rc = style->borderRightColor();
+        const Color& rc = style->visitedDependentColor(CSSPropertyBorderRightColor);
         int startY = ty;
 
         bool ignore_top =
