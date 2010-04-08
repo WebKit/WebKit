@@ -1,3 +1,11 @@
+2010-04-08  Benjamin Otte  <otte@gnome.org>
+
+        Reviewed by Gustavo Noronha.
+
+        Fix build with MathML enabled.
+
+        * GNUmakefile.am:
+
 2010-04-08  Daniel Bates  <dbates@rim.com>
 
         No review, rolling out 56655.

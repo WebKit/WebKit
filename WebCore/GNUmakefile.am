@@ -2837,6 +2837,14 @@ webcore_sources += \
 	WebCore/mathml/MathMLTextElement.h \
 	WebCore/mathml/RenderMathMLBlock.cpp \
 	WebCore/mathml/RenderMathMLBlock.h \
+	WebCore/mathml/RenderMathMLFraction.cpp \
+	WebCore/mathml/RenderMathMLFraction.h \
+	WebCore/mathml/RenderMathMLMath.cpp \
+	WebCore/mathml/RenderMathMLMath.h \
+	WebCore/mathml/RenderMathMLOperator.cpp \
+	WebCore/mathml/RenderMathMLOperator.h \
+	WebCore/mathml/RenderMathMLRow.cpp \
+	WebCore/mathml/RenderMathMLRow.h \
 	WebCore/mathml/RenderMathMLSubSup.cpp \
 	WebCore/mathml/RenderMathMLSubSup.h \
 	WebCore/mathml/RenderMathMLUnderOver.cpp \
@@ -2853,8 +2861,8 @@ DerivedSources/MathMLElementFactory.h: DerivedSources/MathMLElementFactory.cpp
 
 DerivedSources/MathMLNames.h: DerivedSources/MathMLNames.cpp
 
-DerivedSources/MathMLElementFactory.cpp DerivedSources/MathMLNames.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/mathml/mathtags.in
-	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --tags $(WebCore)/mathml/mathtags.in --factory --wrapperFactory --outputDir "$(GENSOURCES)"
+DerivedSources/MathMLElementFactory.cpp DerivedSources/MathMLNames.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/mathml/mathtags.in $(WebCore)/mathml/mathattrs.in
+	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --tags $(WebCore)/mathml/mathtags.in --attrs $(WebCore)/mathml/mathattrs.in --factory --wrapperFactory --outputDir "$(GENSOURCES)"
 else 
 DerivedSources/MathMLElementFactory.cpp:
 	echo > $@
