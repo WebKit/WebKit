@@ -2845,7 +2845,9 @@ BUG40027 LINUX : fast/forms/input-file-re-render.html = TEXT IMAGE
 
 // Caused by http://trac.webkit.org/changeset/57215/
 // I think this is due to broken complex text behavior, but I need it investigate more.
-BUG_OJAN WIN : fast/text/line-breaks.html = IMAGE+TEXT
+BUGWK37242 WIN : fast/text/line-breaks.html = IMAGE+TEXT
+
+BUGWK37283 : fast/overflow/scrollbar-restored-and-then-locked.html = TEXT
 
 // These are failing due to new-rin-webkit-tests's diff trimming line ends.
 BUGWK36983 MAC : fast/canvas/webgl/null-object-behaviour.html = TEXT

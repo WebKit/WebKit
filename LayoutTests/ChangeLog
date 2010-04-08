@@ -1,5 +1,14 @@
 2010-04-08  Ojan Vafai  <ojan@chromium.org>
 
+        Reviewed by Dimitri Glazkov.
+
+        A couple test expectations cleanups
+        https://bugs.webkit.org/show_bug.cgi?id=37285
+
+        * platform/chromium/test_expectations.txt:
+
+2010-04-08  Ojan Vafai  <ojan@chromium.org>
+
         Reviewed by Adam Barth.
 
         Fix http.conf for GTK-Debug and Chromium-Linux bots
