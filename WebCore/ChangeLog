@@ -1,3 +1,38 @@
+2010-04-01  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        [Qt] REGRESSION:(r50665) QWebFrame::setScrollBarPolicy(Qt::Vertical,Qt::ScrollBarAlwaysOff) has no effect.
+        https://bugs.webkit.org/show_bug.cgi?id=29431
+
+        Test: fast/overflow/scrollbar-restored-and-then-locked.html
+
+        Patch introduces a lock scrollbars concept to ScrollView, as in WebDynamicScrollBarsView.mm/h
+        on WebKit/mac. It is needed because in QtWebKit, we have Api for setting both vertical and
+        horizontal scrollbars on/off/auto. When it is set to off, for example, it should remain
+        as such, unless unset.
+
+        For the locking concept, optional 'lock' parameters were added to setScrollbarModes,
+        setHorizontalScrollbarMode and setVerticalScrollbarMode methods of ScrollView. As these
+        are all optional, any previous code calling them do not need modification.
+
+        Two optional parameters were also added to Frame's createView method, for horizontal and vertical
+        lock state persistence cross page loads.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::createView):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::ScrollView):
+        (WebCore::ScrollView::setScrollbarModes):
+        (WebCore::ScrollView::setHorizontalScrollbarMode):
+        (WebCore::ScrollView::setVerticalScrollbarMode):
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::setHorizontalScrollbarLock):
+        (WebCore::ScrollView::isHorizontalScrollbarLocked):
+        (WebCore::ScrollView::setVerticalScrollbarLock):
+        (WebCore::ScrollView::isVerticalScrollbarLocked):
+        (WebCore::ScrollView::setScrollingModesLocked):
+
 2010-04-08  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

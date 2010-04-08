@@ -822,3 +822,6 @@ fast/media/media-feature-wgt-view-mode.html
 
 # Need expectations. See https://bugs.webkit.org/show_bug.cgi?id=36461
 fast/repaint/overflow-scroll-body-appear.html
+
+# Need to add functionality to DumpRenderTree to handle scrollbar police changes
+fast/overflow/scrollbar-restored-and-then-locked.html

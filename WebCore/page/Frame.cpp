@@ -1780,7 +1780,8 @@ Document* Frame::documentAtPoint(const IntPoint& point)
 void Frame::createView(const IntSize& viewportSize,
                        const Color& backgroundColor, bool transparent,
                        const IntSize& fixedLayoutSize, bool useFixedLayout,
-                       ScrollbarMode horizontalScrollbarMode, ScrollbarMode verticalScrollbarMode)
+                       ScrollbarMode horizontalScrollbarMode, bool horizontalLock,
+                       ScrollbarMode verticalScrollbarMode, bool verticalLock)
 {
     ASSERT(this);
     ASSERT(m_page);
@@ -1800,7 +1801,7 @@ void Frame::createView(const IntSize& viewportSize,
     } else
         frameView = FrameView::create(this);
 
-    frameView->setScrollbarModes(horizontalScrollbarMode, verticalScrollbarMode);
+    frameView->setScrollbarModes(horizontalScrollbarMode, verticalScrollbarMode, horizontalLock, verticalLock);
 
     setView(frameView);
 

@@ -215,12 +215,17 @@ void FrameLoaderClientQt::transitionToCommittedForNewPage()
     QWebPage* page = m_webFrame->page();
     const QSize preferredLayoutSize = page->preferredContentsSize();
 
+    ScrollbarMode hScrollbar = (ScrollbarMode) m_webFrame->scrollBarPolicy(Qt::Horizontal);
+    ScrollbarMode vScrollbar = (ScrollbarMode) m_webFrame->scrollBarPolicy(Qt::Vertical);
+    bool hLock = hScrollbar != ScrollbarAuto;
+    bool vLock = vScrollbar != ScrollbarAuto;
+
     m_frame->createView(m_webFrame->page()->viewportSize(),
                         backgroundColor, !backgroundColor.alpha(),
                         preferredLayoutSize.isValid() ? IntSize(preferredLayoutSize) : IntSize(),
                         preferredLayoutSize.isValid(),
-                        (ScrollbarMode)m_webFrame->scrollBarPolicy(Qt::Horizontal),
-                        (ScrollbarMode)m_webFrame->scrollBarPolicy(Qt::Vertical));
+                        hScrollbar, hLock,
+                        vScrollbar, vLock);
 }
 
 

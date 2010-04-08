@@ -585,6 +585,7 @@ private slots:
     void render();
     void scrollPosition();
     void scrollToAnchor();
+    void scrollbarsOff();
     void evaluateWillCauseRepaint();
     void qObjectWrapperWithSameIdentity();
     void introspectQtMethods_data();
@@ -2794,6 +2795,38 @@ void tst_QWebFrame::scrollToAnchor()
     frame->scrollToAnchor("bar");
     frame->scrollToAnchor("notexist");
     QVERIFY(frame->scrollPosition().y() != 0);
+}
+
+
+void tst_QWebFrame::scrollbarsOff()
+{
+    QWebView view;
+    QWebFrame* mainFrame = view.page()->mainFrame();
+
+    mainFrame->setScrollBarPolicy(Qt::Vertical, Qt::ScrollBarAlwaysOff);
+    mainFrame->setScrollBarPolicy(Qt::Horizontal, Qt::ScrollBarAlwaysOff);
+
+    QString html("<script>" \
+                 "   function checkScrollbar() {" \
+                 "       if (innerWidth === document.documentElement.offsetWidth)" \
+                 "           document.getElementById('span1').innerText = 'SUCCESS';" \
+                 "       else" \
+                 "           document.getElementById('span1').innerText = 'FAIL';" \
+                 "   }" \
+                 "</script>" \
+                 "<body>" \
+                 "   <div style='margin-top:1000px ; margin-left:1000px'>" \
+                 "       <a id='offscreen' href='a'>End</a>" \
+                 "   </div>" \
+                 "<span id='span1'></span>" \
+                 "</body>");
+
+
+    view.setHtml(html);
+    ::waitForSignal(&view, SIGNAL(loadFinished(bool)));
+
+    mainFrame->evaluateJavaScript("checkScrollbar();");
+    QCOMPARE(mainFrame->documentElement().findAll("span").at(0).toPlainText(), QString("SUCCESS"));
 }
 
 void tst_QWebFrame::evaluateWillCauseRepaint()

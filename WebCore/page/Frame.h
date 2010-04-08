@@ -119,7 +119,8 @@ namespace WebCore {
         void setExcludeFromTextSearch(bool);
 
         void createView(const IntSize&, const Color&, bool, const IntSize &, bool,
-                        ScrollbarMode = ScrollbarAuto, ScrollbarMode = ScrollbarAuto);
+                        ScrollbarMode = ScrollbarAuto, bool horizontalLock = false,
+                        ScrollbarMode = ScrollbarAuto, bool verticalLock = false);
 
         void injectUserScripts(UserScriptInjectionTime);
         

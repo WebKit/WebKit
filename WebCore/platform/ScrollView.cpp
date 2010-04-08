@@ -42,6 +42,8 @@ namespace WebCore {
 ScrollView::ScrollView()
     : m_horizontalScrollbarMode(ScrollbarAuto)
     , m_verticalScrollbarMode(ScrollbarAuto)
+    , m_horizontalScrollbarLock(false)
+    , m_verticalScrollbarLock(false)
     , m_prohibitsScrolling(false)
     , m_canBlitOnScroll(true)
     , m_scrollbarsAvoidingResizer(0)
@@ -115,12 +117,30 @@ PassRefPtr<Scrollbar> ScrollView::createScrollbar(ScrollbarOrientation orientati
     return Scrollbar::createNativeScrollbar(this, orientation, RegularScrollbar);
 }
 
-void ScrollView::setScrollbarModes(ScrollbarMode horizontalMode, ScrollbarMode verticalMode)
+void ScrollView::setScrollbarModes(ScrollbarMode horizontalMode, ScrollbarMode verticalMode,
+                                   bool horizontalLock, bool verticalLock)
 {
-    if (horizontalMode == horizontalScrollbarMode() && verticalMode == verticalScrollbarMode())
+    bool needsUpdate = false;
+
+    if (horizontalMode != horizontalScrollbarMode() && !m_horizontalScrollbarLock) {
+        m_horizontalScrollbarMode = horizontalMode;
+        needsUpdate = true;
+    }
+
+    if (verticalMode != verticalScrollbarMode() && !m_verticalScrollbarLock) {
+        m_verticalScrollbarMode = verticalMode;
+        needsUpdate = true;
+    }
+
+    if (horizontalLock)
+        setHorizontalScrollbarLock();
+
+    if (verticalLock)
+        setVerticalScrollbarLock();
+
+    if (!needsUpdate)
         return;
-    m_horizontalScrollbarMode = horizontalMode;
-    m_verticalScrollbarMode = verticalMode;
+
     if (platformWidget())
         platformSetScrollbarModes();
     else

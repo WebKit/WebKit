@@ -447,6 +447,9 @@ void DumpRenderTree::resetToConsistentStateBeforeTesting()
     clearHistory(m_page);
     qt_drt_clearFrameName(m_page->mainFrame());
 
+    m_page->mainFrame()->setScrollBarPolicy(Qt::Vertical, Qt::ScrollBarAsNeeded);
+    m_page->mainFrame()->setScrollBarPolicy(Qt::Horizontal, Qt::ScrollBarAsNeeded);
+
     WorkQueue::shared()->clear();
     WorkQueue::shared()->setFrozen(false);
 

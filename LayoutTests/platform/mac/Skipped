@@ -151,3 +151,6 @@ fast/media/media-feature-wgt-view-mode.html
 # Test is flaky and thus not useful until fixed.
 # https://bugs.webkit.org/show_bug.cgi?id=36642
 fast/replaced/border-radius-clip.html
+
+# Need to add functionality to DumpRenderTree to handle scrollbar police changes
+fast/overflow/scrollbar-restored-and-then-locked.html

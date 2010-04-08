@@ -83,12 +83,20 @@ public:
     // Auto means show a scrollbar only when one is needed.
     // Note that for platforms with native widgets, these modes are considered advisory.  In other words the underlying native
     // widget may choose not to honor the requested modes.
-    void setScrollbarModes(ScrollbarMode horizontalMode, ScrollbarMode verticalMode);
-    void setHorizontalScrollbarMode(ScrollbarMode mode) { setScrollbarModes(mode, verticalScrollbarMode()); }
-    void setVerticalScrollbarMode(ScrollbarMode mode) { setScrollbarModes(horizontalScrollbarMode(), mode); }
+    void setScrollbarModes(ScrollbarMode horizontalMode, ScrollbarMode verticalMode, bool horizontalLock = false, bool verticalLock = false);
+    void setHorizontalScrollbarMode(ScrollbarMode mode, bool lock = false) { setScrollbarModes(mode, verticalScrollbarMode(), lock, verticalScrollbarLock()); }
+    void setVerticalScrollbarMode(ScrollbarMode mode, bool lock = false) { setScrollbarModes(horizontalScrollbarMode(), mode, horizontalScrollbarLock(), lock); };
     void scrollbarModes(ScrollbarMode& horizontalMode, ScrollbarMode& verticalMode) const;
     ScrollbarMode horizontalScrollbarMode() const { ScrollbarMode horizontal, vertical; scrollbarModes(horizontal, vertical); return horizontal; }
     ScrollbarMode verticalScrollbarMode() const { ScrollbarMode horizontal, vertical; scrollbarModes(horizontal, vertical); return vertical; }
+
+    void setHorizontalScrollbarLock(bool lock = true) { m_horizontalScrollbarLock = lock; }
+    bool horizontalScrollbarLock() const { return m_horizontalScrollbarLock; }
+    void setVerticalScrollbarLock(bool lock = true) { m_verticalScrollbarLock = lock; }
+    bool verticalScrollbarLock() const { return m_verticalScrollbarLock; }
+
+    void setScrollingModesLock(bool lock = true) { m_horizontalScrollbarLock = m_verticalScrollbarLock = lock; }
+
     virtual void setCanHaveScrollbars(bool);
     bool canHaveScrollbars() const { return horizontalScrollbarMode() != ScrollbarAlwaysOff || verticalScrollbarMode() != ScrollbarAlwaysOff; }
 
@@ -257,6 +265,10 @@ private:
     RefPtr<Scrollbar> m_verticalScrollbar;
     ScrollbarMode m_horizontalScrollbarMode;
     ScrollbarMode m_verticalScrollbarMode;
+
+    bool m_horizontalScrollbarLock;
+    bool m_verticalScrollbarLock;
+
     bool m_prohibitsScrolling;
 
     HashSet<RefPtr<Widget> > m_children;

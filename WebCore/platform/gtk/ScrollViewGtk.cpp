@@ -168,7 +168,7 @@ IntRect ScrollView::visibleContentRect(bool includeScrollbars) const
                            measuredWidget->allocation.height));
 }
 
-void ScrollView::setScrollbarModes(ScrollbarMode horizontalMode, ScrollbarMode verticalMode)
+void ScrollView::setScrollbarModes(ScrollbarMode horizontalMode, ScrollbarMode verticalMode, bool, bool)
 {
     if (horizontalMode == m_horizontalScrollbarMode && verticalMode == m_verticalScrollbarMode)
         return;

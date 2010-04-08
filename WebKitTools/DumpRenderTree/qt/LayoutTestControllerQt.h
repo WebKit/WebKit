@@ -165,6 +165,12 @@ public slots:
     int numberOfPages(float width = maxViewWidth, float height = maxViewHeight);
     bool callShouldCloseOnWebView();
 
+    /*
+        Policy values: 'on', 'auto' or 'off'.
+        Orientation values: 'vertical' or 'horizontal'.
+    */
+    void setScrollbarPolicy(const QString& orientation, const QString& policy);
+
 private slots:
     void processWork();
 

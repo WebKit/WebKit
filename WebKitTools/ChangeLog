@@ -1,3 +1,19 @@
+2010-04-01  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        [Qt] REGRESSION:(r50665) QWebFrame::setScrollBarPolicy(Qt::Vertical,Qt::ScrollBarAlwaysOff) has no effect.
+        https://bugs.webkit.org/show_bug.cgi?id=29431
+
+        Make possible to DRT to set scrollbar policies (on, off or auto).
+
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::setScrollbarPolicy):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+        * QtLauncher/main.cpp:
+        (LauncherWindow::toggleScrollbars):
+        (LauncherWindow::createChrome):
+
 2010-04-08  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
