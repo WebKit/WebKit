@@ -1,3 +1,13 @@
+2010-04-07  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Steve Falkenburg.
+
+        Remove QuartzCoreInterface from the build
+        
+        No longer needed since QuartzCore.dll is now included in  the latest Safari release (4.0.5).
+
+        * WebKit.vcproj/WebKit.vcproj:Removed delay load for QuartzCore and QuartzCoreInterface
+
 2010-04-07  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Yury Semikhatsky.

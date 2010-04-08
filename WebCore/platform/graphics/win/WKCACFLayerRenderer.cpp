@@ -39,7 +39,6 @@
 #include <CoreGraphics/CGSRegion.h>
 #include <QuartzCore/CACFContext.h>
 #include <QuartzCore/CARenderOGL.h>
-#include <QuartzCoreInterface/QuartzCoreInterface.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/OwnPtr.h>
@@ -346,7 +345,7 @@ bool WKCACFLayerRenderer::createRenderer()
     windowsForContexts().set(m_context.get(), this);
 
     m_renderContext = static_cast<CARenderContext*>(CACFContextGetRenderContext(m_context.get()));
-    m_renderer = CARenderOGLNew(wkqcCARenderOGLCallbacks(wkqckCARenderDX9Callbacks), m_d3dDevice.get(), 0);
+    m_renderer = CARenderOGLNew(&kCARenderDX9Callbacks, m_d3dDevice.get(), 0);
 
     // Create the root hierarchy.
     // Under the root layer, we have a clipping layer to clip the content,

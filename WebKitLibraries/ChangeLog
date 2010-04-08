@@ -1,3 +1,16 @@
+2010-04-07  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Steve Falkenburg.
+
+        Remove QuartzCoreInterface from the build
+        
+        No longer needed since QuartzCore.dll is now included in  the latest Safari release (4.0.5).
+
+        * win/bin/QuartzCoreInterface.dll: Removed.
+        * win/include/QuartzCoreInterface: Removed.
+        * win/include/QuartzCoreInterface/QuartzCoreInterface.h: Removed.
+        * win/lib/QuartzCoreInterface.lib: Removed.
+
 2010-04-02  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Eric Carlson.

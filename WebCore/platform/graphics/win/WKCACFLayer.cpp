@@ -36,18 +36,9 @@
 #include <stdio.h>
 #include <QuartzCore/CACFContext.h>
 #include <QuartzCore/CARender.h>
-#include <QuartzCoreInterface/QuartzCoreInterface.h>
 
 #ifndef NDEBUG
 #include <wtf/CurrentTime.h>
-#endif
-
-#ifdef DEBUG_ALL
-#pragma comment(lib, "QuartzCore_debug")
-#pragma comment(lib, "QuartzCoreInterface_debug")
-#else
-#pragma comment(lib, "QuartzCore")
-#pragma comment(lib, "QuartzCoreInterface")
 #endif
 
 namespace WebCore {
@@ -60,37 +51,11 @@ static void displayCallback(CACFLayerRef layer, CGContextRef context)
     WKCACFLayer::layer(layer)->drawInContext(context);
 }
 
-#define STATIC_CACF_STRING(name) \
-    static CFStringRef name() \
-    { \
-        static CFStringRef name = wkqcCFStringRef(wkqc##name); \
-        return name; \
-    }
-
-STATIC_CACF_STRING(kCACFLayer)
-STATIC_CACF_STRING(kCACFTransformLayer)
-STATIC_CACF_STRING(kCACFGravityCenter)
-STATIC_CACF_STRING(kCACFGravityTop)
-STATIC_CACF_STRING(kCACFGravityBottom)
-STATIC_CACF_STRING(kCACFGravityLeft)
-STATIC_CACF_STRING(kCACFGravityRight)
-STATIC_CACF_STRING(kCACFGravityTopLeft)
-STATIC_CACF_STRING(kCACFGravityTopRight)
-STATIC_CACF_STRING(kCACFGravityBottomLeft)
-STATIC_CACF_STRING(kCACFGravityBottomRight)
-STATIC_CACF_STRING(kCACFGravityResize)
-STATIC_CACF_STRING(kCACFGravityResizeAspect)
-STATIC_CACF_STRING(kCACFGravityResizeAspectFill)
-STATIC_CACF_STRING(kCACFFilterLinear)
-STATIC_CACF_STRING(kCACFFilterNearest)
-STATIC_CACF_STRING(kCACFFilterTrilinear)
-STATIC_CACF_STRING(kCACFFilterLanczos)
-
 static CFStringRef toCACFLayerType(WKCACFLayer::LayerType type)
 {
     switch (type) {
-    case WKCACFLayer::Layer: return kCACFLayer();
-    case WKCACFLayer::TransformLayer: return kCACFTransformLayer();
+    case WKCACFLayer::Layer: return kCACFLayer;
+    case WKCACFLayer::TransformLayer: return kCACFTransformLayer;
     default: return 0;
     }
 }
@@ -98,55 +63,55 @@ static CFStringRef toCACFLayerType(WKCACFLayer::LayerType type)
 static CFStringRef toCACFContentsGravityType(WKCACFLayer::ContentsGravityType type)
 {
     switch (type) {
-    case WKCACFLayer::Center: return kCACFGravityCenter();
-    case WKCACFLayer::Top: return kCACFGravityTop();
-    case WKCACFLayer::Bottom: return kCACFGravityBottom();
-    case WKCACFLayer::Left: return kCACFGravityLeft();
-    case WKCACFLayer::Right: return kCACFGravityRight();
-    case WKCACFLayer::TopLeft: return kCACFGravityTopLeft();
-    case WKCACFLayer::TopRight: return kCACFGravityTopRight();
-    case WKCACFLayer::BottomLeft: return kCACFGravityBottomLeft();
-    case WKCACFLayer::BottomRight: return kCACFGravityBottomRight();
-    case WKCACFLayer::Resize: return kCACFGravityResize();
-    case WKCACFLayer::ResizeAspect: return kCACFGravityResizeAspect();
-    case WKCACFLayer::ResizeAspectFill: return kCACFGravityResizeAspectFill();
+    case WKCACFLayer::Center: return kCACFGravityCenter;
+    case WKCACFLayer::Top: return kCACFGravityTop;
+    case WKCACFLayer::Bottom: return kCACFGravityBottom;
+    case WKCACFLayer::Left: return kCACFGravityLeft;
+    case WKCACFLayer::Right: return kCACFGravityRight;
+    case WKCACFLayer::TopLeft: return kCACFGravityTopLeft;
+    case WKCACFLayer::TopRight: return kCACFGravityTopRight;
+    case WKCACFLayer::BottomLeft: return kCACFGravityBottomLeft;
+    case WKCACFLayer::BottomRight: return kCACFGravityBottomRight;
+    case WKCACFLayer::Resize: return kCACFGravityResize;
+    case WKCACFLayer::ResizeAspect: return kCACFGravityResizeAspect;
+    case WKCACFLayer::ResizeAspectFill: return kCACFGravityResizeAspectFill;
     default: return 0;
     }
 }
 
 static WKCACFLayer::ContentsGravityType fromCACFContentsGravityType(CFStringRef string)
 {
-    if (CFEqual(string, kCACFGravityTop()))
+    if (CFEqual(string, kCACFGravityTop))
         return WKCACFLayer::Top;
 
-    if (CFEqual(string, kCACFGravityBottom()))
+    if (CFEqual(string, kCACFGravityBottom))
         return WKCACFLayer::Bottom;
 
-    if (CFEqual(string, kCACFGravityLeft()))
+    if (CFEqual(string, kCACFGravityLeft))
         return WKCACFLayer::Left;
 
-    if (CFEqual(string, kCACFGravityRight()))
+    if (CFEqual(string, kCACFGravityRight))
         return WKCACFLayer::Right;
 
-    if (CFEqual(string, kCACFGravityTopLeft()))
+    if (CFEqual(string, kCACFGravityTopLeft))
         return WKCACFLayer::TopLeft;
 
-    if (CFEqual(string, kCACFGravityTopRight()))
+    if (CFEqual(string, kCACFGravityTopRight))
         return WKCACFLayer::TopRight;
 
-    if (CFEqual(string, kCACFGravityBottomLeft()))
+    if (CFEqual(string, kCACFGravityBottomLeft))
         return WKCACFLayer::BottomLeft;
 
-    if (CFEqual(string, kCACFGravityBottomRight()))
+    if (CFEqual(string, kCACFGravityBottomRight))
         return WKCACFLayer::BottomRight;
 
-    if (CFEqual(string, kCACFGravityResize()))
+    if (CFEqual(string, kCACFGravityResize))
         return WKCACFLayer::Resize;
 
-    if (CFEqual(string, kCACFGravityResizeAspect()))
+    if (CFEqual(string, kCACFGravityResizeAspect))
         return WKCACFLayer::ResizeAspect;
 
-    if (CFEqual(string, kCACFGravityResizeAspectFill()))
+    if (CFEqual(string, kCACFGravityResizeAspectFill))
         return WKCACFLayer::ResizeAspectFill;
 
     return WKCACFLayer::Center;
@@ -155,23 +120,23 @@ static WKCACFLayer::ContentsGravityType fromCACFContentsGravityType(CFStringRef 
 static CFStringRef toCACFFilterType(WKCACFLayer::FilterType type)
 {
     switch (type) {
-    case WKCACFLayer::Linear: return kCACFFilterLinear();
-    case WKCACFLayer::Nearest: return kCACFFilterNearest();
-    case WKCACFLayer::Trilinear: return kCACFFilterTrilinear();
-    case WKCACFLayer::Lanczos: return kCACFFilterLanczos();
+    case WKCACFLayer::Linear: return kCACFFilterLinear;
+    case WKCACFLayer::Nearest: return kCACFFilterNearest;
+    case WKCACFLayer::Trilinear: return kCACFFilterTrilinear;
+    case WKCACFLayer::Lanczos: return kCACFFilterLanczos;
     default: return 0;
     }
 }
 
 static WKCACFLayer::FilterType fromCACFFilterType(CFStringRef string)
 {
-    if (CFEqual(string, kCACFFilterNearest()))
+    if (CFEqual(string, kCACFFilterNearest))
         return WKCACFLayer::Nearest;
 
-    if (CFEqual(string, kCACFFilterTrilinear()))
+    if (CFEqual(string, kCACFFilterTrilinear))
         return WKCACFLayer::Trilinear;
 
-    if (CFEqual(string, kCACFFilterLanczos()))
+    if (CFEqual(string, kCACFFilterLanczos))
         return WKCACFLayer::Lanczos;
 
     return WKCACFLayer::Linear;
@@ -230,7 +195,7 @@ void WKCACFLayer::setNeedsCommit()
 
 bool WKCACFLayer::isTransformLayer() const
 {
-    return CACFLayerGetClass(layer()) == kCACFTransformLayer();
+    return CACFLayerGetClass(layer()) == kCACFTransformLayer;
 }
 
 void WKCACFLayer::addSublayer(PassRefPtr<WKCACFLayer> sublayer)

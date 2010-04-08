@@ -37,7 +37,6 @@
 #include "PlatformString.h"
 #include "SystemTime.h"
 #include "WKCACFLayer.h"
-#include <QuartzCoreInterface/QuartzCoreInterface.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/StringExtras.h>
 #include <wtf/text/CString.h>
@@ -667,7 +666,7 @@ void GraphicsLayerCACF::updateLayerPreserves3D()
         m_layer->setPosition(point);
 
         m_layer->setAnchorPoint(CGPointMake(0.5f, 0.5f));
-        m_layer->setTransform(wkqcCATransform3DIdentity());
+        m_layer->setTransform(CATransform3DIdentity);
         
         // Set the old layer to opacity of 1. Further down we will set the opacity on the transform layer.
         m_layer->setOpacity(1);

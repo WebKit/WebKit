@@ -1,3 +1,24 @@
+2010-04-07  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Steve Falkenburg.
+
+        Remove QuartzCoreInterface from the build
+        
+        No longer needed since QuartzCore.dll is now included in  the latest Safari release (4.0.5).
+        This gets rid of all the function shims from the clients of QuartzCore.dll.
+
+        * platform/graphics/win/GraphicsLayerCACF.cpp:
+        (WebCore::GraphicsLayerCACF::updateLayerPreserves3D):
+        * platform/graphics/win/WKCACFLayer.cpp:
+        (WebCore::toCACFLayerType):
+        (WebCore::toCACFContentsGravityType):
+        (WebCore::fromCACFContentsGravityType):
+        (WebCore::toCACFFilterType):
+        (WebCore::fromCACFFilterType):
+        (WebCore::WKCACFLayer::isTransformLayer):
+        * platform/graphics/win/WKCACFLayerRenderer.cpp:
+        (WebCore::WKCACFLayerRenderer::createRenderer):
+
 2010-04-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r57178.
