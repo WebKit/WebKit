@@ -714,9 +714,10 @@ class TestRunner:
 
     def _display_one_line_progress(self, result_summary):
         """Displays the progress through the test run."""
-        self._meter.update("Testing: %d ran as expected, %d didn't, %d left" %
-            (result_summary.expected, result_summary.unexpected,
-             result_summary.remaining))
+        percent_complete = 100 * (result_summary.expected + result_summary.unexpected) / result_summary.total
+        self._meter.update("Testing (%d%%): %d ran as expected, %d didn't, %d left" %
+            (percent_complete, result_summary.expected,
+             result_summary.unexpected, result_summary.remaining))
 
     def _display_detailed_progress(self, result_summary):
         """Display detailed progress output where we print the directory name
