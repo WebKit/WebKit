@@ -74,6 +74,7 @@ LayoutTestController::LayoutTestController(const std::string& testPathOrURL, con
     , m_globalFlag(false)
     , m_isGeolocationPermissionSet(false)
     , m_geolocationPermission(false)
+    , m_handlesAuthenticationChallenges(false)
     , m_testPathOrURL(testPathOrURL)
     , m_expectedPixelHash(expectedPixelHash)
 {
