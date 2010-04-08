@@ -1,3 +1,14 @@
+2010-04-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed Oliver Hunt.
+
+        [Qt]r57240 broke Qt build (might be a gcc bug)
+        https://bugs.webkit.org/show_bug.cgi?id=37253
+
+        Workaround until fix. On PLATFORM(QT) use inline instead of ALWAYS_INLINE.
+
+        * wtf/PassRefPtr.h: Qt guards added.
+
 2010-04-07  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Anders Carlsson.

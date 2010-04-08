@@ -33,9 +33,16 @@ namespace WTF {
     // Remove inline for WINSCW compiler to prevent the compiler agressively resolving
     // T::ref() and T::deref(), which will fail compiling when PassRefPtr<T> is used as
     // a class member or function arguments before T is defined.
+
+    // [Qt]r57240 broke Qt build (might be a gcc bug)
+    // FIXME! See: https://bugs.webkit.org/show_bug.cgi?id=37253
     template<typename T>
 #if !COMPILER(WINSCW)
+#if !PLATFORM(QT)
     ALWAYS_INLINE
+#else
+    inline
+#endif
 #endif
     void refIfNotNull(T* ptr)
     {
@@ -43,9 +50,15 @@ namespace WTF {
             ptr->ref();
     }
 
+    // [Qt]r57240 broke Qt build (might be a gcc bug)
+    // FIXME! See: https://bugs.webkit.org/show_bug.cgi?id=37253
     template<typename T> 
 #if !COMPILER(WINSCW)
-    ALWAYS_INLINE 
+#if !PLATFORM(QT)
+    ALWAYS_INLINE
+#else
+    inline
+#endif
 #endif
     void derefIfNotNull(T* ptr)
     {
