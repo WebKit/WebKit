@@ -36,7 +36,7 @@ shouldBe(elBackground, 'invalidColor');
 
 debug('Change name:');
 el.name = '';
-shouldBe(elBackground, 'normalColor');
+shouldBe(elBackground, 'invalidColor');
 el.name = 'bar';
 shouldBe(elBackground, 'invalidColor');
 
@@ -57,7 +57,7 @@ shouldBe(elBackground, 'invalidColor');
 debug('Inside/outside of a form:');
 el = makeInvalid();
 nonForm.appendChild(el);
-shouldBe(elBackground, 'normalColor');
+shouldBe(elBackground, 'invalidColor');
 form.appendChild(el);
 shouldBe(elBackground, 'invalidColor');
 

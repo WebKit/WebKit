@@ -1,4 +1,0 @@
-
-Fieldset test
-
-SUCCESS

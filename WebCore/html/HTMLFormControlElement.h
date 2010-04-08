@@ -106,7 +106,7 @@ public:
 
     virtual short tabIndex() const;
 
-    bool willValidate() const;
+    virtual bool willValidate() const;
     String validationMessage();
     bool checkValidity();
     // This must be called when a validation constraint or control value is changed.
@@ -116,7 +116,7 @@ public:
     virtual bool patternMismatch() const { return false; }
     virtual bool tooLong() const { return false; }
 
-    void formDestroyed();
+    void formDestroyed() { m_form = 0; }
 
     virtual void dispatchFocusEvent();
     virtual void dispatchBlurEvent();
@@ -134,12 +134,15 @@ private:
 
     HTMLFormElement* m_form;
     OwnPtr<ValidityState> m_validityState;
-    bool m_hasName : 1;
     bool m_disabled : 1;
     bool m_readOnly : 1;
     bool m_required : 1;
     bool m_valueMatchesRenderer : 1;
-    bool m_willValidate : 1;
+    // The initial value of m_willValidate depends on a subclass, and we can't
+    // initialize it with a virtual function in the constructor. m_willValidate
+    // is not deterministic during m_willValidateInitialized=false.
+    mutable bool m_willValidateInitialized: 1;
+    mutable bool m_willValidate : 1;
     // Cache of validity()->valid().
     // "candidate for constraint validation" doesn't affect to m_isValid.
     bool m_isValid : 1;

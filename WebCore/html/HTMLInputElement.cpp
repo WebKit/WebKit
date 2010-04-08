@@ -817,6 +817,7 @@ void HTMLInputElement::setInputType(const String& t)
             bool wasPasswordField = inputType() == PASSWORD;
             bool didRespectHeightAndWidth = respectHeightAndWidthAttrs();
             m_type = newType;
+            setNeedsWillValidateCheck();
             bool willStoreValue = storesValueSeparateFromAttribute();
             bool isPasswordField = inputType() == PASSWORD;
             bool willRespectHeightAndWidth = respectHeightAndWidthAttrs();
@@ -855,7 +856,6 @@ void HTMLInputElement::setInputType(const String& t)
             checkedRadioButtons(this).addButton(this);
         }
 
-        setNeedsWillValidateCheck();
         setNeedsValidityCheck();
         InputElement::notifyFormStateChanged(this);
     }

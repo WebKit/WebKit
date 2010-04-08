@@ -1,3 +1,41 @@
+2010-04-08  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        willValidate doesn't need to check existence of a form element and a name attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=34733
+
+        - Merge willvalidate-00x tests into one file.
+        - Update tests affected by the willValidate behavior change.
+
+        * fast/forms/input-live-pseudo-selectors-expected.txt:
+        * fast/forms/resources/input-live-pseudo-selectors.js:
+        * fast/forms/resources/textarea-live-pseudo-selectors.js:
+        * fast/forms/script-tests/willvalidate.js: Added.
+        * fast/forms/textarea-live-pseudo-selectors-expected.txt:
+        * fast/forms/willvalidate-000-expected.txt: Removed.
+        * fast/forms/willvalidate-000.html: Removed.
+        * fast/forms/willvalidate-001-expected.txt: Removed.
+        * fast/forms/willvalidate-001.html: Removed.
+        * fast/forms/willvalidate-002-expected.txt: Removed.
+        * fast/forms/willvalidate-002.html: Removed.
+        * fast/forms/willvalidate-003-expected.txt: Removed.
+        * fast/forms/willvalidate-003.html: Removed.
+        * fast/forms/willvalidate-004-expected.txt: Removed.
+        * fast/forms/willvalidate-004.html: Removed.
+        * fast/forms/willvalidate-005-expected.txt: Removed.
+        * fast/forms/willvalidate-005.html: Removed.
+        * fast/forms/willvalidate-006-expected.txt: Removed.
+        * fast/forms/willvalidate-006.html: Removed.
+        * fast/forms/willvalidate-007-expected.txt: Removed.
+        * fast/forms/willvalidate-007.html: Removed.
+        * fast/forms/willvalidate-008-expected.txt: Removed.
+        * fast/forms/willvalidate-008.html: Removed.
+        * fast/forms/willvalidate-009-expected.txt: Removed.
+        * fast/forms/willvalidate-009.html: Removed.
+        * fast/forms/willvalidate-expected.txt: Added.
+        * fast/forms/willvalidate.html: Added.
+
 2010-04-08  Vitaly Repeshko  <vitalyr@chromium.org>
 
         Reviewed by Dimitri Glazkov.

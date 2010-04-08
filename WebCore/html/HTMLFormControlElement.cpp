@@ -52,12 +52,12 @@ using namespace HTMLNames;
 HTMLFormControlElement::HTMLFormControlElement(const QualifiedName& tagName, Document* doc, HTMLFormElement* f, ConstructionType constructionType)
     : HTMLElement(tagName, doc, constructionType)
     , m_form(f)
-    , m_hasName(false)
     , m_disabled(false)
     , m_readOnly(false)
     , m_required(false)
     , m_valueMatchesRenderer(false)
-    , m_willValidate(false)
+    , m_willValidateInitialized(false)
+    , m_willValidate(true)
     , m_isValid(true)
 {
     if (!m_form)
@@ -92,9 +92,7 @@ ValidityState* HTMLFormControlElement::validity()
 
 void HTMLFormControlElement::parseMappedAttribute(MappedAttribute *attr)
 {
-    if (attr->name() == nameAttr)
-        m_hasName = !attr->isEmpty();
-    else if (attr->name() == disabledAttr) {
+    if (attr->name() == disabledAttr) {
         bool oldDisabled = m_disabled;
         m_disabled = !attr->isNull();
         if (oldDisabled != m_disabled) {
@@ -155,10 +153,9 @@ void HTMLFormControlElement::insertedIntoTree(bool deep)
         // setting a form, we will already have a non-null value for m_form, 
         // and so we don't need to do anything.
         m_form = findFormAncestor();
-        if (m_form) {
+        if (m_form)
             m_form->registerFormElement(this);
-            setNeedsWillValidateCheck();
-        } else
+        else
             document()->checkedRadioButtons().addButton(this);
     }
 
@@ -185,17 +182,9 @@ void HTMLFormControlElement::removedFromTree(bool deep)
     if (m_form && !(parser && parser->isHandlingResidualStyleAcrossBlocks()) && findRoot(this) != findRoot(m_form)) {
         m_form->removeFormElement(this);
         m_form = 0;
-        setNeedsWillValidateCheck();
     }
 
     HTMLElement::removedFromTree(deep);
-}
-
-void HTMLFormControlElement::formDestroyed()
-{
-    if (m_form)
-        setNeedsWillValidateCheck();
-    m_form = 0;
 }
 
 const AtomicString& HTMLFormControlElement::formControlName() const
@@ -303,24 +292,33 @@ short HTMLFormControlElement::tabIndex() const
 
 bool HTMLFormControlElement::recalcWillValidate() const
 {
-    // FIXME: Check if the control does not have a datalist element as an ancestor.
-    return m_form && m_hasName && !m_disabled && !m_readOnly;
+    // FIXME: Should return false if this element has a datalist element as an
+    // ancestor. See HTML5 4.10.10 'The datalist element.'
+    return !m_disabled && !m_readOnly;
 }
 
 bool HTMLFormControlElement::willValidate() const
 {
-    // If the following assertion fails, setNeedsWillValidateCheck() is not
-    // called correctly when something which changes recalcWillValidate() result
-    // is updated.
-    ASSERT(m_willValidate == recalcWillValidate());
+    if (!m_willValidateInitialized) {
+        m_willValidateInitialized = true;
+        m_willValidate = recalcWillValidate();
+    } else {
+        // If the following assertion fails, setNeedsWillValidateCheck() is not
+        // called correctly when something which changes recalcWillValidate() result
+        // is updated.
+        ASSERT(m_willValidate == recalcWillValidate());
+    }
     return m_willValidate;
 }
 
 void HTMLFormControlElement::setNeedsWillValidateCheck()
 {
+    // We need to recalculate willValidte immediately because willValidate
+    // change can causes style change.
     bool newWillValidate = recalcWillValidate();
-    if (m_willValidate == newWillValidate)
+    if (m_willValidateInitialized && m_willValidate == newWillValidate)
         return;
+    m_willValidateInitialized = true;
     m_willValidate = newWillValidate;
     setNeedsStyleRecalc();
     // FIXME: Show/hide a validation message.
