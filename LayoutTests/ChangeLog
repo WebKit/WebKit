@@ -1,5 +1,71 @@
 2010-04-08  Daniel Bates  <dbates@rim.com>
 
+        No review, rolling out 56717.
+        http://trac.webkit.org/changeset/56717
+        https://bugs.webkit.org/show_bug.cgi?id=9268
+
+        Rolling out the change committed in change set 56717
+        since we rolled out the change committed in change set 56655,
+        <http://trac.webkit.org/changeset/56655> (in change set 57287,
+        <http://trac.webkit.org/changeset/57287>). The change committed
+        in change set 56655 caused a layout test regression of the some
+        of the mozilla- and mozilla expected failure- tests. See bug #9268
+        for more details.
+
+        * platform/qt/fast/table/table-background-expected.checksum: Removed.
+        * platform/qt/fast/table/table-background-expected.png: Removed.
+        * platform/qt/fast/table/table-background-expected.txt: Removed.
+        * platform/qt/fast/table/table-cell-border-draws-on-top-of-col-background-expected.checksum: Removed.
+        * platform/qt/fast/table/table-cell-border-draws-on-top-of-col-background-expected.png: Removed.
+        * platform/qt/fast/table/table-cell-border-draws-on-top-of-col-background-expected.txt: Removed.
+        * platform/qt/fast/table/table-cell-border-draws-on-top-of-col-group-background-expected.checksum: Removed.
+        * platform/qt/fast/table/table-cell-border-draws-on-top-of-col-group-background-expected.png: Removed.
+        * platform/qt/fast/table/table-cell-border-draws-on-top-of-col-group-background-expected.txt: Removed.
+        * platform/qt/fast/table/table-cell-border-draws-on-top-of-row-background-expected.checksum: Removed.
+        * platform/qt/fast/table/table-cell-border-draws-on-top-of-row-background-expected.png: Removed.
+        * platform/qt/fast/table/table-cell-border-draws-on-top-of-row-background-expected.txt: Removed.
+        * platform/qt/fast/table/table-cell-border-draws-on-top-of-row-group-background-expected.checksum: Removed.
+        * platform/qt/fast/table/table-cell-border-draws-on-top-of-row-group-background-expected.png: Removed.
+        * platform/qt/fast/table/table-cell-border-draws-on-top-of-row-group-background-expected.txt: Removed.
+        * platform/qt/fast/table/table-cell-overrides-row-background-expected.checksum: Removed.
+        * platform/qt/fast/table/table-cell-overrides-row-background-expected.png: Removed.
+        * platform/qt/fast/table/table-cell-overrides-row-background-expected.txt: Removed.
+        * platform/qt/fast/table/table-col-background-expected.checksum: Removed.
+        * platform/qt/fast/table/table-col-background-expected.png: Removed.
+        * platform/qt/fast/table/table-col-background-expected.txt: Removed.
+        * platform/qt/fast/table/table-col-group-background-expected.checksum: Removed.
+        * platform/qt/fast/table/table-col-group-background-expected.png: Removed.
+        * platform/qt/fast/table/table-col-group-background-expected.txt: Removed.
+        * platform/qt/fast/table/table-col-group-col-span-background-expected.checksum: Removed.
+        * platform/qt/fast/table/table-col-group-col-span-background-expected.png: Removed.
+        * platform/qt/fast/table/table-col-group-col-span-background-expected.txt: Removed.
+        * platform/qt/fast/table/table-col-group-span-background-expected.checksum: Removed.
+        * platform/qt/fast/table/table-col-group-span-background-expected.png: Removed.
+        * platform/qt/fast/table/table-col-group-span-background-expected.txt: Removed.
+        * platform/qt/fast/table/table-col-span-background-expected.checksum: Removed.
+        * platform/qt/fast/table/table-col-span-background-expected.png: Removed.
+        * platform/qt/fast/table/table-col-span-background-expected.txt: Removed.
+        * platform/qt/fast/table/table-row-background-expected.checksum: Removed.
+        * platform/qt/fast/table/table-row-background-expected.png: Removed.
+        * platform/qt/fast/table/table-row-background-expected.txt: Removed.
+        * platform/qt/fast/table/table-row-background-left-50px-expected.checksum: Removed.
+        * platform/qt/fast/table/table-row-background-left-50px-expected.png: Removed.
+        * platform/qt/fast/table/table-row-background-left-50px-expected.txt: Removed.
+        * platform/qt/fast/table/table-row-background-right-100percent-expected.checksum: Removed.
+        * platform/qt/fast/table/table-row-background-right-100percent-expected.png: Removed.
+        * platform/qt/fast/table/table-row-background-right-100percent-expected.txt: Removed.
+        * platform/qt/fast/table/table-row-background-right-50px-expected.checksum: Removed.
+        * platform/qt/fast/table/table-row-background-right-50px-expected.png: Removed.
+        * platform/qt/fast/table/table-row-background-right-50px-expected.txt: Removed.
+        * platform/qt/fast/table/table-row-group-background-expected.checksum: Removed.
+        * platform/qt/fast/table/table-row-group-background-expected.png: Removed.
+        * platform/qt/fast/table/table-row-group-background-expected.txt: Removed.
+        * platform/qt/fast/table/table-row-group-background-positioned-expected.checksum: Removed.
+        * platform/qt/fast/table/table-row-group-background-positioned-expected.png: Removed.
+        * platform/qt/fast/table/table-row-group-background-positioned-expected.txt: Removed.
+
+2010-04-08  Daniel Bates  <dbates@rim.com>
+
         No review, rolling out 56655.
         http://trac.webkit.org/changeset/56655
         https://bugs.webkit.org/show_bug.cgi?id=9268
