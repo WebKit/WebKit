@@ -3024,7 +3024,6 @@ fast/forms/textfield-overflow.html
 fast/forms/thumbslider-crash.html
 fast/forms/thumbslider-no-parent-slider.html
 fast/forms/visual-hebrew-text-field.html
-fast/forms/willvalidate-000.html
 fast/frames/contentWindow_Frame.html
 fast/frames/contentWindow_iFrame.html
 fast/frames/frameElement-frame.html

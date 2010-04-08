@@ -1,3 +1,10 @@
+2010-04-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] r57274 removed fast/forms/willvalidate-000.html,
+        so it should be removed from Skipped list too.
+
+        * platform/qt/Skipped: fast/forms/willvalidate-000.html removed.
+
 2010-04-08  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Geoffrey Garen.
