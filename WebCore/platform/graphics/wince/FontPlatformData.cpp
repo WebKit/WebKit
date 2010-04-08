@@ -26,8 +26,10 @@
 #include "FontData.h"
 #include "PlatformString.h"
 #include "SimpleFontData.h"
+#include "StringHash.h"
 #include "UnicodeRange.h"
 #include "wtf/OwnPtr.h"
+#include <wtf/StdLibExtras.h>
 
 #include <windows.h>
 #include <mlang.h>

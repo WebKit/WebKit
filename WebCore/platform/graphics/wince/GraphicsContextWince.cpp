@@ -23,6 +23,7 @@
 
 #include "AffineTransform.h"
 #include "CharacterNames.h"
+#include "Font.h"
 #include "GlyphBuffer.h"
 #include "Gradient.h"
 #include "GraphicsContextPrivate.h"

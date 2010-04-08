@@ -20,6 +20,11 @@
 #ifndef PlatformPathWince_h
 #define PlatformPathWince_h
 
+#include "FloatPoint.h"
+#include "FloatRect.h"
+#include "Path.h"
+#include <wtf/Vector.h>
+
 namespace WebCore {
 
     class GraphicsContext;

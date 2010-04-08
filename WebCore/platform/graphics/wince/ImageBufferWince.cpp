@@ -27,6 +27,7 @@
 #include "JPEGEncoder.h"
 #include "PNGEncoder.h"
 #include "SharedBitmap.h"
+#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 

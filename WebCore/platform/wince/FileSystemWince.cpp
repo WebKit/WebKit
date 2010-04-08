@@ -31,6 +31,7 @@
 #include "config.h"
 #include "FileSystem.h"
 
+#include "NotImplemented.h"
 #include "PlatformString.h"
 #include <wtf/text/CString.h>
 
