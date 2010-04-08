@@ -1,3 +1,16 @@
+2010-04-08  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Warnings when compiling InspectorClientQt.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=37266
+
+        Add a default: for the switch()-case to avoid
+        warnings.
+
+        * WebCoreSupport/InspectorClientQt.cpp:
+        (WebCore::variantToSetting):
+
 2010-04-01  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by David Hyatt.
