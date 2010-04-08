@@ -440,6 +440,8 @@ public:
     void setUsesBeforeAfterRules(bool b) { m_usesBeforeAfterRules = b; }
     bool usesRemUnits() const { return m_usesRemUnits; }
     void setUsesRemUnits(bool b) { m_usesRemUnits = b; }
+    bool usesLinkRules() const { return linkColor() != visitedLinkColor() || m_usesLinkRules; }
+    void setUsesLinkRules(bool b) { m_usesLinkRules = b; }
 
     // Machinery for saving and restoring state when you leave and then go back to a page.
     void registerFormElementWithState(Element* e) { m_formElementsWithState.add(e); }
@@ -1101,6 +1103,7 @@ private:
     bool m_usesFirstLetterRules;
     bool m_usesBeforeAfterRules;
     bool m_usesRemUnits;
+    bool m_usesLinkRules;
     bool m_gotoAnchorNeededAfterStylesheetsLoad;
     bool m_isDNSPrefetchEnabled;
     bool m_haveExplicitlyDisabledDNSPrefetch;

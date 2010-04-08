@@ -1095,6 +1095,10 @@ pseudo:
             CSSParser* p = static_cast<CSSParser*>(parser);
             if (Document* doc = p->document())
                 doc->setUsesBeforeAfterRules(true);
+        } else if (type == CSSSelector::PseudoLink || type == CSSSelector::PseudoVisited) {
+            CSSParser* p = static_cast<CSSParser*>(parser);
+            if (Document* doc = p->document())
+                doc->setUsesLinkRules(true);
         }
     }
     | ':' ':' IDENT {

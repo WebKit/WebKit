@@ -2,6 +2,28 @@
 
         Reviewed by Oliver Hunt.
 
+        Followup optimization to bug 24300, don't leak history info via CSS :visited.  If a Web
+        site uses document colors that are the same for link and vlink in HTML and also doesn't
+        specify any :link or :visited rules, then don't waste time resolving visited styles.
+
+        There is a further optimization that could be done to detect when :link and :visited are
+        used together in the same rule to specify a color, and this is how most sites turn off
+        visited link colors, but this fix doesn't address that.  It just restores the optimization
+        that existed prior to the patch in 24300 landing.
+
+        * css/CSSGrammar.y:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::styleForElement):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * dom/Document.h:
+        (WebCore::Document::usesLinkRules):
+        (WebCore::Document::setUsesLinkRules):
+
+2010-04-08  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Oliver Hunt.
+
         Caught by pixel tests.  I missed patching the borderRightColor() call for fieldset border painting so the
         border stopped showing up.
         

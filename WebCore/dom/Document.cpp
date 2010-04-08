@@ -428,6 +428,7 @@ Document::Document(Frame* frame, bool isXHTML, bool isHTML)
     m_usesFirstLetterRules = false;
     m_usesBeforeAfterRules = false;
     m_usesRemUnits = false;
+    m_usesLinkRules = false;
 
     m_gotoAnchorNeededAfterStylesheetsLoad = false;
  
