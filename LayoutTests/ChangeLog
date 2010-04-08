@@ -1,3 +1,13 @@
+2010-04-08  Chris Evans  <cevans@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add test for SVG image with excessive nesting.
+        https://bugs.webkit.org/show_bug.cgi?id=37247
+
+        * fast/images/svg-nested.html: added
+        * fast/images/svg-nested-expected.txt: added
+
 2010-04-08  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

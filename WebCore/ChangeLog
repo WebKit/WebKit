@@ -1,3 +1,17 @@
+2010-04-08  Chris Evans  <cevans@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Sanity: apply a max node depth to XML parsing.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37247
+
+        Test: fast/images/svg-nested.html
+
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::pushCurrentNode):
+          Error out the parse upon a really large node depth.
+
 2010-04-07  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Jeremy Orlow.

@@ -67,6 +67,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 const int maxErrors = 25;
+const size_t maxNestingDepth = 4096;
 
 #if ENABLE(WML)
 bool XMLTokenizer::isWMLDocument() const
@@ -86,6 +87,8 @@ void XMLTokenizer::pushCurrentNode(Node* n)
         n->ref();
     m_currentNodeStack.append(m_currentNode);
     m_currentNode = n;
+    if (m_currentNodeStack.size() > maxNestingDepth)
+        handleError(fatal, "Excessive node nesting.", lineNumber(), columnNumber());
 }
 
 void XMLTokenizer::popCurrentNode()
