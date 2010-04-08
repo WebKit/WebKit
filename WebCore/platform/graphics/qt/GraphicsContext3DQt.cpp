@@ -1030,27 +1030,15 @@ void GraphicsContext3D::scissor(long x, long y, unsigned long width, unsigned lo
     glScissor(x, y, width, height);
 }
 
-void GraphicsContext3D::shaderSource(WebGLShader* shader, const String& string)
+void GraphicsContext3D::shaderSource(WebGLShader* shader, const String& source)
 {
     ASSERT(shader);
     
     m_internal->m_glWidget->makeCurrent();
 
-    // Force the use of GLSL 1.0:
-    // https://cvs.khronos.org/svn/repos/registry/trunk/public/webgl/doc/spec/WebGL-spec.html#4.4
-    // FIXME: Lines beginning with "#version" should be stripped out.
-
-    String prepared;
-   
-    prepared.append("#version 100\n");
-#if defined(QT_OPENGL_ES_2)
-    prepared.append("precision mediump float;\n");
-#endif
-    prepared.append(string);
-
-    CString preparedCS = prepared.utf8();
-    const char* data = preparedCS.data();
-    int length = prepared.length();
+    CString sourceCS = source.utf8();
+    const char* data = sourceCS.data();
+    int length = source.length();
     m_internal->shaderSource((GLuint) shader->object(), /* count */ 1, &data, &length);
 }
 

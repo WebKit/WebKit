@@ -1,3 +1,13 @@
+2010-04-08  Jarkko Sakkinen  <jarkko.sakkinen@tieto.com>
+
+        Reviewed by Simon Hausmann.
+
+         [Qt] Remove shaderSource manipulation from GraphicsContext3DQt.cpp
+         https://bugs.webkit.org/show_bug.cgi?id=37226
+
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3D::shaderSource):
+
 2010-04-08  Chris Evans  <cevans@chromium.org>
 
         Reviewed by Adam Barth.
