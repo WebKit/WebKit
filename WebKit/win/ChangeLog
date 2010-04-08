@@ -1,3 +1,13 @@
+2010-04-08  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebView::isLoading should null check m_mainFrame
+        https://bugs.webkit.org/show_bug.cgi?id=37294
+
+        * WebView.cpp:
+        (WebView::isLoading):
+
 2010-04-07  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Steve Falkenburg.

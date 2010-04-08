@@ -3428,6 +3428,9 @@ HRESULT STDMETHODCALLTYPE WebView::isLoading(
 
     *isLoading = FALSE;
 
+    if (!m_mainFrame)
+        return E_FAIL;
+
     if (SUCCEEDED(m_mainFrame->dataSource(&dataSource)))
         dataSource->isLoading(isLoading);
 
