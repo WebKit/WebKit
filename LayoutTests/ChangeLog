@@ -1,3 +1,14 @@
+2010-04-08  Andrew Scherkus  <scherkus@chromium.org>
+
+        Unreviewed, cleaning up test expectations for fast/media and media/video-played-reset.html.
+
+        Previously all of fast/media was marked as PASS FAIL, but now has finer-grained
+        expectations for all tests.
+
+        Due to Chromium-side changes, media/video-played-reset.html is now passing again.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-04-07  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
