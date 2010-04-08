@@ -1,3 +1,12 @@
+2010-04-08  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [Chromium] Mark failing tests after r57292
+        https://bugs.webkit.org/show_bug.cgi?id=37298
+
+        * platform/chromium/test_expectations.txt:
+
 2010-03-29  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Simon Fraser.

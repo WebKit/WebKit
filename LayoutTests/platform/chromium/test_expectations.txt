@@ -2849,6 +2849,10 @@ BUGWK37242 WIN : fast/text/line-breaks.html = IMAGE+TEXT
 
 BUGWK37283 : fast/overflow/scrollbar-restored-and-then-locked.html = TEXT
 
+BUGWK37297 : fast/history/nested-visited-test.html = TEXT
+BUGWK37297 : fast/history/self-is-visited.html = TEXT
+BUGWK37297 : fast/history/sibling-visited-test.html = TEXT
+
 // These are failing due to new-rin-webkit-tests's diff trimming line ends.
 BUGWK36983 MAC : fast/canvas/webgl/null-object-behaviour.html = TEXT
 BUGWK36983 MAC : fast/canvas/webgl/uniform-location.html = TEXT
