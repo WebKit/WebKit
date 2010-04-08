@@ -1,3 +1,11 @@
+2010-04-07  Maciej Stachowiak  <mjs@apple.com>
+
+        (Not reviewed.)
+
+        Random demo to look cool on twitter.
+
+        * misc/gradient-input.html: Added.
+
 2010-04-04  Pavel Feldman  <pfeldman@chromium.org>
 
         (Not reviewed).
