@@ -1,3 +1,16 @@
+2010-04-08  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Simon Hausmann.
+
+        [WINCE] Replace max with std::max
+        https://bugs.webkit.org/show_bug.cgi?id=37201
+
+        std::max is preferred.
+
+        * platform/wince/FileSystemWince.cpp:
+        (WebCore::makeAllDirectories):
+        (WebCore::pathGetFileName):
+
 2010-04-08  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Laszlo Gombos.

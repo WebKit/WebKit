@@ -133,11 +133,11 @@ CString fileSystemRepresentation(const String&)
 
 bool makeAllDirectories(const String& path)
 {
-    int lastDivPos = max(path.reverseFind('/'), path.reverseFind('\\'));
+    int lastDivPos = std::max(path.reverseFind('/'), path.reverseFind('\\'));
     int endPos = path.length();
     if (lastDivPos == path.length() - 1) {
         endPos -= 1;
-        lastDivPos = max(path.reverseFind('/', lastDivPos), path.reverseFind('\\', lastDivPos));
+        lastDivPos = std::max(path.reverseFind('/', lastDivPos), path.reverseFind('\\', lastDivPos));
     }
 
     if (lastDivPos > 0) {
@@ -160,7 +160,7 @@ String homeDirectoryPath()
 
 String pathGetFileName(const String& path)
 {
-    return path.substring(max(path.reverseFind('/'), path.reverseFind('\\')) + 1);
+    return path.substring(std::max(path.reverseFind('/'), path.reverseFind('\\')) + 1);
 }
 
 String directoryName(const String& path)
