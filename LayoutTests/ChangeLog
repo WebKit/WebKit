@@ -1,3 +1,16 @@
+2010-04-07  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        transitions/transition-end-event-transform.html fails intermittently on Tiger Intel Release bot
+        https://bugs.webkit.org/show_bug.cgi?id=37145
+
+        I think this test might be getting confused because it only expects the
+        end event to fire once but actually it fires again for the second
+        transition.  Let's try this patch and see if it fixes the flakiness.
+
+        * transitions/transition-end-event-set-none.html:
+
 2010-04-07  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Alexey Proskuryakov.

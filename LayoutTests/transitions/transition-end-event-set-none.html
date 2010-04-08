@@ -36,12 +36,16 @@
       box.className = "box box2";
     }
     
+    var firstTimeInHandleEndEvent = true;
     function handleEndEvent(event)
     {
       recordTransitionEndEvent(event);
       
       event.target.style.webkitTransitionProperty = "none";
-      window.setTimeout(startTransition, 100);
+      if (firstTimeInHandleEndEvent) {
+        firstTimeInHandleEndEvent = false;
+        window.setTimeout(startTransition, 100);
+      }
     }
 
     function setupTest()
