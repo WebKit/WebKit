@@ -341,6 +341,11 @@ http/tests/plugins/third-party-cookie-accept-policy.html
 
 # Missing layoutTestController.evaluateScriptInIsolatedWorld()
 storage/open-database-creation-callback-isolated-world.html
+
+# Missing layoutTestController.computedStyleIncludingVisitedInfo()
+fast/history/nested-visited-test.html
+fast/history/self-is-visited.html
+fast/history/sibling-visited-test.html
 # ============================================================================= #
 
 # ------- missing eventSender.beginDragWithFiles
