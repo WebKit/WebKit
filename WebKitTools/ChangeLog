@@ -2,6 +2,19 @@
 
         Reviewed by Adam Barth.
 
+        new-run-webkit-tests crashes when run on a 64-bit machine
+        https://bugs.webkit.org/show_bug.cgi?id=37248
+
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+         - The code was trying to always run the 32-bit intel version
+           of the DumpRenderTree binary.  DRT does not build 32-bit on 64-bit
+           machines so that makes no sense.  This may have made sense for test_shell
+           at some point, but I think we should just remove this for DRT.
+
+2010-04-07  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         WebKit Apache configs only listen on IPv4 addresses, causing random timeouts
         https://bugs.webkit.org/show_bug.cgi?id=37104
 

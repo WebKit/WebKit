@@ -406,7 +406,7 @@ class MacDriver(base.Driver):
             # about it anyway.
             cmd += self._options.wrapper.split()
 
-        cmd += ['arch', '-i386', port._path_to_driver(), '-']
+        cmd += [port._path_to_driver(), '-']
 
         if image_path:
             cmd.append('--pixel-tests')
