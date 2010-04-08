@@ -600,7 +600,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         IntPoint phase;
         IntSize tileSize;
 
-        calculateBackgroundImageGeometry(bgLayer, tx, ty, w, h, destRect, phase, tileSize, backgroundObject);
+        calculateBackgroundImageGeometry(bgLayer, tx, ty, w, h, destRect, phase, tileSize);
         IntPoint destOrigin = destRect.location();
         destRect.intersect(paintInfo.rect);
         if (!destRect.isEmpty()) {
@@ -680,7 +680,7 @@ IntSize RenderBoxModelObject::calculateFillTileSize(const FillLayer* fillLayer, 
 }
 
 void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* fillLayer, int tx, int ty, int w, int h, 
-                                                            IntRect& destRect, IntPoint& phase, IntSize& tileSize, RenderObject* backgroundObject)
+                                                            IntRect& destRect, IntPoint& phase, IntSize& tileSize)
 {
     int left = 0;
     int top = 0;
@@ -700,12 +700,8 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* fil
     }
 #endif
 
-    // FIXME: Add table columns/column groups to this condition once RenderTableCol::absoluteContentBox(),
-    // RenderTableCol::width() and RenderTableCol::height() have been implemented. See bug <https://bugs.webkit.org/show_bug.cgi?id=36104>.
-    bool isBackgroundTablePart = backgroundObject && (backgroundObject->isTableRow() || backgroundObject->isTableSection());
-
     if (!fixedAttachment) {
-        destRect = isBackgroundTablePart ? toRenderBox(backgroundObject)->absoluteBoundingBoxRect() : IntRect(tx, ty, w, h);
+        destRect = IntRect(tx, ty, w, h);
 
         int right = 0;
         int bottom = 0;
@@ -728,10 +724,6 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* fil
         // the background positioning area.
         if (isRoot()) {
             positioningAreaSize = IntSize(toRenderBox(this)->width() - left - right, toRenderBox(this)->height() - top - bottom);
-            left += marginLeft();
-            top += marginTop();
-        } else if (isBackgroundTablePart) {
-            positioningAreaSize = IntSize(toRenderBox(backgroundObject)->width() - left - right, toRenderBox(backgroundObject)->height() - top - bottom);
             left += marginLeft();
             top += marginTop();
         } else
@@ -768,11 +760,6 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* fil
         phase.move(max(tx - destRect.x(), 0), max(ty - destRect.y(), 0));
 
     destRect.intersect(IntRect(tx, ty, w, h));
-
-    if (adjustBackgroundImagePosition(backgroundObject, destRect, tileSize, xPosition, yPosition)) {
-        phase.setX(tileSize.width() ? tileSize.width() - xPosition % tileSize.width() : 0);
-        phase.setY(tileSize.height() ? tileSize.height() - yPosition % tileSize.height() : 0);
-    }
 }
 
 int RenderBoxModelObject::verticalPosition(bool firstLine) const

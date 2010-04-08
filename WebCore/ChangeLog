@@ -1,3 +1,25 @@
+2010-04-08  Daniel Bates  <dbates@rim.com>
+
+        No review, rolling out 56655.
+        http://trac.webkit.org/changeset/56655
+        https://bugs.webkit.org/show_bug.cgi?id=9268
+
+        Rolling out the change committed in change set 56655
+        because it caused a regression in some of the mozilla
+        and mozilla expected failure test cases, such as:
+        tables/mozilla/marvin/backgr_simple-table-row.html, and
+        tables/mozilla/marvin/backgr_simple-table-row-group.html.
+
+        We need to look into this issue some more.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        (WebCore::RenderBoxModelObject::calculateBackgroundImageGeometry):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderObject.h:
+        * rendering/RenderTableCell.cpp:
+        * rendering/RenderTableCell.h:
+
 2010-03-30  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Dimitri Glazkov.

@@ -1,3 +1,86 @@
+2010-04-08  Daniel Bates  <dbates@rim.com>
+
+        No review, rolling out 56655.
+        http://trac.webkit.org/changeset/56655
+        https://bugs.webkit.org/show_bug.cgi?id=9268
+
+        Rolling out the change committed in change set 56655
+        because it caused a regression in some of the mozilla
+        and mozilla expected failure test cases, such as:
+        tables/mozilla/marvin/backgr_simple-table-row.html, and
+        tables/mozilla/marvin/backgr_simple-table-row-group.html.
+
+        We need to look into this issue some more.
+
+        * fast/table/table-background.html: Removed.
+        * fast/table/table-cell-border-draws-on-top-of-col-background.html: Removed.
+        * fast/table/table-cell-border-draws-on-top-of-col-group-background.html: Removed.
+        * fast/table/table-cell-border-draws-on-top-of-row-background.html: Removed.
+        * fast/table/table-cell-border-draws-on-top-of-row-group-background.html: Removed.
+        * fast/table/table-cell-overrides-row-background.html: Removed.
+        * fast/table/table-col-background.html: Removed.
+        * fast/table/table-col-group-background.html: Removed.
+        * fast/table/table-col-group-col-span-background.html: Removed.
+        * fast/table/table-col-group-span-background.html: Removed.
+        * fast/table/table-col-span-background.html: Removed.
+        * fast/table/table-row-background-left-50px.html: Removed.
+        * fast/table/table-row-background-right-100percent.html: Removed.
+        * fast/table/table-row-background-right-50px.html: Removed.
+        * fast/table/table-row-background.html: Removed.
+        * fast/table/table-row-group-background-positioned.html: Removed.
+        * fast/table/table-row-group-background.html: Removed.
+        * platform/mac/fast/table/table-background-expected.checksum: Removed.
+        * platform/mac/fast/table/table-background-expected.png: Removed.
+        * platform/mac/fast/table/table-background-expected.txt: Removed.
+        * platform/mac/fast/table/table-cell-border-draws-on-top-of-col-background-expected.checksum: Removed.
+        * platform/mac/fast/table/table-cell-border-draws-on-top-of-col-background-expected.png: Removed.
+        * platform/mac/fast/table/table-cell-border-draws-on-top-of-col-background-expected.txt: Removed.
+        * platform/mac/fast/table/table-cell-border-draws-on-top-of-col-group-background-expected.checksum: Removed.
+        * platform/mac/fast/table/table-cell-border-draws-on-top-of-col-group-background-expected.png: Removed.
+        * platform/mac/fast/table/table-cell-border-draws-on-top-of-col-group-background-expected.txt: Removed.
+        * platform/mac/fast/table/table-cell-border-draws-on-top-of-row-background-expected.checksum: Removed.
+        * platform/mac/fast/table/table-cell-border-draws-on-top-of-row-background-expected.png: Removed.
+        * platform/mac/fast/table/table-cell-border-draws-on-top-of-row-background-expected.txt: Removed.
+        * platform/mac/fast/table/table-cell-border-draws-on-top-of-row-group-background-expected.checksum: Removed.
+        * platform/mac/fast/table/table-cell-border-draws-on-top-of-row-group-background-expected.png: Removed.
+        * platform/mac/fast/table/table-cell-border-draws-on-top-of-row-group-background-expected.txt: Removed.
+        * platform/mac/fast/table/table-cell-overrides-row-background-expected.checksum: Removed.
+        * platform/mac/fast/table/table-cell-overrides-row-background-expected.png: Removed.
+        * platform/mac/fast/table/table-cell-overrides-row-background-expected.txt: Removed.
+        * platform/mac/fast/table/table-col-background-expected.checksum: Removed.
+        * platform/mac/fast/table/table-col-background-expected.png: Removed.
+        * platform/mac/fast/table/table-col-background-expected.txt: Removed.
+        * platform/mac/fast/table/table-col-group-background-expected.checksum: Removed.
+        * platform/mac/fast/table/table-col-group-background-expected.png: Removed.
+        * platform/mac/fast/table/table-col-group-background-expected.txt: Removed.
+        * platform/mac/fast/table/table-col-group-col-span-background-expected.checksum: Removed.
+        * platform/mac/fast/table/table-col-group-col-span-background-expected.png: Removed.
+        * platform/mac/fast/table/table-col-group-col-span-background-expected.txt: Removed.
+        * platform/mac/fast/table/table-col-group-span-background-expected.checksum: Removed.
+        * platform/mac/fast/table/table-col-group-span-background-expected.png: Removed.
+        * platform/mac/fast/table/table-col-group-span-background-expected.txt: Removed.
+        * platform/mac/fast/table/table-col-span-background-expected.checksum: Removed.
+        * platform/mac/fast/table/table-col-span-background-expected.png: Removed.
+        * platform/mac/fast/table/table-col-span-background-expected.txt: Removed.
+        * platform/mac/fast/table/table-row-background-expected.checksum: Removed.
+        * platform/mac/fast/table/table-row-background-expected.png: Removed.
+        * platform/mac/fast/table/table-row-background-expected.txt: Removed.
+        * platform/mac/fast/table/table-row-background-left-50px-expected.checksum: Removed.
+        * platform/mac/fast/table/table-row-background-left-50px-expected.png: Removed.
+        * platform/mac/fast/table/table-row-background-left-50px-expected.txt: Removed.
+        * platform/mac/fast/table/table-row-background-right-100percent-expected.checksum: Removed.
+        * platform/mac/fast/table/table-row-background-right-100percent-expected.png: Removed.
+        * platform/mac/fast/table/table-row-background-right-100percent-expected.txt: Removed.
+        * platform/mac/fast/table/table-row-background-right-50px-expected.checksum: Removed.
+        * platform/mac/fast/table/table-row-background-right-50px-expected.png: Removed.
+        * platform/mac/fast/table/table-row-background-right-50px-expected.txt: Removed.
+        * platform/mac/fast/table/table-row-group-background-expected.checksum: Removed.
+        * platform/mac/fast/table/table-row-group-background-expected.png: Removed.
+        * platform/mac/fast/table/table-row-group-background-expected.txt: Removed.
+        * platform/mac/fast/table/table-row-group-background-positioned-expected.checksum: Removed.
+        * platform/mac/fast/table/table-row-group-background-positioned-expected.png: Removed.
+        * platform/mac/fast/table/table-row-group-background-positioned-expected.txt: Removed.
+
 2010-04-08  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Dimitri Glazkov.
