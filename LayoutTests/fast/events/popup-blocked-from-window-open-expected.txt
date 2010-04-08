@@ -1,1 +1,0 @@
-If the inner pop-up was not blocked then there will be an ALERT containing a DOMWindow object. Otherwise, the test passes.
