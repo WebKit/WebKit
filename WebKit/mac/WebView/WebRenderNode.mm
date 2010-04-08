@@ -118,8 +118,15 @@ static WebRenderNode *copyRenderNode(RenderObject* node)
         IntRect box = text->linesBoundingBox();
         width = box.width();
         height = box.height();
+    } else if (node->isRenderInline()) {
+        RenderBoxModelObject* inlineFlow = toRenderBoxModelObject(node);
+        IntRect boundingBox = inlineFlow->borderBoundingBox();
+        x = boundingBox.x();
+        y = boundingBox.y();
+        width = boundingBox.width();
+        height = boundingBox.height();
     }
-    
+
     WebRenderNode *result = [[WebRenderNode alloc] _initWithName:name
                                                         position:absPos rect:NSMakeRect(x, y, width, height)
                                                        coreFrame:frame children:children];

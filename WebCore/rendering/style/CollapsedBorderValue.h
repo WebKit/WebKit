@@ -36,8 +36,9 @@ struct CollapsedBorderValue {
     {
     }
 
-    CollapsedBorderValue(const BorderValue* b, EBorderPrecedence p)
+    CollapsedBorderValue(const BorderValue* b, Color c, EBorderPrecedence p)
         : border(b)
+        , borderColor(c)
         , precedence(p)
     {
     }
@@ -45,7 +46,7 @@ struct CollapsedBorderValue {
     int width() const { return border && border->nonZero() ? border->width : 0; }
     EBorderStyle style() const { return border ? border->style() : BHIDDEN; }
     bool exists() const { return border; }
-    Color color() const { return border ? border->color : Color(); }
+    Color color() const { return borderColor; }
     bool isTransparent() const { return border ? border->isTransparent() : true; }
     
     bool operator==(const CollapsedBorderValue& o) const
@@ -54,10 +55,11 @@ struct CollapsedBorderValue {
             return !o.border;
         if (!o.border)
             return false;
-        return *border == *o.border && precedence == o.precedence;
+        return *border == *o.border && borderColor == o.borderColor && precedence == o.precedence;
     }
     
     const BorderValue* border;
+    Color borderColor;
     EBorderPrecedence precedence;    
 };
 

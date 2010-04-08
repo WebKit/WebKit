@@ -101,10 +101,13 @@
 #import "WebVideoFullscreenController.h"
 #import <CoreFoundation/CFSet.h>
 #import <Foundation/NSURLConnection.h>
+#import <JavaScriptCore/APICast.h>
+#import <JavaScriptCore/JSValueRef.h>
 #import <WebCore/ApplicationCacheStorage.h>
 #import <WebCore/BackForwardList.h>
 #import <WebCore/Cache.h>
 #import <WebCore/ColorMac.h>
+#import <WebCore/CSSComputedStyleDeclaration.h>
 #import <WebCore/Cursor.h>
 #import <WebCore/Database.h>
 #import <WebCore/Document.h>
@@ -124,6 +127,8 @@
 #import <WebCore/HTMLNames.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/IconDatabase.h>
+#import <WebCore/JSCSSStyleDeclaration.h>
+#import <WebCore/JSElement.h>
 #import <WebCore/Logging.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/Page.h>
@@ -5695,6 +5700,25 @@ static void layerSyncRunLoopObserverCallBack(CFRunLoopObserverRef, CFRunLoopActi
         _private->page->geolocationController()->errorOccurred(geolocatioError.get());
     }
 #endif
+}
+
+@end
+
+@implementation WebView (WebViewPrivateStyleInfo)
+
+- (JSValueRef)_computedStyleIncludingVisitedInfo:(JSContextRef)context forElement:(JSValueRef)value
+{
+    JSLock lock(SilenceAssertionsOnly);
+    ExecState* exec = toJS(context);
+    if (!value)
+        return JSValueMakeUndefined(context);
+    JSValue jsValue = toJS(exec, value);
+    if (!jsValue.inherits(&JSElement::s_info))
+        return JSValueMakeUndefined(context);
+    JSElement* jsElement = static_cast<JSElement*>(asObject(jsValue));
+    Element* element = jsElement->impl();
+    RefPtr<CSSComputedStyleDeclaration> style = computedStyle(element, true);
+    return toRef(exec, toJS(exec, jsElement->globalObject(), style.get()));
 }
 
 @end

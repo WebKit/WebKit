@@ -408,9 +408,9 @@ public:
     bool hasMask() const { return style() && style()->hasMask(); }
 
     void drawLineForBoxSide(GraphicsContext*, int x1, int y1, int x2, int y2, BoxSide,
-                            Color, const Color& textcolor, EBorderStyle, int adjbw1, int adjbw2);
+                            Color, EBorderStyle, int adjbw1, int adjbw2);
     void drawArcForBoxSide(GraphicsContext*, int x, int y, float thickness, IntSize radius, int angleStart,
-                           int angleSpan, BoxSide, Color, const Color& textcolor, EBorderStyle, bool firstCorner);
+                           int angleSpan, BoxSide, Color, EBorderStyle, bool firstCorner);
 
 public:
     // The pseudo element style can be cached or uncached.  Use the cached method if the pseudo element doesn't respect
@@ -781,7 +781,7 @@ protected:
     // Overrides should call the superclass at the start
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
-    void paintOutline(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle*);
+    void paintOutline(GraphicsContext*, int tx, int ty, int w, int h);
     void addPDFURLRect(GraphicsContext*, const IntRect&);
 
     virtual IntRect viewRect() const;

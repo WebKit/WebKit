@@ -1,3 +1,139 @@
+2010-04-07  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24300, don't leak history info via CSS :visited.
+
+        This patch implements the policy described by David Baron here:
+        
+        http://dbaron.org/mozilla/visited-privacy
+        
+        Added new tests in fast/history.
+
+        * WebCore.base.exp:
+        Expose functions needed for the WebKit SPI used by layout tests.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isVisited):
+        Make sure accessibility objects still return visited information.
+        
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::CSSComputedStyleDeclaration):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSComputedStyleDeclaration.h:
+        (WebCore::computedStyle):
+        Add a boolean to computed style declarations that - if set - causes the computed style
+        to still return :visited information.  For normal Web pages, this will be false.  It is set
+        to true for the Web Inspector and by the WebKit SPI used by the layout tests.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::initElement):
+        (WebCore::CSSStyleSelector::SelectorChecker::SelectorChecker):
+        (WebCore::CSSStyleSelector::SelectorChecker::determineLinkState):
+        (WebCore::CSSStyleSelector::SelectorChecker::checkSelector):
+        (WebCore::CSSStyleSelector::canShareStyleWithElement):
+        (WebCore::CSSStyleSelector::styleForElement):
+        (WebCore::CSSStyleSelector::keyframeStylesForAnimation):
+        (WebCore::CSSStyleSelector::pseudoStyleForElement):
+        (WebCore::CSSStyleSelector::pseudoStyleRulesForElement):
+        (WebCore::CSSStyleSelector::checkSelector):
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector):
+        (WebCore::CSSStyleSelector::applyPropertyToStyle):
+        (WebCore::CSSStyleSelector::getColorFromPrimitiveValue):
+        * css/CSSStyleSelector.h:
+        Rework the style selector to resolve two styles instead of one.  The first forces the link to
+        be unvisited, and the second forces the link to be visited.  The real state of the link is 
+        cached on the principal (unvisited) style.  The visited style hangs off the principal style
+        as a pseudo style (VISITED_LINK).
+
+        * dom/Element.cpp:
+        (WebCore::Element::pseudoStyleCacheIsInvalid):
+        Make sure to deal with the VISITED_LINK pseudo to know when only :visited style info changed.
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::getStyles):
+        Let the Web Inspector see :visited computed styles by default.
+        
+        * platform/LinkHash.cpp:
+        (WebCore::visitedURL):
+        Fix an issue where <a href=""> is not hashed properly to the document's base URI, so it wasn't
+        correctly reported as :visited.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintBoxDecorations):
+        (WebCore::InlineFlowBox::paintTextDecorations):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintSelection):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintColumnRules):
+        (WebCore::RenderBlock::paintObject):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintBorder):
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::paintBorderMinusLegend):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintFocusRings):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::paintOutline):
+        (WebCore::RenderInline::paintOutlineForLine):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::drawLineForBoxSide):
+        (WebCore::RenderObject::drawArcForBoxSide):
+        (WebCore::RenderObject::paintOutline):
+        (WebCore::decorationColor):
+        (WebCore::RenderObject::getTextDecorationColors):
+        * rendering/RenderObject.h:
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::paint):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::paint):
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::paint):
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::paint):
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::paint):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::collapsedLeftBorder):
+        (WebCore::RenderTableCell::collapsedRightBorder):
+        (WebCore::RenderTableCell::collapsedTopBorder):
+        (WebCore::RenderTableCell::collapsedBottomBorder):
+        (WebCore::RenderTableCell::paintCollapsedBorder):
+        * rendering/style/CollapsedBorderValue.h:
+        (WebCore::CollapsedBorderValue::CollapsedBorderValue):
+        (WebCore::CollapsedBorderValue::color):
+        (WebCore::CollapsedBorderValue::operator==):
+        Patch painting code to fetch visitedDependentColors from the RenderStyle.  Properties that
+        are honored include background-color, color, border colors, outline color, column rules,
+        and fill and stroke (both SVG and our custom versions).
+    
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::RenderStyle):
+        (WebCore::RenderStyle::diff):
+        (WebCore::borderStyleForColorProperty):
+        (WebCore::colorIncludingFallback):
+        (WebCore::RenderStyle::visitedDependentColor):
+        * rendering/style/RenderStyle.h:
+        (WebCore::):
+        (WebCore::InheritedFlags::NonInheritedFlags::operator==):
+        (WebCore::InheritedFlags::setBitDefaults):
+        (WebCore::InheritedFlags::insideLink):
+        (WebCore::InheritedFlags::isLink):
+        (WebCore::InheritedFlags::setInsideLink):
+        (WebCore::InheritedFlags::setIsLink):
+        * rendering/style/RenderStyleConstants.h:
+        Change how link information is stored.  The noninherited flags now have a bit set for if you're a link
+        or not.  The inherited flags now cache whether you're inside a visited or unvisited link (or no link at
+        all).
+
+        (WebCore::):
+        * svg/graphics/SVGPaintServer.cpp:
+        (WebCore::SVGPaintServer::fillPaintServer):
+        (WebCore::SVGPaintServer::strokePaintServer):
+        Patch SVG fill/stroke painting to honor :visited.
+
 2010-04-08  Benjamin Otte  <otte@gnome.org>
 
         Reviewed by Gustavo Noronha.

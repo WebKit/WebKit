@@ -599,6 +599,10 @@ Could be worth adding to the API.
 - (void)_geolocationDidFailWithError:(NSError *)error;
 @end
 
+@interface WebView (WebViewPrivateStyleInfo)
+- (JSValueRef)_computedStyleIncludingVisitedInfo:(JSContextRef)context forElement:(JSValueRef)value;
+@end
+
 @interface NSObject (WebFrameLoadDelegatePrivate)
 - (void)webView:(WebView *)sender didFirstLayoutInFrame:(WebFrame *)frame;
 

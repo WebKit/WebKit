@@ -698,20 +698,13 @@ bool RenderObject::mustRepaintBackgroundOrBorder() const
 }
 
 void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, int x1, int y1, int x2, int y2,
-                                      BoxSide s, Color c, const Color& textcolor, EBorderStyle style,
+                                      BoxSide s, Color c, EBorderStyle style,
                                       int adjbw1, int adjbw2)
 {
     int width = (s == BSTop || s == BSBottom ? y2 - y1 : x2 - x1);
 
     if (style == DOUBLE && width < 3)
         style = SOLID;
-
-    if (!c.isValid()) {
-        if (style == INSET || style == OUTSET || style == RIDGE || style == GROOVE)
-            c.setRGB(238, 238, 238);
-        else
-            c = textcolor;
-    }
 
     switch (style) {
         case BNONE:
@@ -764,34 +757,34 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, int x1, 
                     case BSTop:
                         drawLineForBoxSide(graphicsContext, x1 + max((-adjbw1 * 2 + 1) / 3, 0),
                                    y1, x2 - max((-adjbw2 * 2 + 1) / 3, 0), y1 + third,
-                                   s, c, textcolor, SOLID, adjbw1bigthird, adjbw2bigthird);
+                                   s, c, SOLID, adjbw1bigthird, adjbw2bigthird);
                         drawLineForBoxSide(graphicsContext, x1 + max((adjbw1 * 2 + 1) / 3, 0),
                                    y2 - third, x2 - max((adjbw2 * 2 + 1) / 3, 0), y2,
-                                   s, c, textcolor, SOLID, adjbw1bigthird, adjbw2bigthird);
+                                   s, c, SOLID, adjbw1bigthird, adjbw2bigthird);
                         break;
                     case BSLeft:
                         drawLineForBoxSide(graphicsContext, x1, y1 + max((-adjbw1 * 2 + 1) / 3, 0),
                                    x1 + third, y2 - max((-adjbw2 * 2 + 1) / 3, 0),
-                                   s, c, textcolor, SOLID, adjbw1bigthird, adjbw2bigthird);
+                                   s, c, SOLID, adjbw1bigthird, adjbw2bigthird);
                         drawLineForBoxSide(graphicsContext, x2 - third, y1 + max((adjbw1 * 2 + 1) / 3, 0),
                                    x2, y2 - max((adjbw2 * 2 + 1) / 3, 0),
-                                   s, c, textcolor, SOLID, adjbw1bigthird, adjbw2bigthird);
+                                   s, c, SOLID, adjbw1bigthird, adjbw2bigthird);
                         break;
                     case BSBottom:
                         drawLineForBoxSide(graphicsContext, x1 + max((adjbw1 * 2 + 1) / 3, 0),
                                    y1, x2 - max((adjbw2 * 2 + 1) / 3, 0), y1 + third,
-                                   s, c, textcolor, SOLID, adjbw1bigthird, adjbw2bigthird);
+                                   s, c, SOLID, adjbw1bigthird, adjbw2bigthird);
                         drawLineForBoxSide(graphicsContext, x1 + max((-adjbw1 * 2 + 1) / 3, 0),
                                    y2 - third, x2 - max((-adjbw2 * 2 + 1) / 3, 0), y2,
-                                   s, c, textcolor, SOLID, adjbw1bigthird, adjbw2bigthird);
+                                   s, c, SOLID, adjbw1bigthird, adjbw2bigthird);
                         break;
                     case BSRight:
                         drawLineForBoxSide(graphicsContext, x1, y1 + max((adjbw1 * 2 + 1) / 3, 0),
                                    x1 + third, y2 - max((adjbw2 * 2 + 1) / 3, 0),
-                                   s, c, textcolor, SOLID, adjbw1bigthird, adjbw2bigthird);
+                                   s, c, SOLID, adjbw1bigthird, adjbw2bigthird);
                         drawLineForBoxSide(graphicsContext, x2 - third, y1 + max((-adjbw1 * 2 + 1) / 3, 0),
                                    x2, y2 - max((-adjbw2 * 2 + 1) / 3, 0),
-                                   s, c, textcolor, SOLID, adjbw1bigthird, adjbw2bigthird);
+                                   s, c, SOLID, adjbw1bigthird, adjbw2bigthird);
                         break;
                     default:
                         break;
@@ -818,27 +811,27 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, int x1, 
             switch (s) {
                 case BSTop:
                     drawLineForBoxSide(graphicsContext, x1 + max(-adjbw1, 0) / 2, y1, x2 - max(-adjbw2, 0) / 2, (y1 + y2 + 1) / 2,
-                               s, c, textcolor, s1, adjbw1bighalf, adjbw2bighalf);
+                               s, c, s1, adjbw1bighalf, adjbw2bighalf);
                     drawLineForBoxSide(graphicsContext, x1 + max(adjbw1 + 1, 0) / 2, (y1 + y2 + 1) / 2, x2 - max(adjbw2 + 1, 0) / 2, y2,
-                               s, c, textcolor, s2, adjbw1 / 2, adjbw2 / 2);
+                               s, c, s2, adjbw1 / 2, adjbw2 / 2);
                     break;
                 case BSLeft:
                     drawLineForBoxSide(graphicsContext, x1, y1 + max(-adjbw1, 0) / 2, (x1 + x2 + 1) / 2, y2 - max(-adjbw2, 0) / 2,
-                               s, c, textcolor, s1, adjbw1bighalf, adjbw2bighalf);
+                               s, c, s1, adjbw1bighalf, adjbw2bighalf);
                     drawLineForBoxSide(graphicsContext, (x1 + x2 + 1) / 2, y1 + max(adjbw1 + 1, 0) / 2, x2, y2 - max(adjbw2 + 1, 0) / 2,
-                               s, c, textcolor, s2, adjbw1 / 2, adjbw2 / 2);
+                               s, c, s2, adjbw1 / 2, adjbw2 / 2);
                     break;
                 case BSBottom:
                     drawLineForBoxSide(graphicsContext, x1 + max(adjbw1, 0) / 2, y1, x2 - max(adjbw2, 0) / 2, (y1 + y2 + 1) / 2,
-                               s, c, textcolor, s2, adjbw1bighalf, adjbw2bighalf);
+                               s, c, s2, adjbw1bighalf, adjbw2bighalf);
                     drawLineForBoxSide(graphicsContext, x1 + max(-adjbw1 + 1, 0) / 2, (y1 + y2 + 1) / 2, x2 - max(-adjbw2 + 1, 0) / 2, y2,
-                               s, c, textcolor, s1, adjbw1/2, adjbw2/2);
+                               s, c, s1, adjbw1 / 2, adjbw2 / 2);
                     break;
                 case BSRight:
                     drawLineForBoxSide(graphicsContext, x1, y1 + max(adjbw1, 0) / 2, (x1 + x2 + 1) / 2, y2 - max(adjbw2, 0) / 2,
-                               s, c, textcolor, s2, adjbw1bighalf, adjbw2bighalf);
+                               s, c, s2, adjbw1bighalf, adjbw2bighalf);
                     drawLineForBoxSide(graphicsContext, (x1 + x2 + 1) / 2, y1 + max(-adjbw1 + 1, 0) / 2, x2, y2 - max(-adjbw2 + 1, 0) / 2,
-                               s, c, textcolor, s1, adjbw1/2, adjbw2/2);
+                               s, c, s1, adjbw1 / 2, adjbw2 / 2);
                     break;
             }
             break;
@@ -894,18 +887,11 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, int x1, 
 }
 
 void RenderObject::drawArcForBoxSide(GraphicsContext* graphicsContext, int x, int y, float thickness, IntSize radius,
-                                     int angleStart, int angleSpan, BoxSide s, Color c, const Color& textColor,
+                                     int angleStart, int angleSpan, BoxSide s, Color c,
                                      EBorderStyle style, bool firstCorner)
 {
     if ((style == DOUBLE && thickness / 2 < 3) || ((style == RIDGE || style == GROOVE) && thickness / 2 < 2))
         style = SOLID;
-
-    if (!c.isValid()) {
-        if (style == INSET || style == OUTSET || style == RIDGE || style == GROOVE)
-            c.setRGB(238, 238, 238);
-        else
-            c = textColor;
-    }
 
     switch (style) {
         case BNONE:
@@ -994,33 +980,32 @@ void RenderObject::addPDFURLRect(GraphicsContext* context, const IntRect& rect)
     context->setURLForRect(n->document()->completeURL(href), rect);
 }
 
-void RenderObject::paintOutline(GraphicsContext* graphicsContext, int tx, int ty, int w, int h, const RenderStyle* style)
+void RenderObject::paintOutline(GraphicsContext* graphicsContext, int tx, int ty, int w, int h)
 {
     if (!hasOutline())
         return;
 
-    int ow = style->outlineWidth();
-    EBorderStyle os = style->outlineStyle();
+    RenderStyle* styleToUse = style();
+    int ow = styleToUse->outlineWidth();
+    EBorderStyle os = styleToUse->outlineStyle();
 
-    Color oc = style->outlineColor();
-    if (!oc.isValid())
-        oc = style->color();
+    Color oc = styleToUse->visitedDependentColor(CSSPropertyOutlineColor);
 
-    int offset = style->outlineOffset();
+    int offset = styleToUse->outlineOffset();
 
-    if (style->outlineStyleIsAuto() || hasOutlineAnnotation()) {
-        if (!theme()->supportsFocusRing(style)) {
+    if (styleToUse->outlineStyleIsAuto() || hasOutlineAnnotation()) {
+        if (!theme()->supportsFocusRing(styleToUse)) {
             // Only paint the focus ring by hand if the theme isn't able to draw the focus ring.
             Vector<IntRect> focusRingRects;
             addFocusRingRects(focusRingRects, tx, ty);
-            if (style->outlineStyleIsAuto())
+            if (styleToUse->outlineStyleIsAuto())
                 graphicsContext->drawFocusRing(focusRingRects, ow, offset, oc);
             else
                 addPDFURLRect(graphicsContext, unionRect(focusRingRects));
         }
     }
 
-    if (style->outlineStyleIsAuto() || style->outlineStyle() == BNONE)
+    if (styleToUse->outlineStyleIsAuto() || styleToUse->outlineStyle() == BNONE)
         return;
 
     tx -= offset;
@@ -1031,17 +1016,10 @@ void RenderObject::paintOutline(GraphicsContext* graphicsContext, int tx, int ty
     if (h < 0 || w < 0)
         return;
 
-    drawLineForBoxSide(graphicsContext, tx - ow, ty - ow, tx, ty + h + ow,
-               BSLeft, Color(oc), style->color(), os, ow, ow);
-
-    drawLineForBoxSide(graphicsContext, tx - ow, ty - ow, tx + w + ow, ty,
-               BSTop, Color(oc), style->color(), os, ow, ow);
-
-    drawLineForBoxSide(graphicsContext, tx + w, ty - ow, tx + w + ow, ty + h + ow,
-               BSRight, Color(oc), style->color(), os, ow, ow);
-
-    drawLineForBoxSide(graphicsContext, tx - ow, ty + h, tx + w + ow, ty + h + ow,
-               BSBottom, Color(oc), style->color(), os, ow, ow);
+    drawLineForBoxSide(graphicsContext, tx - ow, ty - ow, tx, ty + h + ow, BSLeft, oc, os, ow, ow);
+    drawLineForBoxSide(graphicsContext, tx - ow, ty - ow, tx + w + ow, ty, BSTop, oc, os, ow, ow);
+    drawLineForBoxSide(graphicsContext, tx + w, ty - ow, tx + w + ow, ty + h + ow, BSRight, oc, os, ow, ow);
+    drawLineForBoxSide(graphicsContext, tx - ow, ty + h, tx + w + ow, ty + h + ow, BSBottom, oc, os, ow, ow);
 }
 
 IntRect RenderObject::absoluteBoundingBoxRect(bool useTransforms)
@@ -2209,21 +2187,17 @@ PassRefPtr<RenderStyle> RenderObject::getUncachedPseudoStyle(PseudoId pseudo, Re
     return result.release();
 }
 
-static Color decorationColor(RenderStyle* style)
+static Color decorationColor(RenderObject* renderer)
 {
     Color result;
-    if (style->textStrokeWidth() > 0) {
+    if (renderer->style()->textStrokeWidth() > 0) {
         // Prefer stroke color if possible but not if it's fully transparent.
-        result = style->textStrokeColor();
-        if (!result.isValid())
-            result = style->color();
+        result = renderer->style()->visitedDependentColor(CSSPropertyWebkitTextStrokeColor);
         if (result.alpha())
             return result;
     }
     
-    result = style->textFillColor();
-    if (!result.isValid())
-        result = style->color();
+    result = renderer->style()->visitedDependentColor(CSSPropertyWebkitTextFillColor);
     return result;
 }
 
@@ -2236,15 +2210,15 @@ void RenderObject::getTextDecorationColors(int decorations, Color& underline, Co
         if (currDecs) {
             if (currDecs & UNDERLINE) {
                 decorations &= ~UNDERLINE;
-                underline = decorationColor(curr->style());
+                underline = decorationColor(curr);
             }
             if (currDecs & OVERLINE) {
                 decorations &= ~OVERLINE;
-                overline = decorationColor(curr->style());
+                overline = decorationColor(curr);
             }
             if (currDecs & LINE_THROUGH) {
                 decorations &= ~LINE_THROUGH;
-                linethrough = decorationColor(curr->style());
+                linethrough = decorationColor(curr);
             }
         }
         curr = curr->parent();
@@ -2256,11 +2230,11 @@ void RenderObject::getTextDecorationColors(int decorations, Color& underline, Co
     // If we bailed out, use the element we bailed out at (typically a <font> or <a> element).
     if (decorations && curr) {
         if (decorations & UNDERLINE)
-            underline = decorationColor(curr->style());
+            underline = decorationColor(curr);
         if (decorations & OVERLINE)
-            overline = decorationColor(curr->style());
+            overline = decorationColor(curr);
         if (decorations & LINE_THROUGH)
-            linethrough = decorationColor(curr->style());
+            linethrough = decorationColor(curr);
     }
 }
 

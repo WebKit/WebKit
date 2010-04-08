@@ -21,6 +21,7 @@
 #include "InlineFlowBox.h"
 
 #include "CachedImage.h"
+#include "CSSPropertyNames.h"
 #include "Document.h"
 #include "EllipsisBox.h"
 #include "GraphicsContext.h"
@@ -764,7 +765,7 @@ void InlineFlowBox::paintBoxDecorations(RenderObject::PaintInfo& paintInfo, int 
         if (styleToUse->boxShadow())
             paintBoxShadow(context, styleToUse, Normal, tx, ty, w, h);
 
-        Color c = styleToUse->backgroundColor();
+        Color c = styleToUse->visitedDependentColor(CSSPropertyBackgroundColor);
         paintFillLayers(paintInfo, c, styleToUse->backgroundLayers(), tx, ty, w, h);
 
         if (styleToUse->boxShadow())
@@ -961,7 +962,7 @@ void InlineFlowBox::paintTextDecorations(RenderObject::PaintInfo& paintInfo, int
         tx += borderLeft() + paddingLeft();
 
         Color underline, overline, linethrough;
-        underline = overline = linethrough = styleToUse->color();
+        underline = overline = linethrough = styleToUse->visitedDependentColor(CSSPropertyColor);
         if (!parent())
             renderer()->getTextDecorationColors(deco, underline, overline, linethrough);
 

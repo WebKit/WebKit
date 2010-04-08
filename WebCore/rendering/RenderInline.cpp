@@ -965,21 +965,20 @@ void RenderInline::paintOutline(GraphicsContext* graphicsContext, int tx, int ty
     if (!hasOutline())
         return;
     
-    if (style()->outlineStyleIsAuto() || hasOutlineAnnotation()) {
-        int ow = style()->outlineWidth();
-        Color oc = style()->outlineColor();
-        if (!oc.isValid())
-            oc = style()->color();
+    RenderStyle* styleToUse = style();
+    if (styleToUse->outlineStyleIsAuto() || hasOutlineAnnotation()) {
+        int ow = styleToUse->outlineWidth();
+        Color oc = styleToUse->visitedDependentColor(CSSPropertyOutlineColor);
 
         Vector<IntRect> focusRingRects;
         addFocusRingRects(focusRingRects, tx, ty);
-        if (style()->outlineStyleIsAuto())
-            graphicsContext->drawFocusRing(focusRingRects, ow, style()->outlineOffset(), oc);
+        if (styleToUse->outlineStyleIsAuto())
+            graphicsContext->drawFocusRing(focusRingRects, ow, styleToUse->outlineOffset(), oc);
         else
             addPDFURLRect(graphicsContext, unionRect(focusRingRects));
     }
 
-    if (style()->outlineStyleIsAuto() || style()->outlineStyle() == BNONE)
+    if (styleToUse->outlineStyleIsAuto() || styleToUse->outlineStyle() == BNONE)
         return;
 
     Vector<IntRect> rects;
@@ -1000,11 +999,10 @@ void RenderInline::paintOutline(GraphicsContext* graphicsContext, int tx, int ty
 void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, int tx, int ty,
                                        const IntRect& lastline, const IntRect& thisline, const IntRect& nextline)
 {
-    int ow = style()->outlineWidth();
-    EBorderStyle os = style()->outlineStyle();
-    Color oc = style()->outlineColor();
-    if (!oc.isValid())
-        oc = style()->color();
+    RenderStyle* styleToUse = style();
+    int ow = styleToUse->outlineWidth();
+    EBorderStyle os = styleToUse->outlineStyle();
+    Color oc = styleToUse->visitedDependentColor(CSSPropertyOutlineColor);
 
     int offset = style()->outlineOffset();
 
@@ -1020,7 +1018,7 @@ void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, int tx,
                l,
                b + (nextline.isEmpty() || thisline.x() <= nextline.x() || (nextline.right() - 1) <= thisline.x() ? ow : 0),
                BSLeft,
-               oc, style()->color(), os,
+               oc, os,
                (lastline.isEmpty() || thisline.x() < lastline.x() || (lastline.right() - 1) <= thisline.x() ? ow : -ow),
                (nextline.isEmpty() || thisline.x() <= nextline.x() || (nextline.right() - 1) <= thisline.x() ? ow : -ow));
     
@@ -1031,7 +1029,7 @@ void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, int tx,
                r + ow,
                b + (nextline.isEmpty() || nextline.right() <= thisline.right() || (thisline.right() - 1) <= nextline.x() ? ow : 0),
                BSRight,
-               oc, style()->color(), os,
+               oc, os,
                (lastline.isEmpty() || lastline.right() < thisline.right() || (thisline.right() - 1) <= lastline.x() ? ow : -ow),
                (nextline.isEmpty() || nextline.right() <= thisline.right() || (thisline.right() - 1) <= nextline.x() ? ow : -ow));
     // upper edge
@@ -1041,7 +1039,7 @@ void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, int tx,
                    t - ow,
                    min(r+ow, (lastline.isEmpty() ? 1000000 : tx + lastline.x())),
                    t ,
-                   BSTop, oc, style()->color(), os,
+                   BSTop, oc, os,
                    ow,
                    (!lastline.isEmpty() && tx + lastline.x() + 1 < r + ow) ? -ow : ow);
     
@@ -1051,7 +1049,7 @@ void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, int tx,
                    t - ow,
                    r + ow,
                    t ,
-                   BSTop, oc, style()->color(), os,
+                   BSTop, oc, os,
                    (!lastline.isEmpty() && l - ow < tx + lastline.right()) ? -ow : ow,
                    ow);
     
@@ -1062,7 +1060,7 @@ void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, int tx,
                    b,
                    min(r + ow, !nextline.isEmpty() ? tx + nextline.x() + 1 : 1000000),
                    b + ow,
-                   BSBottom, oc, style()->color(), os,
+                   BSBottom, oc, os,
                    ow,
                    (!nextline.isEmpty() && tx + nextline.x() + 1 < r + ow) ? -ow : ow);
     
@@ -1072,7 +1070,7 @@ void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, int tx,
                    b,
                    r + ow,
                    b + ow,
-                   BSBottom, oc, style()->color(), os,
+                   BSBottom, oc, os,
                    (!nextline.isEmpty() && l - ow < tx + nextline.right()) ? -ow : ow,
                    ow);
 }

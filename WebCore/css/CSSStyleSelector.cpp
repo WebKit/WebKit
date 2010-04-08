@@ -382,8 +382,6 @@ static CSSStyleSheet* simpleDefaultStyleSheet;
 
 RenderStyle* CSSStyleSelector::s_styleNotYetAvailable;
 
-static PseudoState pseudoState;
-
 static void loadFullDefaultStyle();
 static void loadSimpleDefaultStyle();
 // FIXME: It would be nice to use some mechanism that guarantees this is in sync with the real UA stylesheet.
@@ -802,14 +800,10 @@ void CSSStyleSelector::sortMatchedRules(unsigned start, unsigned end)
         m_matchedRules[i] = rulesMergeBuffer[i - start];
 }
 
-void CSSStyleSelector::initElementAndPseudoState(Element* e)
+void CSSStyleSelector::initElement(Element* e)
 {
     m_element = e;
-    if (m_element && m_element->isStyledElement())
-        m_styledElement = static_cast<StyledElement*>(m_element);
-    else
-        m_styledElement = 0;
-    pseudoState = PseudoUnknown;
+    m_styledElement = m_element && m_element->isStyledElement() ? static_cast<StyledElement*>(m_element) : 0;
 }
 
 void CSSStyleSelector::initForStyleResolve(Element* e, RenderStyle* parentStyle, PseudoId pseudoID)
@@ -876,54 +870,54 @@ CSSStyleSelector::SelectorChecker::SelectorChecker(Document* document, bool stri
     , m_collectRulesOnly(false)
     , m_pseudoStyle(NOPSEUDO)
     , m_documentIsHTML(document->isHTMLDocument())
+    , m_matchVisitedPseudoClass(false)
 {
 }
 
-PseudoState CSSStyleSelector::SelectorChecker::checkPseudoState(Element* element, bool checkVisited) const
+EInsideLink CSSStyleSelector::SelectorChecker::determineLinkState(Element* element) const
 {
+    if (!element->isLink())
+        return NotInsideLink;
+    
     const AtomicString* attr = linkAttribute(element);
     if (!attr || attr->isNull())
-        return PseudoNone;
-
-    if (!checkVisited)
-        return PseudoAnyLink;
+        return NotInsideLink;
 
 #if PLATFORM(QT)
     Vector<UChar, 512> url;
     visitedURL(m_document->baseURL(), *attr, url);
     if (url.isEmpty())
-        return PseudoLink;
+        return InsideUnvisitedLink;
 
     // If the Qt4.4 interface for the history is used, we will have to fallback
     // to the old global history.
     QWebHistoryInterface* iface = QWebHistoryInterface::defaultInterface();
     if (iface)
-        return iface->historyContains(QString(reinterpret_cast<QChar*>(url.data()), url.size())) ? PseudoVisited : PseudoLink;
+        return iface->historyContains(QString(reinterpret_cast<QChar*>(url.data()), url.size())) ? InsideVisitedLink : InsideUnvisitedLink;
 
     LinkHash hash = visitedLinkHash(url.data(), url.size());
     if (!hash)
-        return PseudoLink;
+        return InsideUnvisitedLink;
 #else
     LinkHash hash = visitedLinkHash(m_document->baseURL(), *attr);
     if (!hash)
-        return PseudoLink;
+        return InsideUnvisitedLink;
 #endif
 
     Frame* frame = m_document->frame();
     if (!frame)
-        return PseudoLink;
+        return InsideUnvisitedLink;
 
     Page* page = frame->page();
     if (!page)
-        return PseudoLink;
+        return InsideUnvisitedLink;
 
     m_linksCheckedForVisitedState.add(hash);
-    return page->group().isLinkVisited(hash) ? PseudoVisited : PseudoLink;
+    return page->group().isLinkVisited(hash) ? InsideVisitedLink : InsideUnvisitedLink;
 }
 
 bool CSSStyleSelector::SelectorChecker::checkSelector(CSSSelector* sel, Element* element) const
 {
-    pseudoState = PseudoUnknown;
     PseudoId dynamicPseudo = NOPSEUDO;
 
     return checkSelector(sel, element, 0, dynamicPseudo, true, false) == SelectorMatches;
@@ -1031,20 +1025,11 @@ bool CSSStyleSelector::canShareStyleWithElement(Node* n)
                 if (s->hasMappedAttributes())
                     mappedAttrsMatch = s->mappedAttributes()->mapsEquivalent(m_styledElement->mappedAttributes());
                 if (mappedAttrsMatch) {
-                    bool linksMatch = true;
-
                     if (s->isLink()) {
-                        // We need to check to see if the visited state matches.
-                        if (pseudoState == PseudoUnknown) {
-                            const Color& linkColor = m_element->document()->linkColor();
-                            const Color& visitedColor = m_element->document()->visitedLinkColor();
-                            pseudoState = m_checker.checkPseudoState(m_element, style->pseudoState() != PseudoAnyLink || linkColor != visitedColor);
-                        }
-                        linksMatch = (pseudoState == style->pseudoState());
+                        if (m_checker.determineLinkState(m_element) != style->insideLink())
+                            return false;
                     }
-                    
-                    if (linksMatch)
-                        return true;
+                    return true;
                 }
             }
         }
@@ -1134,7 +1119,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForDocument(Document* document)
 // If resolveForRootDefault is true, style based on user agent style sheet only. This is used in media queries, where
 // relative units are interpreted according to document root element style, styled only with UA stylesheet
 
-PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyle* defaultParent, bool allowSharing, bool resolveForRootDefault)
+PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyle* defaultParent, bool allowSharing, bool resolveForRootDefault, bool matchVisitedRules)
 {
     // Once an element has a renderer, we don't try to destroy it, since otherwise the renderer
     // will vanish if a style recalc happens during loading.
@@ -1150,13 +1135,15 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
         return s_styleNotYetAvailable;
     }
 
-    initElementAndPseudoState(e);
+    initElement(e);
     if (allowSharing) {
         RenderStyle* sharedStyle = locateSharedStyle();
         if (sharedStyle)
             return sharedStyle;
     }
     initForStyleResolve(e, defaultParent);
+    
+    m_checker.m_matchVisitedPseudoClass = matchVisitedRules;
 
     m_style = RenderStyle::create();
 
@@ -1165,6 +1152,11 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
     else
         m_parentStyle = style();
 
+    if (e->isLink()) {
+        m_style->setIsLink(true);
+        m_style->setInsideLink(m_checker.determineLinkState(e));
+    }
+    
     if (simpleDefaultStyleSheet && !elementCanUseSimpleDefaultStyle(e))
         loadFullDefaultStyle();
 
@@ -1276,6 +1268,9 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
         }
     }
 
+    // Reset the value back before applying properties, so that -webkit-link knows what color to use.
+    m_checker.m_matchVisitedPseudoClass = matchVisitedRules;
+    
     // Now we have all of the matched rules in the appropriate order.  Walk the rules and apply
     // high-priority properties first, i.e., those properties that other properties depend on.
     // The order is (1) high-priority not important, (2) high-priority important, (3) normal not important
@@ -1318,13 +1313,26 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
     // Clean up our style object's display and text decorations (among other fixups).
     adjustRenderStyle(style(), e);
 
-    // If we are a link, cache the determined pseudo-state.
-    if (e->isLink())
-        m_style->setPseudoState(pseudoState);
-
     // If we have first-letter pseudo style, do not share this style
     if (m_style->hasPseudoStyle(FIRST_LETTER))
         m_style->setUnique();
+
+    // Compute our style allowing :visited to match.
+    if (!matchVisitedRules && m_style->insideLink()) {
+        // Fetch our parent style.
+        RenderStyle* parentStyle = m_parentStyle;
+        if (!m_style->isLink()) {
+            // Use the parent's visited style if one exists.
+            RenderStyle* parentVisitedStyle = m_parentStyle->getCachedPseudoStyle(VISITED_LINK);
+            if (parentVisitedStyle)
+                parentStyle = parentVisitedStyle;
+        }
+        RefPtr<RenderStyle> resultStyle = m_style.release();
+        PassRefPtr<RenderStyle> visitedStyle = styleForElement(e, parentStyle, false, false, true);
+        visitedStyle->setStyleType(VISITED_LINK);
+        resultStyle->addCachedPseudoStyle(visitedStyle);
+        return resultStyle.release();
+    }
 
     // Now return the style.
     return m_style.release();
@@ -1348,7 +1356,7 @@ void CSSStyleSelector::keyframeStylesForAnimation(Element* e, const RenderStyle*
     // Construct and populate the style for each keyframe
     for (unsigned i = 0; i < rule->length(); ++i) {
         // Apply the declaration to the style. This is a simplified version of the logic in styleForElement
-        initElementAndPseudoState(e);
+        initElement(e);
         initForStyleResolve(e);
         
         const WebKitCSSKeyframeRule* kf = rule->item(i);
@@ -1412,12 +1420,12 @@ void CSSStyleSelector::keyframeStylesForAnimation(Element* e, const RenderStyle*
         list.clear();
 }
 
-PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo, Element* e, RenderStyle* parentStyle)
+PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo, Element* e, RenderStyle* parentStyle, bool matchVisitedLinks)
 {
     if (!e)
         return 0;
 
-    initElementAndPseudoState(e);
+    initElement(e);
     initForStyleResolve(e, parentStyle, pseudo);
     m_style = parentStyle;
     
@@ -1440,7 +1448,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo,
     if (parentStyle)
         m_style->inheritFrom(parentStyle);
 
-    m_style->noninherited_flags._styleType = pseudo;
+    m_style->setStyleType(pseudo);
     
     m_lineHeightValue = 0;
     // High-priority properties.
@@ -1474,6 +1482,22 @@ PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo,
         updateFont();
     // Clean up our style object's display and text decorations (among other fixups).
     adjustRenderStyle(style(), 0);
+
+    // Compute our :visited style.
+    if (!matchVisitedLinks && m_style->insideLink()) {
+        // Fetch our parent style.
+        RenderStyle* parentStyle = m_parentStyle;
+        if (parentStyle) {
+            RenderStyle* parentVisitedStyle = m_parentStyle->getCachedPseudoStyle(VISITED_LINK);
+            if (parentVisitedStyle)
+                parentStyle = parentVisitedStyle;
+        }
+        RefPtr<RenderStyle> resultStyle = m_style.release();
+        RefPtr<RenderStyle> visitedStyle = pseudoStyleForElement(pseudo, e, parentStyle, true);
+        visitedStyle->setStyleType(VISITED_LINK);
+        resultStyle->addCachedPseudoStyle(visitedStyle.release());
+        return resultStyle.release();
+    }
 
     // Now return the style.
     return m_style.release();
@@ -1732,7 +1756,7 @@ PassRefPtr<CSSRuleList> CSSStyleSelector::pseudoStyleRulesForElement(Element* e,
 
     m_checker.m_collectRulesOnly = true;
 
-    initElementAndPseudoState(e);
+    initElement(e);
     initForStyleResolve(e, 0, pseudoId);
 
     if (!authorOnly) {
@@ -1763,7 +1787,7 @@ bool CSSStyleSelector::checkSelector(CSSSelector* sel)
     m_dynamicPseudo = NOPSEUDO;
 
     // Check the selector
-    SelectorMatch match = m_checker.checkSelector(sel, m_element, &m_selectorAttrs, m_dynamicPseudo, true, false, style(), m_parentStyle);
+    SelectorMatch match = m_checker.checkSelector(sel, m_element, &m_selectorAttrs, m_dynamicPseudo, false, false, style(), m_parentStyle);
     if (match != SelectorMatches)
         return false;
 
@@ -1778,7 +1802,7 @@ bool CSSStyleSelector::checkSelector(CSSSelector* sel)
 // * SelectorMatches         - the selector matches the element e
 // * SelectorFailsLocally    - the selector fails for the element e
 // * SelectorFailsCompletely - the selector fails for e and any sibling or ancestor of e
-CSSStyleSelector::SelectorMatch CSSStyleSelector::SelectorChecker::checkSelector(CSSSelector* sel, Element* e, HashSet<AtomicStringImpl*>* selectorAttrs, PseudoId& dynamicPseudo, bool isAncestor, bool isSubSelector, RenderStyle* elementStyle, RenderStyle* elementParentStyle) const
+CSSStyleSelector::SelectorMatch CSSStyleSelector::SelectorChecker::checkSelector(CSSSelector* sel, Element* e, HashSet<AtomicStringImpl*>* selectorAttrs, PseudoId& dynamicPseudo, bool isSubSelector, bool encounteredLink, RenderStyle* elementStyle, RenderStyle* elementParentStyle) const
 {
 #if ENABLE(SVG)
     // Spec: CSS2 selectors cannot be applied to the (conceptually) cloned DOM tree
@@ -1788,7 +1812,7 @@ CSSStyleSelector::SelectorMatch CSSStyleSelector::SelectorChecker::checkSelector
 #endif
 
     // first selector has to match
-    if (!checkOneSelector(sel, e, selectorAttrs, dynamicPseudo, isAncestor, isSubSelector, elementStyle, elementParentStyle))
+    if (!checkOneSelector(sel, e, selectorAttrs, dynamicPseudo, isSubSelector, elementStyle, elementParentStyle))
         return SelectorFailsLocally;
 
     // The rest of the selectors has to match
@@ -1804,6 +1828,17 @@ CSSStyleSelector::SelectorMatch CSSStyleSelector::SelectorChecker::checkSelector
         if (m_pseudoStyle != NOPSEUDO && m_pseudoStyle != dynamicPseudo)
             return SelectorFailsCompletely;
 
+    // Check for nested links.
+    if (m_matchVisitedPseudoClass) {
+        RenderStyle* currentStyle = elementStyle ? elementStyle : e->renderStyle();
+        if (currentStyle && currentStyle->insideLink() && e->isLink()) {
+            if (encounteredLink)
+                m_matchVisitedPseudoClass = false; // This link is not relevant to the style being resolved, so disable matching.
+            else
+                encounteredLink = true;
+        }
+    }
+
     switch (relation) {
         case CSSSelector::Descendant:
             while (true) {
@@ -1811,7 +1846,7 @@ CSSStyleSelector::SelectorMatch CSSStyleSelector::SelectorChecker::checkSelector
                 if (!n || !n->isElementNode())
                     return SelectorFailsCompletely;
                 e = static_cast<Element*>(n);
-                SelectorMatch match = checkSelector(sel, e, selectorAttrs, dynamicPseudo, true, false);
+                SelectorMatch match = checkSelector(sel, e, selectorAttrs, dynamicPseudo, false, encounteredLink);
                 if (match != SelectorFailsLocally)
                     return match;
             }
@@ -1822,7 +1857,7 @@ CSSStyleSelector::SelectorMatch CSSStyleSelector::SelectorChecker::checkSelector
             if (!n || !n->isElementNode())
                 return SelectorFailsCompletely;
             e = static_cast<Element*>(n);
-            return checkSelector(sel, e, selectorAttrs, dynamicPseudo, true, false);
+            return checkSelector(sel, e, selectorAttrs, dynamicPseudo, false, encounteredLink);
         }
         case CSSSelector::DirectAdjacent:
         {
@@ -1837,7 +1872,8 @@ CSSStyleSelector::SelectorMatch CSSStyleSelector::SelectorChecker::checkSelector
             if (!n)
                 return SelectorFailsLocally;
             e = static_cast<Element*>(n);
-            return checkSelector(sel, e, selectorAttrs, dynamicPseudo, false, false); 
+            m_matchVisitedPseudoClass = false;
+            return checkSelector(sel, e, selectorAttrs, dynamicPseudo, false, encounteredLink); 
         }
         case CSSSelector::IndirectAdjacent:
             if (!m_collectRulesOnly && e->parentNode() && e->parentNode()->isElementNode()) {
@@ -1852,7 +1888,8 @@ CSSStyleSelector::SelectorMatch CSSStyleSelector::SelectorChecker::checkSelector
                 if (!n)
                     return SelectorFailsLocally;
                 e = static_cast<Element*>(n);
-                SelectorMatch match = checkSelector(sel, e, selectorAttrs, dynamicPseudo, false, false);
+                m_matchVisitedPseudoClass = false;
+                SelectorMatch match = checkSelector(sel, e, selectorAttrs, dynamicPseudo, false, encounteredLink);
                 if (match != SelectorFailsLocally)
                     return match;
             };
@@ -1864,7 +1901,7 @@ CSSStyleSelector::SelectorMatch CSSStyleSelector::SelectorChecker::checkSelector
             if ((elementStyle || m_collectRulesOnly) && dynamicPseudo != NOPSEUDO && dynamicPseudo != SELECTION &&
                 !((RenderScrollbar::scrollbarForStyleResolve() || dynamicPseudo == SCROLLBAR_CORNER || dynamicPseudo == RESIZER) && sel->m_match == CSSSelector::PseudoClass))
                 return SelectorFailsCompletely;
-            return checkSelector(sel, e, selectorAttrs, dynamicPseudo, isAncestor, true, elementStyle, elementParentStyle);
+            return checkSelector(sel, e, selectorAttrs, dynamicPseudo, true, encounteredLink, elementStyle, elementParentStyle);
     }
 
     return SelectorFailsCompletely;
@@ -1937,7 +1974,7 @@ static bool htmlAttributeHasCaseInsensitiveValue(const QualifiedName& attr)
     return isPossibleHTMLAttr && htmlCaseInsensitiveAttributesSet->contains(attr.localName().impl());
 }
 
-bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Element* e, HashSet<AtomicStringImpl*>* selectorAttrs, PseudoId& dynamicPseudo, bool isAncestor, bool isSubSelector, RenderStyle* elementStyle, RenderStyle* elementParentStyle) const
+bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Element* e, HashSet<AtomicStringImpl*>* selectorAttrs, PseudoId& dynamicPseudo, bool isSubSelector, RenderStyle* elementStyle, RenderStyle* elementParentStyle) const
 {
     if (!e)
         return false;
@@ -2038,7 +2075,7 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
                 // the parser enforces that this never occurs
                 ASSERT(!subSel->simpleSelector());
 
-                if (!checkOneSelector(subSel, e, selectorAttrs, dynamicPseudo, isAncestor, true, elementStyle, elementParentStyle))
+                if (!checkOneSelector(subSel, e, selectorAttrs, dynamicPseudo, true, elementStyle, elementParentStyle))
                     return true;
             }
         } else if (dynamicPseudo != NOPSEUDO && (RenderScrollbar::scrollbarForStyleResolve() || dynamicPseudo == SCROLLBAR_CORNER || dynamicPseudo == RESIZER)) {
@@ -2346,9 +2383,7 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
                     return true;
                 break;
             case CSSSelector::PseudoAnyLink:
-                if (pseudoState == PseudoUnknown)
-                    pseudoState = checkPseudoState(e, false);
-                if (pseudoState == PseudoAnyLink || pseudoState == PseudoLink || pseudoState == PseudoVisited)
+                if (e && e->isLink())
                     return true;
                 break;
             case CSSSelector::PseudoAutofill: {
@@ -2359,16 +2394,12 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
                 break;
             }
             case CSSSelector::PseudoLink:
-                if (pseudoState == PseudoUnknown || pseudoState == PseudoAnyLink)
-                    pseudoState = checkPseudoState(e);
-                if (pseudoState == PseudoLink)
-                    return true;
+                if (e && e->isLink())
+                    return !m_matchVisitedPseudoClass;
                 break;
             case CSSSelector::PseudoVisited:
-                if (pseudoState == PseudoUnknown || pseudoState == PseudoAnyLink)
-                    pseudoState = checkPseudoState(e);
-                if (pseudoState == PseudoVisited)
-                    return true;
+                if (e && e->isLink())
+                    return m_matchVisitedPseudoClass;
                 break;
             case CSSSelector::PseudoDrag: {
                 if (elementStyle)
@@ -2954,7 +2985,7 @@ static void applyCounterList(RenderStyle* style, CSSValueList* list, bool isRese
 
 void CSSStyleSelector::applyPropertyToStyle(int id, CSSValue *value, RenderStyle* style)
 {
-    initElementAndPseudoState(0);
+    initElement(0);
     initForStyleResolve(0, style);
     m_style = style;
     applyProperty(id, value);
@@ -6047,17 +6078,9 @@ Color CSSStyleSelector::getColorFromPrimitiveValue(CSSPrimitiveValue* primitiveV
     if (ident) {
         if (ident == CSSValueWebkitText)
             col = m_element->document()->textColor();
-        else if (ident == CSSValueWebkitLink) {
-            const Color& linkColor = m_element->document()->linkColor();
-            const Color& visitedColor = m_element->document()->visitedLinkColor();
-            if (linkColor == visitedColor)
-                col = linkColor;
-            else {
-                if (pseudoState == PseudoUnknown || pseudoState == PseudoAnyLink)
-                    pseudoState = m_checker.checkPseudoState(m_element);
-                col = (pseudoState == PseudoLink) ? linkColor : visitedColor;
-            }
-        } else if (ident == CSSValueWebkitActivelink)
+        else if (ident == CSSValueWebkitLink)
+            col = m_element->isLink() && m_checker.m_matchVisitedPseudoClass ? m_element->document()->visitedLinkColor() : m_element->document()->linkColor();
+        else if (ident == CSSValueWebkitActivelink)
             col = m_element->document()->activeLinkColor();
         else if (ident == CSSValueWebkitFocusRingColor)
             col = RenderTheme::focusRingColor();

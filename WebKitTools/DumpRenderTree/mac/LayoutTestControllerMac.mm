@@ -181,6 +181,11 @@ void LayoutTestController::keepWebHistory()
     }
 }
 
+JSValueRef LayoutTestController::computedStyleIncludingVisitedInfo(JSContextRef context, JSValueRef value)
+{   
+    return [[mainFrame webView] _computedStyleIncludingVisitedInfo:context forElement:value];
+}
+
 JSRetainPtr<JSStringRef> LayoutTestController::layerTreeAsText() const
 {
     JSRetainPtr<JSStringRef> string(Adopt, JSStringCreateWithCFString((CFStringRef)[mainFrame _layerTreeAsText]));

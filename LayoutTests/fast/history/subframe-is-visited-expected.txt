@@ -1,5 +1,0 @@
-There should be no red link displayed below.
-
-Subframe loaded; test was able to run.
-
-

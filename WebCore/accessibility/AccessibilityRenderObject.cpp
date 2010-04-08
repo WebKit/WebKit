@@ -1806,7 +1806,8 @@ KURL AccessibilityRenderObject::url() const
 
 bool AccessibilityRenderObject::isVisited() const
 {
-    return m_renderer->style()->pseudoState() == PseudoVisited;
+    // FIXME: Is it a privacy violation to expose visited information to accessibility APIs?
+    return m_renderer->style()->isLink() && m_renderer->style()->insideLink() == InsideVisitedLink;
 }
     
 bool AccessibilityRenderObject::isExpanded() const

@@ -95,7 +95,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int, int)
     }
 
     if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth())
-        paintOutline(paintInfo.context, 0, 0, width(), height(), style());
+        paintOutline(paintInfo.context, 0, 0, width(), height());
 
     paintInfo.context->restore();
 }

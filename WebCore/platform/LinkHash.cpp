@@ -154,10 +154,11 @@ LinkHash visitedLinkHash(const UChar* url, unsigned length)
 
 void visitedURL(const KURL& base, const AtomicString& attributeURL, Vector<UChar, 512>& buffer)
 {
+    if (attributeURL.isNull())
+        return;
+
     const UChar* characters = attributeURL.characters();
     unsigned length = attributeURL.length();
-    if (!length)
-        return;
 
     // This is a poor man's completeURL. Faster with less memory allocation.
     // FIXME: It's missing a lot of what completeURL does and a lot of what KURL does.
@@ -186,16 +187,20 @@ void visitedURL(const KURL& base, const AtomicString& attributeURL, Vector<UChar
         return;
     }
 
-    switch (characters[0]) {
-        case '/':
-            buffer.append(base.string().characters(), base.pathStart());
-            break;
-        case '#':
-            buffer.append(base.string().characters(), base.pathEnd());
-            break;
-        default:
-            buffer.append(base.string().characters(), base.pathAfterLastSlash());
-            break;
+    if (!length)
+        buffer.append(base.string().characters(), base.string().length());
+    else {
+        switch (characters[0]) {
+            case '/':
+                buffer.append(base.string().characters(), base.pathStart());
+                break;
+            case '#':
+                buffer.append(base.string().characters(), base.pathEnd());
+                break;
+            default:
+                buffer.append(base.string().characters(), base.pathAfterLastSlash());
+                break;
+        }
     }
     buffer.append(characters, length);
     cleanPath(buffer);

@@ -174,4 +174,6 @@ namespace WebCore {
 - (void)_exitFullscreen;
 #endif
 
+- (JSValueRef)_computedStyleIncludingVisitedInfo:(JSContextRef)context forElement:(JSValueRef)value;
+
 @end

@@ -411,18 +411,14 @@ void InlineTextBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
         textFillColor = Color::black;
         textStrokeColor = Color::black;
     } else {
-        textFillColor = styleToUse->textFillColor();
-        if (!textFillColor.isValid())
-            textFillColor = styleToUse->color();
-
+        textFillColor = styleToUse->visitedDependentColor(CSSPropertyWebkitTextFillColor);
+        
         // Make the text fill color legible against a white background
         if (styleToUse->forceBackgroundsToWhite())
             textFillColor = correctedTextColor(textFillColor, Color::white);
 
-        textStrokeColor = styleToUse->textStrokeColor();
-        if (!textStrokeColor.isValid())
-            textStrokeColor = styleToUse->color();
-
+        textStrokeColor = styleToUse->visitedDependentColor(CSSPropertyWebkitTextStrokeColor);
+        
         // Make the text stroke color legible against a white background
         if (styleToUse->forceBackgroundsToWhite())
             textStrokeColor = correctedTextColor(textStrokeColor, Color::white);
@@ -517,7 +513,7 @@ void InlineTextBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
 
     // Paint decorations
     if (d != TDNONE && paintInfo.phase != PaintPhaseSelection && styleToUse->htmlHacks()) {
-        context->setStrokeColor(styleToUse->color(), styleToUse->colorSpace());
+        context->setStrokeColor(styleToUse->visitedDependentColor(CSSPropertyColor), styleToUse->colorSpace());
         paintDecoration(context, tx, ty, d, textShadow);
     }
 
@@ -577,7 +573,7 @@ void InlineTextBox::paintSelection(GraphicsContext* context, int tx, int ty, Ren
     if (sPos >= ePos)
         return;
 
-    Color textColor = style->color();
+    Color textColor = style->visitedDependentColor(CSSPropertyColor);
     Color c = renderer()->selectionBackgroundColor();
     if (!c.isValid() || c.alpha() == 0)
         return;
