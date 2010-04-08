@@ -30,25 +30,77 @@
 #define IDBCallbacks_h
 
 #include "ActiveDOMObject.h"
+#include "IDBDatabaseError.h"
+#include "Timer.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
+#if ENABLE(INDEXED_DATABASE)
+
 namespace WebCore {
 
-class IDBDatabaseError;
-
+// All IndexedDB callbacks must implement this class.  It handles the asynchronous firing of
+// the callbacks.
 template <typename ResultType>
 class IDBCallbacks : public RefCounted<IDBCallbacks<ResultType> >, public ActiveDOMObject {
 public:
     IDBCallbacks(ScriptExecutionContext* scriptExecutionContext, void* upcastPointer)
-        : ActiveDOMObject(scriptExecutionContext, upcastPointer) { }
+        : ActiveDOMObject(scriptExecutionContext, upcastPointer)
+        , m_timer(this, &IDBCallbacks::timerFired)
+    {
+    }
+
     virtual ~IDBCallbacks() { }
 
-    virtual void onSuccess(PassRefPtr<ResultType>) = 0;
-    virtual void onError(PassRefPtr<IDBDatabaseError>) = 0;
+    void onSuccess(PassRefPtr<ResultType> result)
+    {
+        ASSERT(!m_result);
+        ASSERT(!m_error);
+        m_result = result;
+        ASSERT(m_result);
+
+        ASSERT(!m_timer.isActive());
+        m_selfRef = this;
+        m_timer.startOneShot(0);
+    }
+
+    void onError(PassRefPtr<IDBDatabaseError> error)
+    {
+        ASSERT(!m_result);
+        ASSERT(!m_error);
+        m_error = error;
+        ASSERT(m_error);
+
+        ASSERT(!m_timer.isActive());
+        m_selfRef = this;
+        m_timer.startOneShot(0);
+    }
+
+protected:
+    virtual void onSuccessAsync(PassRefPtr<ResultType>) = 0;
+    virtual void onErrorAsync(PassRefPtr<IDBDatabaseError>) = 0;
+
+    void timerFired(Timer<IDBCallbacks>*)
+    {
+        if (m_result) {
+            onSuccessAsync(m_result);
+            m_result = 0;
+        } else {
+            onErrorAsync(m_error);
+            m_error = 0;
+        }
+        m_selfRef = 0; // May trigger a delete immediately.
+    }
+
+private:
+    Timer<IDBCallbacks> m_timer;
+    RefPtr<IDBCallbacks> m_selfRef;
+    RefPtr<ResultType> m_result;
+    RefPtr<IDBDatabaseError> m_error;
 };
 
 } // namespace WebCore
 
-#endif // IDBCallbacks_h
+#endif
 
+#endif // IDBCallbacks_h

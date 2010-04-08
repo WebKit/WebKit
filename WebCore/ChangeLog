@@ -1,3 +1,25 @@
+2010-04-08  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        IDB callbacks should fire asynchronously
+        https://bugs.webkit.org/show_bug.cgi?id=37265
+
+        Fix the firing behavior of the callbacks to not be synchronous.
+
+        There's still a major bug that I'm trying to track down that is keeping
+        us from testing this stuff.  Promise lots of tests ASAP.
+
+        * bindings/v8/custom/V8CustomIDBCallbacks.h:
+        (WebCore::V8CustomIDBCallbacks::onSuccessAsync):
+        (WebCore::V8CustomIDBCallbacks::onErrorAsync):
+        * storage/IDBCallbacks.h:
+        (WebCore::IDBCallbacks::IDBCallbacks):
+        (WebCore::IDBCallbacks::onSuccess):
+        (WebCore::IDBCallbacks::onError):
+        (WebCore::IDBCallbacks::timerFired):
+        * storage/IndexedDatabaseRequest.cpp:
+
 2010-04-08  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.

@@ -30,6 +30,7 @@
 #include "IndexedDatabaseRequest.h"
 
 #include "ExceptionCode.h"
+#include "IDBDatabase.h"
 #include "IndexedDatabase.h"
 
 #if ENABLE(INDEXED_DATABASE)
