@@ -131,6 +131,9 @@
 // Typically this would be called from inside an override of -[NSView knowsPageRange:].
 - (void)_layoutForPrinting;
 - (WebCGFloat)_adjustedBottomOfPageWithTop:(WebCGFloat)top bottom:(WebCGFloat)bottom limit:(WebCGFloat)bottomLimit;
+- (BOOL)_isInPrintMode;
+- (BOOL)_beginPrintModeWithPageWidth:(float)pageWidth shrinkToFit:(BOOL)shrinkToFit;
+- (void)_endPrintMode;
 
 - (BOOL)_canSmartReplaceWithPasteboard:(NSPasteboard *)pasteboard;
 

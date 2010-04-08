@@ -1,3 +1,33 @@
+2010-04-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Refactor WebHTMLView printing code and add private methods to enter and exit printing mode.
+        https://bugs.webkit.org/show_bug.cgi?id=37246
+
+        * Misc/WebNSPrintOperationExtras.h: Declared -_web_availablePaperWidth and -_web_availablePaperHeight.
+        * Misc/WebNSPrintOperationExtras.m:
+        (-[NSPrintOperation _web_availablePaperWidth]): Turned -[WebHTMLView _availablePaperWidthForPrintOperation:]
+        into this method.
+        (-[NSPrintOperation _web_availablePaperHeight]): Turned -[WebHTMLView _calculatePrintHeight] into this
+        method.
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _isInPrintMode]): Added this accessor.
+        (-[WebHTMLView _beginPrintModeWithPageWidth:shrinkToFit:]): Added. Moved the code from -knowsPageRange: that
+        computes the layout widths and enters printing mode into this private method.
+        (-[WebHTMLView _endPrintMode]): New private method (the old -_endPrintMode has been renamed).
+        (-[WebHTMLView _scaleFactorForPrintOperation:]): Use -[NSPrintOperation _web_availablePaperWidth].
+        (-[WebHTMLView _endPrintModeAndRestoreWindowAutodisplay]): Renamed -_endPrintMode to this, changed it to call
+        _endPrintMode.
+        (-[WebHTMLView _delayedEndPrintMode:]): Updated for rename.
+        (-[WebHTMLView knowsPageRange:]): Use -_beginPrintModeWithPageWidth:shrintToFit:,
+        -[NSPrintOperation _web_availablePaperWidth], and -[NSPrintOperation _web_availablePaperHeight]. Updated for
+        rename.
+        (-[WebHTMLView beginDocument]): Updated for rename.
+        (-[WebHTMLView endDocument]): Ditto.
+        * WebView/WebHTMLViewPrivate.h: Declared new private methods -_isInPrintMode,
+        -_beginPrintModeWithPageWidth:shrinkToFit: and -_endPrintMode.
+
 2010-04-07  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Yury Semikhatsky.

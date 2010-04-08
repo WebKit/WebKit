@@ -35,4 +35,16 @@
     return [[[[self printInfo] dictionary] objectForKey:NSPrintScalingFactor] floatValue];
 }
 
+- (float)_web_availablePaperWidth
+{
+    NSPrintInfo *printInfo = [self printInfo];
+    return [printInfo paperSize].width - [printInfo leftMargin] - [printInfo rightMargin];
+}
+
+- (float)_web_availablePaperHeight
+{
+    NSPrintInfo *printInfo = [self printInfo];
+    return [printInfo paperSize].height - [printInfo topMargin] - [printInfo bottomMargin];
+}
+
 @end

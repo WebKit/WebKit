@@ -322,7 +322,6 @@ static CachedResourceClient* promisedDataClient()
 - (BOOL)_shouldInsertFragment:(DOMDocumentFragment *)fragment replacingDOMRange:(DOMRange *)range givenAction:(WebViewInsertAction)action;
 - (BOOL)_shouldInsertText:(NSString *)text replacingDOMRange:(DOMRange *)range givenAction:(WebViewInsertAction)action;
 - (BOOL)_shouldReplaceSelectionWithText:(NSString *)text givenAction:(WebViewInsertAction)action;
-- (float)_calculatePrintHeight;
 - (DOMRange *)_selectedRange;
 - (BOOL)_shouldDeleteRange:(DOMRange *)range;
 - (NSView *)_hitViewForEvent:(NSEvent *)event;
@@ -899,17 +898,6 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 - (BOOL)_shouldReplaceSelectionWithText:(NSString *)text givenAction:(WebViewInsertAction)action
 {
     return [self _shouldInsertText:text replacingDOMRange:[self _selectedRange] givenAction:action];
-}
-
-// Calculate the vertical size of the view that fits on a single page
-- (float)_calculatePrintHeight
-{
-    // Obtain the print info object for the current operation
-    NSPrintInfo *pi = [[NSPrintOperation currentOperation] printInfo];
-    
-    // Calculate the page height in points
-    NSSize paperSize = [pi paperSize];
-    return paperSize.height - [pi topMargin] - [pi bottomMargin];
 }
 
 - (DOMRange *)_selectedRange
@@ -2200,6 +2188,36 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
 #else
     return 0;
 #endif
+}
+
+- (BOOL)_isInPrintMode
+{
+    return _private->printing;
+}
+
+- (BOOL)_beginPrintModeWithPageWidth:(float)pageWidth shrinkToFit:(BOOL)shrinkToFit
+{
+    Frame* frame = core([self _frame]);
+    if (!frame)
+        return NO;
+
+    float minLayoutWidth = 0;
+    float maxLayoutWidth = 0;
+
+    // If we are a frameset just print with the layout we have onscreen, otherwise relayout
+    // according to the page width.
+    if (!frame->document() || !frame->document()->isFrameSet()) {
+        minLayoutWidth = shrinkToFit ? pageWidth * PrintingMinimumShrinkFactor : pageWidth;
+        maxLayoutWidth = shrinkToFit ? pageWidth * PrintingMaximumShrinkFactor : pageWidth;
+    }
+    [self _setPrinting:YES minimumPageWidth:minLayoutWidth maximumPageWidth:maxLayoutWidth adjustViewSize:YES];
+
+    return YES;
+}
+
+- (void)_endPrintMode
+{
+    [self _setPrinting:NO minimumPageWidth:0 maximumPageWidth:0 adjustViewSize:YES];
 }
 
 - (CGFloat)_adjustedBottomOfPageWithTop:(CGFloat)top bottom:(CGFloat)bottom limit:(CGFloat)bottomLimit
@@ -3828,12 +3846,6 @@ static BOOL isInPasswordField(Frame* coreFrame)
     }
 }
 
-- (float)_availablePaperWidthForPrintOperation:(NSPrintOperation *)printOperation
-{
-    NSPrintInfo *printInfo = [printOperation printInfo];
-    return [printInfo paperSize].width - [printInfo leftMargin] - [printInfo rightMargin];
-}
-
 - (float)_scaleFactorForPrintOperation:(NSPrintOperation *)printOperation
 {
     float viewWidth = NSWidth([self bounds]);
@@ -3844,7 +3856,7 @@ static BOOL isInPasswordField(Frame* coreFrame)
 
     float userScaleFactor = [printOperation _web_pageSetupScaleFactor];
     float maxShrinkToFitScaleFactor = 1.0f / PrintingMaximumShrinkFactor;
-    float shrinkToFitScaleFactor = [self _availablePaperWidthForPrintOperation:printOperation]/viewWidth;
+    float shrinkToFitScaleFactor = [printOperation _web_availablePaperWidth] / viewWidth;
     float shrinkToAvoidOrphan = _private->avoidingPrintOrphan ? (1.0f / PrintingOrphanShrinkAdjustment) : 1.0f;
     return userScaleFactor * max(maxShrinkToFitScaleFactor, shrinkToFitScaleFactor) * shrinkToAvoidOrphan;
 }
@@ -3864,9 +3876,9 @@ static BOOL isInPasswordField(Frame* coreFrame)
     [self _setPrinting:YES minimumPageWidth:pageWidth maximumPageWidth:pageWidth adjustViewSize:YES];
 }
 
-- (void)_endPrintMode
+- (void)_endPrintModeAndRestoreWindowAutodisplay
 {
-    [self _setPrinting:NO minimumPageWidth:0.0f maximumPageWidth:0.0f adjustViewSize:YES];
+    [self _endPrintMode];
     [[self window] setAutodisplay:YES];
 }
 
@@ -3892,7 +3904,7 @@ static BOOL isInPasswordField(Frame* coreFrame)
         // cancelled, beginDocument and endDocument must not have been called, and we need to clean up
         // the print mode here.
         ASSERT(currentOperation == nil);
-        [self _endPrintMode];
+        [self _endPrintModeAndRestoreWindowAutodisplay];
     }
 }
 
@@ -3902,22 +3914,12 @@ static BOOL isInPasswordField(Frame* coreFrame)
     // Must do this explicit display here, because otherwise the view might redisplay while the print
     // sheet was up, using printer fonts (and looking different).
     [self displayIfNeeded];
-    [[self window] setAutodisplay:NO];
-    
-    // If we are a frameset just print with the layout we have onscreen, otherwise relayout
-    // according to the paper size
-    float minLayoutWidth = 0.0f;
-    float maxLayoutWidth = 0.0f;
-    Frame* frame = core([self _frame]);
-    if (!frame)
-        return NO;
-    if (!frame->document() || !frame->document()->isFrameSet()) {
-        float paperWidth = [self _availablePaperWidthForPrintOperation:[NSPrintOperation currentOperation]];
-        minLayoutWidth = paperWidth * PrintingMinimumShrinkFactor;
-        maxLayoutWidth = paperWidth * PrintingMaximumShrinkFactor;
-    }
-    [self _setPrinting:YES minimumPageWidth:minLayoutWidth maximumPageWidth:maxLayoutWidth adjustViewSize:YES]; // will relayout
+    [[self window] setAutodisplay:NO];    
+
     NSPrintOperation *printOperation = [NSPrintOperation currentOperation];
+    if (![self _beginPrintModeWithPageWidth:[printOperation _web_availablePaperWidth] shrinkToFit:YES])
+        return NO;
+
     // Certain types of errors, including invalid page ranges, can cause beginDocument and
     // endDocument to be skipped after we've put ourselves in print mode (see 4145905). In those cases
     // we need to get out of print mode without relying on any more callbacks from the printing mechanism.
@@ -3935,9 +3937,9 @@ static BOOL isInPasswordField(Frame* coreFrame)
     float totalScaleFactor = [self _scaleFactorForPrintOperation:printOperation];
     float userScaleFactor = [printOperation _web_pageSetupScaleFactor];
     [_private->pageRects release];
-    float fullPageHeight = floorf([self _calculatePrintHeight]/totalScaleFactor);
-    NSArray *newPageRects = [[self _frame] _computePageRectsWithPrintWidthScaleFactor:userScaleFactor
-                                                                          printHeight:fullPageHeight];
+    float fullPageHeight = floorf([printOperation _web_availablePaperHeight] / totalScaleFactor);
+    WebFrame *frame = [self _frame];
+    NSArray *newPageRects = [frame _computePageRectsWithPrintWidthScaleFactor:userScaleFactor printHeight:fullPageHeight];
     
     // AppKit gets all messed up if you give it a zero-length page count (see 3576334), so if we
     // hit that case we'll pass along a degenerate 1 pixel square to print. This will print
@@ -3950,8 +3952,7 @@ static BOOL isInPasswordField(Frame* coreFrame)
         // content onto one fewer page. If it does, use the adjusted scale. If not, use the original scale.
         float lastPageHeight = NSHeight([[newPageRects lastObject] rectValue]);
         if (lastPageHeight/fullPageHeight < LastPrintedPageOrphanRatio) {
-            NSArray *adjustedPageRects = [[self _frame] _computePageRectsWithPrintWidthScaleFactor:userScaleFactor
-                                                                                       printHeight:fullPageHeight*PrintingOrphanShrinkAdjustment];
+            NSArray *adjustedPageRects = [frame _computePageRectsWithPrintWidthScaleFactor:userScaleFactor printHeight:fullPageHeight * PrintingOrphanShrinkAdjustment];
             // Use the adjusted rects only if the page count went down
             if ([adjustedPageRects count] < [newPageRects count]) {
                 newPageRects = adjustedPageRects;
@@ -3991,7 +3992,7 @@ static BOOL isInPasswordField(Frame* coreFrame)
     } @catch (NSException *localException) {
         // Exception during [super beginDocument] means that endDocument will not get called,
         // so we need to clean up our "print mode" here.
-        [self _endPrintMode];
+        [self _endPrintModeAndRestoreWindowAutodisplay];
     }
 }
 
@@ -3999,7 +4000,7 @@ static BOOL isInPasswordField(Frame* coreFrame)
 {
     [super endDocument];
     // Note sadly at this point [NSGraphicsContext currentContextDrawingToScreen] is still NO 
-    [self _endPrintMode];
+    [self _endPrintModeAndRestoreWindowAutodisplay];
 }
 
 - (void)keyDown:(NSEvent *)event

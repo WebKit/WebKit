@@ -31,5 +31,7 @@
 @interface NSPrintOperation (WebKitExtras)
 
 - (float)_web_pageSetupScaleFactor;
+- (float)_web_availablePaperWidth;
+- (float)_web_availablePaperHeight;
 
 @end
