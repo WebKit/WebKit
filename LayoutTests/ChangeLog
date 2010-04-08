@@ -1,3 +1,35 @@
+2010-04-07  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        WebKit Apache configs only listen on IPv4 addresses, causing random timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=37104
+
+        WebKit Apache configs were only listening on IPv4 loopback (127.0.0.1), however
+        the system will resolve "localhost." to both IPv4 and IPv6 (::1) loopback
+        addreses when IPv6 is enabled.  Since DNS lookup returns addresses in random
+        order, we would occasionally fail to make connections to "localhost" addresses
+        if the various network re-tries all happen to resolve to the IPv6 loopback.
+
+        To make matters worse, the kernel has a connection reset throttle which we
+        could trigger if we would repeatedly attempt to connect to ::1 and fail.
+        The trottle would cause a 1 or 2 second delay on the connection, sometimes
+        causing slow tests to time out.
+
+        I also discovered during this investigation that we have some partial support
+        for specifying our apache port numbers at runtime.  The support is already incomplete
+        by not accounting for WebSockets or SSL ports.  This fix will make our partial
+        support for dynamic apache port numbers even more broken.
+
+        I've added Listen [::1]:PORT directives for 8000, 8080, and 8443 to all
+        platforms (except cygwin which does not have the 8443 directive to begin with).
+
+        * http/conf/apache2-debian-httpd.conf:
+        * http/conf/apache2-httpd.conf:
+        * http/conf/cygwin-httpd.conf:
+        * http/conf/fedora-httpd.conf:
+        * http/conf/httpd.conf:
+
 2010-04-07  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Adam Barth.

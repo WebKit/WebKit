@@ -119,6 +119,10 @@ my $complexText = 0;
 my $exitAfterNFailures = 0;
 my $generateNewResults = isAppleMacWebKit() ? 1 : 0;
 my $guardMalloc = '';
+# FIXME: Dynamic HTTP-port configuration in this file is wrong.  The various
+# apache config files in LayoutTests/http/config govern the port numbers.
+# Dynamic configuration as-written will also cause random failures in
+# an IPv6 environment.  See https://bugs.webkit.org/show_bug.cgi?id=37104.
 my $httpdPort = 8000;
 my $httpdSSLPort = 8443;
 my $ignoreMetrics = 0;

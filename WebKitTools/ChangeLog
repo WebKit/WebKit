@@ -1,3 +1,16 @@
+2010-04-07  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        WebKit Apache configs only listen on IPv4 addresses, causing random timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=37104
+
+        Add warnings that the partial support for specifying what port numbers
+        apache should bind to is even more broken after this fix.
+
+        * Scripts/run-webkit-httpd:
+        * Scripts/run-webkit-tests:
+
 2010-04-07  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler.
