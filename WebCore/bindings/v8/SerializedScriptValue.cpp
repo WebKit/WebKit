@@ -384,6 +384,7 @@ private:
             : State<v8::Object>(object, next)
             , m_propertyNames(object->GetPropertyNames())
             , m_index(-1)
+            , m_numSerializedProperties(0)
             , m_nameDone(false)
         {
         }
@@ -409,10 +410,11 @@ private:
                 v8::Local<v8::Value> value = composite()->Get(m_propertyName);
                 m_nameDone = false;
                 m_propertyName.Clear();
+                ++m_numSerializedProperties;
                 if (StateBase* newState = serializer.doSerialize(value, this))
                     return newState;
             }
-            return objectDone(m_index, serializer);
+            return objectDone(m_numSerializedProperties, serializer);
         }
 
     protected:
@@ -422,6 +424,7 @@ private:
         v8::Local<v8::Array> m_propertyNames;
         v8::Local<v8::Value> m_propertyName;
         unsigned m_index;
+        unsigned m_numSerializedProperties;
         bool m_nameDone;
     };
 

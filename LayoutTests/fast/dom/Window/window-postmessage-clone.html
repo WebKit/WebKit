@@ -92,6 +92,14 @@ function onmessage(evt) {
 
 window.addEventListener('message', onmessage, false);
 
+function ConstructorWithPrototype(s) {
+    this.field = s;
+}
+
+ConstructorWithPrototype.prototype = {
+    protoProperty: 2010
+};
+
 function tryPostMessage(message, shouldThrow, expected) {
     try {
         var value = eval(message);
@@ -121,6 +129,7 @@ tryPostMessage('[1,2,3]');
 tryPostMessage('[,,1]');
 tryPostMessage('(function(){})', false, 'null');
 tryPostMessage('new Date(1234567890000)');
+tryPostMessage('new ConstructorWithPrototype("foo")', false, '({field:"foo"})');
 cyclicObject={};
 cyclicObject.self = cyclicObject;
 tryPostMessage('cyclicObject', true);

@@ -15,6 +15,7 @@ PASS: eventData is 1,2,3 of type object
 PASS: eventData is ,,1 of type object
 PASS: eventData is null of type object
 PASS: eventData is 2009-02-13T23:31:30.000Z of type object
+PASS: eventData is [object Object] of type object
 PASS: eventData is [object Array](default toString threw RangeError: Maximum call stack size exceeded.) of type object
 PASS: eventData is [object File] of type object
 PASS: eventData is [object FileList] of type object
