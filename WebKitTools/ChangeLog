@@ -1,3 +1,25 @@
+2010-04-05  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] REGRESSION:(r50665) QWebFrame::setScrollBarPolicy(Qt::Vertical,Qt::ScrollBarAlwaysOff) has no effect.
+        https://bugs.webkit.org/show_bug.cgi?id=29431
+
+        Added stubs for Mac, win, gtk and wx DRTs to implement setScrollbarPolicy method.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (setScrollbarPolicyCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setScrollbarPolicy):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setScrollbarPolicy):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setScrollbarPolicy):
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::setScrollbarPolicy):
+
 2010-04-01  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by David Hyatt.
