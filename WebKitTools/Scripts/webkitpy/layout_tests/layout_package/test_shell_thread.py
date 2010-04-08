@@ -51,8 +51,8 @@ _log = logging.getLogger("webkitpy.layout_tests.layout_package."
                          "test_shell_thread")
 
 
-def process_output(port, test_info, test_types, test_args, target, output_dir,
-                   crash, timeout, test_run_time, actual_checksum,
+def process_output(port, test_info, test_types, test_args, configuration,
+                   output_dir, crash, timeout, test_run_time, actual_checksum,
                    output, error):
     """Receives the output from a test_shell process, subjects it to a number
     of tests, and returns a list of failure types the test produced.
@@ -63,7 +63,7 @@ def process_output(port, test_info, test_types, test_args, target, output_dir,
       test_info: Object containing the test filename, uri and timeout
       test_types: list of test types to subject the output to
       test_args: arguments to be passed to each test
-      target: Debug or Release
+      configuration: Debug or Release
       output_dir: directory to put crash stack traces into
 
     Returns: a list of failure objects and times for the test being processed
@@ -101,7 +101,7 @@ def process_output(port, test_info, test_types, test_args, target, output_dir,
         start_diff_time = time.time()
         new_failures = test_type.compare_output(port, test_info.filename,
                                                 output, local_test_args,
-                                                target)
+                                                configuration)
         # Don't add any more failures if we already have a crash, so we don't
         # double-report those tests. We do double-report for timeouts since
         # we still want to see the text and image output.
@@ -130,7 +130,7 @@ class SingleTestThread(threading.Thread):
     """Thread wrapper for running a single test file."""
 
     def __init__(self, port, image_path, shell_args, test_info,
-        test_types, test_args, target, output_dir):
+        test_types, test_args, configuration, output_dir):
         """
         Args:
           port: object implementing port-specific hooks
@@ -146,7 +146,7 @@ class SingleTestThread(threading.Thread):
         self._test_info = test_info
         self._test_types = test_types
         self._test_args = test_args
-        self._target = target
+        self._configuration = configuration
         self._output_dir = output_dir
 
     def run(self):
@@ -159,7 +159,7 @@ class SingleTestThread(threading.Thread):
         end = time.time()
         self._test_stats = process_output(self._port,
             test_info, self._test_types, self._test_args,
-            self._target, self._output_dir, crash, timeout, end - start,
+            self._configuration, self._output_dir, crash, timeout, end - start,
             actual_checksum, output, error)
         driver.stop()
 
@@ -365,7 +365,7 @@ class TestShellThread(threading.Thread):
                                   test_info,
                                   self._test_types,
                                   self._test_args,
-                                  self._options.target,
+                                  self._options.configuration,
                                   self._options.results_directory)
 
         worker.start()
@@ -420,7 +420,7 @@ class TestShellThread(threading.Thread):
         end = time.time()
 
         stats = process_output(self._port, test_info, self._test_types,
-                               self._test_args, self._options.target,
+                               self._test_args, self._options.configuration,
                                self._options.results_directory, crash,
                                timeout, end - start, actual_checksum,
                                output, error)

@@ -44,7 +44,7 @@ _log = logging.getLogger("webkitpy.layout_tests.test_types.fuzzy_image_diff")
 
 class FuzzyImageDiff(test_type_base.TestTypeBase):
 
-    def compare_output(self, filename, output, test_args, target):
+    def compare_output(self, filename, output, test_args, configuration):
         """Implementation of CompareOutput that checks the output image and
         checksum against the expected files from the LayoutTest directory.
         """

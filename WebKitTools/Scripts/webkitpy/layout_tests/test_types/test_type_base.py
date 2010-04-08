@@ -131,7 +131,7 @@ class TestTypeBase(object):
             self._port.relative_test_filename(filename))
         return os.path.splitext(output_filename)[0] + modifier
 
-    def compare_output(self, port, filename, output, test_args, target):
+    def compare_output(self, port, filename, output, test_args, configuration):
         """Method that compares the output from the test with the
         expected value.
 
@@ -142,7 +142,7 @@ class TestTypeBase(object):
           output: a string containing the output of the test
           test_args: a TestArguments object holding optional additional
               arguments
-          target: Debug or Release
+          configuration: Debug or Release
 
         Return:
           a list of TestFailure objects, empty if the test passes

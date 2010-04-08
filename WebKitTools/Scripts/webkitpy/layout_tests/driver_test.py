@@ -64,8 +64,10 @@ if __name__ == '__main__':
     optparser = optparse.OptionParser()
     optparser.add_option('-p', '--platform', action='store', default='mac',
                          help='Platform to test (e.g., "mac", "chromium-mac", etc.')
-    optparser.add_option('-t', '--target', action='store', default='Release',
-                         help='build type ("Debug" or "Release")')
+    optparser.add_option('--debug', action='store_const', const='Debug',
+                         dest="configuration", help='Set the configuration to Debug')
+    optparser.add_option('--release', action='store_const', const='Release',
+                         dest="configuration", help='Set the configuration to Release')
     optparser.add_option('', '--timeout', action='store', default='2000',
                          help='test timeout in milliseconds (2000 by default)')
     optparser.add_option('', '--wrapper', action='store')

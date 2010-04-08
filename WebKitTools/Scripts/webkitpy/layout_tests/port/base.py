@@ -579,7 +579,7 @@ class Port(object):
         This is needed only by ports that use the apache_http_server module."""
         raise NotImplementedError('Port.path_to_apache_config_file')
 
-    def _path_to_driver(self, target=None):
+    def _path_to_driver(self, configuration=None):
         """Returns the full path to the test driver (DumpRenderTree)."""
         raise NotImplementedError('Port.path_to_driver')
 

@@ -84,12 +84,12 @@ class ImageDiff(test_type_base.TestTypeBase):
         self._save_baseline_data(filename, png_data, ".png")
         self._save_baseline_data(filename, checksum, ".checksum")
 
-    def _create_image_diff(self, port, filename, target):
+    def _create_image_diff(self, port, filename, configuration):
         """Creates the visual diff of the expected/actual PNGs.
 
         Args:
           filename: the name of the test
-          target: Debug or Release
+          configuration: Debug or Release
         Returns True if the files are different, False if they match
         """
         diff_filename = self.output_filename(filename,
@@ -110,12 +110,12 @@ class ImageDiff(test_type_base.TestTypeBase):
         global _compare_msg_printed
         if not _compare_available and not _compare_msg_printed:
             _compare_msg_printed = True
-            print('image_diff not found. Make sure you have a ' + target +
-                  ' build of the image_diff executable.')
+            print('image_diff not found. Make sure you have a ' +
+                  configuration + ' build of the image_diff executable.')
 
         return result
 
-    def compare_output(self, port, filename, output, test_args, target):
+    def compare_output(self, port, filename, output, test_args, configuration):
         """Implementation of CompareOutput that checks the output image and
         checksum against the expected files from the LayoutTest directory.
         """
@@ -169,7 +169,7 @@ class ImageDiff(test_type_base.TestTypeBase):
 
         # Even though we only use the result in one codepath below but we
         # still need to call CreateImageDiff for other codepaths.
-        images_are_different = self._create_image_diff(port, filename, target)
+        images_are_different = self._create_image_diff(port, filename, configuration)
         if expected_hash == '':
             failures.append(test_failures.FailureMissingImageHash(self))
         elif test_args.hash != expected_hash:

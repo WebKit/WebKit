@@ -80,7 +80,7 @@ class ChromiumPort(base.Port):
         result = check_file_exists(test_shell_binary_path,
                                    'test driver')
         if result:
-            result = (self._check_driver_build_up_to_date(self._options.target)
+            result = (self._check_driver_build_up_to_date(self._options.configuration)
                       and result)
         else:
             _log.error('')
@@ -129,7 +129,7 @@ class ChromiumPort(base.Port):
             'chromium', 'test_expectations.txt')
 
     def results_directory(self):
-        return self.path_from_chromium_base('webkit', self._options.target,
+        return self.path_from_chromium_base('webkit', self._options.configuration,
                                             self._options.results_directory)
 
     def setup_test_run(self):
@@ -201,8 +201,8 @@ class ChromiumPort(base.Port):
     # or any subclasses.
     #
 
-    def _check_driver_build_up_to_date(self, target):
-        if target in ('Debug', 'Release'):
+    def _check_driver_build_up_to_date(self, configuration):
+        if configuration in ('Debug', 'Release'):
             try:
                 debug_path = self._path_to_driver('Debug')
                 release_path = self._path_to_driver('Release')
@@ -210,8 +210,8 @@ class ChromiumPort(base.Port):
                 debug_mtime = os.stat(debug_path).st_mtime
                 release_mtime = os.stat(release_path).st_mtime
 
-                if (debug_mtime > release_mtime and target == 'Release' or
-                    release_mtime > debug_mtime and target == 'Debug'):
+                if (debug_mtime > release_mtime and configuration == 'Release' or
+                    release_mtime > debug_mtime and configuration == 'Debug'):
                     _log.warning('You are not running the most '
                                  'recent test_shell binary. You need to '
                                  'pass --debug or not to select between '
@@ -236,7 +236,7 @@ class ChromiumDriver(base.Driver):
     def __init__(self, port, image_path, options):
         self._port = port
         self._options = options
-        self._target = port._options.target
+        self._configuration = port._options.configuration
         self._image_path = image_path
 
         cmd = []

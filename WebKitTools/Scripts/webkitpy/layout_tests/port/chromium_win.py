@@ -47,8 +47,8 @@ class ChromiumWinPort(chromium.ChromiumPort):
     def __init__(self, port_name=None, options=None):
         if port_name is None:
             port_name = 'chromium-win' + self.version()
-        if options and not hasattr(options, 'target'):
-            options.target = 'Release'
+        if options and not hasattr(options, 'configuration'):
+            options.configuration = 'Release'
         chromium.ChromiumPort.__init__(self, port_name, options)
 
     def baseline_search_path(self):
@@ -141,16 +141,16 @@ class ChromiumWinPort(chromium.ChromiumPort):
     def _path_to_lighttpd_php(self):
         return self._lighttpd_path('php5', 'php-cgi.exe')
 
-    def _path_to_driver(self, target=None):
-        if not target:
-            target = self._options.target
-        return self._build_path(target, 'test_shell.exe')
+    def _path_to_driver(self, configuration=None):
+        if not configuration:
+            configuration = self._options.configuration
+        return self._build_path(configuration, 'test_shell.exe')
 
     def _path_to_helper(self):
-        return self._build_path(self._options.target, 'layout_test_helper.exe')
+        return self._build_path(self._options.configuration, 'layout_test_helper.exe')
 
     def _path_to_image_diff(self):
-        return self._build_path(self._options.target, 'image_diff.exe')
+        return self._build_path(self._options.configuration, 'image_diff.exe')
 
     def _path_to_wdiff(self):
         return self.path_from_chromium_base('third_party', 'cygwin', 'bin',

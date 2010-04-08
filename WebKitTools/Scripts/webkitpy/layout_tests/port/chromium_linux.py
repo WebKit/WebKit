@@ -46,8 +46,8 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
     def __init__(self, port_name=None, options=None):
         if port_name is None:
             port_name = 'chromium-linux'
-        if options and not hasattr(options, 'target'):
-            options.target = 'Release'
+        if options and not hasattr(options, 'configuration'):
+            options.configuration = 'Release'
         chromium.ChromiumPort.__init__(self, port_name, options)
 
     def baseline_search_path(self):
@@ -169,16 +169,16 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
     def _path_to_lighttpd_php(self):
         return "/usr/bin/php-cgi"
 
-    def _path_to_driver(self, target=None):
-        if not target:
-            target = self._options.target
-        return self._build_path(target, 'test_shell')
+    def _path_to_driver(self, configuration=None):
+        if not configuration:
+            configuration = self._options.configuration
+        return self._build_path(configuration, 'test_shell')
 
     def _path_to_helper(self):
         return None
 
     def _path_to_image_diff(self):
-        return self._build_path(self._options.target, 'image_diff')
+        return self._build_path(self._options.configuration, 'image_diff')
 
     def _path_to_wdiff(self):
         if self._is_redhat_based():

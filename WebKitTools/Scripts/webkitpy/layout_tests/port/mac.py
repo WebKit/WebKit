@@ -80,7 +80,7 @@ class MacPort(base.Port):
 
     def check_build(self, needs_http):
         build_drt_command = [self.script_path("build-dumprendertree")]
-        if self._options.target == "Debug":
+        if self._options.configuration == "Debug":
             build_drt_command.append('--debug')
         if executive.run_command(build_drt_command, return_exit_code=True):
             return False
@@ -319,7 +319,7 @@ class MacPort(base.Port):
             self._cached_build_root = executive.run_command(
                 [self.script_path("webkit-build-directory"),
                  "--top-level"]).rstrip()
-        return os.path.join(self._cached_build_root, self._options.target,
+        return os.path.join(self._cached_build_root, self._options.configuration,
                             *comps)
 
     def _kill_process(self, pid):

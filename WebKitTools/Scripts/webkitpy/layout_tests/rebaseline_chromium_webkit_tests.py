@@ -1003,14 +1003,14 @@ def main():
                                 '%(levelname)s %(message)s'),
                         datefmt='%y%m%d %H:%M:%S')
 
-    # options.target is used by port to locate image_diff binary.
+    # options.configuration is used by port to locate image_diff binary.
     # Check the imgage_diff release binary, if it does not exist,
     # fallback to debug.
-    options.target = "release"
+    options.configuration = "release"
     port_obj = port.get(None, options)
     if not port_obj.check_image_diff(override_step=None, logging=False):
         _log.debug('No release version image diff binary found.')
-        options.target = "debug"
+        options.configuration = "debug"
         port_obj = port.get(None, options)
     else:
        _log.debug('Found release version image diff binary.')
