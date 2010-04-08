@@ -52,7 +52,10 @@ public:
     // fileName - The name of the database file.
     // database - The SQLite structure that represents the database stored
     //            in the given file.
-    static int openDatabase(const String& fileName, sqlite3** database);
+    // forWebSQLDatabase - True, if and only if we're opening a Web SQL Database file.
+    //                     Used by Chromium to determine if the DB file needs to be opened
+    //                     using a custom VFS.
+    static int openDatabase(const String& fileName, sqlite3** database, bool forWebSQLDatabase);
 
     // Returns the file name for a database.
     //

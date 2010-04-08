@@ -142,12 +142,6 @@ namespace WebCore {
 
 void SQLiteFileSystem::registerSQLiteVFS()
 {
-    // FIXME: Make sure there aren't any unintended consequences when VFS code is called in the browser process.
-    if (!ChromiumBridge::sandboxEnabled()) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
     sqlite3_vfs* win32_vfs = sqlite3_vfs_find("win32");
     static sqlite3_vfs chromium_vfs = {
         1,

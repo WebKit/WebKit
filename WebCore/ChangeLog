@@ -1,3 +1,34 @@
+2010-04-07  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Fix Chromium's HTML5 DB support in --single-process mode.
+        https://bugs.webkit.org/show_bug.cgi?id=37186.
+
+        Always register and use Chromium's SQLite VFS for
+        WebSQLDatabases. Keep using the default VFS in all other
+        cases. This change should allow Chromium to support
+        WebSQLDatabases in --single-process mode.
+
+        Also, cleaning up a bit SQLiteFileSystemChromium and getting rid
+        of the SQLITE_OPEN_FULLMUTEX flag: we use sqlite DB handles only
+        on the DB thread, so we don't need multi-threaded support.
+
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::open):
+        * platform/sql/SQLiteDatabase.h:
+        * platform/sql/SQLiteFileSystem.cpp:
+        (WebCore::SQLiteFileSystem::openDatabase):
+        * platform/sql/SQLiteFileSystem.h:
+        * platform/sql/chromium/SQLiteFileSystemChromium.cpp:
+        (WebCore::SQLiteFileSystem::openDatabase):
+        * platform/sql/chromium/SQLiteFileSystemChromiumPosix.cpp:
+        (WebCore::SQLiteFileSystem::registerSQLiteVFS):
+        * platform/sql/chromium/SQLiteFileSystemChromiumWin.cpp:
+        (WebCore::SQLiteFileSystem::registerSQLiteVFS):
+        * storage/Database.cpp:
+        (WebCore::Database::performOpenAndVerify):
+
 2010-04-07  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Steve Falkenburg.

@@ -55,7 +55,7 @@ public:
     SQLiteDatabase();
     ~SQLiteDatabase();
 
-    bool open(const String& filename);
+    bool open(const String& filename, bool forWebSQLDatabase = false);
     bool isOpen() const { return m_db; }
     void close();
 

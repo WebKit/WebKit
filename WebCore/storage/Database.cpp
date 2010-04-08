@@ -538,7 +538,7 @@ void Database::performPolicyChecks()
 
 bool Database::performOpenAndVerify(ExceptionCode& e)
 {
-    if (!m_sqliteDatabase.open(m_filename)) {
+    if (!m_sqliteDatabase.open(m_filename, true)) {
         LOG_ERROR("Unable to open database at path %s", m_filename.ascii().data());
         e = INVALID_STATE_ERR;
         return false;
