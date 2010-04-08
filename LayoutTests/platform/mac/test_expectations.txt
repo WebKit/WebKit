@@ -127,3 +127,5 @@ BUG36620 : transforms/2d/hindi-rotated.html = IMAGE
 // These fail depending on order due to interactions with previous tests:
 BUG35006 : fast/dom/global-constructors.html = PASS TEXT
 BUG37007 : fast/tokenizer/doctype-search-reset.html = PASS TEXT
+BUG37255 : fast/repaint/renderer-destruction-by-invalidateSelection-crash.html = PASS TEXT
+BUG37256 : fast/text/international/thai-line-breaks.html = PASS TEXT

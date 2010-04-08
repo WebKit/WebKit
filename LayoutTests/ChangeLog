@@ -1,3 +1,10 @@
+2010-04-08  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.  Update test_expectations to account for some tests that
+        fail when run out of order.
+
+        * platform/mac/test_expectations.txt:
+
 2010-04-08  Chris Evans  <cevans@chromium.org>
 
         Reviewed by Adam Barth.
