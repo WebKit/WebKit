@@ -1,3 +1,35 @@
+2010-04-08  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [chromium] Many new test results are needed due to recent check-ins.
+        https://bugs.webkit.org/show_bug.cgi?id=36799
+
+        I missed the linux-only results in http://trac.webkit.org/changeset/57291
+
+        * platform/chromium-linux/tables/mozilla/bugs/bug1296-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug1296-expected.png: Removed.
+        * platform/chromium-linux/tables/mozilla/bugs/bug1430-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug1430-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/backgr_simple-table-column-group-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/marvin/backgr_simple-table-column-group-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/backgr_simple-table-row-group-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/marvin/backgr_simple-table-row-group-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_border-table-column-expected.checksum:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_border-table-column-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_border-table-column-group-expected.checksum:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_border-table-column-group-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_border-table-row-expected.checksum:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_border-table-row-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_fixed-bg-expected.checksum:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_fixed-bg-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_layers-hide-expected.checksum:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_layers-hide-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_position-table-column-expected.checksum:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_position-table-column-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_position-table-row-group-expected.checksum:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_position-table-row-group-expected.png:
+
 2010-04-07  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Oliver Hunt.
