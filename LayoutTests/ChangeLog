@@ -1,3 +1,13 @@
+2010-04-08  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Darin Adler.
+
+        Tests that should have been landed as part of the earlier patch for Bug 36276.
+        https://bugs.webkit.org/show_bug.cgi?id=36276
+
+        * fast/css/invalid-not-with-simple-selector-sequence-expected.txt: Added.
+        * fast/css/invalid-not-with-simple-selector-sequence.html: Added.
+
 2010-04-08  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Dimitri Glazkov.
