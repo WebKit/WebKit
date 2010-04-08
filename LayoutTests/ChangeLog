@@ -1,3 +1,12 @@
+2010-04-08  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Fix http.conf for GTK-Debug and Chromium-Linux bots
+        https://bugs.webkit.org/show_bug.cgi?id=37279
+
+        * http/conf/apache2-debian-httpd.conf:
+
 2010-04-08  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
