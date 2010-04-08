@@ -1,3 +1,17 @@
+2010-04-08  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Simon Hausmann.
+
+        [WINCE] Use WebCore::instanceHandle()
+        https://bugs.webkit.org/show_bug.cgi?id=37202
+
+        Page::instanceHandle() is moved to WebCore::instanceHandle().
+
+        * platform/wince/PasteboardWince.cpp:
+        (WebCore::Pasteboard::Pasteboard):
+        * platform/wince/SharedTimerWince.cpp:
+        (WebCore::initializeOffScreenTimerWindow):
+
 2010-04-08  Vitaly Repeshko  <vitalyr@chromium.org>
 
         Reviewed by Dimitri Glazkov.
