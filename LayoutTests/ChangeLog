@@ -1,5 +1,11 @@
 2010-04-08  Andrew Scherkus  <scherkus@chromium.org>
 
+        Unreviewed, cleaning up Chromium Mac test expecatations for fast/media.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-04-08  Andrew Scherkus  <scherkus@chromium.org>
+
         Unreviewed, cleaning up test expectations for fast/media and media/video-played-reset.html.
 
         Previously all of fast/media was marked as PASS FAIL, but now has finer-grained
