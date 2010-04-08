@@ -395,8 +395,8 @@
             shouldBe("window.onsubmit", "onsubmitOld");
             shouldBe("window.onunload", "onunloadOld");
             shouldBe("window.opener", "openerOld");
-            shouldBe("window.outerHeight", "outerHeightOld");
-            shouldBe("window.outerWidth", "outerWidthOld");
+            shouldBe("window.outerHeight", "outerHeightOld", true); // The result can be dependent on previous tests.
+            shouldBe("window.outerWidth", "outerWidthOld", true); // The result can be dependent on previous tests.
             shouldBe("window.pageXOffset", "pageXOffsetOld");
             shouldBe("window.pageYOffset", "pageYOffsetOld");
             shouldBe("window.personalbar", "personalbarOld");

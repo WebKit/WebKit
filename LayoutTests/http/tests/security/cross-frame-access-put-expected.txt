@@ -511,8 +511,8 @@ ALERT: PASS: window.onselect should be 'null' and is.
 ALERT: PASS: window.onsubmit should be 'null' and is.
 ALERT: PASS: window.onunload should be 'null' and is.
 ALERT: PASS: window.opener should be 'null' and is.
-ALERT: PASS: window.outerHeight should be '0' and is.
-ALERT: PASS: window.outerWidth should be '0' and is.
+ALERT: PASS: window.outerHeight matched the expected value.
+ALERT: PASS: window.outerWidth matched the expected value.
 ALERT: PASS: window.pageXOffset should be '0' and is.
 ALERT: PASS: window.pageYOffset should be '0' and is.
 ALERT: PASS: window.personalbar should be '[object BarInfo]' and is.
