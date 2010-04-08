@@ -129,3 +129,5 @@ BUG35006 : fast/dom/global-constructors.html = PASS TEXT
 BUG37007 : fast/tokenizer/doctype-search-reset.html = PASS TEXT
 BUG37255 : fast/repaint/renderer-destruction-by-invalidateSelection-crash.html = PASS TEXT
 BUG37256 : fast/text/international/thai-line-breaks.html = PASS TEXT
+BUG37259 : fast/dom/SelectorAPI/dumpNodeList-almost-strict.html = PASS TEXT
+BUG37259 : fast/dom/SelectorAPI/dumpNodeList.html = PASS TEXT

@@ -1,3 +1,13 @@
+2010-04-08  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Update test_expectations to account for tests which fail
+        when run out of order.
+
+        fast/dom/SelectorAPI/dumpNodeList tests fail when run out of order.
+        https://bugs.webkit.org/show_bug.cgi?id=37259
+
+        * platform/mac/test_expectations.txt:
+
 2010-04-08  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.  Update test_expectations to account for some tests that
