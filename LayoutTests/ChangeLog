@@ -1,3 +1,13 @@
+2010-04-08  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Render Load, DOM Content and MarkTimeline event dividers on Timeline panel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37267
+
+        * inspector/timeline-enum-stability-expected.txt:
+
 2010-04-08  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed. Fix a test for the behavior change by r57274.

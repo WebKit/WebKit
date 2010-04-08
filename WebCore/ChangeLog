@@ -1,3 +1,42 @@
+2010-04-08  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Render Load, DOM Content and MarkTimeline event dividers on Timeline panel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37267
+
+        * English.lproj/localizedStrings.js:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::mainResourceFiredDOMContentEvent):
+        (WebCore::InspectorController::mainResourceFiredLoadEvent):
+        * inspector/InspectorController.h:
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::didMarkDOMContentEvent):
+        (WebCore::InspectorTimelineAgent::didMarkLoadEvent):
+        * inspector/InspectorTimelineAgent.h:
+        (WebCore::):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.updateGraphDividersIfNeeded):
+        * inspector/front-end/TimelineAgent.js:
+        * inspector/front-end/TimelineGrid.js:
+        (WebInspector.TimelineGrid.prototype.removeEventDividers):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+        (WebInspector.TimelinePanel.prototype.get _recordStyles):
+        (WebInspector.TimelinePanel.prototype._updateMarks):
+        (WebInspector.TimelinePanel.prototype._innerAddRecordToTimeline):
+        (WebInspector.TimelinePanel.prototype._clearPanel):
+        (WebInspector.TimelinePanel.prototype._refresh):
+        (WebInspector.TimelinePanel.prototype._refreshRecords):
+        (WebInspector.TimelineCalculator.prototype.computeBarGraphWindowPosition):
+        (WebInspector.TimelineRecordGraphRow.prototype.update):
+        * inspector/front-end/inspector.css:
+        (.resources-event-divider):
+        (.resources-red-divider):
+        (.resources-blue-divider):
+        (.resources-orange-divider):
+
 2010-04-01  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by David Hyatt.

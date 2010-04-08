@@ -841,6 +841,8 @@ void InspectorController::mainResourceFiredDOMContentEvent(DocumentLoader* loade
 
     if (m_mainResource) {
         m_mainResource->markDOMContentEventTime();
+        if (m_timelineAgent)
+            m_timelineAgent->didMarkDOMContentEvent();
         if (m_frontend)
             m_mainResource->updateScriptObject(m_frontend.get());
     }
@@ -853,6 +855,8 @@ void InspectorController::mainResourceFiredLoadEvent(DocumentLoader* loader, con
 
     if (m_mainResource) {
         m_mainResource->markLoadEventTime();
+        if (m_timelineAgent)
+            m_timelineAgent->didMarkLoadEvent();
         if (m_frontend)
             m_mainResource->updateScriptObject(m_frontend.get());
     }

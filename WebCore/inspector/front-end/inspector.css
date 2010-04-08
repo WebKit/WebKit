@@ -2667,7 +2667,7 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
     margin-right: 3px;
 }
 
-#resources-dividers {
+.resources-dividers {
     position: absolute;
     left: 0;
     right: 0;
@@ -2676,7 +2676,7 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
     z-index: -100;
 }
 
-#resources-event-dividers {
+.resources-event-dividers {
     position: absolute;
     left: 0;
     right: 0;
@@ -2686,7 +2686,11 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
     pointer-events: none;
 }
 
-#resources-dividers-label-bar {
+.timeline .resources-event-dividers {
+    height: 19px;
+}
+
+.resources-dividers-label-bar {
     position: absolute;
     top: 0;
     left: 0px;
@@ -2714,22 +2718,24 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
     pointer-events: auto;
 }
 
-.resources-onload-divider {
+.resources-event-divider {
     position: absolute;
     width: 2px;
     top: 0;
     bottom: 0;
     z-index: 300;
+}
+
+.resources-red-divider {
     background-color: rgba(255, 0, 0, 0.5);
 }
 
-.resources-ondomcontent-divider {
-    position: absolute;
-    width: 2px;
-    top: 0;
-    bottom: 0;
-    z-index: 300;
+.resources-blue-divider {
     background-color: rgba(0, 0, 255, 0.5);
+}
+
+.resources-orange-divider {
+    background-color: rgba(255, 178, 23, 0.5);
 }
 
 .resources-divider.last {

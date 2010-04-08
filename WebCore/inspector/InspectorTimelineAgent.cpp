@@ -244,6 +244,18 @@ void InspectorTimelineAgent::didMarkTimeline(const String& message)
     addRecordToTimeline(record, MarkTimelineRecordType);
 }
 
+void InspectorTimelineAgent::didMarkDOMContentEvent()
+{
+    ScriptObject record = TimelineRecordFactory::createGenericRecord(m_frontend, WTF::currentTimeMS());
+    addRecordToTimeline(record, MarkDOMContentEventType);
+}
+
+void InspectorTimelineAgent::didMarkLoadEvent()
+{
+    ScriptObject record = TimelineRecordFactory::createGenericRecord(m_frontend, WTF::currentTimeMS());
+    addRecordToTimeline(record, MarkLoadEventType);
+}
+
 void InspectorTimelineAgent::reset()
 {
     m_recordStack.clear();

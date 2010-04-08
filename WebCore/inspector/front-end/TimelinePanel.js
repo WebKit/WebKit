@@ -95,6 +95,8 @@ WebInspector.TimelinePanel = function()
     // Disable short events filter by default.
     this.toggleFilterButton.toggled = true;
     this._calculator._showShortEvents = this.toggleFilterButton.toggled;
+    this._markTimelineRecords = [];
+    this._expandOffset = 15;
 }
 
 WebInspector.TimelinePanel.shortRecordThreshold = 0.015;
@@ -152,6 +154,8 @@ WebInspector.TimelinePanel.prototype = {
             recordStyles[recordTypes.FunctionCall] = { title: WebInspector.UIString("Function Call"), category: this.categories.scripting };
             recordStyles[recordTypes.ResourceReceiveData] = { title: WebInspector.UIString("Receive Data"), category: this.categories.loading };
             recordStyles[recordTypes.GCEvent] = { title: WebInspector.UIString("GC Event"), category: this.categories.scripting };
+            recordStyles[recordTypes.MarkDOMContentEventType] = { title: WebInspector.UIString("DOMContent event"), category: this.categories.scripting };
+            recordStyles[recordTypes.MarkLoadEventType] = { title: WebInspector.UIString("Load event"), category: this.categories.scripting };
             this._recordStylesArray = recordStyles;
         }
         return this._recordStylesArray;
@@ -175,6 +179,46 @@ WebInspector.TimelinePanel.prototype = {
     _updateRecordsCounter: function()
     {
         this.recordsCounter.textContent = WebInspector.UIString("%d of %d captured records are visible", this._rootRecord._visibleRecordsCount, this._rootRecord._allRecordsCount);
+    },
+
+    _updateEventDividers: function()
+    {
+        this._timelineGrid.removeEventDividers();
+        var clientWidth = this._graphRowsElement.offsetWidth - this._expandOffset;
+        for (var i = 0; i < this._markTimelineRecords.length; ++i) {
+            var record = this._markTimelineRecords[i];
+            var positions = this._calculator.computeBarGraphWindowPosition(record, clientWidth);
+            if (positions.left < 0 || positions.left >= clientWidth)
+                continue;
+
+            var divider = this._createEventDivider(record);
+            divider.style.left = (positions.left + this._expandOffset) + "px";
+
+            this._timelineGrid.addEventDivider(divider);
+        }
+        this._overviewPane.updateEventDividers(this._markTimelineRecords, this._createEventDivider.bind(this));
+    },
+
+    _createEventDivider: function(record)
+    {
+        var eventDivider = document.createElement("div");
+        eventDivider.className = "resources-event-divider";
+        var recordTypes = WebInspector.TimelineAgent.RecordType;
+
+        var eventDividerPadding = document.createElement("div");
+        eventDividerPadding.className = "resources-event-divider-padding";
+        eventDividerPadding.title = record.title;
+
+        if (record.type === recordTypes.MarkDOMContentEventType)
+            eventDivider.className += " resources-blue-divider";
+        else if (record.type === recordTypes.MarkLoadEventType)
+            eventDivider.className += " resources-red-divider";
+        else if (record.type === recordTypes.MarkTimeline) {
+            eventDivider.className += " resources-orange-divider";
+            eventDividerPadding.title = record.data.message;
+        }
+        eventDividerPadding.appendChild(eventDivider);
+        return eventDividerPadding;
     },
 
     _toggleTimelineButtonClicked: function()
@@ -243,8 +287,16 @@ WebInspector.TimelinePanel.prototype = {
                 connectedToOldRecord = true;
             }
         }
+        var recordTypes = WebInspector.TimelineAgent.RecordType;
 
         var formattedRecord = new WebInspector.TimelinePanel.FormattedRecord(record, parentRecord, this._recordStyles, this._sendRequestRecords, this._timerRecords);
+
+        if (record.type === recordTypes.MarkDOMContentEventType || record.type === recordTypes.MarkLoadEventType) {
+            // No bar entry for load events.
+            this._markTimelineRecords.push(formattedRecord);
+            return;
+        }
+
         ++this._rootRecord._allRecordsCount;
 
         if (parentRecord === this._rootRecord)
@@ -260,6 +312,10 @@ WebInspector.TimelinePanel.prototype = {
                 record = record.parent;
             }
         }
+
+        // Keep bar entry for mark timeline since nesting might be interesting to the user.
+        if (record.type === recordTypes.MarkTimeline)
+            this._markTimelineRecords.push(formattedRecord);
     },
 
     setSidebarWidth: function(width)
@@ -293,6 +349,7 @@ WebInspector.TimelinePanel.prototype = {
 
     _clearPanel: function()
     {
+        this._markTimelineRecords = [];
         this._sendRequestRecords = {};
         this._timerRecords = {};
         this._rootRecord = this._createRootRecord();
@@ -360,6 +417,7 @@ WebInspector.TimelinePanel.prototype = {
         this._overviewPane.update(this._rootRecord.children, this._calculator._showShortEvents);
         this._refreshRecords(!this._boundariesAreValid);
         this._updateRecordsCounter();
+        this._updateEventDividers();
         this._boundariesAreValid = true;
     },
 
@@ -417,7 +475,6 @@ WebInspector.TimelinePanel.prototype = {
 
         // Define row height, should be in sync with styles for timeline graphs.
         const rowHeight = 18;
-        const expandOffset = 15;
 
         // Convert visible area to visible indexes. Always include top-level record for a visible nested record.
         var startIndex = Math.max(0, Math.min(Math.floor(visibleTop / rowHeight) - 1, recordsInWindow.length - 1));
@@ -451,7 +508,7 @@ WebInspector.TimelinePanel.prototype = {
             }
 
             listRowElement.row.update(record, isEven, this._calculator, visibleTop);
-            graphRowElement.row.update(record, isEven, this._calculator, width, expandOffset, i);
+            graphRowElement.row.update(record, isEven, this._calculator, width, this._expandOffset, i);
 
             listRowElement = listRowElement.nextSibling;
             graphRowElement = graphRowElement.nextSibling;
@@ -472,7 +529,7 @@ WebInspector.TimelinePanel.prototype = {
         this._itemsGraphsElement.insertBefore(this._graphRowsElement, this._bottomGapElement);
         this.sidebarResizeElement.style.height = this.sidebarElement.clientHeight + "px";
         // Reserve some room for expand / collapse controls to the left for records that start at 0ms.
-        var timelinePaddingLeft = this._calculator.windowLeft === 0 ? expandOffset : 0;
+        var timelinePaddingLeft = this._calculator.windowLeft === 0 ? this._expandOffset : 0;
         if (updateBoundaries)
             this._timelineGrid.updateDividers(true, this._calculator, timelinePaddingLeft);
         this._adjustScrollPosition((recordsInWindow.length + 1) * rowHeight);
@@ -530,11 +587,11 @@ WebInspector.TimelineCalculator.prototype = {
         return {start: start, end: end, endWithChildren: endWithChildren};
     },
 
-    computeBarGraphWindowPosition: function(record, clientWidth, expandOffset)
+    computeBarGraphWindowPosition: function(record, clientWidth)
     {
         const minWidth = 5;
         const borderWidth = 4;
-        var workingArea = clientWidth - expandOffset - minWidth - borderWidth;
+        var workingArea = clientWidth - minWidth - borderWidth;
         var percentages = this.computeBarGraphPercentages(record);
         var left = percentages.start / 100 * workingArea;
         var width = (percentages.end - percentages.start) / 100 * workingArea + minWidth;
@@ -670,7 +727,7 @@ WebInspector.TimelineRecordGraphRow.prototype = {
     {
         this._record = record;
         this.element.className = "timeline-graph-side timeline-category-" + record.category.name + (isEven ? " even" : "");
-        var barPosition = calculator.computeBarGraphWindowPosition(record, clientWidth, expandOffset);
+        var barPosition = calculator.computeBarGraphWindowPosition(record, clientWidth - expandOffset);
         this._barWithChildrenElement.style.left = barPosition.left + expandOffset + "px";
         this._barWithChildrenElement.style.width = barPosition.widthWithChildren + "px";
         this._barElement.style.left = barPosition.left + expandOffset + "px";

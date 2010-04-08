@@ -578,7 +578,7 @@ WebInspector.ResourcesPanel.prototype = {
             var percent = this.calculator.computePercentageFromEventTime(this.mainResourceLoadTime);
 
             var loadDivider = document.createElement("div");
-            loadDivider.className = "resources-onload-divider";
+            loadDivider.className = "resources-event-divider resources-red-divider";
 
             var loadDividerPadding = document.createElement("div");
             loadDividerPadding.className = "resources-event-divider-padding";
@@ -593,7 +593,7 @@ WebInspector.ResourcesPanel.prototype = {
             var percent = this.calculator.computePercentageFromEventTime(this.mainResourceDOMContentTime);
 
             var domContentDivider = document.createElement("div");
-            domContentDivider.className = "resources-ondomcontent-divider";
+            domContentDivider.className = "resources-event-divider resources-blue-divider";
             
             var domContentDividerPadding = document.createElement("div");
             domContentDividerPadding.className = "resources-event-divider-padding";
