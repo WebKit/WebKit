@@ -1,3 +1,19 @@
+2010-04-07  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Enable rebaseline-chromium-webkit-tests to run from a webkit-only
+        checkout (i.e., you don't need anything from the Chromium tree checked
+        out). This requires us to introduce the concept of a "target"
+        port/platform that we use to get configuration information from as well
+        as the "running" port that we use to make directories and diff images
+        and the "rebaselining" port we use to actually manage baselines.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37238
+
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests.py:
+
 2010-04-05  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Simon Hausmann.

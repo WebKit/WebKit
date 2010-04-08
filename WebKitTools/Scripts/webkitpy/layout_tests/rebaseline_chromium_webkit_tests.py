@@ -41,6 +41,7 @@ The script does the following for each platform specified:
 At the end, the script generates a html that compares old and new baselines.
 """
 
+import copy
 import logging
 import optparse
 import os
@@ -203,14 +204,21 @@ class Rebaseliner(object):
 
     REVISION_REGEX = r'<a href=\"(\d+)/\">'
 
-    def __init__(self, running_port, platform, options):
+    def __init__(self, running_port, target_port, platform, options):
+        """
+        Args:
+            running_port: the Port the script is running on.
+            target_port: the Port the script uses to find port-specific
+                configuration information like the test_expectations.txt
+                file location and the list of test platforms.
+            platform: the test platform to rebaseline
+            options: the command-line options object."""
         self._platform = platform
         self._options = options
-        # This is the port that the script is running on.
         self._port = running_port
-        # This is the port that the rebaselining tool creates new baselines for.
+        self._target_port = target_port
         self._rebaseline_port = port.get(
-            self._port.test_platform_name_to_name(platform), options)
+            self._target_port.test_platform_name_to_name(platform), options)
         self._rebaselining_tests = []
         self._rebaselined_tests = []
 
@@ -504,7 +512,8 @@ class Rebaseliner(object):
           True if the baseline is unnecessary.
           False otherwise.
         """
-        test_filepath = os.path.join(self._port.layout_tests_dir(), test)
+        test_filepath = os.path.join(self._target_port.layout_tests_dir(),
+                                     test)
         all_baselines = self._rebaseline_port.expected_baselines(
             test_filepath, suffix, True)
         for (fallback_dir, fallback_file) in all_baselines:
@@ -580,7 +589,7 @@ class Rebaseliner(object):
             new_expectations = (
                 self._test_expectations.remove_platform_from_expectations(
                 self._rebaselined_tests, self._platform))
-            path = self._port.path_to_test_expectations_file()
+            path = self._target_port.path_to_test_expectations_file()
             if backup:
                 date_suffix = time.strftime('%Y%m%d%H%M%S',
                                             time.localtime(time.time()))
@@ -797,9 +806,9 @@ class HtmlGenerator(object):
                         '<img style="width: 200" src="%(uri)s" /></a></td>')
     HTML_TR = '<tr>%s</tr>'
 
-    def __init__(self, port, options, platforms, rebaselining_tests):
+    def __init__(self, target_port, options, platforms, rebaselining_tests):
         self._html_directory = options.html_directory
-        self._port = port
+        self._target_port = target_port
         self._platforms = platforms
         self._rebaselining_tests = rebaselining_tests
         self._html_file = os.path.join(options.html_directory,
@@ -838,7 +847,7 @@ class HtmlGenerator(object):
 
         _log.info('Launching html: "%s"', self._html_file)
 
-        html_uri = self._port.filename_to_uri(self._html_file)
+        html_uri = self._target_port.filename_to_uri(self._html_file)
         webbrowser.open(html_uri, 1)
 
         _log.info('Html launched.')
@@ -876,13 +885,14 @@ class HtmlGenerator(object):
         links = ''
         if os.path.exists(old_file):
             links += html_td_link % {
-                'uri': self._port.filename_to_uri(old_file),
+                'uri': self._target_port.filename_to_uri(old_file),
                 'name': baseline_filename}
         else:
             _log.info('    No old baseline file: "%s"', old_file)
             links += self.HTML_TD_NOLINK % ''
 
-        links += html_td_link % {'uri': self._port.filename_to_uri(new_file),
+        links += html_td_link % {'uri': self._target_port.filename_to_uri(
+                                     new_file),
                                  'name': baseline_filename}
 
         diff_file = get_result_file_fullpath(self._html_directory,
@@ -890,7 +900,7 @@ class HtmlGenerator(object):
                                              'diff')
         _log.info('    Baseline diff file: "%s"', diff_file)
         if os.path.exists(diff_file):
-            links += html_td_link % {'uri': self._port.filename_to_uri(
+            links += html_td_link % {'uri': self._target_port.filename_to_uri(
                 diff_file), 'name': 'Diff'}
         else:
             _log.info('    No baseline diff file: "%s"', diff_file)
@@ -929,9 +939,10 @@ class HtmlGenerator(object):
                     rows.append(self.HTML_TR % row)
 
         if rows:
-            test_path = os.path.join(self._port.layout_tests_dir(), test)
-            html = self.HTML_TR_TEST % (self._port.filename_to_uri(test_path),
-                test)
+            test_path = os.path.join(self._target_port.layout_tests_dir(),
+                                     test)
+            html = self.HTML_TR_TEST % (
+                self._target_port.filename_to_uri(test_path), test)
             html += self.HTML_TEST_DETAIL % ' '.join(rows)
 
             _log.debug('    html for test: %s', html)
@@ -987,12 +998,23 @@ def main():
                              help=('The directory that stores the results for'
                                    ' rebaselining comparison.'))
 
+    option_parser.add_option('', '--target-platform',
+                             default='chromium',
+                             help=('The target platform to rebaseline '
+                                   '("mac", "chromium", "qt", etc.). Defaults '
+                                   'to "chromium".'))
     options = option_parser.parse_args()[0]
 
-    # FIXME: Setting options.chromium to True forces port.get() to only look
-    # at Chromium ports; we hard-code this because this script doesn't work
-    # on non-Chromium ports yet. We should fix that.
-    options.chromium = True
+    # We need to create three different Port objects over the life of this
+    # script. |target_port_obj| is used to determine configuration information:
+    # location of the expectations file, names of ports to rebaseline, etc.
+    # |port_obj| is used for runtime functionality like actually diffing
+    # Then we create a rebaselining port to actual find and manage the
+    # baselines.
+    target_options = copy.copy(options)
+    if options.target_platform == 'chromium':
+        target_options.chromium = True
+    target_port_obj = port.get(None, target_options)
 
     # Set up our logging format.
     log_level = logging.INFO
@@ -1013,7 +1035,7 @@ def main():
         options.configuration = "debug"
         port_obj = port.get(None, options)
     else:
-       _log.debug('Found release version image diff binary.')
+        _log.debug('Found release version image diff binary.')
 
     # Verify 'platforms' option is valid
     if not options.platforms:
@@ -1040,7 +1062,7 @@ def main():
     rebaselining_tests = set()
     backup = options.backup
     for platform in rebaseline_platforms:
-        rebaseliner = Rebaseliner(port_obj, platform, options)
+        rebaseliner = Rebaseliner(port_obj, target_port_obj, platform, options)
 
         _log.info('')
         log_dashed_string('Rebaseline started', platform)
@@ -1055,7 +1077,7 @@ def main():
 
     _log.info('')
     log_dashed_string('Rebaselining result comparison started', None)
-    html_generator = HtmlGenerator(port_obj,
+    html_generator = HtmlGenerator(target_port_obj,
                                    options,
                                    rebaseline_platforms,
                                    rebaselining_tests)

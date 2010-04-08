@@ -62,7 +62,8 @@ class MacPort(base.Port):
 
         # FIXME: disable pixel tests until they are run by default on the
         # build machines.
-        if options and options.pixel_tests is None:
+        if options and (not hasattr(options, "pixel_tests") or
+           options.pixel_tests is None):
             options.pixel_tests = False
 
     def baseline_path(self):
@@ -86,14 +87,12 @@ class MacPort(base.Port):
         if executive.run_command(build_drt_command, return_exit_code=True):
             return False
 
+        if not self.check_image_diff():
+            return False
+
         driver_path = self._path_to_driver()
         if not os.path.exists(driver_path):
             _log.error("DumpRenderTree was not found at %s" % driver_path)
-            return False
-
-        image_diff_path = self._path_to_image_diff()
-        if not os.path.exists(image_diff_path):
-            _log.error("ImageDiff was not found at %s" % image_diff_path)
             return False
 
         java_tests_path = os.path.join(self.layout_tests_dir(), "java")
@@ -102,6 +101,13 @@ class MacPort(base.Port):
             _log.error("Failed to build Java support files: %s" % build_java)
             return False
 
+        return True
+
+    def check_image_diff(self, override_step=None, logging=True):
+        image_diff_path = self._path_to_image_diff()
+        if not os.path.exists(image_diff_path):
+            _log.error("ImageDiff was not found at %s" % image_diff_path)
+            return False
         return True
 
     def diff_image(self, expected_filename, actual_filename,
