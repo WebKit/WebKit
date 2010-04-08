@@ -46,6 +46,7 @@ static bool areRectsFullyAligned(FocusDirection, const IntRect&, const IntRect&)
 static bool areRectsPartiallyAligned(FocusDirection, const IntRect&, const IntRect&);
 static bool isRectInDirection(FocusDirection, const IntRect&, const IntRect&);
 static void deflateIfOverlapped(IntRect&, IntRect&);
+static bool checkNegativeCoordsForNode(Node*, const IntRect&);
 
 void distanceDataForNode(FocusDirection direction, Node* start, FocusCandidate& candidate)
 {
@@ -68,8 +69,20 @@ void distanceDataForNode(FocusDirection direction, Node* start, FocusCandidate& 
     // deflate both.
     deflateIfOverlapped(curRect, targetRect);
 
+    // If empty rects or negative width or height, bail out.
     if (curRect.isEmpty() || targetRect.isEmpty()
-        || targetRect.x() < 0 || targetRect.y() < 0) {
+     || targetRect.width() <= 0 || targetRect.height() <= 0) {
+        candidate.distance = maxDistance();
+        return;
+    }
+
+    // Negative coordinates can be used if node is scrolled up offscreen.
+    if (!checkNegativeCoordsForNode(start, curRect)) {
+        candidate.distance = maxDistance();
+        return;
+    }
+
+    if (!checkNegativeCoordsForNode(candidate.node, targetRect)) {
         candidate.distance = maxDistance();
         return;
     }
@@ -484,6 +497,26 @@ static void deflateIfOverlapped(IntRect& a, IntRect& b)
 
     if ((b.width() + 2 * fudgeFactor > 0) && (b.height() + 2 * fudgeFactor > 0))
         b.inflate(fudgeFactor);
+}
+
+static bool checkNegativeCoordsForNode(Node* node, const IntRect& curRect)
+{
+    ASSERT(node || node->renderer());
+
+    if (curRect.x() > 0 && curRect.y() > 0)
+        return true;
+
+    bool canBeScrolled = false;
+
+    RenderObject* renderer = node->renderer();
+    for (; renderer; renderer = renderer->parent()) {
+        if (renderer->isBox() && toRenderBox(renderer)->canBeScrolledAndHasScrollableArea()) {
+            canBeScrolled = true;
+            break;
+        }
+    }
+
+    return canBeScrolled;
 }
 
 } // namespace WebCore

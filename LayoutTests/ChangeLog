@@ -1,3 +1,13 @@
+2010-03-29  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Spatial Navigation: proper handle negative x or y coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=36773
+
+        * fast/events/spatial-navigation/snav-offscreen-content-expected.txt: Added.
+        * fast/events/spatial-navigation/snav-offscreen-content.html: Added.
+
 2010-04-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] r57274 removed fast/forms/willvalidate-000.html,
