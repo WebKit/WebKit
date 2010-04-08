@@ -38,14 +38,13 @@
 
 namespace WebCore {
 
-PassRefPtr<V8CustomXPathNSResolver> V8CustomXPathNSResolver::create(V8Proxy* proxy, v8::Handle<v8::Object> resolver)
+PassRefPtr<V8CustomXPathNSResolver> V8CustomXPathNSResolver::create(v8::Handle<v8::Object> resolver)
 {
-    return adoptRef(new V8CustomXPathNSResolver(proxy, resolver));
+    return adoptRef(new V8CustomXPathNSResolver(resolver));
 }
 
-V8CustomXPathNSResolver::V8CustomXPathNSResolver(V8Proxy* proxy, v8::Handle<v8::Object> resolver)
-        : m_proxy(proxy)
-        , m_resolver(resolver)
+V8CustomXPathNSResolver::V8CustomXPathNSResolver(v8::Handle<v8::Object> resolver)
+    : m_resolver(resolver)
 {
 }
 
@@ -55,14 +54,6 @@ V8CustomXPathNSResolver::~V8CustomXPathNSResolver()
 
 String V8CustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
 {
-    V8Proxy* proxy = m_proxy;
-
-    if (!proxy) {
-        proxy = V8Proxy::retrieve();
-        if (!proxy)
-            return String();
-    }
-
     v8::Handle<v8::Function> lookupNamespaceURIFunc;
     v8::Handle<v8::String> lookupNamespaceURIName = v8::String::New("lookupNamespaceURI");
 
@@ -74,8 +65,10 @@ String V8CustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
     }
 
     if (lookupNamespaceURIFunc.IsEmpty() && !m_resolver->IsFunction()) {
-        Frame* frame = proxy->frame();
-        logInfo(frame, "XPathNSResolver does not have a lookupNamespaceURI method.", String());
+        if (V8Proxy* proxy = V8Proxy::retrieve()) {
+            if (Frame* frame = proxy->frame())
+                logInfo(frame, "XPathNSResolver does not have a lookupNamespaceURI method.", String());
+        }
         return String();
     }
 
@@ -87,7 +80,7 @@ String V8CustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
     v8::Handle<v8::Value> argv[argc] = { v8String(prefix) };
     v8::Handle<v8::Function> function = lookupNamespaceURIFunc.IsEmpty() ? v8::Handle<v8::Function>::Cast(m_resolver) : lookupNamespaceURIFunc;
 
-    v8::Handle<v8::Value> retval = proxy->callFunction(function, m_resolver, argc, argv);
+    v8::Handle<v8::Value> retval = V8Proxy::callFunctionWithoutFrame(function, m_resolver, argc, argv);
 
     // Eat exceptions from namespace resolver and return an empty string. This will most likely cause NAMESPACE_ERR.
     if (try_catch.HasCaught())

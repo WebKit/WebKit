@@ -1,3 +1,13 @@
+2010-04-08  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [V8] Fix crash in NodeFilterCondition in detached iframe
+        https://bugs.webkit.org/show_bug.cgi?id=37234
+
+        * fast/dom/node-filter-detached-iframe-crash-expected.txt: Added.
+        * fast/dom/node-filter-detached-iframe-crash.html: Added.
+
 2010-04-08  Eric Seidel  <eric@webkit.org>
 
         Unreviewed.  Update test_expectations to account for tests which fail

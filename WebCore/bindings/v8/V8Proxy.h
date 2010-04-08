@@ -220,6 +220,9 @@ namespace WebCore {
         // Call the function with the given receiver and arguments.
         v8::Local<v8::Value> callFunction(v8::Handle<v8::Function>, v8::Handle<v8::Object>, int argc, v8::Handle<v8::Value> argv[]);
 
+        // Call the function with the given receiver and arguments.
+        static v8::Local<v8::Value> callFunctionWithoutFrame(v8::Handle<v8::Function>, v8::Handle<v8::Object>, int argc, v8::Handle<v8::Value> argv[]);
+
         // Call the function as constructor with the given arguments.
         v8::Local<v8::Value> newInstance(v8::Handle<v8::Function>, int argc, v8::Handle<v8::Value> argv[]);
 

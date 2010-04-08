@@ -1,3 +1,20 @@
+2010-04-08  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [V8] Fix crash in NodeFilterCondition in detached iframe
+        https://bugs.webkit.org/show_bug.cgi?id=37234
+
+        Test: fast/dom/node-filter-detached-iframe-crash.html
+
+        * bindings/v8/V8NodeFilterCondition.cpp:
+        (WebCore::V8NodeFilterCondition::acceptNode): Switched to using
+        callFunctionWithoutFrame.
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::callFunctionWithoutFrame): Added a function to
+        call V8 with no current frame.
+        * bindings/v8/V8Proxy.h:
+
 2010-04-08  Jarkko Sakkinen  <jarkko.sakkinen@tieto.com>
 
         Reviewed by Simon Hausmann.
