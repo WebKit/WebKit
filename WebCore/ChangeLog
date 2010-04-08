@@ -1,3 +1,36 @@
+2010-03-30  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Refactor DatabaseTracker, part 1: Remove the dependency on
+        OriginQuotaManager from DatabaseTracker.h.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31482
+
+        * storage/DatabaseTracker.cpp:
+        (originQuotaManager):
+        (WebCore::DatabaseTracker::DatabaseTracker):
+        (WebCore::DatabaseTracker::canEstablishDatabase):
+        (WebCore::DatabaseTracker::hasEntryForOrigin):
+        (WebCore::DatabaseTracker::getMaxSizeForDatabase):
+        (WebCore::DatabaseTracker::databaseChanged):
+        (WebCore::DatabaseTracker::fullPathForDatabaseNoLock):
+        (WebCore::DatabaseTracker::fullPathForDatabase):
+        (WebCore::DatabaseTracker::populateOrigins):
+        (WebCore::DatabaseTracker::origins):
+        (WebCore::DatabaseTracker::databaseNamesForOrigin):
+        (WebCore::DatabaseTracker::removeOpenDatabase):
+        (WebCore::DatabaseTracker::usageForOriginNoLock):
+        (WebCore::DatabaseTracker::usageForOrigin):
+        (WebCore::DatabaseTracker::quotaForOrigin):
+        (WebCore::DatabaseTracker::setQuota):
+        (WebCore::DatabaseTracker::deleteOrigin):
+        (WebCore::DatabaseTracker::deleteDatabase):
+        (WebCore::DatabaseTracker::deleteDatabaseFile):
+        * storage/DatabaseTracker.h:
+        * storage/SQLTransactionClient.cpp:
+        (WebCore::SQLTransactionClient::didExecuteStatement):
+
 2010-04-08  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Simon Hausmann.
