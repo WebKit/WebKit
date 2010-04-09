@@ -31,10 +31,16 @@
 #include "config.h"
 #include "SerializedScriptValue.h"
 
+#include "Blob.h"
 #include "ByteArray.h"
 #include "CanvasPixelArray.h"
+#include "File.h"
+#include "FileList.h"
 #include "ImageData.h"
 #include "SharedBuffer.h"
+#include "V8Blob.h"
+#include "V8File.h"
+#include "V8FileList.h"
 #include "V8ImageData.h"
 #include "V8Proxy.h"
 
@@ -67,6 +73,9 @@ enum SerializationTag {
     Uint32Tag = 'U',
     DateTag = 'D',
     NumberTag = 'N',
+    BlobTag = 'b',
+    FileTag = 'f',
+    FileListTag = 'l',
     ImageDataTag = '#',
     ArrayTag = '[',
     ObjectTag = '{',
@@ -137,8 +146,15 @@ public:
     {
         ASSERT(length >= 0);
         append(StringTag);
-        doWriteUint32(static_cast<uint32_t>(length));
-        append(reinterpret_cast<const uint8_t*>(data), length);
+        doWriteString(data, length);
+    }
+
+    void writeWebCoreString(const String& string)
+    {
+        // Uses UTF8 encoding so we can read it back as either V8 or
+        // WebCore string.
+        append(StringTag);
+        doWriteWebCoreString(string);
     }
 
     void writeInt32(int32_t value)
@@ -163,6 +179,27 @@ public:
     {
         append(NumberTag);
         doWriteNumber(number);
+    }
+
+    void writeBlob(const String& path)
+    {
+        append(BlobTag);
+        doWriteWebCoreString(path);
+    }
+
+    void writeFile(const String& path)
+    {
+        append(FileTag);
+        doWriteWebCoreString(path);
+    }
+
+    void writeFileList(const FileList& fileList)
+    {
+        append(FileListTag);
+        uint32_t length = fileList.length();
+        doWriteUint32(length);
+        for (unsigned i = 0; i < length; ++i)
+            doWriteWebCoreString(fileList.item(i)->path());
     }
 
     void writeImageData(uint32_t width, uint32_t height, const uint8_t* pixelData, uint32_t pixelDataLength)
@@ -200,6 +237,18 @@ public:
     }
 
 private:
+    void doWriteString(const char* data, int length)
+    {
+        doWriteUint32(static_cast<uint32_t>(length));
+        append(reinterpret_cast<const uint8_t*>(data), length);
+    }
+
+    void doWriteWebCoreString(const String& string)
+    {
+        RefPtr<SharedBuffer> buffer = utf8Buffer(string);
+        doWriteString(buffer->data(), buffer->size());
+    }
+
     void doWriteUint32(uint32_t value)
     {
         while (true) {
@@ -504,6 +553,30 @@ private:
         m_writer.writeString(*stringValue, stringValue.length());
     }
 
+    void writeBlob(v8::Handle<v8::Value> value)
+    {
+        Blob* blob = V8Blob::toNative(value.As<v8::Object>());
+        if (!blob)
+            return;
+        m_writer.writeBlob(blob->path());
+    }
+
+    void writeFile(v8::Handle<v8::Value> value)
+    {
+        File* file = V8File::toNative(value.As<v8::Object>());
+        if (!file)
+            return;
+        m_writer.writeFile(file->path());
+    }
+
+    void writeFileList(v8::Handle<v8::Value> value)
+    {
+        FileList* fileList = V8FileList::toNative(value.As<v8::Object>());
+        if (!fileList)
+            return;
+        m_writer.writeFileList(*fileList);
+    }
+
     void writeImageData(v8::Handle<v8::Value> value)
     {
         ImageData* imageData = V8ImageData::toNative(value.As<v8::Object>());
@@ -555,6 +628,12 @@ Serializer::StateBase* Serializer::doSerialize(v8::Handle<v8::Value> value, Stat
         writeString(value);
     else if (value->IsArray())
         return push(newArrayState(value.As<v8::Array>(), next));
+    else if (V8File::HasInstance(value))
+        writeFile(value);
+    else if (V8Blob::HasInstance(value))
+        writeBlob(value);
+    else if (V8FileList::HasInstance(value))
+        writeFileList(value);
     else if (V8ImageData::HasInstance(value))
         writeImageData(value);
     else if (value->IsObject())
@@ -628,6 +707,18 @@ public:
             if (!readNumber(value))
                 return false;
             break;
+        case BlobTag:
+            if (!readBlob(value))
+                return false;
+            break;
+        case FileTag:
+            if (!readFile(value))
+                return false;
+            break;
+        case FileListTag:
+            if (!readFileList(value))
+                return false;
+            break;
         case ImageDataTag:
             if (!readImageData(value))
                 return false;
@@ -682,6 +773,18 @@ private:
         if (m_position + length > m_length)
             return false;
         *value = v8::String::New(reinterpret_cast<const char*>(m_buffer + m_position), length);
+        m_position += length;
+        return true;
+    }
+
+    bool readWebCoreString(String* string)
+    {
+        uint32_t length;
+        if (!doReadUint32(&length))
+            return false;
+        if (m_position + length > m_length)
+            return false;
+        *string = String::fromUTF8(reinterpret_cast<const char*>(m_buffer + m_position), length);
         m_position += length;
         return true;
     }
@@ -742,6 +845,42 @@ private:
         memcpy(pixelArray->data(), m_buffer + m_position, pixelDataLength);
         m_position += pixelDataLength;
         *value = toV8(imageData);
+        return true;
+    }
+
+    bool readBlob(v8::Handle<v8::Value>* value)
+    {
+        String path;
+        if (!readWebCoreString(&path))
+            return false;
+        PassRefPtr<Blob> blob = Blob::create(path);
+        *value = toV8(blob);
+        return true;
+    }
+
+    bool readFile(v8::Handle<v8::Value>* value)
+    {
+        String path;
+        if (!readWebCoreString(&path))
+            return false;
+        PassRefPtr<File> file = File::create(path);
+        *value = toV8(file);
+        return true;
+    }
+
+    bool readFileList(v8::Handle<v8::Value>* value)
+    {
+        uint32_t length;
+        if (!doReadUint32(&length))
+            return false;
+        PassRefPtr<FileList> fileList = FileList::create();
+        for (unsigned i = 0; i < length; ++i) {
+            String path;
+            if (!readWebCoreString(&path))
+                return false;
+            fileList->append(File::create(path));
+        }
+        *value = toV8(fileList);
         return true;
     }
 
@@ -892,9 +1031,8 @@ SerializedScriptValue::SerializedScriptValue(String data, StringDataMode mode)
         m_data = data;
     else {
         ASSERT(mode == StringValue);
-        RefPtr<SharedBuffer> buffer = utf8Buffer(data);
         Writer writer;
-        writer.writeString(buffer->data(), buffer->size());
+        writer.writeWebCoreString(data);
         m_data = StringImpl::adopt(writer.data());
     }
 }

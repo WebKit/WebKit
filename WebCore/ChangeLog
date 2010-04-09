@@ -1,3 +1,32 @@
+2010-04-09  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [V8] SerializedScriptValue value doesn't follow the spec for DOM objects and files
+        https://bugs.webkit.org/show_bug.cgi?id=37094
+
+        This patch adds support for file-related types.
+
+        * bindings/v8/SerializedScriptValue.cpp:
+        (WebCore::):
+        (WebCore::Writer::writeString):
+        (WebCore::Writer::writeWebCoreString):
+        (WebCore::Writer::writeBlob):
+        (WebCore::Writer::writeFile):
+        (WebCore::Writer::writeFileList):
+        (WebCore::Writer::doWriteString):
+        (WebCore::Writer::doWriteWebCoreString):
+        (WebCore::Serializer::writeBlob):
+        (WebCore::Serializer::writeFile):
+        (WebCore::Serializer::writeFileList):
+        (WebCore::Serializer::doSerialize):
+        (WebCore::Reader::read):
+        (WebCore::Reader::readWebCoreString):
+        (WebCore::Reader::readBlob):
+        (WebCore::Reader::readFile):
+        (WebCore::Reader::readFileList):
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+
 2010-04-09  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Cameron Zwarich.
