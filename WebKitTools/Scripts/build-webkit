@@ -48,6 +48,7 @@ chdirWebKit();
 my $showHelp = 0;
 my $clean = 0;
 my $minimal = 0;
+my $webkit2 = 0;
 my $makeArgs;
 my $startTime = time();
 
@@ -223,6 +224,7 @@ Usage: $programName [options] [options to pass to build system]
   --chromium                        Build the Chromium port on Mac/Win/Linux
   --gtk                             Build the GTK+ port
   --qt                              Build the Qt port
+  --webkit2                         Build the WebKit2 framework
   --inspector-frontend              Copy changes to the inspector front-end files to the build directory
 
   --makeargs=<arguments>            Optional Makefile flags
@@ -236,6 +238,7 @@ my %options = (
     'clean' => \$clean,
     'makeargs=s' => \$makeArgs,
     'minimal' => \$minimal,
+    'webkit2' => \$webkit2,
 );
 
 # Build usage text and options list from features
@@ -258,7 +261,10 @@ setConfiguration();
 my $productDir = productDir();
 
 # Check that all the project directories are there.
-my @projects = ("JavaScriptCore", "WebCore", "WebKit");
+my @projects = ("JavaScriptCore", "WebCore");
+
+push @projects, ($webkit2 ? "WebKit2" : "WebKit");
+
 # Only Apple builds JavaScriptGlue, and only on the Mac
 splice @projects, 1, 0, "JavaScriptGlue" if isAppleMacWebKit();
 
@@ -379,7 +385,18 @@ for my $dir (@projects) {
     } elsif (isQt()) {
         $result = buildQMakeQtProject($dir, $clean, @options);
     } elsif (isAppleMacWebKit()) {
-        $result = buildXCodeProject($dir, $clean, @options, @ARGV);
+        my @completeOptions = @options;
+        if ($webkit2 && $dir eq "WebCore") {
+            my @webKit2SpecificOverrides = (
+                'UMBRELLA_LDFLAGS=',
+                'GCC_PREPROCESSOR_DEFINITIONS=$(GCC_PREPROCESSOR_DEFINITIONS) ' .
+                    'ENABLE_EXPERIMENTAL_SINGLE_VIEW_MODE=1 ' .
+                    'WTF_USE_WEB_THREAD=1 '
+            );
+            push @completeOptions, @webKit2SpecificOverrides;
+        }
+
+        $result = buildXCodeProject($dir, $clean, @completeOptions, @ARGV);
     } elsif (isAppleWinWebKit()) {
         if ($dir eq "WebKit") {
             $result = buildVisualStudioProject("win/WebKit.vcproj/WebKit.sln", $clean);
