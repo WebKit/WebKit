@@ -103,6 +103,12 @@ bool WebSecurityOrigin::canAccess(const WebSecurityOrigin& other) const
     return m_private->canAccess(other.m_private);
 }
 
+bool WebSecurityOrigin::canRequest(const WebURL& url) const
+{
+    ASSERT(m_private);
+    return m_private->canRequest(url);
+}
+
 WebString WebSecurityOrigin::toString() const
 {
     ASSERT(m_private);

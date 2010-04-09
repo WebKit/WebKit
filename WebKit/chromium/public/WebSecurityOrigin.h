@@ -73,11 +73,16 @@ public:
     // The empty WebSecurityOrigin is the least privileged WebSecurityOrigin.
     WEBKIT_API bool isEmpty() const;
 
-    // Returns true if this SecurityOrigin can script objects in the given
+    // Returns true if this WebSecurityOrigin can script objects in the given
     // SecurityOrigin. For example, call this function before allowing
     // script from one security origin to read or write objects from
     // another SecurityOrigin.
     WEBKIT_API bool canAccess(const WebSecurityOrigin&) const;
+
+    // Returns true if this WebSecurityOrigin can read content retrieved from
+    // the given URL. For example, call this function before allowing script
+    // from a given security origin to receive contents from a given URL.
+    WEBKIT_API bool canRequest(const WebURL&) const;
 
     // Returns a string representation of the WebSecurityOrigin.  The empty
     // WebSecurityOrigin is represented by "null".  The representation of a
