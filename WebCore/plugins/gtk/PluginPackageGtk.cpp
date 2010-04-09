@@ -69,6 +69,9 @@ bool PluginPackage::fetchInfo()
     }
 
     const gchar* types = NP_GetMIMEDescription();
+    if (!types)
+        return true;
+
     gchar** mimeDescs = g_strsplit(types, ";", -1);
     for (int i = 0; mimeDescs[i] && mimeDescs[i][0]; i++) {
         gchar** mimeData = g_strsplit(mimeDescs[i], ":", 3);
