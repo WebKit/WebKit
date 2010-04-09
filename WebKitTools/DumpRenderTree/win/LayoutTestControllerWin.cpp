@@ -176,7 +176,7 @@ void LayoutTestController::keepWebHistory()
 JSValueRef LayoutTestController::computedStyleIncludingVisitedInfo(JSContextRef context, JSValueRef value)
 {
     // FIXME: Implement this.
-    return 0;
+    return JSValueMakeUndefined(context);
 }
 
 JSRetainPtr<JSStringRef> LayoutTestController::layerTreeAsText() const

@@ -1,3 +1,20 @@
+2010-04-09  Adam Roben  <aroben@apple.com>
+
+        Don't return 0 as a JSValueRef
+
+        That is an illegal use of the JSC API.
+
+        Fixes <http://webkit.org/b/37333> REGRESSION (r57292): :visited tests
+        are asserting on debug Windows and GTK builds
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::computedStyleIncludingVisitedInfo):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::computedStyleIncludingVisitedInfo):
+        Return an "undefined" JSValueRef instead of 0.
+
 2010-04-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Eric Seidel.

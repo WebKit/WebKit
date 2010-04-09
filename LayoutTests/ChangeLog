@@ -1,3 +1,23 @@
+2010-04-09  Adam Roben  <aroben@apple.com>
+
+        Add Windows- and GTK-specific results for new :visited tests
+
+        These platforms haven't yet implemented the new LayoutTestController
+        API these tests require. Implementing the API is tracked by
+        <http://webkit.org/b/37336> and <http://webkit.org/b/37337>.
+
+        Fixes <http://webkit.org/b/37333> REGRESSION (r57292): :visited tests
+        are asserting on debug Windows and GTK builds.
+
+        Reviewed by Anders Carlsson.
+
+        * platform/gtk/fast/history/nested-visited-test-expected.txt: Added.
+        * platform/gtk/fast/history/self-is-visited-expected.txt: Added.
+        * platform/gtk/fast/history/sibling-visited-test-expected.txt: Added.
+        * platform/win/fast/history/nested-visited-test-expected.txt: Added.
+        * platform/win/fast/history/self-is-visited-expected.txt: Added.
+        * platform/win/fast/history/sibling-visited-test-expected.txt: Added.
+
 2010-04-09  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Darin Fisher.
