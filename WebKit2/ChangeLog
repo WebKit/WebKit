@@ -1,3 +1,58 @@
+2010-04-08  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig and Oliver Hunt.
+
+        Add WebKit2/WebProcess directory.
+
+        * WebProcess: Added.
+        * WebProcess/Launching: Added.
+        * WebProcess/Launching/mac: Added.
+        * WebProcess/Launching/mac/WebProcessMain.mm: Added.
+        * WebProcess/Launching/win: Added.
+        * WebProcess/Launching/win/WebProcessWinMain.cpp: Added.
+        * WebProcess/WebCoreSupport: Added.
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp: Added.
+        * WebProcess/WebCoreSupport/WebChromeClient.h: Added.
+        * WebProcess/WebCoreSupport/WebContextMenuClient.cpp: Added.
+        * WebProcess/WebCoreSupport/WebContextMenuClient.h: Added.
+        * WebProcess/WebCoreSupport/WebDragClient.cpp: Added.
+        * WebProcess/WebCoreSupport/WebDragClient.h: Added.
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp: Added.
+        * WebProcess/WebCoreSupport/WebEditorClient.h: Added.
+        * WebProcess/WebCoreSupport/WebErrors.h: Added.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp: Added.
+        * WebProcess/WebCoreSupport/WebInspectorClient.h: Added.
+        * WebProcess/WebCoreSupport/mac: Added.
+        * WebProcess/WebCoreSupport/mac/WebErrorsMac.mm: Added.
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.h: Added.
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.m: Added.
+        * WebProcess/WebCoreSupport/win: Added.
+        * WebProcess/WebCoreSupport/win/WebCoreLocalizedStrings.cpp: Added.
+        * WebProcess/WebCoreSupport/win/WebErrorsWin.cpp: Added.
+        * WebProcess/WebPage: Added.
+        * WebProcess/WebPage/DrawingArea.cpp: Added.
+        * WebProcess/WebPage/DrawingArea.h: Added.
+        * WebProcess/WebPage/WebFrame.cpp: Added.
+        * WebProcess/WebPage/WebFrame.h: Added.
+        * WebProcess/WebPage/WebPage.cpp: Added.
+        * WebProcess/WebPage/WebPage.h: Added.
+        * WebProcess/WebPage/mac: Added.
+        * WebProcess/WebPage/mac/DrawingAreaUpdateChunk.cpp: Added.
+        * WebProcess/WebPage/mac/DrawingAreaUpdateChunk.h: Added.
+        * WebProcess/WebPage/mac/WebPageMac.mm: Added.
+        * WebProcess/WebPage/win: Added.
+        * WebProcess/WebPage/win/DrawingAreaUpdateChunk.cpp: Added.
+        * WebProcess/WebPage/win/DrawingAreaUpdateChunk.h: Added.
+        * WebProcess/WebPage/win/WebPageWin.cpp: Added.
+        * WebProcess/WebProcess.cpp: Added.
+        * WebProcess/WebProcess.h: Added.
+        * WebProcess/win: Added.
+        * WebProcess/win/DllMain.cpp: Added.
+        * WebProcess/win/WebLocalizableStrings.cpp: Added.
+        * WebProcess/win/WebLocalizableStrings.h: Added.
+        * WebProcess/win/WebProcessMain.cpp: Added.
+        * WebProcess/win/WebProcessMain.h: Added.
+
 2010-04-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
