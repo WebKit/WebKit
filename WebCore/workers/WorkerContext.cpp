@@ -60,6 +60,24 @@
 
 namespace WebCore {
 
+class CloseWorkerContextTask : public ScriptExecutionContext::Task {
+public:
+    static PassOwnPtr<CloseWorkerContextTask> create()
+    {
+        return new CloseWorkerContextTask;
+    }
+
+    virtual void performTask(ScriptExecutionContext *context)
+    {
+        ASSERT(context->isWorkerContext());
+        WorkerContext* workerContext = static_cast<WorkerContext*>(context);
+        // Notify parent that this context is closed. Parent is responsible for calling WorkerThread::stop().
+        workerContext->thread()->workerReportingProxy().workerContextClosed();
+    }
+
+    virtual bool isCleanupTask() const { return true; }
+};
+
 WorkerContext::WorkerContext(const KURL& url, const String& userAgent, WorkerThread* thread)
     : m_url(url)
     , m_userAgent(userAgent)
@@ -124,8 +142,9 @@ void WorkerContext::close()
         return;
 
     m_closing = true;
-    // Notify parent that this context is closed. Parent is responsible for calling WorkerThread::stop().
-    thread()->workerReportingProxy().workerContextClosed();
+    // Let current script run to completion but prevent future script evaluations.
+    m_script->forbidExecution(WorkerScriptController::LetRunningScriptFinish);
+    postTask(CloseWorkerContextTask::create());
 }
 
 WorkerNavigator* WorkerContext::navigator() const

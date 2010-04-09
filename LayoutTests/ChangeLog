@@ -1,3 +1,19 @@
+2010-04-09  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        WebCore: WorkerGlobalScope.close() should let the currently running script complete execution, then terminate the worker.
+        https://bugs.webkit.org/show_bug.cgi?id=37053
+
+        * fast/workers/resources/worker-close.js:
+        * fast/workers/worker-close-expected.txt:
+        Updated tests to expect the script fragment that includes close() to run to completion.
+
+        * fast/workers/worker-close-more-expected.txt: Added.
+        * fast/workers/worker-close-more.html: Added.
+        * fast/workers/worker-close.html:
+        Added test to check terminate() after close() and close() in the case of multiple MessagePort messages dispatching.
+
 2010-04-09  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.

@@ -121,7 +121,7 @@ void* WorkerThread::workerThread()
         if (m_runLoop.terminated()) {
             // The worker was terminated before the thread had a chance to run. Since the context didn't exist yet,
             // forbidExecution() couldn't be called from stop().
-           m_workerContext->script()->forbidExecution();
+           m_workerContext->script()->forbidExecution(WorkerScriptController::TerminateRunningScript);
         }
     }
 
@@ -218,7 +218,7 @@ void WorkerThread::stop()
 
     // Ensure that tasks are being handled by thread event loop. If script execution weren't forbidden, a while(1) loop in JS could keep the thread alive forever.
     if (m_workerContext) {
-        m_workerContext->script()->forbidExecution();
+        m_workerContext->script()->forbidExecution(WorkerScriptController::TerminateRunningScript);
 
     // FIXME: Rudely killing the thread won't work when we allow nested workers, because they will try to post notifications of their destruction.
     // This can likely use the same mechanism as used for databases above.

@@ -52,6 +52,9 @@ namespace WebCore {
 
         JSWorkerContext* workerContextWrapper()
         {
+            if (m_executionForbidden)
+                return 0;
+
             initScriptIfNeeded();
             return m_workerContextWrapper;
         }
@@ -61,7 +64,8 @@ namespace WebCore {
 
         void setException(ScriptValue);
 
-        void forbidExecution();
+        enum ForbidExecutionOption { TerminateRunningScript, LetRunningScriptFinish };
+        void forbidExecution(ForbidExecutionOption);
 
         JSC::JSGlobalData* globalData() { return m_globalData.get(); }
 

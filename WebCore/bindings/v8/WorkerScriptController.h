@@ -55,7 +55,9 @@ namespace WebCore {
 
         void setException(ScriptValue);
 
-        void forbidExecution();
+        enum ForbidExecutionOption { TerminateRunningScript, LetRunningScriptFinish };
+        void forbidExecution(ForbidExecutionOption);
+
         // Returns WorkerScriptController for the currently executing context. 0 will be returned if the current executing context is not the worker context.
         static WorkerScriptController* controllerForContext();
 

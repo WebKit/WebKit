@@ -1,3 +1,45 @@
+2010-04-09  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        WebCore: WorkerGlobalScope.close() should let the currently running script complete execution, then terminate the worker.
+        https://bugs.webkit.org/show_bug.cgi?id=37053
+
+        Test: fast/workers/worker-close-more.html
+
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::forbidExecution):
+        (WebCore::WorkerScriptController::):
+        * bindings/v8/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::forbidExecution):
+        * bindings/v8/WorkerScriptController.h:
+        (WebCore::WorkerScriptController::):
+        Added option parameter to forbidExecution (both JCS and V8 versions) that specifies whether currently running
+        script should be immediately terminated or left executed until the end.
+
+        * bindings/js/WorkerScriptController.h:
+        (WebCore::WorkerScriptController::workerContextWrapper):
+        This method now can return 0 instead of context if the further execution of JS is forbidden. Since any JS execution requires
+        fetching JS global object first, returning 0 here is a good way to prevent re-entry into JS once worker started termination.
+        V8 version does similar thing already in WorkerScriptController::proxy().
+
+        * workers/DedicatedWorkerContext.cpp:
+        (WebCore::DedicatedWorkerContext::postMessage):
+        Removed check that immediately disables postMessage from WorkerContext after close().
+
+        * workers/WorkerContext.cpp:
+        (WebCore::CloseWorkerContextTask::create):
+        (WebCore::CloseWorkerContextTask::performTask):
+        (WebCore::CloseWorkerContextTask::isCleanupTask):
+        (WebCore::WorkerContext::close):
+        Use new forbidExecution(LetRunningScriptFinish) to avoid termination of script until it executes and exits.
+        Post a task to actually terminate the worker once the currently executing JS fragment exits.
+
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::workerThread):
+        (WebCore::WorkerThread::stop):
+        Use new forbidExecution(TerminateRunningScript) to immediately terminate the JS.
+
 2010-04-09  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.

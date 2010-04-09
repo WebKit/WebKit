@@ -62,8 +62,6 @@ void DedicatedWorkerContext::postMessage(PassRefPtr<SerializedScriptValue> messa
 
 void DedicatedWorkerContext::postMessage(PassRefPtr<SerializedScriptValue> message, const MessagePortArray* ports, ExceptionCode& ec)
 {
-    if (isClosing())
-        return;
     // Disentangle the port in preparation for sending it to the remote context.
     OwnPtr<MessagePortChannelArray> channels = MessagePort::disentanglePorts(ports, ec);
     if (ec)

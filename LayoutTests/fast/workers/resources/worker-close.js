@@ -17,7 +17,7 @@ onmessage = function(evt)
         postMessage("typeof close: " + (typeof close));
     } else if (evt.data == "close") {
         close();
-        postMessage("Should not be delivered");
+        postMessage("Should be delivered");
     } else if (evt.data == "ping") {
         postMessage("pong");
     } else if (evt.data == "throw") {
@@ -25,6 +25,18 @@ onmessage = function(evt)
     } else if (evt.data == "closeWithError") {
         close();
         nonExistentFunction();  // Undefined function - throws exception
+    } else if (evt.data == "close_post_loop") {
+        close();
+        postMessage("closed");
+        while(true) {} // Should loop forever.
+    } else if (evt.data == "take_port") {
+        messagePort = evt.ports[0];
+        messagePort.onmessage = function(event) {
+            close();
+            postMessage("echo_" + event.data);
+        }
+    } else if (evt.data == "start_port") {
+        messagePort.start();
     } else {
         postMessage("FAIL: Unknown message type: " + evt.data);
     }

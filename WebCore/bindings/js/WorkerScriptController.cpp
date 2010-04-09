@@ -136,15 +136,16 @@ void WorkerScriptController::setException(ScriptValue exception)
     m_workerContextWrapper->globalExec()->setException(exception.jsValue());
 }
 
-void WorkerScriptController::forbidExecution()
+void WorkerScriptController::forbidExecution(ForbidExecutionOption option)
 {
-    // This function is called from another thread.
+    // This function may be called from another thread.
     // Mutex protection for m_executionForbidden is needed to guarantee that the value is synchronized between processors, because
     // if it were not, the worker could re-enter JSC::evaluate(), but with timeout already reset.
     // It is not critical for Terminator::m_shouldTerminate to be synchronized, we just rely on it reaching the worker thread's processor sooner or later.
     MutexLocker lock(m_sharedDataMutex);
     m_executionForbidden = true;
-    m_globalData->terminator.terminateSoon();
+    if (option == TerminateRunningScript)
+        m_globalData->terminator.terminateSoon();
 }
 
 } // namespace WebCore
