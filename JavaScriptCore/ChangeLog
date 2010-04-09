@@ -1,3 +1,14 @@
+2010-04-09  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Make CallIdentifier constructor to handle null urls.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37341
+
+        * profiler/CallIdentifier.h:
+        (JSC::CallIdentifier::CallIdentifier):
+
 2010-04-09  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Simon Hausmann.

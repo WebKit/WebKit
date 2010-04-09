@@ -44,7 +44,7 @@ namespace JSC {
 
         CallIdentifier(const UString& name, const UString& url, int lineNumber)
             : m_name(name)
-            , m_url(url)
+            , m_url(!url.isNull() ? url : "")
             , m_lineNumber(lineNumber)
         {
         }
