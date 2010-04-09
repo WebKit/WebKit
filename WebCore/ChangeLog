@@ -1,3 +1,9 @@
+2010-04-09  Sam Weinig  <sam@webkit.org>
+
+        Fix the mac WebKit2 build.
+
+        * WebCore.base.exp:
+
 2010-04-08  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
