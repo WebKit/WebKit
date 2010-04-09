@@ -1,6 +1,24 @@
 2010-04-09  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37353, clean up cursors used by RenderStyles.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectCursor):
+        * rendering/style/CursorData.h:
+        (WebCore::CursorData::CursorData):
+        (WebCore::CursorData::operator==):
+        (WebCore::CursorData::image):
+        (WebCore::CursorData::hotSpot):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::addCursor):
+
+2010-04-09  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adam Roben.
         
         https://bugs.webkit.org/show_bug.cgi?id=37349, RenderStyle cleanup.  Working from the outside in to
         bring some style consistency to RenderStyle and its associated classes.  This patch cleans up the

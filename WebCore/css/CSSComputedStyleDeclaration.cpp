@@ -820,7 +820,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             if (cursors && cursors->size() > 0) {
                 list = CSSValueList::createCommaSeparated();
                 for (unsigned i = 0; i < cursors->size(); ++i)
-                    list->append(CSSPrimitiveValue::create((*cursors)[i].cursorImage->url(), CSSPrimitiveValue::CSS_URI));
+                    list->append(CSSPrimitiveValue::create((*cursors)[i].image()->url(), CSSPrimitiveValue::CSS_URI));
             }
             RefPtr<CSSValue> value = CSSPrimitiveValue::create(style->cursor());
             if (list) {

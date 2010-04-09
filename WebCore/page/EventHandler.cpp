@@ -1021,8 +1021,8 @@ Cursor EventHandler::selectCursor(const MouseEventWithHitTestResults& event, Scr
     if (style && style->cursors()) {
         const CursorList* cursors = style->cursors();
         for (unsigned i = 0; i < cursors->size(); ++i) {
-            CachedImage* cimage = (*cursors)[i].cursorImage.get();
-            IntPoint hotSpot = (*cursors)[i].hotSpot;
+            const CachedImage* cimage = (*cursors)[i].image();
+            IntPoint hotSpot = (*cursors)[i].hotSpot();
             if (!cimage)
                 continue;
             // Limit the size of cursors so that they cannot be used to cover UI elements in chrome.
