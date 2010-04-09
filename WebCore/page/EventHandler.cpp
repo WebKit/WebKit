@@ -1204,7 +1204,7 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
     if (Page* page = m_frame->page()) {
         InspectorController* inspector = page->inspectorController();
         if (inspector && inspector->enabled() && inspector->searchingForNodeInPage()) {
-            inspector->handleMousePressOnNode(m_mousePressNode.get());
+            inspector->handleMousePress();
             invalidateClick();
             return true;
         }

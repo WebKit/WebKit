@@ -225,20 +225,9 @@ void InspectorController::setSetting(const String& key, const String& value)
     m_client->storeSetting(key, value);
 }
 
-// Trying to inspect something in a frame with JavaScript disabled would later lead to
-// crashes trying to create JavaScript wrappers. Some day we could fix this issue, but
-// for now prevent crashes here by never targeting a node in such a frame.
-static bool canPassNodeToJavaScript(Node* node)
-{
-    if (!node)
-        return false;
-    Frame* frame = node->document()->frame();
-    return frame && frame->script()->canExecuteScripts(NotAboutToExecuteScript);
-}
-
 void InspectorController::inspect(Node* node)
 {
-    if (!canPassNodeToJavaScript(node) || !enabled())
+    if (!enabled())
         return;
 
     show();
@@ -385,18 +374,18 @@ void InspectorController::mouseDidMoveOverElement(const HitTestResult& result, u
         highlight(node);
 }
 
-void InspectorController::handleMousePressOnNode(Node* node)
+void InspectorController::handleMousePress()
 {
     if (!enabled())
         return;
 
     ASSERT(m_searchingForNode);
-    ASSERT(node);
-    if (!node)
+    if (!m_highlightedNode)
         return;
 
+    RefPtr<Node> node = m_highlightedNode;
     setSearchingForNode(false);
-    inspect(node);
+    inspect(node.get());
 }
 
 void InspectorController::setInspectorFrontendClient(PassOwnPtr<InspectorFrontendClient> client)
