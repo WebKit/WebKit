@@ -1,5 +1,17 @@
 2010-04-09  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed, but approved by Dirk Pranke.
+
+        rename test_expectations_test.py to test_expectations_unittest.py so it actually gets run
+        https://bugs.webkit.org/show_bug.cgi?id=37372
+
+        We need to end unit tests with _unittest.py for them to be autodetected
+        by the test harness.  +6 tests.
+
+        * Scripts/webkitpy/layout_tests/layout_package/test_expectations_unittest.py: Renamed from WebKitTools/Scripts/webkitpy/layout_tests/layout_package/test_expectations_test.py.
+
+2010-04-09  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         new-run-webkit-tests should talk about DumpRenderTree not test_shell
