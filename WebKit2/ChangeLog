@@ -1,5 +1,40 @@
 2010-04-08  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Anders Carlsson.
+
+        Add WebKit2/Platform directory.
+
+        * Platform: Added.
+        * Platform/CoreIPC: Added.
+        * Platform/CoreIPC/ArgumentDecoder.cpp: Added.
+        * Platform/CoreIPC/ArgumentDecoder.h: Added.
+        * Platform/CoreIPC/ArgumentEncoder.cpp: Added.
+        * Platform/CoreIPC/ArgumentEncoder.h: Added.
+        * Platform/CoreIPC/Arguments.h: Added.
+        * Platform/CoreIPC/Attachment.cpp: Added.
+        * Platform/CoreIPC/Attachment.h: Added.
+        * Platform/CoreIPC/Connection.cpp: Added.
+        * Platform/CoreIPC/Connection.h: Added.
+        * Platform/CoreIPC/MessageID.h: Added.
+        * Platform/CoreIPC/mac: Added.
+        * Platform/CoreIPC/mac/ConnectionMac.cpp: Added.
+        * Platform/CoreIPC/mac/MachPort.h: Added.
+        * Platform/CoreIPC/win: Added.
+        * Platform/CoreIPC/win/ConnectionWin.cpp: Added.
+        * Platform/PlatformProcessIdentifier.h: Added.
+        * Platform/RunLoop.cpp: Added.
+        * Platform/RunLoop.h: Added.
+        * Platform/WorkItem.h: Added.
+        * Platform/WorkQueue.cpp: Added.
+        * Platform/WorkQueue.h: Added.
+        * Platform/mac: Added.
+        * Platform/mac/RunLoopMac.mm: Added.
+        * Platform/mac/WorkQueueMac.cpp: Added.
+        * Platform/win: Added.
+        * Platform/win/RunLoopWin.cpp: Added.
+
+2010-04-08  Sam Weinig  <sam@webkit.org>
+
         Rubber-stamped by Mark Rowe.
 
         Add WebKit2 directory.
