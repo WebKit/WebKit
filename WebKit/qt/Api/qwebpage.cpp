@@ -3390,7 +3390,7 @@ QString QWebPage::userAgentForUrl(const QUrl& url) const
 
     // Language
     QLocale locale;
-    if (d->client)
+    if (d->client && d->client->ownerWidget())
         locale = d->client->ownerWidget()->locale();
     QString name = locale.name();
     name[2] = QLatin1Char('-');
