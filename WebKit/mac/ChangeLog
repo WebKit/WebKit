@@ -1,3 +1,57 @@
+2010-04-08  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/7814899> REGRESSION(r56008): iTunes crashes on quit inside -[NSScrollView dealloc]
+
+        In r56008 new instance variables were added to WebDynamicScrollBarsView, increasing its size.
+        This causes problems for 32-bit applications that derive from WebDynamicScrollBarsView, as the
+        size and layout of their subclasses is baked in at compile time.  This results in instances
+        being allocated that are smaller than the new code expects, and may result in the new instance
+        variables sharing the same memory space as any instance variables that the subclass defines.
+
+        We can avoid this problem by having the class contain only a single member that acts as a pointer
+        to a heap-allocated structure that acts as storage for the real instance variables.  This makes
+        us free to add instance variables in the future without risk of changing the size of the class.
+        To ensure that 32-bit applications that are built against this new WebDynamicScrollBarsView header
+        are able to run against older versions of WebKit we pad the class out to its previous size.  This
+        results in any subclasses of WebDynamicScrollBarsView being created with a layout that is compatible
+        with both versions of the code.
+
+        This change could potentially break a subclass of WebDynamicScrollBarsView that directly accesses
+        instance variables of its superclass.  However, this is a private header and no known subclasses
+        of WebDynamicScrollBarsView access superclass instance variables in this fashion.
+
+        * WebView/WebDynamicScrollBarsView.h:
+        * WebView/WebDynamicScrollBarsView.mm:
+        (-[WebDynamicScrollBarsView initWithFrame:]):
+        (-[WebDynamicScrollBarsView dealloc]):
+        (-[WebDynamicScrollBarsView finalize]):
+        (-[WebDynamicScrollBarsView setAllowsHorizontalScrolling:]):
+        (-[WebDynamicScrollBarsView setAllowsScrollersToOverlapContent:]):
+        (-[WebDynamicScrollBarsView setAlwaysHideHorizontalScroller:]):
+        (-[WebDynamicScrollBarsView setAlwaysHideVerticalScroller:]):
+        (-[WebDynamicScrollBarsView horizontalScrollingAllowed]):
+        (-[WebDynamicScrollBarsView verticalScrollingAllowed]):
+        (-[WebDynamicScrollBarsView contentViewFrame]):
+        (-[WebDynamicScrollBarsView tile]):
+        (-[WebDynamicScrollBarsView setSuppressLayout:]):
+        (-[WebDynamicScrollBarsView setScrollBarsSuppressed:repaintOnUnsuppress:]):
+        (-[WebDynamicScrollBarsView updateScrollers]):
+        (-[WebDynamicScrollBarsView reflectScrolledClipView:]):
+        (-[WebDynamicScrollBarsView allowsHorizontalScrolling]):
+        (-[WebDynamicScrollBarsView allowsVerticalScrolling]):
+        (-[WebDynamicScrollBarsView scrollingModes:WebCore::vertical:WebCore::]):
+        (-[WebDynamicScrollBarsView horizontalScrollingMode]):
+        (-[WebDynamicScrollBarsView verticalScrollingMode]):
+        (-[WebDynamicScrollBarsView setScrollingModes:vertical:andLock:]):
+        (-[WebDynamicScrollBarsView setHorizontalScrollingModeLocked:]):
+        (-[WebDynamicScrollBarsView setVerticalScrollingModeLocked:]):
+        (-[WebDynamicScrollBarsView setScrollingModesLocked:]):
+        (-[WebDynamicScrollBarsView horizontalScrollingModeLocked]):
+        (-[WebDynamicScrollBarsView verticalScrollingModeLocked]):
+        (-[WebDynamicScrollBarsView scrollWheel:]):
+
 2010-04-07  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Oliver Hunt.
