@@ -86,7 +86,7 @@ class ServerProcess:
         if self.crashed:
             # This is hex code 0xc000001d, which is used for abrupt
             # termination. This happens if we hit ctrl+c from the prompt
-            # and we happen to be waiting on the test_shell.
+            # and we happen to be waiting on the DumpRenderTree.
             # sdoyon: Not sure for which OS and in what circumstances the
             # above code is valid. What works for me under Linux to detect
             # ctrl+c is for the subprocess returncode to be negative
@@ -205,8 +205,8 @@ class ServerProcess:
         if sys.platform not in ('win32', 'cygwin'):
             # Closing stdin/stdout/stderr hangs sometimes on OS X,
             # (see restart(), above), and anyway we don't want to hang
-            # the harness if test_shell is buggy, so we wait a couple
-            # seconds to give test_shell a chance to clean up, but then
+            # the harness if DumpRenderTree is buggy, so we wait a couple
+            # seconds to give DumpRenderTree a chance to clean up, but then
             # force-kill the process if necessary.
             KILL_TIMEOUT = 3.0
             timeout = time.time() + KILL_TIMEOUT

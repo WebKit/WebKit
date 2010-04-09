@@ -27,10 +27,10 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""A Thread object for running the test shell and processing URLs from a
+"""A Thread object for running DumpRenderTree and processing URLs from a
 shared queue.
 
-Each thread runs a separate instance of the test_shell binary and validates
+Each thread runs a separate instance of the DumpRenderTree binary and validates
 the output.  When there are no more URLs to process in the shared queue, the
 thread exits.
 """
@@ -48,18 +48,18 @@ import time
 import test_failures
 
 _log = logging.getLogger("webkitpy.layout_tests.layout_package."
-                         "test_shell_thread")
+                         "dump_render_tree_thread")
 
 
 def process_output(port, test_info, test_types, test_args, configuration,
                    output_dir, crash, timeout, test_run_time, actual_checksum,
                    output, error):
-    """Receives the output from a test_shell process, subjects it to a number
+    """Receives the output from a DumpRenderTree process, subjects it to a number
     of tests, and returns a list of failure types the test produced.
 
     Args:
       port: port-specific hooks
-      proc: an active test_shell process
+      proc: an active DumpRenderTree process
       test_info: Object containing the test filename, uri and timeout
       test_types: list of test types to subject the output to
       test_args: arguments to be passed to each test
@@ -171,7 +171,7 @@ class TestShellThread(threading.Thread):
 
     def __init__(self, port, filename_list_queue, result_queue,
                  test_types, test_args, image_path, shell_args, options):
-        """Initialize all the local state for this test shell thread.
+        """Initialize all the local state for this DumpRenderTree thread.
 
         Args:
           port: interface to port-specific hooks
@@ -182,7 +182,7 @@ class TestShellThread(threading.Thread):
           test_types: A list of TestType objects to run the test output
               against.
           test_args: A TestArguments object to pass to each TestType.
-          shell_args: Any extra arguments to be passed to test_shell.exe.
+          shell_args: Any extra arguments to be passed to DumpRenderTree.
           options: A property dictionary as produced by optparse. The
               command-line options should match those expected by
               run_webkit_tests; they are typically passed via the
@@ -304,7 +304,7 @@ class TestShellThread(threading.Thread):
                     self._current_dir, self._filename_list = \
                         self._filename_list_queue.get_nowait()
                 except Queue.Empty:
-                    self._kill_test_shell()
+                    self._kill_dump_render_tree()
                     tests_run_file.close()
                     return
 
@@ -324,9 +324,9 @@ class TestShellThread(threading.Thread):
             filename = test_info.filename
             tests_run_file.write(filename + "\n")
             if failures:
-                # Check and kill test shell if we need too.
-                if len([1 for f in failures if f.should_kill_test_shell()]):
-                    self._kill_test_shell()
+                # Check and kill DumpRenderTree if we need too.
+                if len([1 for f in failures if f.should_kill_dump_render_tree()]):
+                    self._kill_dump_render_tree()
                     # Reset the batch count since the shell just bounced.
                     batch_count = 0
                 # Print the error message(s).
@@ -341,7 +341,7 @@ class TestShellThread(threading.Thread):
 
             if batch_size > 0 and batch_count > batch_size:
                 # Bounce the shell and reset count.
-                self._kill_test_shell()
+                self._kill_dump_render_tree()
                 batch_count = 0
 
             if test_runner:
@@ -370,20 +370,20 @@ class TestShellThread(threading.Thread):
 
         worker.start()
 
-        # When we're running one test per test_shell process, we can enforce
-        # a hard timeout. the test_shell watchdog uses 2.5x the timeout
+        # When we're running one test per DumpRenderTree process, we can enforce
+        # a hard timeout. the DumpRenderTree watchdog uses 2.5x the timeout
         # We want to be larger than that.
         worker.join(int(test_info.timeout) * 3.0 / 1000.0)
         if worker.isAlive():
             # If join() returned with the thread still running, the
-            # test_shell.exe is completely hung and there's nothing
+            # DumpRenderTree is completely hung and there's nothing
             # more we can do with it.  We have to kill all the
-            # test_shells to free it up. If we're running more than
-            # one test_shell thread, we'll end up killing the other
-            # test_shells too, introducing spurious crashes. We accept that
+            # DumpRenderTrees to free it up. If we're running more than
+            # one DumpRenderTree thread, we'll end up killing the other
+            # DumpRenderTrees too, introducing spurious crashes. We accept that
             # tradeoff in order to avoid losing the rest of this thread's
             # results.
-            _log.error('Test thread hung: killing all test_shells')
+            _log.error('Test thread hung: killing all DumpRenderTrees')
             worker._driver.stop()
 
         try:
@@ -398,7 +398,7 @@ class TestShellThread(threading.Thread):
         return failures
 
     def _run_test(self, test_info):
-        """Run a single test file using a shared test_shell process.
+        """Run a single test file using a shared DumpRenderTree process.
 
         Args:
           test_info: Object containing the test filename, uri and timeout
@@ -406,7 +406,7 @@ class TestShellThread(threading.Thread):
         Return:
           A list of TestFailure objects describing the error.
         """
-        self._ensure_test_shell_is_running()
+        self._ensure_dump_render_tree_is_running()
         # The pixel_hash is used to avoid doing an image dump if the
         # checksums match, so it should be set to a blank value if we
         # are generating a new baseline.  (Otherwise, an image from a
@@ -428,17 +428,17 @@ class TestShellThread(threading.Thread):
         self._test_stats.append(stats)
         return stats.failures
 
-    def _ensure_test_shell_is_running(self):
-        """Start the shared test shell, if it's not running.  Not for use when
-        running tests singly, since those each start a separate test shell in
+    def _ensure_dump_render_tree_is_running(self):
+        """Start the shared DumpRenderTree, if it's not running.  Not for use when
+        running tests singly, since those each start a separate DumpRenderTree in
         their own thread.
         """
         if (not self._driver or self._driver.poll() is not None):
             self._driver = self._port.start_driver(
                 self._image_path, self._shell_args)
 
-    def _kill_test_shell(self):
-        """Kill the test shell process if it's running."""
+    def _kill_dump_render_tree(self):
+        """Kill the DumpRenderTree process if it's running."""
         if self._driver:
             self._driver.stop()
             self._driver = None

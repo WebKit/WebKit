@@ -76,8 +76,8 @@ class ChromiumPort(base.Port):
 
     def check_build(self, needs_http):
         result = True
-        test_shell_binary_path = self._path_to_driver()
-        result = check_file_exists(test_shell_binary_path,
+        dump_render_tree_binary_path = self._path_to_driver()
+        result = check_file_exists(dump_render_tree_binary_path,
                                    'test driver')
         if result:
             result = (self._check_driver_build_up_to_date(self._options.configuration)
@@ -97,8 +97,8 @@ class ChromiumPort(base.Port):
         return result
 
     def check_sys_deps(self, needs_http):
-        test_shell_binary_path = self._path_to_driver()
-        proc = subprocess.Popen([test_shell_binary_path,
+        dump_render_tree_binary_path = self._path_to_driver()
+        proc = subprocess.Popen([dump_render_tree_binary_path,
                                 '--check-layout-test-sys-deps'])
         if proc.wait():
             _log.error('System dependencies check failed.')
@@ -134,8 +134,8 @@ class ChromiumPort(base.Port):
 
     def setup_test_run(self):
         # Delete the disk cache if any to ensure a clean test run.
-        test_shell_binary_path = self._path_to_driver()
-        cachedir = os.path.split(test_shell_binary_path)[0]
+        dump_render_tree_binary_path = self._path_to_driver()
+        cachedir = os.path.split(dump_render_tree_binary_path)[0]
         cachedir = os.path.join(cachedir, "cache")
         if os.path.exists(cachedir):
             shutil.rmtree(cachedir)
@@ -213,7 +213,7 @@ class ChromiumPort(base.Port):
                 if (debug_mtime > release_mtime and configuration == 'Release' or
                     release_mtime > debug_mtime and configuration == 'Debug'):
                     _log.warning('You are not running the most '
-                                 'recent test_shell binary. You need to '
+                                 'recent DumpRenderTree binary. You need to '
                                  'pass --debug or not to select between '
                                  'Debug and Release.')
                     _log.warning('')
@@ -256,7 +256,7 @@ class ChromiumDriver(base.Driver):
             cmd += options
 
         # We need to pass close_fds=True to work around Python bug #2320
-        # (otherwise we can hang when we kill test_shell when we are running
+        # (otherwise we can hang when we kill DumpRenderTree when we are running
         # multiple threads). See http://bugs.python.org/issue2320 .
         # Note that close_fds isn't supported on Windows, but this bug only
         # shows up on Mac and Linux.
@@ -294,7 +294,7 @@ class ChromiumDriver(base.Driver):
             if line == '' and self.poll() is not None:
                 # This is hex code 0xc000001d, which is used for abrupt
                 # termination. This happens if we hit ctrl+c from the prompt
-                # and we happen to be waiting on the test_shell.
+                # and we happen to be waiting on the DumpRenderTree.
                 # sdoyon: Not sure for which OS and in what circumstances the
                 # above code is valid. What works for me under Linux to detect
                 # ctrl+c is for the subprocess returncode to be negative
@@ -336,8 +336,8 @@ class ChromiumDriver(base.Driver):
             if sys.platform not in ('win32', 'cygwin'):
                 # Closing stdin/stdout/stderr hangs sometimes on OS X,
                 # (see __init__(), above), and anyway we don't want to hang
-                # the harness if test_shell is buggy, so we wait a couple
-                # seconds to give test_shell a chance to clean up, but then
+                # the harness if DumpRenderTree is buggy, so we wait a couple
+                # seconds to give DumpRenderTree a chance to clean up, but then
                 # force-kill the process if necessary.
                 KILL_TIMEOUT = 3.0
                 timeout = time.time() + KILL_TIMEOUT

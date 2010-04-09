@@ -1,3 +1,21 @@
+2010-04-09  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        new-run-webkit-tests should talk about DumpRenderTree not test_shell
+        https://bugs.webkit.org/show_bug.cgi?id=37371
+
+        test_shell is some strange Chromium thing.
+        DumpRenderTree (tm) is the real deal.
+
+        * Scripts/webkitpy/layout_tests/layout_package/dump_render_tree_thread.py: Added.
+        * Scripts/webkitpy/layout_tests/layout_package/test_expectations.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_failures.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_shell_thread.py: Removed.
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/server_process.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2010-04-09  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Alexey Proskuryakov.

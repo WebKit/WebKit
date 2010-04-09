@@ -79,8 +79,8 @@ class TestFailure(object):
         """Returns an HTML string to be included on the results.html page."""
         raise NotImplemented
 
-    def should_kill_test_shell(self):
-        """Returns True if we should kill the test shell before the next
+    def should_kill_dump_render_tree(self):
+        """Returns True if we should kill DumpRenderTree before the next
         test."""
         return False
 
@@ -145,7 +145,7 @@ class FailureWithType(TestFailure):
 
 
 class FailureTimeout(TestFailure):
-    """Test timed out.  We also want to restart the test shell if this
+    """Test timed out.  We also want to restart DumpRenderTree if this
     happens."""
 
     @staticmethod
@@ -155,7 +155,7 @@ class FailureTimeout(TestFailure):
     def result_html_output(self, filename):
         return "<strong>%s</strong>" % self.message()
 
-    def should_kill_test_shell(self):
+    def should_kill_dump_render_tree(self):
         return True
 
 
@@ -172,7 +172,7 @@ class FailureCrash(TestFailure):
         return "<strong>%s</strong> <a href=%s>stack</a>" % (self.message(),
                                                              stack)
 
-    def should_kill_test_shell(self):
+    def should_kill_dump_render_tree(self):
         return True
 
 
