@@ -1,3 +1,14 @@
+2010-04-09  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Changed expectation for text status for HTTP status of 4xx following
+        a fix for localized status messages.
+        https://bugs.webkit.org/show_bug.cgi?id=37274
+
+        * platform/mac/http/tests/xmlhttprequest/web-apps/013-expected.txt:
+        * platform/mac/http/tests/xmlhttprequest/xmlhttprequest-missing-file-exception-expected.txt:
+
 2010-04-09  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Darin Adler.

@@ -79,8 +79,9 @@ void ResourceResponse::platformLazyInit()
         
         m_httpStatusCode = [httpResponse statusCode];
         
-        // FIXME: it would be nice to have a way to get the real status text eventually.
-        m_httpStatusText = "OK";
+        // we used to return "OK" for everything, so be compatible and return "OK" for 200.
+        m_httpStatusText = m_httpStatusCode == 200 ? String("OK") 
+            : String([NSHTTPURLResponse localizedStringForStatusCode: m_httpStatusCode]);
         
         NSDictionary *headers = [httpResponse allHeaderFields];
         NSEnumerator *e = [headers keyEnumerator];
