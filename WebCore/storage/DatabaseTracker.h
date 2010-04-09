@@ -52,6 +52,7 @@ struct SecurityOriginHash;
 
 #if !PLATFORM(CHROMIUM)
 class DatabaseTrackerClient;
+class OriginQuotaManager;
 
 struct SecurityOriginTraits;
 #endif // !PLATFORM(CHROMIUM)
@@ -61,8 +62,8 @@ public:
     static DatabaseTracker& tracker();
     // This singleton will potentially be used from multiple worker threads and the page's context thread simultaneously.  To keep this safe, it's
     // currently using 4 locks.  In order to avoid deadlock when taking multiple locks, you must take them in the correct order:
-    // m_databaseGuard before originQuotaManager() if both locks are needed.
-    // m_openDatabaseMapGuard is currently independent of the other locks.
+    // originQuotaManager() before m_databaseGuard or m_openDatabaseMapGuard
+    // m_databaseGuard before m_openDatabaseMapGuard
     // notificationMutex() is currently independent of the other locks.
 
     bool canEstablishDatabase(ScriptExecutionContext*, const String& name, const String& displayName, unsigned long estimatedSize);
@@ -74,7 +75,6 @@ public:
     void getOpenDatabases(SecurityOrigin* origin, const String& name, HashSet<RefPtr<Database> >* databases);
 
     unsigned long long getMaxSizeForDatabase(const Database*);
-    void databaseChanged(Database*);
 
 private:
     DatabaseTracker();
@@ -110,9 +110,13 @@ public:
     // From a secondary thread, must be thread safe with its data
     void scheduleNotifyDatabaseChanged(SecurityOrigin*, const String& name);
 
+    OriginQuotaManager& originQuotaManager();
+
+
     bool hasEntryForOrigin(SecurityOrigin*);
 
 private:
+    OriginQuotaManager& originQuotaManagerNoLock();
     bool hasEntryForOriginNoLock(SecurityOrigin* origin);
     String fullPathForDatabaseNoLock(SecurityOrigin*, const String& name, bool createIfDoesNotExist);
     bool databaseNamesForOriginNoLock(SecurityOrigin* origin, Vector<String>& resultVector);
@@ -137,6 +141,8 @@ private:
 
     typedef HashMap<RefPtr<SecurityOrigin>, unsigned long long, SecurityOriginHash> QuotaMap;
     mutable OwnPtr<QuotaMap> m_quotaMap;
+
+    OwnPtr<OriginQuotaManager> m_quotaManager;
 
     String m_databaseDirectoryPath;
 
