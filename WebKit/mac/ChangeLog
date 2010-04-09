@@ -1,3 +1,14 @@
+2010-04-09  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Work around QTMovieView bug (<rdar://problem/7712713>) by using a QTMovieLayer instead.
+        https://bugs.webkit.org/show_bug.cgi?id=37311 / <rdar://problem/7749993>
+
+        * WebView/WebVideoFullscreenController.mm:
+        (-[WebVideoFullscreenController windowDidLoad]):
+        (-[WebVideoFullscreenController setMediaElement:WebCore::]):
+
 2010-04-08  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by John Sullivan.

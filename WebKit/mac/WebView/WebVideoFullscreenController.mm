@@ -37,7 +37,7 @@
 #import <wtf/UnusedParam.h>
 
 SOFT_LINK_FRAMEWORK(QTKit)
-SOFT_LINK_CLASS(QTKit, QTMovieView)
+SOFT_LINK_CLASS(QTKit, QTMovieLayer)
 
 SOFT_LINK_POINTER(QTKit, QTMovieRateDidChangeNotification, NSString *)
 
@@ -86,16 +86,14 @@ SOFT_LINK_POINTER(QTKit, QTMovieRateDidChangeNotification, NSString *)
 - (void)windowDidLoad
 {
     WebVideoFullscreenWindow *window = [self fullscreenWindow];
-    QTMovieView *view = [[getQTMovieViewClass() alloc] init];
-    [view setFillColor:[NSColor clearColor]];
-    [window setContentView:view];
-    [view setControllerVisible:NO];
-    [view setPreservesAspectRatio:YES];
+    QTMovieLayer *layer = [[getQTMovieLayerClass() alloc] init];
+    [[window contentView] setLayer:layer];
+    [[window contentView] setWantsLayer:YES];
     if (_mediaElement)
-        [view setMovie:_mediaElement->platformMedia().qtMovie];
+        [layer setMovie:_mediaElement->platformMedia().qtMovie];
     [window setHasShadow:YES]; // This is nicer with a shadow.
     [window setLevel:NSPopUpMenuWindowLevel-1];
-    [view release];
+    [layer release];
 }
 
 - (WebCore::HTMLMediaElement*)mediaElement;
@@ -107,12 +105,12 @@ SOFT_LINK_POINTER(QTKit, QTMovieRateDidChangeNotification, NSString *)
 {
     _mediaElement = mediaElement;
     if ([self isWindowLoaded]) {
-        QTMovieView *movieView = (QTMovieView *)[[self fullscreenWindow] contentView];
+        QTMovieLayer *movieLayer = (QTMovieLayer *)[[[self fullscreenWindow] contentView] layer];
         QTMovie *movie = _mediaElement->platformMedia().qtMovie;
 
-        ASSERT(movieView && [movieView isKindOfClass:[getQTMovieViewClass() class]]);
+        ASSERT(movieLayer && [movieLayer isKindOfClass:[getQTMovieLayerClass() class]]);
         ASSERT(movie);
-        [movieView setMovie:movie];
+        [movieLayer setMovie:movie];
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(rateChanged:) 
                                                      name:QTMovieRateDidChangeNotification 
