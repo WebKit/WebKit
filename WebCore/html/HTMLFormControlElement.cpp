@@ -329,14 +329,17 @@ String HTMLFormControlElement::validationMessage()
     return validity()->validationMessage();
 }
 
-bool HTMLFormControlElement::checkValidity()
+bool HTMLFormControlElement::checkValidity(Vector<RefPtr<HTMLFormControlElement> >* unhandledInvalidControls)
 {
-    if (willValidate() && !isValidFormControlElement()) {
-        dispatchEvent(Event::create(eventNames().invalidEvent, false, true));
-        return false;
-    }
-
-    return true;
+    if (!willValidate() || isValidFormControlElement())
+        return true;
+    // An event handler can deref this object.
+    RefPtr<HTMLFormControlElement> protector(this);
+    RefPtr<Document> originalDocument(document());
+    bool needsDefaultAction = dispatchEvent(Event::create(eventNames().invalidEvent, false, true));
+    if (needsDefaultAction && unhandledInvalidControls && inDocument() && originalDocument == document())
+        unhandledInvalidControls->append(this);
+    return false;
 }
 
 bool HTMLFormControlElement::isValidFormControlElement()

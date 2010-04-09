@@ -1,3 +1,38 @@
+2010-04-09  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Implement interactive validation for forms.
+        https://bugs.webkit.org/show_bug.cgi?id=34930
+
+        - HTMLFormControlElement::checkValidity() supports unhandled invalid control list
+        - HTMLFormElement::validateInteractively() called from prepareSubmit()
+          prevents the submission if neither noValidate nor formNoValidate is
+          specified, and focuses on the first invalid control of which "invalid"
+          event is not canceled.
+
+        Tests: fast/forms/checkValidity-cancel.html
+               fast/forms/interactive-validation-cancel.html
+               fast/forms/interactive-validation-formnovalidate.html
+               fast/forms/interactive-validation-novalidate.html
+               fast/forms/interactive-validation-prevented.html
+               fast/forms/interactive-validation-remove-node-in-handler.html
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::checkValidity):
+          If the control is invalid and the "invalid" is not canceled,
+          push the control to the specified vector.
+        * html/HTMLFormControlElement.h:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::validateInteractively):
+         The main part of the interactive validation.
+        (WebCore::HTMLFormElement::prepareSubmit):
+         Calls validateInteractively().
+        (WebCore::HTMLFormElement::checkValidity):
+         Uses collectUnhandledInvalidControls().
+        (WebCore::HTMLFormElement::collectUnhandledInvalidControls):
+        * html/HTMLFormElement.h:
+
 2010-04-09  Sam Weinig  <sam@webkit.org>
 
         Fix the mac WebKit2 build.

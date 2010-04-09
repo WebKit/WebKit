@@ -137,6 +137,11 @@ private:
     TextEncoding dataEncoding() const;
     PassRefPtr<FormData> createFormData();
     unsigned formElementIndex(HTMLFormControlElement*);
+    // Returns true if the submission should be proceeded.
+    bool validateInteractively(Event*);
+    // Validates each of the controls, and stores controls of which 'invalid'
+    // event was not canceled to the specified vector.
+    void collectUnhandledInvalidControls(Vector<RefPtr<HTMLFormControlElement> >&);
 
     friend class HTMLFormCollection;
 

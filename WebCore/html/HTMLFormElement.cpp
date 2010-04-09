@@ -27,6 +27,7 @@
 
 #include "CSSHelper.h"
 #include "DOMFormData.h"
+#include "DOMWindow.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -219,6 +220,64 @@ bool HTMLFormElement::isMailtoForm() const
     return protocolIs(m_url, "mailto");
 }
 
+static inline HTMLFormControlElement* submitElementFromEvent(const Event* event)
+{
+    Node* targetNode = event->target()->toNode();
+    if (!targetNode || !targetNode->isElementNode())
+        return 0;
+    Element* targetElement = static_cast<Element*>(targetNode);
+    if (!targetElement->isFormControlElement())
+        return 0;
+    return static_cast<HTMLFormControlElement*>(targetElement);
+}
+
+bool HTMLFormElement::validateInteractively(Event* event)
+{
+    ASSERT(event);
+    if (noValidate())
+        return true;
+
+    HTMLFormControlElement* submitElement = submitElementFromEvent(event);
+    if (submitElement && submitElement->formNoValidate())
+        return true;
+
+    Vector<RefPtr<HTMLFormControlElement> > unhandledInvalidControls;
+    collectUnhandledInvalidControls(unhandledInvalidControls);
+    if (unhandledInvalidControls.isEmpty())
+        return true;
+    // If the form has invalid controls, abort submission.
+
+    RefPtr<HTMLFormElement> protector(this);
+    // Focus on the first focusable control.
+    for (unsigned i = 0; i < unhandledInvalidControls.size(); ++i) {
+        HTMLFormControlElement* unhandled = unhandledInvalidControls[i].get();
+        if (unhandled->isFocusable() && unhandled->inDocument()) {
+            RefPtr<Document> originalDocument(unhandled->document());
+            unhandled->scrollIntoViewIfNeeded(false);
+            // scrollIntoViewIfNeeded() dispatches events, so the state
+            // of 'unhandled' might be changed so it's no longer focusable or
+            // moved to another document.
+            if (unhandled->isFocusable() && unhandled->inDocument() && originalDocument == unhandled->document()) {
+                unhandled->focus();
+                break;
+            }
+        }
+    }
+    // Warn about all of unfocusable controls.
+    if (Frame* frame = document()->frame()) {
+        for (unsigned i = 0; i < unhandledInvalidControls.size(); ++i) {
+            HTMLFormControlElement* unhandled = unhandledInvalidControls[i].get();
+            if (unhandled->isFocusable() && unhandled->inDocument())
+                continue;
+            String message("An invalid form control with name='%name' is not focusable.");
+            message.replace("%name", unhandled->name());
+            frame->domWindow()->console()->addMessage(HTMLMessageSource, LogMessageType, ErrorMessageLevel, message, 0, document()->url().string());
+        }
+    }
+    m_insubmit = false;
+    return false;
+}
+
 bool HTMLFormElement::prepareSubmit(Event* event)
 {
     Frame* frame = document()->frame();
@@ -227,6 +286,10 @@ bool HTMLFormElement::prepareSubmit(Event* event)
 
     m_insubmit = true;
     m_doingsubmit = false;
+
+    // Interactive validation must be done before dispatching the submit event.
+    if (!validateInteractively(event))
+        return false;
 
     if (dispatchEvent(Event::create(eventNames().submitEvent, true, true)) && !m_doingsubmit)
         m_doingsubmit = true;
@@ -541,16 +604,24 @@ HTMLFormControlElement* HTMLFormElement::defaultButton() const
 
 bool HTMLFormElement::checkValidity()
 {
-    // TODO: Check for unhandled invalid controls, see #27452 for tips.
+    Vector<RefPtr<HTMLFormControlElement> > controls;
+    collectUnhandledInvalidControls(controls);
+    return controls.isEmpty();
+}
 
-    bool hasOnlyValidControls = true;
-    for (unsigned i = 0; i < formElements.size(); ++i) {
-        HTMLFormControlElement* control = formElements[i];
-        if (!control->checkValidity())
-            hasOnlyValidControls = false;
+void HTMLFormElement::collectUnhandledInvalidControls(Vector<RefPtr<HTMLFormControlElement> >& unhandledInvalidControls)
+{
+    RefPtr<HTMLFormElement> protector(this);
+    // Copy formElements because event handlers called from
+    // HTMLFormControlElement::checkValidity() might change formElements.
+    Vector<RefPtr<HTMLFormControlElement> > elements;
+    elements.reserveCapacity(formElements.size());
+    for (unsigned i = 0; i < formElements.size(); ++i)
+        elements.append(formElements[i]);
+    for (unsigned i = 0; i < elements.size(); ++i) {
+        if (elements[i]->form() == this)
+            elements[i]->checkValidity(&unhandledInvalidControls);
     }
-
-    return hasOnlyValidControls;
 }
 
 PassRefPtr<HTMLFormControlElement> HTMLFormElement::elementForAlias(const AtomicString& alias)

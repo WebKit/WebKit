@@ -1,3 +1,26 @@
+2010-04-09  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Implement interactive validation for forms.
+        https://bugs.webkit.org/show_bug.cgi?id=34930
+
+        Add tests for "invalid" event and interactive validation.
+
+        * fast/forms/checkValidity-cancel-expected.txt: Added.
+        * fast/forms/checkValidity-cancel.html: Added.
+        * fast/forms/interactive-validation-cancel-expected.txt: Added.
+        * fast/forms/interactive-validation-cancel.html: Added.
+        * fast/forms/interactive-validation-formnovalidate-expected.txt: Added.
+        * fast/forms/interactive-validation-formnovalidate.html: Added.
+        * fast/forms/interactive-validation-novalidate-expected.txt: Added.
+        * fast/forms/interactive-validation-novalidate.html: Added.
+        * fast/forms/interactive-validation-prevented-expected.txt: Added.
+        * fast/forms/interactive-validation-prevented.html: Added.
+        * fast/forms/interactive-validation-remove-node-in-handler-expected.txt: Added.
+        * fast/forms/interactive-validation-remove-node-in-handler.html: Added.
+        * fast/forms/script-tests/checkValidity-cancel.js: Added.
+
 2010-04-09  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK+] media/video-src-invalid-remove.html
