@@ -39,6 +39,7 @@ void InitWebCoreSystemInterface(void)
     INIT(AdvanceDefaultButtonPulseAnimation);
     INIT(CGContextGetShouldSmoothFonts);
     INIT(CopyCONNECTProxyResponse);
+    INIT(CopyNSURLResponseStatusLine);
     INIT(CreateCustomCFReadStream);
     INIT(CreateNSURLConnectionDelegateProxy);
     INIT(DrawCapsLockIndicator);
@@ -83,6 +84,7 @@ void InitWebCoreSystemInterface(void)
     INIT(QTMovieGetType);
     INIT(QTMovieHasClosedCaptions);
     INIT(QTMovieSetShowClosedCaptions);
+    INIT(QTMovieSelectPreferredAlternates);
     INIT(QTMovieViewSetDrawSynchronously);
 
 #ifndef BUILDING_ON_TIGER
