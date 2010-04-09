@@ -27,6 +27,7 @@
 #define NotImplemented_h
 
 #include <wtf/Assertions.h>
+#include <stdio.h>
 
 #if defined(NDEBUG)
 #define notImplemented() ((void)0)
