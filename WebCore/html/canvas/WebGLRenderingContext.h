@@ -309,6 +309,8 @@ class WebKitCSSMatrix;
         bool validateIndexArrayPrecise(unsigned long count, unsigned long type, long offset, long& numElementsRequired);
         bool validateRenderingState(long numElements);
 
+        bool validateWebGLObject(CanvasObject* object);
+
         OwnPtr<GraphicsContext3D> m_context;
         bool m_needsUpdate;
         bool m_markedCanvasDirty;

@@ -10,7 +10,7 @@ PASS context.getActiveUniform(program, 1) threw exception GL error 1281 in getAc
 PASS context.getError() is 0
 PASS context.getActiveUniform(program, -1) threw exception GL error 1281 in getActiveUniform.
 PASS context.getError() is 0
-PASS context.getActiveUniform(null, 0) threw exception GL error 1282 in getActiveUniform.
+PASS context.getActiveUniform(null, 0) threw exception GL error 1281 in getActiveUniform.
 PASS context.getError() is 0
 PASS context.getActiveAttrib(program, 0).name is 'a_normal'
 PASS context.getActiveAttrib(program, 0).type is context.FLOAT_VEC3
@@ -22,7 +22,7 @@ PASS context.getActiveAttrib(program, 2) threw exception GL error 1281 in getAct
 PASS context.getError() is 0
 PASS context.getActiveAttrib(program, -1) threw exception GL error 1281 in getActiveAttrib.
 PASS context.getError() is 0
-PASS context.getActiveAttrib(null, 0) threw exception GL error 1282 in getActiveAttrib.
+PASS context.getActiveAttrib(null, 0) threw exception GL error 1281 in getActiveAttrib.
 PASS context.getError() is 0
 PASS context2.getError() is 0
 PASS context2.getActiveAttrib(program, 0) threw exception GL error 1282 in getActiveAttrib.

@@ -1,5 +1,30 @@
 2010-04-09  Zhenyao Mo  <zmo@google.com>
 
+        Reviewed by Darin Fisher.
+
+        Passing null WebGLObjects should synthesize INVALID_VALUE error
+        https://bugs.webkit.org/show_bug.cgi?id=37047
+
+        * html/canvas/WebGLRenderingContext.cpp: Synthesize INVALID_VALUE error when input object is 0.
+        (WebCore::WebGLRenderingContext::bindAttribLocation):
+        (WebCore::WebGLRenderingContext::compileShader):
+        (WebCore::WebGLRenderingContext::detachShader):
+        (WebCore::WebGLRenderingContext::validateWebGLObject):
+        (WebCore::WebGLRenderingContext::getActiveAttrib):
+        (WebCore::WebGLRenderingContext::getActiveUniform):
+        (WebCore::WebGLRenderingContext::getProgramParameter):
+        (WebCore::WebGLRenderingContext::getProgramInfoLog):
+        (WebCore::WebGLRenderingContext::getShaderParameter):
+        (WebCore::WebGLRenderingContext::getShaderInfoLog):
+        (WebCore::WebGLRenderingContext::getShaderSource):
+        (WebCore::WebGLRenderingContext::getUniform):
+        (WebCore::WebGLRenderingContext::getUniformLocation):
+        (WebCore::WebGLRenderingContext::linkProgram):
+        (WebCore::WebGLRenderingContext::shaderSource):
+        * html/canvas/WebGLRenderingContext.h: Add helper function to validate webgl object input parameters.
+
+2010-04-09  Zhenyao Mo  <zmo@google.com>
+
         Reviewed by Dimitri Glazkov.
 
         Must resolve multisampled back buffer during copyTexImage2D and copyTexSubImage2D

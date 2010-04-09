@@ -15,7 +15,7 @@ shouldBe("context.getError()", "0");
 debug("Testing getActiveAttrib");
 // Synthetic OpenGL error
 shouldBeNull("context.getActiveAttrib(null, 2)");
-shouldBe("context.getError()", "context.INVALID_OPERATION");
+shouldBe("context.getError()", "context.INVALID_VALUE");
 // Error state should be clear by this point
 shouldBe("context.getError()", "context.NO_ERROR");
 // Real OpenGL error
@@ -27,7 +27,7 @@ shouldBe("context.getError()", "context.NO_ERROR");
 debug("Testing getActiveUniform");
 // Synthetic OpenGL error
 shouldBeNull("context.getActiveUniform(null, 0)");
-shouldBe("context.getError()", "context.INVALID_OPERATION");
+shouldBe("context.getError()", "context.INVALID_VALUE");
 // Error state should be clear by this point
 shouldBe("context.getError()", "context.NO_ERROR");
 // Real OpenGL error

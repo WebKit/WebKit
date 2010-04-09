@@ -1,5 +1,17 @@
 2010-04-09  Zhenyao Mo  <zmo@google.com>
 
+        Reviewed by Darin Fisher.
+
+        Passing null WebGLObjects should synthesize INVALID_VALUE error
+        https://bugs.webkit.org/show_bug.cgi?id=37047
+
+        * fast/canvas/webgl/error-reporting-expected.txt: Change a few errors from INVALID_OPERATION to INVALID_VALUE.
+        * fast/canvas/webgl/getActiveTest-expected.txt: Ditto.
+        * fast/canvas/webgl/null-object-behaviour-expected.txt: Ditto.
+        * fast/canvas/webgl/script-tests/error-reporting.js: Ditto.
+
+2010-04-09  Zhenyao Mo  <zmo@google.com>
+
         Reviewed by Dimitri Glazkov.
 
         Must resolve multisampled back buffer during copyTexImage2D and copyTexSubImage2D

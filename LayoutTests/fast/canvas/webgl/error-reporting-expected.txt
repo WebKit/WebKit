@@ -5,14 +5,14 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS context.getError() is 0
 Testing getActiveAttrib
 PASS context.getActiveAttrib(null, 2) is null
-PASS context.getError() is context.INVALID_OPERATION
+PASS context.getError() is context.INVALID_VALUE
 PASS context.getError() is context.NO_ERROR
 PASS context.getActiveAttrib(program, 2) is null
 PASS context.getError() is context.INVALID_VALUE
 PASS context.getError() is context.NO_ERROR
 Testing getActiveUniform
 PASS context.getActiveUniform(null, 0) is null
-PASS context.getError() is context.INVALID_OPERATION
+PASS context.getError() is context.INVALID_VALUE
 PASS context.getError() is context.NO_ERROR
 PASS context.getActiveUniform(program, 50) is null
 PASS context.getError() is context.INVALID_VALUE
