@@ -62,6 +62,9 @@ protected:
 
 private:
     void computePageRectsWithPageSizeInternal(const FloatSize& pageSizeInPixels, bool allowHorizontalMultiPages);
+
+    // Used to prevent misuses of begin() and end() (e.g., call end without begin).
+    bool m_isPrinting;
 };
 
 }

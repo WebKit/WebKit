@@ -1,3 +1,19 @@
+2010-04-09  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Prevent wrong use of PrintContext
+        https://bugs.webkit.org/show_bug.cgi?id=37194
+
+        No new tests because this doesn't change the behavior.
+
+        * page/PrintContext.cpp:
+        (WebCore::PrintContext::PrintContext):
+        (WebCore::PrintContext::~PrintContext):
+        (WebCore::PrintContext::begin):
+        (WebCore::PrintContext::end):
+        * page/PrintContext.h:
+
 2010-04-09  Vitaly Repeshko  <vitalyr@chromium.org>
 
         Reviewed by Darin Fisher.

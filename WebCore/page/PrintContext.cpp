@@ -32,11 +32,13 @@ namespace WebCore {
 
 PrintContext::PrintContext(Frame* frame)
     : m_frame(frame)
+    , m_isPrinting(false)
 {
 }
 
 PrintContext::~PrintContext()
 {
+    ASSERT(!m_isPrinting);
     m_pageRects.clear();
 }
 
@@ -114,6 +116,9 @@ void PrintContext::computePageRectsWithPageSizeInternal(const FloatSize& pageSiz
 
 void PrintContext::begin(float width)
 {
+    ASSERT(!m_isPrinting);
+    m_isPrinting = true;
+
     // By imaging to a width a little wider than the available pixels,
     // thin pages will be scaled down a little, matching the way they
     // print in IE and Camino. This lets them use fewer sheets than they
@@ -150,6 +155,8 @@ void PrintContext::spoolPage(GraphicsContext& ctx, int pageNumber, float width)
 
 void PrintContext::end()
 {
+    ASSERT(m_isPrinting);
+    m_isPrinting = false;
     m_frame->setPrinting(false, 0, 0, true);
 }
 
