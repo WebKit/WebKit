@@ -97,7 +97,7 @@ FloatRect ChromeClientQt::windowRect()
     QWidget* view = m_webPage->view();
     if (!view)
         return FloatRect();
-    return IntRect(view->topLevelWidget()->geometry());
+    return IntRect(view->window()->geometry());
 }
 
 
@@ -176,7 +176,7 @@ void ChromeClientQt::show()
     QWidget* view = m_webPage->view();
     if (!view)
         return;
-    view->topLevelWidget()->show();
+    view->window()->show();
 }
 
 
@@ -341,7 +341,7 @@ IntRect ChromeClientQt::windowResizerRect() const
     if (!ownerWidget)
         return IntRect();
 
-    QWidget* topLevelWidget = ownerWidget->topLevelWidget();
+    QWidget* topLevelWidget = ownerWidget->window();
     QRect topLevelGeometry(topLevelWidget->geometry());
 
     // There's no API in Qt to query for the size of the resizer, so we assume

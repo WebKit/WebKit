@@ -1,3 +1,17 @@
+2010-04-09  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        Removing the use of topLevelWidget of QWidget class since it is deprecated/obsolete
+        since Qt 4.5. window() method is being used instead now.
+
+        See http://doc.trolltech.com/4.5/qwidget-obsolete.html#topLevelWidget for more info.
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::windowRect):
+        (WebCore::ChromeClientQt::show):
+        (WebCore::ChromeClientQt::windowResizerRect):
+
 2010-04-09  Tasuku Suzuki  <tasuku.suzuki@nokia.com>
 
         Reviewed by Simon Hausmann.
