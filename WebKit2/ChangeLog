@@ -2,6 +2,37 @@
 
         Reviewed by Anders Carlsson.
 
+        Add WebKit2/Shared directory.
+
+        * Shared: Added.
+        * Shared/CoreIPCSupport: Added.
+        * Shared/CoreIPCSupport/DrawingAreaMessageKinds.h: Added.
+        * Shared/CoreIPCSupport/DrawingAreaProxyMessageKinds.h: Added.
+        * Shared/CoreIPCSupport/WebPageMessageKinds.h: Added.
+        * Shared/CoreIPCSupport/WebPageProxyMessageKinds.h: Added.
+        * Shared/CoreIPCSupport/WebProcessMessageKinds.h: Added.
+        * Shared/NotImplemented.h: Added.
+        * Shared/WebCoreTypeArgumentMarshalling.h: Added.
+        * Shared/WebEvent.h: Added.
+        * Shared/WebEventConversion.cpp: Added.
+        * Shared/WebEventConversion.h: Added.
+        * Shared/WebPreferencesStore.cpp: Added.
+        * Shared/WebPreferencesStore.h: Added.
+        * Shared/mac: Added.
+        * Shared/mac/UpdateChunk.cpp: Added.
+        * Shared/mac/UpdateChunk.h: Added.
+        * Shared/mac/WebEventFactory.h: Added.
+        * Shared/mac/WebEventFactory.mm: Added.
+        * Shared/win: Added.
+        * Shared/win/UpdateChunk.cpp: Added.
+        * Shared/win/UpdateChunk.h: Added.
+        * Shared/win/WebEventFactory.cpp: Added.
+        * Shared/win/WebEventFactory.h: Added.
+
+2010-04-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
         Add WebKit2/Platform directory.
 
         * Platform: Added.
