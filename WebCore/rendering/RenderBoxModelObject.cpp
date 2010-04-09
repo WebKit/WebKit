@@ -636,6 +636,7 @@ IntSize RenderBoxModelObject::calculateFillTileSize(const FillLayer* fillLayer, 
         case SizeLength: {
             int w = positioningAreaSize.width();
             int h = positioningAreaSize.height();
+
             Length layerWidth = fillLayer->size().size.width();
             Length layerHeight = fillLayer->size().size.height();
 
@@ -651,15 +652,19 @@ IntSize RenderBoxModelObject::calculateFillTileSize(const FillLayer* fillLayer, 
             
             // If one of the values is auto we have to use the appropriate
             // scale to maintain our aspect ratio.
-            if (layerWidth.isAuto() && !layerHeight.isAuto())
-                w = image->imageSize(this, style()->effectiveZoom()).width() * h / image->imageSize(this, style()->effectiveZoom()).height();        
-            else if (!layerWidth.isAuto() && layerHeight.isAuto())
-                h = image->imageSize(this, style()->effectiveZoom()).height() * w / image->imageSize(this, style()->effectiveZoom()).width();
-            else if (layerWidth.isAuto() && layerHeight.isAuto()) {
-                // If both width and height are auto, we just want to use the image's
-                // intrinsic size.
-                w = image->imageSize(this, style()->effectiveZoom()).width();
-                h = image->imageSize(this, style()->effectiveZoom()).height();
+            if (layerWidth.isAuto() && !layerHeight.isAuto()) {
+                IntSize imageIntrinsicSize = image->imageSize(this, style()->effectiveZoom());
+                if (imageIntrinsicSize.height())
+                    w = imageIntrinsicSize.width() * h / imageIntrinsicSize.height();        
+            } else if (!layerWidth.isAuto() && layerHeight.isAuto()) {
+                IntSize imageIntrinsicSize = image->imageSize(this, style()->effectiveZoom());
+                if (imageIntrinsicSize.width())
+                    h = imageIntrinsicSize.height() * w / imageIntrinsicSize.width();
+            } else if (layerWidth.isAuto() && layerHeight.isAuto()) {
+                // If both width and height are auto, use the image's intrinsic size.
+                IntSize imageIntrinsicSize = image->imageSize(this, style()->effectiveZoom());
+                w = imageIntrinsicSize.width();
+                h = imageIntrinsicSize.height();
             }
             
             return IntSize(max(1, w), max(1, h));
@@ -667,15 +672,17 @@ IntSize RenderBoxModelObject::calculateFillTileSize(const FillLayer* fillLayer, 
         case Contain:
         case Cover: {
             IntSize imageIntrinsicSize = image->imageSize(this, 1);
-            float horizontalScaleFactor = static_cast<float>(positioningAreaSize.width()) / imageIntrinsicSize.width();
-            float verticalScaleFactor = static_cast<float>(positioningAreaSize.height()) / imageIntrinsicSize.height();
+            float horizontalScaleFactor = imageIntrinsicSize.width()
+                ? static_cast<float>(positioningAreaSize.width()) / imageIntrinsicSize.width() : 1;
+            float verticalScaleFactor = imageIntrinsicSize.height()
+                ? static_cast<float>(positioningAreaSize.height()) / imageIntrinsicSize.height() : 1;
             float scaleFactor = type == Contain ? min(horizontalScaleFactor, verticalScaleFactor) : max(horizontalScaleFactor, verticalScaleFactor);
-
             return IntSize(max<int>(1, imageIntrinsicSize.width() * scaleFactor), max<int>(1, imageIntrinsicSize.height() * scaleFactor));
         }
         case SizeNone:
             break;
     }
+
     return image->imageSize(this, style()->effectiveZoom());
 }
 
