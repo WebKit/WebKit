@@ -1,3 +1,40 @@
+2010-04-09  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=37368
+        Add MiniBrowser.
+
+        * MiniBrowser: Added.
+        * MiniBrowser/MiniBrowser.vcproj: Added.
+        * MiniBrowser/MiniBrowser.xcodeproj: Added.
+        * MiniBrowser/MiniBrowser.xcodeproj/project.pbxproj: Added.
+        * MiniBrowser/mac: Added.
+        * MiniBrowser/mac/AppDelegate.h: Added.
+        * MiniBrowser/mac/AppDelegate.m: Added.
+        * MiniBrowser/mac/BrowserWindowController.h: Added.
+        * MiniBrowser/mac/BrowserWindowController.m: Added.
+        * MiniBrowser/mac/English.lproj: Added.
+        * MiniBrowser/mac/English.lproj/BrowserWindow.xib: Added.
+        * MiniBrowser/mac/English.lproj/InfoPlist.strings: Added.
+        * MiniBrowser/mac/English.lproj/MainMenu.xib: Added.
+        * MiniBrowser/mac/MiniBrowser-Info.plist: Added.
+        * MiniBrowser/mac/MiniBrowser_Prefix.pch: Added.
+        * MiniBrowser/mac/main.m: Added.
+        * MiniBrowser/win: Added.
+        * MiniBrowser/win/BrowserView.cpp: Added.
+        * MiniBrowser/win/BrowserView.h: Added.
+        * MiniBrowser/win/BrowserWindow.cpp: Added.
+        * MiniBrowser/win/BrowserWindow.h: Added.
+        * MiniBrowser/win/MiniBrowser.cpp: Added.
+        * MiniBrowser/win/MiniBrowser.h: Added.
+        * MiniBrowser/win/MiniBrowser.rc: Added.
+        * MiniBrowser/win/Resources: Added.
+        * MiniBrowser/win/main.cpp: Added.
+        * MiniBrowser/win/resource.h: Added.
+        * MiniBrowser/win/stdafx.cpp: Added.
+        * MiniBrowser/win/stdafx.h: Added.
+
 2010-04-09  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
