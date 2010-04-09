@@ -1,3 +1,21 @@
+2010-04-09  Tasuku Suzuki  <tasuku.suzuki@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix compile error with QT_NO_ACTION
+        https://bugs.webkit.org/show_bug.cgi?id=36529
+
+        Make sure QT_NO_ACTION is not defined to use QAction
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebView::pageAction):
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::updateAction):
+        (QWebPage::updatePositionDependentActions):
+        * Api/qwebpage.h:
+        * Api/qwebview.cpp:
+        * Api/qwebview.h:
+
 2010-04-09  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Lars Knoll.

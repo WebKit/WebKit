@@ -585,6 +585,7 @@ QString QWebView::selectedText() const
     return QString();
 }
 
+#ifndef QT_NO_ACTION
 /*!
     Returns a pointer to a QAction that encapsulates the specified web action \a action.
 */
@@ -592,6 +593,7 @@ QAction *QWebView::pageAction(QWebPage::WebAction action) const
 {
     return page()->action(action);
 }
+#endif
 
 /*!
     Triggers the specified \a action. If it is a checkable action the specified
