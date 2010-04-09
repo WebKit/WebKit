@@ -1,3 +1,28 @@
+2010-04-09  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24572
+        XMLHttpRequest.statusText returns always "OK" on Mac
+
+        We only need custom results on Tiger now.
+
+        * platform/mac-tiger/http/tests/xmlhttprequest: Added.
+        * platform/mac-tiger/http/tests/xmlhttprequest/web-apps: Added.
+        * platform/mac-tiger/http/tests/xmlhttprequest/web-apps/012-expected.txt: Copied from LayoutTests/platform/mac/http/tests/xmlhttprequest/web-apps/012-expected.txt.
+        * platform/mac-tiger/http/tests/xmlhttprequest/web-apps/013-expected.txt: Copied from LayoutTests/platform/mac/http/tests/xmlhttprequest/web-apps/013-expected.txt.
+        * platform/mac-tiger/http/tests/xmlhttprequest/xmlhttprequest-missing-file-exception-expected.txt: Copied from LayoutTests/platform/mac/http/tests/xmlhttprequest/xmlhttprequest-missing-file-exception-expected.txt.
+        * platform/mac/http/tests/xmlhttprequest: Removed.
+        * platform/mac/http/tests/xmlhttprequest/web-apps: Removed.
+        * platform/mac/http/tests/xmlhttprequest/web-apps/012-expected.txt: Removed.
+        * platform/mac/http/tests/xmlhttprequest/web-apps/013-expected.txt: Removed.
+        * platform/mac/http/tests/xmlhttprequest/xmlhttprequest-missing-file-exception-expected.txt: Removed.
+        * platform/win/http/tests/xmlhttprequest: Removed.
+        * platform/win/http/tests/xmlhttprequest/web-apps: Removed.
+        * platform/win/http/tests/xmlhttprequest/web-apps/012-expected.txt: Removed.
+        * platform/win/http/tests/xmlhttprequest/web-apps/013-expected.txt: Removed.
+        * platform/win/http/tests/xmlhttprequest/xmlhttprequest-missing-file-exception-expected.txt: Removed.
+
 2010-04-09  Dumitru Daniliuc  <dumi@chromium.org>
 
         Unreviewed, rolling back the last two changes. The failing tests

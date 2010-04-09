@@ -295,4 +295,12 @@ XSSProtectionDisposition parseXSSProtectionHeader(const String& header)
     return XSSProtectionEnabled;
 }
 
+String extractReasonPhraseFromHTTPStatusLine(const String& statusLine)
+{
+    int spacePos = statusLine.find(' ');
+    // Remove status code from the status line.
+    spacePos = statusLine.find(' ', spacePos + 1);
+    return statusLine.substring(spacePos + 1);
+}
+
 }

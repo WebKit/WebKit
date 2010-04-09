@@ -26,7 +26,9 @@
 #import "config.h"
 #import "ResourceResponse.h"
 
+#import "HTTPParsers.h"
 #import "WebCoreURLResponse.h"
+#import "WebCoreSystemInterface.h"
 #import <Foundation/Foundation.h>
 #import <wtf/StdLibExtras.h>
 #import <limits>
@@ -78,10 +80,12 @@ void ResourceResponse::platformLazyInit()
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)m_nsResponse.get();
         
         m_httpStatusCode = [httpResponse statusCode];
-        
-        // we used to return "OK" for everything, so be compatible and return "OK" for 200.
-        m_httpStatusText = m_httpStatusCode == 200 ? String("OK") 
-            : String([NSHTTPURLResponse localizedStringForStatusCode: m_httpStatusCode]);
+
+        RetainPtr<NSString> httpStatusLine(AdoptNS, wkCopyNSURLResponseStatusLine(m_nsResponse.get()));
+        if (httpStatusLine)
+            m_httpStatusText = extractReasonPhraseFromHTTPStatusLine(httpStatusLine.get());
+        else
+            m_httpStatusText = "OK";
         
         NSDictionary *headers = [httpResponse allHeaderFields];
         NSEnumerator *e = [headers keyEnumerator];

@@ -55,6 +55,7 @@ String filenameFromHTTPContentDisposition(const String&);
 String extractMIMETypeFromMediaType(const String&);
 String extractCharsetFromMediaType(const String&); 
 XSSProtectionDisposition parseXSSProtectionHeader(const String&);
+String extractReasonPhraseFromHTTPStatusLine(const String&);
 
 }
 

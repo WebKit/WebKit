@@ -29,8 +29,9 @@ NSString *WKGetPreferredExtensionForMIMEType(NSString *type);
 NSArray *WKGetExtensionsForMIMEType(NSString *type);
 NSString *WKGetMIMETypeForExtension(NSString *extension);
 
-NSDate *WKGetNSURLResponseLastModifiedDate(NSURLResponse *response);
-NSTimeInterval WKGetNSURLResponseFreshnessLifetime(NSURLResponse *response);
+NSDate *WKGetNSURLResponseLastModifiedDate(NSURLResponse *);
+NSTimeInterval WKGetNSURLResponseFreshnessLifetime(NSURLResponse *);
+NSString *WKCopyNSURLResponseStatusLine(NSURLResponse *);
 
 CFStringEncoding WKGetWebDefaultCFStringEncoding(void);
 

@@ -45,6 +45,7 @@ void InitWebCoreSystemInterface(void)
     INIT(AdvanceDefaultButtonPulseAnimation);
     INIT(CGContextGetShouldSmoothFonts);
     INIT(CopyCONNECTProxyResponse);
+    INIT(CopyNSURLResponseStatusLine);
     INIT(CreateCustomCFReadStream);
     INIT(CreateNSURLConnectionDelegateProxy);
     INIT(DrawCapsLockIndicator);

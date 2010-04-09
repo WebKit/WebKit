@@ -1,3 +1,27 @@
+2010-04-09  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24572
+        XMLHttpRequest.statusText returns always "OK" on Mac
+
+        Covered by existing tests, which now pass.
+
+        * WebCore.base.exp:
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+        Added a WebKitSystemInterface method to fetch status line.
+
+        * platform/network/HTTPParsers.cpp: (WebCore::extractReasonPhraseFromHTTPStatusLine):
+        * platform/network/HTTPParsers.h:
+        * platform/network/cf/ResourceResponseCFNet.cpp: (WebCore::ResourceResponse::platformLazyInit):
+        Moved code for parsing status line to HTTPHeaders, as it's used for both Mac and CF now.
+
+        * platform/network/mac/ResourceResponseMac.mm: (WebCore::ResourceResponse::platformLazyInit):
+        Use the actual reason phrase when available, and "OK" otherwise. Synthesizing a reson when
+        there isn't one is misleading, so we'll stick to our old broken behavior on Tiger, rather than
+        introduce a new broken one.
+
 2010-04-09  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Oliver Hunt.
