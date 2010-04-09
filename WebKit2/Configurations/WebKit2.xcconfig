@@ -1,0 +1,49 @@
+// Copyright (C) 2010 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+// PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+// OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+
+#include "FeatureDefines.xcconfig"
+#include "Version.xcconfig"
+
+//EXPORTED_SYMBOLS_FILE = $(EXPORTED_SYMBOLS_FILE_$(CURRENT_ARCH));
+//EXPORTED_SYMBOLS_FILE_ = mac/WebKit.exp;
+//EXPORTED_SYMBOLS_FILE_i386 = mac/WebKit.exp;
+//EXPORTED_SYMBOLS_FILE_ppc = mac/WebKit.exp;
+//EXPORTED_SYMBOLS_FILE_ppc64 = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.LP64.exp;
+//EXPORTED_SYMBOLS_FILE_x86_64 = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.LP64.exp;
+FRAMEWORK_SEARCH_PATHS = $(UMBRELLA_FRAMEWORKS_DIR) $(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Frameworks $(SYSTEM_LIBRARY_DIR)/PrivateFrameworks $(FRAMEWORK_SEARCH_PATHS);
+GCC_PREFIX_HEADER = WebKit2_Prefix.pch;
+GCC_PREPROCESSOR_DEFINITIONS = $(DEBUG_DEFINES) $(FEATURE_DEFINES) FRAMEWORK_NAME=WebKit2
+HEADER_SEARCH_PATHS = $(WEBCORE_PRIVATE_HEADERS_DIR)/ForwardingHeaders $(WEBCORE_PRIVATE_HEADERS_DIR)/icu "${BUILT_PRODUCTS_DIR}/usr/local/include" "${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit2" $(HEADER_SEARCH_PATHS);
+INFOPLIST_FILE = mac/Info.plist;
+INSTALL_PATH = $(SYSTEM_LIBRARY_DIR)/Frameworks;
+INSTALLHDRS_COPY_PHASE = YES;
+INSTALLHDRS_SCRIPT_PHASE = YES;
+PRODUCT_NAME = WebKit2;
+UMBRELLA_FRAMEWORKS_DIR = $(NEXT_ROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit2.framework/Versions/A/Frameworks;
+OTHER_LDFLAGS = -sub_umbrella WebCore $(OTHER_LDFLAGS);
+
+WEBCORE_PRIVATE_HEADERS_DIR = $(WEBCORE_PRIVATE_HEADERS_DIR_$(REAL_PLATFORM_NAME)_$(CONFIGURATION));
+WEBCORE_PRIVATE_HEADERS_DIR_macosx_Release = $(WEBCORE_PRIVATE_HEADERS_engineering);
+WEBCORE_PRIVATE_HEADERS_DIR_macosx_Debug = $(WEBCORE_PRIVATE_HEADERS_engineering);
+WEBCORE_PRIVATE_HEADERS_DIR_macosx_Production = $(UMBRELLA_FRAMEWORKS_DIR)/WebCore.framework/PrivateHeaders;
+WEBCORE_PRIVATE_HEADERS_engineering = $(BUILT_PRODUCTS_DIR)/WebCore.framework/PrivateHeaders;

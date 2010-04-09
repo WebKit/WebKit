@@ -1,3 +1,33 @@
+2010-04-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Add build support for WebKit2.
+
+        * Configurations: Added.
+        * Configurations/Base.xcconfig: Added.
+        * Configurations/DebugRelease.xcconfig: Added.
+        * Configurations/FeatureDefines.xcconfig: Added.
+        * Configurations/Version.xcconfig: Added.
+        * Configurations/WebKit2.xcconfig: Added.
+        * English.lproj: Added.
+        * English.lproj/InfoPlist.strings: Added.
+        * Info.plist: Added.
+        * Makefile: Added.
+        * WebKit2.xcodeproj: Added.
+        * WebKit2.xcodeproj/project.pbxproj: Added.
+        * WebKit2Prefix.cpp: Added.
+        * WebKit2Prefix.h: Added.
+        * WebKit2_Prefix.pch: Added.
+        * WebProcess-Info.plist: Added.
+        * version.plist: Added.
+        * win: Added.
+        * win/WebKit2.def: Added.
+        * win/WebKit2.vcproj: Added.
+        * win/WebKit2Generated.make: Added.
+        * win/WebKit2Generated.vcproj: Added.
+        * win/WebKit2WebProcess.vcproj: Added.
+
 2010-04-08  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

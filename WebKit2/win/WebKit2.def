@@ -1,0 +1,10 @@
+LIBRARY "WebKit2"
+
+EXPORTS
+    WKContextCreateWithProcessModel
+    WKPageNamespaceCreate
+    WKPageLoadURL
+    WKViewCreate
+    WKViewGetWindow
+    WKViewGetPage
+    ?WebProcessMain@WebKit@@YAHPAUHINSTANCE__@@PA_W@Z
