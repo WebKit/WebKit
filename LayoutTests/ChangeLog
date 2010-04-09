@@ -1,3 +1,13 @@
+2010-04-08  Chris Evans  <cevans@chromium.org>
+
+        Reviewed by Sam Weinig.
+
+        Add test for POST & _blank popup blocker bypass.
+        https://bugs.webkit.org/show_bug.cgi?id=34541
+
+        * fast/events/popup-blocked-to-post-blank.html: added
+        * fast/events/popup-blocked-to-post-blank-expected.txt: added
+
 2010-04-08  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Adam Barth.

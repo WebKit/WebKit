@@ -1166,9 +1166,9 @@ static IntPoint documentPointForWindowPoint(Frame* frame, const IntPoint& window
 bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
 {
     RefPtr<FrameView> protector(m_frame->view());
-    
-    UserGestureIndicator gestureIndicator;
-    
+
+    UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
+
     cancelFakeMouseMoveEvent();
     m_mousePressed = true;
     m_capturesDragging = true;
@@ -1297,8 +1297,8 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
 bool EventHandler::handleMouseDoubleClickEvent(const PlatformMouseEvent& mouseEvent)
 {
     RefPtr<FrameView> protector(m_frame->view());
-    
-    UserGestureIndicator gestureIndicator;
+
+    UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
 
     // We get this instead of a second mouse-up 
     m_mousePressed = false;
@@ -1467,7 +1467,7 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent)
 {
     RefPtr<FrameView> protector(m_frame->view());
     
-    UserGestureIndicator gestureIndicator;
+    UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
 
 #if ENABLE(PAN_SCROLLING)
     if (mouseEvent.button() == MiddleButton)
@@ -2127,8 +2127,8 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
     RefPtr<Node> node = eventTargetNodeForDocument(m_frame->document());
     if (!node)
         return false;
-    
-    UserGestureIndicator gestureIndicator;
+
+    UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
 
     if (FrameView* view = m_frame->view())
         view->resetDeferredRepaintDelay();
@@ -2696,8 +2696,8 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
 
     const Vector<PlatformTouchPoint>& points = event.touchPoints();
     AtomicString* eventName = 0;
-    
-    UserGestureIndicator gestureIndicator;
+
+    UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
 
     for (unsigned i = 0; i < points.size(); ++i) {
         const PlatformTouchPoint& point = points[i];

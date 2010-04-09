@@ -43,6 +43,7 @@
 #include "HTMLFormElement.h"
 #include "HTMLFrameOwnerElement.h"
 #include "Page.h"
+#include "UserGestureIndicator.h"
 #include <wtf/CurrentTime.h>
 
 namespace WebCore {
@@ -175,6 +176,7 @@ public:
         , m_frameRequest(frameRequest)
         , m_event(event)
         , m_formState(formState)
+        , m_wasProcessingUserGesture(UserGestureIndicator::processingUserGesture())
     {
         ASSERT(!frameRequest.isEmpty());
         ASSERT(m_formState);
@@ -182,6 +184,8 @@ public:
 
     virtual void fire(Frame* frame)
     {
+        UserGestureIndicator gestureIndicator(m_wasProcessingUserGesture ? DefinitelyProcessingUserGesture : PossiblyProcessingUserGesture);
+
         // The submitForm function will find a target frame before using the redirection timer.
         // Now that the timer has fired, we need to repeat the security check which normally is done when
         // selecting a target, in case conditions have changed. Other code paths avoid this by targeting
@@ -200,6 +204,7 @@ private:
     const FrameLoadRequest m_frameRequest;
     const RefPtr<Event> m_event;
     const RefPtr<FormState> m_formState;
+    bool m_wasProcessingUserGesture;
 };
 
 RedirectScheduler::RedirectScheduler(Frame* frame)

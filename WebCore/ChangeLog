@@ -1,3 +1,33 @@
+2010-04-08  Chris Evans  <cevans@chromium.org>
+
+        Reviewed by Sam Weinig.
+
+        Use the new UserGestureIndictor for _blank POST requests.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34541
+
+        Test: fast/events/popup-blocked-to-post-blank.html
+
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::processingUserGesture):
+          Use UserGestureIndicator in more cases.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler):
+          Impact from UserGestureIndicator API change.
+        (WebCore::FrameLoader::submitForm):
+          Block the load immediately if popups are not allowed and it would
+          open a new window.
+        * loader/RedirectScheduler.cpp:
+        (WebCore::ScheduledFormSubmission::ScheduledFormSubmission):
+          Note the UserGestureIndicator status at the time of submission.
+        (WebCore::ScheduledFormSubmission::fire):
+          Use the stored UserGestureIndicator status in the asynchronous
+          callback.
+        * dom/UserGestureIndicator.h:
+        * dom/UserGestureIndicator.cpp:
+        (WebCore::UserGestureIndicator::UserGestureIndicator):
+          Add ability to store a negative indication.
+
 2010-03-29  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Simon Fraser.

@@ -1,0 +1,32 @@
+<html>
+<head>
+<script>
+if (window.layoutTestController) {
+  layoutTestController.dumpAsText();
+  layoutTestController.setCanOpenWindows();
+  layoutTestController.setPopupBlockingEnabled(true);
+  layoutTestController.setCloseRemainingWindowsWhenComplete(true);
+  layoutTestController.waitUntilDone();
+}
+
+function test() {
+  // We rely on sequential ordering of POST processing.
+  var form = document.getElementById('form');
+  form.submit();
+  var form2 = document.getElementById('form2');
+  form2.submit();
+}
+</script>
+</head>
+<body onload="test()">
+If the POST pop-up was not blocked then there will be an ALERT containing a
+DOMWindow object. Otherwise, the test passes.
+<form id="form" action="data:text/html,<script>alert(window)</script>" target="_blank">
+<input type="submit" value="Submit to new window"/>
+</form>
+<form id="form2" action="data:text/html,<b>hello!</b><script>window.layoutTestController && layoutTestController.notifyDone()</script>" target="target">
+<input type="submit" value="Submit local page Javascript"/>
+</form>
+<iframe id="target"></iframe>
+</body>
+</html>

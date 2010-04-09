@@ -154,9 +154,10 @@ void ScriptController::updatePlatformScriptObjects()
 bool ScriptController::processingUserGesture(DOMWrapperWorld*) const
 {
     Frame* activeFrame = V8Proxy::retrieveFrameForEnteredContext();
-    // No script is running, so it must be run by users.
+    // No script is running, so it is user-initiated unless the gesture stack
+    // explicitly says it is not.
     if (!activeFrame)
-        return true;
+        return UserGestureIndicator::processingUserGesture();
 
     V8Proxy* activeProxy = activeFrame->script()->proxy();
 
