@@ -1,3 +1,17 @@
+2010-04-09  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] User agent style sheets are crippled by moc -E in make-css-file-arrays.pl
+        https://bugs.webkit.org/show_bug.cgi?id=37296
+
+        Update expected files after removal of moc preprocessing of default css sheets.
+        These test results now only differ in metrics from Mac ones.
+
+        * platform/qt/editing/execCommand/insert-list-xml-expected.txt:
+        * platform/qt/svg/custom/createImageElement2-expected.txt:
+        * platform/qt/svg/custom/use-on-symbol-inside-pattern-expected.txt:
+
 2010-04-08  Chris Evans  <cevans@chromium.org>
 
         Reviewed by Sam Weinig.

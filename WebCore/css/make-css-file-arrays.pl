@@ -23,21 +23,6 @@
 use strict;
 use Getopt::Long;
 
-my $preprocessor;
-
-GetOptions('preprocessor=s' => \$preprocessor);
-
-if (!$preprocessor) {
-    require Config;
-    my $gccLocation = "";
-    if (($Config::Config{'osname'}) =~ /solaris/i) {
-        $gccLocation = "/usr/sfw/bin/gcc";
-    } else {
-        $gccLocation = "/usr/bin/gcc";
-    }
-    $preprocessor = $gccLocation . " -E -P -x c++";
-}
-
 my $header = $ARGV[0];
 shift;
 
@@ -55,7 +40,7 @@ for my $in (@ARGV) {
     my $name = $1;
 
     # Slurp in the CSS file.
-    open IN, $preprocessor . " " . $in . "|" or die;
+    open IN, "<", $in or die;
     my $text; { local $/; $text = <IN>; }
     close IN;
 

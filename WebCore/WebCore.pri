@@ -698,7 +698,7 @@ addExtraCompiler(colordata)
 stylesheets.wkScript = $$PWD/css/make-css-file-arrays.pl
 stylesheets.output = $${WC_GENERATED_SOURCES_DIR}/UserAgentStyleSheetsData.cpp
 stylesheets.input = stylesheets.wkScript
-stylesheets.commands = perl $$stylesheets.wkScript --preprocessor \"$${QMAKE_MOC} -E\" $${WC_GENERATED_SOURCES_DIR}/UserAgentStyleSheets.h ${QMAKE_FILE_OUT} $$STYLESHEETS_EMBED
+stylesheets.commands = perl $$stylesheets.wkScript $${WC_GENERATED_SOURCES_DIR}/UserAgentStyleSheets.h ${QMAKE_FILE_OUT} $$STYLESHEETS_EMBED
 stylesheets.depends = $$STYLESHEETS_EMBED
 stylesheets.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_WC_GENERATED_SOURCES_DIR}/UserAgentStyleSheets.h
 addExtraCompiler(stylesheets, $${WC_GENERATED_SOURCES_DIR}/UserAgentStyleSheets.h)

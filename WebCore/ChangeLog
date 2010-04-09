@@ -1,3 +1,18 @@
+2010-04-09  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] User agent style sheets are crippled by moc -E in make-css-file-arrays.pl
+        https://bugs.webkit.org/show_bug.cgi?id=37296
+
+        Do not use moc to preprocess user agent style sheets because it removes at-symbols
+        and hexadecimal colours from declarations.
+        Remove unneeded preprocessor usage from make-css-file-arrays.pl since the script
+        processes default css files using regular expressions therefore preprocessing is redundant.
+
+        * WebCore.pri: remove --preprocessor usage
+        * css/make-css-file-arrays.pl: remove gcc dependency
+
 2010-04-08  Chris Evans  <cevans@chromium.org>
 
         Reviewed by Sam Weinig.
