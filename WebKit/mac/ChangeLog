@@ -1,3 +1,15 @@
+2010-04-09  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, rolling out r57343.
+        http://trac.webkit.org/changeset/57343
+        https://bugs.webkit.org/show_bug.cgi?id=37311
+
+        Broke Tiger compile.
+
+        * WebView/WebVideoFullscreenController.mm:
+        (-[WebVideoFullscreenController windowDidLoad]):
+        (-[WebVideoFullscreenController setMediaElement:WebCore::]):
+
 2010-04-09  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
