@@ -1,3 +1,11 @@
+2010-04-09  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix crashes with package builds in release
+
+        * WebCore.pro: Don't add NDEBUG to the defines here, add it from JavaScriptCore.pri
+
 2010-04-09  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Simon Fraser.

@@ -1,3 +1,17 @@
+2010-04-09  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix crashes with package builds in release
+
+        Add NDEBUG to the defines for package build in JavaScriptCore.pri,
+        so that it's consistently used for JavaScriptCore, WebCore, jsc and all
+        other tools using wtf, etc. data structures directly. Mixing NDEBUG with
+        non-NDEBUG builds causes crashes due to differences in data structures when
+        assertions/checks are enabled.
+
+        * JavaScriptCore.pri:
+
 2010-04-09  Patrick Gansterer  <paroga@paroga.com>
 
         Reviewed by Darin Adler.

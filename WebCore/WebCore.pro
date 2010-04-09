@@ -52,7 +52,6 @@ CONFIG(standalone_package) {
     isEmpty(JSC_GENERATED_SOURCES_DIR):JSC_GENERATED_SOURCES_DIR = $$PWD/../JavaScriptCore/generated
 
     PRECOMPILED_HEADER = $$PWD/../WebKit/qt/WebKit_pch.h
-    DEFINES *= NDEBUG
 
     symbian: TARGET += $${QT_LIBINFIX}
 } else {

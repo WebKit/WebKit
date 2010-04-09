@@ -8,6 +8,8 @@ CONFIG(standalone_package) {
     isEmpty(JSC_GENERATED_SOURCES_DIR):JSC_GENERATED_SOURCES_DIR = generated
 }
 
+CONFIG(standalone_package): DEFINES *= NDEBUG
+
 symbian: {
     # Need to guarantee this comes before system includes of /epoc32/include
     MMP_RULES += "USERINCLUDE ../JavaScriptCore/profiler"
