@@ -151,6 +151,9 @@ public:
     // Hide the popup.
     void hidePopup();
 
+    // The popup was hidden.
+    void notifyPopupHidden();
+
     // Compute size of widget and children.
     void layout();
 

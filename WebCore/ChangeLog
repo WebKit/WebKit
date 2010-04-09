@@ -1,3 +1,16 @@
+2010-04-09  Evan Stade  <estade@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [chromium] <select> dropdowns don't die when an item is selected
+        https://bugs.webkit.org/show_bug.cgi?id=37243
+
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupContainer::hidePopup):
+        (WebCore::PopupContainer::notifyPopupHidden):
+        (WebCore::PopupListBox::hidePopup): inform container that popup is closing
+        * platform/chromium/PopupMenuChromium.h:
+
 2010-04-09  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Simon Hausmann.
