@@ -58,6 +58,7 @@ use File::Find;
 use File::Path;
 use File::Spec;
 use File::Spec::Functions;
+use File::Temp;
 use FindBin;
 use Getopt::Long;
 use IPC::Open2;
@@ -1309,6 +1310,8 @@ sub openDumpTool()
         $CLEAN_ENV{WEBKIT_TESTFONTS} = $ENV{'WEBKIT_TESTFONTS'};
     }
 
+    # unique temporary directory for each DumpRendertree - needed for running more DumpRenderTree in parallel
+    $CLEAN_ENV{DUMPRENDERTREE_TEMP} = File::Temp::tempdir('DumpRenderTree-XXXXXX', TMPDIR => 1, CLEANUP => 1);
     $CLEAN_ENV{XML_CATALOG_FILES} = ""; # work around missing /etc/catalog <rdar://problem/4292995>
 
     # Platform spesifics

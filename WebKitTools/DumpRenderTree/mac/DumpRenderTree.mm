@@ -362,7 +362,14 @@ void testStringByEvaluatingJavaScriptFromString()
 
 static NSString *libraryPathForDumpRenderTree()
 {
-    return [@"~/Library/Application Support/DumpRenderTree" stringByExpandingTildeInPath];
+    //FIXME: This may not be sufficient to prevent interactions/crashes
+    //when running more than one copy of DumpRenderTree.
+    //See https://bugs.webkit.org/show_bug.cgi?id=10906
+    char* dumpRenderTreeTemp = getenv("DUMPRENDERTREE_TEMP");
+    if (dumpRenderTreeTemp)
+        return [[NSFileManager defaultManager] stringWithFileSystemRepresentation:dumpRenderTreeTemp length:strlen(dumpRenderTreeTemp)];
+    else
+        return [@"~/Library/Application Support/DumpRenderTree" stringByExpandingTildeInPath];
 }
 
 // Called before each test.
