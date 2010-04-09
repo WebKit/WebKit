@@ -1,3 +1,11 @@
+2010-04-09  Adam Roben  <aroben@apple.com>
+
+        Windows Debug/Release build fix after r57244
+
+        * WebKit.vcproj/WebKit.vcproj: Don't delay-load QuartzCore.dll or
+        QuartzCoreInterface.dll in any configurations. r57244 made this change
+        only for Debug_Internal.
+
 2010-04-08  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Darin Adler.
