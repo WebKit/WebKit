@@ -76,6 +76,16 @@ struct WebDynamicScrollBarsViewPrivate {
     return self;
 }
 
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+    if (!(self = [super initWithCoder:aDecoder]))
+        return nil;
+
+    _private = new WebDynamicScrollBarsViewPrivate;
+    memset(_private, 0, sizeof(WebDynamicScrollBarsViewPrivate));
+    return self;
+}
+
 - (void)dealloc
 {
     delete _private;

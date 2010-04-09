@@ -1,3 +1,12 @@
+2010-04-09  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7846015> REGRESSION (r57332) - Crash in [WebDynamicScrollBarsView(WebInternal) reflectScrolledClipView:] when opening the Downloads window
+
+        * WebView/WebDynamicScrollBarsView.mm:
+        (-[WebDynamicScrollBarsView initWithCoder:]): Added. Calls super and then initializes _private.
+
 2010-04-09  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Darin Adler.
