@@ -2858,4 +2858,4 @@ BUGWK36983 MAC : fast/canvas/webgl/null-object-behaviour.html = TEXT
 BUGWK36983 MAC : fast/canvas/webgl/uniform-location.html = TEXT
 
 // WebKit roll 57286:573xx
-BUGWK37359 LINUX : websocket/tests/workers/worker-simple.html = TEXT
+BUGWK37359 LINUX : websocket/tests/workers/worker-simple.html = TIMEOUT TEXT

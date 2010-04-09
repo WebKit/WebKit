@@ -1,5 +1,13 @@
 2010-04-09  Dumitru Daniliuc  <dumi@chromium.org>
 
+        Unreviewed, adding a TIMEOUT expectations for worker-simple.html
+        on Linux.
+        https://bugs.webkit.org/show_bug.cgi?id=37274
+
+        * platform/chromium/test_expectations.txt:
+
+2010-04-09  Dumitru Daniliuc  <dumi@chromium.org>
+
         Unreviewed, skipping a test on Linux in Chromium.
         https://bugs.webkit.org/show_bug.cgi?id=37359
 
