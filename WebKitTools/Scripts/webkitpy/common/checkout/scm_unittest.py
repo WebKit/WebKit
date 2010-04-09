@@ -69,33 +69,42 @@ def read_from_path(file_path):
 
 # Exists to share svn repository creation code between the git and svn tests
 class SVNTestRepository:
-    @staticmethod
-    def _setup_test_commits(test_object):
+    @classmethod
+    def _svn_add(cls, path):
+        run_command(["svn", "add", path])
+
+    @classmethod
+    def _svn_commit(cls, message):
+        run_command(["svn", "commit", "--quiet", "--message", message])
+
+    @classmethod
+    def _setup_test_commits(cls, test_object):
         # Add some test commits
         os.chdir(test_object.svn_checkout_path)
-        test_file = open('test_file', 'w')
-        test_file.write("test1")
-        test_file.flush()
 
-        run_command(['svn', 'add', 'test_file'])
-        run_command(['svn', 'commit', '--quiet', '--message', 'initial commit'])
-        
-        test_file.write("test2")
-        test_file.flush()
-        
-        run_command(['svn', 'commit', '--quiet', '--message', 'second commit'])
-        
-        test_file.write("test3\n")
-        test_file.flush()
+        write_into_file_at_path("test_file", "test1")
+        cls._svn_add("test_file")
+        cls._svn_commit("initial commit")
+
+        write_into_file_at_path("test_file", "test1test2")
+        # This used to be the last commit, but doing so broke
+        # GitTest.test_apply_git_patch which use the inverse diff of the last commit.
+        # svn-apply fails to remove directories in Git, see:
+        # https://bugs.webkit.org/show_bug.cgi?id=34871
+        os.mkdir("test_dir")
+        # Slash should always be the right path separator since we use cygwin on Windows.
+        test_file3_path = "test_dir/test_file3"
+        write_into_file_at_path(test_file3_path, "third file")
+        cls._svn_add("test_dir")
+        cls._svn_commit("second commit")
+
+        write_into_file_at_path("test_file", "test1test2test3\n")
         write_into_file_at_path("test_file2", "second file")
-        run_command(['svn', 'add', 'test_file2'])
+        cls._svn_add("test_file2")
+        cls._svn_commit("third commit")
 
-        run_command(['svn', 'commit', '--quiet', '--message', 'third commit'])
-
-        test_file.write("test4\n")
-        test_file.close()
-
-        run_command(['svn', 'commit', '--quiet', '--message', 'fourth commit'])
+        write_into_file_at_path("test_file", "test1test2test3\ntest4\n")
+        cls._svn_commit("fourth commit")
 
         # svn does not seem to update after commit as I would expect.
         run_command(['svn', 'update'])
@@ -203,8 +212,23 @@ class SCMTest(unittest.TestCase):
         commit_text = self.scm.commit_with_message("yet another test commit", username)
         self.assertEqual(self.scm.svn_revision_from_commit_text(commit_text), '0')
 
+    def _shared_test_changed_files(self):
+        write_into_file_at_path("test_file", "changed content")
+        self.assertEqual(self.scm.changed_files(), ["test_file"])
+        write_into_file_at_path("test_dir/test_file3", "new stuff")
+        self.assertEqual(self.scm.changed_files(), ["test_dir/test_file3", "test_file"])
+        old_cwd = os.getcwd()
+        os.chdir("test_dir")
+        # Validate that changed_files does not change with our cwd, see bug 37015.
+        self.assertEqual(self.scm.changed_files(), ["test_dir/test_file3", "test_file"])
+        os.chdir(old_cwd)
+
     def _shared_test_changed_files_for_revision(self):
-        self.assertEqual(self.scm.changed_files_for_revision(2), ["test_file"])
+        # SVN reports directory changes, Git does not.
+        changed_files = self.scm.changed_files_for_revision(2)
+        if "test_dir" in changed_files:
+            changed_files.remove("test_dir")
+        self.assertEqual(changed_files, ["test_dir/test_file3", "test_file"])
         self.assertEqual(sorted(self.scm.changed_files_for_revision(3)), sorted(["test_file", "test_file2"])) # Git and SVN return different orders.
         self.assertEqual(self.scm.changed_files_for_revision(4), ["test_file"])
 
@@ -427,11 +451,11 @@ class SVNTest(SCMTest):
         SVNTestRepository.tear_down(self)
 
     def test_create_patch_is_full_patch(self):
-        test_dir_path = os.path.join(self.svn_checkout_path, 'test_dir')
+        test_dir_path = os.path.join(self.svn_checkout_path, "test_dir2")
         os.mkdir(test_dir_path)
         test_file_path = os.path.join(test_dir_path, 'test_file2')
         write_into_file_at_path(test_file_path, 'test content')
-        run_command(['svn', 'add', 'test_dir'])
+        run_command(['svn', 'add', 'test_dir2'])
 
         # create_patch depends on 'svn-create-patch', so make a dummy version.
         scripts_path = os.path.join(self.svn_checkout_path, 'WebKitTools', 'Scripts')
@@ -526,6 +550,9 @@ Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
 
     def test_svn_apply_git_patch(self):
         self._shared_test_svn_apply_git_patch()
+
+    def test_changed_files(self):
+        self._shared_test_changed_files()
 
     def test_changed_files_for_revision(self):
         self._shared_test_changed_files_for_revision()
@@ -655,6 +682,9 @@ class GitTest(SCMTest):
 
     def test_apply_git_patch(self):
         scm = detect_scm_system(self.git_checkout_path)
+        # We carefullly pick a diff which does not have a directory addition
+        # as currently svn-apply will error out when trying to remove directories
+        # in Git: https://bugs.webkit.org/show_bug.cgi?id=34871
         patch = self._create_patch(run_command(['git', 'diff', 'HEAD..HEAD^']))
         self._setup_webkittools_scripts_symlink(scm)
         Checkout(scm).apply_patch(patch)
@@ -706,6 +736,9 @@ class GitTest(SCMTest):
         self.assertTrue(re.search(r'\nliteral 0\n', patch_since_local_commit))
         self.assertTrue(re.search(r'\nliteral 256\n', patch_since_local_commit))
         self.assertEqual(patch_from_local_commit, patch_since_local_commit)
+
+    def test_changed_files(self):
+        self._shared_test_changed_files()
 
     def test_changed_files_for_revision(self):
         self._shared_test_changed_files_for_revision()

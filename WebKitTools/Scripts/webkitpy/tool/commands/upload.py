@@ -52,7 +52,8 @@ class CommitMessageForCurrentDiff(AbstractDeclarativeCommand):
     help_text = "Print a commit message suitable for the uncommitted changes"
 
     def execute(self, options, args, tool):
-        os.chdir(tool.scm().checkout_root)
+        # This command is a useful test to make sure commit_message_for_this_commit
+        # always returns the right value regardless of the current working directory.
         print "%s" % tool.checkout().commit_message_for_this_commit().message()
 
 class CleanPendingCommit(AbstractDeclarativeCommand):

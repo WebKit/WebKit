@@ -1,3 +1,32 @@
+2010-04-09  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        webkit-patch attached my patch to the wrong bug
+        https://bugs.webkit.org/show_bug.cgi?id=37015
+
+        The problem here is that SVN was violating SCM's implicit
+        contract of always returning paths relative to the repository root.
+        That can easily be fixed by telling SVN that the CWD is the repository root.
+
+        When fixing this I realized there are a large number of places in SCM.py where
+        we want to consider explicitly passing self.checkout_root as the CWD.
+        That would allow scm methods to be executed even when the CWD is not inside
+        the scm tree at all, and would also make sure (in the case of SVN) that paths
+        returned are relative to the root.  Git (almost always) returns paths relative
+        to the repository root.
+
+        * Scripts/webkitpy/common/checkout/scm.py:
+         - Explicitly pass self.checkout_root as cwd in run_status_and_extract_filenames
+         - Add a ton of FIXMEs about the need to go back and decide which methods require cwd=self.checkout_root
+           and which do not.  We'll probably add a helper function to scm (likely SCM._run) which
+           always passes cwd=self.checkout_root to Executive.run_command
+        * Scripts/webkitpy/common/checkout/scm_unittest.py:
+         - Add a test for this change.
+        * Scripts/webkitpy/tool/commands/upload.py:
+         - Removed the explicit os.chdir to the repository root, since scm.py methods
+           should be robust against the cwd not being equal to the root.
+
 2010-04-09  Adam Roben  <aroben@apple.com>
 
         Don't return 0 as a JSValueRef

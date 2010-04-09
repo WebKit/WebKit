@@ -32,6 +32,9 @@
 import os
 import re
 
+# FIXME: Instead of using run_command directly, most places in this
+# class would rather use an SCM.run method which automatically set
+# cwd=self.checkout_root.
 from webkitpy.common.system.executive import Executive, run_command, ScriptError
 from webkitpy.common.system.user import User
 from webkitpy.common.system.deprecated_logging import error, log
@@ -90,6 +93,7 @@ def commit_error_handler(error):
     Executive.default_error_handler(error)
 
 
+# SCM methods are expected to return paths relative to self.checkout_root.
 class SCM:
     def __init__(self, cwd):
         self.cwd = cwd
@@ -104,6 +108,7 @@ class SCM:
 
     def ensure_clean_working_directory(self, force_clean):
         if not force_clean and not self.working_directory_is_clean():
+            # FIXME: Shouldn't this use cwd=self.checkout_root?
             print run_command(self.status_command(), error_handler=Executive.ignore_error)
             raise ScriptError(message="Working directory has modifications, pass --force-clean or --no-clean to continue.")
         
@@ -122,7 +127,8 @@ class SCM:
 
     def run_status_and_extract_filenames(self, status_command, status_regexp):
         filenames = []
-        for line in run_command(status_command).splitlines():
+        # We run with cwd=self.checkout_root so that returned-paths are root-relative.
+        for line in run_command(status_command, cwd=self.checkout_root).splitlines():
             match = re.search(status_regexp, line)
             if not match:
                 continue
@@ -289,9 +295,11 @@ class SVN(SCM):
         return self.cached_version
 
     def working_directory_is_clean(self):
+        # FIXME: Should this use cwd=self.checkout_root?
         return run_command(['svn', 'diff']) == ""
 
     def clean_working_directory(self):
+        # FIXME: Shouldn't this use cwd=self.checkout_root?
         run_command(['svn', 'revert', '-R', '.'])
 
     def status_command(self):
@@ -330,6 +338,7 @@ class SVN(SCM):
         return run_command(["svn", "cat", "-r", str(revision), remote_path])
 
     def diff_for_revision(self, revision):
+        # FIXME: This should probably use cwd=self.checkout_root
         return run_command(['svn', 'diff', '-c', str(revision)])
 
     def _repository_url(self):
@@ -340,9 +349,11 @@ class SVN(SCM):
         svn_merge_args = ['svn', 'merge', '--non-interactive', '-c', '-%s' % revision, self._repository_url()]
         log("WARNING: svn merge has been known to take more than 10 minutes to complete.  It is recommended you use git for rollouts.")
         log("Running '%s'" % " ".join(svn_merge_args))
+        # FIXME: Should this use cwd=self.checkout_root?
         run_command(svn_merge_args)
 
     def revert_files(self, file_paths):
+        # FIXME: This should probably use cwd=self.checkout_root.
         run_command(['svn', 'revert'] + file_paths)
 
     def commit_with_message(self, message, username=None):
@@ -357,6 +368,7 @@ class SVN(SCM):
         if username:
             svn_commit_args.extend(["--username", username])
         svn_commit_args.extend(["-m", message])
+        # FIXME: Should this use cwd=self.checkout_root?
         return run_command(svn_commit_args, error_handler=commit_error_handler)
 
     def svn_commit_log(self, svn_revision):
@@ -388,6 +400,7 @@ class Git(SCM):
 
     @classmethod
     def read_git_config(cls, key):
+        # FIXME: This should probably use cwd=self.checkout_root.
         return run_command(["git", "config", key],
             error_handler=Executive.ignore_error).rstrip('\n')
 
@@ -396,18 +409,22 @@ class Git(SCM):
         return "^Committed r(?P<svn_revision>\d+)$"
 
     def discard_local_commits(self):
+        # FIXME: This should probably use cwd=self.checkout_root
         run_command(['git', 'reset', '--hard', self.svn_branch_name()])
     
     def local_commits(self):
+        # FIXME: This should probably use cwd=self.checkout_root
         return run_command(['git', 'log', '--pretty=oneline', 'HEAD...' + self.svn_branch_name()]).splitlines()
 
     def rebase_in_progress(self):
         return os.path.exists(os.path.join(self.checkout_root, '.git/rebase-apply'))
 
     def working_directory_is_clean(self):
+        # FIXME: This should probably use cwd=self.checkout_root
         return run_command(['git', 'diff', 'HEAD', '--name-only']) == ""
 
     def clean_working_directory(self):
+        # FIXME: These should probably use cwd=self.checkout_root.
         # Could run git clean here too, but that wouldn't match working_directory_is_clean
         run_command(['git', 'reset', '--hard', 'HEAD'])
         # Aborting rebase even though this does not match working_directory_is_clean
@@ -446,10 +463,12 @@ class Git(SCM):
         return "git"
 
     def create_patch(self):
+        # FIXME: This should probably use cwd=self.checkout_root
         return run_command(['git', 'diff', '--binary', 'HEAD'])
 
     @classmethod
     def git_commit_from_svn_revision(cls, revision):
+        # FIXME: This should probably use cwd=self.checkout_root
         git_commit = run_command(['git', 'svn', 'find-rev', 'r%s' % revision]).rstrip()
         # git svn find-rev always exits 0, even when the revision is not found.
         if not git_commit:
