@@ -162,6 +162,8 @@ void JSNode::markChildren(MarkStack& markStack)
     // case, the root of the detached subtree has a wrapper, so the tree will only
     // get marked once. Nodes that aren't outermost need to mark the outermost
     // in case it is otherwise unreachable.
+    // FIXME: In the non-common case of root not having a wrapper, this is still an O(n^2) algorithm,
+    // as we will traverse the whole tree as many times as there are nodes with wrappers in it.
     if (node != outermostNodeWithWrapper) {
         markDOMNodeWrapper(markStack, m_impl->document(), outermostNodeWithWrapper);
         return;

@@ -1,3 +1,23 @@
+2010-04-08  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37181
+        <rdar://problem/7835374> REGRESSION (r54400): Hangs when doing AJAX update with large amount of data
+
+        Test: fast/events/gc-freeze-with-attribute-listeners.html
+
+        The problem was that we were creating JS wrappers for nodes with attribute event listeners,
+        and GC is very slow if there are nodes with wrappers in a detached tree whose root does not
+        have a wrapper.
+
+        * bindings/js/ScriptEventListener.cpp: (WebCore::createAttributeEventListener): Don't create
+        wrappers for attribute event listeners - if there is a node, JSLazyEventListener::initializeJSFunction()
+        will create one.
+
+        * bindings/js/JSNodeCustom.cpp: (WebCore::JSNode::markChildren): Added a FIXME about the problem
+        we are stepping around now.
+
 2010-04-09  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

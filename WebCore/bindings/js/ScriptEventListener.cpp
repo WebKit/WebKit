@@ -59,7 +59,6 @@ PassRefPtr<JSLazyEventListener> createAttributeEventListener(Node* node, Attribu
 
     int lineNumber = 1;
     String sourceURL;
-    JSObject* wrapper = 0;
     
     // FIXME: We should be able to provide accurate source information for frameless documents, too (e.g. for importing nodes from XMLHttpRequest.responseXML).
     if (Frame* frame = node->document()->frame()) {
@@ -74,13 +73,9 @@ PassRefPtr<JSLazyEventListener> createAttributeEventListener(Node* node, Attribu
 
         lineNumber = scriptController->eventHandlerLineNumber();
         sourceURL = node->document()->url().string();
-
-        JSC::JSLock lock(SilenceAssertionsOnly);
-        JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(node->document(), mainThreadNormalWorld());
-        wrapper = asObject(toJS(globalObject->globalExec(), globalObject, node));
     }
 
-    return JSLazyEventListener::create(attr->localName().string(), eventParameterName(node->isSVGElement()), attr->value(), node, sourceURL, lineNumber, wrapper, mainThreadNormalWorld());
+    return JSLazyEventListener::create(attr->localName().string(), eventParameterName(node->isSVGElement()), attr->value(), node, sourceURL, lineNumber, 0, mainThreadNormalWorld());
 }
 
 PassRefPtr<JSLazyEventListener> createAttributeEventListener(Frame* frame, Attribute* attr)
