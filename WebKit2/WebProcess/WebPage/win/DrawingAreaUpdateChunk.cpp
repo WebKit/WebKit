@@ -25,13 +25,12 @@
 
 #include "DrawingAreaUpdateChunk.h"
 
-#include "MessageID.h"
-
-#include "WebPage.h"
-#include "UpdateChunk.h"
 #include "DrawingAreaMessageKinds.h"
 #include "DrawingAreaProxyMessageKinds.h"
+#include "MessageID.h"
+#include "UpdateChunk.h"
 #include "WebCoreTypeArgumentMarshalling.h"
+#include "WebPage.h"
 #include "WebProcess.h"
 #include <WebCore/BitmapInfo.h>
 #include <WebCore/GraphicsContext.h>
@@ -39,7 +38,6 @@
 using namespace WebCore;
 
 namespace WebKit {
-
 
 DrawingAreaUpdateChunk::DrawingAreaUpdateChunk(WebPage* webPage)
     : DrawingArea(DrawingAreaUpdateChunkType, webPage)
