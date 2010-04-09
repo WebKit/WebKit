@@ -1,3 +1,12 @@
+2010-04-09  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <http://webkit.org/b/37326> IDL files are being copied in to the WebCore framework again
+
+        * WebCore.xcodeproj/project.pbxproj: Wire up the script.  Remove the three inappropriate
+        files from the Copy Bundle Resources build phase.
+
 2010-04-09  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Darin Fisher.

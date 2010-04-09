@@ -596,7 +596,6 @@
 		29A8124B0FBB9CA900510293 /* AXObjectCacheMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29A812470FBB9CA900510293 /* AXObjectCacheMac.mm */; };
 		2D9066060BE141D400956998 /* LayoutState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D9066040BE141D400956998 /* LayoutState.cpp */; };
 		2D9066070BE141D400956998 /* LayoutState.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9066050BE141D400956998 /* LayoutState.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		2E0888C4114883A900AF4265 /* DOMFormData.idl in Resources */ = {isa = PBXBuildFile; fileRef = 2E0888C3114883A900AF4265 /* DOMFormData.idl */; };
 		2E0888D41148848A00AF4265 /* JSDOMFormData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E0888D21148848A00AF4265 /* JSDOMFormData.cpp */; };
 		2E0888D51148848A00AF4265 /* JSDOMFormData.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E0888D31148848A00AF4265 /* JSDOMFormData.h */; };
 		2E0888E6114884E200AF4265 /* JSDOMFormDataCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E0888E5114884E200AF4265 /* JSDOMFormDataCustom.cpp */; };
@@ -2510,7 +2509,6 @@
 		A4226E951163D73A008B8397 /* DOMHTMLProgressElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A4226E921163D73A008B8397 /* DOMHTMLProgressElement.h */; };
 		A4226E961163D73A008B8397 /* DOMHTMLProgressElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = A4226E931163D73A008B8397 /* DOMHTMLProgressElement.mm */; };
 		A4226E991163D7CC008B8397 /* DOMHTMLProgressElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A4226E981163D7CC008B8397 /* DOMHTMLProgressElementInternal.h */; };
-		A4226EA61163D84D008B8397 /* HTMLProgressElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = A4226EA51163D84D008B8397 /* HTMLProgressElement.idl */; };
 		A43BF5981149290A00C643CA /* HTMLProgressElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A43BF5961149290A00C643CA /* HTMLProgressElement.cpp */; };
 		A43BF5991149290A00C643CA /* HTMLProgressElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A43BF5971149290A00C643CA /* HTMLProgressElement.h */; };
 		A43BF59C1149292800C643CA /* RenderProgress.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A43BF59A1149292800C643CA /* RenderProgress.cpp */; };
@@ -4919,8 +4917,6 @@
 		FA0B1F8911125CEE007F9839 /* RenderMathMLRow.h in Headers */ = {isa = PBXBuildFile; fileRef = FA0B1F8511125CEE007F9839 /* RenderMathMLRow.h */; };
 		FA5FAE4211126A5D00D3750F /* RenderMathMLOperator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA5FAE4011126A5D00D3750F /* RenderMathMLOperator.cpp */; };
 		FA5FAE4311126A5D00D3750F /* RenderMathMLOperator.h in Headers */ = {isa = PBXBuildFile; fileRef = FA5FAE4111126A5D00D3750F /* RenderMathMLOperator.h */; };
-		FA654A641108ABB7002615E0 /* mathml.css in Resources */ = {isa = PBXBuildFile; fileRef = FA654A631108ABB7002615E0 /* mathml.css */; };
-		FA654A681108ABE2002615E0 /* mathattrs.in in Resources */ = {isa = PBXBuildFile; fileRef = FA654A671108ABE2002615E0 /* mathattrs.in */; };
 		FA654A6B1108ABED002615E0 /* MathMLTextElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA654A691108ABED002615E0 /* MathMLTextElement.cpp */; };
 		FA654A6C1108ABED002615E0 /* MathMLTextElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FA654A6A1108ABED002615E0 /* MathMLTextElement.h */; };
 		FA654A6F1108ABFF002615E0 /* RenderMathMLBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA654A6D1108ABFF002615E0 /* RenderMathMLBlock.cpp */; };
@@ -18851,6 +18847,7 @@
 				939D050109D9FF6B00984996 /* Check For Global Initializers */,
 				933457E60EBFDF6B00B80894 /* Check For Exit Time Destructors */,
 				5D0D540D0E9862F60029E223 /* Check For Weak VTables and Externals */,
+				5DF50887116F3077005202AB /* Check For Inappropriate Files In Framework */,
 			);
 			buildRules = (
 			);
@@ -18908,8 +18905,6 @@
 				85136C9B0AED665900F90A3D /* helpCursor.png in Resources */,
 				85136C9C0AED665900F90A3D /* linkCursor.png in Resources */,
 				1CDC14050DD3934C006EACD3 /* localizedStrings.js in Resources */,
-				FA654A681108ABE2002615E0 /* mathattrs.in in Resources */,
-				FA654A641108ABB7002615E0 /* mathml.css in Resources */,
 				AB4261D80A2F6C9700BDD17D /* missingImage.tiff in Resources */,
 				85136C9D0AED665900F90A3D /* moveCursor.png in Resources */,
 				46F9D5DE0B0D60170028EE36 /* noDropCursor.png in Resources */,
@@ -18931,8 +18926,6 @@
 				85136CA80AED665900F90A3D /* westResizeCursor.png in Resources */,
 				1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */,
 				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
-				2E0888C4114883A900AF4265 /* DOMFormData.idl in Resources */,
-				A4226EA61163D84D008B8397 /* HTMLProgressElement.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -19017,6 +19010,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# Touch Info.plist to let Xcode know it needs to copy it into the built product\nif [[ \"${CONFIGURATION}\" != \"Production\" ]]; then\n    touch \"$SRCROOT/Info.plist\";\nfi;\n";
+		};
+		5DF50887116F3077005202AB /* Check For Inappropriate Files In Framework */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check For Inappropriate Files In Framework";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../WebKitTools/Scripts/check-for-inappropriate-files-in-framework ]; then\n    ../WebKitTools/Scripts/check-for-inappropriate-files-in-framework || exit $?\nfi\n";
 		};
 		933457E60EBFDF6B00B80894 /* Check For Exit Time Destructors */ = {
 			isa = PBXShellScriptBuildPhase;

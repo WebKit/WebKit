@@ -1,3 +1,16 @@
+2010-04-09  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <http://webkit.org/b/37326> IDL files are being copied in to the WebCore framework again
+
+        Add a script to detect the presence of inappropriate files in the frameworks.  At present
+        it only looks for .css, .idl and .in files in the top level of WebCore.framework/Resources,
+        as these are the only cases we've encountered recently.  It can be extended to check the
+        other frameworks or for other inappropriate files in the future.
+
+        * Scripts/check-for-inappropriate-files-in-framework: Added.
+
 2010-04-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
