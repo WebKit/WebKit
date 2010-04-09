@@ -33,7 +33,7 @@
 using namespace WebCore;
 using namespace WebKit;
 
-WKURLRef WKURKCreateWithCFURL(CFURLRef cfURL)
+WKURLRef WKURLCreateWithCFURL(CFURLRef cfURL)
 {
     RefPtr<KURLWrapper> url = KURLWrapper::create(KURL(cfURL));
     return toRef(url.release().releaseRef());

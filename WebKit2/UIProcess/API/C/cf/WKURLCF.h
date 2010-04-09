@@ -33,7 +33,7 @@
 extern "C" {
 #endif
 
-WK_EXPORT WKURLRef WKURKCreateWithCFURL(CFURLRef URL);
+WK_EXPORT WKURLRef WKURLCreateWithCFURL(CFURLRef URL);
 WK_EXPORT CFURLRef WKURLCopyCFURL(CFAllocatorRef alloc, WKURLRef string);
 
 #ifdef __cplusplus

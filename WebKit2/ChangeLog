@@ -1,3 +1,18 @@
+2010-04-09  Anders Carlsson  <andersca@apple.com>
+
+        More Windows build fixes.
+        
+        * Shared/NotImplemented.h:
+        * UIProcess/API/C/cf/WKURLCF.cpp:
+        Fix typo.
+        
+        (WKURLCreateWithCFURL):
+        * UIProcess/API/C/cf/WKURLCF.h:
+        Ditto.
+        
+        * win/WebKit2Generated.make:
+        Copy the new CF headers.
+
 2010-04-09  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
