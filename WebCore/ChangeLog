@@ -1,3 +1,128 @@
+2010-04-09  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adam Roben.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=37349, RenderStyle cleanup.  Working from the outside in to
+        bring some style consistency to RenderStyle and its associated classes.  This patch cleans up the
+        border and outline classes.
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::calcBorderLeft):
+        (WebCore::RenderTable::calcBorderRight):
+        (WebCore::RenderTable::outerBorderTop):
+        (WebCore::RenderTable::outerBorderBottom):
+        (WebCore::RenderTable::outerBorderLeft):
+        (WebCore::RenderTable::outerBorderRight):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::compareBorders):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::calcOuterBorderTop):
+        (WebCore::RenderTableSection::calcOuterBorderBottom):
+        (WebCore::RenderTableSection::calcOuterBorderLeft):
+        (WebCore::RenderTableSection::calcOuterBorderRight):
+        * rendering/style/BorderData.h:
+        (WebCore::BorderData::hasBorder):
+        (WebCore::BorderData::hasBorderRadius):
+        (WebCore::BorderData::borderLeftWidth):
+        (WebCore::BorderData::borderRightWidth):
+        (WebCore::BorderData::borderTopWidth):
+        (WebCore::BorderData::borderBottomWidth):
+        (WebCore::BorderData::operator==):
+        (WebCore::BorderData::left):
+        (WebCore::BorderData::right):
+        (WebCore::BorderData::top):
+        (WebCore::BorderData::bottom):
+        (WebCore::BorderData::image):
+        (WebCore::BorderData::topLeft):
+        (WebCore::BorderData::topRight):
+        (WebCore::BorderData::bottomLeft):
+        (WebCore::BorderData::bottomRight):
+        * rendering/style/BorderValue.h:
+        (WebCore::BorderValue::BorderValue):
+        (WebCore::BorderValue::nonZero):
+        (WebCore::BorderValue::isTransparent):
+        (WebCore::BorderValue::operator==):
+        (WebCore::BorderValue::color):
+        (WebCore::BorderValue::width):
+        (WebCore::BorderValue::style):
+        * rendering/style/CollapsedBorderValue.h:
+        (WebCore::CollapsedBorderValue::CollapsedBorderValue):
+        (WebCore::CollapsedBorderValue::width):
+        (WebCore::CollapsedBorderValue::style):
+        (WebCore::CollapsedBorderValue::exists):
+        (WebCore::CollapsedBorderValue::color):
+        (WebCore::CollapsedBorderValue::isTransparent):
+        (WebCore::CollapsedBorderValue::precedence):
+        (WebCore::CollapsedBorderValue::operator==):
+        * rendering/style/OutlineValue.h:
+        (WebCore::OutlineValue::OutlineValue):
+        (WebCore::OutlineValue::operator==):
+        (WebCore::OutlineValue::offset):
+        (WebCore::OutlineValue::isAuto):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::getBorderRadiiForRect):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::borderLeft):
+        (WebCore::InheritedFlags::borderRight):
+        (WebCore::InheritedFlags::borderTop):
+        (WebCore::InheritedFlags::borderBottom):
+        (WebCore::InheritedFlags::borderImage):
+        (WebCore::InheritedFlags::borderTopLeftRadius):
+        (WebCore::InheritedFlags::borderTopRightRadius):
+        (WebCore::InheritedFlags::borderBottomLeftRadius):
+        (WebCore::InheritedFlags::borderBottomRightRadius):
+        (WebCore::InheritedFlags::borderLeftStyle):
+        (WebCore::InheritedFlags::borderLeftColor):
+        (WebCore::InheritedFlags::borderLeftIsTransparent):
+        (WebCore::InheritedFlags::borderRightStyle):
+        (WebCore::InheritedFlags::borderRightColor):
+        (WebCore::InheritedFlags::borderRightIsTransparent):
+        (WebCore::InheritedFlags::borderTopStyle):
+        (WebCore::InheritedFlags::borderTopColor):
+        (WebCore::InheritedFlags::borderTopIsTransparent):
+        (WebCore::InheritedFlags::borderBottomStyle):
+        (WebCore::InheritedFlags::borderBottomColor):
+        (WebCore::InheritedFlags::borderBottomIsTransparent):
+        (WebCore::InheritedFlags::outlineWidth):
+        (WebCore::InheritedFlags::outlineStyleIsAuto):
+        (WebCore::InheritedFlags::outlineColor):
+        (WebCore::InheritedFlags::outlineOffset):
+        (WebCore::InheritedFlags::columnRuleColor):
+        (WebCore::InheritedFlags::resetBorderTop):
+        (WebCore::InheritedFlags::resetBorderRight):
+        (WebCore::InheritedFlags::resetBorderBottom):
+        (WebCore::InheritedFlags::resetBorderLeft):
+        (WebCore::InheritedFlags::resetBorderImage):
+        (WebCore::InheritedFlags::resetBorderTopLeftRadius):
+        (WebCore::InheritedFlags::resetBorderTopRightRadius):
+        (WebCore::InheritedFlags::resetBorderBottomLeftRadius):
+        (WebCore::InheritedFlags::resetBorderBottomRightRadius):
+        (WebCore::InheritedFlags::setBorderImage):
+        (WebCore::InheritedFlags::setBorderTopLeftRadius):
+        (WebCore::InheritedFlags::setBorderTopRightRadius):
+        (WebCore::InheritedFlags::setBorderBottomLeftRadius):
+        (WebCore::InheritedFlags::setBorderBottomRightRadius):
+        (WebCore::InheritedFlags::setBorderLeftWidth):
+        (WebCore::InheritedFlags::setBorderLeftStyle):
+        (WebCore::InheritedFlags::setBorderLeftColor):
+        (WebCore::InheritedFlags::setBorderRightWidth):
+        (WebCore::InheritedFlags::setBorderRightStyle):
+        (WebCore::InheritedFlags::setBorderRightColor):
+        (WebCore::InheritedFlags::setBorderTopWidth):
+        (WebCore::InheritedFlags::setBorderTopStyle):
+        (WebCore::InheritedFlags::setBorderTopColor):
+        (WebCore::InheritedFlags::setBorderBottomWidth):
+        (WebCore::InheritedFlags::setBorderBottomStyle):
+        (WebCore::InheritedFlags::setBorderBottomColor):
+        (WebCore::InheritedFlags::setOutlineWidth):
+        (WebCore::InheritedFlags::setOutlineStyle):
+        (WebCore::InheritedFlags::setOutlineColor):
+        (WebCore::InheritedFlags::setOutlineOffset):
+        (WebCore::InheritedFlags::setColumnRuleColor):
+        (WebCore::InheritedFlags::setColumnRuleWidth):
+        * rendering/style/StyleMultiColData.h:
+        (WebCore::StyleMultiColData::ruleWidth):
+
 2010-04-09  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Darin Adler.

@@ -29,38 +29,42 @@
 
 namespace WebCore {
 
-struct CollapsedBorderValue {
+class CollapsedBorderValue {
+friend class RenderStyle;
+public:
     CollapsedBorderValue()
-        : border(0)
-        , precedence(BOFF)
+        : m_border(0)
+        , m_precedence(BOFF)
     {
     }
 
     CollapsedBorderValue(const BorderValue* b, Color c, EBorderPrecedence p)
-        : border(b)
-        , borderColor(c)
-        , precedence(p)
+        : m_border(b)
+        , m_borderColor(c)
+        , m_precedence(p)
     {
     }
 
-    int width() const { return border && border->nonZero() ? border->width : 0; }
-    EBorderStyle style() const { return border ? border->style() : BHIDDEN; }
-    bool exists() const { return border; }
-    Color color() const { return borderColor; }
-    bool isTransparent() const { return border ? border->isTransparent() : true; }
-    
+    int width() const { return m_border && m_border->nonZero() ? m_border->width() : 0; }
+    EBorderStyle style() const { return m_border ? m_border->style() : BHIDDEN; }
+    bool exists() const { return m_border; }
+    const Color& color() const { return m_borderColor; }
+    bool isTransparent() const { return m_border ? m_border->isTransparent() : true; }
+    EBorderPrecedence precedence() const { return m_precedence; }
+
     bool operator==(const CollapsedBorderValue& o) const
     {
-        if (!border)
-            return !o.border;
-        if (!o.border)
+        if (!m_border)
+            return !o.m_border;
+        if (!o.m_border)
             return false;
-        return *border == *o.border && borderColor == o.borderColor && precedence == o.precedence;
+        return *m_border == *o.m_border && m_borderColor == o.m_borderColor && m_precedence == o.m_precedence;
     }
-    
-    const BorderValue* border;
-    Color borderColor;
-    EBorderPrecedence precedence;    
+
+private:
+    const BorderValue* m_border;
+    Color m_borderColor;
+    EBorderPrecedence m_precedence;    
 };
 
 } // namespace WebCore

@@ -733,11 +733,11 @@ void RenderStyle::setBoxShadow(ShadowData* shadowData, bool add)
 
 void RenderStyle::getBorderRadiiForRect(const IntRect& r, IntSize& topLeft, IntSize& topRight, IntSize& bottomLeft, IntSize& bottomRight) const
 {
-    topLeft = surround->border.topLeft;
-    topRight = surround->border.topRight;
+    topLeft = surround->border.topLeft();
+    topRight = surround->border.topRight();
     
-    bottomLeft = surround->border.bottomLeft;
-    bottomRight = surround->border.bottomRight;
+    bottomLeft = surround->border.bottomLeft();
+    bottomRight = surround->border.bottomRight();
 
     // Constrain corner radii using CSS3 rules:
     // http://www.w3.org/TR/css3-background/#the-border-radius

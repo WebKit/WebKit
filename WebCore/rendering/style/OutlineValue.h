@@ -30,16 +30,17 @@
 namespace WebCore {
 
 class OutlineValue : public BorderValue {
+friend class RenderStyle;
 public:
     OutlineValue()
-        : _offset(0)
-        , _auto(false)
+        : m_offset(0)
+        , m_isAuto(false)
     {
     }
     
     bool operator==(const OutlineValue& o) const
     {
-        return width == o.width && m_style == o.m_style && color == o.color && _offset == o._offset && _auto == o._auto;
+        return m_width == o.m_width && m_style == o.m_style && m_color == o.m_color && m_offset == o.m_offset && m_isAuto == o.m_isAuto;
     }
     
     bool operator!=(const OutlineValue& o) const
@@ -47,8 +48,12 @@ public:
         return !(*this == o);
     }
     
-    int _offset;
-    bool _auto;
+    int offset() const { return m_offset; }
+    bool isAuto() const { return m_isAuto; }
+
+private:
+    int m_offset;
+    bool m_isAuto;
 };
 
 } // namespace WebCore

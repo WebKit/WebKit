@@ -385,47 +385,47 @@ public:
     Length maxHeight() const { return box->max_height; }
 
     const BorderData& border() const { return surround->border; }
-    const BorderValue& borderLeft() const { return surround->border.left; }
-    const BorderValue& borderRight() const { return surround->border.right; }
-    const BorderValue& borderTop() const { return surround->border.top; }
-    const BorderValue& borderBottom() const { return surround->border.bottom; }
+    const BorderValue& borderLeft() const { return surround->border.left(); }
+    const BorderValue& borderRight() const { return surround->border.right(); }
+    const BorderValue& borderTop() const { return surround->border.top(); }
+    const BorderValue& borderBottom() const { return surround->border.bottom(); }
 
-    const NinePieceImage& borderImage() const { return surround->border.image; }
+    const NinePieceImage& borderImage() const { return surround->border.image(); }
 
-    const IntSize& borderTopLeftRadius() const { return surround->border.topLeft; }
-    const IntSize& borderTopRightRadius() const { return surround->border.topRight; }
-    const IntSize& borderBottomLeftRadius() const { return surround->border.bottomLeft; }
-    const IntSize& borderBottomRightRadius() const { return surround->border.bottomRight; }
+    const IntSize& borderTopLeftRadius() const { return surround->border.topLeft(); }
+    const IntSize& borderTopRightRadius() const { return surround->border.topRight(); }
+    const IntSize& borderBottomLeftRadius() const { return surround->border.bottomLeft(); }
+    const IntSize& borderBottomRightRadius() const { return surround->border.bottomRight(); }
     bool hasBorderRadius() const { return surround->border.hasBorderRadius(); }
 
     unsigned short borderLeftWidth() const { return surround->border.borderLeftWidth(); }
-    EBorderStyle borderLeftStyle() const { return surround->border.left.style(); }
-    const Color& borderLeftColor() const { return surround->border.left.color; }
-    bool borderLeftIsTransparent() const { return surround->border.left.isTransparent(); }
+    EBorderStyle borderLeftStyle() const { return surround->border.left().style(); }
+    const Color& borderLeftColor() const { return surround->border.left().color(); }
+    bool borderLeftIsTransparent() const { return surround->border.left().isTransparent(); }
     unsigned short borderRightWidth() const { return surround->border.borderRightWidth(); }
-    EBorderStyle borderRightStyle() const { return surround->border.right.style(); }
-    const Color& borderRightColor() const { return surround->border.right.color; }
-    bool borderRightIsTransparent() const { return surround->border.right.isTransparent(); }
+    EBorderStyle borderRightStyle() const { return surround->border.right().style(); }
+    const Color& borderRightColor() const { return surround->border.right().color(); }
+    bool borderRightIsTransparent() const { return surround->border.right().isTransparent(); }
     unsigned short borderTopWidth() const { return surround->border.borderTopWidth(); }
-    EBorderStyle borderTopStyle() const { return surround->border.top.style(); }
-    const Color& borderTopColor() const { return surround->border.top.color; }
-    bool borderTopIsTransparent() const { return surround->border.top.isTransparent(); }
+    EBorderStyle borderTopStyle() const { return surround->border.top().style(); }
+    const Color& borderTopColor() const { return surround->border.top().color(); }
+    bool borderTopIsTransparent() const { return surround->border.top().isTransparent(); }
     unsigned short borderBottomWidth() const { return surround->border.borderBottomWidth(); }
-    EBorderStyle borderBottomStyle() const { return surround->border.bottom.style(); }
-    const Color& borderBottomColor() const { return surround->border.bottom.color; }
-    bool borderBottomIsTransparent() const { return surround->border.bottom.isTransparent(); }
+    EBorderStyle borderBottomStyle() const { return surround->border.bottom().style(); }
+    const Color& borderBottomColor() const { return surround->border.bottom().color(); }
+    bool borderBottomIsTransparent() const { return surround->border.bottom().isTransparent(); }
 
     unsigned short outlineSize() const { return max(0, outlineWidth() + outlineOffset()); }
     unsigned short outlineWidth() const
     {
         if (background->m_outline.style() == BNONE)
             return 0;
-        return background->m_outline.width;
+        return background->m_outline.width();
     }
     bool hasOutline() const { return outlineWidth() > 0 && outlineStyle() > BHIDDEN; }
     EBorderStyle outlineStyle() const { return background->m_outline.style(); }
-    bool outlineStyleIsAuto() const { return background->m_outline._auto; }
-    const Color& outlineColor() const { return background->m_outline.color; }
+    bool outlineStyleIsAuto() const { return background->m_outline.isAuto(); }
+    const Color& outlineColor() const { return background->m_outline.color(); }
 
     EOverflow overflowX() const { return static_cast<EOverflow>(noninherited_flags._overflowX); }
     EOverflow overflowY() const { return static_cast<EOverflow>(noninherited_flags._overflowY); }
@@ -610,7 +610,7 @@ public:
     {
         if (background->m_outline.style() == BNONE)
             return 0;
-        return background->m_outline._offset;
+        return background->m_outline.offset();
     }
 
     ShadowData* textShadow() const { return rareInheritedData->textShadow; }
@@ -661,7 +661,7 @@ public:
     bool hasAutoColumnCount() const { return rareNonInheritedData->m_multiCol->m_autoCount; }
     float columnGap() const { return rareNonInheritedData->m_multiCol->m_gap; }
     bool hasNormalColumnGap() const { return rareNonInheritedData->m_multiCol->m_normalGap; }
-    const Color& columnRuleColor() const { return rareNonInheritedData->m_multiCol->m_rule.color; }
+    const Color& columnRuleColor() const { return rareNonInheritedData->m_multiCol->m_rule.color(); }
     EBorderStyle columnRuleStyle() const { return rareNonInheritedData->m_multiCol->m_rule.style(); }
     unsigned short columnRuleWidth() const { return rareNonInheritedData->m_multiCol->ruleWidth(); }
     bool columnRuleIsTransparent() const { return rareNonInheritedData->m_multiCol->m_rule.isTransparent(); }
@@ -756,16 +756,16 @@ public:
 #endif
 
     void resetBorder() { resetBorderImage(); resetBorderTop(); resetBorderRight(); resetBorderBottom(); resetBorderLeft(); resetBorderRadius(); }
-    void resetBorderTop() { SET_VAR(surround, border.top, BorderValue()) }
-    void resetBorderRight() { SET_VAR(surround, border.right, BorderValue()) }
-    void resetBorderBottom() { SET_VAR(surround, border.bottom, BorderValue()) }
-    void resetBorderLeft() { SET_VAR(surround, border.left, BorderValue()) }
-    void resetBorderImage() { SET_VAR(surround, border.image, NinePieceImage()) }
+    void resetBorderTop() { SET_VAR(surround, border.m_top, BorderValue()) }
+    void resetBorderRight() { SET_VAR(surround, border.m_right, BorderValue()) }
+    void resetBorderBottom() { SET_VAR(surround, border.m_bottom, BorderValue()) }
+    void resetBorderLeft() { SET_VAR(surround, border.m_left, BorderValue()) }
+    void resetBorderImage() { SET_VAR(surround, border.m_image, NinePieceImage()) }
     void resetBorderRadius() { resetBorderTopLeftRadius(); resetBorderTopRightRadius(); resetBorderBottomLeftRadius(); resetBorderBottomRightRadius(); }
-    void resetBorderTopLeftRadius() { SET_VAR(surround, border.topLeft, initialBorderRadius()) }
-    void resetBorderTopRightRadius() { SET_VAR(surround, border.topRight, initialBorderRadius()) }
-    void resetBorderBottomLeftRadius() { SET_VAR(surround, border.bottomLeft, initialBorderRadius()) }
-    void resetBorderBottomRightRadius() { SET_VAR(surround, border.bottomRight, initialBorderRadius()) }
+    void resetBorderTopLeftRadius() { SET_VAR(surround, border.m_topLeft, initialBorderRadius()) }
+    void resetBorderTopRightRadius() { SET_VAR(surround, border.m_topRight, initialBorderRadius()) }
+    void resetBorderBottomLeftRadius() { SET_VAR(surround, border.m_bottomLeft, initialBorderRadius()) }
+    void resetBorderBottomRightRadius() { SET_VAR(surround, border.m_bottomRight, initialBorderRadius()) }
 
     void resetOutline() { SET_VAR(background, m_outline, OutlineValue()) }
 
@@ -776,12 +776,12 @@ public:
     void setBackgroundSize(EFillSizeType b) { SET_VAR(background, m_background.m_sizeType, b) }
     void setBackgroundSizeLength(LengthSize l) { SET_VAR(background, m_background.m_sizeLength, l) }
     
-    void setBorderImage(const NinePieceImage& b) { SET_VAR(surround, border.image, b) }
+    void setBorderImage(const NinePieceImage& b) { SET_VAR(surround, border.m_image, b) }
 
-    void setBorderTopLeftRadius(const IntSize& s) { SET_VAR(surround, border.topLeft, s) }
-    void setBorderTopRightRadius(const IntSize& s) { SET_VAR(surround, border.topRight, s) }
-    void setBorderBottomLeftRadius(const IntSize& s) { SET_VAR(surround, border.bottomLeft, s) }
-    void setBorderBottomRightRadius(const IntSize& s) { SET_VAR(surround, border.bottomRight, s) }
+    void setBorderTopLeftRadius(const IntSize& s) { SET_VAR(surround, border.m_topLeft, s) }
+    void setBorderTopRightRadius(const IntSize& s) { SET_VAR(surround, border.m_topRight, s) }
+    void setBorderBottomLeftRadius(const IntSize& s) { SET_VAR(surround, border.m_bottomLeft, s) }
+    void setBorderBottomRightRadius(const IntSize& s) { SET_VAR(surround, border.m_bottomRight, s) }
 
     void setBorderRadius(const IntSize& s)
     {
@@ -793,27 +793,27 @@ public:
     
     void getBorderRadiiForRect(const IntRect&, IntSize& topLeft, IntSize& topRight, IntSize& bottomLeft, IntSize& bottomRight) const;
 
-    void setBorderLeftWidth(unsigned short v) { SET_VAR(surround, border.left.width, v) }
-    void setBorderLeftStyle(EBorderStyle v) { SET_VAR(surround, border.left.m_style, v) }
-    void setBorderLeftColor(const Color& v) { SET_VAR(surround, border.left.color, v) }
-    void setBorderRightWidth(unsigned short v) { SET_VAR(surround, border.right.width, v) }
-    void setBorderRightStyle(EBorderStyle v) { SET_VAR(surround, border.right.m_style, v) }
-    void setBorderRightColor(const Color& v) { SET_VAR(surround, border.right.color, v) }
-    void setBorderTopWidth(unsigned short v) { SET_VAR(surround, border.top.width, v) }
-    void setBorderTopStyle(EBorderStyle v) { SET_VAR(surround, border.top.m_style, v) }
-    void setBorderTopColor(const Color& v) { SET_VAR(surround, border.top.color, v) }
-    void setBorderBottomWidth(unsigned short v) { SET_VAR(surround, border.bottom.width, v) }
-    void setBorderBottomStyle(EBorderStyle v) { SET_VAR(surround, border.bottom.m_style, v) }
-    void setBorderBottomColor(const Color& v) { SET_VAR(surround, border.bottom.color, v) }
-    void setOutlineWidth(unsigned short v) { SET_VAR(background, m_outline.width, v) }
+    void setBorderLeftWidth(unsigned short v) { SET_VAR(surround, border.m_left.m_width, v) }
+    void setBorderLeftStyle(EBorderStyle v) { SET_VAR(surround, border.m_left.m_style, v) }
+    void setBorderLeftColor(const Color& v) { SET_VAR(surround, border.m_left.m_color, v) }
+    void setBorderRightWidth(unsigned short v) { SET_VAR(surround, border.m_right.m_width, v) }
+    void setBorderRightStyle(EBorderStyle v) { SET_VAR(surround, border.m_right.m_style, v) }
+    void setBorderRightColor(const Color& v) { SET_VAR(surround, border.m_right.m_color, v) }
+    void setBorderTopWidth(unsigned short v) { SET_VAR(surround, border.m_top.m_width, v) }
+    void setBorderTopStyle(EBorderStyle v) { SET_VAR(surround, border.m_top.m_style, v) }
+    void setBorderTopColor(const Color& v) { SET_VAR(surround, border.m_top.m_color, v) }
+    void setBorderBottomWidth(unsigned short v) { SET_VAR(surround, border.m_bottom.m_width, v) }
+    void setBorderBottomStyle(EBorderStyle v) { SET_VAR(surround, border.m_bottom.m_style, v) }
+    void setBorderBottomColor(const Color& v) { SET_VAR(surround, border.m_bottom.m_color, v) }
+    void setOutlineWidth(unsigned short v) { SET_VAR(background, m_outline.m_width, v) }
 
     void setOutlineStyle(EBorderStyle v, bool isAuto = false)
     {
         SET_VAR(background, m_outline.m_style, v)
-        SET_VAR(background, m_outline._auto, isAuto)
+        SET_VAR(background, m_outline.m_isAuto, isAuto)
     }
 
-    void setOutlineColor(const Color& v) { SET_VAR(background, m_outline.color, v) }
+    void setOutlineColor(const Color& v) { SET_VAR(background, m_outline.m_color, v) }
 
     void setOverflowX(EOverflow v) { noninherited_flags._overflowX = v; }
     void setOverflowY(EOverflow v) { noninherited_flags._overflowY = v; }
@@ -947,7 +947,7 @@ public:
     void addBindingURI(StringImpl* uri);
 #endif
 
-    void setOutlineOffset(int v) { SET_VAR(background, m_outline._offset, v) }
+    void setOutlineOffset(int v) { SET_VAR(background, m_outline.m_offset, v) }
     void setTextShadow(ShadowData* val, bool add=false);
     void setTextStrokeColor(const Color& c) { SET_VAR(rareInheritedData, textStrokeColor, c) }
     void setTextStrokeWidth(float w) { SET_VAR(rareInheritedData, textStrokeWidth, w) }
@@ -991,9 +991,9 @@ public:
     void setHasAutoColumnCount() { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_autoCount, true); SET_VAR(rareNonInheritedData.access()->m_multiCol, m_count, 0); }
     void setColumnGap(float f) { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_normalGap, false); SET_VAR(rareNonInheritedData.access()->m_multiCol, m_gap, f); }
     void setHasNormalColumnGap() { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_normalGap, true); SET_VAR(rareNonInheritedData.access()->m_multiCol, m_gap, 0); }
-    void setColumnRuleColor(const Color& c) { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_rule.color, c); }
+    void setColumnRuleColor(const Color& c) { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_rule.m_color, c); }
     void setColumnRuleStyle(EBorderStyle b) { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_rule.m_style, b); }
-    void setColumnRuleWidth(unsigned short w) { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_rule.width, w); }
+    void setColumnRuleWidth(unsigned short w) { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_rule.m_width, w); }
     void resetColumnRule() { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_rule, BorderValue()) }
     void setColumnBreakBefore(EPageBreak p) { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_breakBefore, p); }
     void setColumnBreakInside(EPageBreak p) { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_breakInside, p); }

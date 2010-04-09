@@ -322,7 +322,7 @@ static CollapsedBorderValue compareBorders(const CollapsedBorderValue& border1, 
         return border1.style() > border2.style() ? border1 : border2;
     
     // The border have the same width and style.  Rely on precedence (cell over row over row group, etc.)
-    return border1.precedence >= border2.precedence ? border1 : border2;
+    return border1.precedence() >= border2.precedence() ? border1 : border2;
 }
 
 CollapsedBorderValue RenderTableCell::collapsedLeftBorder(bool rtl) const
