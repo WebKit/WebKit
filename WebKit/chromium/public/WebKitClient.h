@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -77,12 +77,6 @@ public:
 
     // May return null.
     virtual WebCookieJar* cookieJar() { return 0; }
-
-
-    // Application Cache --------------------------------------------
-
-    // May return null if the process type doesn't involve appcaching.
-    virtual WebApplicationCacheHost* createApplicationCacheHost(WebApplicationCacheHostClient*) { return 0; }
 
 
     // DOM Storage --------------------------------------------------

@@ -50,8 +50,6 @@ public:
         WebKit::WebFrameImpl* webFrame = WebKit::WebFrameImpl::fromFrame(host->m_documentLoader->frame());
         ASSERT(webFrame);
         m_outerHost.set(webFrame->client()->createApplicationCacheHost(webFrame, this));
-        if (!m_outerHost.get())
-            m_outerHost.set(WebKit::webKitClient()->createApplicationCacheHost(this));
     }
 
     virtual void notifyEventListener(WebKit::WebApplicationCacheHost::EventID eventID)

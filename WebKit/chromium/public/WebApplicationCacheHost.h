@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -42,7 +42,7 @@ class WebURLResponse;
 struct WebURLError;
 
 // This interface is used by webkit to call out to the embedder. Webkit uses
-// the WebKitClient::createApplicationCacheHost method to create instances,
+// the WebFrameClient::createApplicationCacheHost method to create instances,
 // and calls delete when the instance is no longer needed.
 class WebApplicationCacheHost {
 public:
