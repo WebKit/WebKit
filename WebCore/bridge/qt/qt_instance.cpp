@@ -220,10 +220,12 @@ void QtInstance::getPropertyNames(ExecState* exec, PropertyNameArray& array)
             }
         }
 
+#ifndef QT_NO_PROPERTIES
         QList<QByteArray> dynProps = obj->dynamicPropertyNames();
         foreach(QByteArray ba, dynProps) {
             array.add(Identifier(exec, ba.constData()));
         }
+#endif
 
         for (i=0; i < meta->methodCount(); i++) {
             QMetaMethod method = meta->method(i);
@@ -325,8 +327,10 @@ const char* QtField::name() const
         return m_property.name();
     else if (m_type == ChildObject && m_childObject)
         return m_childObject->objectName().toLatin1();
+#ifndef QT_NO_PROPERTIES
     else if (m_type == DynamicProperty)
         return m_dynamicProperty.constData();
+#endif
     return ""; // deleted child object
 }
 
@@ -344,9 +348,10 @@ JSValue QtField::valueFromInstance(ExecState* exec, const Instance* inst) const
                 return jsUndefined();
         } else if (m_type == ChildObject)
             val = QVariant::fromValue((QObject*) m_childObject);
+#ifndef QT_NO_PROPERTIES
         else if (m_type == DynamicProperty)
             val = obj->property(m_dynamicProperty);
-
+#endif
         return convertQVariantToValue(exec, inst->rootObject(), val);
     } else {
         QString msg = QString(QLatin1String("cannot access member `%1' of deleted QObject")).arg(QLatin1String(name()));
@@ -371,8 +376,11 @@ void QtField::setValueToInstance(ExecState* exec, const Instance* inst, JSValue 
         if (m_type == MetaProperty) {
             if (m_property.isWritable())
                 m_property.write(obj, val);
-        } else if (m_type == DynamicProperty)
+        }
+#ifndef QT_NO_PROPERTIES
+        else if (m_type == DynamicProperty)
             obj->setProperty(m_dynamicProperty.constData(), val);
+#endif
     } else {
         QString msg = QString(QLatin1String("cannot access member `%1' of deleted QObject")).arg(QLatin1String(name()));
         throwError(exec, GeneralError, msg.toLatin1().constData());

@@ -40,7 +40,9 @@ public:
 
     typedef enum {
         MetaProperty,
+#ifndef QT_NO_PROPERTIES
         DynamicProperty,
+#endif
         ChildObject
     } QtFieldType;
 
@@ -48,9 +50,11 @@ public:
         : m_type(MetaProperty), m_property(p)
         {}
 
+#ifndef QT_NO_PROPERTIES
     QtField(const QByteArray &b)
         : m_type(DynamicProperty), m_dynamicProperty(b)
         {}
+#endif
 
     QtField(QObject *child)
         : m_type(ChildObject), m_childObject(child)

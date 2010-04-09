@@ -139,6 +139,7 @@ Field* QtClass::fieldNamed(const Identifier& identifier, Instance* instance) con
             // other types so we can delete them later
             if (f->fieldType() == QtField::MetaProperty)
                 return f;
+#ifndef QT_NO_PROPERTIES
             else if (f->fieldType() == QtField::DynamicProperty) {
                 if (obj->dynamicPropertyNames().indexOf(ba) >= 0)
                     return f;
@@ -147,7 +148,9 @@ Field* QtClass::fieldNamed(const Identifier& identifier, Instance* instance) con
                     qtinst->m_fields.remove(objName);
                     delete f;
                 }
-            } else {
+            }
+#endif
+            else {
                 QList<QObject*> children = obj->children();
                 for (int index = 0; index < children.count(); ++index) {
                     QObject *child = children.at(index);
@@ -172,6 +175,7 @@ Field* QtClass::fieldNamed(const Identifier& identifier, Instance* instance) con
             }
         }
 
+#ifndef QT_NO_PROPERTIES
         // Dynamic properties
         index = obj->dynamicPropertyNames().indexOf(ba);
         if (index >= 0) {
@@ -179,6 +183,7 @@ Field* QtClass::fieldNamed(const Identifier& identifier, Instance* instance) con
             qtinst->m_fields.insert(objName, f);
             return f;
         }
+#endif
 
         // Child objects
 
@@ -202,12 +207,14 @@ Field* QtClass::fieldNamed(const Identifier& identifier, Instance* instance) con
         if (qtinst->m_methods.contains(ba))
             return 0;
 
+#ifndef QT_NO_PROPERTIES
         // deleted qobject, but can't throw an error from here (no exec)
         // create a fake QtField that will throw upon access
         if (!f) {
             f = new QtField(ba);
             qtinst->m_fields.insert(objName, f);
         }
+#endif
         return f;
     }
 }
