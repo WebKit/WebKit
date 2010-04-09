@@ -1,5 +1,85 @@
 2010-04-08  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Add WebKit2/UIProcess directory.
+
+        * UIProcess: Added.
+        * UIProcess/API: Added.
+        * UIProcess/API/C: Added.
+        * UIProcess/API/C/WKAPICast.h: Added.
+        * UIProcess/API/C/WKBase.h: Added.
+        * UIProcess/API/C/WKContext.cpp: Added.
+        * UIProcess/API/C/WKContext.h: Added.
+        * UIProcess/API/C/WKFrame.cpp: Added.
+        * UIProcess/API/C/WKFrame.h: Added.
+        * UIProcess/API/C/WKFramePolicyListener.cpp: Added.
+        * UIProcess/API/C/WKFramePolicyListener.h: Added.
+        * UIProcess/API/C/WKPage.cpp: Added.
+        * UIProcess/API/C/WKPage.h: Added.
+        * UIProcess/API/C/WKPageNamespace.cpp: Added.
+        * UIProcess/API/C/WKPageNamespace.h: Added.
+        * UIProcess/API/C/WKPreferences.cpp: Added.
+        * UIProcess/API/C/WKPreferences.h: Added.
+        * UIProcess/API/C/WebKit2.h: Added.
+        * UIProcess/API/mac: Added.
+        * UIProcess/API/mac/PageClientImpl.h: Added.
+        * UIProcess/API/mac/PageClientImpl.mm: Added.
+        * UIProcess/API/mac/WKView.h: Added.
+        * UIProcess/API/mac/WKView.mm: Added.
+        * UIProcess/API/mac/WKViewInternal.h: Added.
+        * UIProcess/API/win: Added.
+        * UIProcess/API/win/WKAPICastWin.h: Added.
+        * UIProcess/API/win/WKBaseWin.h: Added.
+        * UIProcess/API/win/WKView.cpp: Added.
+        * UIProcess/API/win/WKView.h: Added.
+        * UIProcess/Launcher: Added.
+        * UIProcess/Launcher/WebProcessLauncher.h: Added.
+        * UIProcess/Launcher/mac: Added.
+        * UIProcess/Launcher/mac/WebProcessLauncher.mm: Added.
+        * UIProcess/Launcher/win: Added.
+        * UIProcess/Launcher/win/WebProcessLauncher.cpp: Added.
+        * UIProcess/PageClient.h: Added.
+        * UIProcess/ProcessModel.h: Added.
+        * UIProcess/ResponsivenessTimer.cpp: Added.
+        * UIProcess/ResponsivenessTimer.h: Added.
+        * UIProcess/ScriptReturnValueCallback.cpp: Added.
+        * UIProcess/ScriptReturnValueCallback.h: Added.
+        * UIProcess/WebContext.cpp: Added.
+        * UIProcess/WebContext.h: Added.
+        * UIProcess/WebFramePolicyListenerProxy.cpp: Added.
+        * UIProcess/WebFramePolicyListenerProxy.h: Added.
+        * UIProcess/WebFrameProxy.cpp: Added.
+        * UIProcess/WebFrameProxy.h: Added.
+        * UIProcess/WebLoaderClient.cpp: Added.
+        * UIProcess/WebLoaderClient.h: Added.
+        * UIProcess/WebPageNamespace.cpp: Added.
+        * UIProcess/WebPageNamespace.h: Added.
+        * UIProcess/WebPageProxy.cpp: Added.
+        * UIProcess/WebPageProxy.h: Added.
+        * UIProcess/WebPolicyClient.cpp: Added.
+        * UIProcess/WebPolicyClient.h: Added.
+        * UIProcess/WebPreferences.cpp: Added.
+        * UIProcess/WebPreferences.h: Added.
+        * UIProcess/WebProcessManager.cpp: Added.
+        * UIProcess/WebProcessManager.h: Added.
+        * UIProcess/WebProcessProxy.cpp: Added.
+        * UIProcess/WebProcessProxy.h: Added.
+        * UIProcess/WebUIClient.cpp: Added.
+        * UIProcess/WebUIClient.h: Added.
+        * UIProcess/mac: Added.
+        * UIProcess/mac/DrawingAreaProxy.h: Added.
+        * UIProcess/mac/DrawingAreaProxy.mm: Added.
+        * UIProcess/mac/DrawingAreaProxyUpdateChunk.h: Added.
+        * UIProcess/mac/DrawingAreaProxyUpdateChunk.mm: Added.
+        * UIProcess/win: Added.
+        * UIProcess/win/DrawingAreaProxy.cpp: Added.
+        * UIProcess/win/DrawingAreaProxy.h: Added.
+        * UIProcess/win/WebView.cpp: Added.
+        * UIProcess/win/WebView.h: Added.
+
+2010-04-08  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig and Oliver Hunt.
 
         Add WebKit2/WebProcess directory.
