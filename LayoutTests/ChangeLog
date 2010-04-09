@@ -1,3 +1,11 @@
+2010-04-09  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Update test as the 'all' value has been removed
+
+        * fast/media/media-feature-wgt-view-mode.html:
+
 2010-04-09  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Simon Hausmann.

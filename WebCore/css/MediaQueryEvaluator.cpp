@@ -501,8 +501,6 @@ static bool view_modeMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* fram
     if (value) {
         String mode = static_cast<CSSPrimitiveValue*>(value)->getStringValue();
         if (ChromeClient* client = frame->page()->chrome()->client()) {
-            if (mode == "all")
-                return true;
             if (mode == "mini" && client->isDocked())
                 return true;
             if (mode == "floating" && client->isFloating())
@@ -514,7 +512,7 @@ static bool view_modeMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* fram
             return false;
         }
     }
-    return false;
+    return true;
 }
 #endif
 

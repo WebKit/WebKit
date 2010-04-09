@@ -1,3 +1,14 @@
+2010-04-09  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Remove "all" value from the view-mode media feature (as agreed on
+        1-Apr-2010) in the Widgets voice conf.
+
+        * css/CSSValueKeywords.in:
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::view_modeMediaFeatureEval):
+
 2010-04-09  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r57286.
