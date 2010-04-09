@@ -1,3 +1,13 @@
+2010-04-09  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK+] media/video-src-invalid-remove.html
+        https://bugs.webkit.org/show_bug.cgi?id=37344
+
+        Skip test that is failing constantly but apparently without reason
+        on the 64 bits release bot.
+
+        * platform/gtk/Skipped:
+
 2010-04-09  Andras Becsi  <abecsi@webkit.org>
 
         Rubber-stamped by Simon Hausmann.

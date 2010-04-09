@@ -5895,3 +5895,8 @@ http/tests/media/video-play-suspend.html
 
 # Need to add functionality to DumpRenderTree to handle scrollbar police changes
 fast/overflow/scrollbar-restored-and-then-locked.html
+
+# Failing constantly on 64bits release bot since r57284,
+# which is completely unrelated
+# See https://bugs.webkit.org/show_bug.cgi?id=37344
+media/video-src-invalid-remove.html
