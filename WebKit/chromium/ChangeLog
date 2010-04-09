@@ -1,3 +1,14 @@
+2010-04-09  Marcus Bulach  <bulach@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Crash on WebKit::WebGeolocationServiceBridgeImpl::stopUpdating() during frame disconnection
+        Should not try to access WebViewClient if the frame has already been disconnected.
+        https://bugs.webkit.org/show_bug.cgi?id=37318
+
+        * src/WebGeolocationServiceBridgeImpl.cpp:
+        (WebKit::WebGeolocationServiceBridgeImpl::stopUpdating):
+
 2010-04-09  Jochen Eisinger  <jochen@chromium.org>
 
         Reviewed by Adam Barth.
