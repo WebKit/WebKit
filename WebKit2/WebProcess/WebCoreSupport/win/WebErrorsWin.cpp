@@ -34,8 +34,7 @@ namespace WebKit {
 
 #define WebURLErrorDomain TEXT("CFURLErrorDomain")
 
-enum
-{
+enum {
     WebURLErrorUnknown =                         -1,
     WebURLErrorCancelled =                       -999,
     WebURLErrorBadURL =                          -1000,

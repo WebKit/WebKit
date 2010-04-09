@@ -26,18 +26,16 @@
 #ifndef Connection_h
 #define Connection_h
 
-#include "Arguments.h"
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
+#include "Arguments.h"
 #include "MessageID.h"
 #include "WorkQueue.h"
-
+#include <deque>
+#include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Threading.h>
-
-#include <deque>
-#include <memory>
 
 #if PLATFORM(MAC)
 #include <mach/mach_port.h>

@@ -28,14 +28,14 @@
 #include "Connection.h"
 #include "RunLoop.h"
 #include "WebProcess.h"
-#include <runtime/InitializeThreading.h>
 #include <WebCore/PlatformString.h>
-#include <wtf/Threading.h>
-#include <wtf/PassRefPtr.h>
-
+#include <runtime/InitializeThreading.h>
 #include <string>
+#include <wtf/PassRefPtr.h>
+#include <wtf/Threading.h>
 
 using namespace WebCore;
+
 namespace WebKit {
 
 // FIXME: We need to use a better connection identifier.

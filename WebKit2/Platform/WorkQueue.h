@@ -28,7 +28,6 @@
 
 #if PLATFORM(MAC)
 #include <dispatch/dispatch.h>
-#include <wtf/HashMap.h>
 #elif PLATFORM(WIN)
 #include <queue>
 #endif

@@ -69,14 +69,14 @@ public:
         mach_port_t machPort = dispatch_source_get_handle(eventSource->m_dispatchSource);
         
         switch (eventSource->m_eventType) {
-            case MachPortDataAvailable:
-                // Release our receive right.
-                mach_port_mod_refs(mach_task_self(), machPort, MACH_PORT_RIGHT_RECEIVE, -1);
-                break;
-            case MachPortDeadNameNotification:
-                // Release our send right.
-                mach_port_deallocate(mach_task_self(), machPort);
-                break;
+        case MachPortDataAvailable:
+            // Release our receive right.
+            mach_port_mod_refs(mach_task_self(), machPort, MACH_PORT_RIGHT_RECEIVE, -1);
+            break;
+        case MachPortDeadNameNotification:
+            // Release our send right.
+            mach_port_deallocate(mach_task_self(), machPort);
+            break;
         }
     }
     
@@ -100,12 +100,12 @@ void WorkQueue::registerMachPortEventHandler(mach_port_t machPort, MachPortEvent
 {
     dispatch_source_type_t sourceType = 0;
     switch (eventType) {
-        case MachPortDataAvailable:
-            sourceType = DISPATCH_SOURCE_TYPE_MACH_RECV;
-            break;
-        case MachPortDeadNameNotification:
-            sourceType = DISPATCH_SOURCE_TYPE_MACH_SEND;
-            break;
+    case MachPortDataAvailable:
+        sourceType = DISPATCH_SOURCE_TYPE_MACH_RECV;
+        break;
+    case MachPortDeadNameNotification:
+        sourceType = DISPATCH_SOURCE_TYPE_MACH_SEND;
+        break;
     }
     
     dispatch_source_t dispatchSource = dispatch_source_create(sourceType, machPort, 0, m_dispatchQueue);

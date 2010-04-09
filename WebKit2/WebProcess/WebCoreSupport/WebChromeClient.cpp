@@ -34,10 +34,9 @@
 #include "WebPageProxyMessageKinds.h"
 #include "WebPreferencesStore.h"
 #include "WebProcess.h"
-
+#include <WebCore/FileChooser.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
-#include <WebCore/FileChooser.h>
 
 using namespace WebCore;
 

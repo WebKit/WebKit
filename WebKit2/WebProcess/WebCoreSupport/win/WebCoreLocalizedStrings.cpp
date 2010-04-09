@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <windows.h>
 #include "WebLocalizableStrings.h"
 #include <WebCore/IntSize.h>
 #include <WebCore/LocalizedStrings.h>
 #include <WebCore/PlatformString.h>
+#include <windows.h>
 #include <wtf/MathExtras.h>
 #include <wtf/RetainPtr.h>
 
@@ -242,7 +242,7 @@ String WebCore::localizedMediaTimeDescription(float time)
     return result.get();
 }
 
-#endif  // ENABLE(VIDEO)
+#endif // ENABLE(VIDEO)
 
 String WebCore::validationMessageValueMissingText() { return String(LPCTSTR_UI_STRING("value missing", "Validation message for required form control elements that have no value")); }
 String WebCore::validationMessageTypeMismatchText() { return String(LPCTSTR_UI_STRING("type mismatch", "Validation message for input form controls with a value not matching type")); }

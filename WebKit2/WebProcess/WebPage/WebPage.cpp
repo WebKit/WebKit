@@ -26,9 +26,8 @@
 #include "WebPage.h"
 
 #include "Arguments.h"
-#include "MessageID.h"
-
 #include "DrawingArea.h"
+#include "MessageID.h"
 #include "WebChromeClient.h"
 #include "WebContextMenuClient.h"
 #include "WebCoreTypeArgumentMarshalling.h"
@@ -42,7 +41,6 @@
 #include "WebPageProxyMessageKinds.h"
 #include "WebPreferencesStore.h"
 #include "WebProcess.h"
-
 #include <WebCore/BackForwardList.h>
 #include <WebCore/EventHandler.h>
 #include <WebCore/FocusController.h>
@@ -55,7 +53,6 @@
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/Settings.h>
-
 #include <runtime/JSLock.h>
 #include <runtime/JSValue.h>
 
@@ -87,7 +84,7 @@ WebPage::WebPage(uint64_t pageID, const IntSize& viewSize, const WebPreferencesS
     , m_canGoForward(false)
     , m_pageID(pageID)
 {
-    ASSERT(m_pageID != 0);
+    ASSERT(m_pageID);
 
     m_page->settings()->setJavaScriptEnabled(store.javaScriptEnabled);
     m_page->settings()->setLoadsImagesAutomatically(store.loadsImagesAutomatically);

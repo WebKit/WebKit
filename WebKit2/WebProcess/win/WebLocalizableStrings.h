@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebLocalizableStrings_H
-#define WebLocalizableStrings_H
+#ifndef WebLocalizableStrings_h
+#define WebLocalizableStrings_h
 
 #include <CoreFoundation/CoreFoundation.h>
 
@@ -70,4 +70,4 @@ extern WebLocalizableStringsBundle LOCALIZABLE_STRINGS_BUNDLE(FRAMEWORK_NAME);
 
 #endif
 
-#endif
+#endif // WebLocalizableStrings_h

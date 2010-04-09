@@ -26,17 +26,15 @@
 #include "WebView.h"
 
 #include "DrawingAreaProxy.h"
-
 #include "RunLoop.h"
 #include "WebEventFactory.h"
 #include "WebPageNamespace.h"
 #include "WebPageProxy.h"
+#include <Commctrl.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PlatformString.h>
 #include <WebCore/WebCoreInstanceHandle.h>
 #include <WebCore/WindowMessageBroadcaster.h>
-
-#include <Commctrl.h>
 
 using namespace WebCore;
 
@@ -414,7 +412,7 @@ void WebView::initializeToolTipWindow()
 
     TOOLINFO info = {0};
     info.cbSize = sizeof(info);
-    info.uFlags = TTF_IDISHWND | TTF_SUBCLASS ;
+    info.uFlags = TTF_IDISHWND | TTF_SUBCLASS;
     info.uId = reinterpret_cast<UINT_PTR>(m_window);
 
     ::SendMessage(m_toolTipWindow, TTM_ADDTOOL, 0, reinterpret_cast<LPARAM>(&info));

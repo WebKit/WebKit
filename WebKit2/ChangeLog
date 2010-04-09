@@ -1,7 +1,50 @@
+2010-04-09  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix minor style nits found by the style-script.
+
+        * Platform/CoreIPC/ArgumentDecoder.h:
+        * Platform/CoreIPC/ArgumentEncoder.cpp:
+        * Platform/CoreIPC/Attachment.cpp:
+        * Platform/CoreIPC/Connection.cpp:
+        * Platform/CoreIPC/Connection.h:
+        * Platform/CoreIPC/mac/ConnectionMac.cpp:
+        * Platform/CoreIPC/win/ConnectionWin.cpp:
+        * Platform/WorkQueue.h:
+        * Platform/mac/WorkQueueMac.cpp:
+        * Platform/win/RunLoopWin.cpp:
+        * Shared/KURLWrapper.h:
+        * Shared/WebCoreTypeArgumentMarshalling.h:
+        * Shared/mac/UpdateChunk.cpp:
+        * UIProcess/API/C/WKPage.cpp:
+        * UIProcess/API/C/WKURL.cpp:
+        * UIProcess/Launcher/win/WebProcessLauncher.cpp:
+        * UIProcess/ResponsivenessTimer.cpp:
+        * UIProcess/WebLoaderClient.cpp:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPolicyClient.cpp:
+        * UIProcess/WebUIClient.cpp:
+        * UIProcess/win/DrawingAreaProxy.cpp:
+        * UIProcess/win/WebView.cpp:
+        * WebProcess/Launching/win/WebProcessWinMain.cpp:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.h:
+        * WebProcess/WebCoreSupport/win/WebCoreLocalizedStrings.cpp:
+        * WebProcess/WebCoreSupport/win/WebErrorsWin.cpp:
+        * WebProcess/WebPage/WebFrame.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/mac/DrawingAreaUpdateChunk.cpp:
+        * WebProcess/WebProcess.h:
+        * WebProcess/win/WebLocalizableStrings.cpp:
+        * WebProcess/win/WebLocalizableStrings.h:
+        * WebProcess/win/WebProcessMain.cpp:
+
 2010-04-09  Anders Carlsson  <andersca@apple.com>
 
         Fix Windows build.
-        
+
         * Shared/NotImplemented.h:
         Include stdio.h.
 

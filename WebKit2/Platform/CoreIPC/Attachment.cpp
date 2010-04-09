@@ -25,8 +25,8 @@
 
 #include "Attachment.h"
 
-#include "ArgumentEncoder.h"
 #include "ArgumentDecoder.h"
+#include "ArgumentEncoder.h"
 
 namespace CoreIPC {
 

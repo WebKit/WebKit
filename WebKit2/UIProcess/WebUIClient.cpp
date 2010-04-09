@@ -38,7 +38,7 @@ WebUIClient::WebUIClient()
 
 void WebUIClient::initialize(WKPageUIClient* client)
 {
-    if (client && client->version == 0)
+    if (client && !client->version)
         m_pageUIClient = *client;
     else 
         memset(&m_pageUIClient, 0, sizeof(m_pageUIClient));

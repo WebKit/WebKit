@@ -36,7 +36,7 @@ WebLoaderClient::WebLoaderClient()
 
 void WebLoaderClient::initialize(WKPageLoaderClient* client)
 {
-    if (client && client->version == 0)
+    if (client && !client->version)
         m_pageLoaderClient = *client;
     else 
         memset(&m_pageLoaderClient, 0, sizeof(m_pageLoaderClient));

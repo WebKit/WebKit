@@ -23,6 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef WebSystemInterface_h
+#define WebSystemInterface_h
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -32,3 +35,5 @@ void InitWebCoreSystemInterface(void);
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* WebSystemInterface_h */

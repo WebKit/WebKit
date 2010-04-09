@@ -28,8 +28,8 @@
 
 #include "Attachment.h"
 #include <memory>
-#include <vector>
 #include <queue>
+#include <vector>
 #include <wtf/TypeTraits.h>
 
 namespace CoreIPC {

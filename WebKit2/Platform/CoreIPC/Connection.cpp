@@ -143,7 +143,7 @@ std::auto_ptr<ArgumentDecoder> Connection::waitForMessage(MessageID messageID, u
         MutexLocker locker(m_waitForMessageMutex);
 
         HashMap<std::pair<unsigned, uint64_t>, ArgumentDecoder*>::iterator it = m_waitForMessageMap.find(messageAndDestination);
-        if (it->second != 0) {
+        if (it->second) {
             std::auto_ptr<ArgumentDecoder> arguments(it->second);
             m_waitForMessageMap.remove(it);
             

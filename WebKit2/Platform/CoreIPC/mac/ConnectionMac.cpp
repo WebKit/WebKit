@@ -164,24 +164,24 @@ void Connection::sendOutgoingMessage(unsigned messageID, auto_ptr<ArgumentEncode
 
             mach_msg_descriptor_t* descriptor = reinterpret_cast<mach_msg_descriptor_t*>(descriptorData);
             switch (attachment.type()) {
-                case Attachment::MachPortType:
-                    descriptor->port.name = attachment.port();
-                    descriptor->port.disposition = attachment.disposition();
-                    descriptor->port.type = MACH_MSG_PORT_DESCRIPTOR;            
+            case Attachment::MachPortType:
+                descriptor->port.name = attachment.port();
+                descriptor->port.disposition = attachment.disposition();
+                descriptor->port.type = MACH_MSG_PORT_DESCRIPTOR;            
 
-                    descriptorData += sizeof(mach_msg_port_descriptor_t);
-                    break;
-                case Attachment::MachOOLMemoryType:
-                    descriptor->out_of_line.address = attachment.address();
-                    descriptor->out_of_line.size = attachment.size();
-                    descriptor->out_of_line.copy = attachment.copyOptions();
-                    descriptor->out_of_line.deallocate = attachment.deallocate();
-                    descriptor->out_of_line.type = MACH_MSG_OOL_DESCRIPTOR;            
+                descriptorData += sizeof(mach_msg_port_descriptor_t);
+                break;
+            case Attachment::MachOOLMemoryType:
+                descriptor->out_of_line.address = attachment.address();
+                descriptor->out_of_line.size = attachment.size();
+                descriptor->out_of_line.copy = attachment.copyOptions();
+                descriptor->out_of_line.deallocate = attachment.deallocate();
+                descriptor->out_of_line.type = MACH_MSG_OOL_DESCRIPTOR;            
 
-                    descriptorData += sizeof(mach_msg_ool_descriptor_t);
-                    break;
-                default:
-                    ASSERT_NOT_REACHED();
+                descriptorData += sizeof(mach_msg_ool_descriptor_t);
+                break;
+            default:
+                ASSERT_NOT_REACHED();
             }
         }
 
@@ -228,17 +228,17 @@ static auto_ptr<ArgumentDecoder> createArgumentDecoder(mach_msg_header_t* header
         mach_msg_descriptor_t* descriptor = reinterpret_cast<mach_msg_descriptor_t*>(descriptorData);
 
         switch (descriptor->type.type) {
-            case MACH_MSG_PORT_DESCRIPTOR:
-                attachments.push(Attachment(descriptor->port.name, descriptor->port.disposition));
-                descriptorData += sizeof(mach_msg_port_descriptor_t);
-                break;
-            case MACH_MSG_OOL_DESCRIPTOR:
-                attachments.push(Attachment(descriptor->out_of_line.address, descriptor->out_of_line.size,
-                                            descriptor->out_of_line.copy, descriptor->out_of_line.deallocate));
-                descriptorData += sizeof(mach_msg_ool_descriptor_t);
-                break;
-            default:
-                ASSERT(false && "Unhandled descriptor type");
+        case MACH_MSG_PORT_DESCRIPTOR:
+            attachments.push(Attachment(descriptor->port.name, descriptor->port.disposition));
+            descriptorData += sizeof(mach_msg_port_descriptor_t);
+            break;
+        case MACH_MSG_OOL_DESCRIPTOR:
+            attachments.push(Attachment(descriptor->out_of_line.address, descriptor->out_of_line.size,
+                                        descriptor->out_of_line.copy, descriptor->out_of_line.deallocate));
+            descriptorData += sizeof(mach_msg_ool_descriptor_t);
+            break;
+        default:
+            ASSERT(false && "Unhandled descriptor type");
         }
     }
 

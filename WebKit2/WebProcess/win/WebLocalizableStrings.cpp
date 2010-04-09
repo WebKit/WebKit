@@ -23,20 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <windows.h>
 #include "WebLocalizableStrings.h"
 
-#pragma warning(push, 0)
+#include <CoreFoundation/CoreFoundation.h>
 #include <WebCore/PlatformString.h>
 #include <WebCore/StringHash.h>
 #include <WebCore/WebCoreInstanceHandle.h>
-#pragma warning(pop)
-
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/StdLibExtras.h>
-#include <CoreFoundation/CoreFoundation.h>
 
 class LocalizedString;
 

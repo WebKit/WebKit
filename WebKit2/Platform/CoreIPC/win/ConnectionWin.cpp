@@ -93,11 +93,11 @@ void Connection::readEventHandler()
             DWORD error = ::GetLastError();
 
             switch (error) {
-                case ERROR_BROKEN_PIPE:
-                    connectionDidClose();
-                    return;
-                default:
-                    ASSERT_NOT_REACHED();
+            case ERROR_BROKEN_PIPE:
+                connectionDidClose();
+                return;
+            default:
+                ASSERT_NOT_REACHED();
             }
         }
     }
@@ -144,9 +144,9 @@ bool Connection::open()
 
     if (m_isServer) {
         // Wait for a connection.
-        if (::ConnectNamedPipe(m_connectionPipe, &m_readState)) {
+        if (::ConnectNamedPipe(m_connectionPipe, &m_readState))
             m_isConnected = true;
-        } else {
+        else {
             // Even though the call to ConnectNamedPipe failed, we might still have a valid connection.
             DWORD error = ::GetLastError();
             if (error == ERROR_PIPE_CONNECTED) {

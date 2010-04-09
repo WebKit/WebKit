@@ -31,8 +31,8 @@
 #include "Arguments.h"
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntRect.h>
-#include <WebCore/PlatformString.h>
 #include <WebCore/KURL.h>
+#include <WebCore/PlatformString.h>
 
 namespace CoreIPC {
 namespace ArgumentCoders {

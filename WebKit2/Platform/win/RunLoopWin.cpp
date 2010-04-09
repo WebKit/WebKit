@@ -51,12 +51,12 @@ LRESULT CALLBACK RunLoop::RunLoopWndProc(HWND hWnd, UINT message, WPARAM wParam,
 LRESULT RunLoop::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message) {
-        case PerformWorkMessage:
-            performWork();
-            return 0;
-        case WM_TIMER:
-            RunLoop::TimerBase::timerFired(this, wParam);
-            return 0;
+    case PerformWorkMessage:
+        performWork();
+        return 0;
+    case WM_TIMER:
+        RunLoop::TimerBase::timerFired(this, wParam);
+        return 0;
     }
 
     return ::DefWindowProc(hWnd, message, wParam, lParam);

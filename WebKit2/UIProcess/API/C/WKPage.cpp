@@ -106,19 +106,19 @@ void WKPageTerminate(WKPageRef pageRef)
 
 void WKPageSetPageLoaderClient(WKPageRef pageRef, WKPageLoaderClient* wkClient)
 {
-    if (wkClient && wkClient->version == 0)
+    if (wkClient && !wkClient->version)
         toWK(pageRef)->initializeLoaderClient(wkClient);
 }
 
 void WKPageSetPagePolicyClient(WKPageRef pageRef, WKPagePolicyClient * wkClient)
 {
-    if (wkClient && wkClient->version == 0)
+    if (wkClient && !wkClient->version)
         toWK(pageRef)->initializePolicyClient(wkClient);
 }
 
 void WKPageSetPageUIClient(WKPageRef pageRef, WKPageUIClient * wkClient)
 {
-   if (wkClient && wkClient->version == 0)
+   if (wkClient && !wkClient->version)
         toWK(pageRef)->initializeUIClient(wkClient);
 }
 

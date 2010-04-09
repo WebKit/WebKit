@@ -32,7 +32,6 @@
 #include "WebPage.h"
 #include "WebPageProxyMessageKinds.h"
 #include "WebProcess.h"
-
 #include <WebCore/Chrome.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/FormState.h>
@@ -43,8 +42,8 @@
 #include <WebCore/Page.h>
 #include <WebCore/ProgressTracker.h>
 #include <WebCore/ResourceError.h>
-#include <WebCore/WindowFeatures.h>
 #include <WebCore/Widget.h>
+#include <WebCore/WindowFeatures.h>
 
 using namespace WebCore;
 

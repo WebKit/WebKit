@@ -25,10 +25,9 @@
 
 #include "DrawingAreaUpdateChunk.h"
 
-#include "MessageID.h"
-
 #include "DrawingAreaMessageKinds.h"
 #include "DrawingAreaProxyMessageKinds.h"
+#include "MessageID.h"
 #include "UpdateChunk.h"
 #include "WebCoreTypeArgumentMarshalling.h"
 #include "WebPage.h"

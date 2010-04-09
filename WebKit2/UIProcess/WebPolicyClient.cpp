@@ -25,8 +25,8 @@
 
 #include "WebPolicyClient.h"
 
-#include "WKAPICast.h"
 #include "KURLWrapper.h"
+#include "WKAPICast.h"
 #include <WebCore/PlatformString.h>
 
 using namespace WebCore;
@@ -40,7 +40,7 @@ WebPolicyClient::WebPolicyClient()
 
 void WebPolicyClient::initialize(WKPagePolicyClient* client)
 {
-    if (client && client->version == 0)
+    if (client && !client->version)
         m_pagePolicyClient = *client;
     else 
         memset(&m_pagePolicyClient, 0, sizeof(m_pagePolicyClient));

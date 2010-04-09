@@ -34,8 +34,8 @@
 #include "WebPolicyClient.h"
 #include "WebUIClient.h"
 #include <WebCore/FrameLoaderTypes.h>
-#include <WebCore/PlatformString.h>
 #include <WebCore/KURL.h>
+#include <WebCore/PlatformString.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>

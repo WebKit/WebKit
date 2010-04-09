@@ -25,14 +25,13 @@
 
 #include "DrawingAreaProxy.h"
 
-#include "MessageID.h"
 #include "Connection.h"
-
-#include "DrawingAreaProxyMessageKinds.h"
 #include "DrawingAreaMessageKinds.h"
+#include "DrawingAreaProxyMessageKinds.h"
+#include "MessageID.h"
 #include "UpdateChunk.h"
-#include "WebView.h"
 #include "WebProcessProxy.h"
+#include "WebView.h"
 #include <WebCore/BitmapInfo.h>
 #include <WebCore/IntRect.h>
 
@@ -58,7 +57,7 @@ void DrawingAreaProxy::ensureBackingStore()
 
     BitmapInfo bitmapInfo = BitmapInfo::createBottomUp(IntSize(m_backingStoreSize));
 
-    void* pixels = NULL;
+    void* pixels = 0;
     m_backingStoreBitmap.set(::CreateDIBSection(0, &bitmapInfo, DIB_RGB_COLORS, &pixels, 0, 0));
 
     if (!m_backingStoreDC) {
@@ -104,7 +103,7 @@ void DrawingAreaProxy::drawUpdateChunkIntoBackingStore(UpdateChunk& updateChunk)
     BOOL result = ::DuplicateHandle(m_webView->page()->process()->processIdentifier(), updateChunk.memory(),
                                     ::GetCurrentProcess(), &updateChunkHandle, STANDARD_RIGHTS_REQUIRED | FILE_MAP_READ | FILE_MAP_WRITE, false, DUPLICATE_CLOSE_SOURCE);
 
-    void* pixels = NULL;
+    void* pixels = 0;
     OwnPtr<HBITMAP> hBitmap(::CreateDIBSection(0, &bitmapInfo, DIB_RGB_COLORS, &pixels, updateChunkHandle, 0));
     ::SelectObject(updateChunkBitmapDC.get(), hBitmap.get());
 

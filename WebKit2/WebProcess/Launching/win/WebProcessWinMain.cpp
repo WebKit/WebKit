@@ -23,10 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <windows.h>
-#include <tchar.h>
-
 #include "WebProcessMain.h"
+#include <tchar.h>
+#include <windows.h>
 
 #if defined _M_IX86
 #define PROCESSORARCHITECTURE "x86"

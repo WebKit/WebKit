@@ -26,8 +26,8 @@
 #ifndef WebProcess_h
 #define WebProcess_h
 
-#include "DrawingArea.h"
 #include "Connection.h"
+#include "DrawingArea.h"
 #include <wtf/HashMap.h>
 
 namespace WebCore {

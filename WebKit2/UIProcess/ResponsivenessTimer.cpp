@@ -81,4 +81,4 @@ void ResponsivenessTimer::stop()
     m_timer.stop();
 }
 
-} //namespace WebKit
+} // namespace WebKit
