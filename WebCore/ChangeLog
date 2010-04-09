@@ -1,3 +1,37 @@
+2010-04-09  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37361, clean up FillLayer.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * rendering/style/FillLayer.h:
+        (WebCore::FillLayer::sizeType):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::backgroundImage):
+        (WebCore::InheritedFlags::backgroundRepeatX):
+        (WebCore::InheritedFlags::backgroundRepeatY):
+        (WebCore::InheritedFlags::backgroundComposite):
+        (WebCore::InheritedFlags::backgroundAttachment):
+        (WebCore::InheritedFlags::backgroundClip):
+        (WebCore::InheritedFlags::backgroundOrigin):
+        (WebCore::InheritedFlags::backgroundXPosition):
+        (WebCore::InheritedFlags::backgroundYPosition):
+        (WebCore::InheritedFlags::backgroundSizeType):
+        (WebCore::InheritedFlags::backgroundSizeLength):
+        (WebCore::InheritedFlags::maskImage):
+        (WebCore::InheritedFlags::maskRepeatX):
+        (WebCore::InheritedFlags::maskRepeatY):
+        (WebCore::InheritedFlags::maskComposite):
+        (WebCore::InheritedFlags::maskAttachment):
+        (WebCore::InheritedFlags::maskClip):
+        (WebCore::InheritedFlags::maskOrigin):
+        (WebCore::InheritedFlags::maskXPosition):
+        (WebCore::InheritedFlags::maskYPosition):
+        (WebCore::InheritedFlags::maskSizeType):
+        (WebCore::InheritedFlags::maskSizeLength):
+
 2010-04-09  Sam Weinig  <sam@webkit.org>
 
         Add another missing export to fix the build.

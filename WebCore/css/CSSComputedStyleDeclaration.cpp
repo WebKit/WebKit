@@ -958,9 +958,14 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
                 return style->maskImage()->cssValue();
             return CSSPrimitiveValue::createIdentifier(CSSValueNone);
         case CSSPropertyWebkitMaskSize: {
+            EFillSizeType size = style->maskSizeType();
+            if (size == Contain)
+                return CSSPrimitiveValue::createIdentifier(CSSValueContain);
+            if (size == Cover)
+                return CSSPrimitiveValue::createIdentifier(CSSValueCover);
             RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-            list->append(CSSPrimitiveValue::create(style->maskSize().width()));
-            list->append(CSSPrimitiveValue::create(style->maskSize().height()));
+            list->append(CSSPrimitiveValue::create(style->maskSizeLength().width()));
+            list->append(CSSPrimitiveValue::create(style->maskSizeLength().height()));
             return list.release();
         }  
         case CSSPropertyWebkitMaskRepeat:
