@@ -30,6 +30,7 @@
 #include "Attachment.h"
 #include "WebCoreTypeArgumentMarshalling.h"
 #include <WebCore/FloatRect.h>
+#include <mach/vm_map.h>
 #include <wtf/RetainPtr.h>
 
 using namespace WebCore;

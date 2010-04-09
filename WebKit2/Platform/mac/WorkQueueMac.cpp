@@ -25,6 +25,8 @@
 
 #include "WorkQueue.h"
 
+#include <mach/mach_port.h>
+
 void WorkQueue::executeWorkItem(void* item)
 {
     WorkQueue* queue = static_cast<WorkQueue*>(dispatch_get_context(dispatch_get_current_queue()));

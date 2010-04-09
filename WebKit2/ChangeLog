@@ -1,3 +1,16 @@
+2010-04-09  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=37351
+        Cannot build with build-webkit --webkit2
+
+        Add some headers that it seems others are not getting
+        already.
+
+        * Platform/mac/WorkQueueMac.cpp: #inlude <mach/mach_port.h>
+        * Shared/mac/UpdateChunk.cpp: #inlude <mach/vm_map.h>
+
 2010-04-09  Anders Carlsson  <andersca@apple.com>
 
         More build fixes.
