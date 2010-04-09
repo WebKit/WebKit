@@ -1,3 +1,16 @@
+2010-04-09  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Must resolve multisampled back buffer during copyTexImage2D and copyTexSubImage2D
+        https://bugs.webkit.org/show_bug.cgi?id=37174
+
+        Test: fast/canvas/webgl/copy-tex-image-and-sub-image-2d.html
+
+        * src/WebGraphicsContext3DDefaultImpl.cpp: Resolve multisampled back buffer during copyTexImage2D and copyTexSubImage2D.
+        (WebKit::WebGraphicsContext3DDefaultImpl::copyTexImage2D):
+        (WebKit::WebGraphicsContext3DDefaultImpl::copyTexSubImage2D):
+
 2010-04-07  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

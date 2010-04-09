@@ -17,10 +17,10 @@
 // by the caller. By default, it maps to the window.console() function on WebKit and to
 // an empty function on other browsers.
 //
-function initWebGL(canvasName, vshader, fshader, attribs, clearColor, clearDepth)
+function initWebGL(canvasName, vshader, fshader, attribs, clearColor, clearDepth, contextAttribs)
 {
     var canvas = document.getElementById(canvasName);
-    var gl = canvas.getContext("experimental-webgl");
+    var gl = canvas.getContext("experimental-webgl", contextAttribs);
     if (!gl) {
         alert("No WebGL context found");
         return null;

@@ -838,9 +838,43 @@ DELEGATE_TO_GL_4(colorMask, ColorMask, bool, bool, bool, bool)
 
 DELEGATE_TO_GL_1(compileShader, CompileShader, WebGLId)
 
-DELEGATE_TO_GL_8(copyTexImage2D, CopyTexImage2D, unsigned long, long, unsigned long, long, long, unsigned long, unsigned long, long)
+void WebGraphicsContext3DDefaultImpl::copyTexImage2D(unsigned long target, long level, unsigned long internalformat,
+                                                     long x, long y, unsigned long width, unsigned long height, long border)
+{
+    makeContextCurrent();
+#ifndef RENDER_TO_DEBUGGING_WINDOW
+    if (m_attributes.antialias && m_boundFBO == m_multisampleFBO) {
+        glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_multisampleFBO);
+        glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, m_fbo);
+        glBlitFramebufferEXT(x, y, x + width, y + height, x, y, x + width, y + height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
+    }
+#endif
+    glCopyTexImage2D(target, level, internalformat, x, y, width, height, border);
+#ifndef RENDER_TO_DEBUGGING_WINDOW
+    if (m_attributes.antialias && m_boundFBO == m_multisampleFBO)
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_boundFBO);
+#endif
+}
 
-DELEGATE_TO_GL_8(copyTexSubImage2D, CopyTexSubImage2D, unsigned long, long, long, long, long, long, unsigned long, unsigned long)
+void WebGraphicsContext3DDefaultImpl::copyTexSubImage2D(unsigned long target, long level, long xoffset, long yoffset,
+                                                        long x, long y, unsigned long width, unsigned long height)
+{
+    makeContextCurrent();
+#ifndef RENDER_TO_DEBUGGING_WINDOW
+    if (m_attributes.antialias && m_boundFBO == m_multisampleFBO) {
+        glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_multisampleFBO);
+        glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, m_fbo);
+        glBlitFramebufferEXT(x, y, x + width, y + height, x, y, x + width, y + height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
+    }
+#endif
+    glCopyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
+#ifndef RENDER_TO_DEBUGGING_WINDOW
+    if (m_attributes.antialias && m_boundFBO == m_multisampleFBO)
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_boundFBO);
+#endif
+}
 
 DELEGATE_TO_GL_1(cullFace, CullFace, unsigned long)
 
