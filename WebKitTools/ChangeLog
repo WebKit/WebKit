@@ -1,3 +1,10 @@
+2010-04-09  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix after addition of LayoutTestController method.
+
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::computedStyleIncludingVisitedInfo):
+
 2010-04-09  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
