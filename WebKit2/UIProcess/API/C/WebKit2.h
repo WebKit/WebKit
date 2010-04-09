@@ -33,6 +33,8 @@
 #include <WebKit2/WKPage.h>
 #include <WebKit2/WKPageNamespace.h>
 #include <WebKit2/WKPreferences.h>
+#include <WebKit2/WKString.h>
+#include <WebKit2/WKURL.h>
 #include <WebKit2/WKView.h>
 
 #endif /* WebKit2_h */
