@@ -1,0 +1,35 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 1 of #text > DIV > DIV > BODY > HTML > #document to 4 of #text > DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > DIV > DIV > BODY > HTML > #document to 4 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x226 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x61
+          RenderText {#text} at (0,0) size 77x31
+            text run at (0,0) width 77: "Tests: "
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {#text} at (0,31) size 695x29
+            text run at (0,31) width 695: "Non-smart delete when deleting a word selected via the keyboard."
+        RenderBlock {DIV} at (14,91) size 756x121
+          RenderText {#text} at (0,0) size 214x31
+            text run at (0,0) width 214: "Expected Results: "
+          RenderBR {BR} at (214,24) size 0x0
+          RenderText {#text} at (0,31) size 742x59
+            text run at (0,31) width 742: "The first word should be deleted. The space following it should remain."
+            text run at (0,61) width 240: "It should look like this: "
+          RenderBR {BR} at (240,84) size 0x0
+          RenderText {#text} at (0,91) size 104x29
+            text run at (0,91) width 104: "\" bar baz\""
+      RenderBlock {DIV} at (0,250) size 784x34
+        RenderBlock {DIV} at (0,0) size 784x34 [border: (2px solid #FF0000)]
+          RenderText {#text} at (2,2) size 86x29
+            text run at (2,2) width 86: " bar baz"
+caret: position 0 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
