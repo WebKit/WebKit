@@ -7,4 +7,6 @@ EXPORTS
     WKViewCreate
     WKViewGetWindow
     WKViewGetPage
+    WKURLCreateWithCFURL
+    WKURLRelease
     ?WebProcessMain@WebKit@@YAHPAUHINSTANCE__@@PA_W@Z

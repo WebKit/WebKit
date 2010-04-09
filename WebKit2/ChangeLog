@@ -1,3 +1,16 @@
+2010-04-09  Anders Carlsson  <andersca@apple.com>
+
+        More build fixes.
+        
+        * WebProcess/win/WebProcessMain.h:
+        Include windows.h here.
+        
+        * win/WebKit2.def:
+        Add new exports.
+
+        * win/WebKit2.vcproj:
+        Add new files.
+
 2010-04-09  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

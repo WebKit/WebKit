@@ -26,6 +26,8 @@
 #ifndef WebProcessMain_h
 #define WebProcessMain_h
 
+#include <windows.h>
+
 namespace WebKit {
 
 // This is called only from the _tWinMain function of the WebProcess.
