@@ -25,6 +25,8 @@
 
 #include "ScriptReturnValueCallback.h"
 
+#include "WKAPICast.h"
+
 namespace WebKit {
 
 static uint64_t generateCallbackID()
@@ -47,11 +49,11 @@ ScriptReturnValueCallback::~ScriptReturnValueCallback()
         m_disposeCallback(m_context);
 }
 
-void ScriptReturnValueCallback::performCallbackWithReturnValue(CFStringRef returnValue)
+void ScriptReturnValueCallback::performCallbackWithReturnValue(WebCore::StringImpl* returnValue)
 {
     ASSERT(m_callback);
 
-    m_callback(m_context, returnValue);
+    m_callback(m_context, toRef(returnValue));
     
     m_callback = 0;
     m_disposeCallback = 0;

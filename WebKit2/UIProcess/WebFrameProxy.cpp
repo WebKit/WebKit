@@ -26,7 +26,6 @@
 #include "WebFrameProxy.h"
 
 #include "WebPageProxy.h"
-#include <WebCore/KURL.h>
 #include <WebCore/PlatformString.h>
 
 using namespace WebCore;
@@ -65,16 +64,15 @@ void WebFrameProxy::didStartProvisionalLoad(const KURL& url)
 {
     // FIXME: Add assertions.
     m_loadState = LoadStateProvisional;
-
-    // FIXME: This is the wrong layer to be converting to CF.
-    m_provisionalURL.adoptCF(url.createCFURL());
+    m_provisionalURL = KURLWrapper::create(url);
 }
 
 void WebFrameProxy::didCommitLoad()
 {
     // FIXME: Add assertions.
     m_loadState = LoadStateCommitted;
-    m_url = m_provisionalURL.releaseRef();
+    m_url = m_provisionalURL;
+    m_provisionalURL = 0;
 }
 
 void WebFrameProxy::didFinishLoad()

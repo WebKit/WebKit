@@ -93,6 +93,15 @@
 		BC111B65112F638300337BAB /* WebProcessMessageKinds.h in Headers */ = {isa = PBXBuildFile; fileRef = BC111B62112F638300337BAB /* WebProcessMessageKinds.h */; };
 		BC1A7C581136E19C00FB7167 /* WebProcessLauncher.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A7C571136E19C00FB7167 /* WebProcessLauncher.h */; };
 		BC1DD7B2114DC396005ADAF3 /* WebCoreTypeArgumentMarshalling.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1DD7B1114DC396005ADAF3 /* WebCoreTypeArgumentMarshalling.h */; };
+		BC20EBB0116EEB0800094A50 /* WKString.h in Headers */ = {isa = PBXBuildFile; fileRef = BC20EBAE116EEB0800094A50 /* WKString.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BC20EBB1116EEB0800094A50 /* WKString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC20EBAF116EEB0800094A50 /* WKString.cpp */; };
+		BC20EBB4116EEF7A00094A50 /* WKURL.h in Headers */ = {isa = PBXBuildFile; fileRef = BC20EBB2116EEF7A00094A50 /* WKURL.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BC20EBB5116EEF7A00094A50 /* WKURL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC20EBB3116EEF7A00094A50 /* WKURL.cpp */; };
+		BC20EBC7116EF10500094A50 /* KURLWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = BC20EBC5116EF10500094A50 /* KURLWrapper.h */; };
+		BC20EC06116EF7FF00094A50 /* WKStringCF.h in Headers */ = {isa = PBXBuildFile; fileRef = BC20EC04116EF7FF00094A50 /* WKStringCF.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BC20EC07116EF7FF00094A50 /* WKStringCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC20EC05116EF7FF00094A50 /* WKStringCF.cpp */; };
+		BC20ED66116F971100094A50 /* WKURLCF.h in Headers */ = {isa = PBXBuildFile; fileRef = BC20ED64116F971100094A50 /* WKURLCF.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BC20ED67116F971100094A50 /* WKURLCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC20ED65116F971100094A50 /* WKURLCF.cpp */; };
 		BC2E6E871141971500A63B1E /* RunLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC2E6E771141970C00A63B1E /* RunLoop.cpp */; };
 		BC2E6E881141971500A63B1E /* RunLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2E6E781141970C00A63B1E /* RunLoop.h */; };
 		BC2E6E8C1141971500A63B1E /* WorkItem.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2E6E7C1141970C00A63B1E /* WorkItem.h */; };
@@ -271,6 +280,15 @@
 		BC111B62112F638300337BAB /* WebProcessMessageKinds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessMessageKinds.h; sourceTree = "<group>"; };
 		BC1A7C571136E19C00FB7167 /* WebProcessLauncher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessLauncher.h; sourceTree = "<group>"; };
 		BC1DD7B1114DC396005ADAF3 /* WebCoreTypeArgumentMarshalling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreTypeArgumentMarshalling.h; sourceTree = "<group>"; };
+		BC20EBAE116EEB0800094A50 /* WKString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKString.h; sourceTree = "<group>"; };
+		BC20EBAF116EEB0800094A50 /* WKString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKString.cpp; sourceTree = "<group>"; };
+		BC20EBB2116EEF7A00094A50 /* WKURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKURL.h; sourceTree = "<group>"; };
+		BC20EBB3116EEF7A00094A50 /* WKURL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKURL.cpp; sourceTree = "<group>"; };
+		BC20EBC5116EF10500094A50 /* KURLWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KURLWrapper.h; sourceTree = "<group>"; };
+		BC20EC04116EF7FF00094A50 /* WKStringCF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKStringCF.h; sourceTree = "<group>"; };
+		BC20EC05116EF7FF00094A50 /* WKStringCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKStringCF.cpp; sourceTree = "<group>"; };
+		BC20ED64116F971100094A50 /* WKURLCF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKURLCF.h; sourceTree = "<group>"; };
+		BC20ED65116F971100094A50 /* WKURLCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKURLCF.cpp; sourceTree = "<group>"; };
 		BC2E6E771141970C00A63B1E /* RunLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RunLoop.cpp; sourceTree = "<group>"; };
 		BC2E6E781141970C00A63B1E /* RunLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RunLoop.h; sourceTree = "<group>"; };
 		BC2E6E7C1141970C00A63B1E /* WorkItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkItem.h; sourceTree = "<group>"; };
@@ -458,6 +476,7 @@
 			children = (
 				BC111B5F112F635E00337BAB /* CoreIPCSupport */,
 				BC111B5A112F628200337BAB /* mac */,
+				BC20EBC5116EF10500094A50 /* KURLWrapper.h */,
 				BCC57161115ADB42001CCAF9 /* NotImplemented.h */,
 				BC1DD7B1114DC396005ADAF3 /* WebCoreTypeArgumentMarshalling.h */,
 				BC032DAF10F4380F0058C15A /* WebEvent.h */,
@@ -592,6 +611,7 @@
 		BC0C376610F807660076D7CB /* C */ = {
 			isa = PBXGroup;
 			children = (
+				BC20EBD0116EF66700094A50 /* cf */,
 				BCB63477116BF10600603215 /* WebKit2.h */,
 				BC0C376D10F808460076D7CB /* WKAPICast.h */,
 				BC0C376710F807B20076D7CB /* WKBase.h */,
@@ -607,6 +627,10 @@
 				BCEE98CB1133174C006BCC24 /* WKPageNamespace.h */,
 				BCD597CF112B56AC00EC8C23 /* WKPreferences.cpp */,
 				BCD597CE112B56AC00EC8C23 /* WKPreferences.h */,
+				BC20EBAF116EEB0800094A50 /* WKString.cpp */,
+				BC20EBAE116EEB0800094A50 /* WKString.h */,
+				BC20EBB3116EEF7A00094A50 /* WKURL.cpp */,
+				BC20EBB2116EEF7A00094A50 /* WKURL.h */,
 			);
 			path = C;
 			sourceTree = "<group>";
@@ -687,6 +711,17 @@
 				BC111B62112F638300337BAB /* WebProcessMessageKinds.h */,
 			);
 			path = CoreIPCSupport;
+			sourceTree = "<group>";
+		};
+		BC20EBD0116EF66700094A50 /* cf */ = {
+			isa = PBXGroup;
+			children = (
+				BC20EC05116EF7FF00094A50 /* WKStringCF.cpp */,
+				BC20EC04116EF7FF00094A50 /* WKStringCF.h */,
+				BC20ED65116F971100094A50 /* WKURLCF.cpp */,
+				BC20ED64116F971100094A50 /* WKURLCF.h */,
+			);
+			path = cf;
 			sourceTree = "<group>";
 		};
 		BC2E6E74114196F000A63B1E /* Platform */ = {
@@ -807,6 +842,11 @@
 				BC8699B5116AADAA002A925B /* WKView.h in Headers */,
 				BC8699B7116AADAA002A925B /* WKViewInternal.h in Headers */,
 				BCB63478116BF10600603215 /* WebKit2.h in Headers */,
+				BC20EBB0116EEB0800094A50 /* WKString.h in Headers */,
+				BC20EBB4116EEF7A00094A50 /* WKURL.h in Headers */,
+				BC20EBC7116EF10500094A50 /* KURLWrapper.h in Headers */,
+				BC20EC06116EF7FF00094A50 /* WKStringCF.h in Headers */,
+				BC20ED66116F971100094A50 /* WKURLCF.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -956,6 +996,10 @@
 				BC8452A71162C80900CAB9B5 /* DrawingArea.cpp in Sources */,
 				BC8452BB1162C96F00CAB9B5 /* DrawingAreaUpdateChunk.cpp in Sources */,
 				BC8699B6116AADAA002A925B /* WKView.mm in Sources */,
+				BC20EBB1116EEB0800094A50 /* WKString.cpp in Sources */,
+				BC20EBB5116EEF7A00094A50 /* WKURL.cpp in Sources */,
+				BC20EC07116EF7FF00094A50 /* WKStringCF.cpp in Sources */,
+				BC20ED67116F971100094A50 /* WKURLCF.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

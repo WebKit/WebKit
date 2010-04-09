@@ -52,16 +52,16 @@ WKFrameLoadState WKFrameGetFrameLoadState(WKFrameRef frameRef)
     return kWKFrameLoadStateFinished;
 }
 
-CFURLRef WKFrameGetProvisionalURL(WKFrameRef frameRef)
+WKURLRef WKFrameGetProvisionalURL(WKFrameRef frameRef)
 {
     WebFrameProxy* frame = toWK(frameRef);
-    return frame->provisionalURL();
+    return toRef(frame->provisionalURL());
 }
 
-CFURLRef WKFrameGetURL(WKFrameRef frameRef)
+WKURLRef WKFrameGetURL(WKFrameRef frameRef)
 {
     WebFrameProxy* frame = toWK(frameRef);
-    return frame->url();
+    return toRef(frame->url());
 }
 
 WKFrameRef WKFrameRetain(WKFrameRef frameRef)

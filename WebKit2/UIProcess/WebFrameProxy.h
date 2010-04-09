@@ -26,11 +26,11 @@
 #ifndef WebFrameProxy_h
 #define WebFrameProxy_h
 
+#include "KURLWrapper.h"
 #include "WebFramePolicyListenerProxy.h"
 #include <WebCore/FrameLoaderTypes.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
-#include <wtf/RetainPtr.h>
 
 namespace CoreIPC {
     class ArgumentDecoder;
@@ -39,7 +39,6 @@ namespace CoreIPC {
 }
 
 namespace WebCore {
-    class KURL;
     class String;
 }
 
@@ -68,8 +67,8 @@ public:
     bool isMainFrame() const;
     LoadState loadState() const { return m_loadState; }
 
-    CFURLRef url() const { return m_url.get(); }
-    CFURLRef provisionalURL() const { return m_provisionalURL.get(); }
+    KURLWrapper* url() const { return m_url.get(); }
+    KURLWrapper* provisionalURL() const { return m_provisionalURL.get(); }
 
     void didStartProvisionalLoad(const WebCore::KURL& url);
     void didCommitLoad();
@@ -84,8 +83,8 @@ private:
 
     WebPageProxy* m_page;
     LoadState m_loadState;
-    RetainPtr<CFURLRef> m_url;
-    RetainPtr<CFURLRef> m_provisionalURL;
+    RefPtr<KURLWrapper> m_url;
+    RefPtr<KURLWrapper> m_provisionalURL;
     RefPtr<WebFramePolicyListenerProxy> m_policyListener;
     uint64_t m_frameID;
 };

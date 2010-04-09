@@ -28,6 +28,10 @@
 
 #include "WKPage.h"
 
+namespace WebCore {
+    class StringImpl;
+}
+
 namespace WebKit {
 
 class WebFrameProxy;
@@ -41,7 +45,7 @@ public:
     WebPageProxy* createNewPage(WebPageProxy*);
     void showPage(WebPageProxy*);
     void close(WebPageProxy*);
-    void runJavaScriptAlert(WebPageProxy*, CFStringRef, WebFrameProxy*);
+    void runJavaScriptAlert(WebPageProxy*, WebCore::StringImpl*, WebFrameProxy*);
 
 private:
     WKPageUIClient m_pageUIClient;

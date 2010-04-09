@@ -23,46 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebLoaderClient_h
-#define WebLoaderClient_h
+#include "WKURLCF.h"
 
-#include "WKPage.h"
+#include "KURLWrapper.h"
+#include "WKAPICast.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
-namespace WebCore {
-    class StringImpl;
+using namespace WebCore;
+using namespace WebKit;
+
+WKURLRef WKURKCreateWithCFURL(CFURLRef cfURL)
+{
+    RefPtr<KURLWrapper> url = KURLWrapper::create(KURL(cfURL));
+    return toRef(url.release().releaseRef());
 }
 
-namespace WebKit {
-
-class WebPageProxy;
-class WebFrameProxy;
-
-class WebLoaderClient {
-public:
-    WebLoaderClient();
-    void initialize(WKPageLoaderClient*);
-
-    void didStartProvisionalLoadForFrame(WebPageProxy*, WebFrameProxy*);
-    void didReceiveServerRedirectForProvisionalLoadForFrame(WebPageProxy*, WebFrameProxy*);
-    void didFailProvisionalLoadWithErrorForFrame(WebPageProxy*, WebFrameProxy*);
-    void didCommitLoadForFrame(WebPageProxy*, WebFrameProxy*);
-    void didFinishLoadForFrame(WebPageProxy*, WebFrameProxy*);
-    void didFailLoadWithErrorForFrame(WebPageProxy*, WebFrameProxy*);
-    void didReceiveTitleForFrame(WebPageProxy*, WebCore::StringImpl*, WebFrameProxy*);
-    void didFirstLayoutForFrame(WebPageProxy*, WebFrameProxy*);
-    void didFirstVisuallyNonEmptyLayoutForFrame(WebPageProxy*, WebFrameProxy*);
-    void didStartProgress(WebPageProxy*);
-    void didChangeProgress(WebPageProxy*, double);
-    void didFinishProgress(WebPageProxy*);
-
-    // FIXME: These two methods should not be part of this client. 
-    void didBecomeUnresponsive(WebPageProxy*);
-    void didBecomeResponsive(WebPageProxy*);
-
-private:
-    WKPageLoaderClient m_pageLoaderClient;
-};
-
-} // namespace WebKit
-
-#endif // WebLoaderClient_h
+CFURLRef WKURLCopyCFURL(CFAllocatorRef /*allocatorRef*/, WKURLRef URLRef)
+{
+    // FIXME: Honor the allocator parameter.
+    return toWK(URLRef)->url().createCFURL();
+}

@@ -54,7 +54,7 @@ void WebFrameLoaderClient::frameLoaderDestroyed()
 {
     m_frame->invalidate();
 
-    // Balences explicit ref() in WebFrame::createMainFrame and WebFrame::createSubframe.
+    // Balances explicit ref() in WebFrame::createMainFrame and WebFrame::createSubframe.
     m_frame->deref();
 }
 

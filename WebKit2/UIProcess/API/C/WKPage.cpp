@@ -39,9 +39,9 @@ WKPageNamespaceRef WKPageGetPageNamespace(WKPageRef pageRef)
     return toRef(toWK(pageRef)->pageNamespace());
 }
 
-void WKPageLoadURL(WKPageRef pageRef, CFURLRef url)
+void WKPageLoadURL(WKPageRef pageRef, WKURLRef URLRef)
 {
-    toWK(pageRef)->loadURL(url);
+    toWK(pageRef)->loadURL(toWK(URLRef)->url());
 }
 
 void WKPageStopLoading(WKPageRef pageRef)
@@ -89,9 +89,9 @@ bool WKPageCanGoBack(WKPageRef pageRef)
     return toWK(pageRef)->canGoBack();
 }
 
-CFStringRef WKPageGetTitle(WKPageRef pageRef)
+WKStringRef WKPageGetTitle(WKPageRef pageRef)
 {
-    return toWK(pageRef)->pageTitle();
+    return toRef(toWK(pageRef)->pageTitle().impl());
 }
 
 WKFrameRef WKPageGetMainFrame(WKPageRef pageRef)
@@ -123,28 +123,28 @@ void WKPageSetPageUIClient(WKPageRef pageRef, WKPageUIClient * wkClient)
 }
 
 #if __BLOCKS__
-static void callBlockAndRelease(void *context, CFStringRef resultValue)
+static void callBlockAndRelease(void* context, WKStringRef resultValue)
 {
-    void (^block)(CFStringRef) = (void (^ReturnValueBlockType)(CFStringRef))context;
+    void (^block)(WKStringRef) = (void (^ReturnValueBlockType)(WKStringRef))context;
     block(resultValue);
     Block_release(block);
 }
 
-static void disposeBlock(void *context)
+static void disposeBlock(void* context)
 {
-    void (^block)(CFStringRef) = (void (^ReturnValueBlockType)(CFStringRef))context;
+    void (^block)(WKStringRef) = (void (^ReturnValueBlockType)(WKStringRef))context;
     Block_release(block);
 }
 
-void WKPageRunJavaScriptInMainFrame(WKPageRef pageRef, CFStringRef script, void (^returnValueBlock)(CFStringRef))
+void WKPageRunJavaScriptInMainFrame(WKPageRef pageRef, WKStringRef scriptRef, void (^returnValueBlock)(WKStringRef))
 {
-    WKPageRunJavaScriptInMainFrame_f(pageRef, script, Block_copy(returnValueBlock), callBlockAndRelease, disposeBlock);
+    WKPageRunJavaScriptInMainFrame_f(pageRef, scriptRef, Block_copy(returnValueBlock), callBlockAndRelease, disposeBlock);
 }
 #endif
 
-void WKPageRunJavaScriptInMainFrame_f(WKPageRef pageRef, CFStringRef script, void *context, void (*returnValueCallback)(void*, CFStringRef), void (*disposeContextCallback)(void*))
+void WKPageRunJavaScriptInMainFrame_f(WKPageRef pageRef, WKStringRef scriptRef, void* context, void (*returnValueCallback)(void*, WKStringRef), void (*disposeContextCallback)(void*))
 {
-    toWK(pageRef)->runJavaScriptInMainFrame(WebCore::String(script), ScriptReturnValueCallback::create(context, returnValueCallback, disposeContextCallback));
+    toWK(pageRef)->runJavaScriptInMainFrame(toWK(scriptRef), ScriptReturnValueCallback::create(context, returnValueCallback, disposeContextCallback));
 }
 
 WKPageRef WKPageRetain(WKPageRef pageRef)

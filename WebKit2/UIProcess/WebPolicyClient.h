@@ -28,6 +28,11 @@
 
 #include "WKPage.h"
 
+namespace WebCore {
+    class String;
+    class KURL;
+}
+
 namespace WebKit {
 
 class WebPageProxy;
@@ -39,9 +44,9 @@ public:
     WebPolicyClient();
     void initialize(WKPagePolicyClient*);
 
-    bool decidePolicyForNavigationAction(WebPageProxy*, uint32_t, CFURLRef, WebFrameProxy*, WebFramePolicyListenerProxy*);
-    bool decidePolicyForNewWindowAction(WebPageProxy*, uint32_t, CFURLRef, WebFrameProxy*, WebFramePolicyListenerProxy*);
-    bool decidePolicyForMIMEType(WebPageProxy*, CFStringRef, CFURLRef, WebFrameProxy*, WebFramePolicyListenerProxy*);
+    bool decidePolicyForNavigationAction(WebPageProxy*, uint32_t, const WebCore::KURL& url, WebFrameProxy*, WebFramePolicyListenerProxy*);
+    bool decidePolicyForNewWindowAction(WebPageProxy*, uint32_t, const WebCore::KURL& url, WebFrameProxy*, WebFramePolicyListenerProxy*);
+    bool decidePolicyForMIMEType(WebPageProxy*, const WebCore::String&, const WebCore::KURL& url, WebFrameProxy*, WebFramePolicyListenerProxy*);
 
 private:
     WKPagePolicyClient m_pagePolicyClient;

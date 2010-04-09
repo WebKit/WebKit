@@ -36,6 +36,8 @@ typedef struct OpaqueWKContext* WKContextRef;
 typedef struct OpaqueWKPageNamespace* WKPageNamespaceRef;
 typedef struct OpaqueWKFramePolicyListener* WKFramePolicyListenerRef;
 typedef struct OpaqueWKPreferencesRef* WKPreferencesRef;
+typedef struct OpaqueWKStringRef* WKStringRef;
+typedef struct OpaqueWKURLRef* WKURLRef;
 
 #define WK_EXPORT
 

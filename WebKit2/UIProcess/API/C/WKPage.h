@@ -44,7 +44,7 @@ typedef void (*WKPageDidFailProvisionalLoadWithErrorForFrameCallback)(WKPageRef 
 typedef void (*WKPageDidCommitLoadForFrameCallback)(WKPageRef page, WKFrameRef frame, const void *clientInfo);
 typedef void (*WKPageDidFinishLoadForFrameCallback)(WKPageRef page, WKFrameRef frame, const void *clientInfo);
 typedef void (*WKPageDidFailLoadWithErrorForFrameCallback)(WKPageRef page, WKFrameRef frame, const void *clientInfo); // FIXME: Add WKErrorRef.
-typedef void (*WKPageDidReceiveTitleForFrameCallback)(WKPageRef page, CFStringRef title, WKFrameRef frame, const void *clientInfo);
+typedef void (*WKPageDidReceiveTitleForFrameCallback)(WKPageRef page, WKStringRef title, WKFrameRef frame, const void *clientInfo);
 typedef void (*WKPageDidFirstLayoutForFrame)(WKPageRef page, WKFrameRef frame, const void *clientInfo);
 typedef void (*WKPageDidFirstVisuallyNonEmptyLayoutForFrame)(WKPageRef page, WKFrameRef frame, const void *clientInfo);
 
@@ -84,9 +84,9 @@ typedef struct WKPageLoaderClient WKPageLoaderClient;
 
 // Policy Client.
 
-typedef void (*WKPageDecidePolicyForNavigationActionCallback)(WKPageRef page, uint32_t navigationType, CFURLRef url, WKFrameRef frame, WKFramePolicyListenerRef listener, const void *clientInfo);
-typedef void (*WKPageDecidePolicyForNewWindowActionCallback)(WKPageRef page, uint32_t navigationType, CFURLRef url, WKFrameRef frame, WKFramePolicyListenerRef listener, const void *clientInfo);
-typedef void (*WKPageDecidePolicyForMIMETypeCallback)(WKPageRef page, CFStringRef MIMEType, CFURLRef url, WKFrameRef frame, WKFramePolicyListenerRef listener, const void *clientInfo);
+typedef void (*WKPageDecidePolicyForNavigationActionCallback)(WKPageRef page, uint32_t navigationType, WKURLRef url, WKFrameRef frame, WKFramePolicyListenerRef listener, const void *clientInfo);
+typedef void (*WKPageDecidePolicyForNewWindowActionCallback)(WKPageRef page, uint32_t navigationType, WKURLRef url, WKFrameRef frame, WKFramePolicyListenerRef listener, const void *clientInfo);
+typedef void (*WKPageDecidePolicyForMIMETypeCallback)(WKPageRef page, WKStringRef MIMEType, WKURLRef url, WKFrameRef frame, WKFramePolicyListenerRef listener, const void *clientInfo);
 
 struct WKPagePolicyClient {
     int                                                                 version;
@@ -101,7 +101,7 @@ typedef struct WKPagePolicyClient WKPagePolicyClient;
 typedef WKPageRef (*WKPageCreateNewPageCallback)(WKPageRef page, const void *clientInfo);
 typedef void (*WKPageShowPageCallback)(WKPageRef page, const void *clientInfo);
 typedef void (*WKPageCloseCallback)(WKPageRef page, const void *clientInfo);
-typedef void (*WKPageRunJavaScriptAlertCallback)(WKPageRef page, CFStringRef alertText, WKFrameRef frame, const void *clientInfo);
+typedef void (*WKPageRunJavaScriptAlertCallback)(WKPageRef page, WKStringRef alertText, WKFrameRef frame, const void *clientInfo);
 
 struct WKPageUIClient {
     int                                                                 version;
@@ -115,7 +115,7 @@ typedef struct WKPageUIClient WKPageUIClient;
 
 WK_EXPORT WKPageNamespaceRef WKPageGetPageNamespace(WKPageRef page);
 
-WK_EXPORT void WKPageLoadURL(WKPageRef page, CFURLRef url);
+WK_EXPORT void WKPageLoadURL(WKPageRef page, WKURLRef url);
 WK_EXPORT void WKPageStopLoading(WKPageRef page);
 WK_EXPORT void WKPageReload(WKPageRef page);
 
@@ -128,7 +128,7 @@ WK_EXPORT bool WKPageCanGoForward(WKPageRef page);
 WK_EXPORT void WKPageGoBack(WKPageRef page);
 WK_EXPORT bool WKPageCanGoBack(WKPageRef page);
 
-WK_EXPORT CFStringRef WKPageGetTitle(WKPageRef page);
+WK_EXPORT WKStringRef WKPageGetTitle(WKPageRef page);
 
 WK_EXPORT WKFrameRef WKPageGetMainFrame(WKPageRef page);
 
@@ -139,9 +139,9 @@ WK_EXPORT void WKPageSetPagePolicyClient(WKPageRef page, WKPagePolicyClient * cl
 WK_EXPORT void WKPageSetPageUIClient(WKPageRef page, WKPageUIClient * client);
 
 #if __BLOCKS__
-WK_EXPORT void WKPageRunJavaScriptInMainFrame(WKPageRef page, CFStringRef script, void (^returnValueBlock)(CFStringRef));
+WK_EXPORT void WKPageRunJavaScriptInMainFrame(WKPageRef page, WKStringRef script, void (^returnValueBlock)(WKStringRef));
 #endif
-WK_EXPORT void WKPageRunJavaScriptInMainFrame_f(WKPageRef page, CFStringRef script, void *context, void (*returnValueCallback)(void*, CFStringRef), void (*disposeContextCallback)(void*));
+WK_EXPORT void WKPageRunJavaScriptInMainFrame_f(WKPageRef page, WKStringRef script, void *context, void (*returnValueCallback)(void*, WKStringRef), void (*disposeContextCallback)(void*));
 
 WK_EXPORT WKPageRef WKPageRetain(WKPageRef page);
 WK_EXPORT void WKPageRelease(WKPageRef page);

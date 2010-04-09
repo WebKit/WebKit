@@ -32,6 +32,10 @@
 #include "WKAPICastWin.h"
 #endif
 
+namespace WebCore {
+    class StringImpl;
+}
+
 namespace WebKit {
     class WebContext;
     class WebFramePolicyListenerProxy;
@@ -39,6 +43,7 @@ namespace WebKit {
     class WebPageNamespace;
     class WebPageProxy;
     class WebPreferences;
+    class KURLWrapper;
 }
 
 /* Opaque typing convenience methods */
@@ -101,6 +106,26 @@ inline WebKit::WebPreferences* toWK(WKPreferencesRef p)
 inline WKPreferencesRef toRef(WebKit::WebPreferences* p)
 {
     return reinterpret_cast<WKPreferencesRef>(p);
+}
+
+inline WebCore::StringImpl* toWK(WKStringRef s)
+{
+    return reinterpret_cast<WebCore::StringImpl*>(s);
+}
+
+inline WKStringRef toRef(WebCore::StringImpl* s)
+{
+    return reinterpret_cast<WKStringRef>(s);
+}
+
+inline WebKit::KURLWrapper* toWK(WKURLRef u)
+{
+    return reinterpret_cast<WebKit::KURLWrapper*>(u);
+}
+
+inline WKURLRef toRef(WebKit::KURLWrapper* u)
+{
+    return reinterpret_cast<WKURLRef>(u);
 }
 
 #endif // WKAPICast_h

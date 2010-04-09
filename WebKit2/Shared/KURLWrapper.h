@@ -23,46 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebLoaderClient_h
-#define WebLoaderClient_h
+#ifndef KURLWrapper_h
+#define KURLWrapper_h
 
-#include "WKPage.h"
-
-namespace WebCore {
-    class StringImpl;
-}
+#include <WebCore/KURL.h>
+#include <wtf/RefCounted.h>
+#include <wtf/PassRefPtr.h>
 
 namespace WebKit {
 
-class WebPageProxy;
-class WebFrameProxy;
-
-class WebLoaderClient {
+class KURLWrapper : public RefCounted<KURLWrapper> {
 public:
-    WebLoaderClient();
-    void initialize(WKPageLoaderClient*);
+    static PassRefPtr<KURLWrapper> create(const WebCore::KURL& url)
+    {
+        return adoptRef(new KURLWrapper(url));
+    }
 
-    void didStartProvisionalLoadForFrame(WebPageProxy*, WebFrameProxy*);
-    void didReceiveServerRedirectForProvisionalLoadForFrame(WebPageProxy*, WebFrameProxy*);
-    void didFailProvisionalLoadWithErrorForFrame(WebPageProxy*, WebFrameProxy*);
-    void didCommitLoadForFrame(WebPageProxy*, WebFrameProxy*);
-    void didFinishLoadForFrame(WebPageProxy*, WebFrameProxy*);
-    void didFailLoadWithErrorForFrame(WebPageProxy*, WebFrameProxy*);
-    void didReceiveTitleForFrame(WebPageProxy*, WebCore::StringImpl*, WebFrameProxy*);
-    void didFirstLayoutForFrame(WebPageProxy*, WebFrameProxy*);
-    void didFirstVisuallyNonEmptyLayoutForFrame(WebPageProxy*, WebFrameProxy*);
-    void didStartProgress(WebPageProxy*);
-    void didChangeProgress(WebPageProxy*, double);
-    void didFinishProgress(WebPageProxy*);
-
-    // FIXME: These two methods should not be part of this client. 
-    void didBecomeUnresponsive(WebPageProxy*);
-    void didBecomeResponsive(WebPageProxy*);
+    const WebCore::KURL& url() const { return m_url; }
 
 private:
-    WKPageLoaderClient m_pageLoaderClient;
+    KURLWrapper(const WebCore::KURL& url)
+        : m_url(url)
+    {
+    }
+
+    WebCore::KURL m_url;
 };
 
 } // namespace WebKit
 
-#endif // WebLoaderClient_h
+#endif // KURLWrapper_h

@@ -1,3 +1,80 @@
+2010-04-09  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=37347
+        Don't use CF types in the new C API
+
+        Replace all uses of CF types in the C API.
+        - Replace CFStringRef with WKStringRef.
+        - Replace CFURLRef with WKURLRef.
+
+        * WebKit2.xcodeproj/project.pbxproj: Add new files.
+
+        * Shared/KURLWrapper.h: Added. RefCounted wrapper around KURL.
+        * UIProcess/API/C/WKAPICast.h: Add new conversions.
+        * UIProcess/API/C/WKBase.h: Add new types.
+        * UIProcess/API/C/WKFrame.cpp:
+        * UIProcess/API/C/WKFrame.h: 
+        * UIProcess/API/C/WKPage.cpp:
+        * UIProcess/API/C/WKPage.h:
+        Replace uses of CF types with WK equivalents.
+
+        * UIProcess/API/C/WKString.cpp: Added.
+        * UIProcess/API/C/WKString.h: Added.
+        Represents a WebCore::StringImpl*.
+
+        * UIProcess/API/C/WKURL.cpp: Added.
+        * UIProcess/API/C/WKURL.h: Added.
+        Represents a WebKit::KURLWrapper*.
+
+        * UIProcess/API/C/cf: Added.
+        * UIProcess/API/C/cf/WKStringCF.cpp: Added.
+        * UIProcess/API/C/cf/WKStringCF.h: Added.
+        * UIProcess/API/C/cf/WKURLCF.cpp: Added.
+        * UIProcess/API/C/cf/WKURLCF.h: Added.
+        CoreFoundation conversion files. Allows converting
+         WKStringRef <-> CFStringRef
+         WKURLRef <-> CFURLRef
+
+        * UIProcess/ScriptReturnValueCallback.cpp:
+        (WebKit::ScriptReturnValueCallback::performCallbackWithReturnValue):
+        * UIProcess/ScriptReturnValueCallback.h:
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::didStartProvisionalLoad):
+        (WebKit::WebFrameProxy::didCommitLoad):
+        * UIProcess/WebFrameProxy.h:
+        (WebKit::WebFrameProxy::url):
+        (WebKit::WebFrameProxy::provisionalURL):
+        * UIProcess/WebLoaderClient.cpp:
+        (WebKit::WebLoaderClient::didReceiveTitleForFrame):
+        * UIProcess/WebLoaderClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::didReceiveTitleForFrame):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForNewWindowAction):
+        (WebKit::WebPageProxy::decidePolicyForMIMEType):
+        (WebKit::WebPageProxy::runJavaScriptAlert):
+        (WebKit::WebPageProxy::didRunJavaScriptInMainFrame):
+        (WebKit::WebPageProxy::processDidExit):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::pageTitle):
+        (WebKit::WebPageProxy::urlAtProcessExit):
+        * UIProcess/WebPolicyClient.cpp:
+        (WebKit::WebPolicyClient::decidePolicyForNavigationAction):
+        (WebKit::WebPolicyClient::decidePolicyForNewWindowAction):
+        (WebKit::WebPolicyClient::decidePolicyForMIMEType):
+        * UIProcess/WebPolicyClient.h:
+        * UIProcess/WebUIClient.cpp:
+        (WebKit::WebUIClient::runJavaScriptAlert):
+        * UIProcess/WebUIClient.h:
+        Don't use CF types internally at all.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::frameLoaderDestroyed):
+        Fix typo.
+
 2010-04-08  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

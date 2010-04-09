@@ -35,13 +35,13 @@
 #include "WebUIClient.h"
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/PlatformString.h>
+#include <WebCore/KURL.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
-#include <wtf/RetainPtr.h>
 
 namespace CoreIPC {
     class ArgumentDecoder;
@@ -106,7 +106,7 @@ public:
     void wheelEvent(const WebWheelEvent&);
     void keyEvent(const WebKeyboardEvent&);
 
-    CFStringRef pageTitle() const { return m_pageTitle.get(); }
+    const WebCore::String& pageTitle() const { return m_pageTitle; }
     const WebCore::String& toolTip() const { return m_toolTip; }
 
     void terminateProcess();
@@ -129,7 +129,7 @@ public:
     bool isValid();
 
     // REMOVE: For demo purposes only.
-    CFURLRef urlAtProcessExit() const { return m_urlAtProcessExit.get(); }
+    const WebCore::KURL& urlAtProcessExit() const { return m_urlAtProcessExit; }
 
     void preferencesDidChange();
 
@@ -178,7 +178,7 @@ private:
     RefPtr<WebPageNamespace> m_pageNamespace;
     RefPtr<WebFrameProxy> m_mainFrame;
     HashMap<uint64_t, RefPtr<WebFrameProxy> > m_frameMap;
-    RetainPtr<CFStringRef> m_pageTitle;
+    WebCore::String m_pageTitle;
 
     HashMap<uint64_t, RefPtr<ScriptReturnValueCallback> > m_scriptReturnValueCallbacks;
     
@@ -188,7 +188,7 @@ private:
     WebCore::String m_toolTip;
 
     // REMOVE: For demo purposes only.
-    RetainPtr<CFURLRef> m_urlAtProcessExit;
+    WebCore::KURL m_urlAtProcessExit;
     
     bool m_valid;
     bool m_closed;

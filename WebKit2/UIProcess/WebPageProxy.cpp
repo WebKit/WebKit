@@ -149,7 +149,10 @@ void WebPageProxy::close()
         frame[i]->disconnect();
     m_frameMap.clear();
     m_mainFrame = 0;
-    m_pageTitle = 0;
+
+    m_pageTitle = String();
+    m_toolTip = String();
+
     // FIXME: Do something with pending m_scriptReturnValueCallbacks.
     m_canGoForward = false;
     m_canGoBack = false;
@@ -582,14 +585,11 @@ void WebPageProxy::didReceiveTitleForFrame(WebFrameProxy* frame, const String& t
 {
     frame->didReceiveTitle(title);
 
-    // FIXME: This is the wrong layer to be converting to CF.
-    RetainPtr<CFStringRef> cfTitle(AdoptCF, title.createCFString());
-
     // Cache the title for the main frame in the page.
     if (frame == m_mainFrame)
-        m_pageTitle = cfTitle.get();
+        m_pageTitle = title;
 
-    m_loaderClient.didReceiveTitleForFrame(this, cfTitle.get(), frame);
+    m_loaderClient.didReceiveTitleForFrame(this, title.impl(), frame);
 }
 
 void WebPageProxy::didFirstLayoutForFrame(WebFrameProxy* frame)
@@ -606,32 +606,22 @@ void WebPageProxy::didFirstVisuallyNonEmptyLayoutForFrame(WebFrameProxy* frame)
 
 void WebPageProxy::decidePolicyForNavigationAction(WebFrameProxy* frame, uint32_t navigationType, const KURL& url, uint64_t listenerID)
 {
-    // FIXME: This is the wrong layer to be converting to CF.
-    RetainPtr<CFURLRef> cfURL(AdoptCF, url.createCFURL());
-
     RefPtr<WebFramePolicyListenerProxy> listener = frame->setUpPolicyListenerProxy(listenerID);
-    if (!m_policyClient.decidePolicyForNavigationAction(this, navigationType, cfURL.get(), frame, listener.get()))
+    if (!m_policyClient.decidePolicyForNavigationAction(this, navigationType, url, frame, listener.get()))
         listener->use();
 }
 
 void WebPageProxy::decidePolicyForNewWindowAction(WebFrameProxy* frame, uint32_t navigationType, const KURL& url, uint64_t listenerID)
 {
-    // FIXME: This is the wrong layer to be converting to CF.
-    RetainPtr<CFURLRef> cfURL(AdoptCF, url.createCFURL());
-
     RefPtr<WebFramePolicyListenerProxy> listener = frame->setUpPolicyListenerProxy(listenerID);
-    if (!m_policyClient.decidePolicyForNewWindowAction(this, navigationType, cfURL.get(), frame, listener.get()))
+    if (!m_policyClient.decidePolicyForNewWindowAction(this, navigationType, url, frame, listener.get()))
         listener->use();
 }
 
 void WebPageProxy::decidePolicyForMIMEType(WebFrameProxy* frame, const String& MIMEType, const KURL& url, uint64_t listenerID)
 {
-    // FIXME: This is the wrong layer to be converting to CF.
-    RetainPtr<CFStringRef> cfMIMEType(AdoptCF, MIMEType.createCFString());
-    RetainPtr<CFURLRef> cfURL(AdoptCF, url.createCFURL());
-
     RefPtr<WebFramePolicyListenerProxy> listener = frame->setUpPolicyListenerProxy(listenerID);
-    if (!m_policyClient.decidePolicyForMIMEType(this, cfMIMEType.get(), cfURL.get(), frame, listener.get()))
+    if (!m_policyClient.decidePolicyForMIMEType(this, MIMEType, url, frame, listener.get()))
         listener->use();
 }
 
@@ -653,11 +643,8 @@ void WebPageProxy::closePage()
 
 void WebPageProxy::runJavaScriptAlert(WebFrameProxy* frame, const WebCore::String& alertText)
 {
-    // FIXME: This is the wrong layer to be converting to CF.
-    RetainPtr<CFStringRef> cfAlertText(AdoptCF, alertText.createCFString());
-    m_uiClient.runJavaScriptAlert(this, cfAlertText.get(), frame);
+    m_uiClient.runJavaScriptAlert(this, alertText.impl(), frame);
 }
-
 
 // Other
 
@@ -699,9 +686,7 @@ void WebPageProxy::didRunJavaScriptInMainFrame(const String& resultString, uint6
         return;
     }
 
-    // FIXME: This is the wrong layer to be converting to CF.
-    RetainPtr<CFStringRef> cfResultString(AdoptCF, resultString.createCFString());
-    callback->performCallbackWithReturnValue(cfResultString.get());
+    callback->performCallbackWithReturnValue(resultString.impl());
 }
 
 void WebPageProxy::processDidBecomeUnresponsive()
@@ -718,7 +703,7 @@ void WebPageProxy::processDidExit()
 {
     ASSERT(m_pageClient);
 
-    m_urlAtProcessExit = m_mainFrame->url();
+    m_urlAtProcessExit = m_mainFrame->url()->url();
 
     Vector<RefPtr<WebFrameProxy> > frame;
     copyValuesToVector(m_frameMap, frame);
@@ -726,7 +711,10 @@ void WebPageProxy::processDidExit()
         frame[i]->disconnect();
     m_frameMap.clear();
     m_mainFrame = 0;
-    m_pageTitle = 0;
+
+    m_pageTitle = String();
+    m_toolTip = String();
+
     m_canGoForward = false;
     m_canGoBack = false;
 

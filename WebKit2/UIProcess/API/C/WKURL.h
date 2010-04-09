@@ -23,46 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebLoaderClient_h
-#define WebLoaderClient_h
+#ifndef WKURL_h
+#define WKURL_h
 
-#include "WKPage.h"
+#include <WebKit2/WKBase.h>
 
-namespace WebCore {
-    class StringImpl;
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+WK_EXPORT WKURLRef WKURLRetain(WKURLRef URL);
+WK_EXPORT void WKURLRelease(WKURLRef URL);
+
+#ifdef __cplusplus
 }
+#endif
 
-namespace WebKit {
-
-class WebPageProxy;
-class WebFrameProxy;
-
-class WebLoaderClient {
-public:
-    WebLoaderClient();
-    void initialize(WKPageLoaderClient*);
-
-    void didStartProvisionalLoadForFrame(WebPageProxy*, WebFrameProxy*);
-    void didReceiveServerRedirectForProvisionalLoadForFrame(WebPageProxy*, WebFrameProxy*);
-    void didFailProvisionalLoadWithErrorForFrame(WebPageProxy*, WebFrameProxy*);
-    void didCommitLoadForFrame(WebPageProxy*, WebFrameProxy*);
-    void didFinishLoadForFrame(WebPageProxy*, WebFrameProxy*);
-    void didFailLoadWithErrorForFrame(WebPageProxy*, WebFrameProxy*);
-    void didReceiveTitleForFrame(WebPageProxy*, WebCore::StringImpl*, WebFrameProxy*);
-    void didFirstLayoutForFrame(WebPageProxy*, WebFrameProxy*);
-    void didFirstVisuallyNonEmptyLayoutForFrame(WebPageProxy*, WebFrameProxy*);
-    void didStartProgress(WebPageProxy*);
-    void didChangeProgress(WebPageProxy*, double);
-    void didFinishProgress(WebPageProxy*);
-
-    // FIXME: These two methods should not be part of this client. 
-    void didBecomeUnresponsive(WebPageProxy*);
-    void didBecomeResponsive(WebPageProxy*);
-
-private:
-    WKPageLoaderClient m_pageLoaderClient;
-};
-
-} // namespace WebKit
-
-#endif // WebLoaderClient_h
+#endif /* WKURL_h */
