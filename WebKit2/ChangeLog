@@ -109,6 +109,7 @@
 
         Reviewed by Sam Weinig.
 
+        https://bugs.webkit.org/show_bug.cgi?id=37301
         Add WebKit2/UIProcess directory.
 
         * UIProcess: Added.
@@ -189,6 +190,7 @@
 
         Reviewed by Sam Weinig and Oliver Hunt.
 
+        https://bugs.webkit.org/show_bug.cgi?id=37300
         Add WebKit2/WebProcess directory.
 
         * WebProcess: Added.
@@ -244,6 +246,7 @@
 
         Reviewed by Anders Carlsson.
 
+        https://bugs.webkit.org/show_bug.cgi?id=37295
         Add WebKit2/Shared directory.
 
         * Shared: Added.
@@ -275,6 +278,7 @@
 
         Reviewed by Anders Carlsson.
 
+        https://bugs.webkit.org/show_bug.cgi?id=37293
         Add WebKit2/Platform directory.
 
         * Platform: Added.
