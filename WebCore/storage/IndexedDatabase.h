@@ -51,7 +51,7 @@ public:
     static PassRefPtr<IndexedDatabase> create();
     virtual ~IndexedDatabase() { }
 
-    virtual void open(const String& name, const String& description, bool modifyDatabase, ExceptionCode&, PassRefPtr<IDBDatabaseCallbacks>, Frame*) = 0;
+    virtual void open(const String& name, const String& description, bool modifyDatabase, PassRefPtr<IDBDatabaseCallbacks>, Frame*, ExceptionCode&) = 0;
 };
 
 } // namespace WebCore

@@ -47,7 +47,7 @@ public:
 
     virtual ~WebIndexedDatabase() { }
 
-    virtual void open(const WebString& name, const WebString& description, bool modifyDatabase, int& exceptionCode, WebIDBCallbacks<WebIDBDatabase>*, WebFrame*) = 0;
+    virtual void open(const WebString& name, const WebString& description, bool modifyDatabase, WebIDBCallbacks<WebIDBDatabase>*, WebFrame*, int& exceptionCode) = 0;
 };
 
 } // namespace WebKit

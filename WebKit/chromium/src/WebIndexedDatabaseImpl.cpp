@@ -47,7 +47,7 @@ WebIndexedDatabaseImpl::~WebIndexedDatabaseImpl()
 {
 }
 
-void WebIndexedDatabaseImpl::open(const WebString& name, const WebString& description, bool modifyDatabase, int& exceptionCode, WebIDBCallbacks<WebIDBDatabase>* callbacksPtr, WebFrame*)
+void WebIndexedDatabaseImpl::open(const WebString& name, const WebString& description, bool modifyDatabase, WebIDBCallbacks<WebIDBDatabase>* callbacksPtr, WebFrame*, int& exceptionCode)
 {
     OwnPtr<WebIDBCallbacks<WebIDBDatabase>*> callbacks(callbacksPtr);
     callbacks->onError(WebIDBDatabaseError(0, "Not implemented"));
