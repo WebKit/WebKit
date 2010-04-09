@@ -161,7 +161,7 @@ JSGlobalData* JSDOMWindowBase::commonJSGlobalData()
 #ifndef NDEBUG
         globalData->mainThreadOnly = true;
 #endif
-        globalData->clientData = new WebCoreJSClientData(globalData);
+        initNormalWorldClientData(globalData);
     }
 
     return globalData;

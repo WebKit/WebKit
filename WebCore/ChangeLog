@@ -1,3 +1,33 @@
+2010-04-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Cameron Zwarich.
+        
+        Tidied up some DOMWrapperWorld lifetime issues.
+
+        * bindings/js/DOMWrapperWorld.cpp:
+        (WebCore::DOMWrapperWorld::DOMWrapperWorld): Made DOMWrapperWorld wholly
+        responsible for managing its presence in WebCoreJSClientData's world set.
+        This is simpler and more encapsulated than making its clients sometimes
+        responsible for managing that set and sometimes not.
+        
+        * bindings/js/DOMWrapperWorld.h:
+        (WebCore::DOMWrapperWorld::create): Made isNormal default to false,
+        removing one of the reasons for the IsolatedWorld class to exist, so I
+        could remove that class.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::commonJSGlobalData): Used the work-around below.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::createWorld): Nixed IsolatedWorld, which is
+        now superfluous.
+
+        * bindings/js/WebCoreJSClientData.h:
+        (WebCore::initNormalWorldClientData): Added a work-around for the fact
+        that WebCoreJSClientData must be set as globalData->clientData before
+        the DOMWrapperWorld constructor runs. This removed the other reason
+        for the IsolatedWorld class to exist, so I could remove that class.
+
 2010-04-09  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Nate Chapin.

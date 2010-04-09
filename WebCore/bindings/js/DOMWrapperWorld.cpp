@@ -32,6 +32,9 @@ DOMWrapperWorld::DOMWrapperWorld(JSC::JSGlobalData* globalData, bool isNormal)
     : m_globalData(globalData)
     , m_isNormal(isNormal)
 {
+    JSGlobalData::ClientData* clientData = m_globalData->clientData;
+    ASSERT(clientData);
+    static_cast<WebCoreJSClientData*>(clientData)->rememberWorld(this);
 }
 
 static void forgetWorldOfDOMNodesForDocument(Document* document, DOMWrapperWorld* world)
