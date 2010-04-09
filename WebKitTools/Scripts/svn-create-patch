@@ -218,10 +218,10 @@ sub generateDiff($$)
     my $file = File::Spec->catdir($prefix, $fileData->{path});
     
     if ($ignoreChangelogs && basename($file) eq "ChangeLog") {
-        return;
+        return 0;
     }
     
-    my $patch;
+    my $patch = "";
     if ($fileData->{modificationType} eq "additionWithHistory") {
         manufacturePatchForAdditionWithHistory($fileData);
     }
@@ -233,7 +233,7 @@ sub generateDiff($$)
     }
     close DIFF;
     $patch = fixChangeLogPatch($patch) if basename($file) eq "ChangeLog";
-    print $patch if $patch;
+    print $patch;
     if ($fileData->{isBinary}) {
         print "\n" if ($patch && $patch =~ m/\n\S+$/m);
         outputBinaryContent($file);

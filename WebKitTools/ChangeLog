@@ -1,3 +1,14 @@
+2010-04-09  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix 2 issues (what were introduced in r56524) in svn-create-patch's generateDiff()
+        https://bugs.webkit.org/show_bug.cgi?id=32582
+
+        Add missing return variable. Initialize $patch variable and remove unnecessary condition.
+
+        * Scripts/svn-create-patch:
+
 2010-04-09  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix after addition of LayoutTestController method.
