@@ -59,9 +59,17 @@
 #ifndef NO_RETURN
 #if COMPILER(GCC)
 #define NO_RETURN __attribute((__noreturn__))
-#elif COMPILER(RVCT)
+#elif COMPILER(MSVC) || COMPILER(RVCT)
 #define NO_RETURN __declspec(noreturn)
 #else
 #define NO_RETURN
+#endif
+#endif
+
+#ifndef NO_RETURN_WITH_VALUE
+#if !COMPILER(MSVC)
+#define NO_RETURN_WITH_VALUE NO_RETURN
+#else
+#define NO_RETURN_WITH_VALUE
 #endif
 #endif

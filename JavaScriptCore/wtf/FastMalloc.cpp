@@ -1431,7 +1431,7 @@ class TCMalloc_PageHeap {
   ALWAYS_INLINE bool shouldScavenge() const;
 
 #if !HAVE(DISPATCH_H)
-  static NO_RETURN void* runScavengerThread(void*);
+  static NO_RETURN_WITH_VALUE void* runScavengerThread(void*);
   NO_RETURN void scavengerThread();
 
   // Keeps track of whether the background thread is actively scavenging memory every kScavengeDelayInSeconds, or
