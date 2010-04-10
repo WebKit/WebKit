@@ -1,3 +1,11 @@
+2010-04-09  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        Test a theory about why this is failing downstream.
+
+        * http/tests/security/xss-DENIED-mime-type-execute-as-html.html:
+
 2010-04-09  Sergey Ulanov <sergeyu@chromium.org>
 
         Unreviewed, checking in baselines due to Chromium's new video scaling algorithm.
