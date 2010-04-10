@@ -589,7 +589,7 @@ WebInspector.ConsoleView.prototype = {
         for (var i = 0; i < properties.length; ++i) {
             var name = properties[i].name;
             if (name == parseInt(name))
-                elements[name] = this._format(properties[i].value);
+                elements[name] = this._formatAsArrayEntry(properties[i].value);
         }
 
         elem.appendChild(document.createTextNode("["));
@@ -603,6 +603,13 @@ WebInspector.ConsoleView.prototype = {
                 elem.appendChild(document.createTextNode(", "));
         }
         elem.appendChild(document.createTextNode("]"));
+    },
+
+    _formatAsArrayEntry: function(output)
+    {
+        var type = Object.proxyType(output);
+        // Prevent infinite expansion of cross-referencing arrays.
+        return this._format(output, type === "array");
     }
 }
 

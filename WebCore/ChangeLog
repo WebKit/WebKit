@@ -1,3 +1,16 @@
+2010-04-09  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Joseph Pecoraro.
+
+        Web Inspector: Console with two recursive arrays causes infinite loop trying to display.
+        https://bugs.webkit.org/show_bug.cgi?id=37133
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._printArray):
+        (WebInspector.ConsoleView.prototype._formatAsArrayEntry):
+        * inspector/front-end/InjectedScript.js:
+        (injectedScriptConstructor):
+
 2010-04-09  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Eric Seidel.

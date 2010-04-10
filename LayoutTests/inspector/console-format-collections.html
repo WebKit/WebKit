@@ -34,6 +34,12 @@ function doit()
     var radioNodeList = formElement.x;
     console.log(radioNodeList);
 
+    // Cross-referencing arrays.
+    var arrayX = [1];
+    var arrayY = [2, arrayX];
+    arrayX.push(arrayY);
+    console.log(arrayX);
+
     dumpConsoleMessages();
 }
 

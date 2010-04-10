@@ -137,7 +137,7 @@ InjectedScript.getProperties = function(objectProxy, ignoreHasOwnProperty, abbre
         property.name = propertyName + "";
         property.parentObjectProxy = objectProxy;
         var isGetter = object["__lookupGetter__"] && object.__lookupGetter__(propertyName);
-        if (!property.isGetter) {
+        if (!isGetter) {
             try {
                 var childObject = object[propertyName];
                 var childObjectProxy = new InjectedScript.createProxyObject(childObject, objectProxy.objectId, abbreviate);
