@@ -59,12 +59,14 @@ extern void qt_drt_webinspector_executeScript(QWebPage* page, long callId, const
 extern void qt_drt_webinspector_show(QWebPage *page);
 extern void qt_drt_webinspector_close(QWebPage *page);
 extern void qt_drt_enableCaretBrowsing(QWebPage* page, bool value);
+extern void qt_dump_notification(bool b);
 
 LayoutTestController::LayoutTestController(WebCore::DumpRenderTree* drt)
     : QObject()
     , m_drt(drt)
 {
     reset();
+    qt_dump_notification(true);
 }
 
 void LayoutTestController::reset()
@@ -194,6 +196,17 @@ void LayoutTestController::notifyDone()
 int LayoutTestController::windowCount()
 {
     return m_drt->windowCount();
+}
+
+void LayoutTestController::grantDesktopNotificationPermission(const QString& origin)
+{
+    // FIXME: Implement for notification security
+}
+
+bool LayoutTestController::checkDesktopNotificationPermission(const QString& origin)
+{
+    // FIXME: Implement for notification security
+    return true;
 }
 
 void LayoutTestController::display()

@@ -1,3 +1,33 @@
+2010-04-10  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Implement Desktop Notifications API for QtWebKit
+        https://bugs.webkit.org/show_bug.cgi?id=35503
+
+        Map WebKit notifications to Qt's SystemTray API and
+        implement DRT tracing.
+
+        This patch does not implement the security part of
+        WebKit notifications.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        * Api/qwebpage.h:
+        * Api/qwebpage_p.h:
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::notificationPresenter):
+        * WebCoreSupport/ChromeClientQt.h:
+        * WebCoreSupport/NotificationPresenterClientQt.cpp: Added.
+        (qt_dump_notification):
+        (NotificationPresenterClientQt::NotificationPresenterClientQt):
+        (NotificationPresenterClientQt::show):
+        (NotificationPresenterClientQt::cancel):
+        (NotificationPresenterClientQt::notificationObjectDestroyed):
+        (NotificationPresenterClientQt::requestPermission):
+        (NotificationPresenterClientQt::checkPermission):
+        * WebCoreSupport/NotificationPresenterClientQt.h: Added.
+
 2010-04-09  Tasuku Suzuki  <tasuku.suzuki@nokia.com>
 
         Reviewed by Simon Hausmann.

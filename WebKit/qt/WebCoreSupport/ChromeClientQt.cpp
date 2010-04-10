@@ -37,6 +37,7 @@
 #include "FrameView.h"
 #include "HitTestResult.h"
 #include "Icon.h"
+#include "NotificationPresenterClientQt.h"
 #include "NotImplemented.h"
 #include "ScrollbarTheme.h"
 #include "WindowFeatures.h"
@@ -470,6 +471,13 @@ void ChromeClientQt::reachedMaxAppCacheSize(int64_t)
 {
     // FIXME: Free some space.
     notImplemented();
+}
+#endif
+
+#if ENABLE(NOTIFICATIONS)
+NotificationPresenter* ChromeClientQt::notificationPresenter() const
+{
+    return m_webPage->d->notificationPresenterClient;
 }
 #endif
 

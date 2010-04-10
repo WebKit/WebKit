@@ -55,6 +55,7 @@ namespace WebCore {
     class FrameLoaderClientQt;
     class InspectorClientQt;
     class InspectorFrontendClientQt;
+    class NotificationPresenterClientQt;
     class ResourceHandle;
     class HitTestResult;
     class QNetworkReplyHandler;
@@ -369,6 +370,7 @@ private:
     friend class WebCore::FrameLoaderClientQt;
     friend class WebCore::InspectorClientQt;
     friend class WebCore::InspectorFrontendClientQt;
+    friend class WebCore::NotificationPresenterClientQt;
     friend class WebCore::ResourceHandle;
     friend class WebCore::QNetworkReplyHandler;
 };

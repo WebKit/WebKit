@@ -128,6 +128,10 @@ namespace WebCore {
         virtual void reachedMaxAppCacheSize(int64_t spaceNeeded);
 #endif
 
+#if ENABLE(NOTIFICATIONS)
+        virtual NotificationPresenter* notificationPresenter() const;
+#endif
+
 #if USE(ACCELERATED_COMPOSITING)
         // see ChromeClient.h
         // this is a hook for WebCore to tell us what we need to do with the GraphicsLayers

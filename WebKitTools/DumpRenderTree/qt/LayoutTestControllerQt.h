@@ -110,6 +110,8 @@ public slots:
     void provisionalLoad();
     void setCloseRemainingWindowsWhenComplete(bool = false) {}
     int windowCount();
+    void grantDesktopNotificationPermission(const QString& origin);
+    bool checkDesktopNotificationPermission(const QString& origin);
     void display();
     void clearBackForwardList();
     QString pathToLocalResource(const QString& url);

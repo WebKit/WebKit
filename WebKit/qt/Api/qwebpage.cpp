@@ -80,6 +80,7 @@
 #include "Cache.h"
 #include "runtime/InitializeThreading.h"
 #include "PageGroup.h"
+#include "NotificationPresenterClientQt.h"
 #include "QWebPageClient.h"
 #include "WorkerThread.h"
 
@@ -489,6 +490,10 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     memset(actions, 0, sizeof(actions));
 
     PageGroup::setShouldTrackVisitedLinks(true);
+    
+#if ENABLE(NOTIFICATIONS)    
+    notificationPresenterClient = new NotificationPresenterClientQt();
+#endif
 }
 
 QWebPagePrivate::~QWebPagePrivate()
@@ -501,6 +506,10 @@ QWebPagePrivate::~QWebPagePrivate()
 #endif
     delete settings;
     delete page;
+    
+#if ENABLE(NOTIFICATIONS)
+    delete notificationPresenterClient;
+#endif
 }
 
 WebCore::Page* QWebPagePrivate::core(QWebPage* page)
