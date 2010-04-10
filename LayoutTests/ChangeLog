@@ -1,5 +1,170 @@
 2010-04-10  Andrew Scherkus  <scherkus@chromium.org>
 
+        Unreviewed, enable the rest of the fast/media tests for Chromium Mac and Linux
+        by checking in new baselines.
+
+        * platform/chromium-linux/fast/media/media-descriptor-syntax-01-expected.checksum:
+        * platform/chromium-linux/fast/media/media-descriptor-syntax-01-expected.png:
+        * platform/chromium-linux/fast/media/media-descriptor-syntax-02-expected.checksum:
+        * platform/chromium-linux/fast/media/media-descriptor-syntax-02-expected.png:
+        * platform/chromium-linux/fast/media/media-descriptor-syntax-03-expected.checksum:
+        * platform/chromium-linux/fast/media/media-descriptor-syntax-03-expected.png:
+        * platform/chromium-linux/fast/media/media-descriptor-syntax-04-expected.checksum:
+        * platform/chromium-linux/fast/media/media-descriptor-syntax-04-expected.png:
+        * platform/chromium-linux/fast/media/media-descriptor-syntax-05-expected.checksum:
+        * platform/chromium-linux/fast/media/media-descriptor-syntax-05-expected.png:
+        * platform/chromium-linux/fast/media/media-descriptor-syntax-06-expected.checksum:
+        * platform/chromium-linux/fast/media/media-descriptor-syntax-06-expected.png:
+        * platform/chromium-linux/fast/media/media-type-syntax-01-expected.checksum:
+        * platform/chromium-linux/fast/media/media-type-syntax-01-expected.png:
+        * platform/chromium-linux/fast/media/media-type-syntax-02-expected.checksum:
+        * platform/chromium-linux/fast/media/media-type-syntax-02-expected.png:
+        * platform/chromium-linux/fast/media/mq-animation-expected.checksum: Added.
+        * platform/chromium-linux/fast/media/mq-animation-expected.png: Added.
+        * platform/chromium-linux/fast/media/mq-aspect-ratio-expected.checksum: Added.
+        * platform/chromium-linux/fast/media/mq-aspect-ratio-expected.png: Added.
+        * platform/chromium-linux/fast/media/mq-compound-query-01-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-compound-query-01-expected.png:
+        * platform/chromium-linux/fast/media/mq-compound-query-02-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-compound-query-02-expected.png:
+        * platform/chromium-linux/fast/media/mq-compound-query-03-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-compound-query-03-expected.png:
+        * platform/chromium-linux/fast/media/mq-compound-query-04-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-compound-query-04-expected.png:
+        * platform/chromium-linux/fast/media/mq-compound-query-05-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-compound-query-05-expected.png:
+        * platform/chromium-linux/fast/media/mq-grid-01-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-grid-01-expected.png:
+        * platform/chromium-linux/fast/media/mq-grid-02-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-grid-02-expected.png:
+        * platform/chromium-linux/fast/media/mq-invalid-media-feature-01-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-invalid-media-feature-01-expected.png:
+        * platform/chromium-linux/fast/media/mq-invalid-media-feature-02-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-invalid-media-feature-02-expected.png:
+        * platform/chromium-linux/fast/media/mq-invalid-media-feature-03-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-invalid-media-feature-03-expected.png:
+        * platform/chromium-linux/fast/media/mq-invalid-media-feature-04-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-invalid-media-feature-04-expected.png:
+        * platform/chromium-linux/fast/media/mq-invalid-syntax-01-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-invalid-syntax-01-expected.png:
+        * platform/chromium-linux/fast/media/mq-invalid-syntax-02-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-invalid-syntax-02-expected.png:
+        * platform/chromium-linux/fast/media/mq-invalid-syntax-03-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-invalid-syntax-03-expected.png:
+        * platform/chromium-linux/fast/media/mq-invalid-syntax-04-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-invalid-syntax-04-expected.png:
+        * platform/chromium-linux/fast/media/mq-invalid-syntax-05-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-invalid-syntax-05-expected.png:
+        * platform/chromium-linux/fast/media/mq-js-media-except-01-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-js-media-except-01-expected.png:
+        * platform/chromium-linux/fast/media/mq-js-media-except-02-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-js-media-except-02-expected.png:
+        * platform/chromium-linux/fast/media/mq-js-media-except-03-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-js-media-except-03-expected.png:
+        * platform/chromium-linux/fast/media/mq-js-media-forward-syntax-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-js-media-forward-syntax-expected.png:
+        * platform/chromium-linux/fast/media/mq-js-stylesheet-media-01-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-js-stylesheet-media-01-expected.png:
+        * platform/chromium-linux/fast/media/mq-js-stylesheet-media-02-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-js-stylesheet-media-02-expected.png:
+        * platform/chromium-linux/fast/media/mq-js-stylesheet-media-03-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-js-stylesheet-media-03-expected.png:
+        * platform/chromium-linux/fast/media/mq-js-stylesheet-media-04-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-js-stylesheet-media-04-expected.png:
+        * platform/chromium-linux/fast/media/mq-max-pixel-ratio-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-max-pixel-ratio-expected.png:
+        * platform/chromium-linux/fast/media/mq-min-constraint-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-min-constraint-expected.png:
+        * platform/chromium-linux/fast/media/mq-orientation-expected.checksum: Added.
+        * platform/chromium-linux/fast/media/mq-orientation-expected.png: Added.
+        * platform/chromium-linux/fast/media/mq-pixel-ratio-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-pixel-ratio-expected.png:
+        * platform/chromium-linux/fast/media/mq-relative-constraints-02-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-relative-constraints-02-expected.png:
+        * platform/chromium-linux/fast/media/mq-relative-constraints-03-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-relative-constraints-03-expected.png:
+        * platform/chromium-linux/fast/media/mq-relative-constraints-04-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-relative-constraints-04-expected.png:
+        * platform/chromium-linux/fast/media/mq-relative-constraints-05-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-relative-constraints-05-expected.png:
+        * platform/chromium-linux/fast/media/mq-relative-constraints-06-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-relative-constraints-06-expected.png:
+        * platform/chromium-linux/fast/media/mq-relative-constraints-07-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-relative-constraints-07-expected.png:
+        * platform/chromium-linux/fast/media/mq-relative-constraints-08-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-relative-constraints-08-expected.png:
+        * platform/chromium-linux/fast/media/mq-relative-constraints-09-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-relative-constraints-09-expected.png:
+        * platform/chromium-linux/fast/media/mq-simple-neg-query-01-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-simple-neg-query-01-expected.png:
+        * platform/chromium-linux/fast/media/mq-simple-neg-query-02-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-simple-neg-query-02-expected.png:
+        * platform/chromium-linux/fast/media/mq-simple-neg-query-03-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-simple-neg-query-03-expected.png:
+        * platform/chromium-linux/fast/media/mq-simple-neg-query-04-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-simple-neg-query-04-expected.png:
+        * platform/chromium-linux/fast/media/mq-simple-neg-query-05-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-simple-neg-query-05-expected.png:
+        * platform/chromium-linux/fast/media/mq-simple-query-01-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-simple-query-01-expected.png:
+        * platform/chromium-linux/fast/media/mq-simple-query-02-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-simple-query-02-expected.png:
+        * platform/chromium-linux/fast/media/mq-simple-query-03-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-simple-query-03-expected.png:
+        * platform/chromium-linux/fast/media/mq-simple-query-04-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-simple-query-04-expected.png:
+        * platform/chromium-linux/fast/media/mq-simple-query-05-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-simple-query-05-expected.png:
+        * platform/chromium-linux/fast/media/mq-transform-01-expected.checksum: Added.
+        * platform/chromium-linux/fast/media/mq-transform-01-expected.png: Added.
+        * platform/chromium-linux/fast/media/mq-transform-02-expected.checksum: Added.
+        * platform/chromium-linux/fast/media/mq-transform-02-expected.png: Added.
+        * platform/chromium-linux/fast/media/mq-transform-03-expected.checksum: Added.
+        * platform/chromium-linux/fast/media/mq-transform-03-expected.png: Added.
+        * platform/chromium-linux/fast/media/mq-transform-04-expected.checksum: Added.
+        * platform/chromium-linux/fast/media/mq-transform-04-expected.png: Added.
+        * platform/chromium-linux/fast/media/mq-transition-expected.checksum: Added.
+        * platform/chromium-linux/fast/media/mq-transition-expected.png: Added.
+        * platform/chromium-linux/fast/media/mq-valueless-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-valueless-expected.png:
+        * platform/chromium-linux/fast/media/mq-width-absolute-01-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-width-absolute-01-expected.png:
+        * platform/chromium-linux/fast/media/mq-width-absolute-02-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-width-absolute-02-expected.png:
+        * platform/chromium-linux/fast/media/mq-width-absolute-03-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-width-absolute-03-expected.png:
+        * platform/chromium-linux/fast/media/mq-width-absolute-04-expected.checksum:
+        * platform/chromium-linux/fast/media/mq-width-absolute-04-expected.png:
+        * platform/chromium-linux/fast/media/viewport-media-query-expected.checksum:
+        * platform/chromium-linux/fast/media/viewport-media-query-expected.png:
+        * platform/chromium-mac/fast/media/mq-relative-constraints-02-expected.checksum: Added.
+        * platform/chromium-mac/fast/media/mq-relative-constraints-02-expected.png: Added.
+        * platform/chromium-mac/fast/media/mq-relative-constraints-03-expected.checksum: Added.
+        * platform/chromium-mac/fast/media/mq-relative-constraints-03-expected.png: Added.
+        * platform/chromium-mac/fast/media/mq-relative-constraints-04-expected.checksum: Added.
+        * platform/chromium-mac/fast/media/mq-relative-constraints-04-expected.png: Added.
+        * platform/chromium-mac/fast/media/mq-relative-constraints-05-expected.checksum: Added.
+        * platform/chromium-mac/fast/media/mq-relative-constraints-05-expected.png: Added.
+        * platform/chromium-mac/fast/media/mq-relative-constraints-06-expected.checksum: Added.
+        * platform/chromium-mac/fast/media/mq-relative-constraints-06-expected.png: Added.
+        * platform/chromium-mac/fast/media/mq-relative-constraints-07-expected.checksum: Added.
+        * platform/chromium-mac/fast/media/mq-relative-constraints-07-expected.png: Added.
+        * platform/chromium-mac/fast/media/mq-relative-constraints-08-expected.checksum: Added.
+        * platform/chromium-mac/fast/media/mq-relative-constraints-08-expected.png: Added.
+        * platform/chromium-mac/fast/media/mq-relative-constraints-09-expected.checksum: Added.
+        * platform/chromium-mac/fast/media/mq-relative-constraints-09-expected.png: Added.
+        * platform/chromium-mac/fast/media/mq-width-absolute-01-expected.checksum: Added.
+        * platform/chromium-mac/fast/media/mq-width-absolute-01-expected.png: Added.
+        * platform/chromium-mac/fast/media/mq-width-absolute-02-expected.checksum: Added.
+        * platform/chromium-mac/fast/media/mq-width-absolute-02-expected.png: Added.
+        * platform/chromium-mac/fast/media/mq-width-absolute-03-expected.checksum: Added.
+        * platform/chromium-mac/fast/media/mq-width-absolute-03-expected.png: Added.
+        * platform/chromium-mac/fast/media/mq-width-absolute-04-expected.checksum: Added.
+        * platform/chromium-mac/fast/media/mq-width-absolute-04-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
+2010-04-10  Andrew Scherkus  <scherkus@chromium.org>
+
         Unreviewed, checking in updated baselines and expectations for Chromium media layout tests.
 
         * platform/chromium-linux/media/video-replaces-poster-expected.checksum: Added.
