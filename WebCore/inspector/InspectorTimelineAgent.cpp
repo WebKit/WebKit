@@ -144,6 +144,7 @@ void InspectorTimelineAgent::didWriteHTML(unsigned int endLine)
 
 void InspectorTimelineAgent::didInstallTimer(int timerId, int timeout, bool singleShot)
 {
+    pushGCEventRecords();
     ScriptObject record = TimelineRecordFactory::createGenericRecord(m_frontend, WTF::currentTimeMS());
     record.set("data", TimelineRecordFactory::createTimerInstallData(m_frontend, timerId, timeout, singleShot));
     addRecordToTimeline(record, TimerInstallTimelineRecordType);
@@ -151,6 +152,7 @@ void InspectorTimelineAgent::didInstallTimer(int timerId, int timeout, bool sing
 
 void InspectorTimelineAgent::didRemoveTimer(int timerId)
 {
+    pushGCEventRecords();
     ScriptObject record = TimelineRecordFactory::createGenericRecord(m_frontend, WTF::currentTimeMS());
     record.set("data", TimelineRecordFactory::createGenericTimerData(m_frontend, timerId));
     addRecordToTimeline(record, TimerRemoveTimelineRecordType);
@@ -239,6 +241,7 @@ void InspectorTimelineAgent::didFinishLoadingResource(unsigned long identifier, 
 
 void InspectorTimelineAgent::didMarkTimeline(const String& message)
 {
+    pushGCEventRecords();
     ScriptObject record = TimelineRecordFactory::createGenericRecord(m_frontend, WTF::currentTimeMS());
     record.set("data", TimelineRecordFactory::createMarkTimelineData(m_frontend, message));
     addRecordToTimeline(record, MarkTimelineRecordType);
@@ -246,12 +249,14 @@ void InspectorTimelineAgent::didMarkTimeline(const String& message)
 
 void InspectorTimelineAgent::didMarkDOMContentEvent()
 {
+    pushGCEventRecords();
     ScriptObject record = TimelineRecordFactory::createGenericRecord(m_frontend, WTF::currentTimeMS());
     addRecordToTimeline(record, MarkDOMContentEventType);
 }
 
 void InspectorTimelineAgent::didMarkLoadEvent()
 {
+    pushGCEventRecords();
     ScriptObject record = TimelineRecordFactory::createGenericRecord(m_frontend, WTF::currentTimeMS());
     addRecordToTimeline(record, MarkLoadEventType);
 }
@@ -269,9 +274,7 @@ void InspectorTimelineAgent::resetFrontendProxyObject(InspectorFrontend* fronten
 }
 
 void InspectorTimelineAgent::addRecordToTimeline(ScriptObject record, TimelineRecordType type)
-{  
-    if (type != GCEventTimelineRecordType)
-        pushGCEventRecords();
+{
     record.set("type", type);
     setHeapSizeStatistic(record);
     if (m_recordStack.isEmpty())
@@ -296,6 +299,7 @@ void InspectorTimelineAgent::didCompleteCurrentRecord(TimelineRecordType type)
     // An empty stack could merely mean that the timeline agent was turned on in the middle of
     // an event.  Don't treat as an error.
     if (!m_recordStack.isEmpty()) {
+        pushGCEventRecords();
         TimelineRecordEntry entry = m_recordStack.last();
         m_recordStack.removeLast();
         ASSERT(entry.type == type);
