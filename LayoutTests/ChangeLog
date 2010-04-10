@@ -1,3 +1,21 @@
+2010-04-10  Robert Hogan  <robert@webkit.org>
+
+        Unreviewed fix to regressions from r57416.
+
+        Add expected results missing from r57416
+
+        Skip 2 tests that now fail.
+
+        http/tests/navigation/postredirect-reload.html
+        http/tests/navigation/redirect302-basic.html
+
+        These regressions will be worked under:
+        https://bugs.webkit.org/show_bug.cgi?id=37237
+
+        * platform/qt/Skipped:
+        * platform/qt/http/tests/misc/window-dot-stop-expected.txt: Added.
+        * platform/qt/http/tests/xmlhttprequest/abort-should-cancel-load-expected.txt: Added.
+
 2010-04-11  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Simon Hausmann.
