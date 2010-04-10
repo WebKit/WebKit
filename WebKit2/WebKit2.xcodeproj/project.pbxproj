@@ -29,10 +29,6 @@
 		1A30EAC6115D7DA30053E937 /* ConnectionMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A30EAC5115D7DA30053E937 /* ConnectionMac.cpp */; };
 		1A39A54B1149D0700083E625 /* WebProcessMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC111B02112F5D1900337BAB /* WebProcessMain.mm */; };
 		1A433F0D113C53DD00FACDE9 /* WebErrors.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A433F0C113C53DD00FACDE9 /* WebErrors.h */; };
-		1A4F976F100E7B6600637A18 /* Base.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 1A4F976A100E7B6600637A18 /* Base.xcconfig */; };
-		1A4F9770100E7B6600637A18 /* DebugRelease.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 1A4F976B100E7B6600637A18 /* DebugRelease.xcconfig */; };
-		1A4F9771100E7B6600637A18 /* FeatureDefines.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 1A4F976C100E7B6600637A18 /* FeatureDefines.xcconfig */; };
-		1A4F9773100E7B6600637A18 /* Version.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 1A4F976E100E7B6600637A18 /* Version.xcconfig */; };
 		1A50DB66110A3D57000D3FE5 /* WebProcess.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1A50DB1E110A3BDC000D3FE5 /* WebProcess.app */; };
 		1A594ABA112A1FB6009DE7C7 /* WebUIClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A594AB8112A1FB6009DE7C7 /* WebUIClient.cpp */; };
 		1A594ABB112A1FB6009DE7C7 /* WebUIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A594AB9112A1FB6009DE7C7 /* WebUIClient.h */; };
@@ -40,6 +36,7 @@
 		1AA1CD07100FA1BA0078DEBC /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1CD06100FA1BA0078DEBC /* Carbon.framework */; };
 		1AADE6FF10D855FC00D3D63D /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AADE6FE10D855FC00D3D63D /* ApplicationServices.framework */; };
 		1AF3060A111B599E00F96436 /* WebKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* WebKit2.framework */; };
+		5DAD729C116FF86200EE5396 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D6A5FE840307C02AAC07 /* AppKit.framework */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 		8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 		BC0092F7115837A300E0AE2A /* RunLoopMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC0092F5115837A300E0AE2A /* RunLoopMac.mm */; };
@@ -226,6 +223,8 @@
 		1AA1CD06100FA1BA0078DEBC /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		1AADE6FE10D855FC00D3D63D /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
 		32DBCF5E0370ADEE00C91783 /* WebKit2_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKit2_Prefix.pch; sourceTree = "<group>"; };
+		5DAD7294116FF70B00EE5396 /* WebProcess.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WebProcess.xcconfig; sourceTree = "<group>"; };
+		5DAD73F1116FF90C00EE5396 /* BaseTarget.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = BaseTarget.xcconfig; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* WebKit2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WebKit2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC0092F5115837A300E0AE2A /* RunLoopMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RunLoopMac.mm; sourceTree = "<group>"; };
@@ -362,6 +361,7 @@
 			files = (
 				1A10475A110A5AD500A43ECD /* JavaScriptCore.framework in Frameworks */,
 				1AF3060A111B599E00F96436 /* WebKit2.framework in Frameworks */,
+				5DAD729C116FF86200EE5396 /* AppKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -430,6 +430,7 @@
 		1058C7B0FEA5585E11CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0867D6A5FE840307C02AAC07 /* AppKit.framework */,
 				1AADE6FE10D855FC00D3D63D /* ApplicationServices.framework */,
 				1AA1CD06100FA1BA0078DEBC /* Carbon.framework */,
 				1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */,
@@ -445,7 +446,6 @@
 		1058C7B2FEA5585E11CA2CBB /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				0867D6A5FE840307C02AAC07 /* AppKit.framework */,
 			);
 			name = "Other Frameworks";
 			sourceTree = "<group>";
@@ -454,9 +454,11 @@
 			isa = PBXGroup;
 			children = (
 				1A4F976A100E7B6600637A18 /* Base.xcconfig */,
+				5DAD73F1116FF90C00EE5396 /* BaseTarget.xcconfig */,
 				1A4F976B100E7B6600637A18 /* DebugRelease.xcconfig */,
 				1A4F976C100E7B6600637A18 /* FeatureDefines.xcconfig */,
 				1A4F976E100E7B6600637A18 /* Version.xcconfig */,
+				5DAD7294116FF70B00EE5396 /* WebProcess.xcconfig */,
 				BCB86F4B116AAACD00CE20B7 /* WebKit2.xcconfig */,
 			);
 			path = Configurations;
@@ -923,10 +925,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,
-				1A4F976F100E7B6600637A18 /* Base.xcconfig in Resources */,
-				1A4F9770100E7B6600637A18 /* DebugRelease.xcconfig in Resources */,
-				1A4F9771100E7B6600637A18 /* FeatureDefines.xcconfig in Resources */,
-				1A4F9773100E7B6600637A18 /* Version.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1037,73 +1035,29 @@
 /* Begin XCBuildConfiguration section */
 		1A50DB21110A3BDD000D3FE5 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BCB86F4B116AAACD00CE20B7 /* WebKit2.xcconfig */;
+			baseConfigurationReference = 5DAD7294116FF70B00EE5396 /* WebProcess.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				INFOPLIST_FILE = "WebProcess-Info.plist";
-				INSTALL_PATH = "$(HOME)/Applications";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					AppKit,
-				);
-				PREBINDING = NO;
-				PRODUCT_NAME = WebProcess;
-				USER_HEADER_SEARCH_PATHS = "$(WEBCORE_PRIVATE_HEADERS_DIR)/ForwardingHeaders $(WEBCORE_PRIVATE_HEADERS_DIR)/icu \"${BUILT_PRODUCTS_DIR}/usr/local/include\" \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit2\" $(HEADER_SEARCH_PATHS)";
 			};
 			name = Debug;
 		};
 		1A50DB22110A3BDD000D3FE5 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BCB86F4B116AAACD00CE20B7 /* WebKit2.xcconfig */;
+			baseConfigurationReference = 5DAD7294116FF70B00EE5396 /* WebProcess.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				INFOPLIST_FILE = "WebProcess-Info.plist";
-				INSTALL_PATH = "$(HOME)/Applications";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					AppKit,
-				);
-				PREBINDING = NO;
-				PRODUCT_NAME = WebProcess;
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
 		1A50DB39110A3C13000D3FE5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				PRODUCT_NAME = WebKit2;
+				PRODUCT_NAME = All;
 			};
 			name = Debug;
 		};
 		1A50DB3A110A3C13000D3FE5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				PRODUCT_NAME = WebKit2;
-				ZERO_LINK = NO;
+				PRODUCT_NAME = All;
 			};
 			name = Release;
 		};
@@ -1111,25 +1065,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB86F4B116AAACD00CE20B7 /* WebKit2.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = NO;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = A;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = WebKit2_Prefix.pch;
-				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
 				OTHER_LDFLAGS = (
 					"$(OTHER_LDFLAGS)",
 					"-l$(WEBKIT_SYSTEM_INTERFACE_LIBRARY)",
 				);
-				PRODUCT_NAME = WebKit2;
-				WRAPPER_EXTENSION = framework;
 			};
 			name = Debug;
 		};
@@ -1137,22 +1076,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB86F4B116AAACD00CE20B7 /* WebKit2.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = A;
-				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = WebKit2_Prefix.pch;
-				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
 				OTHER_LDFLAGS = (
 					"$(OTHER_LDFLAGS)",
 					"-l$(WEBKIT_SYSTEM_INTERFACE_LIBRARY)",
 				);
-				PRODUCT_NAME = WebKit2;
-				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;
 		};
@@ -1160,14 +1087,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1A4F976B100E7B6600637A18 /* DebugRelease.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
-				DEBUG_DEFINES = "$(DEBUG_DEFINES_debug)";
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				PREBINDING = NO;
 			};
 			name = Debug;
 		};
@@ -1175,11 +1094,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1A4F976B100E7B6600637A18 /* DebugRelease.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				PREBINDING = NO;
 			};
 			name = Release;
 		};

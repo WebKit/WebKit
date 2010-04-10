@@ -23,15 +23,6 @@
 
 #include "BaseTarget.xcconfig"
 
-PRODUCT_NAME = WebKit2;
-INFOPLIST_FILE = Info.plist;
-INSTALL_PATH = $(SYSTEM_LIBRARY_DIR)/Frameworks;
-OTHER_LDFLAGS = -sub_umbrella WebCore $(OTHER_LDFLAGS);
-
-// FIXME: We need to add an exports file to limit the set of exported symbols.
-// EXPORTED_SYMBOLS_FILE = $(EXPORTED_SYMBOLS_FILE_$(CURRENT_ARCH));
-// EXPORTED_SYMBOLS_FILE_ = mac/WebKit.exp;
-// EXPORTED_SYMBOLS_FILE_i386 = mac/WebKit.exp;
-// EXPORTED_SYMBOLS_FILE_ppc = mac/WebKit.exp;
-// EXPORTED_SYMBOLS_FILE_ppc64 = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.LP64.exp;
-// EXPORTED_SYMBOLS_FILE_x86_64 = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.LP64.exp;
+PRODUCT_NAME = WebProcess;
+INFOPLIST_FILE = WebProcess/Info.plist;
+INSTALL_PATH = $(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit2.framework/Resources;

@@ -1,5 +1,22 @@
 2010-04-09  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Clean up the Xcode project configuration.
+
+        Common target settings are pulled out in to BaseTarget.xcconfig.  The majority of setting overrides are
+        removed from the Xcode project itself.  Info.plist files are updated to match those used in other frameworks.
+
+        * Configurations/BaseTarget.xcconfig: Copied from WebKit2/Configurations/WebKit2.xcconfig.
+        * Configurations/WebKit2.xcconfig:
+        * Configurations/WebProcess.xcconfig: Copied from WebKit2/Configurations/WebKit2.xcconfig.
+        * Info.plist:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess-Info.plist: Removed.
+        * WebProcess/Info.plist: Moved from WebProcess-Info.plist.
+
+2010-04-09  Mark Rowe  <mrowe@apple.com>
+
         Build fix.
 
         * WebProcess/WebCoreSupport/mac/WebSystemInterface.m:
