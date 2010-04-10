@@ -1087,6 +1087,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1A4F976B100E7B6600637A18 /* DebugRelease.xcconfig */;
 			buildSettings = {
+				DEBUG_DEFINES = "$(DEBUG_DEFINES_debug)";
 			};
 			name = Debug;
 		};
