@@ -5223,6 +5223,8 @@ fast/multicol/hit-test-above-or-below.html
 #[Qt] GraphicsLayer: fix test regressions
 animations/fill-mode-transform.html
 animations/simultaneous-start-left.html
+# https://bugs.webkit.org/show_bug.cgi?id=37381
+animations/dynamic-stylesheet-loading.html
 
 # [Qt] Back-forward list dumping is incorrect
 # https://bugs.webkit.org/show_bug.cgi?id=36392
