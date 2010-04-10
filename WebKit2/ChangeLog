@@ -2,6 +2,20 @@
 
         Reviewed by Sam Weinig.
 
+        Bring the WebKit2 Xcode configuration in to sync with recent changes to the WebKit Xcode configuration files.
+
+        In particular, this updates the FEATURE_DEFINES to match those used in the other projects, and brings in
+        the changes to support building WebKit for older Mac OS X versions from the current Mac OS X version.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+        * Configurations/FeatureDefines.xcconfig:
+        * Configurations/Version.xcconfig:
+
+2010-04-09  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Clean up the Xcode project configuration.
 
         Common target settings are pulled out in to BaseTarget.xcconfig.  The majority of setting overrides are
