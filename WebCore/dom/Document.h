@@ -879,6 +879,8 @@ public:
     JSWrapperCacheMap& wrapperCacheMap() { return m_wrapperCacheMap; }
     JSWrapperCache* getWrapperCache(DOMWrapperWorld* world);
     JSWrapperCache* createWrapperCache(DOMWrapperWorld*);
+    void destroyWrapperCache(DOMWrapperWorld*);
+    void destroyAllWrapperCaches();
 #endif
 
     virtual void finishedParsing();

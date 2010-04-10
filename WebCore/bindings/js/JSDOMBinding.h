@@ -128,7 +128,6 @@ namespace WebCore {
 
     JSNode* getCachedDOMNodeWrapper(JSC::ExecState*, Document*, Node*);
     void cacheDOMNodeWrapper(JSC::ExecState*, Document*, Node*, JSNode* wrapper);
-    void forgetAllDOMNodesForDocument(Document*);
     void updateDOMNodeDocument(Node*, Document* oldDocument, Document* newDocument);
 
     void markDOMNodesForDocument(JSC::MarkStack&, Document*);

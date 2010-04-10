@@ -1,3 +1,32 @@
+2010-04-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam "R the K!" Weinig.
+
+        Tidied up some more DOMWrapperWorld lifetime issues.
+
+        * bindings/js/DOMWrapperWorld.cpp:
+        (WebCore::DOMWrapperWorld::~DOMWrapperWorld): Notify the document that
+        we're going away instead of deleting its data, since deleting other
+        objects' data is error-prone and, more importantly, rude.
+
+        * bindings/js/DOMWrapperWorld.h:
+        (WebCore::DOMWrapperWorld::didCreateWrapperCache):
+        (WebCore::DOMWrapperWorld::didDestroyWrapperCache): A few renames for
+        clarity.
+
+        * bindings/js/JSDOMBinding.cpp:
+        * bindings/js/JSDOMBinding.h: Converted forgetAllDOMNodesForDocument
+        to a Document member function, for the same reason.
+
+        * dom/Document.cpp: 
+        (WebCore::Document::~Document):
+        (WebCore::Document::createWrapperCache):
+        (WebCore::Document::destroyWrapperCache):
+        (WebCore::Document::destroyAllWrapperCaches):
+        * dom/Document.h: Added a destroyWrapperCache function to balance
+        createWrapperCache, so it's clear who allocates and deletes these wrapper
+        caches.
+
 2010-04-09  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

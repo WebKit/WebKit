@@ -37,21 +37,14 @@ DOMWrapperWorld::DOMWrapperWorld(JSC::JSGlobalData* globalData, bool isNormal)
     static_cast<WebCoreJSClientData*>(clientData)->rememberWorld(this);
 }
 
-static void forgetWorldOfDOMNodesForDocument(Document* document, DOMWrapperWorld* world)
-{
-    Document::JSWrapperCache* wrappers = document->wrapperCacheMap().take(world);
-    ASSERT(wrappers); // 'world' should only know about 'document' if 'document' knows about 'world'!
-    delete wrappers;
-}
-
 DOMWrapperWorld::~DOMWrapperWorld()
 {
     JSGlobalData::ClientData* clientData = m_globalData->clientData;
     ASSERT(clientData);
     static_cast<WebCoreJSClientData*>(clientData)->forgetWorld(this);
 
-    for (HashSet<Document*>::iterator iter = documentsWithWrappers.begin(); iter != documentsWithWrappers.end(); ++iter)
-        forgetWorldOfDOMNodesForDocument(*iter, this);
+    while (m_documentsWithWrapperCaches.begin() != m_documentsWithWrapperCaches.end())
+        (*m_documentsWithWrapperCaches.begin())->destroyWrapperCache(this);
 }
 
 DOMWrapperWorld* normalWorld(JSC::JSGlobalData& globalData)

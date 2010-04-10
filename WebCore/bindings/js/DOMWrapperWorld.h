@@ -42,8 +42,8 @@ public:
     }
     ~DOMWrapperWorld();
 
-    void rememberDocument(Document* document) { documentsWithWrappers.add(document); }
-    void forgetDocument(Document* document) { documentsWithWrappers.remove(document); }
+    void didCreateWrapperCache(Document* document) { m_documentsWithWrapperCaches.add(document); }
+    void didDestroyWrapperCache(Document* document) { m_documentsWithWrapperCaches.remove(document); }
 
     // FIXME: can we make this private?
     DOMObjectWrapperMap m_wrappers;
@@ -56,7 +56,7 @@ protected:
 
 private:
     JSC::JSGlobalData* m_globalData;
-    HashSet<Document*> documentsWithWrappers;
+    HashSet<Document*> m_documentsWithWrapperCaches;
     bool m_isNormal;
 };
 
