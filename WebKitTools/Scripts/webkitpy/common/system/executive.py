@@ -103,9 +103,11 @@ class Executive(object):
     def run_and_throw_if_fail(self, args, quiet=False):
         # Cache the child's output locally so it can be used for error reports.
         child_out_file = StringIO.StringIO()
+        tee_stdout = sys.stdout
         if quiet:
             dev_null = open(os.devnull, "w")
-        child_stdout = tee(child_out_file, dev_null if quiet else sys.stdout)
+            tee_stdout = dev_null
+        child_stdout = tee(child_out_file, tee_stdout)
         exit_code = self._run_command_with_teed_output(args, child_stdout)
         if quiet:
             dev_null.close()

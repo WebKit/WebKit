@@ -1,3 +1,10 @@
+2010-04-09  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Unreviewed, attempting to make executive.py run with python 2.4
+        (which is still used on Chromium's Windows canary bot).
+
+        * Scripts/webkitpy/common/system/executive.py:
+
 2010-04-09  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Eric Seidel.
