@@ -175,7 +175,7 @@ static bool applyKeyModifier(const string& modifierName, WebInputEvent* event)
         // It must be kept in sync with the related code in above file.
         isSystemKey = true;
 #else
-    } else if (!wcscmp(characters, L"metaKey")) {
+    } else if (!strcmp(characters, "metaKey")) {
         event->modifiers |= WebInputEvent::MetaKey;
 #endif
     }

@@ -1,3 +1,15 @@
+2010-04-09  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [chromium] DRT compile fix on win/linux
+        https://bugs.webkit.org/show_bug.cgi?id=37314
+
+        Looks like this was missed when upstreaming.
+
+        * DumpRenderTree/chromium/EventSender.cpp:
+        (applyKeyModifier):
+
 2010-04-09  Adam Barth  <abarth@webkit.org>
 
         Unreviewed, but approved by Dirk Pranke.
