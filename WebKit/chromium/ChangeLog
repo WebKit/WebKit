@@ -1,3 +1,16 @@
+2010-04-09  Evan Stade  <estade@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [chromium] Linux: respect the scale factor during printing
+        https://bugs.webkit.org/show_bug.cgi?id=37168
+
+        Chromium doesn't support testing .pdfs from printing at the moment, so
+        this change is not covered by any tests.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::ChromePrintContext::spoolPage):
+
 2010-04-09  Aaron Boodman  <aa@chromium.org>
 
         Reviewed by Eric Seidel.

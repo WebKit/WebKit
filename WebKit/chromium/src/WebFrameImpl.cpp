@@ -288,15 +288,20 @@ public:
         return m_printedPageWidth / pageRect.width();
     }
 
-    // Spools the printed page, a subrect of m_frame.  Skip the scale step.
+    // Spools the printed page, a subrect of m_frame. Skip the scale step.
     // NativeTheme doesn't play well with scaling. Scaling is done browser side
-    // instead.  Returns the scale to be applied.
+    // instead. Returns the scale to be applied.
+    // On Linux, we don't have the problem with NativeTheme, hence we let WebKit
+    // do the scaling and ignore the return value.
     virtual float spoolPage(GraphicsContext& ctx, int pageNumber)
     {
         IntRect pageRect = m_pageRects[pageNumber];
         float scale = m_printedPageWidth / pageRect.width();
 
         ctx.save();
+#if OS(LINUX)
+        ctx.scale(WebCore::FloatSize(scale, scale));
+#endif
         ctx.translate(static_cast<float>(-pageRect.x()),
                       static_cast<float>(-pageRect.y()));
         ctx.clip(pageRect);
