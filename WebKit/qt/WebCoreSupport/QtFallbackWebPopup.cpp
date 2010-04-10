@@ -55,6 +55,7 @@ void QtFallbackWebPopupCombo::showPopup()
 
 void QtFallbackWebPopupCombo::hidePopup()
 {
+#ifndef QT_NO_IM
     QWidget* activeFocus = QApplication::focusWidget();
     if (activeFocus && activeFocus == QComboBox::view()
         && activeFocus->testAttribute(Qt::WA_InputMethodEnabled)) {
@@ -64,6 +65,7 @@ void QtFallbackWebPopupCombo::hidePopup()
             qic->setFocusWidget(0);
         }
     }
+#endif // QT_NO_IM
 
     QComboBox::hidePopup();
 
