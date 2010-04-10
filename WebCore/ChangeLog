@@ -1,3 +1,35 @@
+2010-04-09  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        [wx] Basic implementation of SVG support for wx port.
+
+        * css/CSSFontFaceSource.cpp:
+        * platform/graphics/wx/FontPlatformData.h:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::size):
+        * platform/graphics/wx/FontPlatformDataWx.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::GraphicsContext::GraphicsContext):
+        (WebCore::GraphicsContext::clipPath):
+        (WebCore::GraphicsContext::getCTM):
+        (WebCore::GraphicsContext::beginPath):
+        (WebCore::GraphicsContext::addPath):
+        (WebCore::GraphicsContext::concatCTM):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::setLineDash):
+        * platform/graphics/wx/ImageBufferWx.cpp:
+        (WebCore::ImageBuffer::platformTransformColorSpace):
+        * platform/graphics/wx/PathWx.cpp:
+        (WebCore::Path::strokeContains):
+        (WebCore::Path::debugString):
+        (WebCore::Path::operator=):
+        (WebCore::Path::isEmpty):
+        * rendering/RenderSVGResourceMasker.cpp:
+        * wscript:
+
 2010-04-09  Evan Martin  <evan@chromium.org>
 
         Reviewed by Darin Adler.

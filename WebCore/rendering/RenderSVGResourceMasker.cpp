@@ -31,6 +31,7 @@
 #include "ImageBuffer.h"
 #include "ImageData.h"
 #include "IntRect.h"
+#include "RenderSVGResource.h"
 #include "SVGElement.h"
 #include "SVGMaskElement.h"
 #include "SVGStyledElement.h"

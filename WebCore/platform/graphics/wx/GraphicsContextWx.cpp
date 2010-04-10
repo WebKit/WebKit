@@ -91,6 +91,7 @@ public:
 
 #if USE(WXGC)
     wxGCDC* context;
+    wxGraphicsPath currentPath;
 #else
     wxWindowDC* context;
 #endif
@@ -124,6 +125,9 @@ GraphicsContext::GraphicsContext(PlatformGraphicsContext* context)
     }
 #if USE(WXGC)
     m_data->context = (wxGCDC*)context;
+    wxGraphicsContext* gc = m_data->context->GetGraphicsContext();
+    if (gc)
+        m_data->currentPath = gc->CreatePath();
 #else
     m_data->context = (wxWindowDC*)context;
 #endif
@@ -323,6 +327,11 @@ void GraphicsContext::clipOutEllipseInRect(const IntRect&)
     notImplemented();
 }
 
+void GraphicsContext::clipPath(WindRule)
+{
+    notImplemented();
+}
+
 void GraphicsContext::drawLineForText(const IntPoint& origin, int width, bool printing)
 {
     if (paintingDisabled())
@@ -361,7 +370,15 @@ void GraphicsContext::clipToImageBuffer(const FloatRect&, const ImageBuffer*)
 
 AffineTransform GraphicsContext::getCTM() const
 { 
-    notImplemented();
+#if USE(WXGC)
+    wxGraphicsContext* gc = m_data->context->GetGraphicsContext();
+    if (gc) {
+        wxGraphicsMatrix matrix = gc->GetTransform();
+        double a, b, c, d, e, f;
+        matrix.Get(&a, &b, &c, &d, &e, &f);
+        return AffineTransform(a, b, c, d, e, f);
+    }
+#endif
     return AffineTransform();
 }
 
@@ -435,12 +452,19 @@ void GraphicsContext::setCompositeOperation(CompositeOperator op)
 
 void GraphicsContext::beginPath()
 {
-    notImplemented();
+#if USE(WXGC)
+    wxGraphicsContext* gc = m_data->context->GetGraphicsContext();
+    if (gc)
+        m_data->currentPath = gc->CreatePath();
+#endif
 }
 
 void GraphicsContext::addPath(const Path& path)
 {
-    notImplemented();
+#if USE(WXGC)
+    if (path.platformPath())
+        m_data->currentPath.AddPath(*path.platformPath());
+#endif
 }
 
 void GraphicsContext::setPlatformStrokeColor(const Color& color, ColorSpace colorSpace)
@@ -476,7 +500,11 @@ void GraphicsContext::concatCTM(const AffineTransform& transform)
     if (paintingDisabled())
         return;
 
-    notImplemented();
+#if USE(WXGC)
+    wxGraphicsContext* gc = m_data->context->GetGraphicsContext();
+    if (gc)
+        gc->ConcatTransform(transform);
+#endif
     return;
 }
 
@@ -498,10 +526,20 @@ InterpolationQuality GraphicsContext::imageInterpolationQuality() const
 
 void GraphicsContext::fillPath()
 {
+#if USE(WXGC)
+    wxGraphicsContext* gc = m_data->context->GetGraphicsContext();
+    if (gc)
+        gc->FillPath(m_data->currentPath);
+#endif
 }
 
 void GraphicsContext::strokePath()
 {
+#if USE(WXGC)
+    wxGraphicsContext* gc = m_data->context->GetGraphicsContext();
+    if (gc)
+        gc->StrokePath(m_data->currentPath);
+#endif
 }
 
 void GraphicsContext::drawPath()
@@ -549,6 +587,11 @@ void GraphicsContext::strokeRect(const FloatRect&, float)
 void GraphicsContext::setLineCap(LineCap) 
 {
     notImplemented(); 
+}
+
+void GraphicsContext::setLineDash(const DashArray&, float dashOffset)
+{
+    notImplemented();
 }
 
 void GraphicsContext::setLineJoin(LineJoin)

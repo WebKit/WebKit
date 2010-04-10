@@ -87,4 +87,9 @@ Image* ImageBuffer::image() const
     return 0;
 }
 
+void ImageBuffer::platformTransformColorSpace(const Vector<int>&)
+{
+    notImplemented();
+}
+
 } // namespace WebCore

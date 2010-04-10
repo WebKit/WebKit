@@ -121,7 +121,8 @@ webcore_dirs = [
     'page/animation', 
     'platform', 
     'platform/animation', 
-    'platform/graphics', 
+    'platform/graphics',
+    'platform/graphics/filters',
     'platform/graphics/transforms',
     'platform/image-decoders',
     'platform/image-decoders/bmp', 
@@ -136,7 +137,11 @@ webcore_dirs = [
     'plugins', 
     'rendering', 
     'rendering/style', 
-    'storage', 
+    'storage',
+    'svg',
+    'svg/animation',
+    'svg/graphics',
+    'svg/graphics/filters',
     'websockets', 
     'xml'
 ]
@@ -169,7 +174,7 @@ if building_on_win32:
     create_hash_table = get_output('cygpath --unix "%s"' % create_hash_table)
 os.environ['CREATE_HASH_TABLE'] = create_hash_table
 
-feature_defines = ['ENABLE_DATABASE', 'ENABLE_XSLT', 'ENABLE_JAVASCRIPT_DEBUGGER']
+feature_defines = ['ENABLE_DATABASE', 'ENABLE_XSLT', 'ENABLE_JAVASCRIPT_DEBUGGER', 'ENABLE_SVG', 'ENABLE_SVG_USE', 'ENABLE_FILTERS', 'ENABLE_SVG_FONTS', 'ENABLE_SVG_ANIMATION', 'ENABLE_SVG_AS_IMAGE']
 
 msvc_version = 'msvc2008'
 

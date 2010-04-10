@@ -100,6 +100,7 @@ FontPlatformData::FontPlatformData(const FontDescription& desc, const AtomicStri
                         ); 
 #endif
     m_fontState = VALID;
+    m_size = desc.computedPixelSize();
      
 }
 

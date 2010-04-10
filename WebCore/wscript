@@ -115,7 +115,7 @@ def build(bld):
 
     features = [build_port]
     exclude_patterns = ['*AllInOne.cpp', '*Brew.cpp', '*CFNet.cpp', '*Chromium*.cpp', 
-            '*Gtk.cpp', '*Mac.cpp', '*None.cpp', '*Qt.cpp', '*Safari.cpp', '*SVG*.cpp', 
+            '*Gtk.cpp', '*Mac.cpp', '*None.cpp', '*Qt.cpp', '*Safari.cpp',
             'test*bindings.*', '*Wince.cpp']
     if build_port == 'wx':
         features.append('curl')
@@ -180,6 +180,25 @@ def build(bld):
         excludes.append('JSPositionCallback.cpp')
         excludes.append('JSDOMStringList.cpp')
         excludes.append('JSInspectorController.cpp')
+        
+        # The bindings generator seems to think these are ref-counted, while they aren't in trunk.
+        excludes.append('JSElementTimeControl.cpp')
+        excludes.append('JSSVGAnimatedPathData.cpp')
+        excludes.append('JSSVGAnimatedPoints.cpp')
+        excludes.append('JSSVGExternalResourcesRequired.cpp')
+        excludes.append('JSSVGFilterPrimitiveStandardAttributes.cpp')
+        excludes.append('JSSVGLocatable.cpp')
+        excludes.append('JSSVGStyleTable.cpp')
+        excludes.append('JSSVGTests.cpp')
+        excludes.append('JSSVGStylable.cpp')
+        excludes.append('JSSVGZoomAndPan.cpp')
+        
+        # These are files that expect methods not in the base C++ class, usually XYZAnimated methods.
+        excludes.append('JSSVGFitToViewBox.cpp')
+        excludes.append('JSSVGLangSpace.cpp')
+        excludes.append('JSSVGTransformable.cpp')
+        excludes.append('JSSVGURIReference.cpp')
+        
         if building_on_win32:
             excludes.append('SharedTimerWx.cpp')
             excludes.append('GlyphMapWx.cpp')

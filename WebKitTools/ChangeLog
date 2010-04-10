@@ -1,3 +1,11 @@
+2010-04-09  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        [wx] Basic implementation of SVG support for wx port.
+
+        * wx/build/settings.py:
+
 2010-04-09  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

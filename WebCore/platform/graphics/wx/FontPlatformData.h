@@ -65,21 +65,25 @@ public:
 
     FontPlatformData(WTF::HashTableDeletedValueType)
     : m_fontState(DELETED),
-      m_font(0)
+      m_font(0),
+      m_size(0)
     { }
 
     ~FontPlatformData();
 
     FontPlatformData(const FontDescription&, const AtomicString&);
+    
     FontPlatformData(float size, bool bold, bool italic)
     : m_fontState(UNINITIALIZED)
     , m_font(0)
+    , m_size(size)
     {
     }
     
     FontPlatformData() 
     : m_fontState(UNINITIALIZED)
     , m_font(0)
+    , m_size(0)
     {
     }
     
@@ -99,6 +103,8 @@ public:
     }
 
     unsigned computeHash() const;
+    
+    float size() const { return m_size; }
 
     bool operator==(const FontPlatformData& other) const
     { 
@@ -127,6 +133,7 @@ public:
 private:
     WTF::RefPtr<FontHolder> m_font;
     FontState m_fontState;
+    float m_size;
 };
 
 }
