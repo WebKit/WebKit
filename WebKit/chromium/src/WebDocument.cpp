@@ -112,11 +112,6 @@ WebElement WebDocument::getElementById(const WebString& id) const
     return WebElement(constUnwrap<Document>()->getElementById(id));
 }
 
-WebString WebDocument::applicationID() const
-{
-    return WebString();
-}
-
 WebNode WebDocument::focusedNode() const
 {
     return WebNode(constUnwrap<Document>()->focusedNode());

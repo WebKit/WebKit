@@ -72,7 +72,6 @@ public:
     WEBKIT_API WebNodeCollection all();
     WEBKIT_API WebURL completeURL(const WebString&) const;
     WEBKIT_API WebElement getElementById(const WebString&) const;
-    WEBKIT_API WebString applicationID() const;
     WEBKIT_API WebNode focusedNode() const;
 
 #if WEBKIT_IMPLEMENTATION

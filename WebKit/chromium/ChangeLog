@@ -1,3 +1,13 @@
+2010-04-09  Aaron Boodman  <aa@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove applicationID() from WebDocument as it is Chromium-specific.
+        https://bugs.webkit.org/show_bug.cgi?id=37350
+
+        * public/WebDocument.h:
+        * src/WebDocument.cpp:
+
 2010-04-09  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Adler.
