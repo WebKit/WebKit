@@ -41,6 +41,10 @@ StorageEvent::StorageEvent()
 {
 }
 
+StorageEvent::~StorageEvent()
+{
+}
+
 PassRefPtr<StorageEvent> StorageEvent::create(const AtomicString& type, const String& key, const String& oldValue, const String& newValue, const String& uri, Storage* storageArea)
 {
     return adoptRef(new StorageEvent(type, key, oldValue, newValue, uri, storageArea));

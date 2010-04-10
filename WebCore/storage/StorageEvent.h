@@ -39,6 +39,7 @@ namespace WebCore {
     public:
         static PassRefPtr<StorageEvent> create();
         static PassRefPtr<StorageEvent> create(const AtomicString& type, const String& key, const String& oldValue, const String& newValue, const String& uri, Storage* storageArea);
+        virtual ~StorageEvent();
 
         const String& key() const { return m_key; }
         const String& oldValue() const { return m_oldValue; }

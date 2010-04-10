@@ -1,3 +1,18 @@
+2010-04-09  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        StorageEvent destructor should be in StorageEvent.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=37356
+
+        Because Storage is forward-declared in StorageEvent.h, we need to define
+        the StorageEvent destructor in the .cpp file so that the RefPtr<Storage>
+        destructor has a complete type for Storage.
+
+        * storage/StorageEvent.cpp:
+        (WebCore::StorageEvent::~StorageEvent):
+        * storage/StorageEvent.h:
+
 2010-04-09  Young Han Lee  <joybro@company100.net>
 
         Reviewed by Eric Seidel.
