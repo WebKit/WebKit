@@ -1,3 +1,31 @@
+2010-04-11  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Update layoutTestController.DumpResourceLoadCallbacks to match other ports.
+
+        Unskip  http/tests/xmlhttprequest/abort-should-cancel-load.html
+                http/tests/misc/will-send-request-returns-null-on-redirect.html
+                fast/loader/user-style-sheet-resource-load-callbacks.html
+                http/tests/misc/window-dot-stop.html
+                http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-allow.html
+                http/tests/security/XFrameOptions/x-frame-options-deny.html
+                http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-allow.html
+                http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-deny.html
+                http/tests/xmlhttprequest/abort-should-cancel-load.html
+
+        QNetworkReply::OperationCanceledError has a value of 5, so update expected results accordingly.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37237
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (qt_set_will_send_request_returns_null_on_redirect):
+        (drtDescriptionSuitableForTestResult):
+        (WebCore::FrameLoaderClientQt::dispatchWillSendRequest):
+        (WebCore::FrameLoaderClientQt::dispatchDidReceiveResponse):
+        (WebCore::FrameLoaderClientQt::dispatchDidFinishLoading):
+        (WebCore::FrameLoaderClientQt::dispatchDidFailLoading):
+
 2010-04-10  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

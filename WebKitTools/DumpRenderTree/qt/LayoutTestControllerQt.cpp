@@ -40,6 +40,7 @@ extern void qt_wrt_setViewMode(QWebPage*, const QString& mode);
 extern void qt_dump_editing_callbacks(bool b);
 extern void qt_dump_frame_loader(bool b);
 extern void qt_dump_resource_load_callbacks(bool b);
+extern void qt_set_will_send_request_returns_null_on_redirect(bool b);
 extern void qt_drt_setMediaType(QWebFrame* qframe, const QString& type);
 extern void qt_drt_setFrameFlatteningEnabled(QWebPage*, bool);
 extern void qt_drt_setJavaScriptProfilingEnabled(QWebFrame*, bool enabled);
@@ -239,6 +240,11 @@ void LayoutTestController::dumpFrameLoadCallbacks()
 void LayoutTestController::dumpResourceLoadCallbacks()
 {
     qt_dump_resource_load_callbacks(true);
+}
+
+void LayoutTestController::setWillSendRequestReturnsNullOnRedirect(bool enabled)
+{
+    qt_set_will_send_request_returns_null_on_redirect(enabled);
 }
 
 void LayoutTestController::queueBackNavigation(int howFarBackward)

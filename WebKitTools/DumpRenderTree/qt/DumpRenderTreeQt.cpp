@@ -86,6 +86,7 @@ extern void qt_drt_clearFrameName(QWebFrame* qFrame);
 extern void qt_drt_overwritePluginDirectories();
 extern void qt_drt_resetOriginAccessWhiteLists();
 extern bool qt_drt_hasDocumentElement(QWebFrame* qFrame);
+extern void qt_dump_resource_load_callbacks(bool b);
 
 namespace WebCore {
 
@@ -728,8 +729,9 @@ static const char *methodNameStringForFailedTest(LayoutTestController *controlle
 
 void DumpRenderTree::dump()
 {
-    // Prevent any further frame load callbacks from appearing after we dump the result.
+    // Prevent any further frame load or resource load callbacks from appearing after we dump the result.
     qt_dump_frame_loader(false);
+    qt_dump_resource_load_callbacks(false);
 
     QWebFrame *mainFrame = m_page->mainFrame();
 

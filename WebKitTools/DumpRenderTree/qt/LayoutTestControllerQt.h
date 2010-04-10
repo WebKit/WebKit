@@ -101,6 +101,7 @@ public slots:
     void dumpEditingCallbacks();
     void dumpFrameLoadCallbacks();
     void dumpResourceLoadCallbacks();
+    void setWillSendRequestReturnsNullOnRedirect(bool enabled);
     void queueBackNavigation(int howFarBackward);
     void queueForwardNavigation(int howFarForward);
     void queueLoad(const QString& url, const QString& target = QString());
