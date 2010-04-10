@@ -51,6 +51,14 @@ class Port(object):
     """Abstract class for Port-specific hooks for the layout_test package.
     """
 
+    @staticmethod
+    def flag_from_configuration(configuration):
+        flags_by_configuration = {
+            "Debug": "--debug",
+            "Release": "--release",
+        }
+        return flags_by_configuration[configuration]
+
     def __init__(self, port_name=None, options=None):
         self._name = port_name
         self._options = options
