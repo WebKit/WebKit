@@ -34,7 +34,6 @@ class RunTests(AbstractStep):
     @classmethod
     def options(cls):
         return [
-            Options.build,
             Options.test,
             Options.non_interactive,
             Options.quiet,
@@ -42,8 +41,6 @@ class RunTests(AbstractStep):
         ]
 
     def run(self, state):
-        if not self._options.build:
-            return
         if not self._options.test:
             return
 

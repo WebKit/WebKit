@@ -179,6 +179,8 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
             self.run_webkit_patch([
                 "build-and-test",
                 "--force-clean",
+                "--build",
+                "--test",
                 "--non-interactive",
                 "--no-update",
                 "--build-style=both",
@@ -214,6 +216,8 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
             args = [
                 "land-attachment",
                 "--force-clean",
+                "--build",
+                "--test",
                 "--non-interactive",
                 # The master process is responsible for checking the status
                 # of the builders (see above call to _builders_are_green).

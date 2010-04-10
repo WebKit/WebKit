@@ -1,3 +1,22 @@
+2010-04-10  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        webkit-patch land should not build and test by default
+        https://bugs.webkit.org/show_bug.cgi?id=33631
+
+        Reverse the sense of --no-build and --no-test to be --build and --test.
+        Also, decoupled the build and test options so you can test without
+        building.
+
+        (Patch manngled by Adam Barth.  All bugs are his fault.)
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        * Scripts/webkitpy/tool/steps/options.py:
+        * Scripts/webkitpy/tool/steps/runtests.py:
+
 2010-04-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

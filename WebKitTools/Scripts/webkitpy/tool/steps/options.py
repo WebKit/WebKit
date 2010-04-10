@@ -29,7 +29,7 @@
 from optparse import make_option
 
 class Options(object):
-    build = make_option("--no-build", action="store_false", dest="build", default=True, help="Commit without building first, implies --no-test.")
+    build = make_option("--build", action="store_true", dest="build", default=False, help="Build and run run-webkit-tests before committing.")
     build_style = make_option("--build-style", action="store", dest="build_style", default=None, help="Whether to build debug, release, or both.")
     cc = make_option("--cc", action="store", type="string", dest="cc", help="Comma-separated list of email addresses to carbon-copy.")
     check_builders = make_option("--ignore-builders", action="store_false", dest="check_builders", default=True, help="Don't check to see if the build.webkit.org builders are green before landing.")
@@ -51,5 +51,5 @@ class Options(object):
     request_commit = make_option("--request-commit", action="store_true", dest="request_commit", default=False, help="Mark the patch as needing auto-commit after review.")
     review = make_option("--no-review", action="store_false", dest="review", default=True, help="Do not mark the patch for review.")
     reviewer = make_option("-r", "--reviewer", action="store", type="string", dest="reviewer", help="Update ChangeLogs to say Reviewed by REVIEWER.")
-    test = make_option("--no-test", action="store_false", dest="test", default=True, help="Commit without running run-webkit-tests.")
+    test = make_option("--test", action="store_true", dest="test", default=False, help="Commit without running run-webkit-tests")
     update = make_option("--no-update", action="store_false", dest="update", default=True, help="Don't update the working directory.")
