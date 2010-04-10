@@ -79,6 +79,7 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         error_log = self._cygwin_safe_join(output_dir, "error_log.txt")
         document_root = self._cygwin_safe_join(test_dir, "http", "tests")
 
+        # FIXME: We shouldn't be calling a protected method of _port_obj!
         executable = self._port_obj._path_to_apache()
         if self._is_cygwin():
             executable = self._get_cygwin_path(executable)
@@ -217,4 +218,5 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         httpd_pid = None
         if os.path.exists(self._pid_file):
             httpd_pid = int(open(self._pid_file).readline())
+        # FIXME: We shouldn't be calling a protected method of _port_obj!
         self._port_obj._shut_down_http_server(httpd_pid)

@@ -250,6 +250,7 @@ class PyWebSocket(http_server.Lighttpd):
                 'Failed to find %s server pid.' % self._server_name)
 
         _log.debug('Shutting down %s server %d.' % (self._server_name, pid))
+        # FIXME: We shouldn't be calling a protected method of the port_obj!
         self._port_obj._kill_process(pid)
 
         if self._process:

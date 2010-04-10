@@ -2,6 +2,21 @@
 
         Reviewed by Eric Seidel.
 
+        Factor WebKitPort out of MacPort to allow for WinPort
+        https://bugs.webkit.org/show_bug.cgi?id=37388
+
+        The split is a bit of a guess.  We might have to adjust things once we
+        actually have a second port to work with.
+
+        * Scripts/webkitpy/layout_tests/port/apache_http_server.py:
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py: Added.
+        * Scripts/webkitpy/layout_tests/port/websocket_server.py:
+
+2010-04-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         run_webkit_tests.py shouldn't have platform-specific logic
         https://bugs.webkit.org/show_bug.cgi?id=37387
 
