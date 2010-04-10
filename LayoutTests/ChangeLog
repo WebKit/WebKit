@@ -1,3 +1,19 @@
+2010-04-10  Andrew Scherkus  <scherkus@chromium.org>
+
+        Unreviewed, checking in updated baselines and expectations for Chromium media layout tests.
+
+        * platform/chromium-linux/media/video-replaces-poster-expected.checksum: Added.
+        * platform/chromium-linux/media/video-replaces-poster-expected.png: Added.
+        * platform/chromium-mac/media/controls-drag-timebar-expected.txt: Added.
+        * platform/chromium-mac/media/video-currentTime-set-expected.txt:
+        * platform/chromium-mac/media/video-replaces-poster-expected.checksum: Added.
+        * platform/chromium-mac/media/video-replaces-poster-expected.png: Added.
+        * platform/chromium-win/media/controls-drag-timebar-expected.txt: Added.
+        * platform/chromium-win/media/video-currentTime-set-expected.txt:
+        * platform/chromium-win/media/video-replaces-poster-expected.checksum: Added.
+        * platform/chromium-win/media/video-replaces-poster-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-04-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] animations/dynamic-stylesheet-loading.html fails with accelerated compositing

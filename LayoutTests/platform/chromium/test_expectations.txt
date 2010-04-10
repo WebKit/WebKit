@@ -815,9 +815,6 @@ BUG40503 MAC LINUX : fast/media/mq-width-absolute-03.html = IMAGE
 BUG40503 MAC LINUX : fast/media/mq-width-absolute-04.html = IMAGE
 BUG40503 LINUX : fast/media/viewport-media-query.html = IMAGE
 
-// Linux debug media tests have spurious timeouts and it's annoying.  We have no idea why.
-BUG13907 BUG25094 LINUX DEBUG : media = PASS FAIL TIMEOUT
-
 // These tests need to be changed to be platform independent.
 BUG13907 : http/tests/media/remove-while-loading.html = TIMEOUT
 BUG13907 : http/tests/media/video-play-stall-seek.html = TIMEOUT
@@ -886,23 +883,6 @@ BUG33099 : media/video-timeupdate-reverse-play.html = TIMEOUT
 
 // We haven't implemented video preloading and it passing is a false positive.
 BUG16482 : media/video-preload.html = PASS FAIL
-
-// Updating FFmpeg broke these tests.  They all do some form of seeking so
-// our hunch is we need the VP3 seeking patch re-applied.
-BUG35492 : media/controls-drag-timebar.html = FAIL
-BUG35492 : media/video-currentTime-set.html = FAIL TIMEOUT
-BUG35492 : media/video-replaces-poster.html = IMAGE
-
-// These crash a ton on Mac.  We have a fix arriving so we've removed SKIP.
-BUG35858 MAC : media/remove-from-document.html = CRASH PASS TIMEOUT
-BUG35858 MAC : media/video-append-source.html = CRASH PASS TIMEOUT
-BUG35858 MAC : media/video-display-toggle.html = CRASH PASS TIMEOUT
-BUG35858 MAC : media/video-source.html = CRASH PASS TIMEOUT
-BUG35858 MAC : media/video-source-type.html = CRASH PASS TIMEOUT
-BUG35858 MAC : media/video-src.html = CRASH PASS TIMEOUT
-BUG35858 MAC : media/video-src-change.html = CRASH PASS TIMEOUT
-BUG35858 MAC : media/video-src-source.html = CRASH PASS TIMEOUT
-BUG35858 MAC : media/video-timeupdate-during-playback.html = CRASH PASS TIMEOUT
 
 // Function arguments object is copied for each access.
 BUG24194 : fast/js/kde/function_arguments.html = FAIL
