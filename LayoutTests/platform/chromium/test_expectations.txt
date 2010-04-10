@@ -789,8 +789,11 @@ BUG13907 : media/controls-styling.html = FAIL
 
 // These tests are flaky with subtle pixel differences.
 BUG13907 LINUX MAC : media/video-layer-crash.html = IMAGE PASS
-BUG13907 LINUX MAC : media/video-replaces-poster.html = IMAGE PASS
 BUG13907 LINUX MAC : media/video-transformed.html = IMAGE PASS
+
+// This is flaky with a subtle pixel difference in the bottom right corner,
+// which I believe is due to new video scaling algorithm.
+BUG13907 : media/video-replaces-poster.html = IMAGE PASS
 
 // These tests are failing because they use position-dependent mouse clicks.
 BUG13907 BUG25375 : media/video-controls-transformed.html = FAIL

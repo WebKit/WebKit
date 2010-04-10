@@ -1,5 +1,11 @@
 2010-04-10  Andrew Scherkus  <scherkus@chromium.org>
 
+        Unreviewed, fixing description and expectation for media/video-replaces-poster.html.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-04-10  Andrew Scherkus  <scherkus@chromium.org>
+
         Unreviewed, marking media/video-replaces-poster.html as flaky.
 
         * platform/chromium/test_expectations.txt:
