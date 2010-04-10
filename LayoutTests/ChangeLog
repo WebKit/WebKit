@@ -1,3 +1,66 @@
+2010-04-09  Sergey Ulanov <sergeyu@chromium.org>
+
+        Unreviewed, checking in baselines due to Chromium's new video scaling algorithm.
+
+        * platform/chromium-linux/media/controls-after-reload-expected.checksum:
+        * platform/chromium-linux/media/controls-after-reload-expected.png:
+        * platform/chromium-linux/media/controls-strict-expected.checksum:
+        * platform/chromium-linux/media/controls-strict-expected.png:
+        * platform/chromium-linux/media/video-aspect-ratio-expected.checksum:
+        * platform/chromium-linux/media/video-aspect-ratio-expected.png:
+        * platform/chromium-linux/media/video-controls-rendering-expected.checksum:
+        * platform/chromium-linux/media/video-controls-rendering-expected.png:
+        * platform/chromium-linux/media/video-display-toggle-expected.checksum:
+        * platform/chromium-linux/media/video-display-toggle-expected.png:
+        * platform/chromium-linux/media/video-layer-crash-expected.checksum:
+        * platform/chromium-linux/media/video-layer-crash-expected.png:
+        * platform/chromium-linux/media/video-no-audio-expected.checksum:
+        * platform/chromium-linux/media/video-no-audio-expected.png:
+        * platform/chromium-linux/media/video-transformed-expected.checksum:
+        * platform/chromium-linux/media/video-transformed-expected.png:
+        * platform/chromium-linux/media/video-volume-slider-expected.checksum:
+        * platform/chromium-linux/media/video-volume-slider-expected.png:
+        * platform/chromium-linux/media/video-zoom-expected.checksum:
+        * platform/chromium-linux/media/video-zoom-expected.png:
+        * platform/chromium-mac/media/controls-after-reload-expected.checksum:
+        * platform/chromium-mac/media/controls-after-reload-expected.png:
+        * platform/chromium-mac/media/controls-strict-expected.checksum:
+        * platform/chromium-mac/media/controls-strict-expected.png:
+        * platform/chromium-mac/media/video-aspect-ratio-expected.checksum:
+        * platform/chromium-mac/media/video-aspect-ratio-expected.png:
+        * platform/chromium-mac/media/video-controls-rendering-expected.checksum:
+        * platform/chromium-mac/media/video-controls-rendering-expected.png:
+        * platform/chromium-mac/media/video-display-toggle-expected.checksum:
+        * platform/chromium-mac/media/video-display-toggle-expected.png:
+        * platform/chromium-mac/media/video-layer-crash-expected.checksum:
+        * platform/chromium-mac/media/video-layer-crash-expected.png:
+        * platform/chromium-mac/media/video-no-audio-expected.checksum:
+        * platform/chromium-mac/media/video-no-audio-expected.png:
+        * platform/chromium-mac/media/video-transformed-expected.checksum:
+        * platform/chromium-mac/media/video-transformed-expected.png:
+        * platform/chromium-mac/media/video-volume-slider-expected.checksum:
+        * platform/chromium-mac/media/video-volume-slider-expected.png:
+        * platform/chromium-mac/media/video-zoom-expected.checksum:
+        * platform/chromium-mac/media/video-zoom-expected.png:
+        * platform/chromium-win/media/controls-after-reload-expected.checksum:
+        * platform/chromium-win/media/controls-after-reload-expected.png:
+        * platform/chromium-win/media/controls-strict-expected.checksum:
+        * platform/chromium-win/media/controls-strict-expected.png:
+        * platform/chromium-win/media/video-aspect-ratio-expected.checksum:
+        * platform/chromium-win/media/video-aspect-ratio-expected.png:
+        * platform/chromium-win/media/video-controls-rendering-expected.checksum:
+        * platform/chromium-win/media/video-controls-rendering-expected.png:
+        * platform/chromium-win/media/video-display-toggle-expected.checksum:
+        * platform/chromium-win/media/video-display-toggle-expected.png:
+        * platform/chromium-win/media/video-layer-crash-expected.checksum:
+        * platform/chromium-win/media/video-layer-crash-expected.png:
+        * platform/chromium-win/media/video-no-audio-expected.checksum:
+        * platform/chromium-win/media/video-no-audio-expected.png:
+        * platform/chromium-win/media/video-transformed-expected.checksum:
+        * platform/chromium-win/media/video-transformed-expected.png:
+        * platform/chromium-win/media/video-volume-slider-expected.checksum:
+        * platform/chromium-win/media/video-volume-slider-expected.png:
+
 2010-04-09  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.
