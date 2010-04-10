@@ -1,3 +1,16 @@
+2010-04-09  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Prevent HTTP responses served with JSON content type from being rendered as HTML. 
+
+        Test: http/tests/security/xss-DENIED-mime-type-execute-as-html.html
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::isTextMIMEType): Render application/json as text/plain.
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::initializeSupportedNonImageMimeTypes): Add a compile assert to prevent addition of new mime types in non-image types. 
+
 2010-04-09  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Eric Seidel.

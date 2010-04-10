@@ -284,9 +284,10 @@ bool DOMImplementation::isXMLMIMEType(const String& mimeType)
 
 bool DOMImplementation::isTextMIMEType(const String& mimeType)
 {
-    if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType) ||
-        (mimeType.startsWith("text/") && mimeType != "text/html" &&
-         mimeType != "text/xml" && mimeType != "text/xsl"))
+    if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType)
+        || mimeType == "application/json" // Render JSON as text/plain.
+        || (mimeType.startsWith("text/") && mimeType != "text/html"
+            && mimeType != "text/xml" && mimeType != "text/xsl"))
         return true;
 
     return false;

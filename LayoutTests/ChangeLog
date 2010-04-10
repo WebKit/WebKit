@@ -1,3 +1,13 @@
+2010-04-09  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Test non-image and javascript mime types are not rendered as HTML.
+
+        * http/tests/security/resources/send-mime-types.php: Added.
+        * http/tests/security/xss-DENIED-mime-type-execute-as-html-expected.txt: Added.
+        * http/tests/security/xss-DENIED-mime-type-execute-as-html.html: Added.
+
 2010-04-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej Stachowiak.
