@@ -11,6 +11,14 @@
 
 2010-04-10  Andrew Scherkus  <scherkus@chromium.org>
 
+        Unreviewed, checking in corrected baselines for media/video-replaces-poster.html
+        on Chromium Win.
+
+        * platform/chromium-win/media/video-replaces-poster-expected.checksum:
+        * platform/chromium-win/media/video-replaces-poster-expected.png:
+
+2010-04-10  Andrew Scherkus  <scherkus@chromium.org>
+
         Unreviewed, enable the rest of the fast/media tests for Chromium Mac and Linux
         by checking in new baselines.
 
