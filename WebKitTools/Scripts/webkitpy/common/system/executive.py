@@ -127,7 +127,7 @@ class Executive(object):
             return multiprocessing.cpu_count()
         # Darn.  We don't have the multiprocessing package.
         system_name = platform.system()
-        if system_name == "Dawin":
+        if system_name == "Darwin":
             return int(self.run_command(["sysctl", "-n", "hw.ncpu"]))
         elif system_name == "Windows":
             return int(os.environ.get('NUMBER_OF_PROCESSORS', 1))

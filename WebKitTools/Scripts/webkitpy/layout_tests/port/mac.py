@@ -45,7 +45,6 @@ import base
 import server_process
 
 import webkitpy
-import webkitpy.common.system.executive as executive
 import webkitpy.common.system.ospath as ospath
 
 _log = logging.getLogger("webkitpy.layout_tests.port.mac")
@@ -66,6 +65,15 @@ class MacPort(base.Port):
            options.pixel_tests is None):
             options.pixel_tests = False
 
+    def default_num_dump_render_trees(self):
+        # FIXME: new-run-webkit-tests is unstable on Mac running more than
+        # four threads in parallel.
+        # See https://bugs.webkit.org/show_bug.cgi?id=36622
+        num_dump_render_trees = base.Port.default_num_dump_render_trees(self)
+        if num_dump_render_trees > 4:
+            return 4
+        return num_dump_render_trees
+
     def baseline_path(self):
         return self._webkit_baseline_path(self._name)
 
@@ -85,7 +93,7 @@ class MacPort(base.Port):
             self.script_path("build-dumprendertree"),
             self.flag_from_configuration(self._options.configuration),
         ]
-        if executive.run_command(build_drt_command, return_exit_code=True):
+        if self._executive.run_command(build_drt_command, return_exit_code=True):
             return False
 
         if not self.check_image_diff():
@@ -98,7 +106,7 @@ class MacPort(base.Port):
 
         java_tests_path = os.path.join(self.layout_tests_dir(), "java")
         build_java = ["/usr/bin/make", "-C", java_tests_path]
-        if executive.run_command(build_java, return_exit_code=True):
+        if self._executive.run_command(build_java, return_exit_code=True):
             _log.error("Failed to build Java support files: %s" % build_java)
             return False
 
@@ -324,7 +332,7 @@ class MacPort(base.Port):
 
     def _webkit_build_directory(self, args):
         cmd = [self.script_path("webkit-build-directory")] + args
-        return executive.run_command(cmd).rstrip()
+        return self._executive.run_command(cmd).rstrip()
 
     def _build_path(self, *comps):
         if not self._cached_build_root:

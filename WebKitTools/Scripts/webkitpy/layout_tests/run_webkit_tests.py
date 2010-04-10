@@ -1427,12 +1427,7 @@ def main(options, args):
 
     if not options.num_dump_render_trees:
         # FIXME: Investigate perf/flakiness impact of using cpu_count + 1.
-        options.num_dump_render_trees = executive.cpu_count()
-        # FIXME: new-run-webkit-tests is unstable on Mac running more than
-        # four threads in parallel.
-        # See https://bugs.webkit.org/show_bug.cgi?id=36622
-        if platform.system() == "Dawin" and options.num_dump_render_trees > 4:
-            options.num_dump_render_trees = 4
+        options.num_dump_render_trees = port_obj.default_num_dump_render_trees()
 
     write = create_logging_writer(options, 'config')
     write("Running %s DumpRenderTrees in parallel" % options.num_dump_render_trees)

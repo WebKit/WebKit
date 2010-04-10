@@ -1,3 +1,20 @@
+2010-04-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        run_webkit_tests.py shouldn't have platform-specific logic
+        https://bugs.webkit.org/show_bug.cgi?id=37387
+
+        Dirk Pranke pointed out that my last patch was wrong because I
+        introduced platform-specific logic into run_webkit_tests.py, limiting
+        the parallelism in Chromium to work around a bug in the main Mac port.
+
+        * Scripts/webkitpy/common/system/executive.py:
+            - Fix a typo pointed out by Chris Jerdonek.
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2010-04-10  Robert Hogan  <robert@webkit.org>
 
         Unreviewed fix to regressions in r57416.
