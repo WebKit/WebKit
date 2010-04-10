@@ -91,6 +91,7 @@ void LayoutTestController::reset()
     qt_dump_editing_callbacks(false);
     qt_dump_frame_loader(false);
     qt_dump_resource_load_callbacks(false);
+    qt_set_will_send_request_returns_null_on_redirect(false);
     emit hidePage();
 }
 
