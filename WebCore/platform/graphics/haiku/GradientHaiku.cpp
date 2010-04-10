@@ -66,7 +66,7 @@ PlatformGradient Gradient::platformGradient()
 
 void Gradient::fill(GraphicsContext* context, const FloatRect& rect)
 {
-    context->platformContext()->FillRect(rect, *m_gradient);
+    context->platformContext()->FillRect(rect, *platformGradient());
 }
 
 } // namespace WebCore

@@ -2,6 +2,20 @@
 
         Reviewed by Eric Seidel.
 
+        [Haiku] Fix crash in Gradient::fill()
+        https://bugs.webkit.org/show_bug.cgi?id=37386
+
+        Covered by existing tests.
+
+        * platform/graphics/haiku/GradientHaiku.cpp:
+        (WebCore::Gradient::fill):
+            - Make sure the platform gradient is already cached before
+              dereferencing its pointer.
+
+2010-04-10  Stephan Aßmus  <superstippi@gmx.de>
+
+        Reviewed by Eric Seidel.
+
         [Haiku] Fix build of ImageHaiku.cpp
         <https://bugs.webkit.org/show_bug.cgi?id=37384>
 
