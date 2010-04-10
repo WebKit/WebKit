@@ -68,6 +68,11 @@ void KeyframeAnimation::getKeyframeAnimationInterval(const RenderStyle*& fromSty
     double elapsedTime = getElapsedTime();
 
     double t = m_animation->duration() ? (elapsedTime / m_animation->duration()) : 1;
+
+    ASSERT(t >= 0);
+    if (t < 0)
+        t = 0;
+
     int i = static_cast<int>(t);
     t -= i;
     if (m_animation->direction() && (i & 1))

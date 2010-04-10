@@ -1,3 +1,24 @@
+2010-04-09  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Fixed bug where animation time was not updated when dynamically loading a style sheet
+        https://bugs.webkit.org/show_bug.cgi?id=37352
+
+        A dynamically loaded style sheet kicks off its own styleRecalc cycle. This was not
+        bracketed with a beginAnimationUpdate/endAnimationUpdate which wasn't resetting the
+        animation time. In some time-dependent cases this was causing a negative elapsedTime
+        to be sent to the keyframe animator. This is an invalid case which destroys the
+        animation prematurely. I not only added the brackets, but I also added an assert
+        and protection for when the elapsedTime comes up negative.
+
+        Test: animations/dynamic-stylesheet-loading.html
+
+        * dom/Document.cpp: Added brackets
+        (WebCore::Document::updateStyleSelector):
+        * page/animation/KeyframeAnimation.cpp: Added assert and protection
+        (WebCore::KeyframeAnimation::getKeyframeAnimationInterval):
+
 2010-04-09  Jaime Yap  <jaimeyap@google.com>
 
         Reviewed by Pavel Feldman.

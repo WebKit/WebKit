@@ -2483,7 +2483,13 @@ void Document::updateStyleSelector()
 #endif
 
     recalcStyleSelector();
+    // This recalcStyle initiates a new recalc cycle. We need to bracket it to
+    // make sure animations get the correct update time
+    if (m_frame)
+        m_frame->animation()->beginAnimationUpdate();
     recalcStyle(Force);
+    if (m_frame)
+        m_frame->animation()->endAnimationUpdate();
 
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
     if (!ownerElement())
