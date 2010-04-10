@@ -1,3 +1,15 @@
+2010-04-09  Yi Shen  <yi.4.shen@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] tst_QWebFrame::popupFocus() fails
+        https://bugs.webkit.org/show_bug.cgi?id=37320
+
+        The QWebPopup class has been moved & renamed, so tst_QWebFrame::popupFocus() should use
+        the class name "QComboBox", rather than "WebCore::QWebPopup" to find the popup menu.
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+
 2010-04-09  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Holger Freyther.
