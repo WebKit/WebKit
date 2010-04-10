@@ -788,8 +788,9 @@ BUG13907 WIN LINUX : media/video-empty-source.html = IMAGE PASS
 BUG13907 : media/controls-styling.html = FAIL
 
 // These tests are flaky with subtle pixel differences.
-BUG13907 LINUX MAC : media/video-transformed.html = IMAGE PASS
 BUG13907 LINUX MAC : media/video-layer-crash.html = IMAGE PASS
+BUG13907 LINUX MAC : media/video-replaces-poster.html = IMAGE PASS
+BUG13907 LINUX MAC : media/video-transformed.html = IMAGE PASS
 
 // These tests are failing because they use position-dependent mouse clicks.
 BUG13907 BUG25375 : media/video-controls-transformed.html = FAIL
