@@ -163,7 +163,9 @@ class Executive(object):
             stdin = input
             string_to_communicate = None
         else:
-            stdin = subprocess.PIPE if input else None
+            stdin = None
+            if input:
+                stdin = subprocess.PIPE
             string_to_communicate = input
         if return_stderr:
             stderr = subprocess.STDOUT
