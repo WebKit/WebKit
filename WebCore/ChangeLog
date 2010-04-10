@@ -1,3 +1,12 @@
+2010-04-09  Young Han Lee  <joybro@company100.net>
+
+        Reviewed by Eric Seidel.
+
+        [WINCE] Add forwarding header for UnicodeWince.h
+        https://bugs.webkit.org/show_bug.cgi?id=37224
+
+        * ForwardingHeaders/wtf/unicode/wince/UnicodeWince.h: Added.
+
 2010-04-09  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam "R the K!" Weinig.
