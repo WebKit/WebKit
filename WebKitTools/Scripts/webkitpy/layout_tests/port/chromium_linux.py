@@ -73,12 +73,6 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
                        'LinuxBuildInstructions')
         return result
 
-    def num_cores(self):
-        num_cores = os.sysconf("SC_NPROCESSORS_ONLN")
-        if isinstance(num_cores, int) and num_cores > 0:
-            return num_cores
-        return 1
-
     def test_platform_name(self):
         # We use 'linux' instead of 'chromium-linux' in test_expectations.txt.
         return 'linux'

@@ -66,10 +66,6 @@ class ChromiumMacPort(chromium.ChromiumPort):
                        'MacBuildInstructions')
         return result
 
-    def num_cores(self):
-        return int(subprocess.Popen(['sysctl','-n','hw.ncpu'],
-                                    stdout=subprocess.PIPE).stdout.read())
-
     def test_platform_name(self):
         # We use 'mac' instead of 'chromium-mac'
         return 'mac'

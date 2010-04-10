@@ -69,9 +69,6 @@ class TestPort(base.Port):
     def name(self):
         return self._name
 
-    def num_cores(self):
-        return int(os.popen2("sysctl -n hw.ncpu")[1].read())
-
     def options(self):
         return self._options
 

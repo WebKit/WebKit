@@ -78,9 +78,6 @@ class ChromiumWinPort(chromium.ChromiumPort):
         abspath = os.path.abspath(filename)
         return abspath.replace('\\', '/')
 
-    def num_cores(self):
-        return int(os.environ.get('NUMBER_OF_PROCESSORS', 1))
-
     def relative_test_filename(self, filename):
         path = filename[len(self.layout_tests_dir()) + 1:]
         return path.replace('\\', '/')

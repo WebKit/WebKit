@@ -2,6 +2,30 @@
 
         Reviewed by Eric Seidel.
 
+        Don't reinvent Executive.cpu_count for every port
+        https://bugs.webkit.org/show_bug.cgi?id=37377
+
+        mac.py and chromium_mac.py had some copy/paste code.  This code doesn't
+        actually have anything to do with WebKit ports.  It's really just
+        something in the multiprocessing package.  The lame bit is that package
+        isn't available in older versions of Python, so we need to implement a
+        fallback.  However, we already have the fallback in common.  We don't
+        need to reinvent it specificly for layout_tests.
+
+        * Scripts/webkitpy/common/system/executive.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
+2010-04-09  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         new-run-webkit-tests --release fails to build release DRT when global configuration is Debug
         https://bugs.webkit.org/show_bug.cgi?id=37376
 

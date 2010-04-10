@@ -172,15 +172,6 @@ class MacPort(base.Port):
         sp.stop()
         return result
 
-    def num_cores(self):
-        ncores = int(executive.run_command(["sysctl", "-n", "hw.ncpu"]))
-        # FIXME: new-run-webkit-tests is unstable running more than four
-        # threads in parallel.
-        # See https://bugs.webkit.org/show_bug.cgi?id=36622
-        if ncores > 4:
-            ncores = 4
-        return ncores
-
     def path_to_test_expectations_file(self):
         return self.path_from_webkit_base('LayoutTests', 'platform',
            'mac', 'test_expectations.txt')

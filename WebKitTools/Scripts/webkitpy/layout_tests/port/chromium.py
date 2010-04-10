@@ -44,6 +44,7 @@ import websocket_server
 _log = logging.getLogger("webkitpy.layout_tests.port.chromium")
 
 
+# FIXME: This function doesn't belong in this package.
 def check_file_exists(path_to_file, file_description, override_step=None,
                       logging=True):
     """Verify the file is present where expected or log an error.

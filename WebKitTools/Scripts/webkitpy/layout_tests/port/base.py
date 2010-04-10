@@ -286,13 +286,6 @@ class Port(object):
         may be different (e.g., 'win-xp' instead of 'chromium-win-xp'."""
         return self._name
 
-    def num_cores(self):
-        """Return the number of cores/cpus available on this machine.
-
-        This routine is used to determine the default amount of parallelism
-        used by run-chromium-webkit-tests."""
-        raise NotImplementedError('Port.num_cores')
-
     # FIXME: This could be replaced by functions in webkitpy.common.checkout.scm.
     def path_from_webkit_base(self, *comps):
         """Returns the full path to path made by joining the top of the

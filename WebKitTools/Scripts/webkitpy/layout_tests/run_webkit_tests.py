@@ -50,6 +50,7 @@ import logging
 import math
 import optparse
 import os
+import platform
 import Queue
 import random
 import re
@@ -70,6 +71,8 @@ from test_types import fuzzy_image_diff
 from test_types import image_diff
 from test_types import test_type_base
 from test_types import text_diff
+
+from webkitpy.common.system.executive import Executive
 
 import port
 
@@ -1389,6 +1392,7 @@ def main(options, args):
                         stream=meter)
 
     port_obj = port.get(options.platform, options)
+    executive = Executive()
 
     if not options.configuration:
         options.configuration = port_obj.default_configuration()
@@ -1422,8 +1426,13 @@ def main(options, args):
                               ignore_errors=True)
 
     if not options.num_dump_render_trees:
-        # TODO(ojan): Investigate perf/flakiness impact of using numcores + 1.
-        options.num_dump_render_trees = port_obj.num_cores()
+        # FIXME: Investigate perf/flakiness impact of using cpu_count + 1.
+        options.num_dump_render_trees = executive.cpu_count()
+        # FIXME: new-run-webkit-tests is unstable on Mac running more than
+        # four threads in parallel.
+        # See https://bugs.webkit.org/show_bug.cgi?id=36622
+        if platform.system() == "Dawin" and options.num_dump_render_trees > 4:
+            options.num_dump_render_trees = 4
 
     write = create_logging_writer(options, 'config')
     write("Running %s DumpRenderTrees in parallel" % options.num_dump_render_trees)
@@ -1461,9 +1470,9 @@ def main(options, args):
         # Creating the expecations for each platform/configuration pair does
         # all the test list parsing and ensures it's correct syntax (e.g. no
         # dupes).
-        for platform in port_obj.test_platform_names():
-            test_runner.parse_expectations(platform, is_debug_mode=True)
-            test_runner.parse_expectations(platform, is_debug_mode=False)
+        for platform_name in port_obj.test_platform_names():
+            test_runner.parse_expectations(platform_name, is_debug_mode=True)
+            test_runner.parse_expectations(platform_name, is_debug_mode=False)
         meter.update("")
         print ("If there are no fail messages, errors or exceptions, then the "
             "lint succeeded.")
