@@ -1,3 +1,17 @@
+2010-04-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Sketch out the win port for new-run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=37393
+
+        I haven't tried running this yet, but we've got to start somewhere.
+
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/port/win.py: Added.
+
 2010-04-10  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Adam Barth.

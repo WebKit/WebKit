@@ -40,7 +40,10 @@ def get(port_name=None, options=None):
     port_to_use = port_name
     if port_to_use is None:
         if sys.platform == 'win32':
-            port_to_use = 'chromium-win'
+            if options and hasattr(options, 'chromium') and options.chromium:
+                port_to_use = 'chromium-win'
+            else:
+                port_to_use = 'win'
         elif sys.platform == 'linux2':
             port_to_use = 'chromium-linux'
         elif sys.platform == 'darwin':
@@ -62,6 +65,9 @@ def get(port_name=None, options=None):
     elif port_to_use.startswith('mac'):
         import mac
         return mac.MacPort(port_name, options)
+    elif port_to_use.startswith('win'):
+        import win
+        return win.WinPort(port_name, options)
     elif port_to_use.startswith('chromium-mac'):
         import chromium_mac
         return chromium_mac.ChromiumMacPort(port_name, options)

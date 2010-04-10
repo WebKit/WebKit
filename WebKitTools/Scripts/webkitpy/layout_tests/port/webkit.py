@@ -65,7 +65,11 @@ class WebKitPort(base.Port):
         return self._webkit_baseline_path(self._name)
 
     def baseline_search_path(self):
-        raise NotImplementedError('WebKitPort.baseline_search_path')
+        return [self._webkit_baseline_path(self._name)]
+
+    def path_to_test_expectations_file(self):
+        return os.path.join(self._webkit_baseline_path(self._name),
+                            'test_expectations.txt')
 
     def _build_driver(self):
         return not self._executive.run_command([
@@ -167,9 +171,6 @@ class WebKitPort(base.Port):
         sp.stop()
         return result
 
-    def path_to_test_expectations_file(self):
-        raise NotImplementedError('WebKitPort.path_to_test_expectations_file')
-
     def results_directory(self):
         # FIXME: Why do we say chromium here?  Maybe "new-run-webkit-tests-"?
         return ('/tmp/run-chromium-webkit-tests-' +
@@ -190,7 +191,7 @@ class WebKitPort(base.Port):
     def test_base_platform_names(self):
         # At the moment we don't use test platform names, but we have
         # to return something.
-        return ('mac',)
+        return ('mac', 'win')
 
     def _tests_for_other_platforms(self):
         raise NotImplementedError('WebKitPort._tests_for_other_platforms')
@@ -240,6 +241,10 @@ class WebKitPort(base.Port):
             tests_to_skip.append(line)
         return tests_to_skip
 
+    def _skipped_file_paths(self):
+        return [os.path.join(self._webkit_baseline_path(self._name,
+                                                            'Skipped'))]
+
     def _expectations_from_skipped_files(self):
         tests_to_skip = []
         for filename in self._skipped_file_paths():
@@ -277,7 +282,7 @@ class WebKitPort(base.Port):
         return "\n".join(skip_lines)
 
     def test_platform_name(self):
-        raise NotImplementedError('WebKitPort.test_platform_name')
+        return self._name + self.version()
 
     def test_platform_names(self):
         return self.test_base_platform_names() + (
