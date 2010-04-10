@@ -1,3 +1,19 @@
+2010-04-10  Stephan Aßmus  <superstippi@gmx.de>
+
+        Reviewed by Eric Seidel.
+
+        [Haiku] Fix build of ImageHaiku.cpp
+        <https://bugs.webkit.org/show_bug.cgi?id=37384>
+
+        No new tests needed.
+
+        * platform/graphics/haiku/ImageHaiku.cpp:
+        (WebCore::Image::drawPattern):
+            - include SharedBuffer.h
+            - changed parameter name to be in line with other ports,
+              the code I landed in an earlier commit was already using
+              this name.
+
 2010-04-10  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
