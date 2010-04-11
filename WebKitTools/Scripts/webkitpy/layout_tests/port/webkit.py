@@ -306,9 +306,11 @@ class WebKitPort(base.Port):
 
     def _build_path(self, *comps):
         if not self._cached_build_root:
-            self._cached_build_root = self._webkit_build_directory(["--top-level"])
-        return os.path.join(self._cached_build_root, self._options.configuration,
-                            *comps)
+            self._cached_build_root = self._webkit_build_directory([
+                "--configuration",
+                self.flag_from_configuration(self._options.configuration),
+            ])
+        return os.path.join(self._cached_build_root, *comps)
 
     def _path_to_driver(self):
         return self._build_path('DumpRenderTree')

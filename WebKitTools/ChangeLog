@@ -1,5 +1,18 @@
 2010-04-10  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        new-run-webkit-tests can't find ImageDiff on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=37403
+
+        It turns out the build directory on Windows is structured differently
+        than it is on other platforms.  Instead of assuming the normal
+        structure, we should just ask perl to figure it out for us.
+
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+
+2010-04-10  Adam Barth  <abarth@webkit.org>
+
         Rubber-stamped by Eric Seidel.
 
         Change "Gathering files" status line to "Collecting tests".  Gathering
