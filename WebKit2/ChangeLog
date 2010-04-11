@@ -1,3 +1,11 @@
+2010-04-11  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Anders Carlsson.
+
+        Disable not-implemented warnings by default for now.
+
+        * Shared/NotImplemented.h:
+
 2010-04-10  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

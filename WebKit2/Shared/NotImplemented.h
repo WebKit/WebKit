@@ -29,7 +29,9 @@
 #include <stdio.h>
 #include <wtf/Assertions.h>
 
-#if defined(NDEBUG)
+#define DISABLE_NOT_IMPLEMENTED_WARNINGS 1
+
+#if defined(NDEBUG) || defined(DISABLE_NOT_IMPLEMENTED_WARNINGS)
 #define notImplemented() ((void)0)
 #else
 
