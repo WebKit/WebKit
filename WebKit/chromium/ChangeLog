@@ -1,3 +1,12 @@
+2010-04-10  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Include file change as a result of renaming LayerRenderSkia.h to LayerRenderChromium.h
+        https://bugs.webkit.org/show_bug.cgi?id=37231
+
+        * src/WebViewImpl.h:
+
 2010-04-10  Rafael Weinstein  <rafaelw@chromium.org>
 
         Reviewed by Eric Seidel.

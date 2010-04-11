@@ -29,13 +29,13 @@
  */
 
 
-#ifndef LayerRendererSkia_h
-#define LayerRendererSkia_h
+#ifndef LayerRendererChromium_h
+#define LayerRendererChromium_h
 
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "IntRect.h"
-#include "LayerSkia.h"
+#include "LayerChromium.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>

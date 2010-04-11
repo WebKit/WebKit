@@ -32,7 +32,7 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "LayerSkia.h"
+#include "LayerChromium.h"
 
 #include "PlatformContextSkia.h"
 #include "RenderLayerBacking.h"

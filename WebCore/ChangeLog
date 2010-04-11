@@ -1,3 +1,27 @@
+2010-04-10  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Moving files associated with the GPU compositor from platform/graphics/skia to platform/graphics/chromium. Class
+        rename was done in a previous CL, this CL does the file move and rename.
+        https://bugs.webkit.org/show_bug.cgi?id=37231
+
+        No new functionality, no new tests.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp: Copied from WebCore/platform/graphics/skia/GraphicsLayerSkia.cpp.
+        * platform/graphics/chromium/GraphicsLayerChromium.h: Copied from WebCore/platform/graphics/skia/GraphicsLayerSkia.h.
+        * platform/graphics/chromium/LayerChromium.cpp: Copied from WebCore/platform/graphics/skia/LayerSkia.cpp.
+        * platform/graphics/chromium/LayerChromium.h: Copied from WebCore/platform/graphics/skia/LayerSkia.h.
+        * platform/graphics/chromium/LayerRendererChromium.cpp: Copied from WebCore/platform/graphics/skia/LayerRendererSkia.cpp.
+        * platform/graphics/chromium/LayerRendererChromium.h: Copied from WebCore/platform/graphics/skia/LayerRendererSkia.h.
+        * platform/graphics/skia/GraphicsLayerSkia.cpp: Removed.
+        * platform/graphics/skia/GraphicsLayerSkia.h: Removed.
+        * platform/graphics/skia/LayerRendererSkia.cpp: Removed.
+        * platform/graphics/skia/LayerRendererSkia.h: Removed.
+        * platform/graphics/skia/LayerSkia.cpp: Removed.
+        * platform/graphics/skia/LayerSkia.h: Removed.
+
 2010-04-10  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -32,9 +32,9 @@
 #include "config.h"
 
 #if USE(ACCELERATED_COMPOSITING)
-#include "LayerRendererSkia.h"
+#include "LayerRendererChromium.h"
 
-#include "LayerSkia.h"
+#include "LayerChromium.h"
 #include "PlatformContextSkia.h"
 #include "skia/ext/platform_canvas.h"
 

@@ -45,7 +45,7 @@
 #include "EditorClientImpl.h"
 #include "GraphicsLayer.h"
 #include "InspectorClientImpl.h"
-#include "LayerRendererSkia.h"
+#include "LayerRendererChromium.h"
 #include "NotificationPresenterImpl.h"
 
 #include <wtf/OwnPtr.h>

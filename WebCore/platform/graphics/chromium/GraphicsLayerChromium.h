@@ -28,8 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GraphicsLayerSkia_h
-#define GraphicsLayerSkia_h
+#ifndef GraphicsLayerChromium_h
+#define GraphicsLayerChromium_h
 
 #if USE(ACCELERATED_COMPOSITING)
 
