@@ -25,7 +25,6 @@
 
 #include "Connection.h"
 
-#include "Attachment.h"
 #include "RunLoop.h"
 #include "WorkItem.h"
 #include <wtf/CurrentTime.h>
@@ -96,7 +95,7 @@ bool Connection::sendMessage(unsigned messageID, auto_ptr<ArgumentEncoder> argum
         return false;
 
     MutexLocker locker(m_outgoingMessagesLock);
-    m_outgoingMessages.push_back(OutgoingMessage(messageID, arguments));
+    m_outgoingMessages.append(OutgoingMessage(messageID, arguments));
     
     // FIXME: We should add a boolean flag so we don't call this when work has already been scheduled.
     m_connectionQueue.scheduleWork(WorkItem::create(this, &Connection::sendOutgoingMessages));
@@ -108,15 +107,15 @@ std::auto_ptr<ArgumentDecoder> Connection::waitForMessage(MessageID messageID, u
     // First, check if this message is already in the incoming messages queue.
     {
         MutexLocker locker(m_incomingMessagesLock);
-        
-        for (std::deque<IncomingMessage>::iterator it = m_incomingMessages.begin(), end = m_incomingMessages.end(); it != end; ++it) {
-            const IncomingMessage& message = *it;
+
+        for (size_t i = 0; i < m_incomingMessages.size(); ++i) {
+            const IncomingMessage& message = m_incomingMessages[i];
     
             if (message.messageID() == messageID && message.arguments()->destinationID() == destinationID) {
                 std::auto_ptr<ArgumentDecoder> arguments(message.arguments());
                 
                 // Erase the incoming message.
-                m_incomingMessages.erase(it);
+                m_incomingMessages.remove(i);
                 return arguments;
             }
         }
@@ -195,7 +194,7 @@ void Connection::processIncomingMessage(MessageID messageID, std::auto_ptr<Argum
     }
 
     MutexLocker locker(m_incomingMessagesLock);
-    m_incomingMessages.push_back(IncomingMessage(messageID, arguments));
+    m_incomingMessages.append(IncomingMessage(messageID, arguments));
 
     m_clientRunLoop->scheduleWork(WorkItem::create(this, &Connection::dispatchMessages));
 }
@@ -221,30 +220,30 @@ void Connection::sendOutgoingMessages()
     if (!m_isConnected)
         return;
 
-    deque<OutgoingMessage> outgoingMessages;
-    
+    Vector<OutgoingMessage> outgoingMessages;
+
     {
         MutexLocker locker(m_outgoingMessagesLock);
-        swap(m_outgoingMessages, outgoingMessages);
+        m_outgoingMessages.swap(outgoingMessages);
     }
 
     // Send messages.
-    for (deque<OutgoingMessage>::iterator it = outgoingMessages.begin(), end = outgoingMessages.end(); it != end; ++it)
-        sendOutgoingMessage(it->messageID(), auto_ptr<ArgumentEncoder>(it->arguments()));
+    for (size_t i = 0; i < outgoingMessages.size(); ++i)
+        sendOutgoingMessage(outgoingMessages[i].messageID(), std::auto_ptr<ArgumentEncoder>(outgoingMessages[i].arguments()));
 }
 
 void Connection::dispatchMessages()
 {
-    deque<IncomingMessage> incomingMessages;
+    Vector<IncomingMessage> incomingMessages;
     
     {
         MutexLocker locker(m_incomingMessagesLock);
-        swap(m_incomingMessages, incomingMessages);
+        m_incomingMessages.swap(incomingMessages);
     }
 
     // Dispatch messages.
-    for (deque<IncomingMessage>::iterator it = incomingMessages.begin(), end = incomingMessages.end(); it != end; ++it) {
-        IncomingMessage& message = *it;
+    for (size_t i = 0; i < incomingMessages.size(); ++i) {
+        IncomingMessage& message = incomingMessages[i];
         ArgumentDecoder* arguments = message.arguments();
 
         if (message.messageID().isSync()) {
@@ -267,7 +266,7 @@ void Connection::dispatchMessages()
         } else
             m_client->didReceiveMessage(this, message.messageID(), arguments);
 
-        it->destroy();
+        message.destroy();
     }
 }
 

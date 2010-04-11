@@ -27,9 +27,9 @@
 #define RunLoop_h
 
 #include <memory>
-#include <queue>
 #include <wtf/HashMap.h>
 #include <wtf/Threading.h>
+#include <wtf/Vector.h>
 
 class WorkItem;
 
@@ -99,7 +99,7 @@ private:
     void wakeUp();
 
     Mutex m_workItemQueueLock;
-    std::queue<WorkItem*> m_workItemQueue;
+    Vector<WorkItem*> m_workItemQueue;
 
 #if PLATFORM(WIN)
     static bool registerRunLoopMessageWindowClass();

@@ -27,8 +27,6 @@
 
 #include <algorithm>
 
-using namespace std;
-
 namespace CoreIPC {
 
 ArgumentEncoder::ArgumentEncoder(uint64_t destinationID)
@@ -44,7 +42,7 @@ ArgumentEncoder::ArgumentEncoder(uint64_t destinationID)
 ArgumentEncoder::~ArgumentEncoder()
 {
     if (m_buffer)
-        free(m_buffer);
+        fastFree(m_buffer);
     // FIXME: We need to dispose of the attachments in cases of failure.
 }
 
@@ -60,9 +58,9 @@ uint8_t* ArgumentEncoder::grow(unsigned alignment, size_t size)
     if (alignedSize + size > m_bufferCapacity) {
         size_t newCapacity = std::max(alignedSize + size, std::max(static_cast<size_t>(32), m_bufferCapacity + m_bufferCapacity / 4 + 1));
         if (!m_buffer)
-            m_buffer = static_cast<uint8_t*>(malloc(newCapacity));
+            m_buffer = static_cast<uint8_t*>(fastMalloc(newCapacity));
         else
-            m_buffer = static_cast<uint8_t*>(realloc(m_buffer, newCapacity));
+            m_buffer = static_cast<uint8_t*>(fastRealloc(m_buffer, newCapacity));
         
         // FIXME: What should we do if allocating memory fails?
 
@@ -136,13 +134,13 @@ void ArgumentEncoder::encodeDouble(double n)
 
 void ArgumentEncoder::addAttachment(const Attachment& attachment)
 {
-    m_attachments.push_back(attachment);
+    m_attachments.append(attachment);
 }
 
-std::list<Attachment> ArgumentEncoder::releaseAttachments()
+Vector<Attachment> ArgumentEncoder::releaseAttachments()
 {
-    std::list<Attachment> newList;
-    std::swap(newList, m_attachments);
+    Vector<Attachment> newList;
+    newList.swap(m_attachments);
     return newList;
 }
 

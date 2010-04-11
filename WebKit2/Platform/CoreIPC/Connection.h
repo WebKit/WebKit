@@ -31,7 +31,6 @@
 #include "Arguments.h"
 #include "MessageID.h"
 #include "WorkQueue.h"
-#include <deque>
 #include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
@@ -132,7 +131,7 @@ private:
     };
 
     Mutex m_incomingMessagesLock;
-    std::deque<IncomingMessage> m_incomingMessages;
+    Vector<IncomingMessage> m_incomingMessages;
 
     // Outgoing messages.
     class OutgoingMessage {
@@ -157,7 +156,7 @@ private:
     };
     
     Mutex m_outgoingMessagesLock;
-    std::deque<OutgoingMessage> m_outgoingMessages;
+    Vector<OutgoingMessage> m_outgoingMessages;
     
     ThreadCondition m_waitForMessageCondition;
     Mutex m_waitForMessageMutex;

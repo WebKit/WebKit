@@ -27,8 +27,6 @@
 
 #include "WorkItem.h"
 
-using namespace std;
-
 static RunLoop* s_mainRunLoop;
 
 void RunLoop::initializeMainRunLoop()
@@ -46,23 +44,22 @@ RunLoop* RunLoop::mainRunLoop()
 
 void RunLoop::performWork()
 {
-    queue<WorkItem*> workItemQueue;
+    Vector<WorkItem*> workItemQueue;
     {
         MutexLocker locker(m_workItemQueueLock);
-        swap(m_workItemQueue, workItemQueue);
+        m_workItemQueue.swap(workItemQueue);
     }
 
-    while (!workItemQueue.empty()) {
-        auto_ptr<WorkItem> item(workItemQueue.front());
+    for (size_t i = 0; i < workItemQueue.size(); ++i) {
+        std::auto_ptr<WorkItem> item(workItemQueue[i]);
         item->execute();
-        workItemQueue.pop();
     }
 }
 
 void RunLoop::scheduleWork(std::auto_ptr<WorkItem> item)
 {
     MutexLocker locker(m_workItemQueueLock);
-    m_workItemQueue.push(item.release());
+    m_workItemQueue.append(item.release());
 
     wakeUp();
 }
