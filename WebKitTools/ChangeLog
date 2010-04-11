@@ -1,5 +1,13 @@
 2010-04-10  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed attempt to fix the Chromium Mac canary.
+
+        * Scripts/webkitpy/common/config/ports.py:
+        * Scripts/webkitpy/common/config/ports_unittest.py:
+        * Scripts/webkitpy/common/system/executive.py:
+
+2010-04-10  Adam Barth  <abarth@webkit.org>
+
         Unreviewed.
 
         Add the Apache bits to win.py for new-run-webkit-tests

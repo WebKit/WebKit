@@ -121,8 +121,7 @@ class Executive(object):
                               output=child_output)
         return child_output
 
-    @staticmethod
-    def cpu_count():
+    def cpu_count(self):
         if multiprocessing:
             return multiprocessing.cpu_count()
         # Darn.  We don't have the multiprocessing package.

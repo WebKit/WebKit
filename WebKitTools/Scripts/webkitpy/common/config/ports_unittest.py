@@ -30,7 +30,6 @@
 import unittest
 
 from webkitpy.common.config.ports import WebKitPort, MacPort, GtkPort, QtPort, ChromiumPort
-from webkitpy.common.system.executive import Executive
 
 
 class WebKitPortTest(unittest.TestCase):
