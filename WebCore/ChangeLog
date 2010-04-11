@@ -1,3 +1,22 @@
+2010-04-10  Chris Evans  <cevans@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Defense in depth: make sure an SVG document in the <img> context has
+        a unique origin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37392
+
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged):
+          Force the temporary rendering context into a unique origin.
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::setForceSandboxFlags):
+          Support for setting sandbox flags that will always be applied.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::updateSandboxFlags):
+          Always apply any forced flags.
+
 2010-04-10  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by Dimitri Glazkov.

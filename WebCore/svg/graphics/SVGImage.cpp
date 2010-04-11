@@ -255,6 +255,7 @@ bool SVGImage::dataChanged(bool allDataReceived)
         frame->init();
         ResourceRequest fakeRequest(KURL(ParsedURLString, ""));
         FrameLoader* loader = frame->loader();
+        loader->setForceSandboxFlags(SandboxAll);
         loader->load(fakeRequest, false); // Make sure the DocumentLoader is created
         loader->policyChecker()->cancelCheck(); // cancel any policy checks
         loader->commitProvisionalLoad(0);
