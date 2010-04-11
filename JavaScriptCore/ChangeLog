@@ -1,3 +1,12 @@
+2010-04-11  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/7851332> Fix the build.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMallocStats::): Initialize extra members of malloc_introspection_t to zero.
+
 2010-04-09  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.
