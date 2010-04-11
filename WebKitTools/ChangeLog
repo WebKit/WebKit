@@ -1,3 +1,27 @@
+2010-04-11  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add PrettyPatch links to new-run-webkit-tests output
+        https://bugs.webkit.org/show_bug.cgi?id=37406
+
+        * Scripts/webkitpy/layout_tests/layout_package/dump_render_tree_thread.py:
+         - We're leaking a file handle here, add a FIXME.
+        * Scripts/webkitpy/layout_tests/layout_package/test_failures.py:
+         - Add pretty diff links.
+        * Scripts/webkitpy/layout_tests/port/base.py:
+         - Add support for generating pretty diffs using PrettyPatch.
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+         - We're leaking another file handle here, another FIXME.
+        * Scripts/webkitpy/layout_tests/test_types/image_diff.py:
+         - Update write_output_files signature.
+        * Scripts/webkitpy/layout_tests/test_types/test_type_base.py:
+         - Remove unused arguments from write_output_files.
+         - Add support for dumping pretty diffs to write_output_files.
+         - Fix a bunch of file descriptor leaks in this file.
+        * Scripts/webkitpy/layout_tests/test_types/text_diff.py:
+         - Update write_output_files signature.
+
 2010-04-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

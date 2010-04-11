@@ -163,7 +163,7 @@ class WebKitPort(base.Port):
             if m.group(2) == 'passed':
                 result = False
         elif output and diff_filename:
-            open(diff_filename, 'w').write(output)
+            open(diff_filename, 'w').write(output)  # FIXME: This leaks a file handle.
         elif sp.timed_out:
             _log.error("ImageDiff timed out on %s" % expected_filename)
         elif sp.crashed:

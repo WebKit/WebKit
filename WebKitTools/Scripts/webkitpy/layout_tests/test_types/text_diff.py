@@ -98,8 +98,8 @@ class TestTextDiff(test_type_base.TestTypeBase):
         # Write output files for new tests, too.
         if port.compare_text(output, expected):
             # Text doesn't match, write output files.
-            self.write_output_files(port, filename, "", ".txt", output,
-                                    expected, diff=True, wdiff=True)
+            self.write_output_files(port, filename, ".txt", output,
+                                    expected, print_text_diffs=True)
 
             if expected == '':
                 failures.append(test_failures.FailureMissingResult(self))

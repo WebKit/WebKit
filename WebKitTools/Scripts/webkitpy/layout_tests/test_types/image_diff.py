@@ -150,9 +150,9 @@ class ImageDiff(test_type_base.TestTypeBase):
 
         if not os.path.isfile(expected_png_file):
             # Report a missing expected PNG file.
-            self.write_output_files(port, filename, '', '.checksum',
+            self.write_output_files(port, filename, '.checksum',
                                     test_args.hash, expected_hash,
-                                    diff=False, wdiff=False)
+                                    print_text_diffs=False)
             self._copy_output_png(filename, test_args.png_path, '-actual.png')
             failures.append(test_failures.FailureMissingImage(self))
             return failures
@@ -160,10 +160,9 @@ class ImageDiff(test_type_base.TestTypeBase):
             # Hash matched (no diff needed, okay to return).
             return failures
 
-
-        self.write_output_files(port, filename, '', '.checksum',
+        self.write_output_files(port, filename, '.checksum',
                                 test_args.hash, expected_hash,
-                                diff=False, wdiff=False)
+                                print_text_diffs=False)
         self._copy_output_png(filename, test_args.png_path, '-actual.png')
         self._copy_output_png(filename, expected_png_file, '-expected.png')
 

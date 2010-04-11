@@ -519,6 +519,7 @@ class Port(object):
                '--end-insert=##WDIFF_END##',
                actual_filename,
                expected_filename]
+        # FIXME: Why not just check os.exists(executable) once?
         global _wdiff_available
         result = ''
         try:
@@ -541,6 +542,7 @@ class Port(object):
             # http://bugs.python.org/issue1236
             if _wdiff_available:
                 try:
+                    # FIXME: Use Executive() here.
                     wdiff = subprocess.Popen(cmd,
                         stdout=subprocess.PIPE).communicate()[0]
                 except ValueError, e:
@@ -561,6 +563,12 @@ class Port(object):
             else:
                 raise e
         return result
+
+    def pretty_patch_text(self, diff_path):
+        pretty_patch_path = self.path_from_webkit_base("BugsSite", "PrettyPatch")
+        prettify_path = os.path.join(pretty_patch_path, "prettify.rb")
+        command = ["ruby", "-I", pretty_patch_path, prettify_path, diff_path]
+        return self._executive.run_command(command)
 
     def default_configuration(self):
         return "Release"

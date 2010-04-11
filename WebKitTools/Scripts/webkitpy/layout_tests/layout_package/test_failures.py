@@ -110,7 +110,7 @@ class FailureWithType(TestFailure):
 
     def __init__(self, test_type):
         TestFailure.__init__(self)
-        # TODO(ojan): This class no longer needs to know the test_type.
+        # FIXME: This class no longer needs to know the test_type.
         self._test_type = test_type
 
     # Filename suffixes used by ResultHtmlOutput.
@@ -127,6 +127,9 @@ class FailureWithType(TestFailure):
               single item is the [actual] filename suffix.
               If out_names is empty, returns the empty string.
         """
+        # FIXME: Seems like a bad idea to separate the display name data
+        # from the path data by hard-coding the display name here
+        # and passing in the path information via out_names.
         links = ['']
         uris = [self.relative_output_filename(filename, fn) for
                 fn in out_names]
@@ -138,6 +141,8 @@ class FailureWithType(TestFailure):
             links.append("<a href='%s'>diff</a>" % uris[2])
         if len(uris) > 3:
             links.append("<a href='%s'>wdiff</a>" % uris[3])
+        if len(uris) > 4:
+            links.append("<a href='%s'>pretty diff</a>" % uris[4])
         return ' '.join(links)
 
     def result_html_output(self, filename):
@@ -192,9 +197,10 @@ class FailureMissingResult(FailureWithType):
 class FailureTextMismatch(FailureWithType):
     """Text diff output failed."""
     # Filename suffixes used by ResultHtmlOutput.
+    # FIXME: Why don't we use the constants from TestTypeBase here?
     OUT_FILENAMES = ["-actual.txt", "-expected.txt", "-diff.txt"]
     OUT_FILENAMES_WDIFF = ["-actual.txt", "-expected.txt", "-diff.txt",
-                           "-wdiff.html"]
+                           "-wdiff.html", "-pretty-diff.html"]
 
     def __init__(self, test_type, has_wdiff):
         FailureWithType.__init__(self, test_type)

@@ -70,6 +70,7 @@ class TestTypeBase(object):
     FILENAME_SUFFIX_EXPECTED = "-expected"
     FILENAME_SUFFIX_DIFF = "-diff"
     FILENAME_SUFFIX_WDIFF = "-wdiff.html"
+    FILENAME_SUFFIX_PRETTY_PATCH = "-pretty-diff.html"
     FILENAME_SUFFIX_COMPARE = "-diff.png"
 
     def __init__(self, port, root_output_dir):
@@ -111,7 +112,7 @@ class TestTypeBase(object):
         self._port.maybe_make_directory(output_dir)
         output_path = os.path.join(output_dir, output_file)
         _log.debug('writing new baseline to "%s"' % (output_path))
-        open(output_path, "wb").write(data)
+        self._write_into_file_at_path(output_path, data)
 
     def output_filename(self, filename, modifier):
         """Returns a filename inside the output dir that contains modifier.
@@ -149,49 +150,52 @@ class TestTypeBase(object):
         """
         raise NotImplemented
 
-    def write_output_files(self, port, filename, test_type, file_type,
-                           output, expected, diff=True, wdiff=False):
+    def _write_into_file_at_path(self, file_path, contents):
+        file = open(file_path, "wb")
+        file.write(contents)
+        file.close()
+
+    def write_output_files(self, port, filename, file_type,
+                           output, expected, print_text_diffs=False):
         """Writes the test output, the expected output and optionally the diff
         between the two to files in the results directory.
 
         The full output filename of the actual, for example, will be
-          <filename><test_type>-actual<file_type>
+          <filename>-actual<file_type>
         For instance,
-          my_test-simp-actual.txt
+          my_test-actual.txt
 
         Args:
           filename: The test filename
-          test_type: A string describing the test type, e.g. "simp"
           file_type: A string describing the test output file type, e.g. ".txt"
           output: A string containing the test output
           expected: A string containing the expected test output
-          diff: if True, write a file containing the diffs too. This should be
-              False for results that are not text
-          wdiff: if True, write an HTML file containing word-by-word diffs
+          print_text_diffs: True for text diffs. (FIXME: We should be able to get this from the file type?)
         """
         self._make_output_directory(filename)
-        actual_filename = self.output_filename(filename,
-            test_type + self.FILENAME_SUFFIX_ACTUAL + file_type)
-        expected_filename = self.output_filename(filename,
-            test_type + self.FILENAME_SUFFIX_EXPECTED + file_type)
+        actual_filename = self.output_filename(filename, self.FILENAME_SUFFIX_ACTUAL + file_type)
+        expected_filename = self.output_filename(filename, self.FILENAME_SUFFIX_EXPECTED + file_type)
         if output:
-            open(actual_filename, "wb").write(output)
+            self._write_into_file_at_path(actual_filename, output)
         if expected:
-            open(expected_filename, "wb").write(expected)
+            self._write_into_file_at_path(expected_filename, expected)
 
         if not output or not expected:
             return
 
-        if diff:
-            diff = port.diff_text(expected, output, expected_filename,
-                                  actual_filename)
-            diff_filename = self.output_filename(filename,
-                test_type + self.FILENAME_SUFFIX_DIFF + file_type)
-            open(diff_filename, "wb").write(diff)
+        if not print_text_diffs:
+            return
 
-        if wdiff:
-            # Shell out to wdiff to get colored inline diffs.
-            wdiff = port.wdiff_text(expected_filename, actual_filename)
-            filename = self.output_filename(filename, test_type +
-                                            self.FILENAME_SUFFIX_WDIFF)
-            out = open(filename, 'wb').write(wdiff)
+        diff = port.diff_text(expected, output, expected_filename, actual_filename)
+        diff_filename = self.output_filename(filename, self.FILENAME_SUFFIX_DIFF + file_type)
+        self._write_into_file_at_path(diff_filename, diff)
+
+        # Shell out to wdiff to get colored inline diffs.
+        wdiff = port.wdiff_text(expected_filename, actual_filename)
+        wdiff_filename = self.output_filename(filename, self.FILENAME_SUFFIX_WDIFF)
+        self._write_into_file_at_path(wdiff_filename, wdiff)
+
+        # Use WebKit's PrettyPatch.rb to get an HTML diff.
+        pretty_patch = port.pretty_patch_text(diff_filename)
+        pretty_patch_filename = self.output_filename(filename, self.FILENAME_SUFFIX_PRETTY_PATCH)
+        self._write_into_file_at_path(pretty_patch_filename, pretty_patch)

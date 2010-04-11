@@ -89,7 +89,7 @@ def process_output(port, test_info, test_types, test_args, configuration,
                                 test_info.filename))
         filename = os.path.splitext(filename)[0] + "-stack.txt"
         port.maybe_make_directory(os.path.split(filename)[0])
-        open(filename, "wb").write(error)
+        open(filename, "wb").write(error)  # FIXME: This leaks a file handle.
     elif error:
         _log.debug("Previous test output extra lines after dump:\n%s" %
                    error)
