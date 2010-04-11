@@ -1,5 +1,15 @@
 2010-04-11  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        Fix typo in log path for AbstractQueue
+        https://bugs.webkit.org/show_bug.cgi?id=37414
+
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+
+2010-04-11  Adam Barth  <abarth@webkit.org>
+
         Unreviewed.  Add missing import statement.
 
         * Scripts/webkitpy/common/system/executive.py:

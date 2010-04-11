@@ -65,6 +65,9 @@ class AbstractQueueTest(CommandsTest):
         self._assert_log_progress_output(["1","2","3"], "3 patches in test-queue [1, 2, 3]\n")
         self._assert_log_progress_output([1], "1 patch in test-queue [1]\n")
 
+    def test_log_directory(self):
+        self.assertEquals(TestQueue()._log_directory(), "test-queue-logs")
+
     def _assert_run_webkit_patch(self, run_args):
         queue = TestQueue()
         tool = MockTool()

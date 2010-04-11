@@ -76,7 +76,7 @@ class AbstractQueue(Command, QueueEngineDelegate):
         return self.tool.executive.run_and_throw_if_fail(webkit_patch_args)
 
     def _log_directory(self):
-        return "%s-logs"
+        return "%s-logs" % self.name
 
     # QueueEngineDelegate methods
 
