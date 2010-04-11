@@ -1,3 +1,29 @@
+2010-04-10  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27204
+
+        Implement support for changing the executable bit of a file.
+        The executable bit is among the most changed file properties.
+        Future support can include other property changes.
+
+        Currently, if a patch changes the executable bit of a file
+        it is not respected by svn-apply or svn-unapply. Since the
+        commit-queue bot uses these tools as part of its workflow,
+        such patches cannot be committed by it. That is, such patches
+        need to be committed by hand. Instead, we should add support
+        for the executable bit so that such patches can be committed
+        by the commit-queue bot.
+
+        * Scripts/VCSUtils.pm: Also change reference to Apple Computer, Inc.
+        in copyright to Apple, Inc.
+        * Scripts/svn-apply:
+        * Scripts/svn-unapply:
+        * Scripts/webkitperl/VCSUtils_unittest/appendSVNExecutableBitChangeToPatch.pl: Added.
+        * Scripts/webkitperl/VCSUtils_unittest/parseGitFileMode.pl: Added.
+        * Scripts/webkitperl/VCSUtils_unittest/parseStartOfPatchOrPropertyChangeAndEndOfPropertyChange.pl: Added.
+
 2010-04-10  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

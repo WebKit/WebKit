@@ -47,7 +47,7 @@
 #
 # Missing features:
 #
-#   Handle property changes.
+#   Handle property changes other than the executable bit.
 #   Handle copied and moved directories (would require patches made by svn-create-patch).
 #   Use version numbers in the patch file and do a 3-way merge.
 #   When reversing an addition, check that the file matches what's being removed.
@@ -101,6 +101,8 @@ my $copiedFromPath;
 my $filter;
 my $indexPath;
 my $patch;
+my $propertyChangePath;
+my $isGitFormattedPatch = 0;
 while (<>) {
     s/([\n\r]+)$//mg;
     my $eol = $1;
@@ -108,21 +110,28 @@ while (<>) {
         $filter = \&gitdiff2svndiff;
     }
     $_ = &$filter($_) if $filter;
-    if (/^Index: (.+)/) {
-        $indexPath = $1;
-        if ($patch) {
-            if ($copiedFromPath) {
-                push @copiedFiles, $patch;
-            } else {
-                patch($patch);
-            }
-            $copiedFromPath = "";
-            $patch = "";
+    my $indexPath = parseStartOfPatch($_);
+    my $propertyChangePath = parsePropertyChange($_);
+    if (($indexPath || $propertyChangePath) && $patch) {
+        if ($copiedFromPath) {
+            push @copiedFiles, $patch;
+        } else {
+            patch($patch);
         }
+        $copiedFromPath = "";
+        $patch = "";
     }
     if ($indexPath) {
         # Fix paths on diff, ---, and +++ lines to match preceding Index: line.
         s/^--- \S+/--- $indexPath/;
+
+        if ($isGitFormattedPatch && (my $fileMode = parseGitFileMode($_))) {
+            # The gitdiff2svndiff filter only operates on a single, but the equivalent
+            # property change entry in SVN spans multiple lines which we need to parse.
+            appendSVNExecutableBitChangeToPatch($indexPath, $fileMode, \$patch);
+            next;
+        }
+
         if (/^--- .+\(from (\S+):\d+\)$/) {
             $copiedFromPath = $1;
         }
@@ -130,6 +139,7 @@ while (<>) {
             $indexPath = "";
         }
     }
+    $propertyChangePath = "" if isEndOfPropertyChange($_, $propertyChangePath);
     $patch .= $_;
     $patch .= $eol;
 }
@@ -168,23 +178,25 @@ sub patch($)
     my ($patch) = @_;
     return if !$patch;
 
-    unless ($patch =~ m|^Index: ([^\r\n]+)|) {
+    my $fullPath;
+    unless ($fullPath = parseStartOfPatch($patch) || parsePropertyChange($patch)) {
         my $separator = '-' x 67;
-        warn "Failed to find 'Index:' in:\n$separator\n$patch\n$separator\n";
+        warn "Failed to find 'Index:' or 'Property changes on:' in:\n$separator\n$patch\n$separator\n";
         return;
     }
-    my $fullPath = $1;
     $directoriesToCheck{dirname($fullPath)} = 1;
 
     my $deletion = 0;
     my $addition = 0;
     my $isBinary = 0;
+    my $isSVNPropertyChange = 0;
 
     $addition = 1 if ($patch =~ /\n--- .+\(revision 0\)\n/ || $patch =~ /\n@@ -0,0 .* @@/);
     $deletion = 1 if $patch =~ /\n@@ .* \+0,0 @@/;
     $isBinary = 1 if $patch =~ /\nCannot display: file marked as a binary type\./;
+    $isSVNPropertyChange = isSVNProperty($patch);
 
-    if (!$addition && !$deletion && !$isBinary) {
+    if (!$addition && !$deletion && !$isBinary && !$isSVNPropertyChange) {
         # Standard patch, patch tool can handle this.
         if (basename($fullPath) eq "ChangeLog") {
             my $changeLogDotOrigExisted = -f "${fullPath}.orig";
@@ -226,6 +238,9 @@ sub patch($)
 
             # Show status if the file is modifed
             system "svn", "stat", $fullPath;
+        } elsif ($isSVNPropertyChange) {
+            # Reverse change of executable bit.
+            togglePropertyChange($patch, $fullPath, 1);
         } else {
             # Reverse addition
             unapplyPatch($patch, $fullPath, ["--force"]);
