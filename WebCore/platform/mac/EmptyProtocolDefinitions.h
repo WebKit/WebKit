@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,24 +25,29 @@
 
 #if defined(__OBJC__)
 
-#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
-#define DELEGATES_DECLARED_AS_FORMAL_PROTOCOLS 0
-#else
-#define DELEGATES_DECLARED_AS_FORMAL_PROTOCOLS 1
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#include <Foundation/NSPrivateDecls.h>
 #endif
-
-#if !DELEGATES_DECLARED_AS_FORMAL_PROTOCOLS
 
 #define EMPTY_PROTOCOL(NAME) \
 @protocol NAME <NSObject> \
 @end
 
+#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+
 EMPTY_PROTOCOL(NSTableViewDataSource)
 EMPTY_PROTOCOL(NSTableViewDelegate)
 EMPTY_PROTOCOL(NSWindowDelegate)
 
-#undef EMPTY_PROTOCOL
+#endif
 
-#endif /* !DELEGATES_DECLARED_AS_FORMAL_PROTOCOLS */
+#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD) || !defined(__COCOA_FORMAL_PROTOCOLS_2__)
+
+EMPTY_PROTOCOL(NSURLConnectionDelegate)
+EMPTY_PROTOCOL(NSURLDownloadDelegate)
+
+#endif
+
+#undef EMPTY_PROTOCOL
 
 #endif /* defined(__OBJC__) */

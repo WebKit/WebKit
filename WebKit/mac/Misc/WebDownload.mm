@@ -56,7 +56,7 @@ using namespace WebCore;
              directory:(NSString *)directory;
 @end
 
-@interface WebDownloadInternal : NSObject
+@interface WebDownloadInternal : NSObject <NSURLDownloadDelegate>
 {
 @public
     id realDelegate;

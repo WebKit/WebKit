@@ -32,6 +32,7 @@
 #import "BlockExceptions.h"
 #import "CredentialStorage.h"
 #import "DocLoader.h"
+#import "EmptyProtocolDefinitions.h"
 #import "FormDataStreamMac.h"
 #import "Frame.h"
 #import "FrameLoader.h"
@@ -55,12 +56,19 @@ typedef int NSInteger;
 
 using namespace WebCore;
 
-@interface WebCoreResourceHandleAsDelegate : NSObject
+@interface WebCoreResourceHandleAsDelegate : NSObject <NSURLConnectionDelegate>
 {
     ResourceHandle* m_handle;
 }
 - (id)initWithHandle:(ResourceHandle*)handle;
 - (void)detachHandle;
+@end
+
+// WebCoreNSURLConnectionDelegateProxy exists so that we can cast m_proxy to it in order
+// to disambiguate the argument type in the -setDelegate: call.  This avoids a spurious
+// warning that the compiler would otherwise emit.
+@interface WebCoreNSURLConnectionDelegateProxy : NSObject <NSURLConnectionDelegate>
+- (void)setDelegate:(id<NSURLConnectionDelegate>)delegate;
 @end
 
 @interface NSURLConnection (NSURLConnectionTigerPrivate)
@@ -73,7 +81,7 @@ using namespace WebCore;
 
 #ifndef BUILDING_ON_TIGER
 
-@interface WebCoreSynchronousLoader : NSObject {
+@interface WebCoreSynchronousLoader : NSObject <NSURLConnectionDelegate> {
     NSURL *m_url;
     NSString *m_user;
     NSString *m_pass;
@@ -168,7 +176,7 @@ bool ResourceHandle::start(Frame* frame)
 
     ASSERT(!d->m_proxy);
     d->m_proxy.adoptNS(wkCreateNSURLConnectionDelegateProxy());
-    [d->m_proxy.get() setDelegate:ResourceHandle::delegate()];
+    [static_cast<WebCoreNSURLConnectionDelegateProxy*>(d->m_proxy.get()) setDelegate:ResourceHandle::delegate()];
 
     if ((!d->m_user.isEmpty() || !d->m_pass.isEmpty())
 #ifndef BUILDING_ON_TIGER

@@ -1,3 +1,15 @@
+2010-04-10  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/7845305> Further adoption of formal protocols for delegates.
+
+        Move EmptyProtocolDefinitions.h down in to WebCore, and add the new protocols. Adopt the protocols in the appropriate places.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mac/EmptyProtocolDefinitions.h: Renamed from WebKit/mac/Misc/EmptyProtocolDefinitions.h.
+        * platform/network/mac/ResourceHandleMac.mm:
+
 2010-04-10  Chris Evans  <cevans@chromium.org>
 
         Reviewed by Adam Barth.

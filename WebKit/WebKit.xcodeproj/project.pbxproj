@@ -112,7 +112,6 @@
 		5241ADF60B1BC48A004012BD /* WebCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5241ADF40B1BC48A004012BD /* WebCache.mm */; };
 		59C77F3510545F7E00506104 /* WebGeolocationMock.mm in Sources */ = {isa = PBXBuildFile; fileRef = 59C77F3310545F7E00506104 /* WebGeolocationMock.mm */; };
 		59C77F4B105471E700506104 /* WebGeolocationMockPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 59C77F4A105471E700506104 /* WebGeolocationMockPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		5D1638F30E35B45D00F3038E /* EmptyProtocolDefinitions.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D1638F20E35B45D00F3038E /* EmptyProtocolDefinitions.h */; };
 		5D7BF8140C2A1D90008CE06D /* WebInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D7BF8120C2A1D90008CE06D /* WebInspector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5D7BF8150C2A1D90008CE06D /* WebInspector.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5D7BF8130C2A1D90008CE06D /* WebInspector.mm */; };
 		5DE83A7A0D0F7F9400CAD12A /* WebJavaScriptTextInputPanel.nib in Resources */ = {isa = PBXBuildFile; fileRef = 5DE83A740D0F7F9400CAD12A /* WebJavaScriptTextInputPanel.nib */; };
@@ -511,7 +510,6 @@
 		5241ADF40B1BC48A004012BD /* WebCache.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCache.mm; sourceTree = "<group>"; };
 		59C77F3310545F7E00506104 /* WebGeolocationMock.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebGeolocationMock.mm; sourceTree = "<group>"; };
 		59C77F4A105471E700506104 /* WebGeolocationMockPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGeolocationMockPrivate.h; sourceTree = "<group>"; };
-		5D1638F20E35B45D00F3038E /* EmptyProtocolDefinitions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmptyProtocolDefinitions.h; sourceTree = "<group>"; };
 		5D7BF8120C2A1D90008CE06D /* WebInspector.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebInspector.h; sourceTree = "<group>"; };
 		5D7BF8130C2A1D90008CE06D /* WebInspector.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebInspector.mm; sourceTree = "<group>"; };
 		5DE83A750D0F7F9400CAD12A /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/WebJavaScriptTextInputPanel.nib; sourceTree = SOURCE_ROOT; };
@@ -880,7 +878,6 @@
 		254DC334016E1D3F0ECA149E /* Misc */ = {
 			isa = PBXGroup;
 			children = (
-				5D1638F20E35B45D00F3038E /* EmptyProtocolDefinitions.h */,
 				1CCFFD120B1F81F2002EE926 /* OldWebAssertions.c */,
 				5DE92FEE0BD7017E0059A5FD /* WebAssertions.h */,
 				5241ADF30B1BC48A004012BD /* WebCache.h */,
@@ -1348,7 +1345,6 @@
 				939810650824BF01008DF038 /* CarbonWindowAdapter.h in Headers */,
 				939810660824BF01008DF038 /* CarbonWindowContentView.h in Headers */,
 				939810670824BF01008DF038 /* CarbonWindowFrame.h in Headers */,
-				5D1638F30E35B45D00F3038E /* EmptyProtocolDefinitions.h in Headers */,
 				939810680824BF01008DF038 /* HIViewAdapter.h in Headers */,
 				939810690824BF01008DF038 /* HIWebView.h in Headers */,
 				1A8DED500EE88B8A00F25022 /* HostedNetscapePluginStream.h in Headers */,

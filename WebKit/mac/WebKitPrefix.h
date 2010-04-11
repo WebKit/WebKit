@@ -72,7 +72,7 @@ typedef float CGFloat;
 
 #include <wtf/Platform.h>
 
-#include "EmptyProtocolDefinitions.h"
+#include <WebCore/EmptyProtocolDefinitions.h>
 
 /* WebKit has no way to pull settings from WebCore/config.h for now */
 /* so we assume WebKit is always being compiled on top of JavaScriptCore */

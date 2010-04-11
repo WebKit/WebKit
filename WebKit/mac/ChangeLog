@@ -1,3 +1,15 @@
+2010-04-10  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/7845305> Further adoption of formal protocols for delegates.
+
+        Move EmptyProtocolDefinitions.h down in to WebCore, and add the new protocols. Adopt the protocols in the appropriate places.
+
+        * Misc/EmptyProtocolDefinitions.h: Removed.
+        * Misc/WebDownload.mm:
+        * WebKitPrefix.h:
+
 2010-04-09  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Darin Adler.
