@@ -78,16 +78,18 @@ class SheriffBot(AbstractQueue, StepSequenceErrorHandler):
     def process_work_item(self, new_failures):
         blame_list = new_failures.keys()
         for svn_revision, builders in new_failures.items():
-            commit_info = self.tool.checkout().commit_info_for_revision(svn_revision)
-            self._sheriff.post_irc_warning(commit_info, builders)
-            self._sheriff.post_blame_comment_on_bug(commit_info,
-                                                    builders,
-                                                    blame_list)
-            self._sheriff.post_automatic_rollout_patch(commit_info, builders)
-
-            for builder in builders:
-                self.tool.status_server.update_svn_revision(svn_revision,
-                                                            builder.name())
+            try:
+                commit_info = self.tool.checkout().commit_info_for_revision(svn_revision)
+                self._sheriff.post_irc_warning(commit_info, builders)
+                self._sheriff.post_blame_comment_on_bug(commit_info,
+                                                        builders,
+                                                        blame_list)
+                self._sheriff.post_automatic_rollout_patch(commit_info,
+                                                           builders)
+            finally:
+                for builder in builders:
+                    self.tool.status_server.update_svn_revision(svn_revision,
+                                                                builder.name())
         return True
 
     def handle_unexpected_error(self, new_failures, message):
