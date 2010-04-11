@@ -64,15 +64,12 @@
 #include "webinspector.h"
 #include "webpage.h"
 #include "webview.h"
+#include "../../WebKit/qt/WebCoreSupport/DumpRenderTreeSupportQt.h"
 
 #ifdef Q_WS_MAEMO_5
 #include <X11/Xatom.h>
 #include <X11/Xlib.h>
 #undef KeyPress
-#endif
-
-#ifndef NDEBUG
-void QWEBKIT_EXPORT qt_drt_garbageCollector_collect();
 #endif
 
 static const int gExitClickArea = 80;
@@ -1010,7 +1007,7 @@ int launcherMain(const QApplication& app)
 {
 #ifndef NDEBUG
     int retVal = app.exec();
-    qt_drt_garbageCollector_collect();
+    DumpRenderTreeSupportQt::garbageCollectorCollect();
     QWebSettings::clearMemoryCaches();
     return retVal;
 #else
