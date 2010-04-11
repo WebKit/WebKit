@@ -120,7 +120,7 @@ command.</p>
 
 <p>There is one ChangeLog per top-level directory, if you changed code and tests you will need to edit at least two ChangeLogs. The <code>prepare-ChangeLog</code> script will create a stub entries for you.  You should edit these stubs to describe your change, including the full url to the bug (<a href="http://trac.webkit.org/changeset/43259">example entry</a>, note that you can use <code>--bug</code> flag).  (You should set EMAIL_ADDRESS and CHANGE_LOG_NAME in your environment if you will be running this script frequently.)</p>
 
-<p>The line WARNING: NO TEST CASES ADDED OR CHANGED appears if prepare-ChangeLog did not detect the addition of test cases.  If your patch does not require test cases (or test cases are not possible), you should include a line stating such.  Otherwise all changes require test cases which should be mentioned in the ChangeLog.</p>
+<p>The "No new tests. (OOPS!)" line appears if <code>prepare-ChangeLog</code> did not detect the addition of test cases.  If your patch does not require test cases (or test cases are not possible), you should include a line stating such.  Otherwise all changes require test cases which should be mentioned in the ChangeLog.</p>
 
 <h3>Create the patch</h3>
 <p>WebKit uses <code>svn-create-patch</code> to create patches. The
@@ -131,7 +131,7 @@ to make sure no changes are left out of your patch. It is not necessary to
 break a patch into multiple files.</p>
 
 <p>The <code>svn-create-patch</code> script does not create a file automatically.
-You need to redirect the output yourself using something like--</p>
+You need to redirect the output yourself using something like:</p>
 <p class="code">svn-create-patch > MyExcellentPatch.txt</p>
 
 <h3 id="submit">Submit your patch</h3>

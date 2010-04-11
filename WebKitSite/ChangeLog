@@ -1,3 +1,12 @@
+2010-04-11  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Minor Updates and Cleanup to the Contributing Page
+        https://bugs.webkit.org/show_bug.cgi?id=37415
+
+        * coding/contributing.html:
+
 2010-04-07  Maciej Stachowiak  <mjs@apple.com>
 
         (Not reviewed.)
