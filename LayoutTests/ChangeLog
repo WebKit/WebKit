@@ -1,5 +1,18 @@
 2010-04-10  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        Fix bugs to make new-run-webkit-tests almost run on windows
+        https://bugs.webkit.org/show_bug.cgi?id=37400
+
+        Add an empty test expectations file.  I'm not sure whether we'll use
+        this one or make a common one for each port.  However, as written, this
+        file is requires to run new-run-webkit-tests on Windows.
+
+        * platform/win/test_expectations.txt: Added.
+
+2010-04-10  Adam Barth  <abarth@webkit.org>
+
         Rubber-stamped by Eric Seidel.
 
         Add slow expectations based on webkit-dev discussion.

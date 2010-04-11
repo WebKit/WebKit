@@ -39,7 +39,7 @@ def get(port_name=None, options=None):
     appropriate port on this platform."""
     port_to_use = port_name
     if port_to_use is None:
-        if sys.platform == 'win32':
+        if sys.platform == 'win32' or sys.platform == 'cygwin':
             if options and hasattr(options, 'chromium') and options.chromium:
                 port_to_use = 'chromium-win'
             else:

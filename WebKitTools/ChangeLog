@@ -1,3 +1,17 @@
+2010-04-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix bugs to make new-run-webkit-tests almost run on windows
+        https://bugs.webkit.org/show_bug.cgi?id=37400
+
+        Fix some minor bugs that prevent new-run-webkit-tests from being run on
+        Windows.  I still haven't run it to completion, but I'm getting
+        further.
+
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+
 2010-04-10  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

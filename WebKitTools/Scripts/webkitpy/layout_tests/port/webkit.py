@@ -242,8 +242,8 @@ class WebKitPort(base.Port):
         return tests_to_skip
 
     def _skipped_file_paths(self):
-        return [os.path.join(self._webkit_baseline_path(self._name,
-                                                            'Skipped'))]
+        return [os.path.join(self._webkit_baseline_path(self._name),
+                                                        'Skipped')]
 
     def _expectations_from_skipped_files(self):
         tests_to_skip = []
