@@ -37,8 +37,8 @@ import errno
 import logging
 import os.path
 
-from layout_package import test_failures
-from test_types import test_type_base
+from webkitpy.layout_tests.layout_package import test_failures
+from webkitpy.layout_tests.test_types import test_type_base
 
 _log = logging.getLogger("webkitpy.layout_tests.test_types.text_diff")
 

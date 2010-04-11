@@ -59,8 +59,6 @@ import sys
 import time
 import traceback
 
-import simplejson
-
 from layout_package import test_expectations
 from layout_package import json_layout_results_generator
 from layout_package import metered_stream
@@ -73,6 +71,7 @@ from test_types import test_type_base
 from test_types import text_diff
 
 from webkitpy.common.system.executive import Executive
+import webkitpy.thirdparty.simplejson
 
 import port
 

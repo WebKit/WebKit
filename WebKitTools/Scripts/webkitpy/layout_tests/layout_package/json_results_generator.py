@@ -29,14 +29,14 @@
 
 import logging
 import os
-import simplejson
 import subprocess
 import sys
 import time
 import urllib2
 import xml.dom.minidom
 
-from layout_package import test_expectations
+from webkitpy.layout_tests.layout_package import test_expectations
+import webkitpy.thirdparty.simplejson as simplejson
 
 _log = logging.getLogger("webkitpy.layout_tests.layout_package."
                          "json_results_generator")

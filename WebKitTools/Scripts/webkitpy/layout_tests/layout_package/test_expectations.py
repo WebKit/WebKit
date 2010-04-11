@@ -36,7 +36,7 @@ import os
 import re
 import sys
 
-import simplejson
+import webkitpy.thirdparty.simplejson as simplejson
 
 _log = logging.getLogger("webkitpy.layout_tests.layout_package."
                          "test_expectations")

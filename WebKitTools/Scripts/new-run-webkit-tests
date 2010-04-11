@@ -28,15 +28,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """Wrapper around webkitpy/layout_tests/run_webkit_tests.py"""
-import os
-import sys
 
-scripts_directory = os.path.dirname(os.path.abspath(sys.argv[0]))
-webkitpy_directory = os.path.join(scripts_directory, "webkitpy")
-sys.path.append(os.path.join(webkitpy_directory, "layout_tests"))
-sys.path.append(os.path.join(webkitpy_directory, "thirdparty"))  # For simplejson.
-
-import run_webkit_tests
+import webkitpy.layout_tests.run_webkit_tests as run_webkit_tests
 
 if __name__ == '__main__':
     options, args = run_webkit_tests.parse_args()

@@ -29,12 +29,11 @@
 
 import logging
 import os
-import simplejson
 
-from layout_package import json_results_generator
-from layout_package import test_expectations
-from layout_package import test_failures
-
+from webkitpy.layout_tests.layout_package import json_results_generator
+from webkitpy.layout_tests.layout_package import test_expectations
+from webkitpy.layout_tests.layout_package import test_failures
+import webkitpy.thirdparty.simplejson as simplejson
 
 class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGenerator):
     """A JSON results generator for layout tests."""
