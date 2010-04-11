@@ -1,3 +1,12 @@
+2010-04-10  Rafael Weinstein  <rafaelw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Cleanup after chromium breakage. All interface methods are
+        returned to being abstract.
+
+        * public/WebNotificationPresenter.h:
+
 2010-04-09  Evan Stade  <estade@chromium.org>
 
         Reviewed by Eric Seidel.
