@@ -310,6 +310,7 @@ sub handleGitBinaryChange($$)
 sub isDirectoryEmptyForRemoval($)
 {
     my ($dir) = @_;
+    return 1 unless -d $dir;
     my $directoryIsEmpty = 1;
     opendir DIR, $dir or die "Could not open '$dir' to list files: $?";
     for (my $item = readdir DIR; $item && $directoryIsEmpty; $item = readdir DIR) {
@@ -481,6 +482,12 @@ sub scmRemove($)
         close SVN;
         print $svnOutput if $svnOutput;
     } elsif (isGit()) {
-        system("git", "rm", "--force", $path) == 0 or die  "Failed to git rm --force $path.";
+        # Git removes a directory if it becomes empty when the last file it contains is
+        # removed by `git rm`. In svn-apply this can happen when a directory is being
+        # removed in a patch, and all of the files inside of the directory are removed
+        # before attemping to remove the directory itself. In this case, Git will have 
+        # already deleted the directory and `git rm` would exit with an error claiming
+        # there was no file. The --ignore-unmatch switch gracefully handles this case.
+        system("git", "rm", "--force", "--ignore-unmatch", $path) == 0 or die "Failed to git rm --force --ignore-unmatch $path.";
     }
 }
