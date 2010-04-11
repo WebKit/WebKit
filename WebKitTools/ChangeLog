@@ -1,5 +1,14 @@
 2010-04-10  Adam Barth  <abarth@webkit.org>
 
+        Rubber-stamped by Eric Seidel.
+
+        Change "Gathering files" status line to "Collecting tests".  Gathering
+        the files sounds silly to me.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
+2010-04-10  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Fix bugs to make new-run-webkit-tests almost run on windows

@@ -1456,7 +1456,7 @@ def main(options, args):
 
     # Create the output directory if it doesn't already exist.
     port_obj.maybe_make_directory(options.results_directory)
-    meter.update("Gathering files ...")
+    meter.update("Collecting tests ...")
 
     test_runner = TestRunner(port_obj, options, meter)
     test_runner.gather_file_paths(paths)
