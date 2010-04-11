@@ -54,6 +54,7 @@ using namespace std;
 
 namespace WebCore {
 
+#if ENABLE(CONTEXT_MENUS)
 class FrontendMenuProvider : public ContextMenuProvider {
 public:
     static PassRefPtr<FrontendMenuProvider> create(InspectorFrontendHost* frontendHost, ScriptObject webInspector, const Vector<ContextMenuItem*>& items)
@@ -115,11 +116,14 @@ private:
     ScriptObject m_webInspector;
     Vector<ContextMenuItem*> m_items;
 };
+#endif
 
 InspectorFrontendHost::InspectorFrontendHost(InspectorFrontendClient* client, Page* frontendPage)
     : m_client(client)
     , m_frontendPage(frontendPage)
+#if ENABLE(CONTEXT_MENUS)
     , m_menuProvider(0)
+#endif
 {
 }
 
@@ -131,8 +135,10 @@ InspectorFrontendHost::~InspectorFrontendHost()
 void InspectorFrontendHost::disconnectClient()
 {
     m_client = 0;
+#if ENABLE(CONTEXT_MENUS)
     if (m_menuProvider)
         m_menuProvider->disconnect();
+#endif
     m_frontendPage = 0;
 }
 
@@ -201,6 +207,7 @@ void InspectorFrontendHost::copyText(const String& text)
     Pasteboard::generalPasteboard()->writePlainText(text);
 }
 
+#if ENABLE(CONTEXT_MENUS)
 void InspectorFrontendHost::showContextMenu(Event* event, const Vector<ContextMenuItem*>& items)
 {
     ASSERT(m_frontendPage);
@@ -215,6 +222,7 @@ void InspectorFrontendHost::showContextMenu(Event* event, const Vector<ContextMe
     menuController->showContextMenu(event, menuProvider);
     m_menuProvider = menuProvider.get();
 }
+#endif
 
 } // namespace WebCore
 

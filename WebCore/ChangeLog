@@ -1,3 +1,19 @@
+2010-04-10  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        Missing CONTEXT_MENUS Guards
+        https://bugs.webkit.org/show_bug.cgi?id=37398
+
+        Added missing ENABLE(CONTEXT_MENUS) guards.
+
+        * bindings/js/JSInspectorFrontendHostCustom.cpp:
+        (WebCore::JSInspectorFrontendHost::showContextMenu):
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::InspectorFrontendHost):
+        (WebCore::InspectorFrontendHost::disconnectClient):
+        * inspector/InspectorFrontendHost.h:
+
 2010-04-10  Stephan Aßmus  <superstippi@gmx.de>
 
         Reviewed by Eric Seidel.
