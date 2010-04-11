@@ -32,6 +32,7 @@
 #include <QObject>
 
 class QWebPage;
+class DumpRenderTreeSupportQt;
 
 class GCController : public QObject
 {
@@ -43,6 +44,7 @@ public slots:
     void collect() const;
     void collectOnAlternateThread(bool waitUntilDone) const;
     size_t getJSObjectCount() const;
+
 };
 
 #endif

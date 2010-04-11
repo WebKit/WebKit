@@ -53,6 +53,7 @@ QT_END_NAMESPACE
 class QWebFrame;
 
 class LayoutTestController;
+class DumpRenderTreeSupportQt;
 class EventSender;
 class TextInputController;
 class GCController;

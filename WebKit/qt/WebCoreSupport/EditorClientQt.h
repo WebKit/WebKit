@@ -54,7 +54,6 @@ public:
     virtual bool isGrammarCheckingEnabled();
     virtual void toggleGrammarChecking();
     virtual int spellCheckerDocumentTag();
-    
     virtual bool selectWordBeforeMenuEvent();
     virtual bool isEditable();
 

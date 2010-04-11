@@ -50,6 +50,7 @@ class QWebSecurityOrigin;
 class QWebElement;
 class QWebElementCollection;
 
+class DumpRenderTreeSupportQt;
 namespace WebCore {
     class WidgetPrivate;
     class FrameLoaderClientQt;
@@ -225,6 +226,7 @@ private:
     friend class QWebPage;
     friend class QWebPagePrivate;
     friend class QWebFramePrivate;
+    friend class DumpRenderTreeSupportQt;
     friend class WebCore::WidgetPrivate;
     friend class WebCore::FrameLoaderClientQt;
     friend class WebCore::ChromeClientQt;

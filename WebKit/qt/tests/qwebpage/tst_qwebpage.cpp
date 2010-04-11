@@ -20,6 +20,7 @@
 */
 
 #include "../util.h"
+#include "../WebCoreSupport/DumpRenderTreeSupportQt.h"
 #include <QDir>
 #include <QGraphicsWidget>
 #include <QLineEdit>
@@ -725,10 +726,6 @@ void tst_QWebPage::createViewlessPlugin()
 
 }
 
-// import private API
-void QWEBKIT_EXPORT qt_webpage_setGroupName(QWebPage* page, const QString& groupName);
-QString QWEBKIT_EXPORT qt_webpage_groupName(QWebPage* page);
-
 void tst_QWebPage::multiplePageGroupsAndLocalStorage()
 {
     QDir dir(QDir::currentPath());
@@ -740,12 +737,12 @@ void tst_QWebPage::multiplePageGroupsAndLocalStorage()
 
     view1.page()->settings()->setAttribute(QWebSettings::LocalStorageEnabled, true);
     view1.page()->settings()->setLocalStoragePath(QDir::toNativeSeparators(QDir::currentPath() + "/path1"));
-    qt_webpage_setGroupName(view1.page(), "group1");
+    DumpRenderTreeSupportQt::webPageSetGroupName(view1.page(), "group1");
     view2.page()->settings()->setAttribute(QWebSettings::LocalStorageEnabled, true);    
     view2.page()->settings()->setLocalStoragePath(QDir::toNativeSeparators(QDir::currentPath() + "/path2"));
-    qt_webpage_setGroupName(view2.page(), "group2");
-    QCOMPARE(qt_webpage_groupName(view1.page()), QString("group1"));
-    QCOMPARE(qt_webpage_groupName(view2.page()), QString("group2"));
+    DumpRenderTreeSupportQt::webPageSetGroupName(view2.page(), "group2");
+    QCOMPARE(DumpRenderTreeSupportQt::webPageGroupName(view1.page()), QString("group1"));
+    QCOMPARE(DumpRenderTreeSupportQt::webPageGroupName(view2.page()), QString("group2"));
 
 
     view1.setHtml(QString("<html><body> </body></html>"), QUrl("http://www.myexample.com"));
@@ -1532,8 +1529,6 @@ void tst_QWebPage::inputMethodsTextFormat()
 
     delete view;
 }
-// import a little DRT helper function to trigger the garbage collector
-void QWEBKIT_EXPORT qt_drt_garbageCollector_collect();
 
 void tst_QWebPage::protectBindingsRuntimeObjectsFromCollector()
 {
@@ -1551,7 +1546,7 @@ void tst_QWebPage::protectBindingsRuntimeObjectsFromCollector()
 
     newPage->mainFrame()->evaluateJavaScript("testme('foo')");
 
-    qt_drt_garbageCollector_collect();
+    DumpRenderTreeSupportQt::garbageCollectorCollect();
 
     // don't crash!
     newPage->mainFrame()->evaluateJavaScript("testme('bar')");

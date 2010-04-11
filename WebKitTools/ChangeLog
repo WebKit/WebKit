@@ -1,3 +1,45 @@
+2010-04-10  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Refactor Qt DRT support in QtWebKit
+
+        Update Qt DRT to use new DumpRenderTreeSupportQt static class.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35844
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        (WebCore::DumpRenderTree::resetToConsistentStateBeforeTesting):
+        (WebCore::DumpRenderTree::dumpFramesAsText):
+        * DumpRenderTree/qt/DumpRenderTreeQt.h:
+        * DumpRenderTree/qt/GCControllerQt.cpp:
+        (GCController::collect):
+        (GCController::collectOnAlternateThread):
+        (GCController::getJSObjectCount):
+        * DumpRenderTree/qt/GCControllerQt.h:
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::counterValueForElementById):
+        (LayoutTestController::setViewModeMediaFeature):
+        (LayoutTestController::setMediaType):
+        (LayoutTestController::closeWebInspector):
+        (LayoutTestController::showWebInspector):
+        (LayoutTestController::evaluateInWebInspector):
+        (LayoutTestController::setFrameFlatteningEnabled):
+        (LayoutTestController::setJavaScriptProfilingEnabled):
+        (LayoutTestController::setTimelineProfilingEnabled):
+        (LayoutTestController::pauseAnimationAtTimeOnElementWithId):
+        (LayoutTestController::pauseTransitionAtTimeOnElementWithId):
+        (LayoutTestController::sampleSVGAnimationForElementAtTime):
+        (LayoutTestController::numberOfActiveAnimations):
+        (LayoutTestController::whiteListAccessFromOrigin):
+        (LayoutTestController::setCaretBrowsingEnabled):
+        (LayoutTestController::setDomainRelaxationForbiddenForURLScheme):
+        (LayoutTestController::workerThreadCount):
+        (LayoutTestController::pageNumberForElementById):
+        (LayoutTestController::numberOfPages):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+
 2010-04-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

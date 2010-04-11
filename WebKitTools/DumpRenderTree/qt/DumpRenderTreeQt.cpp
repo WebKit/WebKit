@@ -32,6 +32,7 @@
 #include "config.h"
 
 #include "DumpRenderTreeQt.h"
+#include "../../../WebKit/qt/WebCoreSupport/DumpRenderTreeSupportQt.h"
 #include "EventSenderQt.h"
 #include "GCControllerQt.h"
 #include "LayoutTestControllerQt.h"
@@ -79,13 +80,8 @@
 
 #include <qdebug.h>
 
-extern void qt_drt_run(bool b);
 extern void qt_dump_set_accepts_editing(bool b);
 extern void qt_dump_frame_loader(bool b);
-extern void qt_drt_clearFrameName(QWebFrame* qFrame);
-extern void qt_drt_overwritePluginDirectories();
-extern void qt_drt_resetOriginAccessWhiteLists();
-extern bool qt_drt_hasDocumentElement(QWebFrame* qFrame);
 extern void qt_dump_resource_load_callbacks(bool b);
 
 namespace WebCore {
@@ -344,7 +340,7 @@ DumpRenderTree::DumpRenderTree()
     , m_enableTextOutput(false)
     , m_singleFileMode(false)
 {
-    qt_drt_overwritePluginDirectories();
+    DumpRenderTreeSupportQt::overwritePluginDirectories();
 
     char* dumpRenderTreeTemp = getenv("DUMPRENDERTREE_TEMP");
     if (dumpRenderTreeTemp)
@@ -396,7 +392,8 @@ DumpRenderTree::DumpRenderTree()
             this, SLOT(statusBarMessage(const QString&)));
 
     QObject::connect(this, SIGNAL(quit()), qApp, SLOT(quit()), Qt::QueuedConnection);
-    qt_drt_run(true);
+
+    DumpRenderTreeSupportQt::setDumpRenderTreeModeEnabled(true);
     QFocusEvent event(QEvent::FocusIn, Qt::ActiveWindowFocusReason);
     QApplication::sendEvent(m_mainView, &event);
 }
@@ -451,7 +448,7 @@ void DumpRenderTree::resetToConsistentStateBeforeTesting()
     m_page->undoStack()->clear();
     m_page->mainFrame()->setZoomFactor(1.0);
     clearHistory(m_page);
-    qt_drt_clearFrameName(m_page->mainFrame());
+    DumpRenderTreeSupportQt::clearFrameName(m_page->mainFrame());
 
     m_page->mainFrame()->setScrollBarPolicy(Qt::Vertical, Qt::ScrollBarAsNeeded);
     m_page->mainFrame()->setScrollBarPolicy(Qt::Horizontal, Qt::ScrollBarAsNeeded);
@@ -459,7 +456,7 @@ void DumpRenderTree::resetToConsistentStateBeforeTesting()
     WorkQueue::shared()->clear();
     WorkQueue::shared()->setFrozen(false);
 
-    qt_drt_resetOriginAccessWhiteLists();
+    DumpRenderTreeSupportQt::resetOriginAccessWhiteLists();
 
     QLocale::setDefault(QLocale::c());
     setlocale(LC_ALL, "");
@@ -620,7 +617,7 @@ void DumpRenderTree::hidePage()
 
 QString DumpRenderTree::dumpFramesAsText(QWebFrame* frame)
 {
-    if (!frame || !qt_drt_hasDocumentElement(frame))
+    if (!frame || !DumpRenderTreeSupportQt::hasDocumentElement(frame))
         return QString();
 
     QString result;

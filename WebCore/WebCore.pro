@@ -2115,6 +2115,7 @@ SOURCES += \
     ../WebKit/qt/WebCoreSupport/ChromeClientQt.cpp \
     ../WebKit/qt/WebCoreSupport/ContextMenuClientQt.cpp \
     ../WebKit/qt/WebCoreSupport/DragClientQt.cpp \
+    ../WebKit/qt/WebCoreSupport/DumpRenderTreeSupportQt.cpp \
     ../WebKit/qt/WebCoreSupport/EditorClientQt.cpp \
     ../WebKit/qt/WebCoreSupport/EditCommandQt.cpp \
     ../WebKit/qt/WebCoreSupport/FrameLoaderClientQt.cpp \

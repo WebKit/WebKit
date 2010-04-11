@@ -373,6 +373,7 @@ private:
     friend class WebCore::NotificationPresenterClientQt;
     friend class WebCore::ResourceHandle;
     friend class WebCore::QNetworkReplyHandler;
+    friend class DumpRenderTreeSupportQt;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QWebPage::FindFlags)

@@ -1,3 +1,60 @@
+2010-04-10  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Refactor Qt DRT support in QtWebKit
+
+        Move all QT DRT support functions to a static class.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35844
+
+        * Api/qwebframe.cpp: Remove static functions.
+        * Api/qwebframe.h: Make DumpRenderTreeSupportQt a friend.
+        * Api/qwebpage.cpp: Remove static functions.
+        * Api/qwebpage.h: Make DumpRenderTreeSupportQt a friend.
+        * Api/qwebsecurityorigin.cpp: Remove static functions.
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp: Added.
+        (DumpRenderTreeSupportQt::DumpRenderTreeSupportQt):
+        (DumpRenderTreeSupportQt::~DumpRenderTreeSupportQt):
+        (DumpRenderTreeSupportQt::overwritePluginDirectories):
+        (DumpRenderTreeSupportQt::workerThreadCount):
+        (DumpRenderTreeSupportQt::setDumpRenderTreeModeEnabled):
+        (DumpRenderTreeSupportQt::setFrameFlatteningEnabled):
+        (DumpRenderTreeSupportQt::webPageSetGroupName):
+        (DumpRenderTreeSupportQt::webPageGroupName):
+        (DumpRenderTreeSupportQt::webInspectorExecuteScript):
+        (DumpRenderTreeSupportQt::webInspectorClose):
+        (DumpRenderTreeSupportQt::webInspectorShow):
+        (DumpRenderTreeSupportQt::setTimelineProfilingEnabled):
+        (DumpRenderTreeSupportQt::hasDocumentElement):
+        (DumpRenderTreeSupportQt::setJavaScriptProfilingEnabled):
+        (DumpRenderTreeSupportQt::pauseAnimation):
+        (DumpRenderTreeSupportQt::pauseTransitionOfProperty):
+        (DumpRenderTreeSupportQt::pauseSVGAnimation):
+        (DumpRenderTreeSupportQt::numberOfActiveAnimations):
+        (DumpRenderTreeSupportQt::clearFrameName):
+        (DumpRenderTreeSupportQt::javaScriptObjectsCount):
+        (DumpRenderTreeSupportQt::garbageCollectorCollect):
+        (DumpRenderTreeSupportQt::garbageCollectorCollectOnAlternateThread):
+        (DumpRenderTreeSupportQt::counterValueForElementById):
+        (DumpRenderTreeSupportQt::pageNumberForElementById):
+        (DumpRenderTreeSupportQt::numberOfPages):
+        (DumpRenderTreeSupportQt::suspendActiveDOMObjects):
+        (DumpRenderTreeSupportQt::resumeActiveDOMObjects):
+        (DumpRenderTreeSupportQt::evaluateScriptInIsolatedWorld):
+        (DumpRenderTreeSupportQt::whiteListAccessFromOrigin):
+        (DumpRenderTreeSupportQt::resetOriginAccessWhiteLists):
+        (DumpRenderTreeSupportQt::setDomainRelaxationForbiddenForURLScheme):
+        (DumpRenderTreeSupportQt::setCaretBrowsingEnabled):
+        (DumpRenderTreeSupportQt::setMediaType):
+        (DumpRenderTreeSupportQt::setViewMode):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h: Added.
+        * WebCoreSupport/EditorClientQt.h:
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::multiplePageGroupsAndLocalStorage):
+        (tst_QWebPage::inputMethodsTextFormat):
+        (tst_QWebPage::protectBindingsRuntimeObjectsFromCollector):
+
 2010-04-11  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Simon Hausmann.

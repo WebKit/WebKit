@@ -46,6 +46,7 @@
 #include <qwebsecurityorigin.h>
 
 class QWebFrame;
+class DumpRenderTreeSupportQt;
 namespace WebCore {
     class DumpRenderTree;
 }

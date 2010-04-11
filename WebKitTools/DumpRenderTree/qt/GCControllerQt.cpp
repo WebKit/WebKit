@@ -29,13 +29,9 @@
 
 #include "config.h"
 #include "GCControllerQt.h"
+#include "../../../WebKit/qt/WebCoreSupport/DumpRenderTreeSupportQt.h"
 
 #include <qwebpage.h>
-
-extern int qt_drt_javaScriptObjectsCount();
-extern void qt_drt_garbageCollector_collect();
-
-extern void qt_drt_garbageCollector_collectOnAlternateThread(bool waitUntilDone);
 
 GCController::GCController(QWebPage* parent)
     : QObject(parent)
@@ -44,15 +40,15 @@ GCController::GCController(QWebPage* parent)
 
 void GCController::collect() const
 {
-    qt_drt_garbageCollector_collect();
+    DumpRenderTreeSupportQt::garbageCollectorCollect();
 }
 
 void GCController::collectOnAlternateThread(bool waitUntilDone) const
 {
-    qt_drt_garbageCollector_collectOnAlternateThread(waitUntilDone);
+    DumpRenderTreeSupportQt::garbageCollectorCollectOnAlternateThread(waitUntilDone);
 }
 
 size_t GCController::getJSObjectCount() const
 {
-    return qt_drt_javaScriptObjectsCount();
+    return DumpRenderTreeSupportQt::javaScriptObjectsCount();
 }
