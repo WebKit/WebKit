@@ -172,9 +172,9 @@ class WebKitPort(base.Port):
         return result
 
     def results_directory(self):
-        # FIXME: Why do we say chromium here?  Maybe "new-run-webkit-tests-"?
-        return ('/tmp/run-chromium-webkit-tests-' +
-                self._options.results_directory)
+        # Results are store relative to the built products to make it easy
+        # to have multiple copies of webkit checked out and built.
+        return self._build_path(self._options.results_directory)
 
     def setup_test_run(self):
         # This port doesn't require any specific configuration.
