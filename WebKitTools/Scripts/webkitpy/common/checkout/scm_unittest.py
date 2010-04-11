@@ -223,6 +223,29 @@ class SCMTest(unittest.TestCase):
         self.assertEqual(self.scm.changed_files(), ["test_dir/test_file3", "test_file"])
         os.chdir(old_cwd)
 
+    def _shared_test_added_files(self):
+        write_into_file_at_path("test_file", "changed content")
+        self.assertEqual(self.scm.added_files(), [])
+
+        write_into_file_at_path("added_file", "new stuff")
+        self.scm.add("added_file")
+
+        os.mkdir("added_dir")
+        write_into_file_at_path("added_dir/added_file2", "new stuff")
+        self.scm.add("added_dir")
+
+        # SVN reports directory changes, Git does not.
+        added_files = self.scm.added_files()
+        if "added_dir" in added_files:
+            added_files.remove("added_dir")
+        self.assertEqual(added_files, ["added_dir/added_file2", "added_file"])
+
+        # Test also to make sure clean_working_directory removes added files
+        self.scm.clean_working_directory()
+        self.assertEqual(self.scm.added_files(), [])
+        self.assertFalse(os.path.exists("added_file"))
+        self.assertFalse(os.path.exists("added_dir"))
+
     def _shared_test_changed_files_for_revision(self):
         # SVN reports directory changes, Git does not.
         changed_files = self.scm.changed_files_for_revision(2)
@@ -557,6 +580,9 @@ Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
     def test_changed_files_for_revision(self):
         self._shared_test_changed_files_for_revision()
 
+    def test_added_files(self):
+        self._shared_test_added_files()
+
     def test_contents_at_revision(self):
         self._shared_test_contents_at_revision()
 
@@ -745,6 +771,9 @@ class GitTest(SCMTest):
 
     def test_contents_at_revision(self):
         self._shared_test_contents_at_revision()
+
+    def test_added_files(self):
+        self._shared_test_added_files()
 
     def test_committer_email_for_revision(self):
         self._shared_test_committer_email_for_revision()

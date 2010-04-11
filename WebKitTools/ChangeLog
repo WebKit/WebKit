@@ -1,3 +1,27 @@
+2010-04-10  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        WinEWS bot fails to svn update because scm.clean_working_directory leaves files around
+        https://bugs.webkit.org/show_bug.cgi?id=37401
+
+        The Git-based bots don't have this trouble because
+        Git.clean_working_directory fully removes files that were
+        marked as "add".  SVN.clean_working_directory previously just
+        called "svn revert" which would leave added files in the
+        working directory untracked.  This patch makes
+        SVN.clean_working_directory function more like
+        Git.clean_working_directory by removing added files after revert.
+
+        * Scripts/webkitpy/common/checkout/scm.py:
+         - Add SCM.absolute_path for easy conversion between
+           repository-relative paths and absolute paths.
+         - Add SCM.add and SCM.added_files
+         - Make SVN.clean_working_directory remove any added_files after svn revert.
+         - The new unit tests found a bug in Git.status_command, change to use git diff --name-status instead.
+        * Scripts/webkitpy/common/checkout/scm_unittest.py:
+         - Add tests for added code.
+
 2010-04-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

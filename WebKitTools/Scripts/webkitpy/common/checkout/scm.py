@@ -100,9 +100,16 @@ class SCM:
         self.checkout_root = self.find_checkout_root(self.cwd)
         self.dryrun = False
 
+    # SCM always returns repository relative path, but sometimes we need
+    # absolute paths to pass to rm, etc.
+    def absolute_path(self, repository_relative_path):
+        return os.path.join(self.checkout_root, repository_relative_path)
+
+    # FIXME: This belongs in Checkout, not SCM.
     def scripts_directory(self):
         return os.path.join(self.checkout_root, "WebKitTools", "Scripts")
 
+    # FIXME: This belongs in Checkout, not SCM.
     def script_path(self, script_name):
         return os.path.join(self.scripts_directory(), script_name)
 
@@ -168,10 +175,16 @@ class SCM:
     def status_command(self):
         raise NotImplementedError, "subclasses must implement"
 
+    def add(self, path):
+        raise NotImplementedError, "subclasses must implement"
+
     def changed_files(self):
         raise NotImplementedError, "subclasses must implement"
 
     def changed_files_for_revision(self):
+        raise NotImplementedError, "subclasses must implement"
+
+    def added_files(self):
         raise NotImplementedError, "subclasses must implement"
 
     def conflicted_files(self):
@@ -295,12 +308,25 @@ class SVN(SCM):
         return self.cached_version
 
     def working_directory_is_clean(self):
-        # FIXME: Should this use cwd=self.checkout_root?
-        return run_command(['svn', 'diff']) == ""
+        return run_command(["svn", "diff"], cwd=self.checkout_root) == ""
 
     def clean_working_directory(self):
-        # FIXME: Shouldn't this use cwd=self.checkout_root?
-        run_command(['svn', 'revert', '-R', '.'])
+        # svn revert -R is not as awesome as git reset --hard.
+        # It will leave added files around, causing later svn update
+        # calls to fail on the bots.  We make this mirror git reset --hard
+        # by deleting any added files as well.
+        added_files = reversed(sorted(self.added_files()))
+        # added_files() returns directories for SVN, we walk the files in reverse path
+        # length order so that we remove files before we try to remove the directories.
+        run_command(["svn", "revert", "-R", "."], cwd=self.checkout_root)
+        for path in added_files:
+            # This is robust against cwd != self.checkout_root
+            absolute_path = self.absolute_path(path)
+            # Completely lame that there is no easy way to remove both types with one call.
+            if os.path.isdir(path):
+                os.rmdir(absolute_path)
+            else:
+                os.remove(absolute_path)
 
     def status_command(self):
         return ['svn', 'status']
@@ -308,6 +334,10 @@ class SVN(SCM):
     def _status_regexp(self, expected_types):
         field_count = 6 if self.svn_version() > "1.6" else 5
         return "^(?P<status>[%s]).{%s} (?P<filename>.+)$" % (expected_types, field_count)
+
+    def add(self, path):
+        # path is assumed to be cwd relative?
+        run_command(["svn", "add", path])
 
     def changed_files(self):
         return self.run_status_and_extract_filenames(self.status_command(), self._status_regexp("ACDMR"))
@@ -319,6 +349,9 @@ class SVN(SCM):
 
     def conflicted_files(self):
         return self.run_status_and_extract_filenames(self.status_command(), self._status_regexp("C"))
+
+    def added_files(self):
+        return self.run_status_and_extract_filenames(self.status_command(), self._status_regexp("A"))
 
     @staticmethod
     def supports_local_commits():
@@ -432,10 +465,15 @@ class Git(SCM):
             run_command(['git', 'rebase', '--abort'])
 
     def status_command(self):
-        return ['git', 'status']
+        # git status returns non-zero when there are changes, so we use git diff name --name-status HEAD instead.
+        return ["git", "diff", "--name-status", "HEAD"]
 
     def _status_regexp(self, expected_types):
         return '^(?P<status>[%s])\t(?P<filename>.+)$' % expected_types
+
+    def add(self, path):
+        # path is assumed to be cwd relative?
+        run_command(["git", "add", path])
 
     def changed_files(self):
         status_command = ['git', 'diff', '-r', '--name-status', '-C', '-M', 'HEAD']
@@ -454,6 +492,9 @@ class Git(SCM):
     def conflicted_files(self):
         status_command = ['git', 'diff', '--name-status', '-C', '-M', '--diff-filter=U']
         return self.run_status_and_extract_filenames(status_command, self._status_regexp("U"))
+
+    def added_files(self):
+        return self.run_status_and_extract_filenames(self.status_command(), self._status_regexp("A"))
 
     @staticmethod
     def supports_local_commits():
