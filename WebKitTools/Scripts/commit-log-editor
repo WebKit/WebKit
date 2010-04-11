@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2006, 2007, 2008, 2009 Apple Inc.  All rights reserved.
+# Copyright (C) 2006, 2007, 2008, 2009, 2010 Apple Inc.  All rights reserved.
 # Copyright (C) 2009 Torch Mobile Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -88,7 +88,7 @@ my $inChangesToBeCommitted = !isGit();
 my @changeLogs = ();
 my $logContents = "";
 my $existingLog = 0;
-open LOG, $log or die;
+open LOG, $log or die "Could not open the log file.";
 while (<LOG>) {
     if (isGit()) {
         if (/^# Changes to be committed:$/) {
@@ -155,8 +155,8 @@ for my $changeLog (@changeLogs) {
             # Remove indentation spaces
             $line =~ s/^ {8}//;
 
-            # Save the reviewed by line
-            if ($line =~ m/^Reviewed by .*/) {
+            # Save the reviewed / rubber stamped by line.
+            if ($line =~ m/^Reviewed by .*/ || $line =~ m/^Rubber[ \-]?stamped by .*/) {
                 $reviewedByLine = $line;
                 next;
             }
@@ -188,7 +188,6 @@ for my $changeLog (@changeLogs) {
                 $reviewedByLine = "";
             }
 
-
             $lineCount++;
             $contents .= $line;
         } else {
@@ -208,12 +207,6 @@ for my $changeLog (@changeLogs) {
     my $sortKey = lc $label;
     if ($label eq "top level") {
         $sortKey = "";
-    } elsif ($label eq "Tools") {
-        $sortKey = "-, just after top level";
-    } elsif ($label eq "WebBrowser") {
-        $sortKey = lc "WebKit, WebBrowser after";
-    } elsif ($label eq "WebCore") {
-        $sortKey = lc "WebFoundation, WebCore after";
     } elsif ($label eq "LayoutTests") {
         $sortKey = lc "~, LayoutTests last";
     }
