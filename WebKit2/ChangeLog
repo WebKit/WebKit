@@ -1,5 +1,22 @@
 2010-04-11  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=37417
+        Move duplicated internal CoreIPC message kinds to a
+        header.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::processIncomingMessage):
+        * Platform/CoreIPC/CoreIPCMessageKinds.h: Added.
+        (CoreIPC::CoreIPCMessage::):
+        (CoreIPC::):
+        * Platform/CoreIPC/mac/ConnectionMac.cpp:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+
+2010-04-11  Sam Weinig  <sam@webkit.org>
+
         Rubber-stamped by Anders Carlsson.
 
         Disable not-implemented warnings by default for now.

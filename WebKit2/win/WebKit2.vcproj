@@ -1557,6 +1557,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Platform\CoreIPC\CoreIPCMessageKinds.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Platform\CoreIPC\MessageID.h"
 					>
 				</File>

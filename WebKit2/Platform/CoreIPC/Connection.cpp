@@ -25,6 +25,7 @@
 
 #include "Connection.h"
 
+#include "CoreIPCMessageKinds.h"
 #include "RunLoop.h"
 #include "WorkItem.h"
 #include <wtf/CurrentTime.h>
@@ -32,19 +33,6 @@
 using namespace std;
 
 namespace CoreIPC {
-
-namespace CoreIPCMessage {
-
-enum Kind {
-    InitializeConnection,
-    SyncMessageReply,
-};
-
-}
-
-template<> struct MessageKindTraits<CoreIPCMessage::Kind> { 
-    static const MessageClass messageClass = MessageClassCoreIPC;
-};
 
 PassRefPtr<Connection> Connection::createServerConnection(Identifier identifier, Client* client, RunLoop* clientRunLoop)
 {
@@ -178,8 +166,7 @@ void Connection::processIncomingMessage(MessageID messageID, std::auto_ptr<Argum
     {
         MutexLocker locker(m_waitForMessageMutex);
         
-        HashMap<std::pair<unsigned, uint64_t>, ArgumentDecoder*>::iterator it = m_waitForMessageMap.find(std::make_pair(messageID.toInt(), 
-                                                                                                                        arguments->destinationID()));
+        HashMap<std::pair<unsigned, uint64_t>, ArgumentDecoder*>::iterator it = m_waitForMessageMap.find(std::make_pair(messageID.toInt(), arguments->destinationID()));
         if (it != m_waitForMessageMap.end()) {
             it->second = arguments.release();
         

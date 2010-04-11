@@ -88,6 +88,7 @@
 		BC111B63112F638300337BAB /* WebPageMessageKinds.h in Headers */ = {isa = PBXBuildFile; fileRef = BC111B60112F638300337BAB /* WebPageMessageKinds.h */; };
 		BC111B64112F638300337BAB /* WebPageProxyMessageKinds.h in Headers */ = {isa = PBXBuildFile; fileRef = BC111B61112F638300337BAB /* WebPageProxyMessageKinds.h */; };
 		BC111B65112F638300337BAB /* WebProcessMessageKinds.h in Headers */ = {isa = PBXBuildFile; fileRef = BC111B62112F638300337BAB /* WebProcessMessageKinds.h */; };
+		BC131BC911726C2800B69727 /* CoreIPCMessageKinds.h in Headers */ = {isa = PBXBuildFile; fileRef = BC131BC811726C2800B69727 /* CoreIPCMessageKinds.h */; };
 		BC1A7C581136E19C00FB7167 /* WebProcessLauncher.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A7C571136E19C00FB7167 /* WebProcessLauncher.h */; };
 		BC1DD7B2114DC396005ADAF3 /* WebCoreTypeArgumentMarshalling.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1DD7B1114DC396005ADAF3 /* WebCoreTypeArgumentMarshalling.h */; };
 		BC20EBB0116EEB0800094A50 /* WKString.h in Headers */ = {isa = PBXBuildFile; fileRef = BC20EBAE116EEB0800094A50 /* WKString.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -277,6 +278,7 @@
 		BC111B60112F638300337BAB /* WebPageMessageKinds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPageMessageKinds.h; sourceTree = "<group>"; };
 		BC111B61112F638300337BAB /* WebPageProxyMessageKinds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPageProxyMessageKinds.h; sourceTree = "<group>"; };
 		BC111B62112F638300337BAB /* WebProcessMessageKinds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessMessageKinds.h; sourceTree = "<group>"; };
+		BC131BC811726C2800B69727 /* CoreIPCMessageKinds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreIPCMessageKinds.h; sourceTree = "<group>"; };
 		BC1A7C571136E19C00FB7167 /* WebProcessLauncher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessLauncher.h; sourceTree = "<group>"; };
 		BC1DD7B1114DC396005ADAF3 /* WebCoreTypeArgumentMarshalling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreTypeArgumentMarshalling.h; sourceTree = "<group>"; };
 		BC20EBAE116EEB0800094A50 /* WKString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKString.h; sourceTree = "<group>"; };
@@ -503,6 +505,7 @@
 				BCEE966B112FAF57006BCC24 /* Attachment.h */,
 				BC032DA210F437D10058C15A /* Connection.cpp */,
 				BC032DA310F437D10058C15A /* Connection.h */,
+				BC131BC811726C2800B69727 /* CoreIPCMessageKinds.h */,
 				BC032DA410F437D10058C15A /* MessageID.h */,
 			);
 			path = CoreIPC;
@@ -849,6 +852,7 @@
 				BC20EBC7116EF10500094A50 /* KURLWrapper.h in Headers */,
 				BC20EC06116EF7FF00094A50 /* WKStringCF.h in Headers */,
 				BC20ED66116F971100094A50 /* WKURLCF.h in Headers */,
+				BC131BC911726C2800B69727 /* CoreIPCMessageKinds.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

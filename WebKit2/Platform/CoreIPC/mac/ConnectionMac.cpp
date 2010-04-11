@@ -25,6 +25,7 @@
 
 #include "Connection.h"
 
+#include "CoreIPCMessageKinds.h"
 #include "MachPort.h"
 #include "RunLoop.h"
 
@@ -33,20 +34,6 @@ using namespace std;
 namespace CoreIPC {
 
 static const size_t inlineMessageMaxSize = 4096;
-
-// FIXME: Share this between ConnectionMac.cpp and ConnectionWin.cpp.
-namespace CoreIPCMessage {
-
-enum Kind {
-    InitializeConnection,
-    SyncMessageReply,
-};
-
-}
-
-template<> struct MessageKindTraits<CoreIPCMessage::Kind> { 
-    static const MessageClass messageClass = MessageClassCoreIPC;
-};
 
 void Connection::platformInvalidate()
 {
