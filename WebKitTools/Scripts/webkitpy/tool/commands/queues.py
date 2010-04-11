@@ -75,10 +75,13 @@ class AbstractQueue(Command, QueueEngineDelegate):
         webkit_patch_args += map(str, args)
         return self.tool.executive.run_and_throw_if_fail(webkit_patch_args)
 
+    def _log_directory(self):
+        return "%s-logs"
+
     # QueueEngineDelegate methods
 
     def queue_log_path(self):
-        return "%s.log" % self.name
+        return os.path.join(self._log_directory(), "%s.log" % self.name)
 
     def work_item_log_path(self, work_item):
         raise NotImplementedError, "subclasses must implement"
@@ -138,7 +141,7 @@ class AbstractPatchQueue(AbstractQueue):
         self._update_status(message, patch)
 
     def work_item_log_path(self, patch):
-        return os.path.join("%s-logs" % self.name, "%s.log" % patch.bug_id())
+        return os.path.join(self._log_directory(), "%s.log" % patch.bug_id())
 
     def log_progress(self, patch_ids):
         log("%s in %s [%s]" % (pluralize("patch", len(patch_ids)), self.name, ", ".join(map(str, patch_ids))))
