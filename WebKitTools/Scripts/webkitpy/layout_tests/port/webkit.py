@@ -323,6 +323,9 @@ class WebKitPort(base.Port):
         # FIXME: This does not exist on a default Mac OS X Leopard install.
         return 'wdiff'
 
+    def _path_to_apache(self):
+        return '/usr/sbin/httpd'
+
 
 class WebKitDriver(base.Driver):
     """WebKit implementation of the DumpRenderTree interface."""

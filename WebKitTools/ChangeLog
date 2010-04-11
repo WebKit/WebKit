@@ -1,5 +1,20 @@
 2010-04-10  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed.
+
+        Add the Apache bits to win.py for new-run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=37397
+
+        I still have run this yet, but I looked around to figure out what the
+        various paths appear to be.  I'll figure out a way to remove the
+        copy/paste code in a future patch.
+
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/port/win.py:
+
+2010-04-10  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Sketch out the win port for new-run-webkit-tests

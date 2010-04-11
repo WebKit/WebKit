@@ -164,9 +164,6 @@ class MacPort(WebKitPort):
                         process_name], stderr=null)
         null.close()
 
-    def _path_to_apache(self):
-        return '/usr/sbin/httpd'
-
     def _path_to_apache_config_file(self):
         return os.path.join(self.layout_tests_dir(), 'http', 'conf',
                             'apache2-httpd.conf')

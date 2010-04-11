@@ -96,11 +96,20 @@ class WinPort(WebKitPort):
                         stdout=subprocess.PIPE,
                         stderr=subprocess.PIPE)
 
-    def _path_to_apache(self):
-        raise NotImplemented
-
     def _path_to_apache_config_file(self):
-        raise NotImplemented
+        return os.path.join(self.layout_tests_dir(), 'http', 'conf',
+                            'cygwin-httpd.conf')
 
     def _shut_down_http_server(self, server_pid):
-        raise NotImplemented
+        """Shut down the httpd web server. Blocks until it's fully
+        shut down.
+
+        Args:
+            server_pid: The process ID of the running server.
+        """
+        # Looks like we ignore server_pid.
+        # Copy/pasted from chromium-win.
+        subprocess.Popen(('taskkill.exe', '/f', '/im', 'httpd.exe'),
+                        stdin=open(os.devnull, 'r'),
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.PIPE).wait()
