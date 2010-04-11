@@ -42,6 +42,8 @@ import urllib
 import factory
 import http_server
 
+from webkitpy.common.system.executive import Executive
+
 _log = logging.getLogger("webkitpy.layout_tests.port.websocket_server")
 
 _WS_LOG_PREFIX = 'pywebsocket.ws.log-'
@@ -200,6 +202,7 @@ class PyWebSocket(http_server.Lighttpd):
         _log.debug('Starting %s server on %d.' % (
                    self._server_name, self._port))
         _log.debug('cmdline: %s' % ' '.join(start_cmd))
+        # FIXME: We should direct this call through Executive for testing.
         self._process = subprocess.Popen(start_cmd,
                                          stdin=open(os.devnull, 'r'),
                                          stdout=self._wsout,
@@ -250,8 +253,8 @@ class PyWebSocket(http_server.Lighttpd):
                 'Failed to find %s server pid.' % self._server_name)
 
         _log.debug('Shutting down %s server %d.' % (self._server_name, pid))
-        # FIXME: We shouldn't be calling a protected method of the port_obj!
-        self._port_obj._kill_process(pid)
+        # FIXME: We should use a non-static Executive for easier testing.
+        Executive().kill_process(pid)
 
         if self._process:
             self._process.wait()

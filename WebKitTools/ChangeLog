@@ -2,6 +2,32 @@
 
         Reviewed by Eric Seidel.
 
+        kill_process is copy/pasted in five places
+        https://bugs.webkit.org/show_bug.cgi?id=37405
+
+        We shouldn't replicate the kill_process logic in every port.  Instead,
+        we should move the process interaction to Executive.
+
+        Dirk mentioned that he wanted this abstraction to make it easier to
+        mock things out for testing.  It turns out this function is only used
+        in one place where it can't be used as a mock point for testing because
+        the corresponding create process actually creates a real process.  In
+        the long term, we should indirect both these calls through a non-static
+        Executive as a mock point.  However, we should wait on that until we
+        actually want to write the test.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        * Scripts/webkitpy/layout_tests/port/websocket_server.py:
+        * Scripts/webkitpy/layout_tests/port/win.py:
+
+2010-04-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         new-run-webkit-tests shouldn't alter its path to import packages
         https://bugs.webkit.org/show_bug.cgi?id=37404
 

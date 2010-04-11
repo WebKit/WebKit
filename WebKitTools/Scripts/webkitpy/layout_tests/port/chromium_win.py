@@ -110,17 +110,6 @@ class ChromiumWinPort(chromium.ChromiumPort):
         return self.path_from_chromium_base('third_party', 'lighttpd', 'win',
                                             *comps)
 
-    def _kill_process(self, pid):
-        """Forcefully kill the process.
-
-        Args:
-        pid: The id of the process to be killed.
-        """
-        subprocess.call(('taskkill.exe', '/f', '/pid', str(pid)),
-                        stdin=open(os.devnull, 'r'),
-                        stdout=subprocess.PIPE,
-                        stderr=subprocess.PIPE)
-
     def _path_to_apache(self):
         return self.path_from_chromium_base('third_party', 'cygwin', 'usr',
                                             'sbin', 'httpd')

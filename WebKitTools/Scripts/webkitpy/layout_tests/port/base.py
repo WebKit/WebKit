@@ -572,13 +572,6 @@ class Port(object):
     # or any of its subclasses.
     #
 
-    def _kill_process(self, pid):
-        """Forcefully kill a process.
-
-        This routine should not be used or needed generically, but can be
-        used in helper files like http_server.py."""
-        raise NotImplementedError('Port.kill_process')
-
     def _path_to_apache(self):
         """Returns the full path to the apache binary.
 

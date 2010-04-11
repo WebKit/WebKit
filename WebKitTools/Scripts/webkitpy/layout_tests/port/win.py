@@ -83,19 +83,6 @@ class WinPort(WebKitPort):
         ]
         return disabled_feature_tests + webarchive_tests
 
-    # FIXME: This doesn't have anything to do with WebKit.
-    # FIXME: Copy/pasted from chromium-win
-    def _kill_process(self, pid):
-        """Forcefully kill the process.
-
-        Args:
-        pid: The id of the process to be killed.
-        """
-        subprocess.call(('taskkill.exe', '/f', '/pid', str(pid)),
-                        stdin=open(os.devnull, 'r'),
-                        stdout=subprocess.PIPE,
-                        stderr=subprocess.PIPE)
-
     def _path_to_apache_config_file(self):
         return os.path.join(self.layout_tests_dir(), 'http', 'conf',
                             'cygwin-httpd.conf')

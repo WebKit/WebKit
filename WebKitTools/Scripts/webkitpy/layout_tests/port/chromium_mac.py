@@ -105,14 +105,6 @@ class ChromiumMacPort(chromium.ChromiumPort):
         return self.path_from_chromium_base('third_party', 'lighttpd',
                                             'mac', *comps)
 
-    def _kill_process(self, pid):
-        """Forcefully kill the process.
-
-        Args:
-            pid: The id of the process to be killed.
-        """
-        os.kill(pid, signal.SIGKILL)
-
     def _kill_all_process(self, process_name):
         """Kill any processes running under this name."""
         # On Mac OS X 10.6, killall has a new constraint: -SIGNALNAME or

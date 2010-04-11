@@ -125,14 +125,6 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
         return result
 
 
-    def _kill_process(self, pid):
-        """Forcefully kill the process.
-
-        Args:
-        pid: The id of the process to be killed.
-        """
-        os.kill(pid, signal.SIGKILL)
-
     def _kill_all_process(self, process_name):
         null = open(os.devnull)
         subprocess.call(['killall', '-TERM', '-u', os.getenv('USER'),

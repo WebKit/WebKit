@@ -138,6 +138,19 @@ class Executive(object):
         # machines.
         return 2
 
+    def kill_process(self, pid):
+        if platform.system() == "Windows":
+            # According to http://docs.python.org/library/os.html
+            # os.kill isn't available on Windows.  However, when I tried it
+            # using Cygwin, it worked fine.  We should investigate whether
+            # we need this platform specific code here.
+            subprocess.call(('taskkill.exe', '/f', '/pid', str(pid)),
+                            stdin=open(os.devnull, 'r'),
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE)
+            return
+        os.kill(pid, signal.SIGKILL)
+
     # Error handlers do not need to be static methods once all callers are
     # updated to use an Executive object.
 

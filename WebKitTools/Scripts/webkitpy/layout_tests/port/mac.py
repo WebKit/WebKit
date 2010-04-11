@@ -144,15 +144,6 @@ class MacPort(WebKitPort):
         return disabled_feature_tests + webarchive_tests
 
     # FIXME: This doesn't have anything to do with WebKit.
-    def _kill_process(self, pid):
-        """Forcefully kill the process.
-
-        Args:
-        pid: The id of the process to be killed.
-        """
-        os.kill(pid, signal.SIGKILL)
-
-    # FIXME: This doesn't have anything to do with WebKit.
     def _kill_all_process(self, process_name):
         # On Mac OS X 10.6, killall has a new constraint: -SIGNALNAME or
         # -SIGNALNUMBER must come first.  Example problem:
