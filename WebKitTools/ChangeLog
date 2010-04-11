@@ -1,3 +1,9 @@
+2010-04-11  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.  Add missing import statement.
+
+        * Scripts/webkitpy/common/system/executive.py:
+
 2010-04-11  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Simon Hausmann.

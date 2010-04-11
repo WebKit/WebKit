@@ -36,6 +36,7 @@ except ImportError:
 import os
 import platform
 import StringIO
+import signal
 import subprocess
 import sys
 
