@@ -1,3 +1,16 @@
+2010-04-10  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.  Rename m_forceSandboxFlags to m_forcedSandoxFlags, as
+        requested by Darin Adler.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::FrameLoader):
+        (WebCore::FrameLoader::updateSandboxFlags):
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::setForcedSandboxFlags):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged):
+
 2010-04-10  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Dan Bernstein.

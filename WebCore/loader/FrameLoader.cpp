@@ -203,7 +203,7 @@ FrameLoader::FrameLoader(Frame* frame, FrameLoaderClient* client)
     , m_loadingFromCachedPage(false)
     , m_suppressOpenerInNewFrame(false)
     , m_sandboxFlags(SandboxAll)
-    , m_forceSandboxFlags(SandboxNone)
+    , m_forcedSandboxFlags(SandboxNone)
 #ifndef NDEBUG
     , m_didDispatchDidCommitLoad(false)
 #endif
@@ -4011,7 +4011,7 @@ void FrameLoader::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* world)
 
 void FrameLoader::updateSandboxFlags()
 {
-    SandboxFlags flags = m_forceSandboxFlags;
+    SandboxFlags flags = m_forcedSandboxFlags;
     if (Frame* parentFrame = m_frame->tree()->parent())
         flags |= parentFrame->loader()->sandboxFlags();
     if (HTMLFrameOwnerElement* ownerElement = m_frame->ownerElement())
