@@ -50,7 +50,7 @@
 #
 # Missing features:
 #
-#   Handle property changes other than the executable bit.
+#   Handle property changes.
 #   Handle copied and moved directories (would require patches made by svn-create-patch).
 #   When doing a removal, check that old file matches what's being removed.
 #   Notice a patch that's being applied at the "wrong level" and make it work anyway.
@@ -130,37 +130,27 @@ my $copiedFromPath;
 my $filter;
 my $indexPath;
 my $patch;
-my $propertyChangePath;
-my $isGitFormattedPatch = 0;
 while (<>) {
     s/([\n\r]+)$//mg;
     my $eol = $1;
     if (!defined($indexPath) && m#^diff --git \w/#) {
         $filter = \&gitdiff2svndiff;
-        $isGitFormattedPatch = 1;
     }
     $_ = &$filter($_) if $filter;
-    my $indexPath = parseStartOfPatch($_);
-    my $propertyChangePath = parsePropertyChange($_);
-    if (($indexPath || $propertyChangePath) && $patch) {
-        if (!$copiedFromPath) {
-            push @patches, $patch;
+    if (/^Index: (.+)/) {
+        $indexPath = $1;
+        if ($patch) {
+            if (!$copiedFromPath) {
+                push @patches, $patch;
+            }
+            $copiedFromPath = "";
+            $patch = "";
         }
-        $copiedFromPath = "";
-        $patch = "";
     }
     if ($indexPath) {
         # Fix paths on diff, ---, and +++ lines to match preceding Index: line.
         s/\S+$/$indexPath/ if /^diff/;
         s/^--- \S+/--- $indexPath/;
-
-        if ($isGitFormattedPatch && (my $fileMode = parseGitFileMode($_))) {
-            # The gitdiff2svndiff filter only operates on a single, but the equivalent
-            # property change entry in SVN spans multiple lines which we need to parse.
-            appendSVNExecutableBitChangeToPatch($indexPath, $fileMode, \$patch);
-            next;
-        }
-
         if (/^--- .+\(from (\S+):(\d+)\)$/) {
             $copiedFromPath = $1;
             $copiedFiles{$indexPath} = $copiedFromPath;
@@ -173,7 +163,6 @@ while (<>) {
             $indexPath = "";
         }
     }
-    $propertyChangePath = "" if isEndOfPropertyChange($_, $propertyChangePath);
     $patch .= $_;
     $patch .= $eol;
 }
@@ -341,9 +330,9 @@ sub patch($)
     my ($patch) = @_;
     return if !$patch;
 
-    unless ($patch =~ m|^Index: ([^\r\n]+)| || $patch =~ m|^Property changes on: ([^\r\n]+)|) {
+    unless ($patch =~ m|^Index: ([^\r\n]+)|) {
         my $separator = '-' x 67;
-        warn "Failed to find 'Index:' or 'Property changes on:' in:\n$separator\n$patch\n$separator\n";
+        warn "Failed to find 'Index:' in:\n$separator\n$patch\n$separator\n";
         die unless $force;
         return;
     }
@@ -353,15 +342,13 @@ sub patch($)
     my $addition = 0;
     my $isBinary = 0;
     my $isGitBinary = 0;
-    my $isSVNPropertyChange = 0;
 
     $addition = 1 if ($patch =~ /\n--- .+\(revision 0\)\r?\n/ || $patch =~ /\n@@ -0,0 .* @@/) && !exists($copiedFiles{$fullPath});
     $deletion = 1 if $patch =~ /\n@@ .* \+0,0 @@/;
     $isBinary = 1 if $patch =~ /\nCannot display: file marked as a binary type\./;
     $isGitBinary = 1 if $patch =~ /\nGIT binary patch\n/;
-    $isSVNPropertyChange = isSVNProperty($patch);
 
-    if (!$addition && !$deletion && !$isBinary && !$isGitBinary && !$isSVNPropertyChange) {
+    if (!$addition && !$deletion && !$isBinary && !$isGitBinary) {
         # Standard patch, patch tool can handle this.
         if (basename($fullPath) eq "ChangeLog") {
             my $changeLogDotOrigExisted = -f "${fullPath}.orig";
@@ -385,9 +372,6 @@ sub patch($)
             # Deletion
             applyPatch($patch, $fullPath, ["--force"]);
             scmRemove($fullPath);
-        } elsif ($isSVNPropertyChange) {
-            # Change executable bit.
-            togglePropertyChange($patch, $fullPath);
         } else {
             # Addition
             rename($fullPath, "$fullPath.orig") if -e $fullPath;

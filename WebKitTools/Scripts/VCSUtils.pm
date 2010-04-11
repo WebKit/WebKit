@@ -1,6 +1,5 @@
 # Copyright (C) 2007, 2008, 2009 Apple Inc.  All rights reserved.
 # Copyright (C) 2009, 2010 Chris Jerdonek (chris.jerdonek@gmail.com)
-# Copyright (C) Research in Motion Limited 2010. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -11,7 +10,7 @@
 # 2.  Redistributions in binary form must reproduce the above copyright
 #     notice, this list of conditions and the following disclaimer in the
 #     documentation and/or other materials provided with the distribution. 
-# 3.  Neither the name of Apple Inc. ("Apple") nor the names of
+# 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
 #     its contributors may be used to endorse or promote products derived
 #     from this software without specific prior written permission. 
 #
@@ -44,7 +43,6 @@ BEGIN {
     $VERSION     = 1.00;
     @ISA         = qw(Exporter);
     @EXPORT      = qw(
-        &appendSVNExecutableBitChangeToPatch
         &canonicalizePath
         &changeLogEmailAddress
         &changeLogName
@@ -56,28 +54,20 @@ BEGIN {
         &fixChangeLogPatch
         &gitBranch
         &gitdiff2svndiff
-        &isEndOfPropertyChange
         &isGit
         &isGitBranchBuild
         &isGitDirectory
         &isSVN
         &isSVNDirectory
-        &isSVNProperty
         &isSVNVersion16OrNewer
         &makeFilePathRelative
         &mergeChangeLogs
         &normalizePath
-        &parseGitFileMode
         &parsePatch
-        &parsePropertyChange
-        &parseStartOfPatch
         &pathRelativeToSVNRepositoryRootForPath
         &runPatchCommand
-        &scmAddExecutableProperty
-        &scmRemoveExecutableProperty
         &svnRevisionForDirectory
         &svnStatus
-        &togglePropertyChange
     );
     %EXPORT_TAGS = ( );
     @EXPORT_OK   = ();
@@ -118,91 +108,6 @@ sub isGit()
 
     $isGit = isGitDirectory(".");
     return $isGit;
-}
-
-sub parseGitFileMode($)
-{
-    my ($patch) = @_;
-    return ($patch =~ /^new (file )?mode ([0-9]{6})$/) ? $2 : 0;
-}
-
-sub isSVNProperty($)
-{
-    my ($patch) = @_;
-    # FIXME: We should make this more generic and support additional SVN properties.
-    return $patch =~ /\n(Added|Deleted): svn:executable\n/;
-}
-
-sub parseStartOfPatch($)
-{
-    my ($patch) = @_;
-    return $1 if ($patch =~ /^Index: ([^\r\n]+)/);
-    return 0;
-}
-
-sub parsePropertyChange($)
-{
-    my ($patch) = @_;
-    return $1 if ($patch =~ /^Property changes on: ([^\r\n]+)/);
-    return 0;
-}
-
-sub isEndOfPropertyChange($$)
-{
-    my ($patch, $propertyChangePath) = @_;
-    return ($propertyChangePath && $patch =~ /^   (\+|-) \*$/);
-}
-
-sub togglePropertyChange
-{
-    my ($patch, $fullPath, $shouldUnapply) = @_;
-    # Change executable bit.
-    if ($patch =~ /Added: svn:executable\n/) {
-        if (!defined($shouldUnapply)) {
-            scmAddExecutableProperty($fullPath);
-        } else {
-            scmRemoveExecutableProperty($fullPath);
-        }
-    } elsif ($patch =~ /Deleted: svn:executable\n/) {
-        if (!defined($shouldUnapply)) {
-            scmRemoveExecutableProperty($fullPath);
-        } else {
-            scmAddExecutableProperty($fullPath);
-        }
-    }
-}
-
-sub appendSVNExecutableBitChangeToPatch($$$)
-{
-    my ($indexPath, $fileMode, $patchRef) = @_;
-    # Note, we don't need to include either the divider line or the "   + *" line,
-    # but these are left in so as to produce a proper SVN property change entry.
-    $$patchRef .= "Property changes on: $indexPath\n";
-    $$patchRef .= "___________________________________________________________________\n";
-    # FIXME: These file modes are fragile and based on observation.
-    $$patchRef .= "Added: svn:executable\n" if $fileMode eq "100755";
-    $$patchRef .= "Deleted: svn:executable\n" if $fileMode eq "100644";
-    $$patchRef .= "   + *\n";
-}
-
-sub scmAddExecutableProperty($)
-{
-    my ($path) = @_;
-    if (isSVN()) {
-        system("svn", "propset", "svn:executable", "on", $path) == 0 or die "Failed to run 'svn propset svn:executable on $path'.";
-    } elsif (isGit()) {
-        chmod(0755, $path);
-    }
-}
-
-sub scmRemoveExecutableProperty($)
-{
-    my ($path) = @_;
-    if (isSVN()) {
-        system("svn", "propdel", "svn:executable", $path) == 0 or die "Failed to run 'svn propdel svn:executable $path'.";
-    } elsif (isGit()) {
-        chmod(0664, $path);
-    }
 }
 
 sub gitBranch()

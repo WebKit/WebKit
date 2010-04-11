@@ -1,3 +1,20 @@
+2010-04-11  Daniel Bates  <dbates@rim.com>
+
+        No review, rolling out 57440.
+        http://trac.webkit.org/changeset/57440
+        https://bugs.webkit.org/show_bug.cgi?id=27204
+
+        Did not handle Git patches that included both file and property
+        changes to the same file. Rolling this change out while I look
+        into this.
+
+        * Scripts/VCSUtils.pm:
+        * Scripts/svn-apply:
+        * Scripts/svn-unapply:
+        * Scripts/webkitperl/VCSUtils_unittest/appendSVNExecutableBitChangeToPatch.pl: Removed.
+        * Scripts/webkitperl/VCSUtils_unittest/parseGitFileMode.pl: Removed.
+        * Scripts/webkitperl/VCSUtils_unittest/parseStartOfPatchOrPropertyChangeAndEndOfPropertyChange.pl: Removed.
+
 2010-04-11  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
