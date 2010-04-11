@@ -1,3 +1,16 @@
+2010-04-11  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Add setWillSendRequestReturnsNull and setWillSendRequestClearHeader
+
+        https://bugs.webkit.org/show_bug.cgi?id=37410
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (qt_set_will_send_request_returns_null):
+        (qt_set_will_send_request_clear_headers):
+        (WebCore::FrameLoaderClientQt::dispatchWillSendRequest):
+
 2010-04-10  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

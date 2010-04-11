@@ -1,3 +1,17 @@
+2010-04-11  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Add setWillSendRequestReturnsNull and setWillSendRequestClearHeader
+
+        https://bugs.webkit.org/show_bug.cgi?id=37410
+
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::reset):
+        (LayoutTestController::setWillSendRequestReturnsNull):
+        (LayoutTestController::setWillSendRequestClearHeader):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+
 2010-04-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed buildfix for --debug build after r57433.

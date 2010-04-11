@@ -41,6 +41,9 @@ extern void qt_dump_editing_callbacks(bool b);
 extern void qt_dump_frame_loader(bool b);
 extern void qt_dump_resource_load_callbacks(bool b);
 extern void qt_set_will_send_request_returns_null_on_redirect(bool b);
+extern void qt_set_will_send_request_returns_null(bool b);
+extern void qt_set_will_send_request_clear_headers(const QStringList& headers);
+
 extern void qt_dump_notification(bool b);
 
 LayoutTestController::LayoutTestController(WebCore::DumpRenderTree* drt)
@@ -73,6 +76,8 @@ void LayoutTestController::reset()
     qt_dump_frame_loader(false);
     qt_dump_resource_load_callbacks(false);
     qt_set_will_send_request_returns_null_on_redirect(false);
+    qt_set_will_send_request_returns_null(false);
+    qt_set_will_send_request_clear_headers(QStringList());
     emit hidePage();
 }
 
@@ -227,6 +232,16 @@ void LayoutTestController::dumpResourceLoadCallbacks()
 void LayoutTestController::setWillSendRequestReturnsNullOnRedirect(bool enabled)
 {
     qt_set_will_send_request_returns_null_on_redirect(enabled);
+}
+
+void LayoutTestController::setWillSendRequestReturnsNull(bool enabled)
+{
+    qt_set_will_send_request_returns_null(enabled);
+}
+
+void LayoutTestController::setWillSendRequestClearHeader(const QStringList& headers)
+{
+    qt_set_will_send_request_clear_headers(headers);
 }
 
 void LayoutTestController::queueBackNavigation(int howFarBackward)

@@ -302,13 +302,6 @@ http/tests/misc/policy-delegate-called-twice.html
 http/tests/misc/redirect-to-external-url.html
 http/tests/security/feed-urls-from-remote.html
 
-# Missing layoutTestController.setWillSendRequestClearHeader()
-http/tests/security/no-referrer.html
-
-# Missing layoutTestController.setWillSendRequestReturnsNull()
-fast/loader/onload-willSendRequest-null-for-frame.html
-fast/loader/onload-willSendRequest-null-for-script.html
-
 # Missing layoutTestController.evaluateScriptInIsolatedWorld()
 http/tests/security/isolatedWorld
 
