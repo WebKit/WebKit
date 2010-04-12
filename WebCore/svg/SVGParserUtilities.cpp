@@ -140,6 +140,23 @@ static bool parseNumber(const UChar*& ptr, const UChar* end, double& number, boo
     return _parseNumber(ptr, end, number, skip);
 }
 
+// only used to parse largeArcFlag and sweepFlag which must be a "0" or "1"
+// and might not have any whitespace/comma after it
+bool parseArcFlag(const UChar*& ptr, const UChar* end, bool& flag)
+{
+    const UChar flagChar = *ptr++;
+    if (flagChar == '0')
+        flag = false;
+    else if (flagChar == '1')
+        flag = true;
+    else
+        return false;
+    
+    skipOptionalSpacesOrDelimiter(ptr, end);
+    
+    return true;
+}
+
 bool parseNumberOptionalNumber(const String& s, float& x, float& y)
 {
     if (s.isEmpty())
@@ -478,14 +495,10 @@ bool SVGPathParser::parseSVG(const String& s, bool process)
             {
                 bool largeArc, sweep;
                 double angle, rx, ry;
-                if (!parseNumber(ptr, end, rx)    || !parseNumber(ptr, end, ry) ||
-                    !parseNumber(ptr, end, angle) || !parseNumber(ptr, end, tox))
-                    return false;
-                largeArc = tox == 1;
-                if (!parseNumber(ptr, end, tox))
-                    return false;
-                sweep = tox == 1;
-                if (!parseNumber(ptr, end, tox) || !parseNumber(ptr, end, toy))
+                if (!parseNumber(ptr, end, rx)    || !parseNumber(ptr, end, ry)
+                    || !parseNumber(ptr, end, angle)
+                    || !parseArcFlag(ptr, end, largeArc) || !parseArcFlag(ptr, end, sweep)
+                    || !parseNumber(ptr, end, tox) || !parseNumber(ptr, end, toy))
                     return false;
 
                 // Spec: radii are nonnegative numbers

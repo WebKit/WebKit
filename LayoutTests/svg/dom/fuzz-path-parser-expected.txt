@@ -3,6 +3,7 @@ CONSOLE MESSAGE: line 97: Error: Problem parsing d="M1,1Q8,5 5 1 Q4,8,4,3,h4,q8 
 CONSOLE MESSAGE: line 97: Error: Problem parsing d="M1,1h0 A6 5,5 4,1,5,3 H5 a8 8,0 0,9,8 3 a6,1,6,3 5,6,3,S1 9 5 1 7,"
 CONSOLE MESSAGE: line 97: Error: Problem parsing d="M1,1s6 3,8,h9 q5,5 1 4,4,h0 T5 t3,6 s8 5 8 2 zS0 7,7,s6,3,1,"
 CONSOLE MESSAGE: line 97: Error: Problem parsing d="M1,1t4 4 l6 6 a4 2,3,0,1,2 1,Q1,1,0,3,H8 C7,9 8 4,0 t5,2,H9,zHq1 5,9,T6 8,"
+CONSOLE MESSAGE: line 97: Error: Problem parsing d="M1,1t1 0 Zc3,8,8 7 3,4 zzQ5,3 4,4 H0 v8,v1,C0,1,6,2,5,4 q2 7 5 3 a7,4 7 9,7,2 9,ZL6 6,"
 CONSOLE MESSAGE: line 97: Error: Problem parsing d="M1,1L5,9,t3 7 Q6 1 1,1 T3,0 s4 6 8 1,s8 3,8 9,a5 4 3 2,4,2 3,6 "
 CONSOLE MESSAGE: line 97: Error: Problem parsing d="M1,1a9,2 6 1 2 2 2,za9 0 2 8,2,3,3 s5,8,8 1,HC5 8 5,8,4 2 c8 4 5 2 5 9,l3 9,H7 s6 2,0 0 a4 9,1 6,3,7,0,M6,"
 CONSOLE MESSAGE: line 97: Error: Problem parsing d="M1,1T8 5,A2 7 5,7 9 6 5,7,zC8,5,8 1,6 3 v8,zM7,8,q8,6 4 7,c9,6,4,9,2 1 c0 6,9 9,0 7,"
@@ -212,7 +213,7 @@ Could not parse: M1,1h0 A6 5,5 4,1,5,3 H5 a8 8,0 0,9,8 3 a6,1,6,3 5,6,3,S1 9 5 1
 Could not parse: M1,1s6 3,8,h9 q5,5 1 4,4,h0 T5 t3,6 s8 5 8 2 zS0 7,7,s6,3,1,
 Could not parse: M1,1t4 4 l6 6 a4 2,3,0,1,2 1,Q1,1,0,3,H8 C7,9 8 4,0 t5,2,H9,zHq1 5,9,T6 8,
 Parsed as 1 command(s) [M]: M1,1
-Parsed as 16 command(s) [MCZCZZCLLLCCCCZL]: M1,1t1 0 Zc3,8,8 7 3,4 zzQ5,3 4,4 H0 v8,v1,C0,1,6,2,5,4 q2 7 5 3 a7,4 7 9,7,2 9,ZL6 6,
+Could not parse: M1,1t1 0 Zc3,8,8 7 3,4 zzQ5,3 4,4 H0 v8,v1,C0,1,6,2,5,4 q2 7 5 3 a7,4 7 9,7,2 9,ZL6 6,
 Could not parse: M1,1L5,9,t3 7 Q6 1 1,1 T3,0 s4 6 8 1,s8 3,8 9,a5 4 3 2,4,2 3,6 
 Parsed as 6 command(s) [MCLLCC]: M1,1t8 9,l3 5 l9,5 s6,9,2 9,T1 9 
 Could not parse: M1,1a9,2 6 1 2 2 2,za9 0 2 8,2,3,3 s5,8,8 1,HC5 8 5,8,4 2 c8 4 5 2 5 9,l3 9,H7 s6 2,0 0 a4 9,1 6,3,7,0,M6,

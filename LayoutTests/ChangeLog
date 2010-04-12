@@ -1,3 +1,15 @@
+2010-04-12  Jeff Schiller  <codedread@gmail.com>
+
+        Reviewed by Dirk Schulze.
+
+        Add tests to handle that comma/whitespace around arc flags are optional
+        and that arc flags can only be 0 or 1 in SVG path syntax: 
+        https://bugs.webkit.org/show_bug.cgi?id=37431
+
+        * svg/dom/fuzz-path-parser-expected.txt: One test now fails due to flags not 0 or 1
+        * svg/dom/path-parser-expected.txt: Add test results for missing whitespace and flags not 0 or 1
+        * svg/dom/script-tests/path-parser.js: Add 6 tests to check that whitespace is optional after flags and flags must be 0 or 1
+
 2010-04-11  Tony Chang  <tony@chromium.org>
 
         Not reviewed, layout test fix for QT bots.
