@@ -55,14 +55,14 @@ class MacPort(WebKitPort):
             port_name = 'mac' + self.version()
         WebKitPort.__init__(self, port_name, options)
 
-    def default_num_dump_render_trees(self):
+    def default_child_processes(self):
         # FIXME: new-run-webkit-tests is unstable on Mac running more than
         # four threads in parallel.
         # See https://bugs.webkit.org/show_bug.cgi?id=36622
-        num_dump_render_trees = WebKitPort.default_num_dump_render_trees(self)
-        if num_dump_render_trees > 4:
+        child_processes = WebKitPort.default_child_processes(self)
+        if child_processes > 4:
             return 4
-        return num_dump_render_trees
+        return child_processes
 
     def baseline_search_path(self):
         dirs = []

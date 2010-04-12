@@ -70,7 +70,7 @@ class Port(object):
         self._websocket_server = None
         self._executive = executive
 
-    def default_num_dump_render_trees(self):
+    def default_child_processes(self):
         """Return the number of DumpRenderTree instances to use for this
         port."""
         return self._executive.cpu_count()

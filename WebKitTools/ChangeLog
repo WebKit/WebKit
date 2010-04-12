@@ -1,3 +1,20 @@
+2010-04-11  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        Fix new-run-webkit-tests regressions cased by Eric's option parsing patch
+        https://bugs.webkit.org/show_bug.cgi?id=37430
+
+        We need some basic unit testing of this script, or we're going to keep
+        breaking it like this.  Added missing namespace qualifiers and
+        propagated renaming of an option.
+
+        * Scripts/webkitpy/common/config/ports.py:
+        * Scripts/webkitpy/layout_tests/driver_test.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2010-04-11  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

@@ -31,8 +31,6 @@
 import os
 import platform
 
-from optparse import make_option
-
 from webkitpy.common.system.executive import Executive
 
 
