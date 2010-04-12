@@ -23,6 +23,8 @@ CONFIG(debug_and_release):CONFIG(release, debug|release): DESTDIR = release
     } else { # Release
         OBJECTS_DIR = obj/release
     }
+    # Make sure that build_all follows the build_all config in WebCore
+    mac:contains(QT_CONFIG, qt_framework):!CONFIG(webkit_no_framework):!build_pass:CONFIG += build_all
 }
 
 CONFIG(QTDIR_build) {
