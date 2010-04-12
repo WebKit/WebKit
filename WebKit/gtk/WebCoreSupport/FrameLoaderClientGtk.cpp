@@ -149,7 +149,7 @@ void FrameLoaderClient::committedLoad(WebCore::DocumentLoader* loader, const cha
             encoding = loader->response().textEncodingName();
 
         FrameLoader* frameLoader = loader->frameLoader();
-        frameLoader->writer()->setEncoding(encoding, userChosen);
+        frameLoader->setEncoding(encoding, userChosen);
         if (data)
             frameLoader->addData(data, length);
 
@@ -868,7 +868,7 @@ void FrameLoaderClient::finishedLoading(WebCore::DocumentLoader* documentLoader)
 {
     if (!m_pluginView) {
         FrameLoader* loader = documentLoader->frameLoader();
-        loader->writer()->setEncoding(m_response.textEncodingName(), false);
+        loader->setEncoding(m_response.textEncodingName(), false);
     } else {
         m_pluginView->didFinishLoading();
         m_pluginView = 0;

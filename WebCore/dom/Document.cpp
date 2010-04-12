@@ -1769,7 +1769,7 @@ void Document::close()
     if (frame) {
         // This code calls implicitClose() if all loading has completed.
         FrameLoader* frameLoader = frame->loader();
-        frameLoader->writer()->endIfNotLoadingMainResource();
+        frameLoader->endIfNotLoadingMainResource();
         frameLoader->checkCompleted();
     } else {
         // Because we have no frame, we don't know if all loading has completed,

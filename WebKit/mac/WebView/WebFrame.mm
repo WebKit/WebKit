@@ -961,7 +961,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 - (BOOL)_canProvideDocumentSource
 {
     Frame* frame = _private->coreFrame;
-    String mimeType = frame->loader()->writer()->mimeType();
+    String mimeType = frame->loader()->responseMIMEType();
     PluginData* pluginData = frame->page() ? frame->page()->pluginData() : 0;
 
     if (WebCore::DOMImplementation::isTextMIMEType(mimeType) ||
@@ -986,7 +986,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     bool userChosen = !encoding.isNull();
     if (encoding.isNull())
         encoding = textEncodingName;
-    _private->coreFrame->loader()->writer()->setEncoding(encoding, userChosen);
+    _private->coreFrame->loader()->setEncoding(encoding, userChosen);
     [self _addData:data];
 }
 

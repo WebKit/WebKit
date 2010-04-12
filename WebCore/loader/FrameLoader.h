@@ -32,7 +32,6 @@
 #define FrameLoader_h
 
 #include "CachePolicy.h"
-#include "DocumentWriter.h"
 #include "FrameLoaderTypes.h"
 #include "HistoryController.h"
 #include "PolicyCallback.h"
@@ -100,7 +99,6 @@ public:
     PolicyChecker* policyChecker() const { return &m_policyChecker; }
     HistoryController* history() const { return &m_history; }
     ResourceLoadNotifier* notifier() const { return &m_notifer; }
-    DocumentWriter* writer() const { return &m_writer; }
 
     // FIXME: This is not cool, people. There are too many different functions that all start loads.
     // We should aim to consolidate these into a smaller set of functions, and try to reuse more of
@@ -228,15 +226,23 @@ public:
 
     void didExplicitOpen();
 
-    // Callbacks from DocumentWriter
-    void didBeginDocument(bool dispatchWindowObjectAvailable);
-    void didEndDocument();
-    void willSetEncoding();
-
     KURL iconURL();
     void commitIconURLToIconDatabase(const KURL&);
 
     KURL baseURL() const;
+
+    void replaceDocument(const String&);
+
+    void begin();
+    void begin(const KURL&, bool dispatchWindowObjectAvailable = true, SecurityOrigin* forcedSecurityOrigin = 0);
+
+    void write(const char* string, int length = -1, bool flush = false);
+    void write(const String&);
+    void end();
+    void endIfNotLoadingMainResource();
+
+    void setEncoding(const String& encoding, bool userChosen);
+    String encoding() const;
 
     void tokenizerProcessedData();
 
@@ -277,8 +283,8 @@ public:
 
     const KURL& url() const { return m_URL; }
 
-    // setURL is a low-level setter and does not trigger loading.
-    void setURL(const KURL&);
+    void setResponseMIMEType(const String&);
+    const String& responseMIMEType() const;
 
     bool allowPlugins(ReasonForCallingAllowPlugins);
     bool containsPlugins() const;
@@ -297,7 +303,6 @@ public:
     KURL completeURL(const String& url);
 
     void cancelAndClear();
-    void clear(bool clearWindowProperties = true, bool clearScriptObjects = true, bool clearFrameView = true);
 
     void setTitle(const String&);
 
@@ -341,8 +346,6 @@ public:
     bool suppressOpenerInNewFrame() const { return m_suppressOpenerInNewFrame; }
 
     static ObjectContentType defaultObjectContentType(const KURL& url, const String& mimeType);
-
-    bool isDisplayingInitialEmptyDocument() const { return m_isDisplayingInitialEmptyDocument; }
 
 private:
     bool canCachePageContainingThisFrame();
@@ -408,6 +411,8 @@ private:
 
     void updateHistoryAfterClientRedirect();
 
+    void clear(bool clearWindowProperties = true, bool clearScriptObjects = true, bool clearFrameView = true);
+
     bool shouldReloadToHandleUnreachableURL(DocumentLoader*);
 
     void dispatchDidCommitLoad();
@@ -460,7 +465,6 @@ private:
     mutable PolicyChecker m_policyChecker;
     mutable HistoryController m_history;
     mutable ResourceLoadNotifier m_notifer;
-    mutable DocumentWriter m_writer;
 
     FrameState m_state;
     FrameLoadType m_loadType;
@@ -484,6 +488,8 @@ private:
 
     bool m_isExecutingJavaScriptFormAction;
 
+    String m_responseMIMEType;
+
     bool m_didCallImplicitClose;
     bool m_wasUnloadEventEmitted;
     bool m_unloadEventBeingDispatched;
@@ -501,6 +507,11 @@ private:
     bool m_cancellingWithLoadInProgress;
 
     bool m_needsClear;
+    bool m_receivedData;
+
+    bool m_encodingWasChosenByUser;
+    String m_encoding;
+    RefPtr<TextResourceDecoder> m_decoder;
 
     bool m_containsPlugIns;
 

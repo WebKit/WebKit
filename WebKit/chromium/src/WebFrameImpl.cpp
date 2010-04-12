@@ -522,7 +522,7 @@ WebURL WebFrameImpl::openSearchDescriptionURL() const
 
 WebString WebFrameImpl::encoding() const
 {
-    return frame()->loader()->writer()->encoding();
+    return frame()->loader()->encoding();
 }
 
 WebSize WebFrameImpl::scrollOffset() const
@@ -1016,7 +1016,7 @@ void WebFrameImpl::commitDocumentData(const char* data, size_t dataLen)
         userChosen = false;
         encoding = documentLoader->response().textEncodingName();
     }
-    m_frame->loader()->writer()->setEncoding(encoding, userChosen);
+    m_frame->loader()->setEncoding(encoding, userChosen);
 
     // NOTE: mac only does this if there is a document
     m_frame->loader()->addData(data, dataLen);

@@ -87,7 +87,7 @@ TextEncoding FormDataBuilder::dataEncoding(Document* document) const
     }
 
     if (Frame* frame = document->frame())
-        return frame->loader()->writer()->encoding();
+        return frame->loader()->encoding();
 
     return Latin1Encoding();
 }

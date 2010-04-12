@@ -1306,8 +1306,6 @@ webcore_sources += \
 	WebCore/loader/DocumentLoader.h \
 	WebCore/loader/DocumentThreadableLoader.cpp \
 	WebCore/loader/DocumentThreadableLoader.h \
-	WebCore/loader/DocumentWriter.cpp \
-	WebCore/loader/DocumentWriter.h \
 	WebCore/loader/EmptyClients.h \
 	WebCore/loader/FTPDirectoryDocument.cpp \
 	WebCore/loader/FTPDirectoryDocument.h \

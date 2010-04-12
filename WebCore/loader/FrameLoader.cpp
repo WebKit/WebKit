@@ -164,13 +164,17 @@ static int numRequests(Document* document)
     return document->docLoader()->requestCount();
 }
 
+static inline bool canReferToParentFrameEncoding(const Frame* frame, const Frame* parentFrame) 
+{
+    return parentFrame && parentFrame->document()->securityOrigin()->canAccess(frame->document()->securityOrigin());
+}
+
 FrameLoader::FrameLoader(Frame* frame, FrameLoaderClient* client)
     : m_frame(frame)
     , m_client(client)
     , m_policyChecker(frame)
     , m_history(frame)
     , m_notifer(frame)
-    , m_writer(frame)
     , m_state(FrameStateCommittedPage)
     , m_loadType(FrameLoadTypeStandard)
     , m_delegateIsHandlingProvisionalLoadError(false)
@@ -185,6 +189,8 @@ FrameLoader::FrameLoader(Frame* frame, FrameLoaderClient* client)
     , m_isComplete(false)
     , m_isLoadingMainResource(false)
     , m_needsClear(false)
+    , m_receivedData(false)
+    , m_encodingWasChosenByUser(false)
     , m_containsPlugIns(false)
     , m_checkTimer(this, &FrameLoader::checkTimerFired)
     , m_shouldCallCheckCompleted(false)
@@ -225,8 +231,8 @@ void FrameLoader::init()
     setState(FrameStateProvisional);
     m_provisionalDocumentLoader->setResponse(ResourceResponse(KURL(), "text/html", 0, String(), String()));
     m_provisionalDocumentLoader->finishedLoading();
-    writer()->begin(KURL(), false);
-    writer()->end();
+    begin(KURL(), false);
+    end();
     m_frame->document()->cancelParsing();
     m_creatingInitialEmptyDocument = false;
     m_didCallImplicitClose = true;
@@ -699,6 +705,14 @@ void FrameLoader::cancelAndClear()
     m_frame->script()->updatePlatformScriptObjects();
 }
 
+void FrameLoader::replaceDocument(const String& html)
+{
+    stopAllLoaders();
+    begin(m_URL, true, m_frame->document()->securityOrigin());
+    write(html);
+    end();
+}
+
 void FrameLoader::clear(bool clearWindowProperties, bool clearScriptObjects, bool clearFrameView)
 {
     m_frame->editor()->clear();
@@ -732,7 +746,7 @@ void FrameLoader::clear(bool clearWindowProperties, bool clearScriptObjects, boo
     // Do not drop the document before the ScriptController and view are cleared
     // as some destructors might still try to access the document.
     m_frame->setDocument(0);
-    writer()->clear();
+    m_decoder = 0;
 
     m_containsPlugIns = false;
 
@@ -744,12 +758,17 @@ void FrameLoader::clear(bool clearWindowProperties, bool clearScriptObjects, boo
     m_checkTimer.stop();
     m_shouldCallCheckCompleted = false;
     m_shouldCallCheckLoadComplete = false;
+
+    m_receivedData = false;
     m_isDisplayingInitialEmptyDocument = false;
+
+    if (!m_encodingWasChosenByUser)
+        m_encoding = String();
 }
 
 void FrameLoader::receivedFirstData()
 {
-    writer()->begin(m_workingURL, false);
+    begin(m_workingURL, false);
 
     dispatchDidCommitLoad();
     dispatchDidClearWindowObjectsInAllWorlds();
@@ -780,22 +799,41 @@ void FrameLoader::receivedFirstData()
     m_frame->redirectScheduler()->scheduleRedirect(delay, url);
 }
 
-void FrameLoader::setURL(const KURL& url)
+const String& FrameLoader::responseMIMEType() const
 {
-    KURL ref(url);
-    ref.setUser(String());
-    ref.setPass(String());
-    ref.removeFragmentIdentifier();
-    m_outgoingReferrer = ref.string();
-    m_URL = url;
+    return m_responseMIMEType;
 }
 
-void FrameLoader::didBeginDocument(bool dispatch)
+void FrameLoader::setResponseMIMEType(const String& type)
 {
-    if (m_pendingStateObject) {
-        m_frame->document()->statePopped(m_pendingStateObject.get());
-        m_pendingStateObject.clear();
-    }
+    m_responseMIMEType = type;
+}
+    
+void FrameLoader::begin()
+{
+    begin(KURL());
+}
+
+void FrameLoader::begin(const KURL& url, bool dispatch, SecurityOrigin* origin)
+{
+    // We need to take a reference to the security origin because |clear|
+    // might destroy the document that owns it.
+    RefPtr<SecurityOrigin> forcedSecurityOrigin = origin;
+
+    RefPtr<Document> document;
+
+    // Create a new document before clearing the frame, because it may need to inherit an aliased security context.
+    if (!m_isDisplayingInitialEmptyDocument && m_client->shouldUsePluginDocument(m_responseMIMEType))
+        document = PluginDocument::create(m_frame);
+    else if (!m_client->hasHTMLView())
+        document = PlaceholderDocument::create(m_frame);
+    else
+        document = DOMImplementation::createDocument(m_responseMIMEType, m_frame, m_frame->inViewSourceMode());
+
+    bool resetScripting = !(m_isDisplayingInitialEmptyDocument && m_frame->document()->securityOrigin()->isSecureTransitionTo(url));
+    clear(resetScripting, resetScripting);
+    if (resetScripting)
+        m_frame->script()->updatePlatformScriptObjects();
 
     m_needsClear = true;
     m_isComplete = false;
@@ -803,26 +841,148 @@ void FrameLoader::didBeginDocument(bool dispatch)
     m_isLoadingMainResource = true;
     m_isDisplayingInitialEmptyDocument = m_creatingInitialEmptyDocument;
 
+    KURL ref(url);
+    ref.setUser(String());
+    ref.setPass(String());
+    ref.removeFragmentIdentifier();
+    m_outgoingReferrer = ref.string();
+    m_URL = url;
+
+    document->setURL(m_URL);
+    m_frame->setDocument(document);
+
+    if (m_pendingStateObject) {
+        document->statePopped(m_pendingStateObject.get());
+        m_pendingStateObject.clear();
+    }
+    
+    if (m_decoder)
+        document->setDecoder(m_decoder.get());
+    if (forcedSecurityOrigin)
+        document->setSecurityOrigin(forcedSecurityOrigin.get());
+
+    m_frame->domWindow()->setURL(document->url());
+    m_frame->domWindow()->setSecurityOrigin(document->securityOrigin());
+
     if (dispatch)
         dispatchDidClearWindowObjectsInAllWorlds();
-
+    
     updateFirstPartyForCookies();
 
-    Settings* settings = m_frame->document()->settings();
-    m_frame->document()->docLoader()->setAutoLoadImages(settings && settings->loadsImagesAutomatically());
+    Settings* settings = document->settings();
+    document->docLoader()->setAutoLoadImages(settings && settings->loadsImagesAutomatically());
 
     if (m_documentLoader) {
         String dnsPrefetchControl = m_documentLoader->response().httpHeaderField("X-DNS-Prefetch-Control");
         if (!dnsPrefetchControl.isEmpty())
-            m_frame->document()->parseDNSPrefetchControlHeader(dnsPrefetchControl);
+            document->parseDNSPrefetchControlHeader(dnsPrefetchControl);
     }
 
     history()->restoreDocumentState();
+
+    document->implicitOpen();
+    
+    if (m_frame->view() && m_client->hasHTMLView())
+        m_frame->view()->setContentsSize(IntSize());
 }
 
-void FrameLoader::didEndDocument()
+void FrameLoader::write(const char* str, int len, bool flush)
+{
+    if (len == 0 && !flush)
+        return;
+    
+    if (len == -1)
+        len = strlen(str);
+
+    Tokenizer* tokenizer = m_frame->document()->tokenizer();
+    if (tokenizer && tokenizer->wantsRawData()) {
+        if (len > 0)
+            tokenizer->writeRawData(str, len);
+        return;
+    }
+    
+    if (!m_decoder) {
+        if (Settings* settings = m_frame->settings()) {
+            m_decoder = TextResourceDecoder::create(m_responseMIMEType,
+                settings->defaultTextEncodingName(),
+                settings->usesEncodingDetector());
+            Frame* parentFrame = m_frame->tree()->parent();
+            // Set the hint encoding to the parent frame encoding only if
+            // the parent and the current frames share the security origin.
+            // We impose this condition because somebody can make a child frame 
+            // containing a carefully crafted html/javascript in one encoding
+            // that can be mistaken for hintEncoding (or related encoding) by
+            // an auto detector. When interpreted in the latter, it could be
+            // an attack vector.
+            // FIXME: This might be too cautious for non-7bit-encodings and
+            // we may consider relaxing this later after testing.
+            if (canReferToParentFrameEncoding(m_frame, parentFrame))
+                m_decoder->setHintEncoding(parentFrame->document()->decoder());
+        } else
+            m_decoder = TextResourceDecoder::create(m_responseMIMEType, String());
+        Frame* parentFrame = m_frame->tree()->parent();
+        if (m_encoding.isEmpty()) {
+            if (canReferToParentFrameEncoding(m_frame, parentFrame))
+                m_decoder->setEncoding(parentFrame->document()->inputEncoding(), TextResourceDecoder::EncodingFromParentFrame);
+        } else {
+            m_decoder->setEncoding(m_encoding,
+                m_encodingWasChosenByUser ? TextResourceDecoder::UserChosenEncoding : TextResourceDecoder::EncodingFromHTTPHeader);
+        }
+        m_frame->document()->setDecoder(m_decoder.get());
+    }
+
+    String decoded = m_decoder->decode(str, len);
+    if (flush)
+        decoded += m_decoder->flush();
+    if (decoded.isEmpty())
+        return;
+
+    if (!m_receivedData) {
+        m_receivedData = true;
+        if (m_decoder->encoding().usesVisualOrdering())
+            m_frame->document()->setVisuallyOrdered();
+        m_frame->document()->recalcStyle(Node::Force);
+    }
+
+    if (tokenizer) {
+        ASSERT(!tokenizer->wantsRawData());
+        tokenizer->write(decoded, true);
+    }
+}
+
+void FrameLoader::write(const String& str)
+{
+    if (str.isNull())
+        return;
+
+    if (!m_receivedData) {
+        m_receivedData = true;
+        m_frame->document()->setParseMode(Document::Strict);
+    }
+
+    if (Tokenizer* tokenizer = m_frame->document()->tokenizer())
+        tokenizer->write(str, true);
+}
+
+void FrameLoader::end()
 {
     m_isLoadingMainResource = false;
+    endIfNotLoadingMainResource();
+}
+
+void FrameLoader::endIfNotLoadingMainResource()
+{
+    if (m_isLoadingMainResource || !m_frame->page() || !m_frame->document())
+        return;
+
+    // http://bugs.webkit.org/show_bug.cgi?id=10854
+    // The frame's last ref may be removed and it can be deleted by checkCompleted(), 
+    // so we'll add a protective refcount
+    RefPtr<Frame> protector(m_frame);
+
+    // make sure nothing's left in there
+    write(0, 0, true);
+    m_frame->document()->finishParsing();
 }
 
 void FrameLoader::iconLoadDecisionAvailable()
@@ -1100,6 +1260,16 @@ void FrameLoader::loadArchive(PassRefPtr<Archive> prpArchive)
     load(documentLoader.get());
 }
 
+String FrameLoader::encoding() const
+{
+    if (m_encodingWasChosenByUser && !m_encoding.isEmpty())
+        return m_encoding;
+    if (m_decoder && m_decoder->encoding().isValid())
+        return m_decoder->encoding().name();
+    Settings* settings = m_frame->settings();
+    return settings ? settings->defaultTextEncodingName() : String();
+}
+
 bool FrameLoader::requestObject(RenderEmbeddedObject* renderer, const String& url, const AtomicString& frameName,
     const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
@@ -1363,10 +1533,12 @@ void FrameLoader::resetMultipleFormSubmissionProtection()
     m_submittedFormURL = KURL();
 }
 
-void FrameLoader::willSetEncoding()
+void FrameLoader::setEncoding(const String& name, bool userChosen)
 {
     if (!m_workingURL.isEmpty())
         receivedFirstData();
+    m_encoding = name;
+    m_encodingWasChosenByUser = userChosen;
 }
 
 void FrameLoader::addData(const char* bytes, int length)
@@ -1374,7 +1546,7 @@ void FrameLoader::addData(const char* bytes, int length)
     ASSERT(m_workingURL.isEmpty());
     ASSERT(m_frame->document());
     ASSERT(m_frame->document()->parsing());
-    writer()->addData(bytes, length);
+    write(bytes, length);
 }
 
 #if ENABLE(WML)
@@ -2486,7 +2658,7 @@ void FrameLoader::transitionToCommitted(PassRefPtr<CachedPage> cachedPage)
             ASSERT_NOT_REACHED();
     }
 
-    writer()->setMIMEType(dl->responseMIMEType());
+    m_responseMIMEType = dl->responseMIMEType();
 
     // Tell the client we've committed this URL.
     ASSERT(m_frame->view());
@@ -2603,8 +2775,8 @@ void FrameLoader::open(CachedFrameBase& cachedFrame)
     m_URL = url;
     m_workingURL = url;
 
-    m_frame->loader()->started();
-    m_frame->loader()->clear(true, true, cachedFrame.isMainFrame());
+    started();
+    clear(true, true, cachedFrame.isMainFrame());
 
     Document* document = cachedFrame.document();
     ASSERT(document);
@@ -2631,11 +2803,7 @@ void FrameLoader::open(CachedFrameBase& cachedFrame)
     m_frame->domWindow()->setURL(document->url());
     m_frame->domWindow()->setSecurityOrigin(document->securityOrigin());
 
-    // FIXME: I would have expected us to restore the value of
-    // DocumentWriter::m_encoding here, but we don't seem to. I wonder if
-    // that's a bug.  One way to test is to look at the fallback array of
-    // encodings for decoding content disposition.
-    writer()->setDecoder(document->decoder());
+    m_decoder = document->decoder();
 
     updateFirstPartyForCookies();
 
@@ -2727,14 +2895,14 @@ void FrameLoader::finishedLoadingDocument(DocumentLoader* loader)
     ArchiveResource* mainResource = archive->mainResource();
     loader->setParsedArchiveData(mainResource->data());
 
-    writer()->setMIMEType(mainResource->mimeType());
+    m_responseMIMEType = mainResource->mimeType();
 
     closeURL();
     didOpenURL(mainResource->url());
 
     String userChosenEncoding = documentLoader()->overrideEncoding();
     bool encodingIsUserChosen = !userChosenEncoding.isNull();
-    writer()->setEncoding(encodingIsUserChosen ? userChosenEncoding : mainResource->textEncoding(), encodingIsUserChosen);
+    setEncoding(encodingIsUserChosen ? userChosenEncoding : mainResource->textEncoding(), encodingIsUserChosen);
 
     ASSERT(m_frame->document());
 
@@ -3141,12 +3309,8 @@ void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, FrameLoadTyp
 
     // Always try UTF-8. If that fails, try frame encoding (if any) and then the default.
     // For a newly opened frame with an empty URL, encoding() should not be used, because this methods asks decoder, which uses ISO-8859-1.
-    String encoding1 = "UTF-8";
-    String encoding2 = writer()->depricatedFrameEncoding();
-    String encoding3;
-    if (Settings* settings = m_frame->settings())
-        encoding3 = settings->defaultTextEncodingName();
-    request.setResponseContentDispositionEncodingFallbackArray(encoding1, encoding2, encoding3);
+    Settings* settings = m_frame->settings();
+    request.setResponseContentDispositionEncodingFallbackArray("UTF-8", m_URL.isEmpty() ? m_encoding : encoding(), settings ? settings->defaultTextEncodingName() : String());
 }
 
 void FrameLoader::addHTTPOriginIfNeeded(ResourceRequest& request, String origin)
