@@ -1,3 +1,10 @@
+2010-04-12  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Unreviewed, skipping a new test on Chromium, because the test is
+        using an API that is not yet implemented in Chromium.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-04-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Skip new test introduced in r57476, because of unimplemented
