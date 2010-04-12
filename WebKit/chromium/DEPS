@@ -32,20 +32,33 @@
 
 vars = {
   'chromium_svn': 'http://src.chromium.org/svn/trunk/src',
-  'chromium_rev': '43715',
+  'chromium_deps_svn': 'http://src.chromium.org/svn/trunk/deps/third_party',
 
+  # Dependencies' revisions to use:
+  'chromium_rev': '43715',
+  'google-url_rev': '127',
+  'gtest_rev': '408',
+  'gyp_rev': '810',
+  'icu_rev': '43139',
+  'openvcdiff_rev': '28',
+  'ots_rev': '26',
+  'skia_rev': '504',
+  'v8_rev': '4335',
+
+  # Windows:
+  'cygwin_rev': '11984',
+  'ffmpeg_ia32_rev': '42726',
   'pthreads-win32_rev': '26716',
+  'python_24_rev': '22967',
+  'nss_rev': '39612',
 }
 
 deps = {
-  'chromium_deps':
-    File(Var('chromium_svn')+'/DEPS@'+Var('chromium_rev')),
-
   # build tools
   'build':
     Var('chromium_svn')+'/build@'+Var('chromium_rev'),
   'tools/gyp':
-    From('chromium_deps', 'src/tools/gyp'),
+    'http://gyp.googlecode.com/svn/trunk@'+Var('gyp_rev'),
 
   # Basic tools
   'base':
@@ -56,19 +69,20 @@ deps = {
   # skia dependencies
   'skia':
     Var('chromium_svn')+'/skia@'+Var('chromium_rev'),
-  'third_party/skia/src':
-    From('chromium_deps', 'src/third_party/skia/src'),
-  'third_party/skia/include':
-    From('chromium_deps', 'src/third_party/skia/include'),
+  'third_party/skia':
+    'http://skia.googlecode.com/svn/trunk@'+Var('skia_rev'),
 
   # testing
   'testing':
     Var('chromium_svn')+'/testing@'+Var('chromium_rev'),
   'testing/gtest':
-    From('chromium_deps', 'src/testing/gtest'),
+    'http://googletest.googlecode.com/svn/trunk@'+Var('gtest_rev'),
 
   # v8 javascript engine
-  'v8': From('chromium_deps', 'src/v8'),
+  'v8':
+    'http://v8.googlecode.com/svn/trunk@'+Var('v8_rev'),
+  'testing/gtest':
+    'http://googletest.googlecode.com/svn/trunk@'+Var('gtest_rev'),
 
   # net dependencies
   'net':
@@ -76,35 +90,13 @@ deps = {
   'sdch':
     Var('chromium_svn')+'/sdch@'+Var('chromium_rev'),
   'sdch/open-vcdiff':
-    From('chromium_deps', 'src/sdch/open-vcdiff'),
+    'http://open-vcdiff.googlecode.com/svn/trunk@'+Var('openvcdiff_rev'),
   'googleurl':
-    From('chromium_deps', 'src/googleurl'),
-
-  # webkit dependencis
-  'webkit': Var('chromium_svn')+'/webkit@'+Var('chromium_rev'),
-
-  'app':
-    Var('chromium_svn')+'/app@'+Var('chromium_rev'), # needed by appcache
-  'gpu':
-    Var('chromium_svn')+'/gpu@'+Var('chromium_rev'),
-  'media':
-    Var('chromium_svn')+'/media@'+Var('chromium_rev'),
-  'third_party/glew':  # webgl related
-    Var('chromium_svn')+'/third_party/glew@'+Var('chromium_rev'),
-  'third_party/ffmpeg': # needed by webkit/media
-    Var('chromium_svn')+'/third_party/ffmpeg@'+Var('chromium_rev'),
-  'third_party/yasm': # needed by ffmpeg
-    Var('chromium_svn')+'/third_party/yasm@'+Var('chromium_rev'),
-  'third_party/openmax': # needed by webkit/media
-    Var('chromium_svn')+'/third_party/openmax@'+Var('chromium_rev'),
-  'tools/grit':
-    Var('chromium_svn')+'/tools/grit@'+Var('chromium_rev'),
-  'tools/generate_stubs':
-    Var('chromium_svn')+'/tools/generate_stubs@'+Var('chromium_rev'),
+    'http://google-url.googlecode.com/svn/trunk@'+Var('google-url_rev'),
 
   # other third party
   'third_party/icu':
-    From('chromium_deps', 'src/third_party/icu'),
+    Var('chromium_deps_svn')+'/icu42@'+Var('icu_rev'),
 
   'third_party/bzip2':
     Var('chromium_svn')+'/third_party/bzip2@'+Var('chromium_rev'),
@@ -131,7 +123,7 @@ deps = {
     Var('chromium_svn')+'/third_party/npapi@'+Var('chromium_rev'),
 
   'third_party/ots':
-    From('chromium_deps', 'src/third_party/ots'),
+    'http://ots.googlecode.com/svn/trunk@'+Var('ots_rev'),
 
   'third_party/sqlite':
     Var('chromium_svn')+'/third_party/sqlite@'+Var('chromium_rev'),
@@ -146,30 +138,26 @@ deps = {
 deps_os = {
   'win': {
     'third_party/cygwin':
-      From('chromium_deps', 'src/third_party/cygwin'),
+      Var('chromium_deps_svn')+'/cygwin@'+Var('cygwin_rev'),
+
     'third_party/python_24':
-      From('chromium_deps', 'src/third_party/python_24'),
+      Var('chromium_deps_svn')+'/python_24@'+Var('python_24_rev'),
+
     'third_party/ffmpeg/binaries/chromium/win/ia32':
-      From('chromium_deps', 'src/third_party/ffmpeg/binaries/chromium/win/ia32'),
+      Var('chromium_deps_svn')+'/ffmpeg/binaries/win@'+Var('ffmpeg_ia32_rev'),
+
     'third_party/pthreads-win32':
-      'http://src.chromium.org/svn/trunk/deps/third_party/pthreads-win32@'+Var('pthreads-win32_rev'),
-    # base.gypi depends on nss on Windows
-    'third_party/nss':
-      From('chromium_deps', 'src/third_party/nss'),
-    'third_party/wtl':
-      Var('chromium_svn')+'/third_party/wtl@'+Var('chromium_rev'),
-  },
-  'mac': {
-    # needed by ffmpeg
-    'third_party/yasm/source/patched-yasm':
-      From('chromium_deps', 'src/third_party/yasm/source/patched-yasm'),
-    'third_party/ffmpeg/source/patched-ffmpeg-mt':
-      From('chromium_deps', 'src/third_party/ffmpeg/source/patched-ffmpeg-mt'),
+      Var('chromium_deps_svn')+'/pthreads-win32@'+Var('pthreads-win32_rev'),
+
+   # base.gypi depends on nss on Windows
+   'third_party/nss':
+      Var('chromium_deps_svn')+'/nss@'+Var('nss_rev'),
   },
   'unix': {
     # Linux, actually.
     'third_party/harfbuzz':
       Var('chromium_svn')+'/third_party/harfbuzz@'+Var('chromium_rev'),
+
     'tools/xdisplaycheck':
       Var('chromium_svn')+'/tools/xdisplaycheck@'+Var('chromium_rev'),
   },
