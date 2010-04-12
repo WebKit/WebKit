@@ -1,3 +1,67 @@
+2010-04-11  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Factor DocumentWriter out of FrameLoader
+        https://bugs.webkit.org/show_bug.cgi?id=37175
+
+        This patch separates the begin/write/end cycle of decoding network
+        bytes and putting them into a document from the rest of the loading
+        machinery.  The code and state required to write bytes into a document
+        doesn't interact very much with the rest of the loading machinery.
+
+        No tests because there is no behavior change (hopefully!).
+
+        * Android.mk:
+        * GNUmakefile.am:
+        * WebCore.base.exp:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/ScriptControllerBase.cpp:
+        (WebCore::ScriptController::executeIfJavaScriptURL):
+        * dom/Document.cpp:
+        (WebCore::Document::close):
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::checkStyleSheet):
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElementData::scriptCharset):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process):
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::requestPreload):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::finishedLoading):
+        (WebCore::DocumentLoader::setupForReplaceByMIMEType):
+        * loader/DocumentWriter.cpp: Added.
+        * loader/DocumentWriter.h: Added.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::FrameLoader):
+        (WebCore::FrameLoader::init):
+        (WebCore::FrameLoader::clear):
+        (WebCore::FrameLoader::receivedFirstData):
+        (WebCore::FrameLoader::setURL):
+        (WebCore::FrameLoader::didBeginDocument):
+        (WebCore::FrameLoader::didEndDocument):
+        (WebCore::FrameLoader::willSetEncoding):
+        (WebCore::FrameLoader::addData):
+        (WebCore::FrameLoader::transitionToCommitted):
+        (WebCore::FrameLoader::open):
+        (WebCore::FrameLoader::finishedLoadingDocument):
+        (WebCore::FrameLoader::addExtraFieldsToRequest):
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::writer):
+        (WebCore::FrameLoader::isDisplayingInitialEmptyDocument):
+        * loader/MediaDocument.cpp:
+        (WebCore::MediaDocument::replaceMediaElementTimerFired):
+        * loader/PluginDocument.cpp:
+        (WebCore::PluginTokenizer::createDocumentStructure):
+        * platform/network/FormDataBuilder.cpp:
+        (WebCore::FormDataBuilder::dataEncoding):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged):
+
 2010-04-07  Tony Chang  <tony@chromium.org>
 
         Reviewed by Eric Seidel.

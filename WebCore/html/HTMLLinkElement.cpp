@@ -194,7 +194,7 @@ void HTMLLinkElement::process()
         
         String charset = getAttribute(charsetAttr);
         if (charset.isEmpty() && document()->frame())
-            charset = document()->frame()->loader()->encoding();
+            charset = document()->frame()->loader()->writer()->encoding();
 
         if (m_cachedSheet) {
             if (m_loading)

@@ -170,7 +170,7 @@ String WebPageSerializerImpl::preActionBeforeSerializeOpenTag(
             // Get encoding info.
             String xmlEncoding = param->doc->xmlEncoding();
             if (xmlEncoding.isEmpty())
-                xmlEncoding = param->doc->frame()->loader()->encoding();
+                xmlEncoding = param->doc->frame()->loader()->writer()->encoding();
             if (xmlEncoding.isEmpty())
                 xmlEncoding = UTF8Encoding().name();
             result.append("<?xml version=\"");
@@ -514,7 +514,7 @@ bool WebPageSerializerImpl::serialize()
             // A new document, we will serialize it.
             didSerialization = true;
             // Get target encoding for current document.
-            String encoding = currentFrame->frame()->loader()->encoding();
+            String encoding = currentFrame->frame()->loader()->writer()->encoding();
             // Create the text encoding object with target encoding.
             TextEncoding textEncoding(encoding);
             // Construct serialize parameter for late processing document.

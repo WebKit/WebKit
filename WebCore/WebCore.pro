@@ -734,6 +734,7 @@ SOURCES += \
     loader/DocLoader.cpp \
     loader/DocumentLoader.cpp \
     loader/DocumentThreadableLoader.cpp \
+    loader/DocumentWriter.cpp \
     loader/FormState.cpp \
     loader/FrameLoader.cpp \
     loader/HistoryController.cpp \

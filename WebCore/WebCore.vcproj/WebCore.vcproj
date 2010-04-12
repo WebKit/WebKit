@@ -21397,6 +21397,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\loader\DocumentWriter.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\DocumentWriter.h"
+				>
+			</File>
+			<File
 				RelativePath="..\loader\DocumentThreadableLoader.cpp"
 				>
 			</File>

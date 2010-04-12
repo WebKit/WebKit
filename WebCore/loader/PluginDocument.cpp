@@ -105,7 +105,7 @@ void PluginTokenizer::createDocumentStructure()
     
     m_embedElement->setAttribute(nameAttr, "plugin");
     m_embedElement->setAttribute(srcAttr, m_doc->url().string());
-    m_embedElement->setAttribute(typeAttr, m_doc->frame()->loader()->responseMIMEType());
+    m_embedElement->setAttribute(typeAttr, m_doc->frame()->loader()->writer()->mimeType());
     
     body->appendChild(embedElement, ec);    
 }
