@@ -72,6 +72,7 @@ committers_unable_to_review = [
     Committer("Andre Boule", "aboule@apple.com"),
     Committer("Andrew Wellington", ["andrew@webkit.org", "proton@wiretapped.net"], "proton"),
     Committer("Andras Becsi", "abecsi@webkit.org", "bbandix"),
+    Committer("Andy Estes", "aestes@apple.com", "estes"),
     Committer("Anthony Ricaud", "rik@webkit.org", "rik"),
     Committer("Anton Muhin", "antonm@chromium.org", "antonm"),
     Committer("Antonio Gomes", "tonikitoo@webkit.org", "tonikitoo"),
@@ -164,7 +165,6 @@ committers_unable_to_review = [
     Committer("Yuzo Fujishima", "yuzo@google.com", "yuzo"),
     Committer("Zoltan Herczeg", "zherczeg@webkit.org", "zherczeg"),
     Committer("Zoltan Horvath", "zoltan@webkit.org", "zoltan"),
-    Committer("Andy Estes", "aestes@apple.com", "estes"),
 ]
 
 
