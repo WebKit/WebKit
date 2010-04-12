@@ -5799,10 +5799,10 @@ void CSSStyleSelector::mapNinePieceImage(CSSValue* value, NinePieceImage& image)
     CSSBorderImageValue* borderImage = static_cast<CSSBorderImageValue*>(value);
     
     // Set the image (this kicks off the load).
-    image.m_image = styleImage(borderImage->imageValue());
+    image.setImage(styleImage(borderImage->imageValue()));
 
     // Set up a length box to represent our image slices.
-    LengthBox& l = image.m_slices;
+    LengthBox l;
     Rect* r = borderImage->m_imageSliceRect.get();
     if (r->top()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
         l.m_top = Length(r->top()->getDoubleValue(), Percent);
@@ -5820,31 +5820,36 @@ void CSSStyleSelector::mapNinePieceImage(CSSValue* value, NinePieceImage& image)
         l.m_right = Length(r->right()->getDoubleValue(), Percent);
     else
         l.m_right = Length(r->right()->getIntValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
-    
+    image.setSlices(l);
+
     // Set the appropriate rules for stretch/round/repeat of the slices
+    ENinePieceImageRule horizontalRule;
     switch (borderImage->m_horizontalSizeRule) {
         case CSSValueStretch:
-            image.m_horizontalRule = StretchImageRule;
+            horizontalRule = StretchImageRule;
             break;
         case CSSValueRound:
-            image.m_horizontalRule = RoundImageRule;
+            horizontalRule = RoundImageRule;
             break;
         default: // CSSValueRepeat
-            image.m_horizontalRule = RepeatImageRule;
+            horizontalRule = RepeatImageRule;
             break;
     }
+    image.setHorizontalRule(horizontalRule);
 
+    ENinePieceImageRule verticalRule;
     switch (borderImage->m_verticalSizeRule) {
         case CSSValueStretch:
-            image.m_verticalRule = StretchImageRule;
+            verticalRule = StretchImageRule;
             break;
         case CSSValueRound:
-            image.m_verticalRule = RoundImageRule;
+            verticalRule = RoundImageRule;
             break;
         default: // CSSValueRepeat
-            image.m_verticalRule = RepeatImageRule;
+            verticalRule = RepeatImageRule;
             break;
     }
+    image.setVerticalRule(verticalRule);
 }
 
 void CSSStyleSelector::checkForTextSizeAdjust()

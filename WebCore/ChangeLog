@@ -1,5 +1,25 @@
 2010-04-12  David Hyatt  <hyatt@apple.com>
 
+        Reviewed by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37463, clean up NinePieceImage.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForNinePieceImage):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::mapNinePieceImage):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintNinePieceImage):
+        * rendering/style/NinePieceImage.h:
+        (WebCore::NinePieceImage::setImage):
+        (WebCore::NinePieceImage::slices):
+        (WebCore::NinePieceImage::setSlices):
+        (WebCore::NinePieceImage::setHorizontalRule):
+        (WebCore::NinePieceImage::verticalRule):
+        (WebCore::NinePieceImage::setVerticalRule):
+
+2010-04-12  David Hyatt  <hyatt@apple.com>
+
         Reviewed by Sam Weinig.
 
         https://bugs.webkit.org/show_bug.cgi?id=37455, :visited doesn't work with multiple classes/ids.

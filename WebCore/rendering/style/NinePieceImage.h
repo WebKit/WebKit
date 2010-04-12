@@ -55,10 +55,18 @@ public:
 
     bool hasImage() const { return m_image != 0; }
     StyleImage* image() const { return m_image.get(); }
+    void setImage(StyleImage* image) { m_image = image; }
     
+    const LengthBox& slices() const { return m_slices; }
+    void setSlices(const LengthBox& l) { m_slices = l; }
+
     ENinePieceImageRule horizontalRule() const { return static_cast<ENinePieceImageRule>(m_horizontalRule); }
-    ENinePieceImageRule verticalRule() const { return static_cast<ENinePieceImageRule>(m_verticalRule); }
+    void setHorizontalRule(ENinePieceImageRule rule) { m_horizontalRule = rule; }
     
+    ENinePieceImageRule verticalRule() const { return static_cast<ENinePieceImageRule>(m_verticalRule); }
+    void setVerticalRule(ENinePieceImageRule rule) { m_verticalRule = rule; }
+
+private:
     RefPtr<StyleImage> m_image;
     LengthBox m_slices;
     unsigned m_horizontalRule : 2; // ENinePieceImageRule

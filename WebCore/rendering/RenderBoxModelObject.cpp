@@ -834,10 +834,10 @@ bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext,
     int imageWidth = imageSize.width();
     int imageHeight = imageSize.height();
 
-    int topSlice = min(imageHeight, ninePieceImage.m_slices.top().calcValue(imageHeight));
-    int bottomSlice = min(imageHeight, ninePieceImage.m_slices.bottom().calcValue(imageHeight));
-    int leftSlice = min(imageWidth, ninePieceImage.m_slices.left().calcValue(imageWidth));
-    int rightSlice = min(imageWidth, ninePieceImage.m_slices.right().calcValue(imageWidth));
+    int topSlice = min(imageHeight, ninePieceImage.slices().top().calcValue(imageHeight));
+    int bottomSlice = min(imageHeight, ninePieceImage.slices().bottom().calcValue(imageHeight));
+    int leftSlice = min(imageWidth, ninePieceImage.slices().left().calcValue(imageWidth));
+    int rightSlice = min(imageWidth, ninePieceImage.slices().right().calcValue(imageWidth));
 
     ENinePieceImageRule hRule = ninePieceImage.horizontalRule();
     ENinePieceImageRule vRule = ninePieceImage.verticalRule();
