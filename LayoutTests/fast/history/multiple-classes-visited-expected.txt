@@ -1,0 +1,4 @@
+These two links should be the same color (orange):
+
+One Two
+PASS

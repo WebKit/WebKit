@@ -1,3 +1,12 @@
+2010-04-12  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37455, :visited doesn't work with multiple classes/ids.
+
+        * fast/history/multiple-classes-visited-expected.txt: Added.
+        * fast/history/multiple-classes-visited.html: Added.
+
 2010-04-12  Jeff Schiller  <codedread@gmail.com>
 
         Reviewed by Dirk Schulze.

@@ -696,6 +696,12 @@ fast/multicol/single-line.html
 # Need to add functionality to DumpRenderTree to handle error pages
 fast/history/back-forward-reset-after-error-handling.html
 
+# Need to implement computedStyleWithVisitedInfo
+fast/history/multiple-classes-visited.html
+fast/history/nested-visited-test.html
+fast/history/self-is-visited.html
+fast/history/sibling-visited-test.html
+
 # ACCELERATED_COMPOSITING tests that crash
 compositing/layers-inside-overflow-scroll.html
 compositing/self-painting-layers.html

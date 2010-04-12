@@ -919,8 +919,7 @@ EInsideLink CSSStyleSelector::SelectorChecker::determineLinkState(Element* eleme
 bool CSSStyleSelector::SelectorChecker::checkSelector(CSSSelector* sel, Element* element) const
 {
     PseudoId dynamicPseudo = NOPSEUDO;
-
-    return checkSelector(sel, element, 0, dynamicPseudo, true, false) == SelectorMatches;
+    return checkSelector(sel, element, 0, dynamicPseudo, false, false) == SelectorMatches;
 }
 
 #ifdef STYLE_SHARING_STATS
@@ -1829,7 +1828,7 @@ CSSStyleSelector::SelectorMatch CSSStyleSelector::SelectorChecker::checkSelector
             return SelectorFailsCompletely;
 
     // Check for nested links.
-    if (m_matchVisitedPseudoClass) {
+    if (m_matchVisitedPseudoClass && !isSubSelector) {
         RenderStyle* currentStyle = elementStyle ? elementStyle : e->renderStyle();
         if (currentStyle && currentStyle->insideLink() && e->isLink()) {
             if (encounteredLink)
