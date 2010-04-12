@@ -46,7 +46,7 @@ from webkitpy.common.system.executive import Executive
 
 # Python bug workaround.  See Port.wdiff_text() for an explanation.
 _wdiff_available = True
-
+_pretty_patch_available = True
 
 # FIXME: This class should merge with webkitpy.webkit_port at some point.
 class Port(object):
@@ -565,10 +565,18 @@ class Port(object):
         return result
 
     def pretty_patch_text(self, diff_path):
+        global _pretty_patch_available
+        if not _pretty_patch_available:
+            return "Failed to run PrettyPatch"
         pretty_patch_path = self.path_from_webkit_base("BugsSite", "PrettyPatch")
         prettify_path = os.path.join(pretty_patch_path, "prettify.rb")
         command = ["ruby", "-I", pretty_patch_path, prettify_path, diff_path]
-        return self._executive.run_command(command)
+        try:
+            return self._executive.run_command(command)
+        except OSError, e:
+            # If they system is missing ruby just log the error, and stop trying.
+            _pretty_patch_available = False
+            return "Failed to run PrettyPatch: %s" % e
 
     def default_configuration(self):
         return "Release"
