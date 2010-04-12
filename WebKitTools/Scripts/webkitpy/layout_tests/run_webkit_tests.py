@@ -71,7 +71,7 @@ from test_types import test_type_base
 from test_types import text_diff
 
 from webkitpy.common.system.executive import Executive
-import webkitpy.thirdparty.simplejson
+from webkitpy.thirdparty import simplejson
 
 import port
 
