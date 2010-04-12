@@ -35,6 +35,9 @@
 #include <WebKit2/WKPreferences.h>
 #include <WebKit2/WKString.h>
 #include <WebKit2/WKURL.h>
+
+#if !__APPLE__ || __OBJC__
 #include <WebKit2/WKView.h>
+#endif
 
 #endif /* WebKit2_h */

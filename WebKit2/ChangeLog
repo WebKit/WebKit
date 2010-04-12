@@ -1,3 +1,12 @@
+2010-04-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Add #ifdef so that WKView is not included on the mac if not
+        compiling objective-c.
+
+        * UIProcess/API/C/WebKit2.h:
+
 2010-04-12  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.
