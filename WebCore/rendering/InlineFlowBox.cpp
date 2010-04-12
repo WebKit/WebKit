@@ -296,9 +296,9 @@ int InlineFlowBox::placeBoxesHorizontally(int xPos, bool& needsWordSpacing)
             
             int childOverflowLeft = leftGlyphOverflow;
             int childOverflowRight = rightGlyphOverflow;
-            for (ShadowData* shadow = rt->style()->textShadow(); shadow; shadow = shadow->next) {
-                childOverflowLeft = min(childOverflowLeft, shadow->x - shadow->blur + leftGlyphOverflow);
-                childOverflowRight = max(childOverflowRight, shadow->x + shadow->blur + rightGlyphOverflow);
+            for (const ShadowData* shadow = rt->style()->textShadow(); shadow; shadow = shadow->next()) {
+                childOverflowLeft = min(childOverflowLeft, shadow->x() - shadow->blur() + leftGlyphOverflow);
+                childOverflowRight = max(childOverflowRight, shadow->x() + shadow->blur() + rightGlyphOverflow);
             }
             
             leftVisualOverflow = min(xPos + childOverflowLeft, leftVisualOverflow);
@@ -573,9 +573,9 @@ void InlineFlowBox::computeVerticalOverflow(int lineTop, int lineBottom, bool st
 
             int childOverflowTop = topGlyphOverflow;
             int childOverflowBottom = bottomGlyphOverflow;
-            for (ShadowData* shadow = rt->style()->textShadow(); shadow; shadow = shadow->next) {
-                childOverflowTop = min(childOverflowTop, shadow->y - shadow->blur + topGlyphOverflow);
-                childOverflowBottom = max(childOverflowBottom, shadow->y + shadow->blur + bottomGlyphOverflow);
+            for (const ShadowData* shadow = rt->style()->textShadow(); shadow; shadow = shadow->next()) {
+                childOverflowTop = min(childOverflowTop, shadow->y() - shadow->blur() + topGlyphOverflow);
+                childOverflowBottom = max(childOverflowBottom, shadow->y() + shadow->blur() + bottomGlyphOverflow);
             }
             
             topVisualOverflow = min(curr->y() + childOverflowTop, topVisualOverflow);
@@ -981,15 +981,15 @@ void InlineFlowBox::paintTextDecorations(RenderObject::PaintInfo& paintInfo, int
 
         bool setClip = false;
         int extraOffset = 0;
-        ShadowData* shadow = styleToUse->textShadow();
-        if (!linesAreOpaque && shadow && shadow->next) {
+        const ShadowData* shadow = styleToUse->textShadow();
+        if (!linesAreOpaque && shadow && shadow->next()) {
             IntRect clipRect(tx, ty, w, baselinePos + 2);
-            for (ShadowData* s = shadow; s; s = s->next) {
+            for (const ShadowData* s = shadow; s; s = s->next()) {
                 IntRect shadowRect(tx, ty, w, baselinePos + 2);
-                shadowRect.inflate(s->blur);
-                shadowRect.move(s->x, s->y);
+                shadowRect.inflate(s->blur());
+                shadowRect.move(s->x(), s->y());
                 clipRect.unite(shadowRect);
-                extraOffset = max(extraOffset, max(0, s->y) + s->blur);
+                extraOffset = max(extraOffset, max(0, s->y()) + s->blur());
             }
             context->save();
             context->clip(clipRect);
@@ -1002,14 +1002,14 @@ void InlineFlowBox::paintTextDecorations(RenderObject::PaintInfo& paintInfo, int
         bool setShadow = false;
         do {
             if (shadow) {
-                if (!shadow->next) {
+                if (!shadow->next()) {
                     // The last set of lines paints normally inside the clip.
                     ty -= extraOffset;
                     extraOffset = 0;
                 }
-                context->setShadow(IntSize(shadow->x, shadow->y - extraOffset), shadow->blur, shadow->color, colorSpace);
+                context->setShadow(IntSize(shadow->x(), shadow->y() - extraOffset), shadow->blur(), shadow->color(), colorSpace);
                 setShadow = true;
-                shadow = shadow->next;
+                shadow = shadow->next();
             }
 
             if (paintUnderline) {

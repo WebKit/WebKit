@@ -405,12 +405,11 @@ void SVGInlineTextBox::paintCharacters(RenderObject::PaintInfo& paintInfo, int t
 
     if  (isGlyphPhase || isSelectionGlyphPhase) {
         // Set a text shadow if we have one.
-        // FIXME: Support multiple shadow effects.  Need more from the CG API before
-        // we can do this.
+        // FIXME: Support multiple shadow effects.  See how it's done in InlineTextBox.cpp.
         bool setShadow = false;
         if (styleToUse->textShadow()) {
-            paintInfo.context->setShadow(IntSize(styleToUse->textShadow()->x, styleToUse->textShadow()->y),
-                                         styleToUse->textShadow()->blur, styleToUse->textShadow()->color,
+            paintInfo.context->setShadow(IntSize(styleToUse->textShadow()->x(), styleToUse->textShadow()->y()),
+                                         styleToUse->textShadow()->blur(), styleToUse->textShadow()->color(),
                                          styleToUse->colorSpace());
             setShadow = true;
         }

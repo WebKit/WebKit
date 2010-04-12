@@ -416,12 +416,12 @@ NSDictionary* Frame::fontAttributesForSelectionStart() const
     if (style->color().isValid() && style->color() != Color::black)
         [result setObject:nsColor(style->color()) forKey:NSForegroundColorAttributeName];
 
-    ShadowData* shadow = style->textShadow();
+    const ShadowData* shadow = style->textShadow();
     if (shadow) {
         NSShadow* s = [[NSShadow alloc] init];
-        [s setShadowOffset:NSMakeSize(shadow->x, shadow->y)];
-        [s setShadowBlurRadius:shadow->blur];
-        [s setShadowColor:nsColor(shadow->color)];
+        [s setShadowOffset:NSMakeSize(shadow->x(), shadow->y())];
+        [s setShadowBlurRadius:shadow->blur()];
+        [s setShadowColor:nsColor(shadow->color())];
         [result setObject:s forKey:NSShadowAttributeName];
     }
 

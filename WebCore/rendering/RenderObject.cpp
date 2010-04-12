@@ -2354,21 +2354,21 @@ int RenderObject::nextOffset(int current) const
 void RenderObject::adjustRectForOutlineAndShadow(IntRect& rect) const
 {
     int outlineSize = outlineStyleForRepaint()->outlineSize();
-    if (ShadowData* boxShadow = style()->boxShadow()) {
+    if (const ShadowData* boxShadow = style()->boxShadow()) {
         int shadowLeft = 0;
         int shadowRight = 0;
         int shadowTop = 0;
         int shadowBottom = 0;
 
         do {
-            if (boxShadow->style == Normal) {
-                shadowLeft = min(boxShadow->x - boxShadow->blur - boxShadow->spread - outlineSize, shadowLeft);
-                shadowRight = max(boxShadow->x + boxShadow->blur + boxShadow->spread + outlineSize, shadowRight);
-                shadowTop = min(boxShadow->y - boxShadow->blur - boxShadow->spread - outlineSize, shadowTop);
-                shadowBottom = max(boxShadow->y + boxShadow->blur + boxShadow->spread + outlineSize, shadowBottom);
+            if (boxShadow->style() == Normal) {
+                shadowLeft = min(boxShadow->x() - boxShadow->blur() - boxShadow->spread() - outlineSize, shadowLeft);
+                shadowRight = max(boxShadow->x() + boxShadow->blur() + boxShadow->spread() + outlineSize, shadowRight);
+                shadowTop = min(boxShadow->y() - boxShadow->blur() - boxShadow->spread() - outlineSize, shadowTop);
+                shadowBottom = max(boxShadow->y() + boxShadow->blur() + boxShadow->spread() + outlineSize, shadowBottom);
             }
 
-            boxShadow = boxShadow->next;
+            boxShadow = boxShadow->next();
         } while (boxShadow);
 
         rect.move(shadowLeft, shadowTop);

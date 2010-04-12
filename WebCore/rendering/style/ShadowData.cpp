@@ -25,23 +25,23 @@
 namespace WebCore {
 
 ShadowData::ShadowData(const ShadowData& o)
-    : x(o.x)
-    , y(o.y)
-    , blur(o.blur)
-    , spread(o.spread)
-    , style(o.style)
-    , color(o.color)
+    : m_x(o.m_x)
+    , m_y(o.m_y)
+    , m_blur(o.m_blur)
+    , m_spread(o.m_spread)
+    , m_style(o.m_style)
+    , m_color(o.m_color)
 {
-    next = o.next ? new ShadowData(*o.next) : 0;
+    m_next = o.m_next ? new ShadowData(*o.m_next) : 0;
 }
 
 bool ShadowData::operator==(const ShadowData& o) const
 {
-    if ((next && !o.next) || (!next && o.next) ||
-        (next && o.next && *next != *o.next))
+    if ((m_next && !o.m_next) || (!m_next && o.m_next) ||
+        (m_next && o.m_next && *m_next != *o.m_next))
         return false;
     
-    return x == o.x && y == o.y && blur == o.blur && spread == o.spread && style == o.style && color == o.color;
+    return m_x == o.m_x && m_y == o.m_y && m_blur == o.m_blur && m_spread == o.m_spread && m_style == o.m_style && m_color == o.m_color;
 }
 
 } // namespace WebCore

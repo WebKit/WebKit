@@ -712,7 +712,7 @@ void RenderStyle::setTextShadow(ShadowData* val, bool add)
         return;
     }
 
-    val->next = rareData->textShadow;
+    val->setNext(rareData->textShadow);
     rareData->textShadow = val;
 }
 
@@ -724,7 +724,7 @@ void RenderStyle::setBoxShadow(ShadowData* shadowData, bool add)
         return;
     }
 
-    shadowData->next = rareData->m_boxShadow.release();
+    shadowData->setNext(rareData->m_boxShadow.release());
     rareData->m_boxShadow.set(shadowData);
 }
 
@@ -921,15 +921,15 @@ void RenderStyle::getBoxShadowExtent(int &top, int &right, int &bottom, int &lef
     bottom = 0;
     left = 0;
 
-    for (ShadowData* boxShadow = this->boxShadow(); boxShadow; boxShadow = boxShadow->next) {
-        if (boxShadow->style == Inset)
+    for (const ShadowData* boxShadow = this->boxShadow(); boxShadow; boxShadow = boxShadow->next()) {
+        if (boxShadow->style() == Inset)
             continue;
-        int blurAndSpread = boxShadow->blur + boxShadow->spread;
+        int blurAndSpread = boxShadow->blur() + boxShadow->spread();
 
-        top = min(top, boxShadow->y - blurAndSpread);
-        right = max(right, boxShadow->x + blurAndSpread);
-        bottom = max(bottom, boxShadow->y + blurAndSpread);
-        left = min(left, boxShadow->x - blurAndSpread);
+        top = min(top, boxShadow->y() - blurAndSpread);
+        right = max(right, boxShadow->x() + blurAndSpread);
+        bottom = max(bottom, boxShadow->y() + blurAndSpread);
+        left = min(left, boxShadow->x() - blurAndSpread);
     }
 }
 
@@ -938,13 +938,13 @@ void RenderStyle::getBoxShadowHorizontalExtent(int &left, int &right) const
     left = 0;
     right = 0;
 
-    for (ShadowData* boxShadow = this->boxShadow(); boxShadow; boxShadow = boxShadow->next) {
-        if (boxShadow->style == Inset)
+    for (const ShadowData* boxShadow = this->boxShadow(); boxShadow; boxShadow = boxShadow->next()) {
+        if (boxShadow->style() == Inset)
             continue;
-        int blurAndSpread = boxShadow->blur + boxShadow->spread;
+        int blurAndSpread = boxShadow->blur() + boxShadow->spread();
 
-        left = min(left, boxShadow->x - blurAndSpread);
-        right = max(right, boxShadow->x + blurAndSpread);
+        left = min(left, boxShadow->x() - blurAndSpread);
+        right = max(right, boxShadow->x() + blurAndSpread);
     }
 }
 
@@ -953,13 +953,13 @@ void RenderStyle::getBoxShadowVerticalExtent(int &top, int &bottom) const
     top = 0;
     bottom = 0;
 
-    for (ShadowData* boxShadow = this->boxShadow(); boxShadow; boxShadow = boxShadow->next) {
-        if (boxShadow->style == Inset)
+    for (const ShadowData* boxShadow = this->boxShadow(); boxShadow; boxShadow = boxShadow->next()) {
+        if (boxShadow->style() == Inset)
             continue;
-        int blurAndSpread = boxShadow->blur + boxShadow->spread;
+        int blurAndSpread = boxShadow->blur() + boxShadow->spread();
 
-        top = min(top, boxShadow->y - blurAndSpread);
-        bottom = max(bottom, boxShadow->y + blurAndSpread);
+        top = min(top, boxShadow->y() - blurAndSpread);
+        bottom = max(bottom, boxShadow->y() + blurAndSpread);
     }
 }
 

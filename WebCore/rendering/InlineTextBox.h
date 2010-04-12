@@ -150,7 +150,7 @@ protected:
 #endif
 
 private:
-    void paintDecoration(GraphicsContext*, int tx, int ty, int decoration, ShadowData*);
+    void paintDecoration(GraphicsContext*, int tx, int ty, int decoration, const ShadowData*);
     void paintSelection(GraphicsContext*, int tx, int ty, RenderStyle*, const Font&);
     void paintSpellingOrGrammarMarker(GraphicsContext*, int tx, int ty, const DocumentMarker&, RenderStyle*, const Font&, bool grammar);
     void paintTextMatchMarker(GraphicsContext*, int tx, int ty, const DocumentMarker&, RenderStyle*, const Font&);

@@ -614,7 +614,7 @@ public:
         return background->m_outline.offset();
     }
 
-    ShadowData* textShadow() const { return rareInheritedData->textShadow; }
+    const ShadowData* textShadow() const { return rareInheritedData->textShadow; }
     const Color& textStrokeColor() const { return rareInheritedData->textStrokeColor; }
     float textStrokeWidth() const { return rareInheritedData->textStrokeWidth; }
     const Color& textFillColor() const { return rareInheritedData->textFillColor; }
@@ -630,7 +630,7 @@ public:
     EBoxOrient boxOrient() const { return static_cast<EBoxOrient>(rareNonInheritedData->flexibleBox->orient); }
     EBoxAlignment boxPack() const { return static_cast<EBoxAlignment>(rareNonInheritedData->flexibleBox->pack); }
 
-    ShadowData* boxShadow() const { return rareNonInheritedData->m_boxShadow.get(); }
+    const ShadowData* boxShadow() const { return rareNonInheritedData->m_boxShadow.get(); }
     void getBoxShadowExtent(int &top, int &right, int &bottom, int &left) const;
     void getBoxShadowHorizontalExtent(int &left, int &right) const;
     void getBoxShadowVerticalExtent(int &top, int &bottom) const;

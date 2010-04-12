@@ -1,5 +1,67 @@
 2010-04-12  David Hyatt  <hyatt@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37469, clean up ShadowData to be encapsulated properly.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::valueForShadow):
+        * page/animation/AnimationBase.cpp:
+        (WebCore::blendFunc):
+        (WebCore::PropertyWrapperShadow::PropertyWrapperShadow):
+        (WebCore::PropertyWrapperShadow::equals):
+        (WebCore::PropertyWrapperShadow::blend):
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::fontAttributesForSelectionStart):
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::paint):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesHorizontally):
+        (WebCore::InlineFlowBox::computeVerticalOverflow):
+        (WebCore::InlineFlowBox::paintTextDecorations):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::paintTextWithShadows):
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintDecoration):
+        * rendering/InlineTextBox.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintBoxShadow):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateRects):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::adjustRectForOutlineAndShadow):
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::paintCharacters):
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderBase::prepareToRenderSVGContent):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::setTextShadow):
+        (WebCore::RenderStyle::setBoxShadow):
+        (WebCore::RenderStyle::getBoxShadowExtent):
+        (WebCore::RenderStyle::getBoxShadowHorizontalExtent):
+        (WebCore::RenderStyle::getBoxShadowVerticalExtent):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::textShadow):
+        (WebCore::InheritedFlags::boxShadow):
+        * rendering/style/SVGRenderStyle.cpp:
+        (WebCore::getSVGShadowExtent):
+        * rendering/style/ShadowData.cpp:
+        (WebCore::ShadowData::ShadowData):
+        (WebCore::ShadowData::operator==):
+        * rendering/style/ShadowData.h:
+        (WebCore::ShadowData::ShadowData):
+        (WebCore::ShadowData::~ShadowData):
+        (WebCore::ShadowData::x):
+        (WebCore::ShadowData::y):
+        (WebCore::ShadowData::blur):
+        (WebCore::ShadowData::spread):
+        (WebCore::ShadowData::style):
+        (WebCore::ShadowData::color):
+        (WebCore::ShadowData::next):
+        (WebCore::ShadowData::setNext):
+
+2010-04-12  David Hyatt  <hyatt@apple.com>
+
         Reviewed by Mark Rowe.
 
         https://bugs.webkit.org/show_bug.cgi?id=37463, clean up NinePieceImage.

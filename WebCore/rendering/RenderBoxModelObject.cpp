@@ -1322,16 +1322,16 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, int tx, int 
     }
 
     bool hasOpaqueBackground = s->backgroundColor().isValid() && s->backgroundColor().alpha() == 255;
-    for (ShadowData* shadow = s->boxShadow(); shadow; shadow = shadow->next) {
-        if (shadow->style != shadowStyle)
+    for (const ShadowData* shadow = s->boxShadow(); shadow; shadow = shadow->next()) {
+        if (shadow->style() != shadowStyle)
             continue;
 
-        IntSize shadowOffset(shadow->x, shadow->y);
-        int shadowBlur = shadow->blur;
-        int shadowSpread = shadow->spread;
-        Color& shadowColor = shadow->color;
+        IntSize shadowOffset(shadow->x(), shadow->y());
+        int shadowBlur = shadow->blur();
+        int shadowSpread = shadow->spread();
+        const Color& shadowColor = shadow->color();
 
-        if (shadow->style == Normal) {
+        if (shadow->style() == Normal) {
             IntRect fillRect(rect);
             fillRect.inflate(shadowSpread);
             if (fillRect.isEmpty())

@@ -152,12 +152,12 @@ static void getSVGShadowExtent(ShadowData* shadow, int& top, int& right, int& bo
     bottom = 0;
     left = 0;
 
-    int blurAndSpread = shadow->blur + shadow->spread;
+    int blurAndSpread = shadow->blur() + shadow->spread();
 
-    top = min(top, shadow->y - blurAndSpread);
-    right = max(right, shadow->x + blurAndSpread);
-    bottom = max(bottom, shadow->y + blurAndSpread);
-    left = min(left, shadow->x - blurAndSpread);
+    top = min(top, shadow->y() - blurAndSpread);
+    right = max(right, shadow->x() + blurAndSpread);
+    bottom = max(bottom, shadow->y() + blurAndSpread);
+    left = min(left, shadow->x() - blurAndSpread);
 }
 
 void SVGRenderStyle::inflateForShadow(IntRect& repaintRect) const

@@ -2911,17 +2911,19 @@ void RenderLayer::calculateRects(const RenderLayer* rootLayer, const IntRect& pa
 
         // If we establish a clip at all, then go ahead and make sure our background
         // rect is intersected with our layer's bounds.
-        if (ShadowData* boxShadow = renderer()->style()->boxShadow()) {
+        // FIXME: This could be changed to just use generic visual overflow.
+        // See https://bugs.webkit.org/show_bug.cgi?id=37467 for more information.
+        if (const ShadowData* boxShadow = renderer()->style()->boxShadow()) {
             IntRect overflow = layerBounds;
             do {
-                if (boxShadow->style == Normal) {
+                if (boxShadow->style() == Normal) {
                     IntRect shadowRect = layerBounds;
-                    shadowRect.move(boxShadow->x, boxShadow->y);
-                    shadowRect.inflate(boxShadow->blur + boxShadow->spread);
+                    shadowRect.move(boxShadow->x(), boxShadow->y());
+                    shadowRect.inflate(boxShadow->blur() + boxShadow->spread());
                     overflow.unite(shadowRect);
                 }
 
-                boxShadow = boxShadow->next;
+                boxShadow = boxShadow->next();
             } while (boxShadow);
             backgroundRect.intersect(overflow);
         } else
