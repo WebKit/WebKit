@@ -68,6 +68,9 @@ def get(port_name=None, options=None):
     elif port_to_use.startswith('win'):
         import win
         return win.WinPort(port_name, options)
+    elif port_to_use.startswith('gtk'):
+        import gtk
+        return gtk.GtkPort(port_name, options)
     elif port_to_use.startswith('chromium-mac'):
         import chromium_mac
         return chromium_mac.ChromiumMacPort(port_name, options)

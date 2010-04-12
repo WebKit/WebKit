@@ -1,3 +1,11 @@
+2010-04-12  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.
+
+        Add stub Gtk implementation for new-run-webkit-tests.
+
+        * platform/gtk/test_expectations.txt: Copied from LayoutTests/animations/resources/dynamic-stylesheet-insertion-inserted.css.
+
 2010-04-12  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Gustavo Noronha.

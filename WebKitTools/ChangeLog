@@ -1,5 +1,14 @@
 2010-04-12  Eric Seidel  <eric@webkit.org>
 
+        Unreviewed.
+
+        Add stub Gtk implementation for new-run-webkit-tests.
+
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        * Scripts/webkitpy/layout_tests/port/gtk.py: Added.
+
+2010-04-12  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Adam Barth.
 
         new-run-webkit-tests fails with exception on systems missing ruby
