@@ -1,3 +1,12 @@
+2010-04-12  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Gustavo Noronha.
+
+        [Gtk] LayoutTests/platform/gtk/Skipped clean up
+        https://bugs.webkit.org/show_bug.cgi?id=37465
+
+        * platform/gtk/Skipped: Clean up needed after r57289 and r57292.
+
 2010-04-12  Dumitru Daniliuc  <dumi@chromium.org>
 
         Unreviewed, skipping a new test on Chromium, because the test is
