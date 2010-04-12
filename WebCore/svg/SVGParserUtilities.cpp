@@ -142,7 +142,7 @@ static bool parseNumber(const UChar*& ptr, const UChar* end, double& number, boo
 
 // only used to parse largeArcFlag and sweepFlag which must be a "0" or "1"
 // and might not have any whitespace/comma after it
-bool parseArcFlag(const UChar*& ptr, const UChar* end, bool& flag)
+static bool parseArcFlag(const UChar*& ptr, const UChar* end, bool& flag)
 {
     const UChar flagChar = *ptr++;
     if (flagChar == '0')

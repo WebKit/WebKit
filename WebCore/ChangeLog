@@ -1,3 +1,15 @@
+2010-04-12  Dirk Schulze  <krit@webkit.org>
+
+        Unreviewed build fix.
+
+        Make comma/whitespace around arc flags optional in SVG path syntax
+        https://bugs.webkit.org/show_bug.cgi?id=37431
+
+        Fix the SL build.
+
+        * svg/SVGParserUtilities.cpp:
+        (WebCore::parseArcFlag):
+
 2010-04-12  Jeff Schiller  <codedread@gmail.com>
 
         Reviewed by Dirk Schulze.
