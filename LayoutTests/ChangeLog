@@ -1,3 +1,18 @@
+2010-04-12  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Add a trivial test for URL parsing
+        https://bugs.webkit.org/show_bug.cgi?id=37475
+
+        Hopefully this will be the starting point for many URL tests.
+
+        * fast/url/script-tests/TEMPLATE.html: Added.
+        * fast/url/script-tests/trivial.js: Added.
+        (canonicalize):
+        * fast/url/trivial-expected.txt: Added.
+        * fast/url/trivial.html: Added.
+
 2010-04-12  Eric Seidel  <eric@webkit.org>
 
         Unreviewed.
