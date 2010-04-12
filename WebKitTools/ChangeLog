@@ -1,3 +1,27 @@
+2010-04-11  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Break new-run-webkit-tests options into groups for easier re-use and possible relocation
+        https://bugs.webkit.org/show_bug.cgi?id=37408
+
+        new-run-webkit-tests currently has one huge function for
+        dealing with all options-parsing. 
+        This patch is a first attempt at trying to split that large
+        function down into smaller (hopefully more readable?) chunks
+        dealing with the different areas of options.
+        For example, it would make sense to move configuration
+        options off into some module which deals with the vagries of
+        WebKit's configuration system.  It would also make sense to move
+        Chromium options off onto the Chromium port object (where they are used).
+        It may make sense to move results.json options over to the results.json code.
+        This change is a first iteration, and we will certainly need more
+        refinement to this code over time.  Hopefully I didn't make things
+        harder to read here.
+
+        * Scripts/webkitpy/layout_tests/driver_test.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2010-04-11  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

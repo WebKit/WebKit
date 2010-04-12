@@ -61,19 +61,19 @@ def run_tests(port, options, tests):
 
 
 if __name__ == '__main__':
-    optparser = optparse.OptionParser()
-    optparser.add_option('-p', '--platform', action='store', default='mac',
-                         help='Platform to test (e.g., "mac", "chromium-mac", etc.')
-    optparser.add_option('--debug', action='store_const', const='Debug',
-                         dest="configuration", help='Set the configuration to Debug')
-    optparser.add_option('--release', action='store_const', const='Release',
-                         dest="configuration", help='Set the configuration to Release')
-    optparser.add_option('', '--timeout', action='store', default='2000',
-                         help='test timeout in milliseconds (2000 by default)')
-    optparser.add_option('', '--wrapper', action='store')
-    optparser.add_option('', '--no-pixel-tests', action='store_true',
-                         default=False,
-                         help='disable pixel-to-pixel PNG comparisons')
+    # FIXME: configuration_options belong in a shared location.
+    configuration_options = [
+        make_option('--debug', action='store_const', const='Debug', dest="configuration", help='Set the configuration to Debug'),
+        make_option('--release', action='store_const', const='Release', dest="configuration", help='Set the configuration to Release'),
+    ]
+    misc_options = [
+        make_option('-p', '--platform', action='store', default='mac', help='Platform to test (e.g., "mac", "chromium-mac", etc.'),
+        make_option('--timeout', action='store', default='2000', help='test timeout in milliseconds (2000 by default)'),
+        make_option('--wrapper', action='store'),
+        make_option('--no-pixel-tests', action='store_true', default=False, help='disable pixel-to-pixel PNG comparisons'),
+    ]
+    option_list = configuration_options + misc_options
+    optparser = optparse.OptionParser(option_list=option_list)
     options, args = optparser.parse_args()
     p = port.get(options.platform, options)
     run_tests(p, options, args)
