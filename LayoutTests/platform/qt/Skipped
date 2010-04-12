@@ -333,6 +333,7 @@ http/tests/plugins/third-party-cookie-accept-policy.html
 storage/open-database-creation-callback-isolated-world.html
 
 # Missing layoutTestController.computedStyleIncludingVisitedInfo()
+fast/history/multiple-classes-visited.html
 fast/history/nested-visited-test.html
 fast/history/self-is-visited.html
 fast/history/sibling-visited-test.html

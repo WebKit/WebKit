@@ -1,3 +1,10 @@
+2010-04-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Skip new test introduced in r57476, because of unimplemented
+        layoutTestController.computedStyleIncludingVisitedInfo()
+
+        * platform/qt/Skipped: fast/history/multiple-classes-visited.html skipped.
+
 2010-04-12  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.
