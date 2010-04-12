@@ -50,6 +50,7 @@ from checker import check_webkit_style_configuration
 from checker import check_webkit_style_parser
 from checker import configure_logging
 from checker import ProcessorDispatcher
+from checker import PatchChecker
 from checker import StyleChecker
 from checker import StyleCheckerConfiguration
 from filter import validate_filter_rules
@@ -698,61 +699,6 @@ class StyleCheckerCheckFileTest(StyleCheckerCheckFileBase):
                                "")
 
 
-class StyleCheckerCheckPatchTest(StyleCheckerCheckFileBase):
-
-    """Test the check_patch() method of the StyleChecker class.
-
-    Internally, the check_patch() method calls StyleChecker.check_file() for
-    each file that appears in the patch string.  This class passes a mock
-    check_file() method to check_patch() to facilitate unit-testing.  The
-    "got_*" attributes of this class are the parameters that check_patch()
-    passed to check_file().  (We test only a single call.)  These attributes
-    let us check that check_patch() is calling check_file() correctly.
-
-    Attributes:
-      got_file_path: The value that check_patch() passed as the file_path
-                     parameter to the mock_check_file() function.
-      got_line_numbers: The value that check_patch() passed as the line_numbers
-                        parameter to the mock_check_file() function.
-
-    """
-
-    _file_path = "__init__.py"
-
-    # The modified line_numbers array for this patch is: [2].
-    _patch_string = """diff --git a/__init__.py b/__init__.py
-index ef65bee..e3db70e 100644
---- a/__init__.py
-+++ b/__init__.py
-@@ -1,1 +1,2 @@
- # Required for Python to search this directory for module files
-+# New line
-"""
-
-    def setUp(self):
-        StyleCheckerCheckFileBase.setUp(self)
-        self._got_file_path = None
-        self._got_line_numbers = None
-
-    def _mock_check_file(self, file_path, line_numbers):
-        self._got_file_path = file_path
-        self._got_line_numbers = line_numbers
-
-    def test_check_patch(self):
-        patch_files = parse_patch(self._patch_string)
-        diff = patch_files[self._file_path]
-
-        configuration = self._style_checker_configuration()
-
-        style_checker = StyleChecker(configuration)
-
-        style_checker.check_patch(patch_string=self._patch_string,
-                                  mock_check_file=self._mock_check_file)
-
-        self.assertEquals(self._got_file_path, "__init__.py")
-        self.assertEquals(self._got_line_numbers, set([2]))
-
-
 class StyleCheckerCheckPathsTest(unittest.TestCase):
 
     """Test the check_paths() method of the StyleChecker class."""
@@ -799,3 +745,40 @@ class StyleCheckerCheckPathsTest(unittest.TestCase):
                            os.path.join("dir_path1", "file1"),
                            os.path.join("dir_path1", "file2"),
                            os.path.join("dir_path2", "file3")])
+
+
+class PatchCheckerTest(unittest.TestCase):
+
+    """Test the PatchChecker class."""
+
+    class MockStyleChecker(object):
+
+        def __init__(self):
+            self.checked_files = []
+            """A list of (file_path, line_numbers) pairs."""
+
+        def check_file(self, file_path, line_numbers):
+            self.checked_files.append((file_path, line_numbers))
+
+    def setUp(self):
+        style_checker = self.MockStyleChecker()
+        self._style_checker = style_checker
+        self._patch_checker = PatchChecker(style_checker)
+
+    def _call_check_patch(self, patch_string):
+        self._patch_checker.check(patch_string)
+
+    def _assert_checked(self, checked_files):
+        self.assertEquals(self._style_checker.checked_files, checked_files)
+
+    def test_check_patch(self):
+        # The modified line_numbers array for this patch is: [2].
+        self._call_check_patch("""diff --git a/__init__.py b/__init__.py
+index ef65bee..e3db70e 100644
+--- a/__init__.py
++++ b/__init__.py
+@@ -1,1 +1,2 @@
+ # Required for Python to search this directory for module files
++# New line
+""")
+        self._assert_checked([("__init__.py", set([2]))])

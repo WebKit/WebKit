@@ -707,23 +707,26 @@ class StyleChecker(object):
 
         process_file(processor, file_path, handle_style_error)
 
-    # FIXME: Eliminate this method and move its logic to style/main.py.
-    #        Calls to check_patch() can be replaced by appropriate calls
-    #        to check_file() using the optional line_numbers parameter.
-    def check_patch(self, patch_string, mock_check_file=None):
-        """Check style in the given patch.
+
+class PatchChecker(object):
+
+    """Supports checking style in patches."""
+
+    def __init__(self, style_checker):
+        """Create a PatchChecker instance.
 
         Args:
-          patch_string: A string that is a patch string.
+          style_checker: A StyleChecker instance.
 
         """
-        check_file = (self.check_file if mock_check_file is None else
-                      mock_check_file)
+        self._file_checker = style_checker
 
+    def check(self, patch_string):
+        """Check style in the given patch."""
         patch_files = parse_patch(patch_string)
 
         # The diff variable is a DiffFile instance.
-        for file_path, diff in patch_files.iteritems():
+        for path, diff in patch_files.iteritems():
             line_numbers = set()
             for line in diff.lines:
                 # When deleted line is not set, it means that
@@ -731,7 +734,8 @@ class StyleChecker(object):
                 if not line[0]:
                     line_numbers.add(line[1])
 
-            _log.debug('Found %s modified lines in patch for: %s'
-                       % (len(line_numbers), file_path))
+            _log.debug('Found %s new or modified lines in: %s'
+                       % (len(line_numbers), path))
 
-            check_file(file_path=file_path, line_numbers=line_numbers)
+            self._file_checker.check_file(file_path=path,
+                                          line_numbers=line_numbers)

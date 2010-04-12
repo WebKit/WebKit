@@ -49,8 +49,9 @@ import os.path
 import sys
 
 from webkitpy.style_references import detect_checkout
-from webkitpy.style.main import change_directory
 import webkitpy.style.checker as checker
+from webkitpy.style.checker import PatchChecker
+from webkitpy.style.main import change_directory
 
 _log = logging.getLogger("check-webkit-style")
 
@@ -113,7 +114,8 @@ def main():
             patch = checkout.create_patch_since_local_commit(options.git_commit)
         else:
             patch = checkout.create_patch()
-        style_checker.check_patch(patch)
+        patch_checker = PatchChecker(style_checker)
+        patch_checker.check(patch)
 
     error_count = style_checker.error_count
     file_count = style_checker.file_count
