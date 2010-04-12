@@ -1,3 +1,13 @@
+2010-04-11  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] update chromium DEPS for upstream compile
+        https://bugs.webkit.org/show_bug.cgi?id=36578
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp: Small fix to avoid a circular dependency between
+          WebKit.gyp and webkit.gyp.
+
 2010-04-11  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Eric Seidel.

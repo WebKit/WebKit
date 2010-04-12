@@ -57,7 +57,7 @@
                 '<(webkit_api_dir)/WebKit.gyp:webkit',
                 '<(chromium_src_dir)/third_party/npapi/npapi.gyp:npapi',
                 '<(chromium_src_dir)/skia/skia.gyp:skia',
-                '<(chromium_src_dir)/webkit/webkit.gyp:webkit_support',
+                '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support',
             ],
             'include_dirs': [
                 '.',
