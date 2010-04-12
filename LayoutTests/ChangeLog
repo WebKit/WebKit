@@ -1,5 +1,14 @@
 2010-04-11  Tony Chang  <tony@chromium.org>
 
+        Not reviewed, layout test fix for QT bots.
+
+        Update paste expected results on QT and skip a new d&d test.
+
+        * platform/qt/Skipped:
+        * platform/qt/editing/pasteboard/onpaste-text-html-expected.txt: Added.
+
+2010-04-11  Tony Chang  <tony@chromium.org>
+
         Reviewed by Eric Seidel.
 
         [chromium] implement getData('text/html') for paste and drop events
