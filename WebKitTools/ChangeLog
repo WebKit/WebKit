@@ -1,3 +1,17 @@
+2010-04-12  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Modify run_webkit_tests.py to not call sys.exit() at the end of test
+        run; doing so makes it more difficult to embed the routine for,
+        among other things, unit tests. We push the exit calling up into
+        new-run-webkit-tests.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37464
+
+        * Scripts/new-run-webkit-tests:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2010-04-12  Eric Seidel  <eric@webkit.org>
 
         Unreviewed.

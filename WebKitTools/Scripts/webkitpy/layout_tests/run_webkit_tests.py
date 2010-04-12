@@ -614,7 +614,7 @@ class TestRunner:
           result_summary: a summary object tracking the test results.
 
         Return:
-          We return nonzero if there are regressions compared to the last run.
+          The number of unexpected results (0 == success)
         """
         if not self._test_files:
             return 0
@@ -1368,11 +1368,14 @@ def create_logging_writer(options, log_option):
 
 
 def main(options, args):
-    """Run the tests.  Will call sys.exit when complete.
+    """Run the tests.
 
     Args:
       options: a dictionary of command line options
       args: a list of sub directories or files to test
+    Returns:
+      the number of unexpected results that occurred, or -1 if there is an
+          error.
     """
 
     if options.sources:
@@ -1470,7 +1473,7 @@ def main(options, args):
         meter.update("")
         print ("If there are no fail messages, errors or exceptions, then the "
             "lint succeeded.")
-        sys.exit(0)
+        return 0
 
     write = create_logging_writer(options, "config")
     write("Using port '%s'" % port_obj.name())
@@ -1490,7 +1493,7 @@ def main(options, args):
 
     meter.update("Checking build ...")
     if not port_obj.check_build(test_runner.needs_http()):
-        sys.exit(1)
+        return -1
 
     meter.update("Starting helper ...")
     port_obj.start_helper()
@@ -1499,7 +1502,7 @@ def main(options, args):
     if not options.nocheck_sys_deps:
         meter.update("Checking system dependencies ...")
         if not port_obj.check_sys_deps(test_runner.needs_http()):
-            sys.exit(1)
+            return -1
 
     meter.update("Preparing tests ...")
     write = create_logging_writer(options, "expected")
@@ -1513,12 +1516,12 @@ def main(options, args):
         if options.fuzzy_pixel_tests:
             test_runner.add_test_type(fuzzy_image_diff.FuzzyImageDiff)
 
-    has_new_failures = test_runner.run(result_summary)
+    num_unexpected_results = test_runner.run(result_summary)
 
     port_obj.stop_helper()
 
-    _log.debug("Exit status: %d" % has_new_failures)
-    sys.exit(has_new_failures)
+    _log.debug("Exit status: %d" % num_unexpected_results)
+    return num_unexpected_results
 
 
 def parse_args(args=None):
@@ -1620,4 +1623,4 @@ def parse_args(args=None):
 
 if '__main__' == __name__:
     options, args = parse_args()
-    main(options, args)
+    sys.exit(main(options, args))
