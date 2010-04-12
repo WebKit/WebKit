@@ -778,6 +778,7 @@ editing/pasteboard/drag-image-in-about-blank-frame.html
 editing/pasteboard/file-input-files-access.html
 editing/pasteboard/get-data-text-plain-drop.html
 editing/pasteboard/get-data-text-plain-paste.html
+editing/pasteboard/onpaste-text-html.html
 editing/pasteboard/paste-blockquote-before-blockquote.html
 editing/pasteboard/paste-double-nested-blockquote-before-blockquote.html
 editing/pasteboard/paste-into-anchor-text.html
@@ -5317,6 +5318,7 @@ editing/pasteboard/dataTransfer-setData-getData.html
 editing/pasteboard/files-during-page-drags.html
 editing/selection/extend-selection-after-double-click.html
 fast/events/drag-to-navigate.html
+fast/events/ondrop-text-html.html
 fast/events/prevent-drag-to-navigate.html
 fast/forms/slider-delete-while-dragging-thumb.html
 fast/events/tab-focus-anchor.html

@@ -61,6 +61,7 @@ enum ClipboardDataType {
     ClipboardDataTypeURIList,
     ClipboardDataTypeDownloadURL,
     ClipboardDataTypePlainText,
+    ClipboardDataTypeHTML,
 
     ClipboardDataTypeOther,
 };
@@ -83,6 +84,8 @@ static ClipboardDataType clipboardTypeFromMIMEType(const String& type)
         return ClipboardDataTypeURIList;
     if (cleanType == "downloadurl")
         return ClipboardDataTypeDownloadURL;
+    if (cleanType == "text/html")
+        return ClipboardDataTypeHTML;
 
     return ClipboardDataTypeOther;
 }
@@ -125,6 +128,11 @@ void ClipboardChromium::clearData(const String& type)
         
     case ClipboardDataTypePlainText:
         m_dataObject->plainText = "";
+        return;
+
+    case ClipboardDataTypeHTML:
+        m_dataObject->textHtml = "";
+        m_dataObject->htmlBaseUrl = KURL();
         return;
 
     case ClipboardDataTypeOther:
@@ -210,7 +218,25 @@ String ClipboardChromium::getData(const String& type, bool& success) const
         // Otherwise return whatever is stored in plainText.
         success = !m_dataObject->plainText.isEmpty();
         return m_dataObject->plainText;
-        
+
+    case ClipboardDataTypeHTML:
+        if (!isForDragging()) {
+            // If this isn't for a drag, it's for a cut/paste event handler.
+            // In this case, we need to check the clipboard.
+            PasteboardPrivate::ClipboardBuffer buffer = 
+                Pasteboard::generalPasteboard()->isSelectionMode() ?
+                PasteboardPrivate::SelectionBuffer : 
+                PasteboardPrivate::StandardBuffer;
+            String htmlText;
+            KURL sourceURL;
+            ChromiumBridge::clipboardReadHTML(buffer, &htmlText, &sourceURL);
+            success = !htmlText.isEmpty();
+            return htmlText;
+        }
+        // Otherwise return whatever is stored in textHtml.
+        success = !m_dataObject->textHtml.isEmpty();
+        return m_dataObject->textHtml;
+
     case ClipboardDataTypeOther:
         // not yet implemented, see https://bugs.webkit.org/show_bug.cgi?id=34410
         return String();
@@ -275,6 +301,10 @@ bool ClipboardChromium::setData(const String& type, const String& data)
 
     case ClipboardDataTypePlainText:
         m_dataObject->plainText = data;
+        return true;
+
+    case ClipboardDataTypeHTML:
+        m_dataObject->textHtml = data;
         return true;
 
     case ClipboardDataTypeOther:
