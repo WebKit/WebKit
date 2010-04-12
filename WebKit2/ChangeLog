@@ -1,3 +1,11 @@
+2010-04-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Add WebKit2 solution file.
+
+        * WebKit2.sln: Added.
+
 2010-04-11  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
