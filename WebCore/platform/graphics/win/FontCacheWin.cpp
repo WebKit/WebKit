@@ -301,22 +301,62 @@ SimpleFontData* FontCache::getSimilarFontPlatformData(const Font& font)
     return 0;
 }
 
+static SimpleFontData* fontDataFromDescriptionAndLogFont(FontCache* fontCache, const FontDescription& fontDescription, const LOGFONT& font)
+{
+    String fontFamily = String(font.lfFaceName, wcsnlen(font.lfFaceName, LF_FACESIZE));
+    return fontCache->getCachedFontData(fontDescription, fontFamily);
+}
+
 SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& fontDescription)
 {
-    // FIXME: Would be even better to somehow get the user's default font here.  For now we'll pick
-    // the default that the user would get without changing any prefs.
-    static AtomicString timesStr("Times New Roman");
-    if (SimpleFontData* simpleFont = getCachedFontData(fontDescription, timesStr))
+    DEFINE_STATIC_LOCAL(SimpleFontData*, simpleFont, ());
+    if (simpleFont)
         return simpleFont;
 
-    DEFINE_STATIC_LOCAL(String, defaultGUIFontFamily, ());
-    if (defaultGUIFontFamily.isEmpty()) {
-        HFONT defaultGUIFont = static_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT));
-        LOGFONT logFont;
-        GetObject(defaultGUIFont, sizeof(logFont), &logFont);
-        defaultGUIFontFamily = String(logFont.lfFaceName, wcsnlen(logFont.lfFaceName, LF_FACESIZE));
+    // FIXME: Would be even better to somehow get the user's default font here.  For now we'll pick
+    // the default that the user would get without changing any prefs.
+
+    // Search all typical Windows-installed full Unicode fonts.
+    // Sorted by most to least glyphs according to http://en.wikipedia.org/wiki/Unicode_typefaces
+    // Start with Times New Roman also since it is the default if the user doesn't change prefs.
+    static AtomicString fallbackFonts[] = {
+        AtomicString("Times New Roman"),
+        AtomicString("Microsoft Sans Serif"),
+        AtomicString("Tahoma"),
+        AtomicString("Lucida Sans Unicode"),
+        AtomicString("Arial")
+    };
+    for (int i = 0; i < ARRAYSIZE(fallbackFonts); ++i) {
+        if (simpleFont = getCachedFontData(fontDescription, fallbackFonts[i]))
+            return simpleFont;
     }
-    return getCachedFontData(fontDescription, defaultGUIFontFamily);
+
+    // Fall back to the DEFAULT_GUI_FONT if no known Unicode fonts are available.
+    if (HFONT defaultGUIFont = static_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT))) {
+        LOGFONT defaultGUILogFont;
+        GetObject(defaultGUIFont, sizeof(defaultGUILogFont), &defaultGUILogFont);
+        if (simpleFont = fontDataFromDescriptionAndLogFont(this, fontDescription, defaultGUILogFont))
+            return simpleFont;
+    }
+
+    // Fall back to Non-client metrics fonts.
+    NONCLIENTMETRICS nonClientMetrics = {0};
+    nonClientMetrics.cbSize = sizeof(nonClientMetrics);
+    if (SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(nonClientMetrics), &nonClientMetrics, 0)) {
+        if (simpleFont = fontDataFromDescriptionAndLogFont(this, fontDescription, nonClientMetrics.lfMessageFont))
+            return simpleFont;
+        if (simpleFont = fontDataFromDescriptionAndLogFont(this, fontDescription, nonClientMetrics.lfMenuFont))
+            return simpleFont;
+        if (simpleFont = fontDataFromDescriptionAndLogFont(this, fontDescription, nonClientMetrics.lfStatusFont))
+            return simpleFont;
+        if (simpleFont = fontDataFromDescriptionAndLogFont(this, fontDescription, nonClientMetrics.lfCaptionFont))
+            return simpleFont;
+        if (simpleFont = fontDataFromDescriptionAndLogFont(this, fontDescription, nonClientMetrics.lfSmCaptionFont))
+            return simpleFont;
+    }
+    
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 static LONG toGDIFontWeight(FontWeight fontWeight)

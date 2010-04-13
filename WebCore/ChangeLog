@@ -1,3 +1,24 @@
+2010-04-12  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        WebKit should have more robust last-chance font fallback on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=37473
+        <rdar://problem/7789438> Crash in FontFallbackList::determinePitch
+        <rdar://problem/7233762> Crash in FontFallbackList::fontDataAt
+        
+        Look harder for a suitable last-resort font. Previously, we checked for
+        "Times New Roman" followed by DEFAULT_GUI_FONT.
+        
+        We now look for:
+        - Typically installed Unicode-capable fonts, in order of coverage
+        - DEFAULT_GUI_FONT
+        - SPI_GETNONCLIENTMETRICS fonts
+        
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::FontCache::fontDataFromDescriptionAndLogFont):
+        (WebCore::FontCache::getLastResortFallbackFont):
+
 2010-04-12  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.
