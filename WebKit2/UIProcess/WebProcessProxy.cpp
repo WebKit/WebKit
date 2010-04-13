@@ -25,7 +25,6 @@
 
 #include "WebProcessProxy.h"
 
-#include "DrawingAreaProxyMessageKinds.h"
 #include "WebPageNamespace.h"
 #include "WebPageProxy.h"
 #include "WebProcessLauncher.h"

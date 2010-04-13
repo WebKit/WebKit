@@ -1,5 +1,19 @@
 2010-04-13  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Anders Carlsson.
+
+        Do a JS collection and clear the memory cache to improve leaks output
+        when exiting. Only do this in debug builds as it is slow.
+
+        * UIProcess/API/mac/WKView.h:
+        * UIProcess/WebProcessProxy.cpp:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::shutdown):
+        (WebKit::WebProcess::didClose):
+
+2010-04-13  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Adele Peterson.
 
         Post a null event after calling [NSApp stop] to flush the run loop

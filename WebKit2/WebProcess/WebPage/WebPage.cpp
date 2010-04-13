@@ -57,8 +57,6 @@
 #include <runtime/JSValue.h>
 
 #ifndef NDEBUG
-#include <WebCore/Cache.h>
-#include <WebCore/GCController.h>
 #include <wtf/RefCountedLeakCounter.h>
 #endif
 

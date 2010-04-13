@@ -33,6 +33,11 @@
 #include "WebProcessMessageKinds.h"
 #include <wtf/PassRefPtr.h>
 
+#ifndef NDEBUG
+#include <WebCore/Cache.h>
+#include <WebCore/GCController.h>
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -89,7 +94,12 @@ void WebProcess::shutdown()
     // Keep running forever if we're running in the same process.
     if (!isSeparateProcess())
         return;
-    
+
+#ifndef NDEBUG
+    gcController().garbageCollectNow();
+    cache()->setDisabled(true);
+#endif
+
     // Invalidate our connection.
     m_connection->invalidate();
     m_connection = 0;
@@ -136,6 +146,11 @@ void WebProcess::didClose(CoreIPC::Connection*)
 {
     // When running in the same process the connection will never be closed.
     ASSERT(isSeparateProcess());
+
+#ifndef NDEBUG
+    gcController().garbageCollectNow();
+    cache()->setDisabled(true);
+#endif    
 
     // The UI process closed this connection, shut down.
     m_runLoop->stop();
