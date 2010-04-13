@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Ryan Leavengood <leavengood@gmail.com>
+ * Copyright (C) 2010 Stephan Aßmus <superstippi@gmx.de>
  *
  * All rights reserved.
  *
@@ -30,9 +31,6 @@
 
 #include "NotImplemented.h"
 
-#include <app/AppDefs.h>
-
-
 namespace WebCore {
 
 Cursor::Cursor(PlatformCursor cursor)
@@ -41,196 +39,232 @@ Cursor::Cursor(PlatformCursor cursor)
 }
 
 Cursor::Cursor(const Cursor& other)
-    : m_impl(other.m_impl)
+    : m_impl(0)
 {
+    *this = other;
 }
 
 Cursor::~Cursor()
 {
+    delete m_impl;
 }
 
 Cursor::Cursor(Image*, const IntPoint&)
+    : m_impl(0)
 {
     notImplemented();
 }
 
 Cursor& Cursor::operator=(const Cursor& other)
 {
-    m_impl = other.m_impl;
+    delete m_impl;
+    m_impl = other.m_impl ? new BCursor(*other.m_impl) : 0;
     return *this;
 }
 
-static Cursor globalCursor = const_cast<BCursor*>(B_CURSOR_SYSTEM_DEFAULT);
-static Cursor ibeamCursor = const_cast<BCursor*>(B_CURSOR_I_BEAM);
+static Cursor createCursorByID(BCursorID id)
+{
+    return Cursor(new BCursor(id));
+}
 
 const Cursor& pointerCursor()
 {
-    return globalCursor;
+    static Cursor cursorSystemDefault(0);
+    return cursorSystemDefault;
 }
 
 const Cursor& moveCursor()
 {
-    return globalCursor;
+    static Cursor cursorMove = createCursorByID(B_CURSOR_ID_MOVE);
+    return cursorMove;
 }
 
 const Cursor& crossCursor()
 {
-    return globalCursor;
+    static Cursor cursorCrossHair = createCursorByID(B_CURSOR_ID_CROSS_HAIR);
+    return cursorCrossHair;
 }
 
 const Cursor& handCursor()
 {
-    return globalCursor;
+    static Cursor cursorFollowLink = createCursorByID(B_CURSOR_ID_FOLLOW_LINK);
+    return cursorFollowLink;
 }
 
 const Cursor& iBeamCursor()
 {
-    return ibeamCursor;
+    static Cursor cursorIBeam = createCursorByID(B_CURSOR_ID_I_BEAM);
+    return cursorIBeam;
 }
 
 const Cursor& waitCursor()
 {
-    return globalCursor;
+    static Cursor cursorProgress = createCursorByID(B_CURSOR_ID_PROGRESS);
+    return cursorProgress;
 }
 
 const Cursor& helpCursor()
 {
-    return globalCursor;
+    static Cursor cursorHelp = createCursorByID(B_CURSOR_ID_HELP);
+    return cursorHelp;
 }
 
 const Cursor& eastResizeCursor()
 {
-    return globalCursor;
+    static Cursor cursorResizeEast = createCursorByID(B_CURSOR_ID_RESIZE_EAST);
+    return cursorResizeEast;
 }
 
 const Cursor& northResizeCursor()
 {
-    return globalCursor;
+    static Cursor cursorResizeNorth = createCursorByID(B_CURSOR_ID_RESIZE_NORTH);
+    return cursorResizeNorth;
 }
 
 const Cursor& northEastResizeCursor()
 {
-    return globalCursor;
+    static Cursor cursorResizeNorthEast = createCursorByID(B_CURSOR_ID_RESIZE_NORTH_EAST);
+    return cursorResizeNorthEast;
 }
 
 const Cursor& northWestResizeCursor()
 {
-    return globalCursor;
+    static Cursor cursorResizeNorthWest = createCursorByID(B_CURSOR_ID_RESIZE_NORTH_WEST);
+    return cursorResizeNorthWest;
 }
 
 const Cursor& southResizeCursor()
 {
-    return globalCursor;
+    static Cursor cursorResizeSouth = createCursorByID(B_CURSOR_ID_RESIZE_SOUTH);
+    return cursorResizeSouth;
 }
 
 const Cursor& southEastResizeCursor()
 {
-    return globalCursor;
+    static Cursor cursorResizeSouthEast = createCursorByID(B_CURSOR_ID_RESIZE_SOUTH_EAST);
+    return cursorResizeSouthEast;
 }
 
 const Cursor& southWestResizeCursor()
 {
-    return globalCursor;
+    static Cursor cursorResizeSouthWest = createCursorByID(B_CURSOR_ID_RESIZE_SOUTH_WEST);
+    return cursorResizeSouthWest;
 }
 
 const Cursor& westResizeCursor()
 {
-    return globalCursor;
+    static Cursor cursorResizeWest = createCursorByID(B_CURSOR_ID_RESIZE_WEST);
+    return cursorResizeWest;
 }
 
 const Cursor& northSouthResizeCursor()
 {
-    return globalCursor;
+    static Cursor cursorResizeNorthSouth = createCursorByID(B_CURSOR_ID_RESIZE_NORTH_SOUTH);
+    return cursorResizeNorthSouth;
 }
 
 const Cursor& eastWestResizeCursor()
 {
-    return globalCursor;
+    static Cursor cursorResizeEastWest = createCursorByID(B_CURSOR_ID_RESIZE_EAST_WEST);
+    return cursorResizeEastWest;
 }
 
 const Cursor& northEastSouthWestResizeCursor()
 {
-    return globalCursor;
+    static Cursor cursorResizeNorthEastSouthWest = createCursorByID(B_CURSOR_ID_RESIZE_NORTH_EAST_SOUTH_WEST);
+    return cursorResizeNorthEastSouthWest;
 }
 
 const Cursor& northWestSouthEastResizeCursor()
 {
-    return globalCursor;
+    static Cursor cursorResizeNorthWestSouthEast = createCursorByID(B_CURSOR_ID_RESIZE_NORTH_WEST_SOUTH_EAST);
+    return cursorResizeNorthWestSouthEast;
 }
 
 const Cursor& columnResizeCursor()
 {
-    return globalCursor;
+    return eastWestResizeCursor();
 }
 
 const Cursor& rowResizeCursor()
 {
-    return globalCursor;
+    return northSouthResizeCursor();
 }
 
 const Cursor& verticalTextCursor()
 {
-    return globalCursor;
+    static Cursor cursorIBeamHorizontal = createCursorByID(B_CURSOR_ID_I_BEAM_HORIZONTAL);
+    return cursorIBeamHorizontal;
 }
 
 const Cursor& cellCursor()
 {
-    return globalCursor;
+    return pointerCursor();
 }
 
 const Cursor& contextMenuCursor()
 {
-    return globalCursor;
+    static Cursor cursorContextMenu = createCursorByID(B_CURSOR_ID_CONTEXT_MENU);
+    return cursorContextMenu;
 }
 
 const Cursor& noDropCursor()
 {
-    return globalCursor;
+    static Cursor cursorNotAllowed = createCursorByID(B_CURSOR_ID_NOT_ALLOWED);
+    return cursorNotAllowed;
 }
 
 const Cursor& copyCursor()
 {
-    return globalCursor;
+    static Cursor cursorCopy = createCursorByID(B_CURSOR_ID_COPY);
+    return cursorCopy;
 }
 
 const Cursor& progressCursor()
 {
-    return globalCursor;
+    static Cursor cursorProgress = createCursorByID(B_CURSOR_ID_PROGRESS);
+    return cursorProgress;
 }
 
 const Cursor& aliasCursor()
 {
-    return globalCursor;
+    return handCursor();
 }
 
 const Cursor& noneCursor()
 {
-    return globalCursor;
+    static Cursor cursorNoCursor = createCursorByID(B_CURSOR_ID_NO_CURSOR);
+    return cursorNoCursor;
 }
 
 const Cursor& notAllowedCursor()
 {
-    return globalCursor;
+    static Cursor cursorNotAllowed = createCursorByID(B_CURSOR_ID_NOT_ALLOWED);
+    return cursorNotAllowed;
 }
 
 const Cursor& zoomInCursor()
 {
-    return globalCursor;
+    static Cursor cursorZoomIn = createCursorByID(B_CURSOR_ID_ZOOM_IN);
+    return cursorZoomIn;
 }
 
 const Cursor& zoomOutCursor()
 {
-    return globalCursor;
+    static Cursor cursorZoomOut = createCursorByID(B_CURSOR_ID_ZOOM_OUT);
+    return cursorZoomOut;
 }
 
 const Cursor& grabCursor()
 {
-    return globalCursor;
+    static Cursor cursorGrab = createCursorByID(B_CURSOR_ID_GRAB);
+    return cursorGrab;
 }
 
 const Cursor& grabbingCursor()
 {
-    return globalCursor;
+    static Cursor cursorGrabbing = createCursorByID(B_CURSOR_ID_GRABBING);
+    return cursorGrabbing;
 }
 
 } // namespace WebCore

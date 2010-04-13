@@ -1,3 +1,56 @@
+2010-04-13  Stephan Aßmus  <superstippi@gmx.de>
+
+        Reviewed by David Levin.
+
+        [Haiku] Use all the new system cursors available in recent Haiku revisions.
+        <https://bugs.webkit.org/show_bug.cgi?id=37385>
+
+        Covered by existing tests.
+
+        * platform/haiku/CursorHaiku.cpp:
+        (WebCore::Cursor::Cursor):
+        (WebCore::Cursor::~Cursor):
+        (WebCore::Cursor::operator=):
+            - Adapted to maintain an owned BCursor instance.
+        (WebCore::createCursorByID):
+            - helper function to create a Cursor instance by BCursorID constant.
+        (WebCore::pointerCursor):
+            - NULL BCursor triggers using the system cursor.
+        (WebCore::moveCursor):
+        (WebCore::crossCursor):
+        (WebCore::handCursor):
+        (WebCore::iBeamCursor):
+        (WebCore::waitCursor):
+        (WebCore::helpCursor):
+        (WebCore::eastResizeCursor):
+        (WebCore::northResizeCursor):
+        (WebCore::northEastResizeCursor):
+        (WebCore::northWestResizeCursor):
+        (WebCore::southResizeCursor):
+        (WebCore::southEastResizeCursor):
+        (WebCore::southWestResizeCursor):
+        (WebCore::westResizeCursor):
+        (WebCore::northSouthResizeCursor):
+        (WebCore::eastWestResizeCursor):
+        (WebCore::northEastSouthWestResizeCursor):
+        (WebCore::northWestSouthEastResizeCursor):
+        (WebCore::columnResizeCursor):
+        (WebCore::rowResizeCursor):
+        (WebCore::verticalTextCursor):
+        (WebCore::cellCursor):
+        (WebCore::contextMenuCursor):
+        (WebCore::noDropCursor):
+        (WebCore::copyCursor):
+        (WebCore::progressCursor):
+        (WebCore::aliasCursor):
+        (WebCore::noneCursor):
+        (WebCore::notAllowedCursor):
+        (WebCore::zoomInCursor):
+        (WebCore::zoomOutCursor):
+        (WebCore::grabCursor):
+        (WebCore::grabbingCursor):
+            - Use the new system cursors.
+
 2010-04-13  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
