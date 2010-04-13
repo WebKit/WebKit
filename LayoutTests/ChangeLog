@@ -1,5 +1,19 @@
 2010-04-12  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Jeremy Orlow.
+
+        Add some ip4v tests (will revise in a minute)
+        https://bugs.webkit.org/show_bug.cgi?id=37476
+
+        * fast/url/ipv4-expected.txt: Added.
+        * fast/url/ipv4.html: Added.
+        * fast/url/script-tests/ipv4.js: Added.
+        * fast/url/script-tests/trivial.js:
+        (canonicalize):
+        * fast/url/trivial-expected.txt:
+
+2010-04-12  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Maciej Stachowiak.
 
         Add a trivial test for URL parsing

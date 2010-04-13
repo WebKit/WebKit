@@ -8,3 +8,4 @@ PASS canonicalize('/') is 'file:///'
 PASS successfullyParsed is true
 
 TEST COMPLETE
+

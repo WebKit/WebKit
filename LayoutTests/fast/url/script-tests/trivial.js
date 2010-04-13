@@ -6,7 +6,14 @@ function canonicalize(url) {
   return a.href;
 }
 
-shouldBe("canonicalize('http://example.com/')", "'http://example.com/'");
-shouldBe("canonicalize('/')", "'file:///'");
+cases = [ 
+  ["http://example.com/", "http://example.com/"],
+  ["/", "file:///"],
+];
+
+for (var i = 0; i < cases.length; ++i) {
+  shouldBe("canonicalize('" + cases[i][0] + "')",
+           "'" + cases[i][1] + "'");
+}
 
 var successfullyParsed = true;
