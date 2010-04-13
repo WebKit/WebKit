@@ -13,6 +13,7 @@ var skippedProperties = [
     "eventSender", "objCPlugin", "objCPluginFunction",
     "appleScriptController", "plainText", "accessibilityController",
     // Ignore these properties because they do not exist in all implementations. They will be tested separately
+    "webkitNotifications",
     "WebGLRenderingContext", "WebGLArrayBuffer", 
     "WebGLByteArray", "WebGLFloatArray", "WebGLIntArray", "WebGLShortArray", "WebGLUnsignedByteArray", "WebGLUnsignedIntArray", "WebGLUnsignedShortArray", 
 ];

@@ -1,3 +1,14 @@
+2010-04-13  John Gregg  <johnnyg@google.com>
+
+        Reviewed by David Levin.
+
+        As part of enabling notifications layout tests for chromium,
+        exclude it from prototype-inheritance as it is not provided
+        on all implementations.  
+        https://bugs.webkit.org/show_bug.cgi?id=37520
+
+        * fast/dom/script-tests/prototype-inheritance.js:
+
 2010-04-13  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Adam Barth.
