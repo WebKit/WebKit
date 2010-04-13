@@ -932,7 +932,8 @@ void PopupListBox::abandon()
     hidePopup();
 
     if (m_acceptedIndexOnAbandon >= 0) {
-        m_popupClient->valueChanged(m_acceptedIndexOnAbandon);
+        if (m_popupClient)
+            m_popupClient->valueChanged(m_acceptedIndexOnAbandon);
         m_acceptedIndexOnAbandon = -1;
     }
 }
