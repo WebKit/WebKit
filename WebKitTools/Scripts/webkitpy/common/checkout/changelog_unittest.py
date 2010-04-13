@@ -37,9 +37,9 @@ from webkitpy.common.checkout.changelog import *
 
 class ChangeLogsTest(unittest.TestCase):
 
-    _example_entry = '''2009-08-17  Peter Kasting  <pkasting@google.com>
+    _example_entry = u'''2009-08-17  Peter Kasting  <pkasting@google.com>
 
-        Reviewed by Steve Falkenburg.
+        Reviewed by Tor Arne Vestb\xf8.
 
         https://bugs.webkit.org/show_bug.cgi?id=27323
         Only add Cygwin to the path when it isn't already there.  This avoids
@@ -93,7 +93,8 @@ class ChangeLogsTest(unittest.TestCase):
         self.assertEquals(latest_entry.contents(), self._example_entry)
         self.assertEquals(latest_entry.author_name(), "Peter Kasting")
         self.assertEquals(latest_entry.author_email(), "pkasting@google.com")
-        self.assertEquals(latest_entry.reviewer_text(), "Steve Falkenburg")
+        self.assertEquals(latest_entry.reviewer_text(), u"Tor Arne Vestb\xf8")
+        self.assertTrue(latest_entry.reviewer())  # Make sure that our UTF8-based lookup of Tor works.
 
     @staticmethod
     def _write_tmp_file_with_contents(contents):

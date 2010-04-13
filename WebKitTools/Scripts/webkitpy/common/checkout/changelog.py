@@ -28,6 +28,7 @@
 #
 # WebKit's Python module for parsing and modifying ChangeLog files
 
+import codecs
 import fileinput # inplace file editing for set_reviewer_in_changelog
 import os.path
 import re
@@ -115,7 +116,8 @@ class ChangeLog(object):
         return None # We never found a date line!
 
     def latest_entry(self):
-        changelog_file = open(self.path)
+        # ChangeLog files are always UTF-8, we read them in as such to support Reviewers with unicode in their names.
+        changelog_file = codecs.open(self.path, "r", "utf-8")
         try:
             return self.parse_latest_entry_from_file(changelog_file)
         finally:

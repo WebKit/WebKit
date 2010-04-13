@@ -1,3 +1,18 @@
+2010-04-13  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by David Levin.
+
+        the commit-queue hates Tor Arne Vestbø
+        https://bugs.webkit.org/show_bug.cgi?id=37511
+
+        We were failing to read reviewers out of ChangeLogs
+        when the reviewer has unicode characters in his/her name.
+        I fixed this by explicitly decoding from utf8 every time we
+        read in a ChangeLog file (they are always UTF8).
+
+        * Scripts/webkitpy/common/checkout/changelog.py:
+        * Scripts/webkitpy/common/checkout/changelog_unittest.py:
+
 2010-04-13  Adam Roben  <aroben@apple.com>
 
         Fix run-webkit-tests on Windows with spaces in the path
