@@ -1,3 +1,26 @@
+2010-04-12  Timothy Hatcher  <timothy@apple.com>
+
+        SecurityOrigin needs a way to remove individual OriginAccessEntries
+        https://bugs.webkit.org/show_bug.cgi?id=37449
+
+        Reviewed by Dave Hyatt.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (removeOriginAccessWhitelistEntryCallback): Added. Call LayoutTestController::removeOriginAccessWhitelistEntry.
+        (LayoutTestController::staticFunctions): Added removeOriginAccessWhitelistEntry.
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::removeOriginAccessWhitelistEntry): Added. FIXME to implement.
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::removeOriginAccessWhitelistEntry): Added.
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::removeOriginAccessWhitelistEntry): Added. FIXME to implement.
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::removeOriginAccessWhitelistEntry): Added.
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::whiteListAccessFromOrigin): FIXME to implement.
+        (LayoutTestController::removeOriginAccessWhitelistEntry): Added. FIXME to implement.
+
 2010-04-13  Timothy Hatcher  <timothy@apple.com>
 
         Rename SecurityOrigin::whiteListAccessFromOrigin to addOriginAccessWhitelistEntry.

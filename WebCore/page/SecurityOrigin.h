@@ -195,6 +195,7 @@ public:
     static bool shouldTreatURLSchemeAsNoAccess(const String&);
 
     static void addOriginAccessWhitelistEntry(const SecurityOrigin& sourceOrigin, const String& destinationProtocol, const String& destinationDomains, bool allowDestinationSubdomains);
+    static void removeOriginAccessWhitelistEntry(const SecurityOrigin& sourceOrigin, const String& destinationProtocol, const String& destinationDomains, bool allowDestinationSubdomains);
     static void resetOriginAccessWhitelists();
 
 private:

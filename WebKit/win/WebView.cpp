@@ -6040,6 +6040,12 @@ HRESULT WebView::addOriginAccessWhitelistEntry(BSTR sourceOrigin, BSTR destinati
     return S_OK;
 }
 
+HRESULT WebView::removeOriginAccessWhitelistEntry(BSTR sourceOrigin, BSTR destinationProtocol, BSTR destinationHost, BOOL allowDestinationSubdomains)
+{
+    SecurityOrigin::removeOriginAccessWhitelistEntry(*SecurityOrigin::createFromString(String(sourceOrigin, SysStringLen(sourceOrigin))), String(destinationProtocol, SysStringLen(destinationProtocol)), String(destinationHost, SysStringLen(destinationHost)), allowDestinationSubdomains);
+    return S_OK;
+}
+
 HRESULT WebView::resetOriginAccessWhitelists()
 {
     SecurityOrigin::resetOriginAccessWhitelists();

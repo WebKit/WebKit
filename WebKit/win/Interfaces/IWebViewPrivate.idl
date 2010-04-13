@@ -209,6 +209,9 @@ interface IWebViewPrivate : IUnknown
     // - allowDestinationSubdomains: If host is a domain, setting this to YES will whitelist host and all its subdomains, recursively.
     HRESULT addOriginAccessWhitelistEntry([in] BSTR sourceOrigin, [in] BSTR destinationProtocol, [in] BSTR destinationHost, [in] BOOL allowDestinationSubdomains);
 
+    // Removes a white list entry created with addOriginAccessWhitelistEntry. See above.
+    HRESULT removeOriginAccessWhitelistEntry([in] BSTR sourceOrigin, [in] BSTR destinationProtocol, [in] BSTR destinationHost, [in] BOOL allowDestinationSubdomains);
+
     // Removes all white list entries created with addOriginAccessWhitelistEntry.
     HRESULT resetOriginAccessWhitelists();
 

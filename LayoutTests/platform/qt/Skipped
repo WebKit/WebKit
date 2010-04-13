@@ -305,6 +305,9 @@ http/tests/security/feed-urls-from-remote.html
 # Missing layoutTestController.evaluateScriptInIsolatedWorld()
 http/tests/security/isolatedWorld
 
+# Missing layoutTestController.removeOriginAccessWhitelistEntry()
+http/tests/xmlhttprequest/origin-whitelisting-removal.html
+
 # Evaluate expected results for frame loader callbacks
 # https://bugs.webkit.org/show_bug.cgi?id=34839
 http/tests/security/mixedContent/about-blank-iframe-in-main-frame.html

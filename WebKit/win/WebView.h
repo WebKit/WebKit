@@ -762,6 +762,7 @@ public:
     virtual HRESULT STDMETHODCALLTYPE invalidateBackingStore(const RECT*);
 
     virtual HRESULT STDMETHODCALLTYPE addOriginAccessWhitelistEntry(BSTR sourceOrigin, BSTR destinationProtocol, BSTR destinationHost, BOOL allowDestinationSubdomains);
+    virtual HRESULT STDMETHODCALLTYPE removeOriginAccessWhitelistEntry(BSTR sourceOrigin, BSTR destinationProtocol, BSTR destinationHost, BOOL allowDestinationSubdomains);
     virtual HRESULT STDMETHODCALLTYPE resetOriginAccessWhitelists();
 
     virtual HRESULT STDMETHODCALLTYPE setHistoryDelegate(IWebHistoryDelegate* historyDelegate);

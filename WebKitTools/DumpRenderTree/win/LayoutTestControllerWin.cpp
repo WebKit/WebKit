@@ -992,6 +992,15 @@ void LayoutTestController::addOriginAccessWhitelistEntry(JSStringRef sourceOrigi
     webView->addOriginAccessWhitelistEntry(bstrT(sourceOrigin).GetBSTR(), bstrT(destinationProtocol).GetBSTR(), bstrT(destinationHost).GetBSTR(), allowDestinationSubdomains);
 }
 
+void LayoutTestController::removeOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains)
+{
+    COMPtr<IWebViewPrivate> webView;
+    if (FAILED(WebKitCreateInstance(__uuidof(WebView), 0, __uuidof(webView), reinterpret_cast<void**>(&webView))))
+        return;
+
+    webView->removeOriginAccessWhitelistEntry(bstrT(sourceOrigin).GetBSTR(), bstrT(destinationProtocol).GetBSTR(), bstrT(destinationHost).GetBSTR(), allowDestinationSubdomains);
+}
+
 void LayoutTestController::setScrollbarPolicy(JSStringRef orientation, JSStringRef policy)
 {
     // FIXME: implement
