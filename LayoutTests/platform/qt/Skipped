@@ -304,6 +304,10 @@ http/tests/security/feed-urls-from-remote.html
 
 # Missing layoutTestController.evaluateScriptInIsolatedWorld()
 http/tests/security/isolatedWorld
+storage/statement-error-callback-isolated-world.html
+storage/statement-success-callback-isolated-world.html
+storage/transaction-callback-isolated-world.html
+storage/transaction-error-callback-isolated-world.html
 
 # Missing layoutTestController.removeOriginAccessWhitelistEntry()
 http/tests/xmlhttprequest/origin-whitelisting-removal.html

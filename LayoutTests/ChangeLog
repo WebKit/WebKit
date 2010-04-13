@@ -1,3 +1,14 @@
+2010-04-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Skip new test introduced in r57530, because of
+        missing layoutTestController.evaluateScriptInIsolatedWorld()
+
+        * platform/qt/Skipped:
+         - storage/statement-error-callback-isolated-world.html skipped.
+         - storage/statement-success-callback-isolated-world.html skipped.
+         - storage/transaction-callback-isolated-world.html skipped.
+         - storage/transaction-error-callback-isolated-world.html skipped.
+
 2010-04-13  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Xan Lopez.
