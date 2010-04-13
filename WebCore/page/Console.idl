@@ -30,8 +30,7 @@ module window {
 
     interface [OmitConstructor] Console {
 
-        // Not enabled in V8 because it requires request-reply style.
-#if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER && !(defined(V8_BINDING) && V8_BINDING)
+#if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
         readonly attribute [CustomGetter] Array profiles;
 #endif
     

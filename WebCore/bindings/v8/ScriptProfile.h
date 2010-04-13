@@ -32,29 +32,33 @@
 #define ScriptProfile_h
 
 #include "PlatformString.h"
+#include "ScriptProfileNode.h"
+
+namespace v8 {
+class CpuProfile;
+}
 
 namespace WebCore {
 
 class ScriptProfile : public RefCounted<ScriptProfile> {
 public:
-    static PassRefPtr<ScriptProfile> create(const String& title, unsigned uid)
+    static PassRefPtr<ScriptProfile> create(const v8::CpuProfile* profile)
     {
-      return adoptRef(new ScriptProfile(title, uid));
+        return adoptRef(new ScriptProfile(profile));
     }
     virtual ~ScriptProfile() {}
 
-    String title() const { return m_title; }
-    unsigned int uid() const { return m_uid; }
+    String title() const;
+    unsigned int uid() const;
+    PassRefPtr<ScriptProfileNode> head() const;
 
 protected:
-    ScriptProfile(const String& title, unsigned uid)
-        : m_title(title)
-        , m_uid(uid)
+    ScriptProfile(const v8::CpuProfile* profile)
+        : m_profile(profile)
     {}
 
 private:
-    String m_title;
-    unsigned int m_uid;
+    const v8::CpuProfile* m_profile;
 };
 
 } // namespace WebCore

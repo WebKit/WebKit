@@ -41,18 +41,6 @@ devtools.ProfilerAgent = function()
     RemoteProfilerAgent.didGetLogLines = this._didGetLogLines.bind(this);
 
     /**
-     * Active profiler modules flags.
-     * @type {number}
-     */
-    this._activeProfilerModules = devtools.ProfilerAgent.ProfilerModules.PROFILER_MODULE_NONE;
-
-    /**
-     * Interval for polling profiler state.
-     * @type {number}
-     */
-    this._getActiveProfilerModulesInterval = null;
-
-    /**
      * Profiler log position.
      * @type {number}
      */
@@ -63,12 +51,6 @@ devtools.ProfilerAgent = function()
      * @type {number}
      */
     this._lastRequestedLogPosition = -1;
-
-    /**
-     * Whether log contents retrieval must be forced next time.
-     * @type {boolean}
-     */
-    this._forceGetLogLines = false;
 
     /**
      * Profiler processor instance.
@@ -92,50 +74,11 @@ devtools.ProfilerAgent.ProfilerModules = {
 
 
 /**
- * Sets up callbacks that deal with profiles processing.
- */
-devtools.ProfilerAgent.prototype.setupProfilerProcessorCallbacks = function()
-{
-    // A temporary icon indicating that the profile is being processed.
-    var processingIcon = new WebInspector.SidebarTreeElement(
-        "profile-sidebar-tree-item",
-        WebInspector.UIString("Processing..."),
-        '', null, false);
-    var profilesSidebar = WebInspector.panels.profiles.getProfileType(WebInspector.CPUProfileType.TypeId).treeElement;
-
-    this._profilerProcessor.setCallbacks(
-        function onProfileProcessingStarted() {
-            // Set visually empty string. Subtitle hiding is done via styles
-            // manipulation which doesn't play well with dynamic append / removal.
-            processingIcon.subtitle = " ";
-            profilesSidebar.appendChild(processingIcon);
-        },
-        function onProfileProcessingStatus(ticksCount) {
-            processingIcon.subtitle = WebInspector.UIString("%d ticks processed", ticksCount);
-        },
-        function onProfileProcessingFinished(profile) {
-            profilesSidebar.removeChild(processingIcon);
-            profile.typeId = WebInspector.CPUProfileType.TypeId;
-            InspectorBackend.addFullProfile(profile);
-            WebInspector.addProfileHeader(profile);
-            // If no profile is currently shown, show the new one.
-            var profilesPanel = WebInspector.panels.profiles;
-            if (!profilesPanel.visibleView) {
-                profilesPanel.showProfile(profile);
-            }
-        }
-    );
-};
-
-
-/**
  * Initializes profiling state.
  */
 devtools.ProfilerAgent.prototype.initializeProfiling = function()
 {
-    this.setupProfilerProcessorCallbacks();
-    this._forceGetLogLines = true;
-    this._getActiveProfilerModulesInterval = setInterval(function() { RemoteProfilerAgent.getActiveProfilerModules(); }, 1000);
+    this._getNextLogLines(false);
 };
 
 
@@ -193,16 +136,6 @@ devtools.ProfilerAgent.prototype.stopProfiling = function(modules)
  */
 devtools.ProfilerAgent.prototype._didGetActiveProfilerModules = function(modules)
 {
-    var profModules = devtools.ProfilerAgent.ProfilerModules;
-    var profModuleNone = profModules.PROFILER_MODULE_NONE;
-    if (this._forceGetLogLines || (modules !== profModuleNone && this._activeProfilerModules === profModuleNone)) {
-        this._forceGetLogLines = false;
-        // Start to query log data.
-        this._getNextLogLines(true);
-    }
-    this._activeProfilerModules = modules;
-    // Update buttons.
-    WebInspector.setRecordingProfile(modules & profModules.PROFILER_MODULE_CPU);
 };
 
 
@@ -214,14 +147,11 @@ devtools.ProfilerAgent.prototype._didGetActiveProfilerModules = function(modules
 devtools.ProfilerAgent.prototype._didGetLogLines = function(pos, log)
 {
     this._logPosition = pos;
-    if (log.length > 0)
+    if (log.length > 0) {
         this._profilerProcessor.processLogChunk(log);
-    else {
+        this._getNextLogLines();
+    } else {
         // Allow re-reading from the last position.
         this._lastRequestedLogPosition = this._logPosition - 1;
-        if (this._activeProfilerModules === devtools.ProfilerAgent.ProfilerModules.PROFILER_MODULE_NONE)
-            // No new data and profiling is stopped---suspend log reading.
-            return;
     }
-    this._getNextLogLines();
 };

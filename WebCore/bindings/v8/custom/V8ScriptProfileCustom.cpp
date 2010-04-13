@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -29,25 +29,33 @@
  */
 
 #include "config.h"
+#include "V8ScriptProfile.h"
 
-#include "ScriptProfiler.h"
-#include "ScriptString.h"
+#include "ScriptProfile.h"
+#include "V8Binding.h"
+#include "V8Proxy.h"
 
 #include <v8-profiler.h>
 
 namespace WebCore {
 
-void ScriptProfiler::start(ScriptState* state, const String& title)
+v8::Handle<v8::Value> toV8(ScriptProfile* impl)
 {
-    v8::HandleScope hs;
-    v8::CpuProfiler::StartProfiling(v8String(title));
-}
-
-PassRefPtr<ScriptProfile> ScriptProfiler::stop(ScriptState* state, const String& title)
-{
-    v8::HandleScope hs;
-    const v8::CpuProfile* profile = v8::CpuProfiler::StopProfiling(v8String(title));
-    return profile ? ScriptProfile::create(profile) : 0;
+    if (!impl)
+        return v8::Null();
+    v8::Local<v8::Function> function = V8ScriptProfile::GetTemplate()->GetFunction();
+    if (function.IsEmpty()) {
+        // Return if allocation failed.
+        return v8::Local<v8::Object>();
+    }
+    v8::Local<v8::Object> instance = SafeAllocation::newInstance(function);
+    if (instance.IsEmpty()) {
+        // Avoid setting the wrapper if allocation failed.
+        return v8::Local<v8::Object>();
+    }
+    impl->ref();
+    V8DOMWrapper::setDOMWrapper(instance, &V8ScriptProfile::info, impl);
+    return instance;
 }
 
 } // namespace WebCore

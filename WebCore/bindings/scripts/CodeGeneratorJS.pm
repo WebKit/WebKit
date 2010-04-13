@@ -214,12 +214,32 @@ sub AddIncludesForSVGAnimatedType
     }
 }
 
+sub IsScriptProfileType
+{
+    my $type = shift;
+    return 1 if ($type eq "ScriptProfile" or $type eq "ScriptProfileNode");
+    return 0;
+}
+
+sub AddTypedefForScriptProfileType
+{
+    my $type = shift;
+    (my $jscType = $type) =~ s/Script//;
+
+    push(@headerContent, "typedef JSC::$jscType $type;\n\n");
+}
+
 sub AddClassForwardIfNeeded
 {
     my $implClassName = shift;
 
     # SVGAnimatedLength/Number/etc. are typedefs to SVGAnimatedTemplate, so don't use class forwards for them!
-    push(@headerContent, "class $implClassName;\n\n") unless $codeGenerator->IsSVGAnimatedType($implClassName);
+    unless ($codeGenerator->IsSVGAnimatedType($implClassName) or IsScriptProfileType($implClassName)) {
+        push(@headerContent, "class $implClassName;\n\n");
+    # ScriptProfile and ScriptProfileNode are typedefs to JSC::Profile and JSC::ProfileNode.
+    } elsif (IsScriptProfileType($implClassName)) {
+        AddTypedefForScriptProfileType($implClassName);
+    }
 }
 
 sub IsSVGTypeNeedingContextParameter

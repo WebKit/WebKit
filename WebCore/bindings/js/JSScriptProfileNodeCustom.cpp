@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -10,10 +11,10 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
@@ -23,24 +24,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JavaScriptProfile_h
-#define JavaScriptProfile_h
+#include "config.h"
+
+#include "JSScriptProfileNode.h"
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
+#include <profiler/ProfileNode.h>
+#endif
 
-#include <runtime/JSValue.h>
+#include <runtime/JSArray.h>
 
-namespace JSC {
-class ExecState;
-class Profile;
-}
+using namespace JSC;
 
 namespace WebCore {
 
-JSC::JSValue toJS(JSC::ExecState*, JSC::Profile*);
+#if ENABLE(JAVASCRIPT_DEBUGGER)
 
-} // namespace WebCore
+JSValue JSScriptProfileNode::callUID(ExecState* exec) const
+{
+    JSValue result = jsNumber(exec, impl()->callIdentifier().hash());
+    return result;
+}
 
-#endif // ENABLE(JAVASCRIPT_DEBUGGER)
+typedef Vector<RefPtr<ProfileNode> > ProfileNodesList;
+
+JSValue JSScriptProfileNode::children(ExecState* exec) const
+{
+    const ProfileNodesList& children = impl()->children();
+    MarkedArgumentBuffer list;
+
+    ProfileNodesList::const_iterator end = children.end();
+    for (ProfileNodesList::const_iterator iter = children.begin(); iter != end; ++iter)
+        list.append(toJS(exec, iter->get()));
+
+    return constructArray(exec, list);
+}
 
 #endif
+
+} // namespace WebCore

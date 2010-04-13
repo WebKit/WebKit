@@ -270,6 +270,8 @@ IDL_BINDINGS += \
 	WebCore/inspector/InjectedScriptHost.idl \
 	WebCore/inspector/InspectorBackend.idl \
 	WebCore/inspector/InspectorFrontendHost.idl \
+	WebCore/inspector/ScriptProfile.idl \
+	WebCore/inspector/ScriptProfileNode.idl \
 	WebCore/notifications/Notification.idl \
 	WebCore/notifications/NotificationCenter.idl \
 	WebCore/page/BarInfo.idl \
@@ -469,6 +471,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSPluginElementFunctions.cpp \
 	WebCore/bindings/js/JSPluginElementFunctions.h \
 	WebCore/bindings/js/JSPopStateEventCustom.cpp \
+	WebCore/bindings/js/JSScriptProfileNodeCustom.cpp \
 	WebCore/bindings/js/JSStorageCustom.h \
 	WebCore/bindings/js/JSStyleSheetCustom.cpp \
 	WebCore/bindings/js/JSStyleSheetListCustom.cpp \
@@ -487,10 +490,6 @@ webcore_sources += \
 	WebCore/bindings/js/JSXSLTProcessorConstructor.cpp \
 	WebCore/bindings/js/JSXSLTProcessorConstructor.h \
 	WebCore/bindings/js/JSXSLTProcessorCustom.cpp \
-	WebCore/bindings/js/JavaScriptProfile.cpp \
-	WebCore/bindings/js/JavaScriptProfile.h \
-	WebCore/bindings/js/JavaScriptProfileNode.cpp \
-	WebCore/bindings/js/JavaScriptProfileNode.h \
 	WebCore/bindings/js/ScheduledAction.cpp \
 	WebCore/bindings/js/ScheduledAction.h \
 	WebCore/bindings/js/ScriptArray.cpp \
@@ -514,6 +513,7 @@ webcore_sources += \
 	WebCore/bindings/js/ScriptObject.cpp \
 	WebCore/bindings/js/ScriptObject.h \
 	WebCore/bindings/js/ScriptProfile.h \
+	WebCore/bindings/js/ScriptProfileNode.h \
 	WebCore/bindings/js/ScriptProfiler.cpp \
 	WebCore/bindings/js/ScriptProfiler.h \
 	WebCore/bindings/js/ScriptSourceCode.h \

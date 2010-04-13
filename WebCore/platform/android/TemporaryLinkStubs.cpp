@@ -84,7 +84,6 @@
 #include "API/JSClassRef.h"
 #include "JNIUtilityPrivate.h"
 #include "JavaScriptCallFrame.h"
-#include "JavaScriptProfile.h"
 #include "ScriptDebugServer.h"
 #endif
 

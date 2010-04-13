@@ -243,6 +243,8 @@ DOM_CLASSES = \
     Rect \
     SharedWorker \
     SharedWorkerContext \
+    ScriptProfile \
+    ScriptProfileNode \
     SQLError \
     SQLResultSet \
     SQLResultSetRowList \

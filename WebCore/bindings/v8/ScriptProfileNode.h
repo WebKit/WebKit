@@ -28,26 +28,48 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef ScriptProfileNode_h
+#define ScriptProfileNode_h
 
-#include "ScriptProfiler.h"
-#include "ScriptString.h"
+#include "PlatformString.h"
 
-#include <v8-profiler.h>
+namespace v8 {
+class CpuProfileNode;
+}
 
 namespace WebCore {
 
-void ScriptProfiler::start(ScriptState* state, const String& title)
-{
-    v8::HandleScope hs;
-    v8::CpuProfiler::StartProfiling(v8String(title));
-}
+class ScriptProfileNode;
 
-PassRefPtr<ScriptProfile> ScriptProfiler::stop(ScriptState* state, const String& title)
-{
-    v8::HandleScope hs;
-    const v8::CpuProfile* profile = v8::CpuProfiler::StopProfiling(v8String(title));
-    return profile ? ScriptProfile::create(profile) : 0;
-}
+typedef Vector<RefPtr<ScriptProfileNode> > ProfileNodesList;
+
+class ScriptProfileNode : public RefCounted<ScriptProfileNode> {
+public:
+    static PassRefPtr<ScriptProfileNode> create(const v8::CpuProfileNode* profileNode)
+    {
+        return adoptRef(new ScriptProfileNode(profileNode));
+    }
+    virtual ~ScriptProfileNode() {}
+
+    String functionName() const;
+    String url() const;
+    unsigned long lineNumber() const;
+    double totalTime() const;
+    double selfTime() const;
+    unsigned long numberOfCalls() const;
+    ProfileNodesList children() const;
+    bool visible() const;
+    unsigned long callUID() const;
+
+protected:
+    ScriptProfileNode(const v8::CpuProfileNode* profileNode)
+        : m_profileNode(profileNode)
+    {}
+
+private:
+    const v8::CpuProfileNode* m_profileNode;
+};
 
 } // namespace WebCore
+
+#endif // ScriptProfileNode_h

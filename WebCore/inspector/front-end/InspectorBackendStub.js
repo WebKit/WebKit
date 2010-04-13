@@ -214,10 +214,6 @@ WebInspector.InspectorBackendStub.prototype = {
 
     getProfile: function(callId, uid)
     {
-        if (WebInspector.__fullProfiles && (uid in WebInspector.__fullProfiles))
-        {
-            WebInspector.didGetProfile(callId, WebInspector.__fullProfiles[uid]);
-        }
     },
 
     takeHeapSnapshot: function()

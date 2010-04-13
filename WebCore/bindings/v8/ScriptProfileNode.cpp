@@ -30,24 +30,63 @@
 
 #include "config.h"
 
-#include "ScriptProfiler.h"
-#include "ScriptString.h"
+#include "ScriptProfile.h"
+
+#include "V8Binding.h"
 
 #include <v8-profiler.h>
 
 namespace WebCore {
 
-void ScriptProfiler::start(ScriptState* state, const String& title)
+String ScriptProfileNode::functionName() const
 {
-    v8::HandleScope hs;
-    v8::CpuProfiler::StartProfiling(v8String(title));
+    return toWebCoreString(m_profileNode->GetFunctionName());
 }
 
-PassRefPtr<ScriptProfile> ScriptProfiler::stop(ScriptState* state, const String& title)
+String ScriptProfileNode::url() const
 {
-    v8::HandleScope hs;
-    const v8::CpuProfile* profile = v8::CpuProfiler::StopProfiling(v8String(title));
-    return profile ? ScriptProfile::create(profile) : 0;
+    return toWebCoreString(m_profileNode->GetScriptResourceName());
+}
+
+unsigned long ScriptProfileNode::lineNumber() const
+{
+    return m_profileNode->GetLineNumber();
+}
+
+double ScriptProfileNode::totalTime() const
+{
+    // FIXME: use GetTotalMilliseconds once it is implemented in V8.
+    return m_profileNode->GetTotalSamplesCount();
+}
+
+double ScriptProfileNode::selfTime() const
+{
+    // FIXME: use GetSelfMilliseconds once it is implemented in V8.
+    return m_profileNode->GetSelfSamplesCount();
+}
+
+unsigned long ScriptProfileNode::numberOfCalls() const
+{
+    return 0;
+}
+
+ProfileNodesList ScriptProfileNode::children() const
+{
+    const int childrenCount = m_profileNode->GetChildrenCount();
+    ProfileNodesList result(childrenCount);
+    for (int i = 0; i < childrenCount; ++i)
+        result[i] = ScriptProfileNode::create(m_profileNode->GetChild(i));
+    return result;
+}
+
+bool ScriptProfileNode::visible() const
+{
+    return true;
+}
+
+unsigned long ScriptProfileNode::callUID() const
+{
+    return m_profileNode->GetCallUid();
 }
 
 } // namespace WebCore

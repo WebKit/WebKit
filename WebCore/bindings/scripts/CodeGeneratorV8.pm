@@ -2123,6 +2123,8 @@ sub HasCustomToV8Implementation {
     return 1 if $interfaceName eq "NamedNodeMap";
     return 1 if $interfaceName eq "SVGDocument";
     return 1 if $interfaceName eq "SVGElement";
+    return 1 if $interfaceName eq "ScriptProfile";
+    return 1 if $interfaceName eq "ScriptProfileNode";
     return 1 if $interfaceName eq "WorkerContext";
     # We don't generate a custom converter (but JSC does) for the following:
     return 0 if $interfaceName eq "AbstractWorker";

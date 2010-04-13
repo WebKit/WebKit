@@ -113,6 +113,7 @@
 #include "JSSVGMatrixCustom.cpp"
 #include "JSSVGPathSegCustom.cpp"
 #include "JSSVGPathSegListCustom.cpp"
+#include "JSScriptProfileNodeCustom.cpp"
 #include "JSSharedWorkerConstructor.cpp"
 #include "JSSharedWorkerCustom.cpp"
 #include "JSStorageCustom.cpp"

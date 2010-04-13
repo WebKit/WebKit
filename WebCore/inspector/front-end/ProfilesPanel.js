@@ -164,6 +164,7 @@ WebInspector.ProfilesPanel.prototype = {
 
     populateInterface: function()
     {
+        this.reset();
         if (this.visible)
             this._populateProfiles();
         else
@@ -176,7 +177,6 @@ WebInspector.ProfilesPanel.prototype = {
             return;
 
         this._profilerEnabled = true;
-        this.reset();
         this.populateInterface();
     },
 

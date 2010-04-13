@@ -99,13 +99,13 @@
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 #include "ScriptDebugServer.h"
-#endif
-
-#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
-#include "JavaScriptProfile.h"
-
+#if USE(JSC)
 #include <runtime/JSLock.h>
 #include <runtime/UString.h>
+#include "JSScriptProfile.h"
+#else
+#include "V8ScriptProfile.h"
+#endif
 #endif
 
 using namespace std;
@@ -1374,9 +1374,11 @@ void InspectorController::getProfile(long callId, unsigned uid)
     if (!m_frontend)
         return;
     ProfilesMap::iterator it = m_profiles.find(uid);
-#if USE(JSC)
     if (it != m_profiles.end())
+#if USE(JSC)
         m_frontend->didGetProfile(callId, toJS(m_frontend->scriptState(), it->second.get()));
+#else
+        m_frontend->didGetProfile(callId, toV8(it->second.get()));
 #endif
 }
 

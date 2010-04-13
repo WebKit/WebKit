@@ -54,6 +54,8 @@ devtools.InspectorBackendImpl = function()
     this.installInspectorControllerDelegate_("getDatabaseTableNames");
     this.installInspectorControllerDelegate_("getDOMStorageEntries");
     this.installInspectorControllerDelegate_("getEventListenersForNode");
+    this.installInspectorControllerDelegate_("getProfile");
+    this.installInspectorControllerDelegate_("getProfileHeaders");
     this.installInspectorControllerDelegate_("getResourceContent");
     this.installInspectorControllerDelegate_("highlightDOMNode");
     this.installInspectorControllerDelegate_("hideDOMNodeHighlight");
@@ -68,7 +70,9 @@ devtools.InspectorBackendImpl = function()
     this.installInspectorControllerDelegate_("setDOMStorageItem");
     this.installInspectorControllerDelegate_("setInjectedScriptSource");
     this.installInspectorControllerDelegate_("setTextNodeValue");
+    this.installInspectorControllerDelegate_("startProfiling");
     this.installInspectorControllerDelegate_("startTimelineProfiler");
+    this.installInspectorControllerDelegate_("stopProfiling");
     this.installInspectorControllerDelegate_("stopTimelineProfiler");
     this.installInspectorControllerDelegate_("storeLastActivePanel");
 
@@ -187,54 +191,6 @@ devtools.InspectorBackendImpl.prototype.pauseOnExceptions = function()
 devtools.InspectorBackendImpl.prototype.setPauseOnExceptions = function(value)
 {
     return devtools.tools.getDebuggerAgent().setPauseOnExceptions(value);
-};
-
-
-/**
- * @override
- */
-devtools.InspectorBackendImpl.prototype.startProfiling = function()
-{
-    devtools.tools.getProfilerAgent().startProfiling(devtools.ProfilerAgent.ProfilerModules.PROFILER_MODULE_CPU);
-};
-
-
-/**
- * @override
- */
-devtools.InspectorBackendImpl.prototype.stopProfiling = function()
-{
-    devtools.tools.getProfilerAgent().stopProfiling( devtools.ProfilerAgent.ProfilerModules.PROFILER_MODULE_CPU);
-};
-
-
-/**
- * @override
- */
-devtools.InspectorBackendImpl.prototype.getProfileHeaders = function(callId)
-{
-    WebInspector.didGetProfileHeaders(callId, []);
-};
-
-
-/**
- * Emulate WebKit InspectorController behavior. It stores profiles on renderer side,
- * and is able to retrieve them by uid using "getProfile".
- */
-devtools.InspectorBackendImpl.prototype.addFullProfile = function(profile)
-{
-    WebInspector.__fullProfiles = WebInspector.__fullProfiles || {};
-    WebInspector.__fullProfiles[profile.uid] = profile;
-};
-
-
-/**
- * @override
- */
-devtools.InspectorBackendImpl.prototype.getProfile = function(callId, uid)
-{
-    if (WebInspector.__fullProfiles && (uid in WebInspector.__fullProfiles))
-        WebInspector.didGetProfile(callId, WebInspector.__fullProfiles[uid]);
 };
 
 
