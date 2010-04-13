@@ -1,3 +1,18 @@
+2010-04-12  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Finish IPv4 URL parsing test
+        https://bugs.webkit.org/show_bug.cgi?id=37493
+
+        I rushed the first version of this test because I wanted to get the
+        framework in the tree for other folks to work on the other tests.  The
+        expected.txt file matches KURL but the PASS/FAIL indiciations match
+        GURL.
+
+        * fast/url/ipv4-expected.txt:
+        * fast/url/script-tests/ipv4.js:
+
 2010-04-12  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Adam Barth.
