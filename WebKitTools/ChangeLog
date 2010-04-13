@@ -2,6 +2,17 @@
 
         Reviewed by Adam Barth.
 
+        Make new-run-webkit-test PrettyPatch failure reporting more awesome
+        https://bugs.webkit.org/show_bug.cgi?id=37487
+
+        I also fixed an Executive/executive typo.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+
+2010-04-12  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         new-run-webkit-tests should only build java support files on Mac
         https://bugs.webkit.org/show_bug.cgi?id=37482
 

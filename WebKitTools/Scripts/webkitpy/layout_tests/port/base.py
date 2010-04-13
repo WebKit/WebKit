@@ -42,7 +42,12 @@ import apache_http_server
 import http_server
 import websocket_server
 
-from webkitpy.common.system.executive import Executive
+from webkitpy.common.system import logutils
+from webkitpy.common.system.executive import Executive, ScriptError
+
+
+_log = logutils.get_logger(__file__)
+
 
 # Python bug workaround.  See Port.wdiff_text() for an explanation.
 _wdiff_available = True
@@ -564,23 +569,27 @@ class Port(object):
                 raise e
         return result
 
+    _pretty_patch_error_html = "Failed to run PrettyPatch, see error console."
+
     def pretty_patch_text(self, diff_path):
         global _pretty_patch_available
         if not _pretty_patch_available:
-            return "Failed to run PrettyPatch"
+            return self._pretty_patch_error_html
         pretty_patch_path = self.path_from_webkit_base("BugsSite", "PrettyPatch")
         prettify_path = os.path.join(pretty_patch_path, "prettify.rb")
         command = ["ruby", "-I", pretty_patch_path, prettify_path, diff_path]
         try:
             return self._executive.run_command(command)
         except OSError, e:
-            # If they system is missing ruby just log the error, and stop trying.
+            # If the system is missing ruby log the error and stop trying.
             _pretty_patch_available = False
-            return "Failed to run PrettyPatch: %s" % e
-        except Executive.ScriptError, e:
-            # If they system is missing ruby just log the error, and stop trying.
+            _log.error("Failed to run PrettyPatch (%s): %s" % (command, e))
+            return self._pretty_patch_error_html
+        except ScriptError, e:
+            # If ruby failed to run for some reason, log the command output and stop trying.
             _pretty_patch_available = False
-            return "Failed to run PrettyPatch: %s" % e
+            _log.error("Failed to run PrettyPatch (%s):\n%s" % (command, e.message_with_output()))
+            return self._pretty_patch_error_html
 
     def default_configuration(self):
         return "Release"
