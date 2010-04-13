@@ -28,40 +28,41 @@
 namespace WebCore {
 
 StyleBoxData::StyleBoxData()
-    : z_index(0)
-    , z_auto(true)
-    , boxSizing(CONTENT_BOX)
+    : m_minWidth(RenderStyle::initialMinSize())
+    , m_maxWidth(RenderStyle::initialMaxSize())
+    , m_minHeight(RenderStyle::initialMinSize())
+    , m_maxHeight(RenderStyle::initialMaxSize())
+    , m_zIndex(0)
+    , m_hasAutoZIndex(true)
+    , m_boxSizing(CONTENT_BOX)
 {
-    // Initialize our min/max widths/heights.
-    min_width = min_height = RenderStyle::initialMinSize();
-    max_width = max_height = RenderStyle::initialMaxSize();
 }
 
 StyleBoxData::StyleBoxData(const StyleBoxData& o)
     : RefCounted<StyleBoxData>()
-    , width(o.width)
-    , height(o.height)
-    , min_width(o.min_width)
-    , max_width(o.max_width)
-    , min_height(o.min_height)
-    , max_height(o.max_height)
-    , z_index(o.z_index)
-    , z_auto(o.z_auto)
-    , boxSizing(o.boxSizing)
+    , m_width(o.m_width)
+    , m_height(o.m_height)
+    , m_minWidth(o.m_minWidth)
+    , m_maxWidth(o.m_maxWidth)
+    , m_minHeight(o.m_minHeight)
+    , m_maxHeight(o.m_maxHeight)
+    , m_zIndex(o.m_zIndex)
+    , m_hasAutoZIndex(o.m_hasAutoZIndex)
+    , m_boxSizing(o.m_boxSizing)
 {
 }
 
 bool StyleBoxData::operator==(const StyleBoxData& o) const
 {
-    return width == o.width &&
-           height == o.height &&
-           min_width == o.min_width &&
-           max_width == o.max_width &&
-           min_height == o.min_height &&
-           max_height == o.max_height &&
-           z_index == o.z_index &&
-           z_auto == o.z_auto &&
-           boxSizing == o.boxSizing;
+    return m_width == o.m_width
+           && m_height == o.m_height
+           && m_minWidth == o.m_minWidth
+           && m_maxWidth == o.m_maxWidth
+           && m_minHeight == o.m_minHeight
+           && m_maxHeight == o.m_maxHeight
+           && m_zIndex == o.m_zIndex
+           && m_hasAutoZIndex == o.m_hasAutoZIndex
+           && m_boxSizing == o.m_boxSizing;
 }
 
 } // namespace WebCore
