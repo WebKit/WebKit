@@ -1,3 +1,13 @@
+2010-04-13  Chang Shu  <chang.shu@nokia.com>
+
+        Reviewed by Darin Fisher.
+
+        Added test for forcing UTF-8 charset.
+        https://bugs.webkit.org/show_bug.cgi?id=34653
+
+        * http/tests/xmlhttprequest/request-encoding2-expected.txt: Added.
+        * http/tests/xmlhttprequest/request-encoding2.html: Added.
+
 2010-04-13  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Xan Lopez.

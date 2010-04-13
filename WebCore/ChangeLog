@@ -1,3 +1,22 @@
+2010-04-13  Chang Shu  <chang.shu@nokia.com>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34653
+
+        Based on W3C spec and Firefox behavior, while invoking XHR Send with parameter
+        as String, the charset in Content-Type should be forced to set to UTF-8.
+
+        Test: http/tests/xmlhttprequest/request-encoding2.html
+
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::extractCharsetFromMediaType):
+        (WebCore::findCharsetInMediaType):
+        * platform/network/HTTPParsers.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::setCharsetInMediaType):
+        (WebCore::XMLHttpRequest::send):
+
 2010-04-12  Timothy Hatcher  <timothy@apple.com>
 
         SecurityOrigin needs a way to remove individual OriginAccessEntries

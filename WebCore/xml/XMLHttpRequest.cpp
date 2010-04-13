@@ -129,6 +129,29 @@ static bool isSetCookieHeader(const AtomicString& name)
     return equalIgnoringCase(name, "set-cookie") || equalIgnoringCase(name, "set-cookie2");
 }
 
+static void setCharsetInMediaType(String& mediaType, const String& charsetValue)
+{
+    unsigned int pos = 0, len = 0;
+
+    findCharsetInMediaType(mediaType, pos, len);
+
+    if (!len) {
+        // When no charset found, append new charset.
+        mediaType.stripWhiteSpace();
+        if (mediaType[mediaType.length() - 1] != ';')
+            mediaType.append(";");
+        mediaType.append(" charset=");
+        mediaType.append(charsetValue);
+    } else {
+        // Found at least one existing charset, replace all occurrences with new charset.
+        while (len) {
+            mediaType.replace(pos, len, charsetValue);
+            unsigned int start = pos + charsetValue.length();
+            findCharsetInMediaType(mediaType, pos, len, start);
+        }
+    }
+}
+
 static const XMLHttpRequestStaticData* staticData = 0;
 
 static const XMLHttpRequestStaticData* createXMLHttpRequestStaticData()
@@ -433,6 +456,9 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
             else
 #endif
                 setRequestHeaderInternal("Content-Type", "application/xml");
+        } else {
+            setCharsetInMediaType(contentType, "UTF-8");
+            m_requestHeaders.set("Content-Type", contentType);
         }
 
         m_requestEntityBody = FormData::create(UTF8Encoding().encode(body.characters(), body.length(), EntitiesForUnencodables));
