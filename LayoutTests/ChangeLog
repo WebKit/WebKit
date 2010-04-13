@@ -1,3 +1,10 @@
+2010-04-13  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Unreviewed, adding another fast/url/ test to Chromium's
+        test_expectations.txt.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-04-12  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Maciej Stachowiak.
