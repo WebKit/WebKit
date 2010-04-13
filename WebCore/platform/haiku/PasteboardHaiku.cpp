@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006 Zack Rusin <zack@kde.org>
  * Copyright (C) 2007 Ryan Leavengood <leavengood@gmail.com>
+ * Copyright (C) 2010 Stephan Aßmus <superstippi@gmx.de>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -21,7 +22,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -32,11 +33,13 @@
 #include "Frame.h"
 #include "KURL.h"
 #include "NotImplemented.h"
+#include "TextResourceDecoder.h"
 #include "markup.h"
 #include <support/Locker.h>
 #include <Clipboard.h>
 #include <Message.h>
 #include <String.h>
+#include <wtf/text/CString.h>
 
 
 namespace WebCore {
@@ -45,44 +48,80 @@ Pasteboard::Pasteboard()
 {
 }
 
+Pasteboard::~Pasteboard()
+{
+}
+
 Pasteboard* Pasteboard::generalPasteboard()
 {
-    static Pasteboard* pasteboard = new Pasteboard();
-    return pasteboard;
+    static Pasteboard pasteboard;
+    return &pasteboard;
 }
+
+// BClipboard unfortunately does not derive from BLocker, so we cannot use BAutolock.
+class AutoClipboardLocker {
+public:
+    AutoClipboardLocker(BClipboard* clipboard)
+        : m_clipboard(clipboard)
+        , m_isLocked(clipboard && clipboard->Lock())
+    {
+    }
+
+    ~AutoClipboardLocker()
+    {
+        if (m_isLocked)
+            m_clipboard->Unlock();
+    }
+
+    bool isLocked() const
+    {
+        return m_isLocked;
+    }
+
+private:
+    BClipboard* m_clipboard;
+    bool m_isLocked;
+};
 
 void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete, Frame* frame)
 {
-    BClipboard clipboard("WebKit");
-    if (!clipboard.Lock())
+    AutoClipboardLocker locker(be_clipboard);
+    if (!locker.isLocked())
         return;
 
-    clipboard.Clear();
-    BMessage* data = clipboard.Data();
+    be_clipboard->Clear();
+    BMessage* data = be_clipboard->Data();
     if (!data)
         return;
 
-    data->AddString("text/plain", BString(frame->selectedText()));
-    clipboard.Commit();
+    BString string(frame->selectedText());
 
-    clipboard.Unlock();
+    // Replace unwanted representation of blank lines
+    const char* utf8BlankLine = "\302\240\n";
+    string.ReplaceAll(utf8BlankLine, "\n");
+
+    data->AddData("text/plain", B_MIME_TYPE, string.String(), string.Length());
+
+    BString markupString(createMarkup(selectedRange, 0, AnnotateForInterchange));
+    data->AddData("text/html", B_MIME_TYPE, markupString.String(), markupString.Length());
+
+    be_clipboard->Commit();
 }
 
 void Pasteboard::writePlainText(const String& text)
 {
-    BClipboard clipboard("WebKit");
-    if (!clipboard.Lock())
+    AutoClipboardLocker locker(be_clipboard);
+    if (!locker.isLocked())
         return;
 
-    clipboard.Clear();
-    BMessage* data = clipboard.Data();
+    be_clipboard->Clear();
+    BMessage* data = be_clipboard->Data();
     if (!data)
         return;
 
-    data->AddString("text/plain", BString(text));
-    clipboard.Commit();
-
-    clipboard.Unlock();
+    BString string(text);
+    data->AddData("text/plain", B_MIME_TYPE, string.String(), string.Length());
+    be_clipboard->Commit();
 }
 
 bool Pasteboard::canSmartReplace()
@@ -93,18 +132,19 @@ bool Pasteboard::canSmartReplace()
 
 String Pasteboard::plainText(Frame* frame)
 {
-    BClipboard clipboard("WebKit");
-    if (!clipboard.Lock())
+    AutoClipboardLocker locker(be_clipboard);
+    if (!locker.isLocked())
         return String();
 
-    BMessage* data = clipboard.Data();
+    BMessage* data = be_clipboard->Data();
     if (!data)
         return String();
 
+    const char* buffer = 0;
+    ssize_t bufferLength;
     BString string;
-    data->FindString("text/plain", &string);
-
-    clipboard.Unlock();
+    if (data->FindData("text/plain", B_MIME_TYPE, reinterpret_cast<const void**>(&buffer), &bufferLength) == B_OK)
+        string.Append(buffer, bufferLength);
 
     return string;
 }
@@ -112,26 +152,60 @@ String Pasteboard::plainText(Frame* frame)
 PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefPtr<Range> context,
                                                           bool allowPlainText, bool& chosePlainText)
 {
-    notImplemented();
+    chosePlainText = false;
+
+    AutoClipboardLocker locker(be_clipboard);
+    if (!locker.isLocked())
+        return 0;
+
+    BMessage* data = be_clipboard->Data();
+    if (!data)
+        return 0;
+
+    const char* buffer = 0;
+    ssize_t bufferLength;
+    if (data->FindData("text/html", B_MIME_TYPE, reinterpret_cast<const void**>(&buffer), &bufferLength) == B_OK) {
+        RefPtr<TextResourceDecoder> decoder = TextResourceDecoder::create("text/plain", "UTF-8", true);
+        String html = decoder->decode(buffer, bufferLength);
+        html += decoder->flush();
+
+        if (!html.isEmpty()) {
+            RefPtr<DocumentFragment> fragment = createFragmentFromMarkup(frame->document(), html, "", FragmentScriptingNotAllowed);
+            if (fragment)
+                return fragment.release();
+        }
+    }
+
+    if (!allowPlainText)
+        return 0;
+
+    if (data->FindData("text/plain", B_MIME_TYPE, reinterpret_cast<const void**>(&buffer), &bufferLength) == B_OK) {
+        BString plainText(buffer, bufferLength);
+
+        chosePlainText = true;
+        RefPtr<DocumentFragment> fragment = createFragmentFromText(context.get(), plainText);
+        if (fragment)
+            return fragment.release();
+    }
+
     return 0;
 }
 
 void Pasteboard::writeURL(const KURL& url, const String&, Frame*)
 {
-    BClipboard clipboard("WebKit");
-    if (!clipboard.Lock())
+    AutoClipboardLocker locker(be_clipboard);
+    if (!locker.isLocked())
         return;
 
-    clipboard.Clear();
+    be_clipboard->Clear();
 
-    BMessage* data = clipboard.Data();
+    BMessage* data = be_clipboard->Data();
     if (!data)
         return;
 
-    data->AddString("text/plain", url.string());
-    clipboard.Commit();
-
-    clipboard.Unlock();
+    BString string(url.string());
+    data->AddData("text/plain", B_MIME_TYPE, string.String(), string.Length());
+    be_clipboard->Commit();
 }
 
 void Pasteboard::writeImage(Node*, const KURL&, const String&)
@@ -141,14 +215,12 @@ void Pasteboard::writeImage(Node*, const KURL&, const String&)
 
 void Pasteboard::clear()
 {
-    BClipboard clipboard("WebKit");
-    if (!clipboard.Lock())
+    AutoClipboardLocker locker(be_clipboard);
+    if (!locker.isLocked())
         return;
 
-    clipboard.Clear();
-    clipboard.Commit();
-
-    clipboard.Unlock();
+    be_clipboard->Clear();
+    be_clipboard->Commit();
 }
 
 } // namespace WebCore
