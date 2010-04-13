@@ -1,3 +1,16 @@
+2010-04-13  Stephan Aßmus  <superstippi@gmx.de>
+
+        Reviewed by David Levin.
+
+        [Haiku] Use the system's default font family as last fall back font.
+        https://bugs.webkit.org/show_bug.cgi?id=37501
+
+        No new tests needed.
+
+        * platform/graphics/haiku/FontCacheHaiku.cpp:
+        (WebCore::FontCache::getLastResortFallbackFont):
+            - Use the system's default font family (from be_plain_font global).
+
 2010-04-13  Eskil Blomfeldt <eblomfel@trolltech.com>, Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         Reviewed by Simon Hausmann.
