@@ -1,3 +1,25 @@
+2010-04-13  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, just adding a sanity check.
+
+        Add check to make sure commit-queue can never commit too short a message
+        https://bugs.webkit.org/show_bug.cgi?id=37528
+
+        The commit-queue made bogus messages here:
+        http://trac.webkit.org/changeset/57532
+        http://trac.webkit.org/changeset/57534
+
+        This was a regression caused by adding unicode parsing for
+        our ChangeLog files.  Popen does not seem to play nice with
+        unicode strings.
+
+        I'm also adding an "assert" to make sure short ChangeLogs never happen again.
+
+        * Scripts/webkitpy/common/system/executive.py:
+         - Cast input to strings before passing to POpen
+        * Scripts/webkitpy/tool/steps/commit.py:
+         - Validate that commit messages are not to short.
+
 2010-04-13  Adam Roben  <aroben@apple.com>
 
         Robustify new-run-webkit-tests against paths with spaces in them

@@ -32,4 +32,6 @@ from webkitpy.tool.steps.abstractstep import AbstractStep
 class Commit(AbstractStep):
     def run(self, state):
         commit_message = self._tool.checkout().commit_message_for_this_commit()
+        if len(commit_message.message()) < 50:
+            raise Exception("Attempted to commit with a commit message shorter than 50 characters.  Either your patch is missing a ChangeLog or webkit-patch may have a bug.")
         state["commit_text"] =  self._tool.scm().commit_with_message(commit_message.message())

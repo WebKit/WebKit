@@ -179,7 +179,11 @@ class Executive(object):
             stdin = None
             if input:
                 stdin = subprocess.PIPE
-            string_to_communicate = input
+            # string_to_communicate seems to need to be a str for proper
+            # communication with shell commands.
+            # See https://bugs.webkit.org/show_bug.cgi?id=37528
+            # For an example of a regresion caused by passing a unicode string through.
+            string_to_communicate = str(input)
         if return_stderr:
             stderr = subprocess.STDOUT
         else:
