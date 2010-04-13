@@ -73,7 +73,7 @@ RenderStyle::RenderStyle()
     , m_childIndex(0)
     , box(defaultStyle()->box)
     , visual(defaultStyle()->visual)
-    , background(defaultStyle()->background)
+    , m_background(defaultStyle()->m_background)
     , surround(defaultStyle()->surround)
     , rareNonInheritedData(defaultStyle()->rareNonInheritedData)
     , rareInheritedData(defaultStyle()->rareInheritedData)
@@ -103,7 +103,7 @@ RenderStyle::RenderStyle(bool)
 
     box.init();
     visual.init();
-    background.init();
+    m_background.init();
     surround.init();
     rareNonInheritedData.init();
     rareNonInheritedData.access()->flexibleBox.init();
@@ -134,7 +134,7 @@ RenderStyle::RenderStyle(const RenderStyle& o)
     , m_childIndex(0)
     , box(o.box)
     , visual(o.visual)
-    , background(o.background)
+    , m_background(o.m_background)
     , surround(o.surround)
     , rareNonInheritedData(o.rareNonInheritedData)
     , rareInheritedData(o.rareInheritedData)
@@ -169,7 +169,7 @@ bool RenderStyle::operator==(const RenderStyle& o) const
             noninherited_flags == o.noninherited_flags &&
             box == o.box &&
             visual == o.visual &&
-            background == o.background &&
+            m_background == o.m_background &&
             surround == o.surround &&
             rareNonInheritedData == o.rareNonInheritedData &&
             rareInheritedData == o.rareInheritedData &&
@@ -502,7 +502,7 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
         inherited_flags._force_backgrounds_to_white != other->inherited_flags._force_backgrounds_to_white ||
         inherited_flags._insideLink != other->inherited_flags._insideLink ||
         surround->border != other->surround->border ||
-        *background.get() != *other->background.get() ||
+        *m_background.get() != *other->m_background.get() ||
         visual->textDecoration != other->visual->textDecoration ||
         rareInheritedData->userModify != other->rareInheritedData->userModify ||
         rareInheritedData->userSelect != other->rareInheritedData->userSelect ||
