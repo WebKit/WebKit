@@ -1,0 +1,17 @@
+Test URLs that have an anchor.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL canonicalize('http://www.example.com/#hello, world') should be http://www.example.com/#hello, world. Was http://www.example.com/#hello,%20world.
+FAIL canonicalize('http://www.example.com/#Â©') should be http://www.example.com/#Â©. Was http://www.example.com/#%C2%A9.
+FAIL canonicalize('http://www.example.com/#ðss') should be http://www.example.com/#ðss. Was http://www.example.com/#%F0%90%26%23140%3B%26%23128%3Bss.
+PASS canonicalize('http://www.example.com/#%41%a') is 'http://www.example.com/#%41%a'
+FAIL canonicalize('http://www.example.com/#Â') should be http://www.example.com/#ï¿½. Was http://www.example.com/#%C2.
+FAIL canonicalize('http://www.example.com/#aï·') should be http://www.example.com/#aï¿½. Was http://www.example.com/#a%EF%B7%90.
+FAIL canonicalize('http://www.example.com/#asdf#qwer') should be http://www.example.com/#asdf#qwer. Was http://www.example.com/#asdf%23qwer.
+FAIL canonicalize('http://www.example.com/##asdf') should be http://www.example.com/##asdf. Was http://www.example.com/#%23asdf.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
