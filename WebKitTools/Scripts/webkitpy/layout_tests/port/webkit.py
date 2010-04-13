@@ -288,9 +288,6 @@ class WebKitPort(base.Port):
         return self.test_base_platform_names() + (
             'mac-tiger', 'mac-leopard', 'mac-snowleopard')
 
-    def version(self):
-        raise NotImplementedError('WebKitPort.version')
-
     def default_configuration(self):
         # This is a bit of a hack. This state exists in a much nicer form in
         # perl-land.

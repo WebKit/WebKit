@@ -1,3 +1,14 @@
+2010-04-13  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        Remove duplicate function for new-run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=37517
+
+        The version() function was already implemented.
+
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+
 2010-04-13  Eric Seidel  <eric@webkit.org>
 
         Reviewed by David Levin.
