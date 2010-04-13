@@ -727,8 +727,6 @@ FAIL inner.webkitConvertPointFromNodeToPage.isInner should be true. Was false.
 FAIL inner.webkitConvertPointFromNodeToPage.constructor.isInner should be true. Was false.
 FAIL inner.webkitConvertPointFromPageToNode.isInner should be true. Was false.
 FAIL inner.webkitConvertPointFromPageToNode.constructor.isInner should be true. Was false.
-PASS inner.webkitNotifications.isInner is true
-PASS inner.webkitNotifications.constructor.isInner is true
 PASS inner.window.isInner is true
 PASS inner.window.constructor.isInner is true
 PASS successfullyParsed is true

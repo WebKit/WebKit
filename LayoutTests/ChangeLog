@@ -1,3 +1,9 @@
+2010-04-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed fix, update platform specific expected file after r57534.
+
+        * platform/qt/fast/dom/prototype-inheritance-expected.txt: updated.
+
 2010-04-13  Chang Shu  <chang.shu@nokia.com>
 
         Reviewed by Darin Fisher.
