@@ -2,6 +2,20 @@
 
         Reviewed by Anders Carlsson.
 
+        Fix reported leaks when quitting MiniBrowser with open pages.
+
+        * WebProcess/WebPage/WebPage.h: Make close() public.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        (WebKit::WebProcess::removeWebPage):
+        (WebKit::WebProcess::didClose): If the UIProcess disappears, close
+        the live pages in an effort to not leak.
+        * WebProcess/WebProcess.h:
+
+2010-04-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
         Do a JS collection and clear the memory cache to improve leaks output
         when exiting. Only do this in debug builds as it is slow.
 

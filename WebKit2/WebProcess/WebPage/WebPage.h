@@ -63,6 +63,8 @@ public:
     static PassRefPtr<WebPage> create(uint64_t pageID, const WebCore::IntSize& viewSize, const WebPreferencesStore&, DrawingArea::Type);
     ~WebPage();
 
+    void close();
+
     WebCore::Page* corePage() const { return m_page; }
     uint64_t pageID() const { return m_pageID; }
 
@@ -95,7 +97,6 @@ private:
     static const char* interpretKeyEvent(const WebCore::KeyboardEvent*);
 
     // Actions
-    void close();
     void tryClose();
     void loadURL(const WebCore::KURL&);
     void stopLoading();
