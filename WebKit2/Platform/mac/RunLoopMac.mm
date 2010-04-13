@@ -65,9 +65,19 @@ void RunLoop::stop()
 {
     ASSERT(m_runLoop == CFRunLoopGetCurrent());
     
-    if (m_runLoop == mainRunLoop()->m_runLoop)
+    if (m_runLoop == mainRunLoop()->m_runLoop) {
         [NSApp stop:nil];
-    else 
+        NSEvent *event = [NSEvent otherEventWithType:NSApplicationDefined
+                                            location:NSMakePoint(0, 0)
+                                       modifierFlags:0
+                                           timestamp:0.0
+                                         windowNumber:0
+                                             context:nil
+                                             subtype: 0
+                                               data1:0
+                                               data2:0];
+        [NSApp postEvent:event atStart:true];
+    } else
         CFRunLoopStop(m_runLoop);
 }
 

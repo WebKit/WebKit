@@ -1,3 +1,13 @@
+2010-04-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adele Peterson.
+
+        Post a null event after calling [NSApp stop] to flush the run loop
+        and finish teardown.
+
+        * Platform/mac/RunLoopMac.mm:
+        (RunLoop::stop):
+
 2010-04-12  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
