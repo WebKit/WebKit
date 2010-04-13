@@ -4325,6 +4325,7 @@ svg/css/stars-with-shadow.html
 svg/filters/shadow-on-filter.svg
 svg/filters/shadow-on-rect-with-filter.svg
 svg/custom/resource-invalidate-on-target-update.svg
+svg/clip-path
 
 # Tests in tables/ directory
 #   Tests generating new results

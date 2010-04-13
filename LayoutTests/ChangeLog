@@ -1,3 +1,11 @@
+2010-04-13  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        Skipping new tests, we still do not have results.
+
+        * platform/gtk/Skipped:
+
 2010-04-12  Timothy Hatcher  <timothy@apple.com>
 
         SecurityOrigin needs a way to remove individual OriginAccessEntries
