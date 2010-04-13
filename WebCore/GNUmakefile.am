@@ -334,6 +334,8 @@ webcore_sources += \
 	WebCore/accessibility/AccessibilityMenuListOption.h \
 	WebCore/accessibility/AccessibilityObject.cpp \
 	WebCore/accessibility/AccessibilityObject.h \
+	WebCore/accessibility/AccessibilityProgressIndicator.cpp \
+	WebCore/accessibility/AccessibilityProgressIndicator.h \
 	WebCore/accessibility/AccessibilityRenderObject.cpp \
 	WebCore/accessibility/AccessibilityRenderObject.h \
 	WebCore/accessibility/AccessibilityScrollbar.cpp \

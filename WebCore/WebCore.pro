@@ -261,6 +261,7 @@ SOURCES += \
     accessibility/AccessibilityList.cpp \    
     accessibility/AccessibilityListBox.cpp \    
     accessibility/AccessibilityListBoxOption.cpp \    
+    accessibility/AccessibilityProgressIndicator.cpp \    
     accessibility/AccessibilityRenderObject.cpp \    
     accessibility/AccessibilityScrollbar.cpp \
     accessibility/AccessibilitySlider.cpp \    
@@ -1018,6 +1019,7 @@ HEADERS += \
     accessibility/AccessibilityList.h \
     accessibility/AccessibilityMediaControls.h \
     accessibility/AccessibilityObject.h \
+    accessibility/AccessibilityProgressIndicator.h \
     accessibility/AccessibilityRenderObject.h \
     accessibility/AccessibilityScrollbar.h \
     accessibility/AccessibilitySlider.h \

@@ -2505,6 +2505,8 @@
 		A136A00D1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.h in Headers */ = {isa = PBXBuildFile; fileRef = A136A00B1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.h */; };
 		A17C81220F2A5CF7005DAAEB /* HTMLElementFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A17C81200F2A5CF7005DAAEB /* HTMLElementFactory.cpp */; };
 		A17C81230F2A5CF7005DAAEB /* HTMLElementFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = A17C81210F2A5CF7005DAAEB /* HTMLElementFactory.h */; };
+		A409C984116D0DDD007197BD /* AccessibilityProgressIndicator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A409C982116D0DDD007197BD /* AccessibilityProgressIndicator.cpp */; };
+		A409C985116D0DDD007197BD /* AccessibilityProgressIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = A409C983116D0DDD007197BD /* AccessibilityProgressIndicator.h */; };
 		A4226E5A1163D667008B8397 /* JSHTMLProgressElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A4226E591163D667008B8397 /* JSHTMLProgressElement.cpp */; };
 		A4226E5C1163D695008B8397 /* JSHTMLProgressElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A4226E5B1163D695008B8397 /* JSHTMLProgressElement.h */; };
 		A4226E951163D73A008B8397 /* DOMHTMLProgressElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A4226E921163D73A008B8397 /* DOMHTMLProgressElement.h */; };
@@ -7938,6 +7940,8 @@
 		A136A00B1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLHttpRequestProgressEventThrottle.h; sourceTree = "<group>"; };
 		A17C81200F2A5CF7005DAAEB /* HTMLElementFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLElementFactory.cpp; sourceTree = "<group>"; };
 		A17C81210F2A5CF7005DAAEB /* HTMLElementFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLElementFactory.h; sourceTree = "<group>"; };
+		A409C982116D0DDD007197BD /* AccessibilityProgressIndicator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityProgressIndicator.cpp; sourceTree = "<group>"; };
+		A409C983116D0DDD007197BD /* AccessibilityProgressIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityProgressIndicator.h; sourceTree = "<group>"; };
 		A4226E591163D667008B8397 /* JSHTMLProgressElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLProgressElement.cpp; sourceTree = "<group>"; };
 		A4226E5B1163D695008B8397 /* JSHTMLProgressElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLProgressElement.h; sourceTree = "<group>"; };
 		A4226E921163D73A008B8397 /* DOMHTMLProgressElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLProgressElement.h; sourceTree = "<group>"; };
@@ -10876,6 +10880,8 @@
 				76CDD2EF1103DA6600680521 /* AccessibilityMenuListPopup.h */,
 				29A8121E0FBB9C1D00510293 /* AccessibilityObject.cpp */,
 				29A812180FBB9C1D00510293 /* AccessibilityObject.h */,
+				A409C982116D0DDD007197BD /* AccessibilityProgressIndicator.cpp */,
+				A409C983116D0DDD007197BD /* AccessibilityProgressIndicator.h */,
 				29A812080FBB9C1D00510293 /* AccessibilityRenderObject.cpp */,
 				29A8121B0FBB9C1D00510293 /* AccessibilityRenderObject.h */,
 				93C4F6E81108F9A50099D0DB /* AccessibilityScrollbar.cpp */,
@@ -18826,6 +18832,7 @@
 				2542F4DB1166C25A00E89A86 /* UserGestureIndicator.h in Headers */,
 				BC9439C3116CF4940048C750 /* JSNodeCustom.h in Headers */,
 				C5D4AA7A116BAFB60069CA93 /* GlyphMetricsMap.h in Headers */,
+				A409C985116D0DDD007197BD /* AccessibilityProgressIndicator.h in Headers */,
 				895253D8116C4C6800CABF00 /* FileStream.h in Headers */,
 				895253D9116C4C6800CABF00 /* FileStreamClient.h in Headers */,
 				5DC87EF011716DF2001C0E6D /* EmptyProtocolDefinitions.h in Headers */,
@@ -21060,6 +21067,7 @@
 				8952535211641B3400CABF00 /* FileThread.cpp in Sources */,
 				2542F4DA1166C25A00E89A86 /* UserGestureIndicator.cpp in Sources */,
 				C5D4AA79116BAFB60069CA93 /* GlyphMetricsMap.cpp in Sources */,
+				A409C984116D0DDD007197BD /* AccessibilityProgressIndicator.cpp in Sources */,
 				895253D7116C4C6800CABF00 /* FileStream.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

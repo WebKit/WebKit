@@ -423,6 +423,8 @@
             'accessibility/AccessibilityMenuListOption.h',
             'accessibility/AccessibilityObject.cpp',
             'accessibility/AccessibilityObject.h',
+            'accessibility/AccessibilityProgressIndicator.cpp',
+            'accessibility/AccessibilityProgressIndicator.h',
             'accessibility/AccessibilityRenderObject.cpp',
             'accessibility/AccessibilityRenderObject.h',
             'accessibility/AccessibilityScrollbar.cpp',

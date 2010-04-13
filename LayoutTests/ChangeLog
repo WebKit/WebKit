@@ -1,3 +1,13 @@
+2010-04-08  yael aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Accessibility support for progress element
+        https://bugs.webkit.org/show_bug.cgi?id=37275
+
+        * platform/mac/accessibility/progressbar-expected.txt: Added.
+        * platform/mac/accessibility/progressbar.html: Added.
+
 2010-04-12  Dumitru Daniliuc  <dumi@chromium.org>
 
         Unreviewed, fixing a test that started failing with r57492.

@@ -33,6 +33,8 @@ public:
     RenderProgress(HTMLProgressElement*);
     double position() { return m_position; }
     double animationProgress();
+    
+    HTMLProgressElement* progressElement() const;
 
 private:
     virtual const char* renderName() const { return "RenderProgress"; }
