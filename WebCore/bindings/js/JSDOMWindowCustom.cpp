@@ -977,6 +977,9 @@ JSValue JSDOMWindow::openDatabase(ExecState* exec, const ArgList& args)
         creationCallback = JSDatabaseCallback::create(asObject(args.at(4)), globalObject());
 
     JSValue result = toJS(exec, globalObject(), WTF::getPtr(impl()->openDatabase(name, version, displayName, estimatedSize, creationCallback.release(), ec)));
+    if (!ec && result.isNull())
+        ec = SECURITY_ERR;
+
     setDOMException(exec, ec);
     return result;
 }
