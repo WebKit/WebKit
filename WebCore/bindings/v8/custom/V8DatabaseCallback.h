@@ -36,8 +36,7 @@
 #include "DatabaseCallback.h"
 #include "WorldContextHandle.h"
 #include <v8.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 

@@ -290,7 +290,7 @@ void SQLTransaction::deliverTransactionCallback()
 
     if (m_callback) {
         m_executeSqlAllowed = true;
-        m_callback->handleEvent(this, shouldDeliverErrorCallback);
+        m_callback->handleEvent(m_database->scriptExecutionContext(), this, shouldDeliverErrorCallback);
         m_executeSqlAllowed = false;
     } else
         shouldDeliverErrorCallback = true;
@@ -545,7 +545,7 @@ void SQLTransaction::deliverTransactionErrorCallback()
     // Transaction Step 12 - If exists, invoke error callback with the last
     // error to have occurred in this transaction.
     if (m_errorCallback)
-        m_errorCallback->handleEvent(m_transactionError.get());
+        m_errorCallback->handleEvent(m_database->scriptExecutionContext(), m_transactionError.get());
 
     m_nextStep = &SQLTransaction::cleanupAfterTransactionErrorCallback;
     LOG(StorageAPI, "Scheduling cleanupAfterTransactionErrorCallback for transaction %p\n", this);

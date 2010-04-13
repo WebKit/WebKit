@@ -45,15 +45,16 @@ public:
     {
         return adoptRef(new JSCustomSQLStatementCallback(callback, globalObject));
     }
-    
+
     virtual ~JSCustomSQLStatementCallback();
 
-    virtual void handleEvent(SQLTransaction*, SQLResultSet*, bool& raisedException);
+    virtual void handleEvent(ScriptExecutionContext*, SQLTransaction*, SQLResultSet*, bool& raisedException);
 
 private:
     JSCustomSQLStatementCallback(JSC::JSObject* callback, JSDOMGlobalObject*);
 
     JSCallbackData* m_data;
+    RefPtr<DOMWrapperWorld> m_isolatedWorld;
 };
 
 }

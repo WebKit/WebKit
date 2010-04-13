@@ -35,6 +35,7 @@
 
 #include "DatabaseCallback.h"
 #include "JSCallbackData.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 

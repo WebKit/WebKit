@@ -35,16 +35,17 @@
 #include "JSCallbackData.h"
 #include "JSSQLError.h"
 #include "JSSQLTransaction.h"
-#include "ScriptController.h"
+#include "ScriptExecutionContext.h"
 #include <runtime/JSLock.h>
 #include <wtf/MainThread.h>
 
 namespace WebCore {
-    
+
 using namespace JSC;
-    
+
 JSCustomSQLStatementErrorCallback::JSCustomSQLStatementErrorCallback(JSObject* callback, JSDOMGlobalObject* globalObject)
     : m_data(new JSCallbackData(callback, globalObject))
+    , m_isolatedWorld(globalObject->world())
 {
 }
 
@@ -56,18 +57,23 @@ JSCustomSQLStatementErrorCallback::~JSCustomSQLStatementErrorCallback()
 #endif
 }
 
-bool JSCustomSQLStatementErrorCallback::handleEvent(SQLTransaction* transaction, SQLError* error)
+bool JSCustomSQLStatementErrorCallback::handleEvent(ScriptExecutionContext* context, SQLTransaction* transaction, SQLError* error)
 {
     ASSERT(m_data);
-        
+    ASSERT(context);
+
     RefPtr<JSCustomSQLStatementErrorCallback> protect(this);
-        
+
     JSC::JSLock lock(SilenceAssertionsOnly);
-    ExecState* exec = m_data->globalObject()->globalExec();
+    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(context, m_isolatedWorld.get());
+    if (!globalObject)
+        return true; // if we cannot invoke the callback, roll back the transaction
+
+    ExecState* exec = globalObject->globalExec();
     MarkedArgumentBuffer args;
     args.append(toJS(exec, deprecatedGlobalObjectForPrototype(exec), transaction));
     args.append(toJS(exec, deprecatedGlobalObjectForPrototype(exec), error));
-    
+
     bool raisedException = false;
     JSValue result = m_data->invokeCallback(args, &raisedException);
     if (raisedException) {

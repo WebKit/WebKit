@@ -1,3 +1,19 @@
+2010-04-13  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Test that the HTML5 DB callbacks run in the correct context.
+        https://bugs.webkit.org/show_bug.cgi?id=27698
+
+        * storage/statement-error-callback-isolated-world-expected.txt: Added.
+        * storage/statement-error-callback-isolated-world.html: Added.
+        * storage/statement-success-callback-isolated-world-expected.txt: Added.
+        * storage/statement-success-callback-isolated-world.html: Added.
+        * storage/transaction-callback-isolated-world-expected.txt: Added.
+        * storage/transaction-callback-isolated-world.html: Added.
+        * storage/transaction-error-callback-isolated-world-expected.txt: Added.
+        * storage/transaction-error-callback-isolated-world.html: Added.
+
 2010-04-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed fix, platform specific expected file updated after r57511.

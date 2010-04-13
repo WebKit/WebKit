@@ -35,13 +35,14 @@
 
 namespace WebCore {
 
-    class SQLError;
+class ScriptExecutionContext;
+class SQLError;
 
-    class SQLTransactionErrorCallback : public ThreadSafeShared<SQLTransactionErrorCallback> {
-    public:
-        virtual ~SQLTransactionErrorCallback() { }
-        virtual void handleEvent(SQLError*) = 0;
-    };
+class SQLTransactionErrorCallback : public ThreadSafeShared<SQLTransactionErrorCallback> {
+public:
+    virtual ~SQLTransactionErrorCallback() { }
+    virtual void handleEvent(ScriptExecutionContext*, SQLError*) = 0;
+};
 
 }
 

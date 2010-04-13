@@ -35,6 +35,7 @@
 #include "V8CustomSQLTransactionErrorCallback.h"
 
 #include "Frame.h"
+#include "ScriptExecutionContext.h"
 #include "V8CustomVoidCallback.h"
 #include "V8SQLError.h"
 
@@ -43,6 +44,7 @@ namespace WebCore {
 V8CustomSQLTransactionErrorCallback::V8CustomSQLTransactionErrorCallback(v8::Local<v8::Object> callback, Frame* frame)
     : m_callback(v8::Persistent<v8::Object>::New(callback))
     , m_frame(frame)
+    , m_worldContext(UseCurrentWorld)
 {
 }
 
@@ -51,15 +53,15 @@ V8CustomSQLTransactionErrorCallback::~V8CustomSQLTransactionErrorCallback()
     m_callback.Dispose();
 }
 
-void V8CustomSQLTransactionErrorCallback::handleEvent(SQLError* error)
+void V8CustomSQLTransactionErrorCallback::handleEvent(ScriptExecutionContext* context, SQLError* error)
 {
     v8::HandleScope handleScope;
 
-    v8::Handle<v8::Context> context = V8Proxy::context(m_frame.get());
-    if (context.IsEmpty())
+    v8::Handle<v8::Context> v8Context = toV8Context(context, m_worldContext);
+    if (v8Context.IsEmpty())
         return;
 
-    v8::Context::Scope scope(context);
+    v8::Context::Scope scope(v8Context);
 
     v8::Handle<v8::Value> argv[] = {
         toV8(error)
@@ -75,4 +77,3 @@ void V8CustomSQLTransactionErrorCallback::handleEvent(SQLError* error)
 } // namespace WebCore
 
 #endif
-

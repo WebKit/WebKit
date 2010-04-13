@@ -1,3 +1,58 @@
+2010-04-13  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Make all HTML5 DB callbacks run in the correct context.
+        https://bugs.webkit.org/show_bug.cgi?id=27698
+
+        Tests: storage/statement-error-callback-isolated-world.html
+               storage/statement-success-callback-isolated-world.html
+               storage/transaction-callback-isolated-world.html
+               storage/transaction-error-callback-isolated-world.html
+
+        * bindings/js/JSCustomSQLStatementCallback.cpp:
+        (WebCore::JSCustomSQLStatementCallback::JSCustomSQLStatementCallback):
+        (WebCore::JSCustomSQLStatementCallback::handleEvent):
+        * bindings/js/JSCustomSQLStatementCallback.h:
+        * bindings/js/JSCustomSQLStatementErrorCallback.cpp:
+        (WebCore::JSCustomSQLStatementErrorCallback::JSCustomSQLStatementErrorCallback):
+        (WebCore::JSCustomSQLStatementErrorCallback::handleEvent):
+        * bindings/js/JSCustomSQLStatementErrorCallback.h:
+        * bindings/js/JSCustomSQLTransactionCallback.cpp:
+        (WebCore::JSCustomSQLTransactionCallback::JSCustomSQLTransactionCallback):
+        (WebCore::JSCustomSQLTransactionCallback::handleEvent):
+        * bindings/js/JSCustomSQLTransactionCallback.h:
+        * bindings/js/JSCustomSQLTransactionErrorCallback.cpp:
+        (WebCore::JSCustomSQLTransactionErrorCallback::JSCustomSQLTransactionErrorCallback):
+        (WebCore::JSCustomSQLTransactionErrorCallback::handleEvent):
+        * bindings/js/JSCustomSQLTransactionErrorCallback.h:
+        * bindings/v8/custom/V8CustomSQLStatementCallback.cpp:
+        (WebCore::V8CustomSQLStatementCallback::V8CustomSQLStatementCallback):
+        (WebCore::V8CustomSQLStatementCallback::handleEvent):
+        * bindings/v8/custom/V8CustomSQLStatementCallback.h:
+        * bindings/v8/custom/V8CustomSQLStatementErrorCallback.cpp:
+        (WebCore::V8CustomSQLStatementErrorCallback::V8CustomSQLStatementErrorCallback):
+        (WebCore::V8CustomSQLStatementErrorCallback::handleEvent):
+        * bindings/v8/custom/V8CustomSQLStatementErrorCallback.h:
+        * bindings/v8/custom/V8CustomSQLTransactionCallback.cpp:
+        (WebCore::V8CustomSQLTransactionCallback::V8CustomSQLTransactionCallback):
+        (WebCore::V8CustomSQLTransactionCallback::handleEvent):
+        * bindings/v8/custom/V8CustomSQLTransactionCallback.h:
+        * bindings/v8/custom/V8CustomSQLTransactionErrorCallback.cpp:
+        (WebCore::V8CustomSQLTransactionErrorCallback::V8CustomSQLTransactionErrorCallback):
+        (WebCore::V8CustomSQLTransactionErrorCallback::handleEvent):
+        * bindings/v8/custom/V8CustomSQLTransactionErrorCallback.h:
+        * storage/SQLStatement.cpp:
+        (WebCore::SQLStatement::performCallback):
+        * storage/SQLStatementCallback.h:
+        * storage/SQLStatementErrorCallback.h:
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::deliverTransactionCallback):
+        (WebCore::SQLTransaction::deliverTransactionErrorCallback):
+        * storage/SQLTransactionCallback.h:
+        * storage/SQLTransactionErrorCallback.h:
+        (WebCore::SQLTransactionErrorCallback::~SQLTransactionErrorCallback):
+
 2010-04-13  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.
