@@ -1,3 +1,9 @@
+2010-04-12  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Unreviewed, skipping two tests on Chromium because they fail.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-04-12  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Simon Fraser.

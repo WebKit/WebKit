@@ -2775,3 +2775,7 @@ BUGWK36983 MAC : fast/canvas/webgl/uniform-location.html = TEXT
 // Added in http://trac.webkit.org/changeset/57476. Fails in Chromium because
 // LayoutTestController::computedStyleWithVisitedInfo() is missing.
 BUG41206 : fast/history/multiple-classes-visited.html = TEXT TIMEOUT
+
+// WebKit roll 57281:574xx
+BUG41258 WIN : fast/url/trivial.html = TEXT TIMEOUT
+BUG41261 : fast/url/ipv4.html = TEXT TIMEOUT
