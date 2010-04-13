@@ -1,3 +1,10 @@
+2010-04-13  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Checksum of svg/filters/filterRes.svg was not updated properly after rebasing.
+        It's only visible when using "run-webkit-tests --tolerance 0 -p svg"
+
+        * platform/mac/svg/filters/filterRes-expected.checksum:
+
 2010-04-13  Dumitru Daniliuc  <dumi@chromium.org>
 
         Unreviewed, adding another fast/url/ test to Chromium's
