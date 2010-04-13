@@ -2,6 +2,7 @@
  * Copyright (C) 2006 Zack Rusin <zack@kde.org>
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2007 Trolltech ASA
+ * Copyright (C) 2010 Stephan Aßmus <superstippi@gmx.de>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +30,8 @@
 #include "MIMETypeRegistry.h"
 
 #include "PlatformString.h"
-
+#include <MimeType.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 struct ExtensionMap {
@@ -37,11 +39,11 @@ struct ExtensionMap {
     const char* mimeType;
 };
 
-static const ExtensionMap extensionMap [] = {
+static const ExtensionMap extensionMap[] = {
     { "bmp", "image/bmp" },
     { "gif", "image/gif" },
     { "html", "text/html" },
-    { "ico", "image/x-icon" },   
+    { "ico", "image/x-icon" },
     { "jpeg", "image/jpeg" },
     { "jpg", "image/jpeg" },
     { "js", "application/x-javascript" },
@@ -58,23 +60,34 @@ static const ExtensionMap extensionMap [] = {
     { 0, 0 }
 };
 
-// FIXME: Use the Haiku MIME registry
-String MIMETypeRegistry::getMIMETypeForExtension(const String &ext)
+String MIMETypeRegistry::getMIMETypeForExtension(const String& ext)
 {
     String str = ext.lower();
-    const ExtensionMap *extMap = extensionMap;
+
+    // Try WebCore built-in types.
+    const ExtensionMap* extMap = extensionMap;
     while (extMap->extension) {
         if (str == extMap->extension)
             return extMap->mimeType;
         ++extMap;
     }
-    // unknown, let's just assume plain text
-    return "text/plain";
+
+    // Try system mime database.
+    String fakeFileName("filename.");
+    fakeFileName.append(str);
+
+    BMimeType type;
+    if (BMimeType::GuessMimeType(fakeFileName.utf8().data(), &type) == B_OK)
+        return type.Type();
+
+    // unknown
+    return String();
 }
 
 bool MIMETypeRegistry::isApplicationPluginMIMEType(const String&)
 {
     return false;
 }
+
 } // namespace WebCore
 
