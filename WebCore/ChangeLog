@@ -1,3 +1,15 @@
+2010-04-13  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Fix search behavior in Profiles tab.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37498
+
+        * inspector/front-end/ProfileView.js:
+        (WebInspector.CPUProfileView.profileCallback):
+        (WebInspector.CPUProfileView):
+
 2010-04-13  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Oliver Hunt.

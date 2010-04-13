@@ -1,3 +1,13 @@
+2010-04-13  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Fix search behavior in Heap profiles.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37498
+
+        * src/js/HeapProfilerPanel.js:
+
 2010-04-13  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by David Levin.

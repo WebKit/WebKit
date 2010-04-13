@@ -83,7 +83,7 @@ WebInspector.CPUProfileView = function(profile)
     var self = this;
     function profileCallback(profile)
     {
-        self.profile = profile;
+        self.profile.head = profile.head;
         self._assignParentsInProfile();
       
         self.profileDataGridTree = self.bottomUpProfileDataGridTree;
