@@ -1,3 +1,12 @@
+2010-04-12  Tor Arne Vestbø <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        Add stub files for running new-run-webkit-tests for the Qt port
+
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        * Scripts/webkitpy/layout_tests/port/qt.py: Added.
+
 2010-04-12  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Eric Seidel.
