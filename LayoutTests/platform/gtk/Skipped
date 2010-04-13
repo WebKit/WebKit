@@ -5891,3 +5891,6 @@ fast/overflow/scrollbar-restored-and-then-locked.html
 # which is completely unrelated
 # See https://bugs.webkit.org/show_bug.cgi?id=37344
 media/video-src-invalid-remove.html
+
+# See https://bugs.webkit.org/show_bug.cgi?id=37526
+fast/history/multiple-classes-visited.html
