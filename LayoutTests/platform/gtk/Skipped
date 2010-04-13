@@ -1260,6 +1260,11 @@ editing/unsupported-content/table-type-after.html
 editing/unsupported-content/table-type-before.html
 
 # Tests in fast/ directory
+#   Tests generating new results
+fast/repaint/stacked-diacritics.html
+fast/text/international/plane2.html
+
+# Tests in fast/ directory
 #   Tests failing
 fast/canvas/canvas-bg-zoom.html
 fast/canvas/canvas-empty-image-pattern.html
@@ -3961,7 +3966,6 @@ svg/custom/circular-marker-reference-4.svg
 svg/custom/class-baseValue.svg
 svg/custom/class-selector.svg
 svg/custom/clip-path-child-changes.svg
-svg/custom/clip-path-display-none-child.svg
 svg/custom/clip-path-href-changes.svg
 svg/custom/clip-path-referencing-use2.svg
 svg/custom/clip-path-referencing-use.svg

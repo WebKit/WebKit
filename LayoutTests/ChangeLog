@@ -1,3 +1,13 @@
+2010-04-13  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        Skipping more new tests, we still do not have results. Remove test
+        that does not exist anymore:
+        svg/custom/clip-path-display-none-child.svg
+
+        * platform/gtk/Skipped:
+
 2010-04-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Skip new test introduced in r57530, because of
