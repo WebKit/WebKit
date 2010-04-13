@@ -45,9 +45,6 @@ class QtPort(WebKitPort):
             port_name = 'qt'
         WebKitPort.__init__(self, port_name, options)
 
-    def version(self):
-        return ''
-
     def _tests_for_other_platforms(self):
         # FIXME: This list could be dynamic based on platform name and
         # pushed into base.Port.
@@ -58,30 +55,6 @@ class QtPort(WebKitPort):
             "platform/gtk",
             "platform/mac",
         ]
-
-    # FIXME: Validate this list.
-    def _tests_for_disabled_features(self):
-        # FIXME: This should use the feature detection from
-        # webkitperl/features.pm to match run-webkit-tests.
-        # For now we hard-code a list of features known to be disabled on
-        # the Qt platform.
-        disabled_feature_tests = [
-            "fast/xhtmlmp",
-            "http/tests/wml",
-            "mathml",
-            "wml",
-        ]
-        # FIXME: webarchive tests expect to read-write from
-        # -expected.webarchive files instead of .txt files.
-        # This script doesn't know how to do that yet, so pretend they're
-        # just "disabled".
-        webarchive_tests = [
-            "webarchive",
-            "svg/webarchive",
-            "http/tests/webarchive",
-            "svg/custom/image-with-prefix-in-webarchive.svg",
-        ]
-        return disabled_feature_tests + webarchive_tests
 
     def _path_to_apache_config_file(self):
         # FIXME: This needs to detect the distribution and change config files.

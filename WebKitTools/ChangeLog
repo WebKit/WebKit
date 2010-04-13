@@ -1,3 +1,24 @@
+2010-04-12  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        new-run-webkit-tests should only build java support files on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=37482
+
+        Only the mac needs java support files, so I pushed _build_java
+        down into the Mac port using a new hook "_check_port_build".
+        In the process I noticed a bunch of code which could be shared
+        between all ports and thus got rid of _tests_for_disabled_features
+        and version() copy/paste between all webkit ports.
+        I also made check_build only bother to check for ImageDiff if we're
+        using pixel tests.
+
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/port/win.py:
+
 2010-04-12  Dumitru Daniliuc  <dumi@chromium.org>
 
         Unreviewed, trying to make scripts work on machines without

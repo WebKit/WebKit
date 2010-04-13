@@ -71,19 +71,15 @@ class WebKitPort(base.Port):
         return os.path.join(self._webkit_baseline_path(self._name),
                             'test_expectations.txt')
 
+    # Only needed by ports which maintain versioned test expectations (like mac-tiger vs. mac-leopard)
+    def version(self):
+        return ''
+
     def _build_driver(self):
         return not self._executive.run_command([
             self.script_path("build-dumprendertree"),
             self.flag_from_configuration(self._options.configuration),
         ], return_exit_code=True)
-
-    def _build_java(self):
-        java_tests_path = os.path.join(self.layout_tests_dir(), "java")
-        build_java = ["/usr/bin/make", "-C", java_tests_path]
-        if self._executive.run_command(build_java, return_exit_code=True):
-            _log.error("Failed to build Java support files: %s" % build_java)
-            return False
-        return True
 
     def _check_driver(self):
         driver_path = self._path_to_driver()
@@ -95,13 +91,18 @@ class WebKitPort(base.Port):
     def check_build(self, needs_http):
         if not self._build_driver():
             return False
-        if not self.check_image_diff():
-            return False
         if not self._check_driver():
             return False
-        if not self._build_java():
+        if self._options.pixel_tests:
+            if not self.check_image_diff():
+                return False
+        if not self._check_port_build():
             return False
         return True
+
+    def _check_port_build(self):
+        # Ports can override this method to do additional checks.
+        pass
 
     def check_image_diff(self, override_step=None, logging=True):
         image_diff_path = self._path_to_image_diff()
@@ -209,7 +210,6 @@ class WebKitPort(base.Port):
         ]
 
     def _tests_for_disabled_features(self):
-        raise NotImplementedError('WebKitPort._tests_for_disabled_features')
         # FIXME: This should use the feature detection from
         # webkitperl/features.pm to match run-webkit-tests.
         # For now we hard-code a list of features known to be disabled on

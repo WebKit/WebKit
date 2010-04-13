@@ -106,6 +106,17 @@ class MacPort(WebKitPort):
             return '-snowleopard'
         return ''
 
+    def _build_java_test_support(self):
+        java_tests_path = os.path.join(self.layout_tests_dir(), "java")
+        build_java = ["/usr/bin/make", "-C", java_tests_path]
+        if self._executive.run_command(build_java, return_exit_code=True):
+            _log.error("Failed to build Java support files: %s" % build_java)
+            return False
+        return True
+
+    def _check_port_build(self):
+        return self._build_java_test_support()
+
     def _tests_for_other_platforms(self):
         # The original run-webkit-tests builds up a "whitelist" of tests to
         # run, and passes that to DumpRenderTree. new-run-webkit-tests assumes
@@ -119,29 +130,6 @@ class MacPort(WebKitPort):
             "platform/qt",
             "platform/win",
         ]
-
-    def _tests_for_disabled_features(self):
-        # FIXME: This should use the feature detection from
-        # webkitperl/features.pm to match run-webkit-tests.
-        # For now we hard-code a list of features known to be disabled on
-        # the Mac platform.
-        disabled_feature_tests = [
-            "fast/xhtmlmp",
-            "http/tests/wml",
-            "mathml",
-            "wml",
-        ]
-        # FIXME: webarchive tests expect to read-write from
-        # -expected.webarchive files instead of .txt files.
-        # This script doesn't know how to do that yet, so pretend they're
-        # just "disabled".
-        webarchive_tests = [
-            "webarchive",
-            "svg/webarchive",
-            "http/tests/webarchive",
-            "svg/custom/image-with-prefix-in-webarchive.svg",
-        ]
-        return disabled_feature_tests + webarchive_tests
 
     # FIXME: This doesn't have anything to do with WebKit.
     def _kill_all_process(self, process_name):
