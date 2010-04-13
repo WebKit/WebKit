@@ -347,21 +347,21 @@ static void updateFocusCandidateIfCloser(Node* focusedNode, const FocusCandidate
     bool sameDocument = candidate.document() == closest.document();
     if (sameDocument) {
         if (closest.alignment > candidate.alignment
-            || (closest.parentAlignment && candidate.alignment > closest.parentAlignment))
+         || (closest.parentAlignment && candidate.alignment > closest.parentAlignment))
             return;
     } else if (closest.alignment > candidate.alignment
-               && (closest.parentAlignment && candidate.alignment > closest.parentAlignment))
+            && (closest.parentAlignment && candidate.alignment > closest.parentAlignment))
         return;
 
     if (candidate.alignment != None
-        || (closest.parentAlignment >= candidate.alignment
-        && closest.document() == candidate.document())) {
+     || (closest.parentAlignment >= candidate.alignment
+     && closest.document() == candidate.document())) {
 
         // If we are now in an higher precedent case, lets reset the current closest's
         // distance so we force it to be bigger than any result we will get from
         // spatialDistance().
         if (closest.alignment < candidate.alignment
-            && closest.parentAlignment < candidate.alignment)
+         && closest.parentAlignment < candidate.alignment)
             closest.distance = maxDistance();
 
         closest.alignment = candidate.alignment;

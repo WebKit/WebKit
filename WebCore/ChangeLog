@@ -1,3 +1,10 @@
+2010-04-12  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Unreviewed style fix.
+
+        * page/FocusController.cpp:
+        (WebCore::updateFocusCandidateIfCloser):
+
 2010-04-08  yael aharon  <yael.aharon@nokia.com>
 
         Reviewed by Darin Adler.
