@@ -2870,7 +2870,15 @@ void FrameLoader::finishedLoadingDocument(DocumentLoader* loader)
 #endif
     
     // If loading a webarchive, run through webarchive machinery
+#if PLATFORM(CHROMIUM)
+    // https://bugs.webkit.org/show_bug.cgi?id=36426
+    // FIXME: For debugging purposes, should be removed before closing the bug.
+    // Make real copy of the string so we fail here if the responseMIMEType
+    // string is bad.
+    const String responseMIMEType = loader->responseMIMEType();
+#else
     const String& responseMIMEType = loader->responseMIMEType();
+#endif
 
     // FIXME: Mac's FrameLoaderClient::finishedLoading() method does work that is required even with Archive loads
     // so we still need to call it.  Other platforms should only call finishLoading for non-archive loads

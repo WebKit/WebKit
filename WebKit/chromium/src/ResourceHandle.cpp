@@ -57,6 +57,7 @@ public:
         : m_request(request)
         , m_owner(0)
         , m_client(client)
+        , m_state(ConnectionStateNew)
     {
     }
 
@@ -74,14 +75,32 @@ public:
     virtual void didFinishLoading(WebURLLoader*);
     virtual void didFail(WebURLLoader*, const WebURLError&);
 
+    enum ConnectionState {
+        ConnectionStateNew,
+        ConnectionStateStarted,
+        ConnectionStateReceivedResponse,
+        ConnectionStateReceivingData,
+        ConnectionStateFinishedLoading,
+        ConnectionStateCanceled,
+        ConnectionStateFailed,
+    };
+
     ResourceRequest m_request;
     ResourceHandle* m_owner;
     ResourceHandleClient* m_client;
     OwnPtr<WebURLLoader> m_loader;
+
+    // Used for sanity checking to make sure we don't experience illegal state
+    // transitions.
+    ConnectionState m_state;
 };
 
 void ResourceHandleInternal::start()
 {
+    if (m_state != ConnectionStateNew)
+        CRASH();
+    m_state = ConnectionStateStarted;
+
     m_loader.set(webKitClient()->createURLLoader());
     ASSERT(m_loader.get());
 
@@ -92,6 +111,7 @@ void ResourceHandleInternal::start()
 
 void ResourceHandleInternal::cancel()
 {
+    m_state = ConnectionStateCanceled;
     m_loader->cancel();
 
     // Do not make any further calls to the client.
@@ -128,6 +148,12 @@ void ResourceHandleInternal::didReceiveResponse(WebURLLoader*, const WebURLRespo
 {
     ASSERT(m_client);
     ASSERT(!response.isNull());
+    bool isMultipart = response.isMultipartPayload();
+    bool isValidStateTransition = (m_state == ConnectionStateStarted || m_state == ConnectionStateReceivedResponse);
+    // In the case of multipart loads, calls to didReceiveData & didReceiveResponse can be interleaved.
+    if (!isMultipart && !isValidStateTransition)
+        CRASH();
+    m_state = ConnectionStateReceivedResponse;
     m_client->didReceiveResponse(m_owner, response.toResourceResponse());
 }
 
@@ -135,6 +161,9 @@ void ResourceHandleInternal::didReceiveData(
     WebURLLoader*, const char* data, int dataLength)
 {
     ASSERT(m_client);
+    if (m_state != ConnectionStateReceivedResponse && m_state != ConnectionStateReceivingData)
+        CRASH();
+    m_state = ConnectionStateReceivingData;
 
     // FIXME(yurys): it looks like lengthReceived is always the same as
     // dataLength and that the latter parameter can be eliminated.
@@ -145,12 +174,16 @@ void ResourceHandleInternal::didReceiveData(
 void ResourceHandleInternal::didFinishLoading(WebURLLoader*)
 {
     ASSERT(m_client);
+    if (m_state != ConnectionStateReceivedResponse && m_state != ConnectionStateReceivingData)
+        CRASH();
+    m_state = ConnectionStateFinishedLoading;
     m_client->didFinishLoading(m_owner);
 }
 
 void ResourceHandleInternal::didFail(WebURLLoader*, const WebURLError& error)
 {
     ASSERT(m_client);
+    m_state = ConnectionStateFailed;
     m_client->didFail(m_owner, error);
 }
 

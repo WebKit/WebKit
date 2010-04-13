@@ -1,3 +1,16 @@
+2010-04-13  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by David Levin.
+
+        Add some diagnostics to try to track down cause of crash in ArchiveFactory::isArchiveMimeType().
+
+        https://bugs.webkit.org/show_bug.cgi?id=36426
+
+        No new tests as there is no new functionality.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::finishedLoadingDocument): Make copy of mimeType string to isolate crash.
+
 2010-04-13  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Adam Barth.
