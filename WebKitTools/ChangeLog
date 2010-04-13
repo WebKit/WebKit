@@ -1,3 +1,16 @@
+2010-04-13  Adam Roben  <aroben@apple.com>
+
+        Fix run-webkit-tests on Windows with spaces in the path
+
+        Fixes <http://webkit.org/b/37509>.
+
+        Reviewed by Steve Falkenburg.
+
+        * Scripts/run-webkit-tests:
+        (convertPathUsingCygpath): Remove spaces from the path before passing
+        them to cygpath, then add them back in after conversion, as some
+        versions of cygpath seem to convert spaces into newlines.
+
 2010-04-13  Adam Barth  <abarth@webkit.org>
 
         Unreviewed, but approved by Dumitru Daniliuc.  (This patch is intended

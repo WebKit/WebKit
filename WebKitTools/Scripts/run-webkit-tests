@@ -1668,12 +1668,19 @@ sub convertPathUsingCygpath($$)
 {
     my ($path, $options) = @_;
 
+    # cygpath -f (at least in Cygwin 1.7) converts spaces into newlines. We remove spaces here and
+    # add them back in after conversion to work around this.
+    my $spaceSubstitute = "__NOTASPACE__";
+    $path =~ s/ /\Q$spaceSubstitute\E/g;
+
     my $cygpath = openCygpathIfNeeded($options);
     local *inFH = $cygpath->{"in"};
     local *outFH = $cygpath->{"out"};
     print outFH $path . "\n";
     my $convertedPath = <inFH>;
     chomp($convertedPath) if defined $convertedPath;
+
+    $convertedPath =~ s/\Q$spaceSubstitute\E/ /g;
     return $convertedPath;
 }
 
