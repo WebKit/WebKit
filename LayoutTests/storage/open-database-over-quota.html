@@ -6,10 +6,10 @@ function runTest() {
         layoutTestController.dumpAsText();
         layoutTestController.clearAllDatabases();
     }
-        
-    
-    var db = openDatabase('OverQuotaOpen', '', 'Test for bug 36473: missing lock in call to doneCreatingDatabase', 10000000);
-    if (!db) {
+
+    try {
+        var db = openDatabase('OverQuotaOpen', '', 'Test for bug 36473: missing lock in call to doneCreatingDatabase', 10000000);
+    } catch (err) {
         document.getElementById('result').innerHTML = 'PASS'
     }
 }

@@ -1,3 +1,9 @@
+2010-04-12  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Unreviewed, fixing a test that started failing with r57492.
+
+        * storage/open-database-over-quota.html:
+
 2010-04-12  Tor Arne Vestbø <tor.arne.vestbo@nokia.com>
 
         Reviewed by Eric Seidel.
