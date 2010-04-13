@@ -3,7 +3,7 @@
 <script>
 layoutTestController.dumpAsText();
 layoutTestController.waitUntilDone();
-layoutTestController.whiteListAccessFromOrigin("http://localhost:8000", "http", "*.0.0.1", true);
+layoutTestController.addOriginAccessWhitelistEntry("http://localhost:8000", "http", "*.0.0.1", true);
 
 function log(message)
 {

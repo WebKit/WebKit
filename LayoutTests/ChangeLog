@@ -1,3 +1,21 @@
+2010-04-13  Timothy Hatcher  <timothy@apple.com>
+
+        Rename LayoutTestController.whiteListAccessFromOrigin to addOriginAccessWhitelistEntry.
+
+        SecurityOrigin needs a way to remove individual OriginAccessEntries
+        https://bugs.webkit.org/show_bug.cgi?id=37449
+
+        Reviewed by Dave Hyatt.
+
+        * http/tests/security/local-image-from-remote-whitelisted-expected.txt:
+        * http/tests/security/local-image-from-remote-whitelisted.html:
+        * http/tests/xmlhttprequest/origin-whitelisting-all.html:
+        * http/tests/xmlhttprequest/origin-whitelisting-exact-match.html:
+        * http/tests/xmlhttprequest/origin-whitelisting-https.html:
+        * http/tests/xmlhttprequest/origin-whitelisting-ip-addresses-with-subdomains.html:
+        * http/tests/xmlhttprequest/origin-whitelisting-ip-addresses.html:
+        * http/tests/xmlhttprequest/origin-whitelisting-subdomains.html:
+
 2010-04-13  John Gregg  <johnnyg@google.com>
 
         Reviewed by David Levin.

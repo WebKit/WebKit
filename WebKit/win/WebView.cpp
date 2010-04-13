@@ -6034,15 +6034,15 @@ HRESULT WebView::invalidateBackingStore(const RECT* rect)
     return S_OK;
 }
 
-HRESULT WebView::whiteListAccessFromOrigin(BSTR sourceOrigin, BSTR destinationProtocol, BSTR destinationHost, BOOL allowDestinationSubdomains)
+HRESULT WebView::addOriginAccessWhitelistEntry(BSTR sourceOrigin, BSTR destinationProtocol, BSTR destinationHost, BOOL allowDestinationSubdomains)
 {
-    SecurityOrigin::whiteListAccessFromOrigin(*SecurityOrigin::createFromString(String(sourceOrigin, SysStringLen(sourceOrigin))), String(destinationProtocol, SysStringLen(destinationProtocol)), String(destinationHost, SysStringLen(destinationHost)), allowDestinationSubdomains);
+    SecurityOrigin::addOriginAccessWhitelistEntry(*SecurityOrigin::createFromString(String(sourceOrigin, SysStringLen(sourceOrigin))), String(destinationProtocol, SysStringLen(destinationProtocol)), String(destinationHost, SysStringLen(destinationHost)), allowDestinationSubdomains);
     return S_OK;
 }
 
-HRESULT WebView::resetOriginAccessWhiteLists()
+HRESULT WebView::resetOriginAccessWhitelists()
 {
-    SecurityOrigin::resetOriginAccessWhiteLists();
+    SecurityOrigin::resetOriginAccessWhitelists();
     return S_OK;
 }
  

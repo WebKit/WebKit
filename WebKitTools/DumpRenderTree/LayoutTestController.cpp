@@ -1274,7 +1274,7 @@ static JSValueRef waitForPolicyDelegateCallback(JSContextRef context, JSObjectRe
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef whiteListAccessFromOriginCallback(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef addOriginAccessWhitelistEntryCallback(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     if (argumentCount != 4)
         return JSValueMakeUndefined(context);
@@ -1288,7 +1288,7 @@ static JSValueRef whiteListAccessFromOriginCallback(JSContextRef context, JSObje
     bool allowDestinationSubdomains = JSValueToBoolean(context, arguments[3]);
 
     LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
-    controller->whiteListAccessFromOrigin(sourceOrigin.get(), destinationProtocol.get(), destinationHost.get(), allowDestinationSubdomains);
+    controller->addOriginAccessWhitelistEntry(sourceOrigin.get(), destinationProtocol.get(), destinationHost.get(), allowDestinationSubdomains);
     return JSValueMakeUndefined(context);
 }
 
@@ -1550,7 +1550,7 @@ JSStaticFunction* LayoutTestController::staticFunctions()
         { "waitForPolicyDelegate", waitForPolicyDelegateCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "waitUntilDone", waitUntilDoneCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "windowCount", windowCountCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "whiteListAccessFromOrigin", whiteListAccessFromOriginCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "addOriginAccessWhitelistEntry", addOriginAccessWhitelistEntryCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setScrollbarPolicy", setScrollbarPolicyCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0 }
     };

@@ -562,7 +562,7 @@ void LayoutTestController::waitForPolicyDelegate()
     [[mainFrame webView] setPolicyDelegate:policyDelegate];
 }
 
-void LayoutTestController::whiteListAccessFromOrigin(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains)
+void LayoutTestController::addOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains)
 {
     RetainPtr<CFStringRef> sourceOriginCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, sourceOrigin));
     NSString *sourceOriginNS = (NSString *)sourceOriginCF.get();
@@ -570,7 +570,7 @@ void LayoutTestController::whiteListAccessFromOrigin(JSStringRef sourceOrigin, J
     NSString *destinationProtocolNS = (NSString *)protocolCF.get();
     RetainPtr<CFStringRef> hostCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, destinationHost));
     NSString *destinationHostNS = (NSString *)hostCF.get();
-    [WebView _whiteListAccessFromOrigin:sourceOriginNS destinationProtocol:destinationProtocolNS destinationHost:destinationHostNS allowDestinationSubdomains:allowDestinationSubdomains];
+    [WebView _addOriginAccessWhitelistEntryWithSourceOrigin:sourceOriginNS destinationProtocol:destinationProtocolNS destinationHost:destinationHostNS allowDestinationSubdomains:allowDestinationSubdomains];
 }
 
 void LayoutTestController::setScrollbarPolicy(JSStringRef orientation, JSStringRef policy)

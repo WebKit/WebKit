@@ -207,10 +207,10 @@ interface IWebViewPrivate : IUnknown
     // - destinationProtocol: The protocol to grant access to.
     // - destinationHost: The host to grant access to.
     // - allowDestinationSubdomains: If host is a domain, setting this to YES will whitelist host and all its subdomains, recursively.
-    HRESULT whiteListAccessFromOrigin([in] BSTR sourceOrigin, [in] BSTR destinationProtocol, [in] BSTR destinationHost, [in] BOOL allowDestinationSubdomains);
+    HRESULT addOriginAccessWhitelistEntry([in] BSTR sourceOrigin, [in] BSTR destinationProtocol, [in] BSTR destinationHost, [in] BOOL allowDestinationSubdomains);
 
-    // Removes all white list entries created with whiteListAccessFromOrigin.
-    HRESULT resetOriginAccessWhiteLists();
+    // Removes all white list entries created with addOriginAccessWhitelistEntry.
+    HRESULT resetOriginAccessWhitelists();
 
     HRESULT setHistoryDelegate([in] IWebHistoryDelegate* historyDelegate);
     HRESULT historyDelegate([out,retval] IWebHistoryDelegate** historyDelegate);

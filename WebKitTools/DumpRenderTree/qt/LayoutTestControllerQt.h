@@ -153,7 +153,7 @@ public slots:
 
     unsigned numberOfActiveAnimations() const;
 
-    void whiteListAccessFromOrigin(const QString& sourceOrigin, const QString& destinationProtocol, const QString& destinationHost, bool allowDestinationSubdomains);
+    void addOriginAccessWhitelistEntry(const QString& sourceOrigin, const QString& destinationProtocol, const QString& destinationHost, bool allowDestinationSubdomains);
 
     void dispatchPendingLoadRequests();
     void disableImageLoading();

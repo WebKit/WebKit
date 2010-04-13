@@ -227,8 +227,8 @@ public:
     // that case (as the Mac does).
     void fallbackMethod(const CppArgumentList&, CppVariant*);
 
-    // Allows layout tests to call SecurityOrigin::whiteListAccessFromOrigin().
-    void whiteListAccessFromOrigin(const CppArgumentList&, CppVariant*);
+    // Allows layout tests to call SecurityOrigin::addOriginAccessWhitelistEntry().
+    void addOriginAccessWhitelistEntry(const CppArgumentList&, CppVariant*);
 
     // Clears all databases.
     void clearAllDatabases(const CppArgumentList&, CppVariant*);

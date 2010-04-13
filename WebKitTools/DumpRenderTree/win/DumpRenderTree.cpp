@@ -842,7 +842,7 @@ static void resetWebViewToConsistentStateBeforeTesting()
         SetFocus(viewWindow);
 
     webViewPrivate->clearMainFrameName();
-    webViewPrivate->resetOriginAccessWhiteLists();
+    webViewPrivate->resetOriginAccessWhitelists();
 
     BSTR groupName;
     if (SUCCEEDED(webView->groupName(&groupName))) {

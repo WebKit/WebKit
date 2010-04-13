@@ -649,7 +649,7 @@ bool SecurityOrigin::allowSubstituteDataAccessToLocal()
     return localLoadPolicy != SecurityOrigin::AllowLocalLoadsForLocalOnly;
 }
 
-void SecurityOrigin::whiteListAccessFromOrigin(const SecurityOrigin& sourceOrigin, const String& destinationProtocol, const String& destinationDomains, bool allowDestinationSubdomains)
+void SecurityOrigin::addOriginAccessWhitelistEntry(const SecurityOrigin& sourceOrigin, const String& destinationProtocol, const String& destinationDomains, bool allowDestinationSubdomains)
 {
     ASSERT(isMainThread());
     ASSERT(!sourceOrigin.isEmpty());
@@ -665,7 +665,7 @@ void SecurityOrigin::whiteListAccessFromOrigin(const SecurityOrigin& sourceOrigi
     list->append(OriginAccessEntry(destinationProtocol, destinationDomains, allowDestinationSubdomains ? OriginAccessEntry::AllowSubdomains : OriginAccessEntry::DisallowSubdomains));
 }
 
-void SecurityOrigin::resetOriginAccessWhiteLists()
+void SecurityOrigin::resetOriginAccessWhitelists()
 {
     ASSERT(isMainThread());
     OriginAccessMap& map = originAccessMap();

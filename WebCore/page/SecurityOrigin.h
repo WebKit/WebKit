@@ -194,8 +194,8 @@ public:
     static void registerURLSchemeAsNoAccess(const String&);
     static bool shouldTreatURLSchemeAsNoAccess(const String&);
 
-    static void whiteListAccessFromOrigin(const SecurityOrigin& sourceOrigin, const String& destinationProtocol, const String& destinationDomains, bool allowDestinationSubdomains);
-    static void resetOriginAccessWhiteLists();
+    static void addOriginAccessWhitelistEntry(const SecurityOrigin& sourceOrigin, const String& destinationProtocol, const String& destinationDomains, bool allowDestinationSubdomains);
+    static void resetOriginAccessWhitelists();
 
 private:
     SecurityOrigin(const KURL&, SandboxFlags);

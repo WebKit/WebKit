@@ -1,3 +1,19 @@
+2010-04-13  Timothy Hatcher  <timothy@apple.com>
+
+        Rename SecurityOrigin::whiteListAccessFromOrigin to addOriginAccessWhitelistEntry.
+        And SecurityOrigin::resetOriginAccessWhiteLists to resetOriginAccessWhitelists.
+
+        SecurityOrigin needs a way to remove individual OriginAccessEntries
+        https://bugs.webkit.org/show_bug.cgi?id=37449
+
+        Reviewed by Dave Hyatt.
+
+        * WebCore.base.exp:
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::addOriginAccessWhitelistEntry):
+        (WebCore::SecurityOrigin::resetOriginAccessWhitelists):
+        * page/SecurityOrigin.h:
+
 2010-04-13  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Mark Rowe.

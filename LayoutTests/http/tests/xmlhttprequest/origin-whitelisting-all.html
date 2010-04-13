@@ -4,8 +4,8 @@
 <script>
 layoutTestController.dumpAsText();
 layoutTestController.waitUntilDone();
-layoutTestController.whiteListAccessFromOrigin("http://127.0.0.1:8000", "http", "", true);
-layoutTestController.whiteListAccessFromOrigin("http://localhost:8000", "http", "", true);
+layoutTestController.addOriginAccessWhitelistEntry("http://127.0.0.1:8000", "http", "", true);
+layoutTestController.addOriginAccessWhitelistEntry("http://localhost:8000", "http", "", true);
 
 function log(message)
 {
