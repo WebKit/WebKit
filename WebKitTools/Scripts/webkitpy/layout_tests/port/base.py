@@ -577,6 +577,10 @@ class Port(object):
             # If they system is missing ruby just log the error, and stop trying.
             _pretty_patch_available = False
             return "Failed to run PrettyPatch: %s" % e
+        except Executive.ScriptError, e:
+            # If they system is missing ruby just log the error, and stop trying.
+            _pretty_patch_available = False
+            return "Failed to run PrettyPatch: %s" % e
 
     def default_configuration(self):
         return "Release"

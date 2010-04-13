@@ -1,3 +1,10 @@
+2010-04-12  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Unreviewed, trying to make scripts work on machines without
+        Ruby...
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+
 2010-04-12  Tor Arne Vestbø <tor.arne.vestbo@nokia.com>
 
         Reviewed by Eric Seidel.
