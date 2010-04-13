@@ -1,3 +1,18 @@
+2010-04-13  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed, but approved by Dumitru Daniliuc.  (This patch is intended
+        to fix the downstream Chromium build bots.  Hopefully it will work!)
+
+        Add a driver script for the new websocket server
+        https://bugs.webkit.org/show_bug.cgi?id=37495
+
+        websocket_server.py can't be run directly because its a module and not
+        a standalone script.  This used to work by accident because it didn't
+        depend on any other modules.
+
+        * Scripts/new-run-webkit-websocketserver: Added.
+        * Scripts/webkitpy/layout_tests/port/websocket_server.py:
+
 2010-04-12  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
