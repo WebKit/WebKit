@@ -567,7 +567,7 @@ void Document::destroyWrapperCache(DOMWrapperWorld* world)
 void Document::destroyAllWrapperCaches()
 {
     JSWrapperCacheMap& wrapperCacheMap = this->wrapperCacheMap();
-    while (wrapperCacheMap.begin() != wrapperCacheMap.end())
+    while (!wrapperCacheMap.isEmpty())
         destroyWrapperCache(wrapperCacheMap.begin()->first);
 }
 #endif

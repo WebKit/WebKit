@@ -81,14 +81,29 @@ ScriptController::ScriptController(Frame* frame)
 
 ScriptController::~ScriptController()
 {
+    disconnectPlatformScriptObjects();
+
+    // It's likely that destroying m_windowShells will create a lot of garbage.
     if (!m_windowShells.isEmpty()) {
-        m_windowShells.clear();
-    
-        // It's likely that releasing the global object has created a lot of garbage.
+        while (!m_windowShells.isEmpty())
+            destroyWindowShell(m_windowShells.begin()->first.get());
         gcController().garbageCollectSoon();
     }
+}
 
-    disconnectPlatformScriptObjects();
+void ScriptController::destroyWindowShell(DOMWrapperWorld* world)
+{
+    m_windowShells.remove(world);
+    world->didDestroyWindowShell(this);
+}
+
+JSDOMWindowShell* ScriptController::createWindowShell(DOMWrapperWorld* world)
+{
+    ASSERT(!m_windowShells.contains(world));
+    JSDOMWindowShell* windowShell = new JSDOMWindowShell(m_frame->domWindow(), world);
+    m_windowShells.add(world, windowShell);
+    world->didCreateWindowShell(this);
+    return windowShell;
 }
 
 ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode, DOMWrapperWorld* world)
@@ -184,7 +199,7 @@ void ScriptController::clearWindowShell()
         }
     }
 
-    // There is likely to be a lot of garbage now.
+    // It's likely that resetting our windows created a lot of garbage.
     gcController().garbageCollectSoon();
 }
 
@@ -194,8 +209,8 @@ JSDOMWindowShell* ScriptController::initScript(DOMWrapperWorld* world)
 
     JSLock lock(SilenceAssertionsOnly);
 
-    JSDOMWindowShell* windowShell = new JSDOMWindowShell(m_frame->domWindow(), world);
-    m_windowShells.add(world, windowShell);
+    JSDOMWindowShell* windowShell = createWindowShell(world);
+
     windowShell->window()->updateDocument();
 
     if (Page* page = m_frame->page()) {

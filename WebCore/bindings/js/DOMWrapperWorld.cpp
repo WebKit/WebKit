@@ -22,6 +22,7 @@
 #include "DOMWrapperWorld.h"
 
 #include "JSDOMWindow.h"
+#include "ScriptController.h"
 #include "WebCoreJSClientData.h"
 
 using namespace JSC;
@@ -43,8 +44,11 @@ DOMWrapperWorld::~DOMWrapperWorld()
     ASSERT(clientData);
     static_cast<WebCoreJSClientData*>(clientData)->forgetWorld(this);
 
-    while (m_documentsWithWrapperCaches.begin() != m_documentsWithWrapperCaches.end())
+    while (!m_documentsWithWrapperCaches.isEmpty())
         (*m_documentsWithWrapperCaches.begin())->destroyWrapperCache(this);
+
+    while (!m_scriptControllersWithWindowShells.isEmpty())
+        (*m_scriptControllersWithWindowShells.begin())->destroyWindowShell(this);
 }
 
 DOMWrapperWorld* normalWorld(JSC::JSGlobalData& globalData)

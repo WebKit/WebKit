@@ -1,3 +1,31 @@
+2010-04-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Tidied up some more DOMWrapperWorld lifetime issues.
+        
+        Made DOMWrapperWorld aware of its JSDOMWindowShells, so it can clear them.
+
+        * bindings/js/DOMWrapperWorld.cpp:
+        (WebCore::DOMWrapperWorld::~DOMWrapperWorld):
+        * bindings/js/DOMWrapperWorld.h:
+        (WebCore::DOMWrapperWorld::didCreateWindowShell):
+        (WebCore::DOMWrapperWorld::didDestroyWindowShell): Functionality for
+        tracking window shells that reference a given DOMWrapperWorld.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::~ScriptController):
+        (WebCore::ScriptController::destroyWindowShell):
+        (WebCore::ScriptController::createWindowShell):
+        (WebCore::ScriptController::clearWindowShell):
+        (WebCore::ScriptController::initScript):
+        * bindings/js/ScriptController.h: Refactored to update a DOMWrapperWorld
+        when adding or removing a JSDOMWindowShell.
+
+        * dom/Document.cpp:
+        (WebCore::Document::destroyAllWrapperCaches): Changed to use isEmpty(),
+        which is slightly faster and simpler than iterator comparison.
+
 2010-04-13  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Adam Barth.
