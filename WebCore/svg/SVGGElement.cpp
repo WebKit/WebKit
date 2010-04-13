@@ -55,14 +55,20 @@ void SVGGElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     SVGStyledTransformableElement::svgAttributeChanged(attrName);
 
-    if (!renderer())
+    RenderObject* renderer = this->renderer();
+    if (!renderer)
         return;
 
-    if (SVGTests::isKnownAttribute(attrName) || 
-        SVGLangSpace::isKnownAttribute(attrName) ||
-        SVGExternalResourcesRequired::isKnownAttribute(attrName) ||
-        SVGStyledTransformableElement::isKnownAttribute(attrName))
-        renderer()->setNeedsLayout(true);
+    if (SVGStyledTransformableElement::isKnownAttribute(attrName)) {
+        renderer->setNeedsTransformUpdate();
+        renderer->setNeedsLayout(true);
+        return;
+    }
+
+    if (SVGTests::isKnownAttribute(attrName)
+        || SVGLangSpace::isKnownAttribute(attrName)
+        || SVGExternalResourcesRequired::isKnownAttribute(attrName))
+        renderer->setNeedsLayout(true);
 }
 
 void SVGGElement::synchronizeProperty(const QualifiedName& attrName)

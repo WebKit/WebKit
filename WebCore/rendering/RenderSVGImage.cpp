@@ -42,6 +42,7 @@ namespace WebCore {
 
 RenderSVGImage::RenderSVGImage(SVGImageElement* impl)
     : RenderImage(impl)
+    , m_needsTransformUpdate(true)
 {
 }
 
@@ -50,10 +51,13 @@ void RenderSVGImage::layout()
     ASSERT(needsLayout());
 
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
-
     SVGImageElement* image = static_cast<SVGImageElement*>(node());
-    m_localTransform = image->animatedLocalTransform();
-    
+
+    if (m_needsTransformUpdate) {
+        m_localTransform = image->animatedLocalTransform();
+        m_needsTransformUpdate = false;
+    }
+
     // minimum height
     setHeight(errorOccurred() ? intrinsicSize().height() : 0);
 

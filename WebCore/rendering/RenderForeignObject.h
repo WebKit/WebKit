@@ -54,6 +54,7 @@ public:
     virtual bool isSVGForeignObject() const { return true; }
 
     virtual void mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed , bool useTransforms, TransformState& transformState) const;
+    virtual void setNeedsTransformUpdate() { m_needsTransformUpdate = true; }
 
  private:
     virtual void calcWidth();
@@ -62,6 +63,7 @@ public:
     virtual const AffineTransform& localToParentTransform() const;
     virtual AffineTransform localTransform() const { return m_localTransform; }
 
+    bool m_needsTransformUpdate : 1;
     FloatRect m_viewport;
     AffineTransform m_localTransform;
     mutable AffineTransform m_localToParentTransform;

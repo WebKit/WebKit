@@ -1,3 +1,93 @@
+2010-04-13  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        SVG renderers should track transform/path changes, instead of pulling every time from SVG DOM
+        https://bugs.webkit.org/show_bug.cgi?id=15389
+
+        RenderPath caches repaint rectangles (fill/stroke bbox etc.) though this caching
+        was effectively useless because every layout() call caused them to be reset to empty rects.
+        Furthermore RenderPath::layout() queried the SVG DOM upon every invocation to retrieve
+        the Path object, instead of only doing it when necessary. Even the TransformationMatrix
+        was polled everytime from the SVG DOM.
+
+        Move the knownledge wheter we need to update path/transform into the render tree and
+        only update when necessary. This should result in a huge performance increase, with
+        the drawback of adding slightly more memory, because we need to add booleans indicating
+        the status of path/transform (is dirty?).
+
+        Doesn't affect any tests, only performance.
+
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::RenderForeignObject):
+        (WebCore::RenderForeignObject::layout):
+        * rendering/RenderForeignObject.h:
+        (WebCore::RenderForeignObject::setNeedsTransformUpdate):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::setNeedsTransformUpdate):
+        (WebCore::RenderObject::setNeedsBoundariesUpdate):
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::RenderPath):
+        (WebCore::RenderPath::layout):
+        (WebCore::RenderPath::invalidateCachedBoundaries):
+        (WebCore::RenderPath::styleWillChange):
+        * rendering/RenderPath.h:
+        (WebCore::RenderPath::setNeedsBoundariesUpdate):
+        (WebCore::RenderPath::setNeedsPathUpdate):
+        (WebCore::RenderPath::setNeedsTransformUpdate):
+        (WebCore::RenderPath::localToParentTransform):
+        (WebCore::RenderPath::localTransform):
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::RenderSVGImage):
+        (WebCore::RenderSVGImage::layout):
+        * rendering/RenderSVGImage.h:
+        (WebCore::RenderSVGImage::setNeedsTransformUpdate):
+        * rendering/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::invalidateClients):
+        * rendering/RenderSVGResourceMarker.cpp:
+        (WebCore::RenderSVGResourceMarker::invalidateClients):
+        * rendering/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::invalidateClients):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::RenderSVGText):
+        (WebCore::RenderSVGText::layout):
+        * rendering/RenderSVGText.h:
+        (WebCore::RenderSVGText::setNeedsTransformUpdate):
+        * rendering/RenderSVGTransformableContainer.cpp:
+        (WebCore::RenderSVGTransformableContainer::RenderSVGTransformableContainer):
+        (WebCore::RenderSVGTransformableContainer::calculateLocalTransform):
+        * rendering/RenderSVGTransformableContainer.h:
+        (WebCore::RenderSVGTransformableContainer::localToParentTransform):
+        (WebCore::RenderSVGTransformableContainer::setNeedsTransformUpdate):
+        (WebCore::RenderSVGTransformableContainer::localTransform):
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::calculateAnimatedValue):
+        (WebCore::SVGAnimateMotionElement::applyResultsToTarget):
+        * svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::applyResultsToTarget):
+        * svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::svgAttributeChanged):
+        * svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::svgAttributeChanged):
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::svgAttributeChanged):
+        * svg/SVGGElement.cpp:
+        (WebCore::SVGGElement::svgAttributeChanged):
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::svgAttributeChanged):
+        * svg/SVGLineElement.cpp:
+        (WebCore::SVGLineElement::svgAttributeChanged):
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::svgAttributeChanged):
+        * svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::svgAttributeChanged):
+        * svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::svgAttributeChanged):
+        * svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::svgAttributeChanged):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::svgAttributeChanged):
+
 2010-04-13  Mikhail Naganov  <mnaganov@chromium.org>
 
         Unreviewed Qt build fix: add new .idl files to WebCore.pri

@@ -51,8 +51,12 @@ RenderSVGResourceClipper::~RenderSVGResourceClipper()
 void RenderSVGResourceClipper::invalidateClients()
 {
     HashSet<RenderObject*>::const_iterator end = m_clipper.end();
-    for (HashSet<RenderObject*>::const_iterator it = m_clipper.begin(); it != end; ++it)
-        (*it)->setNeedsLayout(true);
+    for (HashSet<RenderObject*>::const_iterator it = m_clipper.begin(); it != end; ++it) {
+        RenderObject* renderer = *it;
+        renderer->setNeedsBoundariesUpdate();
+        renderer->setNeedsLayout(true);
+    }
+
     m_clipper.clear();
 }
 

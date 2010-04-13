@@ -193,15 +193,27 @@ void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     SVGStyledTransformableElement::svgAttributeChanged(attrName);
 
-    if (!renderer())
+    RenderPath* renderer = static_cast<RenderPath*>(this->renderer());
+    if (!renderer)
         return;
 
-    if (attrName == SVGNames::dAttr || attrName == SVGNames::pathLengthAttr ||
-        SVGTests::isKnownAttribute(attrName) ||
-        SVGLangSpace::isKnownAttribute(attrName) ||
-        SVGExternalResourcesRequired::isKnownAttribute(attrName) ||
-        SVGStyledTransformableElement::isKnownAttribute(attrName))
-        renderer()->setNeedsLayout(true);
+    if (attrName == SVGNames::dAttr) {
+        renderer->setNeedsPathUpdate();
+        renderer->setNeedsLayout(true);
+        return;
+    }
+
+    if (SVGStyledTransformableElement::isKnownAttribute(attrName)) {
+        renderer->setNeedsTransformUpdate();
+        renderer->setNeedsLayout(true);
+        return;
+    }
+
+    if (attrName == SVGNames::pathLengthAttr
+        || SVGTests::isKnownAttribute(attrName)
+        || SVGLangSpace::isKnownAttribute(attrName)
+        || SVGExternalResourcesRequired::isKnownAttribute(attrName))
+        renderer->setNeedsLayout(true);
 }
 
 void SVGPathElement::synchronizeProperty(const QualifiedName& attrName)

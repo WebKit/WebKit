@@ -31,13 +31,14 @@ namespace WebCore {
     public:
         RenderSVGTransformableContainer(SVGStyledTransformableElement*);
 
-        virtual const AffineTransform& localToParentTransform() const;
+        virtual const AffineTransform& localToParentTransform() const { return m_localTransform; }
+        virtual void setNeedsTransformUpdate() { m_needsTransformUpdate = true; }
 
     private:
         virtual void calculateLocalTransform();
-        // FIXME: This can be made non-virtual once SVGRenderTreeAsText stops using localTransform()
-        virtual AffineTransform localTransform() const;
+        virtual AffineTransform localTransform() const { return m_localTransform; }
 
+        bool m_needsTransformUpdate : 1;
         AffineTransform m_localTransform;
     };
 }

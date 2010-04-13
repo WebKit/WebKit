@@ -90,15 +90,26 @@ void SVGPolyElement::svgAttributeChanged(const QualifiedName& attrName)
     if (attrName == SVGNames::pointsAttr)
         setSynchronizedSVGAttributes(false);
 
-    if (!renderer())
+    RenderPath* renderer = static_cast<RenderPath*>(this->renderer());
+    if (!renderer)
         return;
 
-    if (attrName == SVGNames::pointsAttr
-        || SVGTests::isKnownAttribute(attrName)
+    if (SVGStyledTransformableElement::isKnownAttribute(attrName)) {
+        renderer->setNeedsTransformUpdate();
+        renderer->setNeedsLayout(true);
+        return;
+    }
+
+    if (attrName == SVGNames::pointsAttr) {
+        renderer->setNeedsPathUpdate();
+        renderer->setNeedsLayout(true);
+        return;
+    }
+
+    if (SVGTests::isKnownAttribute(attrName)
         || SVGLangSpace::isKnownAttribute(attrName)
-        || SVGExternalResourcesRequired::isKnownAttribute(attrName)
-        || SVGStyledTransformableElement::isKnownAttribute(attrName))
-        renderer()->setNeedsLayout(true);
+        || SVGExternalResourcesRequired::isKnownAttribute(attrName))
+        renderer->setNeedsLayout(true);
 }
 
 void SVGPolyElement::synchronizeProperty(const QualifiedName& attrName)

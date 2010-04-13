@@ -31,28 +31,30 @@ namespace WebCore {
     
 RenderSVGTransformableContainer::RenderSVGTransformableContainer(SVGStyledTransformableElement* node)
     : RenderSVGContainer(node)
+    , m_needsTransformUpdate(true)
 {
-}
-
-const AffineTransform& RenderSVGTransformableContainer::localToParentTransform() const
-{
-    return m_localTransform;
-}
-
-AffineTransform RenderSVGTransformableContainer::localTransform() const
-{
-    return m_localTransform;
 }
 
 void RenderSVGTransformableContainer::calculateLocalTransform()
 {
-    m_localTransform = static_cast<SVGStyledTransformableElement*>(node())->animatedLocalTransform();
-    if (!node()->hasTagName(SVGNames::gTag) || !static_cast<SVGGElement*>(node())->isShadowTreeContainerElement())
+    SVGStyledTransformableElement* element = static_cast<SVGStyledTransformableElement*>(node());
+
+    bool needsUpdate = m_needsTransformUpdate;
+    if (needsUpdate) {
+        m_localTransform = element->animatedLocalTransform();
+        m_needsTransformUpdate = false;
+    }
+
+    if (!element->hasTagName(SVGNames::gTag) || !static_cast<SVGGElement*>(element)->isShadowTreeContainerElement())
         return;
 
-    FloatSize translation = static_cast<SVGShadowTreeContainerElement*>(node())->containerTranslation();
+    FloatSize translation = static_cast<SVGShadowTreeContainerElement*>(element)->containerTranslation();
     if (translation.width() == 0 && translation.height() == 0)
         return;
+
+    // FIXME: Could optimize this case for use to avoid refetching the animatedLocalTransform() here, if only the containerTranslation() changed.
+    if (!needsUpdate)
+        m_localTransform = element->animatedLocalTransform();
 
     m_localTransform.translate(translation.width(), translation.height());
 }

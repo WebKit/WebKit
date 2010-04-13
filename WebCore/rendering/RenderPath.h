@@ -41,6 +41,9 @@ public:
     RenderPath(SVGStyledTransformableElement*);
 
     const Path& path() const { return m_path; }
+    void setNeedsBoundariesUpdate() { m_needsBoundariesUpdate = true; }
+    void setNeedsPathUpdate() { m_needsPathUpdate = true; }
+    virtual void setNeedsTransformUpdate() { m_needsTransformUpdate = true; }
 
 private:
     // Hit-detection seperated for the fill and the stroke
@@ -52,9 +55,7 @@ private:
     virtual FloatRect markerBoundingBox() const;
     virtual FloatRect repaintRectInLocalCoordinates() const;
 
-    virtual const AffineTransform& localToParentTransform() const;
-
-    void setPath(const Path&);
+    virtual const AffineTransform& localToParentTransform() const { return m_localTransform; }
 
     virtual bool isRenderPath() const { return true; }
     virtual const char* renderName() const { return "RenderPath"; }
@@ -64,11 +65,17 @@ private:
     virtual void addFocusRingRects(Vector<IntRect>&, int tx, int ty);
 
     virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction);
+    virtual void styleWillChange(StyleDifference, const RenderStyle*);
 
     void calculateMarkerBoundsIfNeeded() const;
+    void invalidateCachedBoundaries();
 
 private:
-    virtual AffineTransform localTransform() const;
+    virtual AffineTransform localTransform() const { return m_localTransform; }
+
+    bool m_needsBoundariesUpdate : 1;
+    bool m_needsPathUpdate : 1;
+    bool m_needsTransformUpdate : 1;
 
     mutable Path m_path;
     mutable FloatRect m_cachedLocalFillBBox;

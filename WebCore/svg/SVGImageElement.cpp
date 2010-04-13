@@ -91,18 +91,25 @@ void SVGImageElement::svgAttributeChanged(const QualifiedName& attrName)
     if (SVGURIReference::isKnownAttribute(attrName))
         m_imageLoader.updateFromElementIgnoringPreviousError();
 
-    if (!renderer())
+    RenderObject* renderer = this->renderer();
+    if (!renderer)
         return;
 
-    if (attrName == SVGNames::xAttr || attrName == SVGNames::yAttr ||
-        attrName == SVGNames::widthAttr || attrName == SVGNames::heightAttr ||
-        attrName == SVGNames::preserveAspectRatioAttr ||
-        SVGTests::isKnownAttribute(attrName) ||
-        SVGLangSpace::isKnownAttribute(attrName) ||
-        SVGExternalResourcesRequired::isKnownAttribute(attrName) ||
-        SVGStyledTransformableElement::isKnownAttribute(attrName)) {
-        renderer()->setNeedsLayout(true);
+    if (SVGStyledTransformableElement::isKnownAttribute(attrName)) {
+        renderer->setNeedsTransformUpdate();
+        renderer->setNeedsLayout(true);
+        return;
     }
+
+    if (attrName == SVGNames::xAttr
+        || attrName == SVGNames::yAttr
+        || attrName == SVGNames::widthAttr
+        || attrName == SVGNames::heightAttr
+        || attrName == SVGNames::preserveAspectRatioAttr
+        || SVGTests::isKnownAttribute(attrName)
+        || SVGLangSpace::isKnownAttribute(attrName)
+        || SVGExternalResourcesRequired::isKnownAttribute(attrName))
+        renderer->setNeedsLayout(true);
 }
 
 void SVGImageElement::synchronizeProperty(const QualifiedName& attrName)

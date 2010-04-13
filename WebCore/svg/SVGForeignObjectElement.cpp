@@ -76,8 +76,15 @@ void SVGForeignObjectElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     SVGStyledTransformableElement::svgAttributeChanged(attrName);
 
-    if (!renderer())
+    RenderObject* renderer = this->renderer();
+    if (!renderer)
         return;
+
+    if (SVGStyledTransformableElement::isKnownAttribute(attrName)) {
+        renderer->setNeedsTransformUpdate();
+        renderer->setNeedsLayout(true);
+        return;
+    }
 
     if (attrName == SVGNames::xAttr
         || attrName == SVGNames::yAttr
@@ -85,9 +92,8 @@ void SVGForeignObjectElement::svgAttributeChanged(const QualifiedName& attrName)
         || attrName == SVGNames::heightAttr
         || SVGTests::isKnownAttribute(attrName)
         || SVGLangSpace::isKnownAttribute(attrName)
-        || SVGExternalResourcesRequired::isKnownAttribute(attrName)
-        || SVGStyledTransformableElement::isKnownAttribute(attrName))
-        renderer()->setNeedsLayout(true);
+        || SVGExternalResourcesRequired::isKnownAttribute(attrName))
+        renderer->setNeedsLayout(true);
 }
 
 void SVGForeignObjectElement::synchronizeProperty(const QualifiedName& attrName)

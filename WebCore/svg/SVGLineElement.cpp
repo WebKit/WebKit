@@ -72,16 +72,29 @@ void SVGLineElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     SVGStyledTransformableElement::svgAttributeChanged(attrName);
 
-    if (!renderer())
+    RenderPath* renderer = static_cast<RenderPath*>(this->renderer());
+    if (!renderer)
         return;
 
-    if (attrName == SVGNames::x1Attr || attrName == SVGNames::y1Attr ||
-        attrName == SVGNames::x2Attr || attrName == SVGNames::y2Attr ||
-        SVGTests::isKnownAttribute(attrName) ||
-        SVGLangSpace::isKnownAttribute(attrName) ||
-        SVGExternalResourcesRequired::isKnownAttribute(attrName) ||
-        SVGStyledTransformableElement::isKnownAttribute(attrName))
-        renderer()->setNeedsLayout(true);
+    if (SVGStyledTransformableElement::isKnownAttribute(attrName)) {
+        renderer->setNeedsTransformUpdate();
+        renderer->setNeedsLayout(true);
+        return;
+    }
+
+    if (attrName == SVGNames::x1Attr
+        || attrName == SVGNames::y1Attr
+        || attrName == SVGNames::x2Attr
+        || attrName == SVGNames::y2Attr) {
+        renderer->setNeedsPathUpdate();
+        renderer->setNeedsLayout(true);
+        return;
+    }
+
+    if (SVGTests::isKnownAttribute(attrName)
+        || SVGLangSpace::isKnownAttribute(attrName)
+        || SVGExternalResourcesRequired::isKnownAttribute(attrName))
+        renderer->setNeedsLayout(true);
 }
 
 void SVGLineElement::synchronizeProperty(const QualifiedName& attrName)

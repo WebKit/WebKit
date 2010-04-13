@@ -85,17 +85,31 @@ void SVGRectElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     SVGStyledTransformableElement::svgAttributeChanged(attrName);
 
-    if (!renderer())
+    RenderPath* renderer = static_cast<RenderPath*>(this->renderer());
+    if (!renderer)
         return;
 
-    if (attrName == SVGNames::xAttr || attrName == SVGNames::yAttr ||
-        attrName == SVGNames::widthAttr || attrName == SVGNames::heightAttr ||
-        attrName == SVGNames::rxAttr || attrName == SVGNames::ryAttr ||
-        SVGTests::isKnownAttribute(attrName) ||
-        SVGLangSpace::isKnownAttribute(attrName) ||
-        SVGExternalResourcesRequired::isKnownAttribute(attrName) ||
-        SVGStyledTransformableElement::isKnownAttribute(attrName))
-        renderer()->setNeedsLayout(true);
+    if (SVGStyledTransformableElement::isKnownAttribute(attrName)) {
+        renderer->setNeedsTransformUpdate();
+        renderer->setNeedsLayout(true);
+        return;
+    }
+
+    if (attrName == SVGNames::xAttr
+        || attrName == SVGNames::yAttr
+        || attrName == SVGNames::widthAttr
+        || attrName == SVGNames::heightAttr
+        || attrName == SVGNames::rxAttr
+        || attrName == SVGNames::ryAttr) {
+        renderer->setNeedsPathUpdate();
+        renderer->setNeedsLayout(true);
+        return;
+    }
+
+    if (SVGTests::isKnownAttribute(attrName)
+        || SVGLangSpace::isKnownAttribute(attrName)
+        || SVGExternalResourcesRequired::isKnownAttribute(attrName))
+        renderer->setNeedsLayout(true);
 }
 
 void SVGRectElement::synchronizeProperty(const QualifiedName& attrName)

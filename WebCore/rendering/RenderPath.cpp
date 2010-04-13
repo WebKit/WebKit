@@ -64,17 +64,10 @@ private:
 
 RenderPath::RenderPath(SVGStyledTransformableElement* node)
     : RenderSVGModelObject(node)
+    , m_needsBoundariesUpdate(false) // default is false, as this is only used when a RenderSVGResource tells us that the boundaries need to be recached
+    , m_needsPathUpdate(true) // default is true, so we grab a Path object once from SVGStyledTransformableElement
+    , m_needsTransformUpdate(true) // default is true, so we grab a AffineTransform object once from SVGStyledTransformableElement
 {
-}
-
-const AffineTransform& RenderPath::localToParentTransform() const
-{
-    return m_localTransform;
-}
-
-AffineTransform RenderPath::localTransform() const
-{
-    return m_localTransform;
 }
 
 bool RenderPath::fillContains(const FloatPoint& point, bool requiresFill) const
@@ -171,22 +164,34 @@ FloatRect RenderPath::repaintRectInLocalCoordinates() const
     return m_cachedLocalRepaintRect;
 }
 
-void RenderPath::setPath(const Path& newPath)
-{
-    m_path = newPath;
-    m_cachedLocalRepaintRect = FloatRect();
-    m_cachedLocalStrokeBBox = FloatRect();
-    m_cachedLocalFillBBox = FloatRect();
-    m_cachedLocalMarkerBBox = FloatRect();
-}
-
 void RenderPath::layout()
 {
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout() && selfNeedsLayout());
-
     SVGStyledTransformableElement* element = static_cast<SVGStyledTransformableElement*>(node());
-    m_localTransform = element->animatedLocalTransform();
-    setPath(element->toPathData());
+
+    // We need to update the Path object whenever the underlying SVGStyledTransformableElement uses relative values
+    // as the viewport size may have changed. It would be nice to optimize this to detect these changes, and only
+    // update when needed, even when using relative values.
+    if (!m_needsPathUpdate && element->hasRelativeValues())
+        m_needsPathUpdate = true;
+
+    bool needsUpdate = m_needsPathUpdate || m_needsTransformUpdate || m_needsBoundariesUpdate;
+
+    if (m_needsBoundariesUpdate)
+        m_needsBoundariesUpdate = false;
+
+    if (m_needsPathUpdate) {
+        m_path = element->toPathData();
+        m_needsPathUpdate = false;
+    }
+
+    if (m_needsTransformUpdate) {
+        m_localTransform = element->animatedLocalTransform();
+        m_needsTransformUpdate = false;
+    }
+
+    if (needsUpdate)
+        invalidateCachedBoundaries();
 
     repainter.repaintAfterLayout();
     setNeedsLayout(false);
@@ -324,6 +329,20 @@ void RenderPath::calculateMarkerBoundsIfNeeded() const
 
     float strokeWidth = SVGRenderStyle::cssPrimitiveToLength(this, svgStyle->strokeWidth(), 1.0f);
     m_cachedLocalMarkerBBox = m_markerLayoutInfo.calculateBoundaries(startMarker, midMarker, endMarker, strokeWidth, m_path);
+}
+
+void RenderPath::invalidateCachedBoundaries()
+{
+    m_cachedLocalRepaintRect = FloatRect();
+    m_cachedLocalStrokeBBox = FloatRect();
+    m_cachedLocalFillBBox = FloatRect();
+    m_cachedLocalMarkerBBox = FloatRect();
+}
+
+void RenderPath::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)
+{
+    invalidateCachedBoundaries();
+    RenderSVGModelObject::styleWillChange(diff, newStyle);
 }
 
 }

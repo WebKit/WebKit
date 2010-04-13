@@ -159,9 +159,11 @@ void SVGAnimateTransformElement::applyResultsToTarget()
         return;
     // We accumulate to the target element transform list so there is not much to do here.
     SVGElement* targetElement = this->targetElement();
-    if (targetElement->renderer())
-        targetElement->renderer()->setNeedsLayout(true);
-    
+    if (RenderObject* renderer = targetElement->renderer()) {
+        renderer->setNeedsTransformUpdate();
+        renderer->setNeedsLayout(true);
+    }
+
     // ...except in case where we have additional instances in <use> trees.
     const HashSet<SVGElementInstance*>& instances = targetElement->instancesForElement();
     RefPtr<SVGTransformList> transformList = transformListFor(targetElement);
@@ -173,8 +175,10 @@ void SVGAnimateTransformElement::applyResultsToTarget()
             static_cast<SVGStyledTransformableElement*>(shadowTreeElement)->setTransformBaseValue(transformList.get());
         else if (shadowTreeElement->hasTagName(SVGNames::textTag))
             static_cast<SVGTextElement*>(shadowTreeElement)->setTransformBaseValue(transformList.get());
-        if (shadowTreeElement->renderer())
-            shadowTreeElement->renderer()->setNeedsLayout(true);
+        if (RenderObject* renderer = shadowTreeElement->renderer()) {
+            renderer->setNeedsTransformUpdate();
+            renderer->setNeedsLayout(true);
+        }
     }
 }
     

@@ -36,6 +36,7 @@ namespace WebCore {
 
 RenderForeignObject::RenderForeignObject(SVGForeignObjectElement* node) 
     : RenderSVGBlock(node)
+    , m_needsTransformUpdate(true)
 {
 }
 
@@ -99,9 +100,12 @@ void RenderForeignObject::layout()
     ASSERT(!view()->layoutStateEnabled()); // RenderSVGRoot disables layoutState for the SVG rendering tree.
 
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
-
     SVGForeignObjectElement* foreign = static_cast<SVGForeignObjectElement*>(node());
-    m_localTransform = foreign->animatedLocalTransform();
+
+    if (m_needsTransformUpdate) {
+        m_localTransform = foreign->animatedLocalTransform();
+        m_needsTransformUpdate = false;
+    }
 
     // Cache viewport boundaries
     FloatPoint viewportLocation(foreign->x().value(foreign), foreign->y().value(foreign));

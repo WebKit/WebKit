@@ -38,6 +38,8 @@ class RenderSVGImage : public RenderImage, protected SVGRenderBase {
 public:
     RenderSVGImage(SVGImageElement*);
 
+    virtual void setNeedsTransformUpdate() { m_needsTransformUpdate = true; }
+
 private:
     virtual const SVGRenderBase* toSVGRenderBase() const { return this; }
     virtual const char* renderName() const { return "RenderSVGImage"; }
@@ -72,6 +74,7 @@ private:
 
     virtual AffineTransform localTransform() const { return m_localTransform; }
 
+    bool m_needsTransformUpdate : 1;
     AffineTransform m_localTransform;
     FloatRect m_localBounds;
     mutable FloatRect m_cachedLocalRepaintRect;
