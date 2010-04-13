@@ -188,7 +188,14 @@ void renderSubtreeToImage(ImageBuffer* image, RenderObject* item)
     ASSERT(item);
     ASSERT(image);
     ASSERT(image->context());
-    RenderObject::PaintInfo info(image->context(), IntRect(), PaintPhaseForeground, 0, 0, 0);
+
+    // FIXME: This sets the rect to the viewable area of the current frame. This
+    // is used to support text drawings to the ImageBuffer. See bug 30399.
+    IntRect rect;
+    FrameView* frameView = item->document()->view();
+    if (frameView)
+        rect = IntRect(0, 0, frameView->visibleWidth(), frameView->visibleHeight());
+    RenderObject::PaintInfo info(image->context(), rect, PaintPhaseForeground, 0, 0, 0);
 
     // FIXME: isSVGContainer returns true for RenderSVGViewportContainer, so if this is ever
     // called with one of those, we will read from the wrong offset in an object due to a bad cast.

@@ -33,6 +33,8 @@ public:
     RenderSVGShadowTreeRootContainer(SVGUseElement*);
     virtual ~RenderSVGShadowTreeRootContainer();
 
+    virtual bool isSVGShadowTreeRootContainer() const { return true; }
+
     void markShadowTreeForRecreation() { m_recreateTree = true; }
     void updateStyle(Node::StyleChange);
     virtual void updateFromElement();

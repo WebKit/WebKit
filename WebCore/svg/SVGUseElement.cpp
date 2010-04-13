@@ -611,6 +611,18 @@ Path SVGUseElement::toClipPath() const
     return Path();
 }
 
+RenderObject* SVGUseElement::rendererClipChild() const
+{
+    Node* n = m_targetElementInstance ? m_targetElementInstance->shadowTreeElement() : 0;
+    if (!n)
+        return 0;
+
+    if (n->isSVGElement() && isDirectReference(n))
+        return static_cast<SVGElement*>(n)->renderer();
+
+    return 0;
+}
+
 void SVGUseElement::buildInstanceTree(SVGElement* target, SVGElementInstance* targetInstance, bool& foundProblem)
 {
     ASSERT(target);

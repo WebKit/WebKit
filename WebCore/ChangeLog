@@ -1,3 +1,69 @@
+2010-04-13  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        <clipPath> doesn't correctly handle <text> elements
+        https://bugs.webkit.org/show_bug.cgi?id=12571
+
+        Adds support for text elements as clipPath, heterogenous clip rules, as well
+        as clipping of clipPath.
+        A fast code path let platforms clip simple shapes directly. All other variants
+        are drawn to a seperate ImageBuffer, which is used as a mask. This happens the same
+        way we like we do it on SVG Masking. This needs temporary changes to the RenderStyle
+        of clipPath childs. Values like stroke, resources, opacity have to be ignored.
+
+        Tests: svg/clip-path/clip-path-child-clipped.svg
+               svg/clip-path/clip-path-childs-clipped.svg
+               svg/clip-path/clip-path-clipped-evenodd-twice.svg
+               svg/clip-path/clip-path-clipped-no-content.svg
+               svg/clip-path/clip-path-clipped-nonzero.svg
+               svg/clip-path/clip-path-clipped.svg
+               svg/clip-path/clip-path-evenodd-nonzero.svg
+               svg/clip-path/clip-path-evenodd.svg
+               svg/clip-path/clip-path-nonzero-evenodd.svg
+               svg/clip-path/clip-path-nonzero.svg
+               svg/clip-path/clip-path-objectBoundingBox.svg
+               svg/clip-path/clip-path-on-clipped-use.svg
+               svg/clip-path/clip-path-on-g-and-child.svg
+               svg/clip-path/clip-path-on-g.svg
+               svg/clip-path/clip-path-on-svg-and-child.svg
+               svg/clip-path/clip-path-on-svg.svg
+               svg/clip-path/clip-path-recursive-call-by-child.svg
+               svg/clip-path/clip-path-recursive-call.svg
+               svg/clip-path/clip-path-text-and-shape.svg
+               svg/clip-path/clip-path-text-and-stroke.svg
+               svg/clip-path/clip-path-text.svg
+               svg/clip-path/clip-path-use-as-child.svg
+               svg/clip-path/clip-path-use-as-child2.svg
+               svg/clip-path/clip-path-use-as-child3.svg
+               svg/clip-path/clip-path-use-as-child4.svg
+               svg/clip-path/clip-path-use-as-child5.svg
+               svg/clip-path/clip-path-userSpaceOnUse.svg
+               svg/clip-path/clip-path-with-container.svg
+               svg/clip-path/clip-path-with-different-unittypes.svg
+               svg/clip-path/clip-path-with-different-unittypes2.svg
+               svg/clip-path/clip-path-with-invisibile-child.svg
+               svg/clip-path/clip-path-with-text-clipped.svg
+
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isSVGShadowTreeRootContainer): identify use-element renderer
+        * rendering/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::invalidateClients):
+        (WebCore::RenderSVGResourceClipper::invalidateClient):
+        (WebCore::RenderSVGResourceClipper::applyResource):
+        (WebCore::RenderSVGResourceClipper::pathOnlyClipping): direct clipping for simple shapes
+        (WebCore::RenderSVGResourceClipper::applyClippingToContext): direct clipping or maskImage?
+        (WebCore::RenderSVGResourceClipper::createClipData): creates maskImage for clipping
+        (WebCore::RenderSVGResourceClipper::resourceBoundingBox):
+        * rendering/RenderSVGResourceClipper.h:
+        * rendering/RenderSVGShadowTreeRootContainer.h: identify use-Element by renderer
+        (WebCore::RenderSVGShadowTreeRootContainer::isSVGShadowTreeRootContainer):
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::renderSubtreeToImage): hack to get texts working on clipping (masks and pattern)
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::rendererClipChild): get renderer of referenced object
+        * svg/SVGUseElement.h:
+
 2010-04-13  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

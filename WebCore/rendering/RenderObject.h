@@ -337,6 +337,7 @@ public:
     virtual bool isSVGImage() const { return false; }
     virtual bool isSVGForeignObject() const { return false; }
     virtual bool isSVGResource() const { return false; }
+    virtual bool isSVGShadowTreeRootContainer() const { return false; }
 
     virtual const SVGRenderBase* toSVGRenderBase() const;
     virtual RenderSVGResource* toRenderSVGResource();

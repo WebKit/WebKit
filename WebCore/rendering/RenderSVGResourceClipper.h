@@ -24,13 +24,21 @@
 #if ENABLE(SVG)
 #include "FloatRect.h"
 #include "GraphicsContext.h"
+#include "ImageBuffer.h"
+#include "IntSize.h"
+#include "Path.h"
 #include "RenderSVGResource.h"
 #include "SVGClipPathElement.h"
 #include "SVGUnitTypes.h"
 
-#include <wtf/HashSet.h>
+#include <wtf/HashMap.h>
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
+
+struct ClipperData {
+    OwnPtr<ImageBuffer> clipMaskImage;
+};
 
 class RenderSVGResourceClipper : public RenderSVGResource {
 
@@ -52,7 +60,13 @@ public:
 
     static RenderSVGResourceType s_resourceType;
 private:
-    HashSet<RenderObject*> m_clipper;
+    // clipPath can be clipped too, but don't have a boundingBox or repaintRect. So we can't call
+    // applyResource directly and use the rects from the object, since they are empty for RenderSVGResources
+    bool applyClippingToContext(RenderObject*, const FloatRect&, const FloatRect&, GraphicsContext*);
+    bool pathOnlyClipping(GraphicsContext*, const FloatRect&);
+    bool createClipData(ClipperData*, const FloatRect&, const FloatRect&);
+
+    HashMap<RenderObject*, ClipperData*> m_clipper;
 };
 
 }

@@ -1,3 +1,166 @@
+2010-04-13  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        <clipPath> doesn't correctly handle <text> elements
+        https://bugs.webkit.org/show_bug.cgi?id=12571
+
+        33 new Tests for SVG's clip-path. Test behavior of different clip objects
+        like text as well as different clip rules.
+        Other older tests are rendered correctly now.
+
+        * platform/mac/svg/W3C-SVG-1.1/masking-intro-01-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/masking-intro-01-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/masking-intro-01-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/masking-path-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/masking-path-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/masking-path-04-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/masking-path-04-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/masking-path-04-b-expected.txt:
+        * platform/mac/svg/batik/text/textEffect2-expected.checksum:
+        * platform/mac/svg/batik/text/textEffect2-expected.png:
+        * platform/mac/svg/batik/text/textEffect2-expected.txt:
+        * platform/mac/svg/batik/text/textProperties-expected.checksum:
+        * platform/mac/svg/batik/text/textProperties-expected.png:
+        * platform/mac/svg/batik/text/textProperties-expected.txt:
+        * platform/mac/svg/clip-path: Added.
+        * platform/mac/svg/clip-path/clip-path-child-clipped-expected.checksum: Added.
+        * platform/mac/svg/clip-path/clip-path-child-clipped-expected.png: Added.
+        * platform/mac/svg/clip-path/clip-path-child-clipped-expected.txt: Added.
+        * platform/mac/svg/clip-path/clip-path-childs-clipped-expected.checksum: Added.
+        * platform/mac/svg/clip-path/clip-path-childs-clipped-expected.png: Added.
+        * platform/mac/svg/clip-path/clip-path-childs-clipped-expected.txt: Added.
+        * platform/mac/svg/clip-path/clip-path-clipped-evenodd-twice-expected.checksum: Added.
+        * platform/mac/svg/clip-path/clip-path-clipped-evenodd-twice-expected.png: Added.
+        * platform/mac/svg/clip-path/clip-path-clipped-evenodd-twice-expected.txt: Added.
+        * platform/mac/svg/clip-path/clip-path-clipped-expected.checksum: Added.
+        * platform/mac/svg/clip-path/clip-path-clipped-expected.png: Added.
+        * platform/mac/svg/clip-path/clip-path-clipped-expected.txt: Added.
+        * platform/mac/svg/clip-path/clip-path-clipped-no-content-expected.checksum: Added.
+        * platform/mac/svg/clip-path/clip-path-clipped-no-content-expected.png: Added.
+        * platform/mac/svg/clip-path/clip-path-clipped-no-content-expected.txt: Added.
+        * platform/mac/svg/clip-path/clip-path-clipped-nonzero-expected.checksum: Added.
+        * platform/mac/svg/clip-path/clip-path-clipped-nonzero-expected.png: Added.
+        * platform/mac/svg/clip-path/clip-path-clipped-nonzero-expected.txt: Added.
+        * platform/mac/svg/clip-path/clip-path-evenodd-expected.checksum: Added.
+        * platform/mac/svg/clip-path/clip-path-evenodd-expected.png: Added.
+        * platform/mac/svg/clip-path/clip-path-evenodd-expected.txt: Added.
+        * platform/mac/svg/clip-path/clip-path-evenodd-nonzero-expected.checksum: Added.
+        * platform/mac/svg/clip-path/clip-path-evenodd-nonzero-expected.png: Added.
+        * platform/mac/svg/clip-path/clip-path-evenodd-nonzero-expected.txt: Added.
+        * platform/mac/svg/clip-path/clip-path-nonzero-evenodd-expected.checksum: Added.
+        * platform/mac/svg/clip-path/clip-path-nonzero-evenodd-expected.png: Added.
+        * platform/mac/svg/clip-path/clip-path-nonzero-evenodd-expected.txt: Added.
+        * platform/mac/svg/clip-path/clip-path-nonzero-expected.checksum: Added.
+        * platform/mac/svg/clip-path/clip-path-nonzero-expected.png: Added.
+        * platform/mac/svg/clip-path/clip-path-nonzero-expected.txt: Added.
+        * platform/mac/svg/clip-path/clip-path-objectBoundingBox-expected.checksum: Added.
+        * platform/mac/svg/clip-path/clip-path-objectBoundingBox-expected.png: Added.
+        * platform/mac/svg/clip-path/clip-path-objectBoundingBox-expected.txt: Added.
+        * platform/mac/svg/clip-path/clip-path-on-clipped-use-expected.checksum: Added.
+        * platform/mac/svg/clip-path/clip-path-on-clipped-use-expected.png: Added.
+        * platform/mac/svg/clip-path/clip-path-on-clipped-use-expected.txt: Added.
+        * platform/mac/svg/clip-path/clip-path-on-g-and-child-expected.checksum: Added.
+        * platform/mac/svg/clip-path/clip-path-on-g-and-child-expected.png: Added.
+        * platform/mac/svg/clip-path/clip-path-on-g-and-child-expected.txt: Added.
+        * platform/mac/svg/clip-path/clip-path-on-g-expected.checksum: Added.
+        * platform/mac/svg/clip-path/clip-path-on-g-expected.png: Added.
+        * platform/mac/svg/clip-path/clip-path-on-g-expected.txt: Added.
+        * platform/mac/svg/clip-path/clip-path-on-svg-and-child-expected.checksum: Added.
+        * platform/mac/svg/clip-path/clip-path-on-svg-and-child-expected.png: Added.
+        * platform/mac/svg/clip-path/clip-path-on-svg-and-child-expected.txt: Added.
+        * platform/mac/svg/clip-path/clip-path-on-svg-expected.checksum: Added.
+        * platform/mac/svg/clip-path/clip-path-on-svg-expected.png: Added.
+        * platform/mac/svg/clip-path/clip-path-on-svg-expected.txt: Added.
+        * platform/mac/svg/clip-path/clip-path-recursive-call-by-child-expected.checksum: Added.
+        * platform/mac/svg/clip-path/clip-path-recursive-call-by-child-expected.png: Added.
+        * platform/mac/svg/clip-path/clip-path-recursive-call-by-child-expected.txt: Added.
+        * platform/mac/svg/clip-path/clip-path-recursive-call-expected.checksum: Added.
+        * platform/mac/svg/clip-path/clip-path-recursive-call-expected.png: Added.
+        * platform/mac/svg/clip-path/clip-path-recursive-call-expected.txt: Added.
+        * platform/mac/svg/clip-path/clip-path-text-and-shape-expected.checksum: Added.
+        * platform/mac/svg/clip-path/clip-path-text-and-shape-expected.png: Added.
+        * platform/mac/svg/clip-path/clip-path-text-and-shape-expected.txt: Added.
+        * platform/mac/svg/clip-path/clip-path-text-and-stroke-expected.checksum: Added.
+        * platform/mac/svg/clip-path/clip-path-text-and-stroke-expected.png: Added.
+        * platform/mac/svg/clip-path/clip-path-text-and-stroke-expected.txt: Added.
+        * platform/mac/svg/clip-path/clip-path-text-expected.checksum: Added.
+        * platform/mac/svg/clip-path/clip-path-text-expected.png: Added.
+        * platform/mac/svg/clip-path/clip-path-text-expected.txt: Added.
+        * platform/mac/svg/clip-path/clip-path-use-as-child-expected.checksum: Added.
+        * platform/mac/svg/clip-path/clip-path-use-as-child-expected.png: Added.
+        * platform/mac/svg/clip-path/clip-path-use-as-child-expected.txt: Added.
+        * platform/mac/svg/clip-path/clip-path-use-as-child2-expected.checksum: Added.
+        * platform/mac/svg/clip-path/clip-path-use-as-child2-expected.png: Added.
+        * platform/mac/svg/clip-path/clip-path-use-as-child2-expected.txt: Added.
+        * platform/mac/svg/clip-path/clip-path-use-as-child3-expected.checksum: Added.
+        * platform/mac/svg/clip-path/clip-path-use-as-child3-expected.png: Added.
+        * platform/mac/svg/clip-path/clip-path-use-as-child3-expected.txt: Added.
+        * platform/mac/svg/clip-path/clip-path-use-as-child4-expected.checksum: Added.
+        * platform/mac/svg/clip-path/clip-path-use-as-child4-expected.png: Added.
+        * platform/mac/svg/clip-path/clip-path-use-as-child4-expected.txt: Added.
+        * platform/mac/svg/clip-path/clip-path-use-as-child5-expected.checksum: Added.
+        * platform/mac/svg/clip-path/clip-path-use-as-child5-expected.png: Added.
+        * platform/mac/svg/clip-path/clip-path-use-as-child5-expected.txt: Added.
+        * platform/mac/svg/clip-path/clip-path-userSpaceOnUse-expected.checksum: Added.
+        * platform/mac/svg/clip-path/clip-path-userSpaceOnUse-expected.png: Added.
+        * platform/mac/svg/clip-path/clip-path-userSpaceOnUse-expected.txt: Added.
+        * platform/mac/svg/clip-path/clip-path-with-container-expected.checksum: Added.
+        * platform/mac/svg/clip-path/clip-path-with-container-expected.png: Added.
+        * platform/mac/svg/clip-path/clip-path-with-container-expected.txt: Added.
+        * platform/mac/svg/clip-path/clip-path-with-different-unittypes-expected.checksum: Added.
+        * platform/mac/svg/clip-path/clip-path-with-different-unittypes-expected.png: Added.
+        * platform/mac/svg/clip-path/clip-path-with-different-unittypes-expected.txt: Added.
+        * platform/mac/svg/clip-path/clip-path-with-different-unittypes2-expected.checksum: Added.
+        * platform/mac/svg/clip-path/clip-path-with-different-unittypes2-expected.png: Added.
+        * platform/mac/svg/clip-path/clip-path-with-different-unittypes2-expected.txt: Added.
+        * platform/mac/svg/clip-path/clip-path-with-invisibile-child-expected.checksum: Added.
+        * platform/mac/svg/clip-path/clip-path-with-invisibile-child-expected.png: Added.
+        * platform/mac/svg/clip-path/clip-path-with-invisibile-child-expected.txt: Added.
+        * platform/mac/svg/clip-path/clip-path-with-text-clipped-expected.checksum: Added.
+        * platform/mac/svg/clip-path/clip-path-with-text-clipped-expected.png: Added.
+        * platform/mac/svg/clip-path/clip-path-with-text-clipped-expected.txt: Added.
+        * platform/mac/svg/custom/clip-path-child-changes-expected.txt:
+        * platform/mac/svg/custom/clip-path-href-changes-expected.txt:
+        * platform/mac/svg/custom/clip-path-units-changes-expected.txt:
+        * platform/mac/svg/custom/clip-path-with-transform-expected.txt:
+        * platform/mac/svg/custom/use-on-clip-path-with-transformation-expected.txt:
+        * platform/mac/svg/filters/filterRes-expected.checksum:
+        * svg/clip-path: Added.
+        * svg/clip-path/clip-path-child-clipped.svg: Added.
+        * svg/clip-path/clip-path-childs-clipped.svg: Added.
+        * svg/clip-path/clip-path-clipped-evenodd-twice.svg: Added.
+        * svg/clip-path/clip-path-clipped-no-content.svg: Added.
+        * svg/clip-path/clip-path-clipped-nonzero.svg: Added.
+        * svg/clip-path/clip-path-clipped.svg: Added.
+        * svg/clip-path/clip-path-evenodd-nonzero.svg: Added.
+        * svg/clip-path/clip-path-evenodd.svg: Added.
+        * svg/clip-path/clip-path-nonzero-evenodd.svg: Added.
+        * svg/clip-path/clip-path-nonzero.svg: Added.
+        * svg/clip-path/clip-path-objectBoundingBox.svg: Added.
+        * svg/clip-path/clip-path-on-clipped-use.svg: Added.
+        * svg/clip-path/clip-path-on-g-and-child.svg: Added.
+        * svg/clip-path/clip-path-on-g.svg: Added.
+        * svg/clip-path/clip-path-on-svg-and-child.svg: Added.
+        * svg/clip-path/clip-path-on-svg.svg: Added.
+        * svg/clip-path/clip-path-recursive-call-by-child.svg: Added.
+        * svg/clip-path/clip-path-recursive-call.svg: Added.
+        * svg/clip-path/clip-path-text-and-shape.svg: Added.
+        * svg/clip-path/clip-path-text-and-stroke.svg: Added.
+        * svg/clip-path/clip-path-text.svg: Added.
+        * svg/clip-path/clip-path-use-as-child.svg: Added.
+        * svg/clip-path/clip-path-use-as-child2.svg: Added.
+        * svg/clip-path/clip-path-use-as-child3.svg: Added.
+        * svg/clip-path/clip-path-use-as-child4.svg: Added.
+        * svg/clip-path/clip-path-use-as-child5.svg: Added.
+        * svg/clip-path/clip-path-userSpaceOnUse.svg: Added.
+        * svg/clip-path/clip-path-with-container.svg: Added.
+        * svg/clip-path/clip-path-with-different-unittypes.svg: Added.
+        * svg/clip-path/clip-path-with-different-unittypes2.svg: Added.
+        * svg/clip-path/clip-path-with-invisibile-child.svg: Added.
+        * svg/clip-path/clip-path-with-text-clipped.svg: Added.
+        * svg/custom/clip-path-display-none-child.svg: Removed.
+
 2010-04-13  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Checksum of svg/filters/filterRes.svg was not updated properly after rebasing.
