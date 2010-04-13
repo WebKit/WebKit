@@ -106,6 +106,11 @@ static IntRect renderRectRelativeToRootDocument(RenderObject* render)
 
     IntRect rect(render->absoluteClippedOverflowRect());
 
+    if (rect.isEmpty()) {
+        Element* e = static_cast<Element*>(render->node());
+        rect = e->getRect();
+    }
+
     // In cases when the |render|'s associated node is in a scrollable inner
     // document, we only consider its scrollOffset if it is not offscreen.
     Node* node = render->node();
