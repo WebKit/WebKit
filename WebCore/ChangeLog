@@ -1,3 +1,43 @@
+2010-04-13  Stephan Aßmus  <superstippi@gmx.de>
+
+        Reviewed by David Levin.
+
+        [Haiku] Fix bridging Widget to native top-level BView.
+        https://bugs.webkit.org/show_bug.cgi?id=37419
+
+        In the Haiku port, there is no mapping between native widgets
+        and WebCore Widget instances. There is only a top-level BView
+        which renders a web page into a bitmap. For certain WebCore widget
+        functionality, we need to access this BView, like for setting the
+        current cursor or forcing focus. On the other hand, setting a
+        platform widget pointer on Widget results into completely different
+        behavior, like ScrollView tries to forward everything instead of
+        handling stuff itself. To make this work, the pointer to a "top-level"
+        BView is stored in every Widget for the Haiku port.
+
+        No new tests needed.
+
+        * platform/Widget.h:
+            - Added the m_topLevelPlatformWidget member for the Haiku platform.
+        (WebCore::Widget::setPlatformWidget):
+        (WebCore::Widget::topLevelPlatformWidget):
+        (WebCore::Widget::setTopLevelPlatformWidget):
+        * platform/haiku/WidgetHaiku.cpp:
+        (WebCore::AutoPlatformWidgetLocker::AutoPlatformWidgetLocker):
+        (WebCore::AutoPlatformWidgetLocker::~AutoPlatformWidgetLocker):
+        (WebCore::AutoPlatformWidgetLocker::isLocked):
+            - helper class for locking the BView looper thread with a timeout
+        (WebCore::Widget::Widget):
+        (WebCore::Widget::setFocus):
+            - Make sure the top-level view receives keyboard input.
+        (WebCore::Widget::setCursor):
+            - Set the cursor on the top-level view.
+        (WebCore::Widget::show):
+        (WebCore::Widget::hide):
+            - Don't show/hide the top-level view, but make the code correct
+              for whenever we would map an individual BView per Widget.
+            - Use setSelfVisible() and isParentVisible() like in other ports.
+
 2010-04-13  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by David Levin.
