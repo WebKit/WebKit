@@ -1,3 +1,26 @@
+2010-04-12  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37480
+
+        Implements all of the non-encoding specific query string tests from
+        <http://code.google.com/p/google-url/source/browse/trunk/src/url_canon_unittest.cc#1016>.
+
+        Also, moved JavaScript function canonicalize to external JavaScript
+        script /resources/utilities.js since this function is being called
+        by tests ipv4.html, query.html, and trivial.html.
+
+        * fast/url/ipv4.html:
+        * fast/url/query-expected.txt: Added.
+        * fast/url/query.html: Added.
+        * fast/url/resources: Added.
+        * fast/url/resources/utilities.js: Added.
+        (canonicalize):
+        * fast/url/script-tests/TEMPLATE.html: Include external JavaScript script resources/utilities.js.
+        * fast/url/script-tests/query.js: Added.
+        * fast/url/trivial.html:
+
 2010-04-12  Dumitru Daniliuc  <dumi@chromium.org>
 
         Unreviewed, skipping two tests on Chromium because they fail.
