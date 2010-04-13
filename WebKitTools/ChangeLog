@@ -1,3 +1,14 @@
+2010-04-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Make building new webkit API and MiniBrowser a little easier.
+
+        * Scripts/build-webkit: Make building with --webkit2 build the 
+        MiniBrowser as well and tell you how to use it.
+        * Scripts/run-minibrowser: Copied from Scripts/run-safari.
+        * Scripts/webkitdirs.pm: Add runMiniBrowser function.
+
 2010-04-12  Timothy Hatcher  <timothy@apple.com>
 
         SecurityOrigin needs a way to remove individual OriginAccessEntries

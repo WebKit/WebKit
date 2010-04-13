@@ -1552,4 +1552,23 @@ sub runSafari
     return 1;
 }
 
+sub runMiniBrowser
+{
+    if (isAppleMacWebKit()) {
+        my $productDir = productDir();
+        print "Starting MiniBrowser with DYLD_FRAMEWORK_PATH set to point to $productDir.\n";
+        $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
+        $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
+        my $miniBrowserPath = "$productDir/MiniBrowser.app/Contents/MacOS/MiniBrowser";
+        if (!isTiger() && architecture()) {
+            return system "arch", "-" . architecture(), $miniBrowserPath, @ARGV;
+        } else {
+            return system $miniBrowserPath, @ARGV;
+        }
+    }
+
+    return 1;
+}
+
+
 1;

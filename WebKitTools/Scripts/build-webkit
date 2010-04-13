@@ -263,7 +263,11 @@ my $productDir = productDir();
 # Check that all the project directories are there.
 my @projects = ("JavaScriptCore", "WebCore");
 
-push @projects, ($webkit2 ? "WebKit2" : "WebKit");
+if (!$webkit2) {
+    push @projects, "WebKit";
+} else {
+    push @projects, ("WebKit2", "WebKitTools/MiniBrowser");
+}
 
 # Only Apple builds JavaScriptGlue, and only on the Mac
 splice @projects, 1, 0, "JavaScriptGlue" if isAppleMacWebKit();
@@ -457,10 +461,16 @@ sub writeCongrats()
 
     print "\n";
     print "===========================================================\n";
-    print " WebKit is now built ($buildTime). \n";
-    if (!isChromium()) {
-        print " To run $launcherName with this newly-built code, use the\n";
-        print " \"$launcherPath\" script.\n";
+    if ($webkit2) {
+        print " WebKit2 is now built ($buildTime). \n";
+        print " To run MiniBrowser with this newly-built code, use the\n";
+        print " \"run-minibrowser\" script.\n";
+    } else {
+        print " WebKit is now built ($buildTime). \n";
+        if (!isChromium()) {
+            print " To run $launcherName with this newly-built code, use the\n";
+            print " \"$launcherPath\" script.\n";
+        }
     }
     print "===========================================================\n";
 }
