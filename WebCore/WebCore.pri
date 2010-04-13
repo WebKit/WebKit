@@ -402,6 +402,8 @@ IDL_BINDINGS += \
     inspector/InspectorBackend.idl \
     inspector/InspectorFrontendHost.idl \
     inspector/JavaScriptCallFrame.idl \
+    inspector/ScriptProfile.idl \
+    inspector/ScriptProfileNode.idl \
     loader/appcache/DOMApplicationCache.idl \
     notifications/Notification.idl \
     notifications/NotificationCenter.idl \

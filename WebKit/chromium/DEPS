@@ -43,7 +43,7 @@ vars = {
   'openvcdiff_rev': '28',
   'ots_rev': '26',
   'skia_rev': '504',
-  'v8_rev': '4335',
+  'v8_rev': '4386',
 
   # Windows:
   'cygwin_rev': '11984',

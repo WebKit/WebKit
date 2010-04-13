@@ -1,3 +1,9 @@
+2010-04-13  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Unreviewed Chromium build fix: pin to a newer V8 revision (4386).
+
+        * DEPS:
+
 2010-04-12  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

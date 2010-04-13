@@ -1,3 +1,9 @@
+2010-04-13  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Unreviewed Qt build fix: add new .idl files to WebCore.pri
+
+        * WebCore.pri:
+
 2010-04-12  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
