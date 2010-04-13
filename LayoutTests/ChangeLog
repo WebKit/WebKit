@@ -17,7 +17,7 @@
 
         Reviewed by Adam Barth.
 
-        https://bugs.webkit.org/show_bug.cgi?id=37480
+        https://bugs.webkit.org/show_bug.cgi?id=37490
 
         Implements the anchor tests from <http://code.google.com/p/google-url/source/browse/trunk/src/url_canon_unittest.cc#1102>.
 
