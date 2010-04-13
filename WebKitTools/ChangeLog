@@ -1,3 +1,9 @@
+2010-04-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed buildfix after r57537.
+
+        * DumpRenderTree/qt/LayoutTestControllerQt.h: Declaration of removeOriginAccessWhitelistEntry() added.
+
 2010-04-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej Stachowiak.
