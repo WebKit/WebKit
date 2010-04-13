@@ -1,3 +1,14 @@
+2010-04-13  Adam Roben  <aroben@apple.com>
+
+        Robustify new-run-webkit-tests against paths with spaces in them
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitpy/layout_tests/port/apache_http_server.py:
+        (LayoutTestApacheHttpd.__init__): Quote all paths that we pass to
+        Apache to ensure that paths with spaces in them are interpreted
+        correctly.
+
 2010-04-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed buildfix after r57537.

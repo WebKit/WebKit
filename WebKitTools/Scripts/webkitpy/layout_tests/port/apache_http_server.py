@@ -85,9 +85,9 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
             executable = self._get_cygwin_path(executable)
 
         cmd = [executable,
-            '-f', self._get_apache_config_file_path(test_dir, output_dir),
-            '-C', "\'DocumentRoot %s\'" % document_root,
-            '-c', "\'Alias /js-test-resources %s\'" % js_test_resources_dir,
+            '-f', "\"%s\"" % self._get_apache_config_file_path(test_dir, output_dir),
+            '-C', "\'DocumentRoot \"%s\"\'" % document_root,
+            '-c', "\'Alias /js-test-resources \"%s\"'" % js_test_resources_dir,
             '-C', "\'Listen %s\'" % "127.0.0.1:8000",
             '-C', "\'Listen %s\'" % "127.0.0.1:8081",
             '-c', "\'TypesConfig \"%s\"\'" % mime_types_path,
@@ -177,7 +177,7 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         It will listen to 127.0.0.1 on each of the given port.
         """
         return '\n'.join(('<VirtualHost 127.0.0.1:%s>' % port,
-                          'DocumentRoot %s' % document_root,
+                          'DocumentRoot "%s"' % document_root,
                           ssl and 'SSLEngine On' or '',
                           '</VirtualHost>', ''))
 
