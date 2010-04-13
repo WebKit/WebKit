@@ -28,10 +28,11 @@
 namespace WebCore {
 
 class HTMLProgressElement;
+class RenderProgress;
 
 class AccessibilityProgressIndicator : public AccessibilityRenderObject {
 public:
-    static PassRefPtr<AccessibilityProgressIndicator> create(RenderObject*);
+    static PassRefPtr<AccessibilityProgressIndicator> create(RenderProgress*);
 
 private:
     virtual AccessibilityRole roleValue() const { return ProgressIndicatorRole; }
@@ -42,7 +43,7 @@ private:
     virtual float maxValueForRange() const;
     virtual float minValueForRange() const;
 
-    AccessibilityProgressIndicator(RenderObject*);
+    AccessibilityProgressIndicator(RenderProgress*);
 
     HTMLProgressElement* element() const;
     virtual bool accessibilityIsIgnored() const;
