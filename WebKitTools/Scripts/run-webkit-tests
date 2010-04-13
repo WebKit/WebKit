@@ -2155,7 +2155,7 @@ sub readSkippedFiles($)
     }
 }
 
-my @testsToRun;
+my @testsFound;
 
 sub directoryFilter
 {
@@ -2170,14 +2170,14 @@ sub fileFilter
     if ($filename =~ /\.([^.]+)$/) {
         if (exists $supportedFileExtensions{$1}) {
             my $path = File::Spec->abs2rel(catfile($File::Find::dir, $filename), $testDirectory);
-            push @testsToRun, $path if !exists $ignoredFiles{$path};
+            push @testsFound, $path if !exists $ignoredFiles{$path};
         }
     }
 }
 
 sub findTestsToRun
 {
-    @testsToRun = ();
+    my @testsToRun = ();
 
     for my $test (@ARGV) {
         $test =~ s/^($layoutTestsName|$testDirectory)\///;
@@ -2192,31 +2192,30 @@ sub findTestsToRun
                 push @testsToRun, $test;
             }
         } elsif (-d $fullPath) {
+            @testsFound = ();
             find({ preprocess => \&directoryFilter, wanted => \&fileFilter }, $fullPath);
             for my $level (@platformTestHierarchy) {
                 my $platformPath = catfile($level, $test);
                 find({ preprocess => \&directoryFilter, wanted => \&fileFilter }, $platformPath) if (-d $platformPath);
             }
+            push @testsToRun, sort pathcmp @testsFound;
+            @testsFound = ();
         } else {
             print "test $test not found\n";
         }
     }
 
     if (!scalar @ARGV) {
+        @testsFound = ();
         find({ preprocess => \&directoryFilter, wanted => \&fileFilter }, $testDirectory);
         for my $level (@platformTestHierarchy) {
             find({ preprocess => \&directoryFilter, wanted => \&fileFilter }, $level);
         }
-    }
+        push @testsToRun, sort pathcmp @testsFound;
+        @testsFound = ();
 
-    # Remove duplicate tests
-    @testsToRun = keys %{{ map { $_ => 1 } @testsToRun }};
-
-    @testsToRun = sort pathcmp @testsToRun;
-
-    # We need to minimize the time when Apache and WebSocketServer is locked by tests
-    # so run them last if no explicit order was specified in the argument list.
-    if (!scalar @ARGV) {
+        # We need to minimize the time when Apache and WebSocketServer is locked by tests
+        # so run them last if no explicit order was specified in the argument list.
         my @httpTests;
         my @websocketTests;
         my @otherTests;

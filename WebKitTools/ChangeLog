@@ -895,6 +895,19 @@
 
         * Scripts/build-webkit:
 
+2010-04-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        run-webkit-tests should respect argument order
+        https://bugs.webkit.org/show_bug.cgi?id=37257
+
+        * Scripts/run-webkit-tests: Changed so that sorting is done only
+        on the results of iterating directories. Test order is based on
+        what's passed on the command line. Removed code that aimed to
+        eliminate duplicates since it can be useful to run the same test
+        more than once.
+
 2010-04-07  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Oliver Hunt.
