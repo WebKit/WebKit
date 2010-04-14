@@ -26,9 +26,16 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import urllib
+
 from webkitpy.tool.steps.abstractstep import AbstractStep
 from webkitpy.tool.steps.options import Options
-from webkitpy.common.system.deprecated_logging import error
+from webkitpy.common.prettypatch import PrettyPatch
+from webkitpy.common.system import logutils
+from webkitpy.common.system.executive import ScriptError
+
+
+_log = logutils.get_logger(__file__)
 
 
 class ConfirmDiff(AbstractStep):
@@ -38,10 +45,30 @@ class ConfirmDiff(AbstractStep):
             Options.confirm,
         ]
 
+    def _show_pretty_diff(self, diff):
+        try:
+            pretty_patch = PrettyPatch(self._tool.executive,
+                                       self._tool.scm().checkout_root)
+            pretty_diff_file = pretty_patch.pretty_diff_file(diff)
+            url = "file://%s" % urllib.quote(pretty_diff_file.name)
+            self._tool.user.open_url(url)
+            # We return the pretty_diff_file here because we need to keep the
+            # file alive until the user has had a chance to confirm the diff.
+            return pretty_diff_file
+        except ScriptError, e:
+            _log.warning("PrettyPatch failed.  :(")
+        except OSError, e:
+            _log.warning("PrettyPatch unavailable.")
+
     def run(self, state):
         if not self._options.confirm:
             return
         diff = self.cached_lookup(state, "diff")
-        self._tool.user.page(diff)
-        if not self._tool.user.confirm("Was that diff correct?"):
+        pretty_diff_file = self._show_pretty_diff(diff)
+        if not pretty_diff_file:
+            self._tool.user.page(diff)
+        diff_correct = self._tool.user.confirm("Was that diff correct?")
+        if pretty_diff_file:
+            pretty_diff_file.close()
+        if not diff_correct:
             exit(1)

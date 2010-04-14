@@ -1,3 +1,16 @@
+2010-04-14  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Use pretty patch for confirming webkit-patch diffs
+        https://bugs.webkit.org/show_bug.cgi?id=37489
+
+        * Scripts/webkitpy/common/prettypatch.py: Added.
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        * Scripts/webkitpy/tool/commands/upload_unittest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+        * Scripts/webkitpy/tool/steps/confirmdiff.py:
+
 2010-04-14  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

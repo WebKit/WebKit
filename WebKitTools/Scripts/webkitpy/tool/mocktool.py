@@ -461,8 +461,10 @@ class MockUser(object):
         return True
 
     def open_url(self, url):
+        if url.startswith("file://"):
+            log("MOCK: user.open_url: file://...")
+            return
         log("MOCK: user.open_url: %s" % url)
-        pass
 
 
 class MockIRC(object):
@@ -494,6 +496,15 @@ class MockStatusServer(object):
 
 class MockExecute(Mock):
     def run_and_throw_if_fail(self, args, quiet=False):
+        return "MOCK output of child process"
+
+    def run_command(self,
+                    args,
+                    cwd=None,
+                    input=None,
+                    error_handler=None,
+                    return_exit_code=False,
+                    return_stderr=True):
         return "MOCK output of child process"
 
 

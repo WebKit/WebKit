@@ -59,7 +59,15 @@ class UploadCommandsTest(CommandsTest):
         options.request_commit = False
         options.review = True
         options.cc = None
-        expected_stderr = "Running check-webkit-style\nObsoleting 2 old patches on bug 42\nMOCK add_patch_to_bug: bug_id=42, description=MOCK description, mark_for_review=True, mark_for_commit_queue=False, mark_for_landing=False\n-- Begin comment --\nNone\n-- End comment --\nMOCK: user.open_url: http://example.com/42\n"
+        expected_stderr = """Running check-webkit-style
+MOCK: user.open_url: file://...
+Obsoleting 2 old patches on bug 42
+MOCK add_patch_to_bug: bug_id=42, description=MOCK description, mark_for_review=True, mark_for_commit_queue=False, mark_for_landing=False
+-- Begin comment --
+None
+-- End comment --
+MOCK: user.open_url: http://example.com/42
+"""
         self.assert_execute_outputs(Post(), [42], options=options, expected_stderr=expected_stderr)
 
     def test_land_safely(self):
@@ -79,7 +87,15 @@ class UploadCommandsTest(CommandsTest):
         options.request_commit = False
         options.review = True
         options.cc = None
-        expected_stderr = "Running check-webkit-style\nObsoleting 2 old patches on bug 42\nMOCK add_patch_to_bug: bug_id=42, description=MOCK description, mark_for_review=True, mark_for_commit_queue=False, mark_for_landing=False\n-- Begin comment --\nNone\n-- End comment --\nMOCK: user.open_url: http://example.com/42\n"
+        expected_stderr = """Running check-webkit-style
+MOCK: user.open_url: file://...
+Obsoleting 2 old patches on bug 42
+MOCK add_patch_to_bug: bug_id=42, description=MOCK description, mark_for_review=True, mark_for_commit_queue=False, mark_for_landing=False
+-- Begin comment --
+None
+-- End comment --
+MOCK: user.open_url: http://example.com/42
+"""
         self.assert_execute_outputs(Upload(), [42], options=options, expected_stderr=expected_stderr)
 
     def test_mark_bug_fixed(self):
