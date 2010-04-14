@@ -112,11 +112,11 @@ bool SVGRenderBase::prepareToRenderSVGContent(RenderObject* object, RenderObject
     }
 
 #if ENABLE(FILTERS)
-    AtomicString filterId(svgStyle->filter());
+    AtomicString filterId(svgStyle->filterResource());
 #endif
 
-    AtomicString clipperId(svgStyle->clipPath());
-    AtomicString maskerId(svgStyle->maskElement());
+    AtomicString clipperId(svgStyle->clipperResource());
+    AtomicString maskerId(svgStyle->maskerResource());
 
     Document* document = object->document();
 
@@ -283,7 +283,7 @@ bool SVGRenderBase::isOverflowHidden(const RenderObject* object)
 FloatRect SVGRenderBase::filterBoundingBoxForRenderer(const RenderObject* object) const
 {
 #if ENABLE(FILTERS)
-    SVGResourceFilter* filter = getFilterById(object->document(), object->style()->svgStyle()->filter(), object);
+    SVGResourceFilter* filter = getFilterById(object->document(), object->style()->svgStyle()->filterResource(), object);
     if (filter)
         return filter->filterBoundingBox(object->objectBoundingBox());
 #else
@@ -294,7 +294,7 @@ FloatRect SVGRenderBase::filterBoundingBoxForRenderer(const RenderObject* object
 
 FloatRect SVGRenderBase::clipperBoundingBoxForRenderer(const RenderObject* object) const
 {
-    if (RenderSVGResourceClipper* clipper = getRenderSVGResourceById<RenderSVGResourceClipper>(object->document(), object->style()->svgStyle()->clipPath()))
+    if (RenderSVGResourceClipper* clipper = getRenderSVGResourceById<RenderSVGResourceClipper>(object->document(), object->style()->svgStyle()->clipperResource()))
         return clipper->resourceBoundingBox(object->objectBoundingBox());
 
     return FloatRect();
@@ -302,7 +302,7 @@ FloatRect SVGRenderBase::clipperBoundingBoxForRenderer(const RenderObject* objec
 
 FloatRect SVGRenderBase::maskerBoundingBoxForRenderer(const RenderObject* object) const
 {
-    if (RenderSVGResourceMasker* masker = getRenderSVGResourceById<RenderSVGResourceMasker>(object->document(), object->style()->svgStyle()->maskElement()))
+    if (RenderSVGResourceMasker* masker = getRenderSVGResourceById<RenderSVGResourceMasker>(object->document(), object->style()->svgStyle()->maskerResource()))
         return masker->resourceBoundingBox(object->objectBoundingBox());
 
     return FloatRect();
@@ -311,15 +311,15 @@ FloatRect SVGRenderBase::maskerBoundingBoxForRenderer(const RenderObject* object
 void deregisterFromResources(RenderObject* object)
 {
     // We only have the renderer for masker and clipper at the moment.
-    if (RenderSVGResourceMasker* masker = getRenderSVGResourceById<RenderSVGResourceMasker>(object->document(), object->style()->svgStyle()->maskElement()))
+    if (RenderSVGResourceMasker* masker = getRenderSVGResourceById<RenderSVGResourceMasker>(object->document(), object->style()->svgStyle()->maskerResource()))
         masker->invalidateClient(object);
-    if (RenderSVGResourceClipper* clipper = getRenderSVGResourceById<RenderSVGResourceClipper>(object->document(), object->style()->svgStyle()->clipPath()))
+    if (RenderSVGResourceClipper* clipper = getRenderSVGResourceById<RenderSVGResourceClipper>(object->document(), object->style()->svgStyle()->clipperResource()))
         clipper->invalidateClient(object);
-    if (RenderSVGResourceMarker* startMarker = getRenderSVGResourceById<RenderSVGResourceMarker>(object->document(), object->style()->svgStyle()->startMarker()))
+    if (RenderSVGResourceMarker* startMarker = getRenderSVGResourceById<RenderSVGResourceMarker>(object->document(), object->style()->svgStyle()->markerStartResource()))
         startMarker->invalidateClient(object);
-    if (RenderSVGResourceMarker* midMarker = getRenderSVGResourceById<RenderSVGResourceMarker>(object->document(), object->style()->svgStyle()->midMarker()))
+    if (RenderSVGResourceMarker* midMarker = getRenderSVGResourceById<RenderSVGResourceMarker>(object->document(), object->style()->svgStyle()->markerMidResource()))
         midMarker->invalidateClient(object);
-    if (RenderSVGResourceMarker* endMarker = getRenderSVGResourceById<RenderSVGResourceMarker>(object->document(), object->style()->svgStyle()->endMarker()))
+    if (RenderSVGResourceMarker* endMarker = getRenderSVGResourceById<RenderSVGResourceMarker>(object->document(), object->style()->svgStyle()->markerEndResource()))
         endMarker->invalidateClient(object);
 }
 

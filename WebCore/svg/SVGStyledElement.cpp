@@ -229,7 +229,7 @@ void SVGStyledElement::invalidateResources()
         return;
 
 #if ENABLE(FILTERS)
-    SVGResourceFilter* filter = getFilterById(document, object->style()->svgStyle()->filter(), object);
+    SVGResourceFilter* filter = getFilterById(document, object->style()->svgStyle()->filterResource(), object);
     if (filter)
         filter->invalidate();
 #endif

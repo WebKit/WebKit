@@ -301,9 +301,9 @@ void RenderPath::calculateMarkerBoundsIfNeeded() const
         return;
 
     const SVGRenderStyle* svgStyle = style()->svgStyle();
-    AtomicString startMarkerId(svgStyle->startMarker());
-    AtomicString midMarkerId(svgStyle->midMarker());
-    AtomicString endMarkerId(svgStyle->endMarker());
+    AtomicString startMarkerId(svgStyle->markerStartResource());
+    AtomicString midMarkerId(svgStyle->markerMidResource());
+    AtomicString endMarkerId(svgStyle->markerEndResource());
 
     RenderSVGResourceMarker* startMarker = getRenderSVGResourceById<RenderSVGResourceMarker>(doc, startMarkerId);
     RenderSVGResourceMarker* midMarker = getRenderSVGResourceById<RenderSVGResourceMarker>(doc, midMarkerId);

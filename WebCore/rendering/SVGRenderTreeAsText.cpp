@@ -352,10 +352,10 @@ static void writeStyle(TextStream& ts, const RenderObject& object)
         writeIfNotDefault(ts, "clip rule", svgStyle->clipRule(), RULE_NONZERO);
     }
 
-    writeIfNotEmpty(ts, "start marker", svgStyle->startMarker());
-    writeIfNotEmpty(ts, "middle marker", svgStyle->midMarker());
-    writeIfNotEmpty(ts, "end marker", svgStyle->endMarker());
-    writeIfNotEmpty(ts, "filter", svgStyle->filter());
+    writeIfNotEmpty(ts, "start marker", svgStyle->markerStartResource());
+    writeIfNotEmpty(ts, "middle marker", svgStyle->markerMidResource());
+    writeIfNotEmpty(ts, "end marker", svgStyle->markerEndResource());
+    writeIfNotEmpty(ts, "filter", svgStyle->filterResource());
 }
 
 static TextStream& writePositionAndStyle(TextStream& ts, const RenderObject& object)
@@ -604,21 +604,21 @@ void writeResources(TextStream& ts, const RenderObject& object, int indent)
     const RenderStyle* style = object.style();
     const SVGRenderStyle* svgStyle = style->svgStyle();
 
-    if (!svgStyle->maskElement().isEmpty()) {
-        if (RenderSVGResourceMasker* masker = getRenderSVGResourceById<RenderSVGResourceMasker>(object.document(), svgStyle->maskElement())) {
+    if (!svgStyle->maskerResource().isEmpty()) {
+        if (RenderSVGResourceMasker* masker = getRenderSVGResourceById<RenderSVGResourceMasker>(object.document(), svgStyle->maskerResource())) {
             writeIndent(ts, indent);
             ts << " ";
-            writeNameAndQuotedValue(ts, "masker", svgStyle->maskElement());
+            writeNameAndQuotedValue(ts, "masker", svgStyle->maskerResource());
             ts << " ";
             writeStandardPrefix(ts, *masker, 0);
             ts << " " << masker->resourceBoundingBox(object.objectBoundingBox()) << "\n";
         }
     }
-    if (!svgStyle->clipPath().isEmpty()) {
-        if (RenderSVGResourceClipper* clipper = getRenderSVGResourceById<RenderSVGResourceClipper>(object.document(), svgStyle->clipPath())) {
+    if (!svgStyle->clipperResource().isEmpty()) {
+        if (RenderSVGResourceClipper* clipper = getRenderSVGResourceById<RenderSVGResourceClipper>(object.document(), svgStyle->clipperResource())) {
             writeIndent(ts, indent);
             ts << " ";
-            writeNameAndQuotedValue(ts, "clipPath", svgStyle->clipPath());
+            writeNameAndQuotedValue(ts, "clipPath", svgStyle->clipperResource());
             ts << " ";
             writeStandardPrefix(ts, *clipper, 0);
             ts << " " << clipper->resourceBoundingBox(object.objectBoundingBox()) << "\n";

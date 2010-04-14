@@ -1,3 +1,90 @@
+2010-04-14  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        SVGRenderStyle/SVGRenderStyleDefs needs a cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=37568
+
+        Cleanup SVGRenderStyle / SVGRenderStyleDefs:
+        - use copy constructors in initialization list to initialize members, instead of assignment operators in the body
+        - fix style issues (misplaced references, abbrevations)
+        - merge StyleClipData/StyleMaskData to save memory, rename it StyleResourceData
+        - move filter property in StyleResourceData
+        - rename StyleMarkerData to StyleInheritedResourceData to highlight the difference to StyleResourceData
+        - unify naming schemes for all resources (filter/clipper/masker/markers)
+          - clipPath() -> clipperResource()
+          - maskElement() -> maskerResource()
+          - startMarker() -> markerStartResource()
+          - midMarker() -> markerMidResource()
+          - endMarker() -> markerEndResource()
+          - filter() -> filterResource()
+
+        Adapt all callsites to the renames above.
+        No new tests, as this doesn't affect anything except memory overhead.
+
+        * css/SVGCSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getSVGPropertyCSSValue):
+        * css/SVGCSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applySVGProperty):
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::calculateMarkerBoundsIfNeeded):
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::selfWillPaint):
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::selfWillPaint):
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderBase::prepareToRenderSVGContent):
+        (WebCore::SVGRenderBase::filterBoundingBoxForRenderer):
+        (WebCore::SVGRenderBase::clipperBoundingBoxForRenderer):
+        (WebCore::SVGRenderBase::maskerBoundingBoxForRenderer):
+        (WebCore::deregisterFromResources):
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::writeStyle):
+        (WebCore::writeResources):
+        * rendering/style/SVGRenderStyle.cpp:
+        (WebCore::SVGRenderStyle::SVGRenderStyle):
+        (WebCore::SVGRenderStyle::operator==):
+        (WebCore::SVGRenderStyle::inheritedNotEqual):
+        (WebCore::SVGRenderStyle::inheritFrom):
+        * rendering/style/SVGRenderStyle.h:
+        * rendering/style/SVGRenderStyleDefs.cpp:
+        (WebCore::StyleFillData::StyleFillData):
+        (WebCore::StyleFillData::operator==):
+        (WebCore::StyleStrokeData::StyleStrokeData):
+        (WebCore::StyleStrokeData::operator==):
+        (WebCore::StyleStopData::StyleStopData):
+        (WebCore::StyleStopData::operator==):
+        (WebCore::StyleTextData::StyleTextData):
+        (WebCore::StyleMiscData::StyleMiscData):
+        (WebCore::StyleMiscData::operator==):
+        (WebCore::StyleShadowSVGData::StyleShadowSVGData):
+        (WebCore::StyleShadowSVGData::operator==):
+        (WebCore::StyleResourceData::StyleResourceData):
+        (WebCore::StyleResourceData::operator==):
+        (WebCore::StyleInheritedResourceData::StyleInheritedResourceData):
+        (WebCore::StyleInheritedResourceData::operator==):
+        * rendering/style/SVGRenderStyleDefs.h:
+        (WebCore::StyleFillData::operator!=):
+        (WebCore::StyleStopData::operator!=):
+        (WebCore::StyleMiscData::create):
+        (WebCore::StyleMiscData::copy):
+        (WebCore::StyleMiscData::operator!=):
+        (WebCore::StyleShadowSVGData::create):
+        (WebCore::StyleShadowSVGData::copy):
+        (WebCore::StyleShadowSVGData::operator!=):
+        (WebCore::StyleResourceData::create):
+        (WebCore::StyleResourceData::copy):
+        (WebCore::StyleResourceData::operator!=):
+        (WebCore::StyleInheritedResourceData::create):
+        (WebCore::StyleInheritedResourceData::copy):
+        (WebCore::StyleInheritedResourceData::operator!=):
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::addResource):
+        (WebCore::SVGDocumentExtensions::removeResource):
+        * svg/SVGDocumentExtensions.h:
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::invalidateResources):
+
 2010-04-14  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Dimitri Glazkov.

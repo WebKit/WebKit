@@ -89,7 +89,7 @@ bool RenderSVGResourceClipper::applyResource(RenderObject* object, GraphicsConte
 bool RenderSVGResourceClipper::pathOnlyClipping(GraphicsContext* context, const FloatRect& objectBoundingBox)
 {
     // If the current clip-path gets clipped itself, we have to fallback to masking.
-    if (!style()->svgStyle()->clipPath().isEmpty())
+    if (!style()->svgStyle()->clipperResource().isEmpty())
         return false;
     WindRule clipRule = RULE_NONZERO;
     Path clipPath = Path();
@@ -114,7 +114,7 @@ bool RenderSVGResourceClipper::pathOnlyClipping(GraphicsContext* context, const 
              continue;
         const SVGRenderStyle* svgStyle = style->svgStyle();
         // Current shape in clip-path gets clipped too. Fallback to masking.
-        if (!svgStyle->clipPath().isEmpty())
+        if (!svgStyle->clipperResource().isEmpty())
             return false;
         // Fallback to masking, if there is more than one clipping path.
         if (clipPath.isEmpty()) {
@@ -177,7 +177,7 @@ bool RenderSVGResourceClipper::createClipData(ClipperData* clipperData, const Fl
 
     // clipPath can also be clipped by another clipPath.
     bool clipperGetsClipped = false;
-    if (RenderSVGResourceClipper* clipper = getRenderSVGResourceById<RenderSVGResourceClipper>(this->document(), style()->svgStyle()->clipPath())) {
+    if (RenderSVGResourceClipper* clipper = getRenderSVGResourceById<RenderSVGResourceClipper>(this->document(), style()->svgStyle()->clipperResource())) {
         clipperGetsClipped = true;
         if (!clipper->applyClippingToContext(this, objectBoundingBox, repaintRect, maskContext)) {
             maskContext->restore();
@@ -227,8 +227,8 @@ bool RenderSVGResourceClipper::createClipData(ClipperData* clipperData, const Fl
         newRenderStyle.get()->setOpacity(1.0f);
         svgStyle->setFillOpacity(1.0f);
         svgStyle->setStrokeOpacity(1.0f);
-        svgStyle->setFilter(String());
-        svgStyle->setMaskElement(String());
+        svgStyle->setFilterResource(String());
+        svgStyle->setMaskerResource(String());
         renderer->setStyle(newRenderStyle.release());
 
         // Get the renderer of the element, that is referenced by the <use>-element.
