@@ -1,3 +1,12 @@
+2010-04-14  Alejandro G. Castro  <alex@igalia.com>
+
+        Rubber-stamped by Xan Lopez.
+
+        Skipping printing/page-break-always.html
+        https://bugs.webkit.org/show_bug.cgi?id=37607
+
+        * platform/gtk/Skipped:
+
 2010-04-14  Adam Roben  <aroben@apple.com>
 
         Skip xss-DENIED-iframe-src-alias.html on Windows

@@ -5982,3 +5982,6 @@ printing/numberOfPages.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=37592
 printing/page-break-always-for-overflow.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=37607
+printing/page-break-always.html
