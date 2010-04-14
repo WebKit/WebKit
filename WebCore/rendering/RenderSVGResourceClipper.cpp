@@ -50,6 +50,7 @@ RenderSVGResourceClipper::RenderSVGResourceClipper(SVGStyledElement* node)
 
 RenderSVGResourceClipper::~RenderSVGResourceClipper()
 {
+    deleteAllValues(m_clipper);
     m_clipper.clear();
 }
 
@@ -76,7 +77,7 @@ void RenderSVGResourceClipper::invalidateClient(RenderObject* object)
     if (!m_clipper.contains(object))
         return;
 
-    m_clipper.take(object);
+    delete m_clipper.take(object);
 }
 
 bool RenderSVGResourceClipper::applyResource(RenderObject* object, GraphicsContext* context)
