@@ -313,7 +313,8 @@ PopupContainer::PopupContainer(PopupMenuClient* client,
                                const PopupContainerSettings& settings)
     : m_listBox(PopupListBox::create(client, settings))
     , m_settings(settings)
-    , m_popupType(popupType)  
+    , m_popupType(popupType)
+    , m_popupOpen(false)
 {
     setScrollbarModes(ScrollbarAlwaysOff, ScrollbarAlwaysOff);
 }
@@ -367,6 +368,7 @@ void PopupContainer::showPopup(FrameView* view)
             }
         }
         chromeClient->popupOpened(this, widgetRect, false);
+        m_popupOpen = true;
     }
 
     if (!m_listBox->parent())
@@ -416,7 +418,10 @@ void PopupContainer::hidePopup()
 
 void PopupContainer::notifyPopupHidden()
 {
-     chromeClientChromium()->popupClosed(this);
+    if (!m_popupOpen)
+        return;
+    m_popupOpen = false;
+    chromeClientChromium()->popupClosed(this);
 }
 
 void PopupContainer::layout()

@@ -1,3 +1,16 @@
+2010-04-14  Jay Civelli  <jcivelli@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [chromium] Select popups would assert when destroyed.
+        Also adding unit-tests for the select popup code.
+        https://bugs.webkit.org/show_bug.cgi?id=37436
+
+        * WebKit.gyp:
+        * src/WebViewImpl.h:
+        (WebKit::WebViewImpl::selectPopup):
+        * tests/PopupMenuTest.cpp: Added.
+
 2010-04-14  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Dimitri Glazkov.

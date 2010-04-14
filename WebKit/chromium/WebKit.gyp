@@ -502,6 +502,7 @@
             'sources': [
                 'tests/KeyboardTest.cpp',
                 'tests/KURLTest.cpp',
+                'tests/PopupMenuTest.cpp',
                 'tests/RunAllTests.cpp',
             ],
             'conditions': [

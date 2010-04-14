@@ -311,6 +311,8 @@ public:
     void setRootGraphicsLayer(WebCore::PlatformLayer*);
 #endif
 
+    WebCore::PopupContainer* selectPopup() const { return m_selectPopup.get(); }
+
 private:
     friend class WebView;  // So WebView::Create can call our constructor
     friend class WTF::RefCounted<WebViewImpl>;
