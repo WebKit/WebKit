@@ -2,6 +2,21 @@
 
         Reviewed by Anders Carlsson.
 
+        Add WKRetainPtr helper class as private header
+        https://bugs.webkit.org/show_bug.cgi?id=37603
+
+        WKRetainPtr is just like RetainPtr, but works for WK types instead of
+        CF/NS types.
+
+        * UIProcess/API/cpp: Added.
+        * UIProcess/API/cpp/WKRetainPtr.h: Added.
+        * WebKit2.xcodeproj/project.pbxproj: Add new file.
+        * win/WebKit2.vcproj: Ditto.
+
+2010-04-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
         Make the WebProcess a LSUIElement to suppress its icon from the Dock.
 
         * WebKit2.xcodeproj/project.pbxproj:
