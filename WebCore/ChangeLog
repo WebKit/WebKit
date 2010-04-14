@@ -1,3 +1,15 @@
+2010-04-14  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Console: Shift-Tab does not cycle autocompletions in the reverse order
+        https://bugs.webkit.org/show_bug.cgi?id=37582
+
+        * inspector/front-end/TextPrompt.js:
+        (WebInspector.TextPrompt.prototype.complete):
+        (WebInspector.TextPrompt.prototype._completionsReady):
+        (WebInspector.TextPrompt.prototype._tabKeyPressed):
+
 2010-04-14  Jeff Schiller  <codedread@gmail.com>
 
         Reviewed by Dirk Schulze.

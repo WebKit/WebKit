@@ -172,7 +172,7 @@ WebInspector.TextPrompt.prototype = {
             this._completeTimeout = setTimeout(this.complete.bind(this, true), 250);
     },
 
-    complete: function(auto)
+    complete: function(auto, reverse)
     {
         this.clearAutoComplete(true);
         var selection = window.getSelection();
@@ -185,10 +185,10 @@ WebInspector.TextPrompt.prototype = {
         if (auto && !this.isCaretAtEndOfPrompt())
             return;
         var wordPrefixRange = selectionRange.startContainer.rangeOfWord(selectionRange.startOffset, this.completionStopCharacters, this.element, "backward");
-        this.completions(wordPrefixRange, auto, this._completionsReady.bind(this, selection, auto, wordPrefixRange));
+        this.completions(wordPrefixRange, auto, this._completionsReady.bind(this, selection, auto, wordPrefixRange, reverse));
     },
 
-    _completionsReady: function(selection, auto, originalWordPrefixRange, completions)
+    _completionsReady: function(selection, auto, originalWordPrefixRange, reverse, completions)
     {
         if (!completions || !completions.length)
             return;
@@ -212,10 +212,13 @@ WebInspector.TextPrompt.prototype = {
                 if (completions[i] === currentText)
                     foundIndex = i;
 
-            if (foundIndex === null || (foundIndex + 1) >= completions.length)
+            var nextIndex = foundIndex + (reverse ? -1 : 1);
+            if (foundIndex === null || nextIndex >= completions.length)
                 var completionText = completions[0];
+            else if (nextIndex < 0)
+                var completionText = completions[completions.length - 1];
             else
-                var completionText = completions[foundIndex + 1];
+                var completionText = completions[nextIndex];
         }
 
         var wordPrefixLength = originalWordPrefixRange.toString().length;
@@ -354,7 +357,7 @@ WebInspector.TextPrompt.prototype = {
         event.preventDefault();
         event.stopPropagation();
 
-        this.complete();
+        this.complete(false, event.shiftKey);
     },
 
     _upKeyPressed: function(event)
