@@ -1,5 +1,19 @@
 2010-04-13  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Adam Roben.
+
+        Add Qt Bot to the list of "core builders" (builders which block the commit-queue when red)
+        https://bugs.webkit.org/show_bug.cgi?id=33297
+
+        This is an experiment.  The bots have been green for
+        a while.  We'll see if adding them under sheriff-bot protection
+        will keep them green.
+
+        * Scripts/webkitpy/common/net/buildbot.py:
+        * Scripts/webkitpy/common/net/buildbot_unittest.py:
+
+2010-04-13  Eric Seidel  <eric@webkit.org>
+
         Unreviewed, just fixing a constant in the Rietveld unit test.
 
         * Scripts/webkitpy/common/net/rietveld_unittest.py

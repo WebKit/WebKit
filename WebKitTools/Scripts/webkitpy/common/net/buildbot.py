@@ -317,6 +317,7 @@ class BuildBot(object):
             "Leopard",
             "Tiger",
             "Windows.*Build",
+            "Qt",
             "Chromium",
         ]
 
