@@ -1,3 +1,11 @@
+2010-04-14  Anton Muhin  <antonm@chromium.org>
+
+        Not review, build fix.
+
+        Add <limits.h> include to bring UINT_MAX.
+
+        * html/canvas/WebGLArray.h:
+
 2010-04-14  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Attempt to unbreak build - NodeRenderStyle.h is an _interessting_ concept...
