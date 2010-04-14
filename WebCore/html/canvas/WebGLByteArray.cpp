@@ -74,9 +74,8 @@ PassRefPtr<WebGLArray> WebGLByteArray::slice(int start, int end)
 {
     unsigned offset, length;
     calculateOffsetAndLength(start, end, m_size, &offset, &length);
-    unsigned fullOffset = m_byteOffset + offset * sizeof(signed char);
-    clampOffsetAndNumElements<signed char>(buffer().get(), &fullOffset, &length);
-    return create(buffer(), fullOffset, length);
+    clampOffsetAndNumElements<signed char>(buffer().get(), m_byteOffset, &offset, &length);
+    return create(buffer(), offset, length);
 }
 
 void WebGLByteArray::set(WebGLByteArray* array, unsigned offset, ExceptionCode& ec) {

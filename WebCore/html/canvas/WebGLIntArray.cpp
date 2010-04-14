@@ -76,9 +76,8 @@ PassRefPtr<WebGLArray> WebGLIntArray::slice(int start, int end)
 {
     unsigned offset, length;
     calculateOffsetAndLength(start, end, m_size, &offset, &length);
-    unsigned fullOffset = m_byteOffset + offset * sizeof(int);
-    clampOffsetAndNumElements<int>(buffer(), &fullOffset, &length);
-    return create(buffer(), fullOffset, length);
+    clampOffsetAndNumElements<int>(buffer(), m_byteOffset, &offset, &length);
+    return create(buffer(), offset, length);
 }
 
 void WebGLIntArray::set(WebGLIntArray* array, unsigned offset, ExceptionCode& ec) {

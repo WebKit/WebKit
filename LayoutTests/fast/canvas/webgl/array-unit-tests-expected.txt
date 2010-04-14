@@ -50,6 +50,7 @@ Testing slicing of WebGLFloatArray
 PASS array.length is 32 / typeSize
 PASS array.slice(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
 PASS array.slice(4, -2147483648).length is 0
+PASS array.length is 0
 Testing slicing with default inputs of WebGLFloatArray
 PASS array.length is 32 / typeSize
 PASS array.slice().length is (32 / typeSize)
@@ -79,6 +80,7 @@ Testing slicing of WebGLIntArray
 PASS array.length is 32 / typeSize
 PASS array.slice(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
 PASS array.slice(4, -2147483648).length is 0
+PASS array.length is 0
 Testing slicing with default inputs of WebGLIntArray
 PASS array.length is 32 / typeSize
 PASS array.slice().length is (32 / typeSize)
@@ -108,6 +110,7 @@ Testing slicing of WebGLShortArray
 PASS array.length is 32 / typeSize
 PASS array.slice(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
 PASS array.slice(4, -2147483648).length is 0
+PASS array.length is 0
 Testing slicing with default inputs of WebGLShortArray
 PASS array.length is 32 / typeSize
 PASS array.slice().length is (32 / typeSize)
@@ -165,6 +168,7 @@ Testing slicing of WebGLUnsignedIntArray
 PASS array.length is 32 / typeSize
 PASS array.slice(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
 PASS array.slice(4, -2147483648).length is 0
+PASS array.length is 0
 Testing slicing with default inputs of WebGLUnsignedIntArray
 PASS array.length is 32 / typeSize
 PASS array.slice().length is (32 / typeSize)
@@ -194,6 +198,7 @@ Testing slicing of WebGLUnsignedShortArray
 PASS array.length is 32 / typeSize
 PASS array.slice(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
 PASS array.slice(4, -2147483648).length is 0
+PASS array.length is 0
 Testing slicing with default inputs of WebGLUnsignedShortArray
 PASS array.length is 32 / typeSize
 PASS array.slice().length is (32 / typeSize)

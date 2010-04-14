@@ -78,9 +78,8 @@ PassRefPtr<WebGLArray> WebGLUnsignedShortArray::slice(int start, int end)
 {
     unsigned offset, length;
     calculateOffsetAndLength(start, end, m_size, &offset, &length);
-    unsigned fullOffset = m_byteOffset + offset * sizeof(unsigned short);
-    clampOffsetAndNumElements<unsigned short>(buffer(), &fullOffset, &length);
-    return create(buffer(), fullOffset, length);
+    clampOffsetAndNumElements<unsigned short>(buffer(), m_byteOffset, &offset, &length);
+    return create(buffer(), offset, length);
 }
 
 void WebGLUnsignedShortArray::set(WebGLUnsignedShortArray* array, unsigned offset, ExceptionCode& ec) {

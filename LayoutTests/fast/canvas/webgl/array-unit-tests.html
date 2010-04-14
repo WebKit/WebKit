@@ -428,6 +428,16 @@ function testSlicingWithOutOfRangeValues(type, name, sz) {
         try {
             shouldBe("array.slice(4, 0x3FFFFFFF).length", "(32 / typeSize) - 4");
             shouldBe("array.slice(4, -2147483648).length", "0");
+            // Test slice() against overflows.
+            array = array.slice(2);
+            if (sz > 1) {
+                // Full byte offset is +1 larger than the maximum unsigned long int.
+                // Make sure slice() still handles it correctly.  Otherwise overflow would happen and
+                // offset would be 0, and array.length array.length would incorrectly be 1.
+                var start = 4294967296 / sz - 2;
+                array = array.slice(start, start + 1);
+                shouldBe("array.length", "0");
+            }
         } catch (e) {
             testFailed("Slicing of " + name + " threw exception");
         }

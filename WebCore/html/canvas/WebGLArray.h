@@ -90,13 +90,23 @@ class WebGLArray : public RefCounted<WebGLArray> {
         return true;
     }
 
+    // Input offset is in number of elements from this array's view;
+    // output offset is in number of bytes from the underlying buffer's view.
     template <typename T>
     static void clampOffsetAndNumElements(PassRefPtr<WebGLArrayBuffer> buffer,
-                                          unsigned *byteOffset,
+                                          unsigned arrayByteOffset,
+                                          unsigned *offset,
                                           unsigned *numElements)
     {
-        *byteOffset = std::min(buffer->byteLength(), *byteOffset);
-        unsigned remainingElements = (buffer->byteLength() - *byteOffset) / sizeof(T);
+        unsigned maxOffset = (UINT_MAX - arrayByteOffset) / sizeof(T);
+        if (*offset > maxOffset) {
+            *offset = buffer->byteLength();
+            *numElements = 0;
+            return;
+        }
+        *offset = arrayByteOffset + *offset * sizeof(T);
+        *offset = std::min(buffer->byteLength(), *offset);
+        unsigned remainingElements = (buffer->byteLength() - *offset) / sizeof(T);
         *numElements = std::min(remainingElements, *numElements);
     }
 

@@ -76,9 +76,8 @@ PassRefPtr<WebGLArray> WebGLUnsignedIntArray::slice(int start, int end)
 {
     unsigned offset, length;
     calculateOffsetAndLength(start, end, m_size, &offset, &length);
-    unsigned fullOffset = m_byteOffset + offset * sizeof(unsigned int);
-    clampOffsetAndNumElements<unsigned int>(buffer(), &fullOffset, &length);
-    return create(buffer(), fullOffset, length);
+    clampOffsetAndNumElements<unsigned int>(buffer(), m_byteOffset, &offset, &length);
+    return create(buffer(), offset, length);
 }
 
 void WebGLUnsignedIntArray::set(WebGLUnsignedIntArray* array, unsigned offset, ExceptionCode& ec) {
