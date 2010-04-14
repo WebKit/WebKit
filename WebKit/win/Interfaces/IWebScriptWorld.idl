@@ -37,4 +37,5 @@ import "JavaScriptCoreAPITypes.idl";
 interface IWebScriptWorld : IUnknown {
     HRESULT standardWorld([out, retval] IWebScriptWorld**);
     [local] HRESULT scriptWorldForGlobalContext([in] JSGlobalContextRef, [out, retval] IWebScriptWorld**);
+    HRESULT unregisterWorld();
 }
