@@ -93,6 +93,7 @@ ScriptController::~ScriptController()
 
 void ScriptController::destroyWindowShell(DOMWrapperWorld* world)
 {
+    ASSERT(m_windowShells.contains(world));
     m_windowShells.remove(world);
     world->didDestroyWindowShell(this);
 }

@@ -1,3 +1,24 @@
+2010-04-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Separated a DOMWrapperWorld's behavior of keeping wrappers alive from
+        its own lifetime, so a DOMWrapperWorld's controller can throw away
+        its wrappers even before its refcount reaches 0.
+
+        * WebCore.base.exp:
+        * bindings/js/DOMWrapperWorld.cpp:
+        (WebCore::DOMWrapperWorld::DOMWrapperWorld):
+        (WebCore::DOMWrapperWorld::~DOMWrapperWorld):
+        (WebCore::DOMWrapperWorld::registerWorld):
+        (WebCore::DOMWrapperWorld::unregisterWorld):
+        * bindings/js/DOMWrapperWorld.h: Factored out DOMWrapperWorld registration
+        and unregistration into helper functions, so unregistering could be done manually.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::destroyWindowShell): Added an ASSERT to match
+        similar code.
+
 2010-04-13  Chang Shu  <chang.shu@nokia.com>
 
         Reviewed by Darin Fisher.

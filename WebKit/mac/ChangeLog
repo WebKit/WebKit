@@ -1,3 +1,15 @@
+2010-04-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Separated a DOMWrapperWorld's behavior of keeping wrappers alive from
+        its own lifetime, so a DOMWrapperWorld's controller can throw away
+        its wrappers even before its refcount reaches 0.
+
+        * WebView/WebScriptWorld.h:
+        * WebView/WebScriptWorld.mm:
+        (-[WebScriptWorld unregisterWorld]): Exported this function through WebKit.
+
 2010-04-12  Timothy Hatcher  <timothy@apple.com>
 
         SecurityOrigin needs a way to remove individual OriginAccessEntries

@@ -75,6 +75,11 @@ static WorldMap& allWorlds()
     return [self initWithWorld:ScriptController::createWorld()];
 }
 
+- (void)unregisterWorld
+{
+    _private->world->unregisterWorld();
+}
+
 - (void)dealloc
 {
     ASSERT(allWorlds().contains(_private->world.get()));

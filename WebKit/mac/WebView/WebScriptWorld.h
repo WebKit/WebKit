@@ -36,4 +36,6 @@ typedef struct OpaqueJSContext* JSGlobalContextRef;
 
 + (WebScriptWorld *)scriptWorldForGlobalContext:(JSGlobalContextRef)globalContext;
 
+- (void)unregisterWorld;
+
 @end
