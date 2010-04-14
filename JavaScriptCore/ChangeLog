@@ -1,3 +1,29 @@
+2010-04-14  Kent Hansen  <kent.hansen@nokia.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Mac OS X: Use deployment target to determine whether memory tagging should be enabled
+        https://bugs.webkit.org/show_bug.cgi?id=34888
+
+        When building on (Snow) Leopard but targeting Tiger
+        (TARGETING_TIGER defined, BUILDING_ON_TIGER not defined),
+        WebKit would crash on Tiger because the tags passed to mmap
+        caused those function calls to fail.
+
+        Conversely, when building on Tiger but targeting Leopard
+        (BUILDING_ON_TIGER defined, TARGETING_LEOPARD defined), WebKit
+        would crash on Leopard because the tags passed to vm_map and
+        vm_allocate caused those function calls to fail.
+
+        Solution: Use TARGETING_TIGER rather than BUILDING_ON_TIGER to
+        govern the tag definitions. Use the same tags for vm_map and
+        vm_allocate regardless of target, since they work on
+        both. Fall back to the mmap tags that work on Tiger (that is,
+        "no tags") if targeting Tiger, since those tags also work on
+        Leopard.
+
+        * wtf/VMTags.h:
+
 2010-04-12  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by nobody, build fix.
