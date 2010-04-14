@@ -1,3 +1,16 @@
+2010-04-14  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Re-write testProfilerTab to match the new implementation.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37516
+
+        * src/js/Tests.js:
+        (.TestSuite.prototype.testProfilerTab.findDisplayedNode):
+        (.TestSuite.prototype.testProfilerTab.findVisibleView):
+        (.TestSuite.prototype.testProfilerTab):
+
 2010-04-13  Timothy Hatcher  <timothy@apple.com>
 
         Rename SecurityOrigin::whiteListAccessFromOrigin to addOriginAccessWhitelistEntry.

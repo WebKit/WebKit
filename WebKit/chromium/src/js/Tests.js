@@ -421,49 +421,44 @@ TestSuite.prototype.testCachedResourceMimeType = function()
 /**
  * Tests that profiler works.
  */
-/*
-// FIXME: disable for now. Need to change js_test.html page in Chromium repo first.
-
 TestSuite.prototype.testProfilerTab = function()
 {
     this.showPanel("profiles");
 
+    var panel = WebInspector.panels.profiles;
     var test = this;
-    this.addSniffer(WebInspector.panels.profiles, "addProfileHeader",
-        function(typeOrProfile, profile) {
-            if (!profile)
-                profile = typeOrProfile;
-            var panel = WebInspector.panels.profiles;
-            panel.showProfile(profile);
-            var node = panel.visibleView.profileDataGridTree.children[0];
-            // Iterate over displayed functions and search for a function
-            // that is called "fib" or "eternal_fib". If found, it will mean
-            // that we actually have profiled page's code.
-            while (node) {
-                if (node.functionName.indexOf("fib") !== -1)
-                    test.releaseControl();
-                node = node.traverseNextNode(true, null, true);
-            }
 
-            test.fail();
-        });
-    var ticksCount = 0;
-    var tickRecord = "\nt,";
-    this.addSniffer(RemoteProfilerAgent, "didGetLogLines",
-        function(posIgnored, log) {
-            var pos = 0;
-            while ((pos = log.indexOf(tickRecord, pos)) !== -1) {
-                pos += tickRecord.length;
-                ticksCount++;
-            }
-            if (ticksCount > 100)
-                InspectorBackend.stopProfiling();
-        }, true);
+    function findDisplayedNode() {
+        var node = panel.visibleView.profileDataGridTree.children[0];
+        if (!node) {
+            // Profile hadn't been queried yet, re-schedule.
+            window.setTimeout(findDisplayedNode, 100);
+            return;
+        }
 
-    InspectorBackend.startProfiling();
+        // Iterate over displayed functions and search for a function
+        // that is called "fib" or "eternal_fib". If found, this will mean
+        // that we actually have profiled page's code.
+        while (node) {
+            if (node.functionName.indexOf("fib") !== -1)
+                test.releaseControl();
+            node = node.traverseNextNode(true, null, true);
+        }
+
+        test.fail();
+    }
+
+    function findVisibleView() {
+        if (!panel.visibleView) {
+            setTimeout(findVisibleView, 0);
+            return;
+        }
+        setTimeout(findDisplayedNode, 0);            
+    }
+
+    findVisibleView();
     this.takeControl();
 };
-*/
 
 
 /**
