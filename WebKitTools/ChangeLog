@@ -1,3 +1,16 @@
+2010-04-14  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Add a way for the buildbot to kill any old processes that are running. This
+        is useful because the Windows bots can get in states where a process remains
+        running (httpd.exe, DumpRenderTree.exe), which causes the bots to get in a red
+        state, and the processes must be killed manually.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg: If we are on Windows, kill
+            the old processes that might be running.
+        * BuildSlaveSupport/win/kill-old-processes: Added.
+
 2010-04-14  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
