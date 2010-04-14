@@ -1,0 +1,37 @@
+Canonicalization of standard URLs
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS canonicalize('http://www.google.com/foo?bar=baz#') is 'http://www.google.com/foo?bar=baz#'
+PASS canonicalize('http://[www.google.com]/') is 'http://[www.google.com]/'
+FAIL canonicalize('ht	tp:@www.google.com:80/;p?#') should be ht%09tp://www.google.com:80/;p?#. Was http:@www.google.com:80/;p?#.
+FAIL canonicalize('http:////////user:@google.com:99?foo') should be http://user@google.com:99/?foo. Was http://////user:@google.com:99?foo.
+FAIL canonicalize('http://192.0x00A80001') should be http://192.168.0.1/. Was http://192.0x00A80001/.
+FAIL canonicalize('http://www/foo%2Ehtml') should be http://www/foo.html. Was http://www/foo%2Ehtml.
+PASS canonicalize('http://user:pass@/') is 'http://user:pass@/'
+PASS canonicalize('http://%25DOMAIN:foobar@foodomain.com/') is 'http://%25DOMAIN:foobar@foodomain.com/'
+PASS canonicalize('http:\\\\www.google.com\\foo') is 'http://www.google.com/foo'
+FAIL canonicalize('http://www.google.com/asdf#Â') should be http://www.google.com/asdf#ï¿½. Was http://www.google.com/asdf#%C2.
+FAIL canonicalize('http://foo:80/') should be http://foo/. Was http://foo:80/.
+PASS canonicalize('http://foo:81/') is 'http://foo:81/'
+PASS canonicalize('httpa://foo:80/') is 'httpa://foo:80/'
+PASS canonicalize('http://foo:-80/') is 'http://foo:-80/'
+FAIL canonicalize('https://foo:443/') should be https://foo/. Was https://foo:443/.
+PASS canonicalize('https://foo:80/') is 'https://foo:80/'
+FAIL canonicalize('ftp://foo:21/') should be ftp://foo/. Was ftp://foo:21/.
+PASS canonicalize('ftp://foo:80/') is 'ftp://foo:80/'
+FAIL canonicalize('gopher://foo:70/') should be gopher://foo/. Was gopher://foo:70/.
+PASS canonicalize('gopher://foo:443/') is 'gopher://foo:443/'
+FAIL canonicalize('ws://foo:80/') should be ws://foo/. Was ws://foo:80/.
+PASS canonicalize('ws://foo:81/') is 'ws://foo:81/'
+PASS canonicalize('ws://foo:443/') is 'ws://foo:443/'
+PASS canonicalize('ws://foo:815/') is 'ws://foo:815/'
+PASS canonicalize('wss://foo:80/') is 'wss://foo:80/'
+PASS canonicalize('wss://foo:81/') is 'wss://foo:81/'
+FAIL canonicalize('wss://foo:443/') should be wss://foo/. Was wss://foo:443/.
+PASS canonicalize('wss://foo:815/') is 'wss://foo:815/'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

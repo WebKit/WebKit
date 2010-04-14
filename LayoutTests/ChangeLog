@@ -1,3 +1,14 @@
+2010-04-14  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Fisher.
+
+        Add LayoutTests for parsing standard URLs
+        https://bugs.webkit.org/show_bug.cgi?id=37580
+
+        * fast/url/script-tests/standard-url.js: Added.
+        * fast/url/standard-url-expected.txt: Added.
+        * fast/url/standard-url.html: Added.
+
 2010-04-14  Adam Roben  <aroben@apple.com>
 
         Roll out r57566
