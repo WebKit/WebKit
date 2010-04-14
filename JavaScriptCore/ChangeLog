@@ -1,3 +1,25 @@
+2010-04-14  Peter Varga  <pvarga@inf.u-szeged.hu>
+
+        Reviewed by Geoffrey Garen.
+
+        Move the YARR JIT fallback detection from RegexJIT.cpp to
+        RegexCompiler.cpp.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37571
+
+        * yarr/RegexCompiler.cpp:
+        (JSC::Yarr::RegexPatternConstructor::atomBackReference):
+        (JSC::Yarr::RegexPatternConstructor::quantifyAtom):
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::RegexGenerator::generateTerm):
+        (JSC::Yarr::RegexGenerator::RegexGenerator):
+        (JSC::Yarr::jitCompileRegex):
+        * yarr/RegexJIT.h:
+        (JSC::Yarr::RegexCodeBlock::operator!):
+        * yarr/RegexPattern.h:
+        (JSC::Yarr::RegexPattern::RegexPattern):
+        (JSC::Yarr::RegexPattern::reset):
+
 2010-04-14  Kent Hansen  <kent.hansen@nokia.com>
 
         Reviewed by Maciej Stachowiak.

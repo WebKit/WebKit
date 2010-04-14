@@ -469,6 +469,7 @@ public:
     void atomBackReference(unsigned subpatternId)
     {
         ASSERT(subpatternId);
+        m_pattern.m_shouldFallBack = true;
         m_pattern.m_maxBackReference = std::max(m_pattern.m_maxBackReference, subpatternId);
 
         if (subpatternId > m_pattern.m_numSubpatterns) {
@@ -543,6 +544,9 @@ public:
                 m_alternative->removeLastTerm();
             return;
         }
+
+        if (max > 1 && term.type == PatternTerm::TypeParenthesesSubpattern)
+            m_pattern.m_shouldFallBack = true;
 
         if (min == 0)
             term.quantify(max, greedy   ? QuantifierGreedy : QuantifierNonGreedy);
