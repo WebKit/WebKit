@@ -434,7 +434,9 @@ class MockCheckout(object):
         return []
 
     def commit_message_for_this_commit(self):
-        return Mock()
+        commit_message = Mock()
+        commit_message.message = lambda:"This is a fake commit message that is at least 50 characters."
+        return commit_message
 
     def apply_patch(self, patch, force=False):
         pass
