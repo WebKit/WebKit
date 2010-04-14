@@ -5979,3 +5979,6 @@ plugins/window-open.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=37585
 printing/numberOfPages.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=37592
+printing/page-break-always-for-overflow.html
