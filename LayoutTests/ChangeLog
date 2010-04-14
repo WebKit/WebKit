@@ -1,3 +1,14 @@
+2010-04-14  Andrey Kosyakov  <caseq@chromium.ru>
+
+        Reviewed by Timothy Hatcher.
+
+        Log error message to inspector console if a resource fails to load.
+        Disable checking of mime-type consistency for failed resources.
+        https://bugs.webkit.org/show_bug.cgi?id=37215
+
+        * inspector/console-resource-errors-expected.txt: Added.
+        * inspector/console-resource-errors.html: Added.
+
 2010-04-14  Alejandro G. Castro  <alex@igalia.com>
 
         Rubber-stamped by Xan Lopez.

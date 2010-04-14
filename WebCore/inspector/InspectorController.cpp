@@ -892,15 +892,19 @@ void InspectorController::willSendRequest(unsigned long identifier, const Resour
 
 void InspectorController::didReceiveResponse(unsigned long identifier, const ResourceResponse& response)
 {
-    RefPtr<InspectorResource> resource = getTrackedResource(identifier);
-    if (!resource)
-        return;
+    if (RefPtr<InspectorResource> resource = getTrackedResource(identifier)) {
+        resource->updateResponse(response);
+        resource->markResponseReceivedTime();
 
-    resource->updateResponse(response);
-    resource->markResponseReceivedTime();
+        if (resource != m_mainResource && m_frontend)
+            resource->updateScriptObject(m_frontend.get());
+    }
+    if (response.httpStatusCode() >= 400) {
+        // The ugly code below is due to that String::format() is not utf8-safe at the moment.
+        String message = String::format("Failed to load resource: the server responded with a status of %u (", response.httpStatusCode()) + response.httpStatusText() + ")";
 
-    if (resource != m_mainResource && m_frontend)
-        resource->updateScriptObject(m_frontend.get());
+        addMessageToConsole(OtherMessageSource, LogMessageType, ErrorMessageLevel, message, 0, response.url().string());
+    }
 }
 
 void InspectorController::didReceiveContentLength(unsigned long identifier, int lengthReceived)
@@ -931,10 +935,15 @@ void InspectorController::didFinishLoading(unsigned long identifier)
         resource->updateScriptObject(m_frontend.get());
 }
 
-void InspectorController::didFailLoading(unsigned long identifier, const ResourceError& /*error*/)
+void InspectorController::didFailLoading(unsigned long identifier, const ResourceError& error)
 {
     if (m_timelineAgent)
         m_timelineAgent->didFinishLoadingResource(identifier, true);
+
+    String message = "Failed to load resource";
+    if (!error.localizedDescription().isEmpty())
+        message += ": " + error.localizedDescription();
+    addMessageToConsole(OtherMessageSource, LogMessageType, ErrorMessageLevel, message, 0, error.failingURL());
 
     RefPtr<InspectorResource> resource = getTrackedResource(identifier);
     if (!resource)
