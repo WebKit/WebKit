@@ -443,6 +443,9 @@ WebInspector.ResourcesPanel.prototype = {
         if (newView.__proto__ === resource._resourcesView.__proto__)
             return;
 
+        resource.warnings = 0;
+        resource.errors = 0;
+
         if (!this.currentQuery && resource._itemsTreeElement)
             resource._itemsTreeElement.updateErrorsAndWarnings();
 

@@ -536,12 +536,6 @@ WebInspector.Resource.prototype = {
 
     _mimeTypeIsConsistentWithType: function()
     {
-        // If status is an error, content is likely to be of an inconsistent type,
-        // as it's going to be an error message. We do not want to emit a warning
-        // for this, though, as this will already be reported as resource loading failure.
-        if (this.statusCode >= 400)
-            return true;
-
         if (typeof this.type === "undefined"
          || this.type === WebInspector.Resource.Type.Other
          || this.type === WebInspector.Resource.Type.XHR)
