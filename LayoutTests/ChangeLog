@@ -1,3 +1,36 @@
+2010-04-13  Alejandro G. Castro  <alex@igalia.com>
+
+        Rubber-stamped by Xan Lopez.
+
+        Skipping svg/custom/use-instanceRoot-as-event-target.xhtml
+        https://bugs.webkit.org/show_bug.cgi?id=37544
+
+        Skipping plugins/setProperty.html
+        https://bugs.webkit.org/show_bug.cgi?id=37545
+
+        Skipping media/audio-delete-while-slider-thumb-clicked.html
+        https://bugs.webkit.org/show_bug.cgi?id=37546
+
+        Skipping media/video-currentTime-set2.html
+        https://bugs.webkit.org/show_bug.cgi?id=37547
+
+        Skipping media/video-seekable.html
+        https://bugs.webkit.org/show_bug.cgi?id=37548
+
+        Skipping media/video-currentTime-set.html
+        https://bugs.webkit.org/show_bug.cgi?id=37549
+
+        Skipping fast/dom/Window/HTMLBodyElement-window-eventListener-attributes.html
+        https://bugs.webkit.org/show_bug.cgi?id=37550
+
+        Skipping media/video-seeking.html
+        https://bugs.webkit.org/show_bug.cgi?id=37551
+
+        Skipping media/video-timeupdate-reverse-play.html
+        https://bugs.webkit.org/show_bug.cgi?id=37552
+
+        * platform/gtk/Skipped:
+
 2010-04-13  Adam Roben  <aroben@apple.com>
 
         Skip xss-DENIED-iframe-src-alias.html on Windows

@@ -5919,3 +5919,30 @@ svg/custom/use-on-clip-path-with-transformation.svg
 
 # https://bugs.webkit.org/show_bug.cgi?id=37540
 http/tests/security/xss-DENIED-mime-type-execute-as-html.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=37544
+svg/custom/use-instanceRoot-as-event-target.xhtml
+
+# https://bugs.webkit.org/show_bug.cgi?id=37545
+plugins/setProperty.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=37546
+media/audio-delete-while-slider-thumb-clicked.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=37547
+media/video-currentTime-set2.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=37548
+media/video-seekable.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=37549
+media/video-currentTime-set.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=37550
+fast/dom/Window/HTMLBodyElement-window-eventListener-attributes.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=37551
+media/video-seeking.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=37552
+media/video-timeupdate-reverse-play.html
