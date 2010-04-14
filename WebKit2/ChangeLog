@@ -1,3 +1,12 @@
+2010-04-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Make the WebProcess a LSUIElement to suppress its icon from the Dock.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Info.plist:
+
 2010-04-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
