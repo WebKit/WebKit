@@ -33,8 +33,7 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSValueList.h"
 #include "IntRect.h"
-#include "RenderObject.h"
-#include "RenderStyle.h"
+#include "NodeRenderStyle.h"
 #include "SVGStyledElement.h"
 
 using namespace std;

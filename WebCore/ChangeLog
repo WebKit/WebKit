@@ -1,5 +1,11 @@
 2010-04-14  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Attempt to unbreak build - NodeRenderStyle.h is an _interessting_ concept...
+
+        * rendering/style/SVGRenderStyle.cpp: Include 'NodeRenderStyle.h'
+
+2010-04-14  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Reviewed by Dirk Schulze.
 
         SVGRenderStyle/SVGRenderStyleDefs needs a cleanup
