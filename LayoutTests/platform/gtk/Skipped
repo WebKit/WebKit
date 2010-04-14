@@ -5982,3 +5982,6 @@ inspector/timeline-layout.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=37613
 printing
+
+# https://bugs.webkit.org/show_bug.cgi?id=37616
+fast/workers/shared-worker-frame-lifecycle.html
