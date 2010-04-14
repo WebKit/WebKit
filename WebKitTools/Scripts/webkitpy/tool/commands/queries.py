@@ -142,7 +142,10 @@ class WhatBroke(AbstractDeclarativeCommand):
         self._print_builder_line(builder.name(), name_width, "FAIL (blame-list: %s%s)" % (suspect_revisions, first_failure_message))
         for revision in suspect_revisions:
             commit_info = self.tool.checkout().commit_info_for_revision(revision)
-            print commit_info.blame_string(self.tool.bugs)
+            if commit_info:
+                print commit_info.blame_string(self.tool.bugs)
+            else:
+                print "FAILED to fetch CommitInfo for r%s, likely missing ChangeLog" % revision
 
     def execute(self, options, args, tool):
         builder_statuses = tool.buildbot.builder_statuses()
@@ -201,7 +204,10 @@ class FailureReason(AbstractDeclarativeCommand):
         print "Suspect revisions:"
         for revision in suspect_revisions:
             commit_info = self.tool.checkout().commit_info_for_revision(revision)
-            print commit_info.blame_string(self.tool.bugs)
+            if commit_info:
+                print commit_info.blame_string(self.tool.bugs)
+            else:
+                print "FAILED to fetch CommitInfo for r%s, likely missing ChangeLog" % revision
 
     def _explain_failures_for_builder(self, builder, start_revision, search_limit=1000):
         print "Examining failures for \"%s\", starting at r%s" % (builder.name(), start_revision)

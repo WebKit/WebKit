@@ -80,6 +80,9 @@ class SheriffBot(AbstractQueue, StepSequenceErrorHandler):
         for svn_revision, builders in new_failures.items():
             try:
                 commit_info = self.tool.checkout().commit_info_for_revision(svn_revision)
+                if not commit_info:
+                    print "FAILED to fetch CommitInfo for r%s, likely missing ChangeLog" % revision
+                    continue
                 self._sheriff.post_irc_warning(commit_info, builders)
                 self._sheriff.post_blame_comment_on_bug(commit_info,
                                                         builders,

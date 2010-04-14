@@ -61,6 +61,8 @@ class Checkout(object):
         changelog_entries = self.changelog_entries_for_revision(revision)
         # Assume for now that the first entry has everything we need:
         # FIXME: This will throw an exception if there were no ChangeLogs.
+        if not len(changelog_entries):
+            return None
         changelog_entry = changelog_entries[0]
         changelog_data = {
             "bug_id": parse_bug_id(changelog_entry.contents()),

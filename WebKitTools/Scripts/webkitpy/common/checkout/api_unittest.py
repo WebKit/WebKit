@@ -144,6 +144,9 @@ class CheckoutTest(unittest.TestCase):
         self.assertEqual(commitinfo.committer_email(), "committer@example.com")
         self.assertEqual(commitinfo.committer(), None)
 
+        checkout.changelog_entries_for_revision = lambda revision: []
+        self.assertEqual(checkout.commit_info_for_revision(1), None)
+
     def test_bug_id_for_revision(self):
         scm = Mock()
         scm.committer_email_for_revision = lambda revision: "committer@example.com"

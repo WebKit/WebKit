@@ -254,7 +254,7 @@ class AbstractRolloutPrepCommand(AbstractSequencedCommand):
 
     def _commit_info(self, revision):
         commit_info = self.tool.checkout().commit_info_for_revision(revision)
-        if commit_info.bug_id():
+        if commit_info and commit_info.bug_id():
             # Note: Don't print a bug URL here because it will confuse the
             #       SheriffBot because the SheriffBot just greps the output
             #       of create-rollout for bug URLs.  It should do better
