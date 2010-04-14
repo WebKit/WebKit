@@ -1,3 +1,12 @@
+2010-04-14  Alejandro G. Castro  <alex@igalia.com>
+
+        Rubber-stamped by Xan Lopez.
+
+        Skipping printing/numberOfPages.html
+        https://bugs.webkit.org/show_bug.cgi?id=37585
+
+        * platform/gtk/Skipped:
+
 2010-04-14  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Fisher.
