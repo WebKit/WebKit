@@ -72,6 +72,7 @@ public:
     HistoryItem* currentItem() const { return m_currentItem.get(); }
     void setCurrentItem(HistoryItem*);
     void setCurrentItemTitle(const String&);
+    bool currentItemShouldBeReplaced() const;
 
     HistoryItem* provisionalItem() const { return m_provisionalItem.get(); }
     void setProvisionalItem(HistoryItem*);

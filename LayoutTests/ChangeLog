@@ -1,3 +1,19 @@
+2010-04-13  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Brady Eidson.
+
+        If the browsing context's session history contains only one Document,
+        and that was the about:blank Document created when the browsing context
+        was created, then the navigation must be done with replacement enabled.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37126
+
+        * fast/loader/frame-location-change-not-added-to-history-expected.txt: Added.
+        * fast/loader/frame-location-change-not-added-to-history.html: Added.
+        * fast/loader/frame-src-change-added-to-history-expected.txt:
+        * fast/loader/frame-src-change-not-added-to-history-expected.txt: Added.
+        * fast/loader/frame-src-change-not-added-to-history.html: Added.
+
 2010-04-13  Mark Rowe  <mrowe@apple.com>
 
         Update the test results after r57544.

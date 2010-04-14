@@ -445,6 +445,15 @@ void HistoryController::setCurrentItemTitle(const String& title)
         m_currentItem->setTitle(title);
 }
 
+bool HistoryController::currentItemShouldBeReplaced() const
+{
+    // From the HTML5 spec for location.assign():
+    //  "If the browsing context's session history contains only one Document,
+    //   and that was the about:blank Document created when the browsing context
+    //   was created, then the navigation must be done with replacement enabled."
+    return m_currentItem && !m_previousItem && equalIgnoringCase(m_currentItem->urlString(), blankURL());
+}
+
 void HistoryController::setProvisionalItem(HistoryItem* item)
 {
     m_provisionalItem = item;
