@@ -77,6 +77,18 @@ void DrawingAreaUpdateChunk::setNeedsDisplay(const IntRect& rect)
     scheduleDisplay();
 }
 
+void DrawingAreaUpdateChunk::paintIntoUpdateChunk(UpdateChunk* updateChunk)
+{
+    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
+    RetainPtr<CGContextRef> bitmapContext(AdoptCF, CGBitmapContextCreate(updateChunk->data(), updateChunk->rect().width(), updateChunk->rect().height(), 8, updateChunk->rect().width() * 4, colorSpace.get(), kCGImageAlphaPremultipliedLast));
+    
+    // Now paint into the backing store.
+    GraphicsContext graphicsContext(bitmapContext.get());
+    graphicsContext.translate(-updateChunk->rect().x(), -updateChunk->rect().y());
+    
+    m_webPage->drawRect(graphicsContext, updateChunk->rect());
+}
+
 void DrawingAreaUpdateChunk::display()
 {
     if (m_dirtyRect.isEmpty())
@@ -88,19 +100,9 @@ void DrawingAreaUpdateChunk::display()
     IntRect dirtyRect = m_dirtyRect;
     m_dirtyRect = IntRect();
 
-    // FIXME: Move this code to draw into an UpdateChunk into a seperate function.
-
     // Create a new UpdateChunk and paint into it.
     UpdateChunk updateChunk(dirtyRect);
-
-    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
-    RetainPtr<CGContextRef> bitmapContext(AdoptCF, CGBitmapContextCreate(updateChunk.data(), dirtyRect.width(), dirtyRect.height(), 8, dirtyRect.width() * 4, colorSpace.get(), kCGImageAlphaPremultipliedLast));
-
-    // Now paint into the backing store.
-    GraphicsContext graphicsContext(bitmapContext.get());
-    graphicsContext.translate(-dirtyRect.x(), -dirtyRect.y());
-
-    m_webPage->drawRect(graphicsContext, dirtyRect);
+    paintIntoUpdateChunk(&updateChunk);
 
     WebProcess::shared().connection()->send(DrawingAreaProxyMessage::Update, m_webPage->pageID(), CoreIPC::In(updateChunk));
 
@@ -119,24 +121,12 @@ void DrawingAreaUpdateChunk::setSize(const IntSize& viewSize)
 {
     m_webPage->setSize(viewSize);
 
-    // FIXME: Move this code to draw into an UpdateChunk into a seperate function.
-
     // Layout if necessary.
     m_webPage->layoutIfNeeded();
 
-    IntRect rect(0, 0, viewSize.width(), viewSize.height());
-
     // Create a new UpdateChunk and paint into it.
-    UpdateChunk updateChunk(rect);
-
-    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
-    RetainPtr<CGContextRef> bitmapContext(AdoptCF, CGBitmapContextCreate(updateChunk.data(), rect.width(), rect.height(), 8, rect.width() * 4, colorSpace.get(), kCGImageAlphaPremultipliedLast));
-
-    // Now paint into the backing store.
-    GraphicsContext graphicsContext(bitmapContext.get());
-    graphicsContext.translate(-rect.x(), -rect.y());
-
-    m_webPage->drawRect(graphicsContext, rect);
+    UpdateChunk updateChunk(IntRect(0, 0, viewSize.width(), viewSize.height()));
+    paintIntoUpdateChunk(&updateChunk);
 
     m_displayTimer.stop();
 

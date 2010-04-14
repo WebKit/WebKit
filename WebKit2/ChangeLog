@@ -1,3 +1,16 @@
+2010-04-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Factor code to paint into an update chunk out into a separate function.
+        https://bugs.webkit.org/show_bug.cgi?id=37594
+
+        * WebProcess/WebPage/mac/DrawingAreaUpdateChunk.cpp:
+        (WebKit::DrawingAreaUpdateChunk::paintIntoUpdateChunk):
+        (WebKit::DrawingAreaUpdateChunk::display):
+        (WebKit::DrawingAreaUpdateChunk::setSize):
+        * WebProcess/WebPage/mac/DrawingAreaUpdateChunk.h:
+
 2010-04-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
