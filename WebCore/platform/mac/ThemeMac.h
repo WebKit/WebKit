@@ -49,6 +49,9 @@ public:
 
     virtual void paint(ControlPart, ControlStates, GraphicsContext*, const IntRect&, float zoomFactor, ScrollView*) const;
     virtual void inflateControlPaintRect(ControlPart, ControlStates, IntRect&, float zoomFactor) const;
+
+    // FIXME: Once RenderThemeMac is converted over to use Theme then this can be internal to ThemeMac.
+    static NSView* ensuredView(ScrollView*);
 };
 
 } // namespace WebCore

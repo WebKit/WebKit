@@ -35,6 +35,19 @@
 
 using namespace std;
 
+// This is a view whose sole purpose is to tell AppKit that it's flipped.
+@interface WebCoreFlippedView : NSView
+@end
+
+@implementation WebCoreFlippedView
+
+- (BOOL)isFlipped
+{
+    return YES;
+}
+
+@end
+
 // FIXME: Default buttons really should be more like push buttons and not like buttons.
 
 namespace WebCore {
@@ -405,7 +418,7 @@ static void paintButton(ControlPart part, ControlStates states, GraphicsContext*
         }
     } 
 
-    NSView *view = scrollView->documentView();
+    NSView *view = ThemeMac::ensuredView(scrollView);
     NSWindow *window = [view window];
     NSButtonCell *previousDefaultButtonCell = [window defaultButtonCell];
 
@@ -415,19 +428,8 @@ static void paintButton(ControlPart part, ControlStates states, GraphicsContext*
     } else if ([previousDefaultButtonCell isEqual:buttonCell])
         [window setDefaultButtonCell:nil];
 
-    if (!view) {
-        context->save();
-        context->translate(inflatedRect.x(), inflatedRect.y());
-        context->scale(FloatSize(1, -1));
-        context->translate(0, -inflatedRect.height());
-        inflatedRect.setLocation(IntPoint());
-    }
-
     [buttonCell drawWithFrame:NSRect(inflatedRect) inView:view];
     [buttonCell setControlView:nil];
-
-    if (!view)
-        context->restore();
 
     if (![previousDefaultButtonCell isEqual:buttonCell])
         [window setDefaultButtonCell:previousDefaultButtonCell];
@@ -435,6 +437,19 @@ static void paintButton(ControlPart part, ControlStates states, GraphicsContext*
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
+// This will ensure that we always return a valid NSView, even if ScrollView doesn't have an associated document NSView.
+// If the ScrollView doesn't have an NSView, we will return a fake NSView whose sole purpose is to tell AppKit that it's flipped.
+NSView *ThemeMac::ensuredView(ScrollView* scrollView)
+{
+    if (NSView *documentView = scrollView->documentView())
+        return documentView;
+    
+    // Use a fake flipped view.
+    static NSView *flippedView = [[WebCoreFlippedView alloc] init];
+    
+    return flippedView;
+}
+    
 // Theme overrides
 
 int ThemeMac::baselinePositionAdjustment(ControlPart part) const

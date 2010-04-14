@@ -1,3 +1,16 @@
+2010-04-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add ThemeMac::ensuredView and get rid of a workaround in ThemeMac::paintButton.
+        https://bugs.webkit.org/show_bug.cgi?id=37601
+
+        * platform/mac/ThemeMac.h:
+        * platform/mac/ThemeMac.mm:
+        (-[WebCoreFlippedView isFlipped]):
+        (WebCore::paintButton):
+        (WebCore::ThemeMac::ensuredView):
+
 2010-04-14  Jay Civelli  <jcivelli@chromium.org>
  
         Reviewed by Dimitri Glazkov.
