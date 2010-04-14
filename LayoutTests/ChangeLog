@@ -1,3 +1,9 @@
+2010-04-13  Mark Rowe  <mrowe@apple.com>
+
+        Update the test results after r57544.
+
+        * http/tests/xmlhttprequest/access-control-basic-whitelist-request-headers-expected.txt:
+
 2010-04-13  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Xan Lopez.
