@@ -1,3 +1,14 @@
+2010-04-14  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add tests for ipv6 address canonicalization.
+        https://bugs.webkit.org/show_bug.cgi?id=37583
+
+        * fast/url/ipv6-expected.txt: Added.
+        * fast/url/ipv6.html: Added.
+        * fast/url/script-tests/ipv6.js: Added.
+
 2010-04-14  Alejandro G. Castro  <alex@igalia.com>
 
         Rubber-stamped by Xan Lopez.
