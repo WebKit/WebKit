@@ -1,3 +1,13 @@
+2010-04-14  Nicolas Weber  <thakis@chromium.org>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Remove passing test from Skipped list.
+        https://bugs.webkit.org/show_bug.cgi?id=34287
+
+        * platform/mac/Skipped:
+        video-cookie.html seems to be passing, so remove it from Skipped list.
+
 2010-04-14  Alejandro G. Castro  <alex@igalia.com>
 
         Rubber-stamped by Xan Lopez.
