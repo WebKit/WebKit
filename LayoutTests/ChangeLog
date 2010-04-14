@@ -1,3 +1,17 @@
+2010-04-14  Adam Roben  <aroben@apple.com>
+
+        Skip xss-DENIED-iframe-src-alias.html on Windows
+
+        I thought that skipping this test was causing other http tests to time
+        out, but Brian Weinstein pointed out that the timing-out tests come
+        before this one so shouldn't be affected by it.
+
+        <http://webkit.org/b/37096> tracks making this test not time out.
+
+        Rubber-stamped by Brian Weinstein.
+
+        * platform/win/Skipped:
+
 2010-04-14  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Adam Barth.
