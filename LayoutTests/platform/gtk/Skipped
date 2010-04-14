@@ -5898,3 +5898,24 @@ media/video-src-invalid-remove.html
 
 # See https://bugs.webkit.org/show_bug.cgi?id=37526
 fast/history/multiple-classes-visited.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=37532
+fast/js/kde/string-1-n.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=37534
+fast/js/kde/string-2-n.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=37535
+inspector/console-format.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=37536
+media/video-reverse-play-duration.html
+
+#https://bugs.webkit.org/show_bug.cgi?id=37537
+plugins/round-trip-npobject.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=37539
+svg/custom/use-on-clip-path-with-transformation.svg
+
+# https://bugs.webkit.org/show_bug.cgi?id=37540
+http/tests/security/xss-DENIED-mime-type-execute-as-html.html
