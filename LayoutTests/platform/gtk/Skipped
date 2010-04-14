@@ -5985,3 +5985,6 @@ printing
 
 # https://bugs.webkit.org/show_bug.cgi?id=37616
 fast/workers/shared-worker-frame-lifecycle.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=37623
+scrollbars/scrollbar-crash-on-refresh.html
