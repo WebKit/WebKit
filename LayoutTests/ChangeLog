@@ -1,3 +1,13 @@
+2010-04-14  Alejandro G. Castro  <alex@igalia.com>
+
+        Rubber-stamped by Xan Lopez.
+
+        Skipping printing, I've duplicated the other printing bugs and
+        left this one.
+        https://bugs.webkit.org/show_bug.cgi?id=37613
+
+        * platform/gtk/Skipped:
+
 2010-04-14  Andrey Kosyakov  <caseq@chromium.ru>
 
         Reviewed by Timothy Hatcher.

@@ -5977,14 +5977,8 @@ media/video-played-ranges-1.html
 # https://bugs.webkit.org/show_bug.cgi?id=37574
 plugins/window-open.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=37585
-printing/numberOfPages.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=37592
-printing/page-break-always-for-overflow.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=37607
-printing/page-break-always.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=37611
 inspector/timeline-layout.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=37613
+printing
