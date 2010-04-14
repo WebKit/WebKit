@@ -1,5 +1,16 @@
 2010-04-13  Adam Roben  <aroben@apple.com>
 
+        Update Windows results for text-control-intrinsic-widths.html
+
+        <http://webkit.org/b/37091> tracks deciding whether these results are
+        better than the previous ones or not.
+
+        Reviewed by Eric Seidel.
+
+        * platform/win/fast/forms/text-control-intrinsic-widths-expected.txt:
+
+2010-04-13  Adam Roben  <aroben@apple.com>
+
         Add Windows failing results for mouse-drag-from-frame-to-other-frame.html
 
         <http://webkit.org/b/37494> tracks fixing this test.
