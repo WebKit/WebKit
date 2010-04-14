@@ -1,3 +1,15 @@
+2010-04-14  Alejandro G. Castro  <alex@igalia.com>
+
+        Rubber-stamped by Xan Lopez.
+
+        Skipping plugins/open-and-close-window-with-plugin.html
+        https://bugs.webkit.org/show_bug.cgi?id=37572
+
+        Skipping media/video-played-ranges-1.html
+        https://bugs.webkit.org/show_bug.cgi?id=37573
+
+        * platform/gtk/Skipped:
+
 2010-04-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r57573.

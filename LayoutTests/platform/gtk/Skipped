@@ -5967,3 +5967,9 @@ plugins/update-widgets-crash.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=37564
 media/audio-data-url.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=37572
+plugins/open-and-close-window-with-plugin.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=37573
+media/video-played-ranges-1.html
