@@ -36,4 +36,4 @@ class RietveldTest(unittest.TestCase):
     def test_url_for_issue(self):
         rietveld = Rietveld(Mock())
         self.assertEqual(rietveld.url_for_issue(34223),
-                         "https://codereview.appspot.com/34223")
+                         "https://wkrietveld.appspot.com/34223")

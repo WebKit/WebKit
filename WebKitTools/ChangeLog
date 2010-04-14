@@ -1,5 +1,11 @@
 2010-04-13  Eric Seidel  <eric@webkit.org>
 
+        Unreviewed, just fixing a constant in the Rietveld unit test.
+
+        * Scripts/webkitpy/common/net/rietveld_unittest.py
+
+2010-04-13  Eric Seidel  <eric@webkit.org>
+
         Unreviewed, just adding missing Mock to fix python tests.
 
         * Scripts/webkitpy/tool/mocktool.py:
@@ -11,7 +17,7 @@
         Add experimental prototype Rietveld integration to webkit-patch upload
         https://bugs.webkit.org/show_bug.cgi?id=37418
 
-        This patch adds bare-bones integrtion with Rietveld for code reviews.
+        This patch adds bare-bones integration with Rietveld for code reviews.
         The behavior is hidden behind the --fancy-review command line flag.
         Currently, there's no support for uploading more than one patch per
         issue (which is a nice feature of Rietveld).  The plan is to play with
