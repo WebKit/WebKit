@@ -6,11 +6,10 @@
    height="600"
    xmlns="http://www.w3.org/2000/svg">
    <path fill="green" d="M 0 0 L 200 0 L 200 200 L 0 200"/>
-   <path fill="red" stroke="red" d="M 0 0 L 10 10 10"/>
    <path fill="red" stroke="red" d="M 602.7771 261.4254 A 318.0399 308.0491 0  1 602.7771 261.4253"/>
    <path fill="red" stroke="red" d="M 0 0 L 10,, 10"/>
    <path fill="red" stroke="red" d="M 0 0 L 10 10E Z"/>
-   <path fill="red" stroke="red" d="M 0 0 L 10 10% Z"/>
+   <path fill="red" stroke="red" d="M 0 0 L 10% 10 Z"/>
    <path fill="red" stroke="red" d="M"/>
    <path fill="red" stroke="red" d="M 0"/>
    <path fill="red" stroke="red" d="M 0 0 0"/>

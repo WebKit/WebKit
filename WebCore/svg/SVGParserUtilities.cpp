@@ -740,15 +740,14 @@ class SVGPathSegListBuilder : private SVGPathParser {
 public:
     bool build(SVGPathSegList* segList, const String& d, bool process)
     {
-        if (!parseSVG(d, process))
-            return false;
+        bool result = parseSVG(d, process);
         size_t size = m_vector.size();
         for (size_t i = 0; i < size; ++i) {
             ExceptionCode ec;
             segList->appendItem(m_vector[i].release(), ec);
         }
         m_vector.clear();
-        return true;
+        return result;
     }
 
 private:

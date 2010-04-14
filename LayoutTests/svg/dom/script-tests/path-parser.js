@@ -26,7 +26,7 @@ function printSegment(segment)
         if (i)
             string += ",";
         var value = segment[names[i]];
-        if (!value) {
+        if (value == undefined) {
             string += "?";
             continue;
         }
@@ -87,8 +87,8 @@ shouldBe("parsePath('M100,200 a3,4,5,006,7')", "'M100,200 C98.5,202.3,98.6,205.7
 shouldBe("parsePath('M100,200 a3,4,5,016,7')", "'M100,200 C101.5,197.7,104.1,197.4,105.8,199.3 C107.4,201.3,107.5,204.7,106,207'");
 shouldBe("parsePath('M100,200 a3,4,5,106,7')", "'M100,200 C98.5,202.3,98.6,205.7,100.2,207.7 C101.9,209.6,104.5,209.3,106,207'");
 shouldBe("parsePath('M100,200 a3,4,5,116,7')", "'M100,200 C101.5,197.7,104.1,197.4,105.8,199.3 C107.4,201.3,107.5,204.7,106,207'");
-shouldBe("parsePath('M100,200 a3,4,5,2,1,6,7')", "''");
-shouldBe("parsePath('M100,200 a3,4,5,1,2,6,7')", "''");
+shouldBe("parsePath('M100,200 a3,4,5,2,1,6,7')", "'M100,200'");
+shouldBe("parsePath('M100,200 a3,4,5,1,2,6,7')", "'M100,200'");
 
 shouldBe("parsePath('M1,2,3,4')", "'M1,2 L3,4'");
 shouldBe("parsePath('m100,200,3,4')", "'M100,200 L103,204'");
@@ -107,8 +107,9 @@ shouldBe("parsePath('M1,2 ')", "'M1,2'");
 shouldBe("parsePath('M1,2\\t')", "'M1,2'");
 shouldBe("parsePath('M1,2\\n')", "'M1,2'");
 shouldBe("parsePath('M1,2\\r')", "'M1,2'");
-shouldBe("parsePath('M1,2\\v')", "''");
-shouldBe("parsePath('M1,2x')", "''");
+shouldBe("parsePath('M1,2\\v')", "'M1,2'");
+shouldBe("parsePath('M1,2x')", "'M1,2'");
+shouldBe("parsePath('M1,2 L40,0#90')", "'M1,2 L40,0'");
 
 shouldBe("parsePath('')", "''");
 shouldBe("parsePath('x')", "''");

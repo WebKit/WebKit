@@ -4,6 +4,7 @@ CONSOLE MESSAGE: line 9: Error: Problem parsing d="M1,2"
 CONSOLE MESSAGE: line 9: Error: Problem parsing d="xM1,2"
 CONSOLE MESSAGE: line 9: Error: Problem parsing d="M1,2"
 CONSOLE MESSAGE: line 9: Error: Problem parsing d="M1,2x"
+CONSOLE MESSAGE: line 9: Error: Problem parsing d="M1,2 L40,0#90"
 CONSOLE MESSAGE: line 9: Error: Problem parsing d=""
 CONSOLE MESSAGE: line 9: Error: Problem parsing d="x"
 CONSOLE MESSAGE: line 9: Error: Problem parsing d="L1,2"
@@ -43,8 +44,8 @@ PASS parsePath('M100,200 a3,4,5,006,7') is 'M100,200 C98.5,202.3,98.6,205.7,100.
 PASS parsePath('M100,200 a3,4,5,016,7') is 'M100,200 C101.5,197.7,104.1,197.4,105.8,199.3 C107.4,201.3,107.5,204.7,106,207'
 PASS parsePath('M100,200 a3,4,5,106,7') is 'M100,200 C98.5,202.3,98.6,205.7,100.2,207.7 C101.9,209.6,104.5,209.3,106,207'
 PASS parsePath('M100,200 a3,4,5,116,7') is 'M100,200 C101.5,197.7,104.1,197.4,105.8,199.3 C107.4,201.3,107.5,204.7,106,207'
-PASS parsePath('M100,200 a3,4,5,2,1,6,7') is ''
-PASS parsePath('M100,200 a3,4,5,1,2,6,7') is ''
+PASS parsePath('M100,200 a3,4,5,2,1,6,7') is 'M100,200'
+PASS parsePath('M100,200 a3,4,5,1,2,6,7') is 'M100,200'
 PASS parsePath('M1,2,3,4') is 'M1,2 L3,4'
 PASS parsePath('m100,200,3,4') is 'M100,200 L103,204'
 PASS parsePath('M 100-200') is 'M100,-200'
@@ -60,8 +61,9 @@ PASS parsePath('M1,2 ') is 'M1,2'
 PASS parsePath('M1,2\t') is 'M1,2'
 PASS parsePath('M1,2\n') is 'M1,2'
 PASS parsePath('M1,2\r') is 'M1,2'
-PASS parsePath('M1,2\v') is ''
-PASS parsePath('M1,2x') is ''
+PASS parsePath('M1,2\v') is 'M1,2'
+PASS parsePath('M1,2x') is 'M1,2'
+PASS parsePath('M1,2 L40,0#90') is 'M1,2 L40,0'
 PASS parsePath('') is ''
 PASS parsePath('x') is ''
 PASS parsePath('L1,2') is ''

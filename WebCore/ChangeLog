@@ -1,3 +1,12 @@
+2010-04-14  Jeff Schiller  <codedread@gmail.com>
+
+        Reviewed by Dirk Schulze.
+
+        Render SVG Paths up to first error, bug 37413: https://bugs.webkit.org/show_bug.cgi?id=37413
+
+        * svg/SVGParserUtilities.cpp:
+        (WebCore::SVGPathSegListBuilder::build):
+
 2010-04-14  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Joseph Pecoraro.
