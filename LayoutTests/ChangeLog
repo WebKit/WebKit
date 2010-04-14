@@ -2,6 +2,19 @@
 
         Reviewed by Darin Fisher.
 
+        Add port URL tests
+        https://bugs.webkit.org/show_bug.cgi?id=37524
+
+        This went pretty well.
+
+        * fast/url/port-expected.txt: Added.
+        * fast/url/port.html: Added.
+        * fast/url/script-tests/port.js: Added.
+
+2010-04-14  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Fisher.
+
         Add LayoutTests for parsing "path" URLs
         https://bugs.webkit.org/show_bug.cgi?id=37581
 

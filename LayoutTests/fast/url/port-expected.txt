@@ -1,0 +1,14 @@
+Test URLs that have a port number.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL canonicalize('http://www.example.com:as df/') should be http://www.example.com:as%20df/. Was http://www.example.com:as df/.
+PASS canonicalize('http://www.example.com:-2/') is 'http://www.example.com:-2/'
+FAIL canonicalize('http://www.example.com:80/') should be http://www.example.com/. Was http://www.example.com:80/.
+PASS canonicalize('http://www.example.com:8080/') is 'http://www.example.com:8080/'
+PASS canonicalize('foobar://www.example.com:80/') is 'foobar://www.example.com:80/'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
