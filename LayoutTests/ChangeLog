@@ -1,3 +1,9 @@
+2010-04-14  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Skipping another crash on the 64bit Gtk slave.
+
+        * platform/gtk/Skipped:
+
 2010-04-14  Alejandro G. Castro  <alex@igalia.com>
 
         Rubber-stamped by Xan Lopez.
