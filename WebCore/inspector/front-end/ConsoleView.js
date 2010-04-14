@@ -93,11 +93,13 @@ WebInspector.ConsoleView = function(drawer)
     this._shortcuts = {};
 
     var shortcut;
-    var clearConsoleHandler = this.requestClearMessages.bind(this);
 
     shortcut = WebInspector.KeyboardShortcut.makeKey("k", WebInspector.KeyboardShortcut.Modifiers.Meta);
-    this._shortcuts[shortcut] = clearConsoleHandler;
+    // This case requires a separate bound function as its isMacOnly property should not be shared among different shortcut handlers.
+    this._shortcuts[shortcut] = this.requestClearMessages.bind(this);
     this._shortcuts[shortcut].isMacOnly = true;
+
+    var clearConsoleHandler = this.requestClearMessages.bind(this);
     shortcut = WebInspector.KeyboardShortcut.makeKey("l", WebInspector.KeyboardShortcut.Modifiers.Ctrl);
     this._shortcuts[shortcut] = clearConsoleHandler;
 

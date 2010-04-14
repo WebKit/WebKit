@@ -1,3 +1,13 @@
+2010-04-14  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Joseph Pecoraro.
+
+        Web Inspector: Ctrl-L (Clear History) does nothing on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=37579
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView):
+
 2010-04-14  Anton Muhin  <antonm@chromium.org>
 
         Not review, build fix.
