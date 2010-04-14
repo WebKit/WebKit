@@ -2780,3 +2780,13 @@ BUG41206 : fast/history/multiple-classes-visited.html = TEXT TIMEOUT
 BUG41292 WIN : fast/url/trivial.html = TEXT TIMEOUT
 BUG41292 : fast/url/ipv4.html = TEXT TIMEOUT
 BUG41292 : fast/url/anchor.html = TEXT TIMEOUT
+
+BUG41455 SKIP : http/tests/xmlhttprequest/origin-whitelisting-all.html = TIMEOUT
+BUG41455 SKIP : http/tests/xmlhttprequest/origin-whitelisting-exact-match.html = TIMEOUT
+BUG41455 SKIP : http/tests/xmlhttprequest/origin-whitelisting-https.html = TIMEOUT
+BUG41455 SKIP : http/tests/xmlhttprequest/origin-whitelisting-ip-addresses-with-subdomains.html = TIMEOUT
+BUG41455 SKIP : http/tests/xmlhttprequest/origin-whitelisting-ip-addresses.html = TIMEOUT
+BUG41455 SKIP : http/tests/xmlhttprequest/origin-whitelisting-subdomains.html = TIMEOUT
+BUG41455 SKIP : http/tests/xmlhttprequest/origin-whitelisting-removal.html = TIMEOUT
+BUG41455 SKIP : http/tests/security/local-image-from-remote-whitelisted.html = TIMEOUT
+
