@@ -1,5 +1,15 @@
 2010-04-13  Adam Roben  <aroben@apple.com>
 
+        Add Windows failing results for mouse-drag-from-frame-to-other-frame.html
+
+        <http://webkit.org/b/37494> tracks fixing this test.
+
+        Reviewed by Eric Seidel.
+
+        * platform/win/fast/events/mouse-drag-from-frame-to-other-frame-expected.txt: Added.
+
+2010-04-13  Adam Roben  <aroben@apple.com>
+
         Add Windows failing results for font-face-opentype.html
 
         <http://webkit.org/b/37089> tracks fixing this test.
