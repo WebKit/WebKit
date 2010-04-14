@@ -2,6 +2,17 @@
 
         Reviewed by Darin Fisher.
 
+        Add LayoutTests for parsing "path" URLs
+        https://bugs.webkit.org/show_bug.cgi?id=37581
+
+        * fast/url/path-url-expected.txt: Added.
+        * fast/url/path-url.html: Added.
+        * fast/url/script-tests/path-url.js: Added.
+
+2010-04-14  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Fisher.
+
         Add LayoutTests for parsing standard URLs
         https://bugs.webkit.org/show_bug.cgi?id=37580
 
