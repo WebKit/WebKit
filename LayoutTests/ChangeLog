@@ -2,6 +2,33 @@
 
         Rubber-stamped by Xan Lopez.
 
+        Skipping media/video-seeking.html
+        https://bugs.webkit.org/show_bug.cgi?id=37551
+
+        Skipping media/video-timeupdate-reverse-play.html
+        https://bugs.webkit.org/show_bug.cgi?id=37552
+
+        Skipping media/video-played-reset.html
+        https://bugs.webkit.org/show_bug.cgi?id=37556
+
+        Skipping http/tests/misc/image-blocked-src-change.html
+        https://bugs.webkit.org/show_bug.cgi?id=37557
+
+        Skipping inspector/console-clear.html
+        https://bugs.webkit.org/show_bug.cgi?id=37558
+
+        Skipping inspector/console-format-collections.html
+        https://bugs.webkit.org/show_bug.cgi?id=37559
+
+        Skipping svg/dom/SVGScriptElement/script-set-href.svg
+        https://bugs.webkit.org/show_bug.cgi?id=37560
+
+        * platform/gtk/Skipped:
+
+2010-04-13  Alejandro G. Castro  <alex@igalia.com>
+
+        Rubber-stamped by Xan Lopez.
+
         Skipping svg/custom/use-instanceRoot-as-event-target.xhtml
         https://bugs.webkit.org/show_bug.cgi?id=37544
 

@@ -5946,3 +5946,18 @@ media/video-seeking.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=37552
 media/video-timeupdate-reverse-play.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=37556
+media/video-played-reset.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=37557
+http/tests/misc/image-blocked-src-change.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=37558
+inspector/console-clear.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=37559
+inspector/console-format-collections.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=37560
+svg/dom/SVGScriptElement/script-set-href.svg
