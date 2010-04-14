@@ -43,4 +43,6 @@
 
 - (void)loadURLString:(NSString *)urlString;
 
+- (void)applicationTerminating;
+
 @end

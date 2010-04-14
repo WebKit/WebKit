@@ -95,4 +95,18 @@ static const WKProcessModel defaultProcessModel = kWKProcessModelSecondaryProces
     [self newWindow:self];
 }
 
+- (void)applicationWillTerminate:(NSNotification *)notification
+{
+    NSArray* windows = [NSApp windows];
+    for (NSWindow* window in windows) {
+        BrowserWindowController *controller = (BrowserWindowController *)[window delegate];
+        [controller applicationTerminating];
+    }
+
+    if (pageNamespace) {
+        WKPageNamespaceRelease(pageNamespace);
+        pageNamespace = 0;
+    }
+}
+
 @end

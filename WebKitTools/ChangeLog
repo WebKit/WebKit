@@ -1,3 +1,19 @@
+2010-04-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Tear down WebKit more completely on window closing and application
+        termination. We still don't block application termination for pending
+        close, but this is a step in the right direction.
+
+        * MiniBrowser/mac/AppDelegate.m:
+        (-[BrowserAppDelegate applicationWillTerminate:]):
+        * MiniBrowser/mac/BrowserWindowController.h:
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController dealloc]):
+        (-[BrowserWindowController windowWillClose:]):
+        (-[BrowserWindowController applicationTerminating]):
+
 2010-04-14  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

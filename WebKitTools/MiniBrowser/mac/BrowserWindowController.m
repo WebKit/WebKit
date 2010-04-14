@@ -46,8 +46,7 @@
 
 - (void)dealloc
 {
-    WKPageNamespaceRelease(_pageNamespace);
-    
+    assert(!_pageNamespace);
     [super dealloc];
 }
 
@@ -71,6 +70,18 @@
     NSLog(@"windowShouldClose");
     BOOL canCloseImmediately = WKPageTryClose(_webView.pageRef);
     return canCloseImmediately;
+}
+
+- (void)windowWillClose:(NSNotification *)notification
+{
+    WKPageNamespaceRelease(_pageNamespace);
+    _pageNamespace = 0;
+}
+
+- (void)applicationTerminating
+{
+    WKPageClose(_webView.pageRef);
+    WKPageRelease(_webView.pageRef);
 }
 
 static void _didStartProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
