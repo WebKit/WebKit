@@ -36,6 +36,7 @@ from webkitpy.common.checkout.api import Checkout
 from webkitpy.common.checkout.scm import detect_scm_system
 from webkitpy.common.net.bugzilla import Bugzilla
 from webkitpy.common.net.buildbot import BuildBot
+from webkitpy.common.net.rietveld import Rietveld
 from webkitpy.common.net.irc.ircproxy import IRCProxy
 from webkitpy.common.system.executive import Executive
 from webkitpy.common.system.user import User
@@ -70,6 +71,7 @@ class WebKitPatch(MultiCommandTool):
         self._scm = None
         self._checkout = None
         self.status_server = StatusServer()
+        self.codereview = Rietveld(self.executive)
 
     def scm(self):
         # Lazily initialize SCM to not error-out before command line parsing (or when running non-scm commands).
@@ -121,6 +123,7 @@ class WebKitPatch(MultiCommandTool):
         if options.dry_run:
             self.scm().dryrun = True
             self.bugs.dryrun = True
+            self.codereview.dryrun = True
         if options.status_host:
             self.status_server.set_host(options.status_host)
         if options.irc_password:

@@ -69,6 +69,13 @@ installer.install(url="http://pypi.python.org/packages/source/m/mechanize/mechan
 installer.install(url="http://pypi.python.org/packages/source/p/pep8/pep8-0.5.0.tar.gz#md5=512a818af9979290cd619cce8e9c2e2b",
                   url_subpath="pep8-0.5.0/pep8.py")
 
+
+rietveld_dir = os.path.join(autoinstalled_dir, "rietveld")
+installer = AutoInstaller(target_dir=rietveld_dir)
+installer.install(url="http://webkit-rietveld.googlecode.com/svn/trunk/static/upload.py",
+                  target_name="upload.py")
+
+
 # Since irclib and ircbot are two top-level packages, we need to import
 # them separately.  We group them into an irc package for better
 # organization purposes.

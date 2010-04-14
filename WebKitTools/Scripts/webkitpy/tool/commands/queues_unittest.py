@@ -71,6 +71,7 @@ class AbstractQueueTest(CommandsTest):
     def _assert_run_webkit_patch(self, run_args):
         queue = TestQueue()
         tool = MockTool()
+        tool.executive = Mock()
         queue.bind_to_tool(tool)
 
         queue.run_webkit_patch(run_args)

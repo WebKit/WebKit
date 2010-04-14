@@ -33,6 +33,7 @@ from webkitpy.common.config.committers import CommitterList, Reviewer
 from webkitpy.common.checkout.commitinfo import CommitInfo
 from webkitpy.common.checkout.scm import CommitMessage
 from webkitpy.common.net.bugzilla import Bug, Attachment
+from webkitpy.common.net.rietveld import Rietveld
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.common.system.deprecated_logging import log
 
@@ -43,6 +44,7 @@ def _id_to_object_dictionary(*objects):
         dictionary[thing["id"]] = thing
     return dictionary
 
+# Testing
 
 # FIXME: The ids should be 1, 2, 3 instead of crazy numbers.
 
@@ -488,13 +490,18 @@ class MockStatusServer(object):
         return 191
 
 
+class MockExecute(Mock):
+    def run_and_throw_if_fail(self, args, quiet=False):
+        return "MOCK output of child process"
+
+
 class MockTool():
 
     def __init__(self, log_executive=False):
         self.wakeup_event = threading.Event()
         self.bugs = MockBugzilla()
         self.buildbot = MockBuildBot()
-        self.executive = Mock()
+        self.executive = MockExecute()
         if log_executive:
             self.executive.run_and_throw_if_fail = lambda args: log("MOCK run_and_throw_if_fail: %s" % args)
         self._irc = None
@@ -503,6 +510,7 @@ class MockTool():
         self._checkout = MockCheckout()
         self.status_server = MockStatusServer()
         self.irc_password = "MOCK irc password"
+        self.codereview = Rietveld(self.executive)
 
     def scm(self):
         return self._scm

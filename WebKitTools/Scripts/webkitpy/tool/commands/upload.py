@@ -164,6 +164,7 @@ class Post(AbstractPatchUploadingCommand):
     steps = [
         steps.CheckStyle,
         steps.ConfirmDiff,
+        steps.PostCodeReview,
         steps.ObsoletePatches,
         steps.PostDiff,
     ]
@@ -208,6 +209,7 @@ class Upload(AbstractPatchUploadingCommand):
         steps.PrepareChangeLog,
         steps.EditChangeLog,
         steps.ConfirmDiff,
+        steps.PostCodeReview,
         steps.ObsoletePatches,
         steps.PostDiff,
     ]

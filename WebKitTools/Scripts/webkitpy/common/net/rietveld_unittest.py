@@ -1,9 +1,9 @@
-# Copyright (C) 2010 Google Inc. All rights reserved.
-# 
+# Copyright (c) 2010 Google Inc. All rights reserved.
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
-# 
+#
 #     * Redistributions of source code must retain the above copyright
 # notice, this list of conditions and the following disclaimer.
 #     * Redistributions in binary form must reproduce the above
@@ -13,7 +13,7 @@
 #     * Neither the name of Google Inc. nor the names of its
 # contributors may be used to endorse or promote products derived from
 # this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 # LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -26,30 +26,14 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import StringIO
+import unittest
 
-from webkitpy.tool.steps.abstractstep import AbstractStep
-from webkitpy.tool.steps.options import Options
+from webkitpy.common.net.rietveld import Rietveld
+from webkitpy.thirdparty.mock import Mock
 
 
-class PostDiff(AbstractStep):
-    @classmethod
-    def options(cls):
-        return [
-            Options.description,
-            Options.review,
-            Options.request_commit,
-            Options.open_bug,
-        ]
-
-    def run(self, state):
-        diff = self.cached_lookup(state, "diff")
-        diff_file = StringIO.StringIO(diff) # add_patch_to_bug expects a file-like object
-        description = self._options.description or "Patch"
-        comment_text = None
-        codereview_issue = state.get("codereview_issue")
-        if codereview_issue:
-            comment_text = "Feel free to provide comments at %s" % self._tool.codereview.url_for_issue(codereview_issue)
-        self._tool.bugs.add_patch_to_bug(state["bug_id"], diff_file, description, comment_text=comment_text, mark_for_review=self._options.review, mark_for_commit_queue=self._options.request_commit)
-        if self._options.open_bug:
-            self._tool.user.open_url(self._tool.bugs.bug_url_for_bug_id(state["bug_id"]))
+class RietveldTest(unittest.TestCase):
+    def test_url_for_issue(self):
+        rietveld = Rietveld(Mock())
+        self.assertEqual(rietveld.url_for_issue(34223),
+                         "https://codereview.appspot.com/34223")

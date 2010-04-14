@@ -40,6 +40,7 @@ class Options(object):
     confirm = make_option("--no-confirm", action="store_false", dest="confirm", default=True, help="Skip confirmation steps.")
     description = make_option("-m", "--description", action="store", type="string", dest="description", help="Description string for the attachment (default: \"patch\")")
     email = make_option("--email", action="store", type="string", dest="email", help="Email address to use in ChangeLogs.")
+    fancy_review = make_option("--fancy-review", action="store_true", dest="fancy_review", default=False, help="(Experimental) Upload the patch to Rietveld code review tool.")
     force_clean = make_option("--force-clean", action="store_true", dest="force_clean", default=False, help="Clean working directory before applying patches (removes local changes and commits)")
     local_commit = make_option("--local-commit", action="store_true", dest="local_commit", default=False, help="Make a local commit for each applied patch")
     non_interactive = make_option("--non-interactive", action="store_true", dest="non_interactive", default=False, help="Never prompt the user, fail as fast as possible.")
