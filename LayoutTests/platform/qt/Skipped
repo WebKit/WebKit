@@ -5225,6 +5225,8 @@ animations/dynamic-stylesheet-loading.html
 # [Qt] Back-forward list dumping is incorrect
 # https://bugs.webkit.org/show_bug.cgi?id=36392
 fast/loader/frame-src-change-added-to-history.html
+fast/loader/frame-src-change-not-added-to-history.html
+fast/loader/frame-location-change-not-added-to-history.html
 
 # fast/loader/stateobjects/replacestate-in-iframe.html caused infinite loop
 # https://bugs.webkit.org/show_bug.cgi?id=36467

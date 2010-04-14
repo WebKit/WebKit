@@ -1,3 +1,12 @@
+2010-04-13  Darin Fisher  <darin@chromium.org>
+
+        Update skipped lists for failing tests:
+        fast/loader/frame-src-change-not-added-to-history.html
+        fast/loader/frame-location-change-not-added-to-history.html
+
+        * platform/mac-tiger/Skipped:
+        * platform/qt/Skipped:
+
 2010-04-13  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Oliver Hunt.
