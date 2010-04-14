@@ -1,3 +1,14 @@
+2010-04-14  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Don't cache SimpleFontData* in getLastResortFallbackFont. The cached entry may be invalidated.
+        https://bugs.webkit.org/show_bug.cgi?id=37599
+
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::fontDataFromDescriptionAndLogFont):
+        (WebCore::FontCache::getLastResortFallbackFont):
+
 2010-04-14  Andrey Kosyakov  <caseq@chromium.ru>
 
         Reviewed by Timothy Hatcher.

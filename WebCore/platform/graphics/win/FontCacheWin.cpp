@@ -301,17 +301,20 @@ SimpleFontData* FontCache::getSimilarFontPlatformData(const Font& font)
     return 0;
 }
 
-static SimpleFontData* fontDataFromDescriptionAndLogFont(FontCache* fontCache, const FontDescription& fontDescription, const LOGFONT& font)
+static SimpleFontData* fontDataFromDescriptionAndLogFont(FontCache* fontCache, const FontDescription& fontDescription, const LOGFONT& font, AtomicString& outFontFamilyName)
 {
-    String fontFamily = String(font.lfFaceName, wcsnlen(font.lfFaceName, LF_FACESIZE));
-    return fontCache->getCachedFontData(fontDescription, fontFamily);
+    AtomicString familyName = String(font.lfFaceName, wcsnlen(font.lfFaceName, LF_FACESIZE));
+    SimpleFontData* fontData = fontCache->getCachedFontData(fontDescription, familyName);
+    if (fontData)
+        outFontFamilyName = familyName;
+    return fontData;
 }
 
 SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& fontDescription)
 {
-    DEFINE_STATIC_LOCAL(SimpleFontData*, simpleFont, ());
-    if (simpleFont)
-        return simpleFont;
+    DEFINE_STATIC_LOCAL(AtomicString, fallbackFontName, ());
+    if (!fallbackFontName.isEmpty())
+        return getCachedFontData(fontDescription, fallbackFontName);
 
     // FIXME: Would be even better to somehow get the user's default font here.  For now we'll pick
     // the default that the user would get without changing any prefs.
@@ -326,16 +329,19 @@ SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& font
         AtomicString("Lucida Sans Unicode"),
         AtomicString("Arial")
     };
+    SimpleFontData* simpleFont;
     for (int i = 0; i < ARRAYSIZE(fallbackFonts); ++i) {
-        if (simpleFont = getCachedFontData(fontDescription, fallbackFonts[i]))
+        if (simpleFont = getCachedFontData(fontDescription, fallbackFonts[i])) {
+            fallbackFontName = fallbackFonts[i];
             return simpleFont;
+        }
     }
 
     // Fall back to the DEFAULT_GUI_FONT if no known Unicode fonts are available.
     if (HFONT defaultGUIFont = static_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT))) {
         LOGFONT defaultGUILogFont;
         GetObject(defaultGUIFont, sizeof(defaultGUILogFont), &defaultGUILogFont);
-        if (simpleFont = fontDataFromDescriptionAndLogFont(this, fontDescription, defaultGUILogFont))
+        if (simpleFont = fontDataFromDescriptionAndLogFont(this, fontDescription, defaultGUILogFont, fallbackFontName))
             return simpleFont;
     }
 
@@ -343,15 +349,15 @@ SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& font
     NONCLIENTMETRICS nonClientMetrics = {0};
     nonClientMetrics.cbSize = sizeof(nonClientMetrics);
     if (SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(nonClientMetrics), &nonClientMetrics, 0)) {
-        if (simpleFont = fontDataFromDescriptionAndLogFont(this, fontDescription, nonClientMetrics.lfMessageFont))
+        if (simpleFont = fontDataFromDescriptionAndLogFont(this, fontDescription, nonClientMetrics.lfMessageFont, fallbackFontName))
             return simpleFont;
-        if (simpleFont = fontDataFromDescriptionAndLogFont(this, fontDescription, nonClientMetrics.lfMenuFont))
+        if (simpleFont = fontDataFromDescriptionAndLogFont(this, fontDescription, nonClientMetrics.lfMenuFont, fallbackFontName))
             return simpleFont;
-        if (simpleFont = fontDataFromDescriptionAndLogFont(this, fontDescription, nonClientMetrics.lfStatusFont))
+        if (simpleFont = fontDataFromDescriptionAndLogFont(this, fontDescription, nonClientMetrics.lfStatusFont, fallbackFontName))
             return simpleFont;
-        if (simpleFont = fontDataFromDescriptionAndLogFont(this, fontDescription, nonClientMetrics.lfCaptionFont))
+        if (simpleFont = fontDataFromDescriptionAndLogFont(this, fontDescription, nonClientMetrics.lfCaptionFont, fallbackFontName))
             return simpleFont;
-        if (simpleFont = fontDataFromDescriptionAndLogFont(this, fontDescription, nonClientMetrics.lfSmCaptionFont))
+        if (simpleFont = fontDataFromDescriptionAndLogFont(this, fontDescription, nonClientMetrics.lfSmCaptionFont, fallbackFontName))
             return simpleFont;
     }
     
