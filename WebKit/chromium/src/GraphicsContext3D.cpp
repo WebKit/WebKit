@@ -218,7 +218,7 @@ public:
     void pixelStorei(unsigned long pname, long param);
     void polygonOffset(double factor, double units);
 
-    PassRefPtr<WebGLArray> readPixels(long x, long y, unsigned long width, unsigned long height, unsigned long format, unsigned long type);
+    void readPixels(long x, long y, unsigned long width, unsigned long height, unsigned long format, unsigned long type, void* data);
 
     void releaseShaderCompiler();
     void renderbufferStorage(unsigned long target, unsigned long internalformat, unsigned long width, unsigned long height);
@@ -590,6 +590,12 @@ rt GraphicsContext3DInternal::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6) \
     return m_impl->name(a1, a2, a3, a4, a5, a6);       \
 }
 
+#define DELEGATE_TO_IMPL_7(name, t1, t2, t3, t4, t5, t6, t7) \
+void GraphicsContext3DInternal::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6, t7 a7) \
+{ \
+    m_impl->name(a1, a2, a3, a4, a5, a6, a7);   \
+}
+
 #define DELEGATE_TO_IMPL_7R(name, t1, t2, t3, t4, t5, t6, t7, rt) \
 rt GraphicsContext3DInternal::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6, t7 a7) \
 { \
@@ -804,15 +810,7 @@ DELEGATE_TO_IMPL_1(lineWidth, double)
 DELEGATE_TO_IMPL_1_X(linkProgram, WebGLProgram*)
 DELEGATE_TO_IMPL_2(pixelStorei, unsigned long, long)
 DELEGATE_TO_IMPL_2(polygonOffset, double, double)
-
-PassRefPtr<WebGLArray> GraphicsContext3DInternal::readPixels(long x, long y, unsigned long width, unsigned long height, unsigned long format, unsigned long type)
-{
-    // FIXME: take into account pack alignment.
-    RefPtr<WebGLUnsignedByteArray> array = WebGLUnsignedByteArray::create(width * height * 4);
-    m_impl->readPixels(x, y, width, height, format, type, array->baseAddress());
-    return array;
-}
-
+DELEGATE_TO_IMPL_7(readPixels, long, long, unsigned long, unsigned long, unsigned long, unsigned long, void*)
 DELEGATE_TO_IMPL(releaseShaderCompiler)
 DELEGATE_TO_IMPL_4(renderbufferStorage, unsigned long, unsigned long, unsigned long, unsigned long)
 DELEGATE_TO_IMPL_2(sampleCoverage, double, bool)
@@ -1026,6 +1024,12 @@ rt GraphicsContext3D::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6) \
     return m_internal->name(a1, a2, a3, a4, a5, a6);       \
 }
 
+#define DELEGATE_TO_INTERNAL_7(name, t1, t2, t3, t4, t5, t6, t7) \
+void GraphicsContext3D::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6, t7 a7) \
+{ \
+    m_internal->name(a1, a2, a3, a4, a5, a6, a7);   \
+}
+
 #define DELEGATE_TO_INTERNAL_7R(name, t1, t2, t3, t4, t5, t6, t7, rt) \
 rt GraphicsContext3D::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6, t7 a7) \
 { \
@@ -1183,7 +1187,7 @@ DELEGATE_TO_INTERNAL_1(linkProgram, WebGLProgram*)
 DELEGATE_TO_INTERNAL_2(pixelStorei, unsigned long, long)
 DELEGATE_TO_INTERNAL_2(polygonOffset, double, double)
 
-DELEGATE_TO_INTERNAL_6R(readPixels, long, long, unsigned long, unsigned long, unsigned long, unsigned long, PassRefPtr<WebGLArray>)
+DELEGATE_TO_INTERNAL_7(readPixels, long, long, unsigned long, unsigned long, unsigned long, unsigned long, void*)
 
 DELEGATE_TO_INTERNAL(releaseShaderCompiler)
 DELEGATE_TO_INTERNAL_4(renderbufferStorage, unsigned long, unsigned long, unsigned long, unsigned long)

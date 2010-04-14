@@ -1,3 +1,15 @@
+2010-04-14  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        readPixels must take PACK_ALIGNMENT into account
+        https://bugs.webkit.org/show_bug.cgi?id=34718
+
+        * src/GraphicsContext3D.cpp: Refactor readPixels.
+        * src/WebGraphicsContext3DDefaultImpl.cpp:
+        (WebKit::WebGraphicsContext3DDefaultImpl::readBackFramebuffer): Temporarily disable pack alignment for glReadPixels.
+        (WebKit::WebGraphicsContext3DDefaultImpl::readPixels): Move array allocation and alpha fix to WebGLRenderingContext; flush before read pixels.
+
 2010-04-14  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.

@@ -1,0 +1,113 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css"/>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/webgl-test.js"></script>
+<script src="resources/utils3d.js"></script>
+<script id="vshader" type="x-shader/x-vertex">
+attribute vec3 pos;
+attribute vec4 colorIn;
+varying vec4 color;
+
+void main()
+{
+    color = colorIn;
+    gl_Position = vec4(pos.xyz, 1.0);
+}
+</script>
+
+<script id="fshader" type="x-shader/x-fragment">
+varying vec4 color;
+
+void main()
+{
+    gl_FragColor = color;
+}
+</script>
+
+<script>
+var successfullyParsed = false;
+
+// These four declarations need to be global for "shouldBe" to see them
+var gl = null;
+var array = null;
+var expectedSize = 0;
+var pixel = [ 0, 0, 0, 1 ];
+
+function init()
+{
+    if (window.layoutTestController) {
+        layoutTestController.overridePreference("WebKitWebGLEnabled", "1");
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    description('Verify readPixels() works fine with various PACK_ALIGNMENT values.');
+
+    runTest();
+}
+
+function runTestIteration(packAlignment, width, height, size)
+{
+    debug("Testing PACK_ALIGNMENT = " + packAlignment + ", width = " + width + ", height = " + height);
+    gl.clearColor(1, 1, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.pixelStorei(gl.PACK_ALIGNMENT, packAlignment);
+    array = gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE);
+    expectedSize = size;
+    shouldBe("array.length", "expectedSize");
+    // Check the last pixel of the last row.
+    var padding = 0;
+    if (height > 1)
+        padding = (size - width * height * 4) / (height - 1);
+    var bytesPerRow = width * 4 + padding;
+    var pos = bytesPerRow * (height - 1) + (width - 1) * 4;
+    pixel[0] = array[pos];
+    pixel[1] = array[pos + 1];
+    pixel[2] = array[pos + 2];
+    pixel[3] = array[pos + 3];
+    shouldBe("pixel", "[ 255, 255, 0, 255]");
+}
+
+function runTest()
+{
+    shouldBeNonNull("gl = initWebGL('example', 'vshader', 'fshader', [ 'pos', 'colorIn' ], [ 0, 0, 0, 1 ], 1)");
+    gl.disable(gl.BLEND);
+
+    runTestIteration(1, 1, 2, 8);
+    runTestIteration(2, 1, 2, 8);
+    runTestIteration(4, 1, 2, 8);
+    runTestIteration(8, 1, 2, 12);
+    runTestIteration(4, 2, 2, 16);
+    runTestIteration(8, 2, 2, 16);
+    runTestIteration(4, 3, 2, 24);
+    runTestIteration(8, 3, 2, 28);
+    runTestIteration(4, 4, 2, 32);
+    runTestIteration(8, 4, 2, 32);
+    runTestIteration(8, 5, 1, 20);
+    runTestIteration(4, 5, 2, 40);
+    runTestIteration(8, 5, 2, 44);
+    runTestIteration(8, 6, 2, 48);
+    runTestIteration(8, 7, 2, 60);
+    runTestIteration(8, 8, 2, 64);
+
+    successfullyParsed = true;
+    var epilogue = document.createElement("script");
+    epilogue.onload = finish;
+    epilogue.src = "../../js/resources/js-test-post.js";
+    document.body.appendChild(epilogue);
+}
+
+function finish() {
+    if (window.layoutTestController) {
+        layoutTestController.notifyDone();
+    }
+}
+</script>
+</head>
+<body onload="init()">
+<canvas id="example" width="32px" height="32px"></canvas>
+<div id="description"></div>
+<div id="console"></div>
+</body>
+</html>

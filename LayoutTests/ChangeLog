@@ -1,3 +1,13 @@
+2010-04-14  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        readPixels must take PACK_ALIGNMENT into account
+        https://bugs.webkit.org/show_bug.cgi?id=34718
+
+        * fast/canvas/webgl/read-pixels-expected.txt: Verify pixelStorei and readPixels.
+        * fast/canvas/webgl/read-pixels.html: Ditto.
+
 2010-04-14  Nicolas Weber  <thakis@chromium.org>
 
         Reviewed by Gustavo Noronha Silva.

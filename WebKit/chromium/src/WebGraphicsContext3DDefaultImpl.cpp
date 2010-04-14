@@ -661,6 +661,15 @@ bool WebGraphicsContext3DDefaultImpl::readBackFramebuffer(unsigned char* pixels,
             glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
         }
     }
+
+    GLint packAlignment = 4;
+    bool mustRestorePackAlignment = false;
+    glGetIntegerv(GL_PACK_ALIGNMENT, &packAlignment);
+    if (packAlignment > 4) {
+        glPixelStorei(GL_PACK_ALIGNMENT, 4);
+        mustRestorePackAlignment = true;
+    }
+
 #if PLATFORM(SKIA)
     glReadPixels(0, 0, m_cachedWidth, m_cachedHeight, GL_BGRA, GL_UNSIGNED_BYTE, pixels);
 #elif PLATFORM(CG)
@@ -668,6 +677,9 @@ bool WebGraphicsContext3DDefaultImpl::readBackFramebuffer(unsigned char* pixels,
 #else
 #error Must port to your platform
 #endif
+
+    if (mustRestorePackAlignment)
+        glPixelStorei(GL_PACK_ALIGNMENT, packAlignment);
 
     if (mustRestoreFBO)
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_boundFBO);
@@ -1152,27 +1164,19 @@ DELEGATE_TO_GL_2(polygonOffset, PolygonOffset, double, double)
 
 void WebGraphicsContext3DDefaultImpl::readPixels(long x, long y, unsigned long width, unsigned long height, unsigned long format, unsigned long type, void* pixels)
 {
+    // FIXME: remove the two glFlush calls when the driver bug is fixed, i.e.,
+    // all previous rendering calls should be done before reading pixels.
+    glFlush();
 #ifndef RENDER_TO_DEBUGGING_WINDOW
     if (m_attributes.antialias && m_boundFBO == m_multisampleFBO) {
         glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_multisampleFBO);
         glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, m_fbo);
         glBlitFramebufferEXT(x, y, x + width, y + height, x, y, x + width, y + height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
+        glFlush();
     }
 #endif
     glReadPixels(x, y, width, height, format, type, pixels);
-#if PLATFORM(CG)
-    if (!m_attributes.alpha) {
-        // If alpha is off, by default glReadPixels should set the alpha to 255 instead of 0.
-        // This is a hack until glReadPixels fixes its behavior.
-        // Pixels are stored in WebGLUnsignedByteArray, which is unsigned char array.
-        unsigned char* data = reinterpret_cast<unsigned char*>(pixels);
-        // FIXME: take into account pack alignment.
-        unsigned long byteLength = width * height * 4 * sizeof(unsigned char);
-        for (unsigned long i = 3; i < byteLength; i += 4)
-            data[i] = 255;
-    }
-#endif
 #ifndef RENDER_TO_DEBUGGING_WINDOW
     if (m_attributes.antialias && m_boundFBO == m_multisampleFBO)
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_boundFBO);

@@ -344,6 +344,11 @@ class WebKitCSSMatrix;
         TextureUnitState m_textureUnits[32];
         unsigned long m_activeTextureUnit;
 
+        int m_packAlignment;
+        int m_unpackAlignment;
+        unsigned long m_implementationColorReadFormat;
+        unsigned long m_implementationColorReadType;
+
         // Helpers for getParameter and others
         WebGLGetInfo getBooleanParameter(unsigned long pname);
         WebGLGetInfo getFloatParameter(unsigned long pname);

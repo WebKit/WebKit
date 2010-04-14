@@ -801,36 +801,22 @@ void GraphicsContext3D::polygonOffset(double factor, double units)
     ::glPolygonOffset(static_cast<float>(factor), static_cast<float>(units));
 }
 
-PassRefPtr<WebGLArray> GraphicsContext3D::readPixels(long x, long y, unsigned long width, unsigned long height, unsigned long format, unsigned long type)
+void GraphicsContext3D::readPixels(long x, long y, unsigned long width, unsigned long height, unsigned long format, unsigned long type, void* data)
 {
+    // FIXME: remove the two glFlush calls when the driver bug is fixed, i.e.,
+    // all previous rendering calls should be done before reading pixels.
     ensureContext(m_contextObj);
-    
-    // FIXME: For now we only accept GL_UNSIGNED_BYTE/GL_RGBA. In reality OpenGL ES 2.0 accepts that pair and one other
-    // as specified by GL_IMPLEMENTATION_COLOR_READ_FORMAT and GL_IMPLEMENTATION_COLOR_READ_TYPE. But for now we will
-    // not accept those.
-    // FIXME: Also, we should throw when an unacceptable value is passed
-    if (type != GL_UNSIGNED_BYTE || format != GL_RGBA)
-        return 0;
-        
+    ::glFlush();
     if (m_attrs.antialias && m_boundFBO == m_multisampleFBO) {
         ::glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_multisampleFBO);
         ::glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, m_fbo);
         ::glBlitFramebufferEXT(x, y, x + width, y + height, x, y, x + width, y + height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
         ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
+        ::glFlush();
     }
-    RefPtr<WebGLUnsignedByteArray> array = WebGLUnsignedByteArray::create(width * height * 4);
-    ::glReadPixels(x, y, width, height, format, type, (GLvoid*) array->data());
+    ::glReadPixels(x, y, width, height, format, type, data);
     if (m_attrs.antialias && m_boundFBO == m_multisampleFBO)
         ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_multisampleFBO);
-    if (!m_attrs.alpha) {
-        // If alpha is off, by default glReadPixels should set the alpha to 255 instead of 0.
-        // This is a hack until ::glReadPixels fixes its behavior.
-        GLubyte* data = reinterpret_cast<GLubyte*>(array->data());
-        unsigned byteLength = array->byteLength();
-        for (unsigned i = 3; i < byteLength; i += 4)
-            data[i] = 255;
-    }
-    return array;    
 }
 
 void GraphicsContext3D::releaseShaderCompiler()

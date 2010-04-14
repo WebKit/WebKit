@@ -38,6 +38,7 @@
 #include "RenderBox.h"
 #include "RenderLayer.h"
 #include "WebGLActiveInfo.h"
+#include "WebGLUnsignedShortArray.h"
 #include "WebGLBuffer.h"
 #include "WebGLContextAttributes.h"
 #include "WebGLFramebuffer.h"
@@ -85,11 +86,21 @@ WebGLRenderingContext::WebGLRenderingContext(HTMLCanvasElement* passedCanvas, Pa
     , m_needsUpdate(true)
     , m_markedCanvasDirty(false)
     , m_activeTextureUnit(0)
+    , m_packAlignment(4)
+    , m_unpackAlignment(4)
 {
     ASSERT(m_context);
     int numVertexAttribs = 0;
     m_context->getIntegerv(GraphicsContext3D::MAX_VERTEX_ATTRIBS, &numVertexAttribs);
     m_maxVertexAttribs = numVertexAttribs;
+    int implementationColorReadFormat = GraphicsContext3D::RGBA;
+    m_context->getIntegerv(GraphicsContext3D::IMPLEMENTATION_COLOR_READ_FORMAT, &implementationColorReadFormat);
+    m_implementationColorReadFormat = implementationColorReadFormat;
+    int implementationColorReadType = GraphicsContext3D::UNSIGNED_BYTE;
+    m_context->getIntegerv(GraphicsContext3D::IMPLEMENTATION_COLOR_READ_TYPE, &implementationColorReadType);
+    // FIXME: remove the getError() when IMPLEMENTATION_COLOR_READ_FORMAT/TYPE are supported.
+    m_context->getError();
+    m_implementationColorReadType = implementationColorReadType;
     m_context->reshape(canvas()->width(), canvas()->height());
     m_context->viewport(0, 0, canvas()->width(), canvas()->height());
 }
@@ -1564,6 +1575,16 @@ void WebGLRenderingContext::linkProgram(WebGLProgram* program, ExceptionCode& ec
 void WebGLRenderingContext::pixelStorei(unsigned long pname, long param)
 {
     m_context->pixelStorei(pname, param);
+    if (param == 1 || param == 2 || param == 4 || param == 8) {
+        switch (pname) {
+        case GraphicsContext3D::PACK_ALIGNMENT:
+            m_packAlignment = static_cast<int>(param);
+            break;
+        case GraphicsContext3D::UNPACK_ALIGNMENT:
+            m_unpackAlignment = static_cast<int>(param);
+            break;
+        }
+    }
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1575,7 +1596,76 @@ void WebGLRenderingContext::polygonOffset(double factor, double units)
 
 PassRefPtr<WebGLArray> WebGLRenderingContext::readPixels(long x, long y, unsigned long width, unsigned long height, unsigned long format, unsigned long type)
 {
-    RefPtr<WebGLArray> array = m_context->readPixels(x, y, width, height, format, type);
+    // Validate enums.
+    unsigned long componentsPerPixel = 0;
+    switch (format) {
+    case GraphicsContext3D::ALPHA:
+        componentsPerPixel = 1;
+        break;
+    case GraphicsContext3D::RGB:
+        componentsPerPixel = 3;
+        break;
+    case GraphicsContext3D::RGBA:
+        componentsPerPixel = 4;
+        break;
+    default:
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
+        return 0;
+    }
+    unsigned long bytesPerComponent = 0;
+    switch (type) {
+    case GraphicsContext3D::UNSIGNED_BYTE:
+        bytesPerComponent = sizeof(unsigned char);
+        break;
+    case GraphicsContext3D::UNSIGNED_SHORT_5_6_5:
+    case GraphicsContext3D::UNSIGNED_SHORT_4_4_4_4:
+    case GraphicsContext3D::UNSIGNED_SHORT_5_5_5_1:
+        componentsPerPixel = 1;
+        bytesPerComponent = sizeof(unsigned short);
+        break;
+    default:
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
+        return 0;
+    }
+    if (!(format == GraphicsContext3D::RGBA && type == GraphicsContext3D::UNSIGNED_BYTE || format == m_implementationColorReadFormat && type == m_implementationColorReadFormat)) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
+        return 0;
+    }
+    // Calculate array size, taking into consideration of PACK_ALIGNMENT.
+    unsigned long bytesPerRow = componentsPerPixel * bytesPerComponent * width;
+    unsigned long padding = 0;
+    unsigned long residualBytes = bytesPerRow % m_packAlignment;
+    if (residualBytes) {
+        padding = m_packAlignment - residualBytes;
+        bytesPerRow += padding;
+    }
+    // The last row needs no padding.
+    unsigned long totalBytes = bytesPerRow * height - padding;
+    unsigned long num = totalBytes / bytesPerComponent;
+    RefPtr<WebGLArray> array;
+    if (type == GraphicsContext3D::UNSIGNED_BYTE)
+        array = WebGLUnsignedByteArray::create(num);
+    else
+        array = WebGLUnsignedShortArray::create(num);
+    void* data = array->baseAddress();
+    m_context->readPixels(x, y, width, height, format, type, data);
+#if PLATFORM(CG)
+    // FIXME: remove this section when GL driver bug on Mac is fixed, i.e.,
+    // when alpha is off, readPixels should set alpha to 255 instead of 0.
+    if ((format == GraphicsContext3D::ALPHA || format == GraphicsContext3D::RGBA) && !m_context->getContextAttributes().alpha) {
+        if (type == GraphicsContext3D::UNSIGNED_BYTE) {
+            unsigned char* pixels = reinterpret_cast<unsigned char*>(data);
+            for (unsigned long iy = 0; iy < height; ++iy) {
+                for (unsigned long ix = 0; ix < width; ++ix) {
+                    pixels[componentsPerPixel - 1] = 255;
+                    pixels += componentsPerPixel;
+                }
+                pixels += padding;
+            }
+        }
+        // FIXME: check whether we need to do the same with UNSIGNED_SHORT.
+    }
+#endif
     cleanupAfterGraphicsCall(false);
     return array;
 }
