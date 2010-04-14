@@ -1,3 +1,18 @@
+2010-04-14  Aaron Boodman  <aa@chromium.org>
+
+        Reviewed by David Levin.
+
+        Support relative URLs for notifications on Chromium. They weren't working previously because WebCore was inserting
+        the relative URL into a KURL instance, but when KURL is backed by GURL as it is on Chromium, relative URLs are
+        unsupported. Fixed by resolving the relative URL first.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36623
+
+        Adding tests for this is difficult because we don't currently have DRT support for notifications on Mac, only Windows.
+
+        * public/WebNotification.h: Remove deprecated icon() method.
+        * src/WebNotification.cpp: Ditto.
+
 2010-04-14  Jay Civelli  <jcivelli@chromium.org>
 
         Reviewed by Dimitri Glazkov.

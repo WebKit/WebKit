@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-Notification::Notification(const String& url, ScriptExecutionContext* context, ExceptionCode& ec, NotificationPresenter* provider)
+Notification::Notification(const KURL& url, ScriptExecutionContext* context, ExceptionCode& ec, NotificationPresenter* provider)
     : ActiveDOMObject(context, this)
     , m_isHTML(true)
     , m_isShowing(false)
@@ -54,11 +54,12 @@ Notification::Notification(const String& url, ScriptExecutionContext* context, E
         return;
     }
 
-    m_notificationURL = context->completeURL(url);
-    if (url.isEmpty() || !m_notificationURL.isValid()) {
+    if (url.isEmpty() || !url.isValid()) {
         ec = SYNTAX_ERR;
         return;
     }
+
+    m_notificationURL = url;
 }
 
 Notification::Notification(const NotificationContents& contents, ScriptExecutionContext* context, ExceptionCode& ec, NotificationPresenter* provider)
@@ -74,9 +75,7 @@ Notification::Notification(const NotificationContents& contents, ScriptExecution
         return;
     }
 
-    if (!contents.icon().isEmpty())
-        m_iconURL = context->completeURL(contents.icon());
-    if (!m_iconURL.isEmpty() && !m_iconURL.isValid()) {
+    if (!contents.icon().isEmpty() && !contents.icon().isValid()) {
         ec = SYNTAX_ERR;
         return;
     }

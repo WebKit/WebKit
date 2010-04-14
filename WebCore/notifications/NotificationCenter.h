@@ -55,7 +55,11 @@ namespace WebCore {
                 ec = INVALID_STATE_ERR;
                 return 0;
             }
-            return Notification::create(KURL(ParsedURLString, URI), context(), ec, presenter());
+            if (URI.isEmpty()) {
+                ec = SYNTAX_ERR;
+                return 0;
+            }
+            return Notification::create(m_scriptExecutionContext->completeURL(URI), context(), ec, presenter());
         }
 
         Notification* createNotification(const String& iconURI, const String& title, const String& body, ExceptionCode& ec)
@@ -64,7 +68,7 @@ namespace WebCore {
                 ec = INVALID_STATE_ERR;
                 return 0;
             }
-            NotificationContents contents(iconURI, title, body);
+            NotificationContents contents(iconURI.isEmpty() ? KURL() : m_scriptExecutionContext->completeURL(iconURI), title, body);
             return Notification::create(contents, context(), ec, presenter());
         }
 

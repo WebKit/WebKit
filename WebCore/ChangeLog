@@ -1,3 +1,27 @@
+2010-04-14  Aaron Boodman  <aa@chromium.org>
+
+        Reviewed by David Levin.
+
+        Support relative URLs for notifications on Chromium. They weren't working previously because WebCore was inserting
+        the relative URL into a KURL instance, but when KURL is backed by GURL as it is on Chromium, relative URLs are
+        unsupported. Fixed by resolving the relative URL first.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36623
+
+        Adding tests for this is difficult because we don't currently have DRT support for notifications on Mac, only Windows.
+
+        * notifications/Notification.cpp:
+        (WebCore::Notification::Notification): Accept resolved KURL instead of relative string.
+        * notifications/Notification.h:
+        (WebCore::Notification::create): Ditto.
+        (WebCore::Notification::iconURL): Return resolved KURL instead of relative string.
+        * notifications/NotificationCenter.h:
+        (WebCore::NotificationCenter::createHTMLNotification): Immediately resolve URL instead of passing off relative string.
+        (WebCore::NotificationCenter::createNotification): Ditto.
+        * notifications/NotificationContents.h:
+        (WebCore::NotificationContents::NotificationContents): Accept resolved KURL instead of relative string.
+        (WebCore::NotificationContents::icon): Return resolved URL.
+
 2010-04-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
