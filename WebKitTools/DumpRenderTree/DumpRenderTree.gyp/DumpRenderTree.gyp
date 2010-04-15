@@ -55,6 +55,7 @@
             'mac_bundle': 1,
             'dependencies': [
                 '<(webkit_api_dir)/WebKit.gyp:webkit',
+                '<(webkit_top)/JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf_config',
                 '<(chromium_src_dir)/third_party/npapi/npapi.gyp:npapi',
                 '<(chromium_src_dir)/skia/skia.gyp:skia',
                 '<(chromium_src_dir)/webkit/webkit.gyp:webkit_support',

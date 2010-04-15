@@ -43,7 +43,7 @@ class TestShell;
 namespace WebKit {
 class WebFrame;
 class WebURL;
-class WebURLError;
+struct WebURLError;
 struct WebRect;
 }
 namespace skia {

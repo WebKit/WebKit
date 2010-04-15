@@ -49,6 +49,10 @@
 #include "public/WebView.h"
 #include "webkit/support/webkit_support.h"
 
+#if OS(WINDOWS)
+#include <wtf/OwnArrayPtr.h>
+#endif
+
 using namespace WebKit;
 using namespace std;
 
@@ -647,7 +651,9 @@ void LayoutTestController::pathToLocalResource(const CppArgumentList& arguments,
             tempLength = GetTempPathW(bufferSize, tempPath.get());
             ASSERT(tempLength < bufferSize);
         }
-        result->set(WebString(tempPath.get(), tempLength).utf8() + url.substr(tempPrefixLength));
+        std::string resultPath(WebString(tempPath.get(), tempLength).utf8());
+        resultPath.append(url.substr(tempPrefixLength));
+        result->set(resultPath);
         return;
     }
 #endif

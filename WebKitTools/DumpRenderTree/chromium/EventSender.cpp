@@ -300,14 +300,14 @@ void EventSender::reset()
     pressedButton = WebMouseEvent::ButtonNone;
     dragMode.set(true);
 #if OS(WINDOWS)
-    wmKeyDown.Set(WM_KEYDOWN);
-    wmKeyUp.Set(WM_KEYUP);
-    wmChar.Set(WM_CHAR);
-    wmDeadChar.Set(WM_DEADCHAR);
-    wmSysKeyDown.Set(WM_SYSKEYDOWN);
-    wmSysKeyUp.Set(WM_SYSKEYUP);
-    wmSysChar.Set(WM_SYSCHAR);
-    wmSysDeadChar.Set(WM_SYSDEADCHAR);
+    wmKeyDown.set(WM_KEYDOWN);
+    wmKeyUp.set(WM_KEYUP);
+    wmChar.set(WM_CHAR);
+    wmDeadChar.set(WM_DEADCHAR);
+    wmSysKeyDown.set(WM_SYSKEYDOWN);
+    wmSysKeyUp.set(WM_SYSKEYUP);
+    wmSysChar.set(WM_SYSCHAR);
+    wmSysDeadChar.set(WM_SYSDEADCHAR);
 #endif
     lastMousePos = WebPoint(0, 0);
     lastClickTimeSec = 0;
@@ -632,7 +632,7 @@ void EventSender::dispatchMessage(const CppArgumentList& arguments, CppVariant* 
 #if OS(WINDOWS)
     if (arguments.size() == 3) {
         // Grab the message id to see if we need to dispatch it.
-        int msg = arguments[0].ToInt32();
+        int msg = arguments[0].toInt32();
 
         // WebKit's version of this function stuffs a MSG struct and uses
         // TranslateMessage and DispatchMessage. We use a WebKeyboardEvent, which
@@ -642,8 +642,8 @@ void EventSender::dispatchMessage(const CppArgumentList& arguments, CppVariant* 
 
         webview()->layout();
 
-        unsigned long lparam = static_cast<unsigned long>(arguments[2].ToDouble());
-        webview()->handleInputEvent(WebInputEventFactory::keyboardEvent(0, msg, arguments[1].ToInt32(), lparam));
+        unsigned long lparam = static_cast<unsigned long>(arguments[2].toDouble());
+        webview()->handleInputEvent(WebInputEventFactory::keyboardEvent(0, msg, arguments[1].toInt32(), lparam));
     } else
         ASSERT_NOT_REACHED();
 #endif

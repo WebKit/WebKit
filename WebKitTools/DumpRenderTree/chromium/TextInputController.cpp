@@ -36,6 +36,7 @@
 #include "public/WebRange.h"
 #include "public/WebString.h"
 #include "public/WebView.h"
+#include <wtf/StringExtras.h>
 #include <string>
 
 using namespace WebKit;
