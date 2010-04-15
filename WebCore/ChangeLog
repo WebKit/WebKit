@@ -1,3 +1,22 @@
+2010-04-15  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        LayoutTest breakage in V8 bindings after r57627
+        https://bugs.webkit.org/show_bug.cgi?id=37660
+
+        Fixes breakage of the following tests due to an error in V8 bindings for
+        NamedNodeMap:
+        hc_namednodemapinuseattributeerr.html
+        hc_namednodemapsetnameditemreturnvalue.html
+        hc_namednodemapwrongdocumenterr.html
+        hc_namednodemapinvalidtype1.html
+        NamedNodeMap-setNamedItem-crash.html
+
+        * bindings/v8/custom/V8NamedNodeMapCustom.cpp:
+        (WebCore::V8NamedNodeMap::setNamedItemNSCallback):
+        (WebCore::V8NamedNodeMap::setNamedItemCallback):
+
 2010-04-15  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Anders Carlsson.

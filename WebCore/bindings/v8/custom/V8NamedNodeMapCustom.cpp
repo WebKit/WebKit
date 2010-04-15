@@ -88,7 +88,7 @@ v8::Handle<v8::Value> V8NamedNodeMap::setNamedItemNSCallback(const v8::Arguments
 
     ExceptionCode ec = 0;
     RefPtr<Node> result = imp->setNamedItemNS(newNode, ec);
-    if (UNLIKELY(!ec)) {
+    if (UNLIKELY(ec)) {
         throwError(ec);
         return v8::Handle<v8::Value>();
     }
@@ -109,7 +109,7 @@ v8::Handle<v8::Value> V8NamedNodeMap::setNamedItemCallback(const v8::Arguments &
 
     ExceptionCode ec = 0;
     RefPtr<Node> result = imp->setNamedItem(newNode, ec);
-    if (UNLIKELY(!ec)) {
+    if (UNLIKELY(ec)) {
         throwError(ec);
         return v8::Handle<v8::Value>();
     }
