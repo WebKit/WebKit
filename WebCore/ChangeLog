@@ -1,3 +1,16 @@
+2010-04-14  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Spatial Navigation: remove unnecessery assignment in updateFocusCandidateIfCloser method
+        https://bugs.webkit.org/show_bug.cgi?id=37634
+
+        This assignment line is not longer needed after r57061, bug that refactored all
+        assignment logic to happen lines below in the method.
+
+        * page/FocusController.cpp:
+        (WebCore::updateFocusCandidateIfCloser):
+
 2010-04-15  Yury Semikhatsky  <yurys@google.com>
 
         Reviewed by Pavel Feldman.

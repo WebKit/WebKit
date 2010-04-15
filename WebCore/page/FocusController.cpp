@@ -363,8 +363,6 @@ static void updateFocusCandidateIfCloser(Node* focusedNode, const FocusCandidate
         if (closest.alignment < candidate.alignment
          && closest.parentAlignment < candidate.alignment)
             closest.distance = maxDistance();
-
-        closest.alignment = candidate.alignment;
     }
 
     // Bail out if candidate's distance is larger than that of the closest candidate.
