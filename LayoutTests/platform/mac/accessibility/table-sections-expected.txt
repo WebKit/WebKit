@@ -21,7 +21,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXCell>
 AXSize: NSSize: {20, 30}
 AXTitle: 
@@ -46,7 +46,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXCell>
 AXSize: NSSize: {27, 30}
 AXTitle: 
@@ -71,7 +71,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXCell>
 AXSize: NSSize: {28, 30}
 AXTitle: 
@@ -100,7 +100,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXCell>
 AXSize: NSSize: {20, 30}
 AXTitle: 
@@ -125,7 +125,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXCell>
 AXSize: NSSize: {20, 30}
 AXTitle: 
@@ -150,7 +150,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXCell>
 AXSize: NSSize: {20, 30}
 AXTitle: 
@@ -264,7 +264,7 @@ AXRole: AXRow
 AXSubrole: (null)
 AXRoleDescription: row
 AXChildren: <array of size 3>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXRow>
 AXSize: NSSize: {75, 30}
 AXTitle: 
@@ -288,7 +288,7 @@ AXRole: AXRow
 AXSubrole: (null)
 AXRoleDescription: row
 AXChildren: <array of size 3>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXRow>
 AXSize: NSSize: {75, 30}
 AXTitle: 
@@ -312,7 +312,7 @@ AXRole: AXRow
 AXSubrole: (null)
 AXRoleDescription: row
 AXChildren: <array of size 3>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXRow>
 AXSize: NSSize: {75, 30}
 AXTitle: 
@@ -336,7 +336,7 @@ AXRole: AXRow
 AXSubrole: (null)
 AXRoleDescription: row
 AXChildren: <array of size 3>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXRow>
 AXSize: NSSize: {75, 30}
 AXTitle: 
@@ -364,7 +364,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXCell>
 AXSize: NSSize: {20, 30}
 AXTitle: 
@@ -389,7 +389,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXCell>
 AXSize: NSSize: {27, 30}
 AXTitle: 
@@ -414,7 +414,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXCell>
 AXSize: NSSize: {28, 30}
 AXTitle: 
@@ -439,7 +439,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXCell>
 AXSize: NSSize: {20, 30}
 AXTitle: 
@@ -464,7 +464,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXCell>
 AXSize: NSSize: {27, 30}
 AXTitle: 
@@ -489,7 +489,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXCell>
 AXSize: NSSize: {28, 30}
 AXTitle: 
@@ -514,7 +514,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXCell>
 AXSize: NSSize: {20, 30}
 AXTitle: 
@@ -539,7 +539,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXCell>
 AXSize: NSSize: {27, 30}
 AXTitle: 
@@ -564,7 +564,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXCell>
 AXSize: NSSize: {28, 30}
 AXTitle: 
@@ -589,7 +589,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXCell>
 AXSize: NSSize: {20, 30}
 AXTitle: 
@@ -614,7 +614,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXCell>
 AXSize: NSSize: {27, 30}
 AXTitle: 
@@ -639,7 +639,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXCell>
 AXSize: NSSize: {28, 30}
 AXTitle: 
@@ -699,7 +699,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXCell>
 AXSize: NSSize: {20, 30}
 AXTitle: 
@@ -724,7 +724,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXCell>
 AXSize: NSSize: {27, 30}
 AXTitle: 
@@ -749,7 +749,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXCell>
 AXSize: NSSize: {28, 30}
 AXTitle: 
@@ -778,7 +778,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXCell>
 AXSize: NSSize: {20, 30}
 AXTitle: 
@@ -803,7 +803,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXCell>
 AXSize: NSSize: {20, 30}
 AXTitle: 
@@ -828,7 +828,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXCell>
 AXSize: NSSize: {20, 30}
 AXTitle: 
@@ -942,7 +942,7 @@ AXRole: AXRow
 AXSubrole: (null)
 AXRoleDescription: row
 AXChildren: <array of size 3>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXRow>
 AXSize: NSSize: {75, 30}
 AXTitle: 
@@ -966,7 +966,7 @@ AXRole: AXRow
 AXSubrole: (null)
 AXRoleDescription: row
 AXChildren: <array of size 3>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXRow>
 AXSize: NSSize: {75, 30}
 AXTitle: 
@@ -990,7 +990,7 @@ AXRole: AXRow
 AXSubrole: (null)
 AXRoleDescription: row
 AXChildren: <array of size 3>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXRow>
 AXSize: NSSize: {75, 30}
 AXTitle: 
@@ -1014,7 +1014,7 @@ AXRole: AXRow
 AXSubrole: (null)
 AXRoleDescription: row
 AXChildren: <array of size 3>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXRow>
 AXSize: NSSize: {75, 30}
 AXTitle: 
@@ -1042,7 +1042,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXCell>
 AXSize: NSSize: {20, 30}
 AXTitle: 
@@ -1067,7 +1067,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXCell>
 AXSize: NSSize: {27, 30}
 AXTitle: 
@@ -1092,7 +1092,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXCell>
 AXSize: NSSize: {28, 30}
 AXTitle: 
@@ -1117,7 +1117,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXCell>
 AXSize: NSSize: {20, 30}
 AXTitle: 
@@ -1142,7 +1142,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXCell>
 AXSize: NSSize: {27, 30}
 AXTitle: 
@@ -1167,7 +1167,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXCell>
 AXSize: NSSize: {28, 30}
 AXTitle: 
@@ -1192,7 +1192,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXCell>
 AXSize: NSSize: {20, 30}
 AXTitle: 
@@ -1217,7 +1217,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXCell>
 AXSize: NSSize: {27, 30}
 AXTitle: 
@@ -1242,7 +1242,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXCell>
 AXSize: NSSize: {28, 30}
 AXTitle: 
@@ -1267,7 +1267,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXCell>
 AXSize: NSSize: {20, 30}
 AXTitle: 
@@ -1292,7 +1292,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXCell>
 AXSize: NSSize: {27, 30}
 AXTitle: 
@@ -1317,7 +1317,7 @@ AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
 AXChildren: <array of size 1>
-AXHelp: This is the summary text that should appear as a description
+AXHelp: 
 AXParent: <AXCell>
 AXSize: NSSize: {28, 30}
 AXTitle: 

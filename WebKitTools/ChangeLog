@@ -1,3 +1,21 @@
+2010-04-15  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        AXHelp is being appended from ancestors incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=37659
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (getHelpTextCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (AccessibilityUIElement::helpText):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::helpText):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::helpText):
+
 2010-04-15  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Adam Barth.

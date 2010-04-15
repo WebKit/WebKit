@@ -440,6 +440,12 @@ JSStringRef AccessibilityUIElement::language()
     return concatenateAttributeAndValue(@"AXLanguage", description);
 }
 
+JSStringRef AccessibilityUIElement::helpText() const
+{
+    id description = descriptionOfValue([m_element accessibilityAttributeValue:NSAccessibilityHelpAttribute], m_element);
+    return concatenateAttributeAndValue(@"AXHelp", description);
+}
+
 double AccessibilityUIElement::x()
 {
     NSValue* positionValue = [m_element accessibilityAttributeValue:NSAccessibilityPositionAttribute];

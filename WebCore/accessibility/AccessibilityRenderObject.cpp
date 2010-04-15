@@ -724,6 +724,15 @@ String AccessibilityRenderObject::helpText() const
             if (!title.isEmpty())
                 return title;
         }
+        
+        // Only take help text from an ancestor element if its a group or an unknown role. If help was 
+        // added to those kinds of elements, it is likely it was meant for a child element.
+        AccessibilityObject* axObj = axObjectCache()->getOrCreate(curr);
+        if (axObj) {
+            AccessibilityRole role = axObj->roleValue();
+            if (role != GroupRole && role != UnknownRole)
+                break;
+        }
     }
     
     return String();

@@ -441,6 +441,12 @@ static JSValueRef getLanguageCallback(JSContextRef context, JSObjectRef thisObje
     return JSValueMakeString(context, language.get());
 }
 
+static JSValueRef getHelpTextCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+{
+    JSRetainPtr<JSStringRef> language(Adopt, toAXElement(thisObject)->helpText());
+    return JSValueMakeString(context, language.get());
+}
+
 static JSValueRef getOrientationCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
     JSRetainPtr<JSStringRef> orientation(Adopt, toAXElement(thisObject)->orientation());
@@ -642,6 +648,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "title", getTitleCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "description", getDescriptionCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "language", getLanguageCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "helpText", getHelpTextCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "stringValue", getStringValueCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "x", getXCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "y", getYCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
