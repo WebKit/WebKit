@@ -2,6 +2,18 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
+        Fix a memory leak in QScriptValue::inherits.
+
+        [Qt] QScriptValue::inherits has a memory leak.
+        https://bugs.webkit.org/show_bug.cgi?id=37617
+
+        * qt/api/qscriptvalue_p.h:
+        (QScriptValuePrivate::inherits):
+
+2010-04-14  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
         Fix a few memory leaks in QScriptEngine.
 
         Syntax checking caused memory leak, not all temporary variables were released.
