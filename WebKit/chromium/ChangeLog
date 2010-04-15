@@ -1,3 +1,15 @@
+2010-04-15  Ben Murdoch  <benm@google.com>
+
+        Unreviewed, rolling out r57652.
+        http://trac.webkit.org/changeset/57652
+        https://bugs.webkit.org/show_bug.cgi?id=37609
+
+        Caused a build break on Chromium Mac and Layout Test fail on
+        Qt
+
+        * src/WebInputEventConversion.cpp:
+        (WebKit::toPlatformTouchPointState):
+
 2010-04-14  Ben Murdoch  <benm@google.com>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -196,6 +196,8 @@ static inline PlatformTouchPoint::State toPlatformTouchPointState(const WebTouch
         return PlatformTouchPoint::TouchPressed;
     case WebTouchPoint::StateMoved:
         return PlatformTouchPoint::TouchMoved;
+    case WebTouchPoint::StateStationary:
+        return PlatformTouchPoint::TouchStationary;
     case WebTouchPoint::StateCancelled:
         return PlatformTouchPoint::TouchCancelled;
     case WebTouchPoint::StateUndefined:
