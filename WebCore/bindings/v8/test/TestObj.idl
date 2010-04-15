@@ -61,5 +61,11 @@ module test {
         void    methodWithOptionalArg(in [Optional] long opt);
         void    methodWithNonOptionalArgAndOptionalArg(in long nonOpt, in [Optional] long opt);
         void    methodWithNonOptionalArgAndTwoOptionalArgs(in long nonOpt, in [Optional] long opt1, in long opt2);
+
+        // Overloads
+        void    overloadedMethod(in TestObj objArg, in DOMString strArg);
+        void    overloadedMethod(in TestObj objArg, in [Optional] long intArg);
+        void    overloadedMethod(in DOMString strArg);
+        void    overloadedMethod(in long intArg);
     };
 }

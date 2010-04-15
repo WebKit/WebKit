@@ -1,3 +1,18 @@
+2010-04-15  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        Overloads auto-generation in V8
+        https://bugs.webkit.org/show_bug.cgi?id=37373
+
+        This will be used by XHR.send/open, Canvas.*, WebGL.* methods that are currently custom. When more than a single overload exists for a method, the correct overload is chosen based on the total number of arguments passed as well as the values passed to non-primitive arguments.
+
+        Overload dispatch order depends on the order the functions are defined in the IDL. Overloads must be specified from the most precise (overloads with wrapper type arguments) to the least precise (overloads with only primitive type arguments).
+
+        * bindings/scripts/CodeGeneratorV8.pm: Identify and output overloads callbacks and dispatch code.
+        * bindings/v8/test/TestObj.idl: Overloads sample.
+        * bindings/v8/test/V8TestObj.cpp: Output change.
+
 2010-04-15  Ben Murdoch  <benm@google.com>
 
         Reviewed by Kenneth Rohde Christiansen.

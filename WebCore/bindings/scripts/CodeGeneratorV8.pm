@@ -195,6 +195,23 @@ sub GenerateConditionalString
     }
 }
 
+sub LinkOverloadedFunctions
+{
+    my $dataNode = shift;
+
+    # Identifies overloaded functions and for each function adds an array with
+    # links to its respective overloads (including itself).
+    my %nameToFunctionsMap = ();
+    foreach my $function (@{$dataNode->functions}) {
+        my $name = $function->signature->name;
+        $nameToFunctionsMap{$name} = [] if !exists $nameToFunctionsMap{$name};
+        push(@{$nameToFunctionsMap{$name}}, $function);
+        $function->{overloads} = $nameToFunctionsMap{$name};
+        $function->{overloadIndex} = @{$nameToFunctionsMap{$name}};
+    }
+
+}
+
 sub GenerateHeader
 {
     my $object = shift;
@@ -1001,6 +1018,83 @@ static v8::Handle<v8::Value> ${functionName}EventListenerCallback(const v8::Argu
 END
 }
 
+sub GenerateParametersCheckExpression
+{
+    my $numParameters = shift;
+    my $function = shift;
+
+    my @andExpression = ();
+    push(@andExpression, "args.Length() == $numParameters");
+    my $parameterIndex = 0;
+    foreach $parameter (@{$function->parameters}) {
+        last if $parameterIndex >= $numParameters;
+        my $value = "args[$parameterIndex]";
+        my $type = GetTypeFromSignature($parameter);
+
+        # Only DOMString or wrapper types are checked.
+        # For DOMString, Null or Undefined are accepted too, as these are
+        # usually acceptable values for a DOMString argument.
+        push(@andExpression, "(${value}.IsNull() || ${value}.IsUndefined() || ${value}.IsString())") if $codeGenerator->IsStringType($type);
+        push(@andExpression, "V8${type}::HasInstance($value)") if IsWrapperType($type);
+
+        $parameterIndex++;
+    }
+    my $res = join(" && ", @andExpression);
+    $res = "($res)" if @andExpression > 1;
+    return $res;
+}
+
+sub GenerateFunctionParametersCheck
+{
+    my $function = shift;
+
+    my @orExpression = ();
+    my $numParameters = 0;
+    foreach $parameter (@{$function->parameters}) {
+        if ($parameter->extendedAttributes->{"Optional"}) {
+            push(@orExpression, GenerateParametersCheckExpression($numParameters, $function));
+        }
+        $numParameters++;
+    }
+    push(@orExpression, GenerateParametersCheckExpression($numParameters, $function));
+    return join(" || ", @orExpression);
+}
+
+sub GenerateOverloadedFunctionCallback
+{
+    my $function = shift;
+    my $dataNode = shift;
+    my $implClassName = shift;
+
+    # Generate code for choosing the correct overload to call. Overloads are
+    # chosen based on the total number of arguments passed and the type of
+    # values passed in non-primitive argument slots. When more than a single
+    # overload is applicable, precedence is given according to the order of
+    # declaration in the IDL.
+
+    my $name = $function->signature->name;
+    push(@implContentDecls, <<END);
+static v8::Handle<v8::Value> ${name}Callback(const v8::Arguments& args) {
+    INC_STATS(\"DOM.$implClassName.$name\");
+END
+    foreach my $overload (@{$function->{overloads}}) {
+        my $parametersCheck = GenerateFunctionParametersCheck($overload);
+        if ($overload->{overloadIndex} == 1) {
+            push(@implContentDecls, "    if ($parametersCheck) {\n");
+        } else {
+            push(@implContentDecls, "    } else if ($parametersCheck) {\n");
+        }
+        push(@implContentDecls, "        return ${name}$overload->{overloadIndex}Callback(args);\n");
+    }
+    push(@implContentDecls, <<END);
+    } else {
+        V8Proxy::setDOMException(SYNTAX_ERR);
+        return notHandledByInterceptor();
+    }
+END
+    push(@implContentDecls, "}\n\n");
+}
+
 sub GenerateFunctionCallback
 {
     my $function = shift;
@@ -1009,6 +1103,11 @@ sub GenerateFunctionCallback
 
     my $interfaceName = $dataNode->name;
     my $name = $function->signature->name;
+
+    if (@{$function->{overloads}} > 1) {
+        # Append a number to an overloaded method's name to make it unique:
+        $name = $name . $function->{overloadIndex};
+    }
 
     # Adding and removing event listeners are not standard callback behavior,
     # but they are extremely consistent across the various classes that take event listeners,
@@ -1043,7 +1142,7 @@ END
 END
     }
 
-  # Check domain security if needed
+    # Check domain security if needed
     if (($dataNode->extendedAttributes->{"CheckDomainSecurity"}
        || $interfaceName eq "DOMWindow")
        && !$function->signature->extendedAttributes->{"DoNotCheckDomainSecurity"}) {
@@ -1561,12 +1660,17 @@ sub GenerateImplementation
         GenerateConstructorGetter($implClassName);
     }
 
+    LinkOverloadedFunctions($dataNode);
+
     my $indexer;
     my $namedPropertyGetter;
     # Generate methods for functions.
     foreach my $function (@{$dataNode->functions}) {
         if (!($function->signature->extendedAttributes->{"Custom"} || $function->signature->extendedAttributes->{"V8Custom"})) {
             GenerateFunctionCallback($function, $dataNode, $implClassName);
+            if ($function->{overloadIndex} > 1 && $function->{overloadIndex} == @{$function->{overloads}}) {
+                GenerateOverloadedFunctionCallback($function, $dataNode, $implClassName);
+            }
         }
 
         if ($function->signature->name eq "item") {
@@ -1624,6 +1728,9 @@ sub GenerateImplementation
     $num_callbacks = 0;
     $has_callbacks = 0;
     foreach my $function (@{$dataNode->functions}) {
+        # Only one table entry is needed for overloaded methods:
+        next if $function->{overloadIndex} > 1;
+
         my $attrExt = $function->signature->extendedAttributes;
         # Don't put any nonstandard functions into this table:
         if ($attrExt->{"V8OnInstance"}) {
@@ -1785,6 +1892,9 @@ END
     # Define our functions with Set() or SetAccessor()
     $total_functions = 0;
     foreach my $function (@{$dataNode->functions}) {
+        # Only one accessor is needed for overloaded methods:
+        next if $function->{overloadIndex} > 1;
+
         $total_functions++;
         my $attrExt = $function->signature->extendedAttributes;
         my $name = $function->signature->name;

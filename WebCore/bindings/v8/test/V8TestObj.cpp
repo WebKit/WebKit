@@ -265,6 +265,60 @@ static v8::Handle<v8::Value> methodWithNonOptionalArgAndTwoOptionalArgsCallback(
     return v8::Handle<v8::Value>();
 }
 
+static v8::Handle<v8::Value> overloadedMethod1Callback(const v8::Arguments& args) {
+    INC_STATS("DOM.TestObj.overloadedMethod1");
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    TestObj* objArg = V8TestObj::HasInstance(args[0]) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0;
+    V8Parameter<> strArg = args[1];
+    imp->overloadedMethod(objArg, strArg);
+    return v8::Handle<v8::Value>();
+}
+
+static v8::Handle<v8::Value> overloadedMethod2Callback(const v8::Arguments& args) {
+    INC_STATS("DOM.TestObj.overloadedMethod2");
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    TestObj* objArg = V8TestObj::HasInstance(args[0]) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0;
+    if (args.Length() <= 1) {
+        imp->overloadedMethod(objArg);
+        return v8::Handle<v8::Value>();
+    }
+    int intArg = toInt32(args[1]);
+    imp->overloadedMethod(objArg, intArg);
+    return v8::Handle<v8::Value>();
+}
+
+static v8::Handle<v8::Value> overloadedMethod3Callback(const v8::Arguments& args) {
+    INC_STATS("DOM.TestObj.overloadedMethod3");
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    V8Parameter<> strArg = args[0];
+    imp->overloadedMethod(strArg);
+    return v8::Handle<v8::Value>();
+}
+
+static v8::Handle<v8::Value> overloadedMethod4Callback(const v8::Arguments& args) {
+    INC_STATS("DOM.TestObj.overloadedMethod4");
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    int intArg = toInt32(args[0]);
+    imp->overloadedMethod(intArg);
+    return v8::Handle<v8::Value>();
+}
+
+static v8::Handle<v8::Value> overloadedMethodCallback(const v8::Arguments& args) {
+    INC_STATS("DOM.TestObj.overloadedMethod");
+    if ((args.Length() == 2 && V8TestObj::HasInstance(args[0]) && (args[1].IsNull() || args[1].IsUndefined() || args[1].IsString()))) {
+        return overloadedMethod1Callback(args);
+    } else if ((args.Length() == 1 && V8TestObj::HasInstance(args[0])) || (args.Length() == 2 && V8TestObj::HasInstance(args[0]))) {
+        return overloadedMethod2Callback(args);
+    } else if ((args.Length() == 1 && (args[0].IsNull() || args[0].IsUndefined() || args[0].IsString()))) {
+        return overloadedMethod3Callback(args);
+    } else if (args.Length() == 1) {
+        return overloadedMethod4Callback(args);
+    } else {
+        V8Proxy::setDOMException(SYNTAX_ERR);
+        return notHandledByInterceptor();
+    }
+}
+
 } // namespace TestObjInternal
 
 static const BatchedAttribute TestObj_attrs[] = {
@@ -406,6 +460,12 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestObjTemplate(v8::Persi
     v8::Handle<v8::FunctionTemplate> objMethodWithArgs_argv[objMethodWithArgs_argc] = { v8::Handle<v8::FunctionTemplate>(), v8::Handle<v8::FunctionTemplate>(), V8TestObj::GetRawTemplate() };
     v8::Handle<v8::Signature> objMethodWithArgs_signature = v8::Signature::New(desc, objMethodWithArgs_argc, objMethodWithArgs_argv);
     proto->Set(v8::String::New("objMethodWithArgs"), v8::FunctionTemplate::New(TestObjInternal::objMethodWithArgsCallback, v8::Handle<v8::Value>(), objMethodWithArgs_signature));
+
+    // Custom Signature 'overloadedMethod'
+    const int overloadedMethod_argc = 2;
+    v8::Handle<v8::FunctionTemplate> overloadedMethod_argv[overloadedMethod_argc] = { V8TestObj::GetRawTemplate(), v8::Handle<v8::FunctionTemplate>() };
+    v8::Handle<v8::Signature> overloadedMethod_signature = v8::Signature::New(desc, overloadedMethod_argc, overloadedMethod_argv);
+    proto->Set(v8::String::New("overloadedMethod"), v8::FunctionTemplate::New(TestObjInternal::overloadedMethodCallback, v8::Handle<v8::Value>(), overloadedMethod_signature));
 
     // Custom toString template
     desc->Set(getToStringName(), getToStringTemplate());
