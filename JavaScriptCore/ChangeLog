@@ -1,3 +1,17 @@
+2010-04-14  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fix memory leak inside QScriptEnginePrivate::makeJSValue.
+
+        QScriptEnginePrivate::makeJSValue should release temporary JSStringRef variable.
+
+        [Qt] tst_QScriptValue::toString has a memory leak.
+        https://bugs.webkit.org/show_bug.cgi?id=37598
+
+        * qt/api/qscriptengine_p.h:
+        (QScriptEnginePrivate::makeJSValue):
+
 2010-04-14  Peter Varga  <pvarga@inf.u-szeged.hu>
 
         Reviewed by Geoffrey Garen.

@@ -104,7 +104,10 @@ JSValueRef QScriptEnginePrivate::makeJSValue(uint number) const
 
 JSValueRef QScriptEnginePrivate::makeJSValue(const QString& string) const
 {
-    return JSValueMakeString(m_context, QScriptConverter::toString(string));
+    JSStringRef tmp = QScriptConverter::toString(string);
+    JSValueRef result = JSValueMakeString(m_context, tmp);
+    JSStringRelease(tmp);
+    return result;
 }
 
 JSValueRef QScriptEnginePrivate::makeJSValue(bool value) const
