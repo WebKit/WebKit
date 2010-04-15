@@ -43,8 +43,6 @@ class PostCodeReview(AbstractStep):
     def run(self, state):
         if not self._options.fancy_review:
             return
-        if not self._options.review:
-            return
         # FIXME: This will always be None because we don't retrieve the issue
         #        number from the ChangeLog yet.
         codereview_issue = state.get("codereview_issue")
