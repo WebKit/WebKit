@@ -35,6 +35,38 @@ using namespace JSC;
 
 namespace WebCore {
 
+JSValue JSNamedNodeMap::setNamedItem(ExecState* exec, const ArgList& args)
+{
+    NamedNodeMap* imp = static_cast<NamedNodeMap*>(impl());
+    ExceptionCode ec = 0;
+    Node* newNode = toNode(args.at(0));
+
+    if (newNode && newNode->nodeType() == Node::ATTRIBUTE_NODE && imp->element()) {
+        if (!allowSettingSrcToJavascriptURL(exec, imp->element(), newNode->nodeName(), newNode->nodeValue()))
+            return jsNull();
+    }
+
+    JSValue result = toJS(exec, globalObject(), WTF::getPtr(imp->setNamedItem(newNode, ec)));
+    setDOMException(exec, ec);
+    return result;
+}
+
+JSValue JSNamedNodeMap::setNamedItemNS(ExecState* exec, const ArgList& args)
+{
+    NamedNodeMap* imp = static_cast<NamedNodeMap*>(impl());
+    ExceptionCode ec = 0;
+    Node* newNode = toNode(args.at(0));
+
+    if (newNode && newNode->nodeType() == Node::ATTRIBUTE_NODE && imp->element()) {
+        if (!allowSettingSrcToJavascriptURL(exec, imp->element(), newNode->nodeName(), newNode->nodeValue()))
+            return jsNull();
+    }
+
+    JSValue result = toJS(exec, globalObject(), WTF::getPtr(imp->setNamedItemNS(newNode, ec)));
+    setDOMException(exec, ec);
+    return result;
+}
+
 bool JSNamedNodeMap::canGetItemsForName(ExecState*, NamedNodeMap* impl, const Identifier& propertyName)
 {
     return impl->getNamedItem(propertyName);

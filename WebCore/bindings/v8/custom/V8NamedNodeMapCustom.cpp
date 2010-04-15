@@ -32,8 +32,9 @@
 #include "V8NamedNodeMap.h"
 
 #include "NamedNodeMap.h"
+#include "V8Attr.h"
 #include "V8Binding.h"
-#include "V8DOMWrapper.h"
+#include "V8BindingState.h"
 #include "V8Element.h"
 #include "V8Node.h"
 #include "V8Proxy.h"
@@ -70,6 +71,48 @@ v8::Handle<v8::Value> V8NamedNodeMap::namedPropertyGetter(v8::Local<v8::String> 
     RefPtr<Node> result = imp->getNamedItem(toWebCoreString(name));
     if (!result)
         return notHandledByInterceptor();
+
+    return toV8(result.release());
+}
+
+v8::Handle<v8::Value> V8NamedNodeMap::setNamedItemNSCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.NamedNodeMap.setNamedItemNS");
+    NamedNodeMap* imp = V8NamedNodeMap::toNative(args.Holder());
+    Node* newNode = V8Node::HasInstance(args[0]) ? V8Node::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0;
+
+    if (newNode && newNode->nodeType() == Node::ATTRIBUTE_NODE && imp->element()) {
+        if (!V8BindingSecurity::allowSettingSrcToJavascriptURL(V8BindingState::Only(), imp->element(), newNode->nodeName(), newNode->nodeValue()))
+            return v8::Handle<v8::Value>();
+    }
+
+    ExceptionCode ec = 0;
+    RefPtr<Node> result = imp->setNamedItemNS(newNode, ec);
+    if (UNLIKELY(!ec)) {
+        throwError(ec);
+        return v8::Handle<v8::Value>();
+    }
+
+    return toV8(result.release());
+}
+
+v8::Handle<v8::Value> V8NamedNodeMap::setNamedItemCallback(const v8::Arguments & args)
+{
+    INC_STATS("DOM.NamedNodeMap.setNamedItem");
+    NamedNodeMap* imp = V8NamedNodeMap::toNative(args.Holder());
+    Node* newNode = V8Node::HasInstance(args[0]) ? V8Node::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0;
+
+    if (newNode && newNode->nodeType() == Node::ATTRIBUTE_NODE && imp->element()) {
+      if (!V8BindingSecurity::allowSettingSrcToJavascriptURL(V8BindingState::Only(), imp->element(), newNode->nodeName(), newNode->nodeValue()))
+            return v8::Handle<v8::Value>();
+    }
+
+    ExceptionCode ec = 0;
+    RefPtr<Node> result = imp->setNamedItem(newNode, ec);
+    if (UNLIKELY(!ec)) {
+        throwError(ec);
+        return v8::Handle<v8::Value>();
+    }
 
     return toV8(result.release());
 }

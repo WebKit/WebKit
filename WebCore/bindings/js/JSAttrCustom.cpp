@@ -33,6 +33,7 @@
 #include "Document.h"
 #include "HTMLFrameElementBase.h"
 #include "HTMLNames.h"
+#include "JSDOMBinding.h"
 
 using namespace JSC;
 
@@ -46,38 +47,12 @@ void JSAttr::setValue(ExecState* exec, JSValue value)
     String attrValue = valueToStringWithNullCheck(exec, value);
 
     Element* ownerElement = imp->ownerElement();
-    if (ownerElement && (ownerElement->hasTagName(iframeTag) || ownerElement->hasTagName(frameTag))) {
-        if (equalIgnoringCase(imp->name(), "src") && protocolIsJavaScript(deprecatedParseURL(attrValue))) {
-            Document* contentDocument = static_cast<HTMLFrameElementBase*>(ownerElement)->contentDocument();
-            if (contentDocument && !checkNodeSecurity(exec, contentDocument))
-                return;
-        }
-    }
+    if (ownerElement && !allowSettingSrcToJavascriptURL(exec, ownerElement, imp->name(), attrValue))
+        return;
 
     ExceptionCode ec = 0;
     imp->setValue(attrValue, ec);
     setDOMException(exec, ec);
-}
-
-JSC::JSValue JSAttr::nodeValue(JSC::ExecState* exec) const
-{
-    Attr* imp = this->impl();
-    return jsStringOrNull(exec, imp->value());
-}
-
-void JSAttr::setNodeValue(JSC::ExecState* exec, JSC::JSValue value)
-{
-    setValue(exec, value);
-}
-
-JSC::JSValue JSAttr::textContent(JSC::ExecState* exec) const
-{
-    return nodeValue(exec);
-}
-
-void JSAttr::setTextContent(JSC::ExecState* exec, JSC::JSValue value)
-{
-    setValue(exec, value);
 }
 
 void JSAttr::markChildren(MarkStack& markStack)

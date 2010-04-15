@@ -300,6 +300,8 @@ namespace WebCore {
     bool allowsAccessFromFrame(JSC::ExecState*, Frame*);
     bool allowsAccessFromFrame(JSC::ExecState*, Frame*, String& message);
     bool shouldAllowNavigation(JSC::ExecState*, Frame*);
+    bool allowSettingSrcToJavascriptURL(JSC::ExecState*, Element*, const String&, const String&);
+
     void printErrorMessageForFrame(Frame*, const String& message);
     JSC::JSValue objectToStringFunctionGetter(JSC::ExecState*, JSC::JSValue, const JSC::Identifier& propertyName);
 

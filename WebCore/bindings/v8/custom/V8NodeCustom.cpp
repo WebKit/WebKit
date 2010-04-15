@@ -37,6 +37,7 @@
 #include "V8AbstractEventListener.h"
 #include "V8Attr.h"
 #include "V8Binding.h"
+#include "V8BindingState.h"
 #include "V8CDATASection.h"
 #include "V8Comment.h"
 #include "V8CustomEventListener.h"
@@ -56,12 +57,57 @@
 
 namespace WebCore {
 
+static inline bool isFrameSrc(Element *element, const String& name)
+{
+    return element && (element->hasTagName(HTMLNames::iframeTag) || element->hasTagName(HTMLNames::frameTag)) && equalIgnoringCase(name, "src");
+}
+
+void V8Node::textContentAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    Node* imp = V8Node::toNative(info.Holder());
+    String nodeValue = toWebCoreStringWithNullCheck(value);
+
+    if (imp->nodeType() == Node::ATTRIBUTE_NODE) {
+        Element * ownerElement = V8Attr::toNative(info.Holder())->ownerElement();
+        if (ownerElement && !V8BindingSecurity::allowSettingSrcToJavascriptURL(V8BindingState::Only(), ownerElement, imp->nodeName(), nodeValue))
+            return;
+    }
+
+    ExceptionCode ec = 0;
+    imp->setTextContent(nodeValue, ec);
+    if (ec)
+        throwError(ec);
+}
+
+void V8Node::nodeValueAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    Node* imp = V8Node::toNative(info.Holder());
+    String nodeValue = toWebCoreStringWithNullCheck(value);
+
+    if (imp->nodeType() == Node::ATTRIBUTE_NODE) {
+        Element * ownerElement = V8Attr::toNative(info.Holder())->ownerElement();
+        if (ownerElement && !V8BindingSecurity::allowSettingSrcToJavascriptURL(V8BindingState::Only(), ownerElement, imp->nodeName(), nodeValue))
+            return;
+    }
+
+    ExceptionCode ec = 0;
+    imp->setNodeValue(nodeValue, ec);
+    if (ec)
+        throwError(ec);
+}
+
 // This function is customized to take advantage of the optional 4th argument: shouldLazyAttach
 v8::Handle<v8::Value> V8Node::insertBeforeCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Node.insertBefore");
     v8::Handle<v8::Object> holder = args.Holder();
     Node* imp = V8Node::toNative(holder);
+
+    if (imp->nodeType() == Node::ATTRIBUTE_NODE && isFrameSrc(V8Attr::toNative(holder)->ownerElement(), imp->nodeName())) {
+        V8Proxy::setDOMException(NOT_SUPPORTED_ERR);
+        return v8::Handle<v8::Value>();
+    }
+
     ExceptionCode ec = 0;
     Node* newChild = V8Node::HasInstance(args[0]) ? V8Node::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0;
     Node* refChild = V8Node::HasInstance(args[1]) ? V8Node::toNative(v8::Handle<v8::Object>::Cast(args[1])) : 0;
@@ -81,6 +127,12 @@ v8::Handle<v8::Value> V8Node::replaceChildCallback(const v8::Arguments& args)
     INC_STATS("DOM.Node.replaceChild");
     v8::Handle<v8::Object> holder = args.Holder();
     Node* imp = V8Node::toNative(holder);
+
+    if (imp->nodeType() == Node::ATTRIBUTE_NODE && isFrameSrc(V8Attr::toNative(holder)->ownerElement(), imp->nodeName())) {
+        V8Proxy::setDOMException(NOT_SUPPORTED_ERR);
+        return v8::Handle<v8::Value>();
+    }
+
     ExceptionCode ec = 0;
     Node* newChild = V8Node::HasInstance(args[0]) ? V8Node::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0;
     Node* oldChild = V8Node::HasInstance(args[1]) ? V8Node::toNative(v8::Handle<v8::Object>::Cast(args[1])) : 0;
@@ -99,6 +151,12 @@ v8::Handle<v8::Value> V8Node::removeChildCallback(const v8::Arguments& args)
     INC_STATS("DOM.Node.removeChild");
     v8::Handle<v8::Object> holder = args.Holder();
     Node* imp = V8Node::toNative(holder);
+
+    if (imp->nodeType() == Node::ATTRIBUTE_NODE && isFrameSrc(V8Attr::toNative(holder)->ownerElement(), imp->nodeName())) {
+        V8Proxy::setDOMException(NOT_SUPPORTED_ERR);
+        return v8::Handle<v8::Value>();
+    }
+
     ExceptionCode ec = 0;
     Node* oldChild = V8Node::HasInstance(args[0]) ? V8Node::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0;
     bool success = imp->removeChild(oldChild, ec);
@@ -117,6 +175,12 @@ v8::Handle<v8::Value> V8Node::appendChildCallback(const v8::Arguments& args)
     INC_STATS("DOM.Node.appendChild");
     v8::Handle<v8::Object> holder = args.Holder();
     Node* imp = V8Node::toNative(holder);
+
+    if (imp->nodeType() == Node::ATTRIBUTE_NODE && isFrameSrc(V8Attr::toNative(holder)->ownerElement(), imp->nodeName())) {
+        V8Proxy::setDOMException(NOT_SUPPORTED_ERR);
+        return v8::Handle<v8::Value>();
+    }
+
     ExceptionCode ec = 0;
     Node* newChild = V8Node::HasInstance(args[0]) ? V8Node::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0;
     bool success = imp->appendChild(newChild, ec, true );

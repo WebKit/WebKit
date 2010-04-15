@@ -38,6 +38,7 @@
 #include "JSAttr.h"
 #include "JSCDATASection.h"
 #include "JSComment.h"
+#include "JSDOMBinding.h"
 #include "JSDocument.h"
 #include "JSDocumentFragment.h"
 #include "JSDocumentType.h"
@@ -66,12 +67,53 @@ using namespace JSC;
 
 namespace WebCore {
 
-typedef int ExpectionCode;
+static inline bool isAttrFrameSrc(Element *element, const String& name)
+{
+    return element && (element->hasTagName(HTMLNames::iframeTag) || element->hasTagName(HTMLNames::frameTag)) && equalIgnoringCase(name, "src");
+}
+
+void JSNode::setNodeValue(JSC::ExecState* exec, JSC::JSValue value)
+{
+    Node* imp = static_cast<Node*>(impl());
+    String nodeValue = valueToStringWithNullCheck(exec, value);
+
+    if (imp->nodeType() == Node::ATTRIBUTE_NODE) {
+        Element* ownerElement = static_cast<Attr*>(impl())->ownerElement();
+        if (ownerElement && !allowSettingSrcToJavascriptURL(exec, ownerElement, imp->nodeName(), nodeValue))
+            return;
+    }
+
+    ExceptionCode ec = 0;
+    imp->setNodeValue(nodeValue, ec);
+    setDOMException(exec, ec);
+}
+
+void JSNode::setTextContent(JSC::ExecState* exec, JSC::JSValue value)
+{
+    Node* imp = static_cast<Node*>(impl());
+    String nodeValue = valueToStringWithNullCheck(exec, value);
+
+    if (imp->nodeType() == Node::ATTRIBUTE_NODE) {
+        Element* ownerElement = static_cast<Attr*>(impl())->ownerElement();
+        if (ownerElement && !allowSettingSrcToJavascriptURL(exec, ownerElement, imp->nodeName(), nodeValue))
+            return;
+    }
+
+    ExceptionCode ec = 0;
+    imp->setTextContent(nodeValue, ec);
+    setDOMException(exec, ec);
+}
 
 JSValue JSNode::insertBefore(ExecState* exec, const ArgList& args)
 {
+    Node* imp = static_cast<Node*>(impl());
+    if (imp->nodeType() == Node::ATTRIBUTE_NODE && isAttrFrameSrc(static_cast<Attr*>(impl())->ownerElement(), imp->nodeName())) {
+        setDOMException(exec, NOT_SUPPORTED_ERR);
+        return jsNull();
+    }
+
     ExceptionCode ec = 0;
-    bool ok = impl()->insertBefore(toNode(args.at(0)), toNode(args.at(1)), ec, true);
+    bool ok = imp->insertBefore(toNode(args.at(0)), toNode(args.at(1)), ec, true);
     setDOMException(exec, ec);
     if (ok)
         return args.at(0);
@@ -80,8 +122,14 @@ JSValue JSNode::insertBefore(ExecState* exec, const ArgList& args)
 
 JSValue JSNode::replaceChild(ExecState* exec, const ArgList& args)
 {
+    Node* imp = static_cast<Node*>(impl());
+    if (imp->nodeType() == Node::ATTRIBUTE_NODE && isAttrFrameSrc(static_cast<Attr*>(impl())->ownerElement(), imp->nodeName())) {
+        setDOMException(exec, NOT_SUPPORTED_ERR);
+        return jsNull();
+    }
+
     ExceptionCode ec = 0;
-    bool ok = impl()->replaceChild(toNode(args.at(0)), toNode(args.at(1)), ec, true);
+    bool ok = imp->replaceChild(toNode(args.at(0)), toNode(args.at(1)), ec, true);
     setDOMException(exec, ec);
     if (ok)
         return args.at(1);
@@ -90,8 +138,14 @@ JSValue JSNode::replaceChild(ExecState* exec, const ArgList& args)
 
 JSValue JSNode::removeChild(ExecState* exec, const ArgList& args)
 {
+    Node* imp = static_cast<Node*>(impl());
+    if (imp->nodeType() == Node::ATTRIBUTE_NODE && isAttrFrameSrc(static_cast<Attr*>(impl())->ownerElement(), imp->nodeName())) {
+        setDOMException(exec, NOT_SUPPORTED_ERR);
+        return jsNull();
+    }
+
     ExceptionCode ec = 0;
-    bool ok = impl()->removeChild(toNode(args.at(0)), ec);
+    bool ok = imp->removeChild(toNode(args.at(0)), ec);
     setDOMException(exec, ec);
     if (ok)
         return args.at(0);
@@ -100,8 +154,14 @@ JSValue JSNode::removeChild(ExecState* exec, const ArgList& args)
 
 JSValue JSNode::appendChild(ExecState* exec, const ArgList& args)
 {
+    Node* imp = static_cast<Node*>(impl());
+    if (imp->nodeType() == Node::ATTRIBUTE_NODE && isAttrFrameSrc(static_cast<Attr*>(impl())->ownerElement(), imp->nodeName())) {
+        setDOMException(exec, NOT_SUPPORTED_ERR);
+        return jsNull();
+    }
+
     ExceptionCode ec = 0;
-    bool ok = impl()->appendChild(toNode(args.at(0)), ec, true);
+    bool ok = imp->appendChild(toNode(args.at(0)), ec, true);
     setDOMException(exec, ec);
     if (ok)
         return args.at(0);

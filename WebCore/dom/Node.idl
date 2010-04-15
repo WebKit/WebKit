@@ -51,7 +51,7 @@ module core {
         readonly attribute [ConvertNullStringTo=Null] DOMString        nodeName;
 
                  // FIXME: the spec says this can also raise on retrieval.
-                 attribute [ConvertNullStringTo=Null, ConvertNullToNullString] DOMString        nodeValue
+                 attribute [CustomSetter, ConvertNullStringTo=Null, ConvertNullToNullString] DOMString        nodeValue
                      setter raises(DOMException);
 
         readonly attribute unsigned short   nodeType;
@@ -96,7 +96,7 @@ module core {
         readonly attribute [ConvertNullStringTo=Null] DOMString       baseURI;
 
                  // FIXME: the spec says this can also raise on retrieval.
-                 attribute [ConvertNullStringTo=Null, ConvertNullToNullString] DOMString       textContent
+                 attribute [CustomSetter, ConvertNullStringTo=Null, ConvertNullToNullString] DOMString       textContent
                      setter raises(DOMException);
 
         boolean            isSameNode(in Node other);

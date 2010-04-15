@@ -1,3 +1,13 @@
+2010-04-14  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Fix frame/iframe src setting for JavaScript URLs
+        https://bugs.webkit.org/show_bug.cgi?id=37031
+
+        * http/tests/security/xss-DENIED-iframe-src-alias-expected.txt:
+        * http/tests/security/xss-DENIED-iframe-src-alias.html:
+
 2010-04-14  Xan Lopez  <xlopez@igalia.com>
 
         [GTK] scrollbars/scrollbar-crash-on-refresh.html is flakey on debug bots 

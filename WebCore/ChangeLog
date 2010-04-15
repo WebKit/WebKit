@@ -1,3 +1,51 @@
+2010-04-14  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Javascript URL can be set as iframe.src via multiple DOM aliases
+        https://bugs.webkit.org/show_bug.cgi?id=37031
+
+        Moved frame/iframe checks from Attr to Node on inherited members.
+        Node child manipulation methods now return NOT_SUPPORTED_ERR if used
+        on a frame/iframe src attribute.
+        NamedNodeMap set methods now perform frame/iframe src checks.
+        Moved allowSettingSrcToJavascriptURL static helper function from 
+        JSElementCustom.cpp to exported function in JSDOMBinding.h.
+
+        * bindings/js/JSAttrCustom.cpp:
+        (WebCore::JSAttr::setValue):
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::allowSettingSrcToJavascriptURL):
+        * bindings/js/JSDOMBinding.h:
+        * bindings/js/JSElementCustom.cpp:
+        * bindings/js/JSNamedNodeMapCustom.cpp:
+        (WebCore::JSNamedNodeMap::setNamedItem):
+        (WebCore::JSNamedNodeMap::setNamedItemNS):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::isAttrFrameSrc):
+        (WebCore::JSNode::setNodeValue):
+        (WebCore::JSNode::setTextContent):
+        (WebCore::JSNode::insertBefore):
+        (WebCore::JSNode::replaceChild):
+        (WebCore::JSNode::removeChild):
+        (WebCore::JSNode::appendChild):
+        * bindings/v8/custom/V8AttrCustom.cpp:
+        * bindings/v8/custom/V8NamedNodeMapCustom.cpp:
+        (WebCore::V8NamedNodeMap::setNamedItemNSCallback):
+        (WebCore::V8NamedNodeMap::setNamedItemCallback):
+        (WebCore::toV8):
+        * bindings/v8/custom/V8NodeCustom.cpp:
+        (WebCore::isFrameSrc):
+        (WebCore::V8Node::textContentAccessorSetter):
+        (WebCore::V8Node::nodeValueAccessorSetter):
+        (WebCore::V8Node::insertBeforeCallback):
+        (WebCore::V8Node::replaceChildCallback):
+        (WebCore::V8Node::removeChildCallback):
+        (WebCore::V8Node::appendChildCallback):
+        * dom/Attr.idl:
+        * dom/NamedNodeMap.idl:
+        * dom/Node.idl:
+
 2010-04-14  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Xan Lopez.

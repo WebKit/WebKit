@@ -28,7 +28,7 @@ module core {
 
         Node getNamedItem(in DOMString name);
 
-        Node setNamedItem(in Node node)
+        [Custom] Node setNamedItem(in Node node)
             raises(DOMException);
 
         Node removeNamedItem(in DOMString name)
@@ -46,7 +46,7 @@ module core {
             // FIXME: the implementation does take an exceptioncode parameter.
             /*raises(DOMException)*/;
 
-        Node setNamedItemNS(in Node node)
+        [Custom] Node setNamedItemNS(in Node node)
             raises(DOMException);
 
         [OldStyleObjC] Node removeNamedItemNS(in [ConvertNullToNullString] DOMString namespaceURI, 
