@@ -35,11 +35,12 @@ using namespace WebKit;
 
 WKURLRef WKURLCreateWithCFURL(CFURLRef cfURL)
 {
-    return toURLRef(String(CFURLGetString(cfURL)).impl());
+    String urlString(CFURLGetString(cfURL));
+    RefPtr<StringImpl> urlStringImpl = urlString.impl();
+    return toURLRef(urlStringImpl.release().releaseRef());
 }
 
-CFURLRef WKURLCopyCFURL(CFAllocatorRef /*allocatorRef*/, WKURLRef URLRef)
+CFURLRef WKURLCopyCFURL(CFAllocatorRef allocatorRef, WKURLRef URLRef)
 {
-    // FIXME: Honor the allocator parameter.
-    return CFURLCreateWithBytes(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(toWK(URLRef)->characters()), toWK(URLRef)->length(), kCFStringEncodingUTF16, 0);
+    return CFURLCreateWithBytes(allocatorRef, reinterpret_cast<const UInt8*>(toWK(URLRef)->characters()), toWK(URLRef)->length() * 2, kCFStringEncodingUTF16, 0);
 }

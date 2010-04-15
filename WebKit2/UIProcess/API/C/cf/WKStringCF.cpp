@@ -33,9 +33,8 @@ using namespace WebCore;
 WKStringRef WKStringCreateWithCFString(CFStringRef cfString)
 {
     String string(cfString);
-    StringImpl* stringImpl = string.impl();
-    stringImpl->ref();
-    return toRef(stringImpl);
+    RefPtr<StringImpl> stringImpl = string.impl();
+    return toRef(stringImpl.release().releaseRef());
 }
 
 CFStringRef WKStringCopyCFString(CFAllocatorRef /*allocatorRef*/, WKStringRef stringRef)

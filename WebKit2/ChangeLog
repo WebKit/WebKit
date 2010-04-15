@@ -1,3 +1,15 @@
+2010-04-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix WebKit2s build. Don't return temporaries.
+
+        * UIProcess/API/C/cf/WKStringCF.cpp:
+        (WKStringCreateWithCFString):
+        * UIProcess/API/C/cf/WKURLCF.cpp:
+        (WKURLCreateWithCFURL):
+        (WKURLCopyCFURL):
+
 2010-04-12  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Anders Carlsson.
