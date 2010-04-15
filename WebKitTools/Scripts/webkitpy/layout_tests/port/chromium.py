@@ -113,6 +113,9 @@ class ChromiumPort(base.Port):
         return check_file_exists(image_diff_path, 'image diff exe',
                                  override_step, logging)
 
+    def driver_name(self):
+        return "test_shell"
+
     def path_from_chromium_base(self, *comps):
         """Returns the full path to path made by joining the top of the
         Chromium source tree and the list of path components in |*comps|."""

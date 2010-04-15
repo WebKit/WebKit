@@ -1,3 +1,19 @@
+2010-04-15  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add a way to override the user-visible name for the test binary since
+        some ports don't call it DumpRenderTree (e.g., Chromium Win uses
+        test_shell, Chromium Mac uses TestShell) by adding a driver_name()
+        method to the Port interface.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37631
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2010-04-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.

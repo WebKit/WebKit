@@ -161,6 +161,13 @@ class Port(object):
                                     actual_filename)
         return ''.join(diff)
 
+    def driver_name(self):
+        """Returns the name of the actual binary that is performing the test,
+        so that it can be referred to in log messages. In most cases this
+        will be DumpRenderTree, but if a port uses a binary with a different
+        name, it can be overridden here."""
+        return "DumpRenderTree"
+
     def expected_baselines(self, filename, suffix, all_baselines=False):
         """Given a test name, finds where the baseline results are located.
 

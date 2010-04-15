@@ -27,7 +27,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""Run layout tests using DumpRenderTree.
+"""Run layout tests.
 
 This is a port of the existing webkit test script run-webkit-tests.
 
@@ -558,7 +558,11 @@ class TestRunner:
               in the form {filename:filename, test_run_time:test_run_time}
             result_summary: summary object to populate with the results
         """
-        self._meter.update('Starting DumpRenderTrees ...')
+        plural = ""
+        if self._options.child_processes > 1:
+            plural = "s"
+        self._meter.update('Starting %s%s ...' %
+                           (self._port.driver_name(), plural))
         threads = self._instantiate_dump_render_tree_threads(file_list,
                                                              result_summary)
 
@@ -686,8 +690,7 @@ class TestRunner:
         self._write_json_files(unexpected_results, result_summary,
                              individual_test_timings)
 
-        # Write the summary to disk (results.html) and maybe open the
-        # DumpRenderTree to this file.
+        # Write the summary to disk (results.html) and display it if requested.
         wrote_results = self._write_results_html_file(result_summary)
         if not self._options.noshow_results and wrote_results:
             self._show_results_html_file()
@@ -1436,7 +1439,11 @@ def main(options, args, print_results=True):
         options.child_processes = port_obj.default_child_processes()
 
     write = create_logging_writer(options, 'config')
-    write("Running %s DumpRenderTrees in parallel" % options.child_processes)
+    if options.child_processes == 1:
+        write("Running one %s" % port_obj.driver_name)
+    else:
+        write("Running %s %ss in parallel" % (
+              options.child_processes, port_obj.driver_name()))
 
     if not options.time_out_ms:
         if options.configuration == "Debug":

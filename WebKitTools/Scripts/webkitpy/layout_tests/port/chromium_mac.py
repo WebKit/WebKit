@@ -66,6 +66,10 @@ class ChromiumMacPort(chromium.ChromiumPort):
                        'MacBuildInstructions')
         return result
 
+    def driver_name(self):
+        """name for this port's equivalent of DumpRenderTree."""
+        return "TestShell"
+
     def test_platform_name(self):
         # We use 'mac' instead of 'chromium-mac'
         return 'mac'
