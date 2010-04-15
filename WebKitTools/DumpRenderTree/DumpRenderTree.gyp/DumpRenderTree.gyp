@@ -92,11 +92,22 @@
                 '../chromium/TestNavigationController.h',
                 '../chromium/TestShell.cpp',
                 '../chromium/TestShell.h',
-                '../chromium/TestShellMac.mm',
                 '../chromium/TextInputController.cpp',
                 '../chromium/TextInputController.h',
                 '../chromium/WebViewHost.cpp',
                 '../chromium/WebViewHost.h',
+            ],
+            'conditions': [
+                ['OS=="win"', {
+                    'sources': [
+                        '../chromium/TestShellWin.cpp',
+                    ],
+                }],
+                ['OS=="mac"', {
+                    'sources': [
+                        '../chromium/TestShellMac.mm',
+                    ],
+                }],
             ],
             'mac_bundle_resources': [
                 '../qt/fonts/AHEM____.TTF',

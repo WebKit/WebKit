@@ -1,4 +1,21 @@
 2010-04-15  Roland Steiner  <rolandsteiner@chromium.org>
+ 
+        Reviewed by Dimitri Glazkov.
+
+        Bug 37636 - [DRT/Chromium] Implement DRT/Chromium for Windows
+        https://bugs.webkit.org/show_bug.cgi?id=37636
+ 
+        Second patch: add Windows-specific implementation parts
+        of TestShell.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell::finishedEvent):
+        * DumpRenderTree/chromium/TestShellWin.cpp:
+        (watchDogThread):
+        (TestShell::waitTestFinished):
+
+2010-04-15  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Dimitri Glazkov.
 
