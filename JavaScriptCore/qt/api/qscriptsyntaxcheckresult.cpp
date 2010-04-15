@@ -124,9 +124,13 @@ QScriptSyntaxCheckResultPrivate::~QScriptSyntaxCheckResultPrivate()
 
 QString QScriptSyntaxCheckResultPrivate::errorMessage() const
 {
-    if (m_exception)
-        return QScriptConverter::toString(JSValueToStringCopy(m_engine->context(), m_exception, /* exception */ 0));
-    return QString();
+    if (!m_exception)
+        return QString();
+
+    JSStringRef tmp = JSValueToStringCopy(m_engine->context(), m_exception, /* exception */ 0);
+    QString message = QScriptConverter::toString(tmp);
+    JSStringRelease(tmp);
+    return message;
 }
 
 int QScriptSyntaxCheckResultPrivate::errorLineNumber() const
@@ -134,9 +138,11 @@ int QScriptSyntaxCheckResultPrivate::errorLineNumber() const
     if (!m_exception)
         return -1;
     // m_exception is an instance of the Exception so it has "line" attribute.
+    JSStringRef lineAttrName = QScriptConverter::toString("line");
     JSValueRef line = JSObjectGetProperty(m_engine->context(),
                                           m_exception,
-                                          QScriptConverter::toString("line"),
+                                          lineAttrName,
                                           /* exceptions */0);
+    JSStringRelease(lineAttrName);
     return JSValueToNumber(m_engine->context(), line, /* exceptions */0);
 }

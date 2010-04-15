@@ -2,6 +2,23 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
+        Fix a few memory leaks in QScriptEngine.
+
+        Syntax checking caused memory leak, not all temporary variables were released.
+
+        [Qt] Syntax checking  in the QtScript cause a memory leak.
+        https://bugs.webkit.org/show_bug.cgi?id=37610
+
+        * qt/api/qscriptengine_p.cpp:
+        (QScriptEnginePrivate::checkSyntax):
+        * qt/api/qscriptsyntaxcheckresult.cpp:
+        (QScriptSyntaxCheckResultPrivate::errorMessage):
+        (QScriptSyntaxCheckResultPrivate::errorLineNumber):
+
+2010-04-14  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
         Fix memory leak inside QScriptEnginePrivate::makeJSValue.
 
         QScriptEnginePrivate::makeJSValue should release temporary JSStringRef variable.

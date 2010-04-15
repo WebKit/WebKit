@@ -42,8 +42,12 @@ QScriptEnginePrivate::~QScriptEnginePrivate()
 QScriptSyntaxCheckResultPrivate* QScriptEnginePrivate::checkSyntax(const QString& program)
 {
     JSValueRef exception;
-    if (JSCheckScriptSyntax(m_context, QScriptConverter::toString(program), /* url */ 0, /* starting line */ 1, &exception))
+    JSStringRef source = QScriptConverter::toString(program);
+    bool syntaxIsCorrect = JSCheckScriptSyntax(m_context, source, /* url */ 0, /* starting line */ 1, &exception);
+    JSStringRelease(source);
+    if (syntaxIsCorrect) {
         return new QScriptSyntaxCheckResultPrivate(this);
+    }
     JSValueProtect(m_context, exception);
     return new QScriptSyntaxCheckResultPrivate(this, const_cast<JSObjectRef>(exception));
 }
