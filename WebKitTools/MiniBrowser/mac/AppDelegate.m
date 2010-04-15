@@ -34,9 +34,13 @@ static const WKProcessModel defaultProcessModel = kWKProcessModelSecondaryProces
 - (id)init
 {
     self = [super init];
-    if (self)
-        currentProcessModel = defaultProcessModel;
-    
+    if (self) {
+        if ([NSEvent modifierFlags] & NSShiftKeyMask)
+            currentProcessModel = kWKProcessModelSecondaryThread;
+        else
+            currentProcessModel = kWKProcessModelSecondaryProcess;
+    }
+
     return self;
 }
 

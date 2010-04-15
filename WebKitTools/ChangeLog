@@ -1,3 +1,13 @@
+2010-04-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Start the mini browser in threaded mode if shift is pressed during startup.
+        https://bugs.webkit.org/show_bug.cgi?id=37670
+
+        * MiniBrowser/mac/AppDelegate.m:
+        (-[BrowserAppDelegate init]):
+
 2010-04-15  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
