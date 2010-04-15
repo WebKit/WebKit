@@ -23,59 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPageProxyMessageKinds_h
-#define WebPageProxyMessageKinds_h
+#include "WKNavigationData.h"
 
-#include "MessageID.h"
+#include "WKAPICast.h"
+#include "WebNavigationData.h"
 
-// Messages sent from the web process to the WebPageProxy.
+using namespace WebKit;
 
-namespace WebPageProxyMessage {
-
-enum Kind {
-    CreateNewPage,
-    ShowPage,
-    RunJavaScriptAlert,
-    
-    ClosePage,
-    DecidePolicyForMIMEType,
-    DecidePolicyForNavigationAction,
-    DecidePolicyForNewWindowAction,
-    DidChangeCanGoBack,
-    DidChangeCanGoForward,
-    DidChangeProgress,
-    DidCommitLoadForFrame,
-    DidCreateMainFrame,
-    DidCreateSubFrame,
-    DidFailLoadForFrame,
-    DidFailProvisionalLoadForFrame,
-    DidFinishLoadForFrame,
-    DidFinishProgress,
-    DidFirstLayoutForFrame,
-    DidFirstVisuallyNonEmptyLayoutForFrame,
-    DidNavigateWithNavigationData,
-    DidPerformClientRedirect,
-    DidPerformServerRedirect,
-    DidReceiveEvent,
-    DidReceiveServerRedirectForProvisionalLoadForFrame,
-    DidReceiveTitleForFrame,
-    DidRunJavaScriptInMainFrame,
-    DidSetFrame,
-    DidStartProgress,
-    DidStartProvisionalLoadForFrame,
-    DidUpdateHistoryTitle,
-    SetToolTip,
-    TakeFocus,
-};
-
+WKStringRef WKNavigationDataGetTitle(WKNavigationDataRef navigationDataRef)
+{
+    return toRef(toWK(navigationDataRef)->title().impl());
 }
 
-namespace CoreIPC {
-
-template<> struct MessageKindTraits<WebPageProxyMessage::Kind> { 
-    static const MessageClass messageClass = MessageClassWebPageProxy;
-};
-
+WKURLRef WKNavigationDataGetURL(WKNavigationDataRef navigationDataRef)
+{
+    return toURLRef(toWK(navigationDataRef)->url().impl());
 }
 
-#endif // WebPageProxyMessageKinds_h
+WKNavigationDataRef WKNavigationDataRetain(WKNavigationDataRef navigationDataRef)
+{
+    toWK(navigationDataRef)->ref();
+    return navigationDataRef;
+}
+
+void WKNavigationDataRelease(WKNavigationDataRef navigationDataRef)
+{
+    toWK(navigationDataRef)->deref();
+}

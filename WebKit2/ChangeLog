@@ -1,5 +1,38 @@
 2010-04-15  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Anders Carlsson.
+
+        Add WebHistoryClient support.
+        https://bugs.webkit.org/show_bug.cgi?id=37671
+
+        Adds the following callbacks:
+            didNavigateWithNavigationData
+            didPerformClientRedirect
+            didPerformServerRedirect
+            didUpdateHistoryTitle
+
+        * Shared/CoreIPCSupport/WebPageProxyMessageKinds.h:
+        (WebPageProxyMessage::):
+        * Shared/WebNavigationDataStore.h: Added.
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKBase.h:
+        * UIProcess/API/C/WKNavigationData.cpp: Added.
+        * UIProcess/API/C/WKNavigationData.h: Added.
+        * UIProcess/API/C/WKPage.cpp:
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/C/WebKit2.h:
+        * UIProcess/WebHistoryClient.cpp: Copied from UIProcess/WebUIClient.cpp.
+        * UIProcess/WebHistoryClient.h: Copied from UIProcess/WebUIClient.h.
+        * UIProcess/WebNavigationData.cpp: Added.
+        * UIProcess/WebNavigationData.h: Added.
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        * win/WebKit2.vcproj:
+
+2010-04-15  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Adam Roben.
 
         Remove empty file configurations.

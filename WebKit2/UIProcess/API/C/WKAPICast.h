@@ -37,9 +37,11 @@ namespace WebCore {
 }
 
 namespace WebKit {
+    class KURLWrapper;
     class WebContext;
     class WebFramePolicyListenerProxy;
     class WebFrameProxy;
+    class WebNavigationData;
     class WebPageNamespace;
     class WebPageProxy;
     class WebPreferences;
@@ -125,6 +127,16 @@ inline WebCore::StringImpl* toWK(WKURLRef u)
 inline WKURLRef toURLRef(WebCore::StringImpl* s)
 {
     return reinterpret_cast<WKURLRef>(s);
+}
+
+inline WebKit::WebNavigationData* toWK(WKNavigationDataRef n)
+{
+    return reinterpret_cast<WebKit::WebNavigationData*>(n);
+}
+
+inline WKNavigationDataRef toRef(WebKit::WebNavigationData* n)
+{
+    return reinterpret_cast<WKNavigationDataRef>(n);
 }
 
 #endif // WKAPICast_h

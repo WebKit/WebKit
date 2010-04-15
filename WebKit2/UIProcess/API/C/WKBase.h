@@ -30,11 +30,12 @@
 #include <WebKit2/WKBaseWin.h>
 #endif
 
-typedef struct OpaqueWKFrame* WKFrameRef;
-typedef struct OpaqueWKPage* WKPageRef;
 typedef struct OpaqueWKContext* WKContextRef;
-typedef struct OpaqueWKPageNamespace* WKPageNamespaceRef;
+typedef struct OpaqueWKFrame* WKFrameRef;
 typedef struct OpaqueWKFramePolicyListener* WKFramePolicyListenerRef;
+typedef struct OpaqueWKNavigationDataRef* WKNavigationDataRef;
+typedef struct OpaqueWKPage* WKPageRef;
+typedef struct OpaqueWKPageNamespace* WKPageNamespaceRef;
 typedef struct OpaqueWKPreferencesRef* WKPreferencesRef;
 typedef struct OpaqueWKStringRef* WKStringRef;
 typedef struct OpaqueWKURLRef* WKURLRef;

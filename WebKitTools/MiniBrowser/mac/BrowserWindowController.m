@@ -89,6 +89,8 @@
     WKPageRelease(_webView.pageRef);
 }
 
+#pragma mark Loader Client Callbacks
+
 static void _didStartProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, const void *clientInfo)
 {
     NSLog(@"didStartProvisionalLoadForFrame");
@@ -161,6 +163,8 @@ static void _didBecomeResponsive(WKPageRef page, const void *clientInfo)
     NSLog(@"didBecomeResponsive");
 }
 
+#pragma mark Policy Client Callbacks
+
 static void _decidePolicyForNavigationAction(WKPageRef page, uint32_t navigationType, WKURLRef url, WKFrameRef frame, WKFramePolicyListenerRef listener, const void *clientInfo)
 {
     NSLog(@"decidePolicyForNavigationAction");
@@ -177,6 +181,8 @@ static void _decidePolicyForMIMEType(WKPageRef page, WKStringRef MIMEType, WKURL
 {
     WKFramePolicyListenerUse(listener);
 }
+
+#pragma mark UI Client Callbacks
 
 static WKPageRef _createNewPage(WKPageRef page, const void* clientInfo)
 {
@@ -215,6 +221,45 @@ static void _runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRe
 
     [alert runModal];
     [alert release];
+}
+
+
+#pragma mark History Client Callbacks
+
+static void _didNavigateWithNavigationData(WKPageRef page, WKNavigationDataRef navigationData, WKFrameRef frame, const void *clientInfo)
+{
+    CFStringRef title = WKStringCopyCFString(0, WKNavigationDataGetTitle(navigationData));
+    CFURLRef url = WKURLCopyCFURL(0, WKNavigationDataGetURL(navigationData));
+    NSLog(@"HistoryClient - didNavigateWithNavigationData - title: %@ - url: %@", title, url);
+    CFRelease(title);
+    CFRelease(url);
+}
+
+static void _didPerformClientRedirect(WKPageRef page, WKURLRef sourceURL, WKURLRef destinationURL, WKFrameRef frame, const void *clientInfo)
+{
+    CFURLRef cfSourceURL = WKURLCopyCFURL(0, sourceURL);
+    CFURLRef cfDestinationURL = WKURLCopyCFURL(0, destinationURL);
+    NSLog(@"HistoryClient - didPerformClientRedirect - sourceURL: %@ - destinationURL: %@", cfSourceURL, cfDestinationURL);
+    CFRelease(cfSourceURL);
+    CFRelease(cfDestinationURL);
+}
+
+static void _didPerformServerRedirect(WKPageRef page, WKURLRef sourceURL, WKURLRef destinationURL, WKFrameRef frame, const void *clientInfo)
+{
+    CFURLRef cfSourceURL = WKURLCopyCFURL(0, sourceURL);
+    CFURLRef cfDestinationURL = WKURLCopyCFURL(0, destinationURL);
+    NSLog(@"HistoryClient - didPerformServerRedirect - sourceURL: %@ - destinationURL: %@", cfSourceURL, cfDestinationURL);
+    CFRelease(cfSourceURL);
+    CFRelease(cfDestinationURL);
+}
+
+static void _didUpdateHistoryTitle(WKPageRef page, WKStringRef title, WKURLRef URL, WKFrameRef frame, const void *clientInfo)
+{
+    CFStringRef cfTitle = WKStringCopyCFString(0, title);
+    CFURLRef cfURL = WKURLCopyCFURL(0, URL);
+    NSLog(@"HistoryClient - didUpdateHistoryTitle - title: %@ - URL: %@", cfTitle, cfURL);
+    CFRelease(cfTitle);
+    CFRelease(cfURL);
 }
 
 - (void)awakeFromNib
@@ -264,6 +309,17 @@ static void _runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRe
         _runJavaScriptAlert
     };
     WKPageSetPageUIClient(_webView.pageRef, &uiClient);
+
+    WKPageHistoryClient historyClient = {
+        0,
+        self,
+        _didNavigateWithNavigationData,
+        _didPerformClientRedirect,
+        _didPerformServerRedirect,
+        _didUpdateHistoryTitle,
+    };
+
+    WKPageSetPageHistoryClient(_webView.pageRef, &historyClient);
 }
 
 - (void)didStartProgress

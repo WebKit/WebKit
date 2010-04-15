@@ -23,59 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPageProxyMessageKinds_h
-#define WebPageProxyMessageKinds_h
+#ifndef WKNavigationData_h
+#define WKNavigationData_h
 
-#include "MessageID.h"
+#include <WebKit2/WKBase.h>
 
-// Messages sent from the web process to the WebPageProxy.
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-namespace WebPageProxyMessage {
+WK_EXPORT WKStringRef WKNavigationDataGetTitle(WKNavigationDataRef navigationData);
+WK_EXPORT WKURLRef WKNavigationDataGetURL(WKNavigationDataRef navigationData);
 
-enum Kind {
-    CreateNewPage,
-    ShowPage,
-    RunJavaScriptAlert,
-    
-    ClosePage,
-    DecidePolicyForMIMEType,
-    DecidePolicyForNavigationAction,
-    DecidePolicyForNewWindowAction,
-    DidChangeCanGoBack,
-    DidChangeCanGoForward,
-    DidChangeProgress,
-    DidCommitLoadForFrame,
-    DidCreateMainFrame,
-    DidCreateSubFrame,
-    DidFailLoadForFrame,
-    DidFailProvisionalLoadForFrame,
-    DidFinishLoadForFrame,
-    DidFinishProgress,
-    DidFirstLayoutForFrame,
-    DidFirstVisuallyNonEmptyLayoutForFrame,
-    DidNavigateWithNavigationData,
-    DidPerformClientRedirect,
-    DidPerformServerRedirect,
-    DidReceiveEvent,
-    DidReceiveServerRedirectForProvisionalLoadForFrame,
-    DidReceiveTitleForFrame,
-    DidRunJavaScriptInMainFrame,
-    DidSetFrame,
-    DidStartProgress,
-    DidStartProvisionalLoadForFrame,
-    DidUpdateHistoryTitle,
-    SetToolTip,
-    TakeFocus,
-};
+WK_EXPORT WKNavigationDataRef WKNavigationDataRetain(WKNavigationDataRef navigationData);
+WK_EXPORT void WKNavigationDataRelease(WKNavigationDataRef navigationData);
 
+#ifdef __cplusplus
 }
+#endif
 
-namespace CoreIPC {
-
-template<> struct MessageKindTraits<WebPageProxyMessage::Kind> { 
-    static const MessageClass messageClass = MessageClassWebPageProxy;
-};
-
-}
-
-#endif // WebPageProxyMessageKinds_h
+#endif /* WKNavigationData_h */

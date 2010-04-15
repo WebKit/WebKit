@@ -23,59 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPageProxyMessageKinds_h
-#define WebPageProxyMessageKinds_h
+#ifndef WebNavigationDataStore_h
+#define WebNavigationDataStore_h
 
-#include "MessageID.h"
+#include "ArgumentDecoder.h"
+#include "ArgumentEncoder.h"
+#include "WebCoreTypeArgumentMarshalling.h"
+#include <WebCore/PlatformString.h>
 
-// Messages sent from the web process to the WebPageProxy.
+namespace WebKit {
 
-namespace WebPageProxyMessage {
+struct WebNavigationDataStore {
+    void encode(CoreIPC::ArgumentEncoder& encoder) const
+    {
+        encoder.encode(url);
+        encoder.encode(title);
+    }
 
-enum Kind {
-    CreateNewPage,
-    ShowPage,
-    RunJavaScriptAlert,
-    
-    ClosePage,
-    DecidePolicyForMIMEType,
-    DecidePolicyForNavigationAction,
-    DecidePolicyForNewWindowAction,
-    DidChangeCanGoBack,
-    DidChangeCanGoForward,
-    DidChangeProgress,
-    DidCommitLoadForFrame,
-    DidCreateMainFrame,
-    DidCreateSubFrame,
-    DidFailLoadForFrame,
-    DidFailProvisionalLoadForFrame,
-    DidFinishLoadForFrame,
-    DidFinishProgress,
-    DidFirstLayoutForFrame,
-    DidFirstVisuallyNonEmptyLayoutForFrame,
-    DidNavigateWithNavigationData,
-    DidPerformClientRedirect,
-    DidPerformServerRedirect,
-    DidReceiveEvent,
-    DidReceiveServerRedirectForProvisionalLoadForFrame,
-    DidReceiveTitleForFrame,
-    DidRunJavaScriptInMainFrame,
-    DidSetFrame,
-    DidStartProgress,
-    DidStartProvisionalLoadForFrame,
-    DidUpdateHistoryTitle,
-    SetToolTip,
-    TakeFocus,
+    static bool decode(CoreIPC::ArgumentDecoder& decoder, WebNavigationDataStore& store)
+    {
+        if (!decoder.decode(store.url))
+            return false;
+        if (!decoder.decode(store.title))
+            return false;
+        return true;
+    }
+
+    // FIXME: Add the remaining items we want to track for history.
+    WebCore::String url;
+    WebCore::String title;
 };
 
-}
+} // namespace WebKit
 
-namespace CoreIPC {
-
-template<> struct MessageKindTraits<WebPageProxyMessage::Kind> { 
-    static const MessageClass messageClass = MessageClassWebPageProxy;
-};
-
-}
-
-#endif // WebPageProxyMessageKinds_h
+#endif // WebNavigationDataStore_h

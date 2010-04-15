@@ -30,6 +30,7 @@
 #include <WebKit2/WKContext.h>
 #include <WebKit2/WKFrame.h>
 #include <WebKit2/WKFramePolicyListener.h>
+#include <WebKit2/WKNavigationData.h>
 #include <WebKit2/WKPage.h>
 #include <WebKit2/WKPageNamespace.h>
 #include <WebKit2/WKPreferences.h>

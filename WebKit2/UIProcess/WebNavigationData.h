@@ -23,59 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPageProxyMessageKinds_h
-#define WebPageProxyMessageKinds_h
+#ifndef WebNavigationData_h
+#define WebNavigationData_h
 
-#include "MessageID.h"
+#include "WebNavigationDataStore.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 
-// Messages sent from the web process to the WebPageProxy.
+namespace WebKit {
 
-namespace WebPageProxyMessage {
+class WebNavigationData : public RefCounted<WebNavigationData> {
+public:
+    static PassRefPtr<WebNavigationData> create(const WebNavigationDataStore& store)
+    {
+        return adoptRef(new WebNavigationData(store));
+    }
+    ~WebNavigationData();
 
-enum Kind {
-    CreateNewPage,
-    ShowPage,
-    RunJavaScriptAlert,
-    
-    ClosePage,
-    DecidePolicyForMIMEType,
-    DecidePolicyForNavigationAction,
-    DecidePolicyForNewWindowAction,
-    DidChangeCanGoBack,
-    DidChangeCanGoForward,
-    DidChangeProgress,
-    DidCommitLoadForFrame,
-    DidCreateMainFrame,
-    DidCreateSubFrame,
-    DidFailLoadForFrame,
-    DidFailProvisionalLoadForFrame,
-    DidFinishLoadForFrame,
-    DidFinishProgress,
-    DidFirstLayoutForFrame,
-    DidFirstVisuallyNonEmptyLayoutForFrame,
-    DidNavigateWithNavigationData,
-    DidPerformClientRedirect,
-    DidPerformServerRedirect,
-    DidReceiveEvent,
-    DidReceiveServerRedirectForProvisionalLoadForFrame,
-    DidReceiveTitleForFrame,
-    DidRunJavaScriptInMainFrame,
-    DidSetFrame,
-    DidStartProgress,
-    DidStartProvisionalLoadForFrame,
-    DidUpdateHistoryTitle,
-    SetToolTip,
-    TakeFocus,
+    WebCore::String title() const { return m_store.title; }
+    WebCore::String url() const { return m_store.url; }
+
+private:
+    WebNavigationData(const WebNavigationDataStore&);
+
+    WebNavigationDataStore m_store;
 };
 
-}
+} // namespace WebKit
 
-namespace CoreIPC {
-
-template<> struct MessageKindTraits<WebPageProxyMessage::Kind> { 
-    static const MessageClass messageClass = MessageClassWebPageProxy;
-};
-
-}
-
-#endif // WebPageProxyMessageKinds_h
+#endif // WebNavigationData_h

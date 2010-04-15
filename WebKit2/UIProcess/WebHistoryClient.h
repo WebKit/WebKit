@@ -23,59 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPageProxyMessageKinds_h
-#define WebPageProxyMessageKinds_h
+#ifndef WebHistoryClient_h
+#define WebHistoryClient_h
 
-#include "MessageID.h"
+#include "WKPage.h"
 
-// Messages sent from the web process to the WebPageProxy.
-
-namespace WebPageProxyMessage {
-
-enum Kind {
-    CreateNewPage,
-    ShowPage,
-    RunJavaScriptAlert,
-    
-    ClosePage,
-    DecidePolicyForMIMEType,
-    DecidePolicyForNavigationAction,
-    DecidePolicyForNewWindowAction,
-    DidChangeCanGoBack,
-    DidChangeCanGoForward,
-    DidChangeProgress,
-    DidCommitLoadForFrame,
-    DidCreateMainFrame,
-    DidCreateSubFrame,
-    DidFailLoadForFrame,
-    DidFailProvisionalLoadForFrame,
-    DidFinishLoadForFrame,
-    DidFinishProgress,
-    DidFirstLayoutForFrame,
-    DidFirstVisuallyNonEmptyLayoutForFrame,
-    DidNavigateWithNavigationData,
-    DidPerformClientRedirect,
-    DidPerformServerRedirect,
-    DidReceiveEvent,
-    DidReceiveServerRedirectForProvisionalLoadForFrame,
-    DidReceiveTitleForFrame,
-    DidRunJavaScriptInMainFrame,
-    DidSetFrame,
-    DidStartProgress,
-    DidStartProvisionalLoadForFrame,
-    DidUpdateHistoryTitle,
-    SetToolTip,
-    TakeFocus,
-};
-
+namespace WebCore {
+    class String;
 }
 
-namespace CoreIPC {
+namespace WebKit {
 
-template<> struct MessageKindTraits<WebPageProxyMessage::Kind> { 
-    static const MessageClass messageClass = MessageClassWebPageProxy;
+class WebFrameProxy;
+class WebNavigationDataStore;
+class WebPageProxy;
+
+class WebHistoryClient {
+public:
+    WebHistoryClient();
+    void initialize(WKPageHistoryClient*);
+
+    void didNavigateWithNavigationData(WebPageProxy*, const WebNavigationDataStore&, WebFrameProxy*);
+    void didPerformClientRedirect(WebPageProxy*, const WebCore::String& sourceURL, const WebCore::String& destinationURL, WebFrameProxy*);
+    void didPerformServerRedirect(WebPageProxy*, const WebCore::String& sourceURL, const WebCore::String& destinationURL, WebFrameProxy*);
+    void didUpdateHistoryTitle(WebPageProxy*, const WebCore::String& title, const WebCore::String& url, WebFrameProxy*);
+
+private:
+    WKPageHistoryClient m_pageHistoryClient;
 };
 
-}
+} // namespace WebKit
 
-#endif // WebPageProxyMessageKinds_h
+#endif // WebHistoryClient_h

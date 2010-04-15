@@ -83,7 +83,6 @@ struct WKPageLoaderClient {
 typedef struct WKPageLoaderClient WKPageLoaderClient;
 
 // Policy Client.
-
 typedef void (*WKPageDecidePolicyForNavigationActionCallback)(WKPageRef page, uint32_t navigationType, WKURLRef url, WKFrameRef frame, WKFramePolicyListenerRef listener, const void *clientInfo);
 typedef void (*WKPageDecidePolicyForNewWindowActionCallback)(WKPageRef page, uint32_t navigationType, WKURLRef url, WKFrameRef frame, WKFramePolicyListenerRef listener, const void *clientInfo);
 typedef void (*WKPageDecidePolicyForMIMETypeCallback)(WKPageRef page, WKStringRef MIMEType, WKURLRef url, WKFrameRef frame, WKFramePolicyListenerRef listener, const void *clientInfo);
@@ -113,6 +112,23 @@ struct WKPageUIClient {
 };
 typedef struct WKPageUIClient WKPageUIClient;
 
+// History Client
+typedef void (*WKPageDidNavigateWithNavigationDataCallback)(WKPageRef page, WKNavigationDataRef navigationData, WKFrameRef frame, const void *clientInfo);
+typedef void (*WKPageDidPerformClientRedirectCallback)(WKPageRef page, WKURLRef sourceURL, WKURLRef destinationURL, WKFrameRef frame, const void *clientInfo);
+typedef void (*WKPageDidPerformServerRedirectCallback)(WKPageRef page, WKURLRef sourceURL, WKURLRef destinationURL, WKFrameRef frame, const void *clientInfo);
+typedef void (*WKPageDidUpdateHistoryTitleCallback)(WKPageRef page, WKStringRef title, WKURLRef URL, WKFrameRef frame, const void *clientInfo);
+
+struct WKPageHistoryClient {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+    WKPageDidNavigateWithNavigationDataCallback                         didNavigateWithNavigationData;
+    WKPageDidPerformClientRedirectCallback                              didPerformClientRedirect;
+    WKPageDidPerformServerRedirectCallback                              didPerformServerRedirect;
+    WKPageDidUpdateHistoryTitleCallback                                 didUpdateHistoryTitle;
+};
+typedef struct WKPageHistoryClient WKPageHistoryClient;
+
+
 WK_EXPORT WKPageNamespaceRef WKPageGetPageNamespace(WKPageRef page);
 
 WK_EXPORT void WKPageLoadURL(WKPageRef page, WKURLRef url);
@@ -137,6 +153,7 @@ WK_EXPORT void WKPageTerminate(WKPageRef page);
 WK_EXPORT void WKPageSetPageLoaderClient(WKPageRef page, WKPageLoaderClient * client);
 WK_EXPORT void WKPageSetPagePolicyClient(WKPageRef page, WKPagePolicyClient * client);
 WK_EXPORT void WKPageSetPageUIClient(WKPageRef page, WKPageUIClient * client);
+WK_EXPORT void WKPageSetPageHistoryClient(WKPageRef page, WKPageHistoryClient * client);
 
 #if __BLOCKS__
 WK_EXPORT void WKPageRunJavaScriptInMainFrame(WKPageRef page, WKStringRef script, void (^returnValueBlock)(WKStringRef));

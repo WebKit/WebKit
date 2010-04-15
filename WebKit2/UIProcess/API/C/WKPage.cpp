@@ -118,8 +118,14 @@ void WKPageSetPagePolicyClient(WKPageRef pageRef, WKPagePolicyClient * wkClient)
 
 void WKPageSetPageUIClient(WKPageRef pageRef, WKPageUIClient * wkClient)
 {
-   if (wkClient && !wkClient->version)
+    if (wkClient && !wkClient->version)
         toWK(pageRef)->initializeUIClient(wkClient);
+}
+
+void WKPageSetPageHistoryClient(WKPageRef pageRef, WKPageHistoryClient * wkClient)
+{
+    if (wkClient && !wkClient->version)
+        toWK(pageRef)->initializeHistoryClient(wkClient);
 }
 
 #if __BLOCKS__

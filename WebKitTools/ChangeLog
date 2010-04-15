@@ -1,3 +1,19 @@
+2010-04-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Add WebHistoryClient support.
+        https://bugs.webkit.org/show_bug.cgi?id=37671
+
+        Add HistoryClient logging.
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (_didNavigateWithNavigationData):
+        (_didPerformClientRedirect):
+        (_didPerformServerRedirect):
+        (_didUpdateHistoryTitle):
+        (-[BrowserWindowController awakeFromNib]):
+
 2010-04-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

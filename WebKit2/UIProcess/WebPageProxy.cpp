@@ -31,6 +31,7 @@
 #include "WebContext.h"
 #include "WebCoreTypeArgumentMarshalling.h"
 #include "WebEvent.h"
+#include "WebNavigationDataStore.h"
 #include "WebPageMessageKinds.h"
 #include "WebPageNamespace.h"
 #include "WebPageProxyMessageKinds.h"
@@ -105,6 +106,11 @@ void WebPageProxy::initializePolicyClient(WKPagePolicyClient* policyClient)
 void WebPageProxy::initializeUIClient(WKPageUIClient* client)
 {
     m_uiClient.initialize(client);
+}
+
+void WebPageProxy::initializeHistoryClient(WKPageHistoryClient* client)
+{
+    m_historyClient.initialize(client);
 }
 
 void WebPageProxy::revive()
@@ -477,6 +483,41 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
             closePage();
             break;
         }
+        case WebPageProxyMessage::DidNavigateWithNavigationData: {
+            WebNavigationDataStore store;
+            uint64_t frameID;
+            if (!arguments.decode(CoreIPC::Out(store, frameID)))
+                return;
+            didNavigateWithNavigationData(webFrame(frameID), store);
+            break;
+        }
+        case WebPageProxyMessage::DidPerformClientRedirect: {
+            String sourceURLString;
+            String destinationURLString;
+            uint64_t frameID;
+            if (!arguments.decode(CoreIPC::Out(sourceURLString, destinationURLString, frameID)))
+                return;
+            didPerformClientRedirect(webFrame(frameID), sourceURLString, destinationURLString);
+            break;
+        }
+        case WebPageProxyMessage::DidPerformServerRedirect: {
+            String sourceURLString;
+            String destinationURLString;
+            uint64_t frameID;
+            if (!arguments.decode(CoreIPC::Out(sourceURLString, destinationURLString, frameID)))
+                return;
+            didPerformServerRedirect(webFrame(frameID), sourceURLString, destinationURLString);
+            break;
+        }
+        case WebPageProxyMessage::DidUpdateHistoryTitle: {
+            String title;
+            String url;
+            uint64_t frameID;
+            if (!arguments.decode(CoreIPC::Out(title, url, frameID)))
+                return;
+            didUpdateHistoryTitle(webFrame(frameID), title, url);
+            break;
+        }
         default:
             ASSERT_NOT_REACHED();
             break;
@@ -643,6 +684,29 @@ void WebPageProxy::closePage()
 void WebPageProxy::runJavaScriptAlert(WebFrameProxy* frame, const WebCore::String& alertText)
 {
     m_uiClient.runJavaScriptAlert(this, alertText.impl(), frame);
+}
+
+
+// HistoryClient
+
+void WebPageProxy::didNavigateWithNavigationData(WebFrameProxy* frame, const WebNavigationDataStore& store) 
+{
+    m_historyClient.didNavigateWithNavigationData(this, store, frame);
+}
+
+void WebPageProxy::didPerformClientRedirect(WebFrameProxy* frame, const String& sourceURLString, const String& destinationURLString)
+{
+    m_historyClient.didPerformClientRedirect(this, sourceURLString, destinationURLString, frame);
+}
+
+void WebPageProxy::didPerformServerRedirect(WebFrameProxy* frame, const String& sourceURLString, const String& destinationURLString)
+{
+    m_historyClient.didPerformServerRedirect(this, sourceURLString, destinationURLString, frame);
+}
+
+void WebPageProxy::didUpdateHistoryTitle(WebFrameProxy* frame, const String& title, const String& url)
+{
+    m_historyClient.didUpdateHistoryTitle(this, title, url, frame);
 }
 
 // Other

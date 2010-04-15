@@ -506,6 +506,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\WebNavigationDataStore.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\WebPreferencesStore.cpp"
 				>
 			</File>
@@ -750,11 +754,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\UIProcess\WebHistoryClient.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebHistoryClient.h"
+				>
+			</File>
+			<File
 				RelativePath="..\UIProcess\WebLoaderClient.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\UIProcess\WebLoaderClient.h"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebNavigationData.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebNavigationData.h"
 				>
 			</File>
 			<File
@@ -853,6 +873,14 @@
 					</File>
 					<File
 						RelativePath="..\UIProcess\API\C\WKFramePolicyListener.h"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKNavigationData.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKNavigationData.h"
 						>
 					</File>
 					<File
