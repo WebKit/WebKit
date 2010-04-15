@@ -1,3 +1,15 @@
+2010-04-15  Albert J. Wong  <ajwong@chromium.org>
+
+        Not reviewed, sheriffing.
+
+        [Chromium] Update chromium layout tests expecataions with new baselines. Remove expectations for some tests that seem to be passing now.
+
+        * platform/chromium-win/fast/backgrounds/svg-as-background-1-expected.checksum:
+        * platform/chromium-win/fast/backgrounds/svg-as-background-1-expected.png:
+        * platform/chromium-win/fast/backgrounds/svg-as-background-3-expected.checksum:
+        * platform/chromium-win/fast/backgrounds/svg-as-background-3-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2010-04-15  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
