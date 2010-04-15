@@ -199,6 +199,14 @@ void SVGStyledElement::svgAttributeChanged(const QualifiedName& attrName)
     if (attrName.matches(HTMLNames::classAttr))
         classAttributeChanged(className());
 
+    if (attrName == idAttributeName()) {
+        // Notify resources about id changes, this is important as we cache resources by id in SVGDocumentExtensions
+        if (renderer() && renderer()->isSVGResource()) {
+            RenderSVGResource* resource = renderer()->toRenderSVGResource();
+            resource->idChanged();
+        }
+    }
+
     // If we're the child of a resource element, be sure to invalidate it.
     invalidateResourcesInAncestorChain();
 

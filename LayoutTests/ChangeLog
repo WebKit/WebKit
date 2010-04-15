@@ -1,3 +1,15 @@
+2010-04-15  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Beth Dakin.
+
+        RenderSVGResource <-> id mapping should be cached
+        https://bugs.webkit.org/show_bug.cgi?id=37575
+
+        * platform/mac/svg/custom/clip-path-id-changes-expected.checksum: Added.
+        * platform/mac/svg/custom/clip-path-id-changes-expected.png: Added.
+        * platform/mac/svg/custom/clip-path-id-changes-expected.txt: Added.
+        * svg/custom/clip-path-id-changes.svg: Added.
+
 2010-04-15  Anton Muhin   <antonm@chromium.org>
 
         Not reviewed, sheriffing.

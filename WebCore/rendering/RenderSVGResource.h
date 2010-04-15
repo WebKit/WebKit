@@ -35,7 +35,50 @@ enum RenderSVGResourceType {
 
 class RenderSVGResource : public RenderSVGHiddenContainer {
 public:
-    RenderSVGResource(SVGStyledElement* node) : RenderSVGHiddenContainer(node) { }
+    RenderSVGResource(SVGStyledElement* node)
+        : RenderSVGHiddenContainer(node)
+        , m_id(node->getIDAttribute())
+    {
+        ASSERT(node->document());
+        node->document()->accessSVGExtensions()->addResource(m_id, this);
+    }
+
+    virtual ~RenderSVGResource()
+    {
+        ASSERT(node());
+        ASSERT(node()->document());
+        node()->document()->accessSVGExtensions()->removeResource(m_id);
+    }
+
+    void idChanged()
+    {
+        ASSERT(node());
+        ASSERT(node()->document());
+        SVGDocumentExtensions* extensions = node()->document()->accessSVGExtensions();
+
+        // Remove old id, that is guaranteed to be present in cache
+        extensions->removeResource(m_id);
+
+        m_id = static_cast<Element*>(node())->getIDAttribute();
+
+        // It's possible that an element is referencing us with the new id, and has to be notified that we're existing now
+        if (extensions->isPendingResource(m_id)) {
+            OwnPtr<HashSet<SVGStyledElement*> > clients(extensions->removePendingResource(m_id));
+            if (clients->isEmpty())
+                return;
+
+            HashSet<SVGStyledElement*>::const_iterator it = clients->begin();
+            const HashSet<SVGStyledElement*>::const_iterator end = clients->end();
+
+            for (; it != end; ++it) {
+                if (RenderObject* renderer = (*it)->renderer())
+                    renderer->setNeedsLayout(true);
+            }
+        }
+
+        // Recache us with the new id
+        extensions->addResource(m_id, this);
+    }
 
     template<class Renderer>
     Renderer* cast()
@@ -57,6 +100,9 @@ public:
     virtual FloatRect resourceBoundingBox(const FloatRect&) const = 0;
 
     virtual RenderSVGResourceType resourceType() const = 0;
+
+private:
+    AtomicString m_id;
 };
 
 template<typename Renderer>
@@ -65,19 +111,10 @@ Renderer* getRenderSVGResourceById(Document* document, const AtomicString& id)
     if (id.isEmpty())
         return 0;
 
-    Element* element = document->getElementById(id);
-    if (!element || !element->isSVGElement())
-        return 0;
+    if (RenderSVGResource* renderResource = document->accessSVGExtensions()->resourceById(id))
+        return renderResource->cast<Renderer>();
 
-    RenderObject* renderer = element->renderer();
-    if (!renderer)
-        return 0;
-
-    RenderSVGResource* renderResource = renderer->toRenderSVGResource();
-    if (!renderResource)
-        return 0;
-
-    return renderResource->cast<Renderer>();
+    return 0;
 }
 
 }

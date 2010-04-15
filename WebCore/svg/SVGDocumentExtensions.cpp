@@ -62,6 +62,34 @@ void SVGDocumentExtensions::removeTimeContainer(SVGSVGElement* element)
     m_timeContainers.remove(element);
 }
 
+void SVGDocumentExtensions::addResource(const String& id, RenderSVGResource* resource)
+{
+    ASSERT(resource);
+
+    if (id.isEmpty())
+        return;
+
+    // Replaces resource if already present, to handle potential id changes
+    m_resources.set(id, resource);
+}
+
+void SVGDocumentExtensions::removeResource(const String& id)
+{
+    if (id.isEmpty())
+        return;
+
+    ASSERT(m_resources.contains(id));
+    m_resources.remove(id);
+}
+
+RenderSVGResource* SVGDocumentExtensions::resourceById(const String& id) const
+{
+    if (id.isEmpty())
+        return 0;
+
+    return m_resources.get(id);
+}
+
 void SVGDocumentExtensions::startAnimations()
 {
     // FIXME: Eventually every "Time Container" will need a way to latch on to some global timer

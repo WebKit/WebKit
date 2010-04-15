@@ -1,3 +1,25 @@
+2010-04-15  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Beth Dakin.
+
+        RenderSVGResource <-> id mapping should be cached
+        https://bugs.webkit.org/show_bug.cgi?id=37575
+
+        Test: svg/custom/clip-path-id-changes.svg
+
+        * rendering/RenderSVGResource.h:
+        (WebCore::RenderSVGResource::RenderSVGResource):
+        (WebCore::RenderSVGResource::~RenderSVGResource):
+        (WebCore::RenderSVGResource::idChanged):
+        (WebCore::getRenderSVGResourceById):
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::addResource):
+        (WebCore::SVGDocumentExtensions::removeResource):
+        (WebCore::SVGDocumentExtensions::resourceById):
+        * svg/SVGDocumentExtensions.h:
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::svgAttributeChanged):
+
 2010-04-15  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Dimitri Glazkov.
