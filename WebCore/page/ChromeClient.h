@@ -231,10 +231,11 @@ namespace WebCore {
 #endif
 
 #if ENABLE(WIDGETS_10_SUPPORT)
-        virtual bool isDocked() { return false; }
+        virtual bool isWindowed() { return false; }
         virtual bool isFloating() { return false; }
-        virtual bool isApplication() { return false; }
         virtual bool isFullscreen() { return false; }
+        virtual bool isMaximized() { return false; }
+        virtual bool isMinimized() { return false; }
 #endif
 
     protected:

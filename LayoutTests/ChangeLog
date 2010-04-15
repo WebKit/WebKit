@@ -1,3 +1,14 @@
+2010-04-14  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Changing view mode names due to specification changes
+        https://bugs.webkit.org/show_bug.cgi?id=37615
+
+        specification: http://dev.w3.org/2006/waf/widgets-vmmf/
+
+        * fast/media/media-feature-wgt-view-mode.html:
+
 2010-04-14  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Adam Barth.

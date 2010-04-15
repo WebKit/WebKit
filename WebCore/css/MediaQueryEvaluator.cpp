@@ -501,13 +501,15 @@ static bool view_modeMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* fram
     if (value) {
         String mode = static_cast<CSSPrimitiveValue*>(value)->getStringValue();
         if (ChromeClient* client = frame->page()->chrome()->client()) {
-            if (mode == "mini" && client->isDocked())
+            if (mode == "windowed" && client->isWindowed())
                 return true;
             if (mode == "floating" && client->isFloating())
                 return true;
-            if (mode == "application" && client->isApplication())
-                return true;
             if (mode == "fullscreen" && client->isFullscreen())
+                return true;
+            if (mode == "maximized" && client->isMaximized())
+                return true;
+            if (mode == "minimized" && client->isMinimized())
                 return true;
             return false;
         }

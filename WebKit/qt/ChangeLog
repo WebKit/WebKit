@@ -1,5 +1,23 @@
 2010-04-14  Luiz Agostini  <luiz.agostini@openbossa.org>
 
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Changing view mode names due to specification changes
+        https://bugs.webkit.org/show_bug.cgi?id=37615
+
+        test: fast/media/media-feature-wgt-view-mode.html
+
+        specification: http://dev.w3.org/2006/waf/widgets-vmmf/
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::isWindowed):
+        (WebCore::ChromeClientQt::isFullscreen):
+        (WebCore::ChromeClientQt::isMaximized):
+        (WebCore::ChromeClientQt::isMinimized):
+        * WebCoreSupport/ChromeClientQt.h:
+
+2010-04-14  Luiz Agostini  <luiz.agostini@openbossa.org>
+
         Reviewed by Simon Hausmann.
 
         [Qt] Moving setViewMode from DumpRenderTreeSupportQt to qwebpage.cpp
