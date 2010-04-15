@@ -1,3 +1,21 @@
+2010-04-09  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Kenneth Christiansen and Tor Arne Vestbø.
+
+        REGRESSION(r56552): Broken scrollbars size
+        https://bugs.webkit.org/show_bug.cgi?id=36853
+
+        The regression was caused by r56552, which introduced a fix to bug
+        webkit.org/b/21300. The bug solved an issue with the resize handle on mac,
+        but did it in a way that affected all Qt platforms and thus broke the behavior
+        on non-mac platforms.
+
+        This patch makes the mac specific change ifdef'ed and only applied for the mac
+        platform.
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::windowResizerRect):
+
 2010-04-15  Bruno Schmidt  <bruno.schmidt@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.
