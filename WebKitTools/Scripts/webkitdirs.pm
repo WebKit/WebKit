@@ -1570,5 +1570,26 @@ sub runMiniBrowser
     return 1;
 }
 
+sub debugMiniBrowser
+{
+    if (isAppleMacWebKit()) {
+        my $gdbPath = "/usr/bin/gdb";
+        die "Can't find gdb executable. Is gdb installed?\n" unless -x $gdbPath;
+
+        my $productDir = productDir();
+
+        $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
+        $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = 'YES';
+
+        my $miniBrowserPath = "$productDir/MiniBrowser.app/Contents/MacOS/MiniBrowser";
+
+        print "Starting MiniBrowser under gdb with DYLD_FRAMEWORK_PATH set to point to built WebKit2 in $productDir.\n";
+        my @architectureFlags = ("-arch", architecture()) if !isTiger();
+        exec $gdbPath, @architectureFlags, $miniBrowserPath or die;
+        return;
+    }
+    
+    return 1;
+}
 
 1;
