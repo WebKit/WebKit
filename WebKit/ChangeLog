@@ -1,3 +1,13 @@
+2010-04-15  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add EFL port files to efl/WebCoreSupport.
+        http://webkit.org/b/35918
+
+        * efl/WebCoreSupport/EditorClientEfl.cpp: Added.
+        * efl/WebCoreSupport/EditorClientEfl.h: Added.
+
 2010-04-10  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Dan Bernstein.
