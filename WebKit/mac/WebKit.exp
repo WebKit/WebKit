@@ -35,6 +35,7 @@
 .objc_class_name_WebStringTruncator
 .objc_class_name_WebTextIterator
 .objc_class_name_WebURLsWithTitles
+.objc_class_name_WebUserContentURLPattern
 .objc_class_name_WebView
 .objc_class_name_WebWorkersPrivate
 _HIWebViewCreate
