@@ -82,7 +82,9 @@ PassOwnPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3D::Attri
 }
 
 GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs)
-    : m_attrs(attrs)
+    : m_currentWidth(0)
+    , m_currentHeight(0)
+    , m_attrs(attrs)
     , m_contextObj(0)
     , m_texture(0)
     , m_fbo(0)
@@ -340,8 +342,8 @@ void GraphicsContext3D::prepareTexture()
         ::glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, m_fbo);
         ::glBlitFramebufferEXT(0, 0, m_currentWidth, m_currentHeight, 0, 0, m_currentWidth, m_currentHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
         ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_boundFBO);
-        ::glFinish();
     }
+    ::glFinish();
 }
 
 void GraphicsContext3D::activeTexture(unsigned long texture)
