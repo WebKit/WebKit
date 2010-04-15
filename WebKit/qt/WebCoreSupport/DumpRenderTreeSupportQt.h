@@ -66,7 +66,6 @@ public:
     static QString counterValueForElementById(QWebFrame* frame, const QString& id);
     static void webPageSetGroupName(QWebPage* page, const QString& groupName);
     static void clearFrameName(QWebFrame* frame);
-    static void setViewMode(QWebPage* page, const QString& mode);
     static void overwritePluginDirectories();
     static int numberOfActiveAnimations(QWebFrame*);
     static int numberOfPages(QWebFrame* frame, float width, float height);

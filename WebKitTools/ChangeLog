@@ -1,3 +1,16 @@
+2010-04-14  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Moving setViewMode from DumpRenderTreeSupportQt to qwebpage.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=37622
+
+        Method qt_wrt_setViewMode was removed from qwebpage.cpp by mistake in r57433
+        (bug 35844). Moving it back.
+
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::setViewModeMediaFeature):
+
 2010-04-15  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Adam Barth.

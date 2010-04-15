@@ -120,6 +120,15 @@
 
 using namespace WebCore;
 
+void QWEBKIT_EXPORT qt_wrt_setViewMode(QWebPage* page, const QString& mode)
+{
+    QWebPagePrivate::priv(page)->viewMode = mode;
+    WebCore::Frame* frame = QWebFramePrivate::core(page->mainFrame());
+    WebCore::FrameView* view = frame->view();
+    frame->document()->updateStyleSelector();
+    view->forceLayout();
+}
+
 bool QWebPagePrivate::drtRun = false;
 
 class QWebPageWidgetClient : public QWebPageClient {
