@@ -1,3 +1,9 @@
+2010-04-14  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed attempt to fix Qt build.
+
+        * bindings/js/JSNodeCustom.cpp:
+
 2010-04-14  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Adam Barth.

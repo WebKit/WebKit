@@ -34,6 +34,7 @@
 #include "DocumentType.h"
 #include "Entity.h"
 #include "EntityReference.h"
+#include "ExceptionCode.h"
 #include "HTMLElement.h"
 #include "JSAttr.h"
 #include "JSCDATASection.h"
