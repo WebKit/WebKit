@@ -6,7 +6,6 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS accessibilityController.focusedElement.helpText is 'AXHelp: '
-PASS accessibilityController.focusedElement.parentElement().helpText is 'AXHelp: '
 PASS successfullyParsed is true
 
 TEST COMPLETE

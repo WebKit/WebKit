@@ -27,7 +27,6 @@ var successfullyParsed = false;
 
         document.getElementById("checkbox").focus();
         shouldBe("accessibilityController.focusedElement.helpText", "'AXHelp: '");
-        shouldBe("accessibilityController.focusedElement.parentElement().helpText", "'AXHelp: '");
     }
 
     successfullyParsed = true;

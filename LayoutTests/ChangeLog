@@ -1,3 +1,15 @@
+2010-04-15  Chris Fleizach  <cfleizach@apple.com>
+
+        Unreviewed.
+
+        Layout test fix for new test that works differently on leopard v. snow leopard.
+
+        AXHelp is being appended from ancestors incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=37659
+
+        * platform/mac/accessibility/unexpected-help-text-expected.txt:
+        * platform/mac/accessibility/unexpected-help-text.html:
+
 2010-04-15  Albert J. Wong  <ajwong@chromium.org>
 
         Not reviewed, sheriffing.
