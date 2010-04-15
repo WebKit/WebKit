@@ -38,6 +38,7 @@
 }
 - (IBAction)fetch:(id)sender;
 - (IBAction)reload:(id)sender;
+- (IBAction)forceRepaint:(id)sender;
 
 - (id)initWithPageNamespace:(WKPageNamespaceRef)pageNamespace;
 

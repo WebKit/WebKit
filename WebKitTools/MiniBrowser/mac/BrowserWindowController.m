@@ -65,6 +65,11 @@
     WKPageReload(_webView.pageRef);
 }
 
+- (IBAction)forceRepaint:(id)sender
+{
+    [_webView setNeedsDisplay:YES];
+}
+
 - (BOOL)windowShouldClose:(id)sender
 {
     NSLog(@"windowShouldClose");

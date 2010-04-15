@@ -1,3 +1,15 @@
+2010-04-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Add "Force Repaint" to debug menu.
+        https://bugs.webkit.org/show_bug.cgi?id=37627
+
+        * MiniBrowser/mac/BrowserWindowController.h:
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController forceRepaint:]):
+        * MiniBrowser/mac/English.lproj/MainMenu.xib:
+
 2010-04-15  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.
