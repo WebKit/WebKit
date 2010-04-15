@@ -1,3 +1,16 @@
+2010-04-15  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add some very minimal unit tests for new-run-webkit-tests. This should
+        be enough to catch egregious brokenness like syntax errors and import
+        declaration issues.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37432
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py: Added.
+
 2010-04-14  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.

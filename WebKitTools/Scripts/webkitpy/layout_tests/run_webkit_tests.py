@@ -604,7 +604,7 @@ class TestRunner:
         """Returns whether the test runner needs an HTTP server."""
         return self._contains_tests(self.HTTP_SUBDIR)
 
-    def run(self, result_summary):
+    def run(self, result_summary, print_results):
         """Run all our tests on all our test files.
 
         For each test file, we run each test type. If there are any failures,
@@ -612,6 +612,7 @@ class TestRunner:
 
         Args:
           result_summary: a summary object tracking the test results.
+          print_results: whether or not to print the summary at the end
 
         Return:
           The number of unexpected results (0 == success)
@@ -667,14 +668,15 @@ class TestRunner:
         sys.stdout.flush()
         sys.stderr.flush()
 
-        if (LOG_DETAILED_PROGRESS in self._options.log or
-            (LOG_UNEXPECTED in self._options.log and
-             result_summary.total != result_summary.expected)):
-            print
-
         # This summary data gets written to stdout regardless of log level
-        self._print_one_line_summary(result_summary.total,
-                                  result_summary.expected)
+        # (unless of course we're printing nothing).
+        if print_results:
+            if (LOG_DETAILED_PROGRESS in self._options.log or
+                (LOG_UNEXPECTED in self._options.log and
+                 result_summary.total != result_summary.expected)):
+                print
+            self._print_one_line_summary(result_summary.total,
+                                         result_summary.expected)
 
         unexpected_results = self._summarize_unexpected_results(result_summary,
             retry_summary)
@@ -1367,12 +1369,14 @@ def create_logging_writer(options, log_option):
     return lambda str: 1
 
 
-def main(options, args):
+def main(options, args, print_results=True):
     """Run the tests.
 
     Args:
       options: a dictionary of command line options
       args: a list of sub directories or files to test
+      print_results: whether or not to log anything to stdout.
+          Set to false by the unit tests
     Returns:
       the number of unexpected results that occurred, or -1 if there is an
           error.
@@ -1516,7 +1520,7 @@ def main(options, args):
         if options.fuzzy_pixel_tests:
             test_runner.add_test_type(fuzzy_image_diff.FuzzyImageDiff)
 
-    num_unexpected_results = test_runner.run(result_summary)
+    num_unexpected_results = test_runner.run(result_summary, print_results)
 
     port_obj.stop_helper()
 
