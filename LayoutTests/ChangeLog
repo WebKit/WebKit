@@ -1,3 +1,15 @@
+2010-04-15  Jonathan Dixon  <joth@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37492
+
+        Add mailto: canonicalization tests to the URL regressions tests
+
+        * fast/url/mailto-expected.txt: Added.
+        * fast/url/mailto.html: Added.
+        * fast/url/script-tests/mailto.js: Added.
+
 2010-04-15  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Maciej Stachowiak.
