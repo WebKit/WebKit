@@ -1,3 +1,22 @@
+2010-04-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Repaint of fixed, transformed element is broken
+        https://bugs.webkit.org/show_bug.cgi?id=37637
+
+        RenderBox::computeRectForRepaint() failed to set the 'fixed' flag correctly
+        for elements that had both fixed position and a transform. If the element has
+        a transform, 'fixed' should only remain true if the element itself is fixed
+        position.
+        
+        Also cache style()->position() in a local variable for performance.
+        
+        Test: fast/repaint/fixed-tranformed.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeRectForRepaint):
+
 2010-04-14  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

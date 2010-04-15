@@ -1184,10 +1184,9 @@ void RenderBox::computeRectForRepaint(RenderBoxModelObject* repaintContainer, In
     IntPoint topLeft = rect.location();
     topLeft.move(x(), y());
 
-    if (style()->position() == FixedPosition)
-        fixed = true;
+    EPosition position = style()->position();
 
-    if (o->isBlockFlow() && style()->position() != AbsolutePosition && style()->position() != FixedPosition) {
+    if (o->isBlockFlow() && position != AbsolutePosition && position != FixedPosition) {
         RenderBlock* cb = toRenderBlock(o);
         if (cb->hasColumns()) {
             IntRect repaintRect(topLeft, rect.size());
@@ -1200,16 +1199,17 @@ void RenderBox::computeRectForRepaint(RenderBoxModelObject* repaintContainer, In
     // We are now in our parent container's coordinate space.  Apply our transform to obtain a bounding box
     // in the parent's coordinate space that encloses us.
     if (layer() && layer()->transform()) {
-        fixed = false;
+        fixed = position == FixedPosition;
         rect = layer()->transform()->mapRect(rect);
         // FIXME: this clobbers topLeft adjustment done for multicol above
         topLeft = rect.location();
         topLeft.move(x(), y());
-    }
+    } else if (position == FixedPosition)
+        fixed = true;
 
-    if (style()->position() == AbsolutePosition && o->isRelPositioned() && o->isRenderInline())
+    if (position == AbsolutePosition && o->isRelPositioned() && o->isRenderInline())
         topLeft += toRenderInline(o)->relativePositionedInlineOffset(this);
-    else if (style()->position() == RelativePosition && layer()) {
+    else if (position == RelativePosition && layer()) {
         // Apply the relative position offset when invalidating a rectangle.  The layer
         // is translated, but the render box isn't, so we need to do this to get the
         // right dirty rect.  Since this is called from RenderObject::setStyle, the relative position

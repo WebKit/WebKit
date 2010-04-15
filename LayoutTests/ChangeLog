@@ -1,3 +1,18 @@
+2010-04-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Repaint of fixed, transformed element is broken
+        https://bugs.webkit.org/show_bug.cgi?id=37637
+
+        Testcase for repainting a fixed-position elemnt with a transform in a
+        scrolled page.
+        
+        * fast/repaint/fixed-tranformed.html: Added.
+        * platform/mac/fast/repaint/fixed-tranformed-expected.checksum: Added.
+        * platform/mac/fast/repaint/fixed-tranformed-expected.png: Added.
+        * platform/mac/fast/repaint/fixed-tranformed-expected.txt: Added.
+
 2010-04-14  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.
