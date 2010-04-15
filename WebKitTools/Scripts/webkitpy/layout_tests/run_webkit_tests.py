@@ -367,7 +367,6 @@ class TestRunner:
         self._print_expected_results_of_type(write, result_summary,
             test_expectations.SKIP, "skipped")
 
-
         if self._options.force:
             write('Running all tests, including skips (--force)')
         else:
@@ -506,7 +505,8 @@ class TestRunner:
                 return True
         return False
 
-    def _instantiate_dump_render_tree_threads(self, test_files, result_summary):
+    def _instantiate_dump_render_tree_threads(self, test_files,
+                                              result_summary):
         """Instantitates and starts the TestShellThread(s).
 
         Return:
@@ -523,15 +523,11 @@ class TestRunner:
                 test_types.append(t(self._port,
                                     self._options.results_directory))
 
-            test_args, png_path, shell_args = self._get_dump_render_tree_args(i)
+            test_args, png_path, shell_args = \
+                self._get_dump_render_tree_args(i)
             thread = dump_render_tree_thread.TestShellThread(self._port,
-                                                             filename_queue,
-                                                             self._result_queue,
-                                                             test_types,
-                                                             test_args,
-                                                             png_path,
-                                                             shell_args,
-                                                             self._options)
+                filename_queue, self._result_queue, test_types, test_args,
+                png_path, shell_args, self._options)
             if self._is_single_threaded():
                 thread.run_in_main_thread(self, result_summary)
             else:
@@ -721,9 +717,10 @@ class TestRunner:
 
     def _display_one_line_progress(self, result_summary):
         """Displays the progress through the test run."""
-        percent_complete = 100 * (result_summary.expected + result_summary.unexpected) / result_summary.total
-        self._meter.update("Testing (%d%%): %d ran as expected, %d didn't, %d left" %
-            (percent_complete, result_summary.expected,
+        percent_complete = 100 * (result_summary.expected +
+            result_summary.unexpected) / result_summary.total
+        self._meter.update("Testing (%d%%): %d ran as expected, %d didn't,"
+            " %d left" % (percent_complete, result_summary.expected,
              result_summary.unexpected, result_summary.remaining))
 
     def _display_detailed_progress(self, result_summary):
@@ -977,8 +974,8 @@ class TestRunner:
         Args:
           write: A callback to write info to (e.g., a LoggingWriter) or
               sys.stdout.write.
-          individual_test_timings: List of dump_render_tree_thread.TestStats for all
-              tests.
+          individual_test_timings: List of dump_render_tree_thread.TestStats
+              for all tests.
         """
         test_types = individual_test_timings[0].time_for_diffs.keys()
         times_for_dump_render_tree = []
@@ -997,7 +994,8 @@ class TestRunner:
                     time_for_diffs[test_type])
 
         self._print_statistics_for_test_timings(write,
-            "PER TEST TIME IN TESTSHELL (seconds):", times_for_dump_render_tree)
+            "PER TEST TIME IN TESTSHELL (seconds):",
+            times_for_dump_render_tree)
         self._print_statistics_for_test_timings(write,
             "PER TEST DIFF PROCESSING TIMES (seconds):",
             times_for_diff_processing)
@@ -1012,8 +1010,8 @@ class TestRunner:
         Args:
           write: A callback to write info to (e.g., a LoggingWriter) or
               sys.stdout.write.
-          individual_test_timings: List of dump_render_tree_thread.TestStats for all
-              tests.
+          individual_test_timings: List of dump_render_tree_thread.TestStats
+              for all tests.
           result_summary: summary object for test run
         """
         # Reverse-sort by the time spent in DumpRenderTree.
@@ -1540,95 +1538,175 @@ def parse_args(args=None):
 
     Returns a tuple of options, args from optparse"""
 
-    # FIXME: All of these options should be stored closer to the code which actually uses them.
-    # FIXME: configuration_options should move to WebKitPort and be shared across all scripts.
+    # FIXME: All of these options should be stored closer to the code which
+    # FIXME: actually uses them. configuration_options should move
+    # FIXME: to WebKitPort and be shared across all scripts.
     configuration_options = [
-        optparse.make_option("-t", "--target", dest="configuration", help="(DEPRECATED)"),
+        optparse.make_option("-t", "--target", dest="configuration",
+                             help="(DEPRECATED)"),
         # FIXME: --help should display which configuration is default.
-        optparse.make_option('--debug', action='store_const', const='Debug', dest="configuration", help='Set the configuration to Debug'),
-        optparse.make_option('--release', action='store_const', const='Release', dest="configuration", help='Set the configuration to Release'),
+        optparse.make_option('--debug', action='store_const', const='Debug',
+                             dest="configuration",
+                             help='Set the configuration to Debug'),
+        optparse.make_option('--release', action='store_const',
+                             const='Release', dest="configuration",
+                             help='Set the configuration to Release'),
         # old-run-webkit-tests also accepts -c, --configuration CONFIGURATION.
     ]
 
     logging_options = [
-        optparse.make_option("--log", action="store", default="detailed-progress,unexpected",
-                    help="log various types of data. The param should be a comma-separated list of values from: "
-                         "actual,config," + LOG_DETAILED_PROGRESS + ",expected,timing," + LOG_UNEXPECTED + " "
-                          "(defaults to " + "--log detailed-progress,unexpected)"),
-        optparse.make_option("-v", "--verbose", action="store_true", default=False, help="include debug-level logging"),
-        optparse.make_option("--sources", action="store_true", help="show expected result file path for each test (implies --verbose)"),
-        # old-run-webkit-tests has a --slowest option which just prints the slowest 10.
-        optparse.make_option("--num-slow-tests-to-log", default=50, help="Number of slow tests whose timings to print."),
+        optparse.make_option("--log", action="store",
+            default="detailed-progress,unexpected",
+            help="log various types of data. The param should be a " +
+                 "comma-separated list of values from: " +
+                 "actual,config," + LOG_DETAILED_PROGRESS +
+                 ",expected,timing," + LOG_UNEXPECTED + " " +
+                 "(defaults to " + "--log detailed-progress,unexpected)"),
+        optparse.make_option("-v", "--verbose", action="store_true",
+            default=False, help="include debug-level logging"),
+        optparse.make_option("--sources", action="store_true",
+            help="show expected result file path for each test " +
+                 "(implies --verbose)"),
+        # old-run-webkit-tests has a --slowest option which just prints
+        # the slowest 10.
+        optparse.make_option("--num-slow-tests-to-log", default=50,
+            help="Number of slow tests whose timings to print."),
     ]
 
     # FIXME: These options should move onto the ChromiumPort.
     chromium_options = [
-        optparse.make_option("--chromium", action="store_true", default=False, help="use the Chromium port"),
-        optparse.make_option("--startup-dialog", action="store_true", default=False, help="create a dialog on DumpRenderTree startup"),
-        optparse.make_option("--gp-fault-error-box", action="store_true", default=False, help="enable Windows GP fault error box"),
-        optparse.make_option("--nocheck-sys-deps", action="store_true", default=False, help="Don't check the system dependencies (themes)"),
+        optparse.make_option("--chromium", action="store_true", default=False,
+            help="use the Chromium port"),
+        optparse.make_option("--startup-dialog", action="store_true",
+            default=False, help="create a dialog on DumpRenderTree startup"),
+        optparse.make_option("--gp-fault-error-box", action="store_true",
+            default=False, help="enable Windows GP fault error box"),
+        optparse.make_option("--nocheck-sys-deps", action="store_true",
+            default=False,
+            help="Don't check the system dependencies (themes)"),
     ]
 
     # Missing Mac options:
     # FIXME: Need: -g, --guard for guard malloc support on Mac.
     # FIXME: Need: -l --leaks    Enable leaks checking.
-    # FIXME: Need: --[no-]sample-on-timeout Run sample on timeout (default: run) (Mac OS X only)
+    # FIXME: Need: --[no-]sample-on-timeout Run sample on timeout
+    # FIXME: Need:    (default: run) (Mac OS X only)
 
     results_options = [
-        # NEED for bots: --use-remote-links-to-tests     Link to test files within the SVN repository in the results.
-        optparse.make_option("-p", "--pixel-tests'", action="store_true", dest="pixel_tests", help="Enable pixel-to-pixel PNG comparisons"),
-        optparse.make_option("--no-pixel-tests", action="store_false", dest="pixel_tests", help="Disable pixel-to-pixel PNG comparisons"),
-        optparse.make_option("--fuzzy-pixel-tests", action="store_true", default=False, help="Also use fuzzy matching to compare pixel test outputs."),
-        # old-run-webkit-tests allows a specific tollerance: --tolerance t  Ignore image differences less than this percentage (default: 0.1)
-        optparse.make_option("--results-directory", default="layout-test-results", help="Output results directory source dir, relative to Debug or Release"),
-        optparse.make_option("--new-baseline", action="store_true", default=False, help="Save all generated results as new baselines into the platform directory, overwriting whatever's already there."),
+        # NEED for bots: --use-remote-links-to-tests Link to test files
+        # within the SVN repository in the results.
+        optparse.make_option("-p", "--pixel-tests'", action="store_true",
+            dest="pixel_tests", help="Enable pixel-to-pixel PNG comparisons"),
+        optparse.make_option("--no-pixel-tests", action="store_false",
+            dest="pixel_tests", help="Disable pixel-to-pixel PNG comparisons"),
+        optparse.make_option("--fuzzy-pixel-tests", action="store_true",
+            default=False,
+            help="Also use fuzzy matching to compare pixel test outputs."),
+        # old-run-webkit-tests allows a specific tolerance: --tolerance t
+        # Ignore image differences less than this percentage (default: 0.1)
+        optparse.make_option("--results-directory",
+            default="layout-test-results",
+            help="Output results directory source dir, relative to Debug or "
+                 "Release"),
+        optparse.make_option("--new-baseline", action="store_true",
+            default=False, help="Save all generated results as new baselines "
+                 "into the platform directory, overwriting whatever's "
+                 "already there."),
         # FIXME: --noshow should be --no-show to match the GNU get_opt pattern.
-        optparse.make_option("--noshow-results", action="store_true", default=False, help="Don't launch a browser with results after the tests are done"),
-        # old-run-webkit-tests: --[no-]launch-safari            Launch (or do not launch) Safari to display test results (default: launch)
-        optparse.make_option("--full-results-html", action="store_true", default=False, help="Show all failures in results.html, rather than only regressions"),
-        optparse.make_option("--clobber-old-results", action="store_true", default=False, help="Clobbers test results from previous runs."),
-        optparse.make_option("--platform", help="Override the platform for expected results"),
+        optparse.make_option("--noshow-results", action="store_true",
+            default=False,
+            help="Don't launch a browser with results after the tests "
+                 "are done"),
+        # old-run-webkit-tests:
+        # --[no-]launch-safari    Launch (or do not launch) Safari to display
+        #                         test results (default: launch)
+        optparse.make_option("--full-results-html", action="store_true",
+            default=False,
+            help="Show all failures in results.html, rather than only "
+                 "regressions"),
+        optparse.make_option("--clobber-old-results", action="store_true",
+            default=False, help="Clobbers test results from previous runs."),
+        optparse.make_option("--platform",
+            help="Override the platform for expected results"),
         # old-run-webkit-tests also has HTTP toggle options:
-        # --[no-]http                     Run (or do not run) http tests (default: run)
-        # --[no-]wait-for-httpd           Wait for httpd if some other test session is using it already (same as WEBKIT_WAIT_FOR_HTTPD=1). (default: 0)
+        # --[no-]http                     Run (or do not run) http tests
+        #                                 (default: run)
+        # --[no-]wait-for-httpd           Wait for httpd if some other test
+        #                                 session is using it already (same
+        #                                 as WEBKIT_WAIT_FOR_HTTPD=1).
+        #                                 (default: 0)
     ]
 
     test_options = [
         # old-run-webkit-tests has --valgrind instead of wrapper.
-        optparse.make_option("--wrapper", help="wrapper command to insert before invocations of DumpRenderTree; option is split "
-                                      "on whitespace before running. (Example: --wrapper='valgrind --smc-check=all')"),
-        # old-run-webkit-tests: -i|--ignore-tests               Comma-separated list of directories or tests to ignore
-        optparse.make_option("--test-list", action="append", help="read list of tests to run from file", metavar="FILE"),
-        # old-run-webkit-tests uses --skipped==[default|ignore|only] instead of --force:
-        optparse.make_option("--force", action="store_true", default=False, help="Run all tests, even those marked SKIP in the test list"),
-        optparse.make_option("--use-apache", action="store_true", default=False, help="Whether to use apache instead of lighttpd."),
-        optparse.make_option("--time-out-ms", help="Set the timeout for each test"),
+        optparse.make_option("--wrapper",
+            help="wrapper command to insert before invocations of "
+                 "DumpRenderTree; option is split on whitespace before "
+                 "running. (Example: --wrapper='valgrind --smc-check=all')"),
+        # old-run-webkit-tests:
+        # -i|--ignore-tests               Comma-separated list of directories
+        #                                 or tests to ignore
+        optparse.make_option("--test-list", action="append",
+            help="read list of tests to run from file", metavar="FILE"),
+        # old-run-webkit-tests uses --skipped==[default|ignore|only]
+        # instead of --force:
+        optparse.make_option("--force", action="store_true", default=False,
+            help="Run all tests, even those marked SKIP in the test list"),
+        optparse.make_option("--use-apache", action="store_true",
+            default=False, help="Whether to use apache instead of lighttpd."),
+        optparse.make_option("--time-out-ms",
+            help="Set the timeout for each test"),
         # old-run-webkit-tests calls --randomize-order --random:
-        optparse.make_option("--randomize-order", action="store_true", default=False, help=("Run tests in random order (useful for tracking down corruption)")),
-        optparse.make_option("--run-chunk", help=("Run a specified chunk (n:l), the nth of len l, of the layout tests")),
-        optparse.make_option("--run-part", help=("Run a specified part (n:m), the nth of m parts, of the layout tests")),
-        # old-run-webkit-tests calls --batch-size: --nthly n   Restart DumpRenderTree every n tests (default: 1000)
-        optparse.make_option("--batch-size", help=("Run a the tests in batches (n), after every n tests, DumpRenderTree is relaunched.")),
-        # old-run-webkit-tests calls --run-singly: -1|--singly  Isolate each test case run (implies --nthly 1 --verbose)
-        optparse.make_option("--run-singly", action="store_true", default=False, help="run a separate DumpRenderTree for each test"),
-        optparse.make_option("--child-processes", help="Number of DumpRenderTrees to run in parallel."),  # FIXME: Display default.
-        optparse.make_option("--experimental-fully-parallel", action="store_true", default=False, help="run all tests in parallel"),
-        # FIXME: Need --exit-after-n-failures N       Exit after the first N failures instead of running all tests
-        # FIXME: consider: --iterations n                  Number of times to run the set of tests (e.g. ABCABCABC)
+        optparse.make_option("--randomize-order", action="store_true",
+            default=False, help=("Run tests in random order (useful "
+                                "for tracking down corruption)")),
+        optparse.make_option("--run-chunk",
+            help=("Run a specified chunk (n:l), the nth of len l, "
+                 "of the layout tests")),
+        optparse.make_option("--run-part", help=("Run a specified part (n:m), "
+                  "the nth of m parts, of the layout tests")),
+        # old-run-webkit-tests calls --batch-size: --nthly n
+        #   Restart DumpRenderTree every n tests (default: 1000)
+        optparse.make_option("--batch-size",
+            help=("Run a the tests in batches (n), after every n tests, "
+                  "DumpRenderTree is relaunched.")),
+        # old-run-webkit-tests calls --run-singly: -1|--singly
+        # Isolate each test case run (implies --nthly 1 --verbose)
+        optparse.make_option("--run-singly", action="store_true",
+            default=False, help="run a separate DumpRenderTree for each test"),
+        optparse.make_option("--child-processes",
+            help="Number of DumpRenderTrees to run in parallel."),
+        # FIXME: Display default number of child processes that will run.
+        optparse.make_option("--experimental-fully-parallel",
+            action="store_true", default=False,
+            help="run all tests in parallel"),
+        # FIXME: Need --exit-after-n-failures N
+        #      Exit after the first N failures instead of running all tests
+        # FIXME: consider: --iterations n
+        #      Number of times to run the set of tests (e.g. ABCABCABC)
     ]
 
     misc_options = [
-        optparse.make_option("--lint-test-files", action="store_true", default=False, help="Makes sure the test files parse for all configurations. Does not run any tests."),
+        optparse.make_option("--lint-test-files", action="store_true",
+        default=False, help=("Makes sure the test files parse for all "
+                            "configurations. Does not run any tests.")),
     ]
 
     # FIXME: Move these into json_results_generator.py
     results_json_options = [
-        optparse.make_option("--builder-name", default="DUMMY_BUILDER_NAME", help=("The name of the builder shown on the waterfall running this script e.g. WebKit.")),
-        optparse.make_option("--build-name", default="DUMMY_BUILD_NAME", help=("The name of the builder used in its path, e.g. webkit-rel.")),
-        optparse.make_option("--build-number", default="DUMMY_BUILD_NUMBER", help=("The build number of the builder running this script.")),
+        optparse.make_option("--builder-name", default="DUMMY_BUILDER_NAME",
+            help=("The name of the builder shown on the waterfall running "
+                  "this script e.g. WebKit.")),
+        optparse.make_option("--build-name", default="DUMMY_BUILD_NAME",
+            help=("The name of the builder used in its path, e.g. "
+                  "webkit-rel.")),
+        optparse.make_option("--build-number", default="DUMMY_BUILD_NUMBER",
+            help=("The build number of the builder running this script.")),
     ]
 
-    option_list = configuration_options + logging_options + chromium_options + results_options + test_options + misc_options + results_json_options
+    option_list = (configuration_options + logging_options +
+                   chromium_options + results_options + test_options +
+                   misc_options + results_json_options)
     option_parser = optparse.OptionParser(option_list=option_list)
     return option_parser.parse_args(args)
 

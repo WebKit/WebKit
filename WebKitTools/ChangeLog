@@ -1,5 +1,17 @@
 2010-04-15  Dirk Pranke  <dpranke@chromium.org>
 
+        Reviewed by Adam Barth.
+
+        Re-format run-webkit-tests to fit in 80-columns for PEP-8 compliance.
+        (broken by r57463 and r57381, at least). I've also filed bug 37477
+        to fix check-webkit-style to catch these things.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38586
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
+2010-04-15  Dirk Pranke  <dpranke@chromium.org>
+
         Reviewed by Dimitri Glazkov.
 
         Add a way to override the user-visible name for the test binary since
