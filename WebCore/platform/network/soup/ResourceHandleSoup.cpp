@@ -385,7 +385,7 @@ static gboolean parseDataUrl(gpointer callback_data)
         // The load may be cancelled, and the client may be destroyed
         // by any of the client reporting calls, so we check, and bail
         // out in either of those cases.
-        if (!handle->client() || d->m_cancelled)
+        if (d->m_cancelled || !handle->client())
             return false;
 
         // Use the GLib Base64, since WebCore's decoder isn't
@@ -402,14 +402,14 @@ static gboolean parseDataUrl(gpointer callback_data)
         response.setTextEncodingName("UTF-16");
         client->didReceiveResponse(handle, response);
 
-        if (!handle->client() || d->m_cancelled)
+        if (d->m_cancelled || !handle->client())
             return false;
 
         if (data.length() > 0)
             client->didReceiveData(handle, reinterpret_cast<const char*>(data.characters()), data.length() * sizeof(UChar), 0);
     }
 
-    if (!handle->client() || d->m_cancelled)
+    if (d->m_cancelled || !handle->client())
         return false;
 
     client->didFinishLoading(handle);

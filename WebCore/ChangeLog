@@ -1,3 +1,13 @@
+2010-04-14  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        We have to check if the resource handler is cancelled before
+        checking the client, other case it could crash.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::parseDataUrl):
+
 2010-04-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r57609.
