@@ -2,6 +2,24 @@
 
         Not reviewed, sheriffing.
 
+        [Chromium] rebaseline fast/repaint/fixed-tranformed.html after
+        http://trac.webkit.org/changeset/57633/
+
+        https://bugs.webkit.org/show_bug.cgi?id=37656
+
+        * platform/chromium-linux/fast/repaint/fixed-tranformed-expected.checksum: Added.
+        * platform/chromium-linux/fast/repaint/fixed-tranformed-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/fixed-tranformed-expected.checksum: Added.
+        * platform/chromium-mac/fast/repaint/fixed-tranformed-expected.png: Added.
+        * platform/chromium-win-xp/fast/repaint: Added.
+        * platform/chromium-win-xp/fast/repaint/fixed-tranformed-expected.png: Added.
+        * platform/chromium-win/fast/repaint/fixed-tranformed-expected.checksum: Added.
+        * platform/chromium-win/fast/repaint/fixed-tranformed-expected.png: Added.
+
+2010-04-15  Anton Muhin   <antonm@chromium.org>
+
+        Not reviewed, sheriffing.
+
         Rebaseline some recently added LayoutTests under fast/url.
 
         * platform/chromium-linux/fast/url: Added.
