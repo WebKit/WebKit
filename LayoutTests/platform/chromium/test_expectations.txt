@@ -413,10 +413,12 @@ WONTFIX : http/tests/history/redirect-meta-refresh-0-seconds.html = FAIL
 WONTFIX : fast/dom/getter-on-window-object2.html = FAIL
 
 // V8 doesn't stable sort and we currently have no intention of
-// changing this. It is tracked by:
-// http://code.google.com/p/v8/issues/detail?id=90
-WONTFIX : fast/js/comparefn-sort-stability.html = FAIL
-WONTFIX : fast/js/sort-stability.html = FAIL
+// changing this.  The following tests only happen to pass due to
+// the current algorithm used for sorting small arrays. If larger
+// arrays were used in the tests, they would fail.
+// It is tracked by: http://code.google.com/p/v8/issues/detail?id=90
+WONTFIX : fast/js/comparefn-sort-stability.html = PASS
+WONTFIX : fast/js/sort-stability.html = PASS
 
 // We have no indication that anyone misses this and have currently no
 // intention of implementing it.
