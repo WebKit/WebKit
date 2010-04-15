@@ -216,7 +216,7 @@ void WebFrameLoaderClient::dispatchDidStartProvisionalLoad()
         return;
 
     DocumentLoader* provisionalLoader = m_frame->coreFrame()->loader()->provisionalDocumentLoader();
-    const KURL& url = provisionalLoader->url();
+    const String& url = provisionalLoader->url().string();
 
     WebProcess::shared().connection()->send(WebPageProxyMessage::DidStartProvisionalLoadForFrame, webPage->pageID(), CoreIPC::In(m_frame->frameID(), url));
 }
@@ -319,7 +319,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForMIMEType(FramePolicyFunction f
         return;
 
     uint64_t listenerID = m_frame->setUpPolicyListener(function);
-    KURL url = request.url(); // FIXME: Pass entire request.
+    const String& url = request.url().string(); // FIXME: Pass entire request.
 
     WebProcess::shared().connection()->send(WebPageProxyMessage::DecidePolicyForMIMEType, webPage->pageID(),
                                             CoreIPC::In(m_frame->frameID(), MIMEType, url, listenerID));
@@ -335,7 +335,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(FramePolicyFun
 
     // FIXME: Pass more than just the navigation action type.
     // FIXME: Pass the frame name.
-    KURL url = request.url(); // FIXME: Pass entire request.
+    const String& url = request.url().string(); // FIXME: Pass entire request.
 
     WebProcess::shared().connection()->send(WebPageProxyMessage::DecidePolicyForNewWindowAction, webPage->pageID(),
                                             CoreIPC::In(m_frame->frameID(), (uint32_t)navigationAction.type(), url, listenerID));
@@ -350,7 +350,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFu
     uint64_t listenerID = m_frame->setUpPolicyListener(function);
 
     // FIXME: Pass more than just the navigation action type.
-    KURL url = request.url(); // FIXME: Pass entire request.
+    const String& url = request.url().string(); // FIXME: Pass entire request.
 
     WebProcess::shared().connection()->send(WebPageProxyMessage::DecidePolicyForNavigationAction, webPage->pageID(),
                                             CoreIPC::In(m_frame->frameID(), (uint32_t)navigationAction.type(), url, listenerID));

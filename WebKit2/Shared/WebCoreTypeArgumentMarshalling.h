@@ -31,7 +31,6 @@
 #include "Arguments.h"
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntRect.h>
-#include <WebCore/KURL.h>
 #include <WebCore/PlatformString.h>
 
 namespace CoreIPC {
@@ -168,24 +167,6 @@ template<> inline bool decode(ArgumentDecoder& decoder, WebCore::String& s)
         return false;
 
     s = string;
-    return true;
-}
-
-// WebCore::KURL
-// FIXME: The encoding scheme for KURL is really inefficient since we end up parsing the URL
-// twice. We should find a way to encode the parsed url form. 
-template<> inline void encode(ArgumentEncoder& encoder, const WebCore::KURL& url)
-{
-    encoder.encode(url.string());
-}
-
-template<> inline bool decode(ArgumentDecoder& decoder, WebCore::KURL& url)
-{
-    WebCore::String string;
-    if (!decoder.decode(string))
-        return false;
-
-    url = WebCore::KURL(WebCore::ParsedURLString, string);
     return true;
 }
 

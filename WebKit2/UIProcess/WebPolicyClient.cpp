@@ -25,7 +25,6 @@
 
 #include "WebPolicyClient.h"
 
-#include "KURLWrapper.h"
 #include "WKAPICast.h"
 #include <WebCore/PlatformString.h>
 
@@ -46,33 +45,30 @@ void WebPolicyClient::initialize(WKPagePolicyClient* client)
         memset(&m_pagePolicyClient, 0, sizeof(m_pagePolicyClient));
 }
 
-bool WebPolicyClient::decidePolicyForNavigationAction(WebPageProxy* page, uint32_t navigationAction, const KURL& url, WebFrameProxy* frame, WebFramePolicyListenerProxy* listener)
+bool WebPolicyClient::decidePolicyForNavigationAction(WebPageProxy* page, uint32_t navigationAction, const String& url, WebFrameProxy* frame, WebFramePolicyListenerProxy* listener)
 {
     if (!m_pagePolicyClient.decidePolicyForNavigationAction)
         return false;
 
-    RefPtr<KURLWrapper> urlWrapper = KURLWrapper::create(url);
-    m_pagePolicyClient.decidePolicyForNavigationAction(toRef(page), navigationAction, toRef(urlWrapper.get()), toRef(frame), toRef(listener), m_pagePolicyClient.clientInfo);
+    m_pagePolicyClient.decidePolicyForNavigationAction(toRef(page), navigationAction, toURLRef(url.impl()), toRef(frame), toRef(listener), m_pagePolicyClient.clientInfo);
     return true;
 }
 
-bool WebPolicyClient::decidePolicyForNewWindowAction(WebPageProxy* page, uint32_t navigationAction, const KURL& url, WebFrameProxy* frame, WebFramePolicyListenerProxy* listener)
+bool WebPolicyClient::decidePolicyForNewWindowAction(WebPageProxy* page, uint32_t navigationAction, const String& url, WebFrameProxy* frame, WebFramePolicyListenerProxy* listener)
 {
     if (!m_pagePolicyClient.decidePolicyForNewWindowAction)
         return false;
 
-    RefPtr<KURLWrapper> urlWrapper = KURLWrapper::create(url);
-    m_pagePolicyClient.decidePolicyForNewWindowAction(toRef(page), navigationAction, toRef(urlWrapper.get()), toRef(frame), toRef(listener), m_pagePolicyClient.clientInfo);
+    m_pagePolicyClient.decidePolicyForNewWindowAction(toRef(page), navigationAction, toURLRef(url.impl()), toRef(frame), toRef(listener), m_pagePolicyClient.clientInfo);
     return true;
 }
 
-bool WebPolicyClient::decidePolicyForMIMEType(WebPageProxy* page, const String& MIMEType, const KURL& url, WebFrameProxy* frame, WebFramePolicyListenerProxy* listener)
+bool WebPolicyClient::decidePolicyForMIMEType(WebPageProxy* page, const String& MIMEType, const String& url, WebFrameProxy* frame, WebFramePolicyListenerProxy* listener)
 {
     if (!m_pagePolicyClient.decidePolicyForMIMEType)
         return false;
 
-    RefPtr<KURLWrapper> urlWrapper = KURLWrapper::create(url);
-    m_pagePolicyClient.decidePolicyForMIMEType(toRef(page), toRef(MIMEType.impl()), toRef(urlWrapper.get()), toRef(frame), toRef(listener), m_pagePolicyClient.clientInfo);
+    m_pagePolicyClient.decidePolicyForMIMEType(toRef(page), toRef(MIMEType.impl()), toURLRef(url.impl()), toRef(frame), toRef(listener), m_pagePolicyClient.clientInfo);
     return true;
 }
 

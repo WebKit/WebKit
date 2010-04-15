@@ -41,7 +41,7 @@ WKPageNamespaceRef WKPageGetPageNamespace(WKPageRef pageRef)
 
 void WKPageLoadURL(WKPageRef pageRef, WKURLRef URLRef)
 {
-    toWK(pageRef)->loadURL(toWK(URLRef)->url());
+    toWK(pageRef)->loadURL(toWK(URLRef));
 }
 
 void WKPageStopLoading(WKPageRef pageRef)

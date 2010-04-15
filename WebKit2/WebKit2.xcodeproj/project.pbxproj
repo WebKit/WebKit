@@ -95,7 +95,6 @@
 		BC20EBB1116EEB0800094A50 /* WKString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC20EBAF116EEB0800094A50 /* WKString.cpp */; };
 		BC20EBB4116EEF7A00094A50 /* WKURL.h in Headers */ = {isa = PBXBuildFile; fileRef = BC20EBB2116EEF7A00094A50 /* WKURL.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BC20EBB5116EEF7A00094A50 /* WKURL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC20EBB3116EEF7A00094A50 /* WKURL.cpp */; };
-		BC20EBC7116EF10500094A50 /* KURLWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = BC20EBC5116EF10500094A50 /* KURLWrapper.h */; };
 		BC20EC06116EF7FF00094A50 /* WKStringCF.h in Headers */ = {isa = PBXBuildFile; fileRef = BC20EC04116EF7FF00094A50 /* WKStringCF.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BC20EC07116EF7FF00094A50 /* WKStringCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC20EC05116EF7FF00094A50 /* WKStringCF.cpp */; };
 		BC20ED66116F971100094A50 /* WKURLCF.h in Headers */ = {isa = PBXBuildFile; fileRef = BC20ED64116F971100094A50 /* WKURLCF.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -285,7 +284,6 @@
 		BC20EBAF116EEB0800094A50 /* WKString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKString.cpp; sourceTree = "<group>"; };
 		BC20EBB2116EEF7A00094A50 /* WKURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKURL.h; sourceTree = "<group>"; };
 		BC20EBB3116EEF7A00094A50 /* WKURL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKURL.cpp; sourceTree = "<group>"; };
-		BC20EBC5116EF10500094A50 /* KURLWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KURLWrapper.h; sourceTree = "<group>"; };
 		BC20EC04116EF7FF00094A50 /* WKStringCF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKStringCF.h; sourceTree = "<group>"; };
 		BC20EC05116EF7FF00094A50 /* WKStringCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKStringCF.cpp; sourceTree = "<group>"; };
 		BC20ED64116F971100094A50 /* WKURLCF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKURLCF.h; sourceTree = "<group>"; };
@@ -482,7 +480,6 @@
 			children = (
 				BC111B5F112F635E00337BAB /* CoreIPCSupport */,
 				BC111B5A112F628200337BAB /* mac */,
-				BC20EBC5116EF10500094A50 /* KURLWrapper.h */,
 				BCC57161115ADB42001CCAF9 /* NotImplemented.h */,
 				BC1DD7B1114DC396005ADAF3 /* WebCoreTypeArgumentMarshalling.h */,
 				BC032DAF10F4380F0058C15A /* WebEvent.h */,
@@ -876,7 +873,6 @@
 				BCB63478116BF10600603215 /* WebKit2.h in Headers */,
 				BC20EBB0116EEB0800094A50 /* WKString.h in Headers */,
 				BC20EBB4116EEF7A00094A50 /* WKURL.h in Headers */,
-				BC20EBC7116EF10500094A50 /* KURLWrapper.h in Headers */,
 				BC20EC06116EF7FF00094A50 /* WKStringCF.h in Headers */,
 				BC20ED66116F971100094A50 /* WKURLCF.h in Headers */,
 				BC131BC911726C2800B69727 /* CoreIPCMessageKinds.h in Headers */,

@@ -43,7 +43,6 @@ namespace WebKit {
     class WebPageNamespace;
     class WebPageProxy;
     class WebPreferences;
-    class KURLWrapper;
 }
 
 /* Opaque typing convenience methods */
@@ -118,14 +117,14 @@ inline WKStringRef toRef(WebCore::StringImpl* s)
     return reinterpret_cast<WKStringRef>(s);
 }
 
-inline WebKit::KURLWrapper* toWK(WKURLRef u)
+inline WebCore::StringImpl* toWK(WKURLRef u)
 {
-    return reinterpret_cast<WebKit::KURLWrapper*>(u);
+    return reinterpret_cast<WebCore::StringImpl*>(u);
 }
 
-inline WKURLRef toRef(WebKit::KURLWrapper* u)
+inline WKURLRef toURLRef(WebCore::StringImpl* s)
 {
-    return reinterpret_cast<WKURLRef>(u);
+    return reinterpret_cast<WKURLRef>(s);
 }
 
 #endif // WKAPICast_h

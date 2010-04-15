@@ -60,11 +60,11 @@ bool WebFrameProxy::isMainFrame() const
     return this == m_page->mainFrame();
 }
 
-void WebFrameProxy::didStartProvisionalLoad(const KURL& url)
+void WebFrameProxy::didStartProvisionalLoad(const String& url)
 {
     // FIXME: Add assertions.
     m_loadState = LoadStateProvisional;
-    m_provisionalURL = KURLWrapper::create(url);
+    m_provisionalURL = url;
 }
 
 void WebFrameProxy::didCommitLoad()
@@ -72,7 +72,7 @@ void WebFrameProxy::didCommitLoad()
     // FIXME: Add assertions.
     m_loadState = LoadStateCommitted;
     m_url = m_provisionalURL;
-    m_provisionalURL = 0;
+    m_provisionalURL = String();
 }
 
 void WebFrameProxy::didFinishLoad()

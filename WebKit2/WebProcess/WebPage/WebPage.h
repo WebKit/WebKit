@@ -43,7 +43,6 @@ namespace CoreIPC {
 
 namespace WebCore {
     class GraphicsContext;
-    class KURL;
     class KeyboardEvent;
     class Page;
     class PlatformKeyboardEvent;
@@ -98,7 +97,7 @@ private:
 
     // Actions
     void tryClose();
-    void loadURL(const WebCore::KURL&);
+    void loadURL(const WebCore::String&);
     void stopLoading();
     void reload();
     void goForward();

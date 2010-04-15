@@ -26,9 +26,9 @@
 #ifndef WebFrameProxy_h
 #define WebFrameProxy_h
 
-#include "KURLWrapper.h"
 #include "WebFramePolicyListenerProxy.h"
 #include <WebCore/FrameLoaderTypes.h>
+#include <WebCore/PlatformString.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -67,10 +67,10 @@ public:
     bool isMainFrame() const;
     LoadState loadState() const { return m_loadState; }
 
-    KURLWrapper* url() const { return m_url.get(); }
-    KURLWrapper* provisionalURL() const { return m_provisionalURL.get(); }
+    const WebCore::String& url() const { return m_url; }
+    const WebCore::String& provisionalURL() const { return m_provisionalURL; }
 
-    void didStartProvisionalLoad(const WebCore::KURL& url);
+    void didStartProvisionalLoad(const WebCore::String& url);
     void didCommitLoad();
     void didFinishLoad();
     void didReceiveTitle(const WebCore::String&);
@@ -83,8 +83,8 @@ private:
 
     WebPageProxy* m_page;
     LoadState m_loadState;
-    RefPtr<KURLWrapper> m_url;
-    RefPtr<KURLWrapper> m_provisionalURL;
+    WebCore::String m_url;
+    WebCore::String m_provisionalURL;
     RefPtr<WebFramePolicyListenerProxy> m_policyListener;
     uint64_t m_frameID;
 };

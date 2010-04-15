@@ -30,7 +30,6 @@
 
 namespace WebCore {
     class String;
-    class KURL;
 }
 
 namespace WebKit {
@@ -44,9 +43,9 @@ public:
     WebPolicyClient();
     void initialize(WKPagePolicyClient*);
 
-    bool decidePolicyForNavigationAction(WebPageProxy*, uint32_t, const WebCore::KURL& url, WebFrameProxy*, WebFramePolicyListenerProxy*);
-    bool decidePolicyForNewWindowAction(WebPageProxy*, uint32_t, const WebCore::KURL& url, WebFrameProxy*, WebFramePolicyListenerProxy*);
-    bool decidePolicyForMIMEType(WebPageProxy*, const WebCore::String&, const WebCore::KURL& url, WebFrameProxy*, WebFramePolicyListenerProxy*);
+    bool decidePolicyForNavigationAction(WebPageProxy*, uint32_t, const WebCore::String& url, WebFrameProxy*, WebFramePolicyListenerProxy*);
+    bool decidePolicyForNewWindowAction(WebPageProxy*, uint32_t, const WebCore::String& url, WebFrameProxy*, WebFramePolicyListenerProxy*);
+    bool decidePolicyForMIMEType(WebPageProxy*, const WebCore::String&, const WebCore::String& url, WebFrameProxy*, WebFramePolicyListenerProxy*);
 
 private:
     WKPagePolicyClient m_pagePolicyClient;

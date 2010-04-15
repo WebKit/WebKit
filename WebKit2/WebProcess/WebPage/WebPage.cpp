@@ -47,7 +47,6 @@
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/FrameView.h>
-#include <WebCore/KURL.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/Page.h>
 #include <WebCore/PlatformKeyboardEvent.h>
@@ -148,7 +147,7 @@ void WebPage::tryClose()
     WebProcess::shared().connection()->send(WebPageProxyMessage::ClosePage, m_pageID, CoreIPC::In());
 }
 
-void WebPage::loadURL(const KURL& url)
+void WebPage::loadURL(const String& url)
 {
     m_mainFrame->coreFrame()->loader()->load(ResourceRequest(url), false);
 }
@@ -378,7 +377,7 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
             break;
         }
         case WebPageMessage::LoadURL: {
-            KURL url;
+            String url;
             if (!arguments.decode(url))
                 return;
             

@@ -1,3 +1,68 @@
+2010-04-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Fixed complexity and performance FIXME created by using KURL in the UI
+        process -- it turned out that everywhere we were using KURL, we could
+        have just used String instead. (That's how Windows WebKit works, too.)
+
+        I kept WKURLRef and WKStringRef distinct opaque types in the API for now,
+        though, since there may be profit in changing their backing stores in the
+        future, and it's nice for the API to encode a difference between generic
+        strings and strings that are valid, canonical URLs.
+
+        * Shared/KURLWrapper.h: Removed. Yay!
+
+        * Shared/WebCoreTypeArgumentMarshalling.h: Nixed KURL marshalling functions.
+        Old callers marshal Strings now, instead. (This is what KURL was doing
+        under the covers, anyway.)
+
+        * UIProcess/API/C/WKAPICast.h:
+        (toWK): Backed by StringImpl* now.
+        (toURLRef): Added a disambiguating function for specifying that you want
+        a WKURLRef, since StringImpl* converts to WKStringRef by default.
+
+        * UIProcess/API/C/WKFrame.cpp:
+        (WKFrameGetProvisionalURL):
+        (WKFrameGetURL):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageLoadURL):
+        * UIProcess/API/C/WKURL.cpp:
+        * UIProcess/API/C/cf/WKURLCF.cpp:
+        (WKURLCreateWithCFURL):
+        (WKURLCopyCFURL):
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::didStartProvisionalLoad):
+        (WebKit::WebFrameProxy::didCommitLoad):
+        * UIProcess/WebFrameProxy.h:
+        (WebKit::WebFrameProxy::url):
+        (WebKit::WebFrameProxy::provisionalURL):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadURL):
+        (WebKit::WebPageProxy::didReceiveMessage):
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForNewWindowAction):
+        (WebKit::WebPageProxy::decidePolicyForMIMEType):
+        (WebKit::WebPageProxy::processDidExit):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::urlAtProcessExit):
+        * UIProcess/WebPolicyClient.cpp:
+        (WebKit::WebPolicyClient::decidePolicyForNavigationAction):
+        (WebKit::WebPolicyClient::decidePolicyForNewWindowAction):
+        (WebKit::WebPolicyClient::decidePolicyForMIMEType):
+        * UIProcess/WebPolicyClient.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidStartProvisionalLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForMIMEType):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadURL):
+        (WebKit::WebPage::didReceiveMessage):
+        * WebProcess/WebPage/WebPage.h: Replaced KURL / KURLWrapper with String.
+
 2010-04-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

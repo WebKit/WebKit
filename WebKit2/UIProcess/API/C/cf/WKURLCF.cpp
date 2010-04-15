@@ -25,8 +25,8 @@
 
 #include "WKURLCF.h"
 
-#include "KURLWrapper.h"
 #include "WKAPICast.h"
+#include <WebCore/PlatformString.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -35,12 +35,11 @@ using namespace WebKit;
 
 WKURLRef WKURLCreateWithCFURL(CFURLRef cfURL)
 {
-    RefPtr<KURLWrapper> url = KURLWrapper::create(KURL(cfURL));
-    return toRef(url.release().releaseRef());
+    return toURLRef(String(CFURLGetString(cfURL)).impl());
 }
 
 CFURLRef WKURLCopyCFURL(CFAllocatorRef /*allocatorRef*/, WKURLRef URLRef)
 {
     // FIXME: Honor the allocator parameter.
-    return toWK(URLRef)->url().createCFURL();
+    return CFURLCreateWithBytes(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(toWK(URLRef)->characters()), toWK(URLRef)->length(), kCFStringEncodingUTF16, 0);
 }

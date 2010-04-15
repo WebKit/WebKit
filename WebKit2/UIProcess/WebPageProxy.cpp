@@ -38,7 +38,6 @@
 #include "WebProcessManager.h"
 #include "WebProcessMessageKinds.h"
 #include "WebProcessProxy.h"
-#include <WebCore/KURL.h>
 
 #ifndef NDEBUG
 #include <wtf/RefCountedLeakCounter.h>
@@ -178,7 +177,7 @@ bool WebPageProxy::tryClose()
     return false;
 }
 
-void WebPageProxy::loadURL(const KURL& url)
+void WebPageProxy::loadURL(const String& url)
 {
     if (!isValid()) {
         puts("loadURL called with a dead WebProcess");
@@ -320,7 +319,7 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
         }
         case WebPageProxyMessage::DidStartProvisionalLoadForFrame: {
             uint64_t frameID;
-            KURL url;
+            String url;
             if (!arguments.decode(CoreIPC::Out(frameID, url)))
                 return;
             didStartProvisionalLoadForFrame(webFrame(frameID), url);
@@ -428,7 +427,7 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
         case WebPageProxyMessage::DecidePolicyForNavigationAction: {
             uint64_t frameID;
             uint32_t navigationType;
-            KURL url;
+            String url;
             uint64_t listenerID;
             if (!arguments.decode(CoreIPC::Out(frameID, navigationType, url, listenerID)))
                 return;
@@ -438,7 +437,7 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
         case WebPageProxyMessage::DecidePolicyForNewWindowAction: {
             uint64_t frameID;
             uint32_t navigationType;
-            KURL url;
+            String url;
             uint64_t listenerID;
             if (!arguments.decode(CoreIPC::Out(frameID, navigationType, url, listenerID)))
                 return;
@@ -448,7 +447,7 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
         case WebPageProxyMessage::DecidePolicyForMIMEType: {
             uint64_t frameID;
             String MIMEType;
-            KURL url;
+            String url;
             uint64_t listenerID;
             if (!arguments.decode(CoreIPC::Out(frameID, MIMEType, url, listenerID)))
                 return;
@@ -548,7 +547,7 @@ void WebPageProxy::didFinishProgress()
     m_loaderClient.didFinishProgress(this);
 }
 
-void WebPageProxy::didStartProvisionalLoadForFrame(WebFrameProxy* frame, const KURL& url)
+void WebPageProxy::didStartProvisionalLoadForFrame(WebFrameProxy* frame, const String& url)
 {
     frame->didStartProvisionalLoad(url);
     m_loaderClient.didStartProvisionalLoadForFrame(this, frame);
@@ -604,21 +603,21 @@ void WebPageProxy::didFirstVisuallyNonEmptyLayoutForFrame(WebFrameProxy* frame)
 
 // PolicyClient
 
-void WebPageProxy::decidePolicyForNavigationAction(WebFrameProxy* frame, uint32_t navigationType, const KURL& url, uint64_t listenerID)
+void WebPageProxy::decidePolicyForNavigationAction(WebFrameProxy* frame, uint32_t navigationType, const String& url, uint64_t listenerID)
 {
     RefPtr<WebFramePolicyListenerProxy> listener = frame->setUpPolicyListenerProxy(listenerID);
     if (!m_policyClient.decidePolicyForNavigationAction(this, navigationType, url, frame, listener.get()))
         listener->use();
 }
 
-void WebPageProxy::decidePolicyForNewWindowAction(WebFrameProxy* frame, uint32_t navigationType, const KURL& url, uint64_t listenerID)
+void WebPageProxy::decidePolicyForNewWindowAction(WebFrameProxy* frame, uint32_t navigationType, const String& url, uint64_t listenerID)
 {
     RefPtr<WebFramePolicyListenerProxy> listener = frame->setUpPolicyListenerProxy(listenerID);
     if (!m_policyClient.decidePolicyForNewWindowAction(this, navigationType, url, frame, listener.get()))
         listener->use();
 }
 
-void WebPageProxy::decidePolicyForMIMEType(WebFrameProxy* frame, const String& MIMEType, const KURL& url, uint64_t listenerID)
+void WebPageProxy::decidePolicyForMIMEType(WebFrameProxy* frame, const String& MIMEType, const String& url, uint64_t listenerID)
 {
     RefPtr<WebFramePolicyListenerProxy> listener = frame->setUpPolicyListenerProxy(listenerID);
     if (!m_policyClient.decidePolicyForMIMEType(this, MIMEType, url, frame, listener.get()))
@@ -703,7 +702,7 @@ void WebPageProxy::processDidExit()
 {
     ASSERT(m_pageClient);
 
-    m_urlAtProcessExit = m_mainFrame->url()->url();
+    m_urlAtProcessExit = m_mainFrame->url();
 
     Vector<RefPtr<WebFrameProxy> > frame;
     copyValuesToVector(m_frameMap, frame);
