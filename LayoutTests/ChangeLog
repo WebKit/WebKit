@@ -2,6 +2,20 @@
 
         Not reviewed, sheriffing.
 
+        [Chromium] rebaseline svg/custom/path-bad-data.svg after http://trac.webkit.org/changeset/57591/
+
+        http://trac.webkit.org/changeset/57591://bugs.webkit.org/show_bug.cgi?id=37657 
+
+        * platform/chromium-linux/svg/custom/path-bad-data-expected.checksum:
+        * platform/chromium-linux/svg/custom/path-bad-data-expected.png:
+        * platform/chromium-win/svg/custom/path-bad-data-expected.checksum:
+        * platform/chromium-win/svg/custom/path-bad-data-expected.png:
+        * platform/chromium-win/svg/custom/path-bad-data-expected.txt:
+
+2010-04-15  Anton Muhin   <antonm@chromium.org>
+
+        Not reviewed, sheriffing.
+
         [Chromium] rebaseline fast/repaint/fixed-tranformed.html after
         http://trac.webkit.org/changeset/57633/
 

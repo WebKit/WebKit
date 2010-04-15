@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: line 9: Error: Problem parsing d="M 0 0 L 10 10 10"
 layer at (0,0) size 808x782
   RenderView at (0,0) size 785x585
 layer at (0,0) size 808x782
@@ -9,13 +8,12 @@ layer at (0,0) size 808x782
           RenderText {#text} at (0,0) size 324x22
             text run at (0,0) width 324: "This page contains the following errors:"
         RenderBlock {div} at (18,61) size 701x15
-          RenderText {#text} at (0,0) size 469x15
-            text run at (0,0) width 469: "error on line 10 at column 66: invalid character in attribute value"
-            text run at (469,0) width 0: " "
+          RenderText {#text} at (0,0) size 462x15
+            text run at (0,0) width 462: "error on line 9 at column 66: invalid character in attribute value"
+            text run at (462,0) width 0: " "
         RenderBlock {h3} at (18,94) size 701x23
           RenderText {#text} at (0,0) size 430x22
             text run at (0,0) width 430: "Below is a rendering of the page up to the first error."
       RenderBlock (anonymous) at (0,153) size 769x605
         RenderSVGRoot {svg} at (8,169) size 800x600
           RenderPath {path} at (8,169) size 200x200 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L200.00,0.00 L200.00,200.00 L0.00,200.00"]
-          RenderPath {path} at (8,169) size 0x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#FF0000]}] [data=""]
