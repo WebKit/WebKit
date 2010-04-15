@@ -1,3 +1,24 @@
+2010-04-15  Anton Muhin   <antonm@chromium.org>
+
+        Not reviewed, sheriffing.
+
+        Rebaseline some recently added LayoutTests under fast/url.
+
+        * platform/chromium-linux/fast/url: Added.
+        * platform/chromium-linux/fast/url/mailto-expected.txt: Added.
+        * platform/chromium-linux/fast/url/scheme-expected.txt: Added.
+        * platform/chromium-mac/fast/url: Added.
+        * platform/chromium-mac/fast/url/ipv6-expected.txt: Added.
+        * platform/chromium-mac/fast/url/path-url-expected.txt: Added.
+        * platform/chromium-mac/fast/url/port-expected.txt: Added.
+        * platform/chromium-mac/fast/url/standard-url-expected.txt: Added.
+        * platform/chromium-win/fast/url: Added.
+        * platform/chromium-win/fast/url/ipv6-expected.txt: Added.
+        * platform/chromium-win/fast/url/path-url-expected.txt: Added.
+        * platform/chromium-win/fast/url/port-expected.txt: Added.
+        * platform/chromium-win/fast/url/standard-url-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-04-15  Jonathan Dixon  <joth@chromium.org>
 
         Reviewed by Adam Barth.
