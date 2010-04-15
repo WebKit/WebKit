@@ -1,3 +1,38 @@
+2010-04-15  Albert J. Wong  <ajwong@chromium.org>
+
+        Unreviewed, rolling out r57660.
+        http://trac.webkit.org/changeset/57660
+        https://bugs.webkit.org/show_bug.cgi?id=37604
+
+        Broke a large number of inspector layout tests in chromium.
+
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::InjectedScriptHost::createInjectedScript):
+        * bindings/v8/ScriptDebugServer.cpp:
+        * bindings/v8/ScriptDebugServer.h:
+        (WebCore::ScriptDebugServer::addListener):
+        (WebCore::ScriptDebugServer::removeListener):
+        (WebCore::ScriptDebugServer::setBreakpoint):
+        (WebCore::ScriptDebugServer::removeBreakpoint):
+        (WebCore::ScriptDebugServer::clearBreakpoints):
+        (WebCore::ScriptDebugServer::setBreakpointsActivated):
+        (WebCore::ScriptDebugServer::pauseOnExceptionsState):
+        (WebCore::ScriptDebugServer::setPauseOnExceptionsState):
+        (WebCore::ScriptDebugServer::continueProgram):
+        (WebCore::ScriptDebugServer::stepIntoStatement):
+        (WebCore::ScriptDebugServer::stepOverStatement):
+        (WebCore::ScriptDebugServer::stepOutOfFunction):
+        (WebCore::ScriptDebugServer::currentCallFrameState):
+        (WebCore::ScriptDebugServer::ScriptDebugServer):
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::InjectedScriptHost::createInjectedScript):
+        (WebCore::V8InjectedScriptHost::currentCallFrameCallback):
+        (WebCore::V8InjectedScriptHost::isActivationCallback):
+        * inspector/front-end/InjectedScript.js:
+        (injectedScriptConstructor):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+
 2010-04-14  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Dimitri Glazkov.

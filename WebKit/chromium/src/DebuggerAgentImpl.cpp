@@ -35,7 +35,6 @@
 #include "Document.h"
 #include "Frame.h"
 #include "Page.h"
-#include "ScriptDebugServer.h"
 #include "V8Binding.h"
 #include "WebDevToolsAgentImpl.h"
 #include "WebViewImpl.h"
@@ -77,11 +76,6 @@ void DebuggerAgentImpl::processDebugCommands()
 {
     DebuggerAgentManager::UtilityContextScope utilityScope;
     v8::Debug::ProcessDebugMessages();
-}
-
-void DebuggerAgentImpl::setDebuggerScriptSource(const String& source)
-{
-    WebCore::ScriptDebugServer::shared().setDebuggerScriptSource(source);
 }
 
 void DebuggerAgentImpl::debuggerOutput(const String& command)

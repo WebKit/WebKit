@@ -1,3 +1,31 @@
+2010-04-15  Albert J. Wong  <ajwong@chromium.org>
+
+        Unreviewed, rolling out r57660.
+        http://trac.webkit.org/changeset/57660
+        https://bugs.webkit.org/show_bug.cgi?id=37604
+
+        Broke a large number of inspector layout tests in chromium.
+
+        * WebKit.gypi:
+        * src/DebuggerAgent.h:
+        * src/DebuggerAgentImpl.cpp:
+        * src/DebuggerAgentImpl.h:
+        * src/DebuggerAgentManager.cpp:
+        (WebKit::DebuggerAgentManager::debugAttach):
+        (WebKit::DebuggerAgentManager::debugDetach):
+        (WebKit::DebuggerAgentManager::setMessageLoopDispatchHandler):
+        * src/DebuggerAgentManager.h:
+        * src/InspectorFrontendClientImpl.cpp:
+        (WebKit::InspectorFrontendClientImpl::windowObjectCleared):
+        * src/js/DebuggerScript.js: Removed.
+        * src/js/DevTools.js:
+        (WebInspector.loaded):
+        (WebInspector.UnresolvedPropertyValue):
+        ():
+        * src/js/DevToolsHostStub.js:
+        * src/js/InspectorControllerImpl.js:
+        (devtools.InspectorBackendImpl):
+
 2010-04-15  Yury Semikhatsky  <yurys@google.com>
 
         Reviewed by Pavel Feldman.

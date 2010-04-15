@@ -35,7 +35,6 @@
         'devtools_js_files': [
             'src/js/InspectorControllerImpl.js',
             'src/js/DebuggerAgent.js',
-            'src/js/DebuggerScript.js',
             'src/js/ProfilerAgent.js',
             'src/js/ProfilerProcessor.js',
             'src/js/HeapProfilerPanel.js',

@@ -40,10 +40,7 @@ namespace WebKit {
     METHOD0(getContextId) \
     \
     /* Request v8 to process all debug commands in the queue. */ \
-    METHOD0(processDebugCommands) \
-    \
-    /* Push DebuggerScript.js content to the agent. */ \
-    METHOD1(setDebuggerScriptSource, String)
+    METHOD0(processDebugCommands)
 
 DEFINE_RPC_CLASS(DebuggerAgent, DEBUGGER_AGENT_STRUCT)
 

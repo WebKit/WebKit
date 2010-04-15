@@ -198,8 +198,6 @@ WebInspector.ScriptsPanel = function()
     this._shortcuts[shortcut] = handler;
 
     this._debuggerEnabled = Preferences.debuggerAlwaysEnabled;
-    if (Preferences.debuggerAlwaysEnabled)
-        this._attachDebuggerWhenShown = true;
     this.reset();
 }
 

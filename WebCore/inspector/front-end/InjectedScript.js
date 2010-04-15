@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var injectedScriptConstructor = (function (InjectedScriptHost, inspectedWindow, injectedScriptId, jsEngine) {
+var injectedScriptConstructor = (function (InjectedScriptHost, inspectedWindow, injectedScriptId) {
 
 var InjectedScript = {};
 
@@ -125,32 +125,10 @@ InjectedScript.getProperties = function(objectProxy, ignoreHasOwnProperty, abbre
     if (!InjectedScript._isDefined(object))
         return false;
     var properties = [];
-    
     var propertyNames = ignoreHasOwnProperty ? InjectedScript._getPropertyNames(object) : Object.getOwnPropertyNames(object);
     if (!ignoreHasOwnProperty && object.__proto__)
         propertyNames.push("__proto__");
 
-    if (jsEngine === "v8") {
-        // Check if the object is a scope.
-        if (InjectedScript._isScopeProxy(objectProxy)) {
-            propertyNames = [];
-            for (var name in object)
-                propertyNames.push(name);
-        } else {
-            // FIXME(http://crbug.com/41243): Object.getOwnPropertyNames may return duplicated names.
-            var a = [];
-            propertyNames.sort();
-            var prev;
-            for (var i = 0; i < propertyNames.length; i++) {
-                var n = propertyNames[i];
-                if (n != prev)
-                    a.push(n);
-                prev = n;
-            }
-            propertyNames = a;
-        }
-    }
-    
     // Go over properties, prepare results.
     for (var i = 0; i < propertyNames.length; ++i) {
         var propertyName = propertyNames[i];
@@ -179,12 +157,6 @@ InjectedScript.getProperties = function(objectProxy, ignoreHasOwnProperty, abbre
     }
     return properties;
 }
-
-InjectedScript._isScopeProxy = function(objectProxy)
-{
-    var objectId = objectProxy.objectId;
-    return typeof objectId === "object" && !objectId.thisObject;
-} 
 
 InjectedScript.setPropertyValue = function(objectProxy, propertyName, expression)
 {
@@ -841,59 +813,6 @@ InjectedScript.CallFrameProxy = function(id, callFrame)
     this.scopeChain = this._wrapScopeChain(callFrame);
 }
 
-// FIXME(37663): unify scope chain representation and remove this if.
-if (jsEngine === "v8") {
-
-InjectedScript.CallFrameProxy.prototype = {
-    
-
-    _wrapScopeChain: function(callFrame)
-    {
-        var ScopeType = { Global: 0,
-                          Local: 1,
-                          With: 2,
-                          Closure: 3,
-                          Catch: 4 };
-        var scopeChain = callFrame.scopeChain;
-        var scopeChainProxy = [];
-        for (var i = 0; i < scopeChain.length; i += 2) {
-            var scopeType = scopeChain[i];
-            var scopeObject = scopeChain[i + 1];
-            var scopeObjectProxy = InjectedScript.createProxyObject(scopeObject, { callFrame: this.id, chainIndex: (i + 1) }, true);
-
-            var foundLocalScope = false;
-            switch(scopeType) {
-                case ScopeType.Local: {
-                    foundLocalScope = true;
-                    scopeObjectProxy.isLocal = true;
-                    scopeObjectProxy.thisObject = InjectedScript.createProxyObject(callFrame.thisObject, { callFrame: this.id, thisObject: true }, true);
-                    break;
-                }
-                case ScopeType.Closure: {
-                    scopeObjectProxy.isClosure = true;
-                    break;
-                }
-                case ScopeType.With: {
-                    scopeObjectProxy.isWithBlock = true;
-                    break;
-                }
-            }
-
-            if (foundLocalScope) {
-                if (scopeObject instanceof inspectedWindow.Element)
-                    scopeObjectProxy.isElement = true;
-                else if (scopeObject instanceof inspectedWindow.Document)
-                    scopeObjectProxy.isDocument = true;
-            }
- 
-            scopeChainProxy.push(scopeObjectProxy);
-        }
-        return scopeChainProxy;
-    }
-}
-
-} else {
-
 InjectedScript.CallFrameProxy.prototype = {
     _wrapScopeChain: function(callFrame)
     {
@@ -921,8 +840,6 @@ InjectedScript.CallFrameProxy.prototype = {
         }
         return scopeChainProxy;
     }
-}
-
 }
 
 InjectedScript.executeSql = function(callId, databaseId, query)
