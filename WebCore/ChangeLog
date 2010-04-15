@@ -1,3 +1,27 @@
+2010-04-15  Bruno Schmidt  <bruno.schmidt@gmail.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Null QObjects properties cause Segmentation Fault
+        https://bugs.webkit.org/show_bug.cgi?id=34730
+
+        QObjects exported to the QWebkit javascript with properties that are
+        a null "QObject*" cause Segmentation Fault.
+
+        If an QObject is added to the javascript context and it contains
+        properties of the type QObject* with NULL value, calling the property
+        causes Segmentation Fault.
+        So now the code below properly checks for null pointers:
+
+        * bridge/qt/qt_instance.cpp:
+        (JSC::Bindings::QtInstance::getClass): may return NULL
+        (JSC::Bindings::QtInstance::getMethod): may return jsNull()
+        (JSC::Bindings::QtInstance::stringValue): may return jsNull()
+        (JSC::Bindings::QtInstance::booleanValue): may return false
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::convertValueToQVariant): 
+        (JSC::Bindings::convertQVariantToValue): May return jsNull on QObjectStar
+
 2010-04-14  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -332,7 +332,7 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
             break;
         }
 
-        case QMetaType::QVariantMap: 
+        case QMetaType::QVariantMap:
             if (type == Object || type == Array || type == RTArray) {
                 // Enumerate the contents of the object
                 PropertyNameArray properties(exec);
@@ -871,6 +871,8 @@ JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, con
 
     if (type == QMetaType::QObjectStar || type == QMetaType::QWidgetStar) {
         QObject* obj = variant.value<QObject*>();
+        if (!obj)
+            return jsNull();
         return QtInstance::getQtInstance(obj, root, QScriptEngine::QtOwnership)->createRuntimeObject(exec);
     }
 
