@@ -1,3 +1,14 @@
+2010-04-15  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Eric Seidel.
+
+        Duplicated patches related to wml were pushed to trunk. So, one of
+        the patches should be reverted.
+        https://bugs.webkit.org/show_bug.cgi?id=37542
+
+        * wml/WMLOptionElement.h:
+        * wml/WMLSelectElement.h:
+
 2010-04-15  Bruno Schmidt  <bruno.schmidt@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.
