@@ -1,3 +1,17 @@
+2010-04-15  Adam Roben  <aroben@apple.com>
+
+        Make --exit-after-n-failures work when all tests are timing out or crashing
+
+        Fixes <http://webkit.org/b/37679>.
+
+        Reviewed by Jon Honeycutt.
+
+        * Scripts/run-webkit-tests:
+        (top level): When a test crashes or times out, break out of the main loop if
+        stopRunningTestsEarlyIfNeeded returns true. Moved some code from the bottom of the main loop
+        from here...
+        (stopRunningTestsEarlyIfNeeded): ...to here.
+
 2010-04-15  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
