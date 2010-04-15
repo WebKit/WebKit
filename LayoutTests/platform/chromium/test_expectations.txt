@@ -2789,4 +2789,3 @@ BUG41455 SKIP : http/tests/xmlhttprequest/origin-whitelisting-ip-addresses.html 
 BUG41455 SKIP : http/tests/xmlhttprequest/origin-whitelisting-subdomains.html = TIMEOUT
 BUG41455 SKIP : http/tests/xmlhttprequest/origin-whitelisting-removal.html = TIMEOUT
 BUG41455 SKIP : http/tests/security/local-image-from-remote-whitelisted.html = TIMEOUT
-
