@@ -1,3 +1,42 @@
+2010-04-15  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Use a lower-overhead mechanism for plug-in message throttling
+        https://bugs.webkit.org/show_bug.cgi?id=37642        
+        <rdar://problem/7418285> Very high CPU usage idling in gmail under Windows 7 (plug-in related)
+        
+        GMail has an instance of Flash that loads on the main mail page.
+        This Flash content sends us a constant stream of WM_USER+1 messsages.
+        
+        There was already code in PluginMessageThrottlerWin to queue and process these
+        excess WM_USER+1 messages from Flash. Unfortunately, there were a couple of
+        problems with this code:
+        
+        - The timer used to process the excess messages had a very low timeout (1ms).
+          Chrome uses a value of 5ms for this delay, and doesn't use excess CPU here,
+          while still maintaining good Flash frame rate.
+        
+        - The overhead involved in generating a constant stream of 5ms timers still swamped
+          the CPU, resulting in continued high CPU utilization.
+          
+        To fix this, I changed the throttling code to:
+        
+        - Process a queued WM_USER+1 message directly if none has been processed in 5ms.
+          This allows us to avoid the overhead of a timer.
+          
+        - Process remaining delayed WM_USER+1 messages on a 16ms timer.
+        
+        This reduces our CPU utilization idling in GMail from ~20% to ~2-3% on my system.
+        I also verified the frame rate for Flash content wasn't reduced with this change.
+
+        * plugins/win/PluginMessageThrottlerWin.cpp:
+        (WebCore::PluginMessageThrottlerWin::PluginMessageThrottlerWin): Initialize m_lastMessageTime.
+        (WebCore::PluginMessageThrottlerWin::appendMessage): Process a queued message directly if >5ms have passed.
+        (WebCore::PluginMessageThrottlerWin::processQueuedMessage): Split out from messageThrottleTimerFired.
+        (WebCore::PluginMessageThrottlerWin::messageThrottleTimerFired): Call through to processQueuedMessage.
+        * plugins/win/PluginMessageThrottlerWin.h: Add processQueuedMessage, m_lastMessageTime.
+
 2010-04-15  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by David Levin.

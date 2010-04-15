@@ -29,16 +29,26 @@
 
 #include "PluginView.h"
 #include <wtf/ASCIICType.h>
+#include <wtf/CurrentTime.h>
 
 using namespace WTF;
 
 namespace WebCore {
 
-static const double MessageThrottleTimeInterval = 0.001;
+// Set a timer to make sure we process any queued messages at least every 16ms.
+// This value allows Flash 60 messages/second, which should be enough for video
+// playback, and also gets us over the limit for kicking into high-resolution
+// timer mode (see SharedTimerWin.cpp).
+static const double MessageThrottleTimeInterval = 0.016;
+
+// During a continuous stream of messages, process one every 5ms.
+static const double MessageDirectProcessingInterval = 0.005;
 
 PluginMessageThrottlerWin::PluginMessageThrottlerWin(PluginView* pluginView)
-    : m_back(0), m_front(0)
+    : m_back(0)
+    , m_front(0)
     , m_pluginView(pluginView)
+    , m_lastMessageTime(0)
     , m_messageThrottleTimer(this, &PluginMessageThrottlerWin::messageThrottleTimerFired)
 {
     // Initialize the free list with our inline messages
@@ -74,11 +84,21 @@ void PluginMessageThrottlerWin::appendMessage(HWND hWnd, UINT msg, WPARAM wParam
     if (!m_front)
         m_front = message;
 
+    // If it has been more than MessageDirectProcessingInterval between throttled messages,
+    // go ahead and process a message directly.
+    double currentTime = WTF::currentTime();
+    if (currentTime - m_lastMessageTime > MessageDirectProcessingInterval) {
+        processQueuedMessage();
+        m_lastMessageTime = currentTime;
+        if (!m_front)
+            return;
+    }
+
     if (!m_messageThrottleTimer.isActive())
         m_messageThrottleTimer.startOneShot(MessageThrottleTimeInterval);
 }
 
-void PluginMessageThrottlerWin::messageThrottleTimerFired(Timer<PluginMessageThrottlerWin>*)
+void PluginMessageThrottlerWin::processQueuedMessage()
 {
     PluginMessage* message = m_front;
     m_front = m_front->next;
@@ -91,6 +111,11 @@ void PluginMessageThrottlerWin::messageThrottleTimerFired(Timer<PluginMessageThr
     ::CallWindowProc(m_pluginView->pluginWndProc(), message->hWnd, message->msg, message->wParam, message->lParam);
 
     freeMessage(message);
+}
+
+void PluginMessageThrottlerWin::messageThrottleTimerFired(Timer<PluginMessageThrottlerWin>*)
+{
+    processQueuedMessage();
 
     if (m_front)
         m_messageThrottleTimer.startOneShot(MessageThrottleTimeInterval);
