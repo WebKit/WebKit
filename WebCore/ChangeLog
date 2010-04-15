@@ -1,3 +1,17 @@
+2010-04-15  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by David Levin.
+
+        LEAK: in ThreadableWebSocketChannel::create()
+        https://bugs.webkit.org/show_bug.cgi?id=37584
+
+        No new tests because this change just fixes a leak.
+
+        * websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::WorkerThreadableWebSocketChannel):
+        * websockets/WorkerThreadableWebSocketChannel.h:
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::create):
+
 2010-04-15  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Eric Seidel.

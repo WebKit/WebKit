@@ -105,7 +105,10 @@ private:
     // Bridge for Peer.  Running on the worker thread.
     class Bridge : public RefCounted<Bridge> {
     public:
-        Bridge(PassRefPtr<ThreadableWebSocketChannelClientWrapper>, PassRefPtr<WorkerContext>, const String& taskMode, const KURL&, const String& protocol);
+        static PassRefPtr<Bridge> create(PassRefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper, PassRefPtr<WorkerContext> workerContext, const String& taskMode, const KURL& url, const String& protocol)
+        {
+            return adoptRef(new Bridge(workerClientWrapper, workerContext, taskMode, url, protocol));
+        }
         ~Bridge();
         void connect();
         bool send(const String& message);
@@ -117,6 +120,8 @@ private:
         using RefCounted<Bridge>::deref;
 
     private:
+        Bridge(PassRefPtr<ThreadableWebSocketChannelClientWrapper>, PassRefPtr<WorkerContext>, const String& taskMode, const KURL&, const String& protocol);
+
         static void setWebSocketChannel(ScriptExecutionContext*, Bridge* thisPtr, Peer*, RefPtr<ThreadableWebSocketChannelClientWrapper>);
 
         // Executed on the main thread to create a Peer for this bridge.
