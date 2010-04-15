@@ -4732,9 +4732,7 @@ void RenderBlock::updateFirstLetter()
             // construct text fragment for the first letter
             RenderTextFragment* letter = 
                 new (renderArena()) RenderTextFragment(remainingText->node() ? remainingText->node() : remainingText->document(), oldText.get(), 0, length);
-            RefPtr<RenderStyle> newStyle = RenderStyle::create();
-            newStyle->inheritFrom(pseudoStyle);
-            letter->setStyle(newStyle.release());
+            letter->setStyle(pseudoStyle);
             firstLetter->addChild(letter);
 
             textObj->destroy();

@@ -211,8 +211,17 @@ void RenderStyle::setHasPseudoStyle(PseudoId pseudo)
 
 RenderStyle* RenderStyle::getCachedPseudoStyle(PseudoId pid) const
 {
-    if (!m_cachedPseudoStyle || styleType() != NOPSEUDO)
+    ASSERT(styleType() != VISITED_LINK);
+
+    if (!m_cachedPseudoStyle)
         return 0;
+
+    if (styleType() != NOPSEUDO) {
+        if (pid == VISITED_LINK)
+            return m_cachedPseudoStyle->styleType() == VISITED_LINK ? m_cachedPseudoStyle.get() : 0;
+        return 0;
+    }
+
     RenderStyle* ps = m_cachedPseudoStyle.get();
     while (ps && ps->styleType() != pid)
         ps = ps->m_cachedPseudoStyle.get();

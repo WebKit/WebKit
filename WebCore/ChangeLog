@@ -1,3 +1,15 @@
+2010-04-15  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37567, :first-letter inside a :visited link is wrong color.  Make sure
+        that the pseudo style caching allows visited link styles to hang off other pseudo styles.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateFirstLetter):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::getCachedPseudoStyle):
+
 2010-04-15  Ben Murdoch  <benm@google.com>
 
         Unreviewed, rolling out r57652.
