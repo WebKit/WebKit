@@ -213,35 +213,37 @@ RenderStyle* RenderStyle::getCachedPseudoStyle(PseudoId pid) const
 {
     ASSERT(styleType() != VISITED_LINK);
 
-    if (!m_cachedPseudoStyle)
+    if (!m_cachedPseudoStyles || !m_cachedPseudoStyles->size())
         return 0;
 
     if (styleType() != NOPSEUDO) {
         if (pid == VISITED_LINK)
-            return m_cachedPseudoStyle->styleType() == VISITED_LINK ? m_cachedPseudoStyle.get() : 0;
+            return m_cachedPseudoStyles->at(0)->styleType() == VISITED_LINK ? m_cachedPseudoStyles->at(0).get() : 0;
         return 0;
     }
 
-    RenderStyle* ps = m_cachedPseudoStyle.get();
-    while (ps && ps->styleType() != pid)
-        ps = ps->m_cachedPseudoStyle.get();
-    return ps;
+    for (size_t i = 0; i < m_cachedPseudoStyles->size(); ++i) {
+        RenderStyle* pseudoStyle = m_cachedPseudoStyles->at(i).get();
+        if (pseudoStyle->styleType() == pid)
+            return pseudoStyle;
+    }
+
+    return 0;
 }
 
 RenderStyle* RenderStyle::addCachedPseudoStyle(PassRefPtr<RenderStyle> pseudo)
 {
     if (!pseudo)
         return 0;
-    pseudo->m_cachedPseudoStyle = m_cachedPseudoStyle;
-    m_cachedPseudoStyle = pseudo;
-    return m_cachedPseudoStyle.get();
-}
+    
+    RenderStyle* result = pseudo.get();
 
-void RenderStyle::getPseudoStyleCache(PseudoStyleCache& cache) const
-{
-    ASSERT(cache.isEmpty());
-    for (RenderStyle* pseudoStyle = m_cachedPseudoStyle.get(); pseudoStyle; pseudoStyle = pseudoStyle->m_cachedPseudoStyle.get())
-        cache.append(pseudoStyle);
+    if (!m_cachedPseudoStyles)
+        m_cachedPseudoStyles.set(new PseudoStyleCache);
+
+    m_cachedPseudoStyles->append(pseudo);
+
+    return result;
 }
 
 bool RenderStyle::inheritedNotEqual(const RenderStyle* other) const

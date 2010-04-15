@@ -862,15 +862,17 @@ bool Element::pseudoStyleCacheIsInvalid(const RenderStyle* currentStyle, RenderS
     if (!renderer() || !currentStyle)
         return false;
 
-    RenderStyle::PseudoStyleCache pseudoStyleCache;
-    currentStyle->getPseudoStyleCache(pseudoStyleCache);
-    size_t cacheSize = pseudoStyleCache.size();
+    const PseudoStyleCache* pseudoStyleCache = currentStyle->cachedPseudoStyles();
+    if (!pseudoStyleCache)
+        return false;
+
+    size_t cacheSize = pseudoStyleCache->size();
     for (size_t i = 0; i < cacheSize; ++i) {
         RefPtr<RenderStyle> newPseudoStyle;
-        PseudoId pseudoId = pseudoStyleCache[i]->styleType();
+        PseudoId pseudoId = pseudoStyleCache->at(i)->styleType();
         if (pseudoId == VISITED_LINK) {
             newPseudoStyle =  newStyle->getCachedPseudoStyle(VISITED_LINK); // This pseudo-style was aggressively computed already when we first called styleForElement on the new style.
-            if (!newPseudoStyle || *newPseudoStyle != *pseudoStyleCache[i])
+            if (!newPseudoStyle || *newPseudoStyle != *pseudoStyleCache->at(i))
                 return true;
         } else if (pseudoId == FIRST_LINE || pseudoId == FIRST_LINE_INHERITED)
             newPseudoStyle = renderer()->uncachedFirstLineStyle(newStyle);
@@ -878,7 +880,7 @@ bool Element::pseudoStyleCacheIsInvalid(const RenderStyle* currentStyle, RenderS
             newPseudoStyle = renderer()->getUncachedPseudoStyle(pseudoId, newStyle, newStyle);
         if (!newPseudoStyle)
             return true;
-        if (*newPseudoStyle != *pseudoStyleCache[i]) {
+        if (*newPseudoStyle != *pseudoStyleCache->at(i)) {
             if (pseudoId < FIRST_INTERNAL_PSEUDOID)
                 newStyle->setHasPseudoStyle(pseudoId);
             newStyle->addCachedPseudoStyle(newPseudoStyle);

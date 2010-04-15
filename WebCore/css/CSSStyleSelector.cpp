@@ -1141,7 +1141,23 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
             return sharedStyle;
     }
     initForStyleResolve(e, defaultParent);
-    
+
+    // Compute our style allowing :visited to match first.
+    RefPtr<RenderStyle> visitedStyle;
+    if (!matchVisitedRules && m_parentStyle && (m_parentStyle->insideLink() || e->isLink()) && e->document()->usesLinkRules()) {
+        // Fetch our parent style.
+        RenderStyle* parentStyle = m_parentStyle;
+        if (!e->isLink()) {
+            // Use the parent's visited style if one exists.
+            RenderStyle* parentVisitedStyle = m_parentStyle->getCachedPseudoStyle(VISITED_LINK);
+            if (parentVisitedStyle)
+                parentStyle = parentVisitedStyle;
+        }
+        visitedStyle = styleForElement(e, parentStyle, false, false, true);
+        visitedStyle->setStyleType(VISITED_LINK);
+        initForStyleResolve(e, defaultParent);
+    }
+
     m_checker.m_matchVisitedPseudoClass = matchVisitedRules;
 
     m_style = RenderStyle::create();
@@ -1316,21 +1332,17 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
     if (m_style->hasPseudoStyle(FIRST_LETTER))
         m_style->setUnique();
 
-    // Compute our style allowing :visited to match.
-    if (!matchVisitedRules && m_style->insideLink() && e->document()->usesLinkRules()) {
-        // Fetch our parent style.
-        RenderStyle* parentStyle = m_parentStyle;
-        if (!m_style->isLink()) {
-            // Use the parent's visited style if one exists.
-            RenderStyle* parentVisitedStyle = m_parentStyle->getCachedPseudoStyle(VISITED_LINK);
-            if (parentVisitedStyle)
-                parentStyle = parentVisitedStyle;
+    if (visitedStyle) {
+        // Copy any pseudo bits that the visited style has to the primary style so that
+        // pseudo element styles will continue to work for pseudo elements inside :visited
+        // links.
+        for (unsigned pseudo = FIRST_PUBLIC_PSEUDOID; pseudo < FIRST_INTERNAL_PSEUDOID; ++pseudo) {
+            if (visitedStyle->hasPseudoStyle(static_cast<PseudoId>(pseudo)))
+                m_style->setHasPseudoStyle(static_cast<PseudoId>(pseudo));
         }
-        RefPtr<RenderStyle> resultStyle = m_style.release();
-        PassRefPtr<RenderStyle> visitedStyle = styleForElement(e, parentStyle, false, false, true);
-        visitedStyle->setStyleType(VISITED_LINK);
-        resultStyle->addCachedPseudoStyle(visitedStyle);
-        return resultStyle.release();
+        
+        // Add the visited style off the main style.
+        m_style->addCachedPseudoStyle(visitedStyle.release());
     }
 
     // Now return the style.
@@ -1424,10 +1436,23 @@ PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo,
     if (!e)
         return 0;
 
+    // Compute our :visited style first, so that we know whether or not we'll need to create a normal style just to hang it
+    // off of.
+    RefPtr<RenderStyle> visitedStyle;
+    if (!matchVisitedLinks && parentStyle && parentStyle->insideLink()) {
+        // Fetch our parent style with :visited in effect.
+        RenderStyle* parentVisitedStyle = parentStyle->getCachedPseudoStyle(VISITED_LINK);
+        visitedStyle = pseudoStyleForElement(pseudo, e, parentVisitedStyle ? parentVisitedStyle : parentStyle, true);
+        if (visitedStyle)
+            visitedStyle->setStyleType(VISITED_LINK);
+    }
+
     initElement(e);
     initForStyleResolve(e, parentStyle, pseudo);
     m_style = parentStyle;
     
+    m_checker.m_matchVisitedPseudoClass = matchVisitedLinks;
+
     // Since we don't use pseudo-elements in any of our quirk/print user agent rules, don't waste time walking
     // those rules.
     
@@ -1440,9 +1465,9 @@ PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo,
         matchRules(m_authorStyle, firstAuthorRule, lastAuthorRule);
     }
 
-    if (m_matchedDecls.isEmpty())
+    if (m_matchedDecls.isEmpty() && !visitedStyle)
         return 0;
-    
+
     m_style = RenderStyle::create();
     if (parentStyle)
         m_style->inheritFrom(parentStyle);
@@ -1450,6 +1475,10 @@ PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo,
     m_style->setStyleType(pseudo);
     
     m_lineHeightValue = 0;
+    
+    // Reset the value back before applying properties, so that -webkit-link knows what color to use.
+    m_checker.m_matchVisitedPseudoClass = matchVisitedLinks;
+
     // High-priority properties.
     applyDeclarations(true, false, 0, m_matchedDecls.size() - 1);
     applyDeclarations(true, true, firstAuthorRule, lastAuthorRule);
@@ -1479,25 +1508,14 @@ PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo,
     // go ahead and update it a second time.
     if (m_fontDirty)
         updateFont();
+
     // Clean up our style object's display and text decorations (among other fixups).
     adjustRenderStyle(style(), 0);
 
-    // Compute our :visited style.
-    if (!matchVisitedLinks && m_style->insideLink()) {
-        // Fetch our parent style.
-        RenderStyle* parentStyle = m_parentStyle;
-        if (parentStyle) {
-            RenderStyle* parentVisitedStyle = m_parentStyle->getCachedPseudoStyle(VISITED_LINK);
-            if (parentVisitedStyle)
-                parentStyle = parentVisitedStyle;
-        }
-        RefPtr<RenderStyle> resultStyle = m_style.release();
-        RefPtr<RenderStyle> visitedStyle = pseudoStyleForElement(pseudo, e, parentStyle, true);
-        visitedStyle->setStyleType(VISITED_LINK);
-        resultStyle->addCachedPseudoStyle(visitedStyle.release());
-        return resultStyle.release();
-    }
-
+    // Hang our visited style off m_style.
+    if (visitedStyle)
+        m_style->addCachedPseudoStyle(visitedStyle.release());
+        
     // Now return the style.
     return m_style.release();
 }

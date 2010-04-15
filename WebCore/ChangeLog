@@ -1,3 +1,29 @@
+2010-04-15  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37669, REGRESSION: visited styles don't work right when only the visited path specifies
+        a pseudoelement.
+        
+        Rework the pseudo cache on RenderStyles to support nesting, i.e., a pseudo hanging off a pseudo.  The existing model gets
+        confused by this concept, since it relies on a singly linked list of chained pseudo styles (instead of a Vector owned by a primary
+        style).  I changed the style cache to be a Vector instead.
+        
+        Reworked both styleForElement and pseudoStyleForElement to resolve visited styles first, since in the pseudoStyleForElement case
+        you need to do this in order to know to allocate an unvisited pseudo style even if one shouldn't normally exist.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::styleForElement):
+        (WebCore::CSSStyleSelector::pseudoStyleForElement):
+        * dom/Element.cpp:
+        (WebCore::Element::pseudoStyleCacheIsInvalid):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::getCachedPseudoStyle):
+        (WebCore::RenderStyle::addCachedPseudoStyle):
+        * rendering/style/RenderStyle.h:
+        (WebCore::):
+        (WebCore::InheritedFlags::cachedPseudoStyles):
+
 2010-04-15  Albert J. Wong  <ajwong@chromium.org>
 
         Unreviewed, rolling out r57660.
