@@ -1,3 +1,14 @@
+2010-04-15  Nicolas Weber  <thakis@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Fix drag image thumbnails for indexed images.
+        https://bugs.webkit.org/show_bug.cgi?id=37621
+
+        * platform/chromium/DragImageChromiumMac.cpp:
+        (WebCore::scaleDragImage): Always use RGB color space.
+        (WebCore::dissolveDragImageToFraction): Always use RGB color space.
+
 2010-04-15  Adam Roben  <aroben@apple.com>
 
         Expose UserContentURLPattern as WebKit SPI
