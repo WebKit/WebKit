@@ -1,3 +1,20 @@
+2010-04-15  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37494
+        <rdar://problem/7857060> REGRESSION (r57340): fast/events/mouse-drag-from-frame-to-other-frame.html
+        fails on Windows
+
+        * DumpRenderTree/win/EventSender.cpp: (makeEventSender):
+        * DumpRenderTree/win/EventSender.h:
+        Tell EventSender if it's being created for a top frame.
+        
+        * DumpRenderTree/win/FrameLoadDelegate.cpp:
+        (FrameLoadDelegate::didClearWindowObjectForFrameInStandardWorld): We only want to reset
+        EventSender machinery when a new test is loaded, not when an iframe (or just its global
+        object) is created.
+
 2010-04-15  Adam Roben  <aroben@apple.com>
 
         Fix Windows WebKit2 build.

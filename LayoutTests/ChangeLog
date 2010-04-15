@@ -1,3 +1,13 @@
+2010-04-15  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37494
+        <rdar://problem/7857060> REGRESSION (r57340): fast/events/mouse-drag-from-frame-to-other-frame.html
+        fails on Windows
+
+        * platform/win/fast/events/mouse-drag-from-frame-to-other-frame-expected.txt: Removed.
+
 2010-04-15  Chris Fleizach  <cfleizach@apple.com>
 
         Unreviewed.

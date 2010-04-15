@@ -336,6 +336,9 @@ void FrameLoadDelegate::didClearWindowObjectForFrameInStandardWorld(IWebFrame* f
     JSGlobalContextRef context = frame->globalContext();
     JSObjectRef windowObject = JSContextGetGlobalObject(context);
 
+    IWebFrame* parentFrame = 0;
+    frame->parentFrame(&parentFrame);
+
     JSValueRef exception = 0;
 
     ::gLayoutTestController->makeWindowObject(context, windowObject, &exception);
@@ -348,7 +351,7 @@ void FrameLoadDelegate::didClearWindowObjectForFrameInStandardWorld(IWebFrame* f
     ASSERT(!exception);
 
     JSStringRef eventSenderStr = JSStringCreateWithUTF8CString("eventSender");
-    JSValueRef eventSender = makeEventSender(context);
+    JSValueRef eventSender = makeEventSender(context, !parentFrame);
     JSObjectSetProperty(context, windowObject, eventSenderStr, eventSender, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, 0);
     JSStringRelease(eventSenderStr);
 }
