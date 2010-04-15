@@ -39,7 +39,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QTMovieWin", "..\WebCore\We
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testapi", "..\JavaScriptCore\JavaScriptCore.vcproj\testapi\testapi.vcproj", "{1AFD081F-1AC7-4A97-8EFA-6DF97761A3A2}"
 	ProjectSection(ProjectDependencies) = postProject
-		{1C16337B-ACF3-4D03-AA90-851C5B5EADA6} = {1C16337B-ACF3-4D03-AA90-851C5B5EADA6}
+		{AAE88FEF-509E-4D49-870B-7357922C276F} = {AAE88FEF-509E-4D49-870B-7357922C276F}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebKit2", "win\WebKit2.vcproj", "{0662A8A9-82A3-4638-97D8-EC425D8D87C9}"
@@ -61,7 +61,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebKit2WebProcess", "win\We
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MiniBrowser", "..\WebKitTools\MiniBrowser\MiniBrowser.vcproj", "{1480CF5F-4160-47B5-A0E6-96AEC8258FB5}"
 	ProjectSection(ProjectDependencies) = postProject
-		{0662A8A9-82A3-4638-97D8-EC425D8D87C9} = {0662A8A9-82A3-4638-97D8-EC425D8D87C9}
+		{C59E5129-B453-49B7-A52B-1E104715F76E} = {C59E5129-B453-49B7-A52B-1E104715F76E}
 	EndProjectSection
 EndProject
 Global

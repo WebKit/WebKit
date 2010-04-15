@@ -1,3 +1,11 @@
+2010-04-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Fix build dependencies.
+
+        * WebKit2.sln:
+
 2010-04-15  Adam Roben  <aroben@apple.com>
 
         Fix Windows WebKit2 build.
