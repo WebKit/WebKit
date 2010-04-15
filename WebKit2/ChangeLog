@@ -1,3 +1,11 @@
+2010-04-15  Adam Roben  <aroben@apple.com>
+
+        Fix Windows WebKit2 build.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::processDidExit):
+        * win/WebKit2Generated.make:
+
 2010-04-15  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

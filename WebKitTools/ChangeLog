@@ -1,3 +1,9 @@
+2010-04-15  Adam Roben  <aroben@apple.com>
+
+        Fix Windows WebKit2 build.
+
+        * MiniBrowser/win/MiniBrowser.cpp:
+
 2010-04-15  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Adam Barth.

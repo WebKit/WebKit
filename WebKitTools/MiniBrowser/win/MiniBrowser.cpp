@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "stdafx.h"
+
 #include "BrowserWindow.h"
 #include "MiniBrowser.h"
 #include <assert.h>

@@ -766,7 +766,8 @@ void WebPageProxy::processDidExit()
 {
     ASSERT(m_pageClient);
 
-    m_urlAtProcessExit = m_mainFrame->url();
+    if (m_mainFrame)
+        m_urlAtProcessExit = m_mainFrame->url();
 
     Vector<RefPtr<WebFrameProxy> > frame;
     copyValuesToVector(m_frameMap, frame);
