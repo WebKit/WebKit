@@ -1,3 +1,22 @@
+2010-04-15  Adam Roben  <aroben@apple.com>
+
+        Expose UserContentURLPattern as WebKit SPI
+
+        Fixes <http://webkit.org/b/37354>.
+
+        Reviewed by Tim Hatcher.
+
+        * WebCore.base.exp: Export UserContentURLPattern::parse, and sorted
+        the file.
+
+        * WebCore.xcodeproj/project.pbxproj: Marked UserContentURLPattern.h as
+        "Private".
+
+        * page/UserContentURLPattern.h:
+        (WebCore::UserContentURLPattern::UserContentURLPattern): Added a
+        default constructor.
+        (WebCore::UserContentURLPattern::isValid): Added this getter.
+
 2010-04-15  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

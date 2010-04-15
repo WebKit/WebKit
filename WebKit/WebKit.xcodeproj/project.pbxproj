@@ -340,6 +340,8 @@
 		C0B1F7E910AC8E3100C925D9 /* WebScriptWorld.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0B1F7E610AC8E3100C925D9 /* WebScriptWorld.mm */; };
 		C0B1F7EA10AC8E3100C925D9 /* WebScriptWorldInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = C0B1F7E710AC8E3100C925D9 /* WebScriptWorldInternal.h */; };
 		C0B88E8B10A08F3D00FBB3F5 /* WebFrameLoadDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = C0B88E8A10A08F3D00FBB3F5 /* WebFrameLoadDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C0C5B3EE1177A4A0002B0AEF /* WebUserContentURLPattern.h in Headers */ = {isa = PBXBuildFile; fileRef = C0C5B3EC1177A4A0002B0AEF /* WebUserContentURLPattern.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C0C5B3EF1177A4A0002B0AEF /* WebUserContentURLPattern.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0C5B3ED1177A4A0002B0AEF /* WebUserContentURLPattern.mm */; };
 		DD7CDEE70A23BA9E00069928 /* WebTypesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = DD7CDEE60A23BA9E00069928 /* WebTypesInternal.h */; };
 		DD89682009AA87240097E7F0 /* WebElementDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = DD89681E09AA87240097E7F0 /* WebElementDictionary.h */; };
 		DD89682109AA87240097E7F0 /* WebElementDictionary.mm in Sources */ = {isa = PBXBuildFile; fileRef = DD89681F09AA87240097E7F0 /* WebElementDictionary.mm */; };
@@ -638,6 +640,8 @@
 		C0B1F7E610AC8E3100C925D9 /* WebScriptWorld.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebScriptWorld.mm; sourceTree = "<group>"; };
 		C0B1F7E710AC8E3100C925D9 /* WebScriptWorldInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebScriptWorldInternal.h; sourceTree = "<group>"; };
 		C0B88E8A10A08F3D00FBB3F5 /* WebFrameLoadDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFrameLoadDelegatePrivate.h; sourceTree = "<group>"; };
+		C0C5B3EC1177A4A0002B0AEF /* WebUserContentURLPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebUserContentURLPattern.h; sourceTree = "<group>"; };
+		C0C5B3ED1177A4A0002B0AEF /* WebUserContentURLPattern.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebUserContentURLPattern.mm; sourceTree = "<group>"; };
 		DD7CDEE60A23BA9E00069928 /* WebTypesInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebTypesInternal.h; sourceTree = "<group>"; };
 		DD89681E09AA87240097E7F0 /* WebElementDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebElementDictionary.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		DD89681F09AA87240097E7F0 /* WebElementDictionary.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebElementDictionary.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -952,6 +956,8 @@
 				F59668C802AD2923018635CA /* WebStringTruncator.h */,
 				F59668C902AD2923018635CA /* WebStringTruncator.mm */,
 				DD7CDEE60A23BA9E00069928 /* WebTypesInternal.h */,
+				C0C5B3ED1177A4A0002B0AEF /* WebUserContentURLPattern.mm */,
+				C0C5B3EC1177A4A0002B0AEF /* WebUserContentURLPattern.h */,
 			);
 			name = Misc;
 			path = mac/Misc;
@@ -1539,6 +1545,7 @@
 				939810710824BF01008DF038 /* WebViewPrivate.h in Headers */,
 				0FD3B0F81076C3F700039B96 /* WebWindowAnimation.h in Headers */,
 				41F4484F10338E8C0030E55E /* WebWorkersPrivate.h in Headers */,
+				C0C5B3EE1177A4A0002B0AEF /* WebUserContentURLPattern.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1896,6 +1903,7 @@
 				939810E80824BF01008DF038 /* WebViewFactory.mm in Sources */,
 				0FD3B0F91076C3F700039B96 /* WebWindowAnimation.m in Sources */,
 				41F4485010338E8C0030E55E /* WebWorkersPrivate.mm in Sources */,
+				C0C5B3EF1177A4A0002B0AEF /* WebUserContentURLPattern.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

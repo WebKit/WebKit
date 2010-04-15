@@ -1,3 +1,39 @@
+2010-04-15  Adam Roben  <aroben@apple.com>
+
+        Expose UserContentURLPattern as WebKit SPI
+
+        Fixes <http://webkit.org/b/37354>.
+
+        Reviewed by Tim Hatcher.
+
+        * Interfaces/IWebUserContentURLPattern.idl: Added.
+
+        * Interfaces/WebKit.idl: Added WebUserContentURLPattern.
+
+        * WebKit.vcproj/Interfaces.vcproj: Added IWebUserContentURLPattern.
+
+        * WebKit.vcproj/WebKit.vcproj: Added WebUserContentURLPattern.
+
+        * WebUserContentURLPattern.cpp: Added.
+        (WebUserContentURLPattern::WebUserContentURLPattern):
+        (WebUserContentURLPattern::~WebUserContentURLPattern):
+        (WebUserContentURLPattern::createInstance):
+        (WebUserContentURLPattern::AddRef):
+        (WebUserContentURLPattern::Release):
+        (WebUserContentURLPattern::QueryInterface):
+        Standard COM implementations.
+
+        (WebUserContentURLPattern::parse): Parse the string into a
+        UserContentURLPattern and store it.
+
+        (WebUserContentURLPattern::isValid):
+        (WebUserContentURLPattern::scheme):
+        (WebUserContentURLPattern::host):
+        (WebUserContentURLPattern::matchesSubdomains):
+        Call through to UserContentURLPattern.
+
+        * WebUserContentURLPattern.h: Added.
+
 2010-04-14  Adam Roben  <aroben@apple.com>
 
         Expose DOMWrapperWorld::unregisterWorld as WebKit SPI on Windows

@@ -134,6 +134,7 @@ import "ocidl.idl";
 #include "IWebURLResponsePrivate.idl"
 #include "IWebUndoManager.idl"
 #include "IWebUndoTarget.idl"
+#include "IWebUserContentURLPattern.idl"
 #include "IWebView.idl"
 #include "IWebViewPrivate.idl"
 #include "IWebWorkersPrivate.idl"
@@ -292,5 +293,10 @@ library WebKit
     [uuid(67712611-83CF-4703-89FC-07A0E2A19C0D)]
     coclass WebGeolocationPosition {
         [default] interface IWebGeolocationPosition;
+    }
+
+    [uuid(2D62AE25-DEAA-4945-A76E-CCE05E899664)]
+    coclass WebUserContentURLPattern {
+        [default] interface IWebUserContentURLPattern;
     }
 }

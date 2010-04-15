@@ -846,6 +846,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\WebUserContentURLPattern.h"
+				>
+			</File>
+			<File
 				RelativePath="..\WebView.h"
 				>
 			</File>
@@ -1255,6 +1259,10 @@
 			</File>
 			<File
 				RelativePath="..\WebURLResponse.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\WebUserContentURLPattern.cpp"
 				>
 			</File>
 			<File

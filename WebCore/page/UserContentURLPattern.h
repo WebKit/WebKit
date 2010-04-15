@@ -35,11 +35,15 @@ class KURL;
 
 class UserContentURLPattern {
 public:
+    UserContentURLPattern() : m_invalid(true), m_matchSubdomains(false) { }
+
     UserContentURLPattern(const String& pattern)
     : m_matchSubdomains(false)
     {
         m_invalid = !parse(pattern);
     }
+
+    bool isValid() const { return !m_invalid; }
 
     bool matches(const KURL&) const;
 

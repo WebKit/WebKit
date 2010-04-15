@@ -1,3 +1,25 @@
+2010-04-15  Adam Roben  <aroben@apple.com>
+
+        Expose UserContentURLPattern as WebKit SPI
+
+        Fixes <http://webkit.org/b/37354>.
+
+        Reviewed by Tim Hatcher.
+
+        * Misc/WebUserContentURLPattern.h: Added.
+
+        * Misc/WebUserContentURLPattern.mm: Added.
+        (-[WebUserContentURLPattern initWithPatternString:]): Initialize
+        _private and then parse the passed-in string into a
+        UserContentURLPattern.
+        (-[WebUserContentURLPattern dealloc]): Release _private.
+
+        (-[WebUserContentURLPattern isValid]):
+        (-[WebUserContentURLPattern scheme]):
+        (-[WebUserContentURLPattern host]):
+        (-[WebUserContentURLPattern matchesSubdomains]):
+        Call through to UserContentURLPattern.
+
 2010-04-13  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
