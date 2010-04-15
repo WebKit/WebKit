@@ -1,5 +1,27 @@
 2010-04-15  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Maciej Stachowiak.
+
+        Add URL scheme parsing tests
+        https://bugs.webkit.org/show_bug.cgi?id=37496
+
+        I'm not super happy with how these test turned out.  It's difficult to
+        test these cases with this methodology because most of the cases get
+        treated as relative URLs.  I tired using the "protocol" property of the
+        HTMLAnchorElement, but that often caused the test case to be ignored
+        for reasons I don't fully understand.
+
+        * fast/url/resources/utilities.js:
+        (setBaseURL):
+          - In the course of trying various variations of this test, I wrote
+            this function.  It seemed useful, so I left it here for the benefit
+            of future test writing.
+        * fast/url/scheme-expected.txt: Added.
+        * fast/url/scheme.html: Added.
+        * fast/url/script-tests/scheme.js: Added.
+
+2010-04-15  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Darin Fisher.
 
         Add comments back to IPv4 URL parsing test
