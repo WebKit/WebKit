@@ -31,12 +31,15 @@
 #ifndef DebuggerAgentManager_h
 #define DebuggerAgentManager_h
 
+#include "WebCString.h"
 #include "WebDevToolsAgent.h"
 #include <v8-debug.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
+class Page;
 class PageGroupLoadDeferrer;
 class String;
 }
@@ -97,6 +100,7 @@ private:
     DebuggerAgentManager();
     ~DebuggerAgentManager();
 
+    static void hostDispatchHandler(const Vector<WebCore::Page*>&);
     static void debugHostDispatchHandler();
     static void onV8DebugMessage(const v8::Debug::Message& message);
     static void sendCommandToV8(const WebCore::String& cmd,

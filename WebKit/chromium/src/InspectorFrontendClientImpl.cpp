@@ -69,6 +69,9 @@ void InspectorFrontendClientImpl::windowObjectCleared()
     v8::Handle<v8::Object> global = frameContext->Global();
 
     global->Set(v8::String::New("InspectorFrontendHost"), frontendHostObj);
+#if ENABLE(V8_SCRIPT_DEBUG_SERVER)
+    global->Set(v8::String::New("v8ScriptDebugServerEnabled"), v8::True());
+#endif
 }
 
 void InspectorFrontendClientImpl::frontendLoaded()

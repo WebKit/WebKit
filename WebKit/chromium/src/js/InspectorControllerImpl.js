@@ -86,6 +86,21 @@ devtools.InspectorBackendImpl = function()
     this.installInspectorControllerDelegate_("toggleStyleEnabled");
     this.installInspectorControllerDelegate_("setRuleSelector");
     this.installInspectorControllerDelegate_("addRule");
+
+    if (window.v8ScriptDebugServerEnabled) {
+    this.installInspectorControllerDelegate_("disableDebugger");
+    this.installInspectorControllerDelegate_("enableDebugger");
+    this.installInspectorControllerDelegate_("setBreakpoint");
+    this.installInspectorControllerDelegate_("removeBreakpoint");
+    this.installInspectorControllerDelegate_("activateBreakpoints");
+    this.installInspectorControllerDelegate_("deactivateBreakpoints");
+    this.installInspectorControllerDelegate_("pauseInDebugger");
+    this.installInspectorControllerDelegate_("resumeDebugger");
+    this.installInspectorControllerDelegate_("stepIntoStatementInDebugger");
+    this.installInspectorControllerDelegate_("stepOutOfFunctionInDebugger");
+    this.installInspectorControllerDelegate_("stepOverStatementInDebugger");
+    this.installInspectorControllerDelegate_("setPauseOnExceptionsState");
+    }
 };
 devtools.InspectorBackendImpl.prototype.__proto__ = WebInspector.InspectorBackendStub.prototype;
 
@@ -107,6 +122,8 @@ devtools.InspectorBackendImpl.prototype.profilerEnabled = function()
     return true;
 };
 
+
+if (!window.v8ScriptDebugServerEnabled) {
 
 devtools.InspectorBackendImpl.prototype.setBreakpoint = function(sourceID, line, enabled, condition)
 {
@@ -192,6 +209,8 @@ devtools.InspectorBackendImpl.prototype.setPauseOnExceptions = function(value)
 {
     return devtools.tools.getDebuggerAgent().setPauseOnExceptions(value);
 };
+
+}
 
 
 /**

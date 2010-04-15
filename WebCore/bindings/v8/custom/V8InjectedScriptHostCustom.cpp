@@ -39,6 +39,7 @@
 #include "InspectorController.h"
 #include "Node.h"
 #include "Page.h"
+#include "ScriptDebugServer.h"
 #include "SerializedScriptValue.h"
 
 #include "V8Binding.h"
@@ -110,9 +111,10 @@ ScriptObject InjectedScriptHost::createInjectedScript(const String& scriptSource
     v8::Handle<v8::Value> args[] = {
       scriptHostWrapper,
       windowGlobal,
-      v8::Number::New(id)
+      v8::Number::New(id),
+      v8::String::New("v8")
     };
-    v8::Local<v8::Value> injectedScriptValue = v8::Function::Cast(*v)->Call(windowGlobal, 3, args);
+    v8::Local<v8::Value> injectedScriptValue = v8::Function::Cast(*v)->Call(windowGlobal, 4, args);
     v8::Local<v8::Object> injectedScript(v8::Object::Cast(*injectedScriptValue));
     return ScriptObject(inspectedScriptState, injectedScript);
 }
@@ -156,13 +158,13 @@ v8::Handle<v8::Value> V8InjectedScriptHost::pushNodePathToFrontendCallback(const
 v8::Handle<v8::Value> V8InjectedScriptHost::currentCallFrameCallback(const v8::Arguments& args)
 {
     INC_STATS("InjectedScriptHost.currentCallFrame()");
-    return v8::Undefined();
+    return ScriptDebugServer::shared().currentCallFrameV8();
 }
 
 v8::Handle<v8::Value> V8InjectedScriptHost::isActivationCallback(const v8::Arguments& args)
 {
     INC_STATS("InjectedScriptHost.isActivation()");
-    return v8::Undefined();
+    return v8::Boolean::New(true);
 }
 #endif
 
