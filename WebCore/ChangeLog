@@ -1,3 +1,24 @@
+2010-04-15  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The TouchStationary state of WebCore::PlatformTouchPoint
+        is not handled inside the touch event handler.
+        https://bugs.webkit.org/show_bug.cgi?id=37609
+
+        After discussions at the WebKit contributors meeting, we decided
+        that this is a currently unused state without a good future use
+        case in the Touch API and thus decided to remove it. This patch
+        actions that decision.
+
+        As the TouchStationary state is not handled in the EventHandler,
+        there is no change in functionality so no new tests are required.
+
+        * platform/PlatformTouchPoint.h:
+        (WebCore::PlatformTouchPoint::): Remove TouchStationary.
+        * platform/qt/PlatformTouchPointQt.cpp:
+        (WebCore::PlatformTouchPoint::PlatformTouchPoint): Remove TouchStationary.
+
 2010-04-15  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.
