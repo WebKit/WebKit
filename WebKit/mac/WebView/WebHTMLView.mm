@@ -3802,7 +3802,7 @@ static BOOL isInPasswordField(Frame* coreFrame)
         }
     }
 
-    if (printing != _private->printing) {
+    if (printing || _private->printing) {
         [_private->pageRects release];
         _private->pageRects = nil;
         _private->printing = printing;

@@ -1,3 +1,13 @@
+2010-04-15  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Made consecutive calls to -[WebHTMLView _beginPrintModeWithPageWidth:shrinkToFit:] work
+        without intermediate calls -[WebHTMLView _endPrintMode].
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _setPrinting:minimumPageWidth:maximumPageWidth:adjustViewSize:]):
+
 2010-04-15  Adam Roben  <aroben@apple.com>
 
         Expose UserContentURLPattern as WebKit SPI
