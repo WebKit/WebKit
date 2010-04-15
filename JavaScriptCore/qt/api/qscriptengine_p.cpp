@@ -60,7 +60,10 @@ QScriptValuePrivate* QScriptEnginePrivate::evaluate(const QString& program, cons
 {
     JSStringRef script = QScriptConverter::toString(program);
     JSStringRef file = QScriptConverter::toString(fileName);
-    return new QScriptValuePrivate(this, evaluate(script, file, lineNumber));
+    QScriptValuePrivate* result = new QScriptValuePrivate(this, evaluate(script, file, lineNumber));
+    JSStringRelease(script);
+    JSStringRelease(file);
+    return result;
 }
 
 /*!

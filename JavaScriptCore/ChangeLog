@@ -1,3 +1,18 @@
+2010-04-15  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fix memory leak in QScriptEngine::evaluate().
+
+        QScriptEnginePrivate::evaluate should release temporary variables.
+
+        [Qt] QScriptEngine::evaluate has memory leak.
+        https://bugs.webkit.org/show_bug.cgi?id=37596
+
+        * qt/api/qscriptengine_p.cpp:
+        (QScriptEnginePrivate::evaluate):
+        * qt/api/qscriptengine_p.h:
+
 2010-04-14  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
