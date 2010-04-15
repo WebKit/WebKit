@@ -2,6 +2,19 @@
 
         Reviewed by Simon Fraser.
 
+        Spatial Navigation: make hasOffscreenRect() to earlier return 'true' if absoluteClippedOverflowRect() gives an empty rect
+        https://bugs.webkit.org/show_bug.cgi?id=37635
+
+        absoluteClippedOverflowRect method of RenderObject does return an empty IntRect for offscreen nodes.
+        So hasOffscreenRect method (SpatialNavigation.cpp) can safily bail out earlier in such cases.
+
+        * page/SpatialNavigation.cpp:
+        (WebCore::hasOffscreenRect):
+
+2010-04-14  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Simon Fraser.
+
         Spatial Navigation: remove unnecessery assignment in updateFocusCandidateIfCloser method
         https://bugs.webkit.org/show_bug.cgi?id=37634
 
