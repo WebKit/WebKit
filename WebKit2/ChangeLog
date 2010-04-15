@@ -1,3 +1,28 @@
+2010-04-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix horizontal scrollbar repainting
+        https://bugs.webkit.org/show_bug.cgi?id=37626
+
+        Make sure that the update chunk is flipped because that's what WebCore expects.
+        
+        * Shared/mac/UpdateChunk.cpp:
+        (WebKit::UpdateChunk::createImage):
+        * Shared/mac/UpdateChunk.h:
+        Add new createImage member function that creates a CGImageRef from the update chunk.
+        
+        * UIProcess/mac/DrawingAreaProxyUpdateChunk.mm:
+        (WebKit::DrawingAreaProxyUpdateChunk::drawUpdateChunkIntoBackingStore):
+        Pass the right rectangle here; CoreGraphics wants it in non-flipped coordinates.
+        
+        (WebKit::DrawingAreaProxyUpdateChunk::ensureBackingStore):
+        Create a flipped backing store.
+
+        * WebProcess/WebPage/mac/DrawingAreaUpdateChunk.cpp:
+        (WebKit::DrawingAreaUpdateChunk::paintIntoUpdateChunk):
+        Flip the update chunk.
+
 2010-04-14  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

@@ -52,7 +52,7 @@ DrawingAreaProxyUpdateChunk::~DrawingAreaProxyUpdateChunk()
 {
 }
 
-void DrawingAreaProxyUpdateChunk::drawRectIntoContext(CGRect, CGContextRef context)
+void DrawingAreaProxyUpdateChunk::drawRectIntoContext(CGRect rect, CGContextRef context)
 {
     if (!m_isInitialized) {
         setSize(IntSize([m_webView frame].size));
@@ -76,12 +76,16 @@ void DrawingAreaProxyUpdateChunk::drawRectIntoContext(CGRect, CGContextRef conte
     CGContextDrawImage(context, CGRectMake(0, 0, CGImageGetWidth(image.get()), CGImageGetHeight(image.get())), image.get());
 }
 
-void DrawingAreaProxyUpdateChunk::drawUpdateChunkIntoBackingStore(UpdateChunk& updateChunk)
+void DrawingAreaProxyUpdateChunk::drawUpdateChunkIntoBackingStore(UpdateChunk* updateChunk)
 {
     ensureBackingStore();
 
-    updateChunk.drawIntoContext(m_bitmapContext.get());
-    [m_webView setNeedsDisplayInRect:NSRectFromCGRect((CGRect)updateChunk.rect())];
+    RetainPtr<CGImageRef> image(updateChunk->createImage());
+    const IntRect& updateChunkRect = updateChunk->rect();
+    
+    CGContextDrawImage(m_bitmapContext.get(), CGRectMake(updateChunkRect.x(), m_viewSize.height() - updateChunkRect.bottom(), 
+                                                         updateChunkRect.width(), updateChunkRect.height()), image.get());
+    [m_webView setNeedsDisplayInRect:NSRectFromCGRect(updateChunkRect)];
 }
 
 void DrawingAreaProxyUpdateChunk::ensureBackingStore()
@@ -91,6 +95,10 @@ void DrawingAreaProxyUpdateChunk::ensureBackingStore()
 
     RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
     m_bitmapContext.adoptCF(CGBitmapContextCreate(0, m_viewSize.width(), m_viewSize.height(), 8, m_viewSize.width() * 4, colorSpace.get(), kCGImageAlphaPremultipliedLast));
+    
+    // Flip the bitmap context coordinate system.
+    CGContextTranslateCTM(m_bitmapContext.get(), 0, m_viewSize.height());
+    CGContextScaleCTM(m_bitmapContext.get(), 1, -1);
 }
 
 void DrawingAreaProxyUpdateChunk::setSize(const IntSize& viewSize)
@@ -112,7 +120,7 @@ void DrawingAreaProxyUpdateChunk::setSize(const IntSize& viewSize)
     page->process()->connection()->send(DrawingAreaMessage::SetFrame, page->pageID(), CoreIPC::In(viewSize));
 }
 
-void DrawingAreaProxyUpdateChunk::didSetSize(const IntSize& viewSize, UpdateChunk& updateChunk)
+void DrawingAreaProxyUpdateChunk::didSetSize(const IntSize& viewSize, UpdateChunk* updateChunk)
 {
     ASSERT(m_isWaitingForDidSetFrameNotification);
     m_isWaitingForDidSetFrameNotification = false;
@@ -135,7 +143,7 @@ void DrawingAreaProxyUpdateChunk::didReceiveMessage(CoreIPC::Connection*, CoreIP
             UpdateChunk updateChunk;
             if (!arguments.decode(updateChunk))
                 return;
-            drawUpdateChunkIntoBackingStore(updateChunk);
+            drawUpdateChunkIntoBackingStore(&updateChunk);
             break;
         }
         case DrawingAreaProxyMessage::DidSetFrame: {
@@ -144,7 +152,7 @@ void DrawingAreaProxyUpdateChunk::didReceiveMessage(CoreIPC::Connection*, CoreIP
             if (!arguments.decode(CoreIPC::Out(viewSize, updateChunk)))
                 return;
 
-            didSetSize(viewSize, updateChunk);
+            didSetSize(viewSize, &updateChunk);
             break;
         }
         default:

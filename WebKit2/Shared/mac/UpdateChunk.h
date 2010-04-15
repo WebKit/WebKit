@@ -27,6 +27,7 @@
 #define UpdateChunk_h
 
 #include <WebCore/IntRect.h>
+#include <wtf/RetainPtr.h>
 
 namespace CoreIPC {
     class ArgumentEncoder;
@@ -41,14 +42,14 @@ public:
     UpdateChunk(const WebCore::IntRect&);
     ~UpdateChunk();
 
-    void drawIntoContext(CGContextRef);
-
     uint8_t* data() { return m_data; }
     const WebCore::IntRect& rect() const { return m_rect; }
 
     void encode(CoreIPC::ArgumentEncoder&) const;
     static bool decode(CoreIPC::ArgumentDecoder&, UpdateChunk&);
 
+    RetainPtr<CGImageRef> createImage();
+    
 private:
     size_t size() const { return m_rect.width() * 4 * m_rect.height(); }
 
