@@ -283,7 +283,7 @@ void WebPage::runJavaScriptInMainFrame(const WebCore::String& script, uint64_t c
 
     JSLock lock(SilenceAssertionsOnly);
     JSValue resultValue = m_mainFrame->coreFrame()->script()->executeScript(script, true).jsValue();
-    String resultString = resultValue.toString(m_mainFrame->coreFrame()->script()->globalObject(mainThreadNormalWorld())->globalExec());
+    String resultString = ustringToString(resultValue.toString(m_mainFrame->coreFrame()->script()->globalObject(mainThreadNormalWorld())->globalExec()));
 
     WebProcess::shared().connection()->send(WebPageProxyMessage::DidRunJavaScriptInMainFrame, m_pageID, CoreIPC::In(resultString, callbackID));
 }

@@ -1,5 +1,12 @@
 2010-04-16  Anders Carlsson  <andersca@apple.com>
 
+        Fix build.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::runJavaScriptInMainFrame):
+
+2010-04-16  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Fix windows build.
