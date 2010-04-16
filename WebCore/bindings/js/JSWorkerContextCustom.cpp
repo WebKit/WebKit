@@ -105,7 +105,7 @@ JSValue JSWorkerContext::importScripts(ExecState* exec, const ArgList& args)
 
     Vector<String> urls;
     for (unsigned i = 0; i < args.size(); i++) {
-        urls.append(args.at(i).toString(exec));
+        urls.append(ustringToString(args.at(i).toString(exec)));
         if (exec->hadException())
             return jsUndefined();
     }

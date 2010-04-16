@@ -64,7 +64,7 @@ static JSObject* constructWebSocket(ExecState* exec, JSObject* constructor, cons
     if (args.size() == 0)
         return throwError(exec, SyntaxError, "Not enough arguments");
 
-    const String& urlString = args.at(0).toString(exec);
+    const String& urlString = ustringToString(args.at(0).toString(exec));
     if (exec->hadException())
         return throwError(exec, SyntaxError, "wrong URL");
     const KURL& url = context->completeURL(urlString);
@@ -73,7 +73,7 @@ static JSObject* constructWebSocket(ExecState* exec, JSObject* constructor, cons
     if (args.size() < 2)
         webSocket->connect(url, ec);
     else {
-        const String& protocol = args.at(1).toString(exec);
+        const String& protocol = ustringToString(args.at(1).toString(exec));
         if (exec->hadException())
             return 0;
         webSocket->connect(url, protocol, ec);

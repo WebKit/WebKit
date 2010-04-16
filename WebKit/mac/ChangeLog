@@ -1,3 +1,34 @@
+2010-04-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig & Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37675
+        Remove casts/constructors to/from JSC::UString type from WebCore::String
+        
+        WebCore's strings should not know about JSC::UString, this should be abstracted
+        away in the bindings.  Add explicit conversion methods rather than relying on
+        overloaded cast operators / constructors being implicitly called.
+
+        This patch only changes the class String, once this has landed StringImpl, and
+        hopefully AtomicString too, should follow suit.
+
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (identifierFromIdentifierRep):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::addValueToArray):
+        (WebKit::NetscapePluginInstanceProxy::moveGlobalExceptionToExecState):
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::ProxyInstance::getPropertyNames):
+        * WebView/WebFrame.mm:
+        (-[WebFrame _stringByEvaluatingJavaScriptFromString:forceUserGesture:]):
+        (-[WebFrame _stringByEvaluatingJavaScriptFromString:withGlobalObject:inScriptWorld:]):
+        * WebView/WebScriptDebugDelegate.mm:
+        (-[WebScriptCallFrame evaluateWebScript:]):
+        * WebView/WebScriptDebugger.mm:
+        (toNSURL):
+        * WebView/WebView.mm:
+        (aeDescFromJSValue):
+
 2010-04-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.

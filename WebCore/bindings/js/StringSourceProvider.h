@@ -29,6 +29,7 @@
 #ifndef StringSourceProvider_h
 #define StringSourceProvider_h
 
+#include "JSDOMBinding.h"
 #include "ScriptSourceProvider.h"
 #include <parser/SourceCode.h>
 
@@ -45,7 +46,7 @@ namespace WebCore {
 
     private:
         StringSourceProvider(const String& source, const String& url)
-            : ScriptSourceProvider(url)
+            : ScriptSourceProvider(stringToUString(url))
             , m_source(source)
         {
         }

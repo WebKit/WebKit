@@ -78,7 +78,7 @@ namespace WebCore {
 
 ScriptObject InjectedScriptHost::createInjectedScript(const String& source, ScriptState* scriptState, long id)
 {
-    SourceCode sourceCode = makeSource(source);
+    SourceCode sourceCode = makeSource(stringToUString(source));
     JSLock lock(SilenceAssertionsOnly);
     JSDOMGlobalObject* globalObject = static_cast<JSDOMGlobalObject*>(scriptState->lexicalGlobalObject());
     JSValue globalThisValue = scriptState->globalThisValue();

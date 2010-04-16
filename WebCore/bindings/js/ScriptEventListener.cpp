@@ -113,7 +113,7 @@ String getEventListenerHandlerBody(ScriptExecutionContext* context, ScriptState*
     JSC::JSObject* jsFunction = jsListener->jsFunction(context);
     if (!jsFunction)
         return "";
-    return jsFunction->toString(scriptState);
+    return ustringToString(jsFunction->toString(scriptState));
 }
 
 } // namespace WebCore

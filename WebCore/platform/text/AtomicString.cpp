@@ -295,7 +295,7 @@ AtomicStringImpl* AtomicString::find(const JSC::Identifier& identifier)
 
 AtomicString::operator UString() const
 {
-    return m_string;
+    return m_string.impl()->ustring();
 }
 #endif
 

@@ -36,13 +36,6 @@
 #include <wtf/unicode/UTF8.h>
 #include <wtf/unicode/Unicode.h>
 
-#if USE(JSC)
-#include <runtime/Identifier.h>
-
-using JSC::Identifier;
-using JSC::UString;
-#endif
-
 using namespace WTF;
 using namespace WTF::Unicode;
 
@@ -768,29 +761,6 @@ String String::fromUTF8WithLatin1Fallback(const char* string, size_t size)
         return String(string, size);
     return utf8;
 }
-
-#if USE(JSC)
-String::String(const Identifier& str)
-{
-    if (str.isNull())
-        return;
-    m_impl = StringImpl::create(str.ustring());
-}
-
-String::String(const UString& str)
-{
-    if (str.isNull())
-        return;
-    m_impl = StringImpl::create(str);
-}
-
-String::operator UString() const
-{
-    if (!m_impl)
-        return UString();
-    return m_impl->ustring();
-}
-#endif
 
 // String Operations
 

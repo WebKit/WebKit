@@ -492,18 +492,39 @@ JSValue jsStringOrFalse(ExecState* exec, const KURL& url)
     return jsString(exec, url.string());
 }
 
-UString valueToStringWithNullCheck(ExecState* exec, JSValue value)
+String identifierToString(const Identifier& i)
 {
-    if (value.isNull())
-        return UString();
-    return value.toString(exec);
+    if (i.isNull())
+        return String();
+    return StringImpl::create(i.ustring());
 }
 
-UString valueToStringWithUndefinedOrNullCheck(ExecState* exec, JSValue value)
+String ustringToString(const UString& u)
+{
+    if (u.isNull())
+        return String();
+    return StringImpl::create(u);
+}
+
+UString stringToUString(const String& s)
+{
+    if (StringImpl* impl = s.impl())
+        return impl->ustring();
+    return UString();
+}
+
+String valueToStringWithNullCheck(ExecState* exec, JSValue value)
+{
+    if (value.isNull())
+        return String();
+    return ustringToString(value.toString(exec));
+}
+
+String valueToStringWithUndefinedOrNullCheck(ExecState* exec, JSValue value)
 {
     if (value.isUndefinedOrNull())
-        return UString();
-    return value.toString(exec);
+        return String();
+    return ustringToString(value.toString(exec));
 }
 
 JSValue jsDateOrNull(ExecState* exec, double value)
@@ -534,7 +555,7 @@ void reportException(ExecState* exec, JSValue exception)
     exec->clearException();
 
     if (ExceptionBase* exceptionBase = toExceptionBase(exception))
-        errorMessage = exceptionBase->message() + ": "  + exceptionBase->description();
+        errorMessage = stringToUString(exceptionBase->message() + ": "  + exceptionBase->description());
 
     ScriptExecutionContext* scriptExecutionContext = static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
     ASSERT(scriptExecutionContext);
@@ -544,7 +565,7 @@ void reportException(ExecState* exec, JSValue exception)
     if (!scriptExecutionContext)
         return;
 
-    scriptExecutionContext->reportException(errorMessage, lineNumber, exceptionSourceURL);
+    scriptExecutionContext->reportException(ustringToString(errorMessage), lineNumber, ustringToString(exceptionSourceURL));
 }
 
 void reportCurrentException(ExecState* exec)

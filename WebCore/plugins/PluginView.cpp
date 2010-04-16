@@ -423,7 +423,7 @@ static bool getString(ScriptController* proxy, JSValue result, String& string)
     UString ustring = result.toString(exec);
     exec->clearException();
 
-    string = ustring;
+    string = ustringToString(ustring);
     return true;
 }
 

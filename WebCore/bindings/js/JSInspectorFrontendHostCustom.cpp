@@ -95,7 +95,7 @@ JSValue JSInspectorFrontendHost::showContextMenu(ExecState* execState, const Arg
             items.append(new ContextMenuItem(SeparatorType, ContextMenuItemTagNoAction, String()));
         else {
             ContextMenuAction typedId = static_cast<ContextMenuAction>(ContextMenuItemBaseCustomTag + id.toInt32(execState));
-            items.append(new ContextMenuItem(ActionType, typedId, label.toString(execState)));
+            items.append(new ContextMenuItem(ActionType, typedId, ustringToString(label.toString(execState))));
         }
     }
 

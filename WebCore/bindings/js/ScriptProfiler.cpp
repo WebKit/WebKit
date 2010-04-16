@@ -30,18 +30,19 @@
 
 #include "ScriptProfiler.h"
 
+#include "JSDOMBinding.h"
 #include <profiler/Profiler.h>
 
 namespace WebCore {
 
 void ScriptProfiler::start(ScriptState* state, const String& title)
 {
-    JSC::Profiler::profiler()->startProfiling(state, title);
+    JSC::Profiler::profiler()->startProfiling(state, stringToUString(title));
 }
 
 PassRefPtr<ScriptProfile> ScriptProfiler::stop(ScriptState* state, const String& title)
 {
-    return JSC::Profiler::profiler()->stopProfiling(state, title);
+    return JSC::Profiler::profiler()->stopProfiling(state, stringToUString(title));
 }
 
 } // namespace WebCore

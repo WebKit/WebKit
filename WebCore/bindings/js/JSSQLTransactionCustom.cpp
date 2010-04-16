@@ -49,7 +49,7 @@ JSValue JSSQLTransaction::executeSql(ExecState* exec, const ArgList& args)
         return jsUndefined();
     }
 
-    String sqlStatement = args.at(0).toString(exec);
+    String sqlStatement = ustringToString(args.at(0).toString(exec));
     if (exec->hadException())
         return jsUndefined();
 
@@ -80,7 +80,7 @@ JSValue JSSQLTransaction::executeSql(ExecState* exec, const ArgList& args)
                 sqlValues.append(value.uncheckedGetNumber());
             else {
                 // Convert the argument to a string and append it
-                sqlValues.append(value.toString(exec));
+                sqlValues.append(ustringToString(value.toString(exec)));
                 if (exec->hadException())
                     return jsUndefined();
             }

@@ -50,7 +50,7 @@ bool ScriptValue::getString(ScriptState* scriptState, String& result) const
     UString ustring;
     if (!m_value.get().getString(scriptState, ustring))
         return false;
-    result = ustring;
+    result = ustringToString(ustring);
     return true;
 }
 

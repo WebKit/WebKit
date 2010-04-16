@@ -630,7 +630,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
         return @"";
 
     JSLock lock(SilenceAssertionsOnly);
-    return String(result.toString(_private->coreFrame->script()->globalObject(mainThreadNormalWorld())->globalExec()));
+    return ustringToString(result.toString(_private->coreFrame->script()->globalObject(mainThreadNormalWorld())->globalExec()));
 }
 
 - (NSRect)_caretRectAtNode:(DOMNode *)node offset:(int)offset affinity:(NSSelectionAffinity)affinity
@@ -1263,7 +1263,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
         return @"";
 
     JSLock lock(SilenceAssertionsOnly);
-    return String(result.toString(anyWorldGlobalObject->globalExec()));
+    return ustringToString(result.toString(anyWorldGlobalObject->globalExec()));
 }
 
 - (JSGlobalContextRef)_globalContextForScriptWorld:(WebScriptWorld *)world

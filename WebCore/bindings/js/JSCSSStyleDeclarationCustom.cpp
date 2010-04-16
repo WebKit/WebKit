@@ -165,7 +165,7 @@ JSValue JSCSSStyleDeclaration::nameGetter(ExecState* exec, JSValue slotBase, con
 
     // Make the SVG 'filter' attribute undetectable, to avoid confusion with the IE 'filter' attribute.
     if (propertyName == "filter")
-        return StringObjectThatMasqueradesAsUndefined::create(exec, thisObj->impl()->getPropertyValue(prop));
+        return StringObjectThatMasqueradesAsUndefined::create(exec, stringToUString(thisObj->impl()->getPropertyValue(prop)));
 
     return jsString(exec, thisObj->impl()->getPropertyValue(prop));
 }

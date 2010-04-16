@@ -69,7 +69,7 @@ static NSURL *toNSURL(const UString& s)
 {
     if (s.isEmpty())
         return nil;
-    return KURL(ParsedURLString, s);
+    return KURL(ParsedURLString, ustringToString(s));
 }
 
 static WebFrame *toWebFrame(JSGlobalObject* globalObject)

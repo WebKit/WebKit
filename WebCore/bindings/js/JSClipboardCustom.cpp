@@ -59,7 +59,7 @@ JSValue JSClipboard::types(ExecState* exec) const
     MarkedArgumentBuffer list;
     HashSet<String>::const_iterator end = types.end();
     for (HashSet<String>::const_iterator it = types.begin(); it != end; ++it)
-        list.append(jsString(exec, UString(*it)));
+        list.append(jsString(exec, stringToUString(*it)));
     return constructArray(exec, list);
 }
 
@@ -73,7 +73,7 @@ JSValue JSClipboard::clearData(ExecState* exec, const ArgList& args)
     }
 
     if (args.size() == 1) {
-        clipboard->clearData(args.at(0).toString(exec));
+        clipboard->clearData(ustringToString(args.at(0).toString(exec)));
         return jsUndefined();
     }
 
@@ -90,7 +90,7 @@ JSValue JSClipboard::getData(ExecState* exec, const ArgList& args)
     Clipboard* clipboard = impl();
 
     bool success;
-    String result = clipboard->getData(args.at(0).toString(exec), success);
+    String result = clipboard->getData(ustringToString(args.at(0).toString(exec)), success);
     if (!success)
         return jsUndefined();
 
@@ -105,7 +105,7 @@ JSValue JSClipboard::setData(ExecState* exec, const ArgList& args)
     if (args.size() != 2)
         return throwError(exec, SyntaxError, "setData: Invalid number of arguments");
 
-    return jsBoolean(clipboard->setData(args.at(0).toString(exec), args.at(1).toString(exec)));
+    return jsBoolean(clipboard->setData(ustringToString(args.at(0).toString(exec)), ustringToString(args.at(1).toString(exec))));
 }
 
 JSValue JSClipboard::setDragImage(ExecState* exec, const ArgList& args)

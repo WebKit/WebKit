@@ -199,7 +199,7 @@ void JSLocation::setHref(ExecState* exec, JSValue value)
     Frame* frame = impl()->frame();
     ASSERT(frame);
 
-    KURL url = completeURL(exec, value.toString(exec));
+    KURL url = completeURL(exec, ustringToString(value.toString(exec)));
     if (url.isNull())
         return;
 
@@ -215,7 +215,7 @@ void JSLocation::setProtocol(ExecState* exec, JSValue value)
     ASSERT(frame);
 
     KURL url = frame->loader()->url();
-    if (!url.setProtocol(value.toString(exec))) {
+    if (!url.setProtocol(ustringToString(value.toString(exec)))) {
         setDOMException(exec, SYNTAX_ERR);
         return;
     }
@@ -229,7 +229,7 @@ void JSLocation::setHost(ExecState* exec, JSValue value)
     ASSERT(frame);
 
     KURL url = frame->loader()->url();
-    url.setHostAndPort(value.toString(exec));
+    url.setHostAndPort(ustringToString(value.toString(exec)));
 
     navigateIfAllowed(exec, frame, url, !frame->script()->anyPageIsProcessingUserGesture(), false);
 }
@@ -240,7 +240,7 @@ void JSLocation::setHostname(ExecState* exec, JSValue value)
     ASSERT(frame);
 
     KURL url = frame->loader()->url();
-    url.setHost(value.toString(exec));
+    url.setHost(ustringToString(value.toString(exec)));
 
     navigateIfAllowed(exec, frame, url, !frame->script()->anyPageIsProcessingUserGesture(), false);
 }
@@ -268,7 +268,7 @@ void JSLocation::setPathname(ExecState* exec, JSValue value)
     ASSERT(frame);
 
     KURL url = frame->loader()->url();
-    url.setPath(value.toString(exec));
+    url.setPath(ustringToString(value.toString(exec)));
 
     navigateIfAllowed(exec, frame, url, !frame->script()->anyPageIsProcessingUserGesture(), false);
 }
@@ -279,7 +279,7 @@ void JSLocation::setSearch(ExecState* exec, JSValue value)
     ASSERT(frame);
 
     KURL url = frame->loader()->url();
-    url.setQuery(value.toString(exec));
+    url.setQuery(ustringToString(value.toString(exec)));
 
     navigateIfAllowed(exec, frame, url, !frame->script()->anyPageIsProcessingUserGesture(), false);
 }
@@ -291,7 +291,7 @@ void JSLocation::setHash(ExecState* exec, JSValue value)
 
     KURL url = frame->loader()->url();
     String oldFragmentIdentifier = url.fragmentIdentifier();
-    String str = value.toString(exec);
+    String str = ustringToString(value.toString(exec));
     if (str.startsWith("#"))
         str = str.substring(1);
     if (equalIgnoringNullity(oldFragmentIdentifier, str))
@@ -307,7 +307,7 @@ JSValue JSLocation::replace(ExecState* exec, const ArgList& args)
     if (!frame)
         return jsUndefined();
 
-    KURL url = completeURL(exec, args.at(0).toString(exec));
+    KURL url = completeURL(exec, ustringToString(args.at(0).toString(exec)));
     if (url.isNull())
         return jsUndefined();
 
@@ -335,7 +335,7 @@ JSValue JSLocation::assign(ExecState* exec, const ArgList& args)
     if (!frame)
         return jsUndefined();
 
-    KURL url = completeURL(exec, args.at(0).toString(exec));
+    KURL url = completeURL(exec, ustringToString(args.at(0).toString(exec)));
     if (url.isNull())
         return jsUndefined();
 

@@ -51,11 +51,11 @@ static JSObject* constructHTMLOptionElement(ExecState* exec, JSObject* construct
 
     String data;
     if (!args.at(0).isUndefined())
-        data = args.at(0).toString(exec);
+        data = ustringToString(args.at(0).toString(exec));
 
     String value;
     if (!args.at(1).isUndefined())
-        value = args.at(1).toString(exec);
+        value = ustringToString(args.at(1).toString(exec));
     bool defaultSelected = args.at(2).toBoolean(exec);
     bool selected = args.at(3).toBoolean(exec);
 

@@ -67,8 +67,8 @@ JSValue JSXMLHttpRequest::open(ExecState* exec, const ArgList& args)
     if (args.size() < 2)
         return throwError(exec, SyntaxError, "Not enough arguments");
 
-    const KURL& url = impl()->scriptExecutionContext()->completeURL(args.at(1).toString(exec));
-    String method = args.at(0).toString(exec);
+    const KURL& url = impl()->scriptExecutionContext()->completeURL(ustringToString(args.at(1).toString(exec)));
+    String method = ustringToString(args.at(0).toString(exec));
 
     ExceptionCode ec = 0;
     if (args.size() >= 3) {
@@ -97,7 +97,7 @@ JSValue JSXMLHttpRequest::setRequestHeader(ExecState* exec, const ArgList& args)
         return throwError(exec, SyntaxError, "Not enough arguments");
 
     ExceptionCode ec = 0;
-    impl()->setRequestHeader(args.at(0).toString(exec), args.at(1).toString(exec), ec);
+    impl()->setRequestHeader(args.at(0).toString(exec), ustringToString(args.at(1).toString(exec)), ec);
     setDOMException(exec, ec);
     return jsUndefined();
 }
@@ -118,7 +118,7 @@ JSValue JSXMLHttpRequest::send(ExecState* exec, const ArgList& args)
         else if (val.inherits(&JSDOMFormData::s_info))
             impl()->send(toDOMFormData(val), ec);
         else
-            impl()->send(val.toString(exec), ec);
+            impl()->send(ustringToString(val.toString(exec)), ec);
     }
 
     int signedLineNumber;
@@ -127,7 +127,7 @@ JSValue JSXMLHttpRequest::send(ExecState* exec, const ArgList& args)
     JSValue function;
     exec->interpreter()->retrieveLastCaller(exec, signedLineNumber, sourceID, sourceURL, function);
     impl()->setLastSendLineNumber(signedLineNumber >= 0 ? signedLineNumber : 0);
-    impl()->setLastSendURL(sourceURL);
+    impl()->setLastSendURL(ustringToString(sourceURL));
 
     setDOMException(exec, ec);
     return jsUndefined();
@@ -149,7 +149,7 @@ JSValue JSXMLHttpRequest::overrideMimeType(ExecState* exec, const ArgList& args)
     if (args.size() < 1)
         return throwError(exec, SyntaxError, "Not enough arguments");
 
-    impl()->overrideMimeType(args.at(0).toString(exec));
+    impl()->overrideMimeType(ustringToString(args.at(0).toString(exec)));
     return jsUndefined();
 }
 

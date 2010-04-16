@@ -42,12 +42,12 @@ namespace WebCore {
 JSValue JSDOMFormData::append(ExecState* exec, const ArgList& args)
 {
     if (args.size() >= 2) {
-        String name = args.at(0).toString(exec);
+        String name = ustringToString(args.at(0).toString(exec));
         JSValue value = args.at(1);
         if (value.inherits(&JSBlob::s_info))
             impl()->append(name, toBlob(value));
         else
-            impl()->append(name, value.toString(exec));
+            impl()->append(name, ustringToString(value.toString(exec)));
     }
 
     return jsUndefined();

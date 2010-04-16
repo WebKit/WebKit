@@ -60,7 +60,7 @@ JSValue JSHTMLDocument::nameGetter(ExecState* exec, JSValue slotBase, const Iden
     JSHTMLDocument* thisObj = static_cast<JSHTMLDocument*>(asObject(slotBase));
     HTMLDocument* document = static_cast<HTMLDocument*>(thisObj->impl());
 
-    String name = propertyName;
+    String name = identifierToString(propertyName);
     RefPtr<HTMLCollection> collection = document->documentNamedItems(name);
 
     unsigned length = collection->length();
@@ -137,14 +137,14 @@ static inline void documentWrite(ExecState* exec, const ArgList& args, HTMLDocum
     size_t size = args.size();
 
     UString firstString = args.at(0).toString(exec);
-    SegmentedString segmentedString = String(firstString);
+    SegmentedString segmentedString = ustringToString(firstString);
     if (size != 1) {
         if (!size)
             segmentedString.clear();
         else {
             for (size_t i = 1; i < size; ++i) {
                 UString subsequentString = args.at(i).toString(exec);
-                segmentedString.append(SegmentedString(String(subsequentString)));
+                segmentedString.append(SegmentedString(ustringToString(subsequentString)));
             }
         }
     }

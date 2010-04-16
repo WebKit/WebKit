@@ -1,3 +1,197 @@
+2010-04-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig & Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37675
+        Remove casts/constructors to/from JSC::UString type from WebCore::String
+        
+        WebCore's strings should not know about JSC::UString, this should be abstracted
+        away in the bindings.  Add explicit conversion methods rather than relying on
+        overloaded cast operators / constructors being implicitly called.
+
+        This patch only changes the class String, once this has landed StringImpl, and
+        hopefully AtomicString too, should follow suit.
+
+        This patch adds:
+            WebCore::identifierToString
+            WebCore::ustringToString
+            WebCore::stringToUString
+
+        - to JSDOMBindings.h, and updates code to call these methods.
+
+        * WebCore.base.exp:
+        * WebCore.order:
+        * bindings/js/CachedScriptSourceProvider.h:
+        (WebCore::CachedScriptSourceProvider::CachedScriptSourceProvider):
+        * bindings/js/JSAudioConstructor.cpp:
+        (WebCore::constructAudio):
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::JSCSSStyleDeclaration::nameGetter):
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        (WebCore::toHTMLCanvasStyle):
+        (WebCore::JSCanvasRenderingContext2D::setFillColor):
+        (WebCore::JSCanvasRenderingContext2D::setStrokeColor):
+        (WebCore::JSCanvasRenderingContext2D::drawImageFromRect):
+        (WebCore::JSCanvasRenderingContext2D::setShadow):
+        (WebCore::JSCanvasRenderingContext2D::fillText):
+        (WebCore::JSCanvasRenderingContext2D::strokeText):
+        * bindings/js/JSClipboardCustom.cpp:
+        (WebCore::JSClipboard::types):
+        (WebCore::JSClipboard::clearData):
+        (WebCore::JSClipboard::getData):
+        (WebCore::JSClipboard::setData):
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::lookupNamespaceURI):
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::identifierToString):
+        (WebCore::ustringToString):
+        (WebCore::stringToUString):
+        (WebCore::valueToStringWithNullCheck):
+        (WebCore::valueToStringWithUndefinedOrNullCheck):
+        (WebCore::reportException):
+        * bindings/js/JSDOMBinding.h:
+        * bindings/js/JSDOMFormDataCustom.cpp:
+        (WebCore::JSDOMFormData::append):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::namedItemGetter):
+        (WebCore::JSDOMWindow::setLocation):
+        (WebCore::JSDOMWindow::openDatabase):
+        * bindings/js/JSDatabaseCustom.cpp:
+        (WebCore::JSDatabase::changeVersion):
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::setLocation):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::handleEvent):
+        * bindings/js/JSEventSourceConstructor.cpp:
+        (WebCore::constructEventSource):
+        * bindings/js/JSHTMLAllCollectionCustom.cpp:
+        (WebCore::callHTMLAllCollection):
+        * bindings/js/JSHTMLCanvasElementCustom.cpp:
+        (WebCore::JSHTMLCanvasElement::getContext):
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        (WebCore::callHTMLCollection):
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::nameGetter):
+        (WebCore::documentWrite):
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::InjectedScriptHost::createInjectedScript):
+        * bindings/js/JSInspectorFrontendHostCustom.cpp:
+        (WebCore::JSInspectorFrontendHost::showContextMenu):
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::JSLazyEventListener::initializeJSFunction):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::setHref):
+        (WebCore::JSLocation::setProtocol):
+        (WebCore::JSLocation::setHost):
+        (WebCore::JSLocation::setHostname):
+        (WebCore::JSLocation::setPathname):
+        (WebCore::JSLocation::setSearch):
+        (WebCore::JSLocation::setHash):
+        (WebCore::JSLocation::replace):
+        (WebCore::JSLocation::assign):
+        * bindings/js/JSMessageEventCustom.cpp:
+        (WebCore::JSMessageEvent::initMessageEvent):
+        * bindings/js/JSNamedNodeMapCustom.cpp:
+        (WebCore::JSNamedNodeMap::canGetItemsForName):
+        (WebCore::JSNamedNodeMap::nameGetter):
+        * bindings/js/JSOptionConstructor.cpp:
+        (WebCore::constructHTMLOptionElement):
+        * bindings/js/JSSQLResultSetRowListCustom.cpp:
+        (WebCore::JSSQLResultSetRowList::item):
+        * bindings/js/JSSQLTransactionCustom.cpp:
+        (WebCore::JSSQLTransaction::executeSql):
+        * bindings/js/JSSharedWorkerConstructor.cpp:
+        (WebCore::constructSharedWorker):
+        * bindings/js/JSStorageCustom.cpp:
+        (WebCore::JSStorage::canGetItemsForName):
+        (WebCore::JSStorage::nameGetter):
+        (WebCore::JSStorage::deleteProperty):
+        (WebCore::JSStorage::getOwnPropertyNames):
+        (WebCore::JSStorage::putDelegate):
+        * bindings/js/JSStyleSheetListCustom.cpp:
+        (WebCore::JSStyleSheetList::canGetItemsForName):
+        (WebCore::JSStyleSheetList::nameGetter):
+        * bindings/js/JSWebKitCSSMatrixConstructor.cpp:
+        (WebCore::constructWebKitCSSMatrix):
+        * bindings/js/JSWebSocketConstructor.cpp:
+        (WebCore::constructWebSocket):
+        * bindings/js/JSWebSocketCustom.cpp:
+        (WebCore::JSWebSocket::send):
+        * bindings/js/JSWorkerConstructor.cpp:
+        (WebCore::constructWorker):
+        * bindings/js/JSWorkerContextCustom.cpp:
+        (WebCore::JSWorkerContext::importScripts):
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::open):
+        (WebCore::JSXMLHttpRequest::setRequestHeader):
+        (WebCore::JSXMLHttpRequest::send):
+        (WebCore::JSXMLHttpRequest::overrideMimeType):
+        * bindings/js/JSXSLTProcessorCustom.cpp:
+        (WebCore::JSXSLTProcessor::setParameter):
+        (WebCore::JSXSLTProcessor::getParameter):
+        (WebCore::JSXSLTProcessor::removeParameter):
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::create):
+        * bindings/js/ScriptCallFrame.cpp:
+        (WebCore::ScriptCallFrame::ScriptCallFrame):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluateInWorld):
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::hasBreakpoint):
+        (WebCore::ScriptDebugServer::dispatchDidParseSource):
+        (WebCore::ScriptDebugServer::dispatchFailedToParseSource):
+        (WebCore::ScriptDebugServer::sourceParsed):
+        * bindings/js/ScriptEventListener.cpp:
+        (WebCore::getEventListenerHandlerBody):
+        * bindings/js/ScriptFunctionCall.cpp:
+        (WebCore::ScriptFunctionCall::appendArgument):
+        (WebCore::ScriptFunctionCall::call):
+        (WebCore::ScriptFunctionCall::construct):
+        * bindings/js/ScriptObject.cpp:
+        (WebCore::ScriptObject::set):
+        * bindings/js/ScriptProfiler.cpp:
+        (WebCore::ScriptProfiler::start):
+        (WebCore::ScriptProfiler::stop):
+        * bindings/js/ScriptString.h:
+        (WebCore::ScriptString::operator String):
+        (WebCore::ScriptString::ustring):
+        (WebCore::ScriptString::operator+=):
+        * bindings/js/ScriptValue.cpp:
+        (WebCore::ScriptValue::getString):
+        * bindings/js/ScriptValue.h:
+        (WebCore::ScriptValue::toString):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::SerializedObject::set):
+        (WebCore::SerializingTreeWalker::convertIfTerminal):
+        (WebCore::DeserializingTreeWalker::putProperty):
+        * bindings/js/StringSourceProvider.h:
+        (WebCore::StringSourceProvider::StringSourceProvider):
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject callWebScriptMethod:withArguments:]):
+        (-[WebScriptObject setValue:forKey:]):
+        (-[WebScriptObject valueForKey:]):
+        (-[WebScriptObject removeWebScriptKey:]):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/IdentifierRep.cpp:
+        (WebCore::IdentifierRep::get):
+        * bridge/c/c_utility.cpp:
+        (JSC::Bindings::identifierFromNPIdentifier):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::scriptImported):
+        (WebCore::InspectorController::addProfileFinishedMessageToConsole):
+        (WebCore::InspectorController::createProfileHeader):
+        * inspector/InspectorResource.cpp:
+        (WebCore::InspectorResource::sourceString):
+        * inspector/JavaScriptCallFrame.cpp:
+        (WebCore::JavaScriptCallFrame::functionName):
+        * platform/KURL.h:
+        (WebCore::KURL::operator const String&):
+        * platform/text/AtomicString.cpp:
+        (WebCore::AtomicString::operator UString):
+        * platform/text/AtomicString.h:
+        * platform/text/PlatformString.h:
+        * platform/text/String.cpp:
+
 2010-04-16  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by David Hyatt.

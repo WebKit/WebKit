@@ -79,7 +79,7 @@ String JavaScriptCallFrame::functionName() const
     UString functionName = m_debuggerCallFrame.calculatedFunctionName();
     if (functionName.isEmpty())
         return String();
-    return functionName;
+    return ustringToString(functionName);
 }
 
 DebuggerCallFrame::Type JavaScriptCallFrame::type() const

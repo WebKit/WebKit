@@ -1252,7 +1252,7 @@ void NetscapePluginInstanceProxy::addValueToArray(NSMutableArray *array, ExecSta
 
     if (value.isString()) {
         [array addObject:[NSNumber numberWithInt:StringValueType]];
-        [array addObject:String(value.toString(exec))];
+        [array addObject:ustringToString(value.toString(exec))];
     } else if (value.isNumber()) {
         [array addObject:[NSNumber numberWithInt:DoubleValueType]];
         [array addObject:[NSNumber numberWithDouble:value.toNumber(exec)]];
@@ -1659,10 +1659,10 @@ void NetscapePluginInstanceProxy::moveGlobalExceptionToExecState(ExecState* exec
 
     {
         JSLock lock(SilenceAssertionsOnly);
-        throwError(exec, GeneralError, globalExceptionString());
+        throwError(exec, GeneralError, stringToUString(globalExceptionString()));
     }
 
-    globalExceptionString() = UString();
+    globalExceptionString() = String();
 }
 
 } // namespace WebKit

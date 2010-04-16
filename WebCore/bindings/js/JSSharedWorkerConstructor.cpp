@@ -71,7 +71,7 @@ static JSObject* constructSharedWorker(ExecState* exec, JSObject* constructor, c
     // FIXME: We need to use both the dynamic scope and the lexical scope (dynamic scope for resolving the worker URL)
     DOMWindow* window = asJSDOMWindow(exec->lexicalGlobalObject())->impl();
     ExceptionCode ec = 0;
-    RefPtr<SharedWorker> worker = SharedWorker::create(scriptURL, name, window->document(), ec);
+    RefPtr<SharedWorker> worker = SharedWorker::create(ustringToString(scriptURL), ustringToString(name), window->document(), ec);
     setDOMException(exec, ec);
 
     return asObject(toJS(exec, jsConstructor->globalObject(), worker.release()));

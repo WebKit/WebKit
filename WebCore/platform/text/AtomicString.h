@@ -32,6 +32,13 @@
 #define ATOMICSTRING_CONVERSION
 #endif
 
+#if USE(JSC)
+namespace JSC {
+class Identifier;
+class UString;
+}
+#endif
+
 namespace WebCore {
 
 struct AtomicStringHash;

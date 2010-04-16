@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "IdentifierRep.h"
+#include "JSDOMBinding.h"
 
 #include "PlatformString.h"
 #include <runtime/UString.h>
@@ -91,7 +92,7 @@ IdentifierRep* IdentifierRep::get(const char* name)
     if (!name)
         return 0;
   
-    UString string = String::fromUTF8WithLatin1Fallback(name, strlen(name));
+    UString string = stringToUString(String::fromUTF8WithLatin1Fallback(name, strlen(name)));
     pair<StringIdentifierMap::iterator, bool> result = stringIdentifierMap().add(string.rep(), 0);
     if (result.second) {
         ASSERT(!result.first->second);

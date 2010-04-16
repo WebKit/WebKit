@@ -49,8 +49,8 @@ using namespace JSC;
 
 JSValue JSDatabase::changeVersion(ExecState* exec, const ArgList& args)
 {
-    String oldVersion = args.at(0).toString(exec);
-    String newVersion = args.at(1).toString(exec);
+    String oldVersion = ustringToString(args.at(0).toString(exec));
+    String newVersion = ustringToString(args.at(1).toString(exec));
 
     JSObject* object;
     if (!(object = args.at(2).getObject())) {

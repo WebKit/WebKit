@@ -71,7 +71,7 @@ static JSObject* constructEventSource(ExecState* exec, JSObject* constructor, co
         return throwError(exec, ReferenceError, "EventSource constructor associated document is unavailable");
 
     ExceptionCode ec = 0;
-    RefPtr<EventSource> eventSource = EventSource::create(url, context, ec);
+    RefPtr<EventSource> eventSource = EventSource::create(ustringToString(url), context, ec);
     if (ec) {
         setDOMException(exec, ec);
         return 0;

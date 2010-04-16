@@ -50,13 +50,6 @@ class wxString;
 class BString;
 #endif
 
-#if USE(JSC)
-namespace JSC {
-class Identifier;
-class UString;
-}
-#endif
-
 namespace WTF {
 class CString;
 }
@@ -93,10 +86,6 @@ public:
     String() { } // gives null string, distinguishable from an empty string
     String(const UChar*, unsigned length);
     String(const UChar*); // Specifically for null terminated UTF-16
-#if USE(JSC)
-    String(const JSC::Identifier&);
-    String(const JSC::UString&);
-#endif
     String(const char*);
     String(const char*, unsigned length);
     String(StringImpl* i) : m_impl(i) { }
@@ -111,10 +100,6 @@ public:
 
     static String adopt(StringBuffer& buffer) { return StringImpl::adopt(buffer); }
     static String adopt(Vector<UChar>& vector) { return StringImpl::adopt(vector); }
-
-#if USE(JSC)
-    operator JSC::UString() const;
-#endif
 
     unsigned length() const;
     const UChar* characters() const;

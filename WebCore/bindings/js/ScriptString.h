@@ -31,6 +31,7 @@
 #ifndef ScriptString_h
 #define ScriptString_h
 
+#include "JSDOMBinding.h"
 #include "PlatformString.h"
 #include <runtime/UString.h>
 #include <runtime/StringBuilder.h>
@@ -43,9 +44,12 @@ class ScriptString {
 public:
     ScriptString() {}
     ScriptString(const char* s) : m_str(s) {}
+    ScriptString(const String& s) : m_str(stringToUString(s)) {}
     ScriptString(const JSC::UString& s) : m_str(s) {}
 
     operator JSC::UString() const { return m_str; }
+    operator String() const { return ustringToString(m_str); }
+    const JSC::UString& ustring() const { return m_str; }
 
     bool isNull() const { return m_str.isNull(); }
     size_t size() const { return m_str.size(); }
@@ -60,7 +64,7 @@ public:
     {
         JSC::StringBuilder buffer;
         buffer.append(m_str);
-        buffer.append(s);
+        buffer.append(stringToUString(s));
         m_str = buffer.build();
         return *this;
     }

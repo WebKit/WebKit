@@ -242,14 +242,14 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
         DynamicGlobalObjectScope globalObjectScope(globalObject->globalExec(), globalObject);
 
         JSValue exception;
-        JSValue result = evaluateInGlobalCallFrame(String(script), exception, globalObject);
+        JSValue result = evaluateInGlobalCallFrame(stringToUString(script), exception, globalObject);
         if (exception)
             return [self _convertValueToObjcValue:exception];
         return result ? [self _convertValueToObjcValue:result] : nil;        
     }
 
     JSValue exception;
-    JSValue result = _private->debuggerCallFrame->evaluate(String(script), exception);
+    JSValue result = _private->debuggerCallFrame->evaluate(stringToUString(script), exception);
     if (exception)
         return [self _convertValueToObjcValue:exception];
     return result ? [self _convertValueToObjcValue:result] : nil;

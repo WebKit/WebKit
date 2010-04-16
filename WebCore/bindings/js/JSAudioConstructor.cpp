@@ -64,7 +64,7 @@ static JSObject* constructAudio(ExecState* exec, JSObject* constructor, const Ar
     // rather than looking at args.size.
     String src;
     if (args.size() > 0)
-        src = args.at(0).toString(exec);
+        src = ustringToString(args.at(0).toString(exec));
     return asObject(toJS(exec, jsConstructor->globalObject(),
         HTMLAudioElement::createForJSConstructor(document, src)));
 }
