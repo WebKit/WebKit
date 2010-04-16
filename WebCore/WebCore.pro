@@ -612,6 +612,7 @@ SOURCES += \
     html/File.cpp \
     html/FileList.cpp \
     html/FileStream.cpp \
+    html/FileStreamProxy.cpp \
     html/FileThread.cpp \
     html/FormDataList.cpp \
     html/HTMLAllCollection.cpp \
@@ -1329,7 +1330,9 @@ HEADERS += \
     html/FileList.h \
     html/FileStream.h \
     html/FileStreamClient.h \
+    html/FileStreamProxy.h \
     html/FileThread.h \
+    html/FileThreadTask.h \
     html/FormDataList.h \
     html/HTMLAllCollection.h \
     html/HTMLAnchorElement.h \

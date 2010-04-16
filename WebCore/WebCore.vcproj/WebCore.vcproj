@@ -30305,11 +30305,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\FileStreamProxy.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\FileStreamProxy.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\FileThread.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\html\FileThread.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\FileThreadTask.h"
 				>
 			</File>
 			<File

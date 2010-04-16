@@ -1034,8 +1034,11 @@ webcore_sources += \
 	WebCore/html/FileStream.cpp \
 	WebCore/html/FileStream.h \
 	WebCore/html/FileStreamClient.h \
+	WebCore/html/FileStreamProxy.cpp \
+	WebCore/html/FileStreamProxy.h \
 	WebCore/html/FileThread.cpp \
 	WebCore/html/FileThread.h \
+	WebCore/html/FileThreadTask.h \
 	WebCore/html/FormDataList.cpp \
 	WebCore/html/FormDataList.h \
 	WebCore/html/HTMLAllCollection.cpp \

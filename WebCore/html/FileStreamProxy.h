@@ -28,49 +28,68 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FileStream_h
-#define FileStream_h
+#ifndef FileStreamProxy_h
+#define FileStreamProxy_h
 
 #if ENABLE(FILE_READER) || ENABLE(FILE_WRITER)
 
+#include "ExceptionCode.h"
 #include "FileStreamClient.h"
-#include "FileSystem.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class Blob;
+class FileStream;
+class FileThread;
+class ScriptExecutionContext;
 class String;
 
-// All methods are synchronous and should be called on File or Worker thread.
-class FileStream : public RefCounted<FileStream> {
+// A proxy module that calls corresponding FileStream methods on the file thread.  Note: you must call stop() first and then release the reference to destruct the FileStreamProxy instance.
+class FileStreamProxy : public RefCounted<FileStreamProxy>, public FileStreamClient {
 public:
-    static PassRefPtr<FileStream> create(FileStreamClient* client)
+    static PassRefPtr<FileStreamProxy> create(ScriptExecutionContext* context, FileStreamClient* client)
     {
-        return adoptRef(new FileStream(client));
+        return adoptRef(new FileStreamProxy(context, client));
     }
-    virtual ~FileStream();
+    virtual ~FileStreamProxy();
 
-    void start();
-    void stop();
-
-    void openForRead(Blob*);
+    void openForRead(Blob* blob);
     void openForWrite(const String& path);
     void close();
     void read(char* buffer, int length);
     void write(Blob* blob, long long position, int length);
     void truncate(long long position);
 
-private:
-    FileStream(FileStreamClient*);
+    // Stops the proxy and scedules it to be destructed.  All the pending tasks will be aborted and the file stream will be closed.
+    // Note: the caller should deref the instance immediately after calling stop().
+    void stop();
 
+    FileStreamClient* client() const { return m_client; }
+
+private:
+    FileStreamProxy(ScriptExecutionContext*, FileStreamClient*);
+
+    // FileStreamClient methods.
+    virtual void didGetSize(long long);
+    virtual void didRead(const char*, int);
+    virtual void didWrite(int);
+    virtual void didFinish();
+    virtual void didFail(ExceptionCode);
+    virtual void didStart();
+    virtual void didStop();
+
+    FileThread* fileThread();
+
+    RefPtr<ScriptExecutionContext> m_context;
     FileStreamClient* m_client;
-    PlatformFileHandle m_handle;
+    RefPtr<FileStream> m_stream;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(FILE_READER) || ENABLE(FILE_WRITER)
 
-#endif // FileStream_h
+#endif // FileStreamProxy_h

@@ -48,6 +48,7 @@ public:
 
     // For both reading and writing.
     virtual void didStart() { }
+    virtual void didStop() { }
     virtual void didFinish() { }
     virtual void didFail(ExceptionCode) { }
     virtual void didGetSize(long long) { }

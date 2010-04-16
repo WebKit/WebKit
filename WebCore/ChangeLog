@@ -1,3 +1,26 @@
+2010-04-16  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Jian Li.
+
+        Implement FileStreamProxy that calls FileStream methods on FileThread for FileAPI
+        https://bugs.webkit.org/show_bug.cgi?id=37218
+
+        No new tests; tests will be added when we add upper layer implementations.
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/FileStream.cpp:
+        (WebCore::FileStream::stop):
+        * html/FileStream.h:
+        * html/FileStreamClient.h:
+        (WebCore::FileStreamClient::didStop):
+        * html/FileStreamProxy.cpp: Added
+        * html/FileStreamProxy.h: Added
+        * html/FileThreadTask.h: Added
+
 2010-04-16  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
