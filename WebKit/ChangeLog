@@ -1,3 +1,13 @@
+2010-04-15  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add EFL port files to efl/WebCoreSupport.
+        http://webkit.org/b/35915
+
+        * efl/WebCoreSupport/FrameLoaderClientEfl.cpp: Added.
+        * efl/WebCoreSupport/FrameLoaderClientEfl.h: Added.
+
 2010-04-15  Adam Roben  <aroben@apple.com>
 
         Expose UserContentURLPattern as WebKit SPI
