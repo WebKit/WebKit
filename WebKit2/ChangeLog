@@ -1,3 +1,12 @@
+2010-04-16  Sam Weinig  <weinig@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Make tooltips work. Thanks Adam!
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::toolTipChanged): Pass the WebView's HWND, not the tooltip's.
+
 2010-04-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.
