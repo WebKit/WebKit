@@ -2789,3 +2789,6 @@ BUG41455 SKIP : http/tests/xmlhttprequest/origin-whitelisting-subdomains.html = 
 BUG41455 SKIP : http/tests/xmlhttprequest/origin-whitelisting-removal.html = TIMEOUT
 BUG41455 SKIP : http/tests/security/local-image-from-remote-whitelisted.html = TIMEOUT
 
+// Caused by r57695. Will investigate.
+BUG_JIANLI LINUX : http/tests/local/formdata/send-form-data-with-sliced-file.html = TEXT
+
