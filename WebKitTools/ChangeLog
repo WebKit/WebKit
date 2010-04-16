@@ -1,3 +1,12 @@
+2010-04-16  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [chromium] build DRT on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=37690
+
+        * Scripts/build-dumprendertree: Add support for win and linux
+
 2010-04-16  Sam Weinig  <weinig@apple.com>
 
         Reviewed by Adam Roben.

@@ -95,7 +95,7 @@ if __name__ == '__main__':
                'WebKit.gyp'])
 
   # Generate DRT build files on the platforms that support it.
-  if platform.system() == 'Darwin':
+  if platform.system() in ('Darwin', 'Linux'):
     args.append('../../WebKitTools/DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp')
 
   print 'Updating webkit projects from gyp files...'

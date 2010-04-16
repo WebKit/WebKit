@@ -76,8 +76,13 @@ if (isAppleMacWebKit()) {
 } elsif (isChromium()) {
     if (isDarwin()) {
         $result = buildXCodeProject("DumpRenderTree.gyp/DumpRenderTree", $clean, @ARGV);
+    } elsif (isCygwin() || isWindows()) {
+        # Windows build - builds the root visual studio solution.
+        $result = buildChromiumVisualStudioProject("DumpRenderTree.gyp/DumpRenderTree.sln", $clean);
+    } elsif (isLinux()) {
+        $result = buildChromiumMakefile("../../WebKit/chromium/", "DumpRenderTree", $clean);
     } else {
-        die "Building not defined for this platform!\n";
+        die "This platform is not supported by Chromium.\n";
     }
 } else {
     die "Building not defined for this platform!\n";
