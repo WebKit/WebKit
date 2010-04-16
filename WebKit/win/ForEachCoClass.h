@@ -66,6 +66,7 @@
     macro(WebScriptWorld) \
     macro(WebGeolocationPosition) \
     macro(WebSerializedJSValue) \
+    macro(WebUserContentURLPattern) \
     // end of macro
 
 // Everything below this point is deprecated. Please do not use.

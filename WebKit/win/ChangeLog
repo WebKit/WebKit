@@ -1,3 +1,14 @@
+2010-04-16  Adam Roben  <aroben@apple.com>
+
+        Make it possible for clients to instantiate a WebUserContentURLPattern
+
+        Reviewed by Tim Hatcher.
+
+        * ForEachCoClass.h: Added WebUserContentURLPattern to the FOR_EACH_COCLASS macro, which
+        lists all our instantiatable classes.
+
+        * WebKitClassFactory.cpp: Added a now-required #include.
+
 2010-04-15  Adam Roben  <aroben@apple.com>
 
         Expose UserContentURLPattern as WebKit SPI

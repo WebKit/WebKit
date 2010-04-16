@@ -54,6 +54,7 @@
 #include "WebURLCredential.h"
 #include "WebURLProtectionSpace.h"
 #include "WebURLResponse.h"
+#include "WebUserContentURLPattern.h"
 #include "WebView.h"
 #include "WebWorkersPrivate.h"
 #pragma warning(push, 0)
