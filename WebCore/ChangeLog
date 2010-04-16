@@ -1,3 +1,13 @@
+2010-04-16  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Unreviewed QtWebKit (with Qt 4.7) build fix.
+
+        Bug 37683 moved code from FontQt.cpp to FontPlatformDataQt.cpp but did not
+        renamed the variable used.
+
+        * platform/graphics/qt/FontPlatformDataQt.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+
 2010-04-16  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

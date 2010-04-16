@@ -59,7 +59,7 @@ FontPlatformData::FontPlatformData(const FontDescription& description, const Ato
     const bool smallCaps = description.smallCaps();
     font.setCapitalization(smallCaps ? QFont::SmallCaps : QFont::MixedCase);
 #if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
-    f.setStyleStrategy(QFont::ForceIntegerMetrics);
+    font.setStyleStrategy(QFont::ForceIntegerMetrics);
 #endif
 
     m_data->bold = font.bold();
