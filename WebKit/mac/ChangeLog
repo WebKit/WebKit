@@ -1,3 +1,11 @@
+2010-04-15  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/7870651> WebDynamicScrollBarsView.h generates compile errors when included in plain Objective-C files.
+
+        * WebView/WebDynamicScrollBarsView.h:
+
 2010-04-15  Adam Roben  <aroben@apple.com>
 
         Export WebUserContentURLPattern from WebKit

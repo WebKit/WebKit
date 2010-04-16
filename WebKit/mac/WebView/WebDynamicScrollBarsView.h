@@ -26,13 +26,15 @@
 // This is a Private header (containing SPI), despite the fact that its name
 // does not contain the word Private.
 
+#import <AppKit/NSScrollView.h>
+
 // FIXME: <rdar://problem/5898985> Mail currently expects this header to define WebCoreScrollbarAlwaysOn.
 extern const int WebCoreScrollbarAlwaysOn;
 
 struct WebDynamicScrollBarsViewPrivate;
 @interface WebDynamicScrollBarsView : NSScrollView {
 @private
-    WebDynamicScrollBarsViewPrivate *_private;
+    struct WebDynamicScrollBarsViewPrivate *_private;
 
 #ifndef __OBJC2__
     // We need to pad the class out to its former size.  See <rdar://problem/7814899> for more information.
