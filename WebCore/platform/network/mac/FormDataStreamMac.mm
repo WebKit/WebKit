@@ -141,6 +141,9 @@ static void closeCurrentStream(FormStreamFields *form)
         CFReadStreamSetClient(form->currentStream, kCFStreamEventNone, NULL, NULL);
         CFRelease(form->currentStream);
         form->currentStream = NULL;
+#if ENABLE(BLOB_SLICE)
+        form->currentStreamRangeLength = Blob::toEndOfFile;
+#endif
     }
     if (form->currentData) {
         fastFree(form->currentData);

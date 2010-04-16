@@ -1,3 +1,28 @@
+2010-04-15  Jian Li  <jianli@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Support using FormData to send a sliced file via XHR.
+        https://bugs.webkit.org/show_bug.cgi?id=36678
+
+        Move common functionality to test sending FormData into a helper file
+        so that it can be shared by FormData layout tests. 
+        Also move the form data testing files to a new subdirectory formdata/.
+
+        * http/tests/local/formdata/resources/send-form-data-common.js: Added.
+        * http/tests/local/formdata/script-tests/TEMPLATE.html: Added.
+        * http/tests/local/formdata/script-tests/send-form-data-with-sliced-file.js: Added.
+        * http/tests/local/formdata/script-tests/send-form-data.js: Added.
+        * http/tests/local/formdata/send-form-data-expected.txt: Renamed from LayoutTests/http/tests/local/send-form-data-expected.txt.
+        * http/tests/local/formdata/send-form-data-with-sliced-file-expected.txt: Added.
+        * http/tests/local/formdata/send-form-data-with-sliced-file.html: Added.
+        * http/tests/local/formdata/send-form-data.html: Added.
+        * http/tests/local/resources/send-form-data.js: Removed.
+        * http/tests/local/send-form-data.html: Removed.
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2010-04-15  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Dimitri Glazkov.

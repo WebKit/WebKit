@@ -26,11 +26,13 @@
 #include "ChromeClient.h"
 #include "DOMFormData.h"
 #include "Document.h"
+#include "File.h"
 #include "FileSystem.h"
 #include "FormDataBuilder.h"
 #include "MIMETypeRegistry.h"
 #include "Page.h"
 #include "TextEncoding.h"
+#include "UUID.h"
 
 namespace WebCore {
 
@@ -186,9 +188,21 @@ void FormData::appendDOMFormData(const DOMFormData& domFormData, bool isMultiPar
 
             bool shouldGenerateFile = false;
             // If the current type is FILE, then we also need to include the filename
-            if (value.file()) {
-                const String& path = value.file()->path();
-                String fileName = value.file()->fileName();
+            if (value.blob()) {
+                const String& path = value.blob()->path();
+#if ENABLE(BLOB_SLICE)
+                String fileName;
+                if (value.blob()->isFile())
+                    fileName = static_cast<File*>(value.blob())->fileName();
+                else {
+                    // If a blob is sliced from a file, it does not have the filename. In this case, let's produce a unique filename.
+                    fileName = "Blob" + createCanonicalUUIDString();
+                    fileName.replace("-", ""); // For safty, remove '-' from the filename snce some servers may not like it.
+                }
+#else
+                ASSERT(value.blob()->isFile());
+                String fileName = static_cast<File*>(value.blob())->fileName();
+#endif
 
                 // Let the application specify a filename if it's going to generate a replacement file for the upload.
                 if (!path.isEmpty()) {
@@ -203,7 +217,12 @@ void FormData::appendDOMFormData(const DOMFormData& domFormData, bool isMultiPar
                 // We have to include the filename=".." part in the header, even if the filename is empty
                 formDataBuilder.addFilenameToMultiPartHeader(header, encoding, fileName);
 
+                // If a blob is sliced from a file, do not add the content type. 
+#if ENABLE(BLOB_SLICE)
+                if (!fileName.isEmpty() && value.blob()->isFile()) {
+#else
                 if (!fileName.isEmpty()) {
+#endif
                     // FIXME: The MIMETypeRegistry function's name makes it sound like it takes a path,
                     // not just a basename. But filename is not the path. But note that it's not safe to
                     // just use path instead since in the generated-file case it will not reflect the
@@ -220,8 +239,12 @@ void FormData::appendDOMFormData(const DOMFormData& domFormData, bool isMultiPar
             appendData(header.data(), header.size());
             if (size_t dataSize = value.data().length())
                 appendData(value.data().data(), dataSize);
-            else if (value.file() && !value.file()->path().isEmpty())
-                appendFile(value.file()->path(), shouldGenerateFile);
+            else if (value.blob() && !value.blob()->path().isEmpty())
+#if ENABLE(BLOB_SLICE)
+                appendFileRange(value.blob()->path(), value.blob()->start(), value.blob()->length(), value.blob()->modificationTime(), shouldGenerateFile);
+#else
+                appendFile(value.blob()->path(), shouldGenerateFile);
+#endif
 
             appendData("\r\n", 2);
         } else {

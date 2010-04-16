@@ -39,6 +39,8 @@ public:
         return adoptRef(new File(path));
     }
 
+    virtual bool isFile() const { return true; }
+
     const String& name() const { return m_name; }
     const String& type() const { return m_type; }
 

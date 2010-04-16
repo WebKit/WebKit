@@ -1,3 +1,29 @@
+2010-04-15  Jian Li  <jianli@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Support using FormData to send a sliced file via XHR.
+        https://bugs.webkit.org/show_bug.cgi?id=36678
+
+        Tests: http/tests/local/formdata/send-form-data-with-sliced-file.html
+
+        * html/Blob.h:
+        (WebCore::Blob::isFile):
+        * html/DOMFormData.cpp:
+        (WebCore::DOMFormData::append):
+        * html/File.h:
+        (WebCore::File::isFile):
+        * html/FormDataList.h:
+        (WebCore::FormDataList::appendBlob):
+        (WebCore::FormDataList::Item::Item):
+        (WebCore::FormDataList::Item::blob):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::appendFormData):
+        * platform/network/FormData.cpp:
+        (WebCore::FormData::appendDOMFormData):
+        * platform/network/mac/FormDataStreamMac.mm:
+        (WebCore::closeCurrentStream):
+
 2010-04-15  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Dimitri Glazkov.

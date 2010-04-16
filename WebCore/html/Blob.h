@@ -53,6 +53,8 @@ public:
 
     virtual ~Blob() { }
 
+    virtual bool isFile() const { return false; }
+
 #if ENABLE(BLOB_SLICE)
     PassRefPtr<Blob> slice(long long start, long long length) const;
 #endif

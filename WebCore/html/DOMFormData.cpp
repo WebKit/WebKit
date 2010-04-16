@@ -50,11 +50,8 @@ void DOMFormData::append(const String& name, const String& value)
 
 void DOMFormData::append(const String& name, Blob* blob)
 {
-    // FIXME: Need to support sliced file when Blob.slice support is landed.
-    if (!name.isEmpty() && !blob->path().isEmpty()) {
-        RefPtr<File> file = static_cast<File*>(blob);
-        appendFile(name, file.release());
-    }
+    if (!name.isEmpty())
+        appendBlob(name, blob);
 }
 
 } // namespace WebCore
