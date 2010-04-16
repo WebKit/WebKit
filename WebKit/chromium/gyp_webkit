@@ -78,7 +78,7 @@ if __name__ == '__main__':
   args.extend(['-I' + i for i in additional_include_files(args)])
 
   # On linux, we want gyp to output a makefile (default is scons).
-  if (platform.system() == 'Linux'):
+  if platform.system() == 'Linux':
     args.extend(['-fmake'])
 
   # Other command args:
@@ -93,6 +93,10 @@ if __name__ == '__main__':
 
                # gyp file to execute.
                'WebKit.gyp'])
+
+  # Generate DRT build files on the platforms that support it.
+  if platform.system() == 'Darwin':
+    args.append('../../WebKitTools/DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp')
 
   print 'Updating webkit projects from gyp files...'
   sys.stdout.flush()

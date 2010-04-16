@@ -48,6 +48,26 @@
             }],
         ],
     },
+    'target_defaults': {
+        'target_conditions': [
+            ['OS!="linux" and OS!="freebsd" and OS!="openbsd"', {
+                'sources/': [
+                    ['exclude', '(Gtk|Linux)\\.cpp$']
+                ]
+            }],
+            ['OS!="win"', {
+                'sources/': [
+                    ['exclude', 'Win\\.cpp$'],
+                ]
+            }],
+            ['OS!="mac"', {
+                'sources/': [
+                    # .mm is already excluded by common.gypi
+                    ['exclude', 'Mac\\.cpp$'],
+                ]
+            }],
+        ],
+    },
     'targets': [
         {
             'target_name': 'DumpRenderTree',
@@ -58,7 +78,7 @@
                 '<(webkit_top)/JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf_config',
                 '<(chromium_src_dir)/third_party/npapi/npapi.gyp:npapi',
                 '<(chromium_src_dir)/skia/skia.gyp:skia',
-                '<(chromium_src_dir)/webkit/webkit.gyp:webkit_support',
+                '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support',
             ],
             'include_dirs': [
                 '.',
@@ -92,22 +112,12 @@
                 '../chromium/TestNavigationController.h',
                 '../chromium/TestShell.cpp',
                 '../chromium/TestShell.h',
+                '../chromium/TestShellMac.mm',
+                '../chromium/TestShellWin.cpp',
                 '../chromium/TextInputController.cpp',
                 '../chromium/TextInputController.h',
                 '../chromium/WebViewHost.cpp',
                 '../chromium/WebViewHost.h',
-            ],
-            'conditions': [
-                ['OS=="win"', {
-                    'sources': [
-                        '../chromium/TestShellWin.cpp',
-                    ],
-                }],
-                ['OS=="mac"', {
-                    'sources': [
-                        '../chromium/TestShellMac.mm',
-                    ],
-                }],
             ],
             'mac_bundle_resources': [
                 '../qt/fonts/AHEM____.TTF',
