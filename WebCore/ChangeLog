@@ -1,3 +1,23 @@
+2010-04-16  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Make GraphicsLayerQt always use ItemCoordinateCache, and remove ItemUsesExtendedStyleOption.
+        This aligns our implementation with the Safari implementation - layers are always uploaded
+        to textures in item units, and WebCore is responsible for the heuristics.
+
+        [Qt] GraphicsLayer: performance optimizations
+        https://bugs.webkit.org/show_bug.cgi?id=35393
+
+        No new tests. Still no FPS benchmarks available (on any platform)
+        but animations are noticably better.
+
+        * platform/graphics/qt/GraphicsLayerQt.cpp:
+        (WebCore::GraphicsLayerQtImpl::GraphicsLayerQtImpl):
+        (WebCore::GraphicsLayerQtImpl::paint):
+        (WebCore::GraphicsLayerQtImpl::flushChanges):
+        (WebCore::TransformAnimationQt::updateState):
+
 2010-04-16  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

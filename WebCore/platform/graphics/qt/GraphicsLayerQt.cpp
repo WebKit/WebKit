@@ -156,10 +156,6 @@ public:
     // or ChromeClientQt::scheduleCompositingLayerSync (meaning the sync will happen ASAP)
     void flushChanges(bool recursive = true, bool forceTransformUpdate = false);
 
-    // optimization: when we have an animation running on an element with no contents, that has child-elements with contents,
-    // ALL of them have to have ItemCoordinateCache and not DeviceCoordinateCache
-    void adjustCachingRecursively(bool animationIsRunning);
-
     // optimization: returns true if this or an ancestor has a transform animation running.
     // this enables us to use ItemCoordinatesCache while the animation is running, otherwise we have to recache for every frame
     bool isTransformAnimationRunning() const;
@@ -260,7 +256,7 @@ GraphicsLayerQtImpl::GraphicsLayerQtImpl(GraphicsLayerQt* newLayer)
     setEnabled(true);
 
     // we'll set the cache when we know what's going on
-    setCacheMode(NoCache);
+    setCacheMode(ItemCoordinateCache);
 
     connect(this, SIGNAL(notifyAnimationStartedAsync()), this, SLOT(notifyAnimationStarted()), Qt::QueuedConnection);
 }
@@ -285,21 +281,6 @@ GraphicsLayerQtImpl::~GraphicsLayerQtImpl()
         if (QAbstractAnimation* anim = it->data())
             delete anim;
 #endif
-}
-
-void GraphicsLayerQtImpl::adjustCachingRecursively(bool animationIsRunning)
-{
-    // optimization: we make sure all our children have ItemCoordinateCache -
-    // otherwise we end up re-rendering them during the animation
-    const QList<QGraphicsItem*> children = childItems();
-
-    for (QList<QGraphicsItem*>::const_iterator it = children.begin(); it != children.end(); ++it) {
-        if (QGraphicsItem* item = *it)
-            if (GraphicsLayerQtImpl* layer = qobject_cast<GraphicsLayerQtImpl*>(item->toGraphicsObject())) {
-                if (layer->m_layer->drawsContent() && layer->m_currentContent.contentType == HTMLContentType)
-                    layer->setCacheMode(animationIsRunning ? QGraphicsItem::ItemCoordinateCache : QGraphicsItem::DeviceCoordinateCache);
-            }
-    }    
 }
 
 void GraphicsLayerQtImpl::updateTransform()
@@ -384,14 +365,14 @@ QRectF GraphicsLayerQtImpl::boundingRect() const
 void GraphicsLayerQtImpl::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
     if (m_currentContent.backgroundColor.isValid())
-        painter->fillRect(option->exposedRect, QColor(m_currentContent.backgroundColor));
+        painter->fillRect(option->rect, QColor(m_currentContent.backgroundColor));
 
     switch (m_currentContent.contentType) {
     case HTMLContentType:
         if (m_state.drawsContent) {
             // this is the expensive bit. we try to minimize calls to this area by proper caching
             GraphicsContext gc(painter);
-            m_layer->paintGraphicsLayerContents(gc, option->exposedRect.toAlignedRect());
+            m_layer->paintGraphicsLayerContents(gc, option->rect);
         }
         break;
     case PixmapContentType:
@@ -471,7 +452,6 @@ void GraphicsLayerQtImpl::flushChanges(bool recursive, bool forceUpdateTransform
         if (m_layer->maskLayer()) {
             if (GraphicsLayerQtImpl* mask = qobject_cast<GraphicsLayerQtImpl*>(m_layer->maskLayer()->platformLayer()->toGraphicsObject())) {
                 mask->m_maskEffect = new MaskEffectQt(this, mask);
-                mask->setCacheMode(NoCache);
                 setGraphicsEffect(mask->m_maskEffect.data());
             }
         }
@@ -503,15 +483,19 @@ void GraphicsLayerQtImpl::flushChanges(bool recursive, bool forceUpdateTransform
             update();
             setFlag(ItemHasNoContents, false);
 
+            // no point in caching a directly composited pixmap into another pixmap
+            setCacheMode(NoCache);
+
             break;
         case MediaContentType:
             setFlag(ItemHasNoContents, true);
+            setCacheMode(NoCache);
             m_pendingContent.mediaLayer.data()->setParentItem(this);
             break;
 
         case ColorContentType:
             // no point in caching a solid-color rectangle
-            setCacheMode(m_layer->maskLayer() ? QGraphicsItem::DeviceCoordinateCache : QGraphicsItem::NoCache);
+            setCacheMode(NoCache);
             if (m_pendingContent.contentType != m_currentContent.contentType || m_pendingContent.contentsBackgroundColor != m_currentContent.contentsBackgroundColor)
                 update();
             m_state.drawsContent = false;
@@ -524,15 +508,11 @@ void GraphicsLayerQtImpl::flushChanges(bool recursive, bool forceUpdateTransform
         case HTMLContentType:
             if (m_pendingContent.contentType != m_currentContent.contentType)
                 update();
-            if (!m_state.drawsContent && m_layer->drawsContent())
+            if (!m_state.drawsContent && m_layer->drawsContent()) {
                 update();
-                if (m_layer->drawsContent() && !m_maskEffect) {
-                    setCacheMode(isTransformAnimationRunning() ? ItemCoordinateCache : DeviceCoordinateCache);
-
-                    // HTML content: we want to use exposedRect so we don't use WebCore rendering if we don't have to
-                    setFlag(QGraphicsItem::ItemUsesExtendedStyleOption, true);
-                }
-            else
+                if (m_layer->drawsContent() && !m_maskEffect)
+                    setCacheMode(ItemCoordinateCache);
+            } else if (!m_layer->drawsContent())
                 setCacheMode(NoCache);
 
             setFlag(ItemHasNoContents, !m_layer->drawsContent());
@@ -1177,10 +1157,8 @@ public:
         if (newState == QAbstractAnimation::Running) {
             m_sourceMatrix = m_layer.data()->m_layer->transform();
             m_layer.data()->m_transformAnimationRunning = true;
-            m_layer.data()->adjustCachingRecursively(true);
         } else if (newState == QAbstractAnimation::Stopped) {
             m_layer.data()->m_transformAnimationRunning = false;
-            m_layer.data()->adjustCachingRecursively(false);
         }
     }
 
