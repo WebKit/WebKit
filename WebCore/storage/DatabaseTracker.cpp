@@ -375,7 +375,7 @@ DatabaseDetails DatabaseTracker::detailsForNameAndOrigin(const String& name, Sec
         MutexLocker lockDatabase(m_databaseGuard);
 
         for (HashSet<ProposedDatabase*>::iterator iter = m_proposedDatabases.begin(); iter != m_proposedDatabases.end(); ++iter)
-            if ((*iter)->first == origin && (*iter)->second.name() == name) {
+            if ((*iter)->second.name() == name && (*iter)->first->equal(origin)) {
                 ASSERT((*iter)->second.thread() == currentThread());
                 return (*iter)->second;
             }

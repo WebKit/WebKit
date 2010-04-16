@@ -1,3 +1,18 @@
+2010-04-16  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Make Safari correctly allocate 5MB of DB storage to all new
+        origins.
+        https://bugs.webkit.org/show_bug.cgi?id=36671
+
+        Eric fixed the same problem in
+        DatabaseTracker::fullPathForDatabaseNoLock() in r57128, but forgot
+        to fix it in DatabaseTracker::detailsForNameAndOrigin() too.
+
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::detailsForNameAndOrigin):
+
 2010-04-16  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Jian Li.
