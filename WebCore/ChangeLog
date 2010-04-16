@@ -1,3 +1,20 @@
+2010-04-16  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] WebCore::Font::font() causes a QFont detach
+        https://bugs.webkit.org/show_bug.cgi?id=37683
+
+        Moved the setStyleStrategy call to FontPlatformData
+        to avoid the detach.
+
+        Thanks to Holger for spotting this.
+
+        * platform/graphics/qt/FontPlatformDataQt.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+        * platform/graphics/qt/FontQt.cpp:
+        (WebCore::Font::font):
+
 2010-04-15  Matt Perry  <mpcomplete@chromium.org>
 
         Reviewed by Adam Barth.

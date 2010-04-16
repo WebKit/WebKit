@@ -227,11 +227,6 @@ QFont Font::font() const
         f.setLetterSpacing(QFont::AbsoluteSpacing, m_letterSpacing);
     if (m_wordSpacing != 0)
         f.setWordSpacing(m_wordSpacing);
-
-#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
-    f.setStyleStrategy(QFont::ForceIntegerMetrics);
-#endif
-
     return f;
 }
 
