@@ -1,3 +1,24 @@
+2010-04-15  Dmitry Titov  <dimich@chromium.org>
+
+        Unreviewed, rolling out r57688.
+        http://trac.webkit.org/changeset/57688
+        https://bugs.webkit.org/show_bug.cgi?id=34992
+
+        Makes fast/workers/dedicated-worker-lifecycle.html crashing on all GTK bots
+
+        * bindings/js/JSWorkerContextCustom.cpp:
+        * bindings/v8/custom/V8WorkerContextCustom.cpp:
+        * storage/Database.idl:
+        * storage/SQLError.idl:
+        * storage/SQLResultSet.idl:
+        * storage/SQLResultSetRowList.idl:
+        * storage/SQLTransaction.idl:
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::openDatabase):
+        * workers/WorkerContext.h:
+        (WebCore::WorkerContext::databaseExceededQuota):
+        * workers/WorkerContext.idl:
+
 2010-04-15  Yury Semikhatsky  <yurys@google.com>
 
         Reviewed by Pavel Feldman.

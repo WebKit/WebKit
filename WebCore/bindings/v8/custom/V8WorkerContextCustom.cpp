@@ -37,8 +37,6 @@
 #include "ExceptionCode.h"
 #include "ScheduledAction.h"
 #include "V8Binding.h"
-#include "V8Database.h"
-#include "V8DatabaseCallback.h"
 #include "V8Proxy.h"
 #include "V8Utilities.h"
 #include "V8WorkerContextEventListener.h"
@@ -138,12 +136,6 @@ v8::Handle<v8::Value> toV8(WorkerContext* impl)
     return global;
 }
 
-v8::Handle<v8::Value> V8WorkerContext::openDatabaseCallback(const v8::Arguments& args) 
-{ 
-    INC_STATS("DOM.WorkerContext.openDatabase()"); 
-    // Implementation coming soon.
-    return v8::Undefined(); 
-} 
 } // namespace WebCore
 
 #endif // ENABLE(WORKERS)

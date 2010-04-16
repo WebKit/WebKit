@@ -29,9 +29,6 @@
 
 #include "JSWorkerContext.h"
 
-#include "Database.h"
-#include "JSDatabase.h"
-#include "JSDatabaseCallback.h"
 #include "JSDOMBinding.h"
 #include "JSDOMGlobalObject.h"
 #include "JSEventListener.h"
@@ -165,24 +162,6 @@ JSValue JSWorkerContext::messageChannel(ExecState* exec) const
 }
 #endif
 
-#if ENABLE(DATABASE)
-JSValue JSWorkerContext::openDatabase(ExecState* exec, const ArgList& args) 
-{ 
-    const UString& name = args.at(0).toString(exec); 
-    const UString& version = args.at(1).toString(exec); 
-    const UString& displayName = args.at(2).toString(exec); 
-    unsigned long estimatedSize = args.at(3).toInt32(exec); 
-    RefPtr<DatabaseCallback> creationCallback; 
-    if ((args.size() >= 5) && args.at(4).isObject()) 
-        creationCallback = JSDatabaseCallback::create(asObject(args.at(4)), globalObject()); 
- 
-    ExceptionCode ec = 0; 
-    JSValue result = toJS(exec, globalObject(), WTF::getPtr(impl()->openDatabase(name, version, displayName, estimatedSize, creationCallback.release(), ec))); 
-    setDOMException(exec, ec); 
-    return result; 
-} 
-#endif
- 
 } // namespace WebCore
 
 #endif // ENABLE(WORKERS)

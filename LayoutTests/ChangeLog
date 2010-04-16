@@ -1,3 +1,23 @@
+2010-04-15  Dmitry Titov  <dimich@chromium.org>
+
+        Unreviewed, rolling out r57688.
+        http://trac.webkit.org/changeset/57688
+        https://bugs.webkit.org/show_bug.cgi?id=34992
+
+        Makes fast/workers/dedicated-worker-lifecycle.html crashing on all GTK bots
+
+        * fast/workers/change-version-handle-reuse-worker-expected.txt: Removed.
+        * fast/workers/change-version-handle-reuse-worker.html: Removed.
+        * fast/workers/execute-sql-args-worker-expected.txt: Removed.
+        * fast/workers/execute-sql-args-worker.html: Removed.
+        * fast/workers/resources/database-worker-controller.js: Removed.
+        * fast/workers/resources/database-worker.js: Removed.
+        * storage/change-version-handle-reuse-expected.txt:
+        * storage/change-version-handle-reuse.html:
+        * storage/change-version-handle-reuse.js: Removed.
+        * storage/execute-sql-args.html:
+        * storage/execute-sql-args.js: Removed.
+
 2010-04-15  Albert J. Wong  <ajwong@chromium.org>
 
         Not reviewed.  Sheriffing.
