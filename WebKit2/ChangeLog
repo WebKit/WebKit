@@ -1,3 +1,17 @@
+2010-04-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix windows build.
+
+        * Platform/win/RunLoopWin.cpp:
+        (RunLoop::run):
+        * UIProcess/Launcher/win/WebProcessLauncher.cpp:
+        (WebKit::webThreadBody):
+        (WebKit::launchWebProcess):
+        * WebProcess/win/WebProcessMain.cpp:
+        (WebKit::WebProcessMain):
+
 2010-04-16  Sam Weinig  <weinig@apple.com>
 
         Reviewed by Anders Carlsson.

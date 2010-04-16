@@ -41,9 +41,8 @@ int WebProcessMain(HINSTANCE hInstance, LPTSTR lpstrCmdLine)
     // FIXME: This should come from the command line string.
     const wchar_t* uiProcessName = L"UIProcess";
 
-    WebProcess::shared().initialize(uiProcessName, RunLoop::mainRunLoop());
-
-    RunLoop::mainRunLoop()->run();
+    WebProcess::shared().initialize(uiProcessName, RunLoop::main());
+    RunLoop::run();
 
     return 0;
 }
