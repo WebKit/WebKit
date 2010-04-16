@@ -11,6 +11,17 @@
 
 2010-04-15  Jian Li  <jianli@chromium.org>
 
+        Unreviewed.
+
+        Updated Skipped list to use the right directory due to directory
+        shuffling at r57695.
+
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
+2010-04-15  Jian Li  <jianli@chromium.org>
+
         Reviewed by Dmitry Titov.
 
         Support using FormData to send a sliced file via XHR.
