@@ -1,3 +1,28 @@
+2010-04-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adam Barth.
+
+        Test file: URL canonicalization
+        https://bugs.webkit.org/show_bug.cgi?id=37700
+
+        * fast/url/script-tests/file.js: Added new test.
+        * fast/url/file-expected.txt: Added (expected results).
+        * fast/url/file.html: Added (wrapper).
+
+        * fast/url/script-tests/TEMPLATE.html: Add an explicit dependable
+        <base> URL to the template, to avoid making test expectations
+        system dependent.
+        
+        Other test wrappers regenerated for the above change:
+
+        * fast/url/anchor.html:
+        * fast/url/ipv4.html:
+        * fast/url/path-url.html:
+        * fast/url/port.html:
+        * fast/url/query.html:
+        * fast/url/standard-url.html:
+        * fast/url/trivial.html:
+
 2010-04-15  Tony Chang  <tony@chromium.org>
 
         Not reviewed, trying to make the tree green.
