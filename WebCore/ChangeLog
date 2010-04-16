@@ -19,6 +19,15 @@
 
         Reviewed by Dimitri Glazkov.
 
+        [chromium] Fix Mac build.
+        https://bugs.webkit.org/show_bug.cgi?id=37436
+
+        * platform/chromium/PopupMenuChromium.h:
+
+2010-04-16  Jay Civelli  <jcivelli@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
         [chromium] Select popups would assert when destroyed.
         https://bugs.webkit.org/show_bug.cgi?id=37436
 

@@ -177,9 +177,6 @@ public:
 
     PopupType popupType() const { return m_popupType; }
 
-    // Whether the popup is currently open.
-    bool m_popupOpen;
-
 private:
     friend class WTF::RefCounted<PopupContainer>;
 
@@ -197,6 +194,8 @@ private:
 
     PopupContainerSettings m_settings;
     PopupType m_popupType;
+    // Whether the popup is currently open.
+    bool m_popupOpen;
 };
 
 } // namespace WebCore
