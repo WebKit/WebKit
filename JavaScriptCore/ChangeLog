@@ -4,6 +4,10 @@
 
 2010-04-16  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by nobody, build fix.
+
+2010-04-16  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Bug 37730 - Remove JSC::UString dependencies from WebCore::StringImpl
