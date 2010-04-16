@@ -40,6 +40,7 @@
 #import "RenderView.h"
 #import "SharedBuffer.h"
 #import "TimeRanges.h"
+#import "ThemeMac.h"
 #import "WebCoreSystemInterface.h"
 #import "UserAgentStyleSheets.h"
 #import <Carbon/Carbon.h>
@@ -774,7 +775,7 @@ bool RenderThemeMac::paintMenuList(RenderObject* o, const RenderObject::PaintInf
         paintInfo.context->translate(-inflatedRect.x(), -inflatedRect.y());
     }
 
-    [popupButton drawWithFrame:inflatedRect inView:o->view()->frameView()->documentView()];
+    [popupButton drawWithFrame:inflatedRect inView:ThemeMac::ensuredView(o->view()->frameView())];
     [popupButton setControlView:nil];
 
     paintInfo.context->restore();
@@ -1232,7 +1233,7 @@ bool RenderThemeMac::paintSliderThumb(RenderObject* o, const RenderObject::Paint
         paintInfo.context->translate(-unzoomedRect.x(), -unzoomedRect.y());
     }
 
-    [sliderThumbCell drawWithFrame:unzoomedRect inView:o->view()->frameView()->documentView()];
+    [sliderThumbCell drawWithFrame:unzoomedRect inView:ThemeMac::ensuredView(o->view()->frameView())];
     [sliderThumbCell setControlView:nil];
 
     paintInfo.context->restore();
@@ -1264,7 +1265,7 @@ bool RenderThemeMac::paintSearchField(RenderObject* o, const RenderObject::Paint
     // Set the search button to nil before drawing.  Then reset it so we can draw it later.
     [search setSearchButtonCell:nil];
 
-    [search drawWithFrame:NSRect(unzoomedRect) inView:o->view()->frameView()->documentView()];
+    [search drawWithFrame:NSRect(unzoomedRect) inView:ThemeMac::ensuredView(o->view()->frameView())];
 #ifdef BUILDING_ON_TIGER
     if ([search showsFirstResponder])
         wkDrawTextFieldCellFocusRing(search, NSRect(unzoomedRect));
@@ -1364,7 +1365,7 @@ bool RenderThemeMac::paintSearchFieldCancelButton(RenderObject* o, const RenderO
         paintInfo.context->translate(-unzoomedRect.x(), -unzoomedRect.y());
     }
 
-    [[search cancelButtonCell] drawWithFrame:unzoomedRect inView:o->view()->frameView()->documentView()];
+    [[search cancelButtonCell] drawWithFrame:unzoomedRect inView:ThemeMac::ensuredView(o->view()->frameView())];
     [[search cancelButtonCell] setControlView:nil];
 
     paintInfo.context->restore();
@@ -1429,7 +1430,7 @@ bool RenderThemeMac::paintSearchFieldResultsDecoration(RenderObject* o, const Re
     FloatRect localBounds = [search searchButtonRectForBounds:NSRect(input->renderBox()->borderBoxRect())];
     localBounds = convertToPaintingRect(input->renderer(), o, localBounds, r);
 
-    [[search searchButtonCell] drawWithFrame:localBounds inView:o->view()->frameView()->documentView()];
+    [[search searchButtonCell] drawWithFrame:localBounds inView:ThemeMac::ensuredView(o->view()->frameView())];
     [[search searchButtonCell] setControlView:nil];
     return false;
 }
@@ -1472,7 +1473,7 @@ bool RenderThemeMac::paintSearchFieldResultsButton(RenderObject* o, const Render
         paintInfo.context->translate(-unzoomedRect.x(), -unzoomedRect.y());
     }
 
-    [[search searchButtonCell] drawWithFrame:unzoomedRect inView:o->view()->frameView()->documentView()];
+    [[search searchButtonCell] drawWithFrame:unzoomedRect inView:ThemeMac::ensuredView(o->view()->frameView())];
     [[search searchButtonCell] setControlView:nil];
     
     paintInfo.context->restore();

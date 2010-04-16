@@ -1,3 +1,21 @@
+2010-04-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by David Hyatt.
+
+        Always pass a view to the AppKit drawing functions.
+        https://bugs.webkit.org/show_bug.cgi?id=37724
+
+        * platform/mac/ThemeMac.mm:
+        (WebCore::paintCheckbox):
+        (WebCore::paintRadio):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintMenuList):
+        (WebCore::RenderThemeMac::paintSliderThumb):
+        (WebCore::RenderThemeMac::paintSearchField):
+        (WebCore::RenderThemeMac::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeMac::paintSearchFieldResultsDecoration):
+        (WebCore::RenderThemeMac::paintSearchFieldResultsButton):
+
 2010-04-16  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Dan Bernstein.
