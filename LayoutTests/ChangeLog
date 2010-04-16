@@ -1,3 +1,14 @@
+2010-04-15  Albert J. Wong  <ajwong@chromium.org>
+
+        Not reviewed.  Sheriffing.
+
+        [Chromium] Build fix. Rebaseline these again since the fonts changed again.
+
+        * platform/chromium-win/fast/backgrounds/svg-as-background-1-expected.checksum:
+        * platform/chromium-win/fast/backgrounds/svg-as-background-1-expected.png:
+        * platform/chromium-win/fast/backgrounds/svg-as-background-3-expected.checksum:
+        * platform/chromium-win/fast/backgrounds/svg-as-background-3-expected.png:
+
 2010-04-15  Jian Li  <jianli@chromium.org>
 
         Reviewed by Dmitry Titov.
