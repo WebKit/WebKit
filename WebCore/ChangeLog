@@ -1,3 +1,20 @@
+2010-04-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7873647> Crash when updating hover state
+
+        Test: fast/dynamic/hover-style-recalc-crash.html
+
+        Updating the hover state of an element caused the document to need style
+        recalc, and then updating the hover state of a link caused style recalc,
+        which changed the render tree while updateHoverActiveState() was iterating
+        over it, leading to a crash.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateHoverActiveState): Collect the nodes to be
+        updated into vectors, then update their active and hover states.
+
 2010-04-16  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

@@ -3197,22 +3197,33 @@ void RenderLayer::updateHoverActiveState(const HitTestRequest& request, HitTestR
     // Locate the common ancestor render object for the two renderers.
     RenderObject* ancestor = commonAncestor(oldHoverObj, newHoverObj);
 
+    Vector<Node*, 32> nodesToRemoveFromChain;
+    Vector<Node*, 32> nodesToAddToChain;
+
     if (oldHoverObj != newHoverObj) {
         // The old hover path only needs to be cleared up to (and not including) the common ancestor;
         for (RenderObject* curr = oldHoverObj; curr && curr != ancestor; curr = curr->hoverAncestor()) {
-            if (curr->node() && !curr->isText() && (!mustBeInActiveChain || curr->node()->inActiveChain())) {
-                curr->node()->setActive(false);
-                curr->node()->setHovered(false);
-            }
+            if (curr->node() && !curr->isText() && (!mustBeInActiveChain || curr->node()->inActiveChain()))
+                nodesToRemoveFromChain.append(curr->node());
         }
     }
 
     // Now set the hover state for our new object up to the root.
     for (RenderObject* curr = newHoverObj; curr; curr = curr->hoverAncestor()) {
-        if (curr->node() && !curr->isText() && (!mustBeInActiveChain || curr->node()->inActiveChain())) {
-            curr->node()->setActive(request.active());
-            curr->node()->setHovered(true);
-        }
+        if (curr->node() && !curr->isText() && (!mustBeInActiveChain || curr->node()->inActiveChain()))
+            nodesToAddToChain.append(curr->node());
+    }
+
+    size_t removeCount = nodesToRemoveFromChain.size();
+    for (size_t i = 0; i < removeCount; ++i) {
+        nodesToRemoveFromChain[i]->setActive(false);
+        nodesToRemoveFromChain[i]->setHovered(false);
+    }
+
+    size_t addCount = nodesToAddToChain.size();
+    for (size_t i = 0; i < addCount; ++i) {
+        nodesToAddToChain[i]->setActive(request.active());
+        nodesToAddToChain[i]->setHovered(true);
     }
 }
 

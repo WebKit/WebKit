@@ -1,3 +1,12 @@
+2010-04-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7873647> Crash when updating hover state
+
+        * fast/dynamic/hover-style-recalc-crash-expected.txt: Added.
+        * fast/dynamic/hover-style-recalc-crash.html: Added.
+
 2010-04-16  Andrew Scherkus  <scherkus@chromium.org>
 
         Unreviewed, fixing Chromium test_expectations.txt due to removed tests in r57292.
