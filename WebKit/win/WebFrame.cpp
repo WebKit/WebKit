@@ -2425,7 +2425,7 @@ HRESULT WebFrame::stringByEvaluatingJavaScriptInScriptWorld(IWebScriptWorld* iWo
         return S_OK;
 
     JSLock lock(SilenceAssertionsOnly);
-    String resultString = String(result.toString(anyWorldGlobalObject->globalExec()));
+    String resultString = ustringToString(result.toString(anyWorldGlobalObject->globalExec()));
     *evaluationResult = BString(resultString).release();
 
     return S_OK;
