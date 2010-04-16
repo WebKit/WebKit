@@ -1,3 +1,14 @@
+2010-04-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Add URL parsing tests for paths
+        https://bugs.webkit.org/show_bug.cgi?id=37672
+
+        * fast/url/path-expected.txt: Added.
+        * fast/url/path.html: Added.
+        * fast/url/script-tests/path.js: Added.
+
 2010-04-15  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Dimitri Glazkov.

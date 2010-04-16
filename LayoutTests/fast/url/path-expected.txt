@@ -1,0 +1,41 @@
+Canonicalization of paths.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS canonicalize('http://example.com/././foo') is 'http://example.com/foo'
+PASS canonicalize('http://example.com/./.foo') is 'http://example.com/.foo'
+PASS canonicalize('http://example.com/foo/.') is 'http://example.com/foo/'
+PASS canonicalize('http://example.com/foo/./') is 'http://example.com/foo/'
+PASS canonicalize('http://example.com/foo/bar/..') is 'http://example.com/foo/'
+PASS canonicalize('http://example.com/foo/bar/../') is 'http://example.com/foo/'
+PASS canonicalize('http://example.com/foo/..bar') is 'http://example.com/foo/..bar'
+PASS canonicalize('http://example.com/foo/bar/../ton') is 'http://example.com/foo/ton'
+PASS canonicalize('http://example.com/foo/bar/../ton/../../a') is 'http://example.com/a'
+PASS canonicalize('http://example.com/foo/../../..') is 'http://example.com/'
+PASS canonicalize('http://example.com/foo/../../../ton') is 'http://example.com/ton'
+FAIL canonicalize('http://example.com/foo/%2e') should be http://example.com/foo/. Was http://example.com/foo/%2e.
+FAIL canonicalize('http://example.com/foo/%2e%2') should be http://example.com/foo/.%2. Was http://example.com/foo/%2e%2.
+FAIL canonicalize('http://example.com/foo/%2e./%2e%2e/.%2e/%2e.bar') should be http://example.com/..bar. Was http://example.com/foo/%2e./%2e%2e/.%2e/%2e.bar.
+FAIL canonicalize('http://example.com////../..') should be http://example.com//. Was http://example.com/.
+PASS canonicalize('http://example.com/foo') is 'http://example.com/foo'
+PASS canonicalize('http://example.com/%20foo') is 'http://example.com/%20foo'
+PASS canonicalize('http://example.com/foo%') is 'http://example.com/foo%'
+PASS canonicalize('http://example.com/foo%2') is 'http://example.com/foo%2'
+PASS canonicalize('http://example.com/foo%2zbar') is 'http://example.com/foo%2zbar'
+PASS canonicalize('http://example.com/foo%2Â©zbar') is 'http://example.com/foo%2%C3%82%C2%A9zbar'
+FAIL canonicalize('http://example.com/foo%41%7a') should be http://example.com/fooAz. Was http://example.com/foo%41%7a.
+FAIL canonicalize('http://example.com/foo	%91') should be http://example.com/foo%09%C2%91%91. Was http://example.com/foo%C2%91%91.
+FAIL canonicalize('http://example.com/foo%00%51') should be http://example.com/foo%00Q. Was http://example.com/foo%00%51.
+PASS canonicalize('http://example.com/(%28:%3A%29)') is 'http://example.com/(%28:%3A%29)'
+PASS canonicalize('http://example.com/%3A%3a%3C%3c') is 'http://example.com/%3A%3a%3C%3c'
+FAIL canonicalize('http://example.com/foo	bar') should be http://example.com/foo%09bar. Was http://example.com/foobar.
+PASS canonicalize('http://example.com\\foo\\bar') is 'http://example.com/foo/bar'
+PASS canonicalize('http://example.com/%7Ffp3%3Eju%3Dduvgw%3Dd') is 'http://example.com/%7Ffp3%3Eju%3Dduvgw%3Dd'
+PASS canonicalize('http://example.com/@asdf%40') is 'http://example.com/@asdf%40'
+PASS canonicalize('http://example.com/你好你好') is 'http://example.com/%E4%BD%A0%E5%A5%BD%E4%BD%A0%E5%A5%BD'
+FAIL canonicalize('http://example.com/﷐zyx') should be http://example.com/%EF%BF%BDzyx. Was http://example.com/%EF%B7%90zyx.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
