@@ -469,7 +469,8 @@ void GraphicsLayerQtImpl::flushChanges(bool recursive, bool forceUpdateTransform
     // FIXME: this is a hack, due to a probable QGraphicsScene bug when rapidly modifying the perspective
     // but without this line we get graphic artifacts
     if ((m_changeMask & ChildrenTransformChange) && m_state.childrenTransform != m_layer->childrenTransform())
-        scene()->update();
+        if (scene())
+            scene()->update();
 
     if (m_changeMask & (ChildrenTransformChange | Preserves3DChange | TransformChange | AnchorPointChange | SizeChange)) {
         // due to the differences between the way WebCore handles transforms and the way Qt handles transforms,
