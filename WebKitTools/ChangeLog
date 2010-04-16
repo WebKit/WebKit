@@ -1,3 +1,16 @@
+2010-04-15  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [DRT/Chromium] Add LayoutTestHelper for Mac
+        https://bugs.webkit.org/show_bug.cgi?id=37668
+
+        LayouTestHelper.mm is based on webkit/tools/test_shell/mac/layout_test_helper.mm
+        of Chromium.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+        * DumpRenderTree/chromium/LayoutTestHelper.mm: Added.
+
 2010-04-15  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Geoff Garen.

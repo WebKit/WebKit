@@ -121,8 +121,30 @@
                 '../fonts/WebKitWeightWatcher800.ttf',
                 '../fonts/WebKitWeightWatcher900.ttf',
             ],
+            'conditions': [
+                ['OS=="mac"', {
+                    'dependencies': ['LayoutTestHelper'],
+                }],
+            ],
         },
     ], # targets
+
+    'conditions': [
+        ['OS=="mac"', {
+            'targets': [
+                {
+                    'target_name': 'LayoutTestHelper',
+                    'type': 'executable',
+                    'sources': ['../chromium/LayoutTestHelper.mm'],
+                    'link_settings': {
+                        'libraries': [
+                            '$(SDKROOT)/System/Library/Frameworks/AppKit.framework',
+                        ],
+                    },
+                },
+            ],
+        }],
+    ], # conditions
 }
 
 # Local Variables:
