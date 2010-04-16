@@ -32,13 +32,25 @@ public:
     FormDataList(const TextEncoding&);
 
     void appendData(const String& key, const String& value)
-        { appendString(key); appendString(value); }
+    {
+        appendString(key);
+        appendString(value);
+    }
     void appendData(const String& key, const WTF::CString& value)
-        { appendString(key); appendString(value); }
+    {
+        appendString(key);
+        appendString(value);
+    }
     void appendData(const String& key, int value)
-        { appendString(key); appendString(String::number(value)); }
+    {
+        appendString(key);
+        appendString(String::number(value));
+    }
     void appendBlob(const String& key, PassRefPtr<Blob> blob)
-        { appendString(key); m_list.append(blob); }
+    {
+        appendString(key);
+        m_list.append(blob);
+    }
 
     class Item {
     public:
