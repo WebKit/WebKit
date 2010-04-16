@@ -1,3 +1,13 @@
+2010-04-16  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37718
+        Safari crashes with certain JavaScript charCode events in EventHandler::needsKeyboardEventDisambiguationQuirks
+
+        * fast/events/recorded-keydown-event-expected.txt: Added.
+        * fast/events/recorded-keydown-event.html: Added.
+
 2010-04-16  Adam Roben  <aroben@apple.com>
 
         Skip HTMLFrameSetElement-window-eventListener-attributes.html on SnowLeopard
