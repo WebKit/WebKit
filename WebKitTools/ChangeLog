@@ -1,3 +1,12 @@
+2010-04-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix window.open() and targeted links.
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (_createNewPage): Use the correct initializer to and load the window.
+
 2010-04-16  Adam Roben  <aroben@apple.com>
 
         Fix links to layout test results from build status pages

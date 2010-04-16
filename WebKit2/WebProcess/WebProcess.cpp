@@ -70,8 +70,15 @@ WebPage* WebProcess::webPage(uint64_t pageID) const
 
 WebPage* WebProcess::createWebPage(uint64_t pageID, const IntSize& viewSize, const WebPreferencesStore& store, DrawingArea::Type drawingAreaType)
 {
-    std::pair<HashMap<uint64_t, RefPtr<WebPage> >::iterator, bool> result = m_pageMap.add(pageID, WebPage::create(pageID, viewSize, store, drawingAreaType));
-    ASSERT(result.second);
+    // It is necessary to check for page existence here since during a window.open() (or targeted
+    // link) the WebPage gets created both in the synchronous handler and through the normal way. 
+    std::pair<HashMap<uint64_t, RefPtr<WebPage> >::iterator, bool> result = m_pageMap.add(pageID, 0);
+    if (result.second) {
+        ASSERT(!result.first->second);
+        result.first->second = WebPage::create(pageID, viewSize, store, drawingAreaType);
+    }
+
+    ASSERT(result.first->second);
     return result.first->second.get();
 }
 

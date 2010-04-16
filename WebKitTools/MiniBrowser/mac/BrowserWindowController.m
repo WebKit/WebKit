@@ -187,7 +187,9 @@ static void _decidePolicyForMIMEType(WKPageRef page, WKStringRef MIMEType, WKURL
 static WKPageRef _createNewPage(WKPageRef page, const void* clientInfo)
 {
     NSLog(@"createNewPage");
-    BrowserWindowController *controller = [[BrowserWindowController alloc] init];
+    BrowserWindowController *controller = [[BrowserWindowController alloc] initWithPageNamespace:WKPageGetPageNamespace(page)];
+    [controller loadWindow];
+
     return controller->_webView.pageRef;
 }
 

@@ -528,16 +528,15 @@ void WebPageProxy::didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageI
 {
     switch (messageID.get<WebPageProxyMessage::Kind>()) {
         case WebPageProxyMessage::CreateNewPage: {
-            uint64_t newPageID = 0;
             WebPageProxy* newPage = createNewPage();
             if (newPage) {
                 // FIXME: Pass the real size.
-                reply.encode(CoreIPC::In(newPageID, IntSize(100, 100), 
+                reply.encode(CoreIPC::In(newPage->pageID(), IntSize(100, 100), 
                                          newPage->pageNamespace()->context()->preferences()->store(),
                                          *(newPage->m_drawingArea.get())));
             } else {
                 // FIXME: We should encode a drawing area type here instead.
-                reply.encode(CoreIPC::In(newPageID, IntSize(), WebPreferencesStore(), 0));
+                reply.encode(CoreIPC::In(static_cast<uint64_t>(0), IntSize(), WebPreferencesStore(), 0));
             }
             break;
         }
