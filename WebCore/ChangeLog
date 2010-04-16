@@ -1,3 +1,15 @@
+2010-04-16  Adam Roben  <aroben@apple.com>
+
+        Don't assert when soft-linked libraries can't be found
+
+        In some situations (e.g., when using SOFT_LINK_OPTIONAL), we expect soft-link libraries not
+        to be able to be found in all cases. So we shouldn't assert that they're always found.
+
+        Reviewed by Sam Weinig.
+
+        * platform/win/SoftLinking.h:
+        (SOFT_LINK): Don't assert when LoadLibrary fails.
+
 2010-04-15  Dmitry Titov  <dimich@chromium.org>
 
         Unreviewed, rolling out r57688.
