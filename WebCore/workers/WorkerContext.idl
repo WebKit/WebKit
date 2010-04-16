@@ -49,7 +49,10 @@ module threads {
         // WorkerUtils
         [Custom] void importScripts(/*[Variadic] in DOMString urls */);
                  attribute [Replaceable] WorkerNavigator navigator;
-        // Database openDatabase(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize);
+#if defined(ENABLE_DATABASE) && ENABLE_DATABASE
+        [EnabledAtRuntime, Custom] Database openDatabase(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize, in DatabaseCallback creationCallback)
+            raises(DOMException);
+#endif
         // DatabaseSync openDatabaseSync(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize);
 
         // Timers

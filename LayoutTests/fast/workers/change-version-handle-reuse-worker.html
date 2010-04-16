@@ -1,14 +1,7 @@
 <html> 
 <head>
-<script src="change-version-handle-reuse.js"></script>
+<script src="resources/database-worker-controller.js"></script> 
 <script> 
-
-var DB_TEST_SUFFIX = "_dom";
-
-function log(message)
-{
-    document.getElementById("console").innerText += message + "\n";
-}
 
 function setupAndRunTest()
 {
@@ -18,8 +11,8 @@ function setupAndRunTest()
     }
  
     document.getElementById("console").innerText = "";
- 
-    runTest();
+    databaseWorker.postMessage("importScripts:../../storage/change-version-handle-reuse.js");
+    databaseWorker.postMessage("runTest");
 }
 </script> 
 </head> 

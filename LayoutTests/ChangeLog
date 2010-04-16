@@ -1,3 +1,26 @@
+2010-04-15  Eric Uhrhane  <ericu@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Add bindings for async DB API in Workers.
+        https://bugs.webkit.org/show_bug.cgi?id=34992
+
+        * storage/change-version-handle-reuse.html: Refactored to share code with the worker version of the test.
+        * storage/change-version-handle-reuse-expected.html: Removed reference to reloading, which this test doesn't do.
+        * storage/change-version-handle-reuse.js: This is the extracted shared core of the test.
+        * storage/execute-sql-args.html: Refactored to share code with the worker version of the test.
+        * storage/execute-sql-args.js: This is the extracted shared core of the test.
+
+        These are the worker versions of the tests; they're tiny shims around shared code.
+        * fast/workers/execute-sql-args-worker-expected.txt: Added.
+        * fast/workers/execute-sql-args-worker.html: Added.
+        * fast/workers/change-version-handle-reuse-worker-expected.txt: Added.
+        * fast/workers/change-version-handle-reuse-worker.html: Added.
+        This file gets included from worker database tests; it does all the boilerplate that's needed on the DOM side.
+        * fast/workers/resources/database-worker-controller.js: Added.
+        This file is the boilerplate for the worker side of the database tests.  It will import and run the actual test on command, and will report back completion and exceptions.
+        * fast/workers/resources/database-worker.js: Added.
+
 2010-04-15  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Geoff Garen.
