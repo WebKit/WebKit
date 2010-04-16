@@ -112,6 +112,7 @@
                 '../chromium/TestNavigationController.h',
                 '../chromium/TestShell.cpp',
                 '../chromium/TestShell.h',
+                '../chromium/TestShellGtk.cpp',
                 '../chromium/TestShellMac.mm',
                 '../chromium/TestShellWin.cpp',
                 '../chromium/TextInputController.cpp',

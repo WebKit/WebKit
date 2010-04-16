@@ -2,6 +2,19 @@
 
         Reviewed by Dimitri Glazkov.
 
+        [chromium] Add TestShellGtk.cpp so we can link on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=37561
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp: Add new file and
+            add platform file exceptions.
+        * DumpRenderTree/chromium/TestShellGtk.cpp: Added.
+        (AlarmHandler):
+        (TestShell::waitTestFinished):
+
+2010-04-15  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
         build DRT on chromium mac
         https://bugs.webkit.org/show_bug.cgi?id=37639
 
