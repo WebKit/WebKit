@@ -445,6 +445,14 @@ const char* WebSocketHandshake::readHTTPHeaders(const char* start, const char* e
         }
         AtomicString nameStr(String::fromUTF8(name.data(), name.size()));
         String valueStr = String::fromUTF8(value.data(), value.size());
+        if (nameStr.isNull()) {
+            m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "invalid UTF-8 sequence in header name", 0, clientOrigin());
+            return 0;
+        }
+        if (valueStr.isNull()) {
+            m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "invalid UTF-8 sequence in header value", 0, clientOrigin());
+            return 0;
+        }
         LOG(Network, "name=%s value=%s", nameStr.string().utf8().data(), valueStr.utf8().data());
         headers->add(nameStr, valueStr);
     }

@@ -1,3 +1,15 @@
+2010-04-16  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebSocket crash when it receives bad header.
+        https://bugs.webkit.org/show_bug.cgi?id=37682
+
+        * websocket/tests/bad-handshake-crash-expected.txt: Added.
+        * websocket/tests/bad-handshake-crash.html: Added.
+        * websocket/tests/bad-handshake-crash_wsh.py: Added.
+        * websocket/tests/script-tests/bad-handshake-crash.js: Added.
+
 2010-04-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.

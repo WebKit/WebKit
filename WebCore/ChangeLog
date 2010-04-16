@@ -1,3 +1,20 @@
+2010-04-16  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebSocket crash when it receives bad header.
+        https://bugs.webkit.org/show_bug.cgi?id=37682
+
+        If name or value is not valid UTF-8, nameStr or valueStr would be
+        null string, so crashed in headers->add(nameStr, valueStr).
+        Check both nameStr and valueStr are not null string.
+        Otherwise handshake will fail.
+
+        Test: websocket/tests/bad-handshake-crash.html
+
+        * websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::readHTTPHeaders): check nameStr and valueStr are not null string.
+
 2010-04-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.
