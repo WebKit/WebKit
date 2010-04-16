@@ -1,3 +1,24 @@
+2010-04-16  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r57719.
+        http://trac.webkit.org/changeset/57719
+        https://bugs.webkit.org/show_bug.cgi?id=37708
+
+        Broke 8 URL tests on Windows due to use of file:///tmp/ URLs,
+        which don't work on Windows. (Requested by aroben on #webkit).
+
+        * fast/url/anchor.html:
+        * fast/url/file-expected.txt: Removed.
+        * fast/url/file.html: Removed.
+        * fast/url/ipv4.html:
+        * fast/url/path-url.html:
+        * fast/url/port.html:
+        * fast/url/query.html:
+        * fast/url/script-tests/TEMPLATE.html:
+        * fast/url/script-tests/file.js: Removed.
+        * fast/url/standard-url.html:
+        * fast/url/trivial.html:
+
 2010-04-16  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adam Barth.
