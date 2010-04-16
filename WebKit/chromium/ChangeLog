@@ -1,3 +1,13 @@
+2010-04-16  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Jian Li.
+
+        [chromium] WebKit::WebURLResponse::addHTTPHeaderField will crash if response is invalid UTF-8
+        https://bugs.webkit.org/show_bug.cgi?id=37687
+
+        * src/WebURLResponse.cpp:
+        (WebKit::WebURLResponse::addHTTPHeaderField): ignore if name or value is null string.
+
 2010-04-16  Jay Civelli  <jcivelli@chromium.org>
 
         Reviewed by Dimitri Glazkov.
