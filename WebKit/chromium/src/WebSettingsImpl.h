@@ -71,6 +71,7 @@ public:
     virtual void setJavaEnabled(bool);
     virtual void setAllowScriptsToCloseWindows(bool);
     virtual void setUserStyleSheetLocation(const WebURL&);
+    virtual void setAuthorAndUserStylesEnabled(bool);
     virtual void setUsesPageCache(bool);
     virtual void setDownloadableBinaryFontsEnabled(bool);
     virtual void setXSSAuditorEnabled(bool);

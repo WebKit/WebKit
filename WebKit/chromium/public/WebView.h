@@ -283,6 +283,7 @@ public:
     // User scripts --------------------------------------------------------
     virtual void addUserScript(const WebString& sourceCode,
                                bool runAtStart) = 0;
+    virtual void addUserStyleSheet(const WebString& sourceCode) = 0;
     virtual void removeAllUserContent() = 0;
 
     // Modal dialog support ------------------------------------------------

@@ -1886,6 +1886,13 @@ void WebViewImpl::addUserScript(const WebString& sourceCode, bool runAtStart)
                                     runAtStart ? InjectAtDocumentStart : InjectAtDocumentEnd);
 }
 
+void WebViewImpl::addUserStyleSheet(const WebString& sourceCode)
+{
+    PageGroup* pageGroup = PageGroup::pageGroup(pageGroupName);
+    RefPtr<DOMWrapperWorld> world(DOMWrapperWorld::create());
+    pageGroup->addUserStyleSheetToWorld(world.get(), sourceCode, WebURL(), 0, 0);
+}
+
 void WebViewImpl::removeAllUserContent()
 {
     PageGroup* pageGroup = PageGroup::pageGroup(pageGroupName);
