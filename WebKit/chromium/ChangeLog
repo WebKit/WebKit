@@ -1,3 +1,50 @@
+2010-04-15  Yury Semikhatsky  <yurys@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Support basic debugging capabilities including step in/over/out in v8
+        implementation of ScriptDebugServer.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37604
+
+        * WebKit.gypi:
+        * src/DebuggerAgent.h:
+        * src/DebuggerAgentImpl.cpp:
+        (WebKit::DebuggerAgentImpl::setDebuggerScriptSource):
+        * src/DebuggerAgentImpl.h:
+        * src/DebuggerAgentManager.cpp:
+        (WebKit::DebuggerAgentManager::hostDispatchHandler):
+        (WebKit::DebuggerAgentManager::debugAttach):
+        (WebKit::DebuggerAgentManager::debugDetach):
+        (WebKit::DebuggerAgentManager::setMessageLoopDispatchHandler):
+        * src/DebuggerAgentManager.h:
+        * src/InspectorFrontendClientImpl.cpp:
+        (WebKit::InspectorFrontendClientImpl::windowObjectCleared):
+        * src/js/DebuggerScript.js: Added.
+        (debuggerScriptConstructor.DebuggerScript.getAfterCompileScript):
+        (debuggerScriptConstructor.DebuggerScript.getScripts):
+        (debuggerScriptConstructor.DebuggerScript._formatScript):
+        (debuggerScriptConstructor.DebuggerScript.setBreakpoint):
+        (debuggerScriptConstructor.DebuggerScript.removeBreakpoint):
+        (debuggerScriptConstructor.DebuggerScript.currentCallFrame):
+        (debuggerScriptConstructor.DebuggerScript.stepIntoStatement):
+        (debuggerScriptConstructor.DebuggerScript.stepOverStatement):
+        (debuggerScriptConstructor.DebuggerScript.stepOutOfFunction):
+        (debuggerScriptConstructor.DebuggerScript.clearBreakpoints):
+        (debuggerScriptConstructor.DebuggerScript.setBreakpointsActivated):
+        (debuggerScriptConstructor.DebuggerScript._frameMirrorToJSCallFrame):
+        (debuggerScriptConstructor.DebuggerScript._webkitToV8LineNumber):
+        (debuggerScriptConstructor.DebuggerScript._v8ToWwebkitLineNumber):
+        (debuggerScriptConstructor):
+        * src/js/DevTools.js:
+        (WebInspector.loaded):
+        (.):
+        ():
+        * src/js/DevToolsHostStub.js:
+        (.RemoteDebuggerAgentStub.prototype.setDebuggerScriptSource):
+        * src/js/InspectorControllerImpl.js:
+        (devtools.InspectorBackendImpl):
+
 2010-04-15  Matt Perry  <mpcomplete@chromium.org>
 
         Reviewed by Dimitri Glazkov.

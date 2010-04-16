@@ -95,6 +95,7 @@ ScriptObject InjectedScriptHost::createInjectedScript(const String& source, Scri
     args.append(toJS(scriptState, globalObject, this));
     args.append(globalThisValue);
     args.append(jsNumber(scriptState, id));
+    args.append(jsString(scriptState, String("JSC")));
     JSValue result = JSC::call(scriptState, functionValue, callType, callData, globalThisValue, args);
     if (result.isObject())
         return ScriptObject(scriptState, result.getObject());

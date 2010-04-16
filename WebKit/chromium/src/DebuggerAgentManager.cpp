@@ -34,6 +34,7 @@
 #include "DebuggerAgentImpl.h"
 #include "Frame.h"
 #include "PageGroupLoadDeferrer.h"
+#include "ScriptDebugServer.h"
 #include "V8Proxy.h"
 #include "WebDevToolsAgentImpl.h"
 #include "WebFrameImpl.h"
@@ -71,6 +72,42 @@ private:
 
 } // namespace
 
+
+void DebuggerAgentManager::hostDispatchHandler(const Vector<WebCore::Page*>& pages)
+{
+    if (!s_messageLoopDispatchHandler)
+        return;
+
+    if (s_inHostDispatchHandler)
+        return;
+
+    s_inHostDispatchHandler = true;
+
+    Vector<WebViewImpl*> views;
+    // 1. Disable active objects and input events.
+    for (size_t i = 0; i < pages.size(); i++) {
+        WebCore::Page* page = pages[i];
+        WebViewImpl* view = WebViewImpl::fromPage(page);
+        s_pageDeferrers.set(view , new WebCore::PageGroupLoadDeferrer(page, true));
+        views.append(view);
+        view->setIgnoreInputEvents(true);
+    }
+
+    // 2. Process messages.
+    s_messageLoopDispatchHandler();
+
+    // 3. Bring things back.
+    for (Vector<WebViewImpl*>::iterator it = views.begin(); it != views.end(); ++it) {
+        if (s_pageDeferrers.contains(*it)) {
+            // The view was not closed during the dispatch.
+            (*it)->setIgnoreInputEvents(false);
+        }
+    }
+    deleteAllValues(s_pageDeferrers);
+    s_pageDeferrers.clear();
+
+    s_inHostDispatchHandler = false;
+}
 
 void DebuggerAgentManager::debugHostDispatchHandler()
 {
@@ -116,6 +153,9 @@ DebuggerAgentManager::AttachedAgentsMap* DebuggerAgentManager::s_attachedAgentsM
 
 void DebuggerAgentManager::debugAttach(DebuggerAgentImpl* debuggerAgent)
 {
+#if ENABLE(V8_SCRIPT_DEBUG_SERVER)
+    return;
+#endif
     if (!s_attachedAgentsMap) {
         s_attachedAgentsMap = new AttachedAgentsMap();
         v8::Debug::SetMessageHandler2(&DebuggerAgentManager::onV8DebugMessage);
@@ -128,6 +168,9 @@ void DebuggerAgentManager::debugAttach(DebuggerAgentImpl* debuggerAgent)
 
 void DebuggerAgentManager::debugDetach(DebuggerAgentImpl* debuggerAgent)
 {
+#if ENABLE(V8_SCRIPT_DEBUG_SERVER)
+    return;
+#endif
     if (!s_attachedAgentsMap) {
         ASSERT_NOT_REACHED();
         return;
@@ -249,6 +292,7 @@ void DebuggerAgentManager::executeDebuggerCommand(const String& command, int cal
 void DebuggerAgentManager::setMessageLoopDispatchHandler(WebDevToolsAgent::MessageLoopDispatchHandler handler)
 {
     s_messageLoopDispatchHandler = handler;
+    WebCore::ScriptDebugServer::setMessageLoopDispatchHandler(DebuggerAgentManager::hostDispatchHandler);
 }
 
 void DebuggerAgentManager::setHostId(WebFrameImpl* webframe, int hostId)

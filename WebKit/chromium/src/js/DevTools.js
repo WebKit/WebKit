@@ -183,11 +183,15 @@ WebInspector.loaded = function()
     Preferences.heapProfilerPresent = true;
     Preferences.debuggerAlwaysEnabled = true;
     Preferences.profilerAlwaysEnabled = true;
+    RemoteDebuggerAgent.setDebuggerScriptSource("(" + debuggerScriptConstructor + ")();");
+ 
     oldLoaded.call(this);
 
     InspectorFrontendHost.loaded();
 };
 
+
+if (!window.v8ScriptDebugServerEnabled) {
 
 /**
  * This override is necessary for adding script source asynchronously.
@@ -225,18 +229,6 @@ WebInspector.ScriptView.prototype.didResolveScriptSource_ = function()
 };
 
 
-/**
- * @param {string} type Type of the the property value("object" or "function").
- * @param {string} className Class name of the property value.
- * @constructor
- */
-WebInspector.UnresolvedPropertyValue = function(type, className)
-{
-    this.type = type;
-    this.className = className;
-};
-
-
 (function()
 {
     var oldShow = WebInspector.ScriptsPanel.prototype.show;
@@ -247,6 +239,47 @@ WebInspector.UnresolvedPropertyValue = function(type, className)
         oldShow.call(this);
     };
 })();
+
+
+(function () {
+var orig = InjectedScriptAccess.prototype.getProperties;
+InjectedScriptAccess.prototype.getProperties = function(objectProxy, ignoreHasOwnProperty, abbreviate, callback)
+{
+    if (objectProxy.isScope)
+        devtools.tools.getDebuggerAgent().resolveScope(objectProxy.objectId, callback);
+    else if (objectProxy.isV8Ref)
+        devtools.tools.getDebuggerAgent().resolveChildren(objectProxy.objectId, callback, false);
+    else
+        orig.apply(this, arguments);
+};
+})();
+
+
+(function()
+{
+InjectedScriptAccess.prototype.evaluateInCallFrame = function(callFrameId, code, objectGroup, callback)
+{
+    //TODO(pfeldman): remove once 49084 is rolled.
+    if (!callback)
+        callback = objectGroup;
+    devtools.tools.getDebuggerAgent().evaluateInCallFrame(callFrameId, code, callback);
+};
+})();
+
+
+(function()
+{
+var orig = InjectedScriptAccess.prototype.getCompletions;
+InjectedScriptAccess.prototype.getCompletions = function(expressionString, includeInspectorCommandLineAPI, callFrameId, reportCompletions)
+{
+    if (typeof callFrameId === "number")
+        devtools.tools.getDebuggerAgent().resolveCompletionsOnFrame(expressionString, callFrameId, reportCompletions);
+    else
+        return orig.apply(this, arguments);
+};
+})();
+
+}
 
 
 (function InterceptProfilesPanelEvents()
@@ -340,45 +373,6 @@ WebInspector.UIString = function(string)
         if (glassPane)
             glassPane.parentElement.removeChild(glassPane);
     };
-})();
-
-
-(function () {
-var orig = InjectedScriptAccess.prototype.getProperties;
-InjectedScriptAccess.prototype.getProperties = function(objectProxy, ignoreHasOwnProperty, abbreviate, callback)
-{
-    if (objectProxy.isScope)
-        devtools.tools.getDebuggerAgent().resolveScope(objectProxy.objectId, callback);
-    else if (objectProxy.isV8Ref)
-        devtools.tools.getDebuggerAgent().resolveChildren(objectProxy.objectId, callback, false);
-    else
-        orig.apply(this, arguments);
-};
-})();
-
-
-(function()
-{
-InjectedScriptAccess.prototype.evaluateInCallFrame = function(callFrameId, code, objectGroup, callback)
-{
-    //TODO(pfeldman): remove once 49084 is rolled.
-    if (!callback)
-        callback = objectGroup;
-    devtools.tools.getDebuggerAgent().evaluateInCallFrame(callFrameId, code, callback);
-};
-})();
-
-
-(function()
-{
-var orig = InjectedScriptAccess.prototype.getCompletions;
-InjectedScriptAccess.prototype.getCompletions = function(expressionString, includeInspectorCommandLineAPI, callFrameId, reportCompletions)
-{
-    if (typeof callFrameId === "number")
-        devtools.tools.getDebuggerAgent().resolveCompletionsOnFrame(expressionString, callFrameId, reportCompletions);
-    else
-        return orig.apply(this, arguments);
-};
 })();
 
 

@@ -55,6 +55,11 @@ RemoteDebuggerAgentStub.prototype.processDebugCommands = function()
 };
 
 
+RemoteDebuggerAgentStub.prototype.setDebuggerScriptSource = function(source)
+{
+};
+
+
 /**
  * @constructor
  */
