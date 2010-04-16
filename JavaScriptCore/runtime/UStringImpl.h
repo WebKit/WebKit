@@ -187,7 +187,7 @@ public:
     static PassRefPtr<UStringImpl> create(const UChar*, unsigned length);
     static PassRefPtr<UStringImpl> create(const char*, unsigned length);
     static PassRefPtr<UStringImpl> create(const char*);
-    static PassRefPtr<UStringImpl> create(PassRefPtr<SharedUChar>, const UChar*, unsigned length);
+    static PassRefPtr<UStringImpl> create(const UChar*, unsigned length, PassRefPtr<SharedUChar>);
     static PassRefPtr<UStringImpl> create(PassRefPtr<UStringImpl> rep, unsigned offset, unsigned length)
     {
         ASSERT(rep);

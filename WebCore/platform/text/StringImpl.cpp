@@ -28,7 +28,7 @@
 #include "AtomicString.h"
 #include "StringBuffer.h"
 #include "StringHash.h"
-#include <runtime/UString.h>
+#include <wtf/StdLibExtras.h>
 
 using namespace WTF;
 using namespace Unicode;
@@ -116,6 +116,13 @@ PassRefPtr<StringImpl> StringImpl::create(const char* string)
     if (!string)
         return empty();
     return create(string, strlen(string));
+}
+
+PassRefPtr<StringImpl> StringImpl::create(const UChar* characters, unsigned length, PassRefPtr<SharedUChar> sharedBuffer)
+{
+    ASSERT(characters);
+    ASSERT(minLengthToShare && length >= minLengthToShare);
+    return adoptRef(new StringImpl(characters, length, sharedBuffer));
 }
 
 SharedUChar* StringImpl::sharedBuffer()
@@ -898,24 +905,6 @@ PassRefPtr<StringImpl> StringImpl::adopt(StringBuffer& buffer)
         return empty();
     return adoptRef(new StringImpl(buffer.release(), length));
 }
-
-#if USE(JSC)
-PassRefPtr<StringImpl> StringImpl::create(const JSC::UString& str)
-{
-    if (SharedUChar* sharedBuffer = const_cast<JSC::UString*>(&str)->rep()->sharedBuffer())
-        return adoptRef(new StringImpl(str.data(), str.size(), sharedBuffer));
-    return StringImpl::create(str.data(), str.size());
-}
-
-JSC::UString StringImpl::ustring()
-{
-    SharedUChar* sharedBuffer = this->sharedBuffer();
-    if (sharedBuffer)
-        return JSC::UString::Rep::create(sharedBuffer, const_cast<UChar*>(m_data), m_length);
-
-    return JSC::UString(m_data, m_length);
-}
-#endif
 
 PassRefPtr<StringImpl> StringImpl::createWithTerminatingNullCharacter(const StringImpl& string)
 {

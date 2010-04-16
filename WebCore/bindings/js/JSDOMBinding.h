@@ -321,7 +321,7 @@ namespace WebCore {
             return jsEmptyString(exec);
 
         if (stringImpl->length() == 1 && stringImpl->characters()[0] <= 0xFF)
-            return jsString(exec, stringImpl->ustring());
+            return jsString(exec, stringToUString(s));
 
         JSStringCache& stringCache = currentWorld(exec)->m_stringCache;
         if (JSC::JSString* wrapper = stringCache.get(stringImpl))

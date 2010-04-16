@@ -127,7 +127,7 @@ PassRefPtr<UStringImpl> UStringImpl::create(const char* string)
     return create(string, strlen(string));
 }
 
-PassRefPtr<UStringImpl> UStringImpl::create(PassRefPtr<SharedUChar> sharedBuffer, const UChar* buffer, unsigned length)
+PassRefPtr<UStringImpl> UStringImpl::create(const UChar* buffer, unsigned length, PassRefPtr<SharedUChar> sharedBuffer)
 {
     if (!length)
         return empty();

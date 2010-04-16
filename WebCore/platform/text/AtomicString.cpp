@@ -295,7 +295,12 @@ AtomicStringImpl* AtomicString::find(const JSC::Identifier& identifier)
 
 AtomicString::operator UString() const
 {
-    return m_string.impl()->ustring();
+    StringImpl* impl = m_string.impl();
+    if (!impl)
+        return UString();
+    if (SharedUChar* sharedBuffer = impl->sharedBuffer())
+        return UString::Rep::create(impl->characters(), impl->length(), sharedBuffer);
+    return UString(impl->characters(), impl->length());
 }
 #endif
 

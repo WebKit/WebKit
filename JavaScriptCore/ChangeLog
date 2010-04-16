@@ -1,3 +1,18 @@
+2010-04-16  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 37730 - Remove JSC::UString dependencies from WebCore::StringImpl
+        (Following on from bug #37675).
+
+        Make the argument ordering for UStringImpl's constructor & create
+        methods match, when passed a shared buffer.
+
+        * JavaScriptCore.exp:
+        * runtime/UStringImpl.cpp:
+        (JSC::UStringImpl::create):
+        * runtime/UStringImpl.h:
+
 2010-04-15  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
