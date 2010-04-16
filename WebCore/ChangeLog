@@ -1,3 +1,15 @@
+2010-04-16  Jarkko Sakkinen  <jarkko.j.sakkinen@gmail.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] WebKit compilation fails with --3d-canvas
+        https://bugs.webkit.org/show_bug.cgi?id=37699 
+        
+        API for readPixels() has been changed. 
+
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3D::readPixels):
+
 2010-04-16  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Antti Koivisto.

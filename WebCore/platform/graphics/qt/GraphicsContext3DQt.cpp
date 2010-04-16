@@ -994,16 +994,14 @@ void GraphicsContext3D::polygonOffset(double factor, double units)
     glPolygonOffset(static_cast<float>(factor), static_cast<float>(units));
 }
 
-PassRefPtr<WebGLArray> GraphicsContext3D::readPixels(long x, long y, unsigned long width, unsigned long height, unsigned long format, unsigned long type)
+void GraphicsContext3D::readPixels(long x, long y, unsigned long width, unsigned long height, unsigned long format, unsigned long type, void* data)
 {
     m_internal->m_glWidget->makeCurrent();
     
     if (type != GraphicsContext3D::UNSIGNED_BYTE || format != GraphicsContext3D::RGBA)
-        return 0;
+        return;
         
-    RefPtr<WebGLUnsignedByteArray> array = WebGLUnsignedByteArray::create(width * height * 4);
-    glReadPixels(x, y, width, height, format, type, (GLvoid*) array->data());
-    return array;    
+    glReadPixels(x, y, width, height, format, type, (GLvoid*) data);
 }
 
 void GraphicsContext3D::releaseShaderCompiler()
