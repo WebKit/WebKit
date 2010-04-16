@@ -48,6 +48,41 @@ void WebGLProgram::_deleteObject(Platform3DObject object)
     context()->graphicsContext3D()->deleteProgram(object);
 }
 
+bool WebGLProgram::cacheActiveAttribLocations()
+{
+    m_activeAttribLocations.clear();
+    if (!object())
+        return false;
+    GraphicsContext3D* context3d = context()->graphicsContext3D();
+    int linkStatus;
+    context3d->getProgramiv(this, GraphicsContext3D::LINK_STATUS, &linkStatus);
+    if (!linkStatus)
+        return false;
+
+    int numAttribs = 0;
+    context3d->getProgramiv(this, GraphicsContext3D::ACTIVE_ATTRIBUTES, &numAttribs);
+    m_activeAttribLocations.resize(static_cast<size_t>(numAttribs));
+    for (int i = 0; i < numAttribs; ++i) {
+        ActiveInfo info;
+        context3d->getActiveAttrib(this, i, info);
+        m_activeAttribLocations[i] = context3d->getAttribLocation(this, info.name.charactersWithNullTermination());
+    }
+
+    return true;
+}
+
+int WebGLProgram::numActiveAttribLocations()
+{
+    return static_cast<int>(m_activeAttribLocations.size());
+}
+
+int WebGLProgram::getActiveAttribLocation(int index)
+{
+    if (index < 0 || index >= numActiveAttribLocations())
+        return -1;
+    return m_activeAttribLocations[static_cast<size_t>(index)];
+}
+
 }
 
 #endif // ENABLE(3D_CANVAS)

@@ -1,3 +1,19 @@
+2010-04-15  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Index validation code validates too many vertex attributes
+        https://bugs.webkit.org/show_bug.cgi?id=31892
+
+        * html/canvas/WebGLProgram.cpp:
+        (WebCore::WebGLProgram::cacheActiveAttribLocations): Cache active attribute locations for a program at linkProgram time.
+        (WebCore::WebGLProgram::getActiveAttribLocation): Get the cached attribute location.
+        (WebCore::WebGLProgram::numActiveAttribLocations): Get the number of cached attribute locations.
+        * html/canvas/WebGLProgram.h: Add attribute locations member.
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::validateRenderingState): Add logic not to validate those attributes that do not belong to the current program.
+        (WebCore::WebGLRenderingContext::linkProgram): Call cacheActiveAttribLocations().
+
 2010-04-16  Adam Roben  <aroben@apple.com>
 
         Don't assert when soft-linked libraries can't be found
