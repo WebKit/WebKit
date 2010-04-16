@@ -507,6 +507,8 @@
             'conditions': [
                 ['OS=="win"', {
                     'sources': [
+                        # FIXME: Port PopupMenuTest to Linux and Mac.
+                        'tests/PopupMenuTest.cpp',
                         'tests/TransparencyWinTest.cpp',
                         'tests/UniscribeHelperTest.cpp',
                     ],
