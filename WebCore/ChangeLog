@@ -1,3 +1,9 @@
+2010-04-16  Anders Carlsson  <andersca@apple.com>
+
+        Fix WebKit2 build.
+
+        * WebCore.base.exp:
+
 2010-04-16  Jay Civelli  <jcivelli@chromium.org>
 
         Reviewed by Dimitri Glazkov.
