@@ -1,3 +1,13 @@
+2010-04-16  Adam Roben  <aroben@apple.com>
+
+        Fix links to layout test results from build status pages
+
+        Reviewed by Mark Rowe.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (ExtractTestResults.finished): Prepend "/" on the URL of the test
+        results page so that it is treated as an absolute URL.
+
 2010-04-16  Tony Chang  <tony@chromium.org>
 
         Reviewed by Dimitri Glazkov.
