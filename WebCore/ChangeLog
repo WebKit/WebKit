@@ -1,3 +1,16 @@
+2010-04-15  Matt Perry  <mpcomplete@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Remove the check for the main frame's scheme when deciding which
+        v8 extensions to add to a script context. Instead, Chromium will
+        handle that check elsewhere to allow finer-grained control over
+        what APIs we expose to web pages.
+        https://bugs.webkit.org/show_bug.cgi?id=37681
+
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::createNewContext):
+
 2010-04-15  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Antti Koivisto.

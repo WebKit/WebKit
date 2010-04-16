@@ -331,7 +331,7 @@ v8::Persistent<v8::Context> V8DOMWindowShell::createNewContext(v8::Handle<v8::Ob
         // Note: we check the loader URL here instead of the document URL
         // because we might be currently loading an URL into a blank page.
         // See http://code.google.com/p/chromium/issues/detail?id=10924
-        if (extensions[i].scheme.length() > 0 && (extensions[i].scheme != m_frame->loader()->activeDocumentLoader()->url().protocol() || extensions[i].scheme != m_frame->page()->mainFrame()->loader()->activeDocumentLoader()->url().protocol()))
+        if (extensions[i].scheme.length() > 0 && (extensions[i].scheme != m_frame->loader()->activeDocumentLoader()->url().protocol()))
             continue;
 
         extensionNames[index++] = extensions[i].extension->name();
