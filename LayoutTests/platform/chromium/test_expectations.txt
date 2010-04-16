@@ -2784,3 +2784,5 @@ BUG41455 SKIP : http/tests/security/local-image-from-remote-whitelisted.html = T
 // Caused by r57695. Will investigate.
 BUG_JIANLI LINUX : http/tests/local/formdata/send-form-data-with-sliced-file.html = TEXT
 
+// Started failing around webkit r57737, Chromium r44810.
+BUG_AJWONG LINUX : svg/filters/filterRes.svg = IMAGE

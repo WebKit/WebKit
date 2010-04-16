@@ -1,3 +1,11 @@
+2010-04-16  Albert J. Wong  <ajwong@chromium.org>
+
+        Not reviewed. Fixing chromiumg build.
+
+        [chromium] filterRes.svg is consistently failing now. Marking as such.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-04-16  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
