@@ -1,5 +1,15 @@
 2010-04-16  Adam Roben  <aroben@apple.com>
 
+        Skip HTMLFrameSetElement-window-eventListener-attributes.html on SnowLeopard
+
+        It is crashing sometimes. <http://webkit.org/b/37720> tracks investigating this.
+
+        Rubber-stamped by Sam Weinig.
+
+        * platform/mac-snowleopard/Skipped:
+
+2010-04-16  Adam Roben  <aroben@apple.com>
+
         SKip xss-DENIED-mime-type-execute-as-html.html to see if it makes the
         http test stop timing out on Windows
 
