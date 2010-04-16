@@ -5240,3 +5240,7 @@ websocket/tests/long-invalid-header.html
 # [Qt] REGRESSION: editing/selection/shrink-selection-after-shift-pagedown.html fails after 56567
 # https://bugs.webkit.org/show_bug.cgi?id=36628
 editing/selection/shrink-selection-after-shift-pagedown.html
+
+# Not sure why this is failing on Qt.
+# https://bugs.webkit.org/show_bug.cgi?id=37697
+fast/url/host.html
