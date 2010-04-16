@@ -1,3 +1,9 @@
+2010-04-16  Adam Roben  <aroben@apple.com>
+
+        Fix typo from r55729
+
+        * platform/win/Skipped:
+
 2010-04-16  Albert J. Wong  <ajwong@chromium.org>
 
         Not reviewed. Fixing chromium build.
