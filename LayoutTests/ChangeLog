@@ -1,3 +1,11 @@
+2010-04-16  Andrew Scherkus  <scherkus@chromium.org>
+
+        Unreviewed, checking in Chromium baselines for media/video-seek-past-end-playing.html.
+
+        * platform/chromium-mac/media/video-seek-past-end-playing-expected.txt: Added.
+        * platform/chromium-win/media/video-seek-past-end-playing-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-04-16  Sergey Ulanov <sergeyu@chromium.org>
 
         Unreviewed, checking in baselines due to changes to Chromium's video scaling algorithm.

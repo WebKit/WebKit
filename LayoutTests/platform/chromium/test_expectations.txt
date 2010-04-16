@@ -762,7 +762,7 @@ BUG13907 : media/video-loop.html = PASS FAIL TIMEOUT
 
 // These tests need to be changed to not rely on setTimeout().
 BUG13907 SLOW WIN DEBUG : media/video-played-collapse.html = PASS FAIL
-BUG13907 : media/video-seek-past-end-playing.html = FAIL
+BUG13907 SLOW WIN DEBUG : media/video-seek-past-end-playing.html = PASS FAIL
 
 // We sometimes emit an error from the same source element twice.
 BUG13907 : media/video-source-error.html = PASS FAIL
