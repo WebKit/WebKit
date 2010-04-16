@@ -27,7 +27,7 @@
 #define DrawingAreaProxy_h
 
 #include "ArgumentEncoder.h"
-
+#include <WebCore/IntSize.h>
 #include <wtf/OwnPtr.h>
 
 namespace CoreIPC {
@@ -51,7 +51,7 @@ public:
     ~DrawingAreaProxy();
 
     void paint(HDC, RECT);
-    void resize(SIZE);
+    void setSize(const WebCore::IntSize&);
 
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder&);
 
@@ -63,11 +63,16 @@ public:
 
 private:
     void ensureBackingStore();
-    void drawUpdateChunkIntoBackingStore(UpdateChunk&);
+    void drawUpdateChunkIntoBackingStore(UpdateChunk*);
+    void didSetSize(const WebCore::IntSize&, UpdateChunk*);
 
     OwnPtr<HDC> m_backingStoreDC;
     OwnPtr<HBITMAP> m_backingStoreBitmap;
-    SIZE m_backingStoreSize;
+
+    bool m_isWaitingForDidSetFrameNotification;
+
+    WebCore::IntSize m_viewSize; // Size of the BackingStore as well.
+    WebCore::IntSize m_lastSetViewSize;
 
     WebView* m_webView;
 };

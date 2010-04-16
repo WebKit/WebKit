@@ -1,3 +1,40 @@
+2010-04-16  Sam Weinig  <weinig@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Make resizing responsive on Windows.
+
+        - Use the same waitFor logic as do for the Mac resizing
+          DrawingAreaUpdateChunk code.
+
+        * Shared/win/UpdateChunk.cpp:
+        (WebKit::UpdateChunk::UpdateChunk):
+        * Shared/win/UpdateChunk.h:
+         Add a constructor that only takes an IntRect and allocates
+         the shared memory mapping for you.
+        * UIProcess/win/DrawingAreaProxy.cpp:
+        (WebKit::DrawingAreaProxy::DrawingAreaProxy):
+        (WebKit::DrawingAreaProxy::ensureBackingStore):
+        (WebKit::DrawingAreaProxy::paint):
+        (WebKit::DrawingAreaProxy::drawUpdateChunkIntoBackingStore):
+        (WebKit::DrawingAreaProxy::setSize):
+        (WebKit::DrawingAreaProxy::didSetSize):
+        (WebKit::DrawingAreaProxy::didReceiveMessage):
+        * UIProcess/win/DrawingAreaProxy.h:
+        Perform wait in paint as we do on the mac.
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::onSizeEvent):
+        Change to use an IntSize.
+
+        * WebProcess/WebPage/win/DrawingAreaUpdateChunk.cpp:
+        (WebKit::DrawingAreaUpdateChunk::paintIntoUpdateChunk):
+        (WebKit::DrawingAreaUpdateChunk::display):
+        (WebKit::DrawingAreaUpdateChunk::setSize):
+        * WebProcess/WebPage/win/DrawingAreaUpdateChunk.h:
+        Specialize setSize() drawing and factor out painting
+        into a helper function.
+
 2010-04-16  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by David Hyatt.

@@ -38,6 +38,14 @@ UpdateChunk::UpdateChunk()
 {
 }
 
+UpdateChunk::UpdateChunk(const IntRect& frame)
+    : m_frame(frame)
+{
+    // Create our shared memory mapping.
+    unsigned memorySize = frame.height() * frame.width() * 4;
+    m_bitmapSharedMemory = ::CreateFileMapping(INVALID_HANDLE_VALUE, 0, PAGE_READWRITE, 0, memorySize, 0);
+}
+
 UpdateChunk::UpdateChunk(const IntRect& frame, HANDLE bitmapSharedMemory)
     : m_frame(frame)
     , m_bitmapSharedMemory(bitmapSharedMemory)

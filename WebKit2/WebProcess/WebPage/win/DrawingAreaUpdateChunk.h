@@ -41,6 +41,7 @@ namespace CoreIPC {
 
 namespace WebKit {
 
+class UpdateChunk;
 class WebPage;
 
 class DrawingAreaUpdateChunk : public DrawingArea {
@@ -58,6 +59,7 @@ public:
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder&);
 
 private:
+    void paintIntoUpdateChunk(UpdateChunk*);
     void setSize(const WebCore::IntSize&);
     void scheduleDisplay();
 

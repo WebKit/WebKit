@@ -74,6 +74,32 @@ void DrawingAreaUpdateChunk::setNeedsDisplay(const WebCore::IntRect& rect)
     scheduleDisplay();
 }
 
+void DrawingAreaUpdateChunk::paintIntoUpdateChunk(UpdateChunk* updateChunk)
+{
+    OwnPtr<HDC> hdc(::CreateCompatibleDC(0));
+
+    void* bits;
+    BitmapInfo bmp = BitmapInfo::createBottomUp(updateChunk->frame().size());
+    OwnPtr<HBITMAP> hbmp(::CreateDIBSection(0, &bmp, DIB_RGB_COLORS, &bits, updateChunk->memory(), 0));
+
+    HBITMAP hbmpOld = static_cast<HBITMAP>(::SelectObject(hdc.get(), hbmp.get()));
+    
+    GraphicsContext gc(hdc.get());
+    gc.save();
+    
+    // FIXME: Is this white fill needed?
+    RECT rect = updateChunk->frame();
+    ::FillRect(hdc.get(), &rect, (HBRUSH)::GetStockObject(WHITE_BRUSH));
+    gc.translate(-updateChunk->frame().x(), -updateChunk->frame().y());
+
+    m_webPage->drawRect(gc, updateChunk->frame());
+
+    gc.restore();
+
+    // Re-select the old HBITMAP
+    ::SelectObject(hdc.get(), hbmpOld);
+}
+
 void DrawingAreaUpdateChunk::display()
 {
     if (m_dirtyRect.isEmpty())
@@ -85,34 +111,8 @@ void DrawingAreaUpdateChunk::display()
     IntRect dirtyRect = m_dirtyRect;
     m_dirtyRect = IntRect();
 
-    OwnPtr<HDC> hdc(::CreateCompatibleDC(0));
-
-    // Create our shared memory mapping.
-    unsigned memorySize = dirtyRect.height() * dirtyRect.width() * 4;
-    HANDLE memory = ::CreateFileMapping(INVALID_HANDLE_VALUE, 0, PAGE_READWRITE, 0, memorySize, 0);
-
-    void* bits;
-    BitmapInfo bmp = BitmapInfo::createBottomUp(dirtyRect.size());
-    OwnPtr<HBITMAP> hbmp(::CreateDIBSection(0, &bmp, DIB_RGB_COLORS, &bits, memory, 0));
-
-    HBITMAP hbmpOld = static_cast<HBITMAP>(::SelectObject(hdc.get(), hbmp.get()));
-    
-    GraphicsContext gc(hdc.get());
-    gc.save();
-    
-    // FIXME: Is this white fill needed?
-    RECT rect = dirtyRect;
-    ::FillRect(hdc.get(), &rect, (HBRUSH)::GetStockObject(WHITE_BRUSH));
-    gc.translate(-dirtyRect.x(), -dirtyRect.y());
-
-    m_webPage->drawRect(gc, dirtyRect);
-
-    gc.restore();
-
-    // Re-select the old HBITMAP
-    ::SelectObject(hdc.get(), hbmpOld);
-
-    UpdateChunk updateChunk(dirtyRect, memory);
+    UpdateChunk updateChunk(dirtyRect);
+    paintIntoUpdateChunk(&updateChunk);
 
     WebProcess::shared().connection()->send(DrawingAreaProxyMessage::Update, m_webPage->pageID(), CoreIPC::In(updateChunk));
 
@@ -127,9 +127,22 @@ void DrawingAreaUpdateChunk::scheduleDisplay()
     m_displayTimer.startOneShot(0);
 }
 
-void DrawingAreaUpdateChunk::setSize(const WebCore::IntSize& size)
+void DrawingAreaUpdateChunk::setSize(const WebCore::IntSize& viewSize)
 {
-    m_webPage->setSize(size);
+    ASSERT_ARG(viewSize, !viewSize.isEmpty());
+
+    m_webPage->setSize(viewSize);
+
+    // Layout if necessary.
+    m_webPage->layoutIfNeeded();
+
+    // Create a new UpdateChunk and paint into it.
+    UpdateChunk updateChunk(IntRect(0, 0, viewSize.width(), viewSize.height()));
+    paintIntoUpdateChunk(&updateChunk);
+
+    m_displayTimer.stop();
+
+    WebProcess::shared().connection()->send(DrawingAreaProxyMessage::DidSetFrame, m_webPage->pageID(), CoreIPC::In(viewSize, updateChunk));
 }
 
 void DrawingAreaUpdateChunk::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder& arguments)

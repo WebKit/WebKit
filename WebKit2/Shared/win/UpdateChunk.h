@@ -38,6 +38,7 @@ namespace WebKit {
 class UpdateChunk {
 public:
     UpdateChunk();
+    UpdateChunk(const WebCore::IntRect&);
     UpdateChunk(const WebCore::IntRect&, HANDLE);
 
     const WebCore::IntRect& frame() const { return m_frame; }
