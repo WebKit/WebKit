@@ -1,5 +1,11 @@
 2010-04-16  Andrew Scherkus  <scherkus@chromium.org>
 
+        Unreviewed, fixing Chromium test_expectations.txt due to removed tests in r57292.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-04-16  Andrew Scherkus  <scherkus@chromium.org>
+
         Unreviewed, checking in Chromium baselines for media/video-seek-past-end-playing.html.
 
         * platform/chromium-mac/media/video-seek-past-end-playing-expected.txt: Added.

@@ -644,14 +644,6 @@ BUG24195 MAC : fast/repaint/bugzilla-6473.html = IMAGE
 // Tests requiring features not currently in test_shell.
 // -----------------------------------------------------------------
 
-// These layout tests to see if link colors change after visiting a page. They
-// does this by using layoutTestController.keepWebHistory() to turn on a
-// temporary web history. layoutTestController.keepWebHistory() is not
-// implemented in test shell.
-// This is a test tool problem, not a Chrome problem.
-BUG21888 : fast/history/clicked-link-is-visited.html = FAIL
-BUG21888 : fast/history/subframe-is-visited.html = FAIL
-
 // Implement layoutTestController.display()
 BUG8630 WIN LINUX : fast/repaint/body-background-image.html = FAIL
 
