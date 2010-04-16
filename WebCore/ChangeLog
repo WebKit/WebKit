@@ -1,3 +1,13 @@
+2010-04-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Make sure to update the current graphics context when calling out to AppKit.
+
+        * platform/mac/ThemeMac.mm:
+        (WebCore::paintCheckbox):
+        (WebCore::paintRadio):
+
 2010-04-15  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig & Oliver Hunt.
