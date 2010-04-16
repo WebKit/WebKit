@@ -1,3 +1,14 @@
+2010-04-16  Albert J. Wong  <ajwong@chromium.org>
+
+        Not reviewed. Build fix for chromium.
+
+        [chromium] Add in new baselines for chromium-linux since this test
+        fully passes on this platform.
+
+        * platform/chromium-linux/fast/url/host-expected.txt: Added.
+        * platform/chromium-linux/fast/url/path-expected.txt: Added.
+        * platform/chromium-linux/fast/url/standard-url-expected.txt: Added.
+
 2010-04-16  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Dan Bernstein.
