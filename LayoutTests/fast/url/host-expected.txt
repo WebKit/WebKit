@@ -1,0 +1,34 @@
+Canonicalization of host names.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL canonicalize('http://GoOgLe.CoM/') should be http://google.com/. Was http://GoOgLe.CoM/.
+FAIL canonicalize('http://Goo%20 goo%7C|.com/') should be http://goo%20%20goo%7C%7C.com/. Was http://Goo%20 goo%7C|.com/.
+FAIL canonicalize('http://GOO 　goo.com/') should be http://goo%20%20goo.com/. Was http://goo  goo.com/.
+PASS canonicalize('http://GOO​⁠﻿goo.com/') is 'http://googoo.com/'
+PASS canonicalize('http://www.foo。bar.com/') is 'http://www.foo.bar.com/'
+FAIL canonicalize('http://﷐zyx.com/') should be http://%EF%BF%BDzyx.com/. Was http:/.
+FAIL canonicalize('http://%ef%b7%90zyx.com/') should be http://%EF%BF%BDzyx.com/. Was http://%ef%b7%90zyx.com/.
+PASS canonicalize('http://Ｇｏ.com/') is 'http://go.com/'
+FAIL canonicalize('http://％４１.com/') should be http://a.com/. Was http://%41.com/.
+FAIL canonicalize('http://%ef%bc%85%ef%bc%94%ef%bc%91.com/') should be http://a.com/. Was http://%ef%bc%85%ef%bc%94%ef%bc%91.com/.
+PASS canonicalize('http://％００.com/') is 'http://%00.com/'
+FAIL canonicalize('http://%ef%bc%85%ef%bc%90%ef%bc%90.com/') should be http://%00.com/. Was http://%ef%bc%85%ef%bc%90%ef%bc%90.com/.
+PASS canonicalize('http://你好你好/') is 'http://xn--6qqa088eba/'
+FAIL canonicalize('http://%E4%BD%A0%E5%A5%BD你好/') should be http://xn--6qqa088eba/. Was http://xn--%e4%bd%a0%e5%a5%bd-5g72ap39l/.
+FAIL canonicalize('http://%zz%66%a/') should be http://%25zzf%25a/. Was http://%zz%66%a/.
+PASS canonicalize('http://%25/') is 'http://%25/'
+PASS canonicalize('http://hello%00/') is 'http://hello%00/'
+FAIL canonicalize('http://%30%78%63%30%2e%30%32%35%30.01/') should be http://192.168.0.1/. Was http://%30%78%63%30%2e%30%32%35%30.01/.
+FAIL canonicalize('http://%30%78%63%30%2e%30%32%35%30.01%2e/') should be http://192.168.0.1/. Was http://%30%78%63%30%2e%30%32%35%30.01%2e/.
+FAIL canonicalize('http://%3g%78%63%30%2e%30%32%35%30%2E.01/') should be http://%253gxc0.0250..01/. Was http://%3g%78%63%30%2e%30%32%35%30%2E.01/.
+FAIL canonicalize('http://192.168.0.1 hello/') should be http://192.168.0.1%20hello/. Was http://192.168.0.1 hello/.
+FAIL canonicalize('http://０Ｘｃ０．０２５０．０１/') should be http://192.168.0.1/. Was http://0xc0.0250.01/.
+PASS canonicalize('http://192.168.0.257/') is 'http://192.168.0.257/'
+PASS canonicalize('http://[google.com]/') is 'http://[google.com]/'
+FAIL canonicalize('http://т(/') should be http://xn--%28-7ed/. Was http://xn--(-8tb/.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
