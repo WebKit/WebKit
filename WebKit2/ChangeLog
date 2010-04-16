@@ -2,6 +2,17 @@
 
         Reviewed by Adam Roben.
 
+        Fix crash when trying to load an invalid URL.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadURL): Use constructor for ResourceRequest
+        that takes a KURL instead of the one that takes a String. The one
+        that takes a string expects a valid URL.
+
+2010-04-16  Sam Weinig  <weinig@apple.com>
+
+        Reviewed by Adam Roben.
+
         Make tooltips work. Thanks Adam!
 
         * UIProcess/win/WebView.cpp:

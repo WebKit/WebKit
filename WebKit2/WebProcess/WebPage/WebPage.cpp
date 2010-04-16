@@ -149,7 +149,7 @@ void WebPage::tryClose()
 
 void WebPage::loadURL(const String& url)
 {
-    m_mainFrame->coreFrame()->loader()->load(ResourceRequest(url), false);
+    m_mainFrame->coreFrame()->loader()->load(ResourceRequest(KURL(KURL(), url)), false);
 }
 
 void WebPage::stopLoading()
