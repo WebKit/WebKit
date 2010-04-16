@@ -1,3 +1,13 @@
+2010-04-15  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Must enable GL_VERTEX_PROGRAM_POINT_SIZE during initialization
+        https://bugs.webkit.org/show_bug.cgi?id=37178
+
+        * fast/canvas/webgl/point-size-expected.txt: Added.
+        * fast/canvas/webgl/point-size.html: Added.
+
 2010-04-15  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by Dmitry Titov.

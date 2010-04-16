@@ -381,6 +381,7 @@ bool WebGraphicsContext3DDefaultImpl::initialize(WebGraphicsContext3D::Attribute
     m_attributes = attributes;
     validateAttributes();
 
+    glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
     m_initialized = true;
     return true;
 }

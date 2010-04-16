@@ -1,3 +1,13 @@
+2010-04-15  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Must enable GL_VERTEX_PROGRAM_POINT_SIZE during initialization
+        https://bugs.webkit.org/show_bug.cgi?id=37178
+
+        * src/WebGraphicsContext3DDefaultImpl.cpp: Enable GL_VERTEX_PROGRAM_POINT_SIZE during initialization.
+        (WebKit::WebGraphicsContext3DDefaultImpl::initialize):
+
 2010-04-15  Albert J. Wong  <ajwong@chromium.org>
 
         Unreviewed, rolling out r57660.

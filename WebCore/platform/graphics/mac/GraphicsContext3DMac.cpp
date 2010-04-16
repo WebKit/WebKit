@@ -170,6 +170,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs)
             ::glGenRenderbuffersEXT(1, &m_multisampleDepthStencilBuffer);
     }
     
+    ::glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
     ::glClearColor(0, 0, 0, 0);
 }
 
