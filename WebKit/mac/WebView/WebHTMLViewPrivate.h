@@ -52,6 +52,9 @@
 - (void)paintHighlightForBox:(NSRect)boxRect onLine:(NSRect)lineRect behindText:(BOOL)text entireLine:(BOOL)line;
 @end
 
+extern const float _WebHTMLViewPrintingMinimumShrinkFactor;
+extern const float _WebHTMLViewPrintingMaximumShrinkFactor;
+
 @interface WebHTMLView (WebPrivate)
 
 + (NSArray *)supportedMIMETypes;

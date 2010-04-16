@@ -250,13 +250,13 @@ extern NSString *NSTextInputReplacementRangeAttributeName;
 // print in IE and Camino. This lets them use fewer sheets than they
 // would otherwise, which is presumably why other browsers do this.
 // Wide pages will be scaled down more than this.
-#define PrintingMinimumShrinkFactor     1.25f
+const float _WebHTMLViewPrintingMinimumShrinkFactor = 1.25;
 
 // This number determines how small we are willing to reduce the page content
 // in order to accommodate the widest line. If the page would have to be
 // reduced smaller to make the widest line fit, we just clip instead (this
 // behavior matches MacIE and Mozilla, at least)
-#define PrintingMaximumShrinkFactor     2.0f
+const float _WebHTMLViewPrintingMaximumShrinkFactor = 2;
 
 // This number determines how short the last printed page of a multi-page print session
 // can be before we try to shrink the scale in order to reduce the number of pages, and
@@ -2207,8 +2207,8 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     // If we are a frameset just print with the layout we have onscreen, otherwise relayout
     // according to the page width.
     if (!frame->document() || !frame->document()->isFrameSet()) {
-        minLayoutWidth = shrinkToFit ? pageWidth * PrintingMinimumShrinkFactor : pageWidth;
-        maxLayoutWidth = shrinkToFit ? pageWidth * PrintingMaximumShrinkFactor : pageWidth;
+        minLayoutWidth = shrinkToFit ? pageWidth * _WebHTMLViewPrintingMinimumShrinkFactor : pageWidth;
+        maxLayoutWidth = shrinkToFit ? pageWidth * _WebHTMLViewPrintingMaximumShrinkFactor : pageWidth;
     }
     [self _setPrinting:YES minimumPageWidth:minLayoutWidth maximumPageWidth:maxLayoutWidth adjustViewSize:YES];
 
@@ -3855,7 +3855,7 @@ static BOOL isInPasswordField(Frame* coreFrame)
     }
 
     float userScaleFactor = [printOperation _web_pageSetupScaleFactor];
-    float maxShrinkToFitScaleFactor = 1.0f / PrintingMaximumShrinkFactor;
+    float maxShrinkToFitScaleFactor = 1.0f / _WebHTMLViewPrintingMaximumShrinkFactor;
     float shrinkToFitScaleFactor = [printOperation _web_availablePaperWidth] / viewWidth;
     float shrinkToAvoidOrphan = _private->avoidingPrintOrphan ? (1.0f / PrintingOrphanShrinkAdjustment) : 1.0f;
     return userScaleFactor * max(maxShrinkToFitScaleFactor, shrinkToFitScaleFactor) * shrinkToAvoidOrphan;
