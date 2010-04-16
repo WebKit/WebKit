@@ -50,9 +50,7 @@ RunLoop::~RunLoop()
 
 void RunLoop::run()
 {
-    ASSERT(m_runLoop == CFRunLoopGetCurrent());
-    
-    if (m_runLoop == mainRunLoop()->m_runLoop) {
+    if (current() == main()) {
         // Use -[NSApplication run] for the main run loop.
         [NSApp run];
     } else {
@@ -65,7 +63,7 @@ void RunLoop::stop()
 {
     ASSERT(m_runLoop == CFRunLoopGetCurrent());
     
-    if (m_runLoop == mainRunLoop()->m_runLoop) {
+    if (m_runLoop == main()->m_runLoop) {
         [NSApp stop:nil];
         NSEvent *event = [NSEvent otherEventWithType:NSApplicationDefined
                                             location:NSMakePoint(0, 0)

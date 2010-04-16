@@ -26,6 +26,7 @@
 #include "RunLoop.h"
 
 #include "WorkItem.h"
+#include <wtf/StdLibExtras.h>
 
 static RunLoop* s_mainRunLoop;
 
@@ -33,10 +34,16 @@ void RunLoop::initializeMainRunLoop()
 {
     if (s_mainRunLoop)
         return;
-    s_mainRunLoop = new RunLoop;
+    s_mainRunLoop = RunLoop::current();
 }
 
-RunLoop* RunLoop::mainRunLoop()
+RunLoop* RunLoop::current()
+{
+    DEFINE_STATIC_LOCAL(WTF::ThreadSpecific<RunLoop>, runLoopData, ());
+    return &*runLoopData;
+}
+
+RunLoop* RunLoop::main()
 {
     ASSERT(s_mainRunLoop);
     return s_mainRunLoop;

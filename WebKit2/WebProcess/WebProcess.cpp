@@ -87,7 +87,7 @@ void WebProcess::removeWebPage(uint64_t pageID)
 bool WebProcess::isSeparateProcess() const
 {
     // If we're running on the main run loop, we assume that we're in a separate process.
-    return m_runLoop == RunLoop::mainRunLoop();
+    return m_runLoop == RunLoop::main();
 }
  
 void WebProcess::shutdown()

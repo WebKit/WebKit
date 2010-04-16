@@ -62,14 +62,14 @@ int main(int argc, char** argv)
     RunLoop::initializeMainRunLoop();
     
     // Create the connection.
-    WebProcess::shared().initialize(serverPort, RunLoop::mainRunLoop());
+    WebProcess::shared().initialize(serverPort, RunLoop::main());
     
     [pool drain];
 
      // Initialize AppKit.
     [NSApplication sharedApplication];
 
-    RunLoop::mainRunLoop()->run();
+    RunLoop::run();
 
     // FIXME: Do more cleanup here.
 

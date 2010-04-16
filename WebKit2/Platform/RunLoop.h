@@ -28,6 +28,7 @@
 
 #include <memory>
 #include <wtf/HashMap.h>
+#include <wtf/ThreadSpecific.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
 
@@ -37,14 +38,13 @@ class RunLoop {
 public:
     // Must be called from the main thread.
     static void initializeMainRunLoop();
-    static RunLoop* mainRunLoop();
 
-    RunLoop();
-    ~RunLoop();
+    static RunLoop* current();
+    static RunLoop* main();
 
     void scheduleWork(std::auto_ptr<WorkItem>);
     
-    void run();
+    static void run();
     void stop();
 
     class TimerBase {
@@ -95,6 +95,11 @@ public:
     };
 
 private:
+    friend class WTF::ThreadSpecific<RunLoop>;
+
+    RunLoop();
+    ~RunLoop();
+    
     void performWork();
     void wakeUp();
 

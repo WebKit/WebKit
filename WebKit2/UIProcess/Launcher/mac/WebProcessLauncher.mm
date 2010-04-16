@@ -49,12 +49,11 @@ static void* webThreadBody(void* context)
     InitWebCoreSystemInterface();
     JSC::initializeThreading();
 
-    RunLoop runLoop;
-    WebProcess::shared().initialize(serverPort, &runLoop);
+    WebProcess::shared().initialize(serverPort, RunLoop::current());
 
     [pool drain];
 
-    runLoop.run();
+    RunLoop::current()->run();
 
     return 0;
 }
@@ -70,7 +69,7 @@ ProcessInfo launchWebProcess(CoreIPC::Connection::Client* client, ProcessModel p
     // Insert a send right so we can send to it.
     mach_port_insert_right(mach_task_self(), listeningPort, listeningPort, MACH_MSG_TYPE_MAKE_SEND);
 
-    info.connection = CoreIPC::Connection::createServerConnection(listeningPort, client, RunLoop::mainRunLoop());
+    info.connection = CoreIPC::Connection::createServerConnection(listeningPort, client, RunLoop::main());
     info.connection->open();
 
     switch (processModel) {

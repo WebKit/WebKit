@@ -34,7 +34,7 @@ static const double kResponsivenessTimeout = 3;
 ResponsivenessTimer::ResponsivenessTimer(ResponsivenessTimer::Client* client)
     : m_client(client)
     , m_isResponsive(true)
-    , m_timer(RunLoop::mainRunLoop(), this, &ResponsivenessTimer::timerFired)
+    , m_timer(RunLoop::main(), this, &ResponsivenessTimer::timerFired)
 {
 }
 

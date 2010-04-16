@@ -1,3 +1,28 @@
+2010-04-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by David Hyatt.
+
+        Make run loops be allocated as thread specific data.
+        https://bugs.webkit.org/show_bug.cgi?id=37723
+
+        * Platform/RunLoop.cpp:
+        (RunLoop::initializeMainRunLoop):
+        (RunLoop::current):
+        (RunLoop::main):
+        * Platform/RunLoop.h:
+        * Platform/mac/RunLoopMac.mm:
+        (RunLoop::run):
+        (RunLoop::stop):
+        * UIProcess/Launcher/mac/WebProcessLauncher.mm:
+        (WebKit::webThreadBody):
+        (WebKit::launchWebProcess):
+        * UIProcess/ResponsivenessTimer.cpp:
+        (WebKit::ResponsivenessTimer::ResponsivenessTimer):
+        * WebProcess/Launching/mac/WebProcessMain.mm:
+        (main):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::isSeparateProcess):
+
 2010-04-16  Sam Weinig  <weinig@apple.com>
 
         Reviewed by Adam Roben.
