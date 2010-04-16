@@ -25,10 +25,11 @@
 
 #include "WebPage.h"
 
+#include <WebCore/FontRenderingMode.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/Page.h>
 #include <WebCore/PlatformKeyboardEvent.h>
-
+#include <WebCore/Settings.h>
 #include <WinUser.h>
 
 using namespace WebCore;
@@ -37,6 +38,7 @@ namespace WebKit {
 
 void WebPage::platformInitialize()
 {
+    m_page->settings()->setFontRenderingMode(AlternateRenderingMode);
 }
 
 static const unsigned CtrlKey = 1 << 0;

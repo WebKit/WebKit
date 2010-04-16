@@ -2,6 +2,16 @@
 
         Reviewed by Adam Roben.
 
+        Use GDI text rendering on Windows by default.
+
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        (WebKit::WebPage::platformInitialize): Use the AlternateRenderingMode
+        setting.
+
+2010-04-16  Sam Weinig  <weinig@apple.com>
+
+        Reviewed by Adam Roben.
+
         Fix crash when trying to load an invalid URL.
 
         * WebProcess/WebPage/WebPage.cpp:
