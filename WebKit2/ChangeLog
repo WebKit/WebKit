@@ -1,3 +1,11 @@
+2010-04-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Don't optimize debug builds.
+
+        * WebKit2.xcodeproj/project.pbxproj: Define GCC_OPTIMIZATION_LEVEL correctly.
+
 2010-04-16  Anders Carlsson  <andersca@apple.com>
 
         Fix build.
