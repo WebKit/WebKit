@@ -1,3 +1,29 @@
+2010-04-15  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Antti Koivisto.
+
+        No default selection for <select multiple> menu lists.
+        https://bugs.webkit.org/show_bug.cgi?id=37530
+
+        Manual test: manual-tests/no-listbox-rendering.html
+
+        For menu lists, if the selection is not indicated by the html file, the first <option> will be
+        selected after loading the page or reseting the form. On the other hand listboxes may have no
+        element selected after loading the page or reseting the form.
+
+        When NO_LISTBOX_RENDERING is enabled listboxes becomes menu lists. Those <select multiple>
+        that did not have selected elements, now being menu lists, will have the first <option>
+        selected. That is the behavior difference that this patch corrects.
+
+        When NO_LISTBOX_RENDERING is enabled usesMenuList() always returns true then usesMenuList() cannot
+        be used to decide about initial selection of the elements. This patch replaces (usesMenuLists())
+        by (!multiple && size <= 1) where initial selection is considered.
+
+        * dom/SelectElement.cpp:
+        (WebCore::SelectElement::recalcListItems):
+        (WebCore::SelectElement::reset):
+        * manual-tests/no-listbox-rendering.html: Added.
+
 2010-04-15  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Dimitri Glazkov.
