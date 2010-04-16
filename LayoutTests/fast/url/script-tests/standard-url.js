@@ -3,7 +3,8 @@ description("Canonicalization of standard URLs");
 cases = [ 
   ["http://www.google.com/foo?bar=baz#", "http://www.google.com/foo?bar=baz#"],
   ["http://[www.google.com]/", "http://[www.google.com]/"],
-  ["ht\ttp:@www.google.com:80/;p?#", "ht%09tp://www.google.com:80/;p?#"],
+  // Disabled because whitespace gets treated different in this API.
+  // ["ht\ttp:@www.google.com:80/;p?#", "ht%09tp://www.google.com:80/;p?#"],
   ["http:////////user:@google.com:99?foo", "http://user@google.com:99/?foo"],
   // Disabled because this gets treated as a relative URL.
   // ["www.google.com", ":www.google.com/"],
@@ -14,7 +15,7 @@ cases = [
   // Backslashes should get converted to forward slashes.
   ["http:\\\\\\\\www.google.com\\\\foo", "http://www.google.com/foo"],
   // Busted refs shouldn't make the whole thing fail.
-  ["http://www.google.com/asdf#\xc2", "http://www.google.com/asdf#\xef\xbf\xbd"],
+  ["http://www.google.com/asdf#\\ud800", "http://www.google.com/asdf#\\uFFFD"],
   // Basic port tests.
   ["http://foo:80/", "http://foo/"],
   ["http://foo:81/", "http://foo:81/"],

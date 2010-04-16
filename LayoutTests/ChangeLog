@@ -2,6 +2,29 @@
 
         Reviewed by Jeremy Orlow.
 
+        Clean up unicode URL tests cases
+        https://bugs.webkit.org/show_bug.cgi?id=37678
+
+        When we started writing these URL tests, I didn't understand how to
+        handle the unicodes test cases properly.  With a bunch of help (and a
+        pointer to http://rishida.net/tools/conversion/), I've fixed these to
+        be more or less faithful to the original unit tests.
+
+        * fast/url/anchor-expected.txt:
+        * fast/url/query-expected.txt:
+        * fast/url/script-tests/anchor.js:
+        * fast/url/script-tests/query.js:
+        * fast/url/script-tests/standard-url.js:
+        * fast/url/script-tests/trivial.js:
+            - Updated this test to use the shared implementations
+            - Also, removed assumptions about the base URL.
+        * fast/url/standard-url-expected.txt:
+        * fast/url/trivial-expected.txt:
+
+2010-04-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Jeremy Orlow.
+
         Add URL parsing tests for host names
         https://bugs.webkit.org/show_bug.cgi?id=37666
 
