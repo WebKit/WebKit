@@ -1,5 +1,15 @@
 2010-04-16  Albert J. Wong  <ajwong@chromium.org>
 
+        Not reviewed. Fixing chromium build.
+
+        [chromium] Upstream test_expectations.txt changes from chromium.
+        Mark letter_spacing.html as consistently failing for mac.
+        Fixing a syntax error in the test_expectations.txt file.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-04-16  Albert J. Wong  <ajwong@chromium.org>
+
         Not reviewed. Fixing chromiumg build.
 
         [chromium] filterRes.svg is consistently failing now. Marking as such.

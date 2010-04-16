@@ -1321,7 +1321,7 @@ BUG23498 MAC : css1/pseudo/anchor.html = IMAGE
 BUG23498 MAC : css1/pseudo/firstletter.html = IMAGE
 BUG23498 MAC : css1/pseudo/firstline.html = IMAGE
 BUG23498 MAC : css1/pseudo/multiple_pseudo_elements.html = IMAGE
-BUG23498 MAC : css1/text_properties/letter_spacing.html = IMAGE
+BUG23498 MAC : css1/text_properties/letter_spacing.html = IMAGE+TEXT IMAGE
 BUG23498 MAC : css1/text_properties/line_height.html = IMAGE
 BUG23498 MAC : css1/text_properties/text_decoration.html = IMAGE
 BUG23498 MAC : css1/text_properties/text_indent.html = IMAGE
@@ -2729,7 +2729,7 @@ BUG38704 WIN RELEASE: svg/text/text-text-06-t.svg = CRASH PASS
 BUG38706 : svg/custom/deep-dynamic-updates.svg = IMAGE+TEXT PASS
 
 // Caused by http://trac.webkit.org/changeset/56288/
-BUG_JSCHUH WIN LINUX : svg/filters/filterRes.svg = IMAGE
+BUG_JSCHUH WIN LINUX : svg/filters/filterRes.svg = IMAGE IMAGE+TEXT
 
 // Caused by http://trac.webkit.org/changeset/56394.
 BUG_JAPHET WIN : http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch.html = TEXT
@@ -2784,5 +2784,10 @@ BUG41455 SKIP : http/tests/security/local-image-from-remote-whitelisted.html = T
 // Caused by r57695. Will investigate.
 BUG_JIANLI LINUX : http/tests/local/formdata/send-form-data-with-sliced-file.html = TEXT
 
-// Started failing around webkit r57737, Chromium r44810.
-BUG_AJWONG LINUX : svg/filters/filterRes.svg = IMAGE
+// Failing with webkit roll 57659 -> 57677.
+BUGAJWONG LINUX DEBUG : fast/canvas/toDataURL-noData.html = CRASH
+BUGAJWONG WIN LINUX : fast/backgrounds/svg-as-background-1.html = IMAGE PASS
+BUGAJWONG WIN LINUX : fast/backgrounds/svg-as-background-3.html = IMAGE PASS
+BUGAJWONG LINUX : svg/text/text-intro-05-t.svg = IMAGE PASS
+BUGAJWONG LINUX : svg/text/text-text-07-t.svg = IMAGE PASS
+BUGAJWONG LINUX : svg/text/text-tselect-02-f.svg = IMAGE PASS
