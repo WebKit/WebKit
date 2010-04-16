@@ -1,3 +1,12 @@
+2010-04-16  Albert J. Wong  <ajwong@chromium.org>
+
+        Not reviewed. Build fix.
+
+        [chromium] Compile fix. Missing include header, and missing type conversion.
+
+        * src/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3DInternal::beginPaint):
+
 2010-04-16  Jarkko Sakkinen  <jarkko.j.sakkinen@gmail.com>
  
         Reviewed by Simon Hausmann.

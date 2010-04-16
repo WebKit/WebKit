@@ -57,6 +57,7 @@
 
 #include <stdio.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
 
 #if PLATFORM(CG)
@@ -402,7 +403,7 @@ void GraphicsContext3DInternal::beginPaint(WebGLRenderingContext* context)
         // We need to draw the resizing bitmap into the canvas's backing store.
         SkCanvas canvas(*canvasBitmap);
         SkRect dst;
-        dst.set(0, 0, canvasBitmap->width(), canvasBitmap->height());
+        dst.set(SkIntToScalar(0), SkIntToScalar(0), canvasBitmap->width(), canvasBitmap->height());
         canvas.drawBitmapRect(m_resizingBitmap, 0, dst);
     }
 #elif PLATFORM(CG)
