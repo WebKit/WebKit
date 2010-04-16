@@ -2,6 +2,20 @@
 
         Not reviewed. Build fix for chromium.
 
+        [chromium] Add in new baselines for chromium-mac and chromium-win
+        also since this test there as well.
+
+        * platform/chromium-mac/fast/url/host-expected.txt: Copied from LayoutTests/platform/chromium-linux/fast/url/host-expected.txt.
+        * platform/chromium-mac/fast/url/path-expected.txt: Copied from LayoutTests/platform/chromium-linux/fast/url/path-expected.txt.
+        * platform/chromium-mac/fast/url/standard-url-expected.txt:
+        * platform/chromium-win/fast/url/host-expected.txt: Copied from LayoutTests/platform/chromium-linux/fast/url/host-expected.txt.
+        * platform/chromium-win/fast/url/path-expected.txt: Copied from LayoutTests/platform/chromium-linux/fast/url/path-expected.txt.
+        * platform/chromium-win/fast/url/standard-url-expected.txt:
+
+2010-04-16  Albert J. Wong  <ajwong@chromium.org>
+
+        Not reviewed. Build fix for chromium.
+
         [chromium] Add in new baselines for chromium-linux since this test
         fully passes on this platform.
 

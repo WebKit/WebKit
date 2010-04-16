@@ -5,14 +5,13 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS canonicalize('http://www.google.com/foo?bar=baz#') is 'http://www.google.com/foo?bar=baz#'
 PASS canonicalize('http://[www.google.com]/') is 'http://[www.google.com]/'
-FAIL canonicalize('ht	tp:@www.google.com:80/;p?#') should be ht%09tp://www.google.com:80/;p?#. Was http://www.google.com/;p?#.
 PASS canonicalize('http:////////user:@google.com:99?foo') is 'http://user@google.com:99/?foo'
 PASS canonicalize('http://192.0x00A80001') is 'http://192.168.0.1/'
 PASS canonicalize('http://www/foo%2Ehtml') is 'http://www/foo.html'
 PASS canonicalize('http://user:pass@/') is 'http://user:pass@/'
 PASS canonicalize('http://%25DOMAIN:foobar@foodomain.com/') is 'http://%25DOMAIN:foobar@foodomain.com/'
 PASS canonicalize('http:\\\\www.google.com\\foo') is 'http://www.google.com/foo'
-FAIL canonicalize('http://www.google.com/asdf#Â') should be http://www.google.com/asdf#ï¿½. Was http://www.google.com/asdf#Â.
+PASS canonicalize('http://www.google.com/asdf#\ud800') is 'http://www.google.com/asdf#\uFFFD'
 PASS canonicalize('http://foo:80/') is 'http://foo/'
 PASS canonicalize('http://foo:81/') is 'http://foo:81/'
 PASS canonicalize('httpa://foo:80/') is 'httpa://foo:80/'
