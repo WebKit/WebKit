@@ -30,6 +30,7 @@
 #include "WebGLRenderingContext.h"
 
 #include "CanvasPixelArray.h"
+#include "FrameView.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
 #include "ImageBuffer.h"
@@ -73,7 +74,9 @@ private:
 
 PassOwnPtr<WebGLRenderingContext> WebGLRenderingContext::create(HTMLCanvasElement* canvas, WebGLContextAttributes* attrs)
 {
-    OwnPtr<GraphicsContext3D> context(GraphicsContext3D::create(attrs->attributes()));
+    HostWindow* hostWindow = canvas->document()->view()->root()->hostWindow();
+    OwnPtr<GraphicsContext3D> context(GraphicsContext3D::create(attrs->attributes(), hostWindow));
+
     if (!context)
         return 0;
         

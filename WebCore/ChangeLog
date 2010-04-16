@@ -1,4 +1,27 @@
 2010-04-16  Jarkko Sakkinen  <jarkko.j.sakkinen@gmail.com>
+ 
+        Reviewed by Simon Hausmann.
+ 
+        [Qt] WebGL is not visible when QGLWidget viewport is used
+        https://bugs.webkit.org/show_bug.cgi?id=37070
+ 
+        Added HostWindow parameter to the constructor of GraphicsContext3D.
+        Shared OpenGL context is initialized with parent QGLWidget.
+ 
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::create):
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/mac/GraphicsContext3DMac.cpp:
+        (WebCore::GraphicsContext3D::create):
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3DInternal::GraphicsContext3DInternal):
+        (WebCore::GraphicsContext3DInternal::~GraphicsContext3DInternal):
+        (WebCore::GraphicsContext3DInternal::getOwnerGLWidget):
+        (WebCore::GraphicsContext3D::create):
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+
+2010-04-16  Jarkko Sakkinen  <jarkko.j.sakkinen@gmail.com>
 
         Reviewed by Simon Hausmann.
 

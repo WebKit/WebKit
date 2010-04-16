@@ -23,8 +23,10 @@
 #include "CanvasObject.h"
 #include "GraphicsContext.h"
 #include "HTMLCanvasElement.h"
+#include "HostWindow.h"
 #include "ImageBuffer.h"
 #include "NotImplemented.h"
+#include "QWebPageClient.h"
 #include "WebGLActiveInfo.h"
 #include "WebGLArray.h"
 #include "WebGLBuffer.h"
@@ -37,6 +39,7 @@
 #include "WebGLShader.h"
 #include "WebGLTexture.h"
 #include "WebGLUnsignedByteArray.h"
+#include <QAbstractScrollArea>
 #include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
 
@@ -147,7 +150,7 @@ typedef void (APIENTRY* glVertexAttribPointerType) (GLuint, GLint, GLenum, GLboo
 
 class GraphicsContext3DInternal {
 public:
-    GraphicsContext3DInternal(GraphicsContext3D::Attributes attrs);
+    GraphicsContext3DInternal(GraphicsContext3D::Attributes attrs, HostWindow* hostWindow);
     ~GraphicsContext3DInternal();
 
     bool isContextValid() { return m_contextValid; }
@@ -255,6 +258,7 @@ public:
 
 private:
 
+    QGLWidget* getOwnerGLWidget(QWebPageClient* webPageClient);
     void* getProcAddress(const String& proc);
     bool m_contextValid;
 };
@@ -265,7 +269,7 @@ private:
 #define GET_PROC_ADDRESS(Proc) reinterpret_cast<Proc##Type>(getProcAddress(#Proc));
 #endif
  
-GraphicsContext3DInternal::GraphicsContext3DInternal(GraphicsContext3D::Attributes attrs)
+GraphicsContext3DInternal::GraphicsContext3DInternal(GraphicsContext3D::Attributes attrs, HostWindow* hostWindow)
     : m_attrs(attrs)
     , m_glWidget(0)
     , m_texture(0)
@@ -274,24 +278,33 @@ GraphicsContext3DInternal::GraphicsContext3DInternal(GraphicsContext3D::Attribut
     , m_depthBuffer(0)
     , m_contextValid(true)
 {
-    m_attrs.alpha = true;
-    m_attrs.depth = true;
-    m_attrs.stencil = false;
-    m_attrs.antialias = false;
-    m_attrs.premultipliedAlpha = true;
+    QWebPageClient* webPageClient = hostWindow->platformPageClient();
+    QGLWidget* ownerGLWidget  = getOwnerGLWidget(webPageClient);
 
-    QGLFormat format;
+    if (ownerGLWidget) 
+        m_glWidget = new QGLWidget(0, ownerGLWidget);
+    else {
+        QGLFormat format;
+        format.setDepth(true);
+        format.setSampleBuffers(true);
+        format.setStencil(false);
 
-    format.setDepth(true);
-    format.setSampleBuffers(true);
-    format.setStencil(false);
+        m_glWidget = new QGLWidget(format);
+    }
 
-    m_glWidget = new QGLWidget(format);
     if (!m_glWidget->isValid()) {
         LOG_ERROR("GraphicsContext3D: QGLWidget does not have a valid context");
         m_contextValid = false;
         return;
     }
+ 
+    QGLFormat format = m_glWidget->format();
+
+    m_attrs.alpha = format.alpha();
+    m_attrs.depth = format.depth();
+    m_attrs.stencil = format.stencil();
+    m_attrs.antialias = false;
+    m_attrs.premultipliedAlpha = true;
 
     m_glWidget->makeCurrent();
 
@@ -431,6 +444,16 @@ GraphicsContext3DInternal::~GraphicsContext3DInternal()
     m_glWidget = 0;
 }
 
+QGLWidget* GraphicsContext3DInternal::getOwnerGLWidget(QWebPageClient* webPageClient)
+{
+    QAbstractScrollArea* scrollArea = qobject_cast<QAbstractScrollArea*>(webPageClient->ownerWidget());
+
+    if (scrollArea) 
+        return qobject_cast<QGLWidget*>(scrollArea->viewport());
+
+    return 0;
+}
+
 void* GraphicsContext3DInternal::getProcAddress(const String& proc)
 {
     String ext[3] = { "", "ARB", "EXT" };
@@ -448,14 +471,14 @@ void* GraphicsContext3DInternal::getProcAddress(const String& proc)
     return 0;
 }
 
-PassOwnPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3D::Attributes attrs)
+PassOwnPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3D::Attributes attrs, HostWindow* hostWindow)
 {
-    OwnPtr<GraphicsContext3D> context(new GraphicsContext3D(attrs));
+    OwnPtr<GraphicsContext3D> context(new GraphicsContext3D(attrs, hostWindow));
     return context->m_internal ? context.release() : 0;
 }
 
-GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs)
-    : m_internal(new GraphicsContext3DInternal(attrs))
+GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWindow* hostWindow)
+    : m_internal(new GraphicsContext3DInternal(attrs, hostWindow))
 {
     if (!m_internal->isContextValid()) 
         m_internal = 0;

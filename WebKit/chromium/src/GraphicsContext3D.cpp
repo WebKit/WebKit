@@ -1048,22 +1048,23 @@ rt GraphicsContext3D::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6, t7 a7, t8 a
     return m_internal->name(a1, a2, a3, a4, a5, a6, a7, a8, a9);   \
 }
 
-GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs)
+GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWindow* hostWindow)
 {
+    UNUSED_PARAM(hostWindow);
 }
 
 GraphicsContext3D::~GraphicsContext3D()
 {
 }
 
-PassOwnPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3D::Attributes attrs)
+PassOwnPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3D::Attributes attrs, HostWindow* hostWindow)
 {
     GraphicsContext3DInternal* internal = new GraphicsContext3DInternal();
     if (!internal->initialize(attrs)) {
         delete internal;
         return 0;
     }
-    PassOwnPtr<GraphicsContext3D> result = new GraphicsContext3D(attrs);
+    PassOwnPtr<GraphicsContext3D> result = new GraphicsContext3D(attrs, hostWindow);
     result->m_internal.set(internal);
     return result;
 }
