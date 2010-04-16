@@ -28,6 +28,8 @@
 
 #include <WebKit2/WKURLCF.h>
 
+static const unsigned short HIGH_BIT_MASK_SHORT = 0x8000;
+
 BrowserView::BrowserView()
     : m_webView(0)
 {
@@ -37,7 +39,9 @@ void BrowserView::create(RECT webViewRect, HWND parentWindow)
 {
     assert(!m_webView);
 
-    WKContextRef context = WKContextCreateWithProcessModel(kWKProcessModelSecondaryProcess);
+    bool isShiftKeyDown = ::GetKeyState(VK_SHIFT) & HIGH_BIT_MASK_SHORT;
+
+    WKContextRef context = WKContextCreateWithProcessModel(isShiftKeyDown ? kWKProcessModelSecondaryThread : kWKProcessModelSecondaryProcess);
     WKPageNamespaceRef pageNamespace = WKPageNamespaceCreate(context);
 
     m_webView = WKViewCreate(webViewRect, pageNamespace, parentWindow);
