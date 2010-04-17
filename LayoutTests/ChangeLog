@@ -1,5 +1,20 @@
 2010-04-17  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed.
+
+        Test file: URL canonicalization
+        https://bugs.webkit.org/show_bug.cgi?id=37700
+
+        Re-land http://trac.webkit.org/changeset/57719, hopefully not breaking
+        the Windows bot this time.
+
+        * fast/url/file-expected.txt: Added.
+        * fast/url/file.html: Added.
+        * fast/url/mailto.html:
+        * fast/url/script-tests/file.js: Added.
+
+2010-04-17  Adam Barth  <abarth@webkit.org>
+
         Unreviewed, but I took Jeremy Orlow's suggestions on an earlier
         iteration of this patch.
 
