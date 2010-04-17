@@ -44,9 +44,9 @@ namespace WebKit {
 class WebSecurityOriginPrivate : public SecurityOrigin {
 };
 
-WebSecurityOrigin* WebSecurityOrigin::createFromDatabaseIdentifier(const WebString& databaseIdentifier)
+WebSecurityOrigin WebSecurityOrigin::createFromDatabaseIdentifier(const WebString& databaseIdentifier)
 {
-    return new WebSecurityOrigin(SecurityOrigin::createFromDatabaseIdentifier(databaseIdentifier));
+    return WebSecurityOrigin(SecurityOrigin::createFromDatabaseIdentifier(databaseIdentifier));
 }
 
 WebSecurityOrigin WebSecurityOrigin::createFromString(const WebString& origin)

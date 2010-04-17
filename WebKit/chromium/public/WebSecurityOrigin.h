@@ -56,8 +56,7 @@ public:
         return *this;
     }
 
-    // FIXME: This should return a WebSecurityOrigin, not a pointer to one.
-    WEBKIT_API static WebSecurityOrigin* createFromDatabaseIdentifier(const WebString& databaseIdentifier);
+    WEBKIT_API static WebSecurityOrigin createFromDatabaseIdentifier(const WebString& databaseIdentifier);
     WEBKIT_API static WebSecurityOrigin createFromString(const WebString&);
     WEBKIT_API static WebSecurityOrigin create(const WebURL&);
 

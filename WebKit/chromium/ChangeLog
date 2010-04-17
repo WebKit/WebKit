@@ -1,3 +1,21 @@
+2010-04-16  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Changing the return type of WebSecurityOrigin::createFromDatabaseIdentifier().
+        https://bugs.webkit.org/show_bug.cgi?id=34466
+
+        Changing the return type of
+        WebSecurityOrigin::createFromDatabaseIdentifier() from
+        WebSecurityOrigin* to WebSecurityOrigin, to make it more
+        consistent with the other WebSecurityOrigin methods.
+
+        * public/WebSecurityOrigin.h:
+        * src/WebDatabase.cpp:
+        (WebKit::WebDatabase::closeDatabaseImmediately):
+        * src/WebSecurityOrigin.cpp:
+        (WebKit::WebSecurityOrigin::createFromDatabaseIdentifier):
+
 2010-04-16  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Yury Semikhatsky.

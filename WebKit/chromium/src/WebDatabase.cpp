@@ -111,7 +111,7 @@ void WebDatabase::updateDatabaseSize(
 void WebDatabase::closeDatabaseImmediately(const WebString& originIdentifier, const WebString& databaseName)
 {
     HashSet<RefPtr<Database> > databaseHandles;
-    PassRefPtr<SecurityOrigin> originPrp(*WebSecurityOrigin::createFromDatabaseIdentifier(originIdentifier));
+    PassRefPtr<SecurityOrigin> originPrp(WebSecurityOrigin::createFromDatabaseIdentifier(originIdentifier));
     RefPtr<SecurityOrigin> origin = originPrp;
     DatabaseTracker::tracker().getOpenDatabases(origin.get(), databaseName, &databaseHandles);
     for (HashSet<RefPtr<Database> >::iterator it = databaseHandles.begin(); it != databaseHandles.end(); ++it) {
