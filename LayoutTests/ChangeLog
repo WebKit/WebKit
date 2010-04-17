@@ -2,6 +2,15 @@
 
         Rubber-stamped by Xan Lopez.
 
+        Skipping media/audio-constructor-preload.html
+        https://bugs.webkit.org/show_bug.cgi?id=37753
+
+        * platform/gtk/Skipped:
+
+2010-04-17  Alejandro G. Castro  <alex@igalia.com>
+
+        Rubber-stamped by Xan Lopez.
+
         Skipping inspector/timeline-paint.html
         https://bugs.webkit.org/show_bug.cgi?id=37752
 

@@ -5992,3 +5992,6 @@ scrollbars/scrollbar-crash-on-refresh.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=37752
 inspector/timeline-paint.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=37753
+media/audio-constructor-preload.html
