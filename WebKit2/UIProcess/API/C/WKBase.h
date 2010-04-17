@@ -40,6 +40,14 @@ typedef struct OpaqueWKPreferencesRef* WKPreferencesRef;
 typedef struct OpaqueWKStringRef* WKStringRef;
 typedef struct OpaqueWKURLRef* WKURLRef;
 
+#if defined(WIN32) || defined(_WIN32)
+#if BUILDING_WEBKIT2
+#define WK_EXPORT __declspec(dllexport)
+#else
+#define WK_EXPORT __declspec(dllimport)
+#endif
+#else
 #define WK_EXPORT
+#endif
 
 #endif /* WKBase_h */

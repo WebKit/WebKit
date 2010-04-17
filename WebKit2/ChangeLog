@@ -1,5 +1,16 @@
 2010-04-17  Sam Weinig  <weinig@apple.com>
 
+        Reviewed by Jon "The Belly" Honeycutt.
+
+        Remove the need for a .defs file! Define WK_EXPORT.
+
+        * UIProcess/API/C/WKBase.h:
+        * WebProcess/win/WebProcessMain.h:
+        * win/WebKit2.def: Removed.
+        * win/WebKit2.vcproj:
+
+2010-04-17  Sam Weinig  <weinig@apple.com>
+
         Reviewed by Adam Roben.
 
         Teach windows MiniBrowser how to work with window.open()

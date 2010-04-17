@@ -30,8 +30,14 @@
 
 namespace WebKit {
 
+#if BUILDING_WEBKIT2
+#define DLL_EXPORT __declspec(dllexport)
+#else
+#define DLL_EXPORT __declspec(dllimport)
+#endif
+
 // This is called only from the _tWinMain function of the WebProcess.
-int WebProcessMain(HINSTANCE hInstance, LPTSTR lpstrCmdLine);
+DLL_EXPORT int WebProcessMain(HINSTANCE hInstance, LPTSTR lpstrCmdLine);
 
 } // namespace WebKit
 
