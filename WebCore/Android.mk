@@ -174,6 +174,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	dom/UIEvent.cpp \
 	dom/UIEventWithKeyState.cpp \
 	dom/UserGestureIndicator.cpp \
+	dom/ViewportArguments.cpp \
 	dom/WebKitAnimationEvent.cpp \
 	dom/WebKitTransitionEvent.cpp \
 	dom/WheelEvent.cpp \

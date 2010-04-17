@@ -56,6 +56,7 @@ namespace WebCore {
     class Widget;
 
     struct FrameLoadRequest;
+    struct ViewportArguments;
     struct WindowFeatures;
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -144,6 +145,8 @@ namespace WebCore {
         virtual void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags) = 0;
 
         virtual void setToolTip(const String&, TextDirection) = 0;
+
+        virtual void didReceiveViewportArguments(Frame*, const ViewportArguments&) const { }
 
         virtual void print(Frame*) = 0;
 

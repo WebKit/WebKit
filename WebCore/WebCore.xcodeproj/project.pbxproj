@@ -4718,6 +4718,8 @@
 		CE4C00E410F6F7BA00CA38F5 /* HTMLNoScriptElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE4C00E310F6F7BA00CA38F5 /* HTMLNoScriptElement.cpp */; };
 		CE4C00E610F6F7C100CA38F5 /* HTMLNoScriptElement.h in Headers */ = {isa = PBXBuildFile; fileRef = CE4C00E510F6F7C100CA38F5 /* HTMLNoScriptElement.h */; };
 		CE54FD381016D9A6008B44C8 /* ScriptSourceProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = CE54FD371016D9A6008B44C8 /* ScriptSourceProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CEF418CE1179678C009D112C /* ViewportArguments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEF418CC1179678C009D112C /* ViewportArguments.cpp */; };
+		CEF418CF1179678C009D112C /* ViewportArguments.h in Headers */ = {isa = PBXBuildFile; fileRef = CEF418CD1179678C009D112C /* ViewportArguments.h */; };
 		D01A27AD10C9BFD800026A42 /* SpaceSplitString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D01A27AB10C9BFD800026A42 /* SpaceSplitString.cpp */; };
 		D01A27AE10C9BFD800026A42 /* SpaceSplitString.h in Headers */ = {isa = PBXBuildFile; fileRef = D01A27AC10C9BFD800026A42 /* SpaceSplitString.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		D05CED290A40BB2C00C5AF38 /* FormatBlockCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D05CED270A40BB2C00C5AF38 /* FormatBlockCommand.cpp */; };
@@ -10091,6 +10093,8 @@
 		CE4C00E310F6F7BA00CA38F5 /* HTMLNoScriptElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLNoScriptElement.cpp; sourceTree = "<group>"; };
 		CE4C00E510F6F7C100CA38F5 /* HTMLNoScriptElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLNoScriptElement.h; sourceTree = "<group>"; };
 		CE54FD371016D9A6008B44C8 /* ScriptSourceProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptSourceProvider.h; sourceTree = "<group>"; };
+		CEF418CC1179678C009D112C /* ViewportArguments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewportArguments.cpp; sourceTree = "<group>"; };
+		CEF418CD1179678C009D112C /* ViewportArguments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewportArguments.h; sourceTree = "<group>"; };
 		D01A27AB10C9BFD800026A42 /* SpaceSplitString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpaceSplitString.cpp; sourceTree = "<group>"; };
 		D01A27AC10C9BFD800026A42 /* SpaceSplitString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpaceSplitString.h; sourceTree = "<group>"; };
 		D05CED270A40BB2C00C5AF38 /* FormatBlockCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FormatBlockCommand.cpp; sourceTree = "<group>"; };
@@ -16288,6 +16292,8 @@
 				85031B390A44EFC700F992E0 /* UIEventWithKeyState.h */,
 				2542F4D81166C25A00E89A86 /* UserGestureIndicator.cpp */,
 				2542F4D91166C25A00E89A86 /* UserGestureIndicator.h */,
+				CEF418CC1179678C009D112C /* ViewportArguments.cpp */,
+				CEF418CD1179678C009D112C /* ViewportArguments.h */,
 				31C0FF1B0E4CEB6E007D6FE5 /* WebKitAnimationEvent.cpp */,
 				31C0FF1C0E4CEB6E007D6FE5 /* WebKitAnimationEvent.h */,
 				31C0FF1D0E4CEB6E007D6FE5 /* WebKitAnimationEvent.idl */,
@@ -18858,6 +18864,7 @@
 				9FA37EFD1172FDA600C4CD55 /* JSScriptProfileNode.h in Headers */,
 				895253DD116C4EF500CABF00 /* FileStreamProxy.h in Headers */,
 				895253DF116C4F0600CABF00 /* FileThreadTask.h in Headers */,
+				CEF418CF1179678C009D112C /* ViewportArguments.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -21093,6 +21100,7 @@
 				9FA37EFA1172FDA600C4CD55 /* JSScriptProfile.cpp in Sources */,
 				9FA37EFC1172FDA600C4CD55 /* JSScriptProfileNode.cpp in Sources */,
 				895253DC116C4EF500CABF00 /* FileStreamProxy.cpp in Sources */,
+				CEF418CE1179678C009D112C /* ViewportArguments.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

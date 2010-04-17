@@ -1235,6 +1235,8 @@
             'dom/UIEventWithKeyState.h',
             'dom/UserGestureIndicator.cpp',
             'dom/UserGestureIndicator.h',
+            'dom/ViewportArguments.cpp',
+            'dom/ViewportArguments.h',
             'dom/WebKitAnimationEvent.cpp',
             'dom/WebKitAnimationEvent.h',
             'dom/WebKitTransitionEvent.cpp',

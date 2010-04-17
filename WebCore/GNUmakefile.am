@@ -876,6 +876,8 @@ webcore_sources += \
 	WebCore/dom/UIEventWithKeyState.h \
 	WebCore/dom/UserGestureIndicator.cpp \
 	WebCore/dom/UserGestureIndicator.h \
+	WebCore/dom/ViewportArguments.cpp \
+	WebCore/dom/ViewportArguments.h \
 	WebCore/dom/WebKitAnimationEvent.cpp \
 	WebCore/dom/WebKitAnimationEvent.h \
 	WebCore/dom/WebKitTransitionEvent.cpp \

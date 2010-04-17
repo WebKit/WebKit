@@ -126,6 +126,7 @@
 #include "TreeWalker.h"
 #include "UIEvent.h"
 #include "UserContentURLPattern.h"
+#include "ViewportArguments.h"
 #include "WebKitAnimationEvent.h"
 #include "WebKitTransitionEvent.h"
 #include "WheelEvent.h"
@@ -2295,6 +2296,78 @@ void Document::processHttpEquiv(const String& equiv, const String& content)
             frame->redirectScheduler()->scheduleLocationChange(blankURL(), String());
         }
     }
+}
+
+// Though isspace() considers \t and \v to be whitespace, Win IE doesn't.
+static bool isSeparator(UChar c)
+{
+    return c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '=' || c == ',' || c == '\0';
+}
+
+void Document::processArguments(const String& features, void* data, ArgumentsCallback callback)
+{
+    // Tread lightly in this code -- it was specifically designed to mimic Win IE's parsing behavior.
+    int keyBegin, keyEnd;
+    int valueBegin, valueEnd;
+
+    int i = 0;
+    int length = features.length();
+    String buffer = features.lower();
+    while (i < length) {
+        // skip to first non-separator, but don't skip past the end of the string
+        while (isSeparator(buffer[i])) {
+            if (i >= length)
+                break;
+            i++;
+        }
+        keyBegin = i;
+
+        // skip to first separator
+        while (!isSeparator(buffer[i]))
+            i++;
+        keyEnd = i;
+
+        // skip to first '=', but don't skip past a ',' or the end of the string
+        while (buffer[i] != '=') {
+            if (buffer[i] == ',' || i >= length)
+                break;
+            i++;
+        }
+
+        // skip to first non-separator, but don't skip past a ',' or the end of the string
+        while (isSeparator(buffer[i])) {
+            if (buffer[i] == ',' || i >= length)
+                break;
+            i++;
+        }
+        valueBegin = i;
+
+        // skip to first separator
+        while (!isSeparator(buffer[i]))
+            i++;
+        valueEnd = i;
+
+        ASSERT(i <= length);
+
+        String keyString = buffer.substring(keyBegin, keyEnd - keyBegin);
+        String valueString = buffer.substring(valueBegin, valueEnd - valueBegin);
+        callback(keyString, valueString, this, data);
+    }
+}
+
+void Document::processViewport(const String& features)
+{
+    ASSERT(!features.isNull());
+
+    Frame* frame = this->frame();
+    if (!frame)
+        return;
+
+    ViewportArguments arguments;
+    processArguments(features, (void*)&arguments, &setViewportFeature);
+
+    if (frame->page())
+        frame->page()->chrome()->client()->didReceiveViewportArguments(frame, arguments);
 }
 
 MouseEventWithHitTestResults Document::prepareMouseEvent(const HitTestRequest& request, const IntPoint& documentPoint, const PlatformMouseEvent& event)

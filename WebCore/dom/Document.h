@@ -700,7 +700,8 @@ public:
      * @param content The header value (value of the meta tag's "content" attribute)
      */
     void processHttpEquiv(const String& equiv, const String& content);
-    
+    void processViewport(const String& features);
+
     // Returns the owning element in the parent document.
     // Returns 0 if this is the top level document.
     Element* ownerElement() const;
@@ -974,6 +975,10 @@ protected:
     void clearXMLVersion() { m_xmlVersion = String(); }
 
 private:
+
+    typedef void (*ArgumentsCallback)(const String& keyString, const String& valueString, Document*, void* data);
+    void processArguments(const String& features, void* data, ArgumentsCallback);
+
     virtual bool isDocument() const { return true; }
     virtual void removedLastRef();
     virtual void determineParseMode() { }

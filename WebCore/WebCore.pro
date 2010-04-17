@@ -537,6 +537,7 @@ SOURCES += \
     dom/UIEvent.cpp \
     dom/UIEventWithKeyState.cpp \
     dom/UserGestureIndicator.cpp \
+    dom/ViewportArguments.cpp \
     dom/WebKitAnimationEvent.cpp \
     dom/WebKitTransitionEvent.cpp \
     dom/WheelEvent.cpp \
@@ -1259,6 +1260,7 @@ HEADERS += \
     dom/UIEvent.h \
     dom/UIEventWithKeyState.h \
     dom/UserGestureIndicator.h \
+    dom/ViewportArguments.h \
     dom/WebKitAnimationEvent.h \
     dom/WebKitTransitionEvent.h \
     dom/WheelEvent.h \
