@@ -1,3 +1,13 @@
+2010-04-17  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        We have to initialize the timer attribute after destroying it, not
+        doing it was causing crashes in some situations.
+
+        * webkit/webkitdownload.cpp:
+        (webkit_download_finalize):
+
 2010-04-13  Timothy Hatcher  <timothy@apple.com>
 
         Rename SecurityOrigin::whiteListAccessFromOrigin to addOriginAccessWhitelistEntry.

@@ -153,8 +153,10 @@ static void webkit_download_finalize(GObject* object)
 
     // The download object may never have _start called on it, so we
     // need to make sure timer is non-NULL.
-    if (priv->timer)
+    if (priv->timer) {
         g_timer_destroy(priv->timer);
+        priv->timer = NULL;
+    }
 
     g_free(priv->destinationURI);
     g_free(priv->suggestedFilename);
