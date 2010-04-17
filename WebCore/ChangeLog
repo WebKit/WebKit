@@ -1,3 +1,17 @@
+2010-04-17  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Crash while handling SVG font in the wrong namespace imported with @font-face
+        https://bugs.webkit.org/show_bug.cgi?id=18862
+
+        Test: fast/invalid/invalidSVGFont.html
+
+        * loader/CachedFont.cpp:
+        (WebCore::CachedFont::getSVGFontById): Make sure we really get an SVGFontElement by using
+        getElementsByNameNS: the element factory chooses which element to create based on both
+        localName and namespace.
+
 2010-04-16  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r57770.

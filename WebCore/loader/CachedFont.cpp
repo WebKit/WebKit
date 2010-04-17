@@ -157,7 +157,7 @@ bool CachedFont::ensureSVGFontData()
 SVGFontElement* CachedFont::getSVGFontById(const String& fontName) const
 {
     ASSERT(m_isSVGFont);
-    RefPtr<NodeList> list = m_externalSVGDocument->getElementsByTagName(SVGNames::fontTag.localName());
+    RefPtr<NodeList> list = m_externalSVGDocument->getElementsByTagNameNS(SVGNames::fontTag.namespaceURI(), SVGNames::fontTag.localName());
     if (!list)
         return 0;
 
