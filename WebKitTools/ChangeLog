@@ -1,3 +1,10 @@
+2010-04-17  Adam Barth  <abarth@webkit.org>
+
+        Fix expected results for unit test broken by
+        http://trac.webkit.org/changeset/57772
+
+        * Scripts/webkitpy/common/net/buildbot_unittest.py:
+
 2010-04-17  Sam Weinig  <weinig@apple.com>
 
         Reviewed by Adam Roben.

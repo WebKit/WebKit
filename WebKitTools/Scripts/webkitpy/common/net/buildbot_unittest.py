@@ -271,6 +271,7 @@ class BuildBotTest(unittest.TestCase):
             "Leopard",
             "Tiger",
             "Windows.*Build",
+            "Windows.*Debug.*Test",
             "Qt",
             "Chromium",
         ]
@@ -284,6 +285,7 @@ class BuildBotTest(unittest.TestCase):
             {'name': u'SnowLeopard Intel Release (Tests)', },
             {'name': u'Windows Release (Build)', },
             {'name': u'Windows Debug (Build)', },
+            {'name': u'Windows Debug (Tests)', },
             {'name': u'Qt Linux Release', },
             {'name': u'Qt Linux Release minimal', },
             {'name': u'Qt Linux ARMv5 Release', },
