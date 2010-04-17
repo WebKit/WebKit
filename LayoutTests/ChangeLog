@@ -1,3 +1,17 @@
+2010-04-16  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        [v8] In Workers, script errors right after close() are not delivered to the Worker.onerror
+        https://bugs.webkit.org/show_bug.cgi?id=37691
+
+        Moved the expected result into platform-independent chromium subdirectory, since
+        the only chromium-specific difference is the way v8 formats an error message.
+        Also updated the expected result to match the passing now test.
+
+        * platform/chromium-win/fast/workers/worker-close-expected.txt: Removed.
+        * platform/chromium/fast/workers/worker-close-expected.txt: Added.
+
 2010-04-16  Adam Roben  <aroben@apple.com>
 
         Fix typo from r55729

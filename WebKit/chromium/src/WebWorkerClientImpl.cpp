@@ -96,14 +96,12 @@ WorkerContextProxy* WebWorkerClientImpl::createWorkerContextProxy(Worker* worker
         webWorker = webFrame->client()->createWorker(webFrame, proxy);
     } else {
         WorkerScriptController* controller = WorkerScriptController::controllerForContext();
-        WorkerContextExecutionProxy* currentContext = controller ? controller->proxy() : 0;
-        if (!currentContext) {
+        if (!controller) {
             ASSERT_NOT_REACHED();
             return 0;
         }
 
-        DedicatedWorkerThread* thread =
-        static_cast<DedicatedWorkerThread*>(currentContext->workerContext()->thread());
+        DedicatedWorkerThread* thread = static_cast<DedicatedWorkerThread*>(controller->workerContext()->thread());
         WorkerObjectProxy* workerObjectProxy = &thread->workerObjectProxy();
         WebWorkerImpl* impl = reinterpret_cast<WebWorkerImpl*>(workerObjectProxy);
         webWorker = impl->client()->createWorker(proxy);

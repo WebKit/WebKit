@@ -1,3 +1,13 @@
+2010-04-16  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        [v8] In Workers, script errors right after close() are not delivered to the Worker.onerror
+        https://bugs.webkit.org/show_bug.cgi?id=37691
+
+        * src/WebWorkerClientImpl.cpp:
+        (WebKit::WebWorkerClientImpl::createWorkerContextProxy): Don't need to pull V8 proxy to retrieve current WorkerContext.
+
 2010-04-16  Albert J. Wong  <ajwong@chromium.org>
 
         Not reviewed. Build fix.

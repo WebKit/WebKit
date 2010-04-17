@@ -1,3 +1,18 @@
+2010-04-16  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        [v8] In Workers, script errors right after close() are not delivered to the Worker.onerror.
+        https://bugs.webkit.org/show_bug.cgi?id=37691
+
+        Existing worker-close.html will now work in Chromium.
+
+        * bindings/v8/V8Utilities.cpp:
+        (WebCore::getScriptExecutionContext): Stop using proxy() to just retrieve WorkerContext which should be always available.
+        * bindings/v8/WorkerContextExecutionProxy.h: removed workerContext() accessor which moved to WorkerScriptController.
+        * bindings/v8/WorkerScriptController.h:
+        (WebCore::WorkerScriptController::workerContext): Added, to be able to pull WorkerContext out from the controller.
+
 2010-04-16  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.
