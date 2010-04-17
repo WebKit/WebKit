@@ -1,3 +1,36 @@
+2010-04-17  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: move JavaScriptCallFrame.{h,cpp} to WebCore/bindings/js
+
+        https://bugs.webkit.org/show_bug.cgi?id=37740
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JavaScriptCallFrame.cpp: Renamed from WebCore/inspector/JavaScriptCallFrame.cpp.
+        (WebCore::JavaScriptCallFrame::JavaScriptCallFrame):
+        (WebCore::JavaScriptCallFrame::caller):
+        (WebCore::JavaScriptCallFrame::scopeChain):
+        (WebCore::JavaScriptCallFrame::dynamicGlobalObject):
+        (WebCore::JavaScriptCallFrame::functionName):
+        (WebCore::JavaScriptCallFrame::type):
+        (WebCore::JavaScriptCallFrame::thisObject):
+        (WebCore::JavaScriptCallFrame::evaluate):
+        * bindings/js/JavaScriptCallFrame.h: Renamed from WebCore/inspector/JavaScriptCallFrame.h.
+        (WebCore::JavaScriptCallFrame::create):
+        (WebCore::JavaScriptCallFrame::invalidate):
+        (WebCore::JavaScriptCallFrame::isValid):
+        (WebCore::JavaScriptCallFrame::sourceID):
+        (WebCore::JavaScriptCallFrame::line):
+        (WebCore::JavaScriptCallFrame::update):
+        * inspector/InjectedScriptHost.h:
+        * inspector/InspectorController.h:
+
 2010-04-17  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by Dimitri Glazkov.

@@ -135,6 +135,7 @@
 #include "JSXMLHttpRequestUploadCustom.cpp"
 #include "JSXSLTProcessorConstructor.cpp"
 #include "JSXSLTProcessorCustom.cpp"
+#include "JavaScriptCallFrame.cpp"
 #include "ScheduledAction.cpp"
 #include "ScriptArray.cpp"
 #include "ScriptCachedFrameData.cpp"

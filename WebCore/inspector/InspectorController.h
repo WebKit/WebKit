@@ -68,7 +68,6 @@ class InspectorClient;
 class InspectorFrontend;
 class InspectorFrontendClient;
 class InspectorTimelineAgent;
-class JavaScriptCallFrame;
 class KURL;
 class Node;
 class Page;

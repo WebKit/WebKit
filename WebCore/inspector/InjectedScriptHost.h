@@ -44,7 +44,6 @@ class Database;
 class InjectedScript;
 class InspectorDOMAgent;
 class InspectorFrontend;
-class JavaScriptCallFrame;
 class Node;
 class SerializedScriptValue;
 class Storage;

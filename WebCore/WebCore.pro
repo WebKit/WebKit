@@ -1078,6 +1078,7 @@ HEADERS += \
     bindings/js/JSWorkerContextErrorHandler.h \
     bindings/js/JSXMLHttpRequestConstructor.h \
     bindings/js/JSXSLTProcessorConstructor.h \
+    bindings/js/JavaScriptCallFrame.h \
     bindings/js/ScheduledAction.h \
     bindings/js/ScriptArray.h \
     bindings/js/ScriptCachedFrameData.h \
@@ -1440,7 +1441,6 @@ HEADERS += \
     inspector/InspectorFrontendHost.h \
     inspector/InspectorResource.h \
     inspector/InspectorTimelineAgent.h \
-    inspector/JavaScriptCallFrame.h \
     inspector/ScriptGCEventListener.h \
     inspector/TimelineRecordFactory.h \
     loader/appcache/ApplicationCacheGroup.h \
@@ -2733,7 +2733,7 @@ contains(DEFINES, ENABLE_JAVASCRIPT_DEBUGGER=1) {
     SOURCES += \
         bindings/js/JSJavaScriptCallFrameCustom.cpp \
         bindings/js/ScriptProfiler.cpp \
-        inspector/JavaScriptCallFrame.cpp \
+        bindings/js/JavaScriptCallFrame.cpp \
 }
 
 contains(DEFINES, ENABLE_OFFLINE_WEB_APPLICATIONS=1) {

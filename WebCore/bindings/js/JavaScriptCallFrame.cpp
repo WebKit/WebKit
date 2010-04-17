@@ -25,14 +25,15 @@
 
 #include "config.h"
 #include "JavaScriptCallFrame.h"
+
 #include "JSDOMBinding.h"
 
 #if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
 
 #include "PlatformString.h"
 #include <debugger/DebuggerCallFrame.h>
-#include <runtime/JSGlobalObject.h>
 #include <runtime/Completion.h>
+#include <runtime/JSGlobalObject.h>
 #include <runtime/JSLock.h>
 #include <runtime/JSObject.h>
 #include <runtime/JSValue.h>

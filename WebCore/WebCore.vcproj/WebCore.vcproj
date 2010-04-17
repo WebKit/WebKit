@@ -43292,14 +43292,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\inspector\JavaScriptCallFrame.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\inspector\JavaScriptCallFrame.h"
-				>
-			</File>
-			<File
 				RelativePath="..\inspector\ScriptBreakpoint.h"
 				>
 			</File>
