@@ -1032,9 +1032,10 @@ sub GenerateParametersCheckExpression
         my $type = GetTypeFromSignature($parameter);
 
         # Only DOMString or wrapper types are checked.
-        # For DOMString, Null or Undefined are accepted too, as these are
-        # usually acceptable values for a DOMString argument.
-        push(@andExpression, "(${value}.IsNull() || ${value}.IsUndefined() || ${value}.IsString())") if $codeGenerator->IsStringType($type);
+        # For DOMString, Null, Undefined and any Object are accepted too, as
+        # these are acceptable values for a DOMString argument (any Object can
+        # be converted to a string via .toString).
+        push(@andExpression, "(${value}->IsNull() || ${value}->IsUndefined() || ${value}->IsString() || ${value}->IsObject())") if $codeGenerator->IsStringType($type);
         push(@andExpression, "V8${type}::HasInstance($value)") if IsWrapperType($type);
 
         $parameterIndex++;
@@ -1077,6 +1078,7 @@ sub GenerateOverloadedFunctionCallback
 static v8::Handle<v8::Value> ${name}Callback(const v8::Arguments& args) {
     INC_STATS(\"DOM.$implClassName.$name\");
 END
+
     foreach my $overload (@{$function->{overloads}}) {
         my $parametersCheck = GenerateFunctionParametersCheck($overload);
         if ($overload->{overloadIndex} == 1) {
@@ -2712,6 +2714,16 @@ sub RequiresCustomSignature
     if ($function->signature->extendedAttributes->{"Custom"} ||
         $function->signature->extendedAttributes->{"V8Custom"}) {
         return 0;
+    }
+    # No signature needed for overloaded function
+    if (@{$function->{overloads}} > 1) {
+        return 0;
+    }
+
+    foreach my $parameter (@{$function->parameters}) {
+        if ($parameter->extendedAttributes->{"Optional"}) {
+            return 0;
+        }
     }
 
     foreach my $parameter (@{$function->parameters}) {

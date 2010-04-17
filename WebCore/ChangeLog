@@ -1,3 +1,17 @@
+2010-04-17  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Auto-generate V8 bindings for canvas.* overloads
+        https://bugs.webkit.org/show_bug.cgi?id=37453
+
+        * bindings/v8/custom/V8CanvasRenderingContext2DCustom.cpp: Deleted custom code that is now auto-generated.
+        * bindings/scripts/CodeGeneratorV8.pm: Not generating custom signatures for overloaded methods and accepting Object as a string input.
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawImage): Added missing 9-arguments overloads for drawImage.
+        * html/canvas/CanvasRenderingContext2D.h: 
+        * html/canvas/CanvasRenderingContext2D.idl: Overloaded methods defined (V8 only).
+
 2010-04-17  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

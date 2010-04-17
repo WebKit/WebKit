@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 module html {
@@ -82,8 +82,7 @@ module html {
         attribute DOMString font;
         attribute DOMString textAlign;
         attribute DOMString textBaseline;
-        [Custom] void fillText(/* 4 */);
-        [Custom] void strokeText(/* 4 */);
+
         TextMetrics measureText(in DOMString text);
 
         // other
@@ -98,6 +97,58 @@ module html {
 
         void clearShadow();
 
+#if defined(V8_BINDING) && V8_BINDING
+        void fillText(in DOMString text, in float x, in float y, in [Optional] float maxWidth);
+        void strokeText(in DOMString text, in float x, in float y, in [Optional] float maxWidth);
+
+        void setStrokeColor(in DOMString color, in [Optional] float alpha);
+        void setStrokeColor(in float grayLevel, in [Optional] float alpha);
+        void setStrokeColor(in float r, in float g, in float b, in float a);
+        void setStrokeColor(in float c, in float m, in float y, in float k, in float a);
+
+        void setFillColor(in DOMString color, in [Optional] float alpha);
+        void setFillColor(in float grayLevel, in [Optional] float alpha);
+        void setFillColor(in float r, in float g, in float b, in float a);
+        void setFillColor(in float c, in float m, in float y, in float k, in float a);
+
+        void strokeRect(in float x, in float y, in float width, in float height, in [Optional] float lineWidth);
+
+        void drawImage(in HTMLImageElement image, in float x, in float y);
+        void drawImage(in HTMLImageElement image, in float x, in float y, in float width, in float height)
+            raises (DOMException);
+        void drawImage(in HTMLImageElement image, in float sx, in float sy, in float sw, in float sh, in float dx, in float dy, in float dw, in float dh)
+            raises (DOMException);
+        void drawImage(in HTMLCanvasElement canvas, in float x, in float y);
+        void drawImage(in HTMLCanvasElement canvas, in float x, in float y, in float width, in float height)
+            raises (DOMException);
+        void drawImage(in HTMLCanvasElement canvas, in float sx, in float sy, in float sw, in float sh, in float dx, in float dy, in float dw, in float dh)
+            raises (DOMException);
+#if defined(ENABLE_VIDEO) && ENABLE_VIDEO
+        void drawImage(in HTMLVideoElement video, in float x, in float y);
+        void drawImage(in HTMLVideoElement video, in float x, in float y, in float width, in float height)
+            raises (DOMException);
+        void drawImage(in HTMLVideoElement video, in float sx, in float sy, in float sw, in float sh, in float dx, in float dy, in float dw, in float dh)
+            raises (DOMException);
+#endif
+        void drawImageFromRect(in HTMLImageElement image,
+                               in float sx, in float sy, in float sw, in float sh,
+                               in float dx, in float dy, in float dw, in float dh, in DOMString compositeOperation);
+
+        void setShadow(in float width, in float height, in float blur, in [Optional] DOMString color, in [Optional] float alpha);
+        void setShadow(in float width, in float height, in float blur, in float grayLevel, in [Optional] float alpha);
+        void setShadow(in float width, in float height, in float blur, in float r, in float g, in float b, in float a);
+        void setShadow(in float width, in float height, in float blur, in float c, in float m, in float y, in float k, in float a);
+
+        CanvasPattern createPattern(in HTMLCanvasElement canvas, in [ConvertNullToNullString] DOMString repetitionType)
+            raises (DOMException);
+        CanvasPattern createPattern(in HTMLImageElement image, in [ConvertNullToNullString] DOMString repetitionType)
+            raises (DOMException);
+        void putImageData(in ImageData imagedata, in float dx, in float dy, in [Optional] float dirtyX, in float dirtyY, in float dirtyWidth, in float dirtyHeight)
+            raises(DOMException);
+#else
+        // FIXME: Remove 'else' once JSC supports overloads too.
+        [Custom] void fillText(/* 4 */);
+        [Custom] void strokeText(/* 4 */);
         [Custom] void setStrokeColor(/* 1  */);
         [Custom] void setFillColor(/* 1 */);
         [Custom] void strokeRect(/* 4 */);
@@ -105,16 +156,17 @@ module html {
         [Custom] void drawImageFromRect(/* 10 */);
         [Custom] void setShadow(/* 3 */);
         [Custom] void createPattern(/* 2 */);
-        
+        [Custom] void putImageData(/* in ImageData imagedata, in float dx, in float dy [, in float dirtyX, in float dirtyY, in float dirtyWidth, in float dirtyHeight] */);
+#endif // defined(V8_BINDING)
+
         attribute [Custom] custom strokeStyle;
         attribute [Custom] custom fillStyle;
-        
+
         // pixel manipulation
         ImageData createImageData(in float sw, in float sh)
             raises (DOMException);
         ImageData getImageData(in float sx, in float sy, in float sw, in float sh)
             raises(DOMException);
-        [Custom] void putImageData(/* in ImageData imagedata, in float dx, in float dy [, in float dirtyX, in float dirtyY, in float dirtyWidth, in float dirtyHeight] */);
     };
 
 }
