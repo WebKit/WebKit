@@ -1,3 +1,25 @@
+2010-04-17  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Adding the implementation of GLES2Context class which provides WebCore access to a GL ES context.
+        https://bugs.webkit.org/show_bug.cgi?id=37541
+
+        * WebKit.gyp:
+        * public/WebGLES2Context.h: Added.
+        (WebKit::WebGLES2Context::~WebGLES2Context):
+        * src/GLES2Context.cpp: Added.
+        (WebCore::GLES2ContextInternal::GLES2ContextInternal):
+        (WebCore::GLES2ContextInternal::~GLES2ContextInternal):
+        (WebCore::GLES2ContextInternal::getWebGLES2Context):
+        (WebCore::GLES2ContextInternal::initialize):
+        (WebCore::GLES2Context::create):
+        (WebCore::GLES2Context::~GLES2Context):
+        (WebCore::GLES2Context::initialize):
+        (WebCore::GLES2Context::makeCurrent):
+        (WebCore::GLES2Context::destroy):
+        (WebCore::GLES2Context::swapBuffers):
+
 2010-04-16  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Eric Seidel.
