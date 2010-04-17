@@ -53,13 +53,13 @@ CallType JSNodeList::getCallData(CallData& callData)
 
 bool JSNodeList::canGetItemsForName(ExecState*, NodeList* impl, const Identifier& propertyName)
 {
-    return impl->itemWithName(propertyName);
+    return impl->itemWithName(identifierToAtomicString(propertyName));
 }
 
 JSValue JSNodeList::nameGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)
 {
     JSNodeList* thisObj = static_cast<JSNodeList*>(asObject(slotBase));
-    return toJS(exec, thisObj->impl()->itemWithName(propertyName));
+    return toJS(exec, thisObj->impl()->itemWithName(identifierToAtomicString(propertyName)));
 }
 
 } // namespace WebCore

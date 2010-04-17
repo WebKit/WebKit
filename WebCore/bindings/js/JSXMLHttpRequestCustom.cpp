@@ -97,7 +97,7 @@ JSValue JSXMLHttpRequest::setRequestHeader(ExecState* exec, const ArgList& args)
         return throwError(exec, SyntaxError, "Not enough arguments");
 
     ExceptionCode ec = 0;
-    impl()->setRequestHeader(args.at(0).toString(exec), ustringToString(args.at(1).toString(exec)), ec);
+    impl()->setRequestHeader(ustringToAtomicString(args.at(0).toString(exec)), ustringToString(args.at(1).toString(exec)), ec);
     setDOMException(exec, ec);
     return jsUndefined();
 }
@@ -139,7 +139,7 @@ JSValue JSXMLHttpRequest::getResponseHeader(ExecState* exec, const ArgList& args
         return throwError(exec, SyntaxError, "Not enough arguments");
 
     ExceptionCode ec = 0;
-    JSValue header = jsStringOrNull(exec, impl()->getResponseHeader(args.at(0).toString(exec), ec));
+    JSValue header = jsStringOrNull(exec, impl()->getResponseHeader(ustringToAtomicString(args.at(0).toString(exec)), ec));
     setDOMException(exec, ec);
     return header;
 }
@@ -159,7 +159,7 @@ JSValue JSXMLHttpRequest::addEventListener(ExecState* exec, const ArgList& args)
     if (!listener.isObject())
         return jsUndefined();
 
-    impl()->addEventListener(args.at(0).toString(exec), JSEventListener::create(asObject(listener), this, false, currentWorld(exec)), args.at(2).toBoolean(exec));
+    impl()->addEventListener(ustringToAtomicString(args.at(0).toString(exec)), JSEventListener::create(asObject(listener), this, false, currentWorld(exec)), args.at(2).toBoolean(exec));
     return jsUndefined();
 }
 
@@ -169,7 +169,7 @@ JSValue JSXMLHttpRequest::removeEventListener(ExecState* exec, const ArgList& ar
     if (!listener.isObject())
         return jsUndefined();
 
-    impl()->removeEventListener(args.at(0).toString(exec), JSEventListener::create(asObject(listener), this, false, currentWorld(exec)).get(), args.at(2).toBoolean(exec));
+    impl()->removeEventListener(ustringToAtomicString(args.at(0).toString(exec)), JSEventListener::create(asObject(listener), this, false, currentWorld(exec)).get(), args.at(2).toBoolean(exec));
     return jsUndefined();
 }
 

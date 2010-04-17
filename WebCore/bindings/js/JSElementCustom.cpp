@@ -67,8 +67,8 @@ void JSElement::markChildren(MarkStack& markStack)
 JSValue JSElement::setAttribute(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
-    AtomicString name = args.at(0).toString(exec);
-    AtomicString value = args.at(1).toString(exec);
+    AtomicString name = ustringToAtomicString(args.at(0).toString(exec));
+    AtomicString value = ustringToAtomicString(args.at(1).toString(exec));
 
     Element* imp = impl();
     if (!allowSettingSrcToJavascriptURL(exec, imp, name, value))
@@ -101,8 +101,8 @@ JSValue JSElement::setAttributeNS(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
     AtomicString namespaceURI = valueToStringWithNullCheck(exec, args.at(0));
-    AtomicString qualifiedName = args.at(1).toString(exec);
-    AtomicString value = args.at(2).toString(exec);
+    AtomicString qualifiedName = ustringToAtomicString(args.at(1).toString(exec));
+    AtomicString value = ustringToAtomicString(args.at(2).toString(exec));
 
     Element* imp = impl();
     if (!allowSettingSrcToJavascriptURL(exec, imp, qualifiedName, value))

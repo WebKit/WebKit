@@ -30,13 +30,13 @@ using namespace JSC;
 
 bool JSPluginArray::canGetItemsForName(ExecState*, PluginArray* pluginArray, const Identifier& propertyName)
 {
-    return pluginArray->canGetItemsForName(propertyName);
+    return pluginArray->canGetItemsForName(identifierToAtomicString(propertyName));
 }
 
 JSValue JSPluginArray::nameGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)
 {
     JSPluginArray* thisObj = static_cast<JSPluginArray*>(asObject(slotBase));
-    return toJS(exec, thisObj->impl()->namedItem(propertyName));
+    return toJS(exec, thisObj->impl()->namedItem(identifierToAtomicString(propertyName)));
 }
 
 } // namespace WebCore

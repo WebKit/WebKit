@@ -32,13 +32,6 @@
 #define ATOMICSTRING_CONVERSION
 #endif
 
-#if USE(JSC)
-namespace JSC {
-class Identifier;
-class UString;
-}
-#endif
-
 namespace WebCore {
 
 struct AtomicStringHash;
@@ -49,12 +42,9 @@ public:
 
     AtomicString() { }
     AtomicString(const char* s) : m_string(add(s)) { }
-    AtomicString(const UChar* s, int length) : m_string(add(s, length)) { }
+    AtomicString(const UChar* s, unsigned length) : m_string(add(s, length)) { }
+    AtomicString(const UChar* s, unsigned length, unsigned existingHash) : m_string(add(s, length, existingHash)) { }
     AtomicString(const UChar* s) : m_string(add(s)) { }
-#if USE(JSC)
-    AtomicString(const JSC::UString& s) : m_string(add(s)) { }
-    AtomicString(const JSC::Identifier& s) : m_string(add(s)) { }
-#endif
     ATOMICSTRING_CONVERSION AtomicString(StringImpl* imp) : m_string(add(imp)) { }
     AtomicString(AtomicStringImpl* imp) : m_string(imp) { }
     ATOMICSTRING_CONVERSION AtomicString(const String& s) : m_string(add(s.impl())) { }
@@ -63,16 +53,10 @@ public:
     AtomicString(WTF::HashTableDeletedValueType) : m_string(WTF::HashTableDeletedValue) { }
     bool isHashTableDeletedValue() const { return m_string.isHashTableDeletedValue(); }
 
-#if USE(JSC)
-    static AtomicStringImpl* find(const JSC::Identifier&);
-#endif
+    static AtomicStringImpl* find(const UChar* s, unsigned length, unsigned existingHash);
 
     operator const String&() const { return m_string; }
     const String& string() const { return m_string; };
-
-#if USE(JSC)
-    operator JSC::UString() const;
-#endif
 
     AtomicStringImpl* impl() const { return static_cast<AtomicStringImpl *>(m_string.impl()); }
     
@@ -128,13 +112,10 @@ private:
     String m_string;
     
     static PassRefPtr<StringImpl> add(const char*);
-    static PassRefPtr<StringImpl> add(const UChar*, int length);
+    static PassRefPtr<StringImpl> add(const UChar*, unsigned length);
+    static PassRefPtr<StringImpl> add(const UChar*, unsigned length, unsigned existingHash);
     static PassRefPtr<StringImpl> add(const UChar*);
     static PassRefPtr<StringImpl> add(StringImpl*);
-#if USE(JSC)
-    static PassRefPtr<StringImpl> add(const JSC::UString&);
-    static PassRefPtr<StringImpl> add(const JSC::Identifier&);
-#endif
 };
 
 inline bool operator==(const AtomicString& a, const AtomicString& b) { return a.impl() == b.impl(); }

@@ -51,7 +51,7 @@ using namespace HTMLNames;
 
 bool JSHTMLDocument::canGetItemsForName(ExecState*, HTMLDocument* document, const Identifier& propertyName)
 {
-    AtomicStringImpl* atomicPropertyName = AtomicString::find(propertyName);
+    AtomicStringImpl* atomicPropertyName = findAtomicString(propertyName);
     return atomicPropertyName && (document->hasNamedItem(atomicPropertyName) || document->hasExtraNamedItem(atomicPropertyName));
 }
 

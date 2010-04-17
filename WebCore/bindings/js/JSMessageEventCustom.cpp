@@ -72,7 +72,7 @@ JSC::JSValue JSMessageEvent::initMessageEvent(JSC::ExecState* exec, const JSC::A
     }
 
     MessageEvent* event = static_cast<MessageEvent*>(this->impl());
-    event->initMessageEvent(typeArg, canBubbleArg, cancelableArg, dataArg, ustringToString(originArg), ustringToString(lastEventIdArg), sourceArg, messagePorts.release());
+    event->initMessageEvent(ustringToAtomicString(typeArg), canBubbleArg, cancelableArg, dataArg, ustringToString(originArg), ustringToString(lastEventIdArg), sourceArg, messagePorts.release());
     return jsUndefined();
 }
 

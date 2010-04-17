@@ -32,12 +32,6 @@
 #include <wtf/Threading.h>
 #include <wtf/HashSet.h>
 
-#if USE(JSC)
-#include <runtime/Identifier.h>
-using JSC::Identifier;
-using JSC::UString;
-#endif
-
 namespace WebCore {
 
 static inline HashSet<StringImpl*>& stringTable()
@@ -176,7 +170,7 @@ struct HashAndCharactersTranslator {
     }
 };
 
-PassRefPtr<StringImpl> AtomicString::add(const UChar* s, int length)
+PassRefPtr<StringImpl> AtomicString::add(const UChar* s, unsigned length)
 {
     if (!s)
         return 0;
@@ -190,6 +184,21 @@ PassRefPtr<StringImpl> AtomicString::add(const UChar* s, int length)
     // If the string is newly-translated, then we need to adopt it.
     // The boolean in the pair tells us if that is so.
     return addResult.second ? adoptRef(*addResult.first) : *addResult.first;
+}
+
+PassRefPtr<StringImpl> AtomicString::add(const UChar* s, unsigned length, unsigned existingHash)
+{
+    ASSERT(s);
+    ASSERT(existingHash);
+
+    if (length == 0)
+        return StringImpl::empty();
+    
+    HashAndCharacters buffer = { existingHash, s, length }; 
+    pair<HashSet<StringImpl*>::iterator, bool> addResult = stringTable().add<HashAndCharacters, HashAndCharactersTranslator>(buffer);
+    if (!addResult.second)
+        return *addResult.first;
+    return adoptRef(*addResult.first);
 }
 
 PassRefPtr<StringImpl> AtomicString::add(const UChar* s)
@@ -226,6 +235,21 @@ PassRefPtr<StringImpl> AtomicString::add(StringImpl* r)
     return result;
 }
 
+AtomicStringImpl* AtomicString::find(const UChar* s, unsigned length, unsigned existingHash)
+{
+    ASSERT(s);
+    ASSERT(existingHash);
+
+    if (length == 0)
+        return static_cast<AtomicStringImpl*>(StringImpl::empty());
+
+    HashAndCharacters buffer = { existingHash, s, length }; 
+    HashSet<StringImpl*>::iterator iterator = stringTable().find<HashAndCharacters, HashAndCharactersTranslator>(buffer);
+    if (iterator == stringTable().end())
+        return 0;
+    return static_cast<AtomicStringImpl*>(*iterator);
+}
+
 void AtomicString::remove(StringImpl* r)
 {
     stringTable().remove(r);
@@ -240,69 +264,6 @@ AtomicString AtomicString::lower() const
         return *this;
     return AtomicString(newImpl);
 }
-
-#if USE(JSC)
-PassRefPtr<StringImpl> AtomicString::add(const JSC::Identifier& identifier)
-{
-    if (identifier.isNull())
-        return 0;
-
-    UString::Rep* string = identifier.ustring().rep();
-    unsigned length = string->length();
-    if (!length)
-        return StringImpl::empty();
-
-    HashAndCharacters buffer = { string->existingHash(), string->characters(), length }; 
-    pair<HashSet<StringImpl*>::iterator, bool> addResult = stringTable().add<HashAndCharacters, HashAndCharactersTranslator>(buffer);
-    if (!addResult.second)
-        return *addResult.first;
-    return adoptRef(*addResult.first);
-}
-
-PassRefPtr<StringImpl> AtomicString::add(const JSC::UString& ustring)
-{
-    if (ustring.isNull())
-        return 0;
-
-    UString::Rep* string = ustring.rep();
-    unsigned length = string->length();
-    if (!length)
-        return StringImpl::empty();
-
-    HashAndCharacters buffer = { string->hash(), string->characters(), length }; 
-    pair<HashSet<StringImpl*>::iterator, bool> addResult = stringTable().add<HashAndCharacters, HashAndCharactersTranslator>(buffer);
-    if (!addResult.second)
-        return *addResult.first;
-    return adoptRef(*addResult.first);
-}
-
-AtomicStringImpl* AtomicString::find(const JSC::Identifier& identifier)
-{
-    if (identifier.isNull())
-        return 0;
-
-    UString::Rep* string = identifier.ustring().rep();
-    unsigned length = string->length();
-    if (!length)
-        return static_cast<AtomicStringImpl*>(StringImpl::empty());
-
-    HashAndCharacters buffer = { string->existingHash(), string->characters(), length }; 
-    HashSet<StringImpl*>::iterator iterator = stringTable().find<HashAndCharacters, HashAndCharactersTranslator>(buffer);
-    if (iterator == stringTable().end())
-        return 0;
-    return static_cast<AtomicStringImpl*>(*iterator);
-}
-
-AtomicString::operator UString() const
-{
-    StringImpl* impl = m_string.impl();
-    if (!impl)
-        return UString();
-    if (SharedUChar* sharedBuffer = impl->sharedBuffer())
-        return UString::Rep::create(impl->characters(), impl->length(), sharedBuffer);
-    return UString(impl->characters(), impl->length());
-}
-#endif
 
 DEFINE_GLOBAL(AtomicString, nullAtom)
 DEFINE_GLOBAL(AtomicString, emptyAtom, "")
