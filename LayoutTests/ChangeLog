@@ -1,3 +1,26 @@
+2010-04-17  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed, but I took Jeremy Orlow's suggestions on an earlier
+        iteration of this patch.
+
+        Add URL parsing tests for relative URL resolution
+        https://bugs.webkit.org/show_bug.cgi?id=37644
+
+        I've split the platform specific parts of this test into separate
+        files.  On KURL-based ports these should have the same results on every
+        platform.  We can decide whether to have platform-specific behavior at
+        a later time.
+
+        * fast/url/relative-expected.txt: Added.
+        * fast/url/relative-unix-expected.txt: Added.
+        * fast/url/relative-unix.html: Added.
+        * fast/url/relative-win-expected.txt: Added.
+        * fast/url/relative-win.html: Added.
+        * fast/url/relative.html: Added.
+        * fast/url/script-tests/relative-unix.js: Added.
+        * fast/url/script-tests/relative-win.js: Added.
+        * fast/url/script-tests/relative.js: Added.
+
 2010-04-17  Alejandro G. Castro  <alex@igalia.com>
 
         Rubber-stamped by Xan Lopez.
