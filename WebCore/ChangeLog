@@ -1,3 +1,11 @@
+2010-04-16  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by NOBODY (arm build fix).
+
+        * bindings/js/JSDesktopNotificationsCustom.cpp:
+        (WebCore::JSNotification::addEventListener):
+        (WebCore::JSNotification::removeEventListener):
+
 2010-04-16  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Yury Semikhatsky.
