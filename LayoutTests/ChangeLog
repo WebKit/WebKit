@@ -1,3 +1,14 @@
+2010-04-16  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Antti Koivisto.
+
+        [Qt] GraphicsLayer: support fill-modes
+        https://bugs.webkit.org/show_bug.cgi?id=36216
+
+        Remove LayoutTests/animations/fill-mode-transform.html from the skip list
+
+        * platform/qt/Skipped:
+
 2010-04-16  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Yury Semikhatsky.
