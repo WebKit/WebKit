@@ -1,3 +1,12 @@
+2010-04-17  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        WebKit needs a Chromium Mac EWS Builder
+        https://bugs.webkit.org/show_bug.cgi?id=37742
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+
 2010-04-17  Adam Barth  <abarth@webkit.org>
 
         Fix expected results for unit test broken by

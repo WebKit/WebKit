@@ -137,6 +137,10 @@ class ChromiumWindowsEWS(AbstractChromiumEWS):
     name = "cr-win-ews"
 
 
+class ChromiumMacEWS(AbstractChromiumEWS):
+    name = "cr-mac-ews"
+
+
 # For platforms that we can't run inside a VM (like Mac OS X), we require
 # patches to be uploaded by committers, who are generally trustworthy folk. :)
 class AbstractCommitterOnlyEWS(AbstractEarlyWarningSystem):
