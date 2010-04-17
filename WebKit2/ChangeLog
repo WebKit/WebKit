@@ -1,3 +1,14 @@
+2010-04-17  Sam Weinig  <weinig@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Teach windows MiniBrowser how to work with window.open()
+        and targeted links.
+
+        Export WKPageSetPageUIClient.
+
+        * win/WebKit2.def:
+
 2010-04-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

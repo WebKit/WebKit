@@ -4,6 +4,7 @@ EXPORTS
     WKContextCreateWithProcessModel
     WKPageNamespaceCreate
     WKPageLoadURL
+    WKPageSetPageUIClient
     WKViewCreate
     WKViewGetWindow
     WKViewGetPage

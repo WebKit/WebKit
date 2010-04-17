@@ -35,8 +35,6 @@
 
 using namespace std;
 
-static const wchar_t* kDefaultURLString = L"http://webkit.org/";
-
 BrowserWindow::BrowserWindow()
     : m_window(0)
     , m_rebarWindow(0)
@@ -83,6 +81,10 @@ LRESULT BrowserWindow::wndProc(HWND window, UINT message, WPARAM wParam, LPARAM 
         onDestroy();
         break;
 
+    case WM_NCDESTROY:
+        onNCDestroy();
+        break;
+
     default:
         handled = false;
     }
@@ -124,6 +126,11 @@ void BrowserWindow::showWindow()
     ::ShowWindow(m_window, SW_SHOWNORMAL);
 }
 
+void BrowserWindow::goToURL(const std::wstring& url)
+{
+    m_browserView.goToURL(url);
+}
+
 void BrowserWindow::onCreate(LPCREATESTRUCT createStruct)
 {
     // Register our window.
@@ -160,10 +167,7 @@ void BrowserWindow::onCreate(LPCREATESTRUCT createStruct)
     
     // Create the browser view.
     RECT webViewRect = { 0, 0, 0, 0};
-    m_browserView.create(webViewRect, m_window);
-
-    // Goto the default URL.
-    m_browserView.goToURL(kDefaultURLString);
+    m_browserView.create(webViewRect, this);
 }
 
 void BrowserWindow::onDestroy()
@@ -171,7 +175,11 @@ void BrowserWindow::onDestroy()
     MiniBrowser::shared().unregisterWindow(this);
 
     // FIXME: Should we close the browser view here?
-    // FIXME: Should this delete the browser window?
+}
+
+void BrowserWindow::onNCDestroy()
+{
+    delete this;
 }
 
 void BrowserWindow::onSize(int width, int height)

@@ -1,3 +1,35 @@
+2010-04-17  Sam Weinig  <weinig@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Teach windows MiniBrowser how to work with window.open()
+        and targeted links.
+
+        * MiniBrowser/win/BrowserView.cpp:
+        (createNewPage): Create a new BrowserWindow and return its page.
+        (showPage): Show the page.
+        (closePage): Empty implementation.
+        (runJavaScriptAlert): Empty implementation.
+        (BrowserView::create): Register a UIClient.
+        * MiniBrowser/win/BrowserView.h:
+        (BrowserView::webView): Added.
+        Change create to take a BrowserWindow instead of an HWND.
+
+        * MiniBrowser/win/BrowserWindow.cpp:
+        (BrowserWindow::wndProc): Respond to WM_NCDESTROY.
+        (BrowserWindow::goToURL): Added. Forwards to BrowserView.
+        (BrowserWindow::onCreate): Don't always go to the default
+        url. Let the caller do this.
+        (BrowserWindow::onNCDestroy): Delete the window.
+        * MiniBrowser/win/BrowserWindow.h:
+        (BrowserWindow::view): Added.
+        (BrowserWindow::window): Added.
+
+        * MiniBrowser/win/main.cpp:
+        (_tWinMain):
+        Go to the default URL for the initial page. Allocate the initial
+        window on the heap for correctness.
+
 2010-04-16  Adam Roben  <aroben@apple.com>
 
         Add the Windows Debug (Test) builder to the list of core builders

@@ -29,14 +29,18 @@
 #include <WebKit2/WebKit2.h>
 #include <string>
 
+class BrowserWindow;
+
 class BrowserView  {
 public:
     BrowserView();
 
     void goToURL(const std::wstring& url);
 
-    void create(RECT, HWND parentWindow);
+    void create(RECT, BrowserWindow* parentWindow);
     void setFrame(RECT);
+
+    WKViewRef webView() const { return m_webView; }
 
 private:
     WKViewRef m_webView;

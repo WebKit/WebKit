@@ -26,6 +26,7 @@
 #include "StdAfx.h"
 #include "BrowserView.h"
 
+#include "BrowserWindow.h"
 #include <WebKit2/WKURLCF.h>
 
 static const unsigned short HIGH_BIT_MASK_SHORT = 0x8000;
@@ -35,16 +36,51 @@ BrowserView::BrowserView()
 {
 }
 
-void BrowserView::create(RECT webViewRect, HWND parentWindow)
+// UI Client Callbacks
+
+static WKPageRef createNewPage(WKPageRef page, const void* clientInfo)
+{
+    BrowserWindow* browserWindow = new BrowserWindow();
+    browserWindow->createWindow(0, 0, 800, 600);
+
+    return WKViewGetPage(browserWindow->view().webView());
+}
+
+static void showPage(WKPageRef page, const void *clientInfo)
+{
+    static_cast<BrowserWindow*>(const_cast<void*>(clientInfo))->showWindow();
+}
+
+static void closePage(WKPageRef page, const void *clientInfo)
+{
+}
+
+static void runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef frame, const void* clientInfo)
+{
+}
+
+
+void BrowserView::create(RECT webViewRect, BrowserWindow* parentWindow)
 {
     assert(!m_webView);
 
     bool isShiftKeyDown = ::GetKeyState(VK_SHIFT) & HIGH_BIT_MASK_SHORT;
 
-    WKContextRef context = WKContextCreateWithProcessModel(isShiftKeyDown ? kWKProcessModelSecondaryThread : kWKProcessModelSecondaryProcess);
+    //WKContextRef context = WKContextCreateWithProcessModel(isShiftKeyDown ? kWKProcessModelSecondaryThread : kWKProcessModelSecondaryProcess);
+    WKContextRef context = WKContextCreateWithProcessModel(kWKProcessModelSecondaryThread);
     WKPageNamespaceRef pageNamespace = WKPageNamespaceCreate(context);
 
-    m_webView = WKViewCreate(webViewRect, pageNamespace, parentWindow);
+    m_webView = WKViewCreate(webViewRect, pageNamespace, parentWindow->window());
+
+    WKPageUIClient uiClient = {
+        0,              /* version */
+        parentWindow,   /* clientInfo */
+        createNewPage,
+        showPage,
+        closePage,
+        runJavaScriptAlert
+    };
+    WKPageSetPageUIClient(WKViewGetPage(m_webView), &uiClient);
 }
 
 void BrowserView::setFrame(RECT rect)
