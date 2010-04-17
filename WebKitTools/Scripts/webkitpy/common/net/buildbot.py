@@ -307,9 +307,9 @@ class BuildBot(object):
         self.buildbot_host = host
         self._builder_by_name = {}
 
-        # If any Leopard builder/tester, Windows builder or Chromium builder is
-        # red we should not be landing patches.  Other builders should be added
-        # to this list once they are known to be reliable.
+        # If any core builder is red we should not be landing patches.  Other
+        # builders should be added to this list once they are known to be
+        # reliable.
         # See https://bugs.webkit.org/show_bug.cgi?id=33296 and related bugs.
         self.core_builder_names_regexps = [
             "SnowLeopard.*Build",
@@ -317,6 +317,7 @@ class BuildBot(object):
             "Leopard",
             "Tiger",
             "Windows.*Build",
+            "Windows.*Debug.*Test",
             "Qt",
             "Chromium",
         ]

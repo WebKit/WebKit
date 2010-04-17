@@ -1,3 +1,16 @@
+2010-04-16  Adam Roben  <aroben@apple.com>
+
+        Add the Windows Debug (Test) builder to the list of core builders
+
+        It's been green for a few days now, and all the known Windows
+        flakiness is Release-only.
+
+        Rubber-stamped by Mark Rowe.
+
+        * Scripts/webkitpy/common/net/buildbot.py:
+        (BuildBot.core_builder_name_regexps): Added a regular expression to
+        match the "Windows Debug (Test)" builder.
+
 2010-04-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
