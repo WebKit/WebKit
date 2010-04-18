@@ -1,3 +1,30 @@
+2010-04-14  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add a layer of indirection when calling run-webkit-tests to
+        allow testing new-run-webkit-tests on various platforms.
+        https://bugs.webkit.org/show_bug.cgi?id=37632
+
+        This will let us test and fix bugs in new-run-webkit-tests
+        without needing to restart the buildbot master between tests.
+
+        Currently this change leaves run-webkit-tests as-is, but once
+        its landed we will easily be able to turn on/off
+        new-run-webkit-tests for various ports/configurations.
+
+        I will send a note out to webkit-dev about how we will
+        be using this launcher script to test on the bots.
+
+        * Scripts/old-run-webkit-tests: Copied from WebKitTools/Scripts/run-webkit-tests.
+        * Scripts/run-webkit-tests:
+         - A new script which decides whether to run new- or old-
+           run-webkit-tests based on the platform.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+         - Add some dummy argument handling for arguments which
+           old-run-webkit-tests supports but new-run-webkit-tests
+           does not yet.
+
 2010-04-18  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

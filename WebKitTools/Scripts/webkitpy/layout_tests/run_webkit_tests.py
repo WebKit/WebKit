@@ -688,7 +688,7 @@ class TestRunner:
 
         # Write the summary to disk (results.html) and display it if requested.
         wrote_results = self._write_results_html_file(result_summary)
-        if not self._options.noshow_results and wrote_results:
+        if self._options.show_results and wrote_results:
             self._show_results_html_file()
 
         # Ignore flaky failures and unexpected passes so we don't turn the
@@ -1533,6 +1533,14 @@ def main(options, args, print_results=True):
     return num_unexpected_results
 
 
+def _compat_shim_callback(option, opt_str, value, parser):
+    print "Ignoring unsupported option: %s" % opt_str
+
+
+def _compat_shim_option(option_name, nargs=0):
+    return optparse.make_option(option_name, action="callback", callback=_compat_shim_callback, nargs=nargs, help="Ignored, for old-run-webkit-tests compat only.")
+
+
 def parse_args(args=None):
     """Provides a default set of command line args.
 
@@ -1586,16 +1594,27 @@ def parse_args(args=None):
             help="Don't check the system dependencies (themes)"),
     ]
 
-    # Missing Mac options:
+    # Missing Mac-specific old-run-webkit-tests options:
     # FIXME: Need: -g, --guard for guard malloc support on Mac.
     # FIXME: Need: -l --leaks    Enable leaks checking.
-    # FIXME: Need: --[no-]sample-on-timeout Run sample on timeout
-    # FIXME: Need:    (default: run) (Mac OS X only)
+    # FIXME: Need: --sample-on-timeout Run sample on timeout
+
+    old_run_webkit_tests_compat = [
+        # NRWT doesn't generate results by default anyway.
+        _compat_shim_option("--no-new-test-results"),
+        # NRWT doesn't sample on timeout yet anyway.
+        _compat_shim_option("--no-sample-on-timeout"),
+        # FIXME: NRWT needs to support remote links eventually.
+        _compat_shim_option("--use-remote-links-to-tests"),
+        # FIXME: NRWT doesn't need this option as much since failures are
+        # designed to be cheap.  We eventually plan to add this support.
+        _compat_shim_option("--exit-after-n-failures", nargs=1),
+    ]
 
     results_options = [
         # NEED for bots: --use-remote-links-to-tests Link to test files
         # within the SVN repository in the results.
-        optparse.make_option("-p", "--pixel-tests'", action="store_true",
+        optparse.make_option("-p", "--pixel-tests", action="store_true",
             dest="pixel_tests", help="Enable pixel-to-pixel PNG comparisons"),
         optparse.make_option("--no-pixel-tests", action="store_false",
             dest="pixel_tests", help="Disable pixel-to-pixel PNG comparisons"),
@@ -1612,11 +1631,18 @@ def parse_args(args=None):
             default=False, help="Save all generated results as new baselines "
                  "into the platform directory, overwriting whatever's "
                  "already there."),
-        # FIXME: --noshow should be --no-show to match the GNU get_opt pattern.
-        optparse.make_option("--noshow-results", action="store_true",
-            default=False,
+        optparse.make_option("--no-show-results", action="store_false",
+            default=True, dest="show_results",
             help="Don't launch a browser with results after the tests "
                  "are done"),
+        # FIXME: We should have a helper function to do this sort of
+        # deprectated mapping and automatically log, etc.
+        optparse.make_option("--noshow-results", action="store_false",
+            dest="show_results",
+            help="Deprecated, same as --no-show-results."),
+        optparse.make_option("--no-launch-safari", action="store_false",
+            dest="show_results",
+            help="old-run-webkit-tests compat, same as --noshow-results."),
         # old-run-webkit-tests:
         # --[no-]launch-safari    Launch (or do not launch) Safari to display
         #                         test results (default: launch)
@@ -1706,7 +1732,8 @@ def parse_args(args=None):
 
     option_list = (configuration_options + logging_options +
                    chromium_options + results_options + test_options +
-                   misc_options + results_json_options)
+                   misc_options + results_json_options +
+                   old_run_webkit_tests_compat)
     option_parser = optparse.OptionParser(option_list=option_list)
     return option_parser.parse_args(args)
 
