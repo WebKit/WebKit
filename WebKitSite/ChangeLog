@@ -1,3 +1,9 @@
+2010-04-17  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.  Added loader diagram for upcoming blog post.
+
+        * blog-files/loader-diagram.svg: Added.
+
 2010-04-11  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Eric Seidel.
