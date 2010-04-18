@@ -77,4 +77,5 @@ if (useNewRunWebKitTests()) {
     }
 }
 
-exec($harnessName, @ARGV);
+my $harnessPath = sprintf("%s/%s", relativeScriptsDir(), $harnessName);
+exec($harnessPath, @ARGV);
