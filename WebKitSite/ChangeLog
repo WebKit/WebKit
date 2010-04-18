@@ -1,3 +1,10 @@
+2010-04-18  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.  Update a label of the diagram to better match the
+        description in the text of the blog post.
+
+        * blog-files/loader-diagram.svg:
+
 2010-04-17  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.  Added loader diagram for upcoming blog post.
