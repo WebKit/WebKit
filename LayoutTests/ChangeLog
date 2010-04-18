@@ -1,3 +1,37 @@
+2010-04-18  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Add support for LayoutTestController commands:
+                   setSmartInsertDeleteEnabled
+                   setSelectTrailingWhitespaceEnabled
+                   execCommand
+                   isCommandEnabled
+
+        Unskip tests:
+        editing/deleting/smart-editing-disabled.html
+        editing/execCommand/19089.html
+        editing/execCommand/delete-image-in-anchor.html
+        editing/execCommand/enabling-and-selection-2.html
+        editing/selection/doubleclick-whitespace-crash.html
+        editing/selection/doubleclick-whitespace-img-crash.html
+        editing/selection/doubleclick-whitespace.html
+        editing/selection/select-line.html
+        editing/deleting/5300379.html
+        editing/deleting/smart-delete-003.html
+        editing/deleting/smart-delete-004.html
+        editing/selection/5195166-1.html
+        editing/selection/5195166-2.html
+
+        https://bugs.webkit.org/show_bug.cgi?id=35844
+
+        * platform/qt/Skipped:
+        * platform/qt/editing/deleting/5300379-expected.txt: Update platform-specific results.
+        * platform/qt/editing/deleting/smart-delete-003-expected.txt: Update platform-specific results.
+        * platform/qt/editing/deleting/smart-delete-004-expected.txt: Update platform-specific results.
+        * platform/qt/editing/selection/5195166-1-expected.txt: Copied from LayoutTests/platform/mac/editing/selection/5195166-1-expected.txt.
+        * platform/qt/editing/selection/5195166-2-expected.txt: Update platform-specific results.
+
 2010-04-18  Antonio Gomes  <tonikitoo@webkit.org>
 
         [Qt] Unreviewed fix: remove svg/custom/clip-path-display-none-child.svg from Skipped (non-existent test)

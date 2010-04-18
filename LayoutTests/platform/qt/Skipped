@@ -331,9 +331,6 @@ editing/selection/doubleclick-beside-cr-span.html
 # Missing eventSender.beginDragWithFiles()
 fast/dom/Window/window-postmessage-clone-frames.html
 
-# Missing layoutTestController.execCommand()
-editing/execCommand/delete-image-in-anchor.html 
-
 # Missing layoutTestController.setAlwaysAcceptCookies()
 http/tests/plugins/third-party-cookie-accept-policy.html
 
@@ -403,7 +400,6 @@ fast/ruby/rubyDOM-remove-text2.html
 
 # ------- failing editing tests
 editing/deleting/delete-to-end-of-paragraph.html
-editing/execCommand/enabling-and-selection-2.html
 editing/execCommand/nsresponder-indent.html
 editing/execCommand/nsresponder-outdent.html
 editing/input/emacs-ctrl-o.html
@@ -1191,7 +1187,6 @@ fast/forms/menulist-width-change.html
 # put into the skipped list for now to have some kind of
 # reference, so we don't introduce regressions.
 editing/deleting/5144139-2.html
-editing/deleting/5300379.html
 editing/deleting/delete-block-merge-contents-001.html
 editing/deleting/delete-block-merge-contents-019.html
 editing/deleting/delete-block-merge-contents-020.html
@@ -1202,8 +1197,6 @@ editing/deleting/delete-line-end-ws-001.html
 editing/deleting/delete-line-end-ws-002.html
 editing/deleting/delete-to-select-table.html
 editing/deleting/deletionUI-single-instance.html
-editing/deleting/smart-delete-003.html
-editing/deleting/smart-delete-004.html
 editing/execCommand/4920488.html
 editing/execCommand/4920742-1.html
 editing/execCommand/create-list-with-hr.html
@@ -1235,15 +1228,12 @@ editing/pasteboard/paste-text-003.html
 editing/pasteboard/quirks-mode-br-1.html
 editing/selection/4983858.html
 editing/selection/5136696.html
-editing/selection/5195166-1.html
-editing/selection/5195166-2.html
 editing/selection/after-line-wrap.html
 editing/selection/end-of-document.html
 editing/selection/move-left-right.html
 editing/selection/select-all-001.html
 editing/selection/select-all-002.html
 editing/selection/select-all-003.html
-editing/selection/select-line.html
 editing/style/apple-style-editable-mix.html
 editing/style/create-block-for-style-012.html
 editing/style/font-family-with-space.html
@@ -4852,15 +4842,10 @@ dom/xhtml/level3/core/canonicalform09.xhtml
 editing/deleting/delete-ligature-001.html
 editing/deleting/delete-ligature-002.html
 editing/deleting/delete-ligature-003.html
-editing/deleting/smart-editing-disabled.html
-editing/execCommand/19089.html
 editing/inserting/5803706-1.html
 editing/inserting/5994480-2.html
 editing/pasteboard/files-during-page-drags.html
 editing/pasteboard/get-data-text-plain-drop.html
-editing/selection/doubleclick-whitespace-crash.html
-editing/selection/doubleclick-whitespace-img-crash.html
-editing/selection/doubleclick-whitespace.html
 editing/selection/drag-start-event-client-x-y.html
 editing/selection/extend-selection-bidi.html
 editing/selection/hit-test-anonymous.html

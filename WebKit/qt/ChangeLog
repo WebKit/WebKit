@@ -1,3 +1,30 @@
+2010-04-18  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Add support for LayoutTestController commands:
+                   setSmartInsertDeleteEnabled
+                   setSelectTrailingWhitespaceEnabled
+                   execCommand
+                   isCommandEnabled
+
+        https://bugs.webkit.org/show_bug.cgi?id=35844
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        * Api/qwebpage_p.h:
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::setSmartInsertDeleteEnabled):
+        (DumpRenderTreeSupportQt::setSelectTrailingWhitespaceEnabled):
+        (DumpRenderTreeSupportQt::executeCoreCommandByName):
+        (DumpRenderTreeSupportQt::isCommandEnabled):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::smartInsertDeleteEnabled):
+        (WebCore::EditorClientQt::toggleSmartInsertDelete):
+        (WebCore::EditorClientQt::isSelectTrailingWhitespaceEnabled):
+        * WebCoreSupport/EditorClientQt.h:
+
 2010-04-15  Kent Hansen  <kent.hansen@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

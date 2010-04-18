@@ -146,6 +146,10 @@ public slots:
     void setXSSAuditorEnabled(bool enable);
     void setCaretBrowsingEnabled(bool enable);
     void setViewModeMediaFeature(const QString& mode);
+    void setSmartInsertDeleteEnabled(bool enable);
+    void setSelectTrailingWhitespaceEnabled(bool enable);
+    void execCommand(const QString& name, const QString& value = QString());
+    bool isCommandEnabled(const QString& name) const;
 
     bool pauseAnimationAtTimeOnElementWithId(const QString& animationName, double time, const QString& elementId);
     bool pauseTransitionAtTimeOnElementWithId(const QString& propertyName, double time, const QString& elementId);

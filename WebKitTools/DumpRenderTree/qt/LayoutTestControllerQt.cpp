@@ -589,5 +589,25 @@ void LayoutTestController::setScrollbarPolicy(const QString& orientation, const 
     m_drt->webPage()->mainFrame()->setScrollBarPolicy(o, p);
 }
 
+void LayoutTestController::setSmartInsertDeleteEnabled(bool enable)
+{
+    DumpRenderTreeSupportQt::setSmartInsertDeleteEnabled(m_drt->webPage(), enable);
+}
+
+void LayoutTestController::setSelectTrailingWhitespaceEnabled(bool enable)
+{
+    DumpRenderTreeSupportQt::setSelectTrailingWhitespaceEnabled(m_drt->webPage(), enable);
+}
+
+void LayoutTestController::execCommand(const QString& name, const QString& value)
+{
+    DumpRenderTreeSupportQt::executeCoreCommandByName(m_drt->webPage(), name, value);
+}
+
+bool LayoutTestController::isCommandEnabled(const QString& name) const
+{
+    return DumpRenderTreeSupportQt::isCommandEnabled(m_drt->webPage(), name);
+}
+
 const unsigned LayoutTestController::maxViewWidth = 800;
 const unsigned LayoutTestController::maxViewHeight = 600;

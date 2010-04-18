@@ -333,14 +333,18 @@ void EditorClientQt::pageDestroyed()
 
 bool EditorClientQt::smartInsertDeleteEnabled()
 {
-    notImplemented();
-    return false;
+    return m_page->d->smartInsertDeleteEnabled;
+}
+
+void EditorClientQt::toggleSmartInsertDelete()
+{
+    bool current = m_page->d->smartInsertDeleteEnabled;
+    m_page->d->smartInsertDeleteEnabled = !current;
 }
 
 bool EditorClientQt::isSelectTrailingWhitespaceEnabled()
 {
-    notImplemented();
-    return false;
+    return m_page->d->selectTrailingWhitespaceEnabled;
 }
 
 void EditorClientQt::toggleContinuousSpellChecking()

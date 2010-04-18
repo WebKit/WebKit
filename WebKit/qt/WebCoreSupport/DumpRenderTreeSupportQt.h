@@ -38,6 +38,8 @@ public:
 
     static void executeCoreCommandByName(QWebPage* page, const QString& name, const QString& value);
     static bool isCommandEnabled(QWebPage* page, const QString& name);
+    static void setSmartInsertDeleteEnabled(QWebPage* page, bool enabled);
+    static void setSelectTrailingWhitespaceEnabled(QWebPage* page, bool enabled);
 
     static bool pauseAnimation(QWebFrame*, const QString& name, double time, const QString& elementId);
     static bool pauseTransitionOfProperty(QWebFrame*, const QString& name, double time, const QString& elementId);
