@@ -28,7 +28,7 @@
 
 import os
 
-from webkitpy.tool.commands_references import Mock
+from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.commands.earlywarningsystem import *
 from webkitpy.tool.commands.queuestest import QueuesTest
 

@@ -1,3 +1,35 @@
+2010-04-17  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove steps_references and commands_references
+        https://bugs.webkit.org/show_bug.cgi?id=37758
+
+        We tried using the mumble_references convention to manage our
+        dependencies, but it doesn't seem to be providing much value for the
+        steps and commands module because these modules are small pieces of the
+        larger tool module.  In this patch, I've removed the references file
+        for these modules.
+ 
+        I've left the style_references file for the style module because that
+        module seems better isolated from the rest of webkitpy and the
+        style_references file appears to be providing some value.
+
+        * Scripts/webkitpy/tool/commands/commandtest.py:
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+        * Scripts/webkitpy/tool/commands/queries_unittest.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        * Scripts/webkitpy/tool/commands/queuestest.py:
+        * Scripts/webkitpy/tool/commands/upload.py:
+        * Scripts/webkitpy/tool/commands/upload_unittest.py:
+        * Scripts/webkitpy/tool/commands_references.py: Removed.
+        * Scripts/webkitpy/tool/steps/closebugforlanddiff_unittest.py:
+        * Scripts/webkitpy/tool/steps/steps_unittest.py:
+        * Scripts/webkitpy/tool/steps/updatechangelogswithreview_unittest.py:
+        * Scripts/webkitpy/tool/steps/validatereviewer_unittest.py:
+        * Scripts/webkitpy/tool/steps_references.py: Removed.
+
 2010-04-17  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

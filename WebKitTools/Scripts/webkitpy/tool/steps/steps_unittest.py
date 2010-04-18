@@ -29,8 +29,8 @@
 import unittest
 
 from webkitpy.common.system.outputcapture import OutputCapture
+from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.mocktool import MockTool
-from webkitpy.tool.steps_references import Mock
 from webkitpy.tool.steps.update import Update
 from webkitpy.tool.steps.promptforbugortitle import PromptForBugOrTitle
 
