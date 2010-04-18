@@ -1,3 +1,13 @@
+2010-04-17  Juan C. Montemayor  <jmonte03@cs.tufts.edu>
+
+        Reviewed by Joseph Pecoraro.
+
+        Databases pane doesn't recognize table creation/deletion
+        https://bugs.webkit.org/show_bug.cgi?id=20219
+
+        * inspector/front-end/DatabaseQueryView.js:
+        (WebInspector.DatabaseQueryView.prototype._queryFinished):
+
 2010-04-17  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Adam Barth.

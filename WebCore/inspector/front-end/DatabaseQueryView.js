@@ -140,13 +140,15 @@ WebInspector.DatabaseQueryView.prototype = {
     _queryFinished: function(query, result)
     {
         var dataGrid = WebInspector.panels.storage.dataGridForResult(result);
-        if (!dataGrid)
-            return;
-        dataGrid.element.addStyleClass("inline");
-        this._appendQueryResult(query, dataGrid.element);
-        dataGrid.autoSizeColumns(5);
+        var trimmedQuery = query.trim();
 
-        if (query.match(/^create /i) || query.match(/^drop table /i))
+        if (dataGrid) {
+            dataGrid.element.addStyleClass("inline");
+            this._appendQueryResult(trimmedQuery, dataGrid.element);
+            dataGrid.autoSizeColumns(5);            
+        }
+
+        if (trimmedQuery.match(/^create /i) || trimmedQuery.match(/^drop table /i))
             WebInspector.panels.storage.updateDatabaseTables(this.database);
     },
 
