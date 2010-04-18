@@ -1,5 +1,15 @@
 description("This tests that setting window event listeners on the body, sets them on the window.");
 
+function gc()
+{
+    if (window.GCController)
+        return GCController.collect();
+
+    for (var i = 0; i < 10000; i++) { // > force garbage collection (FF requires about 9K allocations before a collect)
+        var s = new String("");
+    }
+}
+
 var func = function() { }
 
 document.body.onblur = func;
@@ -50,5 +60,7 @@ document.body.onunload = func;
 shouldBe("window.onunload", "func");
 shouldBe("window.onunload", "document.body.onunload");
 window.onunload = null;
+
+gc();
 
 var successfullyParsed = true;

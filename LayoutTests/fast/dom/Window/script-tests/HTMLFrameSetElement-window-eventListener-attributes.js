@@ -1,5 +1,15 @@
 description("This tests that setting window event listeners on the frameset, sets them on the window.");
 
+function gc()
+{
+    if (window.GCController)
+        return GCController.collect();
+
+    for (var i = 0; i < 10000; i++) { // > force garbage collection (FF requires about 9K allocations before a collect)
+        var s = new String("");
+    }
+}
+
 var frameSet = document.createElement("frameset");
 var func = function() { }
 
@@ -51,5 +61,7 @@ frameSet.onunload = func;
 shouldBe("window.onunload", "func");
 shouldBe("window.onunload", "frameSet.onunload");
 window.onunload = null;
+
+gc();
 
 var successfullyParsed = true;

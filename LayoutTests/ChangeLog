@@ -1,3 +1,17 @@
+2010-04-17  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37720
+        <rdar://problem/7873752> HTMLFrameSetElement-window-eventListener-attributes.html sometimes
+        crashes on SnowLeopard Release
+
+        * fast/dom/Window/script-tests/HTMLBodyElement-window-eventListener-attributes.js:
+        * fast/dom/Window/script-tests/HTMLFrameSetElement-window-eventListener-attributes.js:
+        Added gc() calls to test this case more reliably.
+
+        * platform/mac-snowleopard/Skipped: Removed test from skipped list.
+
 2010-04-17  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.

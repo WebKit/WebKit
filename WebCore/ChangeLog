@@ -1,3 +1,24 @@
+2010-04-17  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37720
+        <rdar://problem/7873752> HTMLFrameSetElement-window-eventListener-attributes.html sometimes
+        crashes on SnowLeopard Release
+
+        Tests: 
+        * fast/dom/Window/HTMLBodyElement-window-eventListener-attributes.html:
+        * fast/dom/Window/HTMLFrameSetElement-window-eventListener-attributes.html:
+
+        * bindings/scripts/CodeGeneratorJS.pm: Use global object as a wrapper for window event
+        listeners set via document.body. The body wrapper can go away if nothing else references it.
+
+        * html/HTMLBodyElement.idl: Override listeners that exist on Element with custom implementations,
+        because we need to use window object as a wrapper, not the element. Marked all window event
+        listeners as such for code generator.
+
+        * html/HTMLFrameSetElement.idl: Ditto.
+
 2010-04-17  Juan C. Montemayor  <jmonte03@cs.tufts.edu>
 
         Reviewed by Joseph Pecoraro.
