@@ -6,6 +6,16 @@
         https://bugs.webkit.org/show_bug.cgi?id=37632
 
         * Scripts/run-webkit-tests:
+         - Exit non-zero of launching the harness fails.
+
+2010-04-18  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, fixing the Qt bot.
+
+        Add a layer of indirection when calling run-webkit-tests to allow testing new-run-webkit-tests on various platforms
+        https://bugs.webkit.org/show_bug.cgi?id=37632
+
+        * Scripts/run-webkit-tests:
          - Fix the wrapper to work for users who do not
            have WebKitTools/Scripts in their path.
 
