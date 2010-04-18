@@ -1,3 +1,11 @@
+2010-04-18  Antonio Gomes  <tonikitoo@webkit.org>
+
+        [Qt] Unreviewed fix: remove svg/custom/clip-path-display-none-child.svg from Skipped (non-existent test)
+
+        It was removed by r57511.
+
+        * platform/qt/Skipped:
+
 2010-04-17  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Adam Barth.
