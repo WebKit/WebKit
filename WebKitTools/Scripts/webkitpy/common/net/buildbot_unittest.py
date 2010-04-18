@@ -272,6 +272,7 @@ class BuildBotTest(unittest.TestCase):
             "Tiger",
             "Windows.*Build",
             "Windows.*Debug.*Test",
+            "GTK",
             "Qt",
             "Chromium",
         ]
@@ -286,6 +287,10 @@ class BuildBotTest(unittest.TestCase):
             {'name': u'Windows Release (Build)', },
             {'name': u'Windows Debug (Build)', },
             {'name': u'Windows Debug (Tests)', },
+            {'name': u'GTK Linux 32-bit Release', },
+            {'name': u'GTK Linux 32-bit Debug', },
+            {'name': u'GTK Linux 64-bit Debug', },
+            {'name': u'GTK Linux 64-bit Release', },
             {'name': u'Qt Linux Release', },
             {'name': u'Qt Linux Release minimal', },
             {'name': u'Qt Linux ARMv5 Release', },

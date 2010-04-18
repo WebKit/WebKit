@@ -1,3 +1,18 @@
+2010-04-18  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add Gtk bots to the list of "core builders" (builders which stop the commit-queue when they turn red)
+        https://bugs.webkit.org/show_bug.cgi?id=33295
+
+        The Gtk builders have been green every time I've looked
+        at them in the last 5 days or so.  It would appear webkit
+        is now keeping them green and we should update the core
+        builder list to match reality.
+
+        * Scripts/webkitpy/common/net/buildbot.py:
+        * Scripts/webkitpy/common/net/buildbot_unittest.py:
+
 2010-04-18  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Simon Hausmann.
