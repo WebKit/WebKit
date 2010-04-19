@@ -1078,8 +1078,7 @@ bool Node::canReplaceChild(Node* newChild, Node*)
 
 void Node::checkReplaceChild(Node* newChild, Node* oldChild, ExceptionCode& ec)
 {
-    // Perform error checking as required by spec for adding a new child. Used by
-    // appendChild(), replaceChild() and insertBefore()
+    // Perform error checking as required by spec for adding a new child. Used by replaceChild().
     
     // Not mentioned in spec: throw NOT_FOUND_ERR if newChild is null
     if (!newChild) {
@@ -1134,8 +1133,7 @@ void Node::checkReplaceChild(Node* newChild, Node* oldChild, ExceptionCode& ec)
 
 void Node::checkAddChild(Node *newChild, ExceptionCode& ec)
 {
-    // Perform error checking as required by spec for adding a new child. Used by
-    // appendChild(), replaceChild() and insertBefore()
+    // Perform error checking as required by spec for adding a new child. Used by appendChild() and insertBefore().
 
     // Not mentioned in spec: throw NOT_FOUND_ERR if newChild is null
     if (!newChild) {

@@ -1,3 +1,16 @@
+2010-04-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Manipulating document fragment members while adding it to tree may result in loss of tree integrity.
+        https://bugs.webkit.org/show_bug.cgi?id=36031
+
+        These tests study various side-effects of DOM mutation events fired during appending/inserting
+        document fragments.
+
+        * fast/dom/Node/fragment-mutation-expected.txt: Added.
+        * fast/dom/Node/fragment-mutation.html: Added.
+
 2010-04-19  James Robinson  <jamesr@chromium.org>
 
         Unreviewed - yet more rebaselines and expectation updates.

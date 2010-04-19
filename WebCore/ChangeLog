@@ -1,3 +1,25 @@
+2010-04-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Manipulating document fragment members while adding it to tree may result in loss of tree integrity.
+        https://bugs.webkit.org/show_bug.cgi?id=36031
+
+        Changes the logic of appending/inserting document fragment to first stashing all of its children
+        to a vector, then processing the vector. This avoids ghastliness that would be caused by mutation
+        events mucking with the document fragment while it's being appended/inserted.
+
+        Test: fast/dom/Node/fragment-mutation.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::targetNodes): Added method to populate a vector of nodes (targets) to be used in
+            inserting/appending operation.
+        (WebCore::ContainerNode::insertBefore): Changed to use vector-based iteration.
+        (WebCore::ContainerNode::appendChild): Ditto.
+        * dom/Node.cpp:
+        (WebCore::Node::checkReplaceChild): Cleaned up comments.
+        (WebCore::Node::checkAddChild): Ditto.
+
 2010-04-19  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.
