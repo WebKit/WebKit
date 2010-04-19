@@ -739,7 +739,7 @@ class TestRunner:
         """Displays the progress through the test run."""
         percent_complete = 100 * (result_summary.expected +
             result_summary.unexpected) / result_summary.total
-        self._meter.update("Testing (%d%%): %d ran as expected, %d didn't,"
+        self._meter.progress("Testing (%d%%): %d ran as expected, %d didn't,"
             " %d left" % (percent_complete, result_summary.expected,
              result_summary.unexpected, result_summary.remaining))
 
@@ -782,10 +782,10 @@ class TestRunner:
 
         if result_summary.remaining:
             remain_str = " (%d)" % (result_summary.remaining)
-            self._meter.update("%s%s" %
-                               (self._current_progress_str, remain_str))
+            self._meter.progress("%s%s" %
+                                 (self._current_progress_str, remain_str))
         else:
-            self._meter.write("%s\n" % (self._current_progress_str))
+            self._meter.progress("%s\n" % (self._current_progress_str))
 
     def _get_failures(self, result_summary, include_crashes):
         """Filters a dict of results and returns only the failures.

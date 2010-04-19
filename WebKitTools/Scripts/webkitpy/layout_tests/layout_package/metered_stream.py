@@ -34,6 +34,10 @@ and rewritten repeatedly, without producing multiple lines of output. It
 can be used to produce effects like progress bars.
 """
 
+import logging
+
+_log = logging.getLogger("webkitpy.layout_tests.metered_stream")
+
 
 class MeteredStream:
     """This class is a wrapper around a stream that allows you to implement
@@ -57,8 +61,7 @@ class MeteredStream:
         self._last_update = ""
 
     def write(self, txt):
-        """Write text directly to the stream, overwriting and resetting the
-        meter."""
+        """Write to the stream, overwriting and resetting the meter."""
         if self._dirty:
             self.update("")
             self._dirty = False
@@ -68,22 +71,43 @@ class MeteredStream:
         """Flush any buffered output."""
         self._stream.flush()
 
-    def update(self, str):
-        """Write an update to the stream that will get overwritten by the next
-        update() or by a write().
+    def progress(self, str):
+        """
+        Write a message to the stream that will get overwritten.
 
         This is used for progress updates that don't need to be preserved in
-        the log. Note that verbose disables this routine; we have this in
-        case we are logging lots of output and the update()s will get lost
-        or won't work properly (typically because verbose streams are
-        redirected to files.
+        the log. If the MeteredStream was initialized with verbose==True,
+        then this output is discarded. We have this in case we are logging
+        lots of output and the update()s will get lost or won't work
+        properly (typically because verbose streams are redirected to files).
 
-        TODO(dpranke): figure out if there is a way to detect if we're writing
-        to a stream that handles CRs correctly (e.g., terminals). That might
-        be a cleaner way of handling this.
         """
         if self._verbose:
             return
+        self._write(str)
+
+    def update(self, str):
+        """
+        Write a message that is also included when logging verbosely.
+
+        This routine preserves the same console logging behavior as progress(),
+        but will also log the message if verbose() was true.
+
+        """
+        # Note this is a separate routine that calls either into the logger
+        # or the metering stream. We have to be careful to avoid a layering
+        # inversion (stream calling back into the logger).
+        if self._verbose:
+            _log.info(str)
+        else:
+            self._write(str)
+
+    def _write(self, str):
+        """Actually write the message to the stream."""
+
+        # FIXME: Figure out if there is a way to detect if we're writing
+        # to a stream that handles CRs correctly (e.g., terminals). That might
+        # be a cleaner way of handling this.
 
         # Print the necessary number of backspaces to erase the previous
         # message.

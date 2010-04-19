@@ -2,6 +2,19 @@
 
         Reviewed by Eric Seidel.
 
+        Restructure the logging in new-run-webkit-tests so that many of log
+        messages that were logged to the MeteredStream also get logged in
+        --verbose mode.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37780
+
+        * Scripts/webkitpy/layout_tests/layout_package/metered_stream.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
+2010-04-19  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         new-run-webkit-tests: add 'summary' and 'unexpected-results' options
         to the --log flag. Also add a 'progress' flag to enable the regular
         progress bar (as opposed to 'detailed-progress', which enables the
