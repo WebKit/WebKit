@@ -58,9 +58,9 @@ PassRefPtr<StorageNamespace> StorageNamespaceImpl::localStorageNamespace(const S
     return it->second;
 }
 
-PassRefPtr<StorageNamespace> StorageNamespaceImpl::sessionStorageNamespace()
+PassRefPtr<StorageNamespace> StorageNamespaceImpl::sessionStorageNamespace(unsigned quota)
 {
-    return adoptRef(new StorageNamespaceImpl(SessionStorage, String(), StorageMap::noQuota));
+    return adoptRef(new StorageNamespaceImpl(SessionStorage, String(), quota));
 }
 
 StorageNamespaceImpl::StorageNamespaceImpl(StorageType storageType, const String& path, unsigned quota)

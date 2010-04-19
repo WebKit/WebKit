@@ -1,3 +1,27 @@
+2010-04-19  Ada Chan  <adachan@apple.com>
+
+        Reviewed by Jeremy Orlow.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37717
+        Allow clients concerned with memory consumption to set a quota on session storage
+        since the memory used won't be released until the Page is destroyed.
+        The default is noQuota, which matches the current behavior.
+
+        * WebCore.base.exp: Export Settings::setSessionStorageQuota().
+        * page/Page.cpp:
+        (WebCore::Page::sessionStorage):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setSessionStorageQuota):
+        * page/Settings.h:
+        (WebCore::Settings::sessionStorageQuota):
+        * storage/StorageNamespace.cpp:
+        (WebCore::StorageNamespace::sessionStorageNamespace):
+        * storage/StorageNamespace.h:
+        * storage/StorageNamespaceImpl.cpp:
+        (WebCore::StorageNamespaceImpl::sessionStorageNamespace):
+        * storage/StorageNamespaceImpl.h:
+
 2010-04-19  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.

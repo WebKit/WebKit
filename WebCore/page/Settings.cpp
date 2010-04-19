@@ -34,6 +34,7 @@
 #include "HistoryItem.h"
 #include "Page.h"
 #include "PageCache.h"
+#include "StorageMap.h"
 #include <limits>
 
 using namespace std;
@@ -64,6 +65,7 @@ Settings::Settings(Page* page)
     , m_defaultFixedFontSize(0)
     , m_maximumDecodedImageSize(numeric_limits<size_t>::max())
     , m_localStorageQuota(5 * 1024 * 1024)  // Suggested by the HTML5 spec.
+    , m_sessionStorageQuota(StorageMap::noQuota)
     , m_pluginAllowedRunTime(numeric_limits<unsigned>::max())
     , m_zoomMode(ZoomPage)
     , m_isSpatialNavigationEnabled(false)
@@ -275,6 +277,11 @@ void Settings::setLocalStorageEnabled(bool localStorageEnabled)
 void Settings::setLocalStorageQuota(unsigned localStorageQuota)
 {
     m_localStorageQuota = localStorageQuota;
+}
+
+void Settings::setSessionStorageQuota(unsigned sessionStorageQuota)
+{
+    m_sessionStorageQuota = sessionStorageQuota;
 }
 
 void Settings::setPrivateBrowsingEnabled(bool privateBrowsingEnabled)

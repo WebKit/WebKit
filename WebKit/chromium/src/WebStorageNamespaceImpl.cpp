@@ -47,7 +47,7 @@ WebStorageNamespace* WebStorageNamespace::createLocalStorageNamespace(const WebS
 
 WebStorageNamespace* WebStorageNamespace::createSessionStorageNamespace()
 {
-    return new WebStorageNamespaceImpl(WebCore::StorageNamespaceImpl::sessionStorageNamespace());
+    return new WebStorageNamespaceImpl(WebCore::StorageNamespaceImpl::sessionStorageNamespace(noQuota));
 }
 
 WebStorageNamespaceImpl::WebStorageNamespaceImpl(PassRefPtr<WebCore::StorageNamespace> storageNamespace)

@@ -1,3 +1,16 @@
+2010-04-19  Ada Chan  <adachan@apple.com>
+
+        Reviewed by Jeremy Orlow.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37717
+        Changes needed now that StorageNamespaceImpl::sessionStorageNamespace() and
+        StorageNamespace::sessionStorageNamespace() take in a quota parameter.
+
+        * src/StorageNamespaceProxy.cpp:
+        (WebCore::StorageNamespace::sessionStorageNamespace):
+        * src/WebStorageNamespaceImpl.cpp:
+        (WebKit::WebStorageNamespace::createSessionStorageNamespace):
+
 2010-04-17  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by Dimitri Glazkov.
