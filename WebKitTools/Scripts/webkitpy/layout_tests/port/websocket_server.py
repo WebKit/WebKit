@@ -241,6 +241,7 @@ class PyWebSocket(http_server.Lighttpd):
         if not force and not self.is_running():
             return
 
+        pid = None
         if self._process:
             pid = self._process.pid
         elif self._pidfile:

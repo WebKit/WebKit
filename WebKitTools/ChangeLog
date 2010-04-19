@@ -2,6 +2,18 @@
 
         Reviewed by Eric Seidel.
 
+        Add slightly better logging to the websocket python wrapper script,
+        including a --verbose flag for debug output.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37233
+
+        * Scripts/webkitpy/layout_tests/port/websocket_server.py:
+        * Scripts/new-run-webkit-websocketserver:
+
+2010-04-19  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         new-run-webkit-tests: add a way (--print-unexpected-results) to
         (re-)print out the tests that produced unexpected results in the
         last run. Also add a way (--retry-unexpected-results) to

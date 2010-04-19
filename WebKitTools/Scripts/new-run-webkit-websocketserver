@@ -30,6 +30,7 @@
 """A utility script for starting and stopping the web socket server with the
    same configuration as used in the layout tests."""
 
+import logging
 import optparse
 import tempfile
 
@@ -58,6 +59,8 @@ def main():
                              dest="register_cygwin",
                              help='Register Cygwin paths (on Win try bots)')
     option_parser.add_option('--pidfile', help='path to pid file.')
+    option_parser.add_option('-v', '--verbose', action='store_true',
+                             default=False, help='include debug-level logging')
     options, args = option_parser.parse_args()
 
     if not options.port:
@@ -81,6 +84,11 @@ def main():
 
     port_obj = factory.get()
     pywebsocket = websocket_server.PyWebSocket(port_obj, tempfile.gettempdir(), **kwds)
+
+    log_level = logging.WARN
+    if options.verbose:
+        log_level = logging.DEBUG
+    logging.basicConfig(level=log_level)
 
     if 'start' == options.server:
         pywebsocket.start()
