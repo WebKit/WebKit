@@ -1,3 +1,11 @@
+2010-04-19  Jesus Sanchez-Palencia  <jesus@webkit.org>
+
+        Unreviewed.
+
+        Just adding myself as a committer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-04-19  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Eric Seidel.
