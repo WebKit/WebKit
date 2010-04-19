@@ -209,14 +209,20 @@ class FailureReason(AbstractDeclarativeCommand):
             else:
                 print "FAILED to fetch CommitInfo for r%s, likely missing ChangeLog" % revision
 
-    def _explain_failures_for_builder(self, builder, start_revision, search_limit=1000):
+    def _explain_failures_for_builder(self, builder, start_revision):
         print "Examining failures for \"%s\", starting at r%s" % (builder.name(), start_revision)
         revision_to_test = start_revision
         build = builder.build_for_revision(revision_to_test, allow_failed_lookups=True)
-        results_to_explain = set(build.layout_test_results().failing_tests())
+        layout_test_results = build.layout_test_results()
+        if not layout_test_results:
+            # FIXME: This could be made more user friendly.
+            print "Failed to load layout test results; can't continue. (start revision = r%s)" % start_revision
+            return 1
+
+        results_to_explain = set(layout_test_results.failing_tests())
         last_build_with_results = build
         print "Starting at %s" % revision_to_test
-        while results_to_explain and revision_to_test > start_revision - search_limit:
+        while results_to_explain:
             revision_to_test -= 1
             new_build = builder.build_for_revision(revision_to_test, allow_failed_lookups=True)
             if not new_build:
@@ -243,8 +249,9 @@ class FailureReason(AbstractDeclarativeCommand):
             results_to_explain -= fixed_results
         if results_to_explain:
             print "Failed to explain failures: %s" % results_to_explain
-        else:
-            print "Explained all results for %s" % builder.name()
+            return 1
+        print "Explained all results for %s" % builder.name()
+        return 0
 
     def _builder_to_explain(self):
         builder_statuses = self.tool.buildbot.builder_statuses()
@@ -259,8 +266,12 @@ class FailureReason(AbstractDeclarativeCommand):
                 return (self.tool.buildbot.builder_with_name(chosen_name), status["built_revision"])
 
     def execute(self, options, args, tool):
-        (builder, start_revision) = self._builder_to_explain()
-        self._explain_failures_for_builder(builder, start_revision=start_revision)
+        (builder, latest_revision) = self._builder_to_explain()
+        start_revision = self.tool.user.prompt("Revision to walk backwards from? [%s] " % latest_revision) or latest_revision
+        if not start_revision:
+            print "Revision required."
+            return 1
+        return self._explain_failures_for_builder(builder, start_revision=int(start_revision))
 
 class TreeStatus(AbstractDeclarativeCommand):
     name = "tree-status"
