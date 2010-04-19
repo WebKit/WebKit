@@ -28,6 +28,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashSet.h>
+#include <wtf/WTFThreadData.h>
 
 using WTF::ThreadSpecific;
 
@@ -228,7 +229,7 @@ PassRefPtr<UString::Rep> Identifier::addSlowCase(ExecState* exec, UString::Rep* 
 
 void Identifier::remove(UString::Rep* r)
 {
-    currentIdentifierTable()->remove(r);
+    wtfThreadData().currentIdentifierTable()->remove(r);
 }
     
 Identifier Identifier::from(ExecState* exec, unsigned value)
@@ -252,7 +253,7 @@ void Identifier::checkCurrentIdentifierTable(JSGlobalData* globalData)
 {
     // Check the identifier table accessible through the threadspecific matches the
     // globalData's identifier table.
-    ASSERT_UNUSED(globalData, globalData->identifierTable == currentIdentifierTable());
+    ASSERT_UNUSED(globalData, globalData->identifierTable == wtfThreadData().currentIdentifierTable());
 }
 
 void Identifier::checkCurrentIdentifierTable(ExecState* exec)
@@ -266,32 +267,6 @@ void Identifier::checkCurrentIdentifierTable(ExecState* exec)
 // This would be an ASSERT_NOT_REACHED(), but we're in NDEBUG only code here!
 void Identifier::checkCurrentIdentifierTable(JSGlobalData*) { CRASH(); }
 void Identifier::checkCurrentIdentifierTable(ExecState*) { CRASH(); }
-
-#endif
-
-ThreadSpecific<ThreadIdentifierTableData>* g_identifierTableSpecific = 0;
-
-#if ENABLE(JSC_MULTIPLE_THREADS)
-
-pthread_once_t createIdentifierTableSpecificOnce = PTHREAD_ONCE_INIT;
-static void createIdentifierTableSpecificCallback()
-{
-    ASSERT(!g_identifierTableSpecific);
-    g_identifierTableSpecific = new ThreadSpecific<ThreadIdentifierTableData>();
-}
-void createIdentifierTableSpecific()
-{
-    pthread_once(&createIdentifierTableSpecificOnce, createIdentifierTableSpecificCallback);
-    ASSERT(g_identifierTableSpecific);
-}
-
-#else 
-
-void createIdentifierTableSpecific()
-{
-    ASSERT(!g_identifierTableSpecific);
-    g_identifierTableSpecific = new ThreadSpecific<ThreadIdentifierTableData>();
-}
 
 #endif
 

@@ -564,6 +564,14 @@
 			RelativePath="..\..\wtf\VectorTraits.h"
 			>
 		</File>
+		<File
+			RelativePath="..\..\wtf\WTFThreadData.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\WTFThreadData.h"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

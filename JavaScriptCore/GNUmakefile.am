@@ -284,6 +284,8 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/ValueCheck.h \
 	JavaScriptCore/wtf/Vector.h \
 	JavaScriptCore/wtf/VectorTraits.h \
+	JavaScriptCore/wtf/WTFThreadData.cpp \
+	JavaScriptCore/wtf/WTFThreadData.h \
 	JavaScriptCore/wtf/gobject/GOwnPtr.cpp \
 	JavaScriptCore/wtf/gobject/GOwnPtr.h \
 	JavaScriptCore/wtf/gobject/GRefPtr.cpp \

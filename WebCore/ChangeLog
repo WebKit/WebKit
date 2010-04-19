@@ -1,3 +1,25 @@
+2010-04-16  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37745
+        Move string uniquing tables to (new) WTFThreadData class.
+
+        Remove AtomicString's dependency on ThreadGlobalData so that we can move
+        WebCore's string classes up to WTF.
+
+        * ForwardingHeaders/wtf/WTFThreadData.h: Added.
+        * platform/ThreadGlobalData.cpp: Remove m_atomicStringTable, all wtfThreadData() to ensure threadsafely initialized.
+        (WebCore::ThreadGlobalData::ThreadGlobalData):
+        (WebCore::ThreadGlobalData::~ThreadGlobalData):
+        * platform/ThreadGlobalData.h: Remove m_atomicStringTable.
+        (WebCore::ThreadGlobalData::eventNames):
+        * platform/text/AtomicString.cpp:
+        (WebCore::AtomicStringTable::create):
+        (WebCore::AtomicStringTable::table):
+        (WebCore::AtomicStringTable::destroy):
+        (WebCore::stringTable): Access the AtomicStringTable on wtfThreadData() rather then threadGlobalData().
+
 2010-04-19  Ada Chan  <adachan@apple.com>
 
         Build fix: wrap Settings::setLocalStorageQuota() and Settings::setSessionStorageQuota()
