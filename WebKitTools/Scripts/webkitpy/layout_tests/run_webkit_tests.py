@@ -77,12 +77,29 @@ import port
 
 _log = logging.getLogger("webkitpy.layout_tests.run_webkit_tests")
 
+# dummy value used for command-line explicitness to disable defaults
+LOG_NOTHING = 'nothing'
+
+# Display the one-line progress bar (% completed) while testing
+LOG_PROGRESS = 'progress'
+
 # Indicates that we want detailed progress updates in the output (prints
 # directory-by-directory feedback).
 LOG_DETAILED_PROGRESS = 'detailed-progress'
 
+# Log the one-line summary at the end of the run
+LOG_SUMMARY = 'summary'
+
 # Log any unexpected results while running (instead of just at the end).
 LOG_UNEXPECTED = 'unexpected'
+
+# Log any unexpected results at the end
+LOG_UNEXPECTED_RESULTS = 'unexpected_results'
+
+LOG_VALUES = ",".join(("actual", "config", LOG_DETAILED_PROGRESS, "expected",
+                      LOG_NOTHING, LOG_PROGRESS, LOG_SUMMARY, "timing",
+                      LOG_UNEXPECTED, LOG_UNEXPECTED_RESULTS))
+LOG_DEFAULT_VALUE = "detailed-progress,summary,unexpected,unexpected-results"
 
 # Builder base URL where we have the archived test results.
 BUILDER_BASE_URL = "http://build.chromium.org/buildbot/layout_test_results/"
@@ -675,12 +692,14 @@ class TestRunner:
                 (LOG_UNEXPECTED in self._options.log and
                  result_summary.total != result_summary.expected)):
                 print
-            self._print_one_line_summary(result_summary.total,
-                                         result_summary.expected)
+            if LOG_SUMMARY in self._options.log:
+                self._print_one_line_summary(result_summary.total,
+                                             result_summary.expected)
 
         unexpected_results = self._summarize_unexpected_results(result_summary,
             retry_summary)
-        self._print_unexpected_results(unexpected_results)
+        if LOG_UNEXPECTED_RESULTS in self._options.log:
+            self._print_unexpected_results(unexpected_results)
 
         # Write the same data to log files.
         self._write_json_files(unexpected_results, result_summary,
@@ -711,7 +730,8 @@ class TestRunner:
                 else:
                     if not expected and LOG_UNEXPECTED in self._options.log:
                         self._print_unexpected_test_result(test, result)
-                    self._display_one_line_progress(result_summary)
+                    if LOG_PROGRESS in self._options.log:
+                        self._display_one_line_progress(result_summary)
             except Queue.Empty:
                 return
 
@@ -1564,13 +1584,11 @@ def parse_args(args=None):
 
     logging_options = [
         optparse.make_option("--log", action="store",
-            default="detailed-progress,unexpected",
-            help="log various types of data. The param should be a " +
-                 "comma-separated list of values from: " +
-                 "actual,config," + LOG_DETAILED_PROGRESS +
-                 ",expected,timing," + LOG_UNEXPECTED + " " +
-                 "(defaults to " + "--log detailed-progress,unexpected)"),
-        optparse.make_option("-v", "--verbose", action="store_true",
+            default=LOG_DEFAULT_VALUE,
+            help=("log various types of data. The argument value should be a "
+                  "comma-separated list of values from: %s (defaults to "
+                  "--log %s)" % (LOG_VALUES, LOG_DEFAULT_VALUE))),
+       optparse.make_option("-v", "--verbose", action="store_true",
             default=False, help="include debug-level logging"),
         optparse.make_option("--sources", action="store_true",
             help="show expected result file path for each test " +

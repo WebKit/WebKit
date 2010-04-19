@@ -1,3 +1,26 @@
+2010-04-19  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        new-run-webkit-tests: add 'summary' and 'unexpected-results' options
+        to the --log flag. Also add a 'progress' flag to enable the regular
+        progress bar (as opposed to 'detailed-progress', which enables the
+        dots). Also add a 'nothing' flag to allow you to be explicit that
+        you don't want any logging on the command line.
+
+        The default is
+        '--log detailed-progress,summary,unexpected,unexpected-results'
+
+        (The default logging is unchanged by this patch, this just makes things
+        properly configurable).
+
+        Note that 'nothing' doesn't work properly yet; I need a couple other
+        patches to land to avoid rewriting things several different ways.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37785
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2010-04-19  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Simon Hausmann.
