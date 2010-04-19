@@ -1,3 +1,15 @@
+2010-04-19  Diego Escalante Urrelo  <descalante@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [Gtk] Evaluate and create tests for all the AtkRole's implemented by
+        WebKitGtk
+        https://bugs.webkit.org/show_bug.cgi?id=34449
+
+        Add and enable the build of testatkroles to test ATK non form roles.
+
+        * GNUmakefile.am:
+
 2010-04-18  Michael Forney  <michael@mforney.org>
 
         Reviewed by Laszlo Gombos.

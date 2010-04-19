@@ -1,3 +1,28 @@
+2010-04-19  Diego Escalante Urrelo  <descalante@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [Gtk] Evaluate and create tests for all the AtkRole's implemented by
+        WebKitGtk
+        https://bugs.webkit.org/show_bug.cgi?id=34449
+
+        Add testatkroles to test ATK non form roles.
+
+        * tests/testatkroles.c: Added.
+        (finish_loading):
+        (atk_roles_fixture_setup):
+        (atk_roles_fixture_teardown):
+        (get_child_and_test_role):
+        (test_webkit_atk_get_role_document_frame):
+        (test_webkit_atk_get_role_heading):
+        (test_webkit_atk_get_role_image):
+        (test_webkit_atk_get_role_link):
+        (test_webkit_atk_get_role_list_and_item):
+        (test_webkit_atk_get_role_paragraph):
+        (test_webkit_atk_get_role_section):
+        (test_webkit_atk_get_role_table):
+        (main):
+
 2010-04-17  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Xan Lopez.

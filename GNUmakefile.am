@@ -575,6 +575,7 @@ TEST_PROGS += Programs/unittests/testhttpbackend \
 	Programs/unittests/testwindow \
 	Programs/unittests/testdownload \
 	Programs/unittests/testatk \
+	Programs/unittests/testatkroles \
 	Programs/unittests/testhittestresult \
 	Programs/unittests/testwebsettings \
 	Programs/unittests/testwebresource \
@@ -642,6 +643,11 @@ Programs_unittests_testatk_SOURCES = WebKit/gtk/tests/testatk.c
 Programs_unittests_testatk_CFLAGS = $(webkit_tests_cflags)
 Programs_unittests_testatk_LDADD = $(webkit_tests_ldadd)
 Programs_unittests_testatk_LDFLAGS = $(webkit_tests_ldflags)
+
+Programs_unittests_testatkroles_SOURCES = WebKit/gtk/tests/testatkroles.c
+Programs_unittests_testatkroles_CFLAGS = $(webkit_tests_cflags)
+Programs_unittests_testatkroles_LDADD = $(webkit_tests_ldadd)
+Programs_unittests_testatkroles_LDFLAGS = $(webkit_tests_ldflags)
 
 Programs_unittests_testwebsettings_SOURCES = WebKit/gtk/tests/testwebsettings.c
 Programs_unittests_testwebsettings_CFLAGS = $(webkit_tests_cflags)
