@@ -55,8 +55,8 @@ static void runTest(TestShell& shell, TestParams& params, const string& testName
         pathOrURL.erase(separatorPosition);
     }
     params.testUrl = webkit_support::CreateURLForPathOrURL(pathOrURL);
-    shell.runFileTest(params);
     shell.resetTestController();
+    shell.runFileTest(params);
 }
 
 int main(int argc, char* argv[])

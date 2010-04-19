@@ -1,5 +1,17 @@
 2010-04-19  Kent Tamura  <tkent@chromium.org>
 
+        Reviewed by Shinichiro Hamaji.
+
+        [DRT/Chromium] Fix a test initialization problem
+        https://bugs.webkit.org/show_bug.cgi?id=37791
+
+        * DumpRenderTree/chromium/DumpRenderTree.cpp:
+        (runTest): Call resetTestController() before runFileTest(). Some
+          controllers initialize their fields in reset() and not in their
+          constructors.
+
+2010-04-19  Kent Tamura  <tkent@chromium.org>
+
         Reviewed by Eric Seidel.
 
         [Chromium] new-run-webkit-tests should use WebKitDriver for --use-drt
