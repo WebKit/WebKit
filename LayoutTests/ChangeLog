@@ -1,3 +1,21 @@
+2010-04-19  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed, move chromium baselines for fast/url around.
+
+        The desired behavior is that chromium-win use one set of baselines and
+        chromium-mac/chromium-linux use another, however to do we have to
+        duplicate the mac+linux results into chromium-mac and chromium-linux.
+
+        * platform/chromium-linux/fast/url/file-expected.txt: Added.
+        * platform/chromium-linux/fast/url/relative-unix-expected.txt: Added.
+        * platform/chromium-linux/fast/url/relative-win-expected.txt: Added.
+        * platform/chromium-mac/fast/url/file-expected.txt: Added.
+        * platform/chromium-mac/fast/url/relative-unix-expected.txt: Added.
+        * platform/chromium-mac/fast/url/relative-win-expected.txt: Added.
+        * platform/chromium/fast/url/file-expected.txt: Removed.
+        * platform/chromium/fast/url/relative-unix-expected.txt: Removed.
+        * platform/chromium/fast/url/relative-win-expected.txt: Removed.
+
 2010-04-08  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.
