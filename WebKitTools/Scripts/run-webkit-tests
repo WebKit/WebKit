@@ -78,4 +78,4 @@ if (useNewRunWebKitTests()) {
 }
 
 my $harnessPath = sprintf("%s/%s", relativeScriptsDir(), $harnessName);
-exec($harnessPath, @ARGV) or die "Failed to execute $harnessPath";
+exec $harnessPath ($harnessPath, @ARGV) or die "Failed to execute $harnessPath";

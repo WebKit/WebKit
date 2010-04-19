@@ -1,3 +1,16 @@
+2010-04-19  Adam Roben  <aroben@apple.com>
+
+        Fix run-webkit-tests when there are spaces in the path
+
+        Fixes <http://webkit.org/b/37809>
+
+        Reviewed by Adam Barth.
+
+        * Scripts/run-webkit-tests: Use an "indirect object" to specify the
+        path to the harness to exec(). According to perldoc, this usage will
+        prohibit perl from parsing the arguments to exec() via the shell,
+        which would incorrectly split paths with spaces in them, etc.
+
 2010-04-19  Dave Moore  <davemoore@chromium.org>
 
         Reviewed by Dimitri Glazkov.
