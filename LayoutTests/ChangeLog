@@ -1,5 +1,13 @@
 2010-04-19  James Robinson  <jamesr@chromium.org>
 
+        Unreviewed build fix.
+
+        Update chromium expectations
+
+        * platform/chromium/test_expectations.txt:
+
+2010-04-19  James Robinson  <jamesr@chromium.org>
+
         Unreviewed build fix for Chromium
 
         Add baselines for new platform-specific tests.

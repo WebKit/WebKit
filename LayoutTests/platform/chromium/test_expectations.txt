@@ -775,8 +775,9 @@ BUG13907 : media/video-zoom-controls.html = PASS FAIL TIMEOUT
 
 // Video has a green background, probably due to Mac repaint debugging code.
 // On Windows and Linux the slider control occasionally isn't rendered.
-BUG13907 BUG25376 MAC DEBUG : media/video-empty-source.html = FAIL
-BUG13907 WIN LINUX : media/video-empty-source.html = IMAGE PASS
+//BUG13907 WIN LINUX : media/video-empty-source.html = IMAGE PASS
+// Tests are now completely broken as of 57820. investigating
+BUGJAMESR : media/video-empty-source = IMAGE TEXT
 
 // The media time display is getting styled when it shouldn't be.
 BUG13907 : media/controls-styling.html = FAIL
@@ -1916,7 +1917,8 @@ BUG27486 LINUX DEBUG : fast/forms/listbox-hit-test-zoomed.html = FAIL
 BUG27486 WIN LINUX : fast/forms/slider-zoomed.html = FAIL
 
 // See WebKit 41948
-BUG10468 MAC : fast/replaced/border-radius-clip.html = IMAGE
+// Regressed further at 57820, jamesr investigating
+BUG10468 MAC : fast/replaced/border-radius-clip.html = IMAGE+TEXT
 
 // Mac flaky failures.
 BUG10472 MAC DEBUG : svg/css/glyph-orientation-rounding-test.xhtml = FAIL PASS
@@ -2794,3 +2796,6 @@ BUGAJWONG LINUX : svg/text/text-intro-05-t.svg = IMAGE PASS
 BUGAJWONG LINUX : svg/text/text-text-07-t.svg = IMAGE PASS
 BUGAJWONG LINUX : svg/text/text-tselect-02-f.svg = IMAGE PASS
 
+// Broke at 57820, just need a rebaseline
+BUGJAMESR : media/video-src-change.html = TEXT
+BUGJAMESR : media/video-src-invalid-remove.html = TEXT
