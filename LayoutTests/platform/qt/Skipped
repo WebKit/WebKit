@@ -932,10 +932,6 @@ svg/custom/circular-marker-reference-2.svg
 svg/custom/circular-marker-reference-3.svg
 svg/custom/circular-marker-reference-4.svg
 svg/custom/class-selector.svg
-svg/custom/clip-path-child-changes.svg
-svg/custom/clip-path-href-changes.svg
-svg/custom/clip-path-units-changes.svg
-svg/custom/clip-path-with-transform.svg
 svg/custom/conditional-processing-outside-switch.svg
 svg/custom/control-points-for-S-and-T.svg
 svg/custom/coords-relative-units-transforms.svg
@@ -1009,7 +1005,6 @@ svg/custom/manually-parsed-svg-disallowed-in-dashboard.html
 svg/custom/marker-changes.svg
 svg/custom/marker-child-changes.svg
 svg/custom/marker-default-width-height.svg
-svg/custom/marker-overflow-clip.svg
 svg/custom/marker-viewBox-changes.svg
 svg/custom/mask-changes.svg
 svg/custom/mask-child-changes.svg
@@ -1037,7 +1032,6 @@ svg/custom/polyline-invalid-points.svg
 svg/custom/polyline-setattribute-points-null.svg
 svg/custom/preserve-aspect-ratio-syntax.svg
 svg/custom/prevent-default.svg
-svg/custom/recursive-clippath.svg
 svg/custom/rgbcolor-syntax.svg
 svg/custom/rootelement.svg
 svg/custom/rootmost-svg-xy-attrs.xhtml
@@ -5228,3 +5222,13 @@ editing/selection/shrink-selection-after-shift-pagedown.html
 # Not sure why this is failing on Qt.
 # https://bugs.webkit.org/show_bug.cgi?id=37697
 fast/url/host.html
+
+# [Qt] lacks clipToImageBuffer()
+# https://bugs.webkit.org/show_bug.cgi?id=24289
+svg/clip-path
+svg/custom/clip-path-child-changes.svg
+svg/custom/clip-path-href-changes.svg
+svg/custom/clip-path-units-changes.svg
+svg/custom/clip-path-with-transform.svg
+svg/custom/recursive-clippath.svg
+svg/custom/marker-overflow-clip.svg

@@ -1,3 +1,13 @@
+2010-04-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] lacks clipToImageBuffer()
+        https://bugs.webkit.org/show_bug.cgi?id=24289
+
+        Skip svg/clip-path tests introduced in r52511,
+        and move clip related tests here.
+
+        * platform/qt/Skipped:
+
 2010-04-18  Robert Hogan  <robert@webkit.org>
 
         Unreviewed fix to pixel differences in unskipped layout tests.
