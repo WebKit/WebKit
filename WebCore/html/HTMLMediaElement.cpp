@@ -168,10 +168,10 @@ void HTMLMediaElement::attributeChanged(Attribute* attr, bool preserveDecls)
 
     const QualifiedName& attrName = attr->name();
     if (attrName == srcAttr) {
-        // don't have a src or any <source> children, trigger load
-        if (inDocument() && m_loadState == WaitingForSource)
+        // Trigger a reload, as long as the 'src' attribute is present.
+        if (!getAttribute(srcAttr).isEmpty())
             scheduleLoad();
-    } 
+    }
 #if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     else if (attrName == controlsAttr) {
         if (!isVideo() && attached() && (controls() != (renderer() != 0))) {
@@ -471,12 +471,44 @@ void HTMLMediaElement::prepareForLoad()
     m_sentStalledEvent = false;
     m_haveFiredLoadedData = false;
 
-    // 2 - Abort any already-running instance of the resource selection algorithm for this element.
+    // 1 - Abort any already-running instance of the resource selection algorithm for this element.
     m_currentSourceNode = 0;
 
-    // 3 - If there are any tasks from the media element's media element event task source in 
+    // 2 - If there are any tasks from the media element's media element event task source in 
     // one of the task queues, then remove those tasks.
     cancelPendingEventsAndCallbacks();
+
+    // 3 - If the media element's networkState is set to NETWORK_LOADING or NETWORK_IDLE, queue
+    // a task to fire a simple event named abort at the media element.
+    if (m_networkState == NETWORK_LOADING || m_networkState == NETWORK_IDLE)
+        scheduleEvent(eventNames().abortEvent);
+
+#if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    m_player = MediaPlayer::create(this);
+#else
+    createMediaPlayerProxy();
+#endif
+
+    // 4 - If the media element's networkState is not set to NETWORK_EMPTY, then run these substeps
+    if (m_networkState != NETWORK_EMPTY) {
+        m_networkState = NETWORK_EMPTY;
+        m_readyState = HAVE_NOTHING;
+        m_paused = true;
+        m_seeking = false;
+        scheduleEvent(eventNames().emptiedEvent);
+    }
+
+    // 5 - Set the playbackRate attribute to the value of the defaultPlaybackRate attribute.
+    setPlaybackRate(defaultPlaybackRate());
+
+    // 6 - Set the error attribute to null and the autoplaying flag to true.
+    m_error = 0;
+    m_autoplaying = true;
+
+    m_playedTimeRanges = TimeRanges::create();
+    m_lastSeekTime = 0;
+    m_closedCaptionsVisible = false;
+
 }
 
 void HTMLMediaElement::loadInternal()
@@ -491,42 +523,7 @@ void HTMLMediaElement::loadInternal()
         return;
     }
 
-    // If the load() method for this element is already being invoked, then abort these steps.
-    if (m_processingLoad)
-        return;
-    m_processingLoad = true;
-    
-    // Steps 1 and 2 were done in prepareForLoad()
-
-    // 3 - If the media element's networkState is set to NETWORK_LOADING or NETWORK_IDLE, queue
-    // a task to fire a simple event named abort at the media element.
-    if (m_networkState == NETWORK_LOADING || m_networkState == NETWORK_IDLE)
-        scheduleEvent(eventNames().abortEvent);
-
-    // 4
-    if (m_networkState != NETWORK_EMPTY) {
-        m_networkState = NETWORK_EMPTY;
-        m_readyState = HAVE_NOTHING;
-        m_paused = true;
-        m_seeking = false;
-        if (m_player) {
-            m_player->pause();
-            m_playing = false;
-            m_player->seek(0);
-        }
-        scheduleEvent(eventNames().emptiedEvent);
-    }
-
-    // 5 - Set the playbackRate attribute to the value of the defaultPlaybackRate attribute.
-    setPlaybackRate(defaultPlaybackRate());
-
-    // 6 - Set the error attribute to null and the autoplaying flag to true.
-    m_error = 0;
-    m_autoplaying = true;
-
-    m_playedTimeRanges = TimeRanges::create();
-    m_lastSeekTime = 0;
-    m_closedCaptionsVisible = false;
+    // Steps 1 - 6 were done in prepareForLoad
 
     // 7 - Invoke the media element's resource selection algorithm.
     selectMediaResource();
@@ -620,12 +617,6 @@ void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& content
 
     if (m_sendProgressEvents) 
         startProgressEventTimer();
-
-#if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    m_player = MediaPlayer::create(this);
-#else
-    createMediaPlayerProxy();
-#endif
 
     if (!autoplay())
         m_player->setPreload(m_preload);

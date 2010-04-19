@@ -34,8 +34,6 @@ EVENT(playing)
 EVENT(ended)
 
 *** played to end, setting 'src' to an invalid movie
-RUN(video.src = 'content/garbage.mp4')
-RUN(video.load())
 EVENT(emptied)
 EVENT(loadstart)
 EVENT(error)

@@ -1,6 +1,5 @@
 <html>
     <head>
-
         <script src=media-file.js></script>
         <script src=video-test.js></script>
         <script>
@@ -47,8 +46,7 @@
                     case "ended":
                         var mediaFile = findMediaFile("video", "content/garbage");
                         consoleWrite("<br>*** played to end, setting 'src' to an invalid movie");
-                        run("video.src = '" + mediaFile + "'");
-                        run("video.load()");
+                        video.src = mediaFile;
                         break;
                     case "progress":
                         ++progressEventCount;

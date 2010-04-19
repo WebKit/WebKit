@@ -1,3 +1,18 @@
+2010-04-19  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Setting media element 'src' attribute should trigger immediate load
+        https://bugs.webkit.org/show_bug.cgi?id=37728
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::attributeChanged): Schedule load every time 'src' attribute
+        changes unless it is missing.
+        (WebCore::HTMLMediaElement::prepareForLoad): Include steps 3 to 6 from loadInternal.
+        (WebCore::HTMLMediaElement::loadInternal): Steps 3 to 6 are now in prepareForLoad.
+        (WebCore::HTMLMediaElement::loadResource): MediaPlayer is now allocated in prepareForLoad
+        so the previously loading file, if any, is cancelled there.
+
 2010-04-19  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Simon Hausmann.
