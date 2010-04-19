@@ -1,3 +1,11 @@
+2010-04-19  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidChangeIcons):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
 2010-04-17  Sam Weinig  <weinig@apple.com>
 
         Reviewed by Jon "The Belly" Honeycutt.
