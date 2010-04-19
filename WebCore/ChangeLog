@@ -1,4 +1,15 @@
-2010-04-16  Gavin Barraclough  <barraclough@apple.com>
+2010-04-19  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Fix regression introduced in r57820.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadNextSourceChild): Create a new MediaPlayer instead of
+        just setting a URL on the one used for the previous <source> element. This restores
+        the behavior prior to the changes for https://bugs.webkit.org/show_bug.cgi?id=37728.
+
+2010-04-19  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.
 

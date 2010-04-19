@@ -591,6 +591,11 @@ void HTMLMediaElement::loadNextSourceChild()
         return;
     }
 
+#if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    // Recreate the media player for the new url
+    m_player = MediaPlayer::create(this);
+#endif
+
     m_loadState = LoadingFromSourceElement;
     loadResource(mediaURL, contentType);
 }
