@@ -1,3 +1,14 @@
+2010-04-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix a crash when rendering <select> elements with WebKit2.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintMenuList):
+        Set the current NSGraphicsContext before calling out to AppKit, otherwise the current graphics context
+        could point to a CGContext whose memory has been freed.
+
 2010-04-08  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.

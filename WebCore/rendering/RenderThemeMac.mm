@@ -746,6 +746,7 @@ const int* RenderThemeMac::popupButtonPadding(NSControlSize size) const
 
 bool RenderThemeMac::paintMenuList(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
+    LocalCurrentGraphicsContext localContext(paintInfo.context);
     setPopupButtonCellState(o, r);
 
     NSPopUpButtonCell* popupButton = this->popupButton();
