@@ -1,3 +1,12 @@
+2010-04-19  Ada Chan  <adachan@apple.com>
+
+        Build fix: wrap Settings::setLocalStorageQuota() and Settings::setSessionStorageQuota()
+        in #if ENABLE(DOM_STORAGE).
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+
 2010-04-19  Dave Moore  <davemoore@chromium.org>
 
         Reviewed by Dimitri Glazkov.

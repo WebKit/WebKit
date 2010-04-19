@@ -64,8 +64,10 @@ Settings::Settings(Page* page)
     , m_defaultFontSize(0)
     , m_defaultFixedFontSize(0)
     , m_maximumDecodedImageSize(numeric_limits<size_t>::max())
+#if ENABLE(DOM_STORAGE)            
     , m_localStorageQuota(5 * 1024 * 1024)  // Suggested by the HTML5 spec.
     , m_sessionStorageQuota(StorageMap::noQuota)
+#endif
     , m_pluginAllowedRunTime(numeric_limits<unsigned>::max())
     , m_zoomMode(ZoomPage)
     , m_isSpatialNavigationEnabled(false)
@@ -274,6 +276,7 @@ void Settings::setLocalStorageEnabled(bool localStorageEnabled)
     m_localStorageEnabled = localStorageEnabled;
 }
 
+#if ENABLE(DOM_STORAGE)        
 void Settings::setLocalStorageQuota(unsigned localStorageQuota)
 {
     m_localStorageQuota = localStorageQuota;
@@ -283,6 +286,7 @@ void Settings::setSessionStorageQuota(unsigned sessionStorageQuota)
 {
     m_sessionStorageQuota = sessionStorageQuota;
 }
+#endif
 
 void Settings::setPrivateBrowsingEnabled(bool privateBrowsingEnabled)
 {

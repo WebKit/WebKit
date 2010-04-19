@@ -137,14 +137,16 @@ namespace WebCore {
         void setLocalStorageEnabled(bool);
         bool localStorageEnabled() const { return m_localStorageEnabled; }
 
+#if ENABLE(DOM_STORAGE)        
         void setLocalStorageQuota(unsigned);
         unsigned localStorageQuota() const { return m_localStorageQuota; }
-        
+
         // Allow clients concerned with memory consumption to set a quota on session storage
         // since the memory used won't be released until the Page is destroyed.
         // Default is noQuota.
         void setSessionStorageQuota(unsigned);
         unsigned sessionStorageQuota() const { return m_sessionStorageQuota; }
+#endif
 
         void setPrivateBrowsingEnabled(bool);
         bool privateBrowsingEnabled() const { return m_privateBrowsingEnabled; }
@@ -320,8 +322,10 @@ namespace WebCore {
         int m_defaultFontSize;
         int m_defaultFixedFontSize;
         size_t m_maximumDecodedImageSize;
+#if ENABLE(DOM_STORAGE)        
         unsigned m_localStorageQuota;
         unsigned m_sessionStorageQuota;
+#endif
         unsigned m_pluginAllowedRunTime;
         ZoomMode m_zoomMode;
         bool m_isSpatialNavigationEnabled : 1;
