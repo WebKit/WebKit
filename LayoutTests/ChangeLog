@@ -1,5 +1,14 @@
 2010-04-19  James Robinson  <jamesr@chromium.org>
 
+        Unreviewed - yet more rebaselines and expectation updates.
+
+        * platform/chromium-win/fast/url/file-expected.txt: Added.
+        * platform/chromium-win/fast/url/relative-unix-expected.txt: Added.
+        * platform/chromium-win/fast/url/relative-win-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
+2010-04-19  James Robinson  <jamesr@chromium.org>
+
         Unreviewed. More chromium rebaselines+expectation updates.
 
         * platform/chromium-linux/fast/css/getComputedStyle: Added.

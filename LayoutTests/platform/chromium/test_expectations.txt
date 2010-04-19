@@ -777,7 +777,7 @@ BUG13907 : media/video-zoom-controls.html = PASS FAIL TIMEOUT
 // On Windows and Linux the slider control occasionally isn't rendered.
 //BUG13907 WIN LINUX : media/video-empty-source.html = IMAGE PASS
 // Tests are now completely broken as of 57820. investigating
-BUGJAMESR : media/video-empty-source.html = IMAGE TEXT
+BUGJAMESR : media/video-empty-source.html = IMAGE+TEXT
 
 // The media time display is getting styled when it shouldn't be.
 BUG13907 : media/controls-styling.html = FAIL
