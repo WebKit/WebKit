@@ -1,3 +1,15 @@
+2010-04-18  Michael Forney  <michael@mforney.org>
+
+        Reviewed by Laszlo Gombos.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37762
+
+        Fixes the sandbox option in configure.
+
+        * configure.ac: Fix cut and paste error in the sandbox option causing
+        --{enable,disable}-sandbox to be ineffective, and it to be controlled
+        by the ruby flag.
+
 2010-04-09  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed crash fix.

@@ -389,7 +389,7 @@ AC_MSG_RESULT([$enable_ruby])
 
 # check whether to enable HTML5 sandbox iframe support
 AC_MSG_CHECKING([whether to enable HTML5 sandboxed iframe support])
-AC_ARG_ENABLE(ruby,
+AC_ARG_ENABLE(sandbox,
               AC_HELP_STRING([--enable-sandbox],
                              [enable HTML5 sandboxed iframe support [default=yes]]),
               [],[enable_sandbox="yes"])
