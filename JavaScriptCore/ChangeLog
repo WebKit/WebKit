@@ -1,3 +1,15 @@
+2010-04-18  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Laszlo Gombos.
+
+        [WINCE] Don't define WTF_CPU_MIDDLE_ENDIAN=1
+        https://bugs.webkit.org/show_bug.cgi?id=37434
+
+        Windows CE supports little-endian format only, so don't define
+        WTF_CPU_MIDDLE_ENDIAN=1.
+
+        * wtf/Platform.h:
+
 2010-04-18  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Laszlo Gombos.
