@@ -3197,8 +3197,8 @@ void RenderLayer::updateHoverActiveState(const HitTestRequest& request, HitTestR
     // Locate the common ancestor render object for the two renderers.
     RenderObject* ancestor = commonAncestor(oldHoverObj, newHoverObj);
 
-    Vector<Node*, 32> nodesToRemoveFromChain;
-    Vector<Node*, 32> nodesToAddToChain;
+    Vector<RefPtr<Node>, 32> nodesToRemoveFromChain;
+    Vector<RefPtr<Node>, 32> nodesToAddToChain;
 
     if (oldHoverObj != newHoverObj) {
         // The old hover path only needs to be cleared up to (and not including) the common ancestor;

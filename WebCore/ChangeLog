@@ -1,3 +1,12 @@
+2010-04-19  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Make the fix for <rdar://problem/7873647> from r57759 more robust.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateHoverActiveState): Use RefPtrs for the Nodes.
+
 2010-04-19  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Chromium build fix.
