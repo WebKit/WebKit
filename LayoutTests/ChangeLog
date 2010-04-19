@@ -1,5 +1,18 @@
 2010-04-19  James Robinson  <jamesr@chromium.org>
 
+        Unreviewed. More chromium rebaselines+expectation updates.
+
+        * platform/chromium-linux/fast/css/getComputedStyle: Added.
+        * platform/chromium-linux/fast/css/getComputedStyle/getComputedStyle-with-pseudo-element-expected.txt: Added.
+        * platform/chromium-mac/media/video-src-change-expected.txt:
+        * platform/chromium-mac/media/video-src-invalid-remove-expected.txt: Removed.
+        * platform/chromium-win/fast/css/getComputedStyle/getComputedStyle-with-pseudo-element-expected.txt: Added.
+        * platform/chromium-win/media/video-src-change-expected.txt:
+        * platform/chromium-win/media/video-src-invalid-remove-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
+2010-04-19  James Robinson  <jamesr@chromium.org>
+
         Unreviewed build fix.
 
         Update chromium expectations
