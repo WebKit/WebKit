@@ -1,3 +1,13 @@
+2010-04-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Checked in these tests I wrote becuase Balazs Kelemen wanted to use them.
+
+        * tests/perf: Added.
+        * tests/perf/bench-allocate-nonretained.js: Added.
+        * tests/perf/bench-allocate-retained.js: Added.
+
 2010-04-19  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by NOBODY (windows build fix).
