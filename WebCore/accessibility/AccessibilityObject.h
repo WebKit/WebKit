@@ -347,6 +347,7 @@ public:
     virtual void ariaOwnsElements(AccessibilityChildrenVector&) const { }
     virtual bool supportsARIAFlowTo() const { return false; }
     virtual void ariaFlowToElements(AccessibilityChildrenVector&) const { }
+    virtual bool ariaHasPopup() const { return false; }
     
     // ARIA drag and drop
     virtual bool supportsARIADropping() const { return false; }

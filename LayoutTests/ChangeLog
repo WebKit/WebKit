@@ -1,3 +1,13 @@
+2010-04-19  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        AX: aria-haspopup needs to be exposed
+        https://bugs.webkit.org/show_bug.cgi?id=37808
+
+        * platform/mac/accessibility/element-haspopup-expected.txt: Added.
+        * platform/mac/accessibility/element-haspopup.html: Added.
+
 2010-04-19  James Robinson  <jamesr@chromium.org>
 
         Unreviewed, move chromium baselines for fast/url around.

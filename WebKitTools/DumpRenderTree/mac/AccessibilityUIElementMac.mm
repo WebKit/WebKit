@@ -834,7 +834,9 @@ bool AccessibilityUIElement::isCollapsed() const
 
 bool AccessibilityUIElement::hasPopup() const
 {
-    // FIXME: implement
+    id value = [m_element accessibilityAttributeValue:@"AXHasPopup"];
+    if ([value isKindOfClass:[NSNumber class]])
+        return [value boolValue];
     return false;
 }
 

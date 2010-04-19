@@ -152,6 +152,10 @@ using namespace std;
 #define NSAccessibilityLoadingProgressAttribute @"AXLoadingProgress"
 #endif
 
+#ifndef NSAccessibilityHasPopupAttribute
+#define NSAccessibilityHasPopupAttribute @"AXHasPopup"
+#endif
+
 #ifdef BUILDING_ON_TIGER
 typedef unsigned NSUInteger;
 #define NSAccessibilityValueDescriptionAttribute @"AXValueDescription"
@@ -633,6 +637,9 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
         [additional addObject:NSAccessibilityARIAAtomicAttribute];
         [additional addObject:NSAccessibilityARIABusyAttribute];
     }
+    
+    if (m_object->ariaHasPopup())
+        [additional addObject:NSAccessibilityHasPopupAttribute];
     
     return additional;
 }
@@ -1849,6 +1856,9 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             [dropEffectsArray addObject:dropEffects[i]];
         return dropEffectsArray;
     }
+    
+    if ([attributeName isEqualToString:NSAccessibilityHasPopupAttribute])
+        return [NSNumber numberWithBool:m_object->ariaHasPopup()];
     
     // ARIA Live region attributes.
     if ([attributeName isEqualToString:NSAccessibilityARIALiveAttribute])

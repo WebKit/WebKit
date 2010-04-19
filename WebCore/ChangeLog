@@ -1,3 +1,22 @@
+2010-04-19  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        AX: aria-haspopup needs to be exposed
+        https://bugs.webkit.org/show_bug.cgi?id=37808
+
+        Test: platform/mac/accessibility/element-haspopup.html
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::ariaHasPopup):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::ariaHasPopup):
+        (WebCore::AccessibilityRenderObject::determineAriaRoleAttribute):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper additionalAccessibilityAttributeNames]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2010-04-19  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
