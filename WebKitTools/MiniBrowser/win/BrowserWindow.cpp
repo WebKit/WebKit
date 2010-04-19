@@ -201,6 +201,9 @@ void BrowserWindow::onSize(int width, int height)
 LRESULT BrowserWindow::onCommand(int commandID, bool& handled)
 {
     switch (commandID) {
+    case ID_FILE_NEW_WINDOW:
+        MiniBrowser::shared().createNewWindow();
+        break;
     case ID_FILE_CLOSE:
         ::PostMessage(m_window, WM_CLOSE, 0, 0);
         break;

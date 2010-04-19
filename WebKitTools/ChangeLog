@@ -1,3 +1,27 @@
+2010-04-19  Sam Weinig  <weinig@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Add support for opening a new window (File->New Window) to
+        Windows MiniBrowser. Accelerator doesn't work.
+
+        * MiniBrowser/win/BrowserView.cpp:
+        (createNewPage): Use BrowserView::create.
+        * MiniBrowser/win/BrowserWindow.cpp:
+        (BrowserWindow::onCommand): Respond to ID_FILE_NEW_WINDOW
+        by creating a new window.
+        * MiniBrowser/win/BrowserWindow.h:
+        (BrowserWindow::create): Added. Don't allow creating
+        BrowserWindows on the stack by making constructor
+        private and exposing the create function.
+        * MiniBrowser/win/MiniBrowser.cpp:
+        (MiniBrowser::createNewWindow): Move new window creation
+        logic here.
+        * MiniBrowser/win/MiniBrowser.h:
+        * MiniBrowser/win/MiniBrowser.rc: 
+        * MiniBrowser/win/main.cpp:
+        (_tWinMain): Use the new MiniBrowser::createNewWindow().
+
 2010-04-19  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

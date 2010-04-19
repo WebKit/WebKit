@@ -48,6 +48,16 @@ void MiniBrowser::initialize(HINSTANCE instance)
     m_instance = instance;
 }
 
+void MiniBrowser::createNewWindow()
+{
+    static const wchar_t* kDefaultURLString = L"http://webkit.org/";
+
+    BrowserWindow* browserWindow = BrowserWindow::create();
+    browserWindow->createWindow(0, 0, 800, 600);
+    browserWindow->showWindow();
+    browserWindow->goToURL(kDefaultURLString);
+}
+
 void MiniBrowser::registerWindow(BrowserWindow* window)
 {
     m_browserWindows.insert(window);

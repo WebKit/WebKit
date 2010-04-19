@@ -31,7 +31,10 @@
 
 class BrowserWindow {
 public:
-    BrowserWindow();
+    static BrowserWindow* create()
+    {
+        return new BrowserWindow;
+    }
 
     void createWindow(int x, int y, int width, int height);
     void showWindow();
@@ -44,6 +47,8 @@ public:
     HWND window() const { return m_window; }
 
 private:
+    BrowserWindow();
+
     static LRESULT CALLBACK BrowserWindowWndProc(HWND, UINT, WPARAM, LPARAM);
 
     // Message handlers.

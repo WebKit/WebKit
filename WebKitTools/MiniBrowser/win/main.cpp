@@ -41,18 +41,12 @@
 
 #pragma comment(linker, "/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='" PROCESSORARCHITECTURE "' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
-static const wchar_t* kDefaultURLString = L"http://webkit.org/";
-
 int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpstrCmdLine, int nCmdShow)
 {
     MiniBrowser::shared().initialize(hInstance);
 
     // Create and show our initial window.
-    BrowserWindow* browserWindow = new BrowserWindow();
-    browserWindow->createWindow(0, 0, 800, 600);
-    browserWindow->showWindow();
-
-    browserWindow->goToURL(kDefaultURLString);
+    MiniBrowser::shared().createNewWindow();
 
     MSG message;
     while (BOOL result = ::GetMessage(&message, 0, 0, 0)) {

@@ -40,7 +40,7 @@ BrowserView::BrowserView()
 
 static WKPageRef createNewPage(WKPageRef page, const void* clientInfo)
 {
-    BrowserWindow* browserWindow = new BrowserWindow();
+    BrowserWindow* browserWindow = BrowserWindow::create();
     browserWindow->createWindow(0, 0, 800, 600);
 
     return WKViewGetPage(browserWindow->view().webView());

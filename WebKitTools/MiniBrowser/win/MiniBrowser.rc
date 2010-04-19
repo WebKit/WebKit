@@ -12,8 +12,7 @@ IDR_MAINFRAME MENU
 BEGIN
     POPUP "&File"
     BEGIN
-        MENUITEM "&New Window\tCtrl+N",         ID_FILE_NEW_WINDOW, INACTIVE
-        MENUITEM "&Open...\tCtrl+O",            ID_FILE_OPEN, INACTIVE
+        MENUITEM "&New Window\tCtrl+N",         ID_FILE_NEW_WINDOW
         MENUITEM SEPARATOR
         MENUITEM "&Close",                      ID_FILE_CLOSE
     END
@@ -25,7 +24,7 @@ END
 // Accelerator
 //
 
-IDR_MAINFRAME ACCELERATORS 
+IDR_MAINFRAME_ACCEL ACCELERATORS 
 BEGIN
-    "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL, NOINVERT
+    "N",            ID_FILE_NEW_WINDOW,           VIRTKEY, CONTROL, NOINVERT
 END

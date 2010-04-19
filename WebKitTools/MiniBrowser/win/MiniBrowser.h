@@ -36,6 +36,8 @@ public:
 
     void initialize(HINSTANCE);
 
+    void createNewWindow();
+
     void registerWindow(BrowserWindow*);
     void unregisterWindow(BrowserWindow*);
 
