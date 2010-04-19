@@ -1028,7 +1028,7 @@ def main():
     # options.configuration is used by port to locate image_diff binary.
     # Check the imgage_diff release binary, if it does not exist,
     # fallback to debug.
-    options.configuration = "release"
+    options.configuration = "Release"
     port_obj = port.get(None, options)
     if not port_obj.check_image_diff(override_step=None, logging=False):
         _log.debug('No release version image diff binary found.')

@@ -1,3 +1,11 @@
+2010-04-19  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by abarth.
+
+        Fix a typo
+
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests.py:
+
 2010-04-19  Adam Roben  <aroben@apple.com>
 
         Fix run-webkit-tests when there are spaces in the path
