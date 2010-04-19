@@ -94,12 +94,13 @@ LOG_SUMMARY = 'summary'
 LOG_UNEXPECTED = 'unexpected'
 
 # Log any unexpected results at the end
-LOG_UNEXPECTED_RESULTS = 'unexpected_results'
+LOG_UNEXPECTED_RESULTS = 'unexpected-results'
 
 LOG_VALUES = ",".join(("actual", "config", LOG_DETAILED_PROGRESS, "expected",
                       LOG_NOTHING, LOG_PROGRESS, LOG_SUMMARY, "timing",
                       LOG_UNEXPECTED, LOG_UNEXPECTED_RESULTS))
-LOG_DEFAULT_VALUE = "detailed-progress,summary,unexpected,unexpected-results"
+LOG_DEFAULT_VALUE = ",".join((LOG_DETAILED_PROGRESS, LOG_SUMMARY,
+                              LOG_UNEXPECTED, LOG_UNEXPECTED_RESULTS))
 
 # Builder base URL where we have the archived test results.
 BUILDER_BASE_URL = "http://build.chromium.org/buildbot/layout_test_results/"
