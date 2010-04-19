@@ -27,7 +27,9 @@ namespace QtMobility {
 class QNetworkConfigurationManager;
 }
 #else
+QT_BEGIN_NAMESPACE
 class QNetworkConfigurationManager;
+QT_END_NAMESPACE
 #endif
 
 namespace WebCore {

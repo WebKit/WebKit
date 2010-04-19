@@ -1,3 +1,14 @@
+2010-04-19  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix compilation against namespaced Qt.
+
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/Tile.h:
+        * platform/graphics/qt/MediaPlayerPrivateQt.h:
+        * platform/network/qt/NetworkStateNotifierPrivate.h:
+
 2010-04-19  Balazs Kelemen  <kb@inf.u-szeged.hu>
 
         Reviewed by Kenneth Rohde Christiansen.

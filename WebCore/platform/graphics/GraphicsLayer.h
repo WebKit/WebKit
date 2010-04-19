@@ -60,7 +60,9 @@ typedef WKCACFLayer PlatformLayer;
 typedef void* NativeLayer;
 }
 #elif PLATFORM(QT)
+QT_BEGIN_NAMESPACE
 class QGraphicsItem;
+QT_END_NAMESPACE
 typedef QGraphicsItem PlatformLayer;
 typedef QGraphicsItem* NativeLayer;
 #elif PLATFORM(CHROMIUM)

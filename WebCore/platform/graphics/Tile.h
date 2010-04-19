@@ -29,8 +29,10 @@
 #include <wtf/RefCounted.h>
 
 #if PLATFORM(QT)
+QT_BEGIN_NAMESPACE
 class QPixmap;
 class QRegion;
+QT_END_NAMESPACE
 #endif
 
 namespace WebCore {

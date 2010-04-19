@@ -34,7 +34,10 @@
 #include "KURL.h"
 #include "PlatformString.h"
 
+QT_BEGIN_NAMESPACE
 class QEventLoop;
+QT_END_NAMESPACE
+
 class QWebPage;
 
 namespace WebCore {
