@@ -1,5 +1,15 @@
 2010-04-19  Jessie Berlin  <jberlin@webkit.org>
 
+        Rubber Stamped by Adam Roben
+
+        Chromium Release Build Fix.
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::pseudoId):
+        In the case where the DATALIST is not enabled, fall through to NOPSEUDO instead of omitting PseudoInputListButton entirely from the switch.
+
+2010-04-19  Jessie Berlin  <jberlin@webkit.org>
+
         Reviewed by Dave Hyatt.
 
         First steps towards fixing bug 24021 - pseudo-element styles not accessible / retrievable via DOM methods.

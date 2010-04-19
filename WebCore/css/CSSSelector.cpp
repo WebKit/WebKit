@@ -81,10 +81,6 @@ PseudoId CSSSelector::pseudoId(PseudoType type)
         return AFTER;
     case PseudoFileUploadButton:
         return FILE_UPLOAD_BUTTON;
-#if ENABLE(DATALIST)
-    case PseudoInputListButton:
-        return INPUT_LIST_BUTTON;
-#endif
     case PseudoInputPlaceholder:
         return INPUT_PLACEHOLDER;
     case PseudoSliderThumb:
@@ -147,6 +143,10 @@ PseudoId CSSSelector::pseudoId(PseudoType type)
         return INNER_SPIN_BUTTON;
     case PseudoOuterSpinButton:
         return OUTER_SPIN_BUTTON;
+    case PseudoInputListButton:
+#if ENABLE(DATALIST)
+        return INPUT_LIST_BUTTON;
+#endif
     case PseudoUnknown:
     case PseudoEmpty:
     case PseudoFirstChild:
