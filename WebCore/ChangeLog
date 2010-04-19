@@ -1,3 +1,23 @@
+2010-04-19  Balazs Kelemen  <kb@inf.u-szeged.hu>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Destroy SharedTimerQt before destruction of QCoreApplication.
+
+        To avoid unsafe situations caused by running WebCore code (through firing timers) when destruction of QCoreApplication
+        has been started, we should explicitly destroy the SharedTimerQt instance on application exit.
+        We can achieve that through installing a self-destroying slot for the QCoreApplication::aboutToQuit() signal
+        into the SharedTimerQt instance.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36832
+
+        No functional change so no new tests.
+
+        * platform/qt/SharedTimerQt.cpp:
+        (WebCore::SharedTimerQt::SharedTimerQt):
+        (WebCore::SharedTimerQt::destroy):
+        (WebCore::SharedTimerQt::inst):
+
 2010-04-19  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
