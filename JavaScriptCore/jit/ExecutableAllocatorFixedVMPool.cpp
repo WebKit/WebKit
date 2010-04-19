@@ -27,9 +27,9 @@
 
 #include "ExecutableAllocator.h"
 
-#include <errno.h>
-
 #if ENABLE(ASSEMBLER) && OS(DARWIN) && CPU(X86_64)
+
+#include <errno.h>
 
 #include "TCSpinLock.h"
 #include <mach/mach_init.h>

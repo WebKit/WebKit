@@ -1,3 +1,14 @@
+2010-04-19  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Build fix for WinCE.
+
+        Moved the include of the non-existing errno.h header file inside
+        platform guard macros.
+
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+
 2010-04-18  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Laszlo Gombos.
