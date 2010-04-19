@@ -36,7 +36,6 @@
 #include "UserObjectImp.h"
 #include <JavaScriptCore/JSString.h>
 #include <JavaScriptCore/PropertyNameArray.h>
-#include <JavaScriptCore/WTFThreadData.h>
 
 struct ObjectImpList {
     JSObject* imp;
@@ -428,23 +427,23 @@ ExecState* getThreadGlobalExecState()
 
 JSGlueAPIEntry::JSGlueAPIEntry()
     : m_lock(LockForReal)
-    , m_storedIdentifierTable(wtfThreadData().currentIdentifierTable())
+    , m_storedIdentifierTable(currentIdentifierTable())
 {
-    wtfThreadData().setCurrentIdentifierTable(getThreadGlobalObject()->globalExec()->globalData().identifierTable);
+    setCurrentIdentifierTable(getThreadGlobalObject()->globalExec()->globalData().identifierTable);
 }
 
 JSGlueAPIEntry::~JSGlueAPIEntry()
 {
-    wtfThreadData().setCurrentIdentifierTable(m_storedIdentifierTable);
+    setCurrentIdentifierTable(m_storedIdentifierTable);
 }
 
 JSGlueAPICallback::JSGlueAPICallback(ExecState* exec)
     : m_dropLocks(exec)
 {
-    wtfThreadData().resetCurrentIdentifierTable();
+    resetCurrentIdentifierTable();
 }
 
 JSGlueAPICallback::~JSGlueAPICallback()
 {
-    wtfThreadData().setCurrentIdentifierTable(getThreadGlobalObject()->globalExec()->globalData().identifierTable);
+    setCurrentIdentifierTable(getThreadGlobalObject()->globalExec()->globalData().identifierTable);
 }

@@ -435,8 +435,6 @@
             'wtf/Vector.h',
             'wtf/VectorTraits.h',
             'wtf/VMTags.h',
-            'wtf/WTFThreadData.cpp',
-            'wtf/WTFThreadData.h',
             'wtf/win/MainThreadWin.cpp',
             'wtf/wx/MainThreadWx.cpp',
             'yarr/RegexCompiler.cpp',

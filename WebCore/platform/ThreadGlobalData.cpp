@@ -31,7 +31,6 @@
 #include "StringImpl.h"
 #include "ThreadTimers.h"
 #include <wtf/UnusedParam.h>
-#include <wtf/WTFThreadData.h>
 
 #if USE(ICU_UNICODE)
 #include "TextCodecICU.h"
@@ -56,7 +55,8 @@ ThreadGlobalData* ThreadGlobalData::staticData;
 #endif
 
 ThreadGlobalData::ThreadGlobalData()
-    : m_eventNames(new EventNames)
+    : m_atomicStringTable(new HashSet<StringImpl*>)
+    , m_eventNames(new EventNames)
     , m_threadTimers(new ThreadTimers)
 #ifndef NDEBUG
     , m_isMainThread(isMainThread())
@@ -68,11 +68,11 @@ ThreadGlobalData::ThreadGlobalData()
     , m_cachedConverterTEC(new TECConverterWrapper)
 #endif
 {
+    // StringImpl::empty() does not construct its static string in a threadsafe fashion,
+    // so ensure it has been initialized from here.
+    //
     // This constructor will have been called on the main thread before being called on
-    // any other thread, and is only called once per thread – this makes this a convenient
-    // point to call methods that internally perform a one-time initialization that is not
-    // threadsafe.
-    wtfThreadData();
+    // any other thread, and is only called once per thread.
     StringImpl::empty();
 }
 
@@ -85,6 +85,7 @@ ThreadGlobalData::~ThreadGlobalData()
     delete m_cachedConverterICU;
 #endif
     delete m_eventNames;
+    delete m_atomicStringTable;
     delete m_threadTimers;
 }
 

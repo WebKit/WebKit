@@ -165,7 +165,6 @@ LOCAL_SRC_FILES := \
 	wtf/ThreadIdentifierDataPthreads.cpp \
 	wtf/Threading.cpp \
 	wtf/ThreadingPthreads.cpp \
-	wtf/WTFThreadData.cpp \
 	\
 	wtf/TypeTraits.cpp \
 	wtf/dtoa.cpp \

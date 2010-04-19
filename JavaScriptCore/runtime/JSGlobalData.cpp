@@ -49,7 +49,6 @@
 #include "Lookup.h"
 #include "Nodes.h"
 #include "Parser.h"
-#include <wtf/WTFThreadData.h>
 
 #if ENABLE(JSC_MULTIPLE_THREADS)
 #include <wtf/Threading.h>
@@ -204,7 +203,8 @@ PassRefPtr<JSGlobalData> JSGlobalData::createNonDefault()
 PassRefPtr<JSGlobalData> JSGlobalData::create()
 {
     JSGlobalData* globalData = new JSGlobalData(false);
-    wtfThreadData().initializeIdentifierTable(globalData->identifierTable);
+    setDefaultIdentifierTable(globalData->identifierTable);
+    setCurrentIdentifierTable(globalData->identifierTable);
     return adoptRef(globalData);
 }
 

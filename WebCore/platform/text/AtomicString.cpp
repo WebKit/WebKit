@@ -28,46 +28,15 @@
 
 #include "StaticConstructors.h"
 #include "StringHash.h"
+#include "ThreadGlobalData.h"
 #include <wtf/Threading.h>
 #include <wtf/HashSet.h>
-#include <wtf/WTFThreadData.h>
 
 namespace WebCore {
 
-class AtomicStringTable {
-public:
-    static AtomicStringTable* create()
-    {
-        AtomicStringTable* table = new AtomicStringTable;
-
-        WTFThreadData& data = wtfThreadData();
-        data.m_atomicStringTable = table;
-        data.m_atomicStringTableDestructor = AtomicStringTable::destroy;
-
-        return table;
-    }
-
-    HashSet<StringImpl*>& table()
-    {
-        return m_table;
-    }
-
-private:
-    static void destroy(AtomicStringTable* table)
-    {
-        delete table;
-    }
-
-    HashSet<StringImpl*> m_table;
-};
-
 static inline HashSet<StringImpl*>& stringTable()
 {
-    // Once possible we should make this non-lazy (constructed in WTFThreadData's constructor).
-    AtomicStringTable* table = wtfThreadData().atomicStringTable();
-    if (UNLIKELY(!table))
-        table = AtomicStringTable::create();
-    return table->table();
+    return threadGlobalData().atomicStringTable();
 }
 
 struct CStringTranslator {

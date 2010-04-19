@@ -1,3 +1,45 @@
+2010-04-19  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by NOBODY (rolling out r57829).
+        This broke windows.
+
+        * API/APIShims.h:
+        (JSC::APIEntryShimWithoutLock::APIEntryShimWithoutLock):
+        (JSC::APIEntryShimWithoutLock::~APIEntryShimWithoutLock):
+        (JSC::APICallbackShim::APICallbackShim):
+        (JSC::APICallbackShim::~APICallbackShim):
+        * API/JSContextRef.cpp:
+        * Android.mk:
+        * Android.v8.wtf.mk:
+        * GNUmakefile.am:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.pro:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/Completion.cpp:
+        (JSC::checkSyntax):
+        (JSC::evaluate):
+        * runtime/Identifier.cpp:
+        (JSC::Identifier::remove):
+        (JSC::Identifier::checkCurrentIdentifierTable):
+        (JSC::createIdentifierTableSpecificCallback):
+        (JSC::createIdentifierTableSpecific):
+        * runtime/Identifier.h:
+        (JSC::ThreadIdentifierTableData::ThreadIdentifierTableData):
+        (JSC::defaultIdentifierTable):
+        (JSC::setDefaultIdentifierTable):
+        (JSC::currentIdentifierTable):
+        (JSC::setCurrentIdentifierTable):
+        (JSC::resetCurrentIdentifierTable):
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreadingOnce):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::create):
+        * wtf/WTFThreadData.cpp: Removed.
+        * wtf/WTFThreadData.h: Removed.
+
 2010-04-19  Douglas Gregor  <dgregor@apple.com>
 
         Reviewed and landed by Anders Carlsson.

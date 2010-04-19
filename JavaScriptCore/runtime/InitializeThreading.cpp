@@ -36,7 +36,6 @@
 #include "UString.h"
 #include <wtf/DateMath.h>
 #include <wtf/Threading.h>
-#include <wtf/WTFThreadData.h>
 
 using namespace WTF;
 
@@ -49,7 +48,6 @@ static pthread_once_t initializeThreadingKeyOnce = PTHREAD_ONCE_INIT;
 static void initializeThreadingOnce()
 {
     WTF::initializeThreading();
-    wtfThreadData();
     initializeUString();
     JSGlobalData::storeVPtrs();
 #if ENABLE(JSC_MULTIPLE_THREADS)
