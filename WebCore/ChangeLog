@@ -1,3 +1,46 @@
+2010-04-19  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: implement JavaScriptCallFrame that works for v8.
+        Implementing this binding for v8 allows to make evaluations on
+        call frames and protects access to the debugger context from
+        inspected context.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37755
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * bindings/js/JSJavaScriptCallFrameCustom.cpp:
+        (WebCore::JSJavaScriptCallFrame::scopeType):
+        * bindings/v8/JavaScriptCallFrame.cpp: Added.
+        (WebCore::JavaScriptCallFrame::JavaScriptCallFrame):
+        (WebCore::JavaScriptCallFrame::~JavaScriptCallFrame):
+        (WebCore::JavaScriptCallFrame::caller):
+        (WebCore::JavaScriptCallFrame::sourceID):
+        (WebCore::JavaScriptCallFrame::line):
+        (WebCore::JavaScriptCallFrame::functionName):
+        (WebCore::JavaScriptCallFrame::scopeChain):
+        (WebCore::JavaScriptCallFrame::scopeType):
+        (WebCore::JavaScriptCallFrame::thisObject):
+        (WebCore::JavaScriptCallFrame::evaluate):
+        * bindings/v8/JavaScriptCallFrame.h: Added.
+        (WebCore::JavaScriptCallFrame::create):
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::currentCallFrame):
+        * bindings/v8/ScriptDebugServer.h:
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::V8InjectedScriptHost::currentCallFrameCallback):
+        * bindings/v8/custom/V8JavaScriptCallFrameCustom.cpp: Added.
+        (WebCore::V8JavaScriptCallFrame::evaluateCallback):
+        (WebCore::V8JavaScriptCallFrame::scopeChainAccessorGetter):
+        (WebCore::V8JavaScriptCallFrame::scopeTypeCallback):
+        (WebCore::V8JavaScriptCallFrame::thisObjectAccessorGetter):
+        (WebCore::V8JavaScriptCallFrame::typeAccessorGetter):
+        * inspector/JavaScriptCallFrame.idl:
+        * inspector/front-end/InjectedScript.js:
+        (injectedScriptConstructor.):
+
 2010-04-19  Jessie Berlin  <jberlin@webkit.org>
 
         Rubber Stamped by Adam Roben

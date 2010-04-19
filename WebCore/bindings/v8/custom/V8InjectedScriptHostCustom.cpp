@@ -46,6 +46,7 @@
 #include "V8BindingState.h"
 #include "V8DOMWindow.h"
 #include "V8Database.h"
+#include "V8JavaScriptCallFrame.h"
 #include "V8Node.h"
 #include "V8Proxy.h"
 #include "V8Storage.h"
@@ -158,7 +159,7 @@ v8::Handle<v8::Value> V8InjectedScriptHost::pushNodePathToFrontendCallback(const
 v8::Handle<v8::Value> V8InjectedScriptHost::currentCallFrameCallback(const v8::Arguments& args)
 {
     INC_STATS("InjectedScriptHost.currentCallFrame()");
-    return ScriptDebugServer::shared().currentCallFrameV8();
+    return toV8(ScriptDebugServer::shared().currentCallFrame());
 }
 
 v8::Handle<v8::Value> V8InjectedScriptHost::isActivationCallback(const v8::Arguments& args)

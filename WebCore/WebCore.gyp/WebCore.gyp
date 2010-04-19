@@ -180,9 +180,6 @@
       '../dom/EventTarget.idl',
       '../html/VoidCallback.idl',
 
-      # JSC-only.
-      '../inspector/JavaScriptCallFrame.idl',
-
       # Bindings with custom Objective-C implementations.
       '../page/AbstractView.idl',
 

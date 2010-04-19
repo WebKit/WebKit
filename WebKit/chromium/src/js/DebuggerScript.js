@@ -167,6 +167,7 @@ DebuggerScript._frameMirrorToJSCallFrame = function(frameMirror, callerFrame)
 
     // Get scope chain array in format: [<scope type>, <scope object>, <scope type>, <scope object>,...]
     var scopeChain = [];
+    var scopeType = [];
     for (var i = 0; i < frameMirror.scopeCount(); i++) {
         var scopeMirror = frameMirror.scope(i);
         var scopeObjectMirror = scopeMirror.scopeObject();
@@ -174,8 +175,12 @@ DebuggerScript._frameMirrorToJSCallFrame = function(frameMirror, callerFrame)
         var scopeObject = {};
         for (var j = 0; j < properties.length; j++)
             scopeObject[properties[j].name()] = properties[j].value_;
-        scopeChain.push(scopeMirror.scopeType());
+        scopeType.push(scopeMirror.scopeType());
         scopeChain.push(scopeObject);
+    }
+    
+    function evaluate(expression) {
+        return frameMirror.evaluate(expression, false).value();
     }
     
     return {
@@ -185,6 +190,8 @@ DebuggerScript._frameMirrorToJSCallFrame = function(frameMirror, callerFrame)
         "type": "function",
         "thisObject": thisObject,
         "scopeChain": scopeChain,
+        "scopeType": scopeType,
+        "evaluate": evaluate,
         "caller": callerFrame
     };
 }

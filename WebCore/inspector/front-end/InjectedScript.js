@@ -845,35 +845,35 @@ InjectedScript.CallFrameProxy = function(id, callFrame)
 if (jsEngine === "v8") {
 
 InjectedScript.CallFrameProxy.prototype = {
-    
-
     _wrapScopeChain: function(callFrame)
     {
-        var ScopeType = { Global: 0,
-                          Local: 1,
-                          With: 2,
-                          Closure: 3,
-                          Catch: 4 };
+        const GLOBAL_SCOPE = 0;
+        const LOCAL_SCOPE = 1;
+        const WITH_SCOPE = 2;
+        const CLOSURE_SCOPE = 3;
+        const CATCH_SCOPE = 4;
+    
         var scopeChain = callFrame.scopeChain;
         var scopeChainProxy = [];
-        for (var i = 0; i < scopeChain.length; i += 2) {
-            var scopeType = scopeChain[i];
-            var scopeObject = scopeChain[i + 1];
-            var scopeObjectProxy = InjectedScript.createProxyObject(scopeObject, { callFrame: this.id, chainIndex: (i + 1) }, true);
+        for (var i = 0; i < scopeChain.length; i++) {
+            var scopeType = callFrame.scopeType(i);
+            var scopeObject = scopeChain[i];
+            var scopeObjectProxy = InjectedScript.createProxyObject(scopeObject, { callFrame: this.id, chainIndex: i }, true);
 
             var foundLocalScope = false;
             switch(scopeType) {
-                case ScopeType.Local: {
+                case LOCAL_SCOPE: {
                     foundLocalScope = true;
                     scopeObjectProxy.isLocal = true;
                     scopeObjectProxy.thisObject = InjectedScript.createProxyObject(callFrame.thisObject, { callFrame: this.id, thisObject: true }, true);
                     break;
                 }
-                case ScopeType.Closure: {
+                case CLOSURE_SCOPE: {
                     scopeObjectProxy.isClosure = true;
                     break;
                 }
-                case ScopeType.With: {
+                case WITH_SCOPE:
+                case CATCH_SCOPE: {
                     scopeObjectProxy.isWithBlock = true;
                     break;
                 }

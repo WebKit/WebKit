@@ -85,6 +85,12 @@ JSValue JSJavaScriptCallFrame::scopeChain(ExecState* exec) const
     return constructArray(exec, list);
 }
 
+JSValue JSJavaScriptCallFrame::scopeType(ExecState*, const ArgList&)
+{
+    // FIXME(37663): implement this method the way it's done in the InjectedScipt.js
+    return jsNull();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(JAVASCRIPT_DEBUGGER)
