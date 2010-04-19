@@ -1,3 +1,36 @@
+2010-04-18  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Created a class for check-webkit-style that encapsulates iterating
+        over text files and reading them.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37754
+
+        This revision is an intermediate step towards separating our
+        style-checking code from the logic of iterating over files and
+        reading them.
+
+        * Scripts/webkitpy/common/system/logtesting.py:
+          - Added a logMessages() method to the LoggingTestCase class.
+            This method provides unit tests with access to the raw list
+            of log messages in case the tester needs to do something more
+            than simply assert the list of existing messages.
+
+        * Scripts/webkitpy/style/checker.py:
+          - Added a ProcessorBase class that processors of lists of lines
+            should eventually inherit from.
+          - Also added a FIXME to use the ProcessorBase class and the
+            TextFileReader class added below.
+
+        * Scripts/webkitpy/style/filereader.py: Added.
+          - Created a TextFileReader class that encapsulates reading
+            and iterating over text files.
+
+        * Scripts/webkitpy/style/filereader_unittest.py: Added.
+          - Added a TextFileReaderTest class to unit-test the
+            new TextFileReader class.
+
 2010-04-15  Tony Chang  <tony@chromium.org>
 
         Reviewed by Adam Barth.

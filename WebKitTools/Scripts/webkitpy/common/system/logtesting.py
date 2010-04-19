@@ -173,6 +173,10 @@ class LogTesting(object):
         logger = LogTesting._getLogger()
         logger.removeHandler(self._handler)
 
+    def messages(self):
+        """Return the current list of log messages."""
+        return self._test_stream.messages
+
     # FIXME: Add a clearMessages() method for cases where the caller
     #        deliberately doesn't want to assert every message.
 
@@ -233,6 +237,10 @@ class LoggingTestCase(unittest.TestCase):
 
     def tearDown(self):
         self._log.tearDown()
+
+    def logMessages(self):
+        """Return the current list of log messages."""
+        return self._log.messages()
 
     # FIXME: Add a clearMessages() method for cases where the caller
     #        deliberately doesn't want to assert every message.

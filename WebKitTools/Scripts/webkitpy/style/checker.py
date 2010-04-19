@@ -523,6 +523,35 @@ class StyleCheckerConfiguration(object):
                                            confidence_in_error))
 
 
+class ProcessorBase(object):
+
+    """The base class for processors of lists of lines."""
+
+    def should_process(self, file_path):
+        """Return whether the file at file_path should be processed."""
+        raise NotImplementedError('Subclasses should implement.')
+
+    def process(self, lines, file_path, **kwargs):
+        """Process lines of text read from a file.
+
+        Args:
+          lines: A list of lines of text to process.
+          file_path: The path from which the lines were read.
+          **kwargs: This argument signifies that the process() method of
+                    subclasses of ProcessorBase may support additional
+                    keyword arguments.
+                        For example, a style processor's process() method
+                    may support a "reportable_lines" parameter that represents
+                    the line numbers of the lines for which style errors
+                    should be reported.
+
+        """
+        raise NotImplementedError('Subclasses should implement.')
+
+
+# FIXME: Modify this class to start using the TextFileReader class in
+#        webkitpy/style/filereader.py.  This probably means creating
+#        a StyleProcessor class that inherits from ProcessorBase.
 class StyleChecker(object):
 
     """Supports checking style in files and patches.
