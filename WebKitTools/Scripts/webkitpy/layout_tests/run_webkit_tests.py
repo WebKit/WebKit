@@ -1439,6 +1439,18 @@ def main(options, args, print_results=True):
         # Debug or Release.
         options.results_directory = port_obj.results_directory()
 
+    last_unexpected_results = []
+    if options.print_unexpected_results or options.retry_unexpected_results:
+        unexpected_results_filename = os.path.join(
+           options.results_directory, "unexpected_results.json")
+        f = file(unexpected_results_filename)
+        results = simplejson.load(f)
+        f.close()
+        last_unexpected_results = results['tests'].keys()
+        if options.print_unexpected_results:
+            print "\n".join(last_unexpected_results) + "\n"
+            return 0
+
     if options.clobber_old_results:
         # Just clobber the actual test results directories since the other
         # files in the results directory are explicitly used for cross-run
@@ -1482,6 +1494,7 @@ def main(options, args, print_results=True):
     paths = new_args
     if not paths:
         paths = []
+    paths += last_unexpected_results
     if options.test_list:
         paths += read_test_files(options.test_list)
 
@@ -1731,6 +1744,12 @@ def parse_args(args=None):
         #      Exit after the first N failures instead of running all tests
         # FIXME: consider: --iterations n
         #      Number of times to run the set of tests (e.g. ABCABCABC)
+        optparse.make_option("--print-unexpected-results", action="store_true",
+            default=False, help="print the tests in the last run that "
+            "had unexpected results."),
+        optparse.make_option("--retry-unexpected-results", action="store_true",
+            default=False, help="re-try the tests in the last run that "
+            "had unexpected results."),
     ]
 
     misc_options = [
