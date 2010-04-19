@@ -1143,13 +1143,12 @@ PassRefPtr<Media> DOMWindow::media() const
     return m_media.get();
 }
 
-PassRefPtr<CSSStyleDeclaration> DOMWindow::getComputedStyle(Element* elt, const String&) const
+PassRefPtr<CSSStyleDeclaration> DOMWindow::getComputedStyle(Element* elt, const String& pseudoElt) const
 {
     if (!elt)
         return 0;
 
-    // FIXME: This needs take pseudo elements into account.
-    return computedStyle(elt);
+    return computedStyle(elt, false, pseudoElt);
 }
 
 PassRefPtr<CSSRuleList> DOMWindow::getMatchedCSSRules(Element* elt, const String&, bool authorOnly) const

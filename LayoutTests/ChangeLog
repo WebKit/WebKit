@@ -1,3 +1,13 @@
+2010-04-19  Jessie Berlin  <jberlin@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        First steps towards fixing bug 24021 - pseudo-element styles not accessible / retrievable via DOM methods.
+        https://bugs.webkit.org/show_bug.cgi?id=24021
+
+        * fast/css/getComputedStyle/getComputedStyle-with-pseudo-element-expected.txt: Added.
+        * fast/css/getComputedStyle/getComputedStyle-with-pseudo-element.html: Added.
+
 2010-04-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] lacks clipToImageBuffer()

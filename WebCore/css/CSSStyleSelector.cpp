@@ -2552,132 +2552,16 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
         if (!elementStyle && !m_collectRulesOnly)
             return false;
 
-        switch (sel->pseudoType()) {
-            // Pseudo-elements:
-            case CSSSelector::PseudoFirstLine:
-                dynamicPseudo = FIRST_LINE;
-                return true;
-            case CSSSelector::PseudoFirstLetter:
-                dynamicPseudo = FIRST_LETTER;
-                if (Document* doc = e->document())
-                    doc->setUsesFirstLetterRules(true);
-                return true;
-            case CSSSelector::PseudoSelection:
-                dynamicPseudo = SELECTION;
-                return true;
-            case CSSSelector::PseudoBefore:
-                dynamicPseudo = BEFORE;
-                return true;
-            case CSSSelector::PseudoAfter:
-                dynamicPseudo = AFTER;
-                return true;
-            case CSSSelector::PseudoFileUploadButton:
-                dynamicPseudo = FILE_UPLOAD_BUTTON;
-                return true;
-#if ENABLE(DATALIST)
-            case CSSSelector::PseudoInputListButton:
-                dynamicPseudo = INPUT_LIST_BUTTON;
-                return true;
-#endif
-            case CSSSelector::PseudoInputPlaceholder:
-                dynamicPseudo = INPUT_PLACEHOLDER;
-                return true;
-            case CSSSelector::PseudoSliderThumb:
-                dynamicPseudo = SLIDER_THUMB;
-                return true; 
-            case CSSSelector::PseudoSearchCancelButton:
-                dynamicPseudo = SEARCH_CANCEL_BUTTON;
-                return true; 
-            case CSSSelector::PseudoSearchDecoration:
-                dynamicPseudo = SEARCH_DECORATION;
-                return true;
-            case CSSSelector::PseudoSearchResultsDecoration:
-                dynamicPseudo = SEARCH_RESULTS_DECORATION;
-                return true;
-            case CSSSelector::PseudoSearchResultsButton:
-                dynamicPseudo = SEARCH_RESULTS_BUTTON;
-                return true;
-            case CSSSelector::PseudoMediaControlsPanel:
-                dynamicPseudo = MEDIA_CONTROLS_PANEL;
-                return true;
-            case CSSSelector::PseudoMediaControlsMuteButton:
-                dynamicPseudo = MEDIA_CONTROLS_MUTE_BUTTON;
-                return true;
-            case CSSSelector::PseudoMediaControlsPlayButton:
-                dynamicPseudo = MEDIA_CONTROLS_PLAY_BUTTON;
-                return true;
-            case CSSSelector::PseudoMediaControlsTimelineContainer:
-                dynamicPseudo = MEDIA_CONTROLS_TIMELINE_CONTAINER;
-                return true;
-            case CSSSelector::PseudoMediaControlsVolumeSliderContainer:
-                dynamicPseudo = MEDIA_CONTROLS_VOLUME_SLIDER_CONTAINER;
-                return true;
-            case CSSSelector::PseudoMediaControlsCurrentTimeDisplay:
-                dynamicPseudo = MEDIA_CONTROLS_CURRENT_TIME_DISPLAY;
-                return true;
-            case CSSSelector::PseudoMediaControlsTimeRemainingDisplay:
-                dynamicPseudo = MEDIA_CONTROLS_TIME_REMAINING_DISPLAY;
-                return true;
-            case CSSSelector::PseudoMediaControlsTimeline:
-                dynamicPseudo = MEDIA_CONTROLS_TIMELINE;
-                return true;
-            case CSSSelector::PseudoMediaControlsVolumeSlider:
-                dynamicPseudo = MEDIA_CONTROLS_VOLUME_SLIDER;
-                return true;
-            case CSSSelector::PseudoMediaControlsSeekBackButton:
-                dynamicPseudo = MEDIA_CONTROLS_SEEK_BACK_BUTTON;
-                return true;
-            case CSSSelector::PseudoMediaControlsSeekForwardButton:
-                dynamicPseudo = MEDIA_CONTROLS_SEEK_FORWARD_BUTTON;
-                return true;
-            case CSSSelector::PseudoMediaControlsRewindButton:
-                dynamicPseudo = MEDIA_CONTROLS_REWIND_BUTTON;
-                return true;
-            case CSSSelector::PseudoMediaControlsReturnToRealtimeButton:
-                dynamicPseudo = MEDIA_CONTROLS_RETURN_TO_REALTIME_BUTTON;
-                return true;
-            case CSSSelector::PseudoMediaControlsToggleClosedCaptions:
-                dynamicPseudo = MEDIA_CONTROLS_TOGGLE_CLOSED_CAPTIONS_BUTTON;
-                return true;
-            case CSSSelector::PseudoMediaControlsStatusDisplay:
-                dynamicPseudo = MEDIA_CONTROLS_STATUS_DISPLAY;
-                return true;
-            case CSSSelector::PseudoMediaControlsFullscreenButton:
-                dynamicPseudo = MEDIA_CONTROLS_FULLSCREEN_BUTTON;
-                return true;
-            case CSSSelector::PseudoScrollbar:
-                dynamicPseudo = SCROLLBAR;
-                return true;
-            case CSSSelector::PseudoScrollbarButton:
-                dynamicPseudo = SCROLLBAR_BUTTON;
-                return true;
-            case CSSSelector::PseudoScrollbarCorner:
-                dynamicPseudo = SCROLLBAR_CORNER;
-                return true;
-            case CSSSelector::PseudoScrollbarThumb:
-                dynamicPseudo = SCROLLBAR_THUMB;
-                return true;
-            case CSSSelector::PseudoScrollbarTrack:
-                dynamicPseudo = SCROLLBAR_TRACK;
-                return true;
-            case CSSSelector::PseudoScrollbarTrackPiece:
-                dynamicPseudo = SCROLLBAR_TRACK_PIECE;
-                return true;
-            case CSSSelector::PseudoResizer:
-                dynamicPseudo = RESIZER;
-                return true;
-            case CSSSelector::PseudoInnerSpinButton:
-                dynamicPseudo = INNER_SPIN_BUTTON;
-                return true;
-            case CSSSelector::PseudoOuterSpinButton:
-                dynamicPseudo = OUTER_SPIN_BUTTON;
-                return true;
-            case CSSSelector::PseudoUnknown:
-            case CSSSelector::PseudoNotParsed:
-            default:
-                ASSERT_NOT_REACHED();
-                break;
+        PseudoId pseudoId = CSSSelector::pseudoId(sel->pseudoType());
+        if (pseudoId == FIRST_LETTER) {
+            if (Document* document = e->document())
+                document->setUsesFirstLetterRules(true);
         }
+        if (pseudoId != NOPSEUDO) {
+            dynamicPseudo = pseudoId;
+            return true;
+        }
+        ASSERT_NOT_REACHED();
         return false;
     }
     // ### add the rest of the checks...

@@ -201,7 +201,7 @@ public:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual void recalcStyle(StyleChange = NoChange);
 
-    virtual RenderStyle* computedStyle();
+    RenderStyle* computedStyle(PseudoId = NOPSEUDO);
 
     void dispatchAttrRemovalEvent(Attribute*);
     void dispatchAttrAdditionEvent(Attribute*);
@@ -312,6 +312,7 @@ private:
     virtual const AtomicString& virtualPrefix() const { return prefix(); }
     virtual const AtomicString& virtualLocalName() const { return localName(); }
     virtual const AtomicString& virtualNamespaceURI() const { return namespaceURI(); }
+    virtual RenderStyle* virtualComputedStyle(PseudoId pseudoElementSpecifier = NOPSEUDO) { return computedStyle(pseudoElementSpecifier); }
     
     // cloneNode is private so that non-virtual cloneElementWithChildren and cloneElementWithoutChildren
     // are used instead.

@@ -1,3 +1,65 @@
+2010-04-19  Jessie Berlin  <jberlin@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        First steps towards fixing bug 24021 - pseudo-element styles not accessible / retrievable via DOM methods.
+        https://bugs.webkit.org/show_bug.cgi?id=24021
+
+        Allows access to the computed styles for the pseudo-elements through the second argument to getComputedStyle.
+        This approach does not provide the correct values for 'length' properties and does not work for the ':selection' pseudo-element and will instead return results similiar to those returned by Firefox. This approach also requires waiting until at least one iteration of a hardware accelerated composited animation to return the correct values for the "opacity" and "transform" properties of a pseudo-element associated with the element being animated.
+        Those values need to be retrieved from the renderer for the pseudo-element as opposed to the cached RenderStyle for the element on which the pseudo-element is defined, which is further complicated by the fact that not all elements have renderers.
+
+        Test: fast/css/getComputedStyle/getComputedStyle-with-pseudo-element.html
+
+        * WebCore.base.exp:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::CSSComputedStyleDeclaration):
+        Parse the and store the pseudo-element specifier from the string provided by the user.
+        (WebCore::CSSComputedStyleDeclaration::getFontSizeCSSValuePreferringKeyword):
+        Get the computed style for the pseudo-element if it has been specified.
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        Get the computed style for the pseudo-element if it has been specified, with a FIXME noting that the values returned for the "opacity" and "transform" properties of a pseudo-element associated with an element being animated and using hardware accelerated compositing will not be correct until after the first iteration of the animation.
+        (WebCore::CSSComputedStyleDeclaration::length):
+        Get the computed style for the pseudo-element if it has been specified.
+        (WebCore::CSSComputedStyleDeclaration::cssPropertyMatches):
+        Ditto.
+        * css/CSSComputedStyleDeclaration.h:
+        (WebCore::computedStyle):
+        Take into consideration the pseudo-element.
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::pseudoId):
+        Return the PseudoId that corresponds to the given PseudoType. If there is no corresponding PseudoId, returns NOPSEUDO.
+        (WebCore::nameToPseudoTypeMap):
+        Create and return the mapping between string names and PseudoTypes.
+        (WebCore::CSSSelector::parsePseudoType):
+        Parse and the given string into a PseudoType.
+        (WebCore::CSSSelector::extractPseudoType):
+        Refactored to use parsePseudoType.
+        * css/CSSSelector.h:
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector):
+        Refactored to use pseudoId.
+
+        * dom/Element.cpp:
+        (WebCore::Element::computedStyle):
+        If the pseudo-element is specified, then return the cached RenderStyle for that PseudoId. Added a FIXME to find the actual renders of the pseudo-elements instead of just the cached RenderStyle of the RenderStyle for the associated element.
+        * dom/Element.h:
+        (WebCore::Element::virtualComputedStyle):
+        Because Element::computedStyle is used so often, don't make it virtual. Instead, provide a virtualComputedStyle method in the Node.h class andmake computedStyle non-virtual. That way the Element version and the Node version of computedStyle will have the same name and look the same at the call site, but the Element version will be more efficient.
+
+        * dom/Node.h:
+        (WebCore::Node::computedStyle):
+        Ditto.
+        * dom/Node.cpp:
+        (WebCore::Node::virtualComputedStyle):
+        Get the computed style for the pseudo-element if it has been specified.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::getComputedStyle):
+        Ditto.
+
 2010-04-18  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Laszlo Gombos.
