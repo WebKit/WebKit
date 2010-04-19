@@ -218,6 +218,8 @@ class TestRunner:
         self._current_progress_str = ""
         self._current_test_number = 0
 
+        self._retries = 0
+
     def __del__(self):
         _log.debug("flushing stdout")
         sys.stdout.flush()
@@ -653,12 +655,13 @@ class TestRunner:
         # We exclude the crashes from the list of results to retry, because
         # we want to treat even a potentially flaky crash as an error.
         failures = self._get_failures(result_summary, include_crashes=False)
-        retries = 0
         retry_summary = result_summary
-        while (retries < self.NUM_RETRY_ON_UNEXPECTED_FAILURE and
+        while (self._retries < self.NUM_RETRY_ON_UNEXPECTED_FAILURE and
                len(failures)):
-            _log.debug("Retrying %d unexpected failure(s)" % len(failures))
-            retries += 1
+            _log.info('')
+            _log.info("Retrying %d unexpected failure(s)" % len(failures))
+            _log.info('')
+            self._retries += 1
             retry_summary = ResultSummary(self._expectations, failures.keys())
             self._run_tests(failures.keys(), retry_summary)
             failures = self._get_failures(retry_summary, include_crashes=True)
@@ -739,8 +742,11 @@ class TestRunner:
         """Displays the progress through the test run."""
         percent_complete = 100 * (result_summary.expected +
             result_summary.unexpected) / result_summary.total
-        self._meter.progress("Testing (%d%%): %d ran as expected, %d didn't,"
-            " %d left" % (percent_complete, result_summary.expected,
+        action = "Testing"
+        if self._retries > 0:
+            action = "Retrying"
+        self._meter.progress("%s (%d%%): %d ran as expected, %d didn't,"
+            " %d left" % (action, percent_complete, result_summary.expected,
              result_summary.unexpected, result_summary.remaining))
 
     def _display_detailed_progress(self, result_summary):

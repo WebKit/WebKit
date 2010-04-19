@@ -1,3 +1,18 @@
+2010-04-19  Dirk Pranke <dpranke@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        From a patch by Tor Arne Vestbo  <tor.arne.vestbo@nokia.com>
+
+        new-run-webkit-tests: make the retry step more explicit
+        https://bugs.webkit.org/show_bug.cgi?id=37606
+
+        It might be confusing to see the test and percent counters
+        reset without any notice of what's going on, so we make the
+        message that a retry-run is started explicit.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2010-04-19  Sam Weinig  <weinig@apple.com>
 
         Reviewed by Anders Carlsson.
