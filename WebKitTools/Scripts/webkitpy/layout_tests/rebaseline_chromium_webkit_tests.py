@@ -1032,7 +1032,7 @@ def main():
     port_obj = port.get(None, options)
     if not port_obj.check_image_diff(override_step=None, logging=False):
         _log.debug('No release version image diff binary found.')
-        options.configuration = "debug"
+        options.configuration = "Debug"
         port_obj = port.get(None, options)
     else:
         _log.debug('Found release version image diff binary.')

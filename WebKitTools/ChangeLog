@@ -1,5 +1,17 @@
 2010-04-19  Dirk Pranke  <dpranke@chromium.org>
 
+        Reviewed by Eric Seidel.
+
+        Fix a typo in the rebaselining tool that causes us to use "debug"
+        instead of "Debug" in a directory path, which fails on platforms with
+        case-sensitive filesystems.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37819
+
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests.py:
+
+2010-04-19  Dirk Pranke  <dpranke@chromium.org>
+
         Unreviewed, build fix.
 
         Fix breakage of chromium-win canary bots caused by r57806. That patch
