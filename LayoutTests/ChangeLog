@@ -1,3 +1,16 @@
+2010-04-19  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed build fix for Chromium
+
+        Add baselines for new platform-specific tests.
+
+        * platform/chromium/fast/url: Added.
+        * platform/chromium/fast/url/file-expected.txt: Added.
+        * platform/chromium/fast/url/relative-expected.txt: Added.
+        * platform/chromium/fast/url/relative-unix-expected.txt: Added.
+        * platform/chromium/fast/url/relative-win-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-04-19  Dave Moore  <davemoore@chromium.org>
 
         Reviewed by Dimitri Glazkov.
