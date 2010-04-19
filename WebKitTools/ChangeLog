@@ -1,3 +1,15 @@
+2010-04-19  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Submit a better workaround for r57806 than the one in r57831 - log
+        an error and exit if you try to run new-run-webkit-tests with --use-drt
+        on Windows.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37822
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+
 2010-04-19  Jesus Sanchez-Palencia  <jesus@webkit.org>
 
         Unreviewed.

@@ -81,21 +81,25 @@ class ChromiumPort(base.Port):
         base.Port.__init__(self, port_name, options)
         self._chromium_base_dir = None
 
-        # FIXME: see comment above re: import webkit
-        if sys.platform in ('win32', 'cygwin') and options:
-            options.use_drt = False
-
     def baseline_path(self):
         return self._webkit_baseline_path(self._name)
 
     def check_build(self, needs_http):
         result = True
+
+        # FIXME: see comment above re: import webkit
+        if (sys.platform in ('win32', 'cygwin') and self._options and
+            hasattr(self._options, 'use_drt') and self._options.use_drt):
+            _log.error('--use-drt is not supported on Windows yet')
+            _log.error('')
+            result = False
+
         dump_render_tree_binary_path = self._path_to_driver()
         result = check_file_exists(dump_render_tree_binary_path,
-                                   'test driver')
+                                    'test driver') and result
         if result:
-            result = (self._check_driver_build_up_to_date(self._options.configuration)
-                      and result)
+            result = self._check_driver_build_up_to_date(
+                self._options.configuration)
         else:
             _log.error('')
 
