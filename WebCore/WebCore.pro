@@ -99,15 +99,6 @@ win32-msvc2005|win32-msvc2008:{
     QMAKE_CXXFLAGS_RELEASE -= -GL
 }
 
-wince* {
-#    DEFINES += ENABLE_SVG=0 ENABLE_XPATH=0 ENABLE_XBL=0 \
-#               ENABLE_SVG_ANIMATION=0 ENABLE_SVG_USE=0  \
-#               ENABLE_SVG_FOREIGN_OBJECT=0 ENABLE_SVG_AS_IMAGE=0
-
-    INCLUDEPATH += $$PWD/../JavaScriptCore/os-wince
-    INCLUDEPATH += $$PWD/../JavaScriptCore/os-win32
-}
-
 # Pick up 3rdparty libraries from INCLUDE/LIB just like with MSVC
 win32-g++ {
     TMPPATH            = $$quote($$(INCLUDE))

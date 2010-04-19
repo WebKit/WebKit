@@ -56,6 +56,9 @@ contains(JAVASCRIPTCORE_JIT,no) {
 wince* {
     INCLUDEPATH += $$QT_SOURCE_TREE/src/3rdparty/ce-compat
     DEFINES += WINCEBASIC
+
+    INCLUDEPATH += $$PWD/../JavaScriptCore/os-wince
+    INCLUDEPATH += $$PWD/../JavaScriptCore/os-win32
 }
 
 
