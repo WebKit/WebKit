@@ -35,8 +35,8 @@
 #include "WebGLActiveInfo.h"
 #include "WebGLArray.h"
 #include "WebGLBuffer.h"
-#include "WebGLFramebuffer.h"
 #include "WebGLFloatArray.h"
+#include "WebGLFramebuffer.h"
 #include "WebGLIntArray.h"
 #include "WebGLProgram.h"
 #include "WebGLRenderbuffer.h"
@@ -45,8 +45,9 @@
 #include "WebGLUnsignedByteArray.h"
 #include <CoreGraphics/CGBitmapContext.h>
 #include <OpenGL/CGLRenderers.h>
-#include <wtf/text/CString.h>
+#include <OpenGL/gl.h>
 #include <wtf/UnusedParam.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 
