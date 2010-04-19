@@ -44,7 +44,6 @@ class MainWindow : public QMainWindow {
 public:
     MainWindow(const QString& url = QString());
 
-    void setAddressUrl(const QString& url);
     void addCompleterEntry(const QUrl& url);
 
     void load(const QString& url);
@@ -53,6 +52,8 @@ public:
     WebPage* page();
 
 protected slots:
+    void setAddressUrl(const QString& url);
+    void setAddressUrl(const QUrl& url);
     void openFile();
     void changeLocation();
 

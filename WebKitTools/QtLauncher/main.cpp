@@ -438,7 +438,7 @@ void LauncherWindow::loadStarted()
 void LauncherWindow::loadFinished()
 {
     QUrl url = page()->mainFrame()->url();
-    setAddressUrl(url.toString());
+    setAddressUrl(url.toString(QUrl::RemoveUserInfo));
     addCompleterEntry(url);
 }
 

@@ -1,3 +1,14 @@
+2010-04-19  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        Make the URL change on committed load.
+
+        * QtLauncher/mainwindow.cpp:
+        (MainWindow::buildUI):
+        (MainWindow::setAddressUrl):
+        * QtLauncher/mainwindow.h:
+
 2010-04-19  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Eric Seidel.
