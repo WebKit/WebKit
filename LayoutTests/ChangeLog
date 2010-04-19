@@ -1,3 +1,56 @@
+2010-04-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Rubber-stamped by Simon Hausmann.
+
+        [Qt] Unskip a bunch of now passing tests, add expected files and pixel results.
+        Additionally fix some minor pixel differences.
+
+        Compared to Mac png files and Mac expected files.
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/frames/frame-navigation-expected.checksum: Added.
+        * platform/qt/fast/frames/frame-navigation-expected.png: Added.
+        * platform/qt/fast/frames/frame-navigation-expected.txt: Updated.
+        * platform/qt/fast/overflow/line-clamp-expected.checksum: Added.
+        * platform/qt/fast/overflow/line-clamp-expected.png: Added.
+        * platform/qt/fast/overflow/line-clamp-expected.txt: Added.
+        * platform/qt/fast/reflections/opacity-reflection-transform-expected.checksum: Added.
+        * platform/qt/fast/reflections/opacity-reflection-transform-expected.png: Added.
+        * platform/qt/fast/reflections/opacity-reflection-transform-expected.txt: Added.
+        * platform/qt/fast/repaint/fixed-tranformed-expected.checksum: Added.
+        * platform/qt/fast/repaint/fixed-tranformed-expected.png: Added.
+        * platform/qt/fast/repaint/fixed-tranformed-expected.txt: Added.
+        * platform/qt/fast/repaint/repaint-during-scroll-expected.checksum: Added.
+        * platform/qt/fast/repaint/repaint-during-scroll-expected.png: Added.
+        * platform/qt/fast/repaint/repaint-during-scroll-expected.txt: Added.
+        * platform/qt/http/tests/local/file-url-sent-as-referer-expected.checksum: Added.
+        * platform/qt/http/tests/local/file-url-sent-as-referer-expected.png: Added.
+        * platform/qt/http/tests/local/file-url-sent-as-referer-expected.txt: Updated.
+        * platform/qt/http/tests/misc/error404-expected.checksum: Added.
+        * platform/qt/http/tests/misc/error404-expected.png: Added.
+        * platform/qt/http/tests/misc/error404-expected.txt: Added.
+        * platform/qt/http/tests/misc/frame-access-during-load-expected.checksum: Added.
+        * platform/qt/http/tests/misc/frame-access-during-load-expected.png: Added.
+        * platform/qt/http/tests/misc/frame-access-during-load-expected.txt: Added.
+        * platform/qt/http/tests/misc/generated-content-inside-table-expected.checksum: Added.
+        * platform/qt/http/tests/misc/generated-content-inside-table-expected.png: Added.
+        * platform/qt/http/tests/misc/generated-content-inside-table-expected.txt: Added.
+        * platform/qt/http/tests/misc/iframe404-expected.checksum: Added.
+        * platform/qt/http/tests/misc/iframe404-expected.png: Added.
+        * platform/qt/http/tests/misc/iframe404-expected.txt: Added.
+        * platform/qt/http/tests/misc/location-replace-crossdomain-expected.checksum: Added.
+        * platform/qt/http/tests/misc/location-replace-crossdomain-expected.png: Added.
+        * platform/qt/http/tests/misc/location-replace-crossdomain-expected.txt: Added.
+        * platform/qt/http/tests/uri/css-href-expected.checksum: Added.
+        * platform/qt/http/tests/uri/css-href-expected.png: Added.
+        * platform/qt/http/tests/uri/css-href-expected.txt: Updated.
+        * platform/qt/svg/custom/radial-gradient-with-outstanding-focalPoint-expected.checksum: Added.
+        * platform/qt/svg/custom/radial-gradient-with-outstanding-focalPoint-expected.png: Added.
+        * platform/qt/svg/custom/radial-gradient-with-outstanding-focalPoint-expected.txt: Added.
+        * platform/qt/svg/text/foreignObject-text-clipping-bug-expected.checksum: Added.
+        * platform/qt/svg/text/foreignObject-text-clipping-bug-expected.png: Added.
+        * platform/qt/svg/text/foreignObject-text-clipping-bug-expected.txt: Added.
+
 2010-04-19  Jessie Berlin  <jberlin@webkit.org>
 
         Reviewed by Dave Hyatt.

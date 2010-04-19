@@ -1,0 +1,25 @@
+KRenderingPaintServer {id="rad11" [type=RADIAL-GRADIENT] [stops=[(0.00,#FFFFFF), (1.00,#0000FF)]] [bounding box mode=0] [center=(50,50)] [focal=(100,100)] [radius=30.00]}
+KRenderingPaintServer {id="rad12" [type=RADIAL-GRADIENT] [stops=[(0.00,#FFFFFF), (1.00,#0000FF)]] [bounding box mode=0] [center=(170,50)] [focal=(120,0)] [radius=30.00]}
+KRenderingPaintServer {id="rad21" [type=RADIAL-GRADIENT] [stops=[(0.00,#FFFFFF), (1.00,#0000FF)]] [center=(0.50,0.50)] [focal=(1,1)] [radius=0.30]}
+KRenderingPaintServer {id="rad22" [type=RADIAL-GRADIENT] [stops=[(0.00,#FFFFFF), (1.00,#0000FF)]] [center=(0.50,0.50)] [focal=(0,0)] [radius=0.30]}
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
+        RenderSVGGradientStop {stop} at (0,0) size 0x0
+        RenderSVGGradientStop {stop} at (0,0) size 0x0
+      RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
+        RenderSVGGradientStop {stop} at (0,0) size 0x0
+        RenderSVGGradientStop {stop} at (0,0) size 0x0
+      RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
+        RenderSVGGradientStop {stop} at (0,0) size 0x0
+        RenderSVGGradientStop {stop} at (0,0) size 0x0
+      RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
+        RenderSVGGradientStop {stop} at (0,0) size 0x0
+        RenderSVGGradientStop {stop} at (0,0) size 0x0
+    RenderPath {rect} at (0,0) size 100x100 [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#FFFFFF), (1.00,#0000FF)]] [bounding box mode=0] [center=(50,50)] [focal=(100,100)] [radius=30.00]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 L0.00,0.00"]
+    RenderPath {rect} at (120,0) size 100x100 [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#FFFFFF), (1.00,#0000FF)]] [bounding box mode=0] [center=(170,50)] [focal=(120,0)] [radius=30.00]}] [data="M120.00,0.00 L220.00,0.00 L220.00,100.00 L120.00,100.00 L120.00,0.00"]
+    RenderPath {rect} at (0,120) size 100x100 [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#FFFFFF), (1.00,#0000FF)]] [center=(0.50,0.50)] [focal=(1,1)] [radius=0.30]}] [data="M0.00,120.00 L100.00,120.00 L100.00,220.00 L0.00,220.00 L0.00,120.00"]
+    RenderPath {rect} at (120,120) size 100x100 [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#FFFFFF), (1.00,#0000FF)]] [center=(0.50,0.50)] [focal=(0,0)] [radius=0.30]}] [data="M120.00,120.00 L220.00,120.00 L220.00,220.00 L120.00,220.00 L120.00,120.00"]

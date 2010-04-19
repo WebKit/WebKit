@@ -1,0 +1,43 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 761x40
+          text run at (0,0) width 149: "This test verifies that "
+          text run at (149,0) width 612: "accessing a frame's document while it is still loading does not prevent the load, but can"
+          text run at (0,20) width 318: "access at least a temporary empty document."
+      RenderBlock (anonymous) at (0,56) size 784x120
+        RenderPartObject {IFRAME} at (0,0) size 300x40
+          layer at (0,0) size 300x40
+            RenderView at (0,0) size 300x40
+          layer at (0,0) size 300x40
+            RenderBlock {HTML} at (0,0) size 300x40
+              RenderBody {BODY} at (8,8) size 284x24
+                RenderText {#text} at (0,0) size 80x20
+                  text run at (0,0) width 80: "SUCCESS"
+                RenderText {#text} at (0,0) size 0x0
+                RenderText {#text} at (0,0) size 0x0
+        RenderBR {BR} at (300,40) size 0x0
+        RenderPartObject {IFRAME} at (0,40) size 300x40
+          layer at (0,0) size 300x40
+            RenderView at (0,0) size 300x40
+          layer at (0,0) size 300x40
+            RenderBlock {HTML} at (0,0) size 300x40
+              RenderBody {BODY} at (8,8) size 284x24
+                RenderText {#text} at (0,0) size 80x20
+                  text run at (0,0) width 80: "SUCCESS"
+                RenderText {#text} at (0,0) size 0x0
+                RenderText {#text} at (0,0) size 0x0
+        RenderBR {BR} at (300,80) size 0x0
+        RenderText {#text} at (0,80) size 172x20
+          text run at (0,80) width 172: "[object HTMLDocument]"
+        RenderBR {BR} at (172,96) size 0x0
+        RenderText {#text} at (0,100) size 172x20
+          text run at (0,100) width 172: "[object HTMLDocument]"
+      RenderBlock {P} at (0,192) size 784x20
+        RenderText {#text} at (0,0) size 672x20
+          text run at (0,0) width 672: "If this test passes, you should see SUCCESS twice, followed by [object HTMLDocument] twice."
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0

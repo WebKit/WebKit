@@ -342,6 +342,9 @@ fast/history/multiple-classes-visited.html
 fast/history/nested-visited-test.html
 fast/history/self-is-visited.html
 fast/history/sibling-visited-test.html
+
+# Missing layoutTestController.dumpWillCacheResponse
+http/tests/misc/willCacheResponse-delegate-callback.html
 # ============================================================================= #
 
 # ------- missing eventSender.beginDragWithFiles
@@ -5020,17 +5023,9 @@ fast/css/color-correction-on-text-shadow.html
 fast/css/color-correction-on-text.html
 fast/css/color-correction-untagged-images.html
 fast/css/color-correction.html
-fast/overflow/line-clamp.html
-fast/reflections/opacity-reflection-transform.html
 http/tests/misc/acid2-pixel.html
 http/tests/misc/acid2.html
-http/tests/misc/error404.pl
 http/tests/misc/favicon-as-image.html
-http/tests/misc/frame-access-during-load.html
-http/tests/misc/generated-content-inside-table.html
-http/tests/misc/iframe404.html
-http/tests/misc/location-replace-crossdomain.html
-http/tests/misc/willCacheResponse-delegate-callback.html
 http/tests/multipart/invalid-image-data.html
 svg/css/group-with-shadow.svg
 svg/filters/big-sized-filter-2.svg
@@ -5060,20 +5055,16 @@ http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-window-open.ht
 # Bunch of tests failing since a while on the Qt slave. Please investigate.
 css1/classification/white_space.html
 fast/block/positioning/relative-positioned-inline-container.html
-fast/frames/frame-navigation.html
 fast/repaint/block-selection-gap-in-composited-layer.html
 fast/repaint/block-selection-gap-in-table-cell.html
 fast/repaint/block-selection-gap-stale-cache-2.html
 fast/repaint/block-selection-gap-stale-cache.html
 fast/repaint/inline-overflow.html
 fast/repaint/inline-relative-positioned.html
-http/tests/local/file-url-sent-as-referer.html
 http/tests/misc/bubble-drag-events.html
-http/tests/uri/css-href.php
 printing/compositing-layer-printing.html
 svg/css/composite-shadow-example.html
 svg/css/composite-shadow-with-opacity.html
-svg/custom/radial-gradient-with-outstanding-focalPoint.svg
 
 # CONSOLE MESSAGE: line 28: ReferenceError: Trying to access object from destroyed plug-in.
 # This test introduced in r51877
