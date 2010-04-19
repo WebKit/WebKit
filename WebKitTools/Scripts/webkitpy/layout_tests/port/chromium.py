@@ -40,7 +40,14 @@ import webbrowser
 
 import base
 import http_server
-import webkit
+
+# FIXME: To use the DRT-based version of this file, we need to be able to
+# run the webkit code, which uses server_process, which requires UNIX-style
+# non-blocking I/O with selects(), which requires fcntl() which doesn't exist
+# on Windows.
+if sys.platform not in ('win32', 'cygwin'):
+    import webkit
+
 import websocket_server
 
 _log = logging.getLogger("webkitpy.layout_tests.port.chromium")
@@ -73,6 +80,10 @@ class ChromiumPort(base.Port):
     def __init__(self, port_name=None, options=None):
         base.Port.__init__(self, port_name, options)
         self._chromium_base_dir = None
+
+        # FIXME: see comment above re: import webkit
+        if sys.platform in ('win32', 'cygwin') and options:
+            options.use_drt = False
 
     def baseline_path(self):
         return self._webkit_baseline_path(self._name)

@@ -1,3 +1,18 @@
+2010-04-19  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, build fix.
+
+        Fix breakage of chromium-win canary bots caused by r57806. That patch
+        introduced the option of using Chrome's new port of DumpRenderTree,
+        but unfortunately that port relies on the webkit.py class
+        implementation which uses non-blocking I/O that isn't available on
+        Windows. This patch turns off that option and doesn't import the
+        class if we're running on Windows.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37817
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+
 2010-04-19  James Robinson  <jamesr@chromium.org>
 
         Reviewed by abarth.
