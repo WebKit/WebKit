@@ -235,7 +235,7 @@ class TestRunner:
                 is_debug_mode, self._options.lint_test_files,
                 tests_are_present=True, overrides=overrides_str)
             return self._expectations
-        except Exception, err:
+        except SyntaxError, err:
             if self._options.lint_test_files:
                 print str(err)
             else:
@@ -1592,6 +1592,9 @@ def parse_args(args=None):
         optparse.make_option("--nocheck-sys-deps", action="store_true",
             default=False,
             help="Don't check the system dependencies (themes)"),
+        optparse.make_option("--use-drt", action="store_true",
+            default=False,
+            help="Use DumpRenderTree instead of test_shell"),
     ]
 
     # Missing Mac-specific old-run-webkit-tests options:

@@ -68,6 +68,8 @@ class ChromiumMacPort(chromium.ChromiumPort):
 
     def driver_name(self):
         """name for this port's equivalent of DumpRenderTree."""
+        if self._options.use_drt:
+            return "DumpRenderTree"
         return "TestShell"
 
     def test_platform_name(self):
@@ -91,6 +93,9 @@ class ChromiumMacPort(chromium.ChromiumPort):
     #
 
     def _build_path(self, *comps):
+        if self._options.use_drt:
+            return self.path_from_webkit_base('WebKit', 'chromium',
+                                              'xcodebuild', *comps)
         return self.path_from_chromium_base('xcodebuild', *comps)
 
     def _check_wdiff_install(self):
@@ -142,13 +147,19 @@ class ChromiumMacPort(chromium.ChromiumPort):
         # systems.
         if not configuration:
             configuration = self._options.configuration
-        return self._build_path(configuration, 'TestShell.app', 'Contents',
-                                'MacOS', 'TestShell')
+        return self._build_path(configuration, self.driver_name() + '.app',
+            'Contents', 'MacOS', self.driver_name())
 
     def _path_to_helper(self):
-        return self._build_path(self._options.configuration, 'layout_test_helper')
+        binary_name = 'layout_test_helper'
+        if self._options.use_drt:
+            binary_name = 'LayoutTestHelper'
+        return self._build_path(self._options.configuration, binary_name)
 
     def _path_to_image_diff(self):
+        if self._options.use_drt:
+            # FIXME(tony): This should use ImageDiff.
+            return ''
         return self._build_path(self._options.configuration, 'image_diff')
 
     def _path_to_wdiff(self):

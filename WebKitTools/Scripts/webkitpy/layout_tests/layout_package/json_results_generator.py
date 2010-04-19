@@ -316,10 +316,14 @@ class JSONResultsGenerator(object):
                 self.WEBKIT_SVN)
 
         if hasattr(self._port, 'path_from_chromium_base'):
-            path_to_chrome = self._port.path_from_chromium_base()
-            self._insert_item_into_raw_list(results_for_builder,
-                self._get_svn_revision(path_to_chrome),
-                self.CHROME_SVN)
+            try:
+                path_to_chrome = self._port.path_from_chromium_base()
+                self._insert_item_into_raw_list(results_for_builder,
+                    self._get_svn_revision(path_to_chrome),
+                    self.CHROME_SVN)
+            except AssertionError:
+                # We're not in a Chromium checkout, that's ok.
+                pass
 
         self._insert_item_into_raw_list(results_for_builder,
             int(time.time()),
