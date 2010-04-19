@@ -36,9 +36,11 @@ import signal
 import subprocess
 import sys
 import time
+import webbrowser
 
 import base
 import http_server
+import webkit
 import websocket_server
 
 _log = logging.getLogger("webkitpy.layout_tests.port.chromium")
@@ -150,11 +152,16 @@ class ChromiumPort(base.Port):
             shutil.rmtree(cachedir)
 
     def show_results_html_file(self, results_filename):
-        subprocess.Popen([self._path_to_driver(),
-                          self.filename_to_uri(results_filename)])
+        uri = self.filename_to_uri(results_filename)
+        if self._options.use_drt:
+            webbrowser.open(uri, new=1)
+        else:
+            subprocess.Popen([self._path_to_driver(), uri])
 
     def start_driver(self, image_path, options):
         """Starts a new Driver and returns a handle to it."""
+        if self._options.use_drt:
+            return webkit.WebKitDriver(self, image_path, options)
         return ChromiumDriver(self, image_path, options)
 
     def start_helper(self):

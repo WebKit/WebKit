@@ -1,3 +1,17 @@
+2010-04-19  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [Chromium] new-run-webkit-tests should use WebKitDriver for --use-drt
+        https://bugs.webkit.org/show_bug.cgi?id=37793
+
+        We need to use WebKitDriver instead of ChromiumDriver for Chromium
+        DRT because its interface is different from test_shell.
+
+        Chromium DRT has no UI.  So we can't use it to show test results.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+
 2010-04-18  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Roben.
