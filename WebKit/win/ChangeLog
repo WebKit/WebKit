@@ -1,3 +1,23 @@
+2010-04-19  Dave Moore  <davemoore@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Added notification when the favicons for a page are changed
+        from a script.
+        The Document object will notify the frame loader, which will
+        notify the client. Implementations of FrameLoaderClient will
+        have to add one method; dispatchDidChangeIcons().
+
+        https://bugs.webkit.org/show_bug.cgi?id=33812
+
+        * Interfaces/IWebFrameLoadDelegatePrivate2.idl:
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::dispatchDidChangeIcons):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebFrame.cpp:
+        (WebFrame::didChangeIcons):
+        * WebFrame.h:
+
 2010-04-16  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by NOBODY (Windows build fix).

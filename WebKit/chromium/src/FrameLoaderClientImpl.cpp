@@ -726,6 +726,12 @@ void FrameLoaderClientImpl::dispatchDidReceiveTitle(const String& title)
         m_webFrame->client()->didReceiveTitle(m_webFrame, title);
 }
 
+void FrameLoaderClientImpl::dispatchDidChangeIcons()
+{
+    if (m_webFrame->client())
+        m_webFrame->client()->didChangeIcons(m_webFrame);
+}
+
 void FrameLoaderClientImpl::dispatchDidCommitLoad()
 {
     WebViewImpl* webview = m_webFrame->viewImpl();

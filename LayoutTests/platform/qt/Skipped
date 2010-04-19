@@ -2785,6 +2785,7 @@ fast/dom/HTMLStyleElement/insert-parser-generated.html
 fast/dom/HTMLTableElement/colSpan.html
 fast/dom/HTMLTableElement/createCaption.html
 fast/dom/HTMLTextAreaElement/reset-textarea.html
+fast/dom/icon-url-property.html
 fast/dom/importNodeHTML.html
 fast/dom/importNodeXML.xhtml
 fast/dom/inner-text.html

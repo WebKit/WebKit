@@ -189,6 +189,16 @@ HRESULT STDMETHODCALLTYPE FrameLoadDelegate::didReceiveTitle(
     return S_OK;
 }
 
+HRESULT STDMETHODCALLTYPE FrameLoadDelegate::didChangeIcons(
+    /* [in] */ IWebView* webView,
+    /* [in] */ IWebFrame* frame)
+{
+    if (!done && gLayoutTestController->dumpIconChanges())
+        printf("%s - didChangeIcons\n", descriptionSuitableForTestResult(frame).c_str());
+
+    return S_OK;
+}
+
 void FrameLoadDelegate::processWork()
 {
     // if another load started, then wait for it to complete.

@@ -2170,6 +2170,7 @@ fast/dom/dom-parse-serialize-display.html
 fast/dom/dom-parse-serialize.html
 fast/dom/focus-contenteditable.html
 fast/dom/gc-10.html
+fast/dom/icon-url-property.html
 fast/dom/importNodeHTML.html
 fast/dom/importNodeXML.xhtml
 fast/dom/inner-text.html
