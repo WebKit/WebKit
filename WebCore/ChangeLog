@@ -1,5 +1,11 @@
 2010-04-19  Yury Semikhatsky  <yurys@chromium.org>
 
+        Unreviewed. Chromium build fix.
+
+        * bindings/v8/JavaScriptCallFrame.h:
+
+2010-04-19  Yury Semikhatsky  <yurys@chromium.org>
+
         Reviewed by Pavel Feldman.
 
         Web Inspector: implement JavaScriptCallFrame that works for v8.

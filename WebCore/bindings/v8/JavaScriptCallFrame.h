@@ -49,7 +49,7 @@ public:
 
     JavaScriptCallFrame* caller();
 
-    intptr_t sourceID() const;
+    int sourceID() const;
     int line() const;
     String functionName() const;
     
