@@ -198,12 +198,6 @@ WONTFIX SKIP : fast/events/message-port.html = FAIL
 WONTFIX SKIP : fast/events/message-port-multi.html = FAIL
 WONTFIX SKIP : http/tests/security/MessagePort/event-listener-context.html = FAIL
 
-// Chrome does not support WebArchives (just like Safari for Windows),
-// although we might eventually want to on Mac.
-WONTFIX SKIP : webarchive/adopt-attribute-styled-body-webarchive.html = FAIL
-WONTFIX SKIP : webarchive/adopt-attribute-styled-node-webarchive.html = FAIL
-WONTFIX SKIP : webarchive/adopt-inline-styled-node-webarchive.html = FAIL
-
 // Implement java testing harness.
 BUG36681 DEFER SKIP : java = TEXT
 // Chrome does not support Java LiveConnect.
@@ -275,15 +269,10 @@ WONTFIX : fast/events/keydown-1.html = FAIL
 WONTFIX LINUX WIN : fast/events/option-tab.html = FAIL
 
 // Chrome does not support WebArchives.
-BUG10395 WONTFIX SKIP : webarchive/loading = FAIL TIMEOUT
-BUG10395 WONTFIX : webarchive = PASS
-BUG10395 WONTFIX : svg/webarchive = FAIL PASS
-BUG10395 WONTFIX : svg/custom/image-with-prefix-in-webarchive.svg = FAIL
-BUG10395 WONTFIX : svg/webarchive/svg-feimage-subresources.svg = IMAGE+TEXT
+BUG10395 WONTFIX SKIP : webarchive = FAIL PASS
+BUG10395 WONTFIX SKIP : svg/webarchive = FAIL PASS
+BUG10395 WONTFIX SKIP : svg/custom/image-with-prefix-in-webarchive.svg = FAIL PASS
 BUG10395 WONTFIX SKIP : http/tests/webarchive = FAIL PASS
-BUG10395 WONTFIX SKIP : svg/webarchive/svg-cursor-subresources.svg = FAIL
-BUG10395 WONTFIX SKIP : webarchive/test-css-url-resources-in-stylesheets.html = FAIL
-BUG10395 WONTFIX SKIP : webarchive/test-css-url-resources-inline-styles.html = FAIL
 
 // We don't support ACCELERATED_COMPOSITING. Skipping because some tests in this
 // directory don't have pixel results.
@@ -1637,7 +1626,6 @@ BUG23498 MAC : tables/mozilla_expected_failures/marvin/table_overflow_style_refl
 BUG23498 MAC : tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_tbody_sibling.html = IMAGE
 BUG23498 MAC : tables/mozilla_expected_failures/other/empty_cells.html = IMAGE
 BUG23498 MAC : tables/mozilla_expected_failures/other/test4.html = IMAGE+TEXT IMAGE
-BUG23498 MAC : webarchive/test-duplicate-resources.html = IMAGE
 
 // Missing "misspelled-word" dotted underline
 BUG23497 MAC : editing/selection/unrendered-002.html = IMAGE
@@ -1752,6 +1740,7 @@ BUG23473 MAC : fast/repaint/block-no-inflow-children.html = PASS
 BUG23473 MAC : fast/repaint/block-selection-gap-stale-cache.html = PASS
 BUG23473 MAC : fast/repaint/block-selection-gap-stale-cache-2.html = PASS
 BUG23473 MAC : fast/repaint/fixed.html = PASS
+BUG23473 MAC : fast/repaint/fixed-transformed.html = PASS
 BUG23473 MAC : fast/repaint/flexible-box-overflow.html = PASS
 BUG23473 MAC : fast/repaint/flexible-box-overflow-horizontal.html = PASS
 BUG23473 MAC : fast/repaint/float-new-in-block.html = PASS
@@ -2548,7 +2537,6 @@ BUG32153 : svg/dynamic-updates/SVGTextElement-svgdom-rotate-prop.html = TEXT
 BUG32155 : fast/js/Object-getOwnPropertyNames.html = TEXT
 
 // New flakiness?
-BUG32144 WIN RELEASE : svg/webarchive/svg-script-subresouces.svg = CRASH TEXT PASS
 BUG32145 WIN : animations/3d/transform-origin-vs-functions.html = TEXT PASS
 BUG32149 WIN RELEASE : fast/dom/Document/early-document-access.html = TIMEOUT PASS
 
@@ -2763,7 +2751,6 @@ BUGWK36983 MAC : fast/canvas/webgl/uniform-location.html = TEXT
 BUG41206 : fast/history/multiple-classes-visited.html = TEXT TIMEOUT
 
 // Tests that work with KURL, but fail with GURL
-BUG41292 WIN : fast/url/trivial.html = TEXT TIMEOUT
 BUG41292 : fast/url/ipv4.html = TEXT TIMEOUT
 BUG41292 : fast/url/anchor.html = TEXT TIMEOUT
 
@@ -2786,4 +2773,6 @@ BUGAJWONG WIN LINUX : fast/backgrounds/svg-as-background-3.html = IMAGE PASS
 BUGAJWONG MAC LINUX : svg/text/text-intro-05-t.svg = IMAGE PASS
 BUGAJWONG LINUX : svg/text/text-text-07-t.svg = IMAGE PASS
 BUGAJWONG LINUX : svg/text/text-tselect-02-f.svg = IMAGE PASS
+
+BUG42044 WIN DEBUG : http/tests/security/xss-DENIED-mime-type-execute-as-html.html = PASS TIMEOUT
 
