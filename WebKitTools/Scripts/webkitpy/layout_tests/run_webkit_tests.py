@@ -1705,6 +1705,13 @@ def parse_args(args=None):
     ]
 
     test_options = [
+        optparse.make_option("--build", dest="build",
+            action="store_true", default=True,
+            help="Check to ensure the DumpRenderTree build is up-to-date "
+                 "(default)."),
+        optparse.make_option("--no-build", dest="build",
+            action="store_false", help="Don't check to see if the "
+                                       "DumpRenderTree build is up-to-date."),
         # old-run-webkit-tests has --valgrind instead of wrapper.
         optparse.make_option("--wrapper",
             help="wrapper command to insert before invocations of "

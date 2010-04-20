@@ -97,7 +97,7 @@ class ChromiumPort(base.Port):
         dump_render_tree_binary_path = self._path_to_driver()
         result = check_file_exists(dump_render_tree_binary_path,
                                     'test driver') and result
-        if result:
+        if result and self._options.build:
             result = self._check_driver_build_up_to_date(
                 self._options.configuration)
         else:

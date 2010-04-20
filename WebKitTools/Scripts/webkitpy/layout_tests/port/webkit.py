@@ -89,7 +89,7 @@ class WebKitPort(base.Port):
         return True
 
     def check_build(self, needs_http):
-        if not self._build_driver():
+        if self._options.build and not self._build_driver():
             return False
         if not self._check_driver():
             return False

@@ -1,5 +1,19 @@
 2010-04-19  Dirk Pranke  <dpranke@chromium.org>
 
+        Reviewed by Eric Seidel.
+
+        new-run-webkit-tests: add --build (default) and --no-build
+        options to make that step optional. This flag modifies what happens
+        in port.check_build().
+
+        https://bugs.webkit.org/show_bug.cgi?id=37786
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+
+2010-04-19  Dirk Pranke  <dpranke@chromium.org>
+
         Unreviewed, build fix.
 
         new-run-webkit-tests - fix a typo in r57480 that caused us to stop
