@@ -2,6 +2,17 @@
 
         Unreviewed, build fix.
 
+        Turn off some unit tests for now - the new-run-webkit-tests dryrun
+        tests for chromium won't work if you don't have a chromium checkout.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37841
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
+2010-04-19  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, build fix.
+
         (Re-)add dryrun.py; this was renamed from passing.py in the previous
         CL but apparently somehow didn't get checked in.
 
