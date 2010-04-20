@@ -1,3 +1,17 @@
+2010-04-20  Sergey Ulanov <sergeyu@chromium.org>
+
+        Unreviewed, checking in baselines due to changes to Chromium's video scaling algorithm.
+
+        * platform/chromium-linux/media/video-replaces-poster-expected.checksum:
+        * platform/chromium-linux/media/video-replaces-poster-expected.png:
+        * platform/chromium-mac/media/video-replaces-poster-expected.checksum:
+        * platform/chromium-mac/media/video-replaces-poster-expected.png:
+        * platform/chromium-win/media/video-replaces-poster-expected.checksum:
+        * platform/chromium-win/media/video-replaces-poster-expected.png:
+        * platform/chromium-win/media/video-zoom-expected.checksum: Added.
+        * platform/chromium-win/media/video-zoom-expected.png: Added.
+        * platform/chromium-win/media/video-zoom-expected.txt: Added.
+
 2010-04-20  Robin Cao  <robin.webkit@gmail.com>
 
         Reviewed by Dirk Schulze.
