@@ -20,7 +20,9 @@
 description('Test a case that the first invalid focusable control becomes invisible by a scroll event.');
 
 function handler(event) {
-    document.getElementById('i2').style.display = 'none';
+    var i = document.getElementById('i2');
+    i.style.display = 'none';
+    i.offsetWidth; // Force to do style recalculation.
 }
 
 function startOrVerify() {
