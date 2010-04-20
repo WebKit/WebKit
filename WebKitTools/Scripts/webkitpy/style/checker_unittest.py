@@ -631,9 +631,7 @@ class StyleCheckerCheckFileTest(StyleCheckerCheckFileBase):
             mock_os_path_exists=self.mock_os_path_exists,
             mock_process_file=self.mock_process_file)
 
-        file_count = 1 if self.mock_os_path_exists(file_path) else 0
-
-        self.assertEquals(file_count, style_checker.file_count)
+        self.assertEquals(style_checker.file_count, 1)
 
     def test_check_file_does_not_exist(self):
         file_path = "file_does_not_exist.txt"
@@ -642,10 +640,25 @@ class StyleCheckerCheckFileTest(StyleCheckerCheckFileBase):
         self.assertFalse(self.mock_os_path_exists(file_path))
 
         # Check the outcome.
+        self.assertRaises(SystemExit, self.call_check_file, file_path)
+        self.assertLog(["ERROR: File does not exist: "
+                        "file_does_not_exist.txt\n"])
+
+    def test_check_file_stdin(self):
+        file_path = "-"
+
+        # Confirm that the file does not exist.
+        self.assertFalse(self.mock_os_path_exists(file_path))
+
+        # Check the outcome.
         self.call_check_file(file_path)
-        self.assert_attributes(None, None, None, "")
-        self.assertLog(['WARNING: Skipping non-existent file: '
-                        'file_does_not_exist.txt\n'])
+        expected_processor = CppProcessor(file_path,
+                                          "",
+                                          self.mock_handle_style_error, 3)
+        self.assert_attributes(file_path,
+                               self.mock_handle_style_error,
+                               expected_processor,
+                               "")
 
     def test_check_file_on_skip_without_warning(self):
         """Test check_file() for a skipped-without-warning file."""
@@ -782,3 +795,14 @@ index ef65bee..e3db70e 100644
 +# New line
 """)
         self._assert_checked([("__init__.py", set([2]))])
+
+    def test_check_patch_with_deletion(self):
+        self._call_check_patch("""Index: __init__.py
+===================================================================
+--- __init__.py  (revision 3593)
++++ __init__.py  (working copy)
+@@ -1 +0,0 @@
+-foobar
+""")
+        # _mock_check_file should not be called for the deletion patch.
+        self._assert_checked([])

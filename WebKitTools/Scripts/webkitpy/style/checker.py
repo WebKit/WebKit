@@ -690,6 +690,9 @@ class StyleChecker(object):
                              Defaults to the file processing method of this
                              class.
 
+        Raises:
+          SystemExit: if the file does not exist.
+
         """
         if mock_handle_style_error is None:
             increment = self._increment_error_count
@@ -706,9 +709,9 @@ class StyleChecker(object):
         process_file = (self._process_file if mock_process_file is None else
                         mock_process_file)
 
-        if not os_path_exists(file_path):
-            _log.warn("Skipping non-existent file: %s" % file_path)
-            return
+        if not os_path_exists(file_path) and file_path != "-":
+            _log.error("File does not exist: %s" % file_path)
+            sys.exit(1)
 
         _log.debug("Checking: " + file_path)
 
@@ -766,5 +769,11 @@ class PatchChecker(object):
             _log.debug('Found %s new or modified lines in: %s'
                        % (len(line_numbers), path))
 
-            self._file_checker.check_file(file_path=path,
-                                          line_numbers=line_numbers)
+            # If line_numbers is empty, the file has no new or
+            # modified lines.  In this case, we don't check the file
+            # because we'll never output errors for the file.
+            # This optimization also prevents the program from exiting
+            # due to a deleted file.
+            if line_numbers:
+                self._file_checker.check_file(file_path=path,
+                                              line_numbers=line_numbers)
