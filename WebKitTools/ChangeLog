@@ -1,3 +1,21 @@
+2010-04-20  Dirk Pranke <dpranke@chromium.org>
+
+        This patch to new-run-webkit-tests adds a --log 'trace' option
+        that prints out detailed info about a given test as it executes
+        (where the baselines are, what the expectation is, what we got,
+        how long it took).
+
+        https://bugs.webkit.org/show_bug.cgi?id=37726
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+          - use the newly exposed TestResult class and implement
+            --log trace
+        * Scripts/webkitpy/layout_tests/layout_package/dump_render_thread.py:
+          - rename TestStats to TestResult and make it more public, resulting
+            in cleaner code
+        * Scripts/webkitpy/layout_tests/layout_package/test_expectations.py:
+          - add expectation_to_string() as a separate callable function
+
 2010-04-20  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, rolling out r57907.

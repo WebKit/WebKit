@@ -90,10 +90,12 @@ LOG_DETAILED_PROGRESS = 'detailed-progress'
 # Log the one-line summary at the end of the run
 LOG_SUMMARY = 'summary'
 
+# "Trace" the test - log the expected result, the actual result, and the
+# baselines used
+LOG_TRACE = 'trace'
+
 # Log any unexpected results while running (instead of just at the end).
 LOG_UNEXPECTED = 'unexpected'
-
-# Log any unexpected results at the end
 LOG_UNEXPECTED_RESULTS = 'unexpected-results'
 
 LOG_VALUES = ",".join(("actual", "config", LOG_DETAILED_PROGRESS, "expected",
@@ -153,25 +155,23 @@ class ResultSummary(object):
             self.tests_by_timeline[timeline] = (
                 expectations.get_tests_with_timeline(timeline))
 
-    def add(self, test, failures, result, expected):
-        """Add a result into the appropriate bin.
+    def add(self, result, expected):
+        """Add a TestResult into the appropriate bin.
 
         Args:
-          test: test file name
-          failures: list of failure objects from test execution
-          result: result of test (PASS, IMAGE, etc.).
+          result: TestResult from dump_render_tree_thread.
           expected: whether the result was what we expected it to be.
         """
 
-        self.tests_by_expectation[result].add(test)
-        self.results[test] = result
+        self.tests_by_expectation[result.type].add(result.filename)
+        self.results[result.filename] = result.type
         self.remaining -= 1
-        if len(failures):
-            self.failures[test] = failures
+        if len(result.failures):
+            self.failures[result.filename] = result.failures
         if expected:
             self.expected += 1
         else:
-            self.unexpected_results[test] = result
+            self.unexpected_results[result.filename] = result.type
             self.unexpected += 1
 
 
@@ -394,8 +394,11 @@ class TestRunner:
             # subtracted out of self._test_files, above), but we stub out the
             # results here so the statistics can remain accurate.
             for test in skip_chunk:
-                result_summary.add(test, [], test_expectations.SKIP,
-                                   expected=True)
+                result = dump_render_tree_thread.TestResult(test,
+                    failures=[], test_run_time=0, total_time_for_all_diffs=0,
+                    time_for_diffs=0)
+                result.type = test_expectations.SKIP
+                result_summary.add(result, expected=True)
         write("")
 
         return result_summary
@@ -602,7 +605,7 @@ class TestRunner:
                                        'total_time': thread.get_total_time()})
                 test_timings.update(thread.get_directory_timing_stats())
                 individual_test_timings.extend(
-                    thread.get_individual_test_stats())
+                    thread.get_test_results())
         except KeyboardInterrupt:
             for thread in threads:
                 thread.cancel()
@@ -719,27 +722,58 @@ class TestRunner:
         return unexpected_results['num_regressions']
 
     def update_summary(self, result_summary):
-        """Update the summary while running tests."""
+        """Update the summary and print results with any completed tests."""
         while True:
             try:
-                (test, fail_list) = self._result_queue.get_nowait()
-                result = test_failures.determine_result_type(fail_list)
-                expected = self._expectations.matches_an_expected_result(test,
-                    result, self._options.pixel_tests)
-                result_summary.add(test, fail_list, result, expected)
-                if (LOG_DETAILED_PROGRESS in self._options.log and
-                    (self._options.experimental_fully_parallel or
-                     self._is_single_threaded())):
-                    self._display_detailed_progress(result_summary)
-                else:
-                    if not expected and LOG_UNEXPECTED in self._options.log:
-                        self._print_unexpected_test_result(test, result)
-                    if LOG_PROGRESS in self._options.log:
-                        self._display_one_line_progress(result_summary)
+                result = self._result_queue.get_nowait()
             except Queue.Empty:
                 return
+            expected = self._expectations.matches_an_expected_result(
+                result.filename, result.type, self._options.pixel_tests)
+            result_summary.add(result, expected)
+            self._print_test_results(result, expected, result_summary)
 
-    def _display_one_line_progress(self, result_summary):
+    def _print_test_results(self, result, expected, result_summary):
+        "Print the result of the test as determined by the --log switches."
+        if LOG_TRACE in self._options.log:
+            self._print_test_trace(result)
+        elif (LOG_DETAILED_PROGRESS in self._options.log and
+              (self._options.experimental_fully_parallel or
+               self._is_single_threaded())):
+            self._print_detailed_progress(result_summary)
+        else:
+            if (not expected and LOG_UNEXPECTED in self._options.log):
+                self._print_unexpected_test_result(result)
+            self._print_one_line_progress(result_summary)
+
+    def _print_test_trace(self, result):
+        """Print detailed results of a test (triggered by --log trace).
+        For each test, print:
+           - location of the expected baselines
+           - expected results
+           - actual result
+           - timing info
+        """
+        filename = result.filename
+        test_name = self._port.relative_test_filename(filename)
+        _log.info('trace: %s' % test_name)
+        _log.info('  txt: %s' %
+                  self._port.relative_test_filename(
+                       self._port.expected_filename(filename, '.txt')))
+        png_file = self._port.expected_filename(filename, '.png')
+        if os.path.exists(png_file):
+            _log.info('  png: %s' %
+                      self._port.relative_test_filename(filename))
+        else:
+            _log.info('  png: <none>')
+        _log.info('  exp: %s' %
+                  self._expectations.get_expectations_string(filename))
+        _log.info('  got: %s' %
+                  self._expectations.expectation_to_string(result.type))
+        _log.info(' took: %-.3f' % result.test_run_time)
+        _log.info('')
+
+    def _print_one_line_progress(self, result_summary):
         """Displays the progress through the test run."""
         percent_complete = 100 * (result_summary.expected +
             result_summary.unexpected) / result_summary.total
@@ -750,7 +784,7 @@ class TestRunner:
             " %d left" % (action, percent_complete, result_summary.expected,
              result_summary.unexpected, result_summary.remaining))
 
-    def _display_detailed_progress(self, result_summary):
+    def _print_detailed_progress(self, result_summary):
         """Display detailed progress output where we print the directory name
         and one dot for each completed test. This is triggered by
         "--log detailed-progress"."""
@@ -793,6 +827,13 @@ class TestRunner:
                                  (self._current_progress_str, remain_str))
         else:
             self._meter.progress("%s\n" % (self._current_progress_str))
+
+    def _print_unexpected_test_result(self, result):
+        """Prints one unexpected test result line."""
+        desc = TestExpectationsFile.EXPECTATION_DESCRIPTIONS[result.type][0]
+        self._meter.write("  %s -> unexpected %s\n" %
+                          (self._port.relative_test_filename(result.filename),
+                           desc))
 
     def _get_failures(self, result_summary, include_crashes):
         """Filters a dict of results and returns only the failures.
@@ -1306,12 +1347,6 @@ class TestRunner:
 
         if len(unexpected_results['tests']) and self._options.verbose:
             print "-" * 78
-
-    def _print_unexpected_test_result(self, test, result):
-        """Prints one unexpected test result line."""
-        desc = TestExpectationsFile.EXPECTATION_DESCRIPTIONS[result][0]
-        self._meter.write("  %s -> unexpected %s\n" %
-                          (self._port.relative_test_filename(test), desc))
 
     def _write_results_html_file(self, result_summary):
         """Write results.html which is a summary of tests that failed.

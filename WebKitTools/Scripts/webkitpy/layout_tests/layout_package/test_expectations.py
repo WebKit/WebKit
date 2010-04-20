@@ -48,6 +48,7 @@ _log = logging.getLogger("webkitpy.layout_tests.layout_package."
 # Test expectation file update action constants
 (NO_CHANGE, REMOVE_TEST, REMOVE_PLATFORM, ADD_PLATFORMS_EXCEPT_THIS) = range(4)
 
+
 def result_was_expected(result, expected_results, test_needs_rebaselining,
                         test_is_skipped):
     """Returns whether we got a result we were expecting.
@@ -61,10 +62,11 @@ def result_was_expected(result, expected_results, test_needs_rebaselining,
     if result in (IMAGE, TEXT, IMAGE_PLUS_TEXT) and FAIL in expected_results:
         return True
     if result == MISSING and test_needs_rebaselining:
-       return True
+        return True
     if result == SKIP and test_is_skipped:
-       return True
+        return True
     return False
+
 
 def remove_pixel_failures(expected_results):
     """Returns a copy of the expected results for a test, except that we
@@ -141,12 +143,16 @@ class TestExpectations:
         retval = []
 
         for expectation in expectations:
-            for item in TestExpectationsFile.EXPECTATIONS.items():
-                if item[1] == expectation:
-                    retval.append(item[0])
-                    break
+            retval.append(self.expectation_to_string(expectation))
 
-        return " ".join(retval).upper()
+        return " ".join(retval)
+
+    def expectation_to_string(self, expectation):
+        """Return the uppercased string equivalent of a given expectation."""
+        for item in TestExpectationsFile.EXPECTATIONS.items():
+            if item[1] == expectation:
+                return item[0].upper()
+        return ""
 
     def get_timeline_for_test(self, test):
         return self._expected_failures.get_timeline_for_test(test)
@@ -834,7 +840,8 @@ class TestExpectationsFile:
             if test in set_of_tests:
                 set_of_tests.remove(test)
 
-    def _already_seen_test(self, test, test_list_path, lineno, allow_overrides):
+    def _already_seen_test(self, test, test_list_path, lineno,
+                           allow_overrides):
         """Returns true if we've already seen a more precise path for this test
         than the test_list_path.
         """
