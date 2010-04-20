@@ -80,33 +80,24 @@ static bool isList(Node* node)
     return (node->hasTagName(ulTag) || node->hasTagName(olTag));
 }
 
-static Node* enclosingList(Node* node)
+static Node* enclosingList(const RenderListItem* listItem)
 {
-    Node* parent = node->parentNode();
-    for (Node* n = parent; n; n = n->parentNode())
-        if (isList(n))
-            return n;
-    // If there's no actual <ul> or <ol> list element, then our parent acts as
-    // our list for purposes of determining what other list items should be
-    // numbered as part of the same list.
-    return parent;
-}
+    Node* firstNode = 0;
 
-static Node* enclosingList(const RenderObject* renderer)
-{
-    Node* node = renderer->node();
-    if (node)
-        return enclosingList(node);
+    for (const RenderObject* renderer = listItem->parent(); renderer; renderer = renderer->parent()) {
+        Node* node = renderer->node();
+        if (node) {
+            if (isList(node))
+                return node;
+            if (!firstNode)
+                firstNode = node;
+        }
+    }
 
-    renderer = renderer->parent();
-    while (renderer && !renderer->node())
-        renderer = renderer->parent();
-
-    node = renderer->node();
-    if (isList(node))
-        return node;
-
-    return enclosingList(node);
+    // If there's no actual <ul> or <ol> list element, then the first found
+    // node acts as our list for purposes of determining what other list items
+    // should be numbered as part of the same list.
+    return firstNode;
 }
 
 static RenderListItem* previousListItem(Node* list, const RenderListItem* item)
@@ -114,7 +105,7 @@ static RenderListItem* previousListItem(Node* list, const RenderListItem* item)
     for (RenderObject* renderer = item->previousInPreOrder(); renderer != list->renderer(); renderer = renderer->previousInPreOrder()) {
         if (!renderer->isListItem())
             continue;
-        Node* otherList = enclosingList(renderer);
+        Node* otherList = enclosingList(toRenderListItem(renderer));
         // This item is part of our current list, so it's what we're looking for.
         if (list == otherList)
             return toRenderListItem(renderer);
@@ -326,7 +317,7 @@ void RenderListItem::explicitValueChanged()
 {
     if (m_marker)
         m_marker->setNeedsLayoutAndPrefWidthsRecalc();
-    Node* listNode = enclosingList(node());
+    Node* listNode = enclosingList(this);
     RenderObject* listRenderer = 0;
     if (listNode)
         listRenderer = listNode->renderer();

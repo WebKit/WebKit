@@ -1,3 +1,20 @@
+2010-04-20  Jakub Wieczorek  <jwieczorek@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        RenderListItem: change enclosingList() to only traverse the render tree.
+        https://bugs.webkit.org/show_bug.cgi?id=37319
+
+        This makes the function safe to use for items with nodes that are detached from
+        the DOM tree and simplifies the code quite a bit.
+
+        Covered by existing tests.
+
+        * rendering/RenderListItem.cpp:
+        (WebCore::enclosingList):
+        (WebCore::previousListItem):
+        (WebCore::RenderListItem::explicitValueChanged):
+
 2010-04-20  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
