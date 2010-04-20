@@ -86,6 +86,25 @@ class DefaultStyleErrorHandler(object):
         # errors per category passed to this instance.
         self._category_totals = {}
 
+    # Useful for unit testing.
+    def __eq__(self, other):
+        """Return whether this instance is equal to another."""
+        if self._configuration != other._configuration:
+            return False
+        if self._file_path != other._file_path:
+            return False
+        if self._increment_error_count != other._increment_error_count:
+            return False
+        if self._line_numbers != other._line_numbers:
+            return False
+
+        return True
+
+    # Useful for unit testing.
+    def __ne__(self, other):
+        # Python does not automatically deduce __ne__ from __eq__.
+        return not self.__eq__(other)
+
     def _add_reportable_error(self, category):
         """Increment the error count and return the new category total."""
         self._increment_error_count() # Increment the total.

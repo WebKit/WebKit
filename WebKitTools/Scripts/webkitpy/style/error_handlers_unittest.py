@@ -29,11 +29,20 @@ from checker import StyleCheckerConfiguration
 from error_handlers import DefaultStyleErrorHandler
 from filter import FilterConfiguration
 
-class StyleErrorHandlerTestBase(unittest.TestCase):
+
+class DefaultStyleErrorHandlerTest(unittest.TestCase):
+
+    """Tests the DefaultStyleErrorHandler class."""
 
     def setUp(self):
         self._error_messages = []
         self._error_count = 0
+
+    _category = "whitespace/tab"
+    """The category name for the tests in this class."""
+
+    _file_path = "foo.h"
+    """The file path for the tests in this class."""
 
     def _mock_increment_error_count(self):
         self._error_count += 1
@@ -53,27 +62,16 @@ class StyleErrorHandlerTestBase(unittest.TestCase):
                    output_format="vs7",
                    stderr_write=self._mock_stderr_write)
 
-
-class DefaultStyleErrorHandlerTest(StyleErrorHandlerTestBase):
-
-    """Tests DefaultStyleErrorHandler class."""
-
-    _category = "whitespace/tab"
-    """The category name for the tests in this class."""
-
-    _file_path = "foo.h"
-    """The file path for the tests in this class."""
-
-    def _check_initialized(self):
-        """Check that count and error messages are initialized."""
-        self.assertEquals(0, self._error_count)
-        self.assertEquals(0, len(self._error_messages))
-
     def _error_handler(self, configuration, line_numbers=None):
         return DefaultStyleErrorHandler(configuration=configuration,
                    file_path=self._file_path,
                    increment_error_count=self._mock_increment_error_count,
                    line_numbers=line_numbers)
+
+    def _check_initialized(self):
+        """Check that count and error messages are initialized."""
+        self.assertEquals(0, self._error_count)
+        self.assertEquals(0, len(self._error_messages))
 
     def _call_error_handler(self, handle_error, confidence, line_number=100):
         """Call the given error handler with a test error."""
@@ -81,6 +79,44 @@ class DefaultStyleErrorHandlerTest(StyleErrorHandlerTestBase):
                      category=self._category,
                      confidence=confidence,
                      message="message")
+
+    def test_eq__true_return_value(self):
+        """Test the __eq__() method for the return value of True."""
+        handler1 = self._error_handler(configuration=None)
+        handler2 = self._error_handler(configuration=None)
+
+        self.assertTrue(handler1.__eq__(handler2))
+
+    def test_eq__false_return_value(self):
+        """Test the __eq__() method for the return value of False."""
+        def make_handler(configuration=self._style_checker_configuration(),
+                file_path='foo.txt', increment_error_count=lambda: True,
+                line_numbers=[100]):
+            return DefaultStyleErrorHandler(configuration=configuration,
+                       file_path=file_path,
+                       increment_error_count=increment_error_count,
+                       line_numbers=line_numbers)
+
+        handler = make_handler()
+
+        # Establish a baseline for our comparisons below.
+        self.assertTrue(handler.__eq__(make_handler()))
+
+        # Verify that a difference in any argument causes equality to fail.
+        self.assertFalse(handler.__eq__(make_handler(configuration=None)))
+        self.assertFalse(handler.__eq__(make_handler(file_path='bar.txt')))
+        self.assertFalse(handler.__eq__(make_handler(increment_error_count=None)))
+        self.assertFalse(handler.__eq__(make_handler(line_numbers=[50])))
+
+    def test_ne(self):
+        """Test the __ne__() method."""
+        # By default, __ne__ always returns true on different objects.
+        # Thus, check just the distinguishing case to verify that the
+        # code defines __ne__.
+        handler1 = self._error_handler(configuration=None)
+        handler2 = self._error_handler(configuration=None)
+
+        self.assertFalse(handler1.__ne__(handler2))
 
     def test_non_reportable_error(self):
         """Test __call__() with a non-reportable error."""

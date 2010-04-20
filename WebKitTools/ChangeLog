@@ -1,3 +1,27 @@
+2010-04-20  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        For check-webkit-style, implemented __eq__() and __ne__() (the
+        built-in equality and inequality methods) for the
+        DefaultStyleErrorHandler class.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37850
+
+        This will facilitate unit-testing for a subsequent patch,
+        namely for https://bugs.webkit.org/show_bug.cgi?id=37850
+
+        * Scripts/webkitpy/style/error_handlers.py:
+          - Added __eq__() and __ne__() to the DefaultStyleErrorHandler
+            class.
+
+        * Scripts/webkitpy/style/error_handlers_unittest.py:
+          - Added unit tests for __eq__() and __ne__().
+          - Also included a minor clean-up refactoring of combining the
+            StyleErrorHandlerTestBase class (which has not needed to
+            be separate due to previous changes) into the
+            DefaultStyleErrorHandlerTest class.
+
 2010-04-20  Jakub Wieczorek  <jwieczorek@webkit.org>
 
         Unreviewed.
