@@ -70,13 +70,16 @@ defineTest(addJavaScriptCoreLib) {
     win32-msvc* {
         LIBS += -L$$pathToJavaScriptCoreOutput
         LIBS += -l$$JAVASCRIPTCORE_TARGET
+        POST_TARGETDEPS += $${pathToJavaScriptCoreOutput}$${QMAKE_DIR_SEP}$${JAVASCRIPTCORE_TARGET}.lib
     } else:symbian {
         LIBS += -l$${JAVASCRIPTCORE_TARGET}.lib
+        POST_TARGETDEPS += $${pathToJavaScriptCoreOutput}$${QMAKE_DIR_SEP}$${JAVASCRIPTCORE_TARGET}.lib
     } else {
         # Make sure jscore will be early in the list of libraries to workaround a bug in MinGW
         # that can't resolve symbols from QtCore if libjscore comes after.
         QMAKE_LIBDIR = $$pathToJavaScriptCoreOutput $$QMAKE_LIBDIR
         LIBS += -l$$JAVASCRIPTCORE_TARGET
+        POST_TARGETDEPS += $${pathToJavaScriptCoreOutput}$${QMAKE_DIR_SEP}lib$${JAVASCRIPTCORE_TARGET}.a
     }
 
     win32-* {
@@ -90,6 +93,7 @@ defineTest(addJavaScriptCoreLib) {
 
     export(QMAKE_LIBDIR)
     export(LIBS)
+    export(POST_TARGETDEPS)
     export(CONFIG)
 
     return(true)
