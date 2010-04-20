@@ -1,3 +1,17 @@
+2010-04-20  Kim Grönholm  <kim.gronholm@nomovok.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Multitouch mocking in QtLauncher doesn't work with QGraphicsView
+        https://bugs.webkit.org/show_bug.cgi?id=37816
+        
+        Fix multi-touch mocking in QtLauncher when using QGraphicsView.
+        Test: https://bug-32434-attachments.webkit.org/attachment.cgi?id=44955
+
+        * QtLauncher/main.cpp:
+        (LauncherWindow::eventFilter):
+        (LauncherWindow::initializeView):
+
 2010-04-20  MORITA Hajime <morrita@google.com>
 
         Unreviewed, add myself to the committers list.

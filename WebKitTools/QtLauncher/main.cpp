@@ -364,7 +364,7 @@ bool LauncherWindow::eventFilter(QObject* obj, QEvent* event)
     }
 
 #if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
-    if (!m_touchMocking || obj != m_view)
+    if (!m_touchMocking)
         return QObject::eventFilter(obj, event);
 
     if (event->type() == QEvent::MouseButtonPress
@@ -634,8 +634,9 @@ void LauncherWindow::initializeView(bool useGraphicsView)
 
         connect(view, SIGNAL(currentFPSUpdated(int)), this, SLOT(updateFPS(int)));
 
+        view->installEventFilter(this);
         // The implementation of QAbstractScrollArea::eventFilter makes us need
-        // to install the event filter on the viewport of a QGraphicsView.
+        // to install the event filter also on the viewport of a QGraphicsView.
         view->viewport()->installEventFilter(this);
 
         m_view = view;
