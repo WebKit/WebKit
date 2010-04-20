@@ -2610,7 +2610,6 @@ BUG36019 : fast/images/svg-as-tiled-background.html = IMAGE
 // WebKit roll 55250 to 55339
 BUG36966 : fast/loader/about-blank-hash-kept.html = FAIL
 
-BUG37248 LINUX : svg/W3C-SVG-1.1/filters-displace-01-f.svg = IMAGE+TEXT PASS TEXT
 BUG37463 MAC DEBUG : svg/custom/transform-ignore-after-invalid.svg = PASS CRASH
 
 // WebKit roll 55512:55584
@@ -2756,7 +2755,7 @@ BUGJAMESR LINUX RELEASE : svg/W3C-SVG-1.1/filters-diffuse-01-f.svg = TEXT
 BUGJAMESR : svg/W3C-SVG-1.1/filters-displace-01-f.svg = TEXT
 BUGJAMESR : svg/W3C-SVG-1.1/filters-example-01-b.svg = TEXT
 BUGJAMESR : svg/W3C-SVG-1.1/filters-felem-01-b.svg = TEXT
-BUGJAMESR : svg/W3C-SVG-1.1/filters-gauss-01-b.svg = TEXT
+BUGJAMESR WIN LINUX : svg/W3C-SVG-1.1/filters-gauss-01-b.svg = TEXT
 BUGJAMESR : svg/W3C-SVG-1.1/filters-image-01-b.svg = TEXT
 BUGJAMESR : svg/W3C-SVG-1.1/filters-light-01-f.svg = TEXT
 BUGJAMESR WIN LINUX : svg/W3C-SVG-1.1/filters-morph-01-f.svg = TEXT
@@ -2771,9 +2770,9 @@ BUGJAMESR : svg/batik/text/textEffect3.svg = TEXT
 BUGJAMESR : svg/batik/text/textProperties.svg = TEXT
 BUGJAMESR WIN LINUX : svg/custom/empty-merge.svg = TEXT
 BUGJAMESR WIN LINUX : svg/custom/feComponentTransfer-Discrete.svg = TEXT
-BUGJAMESR WIN LINUX : svg/custom/feComponentTransfer-Gamma.svg = IMAGE
-BUGJAMESR WIN LINUX : svg/custom/feComponentTransfer-Linear.svg = IMAGE
-BUGJAMESR WIN LINUX : svg/custom/feComponentTransfer-Table.svg = IMAGE
+BUGJAMESR WIN LINUX : svg/custom/feComponentTransfer-Gamma.svg = TEXT
+BUGJAMESR WIN LINUX : svg/custom/feComponentTransfer-Linear.svg = TEXT
+BUGJAMESR WIN LINUX : svg/custom/feComponentTransfer-Table.svg = TEXT
 // might have been flaky
 BUGJAMESR : svg/custom/feDisplacementMap-01.svg = TEXT
 BUGJAMESR : svg/custom/image-with-transform-clip-filter.svg = TEXT
@@ -2802,4 +2801,6 @@ BUGJAMESR : svg/filters/subRegion-two-effects.svg = TEXT
 BUGJAMESR : svg/filters/filter-clip.svg = IMAGE
 BUGJAMESR : svg/filters/filter-source-position.svg = IMAGE
 BUGJAMESR BUG30048 BUG29737 : svg/filters/shadow-on-rect-with-filter.svg = IMAGE
-
+BUGJAMESR WIN LINUX : svg/W3C-SVG-1.1/filters-blend-01-b.svg = TEXT
+BUGJAMESR WIN LINUX : svg/W3C-SVG-1.1/filters-color-01-b.svg = TEXT
+BUGJAMESR : svg/W3C-SVG-1.1/animate-elem-41-t.svg = IMAGE+TEXT
