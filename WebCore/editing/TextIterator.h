@@ -68,11 +68,19 @@ private:
 // at points where replaced elements break up the text flow.  The text comes back in
 // chunks so as to optimize for performance of the iteration.
 
+enum TextIteratorBehavior {
+    TextIteratorBehaviorDefault = 0,
+    TextIteratorBehaviorEmitCharactersBetweenAllVisiblePositions = 1 << 0,
+    TextIteratorBehaviorEnterTextControls = 1 << 1,
+    TextIteratorBehaviorEmitsTextsWithoutTranscoding = 1 << 2,
+};
+
 class TextIterator {
 public:
     TextIterator();
     explicit TextIterator(const Range*, bool emitCharactersBetweenAllVisiblePositions = false, bool enterTextControls = false);
-    
+    TextIterator(const Range*, TextIteratorBehavior);
+
     bool atEnd() const { return !m_positionNode; }
     void advance();
     
@@ -87,6 +95,7 @@ public:
     static PassRefPtr<Range> subrange(Range* entireRange, int characterOffset, int characterCount);
     
 private:
+    void init(const Range*);
     void exitNode();
     bool shouldRepresentNodeOffsetZero();
     bool shouldEmitSpaceBeforeAndAfterNode(Node*);
@@ -147,6 +156,9 @@ private:
     // moveParagraphs to not clone/destroy moved content.
     bool m_emitCharactersBetweenAllVisiblePositions;
     bool m_enterTextControls;
+
+    // Used when we want texts for copying, pasting, and transposing.
+    bool m_emitsTextWithoutTranscoding;
 };
 
 // Iterates through the DOM range, returning all the text, and 0-length boundaries

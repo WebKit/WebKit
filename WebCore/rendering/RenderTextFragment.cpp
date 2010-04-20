@@ -76,7 +76,7 @@ void RenderTextFragment::setTextInternal(PassRefPtr<StringImpl> text)
     }
 }
 
-UChar RenderTextFragment::previousCharacter()
+UChar RenderTextFragment::previousCharacter() const
 {
     if (start()) {
         Node* e = node();

@@ -1,3 +1,16 @@
+2010-04-20  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Darin Adler and Alexey Proskuryakov.
+
+        A backslash in EUC-JP becomes to a yen sign when it is copied
+        https://bugs.webkit.org/show_bug.cgi?id=36419
+
+        * editing/execCommand/transpose-backslash-with-euc-expected.txt: Added.
+        * editing/execCommand/transpose-backslash-with-euc.html: Added.
+        * editing/pasteboard/copy-backslash-with-euc-expected.txt: Added.
+        * editing/pasteboard/copy-backslash-with-euc.html: Added.
+        * editing/pasteboard/resources/copy-backslash-euc.html: Added.
+
 2010-04-20  Andrew Scherkus  <scherkus@chromium.org>
 
         Unreviewed, updating Chromium test_expectations for media/video-zoom.html.

@@ -1,3 +1,42 @@
+2010-04-20  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Darin Adler and Alexey Proskuryakov.
+
+        A backslash in EUC-JP becomes to a yen sign when it is copied
+        https://bugs.webkit.org/show_bug.cgi?id=36419
+
+        Tests: editing/execCommand/transpose-backslash-with-euc.html
+               editing/pasteboard/copy-backslash-with-euc.html
+
+        * editing/Editor.cpp: Remove an unnecessary displayStringModifiedByEncoding calls.
+        (WebCore::Editor::addToKillRing):
+        * editing/TextIterator.cpp: TextIterator can use RenderText::textWithoutTranscoding and now plainText() uses this version
+        (WebCore::TextIterator::TextIterator):
+        (WebCore::TextIterator::init):
+        (WebCore::TextIterator::emitText):
+        (WebCore::plainTextToMallocAllocatedBuffer):
+        * editing/TextIterator.h:
+        (WebCore::):
+        * platform/mac/PasteboardMac.mm: Remove an unnecessary displayStringModifiedByEncoding call.
+        (WebCore::Pasteboard::writeSelection):
+        * platform/text/TextEncoding.h: Make backslashAsCurrencySymbol public.
+        * rendering/RenderText.cpp: Add RenderText::textWithoutTranscoding
+        (WebCore::RenderText::RenderText):
+        (WebCore::RenderText::updateNeedsTranscoding):
+        (WebCore::RenderText::styleDidChange):
+        (WebCore::isInlineFlowOrEmptyText):
+        (WebCore::RenderText::previousCharacter):
+        (WebCore::RenderText::setTextInternal):
+        (WebCore::RenderText::textWithoutTranscoding):
+        (WebCore::RenderText::transformText):
+        * rendering/RenderText.h:
+        * rendering/RenderTextControl.cpp: Remove an unnecessary displayStringModifiedByEncoding call.
+        (WebCore::RenderTextControl::setInnerTextValue):
+        (WebCore::RenderTextControl::finishText):
+        * rendering/RenderTextFragment.cpp:
+        (WebCore::RenderTextFragment::previousCharacter):
+        * rendering/RenderTextFragment.h:
+
 2010-04-20  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Dimitri Glazkov.

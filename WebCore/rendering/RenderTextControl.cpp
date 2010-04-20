@@ -167,15 +167,7 @@ void RenderTextControl::updateFromElement()
 
 void RenderTextControl::setInnerTextValue(const String& innerTextValue)
 {
-    String value;
-
-    if (innerTextValue.isNull())
-        value = "";
-    else {
-        value = innerTextValue; 
-        value = document()->displayStringModifiedByEncoding(value);
-    }
-
+    String value = innerTextValue;
     if (value != text() || !m_innerText->hasChildNodes()) {
         if (value != text()) {
             if (Frame* frame = document()->frame()) {
@@ -318,9 +310,6 @@ String RenderTextControl::finishText(Vector<UChar>& result) const
     if (size && result[size - 1] == '\n')
         result.shrink(--size);
 
-    // Convert backslash to currency symbol.
-    document()->displayBufferModifiedByEncoding(result.data(), result.size());
-    
     return String::adopt(result);
 }
 

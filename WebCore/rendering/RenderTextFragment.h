@@ -51,7 +51,7 @@ public:
 
 private:
     virtual void setTextInternal(PassRefPtr<StringImpl>);
-    virtual UChar previousCharacter();
+    virtual UChar previousCharacter() const;
 
     unsigned m_start;
     unsigned m_end;

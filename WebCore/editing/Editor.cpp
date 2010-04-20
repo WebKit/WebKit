@@ -2703,7 +2703,7 @@ void Editor::addToKillRing(Range* range, bool prepend)
     if (m_shouldStartNewKillRingSequence)
         startNewKillRingSequence();
 
-    String text = m_frame->displayStringModifiedByEncoding(plainText(range));
+    String text = plainText(range);
     if (prepend)
         prependToKillRing(text);
     else

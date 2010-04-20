@@ -77,8 +77,9 @@ namespace WebCore {
         String decode(const char*, size_t length, bool stopOnError, bool& sawError) const;
         WTF::CString encode(const UChar*, size_t length, UnencodableHandling) const;
 
-    private:
         UChar backslashAsCurrencySymbol() const;
+
+    private:
         bool isNonByteBasedEncoding() const;
         bool isUTF7Encoding() const;
 

@@ -51,6 +51,7 @@ public:
     virtual void destroy();
 
     StringImpl* text() const { return m_text.impl(); }
+    String textWithoutTranscoding() const;
 
     InlineTextBox* createInlineTextBox();
     void dirtyLineBoxes(bool fullLayout);
@@ -128,7 +129,7 @@ protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
     virtual void setTextInternal(PassRefPtr<StringImpl>);
-    virtual UChar previousCharacter();
+    virtual UChar previousCharacter() const;
     
     virtual InlineTextBox* createTextBox(); // Subclassed by SVG.
 
@@ -148,6 +149,9 @@ private:
     bool containsOnlyWhitespace(unsigned from, unsigned len) const;
     int widthFromCache(const Font&, int start, int len, int xPos, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow*) const;
     bool isAllASCII() const { return m_isAllASCII; }
+    void updateNeedsTranscoding();
+
+    inline void transformText(String&) const;
 
     int m_minWidth; // here to minimize padding in 64-bit.
 
@@ -172,6 +176,7 @@ private:
     bool m_containsReversedText : 1;
     bool m_isAllASCII : 1;
     mutable bool m_knownToHaveNoOverflowAndNoFallbackFonts : 1;
+    bool m_needsTranscoding : 1;
 };
 
 inline RenderText* toRenderText(RenderObject* object)
