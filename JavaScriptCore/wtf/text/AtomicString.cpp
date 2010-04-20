@@ -296,13 +296,13 @@ AtomicString AtomicString::lower() const
     return AtomicString(newImpl);
 }
 
-DEFINE_GLOBAL(AtomicString, nullAtom)
-DEFINE_GLOBAL(AtomicString, emptyAtom, "")
-DEFINE_GLOBAL(AtomicString, textAtom, "#text")
-DEFINE_GLOBAL(AtomicString, commentAtom, "#comment")
-DEFINE_GLOBAL(AtomicString, starAtom, "*")
-DEFINE_GLOBAL(AtomicString, xmlAtom, "xml")
-DEFINE_GLOBAL(AtomicString, xmlnsAtom, "xmlns")
+JS_EXPORTDATA DEFINE_GLOBAL(AtomicString, nullAtom)
+JS_EXPORTDATA DEFINE_GLOBAL(AtomicString, emptyAtom, "")
+JS_EXPORTDATA DEFINE_GLOBAL(AtomicString, textAtom, "#text")
+JS_EXPORTDATA DEFINE_GLOBAL(AtomicString, commentAtom, "#comment")
+JS_EXPORTDATA DEFINE_GLOBAL(AtomicString, starAtom, "*")
+JS_EXPORTDATA DEFINE_GLOBAL(AtomicString, xmlAtom, "xml")
+JS_EXPORTDATA DEFINE_GLOBAL(AtomicString, xmlnsAtom, "xmlns")
 
 void AtomicString::init()
 {
