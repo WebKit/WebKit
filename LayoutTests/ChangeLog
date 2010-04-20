@@ -1,3 +1,17 @@
+2010-04-20  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Rename window.media to window.styleMedia
+        https://bugs.webkit.org/show_bug.cgi?id=36187
+
+        Update layout tests.
+
+        * fast/media/lifetime.html:
+        * fast/media/matchmedium-query-api.html:
+        * fast/media/print-restores-previous-mediatype.html:
+        * fast/media/print-restores-previous-mediatype-expected.txt:
+
 2010-04-20  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Adam Barth.
