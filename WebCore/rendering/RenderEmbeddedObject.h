@@ -37,6 +37,9 @@ public:
     void updateWidget(bool onlyCreateNonNetscapePlugins);
     void setShowsMissingPluginIndicator();
     void setShowsCrashedPluginIndicator();
+
+    bool hasFallbackContent() const { return m_hasFallbackContent; }
+
 #if USE(ACCELERATED_COMPOSITING)
     virtual bool allowsAcceleratedCompositing() const;
 #endif
@@ -53,7 +56,9 @@ private:
 #endif
 
     virtual void layout();
+
     String m_replacementText;
+    bool m_hasFallbackContent;
 };
 
 inline RenderEmbeddedObject* toRenderEmbeddedObject(RenderObject* object)

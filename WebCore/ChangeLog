@@ -1,5 +1,23 @@
 2010-04-19  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Geoff Garen.
+
+        Clean up RenderPart/RenderPartObject/RenderFrame/RenderEmbeddedObject
+        https://bugs.webkit.org/show_bug.cgi?id=37741
+
+        Move m_hasFallbackContent from RenderPart to RenderEmbeddedObject,
+        since it's only used for <object> fallback.
+
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::RenderEmbeddedObject):
+        * rendering/RenderEmbeddedObject.h:
+        (WebCore::RenderEmbeddedObject::hasFallbackContent):
+        * rendering/RenderPart.cpp:
+        (WebCore::RenderPart::RenderPart):
+        * rendering/RenderPart.h:
+
+2010-04-19  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Darin Adler.
 
         Clean up RenderPart/RenderPartObject/RenderFrame/RenderEmbeddedObject

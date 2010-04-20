@@ -66,6 +66,7 @@ static const float replacementTextTextOpacity = 0.55f;
 
 RenderEmbeddedObject::RenderEmbeddedObject(Element* element)
     : RenderPartObject(element)
+    , m_hasFallbackContent(false)
 {
     view()->frameView()->setIsVisuallyNonEmpty();
 }
