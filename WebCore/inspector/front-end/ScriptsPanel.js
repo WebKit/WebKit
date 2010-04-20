@@ -359,7 +359,28 @@ WebInspector.ScriptsPanel.prototype = {
     {
         if (!this.canEditScripts())
             return;
-        var callbackId = WebInspector.Callback.wrap(callback)
+
+        // Need to clear breakpoints and re-create them later when editing source.
+        var breakpointsPanel = this.sidebarPanes.breakpoints;
+        var newBreakpoints = [];
+        for (var id in breakpointsPanel.breakpoints) {
+            var breakpoint = breakpointsPanel.breakpoints[id];
+            breakpointsPanel.removeBreakpoint(breakpoint);
+            newBreakpoints.push(breakpoint);
+        }
+
+        var linesCountToShift = newContent.split("\n").length - 1;
+        function mycallback(newBody)
+        {
+            callback(newBody);
+            for (var i = 0; i < newBreakpoints.length; ++i) {
+                var breakpoint = newBreakpoints[i];
+                if (breakpoint.line >= line)
+                    breakpoint.line += linesCountToShift;
+                this.addBreakpoint(breakpoint);
+            }
+        };
+        var callbackId = WebInspector.Callback.wrap(mycallback.bind(this))
         InspectorBackend.editScriptLine(callbackId, sourceID, line, newContent);
     },
 

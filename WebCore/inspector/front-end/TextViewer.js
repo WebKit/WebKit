@@ -254,8 +254,8 @@ WebInspector.TextViewer.prototype = {
         var lineRow = e.target.enclosingNodeOrSelfWithNodeName("TR");
         if (!lineRow)
             return;
-        var oldContent = lineRow.lastChild.textContent;
-        this._editingLine = WebInspector.startEditing(lineRow.lastChild, this._commitEditingLine.bind(this, lineRow.lineNumber, lineRow.lastChild), this._cancelEditingLine.bind(this), null, true);
+        var oldContent = lineRow.lastChild.innerHTML;
+        this._editingLine = WebInspector.startEditing(lineRow.lastChild, this._commitEditingLine.bind(this, lineRow.lineNumber, lineRow.lastChild), this._cancelEditingLine.bind(this, lineRow.lastChild, oldContent), null, true);
     },
 
     _commitEditingLine: function(lineNumber, element)
@@ -264,9 +264,9 @@ WebInspector.TextViewer.prototype = {
         delete this._editingLine;
     },
 
-    _cancelEditingLine: function(e)
+    _cancelEditingLine: function(element, oldContent, e)
     {
-        this._textModel.setText(null, this._textModel.copyRange());
+        element.innerHTML = oldContent;
         delete this._editingLine;
     },
 
