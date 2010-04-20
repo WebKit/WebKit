@@ -325,6 +325,11 @@ void FrameLoaderClientWx::dispatchDidFinishDocumentLoad()
     }
 }
 
+void FrameLoaderClientWx::dispatchDidChangeIcons()
+{
+    notImplemented();
+}
+
 void FrameLoaderClientWx::dispatchDidFinishLoad()
 {
     notImplemented();

@@ -108,6 +108,7 @@ namespace WebCore {
         virtual void dispatchDidFinishLoad();
         virtual void dispatchDidFirstLayout();
         virtual void dispatchDidFirstVisuallyNonEmptyLayout();
+        virtual void dispatchDidChangeIcons();
 
         virtual void dispatchShow();
         virtual void cancelPolicyCheck();

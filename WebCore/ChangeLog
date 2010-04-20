@@ -1,3 +1,9 @@
+2010-04-19  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix, remove a method that has been moved to PluginView.cpp.
+
+        * plugins/PluginViewNone.cpp:
+
 2010-04-19  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by NOBODY (rolling out r57829).

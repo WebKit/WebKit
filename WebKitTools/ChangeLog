@@ -1,3 +1,9 @@
+2010-04-19  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix, add missing header.
+
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+
 2010-04-19  Dirk Pranke  <dpranke@chromium.org>
  
          Reviewed by Adam Barth.
