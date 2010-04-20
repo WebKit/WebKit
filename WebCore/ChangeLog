@@ -1,3 +1,21 @@
+2010-04-20  Timothy Hatcher  <timothy@apple.com>
+
+        Fix matching of "file:///*" patterns by not trying to compare the host. The host is
+        irrelevant for file URLs.
+
+        Also fix comparisons to be case insensitive.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37889
+
+        Reviewed by Dave Hyatt.
+
+        * page/UserContentURLPattern.cpp:
+        (WebCore::UserContentURLPattern::parse): Use equalIgnoringCase when comparing for "file" schemes.
+        (WebCore::UserContentURLPattern::matches): Use equalIgnoringCase when comparing schemes. Only call
+        matchesHost if the scheme isn't "file".
+        (WebCore::UserContentURLPattern::matchesHost): Call equalIgnoringCase when comparing hosts. The endsWith
+        was already doing a case-insensitive compare, so existing tests worked though this path.
+
 2010-04-20  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Adam Barth.

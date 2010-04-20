@@ -75,7 +75,7 @@ bool UserContentURLPattern::parse(const String& pattern)
 
     int pathStartPos = 0;
 
-    if (m_scheme == "file")
+    if (equalIgnoringCase(m_scheme, "file"))
         pathStartPos = hostStartPos;
     else {
         int hostEndPos = pattern.find("/", hostStartPos);
@@ -114,10 +114,10 @@ bool UserContentURLPattern::matches(const KURL& test) const
     if (m_invalid)
         return false;
 
-    if (test.protocol() != m_scheme)
+    if (!equalIgnoringCase(test.protocol(), m_scheme))
         return false;
 
-    if (!matchesHost(test))
+    if (!equalIgnoringCase(m_scheme, "file") && !matchesHost(test))
         return false;
 
     return matchesPath(test);
@@ -125,7 +125,7 @@ bool UserContentURLPattern::matches(const KURL& test) const
 
 bool UserContentURLPattern::matchesHost(const KURL& test) const
 {
-    if (test.host() == m_host)
+    if (equalIgnoringCase(test.host(), m_host))
         return true;
 
     if (!m_matchSubdomains)
