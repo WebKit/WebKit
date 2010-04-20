@@ -28,10 +28,10 @@
     function runTests()
     {
         log("Media type is set to 'handheld' to be different than the default 'screen'");
-        shouldBe("window.styleMedia.type", window.styleMedia.type, "handheld");
+        shouldBe("window.media.type", window.media.type, "handheld");
         log("<br>The page is printed, which changes the media type to 'print', and then back");
         window.print();
-        shouldBe("window.styleMedia.type", window.styleMedia.type, "handheld");
+        shouldBe("window.media.type", window.media.type, "handheld");
     }
 </script>
 </head>

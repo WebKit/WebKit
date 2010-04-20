@@ -141,7 +141,7 @@ module window {
         readonly attribute Document document;
 
         // CSSOM View Module
-        readonly attribute Media styleMedia;
+        readonly attribute Media media;
 
         // DOM Level 2 Style Interface
         CSSStyleDeclaration getComputedStyle(in Element element,
