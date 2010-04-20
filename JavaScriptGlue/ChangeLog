@@ -1,3 +1,15 @@
+2010-04-20  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber stamped by Maciej Stachowiak (relanding r57829).
+        Added missing JS_EXPORTDATA
+
+        * ForwardingHeaders/wtf/WTFThreadData.h: Copied from JavaScriptGlue/ForwardingHeaders/wtf/WTFThreadData.h.
+        * JSUtils.cpp:
+        (JSGlueAPIEntry::JSGlueAPIEntry):
+        (JSGlueAPIEntry::~JSGlueAPIEntry):
+        (JSGlueAPICallback::JSGlueAPICallback):
+        (JSGlueAPICallback::~JSGlueAPICallback):
+
 2010-04-19  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by NOBODY (rolling out r57829).

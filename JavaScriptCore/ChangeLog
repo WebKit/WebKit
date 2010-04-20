@@ -1,3 +1,37 @@
+2010-04-20  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber stamped by Maciej Stachowiak (relanding r57829).
+        Added missing JS_EXPORTDATA
+
+        * API/APIShims.h:
+        (JSC::APIEntryShimWithoutLock::APIEntryShimWithoutLock):
+        (JSC::APIEntryShimWithoutLock::~APIEntryShimWithoutLock):
+        (JSC::APICallbackShim::APICallbackShim):
+        (JSC::APICallbackShim::~APICallbackShim):
+        * API/JSContextRef.cpp:
+        * Android.mk:
+        * Android.v8.wtf.mk:
+        * GNUmakefile.am:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.pro:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/Completion.cpp:
+        (JSC::checkSyntax):
+        (JSC::evaluate):
+        * runtime/Identifier.cpp:
+        (JSC::Identifier::remove):
+        (JSC::Identifier::checkCurrentIdentifierTable):
+        * runtime/Identifier.h:
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreadingOnce):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::create):
+        * wtf/WTFThreadData.cpp: Copied from JavaScriptCore/wtf/WTFThreadData.cpp.
+        * wtf/WTFThreadData.h: Copied from JavaScriptCore/wtf/WTFThreadData.h.
+
 2010-04-19  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by NOBODY (rolling out r57829).

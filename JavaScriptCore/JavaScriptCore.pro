@@ -203,6 +203,7 @@ SOURCES += \
     wtf/ThreadingNone.cpp \
     wtf/Threading.cpp \
     wtf/TypeTraits.cpp \
+    wtf/WTFThreadData.cpp \
     wtf/text/CString.cpp \
     wtf/unicode/CollatorDefault.cpp \
     wtf/unicode/icu/CollatorICU.cpp \
