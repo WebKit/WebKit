@@ -1,5 +1,12 @@
 2010-04-19  Kevin Ollivier  <kevino@theolliviers.com>
 
+        Fix the Mac builders for now by restoring the keepAlive function.
+
+        * plugins/PluginViewNone.cpp:
+        (WebCore::PluginView::keepAlive):
+
+2010-04-19  Kevin Ollivier  <kevino@theolliviers.com>
+
         [wx] Build fix, remove a method that has been moved to PluginView.cpp.
 
         * plugins/PluginViewNone.cpp:
