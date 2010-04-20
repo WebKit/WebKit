@@ -42,7 +42,7 @@ from webkitpy.common.net.credentials import Credentials
 from webkitpy.common.system.ospath import relpath
 from webkitpy.common.system.user import User
 from webkitpy.thirdparty.autoinstalled.mechanize import Browser
-from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup, SoupStrainer
+from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup, BeautifulStoneSoup, SoupStrainer
 
 
 def parse_bug_id(message):
@@ -266,6 +266,14 @@ class BugzillaQueries(object):
         review_queue_url = "request.cgi?action=queue&type=review&group=type"
         return self._fetch_attachment_ids_request_query(review_queue_url)
 
+    def fetch_quips(self):
+        return self._load_query("/quips.cgi?action=show")
+
+    def parse_quips(self, page, limit=None):
+        soup = BeautifulSoup(page, convertEntities=BeautifulStoneSoup.HTML_ENTITIES)
+        quips = soup.find(text=re.compile("Existing quips:")).findNext("ul").findAll("li")[:limit]
+        return [str(quip_entry.string) for quip_entry in quips]
+
 
 class CommitterValidator(object):
 
@@ -364,6 +372,7 @@ class Bugzilla(object):
         self.authenticated = False
         self.queries = BugzillaQueries(self)
         self.committers = committers
+        self.cached_quips = []
 
         # FIXME: We should use some sort of Browser mock object when in dryrun
         # mode (to prevent any mistakes).
@@ -376,6 +385,13 @@ class Bugzilla(object):
     bug_server_host = "bugs.webkit.org"
     bug_server_regex = "https?://%s/" % re.sub('\.', '\\.', bug_server_host)
     bug_server_url = "https://%s/" % bug_server_host
+
+    def quips(self):
+        # We only fetch and parse the list of quips once per instantiation
+        # so that we do not burden bugs.webkit.org.
+        if not self.cached_quips:
+            self.cached_quips = self.queries.parse_quips(self.queries.fetch_quips())
+        return self.cached_quips
 
     def bug_url_for_bug_id(self, bug_id, xml=False):
         if not bug_id:

@@ -270,6 +270,9 @@ class MockBugzilla(Mock):
         log("bug_title: %s" % bug_title)
         log("bug_description: %s" % bug_description)
 
+    def quips(self):
+        return ["Good artists copy. Great artists steal. - Pablo Picasso"]
+
     def fetch_bug(self, bug_id):
         return Bug(self.bug_cache.get(bug_id), self)
 
