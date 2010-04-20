@@ -2750,7 +2750,7 @@ BUG42044 WIN DEBUG : http/tests/security/xss-DENIED-mime-type-execute-as-html.ht
 
 // Broke at r57886, probably just need new baselines
 BUGJAMESR : svg/W3C-SVG-1.1/filters-composite-02-b.svg = TEXT
-BUGJAMESR WIN LINUX : svg/W3C-SVG-1.1/filters-comptran-01-b.svg
+BUGJAMESR WIN LINUX : svg/W3C-SVG-1.1/filters-comptran-01-b.svg = TEXT
 BUGJAMESR WIN MAC : svg/W3C-SVG-1.1/filters-diffuse-01-f.svg = TEXT
 BUGJAMESR LINUX RELEASE : svg/W3C-SVG-1.1/filters-diffuse-01-f.svg = TEXT
 BUGJAMESR : svg/W3C-SVG-1.1/filters-displace-01-f.svg = TEXT
