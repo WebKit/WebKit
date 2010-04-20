@@ -32,6 +32,7 @@ javascriptcore_h_api += \
 
 javascriptcore_built_nosources += \
 	DerivedSources/Lexer.lut.h \
+	JavaScriptCore/RegExpJitTables.h \
 	JavaScriptCore/runtime/ArrayPrototype.lut.h \
 	JavaScriptCore/runtime/DatePrototype.lut.h \
 	JavaScriptCore/runtime/JSONObject.lut.h \
@@ -544,6 +545,9 @@ DerivedSources/Lexer.lut.h: $(CREATE_HASH_TABLE) $(srcdir)/JavaScriptCore/parser
 JavaScriptCore/%.lut.h: $(CREATE_HASH_TABLE) $(srcdir)/JavaScriptCore/%.cpp
 	$(PERL) $^ -i > $@
 
+JavaScriptCore/RegExpJitTables.h: $(CREATE_REGEXP_TABLES)
+	$(PYTHON) $(CREATE_REGEXP_TABLES) > $@
+
 JavaScriptCore/pcre/chartables.c: $(srcdir)/JavaScriptCore/pcre/dftables
 	$(PERL) $^ $@
 
@@ -604,6 +608,7 @@ Programs_jsc_LDADD = \
 
 javascriptcore_dist += \
 	$(CREATE_HASH_TABLE) \
+	$(CREATE_REGEXP_TABLES) \
 	JavaScriptCore/AUTHORS \
 	JavaScriptCore/COPYING.LIB \
 	JavaScriptCore/ChangeLog \
