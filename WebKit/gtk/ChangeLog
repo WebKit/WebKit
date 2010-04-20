@@ -6,6 +6,26 @@
         WebKitGtk
         https://bugs.webkit.org/show_bug.cgi?id=34449
 
+        Expand testatkroles to test ATK form roles.
+
+        * tests/testatkroles.c:
+        (test_webkit_atk_get_role_check_box):
+        (test_webkit_atk_get_role_entry):
+        (test_webkit_atk_get_role_label):
+        (test_webkit_atk_get_role_listbox):
+        (test_webkit_atk_get_role_password_text):
+        (test_webkit_atk_get_role_push_button):
+        (test_webkit_atk_get_role_radio_button):
+        (main):
+
+2010-04-19  Diego Escalante Urrelo  <descalante@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [Gtk] Evaluate and create tests for all the AtkRole's implemented by
+        WebKitGtk
+        https://bugs.webkit.org/show_bug.cgi?id=34449
+
         Add testatkroles to test ATK non form roles.
 
         * tests/testatkroles.c: Added.

@@ -25,6 +25,7 @@
 
 #if GLIB_CHECK_VERSION(2, 16, 0) && GTK_CHECK_VERSION(2, 14, 0)
 
+/* Non form roles */
 #define HTML_DOCUMENT_FRAME "<html><body>This is a test.</body></html>"
 #define HTML_HEADING "<html><body><h1>1</h1><h2>2</h2><h3>3</h3><h4>4</h4><h5>5</h5><h6>6</h6></body></html>"
 #define HTML_IMAGE "<html><body><img src='foobar.png' alt='This is a test.'/></body></html>"
@@ -33,6 +34,13 @@
 #define HTML_PARAGRAPH "<html><body><p>This is a test.</p></body></html>"
 #define HTML_SECTION "<html><body><div>This is a test.</div></body></html>"
 #define HTML_TABLE "<html><body><table border='1'><tr><td>This is</td><td>a test.</td></tr></table></body></html>"
+/* Form roles */
+#define HTML_CHECK_BOX "<html><body><input type='checkbox' />This is a test.</body></html>"
+#define HTML_LABELED_ENTRY "<html><body><label for='foo'>Name:</label><input type='text' id='foo' /></body></html>"
+#define HTML_LISTBOX "<html><body><select size='3'><option>one</option><option>two</option><option>three</option></select></body></html>"
+#define HTML_PASSWORD_TEXT "<html><body><input type='password' /></body></html>"
+#define HTML_PUSH_BUTTON "<html><body><input type='submit' value='ok' />This is a test.</body></html>"
+#define HTML_RADIO_BUTTON "<html><body><input type='radio' />This is a test.</body></html>"
 
 typedef struct {
     AtkObject* documentFrame;
@@ -166,6 +174,93 @@ static void test_webkit_atk_get_role_table(AtkRolesFixture* fixture, gconstpoint
     get_child_and_test_role(fixture->documentFrame, 0, ATK_ROLE_TABLE);
 }
 
+/* Form roles */
+static void test_webkit_atk_get_role_check_box(AtkRolesFixture* fixture, gconstpointer data)
+{
+    // This is an extraneous object of ATK_ROLE_PANEL which we should get rid of.
+    fixture->obj = atk_object_ref_accessible_child(fixture->documentFrame, 0);
+    g_assert(fixture->obj);
+
+    get_child_and_test_role(fixture->obj, 0, ATK_ROLE_CHECK_BOX);
+
+    g_object_unref(fixture->obj);
+}
+
+static void test_webkit_atk_get_role_entry(AtkRolesFixture* fixture, gconstpointer data)
+{
+    // This is an extraneous object of ATK_ROLE_PANEL which we should get rid of.
+    fixture->obj = atk_object_ref_accessible_child(fixture->documentFrame, 0);
+    g_assert(fixture->obj);
+
+    get_child_and_test_role(fixture->obj, 1, ATK_ROLE_ENTRY);
+
+    g_object_unref(fixture->obj);
+}
+
+static void test_webkit_atk_get_role_label(AtkRolesFixture* fixture, gconstpointer data)
+{
+    // This is an extraneous object of ATK_ROLE_PANEL which we should get rid of.
+    fixture->obj = atk_object_ref_accessible_child(fixture->documentFrame, 0);
+    g_assert(fixture->obj);
+
+    get_child_and_test_role(fixture->obj, 0, ATK_ROLE_LABEL);
+
+    g_object_unref(fixture->obj);
+}
+
+static void test_webkit_atk_get_role_listbox(AtkRolesFixture* fixture, gconstpointer data)
+{
+    AtkObject* listboxObj;
+    // This is an extraneous object of ATK_ROLE_PANEL which we should get rid of.
+    fixture->obj = atk_object_ref_accessible_child(fixture->documentFrame, 0);
+    g_assert(fixture->obj);
+
+    listboxObj = atk_object_ref_accessible_child(fixture->obj, 0);
+    g_assert(listboxObj);
+    fixture->role = atk_object_get_role(listboxObj);
+    g_assert(fixture->role == ATK_ROLE_LIST);
+
+    get_child_and_test_role(listboxObj, 0, ATK_ROLE_LIST_ITEM);
+    get_child_and_test_role(listboxObj, 1, ATK_ROLE_LIST_ITEM);
+    get_child_and_test_role(listboxObj, 2, ATK_ROLE_LIST_ITEM);
+
+    g_object_unref(fixture->obj);
+    g_object_unref(listboxObj);
+}
+
+static void test_webkit_atk_get_role_password_text(AtkRolesFixture* fixture, gconstpointer data)
+{
+    // This is an extraneous object of ATK_ROLE_PANEL which we should get rid of.
+    fixture->obj = atk_object_ref_accessible_child(fixture->documentFrame, 0);
+    g_assert(fixture->obj);
+
+    get_child_and_test_role(fixture->obj, 0, ATK_ROLE_PASSWORD_TEXT);
+
+    g_object_unref(fixture->obj);
+}
+
+static void test_webkit_atk_get_role_push_button(AtkRolesFixture* fixture, gconstpointer data)
+{
+    // This is an extraneous object of ATK_ROLE_PANEL which we should get rid of.
+    fixture->obj = atk_object_ref_accessible_child(fixture->documentFrame, 0);
+    g_assert(fixture->obj);
+
+    get_child_and_test_role(fixture->obj, 0, ATK_ROLE_PUSH_BUTTON);
+
+    g_object_unref(fixture->obj);
+}
+
+static void test_webkit_atk_get_role_radio_button(AtkRolesFixture* fixture, gconstpointer data)
+{
+    // This is an extraneous object of ATK_ROLE_PANEL which we should get rid of.
+    fixture->obj = atk_object_ref_accessible_child(fixture->documentFrame, 0);
+    g_assert(fixture->obj);
+
+    get_child_and_test_role(fixture->obj, 0, ATK_ROLE_RADIO_BUTTON);
+
+    g_object_unref(fixture->obj);
+}
+
 int main(int argc, char** argv)
 {
     g_thread_init(NULL);
@@ -221,7 +316,50 @@ int main(int argc, char** argv)
                test_webkit_atk_get_role_table,
                atk_roles_fixture_teardown);
 
-    return g_test_run ();
+    /* Form roles */
+    g_test_add("/webkit/atk/test_webkit_atk_get_role_check_box",
+               AtkRolesFixture, HTML_CHECK_BOX,
+               atk_roles_fixture_setup,
+               test_webkit_atk_get_role_check_box,
+               atk_roles_fixture_teardown);
+
+    g_test_add("/webkit/atk/test_webkit_atk_get_role_entry",
+               AtkRolesFixture, HTML_LABELED_ENTRY,
+               atk_roles_fixture_setup,
+               test_webkit_atk_get_role_entry,
+               atk_roles_fixture_teardown);
+
+    g_test_add("/webkit/atk/test_webkit_atk_get_role_label",
+               AtkRolesFixture, HTML_LABELED_ENTRY,
+               atk_roles_fixture_setup,
+               test_webkit_atk_get_role_label,
+               atk_roles_fixture_teardown);
+
+    g_test_add("/webkit/atk/test_webkit_atk_get_role_listbox",
+               AtkRolesFixture, HTML_LISTBOX,
+               atk_roles_fixture_setup,
+               test_webkit_atk_get_role_listbox,
+               atk_roles_fixture_teardown);
+
+    g_test_add("/webkit/atk/test_webkit_atk_get_role_password_text",
+               AtkRolesFixture, HTML_PASSWORD_TEXT,
+               atk_roles_fixture_setup,
+               test_webkit_atk_get_role_password_text,
+               atk_roles_fixture_teardown);
+
+    g_test_add("/webkit/atk/test_webkit_atk_get_role_push_button",
+               AtkRolesFixture, HTML_PUSH_BUTTON,
+               atk_roles_fixture_setup,
+               test_webkit_atk_get_role_push_button,
+               atk_roles_fixture_teardown);
+
+    g_test_add("/webkit/atk/test_webkit_atk_get_role_radio_button",
+               AtkRolesFixture, HTML_RADIO_BUTTON,
+               atk_roles_fixture_setup,
+               test_webkit_atk_get_role_radio_button,
+               atk_roles_fixture_teardown);
+
+    return g_test_run();
 }
 
 #else
