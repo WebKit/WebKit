@@ -369,6 +369,11 @@ static void updateFocusCandidateIfCloser(Node* focusedNode, const FocusCandidate
     if (candidate.distance >= closest.distance)
         return;
 
+    if (closest.isNull()) {
+        closest = candidate;
+        return;
+    }
+
     // If the focused node and the candadate are in the same document and current
     // closest candidate is not in an {i}frame that is preferable to get focused ...
     if (focusedNode->document() == candidate.document()

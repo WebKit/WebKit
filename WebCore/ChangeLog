@@ -1,3 +1,20 @@
+2010-04-19  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Spatial Navigation: at @updateFocusCandidateIfCloser make an assignment shortcut when FocusCandidate is null
+        https://bugs.webkit.org/show_bug.cgi?id=37802
+
+        In updateFocusCandidateIfCloser method, we do all bail out checks in the begining of
+        the method body. If after those bail out checks, no "best FocusCandidate" has been taken
+        yet (i.e. focusCandidate.isNull() == true), we can safely take the current candidate,
+        and exit earlier.
+
+        No behavior change, it is just a safe assignment shortcut.
+
+        * page/FocusController.cpp:
+        (WebCore::updateFocusCandidateIfCloser):
+
 2010-04-20  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
