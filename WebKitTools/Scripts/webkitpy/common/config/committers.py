@@ -140,6 +140,7 @@ committers_unable_to_review = [
     Committer("Mike Fenton", ["mike.fenton@torchmobile.com", "mifenton@rim.com"], "mfenton"),
     Committer("Mike Thole", ["mthole@mikethole.com", "mthole@apple.com"]),
     Committer("Mikhail Naganov", "mnaganov@chromium.org"),
+    Committer("MORITA Hajime", "morrita@google.com", "morrita"),
     Committer("Ojan Vafai", "ojan@chromium.org", "ojan"),
     Committer("Pam Greene", "pam@chromium.org", "pamg"),
     Committer("Peter Kasting", ["pkasting@google.com", "pkasting@chromium.org"], "pkasting"),

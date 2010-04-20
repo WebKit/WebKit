@@ -1,3 +1,9 @@
+2010-04-20  MORITA Hajime <morrita@google.com>
+
+        Unreviewed, add myself to the committers list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-04-20  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Shinichiro Hamaji.
