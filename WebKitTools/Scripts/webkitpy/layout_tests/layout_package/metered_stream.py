@@ -60,6 +60,8 @@ class MeteredStream:
         self._stream = stream
         self._last_update = ""
 
+    # FIXME: Does this take a string (unicode) or an array of bytes (str)?
+    # If it takes a string, it needs to call txt.encode("utf-8")
     def write(self, txt):
         """Write to the stream, overwriting and resetting the meter."""
         if self._dirty:
@@ -86,6 +88,8 @@ class MeteredStream:
             return
         self._write(str)
 
+    # FIXME: Does this take a string (unicode) or an array of bytes (str)?
+    # If it takes a string, it needs to call txt.encode("utf-8")
     def update(self, str):
         """
         Write a message that is also included when logging verbosely.

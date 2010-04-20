@@ -102,12 +102,13 @@ class ChangeLog(object):
         date_line_regexp = re.compile(ChangeLogEntry.date_line_regexp)
         entry_lines = []
         # The first line should be a date line.
-        first_line = changelog_file.readline()
+        first_line = unicode(changelog_file.readline(), "utf-8")
         if not date_line_regexp.match(first_line):
             return None
         entry_lines.append(first_line)
 
         for line in changelog_file:
+            line = unicode(line, "utf-8")
             # If we've hit the next entry, return.
             if date_line_regexp.match(line):
                 # Remove the extra newline at the end
@@ -117,7 +118,9 @@ class ChangeLog(object):
 
     def latest_entry(self):
         # ChangeLog files are always UTF-8, we read them in as such to support Reviewers with unicode in their names.
-        changelog_file = codecs.open(self.path, "r", "utf-8")
+        # We don't use codecs.open here to make the api for parse_latest_entry_from_file clearer.
+        # If we did, then it would be unclear as to whos reponsibility decoding of the file should be.
+        changelog_file = open(self.path, "r")
         try:
             return self.parse_latest_entry_from_file(changelog_file)
         finally:

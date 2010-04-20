@@ -28,8 +28,6 @@
 #
 # WebKit's python module for holding information on a commit
 
-import StringIO
-
 from webkitpy.common.checkout.changelog import view_source_url
 from webkitpy.common.config.committers import CommitterList
 

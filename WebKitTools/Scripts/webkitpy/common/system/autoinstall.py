@@ -124,7 +124,7 @@ class AutoInstaller(object):
         _log.debug('    "%s"' % path)
         file = open(path, "w")
         try:
-            file.write(text)
+            file.write(text)  # FIXME: What's the encoding of this file?
         finally:
             file.close()
 

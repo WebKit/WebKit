@@ -1,3 +1,93 @@
+2010-04-20  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        REGRESSION(57531): the commit-queue still hates Tor Arne Vestbø
+        https://bugs.webkit.org/show_bug.cgi?id=37765
+
+        I fixed the queue to not ignore Tor as a reviwer in r57531,
+        but instead it throws an exception every time his name is in a patch.
+
+        This fixes our Executive.run_command code to work around a Popen
+        bug http://bugs.python.org/issue5290 whereby python versions before 2.6
+        do not correctly handle unicode objects as input or output to
+        Popen.communicate.
+
+        Following the advice of:
+        http://farmdev.com/talks/unicode/
+        I'm attempting to take the python unicode plunge and use unicode()
+        objects as strings instead of str() objects everywhere in webkitpy.
+
+        We do not have to use u"" instead of "" because u"a" == "a" as expected
+        in Python.  Python will generate a warning to the console in cases where
+        a unicode() == str() operation cannot be performed.
+
+        I also cleaned up the input handling in run_command a little by adding
+        a new _compute_input() method which can return early instead of having
+        such a long/cluttered if-block.
+
+        Executive.run* now correctly accept and return unicode() objects.
+        I attempted to fix all the places that we call .write() to make sure we
+        encode any unicode() objects into utf-8.
+
+        All places which use StringIO need to be sure to pass StringIO a
+        pre-encoded byte-array (str object) instead of unicode so that
+        clients which read from the StringIO don't have encoding exceptions.
+        To make this easier, I removed the patch_file_object support from
+        add_patch_to_bug, and changed the 4 places which previously used
+        StringIO to create a fake patch file.
+
+        I attempted to document any places where we are not correctly converting
+        to/from bytes (str() objects) to strings (unicode() objects).
+
+        * Scripts/webkitpy/common/checkout/api_unittest.py:
+         - Read/write utf-8 files instead of ascii.
+         - Update the tests to use test for proper unicode() handling.
+        * Scripts/webkitpy/common/checkout/changelog_unittest.py:
+         - Use unicode() strings instead of str() byte arrays.
+        * Scripts/webkitpy/common/checkout/scm.py:
+         - Remove use of str().
+        * Scripts/webkitpy/common/checkout/scm_unittest.py:
+         - Read/write utf-8 files and use unicode() strings in testing.
+        * Scripts/webkitpy/common/config/committers.py:
+         - Use \u instead of \x to make slightly clearer what we're doing.
+        * Scripts/webkitpy/common/net/bugzilla.py:
+         - Add a new _string_contents() method and explain why
+           we have to call unicode() on the result of soup.string
+           and why it's safe to do so w/o needing to pass a codec name.
+         - Remove the (unused) support for passing a file object to add_patch_to_bug().
+        * Scripts/webkitpy/common/net/buildbot.py:
+         - Use unicode() instead of str() when needing to coax a
+           NavigableString object into a unicode() object.
+        * Scripts/webkitpy/common/net/statusserver.py:
+         - Remove use of str()
+        * Scripts/webkitpy/common/prettypatch.py:
+         - Write out the patch file as utf-8.
+        * Scripts/webkitpy/common/system/autoinstall.py:
+         - Add a FIXME about encoding.
+        * Scripts/webkitpy/common/system/deprecated_logging.py:
+         - Document that tee() works on bytes, not strings.
+        * Scripts/webkitpy/common/system/executive.py:
+         - Make run* properly take and return unicode() objects.
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+         - Added a unit test to make sure we don't break Tor again!
+        * Scripts/webkitpy/layout_tests/layout_package/dump_render_tree_thread.py:
+         - Write out the test list as utf-8.
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+         - Write out json files as utf-8.
+        * Scripts/webkitpy/layout_tests/layout_package/metered_stream.py:
+         - Add FIXME about encoding handling.
+        * Scripts/webkitpy/tool/commands/upload.py:
+         - Pass the diff directly to add_patch_to_bug instead of creating a StringIO file wrapper.
+        * Scripts/webkitpy/tool/mocktool.py:
+         - Rename add_patch_to_bug argument to match bugzilla.py
+        * Scripts/webkitpy/tool/steps/postdiff.py:
+         - Pass the diff directly to add_patch_to_bug instead of creating a StringIO file wrapper.
+        * Scripts/webkitpy/tool/steps/postdiffforcommit.py: ditto.
+        * Scripts/webkitpy/tool/steps/postdiffforrevert.py: ditto.
+        * Scripts/webkitpy/tool/steps/steps_unittest.py:
+         - Fixed spurious logging seen when running test-webkitpy
+
 2010-04-20  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Shinichiro Hamaji.

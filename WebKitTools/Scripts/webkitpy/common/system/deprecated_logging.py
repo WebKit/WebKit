@@ -45,9 +45,10 @@ class tee:
     def __init__(self, *files):
         self.files = files
 
-    def write(self, string):
+    # Callers should pass an already encoded string for writing.
+    def write(self, bytes):
         for file in self.files:
-            file.write(string)
+            file.write(bytes)
 
 class OutputTee:
     def __init__(self):

@@ -87,8 +87,8 @@ class ChangeLogsTest(unittest.TestCase):
 '''
 
     def test_latest_entry_parse(self):
-        changelog_contents = "%s\n%s" % (self._example_entry, self._example_changelog)
-        changelog_file = StringIO(changelog_contents)
+        changelog_contents = u"%s\n%s" % (self._example_entry, self._example_changelog)
+        changelog_file = StringIO(changelog_contents.encode("utf-8"))
         latest_entry = ChangeLog.parse_latest_entry_from_file(changelog_file)
         self.assertEquals(latest_entry.contents(), self._example_entry)
         self.assertEquals(latest_entry.author_name(), "Peter Kasting")
@@ -121,7 +121,7 @@ class ChangeLogsTest(unittest.TestCase):
 '''
 
     def test_set_reviewer(self):
-        changelog_contents = "%s\n%s" % (self._new_entry_boilerplate, self._example_changelog)
+        changelog_contents = u"%s\n%s" % (self._new_entry_boilerplate, self._example_changelog)
         changelog_path = self._write_tmp_file_with_contents(changelog_contents)
         reviewer_name = 'Test Reviewer'
         ChangeLog(changelog_path).set_reviewer(reviewer_name)
@@ -169,7 +169,7 @@ class ChangeLogsTest(unittest.TestCase):
 '''
 
     def _assert_update_for_revert_output(self, args, expected_entry):
-        changelog_contents = "%s\n%s" % (self._new_entry_boilerplate, self._example_changelog)
+        changelog_contents = u"%s\n%s" % (self._new_entry_boilerplate, self._example_changelog)
         changelog_path = self._write_tmp_file_with_contents(changelog_contents)
         changelog = ChangeLog(changelog_path)
         changelog.update_for_revert(*args)

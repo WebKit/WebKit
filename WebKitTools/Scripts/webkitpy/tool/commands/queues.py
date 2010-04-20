@@ -71,8 +71,9 @@ class AbstractQueue(Command, QueueEngineDelegate):
     def run_webkit_patch(self, args):
         webkit_patch_args = [self.tool.path()]
         # FIXME: This is a hack, we should have a more general way to pass global options.
-        webkit_patch_args += ["--status-host=%s" % self.tool.status_server.host]
-        webkit_patch_args += map(str, args)
+        webkit_patch_args.append("--status-host")
+        webkit_patch_args.append(self.tool.status_server.host)
+        webkit_patch_args.extend(args)
         return self.tool.executive.run_and_throw_if_fail(webkit_patch_args)
 
     def _log_directory(self):
@@ -123,7 +124,7 @@ class AbstractQueue(Command, QueueEngineDelegate):
         if is_error:
             message = "Error: %s" % message
         output = script_error.message_with_output(output_limit=1024*1024) # 1MB
-        return tool.status_server.update_status(cls.name, message, state["patch"], StringIO(output))
+        return tool.status_server.update_status(cls.name, message, state["patch"], StringIO(output.encode("utf-8")))
 
 
 class AbstractPatchQueue(AbstractQueue):

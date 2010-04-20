@@ -260,7 +260,7 @@ class MockBugzilla(Mock):
                    bug_title,
                    bug_description,
                    component=None,
-                   patch_file_object=None,
+                   diff=None,
                    patch_description=None,
                    cc=None,
                    blocked=None,
@@ -299,7 +299,7 @@ class MockBugzilla(Mock):
 
     def add_patch_to_bug(self,
                          bug_id,
-                         patch_file_object,
+                         diff,
                          description,
                          comment_text=None,
                          mark_for_review=False,
