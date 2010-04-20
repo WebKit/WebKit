@@ -1,3 +1,40 @@
+2010-04-20  Martin Robinson  <mrobinson@webkit.org>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Enable DOM clipboard and drag-and-drop access
+        https://bugs.webkit.org/show_bug.cgi?id=30623
+
+        Move most of the PasteboardHelper logic into WebCore. This helps
+        prepare for WebKit2 and leads to a clearer separation of concerns
+        between the WebKit and WebCore layers.
+
+        No new tests as functionality has not changed.
+
+        * GNUmakefile.am: Add PastboardHelper.cpp to list of sources.
+        * platform/Pasteboard.h: Added a getter for the PasteboardHelper and made the member private.
+        * platform/gtk/PasteboardGtk.cpp: Update PasteboardHelper method calls to use new naming.
+        (WebCore::clipboard_get_contents_cb): Ditto.
+        (WebCore::Pasteboard::helper): Added, member is now private.
+        (WebCore::Pasteboard::writeURL): Ditto.
+        (WebCore::Pasteboard::documentFragment): Update to reflect method renaming.
+        (WebCore::Pasteboard::plainText): Ditto.
+        * platform/gtk/PasteboardHelper.cpp: Added.
+        (WebCore::PasteboardHelper::PasteboardHelper): Added.
+        (WebCore::PasteboardHelper::~PasteboardHelper): Added.
+        (WebCore::PasteboardHelper::initializeTargetList): Added, originally from WebKit.
+        (WebCore::widgetFromFrame): Added helper function.
+        (WebCore::PasteboardHelper::getCurrentClipboard): Added, originally from WebKit.
+        (WebCore::PasteboardHelper::getClipboard): Ditto.
+        (WebCore::PasteboardHelper::getPrimarySelectionClipboard): Ditto.
+        (WebCore::PasteboardHelper::targetList): Ditto.
+        (WebCore::PasteboardHelper::fillSelectionData): Ditto.
+        (WebCore::PasteboardHelper::targetListForDataObject): Ditto.
+        (WebCore::getClipboardContentsCallback): Ditto.
+        (WebCore::clearClipboardContentsCallback): Ditto.
+        (WebCore::PasteboardHelper::writeClipboardContents): Ditto.
+        * platform/gtk/PasteboardHelper.h: Moved methods from WebKit to WebCore.
+
 2010-04-20  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dimitri Glazkov.

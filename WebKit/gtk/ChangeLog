@@ -1,3 +1,24 @@
+2010-04-20  Martin Robinson  <mrobinson@webkit.org>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Enable DOM clipboard and drag-and-drop access
+        https://bugs.webkit.org/show_bug.cgi?id=30623
+
+        Move most of the PasteboardHelper logic into WebCore. This helps
+        prepare for WebKit2 and leads to a clearer separation of concerns
+        between the WebKit and WebCore layers.
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::collapseSelection): Converted this logic to a GClosure callback.
+        (WebKit::EditorClient::respondToChangedSelection): Collapse selection via GClosure now.
+        * WebCoreSupport/PasteboardHelperGtk.cpp: Moved most of the code to WebCore.
+        (WebKit::PasteboardHelperGtk::PasteboardHelperGtk): This constructor just initializes the target list.
+        (WebKit::PasteboardHelperGtk::~PasteboardHelperGtk): The destructor no longer needs to free the target list.
+        (WebKit::PasteboardHelperGtk::getIdForTargetType): Added, virtual method for getting target ids.
+        (WebKit::PasteboardHelperGtk::usePrimarySelectionClipboard): Added, virtual method for querying current clipboard.
+        * WebCoreSupport/PasteboardHelperGtk.h: Update method list to reflect reduced functionality.
+
 2010-04-19  Diego Escalante Urrelo  <descalante@igalia.com>
 
         Reviewed by Xan Lopez.

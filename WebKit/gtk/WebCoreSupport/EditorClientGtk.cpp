@@ -33,12 +33,13 @@
 #include "Frame.h"
 #include <glib.h>
 #include "KeyboardEvent.h"
+#include "markup.h"
 #include "NotImplemented.h"
 #include "Page.h"
 #include "PasteboardHelperGtk.h"
 #include "PlatformKeyboardEvent.h"
 #include "WindowsKeyboardCodes.h"
-#include "markup.h"
+#include "webkitmarshal.h"
 #include "webkitprivate.h"
 #include <wtf/text/CString.h>
 
@@ -196,6 +197,23 @@ void EditorClient::respondToChangedContents()
     notImplemented();
 }
 
+static WebKitWebView* viewSettingClipboard = 0;
+static void collapseSelection(GtkClipboard* clipboard, WebKitWebView* webView)
+{
+    if (viewSettingClipboard && viewSettingClipboard == webView)
+        return;
+
+    WebCore::Page* corePage = core(webView);
+    if (!corePage || !corePage->focusController())
+        return;
+
+    Frame* frame = corePage->focusController()->focusedOrMainFrame();
+
+    // Collapse the selection without clearing it
+    ASSERT(frame);
+    frame->selection()->setBase(frame->selection()->extent(), frame->selection()->affinity());
+}
+
 void EditorClient::respondToChangedSelection()
 {
     WebKitWebViewPrivate* priv = m_webView->priv;
@@ -215,7 +233,12 @@ void EditorClient::respondToChangedSelection()
     if (targetFrame->selection()->isRange()) {
         dataObject->clear();
         dataObject->setRange(targetFrame->selection()->toNormalizedRange());
-        pasteboardHelperInstance()->writeClipboardContents(clipboard, m_webView);
+
+        viewSettingClipboard = m_webView;
+        GClosure* callback = g_cclosure_new_object(G_CALLBACK(collapseSelection), G_OBJECT(m_webView));
+        g_closure_set_marshal(callback, g_cclosure_marshal_VOID__VOID);
+        pasteboardHelperInstance()->writeClipboardContents(clipboard, callback);
+        viewSettingClipboard = 0;
     }
 #endif
 

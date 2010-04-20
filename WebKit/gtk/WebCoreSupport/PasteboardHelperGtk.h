@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2007 Luca Bruno <lethalman88@gmail.com>
  * Copyright (C) 2009 Holger Hans Peter Freyther
+ * Copyright (C) 2010 Martin Robinson <mrobinson@webkit.org>
  * All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -41,16 +42,10 @@ class PasteboardHelperGtk : public PasteboardHelper {
 public:
     PasteboardHelperGtk();
     ~PasteboardHelperGtk();
-    virtual GtkClipboard* getCurrentTarget(Frame*) const;
-    virtual GtkClipboard* getClipboard(Frame*) const;
-    virtual GtkClipboard* getPrimary(Frame*) const;
-    virtual GtkTargetList* targetList() const;
-    virtual gint getWebViewTargetInfoHtml() const;
+    virtual guint getIdForTargetType(PasteboardTargetType);
 
-    void writeClipboardContents(GtkClipboard* clipboard, gpointer data = 0);
-
-private:
-    GtkTargetList* m_targetList;
+protected:
+    virtual bool usePrimarySelectionClipboard(GtkWidget*);
 };
 
 }

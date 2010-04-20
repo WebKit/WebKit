@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2007 Luca Bruno <lethalman88@gmail.com>
  * Copyright (C) 2009 Holger Hans Peter Freyther
+ * Copyright (C) 2010 Martin Robinson <mrobinson@webkit.org>
  * All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -32,18 +33,35 @@
 
 typedef struct _GtkClipboard GtkClipboard;
 typedef struct _GtkTargetList GtkTargetList;
+typedef struct _GtkWidget GtkWidget;
+typedef struct _GtkSelectionData GtkSelectionData;
 
 namespace WebCore {
 
+class DataObjectGtk;
+
 class PasteboardHelper {
 public:
-    virtual ~PasteboardHelper() {};
+    PasteboardHelper();
+    virtual ~PasteboardHelper();
 
-    virtual GtkClipboard* getCurrentTarget(Frame*) const = 0;
-    virtual GtkClipboard* getClipboard(Frame*) const = 0;
-    virtual GtkClipboard* getPrimary(Frame*) const = 0;
-    virtual GtkTargetList* targetList() const = 0;
-    virtual gint getWebViewTargetInfoHtml() const = 0;
+    GtkClipboard* getCurrentClipboard(Frame*);
+    GtkClipboard* getClipboard(Frame*) const;
+    GtkClipboard* getPrimarySelectionClipboard(Frame*) const;
+    GtkTargetList* targetList() const;
+    void fillSelectionData(GtkSelectionData*, guint, DataObjectGtk*);
+    void writeClipboardContents(GtkClipboard*, GClosure*);
+
+    enum PasteboardTargetType { TargetTypeText, TargetTypeMarkup, TargetTypeURIList, TargetTypeNetscapeURL, TargetTypeImage, TargetTypeUnknown };
+    virtual guint getIdForTargetType(PasteboardTargetType) = 0;
+
+protected:
+    void initializeTargetList();
+    virtual bool usePrimarySelectionClipboard(GtkWidget*) = 0;
+
+private:
+    GtkTargetList* m_targetList;
+    GtkTargetList* targetListForDataObject(DataObjectGtk*);
 };
 
 }

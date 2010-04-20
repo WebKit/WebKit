@@ -2092,6 +2092,7 @@ webcoregtk_sources += \
 	WebCore/platform/gtk/MIMETypeRegistryGtk.cpp \
 	WebCore/platform/gtk/MouseEventGtk.cpp \
 	WebCore/platform/gtk/PasteboardGtk.cpp \
+	WebCore/platform/gtk/PasteboardHelper.cpp \
 	WebCore/platform/gtk/PasteboardHelper.h \
 	WebCore/platform/gtk/PlatformScreenGtk.cpp \
 	WebCore/platform/gtk/PopupMenuGtk.cpp \
