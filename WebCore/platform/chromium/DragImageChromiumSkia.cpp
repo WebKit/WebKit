@@ -76,7 +76,11 @@ DragImageRef dissolveDragImageToFraction(DragImageRef image, float)
 
 DragImageRef createDragImageFromImage(Image* image)
 {
-    return new SkBitmap(*image->nativeImageForCurrentFrame());
+    if (!image)
+        return 0;
+
+    NativeImageSkia* bitmap = image->nativeImageForCurrentFrame();
+    return bitmap ? new SkBitmap(*bitmap) : 0;
 }
 
 DragImageRef createDragImageIconForCachedImage(CachedImage*)

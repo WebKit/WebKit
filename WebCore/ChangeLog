@@ -1,3 +1,18 @@
+2010-04-20  Evan Stade  <estade@chromium.org>
+
+        Reviewed by David Levin.
+
+        [chromium] crash when dragging images
+        https://bugs.webkit.org/show_bug.cgi?id=37715
+
+        NULL check the return value of nativeImageForCurrentFrame(),
+        and NULL check Image just for good measure.
+
+        Tested by new DragImageTest unit test.
+
+        * platform/chromium/DragImageChromiumSkia.cpp:
+        (WebCore::createDragImageFromImage):
+
 2010-04-20  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

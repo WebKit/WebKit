@@ -502,6 +502,7 @@
                 'src',
             ],
             'sources': [
+                'tests/DragImageTest.cpp',
                 'tests/KeyboardTest.cpp',
                 'tests/KURLTest.cpp',
                 'tests/RunAllTests.cpp',
@@ -513,6 +514,12 @@
                         'tests/PopupMenuTest.cpp',
                         'tests/TransparencyWinTest.cpp',
                         'tests/UniscribeHelperTest.cpp',
+                    ],
+                }],
+                ['OS=="mac"', {
+                    'sources!': [
+                        # FIXME: Port DragImageTest to Mac.
+                        'tests/DragImageTest.cpp',
                     ],
                 }],
             ],
