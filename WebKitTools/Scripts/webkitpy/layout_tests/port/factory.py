@@ -59,9 +59,9 @@ def get(port_name=None, options=None):
     if port_to_use == 'test':
         import test
         return test.TestPort(port_name, options)
-    elif port_to_use.startswith('passing'):
-        import passing
-        return passing.PassingPort(port_name, options)
+    elif port_to_use.startswith('dryrun'):
+        import dryrun
+        return dryrun.DryRunPort(port_name, options)
     elif port_to_use.startswith('mac'):
         import mac
         return mac.MacPort(port_name, options)

@@ -87,6 +87,8 @@ class ChromiumWinPort(chromium.ChromiumPort):
         return 'win' + self.version()
 
     def version(self):
+        if not hasattr(sys, 'getwindowsversion'):
+            return ''
         winver = sys.getwindowsversion()
         if winver[0] == 6 and (winver[1] == 1):
             return '-7'

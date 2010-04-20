@@ -325,7 +325,7 @@ class Port(object):
         This is used by the rebaselining tool. Raises NotImplementedError
         if the port does not use expectations files."""
         raise NotImplementedError('Port.path_to_test_expectations_file')
- 
+
     def remove_directory(self, *path):
         """Recursively removes a directory, even if it's marked read-only.
 

@@ -1,4 +1,25 @@
 2010-04-19  Dirk Pranke  <dpranke@chromium.org>
+ 
+         Reviewed by Adam Barth.
+ 
+         new-run-webkit-tests - repurpose the "Passing" port as "Dryrun" port
+         that can be used to test platforms other than the one you are running
+         on. This can be useful for checking baselines and testing code
+         coverage.
+ 
+         Note that running the code on the "wrong" port requires each
+         port-specific implementation to actually not require any
+         platform-specific python code (e.g., the chromium-win port must
+         test for the existence of windows functions before calling them).
+ 
+         https://bugs.webkit.org/show_bug.cgi?id=37782
+ 
+         * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+         * Scripts/webkitpy/layout_tests/port/dryrun.py: Renamed from WebKitTools/Scripts/webkitpy/layout_tests/port/passing.py.
+         * Scripts/webkitpy/layout_tests/port/factory.py:
+         * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
+2010-04-19  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Eric Seidel.
 

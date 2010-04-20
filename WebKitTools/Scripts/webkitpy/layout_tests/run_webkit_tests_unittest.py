@@ -56,5 +56,19 @@ class MainTest(unittest.TestCase):
                                      '--log', 'unexpected',
                                      'fast/html']))
 
+
+class DryrunTest(unittest.TestCase):
+    def test_basics(self):
+        self.assertTrue(passing_run(['--platform', 'dryrun',
+                                     'fast/html']))
+        self.assertTrue(passing_run(['--platform', 'dryrun-mac',
+                                     'fast/html']))
+        self.assertTrue(passing_run(['--platform', 'dryrun-chromium-mac',
+                                     'fast/html']))
+        self.assertTrue(passing_run(['--platform', 'dryrun-chromium-win',
+                                     'fast/html']))
+        self.assertTrue(passing_run(['--platform', 'dryrun-chromium-linux',
+                                     'fast/html']))
+
 if __name__ == '__main__':
     unittest.main()
