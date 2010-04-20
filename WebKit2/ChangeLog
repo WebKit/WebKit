@@ -1,3 +1,11 @@
+2010-04-20  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::chooseIconForFiles):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2010-04-19  Anders Carlsson  <andersca@apple.com>
 
         Fix build.

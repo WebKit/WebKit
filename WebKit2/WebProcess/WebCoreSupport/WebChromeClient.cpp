@@ -406,7 +406,7 @@ void WebChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser>)
     notImplemented();
 }
 
-void WebChromeClient::chooseIconForFiles(const Vector<String>&, PassRefPtr<FileChooser>)
+void WebChromeClient::chooseIconForFiles(const Vector<String>&, FileChooser*)
 {
     notImplemented();
 }
