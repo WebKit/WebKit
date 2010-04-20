@@ -1,3 +1,11 @@
+2010-04-20  Nate Chapin  <japhet@chromium.org>
+
+        Unreviewed.
+
+        Update my irc handle in committers.py (natechapin -> japhet).
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-04-20  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
