@@ -1,3 +1,9 @@
+2010-04-20  Andrew Scherkus  <scherkus@chromium.org>
+
+        Unreviewed, updating Chromium test_expectations for media/video-zoom.html.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-04-20  James Robinson  <jamesr@chromium.org>
 
         Unreviewed. Update chromium expectations.  Also consolidate identical

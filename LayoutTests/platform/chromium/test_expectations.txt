@@ -768,6 +768,7 @@ BUGJAMESR : media/video-empty-source.html = IMAGE+TEXT
 BUG13907 : media/controls-styling.html = FAIL
 
 // These tests are flaky with subtle pixel differences.
+BUG13907 LINUX MAC : media/video-zoom.html = IMAGE PASS
 BUG13907 LINUX MAC : media/video-layer-crash.html = IMAGE PASS
 BUG13907 LINUX MAC : media/video-transformed.html = IMAGE PASS
 
