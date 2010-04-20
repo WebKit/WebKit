@@ -1,3 +1,14 @@
+2010-04-19  Jessie Berlin  <jberlin@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Remove an extra space in the getComputedStyle-with-psuedo-element test that was causing it to fail on the Chromium bots, and remove the platform-specific results that were landed in the meantime.
+
+        * fast/css/getComputedStyle/getComputedStyle-with-pseudo-element-expected.txt:
+        * fast/css/getComputedStyle/getComputedStyle-with-pseudo-element.html:
+        * platform/chromium-linux/fast/css/getComputedStyle/getComputedStyle-with-pseudo-element-expected.txt: Removed.
+        * platform/chromium-win/fast/css/getComputedStyle/getComputedStyle-with-pseudo-element-expected.txt: Removed.
+
 2010-04-19  James Robinson  <jamesr@chromium.org>
 
         Unreviewed. Update chromium test expectations.
