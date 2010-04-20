@@ -1,3 +1,18 @@
+2010-04-20  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Invalid cast due to <video> inside <foreignObject> inside <svg> inside <img>
+        https://bugs.webkit.org/show_bug.cgi?id=37331
+
+        Tests for a crash on attempting to load media in a foreignObject inside
+        an SVGImage.
+
+        * media/resources: Added.
+        * media/resources/foreignobject-media.svg: Added.
+        * media/svg-as-image-with-media-blocked-expected.txt: Added.
+        * media/svg-as-image-with-media-blocked.html: Added.
+
 2010-04-20  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Adam Barth.

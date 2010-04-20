@@ -76,6 +76,7 @@ Settings::Settings(Page* page)
     , m_privateBrowsingEnabled(false)
     , m_caretBrowsingEnabled(false)
     , m_areImagesEnabled(true)
+    , m_isMediaEnabled(true)
     , m_arePluginsEnabled(false)
     , m_localStorageEnabled(false)
     , m_isJavaScriptEnabled(false)
@@ -264,6 +265,11 @@ void Settings::setJavaEnabled(bool isJavaEnabled)
 void Settings::setImagesEnabled(bool areImagesEnabled)
 {
     m_areImagesEnabled = areImagesEnabled;
+}
+
+void Settings::setMediaEnabled(bool isMediaEnabled)
+{
+    m_isMediaEnabled = isMediaEnabled;
 }
 
 void Settings::setPluginsEnabled(bool arePluginsEnabled)

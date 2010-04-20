@@ -1,3 +1,25 @@
+2010-04-20  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Invalid cast due to <video> inside <foreignObject> inside <svg> inside <img>
+        https://bugs.webkit.org/show_bug.cgi?id=37331
+
+        Added a setting to enable/disable media per-page and have the SVGImage 
+        disable media for its dummy page. Also found and fixed a related bad
+        cast in the V8 bindings (JSC had a custom wrapper for this already).
+
+        Tests: media/svg-as-image-with-media-blocked.html
+
+        * dom/make_names.pl: Added media enabled check and V8 cast wrapper
+        * page/Settings.cpp: Added m_isMediaEnabled (defaults to true)
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setMediaEnabled):
+        * page/Settings.h:
+        (WebCore::Settings::isMediaEnabled):
+        * svg/graphics/SVGImage.cpp: Disables media in dummy page
+        (WebCore::SVGImage::dataChanged):
+
 2010-04-19  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Simon Fraser.
