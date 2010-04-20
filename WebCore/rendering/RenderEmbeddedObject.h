@@ -27,7 +27,8 @@
 
 namespace WebCore {
 
-// Renderer for embeds and objects.
+// Renderer for embeds and objects, often, but not always, rendered via plug-ins.
+// For example, <embed src="foo.html"> does not invoke a plug-in.
 class RenderEmbeddedObject : public RenderPartObject {
 public:
     RenderEmbeddedObject(Element*);

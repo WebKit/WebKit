@@ -924,8 +924,10 @@ SOURCES += \
     rendering/RenderFileUploadControl.cpp \
     rendering/RenderFlexibleBox.cpp \
     rendering/RenderFrame.cpp \
+    rendering/RenderFrameBase.cpp \
     rendering/RenderFrameSet.cpp \
     rendering/RenderHTMLCanvas.cpp \
+    rendering/RenderIFrame.cpp \
     rendering/RenderImage.cpp \
     rendering/RenderImageGeneratedContent.cpp \
     rendering/RenderInline.cpp \
@@ -1690,8 +1692,10 @@ HEADERS += \
     rendering/RenderFlexibleBox.h \
     rendering/RenderForeignObject.h \
     rendering/RenderFrame.h \
+    rendering/RenderFrameBase.h \
     rendering/RenderFrameSet.h \
     rendering/RenderHTMLCanvas.h \
+    rendering/RenderIFrame.h \
     rendering/RenderImageGeneratedContent.h \
     rendering/RenderImage.h \
     rendering/RenderInline.h \

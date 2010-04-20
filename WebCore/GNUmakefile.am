@@ -1848,10 +1848,14 @@ webcore_sources += \
 	WebCore/rendering/RenderFlexibleBox.h \
 	WebCore/rendering/RenderFrame.cpp \
 	WebCore/rendering/RenderFrame.h \
+	WebCore/rendering/RenderFrameBase.cpp \
+	WebCore/rendering/RenderFrameBase.h \
 	WebCore/rendering/RenderFrameSet.cpp \
 	WebCore/rendering/RenderFrameSet.h \
 	WebCore/rendering/RenderHTMLCanvas.cpp \
 	WebCore/rendering/RenderHTMLCanvas.h \
+	WebCore/rendering/RenderIFrame.cpp \
+	WebCore/rendering/RenderIFrame.h \
 	WebCore/rendering/RenderImage.cpp \
 	WebCore/rendering/RenderImage.h \
 	WebCore/rendering/RenderImageGeneratedContent.cpp \

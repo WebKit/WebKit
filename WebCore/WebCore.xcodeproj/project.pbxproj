@@ -202,6 +202,10 @@
 		0FCF332D0F2B9A25004B6795 /* WebTiledLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCF33290F2B9A25004B6795 /* WebTiledLayer.h */; };
 		0FCF332E0F2B9A25004B6795 /* WebLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FCF332A0F2B9A25004B6795 /* WebLayer.mm */; };
 		0FCF332F0F2B9A25004B6795 /* WebLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCF332B0F2B9A25004B6795 /* WebLayer.h */; };
+		0FD3080E117CF7E700A791F7 /* RenderFrameBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD3080C117CF7E700A791F7 /* RenderFrameBase.cpp */; };
+		0FD3080F117CF7E700A791F7 /* RenderFrameBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD3080D117CF7E700A791F7 /* RenderFrameBase.h */; };
+		0FD308D5117D168500A791F7 /* RenderIFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD308D3117D168400A791F7 /* RenderIFrame.cpp */; };
+		0FD308D6117D168500A791F7 /* RenderIFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD308D4117D168400A791F7 /* RenderIFrame.h */; };
 		0FD723820EC8BD9300CA5DD7 /* FloatQuad.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD723800EC8BD9300CA5DD7 /* FloatQuad.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FD723830EC8BD9300CA5DD7 /* FloatQuad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD723810EC8BD9300CA5DD7 /* FloatQuad.cpp */; };
 		0FF5025B102BA9010066F39A /* DOMMedia.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF50259102BA9010066F39A /* DOMMedia.h */; };
@@ -5575,6 +5579,10 @@
 		0FCF33290F2B9A25004B6795 /* WebTiledLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebTiledLayer.h; sourceTree = "<group>"; };
 		0FCF332A0F2B9A25004B6795 /* WebLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebLayer.mm; sourceTree = "<group>"; };
 		0FCF332B0F2B9A25004B6795 /* WebLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebLayer.h; sourceTree = "<group>"; };
+		0FD3080C117CF7E700A791F7 /* RenderFrameBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderFrameBase.cpp; sourceTree = "<group>"; };
+		0FD3080D117CF7E700A791F7 /* RenderFrameBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderFrameBase.h; sourceTree = "<group>"; };
+		0FD308D3117D168400A791F7 /* RenderIFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderIFrame.cpp; sourceTree = "<group>"; };
+		0FD308D4117D168400A791F7 /* RenderIFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderIFrame.h; sourceTree = "<group>"; };
 		0FD723800EC8BD9300CA5DD7 /* FloatQuad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatQuad.h; sourceTree = "<group>"; };
 		0FD723810EC8BD9300CA5DD7 /* FloatQuad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FloatQuad.cpp; sourceTree = "<group>"; };
 		0FF50259102BA9010066F39A /* DOMMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMMedia.h; sourceTree = "<group>"; };
@@ -15892,10 +15900,14 @@
 				853CA9EB0AEEC63C002372DC /* RenderForeignObject.h */,
 				A871DECC0A1530C700B12A68 /* RenderFrame.cpp */,
 				A871DECB0A1530C700B12A68 /* RenderFrame.h */,
+				0FD3080C117CF7E700A791F7 /* RenderFrameBase.cpp */,
+				0FD3080D117CF7E700A791F7 /* RenderFrameBase.h */,
 				A871DECA0A1530C700B12A68 /* RenderFrameSet.cpp */,
 				A871DEC90A1530C700B12A68 /* RenderFrameSet.h */,
 				BCEA482A097D93020094C9E4 /* RenderHTMLCanvas.cpp */,
 				BCEA482B097D93020094C9E4 /* RenderHTMLCanvas.h */,
+				0FD308D3117D168400A791F7 /* RenderIFrame.cpp */,
+				0FD308D4117D168400A791F7 /* RenderIFrame.h */,
 				BCEA4836097D93020094C9E4 /* RenderImage.cpp */,
 				BCEA4837097D93020094C9E4 /* RenderImage.h */,
 				BCB4F8920DB28E530039139B /* RenderImageGeneratedContent.cpp */,
@@ -18865,6 +18877,8 @@
 				895253DD116C4EF500CABF00 /* FileStreamProxy.h in Headers */,
 				895253DF116C4F0600CABF00 /* FileThreadTask.h in Headers */,
 				CEF418CF1179678C009D112C /* ViewportArguments.h in Headers */,
+				0FD3080F117CF7E700A791F7 /* RenderFrameBase.h in Headers */,
+				0FD308D6117D168500A791F7 /* RenderIFrame.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -21101,6 +21115,8 @@
 				9FA37EFC1172FDA600C4CD55 /* JSScriptProfileNode.cpp in Sources */,
 				895253DC116C4EF500CABF00 /* FileStreamProxy.cpp in Sources */,
 				CEF418CE1179678C009D112C /* ViewportArguments.cpp in Sources */,
+				0FD3080E117CF7E700A791F7 /* RenderFrameBase.cpp in Sources */,
+				0FD308D5117D168500A791F7 /* RenderIFrame.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

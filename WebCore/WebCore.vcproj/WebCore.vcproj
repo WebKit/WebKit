@@ -27553,6 +27553,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\RenderFrameBase.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderFrameBase.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\RenderFrameSet.cpp"
 				>
 			</File>
@@ -27566,6 +27574,14 @@
 			</File>
 			<File
 				RelativePath="..\rendering\RenderHTMLCanvas.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderIFrame.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderIFrame.h"
 				>
 			</File>
 			<File

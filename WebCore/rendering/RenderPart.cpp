@@ -56,60 +56,6 @@ void RenderPart::setWidget(PassRefPtr<Widget> widget)
     viewCleared();
 }
 
-void RenderPart::layoutWithFlattening(bool fixedWidth, bool fixedHeight)
-{
-    FrameView* childFrameView = static_cast<FrameView*>(widget());
-    RenderView* childRoot = childFrameView ? static_cast<RenderView*>(childFrameView->frame()->contentRenderer()) : 0;
-
-    // Do not expand frames which has zero width or height
-    if (!width() || !height() || !childRoot) {
-        updateWidgetPosition();
-        if (childFrameView)
-            childFrameView->layout();
-        setNeedsLayout(false);
-        return;
-    }
-
-    // need to update to calculate min/max correctly
-    updateWidgetPosition();
-    if (childRoot->prefWidthsDirty())
-        childRoot->calcPrefWidths();
-
-    // if scrollbars are off, and the width or height are fixed
-    // we obey them and do not expand. With frame flattening
-    // no subframe much ever become scrollable.
-
-    HTMLFrameElementBase* element = static_cast<HTMLFrameElementBase*>(node());
-    bool isScrollable = element->scrollingMode() != ScrollbarAlwaysOff;
-
-    // consider iframe inset border
-    int hBorder = borderLeft() + borderRight();
-    int vBorder = borderTop() + borderBottom();
-
-    // make sure minimum preferred width is enforced
-    if (isScrollable || !fixedWidth) {
-        setWidth(max(width(), childRoot->minPrefWidth() + hBorder));
-        // update again to pass the new width to the child frame
-        updateWidgetPosition();
-        childFrameView->layout();
-    }
-
-    // expand the frame by setting frame height = content height
-    if (isScrollable || !fixedHeight || childRoot->isFrameSet())
-        setHeight(max(height(), childFrameView->contentsHeight() + vBorder));
-    if (isScrollable || !fixedWidth || childRoot->isFrameSet())
-        setWidth(max(width(), childFrameView->contentsWidth() + hBorder));
-
-    updateWidgetPosition();
-
-    ASSERT(!childFrameView->layoutPending());
-    ASSERT(!childRoot->needsLayout());
-    ASSERT(!childRoot->firstChild() || !childRoot->firstChild()->firstChild() || !childRoot->firstChild()->firstChild()->needsLayout());
-
-    setNeedsLayout(false);
-}
-
-
 void RenderPart::viewCleared()
 {
 }

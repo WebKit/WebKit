@@ -573,8 +573,10 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	rendering/RenderFlexibleBox.cpp \
 	rendering/RenderForeignObject.cpp \
 	rendering/RenderFrame.cpp \
+	rendering/RenderFrameBase.cpp \
 	rendering/RenderFrameSet.cpp \
 	rendering/RenderHTMLCanvas.cpp \
+	rendering/RenderIFrame.cpp \
 	rendering/RenderImage.cpp \
 	rendering/RenderImageGeneratedContent.cpp \
 	rendering/RenderInline.cpp \

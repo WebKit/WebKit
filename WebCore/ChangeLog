@@ -1,3 +1,49 @@
+2010-04-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Clean up RenderPart/RenderPartObject/RenderFrame/RenderEmbeddedObject
+        https://bugs.webkit.org/show_bug.cgi?id=37741
+
+        Add a new renderer for iframes, named RenderIFrame. Add a new shared base class
+        between this and RenderFrame, called RenderFrameBase (following the existing HTMLFrameElementBase),
+        and move code from RenderPart and RenderPartObject into these new classes.
+        
+        There should be no functionality difference with this change, so no new tests.
+        
+        Fixing up renderer names in the layout tests will be done in a later pass.
+        
+        Fix build systems to include the new files.
+        
+        * Android.mk:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::createRenderer):
+        * rendering/RenderEmbeddedObject.h:
+        * rendering/RenderFrame.cpp:
+        (WebCore::RenderFrame::RenderFrame):
+        * rendering/RenderFrame.h:
+        * rendering/RenderFrameBase.cpp: Added.
+        (WebCore::RenderFrameBase::RenderFrameBase):
+        (WebCore::RenderFrameBase::layoutWithFlattening):
+        * rendering/RenderFrameBase.h: Added.
+        * rendering/RenderIFrame.cpp: Added.
+        (WebCore::RenderIFrame::RenderIFrame):
+        (WebCore::RenderIFrame::calcHeight):
+        (WebCore::RenderIFrame::calcWidth):
+        (WebCore::RenderIFrame::flattenFrame):
+        (WebCore::RenderIFrame::layout):
+        * rendering/RenderIFrame.h: Added.
+        (WebCore::RenderIFrame::renderName):
+        * rendering/RenderPart.cpp:
+        * rendering/RenderPart.h:
+        * rendering/RenderPartObject.cpp:
+        * rendering/RenderPartObject.h:
+
 2010-04-19  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Geoffrey Garen.

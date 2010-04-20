@@ -30,7 +30,7 @@
 #include "HTMLDocument.h"
 #include "HTMLNames.h"
 #include "MappedAttribute.h"
-#include "RenderPartObject.h"
+#include "RenderIFrame.h"
 
 namespace WebCore {
 
@@ -143,7 +143,7 @@ bool HTMLIFrameElement::rendererIsNeeded(RenderStyle* style)
 
 RenderObject* HTMLIFrameElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    return new (arena) RenderPartObject(this);
+    return new (arena) RenderIFrame(this);
 }
 
 void HTMLIFrameElement::insertedIntoDocument()
