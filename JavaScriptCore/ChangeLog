@@ -1,6 +1,13 @@
 2010-04-20  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by NOBODY (build fix).
+        Speculative Chromium/Win build fix, attempt #2.
+
+        * config.h:
+
+2010-04-20  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by NOBODY (build fix).
         Speculative Chromium/Win build fix.
 
         * config.h: JS_EXPORTDATA should do nothing on !JSC builds.
