@@ -2940,8 +2940,6 @@
 		A871DED20A1530C700B12A68 /* RenderFrameSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871DECA0A1530C700B12A68 /* RenderFrameSet.cpp */; };
 		A871DED30A1530C700B12A68 /* RenderFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DECB0A1530C700B12A68 /* RenderFrame.h */; };
 		A871DED40A1530C700B12A68 /* RenderFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871DECC0A1530C700B12A68 /* RenderFrame.cpp */; };
-		A871DED50A1530C700B12A68 /* RenderPartObject.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DECD0A1530C700B12A68 /* RenderPartObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A871DED60A1530C700B12A68 /* RenderPartObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871DECE0A1530C700B12A68 /* RenderPartObject.cpp */; };
 		A871DED70A1530C700B12A68 /* RenderPart.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DECF0A1530C700B12A68 /* RenderPart.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A871DFE20A15376B00B12A68 /* RenderReplaced.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871DFDE0A15376B00B12A68 /* RenderReplaced.cpp */; };
 		A871DFE30A15376B00B12A68 /* RenderReplaced.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DFDF0A15376B00B12A68 /* RenderReplaced.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8256,8 +8254,6 @@
 		A871DECA0A1530C700B12A68 /* RenderFrameSet.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderFrameSet.cpp; sourceTree = "<group>"; };
 		A871DECB0A1530C700B12A68 /* RenderFrame.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderFrame.h; sourceTree = "<group>"; };
 		A871DECC0A1530C700B12A68 /* RenderFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderFrame.cpp; sourceTree = "<group>"; };
-		A871DECD0A1530C700B12A68 /* RenderPartObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderPartObject.h; sourceTree = "<group>"; };
-		A871DECE0A1530C700B12A68 /* RenderPartObject.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderPartObject.cpp; sourceTree = "<group>"; };
 		A871DECF0A1530C700B12A68 /* RenderPart.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderPart.h; sourceTree = "<group>"; };
 		A871DFDE0A15376B00B12A68 /* RenderReplaced.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderReplaced.cpp; sourceTree = "<group>"; };
 		A871DFDF0A15376B00B12A68 /* RenderReplaced.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderReplaced.h; sourceTree = "<group>"; };
@@ -15941,8 +15937,6 @@
 				BCFA930710333193007B25D1 /* RenderOverflow.h */,
 				A871DEC80A1530C700B12A68 /* RenderPart.cpp */,
 				A871DECF0A1530C700B12A68 /* RenderPart.h */,
-				A871DECE0A1530C700B12A68 /* RenderPartObject.cpp */,
-				A871DECD0A1530C700B12A68 /* RenderPartObject.h */,
 				853CA9EE0AEEC657002372DC /* RenderPath.cpp */,
 				853CA9EF0AEEC657002372DC /* RenderPath.h */,
 				A43BF59A1149292800C643CA /* RenderProgress.cpp */,
@@ -18243,7 +18237,6 @@
 				BC2CC8DF0F32881000A9DF26 /* RenderObjectChildList.h in Headers */,
 				BCFA930810333193007B25D1 /* RenderOverflow.h in Headers */,
 				A871DED70A1530C700B12A68 /* RenderPart.h in Headers */,
-				A871DED50A1530C700B12A68 /* RenderPartObject.h in Headers */,
 				853CA9F10AEEC657002372DC /* RenderPath.h in Headers */,
 				A871DFE30A15376B00B12A68 /* RenderReplaced.h in Headers */,
 				BCA846D70DC67A350026C309 /* RenderReplica.h in Headers */,
@@ -20555,7 +20548,6 @@
 				BCEA487F097D93020094C9E4 /* RenderObject.cpp in Sources */,
 				BC60EFB70F33A0E700812A93 /* RenderObjectChildList.cpp in Sources */,
 				A871DED00A1530C700B12A68 /* RenderPart.cpp in Sources */,
-				A871DED60A1530C700B12A68 /* RenderPartObject.cpp in Sources */,
 				853CA9F00AEEC657002372DC /* RenderPath.cpp in Sources */,
 				A871DFE20A15376B00B12A68 /* RenderReplaced.cpp in Sources */,
 				BCA846D60DC67A350026C309 /* RenderReplica.cpp in Sources */,

@@ -27755,14 +27755,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\rendering\RenderPartObject.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\rendering\RenderPartObject.h"
-				>
-			</File>
-			<File
 				RelativePath="..\rendering\RenderPath.cpp"
 				>
 			</File>

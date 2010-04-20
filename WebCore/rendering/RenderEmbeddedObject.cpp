@@ -65,7 +65,7 @@ static const float replacementTextRoundedRectRadius = 5;
 static const float replacementTextTextOpacity = 0.55f;
 
 RenderEmbeddedObject::RenderEmbeddedObject(Element* element)
-    : RenderPartObject(element)
+    : RenderPart(element)
     , m_hasFallbackContent(false)
 {
     view()->frameView()->setIsVisuallyNonEmpty();
@@ -80,7 +80,7 @@ RenderEmbeddedObject::~RenderEmbeddedObject()
 #if USE(ACCELERATED_COMPOSITING)
 bool RenderEmbeddedObject::requiresLayer() const
 {
-    if (RenderPartObject::requiresLayer())
+    if (RenderPart::requiresLayer())
         return true;
     
     return allowsAcceleratedCompositing();
@@ -350,7 +350,7 @@ void RenderEmbeddedObject::paint(PaintInfo& paintInfo, int tx, int ty)
         return;
     }
     
-    RenderPartObject::paint(paintInfo, tx, ty);
+    RenderPart::paint(paintInfo, tx, ty);
 }
 
 void RenderEmbeddedObject::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
@@ -422,6 +422,25 @@ void RenderEmbeddedObject::layout()
         frameView()->addWidgetToUpdate(this);
 
     setNeedsLayout(false);
+}
+
+void RenderEmbeddedObject::viewCleared()
+{
+    // This is required for <object> elements whose contents are rendered by WebCore (e.g. src="foo.html").
+    if (node() && widget() && widget()->isFrameView()) {
+        FrameView* view = static_cast<FrameView*>(widget());
+        int marginw = -1;
+        int marginh = -1;
+        if (node()->hasTagName(iframeTag)) {
+            HTMLIFrameElement* frame = static_cast<HTMLIFrameElement*>(node());
+            marginw = frame->getMarginWidth();
+            marginh = frame->getMarginHeight();
+        }
+        if (marginw != -1)
+            view->setMarginWidth(marginw);
+        if (marginh != -1)
+            view->setMarginHeight(marginh);
+    }
 }
 
 }

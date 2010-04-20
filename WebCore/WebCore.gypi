@@ -3138,8 +3138,6 @@
             'rendering/RenderObjectChildList.h',
             'rendering/RenderPart.cpp',
             'rendering/RenderPart.h',
-            'rendering/RenderPartObject.cpp',
-            'rendering/RenderPartObject.h',
             'rendering/RenderPath.cpp',
             'rendering/RenderPath.h',
             'rendering/RenderProgress.cpp',

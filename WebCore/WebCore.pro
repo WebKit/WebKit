@@ -941,7 +941,6 @@ SOURCES += \
     rendering/RenderObject.cpp \
     rendering/RenderObjectChildList.cpp \
     rendering/RenderPart.cpp \
-    rendering/RenderPartObject.cpp \
     rendering/RenderProgress.cpp \
     rendering/RenderReplaced.cpp \
     rendering/RenderReplica.cpp \
@@ -1710,7 +1709,6 @@ HEADERS += \
     rendering/RenderObjectChildList.h \
     rendering/RenderObject.h \
     rendering/RenderPart.h \
-    rendering/RenderPartObject.h \
     rendering/RenderPath.h \
     rendering/RenderProgress.h \
     rendering/RenderReplaced.h \

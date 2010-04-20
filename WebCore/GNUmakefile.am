@@ -1884,8 +1884,6 @@ webcore_sources += \
 	WebCore/rendering/RenderOverflow.h \
 	WebCore/rendering/RenderPart.cpp \
 	WebCore/rendering/RenderPart.h \
-	WebCore/rendering/RenderPartObject.cpp \
-	WebCore/rendering/RenderPartObject.h \
 	WebCore/rendering/RenderProgress.cpp \
 	WebCore/rendering/RenderProgress.h \
 	WebCore/rendering/RenderReplaced.cpp \

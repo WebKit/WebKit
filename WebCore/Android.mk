@@ -593,7 +593,6 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	rendering/RenderObject.cpp \
 	rendering/RenderObjectChildList.cpp \
 	rendering/RenderPart.cpp \
-	rendering/RenderPartObject.cpp \
 	rendering/RenderPath.cpp \
 	rendering/RenderReplaced.cpp \
 	rendering/RenderReplica.cpp \

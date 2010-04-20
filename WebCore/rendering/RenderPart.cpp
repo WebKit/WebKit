@@ -34,7 +34,6 @@ namespace WebCore {
 RenderPart::RenderPart(Element* node)
     : RenderWidget(node)
 {
-    // init RenderObject attributes
     setInline(false);
 }
 
