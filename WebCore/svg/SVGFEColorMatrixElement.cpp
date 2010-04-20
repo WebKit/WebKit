@@ -26,6 +26,7 @@
 #include "MappedAttribute.h"
 #include "SVGNames.h"
 #include "SVGNumberList.h"
+#include "SVGResourceFilter.h"
 
 namespace WebCore {
 
@@ -80,12 +81,12 @@ void SVGFEColorMatrixElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeValues();
 }
 
-PassRefPtr<FilterEffect> SVGFEColorMatrixElement::build(SVGFilterBuilder* filterBuilder)
+bool SVGFEColorMatrixElement::build(SVGResourceFilter* filterResource)
 {
-    FilterEffect* input1 = filterBuilder->getEffectById(in1());
+    FilterEffect* input1 = filterResource->builder()->getEffectById(in1());
 
     if (!input1)
-        return 0;
+        return false;
 
     Vector<float> filterValues;
     SVGNumberList* numbers = values();
@@ -119,10 +120,13 @@ PassRefPtr<FilterEffect> SVGFEColorMatrixElement::build(SVGFilterBuilder* filter
             || (filterType == FECOLORMATRIX_TYPE_HUEROTATE && size != 1)
             || (filterType == FECOLORMATRIX_TYPE_SATURATE && (size != 1
                 || filterValues[0] < 0.0f || filterValues[0] > 1.0f)))
-            return 0;
+            return false;
     }
 
-    return FEColorMatrix::create(input1, filterType, filterValues);
+    RefPtr<FilterEffect> effect = FEColorMatrix::create(input1, filterType, filterValues);
+    filterResource->addFilterEffect(this, effect.release());
+    
+    return true;
 }
 
 } //namespace WebCore

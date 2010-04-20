@@ -30,6 +30,7 @@
 #include "SVGFELightElement.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
+#include "SVGResourceFilter.h"
 
 namespace WebCore {
 
@@ -108,19 +109,22 @@ PassRefPtr<LightSource> SVGFESpecularLightingElement::findLights() const
     return 0;
 }
 
-PassRefPtr<FilterEffect> SVGFESpecularLightingElement::build(SVGFilterBuilder* filterBuilder)
+bool SVGFESpecularLightingElement::build(SVGResourceFilter* filterResource)
 {
-    FilterEffect* input1 = filterBuilder->getEffectById(in1());
+    FilterEffect* input1 = filterResource->builder()->getEffectById(in1());
     
     if (!input1)
-        return 0;
+        return false;
     
     RefPtr<RenderStyle> filterStyle = styleForRenderer();    
     
     Color color = filterStyle->svgStyle()->lightingColor();
     
-    return FESpecularLighting::create(input1, color, surfaceScale(), specularConstant(), 
-                                      specularExponent(), kernelUnitLengthX(), kernelUnitLengthY(), findLights());
+    RefPtr<FilterEffect> effect = FESpecularLighting::create(input1, color, surfaceScale(), specularConstant(), 
+                                        specularExponent(), kernelUnitLengthX(), kernelUnitLengthY(), findLights());
+    filterResource->addFilterEffect(this, effect.release());
+
+    return true;
 }
 
 }

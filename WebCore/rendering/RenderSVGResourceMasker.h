@@ -58,7 +58,7 @@ public:
     virtual void invalidateClients();
     virtual void invalidateClient(RenderObject*);
 
-    virtual bool applyResource(RenderObject*, GraphicsContext*&);
+    virtual bool applyResource(RenderObject*, GraphicsContext*);
     virtual FloatRect resourceBoundingBox(const FloatRect&) const;
 
     SVGUnitTypes::SVGUnitType maskUnits() const { return toUnitType(static_cast<SVGMaskElement*>(node())->maskUnits()); }

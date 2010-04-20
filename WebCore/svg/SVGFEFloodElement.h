@@ -26,13 +26,13 @@
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore {
-class SVGFEFloodElement : public SVGFilterPrimitiveStandardAttributes {
-public:
-    SVGFEFloodElement(const QualifiedName&, Document*);
-    virtual ~SVGFEFloodElement();
+    class SVGFEFloodElement : public SVGFilterPrimitiveStandardAttributes {
+    public:
+        SVGFEFloodElement(const QualifiedName&, Document*);
+        virtual ~SVGFEFloodElement();
 
-    virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*);
-};
+        virtual bool build(SVGResourceFilter*);
+    };
 
 } // namespace WebCore
 

@@ -1,3 +1,9 @@
+KCanvasResource {id="Turb1" [type=FILTER] }
+KCanvasResource {id="Turb2" [type=FILTER] }
+KCanvasResource {id="Turb3" [type=FILTER] }
+KCanvasResource {id="Turb4" [type=FILTER] }
+KCanvasResource {id="Turb5" [type=FILTER] }
+KCanvasResource {id="Turb6" [type=FILTER] }
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
@@ -5,20 +11,7 @@ layer at (0,0) size 480x360
     RenderSVGContainer {g} at (23,25) size 404x273
       RenderSVGContainer {g} at (23,25) size 404x273
         RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-          RenderSVGResourceFilter {filter} [id="Turb1"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-            [last primitive [type=TURBULENCE]  [turbulence type=TURBULANCE] [base frequency x=0.05 y=0.05] [seed=0.00] [num octaves=2] [stitch tiles=0]]
-          RenderSVGResourceFilter {filter} [id="Turb2"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-            [last primitive [type=TURBULENCE]  [turbulence type=TURBULANCE] [base frequency x=0.10 y=0.10] [seed=0.00] [num octaves=2] [stitch tiles=0]]
-          RenderSVGResourceFilter {filter} [id="Turb3"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-            [last primitive [type=TURBULENCE]  [turbulence type=TURBULANCE] [base frequency x=0.05 y=0.05] [seed=0.00] [num octaves=8] [stitch tiles=0]]
-          RenderSVGResourceFilter {filter} [id="Turb4"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-            [last primitive [type=TURBULENCE]  [turbulence type=NOISE] [base frequency x=0.10 y=0.10] [seed=0.00] [num octaves=4] [stitch tiles=0]]
-          RenderSVGResourceFilter {filter} [id="Turb5"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-            [last primitive [type=TURBULENCE]  [turbulence type=NOISE] [base frequency x=0.40 y=0.40] [seed=0.00] [num octaves=4] [stitch tiles=0]]
-          RenderSVGResourceFilter {filter} [id="Turb6"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-            [last primitive [type=TURBULENCE]  [turbulence type=NOISE] [base frequency x=0.10 y=0.10] [seed=0.00] [num octaves=1] [stitch tiles=0]]
-        RenderPath {rect} at (25,25) size 100x75 [fill={[type=SOLID] [color=#000000]}] [data="M25.00,25.00 L125.00,25.00 L125.00,100.00 L25.00,100.00 Z"]
-          [filter="Turb1"] RenderSVGResourceFilter {filter} at (25,25) size 100x75
+        RenderPath {rect} at (25,25) size 100x75 [fill={[type=SOLID] [color=#000000]}] [filter=Turb1] [data="M25.00,25.00 L125.00,25.00 L125.00,100.00 L25.00,100.00 Z"]
         RenderSVGText {text} at (34,117) size 82x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-10) size 82x12
             chunk 1 (middle anchor) text run 1 at (34.00,117.00) startOffset 0 endOffset 15 width 82.00: "type=turbulence"
@@ -28,8 +21,7 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (37,141) size 76x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-10) size 76x12
             chunk 1 (middle anchor) text run 1 at (37.00,141.00) startOffset 0 endOffset 12 width 76.00: "numOctaves=2"
-        RenderPath {rect} at (175,25) size 100x75 [fill={[type=SOLID] [color=#000000]}] [data="M175.00,25.00 L275.00,25.00 L275.00,100.00 L175.00,100.00 Z"]
-          [filter="Turb2"] RenderSVGResourceFilter {filter} at (175,25) size 100x75
+        RenderPath {rect} at (175,25) size 100x75 [fill={[type=SOLID] [color=#000000]}] [filter=Turb2] [data="M175.00,25.00 L275.00,25.00 L275.00,100.00 L175.00,100.00 Z"]
         RenderSVGText {text} at (184,117) size 82x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-10) size 82x12
             chunk 1 (middle anchor) text run 1 at (184.00,117.00) startOffset 0 endOffset 15 width 82.00: "type=turbulence"
@@ -39,8 +31,7 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (187,141) size 76x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-10) size 76x12
             chunk 1 (middle anchor) text run 1 at (187.00,141.00) startOffset 0 endOffset 12 width 76.00: "numOctaves=2"
-        RenderPath {rect} at (325,25) size 100x75 [fill={[type=SOLID] [color=#000000]}] [data="M325.00,25.00 L425.00,25.00 L425.00,100.00 L325.00,100.00 Z"]
-          [filter="Turb3"] RenderSVGResourceFilter {filter} at (325,25) size 100x75
+        RenderPath {rect} at (325,25) size 100x75 [fill={[type=SOLID] [color=#000000]}] [filter=Turb3] [data="M325.00,25.00 L425.00,25.00 L425.00,100.00 L325.00,100.00 Z"]
         RenderSVGText {text} at (334,117) size 82x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-10) size 82x12
             chunk 1 (middle anchor) text run 1 at (334.00,117.00) startOffset 0 endOffset 15 width 82.00: "type=turbulence"
@@ -50,8 +41,7 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (337,141) size 76x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-10) size 76x12
             chunk 1 (middle anchor) text run 1 at (337.00,141.00) startOffset 0 endOffset 12 width 76.00: "numOctaves=8"
-        RenderPath {rect} at (25,180) size 100x75 [fill={[type=SOLID] [color=#000000]}] [data="M25.00,180.00 L125.00,180.00 L125.00,255.00 L25.00,255.00 Z"]
-          [filter="Turb4"] RenderSVGResourceFilter {filter} at (25,180) size 100x75
+        RenderPath {rect} at (25,180) size 100x75 [fill={[type=SOLID] [color=#000000]}] [filter=Turb4] [data="M25.00,180.00 L125.00,180.00 L125.00,255.00 L25.00,255.00 Z"]
         RenderSVGText {text} at (30,272) size 90x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-10) size 90x12
             chunk 1 (middle anchor) text run 1 at (30.50,272.00) startOffset 0 endOffset 17 width 89.00: "type=fractalNoise"
@@ -61,8 +51,7 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (37,296) size 76x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-10) size 76x12
             chunk 1 (middle anchor) text run 1 at (37.00,296.00) startOffset 0 endOffset 12 width 76.00: "numOctaves=4"
-        RenderPath {rect} at (175,180) size 100x75 [fill={[type=SOLID] [color=#000000]}] [data="M175.00,180.00 L275.00,180.00 L275.00,255.00 L175.00,255.00 Z"]
-          [filter="Turb5"] RenderSVGResourceFilter {filter} at (175,180) size 100x75
+        RenderPath {rect} at (175,180) size 100x75 [fill={[type=SOLID] [color=#000000]}] [filter=Turb5] [data="M175.00,180.00 L275.00,180.00 L275.00,255.00 L175.00,255.00 Z"]
         RenderSVGText {text} at (180,272) size 90x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-10) size 90x12
             chunk 1 (middle anchor) text run 1 at (180.50,272.00) startOffset 0 endOffset 17 width 89.00: "type=fractalNoise"
@@ -72,8 +61,7 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (187,296) size 76x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-10) size 76x12
             chunk 1 (middle anchor) text run 1 at (187.00,296.00) startOffset 0 endOffset 12 width 76.00: "numOctaves=4"
-        RenderPath {rect} at (325,180) size 100x75 [fill={[type=SOLID] [color=#000000]}] [data="M325.00,180.00 L425.00,180.00 L425.00,255.00 L325.00,255.00 Z"]
-          [filter="Turb6"] RenderSVGResourceFilter {filter} at (325,180) size 100x75
+        RenderPath {rect} at (325,180) size 100x75 [fill={[type=SOLID] [color=#000000]}] [filter=Turb6] [data="M325.00,180.00 L425.00,180.00 L425.00,255.00 L325.00,255.00 Z"]
         RenderSVGText {text} at (330,272) size 90x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-10) size 90x12
             chunk 1 (middle anchor) text run 1 at (330.50,272.00) startOffset 0 endOffset 17 width 89.00: "type=fractalNoise"

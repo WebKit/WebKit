@@ -23,6 +23,7 @@
 #include "SVGFEDisplacementMapElement.h"
 
 #include "MappedAttribute.h"
+#include "SVGResourceFilter.h"
 
 namespace WebCore {
 
@@ -93,17 +94,20 @@ void SVGFEDisplacementMapElement::synchronizeProperty(const QualifiedName& attrN
         synchronizeScale();
 }
 
-PassRefPtr<FilterEffect> SVGFEDisplacementMapElement::build(SVGFilterBuilder* filterBuilder)
+bool SVGFEDisplacementMapElement::build(SVGResourceFilter* filterResource)
 {
-    FilterEffect* input1 = filterBuilder->getEffectById(in1());
-    FilterEffect* input2 = filterBuilder->getEffectById(in2());
+    FilterEffect* input1 = filterResource->builder()->getEffectById(in1());
+    FilterEffect* input2 = filterResource->builder()->getEffectById(in2());
     
     if (!input1 || !input2)
-        return 0;
+        return false;
         
     
-    return FEDisplacementMap::create(input1, input2, static_cast<ChannelSelectorType>(xChannelSelector()), 
-                                     static_cast<ChannelSelectorType>(yChannelSelector()), scale());
+    RefPtr<FilterEffect> effect = FEDisplacementMap::create(input1, input2, static_cast<ChannelSelectorType>(xChannelSelector()), 
+                                        static_cast<ChannelSelectorType>(yChannelSelector()), scale());
+    filterResource->addFilterEffect(this, effect.release());
+    
+    return true;
 }
 
 }

@@ -1,3 +1,146 @@
+2010-04-20  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r57880.
+        http://trac.webkit.org/changeset/57880
+        https://bugs.webkit.org/show_bug.cgi?id=37846
+
+        Broke several bots, FEDisplacmentMap dumps includes pointers,
+        no one noticed. Dirk will upload a new patch later. (Requested
+        by WildFox on #webkit).
+
+        * Android.mk:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::paint):
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::selfWillPaint):
+        (WebCore::RenderSVGContainer::paint):
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::paint):
+        * rendering/RenderSVGResource.h:
+        (WebCore::):
+        * rendering/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::applyResource):
+        * rendering/RenderSVGResourceClipper.h:
+        * rendering/RenderSVGResourceFilter.cpp: Removed.
+        * rendering/RenderSVGResourceFilter.h: Removed.
+        * rendering/RenderSVGResourceMarker.h:
+        (WebCore::RenderSVGResourceMarker::applyResource):
+        * rendering/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::applyResource):
+        * rendering/RenderSVGResourceMasker.h:
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::selfWillPaint):
+        (WebCore::RenderSVGRoot::paint):
+        * rendering/RenderSVGText.cpp:
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderBase::prepareToRenderSVGContent):
+        (WebCore::SVGRenderBase::finishRenderSVGContent):
+        (WebCore::SVGRenderBase::filterBoundingBoxForRenderer):
+        (WebCore::deregisterFromResources):
+        * rendering/SVGRenderSupport.h:
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::writeStyle):
+        (WebCore::writeSVGResource):
+        (WebCore::writeResources):
+        (WebCore::writeRenderResources):
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBoxPaintWalker::SVGRootInlineBoxPaintWalker):
+        (WebCore::SVGRootInlineBox::paint):
+        * svg/SVGFEBlendElement.cpp:
+        (WebCore::SVGFEBlendElement::build):
+        * svg/SVGFEBlendElement.h:
+        * svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::build):
+        * svg/SVGFEColorMatrixElement.h:
+        * svg/SVGFEComponentTransferElement.cpp:
+        (WebCore::SVGFEComponentTransferElement::build):
+        * svg/SVGFEComponentTransferElement.h:
+        * svg/SVGFECompositeElement.cpp:
+        (WebCore::SVGFECompositeElement::build):
+        * svg/SVGFECompositeElement.h:
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::build):
+        * svg/SVGFEDiffuseLightingElement.h:
+        * svg/SVGFEDisplacementMapElement.cpp:
+        (WebCore::SVGFEDisplacementMapElement::build):
+        * svg/SVGFEDisplacementMapElement.h:
+        * svg/SVGFEFloodElement.cpp:
+        (WebCore::SVGFEFloodElement::build):
+        * svg/SVGFEFloodElement.h:
+        * svg/SVGFEGaussianBlurElement.cpp:
+        (WebCore::SVGFEGaussianBlurElement::build):
+        * svg/SVGFEGaussianBlurElement.h:
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::build):
+        * svg/SVGFEImageElement.h:
+        * svg/SVGFEMergeElement.cpp:
+        (WebCore::SVGFEMergeElement::build):
+        * svg/SVGFEMergeElement.h:
+        * svg/SVGFEMorphologyElement.cpp:
+        (WebCore::SVGFEMorphologyElement::build):
+        * svg/SVGFEMorphologyElement.h:
+        * svg/SVGFEOffsetElement.cpp:
+        (WebCore::SVGFEOffsetElement::build):
+        * svg/SVGFEOffsetElement.h:
+        * svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::build):
+        * svg/SVGFESpecularLightingElement.h:
+        * svg/SVGFETileElement.cpp:
+        (WebCore::SVGFETileElement::build):
+        * svg/SVGFETileElement.h:
+        * svg/SVGFETurbulenceElement.cpp:
+        (WebCore::SVGFETurbulenceElement::build):
+        * svg/SVGFETurbulenceElement.h:
+        (WebCore::):
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::buildFilter):
+        (WebCore::SVGFilterElement::canvasResource):
+        * svg/SVGFilterElement.h:
+        (WebCore::SVGFilterElement::rendererIsNeeded):
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::setStandardAttributes):
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::isFilterEffect):
+        (WebCore::SVGFilterPrimitiveStandardAttributes::rendererIsNeeded):
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::invalidateResources):
+        * svg/graphics/SVGResource.cpp:
+        * svg/graphics/SVGResource.h:
+        (WebCore::):
+        (WebCore::SVGResource::isFilter):
+        * svg/graphics/SVGResourceFilter.cpp: Added.
+        (WebCore::SVGResourceFilter::SVGResourceFilter):
+        (WebCore::SVGResourceFilter::~SVGResourceFilter):
+        (WebCore::SVGResourceFilter::filterBoundingBox):
+        (WebCore::shouldProcessFilter):
+        (WebCore::SVGResourceFilter::addFilterEffect):
+        (WebCore::SVGResourceFilter::fitsInMaximumImageSize):
+        (WebCore::SVGResourceFilter::prepareFilter):
+        (WebCore::SVGResourceFilter::applyFilter):
+        (WebCore::SVGResourceFilter::externalRepresentation):
+        (WebCore::getFilterById):
+        * svg/graphics/SVGResourceFilter.h: Added.
+        (WebCore::SVGResourceFilter::create):
+        (WebCore::SVGResourceFilter::resourceType):
+        (WebCore::SVGResourceFilter::setFilterResolution):
+        (WebCore::SVGResourceFilter::setHasFilterResolution):
+        (WebCore::SVGResourceFilter::filterBoundingBoxMode):
+        (WebCore::SVGResourceFilter::setFilterBoundingBoxMode):
+        (WebCore::SVGResourceFilter::effectBoundingBoxMode):
+        (WebCore::SVGResourceFilter::setEffectBoundingBoxMode):
+        (WebCore::SVGResourceFilter::filterRect):
+        (WebCore::SVGResourceFilter::setFilterRect):
+        (WebCore::SVGResourceFilter::scaleX):
+        (WebCore::SVGResourceFilter::scaleY):
+        (WebCore::SVGResourceFilter::setFilterBoundingBox):
+        (WebCore::SVGResourceFilter::builder):
+        * svg/graphics/filters/SVGFilterBuilder.h:
+
 2010-04-20  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

@@ -38,6 +38,7 @@
 #include "RenderSVGRoot.h"
 #include "SVGLengthList.h"
 #include "SVGRenderSupport.h"
+#include "SVGResourceFilter.h"
 #include "SVGRootInlineBox.h"
 #include "SVGTextElement.h"
 #include "SVGTransformList.h"

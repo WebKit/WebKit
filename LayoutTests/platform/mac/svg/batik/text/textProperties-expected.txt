@@ -1,11 +1,10 @@
+KCanvasResource {id="gaussianBlur" [type=FILTER]  [bounding box=at (-100,-100) size 200x200] [bounding box mode=0]}
 KRenderingPaintServer {id="gradient" [type=LINEAR-GRADIENT] [stops=[(0.00,#0000FF), (1.00,#008000)]] [bounding box mode=0] [start=(-50,-25)] [end=(50,25)]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 450x500
   RenderSVGRoot {svg} at (0,0) size 450x500
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-      RenderSVGResourceFilter {filter} [id="gaussianBlur"] [filterUnits=userSpaceOnUse] [primitiveUnits=userSpaceOnUse]
-        [last primitive ]
       RenderSVGText {text} at (-22,0) size 44x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 44x18
           chunk 1 (middle anchor) text run 1 at (-22.00,0.00) startOffset 0 endOffset 6 width 44.00: "sample"
@@ -109,8 +108,7 @@ layer at (0,0) size 450x500
           RenderSVGInlineText {#text} at (0,-14) size 98x18
             chunk 1 (middle anchor) text run 1 at (-49.00,15.00) startOffset 0 endOffset 14 width 98.00: "fill=\"DarkRed\""
       RenderSVGContainer {g} at (0,270) size 200x200 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,370.00)}]
-        RenderSVGContainer {g} at (0,270) size 200x200
-          [filter="gaussianBlur"] RenderSVGResourceFilter {filter} at (-100,-100) size 200x200
+        RenderSVGContainer {g} at (0,270) size 200x200 [filter=gaussianBlur]
           RenderSVGContainer {use} at (58,342) size 84x36
             RenderSVGContainer {g} at (58,342) size 84x36
               RenderSVGText {text} at (-42,0) size 84x36 contains 1 chunk(s)

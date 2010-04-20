@@ -8389,7 +8389,6 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -18834,7 +18833,6 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Debug_All|Win32"
-
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -27939,14 +27937,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\rendering\RenderSVGResourceFilter.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\rendering\RenderSVGResourceFilter.h"
-				>
-			</File>
-			<File
 				RelativePath="..\rendering\RenderSVGResourceMarker.cpp"
 				>
 			</File>
@@ -31749,7 +31739,6 @@
 						Name="VCCLCompilerTool"
 					/>
 				</FileConfiguration>
-
 			</File>
 			<File
 				RelativePath="..\html\HTMLFormElement.h"
@@ -42371,6 +42360,14 @@
 				</File>
 				<File
 					RelativePath="..\svg\graphics\SVGResource.h"
+					>
+				</File>
+				<File
+					RelativePath="..\svg\graphics\SVGResourceFilter.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\svg\graphics\SVGResourceFilter.h"
 					>
 				</File>
 				<File

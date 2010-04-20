@@ -80,7 +80,7 @@ void RenderSVGResourceMasker::invalidateClient(RenderObject* object)
     delete m_masker.take(object); 
 }
 
-bool RenderSVGResourceMasker::applyResource(RenderObject* object, GraphicsContext*& context)
+bool RenderSVGResourceMasker::applyResource(RenderObject* object, GraphicsContext* context)
 {
     ASSERT(object);
     ASSERT(context);

@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-class RenderSVGResourceFilter;
+class SVGResourceFilter;
 class ImageBuffer;
 
 // SVGRendererBase is an abstract base class which all SVG renderers inherit
@@ -47,8 +47,8 @@ public:
     // FIXME: These are only public for SVGRootInlineBox.
     // It's unclear if these should be exposed or not.  SVGRootInlineBox may
     // pass the wrong RenderObject* and boundingBox to these functions.
-    static bool prepareToRenderSVGContent(RenderObject*, RenderObject::PaintInfo&, const FloatRect& boundingBox, RenderSVGResourceFilter*&, RenderSVGResourceFilter* rootFilter = 0);
-    static void finishRenderSVGContent(RenderObject*, RenderObject::PaintInfo&, RenderSVGResourceFilter*&, GraphicsContext* savedContext);
+    static bool prepareToRenderSVGContent(RenderObject*, RenderObject::PaintInfo&, const FloatRect& boundingBox, SVGResourceFilter*&, SVGResourceFilter* rootFilter = 0);
+    static void finishRenderSVGContent(RenderObject*, RenderObject::PaintInfo&, SVGResourceFilter*&, GraphicsContext* savedContext);
 
     // Layout all children of the passed render object
     static void layoutChildren(RenderObject*, bool selfNeedsLayout);

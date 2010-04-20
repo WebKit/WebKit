@@ -31,7 +31,6 @@
 #include "GraphicsContext.h"
 #include "PointerEventsHitRules.h"
 #include "RenderSVGContainer.h"
-#include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceMarker.h"
 #include "StrokeStyleApplier.h"
 #include "SVGPaintServer.h"
@@ -233,7 +232,7 @@ void RenderPath::paint(PaintInfo& paintInfo, int, int)
     if (drawsOutline || childPaintInfo.phase == PaintPhaseForeground) {
         childPaintInfo.context->save();
         applyTransformToPaintInfo(childPaintInfo, m_localTransform);
-        RenderSVGResourceFilter* filter = 0;
+        SVGResourceFilter* filter = 0;
 
         if (childPaintInfo.phase == PaintPhaseForeground) {
             PaintInfo savedInfo(childPaintInfo);

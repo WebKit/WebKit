@@ -25,6 +25,7 @@
 #include "MappedAttribute.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
+#include "SVGResourceFilter.h"
 
 namespace WebCore {
 
@@ -88,19 +89,22 @@ void SVGFEMorphologyElement::synchronizeProperty(const QualifiedName& attrName)
     }
 }
 
-PassRefPtr<FilterEffect> SVGFEMorphologyElement::build(SVGFilterBuilder* filterBuilder)
+bool SVGFEMorphologyElement::build(SVGResourceFilter* filterResource)
 {
-    FilterEffect* input1 = filterBuilder->getEffectById(in1());
+    FilterEffect* input1 = filterResource->builder()->getEffectById(in1());
     SVGAnimatedPropertyTraits<float>::ReturnType radX = radiusX(),
         radY = radiusY();
 
     if (!input1)
-        return 0;
+        return false;
 
     if (radX < 0 || radY < 0)
-        return 0;
+        return false;
 
-    return FEMorphology::create(input1, static_cast<MorphologyOperatorType>(_operator()), radX, radY);
+    RefPtr<FilterEffect> effect = FEMorphology::create(input1, static_cast<MorphologyOperatorType>(_operator()), radX, radY);
+    filterResource->addFilterEffect(this, effect.release());
+    
+    return true;
 }
 
 } //namespace WebCore

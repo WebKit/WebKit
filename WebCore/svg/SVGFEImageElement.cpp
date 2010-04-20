@@ -33,6 +33,7 @@
 #include "SVGNames.h"
 #include "SVGPreserveAspectRatio.h"
 #include "SVGRenderSupport.h"
+#include "SVGResourceFilter.h"
 
 namespace WebCore {
 
@@ -110,16 +111,16 @@ void SVGFEImageElement::notifyFinished(CachedResource*)
     SVGStyledElement::invalidateResourcesInAncestorChain();
 }
 
-PassRefPtr<FilterEffect> SVGFEImageElement::build(SVGFilterBuilder*)
+bool SVGFEImageElement::build(SVGResourceFilter* filterResource)
 {
     if (!m_cachedImage && !m_targetImage) {
         Element* hrefElement = document()->getElementById(SVGURIReference::getTarget(href()));
         if (!hrefElement || !hrefElement->isSVGElement())
-            return 0;
+            return false;
 
         RenderObject* renderer = hrefElement->renderer();
         if (!renderer)
-            return 0;
+            return false;
 
         IntRect targetRect = enclosingIntRect(renderer->objectBoundingBox());
         m_targetImage = ImageBuffer::create(targetRect.size(), LinearRGB);
@@ -127,7 +128,10 @@ PassRefPtr<FilterEffect> SVGFEImageElement::build(SVGFilterBuilder*)
         renderSubtreeToImage(m_targetImage.get(), renderer);
     }
 
-    return FEImage::create(m_targetImage ? m_targetImage->image() : m_cachedImage->image(), preserveAspectRatio());
+    RefPtr<FilterEffect> effect = FEImage::create(m_targetImage ? m_targetImage->image() : m_cachedImage->image(), preserveAspectRatio());
+    filterResource->addFilterEffect(this, effect.release());
+
+    return true;
 }
 
 void SVGFEImageElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const

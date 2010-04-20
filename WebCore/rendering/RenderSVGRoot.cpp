@@ -35,7 +35,7 @@
 #include "TransformState.h"
 
 #if ENABLE(FILTERS)
-#include "RenderSVGResourceFilter.h"
+#include "SVGResourceFilter.h"
 #endif
 
 using namespace std;
@@ -129,7 +129,7 @@ bool RenderSVGRoot::selfWillPaint() const
 {
 #if ENABLE(FILTERS)
     const SVGRenderStyle* svgStyle = style()->svgStyle();
-    RenderSVGResourceFilter* filter = getRenderSVGResourceById<RenderSVGResourceFilter>(document(), svgStyle->filterResource());
+    SVGResourceFilter* filter = getFilterById(document(), svgStyle->filterResource(), this);
     if (filter)
         return true;
 #endif
@@ -166,7 +166,7 @@ void RenderSVGRoot::paint(PaintInfo& paintInfo, int parentX, int parentY)
     // Transform from our paint container's coordinate system to our local coords.
     applyTransformToPaintInfo(childPaintInfo, localToRepaintContainerTransform(parentOriginInContainer));
 
-    RenderSVGResourceFilter* filter = 0;
+    SVGResourceFilter* filter = 0;
     FloatRect boundingBox = repaintRectInLocalCoordinates();
 
     bool continueRendering = true;

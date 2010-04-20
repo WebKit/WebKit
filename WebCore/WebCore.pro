@@ -1733,7 +1733,6 @@ HEADERS += \
     rendering/RenderSVGModelObject.h \
     rendering/RenderSVGResource.h \
     rendering/RenderSVGResourceClipper.h \
-    rendering/RenderSVGResourceFilter.h \
     rendering/RenderSVGResourceMarker.h \
     rendering/RenderSVGResourceMasker.h \
     rendering/RenderSVGRoot.h \
@@ -1823,6 +1822,7 @@ HEADERS += \
     svg/graphics/SVGPaintServerPattern.h \
     svg/graphics/SVGPaintServerRadialGradient.h \
     svg/graphics/SVGPaintServerSolid.h \
+    svg/graphics/SVGResourceFilter.h \
     svg/graphics/SVGResource.h \
     svg/SVGAElement.h \
     svg/SVGAltGlyphElement.h \
@@ -2694,6 +2694,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/graphics/SVGPaintServerRadialGradient.cpp \
         svg/graphics/SVGPaintServerSolid.cpp \
         svg/graphics/SVGResource.cpp \
+        svg/graphics/SVGResourceFilter.cpp \
         rendering/RenderForeignObject.cpp \
         rendering/RenderPath.cpp \
         rendering/RenderSVGBlock.cpp \
@@ -2705,7 +2706,6 @@ contains(DEFINES, ENABLE_SVG=1) {
         rendering/RenderSVGInlineText.cpp \
         rendering/RenderSVGModelObject.cpp \
         rendering/RenderSVGResourceClipper.cpp \
-        rendering/RenderSVGResourceFilter.cpp \
         rendering/RenderSVGResourceMarker.cpp \
         rendering/RenderSVGResourceMasker.cpp \
         rendering/RenderSVGRoot.cpp \

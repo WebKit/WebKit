@@ -1,3 +1,12 @@
+KCanvasResource {id="surfaceScaleA" [type=FILTER] }
+KCanvasResource {id="surfaceScaleB" [type=FILTER] }
+KCanvasResource {id="surfaceScaleC" [type=FILTER] }
+KCanvasResource {id="diffuseConstantA" [type=FILTER] }
+KCanvasResource {id="diffuseConstantB" [type=FILTER] }
+KCanvasResource {id="diffuseConstantC" [type=FILTER] }
+KCanvasResource {id="lightingColorA" [type=FILTER] }
+KCanvasResource {id="lightingColorB" [type=FILTER] }
+KCanvasResource {id="lightingColorC" [type=FILTER] }
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
@@ -7,54 +16,27 @@ layer at (0,0) size 480x360
         RenderSVGInlineText {#text} at (0,-11) size 140x14
           chunk 1 text run 1 at (145.00,30.00) startOffset 0 endOffset 26 width 140.00: "Filters: feDiffuseLighting"
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-        RenderSVGResourceFilter {filter} [id="surfaceScaleA"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-          [last primitive [type=DIFFUSE-LIGHTING]  [surface scale=1.00] [diffuse constant=1.00] [kernel unit length 0.00, 0.00]]
-        RenderSVGResourceFilter {filter} [id="surfaceScaleB"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-          [last primitive [type=DIFFUSE-LIGHTING]  [surface scale=10.00] [diffuse constant=1.00] [kernel unit length 0.00, 0.00]]
-        RenderSVGResourceFilter {filter} [id="surfaceScaleC"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-          [last primitive [type=DIFFUSE-LIGHTING]  [surface scale=-10.00] [diffuse constant=1.00] [kernel unit length 0.00, 0.00]]
-        RenderSVGResourceFilter {filter} [id="diffuseConstantA"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-          [last primitive [type=DIFFUSE-LIGHTING]  [surface scale=10.00] [diffuse constant=0.00] [kernel unit length 0.00, 0.00]]
-        RenderSVGResourceFilter {filter} [id="diffuseConstantB"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-          [last primitive [type=DIFFUSE-LIGHTING]  [surface scale=10.00] [diffuse constant=1.00] [kernel unit length 0.00, 0.00]]
-        RenderSVGResourceFilter {filter} [id="diffuseConstantC"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-          [last primitive [type=DIFFUSE-LIGHTING]  [surface scale=10.00] [diffuse constant=2.00] [kernel unit length 0.00, 0.00]]
-        RenderSVGResourceFilter {filter} [id="lightingColorA"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-          [last primitive [type=DIFFUSE-LIGHTING]  [surface scale=10.00] [diffuse constant=1.00] [kernel unit length 0.00, 0.00]]
-        RenderSVGResourceFilter {filter} [id="lightingColorB"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-          [last primitive [type=DIFFUSE-LIGHTING]  [surface scale=10.00] [diffuse constant=1.00] [kernel unit length 0.00, 0.00]]
-        RenderSVGResourceFilter {filter} [id="lightingColorC"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-          [last primitive [type=DIFFUSE-LIGHTING]  [surface scale=10.00] [diffuse constant=1.00] [kernel unit length 0.00, 0.00]]
       RenderSVGContainer {g} at (90,61) size 291x49 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,50.00)}]
         RenderSVGText {text} at (90,25) size 291x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-14) size 291x18
             chunk 1 text run 1 at (90.00,25.00) startOffset 0 endOffset 46 width 291.00: "Various values for surfaceScale: 1, 10 and -10"
-        RenderSVGImage {image} at (90,80) size 50x30
-          [filter="surfaceScaleA"] RenderSVGResourceFilter {filter} at (90,30) size 50x30
-        RenderSVGImage {image} at (160,80) size 50x30
-          [filter="surfaceScaleB"] RenderSVGResourceFilter {filter} at (160,30) size 50x30
-        RenderSVGImage {image} at (230,80) size 50x30
-          [filter="surfaceScaleC"] RenderSVGResourceFilter {filter} at (230,30) size 50x30
+        RenderSVGImage {image} at (90,80) size 50x30 [filter=surfaceScaleA]
+        RenderSVGImage {image} at (160,80) size 50x30 [filter=surfaceScaleB]
+        RenderSVGImage {image} at (230,80) size 50x30 [filter=surfaceScaleC]
       RenderSVGContainer {g} at (90,131) size 296x49 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,120.00)}]
         RenderSVGText {text} at (90,25) size 296x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-14) size 296x18
             chunk 1 text run 1 at (90.00,25.00) startOffset 0 endOffset 47 width 296.00: "Various values for diffuseConstants: 0, 1 and 2"
-        RenderSVGImage {image} at (90,150) size 50x30
-          [filter="diffuseConstantA"] RenderSVGResourceFilter {filter} at (90,30) size 50x30
-        RenderSVGImage {image} at (160,150) size 50x30
-          [filter="diffuseConstantB"] RenderSVGResourceFilter {filter} at (160,30) size 50x30
-        RenderSVGImage {image} at (230,150) size 50x30
-          [filter="diffuseConstantC"] RenderSVGResourceFilter {filter} at (230,30) size 50x30
+        RenderSVGImage {image} at (90,150) size 50x30 [filter=diffuseConstantA]
+        RenderSVGImage {image} at (160,150) size 50x30 [filter=diffuseConstantB]
+        RenderSVGImage {image} at (230,150) size 50x30 [filter=diffuseConstantC]
       RenderSVGContainer {g} at (90,201) size 341x49 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,190.00)}]
         RenderSVGText {text} at (90,25) size 341x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-14) size 341x18
             chunk 1 text run 1 at (90.00,25.00) startOffset 0 endOffset 55 width 341.00: "Various values for lighting color: red, yellow and blue"
-        RenderSVGImage {image} at (90,220) size 50x30
-          [filter="lightingColorA"] RenderSVGResourceFilter {filter} at (90,30) size 50x30
-        RenderSVGImage {image} at (160,220) size 50x30
-          [filter="lightingColorB"] RenderSVGResourceFilter {filter} at (160,30) size 50x30
-        RenderSVGImage {image} at (230,220) size 50x30
-          [filter="lightingColorC"] RenderSVGResourceFilter {filter} at (230,30) size 50x30
+        RenderSVGImage {image} at (90,220) size 50x30 [filter=lightingColorA]
+        RenderSVGImage {image} at (160,220) size 50x30 [filter=lightingColorB]
+        RenderSVGImage {image} at (230,220) size 50x30 [filter=lightingColorC]
     RenderSVGText {text} at (10,340) size 264x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-36) size 264x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.4 $"
