@@ -67,7 +67,7 @@ defineTest(addJavaScriptCoreLib) {
     CONFIG(debug_and_release):CONFIG(debug, debug|release): pathToJavaScriptCoreOutput = $$pathToJavaScriptCoreOutput/debug
     CONFIG(debug_and_release):CONFIG(release, debug|release): pathToJavaScriptCoreOutput = $$pathToJavaScriptCoreOutput/release
 
-    win32-msvc* {
+    win32-msvc*|wince* {
         LIBS += -L$$pathToJavaScriptCoreOutput
         LIBS += -l$$JAVASCRIPTCORE_TARGET
         POST_TARGETDEPS += $${pathToJavaScriptCoreOutput}$${QMAKE_DIR_SEP}$${JAVASCRIPTCORE_TARGET}.lib
