@@ -61,6 +61,7 @@ private:
     void ensureBackingStore();
 
     void didSetSize(const WebCore::IntSize& viewSize, UpdateChunk* updateChunk);
+    void update(UpdateChunk*);
 
     bool m_isInitialized;
     bool m_isWaitingForDidSetFrameNotification;

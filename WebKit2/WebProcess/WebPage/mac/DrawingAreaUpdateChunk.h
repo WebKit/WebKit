@@ -54,7 +54,10 @@ private:
     void scheduleDisplay();
     void setSize(const WebCore::IntSize& viewSize);
 
+    void didUpdate();
+
     WebCore::IntRect m_dirtyRect;
+    bool m_isWaitingForUpdate;
     RunLoop::Timer<DrawingAreaUpdateChunk> m_displayTimer;
 };
 

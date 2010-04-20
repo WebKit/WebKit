@@ -28,13 +28,17 @@
 
 #include "MessageID.h"
 
-// Messages sent from the web process to the WebPageProxy.
+// Messages sent from the web process to the UI process.
 
 namespace DrawingAreaMessage {
 
 enum Kind {
     Initialize,
-    SetFrame
+    SetFrame,
+    
+    // Called when an update chunk sent to the drawing area has been
+    // incorporated into the backing store.
+    DidUpdate,
 };
 
 }
