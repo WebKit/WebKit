@@ -1,3 +1,12 @@
+2010-04-20  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        worker-close.html is flaky on slow machines.
+        https://bugs.webkit.org/show_bug.cgi?id=37887
+
+        * fast/workers/worker-close.html: Move the start of the timer to terminate the test after an expected message is received.
+
 2010-04-20  James Robinson  <jamesr@chromium.org>
 
         Unreviewed. Another round of chromium test expectation SVG updates.

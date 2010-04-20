@@ -87,12 +87,12 @@ function testTerminateAfterClose()
     worker.postMessage("close");
     worker.onmessage = function(evt) {
         log("PASS: Received message after worker closed: " + evt.data);
+        // Give worker a chance to close first, then terminate it.
+        timeout = setTimeout(function() {
+            worker.terminate();
+            done();
+        }, 500);
     };
-    // Give worker a chance to close first, then terminate it.
-    timeout = setTimeout(function() {
-        worker.terminate();
-        done();
-    }, 500);
 }
 
 function done() {
