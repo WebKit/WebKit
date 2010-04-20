@@ -38,7 +38,7 @@ class PrettyPatch(object):
     def pretty_diff_file(self, diff):
         pretty_diff = self.pretty_diff(diff)
         diff_file = tempfile.NamedTemporaryFile(suffix=".html")
-        diff_file.write(pretty_diff.encode("utf-8"))
+        diff_file.write(pretty_diff)
         diff_file.flush()
         return diff_file
 

@@ -28,7 +28,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import base64
-import codecs
 import getpass
 import os
 import os.path
@@ -58,12 +57,12 @@ def run_silent(args, cwd=None):
         raise ScriptError('Failed to run "%s"  exit_code: %d  cwd: %s' % (args, exit_code, cwd))
 
 def write_into_file_at_path(file_path, contents):
-    file = codecs.open(file_path, "w", "utf-8")
+    file = open(file_path, 'w')
     file.write(contents)
     file.close()
 
 def read_from_path(file_path):
-    file = codecs.open(file_path, "r", "utf-8")
+    file = open(file_path, 'r')
     contents = file.read()
     file.close()
     return contents

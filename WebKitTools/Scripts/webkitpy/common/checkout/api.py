@@ -50,8 +50,7 @@ class Checkout(object):
 
     def _latest_entry_for_changelog_at_revision(self, changelog_path, revision):
         changelog_contents = self._scm.contents_at_revision(changelog_path, revision)
-        fake_file = StringIO.StringIO(changelog_contents.encode("utf-8"))
-        return ChangeLog.parse_latest_entry_from_file(fake_file)
+        return ChangeLog.parse_latest_entry_from_file(StringIO.StringIO(changelog_contents))
 
     def changelog_entries_for_revision(self, revision):
         changed_files = self._scm.changed_files_for_revision(revision)

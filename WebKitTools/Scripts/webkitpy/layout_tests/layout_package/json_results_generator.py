@@ -27,7 +27,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import codecs
 import logging
 import os
 import subprocess
@@ -119,7 +118,7 @@ class JSONResultsGenerator(object):
         """Generates the JSON output file."""
         json = self._get_json()
         if json:
-            results_file = codecs.open(self._results_file_path, "w", "utf-8")
+            results_file = open(self._results_file_path, "w")
             results_file.write(json)
             results_file.close()
 

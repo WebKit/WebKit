@@ -48,8 +48,7 @@ class StepsTest(unittest.TestCase):
     def test_update_step(self):
         options = Mock()
         options.update = True
-        expected_stderr = "Updating working directory\n"
-        OutputCapture().assert_outputs(self, self._run_step, [Update, options], expected_stderr=expected_stderr)
+        self._run_step(Update, options)
 
     def test_prompt_for_bug_or_title_step(self):
         tool = MockTool()

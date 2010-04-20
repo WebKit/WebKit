@@ -52,9 +52,9 @@ class StatusServer:
         if not patch:
             return
         if patch.bug_id():
-            self.browser["bug_id"] = unicode(patch.bug_id())
+            self.browser["bug_id"] = str(patch.bug_id())
         if patch.id():
-            self.browser["patch_id"] = unicode(patch.id())
+            self.browser["patch_id"] = str(patch.id())
 
     def _add_results_file(self, results_file):
         if not results_file:
@@ -79,7 +79,7 @@ class StatusServer:
         update_svn_revision_url = "%s/update-svn-revision" % self.url
         self.browser.open(update_svn_revision_url)
         self.browser.select_form(name="update_svn_revision")
-        self.browser["number"] = unicode(svn_revision_number)
+        self.browser["number"] = str(svn_revision_number)
         self.browser["broken_bot"] = broken_bot
         return self.browser.submit().read()
 

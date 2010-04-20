@@ -40,7 +40,7 @@ class MacTest(unittest.TestCase):
         relative_paths = [path[len(port.path_from_webkit_base()):] for path in skipped_paths]
         self.assertEqual(relative_paths, ['LayoutTests/platform/mac-leopard/Skipped', 'LayoutTests/platform/mac/Skipped'])
 
-    example_skipped_file = u"""
+    example_skipped_file = """
 # <rdar://problem/5647952> fast/events/mouseout-on-window.html needs mac DRT to issue mouse out events
 fast/events/mouseout-on-window.html
 
@@ -58,7 +58,7 @@ svg/batik/text/smallFonts.svg
 
     def test_skipped_file_paths(self):
         port = mac.MacPort()
-        skipped_file = StringIO.StringIO(self.example_skipped_file.encode("utf-8"))
+        skipped_file = StringIO.StringIO(self.example_skipped_file)
         self.assertEqual(port._tests_from_skipped_file(skipped_file), self.example_skipped_tests)
 
 
