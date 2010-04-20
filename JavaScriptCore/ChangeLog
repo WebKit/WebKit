@@ -1,5 +1,13 @@
 2010-04-20  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by NOBODY (windows build fix).
+
+        Add missing .def file entries.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2010-04-20  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Geoff Garen.
 
         Bug 37828 - Move WebCore's String classes to WTF
