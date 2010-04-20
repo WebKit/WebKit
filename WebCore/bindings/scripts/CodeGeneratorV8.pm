@@ -1036,7 +1036,7 @@ sub GenerateParametersCheckExpression
         # these are acceptable values for a DOMString argument (any Object can
         # be converted to a string via .toString).
         push(@andExpression, "(${value}->IsNull() || ${value}->IsUndefined() || ${value}->IsString() || ${value}->IsObject())") if $codeGenerator->IsStringType($type);
-        push(@andExpression, "V8${type}::HasInstance($value)") if IsWrapperType($type);
+        push(@andExpression, "(${value}->IsNull() || V8${type}::HasInstance($value))") if IsWrapperType($type);
 
         $parameterIndex++;
     }

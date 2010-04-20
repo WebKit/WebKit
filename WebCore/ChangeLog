@@ -1,3 +1,21 @@
+2010-04-20  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        Null value should be legit value for wrapped types. This requires some cleanup in canvas which was missing built-in null argument checks;
+        https://bugs.webkit.org/show_bug.cgi?id=37810
+
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        (WebCore::JSCanvasRenderingContext2D::drawImage): Passes ec to drawImage(3) too
+        * bindings/scripts/CodeGeneratorV8.pm: A null value is now legit value for wrapped types.
+        * bindings/v8/test/V8TestObj.cpp:
+        (WebCore::TestObjInternal::overloadedMethodCallback):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawImage): Added null checks.
+        (WebCore::CanvasRenderingContext2D::createPattern): Added null checks.
+        * html/canvas/CanvasRenderingContext2D.h: Added needed raises "DOMException".
+        * html/canvas/CanvasRenderingContext2D.idl: Added needed raises "DOMException".
+
 2010-04-20  Evan Stade  <estade@chromium.org>
 
         Reviewed by David Levin.

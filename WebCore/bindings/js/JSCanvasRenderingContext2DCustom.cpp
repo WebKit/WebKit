@@ -198,7 +198,7 @@ JSValue JSCanvasRenderingContext2D::drawImage(ExecState* exec, const ArgList& ar
         HTMLImageElement* imgElt = static_cast<HTMLImageElement*>(static_cast<JSHTMLElement*>(o)->impl());
         switch (args.size()) {
             case 3:
-                context->drawImage(imgElt, args.at(1).toFloat(exec), args.at(2).toFloat(exec));
+                context->drawImage(imgElt, args.at(1).toFloat(exec), args.at(2).toFloat(exec), ec);
                 break;
             case 5:
                 context->drawImage(imgElt, args.at(1).toFloat(exec), args.at(2).toFloat(exec),
@@ -219,7 +219,7 @@ JSValue JSCanvasRenderingContext2D::drawImage(ExecState* exec, const ArgList& ar
         HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(static_cast<JSHTMLElement*>(o)->impl());
         switch (args.size()) {
             case 3:
-                context->drawImage(canvas, args.at(1).toFloat(exec), args.at(2).toFloat(exec));
+                context->drawImage(canvas, args.at(1).toFloat(exec), args.at(2).toFloat(exec), ec);
                 break;
             case 5:
                 context->drawImage(canvas, args.at(1).toFloat(exec), args.at(2).toFloat(exec),
@@ -241,7 +241,7 @@ JSValue JSCanvasRenderingContext2D::drawImage(ExecState* exec, const ArgList& ar
             HTMLVideoElement* video = static_cast<HTMLVideoElement*>(static_cast<JSHTMLElement*>(o)->impl());
             switch (args.size()) {
                 case 3:
-                    context->drawImage(video, args.at(1).toFloat(exec), args.at(2).toFloat(exec));
+                    context->drawImage(video, args.at(1).toFloat(exec), args.at(2).toFloat(exec), ec);
                     break;
                 case 5:
                     context->drawImage(video, args.at(1).toFloat(exec), args.at(2).toFloat(exec),
