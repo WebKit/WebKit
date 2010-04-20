@@ -134,4 +134,14 @@ void PluginView::setJavaScriptPaused(bool)
 {
 }
 
+#if defined(XP_UNIX) && ENABLE(NETSCAPE_PLUGIN_API)
+void PluginView::handleFocusInEvent()
+{
+}
+
+void PluginView::handleFocusOutEvent()
+{
+}
+#endif
+
 } // namespace WebCore

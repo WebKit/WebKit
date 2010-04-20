@@ -1,3 +1,16 @@
+2010-04-19  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by David Hyatt.
+
+        Add missing dummy implementations in PluginPackageNone and PluginViewNone.
+        http://webkit.org/b/37478
+
+        * plugins/PluginPackageNone.cpp:
+        (WebCore::PluginPackage::NPVersion): Add dummy implementation.
+        * plugins/PluginViewNone.cpp:
+        (WebCore::PluginView::handleFocusInEvent): Add dummy implementation.
+        (WebCore::PluginView::handleFocusOutEvent): Add dummy implementation.
+
 2010-04-19  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Geoff Garen.
