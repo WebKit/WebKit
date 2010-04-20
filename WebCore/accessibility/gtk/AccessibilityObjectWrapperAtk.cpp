@@ -448,6 +448,8 @@ static AtkRole webkit_accessible_get_role(AtkObject* object)
                 return ATK_ROLE_LABEL;
             if (node->hasTagName(HTMLNames::divTag))
                 return ATK_ROLE_SECTION;
+            if (node->hasTagName(HTMLNames::formTag))
+                return ATK_ROLE_FORM;
         }
     }
 
