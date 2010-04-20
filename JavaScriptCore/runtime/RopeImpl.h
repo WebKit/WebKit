@@ -30,11 +30,11 @@
 
 namespace JSC {
 
-class RopeImpl : public UStringImplBase {
+class RopeImpl : public StringImplBase {
 public:
     // A RopeImpl is composed from a set of smaller strings called Fibers.
     // Each Fiber in a rope is either UStringImpl or another RopeImpl.
-    typedef UStringImplBase* Fiber;
+    typedef StringImplBase* Fiber;
 
     // Creates a RopeImpl comprising of 'fiberCount' Fibers.
     // The RopeImpl is constructed in an uninitialized state - initialize must be called for each Fiber in the RopeImpl.
@@ -72,7 +72,7 @@ public:
     }
 
 private:
-    RopeImpl(unsigned fiberCount) : UStringImplBase(ConstructNonStringImpl), m_fiberCount(fiberCount) {}
+    RopeImpl(unsigned fiberCount) : StringImplBase(ConstructNonStringImpl), m_fiberCount(fiberCount) {}
 
     void destructNonRecursive();
     void derefFibersNonRecursive(Vector<RopeImpl*, 32>& workQueue);

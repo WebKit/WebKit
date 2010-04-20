@@ -1,3 +1,12 @@
+2010-04-20  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 37895 - Share common code from UStringImplBase with StringImpl
+        Add forwarding header.
+
+        * ForwardingHeaders/wtf/text/StringImplBase.h: Added.
+
 2010-04-20  Adam Barth  <abarth@webkit.org>
 
         Unreviewed build fix fro Chromium.

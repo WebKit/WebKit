@@ -33,6 +33,7 @@
 #include <wtf/StringHashFunctions.h>
 #include <wtf/Vector.h>
 #include <wtf/unicode/Unicode.h>
+#include <wtf/text/StringImplBase.h>
 
 namespace JSC {
 
@@ -41,71 +42,7 @@ class IdentifierTable;
 typedef OwnFastMallocPtr<const UChar> SharableUChar;
 typedef CrossThreadRefCounted<SharableUChar> SharedUChar;
 
-class UStringImplBase : public Noncopyable {
-public:
-    bool isStringImpl() { return (m_refCountAndFlags & s_refCountInvalidForStringImpl) != s_refCountInvalidForStringImpl; }
-    unsigned length() const { return m_length; }
-
-    void ref() { m_refCountAndFlags += s_refCountIncrement; }
-
-protected:
-    enum BufferOwnership {
-        BufferInternal,
-        BufferOwned,
-        BufferSubstring,
-        BufferShared,
-    };
-
-    using Noncopyable::operator new;
-    void* operator new(size_t, void* inPlace) { return inPlace; }
-
-    // For SmallStringStorage, which allocates an array and uses an in-place new.
-    UStringImplBase() { }
-
-    UStringImplBase(unsigned length, BufferOwnership ownership)
-        : m_refCountAndFlags(s_refCountIncrement | s_refCountFlagShouldReportedCost | ownership)
-        , m_length(length)
-    {
-        ASSERT(isStringImpl());
-    }
-
-    enum StaticStringConstructType { ConstructStaticString };
-    UStringImplBase(unsigned length, StaticStringConstructType)
-        : m_refCountAndFlags(s_refCountFlagStatic | s_refCountFlagIsIdentifier | BufferOwned)
-        , m_length(length)
-    {
-        ASSERT(isStringImpl());
-    }
-
-    // This constructor is not used when creating UStringImpl objects,
-    // and sets the flags into a state marking the object as such.
-    enum NonStringImplConstructType { ConstructNonStringImpl };
-    UStringImplBase(NonStringImplConstructType)
-        : m_refCountAndFlags(s_refCountIncrement | s_refCountInvalidForStringImpl)
-        , m_length(0)
-    {
-        ASSERT(!isStringImpl());
-    }
-
-    // The bottom 5 bits hold flags, the top 27 bits hold the ref count.
-    // When dereferencing UStringImpls we check for the ref count AND the
-    // static bit both being zero - static strings are never deleted.
-    static const unsigned s_refCountMask = 0xFFFFFFE0;
-    static const unsigned s_refCountIncrement = 0x20;
-    static const unsigned s_refCountFlagStatic = 0x10;
-    static const unsigned s_refCountFlagShouldReportedCost = 0x8;
-    static const unsigned s_refCountFlagIsIdentifier = 0x4;
-    static const unsigned s_refCountMaskBufferOwnership = 0x3;
-    // An invalid permutation of flags (static & shouldReportedCost - static strings do not
-    // set shouldReportedCost in the constructor, and this bit is only ever cleared, not set).
-    // Used by "ConstructNonStringImpl" constructor, above.
-    static const unsigned s_refCountInvalidForStringImpl = s_refCountFlagStatic | s_refCountFlagShouldReportedCost;
-
-    unsigned m_refCountAndFlags;
-    unsigned m_length;
-};
-
-class UStringImpl : public UStringImplBase {
+class UStringImpl : public StringImplBase {
     friend struct CStringTranslator;
     friend struct UCharBufferTranslator;
     friend class JIT;
@@ -119,7 +56,7 @@ private:
     // This means that the static string will never be destroyed, which is important because
     // static strings will be shared across threads & ref-counted in a non-threadsafe manner.
     UStringImpl(const UChar* characters, unsigned length, StaticStringConstructType)
-        : UStringImplBase(length, ConstructStaticString)
+        : StringImplBase(length, ConstructStaticString)
         , m_data(characters)
         , m_buffer(0)
         , m_hash(0)
@@ -129,7 +66,7 @@ private:
 
     // Create a normal string with internal storage (BufferInternal)
     UStringImpl(unsigned length)
-        : UStringImplBase(length, BufferInternal)
+        : StringImplBase(length, BufferInternal)
         , m_data(reinterpret_cast<UChar*>(this + 1))
         , m_buffer(0)
         , m_hash(0)
@@ -140,7 +77,7 @@ private:
 
     // Create a UStringImpl adopting ownership of the provided buffer (BufferOwned)
     UStringImpl(const UChar* characters, unsigned length)
-        : UStringImplBase(length, BufferOwned)
+        : StringImplBase(length, BufferOwned)
         , m_data(characters)
         , m_buffer(0)
         , m_hash(0)
@@ -151,7 +88,7 @@ private:
 
     // Used to create new strings that are a substring of an existing UStringImpl (BufferSubstring)
     UStringImpl(const UChar* characters, unsigned length, PassRefPtr<UStringImpl> base)
-        : UStringImplBase(length, BufferSubstring)
+        : StringImplBase(length, BufferSubstring)
         , m_data(characters)
         , m_substringBuffer(base.releaseRef())
         , m_hash(0)
@@ -163,7 +100,7 @@ private:
 
     // Used to construct new strings sharing an existing SharedUChar (BufferShared)
     UStringImpl(const UChar* characters, unsigned length, PassRefPtr<SharedUChar> sharedBuffer)
-        : UStringImplBase(length, BufferShared)
+        : StringImplBase(length, BufferShared)
         , m_data(characters)
         , m_sharedBuffer(sharedBuffer.releaseRef())
         , m_hash(0)

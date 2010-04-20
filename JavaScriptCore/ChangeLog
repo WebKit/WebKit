@@ -1,3 +1,26 @@
+2010-04-20  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 37895 - Share common code from UStringImplBase with StringImpl
+
+        The implementation of StringImpl & UStringImpl is very similar.  Restructure
+        StringImpl to match UStringImpl, moving the flags and length into a base class,
+        so that this can be shared between both string types to increase code reuse.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/RopeImpl.h:
+        (JSC::RopeImpl::RopeImpl):
+        * runtime/UStringImpl.h:
+        (JSC::UStringImpl::UStringImpl):
+        * wtf/text/StringImpl.h:
+        (WebCore::StringImpl::StringImpl):
+        (WebCore::StringImpl::characters):
+        * wtf/text/StringImplBase.h: Copied from JavaScriptCore/runtime/UStringImpl.h.
+        (WTF::StringImplBase::length):
+        (WTF::StringImplBase::operator new):
+        (WTF::StringImplBase::StringImplBase):
+
 2010-04-20  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
