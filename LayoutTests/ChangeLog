@@ -1,3 +1,13 @@
+2010-04-20  Adam Roben  <aroben@apple.com>
+
+        Unskip xss-DENIED-mime-type-execute-as-html.html on Windows
+
+        This is essentially a rollout of r57729. I was hoping that skipping
+        this test would fix the spurious timeouts described in
+        <http://webkit.org/b/37714>, but that hasn't happened.
+
+        * platform/win/Skipped:
+
 2010-04-20  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

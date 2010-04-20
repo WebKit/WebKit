@@ -839,6 +839,3 @@ fast/events/ondrop-text-html.html
 
 # <http://webkit.org/b/37096> http/tests/security/xss-DENIED-iframe-src-alias.html sometimes times out on Windows
 http/tests/security/xss-DENIED-iframe-src-alias.html
-
-# <http://webkit.org/b/37714> xss-DENIED-mime-type-execute-as-html.html and all subsequent http tests time out on Windows Release bots
-http/tests/security/xss-DENIED-mime-type-execute-as-html.html
