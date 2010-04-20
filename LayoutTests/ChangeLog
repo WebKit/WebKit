@@ -1,3 +1,90 @@
+2010-04-20  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by dglazkov.
+
+        Update chromium SVG baselines for r57886
+        https://bugs.webkit.org/show_bug.cgi?id=37891
+
+        * platform/chromium-linux/svg/custom/image-with-transform-clip-filter-expected.txt: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-composite-02-b-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-displace-01-f-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-example-01-b-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-felem-01-b-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-image-01-b-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-light-01-f-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-specular-01-f-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-tile-01-b-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-turb-01-f-expected.txt: Removed.
+        * platform/chromium-mac/svg/batik/filters/filterRegions-expected.txt: Removed.
+        * platform/chromium-mac/svg/batik/text/textEffect-expected.txt: Removed.
+        * platform/chromium-mac/svg/batik/text/textEffect3-expected.txt: Removed.
+        * platform/chromium-mac/svg/batik/text/textFeatures-expected.txt: Removed.
+        * platform/chromium-mac/svg/batik/text/textProperties-expected.txt: Removed.
+        * platform/chromium-mac/svg/custom/feDisplacementMap-01-expected.txt: Removed.
+        * platform/chromium-mac/svg/custom/image-with-transform-clip-filter-expected.txt: Removed.
+        * platform/chromium-mac/svg/custom/non-opaque-filters-expected.txt: Removed.
+        * platform/chromium-mac/svg/custom/visibility-override-filter-expected.txt: Removed.
+        * platform/chromium-mac/svg/filters/big-sized-filter-2-expected.txt: Removed.
+        * platform/chromium-mac/svg/filters/feColorMatrix-values-expected.txt: Removed.
+        * platform/chromium-mac/svg/filters/feMerge-expected.txt: Removed.
+        * platform/chromium-mac/svg/filters/feOffset-expected.txt: Removed.
+        * platform/chromium-mac/svg/filters/filter-on-tspan-expected.txt: Removed.
+        * platform/chromium-mac/svg/filters/subRegion-in-userSpace-expected.txt: Removed.
+        * platform/chromium-mac/svg/filters/subRegion-one-effect-expected.txt: Removed.
+        * platform/chromium-mac/svg/filters/subRegion-two-effects-expected.txt: Removed.
+        * platform/chromium-win-xp/svg/batik/text/textFeatures-expected.txt: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-blend-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-color-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-composite-02-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-displace-01-f-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-example-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-felem-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-image-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-light-01-f-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-morph-01-f-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-offset-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-specular-01-f-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-tile-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-turb-01-f-expected.txt:
+        * platform/chromium-win/svg/batik/filters/feTile-expected.txt:
+        * platform/chromium-win/svg/batik/filters/filterRegions-expected.txt:
+        * platform/chromium-win/svg/batik/text/textEffect-expected.txt:
+        * platform/chromium-win/svg/batik/text/textEffect3-expected.txt:
+        * platform/chromium-win/svg/batik/text/textFeatures-expected.txt:
+        * platform/chromium-win/svg/batik/text/textProperties-expected.txt:
+        * platform/chromium-win/svg/custom/empty-merge-expected.txt: Removed.
+        * platform/chromium-win/svg/custom/feComponentTransfer-Discrete-expected.txt:
+        * platform/chromium-win/svg/custom/feComponentTransfer-Gamma-expected.txt:
+        * platform/chromium-win/svg/custom/feComponentTransfer-Linear-expected.txt:
+        * platform/chromium-win/svg/custom/feComponentTransfer-Table-expected.txt:
+        * platform/chromium-win/svg/custom/feDisplacementMap-01-expected.txt: Removed.
+        * platform/chromium-win/svg/custom/image-with-transform-clip-filter-expected.txt:
+        * platform/chromium-win/svg/custom/invalid-css-expected.txt:
+        * platform/chromium-win/svg/custom/non-opaque-filters-expected.txt:
+        * platform/chromium-win/svg/custom/resource-invalidate-on-target-update-expected.txt: Removed.
+        * platform/chromium-win/svg/custom/text-filter-expected.txt:
+        * platform/chromium-win/svg/custom/visibility-override-filter-expected.txt: Removed.
+        * platform/chromium-win/svg/filters/big-sized-filter-2-expected.txt: Removed.
+        * platform/chromium-win/svg/filters/big-sized-filter-expected.txt: Removed.
+        * platform/chromium-win/svg/filters/feColorMatrix-values-expected.txt:
+        * platform/chromium-win/svg/filters/feComposite-expected.txt:
+        * platform/chromium-win/svg/filters/feDisplacementMap-expected.txt: Removed.
+        * platform/chromium-win/svg/filters/feGaussianBlur-expected.txt: Removed.
+        * platform/chromium-win/svg/filters/feMerge-expected.txt: Removed.
+        * platform/chromium-win/svg/filters/feMerge-wrong-input-expected.txt: Removed.
+        * platform/chromium-win/svg/filters/feOffset-expected.txt: Removed.
+        * platform/chromium-win/svg/filters/feTile-expected.txt: Removed.
+        * platform/chromium-win/svg/filters/filter-on-tspan-expected.txt:
+        * platform/chromium-win/svg/filters/shadow-on-filter-expected.txt: Removed.
+        * platform/chromium-win/svg/filters/sourceAlpha-expected.txt:
+        * platform/chromium-win/svg/filters/subRegion-in-userSpace-expected.txt: Removed.
+        * platform/chromium-win/svg/filters/subRegion-one-effect-expected.txt: Removed.
+        * platform/chromium-win/svg/filters/subRegion-two-effects-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2010-04-20  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Simon Fraser.

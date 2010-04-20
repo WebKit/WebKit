@@ -65,7 +65,7 @@ BUG24182 SLOW LINUX DEBUG : http/tests/misc/DOMContentLoaded-event.html = PASS
 BUG24182 SLOW LINUX MAC RELEASE : http/tests/navigation/multiple-back-forward-entries.html = PASS
 BUG24182 SLOW LINUX DEBUG : http/tests/navigation/multiple-back-forward-entries.html = PASS
 BUG24182 SLOW : http/tests/xmlhttprequest/simple-cross-origin-progress-events.html = PASS
-//BUG24182 SLOW WIN MAC : svg/custom/invisible-text-after-scrolling.xhtml = PASS
+BUG24182 SLOW WIN MAC : svg/custom/invisible-text-after-scrolling.xhtml = PASS
 BUG24182 SLOW : tables/mozilla/other/slashlogo.html = PASS
 BUG24182 SLOW WIN RELEASE : tables/mozilla/bugs/bug113235-1.html = PASS
 BUG24182 SLOW DEBUG : fast/js/toString-and-valueOf-override.html = PASS
@@ -1963,7 +1963,7 @@ BUG9798 WIN DEBUG : http/tests/xmlhttprequest/encode-request-url-2.html = TIMEOU
 BUG9797 BUG9798 WIN RELEASE SLOW : http/tests/xmlhttprequest/state-after-network-error.html = PASS
 BUG9797 LINUX DEBUG : svg/carto.net/colourpicker.svg = FAIL
 BUG9798 LINUX RELEASE : svg/carto.net/colourpicker.svg = FAIL
-BUG9798 SLOW LINUX : svg/custom/invisible-text-after-scrolling.xhtml = FAIL
+BUG9798 LINUX : svg/custom/invisible-text-after-scrolling.xhtml = IMAGE
 BUG9798 LINUX RELEASE : tables/mozilla/bugs/45621.html = FAIL
 BUG9798 LINUX DEBUG SLOW : tables/mozilla/bugs/45621.html = FAIL
 //also BUG24868 (crash)
@@ -2397,7 +2397,7 @@ BUG29748 WIN DEBUG : fast/forms/input-align-image.html = IMAGE+TEXT PASS
 // Some of these went from IMAGE+TEXT to just IMAGE at r57886
 BUG29737 MAC : svg/W3C-SVG-1.1/filters-blend-01-b.svg = IMAGE
 BUG29737 MAC : svg/W3C-SVG-1.1/filters-color-01-b.svg = IMAGE
-BUG29737 MAC : svg/W3C-SVG-1.1/filters-comptran-01-b.svg = IMAGE+TEXT
+BUG29737 MAC : svg/W3C-SVG-1.1/filters-comptran-01-b.svg = IMAGE
 BUG29737 MAC : svg/W3C-SVG-1.1/filters-gauss-01-b.svg = IMAGE
 BUG29737 MAC : svg/W3C-SVG-1.1/filters-morph-01-f.svg = IMAGE
 BUG29737 MAC : svg/W3C-SVG-1.1/filters-offset-01-b.svg = IMAGE
@@ -2415,15 +2415,14 @@ BUG29737 MAC : svg/filters/feTile.svg = IMAGE
 BUG29737 MAC : svg/filters/shadow-on-filter.svg = IMAGE
 BUG29737 MAC : svg/custom/use-elementInstance-event-target.svg = IMAGE
 BUG29737 SLOW MAC : svg/filters/big-sized-filter.svg = IMAGE
-BUG29737 MAC : svg/filters/filterRes.svg = IMAGE+TEXT
+BUG29737 MAC : svg/filters/filterRes.svg = IMAGE
 BUG29737 MAC : svg/W3C-SVG-1.1/struct-image-02-b.svg = IMAGE
 BUG29737 MAC : svg/filters/sourceAlpha.svg = IMAGE
 
 // More Webkit Roll to r51875
-BUG32432 SLOW LINUX DEBUG : svg/filters/feComposite.svg = TEXT
 
 // WebKit Roll to r51915
-BUG29930 : fast/loader/input-element-page-cache-crash.html = TIMEOUT PASS CRASH
+BUG29930 : fast/loader/input-element-page-cache-crash.html = TIMEOUT PASS TEXT
 
 
 // New tests courtesy of: http://trac.webkit.org/changeset/51936:
@@ -2520,9 +2519,6 @@ BUG32195 : fast/repaint/renderer-destruction-by-invalidateSelection-crash.html =
 // Expectations from roll to 53171:53194
 BUG32235 LINUX DEBUG : svg/W3C-SVG-1.1/filters-diffuse-01-f.svg = PASS TEXT
 
-// Errors from roll from 53207:53246
-BUG32398 RELEASE MAC : svg/custom/resource-invalidate-on-target-update.svg = IMAGE PASS
-
 BUG32308 DEBUG : fast/frames/cached-frame-counter.html = TIMEOUT
 
 // WebKit roll 53341:53451
@@ -2574,7 +2570,6 @@ BUG35064 WIN DEBUG : fast/forms/restore-selection-after-layout.html = TEXT PASS
 // WebKit roll 54482 to 54493.
 BUG35242 WIN : svg/W3C-SVG-1.1/filters-conv-01-f.svg = TEXT
 BUG35242 WIN : svg/W3C-SVG-1.1/text-intro-05-t.svg = TEXT
-BUG35242 WIN : svg/batik/text/textFeatures.svg = TEXT
 BUG35240 MAC : svg/custom/use-clipped-hit.svg = IMAGE
 
 // WebKit roll 54493 to 54530: new tests.
@@ -2683,7 +2678,7 @@ BUG38704 WIN RELEASE: svg/text/text-text-06-t.svg = CRASH PASS
 BUG38706 : svg/custom/deep-dynamic-updates.svg = IMAGE+TEXT PASS
 
 // Caused by http://trac.webkit.org/changeset/56288/
-BUG_JSCHUH WIN LINUX : svg/filters/filterRes.svg = IMAGE IMAGE+TEXT
+BUG_JSCHUH WIN LINUX : svg/filters/filterRes.svg = IMAGE
 
 // Caused by http://trac.webkit.org/changeset/56394.
 BUG_JAPHET WIN : http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch.html = TEXT
@@ -2748,59 +2743,12 @@ BUGAJWONG LINUX : svg/text/text-tselect-02-f.svg = IMAGE PASS
 BUG42044 WIN DEBUG : http/tests/security/xss-DENIED-mime-type-execute-as-html.html = PASS TIMEOUT
 
 // Broke at r57886, probably just need new baselines
-BUGJAMESR : svg/W3C-SVG-1.1/filters-composite-02-b.svg = TEXT
-BUGJAMESR WIN LINUX : svg/W3C-SVG-1.1/filters-comptran-01-b.svg = TEXT
-BUGJAMESR WIN MAC : svg/W3C-SVG-1.1/filters-diffuse-01-f.svg = TEXT
 BUGJAMESR LINUX RELEASE : svg/W3C-SVG-1.1/filters-diffuse-01-f.svg = TEXT
-BUGJAMESR : svg/W3C-SVG-1.1/filters-displace-01-f.svg = TEXT
-BUGJAMESR : svg/W3C-SVG-1.1/filters-example-01-b.svg = TEXT
-BUGJAMESR : svg/W3C-SVG-1.1/filters-felem-01-b.svg = TEXT
 BUGJAMESR WIN LINUX : svg/W3C-SVG-1.1/filters-gauss-01-b.svg = TEXT
-BUGJAMESR : svg/W3C-SVG-1.1/filters-image-01-b.svg = TEXT
-BUGJAMESR : svg/W3C-SVG-1.1/filters-light-01-f.svg = TEXT
-BUGJAMESR WIN LINUX : svg/W3C-SVG-1.1/filters-morph-01-f.svg = TEXT
-BUGJAMESR WIN LINUX : svg/W3C-SVG-1.1/filters-offset-01-b.svg = TEXT
-BUGJAMESR : svg/W3C-SVG-1.1/filters-specular-01-f.svg = TEXT
-BUGJAMESR : svg/W3C-SVG-1.1/filters-tile-01-b.svg = TEXT
-BUGJAMESR : svg/W3C-SVG-1.1/filters-turb-01-f.svg = TEXT
-BUGJAMESR WIN LINUX : svg/batik/filters/feTile.svg = TEXT
-BUGJAMESR : svg/batik/filters/filterRegions.svg = TEXT
-BUGJAMESR : svg/batik/text/textEffect.svg = TEXT
-BUGJAMESR : svg/batik/text/textEffect3.svg = TEXT
-BUGJAMESR : svg/batik/text/textProperties.svg = TEXT
-BUGJAMESR WIN LINUX : svg/custom/empty-merge.svg = TEXT
-BUGJAMESR WIN LINUX : svg/custom/feComponentTransfer-Discrete.svg = TEXT
-BUGJAMESR WIN LINUX : svg/custom/feComponentTransfer-Gamma.svg = TEXT
-BUGJAMESR WIN LINUX : svg/custom/feComponentTransfer-Linear.svg = TEXT
-BUGJAMESR WIN LINUX : svg/custom/feComponentTransfer-Table.svg = TEXT
 // might have been flaky
-BUGJAMESR : svg/custom/feDisplacementMap-01.svg = TEXT
-BUGJAMESR : svg/custom/image-with-transform-clip-filter.svg = TEXT
-BUGJAMESR WIN LINUX : svg/custom/invalid-css.svg = TEXT
-BUGJAMESR : svg/custom/non-opaque-filters.svg = TEXT
-BUGJAMESR WIN LINUX : svg/custom/resource-invalidate-on-target-update.svg = TEXT
-BUGJAMESR MAC DEBUG : svg/custom/resource-invalidate-on-target-update.svg = TEXT
-BUGJAMESR WIN LINUX : svg/custom/text-filter.svg = TEXT
-BUGJAMESR : svg/custom/visibility-override-filter.svg = TEXT
-BUGJAMESR : svg/filters/big-sized-filter-2.svg = TEXT
-BUG24182 SLOW LINUX WIN : svg/filters/big-sized-filter.svg = TEXT
-BUGJAMESR : svg/filters/feColorMatrix-values.svg = TEXT
-BUGJAMESR WIN LINUX : svg/filters/feComposite.svg = TEXT
-BUGJAMESR WIN LINUX : svg/filters/feDisplacementMap.svg = TEXT
-BUGJAMESR WIN LINUX : svg/filters/feGaussianBlur.svg = TEXT
-BUGJAMESR WIN LINUX : svg/filters/feMerge-wrong-input.svg = TEXT
-BUGJAMESR : svg/filters/feMerge.svg = TEXT
-BUGJAMESR : svg/filters/feOffset.svg = TEXT
-BUGJAMESR WIN LINUX : svg/filters/feTile.svg = TEXT
-BUGJAMESR : svg/filters/filter-on-tspan.svg = TEXT
-BUGJAMESR WIN LINUX : svg/filters/shadow-on-filter.svg = TEXT
-BUGJAMESR WIN LINUX : svg/filters/sourceAlpha.svg = TEXT
-BUGJAMESR : svg/filters/subRegion-in-userSpace.svg = TEXT
-BUGJAMESR : svg/filters/subRegion-one-effect.svg = TEXT
-BUGJAMESR : svg/filters/subRegion-two-effects.svg = TEXT
+BUGJAMESR MAC : svg/custom/resource-invalidate-on-target-update.svg = TEXT
+BUGJAMESR LINUX : svg/custom/resource-invalidate-on-target-update.svg = IMAGE
 BUGJAMESR : svg/filters/filter-clip.svg = IMAGE
 BUGJAMESR : svg/filters/filter-source-position.svg = IMAGE
-BUGJAMESR BUG30048 BUG29737 : svg/filters/shadow-on-rect-with-filter.svg = IMAGE
-BUGJAMESR WIN LINUX : svg/W3C-SVG-1.1/filters-blend-01-b.svg = TEXT
-BUGJAMESR WIN LINUX : svg/W3C-SVG-1.1/filters-color-01-b.svg = TEXT
 BUGJAMESR : svg/W3C-SVG-1.1/animate-elem-41-t.svg = IMAGE+TEXT
+BUGJAMESR BUG30048 BUG29737 : svg/filters/shadow-on-rect-with-filter.svg = IMAGE
