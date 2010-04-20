@@ -307,35 +307,10 @@ class BugzillaQueriesTest(unittest.TestCase):
 </body>
 </html>
 """
-    _sample_quip_page = """
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-                      "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-  <head>
-    <title>Bugzilla Quip System</title>
-  </head>
-  <body>
-    <h2>
-
-      Existing quips:
-    </h2>
-    <ul>
-        <li>Everything should be made as simple as possible, but not simpler. - Albert Einstein</li>
-        <li>Good artists copy. Great artists steal. - Pablo Picasso</li>
-
-    </ul>
-  </body>
-</html>
-"""
 
     def test_request_page_parsing(self):
         queries = BugzillaQueries(None)
         self.assertEquals([40511, 40722, 40723], queries._parse_attachment_ids_request_query(self._sample_request_page))
-
-    def test_quip_page_parsing(self):
-        queries = BugzillaQueries(None)
-        expected_quips = ["Everything should be made as simple as possible, but not simpler. - Albert Einstein", "Good artists copy. Great artists steal. - Pablo Picasso"]
-        self.assertEquals(expected_quips, queries.parse_quips(self._sample_quip_page))
 
     def test_load_query(self):
         queries = BugzillaQueries(Mock())

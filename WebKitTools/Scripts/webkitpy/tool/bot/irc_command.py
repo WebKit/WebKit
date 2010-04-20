@@ -26,7 +26,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import random
 import webkitpy.common.config.irc as config_irc
 
 from webkitpy.common.checkout.changelog import view_source_url
@@ -77,6 +76,4 @@ class Rollout(IRCCommand):
 
 class Hi(IRCCommand):
     def execute(self, nick, args, tool, sheriff):
-        quips = tool.bugs.quips()
-        quips.append('"Only you can prevent forest fires." -- Smokey the Bear')
-        return random.choice(quips)
+        return '"Only you can prevent forest fires." -- Smokey the Bear'

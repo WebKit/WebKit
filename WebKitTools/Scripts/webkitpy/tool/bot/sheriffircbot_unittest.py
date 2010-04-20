@@ -27,7 +27,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import unittest
-import random
 
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.bot.sheriff import Sheriff
@@ -46,7 +45,6 @@ def run(message):
 
 class SheriffIRCBotTest(unittest.TestCase):
     def test_hi(self):
-        random.seed(23324)
         expected_stderr = 'MOCK: irc.post: "Only you can prevent forest fires." -- Smokey the Bear\n'
         OutputCapture().assert_outputs(self, run, args=["hi"], expected_stderr=expected_stderr)
 

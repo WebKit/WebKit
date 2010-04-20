@@ -1,5 +1,21 @@
 2010-04-19  Daniel Bates  <dbates@rim.com>
 
+        No review, rolling out 57868.
+        http://trac.webkit.org/changeset/57868
+        https://bugs.webkit.org/show_bug.cgi?id=37748
+
+        Sheriffbot wasn't very inspirational after this patch.
+        Instead, he was silent when you said hi :-(. Rolling
+        out this patch so that I can debug/test this some more.
+
+        * Scripts/webkitpy/common/net/bugzilla.py:
+        * Scripts/webkitpy/common/net/bugzilla_unittest.py:
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        * Scripts/webkitpy/tool/bot/sheriffircbot_unittest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+
+2010-04-19  Daniel Bates  <dbates@rim.com>
+
         Reviewed by Adam Barth.
 
         https://bugs.webkit.org/show_bug.cgi?id=37748
