@@ -660,9 +660,6 @@ BUG8630 WIN LINUX : fast/text/font-initial.html = FAIL
 BUG8630 LINUX : svg/custom/use-detach.svg = FAIL PASS
 BUG18772 LINUX : fast/backgrounds/001.html = FAIL
 
-// Need to implement layoutTestController.addUserScript.
-BUG21113 : userscripts/mixed-case-stylesheet.html = TEXT
-
 // Need a setAuthorAndUserStylesEnabled method in
 // layoutTestController. Now we have preference to enable/disable user
 // styles(not work now), we still need to add a preference to enable/disable
@@ -2149,10 +2146,6 @@ BUG21141 LINUX DEBUG : fast/forms/select-script-onchange.html = FAIL
 // Flaky, not clear as of when.
 BUG21411 WIN LINUX DEBUG : svg/dom/SVGScriptElement/script-load-and-error-events.svg = TEXT PASS
 
-// WebKit 48217:48239
-// Fails because we don't support layoutTestController.addUserStyleSheet().
-BUG21439 : userscripts/simple-stylesheet.html = FAIL
-
 // WK roll to 48371
 BUG21841 MAC DEBUG : plugins/destroy-during-npp-new.html = CRASH PASS
 BUG21841 WIN DEBUG : plugins/destroy-during-npp-new.html = CRASH PASS
@@ -2790,7 +2783,7 @@ BUG_JIANLI LINUX : http/tests/local/formdata/send-form-data-with-sliced-file.htm
 BUGAJWONG LINUX DEBUG : fast/canvas/toDataURL-noData.html = CRASH
 BUGAJWONG WIN LINUX : fast/backgrounds/svg-as-background-1.html = IMAGE PASS
 BUGAJWONG WIN LINUX : fast/backgrounds/svg-as-background-3.html = IMAGE PASS
-BUGAJWONG LINUX : svg/text/text-intro-05-t.svg = IMAGE PASS
+BUGAJWONG MAC LINUX : svg/text/text-intro-05-t.svg = IMAGE PASS
 BUGAJWONG LINUX : svg/text/text-text-07-t.svg = IMAGE PASS
 BUGAJWONG LINUX : svg/text/text-tselect-02-f.svg = IMAGE PASS
 
