@@ -165,8 +165,6 @@ private:
     bool m_scrollbarsVisible;
     bool m_menubarVisible;
     bool m_resizable;
-    // Set to true if the next SetCursor is to be ignored.
-    bool m_ignoreNextSetCursor;
 };
 
 } // namespace WebKit

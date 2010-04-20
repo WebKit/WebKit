@@ -1,3 +1,17 @@
+2010-04-20  Stuart Morgan  <stuartmorgan@chromium.org>
+
+        Reviewed by David Levin.
+
+        Remove a workaround in plugin cursor setting that was obsoleted by
+        the change in https://bugs.webkit.org/show_bug.cgi?id=35132
+        https://bugs.webkit.org/show_bug.cgi?id=37811
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::ChromeClientImpl):
+        (WebKit::ChromeClientImpl::setCursor):
+        (WebKit::ChromeClientImpl::setCursorForPlugin):
+        * src/ChromeClientImpl.h:
+
 2010-04-19  Ada Chan  <adachan@apple.com>
 
         Reviewed by Jeremy Orlow.
