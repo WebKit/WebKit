@@ -2415,7 +2415,6 @@ BUG29737 MAC : svg/filters/feTile.svg = IMAGE
 BUG29737 MAC : svg/filters/shadow-on-filter.svg = IMAGE
 BUG29737 MAC : svg/custom/use-elementInstance-event-target.svg = IMAGE
 BUG29737 SLOW MAC : svg/filters/big-sized-filter.svg = IMAGE
-BUG29737 MAC : svg/filters/filterRes.svg = IMAGE
 BUG29737 MAC : svg/W3C-SVG-1.1/struct-image-02-b.svg = IMAGE
 BUG29737 MAC : svg/filters/sourceAlpha.svg = IMAGE
 
@@ -2678,7 +2677,8 @@ BUG38704 WIN RELEASE: svg/text/text-text-06-t.svg = CRASH PASS
 BUG38706 : svg/custom/deep-dynamic-updates.svg = IMAGE+TEXT PASS
 
 // Caused by http://trac.webkit.org/changeset/56288/
-BUG_JSCHUH WIN LINUX : svg/filters/filterRes.svg = IMAGE
+BUG_JSCHUH WIN LINUX : svg/filters/filterRes.svg = IMAGE+TEXT
+BUG_JSCHUH MAC : svg/filters/filterRes.svg = IMAGE
 
 // Caused by http://trac.webkit.org/changeset/56394.
 BUG_JAPHET WIN : http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch.html = TEXT
@@ -2740,7 +2740,7 @@ BUGAJWONG MAC LINUX : svg/text/text-intro-05-t.svg = IMAGE PASS
 BUGAJWONG LINUX : svg/text/text-text-07-t.svg = IMAGE PASS
 BUGAJWONG LINUX : svg/text/text-tselect-02-f.svg = IMAGE PASS
 
-BUG42044 WIN DEBUG : http/tests/security/xss-DENIED-mime-type-execute-as-html.html = PASS TIMEOUT
+BUG42044 WIN : http/tests/security/xss-DENIED-mime-type-execute-as-html.html = PASS TIMEOUT
 
 // Broke at r57886, probably just need new baselines
 BUGJAMESR LINUX RELEASE : svg/W3C-SVG-1.1/filters-diffuse-01-f.svg = TEXT
@@ -2752,3 +2752,4 @@ BUGJAMESR : svg/filters/filter-clip.svg = IMAGE
 BUGJAMESR : svg/filters/filter-source-position.svg = IMAGE
 BUGJAMESR : svg/W3C-SVG-1.1/animate-elem-41-t.svg = IMAGE+TEXT
 BUGJAMESR BUG30048 BUG29737 : svg/filters/shadow-on-rect-with-filter.svg = IMAGE
+

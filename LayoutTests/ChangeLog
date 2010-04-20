@@ -1,3 +1,14 @@
+2010-04-20  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed. Update chromium expectations.  Also consolidate identical
+        platform expectations for fast/dom/prototype-inheritance.html.
+
+        * platform/chromium-linux/fast/dom/prototype-inheritance-expected.txt: Removed.
+        * platform/chromium-mac/fast/dom/prototype-inheritance-expected.txt: Removed.
+        * platform/chromium-win/fast/dom/prototype-inheritance-expected.txt: Removed.
+        * platform/chromium/fast/dom/prototype-inheritance-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/dom/prototype-inheritance-expected.txt.
+        * platform/chromium/test_expectations.txt:
+
 2010-04-20  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r57924.
