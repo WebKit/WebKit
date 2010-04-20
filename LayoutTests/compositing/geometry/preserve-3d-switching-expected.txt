@@ -10,7 +10,7 @@ The green box appear angled out from the yellow box and embedded in it.
   (preserves3D 0)
   (drawsContent 0)
   (backfaceVisibility visible)
-    (backgroundColor none)
+  (backgroundColor none)
   (transform identity)
   (childrenTransform identity)
   (children 1
@@ -23,7 +23,7 @@ The green box appear angled out from the yellow box and embedded in it.
       (preserves3D 0)
       (drawsContent 0)
       (backfaceVisibility visible)
-            (backgroundColor none)
+      (backgroundColor none)
       (transform identity)
       (childrenTransform identity)
       (children 1
@@ -36,7 +36,7 @@ The green box appear angled out from the yellow box and embedded in it.
           (preserves3D 0)
           (drawsContent 1)
           (backfaceVisibility visible)
-                    (backgroundColor none)
+          (backgroundColor none)
           (transform identity)
           (childrenTransform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 -0.00] [0.00 0.00 0.00 1.00])
           (children 1
@@ -49,7 +49,7 @@ The green box appear angled out from the yellow box and embedded in it.
               (preserves3D 1)
               (drawsContent 1)
               (backfaceVisibility visible)
-                            (backgroundColor none)
+              (backgroundColor none)
               (transform [0.77 -0.56 -0.32 0.00] [0.00 0.50 -0.87 0.00] [0.64 0.66 0.38 0.00] [0.00 0.00 0.00 1.00])
               (childrenTransform identity)
               (children 1
@@ -62,7 +62,7 @@ The green box appear angled out from the yellow box and embedded in it.
                   (preserves3D 0)
                   (drawsContent 1)
                   (backfaceVisibility visible)
-                                    (backgroundColor none)
+                  (backgroundColor none)
                   (transform [0.77 0.00 0.64 0.00] [0.00 1.00 0.00 0.00] [-0.64 0.00 0.77 0.00] [0.00 0.00 50.00 1.00])
                   (childrenTransform identity)
                 )

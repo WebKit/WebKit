@@ -1,3 +1,14 @@
+2010-04-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        backgroundColor is oddly indented in layer tree dump
+        https://bugs.webkit.org/show_bug.cgi?id=37885
+        
+        Fix indentation in this expected result.
+
+        * compositing/geometry/preserve-3d-switching-expected.txt:
+
 2010-04-20  James Robinson  <jamesr@chromium.org>
 
         Unreviewed. Fix typo in chromium test expectations.

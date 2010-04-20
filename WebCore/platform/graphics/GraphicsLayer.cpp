@@ -435,8 +435,8 @@ void GraphicsLayer::dumpProperties(TextStream& ts, int indent, LayerTreeAsTextBe
     writeIndent(ts, indent + 1);
     ts << "(backfaceVisibility " << (m_backfaceVisibility ? "visible" : "hidden") << ")\n";
 
-    writeIndent(ts, indent + 1);
     if (behavior & LayerTreeAsTextDebug) {
+        writeIndent(ts, indent + 1);
         ts << "(";
         if (m_client)
             ts << "client " << static_cast<void*>(m_client);

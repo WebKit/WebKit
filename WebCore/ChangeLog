@@ -173,6 +173,19 @@
 
 2010-04-20  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Anders Carlsson.
+
+        backgroundColor is oddly indented in layer tree dump
+        https://bugs.webkit.org/show_bug.cgi?id=37885
+
+        The writeIndent() was mistakenly outside the LayerTreeAsTextDebug clause, causing indents
+        to be written twice.
+        
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::dumpProperties):
+
+2010-04-20  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dimitri Glazkov.
 
         Clean up RenderPart/RenderPartObject/RenderFrame/RenderEmbeddedObject
