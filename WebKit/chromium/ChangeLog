@@ -1,3 +1,13 @@
+2010-04-20  Jay Civelli  <jcivelli@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [chromium] Tests that pressing tab now closes the select popup.
+        https://bugs.webkit.org/show_bug.cgi?id=37721
+
+        * tests/PopupMenuTest.cpp:
+        (WebKit::TEST_F):
+
 2010-04-20  Evan Stade  <estade@chromium.org>
 
         Reviewed by David Levin.

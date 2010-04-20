@@ -294,6 +294,13 @@ TEST_F(SelectPopupMenuTest, SelectWithKeys)
     simulateKeyDownEvent(VKEY_ESCAPE);
     EXPECT_FALSE(popupOpen());
     EXPECT_EQ(3, selectedIndex());
+
+    // It should work as well with TAB.
+    showPopup();
+    simulateKeyDownEvent(VKEY_DOWN);
+    simulateKeyDownEvent(VKEY_TAB);
+    EXPECT_FALSE(popupOpen());
+    EXPECT_EQ(4, selectedIndex());
 }
 
 // Tests that selecting an item with the mouse does select the item and close
