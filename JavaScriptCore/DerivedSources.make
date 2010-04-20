@@ -48,6 +48,7 @@ all : \
     RegExpObject.lut.h \
     StringPrototype.lut.h \
     docs/bytecode.html \
+    RegExpJitTables.h \
 #
 
 # lookup tables for classes
@@ -74,3 +75,7 @@ chartables.c : dftables
 
 docs/bytecode.html: make-bytecode-docs.pl Interpreter.cpp 
 	perl $^ $@
+
+#character tables for Yarr
+RegExpJitTables.h: create_regex_tables
+	python $^ > $@

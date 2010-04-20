@@ -731,6 +731,16 @@ public:
             m_assembler.testb_im(mask.m_value, address.offset, address.base);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
+    
+    Jump branchTest8(Condition cond, BaseIndex address, Imm32 mask = Imm32(-1))
+    {
+        ASSERT((cond == Zero) || (cond == NonZero));
+        if (mask.m_value == -1)
+            m_assembler.cmpb_im(0, address.offset, address.base, address.index, address.scale);
+        else
+            m_assembler.testb_im(mask.m_value, address.offset, address.base, address.index, address.scale);
+        return Jump(m_assembler.jCC(x86Condition(cond)));
+    }
 
     Jump jump()
     {

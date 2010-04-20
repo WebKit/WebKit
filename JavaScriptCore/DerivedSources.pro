@@ -93,3 +93,9 @@ ctgen.commands = perl $$ctgen.wkScript ${QMAKE_FILE_OUT} $$PREPROCESSOR
 ctgen.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_JSC_GENERATED_SOURCES_DIR}${QMAKE_FILE_BASE}
 addExtraCompiler(ctgen)
 
+#GENERATOR: "RegExpJitTables.h": tables used by Yarr
+retgen.output = $$JSC_GENERATED_SOURCES_DIR/RegExpJitTables.h
+retgen.wkScript = $$PWD/create_regex_tables 
+retgen.input = retgen.wkScript
+retgen.commands = python $$retgen.wkScript > ${QMAKE_FILE_OUT}
+addExtraCompiler(retgen)

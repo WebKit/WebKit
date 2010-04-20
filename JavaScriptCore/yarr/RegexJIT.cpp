@@ -40,7 +40,6 @@ using namespace WTF;
 
 namespace JSC { namespace Yarr {
 
-
 class RegexGenerator : private MacroAssembler {
     friend void jitCompileRegex(JSGlobalData* globalData, RegexCodeBlock& jitObject, const UString& pattern, unsigned& numSubpatterns, const char*& error, bool ignoreCase, bool multiline);
 
@@ -155,6 +154,11 @@ class RegexGenerator : private MacroAssembler {
 
     void matchCharacterClass(RegisterID character, JumpList& matchDest, const CharacterClass* charClass)
     {
+        if (charClass->m_table) {
+            ExtendedAddress tableEntry(character, reinterpret_cast<intptr_t>(charClass->m_table->m_table));
+            matchDest.append(branchTest8(charClass->m_table->m_inverted ? Zero : NonZero, tableEntry));   
+            return;
+        }
         Jump unicodeFail;
         if (charClass->m_matchesUnicode.size() || charClass->m_rangesUnicode.size()) {
             Jump isAscii = branch32(LessThanOrEqual, character, Imm32(0x7f));
@@ -609,9 +613,14 @@ class RegexGenerator : private MacroAssembler {
             ASSERT(!m_pattern.m_ignoreCase || (Unicode::toLower(ch) == Unicode::toUpper(ch)));
             failures.append(jumpIfCharNotEquals(ch, state.inputOffset()));
         }
+
         add32(Imm32(1), countRegister);
         add32(Imm32(1), index);
-        branch32(NotEqual, countRegister, Imm32(term.quantityCount)).linkTo(loop, this);
+        if (term.quantityCount != 0xffffffff)
+            branch32(NotEqual, countRegister, Imm32(term.quantityCount)).linkTo(loop, this);
+        else
+            jump(loop);
+
         failures.append(jump());
 
         Label backtrackBegin(this);
@@ -646,7 +655,8 @@ class RegexGenerator : private MacroAssembler {
         loadFromFrame(term.frameLocation, countRegister);
 
         atEndOfInput().linkTo(hardFail, this);
-        branch32(Equal, countRegister, Imm32(term.quantityCount), hardFail);
+        if (term.quantityCount != 0xffffffff)
+            branch32(Equal, countRegister, Imm32(term.quantityCount), hardFail);
         if (m_pattern.m_ignoreCase && isASCIIAlpha(ch)) {
             readCharacter(state.inputOffset(), character);
             or32(Imm32(32), character);
@@ -732,7 +742,11 @@ class RegexGenerator : private MacroAssembler {
 
         add32(Imm32(1), countRegister);
         add32(Imm32(1), index);
-        branch32(NotEqual, countRegister, Imm32(term.quantityCount)).linkTo(loop, this);
+        if (term.quantityCount != 0xffffffff)
+            branch32(NotEqual, countRegister, Imm32(term.quantityCount)).linkTo(loop, this);
+        else
+            jump(loop);
+
         failures.append(jump());
 
         Label backtrackBegin(this);

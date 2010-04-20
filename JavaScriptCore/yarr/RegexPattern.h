@@ -56,11 +56,35 @@ struct CharacterRange {
     }
 };
 
+struct CharacterClassTable : RefCounted<CharacterClassTable> {
+    const char* m_table;
+    bool m_inverted;
+    static PassRefPtr<CharacterClassTable> create(const char* table, bool inverted)
+    {
+        return adoptRef(new CharacterClassTable(table, inverted));
+    }
+
+private:
+    CharacterClassTable(const char* table, bool inverted)
+        : m_table(table)
+        , m_inverted(inverted)
+    {
+    }
+};
+
 struct CharacterClass : FastAllocBase {
+    // All CharacterClass instances have to have the full set of matches and ranges,
+    // they may have an optional table for faster lookups (which must match the
+    // specified matches and ranges)
+    CharacterClass(PassRefPtr<CharacterClassTable> table)
+        : m_table(table)
+    {
+    }
     Vector<UChar> m_matches;
     Vector<CharacterRange> m_ranges;
     Vector<UChar> m_matchesUnicode;
     Vector<CharacterRange> m_rangesUnicode;
+    RefPtr<CharacterClassTable> m_table;
 };
 
 enum QuantifierType {

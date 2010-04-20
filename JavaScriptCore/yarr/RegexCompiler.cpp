@@ -36,6 +36,8 @@ using namespace WTF;
 
 namespace JSC { namespace Yarr {
 
+#include "RegExpJitTables.h"
+
 class CharacterClassConstructor {
 public:
     CharacterClassConstructor(bool isCaseInsensitive = false)
@@ -141,7 +143,7 @@ public:
 
     CharacterClass* charClass()
     {
-        CharacterClass* characterClass = new CharacterClass();
+        CharacterClass* characterClass = new CharacterClass(0);
 
         characterClass->m_matches.append(m_matches);
         characterClass->m_ranges.append(m_ranges);
@@ -232,105 +234,6 @@ private:
     Vector<UChar> m_matchesUnicode;
     Vector<CharacterRange> m_rangesUnicode;
 };
-
-
-CharacterClass* newlineCreate()
-{
-    CharacterClass* characterClass = new CharacterClass();
-
-    characterClass->m_matches.append('\n');
-    characterClass->m_matches.append('\r');
-    characterClass->m_matchesUnicode.append(0x2028);
-    characterClass->m_matchesUnicode.append(0x2029);
-    
-    return characterClass;
-}
-
-CharacterClass* digitsCreate()
-{
-    CharacterClass* characterClass = new CharacterClass();
-
-    characterClass->m_ranges.append(CharacterRange('0', '9'));
-    
-    return characterClass;
-}
-
-CharacterClass* spacesCreate()
-{
-    CharacterClass* characterClass = new CharacterClass();
-
-    characterClass->m_matches.append(' ');
-    characterClass->m_ranges.append(CharacterRange('\t', '\r'));
-    characterClass->m_matchesUnicode.append(0x00a0);
-    characterClass->m_matchesUnicode.append(0x1680);
-    characterClass->m_matchesUnicode.append(0x180e);
-    characterClass->m_matchesUnicode.append(0x2028);
-    characterClass->m_matchesUnicode.append(0x2029);
-    characterClass->m_matchesUnicode.append(0x202f);
-    characterClass->m_matchesUnicode.append(0x205f);
-    characterClass->m_matchesUnicode.append(0x3000);
-    characterClass->m_rangesUnicode.append(CharacterRange(0x2000, 0x200a));
-    
-    return characterClass;
-}
-
-CharacterClass* wordcharCreate()
-{
-    CharacterClass* characterClass = new CharacterClass();
-
-    characterClass->m_matches.append('_');
-    characterClass->m_ranges.append(CharacterRange('0', '9'));
-    characterClass->m_ranges.append(CharacterRange('A', 'Z'));
-    characterClass->m_ranges.append(CharacterRange('a', 'z'));
-    
-    return characterClass;
-}
-
-CharacterClass* nondigitsCreate()
-{
-    CharacterClass* characterClass = new CharacterClass();
-
-    characterClass->m_ranges.append(CharacterRange(0, '0' - 1));
-    characterClass->m_ranges.append(CharacterRange('9' + 1, 0x7f));
-    characterClass->m_rangesUnicode.append(CharacterRange(0x80, 0xffff));
-    
-    return characterClass;
-}
-
-CharacterClass* nonspacesCreate()
-{
-    CharacterClass* characterClass = new CharacterClass();
-
-    characterClass->m_ranges.append(CharacterRange(0, '\t' - 1));
-    characterClass->m_ranges.append(CharacterRange('\r' + 1, ' ' - 1));
-    characterClass->m_ranges.append(CharacterRange(' ' + 1, 0x7f));
-    characterClass->m_rangesUnicode.append(CharacterRange(0x0080, 0x009f));
-    characterClass->m_rangesUnicode.append(CharacterRange(0x00a1, 0x167f));
-    characterClass->m_rangesUnicode.append(CharacterRange(0x1681, 0x180d));
-    characterClass->m_rangesUnicode.append(CharacterRange(0x180f, 0x1fff));
-    characterClass->m_rangesUnicode.append(CharacterRange(0x200b, 0x2027));
-    characterClass->m_rangesUnicode.append(CharacterRange(0x202a, 0x202e));
-    characterClass->m_rangesUnicode.append(CharacterRange(0x2030, 0x205e));
-    characterClass->m_rangesUnicode.append(CharacterRange(0x2060, 0x2fff));
-    characterClass->m_rangesUnicode.append(CharacterRange(0x3001, 0xffff));
-    
-    return characterClass;
-}
-
-CharacterClass* nonwordcharCreate()
-{
-    CharacterClass* characterClass = new CharacterClass();
-
-    characterClass->m_matches.append('`');
-    characterClass->m_ranges.append(CharacterRange(0, '0' - 1));
-    characterClass->m_ranges.append(CharacterRange('9' + 1, 'A' - 1));
-    characterClass->m_ranges.append(CharacterRange('Z' + 1, '_' - 1));
-    characterClass->m_ranges.append(CharacterRange('z' + 1, 0x7f));
-    characterClass->m_rangesUnicode.append(CharacterRange(0x80, 0xffff));
-
-    return characterClass;
-}
-
 
 class RegexPatternConstructor {
 public:

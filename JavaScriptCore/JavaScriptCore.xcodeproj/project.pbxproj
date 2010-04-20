@@ -853,6 +853,8 @@
 		969A09220ED1E09C00F1F681 /* Completion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Completion.cpp; sourceTree = "<group>"; };
 		96DD73780F9DA3100027FBCC /* VMTags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMTags.h; sourceTree = "<group>"; };
 		97F6903A1169DF7F00A6BB46 /* Terminator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Terminator.h; sourceTree = "<group>"; };
+		A718F61A11754A21002465A7 /* RegExpJitTables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpJitTables.h; sourceTree = "<group>"; };
+		A718F8211178EB4B002465A7 /* create_regex_tables */ = {isa = PBXFileReference; explicitFileType = text.script.python; fileEncoding = 4; path = create_regex_tables; sourceTree = "<group>"; };
 		A72700770DAC605600E548D7 /* JSNotAnObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNotAnObject.h; sourceTree = "<group>"; };
 		A72700780DAC605600E548D7 /* JSNotAnObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNotAnObject.cpp; sourceTree = "<group>"; };
 		A72701B30DADE94900E548D7 /* ExceptionHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExceptionHelpers.h; sourceTree = "<group>"; };
@@ -1113,6 +1115,7 @@
 		0867D691FE84028FC02AAC07 /* JavaScriptCore */ = {
 			isa = PBXGroup;
 			children = (
+				A718F8211178EB4B002465A7 /* create_regex_tables */,
 				937B63CC09E766D200A671DD /* DerivedSources.make */,
 				F692A8540255597D01FF60F7 /* create_hash_table */,
 				14B8ECA60A5653980062BE54 /* JavaScriptCore.exp */,
@@ -1304,6 +1307,7 @@
 		650FDF8D09D0FCA700769E54 /* Derived Sources */ = {
 			isa = PBXGroup;
 			children = (
+				A718F61A11754A21002465A7 /* RegExpJitTables.h */,
 				BC18C5230E16FC8A00B34460 /* ArrayPrototype.lut.h */,
 				65B174BE09D1000200820339 /* chartables.c */,
 				BCD203E70E1718F4002C7E82 /* DatePrototype.lut.h */,

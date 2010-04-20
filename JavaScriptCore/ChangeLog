@@ -1,3 +1,47 @@
+2010-04-20  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Autogenerate yarr character tables
+        https://bugs.webkit.org/show_bug.cgi?id=37877
+
+        Use a python script to automatically generate character tables
+        for the builtin YARR character classes.  This allows us to generate
+        actual tables as well, by using these tables we can both increase
+        performance of the check (for complex builtins) and reduce the actual
+        code size.
+
+        4-8% win on string-unpack-code, but lots of noise on other tests so
+        i'm only confident saying its a 1% win overall.
+
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::ExtendedAddress::ExtendedAddress):
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::branchTest8):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::branchTest8):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::branchTest8):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::cmpb_im):
+        (JSC::X86Assembler::testb_im):
+        * bytecode/SamplingTool.cpp:
+        (JSC::SamplingTool::dump):
+        * create_regex_tables: Added.
+        * yarr/RegexCompiler.cpp:
+        (JSC::Yarr::CharacterClassConstructor::charClass):
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::RegexGenerator::matchCharacterClass):
+        (JSC::Yarr::RegexGenerator::generatePatternCharacterGreedy):
+        (JSC::Yarr::RegexGenerator::generatePatternCharacterNonGreedy):
+        (JSC::Yarr::RegexGenerator::generateCharacterClassGreedy):
+        * yarr/RegexPattern.h:
+        (JSC::Yarr::CharacterClassTable::create):
+        (JSC::Yarr::CharacterClassTable::CharacterClassTable):
+        (JSC::Yarr::CharacterClass::CharacterClass):
+
 2010-04-20  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by NOBODY (speculative windows fix - missed a bit!).
