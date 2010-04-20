@@ -1,3 +1,11 @@
+2010-04-20  Jakub Wieczorek  <jwieczorek@webkit.org>
+
+        Unreviewed.
+
+        Add my IRC nick to the committers.py list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-04-20  Kim Grönholm  <kim.gronholm@nomovok.com>
 
         Reviewed by Simon Hausmann.
