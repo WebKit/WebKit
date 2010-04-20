@@ -1,3 +1,21 @@
+2010-04-20  Robin Cao  <robin.webkit@gmail.com>
+
+        Reviewed by Dirk Schulze.
+
+        SVG no AnimateColor for stroke or fill if they are set to none on target.
+        https://bugs.webkit.org/show_bug.cgi?id=36718
+
+        SVGAnimateElement::resetToBaseValue reset 'm_propertyType' in the process of animation.
+        This will cause problems when attributes 'fill' and 'stroke' have the value 'none', because in this case 
+        the property type determined by base value may be different from the one determined by 'fromTo' values.
+
+        No new tests. The test suite in svg/animation is not working for target element with attribute 'fill' set to 'none'.
+        Now animateColor on target element with attributes 'fill' and 'stroke' set to 'none' is possible.
+
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::SVGAnimateElement::calculateFromAndToValues):
+        (WebCore::SVGAnimateElement::resetToBaseValue):
+
 2010-04-20  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r57892.

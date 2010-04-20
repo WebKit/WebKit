@@ -178,7 +178,7 @@ bool SVGAnimateElement::calculateFromAndToValues(const String& fromString, const
     if (m_propertyType == ColorProperty) {
         m_fromColor = SVGColor::colorFromRGBColorString(fromString);
         m_toColor = SVGColor::colorFromRGBColorString(toString);
-        if (m_fromColor.isValid() && m_toColor.isValid())
+        if (m_fromColor.isValid() && m_toColor.isValid() || m_toColor.isValid() && animationMode() == ToAnimation)
             return true;
     } else if (m_propertyType == NumberProperty) {
         m_numberUnit = String();
@@ -236,11 +236,14 @@ bool SVGAnimateElement::calculateFromAndByValues(const String& fromString, const
 void SVGAnimateElement::resetToBaseValue(const String& baseString)
 {
     m_animatedString = baseString;
+    PropertyType lastType = m_propertyType;
     m_propertyType = determinePropertyType(attributeName());
     if (m_propertyType == ColorProperty) {
         m_animatedColor = baseString.isEmpty() ? Color() : SVGColor::colorFromRGBColorString(baseString);
-        if (m_animatedColor.isValid())
+        if (isContributing(elapsed())) {
+            m_propertyType = lastType;
             return;
+        }
     } else if (m_propertyType == NumberProperty) {
         if (baseString.isEmpty()) {
             m_animatedNumber = 0;

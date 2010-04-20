@@ -1,3 +1,15 @@
+2010-04-20  Robin Cao  <robin.webkit@gmail.com>
+
+        Reviewed by Dirk Schulze.
+
+        Update expected results after bug fix: https://bugs.webkit.org/show_bug.cgi?id=36718
+        now animateColor on target element with attributes 'fill' and 'stroke' set to 'none' is possible.
+
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-41-t-expected.checksum: Updated.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-41-t-expected.png: Updated.
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-41-t-expected.txt: Updated.
+        * svg/custom/animation-currentColor.svg: Updated.
+
 2010-04-20  Adam Roben  <aroben@apple.com>
 
         Unskip xss-DENIED-mime-type-execute-as-html.html on Windows
