@@ -1,3 +1,20 @@
+2010-04-19  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Bindings clean-up.
+        https://bugs.webkit.org/show_bug.cgi?id=37833
+
+        Move some WebSQLDatabases logic out of the bindings into
+        DOMWindow.cpp where it should be.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::openDatabase):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8DOMWindow::openDatabaseCallback):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::openDatabase):
+
 2010-04-19  Kevin Ollivier  <kevino@theolliviers.com>
 
         Fix the Mac builders for now by restoring the keepAlive function.

@@ -735,8 +735,6 @@ v8::Handle<v8::Value> V8DOMWindow::openDatabaseCallback(const v8::Arguments& arg
         creationCallback = V8DatabaseCallback::create(args[4], imp->frame());
 
     v8::Handle<v8::Value> result = toV8(imp->openDatabase(name, version, displayName, estimatedSize, creationCallback.release(), ec));
-    if (!ec && result.IsEmpty())
-        ec = SECURITY_ERR;
 
     V8Proxy::setDOMException(ec);
     return result;

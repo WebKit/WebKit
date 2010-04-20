@@ -1199,19 +1199,14 @@ double DOMWindow::devicePixelRatio() const
 #if ENABLE(DATABASE)
 PassRefPtr<Database> DOMWindow::openDatabase(const String& name, const String& version, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, ExceptionCode& ec)
 {
-    if (!m_frame)
-        return 0;
+    RefPtr<Database> database = 0;
+    if (m_frame && Database::isAvailable() && m_frame->document()->securityOrigin()->canAccessDatabase())
+        database = Database::openDatabase(m_frame->document(), name, version, displayName, estimatedSize, creationCallback, ec);
 
-    if (!Database::isAvailable())
-        return 0;
-
-    Document* document = m_frame->document();
-    if (!document->securityOrigin()->canAccessDatabase()) {
+    if (!database && !ec)
         ec = SECURITY_ERR;
-        return 0;
-    }
 
-    return Database::openDatabase(document, name, version, displayName, estimatedSize, creationCallback, ec);
+    return database;
 }
 #endif
 
