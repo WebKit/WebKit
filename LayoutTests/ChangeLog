@@ -1,3 +1,13 @@
+2010-04-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Test fix, no review.
+
+        Disable compositing/iframes/composited-iframe.html because compositing is
+        turned off at runtime on Leopard (based on QuickTime version), so we can't
+        rely on the result.
+
+        * platform/mac-leopard/Skipped:
+
 2010-04-20  James Robinson  <jamesr@chromium.org>
 
         Reviewed by dglazkov.
