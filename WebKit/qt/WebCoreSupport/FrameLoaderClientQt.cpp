@@ -536,7 +536,7 @@ void FrameLoaderClientQt::finishedLoading(DocumentLoader* loader)
     if (!m_pluginView) {
         if(m_firstData) {
             FrameLoader *fl = loader->frameLoader();
-            fl->setEncoding(m_response.textEncodingName(), false);
+            fl->writer()->setEncoding(m_response.textEncodingName(), false);
             m_firstData = false; 
         }
     }
@@ -727,7 +727,7 @@ void FrameLoaderClientQt::setMainDocumentError(WebCore::DocumentLoader* loader, 
 {
     if (!m_pluginView) {
         if (m_firstData) {
-            loader->frameLoader()->setEncoding(m_response.textEncodingName(), false);
+            loader->frameLoader()->writer()->setEncoding(m_response.textEncodingName(), false);
             m_firstData = false;
         }
     } else {
@@ -745,7 +745,7 @@ void FrameLoaderClientQt::committedLoad(WebCore::DocumentLoader* loader, const c
             return;
         FrameLoader *fl = loader->frameLoader();
         if (m_firstData) {
-            fl->setEncoding(m_response.textEncodingName(), false);
+            fl->writer()->setEncoding(m_response.textEncodingName(), false);
             m_firstData = false;
         }
         fl->addData(data, length);
@@ -931,7 +931,7 @@ void FrameLoaderClientQt::dispatchDidFailLoading(WebCore::DocumentLoader* loader
 
     if (m_firstData) {
         FrameLoader *fl = loader->frameLoader();
-        fl->setEncoding(m_response.textEncodingName(), false);
+        fl->writer()->setEncoding(m_response.textEncodingName(), false);
         m_firstData = false;
     }
 }

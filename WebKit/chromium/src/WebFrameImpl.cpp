@@ -522,7 +522,7 @@ WebURL WebFrameImpl::openSearchDescriptionURL() const
 
 WebString WebFrameImpl::encoding() const
 {
-    return frame()->loader()->encoding();
+    return frame()->loader()->writer()->encoding();
 }
 
 WebSize WebFrameImpl::scrollOffset() const
@@ -1016,7 +1016,7 @@ void WebFrameImpl::commitDocumentData(const char* data, size_t dataLen)
         userChosen = false;
         encoding = documentLoader->response().textEncodingName();
     }
-    m_frame->loader()->setEncoding(encoding, userChosen);
+    m_frame->loader()->writer()->setEncoding(encoding, userChosen);
 
     // NOTE: mac only does this if there is a document
     m_frame->loader()->addData(data, dataLen);
@@ -2121,12 +2121,13 @@ void WebFrameImpl::clearPasswordListeners()
 
 void WebFrameImpl::loadJavaScriptURL(const KURL& url)
 {
-    // This is copied from FrameLoader::executeIfJavaScriptURL.  Unfortunately,
-    // we cannot just use that method since it is private, and it also doesn't
-    // quite behave as we require it to for bookmarklets.  The key difference is
-    // that we need to suppress loading the string result from evaluating the JS
-    // URL if executing the JS URL resulted in a location change.  We also allow
-    // a JS URL to be loaded even if scripts on the page are otherwise disabled.
+    // This is copied from ScriptController::executeIfJavaScriptURL.
+    // Unfortunately, we cannot just use that method since it is private, and
+    // it also doesn't quite behave as we require it to for bookmarklets.  The
+    // key difference is that we need to suppress loading the string result
+    // from evaluating the JS URL if executing the JS URL resulted in a
+    // location change.  We also allow a JS URL to be loaded even if scripts on
+    // the page are otherwise disabled.
 
     if (!m_frame->document() || !m_frame->page())
         return;
@@ -2142,9 +2143,9 @@ void WebFrameImpl::loadJavaScriptURL(const KURL& url)
 
     if (!m_frame->redirectScheduler()->locationChangePending()) {
         m_frame->loader()->stopAllLoaders();
-        m_frame->loader()->begin(m_frame->loader()->url(), true, securityOrigin);
-        m_frame->loader()->write(scriptResult);
-        m_frame->loader()->end();
+        m_frame->loader()->writer()->begin(m_frame->loader()->url(), true, securityOrigin);
+        m_frame->loader()->writer()->addData(scriptResult);
+        m_frame->loader()->writer()->end();
     }
 }
 

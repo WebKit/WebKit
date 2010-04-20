@@ -2490,6 +2490,8 @@
 		97059978107D975200A50A7C /* PolicyCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 97059974107D975200A50A7C /* PolicyCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97059979107D975200A50A7C /* PolicyChecker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97059975107D975200A50A7C /* PolicyChecker.cpp */; };
 		9705997A107D975200A50A7C /* PolicyChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = 97059976107D975200A50A7C /* PolicyChecker.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		973889A0116EA9DC00ADF313 /* DocumentWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9738899E116EA9DC00ADF313 /* DocumentWriter.cpp */; };
+		973889A1116EA9DC00ADF313 /* DocumentWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 9738899F116EA9DC00ADF313 /* DocumentWriter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		973E325610883B7C005BC493 /* ResourceLoadNotifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 973E325410883B7C005BC493 /* ResourceLoadNotifier.cpp */; };
 		973E325710883B7C005BC493 /* ResourceLoadNotifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 973E325510883B7C005BC493 /* ResourceLoadNotifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		979F43D31075E44A0000F83B /* RedirectScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 979F43D11075E44A0000F83B /* RedirectScheduler.cpp */; };
@@ -7931,6 +7933,8 @@
 		97059974107D975200A50A7C /* PolicyCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PolicyCallback.h; sourceTree = "<group>"; };
 		97059975107D975200A50A7C /* PolicyChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PolicyChecker.cpp; sourceTree = "<group>"; };
 		97059976107D975200A50A7C /* PolicyChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PolicyChecker.h; sourceTree = "<group>"; };
+		9738899E116EA9DC00ADF313 /* DocumentWriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentWriter.cpp; sourceTree = "<group>"; };
+		9738899F116EA9DC00ADF313 /* DocumentWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentWriter.h; sourceTree = "<group>"; };
 		973E325410883B7C005BC493 /* ResourceLoadNotifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceLoadNotifier.cpp; sourceTree = "<group>"; };
 		973E325510883B7C005BC493 /* ResourceLoadNotifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadNotifier.h; sourceTree = "<group>"; };
 		979F43D11075E44A0000F83B /* RedirectScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RedirectScheduler.cpp; sourceTree = "<group>"; };
@@ -15238,6 +15242,8 @@
 				656D371E0ADBA5DE00A4554D /* DocumentLoader.h */,
 				0B9056150F2578BE0095FF6A /* DocumentThreadableLoader.cpp */,
 				0B9056160F2578BE0095FF6A /* DocumentThreadableLoader.h */,
+				9738899E116EA9DC00ADF313 /* DocumentWriter.cpp */,
+				9738899F116EA9DC00ADF313 /* DocumentWriter.h */,
 				B255990D0D00D8B900BB825C /* EmptyClients.h */,
 				656D37230ADBA5DE00A4554D /* FormState.cpp */,
 				656D37220ADBA5DE00A4554D /* FormState.h */,
@@ -18852,6 +18858,7 @@
 				C5D4AA7A116BAFB60069CA93 /* GlyphMetricsMap.h in Headers */,
 				A409C985116D0DDD007197BD /* AccessibilityProgressIndicator.h in Headers */,
 				895253D8116C4C6800CABF00 /* FileStream.h in Headers */,
+				973889A1116EA9DC00ADF313 /* DocumentWriter.h in Headers */,
 				895253D9116C4C6800CABF00 /* FileStreamClient.h in Headers */,
 				5DC87EF011716DF2001C0E6D /* EmptyProtocolDefinitions.h in Headers */,
 				9FA37EE41172FC8000C4CD55 /* ScriptProfileNode.h in Headers */,
@@ -21097,6 +21104,7 @@
 				CEF418CE1179678C009D112C /* ViewportArguments.cpp in Sources */,
 				0FD3080E117CF7E700A791F7 /* RenderFrameBase.cpp in Sources */,
 				0FD308D5117D168500A791F7 /* RenderIFrame.cpp in Sources */,
+ 				973889A0116EA9DC00ADF313 /* DocumentWriter.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

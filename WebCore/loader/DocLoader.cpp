@@ -404,7 +404,7 @@ void DocLoader::requestPreload(CachedResource::Type type, const String& url, con
 {
     String encoding;
     if (type == CachedResource::Script || type == CachedResource::CSSStyleSheet)
-        encoding = charset.isEmpty() ? m_doc->frame()->loader()->encoding() : charset;
+        encoding = charset.isEmpty() ? m_doc->frame()->loader()->writer()->encoding() : charset;
 
     CachedResource* resource = requestResource(type, url, encoding, true);
     if (!resource || m_preloads.contains(resource))

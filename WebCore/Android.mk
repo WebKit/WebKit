@@ -286,6 +286,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	loader/DocLoader.cpp \
 	loader/DocumentLoader.cpp \
 	loader/DocumentThreadableLoader.cpp \
+	loader/DocumentWriter.cpp \
 	loader/FormState.cpp \
 	loader/FrameLoader.cpp \
 	loader/HistoryController.cpp \

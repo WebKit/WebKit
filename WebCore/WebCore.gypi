@@ -1747,6 +1747,8 @@
             'loader/DocumentLoader.h',
             'loader/DocumentThreadableLoader.cpp',
             'loader/DocumentThreadableLoader.h',
+            'loader/DocumentWriter.cpp',
+            'loader/DocumentWriter.h',
             'loader/EmptyClients.h',
             'loader/FTPDirectoryDocument.cpp',
             'loader/FTPDirectoryDocument.h',
