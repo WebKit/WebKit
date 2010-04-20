@@ -64,7 +64,6 @@ BUG24182 SLOW RELEASE : http/tests/misc/DOMContentLoaded-event.html = PASS
 BUG24182 SLOW LINUX DEBUG : http/tests/misc/DOMContentLoaded-event.html = PASS
 BUG24182 SLOW LINUX MAC RELEASE : http/tests/navigation/multiple-back-forward-entries.html = PASS
 BUG24182 SLOW LINUX DEBUG : http/tests/navigation/multiple-back-forward-entries.html = PASS
-BUG24182 SLOW LINUX DEBUG : svg/filters/big-sized-filter.svg = PASS
 BUG24182 SLOW : http/tests/xmlhttprequest/simple-cross-origin-progress-events.html = PASS
 //BUG24182 SLOW WIN MAC : svg/custom/invisible-text-after-scrolling.xhtml = PASS
 BUG24182 SLOW : tables/mozilla/other/slashlogo.html = PASS
@@ -882,11 +881,6 @@ BUG10286 LINUX : svg/W3C-SVG-1.1/animate-elem-02-t.svg = FAIL
 
 
 // Bug in Skia, see https://bugs.webkit.org/show_bug.cgi?id=24534 .
-
-// Text fails very rarely, 1/200 runs or fewer.
-BUG29737 LINUX DEBUG : svg/W3C-SVG-1.1/filters-light-01-f.svg = TEXT PASS
-BUG29737 MAC : svg/W3C-SVG-1.1/filters-light-01-f.svg = TEXT PASS
-BUG29737 LINUX MAC DEBUG : svg/W3C-SVG-1.1/filters-specular-01-f.svg = TEXT PASS
 
 // -----------------------------------------------------------------
 // End SVG Regressions
@@ -2400,41 +2394,37 @@ BUG29748 LINUX : tables/mozilla_expected_failures/other/test4.html = IMAGE
 BUG29748 WIN DEBUG : fast/forms/input-align-image.html = IMAGE+TEXT PASS
 
 // More Webkit Roll to r51875
-BUG29737 MAC : svg/W3C-SVG-1.1/filters-blend-01-b.svg = IMAGE+TEXT
-BUG29737 MAC : svg/W3C-SVG-1.1/filters-color-01-b.svg = IMAGE+TEXT
+// Some of these went from IMAGE+TEXT to just IMAGE at r57886
+BUG29737 MAC : svg/W3C-SVG-1.1/filters-blend-01-b.svg = IMAGE
+BUG29737 MAC : svg/W3C-SVG-1.1/filters-color-01-b.svg = IMAGE
 BUG29737 MAC : svg/W3C-SVG-1.1/filters-comptran-01-b.svg = IMAGE+TEXT
-BUG29737 MAC : svg/W3C-SVG-1.1/filters-gauss-01-b.svg = IMAGE+TEXT CRASH
-BUG29737 MAC : svg/W3C-SVG-1.1/filters-morph-01-f.svg = IMAGE+TEXT CRASH
-BUG29737 MAC : svg/W3C-SVG-1.1/filters-offset-01-b.svg = IMAGE+TEXT
-BUG29737 MAC : svg/batik/filters/feTile.svg = IMAGE+TEXT
-BUG29737 MAC : svg/custom/empty-merge.svg = IMAGE+TEXT IMAGE
-BUG29737 MAC : svg/custom/feComponentTransfer-Discrete.svg = IMAGE+TEXT IMAGE
-BUG29737 MAC : svg/custom/feComponentTransfer-Gamma.svg = IMAGE+TEXT
-BUG29737 MAC : svg/custom/feComponentTransfer-Linear.svg = IMAGE+TEXT IMAGE
-BUG29737 MAC : svg/custom/feComponentTransfer-Table.svg = IMAGE+TEXT
-BUG29737 MAC : svg/custom/text-filter.svg = IMAGE+TEXT
-BUG29737 MAC : svg/filters/feComposite.svg = IMAGE+TEXT
-BUG29737 MAC : svg/filters/feDisplacementMap.svg = IMAGE+TEXT TEXT PASS
-BUG29737 MAC : svg/filters/feGaussianBlur.svg = IMAGE+TEXT
-BUG29737 MAC : svg/filters/feTile.svg = IMAGE+TEXT
-BUG29737 MAC : svg/filters/shadow-on-filter.svg = IMAGE+TEXT
-BUG29737 MAC : svg/filters/feMerge-wrong-input.svg = TEXT
+BUG29737 MAC : svg/W3C-SVG-1.1/filters-gauss-01-b.svg = IMAGE
+BUG29737 MAC : svg/W3C-SVG-1.1/filters-morph-01-f.svg = IMAGE
+BUG29737 MAC : svg/W3C-SVG-1.1/filters-offset-01-b.svg = IMAGE
+BUG29737 MAC : svg/batik/filters/feTile.svg = IMAGE
+BUG29737 MAC : svg/custom/empty-merge.svg = IMAGE
+BUG29737 MAC : svg/custom/feComponentTransfer-Discrete.svg = IMAGE
+BUG29737 MAC : svg/custom/feComponentTransfer-Gamma.svg = IMAGE
+BUG29737 MAC : svg/custom/feComponentTransfer-Linear.svg = IMAGE
+BUG29737 MAC : svg/custom/feComponentTransfer-Table.svg = IMAGE
+BUG29737 MAC : svg/custom/text-filter.svg = IMAGE
+BUG29737 MAC : svg/filters/feComposite.svg = IMAGE
+BUG29737 MAC : svg/filters/feDisplacementMap.svg = IMAGE
+BUG29737 MAC : svg/filters/feGaussianBlur.svg = IMAGE
+BUG29737 MAC : svg/filters/feTile.svg = IMAGE
+BUG29737 MAC : svg/filters/shadow-on-filter.svg = IMAGE
 BUG29737 MAC : svg/custom/use-elementInstance-event-target.svg = IMAGE
-BUG29737 MAC : svg/filters/big-sized-filter.svg = IMAGE+TEXT
+BUG29737 SLOW MAC : svg/filters/big-sized-filter.svg = IMAGE
 BUG29737 MAC : svg/filters/filterRes.svg = IMAGE+TEXT
 BUG29737 MAC : svg/W3C-SVG-1.1/struct-image-02-b.svg = IMAGE
-BUG29737 MAC : svg/filters/sourceAlpha.svg = IMAGE+TEXT
+BUG29737 MAC : svg/filters/sourceAlpha.svg = IMAGE
 
 // More Webkit Roll to r51875
-BUG32432 LINUX DEBUG : svg/filters/feComposite.svg = TIMEOUT PASS
+BUG32432 SLOW LINUX DEBUG : svg/filters/feComposite.svg = TEXT
 
 // WebKit Roll to r51915
 BUG29930 : fast/loader/input-element-page-cache-crash.html = TIMEOUT PASS CRASH
 
-// Was first marked as (WIN: TEXT, LINUX: TEXT,  MAC: IMAGE+TEXT) by
-// roll r51875, and then after http://trac.webkit.org/changeset/51936 the
-// shadows broke so IMAGE failure was added to WIN/LINUX.
-BUG30048 BUG29737 : svg/filters/shadow-on-rect-with-filter.svg = IMAGE+TEXT
 
 // New tests courtesy of: http://trac.webkit.org/changeset/51936:
 BUG30048 : svg/css/composite-shadow-example.html = IMAGE
@@ -2485,9 +2475,6 @@ BUG9798 WIN LINUX : fast/loader/javascript-url-encoding-2.html = TIMEOUT PASS
 BUG9798 WIN RELEASE : fast/loading/subframe-removes-itself.html = TEXT PASS
 BUG9798 LINUX MAC : fast/loader/invalid-charset-on-script-crashes-loader.html = TIMEOUT PASS
 
-// Flaky since SVG filters turned on
-BUG29737 LINUX DEBUG : svg/filters/feDisplacementMap.svg = TEXT PASS
-
 // WebKit update 52293->52323
 BUG31253 : http/tests/security/xss-DENIED-assign-location-href-javascript.html = TEXT
 
@@ -2498,21 +2485,9 @@ BUG30826 WIN DEBUG : platform/win/fast/events/panScroll-event-fired.html = PASS 
 // Flaky
 BUG30930 LINUX DEBUG : tables/mozilla/bugs/bug15933.html = IMAGE PASS
 
-// WebKit update 52372->52454
-BUG30939 : svg/filters/filter-clip.svg = IMAGE+TEXT
-// Webkit roll 52198->52205
-// Newly added test in r52202
-BUG30939 MAC WIN : svg/filters/filter-source-position.svg = IMAGE+TEXT
-BUG30939 LINUX RELEASE : svg/filters/filter-source-position.svg = IMAGE+TEXT
-BUG30939 LINUX DEBUG : svg/filters/filter-source-position.svg = IMAGE+TEXT IMAGE
-
 // WebKit roll 52468->52535
 BUG31991 WIN LINUX : fast/text/international/bidi-layout-across-linebreak.html = TEXT
 BUG31252 : http/tests/security/listener/xss-inactive-closure.html = TEXT
-
-// WebKit roll 52633 -> 52667
-// On Linux, sometimes the text dump matches. Not sure why.
-BUG_DIMICH LINUX : svg/custom/resource-invalidate-on-target-update.svg = IMAGE+TEXT IMAGE
 
 BUG31623 WIN: http/tests/appcache/remove-cache.html = PASS TEXT TIMEOUT
 
@@ -2557,13 +2532,11 @@ BUG32675 LINUX : fast/repaint/trailing-floats-root-line-box-overflow.html = IMAG
 
 // Flaky tests found during the roll.
 BUG32679 LINUX DEBUG : http/tests/navigation/lockedhistory-iframe.html = TEXT PASS
-BUG32680 WIN DEBUG : svg/filters/big-sized-filter.svg = TIMEOUT PASS
 BUG32682 LINUX : svg/W3C-SVG-1.1/filters-conv-01-f.svg = TEXT PASS
 BUG32684 WIN : inspector/timeline-layout.html = TEXT PASS
 BUG35519 WIN SKIP : http/tests/inspector/inspect-iframe-from-different-domain.html = PASS
 BUG32688 MAC DEBUG : fast/lists/inlineBoxWrapperNullCheck.html = TEXT PASS
 BUG32689 MAC LINUX DEBUG : http/tests/security/mixedContent/about-blank-iframe-in-main-frame.html = TEXT PASS
-BUG32692 MAC DEBUG : svg/custom/visibility-override-filter.svg = TEXT PASS
 BUG32693 MAC DEBUG : svg/dom/SVGRectElement/rect-modify-rx.svg = TEXT PASS
 BUG35773 WIN LINUX : inspector/console-dir.html = CRASH TEXT PASS
 
@@ -2707,7 +2680,6 @@ BUG38656 : fast/media/print-restores-previous-mediatype.html = TEXT
 BUG40680 SKIP : fast/media/media-feature-wgt-view-mode.html = FAIL
 
 // Unknown flakiness.
-BUG38694 MAC LINUX DEBUG : svg/custom/feDisplacementMap-01.svg = IMAGE+TEXT PASS
 BUG38704 WIN RELEASE: svg/text/text-text-06-t.svg = CRASH PASS
 BUG38706 : svg/custom/deep-dynamic-updates.svg = IMAGE+TEXT PASS
 
@@ -2775,4 +2747,59 @@ BUGAJWONG LINUX : svg/text/text-text-07-t.svg = IMAGE PASS
 BUGAJWONG LINUX : svg/text/text-tselect-02-f.svg = IMAGE PASS
 
 BUG42044 WIN DEBUG : http/tests/security/xss-DENIED-mime-type-execute-as-html.html = PASS TIMEOUT
+
+// Broke at r57886, probably just need new baselines
+BUGJAMESR : svg/W3C-SVG-1.1/filters-composite-02-b.svg = TEXT
+BUGJAMESR WIN LINUX : svg/W3C-SVG-1.1/filters-comptran-01-b.svg
+BUGJAMESR WIN MAC : svg/W3C-SVG-1.1/filters-diffuse-01-f.svg = TEXT
+BUGJAMESR LINUX RELEASE : svg/W3C-SVG-1.1/filters-diffuse-01-f.svg = TEXT
+BUGJAMESR : svg/W3C-SVG-1.1/filters-displace-01-f.svg = TEXT
+BUGJAMESR : svg/W3C-SVG-1.1/filters-example-01-b.svg = TEXT
+BUGJAMESR : svg/W3C-SVG-1.1/filters-felem-01-b.svg = TEXT
+BUGJAMESR : svg/W3C-SVG-1.1/filters-gauss-01-b.svg = TEXT
+BUGJAMESR : svg/W3C-SVG-1.1/filters-image-01-b.svg = TEXT
+BUGJAMESR : svg/W3C-SVG-1.1/filters-light-01-f.svg = TEXT
+BUGJAMESR WIN LINUX : svg/W3C-SVG-1.1/filters-morph-01-f.svg = TEXT
+BUGJAMESR WIN LINUX : svg/W3C-SVG-1.1/filters-offset-01-b.svg = TEXT
+BUGJAMESR : svg/W3C-SVG-1.1/filters-specular-01-f.svg = TEXT
+BUGJAMESR : svg/W3C-SVG-1.1/filters-tile-01-b.svg = TEXT
+BUGJAMESR : svg/W3C-SVG-1.1/filters-turb-01-f.svg = TEXT
+BUGJAMESR WIN LINUX : svg/batik/filters/feTile.svg = TEXT
+BUGJAMESR : svg/batik/filters/filterRegions.svg = TEXT
+BUGJAMESR : svg/batik/text/textEffect.svg = TEXT
+BUGJAMESR : svg/batik/text/textEffect3.svg = TEXT
+BUGJAMESR : svg/batik/text/textProperties.svg = TEXT
+BUGJAMESR WIN LINUX : svg/custom/empty-merge.svg = TEXT
+BUGJAMESR WIN LINUX : svg/custom/feComponentTransfer-Discrete.svg = TEXT
+BUGJAMESR WIN LINUX : svg/custom/feComponentTransfer-Gamma.svg = IMAGE
+BUGJAMESR WIN LINUX : svg/custom/feComponentTransfer-Linear.svg = IMAGE
+BUGJAMESR WIN LINUX : svg/custom/feComponentTransfer-Table.svg = IMAGE
+// might have been flaky
+BUGJAMESR : svg/custom/feDisplacementMap-01.svg = TEXT
+BUGJAMESR : svg/custom/image-with-transform-clip-filter.svg = TEXT
+BUGJAMESR WIN LINUX : svg/custom/invalid-css.svg = TEXT
+BUGJAMESR : svg/custom/non-opaque-filters.svg = TEXT
+BUGJAMESR WIN LINUX : svg/custom/resource-invalidate-on-target-update.svg = TEXT
+BUGJAMESR MAC DEBUG : svg/custom/resource-invalidate-on-target-update.svg = TEXT
+BUGJAMESR WIN LINUX : svg/custom/text-filter.svg = TEXT
+BUGJAMESR : svg/custom/visibility-override-filter.svg = TEXT
+BUGJAMESR : svg/filters/big-sized-filter-2.svg = TEXT
+BUG24182 SLOW LINUX WIN : svg/filters/big-sized-filter.svg = TEXT
+BUGJAMESR : svg/filters/feColorMatrix-values.svg = TEXT
+BUGJAMESR WIN LINUX : svg/filters/feComposite.svg = TEXT
+BUGJAMESR WIN LINUX : svg/filters/feDisplacementMap.svg = TEXT
+BUGJAMESR WIN LINUX : svg/filters/feGaussianBlur.svg = TEXT
+BUGJAMESR WIN LINUX : svg/filters/feMerge-wrong-input.svg = TEXT
+BUGJAMESR : svg/filters/feMerge.svg = TEXT
+BUGJAMESR : svg/filters/feOffset.svg = TEXT
+BUGJAMESR WIN LINUX : svg/filters/feTile.svg = TEXT
+BUGJAMESR : svg/filters/filter-on-tspan.svg = TEXT
+BUGJAMESR WIN LINUX : svg/filters/shadow-on-filter.svg = TEXT
+BUGJAMESR WIN LINUX : svg/filters/sourceAlpha.svg = TEXT
+BUGJAMESR : svg/filters/subRegion-in-userSpace.svg = TEXT
+BUGJAMESR : svg/filters/subRegion-one-effect.svg = TEXT
+BUGJAMESR : svg/filters/subRegion-two-effects.svg = TEXT
+BUGJAMESR : svg/filters/filter-clip.svg = IMAGE
+BUGJAMESR : svg/filters/filter-source-position.svg = IMAGE
+BUGJAMESR BUG30048 BUG29737 : svg/filters/shadow-on-rect-with-filter.svg = IMAGE
 

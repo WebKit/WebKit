@@ -1,3 +1,10 @@
+2010-04-20  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed.  Update chromium test expectations to reflect changes
+        in SVG tests from r57886.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-04-20  Sergey Ulanov <sergeyu@chromium.org>
 
         Unreviewed, checking in baselines due to changes to Chromium's video scaling algorithm.
