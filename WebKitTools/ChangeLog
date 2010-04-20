@@ -1,3 +1,17 @@
+2010-04-20  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        [DRT/Chromium] Fix some unexpected results of editing
+        https://bugs.webkit.org/show_bug.cgi?id=37843
+
+        This change fixes about 70 unexpected results.
+        The original test_webview_delegate.cc doesn't have this bug.
+        The bug was introduced when I ported it to WebKit tree.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (printRangeDescription): Replace the latter startContainer() with endContainer().
+
 2010-04-19  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, build fix.

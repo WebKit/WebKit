@@ -220,7 +220,7 @@ static void printRangeDescription(const WebRange& range)
     WebNode startNode = range.startContainer(exception);
     printNodeDescription(startNode, exception);
     printf(" to %d of ", range.endOffset());
-    WebNode endNode = range.startContainer(exception);
+    WebNode endNode = range.endContainer(exception);
     printNodeDescription(endNode, exception);
 }
 
