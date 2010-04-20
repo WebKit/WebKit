@@ -60,7 +60,7 @@
 #include "Pasteboard.h"
 #include "RemoveFormatCommand.h"
 #include "RenderBlock.h"
-#include "RenderPart.h"
+#include "RenderFrameBase.h"
 #include "ReplaceSelectionCommand.h"
 #include "Sound.h"
 #include "Text.h"
@@ -2747,7 +2747,7 @@ bool Editor::insideVisibleArea(const IntPoint& point) const
     if (!frame->isDisconnected())
         return true;
     
-    RenderPart* renderer = frame->ownerRenderer();
+    RenderFrameBase* renderer = frame->ownerRenderer();
     if (!renderer)
         return false;
 
@@ -2776,7 +2776,7 @@ bool Editor::insideVisibleArea(Range* range) const
     if (!frame->isDisconnected())
         return true;
     
-    RenderPart* renderer = frame->ownerRenderer();
+    RenderFrameBase* renderer = frame->ownerRenderer();
     if (!renderer)
         return false;
 

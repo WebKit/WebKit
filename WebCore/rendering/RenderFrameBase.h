@@ -37,7 +37,26 @@ protected:
 
 public:
     void layoutWithFlattening(bool fixedWidth, bool fixedHeight);
+
+private:
+    virtual bool isRenderFrameBase() const { return true; }
 };
+
+inline RenderFrameBase* toRenderFrameBase(RenderObject* object)
+{
+    ASSERT(!object || object->isRenderFrameBase());
+    return static_cast<RenderFrameBase*>(object);
+}
+
+inline const RenderFrameBase* toRenderFrameBase(const RenderObject* object)
+{
+    ASSERT(!object || object->isRenderFrameBase());
+    return static_cast<const RenderFrameBase*>(object);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toRenderFrameBase(const RenderFrameBase*);
+
 
 } // namespace WebCore
 

@@ -64,7 +64,7 @@
 #include "Page.h"
 #include "PageGroup.h"
 #include "RegularExpression.h"
-#include "RenderPart.h"
+#include "RenderFrameBase.h"
 #include "RenderTableCell.h"
 #include "RenderTextControl.h"
 #include "RenderTheme.h"
@@ -1117,7 +1117,7 @@ HTMLFrameOwnerElement* Frame::ownerElement() const
     return m_ownerElement;
 }
 
-RenderPart* Frame::ownerRenderer() const
+RenderFrameBase* Frame::ownerRenderer() const
 {
     HTMLFrameOwnerElement* ownerElement = m_ownerElement;
     if (!ownerElement)
@@ -1129,9 +1129,9 @@ RenderPart* Frame::ownerRenderer() const
     // that it has started but canceled, then this can turn into an ASSERT
     // since m_ownerElement would be 0 when the load is canceled.
     // https://bugs.webkit.org/show_bug.cgi?id=18585
-    if (!object->isRenderPart())
+    if (!object->isRenderFrameBase())
         return 0;
-    return toRenderPart(object);
+    return toRenderFrameBase(object);
 }
 
 bool Frame::isDisconnected() const

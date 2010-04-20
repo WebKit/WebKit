@@ -1,3 +1,30 @@
+2010-04-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Clean up RenderPart/RenderPartObject/RenderFrame/RenderEmbeddedObject
+        https://bugs.webkit.org/show_bug.cgi?id=37741
+
+        Make Frame::ownerRenderer() return a RenderFrameBase* rather than a
+        RenderPart*, and add the necessary toRenderFrameBase() and isRenderFrameBase().
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/Editor.cpp:
+        (WebCore::Editor::insideVisibleArea):
+        * page/Frame.cpp:
+        (WebCore::Frame::ownerRenderer):
+        * page/Frame.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::~FrameView):
+        (WebCore::FrameView::clear):
+        (WebCore::FrameView::invalidateRect):
+        (WebCore::FrameView::createScrollbar):
+        * rendering/RenderFrameBase.h:
+        (WebCore::RenderFrameBase::isRenderFrameBase):
+        (WebCore::toRenderFrameBase):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isRenderFrameBase):
+
 2010-04-20  Jay Civelli  <jcivelli@chromium.org>
 
         Reviewed by Dimitri Glazkov.
