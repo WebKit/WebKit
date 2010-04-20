@@ -34,17 +34,42 @@ class RenderIFrame : public RenderFrameBase {
 public:
     RenderIFrame(Element*);
 
+#if USE(ACCELERATED_COMPOSITING)
+    bool requiresAcceleratedCompositing() const;
+#endif
+
 private:
     virtual void calcHeight();
     virtual void calcWidth();
 
     virtual void layout();
 
+#if USE(ACCELERATED_COMPOSITING)
+    virtual bool requiresLayer() const;
+#endif
+    virtual bool isRenderIFrame() const { return true; }
+
     virtual const char* renderName() const { return "RenderPartObject"; } // Lying for now to avoid breaking tests
 
     bool flattenFrame();
 
 };
+
+inline RenderIFrame* toRenderIFrame(RenderObject* object)
+{
+    ASSERT(!object || object->isRenderIFrame());
+    return static_cast<RenderIFrame*>(object);
+}
+
+inline const RenderIFrame* toRenderIFrame(const RenderObject* object)
+{
+    ASSERT(!object || object->isRenderIFrame());
+    return static_cast<const RenderIFrame*>(object);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toRenderIFrame(const RenderIFrame*);
+
 
 } // namespace WebCore
 

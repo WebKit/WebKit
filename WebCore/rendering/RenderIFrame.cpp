@@ -118,4 +118,29 @@ void RenderIFrame::layout()
     setNeedsLayout(false);
 }
 
+#if USE(ACCELERATED_COMPOSITING)
+bool RenderIFrame::requiresLayer() const
+{
+    if (RenderPart::requiresLayer())
+        return true;
+    
+    return requiresAcceleratedCompositing();
+}
+
+bool RenderIFrame::requiresAcceleratedCompositing() const
+{
+    if (!node() || !node()->hasTagName(iframeTag))
+        return false;
+
+    // If the contents of the iframe are composited, then we have to be as well.
+    HTMLIFrameElement* element = static_cast<HTMLIFrameElement*>(node());
+    if (Document* contentDocument = element->contentDocument()) {
+        if (RenderView* view = contentDocument->renderView())
+            return view->usesCompositing();
+    }
+
+    return false;
+}
+#endif
+
 }

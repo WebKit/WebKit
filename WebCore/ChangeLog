@@ -1,3 +1,43 @@
+2010-04-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Hook compositing layers together across iframes
+        https://bugs.webkit.org/show_bug.cgi?id=37878
+        
+        First step: if an iframe's document goes into compositing mode, also throw the parent
+        document into compositing mode (all the way up to the root). This is required both
+        to preserve layering (since parent document content can obscure iframe content),
+        and so that we can eventually hook the layer trees together.
+
+        Test: compositing/iframes/composited-iframe.html
+
+        * rendering/RenderIFrame.h:
+        * rendering/RenderIFrame.cpp:
+        (WebCore::RenderIFrame::requiresLayer): In order to make an iframe composited, it also has to have
+        a RenderLayer, so must return |true| from requiresLayer().
+        (WebCore::RenderIFrame::requiresAcceleratedCompositing): Returns true if the content document
+        is in compositing mode.
+        (WebCore::RenderIFrame::isRenderIFrame): Required so that RenderLayerCompositor can check
+        if a renderer is an iframe.
+        (WebCore::toRenderIFrame): Required so that RenderLayerCompositor can cast to a RenderIFrame.
+
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::enableCompositingMode): Call out to the RenderView when
+        the compositing mode changes, so that the parent document can update its compositing status.
+        (WebCore::RenderLayerCompositor::requiresCompositingLayer): Call requiresCompositingForIFrame().
+        (WebCore::RenderLayerCompositor::requiresCompositingForIFrame): Check to see if the iframe
+        wants to be composited.
+
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isRenderIFrame): Base class returns false.
+
+        * rendering/RenderView.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::compositingStateChanged): New method that allows an iframe to notify
+        its parent document that a recalcStyle is required, to update compositing state.
+
 2010-04-20  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by NOBODY (build fix).

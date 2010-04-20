@@ -43,6 +43,7 @@
 #endif
 #include "Page.h"
 #include "RenderEmbeddedObject.h"
+#include "RenderIFrame.h"
 #include "RenderLayerBacking.h"
 #include "RenderReplica.h"
 #include "RenderVideo.h"
@@ -116,6 +117,8 @@ void RenderLayerCompositor::enableCompositingMode(bool enable /* = true */)
             ensureRootPlatformLayer();
         else
             destroyRootPlatformLayer();
+
+        m_renderView->compositingStateChanged(m_compositing);
     }
 }
 
@@ -976,6 +979,7 @@ bool RenderLayerCompositor::requiresCompositingLayer(const RenderLayer* layer) c
              || requiresCompositingForVideo(renderer)
              || requiresCompositingForCanvas(renderer)
              || requiresCompositingForPlugin(renderer)
+             || requiresCompositingForIFrame(renderer)
              || renderer->style()->backfaceVisibility() == BackfaceVisibilityHidden
              || clipsCompositingDescendants(layer)
              || requiresCompositingForAnimation(renderer);
@@ -1081,6 +1085,11 @@ bool RenderLayerCompositor::requiresCompositingForCanvas(RenderObject* renderer)
 bool RenderLayerCompositor::requiresCompositingForPlugin(RenderObject* renderer) const
 {
     return renderer->isEmbeddedObject() && toRenderEmbeddedObject(renderer)->allowsAcceleratedCompositing();
+}
+
+bool RenderLayerCompositor::requiresCompositingForIFrame(RenderObject* renderer) const
+{
+    return renderer->isRenderIFrame() && toRenderIFrame(renderer)->requiresAcceleratedCompositing();
 }
 
 bool RenderLayerCompositor::requiresCompositingForAnimation(RenderObject* renderer) const

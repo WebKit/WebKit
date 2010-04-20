@@ -15,6 +15,20 @@
 
 2010-04-20  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Hook compositing layers together across iframes
+        https://bugs.webkit.org/show_bug.cgi?id=37878
+        
+        Testcase that has a composited iframe, and dumps the layer tree of the parent document
+        to ensure that it also became composited.
+
+        * compositing/iframes/composited-iframe-expected.txt: Added.
+        * compositing/iframes/composited-iframe.html: Added.
+        * compositing/iframes/resources/composited-subframe.html: Added.
+
+2010-04-20  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Anders Carlsson.
 
         backgroundColor is oddly indented in layer tree dump

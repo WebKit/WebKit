@@ -282,6 +282,7 @@ public:
 #endif
     virtual bool isRenderBlock() const { return false; }
     virtual bool isRenderButton() const { return false; }
+    virtual bool isRenderIFrame() const { return false; }
     virtual bool isRenderImage() const { return false; }
     virtual bool isRenderInline() const { return false; }
     virtual bool isRenderPart() const { return false; }
