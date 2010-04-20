@@ -2332,7 +2332,6 @@
 		934F71420D5A6F4400018D69 /* ResourceError.h in Headers */ = {isa = PBXBuildFile; fileRef = 934F71410D5A6F4400018D69 /* ResourceError.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		934F71440D5A6F5300018D69 /* AuthenticationChallenge.h in Headers */ = {isa = PBXBuildFile; fileRef = 934F71430D5A6F5300018D69 /* AuthenticationChallenge.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		934FE9E50B5CA539003E4A73 /* FileChooser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 934FE9E40B5CA539003E4A73 /* FileChooser.cpp */; };
-		9352071909BD3BA500F2038D /* StaticConstructors.h in Headers */ = {isa = PBXBuildFile; fileRef = 9352071709BD3BA500F2038D /* StaticConstructors.h */; };
 		935207BE09BD410A00F2038D /* LocalizedStrings.h in Headers */ = {isa = PBXBuildFile; fileRef = 935207BD09BD410A00F2038D /* LocalizedStrings.h */; };
 		935207C009BD412100F2038D /* LocalizedStringsMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 935207BF09BD412000F2038D /* LocalizedStringsMac.mm */; };
 		9352084509BD43B900F2038D /* Language.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9352084409BD43B900F2038D /* Language.mm */; };
@@ -3852,7 +3851,6 @@
 		B2B2645D0D00A77E000ACC1D /* StringImplCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2B2645B0D00A77E000ACC1D /* StringImplCF.cpp */; };
 		B2B33A5F0B887CEF00C15984 /* SVGCharacterLayoutInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2B33A5D0B887CEF00C15984 /* SVGCharacterLayoutInfo.cpp */; };
 		B2B33A600B887CEF00C15984 /* SVGCharacterLayoutInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = B2B33A5E0B887CEF00C15984 /* SVGCharacterLayoutInfo.h */; };
-		B2C3DA1E0D006C1D00EF6F26 /* AtomicString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D9ED0D006C1D00EF6F26 /* AtomicString.cpp */; };
 		B2C3DA1F0D006C1D00EF6F26 /* AtomicString.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3D9EE0D006C1D00EF6F26 /* AtomicString.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA200D006C1D00EF6F26 /* AtomicStringImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3D9EF0D006C1D00EF6F26 /* AtomicStringImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA210D006C1D00EF6F26 /* Base64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D9F00D006C1D00EF6F26 /* Base64.cpp */; };
@@ -3869,7 +3867,6 @@
 		B2C3DA2F0D006C1D00EF6F26 /* SegmentedString.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3D9FF0D006C1D00EF6F26 /* SegmentedString.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA300D006C1D00EF6F26 /* String.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C3DA000D006C1D00EF6F26 /* String.cpp */; };
 		B2C3DA310D006C1D00EF6F26 /* StringHash.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA010D006C1D00EF6F26 /* StringHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		B2C3DA320D006C1D00EF6F26 /* StringImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C3DA020D006C1D00EF6F26 /* StringImpl.cpp */; };
 		B2C3DA330D006C1D00EF6F26 /* StringImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA030D006C1D00EF6F26 /* StringImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA340D006C1D00EF6F26 /* TextBoundaries.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA040D006C1D00EF6F26 /* TextBoundaries.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA360D006C1D00EF6F26 /* TextBreakIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA060D006C1D00EF6F26 /* TextBreakIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7800,7 +7797,6 @@
 		934F71410D5A6F4400018D69 /* ResourceError.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ResourceError.h; sourceTree = "<group>"; };
 		934F71430D5A6F5300018D69 /* AuthenticationChallenge.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AuthenticationChallenge.h; sourceTree = "<group>"; };
 		934FE9E40B5CA539003E4A73 /* FileChooser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileChooser.cpp; sourceTree = "<group>"; };
-		9352071709BD3BA500F2038D /* StaticConstructors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StaticConstructors.h; sourceTree = "<group>"; };
 		935207BD09BD410A00F2038D /* LocalizedStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalizedStrings.h; sourceTree = "<group>"; };
 		935207BF09BD412000F2038D /* LocalizedStringsMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalizedStringsMac.mm; sourceTree = "<group>"; };
 		9352084409BD43B900F2038D /* Language.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Language.mm; sourceTree = "<group>"; };
@@ -9192,7 +9188,6 @@
 		B2B2645B0D00A77E000ACC1D /* StringImplCF.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StringImplCF.cpp; sourceTree = "<group>"; };
 		B2B33A5D0B887CEF00C15984 /* SVGCharacterLayoutInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGCharacterLayoutInfo.cpp; sourceTree = "<group>"; };
 		B2B33A5E0B887CEF00C15984 /* SVGCharacterLayoutInfo.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGCharacterLayoutInfo.h; sourceTree = "<group>"; };
-		B2C3D9ED0D006C1D00EF6F26 /* AtomicString.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = AtomicString.cpp; sourceTree = "<group>"; };
 		B2C3D9EE0D006C1D00EF6F26 /* AtomicString.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AtomicString.h; sourceTree = "<group>"; };
 		B2C3D9EF0D006C1D00EF6F26 /* AtomicStringImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AtomicStringImpl.h; sourceTree = "<group>"; };
 		B2C3D9F00D006C1D00EF6F26 /* Base64.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Base64.cpp; sourceTree = "<group>"; };
@@ -9209,7 +9204,6 @@
 		B2C3D9FF0D006C1D00EF6F26 /* SegmentedString.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SegmentedString.h; sourceTree = "<group>"; };
 		B2C3DA000D006C1D00EF6F26 /* String.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = String.cpp; sourceTree = "<group>"; };
 		B2C3DA010D006C1D00EF6F26 /* StringHash.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = StringHash.h; sourceTree = "<group>"; };
-		B2C3DA020D006C1D00EF6F26 /* StringImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StringImpl.cpp; sourceTree = "<group>"; };
 		B2C3DA030D006C1D00EF6F26 /* StringImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = StringImpl.h; sourceTree = "<group>"; };
 		B2C3DA040D006C1D00EF6F26 /* TextBoundaries.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TextBoundaries.h; sourceTree = "<group>"; };
 		B2C3DA060D006C1D00EF6F26 /* TextBreakIterator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TextBreakIterator.h; sourceTree = "<group>"; };
@@ -14754,7 +14748,6 @@
 			children = (
 				B2B264590D00A77E000ACC1D /* cf */,
 				B2C3D9F90D006C1D00EF6F26 /* mac */,
-				B2C3D9ED0D006C1D00EF6F26 /* AtomicString.cpp */,
 				B2C3D9EE0D006C1D00EF6F26 /* AtomicString.h */,
 				0FC705200EB1815600B90AD8 /* AtomicStringHash.h */,
 				B2C3D9EF0D006C1D00EF6F26 /* AtomicStringImpl.h */,
@@ -14775,7 +14768,6 @@
 				E1A302C00DE8376900C52F2C /* StringBuilder.cpp */,
 				E1A302BB0DE8370300C52F2C /* StringBuilder.h */,
 				B2C3DA010D006C1D00EF6F26 /* StringHash.h */,
-				B2C3DA020D006C1D00EF6F26 /* StringImpl.cpp */,
 				B2C3DA030D006C1D00EF6F26 /* StringImpl.h */,
 				97C0784F1165D5BE003A32EF /* SuffixTree.h */,
 				B2C3DA040D006C1D00EF6F26 /* TextBoundaries.h */,
@@ -15485,7 +15477,6 @@
 				93309EA0099EB78C0056E581 /* SharedTimer.h */,
 				4B3043C60AE0370300A82647 /* Sound.h */,
 				F587866202DE3B1101EA4122 /* SSLKeyGenerator.h */,
-				9352071709BD3BA500F2038D /* StaticConstructors.h */,
 				93B2D8150F9920D2006AE6B2 /* SuddenTermination.h */,
 				93E62D990985F41600E1B5E3 /* SystemTime.h */,
 				BCE65D310EAD1211007E4533 /* Theme.cpp */,
@@ -18401,7 +18392,6 @@
 				1A7CCB1C0CD9469A00B7B64E /* SQLTransactionErrorCallback.h in Headers */,
 				1A2E6E5A0CC55213004A2062 /* SQLValue.h in Headers */,
 				93F1996308245E59001E9ABC /* SSLKeyGenerator.h in Headers */,
-				9352071909BD3BA500F2038D /* StaticConstructors.h in Headers */,
 				BC7FA62D0D1F0EFF00DB22A9 /* StaticNodeList.h in Headers */,
 				51BE37E00DAEE00E001085FC /* StorageArea.h in Headers */,
 				C5160EEB1004543A00A7CEE2 /* StorageAreaImpl.h in Headers */,
@@ -19163,7 +19153,6 @@
 				512DD8FB0D91E6AF000F89EE /* ArchiveResource.cpp in Sources */,
 				512DD8F70D91E6AF000F89EE /* ArchiveResourceCollection.cpp in Sources */,
 				BCFB2F76097A2E1A00BA703D /* Arena.cpp in Sources */,
-				B2C3DA1E0D006C1D00EF6F26 /* AtomicString.cpp in Sources */,
 				A8C4A80E09D563270003AC8D /* Attr.cpp in Sources */,
 				A8C4A80C09D563270003AC8D /* Attribute.cpp in Sources */,
 				934F71380D5A6EFF00018D69 /* AuthenticationChallengeBase.cpp in Sources */,
@@ -20711,7 +20700,6 @@
 				B2C3DA300D006C1D00EF6F26 /* String.cpp in Sources */,
 				E1A302C10DE8376900C52F2C /* StringBuilder.cpp in Sources */,
 				B2B2645C0D00A77E000ACC1D /* StringCF.cpp in Sources */,
-				B2C3DA320D006C1D00EF6F26 /* StringImpl.cpp in Sources */,
 				B2B2645D0D00A77E000ACC1D /* StringImplCF.cpp in Sources */,
 				B2AFFC950D00A5DF0030074D /* StringImplMac.mm in Sources */,
 				B2AFFC960D00A5DF0030074D /* StringMac.mm in Sources */,

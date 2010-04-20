@@ -25646,10 +25646,6 @@
 				Name="text"
 				>
 				<File
-					RelativePath="..\platform\text\AtomicString.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\platform\text\AtomicString.h"
 					>
 				</File>
@@ -25727,10 +25723,6 @@
 				</File>
 				<File
 					RelativePath="..\platform\text\StringHash.h"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\text\StringImpl.cpp"
 					>
 				</File>
 				<File

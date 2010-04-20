@@ -21,7 +21,7 @@
 #ifndef StaticConstructors_h
 #define StaticConstructors_h
 
-// For WebCore we need to avoid having static constructors. We achieve this
+// We need to avoid having static constructors. We achieve this
 // with two separate methods for GCC and MSVC. Both methods prevent the static
 // initializers from being registered and called on program startup. On GCC, we
 // declare the global objects with a different type that can be POD default

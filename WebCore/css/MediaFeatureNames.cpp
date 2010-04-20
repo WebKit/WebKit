@@ -25,7 +25,7 @@
 #endif
 
 #include "MediaFeatureNames.h"
-#include "StaticConstructors.h"
+#include <wtf/StaticConstructors.h>
 
 namespace WebCore {
 namespace MediaFeatureNames {

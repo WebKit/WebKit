@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved
- * Copyright (C) Research In Motion Limited 2009. All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,10 +18,19 @@
  *
  */
 
-#ifndef WebCoreStringHash_h
-#define WebCoreStringHash_h
+#ifndef AtomicStringImpl_h
+#define AtomicStringImpl_h
 
-// FIXME: remove this header, use the forward from wtf directly.
-#include <wtf/text/StringHash.h>
+#include "StringImpl.h"
+
+// FIXME: This is a temporary layering violation while we move string code to WTF.
+// Landing the file moves in one patch, will follow on with patches to change the namespaces.
+namespace WebCore {
+
+class AtomicStringImpl : public StringImpl
+{
+};
+
+}
 
 #endif

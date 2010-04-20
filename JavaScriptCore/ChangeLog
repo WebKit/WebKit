@@ -1,3 +1,42 @@
+2010-04-20  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Bug 37828 - Move WebCore's String classes to WTF
+
+        Move these classes up to WTF so they are available to all clients of WTF (in
+        particular JSC).
+
+        As a first patch, making the most minimal change possible, since this patch
+        could easily grow rather large since we'll have to change every class forward
+        declaration ( e.g. every "namespace WebCore { class String; }" much change to
+        "namespace WTF { class String; }").
+
+        Moving the files, but leaving the classes logically in the WebCore namespace -
+        which is technically a layering violation - I'll come back and fix this up in a
+        subsequent patch.
+
+        * Android.mk:
+        * Android.v8.wtf.mk:
+        * GNUmakefile.am:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.pro:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * config.h:
+        * wtf/StaticConstructors.h: Copied from WebCore/platform/StaticConstructors.h.
+        * wtf/text/AtomicString.cpp: Copied from WebCore/platform/text/AtomicString.cpp.
+        * wtf/text/AtomicString.h: Copied from WebCore/platform/text/AtomicString.h.
+        * wtf/text/AtomicStringImpl.h: Copied from WebCore/platform/text/AtomicStringImpl.h.
+        * wtf/text/StringBuffer.h: Copied from WebCore/platform/text/StringBuffer.h.
+        * wtf/text/StringHash.h: Copied from WebCore/platform/text/StringHash.h.
+        * wtf/text/StringImpl.cpp: Copied from WebCore/platform/text/StringImpl.cpp.
+        * wtf/text/StringImpl.h: Copied from WebCore/platform/text/StringImpl.h.
+        * wtf/text/WTFString.cpp: Copied from WebCore/platform/text/String.cpp.
+        (WebCore::charactersToFloat):
+        * wtf/text/WTFString.h: Copied from WebCore/platform/text/PlatformString.h.
+
 2010-04-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed speculative buildfix for WinCE after r57882

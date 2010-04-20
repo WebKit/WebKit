@@ -172,7 +172,10 @@ LOCAL_SRC_FILES := \
 	\
 	wtf/android/MainThreadAndroid.cpp \
 	\
+	wtf/text/AtomicString.cpp \
 	wtf/text/CString.cpp \
+	wtf/text/StringImpl.cpp \
+	wtf/text/WTFString.cpp \
 	\
 	wtf/unicode/CollatorDefault.cpp \
 	wtf/unicode/UTF8.cpp \

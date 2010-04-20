@@ -266,6 +266,7 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/RefPtrHashMap.h \
 	JavaScriptCore/wtf/RetainPtr.h \
 	JavaScriptCore/wtf/SegmentedVector.h \
+	JavaScriptCore/wtf/StaticConstructors.h \
 	JavaScriptCore/wtf/StdLibExtras.h \
 	JavaScriptCore/wtf/StringExtras.h \
 	JavaScriptCore/wtf/StringHashFunctions.h \
@@ -292,8 +293,16 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/gobject/GRefPtr.h \
 	JavaScriptCore/wtf/gtk/MainThreadGtk.cpp \
 	JavaScriptCore/wtf/gtk/ThreadingGtk.cpp \
+	JavaScriptCore/wtf/text/AtomicString.cpp \
+	JavaScriptCore/wtf/text/AtomicString.h \
+	JavaScriptCore/wtf/text/AtomicStringImpl.h \
 	JavaScriptCore/wtf/text/CString.cpp \
 	JavaScriptCore/wtf/text/CString.h \
+	JavaScriptCore/wtf/text/StringHash.h \
+	JavaScriptCore/wtf/text/StringImpl.cpp \
+	JavaScriptCore/wtf/text/StringImpl.h \
+	JavaScriptCore/wtf/text/WTFString.cpp \
+	JavaScriptCore/wtf/text/WTFString.h \
 	JavaScriptCore/wtf/unicode/Collator.h \
 	JavaScriptCore/wtf/unicode/CollatorDefault.cpp \
 	JavaScriptCore/wtf/unicode/UTF8.cpp \

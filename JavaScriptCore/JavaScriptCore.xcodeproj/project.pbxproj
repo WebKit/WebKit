@@ -198,6 +198,15 @@
 		86565742115BE3DA00291F40 /* CString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86565740115BE3DA00291F40 /* CString.cpp */; };
 		86565743115BE3DA00291F40 /* CString.h in Headers */ = {isa = PBXBuildFile; fileRef = 86565741115BE3DA00291F40 /* CString.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		865F408810E7D56300947361 /* APIShims.h in Headers */ = {isa = PBXBuildFile; fileRef = 865F408710E7D56300947361 /* APIShims.h */; };
+		868BFA08117CEFD100B908B1 /* AtomicString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 868BFA00117CEFD100B908B1 /* AtomicString.cpp */; };
+		868BFA09117CEFD100B908B1 /* AtomicString.h in Headers */ = {isa = PBXBuildFile; fileRef = 868BFA01117CEFD100B908B1 /* AtomicString.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		868BFA0A117CEFD100B908B1 /* AtomicStringImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 868BFA02117CEFD100B908B1 /* AtomicStringImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		868BFA0D117CEFD100B908B1 /* StringHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 868BFA05117CEFD100B908B1 /* StringHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		868BFA0E117CEFD100B908B1 /* StringImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 868BFA06117CEFD100B908B1 /* StringImpl.cpp */; };
+		868BFA0F117CEFD100B908B1 /* StringImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 868BFA07117CEFD100B908B1 /* StringImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		868BFA17117CF19900B908B1 /* WTFString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 868BFA15117CF19900B908B1 /* WTFString.cpp */; };
+		868BFA18117CF19900B908B1 /* WTFString.h in Headers */ = {isa = PBXBuildFile; fileRef = 868BFA16117CF19900B908B1 /* WTFString.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		868BFA60117D048200B908B1 /* StaticConstructors.h in Headers */ = {isa = PBXBuildFile; fileRef = 868BFA5F117D048200B908B1 /* StaticConstructors.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8698B86910D44D9400D8D01B /* StringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 8698B86810D44D9400D8D01B /* StringBuilder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8698BB3910D86BAF00D8D01B /* UStringImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 8698BB3710D86BAF00D8D01B /* UStringImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8698BB3A10D86BAF00D8D01B /* UStringImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8698BB3810D86BAF00D8D01B /* UStringImpl.cpp */; };
@@ -560,7 +569,6 @@
 		088FA5B90EF76D4300578E6F /* RandomNumber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RandomNumber.cpp; sourceTree = "<group>"; };
 		088FA5BA0EF76D4300578E6F /* RandomNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RandomNumber.h; sourceTree = "<group>"; };
 		08E279E80EF83B10007DB523 /* RandomNumberSeed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RandomNumberSeed.h; sourceTree = "<group>"; };
-		0B1F921B0F17502D0036468E /* PtrAndFlags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PtrAndFlags.h; sourceTree = "<group>"; };
 		0B330C260F38C62300692DE3 /* TypeTraits.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TypeTraits.cpp; sourceTree = "<group>"; };
 		0B4D7E620F319AC800AD7E58 /* TypeTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypeTraits.h; sourceTree = "<group>"; };
 		0BDFFAD10FC616EC00D69EF4 /* OwnFastMallocPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OwnFastMallocPtr.h; sourceTree = "<group>"; };
@@ -729,6 +737,15 @@
 		86565740115BE3DA00291F40 /* CString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CString.cpp; path = text/CString.cpp; sourceTree = "<group>"; };
 		86565741115BE3DA00291F40 /* CString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CString.h; path = text/CString.h; sourceTree = "<group>"; };
 		865F408710E7D56300947361 /* APIShims.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIShims.h; sourceTree = "<group>"; };
+		868BFA00117CEFD100B908B1 /* AtomicString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AtomicString.cpp; path = text/AtomicString.cpp; sourceTree = "<group>"; };
+		868BFA01117CEFD100B908B1 /* AtomicString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AtomicString.h; path = text/AtomicString.h; sourceTree = "<group>"; };
+		868BFA02117CEFD100B908B1 /* AtomicStringImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AtomicStringImpl.h; path = text/AtomicStringImpl.h; sourceTree = "<group>"; };
+		868BFA05117CEFD100B908B1 /* StringHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StringHash.h; path = text/StringHash.h; sourceTree = "<group>"; };
+		868BFA06117CEFD100B908B1 /* StringImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StringImpl.cpp; path = text/StringImpl.cpp; sourceTree = "<group>"; };
+		868BFA07117CEFD100B908B1 /* StringImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StringImpl.h; path = text/StringImpl.h; sourceTree = "<group>"; };
+		868BFA15117CF19900B908B1 /* WTFString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WTFString.cpp; path = text/WTFString.cpp; sourceTree = "<group>"; };
+		868BFA16117CF19900B908B1 /* WTFString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WTFString.h; path = text/WTFString.h; sourceTree = "<group>"; };
+		868BFA5F117D048200B908B1 /* StaticConstructors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StaticConstructors.h; sourceTree = "<group>"; };
 		8698B86810D44D9400D8D01B /* StringBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringBuilder.h; sourceTree = "<group>"; };
 		8698BB3710D86BAF00D8D01B /* UStringImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UStringImpl.h; sourceTree = "<group>"; };
 		8698BB3810D86BAF00D8D01B /* UStringImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UStringImpl.cpp; sourceTree = "<group>"; };
@@ -1356,7 +1373,6 @@
 				6580F795094070560082C219 /* PassRefPtr.h */,
 				65D6D87E09B5A32E0002E4D7 /* Platform.h */,
 				A7D649A91015224E009B2E1B /* PossiblyNull.h */,
-				0B1F921B0F17502D0036468E /* PtrAndFlags.h */,
 				088FA5B90EF76D4300578E6F /* RandomNumber.cpp */,
 				088FA5BA0EF76D4300578E6F /* RandomNumber.h */,
 				08E279E80EF83B10007DB523 /* RandomNumberSeed.h */,
@@ -1367,6 +1383,7 @@
 				148A1ECD0D10C23B0069A47C /* RefPtrHashMap.h */,
 				51F648D60BB4E2CA0033D760 /* RetainPtr.h */,
 				969A07290ED1CE6900F1F681 /* SegmentedVector.h */,
+				868BFA5F117D048200B908B1 /* StaticConstructors.h */,
 				FE1B44790ECCD73B004F4DD1 /* StdLibExtras.h */,
 				E11D51750B2E798D0056C188 /* StringExtras.h */,
 				5D63E9AC10F2BD6E00FC8AE9 /* StringHashFunctions.h */,
@@ -1645,8 +1662,16 @@
 		8656573E115BE35200291F40 /* text */ = {
 			isa = PBXGroup;
 			children = (
+				868BFA00117CEFD100B908B1 /* AtomicString.cpp */,
+				868BFA01117CEFD100B908B1 /* AtomicString.h */,
+				868BFA02117CEFD100B908B1 /* AtomicStringImpl.h */,
 				86565740115BE3DA00291F40 /* CString.cpp */,
 				86565741115BE3DA00291F40 /* CString.h */,
+				868BFA05117CEFD100B908B1 /* StringHash.h */,
+				868BFA06117CEFD100B908B1 /* StringImpl.cpp */,
+				868BFA07117CEFD100B908B1 /* StringImpl.h */,
+				868BFA15117CF19900B908B1 /* WTFString.cpp */,
+				868BFA16117CF19900B908B1 /* WTFString.h */,
 			);
 			name = text;
 			sourceTree = "<group>";
@@ -2042,6 +2067,12 @@
 				A7482B9311671147003B0712 /* JSWeakObjectMapRefPrivate.h in Headers */,
 				A7482E93116A7CAD003B0712 /* JSWeakObjectMapRefInternal.h in Headers */,
 				86D08D5411793613006E5ED0 /* WTFThreadData.h in Headers */,
+				868BFA09117CEFD100B908B1 /* AtomicString.h in Headers */,
+				868BFA0A117CEFD100B908B1 /* AtomicStringImpl.h in Headers */,
+				868BFA0D117CEFD100B908B1 /* StringHash.h in Headers */,
+				868BFA0F117CEFD100B908B1 /* StringImpl.h in Headers */,
+				868BFA18117CF19900B908B1 /* WTFString.h in Headers */,
+				868BFA60117D048200B908B1 /* StaticConstructors.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2486,6 +2517,9 @@
 				86565742115BE3DA00291F40 /* CString.cpp in Sources */,
 				A7482B9411671147003B0712 /* JSWeakObjectMapRefPrivate.cpp in Sources */,
 				86D08D5311793613006E5ED0 /* WTFThreadData.cpp in Sources */,
+				868BFA08117CEFD100B908B1 /* AtomicString.cpp in Sources */,
+				868BFA0E117CEFD100B908B1 /* StringImpl.cpp in Sources */,
+				868BFA17117CF19900B908B1 /* WTFString.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

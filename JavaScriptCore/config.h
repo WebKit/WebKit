@@ -75,6 +75,12 @@
 #include <wtf/DisallowCType.h>
 #endif
 
+#if COMPILER(MSVC)
+#define SKIP_STATIC_CONSTRUCTORS_ON_MSVC 1
+#else
+#define SKIP_STATIC_CONSTRUCTORS_ON_GCC 1
+#endif
+
 #if PLATFORM(CHROMIUM)
 #if !defined(WTF_USE_V8)
 #define WTF_USE_V8 1

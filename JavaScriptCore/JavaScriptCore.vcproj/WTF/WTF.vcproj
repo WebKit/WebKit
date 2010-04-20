@@ -537,11 +537,43 @@
 			>
 		</File>
 		<File
+ 			RelativePath="..\..\wtf\text\AtomicString.cpp"
+ 			>
+ 		</File>
+ 		<File
+ 			RelativePath="..\..\wtf\text\AtomicString.h"
+ 			>
+ 		</File>
+ 		<File
+ 			RelativePath="..\..\wtf\text\AtomicStringImpl.h"
+ 			>
+ 		</File>
+		<File
  			RelativePath="..\..\wtf\text\CString.cpp"
  			>
  		</File>
  		<File
  			RelativePath="..\..\wtf\text\CString.h"
+ 			>
+ 		</File>
+ 		<File
+ 			RelativePath="..\..\wtf\text\StringHash.h"
+ 			>
+ 		</File>
+		<File
+ 			RelativePath="..\..\wtf\text\StringImpl.cpp"
+ 			>
+ 		</File>
+ 		<File
+ 			RelativePath="..\..\wtf\text\StringImpl.h"
+ 			>
+ 		</File>
+		<File
+ 			RelativePath="..\..\wtf\text\WTFString.cpp"
+ 			>
+ 		</File>
+ 		<File
+ 			RelativePath="..\..\wtf\text\WTFString.h"
  			>
  		</File>
  		<File

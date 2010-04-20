@@ -1,3 +1,47 @@
+2010-04-20  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Bug 37828 - Move WebCore's String classes to WTF
+
+        Move these classes up to WTF so they are available to all clients of WTF (in
+        particular JSC).
+
+        As a first patch, making the most minimal change possible, since this patch
+        could easily grow rather large since we'll have to change every class forward
+        declaration ( e.g. every "namespace WebCore { class String; }" much change to
+        "namespace WTF { class String; }").
+
+        Moving the files, but leaving the classes logically in the WebCore namespace –
+        which is technically a layering violation – I'll come back and fix this up in a
+        subsequent patch.
+
+        * Android.mk:
+        * ForwardingHeaders/wtf/StaticConstructors.h: Added.
+        * ForwardingHeaders/wtf/text/AtomicString.h: Added.
+        * ForwardingHeaders/wtf/text/AtomicStringImpl.h: Added.
+        * ForwardingHeaders/wtf/text/StringBuffer.h: Added.
+        * ForwardingHeaders/wtf/text/StringHash.h: Added.
+        * ForwardingHeaders/wtf/text/StringImpl.h: Added.
+        * ForwardingHeaders/wtf/text/WTFString.h: Added.
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/MediaFeatureNames.cpp:
+        * dom/QualifiedName.cpp:
+        * dom/make_names.pl:
+        * platform/StaticConstructors.h: Removed.
+        * platform/text/AtomicString.cpp: Removed.
+        * platform/text/AtomicString.h:
+        * platform/text/AtomicStringImpl.h:
+        * platform/text/PlatformString.h:
+        * platform/text/String.cpp:
+        * platform/text/StringHash.h:
+        * platform/text/StringImpl.cpp: Removed.
+        * platform/text/StringImpl.h:
+
 2010-04-20  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.

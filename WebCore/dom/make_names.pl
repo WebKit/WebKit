@@ -498,7 +498,7 @@ print F "#endif\n\n";
 
 
 print F "#include \"$parameters{namespace}Names.h\"\n\n";
-print F "#include \"StaticConstructors.h\"\n";
+print F "#include <wtf/StaticConstructors.h>\n";
 
 print F "namespace WebCore {\n\n namespace $parameters{namespace}Names {
 

@@ -26,9 +26,9 @@
 #endif
 
 #include "QualifiedName.h"
-#include "StaticConstructors.h"
 #include <wtf/Assertions.h>
 #include <wtf/HashSet.h>
+#include <wtf/StaticConstructors.h>
 
 namespace WebCore {
 

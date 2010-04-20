@@ -801,7 +801,6 @@ SOURCES += \
     platform/animation/Animation.cpp \
     platform/animation/AnimationList.cpp \
     platform/Arena.cpp \
-    platform/text/AtomicString.cpp \
     platform/text/Base64.cpp \
     platform/text/BidiContext.cpp \
     platform/ContentType.cpp \
@@ -877,7 +876,6 @@ SOURCES += \
     platform/SharedBuffer.cpp \
     platform/text/String.cpp \
     platform/text/StringBuilder.cpp \
-    platform/text/StringImpl.cpp \
     platform/text/TextCodec.cpp \
     platform/text/TextCodecLatin1.cpp \
     platform/text/TextCodecUserDefined.cpp \

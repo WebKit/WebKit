@@ -1719,7 +1719,6 @@ webcore_sources += \
 	WebCore/platform/network/ResourceRequestBase.h \
 	WebCore/platform/network/ResourceResponseBase.cpp \
 	WebCore/platform/network/ResourceResponseBase.h \
-	WebCore/platform/text/AtomicString.cpp \
 	WebCore/platform/text/AtomicString.h \
 	WebCore/platform/text/AtomicStringHash.h \
 	WebCore/platform/text/AtomicStringImpl.h \
@@ -1740,7 +1739,6 @@ webcore_sources += \
 	WebCore/platform/text/StringBuilder.cpp \
 	WebCore/platform/text/StringBuilder.h \
 	WebCore/platform/text/StringHash.h \
-	WebCore/platform/text/StringImpl.cpp \
 	WebCore/platform/text/StringImpl.h \
 	WebCore/platform/text/SuffixTree.h \
 	WebCore/platform/text/TextBoundaries.h \

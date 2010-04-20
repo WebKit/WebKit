@@ -204,7 +204,10 @@ SOURCES += \
     wtf/Threading.cpp \
     wtf/TypeTraits.cpp \
     wtf/WTFThreadData.cpp \
+    wtf/text/AtomicString.cpp \
     wtf/text/CString.cpp \
+    wtf/text/StringImpl.cpp \
+    wtf/text/WTFString.cpp \
     wtf/unicode/CollatorDefault.cpp \
     wtf/unicode/icu/CollatorICU.cpp \
     wtf/unicode/UTF8.cpp \
