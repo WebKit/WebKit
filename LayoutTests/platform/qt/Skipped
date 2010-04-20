@@ -5185,9 +5185,6 @@ editing/execCommand/move-selection-back-line.html
 # https://bugs.webkit.org/show_bug.cgi?id=35973
 fast/multicol/hit-test-above-or-below.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=36191
-#[Qt] GraphicsLayer: fix test regressions
-animations/fill-mode-transform.html
 animations/simultaneous-start-left.html
 # https://bugs.webkit.org/show_bug.cgi?id=37381
 animations/dynamic-stylesheet-loading.html
