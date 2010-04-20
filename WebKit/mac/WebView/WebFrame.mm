@@ -76,7 +76,7 @@
 #import <WebCore/PluginData.h>
 #import <WebCore/PrintContext.h>
 #import <WebCore/RenderLayer.h>
-#import <WebCore/RenderFrameBase.h>
+#import <WebCore/RenderPart.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/ReplaceSelectionCommand.h>
 #import <WebCore/RuntimeApplicationChecks.h>
@@ -599,7 +599,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 - (BOOL)_getVisibleRect:(NSRect*)rect
 {
     ASSERT_ARG(rect, rect);
-    if (RenderFrameBase* ownerRenderer = _private->coreFrame->ownerRenderer()) {
+    if (RenderPart* ownerRenderer = _private->coreFrame->ownerRenderer()) {
         if (ownerRenderer->needsLayout())
             return NO;
         *rect = ownerRenderer->absoluteClippedOverflowRect();

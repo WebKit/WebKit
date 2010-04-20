@@ -67,7 +67,7 @@ namespace WebCore {
     class CSSMutableStyleDeclaration;
     class HTMLTableCellElement;
     class RegularExpression;
-    class RenderFrameBase;
+    class RenderPart;
     class TiledBackingStore;
 
     class Frame : public RefCounted<Frame>
@@ -111,7 +111,7 @@ namespace WebCore {
         ScriptController* script();
 
         RenderView* contentRenderer() const; // root renderer for the document contained in this frame
-        RenderFrameBase* ownerRenderer() const; // renderer for the element that contains this frame
+        RenderPart* ownerRenderer() const; // renderer for the element that contains this frame
 
         bool isDisconnected() const;
         void setIsDisconnected(bool);
