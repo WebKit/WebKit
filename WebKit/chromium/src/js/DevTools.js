@@ -223,7 +223,7 @@ WebInspector.ScriptView.prototype.setupSourceFrameIfNeeded = function()
  */
 WebInspector.ScriptView.prototype.didResolveScriptSource_ = function()
 {
-    this.sourceFrame.setContent("text/javascript", this.script.source);
+    this.sourceFrame.setContent("text/javascript", this._prependWhitespace(this.script.source));
     this._sourceFrameSetup = true;
     delete this._frameNeedsSetup;
 };
@@ -406,11 +406,6 @@ InspectorFrontendHost.addResourceSourceToFrame = function(identifier, element)
     originalAddToFrame.call(this, identifier, resource.mimeType, element);
 };
 })();
-
-WebInspector.pausedScript = function(callFrames)
-{
-    this.panels.scripts.debuggerPaused(callFrames);
-};
 
 // Chromium theme support.
 WebInspector.setToolbarColors = function(backgroundColor, color)

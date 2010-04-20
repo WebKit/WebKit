@@ -43,6 +43,7 @@ WebInspector.TextViewer = function(textModel, platform, url)
     this.element.addEventListener("keydown", this._handleKeyDown.bind(this), false);
     this.element.addEventListener("beforecopy", this._beforeCopy.bind(this), false);
     this.element.addEventListener("copy", this._copy.bind(this), false);
+    this.element.addEventListener("dblclick", this._handleDoubleClick.bind(this), false);
 
     this._url = url;
 
@@ -77,6 +78,11 @@ WebInspector.TextViewer.prototype = {
 
         var chunk = this._makeLineAChunk(lineNumber);
         chunk.element.scrollIntoViewIfNeeded();
+    },
+
+    set editCallback(editCallback)
+    {
+        this._editCallback = editCallback;
     },
 
     addDecoration: function(lineNumber, decoration)
@@ -138,7 +144,9 @@ WebInspector.TextViewer.prototype = {
             this._textChunks.push(chunk);
             this._linesContainerElement.appendChild(chunk.element);
         }
+
         this._indexChunks();
+        this._highlighter.reset();
         this._repaintAll();
     },
 
@@ -206,12 +214,12 @@ WebInspector.TextViewer.prototype = {
                 this._repaintAll();
         }.bind(this), 50);
     },
-    
+
     _handleKeyDown: function()
     {
-        if (event.metaKey || event.shiftKey || event.ctrlKey || event.altKey)
+        if (this._editingLine || event.metaKey || event.shiftKey || event.ctrlKey || event.altKey)
             return;
-        
+
         var scrollValue = 0;
         if (event.keyCode === WebInspector.KeyboardShortcut.KeyCodes.Up)
             scrollValue = -1;
@@ -236,6 +244,30 @@ WebInspector.TextViewer.prototype = {
             event.stopPropagation();
             this.element.scrollLeft += scrollValue;
         }
+    },
+
+    _handleDoubleClick: function(e)
+    {
+        if (!this._editCallback)
+            return;
+
+        var lineRow = e.target.enclosingNodeOrSelfWithNodeName("TR");
+        if (!lineRow)
+            return;
+        var oldContent = lineRow.lastChild.textContent;
+        this._editingLine = WebInspector.startEditing(lineRow.lastChild, this._commitEditingLine.bind(this, lineRow.lineNumber, lineRow.lastChild), this._cancelEditingLine.bind(this), null, true);
+    },
+
+    _commitEditingLine: function(lineNumber, element)
+    {
+        this._editCallback(lineNumber, element.textContent)
+        delete this._editingLine;
+    },
+
+    _cancelEditingLine: function(e)
+    {
+        this._textModel.setText(null, this._textModel.copyRange());
+        delete this._editingLine;
     },
 
     _beforeCopy: function(e)

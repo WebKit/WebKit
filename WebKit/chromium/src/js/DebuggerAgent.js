@@ -215,11 +215,14 @@ devtools.DebuggerAgent.prototype.resolveScriptSource = function(scriptId, callba
     // Force v8 execution so that it gets to processing the requested command.
     RemoteDebuggerAgent.processDebugCommands();
 
+    var self = this;
     this.requestSeqToCallback_[cmd.getSequenceNumber()] = function(msg) {
         if (msg.isSuccess()) {
             var scriptJson = msg.getBody()[0];
-            if (scriptJson)
+            if (scriptJson) {
+                script.source = scriptJson.source;
                 callback(scriptJson.source);
+            }
             else
                 callback(null);
         } else
@@ -295,6 +298,36 @@ devtools.DebuggerAgent.prototype.addBreakpoint = function(sourceId, line, condit
     // Force v8 execution so that it gets to processing the requested command.
     // It is necessary for being able to change a breakpoint just after it
     // has been created (since we need an existing breakpoint id for that).
+    RemoteDebuggerAgent.processDebugCommands();
+};
+
+
+/**
+ * Changes given line of the script. 
+ */
+devtools.DebuggerAgent.prototype.editScriptLine = function(sourceId, line, newContent, callback)
+{
+    var script = this.parsedScripts_[sourceId];
+    if (!script || !script.source)
+        return;
+
+    var lines = script.source.split("\n");
+    lines[line] = newContent;
+
+    var commandArguments = {
+        "script_id": sourceId,
+        "new_source": lines.join("\n")
+    };
+
+    var cmd = new devtools.DebugCommand("changelive", commandArguments);
+    devtools.DebuggerAgent.sendCommand_(cmd);
+    this.requestSeqToCallback_[cmd.getSequenceNumber()] = function(msg) {
+        if (!msg.isSuccess())
+            WebInspector.log("Unable to modify source code within given scope. Only function bodies are editable at the moment.", WebInspector.ConsoleMessage.MessageLevel.Warning);
+        this.resolveScriptSource(sourceId, callback);
+        if (WebInspector.panels.scripts.paused)
+            this.requestBacktrace_();
+    }.bind(this);
     RemoteDebuggerAgent.processDebugCommands();
 };
 
@@ -765,6 +798,8 @@ devtools.DebuggerAgent.prototype.handleDebuggerOutput_ = function(output)
             this.invokeCallbackForResponse_(msg);
         else if (msg.getCommand() === "setbreakpoint")
             this.handleSetBreakpointResponse_(msg);
+        else if (msg.getCommand() === "changelive")
+            this.invokeCallbackForResponse_(msg);
         else if (msg.getCommand() === "clearbreakpoint")
             this.handleClearBreakpointResponse_(msg);
         else if (msg.getCommand() === "backtrace")

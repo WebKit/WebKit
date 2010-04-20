@@ -28,7 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SourceFrame = function(parentElement, addBreakpointDelegate, removeBreakpointDelegate)
+WebInspector.SourceFrame = function(parentElement, addBreakpointDelegate, removeBreakpointDelegate, editDelegate)
 {
     this._parentElement = parentElement;
 
@@ -45,6 +45,7 @@ WebInspector.SourceFrame = function(parentElement, addBreakpointDelegate, remove
 
     this._addBreakpointDelegate = addBreakpointDelegate;
     this._removeBreakpointDelegate = removeBreakpointDelegate;
+    this._editDelegate = editDelegate;
     this._popoverObjectGroup = "popover";
 }
 
@@ -143,6 +144,11 @@ WebInspector.SourceFrame.prototype = {
         this._createViewerIfNeeded();
     },
 
+    updateContent: function(content)
+    {
+        this._textModel.setText(null, content);
+    },
+
     highlightLine: function(line)
     {
         if (this._textViewer)
@@ -192,6 +198,8 @@ WebInspector.SourceFrame.prototype = {
             delete this._lineToHighlight;
         }
         this._textViewer.endUpdates();
+        if (this._editDelegate)
+            this._textViewer.editCallback = this._editDelegate;
     },
 
     findSearchMatches: function(query)

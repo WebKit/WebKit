@@ -677,6 +677,9 @@ WebInspector.documentClick = function(event)
 
 WebInspector.documentKeyDown = function(event)
 {
+    if (WebInspector.isEditingAnyField())
+        return;
+
     if (this.currentFocusElement && this.currentFocusElement.handleKeyEvent) {
         this.currentFocusElement.handleKeyEvent(event);
         if (event.handled) {
@@ -1362,7 +1365,7 @@ WebInspector.updateConsoleMessageRepeatCount = function(count)
     this.console.updateMessageRepeatCount(count);
 }
 
-WebInspector.log = function(message)
+WebInspector.log = function(message, messageLevel)
 {
     // remember 'this' for setInterval() callback
     var self = this;
@@ -1416,7 +1419,7 @@ WebInspector.log = function(message)
         var msg = new WebInspector.ConsoleMessage(
             WebInspector.ConsoleMessage.MessageSource.Other,
             WebInspector.ConsoleMessage.MessageType.Log,
-            WebInspector.ConsoleMessage.MessageLevel.Debug,
+            messageLevel || WebInspector.ConsoleMessage.MessageLevel.Debug,
             -1,
             null,
             null,
@@ -1813,11 +1816,17 @@ WebInspector.isBeingEdited = function(element)
     return element.__editing;
 }
 
+WebInspector.isEditingAnyField = function()
+{
+    return this.__editing;
+}
+
 WebInspector.startEditing = function(element, committedCallback, cancelledCallback, context, multiline)
 {
     if (element.__editing)
         return;
     element.__editing = true;
+    WebInspector.__editing = true;
 
     var oldText = getContent(element);
     var moveDirection = "";
@@ -1841,6 +1850,7 @@ WebInspector.startEditing = function(element, committedCallback, cancelledCallba
 
     function cleanUpAfterEditing() {
         delete this.__editing;
+        delete WebInspector.__editing;
 
         this.removeStyleClass("editing");
         this.tabIndex = oldTabIndex;

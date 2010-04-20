@@ -33,7 +33,8 @@ WebInspector.ScriptView = function(script)
 
     this._frameNeedsSetup = true;
     this._sourceFrameSetup = false;
-    this.sourceFrame = new WebInspector.SourceFrame(this.element, this._addBreakpoint.bind(this), this._removeBreakpoint.bind(this));
+    var canEditScripts = WebInspector.panels.scripts.canEditScripts();
+    this.sourceFrame = new WebInspector.SourceFrame(this.element, this._addBreakpoint.bind(this), this._removeBreakpoint.bind(this), canEditScripts ? this._editLine.bind(this) : null);
 }
 
 WebInspector.ScriptView.prototype = {
@@ -52,13 +53,16 @@ WebInspector.ScriptView.prototype = {
 
         this.attach();
 
+        this.sourceFrame.setContent("text/javascript", this._prependWhitespace(this.script.source));
+        this._sourceFrameSetup = true;
+        delete this._frameNeedsSetup;
+    },
+
+    _prependWhitespace: function(content) {
         var prefix = "";
         for (var i = 0; i < this.script.startingLine - 1; ++i)
             prefix += "\n";
-
-        this.sourceFrame.setContent("text/javascript", prefix + this.script.source);
-        this._sourceFrameSetup = true;
-        delete this._frameNeedsSetup;
+        return prefix + content;
     },
 
     attach: function()
@@ -71,6 +75,17 @@ WebInspector.ScriptView.prototype = {
     {
         var breakpoint = new WebInspector.Breakpoint(this.script.sourceURL, line, this.script.sourceID);
         WebInspector.panels.scripts.addBreakpoint(breakpoint);
+    },
+
+    _editLine: function(line, newContent)
+    {
+        WebInspector.panels.scripts.editScriptLine(this.script.sourceID, line, newContent, this._editLineComplete.bind(this));
+    },
+
+    _editLineComplete: function(newBody)
+    {
+        this.script.source = newBody;
+        this.sourceFrame.updateContent(this._prependWhitespace(newBody));
     },
 
     // The follow methods are pulled from SourceView, since they are

@@ -1,3 +1,46 @@
+2010-04-20  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: add basic script editing capabilities to the front-end.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37875
+
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::setBreakpoint):
+        (WebCore::ScriptDebugServer::removeBreakpoint):
+        * inspector/front-end/ScriptView.js:
+        (WebInspector.ScriptView):
+        (WebInspector.ScriptView.prototype._editLine):
+        (WebInspector.ScriptView.prototype._editLineComplete):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._resourceLoadingFinished):
+        (WebInspector.ScriptsPanel.prototype.canEditScripts):
+        (WebInspector.ScriptsPanel.prototype.editScriptLine):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame):
+        (WebInspector.SourceFrame.prototype.updateContent):
+        (WebInspector.SourceFrame.prototype._createViewerIfNeeded):
+        * inspector/front-end/TextEditorHighlighter.js:
+        (WebInspector.TextEditorHighlighter):
+        (WebInspector.TextEditorHighlighter.prototype.reset):
+        * inspector/front-end/TextEditorModel.js:
+        (WebInspector.TextEditorModel.prototype.copyRange):
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextViewer):
+        (WebInspector.TextViewer.prototype.set editCallback):
+        (WebInspector.TextViewer.prototype._buildChunks):
+        (WebInspector.TextViewer.prototype._handleKeyDown):
+        (WebInspector.TextViewer.prototype._handleDoubleClick):
+        (WebInspector.TextViewer.prototype._commitEditingLine):
+        (WebInspector.TextViewer.prototype._cancelEditingLine):
+        * inspector/front-end/inspector.js:
+        (WebInspector.documentKeyDown):
+        (WebInspector.log.logMessage):
+        (WebInspector.log):
+        (WebInspector.isEditingAnyField):
+        (WebInspector.startEditing.cleanUpAfterEditing):
+
 2010-04-20  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.

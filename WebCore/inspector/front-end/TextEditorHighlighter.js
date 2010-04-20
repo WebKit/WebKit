@@ -33,10 +33,8 @@ WebInspector.TextEditorHighlighter = function(textModel, damageCallback)
 {
     this._textModel = textModel;
     this._tokenizer = WebInspector.SourceTokenizer.Registry.getInstance().getTokenizer("text/html");
-    this._tokenizerCondition = this._tokenizer.initialCondition;
     this._damageCallback = damageCallback;
-    this._lastHighlightedLine = 0;
-    this._lastHighlightedColumn = 0;
+    this.reset();
 }
 
 WebInspector.TextEditorHighlighter.prototype = {
@@ -47,6 +45,13 @@ WebInspector.TextEditorHighlighter.prototype = {
             this._tokenizer = tokenizer;
             this._tokenizerCondition = this._tokenizer.initialCondition;
         }
+    },
+
+    reset: function()
+    {
+        this._lastHighlightedLine = 0;
+        this._lastHighlightedColumn = 0;
+        this._tokenizerCondition = this._tokenizer.initialCondition;
     },
 
     highlight: function(endLine)

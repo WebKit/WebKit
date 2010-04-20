@@ -200,6 +200,9 @@ WebInspector.TextEditorModel.prototype = {
 
     copyRange: function(range)
     {
+        if (!range)
+            range = new WebInspector.TextRange(0, 0, this._lines.length - 1, this._lines[this._lines.length - 1].length);
+
         var clip = [];
         if (range.startLine === range.endLine) {
             clip.push(this._lines[range.startLine].substring(range.startColumn, range.endColumn));
