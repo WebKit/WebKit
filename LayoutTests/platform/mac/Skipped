@@ -158,6 +158,3 @@ fast/overflow/scrollbar-restored-and-then-locked.html
 # Mac port doesn't put text/html on the pasteboard for app compatibility: https://bugs.webkit.org/show_bug.cgi?id=19893
 editing/pasteboard/onpaste-text-html.html
 fast/events/ondrop-text-html.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=33812
-fast/dom/icon-url-property.html

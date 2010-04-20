@@ -82,18 +82,6 @@
         * platform/chromium/fast/url/relative-win-expected.txt: Added.
         * platform/chromium/test_expectations.txt:
 
-2010-04-19  Dave Moore  <davemoore@chromium.org>
-
-        Reviewed by Dimitri Glazkov.
-
-        Add test for icon change notifications.
-
-        https://bugs.webkit.org/show_bug.cgi?id=33812
-
-        * fast/dom/icon-url-property-expected.txt: Added.
-        * fast/dom/icon-url-property.html: Added.
-        * Skipped on all platforms but Win
-
 2010-04-19  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.

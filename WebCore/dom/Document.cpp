@@ -4484,8 +4484,6 @@ void Document::setIconURL(const String& iconURL, const String& type)
         m_iconURL = iconURL;
     else if (!type.isEmpty())
         m_iconURL = iconURL;
-    if (Frame* f = frame())
-        f->loader()->setIconURL(m_iconURL);
 }
 
 void Document::setUseSecureKeyboardEntryWhenActive(bool usesSecureKeyboard)

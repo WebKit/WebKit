@@ -3972,11 +3972,6 @@ void FrameLoader::setTitle(const String& title)
     documentLoader()->setTitle(title);
 }
 
-void FrameLoader::setIconURL(const String& iconURL)
-{
-    documentLoader()->setIconURL(iconURL);
-}
-
 KURL FrameLoader::originalRequestURL() const
 {
     return activeDocumentLoader()->originalRequest().url();
@@ -4092,12 +4087,6 @@ void FrameLoader::didChangeTitle(DocumentLoader* loader)
         m_client->setMainFrameDocumentReady(true); // update observers with new DOMDocument
         m_client->dispatchDidReceiveTitle(loader->title());
     }
-}
-
-void FrameLoader::didChangeIcons(DocumentLoader* loader)
-{
-    if (loader == m_documentLoader)
-        m_client->dispatchDidChangeIcons();
 }
 
 void FrameLoader::dispatchDidCommitLoad()

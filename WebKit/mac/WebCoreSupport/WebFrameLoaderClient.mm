@@ -593,11 +593,6 @@ void WebFrameLoaderClient::dispatchDidReceiveTitle(const String& title)
         CallFrameLoadDelegate(implementations->didReceiveTitleForFrameFunc, webView, @selector(webView:didReceiveTitle:forFrame:), (NSString *)title, m_webFrame.get());
 }
 
-void WebFrameLoaderClient::dispatchDidChangeIcons()
-{
-     // FIXME: Implement this to allow container to update favicon.
-}
-
 void WebFrameLoaderClient::dispatchDidCommitLoad()
 {
     // Tell the client we've committed this URL.

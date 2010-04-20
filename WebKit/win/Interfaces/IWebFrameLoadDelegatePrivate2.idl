@@ -52,6 +52,4 @@ interface IWebFrameLoadDelegatePrivate2 : IWebFrameLoadDelegatePrivate
     HRESULT didPushStateWithinPageForFrame([in] IWebView* webView, [in] IWebFrame* frame);
     HRESULT didReplaceStateWithinPageForFrame([in] IWebView* webView, [in] IWebFrame* frame);
     HRESULT didPopStateWithinPageForFrame([in] IWebView* webView, [in] IWebFrame* frame);
-    HRESULT didChangeIcons([in] IWebView* webView, [in] IWebFrame* frame);
-
 }

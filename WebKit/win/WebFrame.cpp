@@ -1544,11 +1544,6 @@ void WebFrame::didChangeTitle(DocumentLoader*)
     notImplemented();
 }
 
-void WebFrame::didChangeIcons(DocumentLoader*)
-{
-    notImplemented();
-}
-
 bool WebFrame::canHandleRequest(const ResourceRequest& request) const
 {
     return WebView::canHandleRequest(request);

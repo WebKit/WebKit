@@ -381,19 +381,6 @@ void FrameLoaderClientQt::dispatchDidReceiveTitle(const String& title)
 }
 
 
-void FrameLoaderClientQt::dispatchDidChangeIcons()
-{
-    if (dumpFrameLoaderCallbacks)
-        printf("%s - didChangeIcons\n", qPrintable(drtDescriptionSuitableForTestResult(m_frame)));
-
-    if (!m_webFrame)
-        return;
-
-    // FIXME: To be notified of changing icon URLS add notification
-    // emit iconsChanged();
-}
-
-
 void FrameLoaderClientQt::dispatchDidCommitLoad()
 {
     if (dumpFrameLoaderCallbacks)
@@ -538,7 +525,7 @@ void FrameLoaderClientQt::willChangeTitle(DocumentLoader*)
 }
 
 
-void FrameLoaderClientQt::didChangeTitle(DocumentLoader*)
+void FrameLoaderClientQt::didChangeTitle(DocumentLoader *)
 {
     // no need for, dispatchDidReceiveTitle is the right callback
 }

@@ -109,7 +109,6 @@ namespace WebCore {
         bool isLoadingInAPISense() const;
         void setPrimaryLoadComplete(bool);
         void setTitle(const String&);
-        void setIconURL(const String&);
         const String& overrideEncoding() const { return m_overrideEncoding; }
 
 #if PLATFORM(MAC)
@@ -151,7 +150,6 @@ namespace WebCore {
 
         void stopRecordingResponses();
         const String& title() const { return m_pageTitle; }
-        const String& iconURL() const { return m_pageIconURL; }
 
         KURL urlForHistory() const;
         bool urlForHistoryReflectsFailure() const;
@@ -259,7 +257,6 @@ namespace WebCore {
         bool m_isClientRedirect;
 
         String m_pageTitle;
-        String m_pageIconURL;
 
         String m_overrideEncoding;
 
