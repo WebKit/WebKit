@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<div style="height:2000px"></div>
+<form id=f action="interactive-validation-prevented.html">
+<input type=hidden name=submitted value=true>
+<input name=i0 required id=i0 value="abc">
+<input name=i1 required id=i1 style="display:none">
+<input name=i2 required id=i2>
+<input name=i3 required id=i3>
+<input type=submit id=s>
+</form>
+<script>
+description('Test a case that the first invalid focusable control becomes invisible by a scroll event.');
+
+function handler(event) {
+    document.getElementById('i2').style.display = 'none';
+}
+
+function startOrVerify() {
+    var query = window.location.search;
+    if (query.indexOf('submitted=true') != -1) {
+        testFailed('The form should not be submitted.');
+    } else {
+        // Force to render the form.
+        document.getElementById("f").offsetWidth;
+        window.addEventListener('scroll', handler, false);
+        // HTMLFormElement::submit() skips validation. Use the submit button.
+        document.getElementById('s').click();
+        testPassed('The form was not submitted');
+        shouldBe('document.activeElement', 'document.getElementById("i3")');
+        window.removeEventListener('scroll', handler, false);
+        debug('TEST COMPLETE');
+    }
+
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+window.onload = startOrVerify;
+</script>
+</body>
+</html>

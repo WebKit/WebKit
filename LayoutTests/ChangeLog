@@ -1,3 +1,19 @@
+2010-04-20  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        More tests for interactive validation
+        https://bugs.webkit.org/show_bug.cgi?id=37345
+
+        Add tests for cases that event handlers modify DOM structures.
+        These improve test coverage for r57346.
+
+        * fast/forms/checkValidity-handler-updates-dom-expected.txt: Added.
+        * fast/forms/checkValidity-handler-updates-dom.html: Added.
+        * fast/forms/interactive-validation-lost-focusable-expected.txt: Added.
+        * fast/forms/interactive-validation-lost-focusable.html: Added.
+        * fast/forms/script-tests/checkValidity-handler-updates-dom.js: Added.
+
 2010-04-19  James Robinson  <jamesr@chromium.org>
 
         Unreviewed. Update chromium test expectations.
