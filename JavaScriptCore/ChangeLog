@@ -1,5 +1,11 @@
 2010-04-20  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by NOBODY (speculative windows fix).
+
+        * wtf/text/AtomicString.h:
+
+2010-04-20  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by NOBODY (windows build fix).
 
         Add missing .def file entries.

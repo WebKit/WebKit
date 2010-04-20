@@ -141,13 +141,13 @@ inline bool equalIgnoringCase(const String& a, const AtomicString& b) { return e
 // Define external global variables for the commonly used atomic strings.
 // These are only usable from the main thread.
 #ifndef ATOMICSTRING_HIDE_GLOBALS
-    extern const AtomicString nullAtom;
-    extern const AtomicString emptyAtom;
-    extern const AtomicString textAtom;
-    extern const AtomicString commentAtom;
-    extern const AtomicString starAtom;
-    extern const AtomicString xmlAtom;
-    extern const AtomicString xmlnsAtom;
+    extern const JS_EXPORTDATA AtomicString nullAtom;
+    extern const JS_EXPORTDATA AtomicString emptyAtom;
+    extern const JS_EXPORTDATA AtomicString textAtom;
+    extern const JS_EXPORTDATA AtomicString commentAtom;
+    extern const JS_EXPORTDATA AtomicString starAtom;
+    extern const JS_EXPORTDATA AtomicString xmlAtom;
+    extern const JS_EXPORTDATA AtomicString xmlnsAtom;
 #endif
 
 } // namespace WebCore
