@@ -30,6 +30,7 @@
 #include "DocumentWriter.h"
 
 #include "DOMImplementation.h"
+#include "DOMWindow.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"

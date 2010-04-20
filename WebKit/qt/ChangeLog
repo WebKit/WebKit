@@ -1,5 +1,12 @@
 2010-04-20  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed build fix.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::setUrl):
+
+2010-04-20  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Factor DocumentWriter out of FrameLoader

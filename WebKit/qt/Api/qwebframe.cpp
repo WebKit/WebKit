@@ -598,8 +598,8 @@ static inline QUrl ensureAbsoluteUrl(const QUrl &url)
 
 void QWebFrame::setUrl(const QUrl &url)
 {
-    d->frame->loader()->begin(ensureAbsoluteUrl(url));
-    d->frame->loader()->end();
+    d->frame->loader()->writer()->begin(ensureAbsoluteUrl(url));
+    d->frame->loader()->writer()->end();
     load(ensureAbsoluteUrl(url));
 }
 

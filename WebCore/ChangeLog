@@ -1,3 +1,9 @@
+2010-04-20  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed build fix fro Chromium.
+
+        * loader/DocumentWriter.cpp:
+
 2010-04-20  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
