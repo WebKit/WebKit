@@ -24,7 +24,6 @@
 #include "SVGFEBlendElement.h"
 
 #include "MappedAttribute.h"
-#include "SVGResourceFilter.h"
 
 namespace WebCore {
 
@@ -79,18 +78,15 @@ void SVGFEBlendElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeIn2();
 }
 
-bool SVGFEBlendElement::build(SVGResourceFilter* filterResource)
+PassRefPtr<FilterEffect> SVGFEBlendElement::build(SVGFilterBuilder* filterBuilder)
 {
-    FilterEffect* input1 = filterResource->builder()->getEffectById(in1());
-    FilterEffect* input2 = filterResource->builder()->getEffectById(in2());
+    FilterEffect* input1 = filterBuilder->getEffectById(in1());
+    FilterEffect* input2 = filterBuilder->getEffectById(in2());
 
     if (!input1 || !input2)
-        return false;
+        return 0;
 
-    RefPtr<FilterEffect> effect = FEBlend::create(input1, input2, static_cast<BlendModeType>(mode()));
-    filterResource->addFilterEffect(this, effect.release());
-
-    return true;
+    return FEBlend::create(input1, input2, static_cast<BlendModeType>(mode()));
 }
 
 }

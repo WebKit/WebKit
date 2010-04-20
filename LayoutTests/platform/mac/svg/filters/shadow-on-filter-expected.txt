@@ -1,7 +1,12 @@
-KCanvasResource {id="filter" [type=FILTER]  [bounding box=at (-50.00%,-50.00%) size 160.00%x160.00%] [effect bounding box mode=1]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderPath {rect} at (50,50) size 480x480 [fill={[type=SOLID] [color=#008000]}] [filter=filter] [data="M200.00,200.00 L500.00,200.00 L500.00,500.00 L200.00,500.00 Z"]
+      RenderSVGResourceFilter {filter} [id="filter"] [filterUnits=objectBoundingBox] [primitiveUnits=objectBoundingBox]
+        [primitve="flood2" [type=FLOOD]  [color=#008000] [opacity=1.00]]
+        [primitve="flood1" [type=FLOOD]  [color=#FF0000] [opacity=1.00]]
+        [primitve="comp1" ]
+        [last primitive ]
+    RenderPath {rect} at (50,50) size 480x480 [fill={[type=SOLID] [color=#008000]}] [data="M200.00,200.00 L500.00,200.00 L500.00,500.00 L200.00,500.00 Z"]
+      [filter="filter"] RenderSVGResourceFilter {filter} at (50,50) size 480x480

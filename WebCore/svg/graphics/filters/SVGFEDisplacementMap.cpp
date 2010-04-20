@@ -155,8 +155,7 @@ TextStream& FEDisplacementMap::externalRepresentation(TextStream& ts) const
 {
     ts << "[type=DISPLACEMENT-MAP] ";
     FilterEffect::externalRepresentation(ts);
-    ts << " [in2=" << m_in2.get() << "]"
-        << " [scale=" << m_scale << "]"
+    ts << "[scale=" << m_scale << "]"
         << " [x channel selector=" << m_xChannelSelector << "]"
         << " [y channel selector=" << m_yChannelSelector << "]";
     return ts;

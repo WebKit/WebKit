@@ -28,20 +28,20 @@
 
 namespace WebCore {
 
-    class SVGFEColorMatrixElement : public SVGFilterPrimitiveStandardAttributes {
-    public:
-        SVGFEColorMatrixElement(const QualifiedName&, Document*);
-        virtual ~SVGFEColorMatrixElement();
+class SVGFEColorMatrixElement : public SVGFilterPrimitiveStandardAttributes {
+public:
+    SVGFEColorMatrixElement(const QualifiedName&, Document*);
+    virtual ~SVGFEColorMatrixElement();
 
-        virtual void parseMappedAttribute(MappedAttribute*);
-        virtual void synchronizeProperty(const QualifiedName&);
-        virtual bool build(SVGResourceFilter*);
+    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void synchronizeProperty(const QualifiedName&);
+    virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*);
 
-    private:
-        DECLARE_ANIMATED_PROPERTY(SVGFEColorMatrixElement, SVGNames::inAttr, String, In1, in1)
-        DECLARE_ANIMATED_PROPERTY(SVGFEColorMatrixElement, SVGNames::typeAttr, int, Type, type)
-        DECLARE_ANIMATED_PROPERTY(SVGFEColorMatrixElement, SVGNames::valuesAttr, SVGNumberList*, Values, values)
-    };
+private:
+    DECLARE_ANIMATED_PROPERTY(SVGFEColorMatrixElement, SVGNames::inAttr, String, In1, in1)
+    DECLARE_ANIMATED_PROPERTY(SVGFEColorMatrixElement, SVGNames::typeAttr, int, Type, type)
+    DECLARE_ANIMATED_PROPERTY(SVGFEColorMatrixElement, SVGNames::valuesAttr, SVGNumberList*, Values, values)
+};
 
 } // namespace WebCore
 

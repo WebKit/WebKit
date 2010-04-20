@@ -3108,6 +3108,8 @@ webcore_sources += \
 	WebCore/rendering/RenderSVGResource.h \
 	WebCore/rendering/RenderSVGResourceClipper.cpp \
 	WebCore/rendering/RenderSVGResourceClipper.h \
+	WebCore/rendering/RenderSVGResourceFilter.cpp \
+	WebCore/rendering/RenderSVGResourceFilter.h \
 	WebCore/rendering/RenderSVGResourceMarker.cpp \
 	WebCore/rendering/RenderSVGResourceMarker.h \
 	WebCore/rendering/RenderSVGResourceMasker.cpp \
@@ -3447,8 +3449,6 @@ webcore_sources += \
 	WebCore/svg/graphics/SVGPaintServerSolid.h \
 	WebCore/svg/graphics/SVGResource.cpp \
 	WebCore/svg/graphics/SVGResource.h \
-	WebCore/svg/graphics/SVGResourceFilter.cpp \
-	WebCore/svg/graphics/SVGResourceFilter.h \
 	WebCore/svg/graphics/SVGResourceListener.h \
 	WebCore/svg/graphics/filters/SVGDistantLightSource.h \
 	WebCore/svg/graphics/filters/SVGFEConvolveMatrix.cpp \

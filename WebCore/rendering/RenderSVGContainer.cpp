@@ -27,9 +27,9 @@
 #include "RenderSVGContainer.h"
 
 #include "GraphicsContext.h"
+#include "RenderSVGResourceFilter.h"
 #include "RenderView.h"
 #include "SVGRenderSupport.h"
-#include "SVGResourceFilter.h"
 #include "SVGStyledElement.h"
 
 namespace WebCore {
@@ -70,7 +70,7 @@ bool RenderSVGContainer::selfWillPaint() const
 {
 #if ENABLE(FILTERS)
     const SVGRenderStyle* svgStyle = style()->svgStyle();
-    SVGResourceFilter* filter = getFilterById(document(), svgStyle->filterResource(), this);
+    RenderSVGResourceFilter* filter = getRenderSVGResourceById<RenderSVGResourceFilter>(document(), svgStyle->filterResource());
     if (filter)
         return true;
 #endif
@@ -95,7 +95,7 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int, int)
 
     applyTransformToPaintInfo(childPaintInfo, localToParentTransform());
 
-    SVGResourceFilter* filter = 0;
+    RenderSVGResourceFilter* filter = 0;
     FloatRect boundingBox = repaintRectInLocalCoordinates();
 
     bool continueRendering = true;

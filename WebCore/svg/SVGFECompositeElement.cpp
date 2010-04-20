@@ -25,7 +25,6 @@
 
 #include "MappedAttribute.h"
 #include "SVGNames.h"
-#include "SVGResourceFilter.h"
 
 namespace WebCore {
 
@@ -102,19 +101,16 @@ void SVGFECompositeElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeK4();
 }
 
-bool SVGFECompositeElement::build(SVGResourceFilter* filterResource)
+PassRefPtr<FilterEffect> SVGFECompositeElement::build(SVGFilterBuilder* filterBuilder)
 {
-    FilterEffect* input1 = filterResource->builder()->getEffectById(in1());
-    FilterEffect* input2 = filterResource->builder()->getEffectById(in2());
+    FilterEffect* input1 = filterBuilder->getEffectById(in1());
+    FilterEffect* input2 = filterBuilder->getEffectById(in2());
     
     if (!input1 || !input2)
-        return false;
+        return 0;
     
-    RefPtr<FilterEffect> effect = FEComposite::create(input1, input2, static_cast<CompositeOperationType>(_operator()),
+    return FEComposite::create(input1, input2, static_cast<CompositeOperationType>(_operator()),
                                         k1(), k2(), k3(), k4());
-    filterResource->addFilterEffect(this, effect.release());
-
-    return true;
 }
 
 }

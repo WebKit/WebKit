@@ -26,20 +26,20 @@
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore {
-    class SVGFEBlendElement : public SVGFilterPrimitiveStandardAttributes {
-    public:
-        SVGFEBlendElement(const QualifiedName&, Document*);
-        virtual ~SVGFEBlendElement();
+class SVGFEBlendElement : public SVGFilterPrimitiveStandardAttributes {
+public:
+    SVGFEBlendElement(const QualifiedName&, Document*);
+    virtual ~SVGFEBlendElement();
 
-        virtual void parseMappedAttribute(MappedAttribute*);
-        virtual void synchronizeProperty(const QualifiedName&);
-        virtual bool build(SVGResourceFilter*);
+    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void synchronizeProperty(const QualifiedName&);
+    virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*);
 
-    private:
-        DECLARE_ANIMATED_PROPERTY(SVGFEBlendElement, SVGNames::inAttr, String, In1, in1)
-        DECLARE_ANIMATED_PROPERTY(SVGFEBlendElement, SVGNames::in2Attr, String, In2, in2)
-        DECLARE_ANIMATED_PROPERTY(SVGFEBlendElement, SVGNames::modeAttr, int, Mode, mode)
-    };
+private:
+    DECLARE_ANIMATED_PROPERTY(SVGFEBlendElement, SVGNames::inAttr, String, In1, in1)
+    DECLARE_ANIMATED_PROPERTY(SVGFEBlendElement, SVGNames::in2Attr, String, In2, in2)
+    DECLARE_ANIMATED_PROPERTY(SVGFEBlendElement, SVGNames::modeAttr, int, Mode, mode)
+};
 
 } // namespace WebCore
 

@@ -27,25 +27,25 @@
 
 namespace WebCore {
 
-    extern char SVGStdDeviationXAttrIdentifier[];
-    extern char SVGStdDeviationYAttrIdentifier[];
+extern char SVGStdDeviationXAttrIdentifier[];
+extern char SVGStdDeviationYAttrIdentifier[];
 
-    class SVGFEGaussianBlurElement : public SVGFilterPrimitiveStandardAttributes {
-    public:
-        SVGFEGaussianBlurElement(const QualifiedName&, Document*);
-        virtual ~SVGFEGaussianBlurElement();
+class SVGFEGaussianBlurElement : public SVGFilterPrimitiveStandardAttributes {
+public:
+    SVGFEGaussianBlurElement(const QualifiedName&, Document*);
+    virtual ~SVGFEGaussianBlurElement();
 
-        void setStdDeviation(float stdDeviationX, float stdDeviationY);
+    void setStdDeviation(float stdDeviationX, float stdDeviationY);
 
-        virtual void parseMappedAttribute(MappedAttribute*);
-        virtual void synchronizeProperty(const QualifiedName&);
-        virtual bool build(SVGResourceFilter*);
+    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void synchronizeProperty(const QualifiedName&);
+    virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*);
 
-    private:
-        DECLARE_ANIMATED_PROPERTY(SVGFEGaussianBlurElement, SVGNames::inAttr, String, In1, in1)
-        DECLARE_ANIMATED_PROPERTY_MULTIPLE_WRAPPERS(SVGFEGaussianBlurElement, SVGNames::stdDeviationAttr, SVGStdDeviationXAttrIdentifier, float, StdDeviationX, stdDeviationX)
-        DECLARE_ANIMATED_PROPERTY_MULTIPLE_WRAPPERS(SVGFEGaussianBlurElement, SVGNames::stdDeviationAttr, SVGStdDeviationYAttrIdentifier, float, StdDeviationY, stdDeviationY)
-    };
+private:
+    DECLARE_ANIMATED_PROPERTY(SVGFEGaussianBlurElement, SVGNames::inAttr, String, In1, in1)
+    DECLARE_ANIMATED_PROPERTY_MULTIPLE_WRAPPERS(SVGFEGaussianBlurElement, SVGNames::stdDeviationAttr, SVGStdDeviationXAttrIdentifier, float, StdDeviationX, stdDeviationX)
+    DECLARE_ANIMATED_PROPERTY_MULTIPLE_WRAPPERS(SVGFEGaussianBlurElement, SVGNames::stdDeviationAttr, SVGStdDeviationYAttrIdentifier, float, StdDeviationY, stdDeviationY)
+};
 
 } // namespace WebCore
 

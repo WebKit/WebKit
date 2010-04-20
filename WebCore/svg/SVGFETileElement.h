@@ -27,18 +27,18 @@
 
 namespace WebCore {
 
-    class SVGFETileElement : public SVGFilterPrimitiveStandardAttributes {
-    public:
-        SVGFETileElement(const QualifiedName&, Document*);
-        virtual ~SVGFETileElement();
+class SVGFETileElement : public SVGFilterPrimitiveStandardAttributes {
+public:
+    SVGFETileElement(const QualifiedName&, Document*);
+    virtual ~SVGFETileElement();
 
-        virtual void parseMappedAttribute(MappedAttribute*);
-        virtual void synchronizeProperty(const QualifiedName&);
-        virtual bool build(SVGResourceFilter*);
+    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void synchronizeProperty(const QualifiedName&);
+    virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*);
 
-    private:
-        DECLARE_ANIMATED_PROPERTY(SVGFETileElement, SVGNames::inAttr, String, In1, in1)
-    };
+private:
+    DECLARE_ANIMATED_PROPERTY(SVGFETileElement, SVGNames::inAttr, String, In1, in1)
+};
 
 } // namespace WebCore
 

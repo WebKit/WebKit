@@ -31,7 +31,6 @@
 #include "SVGFEFuncRElement.h"
 #include "SVGNames.h"
 #include "SVGRenderStyle.h"
-#include "SVGResourceFilter.h"
 
 namespace WebCore {
 
@@ -61,12 +60,12 @@ void SVGFEComponentTransferElement::synchronizeProperty(const QualifiedName& att
         synchronizeIn1();
 }
 
-bool SVGFEComponentTransferElement::build(SVGResourceFilter* filterResource)
+PassRefPtr<FilterEffect> SVGFEComponentTransferElement::build(SVGFilterBuilder* filterBuilder)
 {
-    FilterEffect* input1 = filterResource->builder()->getEffectById(in1());
+    FilterEffect* input1 = filterBuilder->getEffectById(in1());
     
     if (!input1)
-        return false;
+        return 0;
 
     ComponentTransferFunction red;
     ComponentTransferFunction green;
@@ -84,14 +83,9 @@ bool SVGFEComponentTransferElement::build(SVGResourceFilter* filterResource)
             alpha = static_cast<SVGFEFuncAElement*>(n)->transferFunction();
     }
     
-    RefPtr<FilterEffect> effect = FEComponentTransfer::create(input1, red, green, blue, alpha);
-    filterResource->addFilterEffect(this, effect.release());
-    
-    return true;
+    return FEComponentTransfer::create(input1, red, green, blue, alpha);
 }
 
 }
 
-#endif // ENABLE(SVG)
-
-// vim:ts=4:noet
+#endif

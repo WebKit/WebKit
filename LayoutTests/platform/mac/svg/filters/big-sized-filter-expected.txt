@@ -1,5 +1,4 @@
 KRenderingPaintServer {id="gradient" [type=LINEAR-GRADIENT] [stops=[(0.00,#008000), (0.10,#FF0000)]] [start=(0,0)] [end=(1,1)]}
-KCanvasResource {id="filter" [type=FILTER]  [bounding box=at (-10.00%,-10.00%) size 120.00%x120.00%]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
@@ -8,5 +7,8 @@ layer at (0,0) size 800x600
       RenderSVGHiddenContainer {linearGradient} at (0,0) size 0x0
         RenderSVGGradientStop {stop} at (0,0) size 0x0
         RenderSVGGradientStop {stop} at (0,0) size 0x0
+      RenderSVGResourceFilter {filter} [id="filter"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [last primitive [type=OFFSET]  [dx=0.00 dy=0.00]]
     RenderSVGContainer {g} at (0,0) size 800x600
-      RenderPath {rect} at (0,0) size 800x600 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#008000), (0.10,#FF0000)]] [start=(0,0)] [end=(1,1)]}] [filter=filter] [data="M0.00,0.00 L20000.00,0.00 L20000.00,20000.00 L0.00,20000.00 Z"]
+      RenderPath {rect} at (0,0) size 800x600 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#008000), (0.10,#FF0000)]] [start=(0,0)] [end=(1,1)]}] [data="M0.00,0.00 L20000.00,0.00 L20000.00,20000.00 L0.00,20000.00 Z"]
+        [filter="filter"] RenderSVGResourceFilter {filter} at (-2000,-2000) size 24000x24000
