@@ -1,3 +1,14 @@
+2010-04-20  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Change a parameter type of chooseIconForFiles()
+        https://bugs.webkit.org/show_bug.cgi?id=37504
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::chooseIconForFiles):
+        * src/ChromeClientImpl.h:
+
 2010-04-20  Jay Civelli  <jcivelli@chromium.org>
 
         Reviewed by Dimitri Glazkov.

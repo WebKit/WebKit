@@ -35,6 +35,7 @@
 
 namespace WebCore {
 class AccessibilityObject;
+class FileChooser;
 class HTMLParserQuirks;
 class PopupContainer;
 class SecurityOrigin;
@@ -124,7 +125,7 @@ public:
     virtual void requestGeolocationPermissionForFrame(WebCore::Frame*, WebCore::Geolocation*);
     virtual void cancelGeolocationPermissionRequestForFrame(WebCore::Frame*, WebCore::Geolocation*);
     virtual void runOpenPanel(WebCore::Frame*, PassRefPtr<WebCore::FileChooser>);
-    virtual void chooseIconForFiles(const Vector<WebCore::String>&, PassRefPtr<WebCore::FileChooser>);
+    virtual void chooseIconForFiles(const Vector<WebCore::String>&, WebCore::FileChooser*);
     virtual bool setCursor(WebCore::PlatformCursorHandle) { return false; }
     virtual void formStateDidChange(const WebCore::Node*);
     virtual PassOwnPtr<WebCore::HTMLParserQuirks> createHTMLParserQuirks() { return 0; }

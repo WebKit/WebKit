@@ -1,3 +1,22 @@
+2010-04-20  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Change a parameter type of chooseIconForFiles()
+        https://bugs.webkit.org/show_bug.cgi?id=37504
+
+        Change PassRefPtr<FileChooser> parameter of chooseIconForFiles()
+        to FileChooser*. Though an implementation of chooseIconForFiles()
+        might have ownership of the FileChooser instance, we don't need to
+        use PassRefPtr<> in this case.
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyChromeClient::chooseIconForFiles):
+        * page/Chrome.cpp:
+        (WebCore::Chrome::chooseIconForFiles):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+
 2010-04-20  Diego Escalante Urrelo  <descalante@igalia.com>
 
         Reviewed by Xan Lopez.

@@ -1,3 +1,14 @@
+2010-04-20  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Change a parameter type of chooseIconForFiles()
+        https://bugs.webkit.org/show_bug.cgi?id=37504
+
+        * WebKitSupport/ChromeClientWx.cpp:
+        (WebCore::ChromeClientWx::chooseIconForFiles):
+        * WebKitSupport/ChromeClientWx.h:
+
 2010-04-19  Kevin Ollivier  <kevino@theolliviers.com>
 
         Build fix, add stub for new FrameLoaderClient method.

@@ -1,3 +1,14 @@
+2010-04-20  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Change a parameter type of chooseIconForFiles()
+        https://bugs.webkit.org/show_bug.cgi?id=37504
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::chooseIconForFiles):
+
 2010-04-20  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r57892.

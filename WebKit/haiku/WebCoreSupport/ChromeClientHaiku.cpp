@@ -357,7 +357,7 @@ void ChromeClientHaiku::runOpenPanel(Frame*, PassRefPtr<FileChooser>)
     notImplemented();
 }
 
-void ChromeClientHaiku::chooseIconForFiles(const Vector<String>& filenames, PassRefPtr<FileChooser> chooser)
+void ChromeClientHaiku::chooseIconForFiles(const Vector<String>& filenames, FileChooser* chooser)
 {
     chooser->iconLoaded(Icon::createIconForFiles(filenames));
 }

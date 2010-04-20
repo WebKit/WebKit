@@ -192,7 +192,7 @@ namespace WebCore {
             
         virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>) = 0;
         // Asynchronous request to load an icon for specified filenames.
-        virtual void chooseIconForFiles(const Vector<String>&, PassRefPtr<FileChooser>) = 0;
+        virtual void chooseIconForFiles(const Vector<String>&, FileChooser*) = 0;
 
         virtual bool setCursor(PlatformCursorHandle) = 0;
 

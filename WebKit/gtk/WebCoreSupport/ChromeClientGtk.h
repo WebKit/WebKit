@@ -110,7 +110,7 @@ namespace WebKit {
         virtual void reachedMaxAppCacheSize(int64_t spaceNeeded);
 #endif
         virtual void runOpenPanel(WebCore::Frame*, PassRefPtr<WebCore::FileChooser>);
-        virtual void chooseIconForFiles(const Vector<WebCore::String>&, PassRefPtr<WebCore::FileChooser>);
+        virtual void chooseIconForFiles(const Vector<WebCore::String>&, WebCore::FileChooser*);
 
         virtual void formStateDidChange(const WebCore::Node*) { }
 

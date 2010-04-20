@@ -430,7 +430,7 @@ void Chrome::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> fileChooser)
     m_client->runOpenPanel(frame, fileChooser);
 }
 
-void Chrome::chooseIconForFiles(const Vector<String>& filenames, PassRefPtr<FileChooser> fileChooser)
+void Chrome::chooseIconForFiles(const Vector<String>& filenames, FileChooser* fileChooser)
 {
     m_client->chooseIconForFiles(filenames, fileChooser);
 }

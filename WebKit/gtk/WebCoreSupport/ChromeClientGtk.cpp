@@ -559,7 +559,7 @@ void ChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser> prpFileChooser)
     gtk_widget_destroy(dialog);
 }
 
-void ChromeClient::chooseIconForFiles(const Vector<WebCore::String>& filenames, PassRefPtr<WebCore::FileChooser> chooser)
+void ChromeClient::chooseIconForFiles(const Vector<WebCore::String>& filenames, WebCore::FileChooser* chooser)
 {
     chooser->iconLoaded(Icon::createIconForFiles(filenames));
 }

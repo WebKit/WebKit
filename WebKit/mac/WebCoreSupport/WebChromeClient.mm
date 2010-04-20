@@ -644,7 +644,7 @@ void WebChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser> chooser)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void WebChromeClient::chooseIconForFiles(const Vector<String>& filenames, PassRefPtr<FileChooser> chooser)
+void WebChromeClient::chooseIconForFiles(const Vector<String>& filenames, FileChooser* chooser)
 {
     chooser->iconLoaded(Icon::createIconForFiles(filenames));
 }

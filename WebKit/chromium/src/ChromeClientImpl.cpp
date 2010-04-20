@@ -602,7 +602,7 @@ void ChromeClientImpl::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> fileCh
     chooserCompletion->didChooseFile(WebVector<WebString>());
 }
 
-void ChromeClientImpl::chooseIconForFiles(const Vector<WebCore::String>&, PassRefPtr<WebCore::FileChooser>)
+void ChromeClientImpl::chooseIconForFiles(const Vector<WebCore::String>&, WebCore::FileChooser*)
 {
     notImplemented();
 }
