@@ -54,6 +54,14 @@
 
         Reviewed by Geoff Garen.
 
+        Add forwarding header.
+
+        * ForwardingHeaders/runtime/RopeImpl.h: Added.
+
+2010-04-20  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
         Bug 37828 - Move WebCore's String classes to WTF
 
         Move these classes up to WTF so they are available to all clients of WTF (in

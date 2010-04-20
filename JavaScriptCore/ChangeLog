@@ -10,6 +10,45 @@
 
         Reviewed by Geoff Garen.
 
+        Bug 37869 - Move URopeImpl to its own .h/.cpp
+        
+        Currently Ropes are implemented by the class URopeImpl, which is defined in
+        UStringImpl.h, and then typedefed to the name JSString::Rope. Remove the
+        typedef, and rename all uses of URopeImpl and JSString::Rope to just RopeImpl.
+
+        Move RopeImpl to its own header, and remove all remaining references to ropes
+        from UStringImpl (rename UStringOrRopeImpl to UStringImplBase, rename or move
+        the isRope & deref methods from UStringOrRopeImpl).
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/JSString.cpp:
+        (JSC::JSString::resolveRope):
+        * runtime/JSString.h:
+        (JSC::):
+        (JSC::RopeBuilder::JSString):
+        (JSC::RopeBuilder::~JSString):
+        (JSC::RopeBuilder::appendStringInConstruct):
+        (JSC::RopeBuilder::JSStringFinalizerStruct::):
+        * runtime/RopeImpl.cpp: Copied from JavaScriptCore/runtime/UStringImpl.cpp.
+        (JSC::RopeImpl::derefFibersNonRecursive):
+        (JSC::RopeImpl::destructNonRecursive):
+        * runtime/RopeImpl.h: Copied from JavaScriptCore/runtime/UStringImpl.h.
+        (JSC::RopeImpl::tryCreateUninitialized):
+        (JSC::RopeImpl::isRope):
+        (JSC::RopeImpl::deref):
+        (JSC::RopeImpl::RopeImpl):
+        * runtime/UStringImpl.cpp:
+        * runtime/UStringImpl.h:
+        (JSC::UStringImplBase::isInvalid):
+        (JSC::UStringImplBase::ref):
+        (JSC::UStringImplBase::UStringImplBase):
+        (JSC::UStringImplBase::):
+        (JSC::UStringImpl::UStringImpl):
+
+2010-04-20  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
         Bug 37828 - Move WebCore's String classes to WTF
 
         Move these classes up to WTF so they are available to all clients of WTF (in

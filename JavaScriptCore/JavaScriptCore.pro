@@ -177,6 +177,7 @@ SOURCES += \
     runtime/RegExp.cpp \
     runtime/RegExpObject.cpp \
     runtime/RegExpPrototype.cpp \
+    runtime/RopeImpl.cpp \
     runtime/ScopeChain.cpp \
     runtime/SmallStrings.cpp \
     runtime/StringConstructor.cpp \

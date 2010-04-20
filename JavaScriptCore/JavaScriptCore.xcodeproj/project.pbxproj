@@ -214,6 +214,8 @@
 		86A90ED00EE7D51F00AB350D /* JITArithmetic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86A90ECF0EE7D51F00AB350D /* JITArithmetic.cpp */; };
 		86ADD1450FDDEA980006EEC2 /* ARMv7Assembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 86ADD1430FDDEA980006EEC2 /* ARMv7Assembler.h */; };
 		86ADD1460FDDEA980006EEC2 /* MacroAssemblerARMv7.h in Headers */ = {isa = PBXBuildFile; fileRef = 86ADD1440FDDEA980006EEC2 /* MacroAssemblerARMv7.h */; };
+		86B99AB8117E391E00DF5A90 /* RopeImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86B99AB6117E391E00DF5A90 /* RopeImpl.cpp */; };
+		86B99AB9117E391E00DF5A90 /* RopeImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 86B99AB7117E391E00DF5A90 /* RopeImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86C36EEA0EE1289D00B3DF59 /* MacroAssembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 86C36EE90EE1289D00B3DF59 /* MacroAssembler.h */; };
 		86CA032E1038E8440028A609 /* Executable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86CA032D1038E8440028A609 /* Executable.cpp */; };
 		86CAFEE31035DDE60028A609 /* Executable.h in Headers */ = {isa = PBXBuildFile; fileRef = 86CAFEE21035DDE60028A609 /* Executable.h */; settings = {ATTRIBUTES = (); }; };
@@ -753,6 +755,8 @@
 		86A90ECF0EE7D51F00AB350D /* JITArithmetic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITArithmetic.cpp; sourceTree = "<group>"; };
 		86ADD1430FDDEA980006EEC2 /* ARMv7Assembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARMv7Assembler.h; sourceTree = "<group>"; };
 		86ADD1440FDDEA980006EEC2 /* MacroAssemblerARMv7.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssemblerARMv7.h; sourceTree = "<group>"; };
+		86B99AB6117E391E00DF5A90 /* RopeImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RopeImpl.cpp; sourceTree = "<group>"; };
+		86B99AB7117E391E00DF5A90 /* RopeImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RopeImpl.h; sourceTree = "<group>"; };
 		86C36EE90EE1289D00B3DF59 /* MacroAssembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssembler.h; sourceTree = "<group>"; };
 		86CA032D1038E8440028A609 /* Executable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Executable.cpp; sourceTree = "<group>"; };
 		86CAFEE21035DDE60028A609 /* Executable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Executable.h; sourceTree = "<group>"; };
@@ -1624,6 +1628,8 @@
 				F692A87C0255597D01FF60F7 /* RegExpObject.h */,
 				BCD202BF0E1706A7002C7E82 /* RegExpPrototype.cpp */,
 				BCD202C00E1706A7002C7E82 /* RegExpPrototype.h */,
+				86B99AB6117E391E00DF5A90 /* RopeImpl.cpp */,
+				86B99AB7117E391E00DF5A90 /* RopeImpl.h */,
 				9374D3A8038D9D74008635CE /* ScopeChain.cpp */,
 				9374D3A7038D9D74008635CE /* ScopeChain.h */,
 				7E2C6C980D31C6B6002D44E2 /* ScopeChainMark.h */,
@@ -2073,6 +2079,7 @@
 				868BFA0F117CEFD100B908B1 /* StringImpl.h in Headers */,
 				868BFA18117CF19900B908B1 /* WTFString.h in Headers */,
 				868BFA60117D048200B908B1 /* StaticConstructors.h in Headers */,
+				86B99AB9117E391E00DF5A90 /* RopeImpl.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2520,6 +2527,7 @@
 				868BFA08117CEFD100B908B1 /* AtomicString.cpp in Sources */,
 				868BFA0E117CEFD100B908B1 /* StringImpl.cpp in Sources */,
 				868BFA17117CF19900B908B1 /* WTFString.cpp in Sources */,
+				86B99AB8117E391E00DF5A90 /* RopeImpl.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

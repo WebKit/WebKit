@@ -498,6 +498,8 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/RegExpObject.h \
 	JavaScriptCore/runtime/RegExpPrototype.cpp \
 	JavaScriptCore/runtime/RegExpPrototype.h \
+	JavaScriptCore/runtime/RopeImpl.cpp \
+	JavaScriptCore/runtime/RopeImpl.h \
 	JavaScriptCore/runtime/ScopeChain.cpp \
 	JavaScriptCore/runtime/ScopeChain.h \
 	JavaScriptCore/runtime/ScopeChainMark.h \

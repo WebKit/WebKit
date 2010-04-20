@@ -41,13 +41,12 @@ class IdentifierTable;
 typedef OwnFastMallocPtr<const UChar> SharableUChar;
 typedef CrossThreadRefCounted<SharableUChar> SharedUChar;
 
-class UStringOrRopeImpl : public Noncopyable {
+class UStringImplBase : public Noncopyable {
 public:
-    bool isRope() { return (m_refCountAndFlags & s_refCountIsRope) == s_refCountIsRope; }
+    bool isStringImpl() { return (m_refCountAndFlags & s_refCountInvalidForStringImpl) != s_refCountInvalidForStringImpl; }
     unsigned length() const { return m_length; }
 
     void ref() { m_refCountAndFlags += s_refCountIncrement; }
-    inline void deref();
 
 protected:
     enum BufferOwnership {
@@ -61,29 +60,31 @@ protected:
     void* operator new(size_t, void* inPlace) { return inPlace; }
 
     // For SmallStringStorage, which allocates an array and uses an in-place new.
-    UStringOrRopeImpl() { }
+    UStringImplBase() { }
 
-    UStringOrRopeImpl(unsigned length, BufferOwnership ownership)
+    UStringImplBase(unsigned length, BufferOwnership ownership)
         : m_refCountAndFlags(s_refCountIncrement | s_refCountFlagShouldReportedCost | ownership)
         , m_length(length)
     {
-        ASSERT(!isRope());
+        ASSERT(isStringImpl());
     }
 
     enum StaticStringConstructType { ConstructStaticString };
-    UStringOrRopeImpl(unsigned length, StaticStringConstructType)
+    UStringImplBase(unsigned length, StaticStringConstructType)
         : m_refCountAndFlags(s_refCountFlagStatic | s_refCountFlagIsIdentifier | BufferOwned)
         , m_length(length)
     {
-        ASSERT(!isRope());
+        ASSERT(isStringImpl());
     }
 
-    enum RopeConstructType { ConstructRope };
-    UStringOrRopeImpl(RopeConstructType)
-        : m_refCountAndFlags(s_refCountIncrement | s_refCountIsRope)
+    // This constructor is not used when creating UStringImpl objects,
+    // and sets the flags into a state marking the object as such.
+    enum NonStringImplConstructType { ConstructNonStringImpl };
+    UStringImplBase(NonStringImplConstructType)
+        : m_refCountAndFlags(s_refCountIncrement | s_refCountInvalidForStringImpl)
         , m_length(0)
     {
-        ASSERT(isRope());
+        ASSERT(!isStringImpl());
     }
 
     // The bottom 5 bits hold flags, the top 27 bits hold the ref count.
@@ -95,21 +96,20 @@ protected:
     static const unsigned s_refCountFlagShouldReportedCost = 0x8;
     static const unsigned s_refCountFlagIsIdentifier = 0x4;
     static const unsigned s_refCountMaskBufferOwnership = 0x3;
-    // Use an otherwise invalid permutation of flags (static & shouldReportedCost -
-    // static strings do not set shouldReportedCost in the constructor, and this bit
-    // is only ever cleared, not set) to identify objects that are ropes.
-    static const unsigned s_refCountIsRope = s_refCountFlagStatic | s_refCountFlagShouldReportedCost;
+    // An invalid permutation of flags (static & shouldReportedCost - static strings do not
+    // set shouldReportedCost in the constructor, and this bit is only ever cleared, not set).
+    // Used by "ConstructNonStringImpl" constructor, above.
+    static const unsigned s_refCountInvalidForStringImpl = s_refCountFlagStatic | s_refCountFlagShouldReportedCost;
 
     unsigned m_refCountAndFlags;
     unsigned m_length;
 };
 
-class UStringImpl : public UStringOrRopeImpl {
+class UStringImpl : public UStringImplBase {
     friend struct CStringTranslator;
     friend struct UCharBufferTranslator;
     friend class JIT;
     friend class SmallStringsStorage;
-    friend class UStringOrRopeImpl;
     friend void initializeUString();
 private:
     // For SmallStringStorage, which allocates an array and uses an in-place new.
@@ -119,7 +119,7 @@ private:
     // This means that the static string will never be destroyed, which is important because
     // static strings will be shared across threads & ref-counted in a non-threadsafe manner.
     UStringImpl(const UChar* characters, unsigned length, StaticStringConstructType)
-        : UStringOrRopeImpl(length, ConstructStaticString)
+        : UStringImplBase(length, ConstructStaticString)
         , m_data(characters)
         , m_buffer(0)
         , m_hash(0)
@@ -129,7 +129,7 @@ private:
 
     // Create a normal string with internal storage (BufferInternal)
     UStringImpl(unsigned length)
-        : UStringOrRopeImpl(length, BufferInternal)
+        : UStringImplBase(length, BufferInternal)
         , m_data(reinterpret_cast<UChar*>(this + 1))
         , m_buffer(0)
         , m_hash(0)
@@ -140,7 +140,7 @@ private:
 
     // Create a UStringImpl adopting ownership of the provided buffer (BufferOwned)
     UStringImpl(const UChar* characters, unsigned length)
-        : UStringOrRopeImpl(length, BufferOwned)
+        : UStringImplBase(length, BufferOwned)
         , m_data(characters)
         , m_buffer(0)
         , m_hash(0)
@@ -151,7 +151,7 @@ private:
 
     // Used to create new strings that are a substring of an existing UStringImpl (BufferSubstring)
     UStringImpl(const UChar* characters, unsigned length, PassRefPtr<UStringImpl> base)
-        : UStringOrRopeImpl(length, BufferSubstring)
+        : UStringImplBase(length, BufferSubstring)
         , m_data(characters)
         , m_substringBuffer(base.releaseRef())
         , m_hash(0)
@@ -163,7 +163,7 @@ private:
 
     // Used to construct new strings sharing an existing SharedUChar (BufferShared)
     UStringImpl(const UChar* characters, unsigned length, PassRefPtr<SharedUChar> sharedBuffer)
-        : UStringOrRopeImpl(length, BufferShared)
+        : UStringImplBase(length, BufferShared)
         , m_data(characters)
         , m_sharedBuffer(sharedBuffer.releaseRef())
         , m_hash(0)
@@ -287,55 +287,6 @@ private:
     };
     mutable unsigned m_hash;
 };
-
-class URopeImpl : public UStringOrRopeImpl {
-    friend class UStringOrRopeImpl;
-public:
-    // A URopeImpl is composed from a set of smaller strings called Fibers.
-    // Each Fiber in a rope is either UStringImpl or another URopeImpl.
-    typedef UStringOrRopeImpl* Fiber;
-
-    // Creates a URopeImpl comprising of 'fiberCount' Fibers.
-    // The URopeImpl is constructed in an uninitialized state - initialize must be called for each Fiber in the URopeImpl.
-    static PassRefPtr<URopeImpl> tryCreateUninitialized(unsigned fiberCount)
-    {
-        void* allocation;
-        if (tryFastMalloc(sizeof(URopeImpl) + (fiberCount - 1) * sizeof(Fiber)).getValue(allocation))
-            return adoptRef(new (allocation) URopeImpl(fiberCount));
-        return 0;
-    }
-
-    void initializeFiber(unsigned &index, Fiber fiber)
-    {
-        m_fibers[index++] = fiber;
-        fiber->ref();
-        m_length += fiber->length();
-    }
-
-    unsigned fiberCount() { return m_fiberCount; }
-    Fiber& fibers(unsigned index) { return m_fibers[index]; }
-
-    ALWAYS_INLINE void deref() { m_refCountAndFlags -= s_refCountIncrement; if (!(m_refCountAndFlags & s_refCountMask)) destructNonRecursive(); }
-
-private:
-    URopeImpl(unsigned fiberCount) : UStringOrRopeImpl(ConstructRope), m_fiberCount(fiberCount) {}
-
-    void destructNonRecursive();
-    void derefFibersNonRecursive(Vector<URopeImpl*, 32>& workQueue);
-
-    bool hasOneRef() { return (m_refCountAndFlags & s_refCountMask) == s_refCountIncrement; }
-
-    unsigned m_fiberCount;
-    Fiber m_fibers[1];
-};
-
-inline void UStringOrRopeImpl::deref()
-{
-    if (isRope())
-        static_cast<URopeImpl*>(this)->deref();
-    else
-        static_cast<UStringImpl*>(this)->deref();
-}
 
 bool equal(const UStringImpl*, const UStringImpl*);
 

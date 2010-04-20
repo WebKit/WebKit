@@ -51,7 +51,7 @@ void JSString::resolveRope(ExecState* exec) const
         m_value = newImpl;
     else {
         for (unsigned i = 0; i < m_fiberCount; ++i) {
-            m_other.m_fibers[i]->deref();
+            RopeImpl::deref(m_other.m_fibers[i]);
             m_other.m_fibers[i] = 0;
         }
         m_fiberCount = 0;
@@ -62,15 +62,15 @@ void JSString::resolveRope(ExecState* exec) const
     }
     UChar* position = buffer + m_length;
 
-    // Start with the current Rope.
-    Vector<Rope::Fiber, 32> workQueue;
-    Rope::Fiber currentFiber;
+    // Start with the current RopeImpl.
+    Vector<RopeImpl::Fiber, 32> workQueue;
+    RopeImpl::Fiber currentFiber;
     for (unsigned i = 0; i < (m_fiberCount - 1); ++i)
         workQueue.append(m_other.m_fibers[i]);
     currentFiber = m_other.m_fibers[m_fiberCount - 1];
     while (true) {
-        if (currentFiber->isRope()) {
-            Rope* rope = static_cast<URopeImpl*>(currentFiber);
+        if (RopeImpl::isRope(currentFiber)) {
+            RopeImpl* rope = static_cast<RopeImpl*>(currentFiber);
             // Copy the contents of the current rope into the workQueue, with the last item in 'currentFiber'
             // (we will be working backwards over the rope).
             unsigned fiberCountMinusOne = rope->fiberCount() - 1;
@@ -88,7 +88,7 @@ void JSString::resolveRope(ExecState* exec) const
                 // Create a string from the UChar buffer, clear the rope RefPtr.
                 ASSERT(buffer == position);
                 for (unsigned i = 0; i < m_fiberCount; ++i) {
-                    m_other.m_fibers[i]->deref();
+                    RopeImpl::deref(m_other.m_fibers[i]);
                     m_other.m_fibers[i] = 0;
                 }
                 m_fiberCount = 0;
