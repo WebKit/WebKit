@@ -1,3 +1,70 @@
+2010-04-20  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVGResourceFilter needs to be moved to under Renderers
+        https://bugs.webkit.org/show_bug.cgi?id=35320
+
+        All SVG tests with filters need an update. A new renderer for
+        SVGFilterElement was created. This renderer also dumps filter
+        primitives as long as they have externalRepresentation implemented.
+
+        * platform/mac/svg/W3C-SVG-1.1/filters-blend-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-color-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-composite-02-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-conv-01-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-displace-01-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-example-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-felem-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-gauss-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-image-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-light-01-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-morph-01-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-offset-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-specular-01-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-tile-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-turb-01-f-expected.txt:
+        * platform/mac/svg/batik/filters/feTile-expected.txt:
+        * platform/mac/svg/batik/filters/filterRegions-expected.txt:
+        * platform/mac/svg/batik/text/textEffect-expected.txt:
+        * platform/mac/svg/batik/text/textEffect3-expected.txt:
+        * platform/mac/svg/batik/text/textFeatures-expected.txt:
+        * platform/mac/svg/batik/text/textProperties-expected.txt:
+        * platform/mac/svg/custom/empty-merge-expected.txt:
+        * platform/mac/svg/custom/feComponentTransfer-Discrete-expected.txt:
+        * platform/mac/svg/custom/feComponentTransfer-Gamma-expected.txt:
+        * platform/mac/svg/custom/feComponentTransfer-Linear-expected.txt:
+        * platform/mac/svg/custom/feComponentTransfer-Table-expected.txt:
+        * platform/mac/svg/custom/feDisplacementMap-01-expected.txt:
+        * platform/mac/svg/custom/image-with-transform-clip-filter-expected.txt:
+        * platform/mac/svg/custom/invalid-css-expected.txt:
+        * platform/mac/svg/custom/non-opaque-filters-expected.txt:
+        * platform/mac/svg/custom/resource-invalidate-on-target-update-expected.txt:
+        * platform/mac/svg/custom/text-filter-expected.txt:
+        * platform/mac/svg/custom/visibility-override-filter-expected.txt:
+        * platform/mac/svg/filters/big-sized-filter-2-expected.txt:
+        * platform/mac/svg/filters/big-sized-filter-expected.txt:
+        * platform/mac/svg/filters/feColorMatrix-values-expected.txt:
+        * platform/mac/svg/filters/feComposite-expected.txt:
+        * platform/mac/svg/filters/feDisplacementMap-expected.txt:
+        * platform/mac/svg/filters/feGaussianBlur-expected.txt:
+        * platform/mac/svg/filters/feMerge-expected.txt:
+        * platform/mac/svg/filters/feMerge-wrong-input-expected.txt:
+        * platform/mac/svg/filters/feOffset-expected.txt:
+        * platform/mac/svg/filters/feTile-expected.txt:
+        * platform/mac/svg/filters/filter-clip-expected.txt:
+        * platform/mac/svg/filters/filter-on-tspan-expected.txt:
+        * platform/mac/svg/filters/filter-source-position-expected.txt:
+        * platform/mac/svg/filters/filterRes-expected.txt:
+        * platform/mac/svg/filters/shadow-on-filter-expected.txt:
+        * platform/mac/svg/filters/shadow-on-rect-with-filter-expected.txt:
+        * platform/mac/svg/filters/sourceAlpha-expected.txt:
+        * platform/mac/svg/filters/subRegion-in-userSpace-expected.txt:
+        * platform/mac/svg/filters/subRegion-one-effect-expected.txt:
+        * platform/mac/svg/filters/subRegion-two-effects-expected.txt:
+
 2010-04-20  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Antti Koivisto.

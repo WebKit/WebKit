@@ -1,7 +1,3 @@
-KCanvasResource {id="erode1" [type=FILTER] }
-KCanvasResource {id="erode2" [type=FILTER] }
-KCanvasResource {id="dilate1" [type=FILTER] }
-KCanvasResource {id="dilate2" [type=FILTER] }
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
@@ -12,6 +8,14 @@ layer at (0,0) size 480x360
           chunk 1 (middle anchor) text run 1 at (153.00,16.00) startOffset 0 endOffset 27 width 174.00: "Filter Effect: feMorphology"
       RenderSVGContainer {g} at (38,22) size 394x272 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,-6.00)}]
         RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+          RenderSVGResourceFilter {filter} [id="erode1"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+            [last primitive [type=MORPHOLOGY]  [operator type=ERODE] [radius x=1.00 y=1.00]]
+          RenderSVGResourceFilter {filter} [id="erode2"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+            [last primitive [type=MORPHOLOGY]  [operator type=ERODE] [radius x=2.00 y=2.00]]
+          RenderSVGResourceFilter {filter} [id="dilate1"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+            [last primitive [type=MORPHOLOGY]  [operator type=DILATE] [radius x=1.00 y=1.00]]
+          RenderSVGResourceFilter {filter} [id="dilate2"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+            [last primitive [type=MORPHOLOGY]  [operator type=DILATE] [radius x=3.00 y=3.00]]
           RenderSVGContainer {g} at (0,0) size 149x118
             RenderSVGContainer {g} at (0,0) size 149x118
               RenderSVGContainer {g} at (0,0) size 149x118
@@ -21,7 +25,8 @@ layer at (0,0) size 480x360
                 RenderPath {path} at (36,0) size 100x76 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=7.17]}] [data="M131.56,26.34 C131.56,54.90,108.77,78.05,80.66,78.05 C58.17,78.05,39.94,59.53,39.94,36.68 C39.94,18.40,54.53,3.59,72.52,3.59 C86.91,3.59,98.58,15.44,98.58,30.06 C98.58,41.76,89.25,51.24,77.73,51.24 C68.52,51.24,61.05,43.65,61.05,34.30 C61.05,26.81,67.03,20.74,74.39,20.74 C80.29,20.74,85.07,25.60,85.07,31.59 C85.07,36.38,81.25,40.26,76.53,40.26 C72.75,40.26,69.70,37.15,69.70,33.32"]
         RenderSVGContainer {g} at (38,22) size 394x272
           RenderSVGContainer {g} at (38,22) size 139x132
-            RenderSVGContainer {use} at (38,22) size 139x117 [filter=erode1]
+            RenderSVGContainer {use} at (38,22) size 139x117
+              [filter="erode1"] RenderSVGResourceFilter {filter} at (38.58,28.58) size 137.73x116.11
               RenderSVGContainer {g} at (34,18) size 150x125 [transform={m=((1.00,0.00)(0.00,1.00)) t=(35.00,25.00)}]
                 RenderSVGContainer {g} at (34,18) size 150x125
                   RenderSVGContainer {g} at (34,18) size 150x125
@@ -34,7 +39,8 @@ layer at (0,0) size 480x360
               RenderSVGInlineText {#text} at (0,-14) size 130x18
                 chunk 1 (middle anchor) text run 1 at (45.00,156.00) startOffset 0 endOffset 19 width 130.00: "type=erode radius=1"
           RenderSVGContainer {g} at (293,22) size 139x132 [transform={m=((1.00,0.00)(0.00,1.00)) t=(255.00,0.00)}]
-            RenderSVGContainer {use} at (293,22) size 139x117 [filter=erode2]
+            RenderSVGContainer {use} at (293,22) size 139x117
+              [filter="erode2"] RenderSVGResourceFilter {filter} at (38.58,28.58) size 137.73x116.11
               RenderSVGContainer {g} at (289,18) size 150x125 [transform={m=((1.00,0.00)(0.00,1.00)) t=(35.00,25.00)}]
                 RenderSVGContainer {g} at (289,18) size 150x125
                   RenderSVGContainer {g} at (289,18) size 150x125
@@ -47,7 +53,8 @@ layer at (0,0) size 480x360
               RenderSVGInlineText {#text} at (0,-14) size 130x18
                 chunk 1 (middle anchor) text run 1 at (45.00,156.00) startOffset 0 endOffset 19 width 130.00: "type=erode radius=2"
           RenderSVGContainer {g} at (38,162) size 139x132 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,140.00)}]
-            RenderSVGContainer {use} at (38,162) size 139x117 [filter=dilate1]
+            RenderSVGContainer {use} at (38,162) size 139x117
+              [filter="dilate1"] RenderSVGResourceFilter {filter} at (38.58,28.58) size 137.73x116.11
               RenderSVGContainer {g} at (34,158) size 150x125 [transform={m=((1.00,0.00)(0.00,1.00)) t=(35.00,25.00)}]
                 RenderSVGContainer {g} at (34,158) size 150x125
                   RenderSVGContainer {g} at (34,158) size 150x125
@@ -60,7 +67,8 @@ layer at (0,0) size 480x360
               RenderSVGInlineText {#text} at (0,-14) size 130x18
                 chunk 1 (middle anchor) text run 1 at (45.50,156.00) startOffset 0 endOffset 20 width 129.00: "type=dilate radius=1"
           RenderSVGContainer {g} at (293,162) size 139x132 [transform={m=((1.00,0.00)(0.00,1.00)) t=(255.00,140.00)}]
-            RenderSVGContainer {use} at (293,162) size 139x117 [filter=dilate2]
+            RenderSVGContainer {use} at (293,162) size 139x117
+              [filter="dilate2"] RenderSVGResourceFilter {filter} at (38.58,28.58) size 137.73x116.11
               RenderSVGContainer {g} at (289,158) size 150x125 [transform={m=((1.00,0.00)(0.00,1.00)) t=(35.00,25.00)}]
                 RenderSVGContainer {g} at (289,158) size 150x125
                   RenderSVGContainer {g} at (289,158) size 150x125

@@ -81,7 +81,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int, int)
     paintInfo.context->concatCTM(localToParentTransform());
 
     if (paintInfo.phase == PaintPhaseForeground) {
-        SVGResourceFilter* filter = 0;
+        RenderSVGResourceFilter* filter = 0;
 
         PaintInfo savedInfo(paintInfo);
 

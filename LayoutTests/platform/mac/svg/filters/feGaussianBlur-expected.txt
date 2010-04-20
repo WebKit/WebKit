@@ -1,45 +1,65 @@
-KCanvasResource {id="0x0" [type=FILTER]  [bounding box=at (-10.00%,-10.00%) size 120.00%x120.00%]}
-KCanvasResource {id="0x5" [type=FILTER]  [bounding box=at (-10.00%,-10.00%) size 120.00%x120.00%]}
-KCanvasResource {id="5x0" [type=FILTER]  [bounding box=at (-10.00%,-10.00%) size 120.00%x120.00%]}
-KCanvasResource {id="3x3" [type=FILTER]  [bounding box=at (-10.00%,-10.00%) size 120.00%x120.00%]}
-KCanvasResource {id="1x6" [type=FILTER]  [bounding box=at (-10.00%,-10.00%) size 120.00%x120.00%]}
-KCanvasResource {id="6x1" [type=FILTER]  [bounding box=at (-10.00%,-10.00%) size 120.00%x120.00%]}
-KCanvasResource {id="2x10" [type=FILTER]  [bounding box=at (-10.00%,-10.00%) size 120.00%x120.00%]}
-KCanvasResource {id="1x1" [type=FILTER]  [bounding box=at (-10.00%,-10.00%) size 120.00%x120.00%]}
-KCanvasResource {id="10x100" [type=FILTER]  [bounding box=at (-10.00%,-10.00%) size 120.00%x120.00%]}
-KCanvasResource {id="15x15" [type=FILTER]  [bounding box=at (-10.00%,-10.00%) size 120.00%x120.00%]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (2,2) size 91x91 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,10.00)}] [filter=0x0]
+      RenderSVGResourceFilter {filter} [id="0x0"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [last primitive ]
+      RenderSVGResourceFilter {filter} [id="0x5"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [last primitive ]
+      RenderSVGResourceFilter {filter} [id="5x0"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [last primitive ]
+      RenderSVGResourceFilter {filter} [id="3x3"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [last primitive ]
+      RenderSVGResourceFilter {filter} [id="1x6"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [last primitive ]
+      RenderSVGResourceFilter {filter} [id="6x1"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [last primitive ]
+      RenderSVGResourceFilter {filter} [id="2x10"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [last primitive ]
+      RenderSVGResourceFilter {filter} [id="1x1"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [last primitive ]
+      RenderSVGResourceFilter {filter} [id="10x100"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [last primitive ]
+      RenderSVGResourceFilter {filter} [id="15x15"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [last primitive ]
+    RenderSVGContainer {g} at (2,2) size 91x91 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,10.00)}]
+      [filter="0x0"] RenderSVGResourceFilter {filter} at (-7.50,-7.50) size 90x90
       RenderPath {rect} at (10,10) size 50x50 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L50.00,0.00 L50.00,50.00 L0.00,50.00 Z"]
       RenderPath {rect} at (35,35) size 50x50 [fill={[type=SOLID] [color=#0000FF]}] [data="M25.00,25.00 L75.00,25.00 L75.00,75.00 L25.00,75.00 Z"]
-    RenderSVGContainer {g} at (102,2) size 91x91 [transform={m=((1.00,0.00)(0.00,1.00)) t=(110.00,10.00)}] [filter=0x5]
+    RenderSVGContainer {g} at (102,2) size 91x91 [transform={m=((1.00,0.00)(0.00,1.00)) t=(110.00,10.00)}]
+      [filter="0x5"] RenderSVGResourceFilter {filter} at (-7.50,-7.50) size 90x90
       RenderPath {rect} at (110,10) size 50x50 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L50.00,0.00 L50.00,50.00 L0.00,50.00 Z"]
       RenderPath {rect} at (135,35) size 50x50 [fill={[type=SOLID] [color=#0000FF]}] [data="M25.00,25.00 L75.00,25.00 L75.00,75.00 L25.00,75.00 Z"]
-    RenderSVGContainer {g} at (202,2) size 91x91 [transform={m=((1.00,0.00)(0.00,1.00)) t=(210.00,10.00)}] [filter=5x0]
+    RenderSVGContainer {g} at (202,2) size 91x91 [transform={m=((1.00,0.00)(0.00,1.00)) t=(210.00,10.00)}]
+      [filter="5x0"] RenderSVGResourceFilter {filter} at (-7.50,-7.50) size 90x90
       RenderPath {rect} at (210,10) size 50x50 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L50.00,0.00 L50.00,50.00 L0.00,50.00 Z"]
       RenderPath {rect} at (235,35) size 50x50 [fill={[type=SOLID] [color=#0000FF]}] [data="M25.00,25.00 L75.00,25.00 L75.00,75.00 L25.00,75.00 Z"]
-    RenderSVGContainer {g} at (302,2) size 91x91 [transform={m=((1.00,0.00)(0.00,1.00)) t=(310.00,10.00)}] [filter=3x3]
+    RenderSVGContainer {g} at (302,2) size 91x91 [transform={m=((1.00,0.00)(0.00,1.00)) t=(310.00,10.00)}]
+      [filter="3x3"] RenderSVGResourceFilter {filter} at (-7.50,-7.50) size 90x90
       RenderPath {rect} at (310,10) size 50x50 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L50.00,0.00 L50.00,50.00 L0.00,50.00 Z"]
       RenderPath {rect} at (335,35) size 50x50 [fill={[type=SOLID] [color=#0000FF]}] [data="M25.00,25.00 L75.00,25.00 L75.00,75.00 L25.00,75.00 Z"]
-    RenderSVGContainer {g} at (402,2) size 91x91 [transform={m=((1.00,0.00)(0.00,1.00)) t=(410.00,10.00)}] [filter=1x6]
+    RenderSVGContainer {g} at (402,2) size 91x91 [transform={m=((1.00,0.00)(0.00,1.00)) t=(410.00,10.00)}]
+      [filter="1x6"] RenderSVGResourceFilter {filter} at (-7.50,-7.50) size 90x90
       RenderPath {rect} at (410,10) size 50x50 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L50.00,0.00 L50.00,50.00 L0.00,50.00 Z"]
       RenderPath {rect} at (435,35) size 50x50 [fill={[type=SOLID] [color=#0000FF]}] [data="M25.00,25.00 L75.00,25.00 L75.00,75.00 L25.00,75.00 Z"]
-    RenderSVGContainer {g} at (2,102) size 91x91 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,110.00)}] [filter=6x1]
+    RenderSVGContainer {g} at (2,102) size 91x91 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,110.00)}]
+      [filter="6x1"] RenderSVGResourceFilter {filter} at (-7.50,-7.50) size 90x90
       RenderPath {rect} at (10,110) size 50x50 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L50.00,0.00 L50.00,50.00 L0.00,50.00 Z"]
       RenderPath {rect} at (35,135) size 50x50 [fill={[type=SOLID] [color=#0000FF]}] [data="M25.00,25.00 L75.00,25.00 L75.00,75.00 L25.00,75.00 Z"]
-    RenderSVGContainer {g} at (102,102) size 91x91 [transform={m=((1.00,0.00)(0.00,1.00)) t=(110.00,110.00)}] [filter=2x10]
+    RenderSVGContainer {g} at (102,102) size 91x91 [transform={m=((1.00,0.00)(0.00,1.00)) t=(110.00,110.00)}]
+      [filter="2x10"] RenderSVGResourceFilter {filter} at (-7.50,-7.50) size 90x90
       RenderPath {rect} at (110,110) size 50x50 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L50.00,0.00 L50.00,50.00 L0.00,50.00 Z"]
       RenderPath {rect} at (135,135) size 50x50 [fill={[type=SOLID] [color=#0000FF]}] [data="M25.00,25.00 L75.00,25.00 L75.00,75.00 L25.00,75.00 Z"]
-    RenderSVGContainer {g} at (202,102) size 91x91 [transform={m=((1.00,0.00)(0.00,1.00)) t=(210.00,110.00)}] [filter=1x1]
+    RenderSVGContainer {g} at (202,102) size 91x91 [transform={m=((1.00,0.00)(0.00,1.00)) t=(210.00,110.00)}]
+      [filter="1x1"] RenderSVGResourceFilter {filter} at (-7.50,-7.50) size 90x90
       RenderPath {rect} at (210,110) size 50x50 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L50.00,0.00 L50.00,50.00 L0.00,50.00 Z"]
       RenderPath {rect} at (235,135) size 50x50 [fill={[type=SOLID] [color=#0000FF]}] [data="M25.00,25.00 L75.00,25.00 L75.00,75.00 L25.00,75.00 Z"]
-    RenderSVGContainer {g} at (302,102) size 91x91 [transform={m=((1.00,0.00)(0.00,1.00)) t=(310.00,110.00)}] [filter=10x100]
+    RenderSVGContainer {g} at (302,102) size 91x91 [transform={m=((1.00,0.00)(0.00,1.00)) t=(310.00,110.00)}]
+      [filter="10x100"] RenderSVGResourceFilter {filter} at (-7.50,-7.50) size 90x90
       RenderPath {rect} at (310,110) size 50x50 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L50.00,0.00 L50.00,50.00 L0.00,50.00 Z"]
       RenderPath {rect} at (335,135) size 50x50 [fill={[type=SOLID] [color=#0000FF]}] [data="M25.00,25.00 L75.00,25.00 L75.00,75.00 L25.00,75.00 Z"]
-    RenderSVGContainer {g} at (402,102) size 91x91 [transform={m=((1.00,0.00)(0.00,1.00)) t=(410.00,110.00)}] [filter=15x15]
+    RenderSVGContainer {g} at (402,102) size 91x91 [transform={m=((1.00,0.00)(0.00,1.00)) t=(410.00,110.00)}]
+      [filter="15x15"] RenderSVGResourceFilter {filter} at (-7.50,-7.50) size 90x90
       RenderPath {rect} at (410,110) size 50x50 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L50.00,0.00 L50.00,50.00 L0.00,50.00 Z"]
       RenderPath {rect} at (435,135) size 50x50 [fill={[type=SOLID] [color=#0000FF]}] [data="M25.00,25.00 L75.00,25.00 L75.00,75.00 L25.00,75.00 Z"]

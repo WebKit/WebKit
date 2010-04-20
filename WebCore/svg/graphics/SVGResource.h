@@ -45,7 +45,6 @@ class TextStream;
 enum SVGResourceType {
     // Painting mode
     ImageResourceType,
-    FilterResourceType,
     PaintServerResourceType,
     
     // For resource tracking we need to know how many types of resource there are
@@ -53,7 +52,6 @@ enum SVGResourceType {
 };
 
 // The SVGResource file represent various graphics resources:
-// - Filter resource
 // - Pattern resource
 // - Linear/Radial gradient resource
 //
@@ -69,7 +67,6 @@ public:
     virtual SVGResourceType resourceType() const = 0;
     
     bool isPaintServer() const { return resourceType() == PaintServerResourceType; }
-    bool isFilter() const { return resourceType() == FilterResourceType; }
 
     virtual TextStream& externalRepresentation(TextStream&) const;
 

@@ -1,8 +1,3 @@
-KCanvasResource {id="BlendNormal" [type=FILTER] }
-KCanvasResource {id="BlendMultiply" [type=FILTER] }
-KCanvasResource {id="BlendScreen" [type=FILTER] }
-KCanvasResource {id="BlendDarken" [type=FILTER] }
-KCanvasResource {id="BlendLighten" [type=FILTER] }
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
@@ -10,14 +5,35 @@ layer at (0,0) size 480x360
     RenderSVGContainer {g} at (15,15) size 435x294
       RenderSVGImage {image} at (120,15) size 300x294
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-      RenderPath {rect} at (90,30) size 360x30 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [filter=BlendNormal] [data="M30.00,10.00 L150.00,10.00 L150.00,20.00 L30.00,20.00 Z"]
-      RenderPath {rect} at (90,69) size 360x30 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [filter=BlendMultiply] [data="M30.00,23.00 L150.00,23.00 L150.00,33.00 L30.00,33.00 Z"]
-      RenderSVGContainer {g} at (90,108) size 360x69 [filter=BlendMultiply]
+        RenderSVGResourceFilter {filter} [id="BlendNormal"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [primitve="img1" [type=FLOOD]  [color=#00FF00] [opacity=0.50]]
+          [last primitive ]
+        RenderSVGResourceFilter {filter} [id="BlendMultiply"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [primitve="img2" [type=FLOOD]  [color=#00FF00] [opacity=0.50]]
+          [last primitive ]
+        RenderSVGResourceFilter {filter} [id="BlendScreen"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [primitve="img2" [type=FLOOD]  [color=#00FF00] [opacity=0.50]]
+          [last primitive ]
+        RenderSVGResourceFilter {filter} [id="BlendDarken"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [primitve="img2" [type=FLOOD]  [color=#00FF00] [opacity=0.50]]
+          [last primitive ]
+        RenderSVGResourceFilter {filter} [id="BlendLighten"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [primitve="img2" [type=FLOOD]  [color=#00FF00] [opacity=0.50]]
+          [last primitive ]
+      RenderPath {rect} at (90,30) size 360x30 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [data="M30.00,10.00 L150.00,10.00 L150.00,20.00 L30.00,20.00 Z"]
+        [filter="BlendNormal"] RenderSVGResourceFilter {filter} at (30,10) size 120x10
+      RenderPath {rect} at (90,69) size 360x30 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [data="M30.00,23.00 L150.00,23.00 L150.00,33.00 L30.00,33.00 Z"]
+        [filter="BlendMultiply"] RenderSVGResourceFilter {filter} at (30,23) size 120x10
+      RenderSVGContainer {g} at (90,108) size 360x69
+        [filter="BlendMultiply"] RenderSVGResourceFilter {filter} at (30,36) size 120x23
         RenderPath {rect} at (90,108) size 360x30 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [data="M30.00,36.00 L150.00,36.00 L150.00,46.00 L30.00,46.00 Z"]
         RenderPath {rect} at (90,147) size 360x30 [opacity=0.50] [fill={[type=SOLID] [color=#FFFF00]}] [data="M30.00,49.00 L150.00,49.00 L150.00,59.00 L30.00,59.00 Z"]
-      RenderPath {rect} at (90,186) size 360x30 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [filter=BlendScreen] [data="M30.00,62.00 L150.00,62.00 L150.00,72.00 L30.00,72.00 Z"]
-      RenderPath {rect} at (90,225) size 360x30 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [filter=BlendDarken] [data="M30.00,75.00 L150.00,75.00 L150.00,85.00 L30.00,85.00 Z"]
-      RenderPath {rect} at (90,264) size 360x30 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [filter=BlendLighten] [data="M30.00,88.00 L150.00,88.00 L150.00,98.00 L30.00,98.00 Z"]
+      RenderPath {rect} at (90,186) size 360x30 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [data="M30.00,62.00 L150.00,62.00 L150.00,72.00 L30.00,72.00 Z"]
+        [filter="BlendScreen"] RenderSVGResourceFilter {filter} at (30,62) size 120x10
+      RenderPath {rect} at (90,225) size 360x30 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [data="M30.00,75.00 L150.00,75.00 L150.00,85.00 L30.00,85.00 Z"]
+        [filter="BlendDarken"] RenderSVGResourceFilter {filter} at (30,75) size 120x10
+      RenderPath {rect} at (90,264) size 360x30 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [data="M30.00,88.00 L150.00,88.00 L150.00,98.00 L30.00,98.00 Z"]
+        [filter="BlendLighten"] RenderSVGResourceFilter {filter} at (30,88) size 120x10
       RenderSVGContainer {g} at (15,33) size 78x258
         RenderSVGText {text} at (5,17) size 21x8 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,-6) size 21x8

@@ -90,13 +90,11 @@ void SVGFilterPrimitiveStandardAttributes::synchronizeProperty(const QualifiedNa
         synchronizeResult();
 }
 
-void SVGFilterPrimitiveStandardAttributes::setStandardAttributes(SVGResourceFilter* resourceFilter, FilterEffect* filterEffect) const
+void SVGFilterPrimitiveStandardAttributes::setStandardAttributes(bool primitiveBoundingBoxMode, FilterEffect* filterEffect) const
 {
     ASSERT(filterEffect);
     if (!filterEffect)
         return;
-
-    ASSERT(resourceFilter);
 
     if (this->hasAttribute(SVGNames::xAttr))
         filterEffect->setHasX(true);
@@ -108,7 +106,7 @@ void SVGFilterPrimitiveStandardAttributes::setStandardAttributes(SVGResourceFilt
         filterEffect->setHasHeight(true);
 
     FloatRect effectBBox;
-    if (resourceFilter->effectBoundingBoxMode())
+    if (primitiveBoundingBoxMode)
         effectBBox = FloatRect(x().valueAsPercentage(),
                                y().valueAsPercentage(),
                                width().valueAsPercentage(),

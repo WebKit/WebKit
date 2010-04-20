@@ -27,13 +27,13 @@
 
 namespace WebCore {
 
-    class SVGFEMergeElement : public SVGFilterPrimitiveStandardAttributes {
-    public:
-        SVGFEMergeElement(const QualifiedName&, Document*);
-        virtual ~SVGFEMergeElement();
+class SVGFEMergeElement : public SVGFilterPrimitiveStandardAttributes {
+public:
+    SVGFEMergeElement(const QualifiedName&, Document*);
+    virtual ~SVGFEMergeElement();
 
-        virtual bool build(SVGResourceFilter*);
-    };
+    virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*);
+};
 
 } // namespace WebCore
 

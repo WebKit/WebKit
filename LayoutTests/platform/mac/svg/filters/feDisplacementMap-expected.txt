@@ -1,6 +1,5 @@
 KRenderingPaintServer {id="linGrad" [type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#00FF00)]] [start=(0,0)] [end=(1,1)]}
 KRenderingPaintServer {id="radGrad" [type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#00FF00)]] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.50]}
-KCanvasResource {id="f1" [type=FILTER]  [effect bounding box mode=1]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
@@ -12,5 +11,13 @@ layer at (0,0) size 800x600
       RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
         RenderSVGGradientStop {stop} at (0,0) size 0x0
         RenderSVGGradientStop {stop} at (0,0) size 0x0
-    RenderSVGImage {image} at (10,10) size 100x100 [filter=f1]
-    RenderSVGImage {image} at (130,10) size 100x100 [filter=f1]
+      RenderSVGResourceFilter {filter} [id="f1"] [filterUnits=objectBoundingBox] [primitiveUnits=objectBoundingBox]
+        [primitve="flood2" [type=FLOOD]  [color=#000000] [opacity=1.00]]
+        [primitve="flood1" [type=FLOOD]  [color=#000000] [opacity=1.00]]
+        [primitve="tile" [type=TILE]]
+        [primitve="pair" ]
+        [last primitive [type=DISPLACEMENT-MAP]  [in2=559671248] [scale=64.00] [x channel selector=RED] [y channel selector=GREEN]]
+    RenderSVGImage {image} at (10,10) size 100x100
+      [filter="f1"] RenderSVGResourceFilter {filter} at (10,10) size 100x100
+    RenderSVGImage {image} at (130,10) size 100x100
+      [filter="f1"] RenderSVGResourceFilter {filter} at (130,10) size 100x100

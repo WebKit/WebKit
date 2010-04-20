@@ -27,20 +27,20 @@
 
 namespace WebCore {
 
-    class SVGFEOffsetElement : public SVGFilterPrimitiveStandardAttributes {
-    public:
-        SVGFEOffsetElement(const QualifiedName&, Document*);
-        virtual ~SVGFEOffsetElement();
+class SVGFEOffsetElement : public SVGFilterPrimitiveStandardAttributes {
+public:
+    SVGFEOffsetElement(const QualifiedName&, Document*);
+    virtual ~SVGFEOffsetElement();
 
-        virtual void parseMappedAttribute(MappedAttribute*);
-        virtual void synchronizeProperty(const QualifiedName&);
-        virtual bool build(SVGResourceFilter*);
+    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual void synchronizeProperty(const QualifiedName&);
+    virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*);
 
-    private:
-        DECLARE_ANIMATED_PROPERTY(SVGFEOffsetElement, SVGNames::inAttr, String, In1, in1)
-        DECLARE_ANIMATED_PROPERTY(SVGFEOffsetElement, SVGNames::dxAttr, float, Dx, dx)
-        DECLARE_ANIMATED_PROPERTY(SVGFEOffsetElement, SVGNames::dyAttr, float, Dy, dy)
-    };
+private:
+    DECLARE_ANIMATED_PROPERTY(SVGFEOffsetElement, SVGNames::inAttr, String, In1, in1)
+    DECLARE_ANIMATED_PROPERTY(SVGFEOffsetElement, SVGNames::dxAttr, float, Dx, dx)
+    DECLARE_ANIMATED_PROPERTY(SVGFEOffsetElement, SVGNames::dyAttr, float, Dy, dy)
+};
 
 } // namespace WebCore
 

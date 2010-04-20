@@ -25,7 +25,6 @@
 
 #include "Attr.h"
 #include "MappedAttribute.h"
-#include "SVGResourceFilter.h"
 
 namespace WebCore {
 
@@ -70,17 +69,14 @@ void SVGFEOffsetElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeIn1();
 }
 
-bool SVGFEOffsetElement::build(SVGResourceFilter* filterResource)
+PassRefPtr<FilterEffect> SVGFEOffsetElement::build(SVGFilterBuilder* filterBuilder)
 {
-    FilterEffect* input1 = filterResource->builder()->getEffectById(in1());
+    FilterEffect* input1 = filterBuilder->getEffectById(in1());
 
     if (!input1)
-        return false;
+        return 0;
 
-    RefPtr<FilterEffect> effect = FEOffset::create(input1, dx(), dy());
-    filterResource->addFilterEffect(this, effect.release());
-
-    return true;
+    return FEOffset::create(input1, dx(), dy());
 }
 
 }

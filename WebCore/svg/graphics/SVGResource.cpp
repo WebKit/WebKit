@@ -50,7 +50,6 @@ SVGResource::SVGResource()
     resourceSet().add(this);
 }
 
-
 SVGResource::~SVGResource()
 {
     ASSERT(resourceSet().contains(this));

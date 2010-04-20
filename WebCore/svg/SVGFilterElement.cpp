@@ -3,6 +3,7 @@
     Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
     Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
     Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
+    Copyright (C) Research In Motion Limited 2010. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -29,12 +30,12 @@
 #include "FloatSize.h"
 #include "MappedAttribute.h"
 #include "PlatformString.h"
+#include "RenderSVGResourceFilter.h"
 #include "SVGFilterBuilder.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
-#include "SVGResourceFilter.h"
 #include "SVGUnitTypes.h"
 
 namespace WebCore {
@@ -161,67 +162,10 @@ FloatRect SVGFilterElement::filterBoundingBox(const FloatRect& objectBoundingBox
     return filterBBox;
 }
 
-void SVGFilterElement::buildFilter(const FloatRect& targetRect) const
+RenderObject* SVGFilterElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    bool filterBBoxMode = filterUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
-    bool primitiveBBoxMode = primitiveUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
-
-    FloatRect filterBBox;
-    if (filterBBoxMode)
-        filterBBox = FloatRect(x().valueAsPercentage(),
-                               y().valueAsPercentage(),
-                               width().valueAsPercentage(),
-                               height().valueAsPercentage());
-    else
-        filterBBox = FloatRect(x().value(this),
-                               y().value(this),
-                               width().value(this),
-                               height().value(this));
-
-    FloatRect filterRect = filterBBox;
-    if (filterBBoxMode)
-        filterRect = FloatRect(targetRect.x() + filterRect.x() * targetRect.width(),
-                               targetRect.y() + filterRect.y() * targetRect.height(),
-                               filterRect.width() * targetRect.width(),
-                               filterRect.height() * targetRect.height());
-
-    m_filter->setFilterBoundingBox(filterRect);
-    m_filter->setFilterRect(filterBBox);
-    m_filter->setEffectBoundingBoxMode(primitiveBBoxMode);
-    m_filter->setFilterBoundingBoxMode(filterBBoxMode);
-
-    if (hasAttribute(SVGNames::filterResAttr)) {
-        m_filter->setHasFilterResolution(true);
-        m_filter->setFilterResolution(FloatSize(filterResX(), filterResY()));
-    }
-
-    // Add effects to the filter
-    m_filter->builder()->clearEffects();
-    for (Node* n = firstChild(); n != 0; n = n->nextSibling()) {
-        SVGElement* element = 0;
-        if (n->isSVGElement()) {
-            element = static_cast<SVGElement*>(n);
-            if (element->isFilterEffect()) {
-                SVGFilterPrimitiveStandardAttributes* effectElement = static_cast<SVGFilterPrimitiveStandardAttributes*>(element);
-                if (!effectElement->build(m_filter.get())) {
-                    m_filter->builder()->clearEffects();
-                    break;
-                }
-            }
-        }
-    }
+    return new (arena) RenderSVGResourceFilter(this);
+}
 }
 
-SVGResource* SVGFilterElement::canvasResource(const RenderObject*)
-{
-    if (!attached())
-        return 0;
-
-    if (!m_filter)
-        m_filter = SVGResourceFilter::create(this);
-    return m_filter.get();
-}
-
-}
-
-#endif // ENABLE(SVG) && ENABLE(FILTERS)
+#endif
