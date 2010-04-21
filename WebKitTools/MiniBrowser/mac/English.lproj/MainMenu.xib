@@ -1332,6 +1332,22 @@
 									<reference key="NSOnImage" ref="35465992"/>
 									<reference key="NSMixedImage" ref="502551668"/>
 								</object>
+								<object class="NSMenuItem" id="137933275">
+									<reference key="NSMenu" ref="865232259"/>
+									<string key="NSTitle">Hide Web View</string>
+									<string key="NSKeyEquiv"/>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="35465992"/>
+									<reference key="NSMixedImage" ref="502551668"/>
+								</object>
+								<object class="NSMenuItem" id="1027125810">
+									<reference key="NSMenu" ref="865232259"/>
+									<string key="NSTitle">Remove Web View</string>
+									<string key="NSKeyEquiv"/>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="35465992"/>
+									<reference key="NSMixedImage" ref="502551668"/>
+								</object>
 								<object class="NSMenuItem" id="162978490">
 									<reference key="NSMenu" ref="865232259"/>
 									<bool key="NSIsDisabled">YES</bool>
@@ -2084,6 +2100,22 @@
 						<reference key="destination" ref="878165919"/>
 					</object>
 					<int key="connectionID">547</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">showHideWebView:</string>
+						<reference key="source" ref="1014"/>
+						<reference key="destination" ref="137933275"/>
+					</object>
+					<int key="connectionID">549</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">removeReinsertWebView:</string>
+						<reference key="source" ref="1014"/>
+						<reference key="destination" ref="1027125810"/>
+					</object>
+					<int key="connectionID">551</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -3130,6 +3162,8 @@
 							<reference ref="340689355"/>
 							<reference ref="878165919"/>
 							<reference ref="162978490"/>
+							<reference ref="137933275"/>
+							<reference ref="1027125810"/>
 						</object>
 						<reference key="parent" ref="816668511"/>
 					</object>
@@ -3173,6 +3207,16 @@
 					<object class="IBObjectRecord">
 						<int key="objectID">546</int>
 						<reference key="object" ref="162978490"/>
+						<reference key="parent" ref="865232259"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">548</int>
+						<reference key="object" ref="137933275"/>
+						<reference key="parent" ref="865232259"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">550</int>
+						<reference key="object" ref="1027125810"/>
 						<reference key="parent" ref="865232259"/>
 					</object>
 				</object>
@@ -3400,6 +3444,8 @@
 					<string>540.IBPluginDependency</string>
 					<string>545.IBPluginDependency</string>
 					<string>546.IBPluginDependency</string>
+					<string>548.IBPluginDependency</string>
+					<string>550.IBPluginDependency</string>
 					<string>56.IBPluginDependency</string>
 					<string>56.ImportedFromIB2</string>
 					<string>57.IBEditorWindowLastContentRect</string>
@@ -3647,10 +3693,12 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{759, 892}, {185, 53}}</string>
+					<string>{{759, 852}, {211, 93}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{908, 902}, {154, 43}}</string>
+					<string>{{944, 872}, {154, 43}}</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -3708,7 +3756,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">547</int>
+			<int key="maxID">551</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -3782,9 +3830,13 @@
 							<string>fetch:</string>
 							<string>forceRepaint:</string>
 							<string>reload:</string>
+							<string>removeReinsertWebView:</string>
+							<string>showHideWebView:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -3797,6 +3849,8 @@
 							<string>fetch:</string>
 							<string>forceRepaint:</string>
 							<string>reload:</string>
+							<string>removeReinsertWebView:</string>
+							<string>showHideWebView:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -3810,6 +3864,14 @@
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">reload:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">removeReinsertWebView:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">showHideWebView:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 						</object>

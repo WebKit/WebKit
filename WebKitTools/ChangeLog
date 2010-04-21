@@ -1,3 +1,17 @@
+2010-04-21  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add debug menu items to show/hide the Web View.
+        https://bugs.webkit.org/show_bug.cgi?id=37958
+
+        * MiniBrowser/mac/BrowserWindowController.h:
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController showHideWebView:]):
+        (-[BrowserWindowController removeReinsertWebView:]):
+        (-[BrowserWindowController validateMenuItem:]):
+        * MiniBrowser/mac/English.lproj/MainMenu.xib:
+
 2010-04-21  Eric Seidel  <eric@webkit.org>
 
         Unreviewed.  Rolling out unicode() changes as they broke NRWT for chromium.

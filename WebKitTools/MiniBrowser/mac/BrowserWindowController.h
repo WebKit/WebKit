@@ -40,10 +40,11 @@
 - (IBAction)reload:(id)sender;
 - (IBAction)forceRepaint:(id)sender;
 
+- (IBAction)showHideWebView:(id)sender;
+- (IBAction)removeReinsertWebView:(id)sender;
+
 - (id)initWithPageNamespace:(WKPageNamespaceRef)pageNamespace;
-
 - (void)loadURLString:(NSString *)urlString;
-
 - (void)applicationTerminating;
 
 @end

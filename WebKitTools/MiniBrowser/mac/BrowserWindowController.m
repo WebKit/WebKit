@@ -60,6 +60,33 @@
     WKURLRelease(url);
 }
 
+- (IBAction)showHideWebView:(id)sender
+{
+    BOOL hidden = ![_webView isHidden];
+    
+    [_webView setHidden:hidden];
+}
+
+- (IBAction)removeReinsertWebView:(id)sender
+{
+    if ([_webView window]) {
+        [_webView retain];
+        [_webView removeFromSuperview]; 
+    } else {
+        [containerView addSubview:_webView];
+        [_webView release];
+    }
+}
+
+- (BOOL)validateMenuItem:(NSMenuItem *)menuItem
+{
+    if ([menuItem action] == @selector(showHideWebView:))
+        [menuItem setTitle:[_webView isHidden] ? @"Show Web View" : @"Hide Web View"];
+    else if ([menuItem action] == @selector(removeReinsertWebView:))
+        [menuItem setTitle:[_webView window] ? @"Remove Web View" : @"Insert Web View"];
+    return YES;
+}
+
 - (IBAction)reload:(id)sender
 {
     WKPageReload(_webView.pageRef);
