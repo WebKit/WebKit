@@ -1,5 +1,16 @@
 2010-04-21  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Eric Carlson.
+
+        <rdar://problem/7313430> Many crashes in Safari inside Flip4Mac below -[NSAlert didEndAlert:returnCode:contextInfo:]
+
+        A manual test case is required here as the Flip4Mac plug-in displays an alert, and some manual tweaking of the plug-in's
+        preference file on disk is often required to reproduce the bug.
+
+        * manual-tests/plugins/flip4mac-update-alert-over-navigation.html: Added.
+
+2010-04-21  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Maciej Stachowiak.
 
         <rdar://problem/7856151> REGRESSION: NPP_Destroy is not called when page navigates when plug-in is displaying modal dialog

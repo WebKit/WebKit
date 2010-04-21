@@ -1,3 +1,46 @@
+2010-04-21  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        <rdar://problem/7313430> Many crashes in Safari inside Flip4Mac below -[NSAlert didEndAlert:returnCode:contextInfo:]
+
+        Existing versions of the Flip4Mac WebKit plug-in have an object lifetime bug related to an NSAlert that is
+        used to notify the user about updates to the plug-in. This bug can result in Safari crashing if the page
+        containing the plug-in navigates while the alert is displayed (<rdar://problem/7313430>).
+
+        The gist of the bug is thus: Flip4Mac sets an instance of the TSUpdateCheck class as the modal delegate of the
+        NSAlert instance. This TSUpdateCheck instance itself has a delegate. The delegate is set to the WmvPlugin
+        instance which is the NSView subclass that is exposed to WebKit as the plug-in view. Since this relationship
+        is that of delegates the TSUpdateCheck does not retain the WmvPlugin. This leads to a bug if the WmvPlugin
+        instance is destroyed before the TSUpdateCheck instance as the TSUpdateCheck instance will be left with a
+        pointer to a stale object. This will happen if a page containing the Flip4Mac plug-in triggers a navigation
+        while the update sheet is visible as the WmvPlugin instance is removed from the view hierarchy and there are
+        no other references to keep the object alive.
+
+        We work around this bug by patching the following two messages:
+
+        1) -[NSAlert beginSheetModalForWindow:modalDelegate:didEndSelector:contextInfo:]
+        2) -[TSUpdateCheck alertDidEnd:returnCode:contextInfo:]
+
+        Our override of 1) detects whether it is Flip4Mac's update sheet triggering the alert by checking whether the
+        modal delegate is an instance of TSUpdateCheck. If it is, it retains the modal delegate's delegate.
+
+        Our override of 2) then autoreleases the delegate, balancing the retain we added in 1).
+
+        These two overrides have the effect of ensuring that the WmvPlugin instance will always outlive the TSUpdateCheck
+        instance, preventing the TSUpdateCheck instance from accessing a stale delegate pointer and crashing the application.
+
+        * Plugins/WebPluginController.mm:
+        (-[WebPluginController addPlugin:]): Check whether the plug-in being instantiated is the Flip4Mac plug-in and
+        install our workaround if it is.
+        (isKindOfClass): Helper function that checks whether the given object is an instance of the named class.
+        (WebKit_TSUpdateCheck_alertDidEnd_returnCode_contextInfo_): Autorelease the delegate.
+        (WebKit_NSAlert_beginSheetModalForWindow_modalDelegate_didEndSelector_contextInfo_): Retain the modal delegate's
+        delegate if this NSAlert belongs to the Flip4Mac plug-in.
+        (installFlip4MacPlugInWorkaroundIfNecessary): Swizzle the necessary methods.  We swizzle the TSUpdateCheck methods
+        first since it is possible that in some versions of Flip4Mac the TSUpdateCheck class may not exist or may not have
+        the method we're interested in.  In that case we want to bail out before patching any methods.
+
 2010-04-20  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Maciej Stachowiak.
