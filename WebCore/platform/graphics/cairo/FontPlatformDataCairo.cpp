@@ -32,7 +32,7 @@
 #include <cairo-ft.h>
 #include <cairo.h>
 #include <fontconfig/fcfreetype.h>
-#include <gtk/gtk.h>
+#include <gdk/gdk.h>
 
 namespace WebCore {
 
