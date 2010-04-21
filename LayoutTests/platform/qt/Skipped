@@ -225,7 +225,6 @@ media/video-seek-past-end-paused.html
 media/video-seek-past-end-playing.html
 media/video-size.html
 media/video-size-intrinsic-scale.html
-media/video-source-add-src.html
 media/video-source-error.html
 media/video-source-error-no-candidate.html
 media/video-source.html

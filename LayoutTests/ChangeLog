@@ -1,3 +1,10 @@
+2010-04-21  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] media/video-source-add-src.html was removed from tree
+        by r57820, so it's time to remove it from Qt Skipped list.
+
+        * platform/qt/Skipped: media/video-source-add-src.html removed.
+
 2010-04-21  Benjamin Poulain  <ikipou@gmail.com>
 
         Reviewed by Simon Fraser.
