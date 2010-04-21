@@ -1,3 +1,10 @@
+2010-04-21  James Robinson  <jamesr@chromium.org>
+
+        Updating chromium expectations for tests that need new layoutTestController
+        functionality.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-04-21  Albert J. Wong  <ajwong@chromium.org>
 
         Not reviewed. Sheriffing cleanup.

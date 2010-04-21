@@ -576,7 +576,7 @@ BUG30536 WIN : http/tests/xmlhttprequest/xmlhttprequest-setrequestheader-no-valu
 BUG8941 WIN SLOW : http/tests/xmlhttprequest/web-apps/013.html = FAIL
 BUG8941 LINUX SLOW : http/tests/xmlhttprequest/web-apps/013.html = PASS
 BUG8941 MAC DEBUG SLOW : http/tests/xmlhttprequest/web-apps/013.html = FAIL
-BUG8941 MAC RELEASE : http/tests/xmlhttprequest/web-apps/013.html = FAIL TIMEOUT
+BUG8941 MAC RELEASE SLOW : http/tests/xmlhttprequest/web-apps/013.html = PASS
 BUG8941 WIN : http/tests/xmlhttprequest/web-apps/012.html = FAIL
 
 // -----------------------------------------------------------------
@@ -1734,8 +1734,10 @@ BUG23473 MAC : fast/repaint = IMAGE
 BUG23473 MAC : fast/repaint/block-no-inflow-children.html = PASS
 BUG23473 MAC : fast/repaint/block-selection-gap-stale-cache.html = PASS
 BUG23473 MAC : fast/repaint/block-selection-gap-stale-cache-2.html = PASS
+BUG23473 MAC : fast/repaint/box-shadow-h.html = PASS
+BUG23473 MAC : fast/repaint/box-shadow-v.html = PASS
 BUG23473 MAC : fast/repaint/fixed.html = PASS
-BUG23473 MAC : fast/repaint/fixed-transformed.html = PASS
+BUG23473 MAC : fast/repaint/fixed-tranformed.html = PASS
 BUG23473 MAC : fast/repaint/flexible-box-overflow.html = PASS
 BUG23473 MAC : fast/repaint/flexible-box-overflow-horizontal.html = PASS
 BUG23473 MAC : fast/repaint/float-new-in-block.html = PASS
@@ -1748,6 +1750,7 @@ BUG23473 MAC : fast/repaint/layer-outline-horizontal.html = PASS
 BUG23473 MAC : fast/repaint/line-flow-with-floats-1.html = PASS
 BUG23473 MAC : fast/repaint/line-flow-with-floats-6.html = PASS
 BUG23473 MAC : fast/repaint/list-marker.html = PASS
+BUG23473 MAC : fast/repaint/overflow-scroll-body-appear.html = PASS
 BUG23473 MAC : fast/repaint/repaint-during-scroll.html = PASS
 BUG23473 MAC : fast/repaint/selection-gap-overflow-scroll-2.html = PASS
 BUG23473 MAC : fast/repaint/shadow-multiple-horizontal.html = PASS
@@ -1769,7 +1772,6 @@ BUG23466 MAC : svg/custom/foreign-object-skew.svg = IMAGE
 
 // Failing on the bots but not locally; need investigation
 BUG23560 MAC : fast/images/animated-svg-as-image.html = IMAGE PASS
-BUG23560 MAC : svg/W3C-SVG-1.1/filters-conv-01-f.svg = FAIL
 
 // -----------------------------------------------------------------
 // END MAC PORT TESTS
@@ -2744,15 +2746,32 @@ BUG41817 LINUX : svg/text/text-tselect-02-f.svg = IMAGE PASS
 BUG42044 WIN : http/tests/security/xss-DENIED-mime-type-execute-as-html.html = PASS TIMEOUT
 
 // Broke at r57886, probably just need new baselines
-BUGJAMESR LINUX RELEASE : svg/W3C-SVG-1.1/filters-diffuse-01-f.svg = TEXT
 BUGJAMESR WIN LINUX : svg/W3C-SVG-1.1/filters-gauss-01-b.svg = TEXT
 // might have been flaky
 BUGJAMESR MAC : svg/custom/resource-invalidate-on-target-update.svg = TEXT
 BUGJAMESR LINUX : svg/custom/resource-invalidate-on-target-update.svg = IMAGE
 BUGJAMESR : svg/filters/filter-clip.svg = IMAGE
 BUGJAMESR : svg/filters/filter-source-position.svg = IMAGE
-BUGJAMESR : svg/W3C-SVG-1.1/animate-elem-41-t.svg = IMAGE+TEXT
+BUGJAMESR WIN LINUX : svg/W3C-SVG-1.1/animate-elem-41-t.svg = IMAGE+TEXT
 BUGJAMESR BUG30048 BUG29737 : svg/filters/shadow-on-rect-with-filter.svg = IMAGE
 
 // Broke at r57940
 BUGWK37907 WIN : editing/pasteboard/copy-backslash-with-euc.html = FAIL
+
+// New layoutTestController function added at r57986
+BUGJAMESR : fast/lists/ol-nested-item-dynamic-insert.html = TEXT
+BUGJAMESR : fast/lists/ol-nested-items-dynamic-remove.html = TEXT
+BUGJAMESR : fast/lists/ol-nested-items.html = TEXT
+BUGJAMESR : fast/lists/ol-nested-list-dynamic-insert.html = TEXT
+BUGJAMESR : fast/lists/ol-nested-list-dynamic-remove = TEXT
+BUGJAMESR : fast/lists/ol-nested-list.html = TEXT
+
+// New layoutTestController function added at r57993
+BUGJAMESR : http/tests/xmlhttprequest/cross-origin-authorization-with-embeddor.html = TIMEOUT
+
+// Need rebaseline due to upstream bugfix r57971
+BUGJAMESR WIN LINUX : fast/repaint/fixed-child-move-after-scroll.html = IMAGE+TEXT
+BUGJAMESR WIN LINUX : fast/repaint/fixed-child-of-fixed-move-after-scroll.html = IMAGE+TEXT
+BUGJAMESR WIN LINUX : fast/repaint/fixed-child-of-transformed-move-after-scroll.html = IMAGE+TEXT
+BUGJAMESR WIN LINUX : fast/repaint/fixed-move-after-scroll.html = IMAGE+TEXT
+
