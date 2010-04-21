@@ -3,7 +3,7 @@
         Reviewed by Darin Adler.
 
         Added missing #include "Lookup.h" in LUT source files.
-        https://bugs.webkit.org/show_bug.cgi?id=XXXXX
+        https://bugs.webkit.org/show_bug.cgi?id=37903
 
         * runtime/ArrayPrototype.cpp:
         * runtime/DatePrototype.cpp:
