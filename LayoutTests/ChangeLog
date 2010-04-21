@@ -1,3 +1,9 @@
+2010-04-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix test result after r57913.
+
+        * compositing/iframes/composited-iframe-expected.txt:
+
 2010-04-20  Yuzo Fujishima  <yuzo@google.com>
 
         Unreviewed test skipping for Chromium Win.

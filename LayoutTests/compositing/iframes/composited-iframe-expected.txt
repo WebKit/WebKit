@@ -8,7 +8,7 @@
   (preserves3D 0)
   (drawsContent 0)
   (backfaceVisibility visible)
-    (backgroundColor none)
+  (backgroundColor none)
   (transform identity)
   (childrenTransform identity)
   (children 1
@@ -21,7 +21,7 @@
       (preserves3D 0)
       (drawsContent 0)
       (backfaceVisibility visible)
-            (backgroundColor none)
+      (backgroundColor none)
       (transform identity)
       (childrenTransform identity)
       (children 1
@@ -34,7 +34,7 @@
           (preserves3D 0)
           (drawsContent 1)
           (backfaceVisibility visible)
-                    (backgroundColor none)
+          (backgroundColor none)
           (transform identity)
           (childrenTransform identity)
         )
