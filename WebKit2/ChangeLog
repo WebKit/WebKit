@@ -1,5 +1,12 @@
 2010-04-20  Anders Carlsson  <andersca@apple.com>
 
+        Fix build.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::receivedData):
+
+2010-04-20  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Don't paint the web page before we've blit the last update chunk to the backing store
