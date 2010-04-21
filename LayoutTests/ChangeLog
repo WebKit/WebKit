@@ -1,6 +1,6 @@
 2010-04-20  Shinichiro Hamaji  <hamaji@chromium.org>
 
-        Reviewed by Darin Adler.
+        Unreviewed test fix.
 
         A backslash in EUC-JP becomes to a yen sign when it is copied
         https://bugs.webkit.org/show_bug.cgi?id=36419
