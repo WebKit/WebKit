@@ -1,3 +1,15 @@
+2010-04-21  Avi Drissman  <avi@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        JPG images fail to print in Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=37796
+
+        Image sources of JPG data with final=false fail to draw into PDF contexts even if later updated (<rdar://problem/7874035>). Therefore, destroy and re-create the image source when the final data arrives.
+
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::setData):
+
 2010-04-21  Marcus Bulach  <bulach@chromium.org>
 
         Reviewed by Nate Chapin.

@@ -119,14 +119,22 @@ bool ImageSource::initialized() const
 
 void ImageSource::setData(SharedBuffer* data, bool allDataReceived)
 {
-    if (!m_decoder)
-        m_decoder = CGImageSourceCreateIncremental(NULL);
 #if PLATFORM(MAC)
+    if (!m_decoder)
+        m_decoder = CGImageSourceCreateIncremental(0);
     // On Mac the NSData inside the SharedBuffer can be secretly appended to without the SharedBuffer's knowledge.  We use SharedBuffer's ability
     // to wrap itself inside CFData to get around this, ensuring that ImageIO is really looking at the SharedBuffer.
     RetainPtr<CFDataRef> cfData(AdoptCF, data->createCFData());
     CGImageSourceUpdateData(m_decoder, cfData.get(), allDataReceived);
 #else
+    if (!m_decoder) {
+        m_decoder = CGImageSourceCreateIncremental(0);
+    } else if (allDataReceived) {
+        // 10.6 bug workaround: image sources with final=false fail to draw into PDF contexts, so re-create image source
+        // when data is complete. <rdar://problem/7874035> (<http://openradar.appspot.com/7874035>)
+        CFRelease(m_decoder);
+        m_decoder = CGImageSourceCreateIncremental(0);
+    }
     // Create a CGDataProvider to wrap the SharedBuffer.
     data->ref();
     // We use the GetBytesAtPosition callback rather than the GetBytePointer one because SharedBuffer
