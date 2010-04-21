@@ -1,3 +1,9 @@
+2010-04-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        No review. Spurious whitespace was removed from project file.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2010-04-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.
