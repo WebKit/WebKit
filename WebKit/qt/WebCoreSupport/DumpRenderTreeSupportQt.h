@@ -24,7 +24,6 @@
 #define DumpRenderTreeSupportQt_h
 
 #include "qwebkitglobal.h"
-#include <QVariant>
 
 class QWebPage;
 class QWebFrame;
@@ -79,7 +78,6 @@ public:
     static void resetOriginAccessWhiteLists();
 
     static int workerThreadCount();
-    static QVariantMap computedStyleIncludingVisitedInfo(QWebFrame* frame, const QString& id);
 };
 
 #endif

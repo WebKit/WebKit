@@ -1,3 +1,13 @@
+2010-04-21  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, rolling out r57963.
+        http://trac.webkit.org/changeset/57963
+        https://bugs.webkit.org/show_bug.cgi?id=37759
+
+        Three tests started crashing on the Qt bot.
+
+        * platform/qt/Skipped:
+
 2010-04-21  Yi Shen  <yi.4.shen@nokia.com>
 
         Reviewed by Simon Hausmann.

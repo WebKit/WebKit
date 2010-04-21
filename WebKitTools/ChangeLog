@@ -1,3 +1,14 @@
+2010-04-21  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, rolling out r57963.
+        http://trac.webkit.org/changeset/57963
+        https://bugs.webkit.org/show_bug.cgi?id=37759
+
+        Three tests started crashing on the Qt bot.
+
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+
 2010-04-21  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Eric Seidel.

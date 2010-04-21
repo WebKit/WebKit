@@ -23,7 +23,6 @@
 #include "config.h"
 #include "DumpRenderTreeSupportQt.h"
 
-#include "CSSComputedStyleDeclaration.h"
 #include "ContextMenu.h"
 #include "ContextMenuClientQt.h"
 #include "ContextMenuController.h"
@@ -365,24 +364,3 @@ bool DumpRenderTreeSupportQt::isCommandEnabled(QWebPage* page, const QString& na
 {
     return page->handle()->page->focusController()->focusedOrMainFrame()->editor()->command(name).isEnabled();
 }
-
-QVariantMap DumpRenderTreeSupportQt::computedStyleIncludingVisitedInfo(QWebFrame* frame, const QString& id)
-{
-    QVariantMap ret;
-    Frame* coreFrame = QWebFramePrivate::core(frame);
-    if (!coreFrame)
-        return ret;
-
-    Element* element = coreFrame->document()->getElementById(AtomicString(id));
-    if (!element)
-        return ret;
-
-    RefPtr<CSSComputedStyleDeclaration> style = computedStyle(element, true);
-    for (int i = 0; i < style->length(); i++) {
-        QString name = style->item(i);
-        QString value = (static_cast<CSSStyleDeclaration*>(style.get()))->getPropertyValue(name);
-        ret[name] = QVariant(value);
-    }
-    return ret;
-}
-
