@@ -35,6 +35,7 @@
 #include "WorkQueueItemQt.h"
 #include <QDir>
 #include <QLocale>
+#include <QMap>
 #include <qwebsettings.h>
 
 extern void qt_wrt_setViewMode(QWebPage* page, const QString& mode);
@@ -607,6 +608,14 @@ void LayoutTestController::execCommand(const QString& name, const QString& value
 bool LayoutTestController::isCommandEnabled(const QString& name) const
 {
     return DumpRenderTreeSupportQt::isCommandEnabled(m_drt->webPage(), name);
+}
+
+QVariantMap LayoutTestController::computedStyleIncludingVisitedInfo(const QVariant& obj) const
+{
+    QMap<QString, QVariant> map = obj.toMap();
+    QString id = map.value("id").toString();
+
+    return DumpRenderTreeSupportQt::computedStyleIncludingVisitedInfo(m_drt->webPage()->mainFrame(), id);
 }
 
 const unsigned LayoutTestController::maxViewWidth = 800;

@@ -1,3 +1,14 @@
+2010-04-21  Yi Shen  <yi.4.shen@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Add LayoutTestController interface: computedStyleIncludingVisitedInfo
+        https://bugs.webkit.org/show_bug.cgi?id=37759
+
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::computedStyleIncludingVisitedInfo):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+
 2010-04-21  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, test fix only.
