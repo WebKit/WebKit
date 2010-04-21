@@ -744,3 +744,89 @@ void LayoutTestController::setWebViewEditable(bool editable)
     WebView *view = [mainFrame webView];
     [view setEditable:editable];
 }
+
+#ifndef BUILDING_ON_TIGER
+static NSString *SynchronousLoaderRunLoopMode = @"DumpRenderTreeSynchronousLoaderRunLoopMode";
+
+@interface SynchronousLoader : NSObject
+{
+    NSString *m_username;
+    NSString *m_password;
+    BOOL m_isDone;
+}
++ (void)makeRequest:(NSURLRequest *)request withUsername:(NSString *)username password:(NSString *)password;
+@end
+
+@implementation SynchronousLoader : NSObject
+- (void)dealloc
+{
+    [m_username release];
+    [m_password release];
+
+    [super dealloc];
+}
+
+- (BOOL)connectionShouldUseCredentialStorage:(NSURLConnection *)connection
+{
+    return YES;
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+{
+    if ([challenge previousFailureCount] == 0) {
+        NSURLCredential *credential = [[NSURLCredential alloc]  initWithUser:m_username password:m_password persistence:NSURLCredentialPersistenceForSession];
+        [[challenge sender] useCredential:credential forAuthenticationChallenge:challenge];
+        return;
+    }
+    [[challenge sender] cancelAuthenticationChallenge:challenge];
+}
+
+- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
+{
+    printf("SynchronousLoader failed: %s\n", [[error description] UTF8String]);
+    m_isDone = YES;
+}
+
+- (void)connectionDidFinishLoading:(NSURLConnection *)connection
+{
+    m_isDone = YES;
+}
+
++ (void)makeRequest:(NSURLRequest *)request withUsername:(NSString *)username password:(NSString *)password
+{
+    ASSERT(![[request URL] user]);
+    ASSERT(![[request URL] password]);
+
+    SynchronousLoader *delegate = [[SynchronousLoader alloc] init];
+    delegate->m_username = [username copy];
+    delegate->m_password = [password copy];
+
+    NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:request delegate:delegate startImmediately:NO];
+    [connection scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:SynchronousLoaderRunLoopMode];
+    [connection start];
+    
+    while (!delegate->m_isDone)
+        [[NSRunLoop currentRunLoop] runMode:SynchronousLoaderRunLoopMode beforeDate:[NSDate distantFuture]];
+
+    [connection cancel];
+    
+    [connection release];
+    [delegate release];
+}
+
+@end
+#endif
+
+void LayoutTestController::authenticateSession(JSStringRef url, JSStringRef username, JSStringRef password)
+{
+    // See <rdar://problem/7880699>.
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+    RetainPtr<CFStringRef> urlStringCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, url));
+    RetainPtr<CFStringRef> usernameCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, username));
+    RetainPtr<CFStringRef> passwordCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, password));
+
+    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:[NSURL URLWithString:(NSString *)urlStringCF.get()]];
+
+    [SynchronousLoader makeRequest:request withUsername:(NSString *)usernameCF.get() password:(NSString *)passwordCF.get()];
+#endif
+}

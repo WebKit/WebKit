@@ -365,6 +365,22 @@ static CFURLRequestRef makeFinalRequest(const ResourceRequest& request, bool sho
     return newRequest;
 }
 
+static CFDictionaryRef createConnectionProperties(bool shouldUseCredentialStorage)
+{
+    static const CFStringRef webKitPrivateSessionCF = CFSTR("WebKitPrivateSession");
+    static const CFStringRef _kCFURLConnectionSessionID = CFSTR("_kCFURLConnectionSessionID");
+    static const CFStringRef kCFURLConnectionSocketStreamProperties = CFSTR("kCFURLConnectionSocketStreamProperties");
+
+    CFDictionaryRef sessionID = shouldUseCredentialStorage ?
+        CFDictionaryCreate(0, 0, 0, 0, 0, 0) :
+        CFDictionaryCreate(0, (const void**)&_kCFURLConnectionSessionID, (const void**)&webKitPrivateSessionCF, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+
+    CFDictionaryRef propertiesDictionary = CFDictionaryCreate(0, (const void**)&kCFURLConnectionSocketStreamProperties, (const void**)&sessionID, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+
+    CFRelease(sessionID);
+    return propertiesDictionary;
+}
+
 bool ResourceHandle::start(Frame* frame)
 {
     // If we are no longer attached to a Page, this must be an attempted load from an
@@ -380,9 +396,11 @@ bool ResourceHandle::start(Frame* frame)
         d->m_request.setURL(urlWithCredentials);
     }
 
+    bool shouldUseCredentialStorage = !client() || client()->shouldUseCredentialStorage(this);
+
     // <rdar://problem/7174050> - For URLs that match the paths of those previously challenged for HTTP Basic authentication, 
     // try and reuse the credential preemptively, as allowed by RFC 2617.
-    if (!client() || client()->shouldUseCredentialStorage(this) && d->m_request.url().protocolInHTTPFamily()) {
+    if (shouldUseCredentialStorage && d->m_request.url().protocolInHTTPFamily()) {
         if (d->m_user.isEmpty() && d->m_pass.isEmpty()) {
             // <rdar://problem/7174050> - For URLs that match the paths of those previously challenged for HTTP Basic authentication, 
             // try and reuse the credential preemptively, as allowed by RFC 2617.
@@ -404,7 +422,9 @@ bool ResourceHandle::start(Frame* frame)
 
     CFURLConnectionClient_V3 client = { 3, this, 0, 0, 0, WebCore::willSendRequest, didReceiveResponse, didReceiveData, NULL, didFinishLoading, didFail, willCacheResponse, didReceiveChallenge, didSendBodyData, shouldUseCredentialStorageCallback, 0};
 
-    d->m_connection.adoptCF(CFURLConnectionCreate(0, request.get(), reinterpret_cast<CFURLConnectionClient*>(&client)));
+    RetainPtr<CFDictionaryRef> connectionProperties(AdoptCF, createConnectionProperties(shouldUseCredentialStorage));
+
+    d->m_connection.adoptCF(CFURLConnectionCreateWithProperties(0, request.get(), reinterpret_cast<CFURLConnectionClient*>(&client), connectionProperties.get()));
 
     CFURLConnectionScheduleWithCurrentMessageQueue(d->m_connection.get());
     CFURLConnectionScheduleDownloadWithRunLoop(d->m_connection.get(), loaderRunLoop(), kCFRunLoopDefaultMode);
@@ -771,7 +791,10 @@ RetainPtr<CFDataRef> WebCoreSynchronousLoader::load(const ResourceRequest& reque
     }
 
     CFURLConnectionClient_V3 client = { 3, &loader, 0, 0, 0, willSendRequest, didReceiveResponse, didReceiveData, 0, didFinishLoading, didFail, 0, didReceiveChallenge, 0, shouldUseCredentialStorage, 0 };
-    RetainPtr<CFURLConnectionRef> connection(AdoptCF, CFURLConnectionCreate(kCFAllocatorDefault, cfRequest.get(), reinterpret_cast<CFURLConnectionClient*>(&client)));
+
+    RetainPtr<CFDictionaryRef> connectionProperties(AdoptCF, createConnectionProperties(loader.m_allowStoredCredentials));
+
+    RetainPtr<CFURLConnectionRef> connection(AdoptCF, CFURLConnectionCreateWithProperties(kCFAllocatorDefault, cfRequest.get(), reinterpret_cast<CFURLConnectionClient*>(&client), connectionProperties.get()));
 
     CFURLConnectionScheduleWithRunLoop(connection.get(), CFRunLoopGetCurrent(), WebCoreSynchronousLoaderRunLoopMode);
     CFURLConnectionScheduleDownloadWithRunLoop(connection.get(), CFRunLoopGetCurrent(), WebCoreSynchronousLoaderRunLoopMode);

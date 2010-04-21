@@ -1,3 +1,13 @@
+2010-04-21  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37933
+        <rdar://problem/7719540> XMLHttpRequest.withCredentials should be better enforced.
+
+        * http/tests/xmlhttprequest/cross-origin-authorization-with-embedder-expected.txt: Added.
+        * http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html: Added.
+
 2010-04-21  Jakub Wieczorek  <jwieczorek@webkit.org>
 
         Unreviewed.
