@@ -615,5 +615,11 @@ QString LayoutTestController::markerTextForListItem(const QWebElement& listItem)
     return DumpRenderTreeSupportQt::markerTextForListItem(listItem);
 }
 
+void LayoutTestController::authenticateSession(const QString&, const QString&, const QString&)
+{
+    // FIXME: If there is a concept per-session (per-process) credential storage, the credentials should be added to it for later use.
+}
+
+
 const unsigned LayoutTestController::maxViewWidth = 800;
 const unsigned LayoutTestController::maxViewHeight = 600;
