@@ -431,9 +431,21 @@ void PopupContainer::layout()
     // Place the listbox within our border.
     m_listBox->move(kBorderSize, kBorderSize);
 
+    // popupWidth is the width of <select> element. Record it before resize frame.
+    int popupWidth = frameRect().width();
     // Size ourselves to contain listbox + border.
-    resize(m_listBox->width() + kBorderSize * 2, m_listBox->height() + kBorderSize * 2);
+    int listBoxWidth = m_listBox->width() + kBorderSize * 2;
+    resize(listBoxWidth, m_listBox->height() + kBorderSize * 2);
 
+    // Adjust the starting x-axis for RTL dropdown. For RTL dropdown, the right edge
+    // of dropdown box should be aligned with the right edge of <select> element box,
+    // and the dropdown box should be expanded to left if more space needed.
+    PopupMenuClient* popupClient = m_listBox->m_popupClient;
+    if (popupClient) {
+        bool rightAligned = m_listBox->m_popupClient->menuStyle().textDirection() == RTL;
+        if (rightAligned)
+            move(x() + popupWidth - listBoxWidth, y());
+    }
     invalidate();
 }
 

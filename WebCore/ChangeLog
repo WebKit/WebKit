@@ -1,3 +1,18 @@
+2010-04-21  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by Dimitri Glazkov
+
+        This patch fixes [chromium] RTL <select> dropdown box expands to right
+        instead of left.
+        https://bugs.webkit.org/show_bug.cgi?id=37232
+
+        No automatic test is possible.
+
+        * manual-tests/select_dropdown_box_alignment.html: Added.
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupContainer::layout): Adjust the x-axis of dropdown box 
+        for RTL.
+
 2010-04-21  anton muhin  <antonm@google.com>
 
         Reviewed by Adam Barth.
