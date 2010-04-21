@@ -1,3 +1,14 @@
+2010-04-21  Gustavo Sverzut Barbieri  <barbieri@profusion.mobi>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Add missing includes to platform/posix/FileSystemPOSIX.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=37861
+
+        No behavior changes, so no new tests were added.
+
+        * platform/posix/FileSystemPOSIX.cpp:
+
 2010-04-21  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Simon Fraser.

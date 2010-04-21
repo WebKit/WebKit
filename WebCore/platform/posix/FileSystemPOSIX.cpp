@@ -31,8 +31,10 @@
 
 #include "PlatformString.h"
 #include <errno.h>
+#include <fcntl.h>
 #include <libgen.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 #include <unistd.h>
 #include <wtf/text/CString.h>
 
