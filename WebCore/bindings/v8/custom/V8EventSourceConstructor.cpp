@@ -56,13 +56,13 @@ v8::Handle<v8::Value> V8EventSource::constructorCallback(const v8::Arguments& ar
     if (!context)
         return throwError("EventSource constructor's associated context is not available", V8Proxy::ReferenceError);
     if (args.Length() != 1)
-        return throwError("EventSource constructor wrong number of parameters", V8Proxy::TypeError);
+        return throwError("Not enough arguments", V8Proxy::SyntaxError);
 
     ExceptionCode ec = 0;
     String url = toWebCoreString(args[0]);
 
     RefPtr<EventSource> eventSource = EventSource::create(url, context, ec);
-    
+
     if (ec)
         return throwError(ec);
 

@@ -2264,6 +2264,7 @@ sub IsActiveDomType
 {
     # FIXME: Consider making this an .idl attribute.
     my $type = shift;
+    return 1 if $type eq "EventSource";
     return 1 if $type eq "MessagePort";
     return 1 if $type eq "XMLHttpRequest";
     return 1 if $type eq "WebSocket";
