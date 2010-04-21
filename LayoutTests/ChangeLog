@@ -1,3 +1,12 @@
+2010-04-21  Alejandro G. Castro  <alex@igalia.com>
+
+        Rubber-stamped by Xan Lopez.
+
+        Skipping fast/frames/frame-crash-with-page-cache.html
+        https://bugs.webkit.org/show_bug.cgi?id=37914
+
+        * platform/gtk/Skipped:
+
 2010-04-20  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.
