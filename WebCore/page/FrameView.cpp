@@ -1011,6 +1011,7 @@ void FrameView::scrollPositionChanged()
     if (!m_nestedLayoutCount && hasFixedObjects()) {
         if (RenderView* root = m_frame->contentRenderer()) {
             root->updateWidgetPositions();
+            root->layer()->updateRepaintRectsAfterScroll();
 #if USE(ACCELERATED_COMPOSITING)
             if (root->usesCompositing())
                 root->compositor()->updateCompositingLayers(CompositingUpdateOnScroll);

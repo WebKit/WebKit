@@ -1,3 +1,31 @@
+2010-04-21  Benjamin Poulain  <ikipou@gmail.com>
+
+        Reviewed by Simon Fraser.
+
+        Update of fixed elements is not made correctly when the page has been scrolled
+        https://bugs.webkit.org/show_bug.cgi?id=36783
+
+        When a fixed element was updated, the old geometry was not repainted correctly
+        because the repaint rect was cached during the layout and not updated when 
+        scrolling.
+
+        The rect is now updated while scrolling so the region updated correspond to the
+        region of the element on the screen.
+
+        The method RenderLayer::updateRepaintRectsAfterScroll() updates
+        the repaint rect of all fixed tree after scroll.
+
+        Tests: fast/repaint/fixed-child-move-after-scroll.html
+               fast/repaint/fixed-child-of-fixed-move-after-scroll.html
+               fast/repaint/fixed-child-of-transformed-move-after-scroll.html
+               fast/repaint/fixed-move-after-scroll.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollPositionChanged):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateRepaintRectsAfterScroll):
+        * rendering/RenderLayer.h:
+
 2010-04-21  Gustavo Sverzut Barbieri  <barbieri@profusion.mobi>
 
         Reviewed by Adam Roben.

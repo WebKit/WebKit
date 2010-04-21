@@ -373,6 +373,22 @@ void RenderLayer::computeRepaintRects()
     m_outlineBox = renderer()->outlineBoundsForRepaint(repaintContainer);
 }
 
+void RenderLayer::updateRepaintRectsAfterScroll(bool fixed)
+{
+    if (fixed || renderer()->style()->position() == FixedPosition) {
+        computeRepaintRects();
+        fixed = true;
+    } else if (renderer()->hasTransform()) {
+        // Transforms act as fixed position containers, so nothing inside a
+        // transformed element can be fixed relative to the viewport if the
+        // transformed element is not fixed itself or child of a fixed element.
+        return;
+    }
+
+    for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
+        child->updateRepaintRectsAfterScroll(fixed);
+}
+
 void RenderLayer::updateTransform()
 {
     // hasTransform() on the renderer is also true when there is transform-style: preserve-3d or perspective set,
