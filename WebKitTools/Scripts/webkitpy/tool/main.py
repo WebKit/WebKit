@@ -40,6 +40,9 @@ from webkitpy.common.net.rietveld import Rietveld
 from webkitpy.common.net.irc.ircproxy import IRCProxy
 from webkitpy.common.system.executive import Executive
 from webkitpy.common.system.user import User
+import webkitpy.tool.commands as commands
+# FIXME: Remove these imports once all the commands are in the root of the
+# command package.
 from webkitpy.tool.commands.download import *
 from webkitpy.tool.commands.earlywarningsystem import *
 from webkitpy.tool.commands.openbugs import OpenBugs

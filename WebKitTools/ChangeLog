@@ -1,5 +1,19 @@
 2010-04-21  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        Add webkit-patch pretty-diff
+        https://bugs.webkit.org/show_bug.cgi?id=37892
+
+        This is slightly lame because it asks you whether the diff is correct,
+        but it's a starting point.
+
+        * Scripts/webkitpy/tool/commands/__init__.py:
+        * Scripts/webkitpy/tool/commands/prettydiff.py: Added.
+        * Scripts/webkitpy/tool/main.py:
+
+2010-04-21  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Darin Adler.
 
         Remove mention of non-existant --no-build option
