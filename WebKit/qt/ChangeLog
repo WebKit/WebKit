@@ -1,3 +1,14 @@
+2010-04-21  Shu Chang  <chang.shu@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix Symbian build where QT_NO_SYSTEMTRAYICON is defined.
+        https://bugs.webkit.org/show_bug.cgi?id=37442
+
+        * WebCoreSupport/NotificationPresenterClientQt.cpp:
+        (NotificationPresenterClientQt::show):
+        * WebCoreSupport/NotificationPresenterClientQt.h:
+
 2010-04-21  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, rolling out r57963.

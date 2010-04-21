@@ -67,10 +67,11 @@ bool NotificationPresenterClientQt::show(Notification* notification)
                 QString(notification->contents().body()).toUtf8().constData());
         }
     }
-            
+
+#ifndef QT_NO_SYSTEMTRAYICON
     m_tray.show();
     m_tray.showMessage(notification->contents().title(), notification->contents().body(), QSystemTrayIcon::Information);
-
+#endif
     return true;
 }
 
