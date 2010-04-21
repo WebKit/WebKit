@@ -155,7 +155,13 @@ class TestTypeBase(object):
 
     def _write_into_file_at_path(self, file_path, contents, encoding=None):
         """Writes contents at file_path, using encoding."""
-        with codecs.open(file_path, "w", encoding) as file:
+        if not encoding:
+            # FIXME: This is a hack to handle binary data.  I thought
+            # encoding=None worked, but I guess not.
+            with open(file_path, "wb") as file:
+                file.write(contents)
+            return
+        with codecs.open(file_path, "w", encoding=encoding) as file:
             file.write(contents)
 
     def write_output_files(self, port, filename, file_type,
