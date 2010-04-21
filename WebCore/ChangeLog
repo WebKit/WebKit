@@ -1,3 +1,39 @@
+2010-04-21  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Adam Barth.
+
+        [GTK] GObject DOM bindings
+        https://bugs.webkit.org/show_bug.cgi?id=33590
+
+        Initial version of the GObject DOM bindings.
+
+        Only bindings for Node.idl and a few of its dependencies are
+        provided, without public API to access them at the
+        moment. References to the Document interfaces and to
+        EventListeners in Node.idl are ignored for GObject to make the
+        initial patch as small as possible, but will be enabled in a
+        follow-up patch.
+
+        * GNUmakefile.am:
+        * bindings/gobject/ConvertToUTF8String.cpp: Added.
+        (convertToUTF8String):
+        * bindings/gobject/ConvertToUTF8String.h: Added.
+        * bindings/gobject/WebKitDOMBinding.cpp: Added.
+        (WebKit::domObjects):
+        (WebKit::DOMObjectCache::get):
+        (WebKit::DOMObjectCache::put):
+        (WebKit::DOMObjectCache::forget):
+        (WebKit::createWrapper):
+        (WebKit::kit):
+        * bindings/gobject/WebKitDOMBinding.h: Added.
+        * bindings/gobject/WebKitDOMObject.cpp: Added.
+        (webkit_dom_object_init):
+        (webkit_dom_object_class_init):
+        * bindings/gobject/WebKitDOMObject.h: Added.
+        * bindings/scripts/CodeGeneratorGObject.pm: Added.
+        * bindings/scripts/gobject-generate-headers.pl: Added.
+        * dom/Node.idl:
+
 2010-04-21  Gustavo Sverzut Barbieri  <barbieri@profusion.mobi>
 
         Reviewed by Xan Lopez.

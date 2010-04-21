@@ -62,7 +62,9 @@ module core {
         readonly attribute Node             previousSibling;
         readonly attribute Node             nextSibling;
         readonly attribute NamedNodeMap     attributes;
+#if !defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT
         readonly attribute Document         ownerDocument;
+#endif
 
         [OldStyleObjC, Custom] Node insertBefore(in [Return] Node newChild,
                                                  in Node refChild)
@@ -133,6 +135,7 @@ module core {
 #endif /* defined(LANGUAGE_OBJECTIVE_C) */
 
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
+#if !defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT
         [JSCCustom] void addEventListener(in DOMString type, 
                                           in EventListener listener, 
                                           in boolean useCapture);
@@ -141,6 +144,7 @@ module core {
                                              in boolean useCapture);
         boolean dispatchEvent(in Event event)
             raises(EventException);
+#endif
 #endif
     };
 
