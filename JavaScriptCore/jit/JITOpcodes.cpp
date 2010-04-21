@@ -1173,13 +1173,6 @@ void JIT::emit_op_new_func_exp(Instruction* currentInstruction)
     stubCall.call(currentInstruction[1].u.operand);
 }
 
-void JIT::emit_op_new_regexp(Instruction* currentInstruction)
-{
-    JITStubCall stubCall(this, cti_op_new_regexp);
-    stubCall.addArgument(ImmPtr(m_codeBlock->regexp(currentInstruction[2].u.operand)));
-    stubCall.call(currentInstruction[1].u.operand);
-}
-
 void JIT::emit_op_throw(Instruction* currentInstruction)
 {
     unsigned exception = currentInstruction[1].u.operand;
@@ -2444,13 +2437,6 @@ void JIT::emit_op_bitxor(Instruction* currentInstruction)
     xorPtr(regT1, regT0);
     emitFastArithReTagImmediate(regT0, regT0);
     emitPutVirtualRegister(currentInstruction[1].u.operand);
-}
-
-void JIT::emit_op_new_regexp(Instruction* currentInstruction)
-{
-    JITStubCall stubCall(this, cti_op_new_regexp);
-    stubCall.addArgument(ImmPtr(m_codeBlock->regexp(currentInstruction[2].u.operand)));
-    stubCall.call(currentInstruction[1].u.operand);
 }
 
 void JIT::emit_op_bitor(Instruction* currentInstruction)

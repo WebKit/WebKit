@@ -34,6 +34,8 @@
 #include "PrototypeFunction.h"
 #include "JSFunction.h"
 #include "Interpreter.h"
+#include "RegExp.h"
+#include "RegExpObject.h"
 #include "UString.h"
 
 using namespace std;
@@ -827,11 +829,6 @@ RegisterID* BytecodeGenerator::addConstantValue(JSValue v)
     return &m_constantPoolRegisters[index];
 }
 
-unsigned BytecodeGenerator::addRegExp(RegExp* r)
-{
-    return m_codeBlock->addRegExp(r);
-}
-
 RegisterID* BytecodeGenerator::emitMove(RegisterID* dst, RegisterID* src)
 {
     emitOpcode(op_mov);
@@ -980,6 +977,12 @@ RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, const Identifier& ident
     if (!stringInMap)
         stringInMap = jsOwnedString(globalData(), identifier.ustring());
     return emitLoad(dst, JSValue(stringInMap));
+}
+
+RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, RegExp* regExp)
+{
+    JSValue jsRegExp = new (globalData()) RegExpObject(m_scopeChain->globalObject()->regExpStructure(), regExp);
+    return emitLoad(dst, jsRegExp);
 }
 
 RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, JSValue v)
@@ -1360,15 +1363,6 @@ RegisterID* BytecodeGenerator::emitNewFunction(RegisterID* dst, FunctionBodyNode
     instructions().append(index);
     return dst;
 }
-
-RegisterID* BytecodeGenerator::emitNewRegExp(RegisterID* dst, RegExp* regExp)
-{
-    emitOpcode(op_new_regexp);
-    instructions().append(dst->index());
-    instructions().append(addRegExp(regExp));
-    return dst;
-}
-
 
 RegisterID* BytecodeGenerator::emitNewFunctionExpression(RegisterID* r0, FuncExprNode* n)
 {

@@ -1237,20 +1237,6 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         vPC += OPCODE_LENGTH(op_new_array);
         NEXT_INSTRUCTION();
     }
-    DEFINE_OPCODE(op_new_regexp) {
-        /* new_regexp dst(r) regExp(re)
-
-           Constructs a new RegExp instance using the original
-           constructor from regexp regExp, and puts the result in
-           register dst.
-        */
-        int dst = vPC[1].u.operand;
-        int regExp = vPC[2].u.operand;
-        callFrame->r(dst) = JSValue(new (globalData) RegExpObject(callFrame->scopeChain()->globalObject->regExpStructure(), callFrame->codeBlock()->regexp(regExp)));
-
-        vPC += OPCODE_LENGTH(op_new_regexp);
-        NEXT_INSTRUCTION();
-    }
     DEFINE_OPCODE(op_mov) {
         /* mov dst(r) src(r)
 

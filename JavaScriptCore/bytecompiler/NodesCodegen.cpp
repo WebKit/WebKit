@@ -149,7 +149,7 @@ RegisterID* RegExpNode::emitBytecode(BytecodeGenerator& generator, RegisterID* d
         return emitThrowError(generator, SyntaxError, "Invalid regular expression: %s", regExp->errorMessage());
     if (dst == generator.ignoredResult())
         return 0;
-    return generator.emitNewRegExp(generator.finalDestination(dst), regExp.get());
+    return generator.emitLoad(generator.finalDestination(dst), regExp.get());
 }
 
 // ------------------------------ ThisNode -------------------------------------

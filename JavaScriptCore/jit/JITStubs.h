@@ -350,7 +350,6 @@ extern "C" {
     JSObject* JIT_STUB cti_op_new_func(STUB_ARGS_DECLARATION);
     JSObject* JIT_STUB cti_op_new_func_exp(STUB_ARGS_DECLARATION);
     JSObject* JIT_STUB cti_op_new_object(STUB_ARGS_DECLARATION);
-    JSObject* JIT_STUB cti_op_new_regexp(STUB_ARGS_DECLARATION);
     JSObject* JIT_STUB cti_op_push_activation(STUB_ARGS_DECLARATION);
     JSObject* JIT_STUB cti_op_push_new_scope(STUB_ARGS_DECLARATION);
     JSObject* JIT_STUB cti_op_push_scope(STUB_ARGS_DECLARATION);

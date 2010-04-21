@@ -89,25 +89,6 @@ CString CodeBlock::registerName(ExecState* exec, int r) const
     return makeString("r", UString::from(r)).UTF8String();
 }
 
-static UString regexpToSourceString(RegExp* regExp)
-{
-    char postfix[5] = { '/', 0, 0, 0, 0 };
-    int index = 1;
-    if (regExp->global())
-        postfix[index++] = 'g';
-    if (regExp->ignoreCase())
-        postfix[index++] = 'i';
-    if (regExp->multiline())
-        postfix[index] = 'm';
-
-    return makeString("/", regExp->pattern(), postfix);
-}
-
-static CString regexpName(int re, RegExp* regexp)
-{
-    return makeString(regexpToSourceString(regexp), "(@re", UString::from(re), ")").UTF8String();
-}
-
 static UString pointerToSourceString(void* p)
 {
     char buffer[2 + 2 * sizeof(void*) + 1]; // 0x [two characters per byte] \0
@@ -364,15 +345,6 @@ void CodeBlock::dump(ExecState* exec) const
         } while (i < m_constantRegisters.size());
     }
 
-    if (m_rareData && !m_rareData->m_regexps.isEmpty()) {
-        printf("\nm_regexps:\n");
-        size_t i = 0;
-        do {
-            printf("  re%u = %s\n", static_cast<unsigned>(i), regexpToSourceString(m_rareData->m_regexps[i].get()).ascii());
-            ++i;
-        } while (i < m_rareData->m_regexps.size());
-    }
-
 #if ENABLE(JIT)
     if (!m_globalResolveInfos.isEmpty() || !m_structureStubInfos.isEmpty())
         printf("\nStructures:\n");
@@ -508,12 +480,6 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             int argv = (++it)->u.operand;
             int argc = (++it)->u.operand;
             printf("[%4d] new_array\t %s, %s, %d\n", location, registerName(exec, dst).data(), registerName(exec, argv).data(), argc);
-            break;
-        }
-        case op_new_regexp: {
-            int r0 = (++it)->u.operand;
-            int re0 = (++it)->u.operand;
-            printf("[%4d] new_regexp\t %s, %s\n", location, registerName(exec, r0).data(), regexpName(re0, regexp(re0)).data());
             break;
         }
         case op_mov: {
@@ -1707,7 +1673,6 @@ void CodeBlock::shrinkToFit()
 
     if (m_rareData) {
         m_rareData->m_exceptionHandlers.shrinkToFit();
-        m_rareData->m_regexps.shrinkToFit();
         m_rareData->m_immediateSwitchJumpTables.shrinkToFit();
         m_rareData->m_characterSwitchJumpTables.shrinkToFit();
         m_rareData->m_stringSwitchJumpTables.shrinkToFit();

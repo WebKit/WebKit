@@ -6,6 +6,36 @@
 
 2010-04-20  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Maciej Stachowiak.
+
+        [ES5] RegExp literals are constants that should be persistent across multiple function calls.
+        https://bugs.webkit.org/show_bug.cgi?id=37908
+
+        Dump the separate RegExp constant pool, and just use the standard JS constant pool
+        in codeblock.  This allows us to drop op_new_regexp and all associated code as well.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        (JSC::CodeBlock::shrinkToFit):
+        * bytecode/CodeBlock.h:
+        * bytecode/Opcode.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitLoad):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::RegExpNode::emitBytecode):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        * jit/JITStubs.cpp:
+        * jit/JITStubs.h:
+        (JSC::):
+
+2010-04-20  Oliver Hunt  <oliver@apple.com>
+
         Fix license on create_regex_tables
 
         * create_regex_tables:

@@ -458,10 +458,6 @@ namespace JSC {
         unsigned addFunctionExpr(NonNullPassRefPtr<FunctionExecutable> n) { unsigned size = m_functionExprs.size(); m_functionExprs.append(n); return size; }
         FunctionExecutable* functionExpr(int index) { return m_functionExprs[index].get(); }
 
-        unsigned addRegExp(RegExp* r) { createRareDataIfNecessary(); unsigned size = m_rareData->m_regexps.size(); m_rareData->m_regexps.append(r); return size; }
-        RegExp* regexp(int index) const { ASSERT(m_rareData); return m_rareData->m_regexps[index].get(); }
-
-
         // Jump Tables
 
         size_t numberOfImmediateSwitchJumpTables() const { return m_rareData ? m_rareData->m_immediateSwitchJumpTables.size() : 0; }
@@ -555,9 +551,6 @@ namespace JSC {
 
         struct RareData : FastAllocBase {
             Vector<HandlerInfo> m_exceptionHandlers;
-
-            // Rare Constants
-            Vector<RefPtr<RegExp> > m_regexps;
 
             // Jump Tables
             Vector<SimpleJumpTable> m_immediateSwitchJumpTables;
