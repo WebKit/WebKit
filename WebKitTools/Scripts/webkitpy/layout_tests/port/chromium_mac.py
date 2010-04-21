@@ -157,10 +157,10 @@ class ChromiumMacPort(chromium.ChromiumPort):
         return self._build_path(self._options.configuration, binary_name)
 
     def _path_to_image_diff(self):
+        binary_name = 'image_diff'
         if self._options.use_drt:
-            # FIXME(tony): This should use ImageDiff.
-            return ''
-        return self._build_path(self._options.configuration, 'image_diff')
+            binary_name = 'ImageDiff'
+        return self._build_path(self._options.configuration, binary_name)
 
     def _path_to_wdiff(self):
         return 'wdiff'

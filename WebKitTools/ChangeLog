@@ -1,3 +1,16 @@
+2010-04-20  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [DRT/Chromium] Import Chromium image_diff as ImageDiff
+        https://bugs.webkit.org/show_bug.cgi?id=37790
+
+        ImageDiff.cpp is based on tools/imagediff/image_diff.cc r41911 of Chromium.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+        * DumpRenderTree/chromium/ImageDiff.cpp: Added.
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+
 2010-04-20  Dirk Pranke <dpranke@chromium.org>
 
         This patch to new-run-webkit-tests adds a --log 'trace' option

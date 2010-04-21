@@ -138,6 +138,22 @@
                 }],
             ],
         },
+
+        {
+            'target_name': 'ImageDiff',
+            'type': 'executable',
+            'dependencies': [
+                '<(webkit_top)/JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
+                '<(chromium_src_dir)/gfx/gfx.gyp:gfx',
+            ],
+            'include_dirs': [
+                '<(webkit_top)/JavaScriptCore',
+                '<(chromium_src_dir)',
+            ],
+            'sources': [
+                '../chromium/ImageDiff.cpp',
+            ],
+        },
     ], # targets
 
     'conditions': [
