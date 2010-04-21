@@ -1,3 +1,22 @@
+2010-04-21  Balazs Kelemen  <kb@inf.u-szeged.hu>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Interrupting JavaScript is cumbersome when you use QtLaucher for testing or profiling.
+        https://bugs.webkit.org/show_bug.cgi?id=37198
+
+        * QtLauncher/main.cpp:
+        (LauncherWindow::toggleInterruptingJavaScriptEnabled):
+        (LauncherWindow::newWindow):
+        (LauncherWindow::cloneWindow):
+        (LauncherWindow::createChrome):
+        (main):
+        * QtLauncher/webpage.cpp:
+        (WebPage::WebPage):
+        (WebPage::shouldInterruptJavaScript):
+        * QtLauncher/webpage.h:
+        (WebPage::setInterruptingJavaScriptEnabled):
+
 2010-04-21  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, rolling out r57963.
