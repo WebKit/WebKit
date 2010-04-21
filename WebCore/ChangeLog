@@ -1,3 +1,16 @@
+2010-04-21  Adam Roben  <aroben@apple.com>
+
+        Fix leaks of FilterData/SVGFilterBuilder in RenderSVGResourceFilter
+
+        Fixes <http://webkit.org/b/37922>.
+
+        Reviewed by Dave Hyatt.
+
+        * rendering/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::applyResource): Use an OwnPtr to
+        hold the heap-allocated FilterData object, so that we won't leak it
+        when we bail out of this function on error.
+
 2010-04-21  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
