@@ -1,3 +1,18 @@
+2010-04-21  Adam Roben  <aroben@apple.com>
+
+        Exclude leaks in CGGradientCreateWithColorComponents from
+        run-webkit-tests leaks output
+
+        The leak in CG is covered by <rdar://problem/7888492>.
+
+        Fixes <http://webkit.org/b/37927>.
+
+        Reviewed by Eric Carlson.
+
+        * Scripts/old-run-webkit-tests:
+        (sub countAndPrintLeaks): Exclude leaks in
+        CGGradientCreateWithColorComponents on certain OSs.
+
 2010-04-21  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Shinichiro Hamaji.
