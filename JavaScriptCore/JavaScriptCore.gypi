@@ -402,6 +402,7 @@
             'wtf/StringHashFunctions.h',
             'wtf/TCPackedCache.h',
             'wtf/qt/MainThreadQt.cpp',
+            'wtf/qt/StringQt.cpp',
             'wtf/qt/ThreadingQt.cpp',
             'wtf/TCPageMap.h',
             'wtf/TCSpinLock.h',

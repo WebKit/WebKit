@@ -2696,7 +2696,6 @@
             'platform/text/mac/TextBreakIteratorInternalICUMac.mm',
             'platform/text/mac/TextCodecMac.cpp',
             'platform/text/mac/TextCodecMac.h',
-            'platform/text/qt/StringQt.cpp',
             'platform/text/qt/TextBoundaries.cpp',
             'platform/text/qt/TextBreakIteratorQt.cpp',
             'platform/text/qt/TextCodecQt.cpp',

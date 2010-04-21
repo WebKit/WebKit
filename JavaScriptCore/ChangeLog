@@ -1,5 +1,13 @@
 2010-04-21  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by NOBODY (Qt build fix).
+
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.pro:
+        * wtf/qt/StringQt.cpp: Copied from WebCore/platform/text/qt/StringQt.cpp.
+
+2010-04-21  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by NOBODY (windows build fix).
 
         * API/JSValueRef.cpp:
