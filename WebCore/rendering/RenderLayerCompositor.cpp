@@ -134,6 +134,15 @@ void RenderLayerCompositor::cacheAcceleratedCompositingFlags()
         showRepaintCounter = settings->showRepaintCounter();
     }
 
+    // We allow the chrome to override the settings, in case the page is rendered
+    // on a chrome that doesn't allow accelerated compositing.
+    if (hasAcceleratedCompositing) {
+        Frame* frame = m_renderView->frameView()->frame();
+        Page* page = frame ? frame->page() : 0;
+        if (page)
+            hasAcceleratedCompositing = page->chrome()->client()->allowsAcceleratedCompositing();
+    }
+
     if (hasAcceleratedCompositing != m_hasAcceleratedCompositing || showDebugBorders != m_showDebugBorders || showRepaintCounter != m_showRepaintCounter)
         setCompositingLayersNeedRebuild();
         

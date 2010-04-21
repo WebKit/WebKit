@@ -55,6 +55,7 @@ public:
     // if scheduleSync is true, we schedule a sync ourselves. otherwise,
     // we wait for the next update and sync the layers then.
     virtual void markForSync(bool scheduleSync = false) {}
+    virtual bool allowsAcceleratedCompositing() const { return false; }
 #endif
 
 #if QT_VERSION >= 0x040600

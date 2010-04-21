@@ -122,6 +122,9 @@ public:
     virtual void setRootGraphicsLayer(QGraphicsItem* layer);
     virtual void markForSync(bool scheduleSync);
     void updateCompositingScrollPosition();
+
+    // QGraphicsWebView can render composited layers
+    virtual bool allowsAcceleratedCompositing() const { return true; }
 #endif
 
     void updateResizesToContentsForPage();

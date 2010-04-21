@@ -1,3 +1,29 @@
+2010-04-21  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Simon Fraser.
+
+        [Qt] Fix or remove the runtime flag for accelerated compositing.
+
+        This adds a way for a chrome client to disallow layers from becoming composited,
+        even if the settings enable accelerated compositing. This is necessary for platforms
+        where different views can be applied with the same settings to the same page.
+
+        We enable an API through ChromeClient to ask the chrome-client whether or not
+        it can render composited layers, which is taken into account when the compositor
+        decides whether or not to start compositing.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37313
+
+        Pages under LayoutTests/compositing now work under QWebView, even when
+        QWebSettings::AcceleratedCompositingEnabled is on.
+
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::allowsAcceleratedCompositing):
+        * platform/qt/QWebPageClient.h:
+        (QWebPageClient::allowsAcceleratedCompositing):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::canBeComposited):
+
 2010-04-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         No review. Spurious whitespace was removed from project file.
