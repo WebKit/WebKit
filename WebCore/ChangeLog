@@ -1,3 +1,29 @@
+2010-04-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Justin Garcia.
+
+        Nested <ul>s are mishandled when converted to <ol> using execCommand('insertorderedlist')
+        https://bugs.webkit.org/show_bug.cgi?id=19539
+
+        Fixes a bug where two consecutive lists are not merged if they have been converted
+        from ordered/unordered lists inside another list.
+
+        The bug was caused by InsertListCommand::doApply where it did not merge a newly inserted
+        list element and its neighbors. This patch adds code to doApply so that after inserting
+        the list element, it updates previousList and nextList to the outermost list elements around
+        insertionPos under the same enclosing list. Because the next and the previous list elements
+        are not necessarily visually next to the newly inserted element before moveParagraph moves
+        the paragraph into the new list element, doApply merges lists after moveParagraph is called.
+
+        Test: editing/execCommand/insert-lists-inside-another-list.html
+
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::doApply): Modified as described above
+        * editing/htmlediting.cpp:
+        (WebCore::outermostEnclosingList): Added rootNode. Returns the outermost list element,
+          which is a descendent of rootNode.
+        * editing/htmlediting.h:
+
 2010-04-20  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

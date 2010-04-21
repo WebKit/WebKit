@@ -1,3 +1,19 @@
+2010-04-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Justin Garcia.
+
+        Nested <ul>s are mishandled when converted to <ol> using execCommand('insertorderedlist')
+        https://bugs.webkit.org/show_bug.cgi?id=19539
+
+        Test to make sure InsertListCommand merges consecutive lists when converting
+        ordered/unordered lists to the opposite type of lists inside another list.
+
+        * editing/execCommand/insert-lists-inside-another-list-expected.txt: Added.
+        * editing/execCommand/insert-lists-inside-another-list.html: Added.
+        * editing/execCommand/script-tests/insert-lists-inside-another-list.js: Added.
+        (testList):
+        * platform/mac/editing/execCommand/create-list-from-range-selection-expected.txt:
+
 2010-04-20  Simon Fraser  <simon.fraser@apple.com>
 
         Fix test result after r57913.
