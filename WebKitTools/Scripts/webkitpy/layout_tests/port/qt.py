@@ -63,7 +63,6 @@ class QtPort(WebKitPort):
                             'apache2-debian-httpd.conf')
 
     def _kill_all_process(self, process_name):
-        # FIXME: This should use Executive.
         null = open(os.devnull)
         subprocess.call(['killall', '-TERM', '-u', os.getenv('USER'),
                         process_name], stderr=null)

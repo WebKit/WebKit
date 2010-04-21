@@ -30,10 +30,6 @@
 
 """Support for automatically downloading Python packages from an URL."""
 
-
-from __future__ import with_statement
-
-import codecs
 import logging
 import new
 import os
@@ -118,7 +114,7 @@ class AutoInstaller(object):
 
         os.makedirs(path)
 
-    def _write_file(self, path, text, encoding):
+    def _write_file(self, path, text):
         """Create a file at the given path with given text.
 
         This method overwrites any existing file.
@@ -126,8 +122,11 @@ class AutoInstaller(object):
         """
         _log.debug("Creating file...")
         _log.debug('    "%s"' % path)
-        with codecs.open(path, "w", encoding) as file:
+        file = open(path, "w")
+        try:
             file.write(text)
+        finally:
+            file.close()
 
     def _set_up_target_dir(self, target_dir, append_to_search_path,
                            make_package):
@@ -155,7 +154,7 @@ class AutoInstaller(object):
             if not os.path.exists(init_path):
                 text = ("# This file is required for Python to search this "
                         "directory for modules.\n")
-                self._write_file(init_path, text, "ascii")
+                self._write_file(init_path, text)
 
     def _create_scratch_directory_inner(self, prefix):
         """Create a scratch directory without exception handling.
@@ -217,8 +216,11 @@ class AutoInstaller(object):
             _log.debug("No URL file found.")
             return False
 
-        with codecs.open(version_path, "r", "utf-8") as file:
+        file = open(version_path, "r")
+        try:
             version = file.read()
+        finally:
+            file.close()
 
         return version.strip() == url.strip()
 
@@ -229,7 +231,7 @@ class AutoInstaller(object):
         _log.debug('    URL: "%s"' % url)
         _log.debug('     To: "%s"' % version_path)
 
-        self._write_file(version_path, url, "utf-8")
+        self._write_file(version_path, url)
 
     def _extract_targz(self, path, scratch_dir):
         # tarfile.extractall() extracts to a path without the
@@ -282,8 +284,6 @@ class AutoInstaller(object):
             # Otherwise, it is a file.
 
             try:
-                # We open this file w/o encoding, as we're reading/writing
-                # the raw byte-stream from the zip file.
                 outfile = open(path, 'wb')
             except IOError, err:
                 # Not all zip files seem to list the directories explicitly,

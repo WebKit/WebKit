@@ -40,7 +40,7 @@ class MacTest(unittest.TestCase):
         relative_paths = [path[len(port.path_from_webkit_base()):] for path in skipped_paths]
         self.assertEqual(relative_paths, ['LayoutTests/platform/mac-leopard/Skipped', 'LayoutTests/platform/mac/Skipped'])
 
-    example_skipped_file = u"""
+    example_skipped_file = """
 # <rdar://problem/5647952> fast/events/mouseout-on-window.html needs mac DRT to issue mouse out events
 fast/events/mouseout-on-window.html
 

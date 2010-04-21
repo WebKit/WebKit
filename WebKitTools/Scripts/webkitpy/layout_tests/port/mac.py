@@ -133,7 +133,6 @@ class MacPort(WebKitPort):
 
     # FIXME: This doesn't have anything to do with WebKit.
     def _kill_all_process(self, process_name):
-        # FIXME: This should use Executive.
         # On Mac OS X 10.6, killall has a new constraint: -SIGNALNAME or
         # -SIGNALNUMBER must come first.  Example problem:
         #   $ killall -u $USER -TERM lighttpd

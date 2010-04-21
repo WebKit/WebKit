@@ -71,11 +71,8 @@ class AbstractQueue(Command, QueueEngineDelegate):
     def run_webkit_patch(self, args):
         webkit_patch_args = [self.tool.path()]
         # FIXME: This is a hack, we should have a more general way to pass global options.
-        # FIXME: We must always pass global options and their value in one argument
-        # because our global option code looks for the first argument which does
-        # not begin with "-" and assumes that is the command name.
         webkit_patch_args += ["--status-host=%s" % self.tool.status_server.host]
-        webkit_patch_args.extend(args)
+        webkit_patch_args += map(str, args)
         return self.tool.executive.run_and_throw_if_fail(webkit_patch_args)
 
     def _log_directory(self):
@@ -126,10 +123,7 @@ class AbstractQueue(Command, QueueEngineDelegate):
         if is_error:
             message = "Error: %s" % message
         output = script_error.message_with_output(output_limit=1024*1024) # 1MB
-        # We pre-encode the string to a byte array before passing it
-        # to status_server, because ClientForm (part of mechanize)
-        # wants a file-like object with pre-encoded data.
-        return tool.status_server.update_status(cls.name, message, state["patch"], StringIO(output.encode("utf-8")))
+        return tool.status_server.update_status(cls.name, message, state["patch"], StringIO(output))
 
 
 class AbstractPatchQueue(AbstractQueue):

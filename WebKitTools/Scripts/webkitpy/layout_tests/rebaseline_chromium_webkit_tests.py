@@ -41,9 +41,6 @@ The script does the following for each platform specified:
 At the end, the script generates a html that compares old and new baselines.
 """
 
-from __future__ import with_statement
-
-import codecs
 import copy
 import logging
 import optparse
@@ -601,10 +598,9 @@ class Rebaseliner(object):
                     os.remove(backup_file)
                 _log.info('Saving original file to "%s"', backup_file)
                 os.rename(path, backup_file)
-            # FIXME: What encoding are these files?
-            # Or is new_expectations always a byte array?
-            with open(path, "w") as file:
-                file.write(new_expectations)
+            f = open(path, "w")
+            f.write(new_expectations)
+            f.close()
         else:
             _log.info('No test was rebaselined so nothing to remove.')
 
@@ -719,10 +715,9 @@ class Rebaseliner(object):
         base_file = get_result_file_fullpath(self._options.html_directory,
                                              baseline_filename, self._platform,
                                              'old')
-        # FIXME: This assumes run_shell returns a byte array.
-        # We should be using an explicit encoding here.
-        with open(base_file, "wb") as file:
-            file.write(output)
+        f = open(base_file, 'wb')
+        f.write(output)
+        f.close()
         _log.info('  Html: created old baseline file: "%s".',
                   base_file)
 
@@ -753,9 +748,9 @@ class Rebaseliner(object):
                 diff_file = get_result_file_fullpath(
                     self._options.html_directory, baseline_filename,
                     self._platform, 'diff')
-                # FIXME: This assumes run_shell returns a byte array, not unicode()
-                with open(diff_file, 'wb') as file:
-                    file.write(output)
+                f = open(diff_file, 'wb')
+                f.write(output)
+                f.close()
                 _log.info('  Html: created baseline diff file: "%s".',
                           diff_file)
 
@@ -840,8 +835,9 @@ class HtmlGenerator(object):
                                         'body': html_body})
         _log.debug(html)
 
-        with codecs.open(self._html_file, "w", "utf-8") as file:
-            file.write(html)
+        f = open(self._html_file, 'w')
+        f.write(html)
+        f.close()
 
         _log.info('Baseline comparison html generated at "%s"',
                   self._html_file)

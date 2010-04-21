@@ -26,9 +26,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import with_statement
-
-import codecs
 import os
 import shutil
 import tempfile
@@ -40,14 +37,14 @@ from webkitpy.common.checkout.scm import detect_scm_system, CommitMessage
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.thirdparty.mock import Mock
 
-
 # FIXME: Copied from scm_unittest.py
-def write_into_file_at_path(file_path, contents, encoding="utf-8"):
-    with codecs.open(file_path, "w", encoding) as file:
-        file.write(contents)
+def write_into_file_at_path(file_path, contents):
+    new_file = open(file_path, 'w')
+    new_file.write(contents)
+    new_file.close()
 
 
-_changelog1entry1 = u"""2010-03-25  Tor Arne Vestb\u00f8  <vestbo@webkit.org>
+_changelog1entry1 = """2010-03-25  Eric Seidel  <eric@webkit.org>
 
         Unreviewed build fix to un-break webkit-patch land.
 
@@ -56,7 +53,7 @@ _changelog1entry1 = u"""2010-03-25  Tor Arne Vestb\u00f8  <vestbo@webkit.org>
 
         * Scripts/webkitpy/common/checkout/api.py: import scm.CommitMessage
 """
-_changelog1entry2 = u"""2010-03-25  Adam Barth  <abarth@webkit.org>
+_changelog1entry2 = """2010-03-25  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
 
@@ -65,8 +62,8 @@ _changelog1entry2 = u"""2010-03-25  Adam Barth  <abarth@webkit.org>
 
         * Scripts/webkitpy/common/checkout/api.py:
 """
-_changelog1 = u"\n".join([_changelog1entry1, _changelog1entry2])
-_changelog2 = u"""2010-03-25  Tor Arne Vestb\u00f8  <vestbo@webkit.org>
+_changelog1 = "\n".join([_changelog1entry1, _changelog1entry2])
+_changelog2 = """2010-03-25  Eric Seidel  <eric@webkit.org>
 
         Unreviewed build fix to un-break webkit-patch land.
 
@@ -82,7 +79,7 @@ _changelog2 = u"""2010-03-25  Tor Arne Vestb\u00f8  <vestbo@webkit.org>
 """
 
 class CommitMessageForThisCommitTest(unittest.TestCase):
-    expected_commit_message = u"""2010-03-25  Tor Arne Vestb\u00f8  <vestbo@webkit.org>
+    expected_commit_message = """2010-03-25  Eric Seidel  <eric@webkit.org>
 
         Unreviewed build fix to un-break webkit-patch land.
 
@@ -90,7 +87,7 @@ class CommitMessageForThisCommitTest(unittest.TestCase):
         https://bugs.webkit.org/show_bug.cgi?id=36629
 
         * Scripts/webkitpy/common/checkout/api.py: import scm.CommitMessage
-2010-03-25  Tor Arne Vestb\u00f8  <vestbo@webkit.org>
+2010-03-25  Eric Seidel  <eric@webkit.org>
 
         Unreviewed build fix to un-break webkit-patch land.
 
@@ -140,8 +137,8 @@ class CheckoutTest(unittest.TestCase):
         checkout.changelog_entries_for_revision = lambda revision: [ChangeLogEntry(_changelog1entry1)]
         commitinfo = checkout.commit_info_for_revision(4)
         self.assertEqual(commitinfo.bug_id(), 36629)
-        self.assertEqual(commitinfo.author_name(), u"Tor Arne Vestb\u00f8")
-        self.assertEqual(commitinfo.author_email(), "vestbo@webkit.org")
+        self.assertEqual(commitinfo.author_name(), "Eric Seidel")
+        self.assertEqual(commitinfo.author_email(), "eric@webkit.org")
         self.assertEqual(commitinfo.reviewer_text(), None)
         self.assertEqual(commitinfo.reviewer(), None)
         self.assertEqual(commitinfo.committer_email(), "committer@example.com")

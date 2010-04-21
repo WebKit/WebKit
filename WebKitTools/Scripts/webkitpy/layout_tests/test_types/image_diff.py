@@ -34,9 +34,6 @@ match, returns FailureImageHashMismatch and outputs both hashes into the layout
 test results directory.
 """
 
-from __future__ import with_statement
-
-import codecs
 import errno
 import logging
 import os
@@ -81,8 +78,9 @@ class ImageDiff(test_type_base.TestTypeBase):
           png_path: path to the actual PNG result file
           checksum: value of the actual checksum result
         """
-        with open(png_path, "rb") as png_file:
-            png_data = png_file.read()
+        png_file = open(png_path, "rb")
+        png_data = png_file.read()
+        png_file.close()
         self._save_baseline_data(filename, png_data, ".png")
         self._save_baseline_data(filename, checksum, ".checksum")
 
@@ -142,10 +140,8 @@ class ImageDiff(test_type_base.TestTypeBase):
             _log.debug('Using %s' % expected_hash_file)
             _log.debug('Using %s' % expected_png_file)
 
-        # FIXME: We repeat this pattern often, we should share code.
         try:
-            with codecs.open(expected_hash_file, "r", "ascii") as file:
-                expected_hash = file.read()
+            expected_hash = open(expected_hash_file, "r").read()
         except IOError, e:
             if errno.ENOENT != e.errno:
                 raise

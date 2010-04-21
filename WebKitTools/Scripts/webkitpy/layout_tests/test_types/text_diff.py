@@ -33,9 +33,6 @@ If the output doesn't match, returns FailureTextMismatch and outputs the diff
 files into the layout test results directory.
 """
 
-from __future__ import with_statement
-
-import codecs
 import errno
 import logging
 import os.path
@@ -73,10 +70,8 @@ class TestTextDiff(test_type_base.TestTypeBase):
         return self.get_normalized_text(expected_filename)
 
     def get_normalized_text(self, filename):
-        # FIXME: We repeat this pattern often, we should share code.
         try:
-            with codecs.open(filename, "r", "utf-8") as file:
-                text = file.read()
+            text = open(filename).read()
         except IOError, e:
             if errno.ENOENT != e.errno:
                 raise

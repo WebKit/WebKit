@@ -27,10 +27,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import with_statement
-
 import base64
-import codecs
 import getpass
 import os
 import os.path
@@ -59,16 +56,16 @@ def run_silent(args, cwd=None):
     if exit_code:
         raise ScriptError('Failed to run "%s"  exit_code: %d  cwd: %s' % (args, exit_code, cwd))
 
+def write_into_file_at_path(file_path, contents):
+    file = open(file_path, 'w')
+    file.write(contents)
+    file.close()
 
-def write_into_file_at_path(file_path, contents, encoding="utf-8"):
-    with codecs.open(file_path, "w", encoding) as file:
-        file.write(contents)
-
-
-def read_from_path(file_path, encoding="utf-8"):
-    with codecs.open(file_path, "r", encoding) as file:
-        return file.read()
-
+def read_from_path(file_path):
+    file = open(file_path, 'r')
+    contents = file.read()
+    file.close()
+    return contents
 
 # Exists to share svn repository creation code between the git and svn tests
 class SVNTestRepository:
@@ -311,7 +308,7 @@ HcmV?d00001
 
 """
         self.checkout.apply_patch(self._create_patch(git_binary_addition))
-        added = read_from_path('fizzbuzz7.gif', encoding=None)
+        added = read_from_path('fizzbuzz7.gif')
         self.assertEqual(512, len(added))
         self.assertTrue(added.startswith('GIF89a'))
         self.assertTrue('fizzbuzz7.gif' in self.scm.changed_files())
@@ -339,7 +336,7 @@ ptUl-ZG<%a~#LwkIWv&q!KSCH7tQ8cJDiw+|GV?MN)RjY50RTb-xvT&H
 
 """
         self.checkout.apply_patch(self._create_patch(git_binary_modification))
-        modified = read_from_path('fizzbuzz7.gif', encoding=None)
+        modified = read_from_path('fizzbuzz7.gif')
         self.assertEqual('foobar\n', modified)
         self.assertTrue('fizzbuzz7.gif' in self.scm.changed_files())
 
@@ -521,7 +518,7 @@ Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
         self._setup_webkittools_scripts_symlink(self.scm)
         patch_file = self._create_patch(patch_contents)
         self.checkout.apply_patch(patch_file)
-        actual_contents = read_from_path("test_file.swf", encoding=None)
+        actual_contents = read_from_path("test_file.swf")
         self.assertEqual(actual_contents, expected_contents)
 
     def test_apply_svn_patch(self):
@@ -742,7 +739,7 @@ class GitTest(SCMTest):
         test_file_name = 'binary_file'
         test_file_path = os.path.join(self.git_checkout_path, test_file_name)
         file_contents = ''.join(map(chr, range(256)))
-        write_into_file_at_path(test_file_path, file_contents, encoding=None)
+        write_into_file_at_path(test_file_path, file_contents)
         run_command(['git', 'add', test_file_name])
         patch = scm.create_patch()
         self.assertTrue(re.search(r'\nliteral 0\n', patch))
@@ -752,10 +749,10 @@ class GitTest(SCMTest):
         run_command(['git', 'rm', '-f', test_file_name])
         self._setup_webkittools_scripts_symlink(scm)
         self.checkout.apply_patch(self._create_patch(patch))
-        self.assertEqual(file_contents, read_from_path(test_file_path, encoding=None))
+        self.assertEqual(file_contents, read_from_path(test_file_path))
 
         # Check if we can create a patch from a local commit.
-        write_into_file_at_path(test_file_path, file_contents, encoding=None)
+        write_into_file_at_path(test_file_path, file_contents)
         run_command(['git', 'add', test_file_name])
         run_command(['git', 'commit', '-m', 'binary diff'])
         patch_from_local_commit = scm.create_patch_from_local_commit('HEAD')

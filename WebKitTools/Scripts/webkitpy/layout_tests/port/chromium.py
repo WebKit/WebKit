@@ -389,8 +389,7 @@ class ChromiumDriver(base.Driver):
                 if self._proc.poll() is None:
                     _log.warning('stopping test driver timed out, '
                                  'killing it')
-                    # FIXME: This should use Executive.
-                    null = open(os.devnull, "w")  # Does this need an encoding?
+                    null = open(os.devnull, "w")
                     subprocess.Popen(["kill", "-9",
                                      str(self._proc.pid)], stderr=null)
                     null.close()

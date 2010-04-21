@@ -29,10 +29,6 @@
 
 """WebKit implementations of the Port interface."""
 
-
-from __future__ import with_statement
-
-import codecs
 import logging
 import os
 import pdb
@@ -138,11 +134,9 @@ class WebKitPort(base.Port):
         sp = server_process.ServerProcess(self, 'ImageDiff', command)
 
         actual_length = os.stat(actual_filename).st_size
-        with open(actual_filename) as file:
-            actual_file = file.read()
+        actual_file = open(actual_filename).read()
         expected_length = os.stat(expected_filename).st_size
-        with open(expected_filename) as file:
-            expected_file = file.read()
+        expected_file = open(expected_filename).read()
         sp.write('Content-Length: %d\n%sContent-Length: %d\n%s' %
                  (actual_length, actual_file, expected_length, expected_file))
 
@@ -171,8 +165,7 @@ class WebKitPort(base.Port):
             if m.group(2) == 'passed':
                 result = False
         elif output and diff_filename:
-            with open(diff_filename, 'w') as file:
-                file.write(output)
+            open(diff_filename, 'w').write(output)  # FIXME: This leaks a file handle.
         elif sp.timed_out:
             _log.error("ImageDiff timed out on %s" % expected_filename)
         elif sp.crashed:

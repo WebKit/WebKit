@@ -22,9 +22,6 @@
 
 """Contains unit tests for filereader.py."""
 
-from __future__ import with_statement
-
-import codecs
 import os
 import shutil
 import tempfile
@@ -70,12 +67,14 @@ class TextFileReaderTest(LoggingTestCase):
         LoggingTestCase.tearDown(self)
         shutil.rmtree(self._temp_dir)
 
-    def _create_file(self, rel_path, text, encoding="utf-8"):
+    def _create_file(self, rel_path, text):
         """Create a file with given text and return the path to the file."""
-        # FIXME: There are better/more secure APIs for creatin tmp file paths.
         file_path = os.path.join(self._temp_dir, rel_path)
-        with codecs.open(file_path, "w", encoding) as file:
-            file.write(text)
+
+        file = open(file_path, 'w')
+        file.write(text)
+        file.close()
+
         return file_path
 
     def _passed_to_processor(self):

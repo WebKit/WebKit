@@ -26,12 +26,9 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import with_statement
-
-import codecs
+import unittest
 import os
 import tempfile
-import unittest
 
 from StringIO import StringIO
 
@@ -55,7 +52,7 @@ class ChangeLogsTest(unittest.TestCase):
 '''
 
     # More example text than we need.  Eventually we need to support parsing this all and write tests for the parsing.
-    _example_changelog = u"""2009-08-17  Tor Arne Vestb\xf8  <vestbo@webkit.org>
+    _example_changelog = '''2009-08-17  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/28393> check-webkit-style: add check for use of std::max()/std::min() instead of MAX()/MIN()
 
@@ -87,10 +84,10 @@ class ChangeLogsTest(unittest.TestCase):
         so we can't assert here.
 
 == Rolled over to ChangeLog-2009-06-16 ==
-"""
+'''
 
     def test_latest_entry_parse(self):
-        changelog_contents = u"%s\n%s" % (self._example_entry, self._example_changelog)
+        changelog_contents = "%s\n%s" % (self._example_entry, self._example_changelog)
         changelog_file = StringIO(changelog_contents)
         latest_entry = ChangeLog.parse_latest_entry_from_file(changelog_file)
         self.assertEquals(latest_entry.contents(), self._example_entry)
@@ -100,17 +97,19 @@ class ChangeLogsTest(unittest.TestCase):
         self.assertTrue(latest_entry.reviewer())  # Make sure that our UTF8-based lookup of Tor works.
 
     @staticmethod
-    def _write_tmp_file_with_contents(byte_array):
-        assert(isinstance(byte_array, str))
+    def _write_tmp_file_with_contents(contents):
         (file_descriptor, file_path) = tempfile.mkstemp() # NamedTemporaryFile always deletes the file on close in python < 2.6
-        with os.fdopen(file_descriptor, "w") as file:
-            file.write(byte_array)
+        file = os.fdopen(file_descriptor, 'w')
+        file.write(contents)
+        file.close()
         return file_path
 
     @staticmethod
-    def _read_file_contents(file_path, encoding):
-        with codecs.open(file_path, "r", encoding) as file:
-            return file.read()
+    def _read_file_contents(file_path):
+        file = open(file_path)
+        contents = file.read()
+        file.close()
+        return contents
 
     _new_entry_boilerplate = '''2009-08-19  Eric Seidel  <eric@webkit.org>
 
@@ -122,11 +121,11 @@ class ChangeLogsTest(unittest.TestCase):
 '''
 
     def test_set_reviewer(self):
-        changelog_contents = u"%s\n%s" % (self._new_entry_boilerplate, self._example_changelog)
-        changelog_path = self._write_tmp_file_with_contents(changelog_contents.encode("utf-8"))
+        changelog_contents = "%s\n%s" % (self._new_entry_boilerplate, self._example_changelog)
+        changelog_path = self._write_tmp_file_with_contents(changelog_contents)
         reviewer_name = 'Test Reviewer'
         ChangeLog(changelog_path).set_reviewer(reviewer_name)
-        actual_contents = self._read_file_contents(changelog_path, "utf-8")
+        actual_contents = self._read_file_contents(changelog_path)
         expected_contents = changelog_contents.replace('NOBODY (OOPS!)', reviewer_name)
         os.remove(changelog_path)
         self.assertEquals(actual_contents, expected_contents)
@@ -170,8 +169,8 @@ class ChangeLogsTest(unittest.TestCase):
 '''
 
     def _assert_update_for_revert_output(self, args, expected_entry):
-        changelog_contents = u"%s\n%s" % (self._new_entry_boilerplate, self._example_changelog)
-        changelog_path = self._write_tmp_file_with_contents(changelog_contents.encode("utf-8"))
+        changelog_contents = "%s\n%s" % (self._new_entry_boilerplate, self._example_changelog)
+        changelog_path = self._write_tmp_file_with_contents(changelog_contents)
         changelog = ChangeLog(changelog_path)
         changelog.update_for_revert(*args)
         actual_entry = changelog.latest_entry()

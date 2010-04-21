@@ -126,7 +126,6 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
 
 
     def _kill_all_process(self, process_name):
-        # FIXME: This should use Executive.
         null = open(os.devnull)
         subprocess.call(['killall', '-TERM', '-u', os.getenv('USER'),
                         process_name], stderr=null)

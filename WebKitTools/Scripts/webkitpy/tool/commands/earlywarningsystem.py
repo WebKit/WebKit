@@ -26,6 +26,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from StringIO import StringIO
+
 from webkitpy.tool.commands.queues import AbstractReviewQueue
 from webkitpy.common.config.committers import CommitterList
 from webkitpy.common.config.ports import WebKitPort

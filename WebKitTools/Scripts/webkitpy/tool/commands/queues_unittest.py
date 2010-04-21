@@ -75,7 +75,7 @@ class AbstractQueueTest(CommandsTest):
         queue.bind_to_tool(tool)
 
         queue.run_webkit_patch(run_args)
-        expected_run_args = ["echo", "--status-host=example.com"] + run_args
+        expected_run_args = ["echo", "--status-host=example.com"] + map(str, run_args)
         tool.executive.run_and_throw_if_fail.assert_called_with(expected_run_args)
 
     def test_run_webkit_patch(self):
@@ -150,7 +150,7 @@ Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.c
 Warning, attachment 128 on bug 42 has invalid committer (non-committer@example.com)
 1 patch in commit-queue [106]
 """,
-            "process_work_item": "MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'land-attachment', '--force-clean', '--build', '--test', '--non-interactive', '--ignore-builders', '--build-style=both', '--quiet', 76543]\n",
+            "process_work_item": "MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'land-attachment', '--force-clean', '--build', '--test', '--non-interactive', '--ignore-builders', '--build-style=both', '--quiet', '76543']\n",
         }
         self.assert_queue_outputs(CommitQueue(), tool=tool, work_item=rollout_patch, expected_stderr=expected_stderr)
 
