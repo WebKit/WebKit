@@ -54,6 +54,7 @@ class WebKitPort(base.Port):
     def __init__(self, port_name=None, options=None):
         base.Port.__init__(self, port_name, options)
         self._cached_build_root = None
+        self._cached_apache_path = None
 
         # FIXME: disable pixel tests until they are run by default on the
         # build machines.
@@ -102,7 +103,7 @@ class WebKitPort(base.Port):
 
     def _check_port_build(self):
         # Ports can override this method to do additional checks.
-        pass
+        return True
 
     def check_image_diff(self, override_step=None, logging=True):
         image_diff_path = self._path_to_image_diff()
@@ -323,7 +324,18 @@ class WebKitPort(base.Port):
         return 'wdiff'
 
     def _path_to_apache(self):
-        return '/usr/sbin/httpd'
+        if not self._cached_apache_path:
+            # The Apache binary path can vary depending on OS and distribution
+            # See http://wiki.apache.org/httpd/DistrosDefaultLayout
+            for path in ["/usr/sbin/httpd", "/usr/sbin/apache2"]:
+                if os.path.exists(path):
+                    self._cached_apache_path = path
+                    break
+
+            if not self._cached_apache_path:
+                _log.error("Could not find apache. Not installed or unknown path.")
+
+        return self._cached_apache_path
 
 
 class WebKitDriver(base.Driver):

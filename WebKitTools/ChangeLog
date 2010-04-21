@@ -1,3 +1,15 @@
+2010-04-21  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        new-run-webkit-tests: try to detect alternate apache path
+        https://bugs.webkit.org/show_bug.cgi?id=37587
+
+        _check_port_build() also needs to return true in the
+        base implementation to not fail the check_build step.
+
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+
 2010-04-21  Yi Shen  <yi.4.shen@nokia.com>
 
         Reviewed by Simon Hausmann.
