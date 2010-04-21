@@ -4900,6 +4900,9 @@ loader/go-back-to-different-window-size.html
 # This port doesn't support Geolocation.
 fast/dom/Geolocation
 
+# This port doesn't support Notifications.
+fast/notifications
+
 # Missing DRT ability to set accept cookie policy
 http/tests/xmlhttprequest/cross-origin-cookie-storage.html
 

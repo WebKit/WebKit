@@ -1,3 +1,30 @@
+2010-04-15  John Gregg  <johnnyg@google.com>
+
+        Reviewed by David Levin.
+
+        Enable the notifications layout tests, but skip them on the ports that don't
+        implement notifications.
+        https://bugs.webkit.org/show_bug.cgi?id=37667
+
+        * fast/notifications/notifications-check-permission.html: Added.
+        * fast/notifications/notifications-check-permission.html-disabled: Removed.
+        * fast/notifications/notifications-display-close-events.html: Added.
+        * fast/notifications/notifications-display-close-events.html-disabled: Removed.
+        * fast/notifications/notifications-double-show.html: Added.
+        * fast/notifications/notifications-double-show.html-disabled: Removed.
+        * fast/notifications/notifications-no-icon.html: Added.
+        * fast/notifications/notifications-no-icon.html-disabled: Removed.
+        * fast/notifications/notifications-request-permission.html: Added.
+        * fast/notifications/notifications-request-permission.html-disabled: Removed.
+        * fast/notifications/notifications-with-permission.html: Added.
+        * fast/notifications/notifications-with-permission.html-disabled: Removed.
+        * fast/notifications/notifications-without-permission.html: Added.
+        * fast/notifications/notifications-without-permission.html-disabled: Removed.
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2010-04-21  Simon Fraser  <simon.fraser@apple.com>
 
         Unreviewed; fix assertion in LayoutTests.

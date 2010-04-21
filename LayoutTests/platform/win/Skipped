@@ -635,6 +635,9 @@ fast/events/keydown-function-keys.html
 # This port doesn't support Geolocation.
 fast/dom/Geolocation
 
+# This port doesn't support Notifications.
+fast/notifications
+
 # MediaPlayerPrivateQuickTimeWin doesn't return to NETWORK_IDLE and hence doesn't fire a suspend event
 # https://bugs.webkit.org/show_bug.cgi?id=37035
 http/tests/media/video-play-suspend.html
