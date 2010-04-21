@@ -1,3 +1,18 @@
+2010-04-21  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber Stamped by Oliver Hunt.
+
+        Make SmallStrings store an array of RefPtr<StringImpl>,
+        instead of a direct array of StringImpls.  This allows
+        us to remove a friend (and a layering violation) from
+        WTF::StringImpl, and makes it so that all StringImpls
+        are individually heap allocated.
+
+        * runtime/SmallStrings.cpp:
+        (JSC::SmallStringsStorage::rep):
+        (JSC::SmallStringsStorage::SmallStringsStorage):
+        * wtf/text/StringImpl.h:
+
 2010-04-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.

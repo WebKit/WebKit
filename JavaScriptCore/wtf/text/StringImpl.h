@@ -46,7 +46,6 @@ namespace JSC {
 
 struct IdentifierCStringTranslator;
 struct IdentifierUCharBufferTranslator;
-class SmallStringsStorage;
 
 }
 
@@ -70,14 +69,10 @@ typedef bool (*CharacterMatchFunctionPtr)(UChar);
 class StringImpl : public StringImplBase {
     friend struct JSC::IdentifierCStringTranslator;
     friend struct JSC::IdentifierUCharBufferTranslator;
-    friend class JSC::SmallStringsStorage;
     friend struct CStringTranslator;
     friend struct HashAndCharactersTranslator;
     friend struct UCharBufferTranslator;
 private:
-    // For SmallStringStorage, which allocates an array and uses an in-place new.
-    StringImpl() { }
-
     // Used to construct static strings, which have an special refCount that can never hit zero.
     // This means that the static string will never be destroyed, which is important because
     // static strings will be shared across threads & ref-counted in a non-threadsafe manner.
