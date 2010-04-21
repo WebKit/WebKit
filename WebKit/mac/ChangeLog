@@ -1,5 +1,11 @@
 2010-04-21  Mark Rowe  <mrowe@apple.com>
 
+        Tiger build fix.
+
+        * Plugins/WebPluginController.mm: Add an #import that is necessary on Tiger.
+
+2010-04-21  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Eric Carlson.
 
         <rdar://problem/7313430> Many crashes in Safari inside Flip4Mac below -[NSAlert didEndAlert:returnCode:contextInfo:]

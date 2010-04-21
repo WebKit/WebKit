@@ -58,6 +58,7 @@
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/WebCoreURLResponse.h>
+#import <objc/objc-runtime.h>
 #import <runtime/JSLock.h>
 
 using namespace WebCore;
