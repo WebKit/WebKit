@@ -66,7 +66,6 @@ class StepSequence(object):
             self._run(tool, options, state)
         except CheckoutNeedsUpdate, e:
             log("Commit failed because the checkout is out of date.  Please update and try again.")
-            log("You can pass --no-build to skip building/testing after update if you believe the new commits did not affect the results.")
             QueueEngine.exit_after_handled_error(e)
         except ScriptError, e:
             if not options.quiet:
