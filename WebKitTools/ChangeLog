@@ -2,6 +2,15 @@
 
         Reviewed by Eric Seidel.
 
+        Make new-run-webkit-tests work for the Qt port
+        https://bugs.webkit.org/show_bug.cgi?id=37588
+
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+
+2010-04-21  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Eric Seidel.
+
         new-run-webkit-tests: try to detect alternate apache path
         https://bugs.webkit.org/show_bug.cgi?id=37587
 

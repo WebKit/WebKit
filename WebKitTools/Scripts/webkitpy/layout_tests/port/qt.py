@@ -31,6 +31,7 @@
 import logging
 import os
 import subprocess
+import signal
 
 from webkitpy.layout_tests.port.webkit import WebKitPort
 
@@ -90,6 +91,9 @@ class QtPort(WebKitPort):
                 # 'killall' web servers.
                 self._shut_down_http_server(None)
 
-    def default_configuration(self):
-        # FIXME: Do this properly
-        return "Release"
+    def _build_driver(self):
+        # The Qt port builds DRT as part of the main build step
+        return True
+
+    def _path_to_driver(self):
+        return self._build_path('bin/DumpRenderTree')
