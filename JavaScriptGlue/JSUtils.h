@@ -80,6 +80,7 @@ enum {
 class JSGlueAPIEntry {
 public:
     JSGlueAPIEntry();
+    JSGlueAPIEntry(JSGlobalObject*); // For use when it's not safe for JSGlueAPIEntry() to call getThreadGlobalObject() -- for example, from a thread-specific data destructor.
     ~JSGlueAPIEntry();
 
 private:
