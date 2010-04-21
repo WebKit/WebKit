@@ -4928,6 +4928,7 @@ http/tests/xmlhttprequest/access-control-basic-get-fail-non-simple.html
 http/tests/xmlhttprequest/access-control-response-with-body.html
 http/tests/xmlhttprequest/cross-origin-authorization.html
 http/tests/xmlhttprequest/cross-origin-no-authorization.html
+http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html
 http/tests/xmlhttprequest/logout.html
 http/tests/xmlhttprequest/methods-async.html
 http/tests/xmlhttprequest/simple-cross-origin-denied-events-post.html
