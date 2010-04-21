@@ -59,7 +59,7 @@ bool WebPageSerializer::serialize(WebFrame* frame,
 
 WebString WebPageSerializer::generateMetaCharsetDeclaration(const WebString& charset)
 {
-    return String::format("<META http-equiv=\"Content-Type\" content=\"text/html; charset=%s\">",
+    return String::format("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=%s\">",
                           charset.utf8().data());
 }
 
@@ -75,7 +75,7 @@ WebString WebPageSerializer::generateBaseTagDeclaration(const WebString& baseTar
     String targetDeclaration;
     if (!baseTarget.isEmpty())
         targetDeclaration = String::format(" target=\"%s\"", baseTarget.utf8().data());
-    return String::format("<BASE href=\".\"%s>", targetDeclaration.utf8().data());
+    return String::format("<base href=\".\"%s>", targetDeclaration.utf8().data());
 }
 
 }  // namespace WebKit

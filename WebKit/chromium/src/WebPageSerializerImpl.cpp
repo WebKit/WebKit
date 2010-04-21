@@ -306,7 +306,7 @@ void WebPageSerializerImpl::openTagToString(const Element* element,
     if (needSkip)
         return;
     // Add open tag
-    result += "<" + element->nodeName();
+    result += "<" + element->nodeName().lower();
     // Go through all attributes and serialize them.
     const NamedNodeMap *attrMap = element->attributes(true);
     if (attrMap) {
@@ -374,7 +374,7 @@ void WebPageSerializerImpl::endTagToString(const Element* element,
     // Write end tag when element has child/children.
     if (element->hasChildNodes() || param->hasAddedContentsBeforeEnd) {
         result += "</";
-        result += element->nodeName();
+        result += element->nodeName().lower();
         result += ">";
     } else {
         // Check whether we have to write end tag for empty element.
@@ -385,7 +385,7 @@ void WebPageSerializerImpl::endTagToString(const Element* element,
             if (htmlElement->endTagRequirement() == TagStatusRequired) {
                 // We need to write end tag when it is required.
                 result += "</";
-                result += element->nodeName();
+                result += element->nodeName().lower();
                 result += ">";
             }
         } else {
