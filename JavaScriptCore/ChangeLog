@@ -1,3 +1,9 @@
+2010-04-20  Xan Lopez  <xlopez@igalia.com>
+
+        Another attempt to fix the build.
+
+        * GNUmakefile.am:
+
 2010-04-20  Oliver Hunt  <oliver@apple.com>
 
         Fix license on create_regex_tables
