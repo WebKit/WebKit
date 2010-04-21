@@ -1,3 +1,15 @@
+2010-04-21  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Unreviewed.
+
+        [Qt] [Symbian] Build fix.
+
+        Work around a Qt quirk. Some versions of Symbian port Qt
+        QFontDatabase::removeAllApplicationFonts symbol is not available.
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::open):
+
 2010-04-21  Alexey Proskuryakov  <ap@apple.com>
 
         Unreviewed.
