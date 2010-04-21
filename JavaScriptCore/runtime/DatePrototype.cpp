@@ -24,11 +24,12 @@
 #include "DatePrototype.h"
 
 #include "DateConversion.h"
+#include "DateInstance.h"
 #include "Error.h"
 #include "JSString.h"
 #include "JSStringBuilder.h"
+#include "Lookup.h"
 #include "ObjectPrototype.h"
-#include "DateInstance.h"
 
 #if !PLATFORM(MAC) && HAVE(LANGINFO_H)
 #include <langinfo.h>

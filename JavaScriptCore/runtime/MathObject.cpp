@@ -21,6 +21,7 @@
 #include "config.h"
 #include "MathObject.h"
 
+#include "Lookup.h"
 #include "ObjectPrototype.h"
 #include "Operations.h"
 #include <time.h>

@@ -31,6 +31,7 @@
 #include "ExceptionHelpers.h"
 #include "JSArray.h"
 #include "LiteralParser.h"
+#include "Lookup.h"
 #include "PropertyNameArray.h"
 #include "StringBuilder.h"
 #include <wtf/MathExtras.h>

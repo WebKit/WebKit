@@ -29,6 +29,7 @@
 #include "JSArray.h"
 #include "JSFunction.h"
 #include "JSStringBuilder.h"
+#include "Lookup.h"
 #include "ObjectPrototype.h"
 #include "Operations.h"
 #include "PropertyNameArray.h"

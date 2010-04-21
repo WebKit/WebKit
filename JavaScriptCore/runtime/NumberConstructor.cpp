@@ -22,6 +22,7 @@
 #include "config.h"
 #include "NumberConstructor.h"
 
+#include "Lookup.h"
 #include "NumberObject.h"
 #include "NumberPrototype.h"
 

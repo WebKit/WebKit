@@ -24,13 +24,13 @@
 #include "config.h"
 #include "ArrayPrototype.h"
 
-#include "CodeBlock.h"
 #include "CachedCall.h"
+#include "CodeBlock.h"
 #include "Interpreter.h"
 #include "JIT.h"
 #include "JSStringBuilder.h"
-#include "ObjectPrototype.h"
 #include "Lookup.h"
+#include "ObjectPrototype.h"
 #include "Operations.h"
 #include <algorithm>
 #include <wtf/Assertions.h>
