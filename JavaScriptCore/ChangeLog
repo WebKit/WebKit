@@ -1,3 +1,16 @@
+2010-04-21  Gustavo Sverzut Barbieri  <barbieri@profusion.mobi>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Add missing EFL JavaScriptCore file.
+        http://webkit.org/b/37854
+
+        * wtf/efl: Added.
+        * wtf/efl/MainThreadEfl.cpp: Added.
+        (WTF::initializeMainThreadPlatform):
+        (WTF::timeoutFired):
+        (WTF::scheduleDispatchFunctionsOnMainThread):
+
 2010-04-20  Xan Lopez  <xlopez@igalia.com>
 
         Another attempt to fix the build.
