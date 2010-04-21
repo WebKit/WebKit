@@ -35,6 +35,7 @@
 #define HTML_SECTION "<html><body><div>This is a test.</div></body></html>"
 #define HTML_TABLE "<html><body><table border='1'><tr><td>This is</td><td>a test.</td></tr></table></body></html>"
 /* Form roles */
+#define HTML_FORM "<html><body><form>This is a test.</form></body></html>"
 #define HTML_CHECK_BOX "<html><body><input type='checkbox' />This is a test.</body></html>"
 #define HTML_LABELED_ENTRY "<html><body><label for='foo'>Name:</label><input type='text' id='foo' /></body></html>"
 #define HTML_LISTBOX "<html><body><select size='3'><option>one</option><option>two</option><option>three</option></select></body></html>"
@@ -175,6 +176,11 @@ static void test_webkit_atk_get_role_table(AtkRolesFixture* fixture, gconstpoint
 }
 
 /* Form roles */
+static void test_webkit_atk_get_role_form(AtkRolesFixture *fixture, gconstpointer data)
+{
+    get_child_and_test_role(fixture->documentFrame, 0, ATK_ROLE_FORM);
+}
+
 static void test_webkit_atk_get_role_check_box(AtkRolesFixture* fixture, gconstpointer data)
 {
     // This is an extraneous object of ATK_ROLE_PANEL which we should get rid of.
@@ -317,6 +323,11 @@ int main(int argc, char** argv)
                atk_roles_fixture_teardown);
 
     /* Form roles */
+    g_test_add("/webkit/atk/test_webkit_atk_get_role_form",
+               AtkRolesFixture, HTML_FORM,
+               atk_roles_fixture_setup,
+               test_webkit_atk_get_role_form,
+               atk_roles_fixture_teardown);
     g_test_add("/webkit/atk/test_webkit_atk_get_role_check_box",
                AtkRolesFixture, HTML_CHECK_BOX,
                atk_roles_fixture_setup,
