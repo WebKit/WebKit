@@ -321,9 +321,14 @@ class ChromiumDriver(base.Driver):
             cmd += ' ' + checksum
         cmd += "\n"
 
-        self._proc.stdin.write(cmd)
-        line = self._proc.stdout.readline()
-        while line.rstrip() != "#EOF":
+        try:
+            self._proc.stdin.write(cmd)
+            line = self._proc.stdout.readline()
+        except IOError, e:
+            _log.error("IOError communicating w/ test_shell: " + str(e))
+            crash = True
+
+        while not crash and line.rstrip() != "#EOF":
             # Make sure we haven't crashed.
             if line == '' and self.poll() is not None:
                 # This is hex code 0xc000001d, which is used for abrupt
@@ -356,7 +361,11 @@ class ChromiumDriver(base.Driver):
             else:
                 error.append(line)
 
-            line = self._proc.stdout.readline()
+            try:
+                line = self._proc.stdout.readline()
+            except IOError, e:
+                _log.error("IOError while reading: " + str(e))
+                crash = True
 
         return (crash, timeout, actual_checksum, ''.join(output),
                 ''.join(error))
