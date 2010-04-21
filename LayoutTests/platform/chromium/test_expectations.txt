@@ -1216,11 +1216,6 @@ BUG10361 WIN : http/tests/misc/single-character-pi-stylesheet.xhtml = FAIL
 BUG8729 WIN DEBUG : http/tests/multipart/invalid-image-data.html = FAIL
 BUG8729 SLOW WIN RELEASE : http/tests/multipart/invalid-image-data.html = FAIL
 
-// This test got considerably more flaky for DEBUG when we switched from
-// lighttpd to apache on the linux bots. For RELEASE, this was not flaky until
-// we sharded the http.
-BUG9798 LINUX : http/tests/multipart/invalid-image-data.html = PASS IMAGE
-
 // -----------------------------------------------------------------
 // MAC PORT TESTS
 // -----------------------------------------------------------------
@@ -2760,18 +2755,22 @@ BUGWK37907 WIN : editing/pasteboard/copy-backslash-with-euc.html = FAIL
 
 // New layoutTestController function added at r57986
 BUGJAMESR : fast/lists/ol-nested-item-dynamic-insert.html = TEXT
+BUGJAMESR : fast/lists/ol-nested-items-dynamic-insert.html = TEXT
 BUGJAMESR : fast/lists/ol-nested-items-dynamic-remove.html = TEXT
 BUGJAMESR : fast/lists/ol-nested-items.html = TEXT
 BUGJAMESR : fast/lists/ol-nested-list-dynamic-insert.html = TEXT
-BUGJAMESR : fast/lists/ol-nested-list-dynamic-remove = TEXT
+BUGJAMESR : fast/lists/ol-nested-list-dynamic-remove.html = TEXT
 BUGJAMESR : fast/lists/ol-nested-list.html = TEXT
 
 // New layoutTestController function added at r57993
-BUGJAMESR : http/tests/xmlhttprequest/cross-origin-authorization-with-embeddor.html = TIMEOUT
+BUGJAMESR : http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html = TIMEOUT
 
 // Need rebaseline due to upstream bugfix r57971
 BUGJAMESR WIN LINUX : fast/repaint/fixed-child-move-after-scroll.html = IMAGE+TEXT
 BUGJAMESR WIN LINUX : fast/repaint/fixed-child-of-fixed-move-after-scroll.html = IMAGE+TEXT
 BUGJAMESR WIN LINUX : fast/repaint/fixed-child-of-transformed-move-after-scroll.html = IMAGE+TEXT
 BUGJAMESR WIN LINUX : fast/repaint/fixed-move-after-scroll.html = IMAGE+TEXT
+
+// Started failing at r57969
+BUGJAMESR MAC : http/tests/multipart/invalid-image-data.html = IMAGE
 
