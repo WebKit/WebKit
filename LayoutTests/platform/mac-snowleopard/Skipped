@@ -117,3 +117,6 @@ platform/mac/fonts/color-bitmap.html
 # Snow Leopard bot does not support EXT_packed_depth_stencil, which is required by WebGL.
 # https://bugs.webkit.org/show_bug.cgi?id=36925
 fast/canvas/webgl/framebuffer-object-attachment.html
+
+# This test asserts: https://bugs.webkit.org/show_bug.cgi?id=37932
+transitions/transition-end-event-destroy-iframe.html

@@ -1,3 +1,16 @@
+2010-04-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Unreviewed; fix assertion in LayoutTests.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37932
+        Assertion in transitions/transition-end-event-destroy-iframe.html
+        
+        Now that composited iframes cause their parent document to enter compositing mode,
+        iframe painting via NSView does't send the required -viewWillDraw, which causes
+        this assertion. Disable the test until we figure out a solution.
+
+        * platform/mac-snowleopard/Skipped:
+
 2010-04-21  James Robinson  <jamesr@chromium.org>
 
         Unreviewed. Updating chromium test expecations.
