@@ -1,5 +1,11 @@
 2010-04-20  Oliver Hunt  <oliver@apple.com>
 
+        Fix license on create_regex_tables
+
+        * create_regex_tables:
+
+2010-04-20  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by NOBODY (Build fix).
 
         Fix gtk
