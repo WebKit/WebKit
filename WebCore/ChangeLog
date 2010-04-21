@@ -1,5 +1,14 @@
 2010-04-21  Alexey Proskuryakov  <ap@apple.com>
 
+        Tiger build fix.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::createNSURLConnection): Fixed a typo, named an argument.
+        (WebCore::ResourceHandle::start): Moved shouldUseCredentialStorage out of #if, since it's
+        now passed to createNSURLConneciton() on all platforms (and then ignored on Tiger).
+
+2010-04-21  Alexey Proskuryakov  <ap@apple.com>
+
         Reviewed by Adam Roben.
 
         Windows build fix.

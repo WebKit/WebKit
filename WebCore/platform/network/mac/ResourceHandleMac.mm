@@ -165,7 +165,7 @@ static NSURLConnection *createNSURLConnection(NSURLRequest *request, id delegate
 {
 #if defined(BUILDING_ON_TIGER)
     UNUSED_PARAM(shouldUseCredentialStorage);
-    return [[NSURLConnection alloc] initWithRequest:request delegate];
+    return [[NSURLConnection alloc] initWithRequest:request delegate:delegate];
 #else
 
 #if !defined(BUILDING_ON_LEOPARD)
@@ -218,9 +218,9 @@ bool ResourceHandle::start(Frame* frame)
         d->m_request.setURL(urlWithCredentials);
     }
 
-#ifndef BUILDING_ON_TIGER
     bool shouldUseCredentialStorage = !client() || client()->shouldUseCredentialStorage(this);
 
+#ifndef BUILDING_ON_TIGER
     if (shouldUseCredentialStorage && d->m_request.url().protocolInHTTPFamily()) {
         if (d->m_user.isEmpty() && d->m_pass.isEmpty()) {
             // <rdar://problem/7174050> - For URLs that match the paths of those previously challenged for HTTP Basic authentication, 
