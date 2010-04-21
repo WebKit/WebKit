@@ -36,7 +36,6 @@ EXPORTS
     ??1StringImpl@WebCore@@QAE@XZ
     ??1Structure@JSC@@QAE@XZ
     ??1ThreadCondition@WTF@@QAE@XZ
-    ??1UStringImpl@JSC@@QAE@XZ
     ??1WTFThreadData@WTF@@QAE@XZ
     ??2JSGlobalObject@JSC@@SAPAXIPAVJSGlobalData@1@@Z
     ??8JSC@@YA_NABVUString@0@0@Z
@@ -53,13 +52,9 @@ EXPORTS
     ?add@AtomicString@WebCore@@CA?AV?$PassRefPtr@VStringImpl@WebCore@@@WTF@@PB_W@Z
     ?add@AtomicString@WebCore@@CA?AV?$PassRefPtr@VStringImpl@WebCore@@@WTF@@PB_WI@Z
     ?add@AtomicString@WebCore@@CA?AV?$PassRefPtr@VStringImpl@WebCore@@@WTF@@PB_WII@Z
-    ?add@Identifier@JSC@@SA?AV?$PassRefPtr@VUStringImpl@JSC@@@WTF@@PAVExecState@2@PBD@Z
-    ?add@PropertyNameArray@JSC@@QAEXPAVUStringImpl@2@@Z
     ?addPropertyTransition@Structure@JSC@@SA?AV?$PassRefPtr@VStructure@JSC@@@WTF@@PAV12@ABVIdentifier@2@IPAVJSCell@2@AAI@Z
     ?addPropertyTransitionToExistingStructure@Structure@JSC@@SA?AV?$PassRefPtr@VStructure@JSC@@@WTF@@PAV12@ABVIdentifier@2@IPAVJSCell@2@AAI@Z
     ?addPropertyWithoutTransition@Structure@JSC@@QAEIABVIdentifier@2@IPAVJSCell@2@@Z
-    ?addSlowCase@Identifier@JSC@@CA?AV?$PassRefPtr@VUStringImpl@JSC@@@WTF@@PAVExecState@2@PAVUStringImpl@2@@Z
-    ?addSlowCase@Identifier@JSC@@CA?AV?$PassRefPtr@VUStringImpl@JSC@@@WTF@@PAVJSGlobalData@2@PAVUStringImpl@2@@Z
     ?adopt@StringImpl@WebCore@@SA?AV?$PassRefPtr@VStringImpl@WebCore@@@WTF@@AAVStringBuffer@2@@Z
     ?allocate@Heap@JSC@@QAEPAXI@Z
     ?allocatePropertyStorage@JSObject@JSC@@QAEXII@Z
@@ -109,7 +104,6 @@ EXPORTS
     ?create@StringImpl@WebCore@@SA?AV?$PassRefPtr@VStringImpl@WebCore@@@WTF@@PBD@Z
     ?create@StringImpl@WebCore@@SA?AV?$PassRefPtr@VStringImpl@WebCore@@@WTF@@PB_WI@Z
     ?create@StringImpl@WebCore@@SA?AV?$PassRefPtr@VStringImpl@WebCore@@@WTF@@PB_WIV?$PassRefPtr@V?$CrossThreadRefCounted@V?$OwnFastMallocPtr@$$CB_W@WTF@@@WTF@@@4@@Z
-    ?create@UStringImpl@JSC@@SA?AV?$PassRefPtr@VUStringImpl@JSC@@@WTF@@PB_WIV?$PassRefPtr@V?$CrossThreadRefCounted@V?$OwnFastMallocPtr@$$CB_W@WTF@@@WTF@@@4@@Z
     ?createEmptyString@SmallStrings@JSC@@AAEXPAVJSGlobalData@2@@Z
     ?createInheritorID@JSObject@JSC@@AAEPAVStructure@2@XZ
     ?createInterruptedExecutionException@JSC@@YA?AVJSValue@1@PAVJSGlobalData@1@@Z
@@ -159,14 +153,9 @@ EXPORTS
     ?doubleToStringInJavaScriptFormat@WTF@@YAXNQADPAI@Z
     ?dumpSampleData@JSGlobalData@JSC@@QAEXPAVExecState@2@@Z
     ?empty@StringImpl@WebCore@@SAPAV12@XZ
-    ?empty@UStringImpl@JSC@@SAPAV12@XZ
     ?emptyAtom@WebCore@@3VAtomicString@1@B
     ?endsWith@StringImpl@WebCore@@QAE_NPAV12@_N@Z
     ?enumerable@PropertyDescriptor@JSC@@QBE_NXZ
-    ?equal@Identifier@JSC@@SA_NPBVUStringImpl@2@PBD@Z
-    ?equal@JSC@@YA_NPBVUStringImpl@1@0@Z
-    ?equal@WebCore@@YA_NPAVStringImpl@1@0@Z
-    ?equal@WebCore@@YA_NPAVStringImpl@1@PBD@Z
     ?equalIgnoringCase@WebCore@@YA_NPAVStringImpl@1@0@Z
     ?equalIgnoringCase@WebCore@@YA_NPAVStringImpl@1@PBD@Z
     ?equalIgnoringCase@WebCore@@YA_NPB_WPBDI@Z
@@ -200,7 +189,6 @@ EXPORTS
     ?fromUTF8WithLatin1Fallback@String@WebCore@@SA?AV12@PBDI@Z
     ?functionGetter@PropertySlot@JSC@@ABE?AVJSValue@2@PAVExecState@2@@Z
     ?functionName@DebuggerCallFrame@JSC@@QBEPBVUString@2@XZ
-    ?get@Structure@JSC@@QAEIPBVUStringImpl@2@AAIAAPAVJSCell@2@@Z
     ?getCallData@JSCell@JSC@@UAE?AW4CallType@2@AATCallData@2@@Z
     ?getConstructData@JSCell@JSC@@UAE?AW4ConstructType@2@AATConstructData@2@@Z
     ?getJSNumber@JSCell@JSC@@UAE?AVJSValue@2@XZ
@@ -233,7 +221,6 @@ EXPORTS
     ?hasInstance@JSObject@JSC@@UAE_NPAVExecState@2@VJSValue@2@1@Z
     ?hasProperty@JSObject@JSC@@QBE_NPAVExecState@2@ABVIdentifier@2@@Z
     ?hasProperty@JSObject@JSC@@QBE_NPAVExecState@2@I@Z
-    ?hasTransition@Structure@JSC@@QAE_NPAVUStringImpl@2@I@Z
     ?heap@Heap@JSC@@SAPAV12@VJSValue@2@@Z
     ?increment@RefCountedLeakCounter@WTF@@QAEXXZ
     ?init@AtomicString@WebCore@@SAXXZ
@@ -343,7 +330,6 @@ EXPORTS
     ?setWritable@PropertyDescriptor@JSC@@QAEX_N@Z
     ?setter@PropertyDescriptor@JSC@@QBE?AVJSValue@2@XZ
     ?sharedBuffer@StringImpl@WebCore@@QAEPAV?$CrossThreadRefCounted@V?$OwnFastMallocPtr@$$CB_W@WTF@@@WTF@@XZ
-    ?sharedBuffer@UStringImpl@JSC@@QAEPAV?$CrossThreadRefCounted@V?$OwnFastMallocPtr@$$CB_W@WTF@@@WTF@@XZ
     ?signal@ThreadCondition@WTF@@QAEXXZ
     ?simplifyWhiteSpace@String@WebCore@@QBE?AV12@XZ
     ?simplifyWhiteSpace@StringImpl@WebCore@@QAE?AV?$PassRefPtr@VStringImpl@WebCore@@@WTF@@XZ
