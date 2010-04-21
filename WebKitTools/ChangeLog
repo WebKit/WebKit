@@ -1,5 +1,15 @@
 2010-04-21  Eric Seidel  <eric@webkit.org>
 
+        Unreviewed, just fixing exception seen on builders.
+
+        REGRESSION(57531): the commit-queue still hates Tor Arne Vestbø
+        https://bugs.webkit.org/show_bug.cgi?id=37765
+
+        * Scripts/webkitpy/layout_tests/test_types/test_type_base.py:
+         - Pass and encoding to _write_into_file_at_path
+
+2010-04-21  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Adam Barth.
 
         REGRESSION(57531): the commit-queue still hates Tor Arne Vestbø

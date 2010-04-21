@@ -153,11 +153,10 @@ class TestTypeBase(object):
         """
         raise NotImplemented
 
-    def _write_into_file_at_path(self, file_path, byte_array):
-        """This method assumes that byte_array is already encoded
-        into the right format."""
-        with open(file_path, "wb") as file:
-            file.write(byte_array)
+    def _write_into_file_at_path(self, file_path, contents, encoding=None):
+        """Writes contents at file_path, using encoding."""
+        with codecs.open(file_path, "w", encoding) as file:
+            file.write(contents)
 
     def write_output_files(self, port, filename, file_type,
                            output, expected, print_text_diffs=False):
@@ -179,10 +178,13 @@ class TestTypeBase(object):
         self._make_output_directory(filename)
         actual_filename = self.output_filename(filename, self.FILENAME_SUFFIX_ACTUAL + file_type)
         expected_filename = self.output_filename(filename, self.FILENAME_SUFFIX_EXPECTED + file_type)
+        # FIXME: The fact that this function can take many different
+        # types of data is a total hack.
+        encoding = "utf-8" if print_text_diffs else None
         if output:
-            self._write_into_file_at_path(actual_filename, output)
+            self._write_into_file_at_path(actual_filename, output, encoding)
         if expected:
-            self._write_into_file_at_path(expected_filename, expected)
+            self._write_into_file_at_path(expected_filename, expected, encoding)
 
         if not output or not expected:
             return
@@ -192,14 +194,14 @@ class TestTypeBase(object):
 
         diff = port.diff_text(expected, output, expected_filename, actual_filename)
         diff_filename = self.output_filename(filename, self.FILENAME_SUFFIX_DIFF + file_type)
-        self._write_into_file_at_path(diff_filename, diff.encode("utf-8"))
+        self._write_into_file_at_path(diff_filename, diff, encoding="utf-8")
 
         # Shell out to wdiff to get colored inline diffs.
         wdiff = port.wdiff_text(expected_filename, actual_filename)
         wdiff_filename = self.output_filename(filename, self.FILENAME_SUFFIX_WDIFF)
-        self._write_into_file_at_path(wdiff_filename, wdiff.encode("utf-8"))
+        self._write_into_file_at_path(wdiff_filename, wdiff, encoding="utf-8")
 
         # Use WebKit's PrettyPatch.rb to get an HTML diff.
         pretty_patch = port.pretty_patch_text(diff_filename)
         pretty_patch_filename = self.output_filename(filename, self.FILENAME_SUFFIX_PRETTY_PATCH)
-        self._write_into_file_at_path(pretty_patch_filename, pretty_patch.encode("utf-8"))
+        self._write_into_file_at_path(pretty_patch_filename, pretty_patch, encoding="utf-8")
