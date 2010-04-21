@@ -423,13 +423,6 @@ static void stringWrapperDestroyed(JSString* str, void* context)
     cacheKey->deref();
 }
 
-static inline UString stringimplToUString(StringImpl* impl)
-{
-    if (SharedUChar* sharedBuffer = impl->sharedBuffer())
-        return UString::Rep::create(impl->characters(), impl->length(), sharedBuffer);
-    return UString(impl->characters(), impl->length());
-}
-
 JSValue jsStringSlowCase(ExecState* exec, JSStringCache& stringCache, StringImpl* stringImpl)
 {
     // If there is a stale entry, we have to explicitly remove it to avoid
@@ -437,7 +430,7 @@ JSValue jsStringSlowCase(ExecState* exec, JSStringCache& stringCache, StringImpl
     if (JSString* wrapper = stringCache.uncheckedGet(stringImpl))
         stringCache.uncheckedRemove(stringImpl, wrapper);
 
-    JSString* wrapper = jsStringWithFinalizer(exec, stringimplToUString(stringImpl), stringWrapperDestroyed, stringImpl);
+    JSString* wrapper = jsStringWithFinalizer(exec, UString(stringImpl), stringWrapperDestroyed, stringImpl);
     stringCache.set(stringImpl, wrapper);
     // ref explicitly instead of using a RefPtr-keyed hashtable because the wrapper can
     // outlive the cache, so the stringImpl has to match the wrapper's lifetime.
@@ -497,44 +490,6 @@ JSValue jsStringOrFalse(ExecState* exec, const KURL& url)
     if (url.isNull())
         return jsBoolean(false);
     return jsString(exec, url.string());
-}
-
-String ustringToString(const UString& u)
-{
-    if (u.isNull())
-        return String();
-    if (SharedUChar* sharedBuffer = u.rep()->sharedBuffer())
-        return StringImpl::create(u.data(), u.size(), sharedBuffer);
-    return StringImpl::create(u.data(), u.size());
-}
-
-UString stringToUString(const String& s)
-{
-    if (s.isNull())
-        return UString();
-    return stringimplToUString(s.impl());
-}
-
-String identifierToString(const Identifier& i)
-{
-    return ustringToString(i.ustring());
-}
-
-AtomicString ustringToAtomicString(const UString& u)
-{
-    UStringImpl* impl = u.rep();
-    if (!impl)
-        return AtomicString();
-    return AtomicString(impl->characters(), impl->length(), impl->hash());
-}
-
-AtomicString identifierToAtomicString(const Identifier& identifier)
-{
-    if (identifier.isNull())
-        return AtomicString();
-    UStringImpl* impl = identifier.ustring().rep();
-    ASSERT(impl->existingHash());
-    return AtomicString(impl->characters(), impl->length(), impl->existingHash());
 }
 
 AtomicStringImpl* findAtomicString(const Identifier& identifier)

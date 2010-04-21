@@ -339,6 +339,31 @@ namespace WebCore {
         return currentWorld(exec)->m_wrappers;
     }
 
+    inline String ustringToString(const JSC::UString& u)
+    {
+        return u.rep();
+    }
+
+    inline JSC::UString stringToUString(const String& s)
+    {
+        return JSC::UString(s.impl());
+    }
+
+    inline String identifierToString(const JSC::Identifier& i)
+    {
+        return i.ustring().rep();
+    }
+
+    inline AtomicString ustringToAtomicString(const JSC::UString& u)
+    {
+        return AtomicString(u.rep());
+    }
+
+    inline AtomicString identifierToAtomicString(const JSC::Identifier& identifier)
+    {
+        return AtomicString(identifier.ustring().rep());
+    }
+
 } // namespace WebCore
 
 #endif // JSDOMBinding_h

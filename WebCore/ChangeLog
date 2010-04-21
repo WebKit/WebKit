@@ -1,3 +1,19 @@
+2010-04-21  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 37949 - Do no copy strings into a shared buffer when converting UStrings to Strings
+        UString and String now have the same internal representation; Just re-wrap the internal impl.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::jsStringSlowCase):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::ustringToString):
+        (WebCore::stringToUString):
+        (WebCore::identifierToString):
+        (WebCore::ustringToAtomicString):
+        (WebCore::identifierToAtomicString):
+
 2010-04-21  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Eric Carlson.
