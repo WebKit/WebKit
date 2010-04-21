@@ -41,6 +41,7 @@ namespace WebKit {
 
 DrawingAreaUpdateChunk::DrawingAreaUpdateChunk(WebPage* webPage)
     : DrawingArea(DrawingAreaUpdateChunkType, webPage)
+    , m_isWaitingForUpdate(false)
     , m_displayTimer(WebProcess::shared().runLoop(), this, &DrawingArea::display)
 {
 }
@@ -102,6 +103,8 @@ void DrawingAreaUpdateChunk::paintIntoUpdateChunk(UpdateChunk* updateChunk)
 
 void DrawingAreaUpdateChunk::display()
 {
+    ASSERT(!m_isWaitingForUpdate);
+
     if (m_dirtyRect.isEmpty())
         return;
 
@@ -116,11 +119,15 @@ void DrawingAreaUpdateChunk::display()
 
     WebProcess::shared().connection()->send(DrawingAreaProxyMessage::Update, m_webPage->pageID(), CoreIPC::In(updateChunk));
 
+    m_isWaitingForUpdate = true;
     m_displayTimer.stop();
 }
 
 void DrawingAreaUpdateChunk::scheduleDisplay()
 {
+    if (m_isWaitingForUpdate)
+        return;
+
     if (m_displayTimer.isActive())
         return;
 
@@ -130,6 +137,9 @@ void DrawingAreaUpdateChunk::scheduleDisplay()
 void DrawingAreaUpdateChunk::setSize(const WebCore::IntSize& viewSize)
 {
     ASSERT_ARG(viewSize, !viewSize.isEmpty());
+
+    // We don't want to wait for an update until we display. 
+    m_isWaitingForUpdate = false; 
 
     m_webPage->setSize(viewSize);
 
@@ -145,6 +155,15 @@ void DrawingAreaUpdateChunk::setSize(const WebCore::IntSize& viewSize)
     WebProcess::shared().connection()->send(DrawingAreaProxyMessage::DidSetFrame, m_webPage->pageID(), CoreIPC::In(viewSize, updateChunk));
 }
 
+void DrawingAreaUpdateChunk::didUpdate()
+{
+    ASSERT(m_isWaitingForUpdate);
+    m_isWaitingForUpdate = false;
+
+    // Display if needed.
+    display();
+}
+
 void DrawingAreaUpdateChunk::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder& arguments)
 {
     switch (messageID.get<DrawingAreaMessage::Kind>()) {
@@ -155,6 +174,11 @@ void DrawingAreaUpdateChunk::didReceiveMessage(CoreIPC::Connection*, CoreIPC::Me
             setSize(size);
             break;
         }
+
+        case DrawingAreaMessage::DidUpdate:
+            didUpdate();
+            break;
+
         default:
             ASSERT_NOT_REACHED();
             break;

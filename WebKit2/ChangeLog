@@ -1,5 +1,24 @@
 2010-04-20  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Don't paint the web page before we've blit the last update chunk to the backing store.
+
+        * UIProcess/win/DrawingAreaProxy.cpp:
+        (WebKit::DrawingAreaProxy::update):
+        (WebKit::DrawingAreaProxy::didReceiveMessage):
+        * UIProcess/win/DrawingAreaProxy.h:
+        * WebProcess/WebPage/win/DrawingAreaUpdateChunk.cpp:
+        (WebKit::DrawingAreaUpdateChunk::DrawingAreaUpdateChunk):
+        (WebKit::DrawingAreaUpdateChunk::display):
+        (WebKit::DrawingAreaUpdateChunk::scheduleDisplay):
+        (WebKit::DrawingAreaUpdateChunk::setSize):
+        (WebKit::DrawingAreaUpdateChunk::didUpdate):
+        (WebKit::DrawingAreaUpdateChunk::didReceiveMessage):
+        * WebProcess/WebPage/win/DrawingAreaUpdateChunk.h:
+
+2010-04-20  Anders Carlsson  <andersca@apple.com>
+
         Fix build.
 
         * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:

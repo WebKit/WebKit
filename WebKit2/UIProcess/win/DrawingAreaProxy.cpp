@@ -154,6 +154,14 @@ void DrawingAreaProxy::didSetSize(const IntSize& viewSize, UpdateChunk* updateCh
     page->process()->responsivenessTimer()->stop();
 }
 
+void DrawingAreaProxy::update(UpdateChunk* updateChunk)
+{
+    drawUpdateChunkIntoBackingStore(updateChunk);
+
+    WebPageProxy* page = m_webView->page();
+    page->process()->connection()->send(DrawingAreaMessage::DidUpdate, page->pageID(), CoreIPC::In());
+}
+
 void DrawingAreaProxy::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder& arguments)
 {
     switch (messageID.get<DrawingAreaProxyMessage::Kind>()) {
@@ -162,7 +170,7 @@ void DrawingAreaProxy::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageI
             if (!arguments.decode(updateChunk))
                 return;
             
-            drawUpdateChunkIntoBackingStore(&updateChunk);
+            update(&updateChunk);
             break;
         }
         case DrawingAreaProxyMessage::DidSetFrame: {
