@@ -1,3 +1,19 @@
+2010-04-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37776
+        <rdar://problem/7877716> REGRESSION: When using dvorak, keydown/keyup reports qwerty keyCodes
+
+        * platform/cocoa/KeyEventCocoa.mm: (WebCore::windowsKeyCodeForCharCode): Re-added mapping
+        for Roman letters and punctuation.
+
+        * platform/mac/KeyEventMac.mm: (WebCore::windowsKeyCodeForKeyEvent): Improved approximation
+        of IE behavior. Keyboard layouts that change location of Roman letters (like AZERTY or Dvorak)
+        also switch their keycodes. Also, restored Safari 4 behavior for punctuation. It's difficult
+        to match Windows for punctuation exactly, because keyboard layouts make arbitrary changes
+        to their keycodes.
+
 2010-04-20  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler and Alexey Proskuryakov.
