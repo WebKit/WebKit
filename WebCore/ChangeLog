@@ -1,3 +1,18 @@
+2010-04-21  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION(r57292): Safari/Win and Chromium/Win no longer pass the acid3 test.
+        https://bugs.webkit.org/show_bug.cgi?id=37902
+
+        The issue is due to MSVC creating enums as signed. The fix is to store the value
+        as unsigned.
+
+        Test: http://acid3.acidtests.org/
+
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags): Changed type of _insideLink to unsigned.
+
 2010-04-21  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Brady Eidson.
