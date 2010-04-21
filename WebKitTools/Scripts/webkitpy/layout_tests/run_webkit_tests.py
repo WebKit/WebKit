@@ -1063,7 +1063,9 @@ class TestRunner:
           individual_test_timings: List of dump_render_tree_thread.TestStats
               for all tests.
         """
-        test_types = individual_test_timings[0].time_for_diffs.keys()
+        test_types = []  # Unit tests don't actually produce any timings.
+        if individual_test_timings:
+            test_types = individual_test_timings[0].time_for_diffs.keys()
         times_for_dump_render_tree = []
         times_for_diff_processing = []
         times_per_test_type = {}
@@ -1195,6 +1197,8 @@ class TestRunner:
         timings.sort()
 
         num_tests = len(timings)
+        if not num_tests:
+            return
         percentile90 = timings[int(.9 * num_tests)]
         percentile99 = timings[int(.99 * num_tests)]
 

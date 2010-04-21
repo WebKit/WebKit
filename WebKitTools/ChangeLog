@@ -1,3 +1,16 @@
+2010-04-21  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, test fix only.
+
+        new-run-webkit-tests: implement a --log trace message to be able to display detailed output of an individual test run
+        https://bugs.webkit.org/show_bug.cgi?id=37726
+
+        This change seems to have broken a test.
+        Attempting to handle the case where we don't have any
+        timing information.  Dirk may have to correct this change.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2010-04-19  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
