@@ -1,3 +1,10 @@
+2010-04-21  Xan Lopez  <xlopez@igalia.com>
+
+        Try to fix compilation on GTK+ debug bots.
+
+        * bindings/gobject/WebKitDOMBinding.cpp:
+        (WebKit::createWrapper):
+
 2010-04-21  Jakub Wieczorek  <jwieczorek@webkit.org>
 
         Reviewed by Darin Adler.
