@@ -1,3 +1,11 @@
+2010-04-21  Albert J. Wong  <ajwong@chromium.org>
+
+        Not reviewed. Sheriffing cleanup.
+
+        [chromium] Add bug numbers for expectations created during sheriffing.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-04-21  Alexey Proskuryakov  <ap@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=37933

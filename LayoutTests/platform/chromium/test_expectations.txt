@@ -2734,12 +2734,12 @@ BUG41455 SKIP : http/tests/security/local-image-from-remote-whitelisted.html = T
 BUG_JIANLI LINUX : http/tests/local/formdata/send-form-data-with-sliced-file.html = TEXT
 
 // Failing with webkit roll 57659 -> 57677.
-BUGAJWONG LINUX DEBUG : fast/canvas/toDataURL-noData.html = CRASH
-BUGAJWONG WIN LINUX : fast/backgrounds/svg-as-background-1.html = IMAGE PASS
-BUGAJWONG WIN LINUX : fast/backgrounds/svg-as-background-3.html = IMAGE PASS
-BUGAJWONG MAC LINUX : svg/text/text-intro-05-t.svg = IMAGE PASS
-BUGAJWONG LINUX : svg/text/text-text-07-t.svg = IMAGE PASS
-BUGAJWONG LINUX : svg/text/text-tselect-02-f.svg = IMAGE PASS
+BUG42230 LINUX DEBUG : fast/canvas/toDataURL-noData.html = CRASH
+BUG41817 WIN LINUX : fast/backgrounds/svg-as-background-1.html = IMAGE PASS
+BUG41817 WIN LINUX : fast/backgrounds/svg-as-background-3.html = IMAGE PASS
+BUG41817 MAC LINUX : svg/text/text-intro-05-t.svg = IMAGE PASS
+BUG41817 LINUX : svg/text/text-text-07-t.svg = IMAGE PASS
+BUG41817 LINUX : svg/text/text-tselect-02-f.svg = IMAGE PASS
 
 BUG42044 WIN : http/tests/security/xss-DENIED-mime-type-execute-as-html.html = PASS TIMEOUT
 
