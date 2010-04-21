@@ -103,7 +103,7 @@ void JSGlobalData::storeVPtrs()
     jsFunction->~JSCell();
 }
 
-JSGlobalData::JSGlobalData(bool isShared)
+JSGlobalData::JSGlobalData(bool isShared, ThreadStackType threadStackType)
     : isSharedInstance(isShared)
     , clientData(0)
     , arrayTable(fastNew<HashTable>(JSC::arrayTable))
@@ -146,8 +146,9 @@ JSGlobalData::JSGlobalData(bool isShared)
     , markStack(jsArrayVPtr)
     , cachedUTCOffset(NaN)
     , weakRandom(static_cast<int>(currentTime()))
+    , maxReentryDepth(threadStackType == ThreadStackTypeSmall ? MaxSmallThreadReentryDepth : MaxLargeThreadReentryDepth)
 #ifndef NDEBUG
-    , mainThreadOnly(false)
+    , exclusiveThread(0)
 #endif
 {
 #if PLATFORM(MAC)
@@ -196,22 +197,22 @@ JSGlobalData::~JSGlobalData()
     delete clientData;
 }
 
-PassRefPtr<JSGlobalData> JSGlobalData::createNonDefault()
+PassRefPtr<JSGlobalData> JSGlobalData::createNonDefault(ThreadStackType type)
 {
-    return adoptRef(new JSGlobalData(false));
+    return adoptRef(new JSGlobalData(false, type));
 }
 
-PassRefPtr<JSGlobalData> JSGlobalData::create()
+PassRefPtr<JSGlobalData> JSGlobalData::create(ThreadStackType type)
 {
-    JSGlobalData* globalData = new JSGlobalData(false);
+    JSGlobalData* globalData = new JSGlobalData(false, type);
     wtfThreadData().initializeIdentifierTable(globalData->identifierTable);
     return adoptRef(globalData);
 }
 
-PassRefPtr<JSGlobalData> JSGlobalData::createLeaked()
+PassRefPtr<JSGlobalData> JSGlobalData::createLeaked(ThreadStackType type)
 {
     Structure::startIgnoringLeaks();
-    RefPtr<JSGlobalData> data = create();
+    RefPtr<JSGlobalData> data = create(type);
     Structure::stopIgnoringLeaks();
     return data.release();
 }
@@ -225,7 +226,7 @@ JSGlobalData& JSGlobalData::sharedInstance()
 {
     JSGlobalData*& instance = sharedInstanceInternal();
     if (!instance) {
-        instance = new JSGlobalData(true);
+        instance = new JSGlobalData(true, ThreadStackTypeSmall);
 #if ENABLE(JSC_MULTIPLE_THREADS)
         instance->makeUsableFromMultipleThreads();
 #endif

@@ -1,3 +1,22 @@
+2010-04-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=37937
+        Wean JavaScriptCore off calls to isMainThread()
+
+        No change in behavior.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::commonJSGlobalData):
+        Explicitly set a large stack type for the common JSGlobalData and
+        set the currently running thread as the exclusive thread for its 
+        execution.
+
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::WorkerScriptController):
+        Explicitly set a small stack type for the workers JSGlobalData. 
+
 2010-04-21  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by NOBODY (Qt build fix).

@@ -1,3 +1,59 @@
+2010-04-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=37937
+        Wean JavaScriptCore off calls to isMainThread()
+
+        - Replace use of isMainThread() for interpreter reentry checks
+          with a stored value on the JSGlobalData.
+        - Replace use of isMainThread() for useMainThread only check in the
+          collector with a stored exclusive thread.
+
+        * API/JSContextRef.cpp:
+        (JSContextGroupCreate):
+        Always default to a small stack type for uses of the JSC API. It is
+        unlikely that the interpreter reentry required on the web will be as
+        important for other uses of JavaScriptCore. 
+
+        * JavaScriptCore.exp: 
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        Update exports.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::prepareForRepeatCall):
+        Use new stored JSGlobalData::maxReentryDepth instead of isMainThread().
+
+        * interpreter/Interpreter.h:
+        Rename MaxMainThreadReentryDepth to MaxLargeThreadReentryDepth and 
+        MaxSecondaryThreadReentryDepth to MaxSmallThreadReentryDepth.
+
+        * jsc.cpp:
+        (main): Use the a large stack for jsc since it is always using the
+        main thread.
+        
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncToString):
+        (JSC::arrayProtoFuncToLocaleString):
+        (JSC::arrayProtoFuncJoin):
+        Use new stored JSGlobalData::maxReentryDepth instead of isMainThread().
+
+        * runtime/Collector.cpp:
+        (JSC::Heap::registerThread):
+        Use the concept of making JSC run on an exclusiveThread instead of
+        forcing a mainThreadOnly assertion.
+        
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        (JSC::JSGlobalData::createNonDefault):
+        (JSC::JSGlobalData::create):
+        (JSC::JSGlobalData::createLeaked):
+        (JSC::JSGlobalData::sharedInstance):
+        * runtime/JSGlobalData.h:
+        Add ThreadStackType argument to JSGlobalData constructors and set
+        maxReentryDepth based on it.
+
 2010-04-21  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by NOBODY (windows build fix pt. 3).

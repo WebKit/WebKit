@@ -84,6 +84,11 @@ namespace JSC {
         double increment;
     };
 
+    enum ThreadStackType {
+        ThreadStackTypeLarge,
+        ThreadStackTypeSmall
+    };
+
     class JSGlobalData : public RefCounted<JSGlobalData> {
     public:
         struct ClientData {
@@ -93,9 +98,9 @@ namespace JSC {
         static bool sharedInstanceExists();
         static JSGlobalData& sharedInstance();
 
-        static PassRefPtr<JSGlobalData> create();
-        static PassRefPtr<JSGlobalData> createLeaked();
-        static PassRefPtr<JSGlobalData> createNonDefault();
+        static PassRefPtr<JSGlobalData> create(ThreadStackType);
+        static PassRefPtr<JSGlobalData> createLeaked(ThreadStackType);
+        static PassRefPtr<JSGlobalData> createNonDefault(ThreadStackType);
         ~JSGlobalData();
 
 #if ENABLE(JSC_MULTIPLE_THREADS)
@@ -187,8 +192,9 @@ namespace JSC {
         
         WeakRandom weakRandom;
 
+        int maxReentryDepth;
 #ifndef NDEBUG
-        bool mainThreadOnly;
+        ThreadIdentifier exclusiveThread;
 #endif
 
         void resetDateCache();
@@ -197,7 +203,7 @@ namespace JSC {
         void stopSampling();
         void dumpSampleData(ExecState* exec);
     private:
-        JSGlobalData(bool isShared);
+        JSGlobalData(bool isShared, ThreadStackType);
         static JSGlobalData*& sharedInstanceInternal();
         void createNativeThunk();
     };

@@ -102,7 +102,7 @@ EXPORTS
     ?convertUTF16ToUTF8@Unicode@WTF@@YA?AW4ConversionResult@12@PAPB_WPB_WPAPADPAD_N@Z
     ?convertUTF8ToUTF16@Unicode@WTF@@YA?AW4ConversionResult@12@PAPBDPBDPAPA_WPA_W_N@Z
     ?create@ByteArray@WTF@@SA?AV?$PassRefPtr@VByteArray@WTF@@@2@I@Z
-    ?create@JSGlobalData@JSC@@SA?AV?$PassRefPtr@VJSGlobalData@JSC@@@WTF@@XZ
+    ?create@JSGlobalData@JSC@@SA?AV?$PassRefPtr@VJSGlobalData@JSC@@@WTF@@W4ThreadStackType@2@@Z
     ?create@OpaqueJSString@@SA?AV?$PassRefPtr@UOpaqueJSString@@@WTF@@ABVUString@JSC@@@Z
     ?create@StringImpl@WebCore@@SA?AV?$PassRefPtr@VStringImpl@WebCore@@@WTF@@PBD@Z
     ?create@StringImpl@WebCore@@SA?AV?$PassRefPtr@VStringImpl@WebCore@@@WTF@@PB_WI@Z
@@ -110,7 +110,7 @@ EXPORTS
     ?createEmptyString@SmallStrings@JSC@@AAEXPAVJSGlobalData@2@@Z
     ?createInheritorID@JSObject@JSC@@AAEPAVStructure@2@XZ
     ?createInterruptedExecutionException@JSC@@YA?AVJSValue@1@PAVJSGlobalData@1@@Z
-    ?createLeaked@JSGlobalData@JSC@@SA?AV?$PassRefPtr@VJSGlobalData@JSC@@@WTF@@XZ
+    ?createLeaked@JSGlobalData@JSC@@SA?AV?$PassRefPtr@VJSGlobalData@JSC@@@WTF@@W4ThreadStackType@2@@Z
     ?createSingleCharacterString@SmallStrings@JSC@@AAEXPAVJSGlobalData@2@E@Z
     ?createStackOverflowError@JSC@@YA?AVJSValue@1@PAVExecState@1@@Z
     ?createStrippingNullCharactersSlowCase@StringImpl@WebCore@@CA?AV?$PassRefPtr@VStringImpl@WebCore@@@WTF@@PB_WI@Z

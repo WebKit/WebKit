@@ -580,8 +580,8 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, S
 {
     ASSERT(!scopeChain->globalData->exception);
 
-    if (m_reentryDepth >= MaxSecondaryThreadReentryDepth) {
-        if (!isMainThread() || m_reentryDepth >= MaxMainThreadReentryDepth) {
+    if (m_reentryDepth >= MaxSmallThreadReentryDepth) {
+        if (m_reentryDepth >= callFrame->globalData().maxReentryDepth) {
             *exception = createStackOverflowError(callFrame);
             return jsNull();
         }
@@ -641,8 +641,8 @@ JSValue Interpreter::execute(FunctionExecutable* functionExecutable, CallFrame* 
 {
     ASSERT(!scopeChain->globalData->exception);
 
-    if (m_reentryDepth >= MaxSecondaryThreadReentryDepth) {
-        if (!isMainThread() || m_reentryDepth >= MaxMainThreadReentryDepth) {
+    if (m_reentryDepth >= MaxSmallThreadReentryDepth) {
+        if (m_reentryDepth >= callFrame->globalData().maxReentryDepth) {
             *exception = createStackOverflowError(callFrame);
             return jsNull();
         }
@@ -703,8 +703,8 @@ CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* FunctionE
 {
     ASSERT(!scopeChain->globalData->exception);
     
-    if (m_reentryDepth >= MaxSecondaryThreadReentryDepth) {
-        if (!isMainThread() || m_reentryDepth >= MaxMainThreadReentryDepth) {
+    if (m_reentryDepth >= MaxSmallThreadReentryDepth) {
+        if (m_reentryDepth >= callFrame->globalData().maxReentryDepth) {
             *exception = createStackOverflowError(callFrame);
             return CallFrameClosure();
         }
@@ -779,8 +779,8 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSObjec
 {
     ASSERT(!scopeChain->globalData->exception);
 
-    if (m_reentryDepth >= MaxSecondaryThreadReentryDepth) {
-        if (!isMainThread() || m_reentryDepth >= MaxMainThreadReentryDepth) {
+    if (m_reentryDepth >= MaxSmallThreadReentryDepth) {
+        if (m_reentryDepth >= callFrame->globalData().maxReentryDepth) {
             *exception = createStackOverflowError(callFrame);
             return jsNull();
         }

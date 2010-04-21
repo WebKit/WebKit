@@ -48,7 +48,7 @@ using namespace JSC;
 namespace WebCore {
 
 WorkerScriptController::WorkerScriptController(WorkerContext* workerContext)
-    : m_globalData(JSGlobalData::create())
+    : m_globalData(JSGlobalData::create(ThreadStackTypeSmall))
     , m_workerContext(workerContext)
     , m_executionForbidden(false)
 {

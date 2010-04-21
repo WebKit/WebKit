@@ -36,6 +36,7 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "WebCoreJSClientData.h"
+#include <wtf/Threading.h>
 #include <wtf/text/CString.h>
 
 using namespace JSC;
@@ -156,10 +157,10 @@ JSGlobalData* JSDOMWindowBase::commonJSGlobalData()
 
     static JSGlobalData* globalData = 0;
     if (!globalData) {
-        globalData = JSGlobalData::createLeaked().releaseRef();
+        globalData = JSGlobalData::createLeaked(ThreadStackTypeLarge).releaseRef();
         globalData->timeoutChecker.setTimeoutInterval(10000); // 10 seconds
 #ifndef NDEBUG
-        globalData->mainThreadOnly = true;
+        globalData->exclusiveThread = currentThread();
 #endif
         initNormalWorldClientData(globalData);
     }
