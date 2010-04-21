@@ -52,9 +52,12 @@ EXPORTS
     ?add@AtomicString@WebCore@@CA?AV?$PassRefPtr@VStringImpl@WebCore@@@WTF@@PB_W@Z
     ?add@AtomicString@WebCore@@CA?AV?$PassRefPtr@VStringImpl@WebCore@@@WTF@@PB_WI@Z
     ?add@AtomicString@WebCore@@CA?AV?$PassRefPtr@VStringImpl@WebCore@@@WTF@@PB_WII@Z
+    ?add@Identifier@JSC@@SA?AV?$PassRefPtr@VStringImpl@WebCore@@@WTF@@PAVExecState@2@PBD@Z
+    ?add@PropertyNameArray@JSC@@QAEXPAVStringImpl@WebCore@@@Z
     ?addPropertyTransition@Structure@JSC@@SA?AV?$PassRefPtr@VStructure@JSC@@@WTF@@PAV12@ABVIdentifier@2@IPAVJSCell@2@AAI@Z
     ?addPropertyTransitionToExistingStructure@Structure@JSC@@SA?AV?$PassRefPtr@VStructure@JSC@@@WTF@@PAV12@ABVIdentifier@2@IPAVJSCell@2@AAI@Z
     ?addPropertyWithoutTransition@Structure@JSC@@QAEIABVIdentifier@2@IPAVJSCell@2@@Z
+    ?addSlowCase@Identifier@JSC@@CA?AV?$PassRefPtr@VStringImpl@WebCore@@@WTF@@PAVExecState@2@PAVStringImpl@WebCore@@@Z
     ?adopt@StringImpl@WebCore@@SA?AV?$PassRefPtr@VStringImpl@WebCore@@@WTF@@AAVStringBuffer@2@@Z
     ?allocate@Heap@JSC@@QAEPAXI@Z
     ?allocatePropertyStorage@JSObject@JSC@@QAEXII@Z
@@ -156,6 +159,9 @@ EXPORTS
     ?emptyAtom@WebCore@@3VAtomicString@1@B
     ?endsWith@StringImpl@WebCore@@QAE_NPAV12@_N@Z
     ?enumerable@PropertyDescriptor@JSC@@QBE_NXZ
+    ?equal@Identifier@JSC@@SA_NPBVStringImpl@WebCore@@PBD@Z
+    ?equal@WebCore@@YA_NPBVStringImpl@1@0@Z
+    ?equal@WebCore@@YA_NPBVStringImpl@1@PBD@Z
     ?equalIgnoringCase@WebCore@@YA_NPAVStringImpl@1@0@Z
     ?equalIgnoringCase@WebCore@@YA_NPAVStringImpl@1@PBD@Z
     ?equalIgnoringCase@WebCore@@YA_NPB_WPBDI@Z
@@ -189,6 +195,7 @@ EXPORTS
     ?fromUTF8WithLatin1Fallback@String@WebCore@@SA?AV12@PBDI@Z
     ?functionGetter@PropertySlot@JSC@@ABE?AVJSValue@2@PAVExecState@2@@Z
     ?functionName@DebuggerCallFrame@JSC@@QBEPBVUString@2@XZ
+    ?get@Structure@JSC@@QAEIPBVStringImpl@WebCore@@AAIAAPAVJSCell@2@@Z
     ?getCallData@JSCell@JSC@@UAE?AW4CallType@2@AATCallData@2@@Z
     ?getConstructData@JSCell@JSC@@UAE?AW4ConstructType@2@AATConstructData@2@@Z
     ?getJSNumber@JSCell@JSC@@UAE?AVJSValue@2@XZ
@@ -221,6 +228,7 @@ EXPORTS
     ?hasInstance@JSObject@JSC@@UAE_NPAVExecState@2@VJSValue@2@1@Z
     ?hasProperty@JSObject@JSC@@QBE_NPAVExecState@2@ABVIdentifier@2@@Z
     ?hasProperty@JSObject@JSC@@QBE_NPAVExecState@2@I@Z
+    ?hasTransition@Structure@JSC@@QAE_NPAVStringImpl@WebCore@@I@Z
     ?heap@Heap@JSC@@SAPAV12@VJSValue@2@@Z
     ?increment@RefCountedLeakCounter@WTF@@QAEXXZ
     ?init@AtomicString@WebCore@@SAXXZ
