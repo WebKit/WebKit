@@ -29,11 +29,11 @@
 #include "EventNames.h"
 #include "FocusController.h"
 #include "Frame.h"
-#include "KeyboardCodes.h"
 #include "KeyboardEvent.h"
 #include "NotImplemented.h"
 #include "Page.h"
 #include "PlatformKeyboardEvent.h"
+#include "WindowsKeyboardCodes.h"
 #include "ewk_private.h"
 
 using namespace WebCore;

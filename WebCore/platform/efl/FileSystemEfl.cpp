@@ -89,33 +89,6 @@ end:
     return CString();
 }
 
-void closeFile(PlatformFileHandle& handle)
-{
-    if (isHandleValid(handle)) {
-        close(handle);
-        handle = invalidPlatformFileHandle;
-    }
-}
-
-int writeToFile(PlatformFileHandle handle, const char* data, int length)
-{
-    size_t totalBytesWritten = 0;
-    size_t todo = length;
-    while (todo > 0) {
-        ssize_t bytesWritten = write(handle, data, todo);
-        if (bytesWritten < 0) {
-            if (errno != EINTR && errno != EAGAIN)
-                return -1;
-        } else if (bytesWritten > 0) {
-            totalBytesWritten += bytesWritten;
-            data += bytesWritten;
-            todo -= bytesWritten;
-        }
-    }
-
-    return totalBytesWritten;
-}
-
 bool unloadModule(PlatformModule module)
 {
     // caution, closing handle will make memory vanish and any remaining

@@ -30,6 +30,7 @@
 #include "Image.h"
 
 #include "BitmapImage.h"
+#include "SharedBuffer.h"
 
 #include <cairo.h>
 

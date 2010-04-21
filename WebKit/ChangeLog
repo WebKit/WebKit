@@ -1,3 +1,18 @@
+2010-04-21  Gustavo Sverzut Barbieri  <barbieri@profusion.mobi>
+
+        Reviewed by Adam Roben.
+
+        Update EFL port to match recent API changes.
+        http://webkit.org/b/37853
+
+        * efl/WebCoreSupport/EditorClientEfl.cpp:
+        * efl/WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::didTransferChildFrameToNewDocument):
+        (WebCore::FrameLoaderClientEfl::objectContentType):
+        (WebCore::FrameLoaderClientEfl::dispatchDidChangeIcons):
+        (WebCore::FrameLoaderClientEfl::canShowMIMEType):
+        * efl/WebCoreSupport/FrameLoaderClientEfl.h:
+
 2010-04-15  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Kenneth Rohde Christiansen.
