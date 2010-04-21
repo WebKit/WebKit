@@ -1,3 +1,9 @@
+2010-04-20  Xan Lopez  <xlopez@igalia.com>
+
+        Build fix?
+
+        * autotools/webkit.m4:
+
 2010-04-19  Diego Escalante Urrelo  <descalante@igalia.com>
 
         Reviewed by Xan Lopez.

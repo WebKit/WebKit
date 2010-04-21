@@ -51,7 +51,7 @@ if test -z "$PERL"; then
 fi
 
 AC_PATH_PROG(PYTHON, python)
-if test -z &quot;$PYTHON&quot;; then
+if test -z "$PYTHON"; then
    AC_MSG_ERROR([You need 'python' to compile WebKit])
 fi
 
