@@ -42,9 +42,11 @@
                 # DumpRenderTree is being built outside of the full chromium project.
                 # e.g. via build-dumprendertree --chromium
                 'chromium_src_dir': '<(webkit_api_dir)',
+                'webkit_support_gyp': '<(webkit_api_dir)/webkit/support/webkit_support.gyp',
             },{
                 # WebKit is checked out in src/chromium/third_party/WebKit
                 'chromium_src_dir': '<(webkit_top)/../..',
+                'webkit_support_gyp': '<(webkit_top)/../../webkit/webkit.gyp',
             }],
         ],
     },
@@ -79,7 +81,7 @@
                 '<(chromium_src_dir)/third_party/icu/icu.gyp:icuuc',
                 '<(chromium_src_dir)/third_party/npapi/npapi.gyp:npapi',
                 '<(chromium_src_dir)/skia/skia.gyp:skia',
-                '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support',
+                '<(webkit_support_gyp):webkit_support',
             ],
             'include_dirs': [
                 '.',
