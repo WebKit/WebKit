@@ -1,3 +1,18 @@
+2010-04-21  anton muhin  <antonm@google.com>
+
+        Reviewed by Adam Barth.
+
+        [v8] Bail out if fetching of Object.prototype fails.
+        https://bugs.webkit.org/show_bug.cgi?id=37661
+
+        If for any reason we failed to fetch Object.prototype, context cannot
+        be properly initialized and we bail out.
+
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::initContextIfNeeded): bail out if installHiddenObjectPrototype failed
+        (WebCore::V8DOMWindowShell::installHiddenObjectPrototype): bail out if failed to fetch Object.prototype
+        * bindings/v8/V8DOMWindowShell.h: return false if installHiddenObjectPrototype failed
+
 2010-04-21  Timothy Hatcher  <timothy@apple.com>
 
         Make UserContentURLPattern correctly check for subdomains and the URL

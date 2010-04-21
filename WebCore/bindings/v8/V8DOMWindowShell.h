@@ -74,7 +74,7 @@ public:
 
     static v8::Handle<v8::Value> getHiddenObjectPrototype(v8::Handle<v8::Context>);
     // WARNING: Call |installHiddenObjectPrototype| only on fresh contexts!
-    static void installHiddenObjectPrototype(v8::Handle<v8::Context>);
+    static bool installHiddenObjectPrototype(v8::Handle<v8::Context>);
 
     // To create JS Wrapper objects, we create a cache of a 'boiler plate'
     // object, and then simply Clone that object each time we need a new one.
