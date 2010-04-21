@@ -1,3 +1,15 @@
+2010-04-21  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        <rdar://problem/7856151> REGRESSION: NPP_Destroy is not called when page navigates when plug-in is displaying modal dialog
+
+        This is a manual test case as I was not able to construct an automated test that reproduced the same issue without displaying
+        a modal dialog on-screen.
+
+        * manual-tests/plugins/timeout-dialog-displayed-over-navigation.html: Added.
+        * manual-tests/plugins/timeout-dialog-displayed-over-navigation.swf: Added.
+
 2010-04-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.

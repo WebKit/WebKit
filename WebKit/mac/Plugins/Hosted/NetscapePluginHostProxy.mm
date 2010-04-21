@@ -440,7 +440,7 @@ kern_return_t WKPCInvalidateRect(mach_port_t clientPort, uint32_t pluginID, doub
         if (NetscapePluginInstanceProxy* instanceProxy = hostProxy->pluginInstance(pluginID))
             instanceProxy->invalidateRect(x, y, width, height);
         return KERN_SUCCESS;
-    }        
+    }
 
     // Defer the work
     CFRunLoopPerformBlock(CFRunLoopGetMain(), kCFRunLoopDefaultMode, ^{
@@ -947,9 +947,18 @@ kern_return_t WKPCSetModal(mach_port_t clientPort, boolean_t modal)
     NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
     if (!hostProxy)
         return KERN_FAILURE;
-    
-    hostProxy->setModal(modal);
-    
+
+    if (!hostProxy->isProcessingRequests()) {
+        hostProxy->setModal(modal);
+        return KERN_SUCCESS;
+    }
+
+    // Defer the work
+    CFRunLoopPerformBlock(CFRunLoopGetMain(), kCFRunLoopDefaultMode, ^{
+        if (NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort))
+            hostProxy->setModal(modal);
+    });
+
     return KERN_SUCCESS;
 }
 

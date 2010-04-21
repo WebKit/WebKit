@@ -1,3 +1,21 @@
+2010-04-20  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        <rdar://problem/7856151> REGRESSION: NPP_Destroy is not called when page navigates when plug-in is displaying modal dialog
+
+        An interaction between the plug-in host and WebKit was resulting in WKPCSetModal being called while
+        NetscapePluginInstanceProxy was waiting on a reply to the GetScriptableNPObject message. This resulted
+        in calls to stop the plug-in being deferred due to the presence of plug-in code up the stack.  This
+        could lead to crashes as it was possible for the plug-in view to be deallocated during the modal runloop.
+
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCInvalidateRect):
+        (WKPCSetModal): Defer the handling of setModal until the next runloop iteration if the host proxy
+        is already processing requests.  This ensures that there will be no plug-in code on the stack when
+        the modal runloop is entered, which allows the plug-in to be stopped when the page is navigated while
+        a modal dialog is displayed.
+
 2010-04-20  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
