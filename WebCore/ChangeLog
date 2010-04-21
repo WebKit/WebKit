@@ -1,3 +1,12 @@
+2010-04-21  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Windows build fix.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp: Declare CFURLConnectionCreateWithProperties
+        for now, as it's mistakenly missing from WebKitSupportLibrary headers.
+
 2010-04-21  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.

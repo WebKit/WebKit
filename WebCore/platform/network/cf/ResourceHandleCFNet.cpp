@@ -53,6 +53,15 @@
 #include <wtf/Threading.h>
 #include <wtf/text/CString.h>
 
+// FIXME: Remove this declaration once it's in WebKitSupportLibrary.
+extern "C" {
+__declspec(dllimport) CFURLConnectionRef CFURLConnectionCreateWithProperties(
+  CFAllocatorRef           alloc,
+  CFURLRequestRef          request,
+  CFURLConnectionClient *  client,
+  CFDictionaryRef properties);
+}
+
 namespace WebCore {
 
 static CFStringRef WebCoreSynchronousLoaderRunLoopMode = CFSTR("WebCoreSynchronousLoaderRunLoopMode");
