@@ -35,40 +35,25 @@ using WTF::ThreadSpecific;
 
 namespace JSC {
 
-typedef HashMap<const char*, RefPtr<UString::Rep>, PtrHash<const char*> > LiteralIdentifierTable;
-
-class IdentifierTable : public FastAllocBase {
-public:
-    ~IdentifierTable()
-    {
-        HashSet<UString::Rep*>::iterator end = m_table.end();
-        for (HashSet<UString::Rep*>::iterator iter = m_table.begin(); iter != end; ++iter)
-            (*iter)->setIsIdentifier(false);
-    }
-
-    std::pair<HashSet<UString::Rep*>::iterator, bool> add(UString::Rep* value)
-    {
-        std::pair<HashSet<UString::Rep*>::iterator, bool> result = m_table.add(value);
-        (*result.first)->setIsIdentifier(true);
-        return result;
-    }
-
-    template<typename U, typename V>
-    std::pair<HashSet<UString::Rep*>::iterator, bool> add(U value)
-    {
-        std::pair<HashSet<UString::Rep*>::iterator, bool> result = m_table.add<U, V>(value);
-        (*result.first)->setIsIdentifier(true);
-        return result;
-    }
-
-    void remove(UString::Rep* r) { m_table.remove(r); }
-
-    LiteralIdentifierTable& literalTable() { return m_literalTable; }
-
-private:
-    HashSet<UString::Rep*> m_table;
-    LiteralIdentifierTable m_literalTable;
-};
+IdentifierTable::~IdentifierTable()
+{
+    HashSet<StringImpl*>::iterator end = m_table.end();
+    for (HashSet<StringImpl*>::iterator iter = m_table.begin(); iter != end; ++iter)
+        (*iter)->setIsIdentifier(false);
+}
+std::pair<HashSet<StringImpl*>::iterator, bool> IdentifierTable::add(StringImpl* value)
+{
+    std::pair<HashSet<StringImpl*>::iterator, bool> result = m_table.add(value);
+    (*result.first)->setIsIdentifier(true);
+    return result;
+}
+template<typename U, typename V>
+std::pair<HashSet<StringImpl*>::iterator, bool> IdentifierTable::add(U value)
+{
+    std::pair<HashSet<StringImpl*>::iterator, bool> result = m_table.add<U, V>(value);
+    (*result.first)->setIsIdentifier(true);
+    return result;
+}
 
 IdentifierTable* createIdentifierTable()
 {
@@ -228,11 +213,6 @@ PassRefPtr<UString::Rep> Identifier::addSlowCase(ExecState* exec, UString::Rep* 
     return addSlowCase(&exec->globalData(), r);
 }
 
-void Identifier::remove(UString::Rep* r)
-{
-    wtfThreadData().currentIdentifierTable()->remove(r);
-}
-    
 Identifier Identifier::from(ExecState* exec, unsigned value)
 {
     return Identifier(exec, exec->globalData().numericStrings.add(value));

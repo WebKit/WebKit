@@ -73,8 +73,6 @@ namespace JSC {
         friend bool operator==(const Identifier&, const char*);
         friend bool operator!=(const Identifier&, const char*);
     
-        static void remove(UString::Rep*);
-
         static bool equal(const UString::Rep*, const char*);
         static bool equal(const UString::Rep*, const UChar*, unsigned length);
         static bool equal(const UString::Rep* a, const UString::Rep* b) { return ::equal(a, b); }

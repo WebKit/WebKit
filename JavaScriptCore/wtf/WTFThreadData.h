@@ -30,6 +30,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/text/StringHash.h>
 
 // This was ENABLE(WORKERS) in WebCore, but this is not defined when compiling JSC.
 // However this check was not correct anyway, re this comment:
@@ -45,16 +46,39 @@
 #endif
 
 // FIXME: This is a temporary layering violation while we move more string code to WTF.
-namespace JSC {
-class IdentifierTable;
-}
-
-// FIXME: This is a temporary layering violation while we move more string code to WTF.
 namespace WebCore {
 class AtomicStringTable;
+class StringImpl;
 }
+using WebCore::StringImpl;
 
 typedef void (*AtomicStringTableDestructor)(WebCore::AtomicStringTable*);
+
+#if USE(JSC)
+// FIXME: This is a temporary layering violation while we move more string code to WTF.
+namespace JSC {
+
+typedef HashMap<const char*, RefPtr<StringImpl>, PtrHash<const char*> > LiteralIdentifierTable;
+
+class IdentifierTable : public FastAllocBase {
+public:
+    ~IdentifierTable();
+
+    std::pair<HashSet<StringImpl*>::iterator, bool> add(StringImpl* value);
+    template<typename U, typename V>
+    std::pair<HashSet<StringImpl*>::iterator, bool> add(U value);
+
+    void remove(StringImpl* r) { m_table.remove(r); }
+
+    LiteralIdentifierTable& literalTable() { return m_literalTable; }
+
+private:
+    HashSet<StringImpl*> m_table;
+    LiteralIdentifierTable m_literalTable;
+};
+
+}
+#endif
 
 namespace WTF {
 

@@ -29,10 +29,7 @@
 #include "StringBuffer.h"
 #include "StringHash.h"
 #include <wtf/StdLibExtras.h>
-
-#if USE(JSC)
-#include "Identifier.h"
-#endif
+#include <wtf/WTFThreadData.h>
 
 using namespace WTF;
 using namespace Unicode;
@@ -49,7 +46,7 @@ StringImpl::~StringImpl()
         AtomicString::remove(this);
 #if USE(JSC)
     if (isIdentifier())
-        JSC::Identifier::remove(this);
+        wtfThreadData().currentIdentifierTable()->remove(this);
 #endif
 
     BufferOwnership ownership = bufferOwnership();

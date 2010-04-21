@@ -1,3 +1,19 @@
+2010-04-21  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by NOBODY (windows build fix).
+
+        * API/JSValueRef.cpp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * runtime/Identifier.cpp:
+        (JSC::IdentifierTable::~IdentifierTable):
+        (JSC::IdentifierTable::add):
+        * runtime/Identifier.h:
+        * wtf/WTFThreadData.h:
+        (JSC::IdentifierTable::remove):
+        (JSC::IdentifierTable::literalTable):
+        * wtf/text/StringImpl.cpp:
+        (WebCore::StringImpl::~StringImpl):
+
 2010-04-20  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt, Darin Adler.

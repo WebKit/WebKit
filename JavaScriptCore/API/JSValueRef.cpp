@@ -40,6 +40,7 @@
 #include <runtime/JSValue.h>
 
 #include <wtf/Assertions.h>
+#include <wtf/text/StringHash.h>
 
 #include <algorithm> // for std::min
 
