@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,22 +81,20 @@ bool UserContentURLPattern::parse(const String& pattern)
         int hostEndPos = pattern.find("/", hostStartPos);
         if (hostEndPos == -1)
             return false;
-    
-        m_host = pattern.substring(hostStartPos, hostEndPos - hostStartPos);
 
-        // The first component can be '*', which means to match all subdomains.
-        Vector<String> hostComponents;
-        m_host.split(".", hostComponents); 
-        if (hostComponents[0] == "*") {
-            m_matchSubdomains = true;
+        m_host = pattern.substring(hostStartPos, hostEndPos - hostStartPos);
+        m_matchSubdomains = false;
+
+        if (m_host == "*") {
+            // The pattern can be just '*', which means match all domains.
             m_host = "";
-            for (unsigned i = 1; i < hostComponents.size(); ++i) {
-                m_host = m_host + hostComponents[i];
-                if (i < hostComponents.size() - 1)
-                    m_host = m_host + ".";
-            }
+            m_matchSubdomains = true;
+        } else if (m_host.startsWith("*.")) {
+            // The first component can be '*', which means to match all subdomains.
+            m_host = m_host.substring(2); // Length of "*."
+            m_matchSubdomains = true;
         }
-        
+
         // No other '*' can occur in the host.
         if (m_host.find("*") != -1)
             return false;
@@ -125,7 +123,8 @@ bool UserContentURLPattern::matches(const KURL& test) const
 
 bool UserContentURLPattern::matchesHost(const KURL& test) const
 {
-    if (equalIgnoringCase(test.host(), m_host))
+    const String& host = test.host();
+    if (equalIgnoringCase(host, m_host))
         return true;
 
     if (!m_matchSubdomains)
@@ -136,8 +135,14 @@ bool UserContentURLPattern::matchesHost(const KURL& test) const
     if (!m_host.length())
         return true;
 
-    // Check if the test host is a subdomain of our host.
-    return test.host().endsWith(m_host, false);
+    // Check if the domain is a subdomain of our host.
+    if (!host.endsWith(m_host, false))
+        return false;
+
+    ASSERT(host.length() > m_host.length());
+
+    // Check that the character before the suffix is a period.
+    return host[host.length() - m_host.length() - 1] == '.';
 }
 
 struct MatchTester

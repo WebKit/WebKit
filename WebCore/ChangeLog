@@ -1,3 +1,18 @@
+2010-04-21  Timothy Hatcher  <timothy@apple.com>
+
+        Make UserContentURLPattern correctly check for subdomains and the URL
+        has the same suffix as the pattern. Also improve the parsing of the host.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37357
+
+        Reviewed by Darin Adler.
+
+        * page/UserContentURLPattern.cpp:
+        (WebCore::UserContentURLPattern::parse): Simplify the subdomain pattern parsing to
+        simply check for "*" only or a "*." prefix and then do a substring.
+        (WebCore::UserContentURLPattern::matchesHost): Check that the host has a "." in the
+        position before the suffix to ensure it a subdomain and not just a suffix match.
+
 2010-04-21  Xan Lopez  <xlopez@igalia.com>
 
         Try to fix compilation on GTK+ debug bots.
