@@ -1,3 +1,13 @@
+2010-04-21  Yi Shen  <yi.4.shen@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Check the request empty or not in ChromeClientQt::createWindow()
+        https://bugs.webkit.org/show_bug.cgi?id=37821
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::createWindow):
+
 2010-04-21  Shu Chang  <chang.shu@nokia.com>
 
         Reviewed by Simon Hausmann.

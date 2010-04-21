@@ -166,7 +166,9 @@ Page* ChromeClientQt::createWindow(Frame*, const FrameLoadRequest& request, cons
     QWebPage *newPage = m_webPage->createWindow(features.dialog ? QWebPage::WebModalDialog : QWebPage::WebBrowserWindow);
     if (!newPage)
         return 0;
-    newPage->mainFrame()->load(request.resourceRequest().url());
+
+    if (!request.isEmpty())
+        newPage->mainFrame()->load(request.resourceRequest().url());
     return newPage->d->page;
 }
 
