@@ -545,8 +545,8 @@ DerivedSources/Lexer.lut.h: $(CREATE_HASH_TABLE) $(srcdir)/JavaScriptCore/parser
 JavaScriptCore/%.lut.h: $(CREATE_HASH_TABLE) $(srcdir)/JavaScriptCore/%.cpp
 	$(PERL) $^ -i > $@
 
-JavaScriptCore/RegExpJitTables.h: $(CREATE_REGEXP_TABLES)
-	$(PYTHON) $(CREATE_REGEXP_TABLES) > $@
+JavaScriptCore/RegExpJitTables.h: $(srcdir)/JavaScriptCore/create_regex_tables
+	$(PYTHON) $(srcdir)/JavaScriptCore/create_regex_tables > $@
 
 JavaScriptCore/pcre/chartables.c: $(srcdir)/JavaScriptCore/pcre/dftables
 	$(PERL) $^ $@

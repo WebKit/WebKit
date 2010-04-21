@@ -50,6 +50,11 @@ if test -z "$PERL"; then
    AC_MSG_ERROR([You need 'perl' to compile WebKit])
 fi
 
+AC_PATH_PROG(PYTHON, python)
+if test -z &quot;$PYTHON&quot;; then
+   AC_MSG_ERROR([You need 'python' to compile WebKit])
+fi
+
 AC_PATH_PROG(BISON, bison)
 if test -z "$BISON"; then
    AC_MSG_ERROR([You need the 'bison' parser generator to compile WebKit])
