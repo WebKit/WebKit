@@ -2754,3 +2754,5 @@ BUGJAMESR : svg/filters/filter-source-position.svg = IMAGE
 BUGJAMESR : svg/W3C-SVG-1.1/animate-elem-41-t.svg = IMAGE+TEXT
 BUGJAMESR BUG30048 BUG29737 : svg/filters/shadow-on-rect-with-filter.svg = IMAGE
 
+// Broke at r57940
+BUGWK37907 WIN : editing/pasteboard/copy-backslash-with-euc.html = FAIL
