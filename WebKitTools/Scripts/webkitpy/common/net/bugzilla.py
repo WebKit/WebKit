@@ -230,6 +230,14 @@ class BugzillaQueries(object):
     def _fetch_attachment_ids_request_query(self, query):
         return self._parse_attachment_ids_request_query(self._load_query(query))
 
+    def _parse_quips(self, page):
+        soup = BeautifulSoup(page, convertEntities=BeautifulSoup.HTML_ENTITIES)
+        quips = soup.find(text=re.compile(r"Existing quips:")).findNext("ul").findAll("li")
+        return [unicode(quip_entry.string) for quip_entry in quips]
+
+    def fetch_quips(self):
+        return self._parse_quips(self._load_query("/quips.cgi?action=show"))
+
     # List of all r+'d bugs.
     def fetch_bug_ids_from_pending_commit_list(self):
         needs_commit_query_url = "buglist.cgi?query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=review%2B"
@@ -364,6 +372,7 @@ class Bugzilla(object):
         self.authenticated = False
         self.queries = BugzillaQueries(self)
         self.committers = committers
+        self.cached_quips = []
 
         # FIXME: We should use some sort of Browser mock object when in dryrun
         # mode (to prevent any mistakes).
@@ -376,6 +385,13 @@ class Bugzilla(object):
     bug_server_host = "bugs.webkit.org"
     bug_server_regex = "https?://%s/" % re.sub('\.', '\\.', bug_server_host)
     bug_server_url = "https://%s/" % bug_server_host
+
+    def quips(self):
+        # We only fetch and parse the list of quips once per instantiation
+        # so that we do not burden bugs.webkit.org.
+        if not self.cached_quips and not self.dryrun:
+            self.cached_quips = self.queries.fetch_quips()
+        return self.cached_quips
 
     def bug_url_for_bug_id(self, bug_id, xml=False):
         if not bug_id:

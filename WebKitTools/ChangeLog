@@ -1,3 +1,17 @@
+2010-04-20  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37748
+
+        Make Sheriffbot more inspirational.
+
+        * Scripts/webkitpy/common/net/bugzilla.py:
+        * Scripts/webkitpy/common/net/bugzilla_unittest.py:
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        * Scripts/webkitpy/tool/bot/sheriffircbot_unittest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+
 2010-04-20  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.
