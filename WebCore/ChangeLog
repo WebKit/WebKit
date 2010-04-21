@@ -1,5 +1,19 @@
 2010-04-20  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        [Qt] Build fix: warning on L933 of CompositeEditCommand.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=37912
+
+        Replaced the ternary operator by an if statement because GCC was confused by the use of
+        ternary operator and producing warnings on Qt builds.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphs):
+
+2010-04-20  Ryosuke Niwa  <rniwa@webkit.org>
+
         Reviewed by Justin Garcia.
 
         Nested <ul>s are mishandled when converted to <ol> using execCommand('insertorderedlist')
