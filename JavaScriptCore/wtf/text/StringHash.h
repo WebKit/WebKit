@@ -42,7 +42,7 @@ namespace WebCore {
 
     struct StringHash {
         static unsigned hash(StringImpl* key) { return key->hash(); }
-        static bool equal(StringImpl* a, StringImpl* b)
+        static bool equal(const StringImpl* a, const StringImpl* b)
         {
             if (a == b)
                 return true;
@@ -191,7 +191,7 @@ namespace WebCore {
             return hash;
         }
         
-        static bool equal(StringImpl* a, StringImpl* b)
+        static bool equal(const StringImpl* a, const StringImpl* b)
         {
             if (a == b)
                 return true;

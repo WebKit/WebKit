@@ -33,6 +33,7 @@
 #include <runtime/JSGlobalObject.h>
 #include <runtime/ObjectPrototype.h>
 #include <runtime/Identifier.h>
+#include <wtf/text/StringHash.h>
 #include <wtf/unicode/UTF8.h>
 
 using namespace std;

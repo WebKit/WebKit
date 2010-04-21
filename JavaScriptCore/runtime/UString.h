@@ -627,7 +627,7 @@ namespace WTF {
 
     template<> struct StrHash<JSC::UString::Rep*> {
         static unsigned hash(const JSC::UString::Rep* key) { return key->hash(); }
-        static bool equal(const JSC::UString::Rep* a, const JSC::UString::Rep* b) { return JSC::equal(a, b); }
+        static bool equal(const JSC::UString::Rep* a, const JSC::UString::Rep* b) { return ::equal(a, b); }
         static const bool safeToCompareToEmptyOrDeleted = false;
     };
 
@@ -635,22 +635,13 @@ namespace WTF {
         using StrHash<JSC::UString::Rep*>::hash;
         static unsigned hash(const RefPtr<JSC::UString::Rep>& key) { return key->hash(); }
         using StrHash<JSC::UString::Rep*>::equal;
-        static bool equal(const RefPtr<JSC::UString::Rep>& a, const RefPtr<JSC::UString::Rep>& b) { return JSC::equal(a.get(), b.get()); }
-        static bool equal(const JSC::UString::Rep* a, const RefPtr<JSC::UString::Rep>& b) { return JSC::equal(a, b.get()); }
-        static bool equal(const RefPtr<JSC::UString::Rep>& a, const JSC::UString::Rep* b) { return JSC::equal(a.get(), b); }
+        static bool equal(const RefPtr<JSC::UString::Rep>& a, const RefPtr<JSC::UString::Rep>& b) { return ::equal(a.get(), b.get()); }
+        static bool equal(const JSC::UString::Rep* a, const RefPtr<JSC::UString::Rep>& b) { return ::equal(a, b.get()); }
+        static bool equal(const RefPtr<JSC::UString::Rep>& a, const JSC::UString::Rep* b) { return ::equal(a.get(), b); }
 
         static const bool safeToCompareToEmptyOrDeleted = false;
     };
 
-    template<> struct DefaultHash<JSC::UString::Rep*> {
-        typedef StrHash<JSC::UString::Rep*> Hash;
-    };
-
-    template<> struct DefaultHash<RefPtr<JSC::UString::Rep> > {
-        typedef StrHash<RefPtr<JSC::UString::Rep> > Hash;
-
-    };
-    
     template <> struct VectorTraits<JSC::UString> : SimpleClassVectorTraits
     {
         static const bool canInitializeWithMemset = true;

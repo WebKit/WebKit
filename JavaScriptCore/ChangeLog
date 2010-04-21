@@ -1,3 +1,51 @@
+2010-04-20  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt, Darin Adler.
+
+        Bug 37906 - Remove JSC::UStringImpl; unify with StringImpl.
+
+        JSC::UStringImpl and WebCore::StringImpl (soon to be renamed to
+        WTF::StringImpl) are almost identical.  Remove duplication of code by unifying
+        the two, move missing features from UStringImpl into StringImpl & delete the
+        class UStringImpl.
+
+        * API/JSClassRef.cpp:
+        * API/JSContextRef.cpp:
+        * GNUmakefile.am:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.pro:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/EvalCodeCache.h:
+        * bytecode/JumpTable.cpp:
+        * profiler/ProfileNode.cpp:
+        * runtime/Identifier.cpp:
+        (JSC::Identifier::add):
+        * runtime/Identifier.h:
+        (JSC::Identifier::equal):
+        * runtime/UString.cpp:
+        * runtime/UString.h:
+        (WTF::):
+        * runtime/UStringImpl.cpp: Removed.
+        * runtime/UStringImpl.h:
+        * wtf/text/StringHash.h:
+        (WebCore::StringHash::equal):
+        (WebCore::CaseFoldingHash::equal):
+        * wtf/text/StringImpl.cpp:
+        (WebCore::StringImpl::~StringImpl):
+        (WebCore::StringImpl::empty):
+        (WebCore::StringImpl::sharedBuffer):
+        (WebCore::equal):
+        * wtf/text/StringImpl.h:
+        (WebCore::StringImpl::StringImpl):
+        (WebCore::StringImpl::create):
+        (WebCore::StringImpl::tryCreateUninitialized):
+        (WebCore::StringImpl::cost):
+        (WebCore::StringImpl::isIdentifier):
+        (WebCore::StringImpl::setIsIdentifier):
+        (WebCore::StringImpl::computeHash):
+        (WebCore::StringImpl::copyChars):
+        (WebCore::StringImpl::):
+
 2010-04-21  Patrick Gansterer  <paroga@paroga.com>
 
         Reviewed by Darin Adler.

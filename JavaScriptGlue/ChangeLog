@@ -1,5 +1,15 @@
 2010-04-20  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Oliver Hunt, Darin Adler.
+
+        Bug 37906 - Remove JSC::UStringImpl; unify with StringImpl.
+        Add forwarding header.
+
+        * ForwardingHeaders/wtf/ASCIICType.h: Added.
+        * ForwardingHeaders/wtf/text/StringImpl.h: Added.
+
+2010-04-20  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Bug 37895 - Share common code from UStringImplBase with StringImpl

@@ -209,7 +209,6 @@
 		868BFA60117D048200B908B1 /* StaticConstructors.h in Headers */ = {isa = PBXBuildFile; fileRef = 868BFA5F117D048200B908B1 /* StaticConstructors.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8698B86910D44D9400D8D01B /* StringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 8698B86810D44D9400D8D01B /* StringBuilder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8698BB3910D86BAF00D8D01B /* UStringImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 8698BB3710D86BAF00D8D01B /* UStringImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		8698BB3A10D86BAF00D8D01B /* UStringImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8698BB3810D86BAF00D8D01B /* UStringImpl.cpp */; };
 		869EBCB70E8C6D4A008722CC /* ResultType.h in Headers */ = {isa = PBXBuildFile; fileRef = 869EBCB60E8C6D4A008722CC /* ResultType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86A90ED00EE7D51F00AB350D /* JITArithmetic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86A90ECF0EE7D51F00AB350D /* JITArithmetic.cpp */; };
 		86ADD1450FDDEA980006EEC2 /* ARMv7Assembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 86ADD1430FDDEA980006EEC2 /* ARMv7Assembler.h */; };
@@ -752,7 +751,6 @@
 		868BFA5F117D048200B908B1 /* StaticConstructors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StaticConstructors.h; sourceTree = "<group>"; };
 		8698B86810D44D9400D8D01B /* StringBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringBuilder.h; sourceTree = "<group>"; };
 		8698BB3710D86BAF00D8D01B /* UStringImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UStringImpl.h; sourceTree = "<group>"; };
-		8698BB3810D86BAF00D8D01B /* UStringImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UStringImpl.cpp; sourceTree = "<group>"; };
 		869EBCB60E8C6D4A008722CC /* ResultType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResultType.h; sourceTree = "<group>"; };
 		86A90ECF0EE7D51F00AB350D /* JITArithmetic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITArithmetic.cpp; sourceTree = "<group>"; };
 		86ADD1430FDDEA980006EEC2 /* ARMv7Assembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARMv7Assembler.h; sourceTree = "<group>"; };
@@ -1664,7 +1662,6 @@
 				5D53726E0E1C54880021E549 /* Tracing.h */,
 				F692A8850255597D01FF60F7 /* UString.cpp */,
 				F692A8860255597D01FF60F7 /* UString.h */,
-				8698BB3810D86BAF00D8D01B /* UStringImpl.cpp */,
 				8698BB3710D86BAF00D8D01B /* UStringImpl.h */,
 				14BFCE6810CDB1FC00364CCE /* WeakGCMap.h */,
 				14035DB010DBFB2A00FFFFE7 /* WeakGCPtr.h */,
@@ -2531,7 +2528,6 @@
 				14A42E3F0F4F60EE00599099 /* TimeoutChecker.cpp in Sources */,
 				0B330C270F38C62300692DE3 /* TypeTraits.cpp in Sources */,
 				14469DEE107EC7E700650446 /* UString.cpp in Sources */,
-				8698BB3A10D86BAF00D8D01B /* UStringImpl.cpp in Sources */,
 				E1EF79AA0CE97BA60088D500 /* UTF8.cpp in Sources */,
 				86565742115BE3DA00291F40 /* CString.cpp in Sources */,
 				A7482B9411671147003B0712 /* JSWeakObjectMapRefPrivate.cpp in Sources */,

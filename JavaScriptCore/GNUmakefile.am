@@ -518,7 +518,6 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/Tracing.h \
 	JavaScriptCore/runtime/UString.cpp \
 	JavaScriptCore/runtime/UString.h \
-	JavaScriptCore/runtime/UStringImpl.cpp \
 	JavaScriptCore/runtime/UStringImpl.h \
 	JavaScriptCore/runtime/WeakRandom.h \
 	JavaScriptCore/wtf/FastAllocBase.h \

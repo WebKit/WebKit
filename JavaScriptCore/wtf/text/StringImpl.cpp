@@ -30,6 +30,10 @@
 #include "StringHash.h"
 #include <wtf/StdLibExtras.h>
 
+#if USE(JSC)
+#include "Identifier.h"
+#endif
+
 using namespace WTF;
 using namespace Unicode;
 
@@ -43,6 +47,10 @@ StringImpl::~StringImpl()
 
     if (inTable())
         AtomicString::remove(this);
+#if USE(JSC)
+    if (isIdentifier())
+        JSC::Identifier::remove(this);
+#endif
 
     BufferOwnership ownership = bufferOwnership();
     if (ownership != BufferInternal) {
@@ -50,6 +58,9 @@ StringImpl::~StringImpl()
             ASSERT(!m_sharedBuffer);
             ASSERT(m_data);
             fastFree(const_cast<UChar*>(m_data));
+        } else if (ownership == BufferSubstring) {
+            ASSERT(m_substringBuffer);
+            m_substringBuffer->deref();
         } else {
             ASSERT(ownership == BufferShared);
             ASSERT(m_sharedBuffer);
@@ -60,10 +71,15 @@ StringImpl::~StringImpl()
 
 StringImpl* StringImpl::empty()
 {
-    // A non-null pointer at an invalid address (in page zero) so that if it were to be accessed we
-    // should catch the error with fault (however it should be impossible to access, since length is zero).
-    static const UChar* invalidNonNullUCharPtr = reinterpret_cast<UChar*>(static_cast<intptr_t>(1));
-    DEFINE_STATIC_LOCAL(StringImpl, emptyString, (invalidNonNullUCharPtr, 0, ConstructStaticString));
+    // FIXME: This works around a bug in our port of PCRE, that a regular expression
+    // run on the empty string may still perform a read from the first element, and
+    // as such we need this to be a valid pointer. No code should ever be reading
+    // from a zero length string, so this should be able to be a non-null pointer
+    // into the zero-page.
+    // Replace this with 'reinterpret_cast<UChar*>(static_cast<intptr_t>(1))' once
+    // PCRE goes away.
+    static UChar emptyUCharData = 0;
+    DEFINE_STATIC_LOCAL(StringImpl, emptyString, (&emptyUCharData, 0, ConstructStaticString));
     return &emptyString;
 }
 
@@ -136,6 +152,8 @@ SharedUChar* StringImpl::sharedBuffer()
 
     if (ownership == BufferInternal)
         return 0;
+    if (ownership == BufferSubstring)
+        return m_substringBuffer->sharedBuffer();
     if (ownership == BufferOwned) {
         ASSERT(!m_sharedBuffer);
         m_sharedBuffer = SharedUChar::create(new SharableUChar(m_data)).releaseRef();
@@ -782,12 +800,12 @@ PassRefPtr<StringImpl> StringImpl::replace(StringImpl* pattern, StringImpl* repl
     return newImpl;
 }
 
-bool equal(StringImpl* a, StringImpl* b)
+bool equal(const StringImpl* a, const StringImpl* b)
 {
     return StringHash::equal(a, b);
 }
 
-bool equal(StringImpl* a, const char* b)
+bool equal(const StringImpl* a, const char* b)
 {
     if (!a)
         return !b;

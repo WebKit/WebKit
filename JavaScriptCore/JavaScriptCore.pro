@@ -187,7 +187,6 @@ SOURCES += \
     runtime/Structure.cpp \
     runtime/TimeoutChecker.cpp \
     runtime/UString.cpp \
-    runtime/UStringImpl.cpp \
     wtf/Assertions.cpp \
     wtf/ByteArray.cpp \
     wtf/CurrentTime.cpp \

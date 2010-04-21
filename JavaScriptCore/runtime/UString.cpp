@@ -587,20 +587,6 @@ int compare(const UString& s1, const UString& s2)
     return (l1 > l2) ? 1 : -1;
 }
 
-bool equal(const UString::Rep* r, const UString::Rep* b)
-{
-    unsigned length = r->length();
-    if (length != b->length())
-        return false;
-    const UChar* d = r->characters();
-    const UChar* s = b->characters();
-    for (unsigned i = 0; i != length; ++i) {
-        if (d[i] != s[i])
-            return false;
-    }
-    return true;
-}
-
 CString UString::UTF8String(bool strict) const
 {
     // Allocate a buffer big enough to hold all the characters.

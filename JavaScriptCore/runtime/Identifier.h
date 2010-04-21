@@ -77,7 +77,7 @@ namespace JSC {
 
         static bool equal(const UString::Rep*, const char*);
         static bool equal(const UString::Rep*, const UChar*, unsigned length);
-        static bool equal(const UString::Rep* a, const UString::Rep* b) { return JSC::equal(a, b); }
+        static bool equal(const UString::Rep* a, const UString::Rep* b) { return ::equal(a, b); }
 
         static PassRefPtr<UString::Rep> add(ExecState*, const char*); // Only to be used with string literals.
         static PassRefPtr<UString::Rep> add(JSGlobalData*, const char*); // Only to be used with string literals.

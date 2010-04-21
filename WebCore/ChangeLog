@@ -1,3 +1,13 @@
+2010-04-20  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt, Darin Adler.
+
+        Bug 37906 - Remove JSC::UStringImpl; unify with StringImpl.
+        Add include for StringHash.h.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/c/c_class.cpp:
+
 2010-04-21  Alexey Proskuryakov  <ap@apple.com>
 
         Tiger build fix.

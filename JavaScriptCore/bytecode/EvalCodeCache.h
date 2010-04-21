@@ -37,6 +37,7 @@
 #include "UString.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/StringHash.h>
 
 namespace JSC {
 

@@ -33,6 +33,7 @@
 #include "JSClassRef.h"
 #include "JSGlobalObject.h"
 #include "JSObject.h"
+#include <wtf/text/StringHash.h>
 
 #if OS(DARWIN)
 #include <mach-o/dyld.h>

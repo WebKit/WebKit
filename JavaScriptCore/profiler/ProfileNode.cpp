@@ -32,6 +32,7 @@
 #include "Profiler.h"
 #include <stdio.h>
 #include <wtf/DateMath.h>
+#include <wtf/text/StringHash.h>
 
 #if OS(WINDOWS)
 #include <windows.h>

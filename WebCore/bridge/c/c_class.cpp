@@ -34,6 +34,7 @@
 #include "npruntime_impl.h"
 #include <runtime/Identifier.h>
 #include <runtime/JSLock.h>
+#include <wtf/text/StringHash.h>
 
 namespace JSC { namespace Bindings {
 
