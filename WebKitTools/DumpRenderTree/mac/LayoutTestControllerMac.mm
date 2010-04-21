@@ -192,6 +192,12 @@ JSRetainPtr<JSStringRef> LayoutTestController::layerTreeAsText() const
     return string;
 }
 
+JSRetainPtr<JSStringRef> LayoutTestController::markerTextForListItem(JSContextRef context, JSValueRef nodeObject) const
+{
+    // FIXME: Implement me.
+    return JSRetainPtr<JSStringRef>();
+}
+
 int LayoutTestController::pageNumberForElementById(JSStringRef id, float pageWidthInPixels, float pageHeightInPixels)
 {
     RetainPtr<CFStringRef> idCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, id));

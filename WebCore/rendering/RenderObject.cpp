@@ -257,14 +257,6 @@ bool RenderObject::isHTMLMarquee() const
     return node() && node()->renderer() == this && node()->hasTagName(marqueeTag);
 }
 
-static void updateListMarkerNumbers(RenderObject* child)
-{
-    for (RenderObject* sibling = child; sibling; sibling = sibling->nextSibling()) {
-        if (sibling->isListItem())
-            toRenderListItem(sibling)->updateValue();
-    }
-}
-
 void RenderObject::addChild(RenderObject* newChild, RenderObject* beforeChild)
 {
     RenderObjectChildList* children = virtualChildren();
@@ -274,9 +266,7 @@ void RenderObject::addChild(RenderObject* newChild, RenderObject* beforeChild)
 
     bool needsTable = false;
 
-    if (newChild->isListItem())
-        updateListMarkerNumbers(beforeChild ? beforeChild : children->lastChild());
-    else if (newChild->isTableCol() && newChild->style()->display() == TABLE_COLUMN_GROUP)
+    if (newChild->isTableCol() && newChild->style()->display() == TABLE_COLUMN_GROUP)
         needsTable = !isTable();
     else if (newChild->isRenderBlock() && newChild->style()->display() == TABLE_CAPTION)
         needsTable = !isTable();

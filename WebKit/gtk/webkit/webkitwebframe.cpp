@@ -47,8 +47,10 @@
 #include "GtkVersioning.h"
 #include "HTMLFrameOwnerElement.h"
 #include "JSDOMWindow.h"
+#include "JSElement.h"
 #include "JSLock.h"
 #include "PrintContext.h"
+#include "RenderListItem.h"
 #include "RenderView.h"
 #include "RenderTreeAsText.h"
 #include "JSDOMBinding.h"
@@ -1041,6 +1043,16 @@ bool webkit_web_frame_pause_svg_animation(WebKitWebFrame* frame, const gchar* an
 #else
     return false;
 #endif
+}
+
+gchar* webkit_web_frame_marker_text_for_list_item(WebKitWebFrame* frame, JSContextRef context, JSValueRef nodeObject)
+{
+    JSC::ExecState* exec = toJS(context);
+    Element* element = toElement(toJS(exec, nodeObject));
+    if (!element)
+        return 0;
+
+    return g_strdup(markerTextForListItem(element).utf8().data());
 }
 
 unsigned int webkit_web_frame_number_of_active_animations(WebKitWebFrame* frame)

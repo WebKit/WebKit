@@ -1,3 +1,14 @@
+2010-04-21  Jakub Wieczorek  <jwieczorek@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        List item markers are not always updated after changes in the DOM.
+        https://bugs.webkit.org/show_bug.cgi?id=37060
+
+        * Api/qwebelement.h: Make DumpRenderTreeSupportQt a friend class.
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::markerTextForListItem): Add a private API to get the marker text for a list item.
+
 2010-04-21  Yi Shen  <yi.4.shen@nokia.com>
 
         Reviewed by Simon Hausmann.

@@ -1,3 +1,29 @@
+2010-04-21  Jakub Wieczorek  <jwieczorek@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        List item markers are not always updated after changes in the DOM.
+        https://bugs.webkit.org/show_bug.cgi?id=37060
+
+        * fast/lists/dump-list.js:
+        (indent):
+        (dumpListHelper): A recursive function to dump nested lists.
+        (dumpList): A function that dumps a readable plain text representation of a list.
+        * fast/lists/ol-nested-items-dynamic-insert-expected.txt: Added.
+        * fast/lists/ol-nested-items-dynamic-insert.html: Added.
+        * fast/lists/ol-nested-items-dynamic-remove-expected.txt: Added.
+        * fast/lists/ol-nested-items-dynamic-remove.html: Added.
+        * fast/lists/ol-nested-items-expected.txt: Added.
+        * fast/lists/ol-nested-items.html: Added.
+        * fast/lists/ol-nested-list-dynamic-insert-expected.txt: Added.
+        * fast/lists/ol-nested-list-dynamic-insert.html: Added.
+        * fast/lists/ol-nested-list-dynamic-remove-expected.txt: Added.
+        * fast/lists/ol-nested-list-dynamic-remove.html: Added.
+        * fast/lists/ol-nested-list-expected.txt: Added.
+        * fast/lists/ol-nested-list.html: Added.
+        * platform/mac/Skipped: Skip the tests until this port implements the new LayoutTestController function.
+        * platform/win/Skipped: Skip the tests until this port implements the new LayoutTestController function.
+
 2010-04-21  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] media/video-source-add-src.html was removed from tree

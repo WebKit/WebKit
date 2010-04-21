@@ -253,6 +253,8 @@ public:
     
     JSRetainPtr<JSStringRef> layerTreeAsText() const;
 
+    JSRetainPtr<JSStringRef> markerTextForListItem(JSContextRef context, JSValueRef nodeObject) const;
+
     static const unsigned maxViewWidth;
     static const unsigned maxViewHeight;
 

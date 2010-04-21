@@ -154,6 +154,7 @@ private:
 
     static QWebElement enclosingElement(WebCore::Node*);
 
+    friend class DumpRenderTreeSupportQt;
     friend class QWebFrame;
     friend class QWebElementCollection;
     friend class QWebHitTestResult;

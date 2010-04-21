@@ -1,3 +1,32 @@
+2010-04-21  Jakub Wieczorek  <jwieczorek@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        List item markers are not always updated after changes in the DOM.
+        https://bugs.webkit.org/show_bug.cgi?id=37060
+
+        In particular, they would not be updated when adding/removing an item
+        that is not a direct child of the list element.
+
+        Tests: fast/lists/ol-nested-items-dynamic-insert.html
+               fast/lists/ol-nested-items-dynamic-remove.html
+               fast/lists/ol-nested-items.html
+               fast/lists/ol-nested-list-dynamic-insert.html
+               fast/lists/ol-nested-list-dynamic-remove.html
+               fast/lists/ol-nested-list.html
+
+        * rendering/RenderListItem.cpp:
+        (WebCore::updateListMarkerNumbers): Change it to traverse the whole subtree of a list, not only siblings of an item.
+        * rendering/RenderListItem.h:
+        * rendering/RenderObject.cpp: Move the updateListMarkerNumbers function to RenderListItem.cpp.
+        (WebCore::RenderObject::addChild): Move the code updating list markers to RenderObjectChildList for consistency.
+        * rendering/RenderObjectChildList.cpp: Move the updateListMarkerNumbers function to RenderListItem.cpp.
+        (WebCore::RenderObjectChildList::removeChildNode): Pass the actual node being removed, not the next sibling.
+        (WebCore::RenderObjectChildList::appendChildNode): Pass the actual node being added, not the next sibling.
+        (WebCore::RenderObjectChildList::insertChildNode): Pass the actual node being added, not the next sibling.
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::markerTextForListItem):
+
 2010-04-21  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Adam Barth.

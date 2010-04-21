@@ -1,3 +1,25 @@
+2010-04-21  Jakub Wieczorek  <jwieczorek@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        List item markers are not always updated after changes in the DOM.
+        https://bugs.webkit.org/show_bug.cgi?id=37060
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (markerTextForListItemCallback): A function that returns the marker text for a given list item.
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::markerTextForListItem): Implement it in the GTK port.
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::markerTextForListItem): Add a stub.
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::markerTextForListItem): Implement it in the Qt port.
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::markerTextForListItem): Add a stub.
+
 2010-04-21  Adam Roben  <aroben@apple.com>
 
         Exclude leaks in CGGradientCreateWithColorComponents from

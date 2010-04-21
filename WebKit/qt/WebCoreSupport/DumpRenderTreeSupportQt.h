@@ -25,6 +25,8 @@
 
 #include "qwebkitglobal.h"
 
+#include "qwebelement.h"
+
 class QWebPage;
 class QWebFrame;
 
@@ -78,6 +80,8 @@ public:
     static void resetOriginAccessWhiteLists();
 
     static int workerThreadCount();
+
+    static QString markerTextForListItem(const QWebElement& listItem);
 };
 
 #endif

@@ -58,6 +58,7 @@ gchar* webkit_web_frame_counter_value_for_element_by_id(WebKitWebFrame* frame, c
 int webkit_web_frame_page_number_for_element_by_id(WebKitWebFrame* frame, const gchar* id, float pageWidth, float pageHeight);
 int webkit_web_frame_number_of_pages(WebKitWebFrame* frame, float pageWidth, float pageHeight);
 void webkit_web_inspector_execute_script(WebKitWebInspector* inspector, long callId, const gchar* script);
+gchar* webkit_web_frame_marker_text_for_list_item(WebKitWebFrame* frame, JSContextRef context, JSValueRef nodeObject);
 }
 
 static gchar* copyWebSettingKey(gchar* preferenceKey)
@@ -662,4 +663,15 @@ void LayoutTestController::apiTestGoToCurrentBackForwardItem()
 
 void LayoutTestController::setWebViewEditable(bool)
 {
+}
+
+JSRetainPtr<JSStringRef> LayoutTestController::markerTextForListItem(JSContextRef context, JSValueRef nodeObject) const
+{
+    gchar* markerTextGChar = webkit_web_frame_marker_text_for_list_item(mainFrame, context, nodeObject);
+    if (!markerTextGChar)
+        return 0;
+
+    JSRetainPtr<JSStringRef> markerText(Adopt, JSStringCreateWithUTF8CString(markerTextGChar));
+    g_free(markerTextGChar);
+    return markerText;
 }

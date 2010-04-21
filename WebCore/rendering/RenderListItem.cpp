@@ -355,4 +355,38 @@ void RenderListItem::clearExplicitValue()
     explicitValueChanged();
 }
 
+void RenderListItem::updateListMarkerNumbers()
+{
+    Node* listNode = enclosingList(this);
+    ASSERT(listNode && listNode->renderer());
+    if (!listNode || !listNode->renderer())
+        return;
+
+    RenderObject* list = listNode->renderer();
+    RenderObject* child = nextInPreOrder(list);
+    while (child) {
+        if (child->node() && isList(child->node())) {
+            // We've found a nested, independent list: nothing to do here.
+            child = child->nextInPreOrderAfterChildren(list);
+            continue;
+        }
+
+        if (child->isListItem()) {
+            RenderListItem* item = toRenderListItem(child);
+
+            if (!item->m_isValueUpToDate) {
+                // If an item has been marked for update before, we can safely
+                // assume that all the following ones have too.
+                // This gives us the opportunity to stop here and avoid
+                // marking the same nodes again.
+                break;
+            }
+
+            item->updateValue();
+        }
+
+        child = child->nextInPreOrder(list);
+    }
+}
+
 } // namespace WebCore

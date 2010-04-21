@@ -51,6 +51,7 @@ LayoutTestController::LayoutTestController(WebCore::DumpRenderTree* drt)
     : QObject()
     , m_drt(drt)
 {
+    qRegisterMetaType<QWebElement>("QWebElement");
     reset();
     qt_dump_notification(true);
 }
@@ -607,6 +608,11 @@ void LayoutTestController::execCommand(const QString& name, const QString& value
 bool LayoutTestController::isCommandEnabled(const QString& name) const
 {
     return DumpRenderTreeSupportQt::isCommandEnabled(m_drt->webPage(), name);
+}
+
+QString LayoutTestController::markerTextForListItem(const QWebElement& listItem)
+{
+    return DumpRenderTreeSupportQt::markerTextForListItem(listItem);
 }
 
 const unsigned LayoutTestController::maxViewWidth = 800;

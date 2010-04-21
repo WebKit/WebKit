@@ -37,6 +37,7 @@
 #include "PageGroup.h"
 #include "PluginDatabase.h"
 #include "PrintContext.h"
+#include "RenderListItem.h"
 #include "RenderTreeAsText.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
@@ -363,4 +364,9 @@ void DumpRenderTreeSupportQt::executeCoreCommandByName(QWebPage* page, const QSt
 bool DumpRenderTreeSupportQt::isCommandEnabled(QWebPage* page, const QString& name)
 {
     return page->handle()->page->focusController()->focusedOrMainFrame()->editor()->command(name).isEnabled();
+}
+
+QString DumpRenderTreeSupportQt::markerTextForListItem(const QWebElement& listItem)
+{
+    return WebCore::markerTextForListItem(listItem.m_element);
 }

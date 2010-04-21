@@ -46,6 +46,8 @@ public:
 
     const String& markerText() const;
 
+    void updateListMarkerNumbers();
+
 private:
     virtual const char* renderName() const { return "RenderListItem"; }
 
