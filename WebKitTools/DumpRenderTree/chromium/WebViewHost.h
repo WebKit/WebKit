@@ -31,6 +31,7 @@
 #ifndef WebViewHost_h
 #define WebViewHost_h
 
+#include "MockSpellCheck.h"
 #include "TestNavigationController.h"
 #include "public/WebCursorInfo.h"
 #include "public/WebFrameClient.h"
@@ -255,6 +256,9 @@ private:
     // Edit command associated to the current keyboard event.
     std::string m_editCommandName;
     std::string m_editCommandValue;
+
+    // The mock spellchecker used in spellCheck().
+    MockSpellCheck m_spellcheck;
 
     // Painting.
     OwnPtr<skia::PlatformCanvas> m_canvas;

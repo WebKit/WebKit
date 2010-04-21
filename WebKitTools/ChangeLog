@@ -1,3 +1,23 @@
+2010-04-21  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        [DRT/Chromium] Import MockSpellCheck from Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=37910
+
+        Import webkit/tools/test_shell/mock_spellcheck.{cc,h} rev.37241 of Chromium.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+          Add ICU explicitly because WTFString.h includes ICU headers.
+          Add MockSpellCheck.{cpp,h}.
+        * DumpRenderTree/chromium/MockSpellCheck.cpp: Added.
+        * DumpRenderTree/chromium/MockSpellCheck.h: Added.
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::spellCheck):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        * DumpRenderTree/chromium/config.h: Define JS_EXPORTDATA, which is used
+          by wtf/text/AtomicString.h included by wtf/text/WTFString.h.
+
 2010-04-21  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

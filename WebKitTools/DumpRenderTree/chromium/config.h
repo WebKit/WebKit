@@ -44,4 +44,11 @@
 
 #include <wtf/Platform.h>
 
+// JS_EXPORTDATA is needed to inlucde wtf/WTFString.h.
+#if OS(WINDOWS) && !COMPILER(GCC)
+#define JS_EXPORTDATA __declspec(dllimport)
+#else
+#define JS_EXPORTDATA
+#endif
+
 #endif // config_h

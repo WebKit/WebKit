@@ -76,6 +76,7 @@
             'dependencies': [
                 '<(webkit_api_dir)/WebKit.gyp:webkit',
                 '<(webkit_top)/JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf_config',
+                '<(chromium_src_dir)/third_party/icu/icu.gyp:icuuc',
                 '<(chromium_src_dir)/third_party/npapi/npapi.gyp:npapi',
                 '<(chromium_src_dir)/skia/skia.gyp:skia',
                 '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support',
@@ -106,6 +107,8 @@
                 '../chromium/EventSender.h',
                 '../chromium/LayoutTestController.cpp',
                 '../chromium/LayoutTestController.h',
+                '../chromium/MockSpellCheck.cpp',
+                '../chromium/MockSpellCheck.h',
                 '../chromium/PlainTextController.cpp',
                 '../chromium/PlainTextController.h',
                 '../chromium/TestNavigationController.cpp',
