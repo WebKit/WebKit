@@ -1,5 +1,15 @@
 2010-04-21  Jakub Wieczorek  <jwieczorek@webkit.org>
 
+        Unreviewed.
+
+        Skip the new fast/lists tests on Mac and Windows until these ports
+        implement LayoutTestController::markerTextForListItem().
+
+        * platform/mac/Skipped:
+        * platform/win/Skipped:
+
+2010-04-21  Jakub Wieczorek  <jwieczorek@webkit.org>
+
         Reviewed by Darin Adler.
 
         List item markers are not always updated after changes in the DOM.
