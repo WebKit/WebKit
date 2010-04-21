@@ -145,7 +145,7 @@ class SCM:
         return filenames
 
     def strip_r_from_svn_revision(self, svn_revision):
-        match = re.match("^r(?P<svn_revision>\d+)", svn_revision)
+        match = re.match("^r(?P<svn_revision>\d+)", unicode(svn_revision))
         if (match):
             return match.group('svn_revision')
         return svn_revision
@@ -344,7 +344,7 @@ class SVN(SCM):
 
     def changed_files_for_revision(self, revision):
         # As far as I can tell svn diff --summarize output looks just like svn status output.
-        status_command = ["svn", "diff", "--summarize", "-c", str(revision)]
+        status_command = ["svn", "diff", "--summarize", "-c", revision]
         return self.run_status_and_extract_filenames(status_command, self._status_regexp("ACDMR"))
 
     def conflicted_files(self):
@@ -361,18 +361,18 @@ class SVN(SCM):
         return "svn"
 
     def create_patch(self):
-        return run_command(self.script_path("svn-create-patch"), cwd=self.checkout_root, return_stderr=False)
+        return run_command([self.script_path("svn-create-patch")], cwd=self.checkout_root, return_stderr=False)
 
     def committer_email_for_revision(self, revision):
-        return run_command(["svn", "propget", "svn:author", "--revprop", "-r", str(revision)]).rstrip()
+        return run_command(["svn", "propget", "svn:author", "--revprop", "-r", revision]).rstrip()
 
     def contents_at_revision(self, path, revision):
         remote_path = "%s/%s" % (self._repository_url(), path)
-        return run_command(["svn", "cat", "-r", str(revision), remote_path])
+        return run_command(["svn", "cat", "-r", revision, remote_path])
 
     def diff_for_revision(self, revision):
         # FIXME: This should probably use cwd=self.checkout_root
-        return run_command(['svn', 'diff', '-c', str(revision)])
+        return run_command(['svn', 'diff', '-c', revision])
 
     def _repository_url(self):
         return self.value_from_svn_info(self.checkout_root, 'URL')
@@ -405,7 +405,7 @@ class SVN(SCM):
         return run_command(svn_commit_args, error_handler=commit_error_handler)
 
     def svn_commit_log(self, svn_revision):
-        svn_revision = self.strip_r_from_svn_revision(str(svn_revision))
+        svn_revision = self.strip_r_from_svn_revision(svn_revision)
         return run_command(['svn', 'log', '--non-interactive', '--revision', svn_revision]);
 
     def last_svn_commit_log(self):

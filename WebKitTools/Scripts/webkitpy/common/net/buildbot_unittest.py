@@ -51,7 +51,7 @@ class BuilderTest(unittest.TestCase):
 
     def setUp(self):
         self.buildbot = BuildBot()
-        self.builder = Builder("Test Builder", self.buildbot)
+        self.builder = Builder(u"Test Builder \u2661", self.buildbot)
         self._install_fetch_build(lambda build_number: ["test1", "test2"])
 
     def test_find_failure_transition(self):

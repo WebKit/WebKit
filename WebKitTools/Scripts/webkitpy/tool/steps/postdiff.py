@@ -26,8 +26,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import StringIO
-
 from webkitpy.tool.steps.abstractstep import AbstractStep
 from webkitpy.tool.steps.options import Options
 
@@ -44,7 +42,6 @@ class PostDiff(AbstractStep):
 
     def run(self, state):
         diff = self.cached_lookup(state, "diff")
-        diff_file = StringIO.StringIO(diff) # add_patch_to_bug expects a file-like object
         description = self._options.description or "Patch"
         comment_text = None
         codereview_issue = state.get("codereview_issue")
@@ -52,6 +49,6 @@ class PostDiff(AbstractStep):
         # but it makes doing the rietveld integration a lot easier.
         if codereview_issue:
             description += "-%s" % state["codereview_issue"]
-        self._tool.bugs.add_patch_to_bug(state["bug_id"], diff_file, description, comment_text=comment_text, mark_for_review=self._options.review, mark_for_commit_queue=self._options.request_commit)
+        self._tool.bugs.add_patch_to_bug(state["bug_id"], diff, description, comment_text=comment_text, mark_for_review=self._options.review, mark_for_commit_queue=self._options.request_commit)
         if self._options.open_bug:
             self._tool.user.open_url(self._tool.bugs.bug_url_for_bug_id(state["bug_id"]))

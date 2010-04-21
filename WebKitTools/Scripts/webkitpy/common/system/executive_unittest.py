@@ -1,4 +1,4 @@
-# Copyright (C) 2009 Google Inc. All rights reserved.
+# Copyright (C) 2010 Google Inc. All rights reserved.
 # Copyright (C) 2009 Daniel Bates (dbates@intudata.com). All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,7 @@ import unittest
 
 from webkitpy.common.system.executive import Executive, run_command
 
+
 class ExecutiveTest(unittest.TestCase):
 
     def test_run_command_with_bad_command(self):
@@ -38,5 +39,26 @@ class ExecutiveTest(unittest.TestCase):
             run_command(["foo_bar_command_blah"], error_handler=Executive.ignore_error, return_exit_code=True)
         self.failUnlessRaises(OSError, run_bad_command)
 
-if __name__ == '__main__':
-    unittest.main()
+    def test_run_command_with_unicode(self):
+        """Validate that it is safe to pass unicode() objects
+        to Executive.run* methods, and they will return unicode()
+        objects by default unless decode_output=False"""
+        executive = Executive()
+        unicode_tor = u"WebKit \u2661 Tor Arne Vestb\u00F8!"
+        utf8_tor = unicode_tor.encode("utf-8")
+
+        output = executive.run_command(["cat"], input=unicode_tor)
+        self.assertEquals(output, unicode_tor)
+
+        output = executive.run_command(["echo", "-n", unicode_tor])
+        self.assertEquals(output, unicode_tor)
+
+        output = executive.run_command(["echo", "-n", unicode_tor], decode_output=False)
+        self.assertEquals(output, utf8_tor)
+
+        # FIXME: We should only have one run* method to test
+        output = executive.run_and_throw_if_fail(["echo", "-n", unicode_tor], quiet=True)
+        self.assertEquals(output, unicode_tor)
+
+        output = executive.run_and_throw_if_fail(["echo", "-n", unicode_tor], quiet=True, decode_output=False)
+        self.assertEquals(output, utf8_tor)

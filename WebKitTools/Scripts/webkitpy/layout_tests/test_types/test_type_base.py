@@ -32,6 +32,9 @@
 Also defines the TestArguments "struct" to pass them additional arguments.
 """
 
+from __future__ import with_statement
+
+import codecs
 import cgi
 import errno
 import logging
@@ -150,10 +153,11 @@ class TestTypeBase(object):
         """
         raise NotImplemented
 
-    def _write_into_file_at_path(self, file_path, contents):
-        file = open(file_path, "wb")
-        file.write(contents)
-        file.close()
+    def _write_into_file_at_path(self, file_path, byte_array):
+        """This method assumes that byte_array is already encoded
+        into the right format."""
+        with open(file_path, "wb") as file:
+            file.write(byte_array)
 
     def write_output_files(self, port, filename, file_type,
                            output, expected, print_text_diffs=False):
@@ -188,14 +192,14 @@ class TestTypeBase(object):
 
         diff = port.diff_text(expected, output, expected_filename, actual_filename)
         diff_filename = self.output_filename(filename, self.FILENAME_SUFFIX_DIFF + file_type)
-        self._write_into_file_at_path(diff_filename, diff)
+        self._write_into_file_at_path(diff_filename, diff.encode("utf-8"))
 
         # Shell out to wdiff to get colored inline diffs.
         wdiff = port.wdiff_text(expected_filename, actual_filename)
         wdiff_filename = self.output_filename(filename, self.FILENAME_SUFFIX_WDIFF)
-        self._write_into_file_at_path(wdiff_filename, wdiff)
+        self._write_into_file_at_path(wdiff_filename, wdiff.encode("utf-8"))
 
         # Use WebKit's PrettyPatch.rb to get an HTML diff.
         pretty_patch = port.pretty_patch_text(diff_filename)
         pretty_patch_filename = self.output_filename(filename, self.FILENAME_SUFFIX_PRETTY_PATCH)
-        self._write_into_file_at_path(pretty_patch_filename, pretty_patch)
+        self._write_into_file_at_path(pretty_patch_filename, pretty_patch.encode("utf-8"))

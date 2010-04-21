@@ -29,6 +29,10 @@
 
 """A class to start/stop the apache http server used by layout tests."""
 
+
+from __future__ import with_statement
+
+import codecs
 import logging
 import optparse
 import os
@@ -151,7 +155,9 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         """
         httpd_config = self._port_obj._path_to_apache_config_file()
         httpd_config_copy = os.path.join(output_dir, "httpd.conf")
-        httpd_conf = open(httpd_config).read()
+        # httpd.conf is always utf-8 according to http://archive.apache.org/gnats/10125
+        with codecs.open(httpd_config, "r", "utf-8") as httpd_config_file:
+            httpd_conf = httpd_config_file.read()
         if self._is_cygwin():
             # This is a gross hack, but it lets us use the upstream .conf file
             # and our checked in cygwin. This tells the server the root
@@ -164,9 +170,8 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
             httpd_conf = httpd_conf.replace('ServerRoot "/usr"',
                 'ServerRoot "%s"' % self._get_cygwin_path(cygusr))
 
-        f = open(httpd_config_copy, 'wb')
-        f.write(httpd_conf)
-        f.close()
+        with codecs.open(httpd_config_copy, "w", "utf-8") as file:
+            file.write(httpd_conf)
 
         if self._is_cygwin():
             return self._get_cygwin_path(httpd_config_copy)

@@ -1,3 +1,135 @@
+2010-04-21  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        REGRESSION(57531): the commit-queue still hates Tor Arne Vestbø
+        https://bugs.webkit.org/show_bug.cgi?id=37765
+
+        I fixed the queue to not ignore Tor as a reviwer in r57531,
+        but instead it throws an exception every time his name is in a patch.
+
+        This fixes our Executive.run_command code to work around a Popen
+        bug http://bugs.python.org/issue5290 whereby python versions before 2.6
+        do not correctly handle unicode objects as input or output to
+        Popen.communicate.
+
+        Following the advice of:
+        http://farmdev.com/talks/unicode/
+        I have changed all of webkitpy to use unicode() objects as strings
+        instead of str objects (which in Python 3 are renamed "bytes").
+
+        String literals were left as "foo" instead of converting to u"foo"
+        as u"foo" is only required if the string has a non-ascii code point.
+        Python is smart about comparing str() and unicode() values and will
+        log an error to the console if the comparison is ever invalid.
+
+        Executive.run* now correctly accept and return unicode() objects.
+        I attempted to fix all the places that we call .write() to make sure we
+        encode any unicode() objects into utf-8.
+
+        I removed several uses of StringIO.  StringIO should generally always be
+        passed a unicode() value.
+
+        Likewise I replaced most calls to open() with codecs.open().
+        codecs.open() matches Python 3 open semantics in requiring an encoding
+        parameter.  Files opened with codecs.open() with a unicode-compatible
+        encoding will vend unicode() objects from their read() calls, like how
+        StringIO created with a unicode() object will do.
+
+        I also deployed "with" statements wider (now that the project has
+        settled on Python 2.5) to close a bunch of file descriptor leaks.
+
+        * Scripts/webkitpy/common/checkout/api_unittest.py:
+         - Read/write utf-8 files instead of ascii.
+         - Update the tests to use test for proper unicode() handling.
+        * Scripts/webkitpy/common/checkout/changelog.py:
+         - Document that parse_latest_entry_from_file expects
+           file-like objects which return unicode strings.
+        * Scripts/webkitpy/common/checkout/changelog_unittest.py:
+         - Use unicode() strings instead of str() byte arrays.
+         - Deploy "with" to close file descriptor leaks.
+        * Scripts/webkitpy/common/checkout/commitinfo.py:
+         - Remove unneeded import.
+        * Scripts/webkitpy/common/checkout/scm.py:
+         - Remove use of str().
+        * Scripts/webkitpy/common/checkout/scm_unittest.py:
+         - Read/write utf-8 files and use unicode() strings in testing.
+        * Scripts/webkitpy/common/config/committers.py:
+         - Use \u instead of \x to make slightly clearer what we're doing.
+        * Scripts/webkitpy/common/net/bugzilla.py:
+         - Add a new _string_contents() method and explain why
+            we have to call unicode() on the result of soup.string
+            and why it's safe to do so w/o needing to pass a codec name.
+          - Remove the (unused) support for passing a file object to add_patch_to_bug().
+        * Scripts/webkitpy/common/net/buildbot.py:
+         - Use unicode() instead of str() when needing to coax a
+            NavigableString object into a unicode() object.
+        * Scripts/webkitpy/common/net/buildbot_unittest.py:
+         - Add a test which contains a unicode builder name.
+        * Scripts/webkitpy/common/net/statusserver.py:
+         - Remove use of str()
+        * Scripts/webkitpy/common/prettypatch.py:
+         - Write out the patch file as utf-8.
+        * Scripts/webkitpy/common/system/autoinstall.py:
+         - Write out files with a explicit encodings.
+         - Deploy "with" to close file descriptor leaks.
+        * Scripts/webkitpy/common/system/deprecated_logging.py:
+         - Write out log files as utf-8.
+        * Scripts/webkitpy/common/system/executive.py:
+         - Make run* properly take and return unicode() objects.
+         - Cleaned up input handling in run_command a little by adding
+           a _compute_input() method which can return early instead of having
+           such a long/cluttered if-block.
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+         - Added a unit test to make sure we don't break Tor again!
+        * Scripts/webkitpy/layout_tests/layout_package/dump_render_tree_thread.py:
+         - Write out the test list as utf-8.
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+         - Write out json files as utf-8.
+        * Scripts/webkitpy/layout_tests/port/apache_http_server.py:
+         - Deploy "with" to close file descriptor leaks.
+        * Scripts/webkitpy/layout_tests/port/chromium.py: Add Executive.py FIXME.
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py: ditto.
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py: ditto.
+        * Scripts/webkitpy/layout_tests/port/gtk.py: ditto.
+        * Scripts/webkitpy/layout_tests/port/mac.py: ditto.
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+         - Make the skipped file parsing test unicode.
+        * Scripts/webkitpy/layout_tests/port/qt.py: Add Executive.py FIXME.
+        * Scripts/webkitpy/layout_tests/port/server_process.py: ditto.
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+         - Deploy "with" to close file descriptor leaks.
+        * Scripts/webkitpy/layout_tests/port/websocket_server.py:
+         - Make explicit the encodings of log files and pid files.
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests.py:
+         - Make encodings explicit and deploy "with".
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py: ditto.
+        * Scripts/webkitpy/layout_tests/test_types/image_diff.py: ditto.
+        * Scripts/webkitpy/layout_tests/test_types/test_type_base.py: ditto.
+        * Scripts/webkitpy/layout_tests/test_types/text_diff.py: ditto.
+        * Scripts/webkitpy/style/filereader_unittest.py: ditto.
+        * Scripts/webkitpy/thirdparty/__init__.py: ditto.
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+         - Removed extra import.
+        * Scripts/webkitpy/tool/commands/queues.py:
+         - No need to map args to strings now that run_command does.
+         - Update test results to match args changes.
+         - Document our global argument hacks.
+        * Scripts/webkitpy/tool/commands/upload.py:
+         - Pass the diff directly to add_patch_to_bug instead of creating a StringIO file wrapper.
+        * Scripts/webkitpy/tool/mocktool.py:
+         - Rename add_patch_to_bug argument to match bugzilla.py
+        * Scripts/webkitpy/tool/steps/abstractstep.py:
+         - Executive.run_* now require lists instead of strings.
+           The lack of this change was what broke webkit-patch
+           for svn users the first time this was landed.
+        * Scripts/webkitpy/tool/steps/postdiff.py:
+         - Pass the diff directly to add_patch_to_bug instead of creating a StringIO file wrapper.
+        * Scripts/webkitpy/tool/steps/postdiffforcommit.py: ditto
+        * Scripts/webkitpy/tool/steps/postdiffforrevert.py: ditto
+        * Scripts/webkitpy/tool/steps/steps_unittest.py:
+         - Fixed spurious logging seen when running test-webkitpy
+
 2010-04-21  Kinuko Yasuda  <kinuko@chromium.org>
 
         Unreviewed.

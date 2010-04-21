@@ -367,9 +367,8 @@ class TestRunner:
                 files.extend(test_files[0:extra])
             tests_run_filename = os.path.join(self._options.results_directory,
                                               "tests_run.txt")
-            tests_run_file = open(tests_run_filename, "w")
-            tests_run_file.write(tests_run_msg + "\n")
-            tests_run_file.close()
+            with codecs.open(tests_run_filename, "w", "utf-8") as file:
+                file.write(tests_run_msg + "\n")
 
             len_skip_chunk = int(len(files) * len(skipped) /
                                  float(len(self._test_files)))
@@ -966,22 +965,19 @@ class TestRunner:
           individual_test_timings: list of test times (used by the flakiness
             dashboard).
         """
-        _log.debug("Writing JSON files in %s." %
-                   self._options.results_directory)
-        unexpected_file = open(os.path.join(self._options.results_directory,
-            "unexpected_results.json"), "w")
-        unexpected_file.write(simplejson.dumps(unexpected_results,
-                              sort_keys=True, indent=2))
-        unexpected_file.close()
+        results_directory = self._options.results_directory
+        _log.debug("Writing JSON files in %s." % results_directory)
+        unexpected_json_path = os.path.join(results_directory, "unexpected_results.json")
+        with codecs.open(unexpected_json_path, "w", "utf-8") as file:
+            simplejson.dump(unexpected_results, file, sort_keys=True, indent=2)
 
         # Write a json file of the test_expectations.txt file for the layout
         # tests dashboard.
-        expectations_file = open(os.path.join(self._options.results_directory,
-            "expectations.json"), "w")
+        expectations_path = os.path.join(results_directory, "expectations.json")
         expectations_json = \
             self._expectations.get_expectations_json_for_all_platforms()
-        expectations_file.write("ADD_EXPECTATIONS(" + expectations_json + ");")
-        expectations_file.close()
+        with codecs.open(expectations_path, "w", "utf-8") as file:
+            file.write(u"ADD_EXPECTATIONS(%s);" % expectations_json)
 
         json_layout_results_generator.JSONLayoutResultsGenerator(
             self._port, self._options.builder_name, self._options.build_name,
@@ -1392,7 +1388,9 @@ class TestRunner:
 
         out_filename = os.path.join(self._options.results_directory,
                                     "results.html")
-        out_file = open(out_filename, 'w')
+        # FIXME: This should be re-written to prepare the string first
+        # so that the "open" call can be wrapped in a with statement.
+        out_file = codecs.open(out_filename, "w", "utf-8")
         # header
         if self._options.full_results_html:
             h2 = "Test Failures"
@@ -1405,17 +1403,18 @@ class TestRunner:
         test_files.sort()
         for test_file in test_files:
             test_failures = result_summary.failures.get(test_file, [])
-            out_file.write("<p><a href='%s'>%s</a><br />\n"
+            out_file.write(u"<p><a href='%s'>%s</a><br />\n"
                            % (self._port.filename_to_uri(test_file),
                               self._port.relative_test_filename(test_file)))
             for failure in test_failures:
-                out_file.write("&nbsp;&nbsp;%s<br/>"
+                out_file.write(u"&nbsp;&nbsp;%s<br/>"
                                % failure.result_html_output(
                                  self._port.relative_test_filename(test_file)))
             out_file.write("</p>\n")
 
         # footer
         out_file.write("</body></html>\n")
+        out_file.close()
         return True
 
     def _show_results_html_file(self):
@@ -1432,7 +1431,8 @@ def _add_to_dict_of_lists(dict, key, value):
 def read_test_files(files):
     tests = []
     for file in files:
-        for line in open(file):
+        # FIXME: This could be cleaner using a list comprehension.
+        for line in codecs.open(file, "r", "utf-8"):
             line = test_expectations.strip_comments(line)
             if line:
                 tests.append(line)

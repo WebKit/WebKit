@@ -32,6 +32,7 @@
 
 import os.path
 import re
+import StringIO
 import subprocess
 
 from datetime import datetime # used in timestamp()
@@ -427,7 +428,16 @@ class Bugzilla(object):
             if flag['status'] == '+':
                 attachment[result_key] = flag['setter']
 
+    def _string_contents(self, soup):
+        # WebKit's bugzilla instance uses UTF-8.
+        # BeautifulSoup always returns Unicode strings, however
+        # the .string method returns a (unicode) NavigableString.
+        # NavigableString can confuse other parts of the code, so we
+        # convert from NavigableString to a real unicode() object using unicode().
+        return unicode(soup.string)
+
     def _parse_attachment_element(self, element, bug_id):
+
         attachment = {}
         attachment['bug_id'] = bug_id
         attachment['is_obsolete'] = (element.has_key('isobsolete') and element['isobsolete'] == "1")
@@ -435,9 +445,9 @@ class Bugzilla(object):
         attachment['id'] = int(element.find('attachid').string)
         # FIXME: No need to parse out the url here.
         attachment['url'] = self.attachment_url_for_id(attachment['id'])
-        attachment['name'] = unicode(element.find('desc').string)
-        attachment['attacher_email'] = str(element.find('attacher').string)
-        attachment['type'] = str(element.find('type').string)
+        attachment['name'] = self._string_contents(element.find('desc'))
+        attachment['attacher_email'] = self._string_contents(element.find('attacher'))
+        attachment['type'] = self._string_contents(element.find('type'))
         self._parse_attachment_flag(
                 element, 'review', attachment, 'reviewer_email')
         self._parse_attachment_flag(
@@ -448,10 +458,10 @@ class Bugzilla(object):
         soup = BeautifulSoup(page)
         bug = {}
         bug["id"] = int(soup.find("bug_id").string)
-        bug["title"] = unicode(soup.find("short_desc").string)
-        bug["reporter_email"] = str(soup.find("reporter").string)
-        bug["assigned_to_email"] = str(soup.find("assigned_to").string)
-        bug["cc_emails"] = [str(element.string)
+        bug["title"] = self._string_contents(soup.find("short_desc"))
+        bug["reporter_email"] = self._string_contents(soup.find("reporter"))
+        bug["assigned_to_email"] = self._string_contents(soup.find("assigned_to"))
+        bug["cc_emails"] = [self._string_contents(element)
                             for element in soup.findAll('cc')]
         bug["attachments"] = [self._parse_attachment_element(element, bug["id"]) for element in soup.findAll('attachment')]
         return bug
@@ -548,7 +558,7 @@ class Bugzilla(object):
 
     def _fill_attachment_form(self,
                               description,
-                              patch_file_object,
+                              diff,
                               comment_text=None,
                               mark_for_review=False,
                               mark_for_commit_queue=False,
@@ -568,6 +578,9 @@ class Bugzilla(object):
             patch_name = "bug-%s-%s.patch" % (bug_id, timestamp())
         else:
             patch_name ="%s.patch" % timestamp()
+
+        # ClientForm expects a file-like object
+        patch_file_object = StringIO.StringIO(diff.encode("utf-8"))
         self.browser.add_file(patch_file_object,
                               "text/plain",
                               patch_name,
@@ -575,7 +588,7 @@ class Bugzilla(object):
 
     def add_patch_to_bug(self,
                          bug_id,
-                         patch_file_object,
+                         diff,
                          description,
                          comment_text=None,
                          mark_for_review=False,
@@ -594,8 +607,9 @@ class Bugzilla(object):
         self.browser.open("%sattachment.cgi?action=enter&bugid=%s" % (
                           self.bug_server_url, bug_id))
         self.browser.select_form(name="entryform")
+
         self._fill_attachment_form(description,
-                                   patch_file_object,
+                                   diff,
                                    mark_for_review=mark_for_review,
                                    mark_for_commit_queue=mark_for_commit_queue,
                                    mark_for_landing=mark_for_landing,
@@ -628,7 +642,7 @@ class Bugzilla(object):
                    bug_title,
                    bug_description,
                    component=None,
-                   patch_file_object=None,
+                   diff=None,
                    patch_description=None,
                    cc=None,
                    blocked=None,
@@ -653,14 +667,14 @@ class Bugzilla(object):
         if cc:
             self.browser["cc"] = cc
         if blocked:
-            self.browser["blocked"] = str(blocked)
+            self.browser["blocked"] = unicode(blocked)
         self.browser["short_desc"] = bug_title
         self.browser["comment"] = bug_description
 
-        if patch_file_object:
+        if diff:
             self._fill_attachment_form(
                     patch_description,
-                    patch_file_object,
+                    diff,
                     mark_for_review=mark_for_review,
                     mark_for_commit_queue=mark_for_commit_queue)
 

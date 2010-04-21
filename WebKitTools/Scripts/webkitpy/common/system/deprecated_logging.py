@@ -30,24 +30,30 @@
 # WebKit's Python module for logging
 # This module is now deprecated in favor of python's built-in logging.py.
 
+import codecs
 import os
 import sys
+
 
 def log(string):
     print >> sys.stderr, string
 
+
 def error(string):
     log("ERROR: %s" % string)
     exit(1)
+
 
 # Simple class to split output between multiple destinations
 class tee:
     def __init__(self, *files):
         self.files = files
 
-    def write(self, string):
+    # Callers should pass an already encoded string for writing.
+    def write(self, bytes):
         for file in self.files:
-            file.write(string)
+            file.write(bytes)
+
 
 class OutputTee:
     def __init__(self):
@@ -71,7 +77,7 @@ class OutputTee:
         (log_directory, log_name) = os.path.split(log_path)
         if log_directory and not os.path.exists(log_directory):
             os.makedirs(log_directory)
-        return open(log_path, 'a+')
+        return codecs.open(log_path, "a+", "utf-8")
 
     def _tee_outputs_to_files(self, files):
         if not self._original_stdout:
