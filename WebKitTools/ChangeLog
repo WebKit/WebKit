@@ -1,3 +1,30 @@
+2010-04-19  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        new-run-webkit-tests has much higher startup latency than run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=37643
+
+        I got rid of the -expected.checksum reads during startup.
+        This makes startup noticably better on my laptop.
+
+        * Scripts/webkitpy/layout_tests/layout_package/dump_render_tree_thread.py:
+         - Use image_hash() instead of .image_hash now that expected.checksum
+           file reads are done lazily.
+        * Scripts/webkitpy/layout_tests/port/http_server_base.py:
+         - Add debug logging for this sleep call.
+           In my testing I never saw this sleep() hit.
+        * Scripts/webkitpy/layout_tests/port/websocket_server.py:
+         - Sleep a shorter interval to make websocket server
+           startup more responsive.  On my machine startup was
+           taking around 1 second.
+         - Remove the unconditional .5s delay on startup.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+         - Make image_hash file reads done lazily in a new image_hash() function.
+         - Add a "Starting testing ..." meter update after DRT threads have
+           been started, but before we get updates from the first one.
+         - Rename variable "t" to a full english name to match WebKit style.
+
 2010-04-20  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Eric Seidel.

@@ -44,6 +44,9 @@ directory.  Entire lines starting with '//' (comments) will be ignored.
 For details of the files' contents and purposes, see test_lists/README.
 """
 
+from __future__ import with_statement
+
+import codecs
 import errno
 import glob
 import logging
@@ -122,13 +125,27 @@ class TestInfo:
         self.filename = filename
         self.uri = port.filename_to_uri(filename)
         self.timeout = timeout
-        expected_hash_file = port.expected_filename(filename, '.checksum')
+        # FIXME: Confusing that the file is .checksum and we call it "hash"
+        self._expected_hash_path = port.expected_filename(filename, '.checksum')
+        self._have_read_expected_hash = False
+        self._image_hash = None
+
+    def _read_image_hash(self):
         try:
-            self.image_hash = open(expected_hash_file, "r").read()
+            with codecs.open(self._expected_hash_path, "r", "ascii") as hash_file:
+                return hash_file.read()
         except IOError, e:
             if errno.ENOENT != e.errno:
                 raise
-            self.image_hash = None
+
+    def image_hash(self):
+        # Read the image_hash lazily to reduce startup time.
+        # This class is accessed across threads, but only one thread should
+        # ever be dealing with any given TestInfo so no locking is needed.
+        if not self._have_read_expected_hash:
+            self._have_read_expected_hash = True
+            self._image_hash = self._read_image_hash()
+        return self._image_hash
 
 
 class ResultSummary(object):
@@ -542,8 +559,8 @@ class TestRunner:
         for i in xrange(int(self._options.child_processes)):
             # Create separate TestTypes instances for each thread.
             test_types = []
-            for t in self._test_types:
-                test_types.append(t(self._port,
+            for test_type in self._test_types:
+                test_types.append(test_type(self._port,
                                     self._options.results_directory))
 
             test_args, png_path, shell_args = \
@@ -584,6 +601,7 @@ class TestRunner:
                            (self._port.driver_name(), plural))
         threads = self._instantiate_dump_render_tree_threads(file_list,
                                                              result_summary)
+        self._meter.update("Starting testing ...")
 
         # Wait for the threads to finish and collect test failures.
         failures = {}

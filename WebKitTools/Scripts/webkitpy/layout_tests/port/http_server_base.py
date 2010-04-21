@@ -49,6 +49,7 @@ class HttpServerBase(object):
         while time.time() - start_time < 20:
             if action():
                 return True
+            _log.debug("Waiting for action: %s" % action)
             time.sleep(1)
 
         return False

@@ -64,6 +64,7 @@ def url_is_alive(url):
     Return:
       True if the url is alive.
     """
+    sleep_time = 0.5
     wait_time = 5
     while wait_time > 0:
         try:
@@ -72,9 +73,9 @@ def url_is_alive(url):
             return True
         except IOError:
             pass
-        wait_time -= 1
-        # Wait a second and try again.
-        time.sleep(1)
+        # Wait for sleep_time before trying again.
+        wait_time -= sleep_time
+        time.sleep(sleep_time)
 
     return False
 
@@ -208,9 +209,6 @@ class PyWebSocket(http_server.Lighttpd):
                                          stdout=self._wsout,
                                          stderr=subprocess.STDOUT,
                                          env=env)
-
-        # Wait a bit before checking the liveness of the server.
-        time.sleep(0.5)
 
         if self._use_tls:
             url = 'https'
