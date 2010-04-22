@@ -1,3 +1,17 @@
+2010-04-21  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Shinichiro Hamaji.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37056
+        LayoutTests/editing/selection/move-left-right.html is slow
+        
+        Reduced style change that would trigger relayout. Note that You
+        might find that expectation looks storange. It is due to Bug
+        37016.
+
+        * editing/selection/move-left-right.html:
+        * platform/mac/editing/selection/move-left-right-expected.txt:
+
 2010-04-21  David Yonge-Mallo  <davinci@chromium.org>
 
         Reviewed by Dan Bernstein.

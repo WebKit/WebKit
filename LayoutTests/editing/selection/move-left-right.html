@@ -17,9 +17,16 @@
         div.test div { border: 1px dashed pink; padding: 3px; height: 2em; }
     </style>
     <script>
+        var messages = [];
+
         function log(message)
         {
-            document.getElementById("console").appendChild(document.createTextNode(message));
+            messages.push(message);
+        }
+
+        function flushLog()
+        {
+            document.getElementById("console").appendChild(document.createTextNode(messages.join("")));
         }
 
         function caretCoordinates()
@@ -121,12 +128,10 @@
             }
         }
 
-        onload = function()
+        function runTest()
         {
-            if (!window.layoutTestController)
-                return;
-
-            layoutTestController.dumpAsText();
+            if (window.layoutTestController)
+                layoutTestController.dumpAsText();
 
             var tests = document.getElementsByClassName("test");
             var sel = getSelection();
@@ -166,13 +171,22 @@
 
                 checkReverseOrder(positionsMovingLeft, positionsMovingRight);
 
-                tests[i].style.display = "none";
             }
+            document.getElementById("testGroup").style.display = "none";
         }
 
+        onload = function() {
+            try {
+                runTest();
+            } finally {
+                flushLog();
+            }
+        };
     </script>
 </head>
 <body>
+    <div id="testGroup">
+
     <div class="test">
         abc
     </div>
@@ -328,6 +342,10 @@
 
     <div class="test" style="white-space: pre;">אבג<!-- -->
 <!-- -->דהו</div>
+
+    </div>
+
+    </div>
 
     <pre id="console"></pre>
 </body>
