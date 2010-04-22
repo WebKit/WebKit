@@ -1,3 +1,16 @@
+2010-04-21  Evan Martin  <evan@chromium.org>
+
+        Unreviewed, just a dependency change.
+
+        [chromium] roll skia forward to r538
+        https://bugs.webkit.org/show_bug.cgi?id=37960
+
+        This will cause a bunch of pixel tests to fail due to bulleted
+        lists rendering slightly differently.  I will grab new baselines
+        from the bots and check them in in a followup.
+
+        * DEPS:
+
 2010-04-21  Evan Stade  <estade@chromium.org>
 
         Reviewed by Darin Fisher.
