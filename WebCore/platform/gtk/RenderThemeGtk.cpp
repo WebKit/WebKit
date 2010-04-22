@@ -92,8 +92,11 @@ void RenderThemeGtk::initMediaStyling(GtkStyle* style, bool force)
         m_seekForwardButton.clear();
 
         m_fullscreenButton = Image::loadPlatformThemeIcon("gtk-fullscreen", m_mediaIconSize);
-        m_muteButton = Image::loadPlatformThemeIcon("audio-volume-muted", m_mediaIconSize);
-        m_unmuteButton = Image::loadPlatformThemeIcon("audio-volume-high", m_mediaIconSize);
+        // Note that the muteButton and unmuteButton take icons reflecting
+        // the *current* state. Hence, the unmuteButton represents the *muted*
+        // status, the muteButton represents the then current *unmuted* status.
+        m_muteButton = Image::loadPlatformThemeIcon("audio-volume-high", m_mediaIconSize);
+        m_unmuteButton = Image::loadPlatformThemeIcon("audio-volume-muted", m_mediaIconSize);
         m_playButton = Image::loadPlatformThemeIcon(reinterpret_cast<const char*>(playButtonIconName), m_mediaIconSize);
         m_pauseButton = Image::loadPlatformThemeIcon("gtk-media-pause", m_mediaIconSize).releaseRef();
         m_seekBackButton = Image::loadPlatformThemeIcon(reinterpret_cast<const char*>(seekBackButtonIconName), m_mediaIconSize);

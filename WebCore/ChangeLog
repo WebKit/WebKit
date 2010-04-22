@@ -1,3 +1,17 @@
+2010-04-22  Diego Escalante Urrelo  <descalante@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Mute/unmute button on <video> elements are backwards
+        https://bugs.webkit.org/show_bug.cgi?id=33967
+
+        Fix mute/unmute buttons icons-action relation and explain why their
+        variable names and corresponding icons seem to be misleading but are
+        actually right. Original patch by Mike Hommey.
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::initMediaStyling):
+
 2010-04-22  Gustavo Sverzut Barbieri  <barbieri@profusion.mobi>
 
         Reviewed by Eric Seidel.
