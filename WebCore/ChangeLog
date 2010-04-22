@@ -1,3 +1,15 @@
+2010-04-22  Gustavo Sverzut Barbieri  <barbieri@profusion.mobi>
+
+        Reviewed by Eric Seidel.
+
+        Fix build if NPAPI support is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=36621
+
+        No new tests, this is a build fix.
+        Re-submit r58043 with fix for EFL.
+
+        * plugins/PluginViewNone.cpp:
+
 2010-04-22  Diego Escalante Urrelo  <descalante@igalia.com>
 
         Reviewed by Xan Lopez.
