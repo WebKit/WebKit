@@ -1,3 +1,49 @@
+2010-04-22  Stephan Aßmus  <superstippi@gmx.de>
+
+        Reviewed by David Levin.
+
+        [Haiku] Implement ImageBuffer support
+        https://bugs.webkit.org/show_bug.cgi?id=35288
+
+        Covered by existing tests.
+
+        Complete implementation of ImageBuffer for Haiku. Uses StillImage
+        class to export a WebCore::Image and associated GraphicsContext
+        to perform arbitrary drawing in the offscreen BBitmap buffer.
+
+        * platform/graphics/haiku/ImageBufferData.h:
+        * platform/graphics/haiku/ImageBufferHaiku.cpp,
+        (WebCore::ImageBufferData::ImageBufferData),
+        (WebCore::ImageBufferData::~ImageBufferData),
+        (WebCore::ImageBuffer::ImageBuffer),
+        (WebCore::ImageBuffer::~ImageBuffer),
+        (WebCore::ImageBuffer::context),
+        (WebCore::ImageBuffer::image):
+            Implementation uses offscreen BBitmap and BView, wraps StillImage
+            around those to provide WebCore::Image interface.
+        (WebCore::ImageBuffer::platformTransformColorSpace):
+        (WebCore::convertFromData):
+            Method just performs BGRA <-> RGBA conversion.
+        (WebCore::convertFromInternalData):
+            Method just performs BGRA <-> RGBA conversion and handles
+            pre-multiplying the color values if requested.
+        (WebCore::convertToInternalData):
+            Method just performs BGRA <-> RGBA conversion and handles
+            de.multiplying the color values if requested.
+        (WebCore::getImageData):
+            Common code for the next two methods.
+        (WebCore::ImageBuffer::getUnmultipliedImageData),
+        (WebCore::ImageBuffer::getPremultipliedImageData):
+            Implemented.
+        (WebCore::putImageData):
+            Common code for the next two methods.
+        (WebCore::ImageBuffer::putUnmultipliedImageData),
+        (WebCore::ImageBuffer::putPremultipliedImageData):
+            Implemented.
+        (WebCore::ImageBuffer::toDataURL):
+            Uses Haiku "Translation Kit" to convert image data to data
+            of the requested mime type.
+
 2010-04-22  Adam Barth  <abarth@webkit.org>
 
         Unreviewed, rolling out r58069.
