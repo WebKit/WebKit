@@ -442,11 +442,19 @@ class WebKitDriver(base.Driver):
         if self._image_path and len(self._image_path):
             with open(self._image_path, "wb") as image_file:
                 image_file.write(image)
+
+        error_lines = self._server_process.error.splitlines()
+        error_eof = error_lines.pop()
+        assert(error_eof == "#EOF")
+        error = "\n".join(error_lines)
+        # FIXME: This seems like the wrong section of code to be doing
+        # this reset in.
+        self._server_process.error = ""
         return (self._server_process.crashed,
                 self._server_process.timed_out,
                 actual_image_hash,
                 output,
-                self._server_process.error)
+                error)
 
     def stop(self):
         if self._server_process:

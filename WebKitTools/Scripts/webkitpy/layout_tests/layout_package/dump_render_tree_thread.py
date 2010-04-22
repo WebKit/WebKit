@@ -95,8 +95,7 @@ def process_output(port, test_info, test_types, test_args, configuration,
         with codecs.open(filename, "wb", "utf-8") as file:
             file.write(error)
     elif error:
-        _log.debug("Previous test output extra lines after dump:\n%s" %
-                   error)
+        _log.debug("Previous test output stderr lines:\n%s" % error)
 
     # Check the output and save the results.
     start_time = time.time()

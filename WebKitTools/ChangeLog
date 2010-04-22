@@ -1,5 +1,20 @@
 2010-04-22  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Adam Barth.
+
+        new-run-webkit-tests --verbose shows ever-increasing #EOF lines
+        https://bugs.webkit.org/show_bug.cgi?id=37794
+
+        * Scripts/webkitpy/layout_tests/layout_package/dump_render_tree_thread.py:
+         - Fix the log message to explain that this is stderr output, not test output.
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+         - Be sure to reset the server_process.error after reading (seems like the wrong
+           place to do this, but at least this fixes the bug and dpranke and I can talk
+           about better designs later).
+         - Also remove the #EOF from the stderr output before returning it.
+
+2010-04-22  Eric Seidel  <eric@webkit.org>
+
         Unreviewed.  Fixing new-run-webkit-tests on the bots.
 
         * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
