@@ -92,6 +92,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* doc)
     , m_webkitPreservesPitch(true)
     , m_networkState(NETWORK_EMPTY)
     , m_readyState(HAVE_NOTHING)
+    , m_readyStateMaximum(HAVE_NOTHING)
     , m_volume(1.0f)
     , m_lastSeekTime(0)
     , m_previousProgress(0)
@@ -493,6 +494,7 @@ void HTMLMediaElement::prepareForLoad()
     if (m_networkState != NETWORK_EMPTY) {
         m_networkState = NETWORK_EMPTY;
         m_readyState = HAVE_NOTHING;
+        m_readyStateMaximum = HAVE_NOTHING;
         m_paused = true;
         m_seeking = false;
         scheduleEvent(eventNames().emptiedEvent);
@@ -852,6 +854,9 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
     if (m_readyState == oldState)
         return;
     
+    if (oldState > m_readyStateMaximum)
+        m_readyStateMaximum = oldState;
+
     if (m_networkState == NETWORK_EMPTY)
         return;
 
@@ -1628,7 +1633,11 @@ PassRefPtr<TimeRanges> HTMLMediaElement::seekable() const
 
 bool HTMLMediaElement::potentiallyPlaying() const
 {
-    return m_readyState >= HAVE_FUTURE_DATA && couldPlayIfEnoughData();
+    // "pausedToBuffer" means the media engine's rate is 0, but only because it had to stop playing
+    // when it ran out of buffered data. A movie is this state is "potentially playing", modulo the
+    // checks in couldPlayIfEnoughData().
+    bool pausedToBuffer = m_readyStateMaximum >= HAVE_FUTURE_DATA && m_readyState < HAVE_FUTURE_DATA;
+    return (pausedToBuffer || m_readyState >= HAVE_FUTURE_DATA) && couldPlayIfEnoughData();
 }
 
 bool HTMLMediaElement::couldPlayIfEnoughData() const

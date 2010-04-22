@@ -1,3 +1,22 @@
+2010-04-22  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Do not pause movie when readyState drops below HAVE_FUTURE_DATA
+        https://bugs.webkit.org/show_bug.cgi?id=37991
+        <rdar://problem/7893937>
+
+        No new tests, we don't have infrastructure in DRT to test with streamed
+        movies.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Initialize m_readyStateMaximum.
+        (WebCore::HTMLMediaElement::prepareForLoad): Reset m_readyStateMaximum.
+        (WebCore::HTMLMediaElement::setReadyState): Maintain m_readyStateMaximum.
+        (WebCore::HTMLMediaElement::potentiallyPlaying): Also return true if the readyState was
+        previously >= HAVE_FUTURE_DATA. 
+        * html/HTMLMediaElement.h:
+
 2010-04-22  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Dimitri Glazkov.

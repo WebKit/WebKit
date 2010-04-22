@@ -296,6 +296,7 @@ private:
     bool m_webkitPreservesPitch;
     NetworkState m_networkState;
     ReadyState m_readyState;
+    ReadyState m_readyStateMaximum;
     String m_currentSrc;
     
     RefPtr<MediaError> m_error;
