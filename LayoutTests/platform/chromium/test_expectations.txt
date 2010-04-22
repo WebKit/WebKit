@@ -2754,7 +2754,6 @@ BUGJAMESR BUG30048 BUG29737 : svg/filters/shadow-on-rect-with-filter.svg = IMAGE
 BUGWK37907 WIN : editing/pasteboard/copy-backslash-with-euc.html = FAIL
 
 // New layoutTestController function added at r57986
-BUGJAMESR : fast/lists/ol-nested-item-dynamic-insert.html = TEXT
 BUGJAMESR : fast/lists/ol-nested-items-dynamic-insert.html = TEXT
 BUGJAMESR : fast/lists/ol-nested-items-dynamic-remove.html = TEXT
 BUGJAMESR : fast/lists/ol-nested-items.html = TEXT
@@ -2773,4 +2772,9 @@ BUGJAMESR WIN LINUX : fast/repaint/fixed-move-after-scroll.html = IMAGE+TEXT
 
 // Started failing at r57969
 BUGJAMESR MAC : http/tests/multipart/invalid-image-data.html = IMAGE
+
+// Broken downstream by r45265
+BUGJAMESR WIN : media/video-layer-crash.html = IMAGE
+BUGJAMESR WIN : media/video-transformed.html = IMAGE
+BUGJAMESR WIN : media/video-zoom.html = IMAGE
 

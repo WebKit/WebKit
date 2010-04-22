@@ -1,3 +1,9 @@
+2010-04-21  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed. Updating chromium test expecations.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-04-21  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Alexey Proskuryakov.
