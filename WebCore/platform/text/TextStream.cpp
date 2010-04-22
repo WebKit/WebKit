@@ -108,7 +108,7 @@ String TextStream::release()
     return String::adopt(m_text);
 }
 
-#if OS(WINDOWS) && PLATFORM(X86_64) && COMPILER(MSVC)
+#if OS(WINDOWS) && CPU(X86_64) && COMPILER(MSVC)
 TextStream& TextStream::operator<<(__int64 i)
 {
     char buffer[printBufferSize];

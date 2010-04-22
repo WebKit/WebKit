@@ -1,3 +1,15 @@
+2010-04-22  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Fix the MSVC 64bit build.
+        https://bugs.webkit.org/show_bug.cgi?id=37980
+
+        * platform/text/TextStream.cpp:
+        * platform/text/TextStream.h:
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::platformStart):
+
 2010-04-22  Dave Moore  <davemoore@chromium.org>
 
         Reviewed by Dimitri Glazkov.

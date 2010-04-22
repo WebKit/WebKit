@@ -140,7 +140,7 @@ static BYTE* endPaint;
 typedef HDC (WINAPI *PtrBeginPaint)(HWND, PAINTSTRUCT*);
 typedef BOOL (WINAPI *PtrEndPaint)(HWND, const PAINTSTRUCT*);
 
-#if OS(WINDOWS) && PLATFORM(X86_64) && COMPILER(MSVC)
+#if OS(WINDOWS) && CPU(X86_64) && COMPILER(MSVC)
 extern "C" HDC __stdcall _HBeginPaint(HWND hWnd, LPPAINTSTRUCT lpPaint);
 extern "C" BOOL __stdcall _HEndPaint(HWND hWnd, const PAINTSTRUCT* lpPaint);
 #endif
@@ -978,7 +978,7 @@ bool PluginView::platformStart()
 
         // Calling SetWindowLongPtrA here makes the window proc ASCII, which is required by at least
         // the Shockwave Director plug-in.
-#if OS(WINDOWS) && PLATFORM(X86_64) && COMPILER(MSVC)
+#if OS(WINDOWS) && CPU(X86_64) && COMPILER(MSVC)
         ::SetWindowLongPtrA(platformPluginWidget(), GWLP_WNDPROC, (LONG_PTR)DefWindowProcA);
 #elif OS(WINCE)
         ::SetWindowLong(platformPluginWidget(), GWL_WNDPROC, (LONG)DefWindowProc);
