@@ -1,3 +1,15 @@
+2010-04-21  Gustavo Sverzut Barbieri  <barbieri@profusion.mobi>
+
+        Reviewed by Adam Roben.
+
+        Add missing EFL WebCore file.
+        http://webkit.org/b/37854
+
+        No behavior changes, so no new tests were added.
+
+        * bindings/js/ScriptControllerEfl.cpp: Added.
+        (WebCore::ScriptController::createScriptInstanceForWidget):
+
 2010-04-21  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
