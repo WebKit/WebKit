@@ -1,3 +1,10 @@
+2010-04-22  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Restore the Leopard bots to using
+        old-run-webkit-tests for now.
+
+        * Scripts/run-webkit-tests:
+
 2010-04-22  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed fix.

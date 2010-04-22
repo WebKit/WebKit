@@ -58,9 +58,9 @@ sub useNewRunWebKitTests()
 {
     # Change this check to control which platforms use
     # new-run-webkit-tests by default.
-    # FIXME: Temporary, trying new-run-webkit-tests on the real
-    # leopard build bot.
-    return runningOnBuildBot() && isLeopard();
+    # Example: return runningOnBuildBot() && isLeopard();
+    # would enable new-run-webkit-tests on only the leopard buildbots.
+    return 0;
 }
 
 my $harnessName = "old-run-webkit-tests";
