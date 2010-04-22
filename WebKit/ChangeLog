@@ -2,6 +2,23 @@
 
         Reviewed by Gustavo Noronha Silva.
 
+        Update EWebKit (EFL port) to match recent API changes.
+        http://webkit.org/b/37997
+
+        * efl/ewk/ewk_frame.cpp:
+        (ewk_frame_zoom_set): Change to use WebCore::ZoomMode.
+        (ewk_frame_zoom_text_only_set): Change to use WebCore::ZoomMode.
+        (_ewk_frame_handle_key_scrolling): s/WebCore::VK_/VK_/g
+        (ewk_frame_plugin_create): Disable temporarily PluginView-related
+        code until a proper plugin implementation is made.
+        * efl/ewk/ewk_view.cpp: Fix typo in _parent_sc declaration.
+        (ewk_view_selection_get): Fix a reference to WebCore::CString to
+        WTF::CString.
+
+2010-04-22  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Gustavo Noronha Silva.
+
         Update EFL port files to match recent API changes.
         http://webkit.org/b/37876
 

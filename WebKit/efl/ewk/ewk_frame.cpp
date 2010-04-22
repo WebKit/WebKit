@@ -988,7 +988,12 @@ Eina_Bool ewk_frame_zoom_set(Evas_Object* o, float zoom)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->frame, EINA_FALSE);
-    sd->frame->setZoomFactor(zoom, sd->zoom_text_only);
+    WebCore::ZoomMode zoomMode;
+    if (sd->zoom_text_only)
+        zoomMode = WebCore::ZoomTextOnly;
+    else
+        zoomMode = WebCore::ZoomPage;
+    sd->frame->setZoomFactor(zoom, zoomMode);
     return EINA_TRUE;
 }
 
@@ -1022,7 +1027,12 @@ Eina_Bool ewk_frame_zoom_text_only_set(Evas_Object* o, Eina_Bool setting)
         return EINA_TRUE;
 
     sd->zoom_text_only = setting;
-    sd->frame->setZoomFactor(sd->frame->zoomFactor(), setting);
+    WebCore::ZoomMode zoomMode;
+    if (sd->zoom_text_only)
+        zoomMode = WebCore::ZoomTextOnly;
+    else
+        zoomMode = WebCore::ZoomPage;
+    sd->frame->setZoomFactor(sd->frame->zoomFactor(), zoomMode);
     return EINA_TRUE;
 }
 
@@ -1424,45 +1434,45 @@ static inline Eina_Bool _ewk_frame_handle_key_scrolling(WebCore::Frame* frame, c
     int keyCode = event.windowsVirtualKeyCode();
 
     switch (keyCode) {
-    case WebCore::VK_SPACE:
+    case VK_SPACE:
         granularity = WebCore::ScrollByPage;
         if (event.shiftKey())
             direction = WebCore::ScrollUp;
         else
             direction = WebCore::ScrollDown;
         break;
-    case WebCore::VK_NEXT:
+    case VK_NEXT:
         granularity = WebCore::ScrollByPage;
         direction = WebCore::ScrollDown;
         break;
-    case WebCore::VK_PRIOR:
+    case VK_PRIOR:
         granularity = WebCore::ScrollByPage;
         direction = WebCore::ScrollUp;
         break;
-    case WebCore::VK_HOME:
+    case VK_HOME:
         granularity = WebCore::ScrollByDocument;
         direction = WebCore::ScrollUp;
         break;
-    case WebCore::VK_END:
+    case VK_END:
         granularity = WebCore::ScrollByDocument;
         direction = WebCore::ScrollDown;
         break;
-    case WebCore::VK_LEFT:
+    case VK_LEFT:
         granularity = WebCore::ScrollByLine;
         direction = WebCore::ScrollLeft;
         break;
-    case WebCore::VK_RIGHT:
+    case VK_RIGHT:
         granularity = WebCore::ScrollByLine;
         direction = WebCore::ScrollRight;
         break;
-    case WebCore::VK_UP:
+    case VK_UP:
         direction = WebCore::ScrollUp;
         if (event.ctrlKey())
             granularity = WebCore::ScrollByDocument;
         else
             granularity = WebCore::ScrollByLine;
         break;
-    case WebCore::VK_DOWN:
+    case VK_DOWN:
         direction = WebCore::ScrollDown;
          if (event.ctrlKey())
             granularity = WebCore::ScrollByDocument;
@@ -1823,22 +1833,5 @@ void ewk_frame_force_layout(Evas_Object* o)
 
 WTF::PassRefPtr<WebCore::Widget> ewk_frame_plugin_create(Evas_Object* o, const WebCore::IntSize& pluginSize, WebCore::HTMLPlugInElement* element, const WebCore::KURL& url, const WTF::Vector<WebCore::String>& paramNames, const WTF::Vector<WebCore::String>& paramValues, const WebCore::String& mimeType, bool loadManually)
 {
-    DBG("o=%p, size=%dx%d, element=%p, url=%s, mimeType=%s",
-        o, pluginSize.width(), pluginSize.height(), element,
-        url.prettyURL().utf8().data(), mimeType.utf8().data());
-
-    EWK_FRAME_SD_GET_OR_RETURN(o, sd, 0);
-
-    // TODO: emit signal and ask webkit users if something else should be done.
-    // like creating another x window (see gtk, it allows users to create
-    // GtkPluginWidget.
-
-    WTF::RefPtr<WebCore::PluginView> pluginView = WebCore::PluginView::create
-        (sd->frame, pluginSize, element, url, paramNames, paramValues,
-         mimeType, loadManually);
-
-    if (pluginView->status() == WebCore::PluginStatusLoadedSuccessfully)
-        return pluginView;
-
     return 0;
 }
