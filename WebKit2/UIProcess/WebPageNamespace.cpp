@@ -28,6 +28,8 @@
 #include "WebProcessManager.h"
 #include "WebProcessProxy.h"
 
+#include "WKContextPrivate.h"
+
 #ifndef NDEBUG
 #include <wtf/RefCountedLeakCounter.h>
 #endif
@@ -84,6 +86,17 @@ void WebPageNamespace::preferencesDidChange()
 {
     for (WebProcessProxy::pages_const_iterator it = m_process->pages_begin(), end = m_process->pages_end(); it != end; ++it)
         (*it)->preferencesDidChange();
+}
+
+void WebPageNamespace::getStatistics(WKContextStatistics* statistics)
+{
+    if (!m_process)
+        return;
+
+    statistics->numberOfWKPages += m_process->numberOfPages();
+
+    for (WebProcessProxy::pages_const_iterator it = m_process->pages_begin(), end = m_process->pages_end(); it != end; ++it)
+        (*it)->getStatistics(statistics);
 }
 
 } // namespace WebKit

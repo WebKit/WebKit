@@ -37,6 +37,11 @@ WKPageNamespaceRef WKPageNamespaceCreate(WKContextRef ownerContextRef)
     return toRef(toWK(ownerContextRef)->createPageNamespace());
 }
 
+WKContextRef WKPageNamespaceGetContext(WKPageNamespaceRef pageNamespaceRef)
+{
+    return toRef(toWK(pageNamespaceRef)->context());
+}
+
 WKPageNamespaceRef WKPageNamespaceRetain(WKPageNamespaceRef pageNamespaceRef)
 {
     toWK(pageNamespaceRef)->ref();

@@ -23,10 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Cocoa/Cocoa.h>
-
-#import <WebKit2/WebKit2.h>
-
 @interface BrowserWindowController : NSWindowController {
     IBOutlet NSProgressIndicator *progressIndicator;
     IBOutlet NSButton *reloadButton;

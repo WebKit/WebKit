@@ -1,3 +1,31 @@
+2010-04-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=38002
+        Add rudimentary statistics gathering for WebKit2
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetStatistics):
+        * UIProcess/API/C/WKContextPrivate.h: Copied from WebKit2/UIProcess/API/C/WKContext.h.
+        * UIProcess/API/C/WKPageNamespace.cpp:
+        (WKPageNamespaceGetContext):
+        * UIProcess/API/C/WKPageNamespace.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::getStatistics):
+        * UIProcess/WebContext.h:
+        * UIProcess/WebPageNamespace.cpp:
+        (WebKit::WebPageNamespace::getStatistics):
+        * UIProcess/WebPageNamespace.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::getStatistics):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::numberOfPages):
+        * UIProcess/WebProcessProxy.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+
 2010-04-20  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

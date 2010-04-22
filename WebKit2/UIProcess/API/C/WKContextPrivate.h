@@ -23,51 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebContext_h
-#define WebContext_h
+#ifndef WKContextPrivate_h
+#define WKContextPrivate_h
 
-#include "ProcessModel.h"
-#include <wtf/HashSet.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#include <WebKit2/WKBase.h>
+#include <WebKit2/WKContext.h>
 
-struct WKContextStatistics;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-namespace WebKit {
-
-class WebPageNamespace;
-class WebPreferences;
-
-class WebContext : public RefCounted<WebContext> {
-public:
-    static PassRefPtr<WebContext> create(ProcessModel processModel)
-    {
-        return adoptRef(new WebContext(processModel));
-    }
-
-    ~WebContext();
-
-    WebPageNamespace* createPageNamespace();
-    void pageNamespaceWasDestroyed(WebPageNamespace*);
-
-    void setPreferences(WebPreferences*);
-    WebPreferences* preferences() const;
-
-    void preferencesDidChange();
-
-    ProcessModel processModel() const { return m_processModel; }
-
-    void getStatistics(WKContextStatistics* statistics);
-
-private:
-    WebContext(ProcessModel);
-
-    ProcessModel m_processModel;
-    HashSet<WebPageNamespace*> m_pageNamespaces;
-    RefPtr<WebPreferences> m_preferences;
+struct WKContextStatistics {
+    size_t numberOfWKPageNamespaces;
+    size_t numberOfWKPages;
+    size_t numberOfWKFrames;
 };
+typedef struct WKContextStatistics WKContextStatistics;
 
-} // namespace WebKit
+WK_EXPORT void WKContextGetStatistics(WKContextRef context, WKContextStatistics* statistics);
 
-#endif // WebContext_h
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* WKContextPrivate_h */

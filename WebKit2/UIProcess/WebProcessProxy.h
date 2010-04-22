@@ -58,6 +58,7 @@ public:
 
     pages_const_iterator pages_begin();
     pages_const_iterator pages_end();
+    size_t numberOfPages();
 
     ResponsivenessTimer* responsivenessTimer() { return &m_responsivenessTimer; }
 

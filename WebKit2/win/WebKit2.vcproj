@@ -854,6 +854,10 @@
 						>
 					</File>
 					<File
+						RelativePath="..\UIProcess\API\C\WKContextPrivate.h"
+						>
+					</File>
+					<File
 						RelativePath="..\UIProcess\API\C\WKFrame.cpp"
 						>
 					</File>

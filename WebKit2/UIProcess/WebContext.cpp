@@ -30,6 +30,8 @@
 #include "WebPreferences.h"
 #include "WebProcessManager.h"
 
+#include "WKContextPrivate.h"
+
 #ifndef NDEBUG
 #include <wtf/RefCountedLeakCounter.h>
 #endif
@@ -101,6 +103,16 @@ void WebContext::preferencesDidChange()
         WebPageNamespace* pageNamespace = *it;
         pageNamespace->preferencesDidChange();
     }
+}
+
+void WebContext::getStatistics(WKContextStatistics* statistics)
+{
+    memset(statistics, 0, sizeof(WKContextStatistics));
+
+    statistics->numberOfWKPageNamespaces = m_pageNamespaces.size();
+
+    for (HashSet<WebPageNamespace*>::iterator it = m_pageNamespaces.begin(), end = m_pageNamespaces.end(); it != end; ++it)
+        (*it)->getStatistics(statistics);
 }
 
 } // namespace WebKit

@@ -15,6 +15,8 @@
 		BC329498116A941B008635D0 /* BrowserWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = BC329497116A941B008635D0 /* BrowserWindowController.m */; };
 		BC3294A3116A9852008635D0 /* BrowserWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = BC3294A1116A9852008635D0 /* BrowserWindow.xib */; };
 		BC8FB5A8116AA1FE0080D413 /* WebKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC8FB5A7116AA1FE0080D413 /* WebKit2.framework */; };
+		BCE625EE117FC80E00572433 /* BrowserStatisticsWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = BCE625ED117FC80E00572433 /* BrowserStatisticsWindow.xib */; };
+		BCE625F1117FC82700572433 /* BrowserStatisticsWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = BCE625F0117FC82700572433 /* BrowserStatisticsWindowController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +36,9 @@
 		BC329497116A941B008635D0 /* BrowserWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BrowserWindowController.m; path = mac/BrowserWindowController.m; sourceTree = "<group>"; };
 		BC3294A2116A9852008635D0 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = mac/English.lproj/BrowserWindow.xib; sourceTree = "<group>"; };
 		BC8FB5A7116AA1FE0080D413 /* WebKit2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebKit2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		BCE625ED117FC80E00572433 /* BrowserStatisticsWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = BrowserStatisticsWindow.xib; path = mac/BrowserStatisticsWindow.xib; sourceTree = "<group>"; };
+		BCE625EF117FC82700572433 /* BrowserStatisticsWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BrowserStatisticsWindowController.h; path = mac/BrowserStatisticsWindowController.h; sourceTree = "<group>"; };
+		BCE625F0117FC82700572433 /* BrowserStatisticsWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BrowserStatisticsWindowController.m; path = mac/BrowserStatisticsWindowController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +61,8 @@
 				256AC3D90F4B6AC300CF3369 /* AppDelegate.m */,
 				BC329496116A941B008635D0 /* BrowserWindowController.h */,
 				BC329497116A941B008635D0 /* BrowserWindowController.m */,
+				BCE625EF117FC82700572433 /* BrowserStatisticsWindowController.h */,
+				BCE625F0117FC82700572433 /* BrowserStatisticsWindowController.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -115,6 +122,7 @@
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
 				BC3294A1116A9852008635D0 /* BrowserWindow.xib */,
 				1DDD58140DA1D0A300B32029 /* MainMenu.xib */,
+				BCE625ED117FC80E00572433 /* BrowserStatisticsWindow.xib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -174,6 +182,7 @@
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
 				1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */,
 				BC3294A3116A9852008635D0 /* BrowserWindow.xib in Resources */,
+				BCE625EE117FC80E00572433 /* BrowserStatisticsWindow.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -187,6 +196,7 @@
 				256AC3DA0F4B6AC300CF3369 /* AppDelegate.m in Sources */,
 				BC329487116A92E2008635D0 /* main.m in Sources */,
 				BC329498116A941B008635D0 /* BrowserWindowController.m in Sources */,
+				BCE625F1117FC82700572433 /* BrowserStatisticsWindowController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

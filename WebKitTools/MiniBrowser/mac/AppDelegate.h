@@ -23,17 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Cocoa/Cocoa.h>
-#import <WebKit2/WebKit2.h>
-
 @interface BrowserAppDelegate : NSObject <NSApplicationDelegate> {
     WKProcessModel currentProcessModel;
-    WKPageNamespaceRef pageNamespace;
+    WKPageNamespaceRef threadPageNamespace;
+    WKPageNamespaceRef processPageNamespace;
 }
 
-- (WKPageNamespaceRef)getPageNamespace;
+- (WKPageNamespaceRef)getCurrentPageNamespace;
 
 - (IBAction)setSharedProcessProcessModel:(id)sender;
 - (IBAction)setSharedThreadProcessModel:(id)sender;
+- (IBAction)showStatisticsWindow:(id)sender;
 
 @end

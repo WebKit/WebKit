@@ -32,6 +32,8 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
+struct WKContextStatistics;
+
 namespace WebKit {
 
 class WebContext;
@@ -53,6 +55,8 @@ public:
     void reviveIfNecessary();
 
     void preferencesDidChange();
+
+    void getStatistics(WKContextStatistics*);
 
 private:
     WebPageNamespace(WebContext*);

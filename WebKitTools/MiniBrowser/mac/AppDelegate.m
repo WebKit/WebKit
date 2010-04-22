@@ -24,10 +24,11 @@
  */
 
 #import "AppDelegate.h"
+
 #import "BrowserWindowController.h"
+#import "BrowserStatisticsWindowController.h"
 
 static NSString *defaultURL = @"http://webkit.org/";
-static const WKProcessModel defaultProcessModel = kWKProcessModelSecondaryProcess;
 
 @implementation BrowserAppDelegate
 
@@ -39,6 +40,14 @@ static const WKProcessModel defaultProcessModel = kWKProcessModelSecondaryProces
             currentProcessModel = kWKProcessModelSecondaryThread;
         else
             currentProcessModel = kWKProcessModelSecondaryProcess;
+
+        WKContextRef threadContext = WKContextCreateWithProcessModel(kWKProcessModelSecondaryThread);
+        threadPageNamespace = WKPageNamespaceCreate(threadContext);
+        WKContextRelease(threadContext);
+
+        WKContextRef processContext = WKContextCreateWithProcessModel(kWKProcessModelSecondaryProcess);
+        processPageNamespace = WKPageNamespaceCreate(processContext);
+        WKContextRelease(processContext);
     }
 
     return self;
@@ -46,21 +55,15 @@ static const WKProcessModel defaultProcessModel = kWKProcessModelSecondaryProces
 
 - (IBAction)newWindow:(id)sender
 {
-    BrowserWindowController *controller = [[BrowserWindowController alloc] initWithPageNamespace:[self getPageNamespace]];
+    BrowserWindowController *controller = [[BrowserWindowController alloc] initWithPageNamespace:[self getCurrentPageNamespace]];
     [[controller window] makeKeyAndOrderFront:sender];
     
     [controller loadURLString:defaultURL];
 }
 
-- (WKPageNamespaceRef)getPageNamespace
+- (WKPageNamespaceRef)getCurrentPageNamespace
 {
-    if (!pageNamespace) {
-        WKContextRef context = WKContextCreateWithProcessModel(currentProcessModel);
-        pageNamespace = WKPageNamespaceCreate(context);
-        WKContextRelease(context);
-    }
-    
-    return pageNamespace;
+    return (currentProcessModel == kWKProcessModelSecondaryThread) ? threadPageNamespace : processPageNamespace;
 }
 
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem
@@ -78,10 +81,6 @@ static const WKProcessModel defaultProcessModel = kWKProcessModelSecondaryProces
         return;
  
     currentProcessModel = processModel;
-    if (pageNamespace) {
-        WKPageNamespaceRelease(pageNamespace);
-        pageNamespace = 0;
-    }
 }
 
 - (IBAction)setSharedProcessProcessModel:(id)sender
@@ -94,6 +93,16 @@ static const WKProcessModel defaultProcessModel = kWKProcessModelSecondaryProces
     [self _setProcessModel:kWKProcessModelSecondaryThread];
 }
 
+- (IBAction)showStatisticsWindow:(id)sender
+{
+    static BrowserStatisticsWindowController* windowController;
+    if (!windowController)
+        windowController = [[BrowserStatisticsWindowController alloc] initWithThreadedWKContextRef:WKPageNamespaceGetContext(threadPageNamespace) 
+                                                                               processWKContextRef:WKPageNamespaceGetContext(processPageNamespace)];
+
+    [[windowController window] makeKeyAndOrderFront:self];
+}
+
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     [self newWindow:self];
@@ -103,14 +112,18 @@ static const WKProcessModel defaultProcessModel = kWKProcessModelSecondaryProces
 {
     NSArray* windows = [NSApp windows];
     for (NSWindow* window in windows) {
-        BrowserWindowController *controller = (BrowserWindowController *)[window delegate];
-        [controller applicationTerminating];
+        id delegate = [window delegate];
+        if ([delegate isKindOfClass:[BrowserWindowController class]]) {
+            BrowserWindowController *controller = (BrowserWindowController *)delegate;
+            [controller applicationTerminating];
+        }
     }
+    
+    WKPageNamespaceRelease(threadPageNamespace);
+    threadPageNamespace = 0;
 
-    if (pageNamespace) {
-        WKPageNamespaceRelease(pageNamespace);
-        pageNamespace = 0;
-    }
+    WKPageNamespaceRelease(processPageNamespace);
+    processPageNamespace = 0;
 }
 
 @end

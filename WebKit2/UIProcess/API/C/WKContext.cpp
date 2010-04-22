@@ -24,6 +24,7 @@
  */
 
 #include "WKContext.h"
+#include "WKContextPrivate.h"
 
 #include "ProcessModel.h"
 #include "WKAPICast.h"
@@ -60,6 +61,11 @@ void WKContextSetPreferences(WKContextRef contextRef, WKPreferencesRef preferenc
 WKPreferencesRef WKContextGetPreferences(WKContextRef contextRef)
 {
     return toRef(toWK(contextRef)->preferences());
+}
+
+void WKContextGetStatistics(WKContextRef contextRef, WKContextStatistics* statistics)
+{
+    toWK(contextRef)->getStatistics(statistics);
 }
 
 WKContextRef WKContextRetain(WKContextRef contextRef)

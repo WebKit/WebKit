@@ -143,6 +143,7 @@
 		BCC5715B115ADAEF001CCAF9 /* WebSystemInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC57159115ADAEF001CCAF9 /* WebSystemInterface.h */; };
 		BCC5715C115ADAEF001CCAF9 /* WebSystemInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = BCC5715A115ADAEF001CCAF9 /* WebSystemInterface.m */; };
 		BCC57162115ADB42001CCAF9 /* NotImplemented.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC57161115ADB42001CCAF9 /* NotImplemented.h */; };
+		BCC938E11180DE440085E5FE /* WKContextPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC938E01180DE440085E5FE /* WKContextPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCCF085F113F3B8600C650C5 /* DrawingAreaProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = BCCF085D113F3B8600C650C5 /* DrawingAreaProxy.h */; };
 		BCCF0860113F3B8600C650C5 /* DrawingAreaProxy.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCCF085E113F3B8600C650C5 /* DrawingAreaProxy.mm */; };
 		BCD0042D110C1E27003B8A67 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCD0042C110C1E27003B8A67 /* CoreServices.framework */; };
@@ -340,6 +341,7 @@
 		BCC57159115ADAEF001CCAF9 /* WebSystemInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSystemInterface.h; sourceTree = "<group>"; };
 		BCC5715A115ADAEF001CCAF9 /* WebSystemInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebSystemInterface.m; sourceTree = "<group>"; };
 		BCC57161115ADB42001CCAF9 /* NotImplemented.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotImplemented.h; sourceTree = "<group>"; };
+		BCC938E01180DE440085E5FE /* WKContextPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContextPrivate.h; sourceTree = "<group>"; };
 		BCCF085D113F3B8600C650C5 /* DrawingAreaProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DrawingAreaProxy.h; path = mac/DrawingAreaProxy.h; sourceTree = "<group>"; };
 		BCCF085E113F3B8600C650C5 /* DrawingAreaProxy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DrawingAreaProxy.mm; path = mac/DrawingAreaProxy.mm; sourceTree = "<group>"; };
 		BCD0042C110C1E27003B8A67 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = /System/Library/Frameworks/CoreServices.framework; sourceTree = "<absolute>"; };
@@ -641,6 +643,7 @@
 				BC0C376710F807B20076D7CB /* WKBase.h */,
 				BCB9E24A1120E15C00A137E0 /* WKContext.cpp */,
 				BCB9E2491120E15C00A137E0 /* WKContext.h */,
+				BCC938E01180DE440085E5FE /* WKContextPrivate.h */,
 				BCD01398110FA420003B8A67 /* WKFrame.cpp */,
 				BCD01397110FA420003B8A67 /* WKFrame.h */,
 				BCB9F6A41123DD0D00A137E0 /* WKFramePolicyListener.cpp */,
@@ -902,6 +905,7 @@
 				BCF69F9A1176CED600471A52 /* WebNavigationDataStore.h in Headers */,
 				BCF69FA21176D01400471A52 /* WebNavigationData.h in Headers */,
 				BCF69FA91176D1CB00471A52 /* WKNavigationData.h in Headers */,
+				BCC938E11180DE440085E5FE /* WKContextPrivate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,3 +1,30 @@
+2010-04-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=38002
+        Add rudimentary statistics gathering for WebKit2
+
+        * MiniBrowser/MiniBrowser.xcodeproj/project.pbxproj:
+        * MiniBrowser/mac/AppDelegate.h:
+        * MiniBrowser/mac/AppDelegate.m:
+        (-[BrowserAppDelegate init]):
+        (-[BrowserAppDelegate newWindow:]):
+        (-[BrowserAppDelegate getCurrentPageNamespace]):
+        (-[BrowserAppDelegate _setProcessModel:]):
+        (-[BrowserAppDelegate showStatisticsWindow:]):
+        (-[BrowserAppDelegate applicationWillTerminate:]):
+        * MiniBrowser/mac/BrowserStatisticsWindow.xib: Added.
+        * MiniBrowser/mac/BrowserStatisticsWindowController.h: Added.
+        * MiniBrowser/mac/BrowserStatisticsWindowController.m: Added.
+        (-[BrowserStatisticsWindowController initWithThreadedWKContextRef:processWKContextRef:]):
+        (-[BrowserStatisticsWindowController dealloc]):
+        (-[BrowserStatisticsWindowController windowDidLoad]):
+        (-[BrowserStatisticsWindowController refreshStatistics:]):
+        * MiniBrowser/mac/BrowserWindowController.h:
+        * MiniBrowser/mac/English.lproj/MainMenu.xib:
+        * MiniBrowser/mac/MiniBrowser_Prefix.pch:
+
 2010-04-22  Dave Moore  <davemoore@chromium.org>
 
         Reviewed by Dimitri Glazkov.
