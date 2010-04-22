@@ -32,7 +32,7 @@
 
 vars = {
   'chromium_svn': 'http://src.chromium.org/svn/trunk/src',
-  'chromium_rev': '44453',
+  'chromium_rev': '45294',
 
   'pthreads-win32_rev': '26716',
 }
@@ -173,6 +173,8 @@ deps_os = {
       Var('chromium_svn')+'/third_party/harfbuzz@'+Var('chromium_rev'),
     'tools/xdisplaycheck':
       Var('chromium_svn')+'/tools/xdisplaycheck@'+Var('chromium_rev'),
+    'tools/data_pack':
+      Var('chromium_svn')+'/tools/data_pack@'+Var('chromium_rev'),
     'third_party/yasm/source/patched-yasm':
       From('chromium_deps', 'src/third_party/yasm/source/patched-yasm'),
   },
