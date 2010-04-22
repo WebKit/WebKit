@@ -1,5 +1,24 @@
 2010-04-21  Gustavo Sverzut Barbieri  <barbieri@profusion.mobi>
 
+        Reviewed by Nikolas Zimmermann.
+
+        Add missing EFL WebKit/efl theme files.
+        http://webkit.org/b/37854
+
+        * efl/DefaultTheme/default.edc: Added.
+        * efl/DefaultTheme/widget/button/button.edc: Added.
+        * efl/DefaultTheme/widget/check/check.edc: Added.
+        * efl/DefaultTheme/widget/combo/combo.edc: Added.
+        * efl/DefaultTheme/widget/entry/entry.edc: Added.
+        * efl/DefaultTheme/widget/file/file.edc: Added.
+        * efl/DefaultTheme/widget/radio/radio.edc: Added.
+        * efl/DefaultTheme/widget/scrollbar/scrollbar.edc: Added.
+        * efl/DefaultTheme/widget/search/cancel/search_cancel.edc: Added.
+        * efl/DefaultTheme/widget/search/decoration/search_decoration.edc: Added.
+        * efl/DefaultTheme/widget/search/field/search_field.edc: Added.
+
+2010-04-21  Gustavo Sverzut Barbieri  <barbieri@profusion.mobi>
+
         Reviewed by Adam Roben.
 
         Update EFL port to match recent API changes.
