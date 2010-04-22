@@ -1,3 +1,18 @@
+2010-04-21  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Another attempt to fix NRWT for chromium.
+
+        REGRESSION(57531): the commit-queue still hates Tor Arne Vestbø
+        https://bugs.webkit.org/show_bug.cgi?id=37765
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+         - wdiff_text was returning a byte array instead of a
+           unicode string.  The simple fix was to just decode
+           the result.  However, seeing so much duplicated code
+           with Executive made me cry, so I re-wrote the function
+           to be more like pretty_patch_text and use run_command
+           (which already knows how to handle unicode).
+
 2010-04-21  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

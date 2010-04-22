@@ -49,7 +49,19 @@ from webkitpy.common.system.executive import Executive, ScriptError
 _log = logutils.get_logger(__file__)
 
 
-# Python bug workaround.  See Port.wdiff_text() for an explanation.
+# Python's Popen has a bug that causes any pipes opened to a
+# process that can't be executed to be leaked.  Since this
+# code is specifically designed to tolerate exec failures
+# to gracefully handle cases where wdiff is not installed,
+# the bug results in a massive file descriptor leak. As a
+# workaround, if an exec failure is ever experienced for
+# wdiff, assume it's not available.  This will leak one
+# file descriptor but that's better than leaking each time
+# wdiff would be run.
+#
+# http://mail.python.org/pipermail/python-list/
+#    2008-August/505753.html
+# http://bugs.python.org/issue3210
 _wdiff_available = True
 _pretty_patch_available = True
 
@@ -519,62 +531,49 @@ class Port(object):
         expectations, determining search paths, and logging information."""
         raise NotImplementedError('Port.version')
 
+    _WDIFF_DEL = '##WDIFF_DEL##'
+    _WDIFF_ADD = '##WDIFF_ADD##'
+    _WDIFF_END = '##WDIFF_END##'
+
+    def _format_wdiff_output_as_html(self, wdiff):
+        wdiff = cgi.escape(wdiff)
+        wdiff = wdiff.replace(_WDIFF_DEL, '<span class=del>')
+        wdiff = wdiff.replace(_WDIFF_ADD, '<span class=add>')
+        wdiff = wdiff.replace(_WDIFF_END, '</span>')
+        html = '<head><style>.del { background: #faa; } '
+        html += '.add { background: #afa; }</style></head>'
+        html += "<pre>%s</pre>" % wdiff
+        return result
+
+    def _wdiff_command(self):
+        executable = self._path_to_wdiff()
+        return [executable,
+                "--start-delete=%s" % _WDIFF_DEL,
+                "--end-delete=%s" % _WDIFF_END,
+                "--start-insert=%s" % _WDIFF_ADD,
+                "--end-insert=%s" % _WDIFF_END,
+                actual_filename,
+                expected_filename]
+
     def wdiff_text(self, actual_filename, expected_filename):
         """Returns a string of HTML indicating the word-level diff of the
         contents of the two filenames. Returns an empty string if word-level
         diffing isn't available."""
-        executable = self._path_to_wdiff()
-        cmd = [executable,
-               '--start-delete=##WDIFF_DEL##',
-               '--end-delete=##WDIFF_END##',
-               '--start-insert=##WDIFF_ADD##',
-               '--end-insert=##WDIFF_END##',
-               actual_filename,
-               expected_filename]
-        # FIXME: Why not just check os.exists(executable) once?
+
         global _wdiff_available
-        result = ''
+        if not _wdiff_available:
+            return ""
         try:
-            # Python's Popen has a bug that causes any pipes opened to a
-            # process that can't be executed to be leaked.  Since this
-            # code is specifically designed to tolerate exec failures
-            # to gracefully handle cases where wdiff is not installed,
-            # the bug results in a massive file descriptor leak. As a
-            # workaround, if an exec failure is ever experienced for
-            # wdiff, assume it's not available.  This will leak one
-            # file descriptor but that's better than leaking each time
-            # wdiff would be run.
-            #
-            # http://mail.python.org/pipermail/python-list/
-            #    2008-August/505753.html
-            # http://bugs.python.org/issue3210
-            #
-            # It also has a threading bug, so we don't output wdiff if
-            # the Popen raises a ValueError.
-            # http://bugs.python.org/issue1236
-            if _wdiff_available:
-                try:
-                    # FIXME: Use Executive() here.
-                    wdiff = subprocess.Popen(cmd,
-                        stdout=subprocess.PIPE).communicate()[0]
-                except ValueError, e:
-                    # Working around a race in Python 2.4's implementation
-                    # of Popen().
-                    wdiff = ''
-                wdiff = cgi.escape(wdiff)
-                wdiff = wdiff.replace('##WDIFF_DEL##', '<span class=del>')
-                wdiff = wdiff.replace('##WDIFF_ADD##', '<span class=add>')
-                wdiff = wdiff.replace('##WDIFF_END##', '</span>')
-                result = '<head><style>.del { background: #faa; } '
-                result += '.add { background: #afa; }</style></head>'
-                result += '<pre>' + wdiff + '</pre>'
+            return self._executive.run_command(self._wdiff_command())
         except OSError, e:
-            if (e.errno == errno.ENOENT or e.errno == errno.EACCES or
-                e.errno == errno.ECHILD):
-                _wdiff_available = False
-            else:
-                raise e
-        return result
+            # If the system is missing wdiff stop trying.
+            _wdiff_available = False
+            return ''
+        except ScriptError, e:
+            # If wdiff failed to run for some reason, stop trying.
+            _wdiff_available = False
+            return ""
+
 
     _pretty_patch_error_html = "Failed to run PrettyPatch, see error console."
 
