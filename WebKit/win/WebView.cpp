@@ -758,7 +758,7 @@ bool WebView::ensureBackingStore()
         BitmapInfo bitmapInfo = BitmapInfo::createBottomUp(IntSize(m_backingStoreSize));
 
         void* pixels = NULL;
-        m_backingStoreBitmap.set(::CreateDIBSection(NULL, &bitmapInfo, DIB_RGB_COLORS, &pixels, NULL, 0));
+        m_backingStoreBitmap = RefCountedHBITMAP::create(::CreateDIBSection(0, &bitmapInfo, DIB_RGB_COLORS, &pixels, 0, 0));
         return true;
     }
 
@@ -782,11 +782,11 @@ void WebView::addToDirtyRegion(HRGN newRegion)
 
     if (m_backingStoreDirtyRegion) {
         HRGN combinedRegion = ::CreateRectRgn(0,0,0,0);
-        ::CombineRgn(combinedRegion, m_backingStoreDirtyRegion.get(), newRegion, RGN_OR);
+        ::CombineRgn(combinedRegion, m_backingStoreDirtyRegion->handle(), newRegion, RGN_OR);
         ::DeleteObject(newRegion);
-        m_backingStoreDirtyRegion.set(combinedRegion);
+        m_backingStoreDirtyRegion = RefCountedHRGN::create(combinedRegion);
     } else
-        m_backingStoreDirtyRegion.set(newRegion);
+        m_backingStoreDirtyRegion = RefCountedHRGN::create(newRegion);
 
 #if USE(ACCELERATED_COMPOSITING)
     if (m_layerRenderer)
@@ -815,7 +815,7 @@ void WebView::scrollBackingStore(FrameView* frameView, int dx, int dy, const Int
     // Collect our device context info and select the bitmap to scroll.
     HDC windowDC = ::GetDC(m_viewWindow);
     HDC bitmapDC = ::CreateCompatibleDC(windowDC);
-    ::SelectObject(bitmapDC, m_backingStoreBitmap.get());
+    ::SelectObject(bitmapDC, m_backingStoreBitmap->handle());
     
     // Scroll the bitmap.
     RECT scrollRectWin(scrollViewRect);
@@ -892,7 +892,7 @@ void WebView::updateBackingStore(FrameView* frameView, HDC dc, bool backingStore
     if (!dc) {
         windowDC = ::GetDC(m_viewWindow);
         bitmapDC = ::CreateCompatibleDC(windowDC);
-        ::SelectObject(bitmapDC, m_backingStoreBitmap.get());
+        ::SelectObject(bitmapDC, m_backingStoreBitmap->handle());
     }
 
     if (m_backingStoreBitmap && (m_backingStoreDirtyRegion || backingStoreCompletelyDirty)) {
@@ -904,8 +904,8 @@ void WebView::updateBackingStore(FrameView* frameView, HDC dc, bool backingStore
         Vector<IntRect> paintRects;
         if (!backingStoreCompletelyDirty) {
             RECT regionBox;
-            ::GetRgnBox(m_backingStoreDirtyRegion.get(), &regionBox);
-            getUpdateRects(m_backingStoreDirtyRegion.get(), regionBox, paintRects);
+            ::GetRgnBox(m_backingStoreDirtyRegion->handle(), &regionBox);
+            getUpdateRects(m_backingStoreDirtyRegion->handle(), regionBox, paintRects);
         } else {
             RECT clientRect;
             ::GetClientRect(m_viewWindow, &clientRect);
@@ -970,7 +970,7 @@ void WebView::paint(HDC dc, LPARAM options)
 
     HDC bitmapDC = ::CreateCompatibleDC(hdc);
     bool backingStoreCompletelyDirty = ensureBackingStore();
-    ::SelectObject(bitmapDC, m_backingStoreBitmap.get());
+    ::SelectObject(bitmapDC, m_backingStoreBitmap->handle());
 
     // Update our backing store if needed.
     updateBackingStore(frameView, bitmapDC, backingStoreCompletelyDirty, windowsToPaint);
@@ -5616,7 +5616,7 @@ HRESULT STDMETHODCALLTYPE WebView::backingStore(
 {
     if (!hBitmap)
         return E_POINTER;
-    *hBitmap = reinterpret_cast<OLE_HANDLE>(m_backingStoreBitmap.get());
+    *hBitmap = reinterpret_cast<OLE_HANDLE>(m_backingStoreBitmap->handle());
     return S_OK;
 }
 
@@ -6116,6 +6116,14 @@ void WebView::setAcceleratedCompositing(bool accelerated)
     }
 }
 
+void releaseBackingStoreCallback(void* info, const void* data, size_t size)
+{
+    // Release the backing store bitmap previously retained by updateRootLayerContents().
+    ASSERT(info);
+    if (info)
+        static_cast<RefCountedHBITMAP*>(info)->deref();
+}
+
 void WebView::updateRootLayerContents()
 {
     if (!m_backingStoreBitmap || !m_layerRenderer)
@@ -6123,13 +6131,12 @@ void WebView::updateRootLayerContents()
 
     // Get the backing store into a CGImage
     BITMAP bitmap;
-    GetObject(m_backingStoreBitmap.get(), sizeof(bitmap), &bitmap);
-    int bmSize = bitmap.bmWidthBytes * bitmap.bmHeight;
-    RetainPtr<CFDataRef> data(AdoptCF, 
-                                CFDataCreateWithBytesNoCopy(
-                                        0, static_cast<UInt8*>(bitmap.bmBits),
-                                        bmSize, kCFAllocatorNull));
-    RetainPtr<CGDataProviderRef> cgData(AdoptCF, CGDataProviderCreateWithCFData(data.get()));
+    GetObject(m_backingStoreBitmap->handle(), sizeof(bitmap), &bitmap);
+    size_t bmSize = bitmap.bmWidthBytes * bitmap.bmHeight;
+    RetainPtr<CGDataProviderRef> cgData(AdoptCF,
+        CGDataProviderCreateWithData(static_cast<void*>(m_backingStoreBitmap.get()),
+                                                        bitmap.bmBits, bmSize,
+                                                        releaseBackingStoreCallback));
     RetainPtr<CGColorSpaceRef> space(AdoptCF, CGColorSpaceCreateDeviceRGB());
     RetainPtr<CGImageRef> backingStoreImage(AdoptCF, CGImageCreate(bitmap.bmWidth, bitmap.bmHeight,
                                      8, bitmap.bmBitsPixel, 
@@ -6137,6 +6144,11 @@ void WebView::updateRootLayerContents()
                                      kCGBitmapByteOrder32Little | kCGImageAlphaNoneSkipFirst,
                                      cgData.get(), 0, false, 
                                      kCGRenderingIntentDefault));
+
+    // Retain the backing store bitmap so that it is not deleted by deleteBackingStore()
+    // while still in use within CA. When CA is done with the bitmap, it will
+    // call releaseBackingStoreCallback(), which will release the backing store bitmap.
+    m_backingStoreBitmap->ref();
 
     // Hand the CGImage to CACF for compositing
     m_layerRenderer->setRootContents(backingStoreImage.get());

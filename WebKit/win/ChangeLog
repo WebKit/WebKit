@@ -1,3 +1,28 @@
+2010-04-21  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Reference count WebView's backing store bitmap to prevent
+        deleteBackingStore() from freeing the bitmap while it is still being
+        referenced by Core Animation.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37954
+
+        * WebView.cpp:
+        (WebView::ensureBackingStore):
+        (WebView::addToDirtyRegion):
+        (WebView::scrollBackingStore):
+        (WebView::updateBackingStore):
+        (WebView::paint):
+        (WebView::backingStore):
+        (releaseBackingStoreCallback): deref m_backingStoreBitmap once Core
+        Animation has dropeed its reference to the memory.
+        (WebView::updateRootLayerContents): ref m_backingStoreBitmap before
+        passing the memory to Core Animation to prevent deleteBackingStore()
+        from freeing it while it is still referenced by CA.
+        * WebView.h: Make m_backingStoreBitmap a RefCountedGDIHandle<HBITMAP>,
+        and make m_backingStoreDirtyRegion a RefCountedGDIHandle<HRGN>.
+
 2010-04-20  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
