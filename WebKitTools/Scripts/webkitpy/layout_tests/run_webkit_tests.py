@@ -1637,8 +1637,8 @@ def _compat_shim_callback(option, opt_str, value, parser):
     print "Ignoring unsupported option: %s" % opt_str
 
 
-def _compat_shim_option(option_name, nargs=0):
-    return optparse.make_option(option_name, action="callback", callback=_compat_shim_callback, nargs=nargs, help="Ignored, for old-run-webkit-tests compat only.")
+def _compat_shim_option(option_name, **kwargs):
+    return optparse.make_option(option_name, action="callback", callback=_compat_shim_callback, help="Ignored, for old-run-webkit-tests compat only.", **kwargs)
 
 
 def parse_args(args=None):
@@ -1709,7 +1709,7 @@ def parse_args(args=None):
         _compat_shim_option("--use-remote-links-to-tests"),
         # FIXME: NRWT doesn't need this option as much since failures are
         # designed to be cheap.  We eventually plan to add this support.
-        _compat_shim_option("--exit-after-n-failures", nargs=1),
+        _compat_shim_option("--exit-after-n-failures", nargs=1, type="int"),
     ]
 
     results_options = [
