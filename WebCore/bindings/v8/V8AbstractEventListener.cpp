@@ -71,6 +71,8 @@ V8AbstractEventListener::~V8AbstractEventListener()
 
 void V8AbstractEventListener::handleEvent(ScriptExecutionContext* context, Event* event)
 {
+    ASSERT(event);
+
     // The callback function on XMLHttpRequest can clear the event listener and destroys 'this' object. Keep a local reference to it.
     // See issue 889829.
     RefPtr<V8AbstractEventListener> protect(this);
@@ -86,6 +88,7 @@ void V8AbstractEventListener::handleEvent(ScriptExecutionContext* context, Event
 
     // Get the V8 wrapper for the event object.
     v8::Handle<v8::Value> jsEvent = toV8(event);
+    ASSERT(!jsEvent.IsEmpty());
 
     invokeEventHandler(context, event, jsEvent);
 }
@@ -114,6 +117,9 @@ void V8AbstractEventListener::setListenerObject(v8::Handle<v8::Object> listener)
 
 void V8AbstractEventListener::invokeEventHandler(ScriptExecutionContext* context, Event* event, v8::Handle<v8::Value> jsEvent)
 {
+    // If jsEvent is empty, attempt to set it as a hidden value would crash v8.
+    if (jsEvent.IsEmpty())
+        return;
 
     v8::Local<v8::Context> v8Context = toV8Context(context, worldContext());
     if (v8Context.IsEmpty())
