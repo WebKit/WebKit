@@ -1,3 +1,16 @@
+2010-04-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        <rdar://problem/7805969> REGRESSION: iTunes unable to play trailers
+
+        Undo the changes made for https://bugs.webkit.org/show_bug.cgi?id=35215 (<rdar://problem/7673157>)
+        for now. Clients rely on the old behavior, so a fix that changes it will need to account for
+        those.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm: (WebFrameLoaderClient::createPlugin): Pass pluginURL
+        instead of baseURL again.
+
 2010-04-22  Dave Moore  <davemoore@chromium.org>
 
         Reviewed by Dimitri Glazkov.

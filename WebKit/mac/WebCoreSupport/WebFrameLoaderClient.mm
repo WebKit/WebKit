@@ -1536,7 +1536,8 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLP
             [NSNumber numberWithInt:loadManually ? WebPlugInModeFull : WebPlugInModeEmbed], WebPlugInModeKey,
             [NSNumber numberWithBool:!loadManually], WebPlugInShouldLoadMainResourceKey,
             kit(element), WebPlugInContainingElementKey,
-            baseURL, WebPlugInBaseURLKey,
+            // FIXME: We should be passing base URL, see <https://bugs.webkit.org/show_bug.cgi?id=35215>.
+            pluginURL, WebPlugInBaseURLKey, // pluginURL might be nil, so add it last
             nil];
 
         NSView *view = CallUIDelegate(webView, selector, arguments);
