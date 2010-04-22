@@ -2,6 +2,18 @@
 
         Reviewed by Gustavo Noronha Silva.
 
+        Implement findThemePath to locate the correct theme file instead of
+        relying on a hardcoded location.
+        http://webkit.org/b/37996
+
+        * efl/EWebLauncher/main.c:
+        (findThemePath): Fix to locate the correct theme files.
+        (main): Use findThemePath() instead of a hardcoded one.
+
+2010-04-22  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Gustavo Noronha Silva.
+
         Update efl/ewebkit.pc.in to match the variable substitution syntax
         of CMake.
         http://webkit.org/b/37999

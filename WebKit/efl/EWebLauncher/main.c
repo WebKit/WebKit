@@ -31,7 +31,6 @@
 
 #include <ctype.h>
 #include <Ecore.h>
-#include <Ecore_Data.h>
 #include <Ecore_Evas.h>
 #include <Ecore_File.h>
 #include <Ecore_Getopt.h>
@@ -42,6 +41,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
 
@@ -53,8 +53,6 @@
         if (verbose)                \
             printf(format, ##args); \
     } while (0)
-
-#define REL_THEME_PATH "../../../WebKit/efl/DefaultTheme/default.edj"
 
 #define MIN_ZOOM_LEVEL 0
 #define DEFAULT_ZOOM_LEVEL 5
@@ -136,11 +134,11 @@ typedef struct _ELauncher {
     const char *userAgent;
 } ELauncher;
 
-void browserDestroy(Ecore_Evas *ee);
-void closeWindow(Ecore_Evas *ee);
-int browserCreate(const char *url, const char *theme, const char *userAgent, Eina_Rectangle geometry, const char *engine, unsigned char isFullscreen);
+static void browserDestroy(Ecore_Evas *ee);
+static void closeWindow(Ecore_Evas *ee);
+static int browserCreate(const char *url, const char *theme, const char *userAgent, Eina_Rectangle geometry, const char *engine, unsigned char isFullscreen);
 
-void
+static void
 print_history(Eina_List *list)
 {
     Eina_List *l;
@@ -173,7 +171,7 @@ print_history(Eina_List *list)
     }
 }
 
-void
+static void
 zoom_level_set(Evas_Object *webview, int level)
 {
     float factor = ((float) zoomLevels[level]) / 100.0;
@@ -183,53 +181,6 @@ zoom_level_set(Evas_Object *webview, int level)
     cx = mx - ox;
     cy = my - oy;
     ewk_view_zoom_animated_set(webview, factor, 0.5, cx, cy);
-}
-
-char*
-join_path(const char *base, const char *path)
-{
-    char separator[] = "/";
-
-    char tmp[PATH_MAX + 1];
-    char result[PATH_MAX + 1];
-    result[0] = tmp[0] = '\0';
-
-    char *str = strdup(path);
-
-    char *token = NULL;
-    token = strtok(str, separator);
-    int count = 0;
-    do {
-        if (!strcmp(token, ".."))
-            count++;
-        else
-            strcat(tmp, token);
-        token = strtok(NULL, separator);
-        if (!token)
-            break;
-        if (tmp[0])
-            strcat(tmp, separator);
-    } while (EINA_TRUE);
-
-    free(str);
-    str = strdup(base);
-
-    char *base_ptr;
-    while (count--) {
-        base_ptr = strrchr(str, separator[0]);
-        if (!base_ptr) {
-            free(str);
-            return NULL; // couldn't resolve path
-        }
-        *base_ptr = '\0';
-    }
-
-    strcat(result, str);
-    strcat(result, separator);
-    strcat(result, tmp);
-    free(str);
-
-    return strdup(result);
 }
 
 static void
@@ -394,7 +345,7 @@ on_tooltip_text_set(void* user_data, Evas_Object* webview, void* event_info)
         info("%s\n", text);
 }
 
-void
+static void
 on_mouse_down(void* data, Evas* e, Evas_Object* webview, void* event_info)
 {
     Evas_Event_Mouse_Down *ev = (Evas_Event_Mouse_Down*) event_info;
@@ -402,19 +353,19 @@ on_mouse_down(void* data, Evas* e, Evas_Object* webview, void* event_info)
         evas_object_focus_set(webview, !evas_object_focus_get(webview));
 }
 
-void
+static void
 on_focus_out(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
     info("the webview lost keyboard focus\n");
 }
 
-void
+static void
 on_focus_in(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
     info("the webview gained keyboard focus\n");
 }
 
-void
+static void
 on_resized(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
     Evas_Coord w, h;
@@ -422,7 +373,7 @@ on_resized(void *data, Evas *e, Evas_Object *obj, void *event_info)
     ewk_view_fixed_layout_size_set(obj, w, h);
 }
 
-void
+static void
 on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
     Evas_Event_Key_Down *ev = (Evas_Event_Key_Down*) event_info;
@@ -530,7 +481,7 @@ on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
     }
 }
 
-void
+static void
 on_browser_del(void *data, Evas *evas, Evas_Object *browser, void *event)
 {
     ELauncher *app = (ELauncher*) data;
@@ -542,13 +493,13 @@ on_browser_del(void *data, Evas *evas, Evas_Object *browser, void *event)
     evas_object_event_callback_del(app->browser, EVAS_CALLBACK_DEL, on_browser_del);
 }
 
-void
+static void
 on_closeWindow(Ecore_Evas *ee)
 {
     browserDestroy(ee);
 }
 
-int
+static int
 quit(Eina_Bool success, const char *msg)
 {
     edje_shutdown();
@@ -565,7 +516,7 @@ quit(Eina_Bool success, const char *msg)
     return EXIT_SUCCESS;
 }
 
-int
+static int
 browserCreate(const char *url, const char *theme, const char *userAgent, Eina_Rectangle geometry, const char *engine, unsigned char isFullscreen)
 {
     if ((geometry.w <= 0) && (geometry.h <= 0)) {
@@ -653,7 +604,7 @@ browserCreate(const char *url, const char *theme, const char *userAgent, Eina_Re
     return 1;
 }
 
-void
+static void
 browserDestroy(Ecore_Evas *ee)
 {
     ecore_evas_free(ee);
@@ -661,7 +612,7 @@ browserDestroy(Ecore_Evas *ee)
         ecore_main_loop_quit();
 }
 
-void
+static void
 closeWindow(Ecore_Evas *ee)
 {
     Eina_List *l;
@@ -688,6 +639,29 @@ main_signal_exit(void *data, int ev_type, void *ev)
     if (!eina_list_count(windows))
         ecore_main_loop_quit();
     return 1;
+}
+
+static char *
+findThemePath(void)
+{
+    const char **itr, *locations[] = {
+        "./default.edj",
+        "./WebKit/efl/DefaultTheme/default.edj",
+        "../WebKit/efl/DefaultTheme/default.edj",
+        DATA_DIR"/themes/default.edj",
+        NULL
+    };
+
+    for (itr = locations; *itr; itr++) {
+        struct stat st;
+        if (!stat(*itr, &st)) {
+            char path[PATH_MAX];
+            if (realpath(*itr, path))
+                return strdup(path);
+        }
+    }
+
+    return NULL;
 }
 
 int
@@ -750,7 +724,7 @@ main(int argc, char *argv[])
     if (sudoWorkaround)
         strcat(getenv("HOME"), "blah");
 
-    themePath = join_path(argv[0], REL_THEME_PATH);
+    themePath = findThemePath();
 
     ewk_init();
     tmp = getenv("TMPDIR");
