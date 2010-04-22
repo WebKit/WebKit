@@ -1,3 +1,18 @@
+2010-04-21  Jay Civelli  <jcivelli@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Don't notify the WebView that a popup was
+        opened when the popup is handled externally, as the popup
+        is in that case transparent to the WebView.
+        The notification was causing an ASSERT on Mac (where
+        the popup is handled externally) as there would be no
+        notification that the popup was closed.
+        https://bugs.webkit.org/show_bug.cgi?id=37825
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::popupOpened):
+
 2010-04-21  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r58028.

@@ -629,8 +629,11 @@ void ChromeClientImpl::popupOpened(PopupContainer* popupContainer,
             webwidget = m_webView->client()->createPopupMenu();
         if (!webwidget)
             webwidget = m_webView->client()->createPopupMenu(false);
+        // We only notify when the WebView has to handle the popup, as when
+        // the popup is handled externally, the fact that a popup is showing is
+        // transparent to the WebView.
+        m_webView->popupOpened(popupContainer);
     }
-    m_webView->popupOpened(popupContainer);
     static_cast<WebPopupMenuImpl*>(webwidget)->Init(popupContainer, bounds);
 }
 
