@@ -5,6 +5,17 @@
         REGRESSION(57531): the commit-queue still hates Tor Arne Vestbø
         https://bugs.webkit.org/show_bug.cgi?id=37765
 
+        More on-the-bot debugging, sigh.  I wish I had a local build.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+
+2010-04-21  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Fix typo in my previous fix attempt.
+
+        REGRESSION(57531): the commit-queue still hates Tor Arne Vestbø
+        https://bugs.webkit.org/show_bug.cgi?id=37765
+
         * Scripts/webkitpy/layout_tests/port/base.py:
          - Add self. to class variable access.
 

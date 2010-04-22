@@ -545,7 +545,7 @@ class Port(object):
         html += "<pre>%s</pre>" % wdiff
         return result
 
-    def _wdiff_command(self):
+    def _wdiff_command(self, actual_filename, expected_filename):
         executable = self._path_to_wdiff()
         return [executable,
                 "--start-delete=%s" % self._WDIFF_DEL,
@@ -564,7 +564,8 @@ class Port(object):
         if not _wdiff_available:
             return ""
         try:
-            return self._executive.run_command(self._wdiff_command())
+            cmd = self._wdiff_command(actual_filename, expected_filename)
+            return self._executive.run_command(cmd)
         except OSError, e:
             # If the system is missing wdiff stop trying.
             _wdiff_available = False
