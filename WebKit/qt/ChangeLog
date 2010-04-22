@@ -1,3 +1,27 @@
+2010-04-22  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Fix autotests .qrc file paths when built in Qt.
+
+        Compiling auto-tests from qt/tests/auto/qweb* produced
+        failing tests since these .pro files include the
+        ones in WebKit/qt/tests and the .qrc file was
+        not added to RESOURCES
+
+        * tests/benchmarks/loading/loading.pro:
+        * tests/benchmarks/painting/painting.pro:
+        * tests/qgraphicswebview/qgraphicswebview.pro:
+        * tests/qwebelement/qwebelement.pro:
+        * tests/qwebframe/qwebframe.pro:
+        * tests/qwebhistory/qwebhistory.pro:
+        * tests/qwebhistoryinterface/qwebhistoryinterface.pro:
+        * tests/qwebinspector/qwebinspector.pro:
+        * tests/qwebpage/qwebpage.pro:
+        * tests/qwebplugindatabase/qwebplugindatabase.pro:
+        * tests/qwebview/qwebview.pro:
+        * tests/tests.pri:
+
 2010-04-22  Adam Barth  <abarth@webkit.org>
 
         Unreviewed, rolling out r58069.
