@@ -252,7 +252,7 @@ function onCommentSubmit(comment) {
   var lineText = line.select("[class='text']")[0].textContent;
   var filename = comment.up().up().select("h1")[0].down().textContent;
 
-  var snippet = filename + ":" + lineTo + "\n +  " + lineText + "\n" + commentText + "\n\n";
+  var snippet = filename + ":" + lineTo + "\\n +  " + lineText + "\\n" + commentText + "\\n\\n";
 
   // Remove all the crap.
   textarea.remove();

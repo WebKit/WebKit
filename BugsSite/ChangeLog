@@ -1,5 +1,12 @@
 2010-04-22  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed.  Turns out we need to do more escaping because Ruby was
+        explanding our newlines, creating a syntax error.
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2010-04-22  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Darin Adler.
 
         Hack up PrettyDiff to allow line-by-line comments
