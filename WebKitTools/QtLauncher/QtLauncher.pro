@@ -8,6 +8,7 @@ SOURCES += \
     utils.cpp \
     webpage.cpp \
     webview.cpp \
+    fpstimer.cpp \
 
 HEADERS += \
     locationedit.h \
@@ -17,6 +18,7 @@ HEADERS += \
     webinspector.h \
     webpage.h \
     webview.h \
+    fpstimer.h \
 
 CONFIG -= app_bundle
 CONFIG += uitools

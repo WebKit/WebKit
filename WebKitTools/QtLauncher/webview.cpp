@@ -106,25 +106,24 @@ void WebViewGraphicsBased::setFrameRateMeasurementEnabled(bool enabled)
     m_measureFps = enabled;
     if (m_measureFps) {
         m_lastConsultTime = m_startTime = QTime::currentTime();
+        m_fpsTimer.start();
         m_updateTimer->start();
-    } else
+    } else {
+        m_fpsTimer.stop();
         m_updateTimer->stop();
+    }
 }
 
 void WebViewGraphicsBased::updateFrameRate()
 {
-    QTime now = QTime::currentTime();
-
+    const QTime now = QTime::currentTime();
     int interval = m_lastConsultTime.msecsTo(now);
-    int total = m_startTime.msecsTo(now);
-
-    int average = total ? m_numPaintsTotal * 1000 / total : 0;
-    int current = interval ? m_numPaintsSinceLastMeasure * 1000 / interval : 0;
+    int frames = m_fpsTimer.numFrames(interval);
+    int current = interval ? frames * 1000 / interval : 0;
 
     emit currentFPSUpdated(current);
 
     m_lastConsultTime = now;
-    m_numPaintsSinceLastMeasure = 0;
 }
 
 void WebViewGraphicsBased::animatedFlip()
@@ -156,8 +155,6 @@ void WebViewGraphicsBased::paintEvent(QPaintEvent* event)
     QGraphicsView::paintEvent(event);
     if (!m_measureFps)
         return;
-    m_numPaintsSinceLastMeasure++;
-    m_numPaintsTotal++;
 }
 
 static QMenu* createContextMenu(QWebPage* page, QPoint position)
