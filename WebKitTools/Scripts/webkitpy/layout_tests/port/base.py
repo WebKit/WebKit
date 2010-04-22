@@ -537,9 +537,9 @@ class Port(object):
 
     def _format_wdiff_output_as_html(self, wdiff):
         wdiff = cgi.escape(wdiff)
-        wdiff = wdiff.replace(_WDIFF_DEL, '<span class=del>')
-        wdiff = wdiff.replace(_WDIFF_ADD, '<span class=add>')
-        wdiff = wdiff.replace(_WDIFF_END, '</span>')
+        wdiff = wdiff.replace(self._WDIFF_DEL, '<span class=del>')
+        wdiff = wdiff.replace(self._WDIFF_ADD, '<span class=add>')
+        wdiff = wdiff.replace(self._WDIFF_END, '</span>')
         html = '<head><style>.del { background: #faa; } '
         html += '.add { background: #afa; }</style></head>'
         html += "<pre>%s</pre>" % wdiff
@@ -548,10 +548,10 @@ class Port(object):
     def _wdiff_command(self):
         executable = self._path_to_wdiff()
         return [executable,
-                "--start-delete=%s" % _WDIFF_DEL,
-                "--end-delete=%s" % _WDIFF_END,
-                "--start-insert=%s" % _WDIFF_ADD,
-                "--end-insert=%s" % _WDIFF_END,
+                "--start-delete=%s" % self._WDIFF_DEL,
+                "--end-delete=%s" % self._WDIFF_END,
+                "--start-insert=%s" % self._WDIFF_ADD,
+                "--end-insert=%s" % self._WDIFF_END,
                 actual_filename,
                 expected_filename]
 
