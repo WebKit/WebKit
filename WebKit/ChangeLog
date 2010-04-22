@@ -2,6 +2,16 @@
 
         Reviewed by Gustavo Noronha Silva.
 
+        Update efl/ewebkit.pc.in to match the variable substitution syntax
+        of CMake.
+        http://webkit.org/b/37999
+
+        * efl/ewebkit.pc.in: Updated.
+
+2010-04-22  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Gustavo Noronha Silva.
+
         Update EWebKit (EFL port) to match recent API changes.
         http://webkit.org/b/37997
 
