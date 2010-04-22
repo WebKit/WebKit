@@ -1,3 +1,18 @@
+2010-04-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Printing Core Animation-based plug-ins is broken
+        https://bugs.webkit.org/show_bug.cgi?id=37967
+
+        When we do a "flattening" paint because of printing, we need to stash
+        the flattening flag in the FrameView's m_paintBehavior, because
+        WebBaseNetscapePluginView needs to find it there to decide whether
+        to grab a bitmap for printing, for CA plug-ins.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::paintContents):
+
 2010-04-21  François Sausset  <sausset@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.
