@@ -9,8 +9,6 @@ svg/css/glyph-orientation-rounding-test.xhtml
 platform/mac/accessibility/table-multi-bodies.html
 # Lists are not supported on Leopard.
 platform/mac/accessibility/aria-directory.html
-# https://bugs.webkit.org/show_bug.cgi?id=37112 Live regions fails on leopard release bot.
-platform/mac/accessibility/aria-liveregions-notifications.html
 
 # Tests of font features not supported by ATSUI
 platform/mac/fast/text/myanmar-shaping.html

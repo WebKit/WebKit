@@ -2667,22 +2667,19 @@ static RenderObject* rendererForView(NSView* view)
     return [super accessibilityArrayAttributeValues:attribute index:index maxCount:maxCount];
 }
 
-// These are used by DRT so that it can know when notifications are sent.
-// Since they are static, only one callback can be installed at a time (that's all DRT should need).
-typedef void (*AXPostedNotificationCallback)(id element, NSString* notification, void* context);
-static AXPostedNotificationCallback AXNotificationCallback = 0;
-static void* AXPostedNotificationContext = 0;
-
-- (void)accessibilitySetPostedNotificationCallback:(AXPostedNotificationCallback)function withContext:(void*)context
+// This is set by DRT when it wants to listen for notifications.
+static BOOL accessibilityShouldRepostNotifications;
+- (void)accessibilitySetShouldRepostNotifications:(BOOL)repost
 {
-    AXNotificationCallback = function;
-    AXPostedNotificationContext = context;
+    accessibilityShouldRepostNotifications = repost;
 }
 
-- (void)accessibilityPostedNotification:(NSString *)notification
+- (void)accessibilityPostedNotification:(NSString *)notificationName
 {
-    if (AXNotificationCallback)
-        AXNotificationCallback(self, notification, AXPostedNotificationContext);
+    if (accessibilityShouldRepostNotifications) {
+        NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:notificationName, @"notificationName", nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"AXDRTNotification" object:nil userInfo:userInfo];
+    }
 }
 
 @end

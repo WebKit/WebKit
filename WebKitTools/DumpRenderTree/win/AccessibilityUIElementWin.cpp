@@ -562,6 +562,11 @@ bool AccessibilityUIElement::addNotificationListener(JSObjectRef functionCallbac
     return true;
 }
 
+void AccessibilityUIElement::removeNotificationListener()
+{
+    // FIXME: implement
+}
+
 bool AccessibilityUIElement::isSelectable() const
 {
     DWORD state = accessibilityState(m_element);

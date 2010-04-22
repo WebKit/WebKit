@@ -53,7 +53,7 @@ class VisiblePosition;
 - (WebCore::AccessibilityObject*)accessibilityObject;
 
 // Used to inform an element when a notification is posted for it. Used by DRT.
-- (void)accessibilityPostedNotification:(NSString *)notification;
+- (void)accessibilityPostedNotification:(NSString *)notificationName;
 
 - (NSView*)attachmentView;
 

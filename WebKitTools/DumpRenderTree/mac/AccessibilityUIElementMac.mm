@@ -57,32 +57,10 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 
 @interface NSObject (WebKitAccessibilityAdditions)
 - (NSArray *)accessibilityArrayAttributeValues:(NSString *)attribute index:(NSUInteger)index maxCount:(NSUInteger)maxCount;
-- (void)accessibilitySetPostedNotificationCallback:(AXPostedNotificationCallback)function withContext:(void*)context;
+- (void)accessibilitySetShouldRepostNotifications:(BOOL)repost;
 - (NSUInteger)accessibilityIndexOfChild:(id)child;
 - (NSUInteger)accessibilityArrayAttributeCount:(NSString *)attribute;
 @end
-
-AccessibilityUIElement::AccessibilityUIElement(PlatformUIElement element)
-    : m_element(element)
-    , m_notificationFunctionCallback(0)
-{
-    [m_element retain];
-}
-
-AccessibilityUIElement::AccessibilityUIElement(const AccessibilityUIElement& other)
-    : m_element(other.m_element)
-    , m_notificationFunctionCallback(0)
-{
-    [m_element retain];
-}
-
-AccessibilityUIElement::~AccessibilityUIElement()
-{
-    // Make sure that our notification callback does not stick around.
-    if (m_notificationFunctionCallback)
-        [m_element accessibilitySetPostedNotificationCallback:0 withContext:0];
-    [m_element release];
-}
 
 @interface NSString (JSStringRefAdditions)
 + (NSString *)stringWithJSStringRef:(JSStringRef)jsStringRef;
@@ -106,6 +84,88 @@ AccessibilityUIElement::~AccessibilityUIElement()
 }
 
 @end
+
+@interface AccessibilityNotificationHandler : NSObject
+{
+    id m_platformElement;
+    JSObjectRef m_notificationFunctionCallback;
+}
+
+@end
+
+@implementation AccessibilityNotificationHandler
+
+- (id)initWithPlatformElement:(id)platformElement
+{
+    self = [super init];
+
+    m_platformElement = platformElement;
+    
+    // Once an object starts requesting notifications, it's on for the duration of the program.
+    // This is to avoid any race conditions between tests turning this flag on and off. Instead
+    // AccessibilityNotificationHandler can just listen when they want to.
+    [m_platformElement accessibilitySetShouldRepostNotifications:YES];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_notificationReceived:) name:@"AXDRTNotification" object:nil];
+
+    return self;
+}
+ 
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    JSValueUnprotect([mainFrame globalContext], m_notificationFunctionCallback);
+    m_notificationFunctionCallback = 0;
+    
+    [super dealloc];
+}
+
+- (void)_notificationReceived:(NSNotification *)notification
+{
+    NSString *notificationName = [[notification userInfo] objectForKey:@"notificationName"];
+    if (!notificationName)
+        return;
+    
+    JSRetainPtr<JSStringRef> jsNotification(Adopt, [notificationName createJSStringRef]);
+    JSValueRef argument = JSValueMakeString([mainFrame globalContext], jsNotification.get());
+    JSObjectCallAsFunction([mainFrame globalContext], m_notificationFunctionCallback, 0, 1, &argument, 0);
+}
+
+- (void)setCallback:(JSObjectRef)callback
+{
+    if (!callback)
+        return;
+ 
+    // Release the old callback.
+    if (m_notificationFunctionCallback) 
+        JSValueUnprotect([mainFrame globalContext], m_notificationFunctionCallback);
+    
+    m_notificationFunctionCallback = callback;
+    JSValueProtect([mainFrame globalContext], m_notificationFunctionCallback);
+}
+
+@end
+
+AccessibilityUIElement::AccessibilityUIElement(PlatformUIElement element)
+    : m_element(element)
+    , m_notificationHandler(0)
+{
+    // FIXME: ap@webkit.org says ObjC objects need to be CFRetained/CFRelease to be GC-compliant on the mac.
+    [m_element retain];
+}
+
+AccessibilityUIElement::AccessibilityUIElement(const AccessibilityUIElement& other)
+    : m_element(other.m_element)
+    , m_notificationHandler(0)
+{
+    [m_element retain];
+}
+
+AccessibilityUIElement::~AccessibilityUIElement()
+{
+    // The notification handler should be nil because removeNotificationListener() should have been called in the test.
+    ASSERT(!m_notificationHandler);
+    [m_element release];
+}
 
 static NSString* descriptionOfValue(id valueObject, id focusedAccessibilityObject)
 {
@@ -780,26 +840,28 @@ JSStringRef AccessibilityUIElement::url()
     return [[url absoluteString] createJSStringRef];    
 }
 
-static void _accessibilityNotificationCallback(id element, NSString* notification, void* context)
-{
-    if (!context)
-        return;
-
-    JSObjectRef functionCallback = static_cast<JSObjectRef>(context);
-
-    JSRetainPtr<JSStringRef> jsNotification(Adopt, [notification createJSStringRef]);
-    JSValueRef argument = JSValueMakeString([mainFrame globalContext], jsNotification.get());
-    JSObjectCallAsFunction([mainFrame globalContext], functionCallback, NULL, 1, &argument, NULL);
-}
-
 bool AccessibilityUIElement::addNotificationListener(JSObjectRef functionCallback)
 {
     if (!functionCallback)
         return false;
  
-    m_notificationFunctionCallback = functionCallback;
-    [platformUIElement() accessibilitySetPostedNotificationCallback:_accessibilityNotificationCallback withContext:reinterpret_cast<void*>(m_notificationFunctionCallback)];
+    // Mac programmers should not be adding more than one notification listener per element.
+    // Other platforms may be different.
+    if (m_notificationHandler)
+        return false;
+    m_notificationHandler = [[AccessibilityNotificationHandler alloc] initWithPlatformElement:platformUIElement()];
+    [m_notificationHandler setCallback:functionCallback];
+
     return true;
+}
+
+void AccessibilityUIElement::removeNotificationListener()
+{
+    // Mac programmers should not be trying to remove a listener that's already removed.
+    ASSERT(m_notificationHandler);
+
+    [m_notificationHandler release];
+    m_notificationHandler = nil;
 }
 
 bool AccessibilityUIElement::isSelectable() const

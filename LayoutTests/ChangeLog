@@ -1,3 +1,29 @@
+2010-04-21  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        aria-liveregion-notifications.html fails on leopard release bot
+        https://bugs.webkit.org/show_bug.cgi?id=37112
+
+        Add four more tests that test specific live region functionality. Having these
+        four tests run in order seems to stress the notification mechanism and will expose issues 
+        more frequently.
+        Modify tests that use notification listeners to also "removeNotificationListener".
+
+        * platform/mac-leopard/Skipped:
+        * platform/mac/accessibility/aria-listbox-selectedchildren-change.html:
+        * platform/mac/accessibility/aria-liveregion-on-image.html:
+        * platform/mac/accessibility/aria-liveregions-addedelement-expected.txt: Added.
+        * platform/mac/accessibility/aria-liveregions-addedelement.html: Added.
+        * platform/mac/accessibility/aria-liveregions-changedalt-expected.txt: Added.
+        * platform/mac/accessibility/aria-liveregions-changedalt.html: Added.
+        * platform/mac/accessibility/aria-liveregions-changedtext-expected.txt: Added.
+        * platform/mac/accessibility/aria-liveregions-changedtext.html: Added.
+        * platform/mac/accessibility/aria-liveregions-notifications.html:
+        * platform/mac/accessibility/aria-liveregions-removedelement-expected.txt: Added.
+        * platform/mac/accessibility/aria-liveregions-removedelement.html: Added.
+        * platform/mac/accessibility/change-notification-on-scroll.html:
+
 2010-04-21  John Gregg  <johnnyg@google.com>
 
         Reviewed by David Levin.

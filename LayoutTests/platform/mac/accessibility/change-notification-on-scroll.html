@@ -11,10 +11,12 @@ hello hello hello hello hello hello hello hello hello hello hello hello hello he
     if (window.layoutTestController)
         layoutTestController.dumpAsText();
 
+    var textarea = 0;
     function ariaCallback(notification) {
         if (notification == "AXValueChanged") {
             var result = document.getElementById("result");
             result.innerHTML = "Success!"; 
+            textarea.removeNotificationListener();
             window.layoutTestController.notifyDone();
         }
     }
@@ -22,7 +24,7 @@ hello hello hello hello hello hello hello hello hello hello hello hello hello he
     if (window.accessibilityController) {
         window.layoutTestController.waitUntilDone();
         document.getElementById("textarea").focus();
-        var textarea = window.accessibilityController.focusedElement;
+        textarea = window.accessibilityController.focusedElement;
         
         var addedNotification = textarea.addNotificationListener(ariaCallback);
         

@@ -51,6 +51,14 @@ typedef AtkObject* PlatformUIElement;
 typedef void* PlatformUIElement;
 #endif
 
+#if PLATFORM(MAC)
+#ifdef __OBJC__
+typedef id NotificationHandler;
+#else
+typedef struct objc_object* NotificationHandler;
+#endif
+#endif
+
 class AccessibilityUIElement {
 public:
     AccessibilityUIElement(PlatformUIElement);
@@ -174,12 +182,17 @@ public:
     // Notifications
     // Function callback should take one argument, the name of the notification.
     bool addNotificationListener(JSObjectRef functionCallback);
+    // Make sure you call remove, because you can't rely on objects being deallocated in a timely fashion.
+    void removeNotificationListener();
     
 private:
     static JSClassRef getJSClass();
-
     PlatformUIElement m_element;
-    JSObjectRef m_notificationFunctionCallback;
+    
+    // A retained, platform specific object used to help manage notifications for this object.
+#if PLATFORM(MAC)
+    NotificationHandler m_notificationHandler;
+#endif
 };
 
 #endif // AccessibilityUIElement_h

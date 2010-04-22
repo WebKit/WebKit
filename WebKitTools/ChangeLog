@@ -1,3 +1,32 @@
+2010-04-21  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        aria-liveregion-notifications.html fails on leopard release bot
+        https://bugs.webkit.org/show_bug.cgi?id=37112
+
+        Change the way that notifications are listened for by forcing clients
+        to call a remove listener as well to match the add listener. DRT will
+        assert if those are not done in the correct order. 
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (removeNotificationListenerCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (AccessibilityUIElement::removeNotificationListener):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (-[AccessibilityNotificationHandler initWithPlatformElement:]):
+        (-[AccessibilityNotificationHandler dealloc]):
+        (-[AccessibilityNotificationHandler _notificationReceived:]):
+        (-[AccessibilityNotificationHandler setCallback:]):
+        (AccessibilityUIElement::AccessibilityUIElement):
+        (AccessibilityUIElement::~AccessibilityUIElement):
+        (AccessibilityUIElement::addNotificationListener):
+        (AccessibilityUIElement::removeNotificationListener):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::removeNotificationListener):
+
 2010-04-21  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

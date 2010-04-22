@@ -588,6 +588,11 @@ bool AccessibilityUIElement::addNotificationListener(JSObjectRef functionCallbac
     return false;
 }
 
+void AccessibilityUIElement::removeNotificationListener()
+{
+    // FIXME: implement
+}
+
 bool AccessibilityUIElement::isSelectable() const
 {
     // FIXME: implement

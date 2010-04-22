@@ -19,19 +19,14 @@ var successfullyParsed = false;
 
 <script>
 
-    description("This tests that ARIA live regions are sending out the correct notifications. We perform four operations (add, remove, change text, change alt tag), each one should trigger a live region notification");
+    description("This tests that ARIA removing an element from a live region sends the correct notification.");
 
     var liveRegion = 0;
-    var liveRegionChangeCount = 0;
     function ariaCallback(notification) {
         if (notification == "AXLiveRegionChanged") {
-            liveRegionChangeCount++;
-
-            // We should get a total of 4 live region changes.
-            if (liveRegionChangeCount == 4) {
-               liveRegion.removeNotificationListener();
-               window.layoutTestController.notifyDone();
-            }
+           alert("Successfully received " + notification);
+           liveRegion.removeNotificationListener();
+           window.layoutTestController.notifyDone();
         }
     }
 
@@ -43,19 +38,6 @@ var successfullyParsed = false;
 
         var addedNotification = liveRegion.addNotificationListener(ariaCallback);
         shouldBe("addedNotification", "true");
-
-        // this should trigger our live region callback for a text change.
-        document.getElementById("innerlive").innerText = "changed text";
-
-        // this should trigger our live region callback for a new element.
-        document.getElementById("liveregion").innerHTML += "new text element";
-
-        // this should also trigger our live region change because its a text alternative change. 
-        document.getElementById("image").setAttribute('alt', "new image text");
-
-        // Access the accessibility tree here because AX won't post the live region change
-        // notification twice when the children have already been marked as dirty.
-        liveRegion.childAtIndex(0);
 
         // this should trigger our live region callback for a removed element.
         document.getElementById("liveregion").removeChild(document.getElementById("innerlive")); 

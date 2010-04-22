@@ -1,3 +1,27 @@
+2009-04-21  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        aria-liveregion-notifications.html fails on leopard release bot
+        https://bugs.webkit.org/show_bug.cgi?id=37112
+
+        Change the method that DRT uses to monitor AX notifications so that its robust
+        by just sending out NSNotification that can be listened to by anyone, instead
+        of keeping a static function pointer around.
+   
+        This change is aimed to avoid flakiness seen in DRT when the notification handlers
+        are not being called at the appropriate time.
+
+        Tests: platform/mac/accessibility/aria-liveregions-addedelement.html
+               platform/mac/accessibility/aria-liveregions-changedalt.html
+               platform/mac/accessibility/aria-liveregions-changedtext.html
+               platform/mac/accessibility/aria-liveregions-removedelement.html
+
+        * accessibility/mac/AccessibilityObjectWrapper.h:
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilitySetShouldRepostNotifications:]):
+        (-[AccessibilityObjectWrapper accessibilityPostedNotification:]):
+
 2010-04-21  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by NOBODY (Leopard build fix).

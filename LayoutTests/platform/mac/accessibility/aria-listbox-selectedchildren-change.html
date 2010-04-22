@@ -22,6 +22,7 @@ var successfullyParsed = false;
 
     description("This tests that when aria-selected is changed in a listbox, the correct notification is sent.");
 
+    var listbox = 0;
     var notificationCount = 0;
     function ariaCallback(notification) {
         if (notification == "AXSelectedChildrenChanged") {
@@ -29,6 +30,7 @@ var successfullyParsed = false;
 
             // We should get a total of 4 live region changes.
             if (notificationCount == 2) {
+               listbox.removeNotificationListener();
                window.layoutTestController.notifyDone();
             }
         }
@@ -38,7 +40,7 @@ var successfullyParsed = false;
         window.layoutTestController.waitUntilDone();
 
         document.getElementById("listbox").focus();
-        var listbox = window.accessibilityController.focusedElement;
+        listbox = window.accessibilityController.focusedElement;
 
         var addedNotification = listbox.addNotificationListener(ariaCallback);
         shouldBe("addedNotification", "true");
