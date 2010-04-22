@@ -55,7 +55,7 @@ deps = {
 
   # skia dependencies
   'skia':
-    Var('chromium_svn')+'/skia@538',  # TODO: go back to +Var('chromium_rev'),
+    Var('chromium_svn')+'/skia@'+Var('chromium_rev'),
   'third_party/skia/src':
     From('chromium_deps', 'src/third_party/skia/src'),
   'third_party/skia/include':
