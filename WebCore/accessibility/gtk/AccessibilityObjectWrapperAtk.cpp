@@ -360,8 +360,10 @@ static AtkRole atkRole(AccessibilityRole role)
         return ATK_ROLE_TREE;
     case MenuBarRole:
         return ATK_ROLE_MENU_BAR;
+    case MenuListPopupRole:
     case MenuRole:
         return ATK_ROLE_MENU;
+    case MenuListOptionRole:
     case MenuItemRole:
         return ATK_ROLE_MENU_ITEM;
     case ColumnRole:
@@ -379,6 +381,7 @@ static AtkRole atkRole(AccessibilityRole role)
         return ATK_ROLE_PROGRESS_BAR;
     case WindowRole:
         return ATK_ROLE_WINDOW;
+    case PopUpButtonRole:
     case ComboBoxRole:
         return ATK_ROLE_COMBO_BOX;
     case SplitGroupRole:

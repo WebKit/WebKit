@@ -1,3 +1,18 @@
+2010-04-22  Diego Escalante Urrelo  <descalante@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [Gtk] Evaluate and create tests for all the AtkRole's implemented by
+        WebKitGtk
+        https://bugs.webkit.org/show_bug.cgi?id=34449
+
+        Implement ATK_ROLE_COMBO_BOX.
+
+        * accessibility/gtk/AccessibilityObjectAtk.cpp:
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject):
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (atkRole):
+
 2010-04-22  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
