@@ -1,3 +1,24 @@
+2010-04-22  Stephan Aßmus  <superstippi@gmx.de>
+
+        Reviewed by David Levin.
+
+        [Haiku] Improve SimpleFontDataHaiku
+        https://bugs.webkit.org/show_bug.cgi?id=37411
+
+        Covered by existing tests.
+
+        * platform/graphics/haiku/SimpleFontDataHaiku.cpp:
+            - Cleaned up includes
+            - Removed prototype "charUnicodeToUTF8HACK"
+        (WebCore::SimpleFontData::platformInit):
+            - Use const BFont pointer
+        (WebCore::SimpleFontData::smallCapsFontData):
+            - "fontPlatformData" was leaked. It is only
+              used as the key for the font cache lookup.
+        (WebCore::SimpleFontData::platformMetricsForGlyph):
+            - Use existing WebCore encoding infrastructure
+              instead of adding a hack for Haiku. 
+
 2010-04-21  Steve Block  <steveblock@google.com>
 
         Reviewed by Kenneth Rohde Christiansen.

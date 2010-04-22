@@ -34,18 +34,15 @@
 #include "FontCache.h"
 #include "FontDescription.h"
 #include "NotImplemented.h"
-#include <Rect.h>
-#include <unicode/uchar.h>
-#include <unicode/unorm.h>
+#include "TextEncoding.h"
+#include <wtf/text/CString.h>
 
-
-extern int charUnicodeToUTF8HACK(unsigned short, char*);
 
 namespace WebCore {
 
 void SimpleFontData::platformInit()
 {
-    BFont* font = m_platformData.font();
+    const BFont* font = m_platformData.font();
     if (!font)
         return;
 
@@ -76,8 +73,8 @@ SimpleFontData* SimpleFontData::smallCapsFontData(const FontDescription& fontDes
     if (!m_smallCapsFontData) {
         FontDescription desc = FontDescription(fontDescription);
         desc.setSpecifiedSize(0.70f * fontDescription.computedSize());
-        const FontPlatformData* fontPlatformData = new FontPlatformData(desc, desc.family().family());
-        m_smallCapsFontData = new SimpleFontData(*fontPlatformData);
+        FontPlatformData fontPlatformData(desc, desc.family().family());
+        m_smallCapsFontData = new SimpleFontData(fontPlatformData);
     }
     return m_smallCapsFontData;
 }
@@ -95,15 +92,14 @@ void SimpleFontData::determinePitch()
 
 GlyphMetrics SimpleFontData::platformMetricsForGlyph(Glyph glyph, GlyphMetricsMode) const
 {
-    if (!m_platformData.font())
-        return 0;
-
-    char charArray[4];
-    float escapements[1];
-
-    charUnicodeToUTF8HACK(glyph, charArray);
-    m_platformData.font()->GetEscapements(charArray, 1, escapements);
     GlyphMetrics metrics;
+    if (!m_platformData.font())
+        return metrics;
+
+    CString encoded = UTF8Encoding().encode(static_cast<UChar*>(&glyph), 1,
+                                            URLEncodedEntitiesForUnencodables);
+    float escapements[1];
+    m_platformData.font()->GetEscapements(encoded.data(), 1, escapements);
     metrics.horizontalAdvance = escapements[0] * m_platformData.font()->Size();
     return metrics;
 }
