@@ -1,3 +1,18 @@
+2010-04-21  Diego Escalante Urrelo  <descalante@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [Gtk] Evaluate and create tests for all the AtkRole's implemented by
+        WebKitGtk
+        https://bugs.webkit.org/show_bug.cgi?id=34449
+
+        Implement ATK_ROLE_SEPARATOR.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        * accessibility/gtk/AccessibilityObjectAtk.cpp:
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject):
+
 2010-04-21  David Leong  <david.leong@nokia.com>
 
         Reviewed by Simon Hausmann.

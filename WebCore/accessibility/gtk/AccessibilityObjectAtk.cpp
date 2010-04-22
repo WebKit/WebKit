@@ -41,6 +41,9 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
     if (isMenuListPopup() || isMenuListOption())
         return IgnoreObject;
 
+    if (roleValue() == SplitterRole)
+        return IncludeObject;
+
     if (isGroup()) {
         // When a list item is made up entirely of children (e.g. paragraphs)
         // the list item gets ignored. We need it.
