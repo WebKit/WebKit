@@ -117,6 +117,10 @@ class Attachment(object):
         # depends on the current behavior.
         return self._attachment_dictionary.get("url")
 
+    def contents(self):
+        # FIXME: We shouldn't be grabbing at _bugzilla.
+        return self._bug._bugzilla.fetch_attachment_contents(self.id())
+
     def _validate_flag_value(self, flag):
         email = self._attachment_dictionary.get("%s_email" % flag)
         if not email:
@@ -485,6 +489,12 @@ class Bugzilla(object):
 
     def fetch_bug(self, bug_id):
         return Bug(self.fetch_bug_dictionary(bug_id), self)
+
+    def fetch_attachment_contents(self, attachment_id):
+        attachment_url = self.attachment_url_for_id(attachment_id)
+        # We need to authenticate to download patches from security bugs.
+        self.authenticate()
+        return self.browser.open(attachment_url).read()
 
     def _parse_bug_id_from_attachment_page(self, page):
         # The "Up" relation happens to point to the bug.

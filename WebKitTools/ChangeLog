@@ -1,3 +1,16 @@
+2010-04-21  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        webkit-patch can't fetch attachments on security bugs
+        https://bugs.webkit.org/show_bug.cgi?id=37975
+
+        Instead of calling CURL, we just need to use our Mechanize object,
+        which understand bugs.webkit.org authentication.
+
+        * Scripts/webkitpy/common/checkout/api.py:
+        * Scripts/webkitpy/common/net/bugzilla.py:
+
 2010-04-21  Eric Seidel  <eric@webkit.org>
 
         Unreviewed.  Temporary commit, will roll-out before morning.
