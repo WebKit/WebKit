@@ -1,5 +1,15 @@
 2010-04-21  Eric Seidel  <eric@webkit.org>
 
+        Unreviewed.  Temporary commit, will roll-out before morning.
+
+        Turning on new-run-webkit-tests for the Leopard build bot
+        for testing of the harness.
+        Users should not noctice (except for the results.html difference).
+
+        * Scripts/run-webkit-tests:
+
+2010-04-21  Eric Seidel  <eric@webkit.org>
+
         Unreviewed.  Fix typo in my previous fix attempt.
 
         REGRESSION(57531): the commit-queue still hates Tor Arne Vestbø
