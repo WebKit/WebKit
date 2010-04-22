@@ -4862,7 +4862,7 @@ bool Document::isXHTMLMPDocument() const
     // MUST accept XHTMLMP document identified as "application/vnd.wap.xhtml+xml"
     // and SHOULD accept it identified as "application/xhtml+xml" , "application/xhtml+xml" is a 
     // general MIME type for all XHTML documents, not only for XHTMLMP
-    return frame()->loader()->responseMIMEType() == "application/vnd.wap.xhtml+xml";
+    return frame()->loader()->writer()->mimeType() == "application/vnd.wap.xhtml+xml";
 }
 #endif
 
