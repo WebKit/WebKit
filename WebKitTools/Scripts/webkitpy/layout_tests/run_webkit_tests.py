@@ -238,6 +238,9 @@ class TestRunner:
 
         self._retries = 0
 
+        # Hack for dumping threads on the bots
+        self._last_thread_dump = None
+
     def __del__(self):
         _log.debug("flushing stdout")
         sys.stdout.flush()
@@ -583,6 +586,29 @@ class TestRunner:
         """Returns whether we should run all the tests in the main thread."""
         return int(self._options.child_processes) == 1
 
+    def _dump_thread_states(self):
+        for thread_id, stack in sys._current_frames().items():
+            # FIXME: Python 2.6 has thread.ident which we could
+            # use to map from thread_id back to thread.name
+            print "\n# Thread: %d" % thread_id
+            for filename, lineno, name, line in traceback.extract_stack(stack):
+                print 'File: "%s", line %d, in %s' % (filename, lineno, name)
+                if line:
+                    print "  %s" % (line.strip())
+
+    def _dump_thread_states_if_necessary(self):
+        # HACK: Dump thread states every minute to figure out what's
+        # hanging on the bots.
+        if not self._options.verbose:
+            return
+        dump_threads_every = 60  # Dump every minute
+        if not self._last_thread_dump:
+            self._last_thread_dump = time.time()
+        time_since_last_dump = time.time() - self._last_thread_dump
+        if  time_since_last_dump > dump_threads_every:
+            self._dump_thread_states()
+            self._last_thread_dump = time.time()
+
     def _run_tests(self, file_list, result_summary):
         """Runs the tests in the file_list.
 
@@ -597,6 +623,7 @@ class TestRunner:
               in the form {filename:filename, test_run_time:test_run_time}
             result_summary: summary object to populate with the results
         """
+        # FIXME: We should use webkitpy.tool.grammar.pluralize here.
         plural = ""
         if self._options.child_processes > 1:
             plural = "s"
@@ -612,21 +639,28 @@ class TestRunner:
         individual_test_timings = []
         thread_timings = []
         try:
+            # Loop through all the threads waiting for them to finish.
             for thread in threads:
+                # FIXME: We'll end up waiting on the first thread the whole
+                # time.  That means we won't notice exceptions on other
+                # threads until the first one exits.
+                # We should instead while True: in the outer loop
+                # and then loop through threads joining and checking
+                # isAlive and get_exception_info.  Exiting on any exception.
                 while thread.isAlive():
-                    # Let it timeout occasionally so it can notice a
-                    # KeyboardInterrupt. Actually, the timeout doesn't
-                    # really matter: apparently it suffices to not use
-                    # an indefinite blocking join for it to
-                    # be interruptible by KeyboardInterrupt.
+                    # Wake the main thread every 0.1 seconds so we
+                    # can call update_summary in a timely fashion.
                     thread.join(0.1)
+                    # HACK: Used for debugging threads on the bots.
+                    self._dump_thread_states_if_necessary()
                     self.update_summary(result_summary)
+
+                # This thread is done, save off the timing information.
                 thread_timings.append({'name': thread.getName(),
                                        'num_tests': thread.get_num_tests(),
                                        'total_time': thread.get_total_time()})
                 test_timings.update(thread.get_directory_timing_stats())
-                individual_test_timings.extend(
-                    thread.get_test_results())
+                individual_test_timings.extend(thread.get_test_results())
         except KeyboardInterrupt:
             for thread in threads:
                 thread.cancel()
@@ -640,7 +674,9 @@ class TestRunner:
                 # would be assumed to have passed.
                 raise exception_info[0], exception_info[1], exception_info[2]
 
-        # Make sure we pick up any remaining tests.
+        # FIXME: This update_summary call seems unecessary.
+        # Calls are already made right after join() above,
+        # as well as from the individual threads themselves.
         self.update_summary(result_summary)
         return (thread_timings, test_timings, individual_test_timings)
 
