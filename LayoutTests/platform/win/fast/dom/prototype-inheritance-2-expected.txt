@@ -142,12 +142,12 @@ PASS History from inner.document.forms.testForm.0.ownerDocument.defaultView.hist
 PASS HistoryPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.history.__proto__
 PASS Location from inner.document.location
 PASS LocationPrototype from inner.document.location.__proto__
-PASS Media from inner.document.forms.testForm.0.ownerDocument.defaultView.media
-PASS MediaConstructor from inner.document.forms.testForm.0.ownerDocument.defaultView.media.constructor
+PASS Media from inner.document.forms.testForm.0.ownerDocument.defaultView.styleMedia
+PASS MediaConstructor from inner.document.forms.testForm.0.ownerDocument.defaultView.styleMedia.constructor
 PASS MediaList from inner.document.forms.testForm.0.ownerDocument.styleSheets.0.media
 PASS MediaListConstructor from inner.document.forms.testForm.0.ownerDocument.styleSheets.0.media.constructor
 PASS MediaListPrototype from inner.document.forms.testForm.0.ownerDocument.styleSheets.0.media.__proto__
-PASS MediaPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.media.__proto__
+PASS MediaPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.styleMedia.__proto__
 PASS MimeType from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.mimeTypes.0
 PASS MimeTypeArray from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.mimeTypes
 PASS MimeTypeArrayConstructor from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.mimeTypes.constructor

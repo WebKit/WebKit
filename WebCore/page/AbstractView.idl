@@ -32,7 +32,7 @@ module views {
         OmitConstructor
     ] AbstractView {
         readonly attribute Document document;
-        readonly attribute Media media;
+        readonly attribute Media styleMedia;
     };
 
 }

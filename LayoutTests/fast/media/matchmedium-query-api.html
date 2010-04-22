@@ -16,7 +16,7 @@
   
   function testQuery(query, expected)
   {
-    var isTrue = document.defaultView.media.matchMedium(query);
+    var isTrue = window.styleMedia.matchMedium(query);
 
     var message = '\"' + query + '\" evaluates to ' + (isTrue ? 'true' : 'false');
     message += (isTrue == expected) ? ': PASS' : ': FAIL';

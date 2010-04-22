@@ -659,8 +659,6 @@ FAIL inner.location.isInner should be true. Was false.
 FAIL inner.location.constructor.isInner should be true. Was false.
 FAIL inner.locationbar.isInner should be true. Was false.
 FAIL inner.locationbar.constructor.isInner should be true. Was false.
-FAIL inner.media.isInner should be true. Was false.
-FAIL inner.media.constructor.isInner should be true. Was false.
 FAIL inner.menubar.isInner should be true. Was false.
 FAIL inner.menubar.constructor.isInner should be true. Was false.
 PASS inner.moveBy.isInner is true
@@ -739,6 +737,8 @@ FAIL inner.statusbar.isInner should be true. Was false.
 FAIL inner.statusbar.constructor.isInner should be true. Was false.
 PASS inner.stop.isInner is true
 PASS inner.stop.constructor.isInner is true
+FAIL inner.styleMedia.isInner should be true. Was false.
+FAIL inner.styleMedia.constructor.isInner should be true. Was false.
 FAIL inner.toolbar.isInner should be true. Was false.
 FAIL inner.toolbar.constructor.isInner should be true. Was false.
 PASS inner.webkitConvertPointFromNodeToPage.isInner is true
