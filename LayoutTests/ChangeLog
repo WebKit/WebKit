@@ -1,3 +1,15 @@
+2010-04-22  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed, expectations only change.
+        Land chromium platform-specific results for fast/text/format-control.html
+
+        * platform/chromium-linux/fast/text/format-control-expected.checksum: Added.
+        * platform/chromium-linux/fast/text/format-control-expected.png: Added.
+        * platform/chromium-mac/fast/text/format-control-expected.checksum: Added.
+        * platform/chromium-win/fast/text/format-control-expected.checksum: Added.
+        * platform/chromium-win/fast/text/format-control-expected.png: Added.
+        * platform/chromium-win/fast/text/format-control-expected.txt: Added.
+
 2010-04-22  MORITA Hajime <morrita@google.com>
 
         Not reviewed.
