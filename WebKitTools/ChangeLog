@@ -1,3 +1,15 @@
+2010-04-22  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Script fix.  Will ask dpranke to look tomorrow.
+
+        new-run-webkit-tests --verbose shows ever-increasing #EOF lines
+        https://bugs.webkit.org/show_bug.cgi?id=37794
+
+        The bots are seeing cases where .error is sometimes empty.
+        Lets make the code not crash in that case for now.
+
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+
 2010-04-22  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed fix.

@@ -444,8 +444,12 @@ class WebKitDriver(base.Driver):
                 image_file.write(image)
 
         error_lines = self._server_process.error.splitlines()
-        error_eof = error_lines.pop()
-        assert(error_eof == "#EOF")
+        # FIXME: This is a hack.  It is unclear why sometimes
+        # we do not get any error lines from the server_process
+        # probably we are not flushing stderr.
+        if error_lines:
+            error_eof = error_lines.pop()
+            assert(error_eof == "#EOF")
         error = "\n".join(error_lines)
         # FIXME: This seems like the wrong section of code to be doing
         # this reset in.
