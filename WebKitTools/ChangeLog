@@ -9,6 +9,12 @@
 
         Unreviewed fix.
 
+        * Scripts/webkitpy/layout_tests/port/http_server.py: fix NameError: global name 'env' is not defined.
+
+2010-04-22  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed fix.
+
         * Scripts/webkitpy/layout_tests/port/websocket_server.py: fix NameError: global name 'env' is not defined.
 
 2010-04-22  Fumitoshi Ukai  <ukai@chromium.org>

@@ -199,7 +199,7 @@ class Lighttpd(http_server_base.HttpServerBase):
                             os.path.join(tmp_module_path, lib_file))
 
         _log.debug('Starting http server')
-        self._process = subprocess.Popen(start_cmd, env=env)
+        self._process = subprocess.Popen(start_cmd, env=os.environ)
 
         # Wait for server to start.
         self.mappings = mappings
