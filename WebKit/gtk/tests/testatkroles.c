@@ -34,6 +34,7 @@
 #define HTML_PARAGRAPH "<html><body><p>This is a test.</p></body></html>"
 #define HTML_SECTION "<html><body><div>This is a test.</div></body></html>"
 #define HTML_TABLE "<html><body><table border='1'><tr><td>This is</td><td>a test.</td></tr></table></body></html>"
+#define HTML_SEPARATOR "<html><body><hr/></body></html>"
 /* Form roles */
 #define HTML_FORM "<html><body><form>This is a test.</form></body></html>"
 #define HTML_CHECK_BOX "<html><body><input type='checkbox' />This is a test.</body></html>"
@@ -173,6 +174,11 @@ static void test_webkit_atk_get_role_section(AtkRolesFixture* fixture, gconstpoi
 static void test_webkit_atk_get_role_table(AtkRolesFixture* fixture, gconstpointer data)
 {
     get_child_and_test_role(fixture->documentFrame, 0, ATK_ROLE_TABLE);
+}
+
+static void test_webkit_atk_get_role_separator(AtkRolesFixture *fixture, gconstpointer data)
+{
+    get_child_and_test_role(fixture->documentFrame, 0, ATK_ROLE_SEPARATOR);
 }
 
 /* Form roles */
@@ -320,6 +326,12 @@ int main(int argc, char** argv)
                AtkRolesFixture, HTML_TABLE,
                atk_roles_fixture_setup,
                test_webkit_atk_get_role_table,
+               atk_roles_fixture_teardown);
+
+    g_test_add("/webkit/atk/test_webkit_atk_get_role_separator",
+               AtkRolesFixture, HTML_SEPARATOR,
+               atk_roles_fixture_setup,
+               test_webkit_atk_get_role_separator,
                atk_roles_fixture_teardown);
 
     /* Form roles */
