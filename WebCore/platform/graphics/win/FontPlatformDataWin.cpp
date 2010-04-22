@@ -36,7 +36,7 @@ using std::min;
 namespace WebCore {
 
 FontPlatformData::FontPlatformData(HFONT font, float size, bool bold, bool oblique, bool useGDI)
-    : m_font(RefCountedHFONT::create(font))
+    : m_font(RefCountedGDIHandle<HFONT>::create(font))
     , m_size(size)
 #if PLATFORM(CG)
     , m_cgFont(0)

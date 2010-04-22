@@ -28,9 +28,10 @@
 #ifndef FontPlatformData_h
 #define FontPlatformData_h
 
+#include <cairo.h>
 #include "FontDescription.h"
 #include "GlyphBuffer.h"
-#include <cairo.h>
+
 #if defined(USE_FREETYPE)
 #include <cairo-ft.h>
 #include <fontconfig/fcfreetype.h>
@@ -38,7 +39,7 @@
 #include <pango/pangocairo.h>
 #elif PLATFORM(WIN)
 #include <cairo-win32.h>
-#include "RefCountedHFONT.h"
+#include "RefCountedGDIHandle.h"
 #include "StringImpl.h"
 #else
 #error "Must defined a font backend"
@@ -107,7 +108,7 @@ public:
 #if !PLATFORM(WIN)
     static bool init();
 #else
-    HFONT hfont() const { return m_font->hfont(); }
+    HFONT hfont() const { return m_font->handle(); }
     bool useGDI() const { return m_useGDI; }
     cairo_font_face_t* fontFace() const { return m_fontFace; }
 #endif
@@ -164,7 +165,7 @@ public:
 private:
     void platformDataInit(HFONT, float size, HDC, WCHAR* faceName);
 
-    RefPtr<RefCountedHFONT> m_font;
+    RefPtr<RefCountedGDIHandle<HFONT> > m_font;
     cairo_font_face_t* m_fontFace;
     bool m_useGDI;
 #else

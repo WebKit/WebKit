@@ -1,3 +1,32 @@
+2010-04-21  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Create a template for creating reference-counted Windows GDI handles.
+        Refactor RefCountedHFONT to use this template.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37952
+
+        No change in behavior.
+
+        * WebCore.vcproj/WebCore.vcproj: Add RefCountedHFONT.h
+        * platform/graphics/cairo/FontPlatformData.h:
+        (WebCore::FontPlatformData::hfont): Refactor to return m_hfont->handle() instead of m_hfont->hfont().
+        * platform/graphics/cg/FontPlatformData.h:
+        (WebCore::FontPlatformData::hfont): Same.
+        * platform/graphics/win/FontPlatformDataCGWin.cpp:
+        (WebCore::FontPlatformData::FontPlatformData): Instantiate m_hfont with a RefCountedGDIHandle<HFONT>.
+        * platform/graphics/win/FontPlatformDataWin.cpp:
+        (WebCore::FontPlatformData::FontPlatformData): Same.
+        * platform/graphics/win/RefCountedGDIHandle.h: Added. Interface is identical to RefCountedHFONT with exception of renaming hfont() to handle().
+        (WebCore::RefCountedGDIHandle::create):
+        (WebCore::RefCountedGDIHandle::createDeleted):
+        (WebCore::RefCountedGDIHandle::~RefCountedGDIHandle):
+        (WebCore::RefCountedGDIHandle::handle): Return the GDI handle.
+        (WebCore::RefCountedGDIHandle::hash):
+        (WebCore::RefCountedGDIHandle::RefCountedGDIHandle):
+        * platform/graphics/win/RefCountedHFONT.h: Removed.
+
 2010-04-21  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Darin Adler.

@@ -115,7 +115,7 @@ void FontPlatformData::platformDataInit(HFONT font, float size, HDC hdc, WCHAR* 
 }
 
 FontPlatformData::FontPlatformData(HFONT hfont, CGFontRef font, float size, bool bold, bool oblique, bool useGDI)
-    : m_font(RefCountedHFONT::create(hfont))
+    : m_font(RefCountedGDIHandle<HFONT>::create(hfont))
     , m_size(size)
     , m_cgFont(font)
     , m_syntheticBold(bold)

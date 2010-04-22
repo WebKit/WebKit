@@ -23485,7 +23485,7 @@
 						>
 					</File>
 					<File
-						RelativePath="..\platform\graphics\win\RefCountedHFONT.h"
+						RelativePath="..\platform\graphics\win\RefCountedGDIHandle.h"
 						>
 					</File>
 					<File
