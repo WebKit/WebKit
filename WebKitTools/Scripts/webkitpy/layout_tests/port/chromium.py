@@ -371,6 +371,9 @@ class ChromiumDriver(base.Driver):
 
             try:
                 line = self._proc.stdout.readline()
+                # As far as I can tell, all output from test_shell
+                # is text output, thus we know it's all utf-8.
+                line = line.decode("utf-8")
             except IOError, e:
                 _log.error("IOError while reading: " + str(e))
                 crash = True

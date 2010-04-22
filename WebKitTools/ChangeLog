@@ -5,6 +5,19 @@
         REGRESSION(57531): the commit-queue still hates Tor Arne Vestbø
         https://bugs.webkit.org/show_bug.cgi?id=37765
 
+        I'm debugging in the blind because I don't have a chromium
+        build on this laptop.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+         - Apply the previous fix to a second caller.
+
+2010-04-21  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Attempt one more time to fix NRWT for chromium.
+
+        REGRESSION(57531): the commit-queue still hates Tor Arne Vestbø
+        https://bugs.webkit.org/show_bug.cgi?id=37765
+
         * Scripts/webkitpy/layout_tests/port/chromium.py:
          - Fix handling of test_shell output so that we always
            decode it as utf-8.
