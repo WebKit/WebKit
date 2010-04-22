@@ -209,18 +209,18 @@ class ChromiumPort(base.Port):
         Basically this string should contain the equivalent of a
         test_expectations file. See test_expectations.py for more details."""
         expectations_path = self.path_to_test_expectations_file()
-        with codecs.open(expectations_file, "r", "utf-8") as file:
+        with codecs.open(expectations_path, "r", "utf-8") as file:
             return file.read()
 
     def test_expectations_overrides(self):
         try:
-            overrides_file = self.path_from_chromium_base('webkit', 'tools',
+            overrides_path = self.path_from_chromium_base('webkit', 'tools',
                 'layout_tests', 'test_expectations.txt')
         except AssertionError:
             return None
-        if not os.path.exists(overrides_file):
+        if not os.path.exists(overrides_path):
             return None
-        with codecs.open(overrides_file, "r", "utf-8") as file
+        with codecs.open(overrides_path, "r", "utf-8") as file:
             return file.read()
 
     def test_platform_names(self):

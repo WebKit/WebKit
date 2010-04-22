@@ -1,5 +1,16 @@
 2010-04-21  Eric Seidel  <eric@webkit.org>
 
+        Unreviewed, just adding missing ":" in python file.
+
+        REGRESSION(57531): the commit-queue still hates Tor Arne Vestbø
+        https://bugs.webkit.org/show_bug.cgi?id=37765
+
+        new-run-webkit-tests --chromium was borked.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+
+2010-04-21  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Adam Barth.
 
         REGRESSION(57531): the commit-queue still hates Tor Arne Vestbø
