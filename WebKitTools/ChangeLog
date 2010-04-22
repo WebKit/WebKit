@@ -2,6 +2,12 @@
 
         Unreviewed fix.
 
+        * Scripts/webkitpy/layout_tests/port/websocket_server.py: fix NameError: global name 'f' is not defined.
+
+2010-04-22  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed fix.
+
         * Scripts/new-run-webkit-websocketserver: PyWebSocket no longer takes keyword argument 'register_cygwin'.
 
 2010-04-22  Eric Seidel  <eric@webkit.org>
