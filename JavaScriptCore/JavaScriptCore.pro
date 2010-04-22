@@ -9,6 +9,7 @@ CONFIG += staticlib
 # which already exists as a directory
 TARGET = $$JAVASCRIPTCORE_TARGET
 QT += core
+QT -= gui
 
 CONFIG += depend_includepath
 
