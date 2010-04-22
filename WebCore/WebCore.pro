@@ -2398,7 +2398,7 @@ contains(DEFINES, ENABLE_VIDEO=1) {
             HEADERS += platform/graphics/qt/MediaPlayerPrivateQt.h
             SOURCES += platform/graphics/qt/MediaPlayerPrivateQt.cpp
 
-            QT += multimedia
+            tobe|!tobe: QT += multimedia
         } else {
             HEADERS += \
                 platform/graphics/qt/MediaPlayerPrivatePhonon.h
@@ -2774,7 +2774,7 @@ contains(DEFINES, ENABLE_WEB_SOCKETS=1) {
 }
 
 contains(DEFINES, ENABLE_3D_CANVAS=1) {
-QT += opengl
+tobe|!tobe: QT += opengl
 HEADERS += \
 	bindings/js/JSWebGLArrayBufferConstructor.h \
 	bindings/js/JSWebGLArrayHelper.h \

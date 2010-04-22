@@ -1,3 +1,14 @@
+2010-04-22  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Hide the OpenGL and QtMultimedia dependencies from syncqt.
+
+        This prevents the dependent headers from being included by
+        qt/include/QtWebKit/QtWebKit
+
+        * WebCore.pro:
+
 2010-04-22  Gustavo Sverzut Barbieri  <barbieri@profusion.mobi>
 
         Reviewed by Adam Roben.
