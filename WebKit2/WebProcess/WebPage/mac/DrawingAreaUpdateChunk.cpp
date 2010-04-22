@@ -144,7 +144,7 @@ void DrawingAreaUpdateChunk::setSize(const IntSize& viewSize)
 
     m_displayTimer.stop();
 
-    WebProcess::shared().connection()->send(DrawingAreaProxyMessage::DidSetSize, m_webPage->pageID(), CoreIPC::In(viewSize, updateChunk));
+    WebProcess::shared().connection()->send(DrawingAreaProxyMessage::DidSetSize, m_webPage->pageID(), CoreIPC::In(updateChunk));
 }
 
 void DrawingAreaUpdateChunk::didUpdate()

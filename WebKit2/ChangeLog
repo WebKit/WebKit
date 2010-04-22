@@ -2,6 +2,20 @@
 
         Reviewed by Sam Weinig.
 
+        Don't pass the new size when calling didSetSize, it's possible to get
+        the size from the update chunk.
+
+        * UIProcess/mac/DrawingAreaProxyUpdateChunk.h:
+        * UIProcess/mac/DrawingAreaProxyUpdateChunk.mm:
+        (WebKit::DrawingAreaProxyUpdateChunk::didSetSize):
+        (WebKit::DrawingAreaProxyUpdateChunk::didReceiveMessage):
+        * WebProcess/WebPage/mac/DrawingAreaUpdateChunk.cpp:
+        (WebKit::DrawingAreaUpdateChunk::setSize):
+
+2010-04-22  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Rename SetFrame and DidSetFrame to SetSize and DidSetSize.
 
         * Shared/CoreIPCSupport/DrawingAreaMessageKinds.h:

@@ -120,10 +120,12 @@ void DrawingAreaProxyUpdateChunk::setSize(const IntSize& viewSize)
     page->process()->connection()->send(DrawingAreaMessage::SetSize, page->pageID(), CoreIPC::In(viewSize));
 }
 
-void DrawingAreaProxyUpdateChunk::didSetSize(const IntSize& viewSize, UpdateChunk* updateChunk)
+void DrawingAreaProxyUpdateChunk::didSetSize(UpdateChunk* updateChunk)
 {
     ASSERT(m_isWaitingForDidSetFrameNotification);
     m_isWaitingForDidSetFrameNotification = false;
+
+    IntSize viewSize = updateChunk->rect().size();
 
     if (viewSize != m_lastSetViewSize)
         setSize(m_lastSetViewSize);
@@ -155,12 +157,11 @@ void DrawingAreaProxyUpdateChunk::didReceiveMessage(CoreIPC::Connection*, CoreIP
             break;
         }
         case DrawingAreaProxyMessage::DidSetSize: {
-            IntSize viewSize;
             UpdateChunk updateChunk;
-            if (!arguments.decode(CoreIPC::Out(viewSize, updateChunk)))
+            if (!arguments.decode(CoreIPC::Out(updateChunk)))
                 return;
 
-            didSetSize(viewSize, &updateChunk);
+            didSetSize(&updateChunk);
             break;
         }
         default:
