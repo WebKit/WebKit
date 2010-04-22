@@ -13,6 +13,7 @@ function touchcancelHandler() {
     shouldBe("cancelEvent.pageY", touchY.toString());
     if (window.layoutTestController) {
         layoutTestController.notifyDone();
+        isSuccessfullyParsed(); 
     }
 }
     

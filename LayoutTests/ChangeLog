@@ -1,3 +1,18 @@
+2010-04-21  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        send-oncancel-event touch test should use js-test-post-function.js
+        https://bugs.webkit.org/show_bug.cgi?id=37830
+
+        Restore reference to js-test-post-function removed erroneously in copy 
+        when this test was move in http://trac.webkit.org/changeset/54253
+        and the corresponding call to the isSuccessfullyParsed function.
+
+        * fast/events/touch/script-tests/send-oncancel-event.js:
+        (touchcancelHandler): Call isSuccessfullyParsed.
+        * fast/events/touch/send-oncancel-event.html: Add js-test-post-function.js back.
+
 2010-04-21  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Shinichiro Hamaji.
