@@ -291,6 +291,7 @@ public:
     virtual void setMainFrameDocumentReady(bool);
     virtual void willChangeTitle(WebCore::DocumentLoader*);
     virtual void didChangeTitle(WebCore::DocumentLoader*);
+    virtual void didChangeIcons(WebCore::DocumentLoader*);
     virtual bool canHandleRequest(const WebCore::ResourceRequest&) const;
     virtual bool canShowMIMEType(const WebCore::String& MIMEType) const;
     virtual bool representationExistsForURLScheme(const WebCore::String& URLScheme) const;

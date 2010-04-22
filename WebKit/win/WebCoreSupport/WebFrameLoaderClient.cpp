@@ -372,6 +372,20 @@ void WebFrameLoaderClient::dispatchDidReceiveTitle(const String& title)
         frameLoadDelegate->didReceiveTitle(webView, BString(title), m_webFrame);
 }
 
+void WebFrameLoaderClient::dispatchDidChangeIcons()
+{
+    WebView* webView = m_webFrame->webView();
+    COMPtr<IWebFrameLoadDelegatePrivate> frameLoadDelegatePriv;
+    if (FAILED(webView->frameLoadDelegatePrivate(&frameLoadDelegatePriv)) || !frameLoadDelegatePriv)
+        return;
+
+    COMPtr<IWebFrameLoadDelegatePrivate2> frameLoadDelegatePriv2(Query, frameLoadDelegatePriv);
+    if (!frameLoadDelegatePriv2)
+        return;
+
+    frameLoadDelegatePriv2->didChangeIcons(webView, m_webFrame);
+}
+
 void WebFrameLoaderClient::dispatchDidCommitLoad()
 {
     WebView* webView = m_webFrame->webView();

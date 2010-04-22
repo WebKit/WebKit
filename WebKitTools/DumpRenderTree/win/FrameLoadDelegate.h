@@ -74,6 +74,10 @@ public:
         /* [in] */ BSTR title,
         /* [in] */ IWebFrame *frame);
 
+    virtual HRESULT STDMETHODCALLTYPE didChangeIcons(
+        /* [in] */ IWebView *webView,
+        /* [in] */ IWebFrame *frame);
+
     virtual HRESULT STDMETHODCALLTYPE didReceiveIcon( 
         /* [in] */ IWebView *webView,
         /* [in] */ OLE_HANDLE image,

@@ -1,3 +1,24 @@
+2010-04-22  Dave Moore  <davemoore@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add test support for icon changes.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33812
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (dumpIconChangesCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        (LayoutTestController::dumpIconChanges):
+        (LayoutTestController::setDumpIconChanges):
+        * DumpRenderTree/win/FrameLoadDelegate.cpp:
+        (FrameLoadDelegate::didChangeIcons):
+        * DumpRenderTree/win/FrameLoadDelegate.h:
+        * WinLauncher/WinLauncher.h:
+        (WinLauncherWebHost::didChangeIcons):
+
 2010-04-22  Eric Seidel  <eric@webkit.org>
 
         Unreviewed.  Script fix.  Will ask dpranke to look tomorrow.

@@ -61,6 +61,10 @@ public:
         /* [in] */ BSTR title,
         /* [in] */ IWebFrame *frame) { return S_OK; }
     
+    virtual HRESULT STDMETHODCALLTYPE didChangeIcons(
+        /* [in] */ IWebView *webView,
+        /* [in] */ IWebFrame *frame) { return S_OK; }
+
     virtual HRESULT STDMETHODCALLTYPE didReceiveIcon( 
         /* [in] */ IWebView *webView,
         /* [in] */ OLE_HANDLE hBitmap,

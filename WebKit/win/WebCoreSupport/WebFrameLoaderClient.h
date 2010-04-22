@@ -71,6 +71,7 @@ public:
     virtual void dispatchDidReceiveIcon();
     virtual void dispatchDidStartProvisionalLoad();
     virtual void dispatchDidReceiveTitle(const WebCore::String&);
+    virtual void dispatchDidChangeIcons();
     virtual void dispatchDidCommitLoad();
     virtual void dispatchDidFinishDocumentLoad();
     virtual void dispatchDidFinishLoad();

@@ -753,6 +753,11 @@ void FrameLoaderClient::dispatchDidReceiveTitle(const String& title)
     }
 }
 
+void FrameLoaderClient::dispatchDidChangeIcons()
+{
+    notImplemented();
+}
+
 void FrameLoaderClient::dispatchDidCommitLoad()
 {
     if (m_loadingErrorPage)

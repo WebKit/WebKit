@@ -109,6 +109,7 @@ namespace WebCore {
         virtual void dispatchDidReceiveIcon();
         virtual void dispatchDidStartProvisionalLoad();
         virtual void dispatchDidReceiveTitle(const String& title);
+        virtual void dispatchDidChangeIcons();
         virtual void dispatchDidCommitLoad();
         virtual void dispatchDidFailProvisionalLoad(const ResourceError&);
         virtual void dispatchDidFailLoad(const WebCore::ResourceError&);

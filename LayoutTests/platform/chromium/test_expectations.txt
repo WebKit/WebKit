@@ -2725,6 +2725,8 @@ BUG41455 SKIP : http/tests/security/local-image-from-remote-whitelisted.html = T
 // Caused by r57695. Will investigate.
 BUG_JIANLI LINUX : http/tests/local/formdata/send-form-data-with-sliced-file.html = TEXT
 
+BUG33812 SKIP : fast/dom/icon-url-property.html = FAIL
+
 // Failing with webkit roll 57659 -> 57677.
 BUG42230 LINUX DEBUG : fast/canvas/toDataURL-noData.html = CRASH
 BUG41817 WIN LINUX : fast/backgrounds/svg-as-background-1.html = IMAGE PASS

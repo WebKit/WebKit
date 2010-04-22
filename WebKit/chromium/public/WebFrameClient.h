@@ -192,6 +192,9 @@ public:
     // The page title is available.
     virtual void didReceiveTitle(WebFrame*, const WebString& title) { }
 
+    // The icons for the page have changed.
+    virtual void didChangeIcons(WebFrame*) { }
+
     // The frame's document finished loading.
     virtual void didFinishDocumentLoad(WebFrame*) { }
 

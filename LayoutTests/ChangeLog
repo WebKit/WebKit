@@ -1,3 +1,15 @@
+2010-04-22  Dave Moore  <davemoore@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add test for icon change notifications.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33812
+
+        * fast/dom/icon-url-property-expected.txt: Added.
+        * fast/dom/icon-url-property.html: Added.
+        * Skipped on all platforms but Win
+
 2010-04-22  Eric Carlson  <eric.carlson@apple.com>
 
         Test fix, no review.
