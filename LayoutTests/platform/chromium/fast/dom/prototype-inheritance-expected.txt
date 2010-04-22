@@ -79,6 +79,8 @@ PASS inner.Event.isInner is true
 PASS inner.Event.constructor.isInner is true
 PASS inner.EventException.isInner is true
 PASS inner.EventException.constructor.isInner is true
+PASS inner.EventSource.isInner is true
+PASS inner.EventSource.constructor.isInner is true
 PASS inner.File.isInner is true
 PASS inner.File.constructor.isInner is true
 PASS inner.FileList.isInner is true

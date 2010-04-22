@@ -706,11 +706,6 @@ WONTFIX SKIP : storage/private-browsing-readonly.html = PASS
 BUG11246 DEFER SKIP : fast/dom/Geolocation = FAIL
 BUG11246 DEFER SKIP : fast/dom/Window/window-properties-geolocation.html = TEXT
 
-// Implement HTML5 EventSource API. Skipping, because most of these time out and
-// slow down the test run.
-BUG19625 SKIP : fast/eventsource = TIMEOUT
-BUG19625 SKIP : http/tests/eventsource = TIMEOUT
-
 // HTML5 datalist element. We don't enable it because WebKit implementation
 // is incomplete.
 BUG20226 DEFER : fast/forms/datalist-nonoption-child.html = TEXT

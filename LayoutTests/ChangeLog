@@ -1,3 +1,13 @@
+2010-04-22  Marcus Bulach  <bulach@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Enable LayoutTests for EventSource on chromium
+        https://bugs.webkit.org/show_bug.cgi?id=37863
+
+        * platform/chromium/fast/dom/prototype-inheritance-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-04-22  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Eric Seidel.
