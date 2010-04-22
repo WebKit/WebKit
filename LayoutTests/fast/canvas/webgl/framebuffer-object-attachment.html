@@ -34,6 +34,13 @@ function testAttachments(attachment0, buffer0, attachment1, buffer1, isConflicte
     shouldBe("gl.getError()", "gl.NO_ERROR");
     gl.framebufferRenderbuffer(gl.FRAMEBUFFER, attachment1, gl.RENDERBUFFER, buffer1);
     shouldBe("gl.getError()", isConflicted ? "gl.INVALID_OPERATION" : "gl.NO_ERROR");
+    if (isConflicted) {
+        // Detach buffer0 first using a null object, then attaching buffer1 should succeed.
+        gl.framebufferRenderbuffer(gl.FRAMEBUFFER, attachment0, gl.RENDERBUFFER, null);
+        shouldBe("gl.getError()", "gl.NO_ERROR");
+        gl.framebufferRenderbuffer(gl.FRAMEBUFFER, attachment1, gl.RENDERBUFFER, buffer1);
+        shouldBe("gl.getError()", "gl.NO_ERROR");
+    }
 }
 
 description("Test framebuffer object attachment behaviors");

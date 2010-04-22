@@ -41,26 +41,38 @@ Attach depth, then stencil, causing conflict
 PASS fbo = gl.createFramebuffer() is non-null.
 PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.INVALID_OPERATION
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
 Attach stencil, then depth, causing conflict
 PASS fbo = gl.createFramebuffer() is non-null.
 PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.INVALID_OPERATION
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
 Attach depth, then depthStencil, causing conflict
 PASS fbo = gl.createFramebuffer() is non-null.
 PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.INVALID_OPERATION
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
 Attach depthStencil, then depth, causing conflict
 PASS fbo = gl.createFramebuffer() is non-null.
 PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.INVALID_OPERATION
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
 Attach stencil, then depthStencil, causing conflict
 PASS fbo = gl.createFramebuffer() is non-null.
 PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.INVALID_OPERATION
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
 Attach depthStencil, then stencil, causing conflict
 PASS fbo = gl.createFramebuffer() is non-null.
 PASS gl.getError() is gl.NO_ERROR
 PASS gl.getError() is gl.INVALID_OPERATION
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
 PASS successfullyParsed is true
 
 TEST COMPLETE
