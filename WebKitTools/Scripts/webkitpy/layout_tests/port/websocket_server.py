@@ -183,6 +183,7 @@ class PyWebSocket(http_server.Lighttpd):
             start_cmd.extend(['-t', '-k', self._private_key,
                               '-c', self._certificate])
 
+        env = os.environ
         env['PYTHONPATH'] = (pywebsocket_base + os.path.pathsep +
                              env.get('PYTHONPATH', ''))
 
