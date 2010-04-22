@@ -1,3 +1,15 @@
+2010-04-22  Gustavo Sverzut Barbieri  <barbieri@profusion.mobi>
+
+        Reviewed by Adam Roben.
+
+        EFL does not support PluginDatabase yet.
+        http://webkit.org/b/37854
+
+        No behavior changes, so no new tests were added.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::defaultObjectContentType):
+
 2010-04-22  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.
