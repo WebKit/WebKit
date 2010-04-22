@@ -38,6 +38,7 @@
 #include <runtime/JSGlobalObject.h>
 #include <runtime/JSLock.h>
 #include <runtime/JSObject.h>
+#include <wtf/text/StringHash.h>
 
 using namespace JSC;
 

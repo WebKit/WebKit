@@ -1,5 +1,12 @@
 2010-04-22  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by NOBODY (windows build fix).
+
+        * API/JSBase.cpp:
+        * API/JSCallbackObject.cpp:
+
+2010-04-22  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Geoff Garen.
 
         https://bugs.webkit.org/show_bug.cgi?id=37978

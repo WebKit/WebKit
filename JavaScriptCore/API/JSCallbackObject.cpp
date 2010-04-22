@@ -28,6 +28,7 @@
 #include "JSCallbackObject.h"
 
 #include "Collector.h"
+#include <wtf/text/StringHash.h>
 
 namespace JSC {
 
