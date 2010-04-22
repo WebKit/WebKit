@@ -40,10 +40,14 @@
 #include <algorithm>
 #include <stdio.h>
 #include <string.h>
-#include <string>
 #include <vector>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/Vector.h>
+
+#if OS(WINDOWS)
+#include <windows.h>
+#define PATH_MAX MAX_PATH
+#endif
 
 using namespace gfx;
 using namespace std;
