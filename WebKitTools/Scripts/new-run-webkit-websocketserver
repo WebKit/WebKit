@@ -55,6 +55,10 @@ def main():
                              default='', help='TLS private key file.')
     option_parser.add_option('-c', '--certificate', dest='certificate',
                              default='', help='TLS certificate file.')
+    option_parser.add_option('--chromium', action='store_true',
+                             dest='chromium',
+                             default=False,
+                             help='use the Chromium port')
     option_parser.add_option('--register_cygwin', action="store_true",
                              dest="register_cygwin",
                              help='Register Cygwin paths (on Win try bots)')
@@ -82,7 +86,7 @@ def main():
     if options.pidfile:
         kwds['pidfile'] = options.pidfile
 
-    port_obj = factory.get()
+    port_obj = factory.get(options=options)
     pywebsocket = websocket_server.PyWebSocket(port_obj, tempfile.gettempdir(), **kwds)
 
     log_level = logging.WARN

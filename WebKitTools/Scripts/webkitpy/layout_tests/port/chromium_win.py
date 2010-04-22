@@ -50,6 +50,21 @@ class ChromiumWinPort(chromium.ChromiumPort):
         if options and not hasattr(options, 'configuration'):
             options.configuration = 'Release'
         chromium.ChromiumPort.__init__(self, port_name, options)
+        # Put the cygwin directory first in the path to find cygwin1.dll
+        env = os.environ
+        env['PATH'] = '%s;%s' % (
+            self.path_from_chromium_base('third_party', 'cygwin', 'bin'),
+            env['PATH'])
+        # Put the cygwin directory so that pywebsocket finds proper python
+        # executable to run cgi program.
+        env['CYGWIN_PATH'] = self.path_from_chromium_base(
+            'third_party', 'cygwin', 'bin')
+        if sys.platform == 'win32' and options and \
+                hasattr(options, 'register_cygwin') and \
+                options.register_cygwin:
+            setup_mount = self.path_from_chromium_base(
+                'third_party', 'cygwin', 'setup_mount.bat')
+            subprocess.Popen(setup_mount).wait()
 
     def baseline_search_path(self):
         dirs = []
