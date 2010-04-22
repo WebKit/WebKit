@@ -9,10 +9,6 @@ function getShaderSource(file) {
 }
 
 function create3DContext(attrs) {
-    // FIXME: setting default attributes back to all true when the driver bug is fixed.
-    // https://bugs.webkit.org/show_bug.cgi?id=37098
-    if (typeof(attrs) == "undefined")
-        attrs = { stencil: false, antialias: false };
     var canvas = document.createElement("canvas");
     try {
         return canvas.getContext("experimental-webgl", attrs);

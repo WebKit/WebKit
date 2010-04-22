@@ -1,3 +1,13 @@
+2010-04-22  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Turn on antialias and stencil as default canvas attributes.
+        https://bugs.webkit.org/show_bug.cgi?id=36972  
+
+        * fast/canvas/webgl/resources/webgl-test.js: 
+        (create3DContext): Turn on antialias and stencil as default canvas attributes.
+
 2010-04-22  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Unreviewed expected results update.
