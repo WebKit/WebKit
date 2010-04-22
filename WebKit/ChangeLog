@@ -1,3 +1,34 @@
+2010-04-22  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Update EFL port files to match recent API changes.
+        http://webkit.org/b/37876
+
+        * efl/WebCoreSupport/ChromeClientEfl.cpp:
+        (kit): Added.
+        (WebCore::ChromeClientEfl::ChromeClientEfl): Coding style fix.
+        (WebCore::ChromeClientEfl::runBeforeUnloadConfirmPanel): Coding
+        style fix.
+        (WebCore::ChromeClientEfl::mouseDidMoveOverElement): Coding style fix.
+        (WebCore::ChromeClientEfl::runOpenPanel): Implemented.
+        (WebCore::ChromeClientEfl::cancelGeolocationPermissionRequestForFrame): Stubbed.
+        (WebCore::ChromeClientEfl::cancelGeolocationPermissionForFrame): Stubbed.
+        (WebCore::ChromeClientEfl::invalidateContents): Stubbed.
+        (WebCore::ChromeClientEfl::invalidateWindow): Stubbed.
+        (WebCore::ChromeClientEfl::invalidateContentsAndWindow): Implemented.
+        (WebCore::ChromeClientEfl::invalidateContentsForSlowScroll): Implemented.
+        (WebCore::ChromeClientEfl::scroll): Updated.
+        (WebCore::ChromeClientEfl::iconForFiles): Stubbed.
+        (WebCore::ChromeClientEfl::chooseIconForFiles): Stubbed.
+        * efl/WebCoreSupport/ChromeClientEfl.h: Add new method prototypes.
+        * efl/WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::committedLoad): Call setEncoding()
+        from FrameLoader::writer.
+        (WebCore::FrameLoaderClientEfl::finishedLoading): Ditto.
+        (WebCore::FrameLoaderClientEfl::dispatchDidFailLoading): Ditto.
+        (WebCore::FrameLoaderClientEfl::setMainDocumentError): Ditto.
+
 2010-04-21  Gustavo Sverzut Barbieri  <barbieri@profusion.mobi>
 
         Reviewed by Nikolas Zimmermann.

@@ -31,7 +31,7 @@ namespace WebCore {
 
 class ChromeClientEfl : public ChromeClient {
 public:
-    explicit ChromeClientEfl(Evas_Object *view);
+    explicit ChromeClientEfl(Evas_Object* view);
     virtual ~ChromeClientEfl();
 
     virtual void chromeDestroyed();
@@ -49,7 +49,7 @@ public:
     virtual bool canTakeFocus(FocusDirection);
     virtual void takeFocus(FocusDirection);
 
-    virtual void focusedNodeChanged(WebCore::Node*);
+    virtual void focusedNodeChanged(Node*);
 
     virtual Page* createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures&);
     virtual void show();
@@ -88,9 +88,7 @@ public:
 
     virtual IntRect windowResizerRect() const;
 
-    virtual void repaint(const IntRect&, bool contentChanged, bool immediate = false, bool repaintContentOnly = false);
     virtual void contentsSizeChanged(Frame*, const IntSize&) const;
-    virtual bool scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect, bool canBlit, bool isMainFrame);
     virtual IntPoint screenToWindow(const IntPoint&) const;
     virtual IntRect windowToScreen(const IntRect&) const;
     virtual PlatformPageClient platformPageClient() const;
@@ -111,6 +109,7 @@ public:
 #endif
 
     virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>);
+    virtual void chooseIconForFiles(const Vector<String>&, FileChooser*);
     virtual void formStateDidChange(const Node*);
 
     virtual PassOwnPtr<HTMLParserQuirks> createHTMLParserQuirks() { return 0; }
@@ -120,8 +119,18 @@ public:
     virtual void scrollRectIntoView(const IntRect&, const ScrollView*) const {}
 
     virtual void requestGeolocationPermissionForFrame(Frame*, Geolocation*);
+    virtual void cancelGeolocationPermissionRequestForFrame(Frame*, Geolocation*);
+    virtual void cancelGeolocationPermissionForFrame(Frame*, Geolocation*);
 
-    Evas_Object *m_view;
+    virtual void invalidateContents(const IntRect&, bool);
+    virtual void invalidateWindow(const IntRect&, bool);
+    virtual void invalidateContentsAndWindow(const IntRect&, bool);
+    virtual void invalidateContentsForSlowScroll(const IntRect&, bool);
+    virtual void scroll(const IntSize&, const IntRect&, const IntRect&);
+    virtual void cancelGeolocationPermissionRequestForFrame(Frame*);
+    virtual void iconForFiles(const Vector<String, 0u>&, PassRefPtr<FileChooser>);
+
+    Evas_Object* m_view;
     KURL m_hoveredLinkURL;
 };
 }
