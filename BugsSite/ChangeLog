@@ -1,3 +1,23 @@
+2010-04-22  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Hack up PrettyDiff to allow line-by-line comments
+        https://bugs.webkit.org/show_bug.cgi?id=37886
+
+        Admittedly a bit of a hack, this is a basic line-by-line editor we can
+        play with thanks to Andrew Scherkus.  It's meant to integrate with the
+        "review" page at bugs.webkit.org.
+
+        I changed a few things from Andrew's original version:
+        1) Trigger text boxes on single click to make iPhone/iPad reviewing
+        easier.
+        2) Clear the main text box on load.
+        3) Reference a version of prototype.js on bugs.webkit.org.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * prototype.js: Added.
+
 2010-02-22  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Maciej Stachowiak.

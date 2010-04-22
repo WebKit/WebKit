@@ -182,7 +182,112 @@ h1 :hover {
     background-color: #e99;
     text-decoration: none;
 }
+
+/* Support for inline comments */
+.comment {
+  border: 1px width solid red;
+  font-family: monospace;
+}
+
+.comment textarea {
+  width: 100%;
+  height: 6em;
+}
+
+.submitted {
+  font-weight: bold;
+  color: red;
+}
 </style>
+<script src="https://bugs.webkit.org/prototype.js"></script> 
+<script>
+// Code to support inline comments in bugs.webkit.org.
+function getSubmitTextArea() {
+  // Note that this only works when running on same domain.
+  return parent.frames[1].document.getElementsByTagName("textarea")[0];
+}
+
+function onLineClicked(e) {
+  // Find the right line div.
+  // FIXME: why does a click event on my div get intercepted
+  // by a span or even document element :(
+  var line = e.target;
+  while (true) {
+    if (line == document)
+      return;
+    if (line.getAttribute("class").substr(0, 4) == "Line")
+      break;
+    line = line.up();
+  }
+
+  if (line.hasComment)
+    return;
+  line.hasComment = true;
+
+  var lineFrom = line.select("[class='from lineNumber']")[0].innerHTML;
+  var lineTo = line.select("[class='to lineNumber']")[0].innerHTML;
+  var lineText = line.select("[class='text']")[0].innerHTML;
+
+  line.insert({after:
+      "<div class='comment'>" +
+      "<textarea></textarea>" +
+      "<button onclick='onCommentSubmit(this.up())'>Add</button>" +
+      "<button onclick='onCommentCancel(this.up())'>Cancel</button>" +
+      "</div>"});
+
+  var comment = line.next();
+  var textarea = comment.select("textarea")[0];
+  textarea.focus();
+}
+
+function onCommentSubmit(comment) {
+  var textarea = comment.select("textarea")[0];
+  var buttons = comment.select("button");
+  var commentText = textarea.value;
+
+  var line = comment.previous();
+  line.hasComment = false
+  var lineFrom = line.select("[class='from lineNumber']")[0].textContent;
+  var lineTo = line.select("[class='to lineNumber']")[0].textContent;
+  var lineText = line.select("[class='text']")[0].textContent;
+  var filename = comment.up().up().select("h1")[0].down().textContent;
+
+  var snippet = filename + ":" + lineTo + "\n +  " + lineText + "\n" + commentText + "\n\n";
+
+  // Remove all the crap.
+  textarea.remove();
+  buttons[0].remove();
+  buttons[1].remove();
+
+  // Insert a non-editable form of our comment.
+  comment.insert("<pre>" + commentText + "</pre>");
+  comment.setAttribute("class", "comment submitted");
+
+  // Update the submission text area.
+  var submission = getSubmitTextArea();
+  submission.value = submission.value + snippet;
+}
+
+function onCommentCancel(comment) {
+  var line = comment.previous();
+  line.hasComment = false
+  comment.remove();
+}
+
+if (top !== window) {
+  window.addEventListener("load", function () {
+    var lines = $$("div[class~='Line']");
+    for (var i = 0; i < lines.length; ++i) {
+      lines[i].addEventListener("click", onLineClicked, false);
+    }
+  }, false);
+
+  parent.addEventListener("load", function () {
+    // Remove the full diff from the submit text area.
+    return parent.frames[1].document.getElementsByTagName("textarea")[0].value = "";
+  }, false);
+}
+</script>
 EOF
 
     def self.revisionOrDescription(string)
