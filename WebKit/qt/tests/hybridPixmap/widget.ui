@@ -11,14 +11,14 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Widget</string>
+   <string notr="true">Widget</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="WebView" name="webView" native="true">
      <property name="url" stdset="0">
       <url>
-       <string>about:blank</string>
+       <string notr="true">about:blank</string>
       </url>
      </property>
     </widget>
@@ -28,7 +28,7 @@
      <item>
       <widget class="QLabel" name="lbl1">
        <property name="text">
-        <string/>
+        <string notr="true"/>
        </property>
       </widget>
      </item>
@@ -47,21 +47,21 @@
         </size>
        </property>
        <property name="text">
-        <string>Image from Qt to HTML</string>
+        <string notr="true">Image from Qt to HTML</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QLabel" name="lbl3">
        <property name="text">
-        <string>Pixmap from Qt to HTML</string>
+        <string notr="true">Pixmap from Qt to HTML</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QLabel" name="lbl4">
        <property name="text">
-        <string/>
+        <string notr="true"/>
        </property>
       </widget>
      </item>
