@@ -33,8 +33,8 @@
 #include "GraphicsContext.h"
 #include "NodeRenderStyle.h"
 #include "RenderObject.h"
+#include "RenderSVGResourceSolidColor.h"
 #include "RenderStyle.h"
-#include "SVGPaintServerSolid.h"
 #include "SVGStyledElement.h"
 #include "SVGURIReference.h"
 

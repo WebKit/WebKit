@@ -27,6 +27,7 @@
 #include "CSSFontSelector.h"
 #include "GraphicsContext.h"
 #include "RenderObject.h"
+#include "RenderSVGResourceSolidColor.h"
 #include "SimpleFontData.h"
 #include "SVGAltGlyphElement.h"
 #include "SVGFontData.h"
@@ -35,8 +36,6 @@
 #include "SVGFontElement.h"
 #include "SVGFontFaceElement.h"
 #include "SVGMissingGlyphElement.h"
-#include "SVGPaintServer.h"
-#include "SVGPaintServerSolid.h"
 #include "XMLNames.h"
 
 using namespace WTF::Unicode;

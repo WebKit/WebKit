@@ -1730,9 +1730,14 @@ HEADERS += \
     rendering/RenderSVGModelObject.h \
     rendering/RenderSVGResource.h \
     rendering/RenderSVGResourceClipper.h \
-    rendering/RenderSVGResourceFilter.h \
+    rendering/RenderSVGResourceFilter.h \ 
+    rendering/RenderSVGResourceGradient.h \
+    rendering/RenderSVGResourceLinearGradient.h \
     rendering/RenderSVGResourceMarker.h \
     rendering/RenderSVGResourceMasker.h \
+    rendering/RenderSVGResourcePattern.h \
+    rendering/RenderSVGResourceRadialGradient.h \
+    rendering/RenderSVGResourceSolidColor.h \
     rendering/RenderSVGRoot.h \
     rendering/RenderSVGShadowTreeRootContainer.h \
     rendering/RenderSVGText.h \
@@ -1814,12 +1819,7 @@ HEADERS += \
     svg/graphics/filters/SVGFilter.h \
     svg/graphics/filters/SVGLightSource.h \
     svg/graphics/SVGImage.h \
-    svg/graphics/SVGPaintServerGradient.h \
     svg/graphics/SVGPaintServer.h \
-    svg/graphics/SVGPaintServerLinearGradient.h \
-    svg/graphics/SVGPaintServerPattern.h \
-    svg/graphics/SVGPaintServerRadialGradient.h \
-    svg/graphics/SVGPaintServerSolid.h \
     svg/graphics/SVGResource.h \
     svg/SVGAElement.h \
     svg/SVGAltGlyphElement.h \
@@ -2685,12 +2685,6 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/graphics/filters/SVGFilterBuilder.cpp \
         svg/graphics/filters/SVGLightSource.cpp \
         svg/graphics/SVGImage.cpp \
-        svg/graphics/SVGPaintServer.cpp \
-        svg/graphics/SVGPaintServerGradient.cpp \
-        svg/graphics/SVGPaintServerLinearGradient.cpp \
-        svg/graphics/SVGPaintServerPattern.cpp \
-        svg/graphics/SVGPaintServerRadialGradient.cpp \
-        svg/graphics/SVGPaintServerSolid.cpp \
         svg/graphics/SVGResource.cpp \
         rendering/RenderForeignObject.cpp \
         rendering/RenderPath.cpp \
@@ -2702,10 +2696,16 @@ contains(DEFINES, ENABLE_SVG=1) {
         rendering/RenderSVGInline.cpp \
         rendering/RenderSVGInlineText.cpp \
         rendering/RenderSVGModelObject.cpp \
+        rendering/RenderSVGResource.cpp \
         rendering/RenderSVGResourceClipper.cpp \
         rendering/RenderSVGResourceFilter.cpp \
+        rendering/RenderSVGResourceGradient.cpp \
+        rendering/RenderSVGResourceLinearGradient.cpp \
         rendering/RenderSVGResourceMarker.cpp \
         rendering/RenderSVGResourceMasker.cpp \
+        rendering/RenderSVGResourcePattern.cpp \
+        rendering/RenderSVGResourceRadialGradient.cpp \
+        rendering/RenderSVGResourceSolidColor.cpp \
         rendering/RenderSVGRoot.cpp \
         rendering/RenderSVGShadowTreeRootContainer.cpp \
         rendering/RenderSVGText.cpp \

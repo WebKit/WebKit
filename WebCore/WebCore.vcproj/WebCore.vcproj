@@ -27919,6 +27919,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\RenderSVGResource.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\RenderSVGResource.h"
 				>
 			</File>
@@ -27939,6 +27943,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\RenderSVGResourceGradient.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderSVGResourceGradient.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderSVGResourceLinearGradient.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderSVGResourceLinearGradient.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\RenderSVGResourceMarker.cpp"
 				>
 			</File>
@@ -27952,6 +27972,30 @@
 			</File>
 			<File
 				RelativePath="..\rendering\RenderSVGResourceMasker.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderSVGResourcePattern.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderSVGResourcePattern.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderSVGResourceRadialGradient.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderSVGResourceRadialGradient.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderSVGResourceSolidColor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderSVGResourceSolidColor.h"
 				>
 			</File>
 			<File
@@ -42310,51 +42354,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\svg\graphics\SVGPaintServer.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\svg\graphics\SVGPaintServer.h"
-					>
-				</File>
-				<File
-					RelativePath="..\svg\graphics\SVGPaintServerGradient.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\svg\graphics\SVGPaintServerGradient.h"
-					>
-				</File>
-				<File
-					RelativePath="..\svg\graphics\SVGPaintServerLinearGradient.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\svg\graphics\SVGPaintServerLinearGradient.h"
-					>
-				</File>
-				<File
-					RelativePath="..\svg\graphics\SVGPaintServerPattern.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\svg\graphics\SVGPaintServerPattern.h"
-					>
-				</File>
-				<File
-					RelativePath="..\svg\graphics\SVGPaintServerRadialGradient.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\svg\graphics\SVGPaintServerRadialGradient.h"
-					>
-				</File>
-				<File
-					RelativePath="..\svg\graphics\SVGPaintServerSolid.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\svg\graphics\SVGPaintServerSolid.h"
 					>
 				</File>
 				<File
@@ -42363,10 +42363,6 @@
 				</File>
 				<File
 					RelativePath="..\svg\graphics\SVGResource.h"
-					>
-				</File>
-				<File
-					RelativePath="..\svg\graphics\SVGResourceListener.h"
 					>
 				</File>
 				<Filter

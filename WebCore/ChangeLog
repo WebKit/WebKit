@@ -1,3 +1,51 @@
+2010-04-22  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        SVGPaintServer needs to be converted to the new RenderSVGResource* system
+        https://bugs.webkit.org/show_bug.cgi?id=37986
+
+        No functional changes, just move the SVGPaintServer* classes from svg/graphics/ to rendering/, the new location for the RenderSVGResource* classes.
+        This is a preparation for the real patch which follows soon.
+
+        * Android.mk: Rename files and move to the right location.
+        * GNUmakefile.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * rendering/RenderSVGResource.cpp: Copied from svg/graphics/SVGPaintServer.cpp.
+        * rendering/RenderSVGResourceGradient.cpp: Copied from svg/graphics/SVGPaintServerGradient.cpp.
+        * rendering/RenderSVGResourceGradient.h: Copied from svg/graphics/SVGPaintServerGradient.h.
+        * rendering/RenderSVGResourceLinearGradient.cpp: Copied from svg/graphics/SVGPaintServerLinearGradient.cpp.
+        * rendering/RenderSVGResourceLinearGradient.h: Copied from svg/graphics/SVGPaintServerLinearGradient.h.
+        * rendering/RenderSVGResourcePattern.cpp: Copied from svg/graphics/SVGPaintServerPattern.cpp.
+        * rendering/RenderSVGResourcePattern.h: Copied from svg/graphics/SVGPaintServerPattern.h.
+        * rendering/RenderSVGResourceRadialGradient.cpp: Copied from svg/graphics/SVGPaintServerRadialGradient.cpp.
+        * rendering/RenderSVGResourceRadialGradient.h: Copied from svg/graphics/SVGPaintServerRadialGradient.h.
+        * rendering/RenderSVGResourceSolidColor.cpp: Copied from svg/graphics/SVGPaintServerSolid.cpp.
+        * rendering/RenderSVGResourceSolidColor.h: Copied from svg/graphics/SVGPaintServerSolid.h.
+        * rendering/SVGRenderTreeAsText.cpp: Change include file names.
+        * svg/SVGFont.cpp: Ditto.
+        * svg/SVGGradientElement.cpp: Ditto.
+        * svg/SVGGradientElement.h: Ditto.
+        * svg/SVGLinearGradientElement.cpp: Ditto.
+        * svg/SVGPatternElement.cpp: Ditto.
+        * svg/SVGPatternElement.h: Ditto.
+        * svg/SVGRadialGradientElement.cpp: Ditto.
+        * svg/graphics/SVGPaintServer.cpp: Removed.
+        * svg/graphics/SVGPaintServerGradient.cpp: Removed.
+        * svg/graphics/SVGPaintServerGradient.h: Removed.
+        * svg/graphics/SVGPaintServerLinearGradient.cpp: Removed.
+        * svg/graphics/SVGPaintServerLinearGradient.h: Removed.
+        * svg/graphics/SVGPaintServerPattern.cpp: Removed.
+        * svg/graphics/SVGPaintServerPattern.h: Removed.
+        * svg/graphics/SVGPaintServerRadialGradient.cpp: Removed.
+        * svg/graphics/SVGPaintServerRadialGradient.h: Removed.
+        * svg/graphics/SVGPaintServerSolid.cpp: Removed.
+        * svg/graphics/SVGPaintServerSolid.h: Removed.
+        * svg/graphics/SVGResourceListener.h: Removed.
+
 2010-04-22  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Simon Hausmann.

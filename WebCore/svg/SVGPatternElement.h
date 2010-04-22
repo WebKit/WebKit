@@ -23,10 +23,10 @@
 
 #if ENABLE(SVG)
 #include "RenderObject.h"
+#include "RenderSVGResourcePattern.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGFitToViewBox.h"
 #include "SVGLangSpace.h"
-#include "SVGPaintServerPattern.h"
 #include "SVGStyledElement.h"
 #include "SVGTests.h"
 #include "SVGTransformList.h"

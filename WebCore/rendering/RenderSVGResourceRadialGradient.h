@@ -23,38 +23,44 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SVGPaintServerSolid_h
-#define SVGPaintServerSolid_h
+#ifndef RenderSVGResourceRadialGradient_h
+#define RenderSVGResourceRadialGradient_h
 
 #if ENABLE(SVG)
 
-#include "Color.h"
-#include "SVGPaintServer.h"
+#include "FloatPoint.h"
+#include "RenderSVGResourceGradient.h"
 
 namespace WebCore {
 
-    class SVGPaintServerSolid : public SVGPaintServer {
-    public:
-        static PassRefPtr<SVGPaintServerSolid> create() { return adoptRef(new SVGPaintServerSolid); }
-        virtual ~SVGPaintServerSolid();
+class SVGPaintServerRadialGradient : public SVGPaintServerGradient {
+public:
+    static PassRefPtr<SVGPaintServerRadialGradient> create(const SVGGradientElement* owner) { return adoptRef(new SVGPaintServerRadialGradient(owner)); }
+    virtual ~SVGPaintServerRadialGradient();
 
-        virtual SVGPaintServerType type() const { return SolidPaintServer; }
+    virtual SVGPaintServerType type() const { return RadialGradientPaintServer; }
 
-        Color color() const;
-        void setColor(const Color&);
+    FloatPoint gradientCenter() const;
+    void setGradientCenter(const FloatPoint&);
 
-        virtual TextStream& externalRepresentation(TextStream&) const;
+    FloatPoint gradientFocal() const;
+    void setGradientFocal(const FloatPoint&);
 
-        virtual bool setup(GraphicsContext*&, const RenderObject*, const RenderStyle*, SVGPaintTargetType, bool isPaintingText) const;
+    float gradientRadius() const;
+    void setGradientRadius(float);
 
-    private:
-        SVGPaintServerSolid();
+    virtual TextStream& externalRepresentation(TextStream&) const;
 
-        Color m_color;
-    };
+private:
+    SVGPaintServerRadialGradient(const SVGGradientElement* owner);
+
+    float m_radius;
+    FloatPoint m_center;
+    FloatPoint m_focal;
+};
 
 } // namespace WebCore
 
 #endif
 
-#endif // SVGPaintServerSolid_h
+#endif // RenderSVGResourceRadialGradient_h

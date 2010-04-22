@@ -28,16 +28,16 @@
 #include "config.h"
 
 #if ENABLE(SVG)
-#include "SVGPaintServerGradient.h"
+#include "RenderSVGResourceGradient.h"
 
 #include "FloatConversion.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "RenderObject.h"
+#include "RenderSVGResourceLinearGradient.h"
+#include "RenderSVGResourceRadialGradient.h"
 #include "RenderView.h"
 #include "SVGGradientElement.h"
-#include "SVGPaintServerLinearGradient.h"
-#include "SVGPaintServerRadialGradient.h"
 #include "SVGRenderSupport.h"
 #include "SVGRenderTreeAsText.h"
 

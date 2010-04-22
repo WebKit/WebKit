@@ -27,7 +27,7 @@
 #include "config.h"
 
 #if ENABLE(SVG)
-#include "SVGPaintServerSolid.h"
+#include "RenderSVGResourceSolidColor.h"
 
 #include "GraphicsContext.h"
 #include "RenderPath.h"

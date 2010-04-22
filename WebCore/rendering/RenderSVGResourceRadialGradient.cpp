@@ -23,44 +23,66 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SVGPaintServerRadialGradient_h
-#define SVGPaintServerRadialGradient_h
+#include "config.h"
 
 #if ENABLE(SVG)
+#include "RenderSVGResourceRadialGradient.h"
 
-#include "FloatPoint.h"
-#include "SVGPaintServerGradient.h"
+#include "SVGRenderTreeAsText.h"
 
 namespace WebCore {
 
-    class SVGPaintServerRadialGradient : public SVGPaintServerGradient {
-    public:
-        static PassRefPtr<SVGPaintServerRadialGradient> create(const SVGGradientElement* owner) { return adoptRef(new SVGPaintServerRadialGradient(owner)); }
-        virtual ~SVGPaintServerRadialGradient();
+SVGPaintServerRadialGradient::SVGPaintServerRadialGradient(const SVGGradientElement* owner)
+    : SVGPaintServerGradient(owner)
+    , m_radius(0.0f)
+{
+}
 
-        virtual SVGPaintServerType type() const { return RadialGradientPaintServer; }
+SVGPaintServerRadialGradient::~SVGPaintServerRadialGradient()
+{
+}
 
-        FloatPoint gradientCenter() const;
-        void setGradientCenter(const FloatPoint&);
 
-        FloatPoint gradientFocal() const;
-        void setGradientFocal(const FloatPoint&);
+FloatPoint SVGPaintServerRadialGradient::gradientCenter() const
+{
+    return m_center;
+}
 
-        float gradientRadius() const;
-        void setGradientRadius(float);
+void SVGPaintServerRadialGradient::setGradientCenter(const FloatPoint& center)
+{
+    m_center = center;
+}
 
-        virtual TextStream& externalRepresentation(TextStream&) const;
+FloatPoint SVGPaintServerRadialGradient::gradientFocal() const
+{
+    return m_focal;
+}
 
-    private:
-        SVGPaintServerRadialGradient(const SVGGradientElement* owner);
+void SVGPaintServerRadialGradient::setGradientFocal(const FloatPoint& focal)
+{
+    m_focal = focal;
+}
 
-        float m_radius;
-        FloatPoint m_center;
-        FloatPoint m_focal;
-    };
+float SVGPaintServerRadialGradient::gradientRadius() const
+{
+    return m_radius;
+}
+
+void SVGPaintServerRadialGradient::setGradientRadius(float radius)
+{
+    m_radius = radius;
+}
+
+TextStream& SVGPaintServerRadialGradient::externalRepresentation(TextStream& ts) const
+{
+    ts << "[type=RADIAL-GRADIENT] ";
+    SVGPaintServerGradient::externalRepresentation(ts);
+    ts << " [center=" << gradientCenter() << "]"
+        << " [focal=" << gradientFocal() << "]"
+        << " [radius=" << gradientRadius() << "]";
+    return ts;
+}
 
 } // namespace WebCore
 
 #endif
-
-#endif // SVGPaintServerRadialGradient_h

@@ -23,40 +23,53 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SVGPaintServerLinearGradient_h
-#define SVGPaintServerLinearGradient_h
+#include "config.h"
 
 #if ENABLE(SVG)
+#include "RenderSVGResourceLinearGradient.h"
 
-#include "FloatPoint.h"
-#include "SVGPaintServerGradient.h"
+#include "SVGRenderTreeAsText.h"
 
 namespace WebCore {
 
-    class SVGPaintServerLinearGradient : public SVGPaintServerGradient {
-    public:
-        static PassRefPtr<SVGPaintServerLinearGradient> create(const SVGGradientElement* owner) { return adoptRef(new SVGPaintServerLinearGradient(owner)); }
-        virtual ~SVGPaintServerLinearGradient();
+SVGPaintServerLinearGradient::SVGPaintServerLinearGradient(const SVGGradientElement* owner)
+    : SVGPaintServerGradient(owner)
+{ 
+}
 
-        virtual SVGPaintServerType type() const { return LinearGradientPaintServer; }
+SVGPaintServerLinearGradient::~SVGPaintServerLinearGradient()
+{
+}
 
-        FloatPoint gradientStart() const;
-        void setGradientStart(const FloatPoint&);
+FloatPoint SVGPaintServerLinearGradient::gradientStart() const
+{
+    return m_start;
+}
 
-        FloatPoint gradientEnd() const;
-        void setGradientEnd(const FloatPoint&);
+void SVGPaintServerLinearGradient::setGradientStart(const FloatPoint& start)
+{
+    m_start = start;
+}
 
-        virtual TextStream& externalRepresentation(TextStream&) const;
+FloatPoint SVGPaintServerLinearGradient::gradientEnd() const
+{
+    return m_end;
+}
 
-    private:
-        SVGPaintServerLinearGradient(const SVGGradientElement* owner);
+void SVGPaintServerLinearGradient::setGradientEnd(const FloatPoint& end)
+{
+    m_end = end;
+}
 
-        FloatPoint m_start;
-        FloatPoint m_end;
-    };
+TextStream& SVGPaintServerLinearGradient::externalRepresentation(TextStream& ts) const
+{
+    ts << "[type=LINEAR-GRADIENT] ";
+    SVGPaintServerGradient::externalRepresentation(ts);
+    ts  << " [start=" << gradientStart() << "]"
+        << " [end=" << gradientEnd() << "]";
+    return ts;
+}
 
 } // namespace WebCore
 
 #endif
-
-#endif // SVGPaintServerLinearGradient_h

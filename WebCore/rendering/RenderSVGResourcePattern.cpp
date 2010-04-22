@@ -27,7 +27,7 @@
 #include "config.h"
 
 #if ENABLE(SVG)
-#include "SVGPaintServerPattern.h"
+#include "RenderSVGResourcePattern.h"
 
 #include "AffineTransform.h"
 #include "GraphicsContext.h"

@@ -23,52 +23,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#ifndef RenderSVGResourceLinearGradient_h
+#define RenderSVGResourceLinearGradient_h
 
 #if ENABLE(SVG)
-#include "SVGPaintServerLinearGradient.h"
-#include "SVGRenderTreeAsText.h"
+
+#include "FloatPoint.h"
+#include "RenderSVGResourceGradient.h"
 
 namespace WebCore {
 
-SVGPaintServerLinearGradient::SVGPaintServerLinearGradient(const SVGGradientElement* owner)
-    : SVGPaintServerGradient(owner)
-{ 
-}
+class SVGPaintServerLinearGradient : public SVGPaintServerGradient {
+public:
+    static PassRefPtr<SVGPaintServerLinearGradient> create(const SVGGradientElement* owner) { return adoptRef(new SVGPaintServerLinearGradient(owner)); }
+    virtual ~SVGPaintServerLinearGradient();
 
-SVGPaintServerLinearGradient::~SVGPaintServerLinearGradient()
-{
-}
+    virtual SVGPaintServerType type() const { return LinearGradientPaintServer; }
 
-FloatPoint SVGPaintServerLinearGradient::gradientStart() const
-{
-    return m_start;
-}
+    FloatPoint gradientStart() const;
+    void setGradientStart(const FloatPoint&);
 
-void SVGPaintServerLinearGradient::setGradientStart(const FloatPoint& start)
-{
-    m_start = start;
-}
+    FloatPoint gradientEnd() const;
+    void setGradientEnd(const FloatPoint&);
 
-FloatPoint SVGPaintServerLinearGradient::gradientEnd() const
-{
-    return m_end;
-}
+    virtual TextStream& externalRepresentation(TextStream&) const;
 
-void SVGPaintServerLinearGradient::setGradientEnd(const FloatPoint& end)
-{
-    m_end = end;
-}
+private:
+    SVGPaintServerLinearGradient(const SVGGradientElement* owner);
 
-TextStream& SVGPaintServerLinearGradient::externalRepresentation(TextStream& ts) const
-{
-    ts << "[type=LINEAR-GRADIENT] ";
-    SVGPaintServerGradient::externalRepresentation(ts);
-    ts  << " [start=" << gradientStart() << "]"
-        << " [end=" << gradientEnd() << "]";
-    return ts;
-}
+    FloatPoint m_start;
+    FloatPoint m_end;
+};
 
 } // namespace WebCore
 
 #endif
+
+#endif // RenderSVGResourceLinearGradient_h

@@ -23,7 +23,7 @@
 
 #if ENABLE(SVG)
 #include "RenderObject.h"
-#include "SVGPaintServerGradient.h"
+#include "RenderSVGResourceGradient.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGStyledElement.h"
 #include "SVGTransformList.h"

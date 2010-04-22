@@ -606,10 +606,16 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	rendering/RenderSVGInline.cpp \
 	rendering/RenderSVGInlineText.cpp \
 	rendering/RenderSVGModelObject.cpp \
+	rendering/RenderSVGResource.cpp \
 	rendering/RenderSVGResourceClipper.cpp \
 	rendering/RenderSVGResourceFilter.cpp \
+	rendering/RenderSVGResourceGradient.cpp \
+	rendering/RenderSVGResourceLinearGradient.cpp \
 	rendering/RenderSVGResourceMarker.cpp \
 	rendering/RenderSVGResourceMasker.cpp \
+	rendering/RenderSVGResourcePattern.cpp \
+	rendering/RenderSVGResourceRadialGradient.cpp \
+	rendering/RenderSVGResourceSolidColor.cpp \
 	rendering/RenderSVGRoot.cpp \
 	rendering/RenderSVGShadowTreeRootContainer.cpp \
 	rendering/RenderSVGTSpan.cpp \
@@ -855,12 +861,6 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	svg/animation/SVGSMILElement.cpp \
 	\
 	svg/graphics/SVGImage.cpp \
-	svg/graphics/SVGPaintServer.cpp \
-	svg/graphics/SVGPaintServerGradient.cpp \
-	svg/graphics/SVGPaintServerLinearGradient.cpp \
-	svg/graphics/SVGPaintServerPattern.cpp \
-	svg/graphics/SVGPaintServerRadialGradient.cpp \
-	svg/graphics/SVGPaintServerSolid.cpp \
 	svg/graphics/SVGResource.cpp \
 	\
 	svg/graphics/filters/SVGFEConvolveMatrix.cpp \
