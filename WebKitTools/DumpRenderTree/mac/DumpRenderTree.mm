@@ -431,6 +431,7 @@ static void resetDefaultsToConsistentValues()
     [preferences setPrivateBrowsingEnabled:NO];
     [preferences setAuthorAndUserStylesEnabled:YES];
     [preferences setJavaScriptCanOpenWindowsAutomatically:YES];
+    [preferences setJavaScriptCanAccessClipboard:YES];
     [preferences setOfflineWebApplicationCacheEnabled:YES];
     [preferences setDeveloperExtrasEnabled:NO];
     [preferences setLoadsImagesAutomatically:YES];

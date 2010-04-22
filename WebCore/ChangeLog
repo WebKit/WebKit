@@ -1,3 +1,24 @@
+2010-04-22  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add support for controlling clipboard access from javascript.
+        Clipboard access from javascript is disabled by default.
+        https://bugs.webkit.org/show_bug.cgi?id=27751
+
+        Test: editing/execCommand/clipboard-access.html
+
+        * WebCore.base.exp:
+        * editing/EditorCommand.cpp:
+        (WebCore::supportedCopyCut):
+        (WebCore::supportedPaste):
+        (WebCore::createCommandMap):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setJavaScriptCanAccessClipboard):
+        * page/Settings.h:
+        (WebCore::Settings::javaScriptCanAccessClipboard):
+
 2010-04-22  Stephan Aßmus  <superstippi@gmx.de>
 
         Reviewed by David Levin.

@@ -1,3 +1,21 @@
+2010-04-22  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add support for controlling clipboard access from javascript.
+        Clipboard access from javascript is disabled by default.
+        https://bugs.webkit.org/show_bug.cgi?id=27751
+
+        * Interfaces/IWebPreferencesPrivate.idl:
+        * WebPreferenceKeysPrivate.h:
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+        (WebPreferences::javaScriptCanAccessClipboard):
+        (WebPreferences::setJavaScriptCanAccessClipboard):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2010-04-21  Andy Estes  <aestes@apple.com>
 
         Reviewed by Maciej Stachowiak.

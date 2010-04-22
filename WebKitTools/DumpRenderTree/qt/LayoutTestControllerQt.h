@@ -144,6 +144,7 @@ public slots:
     void resetLoadFinished() { m_loadFinished = false; }
     void setWindowIsKey(bool isKey);
     void setMainFrameIsFirstResponder(bool isFirst);
+    void setJavaScriptCanAccessClipboard(bool enable);
     void setXSSAuditorEnabled(bool enable);
     void setCaretBrowsingEnabled(bool enable);
     void setViewModeMediaFeature(const QString& mode);

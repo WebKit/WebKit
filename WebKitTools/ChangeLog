@@ -1,3 +1,41 @@
+2010-04-22  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add support for controlling clipboard access from javascript.
+        Clipboard access from javascript is enabled in test framework.
+        https://bugs.webkit.org/show_bug.cgi?id=27751
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (setJavaScriptCanAccessClipboardCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::setJavaScriptCanAccessClipboard):
+        (LayoutTestController::overridePreference):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::resetWebSettings):
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setJavaScriptCanAccessClipboard):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetDefaultsToConsistentValues):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setJavaScriptCanAccessClipboard):
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::WebPage::WebPage):
+        (WebCore::WebPage::resetSettings):
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::setJavaScriptCanAccessClipboard):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setJavaScriptCanAccessClipboard):
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::setJavaScriptCanAccessClipboard):
+
 2010-04-21  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

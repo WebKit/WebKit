@@ -139,6 +139,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("setPrivateBrowsingEnabled", &LayoutTestController::setPrivateBrowsingEnabled);
     bindMethod("setUseDashboardCompatibilityMode", &LayoutTestController::setUseDashboardCompatibilityMode);
 
+    bindMethod("setJavaScriptCanAccessClipboard", &LayoutTestController::setJavaScriptCanAccessClipboard);
     bindMethod("setXSSAuditorEnabled", &LayoutTestController::setXSSAuditorEnabled);
     bindMethod("evaluateScriptInIsolatedWorld", &LayoutTestController::evaluateScriptInIsolatedWorld);
     bindMethod("overridePreference", &LayoutTestController::overridePreference);
@@ -881,6 +882,13 @@ void LayoutTestController::setPrivateBrowsingEnabled(const CppArgumentList& argu
     result->setNull();
 }
 
+void LayoutTestController::setJavaScriptCanAccessClipboard(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() > 0 && arguments[0].isBool())
+        m_shell->webView()->settings()->setJavaScriptCanAccessClipboard(arguments[0].value.boolValue);
+    result->setNull();
+}
+
 void LayoutTestController::setXSSAuditorEnabled(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isBool())
@@ -1007,6 +1015,8 @@ void LayoutTestController::overridePreference(const CppArgumentList& arguments, 
         settings->setJavaEnabled(cppVariantToBool(value));
     else if (key == "WebKitUsesPageCachePreferenceKey")
         settings->setUsesPageCache(cppVariantToBool(value));
+    else if (key == "WebKitJavaScriptCanAccessClipboard")
+        settings->setJavaScriptCanAccessClipboard(cppVariantToBool(value));
     else if (key == "WebKitXSSAuditorEnabled")
         settings->setXSSAuditorEnabled(cppVariantToBool(value));
     else if (key == "WebKitLocalStorageEnabledPreferenceKey")

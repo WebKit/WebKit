@@ -84,6 +84,7 @@ Settings::Settings(Page* page)
     , m_allowUniversalAccessFromFileURLs(true)
     , m_allowFileAccessFromFileURLs(true)
     , m_javaScriptCanOpenWindowsAutomatically(false)
+    , m_javaScriptCanAccessClipboard(false)
     , m_shouldPrintBackgrounds(false)
     , m_textAreasAreResizable(false)
 #if ENABLE(DASHBOARD_SUPPORT)
@@ -306,6 +307,11 @@ void Settings::setPrivateBrowsingEnabled(bool privateBrowsingEnabled)
 void Settings::setJavaScriptCanOpenWindowsAutomatically(bool javaScriptCanOpenWindowsAutomatically)
 {
     m_javaScriptCanOpenWindowsAutomatically = javaScriptCanOpenWindowsAutomatically;
+}
+
+void Settings::setJavaScriptCanAccessClipboard(bool javaScriptCanAccessClipboard)
+{
+    m_javaScriptCanAccessClipboard = javaScriptCanAccessClipboard;
 }
 
 void Settings::setDefaultTextEncodingName(const String& defaultTextEncodingName)

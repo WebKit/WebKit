@@ -1,3 +1,17 @@
+2010-04-22  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Manual test to verify that javascript cannot access clipboard.        
+        https://bugs.webkit.org/show_bug.cgi?id=27751
+
+        * editing/execCommand/clipboard-access-expected.txt: Added.
+        * editing/execCommand/clipboard-access.html: Added.
+        * editing/execCommand/script-tests/clipboard-access.js: Added.
+        (enabled):
+        (whenEnabled):
+        (runTest):
+
 2010-04-21  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

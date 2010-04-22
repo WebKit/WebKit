@@ -371,6 +371,11 @@ void LayoutTestController::setPopupBlockingEnabled(bool popupBlockingEnabled)
     [[[mainFrame webView] preferences] setJavaScriptCanOpenWindowsAutomatically:!popupBlockingEnabled];
 }
 
+void LayoutTestController::setJavaScriptCanAccessClipboard(bool enabled)
+{
+    [[[mainFrame webView] preferences] setJavaScriptCanAccessClipboard:enabled];
+}
+
 void LayoutTestController::setTabKeyCyclesThroughElements(bool cycles)
 {
     [[mainFrame webView] setTabKeyCyclesThroughElements:cycles];

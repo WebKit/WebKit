@@ -350,6 +350,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:NO],   WebKitLocalFileContentSniffingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitOfflineWebApplicationCacheEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitZoomsTextOnlyPreferenceKey,
+        [NSNumber numberWithBool:NO],   WebKitJavaScriptCanAccessClipboardPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitXSSAuditorEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitAcceleratedCompositingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitShowDebugBordersPreferenceKey,
@@ -829,6 +830,16 @@ static WebCacheModel cacheModelForMainBundle(void)
 - (void)setZoomsTextOnly:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitZoomsTextOnlyPreferenceKey];
+}
+
+- (BOOL)javaScriptCanAccessClipboard
+{
+    return [self _boolValueForKey:WebKitJavaScriptCanAccessClipboardPreferenceKey];
+}
+
+- (void)setJavaScriptCanAccessClipboard:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitJavaScriptCanAccessClipboardPreferenceKey];
 }
 
 - (BOOL)isXSSAuditorEnabled

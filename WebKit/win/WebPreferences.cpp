@@ -206,6 +206,7 @@ void WebPreferences::initializeDefaultSettings()
     CFDictionaryAddValue(defaults, CFSTR(WebKitWebSecurityEnabledPreferenceKey), kCFBooleanTrue);
     CFDictionaryAddValue(defaults, CFSTR(WebKitAllowUniversalAccessFromFileURLsPreferenceKey), kCFBooleanFalse);
     CFDictionaryAddValue(defaults, CFSTR(WebKitAllowFileAccessFromFileURLsPreferenceKey), kCFBooleanTrue);
+    CFDictionaryAddValue(defaults, CFSTR(WebKitJavaScriptCanAccessClipboardPreferenceKey), kCFBooleanFalse);
     CFDictionaryAddValue(defaults, CFSTR(WebKitXSSAuditorEnabledPreferenceKey), kCFBooleanTrue);
     CFDictionaryAddValue(defaults, CFSTR(WebKitFrameFlatteningEnabledPreferenceKey), kCFBooleanFalse);
     CFDictionaryAddValue(defaults, CFSTR(WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey), kCFBooleanTrue);
@@ -806,6 +807,20 @@ HRESULT STDMETHODCALLTYPE WebPreferences::setAllowFileAccessFromFileURLs(
     /* [in] */ BOOL allowAccess)
 {
     setBoolValue(CFSTR(WebKitAllowFileAccessFromFileURLsPreferenceKey), allowAccess);
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebPreferences::javaScriptCanAccessClipboard(
+    /* [retval][out] */ BOOL* enabled)
+{
+    *enabled = boolValueForKey(CFSTR(WebKitJavaScriptCanAccessClipboardPreferenceKey));
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebPreferences::setJavaScriptCanAccessClipboard(
+    /* [in] */ BOOL enabled)
+{
+    setBoolValue(CFSTR(WebKitJavaScriptCanAccessClipboardPreferenceKey), enabled);
     return S_OK;
 }
 
