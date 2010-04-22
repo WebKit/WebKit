@@ -62,6 +62,7 @@ def gather_test_files(port, paths):
     paths_to_walk = set()
     # if paths is empty, provide a pre-defined list.
     if paths:
+        _log.debug("Gathering tests from: %s relative to %s" % (paths, port.layout_tests_dir()))
         for path in paths:
             # If there's an * in the name, assume it's a glob pattern.
             path = os.path.join(port.layout_tests_dir(), path)
@@ -71,6 +72,7 @@ def gather_test_files(port, paths):
             else:
                 paths_to_walk.add(path)
     else:
+        _log.debug("Gathering tests from: %s" % port.layout_tests_dir())
         paths_to_walk.add(port.layout_tests_dir())
 
     # Now walk all the paths passed in on the command line and get filenames

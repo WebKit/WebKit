@@ -1,3 +1,15 @@
+2010-04-22  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Just adding logging.
+
+        Adding logging to help debug why the Leopard Bot
+        can't find any tests to run.
+
+        * Scripts/webkitpy/layout_tests/layout_package/test_files.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+         - Make it a fatal error to have no tests to run.
+
 2010-04-22  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Adam Barth.

@@ -290,7 +290,11 @@ class TestRunner:
         # Remove skipped - both fixable and ignored - files from the
         # top-level list of files to test.
         num_all_test_files = len(self._test_files)
-        write("Found:  %d tests" % (len(self._test_files)))
+        write("Found:  %d tests" % num_all_test_files)
+        if not num_all_test_files:
+            _log.critical("No tests to run.")
+            sys.exit(1)
+
         skipped = set()
         if num_all_test_files > 1 and not self._options.force:
             skipped = self._expectations.get_tests_with_result_type(
