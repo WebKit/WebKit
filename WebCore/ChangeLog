@@ -1,3 +1,22 @@
+2010-04-21  David Yonge-Mallo  <davinci@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        ZWNJ - Display non-printing, invisible character
+        https://bugs.webkit.org/show_bug.cgi?id=16131
+
+        Fix the (non)display of glyphs for ZWJ and ZWNJ in simple font code path.
+
+        Tests: fast/text/format-control.html
+               fast/text/zero-width-characters.html
+
+        * platform/graphics/Font.h:
+        (WebCore::Font::operator!=):
+        (WebCore::Font::treatAsZeroWidthSpace): treat ZWNJ and ZWJ as ZWSP.
+        * platform/graphics/GlyphPageTreeNode.cpp:
+        (WebCore::GlyphPageTreeNode::initializePage): added ZWNJ and ZWJ.
+        * platform/text/CharacterNames.h: added ZWNJ and ZWJ.
+
 2010-04-21  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         Reviewed by George Staikos.

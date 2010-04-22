@@ -165,13 +165,15 @@ void GlyphPageTreeNode::initializePage(const FontData* fontData, unsigned pageNu
                     buffer[(int)'\t'] = ' ';
                     buffer[noBreakSpace] = ' ';
                 } else if (start == (leftToRightMark & ~(GlyphPage::size - 1))) {
-                    // LRM, RLM, LRE, RLE and PDF must not render at all.
+                    // LRM, RLM, LRE, RLE, ZWNJ, ZWJ, and PDF must not render at all.
                     buffer[leftToRightMark - start] = zeroWidthSpace;
                     buffer[rightToLeftMark - start] = zeroWidthSpace;
                     buffer[leftToRightEmbed - start] = zeroWidthSpace;
                     buffer[rightToLeftEmbed - start] = zeroWidthSpace;
                     buffer[leftToRightOverride - start] = zeroWidthSpace;
                     buffer[rightToLeftOverride - start] = zeroWidthSpace;
+                    buffer[zeroWidthNonJoiner - start] = zeroWidthSpace;
+                    buffer[zeroWidthJoiner - start] = zeroWidthSpace;
                     buffer[popDirectionalFormatting - start] = zeroWidthSpace;
                 } else if (start == (objectReplacementCharacter & ~(GlyphPage::size - 1))) {
                     // Object replacement character must not render at all.
