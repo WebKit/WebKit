@@ -1,3 +1,13 @@
+2010-04-22  MORITA Hajime <morrita@google.com>
+
+        Not reviewed.
+
+        Picked a review feedback left on:
+        https://bugs.webkit.org/show_bug.cgi?id=37056
+        LayoutTests/editing/selection/move-left-right.html is slow
+        
+        * editing/selection/move-left-right.html:
+
 2010-04-22  Dave Moore  <davemoore@chromium.org>
 
         Reviewed by Dimitri Glazkov.

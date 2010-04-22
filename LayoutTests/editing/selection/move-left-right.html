@@ -130,9 +130,6 @@
 
         function runTest()
         {
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
-
             var tests = document.getElementsByClassName("test");
             var sel = getSelection();
             for (var i = 0; i < tests.length; ++i) {
@@ -182,6 +179,9 @@
                 flushLog();
             }
         };
+
+        if (window.layoutTestController)
+            layoutTestController.dumpAsText();
     </script>
 </head>
 <body>
