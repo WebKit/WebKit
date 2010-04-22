@@ -1050,7 +1050,23 @@ void WebGraphicsContext3DDefaultImpl::getFramebufferAttachmentParameteriv(unsign
     glGetFramebufferAttachmentParameterivEXT(target, attachment, pname, value);
 }
 
-DELEGATE_TO_GL_2(getIntegerv, GetIntegerv, unsigned long, int*)
+void WebGraphicsContext3DDefaultImpl::getIntegerv(unsigned long pname, int* value)
+{
+    // Need to emulate IMPLEMENTATION_COLOR_READ_FORMAT/TYPE for GL.  Any valid
+    // combination should work, but GL_RGB/GL_UNSIGNED_BYTE might be the most
+    // useful for desktop WebGL users.
+    makeContextCurrent();
+    switch (pname) {
+    case 0x8B9B: // IMPLEMENTATION_COLOR_READ_FORMAT
+        *value = GL_RGB;
+        break;
+    case 0x8B9A: // IMPLEMENTATION_COLOR_READ_TYPE
+        *value = GL_UNSIGNED_BYTE;
+        break;
+    default:
+        glGetIntegerv(pname, value);
+    }
+}
 
 DELEGATE_TO_GL_3(getProgramiv, GetProgramiv, WebGLId, unsigned long, int*)
 

@@ -1,3 +1,17 @@
+2010-04-22  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Emulate GL_IMPLEMENTATION_COLOR_READ_FORMAT/TYPE for glGet
+        https://bugs.webkit.org/show_bug.cgi?id=37281
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::WebGLRenderingContext): Remove error check because two enums are supported now. 
+        (WebCore::WebGLRenderingContext::getParameter): Add two enums.
+        (WebCore::WebGLRenderingContext::readPixels): Fix a tiny bug.
+        * platform/graphics/mac/GraphicsContext3DMac.cpp:
+        (WebCore::GraphicsContext3D::getIntegerv): Emulate two enums.
+
 2010-04-22  Diego Escalante Urrelo  <descalante@igalia.com>
 
         Reviewed by Xan Lopez.

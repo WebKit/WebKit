@@ -24,90 +24,228 @@ void main()
     gl_FragColor = color;
 }
 </script>
-
-<script>
-var successfullyParsed = false;
-
-// These four declarations need to be global for "shouldBe" to see them
-var gl = null;
-var array = null;
-var expectedSize = 0;
-var pixel = [ 0, 0, 0, 1 ];
-
-function init()
-{
-    if (window.layoutTestController) {
-        layoutTestController.overridePreference("WebKitWebGLEnabled", "1");
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
-    }
-
-    description('Verify readPixels() works fine with various PACK_ALIGNMENT values.');
-
-    runTest();
-}
-
-function runTestIteration(packAlignment, width, height, size)
-{
-    debug("Testing PACK_ALIGNMENT = " + packAlignment + ", width = " + width + ", height = " + height);
-    gl.clearColor(1, 1, 0, 1);
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.pixelStorei(gl.PACK_ALIGNMENT, packAlignment);
-    array = gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE);
-    expectedSize = size;
-    shouldBe("array.length", "expectedSize");
-    // Check the last pixel of the last row.
-    var padding = 0;
-    if (height > 1)
-        padding = (size - width * height * 4) / (height - 1);
-    var bytesPerRow = width * 4 + padding;
-    var pos = bytesPerRow * (height - 1) + (width - 1) * 4;
-    pixel[0] = array[pos];
-    pixel[1] = array[pos + 1];
-    pixel[2] = array[pos + 2];
-    pixel[3] = array[pos + 3];
-    shouldBe("pixel", "[ 255, 255, 0, 255]");
-}
-
-function runTest()
-{
-    shouldBeNonNull("gl = initWebGL('example', 'vshader', 'fshader', [ 'pos', 'colorIn' ], [ 0, 0, 0, 1 ], 1)");
-    gl.disable(gl.BLEND);
-
-    runTestIteration(1, 1, 2, 8);
-    runTestIteration(2, 1, 2, 8);
-    runTestIteration(4, 1, 2, 8);
-    runTestIteration(8, 1, 2, 12);
-    runTestIteration(4, 2, 2, 16);
-    runTestIteration(8, 2, 2, 16);
-    runTestIteration(4, 3, 2, 24);
-    runTestIteration(8, 3, 2, 28);
-    runTestIteration(4, 4, 2, 32);
-    runTestIteration(8, 4, 2, 32);
-    runTestIteration(8, 5, 1, 20);
-    runTestIteration(4, 5, 2, 40);
-    runTestIteration(8, 5, 2, 44);
-    runTestIteration(8, 6, 2, 48);
-    runTestIteration(8, 7, 2, 60);
-    runTestIteration(8, 8, 2, 64);
-
-    successfullyParsed = true;
-    var epilogue = document.createElement("script");
-    epilogue.onload = finish;
-    epilogue.src = "../../js/resources/js-test-post.js";
-    document.body.appendChild(epilogue);
-}
-
-function finish() {
-    if (window.layoutTestController) {
-        layoutTestController.notifyDone();
-    }
-}
-</script>
 </head>
-<body onload="init()">
+<body>
 <canvas id="example" width="32px" height="32px"></canvas>
 <div id="description"></div>
 <div id="console"></div>
+<script>
+var successfullyParsed = false;
+
+// The below declarations need to be global for "shouldBe" to see them
+var gl = null;
+var array = null;
+var expectedSize = 0;
+var pixel = [ 0, 0, 0, 0 ];
+var expectedColor = [ 0, 0, 0, 0 ];
+var pixelFormat = 0;
+var pixelType = 0;
+
+function calculatePixelBytes(format, type)
+{
+    var size = 0;
+    switch (format) {
+    case gl.ALPHA:
+        size = 1;
+        break;
+    case gl.RGB:
+        size = 3;
+        break;
+    case gl.RGBA:
+        size = 4;
+        break;
+    default:
+        return -1;
+    }
+    switch (type) {
+    case gl.UNSIGNED_BYTE:
+        break;
+    case gl.UNSIGNED_SHORT_5_6_5:
+        if (format != gl.RGB)
+            return -1;
+        size = 2;
+        break;
+    case gl.UNSIGNED_SHORT_4_4_4_4:
+    case gl.UNSIGNED_SHORT_5_5_5_1:
+        if (format != gl.RGBA)
+            return -1;
+        size = 2;
+        break;
+    default:
+        return -1;
+    }
+    return size;
+}
+
+function calculatePaddingBytes(bytesPerPixel, packAlignment, width)
+{
+    var padding = 0;
+    switch (packAlignment) {
+    case 1:
+    case 2:
+    case 4:
+    case 8:
+        padding = (bytesPerPixel * width) % packAlignment;
+        if (padding > 0)
+            padding = packAlignment - padding;
+        break;
+    default:
+        return -1;
+    }
+    return padding;
+}
+
+function packColor(format, type, r, g, b, a)
+{
+    // FIXME: not sure if the color packing is correct for UNSIGNED_SHORT_*.
+    var color = [ 0, 0, 0, 0 ];
+    switch (type) {
+    case gl.UNSIGNED_BYTE:
+        switch (format) {
+        case gl.ALPHA:
+            color[0] = a;
+            break;
+        case gl.RGB:
+            color[0] = r;
+            color[1] = g;
+            color[2] = b;
+            break;
+        case gl.RGBA:
+            color[0] = r;
+            color[1] = g;
+            color[2] = b;
+            color[3] = a;
+            break;
+        default:
+            return null;
+        }
+        break;
+    case gl.UNSIGNED_SHORT_5_6_5:
+        if (format != gl.RGB)
+            return null;
+        r >>= 3;
+        g >>= 2;
+        b >>= 3;
+        color[0] = (r << 11) + (g << 5) + b;
+        break;
+    case gl.UNSIGNED_SHORT_4_4_4_4:
+        if (format != gl.RGBA)
+            return null;
+        r >>= 4;
+        g >>= 4;
+        b >>= 4;
+        a >>= 4;
+        color[0] = (r << 12) + (g << 8) + (b << 4) + a;
+        break;
+    case gl.UNSIGNED_SHORT_5_5_5_1:
+        if (format != gl.RGBA)
+            return null;
+        r >>= 3;
+        g >>= 3;
+        b >>= 3;
+        a >>= 7;
+        color[0] = (r << 11) + (g << 6) + (b << 1) + a;
+        break;
+    Default:
+        return null;
+    }
+    return color;
+}
+
+function runTestIteration(format, type, packAlignment, width, height)
+{
+    debug("Testing PACK_ALIGNMENT = " + packAlignment + ", width = " + width + ", height = " + height);
+    gl.clearColor(1, 0.4, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.pixelStorei(gl.PACK_ALIGNMENT, packAlignment);
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+    array = gl.readPixels(0, 0, width, height, format, type);
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+    var bytesPerPixel = calculatePixelBytes(format, type);
+    var padding = calculatePaddingBytes(bytesPerPixel, packAlignment, width);
+    expectedSize = bytesPerPixel * width * height + padding * (height - 1);
+    var isShort = false;
+    switch (type) {
+    case gl.UNSIGNED_SHORT_5_6_5:
+    case gl.UNSIGNED_SHORT_4_4_4_4:
+    case gl.UNSIGNED_SHORT_5_5_5_1:
+        isShort = true;
+    }
+    if (isShort)
+        expectedSize /= 2;
+    shouldBe("array.length", "expectedSize");
+    // Check the last pixel of the last row.
+    var bytesPerRow = width * bytesPerPixel + padding;
+    var pos = bytesPerRow * (height - 1) + (width - 1) * bytesPerPixel;
+    var numComponents = bytesPerPixel;
+    if (isShort) {
+        pos /= 2;
+        numComponents /= 2;
+    }
+    for (var i = 0; i < numComponents; ++i)
+        pixel[i] = array[pos + i];
+    for (var i = numComponents; i < 4; ++i)
+        pixel[i] = 0;
+    expectedColor = packColor(format, type, 255, 102, 0, 255);
+    shouldBeNonNull(expectedColor);
+    shouldBe("pixel", "expectedColor");
+}
+
+function checkSupportedPixelFormatAndType()
+{
+    debug("Check supported pixel format/type besides RGBA/UNSIGNED_BYTE");
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+    pixelFormat = gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT);
+    pixelType = gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE);
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+    shouldBeFalse("pixelFormat == gl.RGBA && pixelType == gl.UNSIGNED_BYTE");
+}
+
+description('Verify readPixels() works fine with various PACK_ALIGNMENT values.');
+
+shouldBeNonNull("gl = initWebGL('example', 'vshader', 'fshader', [ 'pos', 'colorIn' ], [ 0, 0, 0, 1 ], 1)");
+gl.disable(gl.BLEND);
+
+checkSupportedPixelFormatAndType();
+
+debug("Testing format = RGBA and type = UNSIGNED_BYTE");
+runTestIteration(gl.RGBA, gl.UNSIGNED_BYTE, 1, 1, 2);
+runTestIteration(gl.RGBA, gl.UNSIGNED_BYTE, 2, 1, 2);
+runTestIteration(gl.RGBA, gl.UNSIGNED_BYTE, 4, 1, 2);
+runTestIteration(gl.RGBA, gl.UNSIGNED_BYTE, 8, 1, 2);
+runTestIteration(gl.RGBA, gl.UNSIGNED_BYTE, 4, 2, 2);
+runTestIteration(gl.RGBA, gl.UNSIGNED_BYTE, 8, 2, 2);
+runTestIteration(gl.RGBA, gl.UNSIGNED_BYTE, 4, 3, 2);
+runTestIteration(gl.RGBA, gl.UNSIGNED_BYTE, 8, 3, 2);
+runTestIteration(gl.RGBA, gl.UNSIGNED_BYTE, 4, 4, 2);
+runTestIteration(gl.RGBA, gl.UNSIGNED_BYTE, 8, 4, 2);
+runTestIteration(gl.RGBA, gl.UNSIGNED_BYTE, 8, 5, 1);
+runTestIteration(gl.RGBA, gl.UNSIGNED_BYTE, 4, 5, 2);
+runTestIteration(gl.RGBA, gl.UNSIGNED_BYTE, 8, 5, 2);
+runTestIteration(gl.RGBA, gl.UNSIGNED_BYTE, 8, 6, 2);
+runTestIteration(gl.RGBA, gl.UNSIGNED_BYTE, 8, 7, 2);
+runTestIteration(gl.RGBA, gl.UNSIGNED_BYTE, 8, 8, 2);
+
+debug("Testing the other supported format/type combination");
+runTestIteration(pixelFormat, pixelType, 1, 1, 2);
+runTestIteration(pixelFormat, pixelType, 2, 1, 2);
+runTestIteration(pixelFormat, pixelType, 4, 1, 2);
+runTestIteration(pixelFormat, pixelType, 8, 1, 2);
+runTestIteration(pixelFormat, pixelType, 4, 2, 2);
+runTestIteration(pixelFormat, pixelType, 8, 2, 2);
+runTestIteration(pixelFormat, pixelType, 4, 3, 2);
+runTestIteration(pixelFormat, pixelType, 8, 3, 2);
+runTestIteration(pixelFormat, pixelType, 4, 4, 2);
+runTestIteration(pixelFormat, pixelType, 8, 4, 2);
+runTestIteration(pixelFormat, pixelType, 8, 5, 1);
+runTestIteration(pixelFormat, pixelType, 4, 5, 2);
+runTestIteration(pixelFormat, pixelType, 8, 5, 2);
+runTestIteration(pixelFormat, pixelType, 8, 6, 2);
+runTestIteration(pixelFormat, pixelType, 8, 7, 2);
+runTestIteration(pixelFormat, pixelType, 8, 8, 2);
+
+successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
 </body>
 </html>

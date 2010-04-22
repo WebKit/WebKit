@@ -1,3 +1,13 @@
+2010-04-22  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Emulate GL_IMPLEMENTATION_COLOR_READ_FORMAT/TYPE for glGet
+        https://bugs.webkit.org/show_bug.cgi?id=37281
+
+        * fast/canvas/webgl/read-pixels-expected.txt: Add test case for the other supported format/type in readPixels (besides RGBA/UNSIGNED_BYTE); also, changed to a simpler test framework.
+        * fast/canvas/webgl/read-pixels.html: Ditto.
+
 2010-04-22  Marcus Bulach  <bulach@chromium.org>
 
         Reviewed by Dimitri Glazkov.

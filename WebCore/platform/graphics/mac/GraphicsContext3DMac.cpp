@@ -1141,8 +1141,20 @@ void GraphicsContext3D::getFramebufferAttachmentParameteriv(unsigned long target
 
 void GraphicsContext3D::getIntegerv(unsigned long pname, int* value)
 {
+    // Need to emulate IMPLEMENTATION_COLOR_READ_FORMAT/TYPE for GL.  Any valid
+    // combination should work, but GL_RGB/GL_UNSIGNED_BYTE might be the most
+    // useful for desktop WebGL users.
     ensureContext(m_contextObj);
-    ::glGetIntegerv(pname, value);
+    switch (pname) {
+    case IMPLEMENTATION_COLOR_READ_FORMAT:
+        *value = GL_RGB;
+        break;
+    case IMPLEMENTATION_COLOR_READ_TYPE:
+        *value = GL_UNSIGNED_BYTE;
+        break;
+    default:
+        ::glGetIntegerv(pname, value);
+    }
 }
 
 void GraphicsContext3D::getProgramiv(WebGLProgram* program, unsigned long pname, int* value)

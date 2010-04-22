@@ -101,8 +101,6 @@ WebGLRenderingContext::WebGLRenderingContext(HTMLCanvasElement* passedCanvas, Pa
     m_implementationColorReadFormat = implementationColorReadFormat;
     int implementationColorReadType = GraphicsContext3D::UNSIGNED_BYTE;
     m_context->getIntegerv(GraphicsContext3D::IMPLEMENTATION_COLOR_READ_TYPE, &implementationColorReadType);
-    // FIXME: remove the getError() when IMPLEMENTATION_COLOR_READ_FORMAT/TYPE are supported.
-    m_context->getError();
     m_implementationColorReadType = implementationColorReadType;
     m_context->reshape(canvas()->width(), canvas()->height());
     m_context->viewport(0, 0, canvas()->width(), canvas()->height());
@@ -1070,6 +1068,10 @@ WebGLGetInfo WebGLRenderingContext::getParameter(unsigned long pname, ExceptionC
         return getUnsignedLongParameter(pname);
     case GraphicsContext3D::GREEN_BITS:
         return getLongParameter(pname);
+    case GraphicsContext3D::IMPLEMENTATION_COLOR_READ_FORMAT:
+        return getLongParameter(pname);
+    case GraphicsContext3D::IMPLEMENTATION_COLOR_READ_TYPE:
+        return getLongParameter(pname);
     case GraphicsContext3D::LINE_WIDTH:
         return getFloatParameter(pname);
     case GraphicsContext3D::MAX_COMBINED_TEXTURE_IMAGE_UNITS:
@@ -1639,7 +1641,7 @@ PassRefPtr<WebGLArray> WebGLRenderingContext::readPixels(long x, long y, unsigne
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
         return 0;
     }
-    if (!(format == GraphicsContext3D::RGBA && type == GraphicsContext3D::UNSIGNED_BYTE || format == m_implementationColorReadFormat && type == m_implementationColorReadFormat)) {
+    if (!(format == GraphicsContext3D::RGBA && type == GraphicsContext3D::UNSIGNED_BYTE || format == m_implementationColorReadFormat && type == m_implementationColorReadType)) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
         return 0;
     }
