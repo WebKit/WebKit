@@ -1,3 +1,19 @@
+2010-04-21  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        URL LayoutTests don't run on Firefox
+        https://bugs.webkit.org/show_bug.cgi?id=37974
+
+        It turns out Firefox doesn't handle base URLs properly if we go through
+        the DOM to create the <base> and <a> elements.  If we switch to
+        document.write, we can run the tests in Firefox (even though
+        document.write is lame).
+
+        * fast/url/resources/utilities.js:
+        (canonicalize):
+        (setBaseURL):
+
 2010-04-21  Ben Murdoch  <benm@google.com>
 
         Reviewed by Jeremy Orlow.
