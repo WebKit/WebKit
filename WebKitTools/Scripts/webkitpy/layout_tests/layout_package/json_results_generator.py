@@ -27,6 +27,9 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import with_statement
+
+import codecs
 import logging
 import os
 import subprocess
@@ -118,7 +121,7 @@ class JSONResultsGenerator(object):
         """Generates the JSON output file."""
         json = self._get_json()
         if json:
-            results_file = open(self._results_file_path, "w")
+            results_file = codecs.open(self._results_file_path, "w", "utf-8")
             results_file.write(json)
             results_file.close()
 
@@ -151,8 +154,8 @@ class JSONResultsGenerator(object):
         error = None
 
         if os.path.exists(self._results_file_path):
-            old_results_file = open(self._results_file_path, "r")
-            old_results = old_results_file.read()
+            with codecs.open(self._results_file_path, "r", "utf-8") as file:
+                old_results = file.read()
         elif self._builder_base_url:
             # Check if we have the archived JSON file on the buildbot server.
             results_file_url = (self._builder_base_url +

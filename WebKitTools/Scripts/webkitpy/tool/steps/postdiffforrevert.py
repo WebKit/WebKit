@@ -26,8 +26,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import StringIO
-
 from webkitpy.common.net.bugzilla import Attachment
 from webkitpy.tool.steps.abstractstep import AbstractStep
 
@@ -44,7 +42,7 @@ following command:\n\n\
 where ATTACHMENT_ID is the ID of this attachment."
         self._tool.bugs.add_patch_to_bug(
             state["bug_id"],
-            StringIO.StringIO(self.cached_lookup(state, "diff")),
+            self.cached_lookup(state, "diff"),
             "%s%s" % (Attachment.rollout_preamble, state["revision"]),
             comment_text=comment_text,
             mark_for_review=False,

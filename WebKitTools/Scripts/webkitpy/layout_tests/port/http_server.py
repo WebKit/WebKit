@@ -29,7 +29,9 @@
 
 """A class to help start/stop the lighttpd server used by layout tests."""
 
+from __future__ import with_statement
 
+import codecs
 import logging
 import optparse
 import os
@@ -114,11 +116,14 @@ class Lighttpd(http_server_base.HttpServerBase):
         self.remove_log_files(self._output_dir, "error.log-")
 
         # Write out the config
-        f = file(base_conf_file, 'rb')
-        base_conf = f.read()
-        f.close()
+        with codecs.open(base_conf_file, "r", "utf-8") as file:
+            base_conf = file.read()
 
-        f = file(out_conf_file, 'wb')
+        # FIXME: This should be re-worked so that this block can
+        # use with open() instead of a manual file.close() call.
+        # lighttpd.conf files seem to be UTF-8 without BOM:
+        # http://redmine.lighttpd.net/issues/992
+        f = codecs.open(out_conf_file, "w", "utf-8")
         f.write(base_conf)
 
         # Write out our cgi handlers.  Run perl through env so that it

@@ -29,6 +29,9 @@
 
 """Chromium implementations of the Port interface."""
 
+from __future__ import with_statement
+
+import codecs
 import logging
 import os
 import shutil
@@ -140,6 +143,7 @@ class ChromiumPort(base.Port):
             abspath = os.path.abspath(__file__)
             offset = abspath.find('third_party')
             if offset == -1:
+                # FIXME: This seems like the wrong error to throw.
                 raise AssertionError('could not find Chromium base dir from ' +
                                      abspath)
             self._chromium_base_dir = abspath[0:offset]
@@ -204,8 +208,9 @@ class ChromiumPort(base.Port):
 
         Basically this string should contain the equivalent of a
         test_expectations file. See test_expectations.py for more details."""
-        expectations_file = self.path_to_test_expectations_file()
-        return file(expectations_file, "r").read()
+        expectations_path = self.path_to_test_expectations_file()
+        with codecs.open(expectations_file, "r", "utf-8") as file:
+            return file.read()
 
     def test_expectations_overrides(self):
         try:
@@ -213,10 +218,10 @@ class ChromiumPort(base.Port):
                 'layout_tests', 'test_expectations.txt')
         except AssertionError:
             return None
-        if os.path.exists(overrides_file):
-            return file(overrides_file, "r").read()
-        else:
+        if not os.path.exists(overrides_file):
             return None
+        with codecs.open(overrides_file, "r", "utf-8") as file
+            return file.read()
 
     def test_platform_names(self):
         return self.test_base_platform_names() + ('win-xp',
@@ -265,7 +270,7 @@ class ChromiumPort(base.Port):
 
 
 class ChromiumDriver(base.Driver):
-    """Abstract interface for the DumpRenderTree interface."""
+    """Abstract interface for test_shell."""
 
     def __init__(self, port, image_path, options):
         self._port = port
@@ -389,7 +394,8 @@ class ChromiumDriver(base.Driver):
                 if self._proc.poll() is None:
                     _log.warning('stopping test driver timed out, '
                                  'killing it')
-                    null = open(os.devnull, "w")
+                    # FIXME: This should use Executive.
+                    null = open(os.devnull, "w")  # Does this need an encoding?
                     subprocess.Popen(["kill", "-9",
                                      str(self._proc.pid)], stderr=null)
                     null.close()

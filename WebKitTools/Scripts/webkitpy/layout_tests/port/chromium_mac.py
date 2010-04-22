@@ -99,6 +99,7 @@ class ChromiumMacPort(chromium.ChromiumPort):
         return self.path_from_chromium_base('xcodebuild', *comps)
 
     def _check_wdiff_install(self):
+        # FIXME: This should use Executive.
         f = open(os.devnull, 'w')
         rcode = 0
         try:
@@ -116,6 +117,7 @@ class ChromiumMacPort(chromium.ChromiumPort):
 
     def _kill_all_process(self, process_name):
         """Kill any processes running under this name."""
+        # FIXME: This should use Executive.
         # On Mac OS X 10.6, killall has a new constraint: -SIGNALNAME or
         # -SIGNALNUMBER must come first.  Example problem:
         #   $ killall -u $USER -TERM lighttpd

@@ -99,10 +99,14 @@ class ChangeLog(object):
 
     @staticmethod
     def parse_latest_entry_from_file(changelog_file):
+        """changelog_file must be a file-like object which returns
+        unicode strings.  Use codecs.open or StringIO(unicode())
+        to pass file objects to this class."""
         date_line_regexp = re.compile(ChangeLogEntry.date_line_regexp)
         entry_lines = []
         # The first line should be a date line.
         first_line = changelog_file.readline()
+        assert(isinstance(first_line, unicode))
         if not date_line_regexp.match(first_line):
             return None
         entry_lines.append(first_line)

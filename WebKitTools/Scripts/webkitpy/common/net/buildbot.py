@@ -44,7 +44,7 @@ _log = get_logger(__file__)
 
 class Builder(object):
     def __init__(self, name, buildbot):
-        self._name = unicode(name)
+        self._name = name
         self._buildbot = buildbot
         self._builds_cache = {}
         self._revision_to_build_number = None
@@ -223,12 +223,12 @@ class LayoutTestResults(object):
         parsed_results = {}
         tables = BeautifulSoup(page).findAll("table")
         for table in tables:
-            table_title = table.findPreviousSibling("p").string
+            table_title = unicode(table.findPreviousSibling("p").string)
             if table_title not in cls.expected_keys:
                 # This Exception should only ever be hit if run-webkit-tests changes its results.html format.
-                raise Exception("Unhandled title: %s" % str(table_title))
+                raise Exception("Unhandled title: %s" % table_title)
             # We might want to translate table titles into identifiers before storing.
-            parsed_results[table_title] = [row.find("a").string for row in table.findAll("tr")]
+            parsed_results[table_title] = [unicode(row.find("a").string) for row in table.findAll("tr")]
 
         return parsed_results
 
@@ -361,7 +361,7 @@ class BuildBot(object):
 
         # First cell is the name
         name_link = status_cells[0].find('a')
-        builder["name"] = name_link.string
+        builder["name"] = unicode(name_link.string)
 
         self._parse_last_build_cell(builder, status_cells[1])
         self._parse_current_build_cell(builder, status_cells[2])
@@ -410,13 +410,13 @@ class BuildBot(object):
         return urllib2.urlopen(build_status_url)
 
     def _parse_twisted_file_row(self, file_row):
-        string_or_empty = lambda string: str(string) if string else ""
+        string_or_empty = lambda soup: unicode(soup.string) if soup.string else u""
         file_cells = file_row.findAll('td')
         return {
-            "filename" : string_or_empty(file_cells[0].find("a").string),
-            "size" : string_or_empty(file_cells[1].string),
-            "type" : string_or_empty(file_cells[2].string),
-            "encoding" : string_or_empty(file_cells[3].string),
+            "filename": string_or_empty(file_cells[0].find("a")),
+            "size": string_or_empty(file_cells[1]),
+            "type": string_or_empty(file_cells[2]),
+            "encoding": string_or_empty(file_cells[3]),
         }
 
     def _parse_twisted_directory_listing(self, page):

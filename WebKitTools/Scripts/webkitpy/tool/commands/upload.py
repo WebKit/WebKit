@@ -30,7 +30,6 @@
 
 import os
 import re
-import StringIO
 import sys
 
 from optparse import make_option
@@ -260,10 +259,6 @@ class PostCommits(AbstractDeclarativeCommand):
             comment_text += tool.scm().files_changed_summary_for_commit(commit_id)
         return comment_text
 
-    def _diff_file_for_commit(self, tool, commit_id):
-        diff = tool.scm().create_patch_from_local_commit(commit_id)
-        return StringIO.StringIO(diff) # add_patch_to_bug expects a file-like object
-
     def execute(self, options, args, tool):
         commit_ids = tool.scm().commit_ids_from_commitish_arguments(args)
         if len(commit_ids) > 10: # We could lower this limit, 10 is too many for one bug as-is.
@@ -284,10 +279,10 @@ class PostCommits(AbstractDeclarativeCommand):
                 steps.ObsoletePatches(tool, options).run(state)
                 have_obsoleted_patches.add(bug_id)
 
-            diff_file = self._diff_file_for_commit(tool, commit_id)
+            diff = tool.scm().create_patch_from_local_commit(commit_id)
             description = options.description or commit_message.description(lstrip=True, strip_url=True)
             comment_text = self._comment_text_for_commit(options, commit_message, tool, commit_id)
-            tool.bugs.add_patch_to_bug(bug_id, diff_file, description, comment_text, mark_for_review=options.review, mark_for_commit_queue=options.request_commit)
+            tool.bugs.add_patch_to_bug(bug_id, diff, description, comment_text, mark_for_review=options.review, mark_for_commit_queue=options.request_commit)
 
 
 # FIXME: This command needs to be brought into the modern age with steps and CommitInfo.
@@ -404,8 +399,7 @@ class CreateBug(AbstractDeclarativeCommand):
             comment_text += tool.scm().files_changed_summary_for_commit(commit_id)
 
         diff = tool.scm().create_patch_from_local_commit(commit_id)
-        diff_file = StringIO.StringIO(diff) # create_bug expects a file-like object
-        bug_id = tool.bugs.create_bug(bug_title, comment_text, options.component, diff_file, "Patch", cc=options.cc, mark_for_review=options.review, mark_for_commit_queue=options.request_commit)
+        bug_id = tool.bugs.create_bug(bug_title, comment_text, options.component, diff, "Patch", cc=options.cc, mark_for_review=options.review, mark_for_commit_queue=options.request_commit)
 
         if bug_id and len(commit_ids) > 1:
             options.bug_id = bug_id
@@ -424,8 +418,7 @@ class CreateBug(AbstractDeclarativeCommand):
             comment_text = commit_message.body(lstrip=True)
 
         diff = tool.scm().create_patch()
-        diff_file = StringIO.StringIO(diff) # create_bug expects a file-like object
-        bug_id = tool.bugs.create_bug(bug_title, comment_text, options.component, diff_file, "Patch", cc=options.cc, mark_for_review=options.review, mark_for_commit_queue=options.request_commit)
+        bug_id = tool.bugs.create_bug(bug_title, comment_text, options.component, diff, "Patch", cc=options.cc, mark_for_review=options.review, mark_for_commit_queue=options.request_commit)
 
     def prompt_for_bug_title_and_comment(self):
         bug_title = User.prompt("Bug title: ")

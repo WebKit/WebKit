@@ -215,6 +215,7 @@ class ServerProcess:
             if self._proc.poll() is None:
                 _log.warning('stopping %s timed out, killing it' %
                              self._name)
+                # FIXME: This should use Executive.
                 null = open(os.devnull, "w")
                 subprocess.Popen(["kill", "-9",
                                   str(self._proc.pid)], stderr=null)

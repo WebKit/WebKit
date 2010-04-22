@@ -29,6 +29,10 @@
 
 """WebKit implementations of the Port interface."""
 
+
+from __future__ import with_statement
+
+import codecs
 import logging
 import os
 import pdb
@@ -134,9 +138,11 @@ class WebKitPort(base.Port):
         sp = server_process.ServerProcess(self, 'ImageDiff', command)
 
         actual_length = os.stat(actual_filename).st_size
-        actual_file = open(actual_filename).read()
+        with open(actual_filename) as file:
+            actual_file = file.read()
         expected_length = os.stat(expected_filename).st_size
-        expected_file = open(expected_filename).read()
+        with open(expected_filename) as file:
+            expected_file = file.read()
         sp.write('Content-Length: %d\n%sContent-Length: %d\n%s' %
                  (actual_length, actual_file, expected_length, expected_file))
 
@@ -165,7 +171,8 @@ class WebKitPort(base.Port):
             if m.group(2) == 'passed':
                 result = False
         elif output and diff_filename:
-            open(diff_filename, 'w').write(output)  # FIXME: This leaks a file handle.
+            with open(diff_filename, 'w') as file:
+                file.write(output)
         elif sp.timed_out:
             _log.error("ImageDiff timed out on %s" % expected_filename)
         elif sp.crashed:
@@ -252,17 +259,16 @@ class WebKitPort(base.Port):
             if not os.path.exists(filename):
                 _log.warn("Failed to open Skipped file: %s" % filename)
                 continue
-            skipped_file = file(filename)
-            tests_to_skip.extend(self._tests_from_skipped_file(skipped_file))
-            skipped_file.close()
+            with codecs.open(filename, "r", "utf-8") as skipped_file:
+                tests_to_skip.extend(self._tests_from_skipped_file(skipped_file))
         return tests_to_skip
 
     def test_expectations(self):
         # The WebKit mac port uses a combination of a test_expectations file
         # and 'Skipped' files.
-        expectations_file = self.path_to_test_expectations_file()
-        expectations = file(expectations_file, "r").read()
-        return expectations + self._skips()
+        expectations_path = self.path_to_test_expectations_file()
+        with codecs.open(expectations_path, "r", "utf-8") as file:
+            return file.read() + self._skips()
 
     def _skips(self):
         # Each Skipped file contains a list of files
@@ -396,7 +402,7 @@ class WebKitDriver(base.Driver):
 
         have_seen_content_type = False
         actual_image_hash = None
-        output = ''
+        output = u''
         image = ''
 
         timeout = int(timeoutms) / 1000.0
@@ -409,7 +415,8 @@ class WebKitDriver(base.Driver):
                 have_seen_content_type):
                 have_seen_content_type = True
             else:
-                output += line
+                # We expect the text content from DumpRenderTree to be UTF-8
+                output += line.decode("utf-8")
             line = self._server_process.read_line(timeout)
             timeout = deadline - time.time()
 
@@ -433,9 +440,8 @@ class WebKitDriver(base.Driver):
             line = self._server_process.read_line(timeout)
 
         if self._image_path and len(self._image_path):
-            image_file = file(self._image_path, "wb")
-            image_file.write(image)
-            image_file.close()
+            with open(self._image_path, "wb") as image_file:
+                image_file.write(image)
         return (self._server_process.crashed,
                 self._server_process.timed_out,
                 actual_image_hash,
