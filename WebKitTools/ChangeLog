@@ -5,6 +5,20 @@
         REGRESSION(57531): the commit-queue still hates Tor Arne Vestbø
         https://bugs.webkit.org/show_bug.cgi?id=37765
 
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+         - Fix handling of test_shell output so that we always
+           decode it as utf-8.
+           Unlike DumpRenderTree test_shell does not ever return
+           pixel data.  It spits out the pixel dumps in a separate
+           file, thus all output over stdout is utf-8 text.
+
+2010-04-21  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Attempt one more time to fix NRWT for chromium.
+
+        REGRESSION(57531): the commit-queue still hates Tor Arne Vestbø
+        https://bugs.webkit.org/show_bug.cgi?id=37765
+
         * Scripts/webkitpy/layout_tests/test_types/image_diff.py:
          - Pass encoding to _save_baseline_data and write_output_files
         * Scripts/webkitpy/layout_tests/test_types/test_type_base.py:
