@@ -1,3 +1,17 @@
+2010-04-21  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Attempt one more time to fix NRWT for chromium.
+
+        REGRESSION(57531): the commit-queue still hates Tor Arne Vestbø
+        https://bugs.webkit.org/show_bug.cgi?id=37765
+
+        * Scripts/webkitpy/layout_tests/test_types/image_diff.py:
+         - Pass encoding to _save_baseline_data and write_output_files
+        * Scripts/webkitpy/layout_tests/test_types/test_type_base.py:
+         - Make _save_baseline_data and write_output_files take an encoding.
+        * Scripts/webkitpy/layout_tests/test_types/text_diff.py:
+        - Pass encoding to _save_baseline_data and write_output_files
+
 2010-04-21  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

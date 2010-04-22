@@ -83,8 +83,8 @@ class ImageDiff(test_type_base.TestTypeBase):
         """
         with open(png_path, "rb") as png_file:
             png_data = png_file.read()
-        self._save_baseline_data(filename, png_data, ".png")
-        self._save_baseline_data(filename, checksum, ".checksum")
+        self._save_baseline_data(filename, png_data, ".png", encoding=None)
+        self._save_baseline_data(filename, checksum, ".checksum", encoding="ascii")
 
     def _create_image_diff(self, port, filename, configuration):
         """Creates the visual diff of the expected/actual PNGs.
@@ -156,6 +156,7 @@ class ImageDiff(test_type_base.TestTypeBase):
             # Report a missing expected PNG file.
             self.write_output_files(port, filename, '.checksum',
                                     test_args.hash, expected_hash,
+                                    encoding="ascii",
                                     print_text_diffs=False)
             self._copy_output_png(filename, test_args.png_path, '-actual.png')
             failures.append(test_failures.FailureMissingImage(self))
@@ -166,6 +167,7 @@ class ImageDiff(test_type_base.TestTypeBase):
 
         self.write_output_files(port, filename, '.checksum',
                                 test_args.hash, expected_hash,
+                                encoding="ascii",
                                 print_text_diffs=False)
         self._copy_output_png(filename, test_args.png_path, '-actual.png')
         self._copy_output_png(filename, expected_png_file, '-expected.png')

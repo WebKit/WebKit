@@ -93,7 +93,7 @@ class TestTypeBase(object):
             self._port.relative_test_filename(filename))
         self._port.maybe_make_directory(os.path.split(output_filename)[0])
 
-    def _save_baseline_data(self, filename, data, modifier):
+    def _save_baseline_data(self, filename, data, modifier, encoding):
         """Saves a new baseline file into the port's baseline directory.
 
         The file will be named simply "<test>-expected<modifier>", suitable for
@@ -115,7 +115,7 @@ class TestTypeBase(object):
         self._port.maybe_make_directory(output_dir)
         output_path = os.path.join(output_dir, output_file)
         _log.debug('writing new baseline to "%s"' % (output_path))
-        self._write_into_file_at_path(output_path, data)
+        self._write_into_file_at_path(output_path, data, encoding)
 
     def output_filename(self, filename, modifier):
         """Returns a filename inside the output dir that contains modifier.
@@ -153,14 +153,15 @@ class TestTypeBase(object):
         """
         raise NotImplemented
 
-    def _write_into_file_at_path(self, file_path, byte_array):
+    def _write_into_file_at_path(self, file_path, contents, encoding="utf-8"):
         """This method assumes that byte_array is already encoded
         into the right format."""
-        with open(file_path, "wb") as file:
-            file.write(byte_array)
+        with codecs.open(file_path, "w", encoding=encoding) as file:
+            file.write(contents)
 
     def write_output_files(self, port, filename, file_type,
-                           output, expected, print_text_diffs=False):
+                           output, expected, encoding,
+                           print_text_diffs=False):
         """Writes the test output, the expected output and optionally the diff
         between the two to files in the results directory.
 
@@ -179,10 +180,12 @@ class TestTypeBase(object):
         self._make_output_directory(filename)
         actual_filename = self.output_filename(filename, self.FILENAME_SUFFIX_ACTUAL + file_type)
         expected_filename = self.output_filename(filename, self.FILENAME_SUFFIX_EXPECTED + file_type)
+        # FIXME: This function is poorly designed.  We should be passing in some sort of
+        # encoding information from the callers.
         if output:
-            self._write_into_file_at_path(actual_filename, output)
+            self._write_into_file_at_path(actual_filename, output, encoding)
         if expected:
-            self._write_into_file_at_path(expected_filename, expected)
+            self._write_into_file_at_path(expected_filename, expected, encoding)
 
         if not output or not expected:
             return
@@ -192,14 +195,14 @@ class TestTypeBase(object):
 
         diff = port.diff_text(expected, output, expected_filename, actual_filename)
         diff_filename = self.output_filename(filename, self.FILENAME_SUFFIX_DIFF + file_type)
-        self._write_into_file_at_path(diff_filename, diff.encode("utf-8"))
+        self._write_into_file_at_path(diff_filename, diff, "utf-8")
 
         # Shell out to wdiff to get colored inline diffs.
         wdiff = port.wdiff_text(expected_filename, actual_filename)
         wdiff_filename = self.output_filename(filename, self.FILENAME_SUFFIX_WDIFF)
-        self._write_into_file_at_path(wdiff_filename, wdiff.encode("utf-8"))
+        self._write_into_file_at_path(wdiff_filename, wdiff, "utf-8")
 
         # Use WebKit's PrettyPatch.rb to get an HTML diff.
         pretty_patch = port.pretty_patch_text(diff_filename)
         pretty_patch_filename = self.output_filename(filename, self.FILENAME_SUFFIX_PRETTY_PATCH)
-        self._write_into_file_at_path(pretty_patch_filename, pretty_patch.encode("utf-8"))
+        self._write_into_file_at_path(pretty_patch_filename, pretty_patch, "utf-8")

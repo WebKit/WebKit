@@ -92,7 +92,7 @@ class TestTextDiff(test_type_base.TestTypeBase):
 
         # If we're generating a new baseline, we pass.
         if test_args.new_baseline:
-            self._save_baseline_data(filename, output, ".txt")
+            self._save_baseline_data(filename, output, ".txt", encoding="utf-8")
             return failures
 
         # Normalize text to diff
@@ -104,7 +104,8 @@ class TestTextDiff(test_type_base.TestTypeBase):
         if port.compare_text(output, expected):
             # Text doesn't match, write output files.
             self.write_output_files(port, filename, ".txt", output,
-                                    expected, print_text_diffs=True)
+                                    expected, encoding="utf-8",
+                                    print_text_diffs=True)
 
             if expected == '':
                 failures.append(test_failures.FailureMissingResult(self))
