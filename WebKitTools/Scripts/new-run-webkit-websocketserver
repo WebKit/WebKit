@@ -82,7 +82,6 @@ def main():
         kwds['private_key'] = options.private_key
     if options.certificate:
         kwds['certificate'] = options.certificate
-    kwds['register_cygwin'] = options.register_cygwin
     if options.pidfile:
         kwds['pidfile'] = options.pidfile
 

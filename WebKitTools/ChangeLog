@@ -1,3 +1,9 @@
+2010-04-22  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed fix.
+
+        * Scripts/new-run-webkit-websocketserver: PyWebSocket no longer takes keyword argument 'register_cygwin'.
+
 2010-04-22  Eric Seidel  <eric@webkit.org>
 
         Unreviewed.  Restore the Leopard bots to using
