@@ -23,6 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <wtf/Platform.h>
+#include <wtf/DisallowCType.h>
+#ifdef __cplusplus
+#include <wtf/FastMalloc.h>
+#endif
+
+#if defined(__APPLE__)
+
+#import <CoreGraphics/CoreGraphics.h>
+
+#ifdef __OBJC__
+#import <Cocoa/Cocoa.h>
+#endif
+
+/* WebKit has no way to pull settings from WebCore/config.h for now */
+/* so we assume WebKit is always being compiled on top of JavaScriptCore */
+#define WTF_USE_JSC 1
+#define WTF_USE_V8 0
+
+#define JS_EXPORTDATA
+#define JS_EXPORTCLASS
+#define WEBKIT_EXPORTDATA
+
+#elif defined(WIN32) || defined(_WIN32)
+
 #ifndef _WIN32_WINNT
 #define _WIN32_WINNT 0x0500
 #endif
@@ -31,8 +56,8 @@
 #define WINVER 0x0500
 #endif
 
-// If we don't define these, they get defined in windef.h. 
-// We want to use std::min and std::max.
+/* If we don't define these, they get defined in windef.h. */
+/* We want to use std::min and std::max. */
 #ifndef max
 #define max max
 #endif
@@ -41,18 +66,11 @@
 #endif
 
 #ifndef _WINSOCKAPI_
-#define _WINSOCKAPI_ // Prevent inclusion of winsock.h in windows.h
+#define _WINSOCKAPI_ /* Prevent inclusion of winsock.h in windows.h */
 #endif
 
-#include <wtf/Platform.h>
 #include <WebCore/config.h>
 #include <windows.h>
-
 #include <CoreGraphics/CoreGraphics.h>
 
-#ifdef __cplusplus
-#include <wtf/FastMalloc.h>
-#endif
-
-#include <wtf/DisallowCType.h>
-
+#endif /* defined(WIN32) || defined(_WIN32) */
