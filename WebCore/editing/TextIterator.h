@@ -69,17 +69,16 @@ private:
 // chunks so as to optimize for performance of the iteration.
 
 enum TextIteratorBehavior {
-    TextIteratorBehaviorDefault = 0,
-    TextIteratorBehaviorEmitCharactersBetweenAllVisiblePositions = 1 << 0,
-    TextIteratorBehaviorEnterTextControls = 1 << 1,
-    TextIteratorBehaviorEmitsTextsWithoutTranscoding = 1 << 2,
+    TextIteratorDefaultBehavior = 0,
+    TextIteratorEmitsCharactersBetweenAllVisiblePositions = 1 << 0,
+    TextIteratorEntersTextControls = 1 << 1,
+    TextIteratorEmitsTextsWithoutTranscoding = 1 << 2,
 };
 
 class TextIterator {
 public:
     TextIterator();
-    explicit TextIterator(const Range*, bool emitCharactersBetweenAllVisiblePositions = false, bool enterTextControls = false);
-    TextIterator(const Range*, TextIteratorBehavior);
+    explicit TextIterator(const Range*, TextIteratorBehavior = TextIteratorDefaultBehavior);
 
     bool atEnd() const { return !m_positionNode; }
     void advance();
@@ -95,7 +94,6 @@ public:
     static PassRefPtr<Range> subrange(Range* entireRange, int characterOffset, int characterCount);
     
 private:
-    void init(const Range*);
     void exitNode();
     bool shouldRepresentNodeOffsetZero();
     bool shouldEmitSpaceBeforeAndAfterNode(Node*);
@@ -132,7 +130,7 @@ private:
     
     // Used when there is still some pending text from the current node; when these
     // are false and 0, we go back to normal iterating.
-    bool m_needAnotherNewline;
+    bool m_needsAnotherNewline;
     InlineTextBox* m_textBox;
     
     // Used to do the whitespace collapsing logic.
@@ -148,14 +146,14 @@ private:
     size_t m_sortedTextBoxesPosition;
     
     // Used when deciding whether to emit a "positioning" (e.g. newline) before any other content
-    bool m_haveEmitted;
+    bool m_hasEmitted;
     
     // Used by selection preservation code.  There should be one character emitted between every VisiblePosition
     // in the Range used to create the TextIterator.
     // FIXME <rdar://problem/6028818>: This functionality should eventually be phased out when we rewrite 
     // moveParagraphs to not clone/destroy moved content.
-    bool m_emitCharactersBetweenAllVisiblePositions;
-    bool m_enterTextControls;
+    bool m_emitsCharactersBetweenAllVisiblePositions;
+    bool m_entersTextControls;
 
     // Used when we want texts for copying, pasting, and transposing.
     bool m_emitsTextWithoutTranscoding;
@@ -222,7 +220,7 @@ private:
 class CharacterIterator {
 public:
     CharacterIterator();
-    explicit CharacterIterator(const Range*, bool emitCharactersBetweenAllVisiblePositions = false, bool enterTextControls = false);
+    explicit CharacterIterator(const Range*, TextIteratorBehavior = TextIteratorDefaultBehavior);
     
     void advance(int numCharacters);
     
