@@ -166,13 +166,18 @@ WebInspector.TimelineOverviewPane.prototype = {
     updateEventDividers: function(records, dividerConstructor)
     {
         this._overviewGrid.removeEventDividers();
+        var dividers = [];
         for (var i = 0; i < records.length; ++i) {
             var record = records[i];
             var positions = this._overviewCalculator.computeBarGraphPercentages(record);
+            var dividerPosition = Math.round(positions.start * 10);
+            if (dividers[dividerPosition])
+                continue;
             var divider = dividerConstructor(record);
             divider.style.left = positions.start + "%";
-            this._overviewGrid.addEventDivider(divider);
+            dividers[dividerPosition] = divider;
         }
+        this._overviewGrid.addEventDividers(dividers);
     },
 
     setSidebarWidth: function(width)

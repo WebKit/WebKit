@@ -185,17 +185,18 @@ WebInspector.TimelinePanel.prototype = {
     {
         this._timelineGrid.removeEventDividers();
         var clientWidth = this._graphRowsElement.offsetWidth - this._expandOffset;
+        var dividers = [];
         for (var i = 0; i < this._markTimelineRecords.length; ++i) {
             var record = this._markTimelineRecords[i];
             var positions = this._calculator.computeBarGraphWindowPosition(record, clientWidth);
-            if (positions.left < 0 || positions.left >= clientWidth)
+            var dividerPosition = Math.round(positions.left);
+            if (dividerPosition < 0 || dividerPosition >= clientWidth || dividers[dividerPosition])
                 continue;
-
             var divider = this._createEventDivider(record);
-            divider.style.left = (positions.left + this._expandOffset) + "px";
-
-            this._timelineGrid.addEventDivider(divider);
+            divider.style.left = (dividerPosition + this._expandOffset) + "px";
+            dividers[dividerPosition] = divider;
         }
+        this._timelineGrid.addEventDividers(dividers);
         this._overviewPane.updateEventDividers(this._markTimelineRecords, this._createEventDivider.bind(this));
     },
 
@@ -417,7 +418,8 @@ WebInspector.TimelinePanel.prototype = {
         this._overviewPane.update(this._rootRecord.children, this._calculator._showShortEvents);
         this._refreshRecords(!this._boundariesAreValid);
         this._updateRecordsCounter();
-        this._updateEventDividers();
+        if(!this._boundariesAreValid)
+            this._updateEventDividers();
         this._boundariesAreValid = true;
     },
 

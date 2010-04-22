@@ -66,7 +66,6 @@ WebInspector.TimelineGrid.prototype = {
             paddingLeft = 0;
         this._currentDividerSlice = slice;
 
-        this._eventDividersElement.removeChildren();
         // Reuse divider elements and labels.
         var divider = this._dividersElement.firstChild;
         var dividerLabelBar = this._dividersLabelBarElement.firstChild;
@@ -133,6 +132,15 @@ WebInspector.TimelineGrid.prototype = {
     addEventDivider: function(divider)
     {
         this._eventDividersElement.appendChild(divider);
+    },
+
+    addEventDividers: function(dividers)
+    {
+        this.element.removeChild(this._eventDividersElement);
+        for (var i = 0; i < dividers.length; ++i)
+            if (dividers[i])
+                this._eventDividersElement.appendChild(dividers[i]);
+        this.element.appendChild(this._eventDividersElement);
     },
 
     removeEventDividers: function()

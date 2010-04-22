@@ -1,3 +1,19 @@
+2010-04-22  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Timeline scrolling speed is slow if it has more than 1k timeline marks.
+        https://bugs.webkit.org/show_bug.cgi?id=37924
+
+        * inspector/front-end/TimelineGrid.js:
+        (WebInspector.TimelineGrid.prototype.updateDividers):
+        (WebInspector.TimelineGrid.prototype.addEventDividers):
+        * inspector/front-end/TimelineOverviewPane.js:
+        (WebInspector.TimelineOverviewPane.prototype.updateEventDividers):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._updateEventDividers):
+        (WebInspector.TimelinePanel.prototype._refresh):
+
 2010-04-22  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Simon Fraser.
