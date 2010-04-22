@@ -193,7 +193,7 @@ void RenderMathMLOperator::updateFromElement()
             text = new (renderArena()) RenderText(node(), StringImpl::create(&m_operator, 1));
         else if (node()->nodeType() == Node::ELEMENT_NODE)
             if (Element* mo = static_cast<Element*>(node()))
-                text = new (renderArena()) RenderText(node(), StringImpl::create(mo->textContent()));
+                text = new (renderArena()) RenderText(node(), StringImpl::create(mo->textContent().characters(), mo->textContent().length()));
         // If we can't figure out the text, leave it blank.
         if (text) {
             text->setStyle(container->style());
