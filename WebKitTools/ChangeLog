@@ -1,3 +1,16 @@
+2010-04-21  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Windows tests buildbots are too slow to be core builders
+        https://bugs.webkit.org/show_bug.cgi?id=37970
+
+        It's 10:45.  The Windows test bots are still hours behind.  They're too
+        slow to be core builders.  When they get fast, we can add them back.
+
+        * Scripts/webkitpy/common/net/buildbot.py:
+        * Scripts/webkitpy/common/net/buildbot_unittest.py:
+
 2010-04-21  Eric Seidel  <eric@webkit.org>
 
         Unreviewed.  Attempt one more time to fix NRWT for chromium.
