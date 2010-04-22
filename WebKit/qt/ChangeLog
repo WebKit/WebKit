@@ -1,3 +1,23 @@
+2010-04-22  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix createPlugin() tests in tst_qwebpage to match behaviour of Qt plugins
+             when PluginsEnabled is false.
+
+        tst_qwebpage should have been updated as part of r56662.
+        (See https://bugs.webkit.org/show_bug.cgi?id=32196)
+
+        Updated documentation of QWebPage::createPlugin and QWebSetting::pluginsEnabled
+            to match the new behaviour.
+
+        * Api/qwebpage.cpp: Update docs.
+        * Api/qwebsettings.cpp: Update docs.
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (createPlugin):
+        (tst_QWebPage::createPluginWithPluginsEnabled):
+        (tst_QWebPage::createPluginWithPluginsDisabled):
+
 2010-04-22  Dave Moore  <davemoore@chromium.org>
 
         Reviewed by Dimitri Glazkov.
