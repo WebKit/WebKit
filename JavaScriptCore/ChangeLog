@@ -2,6 +2,12 @@
 
         Reviewed by NOBODY (windows build fix).
 
+        * API/JSWeakObjectMapRefPrivate.cpp:
+
+2010-04-22  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by NOBODY (windows build fix).
+
         * API/JSBase.cpp:
         * API/JSCallbackObject.cpp:
 
