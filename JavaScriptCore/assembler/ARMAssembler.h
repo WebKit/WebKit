@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 University of Szeged
+ * Copyright (C) 2009, 2010 University of Szeged
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -131,6 +131,9 @@ namespace JSC {
             FDTR = 0x0d000b00,
             B = 0x0a000000,
             BL = 0x0b000000,
+#if WTF_ARM_ARCH_AT_LEAST(5) || defined(__ARM_ARCH_4T__)
+            BX = 0x012fff10,
+#endif
             FMSR = 0x0e000a10,
             FMRS = 0x0e100a10,
             FSITOD = 0x0eb80bc0,
@@ -139,6 +142,7 @@ namespace JSC {
 #if WTF_ARM_ARCH_AT_LEAST(5)
             CLZ = 0x016f0f10,
             BKPT = 0xe120070,
+            BLX = 0x012fff30,
 #endif
 #if WTF_ARM_ARCH_AT_LEAST(7)
             MOVW = 0x03000000,
@@ -182,6 +186,7 @@ namespace JSC {
         };
 
         static const ARMWord INVALID_IMM = 0xf0000000;
+        static const ARMWord InvalidBranchTarget = 0xffffffff;
         static const int DefaultPrefetching = 2;
 
         class JmpSrc {
@@ -547,6 +552,30 @@ namespace JSC {
 #endif
         }
 
+        void bx(int rm, Condition cc = AL)
+        {
+#if WTF_ARM_ARCH_AT_LEAST(5) || defined(__ARM_ARCH_4T__)
+            emitInst(static_cast<ARMWord>(cc) | BX, 0, 0, RM(rm));
+#else
+            mov_r(ARMRegisters::pc, RM(rm), cc);
+#endif
+        }
+
+        JmpSrc blx(int rm, Condition cc = AL)
+        {
+#if WTF_ARM_ARCH_AT_LEAST(5)
+            int s = m_buffer.uncheckedSize();
+            emitInst(static_cast<ARMWord>(cc) | BLX, 0, 0, RM(rm));
+#else
+            ASSERT(rm != 14);
+            ensureSpace(2 * sizeof(ARMWord), 0);
+            mov_r(ARMRegisters::lr, ARMRegisters::pc, cc);
+            int s = m_buffer.uncheckedSize();
+            bx(rm, cc);
+#endif
+            return JmpSrc(s);
+        }
+
         static ARMWord lsl(int reg, ARMWord value)
         {
             ASSERT(reg <= ARMRegisters::pc);
@@ -619,13 +648,18 @@ namespace JSC {
             return label();
         }
 
-        JmpSrc jmp(Condition cc = AL, int useConstantPool = 0)
+        JmpSrc loadBranchTarget(int rd, Condition cc = AL, int useConstantPool = 0)
         {
             ensureSpace(sizeof(ARMWord), sizeof(ARMWord));
             int s = m_buffer.uncheckedSize();
-            ldr_un_imm(ARMRegisters::pc, 0xffffffff, cc);
+            ldr_un_imm(rd, InvalidBranchTarget, cc);
             m_jumps.append(s | (useConstantPool & 0x1));
             return JmpSrc(s);
+        }
+
+        JmpSrc jmp(Condition cc = AL, int useConstantPool = 0)
+        {
+            return loadBranchTarget(ARMRegisters::pc, cc, useConstantPool);
         }
 
         void* executableCopy(ExecutablePool* allocator);
@@ -634,6 +668,14 @@ namespace JSC {
 
         static ARMWord* getLdrImmAddress(ARMWord* insn)
         {
+#if WTF_ARM_ARCH_AT_LEAST(5)
+            // Check for call
+            if ((*insn & 0x0f7f0000) != 0x051f0000) {
+                // Must be BLX
+                ASSERT((*insn & 0x012fff30) == 0x012fff30);
+                insn--;
+            }
+#endif
             // Must be an ldr ..., [pc +/- imm]
             ASSERT((*insn & 0x0f7f0000) == 0x051f0000);
 

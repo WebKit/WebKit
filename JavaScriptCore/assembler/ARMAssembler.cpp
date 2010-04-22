@@ -357,7 +357,7 @@ void* ARMAssembler::executableCopy(ExecutablePool* allocator)
         int pos = (*iter) & (~0x1);
         ARMWord* ldrAddr = reinterpret_cast<ARMWord*>(data + pos);
         ARMWord* addr = getLdrImmAddress(ldrAddr);
-        if (*addr != 0xffffffff) {
+        if (*addr != InvalidBranchTarget) {
             if (!(*iter & 1)) {
                 int diff = reinterpret_cast<ARMWord*>(data + *addr) - (ldrAddr + DefaultPrefetching);
 

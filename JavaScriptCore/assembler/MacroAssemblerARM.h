@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2008 Apple Inc.
- * Copyright (C) 2009 University of Szeged
+ * Copyright (C) 2009, 2010 University of Szeged
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -474,7 +474,7 @@ public:
 
     void jump(RegisterID target)
     {
-        move(target, ARMRegisters::pc);
+        m_assembler.bx(target);
     }
 
     void jump(Address address)
@@ -566,14 +566,19 @@ public:
 
     Call nearCall()
     {
+#if WTF_ARM_ARCH_AT_LEAST(5)
+        ensureSpace(2 * sizeof(ARMWord), sizeof(ARMWord));
+        m_assembler.loadBranchTarget(ARMRegisters::S1, ARMAssembler::AL, true);
+        return Call(m_assembler.blx(ARMRegisters::S1), Call::LinkableNear);
+#else
         prepareCall();
         return Call(m_assembler.jmp(ARMAssembler::AL, true), Call::LinkableNear);
+#endif
     }
 
     Call call(RegisterID target)
     {
-        prepareCall();
-        move(ARMRegisters::pc, target);
+        m_assembler.blx(target);
         JmpSrc jmpSrc;
         return Call(jmpSrc, Call::None);
     }
@@ -585,7 +590,7 @@ public:
 
     void ret()
     {
-        m_assembler.mov_r(ARMRegisters::pc, linkRegister);
+        m_assembler.bx(linkRegister);
     }
 
     void set32(Condition cond, RegisterID left, RegisterID right, RegisterID dest)
@@ -681,8 +686,14 @@ public:
 
     Call call()
     {
+#if WTF_ARM_ARCH_AT_LEAST(5)
+        ensureSpace(2 * sizeof(ARMWord), sizeof(ARMWord));
+        m_assembler.loadBranchTarget(ARMRegisters::S1, ARMAssembler::AL, true);
+        return Call(m_assembler.blx(ARMRegisters::S1), Call::Linkable);
+#else
         prepareCall();
         return Call(m_assembler.jmp(ARMAssembler::AL, true), Call::Linkable);
+#endif
     }
 
     Call tailRecursiveCall()
@@ -886,44 +897,56 @@ protected:
 
     void prepareCall()
     {
+#if WTF_ARM_ARCH_VERSION < 5
         ensureSpace(2 * sizeof(ARMWord), sizeof(ARMWord));
 
         m_assembler.mov_r(linkRegister, ARMRegisters::pc);
+#endif
     }
 
     void call32(RegisterID base, int32_t offset)
     {
+#if WTF_ARM_ARCH_AT_LEAST(5)
+        int targetReg = ARMRegisters::S1;
+#else
+        int targetReg = ARMRegisters::pc;
+#endif
+        int tmpReg = ARMRegisters::S1;
+
         if (base == ARMRegisters::sp)
             offset += 4;
 
         if (offset >= 0) {
             if (offset <= 0xfff) {
                 prepareCall();
-                m_assembler.dtr_u(true, ARMRegisters::pc, base, offset);
+                m_assembler.dtr_u(true, targetReg, base, offset);
             } else if (offset <= 0xfffff) {
-                m_assembler.add_r(ARMRegisters::S0, base, ARMAssembler::OP2_IMM | (offset >> 12) | (10 << 8));
+                m_assembler.add_r(tmpReg, base, ARMAssembler::OP2_IMM | (offset >> 12) | (10 << 8));
                 prepareCall();
-                m_assembler.dtr_u(true, ARMRegisters::pc, ARMRegisters::S0, offset & 0xfff);
+                m_assembler.dtr_u(true, targetReg, tmpReg, offset & 0xfff);
             } else {
-                ARMWord reg = m_assembler.getImm(offset, ARMRegisters::S0);
+                ARMWord reg = m_assembler.getImm(offset, tmpReg);
                 prepareCall();
-                m_assembler.dtr_ur(true, ARMRegisters::pc, base, reg);
+                m_assembler.dtr_ur(true, targetReg, base, reg);
             }
         } else  {
             offset = -offset;
             if (offset <= 0xfff) {
                 prepareCall();
-                m_assembler.dtr_d(true, ARMRegisters::pc, base, offset);
+                m_assembler.dtr_d(true, targetReg, base, offset);
             } else if (offset <= 0xfffff) {
-                m_assembler.sub_r(ARMRegisters::S0, base, ARMAssembler::OP2_IMM | (offset >> 12) | (10 << 8));
+                m_assembler.sub_r(tmpReg, base, ARMAssembler::OP2_IMM | (offset >> 12) | (10 << 8));
                 prepareCall();
-                m_assembler.dtr_d(true, ARMRegisters::pc, ARMRegisters::S0, offset & 0xfff);
+                m_assembler.dtr_d(true, targetReg, tmpReg, offset & 0xfff);
             } else {
-                ARMWord reg = m_assembler.getImm(offset, ARMRegisters::S0);
+                ARMWord reg = m_assembler.getImm(offset, tmpReg);
                 prepareCall();
-                m_assembler.dtr_dr(true, ARMRegisters::pc, base, reg);
+                m_assembler.dtr_dr(true, targetReg, base, reg);
             }
         }
+#if WTF_ARM_ARCH_AT_LEAST(5)
+        m_assembler.blx(targetReg);
+#endif
     }
 
 private:

@@ -1,3 +1,29 @@
+2010-04-22  Gabor Loki  <loki@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        Use BLX and BX to keep happy the return stack predictor above ARMv4
+        https://bugs.webkit.org/show_bug.cgi?id=37862
+
+        Inspired by Jacob Bramley's patch from JaegerMonkey
+
+        * assembler/ARMAssembler.cpp:
+        (JSC::ARMAssembler::executableCopy):
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::):
+        (JSC::ARMAssembler::bx):
+        (JSC::ARMAssembler::blx):
+        (JSC::ARMAssembler::loadBranchTarget):
+        (JSC::ARMAssembler::jmp):
+        (JSC::ARMAssembler::getLdrImmAddress):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::jump):
+        (JSC::MacroAssemblerARM::nearCall):
+        (JSC::MacroAssemblerARM::call):
+        (JSC::MacroAssemblerARM::ret):
+        (JSC::MacroAssemblerARM::prepareCall):
+        (JSC::MacroAssemblerARM::call32):
+
 2010-04-21  Andy Estes  <aestes@apple.com>
 
         Rubber stamped by Mark Rowe.
