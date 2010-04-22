@@ -34,7 +34,7 @@ namespace DrawingAreaMessage {
 
 enum Kind {
     Initialize,
-    SetFrame,
+    SetSize,
     
     // Called when an update chunk sent to the drawing area has been
     // incorporated into the backing store.

@@ -34,7 +34,7 @@ namespace DrawingAreaProxyMessage {
 
 enum Kind {
     Update,
-    DidSetFrame
+    DidSetSize
 };
 
 }

@@ -1,3 +1,21 @@
+2010-04-22  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Rename SetFrame and DidSetFrame to SetSize and DidSetSize.
+
+        * Shared/CoreIPCSupport/DrawingAreaMessageKinds.h:
+        (DrawingAreaMessage::):
+        * Shared/CoreIPCSupport/DrawingAreaProxyMessageKinds.h:
+        (DrawingAreaProxyMessage::):
+        * UIProcess/mac/DrawingAreaProxyUpdateChunk.mm:
+        (WebKit::DrawingAreaProxyUpdateChunk::drawRectIntoContext):
+        (WebKit::DrawingAreaProxyUpdateChunk::setSize):
+        (WebKit::DrawingAreaProxyUpdateChunk::didReceiveMessage):
+        * WebProcess/WebPage/mac/DrawingAreaUpdateChunk.cpp:
+        (WebKit::DrawingAreaUpdateChunk::setSize):
+        (WebKit::DrawingAreaUpdateChunk::didReceiveMessage):
+
 2010-04-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
