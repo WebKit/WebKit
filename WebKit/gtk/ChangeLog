@@ -1,3 +1,18 @@
+2010-04-22  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] GObject DOM bindings
+        https://bugs.webkit.org/show_bug.cgi?id=33590
+
+        Add webkit_web_view_get_document to retrieve the WebKitDOMDocument
+        from a WebKitWebView, and a very simple test for it.
+
+        * tests/testwebview.c:
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_get_document):
+        * webkit/webkitwebview.h:
+
 2010-04-22  Diego Escalante Urrelo  <descalante@igalia.com>
 
         Reviewed by Xan Lopez.

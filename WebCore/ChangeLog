@@ -1,3 +1,79 @@
+2010-04-22  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] GObject DOM bindings
+        https://bugs.webkit.org/show_bug.cgi?id=33590
+
+        Extend the bindings to cover most of Document.idl
+
+        * GNUmakefile.am:
+        * bindings/gobject/WebKitDOMBinding.cpp:
+        (WebKit::createWrapper):
+        (WebKit::kit):
+        * bindings/gobject/WebKitDOMBinding.h:
+        * bindings/gobject/WebKitHTMLElementWrapperFactory.cpp: Added.
+        (WebKit::createAnchorWrapper):
+        (WebKit::createAppletWrapper):
+        (WebKit::createAreaWrapper):
+        (WebKit::createBaseWrapper):
+        (WebKit::createBaseFontWrapper):
+        (WebKit::createBlockquoteWrapper):
+        (WebKit::createBodyWrapper):
+        (WebKit::createBRWrapper):
+        (WebKit::createButtonWrapper):
+        (WebKit::createCanvasWrapper):
+        (WebKit::createTableCaptionWrapper):
+        (WebKit::createTableColWrapper):
+        (WebKit::createModWrapper):
+        (WebKit::createDirectoryWrapper):
+        (WebKit::createDivWrapper):
+        (WebKit::createDListWrapper):
+        (WebKit::createEmbedWrapper):
+        (WebKit::createFieldSetWrapper):
+        (WebKit::createFontWrapper):
+        (WebKit::createFormWrapper):
+        (WebKit::createFrameWrapper):
+        (WebKit::createFrameSetWrapper):
+        (WebKit::createHeadingWrapper):
+        (WebKit::createHeadWrapper):
+        (WebKit::createHRWrapper):
+        (WebKit::createHtmlWrapper):
+        (WebKit::createIFrameWrapper):
+        (WebKit::createImageWrapper):
+        (WebKit::createInputWrapper):
+        (WebKit::createIsIndexWrapper):
+        (WebKit::createLabelWrapper):
+        (WebKit::createLegendWrapper):
+        (WebKit::createLIWrapper):
+        (WebKit::createLinkWrapper):
+        (WebKit::createMapWrapper):
+        (WebKit::createMarqueeWrapper):
+        (WebKit::createMenuWrapper):
+        (WebKit::createMetaWrapper):
+        (WebKit::createObjectWrapper):
+        (WebKit::createOListWrapper):
+        (WebKit::createOptGroupWrapper):
+        (WebKit::createOptionWrapper):
+        (WebKit::createParagraphWrapper):
+        (WebKit::createParamWrapper):
+        (WebKit::createPreWrapper):
+        (WebKit::createQuoteWrapper):
+        (WebKit::createScriptWrapper):
+        (WebKit::createSelectWrapper):
+        (WebKit::createStyleWrapper):
+        (WebKit::createTableWrapper):
+        (WebKit::createTableSectionWrapper):
+        (WebKit::createTableCellWrapper):
+        (WebKit::createTextAreaWrapper):
+        (WebKit::createTitleWrapper):
+        (WebKit::createTableRowWrapper):
+        (WebKit::createUListWrapper):
+        (WebKit::createHTMLElementWrapper):
+        * bindings/gobject/WebKitHTMLElementWrapperFactory.h: Added.
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        * dom/Node.idl:
+
 2010-04-22  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.

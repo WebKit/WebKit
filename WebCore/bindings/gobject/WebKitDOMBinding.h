@@ -28,10 +28,12 @@
 
 namespace WebCore {
 class Node;
+class Element;
 } // namespace WebCore
 
 namespace WebKit {
 gpointer kit(WebCore::Node* node);
+gpointer kit(WebCore::Element* element);
 
 class DOMObjectCache {
 public:
