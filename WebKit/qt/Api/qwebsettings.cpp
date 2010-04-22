@@ -187,8 +187,8 @@ void QWebSettingsPrivate::apply()
                                       global->attributes.value(QWebSettings::SpatialNavigationEnabled));
         settings->setSpatialNavigationEnabled(value);
 
-        value = attributes.value(QWebSettings::DOMPasteAllowed,
-                                      global->attributes.value(QWebSettings::DOMPasteAllowed));
+        value = attributes.value(QWebSettings::JavascriptCanAccessClipboard,
+                                      global->attributes.value(QWebSettings::JavascriptCanAccessClipboard));
         settings->setDOMPasteAllowed(value);
 
         value = attributes.value(QWebSettings::DeveloperExtrasEnabled,
@@ -237,10 +237,6 @@ void QWebSettingsPrivate::apply()
         value = attributes.value(QWebSettings::LocalContentCanAccessFileUrls,
                                       global->attributes.value(QWebSettings::LocalContentCanAccessFileUrls));
         settings->setAllowFileAccessFromFileURLs(value);
-
-        value = attributes.value(QWebSettings::JavaScriptCanAccessClipboard,
-                                      global->attributes.value(QWebSettings::JavaScriptCanAccessClipboard));
-        settings->setJavaScriptCanAccessClipboard(value);
 
         value = attributes.value(QWebSettings::XSSAuditingEnabled,
                                       global->attributes.value(QWebSettings::XSSAuditingEnabled));
@@ -376,8 +372,8 @@ QWebSettings* QWebSettings::globalSettings()
         recording visited pages in the history and storing web page icons.
     \value JavascriptCanOpenWindows Specifies whether JavaScript programs
         can open new windows.
-    \value DOMPasteAllowed Specifies whether JavaScript programs can
-        read clipboard contents.
+    \value JavascriptCanAccessClipboard Specifies whether JavaScript programs
+        can read or write to the clipboard.
     \value DeveloperExtrasEnabled Enables extra tools for Web developers.
         Currently this enables the "Inspect" element in the context menu as
         well as the use of QWebInspector which controls the WebKit WebInspector
@@ -405,7 +401,6 @@ QWebSettings* QWebSettings::globalSettings()
         QWebSettings::LocalStorageEnabled instead.
     \value LocalContentCanAccessRemoteUrls Specifies whether locally loaded documents are allowed to access remote urls.
     \value LocalContentCanAccessFileUrls Specifies whether locally loaded documents are allowed to access other local urls.
-    \value JavaScriptCanAccessClipboard Specifies whether JavaScript can access the clipboard.
     \value XSSAuditingEnabled Specifies whether load requests should be monitored for cross-site scripting attempts.
     \value AcceleratedCompositingEnabled This feature, when used in conjunction with
         QGraphicsWebView, accelerates animations of web content. CSS animations of the transform and

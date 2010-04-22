@@ -1,3 +1,34 @@
+2010-04-22  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed, rolling out r58069.
+        http://trac.webkit.org/changeset/58069
+        https://bugs.webkit.org/show_bug.cgi?id=27751
+
+        Broke compile on Windows.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::overridePreference):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::resetWebSettings):
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetDefaultsToConsistentValues):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::WebPage::WebPage):
+        (WebCore::WebPage::resetSettings):
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+
 2010-04-22  Eric Seidel  <eric@webkit.org>
 
         Unreviewed.  Just adding logging.

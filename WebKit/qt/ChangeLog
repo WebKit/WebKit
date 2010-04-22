@@ -1,3 +1,15 @@
+2010-04-22  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed, rolling out r58069.
+        http://trac.webkit.org/changeset/58069
+        https://bugs.webkit.org/show_bug.cgi?id=27751
+
+        Broke compile on Windows.
+
+        * Api/qwebsettings.cpp:
+        (QWebSettingsPrivate::apply):
+        * Api/qwebsettings.h:
+
 2010-04-22  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Adam Barth.

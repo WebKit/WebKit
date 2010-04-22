@@ -107,9 +107,6 @@ extern NSString *WebPreferencesRemovedNotification;
 - (BOOL)zoomsTextOnly;
 - (void)setZoomsTextOnly:(BOOL)zoomsTextOnly;
 
-- (BOOL)javaScriptCanAccessClipboard;
-- (void)setJavaScriptCanAccessClipboard:(BOOL)flag;
-
 - (BOOL)isXSSAuditorEnabled;
 - (void)setXSSAuditorEnabled:(BOOL)flag;
 

@@ -1345,7 +1345,6 @@ static bool fastDocumentTeardownEnabled()
     settings->setLocalFileContentSniffingEnabled([preferences localFileContentSniffingEnabled]);
     settings->setOfflineWebApplicationCacheEnabled([preferences offlineWebApplicationCacheEnabled]);
     settings->setZoomMode([preferences zoomsTextOnly] ? ZoomTextOnly : ZoomPage);
-    settings->setJavaScriptCanAccessClipboard([preferences javaScriptCanAccessClipboard]);
     settings->setXSSAuditorEnabled([preferences isXSSAuditorEnabled]);
     settings->setEnforceCSSMIMETypeInStrictMode(!WKAppVersionCheckLessThan(@"com.apple.iWeb", -1, 2.1));
     

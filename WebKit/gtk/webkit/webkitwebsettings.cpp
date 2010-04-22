@@ -96,7 +96,6 @@ struct _WebKitWebSettingsPrivate {
     gboolean enable_spatial_navigation;
     gchar* user_agent;
     gboolean javascript_can_open_windows_automatically;
-    gboolean javascript_can_access_clipboard;
     gboolean enable_offline_web_application_cache;
     WebKitEditingBehavior editing_behavior;
     gboolean enable_universal_access_from_file_uris;
@@ -146,7 +145,6 @@ enum {
     PROP_ENABLE_SPATIAL_NAVIGATION,
     PROP_USER_AGENT,
     PROP_JAVASCRIPT_CAN_OPEN_WINDOWS_AUTOMATICALLY,
-    PROP_JAVASCRIPT_CAN_ACCESS_CLIPBOARD,
     PROP_ENABLE_OFFLINE_WEB_APPLICATION_CACHE,
     PROP_EDITING_BEHAVIOR,
     PROP_ENABLE_UNIVERSAL_ACCESS_FROM_FILE_URIS,
@@ -625,22 +623,6 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                                          _("Whether JavaScript can open windows automatically"),
                                                          FALSE,
                                                          flags));
-
-    /**
-    * WebKitWebSettings:javascript-can-access-clipboard
-    *
-    * Whether JavaScript can access Clipboard.
-    *
-    * Since: 1.3.0
-    */
-    g_object_class_install_property(gobject_class,
-                                    PROP_JAVASCRIPT_CAN_ACCESS_CLIPBOARD,
-                                    g_param_spec_boolean("javascript-can-access-clipboard",
-                                                         _("JavaScript can access Clipboard"),
-                                                         _("Whether JavaScript can access Clipboard"),
-                                                         FALSE,
-                                                         flags));
-
     /**
     * WebKitWebSettings:enable-offline-web-application-cache
     *
@@ -1041,9 +1023,6 @@ static void webkit_web_settings_set_property(GObject* object, guint prop_id, con
     case PROP_JAVASCRIPT_CAN_OPEN_WINDOWS_AUTOMATICALLY:
         priv->javascript_can_open_windows_automatically = g_value_get_boolean(value);
         break;
-    case PROP_JAVASCRIPT_CAN_ACCESS_CLIPBOARD:
-        priv->javascript_can_access_clipboard = g_value_get_boolean(value);
-        break;
     case PROP_ENABLE_OFFLINE_WEB_APPLICATION_CACHE:
         priv->enable_offline_web_application_cache = g_value_get_boolean(value);
         break;
@@ -1182,9 +1161,6 @@ static void webkit_web_settings_get_property(GObject* object, guint prop_id, GVa
     case PROP_JAVASCRIPT_CAN_OPEN_WINDOWS_AUTOMATICALLY:
         g_value_set_boolean(value, priv->javascript_can_open_windows_automatically);
         break;
-    case PROP_JAVASCRIPT_CAN_ACCESS_CLIPBOARD:
-        g_value_set_boolean(value, priv->javascript_can_access_clipboard);
-        break;
     case PROP_ENABLE_OFFLINE_WEB_APPLICATION_CACHE:
         g_value_set_boolean(value, priv->enable_offline_web_application_cache);
         break;
@@ -1279,7 +1255,6 @@ WebKitWebSettings* webkit_web_settings_copy(WebKitWebSettings* web_settings)
                  "enable-spatial-navigation", priv->enable_spatial_navigation,
                  "user-agent", webkit_web_settings_get_user_agent(web_settings),
                  "javascript-can-open-windows-automatically", priv->javascript_can_open_windows_automatically,
-                 "javascript-can-access-clipboard", priv->javascript_can_access_clipboard,
                  "enable-offline-web-application-cache", priv->enable_offline_web_application_cache,
                  "editing-behavior", priv->editing_behavior,
                  "enable-universal-access-from-file-uris", priv->enable_universal_access_from_file_uris,

@@ -1,9 +1,0 @@
-Run this test manually to check whether javascript programs can access clipboard.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

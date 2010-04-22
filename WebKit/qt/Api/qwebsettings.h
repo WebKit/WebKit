@@ -55,7 +55,7 @@ public:
         PluginsEnabled,
         PrivateBrowsingEnabled,
         JavascriptCanOpenWindows,
-        DOMPasteAllowed,
+        JavascriptCanAccessClipboard,
         DeveloperExtrasEnabled,
         LinksIncludedInFocusChain,
         ZoomTextOnly,
@@ -68,7 +68,6 @@ public:
 #endif
         LocalContentCanAccessRemoteUrls,
         DnsPrefetchEnabled,
-        JavaScriptCanAccessClipboard,
         XSSAuditingEnabled,
         AcceleratedCompositingEnabled,
         WebGLEnabled,

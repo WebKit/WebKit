@@ -200,11 +200,6 @@ void WebSettingsImpl::setDownloadableBinaryFontsEnabled(bool enabled)
     m_settings->setDownloadableBinaryFontsEnabled(enabled);
 }
 
-void WebSettingsImpl::setJavaScriptCanAccessClipboard(bool enabled)
-{
-    m_settings->setJavaScriptCanAccessClipboard(enabled);
-}
-
 void WebSettingsImpl::setXSSAuditorEnabled(bool enabled)
 {
     m_settings->setXSSAuditorEnabled(enabled);

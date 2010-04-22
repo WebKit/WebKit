@@ -122,9 +122,6 @@ namespace WebCore {
         void setJavaScriptCanOpenWindowsAutomatically(bool);
         bool javaScriptCanOpenWindowsAutomatically() const { return m_javaScriptCanOpenWindowsAutomatically; }
 
-        void setJavaScriptCanAccessClipboard(bool);
-        bool javaScriptCanAccessClipboard() const { return m_javaScriptCanAccessClipboard; }
-
         void setSpatialNavigationEnabled(bool);
         bool isSpatialNavigationEnabled() const { return m_isSpatialNavigationEnabled; }
 
@@ -348,7 +345,6 @@ namespace WebCore {
         bool m_allowUniversalAccessFromFileURLs: 1;
         bool m_allowFileAccessFromFileURLs: 1;
         bool m_javaScriptCanOpenWindowsAutomatically : 1;
-        bool m_javaScriptCanAccessClipboard : 1;
         bool m_shouldPrintBackgrounds : 1;
         bool m_textAreasAreResizable : 1;
 #if ENABLE(DASHBOARD_SUPPORT)

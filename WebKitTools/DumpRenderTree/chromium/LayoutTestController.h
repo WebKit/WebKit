@@ -213,7 +213,6 @@ public:
     void setCallCloseOnWebViews(const CppArgumentList&, CppVariant*);
     void setPrivateBrowsingEnabled(const CppArgumentList&, CppVariant*);
 
-    void setJavaScriptCanAccessClipboard(const CppArgumentList&, CppVariant*);
     void setXSSAuditorEnabled(const CppArgumentList&, CppVariant*);
     void evaluateScriptInIsolatedWorld(const CppArgumentList&, CppVariant*);
     void overridePreference(const CppArgumentList&, CppVariant*);
