@@ -1,3 +1,19 @@
+2010-04-21  Steve Block  <steveblock@google.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Replace Geolocation::suspend()/resume() which are required by Android.
+        https://bugs.webkit.org/show_bug.cgi?id=37942
+
+        These methods were removed in Bug 36255.
+
+        Build fix only, no new tests.
+
+        * page/Geolocation.cpp:
+        (WebCore::Geolocation::suspend):
+        (WebCore::Geolocation::resume):
+        * page/Geolocation.h:
+
 2010-04-21  Ray Rischpater  <Raymond.Rischpater@Nokia.com>
 
         In HTMLInputElement.cpp there are numerous style
