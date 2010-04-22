@@ -2031,6 +2031,7 @@ HEADERS += \
     $$PWD/../WebKit/qt/WebCoreSupport/QtFallbackWebPopup.h \
     $$PWD/../WebKit/qt/WebCoreSupport/FrameLoaderClientQt.h \
     $$PWD/../WebKit/qt/WebCoreSupport/NotificationPresenterClientQt.h \
+    $$PWD/../WebKit/qt/WebCoreSupport/PageClientQt.h \
     $$PWD/platform/network/qt/DnsPrefetchHelper.h
 
 SOURCES += \
@@ -2118,6 +2119,7 @@ SOURCES += \
     ../WebKit/qt/WebCoreSupport/FrameLoaderClientQt.cpp \
     ../WebKit/qt/WebCoreSupport/InspectorClientQt.cpp \
     ../WebKit/qt/WebCoreSupport/NotificationPresenterClientQt.cpp \
+    ../WebKit/qt/WebCoreSupport/PageClientQt.cpp \
     ../WebKit/qt/Api/qwebframe.cpp \
     ../WebKit/qt/Api/qgraphicswebview.cpp \
     ../WebKit/qt/Api/qwebpage.cpp \

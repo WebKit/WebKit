@@ -1,3 +1,14 @@
+2010-04-21  Jesus Sanchez-Palencia  <jesus@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add PageClientQt files.
+
+        [Qt] PageClientQt specific implementation for QWidget
+        https://bugs.webkit.org/show_bug.cgi?id=37858
+
+        * WebCore.pro:
+
 2010-04-21  Diego Escalante Urrelo  <descalante@igalia.com>
 
         Reviewed by Xan Lopez.

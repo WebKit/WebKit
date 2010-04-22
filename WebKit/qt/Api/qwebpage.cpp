@@ -81,7 +81,7 @@
 #include "runtime/InitializeThreading.h"
 #include "PageGroup.h"
 #include "NotificationPresenterClientQt.h"
-#include "QWebPageClient.h"
+#include "PageClientQt.h"
 #include "WorkerThread.h"
 
 #include <QApplication>
@@ -130,115 +130,6 @@ void QWEBKIT_EXPORT qt_wrt_setViewMode(QWebPage* page, const QString& mode)
 }
 
 bool QWebPagePrivate::drtRun = false;
-
-class QWebPageWidgetClient : public QWebPageClient {
-public:
-    QWebPageWidgetClient(QWidget* view)
-        : view(view)
-    {
-        Q_ASSERT(view);
-    }
-
-    virtual bool isQWidgetClient() const { return true; }
-
-    virtual void scroll(int dx, int dy, const QRect&);
-    virtual void update(const QRect& dirtyRect);
-    virtual void setInputMethodEnabled(bool enable);
-    virtual bool inputMethodEnabled() const;
-#if QT_VERSION >= 0x040600
-    virtual void setInputMethodHint(Qt::InputMethodHint hint, bool enable);
-#endif
-
-#ifndef QT_NO_CURSOR
-    virtual QCursor cursor() const;
-    virtual void updateCursor(const QCursor& cursor);
-#endif
-
-    virtual QPalette palette() const;
-    virtual int screenNumber() const;
-    virtual QWidget* ownerWidget() const;
-    virtual QRect geometryRelativeToOwnerWidget() const;
-
-    virtual QObject* pluginParent() const;
-
-    virtual QStyle* style() const;
-
-    QWidget* view;
-};
-
-void QWebPageWidgetClient::scroll(int dx, int dy, const QRect& rectToScroll)
-{
-    view->scroll(qreal(dx), qreal(dy), rectToScroll);
-}
-
-void QWebPageWidgetClient::update(const QRect & dirtyRect)
-{
-    view->update(dirtyRect);
-}
-
-void QWebPageWidgetClient::setInputMethodEnabled(bool enable)
-{
-    view->setAttribute(Qt::WA_InputMethodEnabled, enable);
-}
-
-bool QWebPageWidgetClient::inputMethodEnabled() const
-{
-    return view->testAttribute(Qt::WA_InputMethodEnabled);
-}
-
-#if QT_VERSION >= 0x040600
-void QWebPageWidgetClient::setInputMethodHint(Qt::InputMethodHint hint, bool enable)
-{
-    if (enable)
-        view->setInputMethodHints(view->inputMethodHints() | hint);
-    else
-        view->setInputMethodHints(view->inputMethodHints() & ~hint);
-}
-#endif
-#ifndef QT_NO_CURSOR
-QCursor QWebPageWidgetClient::cursor() const
-{
-    return view->cursor();
-}
-
-void QWebPageWidgetClient::updateCursor(const QCursor& cursor)
-{
-    view->setCursor(cursor);
-}
-#endif
-
-QPalette QWebPageWidgetClient::palette() const
-{
-    return view->palette();
-}
-
-int QWebPageWidgetClient::screenNumber() const
-{
-#if defined(Q_WS_X11)
-    return view->x11Info().screen();
-#endif
-    return 0;
-}
-
-QWidget* QWebPageWidgetClient::ownerWidget() const
-{
-    return view;
-}
-
-QRect QWebPageWidgetClient::geometryRelativeToOwnerWidget() const
-{
-    return view->geometry();
-}
-
-QObject* QWebPageWidgetClient::pluginParent() const
-{
-    return view;
-}
-
-QStyle* QWebPageWidgetClient::style() const
-{
-    return view->style();
-}
 
 // Lookup table mapping QWebPage::WebActions to the associated Editor commands
 static const char* editorCommandWebActions[] =
@@ -1854,12 +1745,12 @@ void QWebPage::setView(QWidget* view)
 
     if (d->client) {
         if (d->client->isQWidgetClient())
-            static_cast<QWebPageWidgetClient*>(d->client)->view = view;
+            static_cast<PageClientQWidget*>(d->client)->view = view;
         return;
     }
 
     if (view)
-        d->client = new QWebPageWidgetClient(view);
+        d->client = new PageClientQWidget(view);
 }
 
 /*!
