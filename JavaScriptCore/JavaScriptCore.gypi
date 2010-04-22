@@ -422,6 +422,7 @@
             'wtf/text/AtomicString.cpp',
             'wtf/text/AtomicString.h',
             'wtf/text/AtomicStringImpl.h',
+            'wtf/text/AtomicStringTable.h',
             'wtf/text/CString.cpp',
             'wtf/text/CString.h',
             'wtf/text/StringHash.h',

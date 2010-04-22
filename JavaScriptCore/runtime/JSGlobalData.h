@@ -56,6 +56,7 @@ namespace JSC {
     class JSGlobalObject;
     class JSObject;
     class Lexer;
+    class LiteralTable;
     class Parser;
     class Stringifier;
     class Structure;
@@ -143,6 +144,7 @@ namespace JSC {
         static JS_EXPORTDATA void* jsFunctionVPtr;
 
         IdentifierTable* identifierTable;
+        LiteralTable* literalTable;
         CommonIdentifiers* propertyNames;
         const MarkedArgumentBuffer* emptyList; // Lists are supposed to be allocated on the stack to have their elements properly marked, which is not the case here - but this list has nothing to mark.
         SmallStrings smallStrings;

@@ -1,3 +1,70 @@
+2010-04-22  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37978
+        Unify JSC::IdentifierTable and WebCore::AtomicStringTable implementations.
+
+        These two classes both implement a HashSet of uniqued StringImpls, with
+        translator classes to avoid unnecessary object creation. The only difference
+        between the classes is which flag (isIdentifier or inTable) is set.
+        Combine the two classes using a template predicated on which flag to use.
+
+        New class AtomicStringTable created, containing all the goodness from
+        IdentifierTable & AtomicStringTable, expect for Identifier's literalTable,
+        which has been moved onto JSGlobalData. Removed duplicate string translator
+        classes. Renamed StringImpl's inTable flag to more explicit 'isAtomic',
+        and set this on the empty string (which matches Identifier behaviour, and
+        removes a redundant check for zero-length).
+
+        * GNUmakefile.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/Identifier.cpp:
+        (JSC::createLiteralTable):
+        (JSC::deleteLiteralTable):
+        (JSC::Identifier::add):
+        (JSC::Identifier::addSlowCase):
+        * runtime/Identifier.h:
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        (JSC::JSGlobalData::~JSGlobalData):
+        * runtime/JSGlobalData.h:
+        * wtf/WTFThreadData.cpp:
+        (WTF::WTFThreadData::WTFThreadData):
+        (WTF::WTFThreadData::~WTFThreadData):
+        * wtf/WTFThreadData.h:
+        (WTF::WTFThreadData::atomicStringTable):
+        * wtf/text/AtomicString.cpp:
+        (WebCore::table):
+        (WebCore::operator==):
+        (WebCore::AtomicString::add):
+        (WebCore::AtomicString::find):
+        (WebCore::AtomicString::remove):
+        * wtf/text/AtomicStringTable.h: Added.
+        (WTF::CStringTranslator::hash):
+        (WTF::CStringTranslator::equal):
+        (WTF::CStringTranslator::translate):
+        (WTF::UCharBufferTranslator::hash):
+        (WTF::UCharBufferTranslator::equal):
+        (WTF::UCharBufferTranslator::translate):
+        (WTF::HashAndCharactersTranslator::hash):
+        (WTF::HashAndCharactersTranslator::equal):
+        (WTF::HashAndCharactersTranslator::translate):
+        (WTF::IdentifierOrAtomicStringTable::remove):
+        (WTF::::~IdentifierOrAtomicStringTable):
+        (WTF::::add):
+        (WTF::::find):
+        * wtf/text/StringImpl.cpp:
+        (WebCore::StringImpl::~StringImpl):
+        * wtf/text/StringImpl.h:
+        (WebCore::StringImpl::isAtomic):
+        (WebCore::StringImpl::setIsAtomic):
+        (WebCore::equal):
+        * wtf/text/StringImplBase.h:
+        (WTF::StringImplBase::StringImplBase):
+
 2010-04-22  Steve Block  <steveblock@google.com>
 
         Reviewed by Adam Barth.

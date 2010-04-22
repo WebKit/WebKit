@@ -129,6 +129,7 @@ JSGlobalData::JSGlobalData(bool isShared, ThreadStackType threadStackType)
     , numberStructure(JSNumberCell::createStructure(jsNull()))
 #endif
     , identifierTable(createIdentifierTable())
+    , literalTable(createLiteralTable())
     , propertyNames(new CommonIdentifiers(this))
     , emptyList(new MarkedArgumentBuffer)
     , lexer(new Lexer(this))
@@ -193,6 +194,7 @@ JSGlobalData::~JSGlobalData()
 
     delete propertyNames;
     deleteIdentifierTable(identifierTable);
+    deleteLiteralTable(literalTable);
 
     delete clientData;
 }

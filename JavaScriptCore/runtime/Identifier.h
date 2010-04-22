@@ -137,6 +137,8 @@ namespace JSC {
 
     IdentifierTable* createIdentifierTable();
     void deleteIdentifierTable(IdentifierTable*);
+    LiteralTable* createLiteralTable();
+    void deleteLiteralTable(LiteralTable*);
 
 } // namespace JSC
 

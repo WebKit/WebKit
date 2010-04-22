@@ -60,7 +60,7 @@ protected:
 
     enum StaticStringConstructType { ConstructStaticString };
     StringImplBase(unsigned length, StaticStringConstructType)
-        : m_refCountAndFlags(s_refCountFlagStatic | s_refCountFlagIsIdentifier | BufferOwned)
+        : m_refCountAndFlags(s_refCountFlagStatic | s_refCountFlagIsAtomic | s_refCountFlagIsIdentifier | BufferOwned)
         , m_length(length)
     {
         ASSERT(isStringImpl());
@@ -83,7 +83,7 @@ protected:
     static const unsigned s_refCountIncrement = 0x80;
     static const unsigned s_refCountFlagStatic = 0x40;
     static const unsigned s_refCountFlagHasTerminatingNullCharacter = 0x20;
-    static const unsigned s_refCountFlagInTable = 0x10;
+    static const unsigned s_refCountFlagIsAtomic = 0x10;
     static const unsigned s_refCountFlagShouldReportedCost = 0x8;
     static const unsigned s_refCountFlagIsIdentifier = 0x4;
     static const unsigned s_refCountMaskBufferOwnership = 0x3;
