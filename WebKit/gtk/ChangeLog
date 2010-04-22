@@ -6,6 +6,20 @@
         WebKitGtk
         https://bugs.webkit.org/show_bug.cgi?id=34449
 
+        Expand testatkroles to test ATK_ROLE_COMBO_BOX.
+
+        * tests/testatkroles.c:
+        (test_webkit_atk_get_role_combobox):
+        (main):
+
+2010-04-22  Diego Escalante Urrelo  <descalante@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [Gtk] Evaluate and create tests for all the AtkRole's implemented by
+        WebKitGtk
+        https://bugs.webkit.org/show_bug.cgi?id=34449
+
         Expand testatkroles to test ATK_ROLE_SEPARATOR.
 
         * tests/testatkroles.c:

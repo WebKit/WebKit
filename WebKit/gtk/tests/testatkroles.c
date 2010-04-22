@@ -35,6 +35,7 @@
 #define HTML_SECTION "<html><body><div>This is a test.</div></body></html>"
 #define HTML_TABLE "<html><body><table border='1'><tr><td>This is</td><td>a test.</td></tr></table></body></html>"
 #define HTML_SEPARATOR "<html><body><hr/></body></html>"
+#define HTML_COMBOBOX "<html><body><select size='1'><option>one</option><option>two</option><option>three</option></select></body></html>"
 /* Form roles */
 #define HTML_FORM "<html><body><form>This is a test.</form></body></html>"
 #define HTML_CHECK_BOX "<html><body><input type='checkbox' />This is a test.</body></html>"
@@ -179,6 +180,32 @@ static void test_webkit_atk_get_role_table(AtkRolesFixture* fixture, gconstpoint
 static void test_webkit_atk_get_role_separator(AtkRolesFixture *fixture, gconstpointer data)
 {
     get_child_and_test_role(fixture->documentFrame, 0, ATK_ROLE_SEPARATOR);
+}
+
+static void test_webkit_atk_get_role_combobox(AtkRolesFixture *fixture, gconstpointer data)
+{
+    AtkObject* comboboxMenu;
+
+    // This is an extraneous object of ATK_ROLE_PANEL which we should get rid of.
+    fixture->obj = atk_object_ref_accessible_child(fixture->documentFrame, 0);
+    g_assert(fixture->obj);
+
+    fixture->obj = atk_object_ref_accessible_child(fixture->obj, 0);
+    g_assert(fixture->obj);
+    fixture->role = atk_object_get_role(fixture->obj);
+    g_assert(fixture->role == ATK_ROLE_COMBO_BOX);
+
+    comboboxMenu = atk_object_ref_accessible_child(fixture->obj, 0);
+    g_assert(comboboxMenu);
+    fixture->role = atk_object_get_role(comboboxMenu);
+    g_assert(fixture->role == ATK_ROLE_MENU);
+
+    get_child_and_test_role(comboboxMenu, 0, ATK_ROLE_MENU_ITEM);
+    get_child_and_test_role(comboboxMenu, 1, ATK_ROLE_MENU_ITEM);
+    get_child_and_test_role(comboboxMenu, 2, ATK_ROLE_MENU_ITEM);
+
+    g_object_unref(fixture->obj);
+    g_object_unref(comboboxMenu);
 }
 
 /* Form roles */
@@ -332,6 +359,12 @@ int main(int argc, char** argv)
                AtkRolesFixture, HTML_SEPARATOR,
                atk_roles_fixture_setup,
                test_webkit_atk_get_role_separator,
+               atk_roles_fixture_teardown);
+
+    g_test_add("/webkit/atk/test_webkit_atk_get_role_combobox",
+               AtkRolesFixture, HTML_COMBOBOX,
+               atk_roles_fixture_setup,
+               test_webkit_atk_get_role_combobox,
                atk_roles_fixture_teardown);
 
     /* Form roles */
