@@ -474,7 +474,7 @@ bool TextIterator::handleTextNode()
         m_sortedTextBoxesPosition = 0;
     }
     
-    m_textBox = renderer->containsReversedText() ? m_sortedTextBoxes[0] : renderer->firstTextBox();
+    m_textBox = renderer->containsReversedText() ? (m_sortedTextBoxes.isEmpty() ? 0 : m_sortedTextBoxes[0]) : renderer->firstTextBox();
     handleTextBox();
     return true;
 }
