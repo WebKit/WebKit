@@ -169,7 +169,14 @@ static int windowsKeyCodeForKeyEvent(NSEvent *event)
     // 3. Certain punctuation keys. On Windows, these are also remapped depending on current keyboard layout,
     //    but see comment in windowsKeyCodeForCharCode().
     if ([event type] == NSKeyDown || [event type] == NSKeyUp) {
-        NSString* s = [event characters]; // Cannot use charactersIgnoringModifiers, because Cmd switches Roman letters for Dvorak-QWERTY layout.
+        // Cmd switches Roman letters for Dvorak-QWERTY layout, so try modified characters first.
+        NSString* s = [event characters];
+        code = [s length] > 0 ? windowsKeyCodeForCharCode([s characterAtIndex:0]) : 0;
+        if (code)
+            return code;
+
+        // Ctrl+A on an AZERTY keyboard would get VK_Q keyCode if we relied on -[NSEvent keyCode] below.
+        s = [event charactersIgnoringModifiers];
         code = [s length] > 0 ? windowsKeyCodeForCharCode([s characterAtIndex:0]) : 0;
         if (code)
             return code;
