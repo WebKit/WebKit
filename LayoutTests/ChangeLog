@@ -1,3 +1,56 @@
+2010-04-23  Adam Langley  <agl@chromium.org>
+
+        Unreviewed, expectations update.
+
+        Merging Skia r526 lead to a number of pixels changing color by 1 in
+        layout tests. This is the rebaseline for Windows and Linux. (Mac isn't
+        using Skia for this.)
+
+        * platform/chromium-linux/css2.1/t0803-c5505-mrgn-00-b-ag-expected.checksum:
+        * platform/chromium-linux/css2.1/t0803-c5505-mrgn-00-b-ag-expected.png:
+        * platform/chromium-linux/css2.1/t0804-c5509-padn-l-03-f-g-expected.checksum:
+        * platform/chromium-linux/css2.1/t0804-c5509-padn-l-03-f-g-expected.png:
+        * platform/chromium-linux/fast/dom/Window/btoa-pnglet-expected.checksum:
+        * platform/chromium-linux/fast/dom/Window/btoa-pnglet-expected.png:
+        * platform/chromium-linux/fast/replaced/image-solid-color-with-alpha-expected.checksum:
+        * platform/chromium-linux/fast/replaced/image-solid-color-with-alpha-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug10565-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug10565-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug10633-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug10633-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug14323-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug14323-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug16012-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug16012-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug20804-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug20804-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug4427-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug4427-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug4803-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug4803-expected.png:
+        * platform/chromium-win/css2.1/t0803-c5505-mrgn-00-b-ag-expected.checksum:
+        * platform/chromium-win/css2.1/t0803-c5505-mrgn-00-b-ag-expected.png:
+        * platform/chromium-win/css2.1/t0804-c5509-padn-l-03-f-g-expected.checksum:
+        * platform/chromium-win/css2.1/t0804-c5509-padn-l-03-f-g-expected.png:
+        * platform/chromium-win/fast/dom/Window/btoa-pnglet-expected.checksum:
+        * platform/chromium-win/fast/dom/Window/btoa-pnglet-expected.png:
+        * platform/chromium-win/fast/replaced/image-solid-color-with-alpha-expected.checksum:
+        * platform/chromium-win/fast/replaced/image-solid-color-with-alpha-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug10565-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug10565-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug10633-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug10633-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug14323-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug14323-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug16012-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug16012-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug20804-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug20804-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug4427-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug4427-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug4803-expected.checksum:
+        * platform/chromium-win/tables/mozilla/bugs/bug4803-expected.png:
+
 2010-04-23  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Unreviewed layout fix.
