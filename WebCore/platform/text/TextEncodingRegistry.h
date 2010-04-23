@@ -46,6 +46,9 @@ namespace WebCore {
     // Only TextEncoding should use this function directly.
     bool noExtendedTextEncodingNameUsed();
 
+#ifndef NDEBUG
+    void dumpTextEncodingNameMap();
+#endif
 }
 
 #endif // TextEncodingRegistry_h
