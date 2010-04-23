@@ -18,7 +18,9 @@ shouldBeUndefined("context.texImage2D(context.TEXTURE_2D, 0, canvas2d, false)");
 shouldBeUndefined("context.texImage2D(context.TEXTURE_2D, 0, video, true, false)");
 
 shouldThrow("context.texSubImage2D(context.TEXTURE_2D)");
-shouldBeUndefined("context.texSubImage2D(context.TEXTURE_2D, 0, 10, 20, 0, 0, context.RGBA, context.UNSIGNED_BYTE, 0)");
+shouldBeUndefined("context.texSubImage2D(context.TEXTURE_2D, 0, 10, 20, 0, 0, context.RGBA, context.UNSIGNED_BYTE, null)");
+// FIXME: The following test fails on JSC: https://bugs.webkit.org/show_bug.cgi?id=38024
+shouldThrow("context.texSubImage2D(context.TEXTURE_2D, 0, 10, 20, 0, 0, context.RGBA, context.UNSIGNED_BYTE, 0)");
 shouldThrow("context.texSubImage2D(context.TEXTURE_2D, 0, 10, 20, 0, context.UNSIGNED_BYTE, 0)");
 shouldBeUndefined("context.texSubImage2D(context.TEXTURE_2D, 0, 10, 20, imageData, false)");
 shouldBeUndefined("context.texSubImage2D(context.TEXTURE_2D, 0, 10, 20, image)");

@@ -1,3 +1,17 @@
+2010-04-23  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Auto-generate WebGLRenderingContext overloads in V8
+        https://bugs.webkit.org/show_bug.cgi?id=37818
+
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp:
+        * html/canvas/WebGLRenderingContext.cpp: Added missing overloads for the following:.
+        (WebCore::WebGLRenderingContext::texImage2D)
+        (WebCore::WebGLRenderingContext::texSubImage2D)
+        * html/canvas/WebGLRenderingContext.h: Added missing overloads.
+        * html/canvas/WebGLRenderingContext.idl: IDL definition of overloads.
+
 2010-04-23  Jeff Schiller  <codedread@gmail.com>
 
         Reviewed by Nikolas Zimmermann.

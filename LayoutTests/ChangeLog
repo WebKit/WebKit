@@ -1,3 +1,14 @@
+2010-04-23  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Auto-generate WebGLRenderingContext overloads in V8
+        https://bugs.webkit.org/show_bug.cgi?id=37818
+
+        * fast/canvas/webgl/script-tests/texImageTest.js: Test was wrong: Passing 0 value for a WebGLArray argument in texImage2D should throw the same exception as when passed to textSubImage2D.
+        * platform/chromium-mac/fast/canvas/webgl/texImageTest-expected.txt:
+        * fast/canvas/webgl/texImageTest-expected.txt: Changes to reflect test.
+
 2010-04-23  Yuzo Fujishima  <yuzo@google.com>
 
         Unreviewed, Chromium test expectation change.

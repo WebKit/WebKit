@@ -474,13 +474,15 @@ module html {
         void         blendFunc(in unsigned long sfactor, in unsigned long dfactor);
         void         blendFuncSeparate(in unsigned long srcRGB, in unsigned long dstRGB, in unsigned long srcAlpha, in unsigned long dstAlpha);
 
-        // Supported forms:
-        //   void bufferData (in GLenum target, in GLsizei size, in GLenum usage);
-        //   void bufferData (in GLenum target, in WebGLArray data, in GLenum usage);
+#if defined(V8_BINDING) && V8_BINDING
+        void         bufferData(in unsigned long target, in WebGLArray data, in unsigned long usage) raises (DOMException);
+        void         bufferData(in unsigned long target, in long size, in unsigned long usage) raises (DOMException);
+        void         bufferSubData(in unsigned long target, in long offset, in WebGLArray data) raises (DOMException);
+#else
+        // FIXME: Unfork once JSC supports overload generation too.
         [Custom] void bufferData() raises(DOMException);
-        // Supported forms:
-        //   void bufferSubData (in GLenum target, in GLsizeiptr offset, in WebGLArray data);
         [Custom] void bufferSubData() raises(DOMException);
+#endif
 
         unsigned long checkFramebufferStatus(in unsigned long target);
         void         clear(in unsigned long mask);
@@ -611,32 +613,34 @@ module html {
         void         texParameteri(in unsigned long target, in unsigned long pname, in long param);
 
         // Supported forms:
-        //   void texImage2D(in GLenum target, in GLint level, in GLenum internalformat, in GLsizei width, in GLsizei height, 
-        //                   in GLint border, in GLenum format, in GLenum type, in WebGLArray pixels);
-        //   void texImage2D(in GLenum target, in GLint level, in ImageData pixels,
-        //                   [Optional] in GLboolean flipY, [Optional] in premultiplyAlpha);
-        //   void texImage2D(in GLenum target, in GLint level, in HTMLImageElement image,
-        //                   [Optional] in GLboolean flipY, [Optional] in premultiplyAlpha);
-        //   void texImage2D(in GLenum target, in GLint level, in HTMLCanvasElement canvas,
-        //                   [Optional] in GLboolean flipY, [Optional] in premultiplyAlpha);
-        //   void texImage2D(in GLenum target, in GLint level, in HTMLVideoElement video,
-        //                   [Optional] in GLboolean flipY, [Optional] in premultiplyAlpha);
+#if defined(V8_BINDING) && V8_BINDING
+        void         texImage2D(in unsigned long target, in long level, in unsigned long internalformat, in long width, in long height, 
+                                in long border, in unsigned long format, in unsigned long type, in WebGLArray pixels) raises (DOMException);
+        void         texImage2D(in unsigned long target, in long level, in ImageData pixels,
+                                in [Optional] boolean flipY, in [Optional] boolean premultiplyAlpha) raises (DOMException);
+        void         texImage2D(in unsigned long target, in long level, in HTMLImageElement image,
+                                in [Optional] boolean flipY, in [Optional] boolean premultiplyAlpha) raises (DOMException);
+        void         texImage2D(in unsigned long target, in long level, in HTMLCanvasElement canvas,
+                                in [Optional] boolean flipY, in [Optional] boolean premultiplyAlpha) raises (DOMException);
+        void         texImage2D(in unsigned long target, in long level, in HTMLVideoElement video,
+                                in [Optional] boolean flipY, in [Optional] boolean premultiplyAlpha) raises (DOMException);
+
+        void         texSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset, 
+                                   in long width, in long height, 
+                                   in unsigned long format, in unsigned long type, in WebGLArray pixels) raises (DOMException);
+        void         texSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset,
+                                   in ImageData pixels, in [Optional] boolean flipY, in [Optional] boolean premultiplyAlpha) raises (DOMException);
+        void         texSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset, 
+                                   in HTMLImageElement image, in [Optional] boolean flipY, in [Optional] boolean premultiplyAlpha) raises (DOMException);
+        void         texSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset, 
+                                   in HTMLCanvasElement canvas, in [Optional] boolean flipY, in [Optional] boolean premultiplyAlpha) raises (DOMException);
+        void         texSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset, 
+                                   in HTMLVideoElement video, in [Optional] boolean flipY, in [Optional] boolean premultiplyAlpha) raises (DOMException);
+#else
+        // FIXME: Unfork once JSC supports overload generation too.
         [Custom] void texImage2D();
-
-        // Supported forms:
-        //   void texSubImage2D(in GLenum target, in GLint level, in GLint xoffset, in GLint yoffset, 
-        //                      in GLsizei width, in GLsizei height, 
-        //                      in GLenum format, in GLenum type, in WebGLArray pixels);
-        //   void texSubImage2D(in GLenum target, in GLint level, in GLint xoffset, in GLint yoffset,
-        //                      in ImageData pixels, [Optional] GLboolean flipY, [Optional] in premultiplyAlpha);
-        //   void texSubImage2D(in GLenum target, in GLint level, in GLint xoffset, in GLint yoffset, 
-        //                      in HTMLImageElement image, [Optional] GLboolean flipY, [Optional] in premultiplyAlpha);
-        //   void texSubImage2D(in GLenum target, in GLint level, in GLint xoffset, in GLint yoffset, 
-        //                      in HTMLCanvasElement canvas, [Optional] GLboolean flipY, [Optional] in premultiplyAlpha);
-        //   void texSubImage2D(in GLenum target, in GLint level, in GLint xoffset, in GLint yoffset, 
-        //                      in HTMLVideoElement video, [Optional] GLboolean flipY, [Optional] in premultiplyAlpha);
         [Custom] void texSubImage2D();
-
+#endif
         void uniform1f(in WebGLUniformLocation location, in float x) raises(DOMException);
         [Custom] void uniform1fv(in WebGLUniformLocation location, in WebGLFloatArray v) raises(DOMException);
         void uniform1i(in WebGLUniformLocation location, in long x) raises(DOMException);
