@@ -1,3 +1,14 @@
+2010-04-23  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Avoid marking symbols as dllexport in chromium win builds
+        https://bugs.webkit.org/show_bug.cgi?id=38058
+
+        No new tests.
+
+        * config.h:
+
 2010-04-23  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Nikolas Zimmermann.
