@@ -1,3 +1,18 @@
+2010-04-23  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37187
+        SVG <use href="foo"> is interpreted as <use href="#foo">
+
+        * platform/mac/svg/custom/broken-internal-references-expected.checksum: Added.
+        * platform/mac/svg/custom/broken-internal-references-expected.png: Added.
+        * platform/mac/svg/custom/broken-internal-references-expected.txt: Added.
+        * svg/custom/broken-internal-references.svg: Added.
+        * svg/dynamic-updates/SVGTRefElement-dom-href-attr-expected.txt:
+        * svg/dynamic-updates/script-tests/SVGTRefElement-dom-href-attr.js:
+        (executeTest): Updated to follow this fix. href value should be an URL, not an id.
+
 2010-04-23  Adam Langley  <agl@chromium.org>
 
         Unreviewed, expectations update.

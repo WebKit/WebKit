@@ -60,8 +60,8 @@ String SVGURIReference::getTarget(const String& url)
     } else if (url.find('#') > -1) { // format is #target
         unsigned int start = url.find('#') + 1;
         return url.substring(start, url.length() - start);
-    } else // Normal Reference, ie. style="color-profile:changeColor"
-        return url;
+    } else // The url doesn't have any target.
+        return String();
 }
 
 }

@@ -22,15 +22,15 @@ textElement.setAttribute("y", "15");
 rootSVGElement.appendChild(textElement);
 
 var trefElement = createSVGElement("tref");
-trefElement.setAttributeNS(xlinkNS, "xlink:href", "testFail");
+trefElement.setAttributeNS(xlinkNS, "xlink:href", "#testFail");
 textElement.appendChild(trefElement);    
 
-shouldBeEqualToString("trefElement.getAttributeNS('" + xlinkNS + "', 'href')", "testFail");
+shouldBeEqualToString("trefElement.getAttributeNS('" + xlinkNS + "', 'href')", "#testFail");
 shouldBeEqualToString("textElement.textContent", "Test failed");
 
 function executeTest() {
-    trefElement.setAttributeNS(xlinkNS, "xlink:href", "testPass");
-    shouldBeEqualToString("trefElement.getAttributeNS('" + xlinkNS + "', 'href')", "testPass");
+    trefElement.setAttributeNS(xlinkNS, "xlink:href", "#testPass");
+    shouldBeEqualToString("trefElement.getAttributeNS('" + xlinkNS + "', 'href')", "#testPass");
     shouldBeEqualToString("textElement.textContent", "Test passed");
 
     completeTest();

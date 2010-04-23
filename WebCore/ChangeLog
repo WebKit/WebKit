@@ -1,3 +1,21 @@
+2010-04-23  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37187
+        SVG <use href="foo"> is interpreted as <use href="#foo">
+
+        getTarget() did return url parameter as is if doesn't have
+        fragment identifier. So fixed to return empty string in such case
+        because we need to distinguish "yyy.html" from "xxx.svg#yyy.html".
+        
+        Test: svg/custom/broken-internal-references.svg
+
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::insertedIntoDocument):
+        * svg/SVGURIReference.cpp:
+        (WebCore::SVGURIReference::getTarget):
+
 2010-04-23  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
