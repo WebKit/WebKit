@@ -744,7 +744,10 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
         return;
     CallbackGuard guard;
 
-    [r adjustMIMETypeIfNecessary];
+    // Avoid MIME type sniffing if the response comes back as 304 Not Modified.
+    int statusCode = [r respondsToSelector:@selector(statusCode)] ? [(id)r statusCode] : 0;
+    if (statusCode != 304)
+        [r adjustMIMETypeIfNecessary];
 
     if ([m_handle->request().nsURLRequest() _propertyForKey:@"ForceHTMLMIMEType"])
         [r _setMIMEType:@"text/html"];

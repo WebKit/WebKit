@@ -1,5 +1,17 @@
 2010-04-23  David Kilzer  <ddkilzer@apple.com>
 
+        <http://webkit.org/b/38032> No need to content sniff 304 responses
+        <rdar://problem/7891726>
+
+        Reviewed by Brady Eidson.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveResponse:]):
+        No need to adjust the MIME type on 304 responses since they're
+        only used to determine if the resource needs to be refetched.
+
+2010-04-23  David Kilzer  <ddkilzer@apple.com>
+
         <http://webkit.org/b/38030> Add WebCore::dumpTextEncodingNameMap() to dump text encoding map on debug builds
 
         Reviewed by Alexey Proskuryakov.
