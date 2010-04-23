@@ -647,10 +647,12 @@ WebInspector.AuditRules.ImageDimensionsRule.prototype = {
 
             const node = WebInspector.domAgent.nodeForId(imageId);
             var src = node.getAttribute("src");
-            for (var frameOwnerCandidate = node; frameOwnerCandidate; frameOwnerCandidate = frameOwnerCandidate.parentNode) {
-                if (frameOwnerCandidate.documentURL) {
-                    var completeSrc = WebInspector.completeURL(frameOwnerCandidate.documentURL, src);
-                    break;
+            if (!WebInspector.URLRegExp.test(src)) {
+                for (var frameOwnerCandidate = node; frameOwnerCandidate; frameOwnerCandidate = frameOwnerCandidate.parentNode) {
+                    if (frameOwnerCandidate.documentURL) {
+                        var completeSrc = WebInspector.completeURL(frameOwnerCandidate.documentURL, src);
+                        break;
+                    }
                 }
             }
             if (completeSrc)
