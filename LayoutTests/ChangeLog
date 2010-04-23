@@ -1,3 +1,13 @@
+2010-04-23  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by Eric Seidel
+
+        QT does not support textInputController.firstRectForCharacterRange(),
+        so, skip editing/inserting/caret-position.html for QT.
+        https://bugs.webkit.org/show_bug.cgi?id=25319
+
+        * platform/qt/Skipped:
+
 2010-04-23  MORITA Hajime  <morrita@google.com>
 
         Not reviewed. Added missing expectation files for
