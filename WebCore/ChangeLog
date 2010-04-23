@@ -1,5 +1,11 @@
 2010-04-23  Adele Peterson  <adele@apple.com>
 
+        Fixing the Tiger build for real.
+
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+
+2010-04-23  Adele Peterson  <adele@apple.com>
+
         Fixing the Tiger build.
 
         * platform/graphics/mac/SimpleFontDataMac.mm:
