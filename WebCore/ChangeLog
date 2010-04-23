@@ -1,3 +1,23 @@
+2010-04-23  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: provide JSC implementation for scopeType method on
+        call frame and use same jsvascript code for JSC and v8 when collecting
+        scope chain data.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37663
+
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::JSInjectedScriptHost::currentCallFrame):
+        * bindings/js/JSJavaScriptCallFrameCustom.cpp:
+        (WebCore::JSJavaScriptCallFrame::scopeType):
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::V8InjectedScriptHost::currentCallFrameCallback):
+        * inspector/InjectedScriptHost.idl:
+        * inspector/front-end/InjectedScript.js:
+        (injectedScriptConstructor.):
+
 2010-04-23  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

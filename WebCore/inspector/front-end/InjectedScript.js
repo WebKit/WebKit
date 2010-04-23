@@ -841,9 +841,6 @@ InjectedScript.CallFrameProxy = function(id, callFrame)
     this.scopeChain = this._wrapScopeChain(callFrame);
 }
 
-// FIXME(37663): unify scope chain representation and remove this if.
-if (jsEngine === "v8") {
-
 InjectedScript.CallFrameProxy.prototype = {
     _wrapScopeChain: function(callFrame)
     {
@@ -855,12 +852,12 @@ InjectedScript.CallFrameProxy.prototype = {
     
         var scopeChain = callFrame.scopeChain;
         var scopeChainProxy = [];
+        var foundLocalScope = false;
         for (var i = 0; i < scopeChain.length; i++) {
             var scopeType = callFrame.scopeType(i);
             var scopeObject = scopeChain[i];
             var scopeObjectProxy = InjectedScript.createProxyObject(scopeObject, { callFrame: this.id, chainIndex: i }, true);
 
-            var foundLocalScope = false;
             switch(scopeType) {
                 case LOCAL_SCOPE: {
                     foundLocalScope = true;
@@ -874,55 +871,19 @@ InjectedScript.CallFrameProxy.prototype = {
                 }
                 case WITH_SCOPE:
                 case CATCH_SCOPE: {
-                    scopeObjectProxy.isWithBlock = true;
+                    if (foundLocalScope && scopeObject instanceof inspectedWindow.Element)
+                        scopeObjectProxy.isElement = true;
+                    else if (foundLocalScope && scopeObject instanceof inspectedWindow.Document)
+                        scopeObjectProxy.isDocument = true;
+                    else
+                        scopeObjectProxy.isWithBlock = true;
                     break;
                 }
             }
-
-            if (foundLocalScope) {
-                if (scopeObject instanceof inspectedWindow.Element)
-                    scopeObjectProxy.isElement = true;
-                else if (scopeObject instanceof inspectedWindow.Document)
-                    scopeObjectProxy.isDocument = true;
-            }
- 
             scopeChainProxy.push(scopeObjectProxy);
         }
         return scopeChainProxy;
     }
-}
-
-} else {
-
-InjectedScript.CallFrameProxy.prototype = {
-    _wrapScopeChain: function(callFrame)
-    {
-        var foundLocalScope = false;
-        var scopeChain = callFrame.scopeChain;
-        var scopeChainProxy = [];
-        for (var i = 0; i < scopeChain.length; ++i) {
-            var scopeObject = scopeChain[i];
-            var scopeObjectProxy = InjectedScript.createProxyObject(scopeObject, { callFrame: this.id, chainIndex: i }, true);
-
-            if (InjectedScriptHost.isActivation(scopeObject)) {
-                if (!foundLocalScope)
-                    scopeObjectProxy.thisObject = InjectedScript.createProxyObject(callFrame.thisObject, { callFrame: this.id, thisObject: true }, true);
-                else
-                    scopeObjectProxy.isClosure = true;
-                foundLocalScope = true;
-                scopeObjectProxy.isLocal = true;
-            } else if (foundLocalScope && scopeObject instanceof inspectedWindow.Element)
-                scopeObjectProxy.isElement = true;
-            else if (foundLocalScope && scopeObject instanceof inspectedWindow.Document)
-                scopeObjectProxy.isDocument = true;
-            else if (!foundLocalScope)
-                scopeObjectProxy.isWithBlock = true;
-            scopeChainProxy.push(scopeObjectProxy);
-        }
-        return scopeChainProxy;
-    }
-}
-
 }
 
 InjectedScript.executeSql = function(callId, databaseId, query)

@@ -161,12 +161,6 @@ v8::Handle<v8::Value> V8InjectedScriptHost::currentCallFrameCallback(const v8::A
     INC_STATS("InjectedScriptHost.currentCallFrame()");
     return toV8(ScriptDebugServer::shared().currentCallFrame());
 }
-
-v8::Handle<v8::Value> V8InjectedScriptHost::isActivationCallback(const v8::Arguments& args)
-{
-    INC_STATS("InjectedScriptHost.isActivation()");
-    return v8::Boolean::New(true);
-}
 #endif
 
 #if ENABLE(DATABASE)

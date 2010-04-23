@@ -43,7 +43,6 @@ module core {
 
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
         [Custom] DOMObject currentCallFrame();
-        [Custom] boolean isActivation(in DOMObject object);
 #endif
 
 #if defined(ENABLE_DATABASE) && ENABLE_DATABASE
