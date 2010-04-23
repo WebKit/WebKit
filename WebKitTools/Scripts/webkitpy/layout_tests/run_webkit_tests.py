@@ -204,8 +204,6 @@ class TestRunner:
     # in DumpRenderTree.
     DEFAULT_TEST_TIMEOUT_MS = 6 * 1000
 
-    NUM_RETRY_ON_UNEXPECTED_FAILURE = 1
-
     def __init__(self, port, options, meter):
         """Initialize test runner data structures.
 
@@ -236,7 +234,7 @@ class TestRunner:
         self._current_progress_str = ""
         self._current_test_number = 0
 
-        self._retries = 0
+        self._retrying = False
 
         # Hack for dumping threads on the bots
         self._last_thread_dump = None
@@ -717,12 +715,12 @@ class TestRunner:
         # we want to treat even a potentially flaky crash as an error.
         failures = self._get_failures(result_summary, include_crashes=False)
         retry_summary = result_summary
-        while (self._retries < self.NUM_RETRY_ON_UNEXPECTED_FAILURE and
-               len(failures)):
+        while (len(failures) and self._options.retry_failures and
+            not self._retrying):
             _log.info('')
-            _log.info("Retrying %d unexpected failure(s)" % len(failures))
+            _log.info("Retrying %d unexpected failure(s) ..." % len(failures))
             _log.info('')
-            self._retries += 1
+            self._retrying = True
             retry_summary = ResultSummary(self._expectations, failures.keys())
             self._run_tests(failures.keys(), retry_summary)
             failures = self._get_failures(retry_summary, include_crashes=True)
@@ -835,7 +833,7 @@ class TestRunner:
         percent_complete = 100 * (result_summary.expected +
             result_summary.unexpected) / result_summary.total
         action = "Testing"
-        if self._retries > 0:
+        if self._retrying:
             action = "Retrying"
         self._meter.progress("%s (%d%%): %d ran as expected, %d didn't,"
             " %d left" % (action, percent_complete, result_summary.expected,
@@ -1544,13 +1542,13 @@ def main(options, args, print_results=True):
         options.results_directory = port_obj.results_directory()
 
     last_unexpected_results = []
-    if options.print_unexpected_results or options.retry_unexpected_results:
+    if options.print_last_failures or options.retest_last_failures:
         unexpected_results_filename = os.path.join(
            options.results_directory, "unexpected_results.json")
         with open(unexpected_results_filename, "r", "utf-8") as file:
             results = simplejson.load(file)
         last_unexpected_results = results['tests'].keys()
-        if options.print_unexpected_results:
+        if options.print_last_failures:
             print "\n".join(last_unexpected_results) + "\n"
             return 0
 
@@ -1854,12 +1852,18 @@ def parse_args(args=None):
         #      Exit after the first N failures instead of running all tests
         # FIXME: consider: --iterations n
         #      Number of times to run the set of tests (e.g. ABCABCABC)
-        optparse.make_option("--print-unexpected-results", action="store_true",
-            default=False, help="print the tests in the last run that "
-            "had unexpected results."),
-        optparse.make_option("--retry-unexpected-results", action="store_true",
-            default=False, help="re-try the tests in the last run that "
-            "had unexpected results."),
+        optparse.make_option("--print-last-failures", action="store_true",
+            default=False, help="Print the tests in the last run that "
+            "had unexpected failures (or passes)."),
+        optparse.make_option("--retest-last-failures", action="store_true",
+            default=False, help="re-test the tests in the last run that "
+            "had unexpected failures (or passes)."),
+        optparse.make_option("--retry-failures", action="store_true",
+            default=True,
+            help="Re-try any tests that produce unexpected results (default)"),
+        optparse.make_option("--no-retry-failures", action="store_false",
+            dest="retry_failures",
+            help="Don't re-try any tests that produce unexpected results."),
     ]
 
     misc_options = [

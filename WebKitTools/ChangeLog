@@ -1,3 +1,18 @@
+2010-04-19  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        new-run-webkit-tests: add a "--retry-failures" flag and a
+        "--no-retry-failures" flag (the former is the default). Also, rename
+        "--print-unexpected-results" and "--retry-unexpected-results" to
+        "--print-last-failures" and "--retry-last-failures" because the
+        retry flag was confusing. The new flag names aren't great, but
+        hopefully they're less confusing.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37838
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2010-04-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
