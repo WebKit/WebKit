@@ -290,6 +290,29 @@ sub prototypeHashTableAccessor
     }
 }
 
+sub GenerateConditionalStringFromAttributeValue
+{
+    my $conditional = shift;
+    if ($conditional =~ /&/) {
+        return "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
+    } elsif ($conditional =~ /\|/) {
+        return "ENABLE(" . join(") || ENABLE(", split(/\|/, $conditional)) . ")";
+    } else {
+        return "ENABLE(" . $conditional . ")";
+    }
+}
+
+sub GenerateConditionalString
+{
+    my $node = shift;
+    my $conditional = $node->extendedAttributes->{"Conditional"};
+    if ($conditional) {
+        return GenerateConditionalStringFromAttributeValue($conditional);
+    } else {
+        return "";
+    }
+}
+
 sub GenerateGetOwnPropertySlotBody
 {
     my ($dataNode, $interfaceName, $className, $implClassName, $hasAttributes, $inlined) = @_;
@@ -496,7 +519,6 @@ sub GenerateHeader
     my $hasRealParent = @{$dataNode->parents} > 0;
     my $hasParent = $hasLegacyParent || $hasRealParent;
     my $parentClassName = GetParentClassName($dataNode);
-    my $conditional = $dataNode->extendedAttributes->{"Conditional"};
     my $eventTarget = $dataNode->extendedAttributes->{"EventTarget"};
     my $needsMarkChildren = $dataNode->extendedAttributes->{"CustomMarkFunction"} || $dataNode->extendedAttributes->{"EventTarget"};
     
@@ -507,11 +529,8 @@ sub GenerateHeader
     push(@headerContentHeader, "\n#ifndef $className" . "_h");
     push(@headerContentHeader, "\n#define $className" . "_h\n\n");
 
-    my $conditionalString;
-    if ($conditional) {
-        $conditionalString = "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
-        push(@headerContentHeader, "#if ${conditionalString}\n\n");
-    }
+    my $conditionalString = GenerateConditionalString($dataNode);
+    push(@headerContentHeader, "#if ${conditionalString}\n\n") if $conditionalString;
 
     if ($hasParent) {
         $headerIncludes{"$parentClassName.h"} = 1;
@@ -906,7 +925,7 @@ sub GenerateHeader
     }
 
     push(@headerContent, "\n} // namespace WebCore\n\n");
-    push(@headerContent, "#endif // ${conditionalString}\n\n") if $conditional;
+    push(@headerContent, "#endif // ${conditionalString}\n\n") if $conditionalString;
     push(@headerContent, "#endif\n");
 
     # - Generate dependencies.
@@ -928,7 +947,6 @@ sub GenerateImplementation
     my $hasRealParent = @{$dataNode->parents} > 0;
     my $hasParent = $hasLegacyParent || $hasRealParent;
     my $parentClassName = GetParentClassName($dataNode);
-    my $conditional = $dataNode->extendedAttributes->{"Conditional"};
     my $visibleClassName = GetVisibleClassName($interfaceName);
     my $eventTarget = $dataNode->extendedAttributes->{"EventTarget"};
     my $needsMarkChildren = $dataNode->extendedAttributes->{"CustomMarkFunction"} || $dataNode->extendedAttributes->{"EventTarget"};
@@ -937,11 +955,8 @@ sub GenerateImplementation
     @implContentHeader = split("\r", $headerTemplate);
 
     push(@implContentHeader, "\n#include \"config.h\"\n");
-    my $conditionalString;
-    if ($conditional) {
-        $conditionalString = "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
-        push(@implContentHeader, "\n#if ${conditionalString}\n\n");
-    }
+    my $conditionalString = GenerateConditionalString($dataNode);
+    push(@implContentHeader, "\n#if ${conditionalString}\n\n") if $conditionalString;
     push(@implContentHeader, "#include \"$className.h\"\n\n");
 
     AddIncludesForSVGAnimatedType($interfaceName) if $className =~ /^JSSVGAnimated/;
@@ -1305,11 +1320,8 @@ sub GenerateImplementation
                 my $getFunctionName = "js" . $interfaceName .  $codeGenerator->WK_ucfirst($attribute->signature->name) . ($attribute->signature->type =~ /Constructor$/ ? "Constructor" : "");
                 my $implGetterFunctionName = $codeGenerator->WK_lcfirst($name);
 
-                my $conditional = $attribute->signature->extendedAttributes->{"Conditional"};
-                if ($conditional) {
-                    $conditionalString = "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
-                    push(@implContent, "#if ${conditionalString}\n");
-                }
+                my $attributeConditionalString = GenerateConditionalString($attribute->signature);
+                push(@implContent, "#if ${attributeConditionalString}\n") if $attributeConditionalString;
 
                 push(@implContent, "JSValue ${getFunctionName}(ExecState* exec, JSValue slotBase, const Identifier&)\n");
                 push(@implContent, "{\n");
@@ -1417,9 +1429,7 @@ sub GenerateImplementation
 
                 push(@implContent, "}\n");
 
-                if ($conditional) {
-                    push(@implContent, "#endif\n");
-                }
+                push(@implContent, "#endif\n") if $attributeConditionalString;
 
                 push(@implContent, "\n");
             }
@@ -1486,11 +1496,8 @@ sub GenerateImplementation
                         my $putFunctionName = "setJS" . $interfaceName .  $codeGenerator->WK_ucfirst($name) . ($attribute->signature->type =~ /Constructor$/ ? "Constructor" : "");
                         my $implSetterFunctionName = $codeGenerator->WK_ucfirst($name);
 
-                        my $conditional = $attribute->signature->extendedAttributes->{"Conditional"};
-                        if ($conditional) {
-                            $conditionalString = "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
-                            push(@implContent, "#if ${conditionalString}\n");
-                        }
+                        my $attributeConditionalString = GenerateConditionalString($attribute->signature);
+                        push(@implContent, "#if ${attributeConditionalString}\n") if $attributeConditionalString;
 
                         push(@implContent, "void ${putFunctionName}(ExecState* exec, JSObject* thisObject, JSValue value)\n");
                         push(@implContent, "{\n");
@@ -1571,9 +1578,7 @@ sub GenerateImplementation
                         
                         push(@implContent, "}\n");
 
-                        if ($conditional) {
-                            push(@implContent, "#endif\n");
-                        }
+                        push(@implContent, "#endif\n") if $attributeConditionalString;
 
                         push(@implContent, "\n");
                     }
@@ -1827,7 +1832,7 @@ sub GenerateImplementation
 
     push(@implContent, "\n}\n");
 
-    push(@implContent, "\n#endif // ${conditionalString}\n") if $conditional;
+    push(@implContent, "\n#endif // ${conditionalString}\n") if $conditionalString;
 }
 
 sub GenerateImplementationFunctionCall()
@@ -2191,7 +2196,7 @@ tableSizeLoop:
             $conditional = $conditionals->{$key};
         }
         if ($conditional) {
-            my $conditionalString = "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
+            my $conditionalString = GenerateConditionalStringFromAttributeValue($conditional);
             push(@implContent, "#if ${conditionalString}\n");
         }
         

@@ -189,7 +189,13 @@ sub GenerateConditionalString
     my $node = shift;
     my $conditional = $node->extendedAttributes->{"Conditional"};
     if ($conditional) {
-        return "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
+        if ($conditional =~ /&/) {
+            return "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
+        } elsif ($conditional =~ /\|/) {
+            return "ENABLE(" . join(") || ENABLE(", split(/\|/, $conditional)) . ")";
+        } else {
+            return "ENABLE(" . $conditional . ")";
+        }
     } else {
         return "";
     }

@@ -269,6 +269,23 @@ sub ReadPublicInterfaces
     $interfaceAvailabilityVersion = "WEBKIT_VERSION_LATEST" if $newPublicClass;
 }
 
+sub GenerateConditionalString
+{
+    my $node = shift;
+    my $conditional = $node->extendedAttributes->{"Conditional"};
+    if ($conditional) {
+        if ($conditional =~ /&/) {
+            return "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
+        } elsif ($conditional =~ /\|/) {
+            return "ENABLE(" . join(") || ENABLE(", split(/\|/, $conditional)) . ")";
+        } else {
+            return "ENABLE(" . $conditional . ")";
+        }
+    } else {
+        return "";
+    }
+}
+
 # Params: 'domClass' struct
 sub GenerateInterface
 {
@@ -1014,7 +1031,6 @@ sub GenerateImplementation
     my $implClassNameWithNamespace = "WebCore::" . $implClassName;
     my $baseClass = GetBaseClass($parentImplClassName);
     my $classHeaderName = GetClassHeaderName($className);
-    my $conditional = $dataNode->extendedAttributes->{"Conditional"};
 
     my $numAttributes = @{$dataNode->attributes};
     my $numFunctions = @{$dataNode->functions};
@@ -1032,11 +1048,8 @@ sub GenerateImplementation
     # - INCLUDES -
     push(@implContentHeader, "\n#import \"config.h\"\n");
 
-    my $conditionalString;
-    if ($conditional) {
-        $conditionalString = "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
-        push(@implContentHeader, "\n#if ${conditionalString}\n\n");
-    }
+    my $conditionalString = GenerateConditionalString($dataNode);
+    push(@implContentHeader, "\n#if ${conditionalString}\n\n") if $conditionalString;
 
     push(@implContentHeader, "#import \"DOMInternal.h\"\n\n");
     push(@implContentHeader, "#import \"$classHeaderName.h\"\n\n");
@@ -1585,7 +1598,7 @@ sub GenerateImplementation
     }
 
     # - End the ifdef conditional if necessary
-    push(@implContent, "\n#endif // ${conditionalString}\n") if $conditional;
+    push(@implContent, "\n#endif // ${conditionalString}\n") if $conditionalString;
 
     # - Generate dependencies.
     if ($writeDependencies && @ancestorInterfaceNames) {
