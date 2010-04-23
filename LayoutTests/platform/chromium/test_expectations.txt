@@ -2775,3 +2775,6 @@ BUGJAMESR WIN : media/video-layer-crash.html = IMAGE
 BUGJAMESR WIN : media/video-transformed.html = IMAGE
 BUGJAMESR WIN : media/video-zoom.html = IMAGE
 
+// Started failing at r58058
+BUGWK38020 WIN LINUX MAC : fast/events/touch/send-oncancel-event.html = TEXT
+
