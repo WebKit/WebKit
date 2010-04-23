@@ -1,3 +1,11 @@
+2010-04-23  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Unreviewed layout fix.
+
+        Change [object Media] to [object StyleMedia]
+
+        * fast/dom/Window/window-properties-expected.txt:
+
 2010-04-22  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Laszlo Gombos.
