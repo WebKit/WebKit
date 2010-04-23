@@ -1,3 +1,11 @@
+2010-04-23  MORITA Hajime  <morrita@google.com>
+
+        Not reviewed. Added missing expectation files for
+        https://bugs.webkit.org/show_bug.cgi?id=37187
+
+        * platform/mac/svg/custom/broken-internal-references-expected.checksum: Added.
+        * platform/mac/svg/custom/broken-internal-references-expected.png: Added.
+
 2010-04-23  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by Dan Bernstein and Darin Adler
