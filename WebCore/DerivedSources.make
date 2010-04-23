@@ -210,7 +210,6 @@ DOM_CLASSES = \
     InspectorFrontendHost \
     KeyboardEvent \
     Location \
-    Media \
     MediaError \
     MediaList \
     MessageChannel \
@@ -397,6 +396,7 @@ DOM_CLASSES = \
     SVGZoomAndPan \
     SVGZoomEvent \
     Screen \
+    StyleMedia \
     StyleSheet \
     StyleSheetList \
     Text \

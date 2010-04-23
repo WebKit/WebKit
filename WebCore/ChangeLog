@@ -1,3 +1,11 @@
+2010-04-23  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Unreviewed build fix.
+
+        Change Media to StyleMedia
+
+        * DerivedSources.make:
+
 2010-04-23  Xan Lopez  <xlopez@igalia.com>
 
         Try to fix the GTK+ bots.
