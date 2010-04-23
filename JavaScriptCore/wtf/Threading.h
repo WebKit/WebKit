@@ -67,6 +67,7 @@
 
 #include <wtf/Assertions.h>
 #include <wtf/Locker.h>
+#include <wtf/MainThread.h>
 #include <wtf/Noncopyable.h>
 
 #if OS(WINDOWS) && !OS(WINCE)
@@ -124,7 +125,6 @@ ThreadIdentifier createThreadInternal(ThreadFunction, void*, const char* threadN
 void initializeCurrentThreadInternal(const char* threadName);
 
 ThreadIdentifier currentThread();
-bool isMainThread();
 int waitForThreadCompletion(ThreadIdentifier, void**);
 void detachThread(ThreadIdentifier);
 
@@ -343,7 +343,6 @@ using WTF::atomicIncrement;
 
 using WTF::createThread;
 using WTF::currentThread;
-using WTF::isMainThread;
 using WTF::detachThread;
 using WTF::waitForThreadCompletion;
 

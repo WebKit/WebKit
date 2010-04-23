@@ -28,8 +28,8 @@
 
 #include "StaticConstructors.h"
 #include "StringHash.h"
-#include <wtf/Threading.h>
 #include <wtf/HashSet.h>
+#include <wtf/Threading.h>
 #include <wtf/WTFThreadData.h>
 #include <wtf/text/AtomicStringTable.h>
 

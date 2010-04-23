@@ -44,8 +44,6 @@ namespace WTF {
 
 static Mutex* atomicallyInitializedStaticMutex;
 
-static ThreadIdentifier mainThreadIdentifier;
-
 static Mutex& threadMapMutex()
 {
     static Mutex mutex;
@@ -62,7 +60,6 @@ void initializeThreading()
         atomicallyInitializedStaticMutex = new Mutex;
         threadMapMutex();
         initializeRandomNumberGenerator();
-        mainThreadIdentifier = currentThread();
         initializeMainThread();
     }
 }
@@ -166,11 +163,6 @@ ThreadIdentifier currentThread()
     if (ThreadIdentifier id = identifierByGthreadHandle(currentThread))
         return id;
     return establishIdentifierForThread(currentThread);
-}
-
-bool isMainThread()
-{
-    return currentThread() == mainThreadIdentifier;
 }
 
 Mutex::Mutex()

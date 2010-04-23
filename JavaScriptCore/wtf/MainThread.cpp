@@ -36,6 +36,10 @@
 
 namespace WTF {
 
+#if !PLATFORM(MAC) && !PLATFORM(QT)
+static ThreadIdentifier mainThreadIdentifier;
+#endif
+
 struct FunctionWithContext {
     MainThreadFunction* function;
     void* context;
@@ -69,6 +73,10 @@ void initializeMainThread()
 {
     mainThreadFunctionQueueMutex();
     initializeMainThreadPlatform();
+
+#if !PLATFORM(MAC) && !PLATFORM(QT)
+    mainThreadIdentifier = currentThread();
+#endif
 }
 
 // 0.1 sec delays in UI is approximate threshold when they become noticeable. Have a limit that's half of that.
@@ -151,5 +159,12 @@ void setMainThreadCallbacksPaused(bool paused)
     if (!callbacksPaused)
         scheduleDispatchFunctionsOnMainThread();
 }
+
+#if !PLATFORM(MAC) && !PLATFORM(QT)
+bool isMainThread()
+{
+    return currentThread() == mainThreadIdentifier;
+}
+#endif
 
 } // namespace WTF

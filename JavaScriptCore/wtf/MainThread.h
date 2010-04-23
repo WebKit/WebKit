@@ -52,10 +52,13 @@ void scheduleDispatchFunctionsOnMainThread();
 Mutex& mainThreadFunctionQueueMutex();
 void dispatchFunctionsFromMainThread();
 
+bool isMainThread();
+
 } // namespace WTF
 
 using WTF::callOnMainThread;
 using WTF::callOnMainThreadAndWait;
 using WTF::setMainThreadCallbacksPaused;
+using WTF::isMainThread;
 
 #endif // MainThread_h

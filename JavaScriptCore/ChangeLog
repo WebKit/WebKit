@@ -1,3 +1,30 @@
+2010-04-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=38022
+        Move isMainThread predicate function to MainThread.h
+
+        * wtf/MainThread.cpp:
+        (WTF::initializeMainThread):
+        (WTF::isMainThread):
+        * wtf/MainThread.h:
+        * wtf/Threading.h:
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::initializeThreading):
+        * wtf/ThreadingWin.cpp:
+        (WTF::initializeThreading):
+        * wtf/gtk/ThreadingGtk.cpp:
+        (WTF::initializeThreading):
+        * wtf/mac/MainThreadMac.mm:
+        (WTF::initializeMainThreadPlatform):
+        (WTF::isMainThread):
+        * wtf/qt/MainThreadQt.cpp:
+        (WTF::isMainThread):
+        * wtf/qt/ThreadingQt.cpp:
+        (WTF::initializeThreading):
+        * wtf/text/AtomicString.cpp:
+
 2010-04-23  Gabor Rapcsanyi  <rgabor@inf.u-szeged.hu>
 
         Reviewed by Laszlo Gombos.
