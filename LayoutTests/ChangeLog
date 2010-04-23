@@ -1,5 +1,16 @@
 2010-04-22  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Adam Barth.
+
+        Add a test for file URL canonicalization with an http base
+        https://bugs.webkit.org/show_bug.cgi?id=38035
+
+        * fast/url/file-http-base-expected.txt: Added.
+        * fast/url/file-http-base.html: Added.
+        * fast/url/script-tests/file-http-base.js: Added.
+
+2010-04-22  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Dan Bernstein and Beth Dakin.
 
         Links around blocks (e.g. divs) results in too many VoiceOver call outs
