@@ -972,7 +972,7 @@ void Heap::markStackObjectsConservatively(MarkStack& markStack)
 void Heap::protect(JSValue k)
 {
     ASSERT(k);
-//    ASSERT(JSLock::currentThreadIsHoldingLock() || !m_globalData->isSharedInstance());
+    ASSERT(JSLock::currentThreadIsHoldingLock() || !m_globalData->isSharedInstance());
 
     if (!k.isCell())
         return;
@@ -983,7 +983,7 @@ void Heap::protect(JSValue k)
 bool Heap::unprotect(JSValue k)
 {
     ASSERT(k);
-//    ASSERT(JSLock::currentThreadIsHoldingLock() || !m_globalData->isSharedInstance());
+    ASSERT(JSLock::currentThreadIsHoldingLock() || !m_globalData->isSharedInstance());
 
     if (!k.isCell())
         return false;
