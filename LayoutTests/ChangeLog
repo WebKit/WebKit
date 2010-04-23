@@ -1,3 +1,16 @@
+2010-04-23  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by Dan Bernstein and Darin Adler
+
+        Fix issue "caret does not paint after type in characters in right
+        aligned div or after delete all characters in RTL div or 
+        0px right padding RTL textarea"
+        https://bugs.webkit.org/show_bug.cgi?id=25319
+
+        * editing/inserting/caret-position-expected.txt: Added.
+        * editing/inserting/caret-position.html: Added.
+        * platform/mac/editing/input/caret-primary-bidi-expected.txt:
+
 2010-04-23  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Nikolas Zimmermann.

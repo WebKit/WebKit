@@ -455,23 +455,40 @@ IntRect RenderText::localCaretRect(InlineBox* inlineBox, int caretOffset, int* e
         *extraWidthToEndOfLine = (box->root()->width() + rootLeft) - (left + 1);
 
     RenderBlock* cb = containingBlock();
+    RenderStyle* cbStyle = cb->style();
+    int leftEdge;
+    int rightEdge;
     if (style()->autoWrap()) {
-        int availableWidth = cb->lineWidth(top, false);
-        if (box->direction() == LTR)
-            left = min(left, rootLeft + availableWidth - caretWidthRightOfOffset);
-        else
-            left = max(left, cb->x());
+        leftEdge = cb->x();
+        rightEdge = cb->frameRect().right();
     } else {
-        // If there is no wrapping, the caret can leave its containing block, but not its root line box.
-        if (cb->style()->direction() == LTR) {
-            int rightEdge = max(cb->width(), rootRight);
-            left = min(left, rightEdge - caretWidthRightOfOffset);
-            left = max(left, rootLeft);
-        } else {
-            int leftEdge = min(cb->x(), rootLeft);
-            left = max(left, leftEdge);
-            left = min(left, rootRight - caretWidth);
-        }
+        leftEdge = min(cb->x(), rootLeft);
+        rightEdge = max(cb->frameRect().right(), rootRight);
+    }
+
+    bool rightAligned = false;
+    switch (cbStyle->textAlign()) {
+    case TAAUTO:
+    case JUSTIFY:
+        rightAligned = cbStyle->direction() == RTL;
+        break;
+    case RIGHT:
+    case WEBKIT_RIGHT:
+        rightAligned = true;
+        break;
+    case LEFT:
+    case WEBKIT_LEFT:
+    case CENTER:
+    case WEBKIT_CENTER:
+        break;
+    }
+
+    if (rightAligned) {
+        left = max(left, leftEdge);
+        left = min(left, rootRight - caretWidth);
+    } else {
+        left = min(left, rightEdge - caretWidthRightOfOffset);
+        left = max(left, rootLeft);
     }
 
     return IntRect(left, top, caretWidth, height);
