@@ -1,5 +1,11 @@
 2010-04-22  Fumitoshi Ukai  <ukai@chromium.org>
 
+        Unreviewed build fix.
+
+        * wtf/MD5.cpp: fix include path of CString.h
+
+2010-04-22  Fumitoshi Ukai  <ukai@chromium.org>
+
         Reviewed by Adam Barth.
 
         MD5 is required for WebSocket new protocol implementation

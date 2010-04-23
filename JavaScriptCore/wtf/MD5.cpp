@@ -51,8 +51,8 @@
 
 #include "Assertions.h"
 #ifndef NDEBUG
-#include "CString.h"
-#include "WTFString.h"
+#include "StringExtras.h"
+#include "text/CString.h"
 #endif
 
 namespace WTF {
