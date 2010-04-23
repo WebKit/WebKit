@@ -1,0 +1,130 @@
+#!/usr/bin/python
+# Copyright (C) 2010 Google Inc.  All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+# OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+
+# This script generates h and cpp file for TestObj.idl using the V8 code
+# generator. Please execute the script whenever changes are made to
+# CodeGeneratorV8.pm, and submit the changes in V8TestObj.h/cpp in the same
+# patch. This makes it easier to track and review changes in generated code.
+# To execute, invoke: 'python run_tests.py'
+
+import os
+import os.path
+import subprocess
+import sys
+import tempfile
+from webkitpy.common.checkout import scm
+
+
+def generateFromIDL(generator, idlFile, outputDir):
+    cmd = ['perl', '-w',
+           '-IWebCore/bindings/scripts',
+           'WebCore/bindings/scripts/generate-bindings.pl',
+           # idl include directories (path relative to generate-bindings.pl)
+           '--include', '.',
+           # place holder for defines (generate-bindings.pl requirement)
+           '--defines', 'x',
+           '--generator', generator,
+           '--outputDir', outputDir,
+           idlFile]
+    return subprocess.call(cmd) == 0
+
+
+def detectChanges(workDir, referenceDir):
+    changesFound = False
+    for outputFile in os.listdir(workDir):
+        print 'Detecting changes in %s...' % outputFile
+        cmd = ['diff',
+               os.path.join(referenceDir, outputFile),
+               os.path.join(workDir, outputFile)]
+        if subprocess.call(cmd) != 0:
+            print 'Detected changes in %s (see above)' % outputFile
+            changesFound = True
+        else:
+            print 'No changes found.'
+
+    return changesFound
+
+
+def runTests(generator, inputDir, referenceDir, overwrite):
+    workDir = referenceDir
+
+    passed = True
+    for inputFile in os.listdir(inputDir):
+        (name, ext) = os.path.splitext(inputFile)
+        if ext != '.idl':
+            continue
+        print 'Testing the %s generator on %s' % (generator, inputFile)
+        # Generate output into the work directory (either the given one or a 
+        # temp one if not overwrite is performed)
+        if not overwrite:
+            workDir = tempfile.mkdtemp()
+        if not generateFromIDL(generator, os.path.join(inputDir, inputFile), workDir):
+            passed = False
+        if overwrite:
+            print "Overwrote reference files"
+            continue
+        # Detect changes
+        if detectChanges(workDir, referenceDir):
+            passed = False
+
+    if not passed:
+        print '%s generator failed.' % generator
+    return passed
+
+
+def main(argv):
+    """Runs WebCore bindings code generators on test IDL files and compares 
+    the results with reference files.
+
+    Options:
+        --overwrite: Overwrites the reference files with the generated results.
+
+    """
+    overwrite = "--overwrite" in argv
+
+    scmSystem = scm.detect_scm_system(os.curdir)
+    print scmSystem
+
+    os.chdir(scmSystem.checkout_root)
+
+    allTestsPassed = True
+    if not runTests('V8',
+        os.path.join('WebCore', 'bindings', 'v8', 'test'), # Input dir
+        os.path.join('WebCore', 'bindings', 'v8', 'test'), # Reference dir
+        overwrite):
+        allTestsPassed = False
+
+    # FIXME: Add tests for JSC, ObjC
+
+    if allTestsPassed:
+        print 'All tests passed!'
+        return 0
+    else:
+        print '(To update the reference files, execute "run-bindings-test --overwrite")'
+        return -1
+
+
+if __name__ == '__main__':
+    sys.exit(main(sys.argv))
