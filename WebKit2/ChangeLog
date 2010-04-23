@@ -1,5 +1,14 @@
 2010-04-23  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Remove an assert. (It's not valid when resizing).
+
+        * WebProcess/WebPage/win/DrawingAreaUpdateChunk.cpp:
+        (WebKit::DrawingAreaUpdateChunk::didUpdate):
+
+2010-04-23  Anders Carlsson  <andersca@apple.com>
+
         Fix build.
 
         * UIProcess/win/DrawingAreaProxy.cpp:
