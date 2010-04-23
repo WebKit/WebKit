@@ -1,3 +1,26 @@
+2010-04-23  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] [Performance] GraphicsLayer: constructing the layers takes too long
+        https://bugs.webkit.org/show_bug.cgi?id=36365
+
+        The issue came from using QGraphicsView's cache as is. The problem is that
+        several code-paths require re-rendering of the item, but not re-rendering
+        of the web content into the cache.
+
+        The way to solve it is by having GraphicsLayerQt manage the cache directly
+        via QPixmapCache, instead of using QGraphicsItem cache modes.
+
+        FPS measurement shows significant improvement (20FPS before, 40FPS after)
+        on several use-cases, including blog-files/leaves on a desktop environment.
+
+        * platform/graphics/qt/GraphicsLayerQt.cpp:
+        (WebCore::GraphicsLayerQtImpl::GraphicsLayerQtImpl):
+        (WebCore::GraphicsLayerQtImpl::recache):
+        (WebCore::GraphicsLayerQtImpl::paint):
+        (WebCore::GraphicsLayerQtImpl::flushChanges):
+
 2010-04-23  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Dimitri Glazkov.
