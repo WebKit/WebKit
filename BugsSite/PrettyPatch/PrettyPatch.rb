@@ -202,9 +202,15 @@ h1 :hover {
 <script src="https://bugs.webkit.org/prototype.js"></script> 
 <script>
 // Code to support inline comments in bugs.webkit.org.
+
 function getSubmitTextArea() {
   // Note that this only works when running on same domain.
-  return parent.frames[1].document.getElementsByTagName("textarea")[0];
+  if (parent.frames.length == 2) {
+    // We're probably in the action=review page.
+    return parent.frames[1].document.getElementById("comment");
+  }
+  // We're probably in the action=edit page.
+  return parent.document.getElementById("smallCommentFrame");
 }
 
 function onLineClicked(e) {
@@ -274,17 +280,21 @@ function onCommentCancel(comment) {
   comment.remove();
 }
 
+function onClearSubmitArea() {
+  var submission = getSubmitTextArea();
+  submission.value = "";
+}
+
 if (top !== window) {
   window.addEventListener("load", function () {
     var lines = $$("div[class~='Line']");
     for (var i = 0; i < lines.length; ++i) {
       lines[i].addEventListener("click", onLineClicked, false);
     }
-  }, false);
 
-  parent.addEventListener("load", function () {
-    // Remove the full diff from the submit text area.
-    return parent.frames[1].document.getElementsByTagName("textarea")[0].value = "";
+    $$("h1")[0].insert("<button style='float:right;' "+
+      "onclick='onClearSubmitArea()'>" +
+      "Clear Main Comment Box</button>");
   }, false);
 }
 </script>

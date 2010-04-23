@@ -1,5 +1,19 @@
 2010-04-22  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Darin Adler.
+
+        The new review tools shouldn't clear the comment box automatically
+        https://bugs.webkit.org/show_bug.cgi?id=38004
+
+        Instead, we now have a button for doing that explicitly.  If people
+        like this tool, we can look at fancier solutions.
+
+        Also, tried to make the tool work on the edit page as well as the review page.
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2010-04-22  Adam Barth  <abarth@webkit.org>
+
         Unreviewed.  Turns out we need to do more escaping because Ruby was
         explanding our newlines, creating a syntax error.
 
