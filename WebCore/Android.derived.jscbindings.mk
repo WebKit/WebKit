@@ -70,10 +70,10 @@ GEN := \
     $(intermediates)/css/JSCSSVariablesDeclaration.h \
     $(intermediates)/css/JSCSSVariablesRule.h \
     $(intermediates)/css/JSCounter.h \
-    $(intermediates)/css/JSMedia.h \
     $(intermediates)/css/JSMediaList.h \
     $(intermediates)/css/JSRGBColor.h \
     $(intermediates)/css/JSRect.h \
+    $(intermediates)/css/JSStyleMedia.h \
     $(intermediates)/css/JSStyleSheet.h \
     $(intermediates)/css/JSStyleSheetList.h \
     $(intermediates)/css/JSWebKitCSSKeyframeRule.h \

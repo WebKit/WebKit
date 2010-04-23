@@ -8141,7 +8141,7 @@
 				>
 			</File>
 			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMedia.cpp"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSStyleMedia.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -8193,7 +8193,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSMedia.h"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSStyleMedia.h"
 				>
 			</File>
 			<File
@@ -27151,11 +27151,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\css\Media.cpp"
+				RelativePath="..\css\StyleMedia.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\css\Media.h"
+				RelativePath="..\css\StyleMedia.h"
 				>
 			</File>
 			<File

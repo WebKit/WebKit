@@ -115,10 +115,10 @@ IDL_BINDINGS += \
 	WebCore/css/CSSVariablesDeclaration.idl \
 	WebCore/css/CSSVariablesRule.idl \
 	WebCore/css/Counter.idl \
-	WebCore/css/Media.idl \
 	WebCore/css/MediaList.idl \
-	WebCore/css/RGBColor.idl \
 	WebCore/css/Rect.idl \
+	WebCore/css/RGBColor.idl \
+	WebCore/css/StyleMedia.idl \
 	WebCore/css/StyleSheet.idl \
 	WebCore/css/StyleSheetList.idl \
 	WebCore/css/WebKitCSSKeyframeRule.idl \
@@ -684,26 +684,26 @@ webcore_sources += \
 	WebCore/css/FontValue.h \
 	WebCore/css/MediaFeatureNames.cpp \
 	WebCore/css/MediaFeatureNames.h \
-	WebCore/css/Media.cpp \
-	WebCore/css/Media.h \
 	WebCore/css/MediaList.cpp \
 	WebCore/css/MediaList.h \
 	WebCore/css/MediaQuery.cpp \
-	WebCore/css/MediaQuery.h \
 	WebCore/css/MediaQueryEvaluator.cpp \
 	WebCore/css/MediaQueryEvaluator.h \
 	WebCore/css/MediaQueryExp.cpp \
 	WebCore/css/MediaQueryExp.h \
+	WebCore/css/MediaQuery.h \
 	WebCore/css/Pair.h \
+	WebCore/css/Rect.h \
 	WebCore/css/RGBColor.cpp \
 	WebCore/css/RGBColor.h \
-	WebCore/css/Rect.h \
 	WebCore/css/ShadowValue.cpp \
 	WebCore/css/ShadowValue.h \
 	WebCore/css/StyleBase.cpp \
 	WebCore/css/StyleBase.h \
 	WebCore/css/StyleList.cpp \
 	WebCore/css/StyleList.h \
+	WebCore/css/StyleMedia.cpp \
+	WebCore/css/StyleMedia.h \
 	WebCore/css/StyleSheet.cpp \
 	WebCore/css/StyleSheet.h \
 	WebCore/css/StyleSheetList.cpp \

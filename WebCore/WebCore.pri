@@ -230,10 +230,10 @@ IDL_BINDINGS += \
     css/CSSValueList.idl \
     css/CSSVariablesDeclaration.idl \
     css/CSSVariablesRule.idl \
-    css/Media.idl \
     css/MediaList.idl \
-    css/RGBColor.idl \
     css/Rect.idl \
+    css/RGBColor.idl \
+    css/StyleMedia.idl \
     css/StyleSheet.idl \
     css/StyleSheetList.idl \
     css/WebKitCSSKeyframeRule.idl \

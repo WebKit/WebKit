@@ -1,3 +1,13 @@
+2010-04-22  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Laszlo Gombos.
+
+        Updated test results as the interface Media was renamed
+        to StyleMedia.
+
+        * fast/dom/prototype-inheritance-2-expected.txt:
+        * platform/win/fast/dom/prototype-inheritance-2-expected.txt:
+
 2010-04-23  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Adam Barth.

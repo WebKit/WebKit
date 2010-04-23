@@ -226,10 +226,10 @@
 		0FF5025B102BA9010066F39A /* DOMMedia.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF50259102BA9010066F39A /* DOMMedia.h */; };
 		0FF5025C102BA9010066F39A /* DOMMedia.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FF5025A102BA9010066F39A /* DOMMedia.mm */; };
 		0FF50263102BA92C0066F39A /* DOMMediaInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF50262102BA92B0066F39A /* DOMMediaInternal.h */; };
-		0FF50269102BA9430066F39A /* JSMedia.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF50267102BA9430066F39A /* JSMedia.cpp */; };
-		0FF5026A102BA9430066F39A /* JSMedia.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF50268102BA9430066F39A /* JSMedia.h */; };
-		0FF50271102BA96A0066F39A /* Media.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF5026E102BA9660066F39A /* Media.cpp */; };
-		0FF50272102BA96A0066F39A /* Media.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF5026F102BA96A0066F39A /* Media.h */; };
+		0FF50269102BA9430066F39A /* JSStyleMedia.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF50267102BA9430066F39A /* JSStyleMedia.cpp */; };
+		0FF5026A102BA9430066F39A /* JSStyleMedia.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF50268102BA9430066F39A /* JSStyleMedia.h */; };
+		0FF50271102BA96A0066F39A /* StyleMedia.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF5026E102BA9660066F39A /* StyleMedia.cpp */; };
+		0FF50272102BA96A0066F39A /* StyleMedia.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF5026F102BA96A0066F39A /* StyleMedia.h */; };
 		1402645E0AFDC19B005919E2 /* LoggingMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1402645D0AFDC19B005919E2 /* LoggingMac.mm */; };
 		1403B99709EB13AF00797C7F /* DOMWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 1403B99509EB13AF00797C7F /* DOMWindow.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1403B99809EB13AF00797C7F /* DOMWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1403B99609EB13AF00797C7F /* DOMWindow.cpp */; };
@@ -5600,11 +5600,11 @@
 		0FF50259102BA9010066F39A /* DOMMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMMedia.h; sourceTree = "<group>"; };
 		0FF5025A102BA9010066F39A /* DOMMedia.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMMedia.mm; sourceTree = "<group>"; };
 		0FF50262102BA92B0066F39A /* DOMMediaInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMMediaInternal.h; sourceTree = "<group>"; };
-		0FF50267102BA9430066F39A /* JSMedia.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMedia.cpp; sourceTree = "<group>"; };
-		0FF50268102BA9430066F39A /* JSMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMedia.h; sourceTree = "<group>"; };
-		0FF5026E102BA9660066F39A /* Media.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Media.cpp; sourceTree = "<group>"; };
-		0FF5026F102BA96A0066F39A /* Media.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Media.h; sourceTree = "<group>"; };
-		0FF50270102BA96A0066F39A /* Media.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Media.idl; sourceTree = "<group>"; };
+		0FF50267102BA9430066F39A /* JSStyleMedia.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStyleMedia.cpp; sourceTree = "<group>"; };
+		0FF50268102BA9430066F39A /* JSStyleMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStyleMedia.h; sourceTree = "<group>"; };
+		0FF5026E102BA9660066F39A /* StyleMedia.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleMedia.cpp; sourceTree = "<group>"; };
+		0FF5026F102BA96A0066F39A /* StyleMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleMedia.h; sourceTree = "<group>"; };
+		0FF50270102BA96A0066F39A /* StyleMedia.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = StyleMedia.idl; sourceTree = "<group>"; };
 		1402645D0AFDC19B005919E2 /* LoggingMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = LoggingMac.mm; sourceTree = "<group>"; };
 		1403B90C09EB124500797C7F /* DOMWindow.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMWindow.idl; sourceTree = "<group>"; };
 		1403B99509EB13AF00797C7F /* DOMWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWindow.h; sourceTree = "<group>"; };
@@ -13884,8 +13884,8 @@
 				BC686C790E0C330100DE8A08 /* JSCSSVariablesDeclaration.h */,
 				BC686C7A0E0C330100DE8A08 /* JSCSSVariablesRule.cpp */,
 				BC686C7B0E0C330100DE8A08 /* JSCSSVariablesRule.h */,
-				0FF50267102BA9430066F39A /* JSMedia.cpp */,
-				0FF50268102BA9430066F39A /* JSMedia.h */,
+				0FF50267102BA9430066F39A /* JSStyleMedia.cpp */,
+				0FF50268102BA9430066F39A /* JSStyleMedia.h */,
 				BC3C39B40C0D3D8D005F4D7A /* JSMediaList.cpp */,
 				BC3C39B50C0D3D8D005F4D7A /* JSMediaList.h */,
 				BCFE2F0F0C1B58370020235F /* JSRect.cpp */,
@@ -15752,9 +15752,9 @@
 				93CA4C9B09DF93FA00DF8677 /* makeprop.pl */,
 				93CA4C9D09DF93FA00DF8677 /* makevalues.pl */,
 				FA654A631108ABB7002615E0 /* mathml.css */,
-				0FF5026E102BA9660066F39A /* Media.cpp */,
-				0FF5026F102BA96A0066F39A /* Media.h */,
-				0FF50270102BA96A0066F39A /* Media.idl */,
+				0FF5026E102BA9660066F39A /* StyleMedia.cpp */,
+				0FF5026F102BA96A0066F39A /* StyleMedia.h */,
+				0FF50270102BA96A0066F39A /* StyleMedia.idl */,
 				070DD8F50F01868000727DEB /* mediaControls.css */,
 				07AFE5900F1446BD00841617 /* mediaControlsQuickTime.css */,
 				4E19591F0A39DABA00220FE5 /* MediaFeatureNames.cpp */,
@@ -17771,7 +17771,7 @@
 				A86629D309DA2B48009633A5 /* JSKeyboardEvent.h in Headers */,
 				935F45430F7C3B5F00D7C1FB /* JSLazyEventListener.h in Headers */,
 				BCE1C43C0D9830D3003B02F2 /* JSLocation.h in Headers */,
-				0FF5026A102BA9430066F39A /* JSMedia.h in Headers */,
+				0FF5026A102BA9430066F39A /* JSStyleMedia.h in Headers */,
 				E44614190CD6826900FADA75 /* JSMediaError.h in Headers */,
 				BC3C39B70C0D3D8D005F4D7A /* JSMediaList.h in Headers */,
 				E107400E0E77BDC00033AF24 /* JSMessageChannel.h in Headers */,
@@ -18052,7 +18052,7 @@
 				FA654A6C1108ABED002615E0 /* MathMLTextElement.h in Headers */,
 				49D5DC2C0F423A73008F20FD /* Matrix3DTransformOperation.h in Headers */,
 				49E911C70EF86D47009D0CAF /* MatrixTransformOperation.h in Headers */,
-				0FF50272102BA96A0066F39A /* Media.h in Headers */,
+				0FF50272102BA96A0066F39A /* StyleMedia.h in Headers */,
 				931BCC611124DFCB00BE70DD /* MediaCanStartListener.h in Headers */,
 				ABFE7E130D32FAF60066F4D2 /* MediaControlElements.h in Headers */,
 				AB40484E0E083FA8007D6920 /* MediaDocument.h in Headers */,
@@ -20072,7 +20072,7 @@
 				935F45420F7C3B5F00D7C1FB /* JSLazyEventListener.cpp in Sources */,
 				BCE1C43B0D9830D3003B02F2 /* JSLocation.cpp in Sources */,
 				BCE1C4400D9830F4003B02F2 /* JSLocationCustom.cpp in Sources */,
-				0FF50269102BA9430066F39A /* JSMedia.cpp in Sources */,
+				0FF50269102BA9430066F39A /* JSStyleMedia.cpp in Sources */,
 				E44614180CD6826900FADA75 /* JSMediaError.cpp in Sources */,
 				BC3C39B60C0D3D8D005F4D7A /* JSMediaList.cpp in Sources */,
 				E107400D0E77BDC00033AF24 /* JSMessageChannel.cpp in Sources */,
@@ -20393,7 +20393,7 @@
 				FA654A6B1108ABED002615E0 /* MathMLTextElement.cpp in Sources */,
 				49D5DC2B0F423A73008F20FD /* Matrix3DTransformOperation.cpp in Sources */,
 				49E911C60EF86D47009D0CAF /* MatrixTransformOperation.cpp in Sources */,
-				0FF50271102BA96A0066F39A /* Media.cpp in Sources */,
+				0FF50271102BA96A0066F39A /* StyleMedia.cpp in Sources */,
 				ABFE7E120D32FAF60066F4D2 /* MediaControlElements.cpp in Sources */,
 				AB40484D0E083FA8007D6920 /* MediaDocument.cpp in Sources */,
 				4E1959210A39DABA00220FE5 /* MediaFeatureNames.cpp in Sources */,

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,55 +24,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#ifndef StyleMedia_h
+#define StyleMedia_h
 
-#include "Media.h"
-#include "CSSStyleSelector.h"
-#include "Frame.h"
-#include "FrameView.h"
-#include "MediaList.h"
-#include "MediaQueryEvaluator.h"
+#include "DOMWindow.h"
 
 namespace WebCore {
 
-Media::Media(Frame* frame)
-    : m_frame(frame)
-{
-}
+class StyleMedia : public RefCounted<StyleMedia> {
+public:
+    static PassRefPtr<StyleMedia> create(Frame* frame)
+    {
+        return adoptRef(new StyleMedia(frame));
+    }
 
-String Media::type() const
-{
-    FrameView* view = m_frame ? m_frame->view() : 0;
-    if (view)
-        return view->mediaType();
+    void disconnectFrame() { m_frame = 0; }
 
-    return String();
-}
+    String type() const;
 
-bool Media::matchMedium(const String& query) const
-{
-    if (!m_frame)
-        return false;
+    bool matchMedium(const String&) const;
 
-    Document* document = m_frame->document();
-    ASSERT(document);
-    Element* documentElement = document->documentElement();
-    ASSERT(documentElement);
+private:
+    StyleMedia(Frame*);
 
-    CSSStyleSelector* styleSelector = document->styleSelector();
-    if (!styleSelector)
-        return false;
+    Frame* m_frame;
+};
 
-    RefPtr<RenderStyle> rootStyle = styleSelector->styleForElement(documentElement, 0 /*defaultParent*/, false /*allowSharing*/, true /*resolveForRootDefault*/);
-    RefPtr<MediaList> media = MediaList::create();
+} // namespace
 
-    ExceptionCode ec = 0;
-    media->setMediaText(query, ec);
-    if (ec)
-        return false;
-
-    MediaQueryEvaluator screenEval(type(), m_frame, rootStyle.get());
-    return screenEval.eval(media.get());
-}
-
-} // namespace WebCore
+#endif // StyleMedia_h

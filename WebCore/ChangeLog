@@ -1,3 +1,38 @@
+2010-04-22  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Laszlo Gombos.
+
+        Rename window.media to window.styleMedia
+        https://bugs.webkit.org/show_bug.cgi?id=36187
+
+        Rename the interface Media to StyleMedia as required by the
+        new CSSOM View spec.
+
+        * Android.derived.jscbindings.mk:
+        * Android.derived.v8bindings.mk:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/Media.cpp: Removed.
+        * css/Media.h: Removed.
+        * css/Media.idl: Removed.
+        * css/StyleMedia.cpp: Added.
+        (WebCore::StyleMedia::StyleMedia):
+        (WebCore::StyleMedia::type):
+        (WebCore::StyleMedia::matchMedium):
+        * css/StyleMedia.h: Added.
+        (WebCore::StyleMedia::create):
+        (WebCore::StyleMedia::disconnectFrame):
+        * css/StyleMedia.idl: Added.
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::styleMedia):
+        * page/DOMWindow.h:
+        (WebCore::DOMWindow::optionalMedia):
+        * page/DOMWindow.idl:
+
 2010-04-23  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

@@ -429,7 +429,6 @@ SOURCES += \
     css/FontFamilyValue.cpp \
     css/FontValue.cpp \
     css/MediaFeatureNames.cpp \
-    css/Media.cpp \
     css/MediaList.cpp \
     css/MediaQuery.cpp \
     css/MediaQueryEvaluator.cpp \
@@ -438,6 +437,7 @@ SOURCES += \
     css/ShadowValue.cpp \
     css/StyleBase.cpp \
     css/StyleList.cpp \
+    css/StyleMedia.cpp \
     css/StyleSheet.cpp \
     css/StyleSheetList.cpp \
     css/WebKitCSSKeyframeRule.cpp \
@@ -1155,7 +1155,6 @@ HEADERS += \
     css/FontFamilyValue.h \
     css/FontValue.h \
     css/MediaFeatureNames.h \
-    css/Media.h \
     css/MediaList.h \
     css/MediaQueryEvaluator.h \
     css/MediaQueryExp.h \
@@ -1164,6 +1163,7 @@ HEADERS += \
     css/ShadowValue.h \
     css/StyleBase.h \
     css/StyleList.h \
+    css/StyleMedia.h \
     css/StyleSheet.h \
     css/StyleSheetList.h \
     css/WebKitCSSKeyframeRule.h \

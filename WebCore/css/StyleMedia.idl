@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +24,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Media_h
-#define Media_h
-
-#include "DOMWindow.h"
-
-namespace WebCore {
-
-class Media : public RefCounted<Media> {
-public:
-    static PassRefPtr<Media> create(Frame* frame)
-    {
-        return adoptRef(new Media(frame));
-    }
-
-    void disconnectFrame() { m_frame = 0; }
-
-    String type() const;
-
-    bool matchMedium(const String&) const;
-    
-private:
-    Media(Frame*);
-
-    Frame* m_frame;
-};
-
-} // namespace
-
-#endif // Media_h
+module view {
+    interface StyleMedia {
+        readonly attribute DOMString type;
+        boolean matchMedium(in DOMString mediaquery);
+    };
+}

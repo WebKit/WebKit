@@ -51,10 +51,10 @@ GEN := \
     $(intermediates)/bindings/V8CSSVariablesDeclaration.h \
     $(intermediates)/bindings/V8CSSVariablesRule.h \
     $(intermediates)/bindings/V8Counter.h \
-    $(intermediates)/bindings/V8Media.h \
     $(intermediates)/bindings/V8MediaList.h \
     $(intermediates)/bindings/V8Rect.h \
     $(intermediates)/bindings/V8RGBColor.h \
+    $(intermediates)/bindings/V8StyleMedia.h \
     $(intermediates)/bindings/V8StyleSheet.h \
     $(intermediates)/bindings/V8StyleSheetList.h  \
     $(intermediates)/bindings/V8WebKitCSSKeyframeRule.h \
