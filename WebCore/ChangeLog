@@ -1,5 +1,18 @@
 2010-04-23  David Kilzer  <ddkilzer@apple.com>
 
+        Size mismatch between format string and argument in dumpTextEncodingNameMap()
+
+        Reviewed by Darin Adler.
+
+        See Bug 38030 and r58157.
+
+        * platform/text/TextEncodingRegistry.cpp:
+        (WebCore::dumpTextEncodingNameMap): Assigned
+        textEncodingNameMap->size() to an unsigned variable before using
+        it in the fprintf() statement.
+
+2010-04-23  David Kilzer  <ddkilzer@apple.com>
+
         BUILD FIX: Attempt to fix Windows build after Bug 36187 landed in r58168
 
         * DerivedSources.cpp: Changed include of JSMedia.cpp to
