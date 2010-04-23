@@ -239,6 +239,10 @@
 				RelativePath="..\..\wtf\win\MainThreadWin.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\..\wtf\win\OwnPtrWin.cpp"
+				>
+			</File>
 		</Filter>
 		<File
 			RelativePath="..\..\wtf\AlwaysInline.h"
@@ -418,10 +422,6 @@
 		</File>
 		<File
 			RelativePath="..\..\wtf\OwnPtrCommon.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\wtf\OwnPtrWin.cpp"
 			>
 		</File>
 		<File
