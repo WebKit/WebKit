@@ -1,3 +1,16 @@
+2010-04-23  Andy Estes  <aestes@apple.com>
+
+        Rubber stamped by Steve Falkenburg.
+
+        Roll out http://trac.webkit.org/changeset/55385.
+
+        <rdar://problem/7884444>
+
+        * Interfaces/IWebUIDelegatePrivate.idl:
+        * Interfaces/WebKit.idl:
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::createPlugin):
+
 2010-04-22  Dave Moore  <davemoore@chromium.org>
 
         Reviewed by Dimitri Glazkov.
