@@ -1,3 +1,19 @@
+2010-04-23  Jeff Schiller  <codedread@gmail.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Display tooltips when hovering over SVG elements, Bug 16854
+        https://bugs.webkit.org/show_bug.cgi?id=16854
+
+        Manual test added for verifying tooltips.
+
+        * manual-tests/svg-tooltip.svg: Added.
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::title): xlink:title takes precedence, otherwise SVGStyledElement::title() is used
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::title): checks for a shadow parent and uses that title, otherwise uses the content's title
+        * svg/SVGStyledElement.h: add title() method declaration
+
 2010-04-23  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/38032> No need to content sniff 304 responses

@@ -60,7 +60,13 @@ SVGAElement::~SVGAElement()
 
 String SVGAElement::title() const
 {
-    return getAttribute(XLinkNames::titleAttr);
+    // If the xlink:title is set (non-empty string), use it.
+    const AtomicString& title = getAttribute(XLinkNames::titleAttr);
+    if (!title.isEmpty())
+        return title;
+
+    // Otherwise, use the title of this element.
+    return SVGStyledElement::title();
 }
 
 void SVGAElement::parseMappedAttribute(MappedAttribute* attr)
