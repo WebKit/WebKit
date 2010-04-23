@@ -205,6 +205,8 @@ void CompositeAnimation::updateKeyframeAnimations(RenderObject* renderer, Render
             
         // Toss the animation order map.
         m_keyframeAnimationOrderMap.clear();
+
+        DEFINE_STATIC_LOCAL(const AtomicString, none, ("none"));
         
         // Now mark any still active animations as active and add any new animations.
         if (targetStyle->animations()) {
@@ -232,7 +234,7 @@ void CompositeAnimation::updateKeyframeAnimations(RenderObject* renderer, Render
                     // Set the saved animation to this new one, just in case the play state has changed.
                     keyframeAnim->setAnimation(anim);
                     keyframeAnim->setIndex(i);
-                } else if ((anim->duration() || anim->delay()) && anim->iterationCount()) {
+                } else if ((anim->duration() || anim->delay()) && anim->iterationCount() && animationName != none) {
                     keyframeAnim = KeyframeAnimation::create(const_cast<Animation*>(anim), renderer, i, this, targetStyle);
                     m_keyframeAnimations.set(keyframeAnim->name().impl(), keyframeAnim);
                 }

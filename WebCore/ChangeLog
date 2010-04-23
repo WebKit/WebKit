@@ -1,3 +1,16 @@
+2010-04-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        CompositeAnimation::updateKeyframeAnimations() can make a KeyframeAnimation for animation "none"
+        https://bugs.webkit.org/show_bug.cgi?id=38017
+
+        Check to see if the animation name is "none", and don't fire off a keyframe animation in
+        that case.
+
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::updateKeyframeAnimations):
+
 2010-04-23  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
