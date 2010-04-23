@@ -127,7 +127,9 @@ private:
     mutable int m_positionEndOffset;
     const UChar* m_textCharacters;
     int m_textLength;
-    
+    // Hold string m_textCharacters points to so we ensure it won't be deleted.
+    String m_text;
+
     // Used when there is still some pending text from the current node; when these
     // are false and 0, we go back to normal iterating.
     bool m_needsAnotherNewline;

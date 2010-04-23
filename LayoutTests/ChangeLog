@@ -1,3 +1,12 @@
+2010-04-22  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION: TextIterator may use freed memory
+        https://bugs.webkit.org/show_bug.cgi?id=37973
+
+        * platform/chromium/test_expectations.txt:
+
 2010-04-22  Yuzo Fujishima  <yuzo@google.com>
 
         Unreviewed. Chromium test expectation change.

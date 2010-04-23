@@ -1,3 +1,19 @@
+2010-04-22  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION: TextIterator may use freed memory
+        https://bugs.webkit.org/show_bug.cgi?id=37973
+
+        Added TextIterator::m_text to hold the returned String.
+
+        No new tests because there are no behavior change, but
+        copy-backslash-with-euc.html on chromium-win should test this.
+
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::emitText):
+        * editing/TextIterator.h:
+
 2010-04-22  Michael Forney  <mforney@mforney.org>
 
         Reviewed by Adam Barth.
