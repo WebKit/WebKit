@@ -76,9 +76,9 @@ void DrawingAreaProxy::paint(HDC hdc, RECT dirtyRect)
         if (!page->isValid())
             return;
         
-        std::auto_ptr<CoreIPC::ArgumentDecoder> arguments = page->process()->connection()->waitFor(DrawingAreaProxyMessage::DidSetFrame, page->pageID(), 0.04);
+        std::auto_ptr<CoreIPC::ArgumentDecoder> arguments = page->process()->connection()->waitFor(DrawingAreaProxyMessage::DidSetSize, page->pageID(), 0.04);
         if (arguments.get())
-            didReceiveMessage(page->process()->connection(), CoreIPC::MessageID(DrawingAreaProxyMessage::DidSetFrame), *arguments.get());
+            didReceiveMessage(page->process()->connection(), CoreIPC::MessageID(DrawingAreaProxyMessage::DidSetSize), *arguments.get());
     }
 
     if (!m_backingStoreBitmap)
@@ -135,7 +135,7 @@ void DrawingAreaProxy::setSize(const IntSize& viewSize)
     m_isWaitingForDidSetFrameNotification = true;
     
     page->process()->responsivenessTimer()->start();
-    page->process()->connection()->send(DrawingAreaMessage::SetFrame, page->pageID(), CoreIPC::In(viewSize));
+    page->process()->connection()->send(DrawingAreaMessage::SetSize, page->pageID(), CoreIPC::In(viewSize));
 }
 
 void DrawingAreaProxy::didSetSize(const IntSize& viewSize, UpdateChunk* updateChunk)
@@ -173,7 +173,7 @@ void DrawingAreaProxy::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageI
             update(&updateChunk);
             break;
         }
-        case DrawingAreaProxyMessage::DidSetFrame: {
+        case DrawingAreaProxyMessage::DidSetSize: {
             IntSize viewSize;
             UpdateChunk updateChunk;
             if (!arguments.decode(CoreIPC::Out(viewSize, updateChunk)))

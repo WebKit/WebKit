@@ -1,3 +1,15 @@
+2010-04-23  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        * UIProcess/win/DrawingAreaProxy.cpp:
+        (WebKit::DrawingAreaProxy::paint):
+        (WebKit::DrawingAreaProxy::setSize):
+        (WebKit::DrawingAreaProxy::didReceiveMessage):
+        * WebProcess/WebPage/win/DrawingAreaUpdateChunk.cpp:
+        (WebKit::DrawingAreaUpdateChunk::setSize):
+        (WebKit::DrawingAreaUpdateChunk::didReceiveMessage):
+
 2010-04-22  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
