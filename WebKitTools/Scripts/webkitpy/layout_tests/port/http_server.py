@@ -55,7 +55,7 @@ class HttpdNotStarted(Exception):
 class Lighttpd(http_server_base.HttpServerBase):
 
     def __init__(self, port_obj, output_dir, background=False, port=None,
-                 root=None, run_background=None):
+                 root=None, register_cygwin=None, run_background=None):
         """Args:
           output_dir: the absolute path to the layout test result directory
         """
@@ -65,6 +65,7 @@ class Lighttpd(http_server_base.HttpServerBase):
         self._process = None
         self._port = port
         self._root = root
+        self._register_cygwin = register_cygwin
         self._run_background = run_background
         if self._port:
             self._port = int(self._port)
@@ -198,8 +199,21 @@ class Lighttpd(http_server_base.HttpServerBase):
             shutil.copyfile(os.path.join(module_path, lib_file),
                             os.path.join(tmp_module_path, lib_file))
 
+        # Put the cygwin directory first in the path to find cygwin1.dll
+        env = os.environ
+        if sys.platform in ('cygwin', 'win32'):
+            env['PATH'] = '%s;%s' % (
+                self._port_obj.path_from_chromium_base('third_party',
+                                                       'cygwin', 'bin'),
+                env['PATH'])
+
+        if sys.platform == 'win32' and self._register_cygwin:
+            setup_mount = self._port_obj.path_from_chromium_base('third_party',
+                'cygwin', 'setup_mount.bat')
+            subprocess.Popen(setup_mount).wait()
+
         _log.debug('Starting http server')
-        self._process = subprocess.Popen(start_cmd, env=os.environ)
+        self._process = subprocess.Popen(start_cmd, env=env)
 
         # Wait for server to start.
         self.mappings = mappings
