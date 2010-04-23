@@ -33,6 +33,7 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QCoreApplication>
+#include <QThread>
 
 namespace WTF {
 

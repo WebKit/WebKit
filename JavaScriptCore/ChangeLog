@@ -1,3 +1,9 @@
+2010-04-23  Sam Weinig  <sam@webkit.org>
+
+        Fix Qt build.
+
+        * wtf/qt/MainThreadQt.cpp: #include <QThread>
+
 2010-04-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
