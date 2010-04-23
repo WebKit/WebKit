@@ -418,6 +418,8 @@ FloatRect SimpleFontData::platformBoundsForGlyph(Glyph glyph) const
     boundingBox = CGRectApplyAffineTransform(box, CGAffineTransformMakeScale(scale, -scale));
     if (m_syntheticBoldOffset)
         boundingBox.setWidth(boundingBox.width() + m_syntheticBoldOffset);
+#else
+    UNUSED_PARAM(glyph);
 #endif
     return boundingBox;
 }
