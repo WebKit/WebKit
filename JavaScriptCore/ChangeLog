@@ -1,3 +1,43 @@
+2010-04-22  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38006
+        Change lifetime of JSC::IdentifierTables used by WebCores to match AtomicStringTable
+
+        Presently JSC's IdentifierTables are owned by the JSGlobalData.  For
+        JSGlobalData objects created via the API this should continue to be the case,
+        but for the JSGlobalData objects used by WebCore (the main thread's common
+        global data, and those for workers) use a IdentifierTable provided (and owned)
+        by wtfThreadData.  This allow the lifetime of these IdentifierTable to match
+        those of the corresponding AtomicStringTables.
+
+        * API/APIShims.h:
+        (JSC::APIEntryShim::APIEntryShim):
+        * API/JSContextRef.cpp:
+        (JSContextGroupCreate):
+        * runtime/Collector.cpp:
+        (JSC::Heap::protect):
+        (JSC::Heap::unprotect):
+        (JSC::Heap::markRoots):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        (JSC::JSGlobalData::~JSGlobalData):
+        (JSC::JSGlobalData::createContextGroup):
+        (JSC::JSGlobalData::create):
+        (JSC::JSGlobalData::sharedInstance):
+        * runtime/JSGlobalData.h:
+        (JSC::JSGlobalData::):
+        (JSC::JSGlobalData::isSharedInstance):
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::JSLock):
+        (JSC::JSLock::lock):
+        (JSC::JSLock::unlock):
+        (JSC::JSLock::DropAllLocks::DropAllLocks):
+        * wtf/WTFThreadData.cpp:
+        (WTF::WTFThreadData::WTFThreadData):
+        (WTF::WTFThreadData::~WTFThreadData):
+
 2010-04-22  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r58110.

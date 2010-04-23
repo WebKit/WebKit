@@ -103,8 +103,8 @@ void JSGlobalData::storeVPtrs()
     jsFunction->~JSCell();
 }
 
-JSGlobalData::JSGlobalData(bool isShared, ThreadStackType threadStackType)
-    : isSharedInstance(isShared)
+JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType threadStackType)
+    : globalDataType(globalDataType)
     , clientData(0)
     , arrayTable(fastNew<HashTable>(JSC::arrayTable))
     , dateTable(fastNew<HashTable>(JSC::dateTable))
@@ -128,7 +128,7 @@ JSGlobalData::JSGlobalData(bool isShared, ThreadStackType threadStackType)
 #if USE(JSVALUE32)
     , numberStructure(JSNumberCell::createStructure(jsNull()))
 #endif
-    , identifierTable(createIdentifierTable())
+    , identifierTable(globalDataType == Default ? wtfThreadData().currentIdentifierTable() : createIdentifierTable())
     , literalTable(createLiteralTable())
     , propertyNames(new CommonIdentifiers(this))
     , emptyList(new MarkedArgumentBuffer)
@@ -193,22 +193,21 @@ JSGlobalData::~JSGlobalData()
     delete emptyList;
 
     delete propertyNames;
-    deleteIdentifierTable(identifierTable);
+    if (globalDataType != Default)
+        deleteIdentifierTable(identifierTable);
     deleteLiteralTable(literalTable);
 
     delete clientData;
 }
 
-PassRefPtr<JSGlobalData> JSGlobalData::createNonDefault(ThreadStackType type)
+PassRefPtr<JSGlobalData> JSGlobalData::createContextGroup(ThreadStackType type)
 {
-    return adoptRef(new JSGlobalData(false, type));
+    return adoptRef(new JSGlobalData(APIContextGroup, type));
 }
 
 PassRefPtr<JSGlobalData> JSGlobalData::create(ThreadStackType type)
 {
-    JSGlobalData* globalData = new JSGlobalData(false, type);
-    wtfThreadData().initializeIdentifierTable(globalData->identifierTable);
-    return adoptRef(globalData);
+    return adoptRef(new JSGlobalData(Default, type));
 }
 
 PassRefPtr<JSGlobalData> JSGlobalData::createLeaked(ThreadStackType type)
@@ -228,7 +227,7 @@ JSGlobalData& JSGlobalData::sharedInstance()
 {
     JSGlobalData*& instance = sharedInstanceInternal();
     if (!instance) {
-        instance = new JSGlobalData(true, ThreadStackTypeSmall);
+        instance = new JSGlobalData(APIShared, ThreadStackTypeSmall);
 #if ENABLE(JSC_MULTIPLE_THREADS)
         instance->makeUsableFromMultipleThreads();
 #endif

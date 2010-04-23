@@ -60,7 +60,7 @@ static void setLockCount(intptr_t count)
 }
 
 JSLock::JSLock(ExecState* exec)
-    : m_lockBehavior(exec->globalData().isSharedInstance ? LockForReal : SilenceAssertionsOnly)
+    : m_lockBehavior(exec->globalData().isSharedInstance() ? LockForReal : SilenceAssertionsOnly)
 {
     lock(m_lockBehavior);
 }
@@ -105,12 +105,12 @@ void JSLock::unlock(JSLockBehavior lockBehavior)
 
 void JSLock::lock(ExecState* exec)
 {
-    lock(exec->globalData().isSharedInstance ? LockForReal : SilenceAssertionsOnly);
+    lock(exec->globalData().isSharedInstance() ? LockForReal : SilenceAssertionsOnly);
 }
 
 void JSLock::unlock(ExecState* exec)
 {
-    unlock(exec->globalData().isSharedInstance ? LockForReal : SilenceAssertionsOnly);
+    unlock(exec->globalData().isSharedInstance() ? LockForReal : SilenceAssertionsOnly);
 }
 
 bool JSLock::currentThreadIsHoldingLock()
@@ -162,7 +162,7 @@ bool JSLock::currentThreadIsHoldingLock()
 static unsigned lockDropDepth = 0;
 
 JSLock::DropAllLocks::DropAllLocks(ExecState* exec)
-    : m_lockBehavior(exec->globalData().isSharedInstance ? LockForReal : SilenceAssertionsOnly)
+    : m_lockBehavior(exec->globalData().isSharedInstance() ? LockForReal : SilenceAssertionsOnly)
 {
     pthread_once(&createJSLockCountOnce, createJSLockCount);
 

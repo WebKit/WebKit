@@ -39,8 +39,8 @@ WTFThreadData* WTFThreadData::staticData;
 WTFThreadData::WTFThreadData()
     : m_atomicStringTable(new WebCore::AtomicStringTable())
 #if USE(JSC)
-    , m_defaultIdentifierTable(0)
-    , m_currentIdentifierTable(0)
+    , m_defaultIdentifierTable(new JSC::IdentifierTable())
+    , m_currentIdentifierTable(m_defaultIdentifierTable)
 #endif
 {
 }
@@ -48,6 +48,9 @@ WTFThreadData::WTFThreadData()
 WTFThreadData::~WTFThreadData()
 {
     delete m_atomicStringTable;
+#if USE(JSC)
+    delete m_defaultIdentifierTable;
+#endif
 }
 
 } // namespace WebCore
