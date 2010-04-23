@@ -1,3 +1,13 @@
+2010-04-23  Patrick Gansterer  <paroga@paroga.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [BREWMP] Move OwnPtrBrew.cpp into platform specific folder.
+        https://bugs.webkit.org/show_bug.cgi?id=38042
+
+        * wtf/OwnPtrBrew.cpp: Removed.
+        * wtf/brew/OwnPtrBrew.cpp: Copied from JavaScriptCore/wtf/OwnPtrBrew.cpp.
+
 2010-04-22  Steve Block  <steveblock@google.com>
 
         Reviewed by Adam Barth.
