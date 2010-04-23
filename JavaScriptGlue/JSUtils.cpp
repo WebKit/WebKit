@@ -395,9 +395,8 @@ static pthread_once_t globalObjectKeyOnce = PTHREAD_ONCE_INIT;
 
 static void unprotectGlobalObject(void* data) 
 {
-    JSGlobalObject* jsGlobalObject = static_cast<JSGlueGlobalObject*>(data);
-    JSGlueAPIEntry entry(jsGlobalObject);
-    gcUnprotect(jsGlobalObject);
+    JSGlueAPIEntry entry;
+    gcUnprotect(static_cast<JSGlueGlobalObject*>(data));
 }
 
 static void initializeGlobalObjectKey()
@@ -405,19 +404,18 @@ static void initializeGlobalObjectKey()
     pthread_key_create(&globalObjectKey, unprotectGlobalObject);
 }
 
+JSGlobalData* getThreadGlobalData()
+{
+    return &JSGlobalData::sharedInstance();
+}
+
 static JSGlueGlobalObject* getThreadGlobalObject()
 {
     pthread_once(&globalObjectKeyOnce, initializeGlobalObjectKey);
     JSGlueGlobalObject* globalObject = static_cast<JSGlueGlobalObject*>(pthread_getspecific(globalObjectKey));
     if (!globalObject) {
-        JSGlobalData& globalData = JSGlobalData::sharedInstance();
-
-        IdentifierTable* storedIdentifierTable = wtfThreadData().currentIdentifierTable();
-        wtfThreadData().setCurrentIdentifierTable(globalData.identifierTable);
-        globalObject = new (&globalData) JSGlueGlobalObject(JSGlueGlobalObject::createStructure(jsNull()));
+        globalObject = new (getThreadGlobalData()) JSGlueGlobalObject(JSGlueGlobalObject::createStructure(jsNull()));
         gcProtect(globalObject);
-        wtfThreadData().setCurrentIdentifierTable(storedIdentifierTable);
-
         pthread_setspecific(globalObjectKey, globalObject);
     }
     return globalObject;
@@ -437,14 +435,7 @@ JSGlueAPIEntry::JSGlueAPIEntry()
     : m_lock(LockForReal)
     , m_storedIdentifierTable(wtfThreadData().currentIdentifierTable())
 {
-    wtfThreadData().setCurrentIdentifierTable(getThreadGlobalObject()->globalExec()->globalData().identifierTable);
-}
-
-JSGlueAPIEntry::JSGlueAPIEntry(JSGlobalObject* jsGlobalObject)
-    : m_lock(LockForReal)
-    , m_storedIdentifierTable(wtfThreadData().currentIdentifierTable())
-{
-    wtfThreadData().setCurrentIdentifierTable(jsGlobalObject->globalExec()->globalData().identifierTable);
+    wtfThreadData().setCurrentIdentifierTable(getThreadGlobalData()->identifierTable);
 }
 
 JSGlueAPIEntry::~JSGlueAPIEntry()
@@ -460,5 +451,5 @@ JSGlueAPICallback::JSGlueAPICallback(ExecState* exec)
 
 JSGlueAPICallback::~JSGlueAPICallback()
 {
-    wtfThreadData().setCurrentIdentifierTable(getThreadGlobalObject()->globalExec()->globalData().identifierTable);
+    wtfThreadData().setCurrentIdentifierTable(getThreadGlobalData()->identifierTable);
 }
