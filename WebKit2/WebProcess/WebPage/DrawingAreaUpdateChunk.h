@@ -49,12 +49,13 @@ public:
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder&);
 
 private:
-    void paintIntoUpdateChunk(UpdateChunk*);
-    
     void scheduleDisplay();
     void setSize(const WebCore::IntSize& viewSize);
 
     void didUpdate();
+
+    // Platform overrides
+    void paintIntoUpdateChunk(UpdateChunk*);
 
     WebCore::IntRect m_dirtyRect;
     bool m_isWaitingForUpdate;

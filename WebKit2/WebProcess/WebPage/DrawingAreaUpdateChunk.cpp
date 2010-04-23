@@ -32,8 +32,6 @@
 #include "WebCoreTypeArgumentMarshalling.h"
 #include "WebPage.h"
 #include "WebProcess.h"
-#include <WebCore/BitmapInfo.h>
-#include <WebCore/GraphicsContext.h>
 
 using namespace WebCore;
 
@@ -42,7 +40,7 @@ namespace WebKit {
 DrawingAreaUpdateChunk::DrawingAreaUpdateChunk(WebPage* webPage)
     : DrawingArea(DrawingAreaUpdateChunkType, webPage)
     , m_isWaitingForUpdate(false)
-    , m_displayTimer(WebProcess::shared().runLoop(), this, &DrawingArea::display)
+    , m_displayTimer(WebProcess::shared().runLoop(), this, &DrawingAreaUpdateChunk::display)
 {
 }
 
@@ -66,39 +64,16 @@ void DrawingAreaUpdateChunk::invalidateContentsForSlowScroll(const IntRect& rect
 
 void DrawingAreaUpdateChunk::scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect)
 {
+    // FIXME: Do something much smarter.
     setNeedsDisplay(rectToScroll);
 }
 
-void DrawingAreaUpdateChunk::setNeedsDisplay(const WebCore::IntRect& rect)
+void DrawingAreaUpdateChunk::setNeedsDisplay(const IntRect& rect)
 {
+    // FIXME: Collect a set of rects/region instead of just the union
+    // of all rects.
     m_dirtyRect.unite(rect);
     scheduleDisplay();
-}
-
-void DrawingAreaUpdateChunk::paintIntoUpdateChunk(UpdateChunk* updateChunk)
-{
-    OwnPtr<HDC> hdc(::CreateCompatibleDC(0));
-
-    void* bits;
-    BitmapInfo bmp = BitmapInfo::createBottomUp(updateChunk->frame().size());
-    OwnPtr<HBITMAP> hbmp(::CreateDIBSection(0, &bmp, DIB_RGB_COLORS, &bits, updateChunk->memory(), 0));
-
-    HBITMAP hbmpOld = static_cast<HBITMAP>(::SelectObject(hdc.get(), hbmp.get()));
-    
-    GraphicsContext gc(hdc.get());
-    gc.save();
-    
-    // FIXME: Is this white fill needed?
-    RECT rect = updateChunk->frame();
-    ::FillRect(hdc.get(), &rect, (HBRUSH)::GetStockObject(WHITE_BRUSH));
-    gc.translate(-updateChunk->frame().x(), -updateChunk->frame().y());
-
-    m_webPage->drawRect(gc, updateChunk->frame());
-
-    gc.restore();
-
-    // Re-select the old HBITMAP
-    ::SelectObject(hdc.get(), hbmpOld);
 }
 
 void DrawingAreaUpdateChunk::display()
@@ -110,10 +85,11 @@ void DrawingAreaUpdateChunk::display()
 
     // Layout if necessary.
     m_webPage->layoutIfNeeded();
-
+ 
     IntRect dirtyRect = m_dirtyRect;
     m_dirtyRect = IntRect();
 
+    // Create a new UpdateChunk and paint into it.
     UpdateChunk updateChunk(dirtyRect);
     paintIntoUpdateChunk(&updateChunk);
 
@@ -127,20 +103,20 @@ void DrawingAreaUpdateChunk::scheduleDisplay()
 {
     if (m_isWaitingForUpdate)
         return;
-
+    
     if (m_displayTimer.isActive())
         return;
 
     m_displayTimer.startOneShot(0);
 }
 
-void DrawingAreaUpdateChunk::setSize(const WebCore::IntSize& viewSize)
+void DrawingAreaUpdateChunk::setSize(const IntSize& viewSize)
 {
     ASSERT_ARG(viewSize, !viewSize.isEmpty());
 
-    // We don't want to wait for an update until we display. 
-    m_isWaitingForUpdate = false; 
-
+    // We don't want to wait for an update until we display.
+    m_isWaitingForUpdate = false;
+    
     m_webPage->setSize(viewSize);
 
     // Layout if necessary.
@@ -152,7 +128,7 @@ void DrawingAreaUpdateChunk::setSize(const WebCore::IntSize& viewSize)
 
     m_displayTimer.stop();
 
-    WebProcess::shared().connection()->send(DrawingAreaProxyMessage::DidSetSize, m_webPage->pageID(), CoreIPC::In(viewSize, updateChunk));
+    WebProcess::shared().connection()->send(DrawingAreaProxyMessage::DidSetSize, m_webPage->pageID(), CoreIPC::In(updateChunk));
 }
 
 void DrawingAreaUpdateChunk::didUpdate()
@@ -168,12 +144,13 @@ void DrawingAreaUpdateChunk::didReceiveMessage(CoreIPC::Connection*, CoreIPC::Me
     switch (messageID.get<DrawingAreaMessage::Kind>()) {
         case DrawingAreaMessage::SetSize: {
             IntSize size;
-            if (!arguments.decode(size))
+            if (!arguments.decode(CoreIPC::Out(size)))
                 return;
+
             setSize(size);
             break;
         }
-
+        
         case DrawingAreaMessage::DidUpdate:
             didUpdate();
             break;

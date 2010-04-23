@@ -23,52 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DrawingAreaUpdateChunk_h
-#define DrawingAreaUpdateChunk_h
+#include "DrawingAreaUpdateChunk.h"
 
-#include "DrawingArea.h"
-#include "RunLoop.h"
+#include "UpdateChunk.h"
+#include "WebPage.h"
+#include <WebCore/GraphicsContext.h>
+#include <wtf/RetainPtr.h>
 
-namespace WebCore {
-    class IntSize;
-}
-
-namespace CoreIPC {
-    class ArgumentDecoder;
-    class Connection;
-    class MessageID;
-}
+using namespace WebCore;
 
 namespace WebKit {
 
-class UpdateChunk;
-class WebPage;
+void DrawingAreaUpdateChunk::paintIntoUpdateChunk(UpdateChunk* updateChunk)
+{
+    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
+    RetainPtr<CGContextRef> bitmapContext(AdoptCF, CGBitmapContextCreate(updateChunk->data(), updateChunk->rect().width(), updateChunk->rect().height(), 8, updateChunk->rect().width() * 4, colorSpace.get(), kCGImageAlphaPremultipliedLast));
 
-class DrawingAreaUpdateChunk : public DrawingArea {
-public:
-    DrawingAreaUpdateChunk(WebPage*);
-    virtual ~DrawingAreaUpdateChunk();
+    // WebCore expects a flipped coordinate system.
+    CGContextTranslateCTM(bitmapContext.get(), 0.0, updateChunk->rect().height());
+    CGContextScaleCTM(bitmapContext.get(), 1.0, -1.0);
 
-    virtual void invalidateWindow(const WebCore::IntRect& rect, bool immediate);
-    virtual void invalidateContentsAndWindow(const WebCore::IntRect& rect, bool immediate);
-    virtual void invalidateContentsForSlowScroll(const WebCore::IntRect& rect, bool immediate);
-    virtual void scroll(const WebCore::IntSize& scrollDelta, const WebCore::IntRect& rectToScroll, const WebCore::IntRect& clipRect);
-    virtual void setNeedsDisplay(const WebCore::IntRect&);
-    virtual void display();
-
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder&);
-
-private:
-    void paintIntoUpdateChunk(UpdateChunk*);
-    void setSize(const WebCore::IntSize&);
-    void didUpdate();
-    void scheduleDisplay();
-
-    WebCore::IntRect m_dirtyRect;
-    bool m_isWaitingForUpdate;
-    RunLoop::Timer<DrawingArea> m_displayTimer;
-};
+    // Now paint into the backing store.
+    GraphicsContext graphicsContext(bitmapContext.get());
+    graphicsContext.translate(-updateChunk->rect().x(), -updateChunk->rect().y());
     
-} // namespace WebKit
+    m_webPage->drawRect(graphicsContext, updateChunk->rect());
+}
 
-#endif // DrawingAreaUpdateChunk_h
+} // namespace WebKit

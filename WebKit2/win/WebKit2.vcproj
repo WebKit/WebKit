@@ -639,6 +639,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\WebProcess\WebPage\DrawingAreaUpdateChunk.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\WebPage\DrawingAreaUpdateChunk.h"
+					>
+				</File>
+				<File
 					RelativePath="..\WebProcess\WebPage\WebFrame.cpp"
 					>
 				</File>
@@ -658,11 +666,7 @@
 					Name="win"
 					>
 					<File
-						RelativePath="..\WebProcess\WebPage\win\DrawingAreaUpdateChunk.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\WebProcess\WebPage\win\DrawingAreaUpdateChunk.h"
+						RelativePath="..\WebProcess\WebPage\win\DrawingAreaUpdateChunkWin.cpp"
 						>
 					</File>
 					<File

@@ -23,61 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DrawingAreaProxy_h
-#define DrawingAreaProxy_h
+#include "DrawingAreaUpdateChunk.h"
 
-#include "ArgumentEncoder.h"
-#include <WebCore/IntSize.h>
-#include <wtf/OwnPtr.h>
+#include "UpdateChunk.h"
+#include "WebPage.h"
+#include <WebCore/BitmapInfo.h>
+#include <WebCore/GraphicsContext.h>
 
-namespace CoreIPC {
-    class ArgumentDecoder;
-    class Connection;
-    class MessageID;
-}
+using namespace WebCore;
 
 namespace WebKit {
 
-class UpdateChunk;
-class WebView;
+void DrawingAreaUpdateChunk::paintIntoUpdateChunk(UpdateChunk* updateChunk)
+{
+    OwnPtr<HDC> hdc(::CreateCompatibleDC(0));
 
-class DrawingAreaProxy {
-public:
-    enum Type {
-        DrawingAreaUpdateChunkType
-    };
+    void* bits;
+    BitmapInfo bmp = BitmapInfo::createBottomUp(updateChunk->frame().size());
+    OwnPtr<HBITMAP> hbmp(::CreateDIBSection(0, &bmp, DIB_RGB_COLORS, &bits, updateChunk->memory(), 0));
 
-    DrawingAreaProxy(WebView*);
-    ~DrawingAreaProxy();
+    HBITMAP hbmpOld = static_cast<HBITMAP>(::SelectObject(hdc.get(), hbmp.get()));
 
-    void paint(HDC, RECT);
-    void setSize(const WebCore::IntSize&);
+    GraphicsContext gc(hdc.get());
+    gc.save();
 
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder&);
+    // FIXME: Is this white fill needed?
+    RECT rect = updateChunk->frame();
+    ::FillRect(hdc.get(), &rect, (HBRUSH)::GetStockObject(WHITE_BRUSH));
+    gc.translate(-updateChunk->frame().x(), -updateChunk->frame().y());
 
-    // The DrawingAreaProxy should never be decoded itself. Instead, the DrawingArea should be decoded.
-    void encode(CoreIPC::ArgumentEncoder& encoder) const
-    {
-        encoder.encode(static_cast<uint32_t>(DrawingAreaUpdateChunkType));
-    }
+    m_webPage->drawRect(gc, updateChunk->frame());
 
-private:
-    void ensureBackingStore();
-    void drawUpdateChunkIntoBackingStore(UpdateChunk*);
-    void didSetSize(UpdateChunk*);
-    void update(UpdateChunk*);
+    gc.restore();
 
-    OwnPtr<HDC> m_backingStoreDC;
-    OwnPtr<HBITMAP> m_backingStoreBitmap;
-
-    bool m_isWaitingForDidSetFrameNotification;
-
-    WebCore::IntSize m_viewSize; // Size of the BackingStore as well.
-    WebCore::IntSize m_lastSetViewSize;
-
-    WebView* m_webView;
-};
+    // Re-select the old HBITMAP
+    ::SelectObject(hdc.get(), hbmpOld);
+}
 
 } // namespace WebKit
-
-#endif // DrawingAreaProxy_h

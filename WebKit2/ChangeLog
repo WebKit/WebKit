@@ -1,3 +1,27 @@
+2010-04-23  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=38059
+        Merge mac and win DrawingAreaUpdateChunk implementation.
+
+        * UIProcess/win/DrawingAreaProxy.cpp:
+        (WebKit::DrawingAreaProxy::didSetSize):
+        (WebKit::DrawingAreaProxy::didReceiveMessage):
+        * UIProcess/win/DrawingAreaProxy.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/DrawingAreaUpdateChunk.cpp: Copied from WebProcess/WebPage/mac/DrawingAreaUpdateChunk.cpp.
+        (WebKit::DrawingAreaUpdateChunk::setSize):
+        * WebProcess/WebPage/DrawingAreaUpdateChunk.h: Copied from WebProcess/WebPage/mac/DrawingAreaUpdateChunk.h.
+        * WebProcess/WebPage/mac/DrawingAreaUpdateChunk.cpp: Removed.
+        * WebProcess/WebPage/mac/DrawingAreaUpdateChunk.h: Removed.
+        * WebProcess/WebPage/mac/DrawingAreaUpdateChunkMac.cpp: Copied from WebProcess/WebPage/mac/DrawingAreaUpdateChunk.cpp.
+        * WebProcess/WebPage/win/DrawingAreaUpdateChunk.cpp: Removed.
+        * WebProcess/WebPage/win/DrawingAreaUpdateChunk.h: Removed.
+        * WebProcess/WebPage/win/DrawingAreaUpdateChunkWin.cpp: Copied from WebProcess/WebPage/win/DrawingAreaUpdateChunk.cpp.
+        (WebKit::DrawingAreaUpdateChunk::paintIntoUpdateChunk):
+        * win/WebKit2.vcproj:
+
 2010-04-23  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
