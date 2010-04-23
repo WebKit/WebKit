@@ -134,9 +134,16 @@ void AnimationControllerPrivate::updateAnimationTimer(bool callSetChanged/* = fa
 
 void AnimationControllerPrivate::updateStyleIfNeededDispatcherFired(Timer<AnimationControllerPrivate>*)
 {
+    fireEventsAndUpdateStyle();
+}
+
+void AnimationControllerPrivate::fireEventsAndUpdateStyle()
+{
     // Protect the frame from getting destroyed in the event handler
     RefPtr<Frame> protector = m_frame;
 
+    bool updateStyle = !m_eventsToDispatch.isEmpty() || !m_nodeChangesToDispatch.isEmpty();
+    
     // fire all the events
     Vector<EventToDispatch>::const_iterator eventsToDispatchEnd = m_eventsToDispatch.end();
     for (Vector<EventToDispatch>::const_iterator it = m_eventsToDispatch.begin(); it != eventsToDispatchEnd; ++it) {
@@ -155,7 +162,7 @@ void AnimationControllerPrivate::updateStyleIfNeededDispatcherFired(Timer<Animat
     
     m_nodeChangesToDispatch.clear();
     
-    if (m_frame)
+    if (updateStyle && m_frame)
         m_frame->document()->updateStyleIfNeeded();
 }
 
@@ -196,6 +203,10 @@ void AnimationControllerPrivate::animationTimerFired(Timer<AnimationControllerPr
     // When the timer fires, all we do is call setChanged on all DOM nodes with running animations and then do an immediate
     // updateStyleIfNeeded.  It will then call back to us with new information.
     updateAnimationTimer(true);
+
+    // Fire events right away, to avoid a flash of unanimated style after an animation completes, and before
+    // the 'end' event fires.
+    fireEventsAndUpdateStyle();
 }
 
 bool AnimationControllerPrivate::isAnimatingPropertyOnRenderer(RenderObject* renderer, CSSPropertyID property, bool isRunningNow) const

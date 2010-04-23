@@ -952,9 +952,6 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
 
             overrideAnimations();
 
-            // Send start event, if needed
-            onAnimationStart(0); // The elapsedTime is always 0 here
-
             // Start the animation
             if (overridden()) {
                 // We won't try to start accelerated animations if we are overridden and
@@ -986,6 +983,9 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
                     if (m_animation->delay() < 0)
                         m_startTime += m_animation->delay();
                 }
+
+                // Now that we know the start time, fire the start event.
+                onAnimationStart(0); // The elapsedTime is 0.
 
                 // Decide whether to go into looping or ending state
                 goIntoEndingOrLoopingState();

@@ -2,6 +2,36 @@
 
         Reviewed by Dan Bernstein.
 
+        When webkitAnimationEnd event fires, on-screen rendering should show the last frame of animation
+        https://bugs.webkit.org/show_bug.cgi?id=37955
+
+        After r37484, animation and transition end events were fired on a timer, after the animation/transition
+        ended. This opened up one event loop cycle in which the non-animating state of the element was visible
+        before the event fired, resulting in flashes in content that reset style from the event handler.
+        
+        Fix by firing these events in the same event cycle as the animation end, once all animations
+        have been updated. This also required moving the place that start animations are fixed until
+        a later state in the state machine, so that animations have their start time set at the point
+        the event is fired (to avoid an assertion when using the freeze API in DRT).
+        
+        Not testable, since the flash is very transitory and cannot be captured in a pixel test.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::updateStateMachine): Move the firing of 'start' events into the state
+        where the start time is known.
+        * page/animation/AnimationControllerPrivate.h:
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::updateStyleIfNeededDispatcherFired): Call the new fireEventsAndUpdateStyle()
+        method.
+        (WebCore::AnimationControllerPrivate::fireEventsAndUpdateStyle): New method to share code that used to be in
+        updateStyleIfNeededDispatcherFired().
+        (WebCore::AnimationControllerPrivate::animationTimerFired): Call fireEventsAndUpdateStyle() once we've
+        processed all animations.
+
+2010-04-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         CompositeAnimation::updateKeyframeAnimations() can make a KeyframeAnimation for animation "none"
         https://bugs.webkit.org/show_bug.cgi?id=38017
 

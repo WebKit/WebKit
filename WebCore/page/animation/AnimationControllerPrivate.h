@@ -92,6 +92,7 @@ public:
     
 private:
     void styleAvailable();
+    void fireEventsAndUpdateStyle();
 
     typedef HashMap<RenderObject*, RefPtr<CompositeAnimation> > RenderObjectAnimationMap;
 
