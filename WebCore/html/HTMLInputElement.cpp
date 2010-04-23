@@ -729,7 +729,11 @@ void HTMLInputElement::aboutToUnload()
 
 bool HTMLInputElement::shouldUseInputMethod() const
 {
-    return m_type == TEXT || m_type == SEARCH || m_type == ISINDEX;
+    // The reason IME's are disabled for the password field is because IMEs 
+    // can access the underlying password and display it in clear text --
+    // e.g. you can use it to access the stored password for any site 
+    // with only trivial effort.
+    return isTextField() && inputType() != PASSWORD;
 }
 
 void HTMLInputElement::handleFocusEvent()

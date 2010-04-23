@@ -1,3 +1,19 @@
+2010-04-22  Ray Rischpater  <Raymond.Rischpater@Nokia.com>
+
+        Reviewed by Darin Adler.
+
+        In HTMLInputElement.cpp, shouldUseInputMethod does not return true for
+        some text input types (TELEPHONE, NUMBER, URL, and EMAIL). Addressed
+        this by changing shouldUseInputMethod to use internal methods to 
+        check that the field is a text field that isn't a password field. 
+
+        No new tests.
+
+        Fixes <https://bugs.webkit.org/show_bug.cgi?id=37719>
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::shouldUseInputMethod):
+
 2010-04-22  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Adam Barth.
