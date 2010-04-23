@@ -1,3 +1,18 @@
+2010-04-22  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/38029> +[WebTextIteratorPrivate initialize] is missing call to JSC::initializeThreading()
+
+        Reviewed by Timothy Hatcher.
+
+        Every other Objective-C class that calls
+        WebCoreObjCFinalizeOnMainThread(self) in +initialize also calls
+        JSC::initializeThreading().  The WebTextIteratorPrivate class
+        was the only one missing this call.
+
+        * WebView/WebTextIterator.mm:
+        (+[WebTextIteratorPrivate initialize]): Added call to
+        JSC::initializeThreading().
+
 2010-04-22  Alexey Proskuryakov  <ap@apple.com>
 
         Rubber-stamped by Mark Rowe.

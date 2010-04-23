@@ -31,6 +31,7 @@
 #import <JavaScriptCore/Vector.h>
 #import <WebCore/TextIterator.h>
 #import <WebCore/WebCoreObjCExtras.h>
+#import <runtime/InitializeThreading.h>
 
 using namespace JSC;
 using namespace WebCore;
@@ -45,6 +46,7 @@ using namespace WebCore;
 
 + (void)initialize
 {
+    JSC::initializeThreading();
 #ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
 #endif
