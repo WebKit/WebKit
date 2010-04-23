@@ -1,9 +1,10 @@
 2010-04-22  Maciej Stachowiak  <mjs@apple.com>
 
-        Reviewed by Dan Bernstein.
+        Reviewed by Dan Bernstein and Beth Dakin.
 
         Links around blocks (e.g. divs) results in too many VoiceOver call outs
         https://bugs.webkit.org/show_bug.cgi?id=37079
+        <rdar://problem/7234118>
 
         The basic change is to modify the AccessibilityRenderObject tree
         traversal methods to account for inline continuations in the
