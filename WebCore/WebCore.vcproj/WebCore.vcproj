@@ -3693,6 +3693,14 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSFileError.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSFileError.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSFileList.cpp"
 				>
 				<FileConfiguration
@@ -30348,6 +30356,10 @@
 			</File>
 			<File
 				RelativePath="..\html\File.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\FileError.h"
 				>
 			</File>
 			<File

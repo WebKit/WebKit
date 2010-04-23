@@ -157,6 +157,7 @@ GEN := \
     $(intermediates)/html/JSDataGridColumn.h \
     $(intermediates)/html/JSDataGridColumnList.h \
     $(intermediates)/html/JSFile.h \
+    $(intermediates)/html/JSFileError.h \
     $(intermediates)/html/JSFileList.h \
     $(intermediates)/html/JSHTMLAllCollection.h \
     $(intermediates)/html/JSHTMLAnchorElement.h \

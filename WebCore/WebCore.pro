@@ -1321,6 +1321,7 @@ HEADERS += \
     html/DOMDataGridDataSource.h \
     html/DOMFormData.h \
     html/File.h \
+    html/FileError.h \
     html/FileList.h \
     html/FileStream.h \
     html/FileStreamClient.h \

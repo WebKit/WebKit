@@ -324,6 +324,7 @@ IDL_BINDINGS += \
     html/DataGridColumnList.idl \
     html/DOMFormData.idl \
     html/File.idl \
+    html/FileError.idl \
     html/FileList.idl \
     html/HTMLAllCollection.idl \
     html/HTMLAudioElement.idl \

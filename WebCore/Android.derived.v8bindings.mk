@@ -138,6 +138,7 @@ GEN := \
     $(intermediates)/bindings/V8DataGridColumn.h \
     $(intermediates)/bindings/V8DataGridColumnList.h \
     $(intermediates)/bindings/V8File.h \
+    $(intermediates)/bindings/V8FileError.h \
     $(intermediates)/bindings/V8FileList.h \
     $(intermediates)/bindings/V8HTMLAllCollection.h \
     $(intermediates)/bindings/V8HTMLAnchorElement.h \

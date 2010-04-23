@@ -129,6 +129,7 @@ DOM_CLASSES = \
     EventSource \
     EventTarget \
     File \
+    FileError \
     FileList \
     Geolocation \
     Geoposition \

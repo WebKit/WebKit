@@ -85,6 +85,7 @@
 #include "JSEventException.cpp"
 #include "JSEventSource.cpp"
 #include "JSFile.cpp"
+#include "JSFileError.cpp"
 #include "JSFileList.cpp"
 #include "JSGeolocation.cpp"
 #include "JSGeoposition.cpp"

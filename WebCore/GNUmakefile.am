@@ -194,6 +194,7 @@ IDL_BINDINGS += \
 	WebCore/html/DataGridColumnList.idl \
 	WebCore/html/DOMFormData.idl \
 	WebCore/html/File.idl \
+	WebCore/html/FileError.idl \
 	WebCore/html/FileList.idl \
 	WebCore/html/HTMLAllCollection.idl \
 	WebCore/html/HTMLAnchorElement.idl \
@@ -1050,6 +1051,7 @@ webcore_sources += \
 	WebCore/html/DOMFormData.h \
 	WebCore/html/File.cpp \
 	WebCore/html/File.h \
+	WebCore/html/FileError.h \
 	WebCore/html/FileList.cpp \
 	WebCore/html/FileList.h \
 	WebCore/html/FileStream.cpp \
