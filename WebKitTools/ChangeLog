@@ -1,3 +1,9 @@
+2010-04-22  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed fix.
+
+        * Scripts/webkitpy/layout_tests/port/websocket_server.py: fix NameError: global name 'f' is not defined.
+
 2010-04-22  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Adam Barth.

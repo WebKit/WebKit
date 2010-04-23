@@ -246,7 +246,7 @@ class PyWebSocket(http_server.Lighttpd):
             pid = self._process.pid
         elif self._pidfile:
             with codecs.open(self._pidfile, "r", "ascii") as file:
-                pid = int(f.read().strip())
+                pid = int(file.read().strip())
 
         if not pid:
             raise PyWebSocketNotFound(
