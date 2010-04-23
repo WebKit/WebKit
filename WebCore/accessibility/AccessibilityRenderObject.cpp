@@ -118,12 +118,72 @@ void AccessibilityRenderObject::detach()
     m_renderer = 0;    
 }
 
+static inline bool isInlineWithContinuation(RenderObject* renderer)
+{
+    if (!renderer->isRenderInline())
+        return false;
+
+    return toRenderInline(renderer)->continuation();
+}
+
+static inline RenderObject* firstChildInContinuation(RenderObject* renderer)
+{
+    RenderObject* r = toRenderInline(renderer)->continuation();
+
+    while (r) {
+        if (r->isRenderBlock())
+            return r;
+        if (RenderObject* child = r->firstChild())
+            return child;
+        r = toRenderInline(r)->continuation(); 
+    }
+
+    return 0;
+}
+
+static inline RenderObject* firstChildConsideringContinuation(RenderObject* renderer)
+{
+    RenderObject* firstChild = renderer->firstChild();
+
+    if (!firstChild && isInlineWithContinuation(renderer))
+        firstChild = firstChildInContinuation(renderer);
+
+    return firstChild;
+}
+
+
+static inline RenderObject* lastChildConsideringContinuation(RenderObject* renderer)
+{
+    RenderObject* lastChild = renderer->lastChild();
+    RenderObject* prev = renderer;
+    RenderObject* cur = renderer;
+
+    if (!cur->isRenderInline() && !cur->isRenderBlock())
+        return renderer;
+
+    while (cur) {
+        prev = cur;
+
+        if (RenderObject* lc = cur->lastChild())
+            lastChild = lc;
+
+        if (cur->isRenderInline()) {
+            cur = toRenderInline(cur)->inlineContinuation();
+            ASSERT(cur || !toRenderInline(prev)->continuation());
+        } else
+            cur = toRenderBlock(cur)->inlineContinuation();
+    }
+
+    return lastChild;
+}
+
 AccessibilityObject* AccessibilityRenderObject::firstChild() const
 {
     if (!m_renderer)
         return 0;
     
-    RenderObject* firstChild = m_renderer->firstChild();
+    RenderObject* firstChild = firstChildConsideringContinuation(m_renderer);
+
     if (!firstChild)
         return 0;
     
@@ -134,32 +194,161 @@ AccessibilityObject* AccessibilityRenderObject::lastChild() const
 {
     if (!m_renderer)
         return 0;
-    
-    RenderObject* lastChild = m_renderer->lastChild();
+
+    RenderObject* lastChild = lastChildConsideringContinuation(m_renderer);
+
     if (!lastChild)
         return 0;
     
     return m_renderer->document()->axObjectCache()->getOrCreate(lastChild);
 }
 
+static inline RenderInline* startOfContinuations(RenderObject* r)
+{
+    if (r->isInlineContinuation())
+        return toRenderInline(r->node()->renderer());
+
+    // Blocks with a previous continuation always have a next continuation
+    if (r->isRenderBlock() && toRenderBlock(r)->inlineContinuation())
+        return toRenderInline(toRenderBlock(r)->inlineContinuation()->node()->renderer());
+
+    return 0;
+}
+
+static inline RenderObject* endOfContinuations(RenderObject* renderer)
+{
+    RenderObject* prev = renderer;
+    RenderObject* cur = renderer;
+
+    if (!cur->isRenderInline() && !cur->isRenderBlock())
+        return renderer;
+
+    while (cur) {
+        prev = cur;
+        if (cur->isRenderInline()) {
+            cur = toRenderInline(cur)->inlineContinuation();
+            ASSERT(cur || !toRenderInline(prev)->continuation());
+        } else 
+            cur = toRenderBlock(cur)->inlineContinuation();
+    }
+
+    return prev;
+}
+
+
+static inline RenderObject* childBeforeConsideringContinuations(RenderInline* r, RenderObject* child)
+{
+    RenderBoxModelObject* curContainer = r;
+    RenderObject* cur = 0;
+    RenderObject* prev = 0;
+
+    while (curContainer) {
+        if (curContainer->isRenderInline()) {
+            cur = curContainer->firstChild();
+            while (cur) {
+                if (cur == child)
+                    return prev;
+                prev = cur;
+                cur = cur->nextSibling();
+            }
+
+            curContainer = toRenderInline(curContainer)->continuation();
+        } else if (curContainer->isRenderBlock()) {
+            if (curContainer == child)
+                return prev;
+
+            prev = curContainer;
+            curContainer = toRenderBlock(curContainer)->inlineContinuation();
+        }
+    }
+
+    ASSERT_NOT_REACHED();
+
+    return 0;
+}
+
+static inline bool firstChildIsInlineContinuation(RenderObject* renderer)
+{
+    return renderer->firstChild() && renderer->firstChild()->isInlineContinuation();
+}
+
 AccessibilityObject* AccessibilityRenderObject::previousSibling() const
 {
     if (!m_renderer)
         return 0;
-    
-    RenderObject* previousSibling = m_renderer->previousSibling();
+
+    RenderObject* previousSibling = 0;
+
+    // Case 1: The node is a block and is an inline's continuation. In that case, the inline's
+    // last child is our previous sibling (or further back in the continuation chain)
+    RenderInline* startOfConts;
+    if (m_renderer->isRenderBlock() && (startOfConts = startOfContinuations(m_renderer)))
+        previousSibling = childBeforeConsideringContinuations(startOfConts, m_renderer);
+
+    // Case 2: Anonymous block parent of the end of a continuation - skip all the way to before
+    // the parent of the start, since everything in between will be linked up via the continuation.
+    else if (m_renderer->isAnonymousBlock() && firstChildIsInlineContinuation(m_renderer))
+        previousSibling = startOfContinuations(m_renderer->firstChild())->parent()->previousSibling();
+
+    // Case 3: The node has an actual previous sibling
+    else if (RenderObject* ps = m_renderer->previousSibling())
+        previousSibling = ps;
+
+    // Case 4: This node has no previous siblings, but its parent is an inline,
+    // and is another node's inline continutation. Follow the continuation chain.
+    else if (m_renderer->parent()->isRenderInline() && (startOfConts = startOfContinuations(m_renderer->parent())))
+        previousSibling = childBeforeConsideringContinuations(startOfConts, m_renderer->parent()->firstChild());
+
     if (!previousSibling)
         return 0;
     
     return m_renderer->document()->axObjectCache()->getOrCreate(previousSibling);
 }
 
+static inline bool lastChildHasContinuation(RenderObject* renderer)
+{
+    return renderer->lastChild() && isInlineWithContinuation(renderer->lastChild());
+}
+
 AccessibilityObject* AccessibilityRenderObject::nextSibling() const
 {
     if (!m_renderer)
         return 0;
-    
-    RenderObject* nextSibling = m_renderer->nextSibling();
+
+    RenderObject* nextSibling = 0;
+
+    // Case 1: node is a block and has an inline continuation. Next sibling is the inline continuation's
+    // first child.
+    RenderInline* inlineContinuation;
+    if (m_renderer->isRenderBlock() && (inlineContinuation = toRenderBlock(m_renderer)->inlineContinuation()))
+        nextSibling = firstChildConsideringContinuation(inlineContinuation);
+
+    // Case 2: Anonymous block parent of the start of a continuation - skip all the way to
+    // after the parent of the end, since everything in between will be linked up via the continuation.
+    else if (m_renderer->isAnonymousBlock() && lastChildHasContinuation(m_renderer))
+        nextSibling = endOfContinuations(m_renderer->lastChild())->parent()->nextSibling();
+
+    // Case 3: node has an actual next sibling
+    else if (RenderObject* ns = m_renderer->nextSibling())
+        nextSibling = ns;
+
+    // Case 4: node is an inline with a continuation. Next sibling is the next sibling of the end 
+    // of the continuation chain.
+    else if (isInlineWithContinuation(m_renderer))
+        nextSibling = endOfContinuations(m_renderer)->nextSibling();
+
+    // Case 5: node has no next sibling, and its parent is an inline with a continuation.
+    else if (isInlineWithContinuation(m_renderer->parent())) {
+        RenderObject* continuation = toRenderInline(m_renderer->parent())->continuation();
+        
+        // Case 4a: continuation is a block - in this case the block itself is the next sibling.
+        if (continuation->isRenderBlock())
+            nextSibling = continuation;
+        // Case 4b: continuation is an inline - in this case the inline's first child is the next sibling
+        else
+            nextSibling = firstChildConsideringContinuation(continuation);
+    }
+
     if (!nextSibling)
         return 0;
     
@@ -170,8 +359,20 @@ AccessibilityObject* AccessibilityRenderObject::parentObjectIfExists() const
 {
     if (!m_renderer)
         return 0;
-    
+
     RenderObject* parent = m_renderer->parent();
+
+    // Case 1: node is a block and is an inline's continuation. Parent
+    // is the start of the continuation chain.
+    RenderInline* startOfConts = 0;
+    if (m_renderer->isRenderBlock() && (startOfConts = startOfContinuations(m_renderer)))
+        parent = startOfConts;
+
+    // Case 2: node's parent is an inline which is some node's continuation; parent is 
+    // the earliest node in the continuation chain.
+    else if (parent && parent->isRenderInline() && (startOfConts = startOfContinuations(parent)))
+        parent = startOfConts;
+
     if (!parent)
         return 0;
 
@@ -184,6 +385,18 @@ AccessibilityObject* AccessibilityRenderObject::parentObject() const
         return 0;
     
     RenderObject* parent = m_renderer->parent();
+
+    // Case 1: node is a block and is an inline's continuation. Parent
+    // is the start of the continuation chain.
+    RenderInline* startOfConts = 0;
+    if (m_renderer->isRenderBlock() && (startOfConts = startOfContinuations(m_renderer)))
+        parent = startOfConts;
+
+    // Case 2: node's parent is an inline which is some node's continuation; parent is 
+    // the earliest node in the continuation chain.
+    else if (parent && parent->isRenderInline() && (startOfConts = startOfContinuations(parent)))
+        parent = startOfConts;
+
     if (!parent)
         return 0;
     

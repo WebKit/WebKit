@@ -1,3 +1,26 @@
+2010-04-22  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Links around blocks (e.g. divs) results in too many VoiceOver call outs
+        https://bugs.webkit.org/show_bug.cgi?id=37079
+        
+        The new test cases verify the accessibility tree created by an image inside a link, and verify
+        that adding a div with role=presentation now has no effect on the accessibility tree (as expected).
+
+        * accessibility/image-link-inline-cont-expected.txt: Added.
+        * accessibility/image-link-inline-cont.html: Added.
+        * accessibility/image-link.html: Added.
+        * platform/gtk/Skipped:
+        * platform/mac/accessibility/image-link-expected.txt: Added.
+        * platform/win/Skipped:
+        
+        Test to check that accessibility tree doesn't get duplicate content in the presence
+        of inline continuations (this was a bug in an earlier version of this patch).
+
+        * accessibility/inline-continuations-expected.txt: Added.
+        * accessibility/inline-continuations.html: Added.
+
 2010-04-22  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler.

@@ -1,3 +1,40 @@
+2010-04-22  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Links around blocks (e.g. divs) results in too many VoiceOver call outs
+        https://bugs.webkit.org/show_bug.cgi?id=37079
+
+        The basic change is to modify the AccessibilityRenderObject tree
+        traversal methods to account for inline continuations in the
+        render tree and make the accessibility tree look as if
+        continuations didn't exist - the same as if CSS blocks could just
+        sit in CSS inlines. This is slightly tricky code but creates a
+        much saner accessibility tree.
+        
+        Tests: accessibility/image-link-inline-cont.html
+               accessibility/image-link.html
+               accessibility/inline-continuations.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::isInlineWithContinuation): Helper function for traversal functions to use in accounting for continuations.
+        (WebCore::firstChildInContinuation): ditto
+        (WebCore::firstChildConsideringContinuation): ditto
+        (WebCore::lastChildConsideringContinuation): ditto
+        (WebCore::startOfContinuations): ditto
+        (WebCore::endOfContinuations): ditto
+        (WebCore::childBeforeConsideringContinuations): ditto
+        (WebCore::firstChildIsInlineContinuation): ditto
+        (WebCore::lastChildHasContinuation): ditto
+        (WebCore::AccessibilityRenderObject::firstChild): Account for inline continuations.
+        (WebCore::AccessibilityRenderObject::lastChild): ditto
+        (WebCore::AccessibilityRenderObject::previousSibling): Account for inline continuations
+        and their anonymous block parents.
+        (WebCore::AccessibilityRenderObject::nextSibling): ditto
+        (WebCore::AccessibilityRenderObject::parentObjectIfExists): Account for inline continuations.
+        (WebCore::AccessibilityRenderObject::parentObject): Account for inline continuations.
+        * rendering/RenderInline.h: Make RenderInline::inlineContinuation public.
+
 2010-04-22  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler.

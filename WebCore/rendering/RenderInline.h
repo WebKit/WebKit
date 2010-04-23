@@ -71,6 +71,8 @@ public:
     int verticalPositionFromCache(bool firstLine) const;
     void invalidateVerticalPosition() { m_verticalPosition = PositionUndefined; }
 
+    RenderInline* inlineContinuation() const;
+
 private:
     virtual RenderObjectChildList* virtualChildren() { return children(); }
     virtual const RenderObjectChildList* virtualChildren() const { return children(); }
@@ -126,7 +128,6 @@ private:
 
     virtual int lineHeight(bool firstLine, bool isRootLineBox = false) const;
 
-    RenderInline* inlineContinuation() const;
     void setContinuation(RenderBoxModelObject* c) { m_continuation = c; }
     
     virtual void childBecameNonInline(RenderObject* child);

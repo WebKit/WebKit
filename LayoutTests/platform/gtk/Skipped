@@ -84,8 +84,11 @@ accessibility/aria-describedby-on-input.html
 accessibility/aria-labelledby-on-input.html
 accessibility/aria-roles.html
 accessibility/aria-tables.html
+accessibility/image-link.html
+accessibility/image-link-inline-cont.html
 accessibility/image-map1.html
 accessibility/image-map2.html
+accessibility/inline-continuations.html
 accessibility/internal-link-anchors2.html
 accessibility/label-for-control-hittest.html
 accessibility/legend.html
