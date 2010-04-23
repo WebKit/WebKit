@@ -2821,6 +2821,11 @@ WebGLGetInfo WebGLRenderingContext::getWebGLUnsignedByteArrayParameter(unsigned 
     return WebGLGetInfo(WebGLUnsignedByteArray::create(value, length));
 }
 
+bool WebGLRenderingContext::isGLES2Compliant()
+{
+    return m_context->isGLES2Compliant();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(3D_CANVAS)

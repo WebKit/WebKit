@@ -1,3 +1,16 @@
+2010-04-22  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Add isGLES2Compliant to GraphicsContext3D
+        https://bugs.webkit.org/show_bug.cgi?id=37872
+
+        * public/WebGraphicsContext3D.h: Add isGLES2Compliant().
+        * src/GraphicsContext3D.cpp: Ditto.
+        * src/WebGraphicsContext3DDefaultImpl.cpp: Ditto.
+        (WebKit::WebGraphicsContext3DDefaultImpl::isGLES2Compliant):
+        * src/WebGraphicsContext3DDefaultImpl.h: Ditto.
+
 2010-04-22  Dave Moore  <davemoore@chromium.org>
 
         Reviewed by Dimitri Glazkov.

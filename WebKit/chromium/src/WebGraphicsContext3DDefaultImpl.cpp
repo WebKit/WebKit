@@ -464,6 +464,11 @@ int WebGraphicsContext3DDefaultImpl::sizeInBytes(int type)
     return 0;
 }
 
+bool WebGraphicsContext3DDefaultImpl::isGLES2Compliant()
+{
+    return false;
+}
+
 static int createTextureObject(GLenum target)
 {
     GLuint texture = 0;

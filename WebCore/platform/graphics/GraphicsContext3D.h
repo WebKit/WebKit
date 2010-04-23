@@ -685,6 +685,8 @@ namespace WebCore {
         // getError in the order they were added.
         void synthesizeGLError(unsigned long error);
 
+        bool isGLES2Compliant();
+
     private:        
         GraphicsContext3D(Attributes attrs, HostWindow* hostWindow);
 

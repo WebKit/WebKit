@@ -298,6 +298,8 @@ class WebKitCSSMatrix;
             if (changed)
                 markContextChanged();
         }
+
+        bool isGLES2Compliant();
         
         // Basic validation of count and offset against number of elements in element array buffer
         bool validateElementArraySize(unsigned long count, unsigned long type, long offset);
