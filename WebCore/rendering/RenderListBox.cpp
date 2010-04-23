@@ -188,7 +188,7 @@ void RenderListBox::calcPrefWidths()
         m_minPrefWidth = min(m_minPrefWidth, calcContentBoxWidth(style()->maxWidth().value()));
     }
 
-    int toAdd = paddingLeft() + paddingRight() + borderLeft() + borderRight();
+    int toAdd = borderAndPaddingWidth();
     m_minPrefWidth += toAdd;
     m_maxPrefWidth += toAdd;
                                 
@@ -221,7 +221,7 @@ int RenderListBox::listHeight() const
 
 void RenderListBox::calcHeight()
 {
-    int toAdd = paddingTop() + paddingBottom() + borderTop() + borderBottom();
+    int toAdd = borderAndPaddingHeight();
  
     int itemHeight = RenderListBox::itemHeight();
     setHeight(itemHeight * size() - rowSpacing + toAdd);

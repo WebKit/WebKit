@@ -637,11 +637,11 @@ void RenderImage::calcPrefWidths()
 {
     ASSERT(prefWidthsDirty());
 
-    int paddingAndBorders = paddingLeft() + paddingRight() + borderLeft() + borderRight();
-    m_maxPrefWidth = calcReplacedWidth(false) + paddingAndBorders;
+    int borderAndPadding = borderAndPaddingWidth();
+    m_maxPrefWidth = calcReplacedWidth(false) + borderAndPadding;
 
     if (style()->maxWidth().isFixed() && style()->maxWidth().value() != undefinedLength)
-        m_maxPrefWidth = min(m_maxPrefWidth, style()->maxWidth().value() + (style()->boxSizing() == CONTENT_BOX ? paddingAndBorders : 0));
+        m_maxPrefWidth = min(m_maxPrefWidth, style()->maxWidth().value() + (style()->boxSizing() == CONTENT_BOX ? borderAndPadding : 0));
 
     if (style()->width().isPercent() || style()->height().isPercent() || 
         style()->maxWidth().isPercent() || style()->maxHeight().isPercent() ||

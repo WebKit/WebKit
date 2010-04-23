@@ -115,7 +115,7 @@ Length RenderTableCell::styleOrColWidth() const
         // Percentages don't need to be handled since they're always treated this way (even when specified on the cells).
         // See Bugzilla bug 8126 for details.
         if (colWidthSum.isFixed() && colWidthSum.value() > 0)
-            colWidthSum = Length(max(0, colWidthSum.value() - borderLeft() - borderRight() - paddingLeft() - paddingRight()), Fixed);
+            colWidthSum = Length(max(0, colWidthSum.value() - borderAndPaddingWidth()), Fixed);
         return colWidthSum;
     }
 

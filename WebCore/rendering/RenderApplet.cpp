@@ -59,9 +59,9 @@ void RenderApplet::createWidgetIfNecessary()
     // use fixed widths/heights from the style system when we can, since the widget might
     // not have an accurate m_width/m_height.
     int contentWidth = style()->width().isFixed() ? style()->width().value() : 
-        width() - borderLeft() - borderRight() - paddingLeft() - paddingRight();
+        width() - borderAndPaddingWidth();
     int contentHeight = style()->height().isFixed() ? style()->height().value() :
-        height() - borderTop() - borderBottom() - paddingTop() - paddingBottom();
+        height() - borderAndPaddingHeight();
     for (Node* child = element->firstChild(); child; child = child->nextSibling()) {
         if (child->hasTagName(paramTag)) {
             HTMLParamElement* p = static_cast<HTMLParamElement*>(child);

@@ -585,10 +585,10 @@ bool RenderBlock::isSelfCollapsingBlock() const
     // (c) have border/padding,
     // (d) have a min-height
     // (e) have specified that one of our margins can't collapse using a CSS extension
-    if (height() > 0 ||
-        isTable() || (borderBottom() + paddingBottom() + borderTop() + paddingTop()) != 0 ||
-        style()->minHeight().isPositive() || 
-        style()->marginTopCollapse() == MSEPARATE || style()->marginBottomCollapse() == MSEPARATE)
+    if (height() > 0
+        || isTable() || borderAndPaddingHeight()
+        || style()->minHeight().isPositive()
+        || style()->marginTopCollapse() == MSEPARATE || style()->marginBottomCollapse() == MSEPARATE)
         return false;
 
     bool hasAutoHeight = style()->height().isAuto();
@@ -3988,7 +3988,7 @@ void RenderBlock::calcPrefWidths()
     }
 
     int toAdd = 0;
-    toAdd = borderLeft() + borderRight() + paddingLeft() + paddingRight();
+    toAdd = borderAndPaddingWidth();
 
     if (hasOverflowClip() && style()->overflowY() == OSCROLL)
         toAdd += verticalScrollbarWidth();

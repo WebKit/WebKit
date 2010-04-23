@@ -102,7 +102,7 @@ int InlineBox::height() const
     const Font& font = renderer()->style(m_firstLine)->font();
     int result = font.height();
     if (parent())
-        result += flowObject->borderTop() + flowObject->paddingTop() + flowObject->borderBottom() + flowObject->paddingBottom();
+        result += flowObject->borderAndPaddingHeight();
     return result;
 }
 

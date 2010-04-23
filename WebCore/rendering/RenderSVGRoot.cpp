@@ -62,11 +62,11 @@ void RenderSVGRoot::calcPrefWidths()
 {
     ASSERT(prefWidthsDirty());
 
-    int paddingAndBorders = paddingLeft() + paddingRight() + borderLeft() + borderRight();
-    int width = calcReplacedWidth(false) + paddingAndBorders;
+    int borderAndPadding = borderAndPaddingWidth();
+    int width = calcReplacedWidth(false) + borderAndPadding;
 
     if (style()->maxWidth().isFixed() && style()->maxWidth().value() != undefinedLength)
-        width = min(width, style()->maxWidth().value() + (style()->boxSizing() == CONTENT_BOX ? paddingAndBorders : 0));
+        width = min(width, style()->maxWidth().value() + (style()->boxSizing() == CONTENT_BOX ? borderAndPadding : 0));
 
     if (style()->width().isPercent() || (style()->width().isAuto() && style()->height().isPercent())) {
         m_minPrefWidth = 0;

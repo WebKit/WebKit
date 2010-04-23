@@ -59,7 +59,7 @@ void RenderFieldset::calcPrefWidths()
         if (legendMarginRight.isFixed())
             legendMinWidth += legendMarginRight.value();
 
-        m_minPrefWidth = max(m_minPrefWidth, legendMinWidth + paddingLeft() + paddingRight() + borderLeft() + borderRight());
+        m_minPrefWidth = max(m_minPrefWidth, legendMinWidth + borderAndPaddingWidth());
     }
 }
 

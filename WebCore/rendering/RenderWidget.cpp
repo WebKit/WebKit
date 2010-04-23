@@ -320,8 +320,8 @@ void RenderWidget::updateWidgetPosition()
     FloatPoint absPos = localToAbsolute();
     absPos.move(borderLeft() + paddingLeft(), borderTop() + paddingTop());
 
-    int w = width() - borderLeft() - borderRight() - paddingLeft() - paddingRight();
-    int h = height() - borderTop() - borderBottom() - paddingTop() - paddingBottom();
+    int w = width() - borderAndPaddingWidth();
+    int h = height() - borderAndPaddingHeight();
 
     bool boundsChanged = setWidgetGeometry(IntRect(absPos.x(), absPos.y(), w, h));
 

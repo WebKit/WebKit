@@ -223,7 +223,7 @@ void RenderTextControlSingleLine::layout()
     innerTextRenderer->style()->setWidth(Length(desiredWidth, Fixed));
 
     if (m_innerBlock) {
-        int innerBlockWidth = width() - paddingLeft() - paddingRight() - borderLeft() - borderRight();
+        int innerBlockWidth = width() - borderAndPaddingWidth();
         if (innerBlockWidth != innerBlockRenderer->width())
             relayoutChildren = true;
         innerBlockRenderer->style()->setWidth(Length(innerBlockWidth, Fixed));

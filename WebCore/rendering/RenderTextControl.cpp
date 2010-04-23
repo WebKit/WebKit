@@ -151,13 +151,12 @@ void RenderTextControl::createSubtreeIfNeeded(TextControlInnerElement* innerBloc
 
 int RenderTextControl::textBlockHeight() const
 {
-    return height() - paddingTop() - paddingBottom() - borderTop() - borderBottom();
+    return height() - borderAndPaddingHeight();
 }
 
 int RenderTextControl::textBlockWidth() const
 {
-    return width() - paddingLeft() - paddingRight() - borderLeft() - borderRight()
-           - m_innerText->renderBox()->paddingLeft() - m_innerText->renderBox()->paddingRight();
+    return width() - borderAndPaddingWidth() - m_innerText->renderBox()->paddingLeft() - m_innerText->renderBox()->paddingRight();
 }
 
 void RenderTextControl::updateFromElement()
@@ -410,7 +409,7 @@ void RenderTextControl::calcHeight()
               m_innerText->renderBox()->marginTop() + m_innerText->renderBox()->marginBottom());
 
     adjustControlHeightBasedOnLineHeight(m_innerText->renderer()->lineHeight(true, true));
-    setHeight(height() + paddingTop() + paddingBottom() + borderTop() + borderBottom());
+    setHeight(height() + borderAndPaddingHeight());
 
     // We are able to have a horizontal scrollbar if the overflow style is scroll, or if its auto and there's no word wrap.
     if (style()->overflowX() == OSCROLL ||  (style()->overflowX() == OAUTO && m_innerText->renderer()->style()->wordWrap() == NormalWordWrap))
@@ -541,7 +540,7 @@ void RenderTextControl::calcPrefWidths()
         m_minPrefWidth = min(m_minPrefWidth, calcContentBoxWidth(style()->maxWidth().value()));
     }
 
-    int toAdd = paddingLeft() + paddingRight() + borderLeft() + borderRight();
+    int toAdd = borderAndPaddingWidth();
 
     m_minPrefWidth += toAdd;
     m_maxPrefWidth += toAdd;
