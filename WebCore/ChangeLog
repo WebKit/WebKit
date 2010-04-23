@@ -1,3 +1,9 @@
+2010-04-23  Xan Lopez  <xlopez@igalia.com>
+
+        Try to fix the GTK+ bots.
+
+        * GNUmakefile.am:
+
 2010-04-22  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Laszlo Gombos.

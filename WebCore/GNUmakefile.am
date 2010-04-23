@@ -3796,8 +3796,8 @@ IDL_BINDINGS_GDOM := \
 	WebCore/css/CSSStyleDeclaration.idl \
 	WebCore/css/CSSStyleSheet.idl \
 	WebCore/css/CSSValue.idl \
-	WebCore/css/Media.idl \
 	WebCore/css/MediaList.idl \
+	WebCore/css/StyleMedia.idl \
 	WebCore/css/StyleSheet.idl \
 	WebCore/css/StyleSheetList.idl \
 	WebCore/dom/Attr.idl \
