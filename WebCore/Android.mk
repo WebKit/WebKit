@@ -438,7 +438,6 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	platform/graphics/FontFastPath.cpp \
 	platform/graphics/GeneratedImage.cpp \
 	platform/graphics/GlyphPageTreeNode.cpp \
-	platform/graphics/GlyphMetricsMap.cpp \
 	platform/graphics/Gradient.cpp \
 	platform/graphics/GraphicsContext.cpp \
 	platform/graphics/GraphicsLayer.cpp \

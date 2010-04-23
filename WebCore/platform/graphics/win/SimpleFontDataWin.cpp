@@ -179,7 +179,24 @@ void SimpleFontData::determinePitch()
     ReleaseDC(0, dc);
 }
 
-GlyphMetrics SimpleFontData::metricsForGDIGlyph(Glyph glyph) const
+FloatRect SimpleFontData::boundsForGDIGlyph(Glyph glyph) const
+{
+    HDC hdc = GetDC(0);
+    SetGraphicsMode(hdc, GM_ADVANCED);
+    HGDIOBJ oldFont = SelectObject(hdc, m_platformData.hfont());
+    
+    GLYPHMETRICS gdiMetrics;
+    static const MAT2 identity = { 0, 1,  0, 0,  0, 0,  0, 1 };
+    GetGlyphOutline(hdc, glyph, GGO_METRICS | GGO_GLYPH_INDEX, &gdiMetrics, 0, 0, &identity);
+    
+    SelectObject(hdc, oldFont);
+    ReleaseDC(0, hdc);
+    
+    return FloatRect(gdiMetrics.gmptGlyphOrigin.x, -gdiMetrics.gmptGlyphOrigin.y,
+        gdiMetrics.gmBlackBoxX + m_syntheticBoldOffset, gdiMetrics.gmBlackBoxY); 
+}
+    
+float SimpleFontData::widthForGDIGlyph(Glyph glyph) const
 {
     HDC hdc = GetDC(0);
     SetGraphicsMode(hdc, GM_ADVANCED);
@@ -192,12 +209,7 @@ GlyphMetrics SimpleFontData::metricsForGDIGlyph(Glyph glyph) const
     SelectObject(hdc, oldFont);
     ReleaseDC(0, hdc);
 
-    GlyphMetrics glyphMetrics;
-    glyphMetrics.horizontalAdvance = gdiMetrics.gmCellIncX + m_syntheticBoldOffset;
-    glyphMetrics.boundingBox = FloatRect(gdiMetrics.gmptGlyphOrigin.x, -gdiMetrics.gmptGlyphOrigin.y,
-        gdiMetrics.gmBlackBoxX + m_syntheticBoldOffset, gdiMetrics.gmBlackBoxY);
-
-    return glyphMetrics;
+    return gdiMetrics.gmCellIncX + m_syntheticBoldOffset;
 }
 
 SCRIPT_FONTPROPERTIES* SimpleFontData::scriptFontProperties() const

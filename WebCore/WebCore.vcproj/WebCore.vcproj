@@ -22842,10 +22842,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\graphics\GlyphMetricsMap.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\platform\graphics\GlyphMetricsMap.h"
 					>
 				</File>

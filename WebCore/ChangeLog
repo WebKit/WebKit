@@ -1,3 +1,74 @@
+2010-04-23  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for <rdar://problem/7855777> REGRESSION: Memory usage increase caused by storing glyph bounds in GlyphMetricsMap
+        https://bugs.webkit.org/show_bug.cgi?id=37936
+
+        This change breaks the GlyphMetricsMap into two maps - one for width and one for bounds, so that we don't store
+        a FloatRect for the glyph bounds unless we need to.
+
+        Covered by existing tests.  This should not cause any change in functionality.
+
+        Updated for removal of GlyphMetricsMap.cpp
+        * Android.mk:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        Made GlyphMetricsMap a template, so it can be used for separate width and bounds maps.
+        * platform/graphics/GlyphMetricsMap.cpp: Removed.
+        * platform/graphics/GlyphMetricsMap.h:
+        (WebCore::GlyphMetricsMap::metricsForGlyph):
+        (WebCore::GlyphMetricsMap::setMetricsForGlyph):
+        (WebCore::GlyphMetricsMap::GlyphMetricsPage::metricsForGlyph):
+        (WebCore::GlyphMetricsMap::GlyphMetricsPage::setMetricsForGlyph):
+        (WebCore::GlyphMetricsMap::GlyphMetricsPage::setMetricsForIndex):
+        (WebCore::::unknownMetrics):
+        (WebCore::::locatePageSlowCase):
+
+        * platform/graphics/mac/ComplexTextController.cpp: (WebCore::ComplexTextController::adjustGlyphsAndAdvances):
+        Call boundsForGlyph instead of metricsForGlyph.
+        * platform/graphics/win/UniscribeController.cpp: (WebCore::UniscribeController::shapeAndPlaceItem):
+        ditto.
+        * platform/graphics/SimpleFontData.cpp: (WebCore::SimpleFontData::platformGlyphInit):
+        Call setMetricsForGlyph for both glyph maps.
+
+        Break getters and setters for metricsForGlyph into widthForGlyph and boundsForGlyph, maintaining present behavior.
+        * platform/graphics/SimpleFontData.h:
+        (WebCore::):
+        (WebCore::SimpleFontData::boundsForGlyph):
+        (WebCore::SimpleFontData::widthForGlyph):
+        * platform/graphics/cairo/SimpleFontDataCairo.cpp:
+        (WebCore::SimpleFontData::platformBoundsForGlyph):
+        (WebCore::SimpleFontData::platformWidthForGlyph):
+        * platform/graphics/chromium/SimpleFontDataChromiumWin.cpp:
+        (WebCore::SimpleFontData::platformBoundsForGlyph):
+        (WebCore::SimpleFontData::platformWidthForGlyph):
+        * platform/graphics/chromium/SimpleFontDataLinux.cpp:
+        (WebCore::SimpleFontData::platformBoundsForGlyph):
+        (WebCore::SimpleFontData::platformWidthForGlyph):
+        * platform/graphics/gtk/SimpleFontDataPango.cpp:
+        (WebCore::SimpleFontData::platformBoundsForGlyph):
+        (WebCore::SimpleFontData::platformWidthForGlyph):
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::platformBoundsForGlyph):
+        (WebCore::SimpleFontData::platformWidthForGlyph):
+        * platform/graphics/win/SimpleFontDataCGWin.cpp:
+        (WebCore::SimpleFontData::platformBoundsForGlyph):
+        (WebCore::SimpleFontData::platformWidthForGlyph):
+        * platform/graphics/win/SimpleFontDataCairoWin.cpp:
+        (WebCore::SimpleFontData::platformBoundsForGlyph):
+        * platform/graphics/win/SimpleFontDataWin.cpp:
+        (WebCore::SimpleFontData::boundsForGDIGlyph):
+        (WebCore::SimpleFontData::widthForGDIGlyph):
+        * platform/graphics/wince/SimpleFontDataWince.cpp:
+        (WebCore::SimpleFontData::platformBoundsForGlyph):
+        * platform/graphics/wx/SimpleFontDataWx.cpp:
+        (WebCore::SimpleFontData::platformBoundsForGlyph):
+        (WebCore::SimpleFontData::platformWidthForGlyph):
+
 2010-04-23  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by Dan Bernstein and Darin Adler

@@ -26,6 +26,7 @@
 
 #include "FontData.h"
 #include "FontPlatformData.h"
+#include "FloatRect.h"
 #include "GlyphMetricsMap.h"
 #include "GlyphPageTreeNode.h"
 #include "TypesettingFeatures.h"
@@ -60,7 +61,6 @@ class SharedBuffer;
 class SVGFontData;
 
 enum Pitch { UnknownPitch, FixedPitch, VariablePitch };
-enum GlyphMetricsMode { GlyphBoundingBox, GlyphWidthOnly };
 
 class SimpleFontData : public FontData {
 public:
@@ -81,9 +81,10 @@ public:
     float xHeight() const { return m_xHeight; }
     unsigned unitsPerEm() const { return m_unitsPerEm; }
 
-    float widthForGlyph(Glyph glyph) const { return metricsForGlyph(glyph, GlyphWidthOnly).horizontalAdvance; }
-    GlyphMetrics metricsForGlyph(Glyph, GlyphMetricsMode = GlyphBoundingBox) const;
-    GlyphMetrics platformMetricsForGlyph(Glyph, GlyphMetricsMode) const;
+    FloatRect boundsForGlyph(Glyph) const;
+    float widthForGlyph(Glyph glyph) const;
+    FloatRect platformBoundsForGlyph(Glyph) const;
+    float platformWidthForGlyph(Glyph) const;
 
     float spaceWidth() const { return m_spaceWidth; }
     float adjustedSpaceWidth() const { return m_adjustedSpaceWidth; }
@@ -168,7 +169,8 @@ private:
     || (OS(WINDOWS) && PLATFORM(WX))
     void initGDIFont();
     void platformCommonDestroy();
-    GlyphMetrics metricsForGDIGlyph(Glyph glyph) const;
+    FloatRect boundsForGDIGlyph(Glyph glyph) const;
+    float widthForGDIGlyph(Glyph glyph) const;
 #endif
 
     int m_ascent;
@@ -182,7 +184,8 @@ private:
 
     FontPlatformData m_platformData;
 
-    mutable GlyphMetricsMap m_glyphToMetricsMap;
+    mutable GlyphMetricsMap<FloatRect> m_glyphToBoundsMap;
+    mutable GlyphMetricsMap<float> m_glyphToWidthMap;
 
     bool m_treatAsFixedPitch;
 
@@ -238,16 +241,25 @@ private:
     
     
 #if !PLATFORM(QT)
-ALWAYS_INLINE GlyphMetrics SimpleFontData::metricsForGlyph(Glyph glyph, GlyphMetricsMode metricsMode) const
+ALWAYS_INLINE FloatRect SimpleFontData::boundsForGlyph(Glyph glyph) const
 {
-    GlyphMetrics metrics = m_glyphToMetricsMap.metricsForGlyph(glyph);
-    if ((metricsMode == GlyphWidthOnly && metrics.horizontalAdvance != cGlyphSizeUnknown) || (metricsMode == GlyphBoundingBox && metrics.boundingBox.width() != cGlyphSizeUnknown))
-        return metrics;
+    FloatRect bounds = m_glyphToBoundsMap.metricsForGlyph(glyph);
+    if (bounds.width() != cGlyphSizeUnknown)
+        return bounds;
+    bounds = platformBoundsForGlyph(glyph);
+    m_glyphToBoundsMap.setMetricsForGlyph(glyph, bounds);
+    return bounds;
+}
 
-    metrics = platformMetricsForGlyph(glyph, metricsMode);
-    m_glyphToMetricsMap.setMetricsForGlyph(glyph, metrics);
+ALWAYS_INLINE float SimpleFontData::widthForGlyph(Glyph glyph) const
+{
+    float width = m_glyphToWidthMap.metricsForGlyph(glyph);
+    if (width != cGlyphSizeUnknown)
+        return width;
 
-    return metrics;
+    width = platformWidthForGlyph(glyph);
+    m_glyphToWidthMap.setMetricsForGlyph(glyph, width);
+    return width;
 }
 #endif
 

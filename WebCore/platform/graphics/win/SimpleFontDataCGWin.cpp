@@ -125,11 +125,26 @@ void SimpleFontData::platformCharWidthInit()
         initCharWidths();
     }
 }
-
-GlyphMetrics SimpleFontData::platformMetricsForGlyph(Glyph glyph, GlyphMetricsMode metricsMode) const
+FloatRect SimpleFontData::platformBoundsForGlyph(Glyph glyph) const
 {
     if (m_platformData.useGDI())
-       return metricsForGDIGlyph(glyph);
+        return boundsForGDIGlyph(glyph);
+
+    CGRect box;
+    CGFontGetGlyphBBoxes(m_platformData.cgFont(), &glyph, 1, &box);
+    float pointSize = m_platformData.size();
+    CGFloat scale = pointSize / unitsPerEm();
+    FloatRect boundingBox = CGRectApplyAffineTransform(box, CGAffineTransformMakeScale(scale, -scale));
+    if (m_syntheticBoldOffset)
+        boundingBox.setWidth(boundingBox.width() + m_syntheticBoldOffset);
+
+    return boundingBox;
+}
+
+float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
+{
+    if (m_platformData.useGDI())
+        return widthForGDIGlyph(glyph);
 
     CGFontRef font = m_platformData.cgFont();
     float pointSize = m_platformData.size();
@@ -139,18 +154,8 @@ GlyphMetrics SimpleFontData::platformMetricsForGlyph(Glyph glyph, GlyphMetricsMo
     // FIXME: Need to add real support for printer fonts.
     bool isPrinterFont = false;
     wkGetGlyphAdvances(font, m, m_isSystemFont, isPrinterFont, glyph, advance);
-    GlyphMetrics metrics;
-    metrics.horizontalAdvance = advance.width + m_syntheticBoldOffset;
-    
-    if (metricsMode == GlyphBoundingBox) {
-        CGRect boundingBox;
-        CGFontGetGlyphBBoxes(font, &glyph, 1, &boundingBox);
-        CGFloat scale = pointSize / unitsPerEm();
-        metrics.boundingBox = CGRectApplyAffineTransform(boundingBox, CGAffineTransformMakeScale(scale, -scale));
-        if (m_syntheticBoldOffset)
-            metrics.boundingBox.setWidth(metrics.boundingBox.width() + m_syntheticBoldOffset);
-    }
-    return metrics;
+
+    return advance.width + m_syntheticBoldOffset;
 }
 
 }

@@ -131,6 +131,11 @@ void SimpleFontData::determinePitch()
     m_treatAsFixedPitch = !(tm.tmPitchAndFamily & TMPF_FIXED_PITCH);
 }
 
+FloatRect SimpleFontData::platformBoundsForGlyph(Glyph) const
+{
+    return FloatRect();
+}
+    
 float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
 {
     if (m_platformData.isDisabled())

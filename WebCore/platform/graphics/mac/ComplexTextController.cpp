@@ -547,12 +547,12 @@ void ComplexTextController::adjustGlyphsAndAdvances()
             m_adjustedAdvances.append(advance);
             m_adjustedGlyphs.append(glyph);
             
-            GlyphMetrics glyphMetrics = fontData->metricsForGlyph(glyph);
-            glyphMetrics.boundingBox.move(glyphOrigin.x, glyphOrigin.y);
-            m_minGlyphBoundingBoxX = min(m_minGlyphBoundingBoxX, glyphMetrics.boundingBox.x());
-            m_maxGlyphBoundingBoxX = max(m_maxGlyphBoundingBoxX, glyphMetrics.boundingBox.right());
-            m_minGlyphBoundingBoxY = min(m_minGlyphBoundingBoxY, glyphMetrics.boundingBox.y());
-            m_maxGlyphBoundingBoxY = max(m_maxGlyphBoundingBoxY, glyphMetrics.boundingBox.bottom());
+            FloatRect glyphBounds = fontData->boundsForGlyph(glyph);
+            glyphBounds.move(glyphOrigin.x, glyphOrigin.y);
+            m_minGlyphBoundingBoxX = min(m_minGlyphBoundingBoxX, glyphBounds.x());
+            m_maxGlyphBoundingBoxX = max(m_maxGlyphBoundingBoxX, glyphBounds.right());
+            m_minGlyphBoundingBoxY = min(m_minGlyphBoundingBoxY, glyphBounds.y());
+            m_maxGlyphBoundingBoxY = max(m_maxGlyphBoundingBoxY, glyphBounds.bottom());
             glyphOrigin.x += advance.width;
             glyphOrigin.y += advance.height;
             

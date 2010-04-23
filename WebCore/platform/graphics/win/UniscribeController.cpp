@@ -380,12 +380,12 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, const S
             glyphBuffer->add(glyph, fontData, advance, &size);
         }
 
-        GlyphMetrics glyphMetrics = fontData->metricsForGlyph(glyph);
-        glyphMetrics.boundingBox.move(m_glyphOrigin.x(), m_glyphOrigin.y());
-        m_minGlyphBoundingBoxX = min(m_minGlyphBoundingBoxX, glyphMetrics.boundingBox.x());
-        m_maxGlyphBoundingBoxX = max(m_maxGlyphBoundingBoxX, glyphMetrics.boundingBox.right());
-        m_minGlyphBoundingBoxY = min(m_minGlyphBoundingBoxY, glyphMetrics.boundingBox.y());
-        m_maxGlyphBoundingBoxY = max(m_maxGlyphBoundingBoxY, glyphMetrics.boundingBox.bottom());
+        FloatRect glyphBounds = fontData->boundsForGlyph(glyph);
+        glyphBounds.move(m_glyphOrigin.x(), m_glyphOrigin.y());
+        m_minGlyphBoundingBoxX = min(m_minGlyphBoundingBoxX, glyphBounds.x());
+        m_maxGlyphBoundingBoxX = max(m_maxGlyphBoundingBoxX, glyphBounds.right());
+        m_minGlyphBoundingBoxY = min(m_minGlyphBoundingBoxY, glyphBounds.y());
+        m_maxGlyphBoundingBoxY = max(m_maxGlyphBoundingBoxY, glyphBounds.bottom());
         m_glyphOrigin.move(advance + offsetX, -offsetY);
 
         // Mutate the glyph array to contain our altered advances.

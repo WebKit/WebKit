@@ -407,7 +407,22 @@ void SimpleFontData::determinePitch()
            [name caseInsensitiveCompare:@"MonotypeCorsiva"] != NSOrderedSame;
 }
 
-GlyphMetrics SimpleFontData::platformMetricsForGlyph(Glyph glyph, GlyphMetricsMode metricsMode) const
+FloatRect SimpleFontData::platformBoundsForGlyph(Glyph glyph) const
+{
+    FloatRect boundingBox;
+#ifndef BUILDING_ON_TIGER
+    CGRect box;
+    CGFontGetGlyphBBoxes(platformData().cgFont(), &glyph, 1, &box);
+    float pointSize = platformData().m_size;
+    CGFloat scale = pointSize / unitsPerEm();
+    boundingBox = CGRectApplyAffineTransform(box, CGAffineTransformMakeScale(scale, -scale));
+    if (m_syntheticBoldOffset)
+        boundingBox.setWidth(boundingBox.width() + m_syntheticBoldOffset);
+#endif
+    return boundingBox;
+}
+
+float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
 {
     NSFont* font = platformData().font();
     float pointSize = platformData().m_size;
@@ -417,19 +432,7 @@ GlyphMetrics SimpleFontData::platformMetricsForGlyph(Glyph glyph, GlyphMetricsMo
         LOG_ERROR("Unable to cache glyph widths for %@ %f", [font displayName], pointSize);
         advance.width = 0;
     }
-    GlyphMetrics metrics;
-    metrics.horizontalAdvance = advance.width + m_syntheticBoldOffset;
-    if (metricsMode == GlyphBoundingBox) {
-#ifndef BUILDING_ON_TIGER
-        CGRect boundingBox;
-        CGFontGetGlyphBBoxes(platformData().cgFont(), &glyph, 1, &boundingBox);
-        CGFloat scale = pointSize / unitsPerEm();
-        metrics.boundingBox = CGRectApplyAffineTransform(boundingBox, CGAffineTransformMakeScale(scale, -scale));
-        if (m_syntheticBoldOffset)
-            metrics.boundingBox.setWidth(metrics.boundingBox.width() + m_syntheticBoldOffset);
-#endif
-    }
-    return metrics;
+    return advance.width + m_syntheticBoldOffset;
 }
 
 #if USE(ATSUI)
