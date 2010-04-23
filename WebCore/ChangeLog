@@ -1,3 +1,11 @@
+2010-04-23  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX: Fix Mac build after Bug 36187 landed in r58168
+
+        * WebCore.xcodeproj/project.pbxproj: Renamed DOMMedia.h,
+        DOMMedia.mm, DOMMediaInternal.h to DOMStyleMedia.h,
+        DOMStyleMedia.mm, DOMStyleMediaInternal.h.  
+
 2010-04-23  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Unreviewed build fix.

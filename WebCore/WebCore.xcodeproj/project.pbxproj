@@ -223,9 +223,9 @@
 		0FD308D6117D168500A791F7 /* RenderIFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD308D4117D168400A791F7 /* RenderIFrame.h */; };
 		0FD723820EC8BD9300CA5DD7 /* FloatQuad.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD723800EC8BD9300CA5DD7 /* FloatQuad.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FD723830EC8BD9300CA5DD7 /* FloatQuad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD723810EC8BD9300CA5DD7 /* FloatQuad.cpp */; };
-		0FF5025B102BA9010066F39A /* DOMMedia.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF50259102BA9010066F39A /* DOMMedia.h */; };
-		0FF5025C102BA9010066F39A /* DOMMedia.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FF5025A102BA9010066F39A /* DOMMedia.mm */; };
-		0FF50263102BA92C0066F39A /* DOMMediaInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF50262102BA92B0066F39A /* DOMMediaInternal.h */; };
+		0FF5025B102BA9010066F39A /* DOMStyleMedia.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF50259102BA9010066F39A /* DOMStyleMedia.h */; };
+		0FF5025C102BA9010066F39A /* DOMStyleMedia.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FF5025A102BA9010066F39A /* DOMStyleMedia.mm */; };
+		0FF50263102BA92C0066F39A /* DOMStyleMediaInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF50262102BA92B0066F39A /* DOMStyleMediaInternal.h */; };
 		0FF50269102BA9430066F39A /* JSStyleMedia.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF50267102BA9430066F39A /* JSStyleMedia.cpp */; };
 		0FF5026A102BA9430066F39A /* JSStyleMedia.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF50268102BA9430066F39A /* JSStyleMedia.h */; };
 		0FF50271102BA96A0066F39A /* StyleMedia.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF5026E102BA9660066F39A /* StyleMedia.cpp */; };
@@ -5597,9 +5597,9 @@
 		0FD308D4117D168400A791F7 /* RenderIFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderIFrame.h; sourceTree = "<group>"; };
 		0FD723800EC8BD9300CA5DD7 /* FloatQuad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatQuad.h; sourceTree = "<group>"; };
 		0FD723810EC8BD9300CA5DD7 /* FloatQuad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FloatQuad.cpp; sourceTree = "<group>"; };
-		0FF50259102BA9010066F39A /* DOMMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMMedia.h; sourceTree = "<group>"; };
-		0FF5025A102BA9010066F39A /* DOMMedia.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMMedia.mm; sourceTree = "<group>"; };
-		0FF50262102BA92B0066F39A /* DOMMediaInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMMediaInternal.h; sourceTree = "<group>"; };
+		0FF50259102BA9010066F39A /* DOMStyleMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMStyleMedia.h; sourceTree = "<group>"; };
+		0FF5025A102BA9010066F39A /* DOMStyleMedia.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMStyleMedia.mm; sourceTree = "<group>"; };
+		0FF50262102BA92B0066F39A /* DOMStyleMediaInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMStyleMediaInternal.h; sourceTree = "<group>"; };
 		0FF50267102BA9430066F39A /* JSStyleMedia.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStyleMedia.cpp; sourceTree = "<group>"; };
 		0FF50268102BA9430066F39A /* JSStyleMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStyleMedia.h; sourceTree = "<group>"; };
 		0FF5026E102BA9660066F39A /* StyleMedia.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleMedia.cpp; sourceTree = "<group>"; };
@@ -11761,10 +11761,10 @@
 		850657040AAB476C002D15C0 /* StyleSheets */ = {
 			isa = PBXGroup;
 			children = (
-				0FF50259102BA9010066F39A /* DOMMedia.h */,
-				0FF5025A102BA9010066F39A /* DOMMedia.mm */,
 				850656F80AAB4763002D15C0 /* DOMMediaList.h */,
 				850656F90AAB4763002D15C0 /* DOMMediaList.mm */,
+				0FF50259102BA9010066F39A /* DOMStyleMedia.h */,
+				0FF5025A102BA9010066F39A /* DOMStyleMedia.mm */,
 				850656FA0AAB4763002D15C0 /* DOMStyleSheet.h */,
 				850656FB0AAB4763002D15C0 /* DOMStyleSheet.mm */,
 				850656FC0AAB4763002D15C0 /* DOMStyleSheetList.h */,
@@ -12680,7 +12680,6 @@
 				85E711800AC5D5350053270F /* DOMHTMLTitleElementInternal.h */,
 				85E711810AC5D5350053270F /* DOMHTMLUListElementInternal.h */,
 				85989DC50ACC8BBD00A0BC51 /* DOMKeyboardEventInternal.h */,
-				0FF50262102BA92B0066F39A /* DOMMediaInternal.h */,
 				85E711820AC5D5350053270F /* DOMMediaListInternal.h */,
 				75793ED20D0CE85B007FC0AC /* DOMMessageEventInternal.h */,
 				E1ADEDD40E76BD60004A1A5E /* DOMMessagePortInternal.h */,
@@ -12697,6 +12696,7 @@
 				8538F05A0AD722F1006A81D1 /* DOMRangeInternal.h */,
 				85E711870AC5D5350053270F /* DOMRectInternal.h */,
 				BCD0FC4E0DBD720B00B2F630 /* DOMRGBColorInternal.h */,
+				0FF50262102BA92B0066F39A /* DOMStyleMediaInternal.h */,
 				85B498FE0ADB348100925CBB /* DOMStyleSheetInternal.h */,
 				85E711880AC5D5350053270F /* DOMStyleSheetListInternal.h */,
 				85ACEF850ACDD04A001214FF /* DOMSVGAElementInternal.h */,
@@ -16808,8 +16808,6 @@
 				BC1A37B9097C715F0019F3D8 /* DOMInternal.h in Headers */,
 				85FF315A0AAFBFCB00374F38 /* DOMKeyboardEvent.h in Headers */,
 				85989DCC0ACC8BBD00A0BC51 /* DOMKeyboardEventInternal.h in Headers */,
-				0FF5025B102BA9010066F39A /* DOMMedia.h in Headers */,
-				0FF50263102BA92C0066F39A /* DOMMediaInternal.h in Headers */,
 				850656FE0AAB4763002D15C0 /* DOMMediaList.h in Headers */,
 				85E711D10AC5D5350053270F /* DOMMediaListInternal.h in Headers */,
 				75793ED30D0CE85B007FC0AC /* DOMMessageEvent.h in Headers */,
@@ -16851,6 +16849,8 @@
 				855D358A0AD707310019AAC7 /* DOMRGBColor.h in Headers */,
 				BCD0FC4F0DBD720B00B2F630 /* DOMRGBColorInternal.h in Headers */,
 				BC5A86850C33676000EEA649 /* DOMSelection.h in Headers */,
+				0FF5025B102BA9010066F39A /* DOMStyleMedia.h in Headers */,
+				0FF50263102BA92C0066F39A /* DOMStyleMediaInternal.h in Headers */,
 				850657000AAB4763002D15C0 /* DOMStyleSheet.h in Headers */,
 				85B498FF0ADB348100925CBB /* DOMStyleSheetInternal.h in Headers */,
 				850657020AAB4763002D15C0 /* DOMStyleSheetList.h in Headers */,
@@ -19430,7 +19430,6 @@
 				93C841FF09CE858300DFF5E5 /* DOMImplementationFront.cpp in Sources */,
 				BC1A37BA097C715F0019F3D8 /* DOMInternal.mm in Sources */,
 				85FF315B0AAFBFCB00374F38 /* DOMKeyboardEvent.mm in Sources */,
-				0FF5025C102BA9010066F39A /* DOMMedia.mm in Sources */,
 				850656FF0AAB4763002D15C0 /* DOMMediaList.mm in Sources */,
 				75793ED40D0CE85B007FC0AC /* DOMMessageEvent.mm in Sources */,
 				E1ACAF4C0E791AAF0087D12B /* DOMMessagePort.mm in Sources */,
@@ -19452,6 +19451,7 @@
 				858C38A80AA8F20400B187A4 /* DOMRect.mm in Sources */,
 				BCAEFCAE1016CE4A0040D34E /* DOMRGBColor.mm in Sources */,
 				BC5A86840C33676000EEA649 /* DOMSelection.cpp in Sources */,
+				0FF5025C102BA9010066F39A /* DOMStyleMedia.mm in Sources */,
 				850657010AAB4763002D15C0 /* DOMStyleSheet.mm in Sources */,
 				850657030AAB4763002D15C0 /* DOMStyleSheetList.mm in Sources */,
 				85ACEF7D0ACDCFCE001214FF /* DOMSVGAElement.mm in Sources */,
