@@ -149,8 +149,6 @@ void DrawingAreaUpdateChunk::setSize(const IntSize& viewSize)
 
 void DrawingAreaUpdateChunk::didUpdate()
 {
-    ASSERT(m_isWaitingForUpdate);
-    
     m_isWaitingForUpdate = false;
 
     // Display if needed.
