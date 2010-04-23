@@ -1328,7 +1328,7 @@ QVariant QWebPage::inputMethodQuery(Qt::InputMethodQuery property) const
                 // We can't access absoluteCaretBounds() while the view needs to layout.
                 return QVariant();
             }
-            return QVariant(frame->selection()->absoluteCaretBounds());
+            return QVariant(view->contentsToWindow(frame->selection()->absoluteCaretBounds()));
         }
         case Qt::ImFont: {
             if (renderTextControl) {

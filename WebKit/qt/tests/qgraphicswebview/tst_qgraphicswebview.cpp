@@ -31,6 +31,7 @@ class tst_QGraphicsWebView : public QObject
 private slots:
     void qgraphicswebview();
     void crashOnViewlessWebPages();
+    void microFocusCoordinates();
 };
 
 void tst_QGraphicsWebView::qgraphicswebview()
@@ -101,6 +102,40 @@ void tst_QGraphicsWebView::crashOnViewlessWebPages()
 
     QVERIFY(waitForSignal(page, SIGNAL(loadFinished(bool))));
 }
+
+void tst_QGraphicsWebView::microFocusCoordinates()
+{
+    QWebPage* page = new QWebPage;
+    QGraphicsWebView* webView = new QGraphicsWebView;
+    webView->setPage( page );
+    QGraphicsView* view = new QGraphicsView;
+    QGraphicsScene* scene = new QGraphicsScene(view);
+    view->setScene(scene);
+    scene->addItem(webView);
+    view->setGeometry(QRect(0,0,500,500));
+
+    page->mainFrame()->setHtml("<html><body>" \
+        "<input type='text' id='input1' style='font--family: serif' value='' maxlength='20'/><br>" \
+        "<canvas id='canvas1' width='500' height='500'/>" \
+        "<input type='password'/><br>" \
+        "<canvas id='canvas2' width='500' height='500'/>" \
+        "</body></html>");
+
+    page->mainFrame()->setFocus();
+
+    QVariant initialMicroFocus = page->inputMethodQuery(Qt::ImMicroFocus);
+    QVERIFY(initialMicroFocus.isValid());
+
+    page->mainFrame()->scroll(0,300);
+
+    QVariant currentMicroFocus = page->inputMethodQuery(Qt::ImMicroFocus);
+    QVERIFY(currentMicroFocus.isValid());
+
+    QCOMPARE(initialMicroFocus.toRect().translated(QPoint(0,-300)), currentMicroFocus.toRect());
+
+    delete view;
+}
+
 
 QTEST_MAIN(tst_QGraphicsWebView)
 

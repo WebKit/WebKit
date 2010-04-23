@@ -48,6 +48,7 @@ private slots:
 
     void reusePage_data();
     void reusePage();
+    void microFocusCoordinates();
 
     void crashTests();
 };
@@ -203,6 +204,31 @@ void tst_QWebView::crashTests()
     QTRY_VERIFY(tester.m_executed); // If fail it means that the test wasn't executed.
 }
 
+void tst_QWebView::microFocusCoordinates()
+{
+    QWebPage* page = new QWebPage;
+    QWebView* webView = new QWebView;
+    webView->setPage( page );
+
+    page->mainFrame()->setHtml("<html><body>" \
+        "<input type='text' id='input1' style='font--family: serif' value='' maxlength='20'/><br>" \
+        "<canvas id='canvas1' width='500' height='500'/>" \
+        "<input type='password'/><br>" \
+        "<canvas id='canvas2' width='500' height='500'/>" \
+        "</body></html>");
+
+    page->mainFrame()->setFocus();
+
+    QVariant initialMicroFocus = page->inputMethodQuery(Qt::ImMicroFocus);
+    QVERIFY(initialMicroFocus.isValid());
+
+    page->mainFrame()->scroll(0,50);
+
+    QVariant currentMicroFocus = page->inputMethodQuery(Qt::ImMicroFocus);
+    QVERIFY(currentMicroFocus.isValid());
+
+    QCOMPARE(initialMicroFocus.toRect().translated(QPoint(0,-50)), currentMicroFocus.toRect());
+}
 
 QTEST_MAIN(tst_QWebView)
 #include "tst_qwebview.moc"

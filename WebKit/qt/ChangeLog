@@ -1,3 +1,24 @@
+2010-04-22  John Pavan  <john.pavan@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] inputMethodQuery returns coordinates in web page coordinates rather than in item coordinates.
+        https://bugs.webkit.org/show_bug.cgi?id=37163
+
+
+        QWebPage::inputMethodQuery is modified so that it
+        returns coordinates in the widget's coordinate system.
+        Tests are added for QGraphicsWebView and QWebView
+        to verify that this behavior is correct after the webpage
+        has been scrolled.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::inputMethodQuery):
+        * tests/qgraphicswebview/tst_qgraphicswebview.cpp:
+        (tst_QGraphicsWebView::microFocusCoordinates):
+        * tests/qwebview/tst_qwebview.cpp:
+        (tst_QWebView::microFocusCoordinates):
+
 2010-04-22  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Simon Hausmann.
