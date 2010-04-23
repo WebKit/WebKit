@@ -2775,3 +2775,6 @@ BUGJAMESR WIN : media/video-zoom.html = IMAGE
 // Started failing at r58058
 BUGWK38020 WIN LINUX MAC : fast/events/touch/send-oncancel-event.html = TEXT
 
+// Started failing at r58152
+BUGWK38038 WIN LINUX MAC : fast/url/file-http-base.html = TEXT
+
