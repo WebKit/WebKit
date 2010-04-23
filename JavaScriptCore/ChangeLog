@@ -1,3 +1,20 @@
+2010-04-22  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        MD5 is required for WebSocket new protocol implementation
+        https://bugs.webkit.org/show_bug.cgi?id=37913
+
+        * GNUmakefile.am:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.pro:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/MD5.cpp: Added.
+        * wtf/MD5.h: Added.
+
 2010-04-22  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by NOBODY (build fix).

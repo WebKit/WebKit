@@ -370,6 +370,8 @@
             'wtf/ListHashSet.h',
             'wtf/ListRefPtr.h',
             'wtf/Locker.h',
+            'wtf/MD5.cpp',
+            'wtf/MD5.h',
             'wtf/MainThread.cpp',
             'wtf/MainThread.h',
             'wtf/MallocZoneSupport.h',

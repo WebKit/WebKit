@@ -1,3 +1,12 @@
+2010-04-22  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        MD5 is required for WebSocket new protocol implementation
+        https://bugs.webkit.org/show_bug.cgi?id=37913
+
+        * ForwardingHeaders/wtf/MD5.h: Added.
+
 2010-04-22  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

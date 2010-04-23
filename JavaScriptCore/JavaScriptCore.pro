@@ -201,6 +201,7 @@ SOURCES += \
     wtf/dtoa.cpp \
     wtf/FastMalloc.cpp \
     wtf/HashTable.cpp \
+    wtf/MD5.cpp \
     wtf/MainThread.cpp \
     wtf/qt/MainThreadQt.cpp \
     wtf/qt/StringQt.cpp \

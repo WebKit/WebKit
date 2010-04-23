@@ -373,6 +373,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\MD5.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\MD5.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\MainThread.cpp"
 			>
 		</File>

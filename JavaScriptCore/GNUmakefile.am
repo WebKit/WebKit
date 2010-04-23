@@ -246,6 +246,8 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/ListHashSet.h \
 	JavaScriptCore/wtf/ListRefPtr.h \
 	JavaScriptCore/wtf/Locker.h \
+	JavaScriptCore/wtf/MD5.cpp \
+	JavaScriptCore/wtf/MD5.h \
 	JavaScriptCore/wtf/MainThread.cpp \
 	JavaScriptCore/wtf/MainThread.h \
 	JavaScriptCore/wtf/MathExtras.h \
