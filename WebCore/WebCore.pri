@@ -4,6 +4,10 @@ CONFIG(standalone_package) {
     isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = generated
 }
 
+CONFIG(minimal) {
+  DEFINES += ENABLE_NETSCAPE_PLUGIN_API=0
+}
+
 ## Define default features macros for optional components
 ## (look for defs in config.h and included files!)
 # Try to locate sqlite3 source

@@ -350,6 +350,10 @@ if (isGtk()) {
     foreach (@features) {
         push @options, "DEFINES+=$_->{define}=${$_->{value}}" if ${$_->{value}} != $_->{default};
     }
+    
+    if ($minimal) {
+        push @options, "CONFIG+=minimal";
+    }
 }
 
 # Force re-link of existing libraries if different than expected
