@@ -36,8 +36,10 @@
 #include "HTMLDocument.h"
 #include "History.h"
 #include "JSAudioConstructor.h"
+#if ENABLE(DATABASE)
 #include "JSDatabase.h"
 #include "JSDatabaseCallback.h"
+#endif
 #include "JSDOMWindowShell.h"
 #include "JSEvent.h"
 #include "JSEventListener.h"

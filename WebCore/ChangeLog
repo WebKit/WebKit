@@ -1,3 +1,15 @@
+2010-04-22  Michael Forney  <mforney@mforney.org>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37761
+
+        Only include JSDatabase.h and JSDatabaseCallback.h when database is
+        enabled. This partially fixes building with --disable-database.
+
+        * bindings/js/JSDOMWindowCustom.cpp: Add a check for database around
+        database-related headers.
+
 2010-04-22  Ray Rischpater  <Raymond.Rischpater@Nokia.com>
 
         Reviewed by Darin Adler.
