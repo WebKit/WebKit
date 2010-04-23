@@ -1,5 +1,16 @@
 2010-04-22  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Dimitri Glazkov.
+
+        new-run-webkit-tests --verbose shows ever-increasing #EOF lines
+        https://bugs.webkit.org/show_bug.cgi?id=37794
+
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+         - Remove the assert() since our ServerProcess code does not always
+           seem to be reading the full stderr output (or we're not waiting for it to).
+
+2010-04-22  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Adam Barth.
 
         Add code to help debug new-run-webkit-test hangs on the Chromium bots

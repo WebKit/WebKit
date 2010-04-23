@@ -447,9 +447,8 @@ class WebKitDriver(base.Driver):
         # FIXME: This is a hack.  It is unclear why sometimes
         # we do not get any error lines from the server_process
         # probably we are not flushing stderr.
-        if error_lines:
-            error_eof = error_lines.pop()
-            assert(error_eof == "#EOF")
+        if error_lines and error_lines[-1] == "#EOF":
+            error_lines.pop()  # Remove the expected "#EOF"
         error = "\n".join(error_lines)
         # FIXME: This seems like the wrong section of code to be doing
         # this reset in.
