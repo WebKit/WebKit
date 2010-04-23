@@ -1,3 +1,19 @@
+2010-04-23  Gabor Rapcsanyi  <rgabor@inf.u-szeged.hu>
+
+        Reviewed by Laszlo Gombos.
+
+        Add RVCT support for Linux
+
+        Developed in cooperation with Gabor Loki.
+
+        * API/JSStringRef.h:
+        * jit/ExecutableAllocator.h:
+        * jit/ExecutableAllocatorPosix.cpp:
+        (JSC::ExecutableAllocator::cacheFlush):
+        * jit/JITStubs.cpp:
+        * wtf/MathExtras.h:
+        * wtf/unicode/qt4/UnicodeQt4.h:
+
 2010-04-23  Patrick Gansterer  <paroga@paroga.com>
 
         Reviewed by Laszlo Gombos.
