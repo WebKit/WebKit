@@ -663,8 +663,10 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
         m_currentUserInitiatedProfileNumber = 1;
         m_nextUserInitiatedProfileNumber = 1;
 #endif
-        // resetScriptObjects should be called before database and DOM storage
+        // unbindAllResources should be called before database and DOM storage
         // resources are cleared so that it has a chance to unbind them.
+        unbindAllResources();
+        
         if (m_frontend) {
             m_frontend->reset();
             m_domAgent->reset();

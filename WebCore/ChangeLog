@@ -1,3 +1,13 @@
+2010-04-23  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        WebInspector: Flaky Inspector tests.
+        https://bugs.webkit.org/show_bug.cgi?id=36217
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::didCommitLoad):
+
 2010-04-23  Yaar Schnitman  <yaar@chromium.org>
 
         Reviewed by Adam Barth.
