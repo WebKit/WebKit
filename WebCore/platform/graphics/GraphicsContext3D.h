@@ -479,6 +479,8 @@ namespace WebCore {
                               bool flipVertically,
                               AlphaOp alphaOp);
 
+        bool isGLES2Compliant() const;
+
         //----------------------------------------------------------------------
         // Entry points for WebGL.
         //
@@ -684,8 +686,6 @@ namespace WebCore {
         // instance of any given error, and returns them from calls to
         // getError in the order they were added.
         void synthesizeGLError(unsigned long error);
-
-        bool isGLES2Compliant();
 
     private:        
         GraphicsContext3D(Attributes attrs, HostWindow* hostWindow);

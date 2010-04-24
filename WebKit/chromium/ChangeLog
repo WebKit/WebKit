@@ -1,3 +1,14 @@
+2010-04-23  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Add isGLES2Compliant to GraphicsContext3D: make the method const.
+        https://bugs.webkit.org/show_bug.cgi?id=37872
+
+        * src/GraphicsContext3D.cpp: Make isGLES2Compliant() const.
+        (WebCore::GraphicsContext3DInternal::isGLES2Compliant):
+        (WebCore::GraphicsContext3D::isGLES2Compliant):
+
 2010-04-23  Rafael Weinstein  <rafaelw@grafaelw.sfo.corp.google.com>
 
         Reviewed by Darin Fisher.
