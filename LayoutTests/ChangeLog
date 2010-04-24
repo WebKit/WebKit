@@ -1,5 +1,22 @@
 2010-04-24  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Update Qt SVG results, and a weird fast/xpath change (newline added).
+
+        * fast/xpath/namespace-vs-predicate-expected.txt:
+        * platform/qt/svg/css/circle-in-mask-with-shadow-expected.txt:
+        * platform/qt/svg/css/mask-with-shadow-expected.txt:
+        * platform/qt/svg/custom/gradient-userSpaceOnUse-with-percentage-expected.txt:
+        * platform/qt/svg/custom/pattern-excessive-malloc-expected.txt:
+        * platform/qt/svg/custom/pattern-size-bigger-than-target-size-expected.txt:
+        * platform/qt/svg/custom/pattern-skew-transformed-expected.txt:
+        * platform/qt/svg/custom/radial-gradient-with-outstanding-focalPoint-expected.txt:
+        * platform/qt/svg/custom/use-on-symbol-inside-pattern-expected.txt:
+        * platform/qt/svg/filters/feTile-expected.txt:
+        * platform/qt/svg/text/selection-background-color-expected.txt:
+        * platform/qt/svg/text/selection-styles-expected.txt:
+
+2010-04-24  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Reviewed by Dirk Schulze.
 
         SVGPaintServer needs to be converted to the new RenderSVGResource* system
