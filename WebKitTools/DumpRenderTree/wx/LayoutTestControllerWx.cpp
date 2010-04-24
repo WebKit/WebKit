@@ -423,6 +423,11 @@ JSRetainPtr<JSStringRef> LayoutTestController::layerTreeAsText() const
     return 0;
 }
 
+JSRetainPtr<JSStringRef> LayoutTestController::markerTextForListItem(JSContextRef context, JSValueRef nodeObject) const
+{
+    return 0;
+}
+
 JSValueRef LayoutTestController::computedStyleIncludingVisitedInfo(JSContextRef, JSValueRef)
 {
     return 0;

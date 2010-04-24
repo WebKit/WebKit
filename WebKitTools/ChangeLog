@@ -1,3 +1,10 @@
+2010-04-23  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix, add platform stub for new LayoutTestController method.
+
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::markerTextForListItem):
+
 2010-04-19  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Adam Barth.
