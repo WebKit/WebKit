@@ -38,6 +38,7 @@
 #include "SVGStyledTransformableElement.h"
 #include "SVGUnitTypes.h"
 #include "SVGUseElement.h"
+#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 
@@ -85,7 +86,11 @@ bool RenderSVGResourceClipper::applyResource(RenderObject* object, RenderStyle*,
 {
     ASSERT(object);
     ASSERT(context);
+#ifndef NDEBUG
     ASSERT(resourceMode == ApplyToDefaultMode);
+#else
+    UNUSED_PARAM(resourceMode);
+#endif
     applyClippingToContext(object, object->objectBoundingBox(), object->repaintRectInLocalCoordinates(), context);
     return true;
 }

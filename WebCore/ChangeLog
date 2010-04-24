@@ -1,5 +1,17 @@
 2010-04-24  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Fix release builds, wrap resourceMode assertion in NDEBUG blocks, use UNUSED_PARAM() otherwhise.
+
+        * rendering/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::applyResource):
+        * rendering/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::applyResource):
+        (WebCore::RenderSVGResourceFilter::postApplyResource):
+        * rendering/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::applyResource):
+
+2010-04-24  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Reviewed by Dirk Schulze.
 
         SVGPaintServer needs to be converted to the new RenderSVGResource* system
