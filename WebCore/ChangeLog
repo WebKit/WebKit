@@ -1,3 +1,18 @@
+2010-04-23  Rafael Weinstein  <rafaelw@grafaelw.sfo.corp.google.com>
+
+        Reviewed by Darin Fisher.
+
+        This patch adds a vector of additionalFeatures to WindowFeatures
+        and populates it with any feature strings that evaluate to "yes"
+        and aren't directly observed in WindowFeatures. This allows
+        clients to capture experimental window features.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38013
+
+        * page/WindowFeatures.cpp:
+        (WebCore::WindowFeatures::setWindowFeature):
+        * page/WindowFeatures.h:
+
 2010-04-23  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.

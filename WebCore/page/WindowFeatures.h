@@ -76,6 +76,8 @@ namespace WebCore {
 
         bool fullscreen;
         bool dialog;
+
+        Vector<String> additionalFeatures;
     };
 
 } // namespace WebCore

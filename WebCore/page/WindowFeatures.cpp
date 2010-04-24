@@ -155,6 +155,8 @@ void WindowFeatures::setWindowFeature(const String& keyString, const String& val
         fullscreen = value;
     else if (keyString == "scrollbars")
         scrollbarsVisible = value;
+    else if (value == 1)
+        additionalFeatures.append(keyString);
 }
 
 bool WindowFeatures::boolFeature(const HashMap<String, String>& features, const char* key, bool defaultValue)
