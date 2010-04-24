@@ -1,3 +1,10 @@
+2010-04-24  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Add win specific result for svg/custom/broken-internal-references.svg
+        It's a bad idea that textPath dumps FLT_MAX when it's not shown - that should be fixed, but it's not related to Moritas testcase.
+
+        * platform/win/svg/custom/broken-internal-references-expected.txt: Added.
+
 2010-04-23  Ben Murdoch  <benm@google.com>
 
         Reviewed by Jeremy Orlow.
