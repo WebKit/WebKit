@@ -1,3 +1,17 @@
+2010-04-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Don't propagate compositing out of iframes on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=38072
+
+        Propagating compositing out of iframes caused too many regressions on Mac,
+        so only do it for other platforms that may need to hook compositing layers
+        together across iframe boundaries.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingForIFrame):
+
 2010-04-24  Anton Muhin  <antonm@chromium.org>
 
         Reviewed by Darin Adler.
