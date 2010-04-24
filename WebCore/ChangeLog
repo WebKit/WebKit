@@ -201,6 +201,22 @@
 
         Reviewed by Dan Bernstein.
 
+        ASSERT(willBeComposited == needsToBeComposited(layer)); on gmail.com
+        https://bugs.webkit.org/show_bug.cgi?id=38066
+        
+        When a layer goes into compositing mode because it has a negative z-index child that is going
+        into compositing mode, then set willBeComposited to true. Also add another assertion to catch
+        any other cases where the state of willBeComposited is mismanaged.
+
+        Test: compositing/composited-negative-zindex-child.html
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+
+2010-04-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         When webkitAnimationEnd event fires, on-screen rendering should show the last frame of animation
         https://bugs.webkit.org/show_bug.cgi?id=37955
 

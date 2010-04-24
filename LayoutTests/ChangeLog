@@ -1,3 +1,15 @@
+2010-04-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        ASSERT(willBeComposited == needsToBeComposited(layer)); on gmail.com
+        https://bugs.webkit.org/show_bug.cgi?id=38066
+
+        Testcase with a negative z-index child that toggles into compositing mode. It should not assert.
+
+        * compositing/composited-negative-zindex-child-expected.txt: Copied from LayoutTests/compositing/self-painting-layers2-expected.txt.
+        * compositing/composited-negative-zindex-child.html: Added.
+
 2010-04-23  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.

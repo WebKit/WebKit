@@ -555,6 +555,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, O
                     childState.m_compositingAncestor = layer;
                     if (overlapMap)
                         addToOverlapMap(*overlapMap, layer, absBounds, haveComputedBounds);
+                    willBeComposited = true;
                 }
             }
         }
@@ -578,6 +579,8 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, O
             }
         }
     }
+
+    ASSERT(willBeComposited == needsToBeComposited(layer));
 
     // If we have a software transform, and we have layers under us, we need to also
     // be composited. Also, if we have opacity < 1, then we need to be a layer so that
