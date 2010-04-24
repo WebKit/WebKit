@@ -34,26 +34,37 @@
 #include "GraphicsTypes.h"
 #include "HTMLNames.h"
 #include "InlineTextBox.h"
+#include "LinearGradientAttributes.h"
 #include "NodeRenderStyle.h"
 #include "Path.h"
+#include "PatternAttributes.h"
+#include "RadialGradientAttributes.h"
 #include "RenderImage.h"
 #include "RenderPath.h"
 #include "RenderSVGContainer.h"
+#include "RenderSVGGradientStop.h"
 #include "RenderSVGInlineText.h"
 #include "RenderSVGResourceClipper.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceGradient.h"
+#include "RenderSVGResourceLinearGradient.h"
 #include "RenderSVGResourceMarker.h"
 #include "RenderSVGResourceMasker.h"
 #include "RenderSVGResourcePattern.h"
+#include "RenderSVGResourceRadialGradient.h"
 #include "RenderSVGResourceSolidColor.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGText.h"
 #include "RenderTreeAsText.h"
 #include "SVGCharacterLayoutInfo.h"
 #include "SVGInlineTextBox.h"
+#include "SVGLinearGradientElement.h"
+#include "SVGPatternElement.h"
+#include "SVGRadialGradientElement.h"
 #include "SVGRootInlineBox.h"
+#include "SVGStopElement.h"
 #include "SVGStyledElement.h"
+
 #include <math.h>
 
 namespace WebCore {
@@ -307,6 +318,47 @@ static TextStream& operator<<(TextStream& ts, LineJoin style)
     return ts;
 }
 
+// FIXME: Maybe this should be in Gradient.cpp
+static TextStream& operator<<(TextStream& ts, GradientSpreadMethod mode)
+{
+    switch (mode) {
+    case SpreadMethodPad:
+        ts << "PAD";
+        break;
+    case SpreadMethodRepeat:
+        ts << "REPEAT";
+        break;
+    case SpreadMethodReflect:
+        ts << "REFLECT";
+        break;
+    }
+
+    return ts;
+}
+
+static void writeSVGPaintingResource(TextStream& ts, RenderSVGResource* resource)
+{
+    if (resource->resourceType() == SolidColorResourceType) {
+        ts << "[type=SOLID] [color=" << static_cast<RenderSVGResourceSolidColor*>(resource)->color() << "]";
+        return;
+    }
+
+    // All other resources derive from RenderSVGResourceContainer
+    RenderSVGResourceContainer* container = static_cast<RenderSVGResourceContainer*>(resource);
+    Node* node = container->node();
+    ASSERT(node);
+    ASSERT(node->isSVGElement());
+
+    if (resource->resourceType() == PatternResourceType)
+        ts << "[type=PATTERN]";
+    else if (resource->resourceType() == LinearGradientResourceType)
+        ts << "[type=LINEAR-GRADIENT]";
+    else if (resource->resourceType() == RadialGradientResourceType)
+        ts << "[type=RADIAL-GRADIENT]";
+
+    ts << " [id=\"" << static_cast<SVGElement*>(node)->getIDAttribute() << "\"]";
+}
+
 static void writeStyle(TextStream& ts, const RenderObject& object)
 {
     const RenderStyle* style = object.style();
@@ -318,12 +370,11 @@ static void writeStyle(TextStream& ts, const RenderObject& object)
     writeIfNotDefault(ts, "opacity", style->opacity(), RenderStyle::initialOpacity());
     if (object.isRenderPath()) {
         const RenderPath& path = static_cast<const RenderPath&>(object);
-        SVGPaintServer* strokePaintServer = SVGPaintServer::strokePaintServer(style, &path);
-        if (strokePaintServer) {
+
+        if (RenderSVGResource* strokePaintingResource = RenderSVGResource::strokePaintingResource(&path, path.style())) {
             TextStreamSeparator s(" ");
-            ts << " [stroke={";
-            if (strokePaintServer)
-                ts << s << *strokePaintServer;
+            ts << " [stroke={" << s;
+            writeSVGPaintingResource(ts, strokePaintingResource);
 
             double dashOffset = SVGRenderStyle::cssPrimitiveToLength(&path, svgStyle->strokeDashOffset(), 0.0f);
             const DashArray& dashArray = dashArrayFromRenderingStyle(style, object.document()->documentElement()->renderStyle());
@@ -340,12 +391,11 @@ static void writeStyle(TextStream& ts, const RenderObject& object)
 
             ts << "}]";
         }
-        SVGPaintServer* fillPaintServer = SVGPaintServer::fillPaintServer(style, &path);
-        if (fillPaintServer) {
+
+        if (RenderSVGResource* fillPaintingResource = RenderSVGResource::fillPaintingResource(&path, path.style())) {
             TextStreamSeparator s(" ");
-            ts << " [fill={";
-            if (fillPaintServer)
-                ts << s << *fillPaintServer;
+            ts << " [fill={" << s;
+            writeSVGPaintingResource(ts, fillPaintingResource);
 
             writeIfNotDefault(ts, "opacity", svgStyle->fillOpacity(), 1.0f);
             writeIfNotDefault(ts, "fill rule", svgStyle->fillRule(), RULE_NONZERO);
@@ -515,7 +565,23 @@ static void writeChildren(TextStream& ts, const RenderObject& object, int indent
         write(ts, *child, indent + 1);
 }
 
-void writeSVGResource(TextStream& ts, const RenderObject& object, int indent)
+static inline String boundingBoxModeString(bool boundingBoxMode)
+{
+    return boundingBoxMode ? "objectBoundingBox" : "userSpaceOnUse";
+}
+
+static inline void writeCommonGradientProperties(TextStream& ts, GradientSpreadMethod spreadMethod, const AffineTransform& gradientTransform, bool boundingBoxMode)
+{
+    writeNameValuePair(ts, "gradientUnits", boundingBoxModeString(boundingBoxMode));
+
+    if (spreadMethod != SpreadMethodPad)
+        ts << " [spreadMethod=" << spreadMethod << "]";
+
+    if (!gradientTransform.isIdentity())
+        ts << " [gradientTransform=" << gradientTransform << "]";
+}
+
+void writeSVGResourceContainer(TextStream& ts, const RenderObject& object, int indent)
 {
     writeStandardPrefix(ts, object, indent);
 
@@ -523,16 +589,16 @@ void writeSVGResource(TextStream& ts, const RenderObject& object, int indent)
     const AtomicString& id = element->getIDAttribute();
     writeNameAndQuotedValue(ts, "id", id);    
 
-    RenderSVGResource* resource = const_cast<RenderObject&>(object).toRenderSVGResource();
+    RenderSVGResourceContainer* resource = const_cast<RenderObject&>(object).toRenderSVGResourceContainer();
+    ASSERT(resource);
+
     if (resource->resourceType() == MaskerResourceType) {
         RenderSVGResourceMasker* masker = static_cast<RenderSVGResourceMasker*>(resource);
-        ASSERT(masker);
         writeNameValuePair(ts, "maskUnits", masker->maskUnits());
         writeNameValuePair(ts, "maskContentUnits", masker->maskContentUnits());
 #if ENABLE(FILTERS)
     } else if (resource->resourceType() == FilterResourceType) {
         RenderSVGResourceFilter* filter = static_cast<RenderSVGResourceFilter*>(resource);
-        ASSERT(filter);
         writeNameValuePair(ts, "filterUnits", filter->filterUnits());
         writeNameValuePair(ts, "primitiveUnits", filter->primitiveUnits());
         if (OwnPtr<SVGFilterBuilder> builder = filter->buildPrimitives()) {
@@ -558,11 +624,9 @@ void writeSVGResource(TextStream& ts, const RenderObject& object, int indent)
 #endif
     } else if (resource->resourceType() == ClipperResourceType) {
         RenderSVGResourceClipper* clipper = static_cast<RenderSVGResourceClipper*>(resource);
-        ASSERT(clipper);
         writeNameValuePair(ts, "clipPathUnits", clipper->clipPathUnits());
     } else if (resource->resourceType() == MarkerResourceType) {
         RenderSVGResourceMarker* marker = static_cast<RenderSVGResourceMarker*>(resource);
-        ASSERT(marker);
         writeNameValuePair(ts, "markerUnits", marker->markerUnits());
         ts << " [ref at " << marker->referencePoint() << "]";
         ts << " [angle=";
@@ -570,6 +634,49 @@ void writeSVGResource(TextStream& ts, const RenderObject& object, int indent)
             ts << "auto" << "]";
         else
             ts << marker->angle() << "]";
+    } else if (resource->resourceType() == PatternResourceType) {
+        RenderSVGResourcePattern* pattern = static_cast<RenderSVGResourcePattern*>(resource);
+
+        // Dump final results that are used for rendering. No use in asking SVGPatternElement for its patternUnits(), as it may
+        // link to other patterns using xlink:href, we need to build the full inheritance chain, aka. collectPatternProperties()
+        PatternAttributes attributes = static_cast<SVGPatternElement*>(pattern->node())->collectPatternProperties();
+        writeNameValuePair(ts, "patternUnits", boundingBoxModeString(attributes.boundingBoxMode()));
+        writeNameValuePair(ts, "patternContentUnits", boundingBoxModeString(attributes.boundingBoxModeContent()));
+
+        AffineTransform transform = attributes.patternTransform();
+        if (!transform.isIdentity())
+            ts << " [patternTransform=" << transform << "]";
+    } else if (resource->resourceType() == LinearGradientResourceType) {
+        RenderSVGResourceLinearGradient* gradient = static_cast<RenderSVGResourceLinearGradient*>(resource);
+
+        // Dump final results that are used for rendering. No use in asking SVGGradientElement for its gradientUnits(), as it may
+        // link to other gradients using xlink:href, we need to build the full inheritance chain, aka. collectGradientProperties()
+        SVGLinearGradientElement* linearGradientElement = static_cast<SVGLinearGradientElement*>(gradient->node());
+
+        LinearGradientAttributes attributes = linearGradientElement->collectGradientProperties();
+        writeCommonGradientProperties(ts, attributes.spreadMethod(), attributes.gradientTransform(), attributes.boundingBoxMode());
+
+        FloatPoint startPoint;
+        FloatPoint endPoint;
+        linearGradientElement->calculateStartEndPoints(attributes, startPoint, endPoint);
+
+        ts << " [start=" << startPoint << "] [end=" << endPoint << "]";
+    }  else if (resource->resourceType() == RadialGradientResourceType) {
+        RenderSVGResourceRadialGradient* gradient = static_cast<RenderSVGResourceRadialGradient*>(resource);
+
+        // Dump final results that are used for rendering. No use in asking SVGGradientElement for its gradientUnits(), as it may
+        // link to other gradients using xlink:href, we need to build the full inheritance chain, aka. collectGradientProperties()
+        SVGRadialGradientElement* radialGradientElement = static_cast<SVGRadialGradientElement*>(gradient->node());
+
+        RadialGradientAttributes attributes = radialGradientElement->collectGradientProperties();
+        writeCommonGradientProperties(ts, attributes.spreadMethod(), attributes.gradientTransform(), attributes.boundingBoxMode());
+
+        FloatPoint focalPoint;
+        FloatPoint centerPoint;
+        float radius;
+        radialGradientElement->calculateFocalCenterPointsAndRadius(attributes, focalPoint, centerPoint, radius);
+
+        ts << " [center=" << centerPoint << "] [focal=" << focalPoint << "] [radius=" << radius << "]";
     }
 
     ts << "\n";
@@ -626,6 +733,20 @@ void write(TextStream& ts, const RenderPath& path, int indent)
     writeResources(ts, path, indent);
 }
 
+void writeSVGGradientStop(TextStream& ts, const RenderSVGGradientStop& stop, int indent)
+{
+    writeStandardPrefix(ts, stop, indent);
+
+    SVGStopElement* stopElement = static_cast<SVGStopElement*>(stop.node());
+    ASSERT(stopElement);
+
+    RenderStyle* style = stop.style();
+    if (!style)
+        return;
+
+    ts << " [offset=" << stopElement->offset() << "] [color=" << stopElement->stopColorIncludingOpacity() << "]\n";
+}
+
 void writeResources(TextStream& ts, const RenderObject& object, int indent)
 {
     const RenderStyle* style = object.style();
@@ -663,31 +784,6 @@ void writeResources(TextStream& ts, const RenderObject& object, int indent)
         }
     }
 #endif
-}
-
-void writeRenderResources(TextStream& ts, Node* parent)
-{
-    ASSERT(parent);
-    Node* node = parent;
-    do {
-        if (!node->isSVGElement())
-            continue;
-        SVGElement* svgElement = static_cast<SVGElement*>(node);
-        if (!svgElement->isStyled())
-            continue;
-
-        SVGStyledElement* styled = static_cast<SVGStyledElement*>(svgElement);
-        RefPtr<SVGResource> resource(styled->canvasResource(node->renderer()));
-        if (!resource)
-            continue;
-
-        String elementId = svgElement->getAttribute(svgElement->idAttributeName());
-        // FIXME: These names are lies!
-        if (resource->isPaintServer()) {
-            RefPtr<SVGPaintServer> paintServer = WTF::static_pointer_cast<SVGPaintServer>(resource);
-            ts << "KRenderingPaintServer {id=\"" << elementId << "\" " << *paintServer << "}" << "\n";
-        }
-    } while ((node = node->traverseNextNode(parent)));
 }
 
 } // namespace WebCore

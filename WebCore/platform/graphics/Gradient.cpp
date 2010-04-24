@@ -96,7 +96,14 @@ void Gradient::addColorStop(float value, const Color& color)
     m_stops.append(ColorStop(value, r, g, b, a));
 
     m_stopsSorted = false;
+    platformDestroy();
+}
 
+void Gradient::addColorStop(const Gradient::ColorStop& stop)
+{
+    m_stops.append(stop);
+
+    m_stopsSorted = false;
     platformDestroy();
 }
 

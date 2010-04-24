@@ -1,27 +1,21 @@
 /*
- * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
- * Copyright (C) 2008 Dirk Schulze <krit@webkit.org>
+ * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
- * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ *
  */
 
 #include "config.h"
@@ -30,64 +24,80 @@
 #include "RenderSVGResourceSolidColor.h"
 
 #include "GraphicsContext.h"
-#include "RenderPath.h"
-#include "SVGRenderTreeAsText.h"
+#include "SVGRenderSupport.h"
+
+#if PLATFORM(SKIA)
+#include "PlatformContextSkia.h"
+#endif
 
 namespace WebCore {
 
-SVGPaintServerSolid::SVGPaintServerSolid()
+RenderSVGResourceType RenderSVGResourceSolidColor::s_resourceType = SolidColorResourceType;
+
+RenderSVGResourceSolidColor::RenderSVGResourceSolidColor()
 {
 }
 
-SVGPaintServerSolid::~SVGPaintServerSolid()
+RenderSVGResourceSolidColor::~RenderSVGResourceSolidColor()
 {
 }
 
-Color SVGPaintServerSolid::color() const
+bool RenderSVGResourceSolidColor::applyResource(RenderObject* object, RenderStyle* style, GraphicsContext*& context, unsigned short resourceMode)
 {
-    return m_color;
-}
+    // We are NOT allowed to ASSERT(object) here, unlike all other resources.
+    // RenderSVGResourceSolidColor is the only resource which may be used from HTML, when rendering
+    // SVG Fonts for a HTML document. This will be indicated by a null RenderObject pointer.
+    ASSERT(context);
+    ASSERT(resourceMode != ApplyToDefaultMode);
 
-void SVGPaintServerSolid::setColor(const Color& color)
-{
-    m_color = color;
-}
-
-TextStream& SVGPaintServerSolid::externalRepresentation(TextStream& ts) const
-{
-    ts << "[type=SOLID]"
-        << " [color="<< color() << "]";
-    return ts;
-}
-
-bool SVGPaintServerSolid::setup(GraphicsContext*& context, const RenderObject* object, const RenderStyle* style, SVGPaintTargetType type, bool isPaintingText) const
-{
     const SVGRenderStyle* svgStyle = style ? style->svgStyle() : 0;
     ColorSpace colorSpace = style ? style->colorSpace() : DeviceColorSpace;
 
-    if ((type & ApplyToFillTargetType) && (!style || svgStyle->hasFill())) {
-        context->setAlpha(style ? svgStyle->fillOpacity() : 1);
-        context->setFillColor(color().rgb(), colorSpace);
-        context->setFillRule(style ? svgStyle->fillRule() : RULE_NONZERO);
+    if (resourceMode & ApplyToFillMode) {
+        context->setAlpha(svgStyle ? svgStyle->fillOpacity() : 1.0f);
+        context->setFillColor(m_color, colorSpace);
+        context->setFillRule(svgStyle ? svgStyle->fillRule() : RULE_NONZERO);
 
-        if (isPaintingText)
+        if (resourceMode & ApplyToTextMode)
             context->setTextDrawingMode(cTextFill);
-    }
-
-    if ((type & ApplyToStrokeTargetType) && (!style || svgStyle->hasStroke())) {
-        context->setAlpha(style ? svgStyle->strokeOpacity() : 1);
-        context->setStrokeColor(color().rgb(), colorSpace);
+    } else if (resourceMode & ApplyToStrokeMode) {
+        context->setAlpha(svgStyle ? svgStyle->strokeOpacity() : 1.0f);
+        context->setStrokeColor(m_color, colorSpace);
 
         if (style)
             applyStrokeStyleToContext(context, style, object);
 
-        if (isPaintingText)
+        if (resourceMode & ApplyToTextMode)
             context->setTextDrawingMode(cTextStroke);
     }
 
     return true;
 }
 
-} // namespace WebCore
+void RenderSVGResourceSolidColor::postApplyResource(RenderObject*, GraphicsContext*& context, unsigned short resourceMode)
+{
+    ASSERT(context);
+    ASSERT(resourceMode != ApplyToDefaultMode);
+
+    if (!(resourceMode & ApplyToTextMode)) {
+        if (resourceMode & ApplyToFillMode)
+            context->fillPath();
+        else if (resourceMode & ApplyToStrokeMode)
+            context->strokePath();
+    }
+
+#if PLATFORM(SKIA)
+    // FIXME: Move this into the GraphicsContext
+    // WebKit implicitly expects us to reset the path.
+    // For example in fillAndStrokePath() of RenderPath.cpp the path is 
+    // added back to the context after filling. This is because internally it
+    // calls CGContextFillPath() which closes the path.
+    context->beginPath();
+    context->platformContext()->setFillShader(0);
+    context->platformContext()->setStrokeShader(0);
+#endif
+}
+
+}
 
 #endif

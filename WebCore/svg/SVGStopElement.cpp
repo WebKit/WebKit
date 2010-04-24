@@ -49,8 +49,6 @@ void SVGStopElement::parseMappedAttribute(MappedAttribute* attr)
             setOffsetBaseValue(value.left(value.length() - 1).toFloat() / 100.0f);
         else
             setOffsetBaseValue(value.toFloat());
-
-        setNeedsStyleRecalc();
     } else
         SVGStyledElement::parseMappedAttribute(attr);
 }
@@ -66,6 +64,15 @@ void SVGStopElement::synchronizeProperty(const QualifiedName& attrName)
 RenderObject* SVGStopElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     return new (arena) RenderSVGGradientStop(this);
+}
+
+Color SVGStopElement::stopColorIncludingOpacity() const
+{
+    ASSERT(renderer());
+    ASSERT(renderer()->style());
+
+    const SVGRenderStyle* svgStyle = renderer()->style()->svgStyle();
+    return colorWithOverrideAlpha(svgStyle->stopColor().rgb(), svgStyle->stopOpacity());
 }
 
 }

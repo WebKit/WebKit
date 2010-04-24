@@ -32,12 +32,13 @@ namespace WebCore {
         SVGStopElement(const QualifiedName&, Document*);
         virtual ~SVGStopElement();
 
+        virtual void parseMappedAttribute(MappedAttribute*);
         virtual void synchronizeProperty(const QualifiedName&);
+
+        Color stopColorIncludingOpacity() const;
 
     private:
         virtual bool isGradientStop() const { return true; }
-
-        virtual void parseMappedAttribute(MappedAttribute*);
 
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 

@@ -1,4 +1,3 @@
-KRenderingPaintServer {id="Grad1" [type=LINEAR-GRADIENT] [stops=[(0.00,#FFFFFF), (1.00,#FFFFFF7F)]] [bounding box mode=0] [start=(60,50)] [end=(60,120)]}
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
@@ -11,10 +10,10 @@ layer at (0,0) size 480x360
       RenderPath {rect} at (10,30) size 100x260 [fill={[type=SOLID] [color=#FF0000]}] [data="M10.00,30.00 L110.00,30.00 L110.00,290.00 L10.00,290.00 Z"]
       RenderSVGResourceMasker {mask} [id="mask1"] [maskUnits=userSpaceOnUse] [maskContentUnits=userSpaceOnUse]
         RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-          RenderSVGHiddenContainer {linearGradient} at (0,0) size 0x0
-            RenderSVGGradientStop {stop} at (0,0) size 0x0
-            RenderSVGGradientStop {stop} at (0,0) size 0x0
-        RenderPath {rect} at (60,50) size 100x60 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FFFFFF), (1.00,#FFFFFF7F)]] [bounding box mode=0] [start=(60,50)] [end=(60,120)]}] [data="M60.00,50.00 L160.00,50.00 L160.00,110.00 L60.00,110.00 Z"]
+          RenderSVGResourceLinearGradient {linearGradient} [id="Grad1"] [gradientUnits=userSpaceOnUse] [start=(60,50)] [end=(60,120)]
+            RenderSVGGradientStop {stop} [offset=0.00] [color=#FFFFFF]
+            RenderSVGGradientStop {stop} [offset=1.00] [color=#FFFFFF80]
+        RenderPath {rect} at (60,50) size 100x60 [fill={[type=LINEAR-GRADIENT] [id="Grad1"]}] [data="M60.00,50.00 L160.00,50.00 L160.00,110.00 L60.00,110.00 Z"]
       RenderPath {rect} at (60,50) size 100x60 [fill={[type=SOLID] [color=#00FF00]}] [data="M60.00,50.00 L160.00,50.00 L160.00,110.00 L60.00,110.00 Z"]
         [masker="mask1"] RenderSVGResourceMasker {mask} at (60,50) size 100x60
       RenderSVGText {text} at (200,65) size 163x14 contains 1 chunk(s)

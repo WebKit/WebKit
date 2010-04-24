@@ -111,7 +111,7 @@ void SVGMarkerElement::svgAttributeChanged(const QualifiedName& attrName)
         SVGExternalResourcesRequired::isKnownAttribute(attrName) ||
         SVGFitToViewBox::isKnownAttribute(attrName) ||
         SVGStyledElement::isKnownAttribute(attrName))
-        invalidateCanvasResources();
+        invalidateResourceClients();
 }
 
 void SVGMarkerElement::synchronizeProperty(const QualifiedName& attrName)
@@ -157,7 +157,8 @@ void SVGMarkerElement::childrenChanged(bool changedByParser, Node* beforeChange,
 {
     SVGStyledElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 
-    invalidateCanvasResources();
+    if (!changedByParser)
+        invalidateResourceClients();
 }
 
 void SVGMarkerElement::setOrientToAuto()
@@ -165,7 +166,7 @@ void SVGMarkerElement::setOrientToAuto()
     setOrientTypeBaseValue(SVG_MARKER_ORIENT_AUTO);
     setOrientAngleBaseValue(SVGAngle());
 
-    invalidateCanvasResources();
+    invalidateResourceClients();
 }
 
 void SVGMarkerElement::setOrientToAngle(const SVGAngle& angle)
@@ -173,7 +174,7 @@ void SVGMarkerElement::setOrientToAngle(const SVGAngle& angle)
     setOrientTypeBaseValue(SVG_MARKER_ORIENT_ANGLE);
     setOrientAngleBaseValue(angle);
 
-    invalidateCanvasResources();
+    invalidateResourceClients();
 }
 
 RenderObject* SVGMarkerElement::createRenderer(RenderArena* arena, RenderStyle*)

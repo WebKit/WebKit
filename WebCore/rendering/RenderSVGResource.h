@@ -22,64 +22,47 @@
 #define RenderSVGResource_h
 
 #if ENABLE(SVG)
-#include "FloatRect.h"
-#include "RenderSVGHiddenContainer.h"
+#include "SVGDocumentExtensions.h"
 
 namespace WebCore {
 
 enum RenderSVGResourceType {
     MaskerResourceType,
     MarkerResourceType,
+    PatternResourceType,
+    LinearGradientResourceType,
+    RadialGradientResourceType,
+    SolidColorResourceType,
     FilterResourceType,
     ClipperResourceType
 };
 
-class RenderSVGResource : public RenderSVGHiddenContainer {
+enum RenderSVGResourceMode {
+    ApplyToDefaultMode = 1 << 0, // used for all resources except gradient/pattern
+    ApplyToFillMode    = 1 << 1,
+    ApplyToStrokeMode  = 1 << 2,
+    ApplyToTextMode    = 1 << 3 // used in combination with ApplyTo{Fill|Stroke}Mode
+};
+
+class FloatRect;
+class GraphicsContext;
+class RenderObject;
+class RenderStyle;
+class RenderSVGResourceSolidColor;
+
+class RenderSVGResource {
 public:
-    RenderSVGResource(SVGStyledElement* node)
-        : RenderSVGHiddenContainer(node)
-        , m_id(node->getIDAttribute())
-    {
-        ASSERT(node->document());
-        node->document()->accessSVGExtensions()->addResource(m_id, this);
-    }
+    RenderSVGResource() { }
+    virtual ~RenderSVGResource() { }
 
-    virtual ~RenderSVGResource()
-    {
-        ASSERT(node());
-        ASSERT(node()->document());
-        node()->document()->accessSVGExtensions()->removeResource(m_id);
-    }
+    virtual void invalidateClients() = 0;
+    virtual void invalidateClient(RenderObject*) = 0;
 
-    void idChanged()
-    {
-        ASSERT(node());
-        ASSERT(node()->document());
-        SVGDocumentExtensions* extensions = node()->document()->accessSVGExtensions();
+    virtual bool applyResource(RenderObject*, RenderStyle*, GraphicsContext*&, unsigned short resourceMode) = 0;
+    virtual void postApplyResource(RenderObject*, GraphicsContext*&, unsigned short) { }
+    virtual FloatRect resourceBoundingBox(const FloatRect&) const = 0;
 
-        // Remove old id, that is guaranteed to be present in cache
-        extensions->removeResource(m_id);
-
-        m_id = static_cast<Element*>(node())->getIDAttribute();
-
-        // It's possible that an element is referencing us with the new id, and has to be notified that we're existing now
-        if (extensions->isPendingResource(m_id)) {
-            OwnPtr<HashSet<SVGStyledElement*> > clients(extensions->removePendingResource(m_id));
-            if (clients->isEmpty())
-                return;
-
-            HashSet<SVGStyledElement*>::const_iterator it = clients->begin();
-            const HashSet<SVGStyledElement*>::const_iterator end = clients->end();
-
-            for (; it != end; ++it) {
-                if (RenderObject* renderer = (*it)->renderer())
-                    renderer->setNeedsLayout(true);
-            }
-        }
-
-        // Recache us with the new id
-        extensions->addResource(m_id, this);
-    }
+    virtual RenderSVGResourceType resourceType() const = 0;
 
     template<class Renderer>
     Renderer* cast()
@@ -90,34 +73,14 @@ public:
         return 0;
     }
 
-    virtual RenderSVGResource* toRenderSVGResource() { return this; }
-    virtual bool isSVGResource() const { return true; }
-    virtual bool drawsContents() { return false; }
+    // Helper utilities used in the render tree to access resources used for painting shapes/text (gradients & patterns only)
+    static RenderSVGResource* fillPaintingResource(const RenderObject*, const RenderStyle*);
+    static RenderSVGResource* strokePaintingResource(const RenderObject*, const RenderStyle*);
+    static RenderSVGResourceSolidColor* sharedSolidPaintingResource();
 
-    virtual void invalidateClients() = 0;
-    virtual void invalidateClient(RenderObject*) = 0;
-
-    virtual bool applyResource(RenderObject*, GraphicsContext*&) = 0;
-    virtual void postApplyResource(RenderObject*, GraphicsContext*&) { }
-    virtual FloatRect resourceBoundingBox(const FloatRect&) const = 0;
-
-    virtual RenderSVGResourceType resourceType() const = 0;
-
-private:
-    AtomicString m_id;
+protected:
+    void markForLayoutAndResourceInvalidation(RenderObject*);
 };
-
-template<typename Renderer>
-Renderer* getRenderSVGResourceById(Document* document, const AtomicString& id)
-{
-    if (id.isEmpty())
-        return 0;
-
-    if (RenderSVGResource* renderResource = document->accessSVGExtensions()->resourceById(id))
-        return renderResource->cast<Renderer>();
-
-    return 0;
-}
 
 }
 

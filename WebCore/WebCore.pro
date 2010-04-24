@@ -1820,8 +1820,6 @@ HEADERS += \
     svg/graphics/filters/SVGFilter.h \
     svg/graphics/filters/SVGLightSource.h \
     svg/graphics/SVGImage.h \
-    svg/graphics/SVGPaintServer.h \
-    svg/graphics/SVGResource.h \
     svg/SVGAElement.h \
     svg/SVGAltGlyphElement.h \
     svg/SVGAngle.h \
@@ -2686,7 +2684,6 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/graphics/filters/SVGFilterBuilder.cpp \
         svg/graphics/filters/SVGLightSource.cpp \
         svg/graphics/SVGImage.cpp \
-        svg/graphics/SVGResource.cpp \
         rendering/RenderForeignObject.cpp \
         rendering/RenderPath.cpp \
         rendering/RenderSVGBlock.cpp \

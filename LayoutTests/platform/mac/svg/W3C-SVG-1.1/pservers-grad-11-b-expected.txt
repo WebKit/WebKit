@@ -1,38 +1,34 @@
-KRenderingPaintServer {id="Grad1" [type=RADIAL-GRADIENT] [stops=[(0.00,#000000), (1.00,#FF0000)]] [bounding box mode=0] [center=(75,100)] [focal=(75,100)] [radius=130.00]}
-KRenderingPaintServer {id="Grad2" [type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#FFFF00)]] [bounding box mode=0] [center=(295,100)] [focal=(295,100)] [radius=150.00]}
-KRenderingPaintServer {id="Grad3" [type=RADIAL-GRADIENT] [stops=[(0.00,#000000), (1.00,#FFFF00)]] [bounding box mode=0] [center=(225,180)] [focal=(225,180)] [radius=90.00]}
-KRenderingPaintServer {id="Grad4" [type=RADIAL-GRADIENT] [stops=[(0.00,#000000), (1.00,#FF0000)]] [bounding box mode=0] [center=(225,245)] [focal=(225,245)] [radius=90.00]}
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGContainer {g} at (8,10) size 464x278
-      RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
-        RenderSVGGradientStop {stop} at (0,0) size 0x0
-        RenderSVGGradientStop {stop} at (0,0) size 0x0
-      RenderPath {rect} at (10,10) size 210x140 [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#000000), (1.00,#FF0000)]] [bounding box mode=0] [center=(75,100)] [focal=(75,100)] [radius=130.00]}] [data="M10.00,10.00 L220.00,10.00 L220.00,150.00 L10.00,150.00 Z"]
+      RenderSVGResourceRadialGradient {radialGradient} [id="Grad1"] [gradientUnits=userSpaceOnUse] [center=(75,100)] [focal=(75,100)] [radius=130.00]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#000000]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#FF0000]
+      RenderPath {rect} at (10,10) size 210x140 [fill={[type=RADIAL-GRADIENT] [id="Grad1"]}] [data="M10.00,10.00 L220.00,10.00 L220.00,150.00 L10.00,150.00 Z"]
       RenderSVGText {text} at (10,165) size 183x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-11) size 183x14
           chunk 1 text run 1 at (10.00,165.00) startOffset 0 endOffset 36 width 183.00: "Radial gradient on fill of rectangle"
-      RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
-        RenderSVGGradientStop {stop} at (0,0) size 0x0
-        RenderSVGGradientStop {stop} at (0,0) size 0x0
-      RenderPath {rect} at (230,10) size 210x140 [stroke={[type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#FFFF00)]] [bounding box mode=0] [center=(295,100)] [focal=(295,100)] [radius=150.00] [stroke width=40.00]}] [data="M250.00,30.00 L420.00,30.00 L420.00,130.00 L250.00,130.00 Z"]
+      RenderSVGResourceRadialGradient {radialGradient} [id="Grad2"] [gradientUnits=userSpaceOnUse] [center=(295,100)] [focal=(295,100)] [radius=150.00]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#FFFF00]
+      RenderPath {rect} at (230,10) size 210x140 [stroke={[type=RADIAL-GRADIENT] [id="Grad2"] [stroke width=40.00]}] [data="M250.00,30.00 L420.00,30.00 L420.00,130.00 L250.00,130.00 Z"]
       RenderSVGText {text} at (230,165) size 204x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-11) size 204x14
           chunk 1 text run 1 at (230.00,165.00) startOffset 0 endOffset 38 width 204.00: "Radial gradient on stroke of rectangle"
-      RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
-        RenderSVGGradientStop {stop} at (0,0) size 0x0
-        RenderSVGGradientStop {stop} at (0,0) size 0x0
+      RenderSVGResourceRadialGradient {radialGradient} [id="Grad3"] [gradientUnits=userSpaceOnUse] [center=(225,180)] [focal=(225,180)] [radius=90.00]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#000000]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#FFFF00]
       RenderSVGText {text} at (10,210) size 419x56 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-45) size 419x56
           chunk 1 text run 1 at (10.00,210.00) startOffset 0 endOffset 21 width 419.00: "Gradient on text fill"
       RenderSVGText {text} at (10,225) size 209x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-11) size 209x14
           chunk 1 text run 1 at (10.00,225.00) startOffset 0 endOffset 40 width 209.00: "Radial gradient on text, black to yellow"
-      RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
-        RenderSVGGradientStop {stop} at (0,0) size 0x0
-        RenderSVGGradientStop {stop} at (0,0) size 0x0
+      RenderSVGResourceRadialGradient {radialGradient} [id="Grad4"] [gradientUnits=userSpaceOnUse] [center=(225,245)] [focal=(225,245)] [radius=90.00]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#000000]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#FF0000]
       RenderSVGText {text} at (10,270) size 460x51 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-41) size 460x51
           chunk 1 text run 1 at (10.00,270.00) startOffset 0 endOffset 23 width 460.00: "Gradient on text stroke"

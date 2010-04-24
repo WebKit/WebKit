@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
+    Copyright (C) Research In Motion Limited 2010. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -84,16 +85,13 @@ void SVGGradientElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     SVGStyledElement::svgAttributeChanged(attrName);
 
-    if (!m_resource)
-        return;
-
-    if (attrName == SVGNames::gradientUnitsAttr ||
-        attrName == SVGNames::gradientTransformAttr ||
-        attrName == SVGNames::spreadMethodAttr ||
-        SVGURIReference::isKnownAttribute(attrName) ||
-        SVGExternalResourcesRequired::isKnownAttribute(attrName) ||
-        SVGStyledElement::isKnownAttribute(attrName))
-        m_resource->invalidate();
+    if (attrName == SVGNames::gradientUnitsAttr
+        || attrName == SVGNames::gradientTransformAttr
+        || attrName == SVGNames::spreadMethodAttr
+        || SVGURIReference::isKnownAttribute(attrName)
+        || SVGExternalResourcesRequired::isKnownAttribute(attrName)
+        || SVGStyledElement::isKnownAttribute(attrName))
+        invalidateResourceClients();
 }
 
 void SVGGradientElement::synchronizeProperty(const QualifiedName& attrName)
@@ -125,61 +123,34 @@ void SVGGradientElement::childrenChanged(bool changedByParser, Node* beforeChang
 {
     SVGStyledElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 
-    if (m_resource)
-        m_resource->invalidate();
+    if (!changedByParser)
+        invalidateResourceClients();
 }
 
-RenderObject* SVGGradientElement::createRenderer(RenderArena* arena, RenderStyle*)
+Vector<Gradient::ColorStop> SVGGradientElement::buildStops()
 {
-    return new (arena) RenderSVGHiddenContainer(this);
-}
+    Vector<Gradient::ColorStop> stops;
 
-SVGResource* SVGGradientElement::canvasResource(const RenderObject*)
-{
-    if (!m_resource) {
-        if (gradientType() == LinearGradientPaintServer)
-            m_resource = SVGPaintServerLinearGradient::create(this);
-        else
-            m_resource = SVGPaintServerRadialGradient::create(this);
-    }
-
-    return m_resource.get();
-}
-
-Vector<SVGGradientStop> SVGGradientElement::buildStops() const
-{
-    Vector<SVGGradientStop> stops;
-    RefPtr<RenderStyle> gradientStyle;
-
+    float previousOffset = 0.0f;
     for (Node* n = firstChild(); n; n = n->nextSibling()) {
         SVGElement* element = n->isSVGElement() ? static_cast<SVGElement*>(n) : 0;
+        if (!element || !element->isGradientStop())
+            continue;
 
-        if (element && element->isGradientStop()) {
-            SVGStopElement* stop = static_cast<SVGStopElement*>(element);
-            float stopOffset = stop->offset();
+        SVGStopElement* stop = static_cast<SVGStopElement*>(element);
+        Color color = stop->stopColorIncludingOpacity();
 
-            Color color;
-            float opacity;
+        // Figure out right monotonic offset
+        float offset = stop->offset();
+        offset = std::min(std::max(previousOffset, offset), 1.0f);
+        previousOffset = offset;
 
-            if (stop->renderer()) {
-                RenderStyle* stopStyle = stop->renderer()->style();
-                color = stopStyle->svgStyle()->stopColor();
-                opacity = stopStyle->svgStyle()->stopOpacity();
-            } else {
-                // If there is no renderer for this stop element, then a parent element
-                // set display="none" - ie. <g display="none"><linearGradient><stop>..
-                // Unfortunately we have to manually rebuild the stop style. See pservers-grad-19-b.svg
-                if (!gradientStyle)
-                    gradientStyle = const_cast<SVGGradientElement*>(this)->styleForRenderer();
+        // Extract individual channel values
+        // FIXME: Why doesn't ColorStop take a Color and an offset??
+        float r, g, b, a;
+        color.getRGBA(r, g, b, a);
 
-                RefPtr<RenderStyle> stopStyle = stop->resolveStyle(gradientStyle.get());
-
-                color = stopStyle->svgStyle()->stopColor();
-                opacity = stopStyle->svgStyle()->stopOpacity();
-            }
-
-            stops.append(makeGradientStop(stopOffset, makeRGBA(color.red(), color.green(), color.blue(), int(opacity * 255.))));
-        }
+        stops.append(Gradient::ColorStop(offset, r, g, b, a));
     }
 
     return stops;

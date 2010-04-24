@@ -27,32 +27,40 @@
 
 namespace WebCore {
     
-    class SVGGradientElement;
-    class SVGStopElement;
-    
-    // This class exists mostly so we can hear about gradient stop style changes
-    class RenderSVGGradientStop : public RenderObject {
-    public:
-        RenderSVGGradientStop(SVGStopElement*);
-        virtual ~RenderSVGGradientStop();
+class SVGGradientElement;
+class SVGStopElement;
 
-        virtual const char* renderName() const { return "RenderSVGGradientStop"; }
+// This class exists mostly so we can hear about gradient stop style changes
+class RenderSVGGradientStop : public RenderObject {
+public:
+    RenderSVGGradientStop(SVGStopElement*);
+    virtual ~RenderSVGGradientStop();
 
-        virtual void layout();
+    virtual bool isSVGGradientStop() const { return true; }
+    virtual const char* renderName() const { return "RenderSVGGradientStop"; }
 
-        // This overrides are needed to prevent ASSERTs on <svg><stop /></svg>
-        // RenderObject's default implementations ASSERT_NOT_REACHED()
-        // https://bugs.webkit.org/show_bug.cgi?id=20400
-        virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject*) { return IntRect(); }
-        virtual FloatRect objectBoundingBox() const { return FloatRect(); }
-        virtual FloatRect repaintRectInLocalCoordinates() const { return FloatRect(); }
+    virtual void layout();
 
-    protected:
-        virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
+    // This overrides are needed to prevent ASSERTs on <svg><stop /></svg>
+    // RenderObject's default implementations ASSERT_NOT_REACHED()
+    // https://bugs.webkit.org/show_bug.cgi?id=20400
+    virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject*) { return IntRect(); }
+    virtual FloatRect objectBoundingBox() const { return FloatRect(); }
+    virtual FloatRect repaintRectInLocalCoordinates() const { return FloatRect(); }
 
-    private:
-        SVGGradientElement* gradientElement() const;
-    };
+protected:
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
+
+private:
+    SVGGradientElement* gradientElement() const;
+};
+
+inline const RenderSVGGradientStop* toRenderSVGGradientStop(const RenderObject* object)
+{
+    ASSERT(!object || object->isSVGGradientStop());
+    return static_cast<const RenderSVGGradientStop*>(object);
+}
+
 }
 
 #endif // ENABLE(SVG)

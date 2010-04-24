@@ -860,7 +860,6 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	svg/animation/SVGSMILElement.cpp \
 	\
 	svg/graphics/SVGImage.cpp \
-	svg/graphics/SVGResource.cpp \
 	\
 	svg/graphics/filters/SVGFEConvolveMatrix.cpp \
 	svg/graphics/filters/SVGFEDiffuseLighting.cpp \

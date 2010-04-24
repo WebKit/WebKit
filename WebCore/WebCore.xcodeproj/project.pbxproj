@@ -143,9 +143,6 @@
 		08A484770E5272C500C3FE76 /* ScriptElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08A484750E5272C500C3FE76 /* ScriptElement.cpp */; };
 		08A484780E5272C500C3FE76 /* ScriptElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 08A484760E5272C500C3FE76 /* ScriptElement.h */; };
 		08A48A6E0E86CF6D00E225DD /* JSSVGElementInstanceCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08A48A6D0E86CF6D00E225DD /* JSSVGElementInstanceCustom.cpp */; };
-		08A7E92711805EDA00D0B870 /* SVGPaintServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 08A7E92611805EDA00D0B870 /* SVGPaintServer.h */; };
-		08A7E92B11805EF100D0B870 /* SVGResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 08A7E92A11805EF100D0B870 /* SVGResource.h */; };
-		08A7E92F11805EFD00D0B870 /* SVGResource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08A7E92E11805EFD00D0B870 /* SVGResource.cpp */; };
 		08C34AF51179C057002D7456 /* RenderSVGResourceGradient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08C34AF11179C056002D7456 /* RenderSVGResourceGradient.cpp */; };
 		08C34AF61179C057002D7456 /* RenderSVGResourceGradient.h in Headers */ = {isa = PBXBuildFile; fileRef = 08C34AF21179C057002D7456 /* RenderSVGResourceGradient.h */; };
 		08C34AF71179C057002D7456 /* RenderSVGResourceLinearGradient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08C34AF31179C057002D7456 /* RenderSVGResourceLinearGradient.cpp */; };
@@ -5519,9 +5516,6 @@
 		08A484750E5272C500C3FE76 /* ScriptElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptElement.cpp; sourceTree = "<group>"; };
 		08A484760E5272C500C3FE76 /* ScriptElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptElement.h; sourceTree = "<group>"; };
 		08A48A6D0E86CF6D00E225DD /* JSSVGElementInstanceCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGElementInstanceCustom.cpp; sourceTree = "<group>"; };
-		08A7E92611805EDA00D0B870 /* SVGPaintServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPaintServer.h; sourceTree = "<group>"; };
-		08A7E92A11805EF100D0B870 /* SVGResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGResource.h; sourceTree = "<group>"; };
-		08A7E92E11805EFD00D0B870 /* SVGResource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGResource.cpp; sourceTree = "<group>"; };
 		08C34AF11179C056002D7456 /* RenderSVGResourceGradient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGResourceGradient.cpp; sourceTree = "<group>"; };
 		08C34AF21179C057002D7456 /* RenderSVGResourceGradient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGResourceGradient.h; sourceTree = "<group>"; };
 		08C34AF31179C057002D7456 /* RenderSVGResourceLinearGradient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGResourceLinearGradient.cpp; sourceTree = "<group>"; };
@@ -14528,9 +14522,6 @@
 				B255989C0D00D8B800BB825C /* filters */,
 				B255990B0D00D8B900BB825C /* SVGImage.cpp */,
 				B255990C0D00D8B900BB825C /* SVGImage.h */,
-				08A7E92611805EDA00D0B870 /* SVGPaintServer.h */,
-				08A7E92E11805EFD00D0B870 /* SVGResource.cpp */,
-				08A7E92A11805EF100D0B870 /* SVGResource.h */,
 			);
 			path = graphics;
 			sourceTree = "<group>";
@@ -18884,8 +18875,6 @@
 				0FD3080F117CF7E700A791F7 /* RenderFrameBase.h in Headers */,
 				0FD308D6117D168500A791F7 /* RenderIFrame.h in Headers */,
 				08C6A7AC117DFBAB00FEA1A2 /* RenderSVGResourceSolidColor.h in Headers */,
-				08A7E92711805EDA00D0B870 /* SVGPaintServer.h in Headers */,
-				08A7E92B11805EF100D0B870 /* SVGResource.h in Headers */,
 				2E3BC0BD117D3A4F00B9409A /* FileError.h in Headers */,
 				2E3BC0CB117D3E0800B9409A /* JSFileError.h in Headers */,
 				2E3BC108117D479800B9409A /* DOMFileError.h in Headers */,
@@ -21124,7 +21113,6 @@
 				0FD308D5117D168500A791F7 /* RenderIFrame.cpp in Sources */,
 				08C6A7AB117DFBAB00FEA1A2 /* RenderSVGResourceSolidColor.cpp in Sources */,
 				973889A0116EA9DC00ADF313 /* DocumentWriter.cpp in Sources */,
-				08A7E92F11805EFD00D0B870 /* SVGResource.cpp in Sources */,
 				2E3BC0CA117D3E0800B9409A /* JSFileError.cpp in Sources */,
 				2E3BC109117D479800B9409A /* DOMFileError.mm in Sources */,
 			);

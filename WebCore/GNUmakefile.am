@@ -3463,8 +3463,6 @@ webcore_sources += \
 	WebCore/svg/animation/SVGSMILElement.h \
 	WebCore/svg/graphics/SVGImage.cpp \
 	WebCore/svg/graphics/SVGImage.h \
-	WebCore/svg/graphics/SVGPaintServer.h \
-	WebCore/svg/graphics/SVGResource.cpp \
 	WebCore/svg/graphics/filters/SVGDistantLightSource.h \
 	WebCore/svg/graphics/filters/SVGFEConvolveMatrix.cpp \
 	WebCore/svg/graphics/filters/SVGFEConvolveMatrix.h \

@@ -2,27 +2,23 @@
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
  *               2008 Eric Seidel <eric@webkit.org>
  *               2008 Dirk Schulze <krit@webkit.org>
+ * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
- * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ *
  */
 
 #include "config.h"
@@ -30,90 +26,50 @@
 #if ENABLE(SVG)
 #include "RenderSVGResourceGradient.h"
 
-#include "FloatConversion.h"
+#include "GradientAttributes.h"
 #include "GraphicsContext.h"
-#include "ImageBuffer.h"
-#include "RenderObject.h"
-#include "RenderSVGResourceLinearGradient.h"
-#include "RenderSVGResourceRadialGradient.h"
-#include "RenderView.h"
-#include "SVGGradientElement.h"
 #include "SVGRenderSupport.h"
-#include "SVGRenderTreeAsText.h"
-
-using namespace std;
+#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 
-static TextStream& operator<<(TextStream& ts, GradientSpreadMethod m)
-{
-    switch (m) {
-        case SpreadMethodPad:
-            ts << "PAD"; break;
-        case SpreadMethodRepeat:
-            ts << "REPEAT"; break;
-        case SpreadMethodReflect:
-            ts << "REFLECT"; break;
-    }
-
-    return ts;
-}
-
-static TextStream& operator<<(TextStream& ts, const Vector<SVGGradientStop>& l)
-{
-    ts << "[";
-    for (Vector<SVGGradientStop>::const_iterator it = l.begin(); it != l.end(); ++it) {
-        ts << "(" << it->first << "," << it->second << ")";
-        if (it + 1 != l.end())
-            ts << ", ";
-    }
-    ts << "]";
-    return ts;
-}
-
-SVGPaintServerGradient::SVGPaintServerGradient(const SVGGradientElement* owner)
-    : m_boundingBoxMode(true)
-    , m_ownerElement(owner)
+RenderSVGResourceGradient::RenderSVGResourceGradient(SVGGradientElement* node)
+    : RenderSVGResourceContainer(node)
 #if PLATFORM(CG)
     , m_savedContext(0)
-    , m_imageBuffer(0)
 #endif
 {
-    ASSERT(owner);
 }
 
-SVGPaintServerGradient::~SVGPaintServerGradient()
+RenderSVGResourceGradient::~RenderSVGResourceGradient()
 {
+    deleteAllValues(m_gradient);
+    m_gradient.clear();
 }
 
-Gradient* SVGPaintServerGradient::gradient() const
+void RenderSVGResourceGradient::invalidateClients()
 {
-    return m_gradient.get();
+    const HashMap<RenderObject*, GradientData*>::const_iterator end = m_gradient.end();
+    for (HashMap<RenderObject*, GradientData*>::const_iterator it = m_gradient.begin(); it != end; ++it)
+        markForLayoutAndResourceInvalidation(it->first);
+
+    deleteAllValues(m_gradient);
+    m_gradient.clear();
 }
 
-void SVGPaintServerGradient::setGradient(PassRefPtr<Gradient> gradient)
+void RenderSVGResourceGradient::invalidateClient(RenderObject* object)
 {
-    m_gradient = gradient;
-}
+    ASSERT(object);
 
-bool SVGPaintServerGradient::boundingBoxMode() const
-{
-    return m_boundingBoxMode;
-}
+    // FIXME: The HashMap should always contain the object on calling invalidateClient. A race condition
+    // during the parsing can causes a call of invalidateClient right before the call of applyResource.
+    // We return earlier for the moment. This bug should be fixed in:
+    // https://bugs.webkit.org/show_bug.cgi?id=35181
+    if (!m_gradient.contains(object))
+        return;
 
-void SVGPaintServerGradient::setBoundingBoxMode(bool mode)
-{
-    m_boundingBoxMode = mode;
-}
-
-AffineTransform SVGPaintServerGradient::gradientTransform() const
-{
-    return m_gradientTransform;
-}
-
-void SVGPaintServerGradient::setGradientTransform(const AffineTransform& transform)
-{
-    m_gradientTransform = transform;
+    delete m_gradient.take(object);
+    markForLayoutAndResourceInvalidation(object);
 }
 
 #if PLATFORM(CG)
@@ -130,9 +86,10 @@ static inline AffineTransform absoluteTransformForRenderer(const RenderObject* o
     return absoluteTransform;
 }
 
-static inline bool createMaskAndSwapContextForTextGradient(
-    GraphicsContext*& context, GraphicsContext*& savedContext,
-    OwnPtr<ImageBuffer>& imageBuffer, const RenderObject* object)
+static inline bool createMaskAndSwapContextForTextGradient(GraphicsContext*& context,
+                                                           GraphicsContext*& savedContext,
+                                                           OwnPtr<ImageBuffer>& imageBuffer,
+                                                           const RenderObject* object)
 {
     const RenderObject* textRootBlock = findTextRootObject(object);
 
@@ -162,35 +119,57 @@ static inline bool createMaskAndSwapContextForTextGradient(
 }
 
 static inline AffineTransform clipToTextMask(GraphicsContext* context,
-    OwnPtr<ImageBuffer>& imageBuffer, const RenderObject* object,
-    const SVGPaintServerGradient* gradientServer)
+                                             OwnPtr<ImageBuffer>& imageBuffer,
+                                             const RenderObject* object,
+                                             GradientData* gradientData)
 {
     const RenderObject* textRootBlock = findTextRootObject(object);
     context->clipToImageBuffer(textRootBlock->repaintRectInLocalCoordinates(), imageBuffer.get());
 
     AffineTransform matrix;
-    if (gradientServer->boundingBoxMode()) {
+    if (gradientData->boundingBoxMode) {
         FloatRect maskBoundingBox = textRootBlock->objectBoundingBox();
         matrix.translate(maskBoundingBox.x(), maskBoundingBox.y());
         matrix.scaleNonUniform(maskBoundingBox.width(), maskBoundingBox.height());
     }
-    matrix.multiply(gradientServer->gradientTransform());
+    matrix.multiply(gradientData->transform);
     return matrix;
 }
 #endif
 
-bool SVGPaintServerGradient::setup(GraphicsContext*& context, const RenderObject* object, const RenderStyle*style, SVGPaintTargetType type, bool isPaintingText) const
+bool RenderSVGResourceGradient::applyResource(RenderObject* object, RenderStyle* style, GraphicsContext*& context, unsigned short resourceMode)
 {
-    m_ownerElement->buildGradient();
+    ASSERT(object);
+    ASSERT(style);
+    ASSERT(context);
+    ASSERT(resourceMode != ApplyToDefaultMode);
 
-    const SVGRenderStyle* svgStyle = style->svgStyle();
-    bool isFilled = (type & ApplyToFillTargetType) && svgStyle->hasFill();
-    bool isStroked = (type & ApplyToStrokeTargetType) && svgStyle->hasStroke();
+    // Be sure to synchronize all SVG properties on the gradientElement _before_ processing any further.
+    // Otherwhise the call to collectGradientAttributes() in createTileImage(), may cause the SVG DOM property
+    // synchronization to kick in, which causes invalidateClients() to be called, which in turn deletes our
+    // GradientData object! Leaving out the line below will cause svg/dynamic-updates/SVG*GradientElement-svgdom* to crash.
+    SVGGradientElement* gradientElement = static_cast<SVGGradientElement*>(node());
+    if (!gradientElement)
+        return false;
 
-    ASSERT((isFilled && !isStroked) || (!isFilled && isStroked));
+    gradientElement->updateAnimatedSVGAttribute(anyQName());
 
+    if (!m_gradient.contains(object))
+        m_gradient.set(object, new GradientData);
+
+    GradientData* gradientData = m_gradient.get(object);
+
+    // Create gradient object
+    if (!gradientData->gradient)
+        buildGradient(gradientData, gradientElement);
+
+    if (!gradientData->gradient)
+        return false;
+
+    // Draw gradient
     context->save();
 
+    bool isPaintingText = resourceMode & ApplyToTextMode;
     if (isPaintingText) {
 #if PLATFORM(CG)
         if (!createMaskAndSwapContextForTextGradient(context, m_savedContext, m_imageBuffer, object)) {
@@ -198,79 +177,89 @@ bool SVGPaintServerGradient::setup(GraphicsContext*& context, const RenderObject
             return false;
         }
 #endif
-        context->setTextDrawingMode(isFilled ? cTextFill : cTextStroke);
+
+        context->setTextDrawingMode(resourceMode & ApplyToFillMode ? cTextFill : cTextStroke);
     }
 
-    if (isFilled) {
-        context->setAlpha(svgStyle->fillOpacity());
-        context->setFillGradient(m_gradient);
-        context->setFillRule(svgStyle->fillRule());
+    AffineTransform transform;
+
+    // CG platforms will handle the gradient space transform for text after applying the
+    // resource, so don't apply it here. For non-CG platforms, we want the text bounding
+    // box applied to the gradient space transform now, so the gradient shader can use it.
+#if PLATFORM(CG)
+    if (gradientData->boundingBoxMode && !isPaintingText) {
+#else
+    if (gradientData->boundingBoxMode) {
+#endif
+        FloatRect objectBoundingBox = object->objectBoundingBox();
+        transform.translate(objectBoundingBox.x(), objectBoundingBox.y());
+        transform.scaleNonUniform(objectBoundingBox.width(), objectBoundingBox.height());
     }
-    if (isStroked) {
+
+    transform.multiply(gradientData->transform);
+    gradientData->gradient->setGradientSpaceTransform(transform);
+
+    const SVGRenderStyle* svgStyle = style->svgStyle();
+    ASSERT(svgStyle);
+
+    if (resourceMode & ApplyToFillMode) {
+        context->setAlpha(svgStyle->fillOpacity());
+        context->setFillGradient(gradientData->gradient);
+        context->setFillRule(svgStyle->fillRule());
+    } else if (resourceMode & ApplyToStrokeMode) {
         context->setAlpha(svgStyle->strokeOpacity());
-        context->setStrokeGradient(m_gradient);
+        context->setStrokeGradient(gradientData->gradient);
         applyStrokeStyleToContext(context, style, object);
     }
-
-    AffineTransform matrix;
-    // CG platforms will handle the gradient space transform for text in
-    // teardown, so we don't apply it here.  For non-CG platforms, we
-    // want the text bounding box applied to the gradient space transform now,
-    // so the gradient shader can use it.
-#if PLATFORM(CG)
-    if (boundingBoxMode() && !isPaintingText) {
-#else
-    if (boundingBoxMode()) {
-#endif
-        FloatRect bbox = object->objectBoundingBox();
-        matrix.translate(bbox.x(), bbox.y());
-        matrix.scaleNonUniform(bbox.width(), bbox.height());
-    }
-    matrix.multiply(gradientTransform());
-    m_gradient->setGradientSpaceTransform(matrix);
 
     return true;
 }
 
-void SVGPaintServerGradient::teardown(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType, bool isPaintingText) const
+void RenderSVGResourceGradient::postApplyResource(RenderObject* object, GraphicsContext*& context, unsigned short resourceMode)
 {
+    ASSERT(context);
+    ASSERT(resourceMode != ApplyToDefaultMode);
+
+    if (resourceMode & ApplyToTextMode) {
 #if PLATFORM(CG)
-    // renderPath() is not used when painting text, so we paint the gradient during teardown()
-    if (isPaintingText && m_savedContext) {
-        // Restore on-screen drawing context
-        context = m_savedContext;
-        m_savedContext = 0;
+        // CG requires special handling for gradient on text
+        if (m_savedContext && m_gradient.contains(object)) {
+            GradientData* gradientData = m_gradient.get(object);
 
-        AffineTransform matrix = clipToTextMask(context, m_imageBuffer, object, this);
-        m_gradient->setGradientSpaceTransform(matrix);
-        context->setFillGradient(m_gradient);
-        
-        const RenderObject* textRootBlock = findTextRootObject(object);
-        context->fillRect(textRootBlock->repaintRectInLocalCoordinates());
+            // Restore on-screen drawing context
+            context = m_savedContext;
+            m_savedContext = 0;
 
-        m_imageBuffer.clear();
-    }
+            gradientData->gradient->setGradientSpaceTransform(clipToTextMask(context, m_imageBuffer, object, gradientData));
+            context->setFillGradient(gradientData->gradient);
+
+            const RenderObject* textRootBlock = findTextRootObject(object);
+            context->fillRect(textRootBlock->repaintRectInLocalCoordinates());
+
+            m_imageBuffer.clear();
+        }
+#else
+        UNUSED_PARAM(object);
 #endif
+    } else {
+        if (resourceMode & ApplyToFillMode)
+            context->fillPath();
+        else if (resourceMode & ApplyToStrokeMode)
+            context->strokePath();
+    }
+
     context->restore();
 }
 
-TextStream& SVGPaintServerGradient::externalRepresentation(TextStream& ts) const
+void RenderSVGResourceGradient::addStops(GradientData* gradientData, const Vector<Gradient::ColorStop>& stops) const
 {
-    // Gradients/patterns aren't setup, until they are used for painting. Work around that fact.
-    m_ownerElement->buildGradient();
+    ASSERT(gradientData->gradient);
 
-    // abstract, don't stream type
-    ts  << "[stops=" << gradientStops() << "]";
-    if (m_gradient->spreadMethod() != SpreadMethodPad)
-        ts << "[method=" << m_gradient->spreadMethod() << "]";
-    if (!boundingBoxMode())
-        ts << " [bounding box mode=" << boundingBoxMode() << "]";
-    if (!gradientTransform().isIdentity())
-        ts << " [transform=" << gradientTransform() << "]";
-
-    return ts;
+    const Vector<Gradient::ColorStop>::const_iterator end = stops.end();
+    for (Vector<Gradient::ColorStop>::const_iterator it = stops.begin(); it != end; ++it)
+        gradientData->gradient->addColorStop(*it);
 }
 
-} // namespace WebCore
+}
 
 #endif

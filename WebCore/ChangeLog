@@ -1,3 +1,262 @@
+2010-04-24  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        SVGPaintServer needs to be converted to the new RenderSVGResource* system
+        https://bugs.webkit.org/show_bug.cgi?id=37986
+
+        Huge speedup for SVG painting using paint servers (gradient/patterns). Cache underlying
+        WebCore::Gradient/Pattern datastructures, do not rebuild them on every painting. This marks
+        the finish of the SVGResource -> RenderSVGResource transition.
+
+        Outline of same key changes:
+        - RenderSVGResource is an abstract base class now, and the previous class is now named RenderSVGResourceContainer
+          All resources except RenderSVGResourceSolidColor now inherit from RenderSVGResourceContainer, as they are all
+          associated with a SVG*Element class. RenderSVGResourceSolidColor inherits from RenderSVGResource, and is not
+          associated with any SVG*Element class. RenderSVGResourceSolidColor is not a render tree object, despite its name.
+          The reason for that is consistency with all other painting resources.
+        - RenderSVGResourceSolidColor does not live in the render tree, and exists only as static object, which is shared
+          and always used when filling/stroking with solid colors - just like the old SVGPaintServerSolid.
+        - RenderSVGResourceGradient/RenderSVGResourcePattern now store the underlying WebCore::Gradient/Pattern object
+          instead of rebuilding it everytime we're asked to paint -> this is the main difference with the old concept, leading
+          to much faster speed.
+        - SVGResource has vanished. All resources (clipper/filter/marker/masker/gradient/pattern) now share the same codepaths
+          to handle updates and client invalidation - which is a huge benefit, and makes the code easier to understand.
+
+        * Android.mk: Remove svg/graphics/SVGResource*, svg/graphics/SVGPaintServer.h from build.
+        * GNUmakefile.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * platform/graphics/Gradient.cpp: Add addColorStop() method taking a ColorStop const-reference.
+        (WebCore::Gradient::addColorStop):
+        * platform/graphics/Gradient.h: Ditto.
+        * platform/graphics/TextRun.h: Rename SVGPaintServer to RenderSVGResource
+        (WebCore::TextRun::TextRun):
+        (WebCore::TextRun::activePaintingResource): Renamed from activePaintServer.
+        (WebCore::TextRun::setActivePaintingResource): Renamed from setActivePaintServer.
+        * platform/graphics/win/GraphicsContextWin.cpp: Remove references to SVGResourceImage, which was removed a long time ago.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::toRenderSVGResourceContainer): Renamed from toRenderSVGResource().
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isSVGGradientStop): Added.
+        (WebCore::RenderObject::isSVGResourceContainer): Renamed from isSVGResource().
+        * rendering/RenderPath.cpp: Utilize RenderSVGResource::fill/strokePaintingResource to request paint servers, instead of SVGPaintServer.
+        (WebCore::RenderPath::fillContains): Adapt to new concept.
+        (WebCore::RenderPath::strokeContains): Ditto.
+        (WebCore::fillAndStrokePath): Ditto.
+        (WebCore::RenderPath::paint): Ditto.
+        * rendering/RenderSVGGradientStop.cpp:
+        (WebCore::RenderSVGGradientStop::styleDidChange): Ditto.
+        * rendering/RenderSVGGradientStop.h: Fixed indention.
+        * rendering/RenderSVGResource.cpp: Refactored old SVGPaintServer code to request fill/stroke painting resources, splitted up in several methods to aid readability. 
+        (WebCore::registerPendingResource):
+        (WebCore::adjustColorForPseudoRules):
+        (WebCore::RenderSVGResource::fillPaintingResource):
+        (WebCore::RenderSVGResource::strokePaintingResource):
+        (WebCore::RenderSVGResource::sharedSolidPaintingResource):
+        (WebCore::RenderSVGResource::markForLayoutAndResourceInvalidation):
+        * rendering/RenderSVGResource.h: Make RenderSVGResource an abstract base class, see above for the reasoning.
+        (WebCore::RenderSVGResource::RenderSVGResource):
+        (WebCore::RenderSVGResource::~RenderSVGResource):
+        (WebCore::RenderSVGResource::postApplyResource):
+        * rendering/RenderSVGResourceClipper.cpp: Inherit from RenderSVGResourceContainer instead of RenderSVGResource.
+        (WebCore::RenderSVGResourceClipper::RenderSVGResourceClipper):
+        (WebCore::RenderSVGResourceClipper::invalidateClient):
+        (WebCore::RenderSVGResourceClipper::applyResource): Adapt to signature changes (add RenderStyle* and resource mode parameters)
+        (WebCore::RenderSVGResourceClipper::applyClippingToContext):
+        * rendering/RenderSVGResourceClipper.h:
+        * rendering/RenderSVGResourceContainer.h: Added. Renamed from RenderSVGResource. Now inherits from RenderSVGHiddenContainer and RenderSVGResource.
+        (WebCore::RenderSVGResourceContainer::RenderSVGResourceContainer):
+        (WebCore::RenderSVGResourceContainer::~RenderSVGResourceContainer):
+        (WebCore::RenderSVGResourceContainer::idChanged):
+        (WebCore::RenderSVGResourceContainer::isSVGResourceContainer):
+        (WebCore::RenderSVGResourceContainer::drawsContents):
+        (WebCore::RenderSVGResourceContainer::toRenderSVGResourceContainer):
+        (WebCore::getRenderSVGResourceContainerById):
+        (WebCore::getRenderSVGResourceById):
+        * rendering/RenderSVGResourceFilter.cpp: Inherit from RenderSVGResourceContainer instead of RenderSVGResource.
+        (WebCore::RenderSVGResourceFilter::RenderSVGResourceFilter):
+        (WebCore::RenderSVGResourceFilter::invalidateClient):
+        (WebCore::RenderSVGResourceFilter::applyResource): Adapt to signature changes (add RenderStyle* and resource mode parameters)
+        (WebCore::RenderSVGResourceFilter::postApplyResource):
+        * rendering/RenderSVGResourceFilter.h:
+        * rendering/RenderSVGResourceGradient.cpp: Moved from SVGPaintServerGradient, cleaned up and refactored.
+        (WebCore::RenderSVGResourceGradient::RenderSVGResourceGradient):
+        (WebCore::RenderSVGResourceGradient::~RenderSVGResourceGradient):
+        (WebCore::RenderSVGResourceGradient::invalidateClients):
+        (WebCore::RenderSVGResourceGradient::invalidateClient):
+        (WebCore::createMaskAndSwapContextForTextGradient):
+        (WebCore::clipToTextMask):
+        (WebCore::RenderSVGResourceGradient::applyResource):
+        * rendering/RenderSVGResourceGradient.h:
+        (WebCore::RenderSVGResourceGradient::resourceBoundingBox):
+        * rendering/RenderSVGResourceLinearGradient.cpp: Moved from SVGPaintServerLinearGradient, cleaned up and refactored.
+        (WebCore::RenderSVGResourceLinearGradient::RenderSVGResourceLinearGradient):
+        (WebCore::RenderSVGResourceLinearGradient::~RenderSVGResourceLinearGradient):
+        (WebCore::RenderSVGResourceLinearGradient::buildGradient):
+        * rendering/RenderSVGResourceLinearGradient.h:
+        (WebCore::RenderSVGResourceLinearGradient::renderName):
+        (WebCore::RenderSVGResourceLinearGradient::resourceType):
+        * rendering/RenderSVGResourceMarker.cpp: Inherit from RenderSVGResourceContainer instead of RenderSVGResource.
+        (WebCore::RenderSVGResourceMarker::RenderSVGResourceMarker):
+        (WebCore::RenderSVGResourceMarker::invalidateClient):
+        * rendering/RenderSVGResourceMarker.h:
+        (WebCore::RenderSVGResourceMarker::applyResource):
+        * rendering/RenderSVGResourceMasker.cpp: Inherit from RenderSVGResourceContainer instead of RenderSVGResource.
+        (WebCore::RenderSVGResourceMasker::RenderSVGResourceMasker):
+        (WebCore::RenderSVGResourceMasker::invalidateClient):
+        (WebCore::RenderSVGResourceMasker::applyResource):
+        * rendering/RenderSVGResourceMasker.h:
+        (WebCore::MaskerData::MaskerData):
+        * rendering/RenderSVGResourcePattern.cpp: Moved from SVGPaintServerPattern, cleaned up and refactored.
+        (WebCore::RenderSVGResourcePattern::RenderSVGResourcePattern):
+        (WebCore::RenderSVGResourcePattern::~RenderSVGResourcePattern):
+        (WebCore::RenderSVGResourcePattern::invalidateClients):
+        (WebCore::RenderSVGResourcePattern::invalidateClient):
+        (WebCore::RenderSVGResourcePattern::applyResource):
+        (WebCore::RenderSVGResourcePattern::postApplyResource):
+        (WebCore::calculatePatternBoundaries):
+        (WebCore::RenderSVGResourcePattern::calculatePatternBoundariesIncludingOverflow):
+        (WebCore::RenderSVGResourcePattern::createTileImage):
+        (WebCore::RenderSVGResourcePattern::buildPattern):
+        * rendering/RenderSVGResourcePattern.h:
+        (WebCore::RenderSVGResourcePattern::renderName):
+        (WebCore::RenderSVGResourcePattern::resourceBoundingBox):
+        (WebCore::RenderSVGResourcePattern::resourceType):
+        * rendering/RenderSVGResourceRadialGradient.cpp: Moved from SVGPaintServerRadialGradient, cleaned up and refactored.
+        (WebCore::RenderSVGResourceRadialGradient::RenderSVGResourceRadialGradient):
+        (WebCore::RenderSVGResourceRadialGradient::~RenderSVGResourceRadialGradient):
+        (WebCore::RenderSVGResourceRadialGradient::buildGradient):
+        * rendering/RenderSVGResourceRadialGradient.h:
+        (WebCore::RenderSVGResourceRadialGradient::renderName):
+        (WebCore::RenderSVGResourceRadialGradient::resourceType):
+        * rendering/RenderSVGResourceSolidColor.cpp: Moved from SVGPaintServerSolid, cleaned up and refactored.
+        (WebCore::RenderSVGResourceSolidColor::RenderSVGResourceSolidColor):
+        (WebCore::RenderSVGResourceSolidColor::~RenderSVGResourceSolidColor):
+        (WebCore::RenderSVGResourceSolidColor::applyResource):
+        (WebCore::RenderSVGResourceSolidColor::postApplyResource):
+        * rendering/RenderSVGResourceSolidColor.h:
+        (WebCore::RenderSVGResourceSolidColor::invalidateClients):
+        (WebCore::RenderSVGResourceSolidColor::invalidateClient):
+        (WebCore::RenderSVGResourceSolidColor::resourceBoundingBox):
+        (WebCore::RenderSVGResourceSolidColor::resourceType):
+        (WebCore::RenderSVGResourceSolidColor::color):
+        (WebCore::RenderSVGResourceSolidColor::setColor):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::paint): Early exit if painting is disabled.
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::write): Add RenderSVGGradientStop dumping.
+        (WebCore::externalRepresentation): Remove SVGResource dumping.
+        * rendering/SVGInlineTextBox.cpp: Adapt to SVGPaintServer changes (paint server request).
+        (WebCore::SVGInlineTextBox::paintCharacters):
+        (WebCore::SVGInlineTextBox::paintDecoration):
+        * rendering/SVGInlineTextBox.h: Ditto.
+        (WebCore::SVGTextPaintInfo::SVGTextPaintInfo):
+        * rendering/SVGRenderSupport.cpp: Ditto.
+        (WebCore::SVGRenderBase::prepareToRenderSVGContent):
+        (WebCore::SVGRenderBase::finishRenderSVGContent):
+        (WebCore::invalidatePaintingResource):
+        (WebCore::deregisterFromResources):
+        (WebCore::dashArrayFromRenderingStyle): Moved here from SVGPaintServer.
+        (WebCore::applyStrokeStyleToContext): Ditto.
+        * rendering/SVGRenderSupport.h:
+        * rendering/SVGRenderTreeAsText.cpp: Add new gradient/pattern dumping code. Stops are now properly dumped as well!
+        (WebCore::operator<<):
+        (WebCore::writeSVGPaintingResource):
+        (WebCore::writeStyle):
+        (WebCore::boundingBoxModeString):
+        (WebCore::writeCommonGradientProperties):
+        (WebCore::writeSVGResourceContainer):
+        (WebCore::writeSVGGradientStop):
+        * rendering/SVGRenderTreeAsText.h:
+        * rendering/SVGRootInlineBox.cpp: Adapt to SVGPaintServer changes (paint server request).
+        (WebCore::SVGRootInlineBoxPaintWalker::SVGRootInlineBoxPaintWalker):
+        (WebCore::SVGRootInlineBoxPaintWalker::~SVGRootInlineBoxPaintWalker):
+        (WebCore::SVGRootInlineBoxPaintWalker::teardownFillPaintServer):
+        (WebCore::SVGRootInlineBoxPaintWalker::teardownStrokePaintServer):
+        (WebCore::SVGRootInlineBoxPaintWalker::setupBackground):
+        (WebCore::SVGRootInlineBoxPaintWalker::setupFill):
+        (WebCore::SVGRootInlineBoxPaintWalker::setupFillSelection):
+        (WebCore::SVGRootInlineBoxPaintWalker::setupStroke):
+        (WebCore::SVGRootInlineBoxPaintWalker::setupStrokeSelection):
+        (WebCore::SVGRootInlineBoxPaintWalker::setupForeground):
+        (WebCore::SVGRootInlineBoxPaintWalker::activePaintingResource):
+        (WebCore::SVGRootInlineBoxPaintWalker::paintChunk):
+        * svg/GradientAttributes.h: Remove SVGGradientStop, use Gradient::ColorStop vector. Cleanup.
+        (WebCore::GradientAttributes::stops):
+        (WebCore::GradientAttributes::setStops):
+        * svg/LinearGradientAttributes.h: Move ENABLE(SVG) guard to correct location.
+        * svg/PatternAttributes.h: Add missing includes and class forwards.
+        * svg/RadialGradientAttributes.h: Move ENABLE(SVG) guard to correct location.
+        * svg/SVGClipPathElement.cpp: Rename invalidateCanvasResources() to invalidateResourceClients().
+        (WebCore::SVGClipPathElement::svgAttributeChanged):
+        (WebCore::SVGClipPathElement::childrenChanged): Only call invalidateResourceClients() when !changedByParser is set.
+        * svg/SVGClipPathElement.h:
+        * svg/SVGDocumentExtensions.cpp: Change HashMaps to hash AtomicStrings instead of Strings. Rename RenderSVGResource to RenderSVGResourceContainer.
+        (WebCore::SVGDocumentExtensions::addResource):
+        (WebCore::SVGDocumentExtensions::removeResource):
+        (WebCore::SVGDocumentExtensions::resourceById):
+        (WebCore::SVGDocumentExtensions::addPendingResource):
+        * svg/SVGDocumentExtensions.h:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::insertedIntoDocument): Remove reference to SVGResource::invalidateClients(), handled differently now.
+        (WebCore::SVGElement::updateAnimatedSVGAttribute): Change assertion, that is incorrect now.
+        * svg/SVGElement.h: Make updateAnimatedSVGAttribute() public.
+        * svg/SVGFont.cpp: Adapt to SVGPaintServer changes (paint server request).
+        (WebCore::Font::drawTextUsingSVGFont):
+        * svg/SVGGElement.cpp: If style()->display() is NONE, create a RenderSVGHiddenContainer, removing hacks in SVGStopElement for pservers-grad-19-b.svg (yes, SVG is crazy.)
+        (WebCore::SVGGElement::createRenderer):
+        * svg/SVGGElement.h: Remove childrenChanged() method which _always_ called renderer->setNeedsLayout(true), which is completly wrong and unnecessary.
+        (WebCore::SVGGElement::rendererIsNeeded): Always return true.
+        * svg/SVGGradientElement.cpp: Adapt to new RenderSVGResourceGradient code.
+        (WebCore::SVGGradientElement::svgAttributeChanged):
+        (WebCore::SVGGradientElement::childrenChanged): Only call invalidateResourceClients() when !changedByParser is set.
+        (WebCore::SVGGradientElement::buildStops):
+        * svg/SVGGradientElement.h:
+        * svg/SVGLinearGradientElement.cpp: Adapt to new RenderSVGResourceLinearGradient code.
+        (WebCore::SVGLinearGradientElement::svgAttributeChanged):
+        (WebCore::SVGLinearGradientElement::createRenderer):
+        (WebCore::SVGLinearGradientElement::collectGradientProperties):
+        (WebCore::SVGLinearGradientElement::calculateStartEndPoints):
+        * svg/SVGLinearGradientElement.h:
+        * svg/SVGMarkerElement.cpp: Rename invalidateCanvasResources() to invalidateResourceClients().
+        (WebCore::SVGMarkerElement::svgAttributeChanged):
+        (WebCore::SVGMarkerElement::childrenChanged): Only call invalidateResourceClients() when !changedByParser is set.
+        (WebCore::SVGMarkerElement::setOrientToAuto):
+        (WebCore::SVGMarkerElement::setOrientToAngle):
+        * svg/SVGMaskElement.cpp: Rename invalidateCanvasResources() to invalidateResourceClients().
+        (WebCore::SVGMaskElement::svgAttributeChanged):
+        (WebCore::SVGMaskElement::childrenChanged): Only call invalidateResourceClients() when !changedByParser is set.
+        * svg/SVGPatternElement.cpp: Rename invalidateCanvasResources() to invalidateResourceClients().
+        (WebCore::SVGPatternElement::svgAttributeChanged):
+        (WebCore::SVGPatternElement::childrenChanged): Only call invalidateResourceClients() when !changedByParser is set.
+        (WebCore::SVGPatternElement::createRenderer):
+        * svg/SVGPatternElement.h:
+        * svg/SVGPolyElement.h: Remove unneded rendererIsNeeded() override.
+        * svg/SVGRadialGradientElement.cpp: Adapt to new RenderSVGResourceRadialGradient code.
+        (WebCore::SVGRadialGradientElement::svgAttributeChanged):
+        (WebCore::SVGRadialGradientElement::createRenderer):
+        (WebCore::SVGRadialGradientElement::collectGradientProperties):
+        (WebCore::SVGRadialGradientElement::calculateFocalCenterPointsAndRadius):
+        * svg/SVGRadialGradientElement.h:
+        * svg/SVGStopElement.cpp: Clean up code, moved stop color calculation from SVGGradientElement to here, where it belongs.
+        (WebCore::SVGStopElement::parseMappedAttribute):
+        (WebCore::SVGStopElement::stopColorIncludingOpacity):
+        * svg/SVGStopElement.h:
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::~SVGStyledElement):
+        (WebCore::SVGStyledElement::svgAttributeChanged): Only invalidateResourcesInAncestorChain()/deregisterFromResources() when we're not parsing.
+        (WebCore::SVGStyledElement::invalidateResourcesInAncestorChain): Early exit if we find a parent resources, there is no resource nesting.
+        (WebCore::SVGStyledElement::invalidateResourceClients): Renamed from invalidateCanvasResources()
+        (WebCore::SVGStyledElement::childrenChanged): Only invalidate SVGElementInstances when !changedByParser is set.
+        * svg/SVGStyledElement.h: Remove canvasResource() logic, remove detach() method.
+        * svg/SVGTextPathElement.h:
+        * svg/graphics/SVGPaintServer.h: Removed.
+        * svg/graphics/SVGResource.cpp: Removed.
+        * svg/graphics/SVGResource.h: Removed.
+
 2010-04-23  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Darin Fisher.

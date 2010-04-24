@@ -1,14 +1,12 @@
-KRenderingPaintServer {id="fillPattern" [type=PATTERN] [bbox=at (0,0) size 20x20]}
-KRenderingPaintServer {id="strokePattern" [type=PATTERN] [bbox=at (0,0) size 20x20]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
-    RenderSVGContainer {g} at (0,8) size 685x372
-      RenderSVGContainer {pattern} at (8,8) size 26x26
+    RenderSVGContainer {g} at (0,15) size 685x365
+      RenderSVGResourcePattern {pattern} [id="fillPattern"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
         RenderPath {rect} at (8,8) size 17x17 [fill={[type=SOLID] [color=#FF0000]}] [data="M5.00,5.00 L15.00,5.00 L15.00,15.00 L5.00,15.00 Z"]
         RenderPath {rect} at (16,16) size 18x18 [fill={[type=SOLID] [color=#008000]}] [data="M10.00,10.00 L20.00,10.00 L20.00,20.00 L10.00,20.00 Z"]
-      RenderSVGContainer {pattern} at (8,8) size 26x26
+      RenderSVGResourcePattern {pattern} [id="strokePattern"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
         RenderPath {rect} at (8,8) size 17x17 [fill={[type=SOLID] [color=#FFFF00]}] [data="M5.00,5.00 L15.00,5.00 L15.00,15.00 L5.00,15.00 Z"]
         RenderPath {rect} at (16,16) size 18x18 [fill={[type=SOLID] [color=#0000FF]}] [data="M10.00,10.00 L20.00,10.00 L20.00,20.00 L10.00,20.00 Z"]
       RenderSVGText {text} at (-150,70) size 375x78 contains 1 chunk(s)

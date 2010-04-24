@@ -1,5 +1,137 @@
 2010-04-24  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Reviewed by Dirk Schulze.
+
+        SVGPaintServer needs to be converted to the new RenderSVGResource* system
+        https://bugs.webkit.org/show_bug.cgi?id=37986
+
+        Rebaseline SVG tests, after the RenderSVGResource transition.
+
+        NOTE: This WILL affect _any_ platform with custom svg results for tests using gradients/patterns.
+              That means I have to wait for the bot results, and update them ASAP. Therefore landing out
+              of california business hours and on the weekend - please stay tuned I'll fix any breakages soon.
+              (Except for chromium whose test results are not available on build.webkit.org, sorry.)
+
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-31-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-78-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/color-prop-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/coords-units-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-color-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/masking-mask-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/masking-mask-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/masking-mask-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/painting-render-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-02-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-03-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-04-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-05-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-05-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-05-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-07-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-08-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-09-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-10-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-11-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-12-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-13-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-14-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-15-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-16-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-17-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-18-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-19-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-19-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-19-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-pattern-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/struct-group-03-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/struct-use-05-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/styling-inherit-01-b-expected.txt:
+        * platform/mac/svg/batik/filters/feTile-expected.txt:
+        * platform/mac/svg/batik/masking/maskRegions-expected.txt:
+        * platform/mac/svg/batik/paints/gradientLimit-expected.txt:
+        * platform/mac/svg/batik/paints/patternPreserveAspectRatioA-expected.txt:
+        * platform/mac/svg/batik/paints/patternRegionA-expected.txt:
+        * platform/mac/svg/batik/paints/patternRegions-expected.txt:
+        * platform/mac/svg/batik/text/textEffect-expected.txt:
+        * platform/mac/svg/batik/text/textEffect2-expected.txt:
+        * platform/mac/svg/batik/text/textEffect3-expected.txt:
+        * platform/mac/svg/batik/text/textProperties-expected.txt:
+        * platform/mac/svg/carto.net/colourpicker-expected.txt:
+        * platform/mac/svg/carto.net/tabgroup-expected.txt:
+        * platform/mac/svg/css/circle-in-mask-with-shadow-expected.txt:
+        * platform/mac/svg/css/mask-with-shadow-expected.txt:
+        * platform/mac/svg/custom/broken-internal-references-expected.txt:
+        * platform/mac/svg/custom/deep-dynamic-updates-expected.txt:
+        * platform/mac/svg/custom/dominant-baseline-hanging-expected.checksum:
+        * platform/mac/svg/custom/dominant-baseline-hanging-expected.png:
+        * platform/mac/svg/custom/dominant-baseline-hanging-expected.txt:
+        * platform/mac/svg/custom/feComponentTransfer-Discrete-expected.txt:
+        * platform/mac/svg/custom/feComponentTransfer-Gamma-expected.txt:
+        * platform/mac/svg/custom/feComponentTransfer-Linear-expected.txt:
+        * platform/mac/svg/custom/feComponentTransfer-Table-expected.txt:
+        * platform/mac/svg/custom/fill-fallback-expected.txt:
+        * platform/mac/svg/custom/gradient-add-stops-expected.txt:
+        * platform/mac/svg/custom/gradient-attr-update-expected.txt:
+        * platform/mac/svg/custom/gradient-cycle-detection-expected.txt:
+        * platform/mac/svg/custom/gradient-deep-referencing-expected.txt:
+        * platform/mac/svg/custom/gradient-rotated-bbox-expected.txt:
+        * platform/mac/svg/custom/gradient-stop-corner-cases-expected.txt:
+        * platform/mac/svg/custom/gradient-stop-style-change-expected.txt:
+        * platform/mac/svg/custom/gradient-stroke-width-expected.checksum:
+        * platform/mac/svg/custom/gradient-stroke-width-expected.png:
+        * platform/mac/svg/custom/gradient-stroke-width-expected.txt:
+        * platform/mac/svg/custom/gradient-userSpaceOnUse-with-percentage-expected.txt:
+        * platform/mac/svg/custom/grayscale-gradient-mask-expected.txt:
+        * platform/mac/svg/custom/group-opacity-expected.txt:
+        * platform/mac/svg/custom/inline-svg-in-xhtml-expected.txt:
+        * platform/mac/svg/custom/invalid-css-expected.txt:
+        * platform/mac/svg/custom/js-late-gradient-and-object-creation-expected.txt:
+        * platform/mac/svg/custom/js-late-gradient-creation-expected.txt:
+        * platform/mac/svg/custom/js-late-pattern-and-object-creation-expected.txt:
+        * platform/mac/svg/custom/js-late-pattern-creation-expected.txt:
+        * platform/mac/svg/custom/js-update-gradient-expected.checksum:
+        * platform/mac/svg/custom/js-update-gradient-expected.png:
+        * platform/mac/svg/custom/js-update-gradient-expected.txt:
+        * platform/mac/svg/custom/js-update-pattern-child-expected.txt:
+        * platform/mac/svg/custom/js-update-pattern-expected.txt:
+        * platform/mac/svg/custom/js-update-stop-expected.txt:
+        * platform/mac/svg/custom/large-bounding-box-percents-expected.txt:
+        * platform/mac/svg/custom/pattern-cycle-detection-expected.txt:
+        * platform/mac/svg/custom/pattern-deep-referencing-expected.txt:
+        * platform/mac/svg/custom/pattern-excessive-malloc-expected.txt:
+        * platform/mac/svg/custom/pattern-in-defs-expected.txt:
+        * platform/mac/svg/custom/pattern-rotate-expected.txt:
+        * platform/mac/svg/custom/pattern-size-bigger-than-target-size-expected.txt:
+        * platform/mac/svg/custom/pattern-skew-transformed-expected.txt:
+        * platform/mac/svg/custom/pattern-with-transformation-expected.txt:
+        * platform/mac/svg/custom/pattern-y-offset-expected.txt:
+        * platform/mac/svg/custom/resource-client-removal-expected.txt:
+        * platform/mac/svg/custom/stroke-fallback-expected.txt:
+        * platform/mac/svg/custom/stroked-pattern-expected.txt:
+        * platform/mac/svg/custom/text-gradient-no-content-expected.txt:
+        * platform/mac/svg/custom/use-on-symbol-inside-pattern-expected.txt:
+        * platform/mac/svg/custom/use-recalcStyle-crash-expected.txt:
+        * platform/mac/svg/filters/big-sized-filter-expected.txt:
+        * platform/mac/svg/filters/feDisplacementMap-expected.txt:
+        * platform/mac/svg/filters/feTile-expected.txt:
+        * platform/mac/svg/filters/filterRes-expected.txt:
+        * platform/mac/svg/hixie/error/003-expected.txt:
+        * platform/mac/svg/hixie/perf/005-expected.txt:
+        * platform/mac/svg/hixie/perf/006-expected.txt:
+        * platform/mac/svg/text/selection-background-color-expected.txt:
+        * platform/mac/svg/text/selection-styles-expected.txt:
+        * platform/mac/svg/text/text-gradient-positioning-expected.txt:
+        * platform/mac/svg/transforms/text-with-pattern-inside-transformed-html-expected.txt:
+        * platform/mac/svg/transforms/text-with-pattern-with-svg-transform-expected.txt:
+        * platform/win/svg/custom/broken-internal-references-expected.txt:
+        * svg/custom/gradient-with-1d-boundingbox-expected.txt:
+        * svg/custom/radial-gradient-with-outstanding-focalPoint-expected.txt:
+
+2010-04-24  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Add win specific result for svg/custom/broken-internal-references.svg
         It's a bad idea that textPath dumps FLT_MAX when it's not shown - that should be fixed, but it's not related to Moritas testcase.
 

@@ -42361,18 +42361,6 @@
 					RelativePath="..\svg\graphics\SVGImage.h"
 					>
 				</File>
-				<File
-					RelativePath="..\svg\graphics\SVGPaintServer.h"
-					>
-				</File>
-				<File
-					RelativePath="..\svg\graphics\SVGResource.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\svg\graphics\SVGResource.h"
-					>
-				</File>
 				<Filter
 					Name="filters"
 					>

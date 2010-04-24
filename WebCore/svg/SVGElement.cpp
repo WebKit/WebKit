@@ -41,7 +41,6 @@
 #include "SVGElementInstance.h"
 #include "SVGElementRareData.h"
 #include "SVGNames.h"
-#include "SVGResource.h"
 #include "SVGSVGElement.h"
 #include "SVGURIReference.h"
 #include "SVGUseElement.h"
@@ -292,8 +291,6 @@ void SVGElement::insertedIntoDocument()
 
         for (; it != end; ++it)
             (*it)->buildPendingResource();
-
-        SVGResource::invalidateClients(*clients);
     }
 }
 
@@ -309,9 +306,7 @@ void SVGElement::attributeChanged(Attribute* attr, bool preserveDecls)
 
 void SVGElement::updateAnimatedSVGAttribute(const QualifiedName& name) const
 {
-    ASSERT(!m_areSVGAttributesValid);
-
-    if (m_synchronizingSVGAttributes)
+    if (m_synchronizingSVGAttributes || m_areSVGAttributesValid)
         return;
 
     m_synchronizingSVGAttributes = true;

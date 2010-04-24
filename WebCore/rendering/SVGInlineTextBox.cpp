@@ -30,7 +30,7 @@
 #include "GraphicsContext.h"
 #include "InlineFlowBox.h"
 #include "Range.h"
-#include "SVGPaintServer.h"
+#include "RenderSVGResource.h"
 #include "SVGRootInlineBox.h"
 #include "Text.h"
 
@@ -418,10 +418,9 @@ void SVGInlineTextBox::paintCharacters(RenderObject::PaintInfo& paintInfo, int t
         TextRun run = svgTextRunForInlineTextBox(chars, length, styleToUse, this, svgChar.x);
 
 #if ENABLE(SVG_FONTS)
-        // SVG Fonts need access to the paint server used to draw the current text chunk.
-        // They need to be able to call renderPath() on a SVGPaintServer object.
-        ASSERT(textPaintInfo.activePaintServer);
-        run.setActivePaintServer(textPaintInfo.activePaintServer);
+        // SVG Fonts need access to the painting resource used to draw the current text chunk.
+        ASSERT(textPaintInfo.activePaintingResource);
+        run.setActivePaintingResource(textPaintInfo.activePaintingResource);
 #endif
 
         int selectionStart = 0;
@@ -569,18 +568,20 @@ void SVGInlineTextBox::paintDecoration(ETextDecoration decoration, GraphicsConte
 
     if (isFilled) {
         if (RenderObject* fillObject = info.fillServerMap.get(decoration)) {
-            if (SVGPaintServer* fillPaintServer = SVGPaintServer::fillPaintServer(fillObject->style(), fillObject)) {
+            if (RenderSVGResource* fillPaintingResource = RenderSVGResource::fillPaintingResource(fillObject, fillObject->style())) {
                 context->addPath(pathForDecoration(decoration, fillObject, tx, ty, width));
-                fillPaintServer->draw(context, fillObject, ApplyToFillTargetType);
+                if (fillPaintingResource->applyResource(fillObject, fillObject->style(), context, ApplyToFillMode))
+                    fillPaintingResource->postApplyResource(fillObject, context, ApplyToFillMode);
             }
         }
     }
 
     if (isStroked) {
         if (RenderObject* strokeObject = info.strokeServerMap.get(decoration)) {
-            if (SVGPaintServer* strokePaintServer = SVGPaintServer::strokePaintServer(strokeObject->style(), strokeObject)) {
+            if (RenderSVGResource* strokePaintingResource = RenderSVGResource::strokePaintingResource(strokeObject, strokeObject->style())) {
                 context->addPath(pathForDecoration(decoration, strokeObject, tx, ty, width));
-                strokePaintServer->draw(context, strokeObject, ApplyToStrokeTargetType);
+                if (strokePaintingResource->applyResource(strokeObject, strokeObject->style(), context, ApplyToStrokeMode))
+                    strokePaintingResource->postApplyResource(strokeObject, context, ApplyToStrokeMode);
             }
         }
     }

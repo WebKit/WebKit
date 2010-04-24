@@ -28,7 +28,7 @@
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "FloatRect.h"
 #include "ImageBuffer.h"
-#include "RenderSVGResource.h"
+#include "RenderSVGResourceContainer.h"
 #include "SVGFilter.h"
 #include "SVGFilterBuilder.h"
 #include "SVGFilterElement.h"
@@ -55,9 +55,9 @@ struct FilterData {
 
 class GraphicsContext;
 
-class RenderSVGResourceFilter : public RenderSVGResource {
+class RenderSVGResourceFilter : public RenderSVGResourceContainer {
 public:
-    RenderSVGResourceFilter(SVGStyledElement*);
+    RenderSVGResourceFilter(SVGFilterElement*);
     virtual ~RenderSVGResourceFilter();
 
     virtual const char* renderName() const { return "RenderSVGResourceFilter"; }
@@ -65,8 +65,8 @@ public:
     virtual void invalidateClients();
     virtual void invalidateClient(RenderObject*);
 
-    virtual bool applyResource(RenderObject*, GraphicsContext*&);
-    virtual void postApplyResource(RenderObject*, GraphicsContext*&);
+    virtual bool applyResource(RenderObject*, RenderStyle*, GraphicsContext*&, unsigned short resourceMode);
+    virtual void postApplyResource(RenderObject*, GraphicsContext*&, unsigned short resourceMode);
 
     virtual FloatRect resourceBoundingBox(const FloatRect&) const;
 

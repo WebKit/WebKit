@@ -38,11 +38,10 @@ namespace WebCore {
         virtual void svgAttributeChanged(const QualifiedName&);
         virtual void synchronizeProperty(const QualifiedName&);
 
-    protected:
-        virtual void buildGradient() const;
-        virtual SVGPaintServerType gradientType() const { return LinearGradientPaintServer; }
+        virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
-        LinearGradientAttributes collectGradientProperties() const;
+        LinearGradientAttributes collectGradientProperties();
+        void calculateStartEndPoints(const LinearGradientAttributes&, FloatPoint& startPoint, FloatPoint& endPoint);
 
     private:
         DECLARE_ANIMATED_PROPERTY(SVGLinearGradientElement, SVGNames::x1Attr, SVGLength, X1, x1)

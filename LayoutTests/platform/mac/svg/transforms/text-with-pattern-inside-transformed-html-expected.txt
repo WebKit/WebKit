@@ -1,7 +1,3 @@
-KRenderingPaintServer {id="pat1" [type=PATTERN] [bbox=at (0,0) size 0.04x0.40]}
-KRenderingPaintServer {id="pat2" [type=PATTERN] [bbox=at (0,0) size 0.04x0.40]}
-KRenderingPaintServer {id="pat3" [type=PATTERN] [bbox=at (0,0) size 0.03x0.30]}
-KRenderingPaintServer {id="pat4" [type=PATTERN] [bbox=at (0,0) size 0.06x0.20]}
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x536
@@ -14,23 +10,23 @@ layer at (0,0) size 800x536
 layer at (58,84) size 402x405
   RenderBlock {div} at (50,68) size 402x402 [border: (1px solid #000000)]
     RenderSVGRoot {svg} at (38,105) size 429x429
-      RenderSVGContainer {pattern} at (150,110) size 17x18
+      RenderSVGResourcePattern {pattern} [id="pat1"] [patternUnits=objectBoundingBox] [patternContentUnits=userSpaceOnUse]
         RenderPath {rect} at (151,110) size 13x13 [fill={[type=SOLID] [color=#FF0000]}] [data="M5.00,5.00 L15.00,5.00 L15.00,15.00 L5.00,15.00 Z"]
         RenderPath {rect} at (154,115) size 12x13 [fill={[type=SOLID] [color=#008000]}] [data="M10.00,10.00 L20.00,10.00 L20.00,20.00 L10.00,20.00 Z"]
-      RenderPath {rect} at (150,119) size 358x173 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [bbox=at (0,0) size 0.04x0.40]}] [data="M25.00,10.00 L455.00,10.00 L455.00,70.00 L25.00,70.00 Z"]
+      RenderPath {rect} at (150,119) size 358x173 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="pat1"]}] [data="M25.00,10.00 L455.00,10.00 L455.00,70.00 L25.00,70.00 Z"]
       RenderSVGText {text} at (25,85) size 395x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-11) size 395x14
           chunk 1 text run 1 at (25.00,85.00) startOffset 0 endOffset 75 width 395.00: "Pattern created using red and green rectangles applied to fill of rectangle"
-      RenderSVGContainer {pattern} at (146,105) size 23x23
+      RenderSVGResourcePattern {pattern} [id="pat2"] [patternUnits=objectBoundingBox] [patternContentUnits=userSpaceOnUse]
         RenderPath {rect} at (149,105) size 12x13 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L10.00,0.00 L10.00,10.00 L0.00,10.00 Z"]
         RenderPath {rect} at (156,108) size 13x12 [fill={[type=SOLID] [color=#008000]}] [data="M10.00,0.00 L20.00,0.00 L20.00,10.00 L10.00,10.00 Z"]
         RenderPath {rect} at (146,113) size 13x12 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,10.00 L10.00,10.00 L10.00,20.00 L0.00,20.00 Z"]
         RenderPath {rect} at (154,115) size 12x13 [fill={[type=SOLID] [color=#FFFF00]}] [data="M10.00,10.00 L20.00,10.00 L20.00,20.00 L10.00,20.00 Z"]
-      RenderPath {rect} at (125,190) size 357x172 [stroke={[type=PATTERN] [bbox=at (0,0) size 0.04x0.40] [stroke width=20.00]}] [data="M35.00,110.00 L445.00,110.00 L445.00,150.00 L35.00,150.00 Z"]
+      RenderPath {rect} at (125,190) size 357x172 [stroke={[type=PATTERN] [id="pat2"] [stroke width=20.00]}] [data="M35.00,110.00 L445.00,110.00 L445.00,150.00 L35.00,150.00 Z"]
       RenderSVGText {text} at (25,175) size 305x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-11) size 305x14
           chunk 1 text run 1 at (25.00,175.00) startOffset 0 endOffset 59 width 305.00: "Pattern of 4 rectangles applied to a stroke of a rectangle."
-      RenderSVGContainer {pattern} at (146,105) size 15x20
+      RenderSVGResourcePattern {pattern} [id="pat3"] [patternUnits=objectBoundingBox] [patternContentUnits=userSpaceOnUse]
         RenderPath {rect} at (149,105) size 12x13 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L10.00,0.00 L10.00,10.00 L0.00,10.00 Z"]
         RenderPath {rect} at (146,113) size 13x12 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,10.00 L10.00,10.00 L10.00,20.00 L0.00,20.00 Z"]
       RenderSVGText {text} at (25,220) size 293x56 contains 1 chunk(s)
@@ -39,7 +35,7 @@ layer at (58,84) size 402x405
       RenderSVGText {text} at (25,235) size 208x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-11) size 208x14
           chunk 1 text run 1 at (25.00,235.00) startOffset 0 endOffset 38 width 208.00: "Pattern consists of red and green rows"
-      RenderSVGContainer {pattern} at (149,105) size 20x15
+      RenderSVGResourcePattern {pattern} [id="pat4"] [patternUnits=objectBoundingBox] [patternContentUnits=userSpaceOnUse]
         RenderPath {rect} at (149,105) size 12x13 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L10.00,0.00 L10.00,10.00 L0.00,10.00 Z"]
         RenderPath {rect} at (156,108) size 13x12 [fill={[type=SOLID] [color=#0000FF]}] [data="M10.00,0.00 L20.00,0.00 L20.00,10.00 L10.00,10.00 Z"]
       RenderSVGText {text} at (25,275) size 302x44 contains 1 chunk(s)

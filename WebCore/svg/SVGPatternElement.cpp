@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2004, 2005, 2006, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
+    Copyright (C) Research In Motion Limited 2010. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -119,19 +120,20 @@ void SVGPatternElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     SVGStyledElement::svgAttributeChanged(attrName);
 
-    if (!m_resource)
-        return;
-
-    if (attrName == SVGNames::patternUnitsAttr || attrName == SVGNames::patternContentUnitsAttr ||
-        attrName == SVGNames::patternTransformAttr || attrName == SVGNames::xAttr || attrName == SVGNames::yAttr ||
-        attrName == SVGNames::widthAttr || attrName == SVGNames::heightAttr ||
-        SVGURIReference::isKnownAttribute(attrName) ||
-        SVGTests::isKnownAttribute(attrName) || 
-        SVGLangSpace::isKnownAttribute(attrName) ||
-        SVGExternalResourcesRequired::isKnownAttribute(attrName) ||
-        SVGFitToViewBox::isKnownAttribute(attrName) ||
-        SVGStyledElement::isKnownAttribute(attrName))
-        m_resource->invalidate();
+    if (attrName == SVGNames::patternUnitsAttr
+        || attrName == SVGNames::patternContentUnitsAttr
+        || attrName == SVGNames::patternTransformAttr
+        || attrName == SVGNames::xAttr
+        || attrName == SVGNames::yAttr
+        || attrName == SVGNames::widthAttr
+        || attrName == SVGNames::heightAttr
+        || SVGURIReference::isKnownAttribute(attrName)
+        || SVGTests::isKnownAttribute(attrName)
+        || SVGLangSpace::isKnownAttribute(attrName)
+        || SVGExternalResourcesRequired::isKnownAttribute(attrName)
+        || SVGFitToViewBox::isKnownAttribute(attrName)
+        || SVGStyledElement::isKnownAttribute(attrName))
+        invalidateResourceClients();
 }
 
 void SVGPatternElement::synchronizeProperty(const QualifiedName& attrName)
@@ -180,126 +182,13 @@ void SVGPatternElement::childrenChanged(bool changedByParser, Node* beforeChange
 {
     SVGStyledElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 
-    if (!m_resource)
-        return;
-
-    m_resource->invalidate();
-}
-
-void SVGPatternElement::buildPattern(const FloatRect& targetRect) const
-{
-    PatternAttributes attributes = collectPatternProperties();
-
-    // If we didn't find any pattern content, ignore the request.
-    if (!attributes.patternContentElement() || !renderer() || !renderer()->style())
-        return;
-
-    FloatRect patternBoundaries; 
-    FloatRect patternContentBoundaries;
-
-    // Determine specified pattern size
-    if (attributes.boundingBoxMode())
-        patternBoundaries = FloatRect(attributes.x().valueAsPercentage() * targetRect.width(),
-                                      attributes.y().valueAsPercentage() * targetRect.height(),
-                                      attributes.width().valueAsPercentage() * targetRect.width(),
-                                      attributes.height().valueAsPercentage() * targetRect.height());
-    else
-        patternBoundaries = FloatRect(attributes.x().value(this),
-                                      attributes.y().value(this),
-                                      attributes.width().value(this),
-                                      attributes.height().value(this));
-
-    IntSize patternSize(patternBoundaries.width(), patternBoundaries.height());
-    clampImageBufferSizeToViewport(document()->view(), patternSize);
-
-    if (patternSize.width() < static_cast<int>(patternBoundaries.width()))
-        patternBoundaries.setWidth(patternSize.width());
-
-    if (patternSize.height() < static_cast<int>(patternBoundaries.height()))
-        patternBoundaries.setHeight(patternSize.height());
-
-    // Eventually calculate the pattern content boundaries (only needed with overflow="visible").
-    RenderStyle* style = renderer()->style();
-    if (style->overflowX() == OVISIBLE && style->overflowY() == OVISIBLE) {
-        for (Node* n = attributes.patternContentElement()->firstChild(); n; n = n->nextSibling()) {
-            if (!n->isSVGElement() || !static_cast<SVGElement*>(n)->isStyledTransformable() || !n->renderer())
-                continue;
-            patternContentBoundaries.unite(n->renderer()->repaintRectInLocalCoordinates());
-        }
-    }
-
-    AffineTransform viewBoxCTM = viewBoxToViewTransform(viewBox(), preserveAspectRatio(), patternBoundaries.width(), patternBoundaries.height()); 
-    FloatRect patternBoundariesIncludingOverflow = patternBoundaries;
-
-    // Apply objectBoundingBoxMode fixup for patternContentUnits, if viewBox is not set.
-    if (!patternContentBoundaries.isEmpty()) {
-        if (!viewBoxCTM.isIdentity())
-            patternContentBoundaries = viewBoxCTM.mapRect(patternContentBoundaries);
-        else if (attributes.boundingBoxModeContent())
-            patternContentBoundaries = FloatRect(patternContentBoundaries.x() * targetRect.width(),
-                                                 patternContentBoundaries.y() * targetRect.height(),
-                                                 patternContentBoundaries.width() * targetRect.width(),
-                                                 patternContentBoundaries.height() * targetRect.height());
-
-        patternBoundariesIncludingOverflow.unite(patternContentBoundaries);
-    }
-
-    IntSize imageSize(lroundf(patternBoundariesIncludingOverflow.width()), lroundf(patternBoundariesIncludingOverflow.height()));
-    clampImageBufferSizeToViewport(document()->view(), imageSize);
-
-    OwnPtr<ImageBuffer> patternImage = ImageBuffer::create(imageSize);
-
-    if (!patternImage)
-        return;
-
-    GraphicsContext* context = patternImage->context();
-    ASSERT(context);
-
-    context->save();
-
-    // Move to pattern start origin
-    if (patternBoundariesIncludingOverflow.location() != patternBoundaries.location()) {
-        context->translate(patternBoundaries.x() - patternBoundariesIncludingOverflow.x(),
-                           patternBoundaries.y() - patternBoundariesIncludingOverflow.y());
-
-        patternBoundaries.setLocation(patternBoundariesIncludingOverflow.location());
-    }
-
-    // Process viewBox or boundingBoxModeContent correction
-    if (!viewBoxCTM.isIdentity())
-        context->concatCTM(viewBoxCTM);
-    else if (attributes.boundingBoxModeContent()) {
-        context->translate(targetRect.x(), targetRect.y());
-        context->scale(FloatSize(targetRect.width(), targetRect.height()));
-    }
-
-    // Render subtree into ImageBuffer
-    for (Node* n = attributes.patternContentElement()->firstChild(); n; n = n->nextSibling()) {
-        if (!n->isSVGElement() || !static_cast<SVGElement*>(n)->isStyled() || !n->renderer())
-            continue;
-        renderSubtreeToImage(patternImage.get(), n->renderer());
-    }
-
-    context->restore();
-
-    m_resource->setPatternTransform(attributes.patternTransform());
-    m_resource->setPatternBoundaries(patternBoundaries); 
-    m_resource->setTile(patternImage.release());
+    if (!changedByParser)
+        invalidateResourceClients();
 }
 
 RenderObject* SVGPatternElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    RenderSVGContainer* patternContainer = new (arena) RenderSVGContainer(this);
-    patternContainer->setDrawsContents(false);
-    return patternContainer;
-}
-
-SVGResource* SVGPatternElement::canvasResource(const RenderObject*)
-{
-    if (!m_resource)
-        m_resource = SVGPaintServerPattern::create(this);
-
-    return m_resource.get();
+    return new (arena) RenderSVGResourcePattern(this);
 }
 
 PatternAttributes SVGPatternElement::collectPatternProperties() const

@@ -2,276 +2,201 @@
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
  *               2007 Rob Buis <buis@kde.org>
  *               2008 Dirk Schulze <krit@webkit.org>
+ * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
- * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ *
  */
 
 #include "config.h"
 
 #if ENABLE(SVG)
-#include "SVGPaintServer.h"
+#include "RenderSVGResource.h"
 
-#include "GraphicsContext.h"
-#include "NodeRenderStyle.h"
-#include "RenderObject.h"
+#include "RenderSVGResourceContainer.h"
 #include "RenderSVGResourceSolidColor.h"
-#include "RenderStyle.h"
-#include "SVGStyledElement.h"
 #include "SVGURIReference.h"
-
-#if PLATFORM(SKIA)
-#include "PlatformContextSkia.h"
-#endif
 
 namespace WebCore {
 
-SVGPaintServer::SVGPaintServer()
+static inline void registerPendingResource(const AtomicString& id, const SVGPaint::SVGPaintType& paintType, const RenderObject* object)
 {
-}
-
-SVGPaintServer::~SVGPaintServer()
-{
-}
-
-TextStream& operator<<(TextStream& ts, const SVGPaintServer& paintServer)
-{
-    return paintServer.externalRepresentation(ts);
-}
-
-SVGPaintServer* getPaintServerById(Document* document, const AtomicString& id, const RenderObject* object)
-{
-    SVGResource* resource = getResourceById(document, id, object);
-    if (resource && resource->isPaintServer())
-        return static_cast<SVGPaintServer*>(resource);
-
-    return 0;
-}
-
-SVGPaintServerSolid* SVGPaintServer::sharedSolidPaintServer()
-{
-    static SVGPaintServerSolid* _sharedSolidPaintServer = SVGPaintServerSolid::create().releaseRef();
-    
-    return _sharedSolidPaintServer;
-}
-
-SVGPaintServer* SVGPaintServer::fillPaintServer(const RenderStyle* style, const RenderObject* item)
-{
-    if (!style->svgStyle()->hasFill())
-        return 0;
-
-    SVGPaint* fill = style->svgStyle()->fillPaint();
-        
-    SVGPaintServer* fillPaintServer = 0;
-    SVGPaint::SVGPaintType paintType = fill->paintType();
-    if (paintType == SVGPaint::SVG_PAINTTYPE_URI ||
-        paintType == SVGPaint::SVG_PAINTTYPE_URI_RGBCOLOR) {
-        AtomicString id(SVGURIReference::getTarget(fill->uri()));
-        fillPaintServer = getPaintServerById(item->document(), id, item);
-
-        SVGElement* svgElement = static_cast<SVGElement*>(item->node());
-        ASSERT(svgElement && svgElement->document() && svgElement->isStyled());
-
-        if (item->isRenderPath() && fillPaintServer)
-            fillPaintServer->addClient(static_cast<SVGStyledElement*>(svgElement));
-        else if (!fillPaintServer && paintType == SVGPaint::SVG_PAINTTYPE_URI)
-            svgElement->document()->accessSVGExtensions()->addPendingResource(id, static_cast<SVGStyledElement*>(svgElement)); 
-    }
-    if (paintType != SVGPaint::SVG_PAINTTYPE_URI && !fillPaintServer) {
-        fillPaintServer = sharedSolidPaintServer();
-        SVGPaintServerSolid* fillPaintServerSolid = static_cast<SVGPaintServerSolid*>(fillPaintServer);
-        
-        Color fillColor;
-        if (paintType == SVGPaint::SVG_PAINTTYPE_CURRENTCOLOR)
-            fillColor = style->color();
-        else
-            fillColor = fill->color();
-
-        if (style->insideLink() == InsideVisitedLink) {
-            RenderStyle* visitedStyle = style->getCachedPseudoStyle(VISITED_LINK);
-            SVGPaint* visitedFill = visitedStyle->svgStyle()->fillPaint();
-            Color visitedFillColor;
-            if (visitedFill->paintType() != SVGPaint::SVG_PAINTTYPE_URI) {
-                if (visitedFill->paintType() == SVGPaint::SVG_PAINTTYPE_CURRENTCOLOR)
-                    visitedFillColor = visitedStyle->color();
-                else
-                    visitedFillColor = visitedFill->color();
-                if (visitedFillColor.isValid())
-                    fillColor = Color(visitedFillColor.red(), visitedFillColor.green(), visitedFillColor.blue(), fillColor.alpha());
-            }
-        }
-
-        fillPaintServerSolid->setColor(fillColor);
-        
-        // FIXME: Ideally invalid colors would never get set on the RenderStyle and this could turn into an ASSERT
-        if (!fillPaintServerSolid->color().isValid())
-            fillPaintServer = 0;
-    }
-    if (!fillPaintServer) {
-        // default value (black), see bug 11017
-        fillPaintServer = sharedSolidPaintServer();
-        static_cast<SVGPaintServerSolid*>(fillPaintServer)->setColor(Color::black);
-    }
-    return fillPaintServer;
-}
-
-SVGPaintServer* SVGPaintServer::strokePaintServer(const RenderStyle* style, const RenderObject* item)
-{
-    if (!style->svgStyle()->hasStroke())
-        return 0;
-
-    SVGPaint* stroke = style->svgStyle()->strokePaint();
-
-    SVGPaintServer* strokePaintServer = 0;
-    SVGPaint::SVGPaintType paintType = stroke->paintType();
-    if ((paintType == SVGPaint::SVG_PAINTTYPE_URI
-        || paintType == SVGPaint::SVG_PAINTTYPE_URI_RGBCOLOR)
-        && item->objectBoundingBox().width() != 0
-        && item->objectBoundingBox().height() != 0) {
-        AtomicString id(SVGURIReference::getTarget(stroke->uri()));
-        strokePaintServer = getPaintServerById(item->document(), id, item);
-
-        SVGElement* svgElement = static_cast<SVGElement*>(item->node());
-        ASSERT(svgElement && svgElement->document() && svgElement->isStyled());
- 
-        if (item->isRenderPath() && strokePaintServer)
-            strokePaintServer->addClient(static_cast<SVGStyledElement*>(svgElement));
-        else if (!strokePaintServer && paintType == SVGPaint::SVG_PAINTTYPE_URI)
-            svgElement->document()->accessSVGExtensions()->addPendingResource(id, static_cast<SVGStyledElement*>(svgElement)); 
-    }
-    if (paintType != SVGPaint::SVG_PAINTTYPE_URI && !strokePaintServer) {
-        strokePaintServer = sharedSolidPaintServer();
-        SVGPaintServerSolid* strokePaintServerSolid = static_cast<SVGPaintServerSolid*>(strokePaintServer);
-        
-        Color strokeColor;
-        if (paintType == SVGPaint::SVG_PAINTTYPE_CURRENTCOLOR)
-            strokeColor = style->color();
-        else
-            strokeColor = stroke->color();
-
-        if (style->insideLink() == InsideVisitedLink) {
-            RenderStyle* visitedStyle = style->getCachedPseudoStyle(VISITED_LINK);
-            SVGPaint* visitedStroke = visitedStyle->svgStyle()->strokePaint();
-            Color visitedStrokeColor;
-            if (visitedStroke->paintType() != SVGPaint::SVG_PAINTTYPE_URI) {
-                if (visitedStroke->paintType() == SVGPaint::SVG_PAINTTYPE_CURRENTCOLOR)
-                    visitedStrokeColor = visitedStyle->color();
-                else
-                    visitedStrokeColor = visitedStroke->color();
-                if (visitedStrokeColor.isValid())
-                    strokeColor = Color(visitedStrokeColor.red(), visitedStrokeColor.green(), visitedStrokeColor.blue(), strokeColor.alpha());
-            }
-        }
-
-        strokePaintServerSolid->setColor(strokeColor);
-
-        // FIXME: Ideally invalid colors would never get set on the RenderStyle and this could turn into an ASSERT
-        if (!strokePaintServerSolid->color().isValid())
-            strokePaintServer = 0;
-    }
-    if (!strokePaintServer) {
-        // default value (black), see bug 11017
-        strokePaintServer = sharedSolidPaintServer();
-        static_cast<SVGPaintServerSolid*>(strokePaintServer)->setColor(Color::black);
-    }
-
-    return strokePaintServer;
-}
-
-void applyStrokeStyleToContext(GraphicsContext* context, const RenderStyle* style, const RenderObject* object)
-{
-    context->setStrokeThickness(SVGRenderStyle::cssPrimitiveToLength(object, style->svgStyle()->strokeWidth(), 1.0f));
-    context->setLineCap(style->svgStyle()->capStyle());
-    context->setLineJoin(style->svgStyle()->joinStyle());
-    if (style->svgStyle()->joinStyle() == MiterJoin)
-        context->setMiterLimit(style->svgStyle()->strokeMiterLimit());
-
-    const DashArray& dashes = dashArrayFromRenderingStyle(object->style(), object->document()->documentElement()->renderStyle());
-    float dashOffset = SVGRenderStyle::cssPrimitiveToLength(object, style->svgStyle()->strokeDashOffset(), 0.0f);
-    context->setLineDash(dashes, dashOffset);
-}
-
-bool SVGPaintServer::setup(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType type, bool isPaintingText) const
-{
-    return setup(context, object, object ? object->style() : 0, type, isPaintingText);
-}
-
-void SVGPaintServer::draw(GraphicsContext*& context, const RenderObject* path, SVGPaintTargetType type) const
-{
-    if (!setup(context, path, type))
+    if (paintType != SVGPaint::SVG_PAINTTYPE_URI)
         return;
 
-    renderPath(context, path, type);
-    teardown(context, path, type);
+    SVGElement* svgElement = static_cast<SVGElement*>(object->node());
+    ASSERT(svgElement);
+    ASSERT(svgElement->isStyled());
+
+    object->document()->accessSVGExtensions()->addPendingResource(id, static_cast<SVGStyledElement*>(svgElement));
 }
 
-void SVGPaintServer::renderPath(GraphicsContext*& context, const RenderObject* path, SVGPaintTargetType type) const
+static inline void adjustColorForPseudoRules(const RenderStyle* style, bool useFillPaint, Color& color)
 {
-    const SVGRenderStyle* style = path ? path->style()->svgStyle() : 0;
+    if (style->insideLink() != InsideVisitedLink)
+        return;
 
-    if ((type & ApplyToFillTargetType) && (!style || style->hasFill()))
-        context->fillPath();
+    RenderStyle* visitedStyle = style->getCachedPseudoStyle(VISITED_LINK);
+    SVGPaint* visitedPaint = useFillPaint ? visitedStyle->svgStyle()->fillPaint() : visitedStyle->svgStyle()->strokePaint();
+    if (visitedPaint->paintType() == SVGPaint::SVG_PAINTTYPE_URI)
+        return;
+        
+    Color visitedColor;
+    if (visitedPaint->paintType() == SVGPaint::SVG_PAINTTYPE_CURRENTCOLOR)
+        visitedColor = visitedStyle->color();
+    else
+        visitedColor = visitedPaint->color();
 
-    if ((type & ApplyToStrokeTargetType) && (!style || style->hasStroke()))
-        context->strokePath();
+    if (visitedColor.isValid())
+        color = Color(visitedColor.red(), visitedColor.green(), visitedColor.blue(), color.alpha());
 }
 
-#if PLATFORM(SKIA)
-void SVGPaintServer::teardown(GraphicsContext*& context, const RenderObject*, SVGPaintTargetType, bool) const
+// FIXME: This method and strokePaintingResource() should be refactored, to share even more code
+RenderSVGResource* RenderSVGResource::fillPaintingResource(const RenderObject* object, const RenderStyle* style)
 {
-    // FIXME: Move this into the GraphicsContext
-    // WebKit implicitly expects us to reset the path.
-    // For example in fillAndStrokePath() of RenderPath.cpp the path is 
-    // added back to the context after filling. This is because internally it
-    // calls CGContextFillPath() which closes the path.
-    context->beginPath();
-    context->platformContext()->setFillShader(0);
-    context->platformContext()->setStrokeShader(0);
-}
-#else
-void SVGPaintServer::teardown(GraphicsContext*&, const RenderObject*, SVGPaintTargetType, bool) const
-{
-}
-#endif
+    ASSERT(object);
+    ASSERT(style);
 
-DashArray dashArrayFromRenderingStyle(const RenderStyle* style, RenderStyle* rootStyle)
-{
-    DashArray array;
-    
-    CSSValueList* dashes = style->svgStyle()->strokeDashArray();
-    if (dashes) {
-        CSSPrimitiveValue* dash = 0;
-        unsigned long len = dashes->length();
-        for (unsigned long i = 0; i < len; i++) {
-            dash = static_cast<CSSPrimitiveValue*>(dashes->itemWithoutBoundsCheck(i));
-            if (!dash)
-                continue;
+    const SVGRenderStyle* svgStyle = style->svgStyle();
+    if (!svgStyle || !svgStyle->hasFill())
+        return 0;
 
-            array.append((float) dash->computeLengthFloat(const_cast<RenderStyle*>(style), rootStyle));
-        }
+    SVGPaint* fillPaint = svgStyle->fillPaint();
+    ASSERT(fillPaint);
+
+    RenderSVGResource* fillPaintingResource = 0;
+
+    SVGPaint::SVGPaintType paintType = fillPaint->paintType();
+    if (paintType == SVGPaint::SVG_PAINTTYPE_URI
+        || paintType == SVGPaint::SVG_PAINTTYPE_URI_RGBCOLOR) {
+        AtomicString id(SVGURIReference::getTarget(fillPaint->uri()));
+        fillPaintingResource = getRenderSVGResourceContainerById(object->document(), id);
+
+        if (!fillPaintingResource)
+            registerPendingResource(id, paintType, object);
     }
 
-    return array;
+    if (paintType != SVGPaint::SVG_PAINTTYPE_URI && !fillPaintingResource) {
+        RenderSVGResourceSolidColor* solidResource = sharedSolidPaintingResource();
+        fillPaintingResource = solidResource;
+
+        Color fillColor;
+        if (fillPaint->paintType() == SVGPaint::SVG_PAINTTYPE_CURRENTCOLOR)
+            fillColor = style->color();
+        else
+            fillColor = fillPaint->color();
+
+        adjustColorForPseudoRules(style, true /* useFillPaint */, fillColor);
+
+        // FIXME: Ideally invalid colors would never get set on the RenderStyle and this could turn into an ASSERT
+        if (fillColor.isValid())
+            solidResource->setColor(fillColor);
+        else
+            fillPaintingResource = 0;
+    }
+
+    if (!fillPaintingResource) {
+        // default value (black), see bug 11017
+        RenderSVGResourceSolidColor* solidResource = sharedSolidPaintingResource();
+        solidResource->setColor(Color::black);
+        fillPaintingResource = solidResource;
+    }
+
+    return fillPaintingResource;
 }
 
-} // namespace WebCore
+RenderSVGResource* RenderSVGResource::strokePaintingResource(const RenderObject* object, const RenderStyle* style)
+{
+    ASSERT(object);
+    ASSERT(style);
+
+    const SVGRenderStyle* svgStyle = style->svgStyle();
+    if (!svgStyle || !svgStyle->hasStroke())
+        return 0;
+
+    SVGPaint* strokePaint = svgStyle->strokePaint();
+    ASSERT(strokePaint);
+
+    RenderSVGResource* strokePaintingResource = 0;
+    FloatRect objectBoundingBox = object->objectBoundingBox();
+
+    SVGPaint::SVGPaintType paintType = strokePaint->paintType();
+    if (!objectBoundingBox.isEmpty()
+        && (paintType == SVGPaint::SVG_PAINTTYPE_URI || paintType == SVGPaint::SVG_PAINTTYPE_URI_RGBCOLOR)) {
+        AtomicString id(SVGURIReference::getTarget(strokePaint->uri()));
+        strokePaintingResource = getRenderSVGResourceContainerById(object->document(), id);
+
+        if (!strokePaintingResource)
+            registerPendingResource(id, paintType, object);
+    }
+
+    if (paintType != SVGPaint::SVG_PAINTTYPE_URI && !strokePaintingResource) {
+        RenderSVGResourceSolidColor* solidResource = sharedSolidPaintingResource();
+        strokePaintingResource = solidResource;
+
+        Color strokeColor;
+        if (strokePaint->paintType() == SVGPaint::SVG_PAINTTYPE_CURRENTCOLOR)
+            strokeColor = style->color();
+        else
+            strokeColor = strokePaint->color();
+
+        adjustColorForPseudoRules(style, false /* useFillPaint */, strokeColor);
+
+        // FIXME: Ideally invalid colors would never get set on the RenderStyle and this could turn into an ASSERT
+        if (strokeColor.isValid())
+            solidResource->setColor(strokeColor);
+        else
+            strokePaintingResource = 0;
+    }
+
+    if (!strokePaintingResource) {
+        // default value (black), see bug 11017
+        RenderSVGResourceSolidColor* solidResource = sharedSolidPaintingResource();
+        solidResource->setColor(Color::black);
+        strokePaintingResource = solidResource;
+    }
+
+    return strokePaintingResource;
+}
+
+RenderSVGResourceSolidColor* RenderSVGResource::sharedSolidPaintingResource()
+{
+    static RenderSVGResourceSolidColor* s_sharedSolidPaintingResource = 0;
+    if (!s_sharedSolidPaintingResource)
+        s_sharedSolidPaintingResource = new RenderSVGResourceSolidColor;
+    return s_sharedSolidPaintingResource;
+}
+
+void RenderSVGResource::markForLayoutAndResourceInvalidation(RenderObject* object)
+{
+    ASSERT(object);
+    ASSERT(object->node());
+    ASSERT(object->node()->isSVGElement());
+
+    // Mark the renderer for layout
+    object->setNeedsLayout(true);
+
+    // Notify any resources in the ancestor chain, that we've been invalidated
+    SVGElement* element = static_cast<SVGElement*>(object->node());
+    if (!element->isStyled())
+        return;
+
+    static_cast<SVGStyledElement*>(element)->invalidateResourcesInAncestorChain();
+}
+
+}
 
 #endif

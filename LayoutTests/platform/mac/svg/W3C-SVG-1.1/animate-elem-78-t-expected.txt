@@ -276,6 +276,8 @@ layer at (0,0) size 480x360
               RenderSVGContainer {g} at (390,235) size 38x8
                 RenderPath {rect} at (390,235) size 8x8 [fill={[type=SOLID] [color=#CCCCCC]}] [data="M10.00,0.00 L18.00,0.00 L18.00,8.00 L10.00,8.00 Z"]
                 RenderPath {rect} at (420,235) size 8x8 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,0.00)}] [fill={[type=SOLID] [color=#CCCCCC]}] [data="M10.00,0.00 L18.00,0.00 L18.00,8.00 L10.00,8.00 Z"]
+          RenderSVGHiddenContainer {g} at (0,0) size 0x0
+            RenderPath {rect} at (200,235) size 8x8 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,0.00)}] [fill={[type=SOLID] [color=#CC0066]}] [data="M10.00,0.00 L18.00,0.00 L18.00,8.00 L10.00,8.00 Z"]
         RenderSVGContainer {g} at (170,255) size 258x8 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,180.00)}]
           RenderSVGHiddenContainer {defs} at (0,0) size 0x0
             RenderSVGContainer {g} at (170,255) size 38x8

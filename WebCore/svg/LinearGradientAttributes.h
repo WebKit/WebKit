@@ -20,9 +20,8 @@
 #ifndef LinearGradientAttributes_h
 #define LinearGradientAttributes_h
 
-#include "GradientAttributes.h"
-
 #if ENABLE(SVG)
+#include "GradientAttributes.h"
 
 namespace WebCore {
     struct LinearGradientAttributes : GradientAttributes {

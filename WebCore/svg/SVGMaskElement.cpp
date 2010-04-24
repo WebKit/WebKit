@@ -104,7 +104,7 @@ void SVGMaskElement::svgAttributeChanged(const QualifiedName& attrName)
         SVGLangSpace::isKnownAttribute(attrName) ||
         SVGExternalResourcesRequired::isKnownAttribute(attrName) ||
         SVGStyledElement::isKnownAttribute(attrName))
-        invalidateCanvasResources();
+        invalidateResourceClients();
 }
 
 void SVGMaskElement::synchronizeProperty(const QualifiedName& attrName)
@@ -138,7 +138,9 @@ void SVGMaskElement::synchronizeProperty(const QualifiedName& attrName)
 void SVGMaskElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
     SVGStyledElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
-    invalidateCanvasResources();
+
+    if (!changedByParser)
+        invalidateResourceClients();
 }
 
 FloatRect SVGMaskElement::maskBoundingBox(const FloatRect& objectBoundingBox) const

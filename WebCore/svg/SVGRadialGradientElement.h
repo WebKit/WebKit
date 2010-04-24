@@ -38,11 +38,10 @@ namespace WebCore {
         virtual void svgAttributeChanged(const QualifiedName&);
         virtual void synchronizeProperty(const QualifiedName&);
 
-    protected:
-        virtual void buildGradient() const;
-        virtual SVGPaintServerType gradientType() const { return RadialGradientPaintServer; }
+        virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
-        RadialGradientAttributes collectGradientProperties() const;
+        RadialGradientAttributes collectGradientProperties();
+        void calculateFocalCenterPointsAndRadius(const RadialGradientAttributes&, FloatPoint& focalPoint, FloatPoint& centerPoint, float& radius);
 
     private:
         DECLARE_ANIMATED_PROPERTY(SVGRadialGradientElement, SVGNames::cxAttr, SVGLength, Cx, cx)

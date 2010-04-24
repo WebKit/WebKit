@@ -3,6 +3,7 @@
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
                   2008 Eric Seidel <eric@webkit.org>
                   2008 Dirk Schulze <krit@webkit.org>
+    Copyright (C) Research In Motion Limited 2010. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -70,12 +71,11 @@ void SVGLinearGradientElement::svgAttributeChanged(const QualifiedName& attrName
 {
     SVGGradientElement::svgAttributeChanged(attrName);
 
-    if (!m_resource)
-        return;
-
-    if (attrName == SVGNames::x1Attr || attrName == SVGNames::y1Attr ||
-        attrName == SVGNames::x2Attr || attrName == SVGNames::y2Attr)
-        m_resource->invalidate();
+    if (attrName == SVGNames::x1Attr
+        || attrName == SVGNames::y1Attr
+        || attrName == SVGNames::x2Attr
+        || attrName == SVGNames::y2Attr)
+        invalidateResourceClients();
 }
 
 void SVGLinearGradientElement::synchronizeProperty(const QualifiedName& attrName)
@@ -100,56 +100,18 @@ void SVGLinearGradientElement::synchronizeProperty(const QualifiedName& attrName
         synchronizeY2();
 }
 
-void SVGLinearGradientElement::buildGradient() const
+RenderObject* SVGLinearGradientElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    LinearGradientAttributes attributes = collectGradientProperties();
-
-    RefPtr<SVGPaintServerLinearGradient> linearGradient = WTF::static_pointer_cast<SVGPaintServerLinearGradient>(m_resource);
-
-    FloatPoint startPoint;
-    FloatPoint endPoint;
-    if (attributes.boundingBoxMode()) {
-        startPoint = FloatPoint(attributes.x1().valueAsPercentage(), attributes.y1().valueAsPercentage());
-        endPoint = FloatPoint(attributes.x2().valueAsPercentage(), attributes.y2().valueAsPercentage());
-    } else {
-        startPoint = FloatPoint(attributes.x1().value(this), attributes.y1().value(this));
-        endPoint = FloatPoint(attributes.x2().value(this), attributes.y2().value(this));
-    }
-
-    RefPtr<Gradient> gradient = Gradient::create(startPoint, endPoint);
-    gradient->setSpreadMethod(attributes.spreadMethod());
-
-    Vector<SVGGradientStop> m_stops = attributes.stops();
-    float previousOffset = 0.0f;
-    for (unsigned i = 0; i < m_stops.size(); ++i) {
-        float offset = std::min(std::max(previousOffset, m_stops[i].first), 1.0f);
-        previousOffset = offset;
-        gradient->addColorStop(offset, m_stops[i].second);
-    }
-
-    linearGradient->setGradient(gradient);
-
-    if (attributes.stops().isEmpty())
-        return;
-
-    // This code should go away.  PaintServers should go away too.
-    // Only this code should care about bounding boxes
-    linearGradient->setBoundingBoxMode(attributes.boundingBoxMode());
-    linearGradient->setGradientStops(attributes.stops());
-
-    // These should possibly be supported on Gradient
-    linearGradient->setGradientTransform(attributes.gradientTransform());
-    linearGradient->setGradientStart(startPoint);
-    linearGradient->setGradientEnd(endPoint);
+    return new (arena) RenderSVGResourceLinearGradient(this);
 }
 
-LinearGradientAttributes SVGLinearGradientElement::collectGradientProperties() const
+LinearGradientAttributes SVGLinearGradientElement::collectGradientProperties()
 {
     LinearGradientAttributes attributes;
-    HashSet<const SVGGradientElement*> processedGradients;
+    HashSet<SVGGradientElement*> processedGradients;
 
     bool isLinear = true;
-    const SVGGradientElement* current = this;
+    SVGGradientElement* current = this;
 
     while (current) {
         if (!attributes.hasSpreadMethod() && current->hasAttribute(SVGNames::spreadMethodAttr))
@@ -162,13 +124,13 @@ LinearGradientAttributes SVGLinearGradientElement::collectGradientProperties() c
             attributes.setGradientTransform(current->gradientTransform()->consolidate().matrix());
 
         if (!attributes.hasStops()) {
-            const Vector<SVGGradientStop>& stops(current->buildStops());
+            const Vector<Gradient::ColorStop>& stops(current->buildStops());
             if (!stops.isEmpty())
                 attributes.setStops(stops);
         }
 
         if (isLinear) {
-            const SVGLinearGradientElement* linear = static_cast<const SVGLinearGradientElement*>(current);
+            SVGLinearGradientElement* linear = static_cast<SVGLinearGradientElement*>(current);
 
             if (!attributes.hasX1() && current->hasAttribute(SVGNames::x1Attr))
                 attributes.setX1(linear->x1());
@@ -188,18 +150,30 @@ LinearGradientAttributes SVGLinearGradientElement::collectGradientProperties() c
         // Respect xlink:href, take attributes from referenced element
         Node* refNode = ownerDocument()->getElementById(SVGURIReference::getTarget(current->href()));
         if (refNode && (refNode->hasTagName(SVGNames::linearGradientTag) || refNode->hasTagName(SVGNames::radialGradientTag))) {
-            current = static_cast<const SVGGradientElement*>(const_cast<const Node*>(refNode));
+            current = static_cast<SVGGradientElement*>(refNode);
 
             // Cycle detection
             if (processedGradients.contains(current))
                 return LinearGradientAttributes();
 
-            isLinear = current->gradientType() == LinearGradientPaintServer;
+            isLinear = current->hasTagName(SVGNames::linearGradientTag);
         } else
             current = 0;
     }
 
     return attributes;
+}
+
+void SVGLinearGradientElement::calculateStartEndPoints(const LinearGradientAttributes& attributes, FloatPoint& startPoint, FloatPoint& endPoint)
+{
+    // Determine gradient start/end points
+    if (attributes.boundingBoxMode()) {
+        startPoint = FloatPoint(attributes.x1().valueAsPercentage(), attributes.y1().valueAsPercentage());
+        endPoint = FloatPoint(attributes.x2().valueAsPercentage(), attributes.y2().valueAsPercentage());
+    } else {
+        startPoint = FloatPoint(attributes.x1().value(this), attributes.y1().value(this));
+        endPoint = FloatPoint(attributes.x2().value(this), attributes.y2().value(this));
+    }
 }
 
 }

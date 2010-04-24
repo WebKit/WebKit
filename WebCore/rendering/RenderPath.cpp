@@ -4,6 +4,7 @@
                   2005, 2007 Eric Seidel <eric@webkit.org>
                   2009 Google, Inc.
                   2009 Dirk Schulze <krit@webkit.org>
+    Copyright (C) Research In Motion Limited 2010. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -34,7 +35,6 @@
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceMarker.h"
 #include "StrokeStyleApplier.h"
-#include "SVGPaintServer.h"
 #include "SVGRenderSupport.h"
 #include "SVGStyledTransformableElement.h"
 #include "SVGTransformList.h"
@@ -76,7 +76,7 @@ bool RenderPath::fillContains(const FloatPoint& point, bool requiresFill) const
     if (m_path.isEmpty())
         return false;
 
-    if (requiresFill && !SVGPaintServer::fillPaintServer(style(), this))
+    if (requiresFill && !RenderSVGResource::fillPaintingResource(this, style()))
         return false;
 
     return m_path.contains(point, style()->svgStyle()->fillRule());
@@ -87,7 +87,7 @@ bool RenderPath::strokeContains(const FloatPoint& point, bool requiresStroke) co
     if (m_path.isEmpty())
         return false;
 
-    if (requiresStroke && !SVGPaintServer::strokePaintServer(style(), this))
+    if (requiresStroke && !RenderSVGResource::strokePaintingResource(this, style()))
         return false;
 
     BoundingRectStrokeStyleApplier strokeStyle(this, style());
@@ -198,20 +198,20 @@ void RenderPath::layout()
     setNeedsLayout(false);
 }
 
-static inline void fillAndStrokePath(const Path& path, GraphicsContext* context, RenderStyle* style, RenderPath* object)
+static inline void fillAndStrokePath(const Path& path, GraphicsContext* context, RenderPath* object)
 {
     context->beginPath();
 
-    SVGPaintServer* fillPaintServer = SVGPaintServer::fillPaintServer(style, object);
-    if (fillPaintServer) {
+    if (RenderSVGResource* fillPaintingResource = RenderSVGResource::fillPaintingResource(object, object->style())) {
         context->addPath(path);
-        fillPaintServer->draw(context, object, ApplyToFillTargetType);
+        if (fillPaintingResource->applyResource(object, object->style(), context, ApplyToFillMode))
+            fillPaintingResource->postApplyResource(object, context, ApplyToFillMode);
     }
-    
-    SVGPaintServer* strokePaintServer = SVGPaintServer::strokePaintServer(style, object);
-    if (strokePaintServer) {
-        context->addPath(path); // path is cleared when filled.
-        strokePaintServer->draw(context, object, ApplyToStrokeTargetType);
+
+    if (RenderSVGResource* strokePaintingResource = RenderSVGResource::strokePaintingResource(object, object->style())) {
+        context->addPath(path);
+        if (strokePaintingResource->applyResource(object, object->style(), context, ApplyToStrokeMode))
+            strokePaintingResource->postApplyResource(object, context, ApplyToStrokeMode);
     }
 }
 
@@ -241,7 +241,7 @@ void RenderPath::paint(PaintInfo& paintInfo, int, int)
             if (prepareToRenderSVGContent(this, childPaintInfo, boundingBox, filter)) {
                 if (style()->svgStyle()->shapeRendering() == SR_CRISPEDGES)
                     childPaintInfo.context->setShouldAntialias(false);
-                fillAndStrokePath(m_path, childPaintInfo.context, style(), this);
+                fillAndStrokePath(m_path, childPaintInfo.context, this);
 
                 if (static_cast<SVGStyledElement*>(node())->supportsMarkers())
                     m_markerLayoutInfo.drawMarkers(childPaintInfo);

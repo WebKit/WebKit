@@ -25,6 +25,7 @@
 #define SVGRenderBase_h
 
 #if ENABLE(SVG)
+#include "DashArray.h"
 #include "RenderObject.h"
 #include "SVGElement.h"
 #include "SVGStyledElement.h"
@@ -85,7 +86,11 @@ void renderSubtreeToImage(ImageBuffer*, RenderObject*);
 void deregisterFromResources(RenderObject*);
 void clampImageBufferSizeToViewport(FrameView*, IntSize& imageBufferSize);
 
+void applyStrokeStyleToContext(GraphicsContext*, const RenderStyle*, const RenderObject*);
+DashArray dashArrayFromRenderingStyle(const RenderStyle* style, RenderStyle* rootStyle);
+
 const RenderObject* findTextRootObject(const RenderObject* start);
+
 } // namespace WebCore
 
 #endif // ENABLE(SVG)

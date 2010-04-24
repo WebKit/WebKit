@@ -27,7 +27,7 @@
 #include "ImageBuffer.h"
 #include "IntSize.h"
 #include "Path.h"
-#include "RenderSVGResource.h"
+#include "RenderSVGResourceContainer.h"
 #include "SVGClipPathElement.h"
 #include "SVGUnitTypes.h"
 
@@ -40,10 +40,9 @@ struct ClipperData {
     OwnPtr<ImageBuffer> clipMaskImage;
 };
 
-class RenderSVGResourceClipper : public RenderSVGResource {
-
+class RenderSVGResourceClipper : public RenderSVGResourceContainer {
 public:
-    RenderSVGResourceClipper(SVGStyledElement*);
+    RenderSVGResourceClipper(SVGClipPathElement*);
     virtual ~RenderSVGResourceClipper();
 
     virtual const char* renderName() const { return "RenderSVGResourceClipper"; }
@@ -51,7 +50,7 @@ public:
     virtual void invalidateClients();
     virtual void invalidateClient(RenderObject*);
 
-    virtual bool applyResource(RenderObject*, GraphicsContext*&);
+    virtual bool applyResource(RenderObject*, RenderStyle*, GraphicsContext*&, unsigned short resourceMode);
     virtual FloatRect resourceBoundingBox(const FloatRect&) const;
 
     virtual RenderSVGResourceType resourceType() const { return ClipperResourceType; }

@@ -29,8 +29,6 @@
 
 namespace WebCore {
 
-    class SVGResource;
-
     void mapAttributeToCSSProperty(HashMap<AtomicStringImpl*, int>* propertyNameToIdMap, const QualifiedName& attrName);
 
     class SVGStyledElement : public SVGElement,
@@ -51,7 +49,6 @@ namespace WebCore {
         bool isKnownAttribute(const QualifiedName&);
 
         virtual bool rendererIsNeeded(RenderStyle*);
-        virtual SVGResource* canvasResource(const RenderObject*) { return 0; }
 
         virtual bool mapToEntry(const QualifiedName&, MappedAttributeEntry&) const;
         virtual void parseMappedAttribute(MappedAttribute*);
@@ -63,10 +60,8 @@ namespace WebCore {
         // Centralized place to force a manual style resolution. Hacky but needed for now.
         PassRefPtr<RenderStyle> resolveStyle(RenderStyle* parentStyle);
 
+        void invalidateResourceClients();
         void invalidateResourcesInAncestorChain() const;
-        void invalidateResources();
-
-        virtual void detach();
 
         bool instanceUpdatesBlocked() const;
         void setInstanceUpdatesBlocked(bool);
@@ -75,8 +70,6 @@ namespace WebCore {
 
     protected: 
         static int cssPropertyIdForSVGAttributeName(const QualifiedName&);
-
-        void invalidateCanvasResources();
 
     private:
         DECLARE_ANIMATED_PROPERTY(SVGStyledElement, HTMLNames::classAttr, String, ClassName, className)

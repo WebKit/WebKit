@@ -1,26 +1,22 @@
 /*
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
- * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ *
  */
 
 #include "config.h"
@@ -28,48 +24,43 @@
 #if ENABLE(SVG)
 #include "RenderSVGResourceLinearGradient.h"
 
-#include "SVGRenderTreeAsText.h"
+#include "LinearGradientAttributes.h"
+#include "SVGLinearGradientElement.h"
 
 namespace WebCore {
 
-SVGPaintServerLinearGradient::SVGPaintServerLinearGradient(const SVGGradientElement* owner)
-    : SVGPaintServerGradient(owner)
-{ 
-}
+RenderSVGResourceType RenderSVGResourceLinearGradient::s_resourceType = LinearGradientResourceType;
 
-SVGPaintServerLinearGradient::~SVGPaintServerLinearGradient()
+RenderSVGResourceLinearGradient::RenderSVGResourceLinearGradient(SVGLinearGradientElement* node)
+    : RenderSVGResourceGradient(node)
 {
 }
 
-FloatPoint SVGPaintServerLinearGradient::gradientStart() const
+RenderSVGResourceLinearGradient::~RenderSVGResourceLinearGradient()
 {
-    return m_start;
 }
 
-void SVGPaintServerLinearGradient::setGradientStart(const FloatPoint& start)
+void RenderSVGResourceLinearGradient::buildGradient(GradientData* gradientData, SVGGradientElement* gradientElement) const
 {
-    m_start = start;
+    SVGLinearGradientElement* linearGradientElement = static_cast<SVGLinearGradientElement*>(gradientElement);
+    LinearGradientAttributes attributes = linearGradientElement->collectGradientProperties();
+
+    // Determine gradient start/end points
+    FloatPoint startPoint;
+    FloatPoint endPoint;
+    linearGradientElement->calculateStartEndPoints(attributes, startPoint, endPoint);
+
+    gradientData->gradient = Gradient::create(startPoint, endPoint);
+    gradientData->gradient->setSpreadMethod(attributes.spreadMethod());
+
+    // Record current gradient transform
+    gradientData->transform = attributes.gradientTransform();
+    gradientData->boundingBoxMode = attributes.boundingBoxMode();
+
+    // Add stops
+    addStops(gradientData, attributes.stops());
 }
 
-FloatPoint SVGPaintServerLinearGradient::gradientEnd() const
-{
-    return m_end;
 }
-
-void SVGPaintServerLinearGradient::setGradientEnd(const FloatPoint& end)
-{
-    m_end = end;
-}
-
-TextStream& SVGPaintServerLinearGradient::externalRepresentation(TextStream& ts) const
-{
-    ts << "[type=LINEAR-GRADIENT] ";
-    SVGPaintServerGradient::externalRepresentation(ts);
-    ts  << " [start=" << gradientStart() << "]"
-        << " [end=" << gradientEnd() << "]";
-    return ts;
-}
-
-} // namespace WebCore
 
 #endif

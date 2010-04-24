@@ -217,6 +217,7 @@ layer at (0,0) size 480x360
       RenderSVGContainer {g} at (59,160) size 367x40 [transform={m=((1.00,0.00)(0.00,1.00)) t=(56.00,155.00)}]
         RenderSVGContainer {g} at (59,165) size 16x32
           RenderPath {rect} at (59,165) size 16x32 [fill={[type=SOLID] [color=#00FF00]}] [data="M3.00,10.00 L19.00,10.00 L19.00,42.00 L3.00,42.00 Z"]
+        RenderSVGHiddenContainer {g} at (0,0) size 0x0
         RenderSVGContainer {g} at (103,165) size 16x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(44.00,0.00)}]
           RenderPath {rect} at (103,165) size 16x32 [fill={[type=SOLID] [color=#00FF00]}] [data="M3.00,10.00 L19.00,10.00 L19.00,42.00 L3.00,42.00 Z"]
         RenderSVGContainer {g} at (125,170) size 15x15 [transform={m=((1.00,0.00)(0.00,1.00)) t=(66.00,0.00)}]

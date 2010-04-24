@@ -1,85 +1,74 @@
 /*
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
- * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ *
  */
 
 #ifndef RenderSVGResourcePattern_h
 #define RenderSVGResourcePattern_h
 
 #if ENABLE(SVG)
-
 #include "AffineTransform.h"
 #include "FloatRect.h"
+#include "ImageBuffer.h"
 #include "Pattern.h"
-#include "SVGPaintServer.h"
+#include "RenderSVGResourceContainer.h"
+#include "SVGPatternElement.h"
+#include "SVGUnitTypes.h"
 
-#include <memory>
-
+#include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
-class GraphicsContext;
-class ImageBuffer;
-class SVGPatternElement;
-
-class SVGPaintServerPattern : public SVGPaintServer {
-public:
-    static PassRefPtr<SVGPaintServerPattern> create(const SVGPatternElement* owner) { return adoptRef(new SVGPaintServerPattern(owner)); }
-
-    virtual ~SVGPaintServerPattern();
-
-    virtual SVGPaintServerType type() const { return PatternPaintServer; }
-
-    // Pattern boundaries
-    void setPatternBoundaries(const FloatRect&);
-    FloatRect patternBoundaries() const;
-
-    ImageBuffer* tile() const;
-    void setTile(PassOwnPtr<ImageBuffer>);
-
-    AffineTransform patternTransform() const;
-    void setPatternTransform(const AffineTransform&);
-
-    virtual TextStream& externalRepresentation(TextStream&) const;
-
-    virtual bool setup(GraphicsContext*&, const RenderObject*, const RenderStyle*, SVGPaintTargetType, bool isPaintingText) const;
-    virtual void teardown(GraphicsContext*&, const RenderObject*, SVGPaintTargetType, bool isPaintingText) const;
-
-private:
-    SVGPaintServerPattern(const SVGPatternElement*);
-    
-    OwnPtr<ImageBuffer> m_tile;
-    const SVGPatternElement* m_ownerElement;
-    AffineTransform m_patternTransform;
-    FloatRect m_patternBoundaries;
-
-    mutable RefPtr<Pattern> m_pattern;
+struct PatternData {
+    RefPtr<Pattern> pattern;
 };
 
-} // namespace WebCore
+struct PatternAttributes;
+
+class RenderSVGResourcePattern : public RenderSVGResourceContainer {
+public:
+    RenderSVGResourcePattern(SVGPatternElement*);
+    virtual ~RenderSVGResourcePattern();
+
+    virtual const char* renderName() const { return "RenderSVGResourcePattern"; }
+
+    virtual void invalidateClients();
+    virtual void invalidateClient(RenderObject*);
+
+    virtual bool applyResource(RenderObject*, RenderStyle*, GraphicsContext*&, unsigned short resourceMode);
+    virtual void postApplyResource(RenderObject*, GraphicsContext*&, unsigned short resourceMode);
+    virtual FloatRect resourceBoundingBox(const FloatRect&) const { return FloatRect(); }
+
+    virtual RenderSVGResourceType resourceType() const { return s_resourceType; }
+    static RenderSVGResourceType s_resourceType;
+
+private:
+    PassOwnPtr<ImageBuffer> createTileImage(FloatRect& patternBoundaries, AffineTransform& patternTransform, const SVGPatternElement*, RenderObject*) const;
+    void buildPattern(PatternData*, const FloatRect& patternBoundaries, PassOwnPtr<ImageBuffer> tileImage) const;
+    FloatRect calculatePatternBoundariesIncludingOverflow(PatternAttributes&, const FloatRect& objectBoundingBox,
+                                                          const AffineTransform& viewBoxCTM, const FloatRect& patternBoundaries) const;
+
+    HashMap<RenderObject*, PatternData*> m_pattern;
+};
+
+}
 
 #endif
-
-#endif // RenderSVGResourcePattern_h
+#endif

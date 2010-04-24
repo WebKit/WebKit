@@ -62,7 +62,7 @@ void SVGDocumentExtensions::removeTimeContainer(SVGSVGElement* element)
     m_timeContainers.remove(element);
 }
 
-void SVGDocumentExtensions::addResource(const String& id, RenderSVGResource* resource)
+void SVGDocumentExtensions::addResource(const AtomicString& id, RenderSVGResourceContainer* resource)
 {
     ASSERT(resource);
 
@@ -73,16 +73,15 @@ void SVGDocumentExtensions::addResource(const String& id, RenderSVGResource* res
     m_resources.set(id, resource);
 }
 
-void SVGDocumentExtensions::removeResource(const String& id)
+void SVGDocumentExtensions::removeResource(const AtomicString& id)
 {
-    if (id.isEmpty())
+    if (id.isEmpty() || !m_resources.contains(id))
         return;
 
-    ASSERT(m_resources.contains(id));
     m_resources.remove(id);
 }
 
-RenderSVGResource* SVGDocumentExtensions::resourceById(const String& id) const
+RenderSVGResourceContainer* SVGDocumentExtensions::resourceById(const AtomicString& id) const
 {
     if (id.isEmpty())
         return 0;
@@ -148,7 +147,7 @@ void SVGDocumentExtensions::addPendingResource(const AtomicString& id, SVGStyled
     if (m_pendingResources.contains(id))
         m_pendingResources.get(id)->add(obj);
     else {
-        HashSet<SVGStyledElement*>* set = new HashSet<SVGStyledElement*>();
+        HashSet<SVGStyledElement*>* set = new HashSet<SVGStyledElement*>;
         set->add(obj);
 
         m_pendingResources.add(id, set);

@@ -54,7 +54,7 @@ class RenderTheme;
 class TransformState;
 class VisiblePosition;
 #if ENABLE(SVG)
-class RenderSVGResource;
+class RenderSVGResourceContainer;
 class SVGRenderBase;
 #endif
 
@@ -332,16 +332,17 @@ public:
     // to add SVG renderer methods to RenderObject with an ASSERT_NOT_REACHED() default implementation.
     virtual bool isSVGRoot() const { return false; }
     virtual bool isSVGContainer() const { return false; }
+    virtual bool isSVGGradientStop() const { return false; }
     virtual bool isSVGHiddenContainer() const { return false; }
     virtual bool isRenderPath() const { return false; }
     virtual bool isSVGText() const { return false; }
     virtual bool isSVGImage() const { return false; }
     virtual bool isSVGForeignObject() const { return false; }
-    virtual bool isSVGResource() const { return false; }
+    virtual bool isSVGResourceContainer() const { return false; }
     virtual bool isSVGShadowTreeRootContainer() const { return false; }
 
     virtual const SVGRenderBase* toSVGRenderBase() const;
-    virtual RenderSVGResource* toRenderSVGResource();
+    virtual RenderSVGResourceContainer* toRenderSVGResourceContainer();
 
     // FIXME: Those belong into a SVG specific base-class for all renderers (see above)
     // Unfortunately we don't have such a class yet, because it's not possible for all renderers

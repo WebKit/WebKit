@@ -23,6 +23,7 @@
 #if ENABLE(SVG)
 #include "SVGGElement.h"
 
+#include "RenderSVGHiddenContainer.h"
 #include "RenderSVGTransformableContainer.h"
 
 namespace WebCore {
@@ -79,16 +80,15 @@ void SVGGElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeExternalResourcesRequired();
 }
 
-void SVGGElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
+RenderObject* SVGGElement::createRenderer(RenderArena* arena, RenderStyle* style)
 {
-    SVGStyledTransformableElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
+    // SVG 1.1 testsuite explicitely uses constructs like <g display="none"><linearGradient>
+    // We still have to create renderers for the <g> & <linearGradient> element, though the
+    // subtree may be hidden - we only want the resource renderers to exist so they can be
+    // referenced from somewhere else.
+    if (style->display() == NONE)
+        return new (arena) RenderSVGHiddenContainer(this);
 
-    if (renderer())
-        renderer()->setNeedsLayout(true);
-}
-
-RenderObject* SVGGElement::createRenderer(RenderArena* arena, RenderStyle*)
-{
     return new (arena) RenderSVGTransformableContainer(this);
 }
 

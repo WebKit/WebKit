@@ -1,32 +1,29 @@
-KRenderingPaintServer {id="gradientDefault" [type=LINEAR-GRADIENT] [stops=[(0.00,#FFFFFF), (0.33,#0000FF), (0.66,#FF0000), (1.00,#FFFF00)]] [start=(0,0)] [end=(1,0)]}
-KRenderingPaintServer {id="gradientSRGB" [type=LINEAR-GRADIENT] [stops=[(0.00,#FFFFFF), (0.33,#0000FF), (0.66,#FF0000), (1.00,#FFFF00)]] [start=(0,0)] [end=(1,0)]}
-KRenderingPaintServer {id="gradientLinearRGB" [type=LINEAR-GRADIENT] [stops=[(0.00,#FFFFFF), (0.33,#0000FF), (0.66,#FF0000), (1.00,#FFFF00)]] [start=(0,0)] [end=(1,0)]}
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGContainer {g} at (0,8) size 468x273
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-        RenderSVGHiddenContainer {linearGradient} at (0,0) size 0x0
-          RenderSVGGradientStop {stop} at (0,0) size 0x0
-          RenderSVGGradientStop {stop} at (0,0) size 0x0
-          RenderSVGGradientStop {stop} at (0,0) size 0x0
-          RenderSVGGradientStop {stop} at (0,0) size 0x0
-        RenderSVGHiddenContainer {linearGradient} at (0,0) size 0x0
-          RenderSVGGradientStop {stop} at (0,0) size 0x0
-          RenderSVGGradientStop {stop} at (0,0) size 0x0
-          RenderSVGGradientStop {stop} at (0,0) size 0x0
-          RenderSVGGradientStop {stop} at (0,0) size 0x0
-        RenderSVGHiddenContainer {linearGradient} at (0,0) size 0x0
-          RenderSVGGradientStop {stop} at (0,0) size 0x0
-          RenderSVGGradientStop {stop} at (0,0) size 0x0
-          RenderSVGGradientStop {stop} at (0,0) size 0x0
-          RenderSVGGradientStop {stop} at (0,0) size 0x0
+        RenderSVGResourceLinearGradient {linearGradient} [id="gradientDefault"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(1,0)]
+          RenderSVGGradientStop {stop} [offset=0.00] [color=#FFFFFF]
+          RenderSVGGradientStop {stop} [offset=0.33] [color=#0000FF]
+          RenderSVGGradientStop {stop} [offset=0.66] [color=#FF0000]
+          RenderSVGGradientStop {stop} [offset=1.00] [color=#FFFF00]
+        RenderSVGResourceLinearGradient {linearGradient} [id="gradientSRGB"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(1,0)]
+          RenderSVGGradientStop {stop} [offset=0.00] [color=#FFFFFF]
+          RenderSVGGradientStop {stop} [offset=0.33] [color=#0000FF]
+          RenderSVGGradientStop {stop} [offset=0.66] [color=#FF0000]
+          RenderSVGGradientStop {stop} [offset=1.00] [color=#FFFF00]
+        RenderSVGResourceLinearGradient {linearGradient} [id="gradientLinearRGB"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(1,0)]
+          RenderSVGGradientStop {stop} [offset=0.00] [color=#FFFFFF]
+          RenderSVGGradientStop {stop} [offset=0.33] [color=#0000FF]
+          RenderSVGGradientStop {stop} [offset=0.66] [color=#FF0000]
+          RenderSVGGradientStop {stop} [offset=1.00] [color=#FFFF00]
       RenderSVGText {text} at (-2,30) size 454x27 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-22) size 454x27
           chunk 1 (middle anchor) text run 1 at (-2.00,30.00) startOffset 0 endOffset 43 width 454.00: "Basic test of color-interpolation property."
       RenderSVGContainer {g} at (36,66) size 432x55 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,80.00)}]
-        RenderPath {rect} at (39,79) size 302x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FFFFFF), (0.33,#0000FF), (0.66,#FF0000), (1.00,#FFFF00)]] [start=(0,0)] [end=(1,0)]}] [data="M0.00,0.00 L300.00,0.00 L300.00,40.00 L0.00,40.00 Z"]
+        RenderPath {rect} at (39,79) size 302x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=LINEAR-GRADIENT] [id="gradientDefault"]}] [data="M0.00,0.00 L300.00,0.00 L300.00,40.00 L0.00,40.00 Z"]
         RenderPath {circle} at (36,66) size 8x8 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M3.00,-10.00 L2.99,-9.81 L2.98,-9.62 L2.95,-9.44 L2.91,-9.25 L2.85,-9.07 L2.79,-8.90 L2.71,-8.72 L2.63,-8.55 L2.53,-8.39 L2.43,-8.24 L2.31,-8.09 L2.19,-7.95 L2.05,-7.81 L1.91,-7.69 L1.76,-7.57 L1.61,-7.47 L1.45,-7.37 L1.28,-7.29 L1.10,-7.21 L0.93,-7.15 L0.75,-7.09 L0.56,-7.05 L0.38,-7.02 L0.19,-7.01 L-0.00,-7.00 L-0.19,-7.01 L-0.38,-7.02 L-0.56,-7.05 L-0.75,-7.09 L-0.93,-7.15 L-1.10,-7.21 L-1.28,-7.29 L-1.45,-7.37 L-1.61,-7.47 L-1.76,-7.57 L-1.91,-7.69 L-2.05,-7.81 L-2.19,-7.95 L-2.31,-8.09 L-2.43,-8.24 L-2.53,-8.39 L-2.63,-8.55 L-2.71,-8.72 L-2.79,-8.90 L-2.85,-9.07 L-2.91,-9.25 L-2.95,-9.44 L-2.98,-9.62 L-2.99,-9.81 L-3.00,-10.00 L-2.99,-10.19 L-2.98,-10.38 L-2.95,-10.56 L-2.91,-10.75 L-2.85,-10.93 L-2.79,-11.10 L-2.71,-11.28 L-2.63,-11.45 L-2.53,-11.61 L-2.43,-11.76 L-2.31,-11.91 L-2.19,-12.05 L-2.05,-12.19 L-1.91,-12.31 L-1.76,-12.43 L-1.61,-12.53 L-1.45,-12.63 L-1.28,-12.71 L-1.10,-12.79 L-0.93,-12.85 L-0.75,-12.91 L-0.56,-12.95 L-0.38,-12.98 L-0.19,-12.99 L0.00,-13.00 L0.19,-12.99 L0.38,-12.98 L0.56,-12.95 L0.75,-12.91 L0.93,-12.85 L1.10,-12.79 L1.28,-12.71 L1.45,-12.63 L1.61,-12.53 L1.76,-12.43 L1.91,-12.31 L2.05,-12.19 L2.19,-12.05 L2.31,-11.91 L2.43,-11.76 L2.53,-11.61 L2.63,-11.45 L2.71,-11.28 L2.79,-11.10 L2.85,-10.93 L2.91,-10.75 L2.95,-10.56 L2.98,-10.38 L2.99,-10.19 Z"]
         RenderPath {line} at (39,73) size 2x47 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,-7.00 L0.00,40.00"]
         RenderPath {rect} at (87,97) size 6x6 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#8080FF]}] [data="M48.00,18.00 L52.00,18.00 L52.00,22.00 L48.00,22.00 Z"]
@@ -45,7 +42,7 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,-16) size 118x19
             chunk 1 text run 1 at (310.00,20.00) startOffset 0 endOffset 14 width 118.00: "default (sRGB)"
       RenderSVGContainer {g} at (36,146) size 356x55 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,160.00)}]
-        RenderPath {rect} at (39,159) size 302x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FFFFFF), (0.33,#0000FF), (0.66,#FF0000), (1.00,#FFFF00)]] [start=(0,0)] [end=(1,0)]}] [data="M0.00,0.00 L300.00,0.00 L300.00,40.00 L0.00,40.00 Z"]
+        RenderPath {rect} at (39,159) size 302x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=LINEAR-GRADIENT] [id="gradientSRGB"]}] [data="M0.00,0.00 L300.00,0.00 L300.00,40.00 L0.00,40.00 Z"]
         RenderPath {circle} at (36,146) size 8x8 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M3.00,-10.00 L2.99,-9.81 L2.98,-9.62 L2.95,-9.44 L2.91,-9.25 L2.85,-9.07 L2.79,-8.90 L2.71,-8.72 L2.63,-8.55 L2.53,-8.39 L2.43,-8.24 L2.31,-8.09 L2.19,-7.95 L2.05,-7.81 L1.91,-7.69 L1.76,-7.57 L1.61,-7.47 L1.45,-7.37 L1.28,-7.29 L1.10,-7.21 L0.93,-7.15 L0.75,-7.09 L0.56,-7.05 L0.38,-7.02 L0.19,-7.01 L-0.00,-7.00 L-0.19,-7.01 L-0.38,-7.02 L-0.56,-7.05 L-0.75,-7.09 L-0.93,-7.15 L-1.10,-7.21 L-1.28,-7.29 L-1.45,-7.37 L-1.61,-7.47 L-1.76,-7.57 L-1.91,-7.69 L-2.05,-7.81 L-2.19,-7.95 L-2.31,-8.09 L-2.43,-8.24 L-2.53,-8.39 L-2.63,-8.55 L-2.71,-8.72 L-2.79,-8.90 L-2.85,-9.07 L-2.91,-9.25 L-2.95,-9.44 L-2.98,-9.62 L-2.99,-9.81 L-3.00,-10.00 L-2.99,-10.19 L-2.98,-10.38 L-2.95,-10.56 L-2.91,-10.75 L-2.85,-10.93 L-2.79,-11.10 L-2.71,-11.28 L-2.63,-11.45 L-2.53,-11.61 L-2.43,-11.76 L-2.31,-11.91 L-2.19,-12.05 L-2.05,-12.19 L-1.91,-12.31 L-1.76,-12.43 L-1.61,-12.53 L-1.45,-12.63 L-1.28,-12.71 L-1.10,-12.79 L-0.93,-12.85 L-0.75,-12.91 L-0.56,-12.95 L-0.38,-12.98 L-0.19,-12.99 L0.00,-13.00 L0.19,-12.99 L0.38,-12.98 L0.56,-12.95 L0.75,-12.91 L0.93,-12.85 L1.10,-12.79 L1.28,-12.71 L1.45,-12.63 L1.61,-12.53 L1.76,-12.43 L1.91,-12.31 L2.05,-12.19 L2.19,-12.05 L2.31,-11.91 L2.43,-11.76 L2.53,-11.61 L2.63,-11.45 L2.71,-11.28 L2.79,-11.10 L2.85,-10.93 L2.91,-10.75 L2.95,-10.56 L2.98,-10.38 L2.99,-10.19 Z"]
         RenderPath {line} at (39,153) size 2x47 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,-7.00 L0.00,40.00"]
         RenderPath {rect} at (87,177) size 6x6 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#8080FF]}] [data="M48.00,18.00 L52.00,18.00 L52.00,22.00 L48.00,22.00 Z"]
@@ -64,7 +61,7 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,-16) size 42x19
             chunk 1 text run 1 at (310.00,20.00) startOffset 0 endOffset 4 width 42.00: "sRGB"
       RenderSVGContainer {g} at (36,226) size 393x55 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,240.00)}]
-        RenderPath {rect} at (39,239) size 302x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FFFFFF), (0.33,#0000FF), (0.66,#FF0000), (1.00,#FFFF00)]] [start=(0,0)] [end=(1,0)]}] [data="M0.00,0.00 L300.00,0.00 L300.00,40.00 L0.00,40.00 Z"]
+        RenderPath {rect} at (39,239) size 302x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=LINEAR-GRADIENT] [id="gradientLinearRGB"]}] [data="M0.00,0.00 L300.00,0.00 L300.00,40.00 L0.00,40.00 Z"]
         RenderPath {circle} at (36,226) size 8x8 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M3.00,-10.00 L2.99,-9.81 L2.98,-9.62 L2.95,-9.44 L2.91,-9.25 L2.85,-9.07 L2.79,-8.90 L2.71,-8.72 L2.63,-8.55 L2.53,-8.39 L2.43,-8.24 L2.31,-8.09 L2.19,-7.95 L2.05,-7.81 L1.91,-7.69 L1.76,-7.57 L1.61,-7.47 L1.45,-7.37 L1.28,-7.29 L1.10,-7.21 L0.93,-7.15 L0.75,-7.09 L0.56,-7.05 L0.38,-7.02 L0.19,-7.01 L-0.00,-7.00 L-0.19,-7.01 L-0.38,-7.02 L-0.56,-7.05 L-0.75,-7.09 L-0.93,-7.15 L-1.10,-7.21 L-1.28,-7.29 L-1.45,-7.37 L-1.61,-7.47 L-1.76,-7.57 L-1.91,-7.69 L-2.05,-7.81 L-2.19,-7.95 L-2.31,-8.09 L-2.43,-8.24 L-2.53,-8.39 L-2.63,-8.55 L-2.71,-8.72 L-2.79,-8.90 L-2.85,-9.07 L-2.91,-9.25 L-2.95,-9.44 L-2.98,-9.62 L-2.99,-9.81 L-3.00,-10.00 L-2.99,-10.19 L-2.98,-10.38 L-2.95,-10.56 L-2.91,-10.75 L-2.85,-10.93 L-2.79,-11.10 L-2.71,-11.28 L-2.63,-11.45 L-2.53,-11.61 L-2.43,-11.76 L-2.31,-11.91 L-2.19,-12.05 L-2.05,-12.19 L-1.91,-12.31 L-1.76,-12.43 L-1.61,-12.53 L-1.45,-12.63 L-1.28,-12.71 L-1.10,-12.79 L-0.93,-12.85 L-0.75,-12.91 L-0.56,-12.95 L-0.38,-12.98 L-0.19,-12.99 L0.00,-13.00 L0.19,-12.99 L0.38,-12.98 L0.56,-12.95 L0.75,-12.91 L0.93,-12.85 L1.10,-12.79 L1.28,-12.71 L1.45,-12.63 L1.61,-12.53 L1.76,-12.43 L1.91,-12.31 L2.05,-12.19 L2.19,-12.05 L2.31,-11.91 L2.43,-11.76 L2.53,-11.61 L2.63,-11.45 L2.71,-11.28 L2.79,-11.10 L2.85,-10.93 L2.91,-10.75 L2.95,-10.56 L2.98,-10.38 L2.99,-10.19 Z"]
         RenderPath {line} at (39,233) size 2x47 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,-7.00 L0.00,40.00"]
         RenderPath {rect} at (87,257) size 6x6 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#8080FF]}] [data="M48.00,18.00 L52.00,18.00 L52.00,22.00 L48.00,22.00 Z"]

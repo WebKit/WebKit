@@ -1,26 +1,22 @@
 /*
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
- * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ *
  */
 
 #include "config.h"
@@ -28,61 +24,48 @@
 #if ENABLE(SVG)
 #include "RenderSVGResourceRadialGradient.h"
 
-#include "SVGRenderTreeAsText.h"
+#include "RadialGradientAttributes.h"
+#include "SVGRadialGradientElement.h"
 
 namespace WebCore {
 
-SVGPaintServerRadialGradient::SVGPaintServerRadialGradient(const SVGGradientElement* owner)
-    : SVGPaintServerGradient(owner)
-    , m_radius(0.0f)
+RenderSVGResourceType RenderSVGResourceRadialGradient::s_resourceType = RadialGradientResourceType;
+
+RenderSVGResourceRadialGradient::RenderSVGResourceRadialGradient(SVGRadialGradientElement* node)
+    : RenderSVGResourceGradient(node)
 {
 }
 
-SVGPaintServerRadialGradient::~SVGPaintServerRadialGradient()
+RenderSVGResourceRadialGradient::~RenderSVGResourceRadialGradient()
 {
 }
 
-
-FloatPoint SVGPaintServerRadialGradient::gradientCenter() const
+void RenderSVGResourceRadialGradient::buildGradient(GradientData* gradientData, SVGGradientElement* gradientElement) const
 {
-    return m_center;
+    SVGRadialGradientElement* radialGradientElement = static_cast<SVGRadialGradientElement*>(gradientElement);
+    RadialGradientAttributes attributes = radialGradientElement->collectGradientProperties();
+
+    // Determine gradient focal/center points and radius
+    FloatPoint focalPoint;
+    FloatPoint centerPoint;
+    float radius;
+    radialGradientElement->calculateFocalCenterPointsAndRadius(attributes, focalPoint, centerPoint, radius);
+
+    gradientData->gradient = Gradient::create(focalPoint,
+                                              0.0f, // SVG does not support a "focus radius"
+                                              centerPoint,
+                                              radius);
+
+    gradientData->gradient->setSpreadMethod(attributes.spreadMethod());
+
+    // Record current gradient transform
+    gradientData->transform = attributes.gradientTransform();
+    gradientData->boundingBoxMode = attributes.boundingBoxMode();
+
+    // Add stops
+    addStops(gradientData, attributes.stops());
 }
 
-void SVGPaintServerRadialGradient::setGradientCenter(const FloatPoint& center)
-{
-    m_center = center;
 }
-
-FloatPoint SVGPaintServerRadialGradient::gradientFocal() const
-{
-    return m_focal;
-}
-
-void SVGPaintServerRadialGradient::setGradientFocal(const FloatPoint& focal)
-{
-    m_focal = focal;
-}
-
-float SVGPaintServerRadialGradient::gradientRadius() const
-{
-    return m_radius;
-}
-
-void SVGPaintServerRadialGradient::setGradientRadius(float radius)
-{
-    m_radius = radius;
-}
-
-TextStream& SVGPaintServerRadialGradient::externalRepresentation(TextStream& ts) const
-{
-    ts << "[type=RADIAL-GRADIENT] ";
-    SVGPaintServerGradient::externalRepresentation(ts);
-    ts << " [center=" << gradientCenter() << "]"
-        << " [focal=" << gradientFocal() << "]"
-        << " [radius=" << gradientRadius() << "]";
-    return ts;
-}
-
-} // namespace WebCore
 
 #endif

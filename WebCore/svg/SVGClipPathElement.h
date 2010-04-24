@@ -29,6 +29,7 @@
 #include "SVGTests.h"
 
 namespace WebCore {
+
 class SVGClipPathElement : public SVGStyledTransformableElement,
                            public SVGTests,
                            public SVGLangSpace,

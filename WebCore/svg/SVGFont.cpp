@@ -470,20 +470,20 @@ void Font::drawTextUsingSVGFont(GraphicsContext* context, const TextRun& run,
         FloatPoint currentPoint = point;
         float scale = convertEmUnitToPixel(size(), fontFaceElement->unitsPerEm(), 1.0f);
 
-        SVGPaintServer* activePaintServer = run.activePaintServer();
+        RenderSVGResource* activePaintingResource = run.activePaintingResource();
 
         // If renderObject is not set, we're dealing for HTML text rendered using SVG Fonts.
         if (!run.referencingRenderObject()) {
-            ASSERT(!activePaintServer);
+            ASSERT(!activePaintingResource);
 
             // TODO: We're only supporting simple filled HTML text so far.
-            SVGPaintServerSolid* solidPaintServer = SVGPaintServer::sharedSolidPaintServer();
-            solidPaintServer->setColor(context->fillColor());
+            RenderSVGResourceSolidColor* solidPaintingResource = RenderSVGResource::sharedSolidPaintingResource();
+            solidPaintingResource->setColor(context->fillColor());
 
-            activePaintServer = solidPaintServer;
+            activePaintingResource = solidPaintingResource;
         }
 
-        ASSERT(activePaintServer);
+        ASSERT(activePaintingResource);
 
         int charsConsumed;
         String glyphName;
@@ -512,7 +512,7 @@ void Font::drawTextUsingSVGFont(GraphicsContext* context, const TextRun& run,
         SVGTextRunWalker<SVGTextRunWalkerDrawTextData> runWalker(fontData, fontElement, data, drawTextUsingSVGFontCallback, drawTextMissingGlyphCallback);
         runWalker.walk(run, isVerticalText, language, from, to);
 
-        SVGPaintTargetType targetType = context->textDrawingMode() == cTextStroke ? ApplyToStrokeTargetType : ApplyToFillTargetType;
+        RenderSVGResourceMode resourceMode = context->textDrawingMode() == cTextStroke ? ApplyToStrokeMode : ApplyToFillMode;
 
         unsigned numGlyphs = data.glyphIdentifiers.size();
         unsigned fallbackCharacterIndex = 0;
@@ -537,10 +537,10 @@ void Font::drawTextUsingSVGFont(GraphicsContext* context, const TextRun& run,
 
                     context->beginPath();
                     context->addPath(glyphPath);
-                    if (activePaintServer->setup(context, run.referencingRenderObject(), targetType)) {
-                        activePaintServer->renderPath(context, run.referencingRenderObject(), targetType);
-                        activePaintServer->teardown(context, run.referencingRenderObject(), targetType);
-                    }
+
+                    RenderStyle* style = run.referencingRenderObject() ? run.referencingRenderObject()->style() : 0;
+                    if (activePaintingResource->applyResource(run.referencingRenderObject(), style, context, resourceMode))
+                        activePaintingResource->postApplyResource(run.referencingRenderObject(), context, resourceMode);
 
                     context->restore();
                 }
