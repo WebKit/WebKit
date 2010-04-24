@@ -1,5 +1,15 @@
 2010-04-24  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed.
+        
+        Attempt to turn the last core builder green again (not related anymore to my previous SVG checkins :-)
+        Skip http/tests/media/video-play-stall-seek.html on Windows as well (just like it has been done for Mac in r58107).
+        Bug https://bugs.webkit.org/show_bug.cgi?id=38000 describes the problem, and says it's ok to skip the test.
+
+        * platform/win/Skipped:
+
+2010-04-24  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Add new results for all SVG tests that were missing on Gtk/Qt (since a while, just took the opportunity to add them now)
 
         * platform/gtk/svg/custom/broken-internal-references-expected.txt: Added.
