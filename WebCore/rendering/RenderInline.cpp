@@ -274,7 +274,7 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
             // has to move into the inline continuation.  Call updateBeforeAfterContent to ensure that the inline's :after
             // content gets properly destroyed.
             if (document()->usesBeforeAfterRules())
-                inlineCurr->children()->updateBeforeAfterContent(this, AFTER);
+                inlineCurr->children()->updateBeforeAfterContent(inlineCurr, AFTER);
 
             // Now we need to take all of the children starting from the first child
             // *after* currChild and append them all to the clone.

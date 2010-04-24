@@ -1,3 +1,14 @@
+2010-04-23  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7898436> :after content is duplicated
+
+        * fast/css-generated-content/after-duplicated-after-split.html: Added.
+        * platform/mac/fast/css-generated-content/after-duplicated-after-split-expected.checksum: Added.
+        * platform/mac/fast/css-generated-content/after-duplicated-after-split-expected.png: Added.
+        * platform/mac/fast/css-generated-content/after-duplicated-after-split-expected.txt: Added.
+
 2010-04-23  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by Eric Seidel

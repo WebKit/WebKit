@@ -1,3 +1,14 @@
+2010-04-23  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7898436> :after content is duplicated
+
+        Test: fast/css-generated-content/after-duplicated-after-split.html
+
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::splitInlines): Pass the correct owner of the child list.
+
 2010-04-23  Adele Peterson  <adele@apple.com>
 
         Fixing the Tiger build for real.
