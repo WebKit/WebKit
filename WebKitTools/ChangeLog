@@ -1,3 +1,11 @@
+2010-04-23  Xiaomei Ji  <xji@chromium.org>
+
+        No need to review.
+
+        Add xji as committer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-04-23  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix, add platform stub for new LayoutTestController method.
