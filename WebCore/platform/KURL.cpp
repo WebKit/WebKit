@@ -1353,27 +1353,29 @@ bool protocolHostAndPortAreEqual(const KURL& a, const KURL& b)
 {
     if (a.m_schemeEnd != b.m_schemeEnd)
         return false;
+
     int hostStartA = a.hostStart();
+    int hostLengthA = a.hostEnd() - hostStartA;
     int hostStartB = b.hostStart();
-    if (a.m_hostEnd - hostStartA != b.m_hostEnd - hostStartB)
+    int hostLengthB = b.hostEnd() - b.hostStart();
+    if (hostLengthA != hostLengthB)
         return false;
 
     // Check the scheme
     for (int i = 0; i < a.m_schemeEnd; ++i)
         if (a.string()[i] != b.string()[i])
             return false;
-    
+
     // And the host
-    for (int i = hostStartA; i < a.m_hostEnd; ++i)
-        if (a.string()[i] != b.string()[i])
+    for (int i = 0; i < hostLengthA; ++i)
+        if (a.string()[hostStartA + i] != b.string()[hostStartB + i])
             return false;
-    
+
     if (a.port() != b.port())
         return false;
 
     return true;
 }
-    
 
 String encodeWithURLEscapeSequences(const String& notEncodedString)
 {

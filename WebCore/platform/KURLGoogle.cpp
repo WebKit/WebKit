@@ -1144,8 +1144,10 @@ bool protocolHostAndPortAreEqual(const KURL& a, const KURL& b)
         return false;
 
     int hostStartA = a.hostStart();
+    int hostLengthA = a.hostEnd() - hostStartA;
     int hostStartB = b.hostStart();
-    if (a.hostEnd() - hostStartA != b.hostEnd() - hostStartB)
+    int hostLengthB = b.hostEnd() - b.hostStart();
+    if (hostLengthA != hostLengthB)
         return false;
 
     // Check the scheme
@@ -1154,8 +1156,8 @@ bool protocolHostAndPortAreEqual(const KURL& a, const KURL& b)
             return false;
     
     // And the host
-    for (int i = hostStartA; i < static_cast<int>(a.hostEnd()); ++i)
-        if (a.string()[i] != b.string()[i])
+    for (int i = 0; i < hostLengthA; ++i)
+        if (a.string()[hostStartA + i] != b.string()[hostStartB + i])
             return false;
     
     if (a.port() != b.port())

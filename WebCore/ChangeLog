@@ -1,3 +1,22 @@
+2010-04-24  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        protocolHostAndPortEquals host check makes a wrong assumption
+        https://bugs.webkit.org/show_bug.cgi?id=37777
+
+        The host check assumed that both host started at the same position. This is true
+        if both URL are the same but sometimes one has credential and the other does not.
+        In this case, the method would compare invalid positions.
+
+        Test: http/tests/appcache/credential-url.html
+
+        * platform/KURL.cpp:
+        (WebCore::protocolHostAndPortAreEqual):
+        * platform/KURLGoogle.cpp:
+        (WebCore::protocolHostAndPortAreEqual):
+        Fix the host check to take both URL's credential into account.
+
 2010-04-24  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Fix linkage on several bots (no idea, why it worked in a from-scratch rebuild on Leopard on my machine!) -> include NodeRenderStyle.h

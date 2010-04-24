@@ -1,3 +1,15 @@
+2010-04-24  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        protocolHostAndPortEquals host check makes a wrong assumption
+        https://bugs.webkit.org/show_bug.cgi?id=37777
+
+        Add a check that the URL with credential matches the current URL.
+
+        * http/tests/appcache/credential-url-expected.txt: Added.
+        * http/tests/appcache/credential-url.html: Added.
+
 2010-04-20  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Simon Hausmann.
