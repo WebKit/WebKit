@@ -1,3 +1,23 @@
+2010-04-20  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Add more support for textInputController
+
+        Add support for selectedRange(), setMarkedText(), insertText(),
+        and firstRectForCharacterRange().
+
+        https://bugs.webkit.org/show_bug.cgi?id=35702
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::inputMethodEvent):
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::selectedRange):
+        (DumpRenderTreeSupportQt::firstRectForCharacterRange):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::inputMethods):
+
 2010-04-22  John Pavan  <john.pavan@nokia.com>
 
         Reviewed by Laszlo Gombos.

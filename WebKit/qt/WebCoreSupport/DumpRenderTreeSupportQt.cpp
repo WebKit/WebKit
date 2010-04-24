@@ -44,6 +44,7 @@
 #if ENABLE(SVG)
 #include "SVGSMILElement.h"
 #endif
+#include "TextIterator.h"
 #include "WorkerThread.h"
 
 #include "qwebframe.h"
@@ -369,4 +370,48 @@ bool DumpRenderTreeSupportQt::isCommandEnabled(QWebPage* page, const QString& na
 QString DumpRenderTreeSupportQt::markerTextForListItem(const QWebElement& listItem)
 {
     return WebCore::markerTextForListItem(listItem.m_element);
+}
+
+QVariantList DumpRenderTreeSupportQt::selectedRange(QWebPage* page)
+{
+    WebCore::Frame* frame = page->handle()->page->focusController()->focusedOrMainFrame();
+    QVariantList selectedRange;
+    RefPtr<Range> range = frame->selection()->toNormalizedRange().get();
+
+    Element* selectionRoot = frame->selection()->rootEditableElement();
+    Element* scope = selectionRoot ? selectionRoot : frame->document()->documentElement();
+
+    RefPtr<Range> testRange = Range::create(scope->document(), scope, 0, range->startContainer(), range->startOffset());
+    ASSERT(testRange->startContainer() == scope);
+    int startPosition = TextIterator::rangeLength(testRange.get());
+
+    ExceptionCode ec;
+    testRange->setEnd(range->endContainer(), range->endOffset(), ec);
+    ASSERT(testRange->startContainer() == scope);
+    int endPosition = TextIterator::rangeLength(testRange.get());
+
+    selectedRange << startPosition << (endPosition - startPosition);
+
+    return selectedRange;
+
+}
+
+QVariantList DumpRenderTreeSupportQt::firstRectForCharacterRange(QWebPage* page, int location, int length)
+{
+    WebCore::Frame* frame = page->handle()->page->focusController()->focusedOrMainFrame();
+    QVariantList rect;
+
+    if ((location + length < location) && (location + length != 0))
+        length = 0;
+
+    Element* selectionRoot = frame->selection()->rootEditableElement();
+    Element* scope = selectionRoot ? selectionRoot : frame->document()->documentElement();
+    RefPtr<Range> range = TextIterator::rangeFromLocationAndLength(scope, location, length);
+
+    if (!range)
+        return QVariantList();
+
+    QRect resultRect = frame->firstRectForRange(range.get());
+    rect << resultRect.x() << resultRect.y() << resultRect.width() << resultRect.height();
+    return rect;
 }

@@ -1,3 +1,31 @@
+2010-04-20  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Add more support for textInputController
+
+        Add support for selectedRange(), setMarkedText(), insertText(),
+        and firstRectForCharacterRange().
+
+        Unskip tests:
+
+        fast/forms/input-maxlength-ime-preedit.html
+        fast/forms/input-maxlength-ime-completed.html
+        fast/text/international/thai-cursor-position.html
+        fast/events/ime-composition-events-001.html
+        editing/selection/5825350-1.html
+        editing/selection/5825350-2.html
+        editing/selection/mixed-editability-10.html
+
+        https://bugs.webkit.org/show_bug.cgi?id=35702
+
+        * DumpRenderTree/qt/TextInputControllerQt.cpp:
+        (TextInputController::setMarkedText):
+        (TextInputController::insertText):
+        (TextInputController::selectedRange):
+        (TextInputController::firstRectForCharacterRange):
+        * DumpRenderTree/qt/TextInputControllerQt.h:
+
 2010-04-23  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

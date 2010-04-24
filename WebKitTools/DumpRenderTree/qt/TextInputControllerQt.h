@@ -31,6 +31,7 @@
 
 #include <QList>
 #include <QObject>
+#include <QVariant>
 #include <QString>
 #include "qwebpage.h"
 
@@ -41,14 +42,14 @@ public:
 
 public slots:
     void doCommand(const QString& command);
-//     void setMarkedText(const QString& str, int from, int length);
+    void setMarkedText(const QString& string, int start, int end);
 //     bool hasMarkedText();
 //     void unmarkText();
 //     QList<int> markedRange();
-//     QList<int> selectedRange();
+    QVariantList selectedRange();
 //     void validAttributesForMarkedText();
-//     void inserText(const QString&);
-//     void firstRectForCharacterRange();
+    void insertText(const QString& string);
+    QVariantList firstRectForCharacterRange(int location, int length);
 //     void characterIndexForPoint(int, int);
 //     void substringFromRange(int, int);
 //     void conversationIdentifier();

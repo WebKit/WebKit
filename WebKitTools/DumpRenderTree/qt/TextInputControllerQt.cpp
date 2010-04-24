@@ -28,8 +28,10 @@
  */
 #include "config.h"
 #include "TextInputControllerQt.h"
+#include "../../../WebKit/qt/WebCoreSupport/DumpRenderTreeSupportQt.h"
 
 #include <QApplication>
+#include <QInputMethodEvent>
 #include <QKeyEvent>
 
 TextInputController::TextInputController(QWebPage* parent)
@@ -126,4 +128,33 @@ void TextInputController::doCommand(const QString& command)
     QApplication::sendEvent(parent(), &event);
     QKeyEvent event2(QEvent::KeyRelease, keycode, modifiers);
     QApplication::sendEvent(parent(), &event2);
+}
+
+void TextInputController::setMarkedText(const QString& string, int start, int end)
+{
+    QList<QInputMethodEvent::Attribute> attributes;
+#if QT_VERSION >= 0x040600
+    QInputMethodEvent::Attribute selection(QInputMethodEvent::Selection, start, end, QVariant());
+    attributes << selection;
+#endif
+    QInputMethodEvent event(string, attributes);
+    QApplication::sendEvent(parent(), &event);
+}
+
+void TextInputController::insertText(const QString& string)
+{
+    QList<QInputMethodEvent::Attribute> attributes;
+    QInputMethodEvent event(string, attributes);
+    event.setCommitString(string);
+    QApplication::sendEvent(parent(), &event);
+}
+
+QVariantList TextInputController::selectedRange()
+{
+    return DumpRenderTreeSupportQt::selectedRange(qobject_cast<QWebPage*>(parent()));
+}
+
+QVariantList TextInputController::firstRectForCharacterRange(int location, int length)
+{
+    return DumpRenderTreeSupportQt::firstRectForCharacterRange(qobject_cast<QWebPage*>(parent()), location, length);
 }
