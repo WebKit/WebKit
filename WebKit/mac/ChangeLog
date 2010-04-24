@@ -1,3 +1,21 @@
+2010-04-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7903728> REGRESSION (r51617): WebView fails to load plug-in MIME types
+        https://bugs.webkit.org/show_bug.cgi?id=38085
+
+        WebView was calling -_webView in a few places where it should have just used itself. It never
+        makes sense for WebView to call -_webView on itself, and these calls look like they were copied
+        from similar code in WebHTMLView, WebFrameView and WebDataSource, where -_webView has a different,
+        useful meaning.
+
+        * WebView/WebView.mm:
+        (-[WebView drawSingleRect:]): Replaced [self _webView] with self.
+        (-[WebView _viewClass:andRepresentationClass:forMIMEType:]): Replaced [[self _webView] preferences]
+        with _private->preferences.
+        (-[WebView _canShowMIMEType:]): Ditto.
+
 2010-04-23  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Anders Carlsson.

@@ -758,10 +758,9 @@ static bool shouldEnableLoadDeferring()
     @try {
         [[self mainFrame] _drawRect:rect contentsOnly:NO];
 
-        WebView *webView = [self _webView];
-        [[webView _UIDelegateForwarder] webView:webView didDrawRect:rect];
+        [[self _UIDelegateForwarder] webView:self didDrawRect:rect];
 
-        if (WebNodeHighlight *currentHighlight = [webView currentNodeHighlight])
+        if (WebNodeHighlight *currentHighlight = [self currentNodeHighlight])
             [currentHighlight setNeedsUpdateInTargetViewRect:rect];
 
         [NSGraphicsContext restoreGraphicsState];
@@ -898,7 +897,7 @@ static bool shouldEnableLoadDeferring()
 
 - (BOOL)_viewClass:(Class *)vClass andRepresentationClass:(Class *)rClass forMIMEType:(NSString *)MIMEType
 {
-    if ([[self class] _viewClass:vClass andRepresentationClass:rClass forMIMEType:MIMEType allowingPlugins:[[[self _webView] preferences] arePlugInsEnabled]])
+    if ([[self class] _viewClass:vClass andRepresentationClass:rClass forMIMEType:MIMEType allowingPlugins:[_private->preferences arePlugInsEnabled]])
         return YES;
 
     if (_private->pluginDatabase) {
@@ -2504,7 +2503,7 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
 
 - (BOOL)_canShowMIMEType:(NSString *)MIMEType
 {
-    return [[self class] _canShowMIMEType:MIMEType allowingPlugins:[[[self _webView] preferences] arePlugInsEnabled]];
+    return [[self class] _canShowMIMEType:MIMEType allowingPlugins:[_private->preferences arePlugInsEnabled]];
 }
 
 - (WebBasePluginPackage *)_pluginForMIMEType:(NSString *)MIMEType
