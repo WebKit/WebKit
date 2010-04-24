@@ -1,5 +1,20 @@
 2010-04-24  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Add new results for all SVG tests that were missing on Gtk/Qt (since a while, just took the opportunity to add them now)
+
+        * platform/gtk/svg/custom/broken-internal-references-expected.txt: Added.
+        * platform/gtk/svg/custom/clip-path-id-changes-expected.txt: Added.
+        * platform/qt/svg/custom/broken-internal-references-expected.txt: Added.
+        * platform/qt/svg/custom/clip-path-id-changes-expected.txt: Added.
+        * platform/qt/svg/custom/mask-on-multiple-objects-expected.txt: Added.
+        * platform/qt/svg/custom/resource-invalidate-on-target-update-expected.txt: Added.
+        * platform/qt/svg/filters/feColorMatrix-values-expected.txt: Added.
+        * platform/qt/svg/filters/filter-clip-expected.txt: Added.
+        * platform/qt/svg/zoom/page/zoom-coords-viewattr-01-b-expected.txt: Added.
+        * platform/qt/svg/zoom/text/zoom-coords-viewattr-01-b-expected.txt: Added.
+
+2010-04-24  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Update Qt SVG results, and a weird fast/xpath change (newline added).
 
         * fast/xpath/namespace-vs-predicate-expected.txt:
