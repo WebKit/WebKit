@@ -56,59 +56,62 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef Threading_h
-#define Threading_h
+#ifndef Atomics_h
+#define Atomics_h
 
 #include "Platform.h"
 
-#include <stdint.h>
-#include <wtf/Assertions.h>
-#include <wtf/Atomics.h>
-#include <wtf/Locker.h>
-#include <wtf/MainThread.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/ThreadSafeShared.h>
-#include <wtf/ThreadingPrimitives.h>
-
-// For portability, we do not use thread-safe statics natively supported by some compilers (e.g. gcc).
-#define AtomicallyInitializedStatic(T, name) \
-    WTF::lockAtomicallyInitializedStaticMutex(); \
-    static T name; \
-    WTF::unlockAtomicallyInitializedStaticMutex();
+#if OS(WINDOWS)
+#include <windows.h>
+#elif OS(DARWIN)
+#include <libkern/OSAtomic.h>
+#elif OS(ANDROID)
+#include <cutils/atomic.h>
+#elif COMPILER(GCC) && !OS(SYMBIAN)
+#if (__GNUC__ > 4) || ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 2))
+#include <ext/atomicity.h>
+#else
+#include <bits/atomicity.h>
+#endif
+#endif
 
 namespace WTF {
 
-typedef uint32_t ThreadIdentifier;
-typedef void* (*ThreadFunction)(void* argument);
+#if OS(WINDOWS)
+#define WTF_USE_LOCKFREE_THREADSAFESHARED 1
 
-// Returns 0 if thread creation failed.
-// The thread name must be a literal since on some platforms it's passed in to the thread.
-ThreadIdentifier createThread(ThreadFunction, void*, const char* threadName);
+#if COMPILER(MINGW) || COMPILER(MSVC7) || OS(WINCE)
+inline int atomicIncrement(int* addend) { return InterlockedIncrement(reinterpret_cast<long*>(addend)); }
+inline int atomicDecrement(int* addend) { return InterlockedDecrement(reinterpret_cast<long*>(addend)); }
+#else
+inline int atomicIncrement(int volatile* addend) { return InterlockedIncrement(reinterpret_cast<long volatile*>(addend)); }
+inline int atomicDecrement(int volatile* addend) { return InterlockedDecrement(reinterpret_cast<long volatile*>(addend)); }
+#endif
 
-// Internal platform-specific createThread implementation.
-ThreadIdentifier createThreadInternal(ThreadFunction, void*, const char* threadName);
+#elif OS(DARWIN)
+#define WTF_USE_LOCKFREE_THREADSAFESHARED 1
 
-// Called in the thread during initialization.
-// Helpful for platforms where the thread name must be set from within the thread.
-void initializeCurrentThreadInternal(const char* threadName);
+inline int atomicIncrement(int volatile* addend) { return OSAtomicIncrement32Barrier(const_cast<int*>(addend)); }
+inline int atomicDecrement(int volatile* addend) { return OSAtomicDecrement32Barrier(const_cast<int*>(addend)); }
 
-ThreadIdentifier currentThread();
-int waitForThreadCompletion(ThreadIdentifier, void**);
-void detachThread(ThreadIdentifier);
+#elif OS(ANDROID)
 
-// This function must be called from the main thread. It is safe to call it repeatedly.
-// Darwin is an exception to this rule: it is OK to call it from any thread, the only requirement is that the calls are not reentrant.
-void initializeThreading();
+inline int atomicIncrement(int volatile* addend) { return android_atomic_inc(addend); }
+inline int atomicDecrement(int volatile* addend) { return android_atomic_dec(addend); }
 
-void lockAtomicallyInitializedStaticMutex();
-void unlockAtomicallyInitializedStaticMutex();
+#elif COMPILER(GCC) && !CPU(SPARC64) && !OS(SYMBIAN) // sizeof(_Atomic_word) != sizeof(int) on sparc64 gcc
+#define WTF_USE_LOCKFREE_THREADSAFESHARED 1
+
+inline int atomicIncrement(int volatile* addend) { return __gnu_cxx::__exchange_and_add(addend, 1) + 1; }
+inline int atomicDecrement(int volatile* addend) { return __gnu_cxx::__exchange_and_add(addend, -1) - 1; }
+
+#endif
 
 } // namespace WTF
 
-using WTF::ThreadIdentifier;
-using WTF::createThread;
-using WTF::currentThread;
-using WTF::detachThread;
-using WTF::waitForThreadCompletion;
+#if USE(LOCKFREE_THREADSAFESHARED)
+using WTF::atomicDecrement;
+using WTF::atomicIncrement;
+#endif
 
-#endif // Threading_h
+#endif // Atomics_h

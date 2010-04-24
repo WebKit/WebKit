@@ -1,5 +1,28 @@
 2010-04-23  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by David Levin.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=38060
+        Split up Threading.h
+
+        Move bits for of Threading.h into 3 new files.
+        - Atomics.h for atomic operations.
+        - ThreadSafeShared.h for the ThreadSafeShared class.
+        - ThreadingPrimitives.h for the primitives and platform types.
+
+        Basic threading operations (creation, etc.) remain in Threading.h.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/Atomics.h: Copied from wtf/Threading.h.
+        * wtf/ThreadSafeShared.h: Copied from wtf/Threading.h.
+        * wtf/Threading.h:
+        * wtf/ThreadingPrimitives.h: Copied from wtf/Threading.h.
+
+2010-04-23  Sam Weinig  <sam@webkit.org>
+
         Fix Qt build.
 
         * wtf/qt/MainThreadQt.cpp: #include <QThread>

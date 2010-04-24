@@ -56,59 +56,93 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef Threading_h
-#define Threading_h
+#ifndef ThreadSafeShared_h
+#define ThreadSafeShared_h
 
 #include "Platform.h"
 
-#include <stdint.h>
-#include <wtf/Assertions.h>
 #include <wtf/Atomics.h>
-#include <wtf/Locker.h>
-#include <wtf/MainThread.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/ThreadSafeShared.h>
 #include <wtf/ThreadingPrimitives.h>
-
-// For portability, we do not use thread-safe statics natively supported by some compilers (e.g. gcc).
-#define AtomicallyInitializedStatic(T, name) \
-    WTF::lockAtomicallyInitializedStaticMutex(); \
-    static T name; \
-    WTF::unlockAtomicallyInitializedStaticMutex();
 
 namespace WTF {
 
-typedef uint32_t ThreadIdentifier;
-typedef void* (*ThreadFunction)(void* argument);
+class ThreadSafeSharedBase : public Noncopyable {
+public:
+    ThreadSafeSharedBase(int initialRefCount = 1)
+        : m_refCount(initialRefCount)
+    {
+    }
 
-// Returns 0 if thread creation failed.
-// The thread name must be a literal since on some platforms it's passed in to the thread.
-ThreadIdentifier createThread(ThreadFunction, void*, const char* threadName);
+    void ref()
+    {
+#if USE(LOCKFREE_THREADSAFESHARED)
+        atomicIncrement(&m_refCount);
+#else
+        MutexLocker locker(m_mutex);
+        ++m_refCount;
+#endif
+    }
 
-// Internal platform-specific createThread implementation.
-ThreadIdentifier createThreadInternal(ThreadFunction, void*, const char* threadName);
+    bool hasOneRef()
+    {
+        return refCount() == 1;
+    }
 
-// Called in the thread during initialization.
-// Helpful for platforms where the thread name must be set from within the thread.
-void initializeCurrentThreadInternal(const char* threadName);
+    int refCount() const
+    {
+#if !USE(LOCKFREE_THREADSAFESHARED)
+        MutexLocker locker(m_mutex);
+#endif
+        return static_cast<int const volatile &>(m_refCount);
+    }
 
-ThreadIdentifier currentThread();
-int waitForThreadCompletion(ThreadIdentifier, void**);
-void detachThread(ThreadIdentifier);
+protected:
+    // Returns whether the pointer should be freed or not.
+    bool derefBase()
+    {
+#if USE(LOCKFREE_THREADSAFESHARED)
+        if (atomicDecrement(&m_refCount) <= 0)
+            return true;
+#else
+        int refCount;
+        {
+            MutexLocker locker(m_mutex);
+            --m_refCount;
+            refCount = m_refCount;
+        }
+        if (refCount <= 0)
+            return true;
+#endif
+        return false;
+    }
 
-// This function must be called from the main thread. It is safe to call it repeatedly.
-// Darwin is an exception to this rule: it is OK to call it from any thread, the only requirement is that the calls are not reentrant.
-void initializeThreading();
+private:
+    template<class T>
+    friend class CrossThreadRefCounted;
 
-void lockAtomicallyInitializedStaticMutex();
-void unlockAtomicallyInitializedStaticMutex();
+    int m_refCount;
+#if !USE(LOCKFREE_THREADSAFESHARED)
+    mutable Mutex m_mutex;
+#endif
+};
+
+template<class T> class ThreadSafeShared : public ThreadSafeSharedBase {
+public:
+    ThreadSafeShared(int initialRefCount = 1)
+        : ThreadSafeSharedBase(initialRefCount)
+    {
+    }
+
+    void deref()
+    {
+        if (derefBase())
+            delete static_cast<T*>(this);
+    }
+};
 
 } // namespace WTF
 
-using WTF::ThreadIdentifier;
-using WTF::createThread;
-using WTF::currentThread;
-using WTF::detachThread;
-using WTF::waitForThreadCompletion;
+using WTF::ThreadSafeShared;
 
-#endif // Threading_h
+#endif // ThreadSafeShared_h

@@ -261,6 +261,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\Atomics.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\ByteArray.cpp"
 			>
 		</File>
@@ -513,7 +517,15 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\ThreadingPrimitives.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\ThreadingWin.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\ThreadSafeShared.h"
 			>
 		</File>
 		<File
