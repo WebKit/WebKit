@@ -31,6 +31,7 @@
 #include "AffineTransform.h"
 #include "Document.h"
 #include "ImageBuffer.h"
+#include "NodeRenderStyle.h"
 #include "RenderObject.h"
 #include "RenderSVGContainer.h"
 #include "RenderSVGResource.h"

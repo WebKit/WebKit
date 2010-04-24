@@ -1,5 +1,12 @@
 2010-04-24  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Fix linkage on several bots (no idea, why it worked in a from-scratch rebuild on Leopard on my machine!) -> include NodeRenderStyle.h
+        Having to include NodeRenderStyle.h just to pull in the renderStyle() is a crazy concept, but I see what it tries to avoid (including RenderObject.h in Node.h)
+
+        * rendering/SVGRenderSupport.cpp:
+
+2010-04-24  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Fix release builds, wrap resourceMode assertion in NDEBUG blocks, use UNUSED_PARAM() otherwhise.
 
         * rendering/RenderSVGResourceClipper.cpp:
