@@ -704,6 +704,22 @@
 			Name="UIProcess"
 			>
 			<File
+				RelativePath="..\UIProcess\DrawingAreaProxy.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\DrawingAreaProxy.h"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\DrawingAreaProxyUpdateChunk.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\DrawingAreaProxyUpdateChunk.h"
+				>
+			</File>
+			<File
 				RelativePath="..\UIProcess\PageClient.h"
 				>
 			</File>
@@ -995,11 +1011,7 @@
 				Name="win"
 				>
 				<File
-					RelativePath="..\UIProcess\win\DrawingAreaProxy.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\UIProcess\win\DrawingAreaProxy.h"
+					RelativePath="..\UIProcess\win\DrawingAreaProxyUpdateChunkWin.cpp"
 					>
 				</File>
 				<File

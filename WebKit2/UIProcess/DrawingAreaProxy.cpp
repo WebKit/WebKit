@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "DrawingAreaProxy.h"
+#include "DrawingAreaProxy.h"
 
 namespace WebKit {
 

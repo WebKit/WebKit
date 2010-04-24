@@ -2,8 +2,50 @@
 
         Reviewed by Anders Carlsson.
 
+        https://bugs.webkit.org/show_bug.cgi?id=38065
+        Merge mac and win DrawingAreaProxyUpdateChunk implementations.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView drawRect:]):
+        * UIProcess/DrawingAreaProxy.cpp: Copied from UIProcess/mac/DrawingAreaProxy.mm.
+        * UIProcess/DrawingAreaProxy.h: Copied from UIProcess/mac/DrawingAreaProxy.h.
+        * UIProcess/DrawingAreaProxyUpdateChunk.cpp: Copied from UIProcess/mac/DrawingAreaProxyUpdateChunk.mm.
+        (WebKit::DrawingAreaProxyUpdateChunk::DrawingAreaProxyUpdateChunk):
+        (WebKit::DrawingAreaProxyUpdateChunk::paint):
+        (WebKit::DrawingAreaProxyUpdateChunk::setSize):
+        (WebKit::DrawingAreaProxyUpdateChunk::didSetSize):
+        (WebKit::DrawingAreaProxyUpdateChunk::update):
+        (WebKit::DrawingAreaProxyUpdateChunk::didReceiveMessage):
+        * UIProcess/DrawingAreaProxyUpdateChunk.h: Copied from UIProcess/mac/DrawingAreaProxyUpdateChunk.h.
+        * UIProcess/mac/DrawingAreaProxy.h: Removed.
+        * UIProcess/mac/DrawingAreaProxy.mm: Removed.
+        * UIProcess/mac/DrawingAreaProxyUpdateChunk.h: Removed.
+        * UIProcess/mac/DrawingAreaProxyUpdateChunk.mm: Removed.
+        * UIProcess/mac/DrawingAreaProxyUpdateChunkMac.mm: Copied from UIProcess/mac/DrawingAreaProxyUpdateChunk.mm.
+        (WebKit::DrawingAreaProxyUpdateChunk::page):
+        (WebKit::DrawingAreaProxyUpdateChunk::invalidateBackingStore):
+        (WebKit::DrawingAreaProxyUpdateChunk::platformPaint):
+        (WebKit::DrawingAreaProxyUpdateChunk::drawUpdateChunkIntoBackingStore):
+        * UIProcess/win/DrawingAreaProxy.cpp: Removed.
+        * UIProcess/win/DrawingAreaProxy.h: Removed.
+        * UIProcess/win/DrawingAreaProxyUpdateChunkWin.cpp: Copied from UIProcess/win/DrawingAreaProxy.cpp.
+        (WebKit::DrawingAreaProxyUpdateChunk::page):
+        (WebKit::DrawingAreaProxyUpdateChunk::ensureBackingStore):
+        (WebKit::DrawingAreaProxyUpdateChunk::invalidateBackingStore):
+        (WebKit::DrawingAreaProxyUpdateChunk::platformPaint):
+        (WebKit::DrawingAreaProxyUpdateChunk::drawUpdateChunkIntoBackingStore):
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::WebView):
+        (WebKit::WebView::onPaintEvent):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+
+2010-04-23  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
         Fix for https://bugs.webkit.org/show_bug.cgi?id=38059
-        Merge mac and win DrawingAreaUpdateChunk implementation.
+        Merge mac and win DrawingAreaUpdateChunk implementations.
 
         * UIProcess/win/DrawingAreaProxy.cpp:
         (WebKit::DrawingAreaProxy::didSetSize):

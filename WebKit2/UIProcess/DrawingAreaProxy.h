@@ -23,57 +23,49 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DrawingAreaProxyUpdateChunk_h
-#define DrawingAreaProxyUpdateChunk_h
+#ifndef DrawingAreaProxy_h
+#define DrawingAreaProxy_h
 
-#include "DrawingAreaProxy.h"
-#include <WebCore/IntSize.h>
-#include <wtf/RetainPtr.h>
+#include "ArgumentEncoder.h"
 
-#ifdef __OBJC__
-@class WKView;
-#else
-class WKView;
-#endif
+namespace CoreIPC {
+    class ArgumentDecoder;
+    class Connection;
+    class MessageID;
+}
+
+namespace WebCore {
+    class IntSize;
+    class IntRect;
+}
 
 namespace WebKit {
 
-class UpdateChunk;
-
-class DrawingAreaProxyUpdateChunk : public DrawingAreaProxy {
+class DrawingAreaProxy {
 public:
-    DrawingAreaProxyUpdateChunk(WKView*);
-    virtual ~DrawingAreaProxyUpdateChunk();
+    enum Type {
+        DrawingAreaUpdateChunkType
+    };
 
-    virtual void drawRectIntoContext(CGRect, CGContextRef);
-    virtual void setSize(const WebCore::IntSize&);
+    virtual ~DrawingAreaProxy();
 
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder&);
+    virtual void paint(const WebCore::IntRect&, CGContextRef) = 0;
+    virtual void setSize(const WebCore::IntSize&) = 0;
+
+    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder&) = 0;
 
     // The DrawingAreaProxy should never be decoded itself. Instead, the DrawingArea should be decoded.
     virtual void encode(CoreIPC::ArgumentEncoder& encoder) const
     {
-        DrawingAreaProxy::encode(encoder);
+        encoder.encode(static_cast<uint32_t>(m_type));
     }
 
-private:
-    void drawUpdateChunkIntoBackingStore(UpdateChunk*);
-    void ensureBackingStore();
+protected:
+    DrawingAreaProxy(Type);
 
-    void didSetSize(UpdateChunk* updateChunk);
-    void update(UpdateChunk*);
-
-    bool m_isInitialized;
-    bool m_isWaitingForDidSetFrameNotification;
-
-    WebCore::IntSize m_viewSize; // Size of the BackingStore as well.
-    WebCore::IntSize m_lastSetViewSize;
-
-    RetainPtr<CGContextRef> m_bitmapContext;
-
-    WKView* m_webView;
+    Type m_type;
 };
     
 } // namespace WebKit
 
-#endif // DrawingAreaProxyUpdateChunk_h
+#endif // DrawingAreaProxy_h

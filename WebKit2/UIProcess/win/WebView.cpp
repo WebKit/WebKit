@@ -25,7 +25,7 @@
 
 #include "WebView.h"
 
-#include "DrawingAreaProxy.h"
+#include "DrawingAreaProxyUpdateChunk.h"
 #include "RunLoop.h"
 #include "WebEventFactory.h"
 #include "WebPageNamespace.h"
@@ -169,7 +169,7 @@ WebView::WebView(RECT rect, WebPageNamespace* pageNamespace, HWND hostWindow)
 
     m_page = pageNamespace->createWebPage();
     m_page->setPageClient(this);
-    m_page->initializeWebPage(IntRect(rect).size(), new DrawingAreaProxy(this));
+    m_page->initializeWebPage(IntRect(rect).size(), new DrawingAreaProxyUpdateChunk(this));
 
     m_window = ::CreateWindowEx(0, kWebKit2WebViewWindowClassName, 0, WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
         rect.top, rect.left, rect.right - rect.left, rect.bottom - rect.top, m_hostWindow ? m_hostWindow : HWND_MESSAGE, 0, instanceHandle(), this);
@@ -305,7 +305,7 @@ LRESULT WebView::onPaintEvent(HWND hWnd, UINT message, WPARAM, LPARAM, bool& han
     PAINTSTRUCT paintStruct;
     HDC hdc = ::BeginPaint(m_window, &paintStruct);
 
-    m_page->drawingArea()->paint(hdc, paintStruct.rcPaint);
+    m_page->drawingArea()->paint(IntRect(paintStruct.rcPaint), hdc);
 
     ::EndPaint(m_window, &paintStruct);
 

@@ -27,7 +27,6 @@
 
 // C API
 #import "WKAPICast.h"
-#import "WKPage.h"
 
 // Implementation
 #import "DrawingAreaProxyUpdateChunk.h"
@@ -41,7 +40,7 @@
 #import "WebProcessManager.h"
 #import "WebProcessProxy.h"
 #import <QuartzCore/QuartzCore.h>
-#import <WebCore/IntSize.h>
+#import <WebCore/IntRect.h>
 #import <wtf/RefPtr.h>
 
 using namespace WebKit;
@@ -249,7 +248,7 @@ using namespace WebCore;
 
     if (_data->_page->isValid() && _data->_page->drawingArea()) {
         CGContextRef context = static_cast<CGContextRef>([[NSGraphicsContext currentContext] graphicsPort]);
-        _data->_page->drawingArea()->drawRectIntoContext(NSRectToCGRect(rect), context);
+        _data->_page->drawingArea()->paint(IntRect(rect), context);
     }
 }
 

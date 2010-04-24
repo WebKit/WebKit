@@ -23,56 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "DrawingAreaProxy.h"
+#include "DrawingAreaProxyUpdateChunk.h"
 
-#include "Connection.h"
 #include "DrawingAreaMessageKinds.h"
 #include "DrawingAreaProxyMessageKinds.h"
 #include "MessageID.h"
 #include "UpdateChunk.h"
+#include "WebCoreTypeArgumentMarshalling.h"
+#include "WebPageProxy.h"
 #include "WebProcessProxy.h"
-#include "WebView.h"
-#include <WebCore/BitmapInfo.h>
-#include <WebCore/IntRect.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-DrawingAreaProxy::DrawingAreaProxy(WebView* webView)
-    : m_isWaitingForDidSetFrameNotification(false)
+DrawingAreaProxyUpdateChunk::DrawingAreaProxyUpdateChunk(PlatformWebView* webView)
+    : DrawingAreaProxy(DrawingAreaUpdateChunkType)
+    , m_isWaitingForDidSetFrameNotification(false)
     , m_webView(webView)
 {
 }
 
-DrawingAreaProxy::~DrawingAreaProxy()
+DrawingAreaProxyUpdateChunk::~DrawingAreaProxyUpdateChunk()
 {
 }
 
-void DrawingAreaProxy::ensureBackingStore()
-{
-    if (m_backingStoreBitmap)
-        return;
-
-    BitmapInfo bitmapInfo = BitmapInfo::createBottomUp(m_viewSize);
-
-    void* pixels = 0;
-    m_backingStoreBitmap.set(::CreateDIBSection(0, &bitmapInfo, DIB_RGB_COLORS, &pixels, 0, 0));
-
-    if (!m_backingStoreDC) {
-        // Create a DC for the backing store.
-        HDC screenDC = ::GetDC(0);
-        m_backingStoreDC.set(::CreateCompatibleDC(screenDC));
-        ::ReleaseDC(0, screenDC);
-    }
-
-    ::SelectObject(m_backingStoreDC.get(), m_backingStoreBitmap.get());
-}
-
-void DrawingAreaProxy::paint(HDC hdc, RECT dirtyRect)
+void DrawingAreaProxyUpdateChunk::paint(const IntRect& rect, PlatformDrawingContext context)
 {
     if (m_isWaitingForDidSetFrameNotification) {
-        WebPageProxy* page = m_webView->page();
+        WebPageProxy* page = this->page();
         if (!page->isValid())
             return;
         
@@ -81,46 +60,12 @@ void DrawingAreaProxy::paint(HDC hdc, RECT dirtyRect)
             didReceiveMessage(page->process()->connection(), CoreIPC::MessageID(DrawingAreaProxyMessage::DidSetSize), *arguments.get());
     }
 
-    if (!m_backingStoreBitmap)
-        return;
-
-    // BitBlt from the backing-store to the passed in hdc.
-    IntRect rect(dirtyRect);
-    ::BitBlt(hdc, rect.x(), rect.y(), rect.width(), rect.height(), m_backingStoreDC.get(), rect.x(), rect.y(), SRCCOPY);
+    platformPaint(rect, context);
 }
 
-void DrawingAreaProxy::drawUpdateChunkIntoBackingStore(UpdateChunk* updateChunk)
+void DrawingAreaProxyUpdateChunk::setSize(const IntSize& viewSize)
 {
-    ensureBackingStore();
-
-    OwnPtr<HDC> updateChunkBitmapDC(::CreateCompatibleDC(m_backingStoreDC.get()));
-
-    // Create a bitmap.
-    BitmapInfo bitmapInfo = BitmapInfo::createBottomUp(updateChunk->frame().size());
-
-    // Duplicate the update chunk handle.
-    HANDLE updateChunkHandle;
-    BOOL result = ::DuplicateHandle(m_webView->page()->process()->processIdentifier(), updateChunk->memory(),
-                                    ::GetCurrentProcess(), &updateChunkHandle, STANDARD_RIGHTS_REQUIRED | FILE_MAP_READ | FILE_MAP_WRITE, false, DUPLICATE_CLOSE_SOURCE);
-
-    void* pixels = 0;
-    OwnPtr<HBITMAP> hBitmap(::CreateDIBSection(0, &bitmapInfo, DIB_RGB_COLORS, &pixels, updateChunkHandle, 0));
-    ::SelectObject(updateChunkBitmapDC.get(), hBitmap.get());
-
-    // BitBlt from the UpdateChunk to the backing store.
-    ::BitBlt(m_backingStoreDC.get(), updateChunk->frame().x(), updateChunk->frame().y(), updateChunk->frame().width(), updateChunk->frame().height(), updateChunkBitmapDC.get(), 0, 0, SRCCOPY);
-
-    // FIXME: We should not do this here.
-    ::CloseHandle(updateChunkHandle);
-
-    // Invalidate the WebView's HWND.
-    RECT rect = updateChunk->frame();
-    ::InvalidateRect(m_webView->window(), &rect, false);
-}
-
-void DrawingAreaProxy::setSize(const IntSize& viewSize)
-{
-    WebPageProxy* page = m_webView->page();
+    WebPageProxy* page = this->page();
     if (!page->isValid())
         return;
 
@@ -129,48 +74,48 @@ void DrawingAreaProxy::setSize(const IntSize& viewSize)
 
     m_viewSize = viewSize;
     m_lastSetViewSize = viewSize;
-    
+
     if (m_isWaitingForDidSetFrameNotification)
         return;
     m_isWaitingForDidSetFrameNotification = true;
-    
+
     page->process()->responsivenessTimer()->start();
     page->process()->connection()->send(DrawingAreaMessage::SetSize, page->pageID(), CoreIPC::In(viewSize));
 }
 
-void DrawingAreaProxy::didSetSize(UpdateChunk* updateChunk)
+void DrawingAreaProxyUpdateChunk::didSetSize(UpdateChunk* updateChunk)
 {
     ASSERT(m_isWaitingForDidSetFrameNotification);
     m_isWaitingForDidSetFrameNotification = false;
 
-    IntSize viewSize = updateChunk->frame().size();
+    IntSize viewSize = updateChunk->rect().size();
+
     if (viewSize != m_lastSetViewSize)
         setSize(m_lastSetViewSize);
 
-    // Invalidate the backing store.
-    m_backingStoreBitmap.clear();
+    invalidateBackingStore();
     drawUpdateChunkIntoBackingStore(updateChunk);
 
-    WebPageProxy* page = m_webView->page();
+    WebPageProxy* page = this->page();
     page->process()->responsivenessTimer()->stop();
 }
 
-void DrawingAreaProxy::update(UpdateChunk* updateChunk)
+void DrawingAreaProxyUpdateChunk::update(UpdateChunk* updateChunk)
 {
     drawUpdateChunkIntoBackingStore(updateChunk);
 
-    WebPageProxy* page = m_webView->page();
+    WebPageProxy* page = this->page();
     page->process()->connection()->send(DrawingAreaMessage::DidUpdate, page->pageID(), CoreIPC::In());
 }
 
-void DrawingAreaProxy::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder& arguments)
+void DrawingAreaProxyUpdateChunk::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder& arguments)
 {
     switch (messageID.get<DrawingAreaProxyMessage::Kind>()) {
         case DrawingAreaProxyMessage::Update: {
             UpdateChunk updateChunk;
             if (!arguments.decode(updateChunk))
                 return;
-            
+
             update(&updateChunk);
             break;
         }
