@@ -1,3 +1,14 @@
+2010-04-23  Qi Zhang  <qi.2.zhang@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] LayoutTests/fast/canvas/pointInPath.html passed, actually it failed
+        https://bugs.webkit.org/show_bug.cgi?id=37276
+
+        pointInPath.html passed because the expected.txt expect it fail, it is wrong.
+
+        * platform/qt/fast/canvas/pointInPath-expected.txt: Removed.
+
 2010-04-23  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
