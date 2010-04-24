@@ -1402,7 +1402,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (!_isStarted)
         return;
     
-    if ([NSGraphicsContext currentContextDrawingToScreen])
+    if ([NSGraphicsContext currentContextDrawingToScreen] || _isFlash)
         [self sendDrawRectEvent:rect];
     else {
         NSBitmapImageRep *printedPluginBitmap = [self _printedPluginBitmap];

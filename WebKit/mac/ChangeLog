@@ -1,3 +1,15 @@
+2010-04-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/7894489> When printing Flash, send a drawRect event, rather than NPPrint
+        
+        When printing Flash plug-ins in 32-bit, send a drawRect event with a CGContextRef, rather than calling
+        NPPrint with a GWorldPtr, since Flash prefers the CGContext path.
+
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView drawRect:]):
+
 2010-04-22  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/38029> +[WebTextIteratorPrivate initialize] is missing call to JSC::initializeThreading()
