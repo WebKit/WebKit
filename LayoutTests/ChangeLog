@@ -1,3 +1,18 @@
+2010-04-23  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        [Android] The touchmove delta used in basic-single-touch-events.html is too small for Android
+        https://bugs.webkit.org/show_bug.cgi?id=38056
+
+        * fast/events/touch/basic-single-touch-events-expected.txt:
+            - update the test expected output
+        * fast/events/touch/script-tests/basic-single-touch-events.js:
+        (verifyTouch): update test expectation with new coordinates.
+        (singleTouchSequence): increase the touch move delta.
+        (touchTargets): Start the touch at a different point to
+                 singleTouchSequence to make examining behavior easier.
+
 2010-04-23  Qi Zhang  <qi.2.zhang@nokia.com>
 
         Reviewed by Laszlo Gombos.

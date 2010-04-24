@@ -62,7 +62,7 @@ function verifyTouch(which) {
         break;
         case 1:
            verifyTouchEvent("touchmove", 1, 1, 1);
-           verifyTouchPoint("touches", 0, 20, 15, 0);
+           verifyTouchPoint("touches", 0, 50, 50, 0);
            shouldBe("lastEvent.shiftKey", "true");
            shouldBe("lastEvent.altKey", "true");
            shouldBe("lastEvent.ctrlKey", "false");
@@ -70,7 +70,7 @@ function verifyTouch(which) {
         break;
         case 2:
             verifyTouchEvent("touchend", 0, 1, 0);
-            verifyTouchPoint("changedTouches", 0, 20, 15, 0);
+            verifyTouchPoint("changedTouches", 0, 50, 50, 0);
             shouldBe("lastEvent.shiftKey", "false");
             shouldBe("lastEvent.altKey", "false");
         break;
@@ -92,7 +92,7 @@ function singleTouchSequence()
     eventSender.addTouchPoint(10, 10);
     eventSender.touchStart();
 
-    eventSender.updateTouchPoint(0, 20, 15);
+    eventSender.updateTouchPoint(0, 50, 50);
     eventSender.setTouchModifier("shift", true);
     eventSender.setTouchModifier("alt", true);
     eventSender.touchMove();
@@ -106,7 +106,7 @@ function singleTouchSequence()
 
 function touchTargets()
 {
-    eventSender.addTouchPoint(10, 10);
+    eventSender.addTouchPoint(20, 20);
     eventSender.touchStart();
 
     eventSender.updateTouchPoint(0, 1000, 1000);
