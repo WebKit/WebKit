@@ -56,6 +56,10 @@ class ExecutiveTest(unittest.TestCase):
         output = executive.run_command(["echo", "-n", unicode_tor], decode_output=False)
         self.assertEquals(output, utf8_tor)
 
+        # Make sure that str() input also works.
+        output = executive.run_command(["cat"], input=utf8_tor, decode_output=False)
+        self.assertEquals(output, utf8_tor)
+
         # FIXME: We should only have one run* method to test
         output = executive.run_and_throw_if_fail(["echo", "-n", unicode_tor], quiet=True)
         self.assertEquals(output, unicode_tor)

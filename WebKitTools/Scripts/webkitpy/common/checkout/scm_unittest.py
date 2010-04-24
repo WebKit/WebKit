@@ -52,6 +52,7 @@ from webkitpy.common.system.executive import Executive, run_command, ScriptError
 # Perhaps through some SCMTest base-class which both SVNTest and GitTest inherit from.
 
 # FIXME: This should be unified into one of the executive.py commands!
+# Callers could use run_and_throw_if_fail(args, cwd=cwd, quiet=True)
 def run_silent(args, cwd=None):
     process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=cwd)
     process.communicate() # ignore output
@@ -68,6 +69,20 @@ def write_into_file_at_path(file_path, contents, encoding="utf-8"):
 def read_from_path(file_path, encoding="utf-8"):
     with codecs.open(file_path, "r", encoding) as file:
         return file.read()
+
+
+def _make_diff(command, *args):
+    # We use this wrapper to disable output decoding. diffs should be treated as
+    # binary files since they may include text files of multiple differnet encodings.
+    return run_command([command, "diff"] + list(args), decode_output=False)
+
+
+def _svn_diff(*args):
+    return _make_diff("svn", *args)
+
+
+def _git_diff(*args):
+    return _make_diff("git", *args)
 
 
 # Exists to share svn repository creation code between the git and svn tests
@@ -106,7 +121,11 @@ class SVNTestRepository:
         cls._svn_add("test_file2")
         cls._svn_commit("third commit")
 
-        write_into_file_at_path("test_file", "test1test2test3\ntest4\n")
+        # This 4th commit is used to make sure that our patch file handling
+        # code correctly treats patches as binary and does not attempt to
+        # decode them assuming they're utf-8.
+        write_into_file_at_path("test_file", u"latin1 test: \u00A0\n", "latin1")
+        write_into_file_at_path("test_file2", u"utf-8 test: \u00A0\n", "utf-8")
         cls._svn_commit("fourth commit")
 
         # svn does not seem to update after commit as I would expect.
@@ -184,15 +203,12 @@ svn: resource out of date; try updating
 # GitTest and SVNTest inherit from this so any test_ methods here will be run once for this class and then once for each subclass.
 class SCMTest(unittest.TestCase):
     def _create_patch(self, patch_contents):
-        patch_path = os.path.join(self.svn_checkout_path, 'patch.diff')
-        write_into_file_at_path(patch_path, patch_contents)
-        patch = {}
-        patch['bug_id'] = '12345'
-        patch['url'] = 'file://%s' % urllib.pathname2url(patch_path)
+        # FIXME: This code is brittle if the Attachment API changes.
+        attachment = Attachment({"bug_id": 12345}, None)
+        attachment.contents = lambda: patch_contents
 
-        attachment = Attachment(patch, None) # FIXME: This is a hack, scm.py shouldn't be fetching attachment data.
         joe_cool = Committer(name="Joe Cool", email_or_emails=None)
-        attachment._reviewer = joe_cool
+        attachment.reviewer = lambda: joe_cool
 
         return attachment
 
@@ -256,12 +272,15 @@ class SCMTest(unittest.TestCase):
             changed_files.remove("test_dir")
         self.assertEqual(changed_files, ["test_dir/test_file3", "test_file"])
         self.assertEqual(sorted(self.scm.changed_files_for_revision(3)), sorted(["test_file", "test_file2"])) # Git and SVN return different orders.
-        self.assertEqual(self.scm.changed_files_for_revision(4), ["test_file"])
+        self.assertEqual(self.scm.changed_files_for_revision(1), ["test_file"])
 
     def _shared_test_contents_at_revision(self):
         self.assertEqual(self.scm.contents_at_revision("test_file", 2), "test1test2")
         self.assertEqual(self.scm.contents_at_revision("test_file", 3), "test1test2test3\n")
-        self.assertEqual(self.scm.contents_at_revision("test_file", 4), "test1test2test3\ntest4\n")
+
+        # Verify that contents_at_revision returns a byte array, aka str():
+        self.assertEqual(self.scm.contents_at_revision("test_file", 4), u"latin1 test: \u00A0\n".encode("latin1"))
+        self.assertEqual(self.scm.contents_at_revision("test_file2", 4), u"utf-8 test: \u00A0\n".encode("utf-8"))
 
         self.assertEqual(self.scm.contents_at_revision("test_file2", 3), "second file")
         # Files which don't exist:
@@ -526,13 +545,13 @@ Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
 
     def test_apply_svn_patch(self):
         scm = detect_scm_system(self.svn_checkout_path)
-        patch = self._create_patch(run_command(['svn', 'diff', '-r4:3']))
+        patch = self._create_patch(_svn_diff("-r4:3"))
         self._setup_webkittools_scripts_symlink(scm)
         Checkout(scm).apply_patch(patch)
 
     def test_apply_svn_patch_force(self):
         scm = detect_scm_system(self.svn_checkout_path)
-        patch = self._create_patch(run_command(['svn', 'diff', '-r2:4']))
+        patch = self._create_patch(_svn_diff("-r2:4"))
         self._setup_webkittools_scripts_symlink(scm)
         self.assertRaises(ScriptError, Checkout(scm).apply_patch, patch, force=True)
 
@@ -660,8 +679,8 @@ class GitTest(SCMTest):
         test_file = os.path.join(self.git_checkout_path, 'test_file')
         write_into_file_at_path(test_file, 'foo')
 
-        diff_to_common_base = run_command(['git', 'diff', self.scm.svn_branch_name() + '..'])
-        diff_to_merge_base = run_command(['git', 'diff', self.scm.svn_merge_base()])
+        diff_to_common_base = _git_diff(self.scm.svn_branch_name() + '..')
+        diff_to_merge_base = _git_diff(self.scm.svn_merge_base())
 
         self.assertFalse(re.search(r'foo', diff_to_common_base))
         self.assertTrue(re.search(r'foo', diff_to_merge_base))
@@ -714,13 +733,13 @@ class GitTest(SCMTest):
         # We carefullly pick a diff which does not have a directory addition
         # as currently svn-apply will error out when trying to remove directories
         # in Git: https://bugs.webkit.org/show_bug.cgi?id=34871
-        patch = self._create_patch(run_command(['git', 'diff', 'HEAD..HEAD^']))
+        patch = self._create_patch(_git_diff('HEAD..HEAD^'))
         self._setup_webkittools_scripts_symlink(scm)
         Checkout(scm).apply_patch(patch)
 
     def test_apply_git_patch_force(self):
         scm = detect_scm_system(self.git_checkout_path)
-        patch = self._create_patch(run_command(['git', 'diff', 'HEAD~2..HEAD']))
+        patch = self._create_patch(_git_diff('HEAD~2..HEAD'))
         self._setup_webkittools_scripts_symlink(scm)
         self.assertRaises(ScriptError, Checkout(scm).apply_patch, patch, force=True)
 

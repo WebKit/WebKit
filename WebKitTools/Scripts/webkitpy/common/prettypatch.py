@@ -36,9 +36,12 @@ class PrettyPatch(object):
         self._checkout_root = checkout_root
 
     def pretty_diff_file(self, diff):
+        # Diffs can contain multiple text files of different encodings
+        # so we always deal with them as byte arrays, not unicode strings.
+        assert(isinstance(diff, str))
         pretty_diff = self.pretty_diff(diff)
         diff_file = tempfile.NamedTemporaryFile(suffix=".html")
-        diff_file.write(pretty_diff.encode("utf-8"))
+        diff_file.write(pretty_diff)
         diff_file.flush()
         return diff_file
 
@@ -52,4 +55,6 @@ class PrettyPatch(object):
             pretty_patch_path,
             prettify_path,
         ]
-        return self._executive.run_command(args, input=diff)
+        # PrettyPatch does not modify the encoding of the diff output
+        # so we can't expect it to be utf-8.
+        return self._executive.run_command(args, input=diff, decode_output=False)

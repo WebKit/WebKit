@@ -308,7 +308,7 @@ class SVN(SCM):
         return self.cached_version
 
     def working_directory_is_clean(self):
-        return run_command(["svn", "diff"], cwd=self.checkout_root) == ""
+        return run_command(["svn", "diff"], cwd=self.checkout_root, decode_output=False) == ""
 
     def clean_working_directory(self):
         # svn revert -R is not as awesome as git reset --hard.
@@ -344,6 +344,7 @@ class SVN(SCM):
 
     def changed_files_for_revision(self, revision):
         # As far as I can tell svn diff --summarize output looks just like svn status output.
+        # No file contents printed, thus utf-8 auto-decoding in run_command is fine.
         status_command = ["svn", "diff", "--summarize", "-c", revision]
         return self.run_status_and_extract_filenames(status_command, self._status_regexp("ACDMR"))
 
@@ -361,14 +362,21 @@ class SVN(SCM):
         return "svn"
 
     def create_patch(self):
-        return run_command([self.script_path("svn-create-patch")], cwd=self.checkout_root, return_stderr=False)
+        """Returns a byte array (str()) representing the patch file.
+        Patch files are effectively binary since they may contain
+        files of multiple different encodings."""
+        return run_command([self.script_path("svn-create-patch")],
+            cwd=self.checkout_root, return_stderr=False,
+            decode_output=False)
 
     def committer_email_for_revision(self, revision):
         return run_command(["svn", "propget", "svn:author", "--revprop", "-r", revision]).rstrip()
 
     def contents_at_revision(self, path, revision):
+        """Returns a byte array (str()) containing the contents
+        of path @ revision in the repository."""
         remote_path = "%s/%s" % (self._repository_url(), path)
-        return run_command(["svn", "cat", "-r", revision, remote_path])
+        return run_command(["svn", "cat", "-r", revision, remote_path], decode_output=False)
 
     def diff_for_revision(self, revision):
         # FIXME: This should probably use cwd=self.checkout_root
@@ -466,6 +474,7 @@ class Git(SCM):
 
     def status_command(self):
         # git status returns non-zero when there are changes, so we use git diff name --name-status HEAD instead.
+        # No file contents printed, thus utf-8 autodecoding in run_command is fine.
         return ["git", "diff", "--name-status", "HEAD"]
 
     def _status_regexp(self, expected_types):
@@ -490,6 +499,8 @@ class Git(SCM):
         return self._changes_files_for_commit(commit_id)
 
     def conflicted_files(self):
+        # We do not need to pass decode_output for this diff command
+        # as we're passing --name-status which does not output any data.
         status_command = ['git', 'diff', '--name-status', '-C', '-M', '--diff-filter=U']
         return self.run_status_and_extract_filenames(status_command, self._status_regexp("U"))
 
@@ -504,8 +515,11 @@ class Git(SCM):
         return "git"
 
     def create_patch(self):
+        """Returns a byte array (str()) representing the patch file.
+        Patch files are effectively binary since they may contain
+        files of multiple different encodings."""
         # FIXME: This should probably use cwd=self.checkout_root
-        return run_command(['git', 'diff', '--binary', 'HEAD'])
+        return run_command(['git', 'diff', '--binary', 'HEAD'], decode_output=False)
 
     @classmethod
     def git_commit_from_svn_revision(cls, revision):
@@ -517,7 +531,9 @@ class Git(SCM):
         return git_commit
 
     def contents_at_revision(self, path, revision):
-        return run_command(["git", "show", "%s:%s" % (self.git_commit_from_svn_revision(revision), path)])
+        """Returns a byte array (str()) containing the contents
+        of path @ revision in the repository."""
+        return run_command(["git", "show", "%s:%s" % (self.git_commit_from_svn_revision(revision), path)], decode_output=False)
 
     def diff_for_revision(self, revision):
         git_commit = self.git_commit_from_svn_revision(revision)
@@ -563,10 +579,16 @@ class Git(SCM):
         return Git.read_git_config('svn-remote.svn.fetch').split(':')[1]
 
     def create_patch_from_local_commit(self, commit_id):
-        return run_command(['git', 'diff', '--binary', commit_id + "^.." + commit_id])
+        """Returns a byte array (str()) representing the patch file.
+        Patch files are effectively binary since they may contain
+        files of multiple different encodings."""
+        return run_command(['git', 'diff', '--binary', commit_id + "^.." + commit_id], decode_output=False)
 
     def create_patch_since_local_commit(self, commit_id):
-        return run_command(['git', 'diff', '--binary', commit_id])
+        """Returns a byte array (str()) representing the patch file.
+        Patch files are effectively binary since they may contain
+        files of multiple different encodings."""
+        return run_command(['git', 'diff', '--binary', commit_id], decode_output=False)
 
     def commit_locally_with_message(self, message):
         run_command(['git', 'commit', '--all', '-F', '-'], input=message)

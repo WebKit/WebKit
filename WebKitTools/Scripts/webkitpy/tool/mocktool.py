@@ -507,7 +507,8 @@ class MockExecute(Mock):
                     input=None,
                     error_handler=None,
                     return_exit_code=False,
-                    return_stderr=True):
+                    return_stderr=True,
+                    decode_output=False):
         return "MOCK output of child process"
 
 

@@ -568,7 +568,7 @@ class Bugzilla(object):
 
     def _fill_attachment_form(self,
                               description,
-                              diff,
+                              patch_file_object,
                               comment_text=None,
                               mark_for_review=False,
                               mark_for_commit_queue=False,
@@ -589,8 +589,6 @@ class Bugzilla(object):
         else:
             patch_name ="%s.patch" % timestamp()
 
-        # ClientForm expects a file-like object
-        patch_file_object = StringIO.StringIO(diff.encode("utf-8"))
         self.browser.add_file(patch_file_object,
                               "text/plain",
                               patch_name,
@@ -618,8 +616,12 @@ class Bugzilla(object):
                           self.bug_server_url, bug_id))
         self.browser.select_form(name="entryform")
 
+        # _fill_attachment_form expects a file-like object
+        # Patch files are already binary, so no encoding needed.
+        assert(isinstance(diff, str))
+        patch_file_object = StringIO.StringIO(diff)
         self._fill_attachment_form(description,
-                                   diff,
+                                   patch_file_object,
                                    mark_for_review=mark_for_review,
                                    mark_for_commit_queue=mark_for_commit_queue,
                                    mark_for_landing=mark_for_landing,
@@ -682,9 +684,13 @@ class Bugzilla(object):
         self.browser["comment"] = bug_description
 
         if diff:
+            # _fill_attachment_form expects a file-like object
+            # Patch files are already binary, so no encoding needed.
+            assert(isinstance(diff, str))
+            patch_file_object = StringIO.StringIO(diff)
             self._fill_attachment_form(
                     patch_description,
-                    diff,
+                    patch_file_object,
                     mark_for_review=mark_for_review,
                     mark_for_commit_queue=mark_for_commit_queue)
 

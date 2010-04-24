@@ -1,3 +1,36 @@
+2010-04-23  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        check-webkit-style complains about non-utf8 data in layout test result
+        https://bugs.webkit.org/show_bug.cgi?id=38027
+
+        The problem was we were assuming patch files/diff output as utf-8.
+        Turns out they're not.  We have to treat them as binary data because
+        a single patch may have multiple text files in it with conflicting encodings!
+
+        * Scripts/webkitpy/common/checkout/api.py:
+         - contents_at_revision returns a byte array, so decode it to unicode
+           before passing it to parse_latest_entry_from_file
+        * Scripts/webkitpy/common/checkout/api_unittest.py:
+         - Update our mock mock_contents_at_revision to match the encoding
+           semantics of the real one.
+        * Scripts/webkitpy/common/checkout/scm.py:
+         - Be careful not to decode output which may contain file contents
+           (like diff, cat or show) as the encoding for that content is unknown.
+        * Scripts/webkitpy/common/checkout/scm_unittest.py:
+         - Update our tests to use both latin1 and utf-8 encoded data.
+        * Scripts/webkitpy/common/net/bugzilla.py:
+         - _fill_attachment_form should not assume unicode data.  Callers
+           may wish to attach other types of files to bugs.
+        * Scripts/webkitpy/common/prettypatch.py:
+         - Diffs are byte arrays, deal with them as such.
+        * Scripts/webkitpy/common/prettypatch_unittest.py:
+         - Test to make sure we handle diffs with multiple conflicting encodings.
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+         - Make sure that our unicode support does not break our
+           byte array input support for run_command.
+
 2010-04-23  Sam Weinig  <sam@webkit.org>
 
         Reviewed by David Levin.
