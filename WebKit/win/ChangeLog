@@ -1,3 +1,17 @@
+2010-04-25  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: inspector client shouldn't check if it can be opened
+        docked if it is already in that state.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37946
+
+        * WebCoreSupport/WebInspectorClient.cpp:
+        (WebInspectorFrontendClient::WebInspectorFrontendClient):
+        (WebInspectorFrontendClient::showWindowWithoutNotifications):
+        * WebCoreSupport/WebInspectorClient.h:
+
 2010-04-24  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Sam Weinig.
