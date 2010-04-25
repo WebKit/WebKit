@@ -254,7 +254,15 @@ double UString::toDouble(bool tolerateTrailingJunk, bool tolerateEmptyString) co
         return NaN;
     }
 
+    // FIXME: If tolerateTrailingJunk is true, then we want to tolerate junk 
+    // after the number, even if it contains invalid UTF-16 sequences. So we
+    // shouldn't use the UTF8String function, which returns null when it
+    // encounters invalid UTF-16. Further, we have no need to convert the
+    // non-ASCII characters to UTF-8, so the UTF8String does quite a bit of
+    // unnecessary work.
     CString s = UTF8String();
+    if (s.isNull())
+        return NaN;
     const char* c = s.data();
 
     // skip leading white space
@@ -318,6 +326,7 @@ double UString::toDouble(bool tolerateTrailingJunk, bool tolerateEmptyString) co
     while (isASCIISpace(*c))
         c++;
     // don't allow anything after - unless tolerant=true
+    // FIXME: If string contains a U+0000 character, then this check is incorrect.
     if (!tolerateTrailingJunk && *c != '\0')
         d = NaN;
 

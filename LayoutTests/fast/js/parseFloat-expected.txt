@@ -1,0 +1,52 @@
+Tests for the parseFloat function.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS parseFloat() is NaN
+PASS parseFloat('') is NaN
+PASS parseFloat(' 0') is 0
+PASS parseFloat('0 ') is 0
+PASS parseFloat('x0') is NaN
+PASS parseFloat('0x') is 0
+PASS parseFloat(' 1') is 1
+PASS parseFloat('1 ') is 1
+PASS parseFloat('x1') is NaN
+PASS parseFloat('1x') is 1
+PASS parseFloat(' 2.3') is 2.3
+PASS parseFloat('2.3 ') is 2.3
+PASS parseFloat('x2.3') is NaN
+PASS parseFloat('2.3x') is 2.3
+PASS parseFloat('0x2') is 0
+PASS parseFloat('1' + nonASCIINonSpaceCharacter) is 1
+PASS parseFloat(nonASCIINonSpaceCharacter + '1') is NaN
+FAIL parseFloat('1' + illegalUTF16Sequence) should be 1. Was NaN.
+PASS parseFloat(illegalUTF16Sequence + '1') is NaN
+PASS parseFloat(tab + '1') is 1
+FAIL parseFloat(nbsp + '1') should be 1. Was NaN.
+PASS parseFloat(ff + '1') is 1
+PASS parseFloat(vt + '1') is 1
+PASS parseFloat(cr + '1') is 1
+PASS parseFloat(lf + '1') is 1
+FAIL parseFloat(ls + '1') should be 1. Was NaN.
+FAIL parseFloat(ps + '1') should be 1. Was NaN.
+FAIL parseFloat(oghamSpaceMark + '1') should be 1. Was NaN.
+FAIL parseFloat(mongolianVowelSeparator + '1') should be 1. Was NaN.
+FAIL parseFloat(enQuad + '1') should be 1. Was NaN.
+FAIL parseFloat(emQuad + '1') should be 1. Was NaN.
+FAIL parseFloat(enSpace + '1') should be 1. Was NaN.
+FAIL parseFloat(emSpace + '1') should be 1. Was NaN.
+FAIL parseFloat(threePerEmSpace + '1') should be 1. Was NaN.
+FAIL parseFloat(fourPerEmSpace + '1') should be 1. Was NaN.
+FAIL parseFloat(sixPerEmSpace + '1') should be 1. Was NaN.
+FAIL parseFloat(figureSpace + '1') should be 1. Was NaN.
+FAIL parseFloat(punctuationSpace + '1') should be 1. Was NaN.
+FAIL parseFloat(thinSpace + '1') should be 1. Was NaN.
+FAIL parseFloat(hairSpace + '1') should be 1. Was NaN.
+FAIL parseFloat(narrowNoBreakSpace + '1') should be 1. Was NaN.
+FAIL parseFloat(mediumMathematicalSpace + '1') should be 1. Was NaN.
+FAIL parseFloat(ideographicSpace + '1') should be 1. Was NaN.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

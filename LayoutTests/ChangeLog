@@ -1,3 +1,19 @@
+2010-04-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        REGRESSION (r56560): Crash in parseFloat if passed invalid UTF-16 data
+        https://bugs.webkit.org/show_bug.cgi?id=38083
+        rdar://problem/7901044
+
+        * fast/js/parseFloat-expected.txt: Added.
+        * fast/js/parseFloat.html: Added.
+        * fast/js/script-tests/parseFloat.js: Added.
+
+        * fast/js/ToNumber-expected.txt: Added.
+        * fast/js/ToNumber.html: Added.
+        * fast/js/script-tests/ToNumber.js: Added.
+
 2010-04-24  Dan Bernstein  <mitz@apple.com>
 
         Add platform-specific results for Mac after r58222.

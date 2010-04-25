@@ -1,0 +1,122 @@
+Test the JavaScript ToNumber operation.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS +undefined is NaN
+PASS +null is 0
+PASS +false is 0
+PASS +true is 1
+PASS +2 is 2
+PASS +'' is 0
+PASS +' 1' is 1
+PASS +'1 ' is 1
+PASS +'x1' is NaN
+PASS +'1x' is NaN
+PASS +'0x1' is 1
+PASS +'1x0' is NaN
+FAIL +(nullCharacter + '1') should be NaN. Was 0.
+FAIL +('1' + nullCharacter) should be NaN. Was 1.
+FAIL +('1' + nullCharacter + '1') should be NaN. Was 1.
+PASS +(nonASCIICharacter + '1') is NaN
+PASS +('1' + nonASCIICharacter) is NaN
+PASS +('1' + nonASCIICharacter + '1') is NaN
+PASS +('1' + nonASCIINonSpaceCharacter) is NaN
+PASS +(nonASCIINonSpaceCharacter + '1') is NaN
+PASS +('1' + nonASCIINonSpaceCharacter + '1') is NaN
+PASS +(illegalUTF16Sequence + '1') is NaN
+PASS +('1' + illegalUTF16Sequence) is NaN
+PASS +('1' + illegalUTF16Sequence + '1') is NaN
+PASS +'inf' is NaN
+PASS +'infinity' is NaN
+PASS +'Inf' is NaN
+PASS +'+inf' is NaN
+PASS +'+infinity' is NaN
+PASS +'+Inf' is NaN
+PASS +'-inf' is NaN
+PASS +'-infinity' is NaN
+PASS +'-Inf' is NaN
+PASS +'Infinity' is Infinity
+PASS +'+Infinity' is Infinity
+PASS +'-Infinity' is -Infinity
+PASS +'++1' is NaN
+PASS +'AB' is NaN
+PASS +'0xAB' is 171
+PASS +'1e1' is 10
+PASS +'1E1' is 10
+PASS +(tab + '1') is 1
+FAIL +(nbsp + '1') should be 1. Was NaN.
+PASS +(ff + '1') is 1
+PASS +(vt + '1') is 1
+PASS +(cr + '1') is 1
+PASS +(lf + '1') is 1
+FAIL +(ls + '1') should be 1. Was NaN.
+FAIL +(ps + '1') should be 1. Was NaN.
+FAIL +(oghamSpaceMark + '1') should be 1. Was NaN.
+FAIL +(mongolianVowelSeparator + '1') should be 1. Was NaN.
+FAIL +(enQuad + '1') should be 1. Was NaN.
+FAIL +(emQuad + '1') should be 1. Was NaN.
+FAIL +(enSpace + '1') should be 1. Was NaN.
+FAIL +(emSpace + '1') should be 1. Was NaN.
+FAIL +(threePerEmSpace + '1') should be 1. Was NaN.
+FAIL +(fourPerEmSpace + '1') should be 1. Was NaN.
+FAIL +(sixPerEmSpace + '1') should be 1. Was NaN.
+FAIL +(figureSpace + '1') should be 1. Was NaN.
+FAIL +(punctuationSpace + '1') should be 1. Was NaN.
+FAIL +(thinSpace + '1') should be 1. Was NaN.
+FAIL +(hairSpace + '1') should be 1. Was NaN.
+FAIL +(narrowNoBreakSpace + '1') should be 1. Was NaN.
+FAIL +(mediumMathematicalSpace + '1') should be 1. Was NaN.
+FAIL +(ideographicSpace + '1') should be 1. Was NaN.
+PASS +('1' + tab) is 1
+FAIL +('1' + nbsp) should be 1. Was NaN.
+PASS +('1' + ff) is 1
+PASS +('1' + vt) is 1
+PASS +('1' + cr) is 1
+PASS +('1' + lf) is 1
+FAIL +('1' + ls) should be 1. Was NaN.
+FAIL +('1' + ps) should be 1. Was NaN.
+FAIL +('1' + oghamSpaceMark) should be 1. Was NaN.
+FAIL +('1' + mongolianVowelSeparator) should be 1. Was NaN.
+FAIL +('1' + enQuad) should be 1. Was NaN.
+FAIL +('1' + emQuad) should be 1. Was NaN.
+FAIL +('1' + enSpace) should be 1. Was NaN.
+FAIL +('1' + emSpace) should be 1. Was NaN.
+FAIL +('1' + threePerEmSpace) should be 1. Was NaN.
+FAIL +('1' + fourPerEmSpace) should be 1. Was NaN.
+FAIL +('1' + sixPerEmSpace) should be 1. Was NaN.
+FAIL +('1' + figureSpace) should be 1. Was NaN.
+FAIL +('1' + punctuationSpace) should be 1. Was NaN.
+FAIL +('1' + thinSpace) should be 1. Was NaN.
+FAIL +('1' + hairSpace) should be 1. Was NaN.
+FAIL +('1' + narrowNoBreakSpace) should be 1. Was NaN.
+FAIL +('1' + mediumMathematicalSpace) should be 1. Was NaN.
+FAIL +('1' + ideographicSpace) should be 1. Was NaN.
+PASS +('1' + tab + '1') is NaN
+PASS +('1' + nbsp + '1') is NaN
+PASS +('1' + ff + '1') is NaN
+PASS +('1' + vt + '1') is NaN
+PASS +('1' + cr + '1') is NaN
+PASS +('1' + lf + '1') is NaN
+PASS +('1' + ls + '1') is NaN
+PASS +('1' + ps + '1') is NaN
+PASS +('1' + oghamSpaceMark + '1') is NaN
+PASS +('1' + mongolianVowelSeparator + '1') is NaN
+PASS +('1' + enQuad + '1') is NaN
+PASS +('1' + emQuad + '1') is NaN
+PASS +('1' + enSpace + '1') is NaN
+PASS +('1' + emSpace + '1') is NaN
+PASS +('1' + threePerEmSpace + '1') is NaN
+PASS +('1' + fourPerEmSpace + '1') is NaN
+PASS +('1' + sixPerEmSpace + '1') is NaN
+PASS +('1' + figureSpace + '1') is NaN
+PASS +('1' + punctuationSpace + '1') is NaN
+PASS +('1' + thinSpace + '1') is NaN
+PASS +('1' + hairSpace + '1') is NaN
+PASS +('1' + narrowNoBreakSpace + '1') is NaN
+PASS +('1' + mediumMathematicalSpace + '1') is NaN
+PASS +('1' + ideographicSpace + '1') is NaN
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
