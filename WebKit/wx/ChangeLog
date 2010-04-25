@@ -1,3 +1,21 @@
+2010-04-25  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        Update focus handling code to match current approaches used by other platforms,
+        and fix focus handling for corner cases such as when a mouse down pops up a dialog.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=38086
+
+        * WebView.cpp:
+        (wxWebView::Create):
+        (wxWebView::OnTLWActivated):
+        (wxWebView::OnPaint):
+        (wxWebView::OnMouseEvents):
+        (wxWebView::OnSetFocus):
+        (wxWebView::OnKillFocus):
+        * WebView.h:
+
 2010-04-20  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

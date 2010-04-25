@@ -340,6 +340,9 @@ bool wxWebView::Create(wxWindow* parent, int id, const wxPoint& position,
     SetDatabasesEnabled(true);
 #endif
 
+    wxWindow* tlw = wxGetTopLevelParent(this);
+    tlw->Connect(-1, wxEVT_ACTIVATE, wxActivateEventHandler(wxWebView::OnTLWActivated));
+
     m_isInitialized = true;
 
     return true;
@@ -357,6 +360,15 @@ wxWebView::~wxWebView()
     
     delete m_impl->page;
     m_impl->page = 0;   
+}
+
+void wxWebView::OnTLWActivated(wxActivateEvent& event)
+{        
+    if (m_impl && m_impl->page && m_impl->page->focusController())
+        m_impl->page->focusController()->setActive(event.GetActive());
+    
+    event.Skip();
+    
 }
 
 void wxWebView::Stop()
@@ -528,13 +540,6 @@ void wxWebView::OnPaint(wxPaintEvent& event)
     if (m_beingDestroyed || !m_mainFrame)
         return;
 
-    // WebView active state is based on TLW active state.
-    wxTopLevelWindow* tlw = dynamic_cast<wxTopLevelWindow*>(wxGetTopLevelParent(this));
-    if (tlw && tlw->IsActive())
-        m_impl->page->focusController()->setActive(true);
-    else {
-        m_impl->page->focusController()->setActive(false);
-    }
     WebCore::Frame* frame = m_mainFrame->GetFrame();
     if (!frame || !frame->view())
         return;
@@ -620,6 +625,21 @@ void wxWebView::OnMouseEvents(wxMouseEvent& event)
         return;
     }
     
+    // If an event, such as a right-click event, leads to a focus change (e.g. it 
+    // raises a dialog), WebKit never gets the mouse up event and never relinquishes 
+    // mouse capture. This leads to WebKit handling mouse events, such as modifying
+    // the selection, while other controls or top level windows have the focus.
+    // I'm not sure if this is the right place to handle this, but I can't seem to
+    // find a precedent on how to handle this in other ports.
+    if (wxWindow::FindFocus() != this) {
+        while (HasCapture())
+            ReleaseMouse();
+
+        frame->eventHandler()->setMousePressed(false);
+
+        return;
+    }
+        
     int clickCount = event.ButtonDClick() ? 2 : 1;
 
     if (clickCount == 1 && m_impl->tripleClickTimer.IsRunning()) {
@@ -882,26 +902,35 @@ void wxWebView::OnKeyEvents(wxKeyEvent& event)
 
 void wxWebView::OnSetFocus(wxFocusEvent& event)
 {
-    WebCore::Frame* frame = 0;
-    if (m_mainFrame)
-        frame = m_mainFrame->GetFrame();
-        
-    if (frame) {
-        frame->selection()->setFocused(true);
-    }
+    if (m_impl && m_impl->page && m_impl->page->focusController()) {
+        m_impl->page->focusController()->setFocused(true);
+        m_impl->page->focusController()->setActive(true);
 
+        if (!m_impl->page->focusController()->focusedFrame() && m_mainFrame)
+            m_impl->page->focusController()->setFocusedFrame(m_mainFrame->GetFrame());
+    }
+    
     event.Skip();
 }
 
 void wxWebView::OnKillFocus(wxFocusEvent& event)
 {
-    WebCore::Frame* frame = 0;
-    if (m_mainFrame)
-        frame = m_mainFrame->GetFrame();
-        
-    if (frame) {
-        frame->selection()->setFocused(false);
+    if (m_impl && m_impl->page && m_impl->page->focusController()) {
+        m_impl->page->focusController()->setFocused(false);
+
+        // We also handle active state in OnTLWActivated, but if a user does not
+        // call event.Skip() in their own EVT_ACTIVATE handler, we won't get those
+        // callbacks. So we handle active state here as well as a fallback.
+        wxTopLevelWindow* tlw = dynamic_cast<wxTopLevelWindow*>(wxGetTopLevelParent(this));
+        if (tlw && tlw->IsActive())
+            m_impl->page->focusController()->setActive(true);
+        else
+            m_impl->page->focusController()->setActive(false);
     }
+    
+    while (HasCapture())
+        ReleaseMouse();
+    
     event.Skip();
 }
 
