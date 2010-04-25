@@ -55,7 +55,7 @@ void WebGeolocationControllerClient::stopUpdating()
     COMPtr<IWebGeolocationProvider> provider;
     if (FAILED(m_webView->geolocationProvider(&provider)))
         return;
-    provider->registerWebView(m_webView.get());
+    provider->unregisterWebView(m_webView.get());
 }
 
 GeolocationPosition* WebGeolocationControllerClient::lastPosition()

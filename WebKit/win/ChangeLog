@@ -1,3 +1,14 @@
+2010-04-24  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Typo in Geolocation code causes crashes when updates are stopped
+        https://bugs.webkit.org/show_bug.cgi?id=38089
+        <rdar://problem/7904104> Crash closing geolocation tab after allowing to use geolocation
+
+        * WebCoreSupport/WebGeolocationControllerClient.cpp:
+        (WebGeolocationControllerClient::stopUpdating): Call unregister instead of register.
+
 2010-04-23  Andy Estes  <aestes@apple.com>
 
         Rubber stamped by Steve Falkenburg.
