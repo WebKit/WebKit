@@ -14,7 +14,7 @@
         (JSC::parseFloat): Added a FIXME comment about a problem I noticed;
         covered by test cases in the test I added.
         * runtime/UString.cpp:
-        (JSC::UString::toDouble): Added FIXME comments about two problem I
+        (JSC::UString::toDouble): Added FIXME comments about two problems I
         noticed; covered by test cases in the tests I added. Added a return
         statement so we don't crash when illegal UTF-16 sequences are present.
 
