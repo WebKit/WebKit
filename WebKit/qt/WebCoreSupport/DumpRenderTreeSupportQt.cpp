@@ -265,8 +265,8 @@ QString DumpRenderTreeSupportQt::counterValueForElementById(QWebFrame* frame, co
 {
     Frame* coreFrame = QWebFramePrivate::core(frame);
     if (Document* document = coreFrame->document()) {
-        Element* element = document->getElementById(id);
-        return WebCore::counterValueForElement(element);
+        if (Element* element = document->getElementById(id))
+            return WebCore::counterValueForElement(element);
     }
     return QString();
 }

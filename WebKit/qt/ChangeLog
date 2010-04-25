@@ -1,3 +1,13 @@
+2010-04-25  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] layoutTestController.counterValueForElementById crashes for a nonexistent ID
+        https://bugs.webkit.org/show_bug.cgi?id=34573
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::counterValueForElementById):
+
 2010-04-20  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Simon Hausmann.
