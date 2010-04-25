@@ -613,6 +613,7 @@ bool RenderTheme::isControlStyled(const RenderStyle* style, const BorderData& bo
         case ButtonPart:
         case ListboxPart:
         case MenulistPart:
+        case ProgressBarPart:
         // FIXME: Uncomment this when making search fields style-able.
         // case SearchFieldPart:
         case TextFieldPart:

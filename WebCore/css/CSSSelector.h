@@ -187,6 +187,7 @@ namespace WebCore {
             PseudoInputListButton,
             PseudoInnerSpinButton,
             PseudoOuterSpinButton,
+            PseudoProgressBarValue,
         };
 
         PseudoType pseudoType() const

@@ -52,7 +52,7 @@ enum ControlPart {
     MediaSeekForwardButtonPart, MediaRewindButtonPart, MediaReturnToRealtimeButtonPart, MediaToggleClosedCaptionsButtonPart,
     MediaSliderPart, MediaSliderThumbPart, MediaVolumeSliderContainerPart, MediaVolumeSliderPart, MediaVolumeSliderThumbPart,
     MediaControlsBackgroundPart, MediaCurrentTimePart, MediaTimeRemainingPart,
-    MenulistPart, MenulistButtonPart, MenulistTextPart, MenulistTextFieldPart, OuterSpinButtonPart, ProgressBarPart,
+    MenulistPart, MenulistButtonPart, MenulistTextPart, MenulistTextFieldPart, OuterSpinButtonPart, ProgressBarPart, ProgressBarValuePart,
     SliderHorizontalPart, SliderVerticalPart, SliderThumbHorizontalPart,
     SliderThumbVerticalPart, CaretPart, SearchFieldPart, SearchFieldDecorationPart,
     SearchFieldResultsDecorationPart, SearchFieldResultsButtonPart,

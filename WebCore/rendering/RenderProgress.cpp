@@ -23,15 +23,35 @@
 
 #include "RenderProgress.h"
 
+#include "HTMLDivElement.h"
 #include "HTMLProgressElement.h"
 #include "RenderTheme.h"
+#include "RenderView.h"
 #include <wtf/CurrentTime.h>
+#include <wtf/RefPtr.h>
 
 using namespace std;
 
 namespace WebCore {
 
 using namespace HTMLNames;
+
+class ProgressValueElement : public HTMLDivElement {
+public:
+    ProgressValueElement(Document*, Node* shadowParent);
+
+private:        
+    virtual bool isShadowNode() const { return true; }
+    virtual Node* shadowParentNode() { return m_shadowParent; }
+
+    Node* m_shadowParent;
+};
+
+ProgressValueElement::ProgressValueElement(Document* document, Node* shadowParent)
+: HTMLDivElement(divTag, document)
+, m_shadowParent(shadowParent)
+{
+}
 
 RenderProgress::RenderProgress(HTMLProgressElement* element)
     : RenderBlock(element)
@@ -41,7 +61,14 @@ RenderProgress::RenderProgress(HTMLProgressElement* element)
     , m_animationDuration(0)
     , m_animating(false)
     , m_animationTimer(this, &RenderProgress::animationTimerFired)
+    , m_valuePart(0)
 {
+}
+
+RenderProgress::~RenderProgress()
+{
+    if (m_valuePart)
+        m_valuePart->detach();
 }
 
 void RenderProgress::layout()
@@ -50,10 +77,32 @@ void RenderProgress::layout()
 
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
 
+    IntSize oldSize = size();
+
     calcWidth();
     calcHeight();
+    if (m_valuePart) {
+        IntRect valuePartRect(borderLeft() + paddingLeft(), borderTop() + paddingTop(), lround((width() - borderLeft() - paddingLeft() - borderRight() - paddingRight()) * position()), height()  - borderTop() - paddingTop() - borderBottom() - paddingBottom());
+        if (style()->direction() == RTL)
+            valuePartRect.setX(width() - borderRight() - paddingRight() - valuePartRect.width());
+        toRenderBox(m_valuePart->renderer())->setFrameRect(valuePartRect);
 
-    m_overflow.clear();
+        if (oldSize != size())
+            m_valuePart->renderer()->setChildNeedsLayout(true, false);
+        
+        LayoutStateMaintainer statePusher(view(), this, size());
+        
+        IntRect oldRect = toRenderBox(m_valuePart->renderer())->frameRect();
+        
+        m_valuePart->renderer()->layoutIfNeeded();
+
+        toRenderBox(m_valuePart->renderer())->setFrameRect(valuePartRect);
+        if (m_valuePart->renderer()->checkForRepaintDuringLayout())
+            m_valuePart->renderer()->repaintDuringLayoutIfMoved(oldRect);
+        
+        statePusher.pop();
+        addOverflowFromChild(toRenderBox(m_valuePart->renderer()));
+    }
 
     updateAnimationState();
 
@@ -62,6 +111,13 @@ void RenderProgress::layout()
     setNeedsLayout(false);
 }
 
+void RenderProgress::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+{
+    RenderBlock::styleDidChange(diff, oldStyle);
+
+    updateValuePartState();
+}
+    
 void RenderProgress::updateFromElement()
 {
     HTMLProgressElement* element = progressElement();
@@ -71,7 +127,44 @@ void RenderProgress::updateFromElement()
 
     updateAnimationState();
 
+    updateValuePartState();
+    
     repaint();
+}
+
+void RenderProgress::updateValuePartState()
+{
+    bool needLayout = !style()->hasAppearance() || m_valuePart;
+    if (!style()->hasAppearance() && !m_valuePart) {
+        m_valuePart = new ProgressValueElement(document(), node());
+        RefPtr<RenderStyle> styleForValuePart = createStyleForValuePart(style());
+        m_valuePart->setRenderer(m_valuePart->createRenderer(renderArena(), styleForValuePart.get()));
+        m_valuePart->renderer()->setStyle(styleForValuePart.release());
+        m_valuePart->setAttached();
+        m_valuePart->setInDocument(true);
+        addChild(m_valuePart->renderer());
+    } else if (style()->hasAppearance() && m_valuePart) {
+        m_valuePart->detach();
+        m_valuePart = 0;
+    }
+    if (needLayout)
+        setNeedsLayout(true);
+}
+
+PassRefPtr<RenderStyle> RenderProgress::createStyleForValuePart(RenderStyle* parentStyle)
+{
+    RefPtr<RenderStyle> styleForValuePart;
+    RenderStyle* pseudoStyle = getCachedPseudoStyle(PROGRESS_BAR_VALUE);
+    if (pseudoStyle)
+        styleForValuePart = RenderStyle::clone(pseudoStyle);
+    else
+        styleForValuePart = RenderStyle::create();
+    
+    if (parentStyle)
+        styleForValuePart->inheritFrom(parentStyle);
+    styleForValuePart->setDisplay(BLOCK);
+    styleForValuePart->setAppearance(ProgressBarValuePart);
+    return styleForValuePart.release();
 }
 
 double RenderProgress::animationProgress()
@@ -99,7 +192,7 @@ void RenderProgress::updateAnimationState()
     m_animationDuration = theme()->animationDurationForProgressBar(this);
     m_animationRepeatInterval = theme()->animationRepeatIntervalForProgressBar(this);
 
-    bool animating = m_animationDuration > 0;
+    bool animating = style()->hasAppearance() && m_animationDuration > 0;
     if (animating == m_animating)
         return;
 

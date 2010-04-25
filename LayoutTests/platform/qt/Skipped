@@ -5219,3 +5219,7 @@ svg/custom/clip-path-units-changes.svg
 svg/custom/clip-path-with-transform.svg
 svg/custom/recursive-clippath.svg
 svg/custom/marker-overflow-clip.svg
+
+# Need new results
+fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element.html
+

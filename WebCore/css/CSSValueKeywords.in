@@ -583,6 +583,7 @@ menulist-text
 menulist-textfield
 outer-spin-button
 progress-bar
+progress-bar-value
 slider-horizontal
 slider-vertical
 sliderthumb-horizontal

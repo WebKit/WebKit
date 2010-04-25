@@ -1,3 +1,41 @@
+2010-04-25  yael aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Adele Peterson.
+
+        Allow styling of HTMLProgressElement.
+        https://bugs.webkit.org/show_bug.cgi?id=37901
+
+        Added a new pseudo element to represent the value portion of the progress element.
+        Web developers can style this pseudo element separate from the rest of the progress element.
+
+        Test: fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element.html
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::pseudoId):
+        (WebCore::nameToPseudoTypeMap):
+        (WebCore::CSSSelector::extractPseudoType):
+        * css/CSSSelector.h:
+        * css/CSSValueKeywords.in:
+        * platform/ThemeTypes.h:
+        * rendering/RenderProgress.cpp:
+        (WebCore::ProgressValueElement::isShadowNode):
+        (WebCore::ProgressValueElement::shadowParentNode):
+        (WebCore::ProgressValueElement::ProgressValueElement):
+        (WebCore::RenderProgress::RenderProgress):
+        (WebCore::RenderProgress::~RenderProgress):
+        (WebCore::RenderProgress::layout):
+        (WebCore::RenderProgress::styleDidChange):
+        (WebCore::RenderProgress::updateFromElement):
+        (WebCore::RenderProgress::updateValuePartState):
+        (WebCore::RenderProgress::createStyleForValuePart):
+        (WebCore::RenderProgress::updateAnimationState):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::isControlStyled):
+        * rendering/RenderProgress.h:
+        * rendering/style/RenderStyleConstants.h:
+
 2010-04-24  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

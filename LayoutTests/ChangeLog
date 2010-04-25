@@ -1,3 +1,22 @@
+2010-04-25  yael aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Adele Peterson.
+
+        Allow styling of HTMLProgressElement.
+        https://bugs.webkit.org/show_bug.cgi?id=37901
+
+        Added a test for changing the -webkit-appearance statically and dynamically.
+
+        * fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element.html: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/mac/fast/dom/HTMLProgressElement: Added.
+        * platform/mac/fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element-expected.checksum: Added.
+        * platform/mac/fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element-expected.png: Added.
+        * platform/mac/fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element-expected.txt: Added.
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2010-04-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.
