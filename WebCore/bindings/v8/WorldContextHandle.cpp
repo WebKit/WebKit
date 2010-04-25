@@ -47,10 +47,9 @@ WorldContextHandle::WorldContextHandle(WorldToUse worldToUse)
 
 v8::Local<v8::Context> WorldContextHandle::adjustedContext(V8Proxy* proxy) const
 {
-    if (m_worldToUse == UseMainWorld)
+    if (m_worldToUse == UseMainWorld || !m_context || m_context->get().IsEmpty())
         return proxy->mainWorldContext();
-    if (!m_context || m_context->get().IsEmpty())
-        return proxy->context();
+
     return v8::Local<v8::Context>::New(m_context->get());
 }
 

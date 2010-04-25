@@ -1,3 +1,15 @@
+2010-04-25  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Added tests for pages event handlers being called with
+        page context when an event is dispatched from an isolated
+        world.
+        https://bugs.webkit.org/show_bug.cgi?id=37947
+
+        * http/tests/security/isolatedWorld/dispatchEvent-expected.txt: Added.
+        * http/tests/security/isolatedWorld/dispatchEvent.html: Added.
+
 2010-04-25  yael aharon  <yael.aharon@nokia.com>
 
         Reviewed by Adele Peterson.

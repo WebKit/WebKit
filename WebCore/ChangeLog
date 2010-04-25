@@ -1,3 +1,16 @@
+2010-04-25  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Get context properly when event handler was created on
+        the main world.
+        https://bugs.webkit.org/show_bug.cgi?id=37947
+
+        Test: http/tests/security/isolatedWorld/dispatchEvent.html
+
+        * bindings/v8/WorldContextHandle.cpp:
+        (WebCore::WorldContextHandle::adjustedContext):
+
 2010-04-25  yael aharon  <yael.aharon@nokia.com>
 
         Reviewed by Adele Peterson.
