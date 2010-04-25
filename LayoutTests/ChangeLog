@@ -1,3 +1,10 @@
+2010-04-24  Dan Bernstein  <mitz@apple.com>
+
+        Add platform-specific results for Mac after r58222.
+
+        * platform/mac/compositing/iframes: Added.
+        * platform/mac/compositing/iframes/composited-iframe-expected.txt: Added.
+
 2010-04-24  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
