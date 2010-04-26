@@ -158,7 +158,6 @@
 #import <objc/objc-runtime.h>
 #import <runtime/ArrayPrototype.h>
 #import <runtime/DateInstance.h>
-#import <runtime/InitializeThreading.h>
 #import <runtime/JSLock.h>
 #import <runtime/JSValue.h>
 #import <wtf/Assertions.h>

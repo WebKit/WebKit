@@ -49,6 +49,7 @@
 #import <wtf/Assertions.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>
+#import <wtf/Threading.h>
 
 using namespace WebCore;
 
@@ -100,6 +101,7 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
 + (void)initialize
 {
     JSC::initializeThreading();
+    WTF::initializeMainThreadToProcessMainThread();
 #ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
 #endif

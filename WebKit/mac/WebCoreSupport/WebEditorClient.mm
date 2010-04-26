@@ -62,6 +62,7 @@
 #import <WebCore/WebCoreObjCExtras.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/PassRefPtr.h>
+#import <wtf/Threading.h>
 
 using namespace WebCore;
 using namespace WTF;
@@ -94,6 +95,7 @@ static WebViewInsertAction kit(EditorInsertAction coreAction)
 + (void)initialize
 {
     JSC::initializeThreading();
+    WTF::initializeMainThreadToProcessMainThread();
 #ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
 #endif

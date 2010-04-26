@@ -41,7 +41,6 @@
 #import "WebView.h"
 #import "WebViewInternal.h"
 
-#import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/AuthenticationMac.h>
 #import <WebCore/BitmapImage.h>
 #import <WebCore/Credential.h>
@@ -56,9 +55,11 @@
 #import <WebCore/ProtectionSpace.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/RenderWidget.h>
+#import <WebCore/WebCoreObjCExtras.h>
 #import <WebKit/DOMPrivate.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/Assertions.h>
+#import <wtf/Threading.h>
 #import <wtf/text/CString.h>
 
 #define LoginWindowDidSwitchFromUserNotification    @"WebLoginWindowDidSwitchFromUserNotification"
@@ -115,6 +116,7 @@ String WebHaltablePlugin::pluginName() const
 + (void)initialize
 {
     JSC::initializeThreading();
+    WTF::initializeMainThreadToProcessMainThread();
 #ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
 #endif

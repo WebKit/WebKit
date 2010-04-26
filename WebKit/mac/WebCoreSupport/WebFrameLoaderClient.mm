@@ -50,16 +50,16 @@
 #import "WebFrameViewInternal.h"
 #import "WebHTMLRepresentationPrivate.h"
 #import "WebHTMLViewInternal.h"
-#import "WebHistoryItemInternal.h"
 #import "WebHistoryInternal.h"
+#import "WebHistoryItemInternal.h"
 #import "WebIconDatabaseInternal.h"
 #import "WebKitErrorsPrivate.h"
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
-#import "WebNavigationData.h"
 #import "WebNSURLExtras.h"
-#import "WebNetscapePluginView.h"
+#import "WebNavigationData.h"
 #import "WebNetscapePluginPackage.h"
+#import "WebNetscapePluginView.h"
 #import "WebPanelAuthenticationHandler.h"
 #import "WebPluginController.h"
 #import "WebPluginPackage.h"
@@ -73,7 +73,6 @@
 #import "WebUIDelegate.h"
 #import "WebUIDelegatePrivate.h"
 #import "WebViewInternal.h"
-#import <WebKitSystemInterface.h>
 #import <WebCore/AuthenticationMac.h>
 #import <WebCore/BlockExceptions.h>
 #import <WebCore/CachedFrame.h>
@@ -89,10 +88,10 @@
 #import <WebCore/FrameTree.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/HTMLAppletElement.h>
-#import <WebCore/HTMLHeadElement.h>
 #import <WebCore/HTMLFormElement.h>
 #import <WebCore/HTMLFrameElement.h>
 #import <WebCore/HTMLFrameOwnerElement.h>
+#import <WebCore/HTMLHeadElement.h>
 #import <WebCore/HTMLNames.h>
 #import <WebCore/HTMLPlugInElement.h>
 #import <WebCore/HistoryItem.h>
@@ -115,8 +114,10 @@
 #import <WebCore/Widget.h>
 #import <WebKit/DOMElement.h>
 #import <WebKit/DOMHTMLFormElement.h>
+#import <WebKitSystemInterface.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/PassRefPtr.h>
+#import <wtf/Threading.h>
 
 #if ENABLE(MAC_JAVA_BRIDGE)
 #import "WebJavaPlugIn.h"
@@ -1792,6 +1793,7 @@ jobject WebFrameLoaderClient::javaApplet(NSView* view)
 + (void)initialize
 {
     JSC::initializeThreading();
+    WTF::initializeMainThreadToProcessMainThread();
 #ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
 #endif

@@ -81,6 +81,11 @@ namespace WTF {
 typedef uint32_t ThreadIdentifier;
 typedef void* (*ThreadFunction)(void* argument);
 
+// This function must be called from the main thread. It is safe to call it repeatedly.
+// Darwin is an exception to this rule: it is OK to call it from any thread, the only 
+// requirement is that the calls are not reentrant.
+void initializeThreading();
+
 // Returns 0 if thread creation failed.
 // The thread name must be a literal since on some platforms it's passed in to the thread.
 ThreadIdentifier createThread(ThreadFunction, void*, const char* threadName);
@@ -96,9 +101,6 @@ ThreadIdentifier currentThread();
 int waitForThreadCompletion(ThreadIdentifier, void**);
 void detachThread(ThreadIdentifier);
 
-// This function must be called from the main thread. It is safe to call it repeatedly.
-// Darwin is an exception to this rule: it is OK to call it from any thread, the only requirement is that the calls are not reentrant.
-void initializeThreading();
 
 void lockAtomicallyInitializedStaticMutex();
 void unlockAtomicallyInitializedStaticMutex();

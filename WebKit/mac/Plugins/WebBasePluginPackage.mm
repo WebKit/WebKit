@@ -28,13 +28,14 @@
 
 #import <WebKit/WebBasePluginPackage.h>
 
-#import <WebKit/WebKitNSStringExtras.h>
-#import <WebKit/WebNetscapePluginPackage.h>
-#import <WebKit/WebNSObjectExtras.h>
-#import <WebKit/WebPluginPackage.h>
 #import <WebCore/WebCoreObjCExtras.h>
+#import <WebKit/WebKitNSStringExtras.h>
+#import <WebKit/WebNSObjectExtras.h>
+#import <WebKit/WebNetscapePluginPackage.h>
+#import <WebKit/WebPluginPackage.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/Assertions.h>
+#import <wtf/Threading.h>
 #import <wtf/Vector.h>
 
 #import <WebKitSystemInterface.h>
@@ -63,6 +64,7 @@
 + (void)initialize
 {
     JSC::initializeThreading();
+    WTF::initializeMainThreadToProcessMainThread();
 #ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
 #endif

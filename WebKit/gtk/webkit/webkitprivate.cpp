@@ -19,9 +19,8 @@
  */
 
 #include "config.h"
-
-#include "webkitsoupauthdialog.h"
 #include "webkitprivate.h"
+
 #include "ApplicationCacheStorage.h"
 #include "Chrome.h"
 #include "ChromeClientGtk.h"
@@ -31,7 +30,6 @@
 #include "GtkVersioning.h"
 #include "HitTestResult.h"
 #include "IconDatabase.h"
-#include <libintl.h>
 #include "Logging.h"
 #include "PageCache.h"
 #include "PageGroup.h"
@@ -41,11 +39,14 @@
 #include "ResourceHandleClient.h"
 #include "ResourceHandleInternal.h"
 #include "ResourceResponse.h"
-#include <runtime/InitializeThreading.h>
 #include "SecurityOrigin.h"
-#include <stdlib.h>
 #include "TextEncodingRegistry.h"
 #include "webkitnetworkresponse.h"
+#include "webkitsoupauthdialog.h"
+#include <libintl.h>
+#include <runtime/InitializeThreading.h>
+#include <stdlib.h>
+#include <wtf/Threading.h>
 
 #if ENABLE(DATABASE)
 #include "DatabaseTracker.h"
@@ -246,6 +247,8 @@ void webkit_init()
     bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
 
     JSC::initializeThreading();
+    WTF::initializeMainThread();
+
     WebCore::InitializeLoggingChannelsIfNecessary();
 
     // We make sure the text codecs have been initialized, because

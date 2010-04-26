@@ -34,6 +34,7 @@
 #import <WebCore/WebCoreObjCExtras.h>
 #import <objc/objc-auto.h>
 #import <runtime/InitializeThreading.h>
+#import <wtf/Threading.h>
 
 BOOL applicationIsTerminating = NO;
 int pluginDatabaseClientCount = 0;
@@ -43,6 +44,7 @@ int pluginDatabaseClientCount = 0;
 + (void)initialize
 {
     JSC::initializeThreading();
+    WTF::initializeMainThreadToProcessMainThread();
 #ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
 #endif

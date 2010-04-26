@@ -74,6 +74,7 @@
 
 #import <WebCore/WebCoreObjCExtras.h>
 #import <runtime/InitializeThreading.h>
+#import <wtf/Threading.h>
 
 #import "WebKitLogging.h"
 #import "WebNSObjectExtras.h"
@@ -269,6 +270,7 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
 + (void)initialize
 {
     JSC::initializeThreading();
+    WTF::initializeMainThreadToProcessMainThread();
 #ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
 #endif

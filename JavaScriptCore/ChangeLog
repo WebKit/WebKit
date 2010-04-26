@@ -1,3 +1,53 @@
+2010-04-25  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=38097
+        Disentangle initializing the main thread from initializing threading
+
+        This is the first step in getting rid of the WEB_THREAD #define and
+        paving the way to allowing mac both WebKit and WebKit2 to use the same
+        WebCore.
+
+        * JavaScriptCore.exp: Export initializeMainThread and initializeMainThreadToProcessMainThread.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Sort files.
+
+        * wtf/MainThread.cpp:
+        (WTF::mainThreadInitializationMutex):
+        (WTF::mainThreadFunctionQueueMutex):
+        (WTF::initializeMainThread):
+        (WTF::deprecatedInitializeMainThread):
+        * wtf/MainThread.h:
+        Added Mac only initializeMainThreadToProcessMainThread which sets up callOnMainThread
+        and isMainThead calls to assume that WebCore's main thread is also the
+        process's main thread. Since it is possible that both initializeMainThread
+        and initializeMainThreadToProcessMainThread could be called, the first one called
+        wins (either will work).
+
+        * wtf/Threading.h: Moved to top of file.
+
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::initializeThreading): Remove call to initializeMainThread.
+        * wtf/ThreadingWin.cpp:
+        (WTF::initializeThreading): Ditto.
+        * wtf/gtk/ThreadingGtk.cpp:
+        (WTF::initializeThreading): Ditto.
+
+        * wtf/mac/MainThreadMac.mm:
+        (WTF::initializeMainThreadPlatform):
+        (WTF::initializeMainThreadToProcessMainThread):
+        (WTF::scheduleDispatchFunctionsOnMainThread):
+        (WTF::isMainThread):
+        Add runtime switch between the old behavior of using the system's main
+        thread and a stored pointer to the main thread. Tiger always uses the
+        system's main thread.
+
+        * wtf/qt/ThreadingQt.cpp:
+        (WTF::initializeThreading): Remove call to initializeMainThread.
+        * wtf/win/MainThreadWin.cpp:
+        (WTF::initializeMainThreadPlatform): Add call to initializeCurrentThreadInternal
+        removed from initializeThreading.
+
 2010-04-26  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -24,9 +24,9 @@
 #include "EWebKit.h"
 #include "Logging.h"
 #include "PageCache.h"
-#include "PageGroup.h"
 #include "ewk_private.h"
 #include "runtime/InitializeThreading.h"
+#include "wtf/Threading.h"
 
 #include <Ecore.h>
 #include <Ecore_Evas.h>
@@ -103,6 +103,7 @@ int ewk_init(void)
 #endif
 
     JSC::initializeThreading();
+    WTF::initializeMainThread();
     WebCore::InitializeLoggingChannelsIfNecessary();
 
     // Page cache capacity (in pages). Comment from Mac port:

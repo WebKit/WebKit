@@ -43,6 +43,7 @@
 #import <WebKit/DOMCore.h>
 #import <WebKit/DOMExtensions.h>
 #import <runtime/InitializeThreading.h>
+#import <wtf/Threading.h>
 
 using namespace WebCore;
 
@@ -64,6 +65,7 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
 + (void)initialize
 {
     JSC::initializeThreading();
+    WTF::initializeMainThreadToProcessMainThread();
 #ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
 #endif

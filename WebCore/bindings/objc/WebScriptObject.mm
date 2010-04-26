@@ -49,6 +49,7 @@
 #import <runtime/JSLock.h>
 #import <runtime/Completion.h>
 #import <runtime/Completion.h>
+#import <wtf/Threading.h>
 
 #ifdef BUILDING_ON_TIGER
 typedef unsigned NSUInteger;
@@ -109,6 +110,7 @@ static void addExceptionToConsole(ExecState* exec)
 + (void)initialize
 {
     JSC::initializeThreading();
+    WTF::initializeMainThreadToProcessMainThread();
 #ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
 #endif

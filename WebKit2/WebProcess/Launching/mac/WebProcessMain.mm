@@ -30,6 +30,7 @@
 #import <servers/bootstrap.h>
 #import <signal.h>
 #import <unistd.h>
+#import <wtf/Threading.h>
 
 // FIXME: We should be doing this another way.
 extern "C" kern_return_t bootstrap_look_up2(mach_port_t, const name_t, mach_port_t*, pid_t, uint64_t);
@@ -59,8 +60,9 @@ int main(int argc, char** argv)
 
     InitWebCoreSystemInterface();
     JSC::initializeThreading();
+    WTF::initializeMainThread();
     RunLoop::initializeMainRunLoop();
-    
+
     // Create the connection.
     WebProcess::shared().initialize(serverPort, RunLoop::main());
     

@@ -30,13 +30,13 @@
 
 #import "WebNetscapePluginView.h"
 
+#import "WebBaseNetscapePluginStream.h"
 #import "WebDataSourceInternal.h"
 #import "WebDefaultUIDelegate.h"
 #import "WebFrameInternal.h" 
 #import "WebFrameView.h"
 #import "WebKitErrorsPrivate.h"
 #import "WebKitLogging.h"
-#import "WebNetscapeContainerCheckPrivate.h"
 #import "WebKitNSStringExtras.h"
 #import "WebKitSystemInterface.h"
 #import "WebNSDataExtras.h"
@@ -45,18 +45,16 @@
 #import "WebNSURLExtras.h"
 #import "WebNSURLRequestExtras.h"
 #import "WebNSViewExtras.h"
-#import "WebNetscapePluginPackage.h"
-#import "WebBaseNetscapePluginStream.h"
-#import "WebPluginContainerCheck.h"
 #import "WebNetscapeContainerCheckContextInfo.h"
+#import "WebNetscapeContainerCheckPrivate.h"
 #import "WebNetscapePluginEventHandler.h"
-#import "WebPreferences.h"
+#import "WebNetscapePluginPackage.h"
+#import "WebPluginContainerCheck.h"
 #import "WebPluginRequest.h"
-#import "WebViewInternal.h"
+#import "WebPreferences.h"
 #import "WebUIDelegatePrivate.h"
+#import "WebViewInternal.h"
 #import <Carbon/Carbon.h>
-#import <runtime/JSLock.h>
-#import <WebCore/npruntime_impl.h>
 #import <WebCore/CookieJar.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/Element.h>
@@ -71,12 +69,15 @@
 #import <WebCore/SoftLinking.h> 
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreURLResponse.h>
+#import <WebCore/npruntime_impl.h>
 #import <WebKit/DOMPrivate.h>
 #import <WebKit/WebUIDelegate.h>
-#import <runtime/InitializeThreading.h>
-#import <wtf/Assertions.h>
-#import <wtf/text/CString.h>
 #import <objc/objc-runtime.h>
+#import <runtime/InitializeThreading.h>
+#import <runtime/JSLock.h>
+#import <wtf/Assertions.h>
+#import <wtf/Threading.h>
+#import <wtf/text/CString.h>
 
 #define LoginWindowDidSwitchFromUserNotification    @"WebLoginWindowDidSwitchFromUserNotification"
 #define LoginWindowDidSwitchToUserNotification      @"WebLoginWindowDidSwitchToUserNotification"
@@ -188,6 +189,7 @@ typedef struct {
 + (void)initialize
 {
     JSC::initializeThreading();
+    WTF::initializeMainThreadToProcessMainThread();
 #ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
 #endif

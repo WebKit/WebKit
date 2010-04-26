@@ -118,6 +118,7 @@
 #import <dlfcn.h>
 #import <limits>
 #import <runtime/InitializeThreading.h>
+#import <wtf/Threading.h>
 
 #if USE(ACCELERATED_COMPOSITING)
 #import <QuartzCore/QuartzCore.h>
@@ -490,6 +491,7 @@ static NSCellStateValue kit(TriState state)
 + (void)initialize
 {
     JSC::initializeThreading();
+    WTF::initializeMainThreadToProcessMainThread();
 #ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
 #endif
@@ -2317,6 +2319,7 @@ static bool matchesExtensionOrEquivalent(NSString *filename, NSString *extension
     [NSApp registerServicesMenuSendTypes:[[self class] _selectionPasteboardTypes] 
                              returnTypes:[[self class] _insertablePasteboardTypes]];
     JSC::initializeThreading();
+    WTF::initializeMainThreadToProcessMainThread();
 #ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
 #endif

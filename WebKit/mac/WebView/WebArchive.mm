@@ -38,6 +38,7 @@
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreObjCExtras.h>
+#import <wtf/Threading.h>
 
 using namespace WebCore;
 
@@ -66,6 +67,7 @@ static NSString * const WebSubframeArchivesKey = @"WebSubframeArchives";
 + (void)initialize
 {
     JSC::initializeThreading();
+    WTF::initializeMainThreadToProcessMainThread();
 #ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
 #endif

@@ -32,6 +32,7 @@
 #import <WebCore/TextIterator.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <runtime/InitializeThreading.h>
+#import <wtf/Threading.h>
 
 using namespace JSC;
 using namespace WebCore;
@@ -47,6 +48,7 @@ using namespace WebCore;
 + (void)initialize
 {
     JSC::initializeThreading();
+    WTF::initializeMainThreadToProcessMainThread();
 #ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
 #endif

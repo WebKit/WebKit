@@ -123,6 +123,7 @@
 #include <WebCore/SimpleFontData.h>
 #include <WebCore/TypingCommand.h>
 #include <WebCore/WindowMessageBroadcaster.h>
+#include <wtf/Threading.h>
 
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
 #include <WebCore/GeolocationController.h>
@@ -342,6 +343,7 @@ WebView::WebView()
 #endif
 {
     JSC::initializeThreading();
+    WTF::initializeMainThread();
 
     m_backingStoreSize.cx = m_backingStoreSize.cy = 0;
 

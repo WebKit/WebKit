@@ -43,6 +43,7 @@
 #include <debugger/Debugger.h>
 #include <runtime/InitializeThreading.h>
 #include <runtime/JSLock.h>
+#include <wtf/Threading.h>
 
 using namespace JSC;
 using namespace std;
@@ -52,6 +53,7 @@ namespace WebCore {
 void ScriptController::initializeThreading()
 {
     JSC::initializeThreading();
+    WTF::initializeMainThread();
 }
 
 ScriptController::ScriptController(Frame* frame)

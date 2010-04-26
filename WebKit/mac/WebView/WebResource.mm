@@ -43,6 +43,7 @@
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreURLResponse.h>
+#import <wtf/Threading.h>
 
 using namespace WebCore;
 
@@ -65,6 +66,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 + (void)initialize
 {
     JSC::initializeThreading();
+    WTF::initializeMainThreadToProcessMainThread();
 #ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
 #endif

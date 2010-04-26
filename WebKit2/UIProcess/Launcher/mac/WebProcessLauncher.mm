@@ -48,6 +48,7 @@ static void* webThreadBody(void* context)
 
     InitWebCoreSystemInterface();
     JSC::initializeThreading();
+    WTF::initializeMainThread();
 
     WebProcess::shared().initialize(serverPort, RunLoop::current());
 

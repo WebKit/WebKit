@@ -56,6 +56,7 @@ void initialize(WebKitClient* webKitClient)
     s_webKitClient = webKitClient;
 
     WTF::initializeThreading();
+    WTF::initializeMainThread();
     WebCore::AtomicString::init();
 
     // Chromium sets the minimum interval timeout to 4ms, overriding the

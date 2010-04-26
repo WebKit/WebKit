@@ -1,3 +1,26 @@
+2010-04-25  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=38097
+        Disentangle initializing the main thread from initializing threading
+
+        * WebCore.xcodeproj/project.pbxproj: Sort files.
+
+        * accessibility/mac/AccessibilityObjectWrapper.mm: Remove unnessary
+        +initialize method. The AccessibilityObjectWrapper has no data members
+        that need to be derefed, so it does not need to be finalized on the main
+        thread.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::initializeThreading): Add call to initializeMainThread.
+        * bindings/objc/WebScriptObject.mm:
+        (+[WebScriptObject initialize]): Add call to initializeMainThreadToProcessMainThread.
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::initializeThreading): Add call to initializeMainThread.
+        * platform/mac/SharedBufferMac.mm:
+        (+[WebCoreSharedBufferData initialize]): Add call to initializeMainThreadToProcessMainThread.
+
 2010-04-26  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Reviewed by Alexey Proskuryakov.

@@ -250,6 +250,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     // KJS specific wrapper around this method. We need to have threading
     // initialized because CollatorICU requires it.
     WTF::initializeThreading();
+    WTF::initializeMainThread();
 
     // set to impossible point so we always get the first mouse pos
     m_lastMousePosition = WebPoint(-1, -1);

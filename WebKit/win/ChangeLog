@@ -1,3 +1,15 @@
+2010-04-25  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=38097
+        Disentangle initializing the main thread from initializing threading
+
+        * WebKitClassFactory.cpp:
+        (WebKitClassFactory::WebKitClassFactory): Add call to initializeMainThread.
+        * WebView.cpp:
+        (WebView::WebView): Ditto.
+
 2010-04-25  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

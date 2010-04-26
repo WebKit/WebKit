@@ -1,3 +1,50 @@
+2010-04-25  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=38097
+        Disentangle initializing the main thread from initializing threading
+
+        Calls initializeMainThreadToProcessMainThread since there is no way to ensure
+        that the initialize method will be called on the main thread.
+
+        * Carbon/CarbonWindowAdapter.mm:
+        (+[CarbonWindowAdapter initialize]): Add call to initializeMainThreadToProcessMainThread.
+        * History/WebBackForwardList.mm:
+        (+[WebBackForwardList initialize]): Ditto.
+        * History/WebHistoryItem.mm:
+        (+[WebHistoryItem initialize]): Ditto.
+        * Misc/WebElementDictionary.mm:
+        (+[WebElementDictionary initialize]): Ditto.
+        * Misc/WebIconDatabase.mm:
+        (+[WebIconDatabase initialize]): Ditto.
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (+[WebHostedNetscapePluginView initialize]): Ditto.
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (+[WebBaseNetscapePluginView initialize]): Ditto.
+        * Plugins/WebBasePluginPackage.mm:
+        (+[WebBasePluginPackage initialize]): Ditto.
+        * Plugins/WebNetscapePluginView.mm:
+        (+[WebNetscapePluginView initialize]): Ditto.
+        * WebCoreSupport/WebEditorClient.mm:
+        (+[WebEditCommand initialize]): Ditto.
+        * WebCoreSupport/WebFrameLoaderClient.mm: 
+        (+[WebFramePolicyListener initialize]): Ditto.
+        * WebView/WebArchive.mm:
+        (+[WebArchivePrivate initialize]): Ditto.
+        * WebView/WebDataSource.mm:
+        (+[WebDataSourcePrivate initialize]): Ditto.
+        * WebView/WebHTMLView.mm:
+        (+[WebHTMLViewPrivate initialize]): Ditto.
+        (+[WebHTMLView initialize]): Ditto.
+        * WebView/WebResource.mm:
+        (+[WebResourcePrivate initialize]): Ditto.
+        * WebView/WebTextIterator.mm:
+        (+[WebTextIteratorPrivate initialize]): Ditto.
+        * WebView/WebView.mm:
+        * WebView/WebViewData.mm: Ditto.
+        (+[WebViewPrivate initialize]): Ditto.
+
 2010-04-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

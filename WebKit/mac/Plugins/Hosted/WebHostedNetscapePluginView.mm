@@ -46,6 +46,7 @@
 #import <WebCore/runtime_root.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/Assertions.h>
+#import <wtf/Threading.h>
 
 using namespace WebCore;
 using namespace WebKit;
@@ -60,6 +61,7 @@ extern "C" {
 + (void)initialize
 {
     JSC::initializeThreading();
+    WTF::initializeMainThreadToProcessMainThread();
 #ifndef BUILDING_ON_TIGER
     WebCoreObjCFinalizeOnMainThread(self);
 #endif

@@ -1,3 +1,13 @@
+2010-04-25  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=38097
+        Disentangle initializing the main thread from initializing threading
+
+        * WebView.cpp:
+        (wxWebView::Create): Add call to initializeMainThread.
+
 2010-04-25  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.

@@ -28,6 +28,7 @@
 #include "RunLoop.h"
 #include "WebProcess.h"
 #include <runtime/InitializeThreading.h>
+#import <wtf/Threading.h>
 
 namespace WebKit {
 
@@ -36,6 +37,7 @@ int WebProcessMain(HINSTANCE hInstance, LPTSTR lpstrCmdLine)
     OleInitialize(0);
 
     JSC::initializeThreading();
+    WTF::initializeMainThread();
     RunLoop::initializeMainRunLoop();
 
     // FIXME: This should come from the command line string.

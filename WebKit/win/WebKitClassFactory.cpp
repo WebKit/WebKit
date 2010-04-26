@@ -57,10 +57,9 @@
 #include "WebUserContentURLPattern.h"
 #include "WebView.h"
 #include "WebWorkersPrivate.h"
-#pragma warning(push, 0)
 #include <JavaScriptCore/InitializeThreading.h>
 #include <WebCore/SoftLinking.h>
-#pragma warning(pop)
+#include <wtf/Threading.h>
 
 // WebKitClassFactory ---------------------------------------------------------
 #if USE(SAFARI_THEME)
@@ -87,6 +86,7 @@ WebKitClassFactory::WebKitClassFactory(CLSID targetClass)
 #endif
 
     JSC::initializeThreading();
+    WTF::initializeMainThread();
 
     gClassCount++;
     gClassNameCount.add("WebKitClassFactory");

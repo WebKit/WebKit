@@ -31,6 +31,7 @@
 
 #import <CoreFoundation/CoreFoundation.h>
 #import <Foundation/NSThread.h>
+#import <stdio.h>
 #import <wtf/Assertions.h>
 #import <wtf/Threading.h>
 
@@ -50,24 +51,38 @@
 
 namespace WTF {
 
-static WTFMainThreadCaller* staticMainThreadCaller = nil;
-#if USE(WEB_THREAD)
-static pthread_t mainThread;
-static NSThread* webThread = nil;
-#endif
+static WTFMainThreadCaller* staticMainThreadCaller;
+static bool isTimerPosted; // This is only accessed on the 'main' thread.
+static bool mainThreadEstablishedAsPthreadMain;
+static pthread_t mainThreadPthread;
+static NSThread* mainThreadNSThread;
 
 void initializeMainThreadPlatform()
 {
+#if !defined(BUILDING_ON_TIGER)
     ASSERT(!staticMainThreadCaller);
     staticMainThreadCaller = [[WTFMainThreadCaller alloc] init];
 
-#if USE(WEB_THREAD)
-    mainThread = pthread_self();
-    webThread = [[NSThread currentThread] retain];
+    mainThreadEstablishedAsPthreadMain = false;
+    mainThreadPthread = pthread_self();
+    mainThreadNSThread = [[NSThread currentThread] retain];
+#else
+    ASSERT_NOT_REACHED();
 #endif
 }
 
-static bool isTimerPosted; // This is only accessed on the 'main' thread.
+void initializeMainThreadToProcessMainThreadPlatform()
+{
+    if (!pthread_main_np())
+        NSLog(@"WebKit Threading Violation - initial use of WebKit from a secondary thread.");
+
+    ASSERT(!staticMainThreadCaller);
+    staticMainThreadCaller = [[WTFMainThreadCaller alloc] init];
+
+    mainThreadEstablishedAsPthreadMain = true;
+    mainThreadPthread = 0;
+    mainThreadNSThread = nil;
+}
 
 static void timerFired(CFRunLoopTimerRef timer, void*)
 {
@@ -87,7 +102,6 @@ static void postTimer()
     CFRunLoopAddTimer(CFRunLoopGetCurrent(), CFRunLoopTimerCreate(0, 0, 0, 0, 0, timerFired, 0), kCFRunLoopCommonModes);
 }
 
-
 void scheduleDispatchFunctionsOnMainThread()
 {
     ASSERT(staticMainThreadCaller);
@@ -97,19 +111,32 @@ void scheduleDispatchFunctionsOnMainThread()
         return;
     }
 
-#if USE(WEB_THREAD)
-    [staticMainThreadCaller performSelector:@selector(call) onThread:webThread withObject:nil waitUntilDone:NO];
+    if (mainThreadEstablishedAsPthreadMain) {
+        ASSERT(!mainThreadNSThread);
+        [staticMainThreadCaller performSelectorOnMainThread:@selector(call) withObject:nil waitUntilDone:NO];
+        return;
+    }
+
+#if !defined(BUILDING_ON_TIGER)
+    ASSERT(mainThreadNSThread);
+    [staticMainThreadCaller performSelector:@selector(call) onThread:mainThreadNSThread withObject:nil waitUntilDone:NO];
 #else
-    [staticMainThreadCaller performSelectorOnMainThread:@selector(call) withObject:nil waitUntilDone:NO];
+    ASSERT_NOT_REACHED();
 #endif
 }
 
 bool isMainThread()
 {
-#if USE(WEB_THREAD)
-    return pthread_equal(pthread_self(), mainThread);
+    if (mainThreadEstablishedAsPthreadMain) {
+        ASSERT(!mainThreadPthread);
+        return pthread_main_np();
+    }
+
+#if !defined(BUILDING_ON_TIGER)
+    ASSERT(mainThreadPthread);
+    return pthread_equal(pthread_self(), mainThreadPthread);
 #else
-    return pthread_main_np();
+    ASSERT_NOT_REACHED();
 #endif
 }
 

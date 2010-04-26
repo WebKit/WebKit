@@ -60,7 +60,6 @@ void initializeThreading()
         atomicallyInitializedStaticMutex = new Mutex;
         threadMapMutex();
         initializeRandomNumberGenerator();
-        initializeMainThread();
     }
 }
 
