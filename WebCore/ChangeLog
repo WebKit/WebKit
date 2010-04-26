@@ -1,3 +1,14 @@
+2010-04-26  Roman Gershman  <romange@google.com>
+
+        Reviewed by Adam Barth.
+
+        [Chromium] Font size in suggestions popup menu should be correlated with the font size of its text field.
+        The following manual test checks for desired behavior.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37977
+
+        * manual-tests/chromium/suggestions-popup-font-change.html: Added.
+
 2010-04-26  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.
