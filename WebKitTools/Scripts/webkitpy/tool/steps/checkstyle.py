@@ -39,6 +39,9 @@ class CheckStyle(AbstractStep):
         return [
             Options.non_interactive,
             Options.check_style,
+            Options.git_commit,
+            Options.no_squash,
+            Options.squash,
         ]
 
     def run(self, state):
@@ -46,7 +49,16 @@ class CheckStyle(AbstractStep):
             return
         os.chdir(self._tool.scm().checkout_root)
         try:
-            self._run_script("check-webkit-style")
+            args = []
+            if self._options.git_commit:
+                args.append("--git-commit")
+                args.append(self._options.git_commit)
+            if self._tool.scm().should_squash(self._options.squash):
+                args.append("--squash")
+            else:
+                args.append("--no-squash")
+
+            self._run_script("check-webkit-style", args)
         except ScriptError, e:
             if self._options.non_interactive:
                 # We need to re-raise the exception here to have the

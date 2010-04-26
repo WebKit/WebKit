@@ -37,7 +37,9 @@ class PostCodeReview(AbstractStep):
             Options.cc,
             Options.description,
             Options.fancy_review,
-            Options.review,
+            Options.git_commit,
+            Options.no_squash,
+            Options.squash,
         ]
 
     def run(self, state):
@@ -66,7 +68,8 @@ class PostCodeReview(AbstractStep):
                 # Unreachable with our current commands, but we might hit
                 # this case if we support bug-less code reviews.
                 message = "Code review"
-        created_issue = self._tool.codereview.post(message=message,
+        created_issue = self._tool.codereview.post(diff=self.cached_lookup(state, "diff"),
+                                                   message=message,
                                                    codereview_issue=codereview_issue,
                                                    cc=self._options.cc)
         if created_issue:

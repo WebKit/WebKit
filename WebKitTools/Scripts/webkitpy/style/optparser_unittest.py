@@ -114,10 +114,6 @@ class ArgumentParserTest(LoggingTestCase):
         self.assertRaises(SystemExit, parse, ['--bad'])
         self.assertLog(['ERROR: no such option: --bad\n'])
 
-        self.assertRaises(SystemExit, parse, ['--git-diff=aa..bb'])
-        self.assertLog(['ERROR: invalid --git-commit option: '
-                        'option does not support ranges "..": aa..bb\n'])
-
         self.assertRaises(SystemExit, parse, ['--min-confidence=bad'])
         self.assertLog(['ERROR: option --min-confidence: '
                         "invalid integer value: 'bad'\n"])
@@ -172,8 +168,6 @@ class ArgumentParserTest(LoggingTestCase):
         (files, options) = parse(['--git-commit=commit'])
         self.assertEquals(options.git_commit, 'commit')
         (files, options) = parse(['--git-diff=commit'])
-        self.assertEquals(options.git_commit, 'commit')
-        (files, options) = parse(['--git-since=commit'])
         self.assertEquals(options.git_commit, 'commit')
         (files, options) = parse(['--verbose'])
         self.assertEquals(options.is_verbose, True)

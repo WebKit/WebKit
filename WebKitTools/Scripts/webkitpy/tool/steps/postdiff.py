@@ -38,6 +38,9 @@ class PostDiff(AbstractStep):
             Options.review,
             Options.request_commit,
             Options.open_bug,
+            Options.git_commit,
+            Options.no_squash,
+            Options.squash,
         ]
 
     def run(self, state):

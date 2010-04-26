@@ -147,7 +147,8 @@ class CommandOptionValues(object):
                  git_commit=None,
                  is_verbose=False,
                  min_confidence=1,
-                 output_format="emacs"):
+                 output_format="emacs",
+                 squash=False):
         if filter_rules is None:
             filter_rules = []
 
@@ -166,6 +167,7 @@ class CommandOptionValues(object):
         self.is_verbose = is_verbose
         self.min_confidence = min_confidence
         self.output_format = output_format
+        self.squash = squash
 
     # Useful for unit testing.
     def __eq__(self, other):
@@ -179,6 +181,8 @@ class CommandOptionValues(object):
         if self.min_confidence != other.min_confidence:
             return False
         if self.output_format != other.output_format:
+            return False
+        if self.squash != other.squash:
             return False
 
         return True
@@ -214,6 +218,8 @@ class ArgumentPrinter(object):
             flags['filter'] = ",".join(filter_rules)
         if options.git_commit:
             flags['git-commit'] = options.git_commit
+        if options.squash:
+            flags['squash'] = options.squash
 
         flag_string = ''
         # Alphabetizing lets us unit test this method.
@@ -303,9 +309,10 @@ class ArgumentParser(object):
         parser.add_option("-f", "--filter-rules", metavar="RULES",
                           dest="filter_value", help=filter_help)
 
-        git_help = "check all changes after the given git commit."
-        parser.add_option("-g", "--git-commit", "--git-diff", "--git-since",
-                          metavar="COMMIT", dest="git_since", help=git_help,)
+        git_commit_help = ("check all changes in the given git commit. "
+                           "Use 'commit_id..' to check all changes after commmit_id")
+        parser.add_option("-g", "--git-diff", "--git-commit",
+                          metavar="COMMIT", dest="git_commit", help=git_commit_help,)
 
         min_confidence_help = ("set the minimum confidence of style errors "
                                "to report.  Can be an integer 1-5, with 1 "
@@ -322,6 +329,14 @@ class ArgumentParser(object):
                           choices=["emacs", "vs7"],
                           dest="output_format", default=default_output_format,
                           help=output_format_help)
+
+        squash_help = ("All diffs from the remote branch are checked."
+                       "If excluded, prompts whether to squash when there are multiple commits.")
+        parser.add_option("-s", "--squash", action="store_true", dest="squash", help=squash_help)
+
+        squash_help = ("Only working copy diffs are checked."
+                       "If excluded, prompts whether to squash when there are multiple commits.")
+        parser.add_option("--no-squash", action="store_false", dest="squash", help=squash_help)
 
         verbose_help = "enable verbose logging."
         parser.add_option("-v", "--verbose", dest="is_verbose", default=False,
@@ -407,7 +422,7 @@ class ArgumentParser(object):
         (options, paths) = self._parser.parse_args(args=args)
 
         filter_value = options.filter_value
-        git_commit = options.git_since
+        git_commit = options.git_commit
         is_verbose = options.is_verbose
         min_confidence = options.min_confidence
         output_format = options.output_format
@@ -422,14 +437,6 @@ class ArgumentParser(object):
         if paths and git_commit:
             self._parse_error('You cannot provide both paths and a git '
                               'commit at the same time.')
-
-        # FIXME: Add unit tests.
-        if git_commit and '..' in git_commit:
-            # FIXME: If the range is a "...", the code should find the common
-            #        ancestor and start there.  See git diff --help for how
-            #        "..." usually works.
-            self._parse_error('invalid --git-commit option: option does '
-                              'not support ranges "..": %s' % git_commit)
 
         min_confidence = int(min_confidence)
         if (min_confidence < 1) or (min_confidence > 5):
@@ -451,7 +458,8 @@ class ArgumentParser(object):
                                       git_commit=git_commit,
                                       is_verbose=is_verbose,
                                       min_confidence=min_confidence,
-                                      output_format=output_format)
+                                      output_format=output_format,
+                                      squash=options.squash)
 
         return (paths, options)
 

@@ -123,6 +123,7 @@ class WebKitPatch(MultiCommandTool):
 
     # FIXME: This may be unnecessary since we pass global options to all commands during execute() as well.
     def handle_global_options(self, options):
+        self._options = options
         if options.dry_run:
             self.scm().dryrun = True
             self.bugs.dryrun = True

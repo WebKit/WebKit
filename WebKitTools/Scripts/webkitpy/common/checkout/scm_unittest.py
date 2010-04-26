@@ -221,15 +221,6 @@ class SCMTest(unittest.TestCase):
 
     # Tests which both GitTest and SVNTest should run.
     # FIXME: There must be a simpler way to add these w/o adding a wrapper method to both subclasses
-    def _shared_test_commit_with_message(self, username="dbates@webkit.org"):
-        write_into_file_at_path('test_file', 'more test content')
-        commit_text = self.scm.commit_with_message("another test commit", username)
-        self.assertEqual(self.scm.svn_revision_from_commit_text(commit_text), '5')
-
-        self.scm.dryrun = True
-        write_into_file_at_path('test_file', 'still more test content')
-        commit_text = self.scm.commit_with_message("yet another test commit", username)
-        self.assertEqual(self.scm.svn_revision_from_commit_text(commit_text), '0')
 
     def _shared_test_changed_files(self):
         write_into_file_at_path("test_file", "changed content")
@@ -560,6 +551,16 @@ Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
         self.assertTrue(re.search('fourth commit', self.scm.last_svn_commit_log()))
         self.assertTrue(re.search('second commit', self.scm.svn_commit_log(2)))
 
+    def _shared_test_commit_with_message(self, username=None):
+        write_into_file_at_path('test_file', 'more test content')
+        commit_text = self.scm.commit_with_message("another test commit", username)
+        self.assertEqual(self.scm.svn_revision_from_commit_text(commit_text), '5')
+
+        self.scm.dryrun = True
+        write_into_file_at_path('test_file', 'still more test content')
+        commit_text = self.scm.commit_with_message("yet another test commit", username)
+        self.assertEqual(self.scm.svn_revision_from_commit_text(commit_text), '0')
+
     def test_commit_text_parsing(self):
         self._shared_test_commit_with_message()
 
@@ -744,7 +745,115 @@ class GitTest(SCMTest):
         self.assertRaises(ScriptError, Checkout(scm).apply_patch, patch, force=True)
 
     def test_commit_text_parsing(self):
-        self._shared_test_commit_with_message()
+        write_into_file_at_path('test_file', 'more test content')
+        self.scm.commit_locally_with_message("another test commit")
+        commit_text = self.scm.commit_with_message("another test commit")
+        self.assertEqual(self.scm.svn_revision_from_commit_text(commit_text), '5')
+
+        self.scm.dryrun = True
+        write_into_file_at_path('test_file', 'still more test content')
+        self.scm.commit_locally_with_message("yet another test commit")
+        commit_text = self.scm.commit_with_message("yet another test commit")
+        self.assertEqual(self.scm.svn_revision_from_commit_text(commit_text), '0')
+
+    def _one_local_commit_plus_working_copy_changes(self):
+        write_into_file_at_path('test_file_commit1', 'more test content')
+        run_command(['git', 'add', 'test_file_commit1'])
+        self.scm.commit_locally_with_message("another test commit")
+
+        write_into_file_at_path('test_file_commit2', 'still more test content')
+        run_command(['git', 'add', 'test_file_commit2'])
+
+    def test_commit_with_message_working_copy_only(self):
+        write_into_file_at_path('test_file_commit1', 'more test content')
+        run_command(['git', 'add', 'test_file_commit1'])
+        scm = detect_scm_system(self.git_checkout_path)
+        commit_text = scm.commit_with_message("yet another test commit")
+
+        self.assertEqual(scm.svn_revision_from_commit_text(commit_text), '5')
+        svn_log = run_command(['git', 'svn', 'log', '--limit=1', '--verbose'])
+        self.assertTrue(re.search(r'test_file_commit1', svn_log))
+
+    def test_commit_with_message_squashed(self):
+        self._one_local_commit_plus_working_copy_changes()
+        scm = detect_scm_system(self.git_checkout_path)
+        commit_text = scm.commit_with_message("yet another test commit", squash=True)
+
+        self.assertEqual(scm.svn_revision_from_commit_text(commit_text), '5')
+        svn_log = run_command(['git', 'svn', 'log', '--limit=1', '--verbose'])
+        self.assertTrue(re.search(r'test_file_commit2', svn_log))
+        self.assertTrue(re.search(r'test_file_commit1', svn_log))
+
+    def _two_local_commits(self):
+        write_into_file_at_path('test_file_commit1', 'more test content')
+        run_command(['git', 'add', 'test_file_commit1'])
+        self.scm.commit_locally_with_message("another test commit")
+
+        write_into_file_at_path('test_file_commit2', 'still more test content')
+        run_command(['git', 'add', 'test_file_commit2'])
+        self.scm.commit_locally_with_message("yet another test commit")
+
+    def test_commit_with_message_git_commit(self):
+        self._two_local_commits()
+
+        scm = detect_scm_system(self.git_checkout_path)
+        commit_text = scm.commit_with_message("another test commit", git_commit="HEAD^")
+        self.assertEqual(scm.svn_revision_from_commit_text(commit_text), '5')
+
+        svn_log = run_command(['git', 'svn', 'log', '--limit=1', '--verbose'])
+        self.assertTrue(re.search(r'test_file_commit1', svn_log))
+        self.assertFalse(re.search(r'test_file_commit2', svn_log))
+
+    def test_commit_with_message_git_commit_range(self):
+        self._two_local_commits()
+
+        scm = detect_scm_system(self.git_checkout_path)
+        commit_text = scm.commit_with_message("another test commit", git_commit="HEAD~2..HEAD")
+        self.assertEqual(scm.svn_revision_from_commit_text(commit_text), '5')
+
+        svn_log = run_command(['git', 'svn', 'log', '--limit=1', '--verbose'])
+        self.assertTrue(re.search(r'test_file_commit1', svn_log))
+        self.assertTrue(re.search(r'test_file_commit2', svn_log))
+
+    def test_commit_with_message_multiple_local_commits(self):
+        self._two_local_commits()
+        scm = detect_scm_system(self.git_checkout_path)
+        self.assertRaises(ScriptError, scm.commit_with_message, ["another test commit"])
+
+    def test_commit_with_message_multiple_local_commits_and_working_copy(self):
+        self._two_local_commits()
+        write_into_file_at_path('test_file_commit1', 'working copy change')
+        scm = detect_scm_system(self.git_checkout_path)
+        self.assertRaises(ScriptError, scm.commit_with_message, ["another test commit"])
+
+    def test_commit_with_message_git_commit_and_working_copy(self):
+        self._two_local_commits()
+        write_into_file_at_path('test_file_commit1', 'working copy change')
+        scm = detect_scm_system(self.git_checkout_path)
+        self.assertRaises(ScriptError, scm.commit_with_message, ["another test commit", 'git_commit="HEAD^"'])
+
+    def test_commit_with_message_multiple_local_commits_no_squash(self):
+        self._two_local_commits()
+        scm = detect_scm_system(self.git_checkout_path)
+        commit_text = scm.commit_with_message("yet another test commit", squash=False)
+        self.assertEqual(scm.svn_revision_from_commit_text(commit_text), '5')
+
+        svn_log = run_command(['git', 'svn', 'log', '--limit=1', '--verbose'])
+        self.assertTrue(re.search(r'test_file_commit2', svn_log))
+        self.assertFalse(re.search(r'test_file_commit1', svn_log))
+
+        svn_log = run_command(['git', 'svn', 'log', '--limit=2', '--verbose'])
+        self.assertTrue(re.search(r'test_file_commit1', svn_log))
+
+    def test_commit_with_message_multiple_local_commits_squash(self):
+        self._two_local_commits()
+        scm = detect_scm_system(self.git_checkout_path)
+        commit_text = scm.commit_with_message("yet another test commit", squash=True)
+        self.assertEqual(scm.svn_revision_from_commit_text(commit_text), '5')
+
+        svn_log = run_command(['git', 'svn', 'log', '--limit=1', '--verbose'])
+        self.assertTrue(re.search(r'test_file_commit2', svn_log))
+        self.assertTrue(re.search(r'test_file_commit1', svn_log))
 
     def test_reverse_diff(self):
         self._shared_test_reverse_diff()
@@ -754,6 +863,59 @@ class GitTest(SCMTest):
 
     def test_svn_apply_git_patch(self):
         self._shared_test_svn_apply_git_patch()
+
+    def test_create_patch_local_plus_working_copy(self):
+        self._one_local_commit_plus_working_copy_changes()
+        scm = detect_scm_system(self.git_checkout_path)
+        self.assertRaises(ScriptError, scm.create_patch)
+
+    def test_create_patch_multiple_local_commits(self):
+        self._two_local_commits()
+        scm = detect_scm_system(self.git_checkout_path)
+        self.assertRaises(ScriptError, scm.create_patch)
+
+    def test_create_patch_squashed(self):
+        self._one_local_commit_plus_working_copy_changes()
+        scm = detect_scm_system(self.git_checkout_path)
+        patch = scm.create_patch(squash=True)
+        self.assertTrue(re.search(r'test_file_commit2', patch))
+        self.assertTrue(re.search(r'test_file_commit1', patch))
+
+    def test_create_patch_not_squashed(self):
+        self._one_local_commit_plus_working_copy_changes()
+        scm = detect_scm_system(self.git_checkout_path)
+        patch = scm.create_patch(squash=False)
+        self.assertTrue(re.search(r'test_file_commit2', patch))
+        self.assertFalse(re.search(r'test_file_commit1', patch))
+
+    def test_create_patch_git_commit(self):
+        self._two_local_commits()
+        scm = detect_scm_system(self.git_checkout_path)
+        patch = scm.create_patch(git_commit="HEAD^")
+        self.assertTrue(re.search(r'test_file_commit1', patch))
+        self.assertFalse(re.search(r'test_file_commit2', patch))
+
+    def test_create_patch_git_commit_range(self):
+        self._two_local_commits()
+        scm = detect_scm_system(self.git_checkout_path)
+        patch = scm.create_patch(git_commit="HEAD~2..HEAD")
+        self.assertTrue(re.search(r'test_file_commit2', patch))
+        self.assertTrue(re.search(r'test_file_commit1', patch))
+
+    def test_create_patch_multiple_local_commits_no_squash(self):
+        self._two_local_commits()
+        scm = detect_scm_system(self.git_checkout_path)
+        patch = scm.create_patch(squash=False)
+        # FIXME: It's weird that with squash=False, create_patch/changed_files ignores local commits,
+        # but commit_with_message commits them.
+        self.assertTrue(patch == "")
+
+    def test_create_patch_multiple_local_commits_squash(self):
+        self._two_local_commits()
+        scm = detect_scm_system(self.git_checkout_path)
+        patch = scm.create_patch(squash=True)
+        self.assertTrue(re.search(r'test_file_commit2', patch))
+        self.assertTrue(re.search(r'test_file_commit1', patch))
 
     def test_create_binary_patch(self):
         # Create a git binary patch and check the contents.
@@ -777,13 +939,62 @@ class GitTest(SCMTest):
         write_into_file_at_path(test_file_path, file_contents, encoding=None)
         run_command(['git', 'add', test_file_name])
         run_command(['git', 'commit', '-m', 'binary diff'])
-        patch_from_local_commit = scm.create_patch_from_local_commit('HEAD')
+        patch_from_local_commit = scm.create_patch('HEAD')
         self.assertTrue(re.search(r'\nliteral 0\n', patch_from_local_commit))
         self.assertTrue(re.search(r'\nliteral 256\n', patch_from_local_commit))
-        patch_since_local_commit = scm.create_patch_since_local_commit('HEAD^1')
-        self.assertTrue(re.search(r'\nliteral 0\n', patch_since_local_commit))
-        self.assertTrue(re.search(r'\nliteral 256\n', patch_since_local_commit))
-        self.assertEqual(patch_from_local_commit, patch_since_local_commit)
+
+    def test_changed_files_local_plus_working_copy(self):
+        self._one_local_commit_plus_working_copy_changes()
+        scm = detect_scm_system(self.git_checkout_path)
+        self.assertRaises(ScriptError, scm.changed_files)
+
+    def test_changed_files_multiple_local_commits(self):
+        self._two_local_commits()
+        scm = detect_scm_system(self.git_checkout_path)
+        self.assertRaises(ScriptError, scm.changed_files)
+
+    def test_changed_files_squashed(self):
+        self._one_local_commit_plus_working_copy_changes()
+        scm = detect_scm_system(self.git_checkout_path)
+        files = scm.changed_files(squash=True)
+        self.assertTrue('test_file_commit2' in files)
+        self.assertTrue('test_file_commit1' in files)
+
+    def test_changed_files_not_squashed(self):
+        self._one_local_commit_plus_working_copy_changes()
+        scm = detect_scm_system(self.git_checkout_path)
+        files = scm.changed_files(squash=False)
+        self.assertTrue('test_file_commit2' in files)
+        self.assertFalse('test_file_commit1' in files)
+
+    def test_changed_files_git_commit(self):
+        self._two_local_commits()
+        scm = detect_scm_system(self.git_checkout_path)
+        files = scm.changed_files(git_commit="HEAD^")
+        self.assertTrue('test_file_commit1' in files)
+        self.assertFalse('test_file_commit2' in files)
+
+    def test_changed_files_git_commit_range(self):
+        self._two_local_commits()
+        scm = detect_scm_system(self.git_checkout_path)
+        files = scm.changed_files(git_commit="HEAD~2..HEAD")
+        self.assertTrue('test_file_commit1' in files)
+        self.assertTrue('test_file_commit2' in files)
+
+    def test_changed_files_multiple_local_commits_no_squash(self):
+        self._two_local_commits()
+        scm = detect_scm_system(self.git_checkout_path)
+        files = scm.changed_files(squash=False)
+        # FIXME: It's weird that with squash=False, create_patch/changed_files ignores local commits,
+        # but commit_with_message commits them.
+        self.assertTrue(len(files) == 0)
+
+    def test_changed_files_multiple_local_commits_squash(self):
+        self._two_local_commits()
+        scm = detect_scm_system(self.git_checkout_path)
+        files = scm.changed_files(squash=True)
+        self.assertTrue('test_file_commit2' in files)
+        self.assertTrue('test_file_commit1' in files)
 
     def test_changed_files(self):
         self._shared_test_changed_files()

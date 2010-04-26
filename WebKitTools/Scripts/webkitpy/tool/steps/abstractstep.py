@@ -36,10 +36,13 @@ class AbstractStep(object):
         self._options = options
         self._port = None
 
-    def _run_script(self, script_name, quiet=False, port=WebKitPort):
+    def _run_script(self, script_name, args=None, quiet=False, port=WebKitPort):
         log("Running %s" % script_name)
+        command = [port.script_path(script_name)]
+        if args:
+            command.extend(args)
         # FIXME: This should use self.port()
-        self._tool.executive.run_and_throw_if_fail([port.script_path(script_name)], quiet)
+        self._tool.executive.run_and_throw_if_fail(command, quiet)
 
     # FIXME: The port should live on the tool.
     def port(self):
@@ -49,8 +52,8 @@ class AbstractStep(object):
         return self._port
 
     _well_known_keys = {
-        "diff" : lambda self: self._tool.scm().create_patch(),
-        "changelogs" : lambda self: self._tool.checkout().modified_changelogs(),
+        "diff": lambda self: self._tool.scm().create_patch(self._options.git_commit, self._options.squash),
+        "changelogs": lambda self: self._tool.checkout().modified_changelogs(self._options.git_commit, self._options.squash),
     }
 
     def cached_lookup(self, state, key, promise=None):

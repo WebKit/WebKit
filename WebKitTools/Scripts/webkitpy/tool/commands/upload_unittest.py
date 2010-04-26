@@ -58,6 +58,8 @@ class UploadCommandsTest(CommandsTest):
         options.description = "MOCK description"
         options.request_commit = False
         options.review = True
+        # Rietveld upload code requires a real SCM checkout.
+        options.fancy_review = False
         options.cc = None
         expected_stderr = """Running check-webkit-style
 MOCK: user.open_url: file://...
@@ -86,6 +88,8 @@ MOCK: user.open_url: http://example.com/42
         options.description = "MOCK description"
         options.request_commit = False
         options.review = True
+        # Rietveld upload code requires a real SCM checkout.
+        options.fancy_review = False
         options.cc = None
         expected_stderr = """Running check-webkit-style
 MOCK: user.open_url: file://...

@@ -27,11 +27,21 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from webkitpy.tool.steps.abstractstep import AbstractStep
+from webkitpy.tool.steps.options import Options
 
 
 class Commit(AbstractStep):
+    @classmethod
+    def options(cls):
+        return [
+            Options.git_commit,
+            Options.no_squash,
+            Options.squash,
+        ]
+
     def run(self, state):
-        commit_message = self._tool.checkout().commit_message_for_this_commit()
+        commit_message = self._tool.checkout().commit_message_for_this_commit(self._options.git_commit, self._options.squash)
         if len(commit_message.message()) < 50:
             raise Exception("Attempted to commit with a commit message shorter than 50 characters.  Either your patch is missing a ChangeLog or webkit-patch may have a bug.")
-        state["commit_text"] =  self._tool.scm().commit_with_message(commit_message.message())
+        state["commit_text"] = self._tool.scm().commit_with_message(commit_message.message(),
+            git_commit=self._options.git_commit, squash=self._options.squash)

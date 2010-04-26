@@ -31,11 +31,20 @@ import re
 
 from webkitpy.common.checkout.changelog import ChangeLog
 from webkitpy.tool.steps.abstractstep import AbstractStep
+from webkitpy.tool.steps.options import Options
 from webkitpy.common.system.deprecated_logging import error, log
 
 
 # FIXME: Some of this logic should probably be unified with CommitterValidator?
 class ValidateReviewer(AbstractStep):
+    @classmethod
+    def options(cls):
+        return [
+            Options.git_commit,
+            Options.no_squash,
+            Options.squash,
+        ]
+
     # FIXME: This should probably move onto ChangeLogEntry
     def _has_valid_reviewer(self, changelog_entry):
         if changelog_entry.reviewer():
@@ -54,7 +63,7 @@ class ValidateReviewer(AbstractStep):
         # FIXME: We should figure out how to handle the current working
         #        directory issue more globally.
         os.chdir(self._tool.scm().checkout_root)
-        for changelog_path in self._tool.checkout().modified_changelogs():
+        for changelog_path in self._tool.checkout().modified_changelogs(self._options.git_commit, self._options.squash):
             changelog_entry = ChangeLog(changelog_path).latest_entry()
             if self._has_valid_reviewer(changelog_entry):
                 continue

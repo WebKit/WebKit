@@ -86,23 +86,23 @@ def main():
     checker.configure_logging(stream=stderr, is_verbose=is_verbose)
     _log.debug("Verbose logging enabled.")
 
+    parser = checker.check_webkit_style_parser()
+    (paths, options) = parser.parse(args)
+
     checkout = detect_checkout()
 
     if checkout is None:
+        if not paths:
+            _log.error("WebKit checkout not found: You must run this script "
+                       "from within a WebKit checkout if you are not passing "
+                       "specific paths to check.")
+            sys.exit(1)
+
         checkout_root = None
         _log.debug("WebKit checkout not found for current directory.")
     else:
         checkout_root = checkout.root_path()
         _log.debug("WebKit checkout found with root: %s" % checkout_root)
-
-    parser = checker.check_webkit_style_parser()
-    (paths, options) = parser.parse(args)
-
-    if checkout is None and not paths:
-        _log.error("WebKit checkout not found: You must run this script "
-                   "from within a WebKit checkout if you are not passing "
-                   "specific paths to check.")
-        sys.exit(1)
 
     configuration = checker.check_webkit_style_configuration(options)
 
@@ -115,10 +115,7 @@ def main():
     if paths:
         file_reader.process_paths(paths)
     else:
-        if options.git_commit:
-            patch = checkout.create_patch_since_local_commit(options.git_commit)
-        else:
-            patch = checkout.create_patch()
+        patch = checkout.create_patch(options.git_commit, options.squash)
         patch_checker = PatchChecker(file_reader)
         patch_checker.check(patch)
 

@@ -26,6 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import os
 import re
 import stat
@@ -50,23 +51,19 @@ class Rietveld(object):
     def __init__(self, executive, dryrun=False):
         self.dryrun = dryrun
         self._executive = executive
-        self._upload_py = upload.__file__
-        # Chop off the last character so we modify permissions on the py file instead of the pyc.
-        if os.path.splitext(self._upload_py)[1] == ".pyc":
-            self._upload_py = self._upload_py[:-1]
-        os.chmod(self._upload_py, os.stat(self._upload_py).st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
 
     def url_for_issue(self, codereview_issue):
         if not codereview_issue:
             return None
         return "%s%s" % (config.codereview_server_url, codereview_issue)
 
-    def post(self, message=None, codereview_issue=None, cc=None):
+    def post(self, diff, message=None, codereview_issue=None, cc=None):
         if not message:
             raise ScriptError("Rietveld requires a message.")
 
         args = [
-            self._upload_py,
+            # First argument is empty string to mimic sys.argv.
+            "",
             "--assume_yes",
             "--server=%s" % config.codereview_server_host,
             "--message=%s" % message,
@@ -80,10 +77,15 @@ class Rietveld(object):
             log("Would have run %s" % args)
             return
 
-        output = self._executive.run_and_throw_if_fail(args)
-        match = re.search("Issue created\. URL: " +
-                          config.codereview_server_regex +
-                          "(?P<codereview_issue>\d+)",
-                          output)
-        if match:
-            return int(match.group('codereview_issue'))
+        # Set logging level to avoid rietveld's logging spew.
+        old_level_name = logging.getLogger().getEffectiveLevel()
+        logging.getLogger().setLevel(logging.ERROR)
+
+        # Use RealMain instead of calling upload from the commandline so that
+        # we can pass in the diff ourselves. Otherwise, upload will just use
+        # git diff for git checkouts, which doesn't respect --squash and --git-commit.
+        issue, patchset = upload.RealMain(args[1:], data=diff)
+
+        # Reset logging level to the original value.
+        logging.getLogger().setLevel(old_level_name)
+        return issue
