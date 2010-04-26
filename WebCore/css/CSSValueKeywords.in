@@ -712,7 +712,8 @@ geometricPrecision
 sRGB
 
 # (-webkit-view-mode:) media feature:
-mini
 floating
-application
 fullscreen
+maximized
+minimized
+windowed

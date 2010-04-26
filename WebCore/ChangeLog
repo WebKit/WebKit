@@ -1,3 +1,15 @@
+2010-04-26  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        View modes names in CSSValueKeywords.in
+        https://bugs.webkit.org/show_bug.cgi?id=38125
+
+        View mode names has changed in previous patch but CSSValueKeywords.in file was
+        not updated.
+
+        * css/CSSValueKeywords.in:
+
 2010-04-26  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
