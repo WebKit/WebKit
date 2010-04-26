@@ -31,7 +31,6 @@
 
 #include "CodeBlock.h"
 #include "JSVariableObject.h"
-#include "RegisterFile.h"
 #include "SymbolTable.h"
 #include "Nodes.h"
 

@@ -38,8 +38,6 @@ namespace WebCore {
 
 class ScriptWrappable {
 public:
-    ScriptWrappable() : m_wrapper(0) { }
-    
     DOMObject* wrapper() const
     {
         return m_wrapper.get();
@@ -47,7 +45,6 @@ public:
     
     void setWrapper(DOMObject* wrapper)
     {
-        ASSERT(wrapper);
         m_wrapper = wrapper;
     }
     

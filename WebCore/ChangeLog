@@ -1,3 +1,23 @@
+2010-04-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/7766413>
+        
+        Fixed a crash seen when using the JavaScriptCore API with WebKit.
+        
+        No layout test because DumpRenderTree doesn't use the JavaScriptCore API
+        in this way.
+
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::JSEventListener): Don't assign 0 to a WeakGCPtr.
+        JavaScriptCore no longer allows this.
+
+        * bindings/js/ScriptWrappable.h:
+        (WebCore::ScriptWrappable::setWrapper): No need to initialize a WeakGCPtr
+        to 0, or ASSERT a non-0 value before assigning to a WeakGCPtr -- both are
+        default behaviors.
+
 2010-04-25  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej Stachowiak.

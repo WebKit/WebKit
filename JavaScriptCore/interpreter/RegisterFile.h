@@ -32,6 +32,7 @@
 #include "Collector.h"
 #include "ExecutableAllocator.h"
 #include "Register.h"
+#include "WeakGCPtr.h"
 #include <stdio.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/VMTags.h>
@@ -124,8 +125,9 @@ namespace JSC {
         Register* end() const { return m_end; }
         size_t size() const { return m_end - m_start; }
 
-        void setGlobalObject(JSGlobalObject* globalObject) { m_globalObject = globalObject; }
-        JSGlobalObject* globalObject() { return m_globalObject; }
+        void setGlobalObject(JSGlobalObject*);
+        bool clearGlobalObject(JSGlobalObject*);
+        JSGlobalObject* globalObject();
 
         bool grow(Register* newEnd);
         void shrink(Register* newEnd);
@@ -153,7 +155,7 @@ namespace JSC {
         Register* m_commitEnd;
 #endif
 
-        JSGlobalObject* m_globalObject; // The global object whose vars are currently stored in the register file.
+        WeakGCPtr<JSGlobalObject> m_globalObject; // The global object whose vars are currently stored in the register file.
     };
 
     // FIXME: Add a generic getpagesize() to WTF, then move this function to WTF as well.
@@ -166,7 +168,6 @@ namespace JSC {
         , m_end(0)
         , m_max(0)
         , m_buffer(0)
-        , m_globalObject(0)
     {
         // Verify that our values will play nice with mmap and VirtualAlloc.
         ASSERT(isPageAligned(maxGlobals));

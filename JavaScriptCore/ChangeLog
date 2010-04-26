@@ -1,3 +1,41 @@
+2010-04-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/7766413>
+        
+        Fixed a crash seen when using the JavaScriptCore API with WebKit.
+        
+        No layout test because DumpRenderTree doesn't use the JavaScriptCore API
+        in this way.
+
+        * interpreter/RegisterFile.cpp:
+        (JSC::RegisterFile::setGlobalObject):
+        (JSC::RegisterFile::clearGlobalObject):
+        (JSC::RegisterFile::globalObject):
+        * interpreter/RegisterFile.h:
+        (JSC::RegisterFile::RegisterFile): Use WeakGCPtr for managing m_globalObject,
+        since it's a weak pointer. (We never noticed this error before because,
+        in WebKit, global objects always have a self-reference in a global variable,
+        so marking the register file's global variables would keep m_globalObject
+        alive. In the JavaScriptCore API, you can allocate a global object with
+        no self-reference.)
+
+        * runtime/JSActivation.h: Removed unneeded #include.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::~JSGlobalObject): Don't use ==, since a weak
+        pointer is 0 when the object it points to runs its destructor.
+
+        * runtime/WeakGCPtr.h:
+        (JSC::WeakGCPtr::clear): Changed to return a bool indicating whether the
+        clear actually happened.
+        (JSC::WeakGCPtr::assign): Changed to forbid assignment of 0 as a shorthand
+        for calling clear(). A client should never clear by assigning 0, since
+        clear() should be conditional on whether the object doing the clearing
+        is still pointed to by the weak pointer. (Otherwise, a zombie object might
+        clear a pointer to a new, valid object.)
+
 2010-04-25  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej Stachowiak.

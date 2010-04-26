@@ -29,6 +29,8 @@
 #include "config.h"
 #include "RegisterFile.h"
 
+#include "JSGlobalObject.h"
+
 namespace JSC {
 
 RegisterFile::~RegisterFile()
@@ -54,6 +56,21 @@ void RegisterFile::releaseExcessCapacity()
     m_commitEnd = m_start;
 #endif
     m_maxUsed = m_start;
+}
+
+void RegisterFile::setGlobalObject(JSGlobalObject* globalObject)
+{
+    m_globalObject = globalObject;
+}
+
+bool RegisterFile::clearGlobalObject(JSGlobalObject* globalObject)
+{
+    return m_globalObject.clear(globalObject);
+}
+
+JSGlobalObject* RegisterFile::globalObject()
+{
+    return m_globalObject.get();
 }
 
 } // namespace JSC

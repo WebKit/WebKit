@@ -117,10 +117,8 @@ JSGlobalObject::~JSGlobalObject()
         (*it)->clearGlobalObject();
         
     RegisterFile& registerFile = globalData()->interpreter->registerFile();
-    if (registerFile.globalObject() == this) {
-        registerFile.setGlobalObject(0);
+    if (registerFile.clearGlobalObject(this))
         registerFile.setNumGlobals(0);
-    }
     d()->destructor(d());
 }
 
