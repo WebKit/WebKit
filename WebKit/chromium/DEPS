@@ -32,7 +32,7 @@
 
 vars = {
   'chromium_svn': 'http://src.chromium.org/svn/trunk/src',
-  'chromium_rev': '45515',
+  'chromium_rev': '45294',
 
   'pthreads-win32_rev': '26716',
 }
@@ -123,9 +123,6 @@ deps = {
 
   'third_party/libxslt':
     Var('chromium_svn')+'/third_party/libxslt@'+Var('chromium_rev'),
-
-  'third_party/mesa':
-    Var('chromium_svn')+'/third_party/mesa@'+Var('chromium_rev'),
 
   'third_party/modp_b64':
     Var('chromium_svn')+'/third_party/modp_b64@'+Var('chromium_rev'),
