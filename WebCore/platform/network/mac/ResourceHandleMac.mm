@@ -572,6 +572,11 @@ void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge
     ASSERT(!challenge.isNull());
     if (challenge != d->m_currentWebChallenge)
         return;
+    
+    if (credential.isEmpty()) {
+        receivedRequestToContinueWithoutCredential(challenge);
+        return;
+    }
 
 #ifdef BUILDING_ON_TIGER
     if (credential.persistence() == CredentialPersistenceNone) {
