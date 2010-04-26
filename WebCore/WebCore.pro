@@ -2398,7 +2398,7 @@ contains(DEFINES, ENABLE_VIDEO=1) {
             HEADERS += platform/graphics/qt/MediaPlayerPrivateQt.h
             SOURCES += platform/graphics/qt/MediaPlayerPrivateQt.cpp
 
-            tobe|!tobe: QT += multimedia
+            tobe|!tobe: QT += multimedia mediaservices
         } else {
             HEADERS += \
                 platform/graphics/qt/MediaPlayerPrivatePhonon.h

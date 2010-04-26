@@ -77,7 +77,7 @@ MediaPlayer::SupportsType MediaPlayerPrivate::supportsType(const String& mime, c
     if (!mime.startsWith("audio/") && !mime.startsWith("video/"))
         return MediaPlayer::IsNotSupported;
 
-    if (QMediaPlayer::hasSupport(mime, QStringList(codec)) >= QtMultimedia::ProbablySupported)
+    if (QMediaPlayer::hasSupport(mime, QStringList(codec)) >= QtMediaServices::ProbablySupported)
         return MediaPlayer::IsSupported;
 
     return MediaPlayer::MayBeSupported;
@@ -344,8 +344,8 @@ unsigned MediaPlayerPrivate::bytesLoaded() const
 
 unsigned MediaPlayerPrivate::totalBytes() const
 {
-    if (m_mediaPlayer->availableMetaData().contains(QtMultimedia::Size))
-        return m_mediaPlayer->metaData(QtMultimedia::Size).toInt();
+    if (m_mediaPlayer->availableMetaData().contains(QtMediaServices::Size))
+        return m_mediaPlayer->metaData(QtMediaServices::Size).toInt();
 
     return 100;
 }

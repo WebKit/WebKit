@@ -1,3 +1,17 @@
+2010-04-26  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Fix compilation against Qt 4.7
+
+        Some QtMultimedia things have been moved into QtMediaServices
+        https://bugs.webkit.org/show_bug.cgi?id=38111
+
+        * WebCore.pro:
+        * platform/graphics/qt/MediaPlayerPrivateQt.cpp:
+        (WebCore::MediaPlayerPrivate::supportsType):
+        (WebCore::MediaPlayerPrivate::totalBytes):
+
 2010-04-26  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Reviewed by Dirk Schulze.
