@@ -1,3 +1,16 @@
+2010-04-26  Markus Goetz  <Markus.Goetz@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] HTTP pipelining efficiency increase
+        https://bugs.webkit.org/show_bug.cgi?id=38062
+
+        Increase number of network requests that are fed into
+        QNetworkAccessManager.
+
+        * platform/network/qt/ResourceRequestQt.cpp:
+        (WebCore::initializeMaximumHTTPConnectionCountPerHost):
+
 2010-04-26  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

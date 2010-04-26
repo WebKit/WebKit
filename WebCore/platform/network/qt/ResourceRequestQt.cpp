@@ -32,12 +32,14 @@ namespace WebCore {
 // To achieve the best result we want WebKit to schedule the jobs so we
 // are using the limit as found in Qt. To allow Qt to fill its queue
 // and prepare jobs we will schedule two more downloads.
+// Per TCP connection there is 1 current processed, 3 possibly pipelined
+// and 2 ready to re-fill the pipeline.
 unsigned initializeMaximumHTTPConnectionCountPerHost()
 {
 #ifdef Q_OS_SYMBIAN
-    return 3 + 2;
+    return 3 * (1 + 3 + 2);
 #else
-    return 6 + 2;
+    return 6 * (1 + 3 + 2);
 #endif
 }
 
