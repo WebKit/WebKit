@@ -2,6 +2,22 @@
 
         Reviewed by Shinichiro Hamaji.
 
+        Deleted the StyleChecker-related classes that are no longer
+        being used.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38118
+
+        * Scripts/webkitpy/style/checker.py:
+          - Deleted the DeprecatedStyleChecker class.
+
+        * Scripts/webkitpy/style/checker_unittest.py:
+          - Deleted the StyleCheckerTest, StyleCheckerCheckFileBase,
+            StyleCheckerCheckFileTest, and StyleCheckerCheckPathsTest classes.
+
+2010-04-26  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Shinichiro Hamaji.
+
         Changed the StyleChecker class to use the new TextFileReader class.
 
         https://bugs.webkit.org/show_bug.cgi?id=37066
