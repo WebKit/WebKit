@@ -1248,6 +1248,7 @@ HEADERS += \
     dom/TouchList.h \
     dom/TransformSource.h \
     dom/Traversal.h \
+    dom/TreeDepthLimit.h \
     dom/TreeWalker.h \
     dom/UIEvent.h \
     dom/UIEventWithKeyState.h \

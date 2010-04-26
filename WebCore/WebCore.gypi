@@ -1233,6 +1233,7 @@
             'dom/TransformSource.h',
             'dom/Traversal.cpp',
             'dom/Traversal.h',
+            'dom/TreeDepthLimit.h',
             'dom/TreeWalker.cpp',
             'dom/TreeWalker.h',
             'dom/UIEvent.cpp',

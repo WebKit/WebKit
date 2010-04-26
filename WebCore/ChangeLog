@@ -1,3 +1,46 @@
+2010-04-25  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        WebKit crashes with deeply nested divs
+        https://bugs.webkit.org/show_bug.cgi?id=18282
+
+        The HTML parser caps a tree depth by MAX_DOM_TREE_DEPTH defined in
+        TreeDepthLimit.h. This is performance-efficient, but does not work for
+        DOM operations such as Node.appendChild().
+
+        Test: fast/parser/element-nesting-cap.html
+
+        * dom/Node.h:
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::pushCurrentNode):
+        * html/HTMLParser.cpp:
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/TreeDepthLimit.h:
+          Added. Define MAX_DOM_TREE_DEPTH. The default value is 5000.
+        * dom/XMLTokenizer.cpp: Use maxDOMTreeDepth.
+        (WebCore::XMLTokenizer::pushCurrentNode):
+        * html/HTMLParser.cpp:
+          Introduce m_treeDepth, which counts the depth of the tree.
+          Unlike m_blocksInStack, it contains the number of non-block nodes.
+        (WebCore::HTMLParser::HTMLParser):
+        (WebCore::HTMLParser::reset):
+        (WebCore::HTMLParser::limitDepth):
+          Renamed from limitBlockDepth. Add check for m_nodeDepth.
+        (WebCore::HTMLParser::insertNodeAfterLimitDepth):
+          Renamed from insertNodeAfterLimitBlockDepth.
+        (WebCore::HTMLParser::parseToken):
+        (WebCore::HTMLParser::handleResidualStyleCloseTagAcrossBlocks):
+        (WebCore::HTMLParser::pushBlock):
+        (WebCore::HTMLParser::popOneBlockCommon):
+        (WebCore::HTMLParser::freeBlock):
+        * html/HTMLParser.h:
+
 2010-04-25  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Adam Barth.

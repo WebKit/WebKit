@@ -29583,6 +29583,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\TreeDepthLimit.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\TreeWalker.cpp"
 				>
 			</File>

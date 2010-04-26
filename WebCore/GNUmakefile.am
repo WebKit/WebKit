@@ -888,6 +888,7 @@ webcore_sources += \
 	WebCore/dom/Tokenizer.h \
 	WebCore/dom/Traversal.cpp \
 	WebCore/dom/Traversal.h \
+	WebCore/dom/TreeDepthLimit.h \
 	WebCore/dom/TreeWalker.cpp \
 	WebCore/dom/TreeWalker.h \
 	WebCore/dom/UIEvent.cpp \

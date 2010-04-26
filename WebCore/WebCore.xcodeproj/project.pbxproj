@@ -739,6 +739,7 @@
 		37C28A6810F659CC008C7813 /* TypesettingFeatures.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C28A6710F659CC008C7813 /* TypesettingFeatures.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37F818FD0D657606005E1F05 /* WebCoreURLResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 37F818FB0D657606005E1F05 /* WebCoreURLResponse.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37F818FE0D657606005E1F05 /* WebCoreURLResponse.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37F818FC0D657606005E1F05 /* WebCoreURLResponse.mm */; };
+		37FD4298118368460093C029 /* TreeDepthLimit.h in Headers */ = {isa = PBXBuildFile; fileRef = 37FD4297118368460093C029 /* TreeDepthLimit.h */; };
 		41002CCD0F66EDEF009E660D /* ScriptFunctionCall.h in Headers */ = {isa = PBXBuildFile; fileRef = 41002CCB0F66EDEF009E660D /* ScriptFunctionCall.h */; };
 		41002CCE0F66EDEF009E660D /* ScriptFunctionCall.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41002CCC0F66EDEF009E660D /* ScriptFunctionCall.cpp */; };
 		410B7E721045FAB000D8224F /* JSMessageEventCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 410B7E711045FAB000D8224F /* JSMessageEventCustom.cpp */; };
@@ -6172,6 +6173,7 @@
 		37F818FB0D657606005E1F05 /* WebCoreURLResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreURLResponse.h; sourceTree = "<group>"; };
 		37F818FC0D657606005E1F05 /* WebCoreURLResponse.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreURLResponse.mm; sourceTree = "<group>"; };
 		37FC96DA1104ED71003E1FAD /* TrailingFloatsRootInlineBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrailingFloatsRootInlineBox.h; sourceTree = "<group>"; };
+		37FD4297118368460093C029 /* TreeDepthLimit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeDepthLimit.h; sourceTree = "<group>"; };
 		41002CCB0F66EDEF009E660D /* ScriptFunctionCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptFunctionCall.h; sourceTree = "<group>"; };
 		41002CCC0F66EDEF009E660D /* ScriptFunctionCall.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptFunctionCall.cpp; sourceTree = "<group>"; };
 		410B7E711045FAB000D8224F /* JSMessageEventCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMessageEventCustom.cpp; sourceTree = "<group>"; };
@@ -16074,6 +16076,7 @@
 		F523D32402DE4478018635CA /* dom */ = {
 			isa = PBXGroup;
 			children = (
+				37FD4297118368460093C029 /* TreeDepthLimit.h */,
 				E1C4DE6D0EA75C650023CCD6 /* ActiveDOMObject.cpp */,
 				E1C4DE680EA75C1E0023CCD6 /* ActiveDOMObject.h */,
 				A8C4A7FC09D563270003AC8D /* Attr.cpp */,
@@ -18879,6 +18882,7 @@
 				2E3BC0CB117D3E0800B9409A /* JSFileError.h in Headers */,
 				2E3BC108117D479800B9409A /* DOMFileError.h in Headers */,
 				2E3BC10B117D47C800B9409A /* DOMFileErrorInternal.h in Headers */,
+				37FD4298118368460093C029 /* TreeDepthLimit.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

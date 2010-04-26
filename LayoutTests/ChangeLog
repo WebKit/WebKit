@@ -1,3 +1,16 @@
+2010-04-25  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        WebKit crashes with deeply nested divs.
+        https://bugs.webkit.org/show_bug.cgi?id=18282
+
+        Add a test for deeply nested <span> elements like block-nesting-cap.html.
+
+        * fast/parser/element-nesting-cap-expected.txt: Added.
+        * fast/parser/element-nesting-cap.html: Added.
+        * fast/parser/script-tests/element-nesting-cap.js: Added.
+
 2010-04-25  Yuzo Fujishima  <yuzo@google.com>
 
         Unreviewed, Chromium test expectation change.

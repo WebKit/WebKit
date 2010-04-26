@@ -50,6 +50,7 @@
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
 #include "TextResourceDecoder.h"
+#include "TreeDepthLimit.h"
 #include <wtf/text/CString.h>
 #include <wtf/StringExtras.h>
 #include <wtf/Threading.h>
@@ -67,7 +68,6 @@ namespace WebCore {
 using namespace HTMLNames;
 
 const int maxErrors = 25;
-const size_t maxNestingDepth = 4096;
 
 #if ENABLE(WML)
 bool XMLTokenizer::isWMLDocument() const
@@ -87,7 +87,7 @@ void XMLTokenizer::pushCurrentNode(Node* n)
         n->ref();
     m_currentNodeStack.append(m_currentNode);
     m_currentNode = n;
-    if (m_currentNodeStack.size() > maxNestingDepth)
+    if (m_currentNodeStack.size() > maxDOMTreeDepth)
         handleError(fatal, "Excessive node nesting.", lineNumber(), columnNumber());
 }
 

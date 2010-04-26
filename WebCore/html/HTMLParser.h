@@ -112,9 +112,8 @@ private:
 
     void processCloseTag(Token*);
 
-    void limitBlockDepth(int tagPriority);
-
-    bool insertNodeAfterLimitBlockDepth(Node*, bool flat = false);
+    void limitDepth(int tagPriority);
+    bool insertNodeAfterLimitDepth(Node*, bool flat = false);
     bool insertNode(Node*, bool flat = false);
     bool handleError(Node*, bool flat, const AtomicString& localName, int tagPriority);
     
@@ -170,6 +169,8 @@ private:
     // currently in m_blockStack. The parser enforces a cap on this value by
     // adding such new elements as siblings instead of children once it is reached.
     size_t m_blocksInStack;
+    // Depth of the tree.
+    unsigned m_treeDepth;
 
     enum ElementInScopeState { NotInScope, InScope, Unknown }; 
     ElementInScopeState m_hasPElementInScope;
