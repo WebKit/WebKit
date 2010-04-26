@@ -1,5 +1,15 @@
 2010-04-25  Tony Chang  <tony@chromium.org>
 
+        Not reviewed, trying to get the chromium bots green.
+        Adding image diffs to pixel tests.
+
+        REGRESSION(r58191): Caret moved a pixel, pixel tests failing
+        https://bugs.webkit.org/show_bug.cgi?id=38104
+
+        * platform/chromium/test_expectations.txt:
+
+2010-04-25  Tony Chang  <tony@chromium.org>
+
         Not reviewed, trying to get the chromium bots
         green.
 

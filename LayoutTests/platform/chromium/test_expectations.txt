@@ -2784,3 +2784,17 @@ BUGWK38100 WIN LINUX MAC : editing/inserting/caret-position.html = TEXT
 
 // New test, may be safe to just rebaseline.
 BUGWK38099 WIN LINUX : svg/custom/broken-internal-references.svg = IMAGE+TEXT
+
+// Regressed with r58191.  May just need to be rebaselined.
+BUGWK38104 : editing/deleting/4845371.html = IMAGE
+BUGWK38104 : editing/deleting/5126166.html = IMAGE
+BUGWK38104 : editing/deleting/5483370.html = IMAGE
+BUGWK38104 : editing/deleting/table-cells.html = IMAGE
+BUGWK38104 : editing/inserting/4875189-2.html = IMAGE
+BUGWK38104 : editing/pasteboard/5387578.html = IMAGE
+BUGWK38104 : editing/pasteboard/paste-4039777-fix.html = IMAGE
+BUGWK38104 : editing/pasteboard/paste-table-001.html = IMAGE
+BUGWK38104 : editing/pasteboard/paste-table-cells.html = IMAGE
+BUGWK38104 : editing/selection/move-past-trailing-space.html = IMAGE
+BUGWK38104 : fast/inline-block/14498-positionForCoordinates.html = IMAGE
+BUGWK38104 : fast/repaint/caret-outside-block.html = IMAGE
