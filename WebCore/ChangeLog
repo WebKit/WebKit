@@ -1,3 +1,16 @@
+2010-04-26  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Dirk Schulze.
+
+        Call setStrokeStyle in applyStrokeStyleToContext
+        https://bugs.webkit.org/show_bug.cgi?id=37849
+
+        Not all platforms set the stroke style to solid if they
+        get an empty line dash array. Some just ignore the operation.
+
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::applyStrokeStyleToContext):
+
 2010-04-23  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.
