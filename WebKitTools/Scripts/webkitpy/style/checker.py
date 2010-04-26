@@ -30,7 +30,6 @@
 
 """Front end of some style-checker modules."""
 
-import codecs
 import logging
 import os.path
 import sys
@@ -337,6 +336,13 @@ class FileType:
     TEXT = 4
 
 
+# FIXME: Rename this class to CheckerDispatcher, rename the style/processors/
+#        folder to style/checkers, and rename all of the code checker
+#        classes to end in "Checker" (e.g. "CppProcessor" should become
+#        "CppChecker").  This will address the current issue whereby the
+#        word "processor" is being used to refer to both a general lines
+#        processor used to instantiate a TextFileReader, and a class used
+#        to check style for a particular file format.
 class ProcessorDispatcher(object):
 
     """Supports determining whether and how to check style, based on path."""
@@ -395,6 +401,11 @@ class ProcessorDispatcher(object):
               file_extension in self.text_file_extensions):
             return FileType.TEXT
         else:
+            # FIXME: If possible, change this method to default to
+            #        returning FileType.TEXT.  The should_process() method
+            #        should really encapsulate which files not to check.
+            #        Currently, "skip" logic is spread between both this
+            #        method and should_process.
             return FileType.NONE
 
     def _create_processor(self, file_type, file_path, handle_style_error,
@@ -528,7 +539,13 @@ class ProcessorBase(object):
     """The base class for processors of lists of lines."""
 
     def should_process(self, file_path):
-        """Return whether the file at file_path should be processed."""
+        """Return whether the file at file_path should be processed.
+
+        The TextFileReader class calls this method prior to reading in
+        the lines of a file.  Use this method, for example, to prevent
+        the style checker from reading binary files into memory.
+
+        """
         raise NotImplementedError('Subclasses should implement.')
 
     def process(self, lines, file_path, **kwargs):
@@ -549,10 +566,8 @@ class ProcessorBase(object):
         raise NotImplementedError('Subclasses should implement.')
 
 
-# FIXME: Modify this class to start using the TextFileReader class in
-#        webkitpy/style/filereader.py.  This probably means creating
-#        a StyleProcessor class that inherits from ProcessorBase.
-class StyleChecker(object):
+# FIXME: Delete this class since it is no longer being used.
+class DeprecatedStyleChecker(object):
 
     """Supports checking style in files and patches.
 
@@ -740,18 +755,139 @@ class StyleChecker(object):
         process_file(processor, file_path, handle_style_error)
 
 
+class StyleProcessor(ProcessorBase):
+
+    """A ProcessorBase for checking style.
+
+    Attributes:
+      error_count: An integer that is the total number of reported
+                   errors for the lifetime of this instance.
+
+    """
+
+    def __init__(self, configuration, mock_dispatcher=None,
+                 mock_increment_error_count=None,
+                 mock_carriage_checker_class=None):
+        """Create an instance.
+
+        Args:
+          configuration: A StyleCheckerConfiguration instance.
+          mock_dispatcher: A mock ProcessorDispatcher instance.  This
+                           parameter is for unit testing.  Defaults to a
+                           ProcessorDispatcher instance.
+          mock_increment_error_count: A mock error-count incrementer.
+          mock_carriage_checker_class: A mock class for checking and
+                                       transforming carriage returns.
+                                       This parameter is for unit testing.
+                                       Defaults to CarriageReturnProcessor.
+
+        """
+        if mock_dispatcher is None:
+            dispatcher = ProcessorDispatcher()
+        else:
+            dispatcher = mock_dispatcher
+
+        if mock_increment_error_count is None:
+            # The following blank line is present to avoid flagging by pep8.py.
+
+            def increment_error_count():
+                """Increment the total count of reported errors."""
+                self.error_count += 1
+        else:
+            increment_error_count = mock_increment_error_count
+
+        if mock_carriage_checker_class is None:
+            # This needs to be a class rather than an instance since the
+            # process() method instantiates one using parameters.
+            carriage_checker_class = CarriageReturnProcessor
+        else:
+            carriage_checker_class = mock_carriage_checker_class
+
+        self.error_count = 0
+
+        self._carriage_checker_class = carriage_checker_class
+        self._configuration = configuration
+        self._dispatcher = dispatcher
+        self._increment_error_count = increment_error_count
+
+    def should_process(self, file_path):
+        """Return whether the file should be checked for style."""
+
+        if self._dispatcher.should_skip_without_warning(file_path):
+            return False
+        if self._dispatcher.should_skip_with_warning(file_path):
+            _log.warn('File exempt from style guide. Skipping: "%s"'
+                      % file_path)
+            return False
+        return True
+
+    def process(self, lines, file_path, line_numbers=None):
+        """Check the given lines for style.
+
+        Arguments:
+          lines: A list of all lines in the file to check.
+          file_path: The path of the file to process.  If possible, the path
+                     should be relative to the source root.  Otherwise,
+                     path-specific logic may not behave as expected.
+          line_numbers: A list of line numbers of the lines for which
+                        style errors should be reported, or None if errors
+                        for all lines should be reported.  When not None, this
+                        list normally contains the line numbers corresponding
+                        to the modified lines of a patch.
+
+        """
+        _log.debug("Checking style: " + file_path)
+
+        style_error_handler = DefaultStyleErrorHandler(
+            configuration=self._configuration,
+            file_path=file_path,
+            increment_error_count=self._increment_error_count,
+            line_numbers=line_numbers)
+
+        carriage_checker = self._carriage_checker_class(style_error_handler)
+
+        # FIXME: We should probably use the SVN "eol-style" property
+        #        or a white list to decide whether or not to do
+        #        the carriage-return check. Originally, we did the
+        #        check only if (os.linesep != '\r\n').
+        #
+        # Check for and remove trailing carriage returns ("\r").
+        lines = carriage_checker.process(lines)
+
+        min_confidence = self._configuration.min_confidence
+        checker = self._dispatcher.dispatch_processor(file_path,
+                                                      style_error_handler,
+                                                      min_confidence)
+
+        if checker is None:
+            # FIXME: Should we really be skipping files that return True
+            #        for should_process()?  Perhaps this should be a
+            #        warning or an exception so we can find out if
+            #        should_process() is missing any files.
+            _log.debug('File not a recognized type to check. Skipping: "%s"'
+                       % file_path)
+            return
+
+        _log.debug("Using class: " + checker.__class__.__name__)
+
+        checker.process(lines)
+
+
+# FIXME: Rename this class to PatchReader to parallel TextFileReader
+#        (and to distinguish it from CarriageReturnChecker, CppChecker,
+#        etc. which are responsible only for processing lines).
 class PatchChecker(object):
 
     """Supports checking style in patches."""
 
-    def __init__(self, style_checker):
+    def __init__(self, text_file_reader):
         """Create a PatchChecker instance.
 
         Args:
-          style_checker: A StyleChecker instance.
+          text_file_reader: A TextFileReader instance.
 
         """
-        self._file_checker = style_checker
+        self._text_file_reader = text_file_reader
 
     def check(self, patch_string):
         """Check style in the given patch."""
@@ -775,5 +911,5 @@ class PatchChecker(object):
             # This optimization also prevents the program from exiting
             # due to a deleted file.
             if line_numbers:
-                self._file_checker.check_file(file_path=path,
-                                              line_numbers=line_numbers)
+                self._text_file_reader.process_file(file_path=path,
+                                                    line_numbers=line_numbers)

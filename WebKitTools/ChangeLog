@@ -1,3 +1,59 @@
+2010-04-26  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Changed the StyleChecker class to use the new TextFileReader class.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37066
+
+        This revision separates the code responsible for reading and iterating
+        over text files from the rest of check-webkit-style.
+
+        * Scripts/check-webkit-style:
+          - Changed the script to use the new StyleProcessor and
+            TextFileReader classes instead of the StyleChecker class.
+
+        * Scripts/webkitpy/style/checker.py:
+          - Added a FIXME to rename many of uses of the word "processor" to
+            "checker".  We did this to clarify the difference between
+            ProcessorBase instances passed to the TextFileReader and
+            classes that process and check lines for style.
+          - Added a FIXME to remove FileType.NONE as a possible return value
+            of ProcessorDispatcher._file_type().  This will better consolidate
+            the logic of which files should be skipped.
+          - Added a FIXME to delete the StyleChecker class.
+          - Added the StyleProcessor class which implements ProcessorBase.
+            This class is responsible for processing lines to check style
+            (but not for reading files).  For each file, this class creates
+            creates both a carriage-return checker and a format-specific
+            style checker (e.g. one of C++, Python, etc).
+          - Updated the PatchChecker class to use a TextFileReader instance
+            instead of a StyleChecker.
+
+        * Scripts/webkitpy/style/checker_unittest.py:
+          - Added the StyleProcessor_EndToEndTest class to do "end-to-end"
+            tests of the StyleProcessor class.
+          - Added the StyleProcessor_CodeCoverageTest to test the
+            StyleProcessor class with more complete code coverage.
+            Unlike the StyleProcessor_EndToEndTest class, this class makes
+            heavy use of mock parameters.
+          - Added FIXME's to delete the unit test classes that are no
+            longer needed.
+          - Updated the PatchCheckerTest class to use a MockTextFileReader
+            instead of a MockStyleChecker.
+
+        * Scripts/webkitpy/style/filereader.py:
+          - Updated the TextFileReader class to use the preferred logic
+            of checking file existence at the beginning of the process_file()
+            method instead of in the except block, per
+            https://bugs.webkit.org/show_bug.cgi?id=37122
+
+        * Scripts/webkitpy/style/filereader_unittest.py:
+          - In the TextFileReaderTest class:
+            - Moved the test_process_file__should_not_process() method.
+            - Added a test_process_file__file_stdin() method to test
+              the file path "-".
+
 2010-04-20  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Simon Hausmann.

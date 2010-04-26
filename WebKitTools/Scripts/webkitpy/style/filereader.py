@@ -103,6 +103,10 @@ class TextFileReader(object):
         """
         self.file_count += 1
 
+        if not os.path.exists(file_path) and file_path != "-":
+            _log.error("File does not exist: '%s'" % file_path)
+            sys.exit(1)
+
         if not self._processor.should_process(file_path):
             _log.debug("Skipping file: '%s'" % file_path)
             return
@@ -111,10 +115,6 @@ class TextFileReader(object):
         try:
             lines = self._read_lines(file_path)
         except IOError, err:
-            if not os.path.exists(file_path):
-                _log.error("File does not exist: '%s'" % file_path)
-                sys.exit(1)
-
             message = ("Could not read file. Skipping: '%s'\n  %s"
                        % (file_path, err))
             _log.warn(message)

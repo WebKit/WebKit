@@ -51,6 +51,8 @@ import sys
 from webkitpy.style_references import detect_checkout
 import webkitpy.style.checker as checker
 from webkitpy.style.checker import PatchChecker
+from webkitpy.style.checker import StyleProcessor
+from webkitpy.style.filereader import TextFileReader
 from webkitpy.style.main import change_directory
 
 _log = logging.getLogger("check-webkit-style")
@@ -103,22 +105,26 @@ def main():
         sys.exit(1)
 
     configuration = checker.check_webkit_style_configuration(options)
-    style_checker = checker.StyleChecker(configuration)
 
     paths = change_directory(checkout_root=checkout_root, paths=paths)
 
+    style_processor = StyleProcessor(configuration)
+
+    file_reader = TextFileReader(style_processor)
+
     if paths:
-        style_checker.check_paths(paths)
+        file_reader.process_paths(paths)
     else:
         if options.git_commit:
             patch = checkout.create_patch_since_local_commit(options.git_commit)
         else:
             patch = checkout.create_patch()
-        patch_checker = PatchChecker(style_checker)
+        patch_checker = PatchChecker(file_reader)
         patch_checker.check(patch)
 
-    error_count = style_checker.error_count
-    file_count = style_checker.file_count
+    error_count = style_processor.error_count
+    file_count = file_reader.file_count
+
     _log.info("Total errors found: %d in %d files"
               % (error_count, file_count))
     # We fail when style errors are found or there are no checked files.
