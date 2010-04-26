@@ -137,6 +137,7 @@ bool isMainThread()
     return pthread_equal(pthread_self(), mainThreadPthread);
 #else
     ASSERT_NOT_REACHED();
+    return false;
 #endif
 }
 
