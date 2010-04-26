@@ -1,3 +1,31 @@
+2010-04-26  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        For check-webkit-style, renamed the style/processors/ directory
+        to style/checkers/.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38122
+
+        * Scripts/webkitpy/style/checker.py:
+          - Updated import statements.
+
+        * Scripts/webkitpy/style/checker_unittest.py:
+          - Updated import statements.
+
+        * Scripts/webkitpy/style/checkers: Copied from WebKitTools/Scripts/webkitpy/style/processors.
+        * Scripts/webkitpy/style/processors: Removed.
+        * Scripts/webkitpy/style/processors/__init__.py: Removed.
+        * Scripts/webkitpy/style/processors/common.py: Removed.
+        * Scripts/webkitpy/style/processors/common_unittest.py: Removed.
+        * Scripts/webkitpy/style/processors/cpp.py: Removed.
+        * Scripts/webkitpy/style/processors/cpp_unittest.py: Removed.
+        * Scripts/webkitpy/style/processors/python.py: Removed.
+        * Scripts/webkitpy/style/processors/python_unittest.py: Removed.
+        * Scripts/webkitpy/style/processors/python_unittest_input.py: Removed.
+        * Scripts/webkitpy/style/processors/text.py: Removed.
+        * Scripts/webkitpy/style/processors/text_unittest.py: Removed.
+
 2010-04-06  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Adam Barth.

@@ -34,15 +34,15 @@ import logging
 import os.path
 import sys
 
+from checkers.common import categories as CommonCategories
+from checkers.common import CarriageReturnProcessor
+from checkers.cpp import CppProcessor
+from checkers.python import PythonProcessor
+from checkers.text import TextProcessor
 from error_handlers import DefaultStyleErrorHandler
 from filter import FilterConfiguration
 from optparser import ArgumentParser
 from optparser import DefaultCommandOptionValues
-from processors.common import categories as CommonCategories
-from processors.common import CarriageReturnProcessor
-from processors.cpp import CppProcessor
-from processors.python import PythonProcessor
-from processors.text import TextProcessor
 from webkitpy.style_references import parse_patch
 from webkitpy.style_references import configure_logging as _configure_logging
 
@@ -191,7 +191,7 @@ _MAX_REPORTS_PER_CATEGORY = {
 
 def _all_categories():
     """Return the set of all categories used by check-webkit-style."""
-    # Take the union across all processors.
+    # Take the union across all checkers.
     categories = CommonCategories.union(CppProcessor.categories)
 
     # FIXME: Consider adding all of the pep8 categories.  Since they

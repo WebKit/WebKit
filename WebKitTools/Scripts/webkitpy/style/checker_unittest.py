@@ -54,14 +54,14 @@ from checker import PatchChecker
 from checker import ProcessorBase
 from checker import StyleProcessor
 from checker import StyleCheckerConfiguration
+from checkers.cpp import CppProcessor
+from checkers.python import PythonProcessor
+from checkers.text import TextProcessor
 from error_handlers import DefaultStyleErrorHandler
 from filter import validate_filter_rules
 from filter import FilterConfiguration
 from optparser import ArgumentParser
 from optparser import CommandOptionValues
-from processors.cpp import CppProcessor
-from processors.python import PythonProcessor
-from processors.text import TextProcessor
 from webkitpy.common.system.logtesting import LoggingTestCase
 from webkitpy.style.filereader import TextFileReader
 
