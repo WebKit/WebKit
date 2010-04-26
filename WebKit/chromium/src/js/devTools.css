@@ -39,6 +39,12 @@ body.detached.platform-mac-snowleopard.inactive #toolbar {
     background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(215, 215, 215)), to(rgb(207, 207, 207))) !important;
 }
 
+body.platform-linux #scripts-files {
+    font-size: 11px;
+    font-weight: normal;
+    line-height: 12px;
+}
+
 /* Heap Profiler Styles */
 
 .heap-snapshot-status-bar-item .glyph {

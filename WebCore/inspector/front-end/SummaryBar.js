@@ -230,13 +230,13 @@ WebInspector.SummaryBar.prototype = {
             ctx.beginPath();
             ctx.moveTo(x, y + r);
             ctx.lineTo(x, y + h - r);
-            ctx.quadraticCurveTo(x, y + h, x + r, y + h);
+            ctx.arc(x + r, y + h - r, r, Math.PI, Math.PI / 2, true);
             ctx.lineTo(x + w - r, y + h);
-            ctx.quadraticCurveTo(x + w, y + h, x + w, y + h - r);
+            ctx.arc(x + w - r, y + h - r, r, Math.PI / 2, 0, true);
             ctx.lineTo(x + w, y + r);
-            ctx.quadraticCurveTo(x + w, y, x + w - r, y);
+            ctx.arc(x + w - r, y + r, r, 0, 3 * Math.PI / 2, true);
             ctx.lineTo(x + r, y);
-            ctx.quadraticCurveTo(x, y, x, y + r);
+            ctx.arc(x + r, y + r, r, Math.PI / 2, Math.PI, true);
             ctx.closePath();
 
             // Clip to the rounded rect path.
