@@ -124,6 +124,9 @@ deps = {
   'third_party/libxslt':
     Var('chromium_svn')+'/third_party/libxslt@'+Var('chromium_rev'),
 
+  'third_party/mesa':
+    Var('chromium_svn')+'/third_party/mesa@'+Var('chromium_rev'),
+
   'third_party/modp_b64':
     Var('chromium_svn')+'/third_party/modp_b64@'+Var('chromium_rev'),
 
