@@ -543,6 +543,8 @@ bool Database::performOpenAndVerify(ExceptionCode& e)
         e = INVALID_STATE_ERR;
         return false;
     }
+    if (!m_sqliteDatabase.turnOnIncrementalAutoVacuum())
+        LOG_ERROR("Unable to turn on incremental auto-vacuum for database %s", m_filename.ascii().data());
 
     ASSERT(m_databaseAuthorizer);
     m_sqliteDatabase.setAuthorizer(m_databaseAuthorizer);
@@ -806,6 +808,14 @@ String Database::fileName() const
 {
     // Return a deep copy for ref counting thread safety
     return m_filename.threadsafeCopy();
+}
+
+void Database::incrementalVacuumIfNeeded()
+{
+    int64_t freeSpaceSize = m_sqliteDatabase.freeSpaceSize();
+    int64_t totalSize = m_sqliteDatabase.totalSize();
+    if (totalSize <= 10 * freeSpaceSize)
+        m_sqliteDatabase.runIncrementalVacuumCommand();
 }
 
 #endif // ENABLE(DATABASE)
