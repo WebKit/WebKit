@@ -157,77 +157,79 @@ body.platform-linux #scripts-files {
     left: 25%;
 }
 
-body.platform-windows .section > .header {
+.section > .header {
     border: 1px solid rgb(92, 116, 157);
     background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(105, 133, 180)), to(rgb(92, 116, 157)));
 }
 
-body.platform-windows .console-group-messages .section > .header {
+.console-group-messages .section > .header {
     padding: 0 8px 0 0;
     background-image: none;
     border: none;
     min-height: 0;
 }
 
-body.platform-windows #resources-filter {
+#resources-filter {
     background: -webkit-gradient(linear, left top, left bottom, from(rgb(233, 233, 233)), to(rgb(233, 233, 233)));
 }
 
-body.platform-windows .crumbs .crumb {
+.crumbs .crumb {
     -webkit-border-image: url(Images/segmentChromium.png) 0 12 0 2;
+    margin-right: -3px;
+    padding-left: 6px;
 }
 
-body.platform-windows .crumbs .crumb.end {
+.crumbs .crumb.end {
     -webkit-border-image: url(Images/segmentEndChromium.png) 0 2 0 2;
 }
 
-body.platform-windows .crumbs .crumb.selected {
+.crumbs .crumb.selected {
     -webkit-border-image: url(Images/segmentSelectedChromium.png) 0 12 0 2;
     color: white;
     text-shadow: rgba(255, 255, 255, 0.5) 0 0px 0;
 }
 
-body.platform-windows .crumbs .crumb.selected:hover {
+.crumbs .crumb.selected:hover {
     -webkit-border-image: url(Images/segmentSelectedChromium.png) 0 12 0 2;
 }
 
-body.platform-windows .crumbs .crumb.selected.end, .crumbs .crumb.selected.end:hover {
+.crumbs .crumb.selected.end, .crumbs .crumb.selected.end:hover {
     -webkit-border-image: url(Images/segmentSelectedEndChromium.png) 0 2 0 2;
 }
 
-body.platform-windows .crumbs .crumb:hover {
+.crumbs .crumb:hover {
     -webkit-border-image: url(Images/segmentHoverChromium.png) 0 12 0 2;
 }
 
-body.platform-windows .crumbs .crumb.dimmed:hover {
+.crumbs .crumb.dimmed:hover {
     -webkit-border-image: url(Images/segmentHoverChromium.png) 0 12 0 2;
 }
 
-body.platform-windows .crumbs .crumb.end:hover {
+.crumbs .crumb.end:hover {
     -webkit-border-image: url(Images/segmentHoverEndChromium.png) 0 2 0 2;
 }
 
-body.platform-windows body.drawer-visible #main-status-bar {
+body.drawer-visible #main-status-bar {
     background-image: url(Images/statusbarResizerVertical.png), url(Images/statusbarBackgroundChromium.png);
 }
 
-body.platform-windows .status-bar {
+.status-bar {
     background-image: url(Images/statusbarBackgroundChromium.png);
 }
 
-body.platform-windows button.status-bar-item {
+button.status-bar-item {
     background-image: url(Images/statusbarButtonsChromium.png);
 }
 
-body.platform-windows select.status-bar-item:active {
+select.status-bar-item:active {
     -webkit-border-image: url(Images/statusbarMenuButtonSelectedChromium.png) 0 17 0 2;
 }
 
-body.platform-windows #drawer {
+#drawer {
     background-image: url(Images/statusbarBottomBackgroundChromium.png);
 }
 
-body.platform-windows select.status-bar-item {
+select.status-bar-item {
     -webkit-border-image: url(Images/statusbarMenuButtonChromium.png) 0 17 0 2;
 }
 

@@ -1,3 +1,43 @@
+2010-04-26  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Chromium Dev Tools: brush up images.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38124
+
+        * WebKit.gypi:
+        * src/js/DevTools.js:
+        (WebInspector.setToolbarColors):
+        * src/js/Images/segmentChromium.png:
+        * src/js/Images/segmentChromium2.png: Removed.
+        * src/js/Images/segmentHoverChromium2.png: Removed.
+        * src/js/Images/segmentSelectedChromium2.png: Removed.
+        * src/js/Images/statusbarBackgroundChromium.png:
+        * src/js/Images/statusbarBackgroundChromium2.png: Removed.
+        * src/js/Images/statusbarBottomBackgroundChromium.png:
+        * src/js/Images/statusbarButtonsChromium.png:
+        * src/js/Images/statusbarMenuButtonChromium.png:
+        * src/js/Images/statusbarMenuButtonChromium2.png: Removed.
+        * src/js/devTools.css:
+        (.section > .header):
+        (.console-group-messages .section > .header):
+        (#resources-filter):
+        (.crumbs .crumb):
+        (.crumbs .crumb.end):
+        (.crumbs .crumb.selected):
+        (.crumbs .crumb.selected:hover):
+        (.crumbs .crumb.selected.end, .crumbs .crumb.selected.end:hover):
+        (.crumbs .crumb:hover):
+        (.crumbs .crumb.dimmed:hover):
+        (.crumbs .crumb.end:hover):
+        (body.drawer-visible #main-status-bar):
+        (.status-bar):
+        (button.status-bar-item):
+        (select.status-bar-item:active):
+        (#drawer):
+        (select.status-bar-item):
+
 2010-04-23  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Darin Fisher.
