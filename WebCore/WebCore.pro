@@ -88,9 +88,6 @@ CONFIG(release):!CONFIG(standalone_package) {
     unix:contains(QT_CONFIG, reduce_relocations):CONFIG += bsymbolic_functions
 }
 
-linux-*: DEFINES += HAVE_STDINT_H
-freebsd-*: DEFINES += HAVE_PTHREAD_NP_H
-
 DEFINES += BUILD_WEBKIT
 
 # Remove whole program optimizations due to miscompilations

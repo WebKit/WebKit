@@ -1,3 +1,19 @@
+2010-04-26  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Clean-up WebCore.pro after now that JavaScriptCore is built separately
+        https://bugs.webkit.org/show_bug.cgi?id=38123
+
+        HAVE_STDINT_H, and HAVE_PTHREAD_NP_H no longer needs to be defined
+        for QtWebKit  as JavaScriptCore is built separately. These defines are only 
+        used  by JavaScriptCore and for JavaScriptCore these are already
+        properly defined in JavaScriptCore/config.h.
+
+        No new tests, no new functionality.
+
+        * WebCore.pro:
+
 2010-04-26  Roman Gershman  <romange@google.com>
 
         Reviewed by Adam Barth.
