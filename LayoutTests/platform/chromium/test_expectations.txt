@@ -75,7 +75,6 @@ BUG24182 SLOW WIN RELEASE : fast/dom/Window/webkitConvertPoint.html = PASS
 
 BUG24182 WIN RELEASE SLOW : http/tests/loading/redirect-methods.html = PASS
 BUG24182 WIN SLOW : svg/hixie/perf/007.xml = PASS
-BUG24182 DEBUG : fast/backgrounds/size/contain-and-cover.html = PASS
 BUG24182 SLOW MAC RELEASE : dom/html/level2/html/HTMLImageElement01.html = PASS
 BUG24182 SLOW WIN RELEASE : http/tests/local/file-url-sent-as-referer.html = PASS
 BUG24182 SLOW WIN DEBUG : svg/carto.net/window.svg = PASS
@@ -937,7 +936,7 @@ BUG3244 WIN LINUX : fast/backgrounds/repeat/mask-negative-offset-repeat.html = F
 // or might be expected and that we should either go with the buildbot output
 // or change the test upstream to specify explicitly what font to use.
 // The mask part of this test is totally wrong.
-BUG3244 LINUX WIN : fast/backgrounds/svg-as-background-6.html = FAIL
+BUG3244 : fast/backgrounds/svg-as-background-6.html = FAIL
 
 BUG10302 LINUX : svg/W3C-SVG-1.1/pservers-grad-10-b.svg = FAIL
 
@@ -2876,3 +2875,5 @@ BUGWK38106 WIN LINUX : svg/W3C-SVG-1.1/pservers-grad-19-b.svg = IMAGE+TEXT
 BUGWK38106 WIN LINUX : svg/custom/dominant-baseline-hanging.svg = IMAGE+TEXT
 BUGWK38106 MAC : svg/custom/dominant-baseline-hanging.svg = IMAGE
 
+// Started failing at 58212
+BUGWK38108 MAC : fast/backgrounds/size/contain-and-cover.html = IMAGE
