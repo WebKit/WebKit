@@ -1,3 +1,19 @@
+2010-04-26  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        [DRT/Chromium] Enable Windows project generation
+        https://bugs.webkit.org/show_bug.cgi?id=38103
+
+        - Bump the Chromium revision to r45515 to have GYP r818, which fixes
+          a Windows project generation bug.
+        - Avoid platform.system(), which causes a crash with python.exe in
+          depot_tools. Use sys.platform instead.
+        - Process DumpRenderTree.gyp on all platforms.
+
+        * DEPS:
+        * gyp_webkit:
+
 2010-04-23  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Darin Fisher.
