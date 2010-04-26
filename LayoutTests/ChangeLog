@@ -1,3 +1,19 @@
+2010-04-25  Tony Chang  <tony@chromium.org>
+
+        Not reviewed, trying to get the chromium bots
+        green.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38099
+        Rebaseline a new test and add another new test to the
+        expected fail list on windows and linux.
+
+        * platform/chromium-linux/fast/css-generated-content/after-duplicated-after-split-expected.checksum: Added.
+        * platform/chromium-linux/fast/css-generated-content/after-duplicated-after-split-expected.png: Added.
+        * platform/chromium-win/fast/css-generated-content/after-duplicated-after-split-expected.checksum: Added.
+        * platform/chromium-win/fast/css-generated-content/after-duplicated-after-split-expected.png: Added.
+        * platform/chromium-win/fast/css-generated-content/after-duplicated-after-split-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-04-25  Yuzo Fujishima  <yuzo@google.com>
 
         Unreviewed, Chromium test expectation change.

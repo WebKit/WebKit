@@ -2782,3 +2782,5 @@ BUGWK38038 WIN LINUX MAC : fast/url/file-http-base.html = TEXT
 // Started failing at r58191
 BUGWK38100 WIN LINUX MAC : editing/inserting/caret-position.html = TEXT
 
+// New test, may be safe to just rebaseline.
+BUGWK38099 WIN LINUX : svg/custom/broken-internal-references.svg = IMAGE+TEXT
