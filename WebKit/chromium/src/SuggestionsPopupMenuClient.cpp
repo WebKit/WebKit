@@ -156,11 +156,9 @@ void SuggestionsPopupMenuClient::initialize(HTMLInputElement* textField,
     FontDescription fontDescription;
     RenderTheme::defaultTheme()->systemFont(CSSValueWebkitControl,
                                             fontDescription);
+    RenderStyle* style = m_textField->computedStyle();
+    fontDescription.setComputedSize(style->fontDescription().computedSize());
 
-    // Use a smaller font size to match IE/Firefox.
-    // FIXME: http://crbug.com/7376 use the system size instead of a
-    //        fixed font size value.
-    fontDescription.setComputedSize(12.0);
     Font font(fontDescription, 0, 0);
     font.update(textField->document()->styleSelector()->fontSelector());
     // The direction of text in popup menu is set the same as the direction of
