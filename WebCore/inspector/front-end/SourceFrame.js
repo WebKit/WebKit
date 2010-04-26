@@ -55,9 +55,12 @@ WebInspector.SourceFrame.prototype = {
     {
         this._visible = visible;
         this._createViewerIfNeeded();
-        if (!visible && this._textViewer)
-            this._textViewer.freeCachedElements();
-            
+        
+        if (!visible) {
+            this._hidePopup();
+            if (this._textViewer)
+                this._textViewer.freeCachedElements();
+        }
     },
 
     get executionLine()

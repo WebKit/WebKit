@@ -1,3 +1,15 @@
+2010-04-26  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: undefined shows up on inspector.
+        https://bugs.webkit.org/show_bug.cgi?id=38120
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.hide):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.set visible):
+
 2010-04-26  Bruno Schmidt  <bruno.schmidt@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.

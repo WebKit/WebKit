@@ -248,6 +248,13 @@ WebInspector.ScriptsPanel.prototype = {
             delete this._attachDebuggerWhenShown;
         }
     },
+    
+    hide: function()
+    {
+        WebInspector.Panel.prototype.hide.call(this);
+        if (this.visibleView)
+            this.visibleView.hide();
+    },
 
     get searchableViews()
     {
