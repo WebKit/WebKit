@@ -1,3 +1,14 @@
+2010-04-26  Thiago Macieira  <thiago.macieira@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix the include header <qstring.h> -> <QtCore/qstring.h>
+
+        The module/header.h style inclusion removes the need to have -I$QTDIR/include/depending-module
+        in the include search path for the application.
+
+        * Api/qwebkitversion.h:
+
 2010-04-26  Bruno Schmidt  <bruno.schmidt@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.
