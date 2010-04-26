@@ -71,14 +71,9 @@ static void deallocCallback(void* context)
 bool WebCoreObjCScheduleDeallocateOnMainThread(Class cls, id object)
 {
     ASSERT([object isKindOfClass:cls]);
-    
-#if USE(WEB_THREAD)
+
     if (isMainThread())
         return false;
-#else
-    if (pthread_main_np() != 0)
-        return false;
-#endif
     
     ClassAndIdPair* pair = new ClassAndIdPair(cls, object);
     callOnMainThread(deallocCallback, pair);
