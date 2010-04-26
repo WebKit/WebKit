@@ -2779,3 +2779,6 @@ BUGWK38020 WIN LINUX MAC : fast/events/touch/send-oncancel-event.html = TEXT
 // Started failing at r58152
 BUGWK38038 WIN LINUX MAC : fast/url/file-http-base.html = TEXT
 
+// Started failing at r58191
+BUGWK38100 WIN LINUX MAC : editing/inserting/caret-position.html = TEXT
+

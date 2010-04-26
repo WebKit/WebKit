@@ -1,3 +1,14 @@
+2010-04-25  Yuzo Fujishima  <yuzo@google.com>
+
+        Unreviewed, Chromium test expectation change.
+
+        editing/inserting/caret-position.html is expected to fail for Chromium.
+        This is because TextInputController::firstRectForCharacterRange is unimplemented for Chromium.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38100
+
+        * platform/chromium/test_expectations.txt:
+
 2010-04-25  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Adam Barth.
