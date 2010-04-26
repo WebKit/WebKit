@@ -897,7 +897,7 @@ JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, con
         QVariantMap::const_iterator i = map.constBegin();
         while (i != map.constEnd()) {
             QString s = i.key();
-            JSValue val = convertQVariantToValue(exec, root, i.value());
+            JSValue val = convertQVariantToValue(exec, root.get(), i.value());
             if (val) {
                 PutPropertySlot slot;
                 ret->put(exec, Identifier(exec, (const UChar *)s.constData(), s.length()), val, slot);

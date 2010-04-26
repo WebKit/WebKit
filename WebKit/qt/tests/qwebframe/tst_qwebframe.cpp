@@ -57,6 +57,7 @@ class MyQObject : public QObject
     Q_PROPERTY(int intProperty READ intProperty WRITE setIntProperty)
     Q_PROPERTY(QVariant variantProperty READ variantProperty WRITE setVariantProperty)
     Q_PROPERTY(QVariantList variantListProperty READ variantListProperty WRITE setVariantListProperty)
+    Q_PROPERTY(QVariantMap variantMapProperty READ variantMapProperty WRITE setVariantMapProperty)
     Q_PROPERTY(QString stringProperty READ stringProperty WRITE setStringProperty)
     Q_PROPERTY(QStringList stringListProperty READ stringListProperty WRITE setStringListProperty)
     Q_PROPERTY(QByteArray byteArrayProperty READ byteArrayProperty WRITE setByteArrayProperty)
@@ -106,7 +107,12 @@ public:
             m_writeOnlyValue(789),
             m_readOnlyValue(987),
             m_objectStar(0),
-            m_qtFunctionInvoked(-1) { }
+            m_qtFunctionInvoked(-1)
+    {
+        m_variantMapValue.insert("a", QVariant(123));
+        m_variantMapValue.insert("b", QVariant(QLatin1String("foo")));
+        m_variantMapValue.insert("c", QVariant::fromValue<QObject*>(this));
+    }
 
     ~MyQObject() { }
 
@@ -129,6 +135,13 @@ public:
     }
     void setVariantListProperty(const QVariantList &value) {
         m_variantListValue = value;
+    }
+
+    QVariantMap variantMapProperty() const {
+        return m_variantMapValue;
+    }
+    void setVariantMapProperty(const QVariantMap &value) {
+        m_variantMapValue = value;
     }
 
     QString stringProperty() const {
@@ -483,6 +496,7 @@ private:
     int m_intValue;
     QVariant m_variantValue;
     QVariantList m_variantListValue;
+    QVariantMap m_variantMapValue;
     QString m_stringValue;
     QStringList m_stringListValue;
     QByteArray m_byteArrayValue;
@@ -756,6 +770,21 @@ void tst_QWebFrame::getSetStaticProperty()
     QCOMPARE(evalJS("myObject.variantListProperty.length === 2"), sTrue);
     QCOMPARE(evalJS("myObject.variantListProperty[0] === 123"), sTrue);
     QCOMPARE(evalJS("myObject.variantListProperty[1] === 'foo'"), sTrue);
+
+    {
+        QString type;
+        QVariant ret = evalJSV("myObject.variantMapProperty", type);
+        QCOMPARE(type, sObject);
+        QCOMPARE(ret.type(), QVariant::Map);
+        QVariantMap vm = ret.value<QVariantMap>();
+        QCOMPARE(vm.size(), 3);
+        QCOMPARE(vm.value("a").toInt(), 123);
+        QCOMPARE(vm.value("b").toString(), QLatin1String("foo"));
+        QCOMPARE(vm.value("c").value<QObject*>(), m_myObject);
+    }
+    QCOMPARE(evalJS("myObject.variantMapProperty.a === 123"), sTrue);
+    QCOMPARE(evalJS("myObject.variantMapProperty.b === 'foo'"), sTrue);
+    QCOMPARE(evalJS("myObject.variantMapProperty.c.variantMapProperty.b === 'foo'"), sTrue);
 
     {
         QString type;

@@ -1,3 +1,25 @@
+2010-04-26  Bruno Schmidt  <bruno.schmidt@gmail.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Exposing an QVariantMap containing QObjectStar to Javascript
+        causes Segmentation Fault
+        https://bugs.webkit.org/show_bug.cgi?id=34729
+
+        If an QVariantMap containing QObjectStar is added to the to QtWebkit
+        Javascript, it's use causes Segmentation Fault.
+        It happens because, in the case QMetaType::QVariantMap, the "root"
+        object that is inside of a PassRefPtr is passed recursively inside a
+        loop to recover the content of the map, but the PassRefPtr semantics
+        prohibit its use inside a loop, so the "root" object mus be passed
+        using the method "PassRefPtr::get" in order to keep the current
+        reference.
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+        (MyQObject::MyQObject): new property variantMapProperty
+        (MyQObject::variantMapProperty): read variantMapProperty
+        (MyQObject::setVariantMapProperty): write variantMapProperty
+
 2010-04-25  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Simon Hausmann.
