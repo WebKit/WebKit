@@ -40,7 +40,7 @@ class Options(object):
     confirm = make_option("--no-confirm", action="store_false", dest="confirm", default=True, help="Skip confirmation steps.")
     description = make_option("-m", "--description", action="store", type="string", dest="description", help="Description string for the attachment (default: \"patch\")")
     email = make_option("--email", action="store", type="string", dest="email", help="Email address to use in ChangeLogs.")
-    fancy_review = make_option("--fancy-review", action="store_true", dest="fancy_review", default=False, help="(Experimental) Upload the patch to Rietveld code review tool.")
+    fancy_review = make_option("--no-fancy-review", action="store_false", dest="fancy_review", default=True, help="Do not upload the patch to Rietveld code review tool.")
     force_clean = make_option("--force-clean", action="store_true", dest="force_clean", default=False, help="Clean working directory before applying patches (removes local changes and commits)")
 # FIXME: Make commit ranges treat each commit separately instead of squashing them into one.
     git_commit = make_option("--git-commit", action="store", dest="git_commit", help="Local git commit to upload/land. If a range, the commits are squashed into one.")

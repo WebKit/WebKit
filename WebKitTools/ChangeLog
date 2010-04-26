@@ -1,3 +1,15 @@
+2010-04-26  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        complete rietveld bugzilla integration
+        https://bugs.webkit.org/show_bug.cgi?id=38021
+
+        Makes --fancy-review the default. All this means is that the patch will
+        be uploaded to rietveld in addition to bugs.webkit.org. 
+
+        * Scripts/webkitpy/tool/steps/options.py:
+
 2010-04-26  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Shinichiro Hamaji.
