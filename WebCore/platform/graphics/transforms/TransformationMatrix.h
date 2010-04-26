@@ -47,7 +47,7 @@
 #endif
 
 #if PLATFORM(WIN) || (PLATFORM(QT) && OS(WINDOWS)) || (PLATFORM(WX) && OS(WINDOWS))
-#if COMPILER(MINGW)
+#if COMPILER(MINGW) && !COMPILER(MINGW64)
 typedef struct _XFORM XFORM;
 #else
 typedef struct tagXFORM XFORM;

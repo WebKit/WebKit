@@ -45,7 +45,7 @@ public:
     TextStream& operator<<(const char*);
     TextStream& operator<<(const void*);
     TextStream& operator<<(const String&);
-#if OS(WINDOWS) && CPU(X86_64) && COMPILER(MSVC)
+#if OS(WINDOWS) && CPU(X86_64)
     TextStream& operator<<(unsigned __int64);
     TextStream& operator<<(__int64);
 #endif

@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-typedef unsigned long uword;
+typedef uintptr_t uword;
 
 struct Arena {
     Arena* next;        // next arena

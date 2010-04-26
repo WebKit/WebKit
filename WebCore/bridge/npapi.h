@@ -590,8 +590,8 @@ typedef QEvent NPEvent;
 typedef struct _NPEvent
 {
     uint16   event;
-    uint32   wParam;
-    uint32   lParam;
+    uintptr_t   wParam;
+    uintptr_t   lParam;
 } NPEvent;
 #elif defined (XP_UNIX)
 typedef XEvent NPEvent;

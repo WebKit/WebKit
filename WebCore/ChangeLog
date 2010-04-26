@@ -1,3 +1,17 @@
+2010-04-26  Ruben Van Boxem  <vanboxem.ruben@gmail.com>
+
+        Reviewed by Adam Roben.
+
+        Fixes for Win64 compilation under gcc (mingw-w64)
+
+        *  WebCore/bridge/npapi.h: for win64 compatibility, mirroring mozilla-central, see Mozilla bug 560298
+        *  WebCore/platform/Arena.h: uword is used to cast from pointers here. unsigned long is 32-bit on Windows (but 64-bit on mac), and too small to hold a pointer. uintptr_t is 32-bit on 32-bit systems (mac, linux and windows) and 64-bit on all 64-bit systems
+        *  WebCore/platform/graphics/transforms/TransformationMatrix.h: let mingw-w64/w32 use MSVC codepath
+        *  WebCore/platform/text/TextStream.cpp: let mingw-w64 use MSVC codepath
+        *  WebCore/platform/text/TextStream.h: let mingw-w64 use MSVC codepath
+        *  WebCore/plugins/PluginView.cpp: fix pointer casts on WIN64 and let mingw-w64 use MSVC codepath
+        *  WebCore/plugins/win/PluginViewWin.cpp: fix pointer casts on WIN64
+
 2010-04-26  Markus Goetz  <Markus.Goetz@nokia.com>
 
         Reviewed by Simon Hausmann.
