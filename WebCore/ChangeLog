@@ -1,3 +1,37 @@
+2010-04-23  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        WebInspector: Aggregated stats of time spent in children records should be visible
+        in the popup panel of parent record. Crash in pushGCEventRecord also was fixed.
+        https://bugs.webkit.org/show_bug.cgi?id=37820
+
+        * English.lproj/localizedStrings.js:
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::pushGCEventRecords):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._innerAddRecordToTimeline):
+        (WebInspector.TimelinePanel.prototype._createRootRecord):
+        (WebInspector.TimelinePanel.prototype._showPopover):
+        (WebInspector.TimelineCalculator.prototype.computeBarGraphPercentages):
+        (WebInspector.TimelineCalculator.prototype.computeBarGraphWindowPosition):
+        (WebInspector.TimelineRecordGraphRow):
+        (WebInspector.TimelineRecordGraphRow.prototype.update):
+        (WebInspector.TimelinePanel.FormattedRecord):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._generateAggregatedInfo):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._generatePopupContent):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._getRecordDetails):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._calculateAggregatedStats):
+        * inspector/front-end/inspector.css:
+        (.timeline-graph-bar.with-children):
+        (.timeline-graph-bar.cpu):
+        (.timeline-aggregated-category):
+        (.timeline-loading):
+        (.timeline-scripting):
+        (.timeline-rendering):
+        (.popover .timeline-aggregated-category.timeline-loading):
+        (.timeline-details-title):
+
 2010-04-25  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.

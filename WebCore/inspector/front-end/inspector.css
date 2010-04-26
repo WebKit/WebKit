@@ -3605,7 +3605,11 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
 }
 
 .timeline-graph-bar.with-children {
-    opacity: 0.3;
+    opacity: 0.2;
+}
+
+.timeline-graph-bar.cpu {
+    opacity: 0.6;
 }
 
 .timeline-graph-side.even {
@@ -3622,6 +3626,32 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
 
 .timeline-category-rendering .timeline-graph-bar {
     -webkit-border-image: url(Images/timelineBarPurple.png) 4 4 5 4;
+}
+
+.timeline-aggregated-category {
+    display: inline-block;
+    height: 11px;
+    margin-right: 2px;
+    margin-left: 6px;
+    position: relative;
+    top: 2px;
+    width: 10px;
+}
+
+.timeline-loading {
+    -webkit-border-image: url(Images/timelineBarBlue.png) 4 4 5 4;
+}
+
+.timeline-scripting {
+    -webkit-border-image: url(Images/timelineBarOrange.png) 4 4 5 4;
+}
+
+.timeline-rendering {
+    -webkit-border-image: url(Images/timelineBarPurple.png) 4 4 5 4;
+}
+
+.popover .timeline-aggregated-category.timeline-loading {
+    margin-left: 0px;
 }
 
 .timeline-category-loading .timeline-tree-icon {
@@ -3651,7 +3681,11 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
 }
 
 .timeline-details-title {
+    border-bottom: 1px solid #B8B8B8;
+    font-size: 11px;
     font-weight: bold;
+    padding-bottom: 5px;
+    padding-top: 0px;
     white-space: nowrap;
 }
 

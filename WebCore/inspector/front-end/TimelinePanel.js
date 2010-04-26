@@ -281,38 +281,46 @@ WebInspector.TimelinePanel.prototype = {
     _innerAddRecordToTimeline: function(record, parentRecord)
     {
         var connectedToOldRecord = false;
-        if (parentRecord === this._rootRecord) {
+        var recordTypes = WebInspector.TimelineAgent.RecordType;
+        if (record.type === recordTypes.MarkDOMContentEventType || record.type === recordTypes.MarkLoadEventType)
+            parentRecord = null; // No bar entry for load events.
+        else if (parentRecord === this._rootRecord) {
             var newParentRecord = this._findParentRecord(record);
             if (newParentRecord) {
                 parentRecord = newParentRecord;
                 connectedToOldRecord = true;
             }
         }
-        var recordTypes = WebInspector.TimelineAgent.RecordType;
 
         var formattedRecord = new WebInspector.TimelinePanel.FormattedRecord(record, parentRecord, this._recordStyles, this._sendRequestRecords, this._timerRecords);
 
         if (record.type === recordTypes.MarkDOMContentEventType || record.type === recordTypes.MarkLoadEventType) {
-            // No bar entry for load events.
             this._markTimelineRecords.push(formattedRecord);
             return;
         }
 
         ++this._rootRecord._allRecordsCount;
-
-        if (parentRecord === this._rootRecord)
-            formattedRecord.collapsed = true;
+        formattedRecord.collapsed = (parentRecord === this._rootRecord);
 
         for (var i = 0; record.children && i < record.children.length; ++i)
             this._innerAddRecordToTimeline(record.children[i], formattedRecord);
 
+        formattedRecord._calculateAggregatedStats(this.categories);
+
         if (connectedToOldRecord) {
             var record = formattedRecord;
-            while (record.parent && record.parent._lastChildEndTime < record._lastChildEndTime) {
-                record.parent._lastChildEndTime = record._lastChildEndTime;
-                record = record.parent;
-            }
-        }
+            do {
+                var parent = record.parent;
+                parent._cpuTime += formattedRecord._cpuTime;
+                if (parent._lastChildEndTime < record._lastChildEndTime)
+                    parent._lastChildEndTime = record._lastChildEndTime;
+                for (var category in formattedRecord._aggregatedStats)
+                    parent._aggregatedStats[category] += formattedRecord._aggregatedStats[category];
+                record = parent;
+            } while (record.parent);
+        } else
+            if (parentRecord !== this._rootRecord)
+                parentRecord._selfTime -= formattedRecord.endTime - formattedRecord.startTime;
 
         // Keep bar entry for mark timeline since nesting might be interesting to the user.
         if (record.type === recordTypes.MarkTimeline)
@@ -345,6 +353,7 @@ WebInspector.TimelinePanel.prototype = {
         rootRecord.children = [];
         rootRecord._visibleRecordsCount = 0;
         rootRecord._allRecordsCount = 0;
+        rootRecord._aggregatedStats = {};
         return rootRecord;
     },
 
@@ -552,7 +561,7 @@ WebInspector.TimelinePanel.prototype = {
     _showPopover: function(anchor)
     {
         var record = anchor.row._record;
-        var popover = new WebInspector.Popover(record._generatePopupContent(this._calculator));
+        var popover = new WebInspector.Popover(record._generatePopupContent(this._calculator, this.categories));
         popover.show(anchor);
         return popover;
     },
@@ -584,9 +593,10 @@ WebInspector.TimelineCalculator.prototype = {
     computeBarGraphPercentages: function(record)
     {
         var start = (record.startTime - this.minimumBoundary) / this.boundarySpan * 100;
-        var end = (record.endTime - this.minimumBoundary) / this.boundarySpan * 100;
+        var end = (record.startTime + record._selfTime - this.minimumBoundary) / this.boundarySpan * 100;
         var endWithChildren = (record._lastChildEndTime - this.minimumBoundary) / this.boundarySpan * 100;
-        return {start: start, end: end, endWithChildren: endWithChildren};
+        var cpuWidth = record._cpuTime / this.boundarySpan * 100;
+        return {start: start, end: end, endWithChildren: endWithChildren, cpuWidth: cpuWidth};
     },
 
     computeBarGraphWindowPosition: function(record, clientWidth)
@@ -598,9 +608,10 @@ WebInspector.TimelineCalculator.prototype = {
         var left = percentages.start / 100 * workingArea;
         var width = (percentages.end - percentages.start) / 100 * workingArea + minWidth;
         var widthWithChildren =  (percentages.endWithChildren - percentages.start) / 100 * workingArea;
+        var cpuWidth = percentages.cpuWidth / 100 * workingArea + minWidth;
         if (percentages.endWithChildren > percentages.end)
             widthWithChildren += borderWidth + minWidth;
-        return {left: left, width: width, widthWithChildren: widthWithChildren};
+        return {left: left, width: width, widthWithChildren: widthWithChildren, cpuWidth: cpuWidth};
     },
 
     calculateWindow: function()
@@ -705,6 +716,11 @@ WebInspector.TimelineRecordGraphRow = function(graphContainer, scheduleRefresh, 
     this._barWithChildrenElement.row = this;
     this._barAreaElement.appendChild(this._barWithChildrenElement);
 
+    this._barCpuElement = document.createElement("div");
+    this._barCpuElement.className = "timeline-graph-bar cpu"
+    this._barCpuElement.row = this;
+    this._barAreaElement.appendChild(this._barCpuElement);
+
     this._barElement = document.createElement("div");
     this._barElement.className = "timeline-graph-bar";
     this._barElement.row = this;
@@ -734,6 +750,8 @@ WebInspector.TimelineRecordGraphRow.prototype = {
         this._barWithChildrenElement.style.width = barPosition.widthWithChildren + "px";
         this._barElement.style.left = barPosition.left + expandOffset + "px";
         this._barElement.style.width =  barPosition.width + "px";
+        this._barCpuElement.style.left = barPosition.left + expandOffset + "px";
+        this._barCpuElement.style.width = barPosition.cpuWidth + "px";
 
         if (record._visibleChildrenCount || record._invisibleChildrenCount) {
             this._expandElement.style.top = index * this._rowHeight + "px";
@@ -773,7 +791,8 @@ WebInspector.TimelinePanel.FormattedRecord = function(record, parentRecord, reco
     var style = recordStyles[record.type];
 
     this.parent = parentRecord;
-    parentRecord.children.push(this);
+    if (parentRecord)
+        parentRecord.children.push(this);
     this.category = style.category;
     this.title = style.title;
     this.startTime = record.startTime / 1000;
@@ -781,6 +800,7 @@ WebInspector.TimelinePanel.FormattedRecord = function(record, parentRecord, reco
     this.count = 1;
     this.type = record.type;
     this.endTime = (typeof record.endTime !== "undefined") ? record.endTime / 1000 : this.startTime;
+    this._selfTime = this.endTime - this.startTime;
     this._lastChildEndTime = this.endTime;
     this.originalRecordForTests = record;
     this.callerScriptName = record.callerScriptName;
@@ -865,7 +885,22 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
         return row;
     },
 
-    _generatePopupContent: function(calculator)
+    _generateAggregatedInfo: function()
+    {
+        var cell = document.createElement("span");
+        cell.className = "timeline-aggregated-info";
+        for (var index in this._aggregatedStats) {
+            var label = document.createElement("div");
+            label.className = "timeline-aggregated-category timeline-" + index;
+            cell.appendChild(label);
+            var text = document.createElement("span");
+            text.textContent = Number.secondsToString(this._aggregatedStats[index] + 0.0001);
+            cell.appendChild(text);
+        }
+        return cell;
+    },
+
+    _generatePopupContent: function(calculator, categories)
     {
         var recordContentTable = document.createElement("table");
         var titleCell = this._createCell(WebInspector.UIString("%s - Details", this.title), "timeline-details-title");
@@ -873,7 +908,12 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
         var titleRow = document.createElement("tr");
         titleRow.appendChild(titleCell);
         recordContentTable.appendChild(titleRow);
-        var text = Number.secondsToString(this.endTime - this.startTime) + " (@" +
+
+        if (this._children && this._children.length) {
+            recordContentTable.appendChild(this._createRow(WebInspector.UIString("Self Time"), Number.secondsToString(this._selfTime + 0.0001)));
+            recordContentTable.appendChild(this._createLinkRow(WebInspector.UIString("Aggregated Time"), this._generateAggregatedInfo()));
+        }
+        var text = Number.secondsToString(this._lastChildEndTime - this.startTime) + " (@" +
         calculator.formatValue(this.startTime - calculator.minimumBoundary) + ")";
         recordContentTable.appendChild(this._createRow(WebInspector.UIString("Duration"), text));
 
@@ -924,10 +964,9 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
             var link = WebInspector.linkifyResourceAsNode(this.callerScriptName, "scripts", this.callerScriptLine);
             recordContentTable.appendChild(this._createLinkRow(WebInspector.UIString("Caller"), link));
         }
-        if (this.usedHeapSize) {
-            recordContentTable.appendChild(this._createRow(WebInspector.UIString("Used Heap Size"), Number.bytesToString(this.usedHeapSize)));
-            recordContentTable.appendChild(this._createRow(WebInspector.UIString("Total Heap Size"), Number.bytesToString(this.totalHeapSize)));
-        }
+        if (this.usedHeapSize)
+            recordContentTable.appendChild(this._createRow(WebInspector.UIString("Used Heap Size"), WebInspector.UIString("%s of %s", Number.bytesToString(this.usedHeapSize), Number.bytesToString(this.totalHeapSize))));
+
         return recordContentTable;
     },
 
@@ -959,6 +998,24 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
             default:
                 return "";
         }
+    },
+
+    _calculateAggregatedStats: function(categories)
+    {
+        this._aggregatedStats = {};
+        for (var category in categories)
+            this._aggregatedStats[category] = 0;
+        this._cpuTime = this._selfTime;
+
+        if (this._children) {
+            for (var index = this._children.length; index; --index) {
+                var child = this._children[index - 1];
+                this._aggregatedStats[child.category.name] += child._selfTime;
+                for (var category in categories)
+                    this._aggregatedStats[category] += child._aggregatedStats[category];
+            }
+            for (var category in this._aggregatedStats)
+                this._cpuTime += this._aggregatedStats[category];
+        }
     }
 }
-

@@ -56,13 +56,17 @@ InspectorTimelineAgent::InspectorTimelineAgent(InspectorFrontend* frontend)
 
 void InspectorTimelineAgent::pushGCEventRecords()
 {
-    for (GCEvents::iterator i = m_gcEvents.begin(); i != m_gcEvents.end(); ++i) {
+    if (!m_gcEvents.size())
+        return;
+
+    GCEvents events = m_gcEvents;
+    m_gcEvents.clear();
+    for (GCEvents::iterator i = events.begin(); i != events.end(); ++i) {
         ScriptObject record = TimelineRecordFactory::createGenericRecord(m_frontend, i->startTime);
         record.set("data", TimelineRecordFactory::createGCEventData(m_frontend, i->collectedBytes));
         record.set("endTime", i->endTime);
         addRecordToTimeline(record, GCEventTimelineRecordType);
     }
-    m_gcEvents.clear();
 }
 
 void InspectorTimelineAgent::didGC(double startTime, double endTime, size_t collectedBytesCount)
