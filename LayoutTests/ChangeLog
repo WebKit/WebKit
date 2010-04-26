@@ -1,3 +1,12 @@
+2010-04-26  Tony Chang  <tony@chromium.org>
+
+        Not reviewed, removing duplicate expectations.
+
+        [chromium] Check and rebaseline SVG test expectations for Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=38106
+
+        * platform/chromium/test_expectations.txt:
+
 2010-04-26  Yuzo Fujishima  <yuzo@google.com>
 
         Unreviewed, Chromium test expectation change.
