@@ -56,7 +56,7 @@ QScriptStringPrivate::QScriptStringPrivate()
 {}
 
 QScriptStringPrivate::QScriptStringPrivate(const QString& qtstring)
-    : m_string(JSStringRetain(QScriptConverter::toString(qtstring)))
+    : m_string(QScriptConverter::toString(qtstring))
 {}
 
 QScriptStringPrivate::~QScriptStringPrivate()

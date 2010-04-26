@@ -1,3 +1,18 @@
+2010-04-26  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fix a memory leak in the QScriptString.
+
+        QScriptStringPrivate's constructor shouldn't call JSStringRetain as
+        QScriptConverter implicitly pass a JSStringRef ownership.
+
+        [Qt] QScriptStringPrivate c'tor problem
+        https://bugs.webkit.org/show_bug.cgi?id=38110
+
+        * qt/api/qscriptstring_p.h:
+        (QScriptStringPrivate::QScriptStringPrivate):
+
 2010-04-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.
