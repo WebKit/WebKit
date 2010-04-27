@@ -1,3 +1,11 @@
+2010-04-27  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.  Regenerate reference bindings code generator output.
+
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjInternal::withScriptStateVoidCallback):
+        (WebCore::TestObjInternal::withScriptStateObjCallback):
+
 2010-04-27  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Dan Bernstein.
