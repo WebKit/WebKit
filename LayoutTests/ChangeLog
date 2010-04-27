@@ -1,5 +1,13 @@
 2010-04-27  Jeremy Orlow  <jorlow@chromium.org>
 
+        Unreviewed.  Previous disabling only did so via
+        TIMEOUT failures.  Needs to ignore TEXT failures
+        on quota-tracking.html as well.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-04-27  Jeremy Orlow  <jorlow@chromium.org>
+
         Unreviewed.  Disable quota-tracking in Chromium
         until Dumi can take a look.
 
