@@ -39,5 +39,7 @@ WKStringRef WKStringCreateWithCFString(CFStringRef cfString)
 
 CFStringRef WKStringCopyCFString(CFAllocatorRef allocatorRef, WKStringRef stringRef)
 {
+    // NOTE: This does not use StringImpl::createCFString() since that function
+    // expects to be called on the thread running WebCore.
     return CFStringCreateWithCharacters(allocatorRef, reinterpret_cast<const UniChar*>(toWK(stringRef)->characters()), toWK(stringRef)->length());
 }
