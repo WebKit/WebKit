@@ -43,6 +43,8 @@ class ConfirmDiff(AbstractStep):
     def options(cls):
         return [
             Options.confirm,
+            Options.git_commit,
+            Options.no_squash,
         ]
 
     def _show_pretty_diff(self, diff):

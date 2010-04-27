@@ -2,6 +2,18 @@
 
         Reviewed by Eric Seidel.
 
+        webkit-patch pretty-diff is broken
+        https://bugs.webkit.org/show_bug.cgi?id=38172
+
+        We need to register for these options because they're used when we look
+        up the diff.
+
+        * Scripts/webkitpy/tool/steps/confirmdiff.py:
+
+2010-04-26  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Add ObjC and GObject to run-bindings-test
         https://bugs.webkit.org/show_bug.cgi?id=38168
 
