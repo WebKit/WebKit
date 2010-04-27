@@ -66,6 +66,8 @@ module test {
         [CallWith=DynamicFrame] void withDynamicFrameAndOptionalArg(in long intArg, in [Optional] long optionalArg);
         [NeedsUserGestureCheck, CallWith=DynamicFrame] void withDynamicFrameAndUserGesture(in long intArg);
         [NeedsUserGestureCheck, CallWith=DynamicFrame] void withDynamicFrameAndUserGestureASAD(in long intArg, in [Optional] long optionalArg);
+        [CallWith=ScriptState] void withScriptStateVoid();
+        [CallWith=ScriptState] TestObj withScriptStateObj();
 
         // 'Optional' extended attribute
         void    methodWithOptionalArg(in [Optional] long opt);

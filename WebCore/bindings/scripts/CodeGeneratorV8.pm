@@ -2333,14 +2333,23 @@ sub GenerateFunctionCallString()
     }
 
     my $index = 0;
+    my $hasScriptState = 0;
 
     my $callWith = $function->signature->extendedAttributes->{"CallWith"};
-    if ($callWith && $callWith eq "DynamicFrame") {
-        $result .= $indent . "Frame* enteredFrame = V8Proxy::retrieveFrameForEnteredContext();\n";
-        $result .= $indent . "if (!enteredFrame)\n";
-        $result .= $indent . "    return v8::Undefined();\n";
+    if ($callWith) {
+        my $callWithArg = "COMPILE_ASSERT(false)";
+        if ($callWith eq "DynamicFrame") {
+            $result .= $indent . "Frame* enteredFrame = V8Proxy::retrieveFrameForEnteredContext();\n";
+            $result .= $indent . "if (!enteredFrame)\n";
+            $result .= $indent . "    return v8::Undefined();\n";
+            $callWithArg = "enteredFrame";
+        } elsif ($callWith eq "ScriptState") {
+            $result .= $indent . "EmptyScriptState state;\n";
+            $callWithArg = "&state";
+            $hasScriptState = 1;
+        }
         $functionString .= ", " if $index;
-        $functionString .= "enteredFrame";
+        $functionString .= $callWithArg;
         $index++;
         $numberOfParameters++
     }
@@ -2397,7 +2406,7 @@ sub GenerateFunctionCallString()
         $result .= $indent . GetNativeType($returnType, 0) . " result = *imp;\n" . $indent . "$functionString;\n";
     } elsif ($returnsListItemPodType) {
         $result .= $indent . "RefPtr<SVGPODListItem<$nativeReturnType> > result = $functionString;\n";
-    } elsif (@{$function->raisesExceptions} or $returnsPodType or $isPodType or IsSVGTypeNeedingContextParameter($returnType)) {
+    } elsif ($hasScriptState or @{$function->raisesExceptions} or $returnsPodType or $isPodType or IsSVGTypeNeedingContextParameter($returnType)) {
         $result .= $indent . $nativeReturnType . " result = $functionString;\n";
     } else {
         # Can inline the function call into the return statement to avoid overhead of using a Ref<> temporary
@@ -2405,8 +2414,14 @@ sub GenerateFunctionCallString()
         $returnIsRef = 0;
     }
 
+    if ($hasScriptState) {
+        $result .= $indent . "if (state.hadException())\n";
+        $result .= $indent . "    return throwError(state.exception());\n"
+    }
+
     if (@{$function->raisesExceptions}) {
-        $result .= $indent . "if (UNLIKELY(ec))\n" . $indent . "    goto fail;\n";
+        $result .= $indent . "if (UNLIKELY(ec))\n";
+        $result .= $indent . "    goto fail;\n";
     }
 
     # If the return type is a POD type, separate out the wrapper generation

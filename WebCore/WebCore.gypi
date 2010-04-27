@@ -787,7 +787,6 @@
             'bindings/v8/custom/V8SharedWorkerCustom.cpp',
             'bindings/v8/custom/V8StyleSheetCustom.cpp',
             'bindings/v8/custom/V8StyleSheetListCustom.cpp',
-            'bindings/v8/custom/V8TreeWalkerCustom.cpp',
             'bindings/v8/custom/V8WebKitCSSMatrixConstructor.cpp',
             'bindings/v8/custom/V8WebKitPointConstructor.cpp',
             'bindings/v8/custom/V8WebSocketCustom.cpp',

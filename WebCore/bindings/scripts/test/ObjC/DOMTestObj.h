@@ -65,6 +65,8 @@
 - (void)withDynamicFrameAndOptionalArg:(int)intArg optionalArg:(int)optionalArg;
 - (void)withDynamicFrameAndUserGesture:(int)intArg;
 - (void)withDynamicFrameAndUserGestureASAD:(int)intArg optionalArg:(int)optionalArg;
+- (void)withScriptStateVoid;
+- (DOMTestObj *)withScriptStateObj;
 - (void)methodWithOptionalArg:(int)opt;
 - (void)methodWithNonOptionalArgAndOptionalArg:(int)nonOpt opt:(int)opt;
 - (void)methodWithNonOptionalArgAndTwoOptionalArgs:(int)nonOpt opt1:(int)opt1 opt2:(int)opt2;

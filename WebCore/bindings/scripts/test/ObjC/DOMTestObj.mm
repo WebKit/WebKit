@@ -233,6 +233,16 @@
     IMPL->withDynamicFrameAndUserGestureASAD(intArg, optionalArg);
 }
 
+- (void)withScriptStateVoid
+{
+    IMPL->withScriptStateVoid();
+}
+
+- (DOMTestObj *)withScriptStateObj
+{
+    return kit(WTF::getPtr(IMPL->withScriptStateObj()));
+}
+
 - (void)methodWithOptionalArg:(int)opt
 {
     IMPL->methodWithOptionalArg(opt);

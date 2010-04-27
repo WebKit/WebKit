@@ -86,6 +86,12 @@ WEBKIT_API void
 webkit_dom_test_obj_with_dynamic_frame_and_user_gesture_asad (WebKitDOMTestObj *self, glong int_arg, glong optional_arg);
 
 WEBKIT_API void
+webkit_dom_test_obj_with_script_state_void (WebKitDOMTestObj *self);
+
+WEBKIT_API WebKitDOMTestObj* 
+webkit_dom_test_obj_with_script_state_obj (WebKitDOMTestObj *self);
+
+WEBKIT_API void
 webkit_dom_test_obj_method_with_optional_arg (WebKitDOMTestObj *self, glong opt);
 
 WEBKIT_API void

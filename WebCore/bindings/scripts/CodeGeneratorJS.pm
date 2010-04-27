@@ -1704,12 +1704,18 @@ sub GenerateImplementation
                 }
 
                 my $callWith = $function->signature->extendedAttributes->{"CallWith"};
-                if ($callWith && $callWith eq "DynamicFrame") {
-                    push(@implContent, "    Frame* dynamicFrame = toDynamicFrame(exec);\n");
-                    push(@implContent, "    if (!dynamicFrame)\n");
-                    push(@implContent, "        return jsUndefined();\n");
+                if ($callWith) {
+                    my $callWithArg = "COMPILE_ASSERT(false)";
+                    if ($callWith eq "DynamicFrame") {
+                        push(@implContent, "    Frame* dynamicFrame = toDynamicFrame(exec);\n");
+                        push(@implContent, "    if (!dynamicFrame)\n");
+                        push(@implContent, "        return jsUndefined();\n");
+                        $callWithArg = "dynamicFrame";
+                    } elsif ($callWith eq "ScriptState") {
+                        $callWithArg = "exec";
+                    }
                     $functionString .= ", " if $paramIndex;
-                    $functionString .= "dynamicFrame";
+                    $functionString .= $callWithArg;
                     $paramIndex++;
                 }
 
@@ -1885,6 +1891,11 @@ sub GenerateImplementationFunctionCall()
         push(@implContent, $indent . "return jsUndefined();\n");
     } else {
         push(@implContent, "\n" . $indent . "JSC::JSValue result = " . NativeToJSValue($function->signature, 1, $implClassName, "", $functionString, "castedThisObj") . ";\n");
+        $callWith = $function->signature->extendedAttributes->{"CallWith"};
+        if ($callWith and $callWith eq "ScriptState") {
+            push(@implContent, $indent . "if (exec->hadException())\n");
+            push(@implContent, $indent . "    return jsUndefined();\n");
+        }
         push(@implContent, $indent . "setDOMException(exec, ec);\n") if @{$function->raisesExceptions};
 
         if ($podType and not $function->signature->extendedAttributes->{"Immutable"}) {

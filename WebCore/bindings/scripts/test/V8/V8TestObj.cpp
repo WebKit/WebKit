@@ -330,6 +330,28 @@ static v8::Handle<v8::Value> withDynamicFrameAndUserGestureASADCallback(const v8
     return v8::Handle<v8::Value>();
 }
 
+static v8::Handle<v8::Value> withScriptStateVoidCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.withScriptStateVoid");
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    EmptyScriptState state;
+    imp->withScriptStateVoid(&state);
+    if (state->hadException())
+        return throwError(state->exception());
+    return v8::Handle<v8::Value>();
+}
+
+static v8::Handle<v8::Value> withScriptStateObjCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.withScriptStateObj");
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    EmptyScriptState state;
+    RefPtr<TestObj> result = imp->withScriptStateObj(&state);
+    if (state->hadException())
+        return throwError(state->exception());
+    return toV8(result.release());
+}
+
 static v8::Handle<v8::Value> methodWithOptionalArgCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.methodWithOptionalArg");
@@ -465,6 +487,8 @@ static const BatchedCallback TestObjCallbacks[] = {
     {"withDynamicFrameAndOptionalArg", TestObjInternal::withDynamicFrameAndOptionalArgCallback},
     {"withDynamicFrameAndUserGesture", TestObjInternal::withDynamicFrameAndUserGestureCallback},
     {"withDynamicFrameAndUserGestureASAD", TestObjInternal::withDynamicFrameAndUserGestureASADCallback},
+    {"withScriptStateVoid", TestObjInternal::withScriptStateVoidCallback},
+    {"withScriptStateObj", TestObjInternal::withScriptStateObjCallback},
     {"methodWithOptionalArg", TestObjInternal::methodWithOptionalArgCallback},
     {"methodWithNonOptionalArgAndOptionalArg", TestObjInternal::methodWithNonOptionalArgAndOptionalArgCallback},
     {"methodWithNonOptionalArgAndTwoOptionalArgs", TestObjInternal::methodWithNonOptionalArgAndTwoOptionalArgsCallback},

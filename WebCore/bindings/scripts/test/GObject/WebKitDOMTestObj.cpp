@@ -187,6 +187,26 @@ webkit_dom_test_obj_with_dynamic_frame_and_user_gesture_asad (WebKitDOMTestObj *
 }
 
 void
+webkit_dom_test_obj_with_script_state_void (WebKitDOMTestObj *self)
+{
+    g_return_if_fail (self);
+    WebCore::TestObj * item = WebKit::core(self);
+    item->withScriptStateVoid();
+
+}
+
+WebKitDOMTestObj* 
+webkit_dom_test_obj_with_script_state_obj (WebKitDOMTestObj *self)
+{
+    g_return_val_if_fail (self, 0);
+    WebCore::TestObj * item = WebKit::core(self);
+    PassRefPtr<WebCore::TestObj> g_res = WTF::getPtr(item->withScriptStateObj());
+    WebKitDOMTestObj*  res = static_cast<WebKitDOMTestObj* >(WebKit::kit(g_res.get()));
+    return res;
+
+}
+
+void
 webkit_dom_test_obj_method_with_optional_arg (WebKitDOMTestObj *self, glong opt)
 {
     g_return_if_fail (self);
