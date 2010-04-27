@@ -838,6 +838,10 @@ JITThunks::JITThunks(JSGlobalData* globalData)
 #endif
 }
 
+JITThunks::~JITThunks()
+{
+}
+
 #if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
 
 NEVER_INLINE void JITThunks::tryCachePutByID(CallFrame* callFrame, CodeBlock* codeBlock, ReturnAddressPtr returnAddress, JSValue baseValue, const PutPropertySlot& slot, StructureStubInfo* stubInfo)
@@ -3301,6 +3305,15 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, to_object)
 
     CallFrame* callFrame = stackFrame.callFrame;
     return JSValue::encode(stackFrame.args[0].jsValue().toObject(callFrame));
+}
+
+NativeExecutable* JITThunks::specializedThunk(JSGlobalData* globalData, ThunkGenerator generator)
+{
+    std::pair<ThunkMap::iterator, bool> entry = m_thunkMap.add(generator, 0);
+    if (!entry.second)
+        return entry.first->second.get();
+    entry.first->second = generator(globalData, m_executablePool.get());
+    return entry.first->second.get();
 }
 
 } // namespace JSC

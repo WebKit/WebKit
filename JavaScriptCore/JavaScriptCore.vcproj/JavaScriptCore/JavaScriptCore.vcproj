@@ -1704,6 +1704,22 @@
 				RelativePath="..\..\jit\JITStubs.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\jit\JSInterfaceJIT.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\jit\SpecializedThunkJIT.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\jit\ThunkGenerators.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\jit\ThunkGenerators.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Resources"

@@ -1,5 +1,82 @@
 2010-04-26  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Gavin Barraclough.
+
+        Need to support more efficient dispatch of lightweight builtins
+        https://bugs.webkit.org/show_bug.cgi?id=38155
+
+        The problem with calling lightweight builtins is that marshalling
+        the call from the nitro calling convention to the system calling
+        convention is very expensive relative to the cost of the actually
+        evaluating the function.  To work around this problem this patch
+        adds the ability to define a custom thunk for a builtin.
+
+        This allows us to use high performance custom implementations of
+        the common and sensible versions of simple builtins.  This patch
+        includes a simple (use of which is currently hardcoded) thunk for
+        charCodeAt.
+
+        This adds a JSInterfaceJIT subclass called SpecializedThunkJIT
+        that has helper functions to remove (or at least reduce) the need
+        to have separate thunk implementations for each JSValue encoding.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.pro:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+          Many project file updates
+
+        * create_hash_table:
+          Add thunk generation callbacks to the hash tables, currently
+          we hardcode the script to only support charCodeAt
+
+        * jit/JITStubCall.h:
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::~JITThunks):
+        (JSC::JITThunks::specializedThunk):
+        * jit/JITStubs.h:
+        * jit/SpecializedThunkJIT.h: Added.
+        (JSC::SpecializedThunkJIT::SpecializedThunkJIT):
+        (JSC::SpecializedThunkJIT::loadCellArgument):
+        (JSC::SpecializedThunkJIT::loadJSStringArgument):
+        (JSC::SpecializedThunkJIT::loadInt32Argument):
+        (JSC::SpecializedThunkJIT::appendFailure):
+        (JSC::SpecializedThunkJIT::returnInt32):
+        (JSC::SpecializedThunkJIT::finalize):
+        (JSC::SpecializedThunkJIT::argumentToVirtualRegister):
+        (JSC::SpecializedThunkJIT::tagReturnAsInt32):
+        * jit/ThunkGenerators.cpp: Added.
+        (JSC::ThunkHelpers::stringImplDataOffset):
+        (JSC::ThunkHelpers::jsStringLengthOffset):
+        (JSC::ThunkHelpers::jsStringValueOffset):
+        (JSC::charCodeAtThunkGenerator):
+        * jit/ThunkGenerators.h: Added.
+        * runtime/Executable.h:
+        (JSC::NativeExecutable::NativeExecutable):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::JSFunction):
+        * runtime/JSFunction.h:
+        * runtime/JSGlobalData.h:
+        (JSC::JSGlobalData::getThunk):
+        * runtime/JSString.h:
+        (JSC::):
+        * runtime/JSValue.h:
+          Protect some of the JSVALUE32 and JSVALUE32_64 only constants
+          and function behind appropriate USE() guards to make it harder
+          to use the wrong flags for the target build.
+        * runtime/Lookup.cpp:
+        (JSC::HashTable::createTable):
+        (JSC::setUpStaticFunctionSlot):
+        * runtime/Lookup.h:
+        (JSC::HashEntry::initialize):
+        (JSC::HashEntry::generator):
+        (JSC::HashEntry::):
+          Make the lookup tables use a specialized thunkGenerator
+          if present
+        * wtf/text/StringImpl.h:
+
+2010-04-26  Oliver Hunt  <oliver@apple.com>
+
         Build fix
 
         * runtime/JSImmediate.h:

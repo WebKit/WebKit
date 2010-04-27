@@ -66,6 +66,8 @@ namespace JSC {
     public:
         friend class JIT;
         friend class JSGlobalData;
+        friend class SpecializedThunkJIT;
+        friend struct ThunkHelpers;
 
         class RopeBuilder {
         public:

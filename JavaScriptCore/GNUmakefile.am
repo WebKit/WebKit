@@ -95,6 +95,10 @@ javascriptcore_sources += \
 	JavaScriptCore/jit/JITStubs.cpp \
 	JavaScriptCore/jit/JITStubs.h \
 	JavaScriptCore/jit/JITStubCall.h \
+	JavaScriptCore/jit/JSInterfaceJIT.h \
+	JavaScriptCore/jit/SpecializedThunkJIT.h \
+	JavaScriptCore/jit/ThunkGenerators.cpp \
+	JavaScriptCore/jit/ThunkGenerators.h \
 	JavaScriptCore/bytecode/StructureStubInfo.cpp \
 	JavaScriptCore/bytecode/StructureStubInfo.h \
 	JavaScriptCore/bytecode/CodeBlock.cpp \

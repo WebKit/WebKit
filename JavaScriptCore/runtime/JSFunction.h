@@ -33,6 +33,7 @@ namespace JSC {
     class FunctionPrototype;
     class JSActivation;
     class JSGlobalObject;
+    class NativeExecutable;
 
     class JSFunction : public InternalFunction {
         friend class JIT;
@@ -42,6 +43,7 @@ namespace JSC {
 
     public:
         JSFunction(ExecState*, NonNullPassRefPtr<Structure>, int length, const Identifier&, NativeFunction);
+        JSFunction(ExecState*, NonNullPassRefPtr<Structure>, int length, const Identifier&, NativeExecutable*, NativeFunction);
         JSFunction(ExecState*, NonNullPassRefPtr<FunctionExecutable>, ScopeChainNode*);
         virtual ~JSFunction();
 

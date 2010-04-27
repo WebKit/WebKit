@@ -67,6 +67,7 @@ namespace JSC {
         friend class JITStubs;
         friend class JITStubCall;
         friend class JSInterfaceJIT;
+        friend class SpecializedThunkJIT;
 
     public:
         static EncodedJSValue encode(JSValue value);
@@ -215,6 +216,10 @@ namespace JSC {
         JSObject* toObjectSlowCase(ExecState*) const;
         JSObject* toThisObjectSlowCase(ExecState*) const;
 
+        JSObject* synthesizePrototype(ExecState*) const;
+        JSObject* synthesizeObject(ExecState*) const;
+
+#if USE(JSVALUE32_64)
         enum { Int32Tag =        0xffffffff };
         enum { CellTag =         0xfffffffe };
         enum { TrueTag =         0xfffffffd };
@@ -223,16 +228,12 @@ namespace JSC {
         enum { UndefinedTag =    0xfffffffa };
         enum { EmptyValueTag =   0xfffffff9 };
         enum { DeletedValueTag = 0xfffffff8 };
-
+        
         enum { LowestTag =  DeletedValueTag };
-
+        
         uint32_t tag() const;
         int32_t payload() const;
 
-        JSObject* synthesizePrototype(ExecState*) const;
-        JSObject* synthesizeObject(ExecState*) const;
-
-#if USE(JSVALUE32_64)
         union {
             EncodedJSValue asEncodedJSValue;
             double asDouble;

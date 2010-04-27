@@ -1,3 +1,15 @@
+2010-04-26  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Need to support more efficient dispatch of lightweight builtins
+        https://bugs.webkit.org/show_bug.cgi?id=38155
+
+        Update bindings generation to include new thunk generator field
+        in the property map hash tables.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+
 2010-04-26  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

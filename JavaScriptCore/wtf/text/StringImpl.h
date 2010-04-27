@@ -27,6 +27,7 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/CrossThreadRefCounted.h>
 #include <wtf/OwnFastMallocPtr.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/StringHashFunctions.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringImplBase.h>
@@ -174,6 +175,7 @@ public:
         return adoptRef(new(resultImpl) StringImpl(length));
     }
 
+    static unsigned dataOffset() { return OBJECT_OFFSETOF(StringImpl, m_data); }
     static PassRefPtr<StringImpl> createWithTerminatingNullCharacter(const StringImpl&);
     static PassRefPtr<StringImpl> createStrippingNullCharacters(const UChar*, unsigned length);
 
@@ -320,7 +322,6 @@ private:
     
     BufferOwnership bufferOwnership() const { return static_cast<BufferOwnership>(m_refCountAndFlags & s_refCountMaskBufferOwnership); }
     bool isStatic() const { return m_refCountAndFlags & s_refCountFlagStatic; }
-
     const UChar* m_data;
     union {
         void* m_buffer;

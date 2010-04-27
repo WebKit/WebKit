@@ -87,6 +87,11 @@ namespace JSC {
         {
             m_jitCode = JITCode(JITCode::HostFunction(exec->globalData().jitStubs.ctiNativeCallThunk()));
         }
+        NativeExecutable(JITCode thunk)
+            : ExecutableBase(NUM_PARAMETERS_IS_HOST)
+        {
+            m_jitCode = thunk;
+        }
 
         ~NativeExecutable();
     };

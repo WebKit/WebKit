@@ -116,13 +116,15 @@ namespace JSC {
             m_jit->poke(argument, m_stackIndex);
             m_stackIndex += stackIndexStep;
         }
-
+        
+#if USE(JSVALUE32_64)
         void addArgument(const JSValue& value)
         {
             m_jit->poke(JIT::Imm32(value.payload()), m_stackIndex);
             m_jit->poke(JIT::Imm32(value.tag()), m_stackIndex + 1);
             m_stackIndex += stackIndexStep;
         }
+#endif
 
         void addArgument(JIT::RegisterID tag, JIT::RegisterID payload)
         {

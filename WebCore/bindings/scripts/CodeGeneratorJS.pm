@@ -2186,6 +2186,11 @@ tableSizeLoop:
 
     # Dump the hash table
     my $count = scalar @{$keys} + 1;
+    push(@implContent, "#if ENABLE(JIT)\n");
+    push(@implContent, "#define THUNK_GENERATOR(generator) , generator\n");
+    push(@implContent, "#else\n");
+    push(@implContent, "#define THUNK_GENERATOR(generator)\n");
+    push(@implContent, "#endif\n");
     push(@implContent, "\nstatic const HashTableValue $nameEntries\[$count\] =\n\{\n");
     $i = 0;
     foreach my $key (@{$keys}) {
@@ -2205,14 +2210,15 @@ tableSizeLoop:
         } else {
             $targetType = "static_cast<PropertySlot::GetValueFunc>";
         }
-        push(@implContent, "    { \"$key\", @$specials[$i], (intptr_t)" . $targetType . "(@$value1[$i]), (intptr_t)@$value2[$i] },\n");
+        push(@implContent, "    { \"$key\", @$specials[$i], (intptr_t)" . $targetType . "(@$value1[$i]), (intptr_t)@$value2[$i] THUNK_GENERATOR(0) },\n");
         if ($conditional) {
             push(@implContent, "#endif\n");
         }
         ++$i;
     }
-    push(@implContent, "    { 0, 0, 0, 0 }\n");
+    push(@implContent, "    { 0, 0, 0, 0 THUNK_GENERATOR(0) }\n");
     push(@implContent, "};\n\n");
+    push(@implContent, "#undef THUNK_GENERATOR\n");
     my $perfectSizeMask = $perfectSize - 1;
     my $compactSizeMask = $numEntries - 1;
     push(@implContent, "static JSC_CONST_HASHTABLE HashTable $name =\n");

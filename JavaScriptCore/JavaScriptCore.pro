@@ -103,6 +103,7 @@ SOURCES += \
     jit/JITPropertyAccess.cpp \
     jit/JITPropertyAccess32_64.cpp \
     jit/JITStubs.cpp \
+    jit/ThunkGenerators.cpp \
     parser/Lexer.cpp \
     parser/Nodes.cpp \
     parser/ParserArena.cpp \

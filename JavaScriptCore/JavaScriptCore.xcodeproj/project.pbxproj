@@ -291,12 +291,15 @@
 		A72701B90DADE94900E548D7 /* ExceptionHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = A72701B30DADE94900E548D7 /* ExceptionHelpers.h */; };
 		A727FF6B0DA3092200E548D7 /* JSPropertyNameIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A727FF660DA3053B00E548D7 /* JSPropertyNameIterator.cpp */; };
 		A7280A2811557E3000D56957 /* JSObjectRefPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = A79EDB0811531CD60019E912 /* JSObjectRefPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A73161FE118692FF00BB280D /* JSInterfaceJIT.h in Headers */ = {isa = PBXBuildFile; fileRef = A73161FD118692FF00BB280D /* JSInterfaceJIT.h */; };
+		A7386554118697B400540279 /* SpecializedThunkJIT.h in Headers */ = {isa = PBXBuildFile; fileRef = A7386551118697B400540279 /* SpecializedThunkJIT.h */; };
+		A7386555118697B400540279 /* ThunkGenerators.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7386552118697B400540279 /* ThunkGenerators.cpp */; };
+		A7386556118697B400540279 /* ThunkGenerators.h in Headers */ = {isa = PBXBuildFile; fileRef = A7386553118697B400540279 /* ThunkGenerators.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7482B9311671147003B0712 /* JSWeakObjectMapRefPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = A7482B791166CDEA003B0712 /* JSWeakObjectMapRefPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7482B9411671147003B0712 /* JSWeakObjectMapRefPrivate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7482B7A1166CDEA003B0712 /* JSWeakObjectMapRefPrivate.cpp */; };
 		A7482E93116A7CAD003B0712 /* JSWeakObjectMapRefInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A7482E37116A697B003B0712 /* JSWeakObjectMapRefInternal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A74B3499102A5F8E0032AB98 /* MarkStack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A74B3498102A5F8E0032AB98 /* MarkStack.cpp */; };
 		A766B44F0EE8DCD1009518CA /* ExecutableAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B48DB50EE74CFC00DCBDB6 /* ExecutableAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A76C51761182748D00715B05 /* JSInterfaceJIT.h in Headers */ = {isa = PBXBuildFile; fileRef = A76C51741182748D00715B05 /* JSInterfaceJIT.h */; };
 		A76EE6590FAE59D5003F069A /* NativeFunctionWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = A76EE6580FAE59D5003F069A /* NativeFunctionWrapper.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7795590101A74D500114E55 /* MarkStack.h in Headers */ = {isa = PBXBuildFile; fileRef = A779558F101A74D500114E55 /* MarkStack.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A782F1A50EEC9FA20036273F /* ExecutableAllocatorPosix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A782F1A40EEC9FA20036273F /* ExecutableAllocatorPosix.cpp */; };
@@ -872,11 +875,14 @@
 		A72701B30DADE94900E548D7 /* ExceptionHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExceptionHelpers.h; sourceTree = "<group>"; };
 		A727FF650DA3053B00E548D7 /* JSPropertyNameIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPropertyNameIterator.h; sourceTree = "<group>"; };
 		A727FF660DA3053B00E548D7 /* JSPropertyNameIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPropertyNameIterator.cpp; sourceTree = "<group>"; };
-		A73161FD118692FF00BB280D /* JSInterfaceJIT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSInterfaceJIT.h; sourceTree = "<group>"; };
+		A7386551118697B400540279 /* SpecializedThunkJIT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpecializedThunkJIT.h; sourceTree = "<group>"; };
+		A7386552118697B400540279 /* ThunkGenerators.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThunkGenerators.cpp; sourceTree = "<group>"; };
+		A7386553118697B400540279 /* ThunkGenerators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThunkGenerators.h; sourceTree = "<group>"; };
 		A7482B791166CDEA003B0712 /* JSWeakObjectMapRefPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWeakObjectMapRefPrivate.h; sourceTree = "<group>"; };
 		A7482B7A1166CDEA003B0712 /* JSWeakObjectMapRefPrivate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWeakObjectMapRefPrivate.cpp; sourceTree = "<group>"; };
 		A7482E37116A697B003B0712 /* JSWeakObjectMapRefInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWeakObjectMapRefInternal.h; sourceTree = "<group>"; };
 		A74B3498102A5F8E0032AB98 /* MarkStack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MarkStack.cpp; sourceTree = "<group>"; };
+		A76C51741182748D00715B05 /* JSInterfaceJIT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSInterfaceJIT.h; sourceTree = "<group>"; };
 		A76EE6580FAE59D5003F069A /* NativeFunctionWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeFunctionWrapper.h; sourceTree = "<group>"; };
 		A779558F101A74D500114E55 /* MarkStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkStack.h; sourceTree = "<group>"; };
 		A782F1A40EEC9FA20036273F /* ExecutableAllocatorPosix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExecutableAllocatorPosix.cpp; sourceTree = "<group>"; };
@@ -1206,6 +1212,9 @@
 		1429D92C0ED22D7000B89619 /* jit */ = {
 			isa = PBXGroup;
 			children = (
+				A7386551118697B400540279 /* SpecializedThunkJIT.h */,
+				A7386552118697B400540279 /* ThunkGenerators.cpp */,
+				A7386553118697B400540279 /* ThunkGenerators.h */,
 				A7B48DB60EE74CFC00DCBDB6 /* ExecutableAllocator.cpp */,
 				A7B48DB50EE74CFC00DCBDB6 /* ExecutableAllocator.h */,
 				86DB64630F95C6FC00D7D921 /* ExecutableAllocatorFixedVMPool.cpp */,
@@ -1223,7 +1232,7 @@
 				960626950FB8EC02009798AB /* JITStubCall.h */,
 				14A23D6C0F4E19CE0023CDAD /* JITStubs.cpp */,
 				14A6581A0F4E36F4000150FD /* JITStubs.h */,
-				A73161FD118692FF00BB280D /* JSInterfaceJIT.h */,
+				A76C51741182748D00715B05 /* JSInterfaceJIT.h */,
 			);
 			path = jit;
 			sourceTree = "<group>";
@@ -2115,7 +2124,9 @@
 				BC5F7BBE11823B590052C02C /* Atomics.h in Headers */,
 				BC5F7BBF11823B590052C02C /* ThreadingPrimitives.h in Headers */,
 				BC5F7BC011823B590052C02C /* ThreadSafeShared.h in Headers */,
-				A73161FE118692FF00BB280D /* JSInterfaceJIT.h in Headers */,
+				A76C51761182748D00715B05 /* JSInterfaceJIT.h in Headers */,
+				A7386554118697B400540279 /* SpecializedThunkJIT.h in Headers */,
+				A7386556118697B400540279 /* ThunkGenerators.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2564,6 +2575,7 @@
 				868BFA17117CF19900B908B1 /* WTFString.cpp in Sources */,
 				86B99AB8117E391E00DF5A90 /* RopeImpl.cpp in Sources */,
 				511FC4C9117EE28700425272 /* MD5.cpp in Sources */,
+				A7386555118697B400540279 /* ThunkGenerators.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

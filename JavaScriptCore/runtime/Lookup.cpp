@@ -46,7 +46,11 @@ void HashTable::createTable(JSGlobalData* globalData) const
             entry = entry->next();
         }
 
-        entry->initialize(identifier, values[i].attributes, values[i].value1, values[i].value2);
+        entry->initialize(identifier, values[i].attributes, values[i].value1, values[i].value2
+#if ENABLE(JIT)
+                          , values[i].generator
+#endif
+                          );
     }
     table = entries;
 }
@@ -70,7 +74,13 @@ void setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* 
     JSValue* location = thisObj->getDirectLocation(propertyName);
 
     if (!location) {
-        InternalFunction* function = new (exec) NativeFunctionWrapper(exec, exec->lexicalGlobalObject()->prototypeFunctionStructure(), entry->functionLength(), propertyName, entry->function());
+        InternalFunction* function;
+#if ENABLE(JIT)
+        if (entry->generator())
+            function = new (exec) NativeFunctionWrapper(exec, exec->lexicalGlobalObject()->prototypeFunctionStructure(), entry->functionLength(), propertyName, exec->globalData().getThunk(entry->generator()), entry->function());
+        else
+#endif
+            function = new (exec) NativeFunctionWrapper(exec, exec->lexicalGlobalObject()->prototypeFunctionStructure(), entry->functionLength(), propertyName, entry->function());
 
         thisObj->putDirectFunction(propertyName, function, entry->attributes());
         location = thisObj->getDirectLocation(propertyName);
