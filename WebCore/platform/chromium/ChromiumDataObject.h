@@ -79,6 +79,8 @@ namespace WebCore {
         {
             url = newURL;
             uriList.clear();
+            if (newURL.isEmpty())
+                return;
             uriList.append(newURL.string());
         }
 
