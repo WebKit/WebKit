@@ -211,6 +211,9 @@ class SCM:
     def revert_files(self, file_paths):
         raise NotImplementedError, "subclasses must implement"
 
+    def should_squash(self, squash):
+        raise NotImplementedError, "subclasses must implement"
+
     def commit_with_message(self, message, username=None, git_commit=None, squash=None):
         raise NotImplementedError, "subclasses must implement"
 
@@ -390,6 +393,10 @@ class SVN(SCM):
     def revert_files(self, file_paths):
         # FIXME: This should probably use cwd=self.checkout_root.
         run_command(['svn', 'revert'] + file_paths)
+
+    def should_squash(self, squash):
+        # SVN doesn't support the concept of squashing.
+        return False
 
     def commit_with_message(self, message, username=None, git_commit=None, squash=None):
         # squash and git-commit are not used by SVN.

@@ -1,3 +1,16 @@
+2010-04-27  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        REGRESSION(r58261): webkit-patch upload does not work in an SVN checkout.
+        https://bugs.webkit.org/show_bug.cgi?id=38186
+
+        Unfortunately, we don't have a good way of testing this change because
+        our test coverage of the scm.py API is poor...
+
+        * Scripts/webkitpy/common/checkout/scm.py:
+        * Scripts/webkitpy/tool/steps/preparechangelog.py:
+
 2010-04-26  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

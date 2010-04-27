@@ -55,8 +55,7 @@ class PrepareChangeLog(AbstractStep):
             args.append("--bug=%s" % state["bug_id"])
         if self._options.email:
             args.append("--email=%s" % self._options.email)
-        if (self._tool.scm().supports_local_commits() and
-            self._tool.scm().should_squash(self._options.squash)):
+        if self._tool.scm().should_squash(self._options.squash):
             args.append("--merge-base=%s" % self._tool.scm().svn_merge_base())
         if self._options.git_commit:
             args.append("--git-commit=%s" % self._options.git_commit)
