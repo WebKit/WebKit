@@ -1,3 +1,14 @@
+2010-04-27  Thomas Zander <t.zander@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix linking on Symbian on Linux using the Makefile based mkspec.
+
+        Disable thumb mode due to library size limitations, just like it's done
+        for the sbs/sbsv2 based build system.
+
+        * WebCore.pro:
+
 2010-04-21  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
