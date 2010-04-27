@@ -1,3 +1,20 @@
+2010-04-27  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, rolling out r58318.
+        http://trac.webkit.org/changeset/58318
+        https://bugs.webkit.org/show_bug.cgi?id=37215
+
+        Broke test on Tiger.  Might just need updated results,
+        unclear.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::didReceiveResponse):
+        (WebCore::InspectorController::didFailLoading):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype._mimeTypeIsConsistentWithType):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.recreateViewForResourceIfNeeded):
+
 2010-04-27  Evan Martin  <evan@chromium.org>
 
         Reviewed by David Levin.
