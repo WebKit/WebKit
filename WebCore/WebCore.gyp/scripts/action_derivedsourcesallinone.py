@@ -49,7 +49,7 @@ import subprocess
 import sys
 
 # A regexp for finding Conditional attributes in interface definitions.
-conditionalPattern = re.compile('interface[\s]*\[[^\]]*Conditional=([\_0-9a-zA-Z&]*)')
+conditionalPattern = re.compile('interface[\s]*\[[^\]]*Conditional=([\_0-9a-zA-Z&|]*)')
 
 copyrightTemplate = """/*
  * THIS FILE WAS AUTOMATICALLY GENERATED, DO NOT EDIT.
@@ -82,11 +82,13 @@ copyrightTemplate = """/*
 """
 
 
-# Wraps conditional with ENABLE() and && if more than one conditional is specified.
+# Wraps conditional with ENABLE() and replace '&','|' with '&&','||' if more than one conditional is specified.
 def formatConditional(conditional):
     def wrapWithEnable(s):
+        if re.match('[|&]$', s):
+            return s * 2
         return 'ENABLE(' + s + ')'
-    return ' && '.join(map(wrapWithEnable, conditional))
+    return ' '.join(map(wrapWithEnable, conditional))
 
 
 # Find the conditional interface attribute.
@@ -101,7 +103,7 @@ def extractConditional(idlFilePath):
     match = conditionalPattern.search(idlContents)
     if match:
         conditional = match.group(1)
-        conditional = conditional.split('&')
+        conditional = re.split('([|&])', conditional)
 
     return conditional
 

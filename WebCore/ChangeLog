@@ -1,3 +1,14 @@
+2010-04-27  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Jian Li.
+
+        [V8] Handle OR ('|') conditional in action_derivedsourcesallinone.py
+        https://bugs.webkit.org/show_bug.cgi?id=38207
+
+        No new tests.
+
+        * WebCore.gyp/scripts/action_derivedsourcesallinone.py:
+
 2010-04-27  François Sausset  <sausset@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.
