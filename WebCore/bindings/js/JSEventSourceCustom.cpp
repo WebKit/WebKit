@@ -43,25 +43,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue JSEventSource::addEventListener(ExecState* exec, const ArgList& args)
-{
-    JSValue listener = args.at(1);
-    if (!listener.isObject())
-        return jsUndefined();
-
-    impl()->addEventListener(ustringToAtomicString(args.at(0).toString(exec)), JSEventListener::create(asObject(listener), this, false, currentWorld(exec)).get(), args.at(2).toBoolean(exec));
-    return jsUndefined();
-}
-
-JSValue JSEventSource::removeEventListener(ExecState* exec, const ArgList& args)
-{
-    JSValue listener = args.at(1);
-    if (!listener.isObject())
-        return jsUndefined();
-
-    impl()->removeEventListener(ustringToAtomicString(args.at(0).toString(exec)), JSEventListener::create(asObject(listener), this, false, currentWorld(exec)).get(), args.at(2).toBoolean(exec));
-    return jsUndefined();
-}
+// FIXME: Remove this file.
 
 } // namespace WebCore
 

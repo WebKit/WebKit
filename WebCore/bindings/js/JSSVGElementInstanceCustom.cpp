@@ -46,26 +46,6 @@ void JSSVGElementInstance::markChildren(MarkStack& markStack)
     markDOMNodeWrapper(markStack, impl()->correspondingElement()->document(), impl()->correspondingElement());
 }
 
-JSValue JSSVGElementInstance::addEventListener(ExecState* exec, const ArgList& args)
-{
-    JSValue listener = args.at(1);
-    if (!listener.isObject())
-        return jsUndefined();
-
-    impl()->addEventListener(ustringToAtomicString(args.at(0).toString(exec)), JSEventListener::create(asObject(listener), this, false, currentWorld(exec)), args.at(2).toBoolean(exec));
-    return jsUndefined();
-}
-
-JSValue JSSVGElementInstance::removeEventListener(ExecState* exec, const ArgList& args)
-{
-    JSValue listener = args.at(1);
-    if (!listener.isObject())
-        return jsUndefined();
-
-    impl()->removeEventListener(ustringToAtomicString(args.at(0).toString(exec)), JSEventListener::create(asObject(listener), this, false, currentWorld(exec)).get(), args.at(2).toBoolean(exec));
-    return jsUndefined();
-}
-
 void JSSVGElementInstance::pushEventHandlerScope(ExecState*, ScopeChain&) const
 {
 }

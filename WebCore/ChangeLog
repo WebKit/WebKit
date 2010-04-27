@@ -1,3 +1,61 @@
+2010-04-27  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Remove copy/paste addEventListener "custom" bindings via code generation
+        https://bugs.webkit.org/show_bug.cgi?id=38210
+
+        It's somewhat lame to special case addEventListener and
+        removeEventListener in the code generator, but it saves a large amount
+        of boilerplate "custom" bindings code.
+
+        Idea shamelessly stolen from the V8 code generator.
+
+        This patch points to some good refactoring opportunities in
+        CodeGeneratorJS.pm, but I'm going to hold off on those for a future
+        patch.  By generating test coverage for the code generator, we make
+        these future refactorings easier.
+
+        * bindings/js/JSAbstractWorkerCustom.cpp:
+        * bindings/js/JSDOMApplicationCacheCustom.cpp:
+        * bindings/js/JSDesktopNotificationsCustom.cpp:
+        * bindings/js/JSEventSourceCustom.cpp:
+        * bindings/js/JSMessagePortCustom.cpp:
+        * bindings/js/JSNodeCustom.cpp:
+        * bindings/js/JSSVGElementInstanceCustom.cpp:
+        * bindings/js/JSWebSocketCustom.cpp:
+        * bindings/js/JSWorkerContextCustom.cpp:
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        * bindings/js/JSXMLHttpRequestUploadCustom.cpp:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::):
+        (WebCore::jsTestObjPrototypeFunctionAddEventListener):
+        (WebCore::jsTestObjPrototypeFunctionRemoveEventListener):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        (-[DOMTestObj addEventListener:listener:useCapture:]):
+        (-[DOMTestObj removeEventListener:listener:useCapture:]):
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjInternal::addEventListenerCallback):
+        (WebCore::TestObjInternal::removeEventListenerCallback):
+        (WebCore::):
+        * dom/MessagePort.idl:
+        * dom/Node.idl:
+        * loader/appcache/DOMApplicationCache.idl:
+        * notifications/Notification.idl:
+        * page/EventSource.idl:
+        * svg/SVGElementInstance.idl:
+        * websockets/WebSocket.idl:
+        * workers/AbstractWorker.idl:
+        * workers/WorkerContext.idl:
+        * xml/XMLHttpRequest.idl:
+        * xml/XMLHttpRequestUpload.idl:
+
 2010-04-27  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Beth Dakin.

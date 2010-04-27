@@ -121,6 +121,25 @@ sub GenerateInterface
     }
 }
 
+sub GenerateEventListenerCall
+{
+    my $className = shift;
+    my $functionName = shift;
+    my $passRefPtrHandling = ($functionName eq "add") ? "" : ".get()";
+
+    $implIncludes{"JSEventListener.h"} = 1;
+
+    my @GenerateEventListenerImpl = ();
+    push(@GenerateEventListenerImpl, <<END);
+    JSValue listener = args.at(1);
+    if (!listener.isObject())
+        return jsUndefined();
+    imp->${functionName}EventListener(ustringToAtomicString(args.at(0).toString(exec)), JSEventListener::create(asObject(listener), castedThisObj, false, currentWorld(exec))$passRefPtrHandling, args.at(2).toBoolean(exec));
+    return jsUndefined();
+END
+    return @GenerateEventListenerImpl;
+}
+
 # Params: 'idlDocument' struct
 sub GenerateModule
 {
@@ -1693,88 +1712,94 @@ sub GenerateImplementation
                     $implIncludes{"JSDOMBinding.h"} = 1;
                 }
 
-                my $paramIndex = 0;
-                my $functionString = ($podType ? "podImp." : "imp->") . $functionImplementationName . "(";
+                if ($function->signature->name eq "addEventListener") {
+                    push(@implContent, GenerateEventListenerCall($className, "add"));
+                } elsif ($function->signature->name eq "removeEventListener") {
+                    push(@implContent, GenerateEventListenerCall($className, "remove"));
+                } else {
+                    my $paramIndex = 0;
+                    my $functionString = ($podType ? "podImp." : "imp->") . $functionImplementationName . "(";
 
-                my $hasOptionalArguments = 0;
+                    my $hasOptionalArguments = 0;
 
-                if ($function->signature->extendedAttributes->{"CustomArgumentHandling"}) {
-                    push(@implContent, "    ScriptCallStack callStack(exec, args, $numParameters);\n");
-                    $implIncludes{"ScriptCallStack.h"} = 1;
-                }
-
-                my $callWith = $function->signature->extendedAttributes->{"CallWith"};
-                if ($callWith) {
-                    my $callWithArg = "COMPILE_ASSERT(false)";
-                    if ($callWith eq "DynamicFrame") {
-                        push(@implContent, "    Frame* dynamicFrame = toDynamicFrame(exec);\n");
-                        push(@implContent, "    if (!dynamicFrame)\n");
-                        push(@implContent, "        return jsUndefined();\n");
-                        $callWithArg = "dynamicFrame";
-                    } elsif ($callWith eq "ScriptState") {
-                        $callWithArg = "exec";
-                    }
-                    $functionString .= ", " if $paramIndex;
-                    $functionString .= $callWithArg;
-                    $paramIndex++;
-                }
-
-                foreach my $parameter (@{$function->parameters}) {
-                    if (!$hasOptionalArguments && $parameter->extendedAttributes->{"Optional"}) {
-                        push(@implContent, "\n    int argsCount = args.size();\n");
-                        $hasOptionalArguments = 1;
+                    if ($function->signature->extendedAttributes->{"CustomArgumentHandling"}) {
+                        push(@implContent, "    ScriptCallStack callStack(exec, args, $numParameters);\n");
+                        $implIncludes{"ScriptCallStack.h"} = 1;
                     }
 
-                    if ($hasOptionalArguments) {
-                        push(@implContent, "    if (argsCount < " . ($paramIndex + 1) . ") {\n");
-                        GenerateImplementationFunctionCall($function, $functionString, $paramIndex, "    " x 2, $podType, $implClassName);
-                        push(@implContent, "    }\n\n");
-                    }
-
-                    my $name = $parameter->name;
-                    
-                    if ($parameter->type eq "XPathNSResolver") {
-                        push(@implContent, "    RefPtr<XPathNSResolver> customResolver;\n");
-                        push(@implContent, "    XPathNSResolver* resolver = toXPathNSResolver(args.at($paramIndex));\n");
-                        push(@implContent, "    if (!resolver) {\n");
-                        push(@implContent, "        customResolver = JSCustomXPathNSResolver::create(exec, args.at($paramIndex));\n");
-                        push(@implContent, "        if (exec->hadException())\n");
-                        push(@implContent, "            return jsUndefined();\n");
-                        push(@implContent, "        resolver = customResolver.get();\n");
-                        push(@implContent, "    }\n");
-                    } else {
-                        push(@implContent, "    " . GetNativeTypeFromSignature($parameter) . " $name = " . JSValueToNative($parameter, "args.at($paramIndex)") . ";\n");
-
-                        # If a parameter is "an index" and it's negative it should throw an INDEX_SIZE_ERR exception.
-                        # But this needs to be done in the bindings, because the type is unsigned and the fact that it
-                        # was negative will be lost by the time we're inside the DOM.
-                        if ($parameter->extendedAttributes->{"IsIndex"}) {
-                            $implIncludes{"ExceptionCode.h"} = 1;
-                            push(@implContent, "    if ($name < 0) {\n");
-                            push(@implContent, "        setDOMException(exec, INDEX_SIZE_ERR);\n");
+                    my $callWith = $function->signature->extendedAttributes->{"CallWith"};
+                    if ($callWith) {
+                        my $callWithArg = "COMPILE_ASSERT(false)";
+                        if ($callWith eq "DynamicFrame") {
+                            push(@implContent, "    Frame* dynamicFrame = toDynamicFrame(exec);\n");
+                            push(@implContent, "    if (!dynamicFrame)\n");
                             push(@implContent, "        return jsUndefined();\n");
-                            push(@implContent, "    }\n");
+                            $callWithArg = "dynamicFrame";
+                        } elsif ($callWith eq "ScriptState") {
+                            $callWithArg = "exec";
                         }
+                        $functionString .= ", " if $paramIndex;
+                        $functionString .= $callWithArg;
+                        $paramIndex++;
                     }
 
-                    $functionString .= ", " if $paramIndex;
+                    foreach my $parameter (@{$function->parameters}) {
+                        if (!$hasOptionalArguments && $parameter->extendedAttributes->{"Optional"}) {
+                            push(@implContent, "\n    int argsCount = args.size();\n");
+                            $hasOptionalArguments = 1;
+                        }
 
-                    if ($parameter->type eq "NodeFilter") {
-                        $functionString .= "$name.get()";
-                    } else {
-                        $functionString .= $name;
+                        if ($hasOptionalArguments) {
+                            push(@implContent, "    if (argsCount < " . ($paramIndex + 1) . ") {\n");
+                            GenerateImplementationFunctionCall($function, $functionString, $paramIndex, "    " x 2, $podType, $implClassName);
+                            push(@implContent, "    }\n\n");
+                        }
+
+                        my $name = $parameter->name;
+                    
+                        if ($parameter->type eq "XPathNSResolver") {
+                            push(@implContent, "    RefPtr<XPathNSResolver> customResolver;\n");
+                            push(@implContent, "    XPathNSResolver* resolver = toXPathNSResolver(args.at($paramIndex));\n");
+                            push(@implContent, "    if (!resolver) {\n");
+                            push(@implContent, "        customResolver = JSCustomXPathNSResolver::create(exec, args.at($paramIndex));\n");
+                            push(@implContent, "        if (exec->hadException())\n");
+                            push(@implContent, "            return jsUndefined();\n");
+                            push(@implContent, "        resolver = customResolver.get();\n");
+                            push(@implContent, "    }\n");
+                        } else {
+                            push(@implContent, "    " . GetNativeTypeFromSignature($parameter) . " $name = " . JSValueToNative($parameter, "args.at($paramIndex)") . ";\n");
+
+                            # If a parameter is "an index" and it's negative it should throw an INDEX_SIZE_ERR exception.
+                            # But this needs to be done in the bindings, because the type is unsigned and the fact that it
+                            # was negative will be lost by the time we're inside the DOM.
+                            if ($parameter->extendedAttributes->{"IsIndex"}) {
+                                $implIncludes{"ExceptionCode.h"} = 1;
+                                push(@implContent, "    if ($name < 0) {\n");
+                                push(@implContent, "        setDOMException(exec, INDEX_SIZE_ERR);\n");
+                                push(@implContent, "        return jsUndefined();\n");
+                                push(@implContent, "    }\n");
+                            }
+                        }
+
+                        $functionString .= ", " if $paramIndex;
+
+                        if ($parameter->type eq "NodeFilter") {
+                            $functionString .= "$name.get()";
+                        } else {
+                            $functionString .= $name;
+                        }
+                        $paramIndex++;
                     }
-                    $paramIndex++;
-                }
 
-                if ($function->signature->extendedAttributes->{"NeedsUserGestureCheck"}) {
-                    $functionString .= ", " if $paramIndex;
-                    $functionString .= "processingUserGesture(exec)";
-                    $paramIndex++;
-                }
+                    if ($function->signature->extendedAttributes->{"NeedsUserGestureCheck"}) {
+                        $functionString .= ", " if $paramIndex;
+                        $functionString .= "processingUserGesture(exec)";
+                        $paramIndex++;
+                    }
 
-                push(@implContent, "\n");
-                GenerateImplementationFunctionCall($function, $functionString, $paramIndex, "    ", $podType, $implClassName);
+                    push(@implContent, "\n");
+                    GenerateImplementationFunctionCall($function, $functionString, $paramIndex, "    ", $podType, $implClassName);
+                }
             }
             push(@implContent, "}\n\n");
         }

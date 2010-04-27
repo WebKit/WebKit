@@ -134,12 +134,12 @@ module core {
 
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
 #if !defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT
-        [JSCCustom] void addEventListener(in DOMString type, 
-                                          in EventListener listener, 
-                                          in boolean useCapture);
-        [JSCCustom] void removeEventListener(in DOMString type, 
-                                             in EventListener listener, 
-                                             in boolean useCapture);
+        void addEventListener(in DOMString type, 
+                              in EventListener listener, 
+                              in boolean useCapture);
+        void removeEventListener(in DOMString type, 
+                                 in EventListener listener, 
+                                 in boolean useCapture);
         boolean dispatchEvent(in Event event)
             raises(EventException);
 #endif

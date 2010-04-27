@@ -60,6 +60,13 @@ module test {
         [CustomArgumentHandling] void customArgsAndException(in log intArg)
             raises(DOMException);
 
+        void addEventListener(in DOMString type, 
+                              in EventListener listener, 
+                              in boolean useCapture);
+        void removeEventListener(in DOMString type, 
+                                 in EventListener listener, 
+                                 in boolean useCapture);
+
         // 'CallWith' extended attribute
         [CallWith=DynamicFrame] void withDynamicFrame();
         [CallWith=DynamicFrame] void withDynamicFrameAndArg(in long intArg);

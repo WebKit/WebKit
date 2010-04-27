@@ -91,12 +91,12 @@ module xml {
         [Custom] void overrideMimeType(in DOMString override);
 
         // EventTarget interface
-        [JSCCustom] void addEventListener(in DOMString type, 
-                                          in EventListener listener, 
-                                          in boolean useCapture);
-        [JSCCustom] void removeEventListener(in DOMString type, 
-                                             in EventListener listener, 
-                                             in boolean useCapture);
+        void addEventListener(in DOMString type, 
+                              in EventListener listener, 
+                              in boolean useCapture);
+        void removeEventListener(in DOMString type, 
+                                 in EventListener listener, 
+                                 in boolean useCapture);
         boolean dispatchEvent(in Event evt)
             raises(EventException);
     };

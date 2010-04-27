@@ -37,8 +37,10 @@
 #import "DOMStyleSheetInternal.h"
 #import "DOMTestObjInternal.h"
 #import "DOMlogInternal.h"
+#import "EventListener.h"
 #import "ExceptionHandlers.h"
 #import "KURL.h"
+#import "ObjCEventListener.h"
 #import "TestObj.h"
 #import "ThreadCheck.h"
 #import "WebCoreObjCExtras.h"
@@ -206,6 +208,18 @@
     WebCore::ExceptionCode ec = 0;
     IMPL->customArgsAndException(core(intArg), ec);
     WebCore::raiseOnDOMError(ec);
+}
+
+- (void)addEventListener:(NSString *)type listener:(id <DOMEventListener>)listener useCapture:(BOOL)useCapture
+{
+    RefPtr<WebCore::EventListener> nativeEventListener = WebCore::ObjCEventListener::wrap(listener);
+    IMPL->addEventListener(type, WTF::getPtr(nativeEventListener), useCapture);
+}
+
+- (void)removeEventListener:(NSString *)type listener:(id <DOMEventListener>)listener useCapture:(BOOL)useCapture
+{
+    RefPtr<WebCore::EventListener> nativeEventListener = WebCore::ObjCEventListener::wrap(listener);
+    IMPL->removeEventListener(type, WTF::getPtr(nativeEventListener), useCapture);
 }
 
 - (void)withDynamicFrame

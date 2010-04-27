@@ -85,26 +85,6 @@ JSValue JSDOMApplicationCache::remove(ExecState* exec, const ArgList& args)
 
 #endif // ENABLE(APPLICATION_CACHE_DYNAMIC_ENTRIES)
 
-JSValue JSDOMApplicationCache::addEventListener(ExecState* exec, const ArgList& args)
-{
-    JSValue listener = args.at(1);
-    if (!listener.isObject())
-        return jsUndefined();
-
-    impl()->addEventListener(ustringToAtomicString(args.at(0).toString(exec)), JSEventListener::create(asObject(listener), this, false, currentWorld(exec)), args.at(2).toBoolean(exec));
-    return jsUndefined();
-}
-
-JSValue JSDOMApplicationCache::removeEventListener(ExecState* exec, const ArgList& args)
-{
-    JSValue listener = args.at(1);
-    if (!listener.isObject())
-        return jsUndefined();
-
-    impl()->removeEventListener(ustringToAtomicString(args.at(0).toString(exec)), JSEventListener::create(asObject(listener), this, false, currentWorld(exec)).get(), args.at(2).toBoolean(exec));
-    return jsUndefined();
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(OFFLINE_WEB_APPLICATIONS)

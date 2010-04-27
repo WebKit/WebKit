@@ -59,26 +59,6 @@ JSValue JSWebSocket::send(ExecState* exec, const ArgList& args)
     return ret;
 }
 
-JSValue JSWebSocket::addEventListener(ExecState* exec, const ArgList& args)
-{
-    JSValue listener = args.at(1);
-    if (!listener.isObject())
-        return jsUndefined();
-
-    impl()->addEventListener(ustringToAtomicString(args.at(0).toString(exec)), JSEventListener::create(asObject(listener), this, false, currentWorld(exec)), args.at(2).toBoolean(exec));
-    return jsUndefined();
-}
-
-JSValue JSWebSocket::removeEventListener(ExecState* exec, const ArgList& args)
-{
-    JSValue listener = args.at(1);
-    if (!listener.isObject())
-        return jsUndefined();
-
-    impl()->removeEventListener(ustringToAtomicString(args.at(0).toString(exec)), JSEventListener::create(asObject(listener), this, false, currentWorld(exec)).get(), args.at(2).toBoolean(exec));
-    return jsUndefined();
-}
-
 }  // namespace WebCore
 
 #endif

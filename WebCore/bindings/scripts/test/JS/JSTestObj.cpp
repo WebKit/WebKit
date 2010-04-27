@@ -21,6 +21,7 @@
 #include "config.h"
 #include "JSTestObj.h"
 
+#include "JSEventListener.h"
 #include "JSTestObj.h"
 #include "JSlog.h"
 #include "KURL.h"
@@ -128,7 +129,7 @@ bool JSTestObjConstructor::getOwnPropertyDescriptor(ExecState* exec, const Ident
 #define THUNK_GENERATOR(generator)
 #endif
 
-static const HashTableValue JSTestObjPrototypeTableValues[21] =
+static const HashTableValue JSTestObjPrototypeTableValues[23] =
 {
     { "voidMethod", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionVoidMethod), (intptr_t)0 THUNK_GENERATOR(0) },
     { "voidMethodWithArgs", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionVoidMethodWithArgs), (intptr_t)3 THUNK_GENERATOR(0) },
@@ -140,6 +141,8 @@ static const HashTableValue JSTestObjPrototypeTableValues[21] =
     { "customMethod", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionCustomMethod), (intptr_t)0 THUNK_GENERATOR(0) },
     { "customMethodWithArgs", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionCustomMethodWithArgs), (intptr_t)3 THUNK_GENERATOR(0) },
     { "customArgsAndException", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionCustomArgsAndException), (intptr_t)1 THUNK_GENERATOR(0) },
+    { "addEventListener", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionAddEventListener), (intptr_t)3 THUNK_GENERATOR(0) },
+    { "removeEventListener", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionRemoveEventListener), (intptr_t)3 THUNK_GENERATOR(0) },
     { "withDynamicFrame", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionWithDynamicFrame), (intptr_t)0 THUNK_GENERATOR(0) },
     { "withDynamicFrameAndArg", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionWithDynamicFrameAndArg), (intptr_t)1 THUNK_GENERATOR(0) },
     { "withDynamicFrameAndOptionalArg", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionWithDynamicFrameAndOptionalArg), (intptr_t)2 THUNK_GENERATOR(0) },
@@ -485,6 +488,34 @@ JSValue JSC_HOST_CALL jsTestObjPrototypeFunctionCustomArgsAndException(ExecState
 
     imp->customArgsAndException(intArg, &callStack, ec);
     setDOMException(exec, ec);
+    return jsUndefined();
+}
+
+JSValue JSC_HOST_CALL jsTestObjPrototypeFunctionAddEventListener(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+{
+    UNUSED_PARAM(args);
+    if (!thisValue.inherits(&JSTestObj::s_info))
+        return throwError(exec, TypeError);
+    JSTestObj* castedThisObj = static_cast<JSTestObj*>(asObject(thisValue));
+    TestObj* imp = static_cast<TestObj*>(castedThisObj->impl());
+    JSValue listener = args.at(1);
+    if (!listener.isObject())
+        return jsUndefined();
+    imp->addEventListener(ustringToAtomicString(args.at(0).toString(exec)), JSEventListener::create(asObject(listener), castedThisObj, false, currentWorld(exec)), args.at(2).toBoolean(exec));
+    return jsUndefined();
+}
+
+JSValue JSC_HOST_CALL jsTestObjPrototypeFunctionRemoveEventListener(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+{
+    UNUSED_PARAM(args);
+    if (!thisValue.inherits(&JSTestObj::s_info))
+        return throwError(exec, TypeError);
+    JSTestObj* castedThisObj = static_cast<JSTestObj*>(asObject(thisValue));
+    TestObj* imp = static_cast<TestObj*>(castedThisObj->impl());
+    JSValue listener = args.at(1);
+    if (!listener.isObject())
+        return jsUndefined();
+    imp->removeEventListener(ustringToAtomicString(args.at(0).toString(exec)), JSEventListener::create(asObject(listener), castedThisObj, false, currentWorld(exec)).get(), args.at(2).toBoolean(exec));
     return jsUndefined();
 }
 
