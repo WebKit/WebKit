@@ -1,0 +1,62 @@
+
+<HTML>
+<HEAD>
+<SCRIPT src="../../resources/dump-as-markup.js"></SCRIPT>
+<#text>
+
+</#text>
+</HEAD>
+<BODY>
+<DIV id="bar">
+<#text><selection-anchor>foo</#text>
+<HR><selection-focus>
+</DIV>
+<#text>
+</#text>
+<INPUT type="text">
+<#text>
+</#text>
+<DIV id="foo" contentEditable="">
+<#text>
+foo</#text>
+<#text> bar
+</#text>
+</DIV>
+<#text>
+</#text>
+<SCRIPT>foo.firstChild.splitText(6);</SCRIPT>
+<#text>
+</#text>
+<SPAN>
+<#text>foo</#text>
+</SPAN>
+<SPAN>
+<#text>bar</#text>
+</SPAN>
+<#text>
+</#text>
+<DIV>
+<DIV>
+<B>
+<#text>sdf</#text>
+</B>
+<I>
+<#text>sdf</#text>
+</I>
+<#text>sdf</#text>
+</DIV>
+</DIV>
+<#text>
+</#text>
+<IFRAME src="data:text/html;charset=utf-8,<!DOCTYPE%20HTML%20PUBLIC%20"-//W3C//DTD%20HTML%204.0//EN">%0D%0A<html%20lang%3D"en">%0D%0A%20<head>%0D%0A%20%20<title>Test</title>%0D%0A%20%20<style%20type%3D"text/css">%0D%0A%20%20</style>%0D%0A%20</head>%0D%0A%20<body>%0D%0A%20%20<p></p>%0D%0A%20</body>%0D%0A</html>%0D%0A"></IFRAME>
+<#text>
+
+</#text>
+<SCRIPT>
+window.getSelection().selectAllChildren(bar)
+</SCRIPT>
+</BODY>
+</HTML>
+
+FRAME 0:
+FIXME: Add method to layout test controller to get access to cross-origin frames.

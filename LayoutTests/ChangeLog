@@ -1,3 +1,23 @@
+2010-04-26  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        layoutTestController should have dumpAsMarkup
+        https://bugs.webkit.org/show_bug.cgi?id=26501
+
+        * editing/selection/dump-as-markup-expected.txt: Added.
+        * editing/selection/dump-as-markup.html: Added.
+        * resources/dump-as-markup.js: Added.
+        (Markup.dump.get var):
+        (Markup.dump.get catch):
+        (Markup.dump):
+        (Markup.waitUntilDone):
+        (Markup.notifyDone):
+        (Markup._spaces):
+        (Markup._getAttributes):
+        (Markup._getMarkupForTextNode):
+        (Markup._getSelectionMarker):
+
 2010-04-27  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Yury Semikhatsky.
