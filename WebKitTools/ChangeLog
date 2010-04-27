@@ -1,3 +1,9 @@
+2010-04-26  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.  Mark run-bindings-tests executable so we can execute it.
+
+        * Scripts/run-bindings-tests:
+
 2010-04-26  Tony Chang  <tony@chromium.org>
 
         Reviewed by David Levin.
