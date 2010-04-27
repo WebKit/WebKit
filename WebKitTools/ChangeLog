@@ -1,5 +1,16 @@
 2010-04-27  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Darin Adler.
+
+        run-bindings-tests should use --reset-results instead of --overwrite
+        https://bugs.webkit.org/show_bug.cgi?id=38200
+
+        As requested by Ojan.
+
+        * Scripts/run-bindings-tests:
+
+2010-04-27  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         REGRESSION(r58261): webkit-patch edit-changelogs is broken
