@@ -2971,3 +2971,6 @@ symbian {
         }
     }
 }
+
+# Disable C++0x mode in WebCore for those who enabled it in their Qt's mkspec
+*-g++*:QMAKE_CXXFLAGS -= -std=c++0x -std=gnu++0x
