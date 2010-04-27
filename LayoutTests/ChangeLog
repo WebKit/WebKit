@@ -1,3 +1,14 @@
+2010-04-27  Evan Martin  <evan@chromium.org>
+
+        Unreviewed, making the bots happy.
+
+        [chromium] bold bengali text not rendered properly on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=37904
+
+        Check in a baseline for Mac pulled from the bots.
+
+        * platform/mac/fast/text/international/bold-bengali-expected.txt: Added.
+
 2010-04-27  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, rolling out r58318.
