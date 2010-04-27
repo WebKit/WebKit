@@ -1,3 +1,11 @@
+2010-04-27  Evan Martin  <evan@chromium.org>
+
+        Unreviewed.
+
+        Adding myself to commmitters list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-04-27  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

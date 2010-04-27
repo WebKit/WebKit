@@ -101,6 +101,7 @@ committers_unable_to_review = [
     Committer("Enrica Casucci", "enrica@apple.com"),
     Committer("Erik Arvidsson", "arv@chromium.org", "arv"),
     Committer("Eric Roman", "eroman@chromium.org", "eroman"),
+    Committer("Evan Martin", "evan@chromium.org", "evmar"),
     Committer("Feng Qian", "feng@chromium.org"),
     Committer("Fumitoshi Ukai", "ukai@chromium.org", "ukai"),
     Committer("Gabor Loki", "loki@webkit.org", "loki04"),
