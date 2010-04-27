@@ -1,3 +1,10 @@
+2010-04-27  Stephanie Lewis  <slewis@apple.com>
+
+        Fix Tiger build.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_PageHeap::Carve):
+
 2010-04-26  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Geoff Garen.

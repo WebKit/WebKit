@@ -1690,7 +1690,9 @@ inline void TCMalloc_PageHeap::Carve(Span* span, Length n, bool released) {
     ASSERT(span->decommitted);
     TCMalloc_SystemCommit(reinterpret_cast<void*>(span->start << kPageShift), static_cast<size_t>(span->length << kPageShift));
     span->decommitted = false;
+#if USE_BACKGROUND_THREAD_TO_SCAVENGE_MEMORY
     free_committed_pages_ += span->length;
+#endif
   }
   
   const int extra = static_cast<int>(span->length - n);
