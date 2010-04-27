@@ -1,3 +1,19 @@
+2010-04-27  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Add test for NodeIterator prototype change behavior
+        https://bugs.webkit.org/show_bug.cgi?id=38219
+
+        In the process of remove the custom code from NodeIterator, we thought
+        we fixed a subtle bug where iterating over nodes from another frame
+        would get the wrong prototype chain.  This test documents that we
+        didn't actually change the behavior and we still have the bug.
+
+        * traversal/node-iterator-prototype-expected.txt: Added.
+        * traversal/node-iterator-prototype.html: Added.
+        * traversal/resources/node-iterator-prototype-frame.html: Added.
+
 2010-04-27  Ojan Vafai  <ojan@chromium.org>
 
         Unreviewed. Minor fix after goofup in http://trac.webkit.org/changeset/58331
