@@ -1,3 +1,60 @@
+2010-04-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r57292): 1.5% page load speed regression from visited link information leak fix
+        https://bugs.webkit.org/show_bug.cgi?id=38131
+
+        I did a number of separate optimizations which speed up style
+        resolution enough to more than make up for the regression. This
+        measures as a total PLT speedup of somewhere between 1.5% and
+        3.7%.
+       
+        Optimizations done:
+        - Cache determineLinkState results, to avoid the need to repeatedly compute
+        the visited link hash for the same element. This directly addresses much
+        of the slowdown, since all elements get their style computed twice now.
+        - Added a fast way to get the length of a CSSMutableStyleDeclaration, and use
+        in CSSStyleSelector::matchRulesForList, since it was hot there.
+        - Hoist some loop invariant code that's not detected by the compiler out of the
+        main loop in matchRulesForList
+        - inline CSSStyleSelector::initElement and locateSharedStyle,
+        since there is only one call site in each case
+        - Inline the common non-line fast case of determineLinkState, and split the rest into
+        out-of-line determineLinkStateSlowCase.
+        - Added inline versions of the functions called by
+        visitedLinkHash (the version called by determineLinkState).
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::length): Implemented in terms of new
+        inline nonvirtual mutableLength().
+        * css/CSSMutableStyleDeclaration.h:
+        (WebCore::CSSMutableStyleDeclaration::mutableLength): Added new nonvirtual
+        inline way to get the length if you know you have a mutable style decl.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::init): Clear cached link state.
+        (WebCore::CSSStyleSelector::matchRulesForList): hoist some code out of the main
+        loop and get style decl length more efficiently.
+        (WebCore::CSSStyleSelector::initElement): inline (only one call site)
+        (WebCore::CSSStyleSelector::SelectorChecker::determineLinkState): Inline fast
+        case, call slow case.
+        (WebCore::CSSStyleSelector::SelectorChecker::determineLinkStateSlowCase): Split
+        most of the above function into this slow case helper.
+        (WebCore::CSSStyleSelector::canShareStyleWithElement): Use the cache-enabled
+        way to get the current link state.
+        (WebCore::CSSStyleSelector::locateSharedStyle): inline
+        (WebCore::CSSStyleSelector::styleForElement): Use the cache-enabled way
+        to get the current link state.
+        * css/CSSStyleSelector.h:
+        (WebCore::CSSStyleSelector::currentElementLinkState): inline way to
+        get link state for the current element; manages the cache
+        * platform/LinkHash.cpp:
+        (WebCore::visitedLinkHashInline): inline version of below function
+        (WebCore::visitedLinkHash): call the inline version
+        (WebCore::visitedURLInline): inline version of below function
+        (WebCore::visitedURL): call the inline version
+        (WebCore::visitedURL): call inline versions of above two functions
+
 2010-04-26  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Alexey Proskuryakov.

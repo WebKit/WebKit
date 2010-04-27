@@ -42,7 +42,8 @@ public:
     virtual String cssText() const = 0;
     virtual void setCssText(const String&, ExceptionCode&) = 0;
 
-    virtual unsigned length() const = 0;
+    unsigned length() const { return virtualLength(); }
+    virtual unsigned virtualLength() const = 0;
     bool isEmpty() const { return !length(); }
     virtual String item(unsigned index) const = 0;
 

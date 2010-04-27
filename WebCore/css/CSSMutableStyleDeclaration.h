@@ -88,7 +88,9 @@ public:
     virtual String cssText() const;
     virtual void setCssText(const String&, ExceptionCode&);
 
-    virtual unsigned length() const;
+    virtual unsigned virtualLength() const;
+    unsigned length() const { return m_properties.size(); }
+
     virtual String item(unsigned index) const;
 
     virtual PassRefPtr<CSSValue> getPropertyCSSValue(int propertyID) const;

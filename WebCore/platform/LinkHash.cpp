@@ -147,12 +147,17 @@ static inline bool needsTrailingSlash(const UChar* characters, unsigned length)
     return pos == length;
 }
 
-LinkHash visitedLinkHash(const UChar* url, unsigned length)
+static ALWAYS_INLINE LinkHash visitedLinkHashInline(const UChar* url, unsigned length)
 {
-  return AlreadyHashed::avoidDeletedValue(StringImpl::computeHash(url, length));
+    return AlreadyHashed::avoidDeletedValue(StringImpl::computeHash(url, length));
 }
 
-void visitedURL(const KURL& base, const AtomicString& attributeURL, Vector<UChar, 512>& buffer)
+LinkHash visitedLinkHash(const UChar* url, unsigned length)
+{
+    return visitedLinkHashInline(url, length);
+}
+
+static ALWAYS_INLINE void visitedURLInline(const KURL& base, const AtomicString& attributeURL, Vector<UChar, 512>& buffer)
 {
     if (attributeURL.isNull())
         return;
@@ -213,14 +218,19 @@ void visitedURL(const KURL& base, const AtomicString& attributeURL, Vector<UChar
     return;
 }
 
+void visitedURL(const KURL& base, const AtomicString& attributeURL, Vector<UChar, 512>& buffer)
+{
+    return visitedURLInline(base, attributeURL, buffer);
+}
+
 LinkHash visitedLinkHash(const KURL& base, const AtomicString& attributeURL)
 {
     Vector<UChar, 512> url;
-    visitedURL(base, attributeURL, url);
+    visitedURLInline(base, attributeURL, url);
     if (url.isEmpty())
         return 0;
 
-    return visitedLinkHash(url.data(), url.size());
+    return visitedLinkHashInline(url.data(), url.size());
 }
 
 }  // namespace WebCore

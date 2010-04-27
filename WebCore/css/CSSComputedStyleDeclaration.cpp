@@ -1499,7 +1499,7 @@ void CSSComputedStyleDeclaration::setProperty(int /*propertyID*/, const String& 
     ec = NO_MODIFICATION_ALLOWED_ERR;
 }
 
-unsigned CSSComputedStyleDeclaration::length() const
+unsigned CSSComputedStyleDeclaration::virtualLength() const
 {
     Node* node = m_node.get();
     if (!node)
