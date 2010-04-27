@@ -11,11 +11,16 @@ function dumpConsoleMessages(noNotifyDone) {
     evaluateInWebInspector("frontend_dumpConsoleMessages", callback);
 }
 
-function dumpConsoleMessagesWithClasses() {
+function dumpConsoleMessagesWithClasses(sortMessages) {
     function callback(result)
     {
+        var messages = [];
         for (var i = 0; i < result.length; ++i)
-            output(result[i].text + " " + result[i].clazz);
+            messages.push(result[i].text + " " + result[i].clazz);
+        if (sortMessages)
+            messages.sort();
+        for (var i = 0; i < messages.length; ++i)
+            output(messages[i]);
         notifyDone();
     }
     evaluateInWebInspector("frontend_dumpConsoleMessages", callback);
