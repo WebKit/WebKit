@@ -35,6 +35,8 @@ import unittest
 
 import webkitpy.layout_tests.run_webkit_tests as run_webkit_tests
 
+from webkitpy.thirdparty.mock import Mock
+
 
 def passing_run(args):
     options, args = run_webkit_tests.parse_args(args)
@@ -55,6 +57,27 @@ class MainTest(unittest.TestCase):
                                     '--child-processes', '1',
                                      '--log', 'unexpected',
                                      'fast/html']))
+
+
+class TestRunnerTest(unittest.TestCase):
+    def test_results_html(self):
+        mock_port = Mock()
+        mock_port.relative_test_filename = lambda name: name
+        mock_port.filename_to_uri = lambda name: name
+
+        runner = run_webkit_tests.TestRunner(port=mock_port, options=Mock(), meter=Mock())
+        expected_html = u"""<html>
+  <head>
+    <title>Layout Test Results (time)</title>
+  </head>
+  <body>
+    <h2>Title (time)</h2>
+        <p><a href='test_path'>test_path</a><br />
+</p>
+</body></html>
+"""
+        html = runner._results_html(["test_path"], {}, "Title", override_time="time")
+        self.assertEqual(html, expected_html)
 
 
 class DryrunTest(unittest.TestCase):

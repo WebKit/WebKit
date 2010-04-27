@@ -1404,6 +1404,32 @@ class TestRunner:
         if len(unexpected_results['tests']) and self._options.verbose:
             print "-" * 78
 
+    def _results_html(self, test_files, failures, title="Test Failures", override_time=None):
+        """
+        test_files = a list of file paths
+        failures = dictionary mapping test paths to failure objects
+        title = title printed at top of test
+        override_time = current time (used by unit tests)
+        """
+        page = """<html>
+  <head>
+    <title>Layout Test Results (%(time)s)</title>
+  </head>
+  <body>
+    <h2>%(title)s (%(time)s)</h2>
+        """ % {'title': title, 'time': override_time or time.asctime()}
+
+        for test_file in sorted(test_files):
+            test_name = self._port.relative_test_filename(test_file)
+            test_url = self._port.filename_to_uri(test_file)
+            page += u"<p><a href='%s'>%s</a><br />\n" % (test_url, test_name)
+            test_failures = failures.get(test_file, [])
+            for failure in test_failures:
+                page += u"&nbsp;&nbsp;%s<br/>" % failure.result_html_output(test_name)
+            page += "</p>\n"
+        page += "</body></html>\n"
+        return page
+
     def _write_results_html_file(self, result_summary):
         """Write results.html which is a summary of tests that failed.
 
@@ -1416,8 +1442,10 @@ class TestRunner:
         """
         # test failures
         if self._options.full_results_html:
+            results_title = "Test Failures"
             test_files = result_summary.failures.keys()
         else:
+            results_title = "Unexpected Test Failures"
             unexpected_failures = self._get_failures(result_summary,
                 include_crashes=True)
             test_files = unexpected_failures.keys()
@@ -1426,33 +1454,10 @@ class TestRunner:
 
         out_filename = os.path.join(self._options.results_directory,
                                     "results.html")
-        # FIXME: This should be re-written to prepare the string first
-        # so that the "open" call can be wrapped in a with statement.
-        out_file = codecs.open(out_filename, "w", "utf-8")
-        # header
-        if self._options.full_results_html:
-            h2 = "Test Failures"
-        else:
-            h2 = "Unexpected Test Failures"
-        out_file.write("<html><head><title>Layout Test Results (%(time)s)"
-                       "</title></head><body><h2>%(h2)s (%(time)s)</h2>\n"
-                       % {'h2': h2, 'time': time.asctime()})
+        with codecs.open(out_filename, "w", "utf-8") as results_file:
+            html = self._results_html(test_files, result_summary.failures, results_title)
+            results_file.write(html)
 
-        test_files.sort()
-        for test_file in test_files:
-            test_failures = result_summary.failures.get(test_file, [])
-            out_file.write(u"<p><a href='%s'>%s</a><br />\n"
-                           % (self._port.filename_to_uri(test_file),
-                              self._port.relative_test_filename(test_file)))
-            for failure in test_failures:
-                out_file.write(u"&nbsp;&nbsp;%s<br/>"
-                               % failure.result_html_output(
-                                 self._port.relative_test_filename(test_file)))
-            out_file.write("</p>\n")
-
-        # footer
-        out_file.write("</body></html>\n")
-        out_file.close()
         return True
 
     def _show_results_html_file(self):

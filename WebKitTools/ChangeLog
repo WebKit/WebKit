@@ -1,3 +1,15 @@
+2010-04-26  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Refactor results.html generation out into a new method and test it
+        https://bugs.webkit.org/show_bug.cgi?id=38164
+
+        Hopefully this results in no change in functionality.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
 2010-04-26  Adam Barth  <abarth@webkit.org>
 
         Unreviewed, rolling out r58265.
