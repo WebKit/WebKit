@@ -153,7 +153,7 @@ class TestTypeBase(object):
         """
         raise NotImplemented
 
-    def _write_into_file_at_path(self, file_path, contents, encoding="utf-8"):
+    def _write_into_file_at_path(self, file_path, contents, encoding):
         """This method assumes that byte_array is already encoded
         into the right format."""
         with codecs.open(file_path, "w", encoding=encoding) as file:
@@ -193,16 +193,19 @@ class TestTypeBase(object):
         if not print_text_diffs:
             return
 
+        # Note: We pass encoding=None for all diff writes, as we treat diff
+        # output as binary.  Diff output may contain multiple files in
+        # conflicting encodings.
         diff = port.diff_text(expected, output, expected_filename, actual_filename)
         diff_filename = self.output_filename(filename, self.FILENAME_SUFFIX_DIFF + file_type)
-        self._write_into_file_at_path(diff_filename, diff, "utf-8")
+        self._write_into_file_at_path(diff_filename, diff, encoding=None)
 
         # Shell out to wdiff to get colored inline diffs.
         wdiff = port.wdiff_text(expected_filename, actual_filename)
         wdiff_filename = self.output_filename(filename, self.FILENAME_SUFFIX_WDIFF)
-        self._write_into_file_at_path(wdiff_filename, wdiff, "utf-8")
+        self._write_into_file_at_path(wdiff_filename, wdiff, encoding=None)
 
         # Use WebKit's PrettyPatch.rb to get an HTML diff.
         pretty_patch = port.pretty_patch_text(diff_filename)
         pretty_patch_filename = self.output_filename(filename, self.FILENAME_SUFFIX_PRETTY_PATCH)
-        self._write_into_file_at_path(pretty_patch_filename, pretty_patch, "utf-8")
+        self._write_into_file_at_path(pretty_patch_filename, pretty_patch, encoding=None)

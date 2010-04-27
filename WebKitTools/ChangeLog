@@ -1,3 +1,63 @@
+2010-04-26  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        [chromium] new-run-webkit-tests hangs on Chromium Bots (OS X and Linux)
+        https://bugs.webkit.org/show_bug.cgi?id=37987
+
+        Rolled out:
+        http://trac.webkit.org/changeset/58062
+        http://trac.webkit.org/changeset/58060
+        http://trac.webkit.org/changeset/58059
+        http://trac.webkit.org/changeset/58055
+        http://trac.webkit.org/changeset/58054
+        and parts of:
+        http://trac.webkit.org/changeset/58050
+
+        I also wrote some new comments and a tiny amount of new
+        code to help make ChromiumDriver.run_test easier to read.
+
+        In order to unit-test my new code, I had to change ChromiumDriver
+        to not automatically start itself when created.  That ended up
+        being a lot of plumbing, but is hopefully easier to understand now.
+
+        There are no tests for the (restored) wdiff code.  wdiff does not
+        exist on all systems, so for now we will assume it worked since
+        it is just old code being reverted.
+
+         * Scripts/webkitpy/layout_tests/driver_test.py:
+          - Use create_driver instead of start_driver, and be sure to call .stop()
+         * Scripts/webkitpy/layout_tests/layout_package/dump_render_tree_thread.py:
+          - Use create_driver instead of start_driver
+         * Scripts/webkitpy/layout_tests/port/base.py:
+          - Added a comment to explain that diffs are binary files.
+          - Various patch reverts relating to wdiff
+          - Add Driver._command_wrapper to share code between WebKitDriver and ChromiumDriver.
+          - Made _command_wrapper use shlex.split to get rid of the FIXME.
+         * Scripts/webkitpy/layout_tests/port/base_unittest.py: Added.
+          - test the new _command_wrapper
+         * Scripts/webkitpy/layout_tests/port/chromium.py:
+         - Use _command_wrapper to get rid of a bunch of ugly code.
+         - Make __init__ stop auto-starting.
+         - Rename create_driver to start_driver.
+         - Added _write_command_and_read_line to make it possible to
+           put a FIXME next to read_line() w/o having to put it in two places.
+         - Moved test_shell command building into _test_shell_command and tested it.
+         - Fix comments to say test_shell since ChromiumDriver is test_shell only.
+         * Scripts/webkitpy/layout_tests/port/chromium_unittest.py: Added.
+          - Test the new test_shell_command method.
+         * Scripts/webkitpy/layout_tests/port/dryrun.py:
+          - Rename create_driver to start_driver.
+         * Scripts/webkitpy/layout_tests/port/test.py:
+          - Rename create_driver to start_driver.
+         * Scripts/webkitpy/layout_tests/port/webkit.py:
+          - Rename create_driver to start_driver.
+          - Treat output as binary arrays.
+         * Scripts/webkitpy/layout_tests/test_types/test_type_base.py:
+          - Treat diff files as binary.
+         * Scripts/webkitpy/layout_tests/test_types/text_diff.py:
+          - Treat diff files as binary.
+
 2010-04-26  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.  Mark run-bindings-tests executable so we can execute it.

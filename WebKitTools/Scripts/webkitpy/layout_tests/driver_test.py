@@ -42,7 +42,8 @@ import port
 def run_tests(port, options, tests):
     # |image_path| is a path to the image capture from the driver.
     image_path = 'image_result.png'
-    driver = port.start_driver(image_path, None)
+    driver = port.create_driver(image_path, None)
+    driver.start()
     for t in tests:
         uri = port.filename_to_uri(os.path.join(port.layout_tests_dir(), t))
         print "uri: " + uri
@@ -58,6 +59,7 @@ def run_tests(port, options, tests):
         print ''.join(err)
         print '"""'
         print
+    driver.stop()
 
 
 if __name__ == '__main__':

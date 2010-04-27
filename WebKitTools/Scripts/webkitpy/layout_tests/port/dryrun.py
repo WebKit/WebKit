@@ -116,7 +116,7 @@ class DryRunPort(object):
     def stop_websocket_server(self):
         pass
 
-    def start_driver(self, image_path, options):
+    def create_driver(self, image_path, options):
         return DryrunDriver(self, image_path, options)
 
 
@@ -152,6 +152,9 @@ class DryrunDriver(base.Driver):
         else:
             hash = None
         return (False, False, hash, text_output, None)
+
+    def start(self):
+        pass
 
     def stop(self):
         pass

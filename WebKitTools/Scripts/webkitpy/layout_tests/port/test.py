@@ -81,7 +81,7 @@ class TestPort(base.Port):
     def show_results_html_file(self, filename):
         pass
 
-    def start_driver(self, image_path, options):
+    def create_driver(self, image_path, options):
         return TestDriver(image_path, options, self)
 
     def start_http_server(self):
@@ -131,6 +131,9 @@ class TestDriver(base.Driver):
 
     def run_test(self, uri, timeoutms, image_hash):
         return (False, False, image_hash, '', None)
+
+    def start(self):
+        pass
 
     def stop(self):
         pass

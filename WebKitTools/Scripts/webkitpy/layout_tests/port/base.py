@@ -34,6 +34,7 @@ import cgi
 import difflib
 import errno
 import os
+import shlex
 import subprocess
 import sys
 import time
@@ -49,19 +50,7 @@ from webkitpy.common.system.executive import Executive, ScriptError
 _log = logutils.get_logger(__file__)
 
 
-# Python's Popen has a bug that causes any pipes opened to a
-# process that can't be executed to be leaked.  Since this
-# code is specifically designed to tolerate exec failures
-# to gracefully handle cases where wdiff is not installed,
-# the bug results in a massive file descriptor leak. As a
-# workaround, if an exec failure is ever experienced for
-# wdiff, assume it's not available.  This will leak one
-# file descriptor but that's better than leaking each time
-# wdiff would be run.
-#
-# http://mail.python.org/pipermail/python-list/
-#    2008-August/505753.html
-# http://bugs.python.org/issue3210
+# Python bug workaround.  See Port.wdiff_text() for an explanation.
 _wdiff_available = True
 _pretty_patch_available = True
 
@@ -427,9 +416,10 @@ class Port(object):
         results_filename in a users' browser."""
         raise NotImplementedError('Port.show_html_results_file')
 
-    def start_driver(self, png_path, options):
-        """Starts a new test Driver and returns a handle to the object."""
-        raise NotImplementedError('Port.start_driver')
+    def create_driver(self, png_path, options):
+        """Return a newly created base.Driver subclass for starting/stopping
+        the test driver."""
+        raise NotImplementedError('Port.create_driver')
 
     def start_helper(self):
         """If a port needs to reconfigure graphics settings or do other
@@ -533,50 +523,64 @@ class Port(object):
         expectations, determining search paths, and logging information."""
         raise NotImplementedError('Port.version')
 
-    _WDIFF_DEL = '##WDIFF_DEL##'
-    _WDIFF_ADD = '##WDIFF_ADD##'
-    _WDIFF_END = '##WDIFF_END##'
-
-    def _format_wdiff_output_as_html(self, wdiff):
-        wdiff = cgi.escape(wdiff)
-        wdiff = wdiff.replace(self._WDIFF_DEL, '<span class=del>')
-        wdiff = wdiff.replace(self._WDIFF_ADD, '<span class=add>')
-        wdiff = wdiff.replace(self._WDIFF_END, '</span>')
-        html = '<head><style>.del { background: #faa; } '
-        html += '.add { background: #afa; }</style></head>'
-        html += "<pre>%s</pre>" % wdiff
-        return result
-
-    def _wdiff_command(self, actual_filename, expected_filename):
-        executable = self._path_to_wdiff()
-        return [executable,
-                "--start-delete=%s" % self._WDIFF_DEL,
-                "--end-delete=%s" % self._WDIFF_END,
-                "--start-insert=%s" % self._WDIFF_ADD,
-                "--end-insert=%s" % self._WDIFF_END,
-                actual_filename,
-                expected_filename]
-
     def wdiff_text(self, actual_filename, expected_filename):
         """Returns a string of HTML indicating the word-level diff of the
         contents of the two filenames. Returns an empty string if word-level
         diffing isn't available."""
-
+        executable = self._path_to_wdiff()
+        cmd = [executable,
+               '--start-delete=##WDIFF_DEL##',
+               '--end-delete=##WDIFF_END##',
+               '--start-insert=##WDIFF_ADD##',
+               '--end-insert=##WDIFF_END##',
+               actual_filename,
+               expected_filename]
+        # FIXME: Why not just check os.exists(executable) once?
         global _wdiff_available
-        if not _wdiff_available:
-            return ""
+        result = ''
         try:
-            cmd = self._wdiff_command(actual_filename, expected_filename)
-            return self._executive.run_command(cmd)
+            # Python's Popen has a bug that causes any pipes opened to a
+            # process that can't be executed to be leaked.  Since this
+            # code is specifically designed to tolerate exec failures
+            # to gracefully handle cases where wdiff is not installed,
+            # the bug results in a massive file descriptor leak. As a
+            # workaround, if an exec failure is ever experienced for
+            # wdiff, assume it's not available.  This will leak one
+            # file descriptor but that's better than leaking each time
+            # wdiff would be run.
+            #
+            # http://mail.python.org/pipermail/python-list/
+            #    2008-August/505753.html
+            # http://bugs.python.org/issue3210
+            #
+            # It also has a threading bug, so we don't output wdiff if
+            # the Popen raises a ValueError.
+            # http://bugs.python.org/issue1236
+            if _wdiff_available:
+                try:
+                    # FIXME: Use Executive() here.
+                    wdiff = subprocess.Popen(cmd,
+                        stdout=subprocess.PIPE).communicate()[0]
+                except ValueError, e:
+                    # Working around a race in Python 2.4's implementation
+                    # of Popen().
+                    wdiff = ''
+                wdiff = cgi.escape(wdiff)
+                wdiff = wdiff.replace('##WDIFF_DEL##', '<span class=del>')
+                wdiff = wdiff.replace('##WDIFF_ADD##', '<span class=add>')
+                wdiff = wdiff.replace('##WDIFF_END##', '</span>')
+                result = '<head><style>.del { background: #faa; } '
+                result += '.add { background: #afa; }</style></head>'
+                result += '<pre>' + wdiff + '</pre>'
         except OSError, e:
-            # If the system is missing wdiff stop trying.
-            _wdiff_available = False
-            return ''
-        except ScriptError, e:
-            # If wdiff failed to run for some reason, stop trying.
-            _wdiff_available = False
-            return ""
-
+            if (e.errno == errno.ENOENT or e.errno == errno.EACCES or
+                e.errno == errno.ECHILD):
+                _wdiff_available = False
+            else:
+                raise e
+        # Diffs are treated as binary as they may include multiple files
+        # with conflicting encodings.  Thus we do not decode the output here.
+        return result
 
     _pretty_patch_error_html = "Failed to run PrettyPatch, see error console."
 
@@ -588,7 +592,9 @@ class Port(object):
         prettify_path = os.path.join(pretty_patch_path, "prettify.rb")
         command = ["ruby", "-I", pretty_patch_path, prettify_path, diff_path]
         try:
-            return self._executive.run_command(command)
+            # Diffs are treated as binary (we pass decode_output=False) as they
+            # may contain multiple files of conflicting encodings.
+            return self._executive.run_command(command, decode_output=False)
         except OSError, e:
             # If the system is missing ruby log the error and stop trying.
             _pretty_patch_available = False
@@ -719,6 +725,24 @@ class Driver:
         Note that the image itself should be written to the path that was
         specified in the __init__() call."""
         raise NotImplementedError('Driver.run_test')
+
+    # FIXME: This is static so we can test it w/o creating a Base instance.
+    @classmethod
+    def _command_wrapper(cls, wrapper_option):
+        # Hook for injecting valgrind or other runtime instrumentation,
+        # used by e.g. tools/valgrind/valgrind_tests.py.
+        wrapper = []
+        browser_wrapper = os.environ.get("BROWSER_WRAPPER", None)
+        if browser_wrapper:
+            # FIXME: There seems to be no reason to use BROWSER_WRAPPER over --wrapper.
+            # Remove this code any time after the date listed below.
+            _log.error("BROWSER_WRAPPER is deprecated, please use --wrapper instead.")
+            _log.error("BROWSER_WRAPPER will be removed any time after June 1st 2010 and your scripts will break.")
+            wrapper += [browser_wrapper]
+
+        if wrapper_option:
+            wrapper += shlex.split(wrapper_option)
+        return wrapper
 
     def poll(self):
         """Returns None if the Driver is still running. Returns the returncode

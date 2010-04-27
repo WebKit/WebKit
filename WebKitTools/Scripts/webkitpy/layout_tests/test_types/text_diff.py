@@ -75,8 +75,12 @@ class TestTextDiff(test_type_base.TestTypeBase):
     def get_normalized_text(self, filename):
         # FIXME: We repeat this pattern often, we should share code.
         try:
-            with codecs.open(filename, "r", "utf-8") as file:
+            # NOTE: -expected.txt files are ALWAYS utf-8.  However,
+            # we do not decode the output from DRT, so we should not
+            # decode the -expected.txt values either to allow comparisons.
+            with codecs.open(filename, "r", encoding=None) as file:
                 text = file.read()
+                # We could assert that the text is valid utf-8.
         except IOError, e:
             if errno.ENOENT != e.errno:
                 raise
@@ -92,7 +96,10 @@ class TestTextDiff(test_type_base.TestTypeBase):
 
         # If we're generating a new baseline, we pass.
         if test_args.new_baseline:
-            self._save_baseline_data(filename, output, ".txt", encoding="utf-8")
+            # Although all test_shell/DumpRenderTree output should be utf-8,
+            # we do not ever decode it inside run-webkit-tests.  For some tests
+            # DumpRenderTree may not output utf-8 text (e.g. webarchives).
+            self._save_baseline_data(filename, output, ".txt", encoding=None)
             return failures
 
         # Normalize text to diff
@@ -104,7 +111,7 @@ class TestTextDiff(test_type_base.TestTypeBase):
         if port.compare_text(output, expected):
             # Text doesn't match, write output files.
             self.write_output_files(port, filename, ".txt", output,
-                                    expected, encoding="utf-8",
+                                    expected, encoding=None,
                                     print_text_diffs=True)
 
             if expected == '':

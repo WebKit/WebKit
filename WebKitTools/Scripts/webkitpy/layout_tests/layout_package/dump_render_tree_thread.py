@@ -155,7 +155,8 @@ class SingleTestThread(threading.Thread):
 
     def run(self):
         test_info = self._test_info
-        driver = self._port.start_driver(self._image_path, self._shell_args)
+        driver = self._port.create_driver(self._image_path, self._shell_args)
+        driver.start()
         start = time.time()
         crash, timeout, actual_checksum, output, error = \
             driver.run_test(test_info.uri.strip(), test_info.timeout,
@@ -447,8 +448,8 @@ class TestShellThread(threading.Thread):
 
         """
         if (not self._driver or self._driver.poll() is not None):
-            self._driver = self._port.start_driver(
-                self._image_path, self._shell_args)
+            self._driver = self._port.create_driver(self._image_path, self._shell_args)
+            self._driver.start()
 
     def _kill_dump_render_tree(self):
         """Kill the DumpRenderTree process if it's running."""
