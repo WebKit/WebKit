@@ -94,6 +94,7 @@ committers_unable_to_review = [
     Committer("Csaba Osztrogonac", "ossy@webkit.org", "ossy"),
     Committer("David Smith", ["catfish.man@gmail.com", "dsmith@webkit.org"], "catfishman"),
     Committer("Dean Jackson", "dino@apple.com", "dino"),
+    Committer("Diego Gonzalez", ["diegohcg@webkit.org", "diego.gonzalez@openbossa.org"], "diegohcg"),
     Committer("Dirk Pranke", "dpranke@chromium.org"),
     Committer("Drew Wilson", "atwilson@chromium.org", "atwilson"),
     Committer("Dumitru Daniliuc", "dumi@chromium.org", "dumi"),
