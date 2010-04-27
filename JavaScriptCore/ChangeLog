@@ -1,3 +1,12 @@
+2010-04-27  Thomas Zander <t.zander@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix the build on Symbian on Linux using the Makefile based mkspec
+
+        * JavaScriptCore.pri: It is necessary to specify the library search path
+        when linking against JavaScriptCore.
+
 2010-04-21  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Simon Hausmann.

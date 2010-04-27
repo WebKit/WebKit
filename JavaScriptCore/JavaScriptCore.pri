@@ -81,6 +81,9 @@ defineTest(addJavaScriptCoreLib) {
         POST_TARGETDEPS += $${pathToJavaScriptCoreOutput}$${QMAKE_DIR_SEP}$${JAVASCRIPTCORE_TARGET}.lib
     } else:symbian {
         LIBS += -l$${JAVASCRIPTCORE_TARGET}.lib
+        # The default symbian build system does not use library paths at all. However when building with
+        # qmake's symbian makespec that uses Makefiles
+        QMAKE_LIBDIR += $$pathToJavaScriptCoreOutput
         POST_TARGETDEPS += $${pathToJavaScriptCoreOutput}$${QMAKE_DIR_SEP}$${JAVASCRIPTCORE_TARGET}.lib
     } else {
         # Make sure jscore will be early in the list of libraries to workaround a bug in MinGW
