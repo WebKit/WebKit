@@ -111,8 +111,8 @@ def main(argv):
 
     allTestsPassed = True
     if not runTests('V8',
-        os.path.join('WebCore', 'bindings', 'v8', 'test'), # Input dir
-        os.path.join('WebCore', 'bindings', 'v8', 'test'), # Reference dir
+        os.path.join('WebCore', 'bindings', 'scripts', 'test'), # Input dir
+        os.path.join('WebCore', 'bindings', 'scripts', 'test'), # Reference dir
         overwrite):
         allTestsPassed = False
 

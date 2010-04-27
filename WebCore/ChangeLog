@@ -1,3 +1,58 @@
+2010-04-26  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Move bindings test directory into the scripts directory
+        https://bugs.webkit.org/show_bug.cgi?id=38161
+
+        This test is really of the bindings scripts not of the bindings
+        themselves.  By moving the files into the scripts directory, we'll be
+        able to test JSC as well.
+
+        * bindings/scripts/test/TestObj.idl: Renamed from WebCore/bindings/v8/test/TestObj.idl.
+        * bindings/scripts/test/V8TestObj.cpp: Renamed from WebCore/bindings/v8/test/V8TestObj.cpp.
+        (WebCore::):
+        (WebCore::TestObjInternal::V8_USE):
+        (WebCore::TestObjInternal::readOnlyIntAttrAttrGetter):
+        (WebCore::TestObjInternal::readOnlyStringAttrAttrGetter):
+        (WebCore::TestObjInternal::readOnlyTestObjAttrAttrGetter):
+        (WebCore::TestObjInternal::intAttrAttrGetter):
+        (WebCore::TestObjInternal::intAttrAttrSetter):
+        (WebCore::TestObjInternal::stringAttrAttrGetter):
+        (WebCore::TestObjInternal::stringAttrAttrSetter):
+        (WebCore::TestObjInternal::testObjAttrAttrGetter):
+        (WebCore::TestObjInternal::testObjAttrAttrSetter):
+        (WebCore::TestObjInternal::attrWithExceptionAttrGetter):
+        (WebCore::TestObjInternal::attrWithExceptionAttrSetter):
+        (WebCore::TestObjInternal::attrWithSetterExceptionAttrGetter):
+        (WebCore::TestObjInternal::attrWithSetterExceptionAttrSetter):
+        (WebCore::TestObjInternal::attrWithGetterExceptionAttrGetter):
+        (WebCore::TestObjInternal::attrWithGetterExceptionAttrSetter):
+        (WebCore::TestObjInternal::voidMethodCallback):
+        (WebCore::TestObjInternal::voidMethodWithArgsCallback):
+        (WebCore::TestObjInternal::intMethodCallback):
+        (WebCore::TestObjInternal::intMethodWithArgsCallback):
+        (WebCore::TestObjInternal::objMethodCallback):
+        (WebCore::TestObjInternal::objMethodWithArgsCallback):
+        (WebCore::TestObjInternal::methodWithExceptionCallback):
+        (WebCore::TestObjInternal::methodWithOptionalArgCallback):
+        (WebCore::TestObjInternal::methodWithNonOptionalArgAndOptionalArgCallback):
+        (WebCore::TestObjInternal::methodWithNonOptionalArgAndTwoOptionalArgsCallback):
+        (WebCore::TestObjInternal::overloadedMethod1Callback):
+        (WebCore::TestObjInternal::overloadedMethod2Callback):
+        (WebCore::TestObjInternal::overloadedMethod3Callback):
+        (WebCore::TestObjInternal::overloadedMethod4Callback):
+        (WebCore::TestObjInternal::overloadedMethodCallback):
+        (WebCore::ConfigureV8TestObjTemplate):
+        (WebCore::V8TestObj::GetRawTemplate):
+        (WebCore::V8TestObj::GetTemplate):
+        (WebCore::V8TestObj::toNative):
+        (WebCore::V8TestObj::HasInstance):
+        (WebCore::V8TestObj::wrap):
+        (WebCore::toV8):
+        (WebCore::V8TestObj::derefObject):
+        * bindings/scripts/test/V8TestObj.h: Renamed from WebCore/bindings/v8/test/V8TestObj.h.
+
 2010-04-26  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by Jian Li.
