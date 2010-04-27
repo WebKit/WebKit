@@ -1,3 +1,14 @@
+2010-04-26  Yuzo Fujishima  <yuzo@google.com>
+
+        Unreviewed, Chromium test expectation change.
+
+        To keep up with the change that turned on HTML5 DB AUTO_VACUUM.
+        https://bugs.webkit.org/show_bug.cgi?id=36251
+
+        * platform/chromium-mac/storage/quota-tracking-expected.txt: Removed.
+        * platform/chromium-win/storage/quota-tracking-expected.txt: Removed.
+        * platform/chromium/storage/quota-tracking-expected.txt: Added.
+
 2010-04-26  Dumitru Daniliuc  <dumi@chromium.org>
 
         Unreviewed, fixing the build breakage introduced by r58270.
