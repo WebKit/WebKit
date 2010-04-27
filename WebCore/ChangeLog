@@ -1,3 +1,16 @@
+2010-04-27  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Simon Hausmann.
+
+        The TouchStationary state of WebCore::PlatformTouchPoint is not handled inside the touch event handler.
+        https://bugs.webkit.org/show_bug.cgi?id=37609
+
+        No new tests required, only updating documentation.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleTouchEvent): Improve the documentation for handling
+            the TouchStationary state as a result of discussions in bug 37609.
+
 2010-04-27  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler, Maciej Stachowiak.

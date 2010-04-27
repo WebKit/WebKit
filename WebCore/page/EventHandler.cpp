@@ -2748,6 +2748,13 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
             touches->append(touch);
 
         // Now build up the correct list for changedTouches.
+        // Note that  any touches that are in the TouchStationary state (e.g. if
+        // the user had several points touched but did not move them all) should
+        // only be present in the touches list. They may also be added to the
+        // targetTouches list later, but should never be in the changedTouches
+        // list so we do not handle them explicitly here.
+        // See https://bugs.webkit.org/show_bug.cgi?id=37609 for further discussion
+        // about the TouchStationary state.
         if (point.state() == PlatformTouchPoint::TouchReleased)
             releasedTouches->append(touch);
         else if (point.state() == PlatformTouchPoint::TouchCancelled)
