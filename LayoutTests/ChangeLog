@@ -1,3 +1,15 @@
+2010-04-27  François Sausset  <sausset@gmail.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Additional MathML mroot & msqrt tests.
+        https://bugs.webkit.org/show_bug.cgi?id=37044
+
+        * mathml/presentation/roots.xhtml: Added.
+        * platform/mac/mathml/presentation/roots-expected.checksum: Added.
+        * platform/mac/mathml/presentation/roots-expected.png: Added.
+        * platform/mac/mathml/presentation/roots-expected.txt: Added.
+
 2010-04-27  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Dimitri Glazkov.

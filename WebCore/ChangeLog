@@ -1,3 +1,31 @@
+2010-04-27  François Sausset  <sausset@gmail.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Implementation of the MathML mroot & msqrt elements.
+        https://bugs.webkit.org/show_bug.cgi?id=37044
+
+        Test: mathml/presentation/roots.xhtml
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/mathml.css:
+        (mroot):
+        (mroot > * + *):
+        (mroot > * + mrow, mroot > * + mfenced):
+        * mathml/MathMLInlineContainerElement.cpp:
+        (WebCore::MathMLInlineContainerElement::createRenderer):
+        * mathml/RenderMathMLRoot.cpp: Added.
+        (WebCore::RenderMathMLRoot::RenderMathMLRoot):
+        (WebCore::RenderMathMLRoot::addChild):
+        (WebCore::RenderMathMLRoot::paint):
+        (WebCore::RenderMathMLRoot::layout):
+        * mathml/RenderMathMLRoot.h: Added.
+        * mathml/RenderMathMLSquareRoot.cpp: Added.
+        (WebCore::RenderMathMLSquareRoot::RenderMathMLSquareRoot):
+        (WebCore::RenderMathMLSquareRoot::paint):
+        (WebCore::RenderMathMLSquareRoot::layout):
+        * mathml/RenderMathMLSquareRoot.h: Added.
+
 2010-04-27  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej Stachowiak.
