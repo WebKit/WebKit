@@ -1,3 +1,13 @@
+2010-04-26  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed, rolling out r58265.
+        http://trac.webkit.org/changeset/58265
+        https://bugs.webkit.org/show_bug.cgi?id=38021
+
+        This change prevents me from uploading patches.  It also breaks sheriff-bot.
+
+        * Scripts/webkitpy/tool/steps/options.py:
+
 2010-04-26  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
