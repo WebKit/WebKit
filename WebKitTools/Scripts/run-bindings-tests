@@ -37,56 +37,58 @@ import tempfile
 from webkitpy.common.checkout import scm
 
 
-def generateFromIDL(generator, idlFile, outputDir):
+def generate_from_idl(generator, idl_file, output_directory):
     cmd = ['perl', '-w',
            '-IWebCore/bindings/scripts',
            'WebCore/bindings/scripts/generate-bindings.pl',
            # idl include directories (path relative to generate-bindings.pl)
            '--include', '.',
-           # place holder for defines (generate-bindings.pl requirement)
-           '--defines', 'x',
+           '--defines', 'TESTING_%s' % generator,
            '--generator', generator,
-           '--outputDir', outputDir,
-           idlFile]
+           '--outputDir', output_directory,
+           idl_file]
     return subprocess.call(cmd) == 0
 
 
-def detectChanges(workDir, referenceDir):
-    changesFound = False
-    for outputFile in os.listdir(workDir):
-        print 'Detecting changes in %s...' % outputFile
+def detect_changes(work_directory, reference_directory):
+    changes_found = False
+    for output_file in os.listdir(work_directory):
+        print 'Detecting changes in %s...' % output_file
         cmd = ['diff',
-               os.path.join(referenceDir, outputFile),
-               os.path.join(workDir, outputFile)]
+               '-u',
+               os.path.join(reference_directory, output_file),
+               os.path.join(work_directory, output_file)]
         if subprocess.call(cmd) != 0:
-            print 'Detected changes in %s (see above)' % outputFile
-            changesFound = True
+            print 'Detected changes in %s (see above)' % output_file
+            changes_found = True
         else:
             print 'No changes found.'
 
-    return changesFound
+    return changes_found
 
 
-def runTests(generator, inputDir, referenceDir, overwrite):
-    workDir = referenceDir
+def run_tests(generator, input_directory, reference_directory, overwrite):
+    work_directory = reference_directory
 
     passed = True
-    for inputFile in os.listdir(inputDir):
-        (name, ext) = os.path.splitext(inputFile)
-        if ext != '.idl':
+    for input_file in os.listdir(input_directory):
+        (name, extension) = os.path.splitext(input_file)
+        if extension != '.idl':
             continue
-        print 'Testing the %s generator on %s' % (generator, inputFile)
+        print 'Testing the %s generator on %s' % (generator, input_file)
         # Generate output into the work directory (either the given one or a 
         # temp one if not overwrite is performed)
         if not overwrite:
-            workDir = tempfile.mkdtemp()
-        if not generateFromIDL(generator, os.path.join(inputDir, inputFile), workDir):
+            work_directory = tempfile.mkdtemp()
+        if not generate_from_idl(generator, os.path.join(input_directory,
+                                                         input_file),
+                                 work_directory):
             passed = False
         if overwrite:
             print "Overwrote reference files"
             continue
         # Detect changes
-        if detectChanges(workDir, referenceDir):
+        if detect_changes(work_directory, reference_directory):
             passed = False
 
     if not passed:
@@ -104,21 +106,24 @@ def main(argv):
     """
     overwrite = "--overwrite" in argv
 
-    scmSystem = scm.detect_scm_system(os.curdir)
-    print scmSystem
+    current_scm = scm.detect_scm_system(os.curdir)
+    os.chdir(current_scm.checkout_root)
 
-    os.chdir(scmSystem.checkout_root)
+    all_tests_passed = True
 
-    allTestsPassed = True
-    if not runTests('V8',
-        os.path.join('WebCore', 'bindings', 'scripts', 'test'), # Input dir
-        os.path.join('WebCore', 'bindings', 'scripts', 'test'), # Reference dir
-        overwrite):
-        allTestsPassed = False
+    generators = [
+        'JS',
+        'V8',
+        # FIXME: Add ObjC
+    ]
 
-    # FIXME: Add tests for JSC, ObjC
+    for generator in generators:
+        input_directory = os.path.join('WebCore', 'bindings', 'scripts', 'test')
+        reference_directory = os.path.join('WebCore', 'bindings', 'scripts', 'test', generator)
+        if not run_tests(generator, input_directory, reference_directory, overwrite):
+            all_tests_passed = False
 
-    if allTestsPassed:
+    if all_tests_passed:
         print 'All tests passed!'
         return 0
     else:

@@ -1,3 +1,15 @@
+2010-04-26  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add testing infrastructure for JSC bindings generator
+        https://bugs.webkit.org/show_bug.cgi?id=38167
+
+        Add support for testing more than one bindings.  Also, converted the
+        script to PEP8 style.
+
+        * Scripts/run-bindings-tests:
+
 2010-04-26  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

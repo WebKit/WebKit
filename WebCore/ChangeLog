@@ -1,3 +1,112 @@
+2010-04-26  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add testing infrastructure for JSC bindings generator
+        https://bugs.webkit.org/show_bug.cgi?id=38167
+
+        This required moving the test files around a bit more.
+
+        * bindings/scripts/test/JS/JSTestObj.cpp: Added.
+        (WebCore::):
+        (WebCore::JSTestObjConstructor::JSTestObjConstructor):
+        (WebCore::JSTestObjConstructor::classInfo):
+        (WebCore::JSTestObjConstructor::createStructure):
+        (WebCore::JSTestObjConstructor::getOwnPropertySlot):
+        (WebCore::JSTestObjConstructor::getOwnPropertyDescriptor):
+        (WebCore::JSTestObjPrototype::self):
+        (WebCore::JSTestObjPrototype::getOwnPropertySlot):
+        (WebCore::JSTestObjPrototype::getOwnPropertyDescriptor):
+        (WebCore::JSTestObj::JSTestObj):
+        (WebCore::JSTestObj::~JSTestObj):
+        (WebCore::JSTestObj::createPrototype):
+        (WebCore::JSTestObj::getOwnPropertySlot):
+        (WebCore::JSTestObj::getOwnPropertyDescriptor):
+        (WebCore::jsTestObjReadOnlyIntAttr):
+        (WebCore::jsTestObjReadOnlyStringAttr):
+        (WebCore::jsTestObjReadOnlyTestObjAttr):
+        (WebCore::jsTestObjIntAttr):
+        (WebCore::jsTestObjStringAttr):
+        (WebCore::jsTestObjTestObjAttr):
+        (WebCore::jsTestObjAttrWithException):
+        (WebCore::jsTestObjAttrWithSetterException):
+        (WebCore::jsTestObjAttrWithGetterException):
+        (WebCore::jsTestObjCustomAttr):
+        (WebCore::jsTestObjConstructor):
+        (WebCore::JSTestObj::put):
+        (WebCore::setJSTestObjIntAttr):
+        (WebCore::setJSTestObjStringAttr):
+        (WebCore::setJSTestObjTestObjAttr):
+        (WebCore::setJSTestObjAttrWithException):
+        (WebCore::setJSTestObjAttrWithSetterException):
+        (WebCore::setJSTestObjAttrWithGetterException):
+        (WebCore::setJSTestObjCustomAttr):
+        (WebCore::JSTestObj::getConstructor):
+        (WebCore::jsTestObjPrototypeFunctionVoidMethod):
+        (WebCore::jsTestObjPrototypeFunctionVoidMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionIntMethod):
+        (WebCore::jsTestObjPrototypeFunctionIntMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionObjMethod):
+        (WebCore::jsTestObjPrototypeFunctionObjMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithException):
+        (WebCore::jsTestObjPrototypeFunctionCustomMethod):
+        (WebCore::jsTestObjPrototypeFunctionCustomMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndOptionalArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndTwoOptionalArgs):
+        (WebCore::toJS):
+        (WebCore::toTestObj):
+        * bindings/scripts/test/JS/JSTestObj.h: Added.
+        (WebCore::JSTestObj::classInfo):
+        (WebCore::JSTestObj::createStructure):
+        (WebCore::JSTestObj::impl):
+        (WebCore::JSTestObjPrototype::classInfo):
+        (WebCore::JSTestObjPrototype::createStructure):
+        (WebCore::JSTestObjPrototype::JSTestObjPrototype):
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/V8/V8TestObj.cpp: Renamed from WebCore/bindings/scripts/test/V8TestObj.cpp.
+        (WebCore::):
+        (WebCore::TestObjInternal::V8_USE):
+        (WebCore::TestObjInternal::readOnlyIntAttrAttrGetter):
+        (WebCore::TestObjInternal::readOnlyStringAttrAttrGetter):
+        (WebCore::TestObjInternal::readOnlyTestObjAttrAttrGetter):
+        (WebCore::TestObjInternal::intAttrAttrGetter):
+        (WebCore::TestObjInternal::intAttrAttrSetter):
+        (WebCore::TestObjInternal::stringAttrAttrGetter):
+        (WebCore::TestObjInternal::stringAttrAttrSetter):
+        (WebCore::TestObjInternal::testObjAttrAttrGetter):
+        (WebCore::TestObjInternal::testObjAttrAttrSetter):
+        (WebCore::TestObjInternal::attrWithExceptionAttrGetter):
+        (WebCore::TestObjInternal::attrWithExceptionAttrSetter):
+        (WebCore::TestObjInternal::attrWithSetterExceptionAttrGetter):
+        (WebCore::TestObjInternal::attrWithSetterExceptionAttrSetter):
+        (WebCore::TestObjInternal::attrWithGetterExceptionAttrGetter):
+        (WebCore::TestObjInternal::attrWithGetterExceptionAttrSetter):
+        (WebCore::TestObjInternal::voidMethodCallback):
+        (WebCore::TestObjInternal::voidMethodWithArgsCallback):
+        (WebCore::TestObjInternal::intMethodCallback):
+        (WebCore::TestObjInternal::intMethodWithArgsCallback):
+        (WebCore::TestObjInternal::objMethodCallback):
+        (WebCore::TestObjInternal::objMethodWithArgsCallback):
+        (WebCore::TestObjInternal::methodWithExceptionCallback):
+        (WebCore::TestObjInternal::methodWithOptionalArgCallback):
+        (WebCore::TestObjInternal::methodWithNonOptionalArgAndOptionalArgCallback):
+        (WebCore::TestObjInternal::methodWithNonOptionalArgAndTwoOptionalArgsCallback):
+        (WebCore::TestObjInternal::overloadedMethod1Callback):
+        (WebCore::TestObjInternal::overloadedMethod2Callback):
+        (WebCore::TestObjInternal::overloadedMethod3Callback):
+        (WebCore::TestObjInternal::overloadedMethod4Callback):
+        (WebCore::TestObjInternal::overloadedMethodCallback):
+        (WebCore::ConfigureV8TestObjTemplate):
+        (WebCore::V8TestObj::GetRawTemplate):
+        (WebCore::V8TestObj::GetTemplate):
+        (WebCore::V8TestObj::toNative):
+        (WebCore::V8TestObj::HasInstance):
+        (WebCore::V8TestObj::wrap):
+        (WebCore::toV8):
+        (WebCore::V8TestObj::derefObject):
+        * bindings/scripts/test/V8/V8TestObj.h: Renamed from WebCore/bindings/scripts/test/V8TestObj.h.
+
 2010-04-26  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
