@@ -1712,7 +1712,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ \"${MACOSX_DEPLOYMENT_TARGET}\" > \"10.5\" && \"${CONFIGURATION}\" != \"Production\" && \"${ACTION}\" == \"build\" ]]; then\n    if [[ ! -e \"${CONFIGURATION_BUILD_DIR}/WebKit.framework/WebKitPluginHost.app\" ]]; then\n       ln -s /System/Library/Frameworks/WebKit.framework/WebKitPluginHost.app \"${CONFIGURATION_BUILD_DIR}/WebKit.framework/WebKitPluginHost.app\"\n    fi\nfi\n";
+			shellScript = "if [[ \"${MACOSX_DEPLOYMENT_TARGET}\" > \"10.5\" && \"${CONFIGURATION}\" != \"Production\" && \"${ACTION}\" == \"build\" ]]; then \n   if [[ ! -e \"${CONFIGURATION_BUILD_DIR}/WebKit.framework/WebKitPluginHost.app\" ]]; then\n       if [[ -e \"${PROJECT_DIR}/../WebKitLibraries/WebKitPluginHost.app\" ]]; then\n           ln -s \"${PROJECT_DIR}/../WebKitLibraries/WebKitPluginHost.app\" \"${CONFIGURATION_BUILD_DIR}/WebKit.framework/WebKitPluginHost.app\"\n       else\n           ln -s /System/Library/Frameworks/WebKit.framework/WebKitPluginHost.app \"${CONFIGURATION_BUILD_DIR}/WebKit.framework/WebKitPluginHost.app\"\n       fi\n   fi\nfi\n";
 		};
 		9337D6540EBFE54D00DA3CB5 /* Check For Exit Time Destructors */ = {
 			isa = PBXShellScriptBuildPhase;

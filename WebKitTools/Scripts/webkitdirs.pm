@@ -231,7 +231,6 @@ sub jscPath($)
 {
     my ($productDir) = @_;
     my $jscName = "jsc";
-    $jscName .= "_debug"  if (isCygwin() && ($configuration eq "Debug"));
     return "$productDir/$jscName";
 }
 

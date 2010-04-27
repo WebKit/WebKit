@@ -10,7 +10,7 @@ debug d development dev develop: force
 
 release r deployment dep deploy: force
 	$(SCRIPTS_PATH)/set-webkit-configuration --release
-	( xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) | grep -v setenv && exit $${PIPESTATUS[0]} )
+	( xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) &&  exit $${PIPESTATUS[0]} )
 
 clean:
 	( xcodebuild $(OTHER_OPTIONS) -alltargets clean $(XCODE_OPTIONS) | grep -v setenv && exit $${PIPESTATUS[0]} )
