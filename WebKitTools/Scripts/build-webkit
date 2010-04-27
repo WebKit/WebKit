@@ -371,6 +371,7 @@ if (isWx()) {
 }
 
 if (isChromium()) {
+    @options = @ARGV;
     # Chromium doesn't build by project directories.
     @projects = ();
     my $result = buildChromium($clean, @options);

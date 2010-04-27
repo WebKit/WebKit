@@ -1479,7 +1479,7 @@ sub buildChromium($@)
     my $result = 1;
     if (isDarwin()) {
         # Mac build - builds the root xcode project.
-        $result = buildXCodeProject("WebKit/chromium/WebKit", $clean, (@options));
+        $result = buildXCodeProject("WebKit/chromium/WebKit", $clean, "-configuration", configuration(), @options);
     } elsif (isCygwin() || isWindows()) {
         # Windows build - builds the root visual studio solution.
         $result = buildChromiumVisualStudioProject("WebKit/chromium/WebKit.sln", $clean);

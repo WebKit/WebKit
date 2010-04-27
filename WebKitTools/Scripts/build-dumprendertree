@@ -75,7 +75,7 @@ if (isAppleMacWebKit()) {
     $result = 0;
 } elsif (isChromium()) {
     if (isDarwin()) {
-        $result = buildXCodeProject("DumpRenderTree.gyp/DumpRenderTree", $clean, @ARGV);
+        $result = buildXCodeProject("DumpRenderTree.gyp/DumpRenderTree", $clean, "-configuration", configuration(), @ARGV);
     } elsif (isCygwin() || isWindows()) {
         # Windows build - builds the root visual studio solution.
         $result = buildChromiumVisualStudioProject("DumpRenderTree.gyp/DumpRenderTree.sln", $clean);
