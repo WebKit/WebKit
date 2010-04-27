@@ -1,5 +1,14 @@
 2010-04-27  Yuzo Fujishima  <yuzo@google.com>
 
+        Unreviewed, fix build breakage by reverting r58299.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35329
+
+        * fast/css/parsing-page-rule-expected.txt: Removed.
+        * fast/css/parsing-page-rule.html: Removed.
+
+2010-04-27  Yuzo Fujishima  <yuzo@google.com>
+
         Reviewed by David Hyatt.
 
         Enhance CSS parser for Paged Media (Iteration 1)

@@ -1,5 +1,22 @@
 2010-04-27  Yuzo Fujishima  <yuzo@google.com>
 
+        Unreviewed, fix build breakage by reverting r58299.
+
+        * css/CSSGrammar.y:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::CSSParser):
+        (WebCore::CSSParser::clearProperties):
+        * css/CSSParser.h:
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::pseudoId):
+        (WebCore::nameToPseudoTypeMap):
+        (WebCore::CSSSelector::extractPseudoType):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::):
+        * css/tokenizer.flex:
+
+2010-04-27  Yuzo Fujishima  <yuzo@google.com>
+
         Reviewed by Shinichiro Hamaji.
 
         WebCore::CSSSelector::RareData::parseNth doesn't check whether the search for '-' in the argument was successful.

@@ -70,7 +70,6 @@ using namespace HTMLNames;
     CSSRuleList* ruleList;
     CSSSelector* selector;
     Vector<CSSSelector*>* selectorList;
-    CSSSelector::MarginBoxType marginBox;
     CSSSelector::Relation relation;
     MediaList* mediaList;
     MediaQuery* mediaQuery;
@@ -98,7 +97,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 
 %}
 
-%expect 55
+%expect 54
 
 %nonassoc LOWEST_PREC
 
@@ -143,23 +142,6 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 %token WEBKIT_DEFINE_SYM
 %token VARIABLES_FOR
 %token WEBKIT_VARIABLES_DECLS_SYM
-%token <marginBox> TOPLEFTCORNER_SYM
-%token <marginBox> TOPLEFT_SYM
-%token <marginBox> TOPCENTER_SYM
-%token <marginBox> TOPRIGHT_SYM
-%token <marginBox> TOPRIGHTCORNER_SYM
-%token <marginBox> BOTTOMLEFTCORNER_SYM
-%token <marginBox> BOTTOMLEFT_SYM
-%token <marginBox> BOTTOMCENTER_SYM
-%token <marginBox> BOTTOMRIGHT_SYM
-%token <marginBox> BOTTOMRIGHTCORNER_SYM
-%token <marginBox> LEFTTOP_SYM
-%token <marginBox> LEFTMIDDLE_SYM
-%token <marginBox> LEFTBOTTOM_SYM
-%token <marginBox> RIGHTTOP_SYM
-%token <marginBox> RIGHTMIDDLE_SYM
-%token <marginBox> RIGHTBOTTOM_SYM
-
 %token ATKEYWORD
 
 %token IMPORTANT_SYM
@@ -206,7 +188,6 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 %type <rule> import
 %type <rule> namespace
 %type <rule> page
-%type <rule> margin_box
 %type <rule> font_face
 %type <rule> keyframes
 %type <rule> invalid_rule
@@ -228,7 +209,6 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 %type <string> ident_or_string
 %type <string> medium
 %type <string> hexcolor
-%type <marginBox> margin_sym
 
 %type <string> media_feature
 %type <mediaList> media_list
@@ -257,7 +237,6 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 %type <selector> class
 %type <selector> attrib
 %type <selector> pseudo
-%type <selector> page_selector
 
 %type <boolean> declaration_list
 %type <boolean> decl_list
@@ -750,102 +729,23 @@ key:
     }
     ;
 
+/*
 page:
-    PAGE_SYM maybe_space page_selector maybe_space
-    '{' maybe_space declarations_and_margins closing_brace {
-        CSSParser* p = static_cast<CSSParser*>(parser);
-        $$ = p->createPageRule(p->sinkFloatingSelector($3));
-    }
-    | PAGE_SYM error invalid_block {
+    PAGE_SYM maybe_space IDENT? pseudo_page? maybe_space
+    '{' maybe_space declaration [ ';' maybe_space declaration ]* '}' maybe_space
+  ;
+
+pseudo_page
+  : ':' IDENT
+  ;
+*/
+
+page:
+    PAGE_SYM error invalid_block {
       $$ = 0;
     }
-    | PAGE_SYM error ';' {
+  | PAGE_SYM error ';' {
       $$ = 0;
-    }
-    ;
-
-page_selector:
-    IDENT {
-        CSSParser* p = static_cast<CSSParser*>(parser);
-        $$ = p->createFloatingSelector();
-        $$->m_tag = QualifiedName(nullAtom, $1, p->m_defaultNamespace);
-    }
-    | IDENT pseudo {
-        CSSParser* p = static_cast<CSSParser*>(parser);
-        $$ = $2;
-        if ($$)
-            $$->m_tag = QualifiedName(nullAtom, $1, p->m_defaultNamespace);
-    }
-    | pseudo {
-        $$ = $1;
-    }
-    | /* empty */ {
-        CSSParser* p = static_cast<CSSParser*>(parser);
-        $$ = p->createFloatingSelector();
-    }
-    ;
-
-declarations_and_margins:
-    declaration_list
-    | declarations_and_margins margin_box maybe_space declaration_list
-    ;
-
-margin_box:
-    margin_sym {
-        static_cast<CSSParser*>(parser)->startDeclarationsForMarginBox();
-    } maybe_space '{' maybe_space declaration_list closing_brace {
-        $$ = static_cast<CSSParser*>(parser)->createMarginAtRule($1);
-    }
-    ;
-
-margin_sym :
-    TOPLEFTCORNER_SYM {
-        $$ = CSSSelector::TopLeftCornerMarginBox;
-    }
-    | TOPLEFT_SYM {
-        $$ = CSSSelector::TopLeftMarginBox;
-    }
-    | TOPCENTER_SYM {
-        $$ = CSSSelector::TopCenterMarginBox;
-    }
-    | TOPRIGHT_SYM {
-        $$ = CSSSelector::TopRightMarginBox;
-    }
-    | TOPRIGHTCORNER_SYM {
-        $$ = CSSSelector::TopRightCornerMarginBox;
-    }
-    | BOTTOMLEFTCORNER_SYM {
-        $$ = CSSSelector::BottomLeftCornerMarginBox;
-    }
-    | BOTTOMLEFT_SYM {
-        $$ = CSSSelector::BottomLeftMarginBox;
-    }
-    | BOTTOMCENTER_SYM {
-        $$ = CSSSelector::BottomCenterMarginBox;
-    }
-    | BOTTOMRIGHT_SYM {
-        $$ = CSSSelector::BottomRightMarginBox;
-    }
-    | BOTTOMRIGHTCORNER_SYM {
-        $$ = CSSSelector::BottomRightCornerMarginBox;
-    }
-    | LEFTTOP_SYM {
-        $$ = CSSSelector::LeftTopMarginBox;
-    }
-    | LEFTMIDDLE_SYM {
-        $$ = CSSSelector::LeftMiddleMarginBox;
-    }
-    | LEFTBOTTOM_SYM {
-        $$ = CSSSelector::LeftBottomMarginBox;
-    }
-    | RIGHTTOP_SYM {
-        $$ = CSSSelector::RightTopMarginBox;
-    }
-    | RIGHTMIDDLE_SYM {
-        $$ = CSSSelector::RightMiddleMarginBox;
-    }
-    | RIGHTBOTTOM_SYM {
-        $$ = CSSSelector::RightBottomMarginBox;
     }
     ;
 

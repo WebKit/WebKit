@@ -53,22 +53,6 @@ nth             [\+-]?{intnum}*n([\+-]{intnum})?
 
 "@import"               {BEGIN(mediaquery); yyTok = IMPORT_SYM; return yyTok;}
 "@page"                 {yyTok = PAGE_SYM; return yyTok;}
-"@top-left-corner"      {yyTok = TOPLEFTCORNER_SYM; return yyTok;}
-"@top-left"             {yyTok = TOPLEFT_SYM; return yyTok;}
-"@top-center"           {yyTok = TOPCENTER_SYM; return yyTok;}
-"@top-right"            {yyTok = TOPRIGHT_SYM; return yyTok;}
-"@top-right-corner"     {yyTok = TOPRIGHTCORNER_SYM; return yyTok;}
-"@bottom-left-corner"   {yyTok = BOTTOMLEFTCORNER_SYM; return yyTok;}
-"@bottom-left"          {yyTok = BOTTOMLEFT_SYM; return yyTok;}
-"@bottom-center"        {yyTok = BOTTOMCENTER_SYM; return yyTok;}
-"@bottom-right"         {yyTok = BOTTOMRIGHT_SYM; return yyTok;}
-"@bottom-right-corner"  {yyTok = BOTTOMRIGHTCORNER_SYM; return yyTok;}
-"@left-top"             {yyTok = LEFTTOP_SYM; return yyTok;}
-"@left-middle"          {yyTok = LEFTMIDDLE_SYM; return yyTok;}
-"@left-bottom"          {yyTok = LEFTBOTTOM_SYM; return yyTok;}
-"@right-top"            {yyTok = RIGHTTOP_SYM; return yyTok;}
-"@right-middle"         {yyTok = RIGHTMIDDLE_SYM; return yyTok;}
-"@right-bottom"         {yyTok = RIGHTBOTTOM_SYM; return yyTok;}
 "@media"                {BEGIN(mediaquery); yyTok = MEDIA_SYM; return yyTok;}
 "@font-face"            {yyTok = FONT_FACE_SYM; return yyTok;}
 "@charset"              {yyTok = CHARSET_SYM; return yyTok;}
