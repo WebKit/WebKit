@@ -496,6 +496,10 @@ void XMLHttpRequest::send(DOMFormData* body, ExceptionCode& ec)
     if (m_method != "GET" && m_method != "HEAD" && m_url.protocolInHTTPFamily()) {
         m_requestEntityBody = FormData::createMultiPart(*body, document());
 
+        // We need to ask the client to provide the generated file names if needed. When FormData fills the element
+        // for the file, it could set a flag to use the generated file name, i.e. a package file on Mac.
+        m_requestEntityBody->generateFiles(document());
+
         String contentType = getRequestHeader("Content-Type");
         if (contentType.isEmpty()) {
             contentType = "multipart/form-data; boundary=";

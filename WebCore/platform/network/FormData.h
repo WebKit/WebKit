@@ -26,7 +26,6 @@
 
 namespace WebCore {
 
-class ChromeClient;
 class DOMFormData;
 class Document;
 
@@ -101,7 +100,7 @@ public:
     const Vector<FormDataElement>& elements() const { return m_elements; }
     const Vector<char>& boundary() const { return m_boundary; }
 
-    void generateFiles(ChromeClient*);
+    void generateFiles(Document*);
     void removeGeneratedFilesIfNeeded();
 
     bool alwaysStream() const { return m_alwaysStream; }

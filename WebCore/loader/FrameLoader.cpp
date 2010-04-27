@@ -504,7 +504,7 @@ void FrameLoader::submitForm(const char* action, const String& url, PassRefPtr<F
         m_submittedFormURL = u;
     }
 
-    formData->generateFiles(m_frame->page()->chrome()->client());
+    formData->generateFiles(m_frame->document());
     
     if (!m_outgoingReferrer.isEmpty())
         frameRequest.resourceRequest().setHTTPReferrer(m_outgoingReferrer);
@@ -3669,7 +3669,7 @@ void FrameLoader::navigateToDifferentDocument(HistoryItem* item, FrameLoadType l
     // If this was a repost that failed the page cache, we might try to repost the form.
     NavigationAction action;
     if (formData) {
-        formData->generateFiles(m_frame->page()->chrome()->client());
+        formData->generateFiles(m_frame->document());
 
         request.setHTTPMethod("POST");
         request.setHTTPBody(formData);

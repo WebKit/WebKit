@@ -286,13 +286,18 @@ String FormData::flattenToString() const
     return Latin1Encoding().decode(bytes.data(), bytes.size());
 }
 
-void FormData::generateFiles(ChromeClient* client)
+void FormData::generateFiles(Document* document)
 {
     ASSERT(!m_hasGeneratedFiles);
     
     if (m_hasGeneratedFiles)
         return;
     
+    Page* page = document->page();
+    if (!page)
+        return;
+    ChromeClient* client = page->chrome()->client();
+
     size_t n = m_elements.size();
     for (size_t i = 0; i < n; ++i) {
         FormDataElement& e = m_elements[i];
