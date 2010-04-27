@@ -173,14 +173,6 @@ String ClipboardChromium::getData(const String& type, bool& success) const
                 // URIs have already been canonicalized, so copy everything verbatim.
                 text.append(uri);
             }
-            // Also create file:// URLs out of the entries in the file list.
-            for (size_t i = 0; i < m_dataObject->filenames.size(); ++i) {
-                String fileURL = ChromiumBridge::filePathToURL(m_dataObject->filenames[i]);
-                ASSERT(!fileURL.isEmpty());
-                if (!text.isEmpty())
-                    text.append(textMIMETypeLineSeparator);
-                text.append(fileURL);
-            }
             success = !text.isEmpty();
             return text;
         }
@@ -191,11 +183,6 @@ String ClipboardChromium::getData(const String& type, bool& success) const
         if (!m_dataObject->url.isEmpty()) {
             success = true;
             return m_dataObject->url.string();
-        }
-        // Otherwise check if we have a file that we could convert to a file:// URL.
-        if (!m_dataObject->filenames.isEmpty()) {
-            success = true;
-            return ChromiumBridge::filePathToURL(m_dataObject->filenames[0]);
         }
         return String();
 
@@ -326,10 +313,8 @@ HashSet<String> ClipboardChromium::types() const
     if (!m_dataObject)
         return results;
 
-    if (!m_dataObject->filenames.isEmpty()) {
-        results.add("text/uri-list");
+    if (!m_dataObject->filenames.isEmpty())
         results.add("Files");
-    }
 
     if (m_dataObject->url.isValid()) {
         ASSERT(!m_dataObject->uriList.isEmpty());

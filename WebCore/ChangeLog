@@ -1,3 +1,16 @@
+2010-04-26  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by Jian Li.
+
+        [Chromium] Don't make file paths available in text/uri-list when dragging files.
+        https://bugs.webkit.org/show_bug.cgi?id=25882
+
+        Test will be checked in with WebCore/platform/mac fix.
+
+        * platform/chromium/ClipboardChromium.cpp:
+        (WebCore::ClipboardChromium::getData):
+        (WebCore::ClipboardChromium::types):
+
 2010-04-26  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin Adler.
