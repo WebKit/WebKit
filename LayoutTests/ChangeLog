@@ -1,3 +1,15 @@
+2010-04-27  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        <input type="search"> with uneven padding causes text clipping
+        https://bugs.webkit.org/show_bug.cgi?id=38160
+
+        * fast/css/input-search-padding.html: Added.
+        * platform/mac/fast/css/input-search-padding-expected.checksum: Added.
+        * platform/mac/fast/css/input-search-padding-expected.png: Added.
+        * platform/mac/fast/css/input-search-padding-expected.txt: Added.
+
 2010-04-27  Jeremy Orlow  <jorlow@chromium.org>
 
         Unreviewed.  Previous disabling only did so via

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2010 Apple Inc. All rights reserved.
  *           (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/) 
  *
  * This library is free software; you can redistribute it and/or
@@ -185,6 +185,9 @@ void RenderTextControlSingleLine::paint(PaintInfo& paintInfo, int tx, int ty)
     if (paintInfo.phase == PaintPhaseBlockBackground && m_shouldDrawCapsLockIndicator) {
         IntRect contentsRect = contentBoxRect();
 
+        // Center vertically like the text.
+        contentsRect.setY((height() - contentsRect.height()) / 2);
+
         // Convert the rect into the coords used for painting the content
         contentsRect.move(tx + x(), ty + y());
         theme()->paintCapsLockIndicator(this, paintInfo, contentsRect);
@@ -356,6 +359,18 @@ void RenderTextControlSingleLine::capsLockStateMayHaveChanged()
         m_shouldDrawCapsLockIndicator = shouldDrawCapsLockIndicator;
         repaint();
     }
+}
+
+IntRect RenderTextControlSingleLine::controlClipRect(int tx, int ty) const
+{
+    // This should only get called for search inputs, which have an innerBlock.
+    ASSERT(hasControlClip());
+    ASSERT(m_innerBlock);
+
+    RenderBox* renderBox = m_innerBlock->renderBox();
+    IntRect clipRect = IntRect(renderBox->x(), renderBox->y(), contentWidth(), contentHeight());        
+    clipRect.move(tx, ty);
+    return clipRect;
 }
 
 int RenderTextControlSingleLine::textBlockWidth() const
