@@ -26,8 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// This IDL file is for testing the V8 generator and for tracking changes
-// in its ouput.
+// This IDL file is for testing the bindings code generator and for tracking
+// changes in its ouput.
 module test {
     interface TestObj {
         // Attributes

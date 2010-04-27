@@ -1,5 +1,11 @@
 2010-04-26  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed.  Update comment to better reflect reality.
+
+        * bindings/scripts/test/TestObj.idl:
+
+2010-04-26  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Add ObjC and GObject to run-bindings-test
