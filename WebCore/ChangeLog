@@ -1,5 +1,20 @@
 2010-04-27  Yuzo Fujishima  <yuzo@google.com>
 
+        Reviewed by Shinichiro Hamaji.
+
+        WebCore::CSSSelector::RareData::parseNth doesn't check whether the search for '-' in the argument was successful.
+        This results in incorrect parsing.
+        For example, '3n' is parsed as if it were '3n-3'. The code has been working OK just accidentally.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37787
+
+        No new tests are added because the original behavior is accidentally OK.
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::RareData::parseNth):
+
+2010-04-27  Yuzo Fujishima  <yuzo@google.com>
+
         Reviewed by David Hyatt.
 
         Enhance CSS parser for Paged Media (Iteration 1)

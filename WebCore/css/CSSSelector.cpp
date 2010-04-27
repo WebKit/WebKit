@@ -773,7 +773,8 @@ bool CSSSelector::RareData::parseNth()
                 m_b = argument.substring(p + 1, argument.length() - p - 1).toInt();
             else {
                 p = argument.find('-', n);
-                m_b = -argument.substring(p + 1, argument.length() - p - 1).toInt();
+                if (p != -1)
+                    m_b = -argument.substring(p + 1, argument.length() - p - 1).toInt();
             }
         } else
             m_b = argument.toInt();
