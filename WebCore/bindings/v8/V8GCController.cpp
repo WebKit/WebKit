@@ -378,7 +378,12 @@ public:
             ActiveDOMObject* activeDOMObject = typeInfo->toActiveDOMObject(wrapper);
             if (activeDOMObject && activeDOMObject->hasPendingActivity()) {
                 ASSERT(!wrapper.IsWeak());
-                wrapper.MakeWeak(activeDOMObject, &DOMDataStore::weakActiveDOMObjectCallback);
+                // NOTE: To re-enable weak status of the active object we use
+                // |object| from the map and not |activeDOMObject|. The latter
+                // may be a different pointer (in case ActiveDOMObject is not
+                // the main base class of the object's class) and pointer
+                // identity is required by DOM map functions.
+                wrapper.MakeWeak(object, &DOMDataStore::weakActiveDOMObjectCallback);
             }
         }
     }

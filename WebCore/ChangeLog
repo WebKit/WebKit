@@ -1,3 +1,20 @@
+2010-04-27  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        [V8] Fix XHR memory leak in GC controller.
+        https://bugs.webkit.org/show_bug.cgi?id=38202
+
+        http://trac.webkit.org/changeset/55798 simplified processing of
+        active DOM objects but introduced a subtle bug in garbage
+        collection of XHRs. ActiveDOMObject is not a direct base class of
+        XHR and so upcasting changes pointer identity and breaks DOM
+        maps. This leads to forever live persistent handles to XHR that
+        had pending activity while V8 GC happened.
+
+        * bindings/v8/V8GCController.cpp:
+        (WebCore::GCEpilogueVisitor::visitDOMWrapper):
+
 2010-04-27  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.  Regenerate reference bindings code generator output.
