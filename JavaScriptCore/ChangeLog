@@ -1,3 +1,26 @@
+2010-04-26  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Factor some basic JS interface logic out of JIT and into a superclass
+        https://bugs.webkit.org/show_bug.cgi?id=38163
+
+        Create JSInterfaceJIT to hold some common low level functions for
+        interacting with the JS RegisterFile.  Doing this separately from
+        https://bugs.webkit.org/show_bug.cgi?id=38155 to ease reviewing.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jit/JIT.h:
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitJumpSlowCaseIfNotJSCell):
+        * jit/JSInterfaceJIT.h: Added.
+        (JSC::JSInterfaceJIT::emitLoadJSCell):
+        (JSC::JSInterfaceJIT::emitJumpIfNotJSCell):
+        (JSC::JSInterfaceJIT::emitLoadInt32):
+        (JSC::JSInterfaceJIT::tagFor):
+        (JSC::JSInterfaceJIT::payloadFor):
+        (JSC::JSInterfaceJIT::addressFor):
+
 2010-04-26  Sam Weinig  <sam@webkit.org>
 
         Fix Tiger build.
