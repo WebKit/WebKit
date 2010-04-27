@@ -37,8 +37,7 @@ WKStringRef WKStringCreateWithCFString(CFStringRef cfString)
     return toRef(stringImpl.release().releaseRef());
 }
 
-CFStringRef WKStringCopyCFString(CFAllocatorRef /*allocatorRef*/, WKStringRef stringRef)
+CFStringRef WKStringCopyCFString(CFAllocatorRef allocatorRef, WKStringRef stringRef)
 {
-    // FIXME: Honor the allocator parameter.
-    return toWK(stringRef)->createCFString();
+    return CFStringCreateWithCharacters(allocatorRef, reinterpret_cast<const UniChar*>(toWK(stringRef)->characters()), toWK(stringRef)->length());
 }

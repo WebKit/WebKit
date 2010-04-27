@@ -1,3 +1,16 @@
+2010-04-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Remove call to StringImpl::createCFString and instead use CFStringCreateWithCharacters
+        directly. StringImpl::createCFString only an optimization when called
+        from the thread that WebCore is running on, which is never the case for
+        WKStringCopyCFString. We should revisit this later, perhaps adding a
+        threadspecific allocator. We also now honor the passed in allocator.
+
+        * UIProcess/API/C/cf/WKStringCF.cpp:
+        (WKStringCopyCFString):
+
 2010-04-25  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej Stachowiak.
