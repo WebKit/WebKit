@@ -1,3 +1,12 @@
+2010-04-27  Evan Martin  <evan@chromium.org>
+
+        Reviewed by David Levin.
+
+        [chromium] bold bengali text not rendered properly on Linux
+        Roll forward Chrome DEPS so we get new Skia API.
+
+        * DEPS: update Chrome to r45696.
+
 2010-04-27  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.

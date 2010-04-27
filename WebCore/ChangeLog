@@ -1,3 +1,20 @@
+2010-04-27  Evan Martin  <evan@chromium.org>
+
+        Reviewed by David Levin.
+
+        [chromium] bold bengali text not rendered properly on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=37904
+
+        We must let Skia do font fallback, rather than picking a font name
+        then handing that to Skia.  For example, if we have Bengali text and
+        choose FreeSans + fake bold, and then later reuse the name, Skia will
+        helpfully use FreeSansBold (which doesn't cover Bengali).
+
+        Test: fast/text/international/bold-bengali.html
+
+        * platform/graphics/chromium/FontCacheLinux.cpp:
+        (WebCore::FontCache::getFontDataForCharacters):
+
 2010-04-27  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Darin Adler.
