@@ -99,6 +99,7 @@ void WebViewGraphicsBased::resizeEvent(QResizeEvent* event)
         return;
     QRectF rect(QPoint(0, 0), event->size());
     m_item->setGeometry(rect);
+    scene()->setSceneRect(rect);
 }
 
 void WebViewGraphicsBased::setFrameRateMeasurementEnabled(bool enabled)
