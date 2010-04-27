@@ -415,9 +415,14 @@ WebInspector.setToolbarColors = function(backgroundColor, color)
         document.head.appendChild(WebInspector._themeStyleElement);
     }
     WebInspector._themeStyleElement.textContent =
-        "body #toolbar, body.inactive #toolbar {\
+        "#toolbar {\
              background-image: none !important;\
              background-color: " + backgroundColor + " !important;\
+         }\
+         \
+         .toolbar-label {\
+             color: " + color + " !important;\
+             text-shadow: none;\
          }";
 }
 

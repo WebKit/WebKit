@@ -15,12 +15,8 @@ body.attached #toolbar {
 
 /* Chrome theme overrides */
 
-body.platform-windows #toolbar {
-    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(242, 247, 253)), to(rgb(223, 234, 248)));
-}
-
-body.platform-windows.inactive #toolbar {
-    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(248, 248, 248)), to(rgb(237, 237, 237)));
+body.platform-windows #toolbar, body.platform-windows.inactive #toolbar {
+    background-image: none;
 }
 
 body.detached.platform-mac-leopard #toolbar {
