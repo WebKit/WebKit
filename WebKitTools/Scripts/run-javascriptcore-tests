@@ -108,6 +108,7 @@ sub testapiPath($)
 {
     my ($productDir) = @_;
     my $jscName = "testapi";
+    $jscName .= "_debug"  if (isCygwin() && ($configuration eq "Debug"));
     return "$productDir/$jscName";
 }
 

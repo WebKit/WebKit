@@ -817,7 +817,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB281EE0CFA713D007E533E /* Base.xcconfig */;
 			buildSettings = {
-				WEBKIT_FRAMEWORK_RESOURCES_PATH = /AppleInternal/WebKitTools;
+				WEBKIT_FRAMEWORK_RESOURCES_PATH = WebKit.framework/Versions/A/Resources;
 			};
 			name = Production;
 		};
@@ -833,7 +833,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB281F00CFA713D007E533E /* DumpRenderTree.xcconfig */;
 			buildSettings = {
-				INSTALL_PATH = "$(WEBKIT_FRAMEWORK_RESOURCES_PATH)";
+				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/$(WEBKIT_FRAMEWORK_RESOURCES_PATH)";
 				SKIP_INSTALL = NO;
 			};
 			name = Production;
@@ -842,7 +842,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB283D80CFA7AFD007E533E /* ImageDiff.xcconfig */;
 			buildSettings = {
-				INSTALL_PATH = "$(WEBKIT_FRAMEWORK_RESOURCES_PATH)";
+				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/$(WEBKIT_FRAMEWORK_RESOURCES_PATH)";
 				SKIP_INSTALL = NO;
 			};
 			name = Production;
@@ -851,7 +851,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB283DE0CFA7C20007E533E /* TestNetscapePlugIn.xcconfig */;
 			buildSettings = {
-				INSTALL_PATH = "$(WEBKIT_FRAMEWORK_RESOURCES_PATH)";
+				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/$(WEBKIT_FRAMEWORK_RESOURCES_PATH)";
 				SKIP_INSTALL = NO;
 			};
 			name = Production;

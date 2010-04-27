@@ -113,8 +113,6 @@ sub main()
             }
         }
         
-        $line =~ s/(\|\s*0x[0-9a-f]+\s*\|)/\|/g;
-        
         # Then give up
         next if (!$callCount || !$byteCount);
         
