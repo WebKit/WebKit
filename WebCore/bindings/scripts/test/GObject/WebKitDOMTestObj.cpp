@@ -29,6 +29,8 @@
 #include "gobject/ConvertToUTF8String.h"
 #include "webkit/WebKitDOMTestObj.h"
 #include "webkit/WebKitDOMTestObjPrivate.h"
+#include "webkit/WebKitDOMlog.h"
+#include "webkit/WebKitDOMlogPrivate.h"
 #include "webkitmarshal.h"
 #include "webkitprivate.h"
 
@@ -133,6 +135,54 @@ webkit_dom_test_obj_method_with_exception (WebKitDOMTestObj *self, GError **erro
         WebCore::getExceptionCodeDescription(ec, ecdesc);
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
     }
+
+}
+
+
+/* TODO: custom function webkit_dom_test_obj_custom_args_and_exception */
+
+void
+webkit_dom_test_obj_with_dynamic_frame (WebKitDOMTestObj *self)
+{
+    g_return_if_fail (self);
+    WebCore::TestObj * item = WebKit::core(self);
+    item->withDynamicFrame();
+
+}
+
+void
+webkit_dom_test_obj_with_dynamic_frame_and_arg (WebKitDOMTestObj *self, glong int_arg)
+{
+    g_return_if_fail (self);
+    WebCore::TestObj * item = WebKit::core(self);
+    item->withDynamicFrameAndArg(int_arg);
+
+}
+
+void
+webkit_dom_test_obj_with_dynamic_frame_and_optional_arg (WebKitDOMTestObj *self, glong int_arg, glong optional_arg)
+{
+    g_return_if_fail (self);
+    WebCore::TestObj * item = WebKit::core(self);
+    item->withDynamicFrameAndOptionalArg(int_arg, optional_arg);
+
+}
+
+void
+webkit_dom_test_obj_with_dynamic_frame_and_user_gesture (WebKitDOMTestObj *self, glong int_arg)
+{
+    g_return_if_fail (self);
+    WebCore::TestObj * item = WebKit::core(self);
+    item->withDynamicFrameAndUserGesture(int_arg);
+
+}
+
+void
+webkit_dom_test_obj_with_dynamic_frame_and_user_gesture_asad (WebKitDOMTestObj *self, glong int_arg, glong optional_arg)
+{
+    g_return_if_fail (self);
+    WebCore::TestObj * item = WebKit::core(self);
+    item->withDynamicFrameAndUserGestureASAD(int_arg, optional_arg);
 
 }
 

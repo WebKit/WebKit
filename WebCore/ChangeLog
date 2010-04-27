@@ -1,5 +1,52 @@
 2010-04-26  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        Add CallWith=DynamicFrame to CodeGenerator
+        https://bugs.webkit.org/show_bug.cgi?id=38174
+
+        I've only used this in one instance, but this is infrastructure that I
+        think will help remove a bunch of custom bindings code.  Also, added a
+        few tests of tricky argument cases.
+
+        * bindings/js/JSHTMLFormElementCustom.cpp:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (webkit_dom_test_obj_with_dynamic_frame):
+        (webkit_dom_test_obj_with_dynamic_frame_and_arg):
+        (webkit_dom_test_obj_with_dynamic_frame_and_optional_arg):
+        (webkit_dom_test_obj_with_dynamic_frame_and_user_gesture):
+        (webkit_dom_test_obj_with_dynamic_frame_and_user_gesture_asad):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::):
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrame):
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndArg):
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndOptionalArg):
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndUserGesture):
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndUserGestureASAD):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        (-[DOMTestObj withDynamicFrame]):
+        (-[DOMTestObj withDynamicFrameAndArg:]):
+        (-[DOMTestObj withDynamicFrameAndOptionalArg:optionalArg:]):
+        (-[DOMTestObj withDynamicFrameAndUserGesture:]):
+        (-[DOMTestObj withDynamicFrameAndUserGestureASAD:optionalArg:]):
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjInternal::withDynamicFrameCallback):
+        (WebCore::TestObjInternal::withDynamicFrameAndArgCallback):
+        (WebCore::TestObjInternal::withDynamicFrameAndOptionalArgCallback):
+        (WebCore::TestObjInternal::withDynamicFrameAndUserGestureCallback):
+        (WebCore::TestObjInternal::withDynamicFrameAndUserGestureASADCallback):
+        (WebCore::):
+        * bindings/v8/custom/V8HTMLFormElementCustom.cpp:
+        * html/HTMLFormElement.idl:
+
+2010-04-26  Adam Barth  <abarth@webkit.org>
+
         Unreviewed.  Update comment to better reflect reality.
 
         * bindings/scripts/test/TestObj.idl:

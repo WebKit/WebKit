@@ -22,7 +22,9 @@
 #include "JSTestObj.h"
 
 #include "JSTestObj.h"
+#include "JSlog.h"
 #include "KURL.h"
+#include "ScriptCallStack.h"
 #include "TestObj.h"
 #include <runtime/Error.h>
 #include <runtime/JSNumberCell.h>
@@ -126,7 +128,7 @@ bool JSTestObjConstructor::getOwnPropertyDescriptor(ExecState* exec, const Ident
 #define THUNK_GENERATOR(generator)
 #endif
 
-static const HashTableValue JSTestObjPrototypeTableValues[13] =
+static const HashTableValue JSTestObjPrototypeTableValues[19] =
 {
     { "voidMethod", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionVoidMethod), (intptr_t)0 THUNK_GENERATOR(0) },
     { "voidMethodWithArgs", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionVoidMethodWithArgs), (intptr_t)3 THUNK_GENERATOR(0) },
@@ -137,6 +139,12 @@ static const HashTableValue JSTestObjPrototypeTableValues[13] =
     { "methodWithException", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithException), (intptr_t)0 THUNK_GENERATOR(0) },
     { "customMethod", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionCustomMethod), (intptr_t)0 THUNK_GENERATOR(0) },
     { "customMethodWithArgs", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionCustomMethodWithArgs), (intptr_t)3 THUNK_GENERATOR(0) },
+    { "customArgsAndException", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionCustomArgsAndException), (intptr_t)1 THUNK_GENERATOR(0) },
+    { "withDynamicFrame", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionWithDynamicFrame), (intptr_t)0 THUNK_GENERATOR(0) },
+    { "withDynamicFrameAndArg", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionWithDynamicFrameAndArg), (intptr_t)1 THUNK_GENERATOR(0) },
+    { "withDynamicFrameAndOptionalArg", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionWithDynamicFrameAndOptionalArg), (intptr_t)2 THUNK_GENERATOR(0) },
+    { "withDynamicFrameAndUserGesture", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionWithDynamicFrameAndUserGesture), (intptr_t)1 THUNK_GENERATOR(0) },
+    { "withDynamicFrameAndUserGestureASAD", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionWithDynamicFrameAndUserGestureASAD), (intptr_t)2 THUNK_GENERATOR(0) },
     { "methodWithOptionalArg", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithOptionalArg), (intptr_t)1 THUNK_GENERATOR(0) },
     { "methodWithNonOptionalArgAndOptionalArg", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndOptionalArg), (intptr_t)2 THUNK_GENERATOR(0) },
     { "methodWithNonOptionalArgAndTwoOptionalArgs", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndTwoOptionalArgs), (intptr_t)3 THUNK_GENERATOR(0) },
@@ -146,9 +154,9 @@ static const HashTableValue JSTestObjPrototypeTableValues[13] =
 #undef THUNK_GENERATOR
 static JSC_CONST_HASHTABLE HashTable JSTestObjPrototypeTable =
 #if ENABLE(PERFECT_HASH_SIZE)
-    { 2047, JSTestObjPrototypeTableValues, 0 };
+    { 8191, JSTestObjPrototypeTableValues, 0 };
 #else
-    { 35, 31, JSTestObjPrototypeTableValues, 0 };
+    { 66, 63, JSTestObjPrototypeTableValues, 0 };
 #endif
 
 const ClassInfo JSTestObjPrototype::s_info = { "TestObjPrototype", 0, &JSTestObjPrototypeTable, 0 };
@@ -460,6 +468,117 @@ JSValue JSC_HOST_CALL jsTestObjPrototypeFunctionCustomMethodWithArgs(ExecState* 
         return throwError(exec, TypeError);
     JSTestObj* castedThisObj = static_cast<JSTestObj*>(asObject(thisValue));
     return castedThisObj->customMethodWithArgs(exec, args);
+}
+
+JSValue JSC_HOST_CALL jsTestObjPrototypeFunctionCustomArgsAndException(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+{
+    UNUSED_PARAM(args);
+    if (!thisValue.inherits(&JSTestObj::s_info))
+        return throwError(exec, TypeError);
+    JSTestObj* castedThisObj = static_cast<JSTestObj*>(asObject(thisValue));
+    TestObj* imp = static_cast<TestObj*>(castedThisObj->impl());
+    ExceptionCode ec = 0;
+    ScriptCallStack callStack(exec, args, 1);
+    log* intArg = tolog(args.at(0));
+
+    imp->customArgsAndException(intArg, &callStack, ec);
+    setDOMException(exec, ec);
+    return jsUndefined();
+}
+
+JSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithDynamicFrame(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+{
+    UNUSED_PARAM(args);
+    if (!thisValue.inherits(&JSTestObj::s_info))
+        return throwError(exec, TypeError);
+    JSTestObj* castedThisObj = static_cast<JSTestObj*>(asObject(thisValue));
+    TestObj* imp = static_cast<TestObj*>(castedThisObj->impl());
+    Frame* dynamicFrame = toDynamicFrame(exec);
+    if (!dynamicFrame)
+        return jsUndefined();
+
+    imp->withDynamicFrame(dynamicFrame);
+    return jsUndefined();
+}
+
+JSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithDynamicFrameAndArg(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+{
+    UNUSED_PARAM(args);
+    if (!thisValue.inherits(&JSTestObj::s_info))
+        return throwError(exec, TypeError);
+    JSTestObj* castedThisObj = static_cast<JSTestObj*>(asObject(thisValue));
+    TestObj* imp = static_cast<TestObj*>(castedThisObj->impl());
+    Frame* dynamicFrame = toDynamicFrame(exec);
+    if (!dynamicFrame)
+        return jsUndefined();
+    int intArg = args.at(1).toInt32(exec);
+
+    imp->withDynamicFrameAndArg(dynamicFrame, intArg);
+    return jsUndefined();
+}
+
+JSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithDynamicFrameAndOptionalArg(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+{
+    UNUSED_PARAM(args);
+    if (!thisValue.inherits(&JSTestObj::s_info))
+        return throwError(exec, TypeError);
+    JSTestObj* castedThisObj = static_cast<JSTestObj*>(asObject(thisValue));
+    TestObj* imp = static_cast<TestObj*>(castedThisObj->impl());
+    Frame* dynamicFrame = toDynamicFrame(exec);
+    if (!dynamicFrame)
+        return jsUndefined();
+    int intArg = args.at(1).toInt32(exec);
+
+    int argsCount = args.size();
+    if (argsCount < 3) {
+        imp->withDynamicFrameAndOptionalArg(dynamicFrame, intArg);
+        return jsUndefined();
+    }
+
+    int optionalArg = args.at(2).toInt32(exec);
+
+    imp->withDynamicFrameAndOptionalArg(dynamicFrame, intArg, optionalArg);
+    return jsUndefined();
+}
+
+JSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithDynamicFrameAndUserGesture(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+{
+    UNUSED_PARAM(args);
+    if (!thisValue.inherits(&JSTestObj::s_info))
+        return throwError(exec, TypeError);
+    JSTestObj* castedThisObj = static_cast<JSTestObj*>(asObject(thisValue));
+    TestObj* imp = static_cast<TestObj*>(castedThisObj->impl());
+    Frame* dynamicFrame = toDynamicFrame(exec);
+    if (!dynamicFrame)
+        return jsUndefined();
+    int intArg = args.at(1).toInt32(exec);
+
+    imp->withDynamicFrameAndUserGesture(dynamicFrame, intArg, processingUserGesture(exec));
+    return jsUndefined();
+}
+
+JSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithDynamicFrameAndUserGestureASAD(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+{
+    UNUSED_PARAM(args);
+    if (!thisValue.inherits(&JSTestObj::s_info))
+        return throwError(exec, TypeError);
+    JSTestObj* castedThisObj = static_cast<JSTestObj*>(asObject(thisValue));
+    TestObj* imp = static_cast<TestObj*>(castedThisObj->impl());
+    Frame* dynamicFrame = toDynamicFrame(exec);
+    if (!dynamicFrame)
+        return jsUndefined();
+    int intArg = args.at(1).toInt32(exec);
+
+    int argsCount = args.size();
+    if (argsCount < 3) {
+        imp->withDynamicFrameAndUserGestureASAD(dynamicFrame, intArg);
+        return jsUndefined();
+    }
+
+    int optionalArg = args.at(2).toInt32(exec);
+
+    imp->withDynamicFrameAndUserGestureASAD(dynamicFrame, intArg, optionalArg, processingUserGesture(exec));
+    return jsUndefined();
 }
 
 JSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalArg(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)

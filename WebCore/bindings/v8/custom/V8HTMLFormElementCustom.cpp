@@ -81,16 +81,4 @@ v8::Handle<v8::Value> V8HTMLFormElement::namedPropertyGetter(v8::Local<v8::Strin
     return toV8(collection);
 }
 
-v8::Handle<v8::Value> V8HTMLFormElement::submitCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.HTMLFormElement.submit()");
-    HTMLFormElement* form = V8HTMLFormElement::toNative(args.Holder());
-    Frame* frame = V8Proxy::retrieveFrameForEnteredContext();
-    if (!frame)
-        return v8::Undefined();
-
-    form->submit(frame);
-    return v8::Undefined();
-}
-
 } // namespace WebCore

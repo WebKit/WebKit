@@ -67,6 +67,24 @@ webkit_dom_test_obj_obj_method_with_args (WebKitDOMTestObj *self, glong int_arg,
 WEBKIT_API void
 webkit_dom_test_obj_method_with_exception (WebKitDOMTestObj *self, GError **error);
 
+
+/* TODO: custom function webkit_dom_test_obj_custom_args_and_exception */
+
+WEBKIT_API void
+webkit_dom_test_obj_with_dynamic_frame (WebKitDOMTestObj *self);
+
+WEBKIT_API void
+webkit_dom_test_obj_with_dynamic_frame_and_arg (WebKitDOMTestObj *self, glong int_arg);
+
+WEBKIT_API void
+webkit_dom_test_obj_with_dynamic_frame_and_optional_arg (WebKitDOMTestObj *self, glong int_arg, glong optional_arg);
+
+WEBKIT_API void
+webkit_dom_test_obj_with_dynamic_frame_and_user_gesture (WebKitDOMTestObj *self, glong int_arg);
+
+WEBKIT_API void
+webkit_dom_test_obj_with_dynamic_frame_and_user_gesture_asad (WebKitDOMTestObj *self, glong int_arg, glong optional_arg);
+
 WEBKIT_API void
 webkit_dom_test_obj_method_with_optional_arg (WebKitDOMTestObj *self, glong opt);
 

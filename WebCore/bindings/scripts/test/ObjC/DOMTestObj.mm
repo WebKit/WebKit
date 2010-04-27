@@ -36,12 +36,14 @@
 #import "DOMNodeInternal.h"
 #import "DOMStyleSheetInternal.h"
 #import "DOMTestObjInternal.h"
+#import "DOMlogInternal.h"
 #import "ExceptionHandlers.h"
 #import "KURL.h"
 #import "TestObj.h"
 #import "ThreadCheck.h"
 #import "WebCoreObjCExtras.h"
 #import "WebScriptObjectPrivate.h"
+#import "log.h"
 #import <wtf/GetPtr.h>
 
 #define IMPL reinterpret_cast<WebCore::TestObj*>(_internal)
@@ -197,6 +199,38 @@
 - (void)customMethodWithArgs:(int)intArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg
 {
     IMPL->customMethodWithArgs(intArg, strArg, core(objArg));
+}
+
+- (void)customArgsAndException:(DOMlog *)intArg
+{
+    WebCore::ExceptionCode ec = 0;
+    IMPL->customArgsAndException(core(intArg), ec);
+    WebCore::raiseOnDOMError(ec);
+}
+
+- (void)withDynamicFrame
+{
+    IMPL->withDynamicFrame();
+}
+
+- (void)withDynamicFrameAndArg:(int)intArg
+{
+    IMPL->withDynamicFrameAndArg(intArg);
+}
+
+- (void)withDynamicFrameAndOptionalArg:(int)intArg optionalArg:(int)optionalArg
+{
+    IMPL->withDynamicFrameAndOptionalArg(intArg, optionalArg);
+}
+
+- (void)withDynamicFrameAndUserGesture:(int)intArg
+{
+    IMPL->withDynamicFrameAndUserGesture(intArg);
+}
+
+- (void)withDynamicFrameAndUserGestureASAD:(int)intArg optionalArg:(int)optionalArg
+{
+    IMPL->withDynamicFrameAndUserGestureASAD(intArg, optionalArg);
 }
 
 - (void)methodWithOptionalArg:(int)opt

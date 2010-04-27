@@ -1691,6 +1691,16 @@ sub GenerateImplementation
                     $implIncludes{"ScriptCallStack.h"} = 1;
                 }
 
+                my $callWith = $function->signature->extendedAttributes->{"CallWith"};
+                if ($callWith && $callWith eq "DynamicFrame") {
+                    push(@implContent, "    Frame* dynamicFrame = toDynamicFrame(exec);\n");
+                    push(@implContent, "    if (!dynamicFrame)\n");
+                    push(@implContent, "        return jsUndefined();\n");
+                    $functionString .= ", " if $paramIndex;
+                    $functionString .= "dynamicFrame";
+                    $paramIndex++;
+                }
+
                 foreach my $parameter (@{$function->parameters}) {
                     if (!$hasOptionalArguments && $parameter->extendedAttributes->{"Optional"}) {
                         push(@implContent, "\n    int argsCount = args.size();\n");

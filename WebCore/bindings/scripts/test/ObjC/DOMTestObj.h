@@ -29,6 +29,7 @@
 #if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_LATEST
 
 @class DOMTestObj;
+@class DOMlog;
 @class NSString;
 
 @interface DOMTestObj : DOMObject
@@ -58,6 +59,12 @@
 - (void)methodWithException;
 - (void)customMethod;
 - (void)customMethodWithArgs:(int)intArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg;
+- (void)customArgsAndException:(DOMlog *)intArg;
+- (void)withDynamicFrame;
+- (void)withDynamicFrameAndArg:(int)intArg;
+- (void)withDynamicFrameAndOptionalArg:(int)intArg optionalArg:(int)optionalArg;
+- (void)withDynamicFrameAndUserGesture:(int)intArg;
+- (void)withDynamicFrameAndUserGestureASAD:(int)intArg optionalArg:(int)optionalArg;
 - (void)methodWithOptionalArg:(int)opt;
 - (void)methodWithNonOptionalArgAndOptionalArg:(int)nonOpt opt:(int)opt;
 - (void)methodWithNonOptionalArgAndTwoOptionalArgs:(int)nonOpt opt1:(int)opt1 opt2:(int)opt2;

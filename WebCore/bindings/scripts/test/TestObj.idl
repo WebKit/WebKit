@@ -57,6 +57,16 @@ module test {
         [Custom] void customMethod();
         [Custom] void customMethodWithArgs(in long intArg, in DOMString strArg, in TestObj objArg);
 
+        [CustomArgumentHandling] void customArgsAndException(in log intArg)
+            raises(DOMException);
+
+        // 'CallWith' extended attribute
+        [CallWith=DynamicFrame] void withDynamicFrame();
+        [CallWith=DynamicFrame] void withDynamicFrameAndArg(in long intArg);
+        [CallWith=DynamicFrame] void withDynamicFrameAndOptionalArg(in long intArg, in [Optional] long optionalArg);
+        [NeedsUserGestureCheck, CallWith=DynamicFrame] void withDynamicFrameAndUserGesture(in long intArg);
+        [NeedsUserGestureCheck, CallWith=DynamicFrame] void withDynamicFrameAndUserGestureASAD(in long intArg, in [Optional] long optionalArg);
+
         // 'Optional' extended attribute
         void    methodWithOptionalArg(in [Optional] long opt);
         void    methodWithNonOptionalArgAndOptionalArg(in long nonOpt, in [Optional] long opt);

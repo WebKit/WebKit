@@ -23,11 +23,13 @@
 
 #include "ExceptionCode.h"
 #include "RuntimeEnabledFeatures.h"
+#include "ScriptCallStack.h"
 #include "V8Binding.h"
 #include "V8BindingState.h"
 #include "V8DOMWrapper.h"
 #include "V8IsolatedContext.h"
 #include "V8Proxy.h"
+#include "V8log.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -233,6 +235,101 @@ static v8::Handle<v8::Value> methodWithExceptionCallback(const v8::Arguments& ar
     return v8::Handle<v8::Value>();
 }
 
+static v8::Handle<v8::Value> customArgsAndExceptionCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.customArgsAndException");
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    ExceptionCode ec = 0;
+    {
+    OwnPtr<ScriptCallStack> callStack(ScriptCallStack::create(args, 1));
+    if (!callStack)
+        return v8::Undefined();
+    log* intArg = V8log::HasInstance(args[0]) ? V8log::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0;
+    imp->customArgsAndException(intArg, callStack.get(), ec);
+    if (UNLIKELY(ec))
+        goto fail;
+    return v8::Handle<v8::Value>();
+    }
+    fail:
+    V8Proxy::setDOMException(ec);
+    return v8::Handle<v8::Value>();
+}
+
+static v8::Handle<v8::Value> withDynamicFrameCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.withDynamicFrame");
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    Frame* enteredFrame = V8Proxy::retrieveFrameForEnteredContext();
+    if (!enteredFrame)
+        return v8::Undefined();
+    imp->withDynamicFrame(enteredFrame);
+    return v8::Handle<v8::Value>();
+}
+
+static v8::Handle<v8::Value> withDynamicFrameAndArgCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.withDynamicFrameAndArg");
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    int intArg = toInt32(args[0]);
+    Frame* enteredFrame = V8Proxy::retrieveFrameForEnteredContext();
+    if (!enteredFrame)
+        return v8::Undefined();
+    imp->withDynamicFrameAndArg(enteredFrame, intArg);
+    return v8::Handle<v8::Value>();
+}
+
+static v8::Handle<v8::Value> withDynamicFrameAndOptionalArgCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.withDynamicFrameAndOptionalArg");
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    int intArg = toInt32(args[0]);
+    if (args.Length() <= 1) {
+        Frame* enteredFrame = V8Proxy::retrieveFrameForEnteredContext();
+        if (!enteredFrame)
+            return v8::Undefined();
+        imp->withDynamicFrameAndOptionalArg(enteredFrame, intArg);
+        return v8::Handle<v8::Value>();
+    }
+    int optionalArg = toInt32(args[1]);
+    Frame* enteredFrame = V8Proxy::retrieveFrameForEnteredContext();
+    if (!enteredFrame)
+        return v8::Undefined();
+    imp->withDynamicFrameAndOptionalArg(enteredFrame, intArg, optionalArg);
+    return v8::Handle<v8::Value>();
+}
+
+static v8::Handle<v8::Value> withDynamicFrameAndUserGestureCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.withDynamicFrameAndUserGesture");
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    int intArg = toInt32(args[0]);
+    Frame* enteredFrame = V8Proxy::retrieveFrameForEnteredContext();
+    if (!enteredFrame)
+        return v8::Undefined();
+    imp->withDynamicFrameAndUserGesture(enteredFrame, intArg, processingUserGesture());
+    return v8::Handle<v8::Value>();
+}
+
+static v8::Handle<v8::Value> withDynamicFrameAndUserGestureASADCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.withDynamicFrameAndUserGestureASAD");
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    int intArg = toInt32(args[0]);
+    if (args.Length() <= 1) {
+        Frame* enteredFrame = V8Proxy::retrieveFrameForEnteredContext();
+        if (!enteredFrame)
+            return v8::Undefined();
+        imp->withDynamicFrameAndUserGestureASAD(enteredFrame, intArg, processingUserGesture());
+        return v8::Handle<v8::Value>();
+    }
+    int optionalArg = toInt32(args[1]);
+    Frame* enteredFrame = V8Proxy::retrieveFrameForEnteredContext();
+    if (!enteredFrame)
+        return v8::Undefined();
+    imp->withDynamicFrameAndUserGestureASAD(enteredFrame, intArg, optionalArg, processingUserGesture());
+    return v8::Handle<v8::Value>();
+}
+
 static v8::Handle<v8::Value> methodWithOptionalArgCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.methodWithOptionalArg");
@@ -363,6 +460,11 @@ static const BatchedCallback TestObjCallbacks[] = {
     {"methodWithException", TestObjInternal::methodWithExceptionCallback},
     {"customMethod", V8TestObj::customMethodCallback},
     {"customMethodWithArgs", V8TestObj::customMethodWithArgsCallback},
+    {"withDynamicFrame", TestObjInternal::withDynamicFrameCallback},
+    {"withDynamicFrameAndArg", TestObjInternal::withDynamicFrameAndArgCallback},
+    {"withDynamicFrameAndOptionalArg", TestObjInternal::withDynamicFrameAndOptionalArgCallback},
+    {"withDynamicFrameAndUserGesture", TestObjInternal::withDynamicFrameAndUserGestureCallback},
+    {"withDynamicFrameAndUserGestureASAD", TestObjInternal::withDynamicFrameAndUserGestureASADCallback},
     {"methodWithOptionalArg", TestObjInternal::methodWithOptionalArgCallback},
     {"methodWithNonOptionalArgAndOptionalArg", TestObjInternal::methodWithNonOptionalArgAndOptionalArgCallback},
     {"methodWithNonOptionalArgAndTwoOptionalArgs", TestObjInternal::methodWithNonOptionalArgAndTwoOptionalArgsCallback},
@@ -394,6 +496,12 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestObjTemplate(v8::Persi
     v8::Handle<v8::FunctionTemplate> objMethodWithArgsArgv[objMethodWithArgsArgc] = { v8::Handle<v8::FunctionTemplate>(), v8::Handle<v8::FunctionTemplate>(), V8TestObj::GetRawTemplate() };
     v8::Handle<v8::Signature> objMethodWithArgsSignature = v8::Signature::New(desc, objMethodWithArgsArgc, objMethodWithArgsArgv);
     proto->Set(v8::String::New("objMethodWithArgs"), v8::FunctionTemplate::New(TestObjInternal::objMethodWithArgsCallback, v8::Handle<v8::Value>(), objMethodWithArgsSignature));
+
+    // Custom Signature 'customArgsAndException'
+    const int customArgsAndExceptionArgc = 1;
+    v8::Handle<v8::FunctionTemplate> customArgsAndExceptionArgv[customArgsAndExceptionArgc] = { V8log::GetRawTemplate() };
+    v8::Handle<v8::Signature> customArgsAndExceptionSignature = v8::Signature::New(desc, customArgsAndExceptionArgc, customArgsAndExceptionArgv);
+    proto->Set(v8::String::New("customArgsAndException"), v8::FunctionTemplate::New(TestObjInternal::customArgsAndExceptionCallback, v8::Handle<v8::Value>(), customArgsAndExceptionSignature));
 
     // Custom toString template
     desc->Set(getToStringName(), getToStringTemplate());

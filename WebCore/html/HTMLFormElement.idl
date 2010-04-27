@@ -35,7 +35,7 @@ module html {
                  attribute [ConvertNullToNullString] DOMString       method;
                  attribute [ConvertNullToNullString] DOMString       target;
         
-        [Custom] void submit();
+        [CallWith=DynamicFrame] void submit();
         void reset();
         boolean  checkValidity();
     };
