@@ -148,7 +148,7 @@ void FontPlatformData::setupPaint(SkPaint* paint) const
     paint->setFakeBoldText(m_fakeBold);
     paint->setTextSkewX(m_fakeItalic ? -SK_Scalar1 / 4 : 0);
 
-    if (m_style.useAntiAlias == 1 || m_style.useAntiAlias == FontRenderStyle::NoPreference && isSkiaAntiAlias)
+    if (m_style.useAntiAlias == 1 || (m_style.useAntiAlias == FontRenderStyle::NoPreference && isSkiaAntiAlias))
         paint->setLCDRenderText(m_style.useSubpixel == FontRenderStyle::NoPreference ? isSkiaSubpixelGlyphs : m_style.useSubpixel);
 }
 
