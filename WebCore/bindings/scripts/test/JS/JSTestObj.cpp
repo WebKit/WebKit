@@ -129,7 +129,7 @@ bool JSTestObjConstructor::getOwnPropertyDescriptor(ExecState* exec, const Ident
 #define THUNK_GENERATOR(generator)
 #endif
 
-static const HashTableValue JSTestObjPrototypeTableValues[23] =
+static const HashTableValue JSTestObjPrototypeTableValues[25] =
 {
     { "voidMethod", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionVoidMethod), (intptr_t)0 THUNK_GENERATOR(0) },
     { "voidMethodWithArgs", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionVoidMethodWithArgs), (intptr_t)3 THUNK_GENERATOR(0) },
@@ -150,6 +150,8 @@ static const HashTableValue JSTestObjPrototypeTableValues[23] =
     { "withDynamicFrameAndUserGestureASAD", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionWithDynamicFrameAndUserGestureASAD), (intptr_t)2 THUNK_GENERATOR(0) },
     { "withScriptStateVoid", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionWithScriptStateVoid), (intptr_t)0 THUNK_GENERATOR(0) },
     { "withScriptStateObj", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionWithScriptStateObj), (intptr_t)0 THUNK_GENERATOR(0) },
+    { "withScriptStateVoidException", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionWithScriptStateVoidException), (intptr_t)0 THUNK_GENERATOR(0) },
+    { "withScriptStateObjException", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionWithScriptStateObjException), (intptr_t)0 THUNK_GENERATOR(0) },
     { "methodWithOptionalArg", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithOptionalArg), (intptr_t)1 THUNK_GENERATOR(0) },
     { "methodWithNonOptionalArgAndOptionalArg", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndOptionalArg), (intptr_t)2 THUNK_GENERATOR(0) },
     { "methodWithNonOptionalArgAndTwoOptionalArgs", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndTwoOptionalArgs), (intptr_t)3 THUNK_GENERATOR(0) },
@@ -161,7 +163,7 @@ static JSC_CONST_HASHTABLE HashTable JSTestObjPrototypeTable =
 #if ENABLE(PERFECT_HASH_SIZE)
     { 8191, JSTestObjPrototypeTableValues, 0 };
 #else
-    { 66, 63, JSTestObjPrototypeTableValues, 0 };
+    { 67, 63, JSTestObjPrototypeTableValues, 0 };
 #endif
 
 const ClassInfo JSTestObjPrototype::s_info = { "TestObjPrototype", 0, &JSTestObjPrototypeTable, 0 };
@@ -636,6 +638,37 @@ JSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateObj(ExecState* ex
 
 
     JSC::JSValue result = toJS(exec, castedThisObj->globalObject(), WTF::getPtr(imp->withScriptStateObj(exec)));
+    if (exec->hadException())
+        return jsUndefined();
+    return result;
+}
+
+JSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateVoidException(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+{
+    UNUSED_PARAM(args);
+    if (!thisValue.inherits(&JSTestObj::s_info))
+        return throwError(exec, TypeError);
+    JSTestObj* castedThisObj = static_cast<JSTestObj*>(asObject(thisValue));
+    TestObj* imp = static_cast<TestObj*>(castedThisObj->impl());
+    ExceptionCode ec = 0;
+
+    imp->withScriptStateVoidException(exec, ec);
+    setDOMException(exec, ec);
+    return jsUndefined();
+}
+
+JSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateObjException(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+{
+    UNUSED_PARAM(args);
+    if (!thisValue.inherits(&JSTestObj::s_info))
+        return throwError(exec, TypeError);
+    JSTestObj* castedThisObj = static_cast<JSTestObj*>(asObject(thisValue));
+    TestObj* imp = static_cast<TestObj*>(castedThisObj->impl());
+    ExceptionCode ec = 0;
+
+
+    JSC::JSValue result = toJS(exec, castedThisObj->globalObject(), WTF::getPtr(imp->withScriptStateObjException(exec, ec)));
+    setDOMException(exec, ec);
     if (exec->hadException())
         return jsUndefined();
     return result;

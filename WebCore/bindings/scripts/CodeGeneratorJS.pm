@@ -1916,12 +1916,13 @@ sub GenerateImplementationFunctionCall()
         push(@implContent, $indent . "return jsUndefined();\n");
     } else {
         push(@implContent, "\n" . $indent . "JSC::JSValue result = " . NativeToJSValue($function->signature, 1, $implClassName, "", $functionString, "castedThisObj") . ";\n");
+        push(@implContent, $indent . "setDOMException(exec, ec);\n") if @{$function->raisesExceptions};
+
         $callWith = $function->signature->extendedAttributes->{"CallWith"};
         if ($callWith and $callWith eq "ScriptState") {
             push(@implContent, $indent . "if (exec->hadException())\n");
             push(@implContent, $indent . "    return jsUndefined();\n");
         }
-        push(@implContent, $indent . "setDOMException(exec, ec);\n") if @{$function->raisesExceptions};
 
         if ($podType and not $function->signature->extendedAttributes->{"Immutable"}) {
             # Immutable methods do not commit changes back to the instance, thus producing

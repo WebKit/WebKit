@@ -374,6 +374,44 @@ static v8::Handle<v8::Value> withScriptStateObjCallback(const v8::Arguments& arg
     return toV8(result.release());
 }
 
+static v8::Handle<v8::Value> withScriptStateVoidExceptionCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.withScriptStateVoidException");
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    ExceptionCode ec = 0;
+    {
+    EmptyScriptState state;
+    imp->withScriptStateVoidException(&state, ec);
+    if (UNLIKELY(ec))
+        goto fail;
+    if (state.hadException())
+        return throwError(state.exception());
+    return v8::Handle<v8::Value>();
+    }
+    fail:
+    V8Proxy::setDOMException(ec);
+    return v8::Handle<v8::Value>();
+}
+
+static v8::Handle<v8::Value> withScriptStateObjExceptionCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.withScriptStateObjException");
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    ExceptionCode ec = 0;
+    {
+    EmptyScriptState state;
+    RefPtr<TestObj> result = imp->withScriptStateObjException(&state, ec);
+    if (UNLIKELY(ec))
+        goto fail;
+    if (state.hadException())
+        return throwError(state.exception());
+    return toV8(result.release());
+    }
+    fail:
+    V8Proxy::setDOMException(ec);
+    return v8::Handle<v8::Value>();
+}
+
 static v8::Handle<v8::Value> methodWithOptionalArgCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.methodWithOptionalArg");
@@ -513,6 +551,8 @@ static const BatchedCallback TestObjCallbacks[] = {
     {"withDynamicFrameAndUserGestureASAD", TestObjInternal::withDynamicFrameAndUserGestureASADCallback},
     {"withScriptStateVoid", TestObjInternal::withScriptStateVoidCallback},
     {"withScriptStateObj", TestObjInternal::withScriptStateObjCallback},
+    {"withScriptStateVoidException", TestObjInternal::withScriptStateVoidExceptionCallback},
+    {"withScriptStateObjException", TestObjInternal::withScriptStateObjExceptionCallback},
     {"methodWithOptionalArg", TestObjInternal::methodWithOptionalArgCallback},
     {"methodWithNonOptionalArgAndOptionalArg", TestObjInternal::methodWithNonOptionalArgAndOptionalArgCallback},
     {"methodWithNonOptionalArgAndTwoOptionalArgs", TestObjInternal::methodWithNonOptionalArgAndTwoOptionalArgsCallback},

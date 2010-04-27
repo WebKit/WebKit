@@ -213,6 +213,38 @@ webkit_dom_test_obj_with_script_state_obj (WebKitDOMTestObj *self)
 }
 
 void
+webkit_dom_test_obj_with_script_state_void_exception (WebKitDOMTestObj *self, GError **error)
+{
+    g_return_if_fail (self);
+    WebCore::TestObj * item = WebKit::core(self);
+    WebCore::ExceptionCode ec = 0;
+    item->withScriptStateVoidException(ec);
+    if (ec) {
+        WebCore::ExceptionCodeDescription ecdesc;
+        WebCore::getExceptionCodeDescription(ec, ecdesc);
+        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+    }
+
+}
+
+WebKitDOMTestObj* 
+webkit_dom_test_obj_with_script_state_obj_exception (WebKitDOMTestObj *self, GError **error)
+{
+    g_return_val_if_fail (self, 0);
+    WebCore::TestObj * item = WebKit::core(self);
+    WebCore::ExceptionCode ec = 0;
+    PassRefPtr<WebCore::TestObj> g_res = WTF::getPtr(item->withScriptStateObjException(ec));
+    if (ec) {
+        WebCore::ExceptionCodeDescription ecdesc;
+        WebCore::getExceptionCodeDescription(ec, ecdesc);
+        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+    }
+    WebKitDOMTestObj*  res = static_cast<WebKitDOMTestObj* >(WebKit::kit(g_res.get()));
+    return res;
+
+}
+
+void
 webkit_dom_test_obj_method_with_optional_arg (WebKitDOMTestObj *self, glong opt)
 {
     g_return_if_fail (self);

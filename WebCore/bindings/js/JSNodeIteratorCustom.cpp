@@ -37,34 +37,4 @@ void JSNodeIterator::markChildren(MarkStack& markStack)
         filter->markAggregate(markStack);
 }
 
-JSValue JSNodeIterator::nextNode(ExecState* exec, const ArgList&)
-{
-    ExceptionCode ec = 0;
-    RefPtr<Node> node = impl()->nextNode(exec, ec);
-    if (ec) {
-        setDOMException(exec, ec);
-        return jsUndefined();
-    }
-
-    if (exec->hadException())
-        return jsUndefined();
-
-    return toJS(exec, node.get());
-}
-
-JSValue JSNodeIterator::previousNode(ExecState* exec, const ArgList&)
-{
-    ExceptionCode ec = 0;
-    RefPtr<Node> node = impl()->previousNode(exec, ec);
-    if (ec) {
-        setDOMException(exec, ec);
-        return jsUndefined();
-    }
-
-    if (exec->hadException())
-        return jsUndefined();
-
-    return toJS(exec, node.get());
-}
-
 }

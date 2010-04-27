@@ -31,9 +31,9 @@ module traversal {
         readonly attribute Node referenceNode;
         readonly attribute boolean pointerBeforeReferenceNode;
 
-        [Custom] Node nextNode() 
+        [CallWith=ScriptState] Node nextNode() 
             raises (DOMException);
-        [Custom] Node previousNode()
+        [CallWith=ScriptState] Node previousNode()
             raises (DOMException);
         void detach();
     };

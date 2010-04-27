@@ -770,7 +770,6 @@
             'bindings/v8/custom/V8NamedNodesCollection.h',
             'bindings/v8/custom/V8NodeCustom.cpp',
             'bindings/v8/custom/V8NodeFilterCustom.cpp',
-            'bindings/v8/custom/V8NodeIteratorCustom.cpp',
             'bindings/v8/custom/V8NodeListCustom.cpp',
             'bindings/v8/custom/V8NotificationCenterCustom.cpp',
             'bindings/v8/custom/V8PopStateEventCustom.cpp',

@@ -257,6 +257,21 @@
     return kit(WTF::getPtr(IMPL->withScriptStateObj()));
 }
 
+- (void)withScriptStateVoidException
+{
+    WebCore::ExceptionCode ec = 0;
+    IMPL->withScriptStateVoidException(ec);
+    WebCore::raiseOnDOMError(ec);
+}
+
+- (DOMTestObj *)withScriptStateObjException
+{
+    WebCore::ExceptionCode ec = 0;
+    DOMTestObj *result = kit(WTF::getPtr(IMPL->withScriptStateObjException(ec)));
+    WebCore::raiseOnDOMError(ec);
+    return result;
+}
+
 - (void)methodWithOptionalArg:(int)opt
 {
     IMPL->methodWithOptionalArg(opt);

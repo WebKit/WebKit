@@ -1,5 +1,48 @@
 2010-04-27  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        Remove custom NodeIterator bindings
+        https://bugs.webkit.org/show_bug.cgi?id=38188
+
+        Another example of CallWith=ScriptState.  This case shows us the right
+        way to handle the interaction with exception codes.
+
+        In my previous patch, I put the exception code handling after the
+        ScriptState exception handling.  It turns out this was a mistake
+        (although a harmless one at the time because no IDL caused us to
+        generate that code).  Now that we're generating both kinds of exception
+        handling, we need to generate them in the right order.
+
+        * WebCore.gypi:
+        * bindings/js/JSNodeIteratorCustom.cpp:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (webkit_dom_test_obj_with_script_state_void_exception):
+        (webkit_dom_test_obj_with_script_state_obj_exception):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptStateVoidException):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptStateObjException):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        (-[DOMTestObj withScriptStateVoidException]):
+        (-[DOMTestObj withScriptStateObjException]):
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjInternal::withScriptStateVoidCallback):
+        (WebCore::TestObjInternal::withScriptStateObjCallback):
+        (WebCore::TestObjInternal::withScriptStateVoidExceptionCallback):
+        (WebCore::TestObjInternal::withScriptStateObjExceptionCallback):
+        (WebCore::):
+        * bindings/v8/custom/V8NodeIteratorCustom.cpp: Removed.
+        * dom/NodeIterator.idl:
+
+2010-04-27  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Darin Adler.
 
         Remove copy/paste addEventListener "custom" bindings via code generation

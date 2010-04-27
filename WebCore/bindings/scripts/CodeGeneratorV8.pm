@@ -2414,14 +2414,14 @@ sub GenerateFunctionCallString()
         $returnIsRef = 0;
     }
 
-    if ($hasScriptState) {
-        $result .= $indent . "if (state.hadException())\n";
-        $result .= $indent . "    return throwError(state.exception());\n"
-    }
-
     if (@{$function->raisesExceptions}) {
         $result .= $indent . "if (UNLIKELY(ec))\n";
         $result .= $indent . "    goto fail;\n";
+    }
+
+    if ($hasScriptState) {
+        $result .= $indent . "if (state.hadException())\n";
+        $result .= $indent . "    return throwError(state.exception());\n"
     }
 
     # If the return type is a POD type, separate out the wrapper generation
