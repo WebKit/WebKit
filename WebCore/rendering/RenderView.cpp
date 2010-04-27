@@ -708,16 +708,6 @@ bool RenderView::usesCompositing() const
     return m_compositor && m_compositor->inCompositingMode();
 }
 
-void RenderView::compositingStateChanged(bool)
-{
-    Element* elt = document()->ownerElement();
-    if (!elt)
-        return;
-
-    // Trigger a recalcStyle in the parent document, to update compositing in that document.
-    elt->setNeedsStyleRecalc(SyntheticStyleChange);
-}
-
 RenderLayerCompositor* RenderView::compositor()
 {
     if (!m_compositor)

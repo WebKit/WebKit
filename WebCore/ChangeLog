@@ -1,3 +1,31 @@
+2010-04-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler, Maciej Stachowiak.
+
+        REGRESSION (r57919): Some pages opened in background tabs don't render the first time you activate their tab
+        https://bugs.webkit.org/show_bug.cgi?id=38183
+
+        Rather than sprinkle PLATFORM #ifdefs around, add a new method,
+        RenderLayerCompositor::shouldPropagateCompositingToIFrameParent(), that indicates whether
+        an iframe with composited content should trigger compositing mode in the enclosing document
+        (a behavior that differs between platforms).
+        
+        Use this new method to determine whether to trigger a style recalc in the parent document
+        when an iframe becomes composited.
+        
+        Move the code formerly in RenderView::compositingStateChanged() into RenderLayerCompositor().
+
+        * manual-tests/compositing/accel-comp-iframe-tab-repaint.html: Added.
+        * manual-tests/compositing/resources/flash-frame.html: Added.
+        * manual-tests/compositing/resources/tab-repaint-part-2.html: Added.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::enableCompositingMode):
+        (WebCore::RenderLayerCompositor::shouldPropagateCompositingToIFrameParent):
+        (WebCore::RenderLayerCompositor::requiresCompositingForIFrame):
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderView.cpp:
+        * rendering/RenderView.h:
+
 2010-04-27  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Yury Semikhatsky.
