@@ -69,6 +69,7 @@
 #include "WebKitCSSKeyframeRule.h"
 #include "WebKitCSSKeyframesRule.h"
 #include "WebKitCSSTransformValue.h"
+#include <limits.h>
 #include <wtf/dtoa.h>
 
 #if ENABLE(DASHBOARD_SUPPORT)
@@ -90,6 +91,8 @@ using namespace WTF;
 #include "CSSValueKeywords.c"
 
 namespace WebCore {
+
+static const unsigned INVALID_NUM_PARSED_PROPERTIES = UINT_MAX;
 
 static bool equal(const CSSParserString& a, const char* b)
 {
@@ -135,6 +138,7 @@ CSSParser::CSSParser(bool strictParsing)
     , m_parsedProperties(static_cast<CSSProperty**>(fastMalloc(32 * sizeof(CSSProperty*))))
     , m_numParsedProperties(0)
     , m_maxParsedProperties(32)
+    , m_numParsedPropertiesBeforeMarginBox(INVALID_NUM_PARSED_PROPERTIES)
     , m_inParseShorthand(0)
     , m_currentShorthand(0)
     , m_implicitShorthand(false)
@@ -396,6 +400,7 @@ void CSSParser::clearProperties()
     for (unsigned i = 0; i < m_numParsedProperties; i++)
         delete m_parsedProperties[i];
     m_numParsedProperties = 0;
+    m_numParsedPropertiesBeforeMarginBox = INVALID_NUM_PARSED_PROPERTIES;
     m_hasFontFaceOnlyValues = false;
 }
 
@@ -5192,6 +5197,39 @@ bool CSSParser::addVariableDeclarationBlock(const CSSParserString&)
 }
 
 #endif
+
+CSSRule* CSSParser::createPageRule(CSSSelector* /* pageSelector */)
+{
+    // FIXME: Create page rule here, using:
+    //        - pageSelector->pseudoType(): the page pseudo-class, i.e., :left, :right, or :first
+    //        - pageSelector->m_tag:  the page name
+    //        - m_parsedProperties: the page properties
+
+    clearProperties();
+    return 0; // until this method is implemented.
+}
+
+CSSRule* CSSParser::createMarginAtRule(CSSSelector::MarginBoxType /* marginBox */)
+{
+    // FIXME: Implement margin at-rule here, using:
+    //        - marginBox: margin box
+    //        - m_parsedProperties: properties at [m_numParsedPropertiesBeforeMarginBox, m_numParsedProperties) are for this at-rule.
+
+    endDeclarationsForMarginBox();
+    return 0; // until this method is implemented.
+}
+
+void CSSParser::startDeclarationsForMarginBox()
+{
+    m_numParsedPropertiesBeforeMarginBox = m_numParsedProperties;
+}
+
+void CSSParser::endDeclarationsForMarginBox()
+{
+    ASSERT(m_numParsedPropertiesBeforeMarginBox != INVALID_NUM_PARSED_PROPERTIES);
+    rollbackLastProperties(m_numParsedProperties - m_numParsedPropertiesBeforeMarginBox);
+    m_numParsedPropertiesBeforeMarginBox = INVALID_NUM_PARSED_PROPERTIES;
+}
 
 void CSSParser::clearVariables()
 {

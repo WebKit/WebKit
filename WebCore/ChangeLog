@@ -1,3 +1,33 @@
+2010-04-27  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by David Hyatt.
+
+        Enhance CSS parser for Paged Media (Iteration 1)
+
+        In this change, the grammar is extended and skeletal methods for creating page rules and margin at-rules are defined.
+        The contents of the methods should be implemented by other changes.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35329
+
+        Test: fast/css/parsing-page-rule.html
+
+        * css/CSSGrammar.y:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::CSSParser):
+        (WebCore::CSSParser::clearProperties):
+        (WebCore::CSSParser::lex):
+        (WebCore::CSSParser::text):
+        (WebCore::CSSParser::createPageRule):
+        (WebCore::CSSParser::createMarginAtRule):
+        (WebCore::CSSParser::startDeclarationsForMarginBox):
+        (WebCore::CSSParser::endDeclarationsForMarginBox):
+        * css/CSSParser.h:
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::extractPseudoType):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::):
+        * css/tokenizer.flex:
+
 2010-04-27  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

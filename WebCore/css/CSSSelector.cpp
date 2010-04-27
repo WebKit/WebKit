@@ -203,6 +203,9 @@ PseudoId CSSSelector::pseudoId(PseudoType type)
     case PseudoDoubleButton:
     case PseudoSingleButton:
     case PseudoNoButton:
+    case PseudoFirstPage:
+    case PseudoLeftPage:
+    case PseudoRightPage:
         return NOPSEUDO;
     case PseudoNotParsed:
         ASSERT_NOT_REACHED();
@@ -305,6 +308,10 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
     DEFINE_STATIC_LOCAL(AtomicString, singleButton, ("single-button"));
     DEFINE_STATIC_LOCAL(AtomicString, noButton, ("no-button"));
     DEFINE_STATIC_LOCAL(AtomicString, cornerPresent, ("corner-present"));
+    // Paged Media pseudo-classes
+    DEFINE_STATIC_LOCAL(AtomicString, firstPage, ("first"));
+    DEFINE_STATIC_LOCAL(AtomicString, leftPage, ("left"));
+    DEFINE_STATIC_LOCAL(AtomicString, rightPage, ("right"));
 
     static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoType = 0;
     if (!nameToPseudoType) {
@@ -399,6 +406,9 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
         nameToPseudoType->set(sliderThumb.impl(), CSSSelector::PseudoSliderThumb);
         nameToPseudoType->set(target.impl(), CSSSelector::PseudoTarget);
         nameToPseudoType->set(visited.impl(), CSSSelector::PseudoVisited);
+        nameToPseudoType->set(firstPage.impl(), CSSSelector::PseudoFirstPage);
+        nameToPseudoType->set(leftPage.impl(), CSSSelector::PseudoLeftPage);
+        nameToPseudoType->set(rightPage.impl(), CSSSelector::PseudoRightPage);
     }
     return nameToPseudoType;
 }
@@ -515,6 +525,9 @@ void CSSSelector::extractPseudoType() const
     case PseudoSingleButton:
     case PseudoNoButton:
     case PseudoNotParsed:
+    case PseudoFirstPage:
+    case PseudoLeftPage:
+    case PseudoRightPage:
         break;
     }
 

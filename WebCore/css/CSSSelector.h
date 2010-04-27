@@ -188,6 +188,28 @@ namespace WebCore {
             PseudoInnerSpinButton,
             PseudoOuterSpinButton,
             PseudoProgressBarValue,
+            PseudoLeftPage,
+            PseudoRightPage,
+            PseudoFirstPage,
+        };
+
+        enum MarginBoxType {
+            TopLeftCornerMarginBox,
+            TopLeftMarginBox,
+            TopCenterMarginBox,
+            TopRightMarginBox,
+            TopRightCornerMarginBox,
+            BottomLeftCornerMarginBox,
+            BottomLeftMarginBox,
+            BottomCenterMarginBox,
+            BottomRightMarginBox,
+            BottomRightCornerMarginBox,
+            LeftTopMarginBox,
+            LeftMiddleMarginBox,
+            LeftBottomMarginBox,
+            RightTopMarginBox,
+            RightMiddleMarginBox,
+            RightBottomMarginBox,
         };
 
         PseudoType pseudoType() const
