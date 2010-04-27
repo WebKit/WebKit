@@ -1,3 +1,21 @@
+2010-04-27  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Chromium] Create new baseline for caret-rtl-2
+        https://bugs.webkit.org/show_bug.cgi?id=38126
+
+        http://trac.webkit.org/changeset/58191/ caused the caret-rtl-2 layout
+        test to start failing under Chromium.  Since we're the only ones who
+        run pixel tests, it's possible that the actual baseline needs to be updated
+        and not just the chromium baseline...but I'm not sure.
+
+        I'm tracking the overall progress of figuring this out here:
+        https://bugs.webkit.org/show_bug.cgi?id=38109
+
+        * platform/chromium-mac/editing/selection/caret-rtl-2-actual.checksum: Added.
+        * platform/chromium-mac/editing/selection/caret-rtl-2-actual.png: Added.
+
 2010-04-27  Evan Martin  <evan@chromium.org>
 
         Unreviewed, making the bots happy.
