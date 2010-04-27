@@ -1,5 +1,12 @@
 2010-04-26  Oliver Hunt  <oliver@apple.com>
 
+        Build fix
+
+        * runtime/JSImmediate.h:
+        * runtime/JSValue.h:
+
+2010-04-26  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Gavin Barraclough.
 
         Factor some basic JS interface logic out of JIT and into a superclass

@@ -66,6 +66,7 @@ namespace JSC {
         friend class JIT;
         friend class JITStubs;
         friend class JITStubCall;
+        friend class JSInterfaceJIT;
 
     public:
         static EncodedJSValue encode(JSValue value);
