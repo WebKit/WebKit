@@ -182,6 +182,7 @@ devtools.DebuggerAgent.prototype.initUI = function()
         for (var scriptId in this.parsedScripts_) {
           var script = this.parsedScripts_[scriptId];
           WebInspector.parsedScriptSource(scriptId, script.getUrl(), undefined /* script source */, script.getLineOffset() + 1);
+          this.restoreBreakpoints_(scriptId, script.getUrl());
         }
         return;
     }
@@ -245,7 +246,7 @@ devtools.DebuggerAgent.prototype.pauseExecution = function()
  * @param {number} line Number of the line for the breakpoint.
  * @param {?string} condition The breakpoint condition.
  */
-devtools.DebuggerAgent.prototype.addBreakpoint = function(sourceId, line, condition)
+devtools.DebuggerAgent.prototype.addBreakpoint = function(sourceId, line, enabled, condition)
 {
     var script = this.parsedScripts_[sourceId];
     if (!script)
@@ -263,7 +264,7 @@ devtools.DebuggerAgent.prototype.addBreakpoint = function(sourceId, line, condit
             this.urlToBreakpoints_[script.getUrl()] = breakpoints;
         }
 
-        var breakpointInfo = new devtools.BreakpointInfo(line);
+        var breakpointInfo = new devtools.BreakpointInfo(line, enabled, condition);
         breakpoints[line] = breakpointInfo;
 
         commandArguments = {
@@ -278,7 +279,7 @@ devtools.DebuggerAgent.prototype.addBreakpoint = function(sourceId, line, condit
         if (breakpointInfo)
             return;
 
-        breakpointInfo = new devtools.BreakpointInfo(line);
+        breakpointInfo = new devtools.BreakpointInfo(line, enabled, condition);
         script.addBreakpointInfo(breakpointInfo);
 
         commandArguments = {
@@ -289,6 +290,9 @@ devtools.DebuggerAgent.prototype.addBreakpoint = function(sourceId, line, condit
             "condition": condition
         };
     }
+
+    if (!enabled)
+        return;
 
     var cmd = new devtools.DebugCommand("setbreakpoint", commandArguments);
 
@@ -962,6 +966,7 @@ devtools.DebuggerAgent.prototype.addScriptInfo_ = function(script, msg)
     if (this.scriptsPanelInitialized_) {
         // Only report script as parsed after scripts panel has been shown.
         WebInspector.parsedScriptSource(script.id, script.name, script.source, script.lineOffset + 1);
+        this.restoreBreakpoints_(script.id, script.name);
     }
 };
 
@@ -1081,6 +1086,23 @@ devtools.DebuggerAgent.prototype.formatCallFrame_ = function(stackFrame)
         scopeChain.push(scopeObjectProxy);
     }
     return new devtools.CallFrame(stackFrame.index, "function", funcName, sourceId, line, scopeChain);
+};
+
+
+/**
+ * Restores breakpoints associated with the URL of a newly parsed script.
+ * @param {number} sourceID The id of the script.
+ * @param {string} scriptUrl URL of the script.
+ */
+devtools.DebuggerAgent.prototype.restoreBreakpoints_ = function(sourceID, scriptUrl)
+{
+    var breakpoints = this.urlToBreakpoints_[scriptUrl];
+    for (var line in breakpoints) {
+        if (parseInt(line) == line) {
+            var v8Line = devtools.DebuggerAgent.v8ToWwebkitLineNumber_(parseInt(line));
+            WebInspector.restoredBreakpoint(sourceID, scriptUrl, v8Line, breakpoints[line].enabled(), breakpoints[line].condition());
+        }
+    }
 };
 
 
@@ -1279,9 +1301,11 @@ devtools.ScriptInfo.prototype.removeBreakpointInfo = function(breakpoint)
  * @param {number} line Breakpoint 0-based line number in the containing script.
  * @constructor
  */
-devtools.BreakpointInfo = function(line)
+devtools.BreakpointInfo = function(line, enabled, condition)
 {
     this.line_ = line;
+    this.enabled_ = enabled;
+    this.condition_ = condition;
     this.v8id_ = -1;
     this.removed_ = false;
 };
@@ -1316,7 +1340,7 @@ devtools.BreakpointInfo.prototype.setV8Id = function(id)
 
 
 /**
- * Marks this breakpoint as removed from the  front-end.
+ * Marks this breakpoint as removed from the front-end.
  */
 devtools.BreakpointInfo.prototype.markAsRemoved = function()
 {
@@ -1331,6 +1355,24 @@ devtools.BreakpointInfo.prototype.markAsRemoved = function()
 devtools.BreakpointInfo.prototype.isRemoved = function()
 {
     return this.removed_;
+};
+
+
+/**
+ * @return {boolean} Whether this breakpoint is enabled.
+ */
+devtools.BreakpointInfo.prototype.enabled = function()
+{
+    return this.enabled_;
+};
+
+
+/**
+ * @return {?string} Breakpoint condition.
+ */
+devtools.BreakpointInfo.prototype.condition = function()
+{
+    return this.condition_;
 };
 
 
