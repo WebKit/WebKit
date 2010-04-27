@@ -2852,6 +2852,8 @@ sub ReturnNativeToJSValue
     return "return v8::Integer::NewFromUnsigned($value)" if $nativeType eq "unsigned";
 
     return "return v8DateOrNull($value)" if $type eq "Date";
+    # long long and unsigned long long are not representable in ECMAScript.
+    return "return v8::Number::New(static_cast<double>($value))" if $type eq "long long" or $type eq "unsigned long long";
     return "return v8::Number::New($value)" if $codeGenerator->IsPrimitiveType($type) or $type eq "SVGPaintType";
     return "return $value.v8Value()" if $nativeType eq "ScriptValue";
 

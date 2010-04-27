@@ -208,6 +208,7 @@ sub GetGValueTypeName {
                  "boolean", "boolean",
                  "char", "char",
                  "long", "long",
+                 "long long", "int64",
                  "short", "int",
                  "uchar", "uchar",
                  "unsigned", "uint",
@@ -232,6 +233,7 @@ sub GetGlibTypeName {
                  "boolean", "gboolean",
                  "char", "gchar",
                  "long", "glong",
+                 "long long", "gint64",
                  "short", "gshort",
                  "uchar", "guchar",
                  "unsigned", "guint",
@@ -255,6 +257,7 @@ sub IsGDOMClassType {
     return 0 if $type eq "boolean";
     return 0 if $type eq "char";
     return 0 if $type eq "long";
+    return 0 if $type eq "long long";
     return 0 if $type eq "short";
     return 0 if $type eq "uchar";
     return 0 if $type eq "unsigned";
@@ -439,6 +442,7 @@ my %param_spec_options = ("int", "G_MININT, /* min */\nG_MAXINT, /* max */\n0, /
                           "double", "G_MINDOUBLE, /* min */\nG_MAXDOUBLE, /* max */\n0.0, /* default */",
                           "uint64", "0, /* min */\nG_MAXUINT64, /* min */\n0, /* default */",
                           "long", "G_MINLONG, /* min */\nG_MAXLONG, /* max */\n0, /* default */",
+                          "int64", "G_MININT64, /* min */\nG_MAXINT64, /* max */\n0, /* default */",
                           "ulong", "0, /* min */\nG_MAXULONG, /* max */\n0, /* default */",
                           "uint", "0, /* min */\nG_MAXUINT, /* max */\n0, /* default */",
                           "ushort", "0, /* min */\nG_MAXUINT16, /* max */\n0, /* default */",
@@ -584,6 +588,7 @@ sub getIncludeHeader {
 
     return "" if $type eq "int";
     return "" if $type eq "long";
+    return "" if $type eq "long long";
     return "" if $type eq "short";
     return "" if $type eq "char";
     return "" if $type eq "float";

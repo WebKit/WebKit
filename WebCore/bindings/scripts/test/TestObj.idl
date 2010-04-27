@@ -35,6 +35,8 @@ module test {
         readonly attribute DOMString       readOnlyStringAttr;
         readonly attribute TestObj         readOnlyTestObjAttr;
         attribute long                     intAttr;
+        attribute long long                longLongAttr;
+        attribute unsigned long long       unsignedLongLongAttr;
         attribute DOMString                stringAttr;
         attribute TestObj                  testObjAttr;
 

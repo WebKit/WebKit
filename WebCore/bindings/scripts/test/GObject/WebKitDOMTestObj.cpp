@@ -321,6 +321,44 @@ webkit_dom_test_obj_set_int_attr (WebKitDOMTestObj *self, glong value)
 
 }
 
+gint64
+webkit_dom_test_obj_get_long_long_attr (WebKitDOMTestObj *self)
+{
+    g_return_val_if_fail (self, 0);
+    WebCore::TestObj * item = WebKit::core(self);
+    gint64 res = item->longLongAttr();
+    return res;
+
+}
+
+void
+webkit_dom_test_obj_set_long_long_attr (WebKitDOMTestObj *self, gint64 value)
+{
+    g_return_if_fail (self);
+    WebCore::TestObj * item = WebKit::core(self);
+    item->setLongLongAttr(value);
+
+}
+
+guint64
+webkit_dom_test_obj_get_unsigned_long_long_attr (WebKitDOMTestObj *self)
+{
+    g_return_val_if_fail (self, 0);
+    WebCore::TestObj * item = WebKit::core(self);
+    guint64 res = item->unsignedLongLongAttr();
+    return res;
+
+}
+
+void
+webkit_dom_test_obj_set_unsigned_long_long_attr (WebKitDOMTestObj *self, guint64 value)
+{
+    g_return_if_fail (self);
+    WebCore::TestObj * item = WebKit::core(self);
+    item->setUnsignedLongLongAttr(value);
+
+}
+
 gchar* 
 webkit_dom_test_obj_get_string_attr (WebKitDOMTestObj *self)
 {
@@ -462,6 +500,8 @@ enum {
     PROP_READ_ONLY_STRING_ATTR,
     PROP_READ_ONLY_TEST_OBJ_ATTR,
     PROP_INT_ATTR,
+    PROP_LONG_LONG_ATTR,
+    PROP_UNSIGNED_LONG_LONG_ATTR,
     PROP_STRING_ATTR,
     PROP_TEST_OBJ_ATTR,
     PROP_ATTR_WITH_EXCEPTION,
@@ -496,6 +536,11 @@ static void webkit_dom_test_obj_set_property(GObject* object, guint prop_id, con
     case PROP_INT_ATTR:
     {
          coreSelf->setIntAttr((g_value_get_long(value)) );
+         break;
+    }
+    case PROP_UNSIGNED_LONG_LONG_ATTR:
+    {
+         coreSelf->setUnsignedLongLongAttr((g_value_get_uint64(value)) );
          break;
     }
     case PROP_STRING_ATTR:
@@ -555,6 +600,16 @@ static void webkit_dom_test_obj_get_property(GObject* object, guint prop_id, GVa
     case PROP_INT_ATTR:
     {
          g_value_set_long(value, coreSelf->intAttr());
+         break;
+    }
+    case PROP_LONG_LONG_ATTR:
+    {
+         g_value_set_int64(value, coreSelf->longLongAttr());
+         break;
+    }
+    case PROP_UNSIGNED_LONG_LONG_ATTR:
+    {
+         g_value_set_uint64(value, coreSelf->unsignedLongLongAttr());
          break;
     }
     case PROP_STRING_ATTR:
@@ -632,6 +687,24 @@ G_MAXLONG, /* max */
                                                            "read-write  glong TestObj.int-attr", /* longer - could do with some extra doc stuff here */
                                                            G_MINLONG, /* min */
 G_MAXLONG, /* max */
+0, /* default */
+                                                           WEBKIT_PARAM_READWRITE));
+     g_object_class_install_property(gobjectClass,
+                                    PROP_LONG_LONG_ATTR,
+                                    g_param_spec_int64("long-long-attr", /* name */
+                                                           "test_obj_long-long-attr", /* short description */
+                                                           "read-write  gint64 TestObj.long-long-attr", /* longer - could do with some extra doc stuff here */
+                                                           G_MININT64, /* min */
+G_MAXINT64, /* max */
+0, /* default */
+                                                           WEBKIT_PARAM_READWRITE));
+     g_object_class_install_property(gobjectClass,
+                                    PROP_UNSIGNED_LONG_LONG_ATTR,
+                                    g_param_spec_uint64("unsigned-long-long-attr", /* name */
+                                                           "test_obj_unsigned-long-long-attr", /* short description */
+                                                           "read-write  guint64 TestObj.unsigned-long-long-attr", /* longer - could do with some extra doc stuff here */
+                                                           0, /* min */
+G_MAXUINT64, /* min */
 0, /* default */
                                                            WEBKIT_PARAM_READWRITE));
      g_object_class_install_property(gobjectClass,

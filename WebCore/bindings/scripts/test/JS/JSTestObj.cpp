@@ -45,12 +45,14 @@ ASSERT_CLASS_FITS_IN_CELL(JSTestObj);
 #define THUNK_GENERATOR(generator)
 #endif
 
-static const HashTableValue JSTestObjTableValues[12] =
+static const HashTableValue JSTestObjTableValues[14] =
 {
     { "readOnlyIntAttr", DontDelete|ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReadOnlyIntAttr), (intptr_t)0 THUNK_GENERATOR(0) },
     { "readOnlyStringAttr", DontDelete|ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReadOnlyStringAttr), (intptr_t)0 THUNK_GENERATOR(0) },
     { "readOnlyTestObjAttr", DontDelete|ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReadOnlyTestObjAttr), (intptr_t)0 THUNK_GENERATOR(0) },
     { "intAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjIntAttr), (intptr_t)setJSTestObjIntAttr THUNK_GENERATOR(0) },
+    { "longLongAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjLongLongAttr), (intptr_t)setJSTestObjLongLongAttr THUNK_GENERATOR(0) },
+    { "unsignedLongLongAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjUnsignedLongLongAttr), (intptr_t)setJSTestObjUnsignedLongLongAttr THUNK_GENERATOR(0) },
     { "stringAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjStringAttr), (intptr_t)setJSTestObjStringAttr THUNK_GENERATOR(0) },
     { "testObjAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjTestObjAttr), (intptr_t)setJSTestObjTestObjAttr THUNK_GENERATOR(0) },
     { "attrWithException", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjAttrWithException), (intptr_t)setJSTestObjAttrWithException THUNK_GENERATOR(0) },
@@ -247,6 +249,24 @@ JSValue jsTestObjIntAttr(ExecState* exec, JSValue slotBase, const Identifier&)
     return result;
 }
 
+JSValue jsTestObjLongLongAttr(ExecState* exec, JSValue slotBase, const Identifier&)
+{
+    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
+    UNUSED_PARAM(exec);
+    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+    JSValue result = jsNumber(exec, imp->longLongAttr());
+    return result;
+}
+
+JSValue jsTestObjUnsignedLongLongAttr(ExecState* exec, JSValue slotBase, const Identifier&)
+{
+    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
+    UNUSED_PARAM(exec);
+    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
+    JSValue result = jsNumber(exec, imp->unsignedLongLongAttr());
+    return result;
+}
+
 JSValue jsTestObjStringAttr(ExecState* exec, JSValue slotBase, const Identifier&)
 {
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
@@ -313,6 +333,20 @@ void setJSTestObjIntAttr(ExecState* exec, JSObject* thisObject, JSValue value)
     JSTestObj* castedThisObj = static_cast<JSTestObj*>(thisObject);
     TestObj* imp = static_cast<TestObj*>(castedThisObj->impl());
     imp->setIntAttr(value.toInt32(exec));
+}
+
+void setJSTestObjLongLongAttr(ExecState* exec, JSObject* thisObject, JSValue value)
+{
+    JSTestObj* castedThisObj = static_cast<JSTestObj*>(thisObject);
+    TestObj* imp = static_cast<TestObj*>(castedThisObj->impl());
+    imp->setLongLongAttr(static_cast<long long>(value.toInteger(exec)));
+}
+
+void setJSTestObjUnsignedLongLongAttr(ExecState* exec, JSObject* thisObject, JSValue value)
+{
+    JSTestObj* castedThisObj = static_cast<JSTestObj*>(thisObject);
+    TestObj* imp = static_cast<TestObj*>(castedThisObj->impl());
+    imp->setUnsignedLongLongAttr(static_cast<unsigned long long>(value.toInteger(exec)));
 }
 
 void setJSTestObjStringAttr(ExecState* exec, JSObject* thisObject, JSValue value)

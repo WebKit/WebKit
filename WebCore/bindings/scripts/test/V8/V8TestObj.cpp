@@ -86,6 +86,38 @@ static void intAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> v
     return;
 }
 
+static v8::Handle<v8::Value> longLongAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.longLongAttr._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return v8::Number::New(static_cast<double>(imp->longLongAttr()));
+}
+
+static void longLongAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.longLongAttr._set");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    long long v = toInt64(value);
+    imp->setLongLongAttr(WTF::getPtr(v));
+    return;
+}
+
+static v8::Handle<v8::Value> unsignedLongLongAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.unsignedLongLongAttr._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return v8::Number::New(static_cast<double>(imp->unsignedLongLongAttr()));
+}
+
+static void unsignedLongLongAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.unsignedLongLongAttr._set");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    unsigned long long v = toInt64(value);
+    imp->setUnsignedLongLongAttr(WTF::getPtr(v));
+    return;
+}
+
 static v8::Handle<v8::Value> stringAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.TestObj.stringAttr._get");
@@ -522,6 +554,10 @@ static const BatchedAttribute TestObjAttrs[] = {
     {"readOnlyTestObjAttr", TestObjInternal::readOnlyTestObjAttrAttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'intAttr' (Type: 'attribute' ExtAttr: '')
     {"intAttr", TestObjInternal::intAttrAttrGetter, TestObjInternal::intAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'longLongAttr' (Type: 'attribute' ExtAttr: '')
+    {"longLongAttr", TestObjInternal::longLongAttrAttrGetter, TestObjInternal::longLongAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'unsignedLongLongAttr' (Type: 'attribute' ExtAttr: '')
+    {"unsignedLongLongAttr", TestObjInternal::unsignedLongLongAttrAttrGetter, TestObjInternal::unsignedLongLongAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'stringAttr' (Type: 'attribute' ExtAttr: '')
     {"stringAttr", TestObjInternal::stringAttrAttrGetter, TestObjInternal::stringAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'testObjAttr' (Type: 'attribute' ExtAttr: '')

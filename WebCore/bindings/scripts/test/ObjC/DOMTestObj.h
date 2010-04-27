@@ -39,6 +39,10 @@
 - (DOMTestObj *)readOnlyTestObjAttr;
 - (int)intAttr;
 - (void)setIntAttr:(int)newIntAttr;
+- (long long)longLongAttr;
+- (void)setLongLongAttr:(long long)newLongLongAttr;
+- (unsigned long long)unsignedLongLongAttr;
+- (void)setUnsignedLongLongAttr:(unsigned long long)newUnsignedLongLongAttr;
 - (NSString *)stringAttr;
 - (void)setStringAttr:(NSString *)newStringAttr;
 - (DOMTestObj *)testObjAttr;

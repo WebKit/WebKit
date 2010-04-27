@@ -94,6 +94,26 @@
     IMPL->setIntAttr(newIntAttr);
 }
 
+- (long long)longLongAttr
+{
+    return IMPL->longLongAttr();
+}
+
+- (void)setLongLongAttr:(long long)newLongLongAttr
+{
+    IMPL->setLongLongAttr(newLongLongAttr);
+}
+
+- (unsigned long long)unsignedLongLongAttr
+{
+    return IMPL->unsignedLongLongAttr();
+}
+
+- (void)setUnsignedLongLongAttr:(unsigned long long)newUnsignedLongLongAttr
+{
+    IMPL->setUnsignedLongLongAttr(newUnsignedLongLongAttr);
+}
+
 - (NSString *)stringAttr
 {
     return IMPL->stringAttr();

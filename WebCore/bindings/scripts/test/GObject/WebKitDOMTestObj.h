@@ -127,6 +127,18 @@ webkit_dom_test_obj_get_int_attr (WebKitDOMTestObj *self);
 WEBKIT_API void
 webkit_dom_test_obj_set_int_attr (WebKitDOMTestObj *self, glong value);
 
+WEBKIT_API gint64
+webkit_dom_test_obj_get_long_long_attr (WebKitDOMTestObj *self);
+
+WEBKIT_API void
+webkit_dom_test_obj_set_long_long_attr (WebKitDOMTestObj *self, gint64 value);
+
+WEBKIT_API guint64
+webkit_dom_test_obj_get_unsigned_long_long_attr (WebKitDOMTestObj *self);
+
+WEBKIT_API void
+webkit_dom_test_obj_set_unsigned_long_long_attr (WebKitDOMTestObj *self, guint64 value);
+
 WEBKIT_API gchar* 
 webkit_dom_test_obj_get_string_attr (WebKitDOMTestObj *self);
 
