@@ -1,3 +1,13 @@
+2010-04-26  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Remove unused code from text_diff.py
+        https://bugs.webkit.org/show_bug.cgi?id=38170
+
+        * Scripts/webkitpy/layout_tests/test_types/text_diff.py:
+         - Remove is_render_tree_dump which appears unused.
+
 2010-04-26  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

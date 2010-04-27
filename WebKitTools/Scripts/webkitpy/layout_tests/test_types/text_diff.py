@@ -46,12 +46,6 @@ from webkitpy.layout_tests.test_types import test_type_base
 _log = logging.getLogger("webkitpy.layout_tests.test_types.text_diff")
 
 
-def is_render_tree_dump(data):
-    """Returns true if data appears to be a render tree dump as opposed to a
-    plain text dump."""
-    return data.find("RenderView at (0,0)") != -1
-
-
 class TestTextDiff(test_type_base.TestTypeBase):
 
     def get_normalized_output_text(self, output):
