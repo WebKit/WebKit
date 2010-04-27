@@ -1,3 +1,11 @@
+2010-04-27  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by David Levin.
+
+        Changed Chris Jerdonek from committer to reviewer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-04-27  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
