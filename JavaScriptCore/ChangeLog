@@ -1,3 +1,20 @@
+2010-04-15  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Fix Mac build break.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37867
+        - Make sure JavaScriptCore's debug_and_release config follows that
+          of WebCore.
+        - Use different name for JavaScriptCore target in debug and release
+          since they might be written in the same path at the same time on
+          parallel builds
+        - Consolidate the DESTDIR determination logic in JavaScriptCore.pri
+
+        * JavaScriptCore.pri:
+        * JavaScriptCore.pro:
+
 2010-04-21  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

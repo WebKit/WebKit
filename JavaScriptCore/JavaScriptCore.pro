@@ -8,6 +8,7 @@ CONFIG += staticlib
 # Don't use JavaScriptCore as the target name. qmake would create a JavaScriptCore.vcproj for msvc
 # which already exists as a directory
 TARGET = $$JAVASCRIPTCORE_TARGET
+DESTDIR = $$JAVASCRIPTCORE_DESTDIR
 QT += core
 QT -= gui
 
@@ -15,10 +16,11 @@ CONFIG += depend_includepath
 
 contains(QT_CONFIG, embedded):CONFIG += embedded
 
-CONFIG(debug_and_release):CONFIG(debug, debug|release): DESTDIR = debug
-CONFIG(debug_and_release):CONFIG(release, debug|release): DESTDIR = release
-
-!CONFIG(QTDIR_build) {
+CONFIG(QTDIR_build) {
+    # Make sure we compile both debug and release on mac when inside Qt.
+    # This line was extracted from qbase.pri instead of including the whole file
+    win32|mac:!macx-xcode:CONFIG += debug_and_release
+} else {
     CONFIG(debug, debug|release) {
         OBJECTS_DIR = obj/debug
     } else { # Release
