@@ -58,11 +58,11 @@
 /* ==== COMPILER() - the compiler being used to build the project ==== */
 
 /* COMPILER(MSVC) Microsoft Visual C++ */
-/* COMPILER(MSVC7) Microsoft Visual C++ v7 or lower*/
+/* COMPILER(MSVC7_OR_LOWER) Microsoft Visual C++ 2003 or lower*/
 #if defined(_MSC_VER)
 #define WTF_COMPILER_MSVC 1
 #if _MSC_VER < 1400
-#define WTF_COMPILER_MSVC7 1
+#define WTF_COMPILER_MSVC7_OR_LOWER 1
 #endif
 #endif
 

@@ -49,7 +49,7 @@ namespace WTF {
 
     inline void getLocalTime(const time_t* localTime, struct tm* localTM)
     {
-    #if COMPILER(MSVC7) || COMPILER(MINGW) || OS(WINCE)
+    #if COMPILER(MSVC7_OR_LOWER) || COMPILER(MINGW) || OS(WINCE)
         *localTM = *localtime(localTime);
     #elif COMPILER(MSVC)
         localtime_s(localTM, localTime);

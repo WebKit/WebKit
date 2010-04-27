@@ -80,7 +80,7 @@ namespace WTF {
 #if OS(WINDOWS)
 #define WTF_USE_LOCKFREE_THREADSAFESHARED 1
 
-#if COMPILER(MINGW) || COMPILER(MSVC7) || OS(WINCE)
+#if COMPILER(MINGW) || COMPILER(MSVC7_OR_LOWER) || OS(WINCE)
 inline int atomicIncrement(int* addend) { return InterlockedIncrement(reinterpret_cast<long*>(addend)); }
 inline int atomicDecrement(int* addend) { return InterlockedDecrement(reinterpret_cast<long*>(addend)); }
 #else

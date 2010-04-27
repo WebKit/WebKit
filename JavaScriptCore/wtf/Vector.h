@@ -939,7 +939,7 @@ namespace WTF {
                 return;
         }
             
-#if COMPILER(MSVC7)
+#if COMPILER(MSVC7_OR_LOWER)
         // FIXME: MSVC7 generates compilation errors when trying to assign
         // a pointer to a Vector of its base class (i.e. can't downcast). So far
         // I've been unable to determine any logical reason for this, so I can

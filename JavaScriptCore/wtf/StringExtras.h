@@ -46,7 +46,7 @@ inline int snprintf(char* buffer, size_t count, const char* format, ...)
     return result;
 }
 
-#if COMPILER(MSVC7) || OS(WINCE)
+#if COMPILER(MSVC7_OR_LOWER) || OS(WINCE)
 
 inline int vsnprintf(char* buffer, size_t count, const char* format, va_list args)
 {

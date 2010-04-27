@@ -1,3 +1,21 @@
+2010-04-27  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Rename COMPILER(MSVC7) to COMPILER(MSVC7_OR_LOWER)
+
+        * config.h:
+        (JSC::Structure::transitionTableAdd):
+        * wtf/Assertions.h:
+        * wtf/Atomics.h:
+        * wtf/CurrentTime.h:
+        (WTF::getLocalTime):
+        * wtf/Platform.h:
+        * wtf/StaticConstructors.h:
+        * wtf/StringExtras.h:
+        * wtf/Vector.h:
+        (WTF::::append):
+
 2010-04-15  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Tor Arne Vestbø.

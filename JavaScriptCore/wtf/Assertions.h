@@ -62,7 +62,7 @@
 #define ASSERTIONS_DISABLED_DEFAULT 0
 #endif
 
-#if COMPILER(MSVC7) || COMPILER(WINSCW)
+#if COMPILER(MSVC7_OR_LOWER) || COMPILER(WINSCW)
 #define HAVE_VARIADIC_MACRO 0
 #else
 #define HAVE_VARIADIC_MACRO 1
@@ -224,7 +224,7 @@ while (0)
 
 /* ASSERT_WITH_MESSAGE */
 
-#if COMPILER(MSVC7)
+#if COMPILER(MSVC7_OR_LOWER)
 #define ASSERT_WITH_MESSAGE(assertion) ((void)0)
 #elif COMPILER(WINSCW)
 #define ASSERT_WITH_MESSAGE(assertion, arg...) ((void)0)
@@ -264,7 +264,7 @@ while (0)
 
 /* FATAL */
 
-#if COMPILER(MSVC7)
+#if COMPILER(MSVC7_OR_LOWER)
 #define FATAL() ((void)0)
 #elif COMPILER(WINSCW)
 #define FATAL(arg...) ((void)0)
@@ -279,7 +279,7 @@ while (0)
 
 /* LOG_ERROR */
 
-#if COMPILER(MSVC7)
+#if COMPILER(MSVC7_OR_LOWER)
 #define LOG_ERROR() ((void)0)
 #elif COMPILER(WINSCW)
 #define LOG_ERROR(arg...)  ((void)0)
@@ -291,7 +291,7 @@ while (0)
 
 /* LOG */
 
-#if COMPILER(MSVC7)
+#if COMPILER(MSVC7_OR_LOWER)
 #define LOG() ((void)0)
 #elif COMPILER(WINSCW)
 #define LOG(arg...) ((void)0)
@@ -305,7 +305,7 @@ while (0)
 
 /* LOG_VERBOSE */
 
-#if COMPILER(MSVC7)
+#if COMPILER(MSVC7_OR_LOWER)
 #define LOG_VERBOSE(channel) ((void)0)
 #elif COMPILER(WINSCW)
 #define LOG_VERBOSE(channel, arg...) ((void)0)
