@@ -935,6 +935,73 @@ sub GenerateHeader
     }
 }
 
+sub GenerateAttributesHashTable($$)
+{
+    my ($object, $dataNode) = @_;
+
+    # FIXME: These should be functions on $dataNode.
+    my $interfaceName = $dataNode->name;
+    my $className = "JS$interfaceName";
+    
+    # - Add all attributes in a hashtable definition
+    my $numAttributes = @{$dataNode->attributes};
+    $numAttributes++ if (!($dataNode->extendedAttributes->{"OmitConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"}));
+
+    return 0  if !$numAttributes;
+
+    my $hashSize = $numAttributes;
+    my $hashName = $className . "Table";
+
+    my @hashKeys = ();
+    my @hashSpecials = ();
+    my @hashValue1 = ();
+    my @hashValue2 = ();
+    my %conditionals = ();
+
+    my @entries = ();
+
+    foreach my $attribute (@{$dataNode->attributes}) {
+        my $name = $attribute->signature->name;
+        push(@hashKeys, $name);
+
+        my @specials = ();
+        push(@specials, "DontDelete") unless $attribute->signature->extendedAttributes->{"Deletable"};
+        push(@specials, "DontEnum") if $attribute->signature->extendedAttributes->{"DontEnum"};
+        push(@specials, "ReadOnly") if $attribute->type =~ /readonly/;
+        my $special = (@specials > 0) ? join("|", @specials) : "0";
+        push(@hashSpecials, $special);
+
+        my $getter = "js" . $interfaceName . $codeGenerator->WK_ucfirst($attribute->signature->name) . ($attribute->signature->type =~ /Constructor$/ ? "Constructor" : "");
+        push(@hashValue1, $getter);
+
+        if ($attribute->type =~ /readonly/) {
+            push(@hashValue2, "0");
+        } else {
+            my $setter = "setJS" . $interfaceName . $codeGenerator->WK_ucfirst($attribute->signature->name) . ($attribute->signature->type =~ /Constructor$/ ? "Constructor" : "");
+            push(@hashValue2, $setter);
+        }
+
+        my $conditional = $attribute->signature->extendedAttributes->{"Conditional"};
+        if ($conditional) {
+            $conditionals{$name} = $conditional;
+        }
+    }
+
+    if (!($dataNode->extendedAttributes->{"OmitConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"})) {
+        push(@hashKeys, "constructor");
+        my $getter = "js" . $interfaceName . "Constructor";
+        push(@hashValue1, $getter);
+        push(@hashValue2, "0");
+        push(@hashSpecials, "DontEnum|ReadOnly"); # FIXME: Setting the constructor should be possible.
+    }
+
+    $object->GenerateHashTable($hashName, $hashSize,
+                               \@hashKeys, \@hashSpecials,
+                               \@hashValue1, \@hashValue2,
+                               \%conditionals);
+    return $numAttributes;
+}
+
 sub GenerateImplementation
 {
     my ($object, $dataNode) = @_;
@@ -973,62 +1040,7 @@ sub GenerateImplementation
 
     push(@implContent, "ASSERT_CLASS_FITS_IN_CELL($className);\n\n");
 
-    # - Add all attributes in a hashtable definition
-    my $numAttributes = @{$dataNode->attributes};
-    $numAttributes++ if (!($dataNode->extendedAttributes->{"OmitConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"}));
-
-    if ($numAttributes > 0) {
-        my $hashSize = $numAttributes;
-        my $hashName = $className . "Table";
-
-        my @hashKeys = ();
-        my @hashSpecials = ();
-        my @hashValue1 = ();
-        my @hashValue2 = ();
-        my %conditionals = ();
-
-        my @entries = ();
-
-        foreach my $attribute (@{$dataNode->attributes}) {
-            my $name = $attribute->signature->name;
-            push(@hashKeys, $name);
-
-            my @specials = ();
-            push(@specials, "DontDelete") unless $attribute->signature->extendedAttributes->{"Deletable"};
-            push(@specials, "DontEnum") if $attribute->signature->extendedAttributes->{"DontEnum"};
-            push(@specials, "ReadOnly") if $attribute->type =~ /readonly/;
-            my $special = (@specials > 0) ? join("|", @specials) : "0";
-            push(@hashSpecials, $special);
-
-            my $getter = "js" . $interfaceName . $codeGenerator->WK_ucfirst($attribute->signature->name) . ($attribute->signature->type =~ /Constructor$/ ? "Constructor" : "");
-            push(@hashValue1, $getter);
-    
-            if ($attribute->type =~ /readonly/) {
-                push(@hashValue2, "0");
-            } else {
-                my $setter = "setJS" . $interfaceName . $codeGenerator->WK_ucfirst($attribute->signature->name) . ($attribute->signature->type =~ /Constructor$/ ? "Constructor" : "");
-                push(@hashValue2, $setter);
-            }
-
-            my $conditional = $attribute->signature->extendedAttributes->{"Conditional"};
-            if ($conditional) {
-                $conditionals{$name} = $conditional;
-            }
-        }
-
-        if (!($dataNode->extendedAttributes->{"OmitConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"})) {
-            push(@hashKeys, "constructor");
-            my $getter = "js" . $interfaceName . "Constructor";
-            push(@hashValue1, $getter);
-            push(@hashValue2, "0");
-            push(@hashSpecials, "DontEnum|ReadOnly"); # FIXME: Setting the constructor should be possible.
-        }
-
-        $object->GenerateHashTable($hashName, $hashSize,
-                                   \@hashKeys, \@hashSpecials,
-                                   \@hashValue1, \@hashValue2,
-                                   \%conditionals);
-    }
+    my $numAttributes = GenerateAttributesHashTable($object, $dataNode);
 
     my $numConstants = @{$dataNode->constants};
     my $numFunctions = @{$dataNode->functions};
