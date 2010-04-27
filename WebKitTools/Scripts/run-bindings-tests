@@ -114,7 +114,8 @@ def main(argv):
     generators = [
         'JS',
         'V8',
-        # FIXME: Add ObjC
+        'ObjC',
+        'GObject',
     ]
 
     for generator in generators:
