@@ -1,3 +1,17 @@
+2010-04-21  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Compile fix for Visual Studio 2010
+        https://bugs.webkit.org/show_bug.cgi?id=37867
+
+        Patch by Prasanth Ullattil <prasanth.ullattil@nokia.com>
+
+        * runtime/Structure.cpp:
+        (JSC::Structure::transitionTableAdd):
+        * wtf/MathExtras.h:
+        * wtf/Platform.h:
+
 2010-04-27  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Simon Hausmann.

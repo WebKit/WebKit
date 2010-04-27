@@ -168,14 +168,14 @@ inline void Structure::transitionTableAdd(const StructureTransitionTableHash::Ke
     if (!specificValue) {
         TransitionTable::iterator find = transitionTable()->find(key);
         if (find == transitionTable()->end())
-            transitionTable()->add(key, Transition(structure, 0));
+            transitionTable()->add(key, Transition(structure, static_cast<Structure*>(0)));
         else
             find->second.first = structure;
     } else {
         // If we're adding a transition to a specific value, then there cannot be
         // an existing transition
         ASSERT(!transitionTable()->contains(key));
-        transitionTable()->add(key, Transition(0, structure));
+        transitionTable()->add(key, Transition(static_cast<Structure*>(0), structure));
     }
 }
 

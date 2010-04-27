@@ -122,8 +122,10 @@ inline double trunc(double num) { return num > 0 ? floor(num) : ceil(num); }
 #endif
 
 #if COMPILER(MSVC)
-
+// The 64bit version of abs() is already defined in stdlib.h which comes with VC10
+#if COMPILER(MSVC9_OR_LOWER)
 inline long long abs(long long num) { return _abs64(num); }
+#endif
 
 inline bool isinf(double num) { return !_finite(num) && !_isnan(num); }
 inline bool isnan(double num) { return !!_isnan(num); }

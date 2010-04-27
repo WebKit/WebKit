@@ -59,10 +59,13 @@
 
 /* COMPILER(MSVC) Microsoft Visual C++ */
 /* COMPILER(MSVC7_OR_LOWER) Microsoft Visual C++ 2003 or lower*/
+/* COMPILER(MSVC9_OR_LOWER) Microsoft Visual C++ 2008 or lower*/
 #if defined(_MSC_VER)
 #define WTF_COMPILER_MSVC 1
 #if _MSC_VER < 1400
 #define WTF_COMPILER_MSVC7_OR_LOWER 1
+#elif _MSC_VER < 1600
+#define WTF_COMPILER_MSVC9_OR_LOWER 1
 #endif
 #endif
 
