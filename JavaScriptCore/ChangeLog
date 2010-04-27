@@ -1,5 +1,12 @@
 2010-04-26  Oliver Hunt  <oliver@apple.com>
 
+        Fix windows
+
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::argumentToVirtualRegister):
+
+2010-04-26  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Gavin Barraclough.
 
         Need to support more efficient dispatch of lightweight builtins

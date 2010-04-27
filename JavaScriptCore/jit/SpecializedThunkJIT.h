@@ -87,9 +87,9 @@ namespace JSC {
         }
         
     private:
-        unsigned argumentToVirtualRegister(unsigned argument)
+        int argumentToVirtualRegister(unsigned argument)
         {
-            return -(RegisterFile::CallFrameHeaderSize + (m_expectedArgCount - argument));
+            return -static_cast<int>(RegisterFile::CallFrameHeaderSize + (m_expectedArgCount - argument));
         }
 
         void tagReturnAsInt32()
