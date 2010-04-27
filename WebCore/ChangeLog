@@ -1,3 +1,17 @@
+2010-04-27  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Beth Dakin.
+
+        Remove now unnecessary EXPERIMENTAL_SINGLE_VIEW_MODE #define.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::EventHandler):
+        (WebCore::EventHandler::clearDragState):
+        * page/EventHandler.h:
+        * page/mac/DragControllerMac.mm:
+        * page/mac/EventHandlerMac.mm:
+        * platform/mac/PopupMenuMac.mm:
+
 2010-04-27  Ben Murdoch  <benm@google.com>
 
         Reviewed by Simon Hausmann.

@@ -397,10 +397,7 @@ for my $dir (@projects) {
         my @completeOptions = @options;
         if ($webkit2 && $dir eq "WebCore") {
             my @webKit2SpecificOverrides = (
-                'UMBRELLA_LDFLAGS=',
-                'GCC_PREPROCESSOR_DEFINITIONS=$(GCC_PREPROCESSOR_DEFINITIONS) ' .
-                    'ENABLE_EXPERIMENTAL_SINGLE_VIEW_MODE=1 ' .
-                    'WTF_USE_WEB_THREAD=1 '
+                'UMBRELLA_LDFLAGS='
             );
             push @completeOptions, @webKit2SpecificOverrides;
         }

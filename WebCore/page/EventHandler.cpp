@@ -138,7 +138,7 @@ static inline bool scrollNode(float delta, WheelEvent::Granularity granularity, 
     return false;
 }
 
-#if !PLATFORM(MAC) || ENABLE(EXPERIMENTAL_SINGLE_VIEW_MODE)
+#if !PLATFORM(MAC)
 
 inline bool EventHandler::eventLoopHandleMouseUp(const MouseEventWithHitTestResults&)
 {
@@ -183,7 +183,7 @@ EventHandler::EventHandler(Frame* frame)
     , m_mouseDownTimestamp(0)
     , m_useLatchedWheelEventNode(false)
     , m_widgetIsLatched(false)
-#if PLATFORM(MAC) && !ENABLE(EXPERIMENTAL_SINGLE_VIEW_MODE)
+#if PLATFORM(MAC)
     , m_mouseDownView(nil)
     , m_sendingEventToSubview(false)
     , m_activationEventNumber(0)
@@ -1656,7 +1656,7 @@ void EventHandler::clearDragState()
     m_dragTarget = 0;
     m_capturingMouseEventsNode = 0;
     m_shouldOnlyFireDragOverEvent = false;
-#if PLATFORM(MAC) && !ENABLE(EXPERIMENTAL_SINGLE_VIEW_MODE)
+#if PLATFORM(MAC)
     m_sendingEventToSubview = false;
 #endif
 }
