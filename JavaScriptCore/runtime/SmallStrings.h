@@ -60,7 +60,9 @@ namespace JSC {
         void clear();
 
         unsigned count() const;
-
+#if ENABLE(JIT)
+        JSString** singleCharacterStrings() { return m_singleCharacterStrings; }
+#endif
     private:
         void createEmptyString(JSGlobalData*);
         void createSingleCharacterString(JSGlobalData*, unsigned char);

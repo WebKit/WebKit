@@ -1,3 +1,32 @@
+2010-04-26  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Add specialized thunks for a char code related string functions
+        https://bugs.webkit.org/show_bug.cgi?id=38177
+
+        This is a simple extension to my prior patch.  Basically hoist the
+        existing character loading logic from the charCodeAt thunk and into
+        a helper function, then add a helper to load strings from the small
+        string cache.  This allows trivial implementations of fromCharCode
+        and charAt. 
+
+        * create_hash_table:
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::returnJSCell):
+        (JSC::SpecializedThunkJIT::tagReturnAsJSCell):
+        * jit/ThunkGenerators.cpp:
+        (JSC::stringCharLoad):
+        (JSC::charToString):
+        (JSC::charCodeAtThunkGenerator):
+        (JSC::charAtThunkGenerator):
+        (JSC::fromCharCodeThunkGenerator):
+        * jit/ThunkGenerators.h:
+        * runtime/SmallStrings.h:
+        (JSC::SmallStrings::singleCharacterStrings):
+        * runtime/StringConstructor.cpp:
+        (JSC::StringConstructor::StringConstructor):
+
 2010-04-27  Thomas Zander <t.zander@nokia.com>
 
         Reviewed by Simon Hausmann.

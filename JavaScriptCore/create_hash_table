@@ -275,6 +275,9 @@ sub output() {
         if ($key eq "charCodeAt") {
             $thunkGenerator = "charCodeAtThunkGenerator";
         }
+        if ($key eq "charAt") {
+            $thunkGenerator = "charAtThunkGenerator";
+        }
         print "   { \"$key\", $attrs[$i], (intptr_t)" . $castStr . "($firstValue), (intptr_t)$secondValue THUNK_GENERATOR($thunkGenerator) },\n";
         $i++;
     }
