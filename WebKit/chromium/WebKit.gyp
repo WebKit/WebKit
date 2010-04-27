@@ -201,6 +201,7 @@
                 'public/WebTextAffinity.h',
                 'public/WebTextCaseSensitivity.h',
                 'public/WebTextDirection.h',
+                'public/WebThemeEngine.h',
                 'public/WebURL.h',
                 'public/WebURLError.h',
                 'public/WebURLLoader.h',
