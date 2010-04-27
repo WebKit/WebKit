@@ -28,6 +28,7 @@
 
 from webkitpy.common.system.deprecated_logging import log
 from webkitpy.common.config.ports import WebKitPort
+from webkitpy.tool.steps.options import Options
 
 
 class AbstractStep(object):
@@ -66,7 +67,12 @@ class AbstractStep(object):
 
     @classmethod
     def options(cls):
-        return []
+        return [
+            # We need these options here because cached_lookup uses them.  :(
+            Options.git_commit,
+            Options.no_squash,
+            Options.squash,
+        ]
 
     def run(self, state):
         raise NotImplementedError, "subclasses must implement"

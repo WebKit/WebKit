@@ -33,7 +33,7 @@ from webkitpy.common.system.deprecated_logging import log
 class RunTests(AbstractStep):
     @classmethod
     def options(cls):
-        return [
+        return AbstractStep.options() + [
             Options.test,
             Options.non_interactive,
             Options.quiet,

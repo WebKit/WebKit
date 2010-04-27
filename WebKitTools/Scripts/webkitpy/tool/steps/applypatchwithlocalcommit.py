@@ -32,9 +32,9 @@ from webkitpy.tool.steps.options import Options
 class ApplyPatchWithLocalCommit(ApplyPatch):
     @classmethod
     def options(cls):
-        return [
+        return ApplyPatch.options() + [
             Options.local_commit,
-        ] + ApplyPatch.options()
+        ]
 
     def run(self, state):
         ApplyPatch.run(self, state)

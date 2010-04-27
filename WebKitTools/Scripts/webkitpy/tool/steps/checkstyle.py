@@ -36,7 +36,7 @@ from webkitpy.common.system.deprecated_logging import error
 class CheckStyle(AbstractStep):
     @classmethod
     def options(cls):
-        return [
+        return AbstractStep.options() + [
             Options.non_interactive,
             Options.check_style,
             Options.git_commit,

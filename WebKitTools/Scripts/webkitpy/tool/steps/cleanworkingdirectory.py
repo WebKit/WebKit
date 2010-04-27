@@ -39,7 +39,7 @@ class CleanWorkingDirectory(AbstractStep):
 
     @classmethod
     def options(cls):
-        return [
+        return AbstractStep.options() + [
             Options.force_clean,
             Options.clean,
         ]

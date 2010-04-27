@@ -33,7 +33,7 @@ from webkitpy.tool.steps.options import Options
 class Commit(AbstractStep):
     @classmethod
     def options(cls):
-        return [
+        return AbstractStep.options() + [
             Options.git_commit,
             Options.no_squash,
             Options.squash,

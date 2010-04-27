@@ -34,7 +34,7 @@ from webkitpy.common.system.deprecated_logging import error
 class EnsureLocalCommitIfNeeded(AbstractStep):
     @classmethod
     def options(cls):
-        return [
+        return AbstractStep.options() + [
             Options.local_commit,
         ]
 

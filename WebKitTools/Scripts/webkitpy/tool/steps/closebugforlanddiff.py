@@ -35,7 +35,7 @@ from webkitpy.common.system.deprecated_logging import log
 class CloseBugForLandDiff(AbstractStep):
     @classmethod
     def options(cls):
-        return [
+        return AbstractStep.options() + [
             Options.close_bug,
         ]
 

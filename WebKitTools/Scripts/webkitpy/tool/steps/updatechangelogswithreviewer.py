@@ -37,7 +37,7 @@ from webkitpy.common.system.deprecated_logging import log, error
 class UpdateChangeLogsWithReviewer(AbstractStep):
     @classmethod
     def options(cls):
-        return [
+        return AbstractStep.options() + [
             Options.git_commit,
             Options.reviewer,
             Options.no_squash,

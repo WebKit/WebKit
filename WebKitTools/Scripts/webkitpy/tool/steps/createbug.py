@@ -33,7 +33,7 @@ from webkitpy.tool.steps.options import Options
 class CreateBug(AbstractStep):
     @classmethod
     def options(cls):
-        return [
+        return AbstractStep.options() + [
             Options.cc,
             Options.component,
         ]

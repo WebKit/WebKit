@@ -41,10 +41,8 @@ _log = logutils.get_logger(__file__)
 class ConfirmDiff(AbstractStep):
     @classmethod
     def options(cls):
-        return [
+        return AbstractStep.options() + [
             Options.confirm,
-            Options.git_commit,
-            Options.no_squash,
         ]
 
     def _show_pretty_diff(self, diff):

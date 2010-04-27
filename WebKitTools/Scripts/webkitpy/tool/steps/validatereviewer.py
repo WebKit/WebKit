@@ -39,7 +39,7 @@ from webkitpy.common.system.deprecated_logging import error, log
 class ValidateReviewer(AbstractStep):
     @classmethod
     def options(cls):
-        return [
+        return AbstractStep.options() + [
             Options.git_commit,
             Options.no_squash,
             Options.squash,

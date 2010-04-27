@@ -1,3 +1,37 @@
+2010-04-27  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        REGRESSION(r58261): webkit-patch edit-changelogs is broken
+        https://bugs.webkit.org/show_bug.cgi?id=38204
+
+        In 58261, we added code to abstract step that interrogates the squash
+        and git_commit options, but it doesn't declare that it uses those
+        options.  That means any command that doesn't happen to declare those
+        options might be broken if it uses the cached_lookup mechanism.
+
+        * Scripts/webkitpy/tool/steps/abstractstep.py:
+        * Scripts/webkitpy/tool/steps/applypatch.py:
+        * Scripts/webkitpy/tool/steps/applypatchwithlocalcommit.py:
+        * Scripts/webkitpy/tool/steps/build.py:
+        * Scripts/webkitpy/tool/steps/checkstyle.py:
+        * Scripts/webkitpy/tool/steps/cleanworkingdirectory.py:
+        * Scripts/webkitpy/tool/steps/closebug.py:
+        * Scripts/webkitpy/tool/steps/closebugforlanddiff.py:
+        * Scripts/webkitpy/tool/steps/commit.py:
+        * Scripts/webkitpy/tool/steps/confirmdiff.py:
+        * Scripts/webkitpy/tool/steps/createbug.py:
+        * Scripts/webkitpy/tool/steps/ensurebuildersaregreen.py:
+        * Scripts/webkitpy/tool/steps/ensurelocalcommitifneeded.py:
+        * Scripts/webkitpy/tool/steps/obsoletepatches.py:
+        * Scripts/webkitpy/tool/steps/postcodereview.py:
+        * Scripts/webkitpy/tool/steps/postdiff.py:
+        * Scripts/webkitpy/tool/steps/preparechangelog.py:
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        * Scripts/webkitpy/tool/steps/update.py:
+        * Scripts/webkitpy/tool/steps/updatechangelogswithreviewer.py:
+        * Scripts/webkitpy/tool/steps/validatereviewer.py:
+
 2010-04-27  Eric Seidel  <eric@webkit.org>
 
         Reviewed by David Levin.

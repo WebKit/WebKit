@@ -34,7 +34,7 @@ from webkitpy.common.system.deprecated_logging import log
 class Build(AbstractStep):
     @classmethod
     def options(cls):
-        return [
+        return AbstractStep.options() + [
             Options.build,
             Options.quiet,
             Options.build_style,

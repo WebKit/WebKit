@@ -33,13 +33,10 @@ from webkitpy.tool.steps.options import Options
 class PostCodeReview(AbstractStep):
     @classmethod
     def options(cls):
-        return [
+        return AbstractStep.options() + [
             Options.cc,
             Options.description,
             Options.fancy_review,
-            Options.git_commit,
-            Options.no_squash,
-            Options.squash,
         ]
 
     def run(self, state):

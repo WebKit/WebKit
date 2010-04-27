@@ -33,14 +33,11 @@ from webkitpy.tool.steps.options import Options
 class PostDiff(AbstractStep):
     @classmethod
     def options(cls):
-        return [
+        return AbstractStep.options() + [
             Options.description,
             Options.review,
             Options.request_commit,
             Options.open_bug,
-            Options.git_commit,
-            Options.no_squash,
-            Options.squash,
         ]
 
     def run(self, state):
