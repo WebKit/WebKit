@@ -55,6 +55,8 @@ foo</#text>
 <SCRIPT>
 window.getSelection().selectAllChildren(bar)
 </SCRIPT>
+<#text>
+</#text>
 </BODY>
 </HTML>
 

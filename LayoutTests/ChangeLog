@@ -1,3 +1,15 @@
+2010-04-27  Ojan Vafai  <ojan@chromium.org>
+
+        Unreviewed. Minor fix after goofup in http://trac.webkit.org/changeset/58331
+
+        layoutTestController should have dumpAsMarkup
+        https://bugs.webkit.org/show_bug.cgi?id=26501
+
+        Forgot to reset the test results after doing the code review feedback
+        of adding a newline.
+
+        * editing/selection/dump-as-markup-expected.txt:
+
 2010-04-26  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Darin Adler.
