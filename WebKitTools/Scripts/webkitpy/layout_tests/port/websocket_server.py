@@ -207,6 +207,7 @@ class PyWebSocket(http_server.Lighttpd):
                    self._server_name, self._port))
         _log.debug('cmdline: %s' % ' '.join(start_cmd))
         # FIXME: We should direct this call through Executive for testing.
+        # Note: Not thread safe: http://bugs.python.org/issue2320
         self._process = subprocess.Popen(start_cmd,
                                          stdin=open(os.devnull, 'r'),
                                          stdout=self._wsout,

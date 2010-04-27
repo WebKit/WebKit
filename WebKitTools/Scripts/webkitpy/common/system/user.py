@@ -67,6 +67,7 @@ class User(object):
     def page(self, message):
         pager = os.environ.get("PAGER") or "less"
         try:
+            # Note: Not thread safe: http://bugs.python.org/issue2320
             child_process = subprocess.Popen([pager], stdin=subprocess.PIPE)
             child_process.communicate(input=message)
         except IOError, e:

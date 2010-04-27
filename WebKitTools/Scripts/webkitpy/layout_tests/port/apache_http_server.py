@@ -191,6 +191,9 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         # Use shell=True because we join the arguments into a string for
         # the sake of Window/Cygwin and it needs quoting that breaks
         # shell=False.
+        # FIXME: We should not need to be joining shell arguments into strings.
+        # shell=True is a trail of tears.
+        # Note: Not thread safe: http://bugs.python.org/issue2320
         self._httpd_proc = subprocess.Popen(self._start_cmd,
                                             stderr=subprocess.PIPE,
             shell=True)

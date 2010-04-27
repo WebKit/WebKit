@@ -210,9 +210,11 @@ class Lighttpd(http_server_base.HttpServerBase):
         if sys.platform == 'win32' and self._register_cygwin:
             setup_mount = self._port_obj.path_from_chromium_base('third_party',
                 'cygwin', 'setup_mount.bat')
+            # FIXME: Should use Executive.run_command
             subprocess.Popen(setup_mount).wait()
 
         _log.debug('Starting http server')
+        # FIXME: Should use Executive.run_command
         self._process = subprocess.Popen(start_cmd, env=env)
 
         # Wait for server to start.

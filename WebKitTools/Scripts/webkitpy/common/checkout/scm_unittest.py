@@ -54,6 +54,7 @@ from webkitpy.common.system.executive import Executive, run_command, ScriptError
 # FIXME: This should be unified into one of the executive.py commands!
 # Callers could use run_and_throw_if_fail(args, cwd=cwd, quiet=True)
 def run_silent(args, cwd=None):
+    # Note: Not thread safe: http://bugs.python.org/issue2320
     process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=cwd)
     process.communicate() # ignore output
     exit_code = process.wait()

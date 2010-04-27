@@ -50,7 +50,19 @@ from webkitpy.common.system.executive import Executive, ScriptError
 _log = logutils.get_logger(__file__)
 
 
-# Python bug workaround.  See Port.wdiff_text() for an explanation.
+# Python's Popen has a bug that causes any pipes opened to a
+# process that can't be executed to be leaked.  Since this
+# code is specifically designed to tolerate exec failures
+# to gracefully handle cases where wdiff is not installed,
+# the bug results in a massive file descriptor leak. As a
+# workaround, if an exec failure is ever experienced for
+# wdiff, assume it's not available.  This will leak one
+# file descriptor but that's better than leaking each time
+# wdiff would be run.
+#
+# http://mail.python.org/pipermail/python-list/
+#    2008-August/505753.html
+# http://bugs.python.org/issue3210
 _wdiff_available = True
 _pretty_patch_available = True
 
@@ -535,36 +547,11 @@ class Port(object):
                '--end-insert=##WDIFF_END##',
                actual_filename,
                expected_filename]
-        # FIXME: Why not just check os.exists(executable) once?
-        global _wdiff_available
+        global _wdiff_available  # See explaination at top of file.
         result = ''
         try:
-            # Python's Popen has a bug that causes any pipes opened to a
-            # process that can't be executed to be leaked.  Since this
-            # code is specifically designed to tolerate exec failures
-            # to gracefully handle cases where wdiff is not installed,
-            # the bug results in a massive file descriptor leak. As a
-            # workaround, if an exec failure is ever experienced for
-            # wdiff, assume it's not available.  This will leak one
-            # file descriptor but that's better than leaking each time
-            # wdiff would be run.
-            #
-            # http://mail.python.org/pipermail/python-list/
-            #    2008-August/505753.html
-            # http://bugs.python.org/issue3210
-            #
-            # It also has a threading bug, so we don't output wdiff if
-            # the Popen raises a ValueError.
-            # http://bugs.python.org/issue1236
             if _wdiff_available:
-                try:
-                    # FIXME: Use Executive() here.
-                    wdiff = subprocess.Popen(cmd,
-                        stdout=subprocess.PIPE).communicate()[0]
-                except ValueError, e:
-                    # Working around a race in Python 2.4's implementation
-                    # of Popen().
-                    wdiff = ''
+                wdiff = self._executive.run_command(cmd, decode_output=False)
                 wdiff = cgi.escape(wdiff)
                 wdiff = wdiff.replace('##WDIFF_DEL##', '<span class=del>')
                 wdiff = wdiff.replace('##WDIFF_ADD##', '<span class=add>')

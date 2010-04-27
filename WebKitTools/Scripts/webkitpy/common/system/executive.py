@@ -87,11 +87,20 @@ def run_command(*args, **kwargs):
 
 class Executive(object):
 
+    def _should_close_fds(self):
+        # We need to pass close_fds=True to work around Python bug #2320
+        # (otherwise we can hang when we kill DumpRenderTree when we are running
+        # multiple threads). See http://bugs.python.org/issue2320 .
+        # Note that close_fds isn't supported on Windows, but this bug only
+        # shows up on Mac and Linux.
+        return sys.platform not in ('win32', 'cygwin')
+
     def _run_command_with_teed_output(self, args, teed_output):
         args = map(unicode, args)  # Popen will throw an exception if args are non-strings (like int())
         child_process = subprocess.Popen(args,
                                          stdout=subprocess.PIPE,
-                                         stderr=subprocess.STDOUT)
+                                         stderr=subprocess.STDOUT,
+                                         close_fds=self._should_close_fds())
 
         # Use our own custom wait loop because Popen ignores a tee'd
         # stderr/stdout.
@@ -177,6 +186,9 @@ class Executive(object):
 
     def _compute_stdin(self, input):
         """Returns (stdin, string_to_communicate)"""
+        # FIXME: We should be returning /dev/null for stdin
+        # or closing stdin after process creation to prevent
+        # child processes from getting input from the user.
         if not input:
             return (None, None)
         if hasattr(input, "read"):  # Check if the input is a file.
@@ -200,6 +212,7 @@ class Executive(object):
                     return_exit_code=False,
                     return_stderr=True,
                     decode_output=True):
+        """Popen wrapper for convenience and to work around python bugs."""
         args = map(unicode, args)  # Popen will throw an exception if args are non-strings (like int())
         stdin, string_to_communicate = self._compute_stdin(input)
         stderr = subprocess.STDOUT if return_stderr else None
@@ -208,7 +221,8 @@ class Executive(object):
                                    stdin=stdin,
                                    stdout=subprocess.PIPE,
                                    stderr=stderr,
-                                   cwd=cwd)
+                                   cwd=cwd,
+                                   close_fds=self._should_close_fds())
         output = process.communicate(string_to_communicate)[0]
         # run_command automatically decodes to unicode() unless explicitly told not to.
         if decode_output:

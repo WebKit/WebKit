@@ -44,6 +44,8 @@ import webbrowser
 import base
 import http_server
 
+from webkitpy.common.system.executive import Executive
+
 # FIXME: To use the DRT-based version of this file, we need to be able to
 # run the webkit code, which uses server_process, which requires UNIX-style
 # non-blocking I/O with selects(), which requires fcntl() which doesn't exist
@@ -80,8 +82,8 @@ def check_file_exists(path_to_file, file_description, override_step=None,
 class ChromiumPort(base.Port):
     """Abstract base class for Chromium implementations of the Port class."""
 
-    def __init__(self, port_name=None, options=None):
-        base.Port.__init__(self, port_name, options)
+    def __init__(self, port_name=None, options=None, **kwargs):
+        base.Port.__init__(self, port_name, options, **kwargs)
         self._chromium_base_dir = None
 
     def baseline_path(self):
@@ -118,10 +120,8 @@ class ChromiumPort(base.Port):
         return result
 
     def check_sys_deps(self, needs_http):
-        dump_render_tree_binary_path = self._path_to_driver()
-        proc = subprocess.Popen([dump_render_tree_binary_path,
-                                '--check-layout-test-sys-deps'])
-        if proc.wait():
+        cmd = [self._path_to_driver(), '--check-layout-test-sys-deps']
+        if self._executive.run_command(cmd, return_exit_code=True):
             _log.error('System dependencies check failed.')
             _log.error('To override, invoke with --nocheck-sys-deps')
             _log.error('')
@@ -176,18 +176,20 @@ class ChromiumPort(base.Port):
             # FIXME: This should use User.open_url
             webbrowser.open(uri, new=1)
         else:
+            # Note: Not thread safe: http://bugs.python.org/issue2320
             subprocess.Popen([self._path_to_driver(), uri])
 
     def create_driver(self, image_path, options):
         """Starts a new Driver and returns a handle to it."""
         if self._options.use_drt:
-            return webkit.WebKitDriver(self, image_path, options)
-        return ChromiumDriver(self, image_path, options)
+            return webkit.WebKitDriver(self, image_path, options, exectuive=self._executive)
+        return ChromiumDriver(self, image_path, options, exectuive=self._executive)
 
     def start_helper(self):
         helper_path = self._path_to_helper()
         if helper_path:
             _log.debug("Starting layout helper %s" % helper_path)
+            # Note: Not thread safe: http://bugs.python.org/issue2320
             self._helper = subprocess.Popen([helper_path],
                 stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=None)
             is_ready = self._helper.stdout.readline()
@@ -273,7 +275,7 @@ class ChromiumPort(base.Port):
 class ChromiumDriver(base.Driver):
     """Abstract interface for test_shell."""
 
-    def __init__(self, port, image_path, options):
+    def __init__(self, port, image_path, options, executive=Executive()):
         self._port = port
         self._configuration = port._options.configuration
         # FIXME: _options is very confusing, because it's not an Options() element.
@@ -281,6 +283,7 @@ class ChromiumDriver(base.Driver):
         # be passed into .start()
         self._options = options
         self._image_path = image_path
+        self._executive = executive
 
     def start(self):
         # FIXME: Should be an error to call this method twice.
@@ -402,8 +405,4 @@ class ChromiumDriver(base.Driver):
                 if self._proc.poll() is None:
                     _log.warning('stopping test driver timed out, '
                                  'killing it')
-                    # FIXME: This should use Executive.
-                    null = open(os.devnull, "w")  # Does this need an encoding?
-                    subprocess.Popen(["kill", "-9",
-                                     str(self._proc.pid)], stderr=null)
-                    null.close()
+                    self._executive.kill_process(self._proc.pid)

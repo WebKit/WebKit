@@ -38,6 +38,8 @@ import subprocess
 import sys
 import time
 
+from webkitpy.common.system.executive import Executive
+
 _log = logging.getLogger("webkitpy.layout_tests.port.server_process")
 
 
@@ -48,12 +50,13 @@ class ServerProcess:
     indefinitely. The class also handles transparently restarting processes
     as necessary to keep issuing commands."""
 
-    def __init__(self, port_obj, name, cmd, env=None):
+    def __init__(self, port_obj, name, cmd, env=None, executive=Executive()):
         self._port = port_obj
         self._name = name
         self._cmd = cmd
         self._env = env
         self._reset()
+        self._executive = executive
 
     def _reset(self):
         self._proc = None
@@ -66,6 +69,7 @@ class ServerProcess:
         if self._proc:
             raise ValueError("%s already running" % self._name)
         self._reset()
+        # close_fds is a workaround for http://bugs.python.org/issue2320
         close_fds = sys.platform not in ('win32', 'cygwin')
         self._proc = subprocess.Popen(self._cmd, stdin=subprocess.PIPE,
                                       stdout=subprocess.PIPE,
@@ -215,10 +219,6 @@ class ServerProcess:
             if self._proc.poll() is None:
                 _log.warning('stopping %s timed out, killing it' %
                              self._name)
-                # FIXME: This should use Executive.
-                null = open(os.devnull, "w")
-                subprocess.Popen(["kill", "-9",
-                                  str(self._proc.pid)], stderr=null)
-                null.close()
+                self._executive.kill_process(self._proc.pid)
                 _log.warning('killed')
         self._reset()

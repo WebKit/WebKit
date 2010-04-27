@@ -45,6 +45,8 @@ import sys
 import time
 import webbrowser
 
+from webkitpy.common.system.executive import Executive
+
 import webkitpy.common.system.ospath as ospath
 import webkitpy.layout_tests.port.base as base
 import webkitpy.layout_tests.port.server_process as server_process
@@ -55,8 +57,8 @@ _log = logging.getLogger("webkitpy.layout_tests.port.webkit")
 class WebKitPort(base.Port):
     """WebKit implementation of the Port class."""
 
-    def __init__(self, port_name=None, options=None):
-        base.Port.__init__(self, port_name, options)
+    def __init__(self, port_name=None, options=None, **kwargs):
+        base.Port.__init__(self, port_name, options, **kwargs)
         self._cached_build_root = None
         self._cached_apache_path = None
 
@@ -195,7 +197,7 @@ class WebKitPort(base.Port):
         webbrowser.open(uri, new=1)
 
     def create_driver(self, image_path, options):
-        return WebKitDriver(self, image_path, options)
+        return WebKitDriver(self, image_path, options, executive=self._executive)
 
     def test_base_platform_names(self):
         # At the moment we don't use test platform names, but we have
@@ -347,7 +349,7 @@ class WebKitPort(base.Port):
 class WebKitDriver(base.Driver):
     """WebKit implementation of the DumpRenderTree interface."""
 
-    def __init__(self, port, image_path, driver_options):
+    def __init__(self, port, image_path, driver_options, executive=Executive()):
         self._port = port
         # FIXME: driver_options is never used.
         self._image_path = image_path

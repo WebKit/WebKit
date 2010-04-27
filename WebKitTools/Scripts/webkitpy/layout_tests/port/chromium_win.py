@@ -144,6 +144,10 @@ class ChromiumWinPort(chromium.ChromiumPort):
         return self.path_from_chromium_base('third_party', 'cygwin', 'bin',
                                             'wdiff.exe')
 
+    def _kill_all(self, process_name):
+        cmd = ['taskkill.exe', '/f', '/im', process_name]
+        self._executive.run_command(cmd)
+
     def _shut_down_http_server(self, server_pid):
         """Shut down the lighttpd web server. Blocks until it's fully
         shut down.
@@ -151,11 +155,7 @@ class ChromiumWinPort(chromium.ChromiumPort):
         Args:
             server_pid: The process ID of the running server.
         """
-        subprocess.Popen(('taskkill.exe', '/f', '/im', 'LightTPD.exe'),
-                        stdin=open(os.devnull, 'r'),
-                        stdout=subprocess.PIPE,
-                        stderr=subprocess.PIPE).wait()
-        subprocess.Popen(('taskkill.exe', '/f', '/im', 'httpd.exe'),
-                        stdin=open(os.devnull, 'r'),
-                        stdout=subprocess.PIPE,
-                        stderr=subprocess.PIPE).wait()
+        # FIXME: Why are we ignoring server_pid and calling
+        # _kill_all instead of Executive.kill_process(pid)?
+        self._kill_all("LightTPD.exe")
+        self._kill_all("httpd.exe")
