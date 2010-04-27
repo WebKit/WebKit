@@ -1,3 +1,14 @@
+2010-04-27  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        <rdar://problem/7911140> Hitting the "delete" key goes back twice
+
+        Reviewed by Maciej Stachowiak.
+
+        * WebView.cpp:
+        (WebView::keyDown):
+        Return true if we navigated back or forward from the key event to
+        prevent the event from being propagated further.
+
 2010-04-25  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej Stachowiak.
