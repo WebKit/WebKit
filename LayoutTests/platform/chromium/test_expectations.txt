@@ -2877,3 +2877,6 @@ BUGWK38106 MAC : svg/custom/dominant-baseline-hanging.svg = IMAGE
 
 // Started failing at 58212
 BUGWK38108 MAC : fast/backgrounds/size/contain-and-cover.html = IMAGE
+
+// WebKit roll 58304:58400
+BUGUKAI WIN MAC : fast/text/international/bold-bengali.html = MISSING

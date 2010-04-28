@@ -1,3 +1,24 @@
+2010-04-28  Marcus Bulach  <bulach@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        [chromium] Rebaseline svg-background-partial-redraw, node-iterator-prototype, and upstream test expectations for fast/text/international/bold-bengali.html
+        https://bugs.webkit.org/show_bug.cgi?id=38259
+
+        * platform/chromium-linux/fast/images/svg-background-partial-redraw-expected.checksum: Added.
+        * platform/chromium-linux/fast/images/svg-background-partial-redraw-expected.png: Added.
+        * platform/chromium-mac/fast/images: Added.
+        * platform/chromium-mac/fast/images/svg-background-partial-redraw-expected.checksum: Added.
+        * platform/chromium-mac/fast/images/svg-background-partial-redraw-expected.png: Added.
+        * platform/chromium-mac/traversal: Added.
+        * platform/chromium-mac/traversal/node-iterator-prototype-expected.txt: Added.
+        * platform/chromium-win/fast/images/svg-background-partial-redraw-expected.checksum: Added.
+        * platform/chromium-win/fast/images/svg-background-partial-redraw-expected.png: Added.
+        * platform/chromium-win/fast/images/svg-background-partial-redraw-expected.txt: Added.
+        * platform/chromium-win/traversal: Added.
+        * platform/chromium-win/traversal/node-iterator-prototype-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-04-28  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Yury Semikhatsky.
