@@ -1,5 +1,11 @@
 2010-04-28  Darin Adler  <darin@apple.com>
 
+        Ignore a directory the Python tools creates.
+
+        * Scripts/webkitpy/style: Modified property svn:ignore.
+
+2010-04-28  Darin Adler  <darin@apple.com>
+
         * Scripts/extract-localizable-strings: Fix minor mistake in
         argument checking.
 
