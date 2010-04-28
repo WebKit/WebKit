@@ -1,3 +1,21 @@
+2010-04-27  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by Jian Li.
+
+        [Chromium] Filter out URLs with a file scheme from text/uri-list when dragging.
+        https://bugs.webkit.org/show_bug.cgi?id=38227
+
+        Unfortunately, the simple fix of not populating the drag data with file URLs doesn't work
+        since the default drop handling uses the drag data URL to navigate to dropped files/URLs.
+        For now, we hack around the problem in the Chromium platform, but the proper long term
+        solution is to change DragController::performDrag to check dragData::asFilenames().
+
+        No new tests.
+
+        * platform/chromium/ClipboardChromium.cpp:
+        (WebCore::ClipboardChromium::getData):
+        (WebCore::ClipboardChromium::types):
+
 2010-04-27  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by the inimitable Dan Bernstein.

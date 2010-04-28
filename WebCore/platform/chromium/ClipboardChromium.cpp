@@ -162,11 +162,15 @@ String ClipboardChromium::getData(const String& type, bool& success) const
     case ClipboardDataTypeNone:
         return String();
 
+    // Hack for URLs. file URLs are used internally for drop's default action, but we don't want
+    // to expose them to the page, so we filter them out here.
     case ClipboardDataTypeURIList:
         {
             String text;
             for (size_t i = 0; i < m_dataObject->uriList.size(); ++i) {
                 const String& uri = m_dataObject->uriList[i];
+                if (protocolIs(uri, "file"))
+                    continue;
                 ASSERT(!uri.isEmpty());
                 if (!text.isEmpty())
                     text.append(textMIMETypeLineSeparator);
@@ -180,7 +184,7 @@ String ClipboardChromium::getData(const String& type, bool& success) const
     case ClipboardDataTypeURL:
         // In case of a previous setData('text/uri-list'), setData() has already
         // prepared the 'url' member, so we can just retrieve it here.
-        if (!m_dataObject->url.isEmpty()) {
+        if (!m_dataObject->url.isEmpty() && !m_dataObject->url.isLocalFile()) {
             success = true;
             return m_dataObject->url.string();
         }
@@ -316,15 +320,24 @@ HashSet<String> ClipboardChromium::types() const
     if (!m_dataObject->filenames.isEmpty())
         results.add("Files");
 
-    if (m_dataObject->url.isValid()) {
+    // Hack for URLs. file URLs are used internally for drop's default action, but we don't want
+    // to expose them to the page, so we filter them out here.
+    if (m_dataObject->url.isValid() && !m_dataObject->url.isLocalFile()) {
         ASSERT(!m_dataObject->uriList.isEmpty());
         results.add("URL");
     }
 
     if (!m_dataObject->uriList.isEmpty()) {
-        // Note that even if the URI list is not empty, it may not actually
-        // contain a valid URL, so we can't return "URL" here.
-        results.add("text/uri-list");
+        // Verify that the URI list contains at least one non-file URL.
+        for (Vector<String>::const_iterator it = m_dataObject->uriList.begin();
+             it != m_dataObject->uriList.end(); ++it) {
+            if (!protocolIs(*it, "file")) {
+                // Note that even if the URI list is not empty, it may not actually
+                // contain a valid URL, so we can't return "URL" here.
+                results.add("text/uri-list");
+                break;
+            }
+        }
     }
 
     if (!m_dataObject->plainText.isEmpty()) {
