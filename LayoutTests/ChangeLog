@@ -1,5 +1,12 @@
 2010-04-27  Julien Chaffraix  <jchaffraix@webkit.org>
 
+        Unreviewed.
+
+        * platform/qt/Skipped: Add the 2 newly added test cases to the list
+        as they involve preflight requests.
+
+2010-04-27  Julien Chaffraix  <jchaffraix@webkit.org>
+
         Reviewed by Alexey Proskuryakov.
 
         [XHR] Cross-Origin synchronous request with credential raises NETWORK_ERR
