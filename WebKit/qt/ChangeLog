@@ -1,3 +1,19 @@
+2010-04-28  Antonio Gomes  <tonikitoo@webkit.org>, Yi Shen <yi.4.shen@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] tst_QWebHistoryInterface::visitedLinks() fails
+        https://bugs.webkit.org/show_bug.cgi?id=37323
+
+        Patch fixes styleProperty method of QWebElement to make use of
+        CSSComputedStyleDeclaration::computedStyle 'allowVisitedStyle' parameter
+        and the corresponding failing QWebHistoryInterface::visitedLinks method.
+
+        * Api/qwebelement.cpp:
+        (QWebElement::styleProperty):
+        * tests/qwebhistoryinterface/tst_qwebhistoryinterface.cpp:
+        (tst_QWebHistoryInterface::visitedLinks):
+
 2010-04-28  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.
