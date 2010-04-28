@@ -79,6 +79,7 @@ public:
     }
     virtual WebKit::WebWorker* createWorker(WebKit::WebWorkerClient*) { return 0; }
     virtual WebKit::WebNotificationPresenter* notificationPresenter() { return 0; }
+    virtual WebKit::WebApplicationCacheHost* createApplicationCacheHost(WebKit::WebApplicationCacheHostClient*) { return 0; }
 
 private:
     ~TestWebWorker() {}

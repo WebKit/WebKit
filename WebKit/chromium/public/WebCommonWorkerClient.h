@@ -33,6 +33,8 @@
 
 namespace WebKit {
 
+class WebApplicationCacheHost;
+class WebApplicationCacheHostClient;
 class WebNotificationPresenter;
 class WebString;
 class WebWorker;
@@ -73,6 +75,9 @@ public:
     // WebSharedWorkers are not instantiated via this API - instead
     // they are created via the WebSharedWorkerRepository.
     virtual WebWorker* createWorker(WebWorkerClient* client) = 0;
+
+    // Called on the main webkit thread in the worker process during initialization.
+    virtual WebApplicationCacheHost* createApplicationCacheHost(WebApplicationCacheHostClient*) = 0;
 
 protected:
     ~WebCommonWorkerClient() { }

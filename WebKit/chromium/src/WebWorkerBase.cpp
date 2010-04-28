@@ -51,30 +51,6 @@ namespace WebKit {
 
 #if ENABLE(WORKERS)
 
-// Dummy WebViewDelegate - we only need it in Worker process to load a
-// 'shadow page' which will initialize WebCore loader.
-class WorkerWebFrameClient : public WebFrameClient {
-public:
-    // Tell the loader to load the data into the 'shadow page' synchronously,
-    // so we can grab the resulting Document right after load.
-    virtual void didCreateDataSource(WebFrame* frame, WebDataSource* ds)
-    {
-        static_cast<WebDataSourceImpl*>(ds)->setDeferMainResourceDataLoad(false);
-    }
-
-    // Lazy allocate and leak this instance.
-    static WorkerWebFrameClient* sharedInstance()
-    {
-        static WorkerWebFrameClient client;
-        return &client;
-    }
-
-private:
-    WorkerWebFrameClient()
-    {
-    }
-};
-
 // This function is called on the main thread to force to initialize some static
 // values used in WebKit before any worker thread is started. This is because in
 // our worker processs, we do not run any WebKit code in main thread and thus
@@ -103,6 +79,9 @@ WebWorkerBase::WebWorkerBase()
 WebWorkerBase::~WebWorkerBase()
 {
     ASSERT(m_webView);
+    WebFrameImpl* webFrame = static_cast<WebFrameImpl*>(m_webView->mainFrame());
+    if (webFrame)
+        webFrame->setClient(0);
     m_webView->close();
 }
 
@@ -122,7 +101,7 @@ void WebWorkerBase::initializeLoader(const WebURL& url)
     // infrastructure.
     ASSERT(!m_webView);
     m_webView = WebView::create(0);
-    m_webView->initializeMainFrame(WorkerWebFrameClient::sharedInstance());
+    m_webView->initializeMainFrame(this);
 
     WebFrameImpl* webFrame = static_cast<WebFrameImpl*>(m_webView->mainFrame());
 
@@ -149,6 +128,20 @@ void WebWorkerBase::invokeTaskMethod(void* param)
         static_cast<ScriptExecutionContext::Task*>(param);
     task->performTask(0);
     delete task;
+}
+
+void WebWorkerBase::didCreateDataSource(WebFrame*, WebDataSource* ds)
+{
+    // Tell the loader to load the data into the 'shadow page' synchronously,
+    // so we can grab the resulting Document right after load.
+    static_cast<WebDataSourceImpl*>(ds)->setDeferMainResourceDataLoad(false);
+}
+
+WebApplicationCacheHost* WebWorkerBase::createApplicationCacheHost(WebFrame*, WebApplicationCacheHostClient* appcacheHostClient)
+{
+    if (commonClient())
+        return commonClient()->createApplicationCacheHost(appcacheHostClient);
+    return 0;
 }
 
 // WorkerObjectProxy -----------------------------------------------------------

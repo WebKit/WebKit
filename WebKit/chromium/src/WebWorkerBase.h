@@ -34,6 +34,7 @@
 #if ENABLE(WORKERS)
 
 #include "ScriptExecutionContext.h"
+#include "WebFrameClient.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerObjectProxy.h"
 #include <wtf/PassOwnPtr.h>
@@ -44,6 +45,8 @@ class WorkerThread;
 }
 
 namespace WebKit {
+class WebApplicationCacheHost;
+class WebApplicationCacheHostClient;
 class WebCommonWorkerClient;
 class WebSecurityOrigin;
 class WebString;
@@ -56,7 +59,8 @@ class WebWorkerClient;
 // code used by both implementation classes, including implementations of the
 // WorkerObjectProxy and WorkerLoaderProxy interfaces.
 class WebWorkerBase : public WebCore::WorkerObjectProxy
-                    , public WebCore::WorkerLoaderProxy {
+                    , public WebCore::WorkerLoaderProxy
+                    , public WebFrameClient {
 public:
     WebWorkerBase();
     virtual ~WebWorkerBase();
@@ -79,6 +83,10 @@ public:
     virtual void postTaskToLoader(PassOwnPtr<WebCore::ScriptExecutionContext::Task>);
     virtual void postTaskForModeToWorkerContext(
         PassOwnPtr<WebCore::ScriptExecutionContext::Task>, const WebCore::String& mode);
+
+    // WebFrameClient methods to support resource loading thru the 'shadow page'.
+    virtual void didCreateDataSource(WebFrame*, WebDataSource*);
+    virtual WebApplicationCacheHost* createApplicationCacheHost(WebFrame*, WebApplicationCacheHostClient*);
 
     // Executes the given task on the main thread.
     static void dispatchTaskToMainThread(PassOwnPtr<WebCore::ScriptExecutionContext::Task>);
