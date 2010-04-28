@@ -313,7 +313,7 @@ bool DragController::tryDocumentDrag(DragData* dragData, DragDestinationAction a
         }
 
         IntPoint point = frameView->windowToContents(dragData->clientPosition());
-        Element* element = elementUnderMouse(m_documentUnderMouse, point);
+        Element* element = elementUnderMouse(m_documentUnderMouse.get(), point);
         if (!asFileInput(element)) {
             VisibleSelection dragCaret = m_documentUnderMouse->frame()->visiblePositionForPoint(point);
             m_page->dragCaretController()->setSelection(dragCaret);
@@ -363,7 +363,7 @@ bool DragController::concludeEditDrag(DragData* dragData)
         return false;
 
     IntPoint point = m_documentUnderMouse->view()->windowToContents(dragData->clientPosition());
-    Element* element = elementUnderMouse(m_documentUnderMouse, point);
+    Element* element = elementUnderMouse(m_documentUnderMouse.get(), point);
     Frame* innerFrame = element->ownerDocument()->frame();
     ASSERT(innerFrame);
 
@@ -439,7 +439,7 @@ bool DragController::concludeEditDrag(DragData* dragData)
             applyCommand(MoveSelectionCommand::create(fragment, dragCaret.base(), smartInsert, smartDelete));
         } else {
             if (setSelectionToDragCaret(innerFrame, dragCaret, range, point))
-                applyCommand(ReplaceSelectionCommand::create(m_documentUnderMouse, fragment, true, dragData->canSmartReplace(), chosePlainText));
+                applyCommand(ReplaceSelectionCommand::create(m_documentUnderMouse.get(), fragment, true, dragData->canSmartReplace(), chosePlainText));
         }
     } else {
         String text = dragData->asPlainText();
@@ -450,7 +450,7 @@ bool DragController::concludeEditDrag(DragData* dragData)
 
         m_client->willPerformDragDestinationAction(DragDestinationActionEdit, dragData);
         if (setSelectionToDragCaret(innerFrame, dragCaret, range, point))
-            applyCommand(ReplaceSelectionCommand::create(m_documentUnderMouse, createFragmentFromText(range.get(), text), true, false, true));
+            applyCommand(ReplaceSelectionCommand::create(m_documentUnderMouse.get(), createFragmentFromText(range.get(), text), true, false, true));
     }
     loader->setAllowStaleResources(false);
 
