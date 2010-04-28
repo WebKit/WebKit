@@ -111,6 +111,7 @@ namespace WebCore {
         virtual void databaseExceededQuota(const String&) { }
 #endif
         virtual bool isContextThread() const;
+        virtual bool isJSExecutionTerminated() const;
 
 
         // These methods are used for GC marking. See JSWorkerContext::markChildren(MarkStack&) in

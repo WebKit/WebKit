@@ -71,7 +71,9 @@ JSValue toJS(ExecState*, WorkerContext* workerContext)
     WorkerScriptController* script = workerContext->script();
     if (!script)
         return jsNull();
-    return script->workerContextWrapper();
+    JSWorkerContext* contextWrapper = script->workerContextWrapper();
+    ASSERT(contextWrapper);
+    return contextWrapper;
 }
 
 JSDedicatedWorkerContext* toJSDedicatedWorkerContext(JSValue value)

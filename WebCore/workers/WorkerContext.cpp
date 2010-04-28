@@ -288,6 +288,11 @@ bool WorkerContext::isContextThread() const
     return currentThread() == thread()->threadID();
 }
 
+bool WorkerContext::isJSExecutionTerminated() const
+{
+    return m_script->isExecutionForbidden();
+}
+
 EventTargetData* WorkerContext::eventTargetData()
 {
     return &m_eventTargetData;

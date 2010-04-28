@@ -1,3 +1,32 @@
+2010-04-28  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Geoffrey Garen.
+
+        REGRESSION: fast/workers/wrapper-map-gc.html crashes on Snow Leopard Release Bot
+        https://bugs.webkit.org/show_bug.cgi?id=37554
+
+        The flaky fast/workers/wrapper-map-gc.html will stop being flaky.
+
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::handleEvent):
+        check if JS execution was terminated, as in cases of Worker.terminate() or WorkerGlobalScope.close().
+        * bindings/js/JSWorkerContextBase.cpp:
+        (WebCore::toJS): ASSERT the value of workerContextWrapper, it should never be 0.
+        * bindings/js/WorkerScriptController.h:
+        (WebCore::WorkerScriptController::workerContextWrapper): remove returning 0 if JS execution was forbidden.
+        (WebCore::WorkerScriptController::isExecutionForbidden):
+        * bindings/v8/WorkerScriptController.h:
+        (WebCore::WorkerScriptController::isExecutionForbidden):
+
+        Add ScriptExecutionContext::isJSExecutionTerminated(), it is always 'false' for Document
+        and 'true' for WorkerContext when script is terminated.
+        * dom/ScriptExecutionContext.h:
+        * dom/Document.h:
+        (WebCore::Document::isJSExecutionTerminated):
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::isJSExecutionTerminated):
+        * workers/WorkerContext.h:
+
 2010-04-28  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

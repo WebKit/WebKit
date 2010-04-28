@@ -76,6 +76,7 @@ namespace WebCore {
         void stopDatabases(DatabaseTaskSynchronizer*);
 #endif
         virtual bool isContextThread() const = 0;
+        virtual bool isJSExecutionTerminated() const = 0;
 
         const KURL& url() const { return virtualURL(); }
         KURL completeURL(const String& url) const { return virtualCompleteURL(url); }

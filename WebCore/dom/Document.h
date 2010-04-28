@@ -950,6 +950,7 @@ public:
 #endif
 
     virtual bool isContextThread() const;
+    virtual bool isJSExecutionTerminated() const { return false; }
 
     void setUsingGeolocation(bool f) { m_usingGeolocation = f; }
     bool usingGeolocation() const { return m_usingGeolocation; };
