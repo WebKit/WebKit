@@ -1,3 +1,86 @@
+2010-04-28  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by Dimitri Glazkov
+
+        Rebaseline Webkit Mac pixel results and chromium pixel results
+        caused by http://trac.webkit.org/changeset/58191
+        Webkit Mac pixel results failed with --tolerance=0
+
+        * platform/chromium-linux/editing/deleting/4845371-expected.checksum:
+        * platform/chromium-linux/editing/deleting/4845371-expected.png: Removed.
+        * platform/chromium-linux/editing/deleting/5126166-expected.checksum:
+        * platform/chromium-linux/editing/deleting/5126166-expected.png:
+        * platform/chromium-linux/editing/deleting/5483370-expected.checksum:
+        * platform/chromium-linux/editing/deleting/5483370-expected.png:
+        * platform/chromium-linux/editing/deleting/table-cells-expected.checksum:
+        * platform/chromium-linux/editing/deleting/table-cells-expected.png: Removed.
+        * platform/chromium-linux/editing/inserting/4875189-2-expected.checksum:
+        * platform/chromium-linux/editing/inserting/4875189-2-expected.png:
+        * platform/chromium-linux/editing/pasteboard/5387578-expected.checksum:
+        * platform/chromium-linux/editing/pasteboard/5387578-expected.png:
+        * platform/chromium-linux/editing/pasteboard/paste-4039777-fix-expected.checksum:
+        * platform/chromium-linux/editing/pasteboard/paste-4039777-fix-expected.png:
+        * platform/chromium-linux/editing/pasteboard/paste-table-001-expected.checksum:
+        * platform/chromium-linux/editing/pasteboard/paste-table-001-expected.png: Removed.
+        * platform/chromium-linux/editing/pasteboard/paste-table-cells-expected.checksum:
+        * platform/chromium-linux/editing/pasteboard/paste-table-cells-expected.png: Removed.
+        * platform/chromium-linux/editing/selection/move-past-trailing-space-expected.checksum:
+        * platform/chromium-linux/editing/selection/move-past-trailing-space-expected.png: Removed.
+        * platform/chromium-linux/fast/inline-block/14498-positionForCoordinates-expected.checksum:
+        * platform/chromium-linux/fast/inline-block/14498-positionForCoordinates-expected.png: Removed.
+        * platform/chromium-linux/fast/repaint/caret-outside-block-expected.checksum:
+        * platform/chromium-linux/fast/repaint/caret-outside-block-expected.png: Removed.
+        * platform/chromium-mac/editing/deleting/4845371-expected.checksum: Added.
+        * platform/chromium-mac/editing/deleting/5126166-expected.checksum: Added.
+        * platform/chromium-mac/editing/deleting/5483370-expected.checksum: Added.
+        * platform/chromium-mac/editing/deleting/table-cells-expected.checksum: Added.
+        * platform/chromium-mac/editing/inserting/4875189-2-expected.checksum: Added.
+        * platform/chromium-mac/editing/pasteboard/5387578-expected.checksum: Added.
+        * platform/chromium-mac/editing/pasteboard/paste-4039777-fix-expected.checksum: Added.
+        * platform/chromium-mac/editing/pasteboard/paste-table-001-expected.checksum: Added.
+        * platform/chromium-mac/editing/pasteboard/paste-table-cells-expected.checksum: Added.
+        * platform/chromium-mac/editing/selection/move-past-trailing-space-expected.checksum: Added.
+        * platform/chromium-mac/fast/inline-block/14498-positionForCoordinates-expected.checksum: Added.
+        * platform/chromium-mac/fast/repaint/caret-outside-block-expected.checksum: Added.
+        * platform/chromium-mac/fast/repaint/caret-outside-block-expected.png: Added.
+        * platform/chromium-win/editing/deleting/4845371-expected.checksum:
+        * platform/chromium-win/editing/deleting/4845371-expected.png:
+        * platform/chromium-win/editing/deleting/5126166-expected.checksum:
+        * platform/chromium-win/editing/deleting/5126166-expected.png:
+        * platform/chromium-win/editing/deleting/5483370-expected.checksum:
+        * platform/chromium-win/editing/deleting/5483370-expected.png:
+        * platform/chromium-win/editing/deleting/table-cells-expected.checksum:
+        * platform/chromium-win/editing/deleting/table-cells-expected.png:
+        * platform/chromium-win/editing/inserting/4875189-2-expected.checksum:
+        * platform/chromium-win/editing/inserting/4875189-2-expected.png:
+        * platform/chromium-win/editing/pasteboard/5387578-expected.checksum:
+        * platform/chromium-win/editing/pasteboard/5387578-expected.png:
+        * platform/chromium-win/editing/pasteboard/paste-4039777-fix-expected.checksum:
+        * platform/chromium-win/editing/pasteboard/paste-4039777-fix-expected.png:
+        * platform/chromium-win/editing/pasteboard/paste-table-001-expected.checksum:
+        * platform/chromium-win/editing/pasteboard/paste-table-001-expected.png:
+        * platform/chromium-win/editing/pasteboard/paste-table-cells-expected.checksum:
+        * platform/chromium-win/editing/pasteboard/paste-table-cells-expected.png:
+        * platform/chromium-win/editing/selection/move-past-trailing-space-expected.checksum:
+        * platform/chromium-win/editing/selection/move-past-trailing-space-expected.png:
+        * platform/chromium-win/fast/inline-block/14498-positionForCoordinates-expected.checksum:
+        * platform/chromium-win/fast/inline-block/14498-positionForCoordinates-expected.png:
+        * platform/chromium-win/fast/repaint/caret-outside-block-expected.checksum:
+        * platform/chromium-win/fast/repaint/caret-outside-block-expected.png:
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/editing/deleting/4845371-expected.png:
+        * platform/mac/editing/deleting/5126166-expected.png:
+        * platform/mac/editing/deleting/5483370-expected.png:
+        * platform/mac/editing/deleting/table-cells-expected.png:
+        * platform/mac/editing/inserting/4875189-2-expected.png:
+        * platform/mac/editing/pasteboard/5387578-expected.png:
+        * platform/mac/editing/pasteboard/paste-4039777-fix-expected.png:
+        * platform/mac/editing/pasteboard/paste-table-001-expected.png:
+        * platform/mac/editing/pasteboard/paste-table-cells-expected.png:
+        * platform/mac/editing/selection/move-past-trailing-space-expected.png:
+        * platform/mac/fast/inline-block/14498-positionForCoordinates-expected.png:
+        * platform/mac/fast/repaint/caret-outside-block-expected.png:
+
 2010-04-28  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
