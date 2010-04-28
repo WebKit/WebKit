@@ -81,19 +81,16 @@ DocumentThreadableLoader::DocumentThreadableLoader(Document* document, Threadabl
     
     ASSERT(m_options.crossOriginRequestPolicy == UseAccessControl);
 
-    OwnPtr<ResourceRequest> crossOriginRequest(new ResourceRequest(request));
-    crossOriginRequest->removeCredentials();
-    crossOriginRequest->setAllowCookies(m_options.allowCredentials);
-
-    if (!m_options.forcePreflight && isSimpleCrossOriginAccessRequest(crossOriginRequest->httpMethod(), crossOriginRequest->httpHeaderFields()))
-        makeSimpleCrossOriginAccessRequest(*crossOriginRequest);
+    if (!m_options.forcePreflight && isSimpleCrossOriginAccessRequest(request.httpMethod(), request.httpHeaderFields()))
+        makeSimpleCrossOriginAccessRequest(request);
     else {
-        m_actualRequest.set(crossOriginRequest.release());
+        m_actualRequest.set(new ResourceRequest(request));
+        m_actualRequest->setAllowCookies(m_options.allowCredentials);
 
-        if (CrossOriginPreflightResultCache::shared().canSkipPreflight(document->securityOrigin()->toString(), m_actualRequest->url(), m_options.allowCredentials, m_actualRequest->httpMethod(), m_actualRequest->httpHeaderFields()))
+        if (CrossOriginPreflightResultCache::shared().canSkipPreflight(document->securityOrigin()->toString(), request.url(), m_options.allowCredentials, request.httpMethod(), request.httpHeaderFields()))
             preflightSuccess();
         else
-            makeCrossOriginAccessRequestWithPreflight(*m_actualRequest);
+            makeCrossOriginAccessRequestWithPreflight(request);
     }
 }
 
@@ -109,6 +106,8 @@ void DocumentThreadableLoader::makeSimpleCrossOriginAccessRequest(const Resource
 
     // Make a copy of the passed request so that we can modify some details.
     ResourceRequest crossOriginRequest(request);
+    crossOriginRequest.removeCredentials();
+    crossOriginRequest.setAllowCookies(m_options.allowCredentials);
     crossOriginRequest.setHTTPOrigin(m_document->securityOrigin()->toString());
 
     loadRequest(crossOriginRequest, DoSecurityCheck);
@@ -298,11 +297,6 @@ void DocumentThreadableLoader::preflightFailure()
 
 void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, SecurityCheckPolicy securityCheck)
 {
-    // Any credential should have been removed from the cross-site requests.
-    const KURL& requestURL = request.url();
-    ASSERT(m_sameOriginRequest || requestURL.user().isEmpty());
-    ASSERT(m_sameOriginRequest || requestURL.pass().isEmpty());
-
     if (m_async) {
         // Don't sniff content or send load callbacks for the preflight request.
         bool sendLoadCallbacks = m_options.sendLoadCallbacks && !m_actualRequest;
@@ -326,15 +320,15 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, Secur
 
     // No exception for file:/// resources, see <rdar://problem/4962298>.
     // Also, if we have an HTTP response, then it wasn't a network error in fact.
-    if (!error.isNull() && !requestURL.isLocalFile() && response.httpStatusCode() <= 0) {
+    if (!error.isNull() && !request.url().isLocalFile() && response.httpStatusCode() <= 0) {
         m_client->didFail(error);
         return;
     }
 
     // FIXME: FrameLoader::loadSynchronously() does not tell us whether a redirect happened or not, so we guess by comparing the
     // request and response URLs. This isn't a perfect test though, since a server can serve a redirect to the same URL that was
-    // requested. Also comparing the request and response URLs as strings will fail if the requestURL still has its credentials.
-    if (requestURL != response.url() && !isAllowedRedirect(response.url())) {
+    // requested.
+    if (request.url() != response.url() && !isAllowedRedirect(response.url())) {
         m_client->didFailRedirectCheck();
         return;
     }

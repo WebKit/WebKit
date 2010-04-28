@@ -1,5 +1,16 @@
 2010-04-27  Julien Chaffraix  <jchaffraix@webkit.org>
 
+        Unreviewed, rolling out my changes as it rendered the Qt bot unreliable.
+
+        * http/tests/xmlhttprequest/access-control-preflight-credential-async-expected.txt: Removed.
+        * http/tests/xmlhttprequest/access-control-preflight-credential-async.html: Removed.
+        * http/tests/xmlhttprequest/access-control-preflight-credential-sync-expected.txt: Removed.
+        * http/tests/xmlhttprequest/access-control-preflight-credential-sync.html: Removed.
+        * http/tests/xmlhttprequest/resources/basic-auth/access-control-auth-basic.php: Removed.
+        * platform/qt/Skipped:
+
+2010-04-27  Julien Chaffraix  <jchaffraix@webkit.org>
+
         Unreviewed.
 
         * platform/qt/Skipped: Add the 2 newly added test cases to the list

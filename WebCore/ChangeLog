@@ -1,5 +1,14 @@
 2010-04-27  Julien Chaffraix  <jchaffraix@webkit.org>
 
+        Unreviewed, rolling out my changes as it rendered the Qt bot unreliable.
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::DocumentThreadableLoader):
+        (WebCore::DocumentThreadableLoader::makeSimpleCrossOriginAccessRequest):
+        (WebCore::DocumentThreadableLoader::loadRequest):
+
+2010-04-27  Julien Chaffraix  <jchaffraix@webkit.org>
+
         Reviewed by Alexey Proskuryakov.
 
         [XHR] Cross-Origin synchronous request with credential raises NETWORK_ERR
