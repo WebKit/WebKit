@@ -1,3 +1,15 @@
+2010-04-28  Daniel Bates  <dbates@rim.com>
+
+        Unreviewed, rebase expected result of failing test.
+
+        Rebasing Qt expected result for selection-gap-overflow-scroll-2.html.
+        Following the landing of bug #37686, this test started failing despite
+        being unrelated to this bug. From looking at the diff of the result,
+        which shows a 1 pixel shift in widths, and based on Csaba Osztrogonac's
+        comment, we have decided to rebase this result.
+
+        * platform/qt/fast/repaint/selection-gap-overflow-scroll-2-expected.txt:
+
 2010-04-27  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler and Eric Seidel.
