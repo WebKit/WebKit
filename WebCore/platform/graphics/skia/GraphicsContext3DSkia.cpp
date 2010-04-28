@@ -55,9 +55,10 @@ bool GraphicsContext3D::getImageData(Image* image,
         return false;
     SkBitmap& skiaImageRef = *skiaImage;
     SkAutoLockPixels lock(skiaImageRef);
+    int width = skiaImage->width();
     int height = skiaImage->height();
     int rowBytes = skiaImage->rowBytes();
-    ASSERT(rowBytes == skiaImage->width() * 4);
+    ASSERT(rowBytes == width * 4);
     uint8_t* pixels = reinterpret_cast<uint8_t*>(skiaImage->getPixels());
     outputVector.resize(rowBytes * height);
     int size = rowBytes * height;
