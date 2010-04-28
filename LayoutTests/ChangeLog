@@ -1,3 +1,16 @@
+2010-04-27  Evan Martin  <evan@chromium.org>
+
+        Reviewed by David Levin.
+
+        [chromium] update test expectations for ancient linux bug
+        https://bugs.webkit.org/show_bug.cgi?id=38229
+
+        According to
+        http://test-results.appspot.com/dashboards/flakiness_dashboard.html#tests=plugins%2Fembed-attributes-setting.html
+        this hasn't crashed in a long time, so the CRASH annotation is superfluous.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-04-27  François Sausset  <sausset@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.
