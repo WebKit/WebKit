@@ -1,3 +1,20 @@
+2010-04-28  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r58313.
+        http://trac.webkit.org/changeset/58313
+        https://bugs.webkit.org/show_bug.cgi?id=38253
+
+        Regression evident in pixel tests: the search icon is always
+        clipped at the bottom. (Requested by jorlow on #webkit).
+
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::controlClipRect):
+        * rendering/RenderTextControl.h:
+        (WebCore::RenderTextControl::hasControlClip):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::paint):
+        * rendering/RenderTextControlSingleLine.h:
+
 2010-04-28  Justin McPherson <justin.mcpherson@nokia.com>
 
         Reviewed by Simon Hausmann.

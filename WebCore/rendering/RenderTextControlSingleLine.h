@@ -55,7 +55,6 @@ public:
 
 private:
     virtual bool hasControlClip() const { return m_cancelButton; }
-    virtual IntRect controlClipRect(int tx, int ty) const;
     virtual bool isTextField() const { return true; }
 
     virtual void subtreeHasChanged();
