@@ -1,3 +1,14 @@
+2010-04-28  Justin McPherson <justin.mcpherson@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix detection of Qt 4.7's multimedia libraries
+
+        QtMultimedia has been split into an additional media services library, which
+        we're using. mediaservices depends on multimedia.
+
+        * WebCore.pro:
+
 2010-04-28  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Unreviewed attempt to fix the chromium build.
