@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+<head>
+<style type="text/css">
+@page {
+    margin-top:5cm;
+    margin-bottom:10cm;
+}
+@page :left {
+    margin-right:3cm;
+}
+@page :right {
+    margin-left:3cm;
+}
+@page :first {
+    border-width:1px;
+}
+@page hello {
+    color:green;
+}
+@page world:right {
+    color:red;
+}
+@media print {
+    @page somepage:first {
+        margin:3cm;
+    }
+}
+/* FIXME: Add the following once size property is implemented.
+
+@page :left {
+    size: 4in 6in;
+}
+@page :right {
+    size: letter;
+}
+*/
+/* FIXME: Add the following once margin at-rule is implemented.
+
+@page :first {
+    @top-left-corner {
+        content:"TLC";
+    }
+    @bottom-center {
+        content:"BC";
+    }
+}
+*/
+</style>
+<script type="text/javascript">
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function print(str)
+{
+    document.getElementById("output").innerHTML += str;
+}
+
+function printCssTextOfPageRules()
+{
+    var ss = document.styleSheets;
+    for (var i = 0; i < ss.length; i++) {
+        for (var j = 0; j < ss[i].cssRules.length; j++) {
+            print(ss[i].cssRules[j].cssText + "<br/>");
+        }
+    }
+}
+
+</script>
+</head>
+<body onload="printCssTextOfPageRules();">
+<div id="output"></div>
+</body>
+</html>
+

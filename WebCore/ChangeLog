@@ -1,3 +1,34 @@
+2010-04-27  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Enhance CSS parser for Paged Media (Iteration 2)
+        Parse and hold paged media rules in CSSStyleSelector.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35782
+
+        Test: printing/page-rule-css-text.html
+
+        * css/CSSGrammar.y:
+        * css/CSSPageRule.cpp:
+        (WebCore::CSSPageRule::CSSPageRule):
+        (WebCore::CSSPageRule::selectorText):
+        * css/CSSPageRule.h:
+        (WebCore::CSSPageRule::create):
+        (WebCore::CSSPageRule::isPageRule):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::createPageRule):
+        * css/CSSStyleRule.h:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSRuleSet::getPageRules):
+        (WebCore::CSSRuleSet::CSSRuleSet):
+        (WebCore::CSSRuleSet::~CSSRuleSet):
+        (WebCore::CSSRuleSet::addPageRule):
+        (WebCore::CSSRuleSet::addRulesFromSheet):
+        * css/CSSStyleSelector.h:
+        * css/StyleBase.h:
+        (WebCore::StyleBase::isPageRule):
+
 2010-04-27  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Oliver Hunt.

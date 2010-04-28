@@ -40,6 +40,7 @@
 #include "CSSInitialValue.h"
 #include "CSSMediaRule.h"
 #include "CSSMutableStyleDeclaration.h"
+#include "CSSPageRule.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSProperty.h"
 #include "CSSPropertyNames.h"
@@ -5198,15 +5199,19 @@ bool CSSParser::addVariableDeclarationBlock(const CSSParserString&)
 
 #endif
 
-CSSRule* CSSParser::createPageRule(CSSSelector* /* pageSelector */)
+CSSRule* CSSParser::createPageRule(CSSSelector* pageSelector)
 {
-    // FIXME: Create page rule here, using:
-    //        - pageSelector->pseudoType(): the page pseudo-class, i.e., :left, :right, or :first
-    //        - pageSelector->m_tag:  the page name
-    //        - m_parsedProperties: the page properties
-
+    // FIXME: Margin at-rules are ignored.
+    m_allowImportRules = m_allowNamespaceDeclarations = m_allowVariablesRules = false;
+    CSSPageRule* pageRule = 0;
+    if (pageSelector) {
+        RefPtr<CSSPageRule> rule = CSSPageRule::create(m_styleSheet, pageSelector, m_lastSelectorLine);
+        rule->setDeclaration(CSSMutableStyleDeclaration::create(rule.get(), m_parsedProperties, m_numParsedProperties));
+        pageRule = rule.get();
+        m_parsedStyleObjects.append(rule.release());
+    }
     clearProperties();
-    return 0; // until this method is implemented.
+    return pageRule;
 }
 
 CSSRule* CSSParser::createMarginAtRule(CSSSelector::MarginBoxType /* marginBox */)

@@ -1,0 +1,8 @@
+@page { margin-top: 5cm; margin-bottom: 10cm; }
+@page :left { margin-right: 3cm; }
+@page :right { margin-left: 3cm; }
+@page :first { border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; }
+@page hello { color: green; }
+@page world:right { color: red; }
+@media print { @page somepage:first { margin-top: 3cm; margin-right: 3cm; margin-bottom: 3cm; margin-left: 3cm; } }
+

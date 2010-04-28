@@ -22,37 +22,34 @@
 #ifndef CSSPageRule_h
 #define CSSPageRule_h
 
-#include "CSSRule.h"
+#include "CSSStyleRule.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class CSSMutableStyleDeclaration;
+class CSSSelector;
+class CSSSelectorList;
 
-class CSSPageRule : public CSSRule {
+class CSSPageRule : public CSSStyleRule {
 public:
-    static PassRefPtr<CSSPageRule> create(CSSStyleSheet* parent)
+    static PassRefPtr<CSSPageRule> create(CSSStyleSheet* parent, CSSSelector* selector, int sourceLine)
     {
-        return adoptRef(new CSSPageRule(parent));
+        return adoptRef(new CSSPageRule(parent, selector, sourceLine));
     }
 
     virtual ~CSSPageRule();
 
-    String selectorText() const;
-    void setSelectorText(const String&, ExceptionCode&);
-
-    CSSMutableStyleDeclaration* style() const { return m_style.get(); }
-
-    virtual String cssText() const;
+    virtual String selectorText() const;
 
 private:
-    CSSPageRule(CSSStyleSheet* parent);
+    CSSPageRule(CSSStyleSheet* parent, CSSSelector* selector, int sourceLine);
+
+    virtual bool isPageRule() { return true; }
 
     // Inherited from CSSRule
     virtual unsigned short type() const { return PAGE_RULE; }
-
-    RefPtr<CSSMutableStyleDeclaration> m_style;
 };
 
 } // namespace WebCore

@@ -1,3 +1,19 @@
+2010-04-27  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Enhance CSS parser for Paged Media (Iteration 2)
+        Parse and hold paged media rules in CSSStyleSelector.
+
+        fast/dom/script-tests/prototype-inheritance-2.js is rebaselined because it assumes @page is ignored.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35782
+
+        * fast/dom/prototype-inheritance-2-expected.txt:
+        * fast/dom/script-tests/prototype-inheritance-2.js:
+        * printing/page-rule-css-text-expected.txt: Added.
+        * printing/page-rule-css-text.html: Added.
+
 2010-04-27  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Oliver Hunt.
