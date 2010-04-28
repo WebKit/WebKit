@@ -571,6 +571,7 @@ WebInspector.ResourcesPanel.prototype = {
             return;
         }
 
+        this._timelineGrid.removeEventDividers();
         if (this.mainResourceLoadTime !== -1) {
             var percent = this.calculator.computePercentageFromEventTime(this.mainResourceLoadTime);
 

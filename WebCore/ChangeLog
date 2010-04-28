@@ -2,6 +2,16 @@
 
         Reviewed by Yury Semikhatsky.
 
+        WebInspector: Multiple Main Resource Content Loaded marks appear in Resource panel.
+        https://bugs.webkit.org/show_bug.cgi?id=38270
+
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.updateGraphDividersIfNeeded):
+
+2010-04-28  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
         WebInspector: Timeline: We can have precise urls in the EvaluateScript records.
         https://bugs.webkit.org/show_bug.cgi?id=38264
 
