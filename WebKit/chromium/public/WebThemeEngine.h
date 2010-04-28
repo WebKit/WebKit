@@ -113,7 +113,7 @@ public:
     // the track while the height will be the minimum height.
     virtual void getSize(Part, WebSize*) {}
     virtual void paint(
-        WebCanvas*, Part, State, const WebRect&, const ExtraParams*) {}
+        WebCanvas*, Part, State, const WebRect&, const ExtraParams&) {}
 };
 
 } // namespace WebKit
