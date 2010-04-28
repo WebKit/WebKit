@@ -2,6 +2,16 @@
 
         Reviewed by Mark Rowe.
 
+        Add MiniBrowser to the lists of modules to build and only build it on
+        SnowLeopard and later.
+
+        * Makefile:
+        * MiniBrowser/Makefile:
+
+2010-04-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
         Make running MiniBrowser.app without explicitly setting DYLD_FRAMEWORK_PATH.
 
         * MiniBrowser/MiniBrowser.xcodeproj/project.pbxproj:

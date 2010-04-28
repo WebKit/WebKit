@@ -1,3 +1,11 @@
+2010-04-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Only build on SnowLeopard and later when using the Makefile.
+
+        * Makefile:
+
 2010-04-27  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej Stachowiak.
