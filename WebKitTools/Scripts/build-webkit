@@ -48,7 +48,6 @@ chdirWebKit();
 my $showHelp = 0;
 my $clean = 0;
 my $minimal = 0;
-my $webkit2 = 0;
 my $makeArgs;
 my $startTime = time();
 
@@ -224,7 +223,6 @@ Usage: $programName [options] [options to pass to build system]
   --chromium                        Build the Chromium port on Mac/Win/Linux
   --gtk                             Build the GTK+ port
   --qt                              Build the Qt port
-  --webkit2                         Build the WebKit2 framework
   --inspector-frontend              Copy changes to the inspector front-end files to the build directory
 
   --makeargs=<arguments>            Optional Makefile flags
@@ -238,7 +236,6 @@ my %options = (
     'clean' => \$clean,
     'makeargs=s' => \$makeArgs,
     'minimal' => \$minimal,
-    'webkit2' => \$webkit2,
 );
 
 # Build usage text and options list from features
@@ -261,16 +258,7 @@ setConfiguration();
 my $productDir = productDir();
 
 # Check that all the project directories are there.
-my @projects = ("JavaScriptCore", "WebCore");
-
-if (!$webkit2) {
-    push @projects, "WebKit";
-} else {
-    push @projects, ("WebKit2", "WebKitTools/MiniBrowser");
-}
-
-# Only Apple builds JavaScriptGlue, and only on the Mac
-splice @projects, 1, 0, "JavaScriptGlue" if isAppleMacWebKit();
+my @projects = ("JavaScriptCore", "WebCore", "WebKit");
 
 my @otherDirs = ("WebKitLibraries");
 for my $dir (@projects, @otherDirs) {
@@ -306,8 +294,13 @@ if (isGtk()) {
         }
     }
 
-    # Copy library and header from WebKitLibraries to a findable place in the product directory.
+    # Apple builds JavaScriptGlue, and only on the Mac.
+    splice @projects, 1, 0, "JavaScriptGlue";
 
+    # WebKit2 is only supported in SnowLeopard and later at present.
+    push @projects, ("WebKit2", "WebKitTools/MiniBrowser") if osXVersion()->{"minor"} >= 6;
+
+    # Copy library and header from WebKitLibraries to a findable place in the product directory.
     my @librariesToCopy = (
         "libWebKitSystemInterfaceTiger.a",
         "libWebKitSystemInterfaceLeopard.a",
@@ -394,6 +387,7 @@ for my $dir (@projects) {
     } elsif (isQt()) {
         $result = buildQMakeQtProject($dir, $clean, @options);
     } elsif (isAppleMacWebKit()) {
+        $dir = "MiniBrowser" if $dir eq "WebKitTools/MiniBrowser";
         $result = buildXCodeProject($dir, $clean, @options, @ARGV);
     } elsif (isAppleWinWebKit()) {
         if ($dir eq "WebKit") {
@@ -455,16 +449,10 @@ sub writeCongrats()
 
     print "\n";
     print "===========================================================\n";
-    if ($webkit2) {
-        print " WebKit2 is now built ($buildTime). \n";
-        print " To run MiniBrowser with this newly-built code, use the\n";
-        print " \"run-minibrowser\" script.\n";
-    } else {
-        print " WebKit is now built ($buildTime). \n";
-        if (!isChromium()) {
-            print " To run $launcherName with this newly-built code, use the\n";
-            print " \"$launcherPath\" script.\n";
-        }
+    print " WebKit is now built ($buildTime). \n";
+    if (!isChromium()) {
+        print " To run $launcherName with this newly-built code, use the\n";
+        print " \"$launcherPath\" script.\n";
     }
     print "===========================================================\n";
 }

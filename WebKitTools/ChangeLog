@@ -1,5 +1,13 @@
 2010-04-27  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Stephanie Lewis.
+
+        Always build WebKit2 when building on SnowLeopard and later. 
+
+        * Scripts/build-webkit:
+
+2010-04-27  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Maciej Stachowiak.
 
         Fix for https://bugs.webkit.org/show_bug.cgi?id=38238
