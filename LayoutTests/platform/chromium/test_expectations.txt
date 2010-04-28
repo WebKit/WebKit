@@ -2877,6 +2877,3 @@ BUGWK38106 MAC : svg/custom/dominant-baseline-hanging.svg = IMAGE
 
 // Started failing at 58212
 BUGWK38108 MAC : fast/backgrounds/size/contain-and-cover.html = IMAGE
-
-// Started failing after revert.
-BUGWK38191 : storage/quota-tracking.html = TIMEOUT TEXT

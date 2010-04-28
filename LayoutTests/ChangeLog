@@ -1,3 +1,16 @@
+2010-04-27  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by David Levin.
+
+        Adjusting the expected amount of space used by quota-tracking.html.
+        https://bugs.webkit.org/show_bug.cgi?id=38191
+
+        The expectations changed because of AUTO_VACUUM's overhead.
+
+        * platform/chromium/test_expectations.txt:
+        * storage/quota-tracking-expected.txt:
+        * storage/quota-tracking.html:
+
 2010-04-27  Evan Martin  <evan@chromium.org>
 
         Reviewed by David Levin.

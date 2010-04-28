@@ -1,3 +1,32 @@
+2010-04-27  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by David Levin.
+
+        Turn on AUTO_VACUUM = INCREMENTAL for all HTML5 databases.
+        https://bugs.webkit.org/show_bug.cgi?id=38191
+
+        Vacuum all databases when the number of free pages is at least 10%
+        of the number of total pages. Also, add a guard against a bug that
+        was fixed in SQLite only starting with version 3.6.16.
+
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::maximumSize):
+        (WebCore::SQLiteDatabase::freeSpaceSize):
+        (WebCore::SQLiteDatabase::totalSize):
+        (WebCore::SQLiteDatabase::runIncrementalVacuumCommand):
+        (WebCore::SQLiteDatabase::turnOnIncrementalAutoVacuum):
+        * platform/sql/SQLiteDatabase.h:
+        (WebCore::SQLiteDatabase::):
+        * platform/sql/SQLiteStatement.cpp:
+        (WebCore::SQLiteStatement::prepare):
+        (WebCore::SQLiteStatement::step):
+        * storage/Database.cpp:
+        (WebCore::Database::performOpenAndVerify):
+        (WebCore::Database::incrementalVacuumIfNeeded):
+        * storage/Database.h:
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::postflightAndCommit):
+
 2010-04-27  Garret Kelly  <gdk@chromium.org>
 
         Reviewed by Darin Fisher.

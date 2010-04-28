@@ -65,6 +65,7 @@ public:
     bool tableExists(const String&);
     void clearAllTables();
     void runVacuumCommand();
+    void runIncrementalVacuumCommand();
     
     bool transactionInProgress() const { return m_transactionInProgress; }
     
@@ -85,6 +86,7 @@ public:
     
     // Gets the number of unused bytes in the database file.
     int64_t freeSpaceSize();
+    int64_t totalSize();
 
     // The SQLite SYNCHRONOUS pragma can be either FULL, NORMAL, or OFF
     // FULL - Any writing calls to the DB block until the data is actually on the disk surface
@@ -107,6 +109,18 @@ public:
     void lock();
     void unlock();
     bool isAutoCommitOn() const;
+
+    // The SQLite AUTO_VACUUM pragma can be either NONE, FULL, or INCREMENTAL.
+    // NONE - SQLite does not do any vacuuming
+    // FULL - SQLite moves all empty pages to the end of the DB file and truncates
+    //        the file to remove those pages after every transaction. This option
+    //        requires SQLite to store additional information about each page in
+    //        the database file.
+    // INCREMENTAL - SQLite stores extra information for each page in the database
+    //               file, but removes the empty pages only when PRAGMA INCREMANTAL_VACUUM
+    //               is called.
+    enum AutoVacuumPragma { AutoVacuumNone = 0, AutoVacuumFull = 1, AutoVacuumIncremental = 2 };
+    bool turnOnIncrementalAutoVacuum();
 
     // Set this flag to allow access from multiple threads.  Not all multi-threaded accesses are safe!
     // See http://www.sqlite.org/cvstrac/wiki?p=MultiThreading for more info.
