@@ -61,24 +61,23 @@ public:
 #if QT_VERSION >= 0x040600
     virtual void setInputMethodHint(Qt::InputMethodHint hint, bool enable) = 0;
 #endif
+
+#ifndef QT_NO_CURSOR
     inline void resetCursor()
     {
-#ifndef QT_NO_CURSOR
         if (!cursor().bitmap() && cursor().shape() == m_lastCursor.shape())
             return;
         updateCursor(m_lastCursor);
-#endif
     }
 
     inline void setCursor(const QCursor& cursor)
     {
-#ifndef QT_NO_CURSOR
         m_lastCursor = cursor;
         if (!cursor.bitmap() && cursor.shape() == this->cursor().shape())
             return;
         updateCursor(cursor);
-#endif
     }
+#endif
 
     virtual QPalette palette() const = 0;
     virtual int screenNumber() const = 0;

@@ -1,3 +1,13 @@
+2010-04-28  İsmail Dönmez  <ismail@namtrac.org>
+
+        Reviewed by Simon Hausmann.
+
+        Fix compilation with QT_NO_CURSOR defined.
+
+        * platform/qt/QWebPageClient.h:
+        (QWebPageClient::resetCursor):
+        (QWebPageClient::setCursor):
+
 2010-04-28  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
