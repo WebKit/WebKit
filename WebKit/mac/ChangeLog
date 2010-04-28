@@ -1,3 +1,15 @@
+2010-04-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/7918719> ASSERT(isMainThread()) from Font::setShouldUseSmoothing()
+        
+        Ensure that the WebView +initialize method initializes threading, so that things are correctly
+        initialized when the first call into the WebKit framework is via a WebView class method.
+
+        * WebView/WebView.mm:
+        (+[WebView initialize]):
+
 2010-04-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele Peterson.

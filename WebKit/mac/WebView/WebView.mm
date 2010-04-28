@@ -158,6 +158,7 @@
 #import <objc/objc-runtime.h>
 #import <runtime/ArrayPrototype.h>
 #import <runtime/DateInstance.h>
+#import <runtime/InitializeThreading.h>
 #import <runtime/JSLock.h>
 #import <runtime/JSValue.h>
 #import <wtf/Assertions.h>
@@ -165,6 +166,7 @@
 #import <wtf/RefCountedLeakCounter.h>
 #import <wtf/RefPtr.h>
 #import <wtf/StdLibExtras.h>
+#import <wtf/Threading.h>
 
 #if ENABLE(DASHBOARD_SUPPORT)
 #import <WebKit/WebDashboardRegion.h>
@@ -2458,6 +2460,8 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
     initialized = YES;
 
     InitWebCoreSystemInterface();
+    JSC::initializeThreading();
+    WTF::initializeMainThreadToProcessMainThread();
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillTerminate) name:NSApplicationWillTerminateNotification object:NSApp];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesChangedNotification:) name:WebPreferencesChangedNotification object:nil];
