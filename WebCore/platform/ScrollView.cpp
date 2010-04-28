@@ -295,30 +295,23 @@ void ScrollView::valueChanged(Scrollbar* scrollbar)
     scrollContents(scrollDelta);
 }
 
-void ScrollView::scrollRectIntoViewRecursively(const IntRect& r)
+void ScrollView::scrollRectIntoViewRecursively(const IntRect&)
 {
-    // FIXME: This method is not transform-aware.  It should just be moved to FrameView so that an accurate
-    // position for the child view can be determined.
-    IntRect rect = r;
-    ScrollView* view = this;
-    while (view) {
-        if (view->prohibitsScrolling()) // Allow the views to scroll into view recursively until we hit one that prohibits scrolling.
-            return;
-        view->setScrollPosition(rect.location());
-        rect.move(view->x() - view->scrollOffset().width(), view->y() - view->scrollOffset().height());
-        if (view->parent())
-            rect.intersect(view->frameRect());
-        view = view->parent();
-    }
-    
-    // We may be embedded inside some containing platform scroll view that we don't manage.  This is the case
-    // in Mail.app on OS X, for example, where the WebKit view for message bodies is inside a Cocoa NSScrollView
-    // that contains both it and message headers.  Let the HostWindow know about this scroll so that it can pass the message
-    // on up the view chain.
-    // This rect is not clamped, since Mail actually relies on receiving an unclamped rect with negative coordinates in order to
-    // expose the headers.
-    if (hostWindow())
-        hostWindow()->scrollRectIntoView(rect, this);
+    // FIXME: This function is unused. To clean up further the following can be done:
+    //
+    //   1) This function and FrameView::scrollRectIntoViewRecursively
+    //      can be deleted.
+    //   2) The FrameView::setScrollPosition can be made non-virtual,
+    //      since there is no class derived from FrameView. Or the
+    //      ScrollView::setScrollPosition should be made virtual.
+    //   3) The scrollRectIntoView function can be removed from the
+    //      HostWindow class.
+    //   4) The Chrome::scrollRectIntoView function can be made
+    //      non-virtual.
+    //   5) The unused ScrollView* argument can be removed from both
+    //      Chrome::scrollRectIntoView and ChromeClient::scrollRectIntoView.
+    //
+    ASSERT_NOT_REACHED();
 }
 
 void ScrollView::setScrollPosition(const IntPoint& scrollPoint)

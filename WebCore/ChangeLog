@@ -1,3 +1,48 @@
+2010-04-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        REGRESSION: Autoscroll does not work in Mail messages
+        https://bugs.webkit.org/show_bug.cgi?id=38267
+        rdar://problem/7559799
+
+        Still haven't figured out a good way to test this with DumpRenderTree
+        or with Safari. Testing has to be done with Mail for now.
+
+        The machinery to make autoscrolling work on Mac OS X when a WebView is embedded in another
+        view had gotten broken in multiple ways. For some reason, a combination of bugs made it
+        partly work until around r48064. This brings it back.
+
+        There were three problems:
+
+            1) Code in EventHandler decided there was nothing to scroll, so didn't start
+               the autoscroll timer.
+            2) The wrong rectangle was passed to Chrome::scrollRectIntoView.
+            3) The Mac WebKit implementation of ChromeClient::scrollRectIntoView did incorrect
+               coordinate conversion.
+
+        I verified that none of these have any effect on regression tests, or behavior in
+        web browsers, or behavior on platforms other than Mac.
+
+        * page/EventHandler.cpp:
+        (WebCore::canAutoscroll): Added. Returns true for boxes that can scroll directly
+        and for the top level box of the top frame.
+        (WebCore::EventHandler::handleMouseDraggedEvent): Use canAutoscroll.
+        (WebCore::EventHandler::updateAutoscrollRenderer): Ditto.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollToAnchor): Fixed comment.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::scrollRectIntoViewRecursively): Put ASSERT_NOT_REACHED into this
+        now-unused function along with some comments about removing some obsolete code.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollRectToVisible): Removed call to scrollRectIntoViewRecursively
+        since from the WebKit point of view this is the topmost scroll view anyway. Instead call
+        setScrollPosition. Moved the code to call Chrome::scrollRectIntoView here since it needs
+        to use a different rectangle anyway.
+
 2010-04-21  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Adele Peterson.

@@ -456,6 +456,30 @@ bool EventHandler::handleMousePressEvent(const MouseEventWithHitTestResults& eve
     return swallowEvent;
 }
 
+// There are two kinds of renderer that can autoscroll.
+static bool canAutoscroll(RenderObject* renderer)
+{
+    if (!renderer->isBox())
+        return false;
+
+    // Check for a box that can be scrolled in its own right.
+    if (toRenderBox(renderer)->canBeScrolledAndHasScrollableArea())
+        return true;
+
+    // Check for a box that represents the top level of a web page.
+    // This can be scrolled by calling Chrome::scrollRectIntoView.
+    // This only has an effect on the Mac platform in applications
+    // that put web views into scrolling containers, such as Mac OS X Mail.
+    // The code for this is in RenderLayer::scrollRectToVisible.
+    if (renderer->node() != renderer->document())
+        return false;
+    Frame* frame = renderer->document()->frame();
+    if (!frame)
+        return false;
+    Page* page = frame->page();
+    return page && page->mainFrame() == frame;
+}
+
 #if ENABLE(DRAG_SUPPORT)
 bool EventHandler::handleMouseDraggedEvent(const MouseEventWithHitTestResults& event)
 {
@@ -476,10 +500,9 @@ bool EventHandler::handleMouseDraggedEvent(const MouseEventWithHitTestResults& e
     m_mouseDownMayStartDrag = false;
 
     if (m_mouseDownMayStartAutoscroll && !m_panScrollInProgress) {            
-        // If the selection is contained in a layer that can scroll, that layer should handle the autoscroll
-        // Otherwise, let the bridge handle it so the view can scroll itself.
+        // Find a renderer that can autoscroll.
         RenderObject* renderer = targetNode->renderer();
-        while (renderer && (!renderer->isBox() || !toRenderBox(renderer)->canBeScrolledAndHasScrollableArea())) {
+        while (renderer && !canAutoscroll(renderer)) {
             if (!renderer->parent() && renderer->node() == renderer->document() && renderer->document()->ownerElement())
                 renderer = renderer->document()->ownerElement()->renderer();
             else
@@ -782,7 +805,7 @@ void EventHandler::updateAutoscrollRenderer()
     if (Node* nodeAtPoint = hitTest.innerNode())
         m_autoscrollRenderer = nodeAtPoint->renderer();
 
-    while (m_autoscrollRenderer && (!m_autoscrollRenderer->isBox() || !toRenderBox(m_autoscrollRenderer)->canBeScrolledAndHasScrollableArea()))
+    while (m_autoscrollRenderer && !canAutoscroll(m_autoscrollRenderer))
         m_autoscrollRenderer = m_autoscrollRenderer->parent();
 }
 

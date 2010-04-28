@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,15 +54,14 @@
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoadRequest.h>
 #import <WebCore/Geolocation.h>
-#import <WebCore/HitTestResult.h>
 #import <WebCore/HTMLNames.h>
+#import <WebCore/HitTestResult.h>
 #import <WebCore/Icon.h>
 #import <WebCore/IntRect.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/PlatformString.h>
 #import <WebCore/ResourceRequest.h>
-#import <WebCore/ScrollView.h>
 #import <WebCore/Widget.h>
 #import <WebCore/WindowFeatures.h>
 #import <wtf/PassRefPtr.h>
@@ -499,17 +498,18 @@ void WebChromeClient::contentsSizeChanged(Frame*, const IntSize&) const
 {
 }
 
-void WebChromeClient::scrollRectIntoView(const IntRect& r, const ScrollView* scrollView) const
+void WebChromeClient::scrollRectIntoView(const IntRect& r, const ScrollView*) const
 {
-    // FIXME: This scrolling behavior should be under the control of the embedding client (rather than something
-    // we just do ourselves).
-
+    // FIXME: This scrolling behavior should be under the control of the embedding client,
+    // perhaps in a delegate method, rather than something WebKit does unconditionally.
+    NSView *coordinateView = [m_webView _usesDocumentViews]
+        ? [[[m_webView mainFrame] frameView] documentView] : m_webView;
     NSRect rect = r;
     for (NSView *view = m_webView; view; view = [view superview]) {
         if ([view isKindOfClass:[NSClipView class]]) {
             NSClipView *clipView = (NSClipView *)view;
             NSView *documentView = [clipView documentView];
-            [documentView scrollRectToVisible:[documentView convertRect:rect fromView:m_webView]];
+            [documentView scrollRectToVisible:[documentView convertRect:rect fromView:coordinateView]];
         }
     }
 }

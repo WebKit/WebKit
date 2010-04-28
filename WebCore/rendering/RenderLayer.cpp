@@ -47,6 +47,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSStyleDeclaration.h"
 #include "CSSStyleSelector.h"
+#include "Chrome.h"
 #include "Document.h"
 #include "EventHandler.h"
 #include "EventNames.h"
@@ -79,12 +80,12 @@
 #include "ScrollbarTheme.h"
 #include "SelectionController.h"
 #include "TextStream.h"
-#include "TransformationMatrix.h"
 #include "TransformState.h"
+#include "TransformationMatrix.h"
 #include "TranslateTransformOperation.h"
-#include <wtf/text/CString.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/UnusedParam.h>
+#include <wtf/text/CString.h>
 
 #if USE(ACCELERATED_COMPOSITING)
 #include "RenderLayerBacking.h"
@@ -1324,7 +1325,7 @@ void RenderLayer::scrollToOffset(int x, int y, bool updateScrollbars, bool repai
     }
 }
 
-void RenderLayer::scrollRectToVisible(const IntRect &rect, bool scrollToAnchor, const ScrollAlignment& alignX, const ScrollAlignment& alignY)
+void RenderLayer::scrollRectToVisible(const IntRect& rect, bool scrollToAnchor, const ScrollAlignment& alignX, const ScrollAlignment& alignY)
 {
     RenderLayer* parentLayer = 0;
     IntRect newRect = rect;
@@ -1389,9 +1390,17 @@ void RenderLayer::scrollRectToVisible(const IntRect &rect, bool scrollToAnchor, 
                 IntRect viewRect = frameView->visibleContentRect(true);
                 IntRect r = getRectToExpose(viewRect, rect, alignX, alignY);
                 
-                // If this is the outermost view that RenderLayer needs to scroll, then we should scroll the view recursively
-                // Other apps, like Mail, rely on this feature.
-                frameView->scrollRectIntoViewRecursively(r);
+                frameView->setScrollPosition(r.location());
+
+                // This is the outermost view of a web page, so after scrolling this view we
+                // scroll its container by calling Page::scrollRectIntoView.
+                // This only has an effect on the Mac platform in applications
+                // that put web views into scrolling containers, such as Mac OS X Mail.
+                // The canAutoscroll function in EventHandler also knows about this.
+                if (Frame* frame = frameView->frame()) {
+                    if (Page* page = frame->page())
+                        page->chrome()->scrollRectIntoView(rect, 0);
+                }
             }
         }
     }

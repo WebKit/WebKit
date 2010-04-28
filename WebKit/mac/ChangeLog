@@ -1,3 +1,20 @@
+2010-04-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        REGRESSION: Autoscroll does not work in Mail messages
+        https://bugs.webkit.org/show_bug.cgi?id=38267
+        rdar://problem/7559799
+
+        The machinery to make autoscrolling work on Mac OS X when a WebView is embedded in another
+        view had gotten broken in multiple ways. For some reason, a combination of bugs made it
+        partly work until around r48064. This brings it back.
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::scrollRectIntoView): When converting coordinates, use the document view
+        rather than the WebView itself. This logic may not be correct for the case where
+        usesDocumentViews is NO, but that is currently an experimental mode and can be fixed later.
+
 2010-04-27  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler and Eric Seidel.
