@@ -33,18 +33,29 @@ function debuggerScriptConstructor() {
 var DebuggerScript = {};
 DebuggerScript._breakpoints = {};
 
+DebuggerScript.PauseOnExceptionsState = {
+    DontPauseOnExceptions : 0,
+    PauseOnAllExceptions : 1,
+    PauseOnUncaughtExceptions: 2
+};
+
+DebuggerScript._pauseOnExceptionsState = DebuggerScript.PauseOnExceptionsState.DontPauseOnExceptions;
+Debug.clearBreakOnException();
+Debug.clearBreakOnUncaughtException();
 
 DebuggerScript.getAfterCompileScript = function(execState, args)
 {
     return DebuggerScript._formatScript(args.eventData.script_.script_);
 }
 
-DebuggerScript.getScripts = function(execState, args)
+DebuggerScript.getScripts = function(contextData)
 {
     var scripts = Debug.scripts();
     var result = [];
     for (var i = 0; i < scripts.length; ++i) {
-        result.push(DebuggerScript._formatScript(scripts[i]));
+        var script = scripts[i];
+        if (contextData === script.context_data)
+            result.push(DebuggerScript._formatScript(script));
     }
     return result;
 }
@@ -90,6 +101,26 @@ DebuggerScript.removeBreakpoint = function(execState, args)
     if (breakId)
         Debug.findBreakPoint(breakId, true);
     delete DebuggerScript._breakpoints[key];
+}
+
+DebuggerScript.pauseOnExceptionsState = function()
+{
+    return DebuggerScript._pauseOnExceptionsState;
+}
+
+DebuggerScript.setPauseOnExceptionsState = function(newState)
+{
+    DebuggerScript._pauseOnExceptionsState = newState;
+
+    if (DebuggerScript.PauseOnExceptionsState.PauseOnAllExceptions === newState)
+        Debug.setBreakOnException();
+    else
+        Debug.clearBreakOnException();
+
+    if (DebuggerScript.PauseOnExceptionsState.PauseOnUncaughtExceptions === newState)
+        Debug.setBreakOnUncaughtException();
+    else
+        Debug.clearBreakOnUncaughtException();
 }
 
 DebuggerScript.currentCallFrame = function(execState, args)
@@ -160,7 +191,7 @@ DebuggerScript._frameMirrorToJSCallFrame = function(frameMirror, callerFrame)
     var sourceID = script && script.id();
     
     // Get line number.
-    var line = DebuggerScript._v8ToWwebkitLineNumber(frameMirror.sourceLine());
+    var line = DebuggerScript._v8ToWebkitLineNumber(frameMirror.sourceLine());
     
     // Get this object.
     var thisObject = frameMirror.details_.receiver();
@@ -201,7 +232,7 @@ DebuggerScript._webkitToV8LineNumber = function(line)
     return line - 1;
 };
 
-DebuggerScript._v8ToWwebkitLineNumber = function(line)
+DebuggerScript._v8ToWebkitLineNumber = function(line)
 {
     return line + 1;
 };

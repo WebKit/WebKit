@@ -33,7 +33,7 @@
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 
-#include "OwnHandle.h"
+#include "JavaScriptCallFrame.h"
 #include "PlatformString.h"
 #include "ScriptBreakpoint.h"
 #include "ScriptState.h"
@@ -45,7 +45,6 @@
 
 namespace WebCore {
 
-class JavaScriptCallFrame;
 class Page;
 class ScriptDebugListener;
 
@@ -75,8 +74,8 @@ public:
         PauseOnAllExceptions,
         PauseOnUncaughtExceptions
     };
-    PauseOnExceptionsState pauseOnExceptionsState() const { return m_pauseOnExceptionsState; }
-    void setPauseOnExceptionsState(PauseOnExceptionsState pauseOnExceptionsState) { m_pauseOnExceptionsState = pauseOnExceptionsState; }
+    PauseOnExceptionsState pauseOnExceptionsState();
+    void setPauseOnExceptionsState(PauseOnExceptionsState pauseOnExceptionsState);
 
     void pauseProgram() { }
     void continueProgram();
@@ -97,7 +96,6 @@ public:
     typedef void (*MessageLoopDispatchHandler)(const Vector<WebCore::Page*>&);
     static void setMessageLoopDispatchHandler(MessageLoopDispatchHandler messageLoopDispatchHandler) { s_messageLoopDispatchHandler = messageLoopDispatchHandler; }
 
-    v8::Handle<v8::Value> currentCallFrameV8();
     PassRefPtr<JavaScriptCallFrame> currentCallFrame();
 
 private:
@@ -130,13 +128,11 @@ private:
 
     typedef HashMap<Page*, ScriptDebugListener*> ListenersMap;
     ListenersMap m_listenersMap;
-    typedef HashMap<ScriptDebugListener*, String> ContextDataMap;
-    ContextDataMap m_contextDataMap;
     String m_debuggerScriptSource;
     PauseOnExceptionsState m_pauseOnExceptionsState;
     OwnHandle<v8::Object> m_debuggerScript;
     ScriptState* m_currentCallFrameState;
-    OwnHandle<v8::Value> m_currentCallFrame;
+    RefPtr<JavaScriptCallFrame> m_currentCallFrame;
     OwnHandle<v8::Object> m_executionState;
 
     static MessageLoopDispatchHandler s_messageLoopDispatchHandler;

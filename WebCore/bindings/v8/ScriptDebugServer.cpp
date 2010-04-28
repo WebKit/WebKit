@@ -81,11 +81,10 @@ void ScriptDebugServer::addListener(ScriptDebugListener* listener, Page* page)
     m_listenersMap.set(page, listener);
     V8Proxy* proxy = V8Proxy::retrieve(page->mainFrame());
     v8::Local<v8::Context> context = proxy->mainWorldContext();
-    String contextData = toWebCoreStringWithNullCheck(context->GetData());
-    m_contextDataMap.set(listener, contextData);
 
     v8::Handle<v8::Function> getScriptsFunction = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("getScripts")));
-    v8::Handle<v8::Value> value = v8::Debug::Call(getScriptsFunction);
+    v8::Handle<v8::Value> argv[] = { context->GetData() };
+    v8::Handle<v8::Value> value = getScriptsFunction->Call(m_debuggerScript.get(), 1, argv);
     if (value.IsEmpty())
         return;
     ASSERT(!value->IsUndefined() && value->IsArray());
@@ -175,6 +174,35 @@ void ScriptDebugServer::setBreakpointsActivated(bool enabled)
 #endif
 }
 
+ScriptDebugServer::PauseOnExceptionsState ScriptDebugServer::pauseOnExceptionsState()
+{
+#if ENABLE(V8_SCRIPT_DEBUG_SERVER)
+    ensureDebuggerScriptCompiled();
+    v8::HandleScope scope;
+    v8::Context::Scope contextScope(v8::Debug::GetDebugContext());
+
+    v8::Handle<v8::Function> currentCallFrameFunction = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("pauseOnExceptionsState")));
+    v8::Handle<v8::Value> argv[] = { v8::Handle<v8::Value>() };
+    v8::Handle<v8::Value> result = currentCallFrameFunction->Call(m_debuggerScript.get(), 0, argv);
+    return static_cast<ScriptDebugServer::PauseOnExceptionsState>(result->Int32Value());
+#else
+    return DontPauseOnExceptions;
+#endif
+}
+
+void ScriptDebugServer::setPauseOnExceptionsState(PauseOnExceptionsState pauseOnExceptionsState)
+{
+#if ENABLE(V8_SCRIPT_DEBUG_SERVER)
+    ensureDebuggerScriptCompiled();
+    v8::HandleScope scope;
+    v8::Context::Scope contextScope(v8::Debug::GetDebugContext());
+
+    v8::Handle<v8::Function> currentCallFrameFunction = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("setPauseOnExceptionsState")));
+    v8::Handle<v8::Value> argv[] = { v8::Int32::New(pauseOnExceptionsState) };
+    currentCallFrameFunction->Call(m_debuggerScript.get(), 1, argv);
+#endif
+}
+
 void ScriptDebugServer::continueProgram()
 {
 #if ENABLE(V8_SCRIPT_DEBUG_SERVER)
@@ -216,26 +244,15 @@ ScriptState* ScriptDebugServer::currentCallFrameState()
     return m_currentCallFrameState;
 }
 
-v8::Handle<v8::Value> ScriptDebugServer::currentCallFrameV8()
-{
-#if ENABLE(V8_SCRIPT_DEBUG_SERVER)
-    if (!m_currentCallFrame.get().IsEmpty())
-        return m_currentCallFrame.get();
-
-    // Check on a bp.
-    v8::Handle<v8::Function> currentCallFrameFunction = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("currentCallFrame")));
-    v8::Handle<v8::Value> argv[] = { m_executionState.get() };
-    v8::Handle<v8::Value> result = currentCallFrameFunction->Call(m_debuggerScript.get(), 1, argv);
-    m_currentCallFrame.set(result);
-    return result;
-#else
-    return v8::Handle<v8::Value>();
-#endif
-}
-
 PassRefPtr<JavaScriptCallFrame> ScriptDebugServer::currentCallFrame()
 {
-    return JavaScriptCallFrame::create(v8::Debug::GetDebugContext(), v8::Handle<v8::Object>::Cast(currentCallFrameV8())); 
+    if (!m_currentCallFrame) {
+        v8::Handle<v8::Function> currentCallFrameFunction = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("currentCallFrame")));
+        v8::Handle<v8::Value> argv[] = { m_executionState.get() };
+        v8::Handle<v8::Value> currentCallFrameV8 = currentCallFrameFunction->Call(m_debuggerScript.get(), 1, argv);
+        m_currentCallFrame = JavaScriptCallFrame::create(v8::Debug::GetDebugContext(), v8::Handle<v8::Object>::Cast(currentCallFrameV8)); 
+    }
+    return m_currentCallFrame;
 }
 
 void ScriptDebugServer::onV8DebugMessage(const v8::Debug::Message& message)
@@ -268,7 +285,7 @@ void ScriptDebugServer::handleV8DebugMessage(const v8::Debug::Message& message)
         return;
 
     // Ignore unsupported event types.
-    if (message.GetEvent() != v8::AfterCompile && message.GetEvent() != v8::Break)
+    if (message.GetEvent() != v8::AfterCompile && message.GetEvent() != v8::Break && message.GetEvent() != v8::Exception)
         return;
 
     v8::Handle<v8::Context> context = message.GetEventContext();
@@ -286,11 +303,13 @@ void ScriptDebugServer::handleV8DebugMessage(const v8::Debug::Message& message)
     if (global.IsEmpty())
         return;
 
+    bool handled = false;
     Frame* frame = V8Proxy::retrieveFrame(context);
     if (frame) {
         ScriptDebugListener* listener = m_listenersMap.get(frame->page());
         if (listener) {
             if (message.GetEvent() == v8::AfterCompile) {
+                handled = true;
                 v8::Context::Scope contextScope(v8::Debug::GetDebugContext());
                 v8::Local<v8::Object> args = v8::Object::New();
                 args->Set(v8::String::New("eventData"), message.GetEventData());
@@ -300,7 +319,8 @@ void ScriptDebugServer::handleV8DebugMessage(const v8::Debug::Message& message)
                 ASSERT(value->IsObject());
                 v8::Handle<v8::Object> object = v8::Handle<v8::Object>::Cast(value);
                 dispatchDidParseSource(listener, object);
-            } else if (message.GetEvent() == v8::Break) {
+            } else if (message.GetEvent() == v8::Break || message.GetEvent() == v8::Exception) {
+                handled = true;
                 m_executionState.set(message.GetExecutionState());
                 m_currentCallFrameState = mainWorldScriptState(frame);
                 listener->didPause();
@@ -308,14 +328,13 @@ void ScriptDebugServer::handleV8DebugMessage(const v8::Debug::Message& message)
             }
         }
     }
+
+    if (!handled && !message.WillStartRunning())
+        continueProgram();
 }
 
 void ScriptDebugServer::dispatchDidParseSource(ScriptDebugListener* listener, v8::Handle<v8::Object> object)
 {
-    String contextData = toWebCoreStringWithNullCheck(object->Get(v8::String::New("contextData")));
-    if (contextData != m_contextDataMap.get(listener))
-        return;
-
     listener->didParseSource(
         toWebCoreStringWithNullCheck(object->Get(v8::String::New("id"))),
         toWebCoreStringWithNullCheck(object->Get(v8::String::New("name"))),
