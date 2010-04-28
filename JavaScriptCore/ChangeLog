@@ -1,3 +1,17 @@
+2010-04-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Don't use CFAbsoluteTimeGetCurrent on Mac OS X, since it's just a cover
+        for gettimeofday anyway.
+
+        * wtf/CurrentTime.cpp:
+        (WTF::currentTime): Remove the CF version of this. Change the "other POSIX"
+        version to pass 0 for the time zone instead of ignoring a return value.
+        Also get rid of unneeded type casts, since operations involving both
+        integers and doubles are always evaluated as doubles in C without explicit
+        type casting.
+
 2010-04-28  Darin Fisher  <darin@chromium.org>
 
         Reviewed by David Levin.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Google Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  *
@@ -53,15 +53,13 @@ extern "C" time_t mktime(struct tm *t);
 #endif
 #endif
 
-#elif PLATFORM(CF)
-#include <CoreFoundation/CFDate.h>
 #elif PLATFORM(GTK)
 #include <glib.h>
 #elif PLATFORM(WX)
 #include <wx/datetime.h>
 #elif PLATFORM(BREWMP)
 #include <AEEStdLib.h>
-#else // Posix systems relying on the gettimeofday()
+#else
 #include <sys/time.h>
 #endif
 
@@ -251,13 +249,6 @@ double currentTime()
 
 #endif // USE(QUERY_PERFORMANCE_COUNTER)
 
-#elif PLATFORM(CF)
-
-double currentTime()
-{
-    return CFAbsoluteTimeGetCurrent() + kCFAbsoluteTimeIntervalSince1970;
-}
-
 #elif PLATFORM(GTK)
 
 // Note: GTK on Windows will pick up the PLATFORM(WIN) implementation above which provides
@@ -293,15 +284,13 @@ double currentTime()
     return static_cast<double>(diffSeconds + GETUTCSECONDS() + ((GETTIMEMS() % 1000) / msPerSecond));
 }
 
-#else // Other Posix systems rely on the gettimeofday().
+#else
 
 double currentTime()
 {
     struct timeval now;
-    struct timezone zone;
-
-    gettimeofday(&now, &zone);
-    return static_cast<double>(now.tv_sec) + (double)(now.tv_usec / 1000000.0);
+    gettimeofday(&now, 0);
+    return now.tv_sec + now.tv_usec / 1000000.0;
 }
 
 #endif
