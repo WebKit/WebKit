@@ -341,6 +341,7 @@ WebView::WebView()
 #if USE(ACCELERATED_COMPOSITING)
     , m_isAcceleratedCompositing(false)
 #endif
+    , m_nextDisplayIsSynchronous(false)
 {
     JSC::initializeThreading();
     WTF::initializeMainThread();
@@ -6153,7 +6154,11 @@ void WebView::updateRootLayerContents()
     m_backingStoreBitmap->ref();
 
     // Hand the CGImage to CACF for compositing
-    m_layerRenderer->setRootContents(backingStoreImage.get());
+    if (m_nextDisplayIsSynchronous) {
+        m_layerRenderer->setRootContentsAndDisplay(backingStoreImage.get());
+        m_nextDisplayIsSynchronous = false;
+    } else
+        m_layerRenderer->setRootContents(backingStoreImage.get());
 
     // Set the frame and scroll position
     Frame* coreFrame = core(m_mainFrame);
@@ -6306,6 +6311,12 @@ HRESULT WebView::setDomainRelaxationForbiddenForURLScheme(BOOL forbidden, BSTR s
 HRESULT WebView::registerURLSchemeAsSecure(BSTR scheme)
 {
     SecurityOrigin::registerURLSchemeAsSecure(toString(scheme));
+    return S_OK;
+}
+
+HRESULT WebView::nextDisplayIsSynchronous()
+{
+    m_nextDisplayIsSynchronous = true;
     return S_OK;
 }
 

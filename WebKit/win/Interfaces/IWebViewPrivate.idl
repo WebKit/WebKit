@@ -231,4 +231,6 @@ interface IWebViewPrivate : IUnknown
     HRESULT setDomainRelaxationForbiddenForURLScheme([in] BOOL forbidden, [in] BSTR scheme);
 
     HRESULT registerURLSchemeAsSecure([in] BSTR scheme);
+
+    HRESULT nextDisplayIsSynchronous();
 }

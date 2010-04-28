@@ -1,3 +1,19 @@
+2010-04-28  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for <rdar://problem/7474349>
+
+        Add a synchronous display mechanism for WKCACFLayerRenderer. 
+
+        * Interfaces/IWebViewPrivate.idl:
+        * Interfaces/WebKit.idl:
+        * WebView.cpp:
+        (WebView::WebView):
+        (WebView::updateRootLayerContents):
+        (WebView::nextDisplayIsSynchronous):
+        * WebView.h:
+
 2010-04-28  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Maciej Stachowiak.

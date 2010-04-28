@@ -62,6 +62,7 @@ public:
 
     void setScrollFrame(const IntPoint&, const IntSize&);
     void setRootContents(CGImageRef);
+    void setRootContentsAndDisplay(CGImageRef);
     void setRootChildLayer(WKCACFLayer* layer);
     void setNeedsDisplay();
     void setHostWindow(HWND window) { m_hostWindow = window; }

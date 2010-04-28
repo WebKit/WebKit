@@ -786,6 +786,8 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setDomainRelaxationForbiddenForURLScheme(BOOL forbidden, BSTR scheme);
     virtual HRESULT STDMETHODCALLTYPE registerURLSchemeAsSecure(BSTR);
 
+    virtual HRESULT STDMETHODCALLTYPE nextDisplayIsSynchronous();
+
     // WebView
     bool shouldUseEmbeddedView(const WebCore::String& mimeType) const;
 
@@ -1020,6 +1022,8 @@ protected:
     OwnPtr<WebCore::WKCACFLayerRenderer> m_layerRenderer;
     bool m_isAcceleratedCompositing;
 #endif
+
+    bool m_nextDisplayIsSynchronous;
 };
 
 #endif
