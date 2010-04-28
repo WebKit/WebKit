@@ -951,7 +951,7 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
                 if (typeof this.data.expectedContentLength === "number" && this.data.expectedContentLength !== -1)
                     recordContentTable.appendChild(this._createRow(WebInspector.UIString("Expected Content Length"), this.data.expectedContentLength));
             } else if (this.type === recordTypes.EvaluateScript) {
-                var link = WebInspector.linkifyResourceAsNode(this.data.url, "scripts", null, "timeline-details");
+                var link = WebInspector.linkifyResourceAsNode(this.data.url, "scripts", this.data.lineNumber, "timeline-details");
                 recordContentTable.appendChild(this._createLinkRow(WebInspector.UIString("Script"), link));
             } else if (this.type === recordTypes.Paint) {
                 recordContentTable.appendChild(this._createRow(WebInspector.UIString("Location"), this.data.x + "\u2009\u00d7\u2009" + this.data.y));
@@ -985,9 +985,10 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
             case WebInspector.TimelineAgent.RecordType.TimerRemove:
             case WebInspector.TimelineAgent.RecordType.TimerFire:
                 return record.data.timerId;
+            case WebInspector.TimelineAgent.RecordType.EvaluateScript:
+                return record.data.url ? WebInspector.displayNameForURL(record.data.url) + ":" + record.data.lineNumber : "";
             case WebInspector.TimelineAgent.RecordType.XHRReadyStateChange:
             case WebInspector.TimelineAgent.RecordType.XHRLoad:
-            case WebInspector.TimelineAgent.RecordType.EvaluateScript:
             case WebInspector.TimelineAgent.RecordType.ResourceSendRequest:
             case WebInspector.TimelineAgent.RecordType.ResourceReceiveData:
             case WebInspector.TimelineAgent.RecordType.ResourceReceiveResponse:
