@@ -182,8 +182,8 @@ class ChromiumPort(base.Port):
     def create_driver(self, image_path, options):
         """Starts a new Driver and returns a handle to it."""
         if self._options.use_drt:
-            return webkit.WebKitDriver(self, image_path, options, exectuive=self._executive)
-        return ChromiumDriver(self, image_path, options, exectuive=self._executive)
+            return webkit.WebKitDriver(self, image_path, options, executive=self._executive)
+        return ChromiumDriver(self, image_path, options, executive=self._executive)
 
     def start_helper(self):
         helper_path = self._path_to_helper()
