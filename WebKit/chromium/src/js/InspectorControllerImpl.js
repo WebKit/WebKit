@@ -128,8 +128,7 @@ if (!window.v8ScriptDebugServerEnabled) {
 devtools.InspectorBackendImpl.prototype.setBreakpoint = function(sourceID, line, enabled, condition)
 {
     this.removeBreakpoint(sourceID, line);
-    if (enabled)
-        devtools.tools.getDebuggerAgent().addBreakpoint(sourceID, line, condition);
+    devtools.tools.getDebuggerAgent().addBreakpoint(sourceID, line, enabled, condition);
 };
 
 
