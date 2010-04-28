@@ -246,10 +246,12 @@ public:
         const WebVector<WebString>& suggestions,
         int defaultSuggestionIndex) = 0;
 
-    // DEPRECATED: WebView::hideSuggestionsPopup is the new way to access this.
-    virtual void hideAutofillPopup() = 0;
+    // Hides any popup (suggestions, selects...) that might be showing.
+    virtual void hidePopups() = 0;
 
     // Hides the suggestions popup if any are showing.
+    // DEPRECATED: use hidePopups() instead.
+    virtual void hideAutofillPopup() = 0;
     virtual void hideSuggestionsPopup() = 0;
 
 

@@ -1789,6 +1789,12 @@ void WebViewImpl::applyAutocompleteSuggestions(
     }
 }
 
+void WebViewImpl::hidePopups()
+{
+    hideSelectPopup();
+    hideSuggestionsPopup();
+}
+
 void WebViewImpl::hideAutofillPopup()
 {
     hideSuggestionsPopup();
