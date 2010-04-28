@@ -311,6 +311,11 @@ public:
     virtual bool shouldUseInputMethod() const;
     virtual IntRect getRect() const;
 
+    // Returns true if the node has a non-empty bounding box in layout.
+    // This does not 100% guarantee the user can see it, but is pretty close.
+    // Note: This method only works properly after layout has occurred.
+    bool hasNonEmptyBoundingBox() const;
+
     virtual void recalcStyle(StyleChange = NoChange) { }
 
     unsigned nodeIndex() const;

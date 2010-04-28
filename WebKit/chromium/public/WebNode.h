@@ -101,6 +101,11 @@ public:
     WEBKIT_API void simulateClick();
     WEBKIT_API WebNodeList getElementsByTagName(const WebString&) const;
 
+    // Returns true if the node has a non-empty bounding box in layout.
+    // This does not 100% guarantee the user can see it, but is pretty close.
+    // Note: This method only works properly after layout has occurred.
+    WEBKIT_API bool hasNonEmptyBoundingBox() const;
+
     // Deprecated. Use to() instead.
     template<typename T> T toElement()
     {

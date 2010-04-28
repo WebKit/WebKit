@@ -32,6 +32,8 @@
 #include "WebElement.h"
 
 #include "Element.h"
+#include "RenderBoxModelObject.h"
+#include "RenderObject.h"
 #include <wtf/PassRefPtr.h>
 
 using namespace WebCore;

@@ -789,12 +789,14 @@ void FrameLoaderClientImpl::dispatchDidFinishLoad()
 
 void FrameLoaderClientImpl::dispatchDidFirstLayout()
 {
+    if (m_webFrame->client())
+        m_webFrame->client()->didFirstLayout(m_webFrame);
 }
 
 void FrameLoaderClientImpl::dispatchDidFirstVisuallyNonEmptyLayout()
 {
-    // FIXME: called when webkit finished layout of a page that was visually non-empty.
-    // All resources have not necessarily finished loading.
+    if (m_webFrame->client())
+        m_webFrame->client()->didFirstVisuallyNonEmptyLayout(m_webFrame);
 }
 
 Frame* FrameLoaderClientImpl::dispatchCreatePage()
