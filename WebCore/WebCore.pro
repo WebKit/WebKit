@@ -2262,7 +2262,8 @@ contains(DEFINES, ENABLE_SQLITE=1) {
         platform/sql/SQLiteTransaction.cpp \
         platform/sql/SQLValue.cpp \
         storage/Database.cpp \
-        storage/DatabaseAuthorizer.cpp
+        storage/DatabaseAuthorizer.cpp \
+        storage/DatabaseSync.cpp
 }
 
 
@@ -2280,6 +2281,7 @@ contains(DEFINES, ENABLE_DATABASE=1) {
         storage/SQLTransaction.cpp \
         storage/SQLTransactionClient.cpp \
         storage/SQLTransactionCoordinator.cpp \
+        storage/SQLTransactionSync.cpp \
         bindings/js/JSCustomSQLStatementCallback.cpp \
         bindings/js/JSCustomSQLStatementErrorCallback.cpp \
         bindings/js/JSCustomSQLTransactionCallback.cpp \
@@ -2296,6 +2298,7 @@ contains(DEFINES, ENABLE_DOM_STORAGE=1) {
         storage/DatabaseAuthorizer.h \
         storage/Database.h \
         storage/DatabaseCallback.h \
+        storage/DatabaseSync.h \
         storage/DatabaseTask.h \
         storage/DatabaseThread.h \
         storage/DatabaseTracker.h \
@@ -2309,6 +2312,7 @@ contains(DEFINES, ENABLE_DOM_STORAGE=1) {
         storage/SQLTransaction.h \
         storage/SQLTransactionClient.h \
         storage/SQLTransactionCoordinator.h \
+        storage/SQLTransactionSync.h \
         storage/StorageArea.h \
         storage/StorageAreaImpl.h \
         storage/StorageAreaSync.h \

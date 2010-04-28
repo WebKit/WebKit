@@ -2343,6 +2343,8 @@ webcore_sources += \
 	WebCore/storage/DatabaseAuthorizer.h \
 	WebCore/storage/DatabaseCallback.h \
 	WebCore/storage/DatabaseDetails.h \
+	WebCore/storage/DatabaseSync.cpp \
+	WebCore/storage/DatabaseSync.h \
 	WebCore/storage/DatabaseTask.cpp \
 	WebCore/storage/DatabaseTask.h \
 	WebCore/storage/DatabaseThread.cpp \
@@ -2370,7 +2372,10 @@ webcore_sources += \
 	WebCore/storage/SQLTransactionClient.h \
 	WebCore/storage/SQLTransactionCoordinator.h \
 	WebCore/storage/SQLTransactionCoordinator.cpp \
-	WebCore/storage/SQLTransactionErrorCallback.h
+	WebCore/storage/SQLTransactionErrorCallback.h \
+	WebCore/storage/SQLTransactionSync.cpp \
+	WebCore/storage/SQLTransactionSync.h \
+	WebCore/storage/SQLTransactionSyncCallback.h
 
 else
 webcore_cppflags += -DENABLE_DATABASE=0

@@ -42691,6 +42691,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\storage\DatabaseSync.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\DatabaseSync.h"
+				>
+			</File>
+			<File
 				RelativePath="..\storage\DatabaseTask.h"
 				>
 			</File>
@@ -42812,6 +42820,18 @@
 			</File>
 			<File
 				RelativePath="..\storage\SQLTransactionErrorCallback.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\SQLTransactionSync.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\SQLTransactionSync.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\SQLTransactionSyncCallback.h"
 				>
 			</File>
 			<File

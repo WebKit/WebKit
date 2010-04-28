@@ -4164,6 +4164,11 @@
 		B51BF6F1102C9E590002C15A /* SQLTransactionClient.h in Headers */ = {isa = PBXBuildFile; fileRef = B51BF6EF102C9E590002C15A /* SQLTransactionClient.h */; };
 		B5A684220FFABE9800D24689 /* SQLiteFileSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = B5A684210FFABE9800D24689 /* SQLiteFileSystem.h */; };
 		B5A684240FFABEAA00D24689 /* SQLiteFileSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5A684230FFABEAA00D24689 /* SQLiteFileSystem.cpp */; };
+		B523CF061182675400EBB29C /* SQLTransactionSyncCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = B523CEFF1182675400EBB29C /* SQLTransactionSyncCallback.h */; };
+		B523CF081182675400EBB29C /* SQLTransactionSync.h in Headers */ = {isa = PBXBuildFile; fileRef = B523CF011182675400EBB29C /* SQLTransactionSync.h */; };
+		B523CF091182675400EBB29C /* SQLTransactionSync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B523CF021182675400EBB29C /* SQLTransactionSync.cpp */; };
+		B523CF0A1182675400EBB29C /* DatabaseSync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B523CF031182675400EBB29C /* DatabaseSync.cpp */; };
+		B523CF0B1182675400EBB29C /* DatabaseSync.h in Headers */ = {isa = PBXBuildFile; fileRef = B523CF041182675400EBB29C /* DatabaseSync.h */; };
 		B5C1123B102B6C4600096578 /* SQLTransactionCoordinator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5C11239102B6C4600096578 /* SQLTransactionCoordinator.cpp */; };
 		B5C1123C102B6C4600096578 /* SQLTransactionCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = B5C1123A102B6C4600096578 /* SQLTransactionCoordinator.h */; };
 		B5D3601A112F8B560048DEA8 /* DatabaseCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = B5D36019112F8B560048DEA8 /* DatabaseCallback.h */; };
@@ -9507,6 +9512,11 @@
 		B50F5B800E96CD9900AD71A6 /* WebCoreObjCExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreObjCExtras.mm; sourceTree = "<group>"; };
 		B51BF6EE102C9E590002C15A /* SQLTransactionClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLTransactionClient.cpp; sourceTree = "<group>"; };
 		B51BF6EF102C9E590002C15A /* SQLTransactionClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLTransactionClient.h; sourceTree = "<group>"; };
+		B523CEFF1182675400EBB29C /* SQLTransactionSyncCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLTransactionSyncCallback.h; sourceTree = "<group>"; };
+		B523CF011182675400EBB29C /* SQLTransactionSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLTransactionSync.h; sourceTree = "<group>"; };
+		B523CF021182675400EBB29C /* SQLTransactionSync.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLTransactionSync.cpp; sourceTree = "<group>"; };
+		B523CF031182675400EBB29C /* DatabaseSync.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatabaseSync.cpp; sourceTree = "<group>"; };
+		B523CF041182675400EBB29C /* DatabaseSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseSync.h; sourceTree = "<group>"; };
 		B5A684210FFABE9800D24689 /* SQLiteFileSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SQLiteFileSystem.h; path = sql/SQLiteFileSystem.h; sourceTree = "<group>"; };
 		B5A684230FFABEAA00D24689 /* SQLiteFileSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SQLiteFileSystem.cpp; path = sql/SQLiteFileSystem.cpp; sourceTree = "<group>"; };
 		B5C11239102B6C4600096578 /* SQLTransactionCoordinator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLTransactionCoordinator.cpp; sourceTree = "<group>"; };
@@ -10736,6 +10746,8 @@
 				51A45B540CAD7FD7000D2BE9 /* DatabaseAuthorizer.h */,
 				B5D36019112F8B560048DEA8 /* DatabaseCallback.h */,
 				5116D9750CF177BD00C2B84D /* DatabaseDetails.h */,
+				B523CF031182675400EBB29C /* DatabaseSync.cpp */,
+				B523CF041182675400EBB29C /* DatabaseSync.h */,
 				519611E90CAC749C0010A80C /* DatabaseTask.cpp */,
 				519611E80CAC749C0010A80C /* DatabaseTask.h */,
 				519611610CAC56570010A80C /* DatabaseThread.cpp */,
@@ -10772,6 +10784,9 @@
 				B5C11239102B6C4600096578 /* SQLTransactionCoordinator.cpp */,
 				B5C1123A102B6C4600096578 /* SQLTransactionCoordinator.h */,
 				1A7CCB180CD9469A00B7B64E /* SQLTransactionErrorCallback.h */,
+				B523CEFF1182675400EBB29C /* SQLTransactionSyncCallback.h */,
+				B523CF011182675400EBB29C /* SQLTransactionSync.h */,
+				B523CF021182675400EBB29C /* SQLTransactionSync.cpp */,
 				51E3F9C50DA059DC00250911 /* Storage.cpp */,
 				51E3F9C40DA059DC00250911 /* Storage.h */,
 				51E3F9D10DA05D7100250911 /* Storage.idl */,
@@ -18888,6 +18903,9 @@
 				37FD4298118368460093C029 /* TreeDepthLimit.h in Headers */,
 				0FF2859111864053007B7CD6 /* RenderMathMLRoot.h in Headers */,
 				0FF2859311864055007B7CD6 /* RenderMathMLSquareRoot.h in Headers */,
+				B523CF061182675400EBB29C /* SQLTransactionSyncCallback.h in Headers */,
+				B523CF081182675400EBB29C /* SQLTransactionSync.h in Headers */,
+				B523CF0B1182675400EBB29C /* DatabaseSync.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -21123,6 +21141,8 @@
 				2E3BC109117D479800B9409A /* DOMFileError.mm in Sources */,
 				0FF2859011864052007B7CD6 /* RenderMathMLRoot.cpp in Sources */,
 				0FF2859211864054007B7CD6 /* RenderMathMLSquareRoot.cpp in Sources */,
+				B523CF091182675400EBB29C /* SQLTransactionSync.cpp in Sources */,
+				B523CF0A1182675400EBB29C /* DatabaseSync.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

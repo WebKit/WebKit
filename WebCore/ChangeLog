@@ -1,3 +1,38 @@
+2010-04-23  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Adding some required classes for the sync WebSQLDatabases API.
+        https://bugs.webkit.org/show_bug.cgi?id=34994
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * storage/DatabaseSync.cpp: Added.
+        (WebCore::DatabaseSync::databaseInfoTableName):
+        (WebCore::DatabaseSync::setIsAvailable):
+        (WebCore::DatabaseSync::isAvailable):
+        (WebCore::DatabaseSync::openDatabaseSync):
+        (WebCore::DatabaseSync::DatabaseSync):
+        (WebCore::DatabaseSync::~DatabaseSync):
+        (WebCore::DatabaseSync::version):
+        (WebCore::DatabaseSync::changeVersion):
+        (WebCore::DatabaseSync::transaction):
+        * storage/DatabaseSync.h: Added.
+        (WebCore::DatabaseSync::databaseDebugName):
+        * storage/SQLTransactionSync.cpp: Added.
+        (WebCore::SQLTransactionSync::create):
+        (WebCore::SQLTransactionSync::SQLTransactionSync):
+        (WebCore::SQLTransactionSync::~SQLTransactionSync):
+        (WebCore::SQLTransactionSync::executeSQL):
+        * storage/SQLTransactionSync.h: Added.
+        (WebCore::SQLTransactionSync::database):
+        (WebCore::SQLTransactionSync::isReadOnly):
+        * storage/SQLTransactionSyncCallback.h: Added.
+        (WebCore::SQLTransactionSyncCallback::~SQLTransactionSyncCallback):
+
 2010-04-28  İsmail Dönmez  <ismail@namtrac.org>
 
         Reviewed by Simon Hausmann.

@@ -73,7 +73,7 @@ public:
 
     ~Database();
 
-// Direct support for the DOM API
+    // Direct support for the DOM API
     static PassRefPtr<Database> openDatabase(ScriptExecutionContext* context, const String& name,
                                              const String& expectedVersion, const String& displayName,
                                              unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback,
@@ -85,7 +85,7 @@ public:
     void transaction(PassRefPtr<SQLTransactionCallback> callback, PassRefPtr<SQLTransactionErrorCallback> errorCallback,
                      PassRefPtr<VoidCallback> successCallback, bool readOnly);
 
-// Internal engine support
+    // Internal engine support
     static const String& databaseInfoTableName();
 
     void disableAuthorizer();
@@ -121,7 +121,7 @@ public:
     unsigned long long databaseSize() const;
     unsigned long long maximumSize() const;
 
-// Called from DatabaseThread, must be prepared to work on the background thread
+    // Called from DatabaseThread, must be prepared to work on the background thread
     void resetAuthorizer();
     void performPolicyChecks();
 
