@@ -1,0 +1,7 @@
+ Tests that errors to load a resource cause error messages to be logged to console.
+
+missing.cssFailed to load resource: the server responded with a status of 404 (OK) console-message console-other-source console-error-level
+non-existent-iframe.htmlFailed to load resource: the server responded with a status of 404 (OK) console-message console-other-source console-error-level
+non-existent-script.jsFailed to load resource: the server responded with a status of 404 (OK) console-message console-other-source console-error-level
+non-existent-xhrFailed to load resource: the server responded with a status of 404 (OK) console-message console-other-source console-error-level
+

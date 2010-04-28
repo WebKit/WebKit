@@ -1,0 +1,30 @@
+<html>
+<head>
+<script src="console-tests.js"></script>
+<script src="inspector-test.js"></script>
+
+<link rel="stylesheet" type="text/css" href="missing.css">
+
+<script>
+function doit()
+{
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET","non-existent-xhr", false);
+    xhr.send(null);
+
+    dumpConsoleMessagesWithClasses(true);
+}
+
+</script>
+</head>
+
+<body onload="onload()">
+<p>
+<script src="non-existent-script.js"></script>
+<iframe src="non-existent-iframe.html"></iframe>
+
+Tests that errors to load a resource cause error messages to be logged to console.
+</p>
+
+</body>
+</html>
