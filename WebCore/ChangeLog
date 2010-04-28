@@ -1,3 +1,33 @@
+2010-04-28  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Linkify node and function in the event listeners panel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38251
+
+        * bindings/js/ScriptEventListener.cpp:
+        (WebCore::eventListenerHandlerBody):
+        (WebCore::eventListenerHandlerLocation):
+        * bindings/js/ScriptEventListener.h:
+        * bindings/v8/ScriptEventListener.cpp:
+        (WebCore::eventListenerHandlerBody):
+        (WebCore::eventListenerHandlerLocation):
+        * bindings/v8/ScriptEventListener.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForEventListener):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.linkifyNodeReference):
+        (WebInspector.ElementsPanel.prototype.linkifyNodeReference.preventDefault):
+        * inspector/front-end/EventListenersSidebarPane.js:
+        (WebInspector.EventListenersSidebarPane.prototype.update.callback):
+        (WebInspector.EventListenersSidebarPane.prototype.update):
+        ():
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype._rebuildSectionsForStyleRules):
+        * inspector/front-end/inspector.css:
+        (.node-link):
+
 2010-04-28  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Alexey Proskuryakov.

@@ -105,7 +105,7 @@ PassRefPtr<JSLazyEventListener> createAttributeEventListener(Frame* frame, Attri
     return JSLazyEventListener::create(attr->localName().string(), eventParameterName(frame->document()->isSVGDocument()), attr->value(), 0, sourceURL, lineNumber, wrapper, mainThreadNormalWorld());
 }
 
-String getEventListenerHandlerBody(ScriptExecutionContext* context, ScriptState* scriptState, EventListener* eventListener)
+String eventListenerHandlerBody(ScriptExecutionContext* context, ScriptState* scriptState, EventListener* eventListener)
 {
     const JSEventListener* jsListener = JSEventListener::cast(eventListener);
     if (!jsListener)
@@ -114,6 +114,11 @@ String getEventListenerHandlerBody(ScriptExecutionContext* context, ScriptState*
     if (!jsFunction)
         return "";
     return ustringToString(jsFunction->toString(scriptState));
+}
+
+bool eventListenerHandlerLocation(ScriptExecutionContext*, ScriptState*, EventListener*, String&, int&)
+{
+    return false;
 }
 
 } // namespace WebCore

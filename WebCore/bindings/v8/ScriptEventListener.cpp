@@ -106,7 +106,7 @@ PassRefPtr<V8LazyEventListener> createAttributeEventListener(Frame* frame, Attri
     return V8LazyEventListener::create(attr->localName().string(), frame->document()->isSVGDocument(), attr->value(), sourceURL, lineNumber, columnNumber, WorldContextHandle(UseMainWorld));
 }
 
-String getEventListenerHandlerBody(ScriptExecutionContext* context, ScriptState* scriptState, EventListener* listener)
+String eventListenerHandlerBody(ScriptExecutionContext* context, ScriptState* scriptState, EventListener* listener)
 {
     if (listener->type() != EventListener::JSEventListenerType)
         return "";
@@ -118,6 +118,29 @@ String getEventListenerHandlerBody(ScriptExecutionContext* context, ScriptState*
         return "";
 
     return toWebCoreStringWithNullCheck(function);
+}
+
+bool eventListenerHandlerLocation(ScriptExecutionContext* context, ScriptState* scriptState, EventListener* listener, String& sourceName, int& lineNumber)
+{
+    if (listener->type() != EventListener::JSEventListenerType)
+        return false;
+
+    ScriptScope scope(scriptState);
+    V8AbstractEventListener* v8Listener = static_cast<V8AbstractEventListener*>(listener);
+    v8::Handle<v8::Object> object = v8Listener->getListenerObject(context);
+    if (object.IsEmpty() || !object->IsFunction())
+        return false;
+
+    v8::Handle<v8::Function> function = v8::Handle<v8::Function>::Cast(object);
+    v8::ScriptOrigin origin = function->GetScriptOrigin();
+    sourceName = "";
+    lineNumber = 1;
+    if (!origin.ResourceName().IsEmpty()) {
+        sourceName = toWebCoreString(origin.ResourceName());
+        lineNumber = function->GetScriptLineNumber() + 1;
+        return true;
+    }
+    return false;
 }
 
 } // namespace WebCore

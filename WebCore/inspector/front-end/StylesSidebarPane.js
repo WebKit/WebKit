@@ -409,10 +409,7 @@ WebInspector.StylesSidebarPane.prototype = {
                 var separatorElement = document.createElement("div");
                 separatorElement.className = "styles-sidebar-separator";
                 if (styleRule.node) {
-                    var link = document.createElement("a");
-                    link.href = "";
-                    link.addEventListener("mousedown", this._selectNode.bind(this, styleRule.node.id), false);
-                    WebInspector.panels.elements.decorateNodeLabel(styleRule.node, link);
+                    var link = WebInspector.panels.elements.linkifyNodeReference(styleRule.node);
                     separatorElement.appendChild(document.createTextNode(WebInspector.UIString("Inherited from") + " "));
                     separatorElement.appendChild(link);
                 } else if ("pseudoId" in styleRule) {
@@ -452,12 +449,6 @@ WebInspector.StylesSidebarPane.prototype = {
             sections.push(section);
         }
         return sections;
-    },
-
-    _selectNode: function(nodeId, e)
-    {
-        WebInspector.updateFocusedNode(nodeId);
-        e.preventDefault();
     },
 
     _containsInherited: function(payload)

@@ -4030,3 +4030,8 @@ a.worker-item:hover {
     text-align: center;
     padding: 32px;
 }
+
+.node-link {
+    text-decoration: underline;
+    cursor: pointer;
+}

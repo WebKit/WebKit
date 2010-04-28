@@ -763,6 +763,20 @@ WebInspector.ElementsPanel.prototype = {
         parentElement.title = title;
     },
 
+    linkifyNodeReference: function(node)
+    {
+        function selectNode(e)
+        {
+            WebInspector.updateFocusedNode(node.id);
+        }
+
+        var link = document.createElement("span");
+        link.className = "node-link";
+        link.addEventListener("click", selectNode, false);
+        this.decorateNodeLabel(node, link);
+        return link;
+    },
+
     updateBreadcrumbSizes: function(focusedCrumb)
     {
         if (!this.visible)
