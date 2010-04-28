@@ -1,3 +1,15 @@
+2010-04-28  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Test that a resource from a different https origin is not cached.
+        https://bugs.webkit.org/show_bug.cgi?id=33456
+
+        * http/tests/appcache/different-https-origin-resource-main-expected.txt: Added.
+        * http/tests/appcache/different-https-origin-resource-main.html: Added.
+        * http/tests/appcache/resources/different-https-origin-resource.html: Added.
+        * http/tests/appcache/resources/different-https-origin-resource.manifest: Added.
+
 2010-04-28  Evan Martin  <evan@chromium.org>
 
         Reviewed by Adam Roben.

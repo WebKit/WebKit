@@ -127,6 +127,9 @@ bool parseManifest(const KURL& manifestURL, const char* data, int length, Manife
             if (!equalIgnoringCase(url.protocol(), manifestURL.protocol()))
                 continue;
             
+            if (mode == Explicit && manifestURL.protocolIs("https") && !protocolHostAndPortAreEqual(manifestURL, url))
+                continue;
+            
             if (mode == Explicit)
                 manifest.explicitURLs.add(url.string());
             else

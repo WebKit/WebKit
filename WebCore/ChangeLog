@@ -1,3 +1,15 @@
+2010-04-28  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Added a check to make sure that resources from a different https origin are not cached.
+        https://bugs.webkit.org/show_bug.cgi?id=33456
+
+        Test: http/tests/appcache/different-https-origin-resource-main.html
+
+        * loader/appcache/ManifestParser.cpp:
+        (WebCore::parseManifest):
+
 2010-04-28  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.

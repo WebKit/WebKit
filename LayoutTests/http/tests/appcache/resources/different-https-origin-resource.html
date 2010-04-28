@@ -1,0 +1,29 @@
+<html manifest="https://127.0.0.1:8443/appcache/resources/different-https-origin-resource.manifest">
+<script>
+var hadError = false;
+var result;
+
+function finish()
+{
+    if (!hadError)
+        result = "PASS";
+    parent.postMessage(result, '*');
+}
+function fail()
+{
+    result = "FAIL: Different https origin resource is getting downloaded to cache.";
+    hadError = true;
+}
+function error()
+{
+    result = "ERROR";
+    hadError = true;
+    finish();
+}
+
+applicationCache.onprogress = function() { fail(); }
+applicationCache.onnoupdate = function() { finish(); }
+applicationCache.oncached = function() { finish(); }
+applicationCache.onerror = function() { error(); }
+</script>
+</html>
