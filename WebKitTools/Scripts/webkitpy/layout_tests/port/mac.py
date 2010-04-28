@@ -30,15 +30,8 @@
 
 import logging
 import os
-import pdb
 import platform
-import re
-import shutil
 import signal
-import subprocess
-import sys
-import time
-import webbrowser
 
 import webkitpy.common.system.ospath as ospath
 import webkitpy.layout_tests.port.server_process as server_process

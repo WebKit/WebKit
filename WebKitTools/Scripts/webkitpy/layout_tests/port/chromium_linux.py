@@ -31,9 +31,7 @@
 
 import logging
 import os
-import platform
 import signal
-import subprocess
 
 import chromium
 
@@ -122,6 +120,7 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
             _log.error('    Please install using: "sudo apt-get install '
                        'wdiff"')
             _log.error('')
+        # FIXME: The ChromiumMac port always returns True.
         return result
 
     def _path_to_apache(self):

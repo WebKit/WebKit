@@ -30,7 +30,6 @@
 
 import logging
 import os
-import subprocess
 
 from webkitpy.layout_tests.port.webkit import WebKitPort
 

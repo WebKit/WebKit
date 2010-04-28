@@ -33,7 +33,6 @@
 import os.path
 import re
 import StringIO
-import subprocess
 
 from datetime import datetime # used in timestamp()
 

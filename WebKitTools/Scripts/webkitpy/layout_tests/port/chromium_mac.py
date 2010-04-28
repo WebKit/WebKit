@@ -33,9 +33,10 @@ import logging
 import os
 import platform
 import signal
-import subprocess
 
 import chromium
+
+from webkitpy.common.system.executive import Executive
 
 _log = logging.getLogger("webkitpy.layout_tests.port.chromium_mac")
 
@@ -99,16 +100,12 @@ class ChromiumMacPort(chromium.ChromiumPort):
         return self.path_from_chromium_base('xcodebuild', *comps)
 
     def _check_wdiff_install(self):
-        # FIXME: This should use Executive.
-        f = open(os.devnull, 'w')
-        rcode = 0
         try:
-            rcode = subprocess.call(['wdiff'], stderr=f)
+            # We're ignoring the return and always returning True
+            self._executive.run_command([self._path_to_wdiff()], error_handler=Executive.ignore_error)
         except OSError:
             _log.warning('wdiff not found. Install using MacPorts or some '
                          'other means')
-            pass
-        f.close()
         return True
 
     def _lighttpd_path(self, *comps):

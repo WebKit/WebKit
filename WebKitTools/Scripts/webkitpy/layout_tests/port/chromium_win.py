@@ -31,9 +31,6 @@
 
 import logging
 import os
-import platform
-import signal
-import subprocess
 import sys
 
 import chromium

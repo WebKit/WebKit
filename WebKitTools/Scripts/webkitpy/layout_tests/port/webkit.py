@@ -35,12 +35,9 @@ from __future__ import with_statement
 import codecs
 import logging
 import os
-import pdb
-import platform
 import re
 import shutil
 import signal
-import subprocess
 import sys
 import time
 import webbrowser
@@ -388,7 +385,6 @@ class WebKitDriver(base.Driver):
             command += "'" + image_hash
         command += "\n"
 
-        # pdb.set_trace()
         self._server_process.write(command)
 
         have_seen_content_type = False

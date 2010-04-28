@@ -35,7 +35,6 @@ import difflib
 import errno
 import os
 import shlex
-import subprocess
 import sys
 import time
 
@@ -148,17 +147,13 @@ class Port(object):
 
         result = True
         try:
-            if subprocess.call(cmd) == 0:
+            if self._executive.run_command(cmd, return_exit_code=True) == 0:
                 return False
         except OSError, e:
             if e.errno == errno.ENOENT or e.errno == errno.EACCES:
                 _compare_available = False
             else:
                 raise e
-        except ValueError:
-            # work around a race condition in Python 2.4's implementation
-            # of subprocess.Popen. See http://bugs.python.org/issue1199282 .
-            pass
         return result
 
     def diff_text(self, expected_text, actual_text,

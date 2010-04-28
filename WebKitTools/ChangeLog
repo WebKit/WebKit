@@ -1,3 +1,38 @@
+2010-04-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by David Levin.
+
+        Audit all uses of subprocess in webkitpy
+        https://bugs.webkit.org/show_bug.cgi?id=38284
+
+        After further discussions with Jeffrey Yasskin
+        about http://bugs.python.org/issue2320
+        and related issues of using subprocess from
+        multiple threads, I have learned that subprocess
+        is known to be non-threadsafe through recent
+        Python 2.7 builds.
+
+        I'm attempting to lessen our exposure to these
+        subprocess bugs by auditing each use of subprocess
+        in webkitpy.  I did not find any unsafe calls
+        in my audit, but I did remove numerous unneeded
+        import subprocess lines.
+
+        * Scripts/webkitpy/common/checkout/api.py:
+        * Scripts/webkitpy/common/net/bugzilla.py:
+        * Scripts/webkitpy/common/system/deprecated_logging_unittest.py:
+        * Scripts/webkitpy/common/system/user.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_mac_unittest.py: Added.
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/port/win.py:
+
 2010-04-28  Darin Adler  <darin@apple.com>
 
         Ignore a directory the Python tools creates.

@@ -62,6 +62,7 @@ class User(object):
     def edit(self, files):
         editor = os.environ.get("EDITOR") or "vi"
         args = shlex.split(editor)
+        # Note: Not thread safe: http://bugs.python.org/issue2320
         subprocess.call(args + files)
 
     def page(self, message):

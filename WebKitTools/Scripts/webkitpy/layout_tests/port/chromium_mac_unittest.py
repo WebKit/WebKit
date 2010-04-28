@@ -1,4 +1,4 @@
-# Copyright (C) 2009 Google Inc. All rights reserved.
+# Copyright (C) 2010 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -26,35 +26,15 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import os
-import StringIO
-import tempfile
+import chromium_mac
 import unittest
 
-from webkitpy.common.system.executive import ScriptError
-from webkitpy.common.system.deprecated_logging import *
-
-class LoggingTest(unittest.TestCase):
-
-    def assert_log_equals(self, log_input, expected_output):
-        original_stderr = sys.stderr
-        test_stderr = StringIO.StringIO()
-        sys.stderr = test_stderr
-
-        try:
-            log(log_input)
-            actual_output = test_stderr.getvalue()
-        finally:
-            sys.stderr = original_stderr
-
-        self.assertEquals(actual_output, expected_output, "log(\"%s\") expected: %s actual: %s" % (log_input, expected_output, actual_output))
-
-    def test_log(self):
-        self.assert_log_equals("test", "test\n")
-
-        # Test that log() does not throw an exception when passed an object instead of a string.
-        self.assert_log_equals(ScriptError(message="ScriptError"), "ScriptError\n")
+from webkitpy.thirdparty.mock import Mock
 
 
-if __name__ == '__main__':
-    unittest.main()
+class ChromiumMacPortTest(unittest.TestCase):
+
+    def test_check_wdiff_install(self):
+        port = chromium_mac.ChromiumMacPort()
+        # Currently is always true, just logs if missing.
+        self.assertTrue(port._check_wdiff_install())
