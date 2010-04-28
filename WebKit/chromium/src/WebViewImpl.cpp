@@ -326,9 +326,12 @@ void WebViewImpl::mouseDown(const WebMouseEvent& event)
     if (!mainFrameImpl() || !mainFrameImpl()->frameView())
         return;
 
-    // If there is a select popup opened, close it as the user is clicking on
-    // the page (outside of the popup).
+    // If there is a select popup open, close it as the user is clicking on
+    // the page (outside of the popup).  We also save it so we can prevent a
+    // click on the select element from immediately reopening the popup.
+    RefPtr<WebCore::PopupContainer> selectPopup = m_selectPopup;
     hideSelectPopup();
+    ASSERT(!m_selectPopup);
 
     m_lastMouseDownPoint = WebPoint(event.x, event.y);
     m_haveMouseCapture = true;
@@ -361,6 +364,13 @@ void WebViewImpl::mouseDown(const WebMouseEvent& event)
         // Focus has not changed, show the suggestions popup.
         static_cast<EditorClientImpl*>(m_page->editorClient())->
             showFormAutofillForNode(clickedNode.get());
+    }
+    if (m_selectPopup && m_selectPopup == selectPopup) {
+        // That click triggered a select popup which is the same as the one that
+        // was showing before the click.  It means the user clicked the select
+        // while the popup was showing, and as a result we first closed then
+        // immediately reopened the select popup.  It needs to be closed.
+        hideSelectPopup();
     }
 
     // Dispatch the contextmenu event regardless of if the click was swallowed.

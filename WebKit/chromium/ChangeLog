@@ -2,6 +2,17 @@
 
         Reviewed by Darin Fisher.
 
+        Makes clicking a select element close its associated popup if
+        it is open.
+        https://bugs.webkit.org/show_bug.cgi?id=38105
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::mouseDown):
+
+2010-04-27  Jay Civelli  <jcivelli@chromium.org>
+
+        Reviewed by Darin Fisher.
+
         [chromium] Merged the WebView public method to close suggestion popups
         into a single method to close all popups (select and suggestions).
         That ensures select popups are closed when the browser window is moved
