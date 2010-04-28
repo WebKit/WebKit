@@ -1,3 +1,14 @@
+2010-04-28  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Failing test http/tests/misc/isindex-with-no-form.html
+        https://bugs.webkit.org/show_bug.cgi?id=30815
+
+        The test currently works, removing from Skipped.
+
+        * platform/gtk/Skipped:
+
 2010-04-28  Evan Martin  <evan@chromium.org>
 
         Reviewed by Darin Adler.
