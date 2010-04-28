@@ -1,5 +1,25 @@
 2010-04-27  Yuzo Fujishima  <yuzo@google.com>
 
+        Reviewed by Dimitri Glazkov.
+
+        Enhance CSS parser for Paged Media (Iteration 3)
+        Implement size parameter parsing for Paged Media.
+        https://bugs.webkit.org/show_bug.cgi?id=35851
+
+        I believe size property hasn't been used so far because (1) it hasn't been properly parsed and
+        (2) a comment in CSSComputedStyleDeclaration::getPropertyCSSValue says so.
+        Changing the way of parsing it should not cause any regressions -- no existing tests fail because of this change.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseSize):
+        (WebCore::CSSParser::parseSizeParameter):
+        * css/CSSParser.h:
+        (WebCore::CSSParser::):
+        * css/CSSValueKeywords.in:
+
+2010-04-27  Yuzo Fujishima  <yuzo@google.com>
+
         Reviewed by Eric Seidel.
 
         Enhance CSS parser for Paged Media (Iteration 2)

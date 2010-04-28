@@ -380,10 +380,15 @@ collapse
 #
 # Unordered rest
 #
+a3
+a4
+a5
 above
 absolute
 always
 avoid
+b4
+b5
 below
 bidi-override
 blink
@@ -398,6 +403,9 @@ hide
 higher
 invert
 landscape
+ledger
+legal
+letter
 level
 line-through
 local

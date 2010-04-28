@@ -252,6 +252,17 @@ namespace WebCore {
 
         void deleteFontFaceOnlyValues();
 
+        enum SizeParameterType {
+            None,
+            Auto,
+            Length,
+            PageSize,
+            Orientation,
+        };
+
+        bool parseSize(int propId, bool important);
+        SizeParameterType parseSizeParameter(CSSValueList* parsedValues, CSSParserValue* value, SizeParameterType prevParamType);
+
         UChar* m_data;
         UChar* yytext;
         UChar* yy_c_buf_p;

@@ -1,5 +1,16 @@
 2010-04-27  Yuzo Fujishima  <yuzo@google.com>
 
+        Reviewed by Dimitri Glazkov.
+
+        Enhance CSS parser for Paged Media (Iteration 3)
+        Implement size parameter parsing for Paged Media.
+        https://bugs.webkit.org/show_bug.cgi?id=35851
+
+        * printing/page-rule-css-text-expected.txt:
+        * printing/page-rule-css-text.html:
+
+2010-04-27  Yuzo Fujishima  <yuzo@google.com>
+
         Reviewed by Eric Seidel.
 
         Enhance CSS parser for Paged Media (Iteration 2)

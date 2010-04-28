@@ -592,7 +592,9 @@ bool CSSParser::parseValue(int propId, bool important)
          * (see parseAuralValues). As we don't support them at all this seems reasonable.
          */
 
-    case CSSPropertySize:                 // <length>{1,2} | auto | portrait | landscape | inherit
+    case CSSPropertySize:                 // <length>{1,2} | auto | [ <page-size> || [ portrait | landscape] ]
+        return parseSize(propId, important);
+
     case CSSPropertyQuotes:               // [<string> <string>]+ | none | inherit
         if (id)
             validPrimitive = true;
@@ -2108,6 +2110,79 @@ bool CSSParser::parse4Values(int propId, const int *properties,  bool important)
     }
     
     return true;
+}
+
+// <length>{1,2} | auto | [ <page-size> || [ portrait | landscape] ]
+bool CSSParser::parseSize(int propId, bool important)
+{
+    ASSERT(propId == CSSPropertySize);
+
+    if (m_valueList->size() > 2)
+        return false;
+
+    CSSParserValue* value = m_valueList->current();
+    if (!value)
+        return false;
+
+    RefPtr<CSSValueList> parsedValues = CSSValueList::createSpaceSeparated();
+
+    // First parameter.
+    SizeParameterType paramType = parseSizeParameter(parsedValues.get(), value, None);
+    if (paramType == None)
+        return false;
+
+    // Second parameter, if any.
+    value = m_valueList->next();
+    if (value) {
+        paramType = parseSizeParameter(parsedValues.get(), value, paramType);
+        if (paramType == None)
+            return false;
+    }
+
+    addProperty(propId, parsedValues.release(), important);
+    return true;
+}
+
+CSSParser::SizeParameterType CSSParser::parseSizeParameter(CSSValueList* parsedValues, CSSParserValue* value, SizeParameterType prevParamType)
+{
+    switch (value->id) {
+    case CSSValueAuto:
+        if (prevParamType == None) {
+            parsedValues->append(CSSPrimitiveValue::createIdentifier(value->id));
+            return Auto;
+        }
+        return None;
+    case CSSValueLandscape:
+    case CSSValuePortrait:
+        if (prevParamType == None || prevParamType == PageSize) {
+            parsedValues->append(CSSPrimitiveValue::createIdentifier(value->id));
+            return Orientation;
+        }
+        return None;
+    case CSSValueA3:
+    case CSSValueA4:
+    case CSSValueA5:
+    case CSSValueB4:
+    case CSSValueB5:
+    case CSSValueLedger:
+    case CSSValueLegal:
+    case CSSValueLetter:
+        if (prevParamType == None || prevParamType == Orientation) {
+            // Normalize to Page Size then Orientation order by prepending.
+            // This is not specified by the CSS3 Paged Media specification, but for simpler processing hereafter.
+            parsedValues->prepend(CSSPrimitiveValue::createIdentifier(value->id));
+            return PageSize;
+        }
+        return None;
+    case 0:
+        if (validUnit(value, FLength, m_strict) && (prevParamType == None || prevParamType == Length)) {
+            parsedValues->append(CSSPrimitiveValue::create(value->fValue, static_cast<CSSPrimitiveValue::UnitTypes>(value->unit)));
+            return Length;
+        }
+        return None;
+    default:
+        return None;
+    }
 }
 
 // [ <string> | <uri> | <counter> | attr(X) | open-quote | close-quote | no-open-quote | no-close-quote ]+ | inherit

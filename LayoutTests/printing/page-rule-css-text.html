@@ -26,15 +26,43 @@
         margin:3cm;
     }
 }
-/* FIXME: Add the following once size property is implemented.
-
-@page :left {
-    size: 4in 6in;
+@page auto_page {
+    size: auto;
 }
-@page :right {
+@page square_page {
+    size: 4in;
+}
+@page letter_page {
     size: letter;
 }
-*/
+@page page_widht_height {
+    size: 10cm 15cm;
+}
+@page page_size_orientation {
+    size: ledger landscape;
+}
+@page page_orientation_size {
+    size: portrait a4;
+}
+@page err_empty_size {
+    size:;
+}
+@page err_unknow_page_size {
+    size: yotsugiri;
+}
+@page err_length_and_page_size {
+    size: 10cm letter;
+}
+@page err_length_and_orientation {
+    size: 10cm landscape;
+}
+@page err_orientations {
+    size: portrait landscape;
+}
+@page err_too_many_params {
+    size: a5 landscape auto;
+}
+
 /* FIXME: Add the following once margin at-rule is implemented.
 
 @page :first {
