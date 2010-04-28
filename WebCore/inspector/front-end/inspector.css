@@ -3387,7 +3387,15 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
     bottom: 0px;
     left: 200px;
     right: 0px;
-    background-color: rgb(224, 224, 224);
+    background-color: rgb(255, 255, 255);
+}
+
+.timeline-window-selector {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background-color: rgba(125, 173, 217, 0.5);
+    z-index: 250;
 }
 
 #timeline-overview-window {
@@ -3396,14 +3404,33 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
     left: 0;
     right: 0;
     top: 0;
+    bottom: 60px;
+    z-index: 150;
+}
+
+.timeline-overview-dividers-background {
+    left: 0%;
+    right: 0%;
+    top: 0px;
+    bottom: 60px;
+    background-color: black;
+    position: absolute;
+}
+
+.timeline-overview-window-rulers {
+    top: 0;
     bottom: 0;
+    position: absolute;
+    opacity: 0.2;
+    border-right: 1px solid black;
+    border-left: 1px solid black;
     z-index: 150;
 }
 
 .timeline-window-resizer {
     position: absolute;
-    top: 35px;
-    bottom: 15px;
+    top: 0px;
+    bottom: 60px;
     width: 5px;
     margin-left: -3px;
     margin-right: -2px;
