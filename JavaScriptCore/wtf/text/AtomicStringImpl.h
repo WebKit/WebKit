@@ -29,6 +29,8 @@ namespace WebCore {
 
 class AtomicStringImpl : public StringImpl
 {
+public:
+    AtomicStringImpl() : StringImpl(0) {}
 };
 
 }

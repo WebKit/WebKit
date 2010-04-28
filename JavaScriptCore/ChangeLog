@@ -1,3 +1,16 @@
+2010-04-28  Thiago Macieira <thiago.macieira@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fix compilation with gcc 3.4.
+
+        AtomicStringImpl.h:29: error: base `WebCore::StringImpl' with only
+        non-default constructor in class without a constructor
+
+        * wtf/text/AtomicStringImpl.h:
+        (WebCore::AtomicStringImpl::AtomicStringImpl): Provide a default constructor.
+        * wtf/text/StringImpl.h: Allow AtomicStringImpl to call a StringImpl constructor through a friend declaration.
+
 2010-04-27  Stephanie Lewis  <slewis@apple.com>
 
         Fix Tiger build.
