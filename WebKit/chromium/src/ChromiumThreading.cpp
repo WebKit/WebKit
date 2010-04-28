@@ -38,13 +38,9 @@
 
 namespace WTF {
 
-void ChromiumThreading::initializeMainThread()
+void ChromiumThreading::callOnMainThread(void (*func)(void*), void* context)
 {
-}
-
-void ChromiumThreading::scheduleDispatchFunctionsOnMainThread()
-{
-    WebKit::webKitClient()->callOnMainThread(&WTF::dispatchFunctionsFromMainThread);
+    WebKit::webKitClient()->callOnMainThread(func, context);
 }
 
 }  // namespace WTF
