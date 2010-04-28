@@ -272,12 +272,13 @@ class ProcessorDispatcherSkipTest(unittest.TestCase):
 
     """Tests the "should skip" methods of the ProcessorDispatcher class."""
 
+    def setUp(self):
+        self._dispatcher = ProcessorDispatcher()
+
     def test_should_skip_with_warning(self):
         """Test should_skip_with_warning()."""
-        dispatcher = ProcessorDispatcher()
-
         # Check a non-skipped file.
-        self.assertFalse(dispatcher.should_skip_with_warning("foo.txt"))
+        self.assertFalse(self._dispatcher.should_skip_with_warning("foo.txt"))
 
         # Check skipped files.
         paths_to_skip = [
@@ -292,25 +293,46 @@ class ProcessorDispatcherSkipTest(unittest.TestCase):
             ]
 
         for path in paths_to_skip:
-            self.assertTrue(dispatcher.should_skip_with_warning(path),
+            self.assertTrue(self._dispatcher.should_skip_with_warning(path),
                             "Checking: " + path)
 
-    def test_should_skip_without_warning(self):
-        """Test should_skip_without_warning()."""
-        dispatcher = ProcessorDispatcher()
+    def _assert_should_skip_without_warning(self, path, is_checker_none,
+                                            expected):
+        # Check the file type before asserting the return value.
+        checker = self._dispatcher.dispatch_processor(file_path=path,
+                                                      handle_style_error=None,
+                                                      min_confidence=3)
+        message = 'while checking: %s' % path
+        self.assertEquals(checker is None, is_checker_none, message)
+        self.assertEquals(self._dispatcher.should_skip_without_warning(path),
+                          expected, message)
 
-        # Check a non-skipped file.
-        self.assertFalse(dispatcher.should_skip_without_warning("foo.txt"))
+    def test_should_skip_without_warning__true(self):
+        """Test should_skip_without_warning() for True return values."""
+        # Check a file with NONE file type.
+        path = 'foo.asdf'  # Non-sensical file extension.
+        self._assert_should_skip_without_warning(path,
+                                                 is_checker_none=True,
+                                                 expected=True)
 
-        # Check skipped files.
-        paths_to_skip = [
-           # LayoutTests folder
-           "LayoutTests/foo.txt",
-            ]
+        # Check files with non-NONE file type.  These examples must be
+        # drawn from the _SKIPPED_FILES_WITHOUT_WARNING configuration
+        # variable.
+        path = os.path.join('LayoutTests', 'foo.txt')
+        self._assert_should_skip_without_warning(path,
+                                                 is_checker_none=False,
+                                                 expected=True)
 
-        for path in paths_to_skip:
-            self.assertTrue(dispatcher.should_skip_without_warning(path),
-                            "Checking: " + path)
+    def test_should_skip_without_warning__false(self):
+        """Test should_skip_without_warning() for False return values."""
+        paths = ['foo.txt',
+                 os.path.join('LayoutTests', 'ChangeLog'),
+        ]
+
+        for path in paths:
+            self._assert_should_skip_without_warning(path,
+                                                     is_checker_none=False,
+                                                     expected=False)
 
 
 class ProcessorDispatcherDispatchTest(unittest.TestCase):
@@ -411,18 +433,34 @@ class ProcessorDispatcherDispatchTest(unittest.TestCase):
         """Test paths that should be checked as text."""
         paths = [
            "ChangeLog",
+           "ChangeLog-2009-06-16",
+           "foo.ac",
+           "foo.cc",
+           "foo.cgi",
            "foo.css",
+           "foo.exp",
+           "foo.flex",
+           "foo.gyp",
+           "foo.gypi",
            "foo.html",
            "foo.idl",
+           "foo.in",
            "foo.js",
            "foo.mm",
            "foo.php",
+           "foo.pl",
            "foo.pm",
+           "foo.pri",
+           "foo.pro",
+           "foo.rb",
+           "foo.sh",
            "foo.txt",
-           "FooChangeLog.bak",
-           "WebCore/ChangeLog",
-           "WebCore/inspector/front-end/inspector.js",
-           "WebKitTools/Scripts/check-webkit-style",
+           "foo.wm",
+           "foo.xhtml",
+           "foo.y",
+           os.path.join("WebCore", "ChangeLog"),
+           os.path.join("WebCore", "inspector", "front-end", "inspector.js"),
+           os.path.join("WebKitTools", "Scripts", "check-webkit-style"),
         ]
 
         for path in paths:
@@ -441,8 +479,10 @@ class ProcessorDispatcherDispatchTest(unittest.TestCase):
         """Test paths that have no file type.."""
         paths = [
            "Makefile",
+           "foo.asdf",  # Non-sensical file extension.
            "foo.png",
            "foo.exe",
+           "foo.vcproj",
             ]
 
         for path in paths:
@@ -726,18 +766,10 @@ class StyleProcessor_CodeCoverageTest(LoggingTestCase):
 
     def test_process__no_checker_dispatched(self):
         """Test the process() method for a path with no dispatched checker."""
-        self._processor.process(lines=['line1', 'line2'],
-                                file_path='foo/do_not_process.txt',
-                                line_numbers=[100])
-
-        # As a sanity check, check that the carriage-return checker was
-        # instantiated.  (This code path was already checked in other test
-        # methods in this test case.)
-        carriage_checker = self.carriage_checker
-        self.assertEquals(carriage_checker.lines, ['line1', 'line2'])
-
-        # Check that the style checker was not dispatched.
-        self.assertTrue(self._mock_dispatcher.dispatched_checker is None)
+        path = os.path.join('foo', 'do_not_process.txt')
+        self.assertRaises(AssertionError, self._processor.process,
+                          lines=['line1', 'line2'], file_path=path,
+                          line_numbers=[100])
 
 
 class PatchCheckerTest(unittest.TestCase):

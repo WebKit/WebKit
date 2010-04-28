@@ -1,3 +1,32 @@
+2010-04-28  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        Adjusted check-webkit-style so that files with file type NONE
+        are automatically skipped without warning.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38197
+
+        This change simplifies configuring which files to skip.  It also
+        addresses an issue whereby check-webkit-style was unintentionally
+        checking .vcproj files for carriage returns.
+
+        * Scripts/webkitpy/style/checker.py:
+          - Moved the C++, Python, and text file extensions to new
+            module-level configuration variables.
+          - Removed .pyc from the _SKIPPED_FILES_WITHOUT_WARNING configuration
+            variable.
+          - Changed the numeric values of the FileType enum so that
+            FileType.NONE evaluates to False.
+          - For ProcessorDispatcher.should_skip_without_warning():
+            - Changed the method to return True for FileType.NONE files.
+            - Made ChangeLog files an exception to getting skipped.
+          - Changed the StyleProcessor.process() method to raise an
+            exception if given a file path that should not be processed.
+
+        * Scripts/webkitpy/style/checker_unittest.py:
+          - Updated the unit tests and added more test cases as necessary.
+
 2010-04-28  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Jeremy Orlow.

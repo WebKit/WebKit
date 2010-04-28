@@ -157,11 +157,51 @@ _PATH_RULES_SPECIFIER = [
 ]
 
 
+_CPP_FILE_EXTENSIONS = [
+    'c',
+    'cpp',
+    'h',
+    ]
+
+_PYTHON_FILE_EXTENSION = 'py'
+
+# FIXME: Include 'vcproj' files as text files after creating a mechanism
+#        for exempting them from the carriage-return checker (since they
+#        are Windows-only files).
+_TEXT_FILE_EXTENSIONS = [
+    'ac',
+    'cc',
+    'cgi',
+    'css',
+    'exp',
+    'flex',
+    'gyp',
+    'gypi',
+    'html',
+    'idl',
+    'in',
+    'js',
+    'mm',
+    'php',
+    'pl',
+    'pm',
+    'pri',
+    'pro',
+    'rb',
+    'sh',
+    'txt',
+#   'vcproj',  # See FIXME above.
+    'wm',
+    'xhtml',
+    'y',
+    ]
+
+
+# Files to skip that are less obvious.
+#
 # Some files should be skipped when checking style. For example,
 # WebKit maintains some files in Mozilla style on purpose to ease
 # future merges.
-#
-# Include a warning for skipped files that are less obvious.
 _SKIPPED_FILES_WITH_WARNING = [
     # The Qt API and tests do not follow WebKit style.
     # They follow Qt style. :)
@@ -174,11 +214,12 @@ _SKIPPED_FILES_WITH_WARNING = [
     ]
 
 
-# Don't include a warning for skipped files that are more common
-# and more obvious.
+# Files to skip that are more common or obvious.
+#
+# This list should be in addition to files with FileType.NONE.  Files
+# with FileType.NONE are automatically skipped without warning.
 _SKIPPED_FILES_WITHOUT_WARNING = [
     "LayoutTests/",
-    ".pyc",
     ]
 
 
@@ -329,11 +370,11 @@ def configure_logging(stream, logger=None, is_verbose=False):
 # Enum-like idiom
 class FileType:
 
-    NONE = 1
+    NONE = 0  # FileType.NONE evaluates to False.
     # Alphabetize remaining types
-    CPP = 2
-    PYTHON = 3
-    TEXT = 4
+    CPP = 1
+    PYTHON = 2
+    TEXT = 3
 
 
 # FIXME: Rename this class to CheckerDispatcher, rename the style/processors/
@@ -346,23 +387,6 @@ class FileType:
 class ProcessorDispatcher(object):
 
     """Supports determining whether and how to check style, based on path."""
-
-    cpp_file_extensions = (
-        'c',
-        'cpp',
-        'h',
-        )
-
-    text_file_extensions = (
-        'css',
-        'html',
-        'idl',
-        'js',
-        'mm',
-        'php',
-        'pm',
-        'txt',
-        )
 
     def _file_extension(self, file_path):
         """Return the file extension without the leading dot."""
@@ -377,6 +401,16 @@ class ProcessorDispatcher(object):
 
     def should_skip_without_warning(self, file_path):
         """Return whether the given file should be skipped without a warning."""
+        if not self._file_type(file_path):  # FileType.NONE.
+            return True
+        # Since "LayoutTests" is in _SKIPPED_FILES_WITHOUT_WARNING, make
+        # an exception to prevent files like "LayoutTests/ChangeLog" and
+        # "LayoutTests/ChangeLog-2009-06-16" from being skipped.
+        #
+        # FIXME: Figure out a good way to avoid having to add special logic
+        #        for this special case.
+        if os.path.basename(file_path).startswith('ChangeLog'):
+            return False
         for skipped_file in _SKIPPED_FILES_WITHOUT_WARNING:
             if file_path.find(skipped_file) >= 0:
                 return True
@@ -386,7 +420,7 @@ class ProcessorDispatcher(object):
         """Return the file type corresponding to the given file."""
         file_extension = self._file_extension(file_path)
 
-        if (file_extension in self.cpp_file_extensions) or (file_path == '-'):
+        if (file_extension in _CPP_FILE_EXTENSIONS) or (file_path == '-'):
             # FIXME: Do something about the comment below and the issue it
             #        raises since cpp_style already relies on the extension.
             #
@@ -394,18 +428,13 @@ class ProcessorDispatcher(object):
             # reading from stdin, cpp_style tests should not rely on
             # the extension.
             return FileType.CPP
-        elif file_extension == "py":
+        elif file_extension == _PYTHON_FILE_EXTENSION:
             return FileType.PYTHON
-        elif ("ChangeLog" in file_path or
+        elif (os.path.basename(file_path).startswith('ChangeLog') or
               (not file_extension and "WebKitTools/Scripts/" in file_path) or
-              file_extension in self.text_file_extensions):
+              file_extension in _TEXT_FILE_EXTENSIONS):
             return FileType.TEXT
         else:
-            # FIXME: If possible, change this method to default to
-            #        returning FileType.TEXT.  The should_process() method
-            #        should really encapsulate which files not to check.
-            #        Currently, "skip" logic is spread between both this
-            #        method and should_process.
             return FileType.NONE
 
     def _create_processor(self, file_type, file_path, handle_style_error,
@@ -623,7 +652,6 @@ class StyleProcessor(ProcessorBase):
 
     def should_process(self, file_path):
         """Return whether the file should be checked for style."""
-
         if self._dispatcher.should_skip_without_warning(file_path):
             return False
         if self._dispatcher.should_skip_with_warning(file_path):
@@ -671,13 +699,7 @@ class StyleProcessor(ProcessorBase):
                                                       min_confidence)
 
         if checker is None:
-            # FIXME: Should we really be skipping files that return True
-            #        for should_process()?  Perhaps this should be a
-            #        warning or an exception so we can find out if
-            #        should_process() is missing any files.
-            _log.debug('File not a recognized type to check. Skipping: "%s"'
-                       % file_path)
-            return
+            raise AssertionError("File should not be checked: '%s'" % file_path)
 
         _log.debug("Using class: " + checker.__class__.__name__)
 
