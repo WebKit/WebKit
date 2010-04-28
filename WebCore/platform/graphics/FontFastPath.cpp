@@ -36,6 +36,10 @@
 #include <wtf/MathExtras.h>
 #include <wtf/unicode/Unicode.h>
 
+#ifndef ROMAN_AND_GREEK_DIACRITICS_CAN_USE_GLYPH_CACHE
+#define ROMAN_AND_GREEK_DIACRITICS_CAN_USE_GLYPH_CACHE 1
+#endif
+
 using namespace WTF;
 using namespace Unicode;
 
@@ -234,12 +238,13 @@ bool Font::canUseGlyphCache(const TextRun& run) const
         if (c <= 0x194F)
             return false;
 
+#if !ROMAN_AND_GREEK_DIACRITICS_CAN_USE_GLYPH_CACHE
         // FIXME: we should not use complex text path for these characters.
-        
         if (c < 0x1E00)     // U+1E00 through U+2000 characters with diacritics and stacked diacritics
             continue;
         if (c <= 0x2000)
             return false;
+#endif
 
         if (c < 0x20D0)     // U+20D0 through U+20FF Combining marks for symbols
             continue;
