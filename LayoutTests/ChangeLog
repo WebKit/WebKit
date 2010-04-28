@@ -1,5 +1,14 @@
 2010-04-28  Shinichiro Hamaji  <hamaji@chromium.org>
 
+        Unreviewed.  Disable printing/media-queries-print for now.
+
+        Add layoutTestController.setPrinting()
+        https://bugs.webkit.org/show_bug.cgi?id=37203
+
+        * platform/mac/Skipped:
+
+2010-04-28  Shinichiro Hamaji  <hamaji@chromium.org>
+
         Unreviewed.  Added missing expectation files missed in r58386.
 
         Add layoutTestController.setPrinting()
