@@ -1,3 +1,15 @@
+2010-04-28  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        fast/text/international/bold-bengali needs baselines
+        https://bugs.webkit.org/show_bug.cgi?id=38273
+
+        * platform/chromium-win/fast/text/international/bold-bengali-expected.checksum: Added.
+        * platform/chromium-win/fast/text/international/bold-bengali-expected.png: Added.
+        * platform/mac/fast/text/international/bold-bengali-expected.checksum: Added.
+        * platform/mac/fast/text/international/bold-bengali-expected.png: Added.
+
 2010-04-28  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by Dimitri Glazkov
