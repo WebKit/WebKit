@@ -1,3 +1,21 @@
+2010-04-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by the inimitable Dan Bernstein.
+
+        SVG as background image renders incorrectly after zooming
+        https://bugs.webkit.org/show_bug.cgi?id=38215
+        
+        When doing a partial redraw of an SVGImage used as a CSS background
+        image, we're limited to drawing the entire Frame, clipped to the dirty rect.
+        Because of this, we need to fix up the CTM so that the origin is at the
+        top left of the unclipped image, rather than the top left of the
+        portion being redrawn.
+
+        Test: fast/images/svg-background-partial-redraw.html
+
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::draw):
+
 2010-04-27  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by David Hyatt.

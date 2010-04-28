@@ -1,3 +1,18 @@
+2010-04-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by the inimitable Dan Bernstein.
+
+        SVG as background image renders incorrectly after zooming
+        https://bugs.webkit.org/show_bug.cgi?id=38215
+        
+        Testcase for a partial redraw of an element using an untiled SVG background image.
+
+        * fast/images/resources/circle.svg: Added.
+        * fast/images/svg-background-partial-redraw.html: Added.
+        * platform/mac/fast/images/svg-background-partial-redraw-expected.checksum: Added.
+        * platform/mac/fast/images/svg-background-partial-redraw-expected.png: Added.
+        * platform/mac/fast/images/svg-background-partial-redraw-expected.txt: Added.
+
 2010-04-27  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by David Hyatt.

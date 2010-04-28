@@ -186,13 +186,22 @@ void SVGImage::draw(GraphicsContext* context, const FloatRect& dstRect, const Fl
     context->clip(enclosingIntRect(dstRect));
     if (compositeOp != CompositeSourceOver)
         context->beginTransparencyLayer(1);
-    context->translate(dstRect.location().x(), dstRect.location().y());
-    context->scale(FloatSize(dstRect.width() / srcRect.width(), dstRect.height() / srcRect.height()));
+
+    FloatSize scale(dstRect.width() / srcRect.width(), dstRect.height() / srcRect.height());
+    
+    // We can only draw the entire frame, clipped to the rect we want. So compute where the top left
+    // of the image would be if we were drawing without clipping, and translate accordingly.
+    FloatSize topLeftOffset(srcRect.location().x() * scale.width(), srcRect.location().y() * scale.height());
+    FloatPoint destOffset = dstRect.location() - topLeftOffset;
+
+    context->translate(destOffset.x(), destOffset.y());
+    context->scale(scale);
 
     view->resize(size());
 
     if (view->needsLayout())
         view->layout();
+
     view->paint(context, IntRect(0, 0, view->width(), view->height()));
 
     if (compositeOp != CompositeSourceOver)
