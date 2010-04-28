@@ -1,3 +1,10 @@
+2010-04-28  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Unreviewed, fixing a build problem introduced by the previous patch.
+
+        * storage/DatabaseSync.cpp:
+        (WebCore::DatabaseSync::openDatabaseSync):
+
 2010-04-23  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Jeremy Orlow.

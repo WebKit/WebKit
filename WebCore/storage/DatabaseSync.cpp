@@ -58,10 +58,11 @@ bool DatabaseSync::isAvailable()
     return isSyncDatabaseAvailable;
 }
 
-PassRefPtr<DatabaseSync> DatabaseSync::openDatabaseSync(ScriptExecutionContext* context, const String&, const String&, const String&,
+PassRefPtr<DatabaseSync> DatabaseSync::openDatabaseSync(ScriptExecutionContext*, const String&, const String&, const String&,
                                                         unsigned long, PassRefPtr<DatabaseCallback>, ExceptionCode& ec)
 {
-    ASSERT(context->isContextThread());
+    // FIXME: uncomment the assert once we use the ScriptExecutionContext* parameter
+    //ASSERT(context->isContextThread());
 
     ec = SECURITY_ERR;
     return 0;
