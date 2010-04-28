@@ -38,7 +38,8 @@ PrintContext::PrintContext(Frame* frame)
 
 PrintContext::~PrintContext()
 {
-    ASSERT(!m_isPrinting);
+    if (m_isPrinting)
+        end();
     m_pageRects.clear();
 }
 

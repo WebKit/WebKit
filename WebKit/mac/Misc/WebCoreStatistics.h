@@ -83,7 +83,7 @@
 @end
 
 @interface WebFrame (WebKitDebug)
-- (NSString *)renderTreeAsExternalRepresentation;
+- (NSString *)renderTreeAsExternalRepresentationForPrinting:(BOOL)forPrinting;
 - (NSString *)counterValueForElement:(DOMElement*)element;
 - (int)pageNumberForElement:(DOMElement*)element:(float)pageWidthInPixels:(float)pageHeightInPixels;
 - (int)numberOfPages:(float)pageWidthInPixels:(float)pageHeightInPixels;

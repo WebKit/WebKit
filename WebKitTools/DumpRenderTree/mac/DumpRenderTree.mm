@@ -1085,7 +1085,7 @@ void dump()
             resultMimeType = @"application/x-webarchive";
         } else {
             sizeWebViewForCurrentTest();
-            resultString = [mainFrame renderTreeAsExternalRepresentation];
+            resultString = [mainFrame renderTreeAsExternalRepresentationForPrinting:gLayoutTestController->isPrinting()];
         }
 
         if (resultString && !resultData)
@@ -1116,6 +1116,7 @@ void dump()
     }
 
     if (dumpPixels && !dumpAsText)
+        // FIXME: when isPrinting is set, dump the image with page separators.
         dumpWebViewAsPixelsAndCompareWithExpected(gLayoutTestController->expectedPixelHash());
 
     puts("#EOF");   // terminate the (possibly empty) pixels block

@@ -1,3 +1,14 @@
+2010-04-27  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Darin Adler and Eric Seidel.
+
+        Add layoutTestController.setPrinting()
+        https://bugs.webkit.org/show_bug.cgi?id=37203
+
+        * Misc/WebCoreStatistics.h:
+        * Misc/WebCoreStatistics.mm:
+        (-[WebFrame renderTreeAsExternalRepresentationForPrinting:]):
+
 2010-04-25  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej Stachowiak.

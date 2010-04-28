@@ -1,3 +1,21 @@
+2010-04-27  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Darin Adler and Eric Seidel.
+
+        Add layoutTestController.setPrinting()
+        https://bugs.webkit.org/show_bug.cgi?id=37203
+
+        Added RenderAsTextPrintingMode as a behavior of externalRepresentation.
+
+        Now ~PrintContext() calls end() automatically.
+
+        * page/PrintContext.cpp:
+        (WebCore::PrintContext::~PrintContext):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::externalRepresentation):
+        * rendering/RenderTreeAsText.h:
+        (WebCore::):
+
 2010-04-27  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Eric Seidel.

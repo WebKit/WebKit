@@ -255,9 +255,9 @@ using namespace WebCore;
 
 @implementation WebFrame (WebKitDebug)
 
-- (NSString *)renderTreeAsExternalRepresentation
+- (NSString *)renderTreeAsExternalRepresentationForPrinting:(BOOL)forPrinting
 {
-    return externalRepresentation(_private->coreFrame);
+    return externalRepresentation(_private->coreFrame, forPrinting ? RenderAsTextPrintingMode : RenderAsTextBehaviorNormal);
 }
 
 - (NSString *)counterValueForElement:(DOMElement*)element

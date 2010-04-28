@@ -1,3 +1,22 @@
+2010-04-27  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Darin Adler and Eric Seidel.
+
+        Add layoutTestController.setPrinting()
+        https://bugs.webkit.org/show_bug.cgi?id=37203
+
+        Now we can test media queries with the new function because the
+        render tree has the color information of the box.
+
+        Note that the pixel test is currently failing. We'll need another
+        patch to enable printing mode for pixel tests.
+
+        * platform/mac/Skipped:
+        * platform/mac/printing/media-queries-print-expected.checksum: Added.
+        * platform/mac/printing/media-queries-print-expected.png: Added.
+        * platform/mac/printing/media-queries-print-expected.txt: Added.
+        * printing/media-queries-print.html:
+
 2010-04-27  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Eric Seidel.
