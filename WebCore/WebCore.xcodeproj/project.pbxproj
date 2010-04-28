@@ -750,7 +750,6 @@
 		411046410FA222A600BA436A /* ScriptEventListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 4110463F0FA222A600BA436A /* ScriptEventListener.h */; };
 		411046420FA222A600BA436A /* ScriptEventListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 411046400FA222A600BA436A /* ScriptEventListener.cpp */; };
 		4127D5370F8AAB1D00E424F5 /* ScriptState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4127D5360F8AAB1D00E424F5 /* ScriptState.cpp */; };
-		415B7C570FF598E6006770F7 /* JSAbstractWorkerCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 415B7C540FF598E6006770F7 /* JSAbstractWorkerCustom.cpp */; };
 		415B7C580FF598E6006770F7 /* JSSharedWorkerConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 415B7C550FF598E6006770F7 /* JSSharedWorkerConstructor.cpp */; };
 		415B7C630FF5A767006770F7 /* JSSharedWorkerConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 415B7C620FF5A767006770F7 /* JSSharedWorkerConstructor.h */; };
 		4162A450101145AE00DFF3ED /* DedicatedWorkerContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4162A44D101145AE00DFF3ED /* DedicatedWorkerContext.cpp */; };
@@ -4578,7 +4577,6 @@
 		BCCD74DC0A4C8D35005FDA6D /* HTMLViewSourceDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = BCCD74DB0A4C8D35005FDA6D /* HTMLViewSourceDocument.h */; };
 		BCCD74E50A4C8DDF005FDA6D /* HTMLViewSourceDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCCD74E40A4C8DDF005FDA6D /* HTMLViewSourceDocument.cpp */; };
 		BCCE58AC1061E8CF008FB35A /* JSDatabaseCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCCE58AB1061E8CF008FB35A /* JSDatabaseCustom.cpp */; };
-		BCCE58AF1061E90C008FB35A /* JSDocumentFragmentCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCCE58AE1061E90C008FB35A /* JSDocumentFragmentCustom.cpp */; };
 		BCCFBAE80B5152ED0001F1D7 /* Tokenizer.h in Headers */ = {isa = PBXBuildFile; fileRef = BCCFBAE70B5152ED0001F1D7 /* Tokenizer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCD0E0FA0E972C3500265DEA /* SecurityOrigin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD0E0F70E972C3500265DEA /* SecurityOrigin.cpp */; };
 		BCD0E0FB0E972C3500265DEA /* SecurityOrigin.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD0E0F80E972C3500265DEA /* SecurityOrigin.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4754,7 +4752,6 @@
 		E0FEF372B27C53EAC1C1FBEE /* EventSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E0FEF371B27C53EAC1C1FBEE /* EventSource.cpp */; };
 		E0FEF372B37C53EAC1C1FBEE /* JSEventSource.h in Headers */ = {isa = PBXBuildFile; fileRef = E0FEF371B37C53EAC1C1FBEE /* JSEventSource.h */; };
 		E0FEF372B47C53EAC1C1FBEE /* JSEventSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E0FEF371B47C53EAC1C1FBEE /* JSEventSource.cpp */; };
-		E0FEF372B57C53EAC1C1FBEE /* JSEventSourceCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E0FEF371B57C53EAC1C1FBEE /* JSEventSourceCustom.cpp */; };
 		E0FEF372B67C53EAC1C1FBEE /* JSEventSourceConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = E0FEF371B67C53EAC1C1FBEE /* JSEventSourceConstructor.h */; };
 		E0FEF372B77C53EAC1C1FBEE /* JSEventSourceConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E0FEF371B77C53EAC1C1FBEE /* JSEventSourceConstructor.cpp */; };
 		E107400D0E77BDC00033AF24 /* JSMessageChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E107400B0E77BDC00033AF24 /* JSMessageChannel.cpp */; };
@@ -6188,7 +6185,6 @@
 		4110463F0FA222A600BA436A /* ScriptEventListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptEventListener.h; sourceTree = "<group>"; };
 		411046400FA222A600BA436A /* ScriptEventListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptEventListener.cpp; sourceTree = "<group>"; };
 		4127D5360F8AAB1D00E424F5 /* ScriptState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptState.cpp; sourceTree = "<group>"; };
-		415B7C540FF598E6006770F7 /* JSAbstractWorkerCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAbstractWorkerCustom.cpp; sourceTree = "<group>"; };
 		415B7C550FF598E6006770F7 /* JSSharedWorkerConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSharedWorkerConstructor.cpp; sourceTree = "<group>"; };
 		415B7C620FF5A767006770F7 /* JSSharedWorkerConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSharedWorkerConstructor.h; sourceTree = "<group>"; };
 		4162A44D101145AE00DFF3ED /* DedicatedWorkerContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DedicatedWorkerContext.cpp; path = workers/DedicatedWorkerContext.cpp; sourceTree = "<group>"; };
@@ -9953,7 +9949,6 @@
 		BCCD74DB0A4C8D35005FDA6D /* HTMLViewSourceDocument.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLViewSourceDocument.h; sourceTree = "<group>"; };
 		BCCD74E40A4C8DDF005FDA6D /* HTMLViewSourceDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLViewSourceDocument.cpp; sourceTree = "<group>"; };
 		BCCE58AB1061E8CF008FB35A /* JSDatabaseCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDatabaseCustom.cpp; sourceTree = "<group>"; };
-		BCCE58AE1061E90C008FB35A /* JSDocumentFragmentCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDocumentFragmentCustom.cpp; sourceTree = "<group>"; };
 		BCCFBAE70B5152ED0001F1D7 /* Tokenizer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Tokenizer.h; sourceTree = "<group>"; };
 		BCD0E0F70E972C3500265DEA /* SecurityOrigin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SecurityOrigin.cpp; sourceTree = "<group>"; };
 		BCD0E0F80E972C3500265DEA /* SecurityOrigin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecurityOrigin.h; sourceTree = "<group>"; };
@@ -10138,7 +10133,6 @@
 		E0FEF371B27C53EAC1C1FBEE /* EventSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventSource.cpp; sourceTree = "<group>"; };
 		E0FEF371B37C53EAC1C1FBEE /* JSEventSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSEventSource.h; sourceTree = "<group>"; };
 		E0FEF371B47C53EAC1C1FBEE /* JSEventSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSEventSource.cpp; sourceTree = "<group>"; };
-		E0FEF371B57C53EAC1C1FBEE /* JSEventSourceCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSEventSourceCustom.cpp; sourceTree = "<group>"; };
 		E0FEF371B67C53EAC1C1FBEE /* JSEventSourceConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSEventSourceConstructor.h; sourceTree = "<group>"; };
 		E0FEF371B77C53EAC1C1FBEE /* JSEventSourceConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSEventSourceConstructor.cpp; sourceTree = "<group>"; };
 		E107400B0E77BDC00033AF24 /* JSMessageChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMessageChannel.cpp; sourceTree = "<group>"; };
@@ -14993,7 +14987,6 @@
 		BC4EDEF70C08F414007EDD49 /* Custom */ = {
 			isa = PBXGroup;
 			children = (
-				415B7C540FF598E6006770F7 /* JSAbstractWorkerCustom.cpp */,
 				BC2ED6BB0C6BD2F000920BFF /* JSAttrCustom.cpp */,
 				49EED14B1051971900099FAB /* JSCanvasRenderingContext2DCustom.cpp */,
 				49EED14D1051971A00099FAB /* JSCanvasRenderingContextCustom.cpp */,
@@ -15010,14 +15003,12 @@
 				4162A453101145E300DFF3ED /* JSDedicatedWorkerContextCustom.cpp */,
 				33503CBF10179C1A003B47E1 /* JSDesktopNotificationsCustom.cpp */,
 				49C7BA8C1042F5B10009D447 /* JSDocumentCustom.cpp */,
-				BCCE58AE1061E90C008FB35A /* JSDocumentFragmentCustom.cpp */,
 				1AC226160DB69F740089B669 /* JSDOMApplicationCacheCustom.cpp */,
 				2E0888E5114884E200AF4265 /* JSDOMFormDataCustom.cpp */,
 				BCD9C25E0C17AA67005C90A2 /* JSDOMWindowCustom.cpp */,
 				652FBBBB0DE27CB60001D386 /* JSDOMWindowCustom.h */,
 				BC2ED5540C6B9BD300920BFF /* JSElementCustom.cpp */,
 				BCEFAF4D0C317E6900FA81F6 /* JSEventCustom.cpp */,
-				E0FEF371B57C53EAC1C1FBEE /* JSEventSourceCustom.cpp */,
 				FE80D7A60E9C1ED2000D6F75 /* JSGeolocationCustom.cpp */,
 				BCE7B1920D4E86960075A539 /* JSHistoryCustom.cpp */,
 				BC97E42B10915B060010D361 /* JSHTMLAllCollectionCustom.cpp */,
@@ -19892,7 +19883,6 @@
 				59EE122C1106080500885116 /* JNIUtilityPrivate.cpp in Sources */,
 				93309DF3099E64920056E581 /* JoinTextNodesCommand.cpp in Sources */,
 				418F88040FF957AE0080F045 /* JSAbstractWorker.cpp in Sources */,
-				415B7C570FF598E6006770F7 /* JSAbstractWorkerCustom.cpp in Sources */,
 				65DF31DA09D1C123000BE325 /* JSAttr.cpp in Sources */,
 				BC2ED6BC0C6BD2F000920BFF /* JSAttrCustom.cpp in Sources */,
 				E4EEFFC80D34550C00469A58 /* JSAudioConstructor.cpp in Sources */,
@@ -19961,7 +19951,6 @@
 				659DDC8209E198BA001BF3C6 /* JSDocument.cpp in Sources */,
 				49C7BA8D1042F5B10009D447 /* JSDocumentCustom.cpp in Sources */,
 				1A494EDE0A123F4C00FDAFC1 /* JSDocumentFragment.cpp in Sources */,
-				BCCE58AF1061E90C008FB35A /* JSDocumentFragmentCustom.cpp in Sources */,
 				65DF31F509D1CC60000BE325 /* JSDocumentType.cpp in Sources */,
 				1AC2260C0DB69F190089B669 /* JSDOMApplicationCache.cpp in Sources */,
 				1AC226170DB69F740089B669 /* JSDOMApplicationCacheCustom.cpp in Sources */,
@@ -19989,7 +19978,6 @@
 				93B70D6909EB0C7C009D8468 /* JSEventListener.cpp in Sources */,
 				E0FEF372B47C53EAC1C1FBEE /* JSEventSource.cpp in Sources */,
 				E0FEF372B77C53EAC1C1FBEE /* JSEventSourceConstructor.cpp in Sources */,
-				E0FEF372B57C53EAC1C1FBEE /* JSEventSourceCustom.cpp in Sources */,
 				BC6090200E91B8EC000C68B5 /* JSEventTarget.cpp in Sources */,
 				3314ACEB10892086000F0E56 /* JSExceptionBase.cpp in Sources */,
 				BC00F0140E0A189500FD04E3 /* JSFile.cpp in Sources */,

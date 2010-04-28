@@ -1,3 +1,22 @@
+2010-04-27  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove obsolete custom bindings file
+        https://bugs.webkit.org/show_bug.cgi?id=38223
+
+        We don't need these files anymore because they are empty.
+
+        * Android.jscbindings.mk:
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSAbstractWorkerCustom.cpp: Removed.
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSDocumentFragmentCustom.cpp: Removed.
+        * bindings/js/JSEventSourceCustom.cpp: Removed.
+
 2010-04-27  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by Jian Li.

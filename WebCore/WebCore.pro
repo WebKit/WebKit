@@ -289,7 +289,6 @@ SOURCES += \
     bindings/js/JSDebugWrapperSet.cpp \
     bindings/js/JSDesktopNotificationsCustom.cpp \
     bindings/js/JSDocumentCustom.cpp \
-    bindings/js/JSDocumentFragmentCustom.cpp \
     bindings/js/JSDOMFormDataCustom.cpp \
     bindings/js/JSDOMGlobalObject.cpp \
     bindings/js/JSDOMWindowBase.cpp \
@@ -299,7 +298,6 @@ SOURCES += \
     bindings/js/JSElementCustom.cpp \
     bindings/js/JSEventCustom.cpp \
     bindings/js/JSEventSourceConstructor.cpp \
-    bindings/js/JSEventSourceCustom.cpp \
     bindings/js/JSEventTarget.cpp \
     bindings/js/JSExceptionBase.cpp \
     bindings/js/JSGeolocationCustom.cpp \
@@ -2349,7 +2347,6 @@ contains(DEFINES, ENABLE_ICONDATABASE=1) {
 
 contains(DEFINES, ENABLE_WORKERS=1) {
     SOURCES += \
-        bindings/js/JSAbstractWorkerCustom.cpp \
         bindings/js/JSDedicatedWorkerContextCustom.cpp \
         bindings/js/JSWorkerConstructor.cpp \
         bindings/js/JSWorkerContextBase.cpp \

@@ -516,7 +516,6 @@
             'bindings/js/JSDebugWrapperSet.cpp',
             'bindings/js/JSDebugWrapperSet.h',
             'bindings/js/JSDocumentCustom.cpp',
-            'bindings/js/JSDocumentFragmentCustom.cpp',
             'bindings/js/JSDOMApplicationCacheCustom.cpp',
             'bindings/js/JSDOMBinding.cpp',
             'bindings/js/JSDOMBinding.h',

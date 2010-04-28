@@ -420,14 +420,12 @@ webcore_sources += \
 	WebCore/bindings/js/JSDOMWrapper.cpp \
 	WebCore/bindings/js/JSDOMWrapper.h \
 	WebCore/bindings/js/JSDocumentCustom.cpp \
-	WebCore/bindings/js/JSDocumentFragmentCustom.cpp \
 	WebCore/bindings/js/JSElementCustom.cpp \
 	WebCore/bindings/js/JSEventCustom.cpp \
 	WebCore/bindings/js/JSEventListener.cpp \
 	WebCore/bindings/js/JSEventListener.h \
 	WebCore/bindings/js/JSEventSourceConstructor.cpp \
 	WebCore/bindings/js/JSEventSourceConstructor.h \
-	WebCore/bindings/js/JSEventSourceCustom.cpp \
 	WebCore/bindings/js/JSEventTarget.cpp \
 	WebCore/bindings/js/JSEventTarget.h \
 	WebCore/bindings/js/JSExceptionBase.cpp \
@@ -2674,7 +2672,6 @@ webcore_cppflags += \
 	-DENABLE_WORKERS=1
 
 webcore_sources += \
-	WebCore/bindings/js/JSAbstractWorkerCustom.cpp \
 	WebCore/bindings/js/JSDedicatedWorkerContextCustom.cpp \
 	WebCore/bindings/js/JSWorkerConstructor.cpp \
 	WebCore/bindings/js/JSWorkerConstructor.h \

@@ -26,7 +26,6 @@
 // This all-in-one cpp file cuts down on template bloat to allow us to build our Windows release build.
 
 #include "GCController.cpp"
-#include "JSAbstractWorkerCustom.cpp"
 #include "JSAttrCustom.cpp"
 #include "JSAudioConstructor.cpp"
 #include "JSCDATASectionCustom.cpp"
@@ -58,12 +57,10 @@
 #include "JSDedicatedWorkerContextCustom.cpp"
 #include "JSDesktopNotificationsCustom.cpp"
 #include "JSDocumentCustom.cpp"
-#include "JSDocumentFragmentCustom.cpp"
 #include "JSElementCustom.cpp"
 #include "JSEventCustom.cpp"
 #include "JSEventListener.cpp"
 #include "JSEventSourceConstructor.cpp"
-#include "JSEventSourceCustom.cpp"
 #include "JSEventTarget.cpp"
 #include "JSExceptionBase.cpp"
 #include "JSHTMLAllCollectionCustom.cpp"
