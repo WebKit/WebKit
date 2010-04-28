@@ -5,6 +5,7 @@
         Rebaseline Webkit Mac pixel results and chromium pixel results
         caused by http://trac.webkit.org/changeset/58191
         Webkit Mac pixel results failed with --tolerance=0
+        https://bugs.webkit.org/show_bug.cgi?id=38104
 
         * platform/chromium-linux/editing/deleting/4845371-expected.checksum:
         * platform/chromium-linux/editing/deleting/4845371-expected.png: Removed.
