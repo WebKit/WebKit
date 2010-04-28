@@ -615,7 +615,10 @@ static bool validateRectForCanvas(float& x, float& y, float& width, float& heigh
 {
     if (!isfinite(x) | !isfinite(y) | !isfinite(width) | !isfinite(height))
         return false;
-    
+
+    if (!width && !height)
+        return false;
+
     if (width < 0) {
         width = -width;
         x -= width;

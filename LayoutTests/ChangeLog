@@ -1,3 +1,27 @@
+2010-04-27  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37686
+
+        Tests that strokeRect does not paint any artifacts when the
+        specified rectangle has height, width = 0 and lineWidth > 1.
+
+        Also tests that clearRect, fillRect, and rect are ignored when
+        height, width = 0.
+
+        * fast/canvas/canvas-clearRect-expected.txt: Added.
+        * fast/canvas/canvas-clearRect.html: Added.
+        * fast/canvas/canvas-fillRect-expected.txt: Added.
+        * fast/canvas/canvas-fillRect.html: Added.
+        * fast/canvas/canvas-modify-emptyPath-expected.txt:
+        * fast/canvas/canvas-strokeRect-expected.txt: Updated results.
+        * fast/canvas/script-tests/canvas-clearRect.js: Added.
+        * fast/canvas/script-tests/canvas-fillRect.js: Added.
+        * fast/canvas/script-tests/canvas-modify-emptyPath.js: Added test case.
+        * fast/canvas/script-tests/canvas-strokeRect.js: Ditto. Also, added
+        debug statements so as to distinguish the results for each test.
+
 2010-04-27  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by the inimitable Dan Bernstein.
