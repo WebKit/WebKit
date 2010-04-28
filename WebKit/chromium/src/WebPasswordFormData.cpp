@@ -162,7 +162,10 @@ WebPasswordFormData::WebPasswordFormData(const WebFormElement& webForm)
     KURL fullOrigin(ParsedURLString, form->document()->documentURI());
 
     // Calculate the canonical action URL
-    KURL fullAction = frame->loader()->completeURL(form->action());
+    String action = form->action();
+    if (action.isNull())
+        action = ""; // missing 'action' attribute implies current URL
+    KURL fullAction = frame->loader()->completeURL(action);
     if (!fullAction.isValid())
         return;
 
