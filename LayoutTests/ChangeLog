@@ -1,3 +1,17 @@
+2010-04-28  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by David Levin.
+
+        fix linux expected result for fast/text/line-breaks.html
+        https://bugs.webkit.org/show_bug.cgi?id=38283
+
+        This is needed after r58426. See http://trac.webkit.org/changeset/57242
+        for more details.
+
+        * platform/chromium-linux/fast/text/line-breaks-expected.checksum:
+        * platform/chromium-linux/fast/text/line-breaks-expected.png:
+        * platform/chromium-linux/fast/text/line-breaks-expected.txt:
+
 2010-04-28  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
