@@ -293,10 +293,10 @@ module window {
 #if defined(ENABLE_ORIENTATION_EVENTS) && ENABLE_ORIENTATION_EVENTS
         attribute EventListener onorientationchange;
 #endif
-        attribute [DontEnum,Conditional=TOUCH_EVENTS] EventListener ontouchstart;
-        attribute [DontEnum,Conditional=TOUCH_EVENTS] EventListener ontouchmove;
-        attribute [DontEnum,Conditional=TOUCH_EVENTS] EventListener ontouchend;
-        attribute [DontEnum,Conditional=TOUCH_EVENTS] EventListener ontouchcancel;
+        attribute [DontEnum,Conditional=TOUCH_EVENTS,EnabledAtRuntime] EventListener ontouchstart;
+        attribute [DontEnum,Conditional=TOUCH_EVENTS,EnabledAtRuntime] EventListener ontouchmove;
+        attribute [DontEnum,Conditional=TOUCH_EVENTS,EnabledAtRuntime] EventListener ontouchend;
+        attribute [DontEnum,Conditional=TOUCH_EVENTS,EnabledAtRuntime] EventListener ontouchcancel;
 
         // EventTarget interface
         [Custom] void addEventListener(in DOMString type,

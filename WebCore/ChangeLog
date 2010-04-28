@@ -1,3 +1,26 @@
+2010-04-27  Garret Kelly  <gdk@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Turn all of the touch event handlers into RuntimeEnabledFeatures, and
+        modify the createEvent methond on Document so that it won't create a
+        TouchEvent if the feature is disabled.
+        https://bugs.webkit.org/show_bug.cgi?id=37485
+
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::touchEnabled):
+        (WebCore::RuntimeEnabledFeatures::setTouchEnabled):
+        (WebCore::RuntimeEnabledFeatures::ontouchstartEnabled):
+        (WebCore::RuntimeEnabledFeatures::ontouchmoveEnabled):
+        (WebCore::RuntimeEnabledFeatures::ontouchendEnabled):
+        (WebCore::RuntimeEnabledFeatures::ontouchcancelEnabled):
+        * dom/Document.cpp:
+        (WebCore::Document::createEvent):
+        * dom/Document.idl:
+        * dom/Element.idl:
+        * page/DOMWindow.idl:
+
 2010-04-27  Jens Alfke  <snej@chromium.org>
 
         Reviewed by Darin Fisher.

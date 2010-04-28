@@ -195,10 +195,10 @@ module core {
         attribute [DontEnum] EventListener onreset;
         attribute [DontEnum] EventListener onsearch;
         attribute [DontEnum] EventListener onselectstart;
-        attribute [DontEnum,Conditional=TOUCH_EVENTS] EventListener ontouchstart;
-        attribute [DontEnum,Conditional=TOUCH_EVENTS] EventListener ontouchmove;
-        attribute [DontEnum,Conditional=TOUCH_EVENTS] EventListener ontouchend;
-        attribute [DontEnum,Conditional=TOUCH_EVENTS] EventListener ontouchcancel;
+        attribute [DontEnum,Conditional=TOUCH_EVENTS,EnabledAtRuntime] EventListener ontouchstart;
+        attribute [DontEnum,Conditional=TOUCH_EVENTS,EnabledAtRuntime] EventListener ontouchmove;
+        attribute [DontEnum,Conditional=TOUCH_EVENTS,EnabledAtRuntime] EventListener ontouchend;
+        attribute [DontEnum,Conditional=TOUCH_EVENTS,EnabledAtRuntime] EventListener ontouchcancel;
 #endif
     };
 

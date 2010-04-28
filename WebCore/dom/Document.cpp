@@ -173,6 +173,9 @@
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
+#if USE(V8)
+#include "RuntimeEnabledFeatures.h"
+#endif
 #include "TouchEvent.h"
 #endif
 
@@ -3153,7 +3156,11 @@ PassRefPtr<Event> Document::createEvent(const String& eventType, ExceptionCode& 
         event = SVGZoomEvent::create();
 #endif
 #if ENABLE(TOUCH_EVENTS)
+#if USE(V8)
+    else if (eventType == "TouchEvent" && RuntimeEnabledFeatures::touchEnabled())
+#else
     else if (eventType == "TouchEvent")
+#endif
         event = TouchEvent::create();
 #endif
     if (event)

@@ -94,6 +94,15 @@ public:
     static bool pushStateEnabled() { return isPushStateEnabled; }
     static bool replaceStateEnabled() { return isPushStateEnabled; }
 
+#if ENABLE(TOUCH_EVENTS)
+    static bool touchEnabled() { return isTouchEnabled; }
+    static void setTouchEnabled(bool isEnabled) { isTouchEnabled = isEnabled; }
+    static bool ontouchstartEnabled() { return isTouchEnabled; }
+    static bool ontouchmoveEnabled() { return isTouchEnabled; }
+    static bool ontouchendEnabled() { return isTouchEnabled; }
+    static bool ontouchcancelEnabled() { return isTouchEnabled; }
+#endif
+
 private:
     // Never instantiate.
     RuntimeEnabledFeatures() { }
@@ -106,6 +115,7 @@ private:
     static bool isIndexedDBEnabled;
     static bool isWebGLEnabled;
     static bool isPushStateEnabled;
+    static bool isTouchEnabled;
 };
 
 } // namespace WebCore
