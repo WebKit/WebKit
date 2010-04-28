@@ -17,4 +17,8 @@
 @page err_length_and_orientation { }
 @page err_orientations { }
 @page err_too_many_params { }
+table { page: Rotated; }
+div { page: auto; }
+pre { }
+p { }
 

@@ -1,5 +1,18 @@
 2010-04-27  Yuzo Fujishima  <yuzo@google.com>
 
+        Reviewed by Eric Seidel.
+
+        Enhance CSS parser for Paged Media (Iteration 4)
+        Implement page property parsing as specified at http://dev.w3.org/csswg/css3-page/#using-named-pages.
+        https://bugs.webkit.org/show_bug.cgi?id=35853
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parsePage):
+        * css/CSSParser.h:
+
+2010-04-27  Yuzo Fujishima  <yuzo@google.com>
+
         Reviewed by Dimitri Glazkov.
 
         Enhance CSS parser for Paged Media (Iteration 3)

@@ -63,6 +63,19 @@
     size: a5 landscape auto;
 }
 
+table {
+    page: Rotated;
+}
+div {
+    page: Auto;
+}
+pre {
+    page: Auto Rotated; /* Invalid */
+}
+p {
+    page: 1cm; /* Invalid */
+}
+
 /* FIXME: Add the following once margin at-rule is implemented.
 
 @page :first {

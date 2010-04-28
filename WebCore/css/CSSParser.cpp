@@ -1694,8 +1694,9 @@ bool CSSParser::parseValue(int propId, bool important)
         return parseTransitionShorthand(important);
     case CSSPropertyInvalid:
         return false;
-    case CSSPropertyFontStretch:
     case CSSPropertyPage:
+        return parsePage(propId, important);
+    case CSSPropertyFontStretch:
     case CSSPropertyTextLineThrough:
     case CSSPropertyTextOverline:
     case CSSPropertyTextUnderline:
@@ -2110,6 +2111,28 @@ bool CSSParser::parse4Values(int propId, const int *properties,  bool important)
     }
     
     return true;
+}
+
+// auto | <identifier>
+bool CSSParser::parsePage(int propId, bool important)
+{
+    ASSERT(propId == CSSPropertyPage);
+
+    if (m_valueList->size() != 1)
+        return false;
+
+    CSSParserValue* value = m_valueList->current();
+    if (!value)
+        return false;
+
+    if (value->id == CSSValueAuto) {
+        addProperty(propId, CSSPrimitiveValue::createIdentifier(value->id), important);
+        return true;
+    } else if (value->id == 0 && value->unit == CSSPrimitiveValue::CSS_IDENT) {
+        addProperty(propId, CSSPrimitiveValue::create(value->string, CSSPrimitiveValue::CSS_STRING), important);
+        return true;
+    }
+    return false;
 }
 
 // <length>{1,2} | auto | [ <page-size> || [ portrait | landscape] ]
