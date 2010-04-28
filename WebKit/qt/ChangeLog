@@ -1,3 +1,13 @@
+2010-04-28  Janne Koskinen  <janne.p.koskinen@digia.com>
+
+        Reviewed by Simon Hausmann <simon.hausmann@nokia.com>
+
+        [Qt] WINS DEF file freeze
+
+        Updated WINSCW def file with added and removed symbols.
+
+        * symbian/bwins/QtWebKitu.def:
+
 2010-04-25  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej Stachowiak.
