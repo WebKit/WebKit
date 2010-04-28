@@ -1,3 +1,12 @@
+2010-04-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Only set -allowable_client WebKit2 for engineering builds on SnowLeopard
+        and later.
+
+        * Configurations/WebCore.xcconfig:
+
 2010-04-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele Peterson.
