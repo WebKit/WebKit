@@ -32,14 +32,11 @@
 #include <QtCore/qmetaobject.h>
 #include <QtCore/qset.h>
 #include <QtCore/qtimer.h>
-#include <QtGui/qbitmap.h>
 #include <QtGui/qcolor.h>
 #include <QtGui/qgraphicseffect.h>
 #include <QtGui/qgraphicsitem.h>
 #include <QtGui/qgraphicsscene.h>
-#include <QtGui/qmatrix4x4.h>
 #include <QtGui/qpainter.h>
-#include <QtGui/qpalette.h>
 #include <QtGui/qpixmap.h>
 #include <QtGui/qpixmapcache.h>
 #include <QtGui/qstyleoption.h>
@@ -135,6 +132,8 @@ public:
     // the compositor lets us special-case images and colors, so we try to do so
     enum StaticContentType { HTMLContentType, PixmapContentType, ColorContentType, MediaContentType};
 
+    const GraphicsLayerQtImpl* rootLayer() const;
+
     GraphicsLayerQtImpl(GraphicsLayerQt* newLayer);
     virtual ~GraphicsLayerQtImpl();
 
@@ -143,9 +142,8 @@ public:
     virtual QRectF boundingRect() const;
     virtual void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*);
 
-    // we manage transforms ourselves because transform-origin acts differently in webkit and in Qt
+    // We manage transforms ourselves because transform-origin acts differently in webkit and in Qt, and we need it as a fallback in case we encounter an un-invertible matrix
     void setBaseTransform(const TransformationMatrix&);
-    QTransform computeTransform(const TransformationMatrix& baseTransform) const;
     void updateTransform();
 
     // let the compositor-API tell us which properties were changed
@@ -163,10 +161,6 @@ public:
     // or ChromeClientQt::scheduleCompositingLayerSync (meaning the sync will happen ASAP)
     void flushChanges(bool recursive = true, bool forceTransformUpdate = false);
 
-    // optimization: returns true if this or an ancestor has a transform animation running.
-    // this enables us to use ItemCoordinatesCache while the animation is running, otherwise we have to recache for every frame
-    bool isTransformAnimationRunning() const;
-
 public slots:
     // we need to notify the client (aka the layer compositor) when the animation actually starts
     void notifyAnimationStarted();
@@ -182,6 +176,7 @@ public:
     GraphicsLayerQt* m_layer;
 
     TransformationMatrix m_baseTransform;
+    TransformationMatrix m_transformRelativeToRootLayer;
     bool m_transformAnimationRunning;
     bool m_opacityAnimationRunning;
     QWeakPointer<MaskEffectQt> m_maskEffect;
@@ -288,6 +283,14 @@ GraphicsLayerQtImpl::~GraphicsLayerQtImpl()
 #endif
 }
 
+const GraphicsLayerQtImpl* GraphicsLayerQtImpl::rootLayer() const
+{
+    if (const GraphicsLayerQtImpl* parent = qobject_cast<const GraphicsLayerQtImpl*>(parentObject()))
+        return parent->rootLayer();
+    return this;
+}
+
+
 
 QPixmap GraphicsLayerQtImpl::recache(const QRegion& regionToUpdate)
 {
@@ -299,7 +302,7 @@ QPixmap GraphicsLayerQtImpl::recache(const QRegion& regionToUpdate)
 
     // We might be drawing into an existing cache.
     if (!QPixmapCache::find(m_backingStoreKey, &pixmap))
-        region = QRegion(boundingRect().toAlignedRect());
+        region = QRegion(QRect(0, 0, m_size.width(), m_size.height()));
 
     if (m_size != pixmap.size()) {
         pixmap = QPixmap(m_size.toSize());
@@ -325,63 +328,93 @@ QPixmap GraphicsLayerQtImpl::recache(const QRegion& regionToUpdate)
 
 void GraphicsLayerQtImpl::updateTransform()
 {
-    setBaseTransform(isTransformAnimationRunning() ? m_baseTransform : m_layer->transform());
-}
+    if (!m_transformAnimationRunning)
+        m_baseTransform = m_layer->transform();
 
-void GraphicsLayerQtImpl::setBaseTransform(const TransformationMatrix& baseTransform)
-{
-    m_baseTransform = baseTransform;
-    setTransform(computeTransform(baseTransform));
-}
+    TransformationMatrix localTransform;
 
-QTransform GraphicsLayerQtImpl::computeTransform(const TransformationMatrix& baseTransform) const
-{
-    if (!m_layer)
-        return baseTransform;
-
-    TransformationMatrix computedTransform;
-
-    // The origin for childrenTransform is always the center of the ancestor which contains the childrenTransform.
-    // this has to do with how WebCore implements -webkit-perspective and -webkit-perspective-origin, which are the CSS
-    // attribute that call setChildrenTransform
-    QPointF offset = -pos() - boundingRect().bottomRight() / 2;
-
-    for (const GraphicsLayerQtImpl* ancestor = this; (ancestor = qobject_cast<GraphicsLayerQtImpl*>(ancestor->parentObject())); ) {
-        if (!ancestor->m_state.childrenTransform.isIdentity()) {
-            const QPointF offset = mapFromItem(ancestor, QPointF(ancestor->m_size.width() / 2, ancestor->m_size.height() / 2));
-            computedTransform
-                .translate(offset.x(), offset.y())
-                .multLeft(ancestor->m_state.childrenTransform)
-                .translate(-offset.x(), -offset.y());
-            break;
-        }
-    }
+    GraphicsLayerQtImpl* parent = qobject_cast<GraphicsLayerQtImpl*>(parentObject());
 
     // webkit has relative-to-size originPoint, graphics-view has a pixel originPoint, here we convert
     // we have to manage this ourselves because QGraphicsView's transformOrigin is incompatible
     const qreal originX = m_state.anchorPoint.x() * m_size.width();
     const qreal originY = m_state.anchorPoint.y() * m_size.height();
-    computedTransform
-            .translate3d(originX, originY, m_state.anchorPoint.z())
-            .multLeft(baseTransform)
+
+    // We ignore QGraphicsItem::pos completely, and use only transforms - because we have to maintain that ourselves for 3D.
+    localTransform
+            .translate3d(originX + m_state.pos.x(), originY + m_state.pos.y(), m_state.anchorPoint.z())
+            .multLeft(m_baseTransform)
             .translate3d(-originX, -originY, -m_state.anchorPoint.z());
 
-    // now we project to 2D
-    return QTransform(computedTransform);
+    // This is the actual 3D transform of this item, with the ancestors' transform baked in.
+    m_transformRelativeToRootLayer = TransformationMatrix(parent ? parent->m_transformRelativeToRootLayer : TransformationMatrix())
+                                         .multLeft(localTransform);
+
+    // Now we have enough information to determine if the layer is facing backwards.
+    if (!m_state.backfaceVisibility && m_transformRelativeToRootLayer.inverse().m33() < 0) {
+        setVisible(false);
+        // No point in making extra calculations for invisible elements.
+        return;
+    }
+
+    // Simplistic depth test - we stack the item behind its parent if its computed z is lower than the parent's computed z at the item's center point.
+    if (parent) {
+        const QPointF centerPointMappedToRoot = rootLayer()->mapFromItem(this, m_size.width() / 2, m_size.height() / 2);
+        setFlag(ItemStacksBehindParent,
+                m_transformRelativeToRootLayer.mapPoint(FloatPoint3D(centerPointMappedToRoot.x(), centerPointMappedToRoot.y(), 0)).z() <
+                parent->m_transformRelativeToRootLayer.mapPoint(FloatPoint3D(centerPointMappedToRoot.x(), centerPointMappedToRoot.y(), 0)).z());
+    }
+
+    // The item is front-facing or backface-visibility is on.
+    setVisible(true);
+
+    // Flatten to 2D-space of this item if it doesn't preserve 3D.
+    if (!m_state.preserves3D) {
+        m_transformRelativeToRootLayer.setM13(0);
+        m_transformRelativeToRootLayer.setM23(0);
+        m_transformRelativeToRootLayer.setM31(0);
+        m_transformRelativeToRootLayer.setM32(0);
+        m_transformRelativeToRootLayer.setM33(1);
+        m_transformRelativeToRootLayer.setM34(0);
+        m_transformRelativeToRootLayer.setM43(0);
+    }
+
+    // Apply perspective for the use of this item's children. Perspective is always applied from the item's center.
+    if (!m_state.childrenTransform.isIdentity())
+        m_transformRelativeToRootLayer
+            .translate(m_size.width() / 2, m_size.height() /2)
+            .multLeft(m_state.childrenTransform)
+            .translate(-m_size.width() / 2, -m_size.height() /2);
+
+    bool inverseOk = true;
+    // Use QTransform::inverse to extrapolate the relative transform of this item, based on the parent's transform relative to
+    // the root layer and the desired transform for this item relative to the root layer.
+    const QTransform parentTransform = parent ? parent->itemTransform(rootLayer()) : QTransform();
+    const QTransform transform2D = QTransform(m_transformRelativeToRootLayer) * parentTransform.inverted(&inverseOk);
+
+    // In rare cases the transformation cannot be inversed - in that case we don't apply the transformation at all, otherwise we'd flicker.
+    // FIXME: This should be amended when Qt moves to a real 3D scene-graph.
+    if (!inverseOk)
+        return;
+
+    setTransform(transform2D);
+
+    const QList<QGraphicsItem*> children = childItems();
+    for (QList<QGraphicsItem*>::const_iterator it = children.begin(); it != children.end(); ++it)
+        if (GraphicsLayerQtImpl* layer= qobject_cast<GraphicsLayerQtImpl*>((*it)->toGraphicsObject()))
+            layer->updateTransform();
 }
 
-bool GraphicsLayerQtImpl::isTransformAnimationRunning() const
+void GraphicsLayerQtImpl::setBaseTransform(const TransformationMatrix& baseTransform)
 {
-    if (m_transformAnimationRunning)
-        return true;
-    if (GraphicsLayerQtImpl* parent = qobject_cast<GraphicsLayerQtImpl*>(parentObject()))
-        return parent->isTransformAnimationRunning();
-    return false;
+    m_baseTransform = baseTransform;
+    updateTransform();
 }
 
 QPainterPath GraphicsLayerQtImpl::opaqueArea() const
 {
     QPainterPath painterPath;
+
     // we try out best to return the opaque area, maybe it will help graphics-view render less items
     if (m_currentContent.backgroundColor.isValid() && m_currentContent.backgroundColor.alpha() == 0xff)
         painterPath.addRect(boundingRect());
@@ -411,10 +444,9 @@ void GraphicsLayerQtImpl::paint(QPainter* painter, const QStyleOptionGraphicsIte
     case HTMLContentType:
         if (m_state.drawsContent) {
             QPixmap backingStore;
-            // We might need to recache, in case we try to paint and the cache
-            // was purged (e.g. if it was full).
+            // We might need to recache, in case we try to paint and the cache was purged (e.g. if it was full).
             if (!QPixmapCache::find(m_backingStoreKey, &backingStore) || backingStore.size() != m_size.toSize())
-                backingStore = recache(QRegion(boundingRect().toAlignedRect()));
+                backingStore = recache(QRegion(m_state.contentsRect));
             painter->drawPixmap(0, 0, backingStore);
         }
         break;
@@ -500,9 +532,6 @@ void GraphicsLayerQtImpl::flushChanges(bool recursive, bool forceUpdateTransform
         }
     }
 
-    if ((m_changeMask & PositionChange) && (m_layer->position() != m_state.pos))
-        setPos(m_layer->position().x(), m_layer->position().y());
-
     if (m_changeMask & SizeChange) {
         if (m_layer->size() != m_state.size) {
             prepareGeometryChange();
@@ -515,7 +544,7 @@ void GraphicsLayerQtImpl::flushChanges(bool recursive, bool forceUpdateTransform
         if (scene())
             scene()->update();
 
-    if (m_changeMask & (ChildrenTransformChange | Preserves3DChange | TransformChange | AnchorPointChange | SizeChange)) {
+    if (m_changeMask & (ChildrenTransformChange | Preserves3DChange | TransformChange | AnchorPointChange | SizeChange | BackfaceVisibilityChange | PositionChange)) {
         // due to the differences between the way WebCore handles transforms and the way Qt handles transforms,
         // all these elements affect the transforms of all the descendants.
         forceUpdateTransform = true;
@@ -586,9 +615,6 @@ void GraphicsLayerQtImpl::flushChanges(bool recursive, bool forceUpdateTransform
 
     if ((m_changeMask & BackgroundColorChange) && (m_pendingContent.backgroundColor != m_currentContent.backgroundColor))
         update();
-
-    // FIXME: the following flags are currently not handled, as they don't have a clear test or are in low priority
-    // GeometryOrientationChange, ContentsOrientationChange, BackfaceVisibilityChange, ChildrenTransformChange, Preserves3DChange
 
     m_state.maskLayer = m_layer->maskLayer();
     m_state.pos = m_layer->position();

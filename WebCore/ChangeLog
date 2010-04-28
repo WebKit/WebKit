@@ -1,3 +1,22 @@
+2010-04-28  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] GraphicsLayer: preserves-3d and backface visibility
+        https://bugs.webkit.org/show_bug.cgi?id=35312
+
+        Implement preserves-3d by maintaining the 3D transformation heirarchy inside GraphicsLayerQt, and extrapolating
+        the relative QTransform. When the extrapolation fails (un-invertible matrix) we ignore the transformation change.
+
+        WebKitSite/blog-files/3d-transforms test now work with Qt.
+
+        * platform/graphics/qt/GraphicsLayerQt.cpp:
+        (WebCore::GraphicsLayerQtImpl::updateTransform):
+        (WebCore::GraphicsLayerQtImpl::opaqueArea):
+        (WebCore::GraphicsLayerQtImpl::boundingRect):
+        (WebCore::GraphicsLayerQtImpl::paint):
+        (WebCore::GraphicsLayerQtImpl::flushChanges):
+
 2010-04-28  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.
