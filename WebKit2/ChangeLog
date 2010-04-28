@@ -1,5 +1,16 @@
 2010-04-27  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Maciej Stachowiak.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=38238
+        Allow both WebKit and WebKit2 to link to the same WebCore.framework
+
+        * Configurations/WebKit2.xcconfig: Remove the OTHER_LDFLAGS. We don't
+        need to set WebCore as a sub_umbrella of WebKit2, since we are not
+        reexporting any of its symbols.
+
+2010-04-27  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Geoffrey Garen.
 
         Add comment about not using StringImpl::createCFString in WKStringCopyCFString.

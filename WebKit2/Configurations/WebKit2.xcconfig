@@ -26,7 +26,6 @@
 PRODUCT_NAME = WebKit2;
 INFOPLIST_FILE = Info.plist;
 INSTALL_PATH = $(SYSTEM_LIBRARY_DIR)/Frameworks;
-OTHER_LDFLAGS = -sub_umbrella WebCore $(OTHER_LDFLAGS);
 
 // FIXME: We need to add an exports file to limit the set of exported symbols.
 // EXPORTED_SYMBOLS_FILE = $(EXPORTED_SYMBOLS_FILE_$(CURRENT_ARCH));

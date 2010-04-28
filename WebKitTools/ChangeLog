@@ -1,3 +1,13 @@
+2010-04-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=38238
+        Allow both WebKit and WebKit2 to link to the same WebCore.framework
+
+        * Scripts/build-webkit: Remove the UMBRELLA_LDFLAGS override when building
+        WebCore for WebKit2, it is no longer necessary.
+
 2010-04-27  James Robinson  <jamesr@chromium.org>
 
         Reviewed by David Levin.

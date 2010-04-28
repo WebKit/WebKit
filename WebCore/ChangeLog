@@ -1,3 +1,15 @@
+2010-04-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=38238
+        Allow both WebKit and WebKit2 to link to the same WebCore.framework
+
+        * Configurations/WebCore.xcconfig: Use -allowable_client WebKit2 to add
+        WebKit2 to the list of frameworks that can link directly to WebCore. It
+        is not necessary for it to be an umbrella since we don't need to reexport
+        any symbols.
+
 2010-04-27  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by David Levin.

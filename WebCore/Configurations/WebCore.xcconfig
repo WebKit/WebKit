@@ -39,7 +39,7 @@ INSTALL_PATH = $(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Fram
 INSTALLHDRS_COPY_PHASE = YES;
 INSTALLHDRS_SCRIPT_PHASE = YES;
 PRODUCT_NAME = WebCore;
-UMBRELLA_LDFLAGS = -umbrella WebKit;
+UMBRELLA_LDFLAGS = -umbrella WebKit -allowable_client WebKit2;
 VISIBILITY_LDFLAGS = ;
 OTHER_LDFLAGS = -l$(SQLITE3_LIBRARY) -lobjc -sub_library libobjc $(UMBRELLA_LDFLAGS) $(VISIBILITY_LDFLAGS);
 

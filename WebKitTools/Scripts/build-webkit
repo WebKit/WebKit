@@ -394,15 +394,7 @@ for my $dir (@projects) {
     } elsif (isQt()) {
         $result = buildQMakeQtProject($dir, $clean, @options);
     } elsif (isAppleMacWebKit()) {
-        my @completeOptions = @options;
-        if ($webkit2 && $dir eq "WebCore") {
-            my @webKit2SpecificOverrides = (
-                'UMBRELLA_LDFLAGS='
-            );
-            push @completeOptions, @webKit2SpecificOverrides;
-        }
-
-        $result = buildXCodeProject($dir, $clean, @completeOptions, @ARGV);
+        $result = buildXCodeProject($dir, $clean, @options, @ARGV);
     } elsif (isAppleWinWebKit()) {
         if ($dir eq "WebKit") {
             $result = buildVisualStudioProject("win/WebKit.vcproj/WebKit.sln", $clean);
