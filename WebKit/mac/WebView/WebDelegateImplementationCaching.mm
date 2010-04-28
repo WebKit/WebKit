@@ -547,6 +547,18 @@ BOOL CallResourceLoadDelegateReturningBoolean(BOOL result, IMP implementation, W
     return result;
 }
 
+BOOL CallResourceLoadDelegateReturningBoolean(BOOL result, IMP implementation, WebView *self, SEL selector, id object1, id object2, id object3)
+{
+    if (!self->_private->catchesDelegateExceptions)
+        return reinterpret_cast<BOOL (*)(id, SEL, WebView *, id, id, id)>(objc_msgSend)(self->_private->resourceProgressDelegate, selector, self, object1, object2, object3);
+    @try {
+        return reinterpret_cast<BOOL (*)(id, SEL, WebView *, id, id, id)>(objc_msgSend)(self->_private->resourceProgressDelegate, selector, self, object1, object2, object3);
+    } @catch(id exception) {
+        ReportDiscardedDelegateException(selector, exception);
+    }
+    return result;
+}
+
 id CallScriptDebugDelegate(IMP implementation, WebView *self, SEL selector, id object1, id object2, NSInteger integer, id object3)
 {
     return CallDelegate(implementation, self, self->_private->scriptDebugDelegate, selector, object1, object2, integer, object3);

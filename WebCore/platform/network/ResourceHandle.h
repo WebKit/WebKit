@@ -82,6 +82,7 @@ class Credential;
 class FormData;
 class Frame;
 class KURL;
+class ProtectionSpace;
 class ResourceError;
 class ResourceHandleClient;
 class ResourceHandleInternal;
@@ -131,6 +132,9 @@ public:
 
 #if PLATFORM(MAC)
     void didCancelAuthenticationChallenge(const AuthenticationChallenge&);
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
+    bool canAuthenticateAgainstProtectionSpace(const ProtectionSpace&);
+#endif
     NSURLConnection *connection() const;
     WebCoreResourceHandleAsDelegate *delegate();
     void releaseDelegate();

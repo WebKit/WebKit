@@ -30,26 +30,28 @@
 namespace WebCore {
 
 enum ProtectionSpaceServerType {
-  ProtectionSpaceServerHTTP = 1,
-  ProtectionSpaceServerHTTPS = 2,
-  ProtectionSpaceServerFTP = 3,
-  ProtectionSpaceServerFTPS = 4,
-  ProtectionSpaceProxyHTTP = 5,
-  ProtectionSpaceProxyHTTPS = 6,
-  ProtectionSpaceProxyFTP = 7,
-  ProtectionSpaceProxySOCKS = 8
+    ProtectionSpaceServerHTTP = 1,
+    ProtectionSpaceServerHTTPS = 2,
+    ProtectionSpaceServerFTP = 3,
+    ProtectionSpaceServerFTPS = 4,
+    ProtectionSpaceProxyHTTP = 5,
+    ProtectionSpaceProxyHTTPS = 6,
+    ProtectionSpaceProxyFTP = 7,
+    ProtectionSpaceProxySOCKS = 8
 };
 
 enum ProtectionSpaceAuthenticationScheme {
-  ProtectionSpaceAuthenticationSchemeDefault = 1,
-  ProtectionSpaceAuthenticationSchemeHTTPBasic = 2,
-  ProtectionSpaceAuthenticationSchemeHTTPDigest = 3,
-  ProtectionSpaceAuthenticationSchemeHTMLForm = 4,
-  ProtectionSpaceAuthenticationSchemeNTLM = 5,
-  ProtectionSpaceAuthenticationSchemeNegotiate = 6,
-  ProtectionSpaceAuthenticationSchemeUnknown = 100,
+    ProtectionSpaceAuthenticationSchemeDefault = 1,
+    ProtectionSpaceAuthenticationSchemeHTTPBasic = 2,
+    ProtectionSpaceAuthenticationSchemeHTTPDigest = 3,
+    ProtectionSpaceAuthenticationSchemeHTMLForm = 4,
+    ProtectionSpaceAuthenticationSchemeNTLM = 5,
+    ProtectionSpaceAuthenticationSchemeNegotiate = 6,
+    ProtectionSpaceAuthenticationSchemeClientCertificateRequested = 7,
+    ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested = 8,
+    ProtectionSpaceAuthenticationSchemeUnknown = 100,
 };
-
+  
 class ProtectionSpace {
 
 public:

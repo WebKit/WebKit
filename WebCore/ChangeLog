@@ -1,3 +1,37 @@
+2010-04-28  Mike Thole  <mthole@apple.com>
+
+        Reviewed by David Kilzer.
+
+        Add canAuthenticateAgainstProtectionSpace() to frame loader so that a protection space 
+        can be inspected before attempting to authenticate against it
+        https://bugs.webkit.org/show_bug.cgi?id=38271
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyFrameLoaderClient::canAuthenticateAgainstProtectionSpace): Added.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::canAuthenticateAgainstProtectionSpace): Added.
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::canAuthenticateAgainstProtectionSpace): Added.
+        * loader/ResourceLoader.h:
+        (WebCore::ResourceLoader::canAuthenticateAgainstProtectionSpace): Added.
+        * platform/network/ProtectionSpace.h:
+        (WebCore::):
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleClient.h:
+        (WebCore::ResourceHandleClient::canAuthenticateAgainstProtectionSpace): Added.
+        * platform/network/mac/AuthenticationMac.mm:
+        (WebCore::mac):
+        Add cases for case ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested and
+        ProtectionSpaceAuthenticationSchemeClientCertificateRequested.  Guarded with the
+        #if USE(PROTECTION_SPACE_AUTH_CALLBACK) as the new NSURLProtectionSpace constants don't
+        exist prior to Mac OS X 10.6.
+        (WebCore::core): Ditto.
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::canAuthenticateAgainstProtectionSpace): Added.
+        (-[WebCoreResourceHandleAsDelegate connection:canAuthenticateAgainstProtectionSpace:]): Added.
+
 2010-04-28  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -414,6 +414,27 @@ void WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(DocumentLoa
     [[WebPanelAuthenticationHandler sharedHandler] startAuthentication:webChallenge window:window];
 }
 
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
+bool WebFrameLoaderClient::canAuthenticateAgainstProtectionSpace(DocumentLoader* loader, unsigned long identifier, const ProtectionSpace& protectionSpace)
+{
+    WebView *webView = getWebView(m_webFrame.get());
+    WebResourceDelegateImplementationCache* implementations = WebViewGetResourceLoadDelegateImplementations(webView);
+    
+    NSURLProtectionSpace *webProtectionSpace = mac(protectionSpace);
+    
+    if (implementations->canAuthenticateAgainstProtectionSpaceFunc) {
+        if (id resource = [webView _objectForIdentifier:identifier]) {
+            return CallResourceLoadDelegateReturningBoolean(NO, implementations->canAuthenticateAgainstProtectionSpaceFunc, webView, @selector(webView:resource:canAuthenticateAgainstProtectionSpace:forDataSource:), resource, webProtectionSpace, dataSource(loader));
+        }
+    }
+
+    // If our resource load delegate doesn't handle the question, then only send authentication
+    // challenges for pre-10.6 protection spaces.  This is the same as the default implementation
+    // in CFNetwork.
+    return (protectionSpace.authenticationScheme() < ProtectionSpaceAuthenticationSchemeClientCertificateRequested);
+}
+#endif
+
 void WebFrameLoaderClient::dispatchDidCancelAuthenticationChallenge(DocumentLoader* loader, unsigned long identifier, const AuthenticationChallenge&challenge)
 {
     WebView *webView = getWebView(m_webFrame.get());

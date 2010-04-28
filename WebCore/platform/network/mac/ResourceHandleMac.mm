@@ -567,6 +567,16 @@ void ResourceHandle::didCancelAuthenticationChallenge(const AuthenticationChalle
         client()->didCancelAuthenticationChallenge(this, challenge);
 }
 
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
+bool ResourceHandle::canAuthenticateAgainstProtectionSpace(const ProtectionSpace& protectionSpace)
+{
+    if (client())
+        return client()->canAuthenticateAgainstProtectionSpace(this, protectionSpace);
+        
+    return false;
+}
+#endif
+
 void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge, const Credential& credential)
 {
     ASSERT(!challenge.isNull());
@@ -738,6 +748,19 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     CallbackGuard guard;
     m_handle->didCancelAuthenticationChallenge(core(challenge));
 }
+
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
+- (BOOL)connection:(NSURLConnection *)unusedConnection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace
+{
+    UNUSED_PARAM(unusedConnection);
+    
+    if (!m_handle)
+        return NO;
+        
+    CallbackGuard guard;
+    return m_handle->canAuthenticateAgainstProtectionSpace(core(protectionSpace));
+}
+#endif
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)r
 {

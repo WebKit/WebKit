@@ -35,6 +35,9 @@
 struct WebResourceDelegateImplementationCache {
     IMP didCancelAuthenticationChallengeFunc;
     IMP didReceiveAuthenticationChallengeFunc;
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
+    IMP canAuthenticateAgainstProtectionSpaceFunc;
+#endif
     IMP identifierForRequestFunc;
     IMP willSendRequestFunc;
     IMP didReceiveResponseFunc;
@@ -130,6 +133,7 @@ id CallResourceLoadDelegate(IMP, WebView *, SEL, id, NSInteger, id);
 id CallResourceLoadDelegate(IMP, WebView *, SEL, id, id, NSInteger, id);
 
 BOOL CallResourceLoadDelegateReturningBoolean(BOOL, IMP, WebView *, SEL, id, id);
+BOOL CallResourceLoadDelegateReturningBoolean(BOOL, IMP, WebView *, SEL, id, id, id);
 
 id CallScriptDebugDelegate(IMP, WebView *, SEL, id, id, NSInteger, id);
 id CallScriptDebugDelegate(IMP, WebView *, SEL, id, NSInteger, id, NSInteger, id);

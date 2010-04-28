@@ -44,6 +44,7 @@ namespace WebCore {
     class DocumentLoader;
     class Frame;
     class FrameLoader;
+    class ProtectionSpace;
     class ResourceHandle;
     class SharedBuffer;
     
@@ -86,6 +87,9 @@ namespace WebCore {
         virtual bool shouldUseCredentialStorage();
         virtual void didReceiveAuthenticationChallenge(const AuthenticationChallenge&);
         void didCancelAuthenticationChallenge(const AuthenticationChallenge&);
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
+        virtual bool canAuthenticateAgainstProtectionSpace(const ProtectionSpace&);
+#endif
         virtual void receivedCancellation(const AuthenticationChallenge&);
 
         // ResourceHandleClient
@@ -101,6 +105,9 @@ namespace WebCore {
         virtual bool shouldUseCredentialStorage(ResourceHandle*) { return shouldUseCredentialStorage(); }
         virtual void didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge& challenge) { didReceiveAuthenticationChallenge(challenge); } 
         virtual void didCancelAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge& challenge) { didCancelAuthenticationChallenge(challenge); } 
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
+        virtual bool canAuthenticateAgainstProtectionSpace(ResourceHandle*, const ProtectionSpace& protectionSpace) { return canAuthenticateAgainstProtectionSpace(protectionSpace); }
+#endif
         virtual void receivedCancellation(ResourceHandle*, const AuthenticationChallenge& challenge) { receivedCancellation(challenge); }
         virtual void willCacheResponse(ResourceHandle*, CacheStoragePolicy&);
 #if PLATFORM(MAC)

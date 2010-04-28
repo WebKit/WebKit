@@ -69,6 +69,7 @@ class NavigationAction;
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 class Node;
 #endif
+class ProtectionSpace;
 class RenderEmbeddedObject;
 class ResourceError;
 class ResourceLoader;
@@ -151,6 +152,9 @@ public:
     static double timeOfLastCompletedLoad();
 
     bool shouldUseCredentialStorage(ResourceLoader*);
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
+    bool canAuthenticateAgainstProtectionSpace(ResourceLoader* loader, const ProtectionSpace& protectionSpace);
+#endif
     const ResourceRequest& originalRequest() const;
     const ResourceRequest& initialRequest() const;
     void receivedMainResourceError(const ResourceError&, bool isComplete);

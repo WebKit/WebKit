@@ -1079,6 +1079,10 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
 #endif
 #endif
 
+#if (PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)) || PLATFORM(IPHONE)
+#define WTF_USE_PROTECTION_SPACE_AUTH_CALLBACK 1
+#endif
+
 #if COMPILER(GCC)
 #define WARN_UNUSED_RETURN __attribute__ ((warn_unused_result))
 #else
