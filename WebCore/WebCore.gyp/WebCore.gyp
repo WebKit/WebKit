@@ -288,7 +288,6 @@
           'inputs': [
             '../css/makeprop.pl',
             '../css/CSSPropertyNames.in',
-            '../css/SVGCSSPropertyNames.in',
           ],
           'outputs': [
             '<(SHARED_INTERMEDIATE_DIR)/webkit/CSSPropertyNames.cpp',
@@ -301,13 +300,19 @@
             '--',
             '<@(_inputs)'
           ],
+          'conditions': [
+            ['enable_svg!=0', {
+              'inputs': [
+                '../css/SVGCSSPropertyNames.in',
+              ],
+            }],
+          ],
         },
         {
           'action_name': 'CSSValueKeywords',
           'inputs': [
             '../css/makevalues.pl',
             '../css/CSSValueKeywords.in',
-            '../css/SVGCSSValueKeywords.in',
           ],
           'outputs': [
             '<(SHARED_INTERMEDIATE_DIR)/webkit/CSSValueKeywords.c',
@@ -319,6 +324,13 @@
             '<@(_outputs)',
             '--',
             '<@(_inputs)'
+          ],
+          'conditions': [
+            ['enable_svg!=0', {
+              'inputs': [
+                '../css/SVGCSSValueKeywords.in',
+              ],
+            }],
           ],
         },
         {

@@ -1431,6 +1431,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             break;
 
         /* Other unimplemented properties */
+        case CSSPropertyBackgroundRepeatX:
+        case CSSPropertyBackgroundRepeatY:
         case CSSPropertyContent: // FIXME: needs implementation, bug 23668
         case CSSPropertyCounterIncrement:
         case CSSPropertyCounterReset:
@@ -1451,6 +1453,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyWebkitMarquee:
         case CSSPropertyWebkitMarqueeSpeed:
         case CSSPropertyWebkitMask:
+        case CSSPropertyWebkitMaskRepeatX:
+        case CSSPropertyWebkitMaskRepeatY:
         case CSSPropertyWebkitPaddingStart:
         case CSSPropertyWebkitPerspectiveOriginX:
         case CSSPropertyWebkitPerspectiveOriginY:
