@@ -872,7 +872,7 @@ void WebViewHost::willSendRequest(WebFrame*, unsigned identifier, WebURLRequest&
         GURL mainDocumentURL = request.firstPartyForCookies();
         printResourceDescription(identifier);
         printf(" - willSendRequest <NSURLRequest URL %s, main document URL %s,"
-               " http method %s> redirectResponse %s\n",
+               " http method %s> redirectResponse ",
                descriptionSuitableForTestResult(requestURL).c_str(),
                URLDescription(mainDocumentURL).c_str(),
                request.httpMethod().utf8().data());

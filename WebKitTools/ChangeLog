@@ -1,3 +1,12 @@
+2010-04-28  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed build fix.
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::dumpImage): format '%u' expects type 'unsigned int', but argument 2 has type 'size_t'.
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::willSendRequest): too few arguments for format.
+
 2010-04-27  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler and Eric Seidel.
