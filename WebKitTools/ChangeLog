@@ -1,3 +1,16 @@
+2010-04-27  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        run-bindings-tests doesn't work in an SVN checkout
+        https://bugs.webkit.org/show_bug.cgi?id=38225
+
+        Previously detect_scm_system needed an absolute path for SVN.  Now we
+        accept a relative path.
+
+        * Scripts/webkitpy/common/checkout/scm.py:
+        * Scripts/webkitpy/common/checkout/scm_unittest.py:
+
 2010-04-27  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Stephanie Lewis.

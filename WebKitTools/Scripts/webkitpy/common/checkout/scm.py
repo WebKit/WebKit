@@ -41,11 +41,13 @@ from webkitpy.common.system.deprecated_logging import error, log
 
 
 def detect_scm_system(path):
-    if SVN.in_working_directory(path):
-        return SVN(cwd=path)
+    absolute_path = os.path.abspath(path)
+
+    if SVN.in_working_directory(absolute_path):
+        return SVN(cwd=absolute_path)
     
-    if Git.in_working_directory(path):
-        return Git(cwd=path)
+    if Git.in_working_directory(absolute_path):
+        return Git(cwd=absolute_path)
     
     return None
 

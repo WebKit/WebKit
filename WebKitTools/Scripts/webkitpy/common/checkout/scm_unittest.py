@@ -487,6 +487,12 @@ class SVNTest(SCMTest):
     def tearDown(self):
         SVNTestRepository.tear_down(self)
 
+    def test_detect_scm_system_relative_url(self):
+        scm = detect_scm_system(".")
+        # I wanted to assert that we got the right path, but there was some
+        # crazy magic with temp folder names that I couldn't figure out.
+        self.assertTrue(scm.checkout_root)
+
     def test_create_patch_is_full_patch(self):
         test_dir_path = os.path.join(self.svn_checkout_path, "test_dir2")
         os.mkdir(test_dir_path)
