@@ -535,39 +535,63 @@ class Port(object):
         expectations, determining search paths, and logging information."""
         raise NotImplementedError('Port.version')
 
+    _WDIFF_DEL = '##WDIFF_DEL##'
+    _WDIFF_ADD = '##WDIFF_ADD##'
+    _WDIFF_END = '##WDIFF_END##'
+
+    def _format_wdiff_output_as_html(self, wdiff):
+        wdiff = cgi.escape(wdiff)
+        wdiff = wdiff.replace(self._WDIFF_DEL, "<span class=del>")
+        wdiff = wdiff.replace(self._WDIFF_ADD, "<span class=add>")
+        wdiff = wdiff.replace(self._WDIFF_END, "</span>")
+        html = "<head><style>.del { background: #faa; } "
+        html += ".add { background: #afa; }</style></head>"
+        html += "<pre>%s</pre>" % wdiff
+        return html
+
+    def _wdiff_command(self, actual_filename, expected_filename):
+        executable = self._path_to_wdiff()
+        return [executable,
+                "--start-delete=%s" % self._WDIFF_DEL,
+                "--end-delete=%s" % self._WDIFF_END,
+                "--start-insert=%s" % self._WDIFF_ADD,
+                "--end-insert=%s" % self._WDIFF_END,
+                actual_filename,
+                expected_filename]
+
+    @staticmethod
+    def _handle_wdiff_error(script_error):
+        # Exit 1 means the files differed, any other exit code is an error.
+        if script_error.exit_code != 1:
+            raise script_error
+
+    def _run_wdiff(self, actual_filename, expected_filename):
+        """Runs wdiff and may throw exceptions.
+        This is mostly a hook for unit testing."""
+        # Diffs are treated as binary as they may include multiple files
+        # with conflicting encodings.  Thus we do not decode the output.
+        command = self._wdiff_command(actual_filename, expected_filename)
+        wdiff = self._executive.run_command(command, decode_output=False,
+            error_handler=self._handle_wdiff_error)
+        return self._format_wdiff_output_as_html(wdiff)
+
     def wdiff_text(self, actual_filename, expected_filename):
         """Returns a string of HTML indicating the word-level diff of the
         contents of the two filenames. Returns an empty string if word-level
         diffing isn't available."""
-        executable = self._path_to_wdiff()
-        cmd = [executable,
-               '--start-delete=##WDIFF_DEL##',
-               '--end-delete=##WDIFF_END##',
-               '--start-insert=##WDIFF_ADD##',
-               '--end-insert=##WDIFF_END##',
-               actual_filename,
-               expected_filename]
         global _wdiff_available  # See explaination at top of file.
-        result = ''
+        if not _wdiff_available:
+            return ""
         try:
-            if _wdiff_available:
-                wdiff = self._executive.run_command(cmd, decode_output=False)
-                wdiff = cgi.escape(wdiff)
-                wdiff = wdiff.replace('##WDIFF_DEL##', '<span class=del>')
-                wdiff = wdiff.replace('##WDIFF_ADD##', '<span class=add>')
-                wdiff = wdiff.replace('##WDIFF_END##', '</span>')
-                result = '<head><style>.del { background: #faa; } '
-                result += '.add { background: #afa; }</style></head>'
-                result += '<pre>' + wdiff + '</pre>'
+            # It's possible to raise a ScriptError we pass wdiff invalid paths.
+            return self._run_wdiff(actual_filename, expected_filename)
         except OSError, e:
-            if (e.errno == errno.ENOENT or e.errno == errno.EACCES or
-                e.errno == errno.ECHILD):
+            if e.errno in [errno.ENOENT, errno.EACCES, errno.ECHILD]:
+                # Silently ignore cases where wdiff is missing.
                 _wdiff_available = False
-            else:
-                raise e
-        # Diffs are treated as binary as they may include multiple files
-        # with conflicting encodings.  Thus we do not decode the output here.
-        return result
+                return ""
+            raise
+        assert(False)  # Should never be reached.
 
     _pretty_patch_error_html = "Failed to run PrettyPatch, see error console."
 

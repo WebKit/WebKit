@@ -1,3 +1,22 @@
+2010-04-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        wdiff_text throws ScriptError because wdiff returns non-zero when files differ
+        https://bugs.webkit.org/show_bug.cgi?id=38246
+
+        wdiff returns 0 when files are the same, 1 when they differ.
+        run_command by default raises ScriptError if the return code is non-zero.
+        Fixed this by adding a custom error handler which only raises if the
+        return code is not 1.
+
+        I broke up the huge wdiff_text() method into little pieces
+        for easier unit testing.  There is only one functional change here
+        and that is the addition of the custom error handler.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+
 2010-04-28  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed build fix.
