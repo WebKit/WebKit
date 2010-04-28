@@ -1,3 +1,12 @@
+2010-04-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Make running MiniBrowser.app without explicitly setting DYLD_FRAMEWORK_PATH.
+
+        * MiniBrowser/MiniBrowser.xcodeproj/project.pbxproj:
+        * MiniBrowser/mac/make-launchable.sh: Added.
+
 2010-04-28  Eric Seidel  <eric@webkit.org>
 
         Reviewed by David Levin.
