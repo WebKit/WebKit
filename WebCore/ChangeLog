@@ -1,3 +1,23 @@
+2010-04-27  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        [XHR] Cross-Origin synchronous request with credential raises NETWORK_ERR
+        https://bugs.webkit.org/show_bug.cgi?id=37781
+        <rdar://problem/7905150>
+
+        Tests: http/tests/xmlhttprequest/access-control-preflight-credential-async.html
+               http/tests/xmlhttprequest/access-control-preflight-credential-sync.html
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::DocumentThreadableLoader): Now we remove the
+        credential from the request here to avoid forgetting to do so in the different code path.
+        (WebCore::DocumentThreadableLoader::makeSimpleCrossOriginAccessRequest): Just add the
+        "Origin" header.
+        (WebCore::DocumentThreadableLoader::loadRequest): Check here the the credential have
+        been removed so that we don't leak them. Also tweaked a comment to make it clear that
+        the URL check has issue when credential is involved.
+
 2010-04-27  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej Stachowiak.
