@@ -904,7 +904,7 @@ void WebView::updateBackingStore(FrameView* frameView, HDC dc, bool backingStore
                 view->layoutIfNeededRecursive();
 
         Vector<IntRect> paintRects;
-        if (!backingStoreCompletelyDirty) {
+        if (!backingStoreCompletelyDirty && m_backingStoreDirtyRegion) {
             RECT regionBox;
             ::GetRgnBox(m_backingStoreDirtyRegion->handle(), &regionBox);
             getUpdateRects(m_backingStoreDirtyRegion->handle(), regionBox, paintRects);

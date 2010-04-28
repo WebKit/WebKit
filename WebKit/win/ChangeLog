@@ -1,3 +1,14 @@
+2010-04-28  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        WebView drawing code may access null backing store dirty region
+        https://bugs.webkit.org/show_bug.cgi?id=38245
+        <rdar://problem/7916101> REGRESSION (r58067): All loaded pages fail to display after running iBench HTML test (intermittent)
+        
+        * WebView.cpp:
+        (WebView::updateBackingStore): Add null check for m_backingStoreDirtyRegion.
+
 2010-04-27  Jon Honeycutt  <jhoneycutt@apple.com>
 
         <rdar://problem/7911140> Hitting the "delete" key goes back twice
