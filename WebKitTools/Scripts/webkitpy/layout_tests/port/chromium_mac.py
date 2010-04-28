@@ -115,19 +115,6 @@ class ChromiumMacPort(chromium.ChromiumPort):
         return self.path_from_chromium_base('third_party', 'lighttpd',
                                             'mac', *comps)
 
-    def _kill_all_process(self, process_name):
-        """Kill any processes running under this name."""
-        # FIXME: This should use Executive.
-        # On Mac OS X 10.6, killall has a new constraint: -SIGNALNAME or
-        # -SIGNALNUMBER must come first.  Example problem:
-        #   $ killall -u $USER -TERM lighttpd
-        #   killall: illegal option -- T
-        # Use of the earlier -TERM placement is just fine on 10.5.
-        null = open(os.devnull)
-        subprocess.call(['killall', '-TERM', '-u', os.getenv('USER'),
-                        process_name], stderr=null)
-        null.close()
-
     def _path_to_apache(self):
         return '/usr/sbin/httpd'
 
@@ -179,8 +166,8 @@ class ChromiumMacPort(chromium.ChromiumPort):
             # TODO(mmoss) This isn't ideal, since it could conflict with
             # lighttpd processes not started by http_server.py,
             # but good enough for now.
-            self._kill_all_process('lighttpd')
-            self._kill_all_process('httpd')
+            self._executive.kill_all('lighttpd')
+            self._executive.kill_all('httpd')
         else:
             try:
                 os.kill(server_pid, signal.SIGTERM)

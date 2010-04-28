@@ -27,6 +27,9 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import signal
+import subprocess
+import sys
 import unittest
 
 from webkitpy.common.system.executive import Executive, run_command
@@ -66,3 +69,25 @@ class ExecutiveTest(unittest.TestCase):
 
         output = executive.run_and_throw_if_fail(["echo", "-n", unicode_tor], quiet=True, decode_output=False)
         self.assertEquals(output, utf8_tor)
+
+    def test_kill_process(self):
+        executive = Executive()
+        # FIXME: This may need edits to work right on windows.
+        # We use "yes" because it loops forever.
+        process = subprocess.Popen(["yes"], stdout=subprocess.PIPE)
+        self.assertEqual(process.poll(), None)  # Process is running
+        executive.kill_process(process.pid)
+        self.assertEqual(process.wait(), -signal.SIGKILL)
+        # Killing again should fail silently.
+        executive.kill_process(process.pid)
+
+    def test_kill_all(self):
+        executive = Executive()
+        # FIXME: This may need edits to work right on windows.
+        # We use "yes" because it loops forever.
+        process = subprocess.Popen(["yes"], stdout=subprocess.PIPE)
+        self.assertEqual(process.poll(), None)  # Process is running
+        executive.kill_all("yes")
+        self.assertEqual(process.wait(), -signal.SIGTERM)
+        # Killing again should fail silently.
+        executive.kill_all("yes")

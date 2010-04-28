@@ -62,13 +62,6 @@ class QtPort(WebKitPort):
         return os.path.join(self.layout_tests_dir(), 'http', 'conf',
                             'apache2-debian-httpd.conf')
 
-    def _kill_all_process(self, process_name):
-        # FIXME: This should use Executive.
-        null = open(os.devnull)
-        subprocess.call(['killall', '-TERM', '-u', os.getenv('USER'),
-                        process_name], stderr=null)
-        null.close()
-
     def _shut_down_http_server(self, server_pid):
         """Shut down the httpd web server. Blocks until it's fully
         shut down.
@@ -81,7 +74,7 @@ class QtPort(WebKitPort):
             # FIXME: This isn't ideal, since it could conflict with
             # lighttpd processes not started by http_server.py,
             # but good enough for now.
-            self._kill_all_process('apache2')
+            self._executive.kill_all('apache2')
         else:
             try:
                 os.kill(server_pid, signal.SIGTERM)

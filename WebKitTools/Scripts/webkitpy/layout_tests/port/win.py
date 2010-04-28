@@ -69,7 +69,4 @@ class WinPort(WebKitPort):
         """
         # Looks like we ignore server_pid.
         # Copy/pasted from chromium-win.
-        subprocess.Popen(('taskkill.exe', '/f', '/im', 'httpd.exe'),
-                        stdin=open(os.devnull, 'r'),
-                        stdout=subprocess.PIPE,
-                        stderr=subprocess.PIPE).wait()
+        self._executive.kill_all("httpd.exe")

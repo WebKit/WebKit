@@ -161,17 +161,39 @@ class Executive(object):
         return 2
 
     def kill_process(self, pid):
+        """Attempts to kill the given pid.
+        Will fail silently if pid does not exist or insufficient permisssions."""
         if platform.system() == "Windows":
             # According to http://docs.python.org/library/os.html
             # os.kill isn't available on Windows.  However, when I tried it
             # using Cygwin, it worked fine.  We should investigate whether
             # we need this platform specific code here.
-            subprocess.call(('taskkill.exe', '/f', '/pid', unicode(pid)),
-                            stdin=open(os.devnull, 'r'),
-                            stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE)
+            command = ["taskkill.exe", "/f", "/pid", str(pid)]
+            # taskkill will exit 128 if the process is not found.
+            self.run_command(command, error_handler=self.ignore_error)
             return
-        os.kill(pid, signal.SIGKILL)
+        try:
+            os.kill(pid, signal.SIGKILL)
+        except OSError, e:
+            # FIXME: We should make non-silent failure an option.
+            pass
+
+    def kill_all(self, process_name):
+        """Attempts to kill processes matching process_name.
+        Will fail silently if no process are found."""
+        if platform.system() == "Windows":
+            # We might want to automatically append .exe?
+            command = ["taskkill.exe", "/f", "/im", process_name]
+            # taskkill will exit 128 if the process is not found.
+            self.run_command(command, error_handler=self.ignore_error)
+            return
+
+        # FIXME: This is inconsistent that kill_all uses TERM and kill_process
+        # uses KILL.  Windows is always using /f (which seems like -KILL).
+        # We should pick one mode, or add support for switching between them.
+        # Note: Mac OS X 10.6 requires -SIGNALNAME before -u USER
+        command = ["killall", "-TERM", "-u", os.getenv("USER"), process_name]
+        self.run_command(command, error_handler=self.ignore_error)
 
     # Error handlers do not need to be static methods once all callers are
     # updated to use an Executive object.

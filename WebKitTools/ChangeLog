@@ -1,5 +1,32 @@
 2010-04-28  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Jeremy Orlow.
+
+        webkitpy: ScriptError('Failed to run "[u\'taskkill.exe\', u\'/f\', u\'/im\', u\'httpd.exe\']" exit_code: 128',)
+        https://bugs.webkit.org/show_bug.cgi?id=38248
+
+        The previous code did not check the return code of taskkill.
+        When I moved that callsite from using subprocess.call to
+        Executive.run_command having a non-zero return code became an error.
+
+        In this change I've centralized our killall handling in executive,
+        and added tests for it to make sure it works.
+
+        Currently kill_process and kill_all swallow exceptions in the cases
+        where the process(es) to be killed do(es) not exist.
+
+        * Scripts/webkitpy/common/system/executive.py:
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        * Scripts/webkitpy/layout_tests/port/win.py:
+
+2010-04-28  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Shinichiro Hamaji.
 
         wdiff_text throws ScriptError because wdiff returns non-zero when files differ
