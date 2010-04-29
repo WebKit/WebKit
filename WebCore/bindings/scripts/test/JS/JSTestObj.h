@@ -91,6 +91,7 @@ JSC::JSValue JSC_HOST_CALL jsTestObjPrototypeFunctionIntMethod(JSC::ExecState*, 
 JSC::JSValue JSC_HOST_CALL jsTestObjPrototypeFunctionIntMethodWithArgs(JSC::ExecState*, JSC::JSObject*, JSC::JSValue, const JSC::ArgList&);
 JSC::JSValue JSC_HOST_CALL jsTestObjPrototypeFunctionObjMethod(JSC::ExecState*, JSC::JSObject*, JSC::JSValue, const JSC::ArgList&);
 JSC::JSValue JSC_HOST_CALL jsTestObjPrototypeFunctionObjMethodWithArgs(JSC::ExecState*, JSC::JSObject*, JSC::JSValue, const JSC::ArgList&);
+JSC::JSValue JSC_HOST_CALL jsTestObjPrototypeFunctionSerializedValue(JSC::ExecState*, JSC::JSObject*, JSC::JSValue, const JSC::ArgList&);
 JSC::JSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithException(JSC::ExecState*, JSC::JSObject*, JSC::JSValue, const JSC::ArgList&);
 JSC::JSValue JSC_HOST_CALL jsTestObjPrototypeFunctionCustomMethod(JSC::ExecState*, JSC::JSObject*, JSC::JSValue, const JSC::ArgList&);
 JSC::JSValue JSC_HOST_CALL jsTestObjPrototypeFunctionCustomMethodWithArgs(JSC::ExecState*, JSC::JSObject*, JSC::JSValue, const JSC::ArgList&);

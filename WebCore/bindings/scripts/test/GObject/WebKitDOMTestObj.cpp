@@ -27,6 +27,8 @@
 #include "TestObj.h"
 #include "WebKitDOMBinding.h"
 #include "gobject/ConvertToUTF8String.h"
+#include "webkit/WebKitDOMSerializedScriptValue.h"
+#include "webkit/WebKitDOMSerializedScriptValuePrivate.h"
 #include "webkit/WebKitDOMTestObj.h"
 #include "webkit/WebKitDOMTestObjPrivate.h"
 #include "webkit/WebKitDOMlog.h"
@@ -120,6 +122,18 @@ webkit_dom_test_obj_obj_method_with_args (WebKitDOMTestObj *self, glong int_arg,
     PassRefPtr<WebCore::TestObj> g_res = WTF::getPtr(item->objMethodWithArgs(int_arg, _g_str_arg, _g_obj_arg));
     WebKitDOMTestObj*  res = static_cast<WebKitDOMTestObj* >(WebKit::kit(g_res.get()));
     return res;
+
+}
+
+void
+webkit_dom_test_obj_serialized_value (WebKitDOMTestObj *self, WebKitDOMSerializedScriptValue*  serialized_arg)
+{
+    g_return_if_fail (self);
+    WebCore::TestObj * item = WebKit::core(self);
+    g_return_if_fail (serialized_arg);
+    WebCore::SerializedScriptValue * _g_serialized_arg = WebKit::core(serialized_arg);
+    g_return_if_fail (_g_serialized_arg);
+    item->serializedValue(_g_serialized_arg);
 
 }
 

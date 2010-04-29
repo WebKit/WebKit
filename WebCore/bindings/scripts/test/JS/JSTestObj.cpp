@@ -26,6 +26,7 @@
 #include "JSlog.h"
 #include "KURL.h"
 #include "ScriptCallStack.h"
+#include "SerializedScriptValue.h"
 #include "TestObj.h"
 #include <runtime/Error.h>
 #include <runtime/JSNumberCell.h>
@@ -131,7 +132,7 @@ bool JSTestObjConstructor::getOwnPropertyDescriptor(ExecState* exec, const Ident
 #define THUNK_GENERATOR(generator)
 #endif
 
-static const HashTableValue JSTestObjPrototypeTableValues[25] =
+static const HashTableValue JSTestObjPrototypeTableValues[26] =
 {
     { "voidMethod", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionVoidMethod), (intptr_t)0 THUNK_GENERATOR(0) },
     { "voidMethodWithArgs", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionVoidMethodWithArgs), (intptr_t)3 THUNK_GENERATOR(0) },
@@ -139,6 +140,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[25] =
     { "intMethodWithArgs", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionIntMethodWithArgs), (intptr_t)3 THUNK_GENERATOR(0) },
     { "objMethod", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionObjMethod), (intptr_t)0 THUNK_GENERATOR(0) },
     { "objMethodWithArgs", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionObjMethodWithArgs), (intptr_t)3 THUNK_GENERATOR(0) },
+    { "serializedValue", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionSerializedValue), (intptr_t)1 THUNK_GENERATOR(0) },
     { "methodWithException", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithException), (intptr_t)0 THUNK_GENERATOR(0) },
     { "customMethod", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionCustomMethod), (intptr_t)0 THUNK_GENERATOR(0) },
     { "customMethodWithArgs", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionCustomMethodWithArgs), (intptr_t)3 THUNK_GENERATOR(0) },
@@ -477,6 +479,19 @@ JSValue JSC_HOST_CALL jsTestObjPrototypeFunctionObjMethodWithArgs(ExecState* exe
 
     JSC::JSValue result = toJS(exec, castedThisObj->globalObject(), WTF::getPtr(imp->objMethodWithArgs(intArg, strArg, objArg)));
     return result;
+}
+
+JSValue JSC_HOST_CALL jsTestObjPrototypeFunctionSerializedValue(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
+{
+    UNUSED_PARAM(args);
+    if (!thisValue.inherits(&JSTestObj::s_info))
+        return throwError(exec, TypeError);
+    JSTestObj* castedThisObj = static_cast<JSTestObj*>(asObject(thisValue));
+    TestObj* imp = static_cast<TestObj*>(castedThisObj->impl());
+    RefPtr<SerializedScriptValue> serializedArg = SerializedScriptValue::create(exec, args.at(0));
+
+    imp->serializedValue(serializedArg);
+    return jsUndefined();
 }
 
 JSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithException(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)

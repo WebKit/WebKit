@@ -1224,7 +1224,8 @@ END
 
         if ($parameter->type eq "SerializedScriptValue") {
             push(@implContentDecls, "SerializedScriptValue::create(args[$paramIndex], ${parameterName}DidThrow);\n");
-            push(@implContentDecls, "    if (${parameterName}DidThrow)\n    return v8::Undefined();\n");
+            push(@implContentDecls, "    if (${parameterName}DidThrow)\n");
+            push(@implContentDecls, "        return v8::Undefined();\n");
         } else {
             push(@implContentDecls, JSValueToNative($parameter, "args[$paramIndex]",
                                                     BasicTypeCanFailConversion($parameter) ?  "${parameterName}Ok" : undef) . ";\n");
@@ -2568,6 +2569,8 @@ sub GetNativeType
     # temporary hack
     return "RefPtr<NodeFilter>" if $type eq "NodeFilter";
 
+    return "RefPtr<SerializedScriptValue>" if $type eq "SerializedScriptValue";
+
     # necessary as resolvers could be constructed on fly.
     return "RefPtr<XPathNSResolver>" if $type eq "XPathNSResolver";
 
@@ -2766,6 +2769,7 @@ sub RequiresCustomSignature
 }
 
 
+# FIXME: Sort this array.
 my %non_wrapper_types = (
     'float' => 1,
     'double' => 1,
@@ -2780,6 +2784,7 @@ my %non_wrapper_types = (
     'unsigned long long' => 1,
     'DOMString' => 1,
     'CompareHow' => 1,
+    'SerializedScriptValue' => 1,
     'SVGAngle' => 1,
     'SVGRect' => 1,
     'SVGPoint' => 1,

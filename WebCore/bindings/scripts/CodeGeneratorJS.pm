@@ -1952,6 +1952,7 @@ my %nativeType = (
     "DOMString" => "const String&",
     "DOMObject" => "ScriptValue",
     "NodeFilter" => "RefPtr<NodeFilter>",
+    "SerializedScriptValue" => "RefPtr<SerializedScriptValue>",
     "SVGAngle" => "SVGAngle",
     "SVGLength" => "SVGLength",
     "SVGMatrix" => "AffineTransform",

@@ -61,6 +61,7 @@
 - (int)intMethodWithArgs:(int)intArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg;
 - (DOMTestObj *)objMethod;
 - (DOMTestObj *)objMethodWithArgs:(int)intArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg;
+- (void)serializedValue:(NSString *)serializedArg;
 - (void)methodWithException;
 - (void)customMethod;
 - (void)customMethodWithArgs:(int)intArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg;

@@ -41,6 +41,7 @@
 #import "ExceptionHandlers.h"
 #import "KURL.h"
 #import "ObjCEventListener.h"
+#import "SerializedScriptValue.h"
 #import "TestObj.h"
 #import "ThreadCheck.h"
 #import "WebCoreObjCExtras.h"
@@ -204,6 +205,11 @@
 - (DOMTestObj *)objMethodWithArgs:(int)intArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg
 {
     return kit(WTF::getPtr(IMPL->objMethodWithArgs(intArg, strArg, core(objArg))));
+}
+
+- (void)serializedValue:(NSString *)serializedArg
+{
+    IMPL->serializedValue(WebCore::SerializedScriptValue::create(WebCore::String(serializedArg)));
 }
 
 - (void)methodWithException

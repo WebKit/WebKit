@@ -27,11 +27,11 @@
 module events {
 
     interface PopStateEvent : Event {
-        [Custom] void initPopStateEvent(in DOMString typeArg, 
+        void initPopStateEvent(in DOMString typeArg, 
                                in boolean canBubbleArg, 
                                in boolean cancelableArg, 
-                               in any stateArg);
-                               
+                               in SerializedScriptValue stateArg);
+
         readonly attribute [V8CustomGetter] any state;
     };
 

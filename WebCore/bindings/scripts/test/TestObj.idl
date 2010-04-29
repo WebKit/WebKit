@@ -48,6 +48,8 @@ module test {
         TestObj objMethod();
         TestObj objMethodWithArgs(in long intArg, in DOMString strArg, in TestObj objArg);
 
+        void serializedValue(in SerializedScriptValue serializedArg);
+
         // Exceptions
         void    methodWithException() raises(DOMException);
         attribute long attrWithException raises(DOMException);
