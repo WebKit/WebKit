@@ -1,3 +1,18 @@
+2010-04-29  Yaar Schnitman  <yaar@chromium.org>
+
+       Not reviewed.
+
+        Adding missing expectations, skipping tests
+        https://bugs.webkit.org/show_bug.cgi?id=38343
+
+        * platform/chromium-linux/fast/css/font-face-woff-expected.checksum: Added.
+        * platform/chromium-mac/fast/media/media-query-invalid-value-expected.checksum: Added.
+        * platform/chromium-win/fast/css/font-face-woff-expected.checksum: Added.
+        * platform/chromium-win/fast/css/font-face-woff-expected.txt: Added.
+        * platform/chromium-win/fast/media/media-query-invalid-value-expected.checksum: Added.
+        * platform/chromium-win/fast/text/international/bold-bengali-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-04-21  Alexey Proskuryakov  <ap@apple.com>
 
         Rubber-stamped by Darin Adler.
