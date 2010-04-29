@@ -6,14 +6,14 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 57x20
           text run at (0,0) width 57: "Test for "
-        RenderInline {I} at (0,0) size 586x20
-          RenderInline {A} at (0,0) size 552x20 [color=#0000EE]
-            RenderText {#text} at (57,0) size 552x20
-              text run at (57,0) width 552: "REGRESSION(r27173): Web Inspector freezes beneath Image::drawPattern()"
-          RenderText {#text} at (609,0) size 34x20
-            text run at (609,0) width 34: " Bug"
-        RenderText {#text} at (643,0) size 4x20
-          text run at (643,0) width 4: "."
+        RenderInline {I} at (0,0) size 581x20
+          RenderInline {A} at (0,0) size 548x20 [color=#0000EE]
+            RenderText {#text} at (57,0) size 548x20
+              text run at (57,0) width 548: "REGRESSION(r27173): Web Inspector freezes beneath Image::drawPattern()"
+          RenderText {#text} at (605,0) size 33x20
+            text run at (605,0) width 33: " Bug"
+        RenderText {#text} at (638,0) size 4x20
+          text run at (638,0) width 4: "."
       RenderBlock {P} at (0,36) size 784x20
         RenderText {#text} at (0,0) size 623x20
           text run at (0,0) width 623: "There should be four blue squares with black borders. WebKit should not hang or assert."

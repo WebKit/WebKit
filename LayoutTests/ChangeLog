@@ -1,3 +1,61 @@
+2010-04-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Rubber-stamped by Simon Hausmann.
+
+        [Qt] Loading of large page can take up to 10 seconds
+        https://bugs.webkit.org/show_bug.cgi?id=31719
+
+        Followup patch. Update expected files because of minor differences.
+        (size of whitespaces, place of linebreaks)
+
+        * platform/qt/css1/basic/inheritance-expected.txt:
+        * platform/qt/css1/box_properties/float_elements_in_series-expected.txt:
+        * platform/qt/css1/box_properties/float_margin-expected.txt:
+        * platform/qt/css1/color_and_background/background_attachment-expected.txt:
+        * platform/qt/css1/color_and_background/background_repeat-expected.txt:
+        * platform/qt/css1/conformance/forward_compatible_parsing-expected.txt:
+        * platform/qt/css1/font_properties/font-expected.txt:
+        * platform/qt/css1/font_properties/font_style-expected.txt:
+        * platform/qt/css1/formatting_model/inline_elements-expected.txt:
+        * platform/qt/css1/text_properties/line_height-expected.txt:
+        * platform/qt/css1/text_properties/text_decoration-expected.txt:
+        * platform/qt/css1/text_properties/text_indent-expected.txt:
+        * platform/qt/css1/text_properties/vertical_align-expected.txt:
+        * platform/qt/css2.1/t1202-counter-01-b-expected.txt:
+        * platform/qt/css2.1/t1202-counter-02-b-expected.txt:
+        * platform/qt/css2.1/t1202-counter-03-b-expected.txt:
+        * platform/qt/css2.1/t1202-counter-04-b-expected.txt:
+        * platform/qt/css2.1/t1202-counters-01-b-expected.txt:
+        * platform/qt/css2.1/t1202-counters-02-b-expected.txt:
+        * platform/qt/css2.1/t1202-counters-03-b-expected.txt:
+        * platform/qt/css2.1/t1508-c527-font-00-b-expected.txt:
+        * platform/qt/css2.1/t1508-c527-font-04-b-expected.txt:
+        * platform/qt/css2.1/t1508-c527-font-05-b-expected.txt:
+        * platform/qt/css2.1/t1508-c527-font-06-b-expected.txt:
+        * platform/qt/css2.1/t1508-c527-font-07-b-expected.txt:
+        * platform/qt/css2.1/t1508-c527-font-08-b-expected.txt:
+        * platform/qt/css2.1/t1508-c527-font-10-c-expected.txt:
+        * platform/qt/editing/selection/select-text-overflow-ellipsis-expected.txt:
+        * platform/qt/fast/backgrounds/background-inherit-color-bug-expected.txt:
+        * platform/qt/fast/backgrounds/body-generated-image-propagated-to-root-expected.txt:
+        * platform/qt/fast/backgrounds/repeat/mask-negative-offset-repeat-expected.txt:
+        * platform/qt/fast/backgrounds/repeat/negative-offset-repeat-expected.txt:
+        * platform/qt/fast/backgrounds/size/zero-expected.txt:
+        * platform/qt/fast/css/font-face-opentype-expected.txt:
+        * platform/qt/fast/lists/w3-css3-list-styles-numeric-expected.txt:
+        * platform/qt/fast/repaint/selection-gap-overflow-scroll-2-expected.txt:
+        * platform/qt/fast/text/fake-italic-expected.txt:
+        * platform/qt/fast/text/international/khmer-selection-expected.txt:
+        * platform/qt/http/tests/local/file-url-sent-as-referer-expected.txt:
+        * platform/qt/svg/filters/feColorMatrix-values-expected.txt:
+        * platform/qt/svg/text/foreignObject-text-clipping-bug-expected.txt:
+        * platform/qt/svg/text/selection-background-color-expected.txt:
+        * platform/qt/svg/text/selection-doubleclick-expected.txt:
+        * platform/qt/svg/text/selection-styles-expected.txt:
+        * platform/qt/svg/text/selection-tripleclick-expected.txt:
+        * platform/qt/svg/zoom/page/zoom-hixie-mixed-009-expected.txt:
+        * platform/qt/svg/zoom/text/zoom-hixie-mixed-009-expected.txt:
+
 2010-04-29  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Adler.

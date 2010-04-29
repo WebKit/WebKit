@@ -63,11 +63,11 @@ layer at (0,0) size 784x1270
       RenderBlock {P} at (0,545) size 768x60
         RenderText {#text} at (0,0) size 711x20
           text run at (0,0) width 711: "Text decorations only apply to the text of an element, so the image at the end of this sentence should "
-        RenderInline {EM} at (0,0) size 24x20
-          RenderText {#text} at (711,0) size 24x20
-            text run at (711,0) width 24: "not"
-        RenderText {#text} at (735,0) size 757x40
-          text run at (735,0) width 22: " be"
+        RenderInline {EM} at (0,0) size 22x20
+          RenderText {#text} at (711,0) size 22x20
+            text run at (711,0) width 22: "not"
+        RenderText {#text} at (733,0) size 755x40
+          text run at (733,0) width 22: " be"
           text run at (0,20) width 74: "overlined: "
         RenderImage {IMG} at (74,21) size 15x15
         RenderText {#text} at (89,20) size 752x40
@@ -157,9 +157,9 @@ layer at (0,0) size 784x1270
               RenderBlock {P} at (4,354) size 746x60
                 RenderText {#text} at (0,0) size 711x20
                   text run at (0,0) width 711: "Text decorations only apply to the text of an element, so the image at the end of this sentence should "
-                RenderInline {EM} at (0,0) size 24x20
-                  RenderText {#text} at (711,0) size 24x20
-                    text run at (711,0) width 24: "not"
+                RenderInline {EM} at (0,0) size 22x20
+                  RenderText {#text} at (711,0) size 22x20
+                    text run at (711,0) width 22: "not"
                 RenderText {#text} at (0,20) size 96x20
                   text run at (0,20) width 96: "be overlined: "
                 RenderImage {IMG} at (96,21) size 15x15

@@ -247,8 +247,8 @@ layer at (0,0) size 784x6961
               text run at (5,0) width 160: "\x{17E2}\x{17E1}\x{17E4}\x{17E7}\x{17E4}\x{17E8}\x{17E3}\x{17E6}\x{17E4}\x{17E7}"
       RenderBlock {DIV} at (0,897) size 768x263
         RenderBlock {H2} at (0,232) size 768x31
-          RenderText {#text} at (0,0) size 72x31
-            text run at (0,0) width 72: "khmer"
+          RenderText {#text} at (0,0) size 71x31
+            text run at (0,0) width 71: "khmer"
         RenderBlock (floating) {OL} at (0,298) size 92x200
           RenderListItem {LI} at (40,0) size 32x20
             RenderListMarker at (-29,0) size 24x20: "\x{17E1}"
@@ -986,8 +986,8 @@ layer at (0,0) size 784x6961
               text run at (5,0) width 40: "\x{1812}\x{1811}\x{1814}\x{1817}\x{1814}\x{1818}\x{1813}\x{1816}\x{1814}\x{1817}"
       RenderBlock {DIV} at (0,4119) size 768x263
         RenderBlock {H2} at (0,232) size 768x31
-          RenderText {#text} at (0,0) size 106x31
-            text run at (0,0) width 106: "myanmar"
+          RenderText {#text} at (0,0) size 105x31
+            text run at (0,0) width 105: "myanmar"
         RenderBlock (floating) {OL} at (0,298) size 92x200
           RenderListItem {LI} at (40,0) size 32x20
             RenderListMarker at (-29,0) size 24x20: "\x{1041}"

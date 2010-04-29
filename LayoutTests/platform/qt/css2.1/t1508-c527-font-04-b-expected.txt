@@ -7,18 +7,20 @@ layer at (0,0) size 800x252
         RenderText {#text} at (0,2) size 752x50
           text run at (0,2) width 752: "This text should be 18px sans-serif, in small-caps, italicized, and very bold. There should be a"
           text run at (0,29) width 217: "9px gap between each line. "
-        RenderInline {SPAN} at (0,0) size 741x185 [color=#C0C0C0]
-          RenderText {#text} at (217,29) size 741x185
-            text run at (217,29) width 516: "dummy text dummy text dummy text dummy text dummy text dummy"
-            text run at (0,56) width 558: "text dummy text dummy text dummy text dummy text dummy text dummy "
-            text run at (558,56) width 183: "text dummy text dummy"
-            text run at (0,83) width 372: "text dummy text dummy text dummy text dummy "
-            text run at (372,83) width 369: "text dummy text dummy text dummy text dummy"
-            text run at (0,110) width 186: "text dummy text dummy "
-            text run at (186,110) width 555: "text dummy text dummy text dummy text dummy text dummy text dummy"
-            text run at (0,137) width 558: "text dummy text dummy text dummy text dummy text dummy text dummy "
-            text run at (558,137) width 183: "text dummy text dummy"
-            text run at (0,164) width 372: "text dummy text dummy text dummy text dummy "
-            text run at (372,164) width 369: "text dummy text dummy text dummy text dummy"
-            text run at (0,191) width 129: "text dummy text"
+        RenderInline {SPAN} at (0,0) size 770x185 [color=#C0C0C0]
+          RenderText {#text} at (217,29) size 770x185
+            text run at (217,29) width 519: "dummy text dummy text dummy text dummy text dummy text dummy "
+            text run at (736,29) width 34: "text"
+            text run at (0,56) width 519: "dummy text dummy text dummy text dummy text dummy text dummy "
+            text run at (519,56) width 220: "text dummy text dummy text"
+            text run at (0,83) width 333: "dummy text dummy text dummy text dummy "
+            text run at (333,83) width 406: "text dummy text dummy text dummy text dummy text"
+            text run at (0,110) width 147: "dummy text dummy "
+            text run at (147,110) width 558: "text dummy text dummy text dummy text dummy text dummy text dummy "
+            text run at (705,110) width 34: "text"
+            text run at (0,137) width 519: "dummy text dummy text dummy text dummy text dummy text dummy "
+            text run at (519,137) width 220: "text dummy text dummy text"
+            text run at (0,164) width 333: "dummy text dummy text dummy text dummy "
+            text run at (333,164) width 406: "text dummy text dummy text dummy text dummy text"
+            text run at (0,191) width 88: "dummy text"
         RenderText {#text} at (0,0) size 0x0

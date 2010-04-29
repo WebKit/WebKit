@@ -6,16 +6,16 @@ layer at (0,0) size 800x518
       RenderBlock {P} at (0,0) size 784x40
         RenderText {#text} at (0,0) size 166x20
           text run at (0,0) width 166: "Mask version of test for "
-        RenderInline {I} at (0,0) size 756x40
+        RenderInline {I} at (0,0) size 755x40
           RenderInline {A} at (0,0) size 320x20 [color=#0000EE]
             RenderText {#text} at (166,0) size 320x20
               text run at (166,0) width 320: "http://bugs.webkit.org/show_bug.cgi?id=5399"
-          RenderText {#text} at (486,0) size 756x40
+          RenderText {#text} at (486,0) size 755x40
             text run at (486,0) width 4: " "
-            text run at (490,0) width 266: "no-repeat on negatively positioned fill"
-            text run at (0,20) width 127: "images is ignored"
-        RenderText {#text} at (127,20) size 4x20
-          text run at (127,20) width 4: "."
+            text run at (490,0) width 265: "no-repeat on negatively positioned fill"
+            text run at (0,20) width 126: "images is ignored"
+        RenderText {#text} at (126,20) size 4x20
+          text run at (126,20) width 4: "."
       RenderBlock {P} at (0,56) size 784x20
         RenderText {#text} at (0,0) size 457x20
           text run at (0,0) width 457: "Element with mask image starting at (-13, -13) with no-repeat set:"

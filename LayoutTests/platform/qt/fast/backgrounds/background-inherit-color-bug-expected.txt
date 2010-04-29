@@ -19,13 +19,13 @@ layer at (0,0) size 784x1280
             text run at (0,0) width 586: "Example: With the following code, the background color of H1 elements stays"
             text run at (0,21) width 429: "pink, no matter what background color the parents have:"
           RenderBR {BR} at (429,21) size 0x20
-          RenderText {#text} at (0,42) size 238x20
+          RenderText {#text} at (0,42) size 237x20
             text run at (0,42) width 33: "  H1 "
-            text run at (33,42) width 205: "{ background-color: pink; }"
-          RenderBR {BR} at (238,42) size 0x20
-          RenderText {#text} at (0,63) size 209x20
+            text run at (33,42) width 204: "{ background-color: pink; }"
+          RenderBR {BR} at (237,42) size 0x20
+          RenderText {#text} at (0,63) size 208x20
             text run at (0,63) width 33: "  H1 "
-            text run at (33,63) width 176: "{ background: inherit; }"
+            text run at (33,63) width 175: "{ background: inherit; }"
         RenderBlock {HR} at (4,272) size 614x2 [border: (1px inset #000000)]
         RenderBlock {P} at (4,290) size 614x63
           RenderText {#text} at (0,0) size 563x62

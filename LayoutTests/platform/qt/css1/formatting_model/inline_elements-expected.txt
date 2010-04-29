@@ -88,7 +88,7 @@ layer at (0,0) size 784x871
                 RenderInline {SPAN} at (0,0) size 738x92 [border: (12px solid #FF0000)]
                   RenderText {#text} at (191,0) size 738x64
                     text run at (191,0) width 523: "very long span in it, and the span has a 12px red border separated from the span by 2pt of"
-                    text run at (0,16) width 726: "padding (the difference between the line-height and the font-size), which should overlap with the lines of text above and below"
+                    text run at (0,16) width 725: "padding (the difference between the line-height and the font-size), which should overlap with the lines of text above and below"
                     text run at (0,32) width 419: "the span, since the padding and border should not effect the line height. "
                     text run at (419,32) width 319: "The span's border should have vertical lines only at the"
                     text run at (0,48) width 315: "beginning and end of the whole span, not on each line."

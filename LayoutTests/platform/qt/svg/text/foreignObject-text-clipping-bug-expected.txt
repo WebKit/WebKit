@@ -11,8 +11,8 @@ layer at (0,0) size 800x294
           RenderPath {rect} at (18,50) size 390x110 [transform={m=((10.00,0.00)(0.00,10.00)) t=(0.00,0.00)}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M1.00,1.00 L61.00,1.00 L61.00,13.00 L1.00,13.00 L1.00,1.00"]
           RenderForeignObject {foreignObject} at (1,1) size 60x10
             RenderBlock {div} at (0,0) size 60x12 [color=#000080]
-              RenderText {#text} at (0,0) size 27x12
-                text run at (0,0) width 27: "TEST"
+              RenderText {#text} at (0,0) size 26x12
+                text run at (0,0) width 26: "TEST"
         RenderText {#text} at (0,0) size 0x0
 layer at (18,184) size 390x124
   RenderBlock (relative positioned) {div} at (0,164) size 390x110 [color=#000080] [bgcolor=#D3D3D3]

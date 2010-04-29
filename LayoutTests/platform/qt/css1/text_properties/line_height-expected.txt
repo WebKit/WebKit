@@ -66,8 +66,8 @@ layer at (0,0) size 784x2892
           RenderText {#text} at (0,4) size 670x15
             text run at (0,4) width 670: "This first part of the DIV should have a line-height of twice the font size, which should cause extra spacing between the lines."
         RenderBlock {P} at (0,48) size 768x72
-          RenderText {#text} at (0,-2) size 741x77
-            text run at (0,-2) width 741: "This sentence should have a line-height of twice the DIV's font size, or"
+          RenderText {#text} at (0,-2) size 740x77
+            text run at (0,-2) width 740: "This sentence should have a line-height of twice the DIV's font size, or"
             text run at (0,22) width 736: "28px; this should not cause extra spacing between the lines, since the"
             text run at (0,46) width 560: "line-height and font-size should have the same value."
         RenderBlock (anonymous) at (0,144) size 768x24
@@ -98,11 +98,11 @@ layer at (0,0) size 784x2892
         RenderText {#text} at (0,0) size 585x15
           text run at (0,0) width 585: "This sentence should have a normal line-height, because negative values are not permitted for this property."
       RenderBlock {P} at (0,1366) size 768x225
-        RenderInline {SPAN} at (0,0) size 757x165 [bgcolor=#C0C0C0]
-          RenderText {#text} at (0,30) size 757x165
+        RenderInline {SPAN} at (0,0) size 765x165 [bgcolor=#C0C0C0]
+          RenderText {#text} at (0,30) size 765x165
             text run at (0,30) width 757: "This sentence should have a line-height of two centimeters, which should cause extra spacing between the lines. The text has a background"
-            text run at (0,105) width 745: "color of silver, but no padding or border. The background color has been set on an inline element and should therefore only cover the text,"
-            text run at (0,180) width 133: "not the interline spacing."
+            text run at (0,105) width 765: "color of silver, but no padding or border. The background color has been set on an inline element and should therefore only cover the text, not"
+            text run at (0,180) width 113: "the interline spacing."
         RenderText {#text} at (0,0) size 0x0
       RenderTable {TABLE} at (0,1603) size 768x1273 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 766x1271
@@ -145,8 +145,8 @@ layer at (0,0) size 784x2892
                   RenderText {#text} at (0,4) size 670x15
                     text run at (0,4) width 670: "This first part of the DIV should have a line-height of twice the font size, which should cause extra spacing between the lines."
                 RenderBlock {P} at (0,48) size 746x72
-                  RenderText {#text} at (0,-2) size 741x77
-                    text run at (0,-2) width 741: "This sentence should have a line-height of twice the DIV's font size, or"
+                  RenderText {#text} at (0,-2) size 740x77
+                    text run at (0,-2) width 740: "This sentence should have a line-height of twice the DIV's font size, or"
                     text run at (0,22) width 736: "28px; this should not cause extra spacing between the lines, since the"
                     text run at (0,46) width 560: "line-height and font-size should have the same value."
                 RenderBlock (anonymous) at (0,144) size 746x24

@@ -30,10 +30,10 @@ layer at (0,0) size 784x4506
           text run at (270,144) width 0: " "
           text run at (0,160) width 256: "P.sixd {border-width: px; border-style: solid;}"
           text run at (256,160) width 0: " "
-          text run at (0,176) width 76: "@three-dee {"
-          text run at (76,176) width 0: " "
-          text run at (0,192) width 138: " @background-lighting {"
-          text run at (138,192) width 0: " "
+          text run at (0,176) width 75: "@three-dee {"
+          text run at (75,176) width 0: " "
+          text run at (0,192) width 137: " @background-lighting {"
+          text run at (137,192) width 0: " "
           text run at (0,208) width 101: "  azimuth: 30deg;"
           text run at (101,208) width 0: " "
           text run at (0,224) width 114: "  elevation: 190deg;"
@@ -60,16 +60,16 @@ layer at (0,0) size 784x4506
           text run at (224,384) width 0: " "
           text run at (0,400) width 177: "SPAN[lang|=\"fr\"] {color: #c37;}"
           text run at (177,400) width 0: " "
-          text run at (0,416) width 76: "@media tty {"
-          text run at (76,416) width 0: " "
+          text run at (0,416) width 75: "@media tty {"
+          text run at (75,416) width 0: " "
           text run at (0,432) width 90: " H1 {color: red;}"
           text run at (90,432) width 0: " "
           text run at (0,448) width 129: " P.sixteen {color: red;}"
           text run at (129,448) width 0: " "
           text run at (0,464) width 8: " }"
           text run at (8,464) width 0: " "
-          text run at (0,480) width 76: "@three-dee {"
-          text run at (76,480) width 0: " "
+          text run at (0,480) width 75: "@three-dee {"
+          text run at (75,480) width 0: " "
           text run at (0,496) width 147: " P.seventeen {color: red }"
           text run at (147,496) width 0: " "
           text run at (0,512) width 8: " }"
@@ -98,8 +98,8 @@ layer at (0,0) size 784x4506
           text run at (269,704) width 0: " "
           text run at (0,720) width 274: "P.twentyoneb {rotation-code: '\\'}\\''; color: green;}"
           text run at (274,720) width 0: " "
-          text run at (0,736) width 80: "P.twentytwo {"
-          text run at (80,736) width 0: " "
+          text run at (0,736) width 79: "P.twentytwo {"
+          text run at (79,736) width 0: " "
           text run at (0,752) width 256: " type-display: @threedee {rotation-code: '}';};"
           text run at (256,752) width 0: " "
           text run at (0,768) width 76: " color: green;"
@@ -280,11 +280,11 @@ layer at (0,0) size 784x4506
         RenderText {#text} at (0,0) size 598x20
           text run at (0,0) width 566: "The text of this paragraph should be normal size because the selector is invalid. "
           text run at (566,0) width 32: "The "
-        RenderInline {EM} at (0,0) size 119x20
-          RenderText {#text} at (598,0) size 119x20
-            text run at (598,0) width 119: "emphasized text"
-        RenderText {#text} at (717,0) size 748x40
-          text run at (717,0) width 31: " and"
+        RenderInline {EM} at (0,0) size 116x20
+          RenderText {#text} at (598,0) size 116x20
+            text run at (598,0) width 116: "emphasized text"
+        RenderText {#text} at (714,0) size 745x40
+          text run at (714,0) width 31: " and"
           text run at (0,20) width 26: "the "
         RenderInline {STRONG} at (0,0) size 82x20
           RenderText {#text} at (26,20) size 82x20
@@ -507,17 +507,18 @@ layer at (0,0) size 784x4506
                 RenderText {#text} at (0,0) size 598x20
                   text run at (0,0) width 566: "The text of this paragraph should be normal size because the selector is invalid. "
                   text run at (566,0) width 32: "The "
-                RenderInline {EM} at (0,0) size 119x20
-                  RenderText {#text} at (598,0) size 119x20
-                    text run at (598,0) width 119: "emphasized text"
-                RenderText {#text} at (0,20) size 57x20
-                  text run at (0,20) width 57: "and the "
+                RenderInline {EM} at (0,0) size 116x20
+                  RenderText {#text} at (598,0) size 116x20
+                    text run at (598,0) width 116: "emphasized text"
+                RenderText {#text} at (714,0) size 745x40
+                  text run at (714,0) width 31: " and"
+                  text run at (0,20) width 26: "the "
                 RenderInline {STRONG} at (0,0) size 82x20
-                  RenderText {#text} at (57,20) size 82x20
-                    text run at (57,20) width 82: "strong text"
-                RenderText {#text} at (139,20) size 740x61
-                  text run at (139,20) width 601: " within it should also be normal size, since the entire ruleset should be skipped (since"
-                  text run at (0,41) width 734: "in some future version of CSS, there could be an operator within the selector that has higher precedence"
+                  RenderText {#text} at (26,20) size 82x20
+                    text run at (26,20) width 82: "strong text"
+                RenderText {#text} at (108,20) size 726x61
+                  text run at (108,20) width 618: " within it should also be normal size, since the entire ruleset should be skipped (since in"
+                  text run at (0,41) width 717: "some future version of CSS, there could be an operator within the selector that has higher precedence"
                   text run at (0,61) width 109: "than a comma)."
               RenderBlock {P} at (4,1453) size 746x41
                 RenderText {#text} at (0,0) size 527x20
