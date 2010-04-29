@@ -456,7 +456,9 @@ sub parseDiffHeader($$)
                         "source revision number \"$sourceRevision\".") if ($2 != $sourceRevision);
                 }
             }
-        } elsif (s/^\+\+\+ \S+/+++ $indexPath/) {
+        } elsif (s/^\+\+\+ \S+/+++ $indexPath/ ||
+                 /^Cannot display: file marked as a binary type.$/ || # SVN binary
+                 /^GIT binary patch$/) {
             # +++
             $foundHeaderEnding = 1;
         }

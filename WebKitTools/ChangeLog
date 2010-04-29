@@ -1,3 +1,22 @@
+2010-04-28  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Added to VCSUtils's parseDiffHeader() support for binary patches.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38094
+
+        The parseDiffHeader() function is part of new patch-parsing code
+        for svn-apply and svn-unapply that will go live in a subsequent
+        revision.
+
+        * Scripts/VCSUtils.pm:
+          - Added logic to parseDiffHeader() to recognize the ending of
+            the header portion of a binary diff.
+
+        * Scripts/webkitperl/VCSUtils_unittest/parseDiffHeader.pl:
+          - Added unit test cases for SVN and Git binary diffs.
+
 2010-04-28  Eric Seidel  <eric@webkit.org>
 
         Reviewed by David Levin.
