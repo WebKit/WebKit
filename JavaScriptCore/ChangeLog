@@ -1,5 +1,14 @@
 2010-04-28  Mike Thole  <mthole@apple.com>
 
+        Reviewed by Mark Rowe.
+
+        Reenable WTF_USE_PROTECTION_SPACE_AUTH_CALLBACK now that an
+        exports file for it has been added.
+
+        * wtf/Platform.h:
+
+2010-04-28  Mike Thole  <mthole@apple.com>
+
         Build fix, not reviewed.
 
         * wtf/Platform.h:

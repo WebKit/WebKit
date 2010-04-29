@@ -4162,13 +4162,13 @@
 		B50F5B810E96CD9900AD71A6 /* WebCoreObjCExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = B50F5B800E96CD9900AD71A6 /* WebCoreObjCExtras.mm */; settings = {COMPILER_FLAGS = "-Wno-deprecated-declarations"; }; };
 		B51BF6F0102C9E590002C15A /* SQLTransactionClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B51BF6EE102C9E590002C15A /* SQLTransactionClient.cpp */; };
 		B51BF6F1102C9E590002C15A /* SQLTransactionClient.h in Headers */ = {isa = PBXBuildFile; fileRef = B51BF6EF102C9E590002C15A /* SQLTransactionClient.h */; };
-		B5A684220FFABE9800D24689 /* SQLiteFileSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = B5A684210FFABE9800D24689 /* SQLiteFileSystem.h */; };
-		B5A684240FFABEAA00D24689 /* SQLiteFileSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5A684230FFABEAA00D24689 /* SQLiteFileSystem.cpp */; };
 		B523CF061182675400EBB29C /* SQLTransactionSyncCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = B523CEFF1182675400EBB29C /* SQLTransactionSyncCallback.h */; };
 		B523CF081182675400EBB29C /* SQLTransactionSync.h in Headers */ = {isa = PBXBuildFile; fileRef = B523CF011182675400EBB29C /* SQLTransactionSync.h */; };
 		B523CF091182675400EBB29C /* SQLTransactionSync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B523CF021182675400EBB29C /* SQLTransactionSync.cpp */; };
 		B523CF0A1182675400EBB29C /* DatabaseSync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B523CF031182675400EBB29C /* DatabaseSync.cpp */; };
 		B523CF0B1182675400EBB29C /* DatabaseSync.h in Headers */ = {isa = PBXBuildFile; fileRef = B523CF041182675400EBB29C /* DatabaseSync.h */; };
+		B5A684220FFABE9800D24689 /* SQLiteFileSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = B5A684210FFABE9800D24689 /* SQLiteFileSystem.h */; };
+		B5A684240FFABEAA00D24689 /* SQLiteFileSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5A684230FFABEAA00D24689 /* SQLiteFileSystem.cpp */; };
 		B5C1123B102B6C4600096578 /* SQLTransactionCoordinator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5C11239102B6C4600096578 /* SQLTransactionCoordinator.cpp */; };
 		B5C1123C102B6C4600096578 /* SQLTransactionCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = B5C1123A102B6C4600096578 /* SQLTransactionCoordinator.h */; };
 		B5D3601A112F8B560048DEA8 /* DatabaseCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = B5D36019112F8B560048DEA8 /* DatabaseCallback.h */; };
@@ -6004,6 +6004,7 @@
 		24F54EAB101FE914000AE741 /* ApplicationCacheHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplicationCacheHost.h; sourceTree = "<group>"; };
 		2542F4D81166C25A00E89A86 /* UserGestureIndicator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserGestureIndicator.cpp; sourceTree = "<group>"; };
 		2542F4D91166C25A00E89A86 /* UserGestureIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserGestureIndicator.h; sourceTree = "<group>"; };
+		271245D311890AB70083E852 /* WebCore.ProtectionSpaceAuthCallback.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = WebCore.ProtectionSpaceAuthCallback.exp; sourceTree = "<group>"; };
 		29A812080FBB9C1D00510293 /* AccessibilityRenderObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityRenderObject.cpp; sourceTree = "<group>"; };
 		29A812090FBB9C1D00510293 /* AccessibilityTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityTable.cpp; sourceTree = "<group>"; };
 		29A8120A0FBB9C1D00510293 /* AccessibilityARIAGrid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityARIAGrid.cpp; sourceTree = "<group>"; };
@@ -11067,6 +11068,7 @@
 				4491959C0FBE17D700D9F824 /* WebCore.JNI.exp */,
 				4491959A0FBE17D700D9F824 /* WebCore.NPAPI.exp */,
 				FE136AE710643BE50078CF6D /* WebCore.OrientationEvents.exp */,
+				271245D311890AB70083E852 /* WebCore.ProtectionSpaceAuthCallback.exp */,
 				4491959B0FBE17D700D9F824 /* WebCore.PluginHostProcess.exp */,
 				449195990FBE17D700D9F824 /* WebCore.SVG.Animation.exp */,
 				449195980FBE17D700D9F824 /* WebCore.SVG.exp */,

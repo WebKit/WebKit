@@ -1,3 +1,13 @@
+2010-04-28  Mike Thole  <mthole@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Add separate exports file for symbols dependent on WTF_USE_PROTECTION_SPACE_AUTH_CALLBACK.
+
+        * DerivedSources.make: Updated for WebCore.ProtectionSpaceAuthCallback.exp.
+        * WebCore.ProtectionSpaceAuthCallback.exp: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+
 2010-04-28  Evan Martin  <evan@chromium.org>
 
         Reviewed by David Levin.
