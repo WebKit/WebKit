@@ -35,7 +35,7 @@ class QScriptSyntaxCheckResultPrivate;
 
 class QScriptEnginePrivate : public QSharedData {
 public:
-    static QScriptEnginePtr get(const QScriptEngine* q) { Q_ASSERT(q); return q->d_ptr; }
+    static QScriptEnginePrivate* get(const QScriptEngine* q) { Q_ASSERT(q); return q->d_ptr.data(); }
     static QScriptEngine* get(const QScriptEnginePrivate* d) { Q_ASSERT(d); return d->q_ptr; }
 
     QScriptEnginePrivate(const QScriptEngine*);

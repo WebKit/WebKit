@@ -76,12 +76,12 @@ public:
     inline QScriptValuePrivate(qsreal number);
     inline QScriptValuePrivate(QScriptValue::SpecialValue value);
 
-    inline QScriptValuePrivate(const QScriptEngine* engine, bool value);
-    inline QScriptValuePrivate(const QScriptEngine* engine, int value);
-    inline QScriptValuePrivate(const QScriptEngine* engine, uint value);
-    inline QScriptValuePrivate(const QScriptEngine* engine, qsreal value);
-    inline QScriptValuePrivate(const QScriptEngine* engine, const QString& value);
-    inline QScriptValuePrivate(const QScriptEngine* engine, QScriptValue::SpecialValue value);
+    inline QScriptValuePrivate(const QScriptEnginePrivate* engine, bool value);
+    inline QScriptValuePrivate(const QScriptEnginePrivate* engine, int value);
+    inline QScriptValuePrivate(const QScriptEnginePrivate* engine, uint value);
+    inline QScriptValuePrivate(const QScriptEnginePrivate* engine, qsreal value);
+    inline QScriptValuePrivate(const QScriptEnginePrivate* engine, const QString& value);
+    inline QScriptValuePrivate(const QScriptEnginePrivate* engine, QScriptValue::SpecialValue value);
 
     inline QScriptValuePrivate(const QScriptEnginePrivate* engine, JSValueRef value);
     inline QScriptValuePrivate(const QScriptEnginePrivate* engine, JSValueRef value, JSObjectRef object);
@@ -209,94 +209,58 @@ QScriptValuePrivate::QScriptValuePrivate(QScriptValue::SpecialValue value)
 {
 }
 
-QScriptValuePrivate::QScriptValuePrivate(const QScriptEngine* engine, bool value)
+QScriptValuePrivate::QScriptValuePrivate(const QScriptEnginePrivate* engine, bool value)
     : m_state(JSPrimitive)
+    , m_engine(const_cast<QScriptEnginePrivate*>(engine))
+    , m_value(engine->makeJSValue(value))
 {
-    if (!engine) {
-        // slower path reinitialization
-        m_state = CBool;
-        m_number = value;
-        m_value = 0;
-    } else {
-        m_engine = QScriptEnginePrivate::get(engine);
-        m_value = m_engine->makeJSValue(value);
-        JSValueProtect(context(), m_value);
-    }
+    Q_ASSERT(engine);
+    JSValueProtect(context(), m_value);
 }
 
-QScriptValuePrivate::QScriptValuePrivate(const QScriptEngine* engine, int value)
+QScriptValuePrivate::QScriptValuePrivate(const QScriptEnginePrivate* engine, int value)
     : m_state(JSPrimitive)
+    , m_engine(const_cast<QScriptEnginePrivate*>(engine))
+    , m_value(m_engine->makeJSValue(value))
 {
-    if (!engine) {
-        // slower path reinitialization
-        m_state = CNumber;
-        m_number = value;
-        m_value = 0;
-    } else {
-        m_engine = QScriptEnginePrivate::get(engine);
-        m_value = m_engine->makeJSValue(value);
-        JSValueProtect(context(), m_value);
-    }
+    Q_ASSERT(engine);
+    JSValueProtect(context(), m_value);
 }
 
-QScriptValuePrivate::QScriptValuePrivate(const QScriptEngine* engine, uint value)
+QScriptValuePrivate::QScriptValuePrivate(const QScriptEnginePrivate* engine, uint value)
     : m_state(JSPrimitive)
+    , m_engine(const_cast<QScriptEnginePrivate*>(engine))
+    , m_value(m_engine->makeJSValue(value))
 {
-    if (!engine) {
-        // slower path reinitialization
-        m_state = CNumber;
-        m_number = value;
-        m_value = 0;
-    } else {
-        m_engine = QScriptEnginePrivate::get(engine);
-        m_value = m_engine->makeJSValue(value);
-        JSValueProtect(context(), m_value);
-    }
+    Q_ASSERT(engine);
+    JSValueProtect(context(), m_value);
 }
 
-QScriptValuePrivate::QScriptValuePrivate(const QScriptEngine* engine, qsreal value)
+QScriptValuePrivate::QScriptValuePrivate(const QScriptEnginePrivate* engine, qsreal value)
     : m_state(JSPrimitive)
+    , m_engine(const_cast<QScriptEnginePrivate*>(engine))
+    , m_value(m_engine->makeJSValue(value))
 {
-    if (!engine) {
-        // slower path reinitialization
-        m_state = CNumber;
-        m_number = value;
-        m_value = 0;
-    } else {
-        m_engine = QScriptEnginePrivate::get(engine);
-        m_value = m_engine->makeJSValue(value);
-        JSValueProtect(context(), m_value);
-    }
+    Q_ASSERT(engine);
+    JSValueProtect(context(), m_value);
 }
 
-QScriptValuePrivate::QScriptValuePrivate(const QScriptEngine* engine, const QString& value)
+QScriptValuePrivate::QScriptValuePrivate(const QScriptEnginePrivate* engine, const QString& value)
     : m_state(JSPrimitive)
+    , m_engine(const_cast<QScriptEnginePrivate*>(engine))
+    , m_value(m_engine->makeJSValue(value))
 {
-    if (!engine) {
-        // slower path reinitialization
-        m_state = CString;
-        m_string = value;
-        m_value = 0;
-    } else {
-        m_engine = QScriptEnginePrivate::get(engine);
-        m_value = m_engine->makeJSValue(value);
-        JSValueProtect(context(), m_value);
-    }
+    Q_ASSERT(engine);
+    JSValueProtect(context(), m_value);
 }
 
-QScriptValuePrivate::QScriptValuePrivate(const QScriptEngine* engine, QScriptValue::SpecialValue value)
+QScriptValuePrivate::QScriptValuePrivate(const QScriptEnginePrivate* engine, QScriptValue::SpecialValue value)
     : m_state(JSPrimitive)
+    , m_engine(const_cast<QScriptEnginePrivate*>(engine))
+    , m_value(m_engine->makeJSValue(value))
 {
-    if (!engine) {
-        // slower path reinitialization
-        m_state = CSpecial;
-        m_number = value;
-        m_value = 0;
-    } else {
-        m_engine = QScriptEnginePrivate::get(engine);
-        m_value = m_engine->makeJSValue(value);
-        JSValueProtect(context(), m_value);
-    }
+    Q_ASSERT(engine);
+    JSValueProtect(context(), m_value);
 }
 
 QScriptValuePrivate::QScriptValuePrivate(const QScriptEnginePrivate* engine, JSValueRef value)
@@ -305,6 +269,7 @@ QScriptValuePrivate::QScriptValuePrivate(const QScriptEnginePrivate* engine, JSV
     , m_value(value)
 {
     Q_ASSERT(engine);
+    Q_ASSERT(value);
     JSValueProtect(context(), m_value);
 }
 
@@ -315,6 +280,8 @@ QScriptValuePrivate::QScriptValuePrivate(const QScriptEnginePrivate* engine, JSV
     , m_object(object)
 {
     Q_ASSERT(engine);
+    Q_ASSERT(value);
+    Q_ASSERT(object);
     JSValueProtect(context(), m_value);
 }
 

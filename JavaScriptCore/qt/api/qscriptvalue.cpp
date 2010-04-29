@@ -115,8 +115,11 @@ QScriptValue::QScriptValue(QScriptValuePrivate* d)
   registers it with the script \a engine.
 */
 QScriptValue::QScriptValue(QScriptEngine* engine, bool value)
-    : d_ptr(new QScriptValuePrivate(engine, value))
 {
+    if (engine)
+        d_ptr = new QScriptValuePrivate(QScriptEnginePrivate::get(engine), value);
+    else
+        d_ptr = new QScriptValuePrivate(value);
 }
 
 /*!
@@ -126,8 +129,11 @@ QScriptValue::QScriptValue(QScriptEngine* engine, bool value)
   registers it with the script \a engine.
 */
 QScriptValue::QScriptValue(QScriptEngine* engine, int value)
-    : d_ptr(new QScriptValuePrivate(engine, value))
 {
+    if (engine)
+        d_ptr = new QScriptValuePrivate(QScriptEnginePrivate::get(engine), value);
+    else
+        d_ptr = new QScriptValuePrivate(value);
 }
 
 /*!
@@ -137,8 +143,11 @@ QScriptValue::QScriptValue(QScriptEngine* engine, int value)
   registers it with the script \a engine.
  */
 QScriptValue::QScriptValue(QScriptEngine* engine, uint value)
-    : d_ptr(new QScriptValuePrivate(engine, value))
 {
+    if (engine)
+        d_ptr = new QScriptValuePrivate(QScriptEnginePrivate::get(engine), value);
+    else
+        d_ptr = new QScriptValuePrivate(value);
 }
 
 /*!
@@ -148,8 +157,11 @@ QScriptValue::QScriptValue(QScriptEngine* engine, uint value)
   registers it with the script \a engine.
 */
 QScriptValue::QScriptValue(QScriptEngine* engine, qsreal value)
-    : d_ptr(new QScriptValuePrivate(engine, value))
 {
+    if (engine)
+        d_ptr = new QScriptValuePrivate(QScriptEnginePrivate::get(engine), value);
+    else
+        d_ptr = new QScriptValuePrivate(value);
 }
 
 /*!
@@ -159,8 +171,11 @@ QScriptValue::QScriptValue(QScriptEngine* engine, qsreal value)
   registers it with the script \a engine.
 */
 QScriptValue::QScriptValue(QScriptEngine* engine, const QString& value)
-    : d_ptr(new QScriptValuePrivate(engine, value))
 {
+    if (engine)
+        d_ptr = new QScriptValuePrivate(QScriptEnginePrivate::get(engine), value);
+    else
+        d_ptr = new QScriptValuePrivate(value);
 }
 
 /*!
@@ -170,8 +185,11 @@ QScriptValue::QScriptValue(QScriptEngine* engine, const QString& value)
   registers it with the script \a engine.
 */
 QScriptValue::QScriptValue(QScriptEngine* engine, const char* value)
-    : d_ptr(new QScriptValuePrivate(engine, QString::fromUtf8(value)))
 {
+    if (engine)
+        d_ptr = new QScriptValuePrivate(QScriptEnginePrivate::get(engine), QString::fromUtf8(value));
+    else
+        d_ptr = new QScriptValuePrivate(QString::fromUtf8(value));
 }
 
 /*!
@@ -181,8 +199,11 @@ QScriptValue::QScriptValue(QScriptEngine* engine, const char* value)
   registers it with the script \a engine.
 */
 QScriptValue::QScriptValue(QScriptEngine* engine, SpecialValue value)
-    : d_ptr(new QScriptValuePrivate(engine, value))
 {
+    if (engine)
+        d_ptr = new QScriptValuePrivate(QScriptEnginePrivate::get(engine), value);
+    else
+        d_ptr = new QScriptValuePrivate(value);
 }
 
 /*!

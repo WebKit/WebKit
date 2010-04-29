@@ -1,3 +1,25 @@
+2010-04-29  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Small cleanup.
+
+        QScriptValuePrivate constructor shouldn't take QScriptEngine pointer
+        as a parameter, because it breaks a private / public separation rule.
+        QScriptEnginePrivate::get(QScriptEngine*) should return
+        a QScriptEnginePrivate pointer instead of a QScriptEnginePtr, it simplifies
+        implementation.
+
+        [Qt] QScriptValuePrivate class needs some cleanup.
+        https://bugs.webkit.org/show_bug.cgi?id=37729
+
+        * qt/api/qscriptengine_p.h:
+        (QScriptEnginePrivate::get):
+        * qt/api/qscriptvalue.cpp:
+        (QScriptValue::QScriptValue):
+        * qt/api/qscriptvalue_p.h:
+        (QScriptValuePrivate::QScriptValuePrivate):
+
 2010-04-29  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Simon Hausmann.
