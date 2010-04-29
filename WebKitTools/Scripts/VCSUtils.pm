@@ -65,6 +65,7 @@ BEGIN {
         &normalizePath
         &parsePatch
         &pathRelativeToSVNRepositoryRootForPath
+        &prepareParsedPatch
         &runPatchCommand
         &svnRevisionForDirectory
         &svnStatus
@@ -481,6 +482,24 @@ sub parseDiffHeader($$)
     return (\%header, $lastReadLine);
 }
 
+# A %diffHash is a hash representing a source control diff of a single
+# file operation (e.g. a file modification, copy, or delete).
+#
+# These hashes appear, for example, in the parseDiff(), parsePatch(),
+# and prepareParsedPatch() subroutines of this package.
+#
+# The corresponding values are--
+#
+#   copiedFromPath: if a file copy, the path from which the file was
+#                   copied. Otherwise, undefined.
+#   indexPath: the path of the file. For SVN-formatted diffs, this is
+#              the same as the path in the "Index:" line.
+#   sourceRevision: the revision number of the source. This is the same
+#                   as the revision number the file was copied from, in
+#                   the case of a file copy.
+#   svnConvertedText: the diff with some lines converted to SVN format.
+#                     Git-specific lines are preserved.
+
 # Parse one diff from a patch file created by svn-create-patch, and
 # advance the file handle so the last line read is the first line
 # of the next header block.
@@ -493,15 +512,8 @@ sub parseDiffHeader($$)
 #   $line: the line last read from $fileHandle.
 #
 # Returns ($diffHashRef, $lastReadLine):
-#   $diffHashRef:
-#     copiedFromPath: if a file copy, the path from which the file was
-#                     copied. Otherwise, undefined.
-#     indexPath: the path in the "Index:" line.
-#     sourceRevision: the revision number of the source. This is the same
-#                     as the revision number the file was copied from, in
-#                     the case of a file copy.
-#     svnConvertedText: the diff with some lines converted to SVN format.
-#                       Git-specific lines are preserved.
+#   $diffHashRef: A reference to a %diffHash.
+#                 See the %diffHash documentation above.
 #   $lastReadLine: the line last read from $fileHandle
 sub parseDiff($$)
 {
@@ -553,8 +565,8 @@ sub parseDiff($$)
 #                read from.
 #
 # Returns:
-#   @diffHashRefs: an array of diff hash references. See parseDiff() for
-#                  a description of each $diffHashRef.
+#   @diffHashRefs: an array of diff hash references.
+#                  See the %diffHash documentation above.
 sub parsePatch($)
 {
     my ($fileHandle) = @_;
@@ -572,6 +584,78 @@ sub parsePatch($)
     }
 
     return @diffHashRefs;
+}
+
+# Prepare the results of parsePatch() for use in svn-apply and svn-unapply.
+#
+# Args:
+#   $shouldForce: Whether to continue processing if an unexpected
+#                 state occurs.
+#   @diffHashRefs: An array of references to %diffHashes.
+#                  See the %diffHash documentation above.
+#
+# Returns $preparedPatchHashRef:
+#   copyDiffHashRefs: A reference to an array of the $diffHashRefs in
+#                     @diffHashRefs that represent file copies. The original
+#                     ordering is preserved.
+#   nonCopyDiffHashRefs: A reference to an array of the $diffHashRefs in
+#                        @diffHashRefs that do not represent file copies.
+#                        The original ordering is preserved.
+#   sourceRevisionHash: A reference to a hash of source path to source
+#                       revision number.
+sub prepareParsedPatch($@)
+{
+    my ($shouldForce, @diffHashRefs) = @_;
+
+    my %copiedFiles;
+
+    # Return values
+    my @copyDiffHashRefs = ();
+    my @nonCopyDiffHashRefs = ();
+    my %sourceRevisionHash = ();
+    for my $diffHashRef (@diffHashRefs) {
+        my $copiedFromPath = $diffHashRef->{copiedFromPath};
+        my $indexPath = $diffHashRef->{indexPath};
+        my $sourceRevision = $diffHashRef->{sourceRevision};
+        my $sourcePath;
+
+        if (defined($copiedFromPath)) {
+            # Then the diff is a copy operation.
+            $sourcePath = $copiedFromPath;
+
+            # FIXME: Consider printing a warning or exiting if
+            #        exists($copiedFiles{$indexPath}) is true -- i.e. if
+            #        $indexPath appears twice as a copy target.
+            $copiedFiles{$indexPath} = $sourcePath;
+
+            push @copyDiffHashRefs, $diffHashRef;
+        } else {
+            # Then the diff is not a copy operation.
+            $sourcePath = $indexPath;
+
+            push @nonCopyDiffHashRefs, $diffHashRef;
+        }
+
+        if (defined($sourceRevision)) {
+            if (exists($sourceRevisionHash{$sourcePath}) &&
+                ($sourceRevisionHash{$sourcePath} != $sourceRevision)) {
+                if (!$shouldForce) {
+                    die "Two revisions of the same file required as a source:\n".
+                        "    $sourcePath:$sourceRevisionHash{$sourcePath}\n".
+                        "    $sourcePath:$sourceRevision";
+                }
+            }
+            $sourceRevisionHash{$sourcePath} = $sourceRevision;
+        }
+    }
+
+    my %preparedPatchHash;
+
+    $preparedPatchHash{copyDiffHashRefs} = \@copyDiffHashRefs;
+    $preparedPatchHash{nonCopyDiffHashRefs} = \@nonCopyDiffHashRefs;
+    $preparedPatchHash{sourceRevisionHash} = \%sourceRevisionHash;
+
+    return \%preparedPatchHash;
 }
 
 # If possible, returns a ChangeLog patch equivalent to the given one,

@@ -123,72 +123,43 @@ my $repositoryRootPath = determineVCSRoot();
 
 my %checkedDirectories;
 my %copiedFiles;
-my @patches;
-my %versions;
 
-my $copiedFromPath;
-my $filter;
-my $indexPath;
-my $patch;
-while (<>) {
-    s/([\n\r]+)$//mg;
-    my $eol = $1;
-    if (!defined($indexPath) && m#^diff --git \w/#) {
-        $filter = \&gitdiff2svndiff;
-    }
-    $_ = &$filter($_) if $filter;
-    if (/^Index: (.+)/) {
-        $indexPath = $1;
-        if ($patch) {
-            if (!$copiedFromPath) {
-                push @patches, $patch;
-            }
-            $copiedFromPath = "";
-            $patch = "";
-        }
-    }
-    if ($indexPath) {
-        # Fix paths on diff, ---, and +++ lines to match preceding Index: line.
-        s/\S+$/$indexPath/ if /^diff/;
-        s/^--- \S+/--- $indexPath/;
-        if (/^--- .+\(from (\S+):(\d+)\)$/) {
-            $copiedFromPath = $1;
-            $copiedFiles{$indexPath} = $copiedFromPath;
-            $versions{$copiedFromPath} = $2 if ($2 != 0);
-        }
-        elsif (/^--- .+\(revision (\d+)\)$/) {
-            $versions{$indexPath} = $1 if ($1 != 0);
-        }
-        if (s/^\+\+\+ \S+/+++ $indexPath/) {
-            $indexPath = "";
-        }
-    }
-    $patch .= $_;
-    $patch .= $eol;
-}
+# Need to use a typeglob to pass the file handle as a parameter,
+# otherwise get a bareword error.
+my @diffHashRefs = parsePatch(*ARGV);
 
-if ($patch && !$copiedFromPath) {
-    push @patches, $patch;
-}
+print "Parsed " . @diffHashRefs . " diffs from patch file(s).\n";
+
+my $preparedPatchHash = prepareParsedPatch($force, @diffHashRefs);
+
+my @copyDiffHashRefs = @{$preparedPatchHash->{copyDiffHashRefs}};
+my @nonCopyDiffHashRefs = @{$preparedPatchHash->{nonCopyDiffHashRefs}};
+my %sourceRevisions = %{$preparedPatchHash->{sourceRevisionHash}};
 
 if ($merge) {
     die "--merge is currently only supported for SVN" unless isSVN();
     # How do we handle Git patches applied to an SVN checkout here?
-    for my $file (sort keys %versions) {
-        my $version = $versions{$file};
+    for my $file (sort keys %sourceRevisions) {
+        my $version = $sourceRevisions{$file};
         print "Getting version $version of $file\n";
         system("svn", "update", "-r", $version, $file) == 0 or die "Failed to run svn update -r $version $file.";
     }
 }
 
-# Handle copied and moved files first since moved files may have their source deleted before the move.
-for my $file (keys %copiedFiles) {
-    addDirectoriesIfNeeded(dirname($file));
-    scmCopy($copiedFiles{$file}, $file);
+# Handle copied and moved files first since moved files may have their
+# source deleted before the move.
+for my $copyDiffHashRef (@copyDiffHashRefs) {
+    my $indexPath = $copyDiffHashRef->{indexPath};
+    my $copiedFromPath = $copyDiffHashRef->{copiedFromPath};
+
+    addDirectoriesIfNeeded(dirname($indexPath));
+    scmCopy($copiedFromPath, $indexPath);
+
+    $copiedFiles{$indexPath} = $copiedFromPath;
 }
 
-for $patch (@patches) {
-    patch($patch);
+for my $diffHashRef (@nonCopyDiffHashRefs) {
+    patch($diffHashRef);
 }
 
 removeDirectoriesIfNeeded();
@@ -326,10 +297,13 @@ sub isDirectoryEmptyForRemoval($)
     return $directoryIsEmpty;
 }
 
+# Args:
+#   $diffHashRef: a diff hash reference of the type returned by parsePatch().
 sub patch($)
 {
-    my ($patch) = @_;
-    return if !$patch;
+    my ($diffHashRef) = @_;
+
+    my $patch = $diffHashRef->{svnConvertedText};
 
     unless ($patch =~ m|^Index: ([^\r\n]+)|) {
         my $separator = '-' x 67;
@@ -344,6 +318,8 @@ sub patch($)
     my $isBinary = 0;
     my $isGitBinary = 0;
 
+    # FIXME: This information should be extracted from the diff file as
+    #        part of the parsing stage, i.e. the call to parsePatch().
     $addition = 1 if ($patch =~ /\n--- .+\(revision 0\)\r?\n/ || $patch =~ /\n@@ -0,0 .* @@/) && !exists($copiedFiles{$fullPath});
     $deletion = 1 if $patch =~ /\n@@ .* \+0,0 @@/;
     $isBinary = 1 if $patch =~ /\nCannot display: file marked as a binary type\./;

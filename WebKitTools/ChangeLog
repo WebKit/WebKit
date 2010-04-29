@@ -1,3 +1,31 @@
+2010-04-29  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Refactored svn-apply and svn-unapply to use the new
+        parsePatch() subroutine.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34033
+
+        * Scripts/VCSUtils.pm:
+          - Consolidated %diffHash documentation.
+          - Added prepareParsedPatch().
+
+        * Scripts/svn-apply:
+          - Replaced main while loop with calls to parsePatch() and
+            prepareParsedPatch().
+
+        * Scripts/svn-unapply:
+          - Replaced main while loop with calls to parsePatch() and
+            prepareParsedPatch().
+
+        * Scripts/test-webkitperl:
+          - Changed to render relative test paths rather than absolute
+            test paths.
+
+        * Scripts/webkitperl/VCSUtils_unittest/prepareParsedPatch.pl: Added.
+          - Added unit tests for prepareParsedPatch().
+
 2010-04-28  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Eric Seidel.
