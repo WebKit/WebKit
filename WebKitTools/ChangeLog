@@ -1,3 +1,9 @@
+2010-04-28  Evan Stade  <estade@chromium.org>
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/committers.py: adding myself as a committer
+
 2010-04-28  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.
