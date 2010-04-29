@@ -1,3 +1,18 @@
+2010-04-28  Martin Robinson  <mrobinson@webkit.org>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Enable DOM clipboard and drag-and-drop access
+        https://bugs.webkit.org/show_bug.cgi?id=30623
+
+        Use the length of the UTF-8 markup data in bytes when filling GtkSelectionData.
+
+        No new tests, because pasteboard DataTransfer tests will be enabled
+        with the completion of the GTK+ DataTransfer object.
+
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::clipboard_get_contents_cb): Use strlen here instead of g_utf8_strlen.
+
 2010-04-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adele Peterson.

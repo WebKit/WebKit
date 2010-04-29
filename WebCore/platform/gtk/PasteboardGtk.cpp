@@ -61,7 +61,7 @@ static void clipboard_get_contents_cb(GtkClipboard *clipboard, GtkSelectionData 
     if (info == Pasteboard::generalPasteboard()->helper()->getIdForTargetType(PasteboardHelper::TargetTypeMarkup))
         gtk_selection_data_set(selection_data, selection_data->target, 8,
                                reinterpret_cast<const guchar*>(clipboardData->markup()),
-                               g_utf8_strlen(clipboardData->markup(), -1));
+                               strlen(clipboardData->markup()));
     else
         gtk_selection_data_set_text(selection_data, clipboardData->text(), -1);
 }
