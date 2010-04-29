@@ -562,6 +562,11 @@ void GraphicsContext3D::reshape(int width, int height)
     glFlush();
 }
 
+bool GraphicsContext3D::isGLES2Compliant() const
+{
+    return m_internal->m_glWidget->paintEngine()->type() == QPaintEngine::OpenGL2;
+}
+
 void GraphicsContext3D::activeTexture(unsigned long texture)
 {
     m_internal->m_glWidget->makeCurrent();
