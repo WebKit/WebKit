@@ -37,6 +37,7 @@ namespace WebCore {
 MediaQueryExp::MediaQueryExp(const AtomicString& mediaFeature, CSSParserValueList* valueList)
     : m_mediaFeature(mediaFeature)
     , m_value(0)
+    , m_isValid(true)
 {
     if (valueList) {
         if (valueList->size() == 1) {
@@ -73,6 +74,7 @@ MediaQueryExp::MediaQueryExp(const AtomicString& mediaFeature, CSSParserValueLis
             if (isValid)
                 m_value = list.release();
         }
+        m_isValid = m_value;
     }
 }
 

@@ -533,6 +533,9 @@ bool MediaQueryEvaluator::eval(const MediaQueryExp* expr) const
     if (!m_frame || !m_style)
         return m_expResult;
 
+    if (!expr->isValid())
+        return false;
+
     if (!gFunctionMap)
         createFunctionMap();
 
