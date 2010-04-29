@@ -685,7 +685,9 @@ class Git(SCM):
         return run_command(['git', 'merge-base', self.svn_branch_name(), 'HEAD']).strip()
 
     def svn_branch_name(self):
-        return Git.read_git_config('svn-remote.svn.fetch').split(':')[1]
+        # FIXME: This should so something like: Git.read_git_config('svn-remote.svn.fetch').split(':')[1]
+        # but that doesn't work if the git repo is tracking multiple svn branches.
+        return 'trunk'
 
     def commit_locally_with_message(self, message):
         run_command(['git', 'commit', '--all', '-F', '-'], input=message)

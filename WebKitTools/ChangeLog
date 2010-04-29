@@ -1,3 +1,17 @@
+2010-04-28  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        webkit-patch doesn't work if a git repo is tracking multiple svn repos
+        https://bugs.webkit.org/show_bug.cgi?id=38290
+        
+        Getting the tests to pass required getting our SVN repo to more closely
+        match the real svn.webkit.org repo by having a trunk directory.
+        That involved adding an extra commit at the beginning and thus changing
+        all the commit numbers in the tests.
+
+        * Scripts/webkitpy/common/checkout/scm.py:
+
 2010-04-29  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

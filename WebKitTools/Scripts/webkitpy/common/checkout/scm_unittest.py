@@ -145,6 +145,19 @@ class SVNTestRepository:
         test_object.svn_checkout_path = tempfile.mkdtemp(suffix="svn_test_checkout")
         run_command(['svn', 'checkout', '--quiet', test_object.svn_repo_url, test_object.svn_checkout_path])
 
+        # Create and checkout a trunk dir to match the standard svn configuration to match git-svn's expectations
+        os.chdir(test_object.svn_checkout_path)
+        os.mkdir('trunk')
+        cls._svn_add('trunk')
+        # We can add tags and branches as well if we ever need to test those.
+        cls._svn_commit('add trunk')
+
+        # Change directory out of the svn checkout so we can delete the checkout directory.
+        # _setup_test_commits will CD back to the svn checkout directory.
+        os.chdir('/')
+        run_command(['rm', '-rf', test_object.svn_checkout_path])
+        run_command(['svn', 'checkout', '--quiet', test_object.svn_repo_url + '/trunk', test_object.svn_checkout_path])
+
         cls._setup_test_commits(test_object)
 
     @classmethod
@@ -259,22 +272,22 @@ class SCMTest(unittest.TestCase):
 
     def _shared_test_changed_files_for_revision(self):
         # SVN reports directory changes, Git does not.
-        changed_files = self.scm.changed_files_for_revision(2)
+        changed_files = self.scm.changed_files_for_revision(3)
         if "test_dir" in changed_files:
             changed_files.remove("test_dir")
         self.assertEqual(changed_files, ["test_dir/test_file3", "test_file"])
-        self.assertEqual(sorted(self.scm.changed_files_for_revision(3)), sorted(["test_file", "test_file2"])) # Git and SVN return different orders.
-        self.assertEqual(self.scm.changed_files_for_revision(1), ["test_file"])
+        self.assertEqual(sorted(self.scm.changed_files_for_revision(4)), sorted(["test_file", "test_file2"]))  # Git and SVN return different orders.
+        self.assertEqual(self.scm.changed_files_for_revision(2), ["test_file"])
 
     def _shared_test_contents_at_revision(self):
-        self.assertEqual(self.scm.contents_at_revision("test_file", 2), "test1test2")
-        self.assertEqual(self.scm.contents_at_revision("test_file", 3), "test1test2test3\n")
+        self.assertEqual(self.scm.contents_at_revision("test_file", 3), "test1test2")
+        self.assertEqual(self.scm.contents_at_revision("test_file", 4), "test1test2test3\n")
 
         # Verify that contents_at_revision returns a byte array, aka str():
-        self.assertEqual(self.scm.contents_at_revision("test_file", 4), u"latin1 test: \u00A0\n".encode("latin1"))
-        self.assertEqual(self.scm.contents_at_revision("test_file2", 4), u"utf-8 test: \u00A0\n".encode("utf-8"))
+        self.assertEqual(self.scm.contents_at_revision("test_file", 5), u"latin1 test: \u00A0\n".encode("latin1"))
+        self.assertEqual(self.scm.contents_at_revision("test_file2", 5), u"utf-8 test: \u00A0\n".encode("utf-8"))
 
-        self.assertEqual(self.scm.contents_at_revision("test_file2", 3), "second file")
+        self.assertEqual(self.scm.contents_at_revision("test_file2", 4), "second file")
         # Files which don't exist:
         # Currently we raise instead of returning None because detecting the difference between
         # "file not found" and any other error seems impossible with svn (git seems to expose such through the return code).
@@ -282,21 +295,21 @@ class SCMTest(unittest.TestCase):
         self.assertRaises(ScriptError, self.scm.contents_at_revision, "does_not_exist", 2)
 
     def _shared_test_committer_email_for_revision(self):
-        self.assertEqual(self.scm.committer_email_for_revision(2), getpass.getuser()) # Committer "email" will be the current user
+        self.assertEqual(self.scm.committer_email_for_revision(3), getpass.getuser())  # Committer "email" will be the current user
 
     def _shared_test_reverse_diff(self):
         self._setup_webkittools_scripts_symlink(self.scm) # Git's apply_reverse_diff uses resolve-ChangeLogs
         # Only test the simple case, as any other will end up with conflict markers.
-        self.scm.apply_reverse_diff('4')
+        self.scm.apply_reverse_diff('5')
         self.assertEqual(read_from_path('test_file'), "test1test2test3\n")
 
     def _shared_test_diff_for_revision(self):
         # Patch formats are slightly different between svn and git, so just regexp for things we know should be there.
-        r3_patch = self.scm.diff_for_revision(3)
+        r3_patch = self.scm.diff_for_revision(4)
         self.assertTrue(re.search('test3', r3_patch))
         self.assertFalse(re.search('test4', r3_patch))
         self.assertTrue(re.search('test2', r3_patch))
-        self.assertTrue(re.search('test2', self.scm.diff_for_revision(2)))
+        self.assertTrue(re.search('test2', self.scm.diff_for_revision(3)))
 
     def _shared_test_svn_apply_git_patch(self):
         self._setup_webkittools_scripts_symlink(self.scm)
@@ -543,25 +556,25 @@ Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
 
     def test_apply_svn_patch(self):
         scm = detect_scm_system(self.svn_checkout_path)
-        patch = self._create_patch(_svn_diff("-r4:3"))
+        patch = self._create_patch(_svn_diff("-r5:4"))
         self._setup_webkittools_scripts_symlink(scm)
         Checkout(scm).apply_patch(patch)
 
     def test_apply_svn_patch_force(self):
         scm = detect_scm_system(self.svn_checkout_path)
-        patch = self._create_patch(_svn_diff("-r2:4"))
+        patch = self._create_patch(_svn_diff("-r3:5"))
         self._setup_webkittools_scripts_symlink(scm)
         self.assertRaises(ScriptError, Checkout(scm).apply_patch, patch, force=True)
 
     def test_commit_logs(self):
         # Commits have dates and usernames in them, so we can't just direct compare.
         self.assertTrue(re.search('fourth commit', self.scm.last_svn_commit_log()))
-        self.assertTrue(re.search('second commit', self.scm.svn_commit_log(2)))
+        self.assertTrue(re.search('second commit', self.scm.svn_commit_log(3)))
 
     def _shared_test_commit_with_message(self, username=None):
         write_into_file_at_path('test_file', 'more test content')
         commit_text = self.scm.commit_with_message("another test commit", username)
-        self.assertEqual(self.scm.svn_revision_from_commit_text(commit_text), '5')
+        self.assertEqual(self.scm.svn_revision_from_commit_text(commit_text), '6')
 
         self.scm.dryrun = True
         write_into_file_at_path('test_file', 'still more test content')
@@ -625,7 +638,7 @@ class GitTest(SCMTest):
     def _setup_git_clone_of_svn_repository(self):
         self.git_checkout_path = tempfile.mkdtemp(suffix="git_test_checkout")
         # --quiet doesn't make git svn silent, so we use run_silent to redirect output
-        run_silent(['git', 'svn', '--quiet', 'clone', self.svn_repo_url, self.git_checkout_path])
+        run_silent(['git', 'svn', 'clone', '-T', 'trunk', self.svn_repo_url, self.git_checkout_path])
 
     def _tear_down_git_clone_of_svn_repository(self):
         run_command(['rm', '-rf', self.git_checkout_path])
@@ -755,7 +768,7 @@ class GitTest(SCMTest):
         write_into_file_at_path('test_file', 'more test content')
         self.scm.commit_locally_with_message("another test commit")
         commit_text = self.scm.commit_with_message("another test commit")
-        self.assertEqual(self.scm.svn_revision_from_commit_text(commit_text), '5')
+        self.assertEqual(self.scm.svn_revision_from_commit_text(commit_text), '6')
 
         self.scm.dryrun = True
         write_into_file_at_path('test_file', 'still more test content')
@@ -777,7 +790,7 @@ class GitTest(SCMTest):
         scm = detect_scm_system(self.git_checkout_path)
         commit_text = scm.commit_with_message("yet another test commit")
 
-        self.assertEqual(scm.svn_revision_from_commit_text(commit_text), '5')
+        self.assertEqual(scm.svn_revision_from_commit_text(commit_text), '6')
         svn_log = run_command(['git', 'svn', 'log', '--limit=1', '--verbose'])
         self.assertTrue(re.search(r'test_file_commit1', svn_log))
 
@@ -786,7 +799,7 @@ class GitTest(SCMTest):
         scm = detect_scm_system(self.git_checkout_path)
         commit_text = scm.commit_with_message("yet another test commit", squash=True)
 
-        self.assertEqual(scm.svn_revision_from_commit_text(commit_text), '5')
+        self.assertEqual(scm.svn_revision_from_commit_text(commit_text), '6')
         svn_log = run_command(['git', 'svn', 'log', '--limit=1', '--verbose'])
         self.assertTrue(re.search(r'test_file_commit2', svn_log))
         self.assertTrue(re.search(r'test_file_commit1', svn_log))
@@ -805,7 +818,7 @@ class GitTest(SCMTest):
 
         scm = detect_scm_system(self.git_checkout_path)
         commit_text = scm.commit_with_message("another test commit", git_commit="HEAD^")
-        self.assertEqual(scm.svn_revision_from_commit_text(commit_text), '5')
+        self.assertEqual(scm.svn_revision_from_commit_text(commit_text), '6')
 
         svn_log = run_command(['git', 'svn', 'log', '--limit=1', '--verbose'])
         self.assertTrue(re.search(r'test_file_commit1', svn_log))
@@ -816,7 +829,7 @@ class GitTest(SCMTest):
 
         scm = detect_scm_system(self.git_checkout_path)
         commit_text = scm.commit_with_message("another test commit", git_commit="HEAD~2..HEAD")
-        self.assertEqual(scm.svn_revision_from_commit_text(commit_text), '5')
+        self.assertEqual(scm.svn_revision_from_commit_text(commit_text), '6')
 
         svn_log = run_command(['git', 'svn', 'log', '--limit=1', '--verbose'])
         self.assertTrue(re.search(r'test_file_commit1', svn_log))
@@ -843,7 +856,7 @@ class GitTest(SCMTest):
         self._two_local_commits()
         scm = detect_scm_system(self.git_checkout_path)
         commit_text = scm.commit_with_message("yet another test commit", squash=False)
-        self.assertEqual(scm.svn_revision_from_commit_text(commit_text), '5')
+        self.assertEqual(scm.svn_revision_from_commit_text(commit_text), '6')
 
         svn_log = run_command(['git', 'svn', 'log', '--limit=1', '--verbose'])
         self.assertTrue(re.search(r'test_file_commit2', svn_log))
@@ -856,7 +869,7 @@ class GitTest(SCMTest):
         self._two_local_commits()
         scm = detect_scm_system(self.git_checkout_path)
         commit_text = scm.commit_with_message("yet another test commit", squash=True)
-        self.assertEqual(scm.svn_revision_from_commit_text(commit_text), '5')
+        self.assertEqual(scm.svn_revision_from_commit_text(commit_text), '6')
 
         svn_log = run_command(['git', 'svn', 'log', '--limit=1', '--verbose'])
         self.assertTrue(re.search(r'test_file_commit2', svn_log))
