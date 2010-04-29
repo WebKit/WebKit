@@ -447,6 +447,8 @@ class TestShellThread(threading.Thread):
         a separate DumpRenderTree in their own thread.
 
         """
+        # poll() is not threadsafe and can throw OSError due to:
+        # http://bugs.python.org/issue1731717
         if (not self._driver or self._driver.poll() is not None):
             self._driver = self._port.create_driver(self._image_path, self._shell_args)
             self._driver.start()

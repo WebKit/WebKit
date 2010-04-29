@@ -104,6 +104,8 @@ class ServerProcess:
         """Check to see if the underlying process is running; returns None
         if it still is (wrapper around subprocess.poll)."""
         if self._proc:
+            # poll() is not threadsafe and can throw OSError due to:
+            # http://bugs.python.org/issue1731717
             return self._proc.poll()
         return None
 
@@ -168,6 +170,8 @@ class ServerProcess:
         select_fds = (out_fd, err_fd)
         deadline = time.time() + timeout
         while not self.timed_out and not self.crashed:
+            # poll() is not threadsafe and can throw OSError due to:
+            # http://bugs.python.org/issue1731717
             if self._proc.poll() != None:
                 self.crashed = True
                 self.handle_interrupt()
@@ -214,8 +218,12 @@ class ServerProcess:
             # force-kill the process if necessary.
             KILL_TIMEOUT = 3.0
             timeout = time.time() + KILL_TIMEOUT
+            # poll() is not threadsafe and can throw OSError due to:
+            # http://bugs.python.org/issue1731717
             while self._proc.poll() is None and time.time() < timeout:
                 time.sleep(0.1)
+            # poll() is not threadsafe and can throw OSError due to:
+            # http://bugs.python.org/issue1731717
             if self._proc.poll() is None:
                 _log.warning('stopping %s timed out, killing it' %
                              self._name)

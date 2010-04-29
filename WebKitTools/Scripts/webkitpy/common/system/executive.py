@@ -108,6 +108,8 @@ class Executive(object):
         while True:
             output_line = child_process.stdout.readline()
             if output_line == "" and child_process.poll() != None:
+                # poll() is not threadsafe and can throw OSError due to:
+                # http://bugs.python.org/issue1731717
                 return child_process.poll()
             # We assume that the child process wrote to us in utf-8,
             # so no re-encoding is necessary before writing here.
@@ -249,6 +251,8 @@ class Executive(object):
         # run_command automatically decodes to unicode() unless explicitly told not to.
         if decode_output:
             output = output.decode("utf-8")
+        # wait() is not threadsafe and can throw OSError due to:
+        # http://bugs.python.org/issue1731717
         exit_code = process.wait()
 
         if return_exit_code:

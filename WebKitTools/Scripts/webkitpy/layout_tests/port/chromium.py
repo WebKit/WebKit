@@ -201,6 +201,8 @@ class ChromiumPort(base.Port):
             _log.debug("Stopping layout test helper")
             self._helper.stdin.write("x\n")
             self._helper.stdin.close()
+            # wait() is not threadsafe and can throw OSError due to:
+            # http://bugs.python.org/issue1731717
             self._helper.wait()
 
     def test_base_platform_names(self):
@@ -306,6 +308,8 @@ class ChromiumDriver(base.Driver):
                                       close_fds=close_flag)
 
     def poll(self):
+        # poll() is not threadsafe and can throw OSError due to:
+        # http://bugs.python.org/issue1731717
         return self._proc.poll()
 
     def returncode(self):
@@ -400,8 +404,12 @@ class ChromiumDriver(base.Driver):
                 # force-kill the process if necessary.
                 KILL_TIMEOUT = 3.0
                 timeout = time.time() + KILL_TIMEOUT
+                # poll() is not threadsafe and can throw OSError due to:
+                # http://bugs.python.org/issue1731717
                 while self._proc.poll() is None and time.time() < timeout:
                     time.sleep(0.1)
+                # poll() is not threadsafe and can throw OSError due to:
+                # http://bugs.python.org/issue1731717
                 if self._proc.poll() is None:
                     _log.warning('stopping test driver timed out, '
                                  'killing it')

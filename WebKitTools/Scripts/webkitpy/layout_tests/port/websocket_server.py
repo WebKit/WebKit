@@ -258,6 +258,8 @@ class PyWebSocket(http_server.Lighttpd):
         Executive().kill_process(pid)
 
         if self._process:
+            # wait() is not threadsafe and can throw OSError due to:
+            # http://bugs.python.org/issue1731717
             self._process.wait()
             self._process = None
 

@@ -1,3 +1,17 @@
+2010-04-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by David Levin.
+
+        Document that subprocess.poll/wait are not threadsafe
+        https://bugs.webkit.org/show_bug.cgi?id=38289
+
+        * Scripts/webkitpy/common/system/executive.py:
+        * Scripts/webkitpy/layout_tests/layout_package/dump_render_tree_thread.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/http_server.py:
+        * Scripts/webkitpy/layout_tests/port/server_process.py:
+        * Scripts/webkitpy/layout_tests/port/websocket_server.py:
+
 2010-04-28  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Daniel Bates.

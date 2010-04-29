@@ -241,5 +241,7 @@ class Lighttpd(http_server_base.HttpServerBase):
         self._port_obj._shut_down_http_server(httpd_pid)
 
         if self._process:
+            # wait() is not threadsafe and can throw OSError due to:
+            # http://bugs.python.org/issue1731717
             self._process.wait()
             self._process = None
