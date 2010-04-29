@@ -271,6 +271,39 @@ sub IsGDOMClassType {
     return 1;
 }
 
+sub GetReadableProperties {
+    my $properties = shift;
+
+    my @result = ();
+
+    foreach my $property (@{$properties}) {
+        if (!SkipAttribute($property)) {
+            push(@result, $property);
+        }
+    }
+
+    return @result;
+}
+
+sub GetWriteableProperties {
+    my $properties = shift;
+    my @result = ();
+
+    foreach my $property (@{$properties}) {
+        my $writeable = $property->type !~ /^readonly/;
+        my $gtype = GetGValueTypeName($property->signature->type);
+        my $hasGtypeSignature = ($gtype eq "boolean" || $gtype eq "float" || $gtype eq "double" ||
+                                 $gtype eq "uint64" || $gtype eq "ulong" || $gtype eq "long" || 
+                                 $gtype eq "uint" || $gtype eq "ushort" || $gtype eq "uchar" ||
+                                 $gtype eq "char" || $gtype eq "string");
+        if ($writeable && $hasGtypeSignature) {
+            push(@result, $property);
+        }
+    }
+
+    return @result;
+}
+
 sub GenerateProperties {
     my ($object, $interfaceName, $dataNode) = @_;
 
@@ -291,24 +324,45 @@ EOF
     my @txtSetProps = ();
     my @txtGetProps = ();
 
+    my @readableProperties = GetReadableProperties($dataNode->attributes);
+
     my $privFunction = GetCoreObject($interfaceName, "coreSelf", "self");
 
     my $txtGetProp = << "EOF";
 static void ${lowerCaseIfaceName}_get_property(GObject* object, guint prop_id, GValue* value, GParamSpec* pspec)
 {
+EOF
+    push(@txtGetProps, $txtGetProp);
+    if (scalar @readableProperties > 0) {
+        $txtGetProp = << "EOF";
     ${className}* self = WEBKIT_DOM_${clsCaps}(object);
     $privFunction
+EOF
+    push(@txtGetProps, $txtGetProp);
+    }
 
+    $txtGetProp = << "EOF";
     switch (prop_id) {
 EOF
     push(@txtGetProps, $txtGetProp);
 
+    my @writeableProperties = GetWriteableProperties(\@readableProperties);
+
     my $txtSetProps = << "EOF";
 static void ${lowerCaseIfaceName}_set_property(GObject* object, guint prop_id, const GValue* value, GParamSpec* pspec)
 {
+EOF
+    push(@txtSetProps, $txtSetProps);
+
+    if (scalar @writeableProperties > 0) {
+        $txtSetProps = << "EOF";
     ${className} *self = WEBKIT_DOM_${clsCaps}(object);
     $privFunction
+EOF
+        push(@txtSetProps, $txtSetProps);
+    }
 
+    $txtSetProps = << "EOF";
     switch (prop_id) {
 EOF
     push(@txtSetProps, $txtSetProps);
@@ -316,11 +370,7 @@ EOF
     # Iterate over the interface attributes and generate a property for
     # each one of them.
   SKIPENUM:
-    foreach my $attribute (@{$dataNode->attributes}) {
-        if (SkipAttribute($attribute)) {
-            next SKIPENUM;
-        }
-
+    foreach my $attribute (@readableProperties) {
         my $camelPropName = $attribute->signature->name;
         my $setPropNameFunction = $codeGenerator->WK_ucfirst($camelPropName);
         my $getPropNameFunction = $codeGenerator->WK_lcfirst($camelPropName);
@@ -378,11 +428,7 @@ EOF
             $getterContentHead = "coreSelf->${getPropNameFunction}(";
         }
 
-        if ($writeable && ($gtype eq "boolean" || $gtype eq "float" || $gtype eq "double" ||
-                           $gtype eq "uint64" || $gtype eq "ulong" || $gtype eq "long" || 
-                           $gtype eq "uint" || $gtype eq "ushort" || $gtype eq "uchar" ||
-                           $gtype eq "char" || $gtype eq "string")) {
-
+        if (grep {$_ eq $attribute} @writeableProperties) {
             push(@txtSetProps, "   case ${propEnum}:\n    {\n");
             push(@txtSetProps, "        WebCore::ExceptionCode ec = 0;\n") if @{$attribute->setterExceptions};
             push(@txtSetProps, "        ${setterContentHead}");

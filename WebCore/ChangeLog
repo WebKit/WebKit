@@ -1,3 +1,16 @@
+2010-04-29  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] GObject DOM bindings
+        https://bugs.webkit.org/show_bug.cgi?id=33590
+
+        Do not generate unneeded boilerplate in {get,set}_property methods
+        when there are no properties to generate code for. This gets rid
+        of lots of compiler warnings.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+
 2010-04-29  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
