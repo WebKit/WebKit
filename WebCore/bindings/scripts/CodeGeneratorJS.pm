@@ -134,7 +134,7 @@ sub GenerateEventListenerCall
     JSValue listener = args.at(1);
     if (!listener.isObject())
         return jsUndefined();
-    imp->${functionName}EventListener(ustringToAtomicString(args.at(0).toString(exec)), JSEventListener::create(asObject(listener), castedThisObj, false, currentWorld(exec))$passRefPtrHandling, args.at(2).toBoolean(exec));
+    imp->${functionName}EventListener(ustringToAtomicString(args.at(0).toString(exec)), JSEventListener::create(asObject(listener), castedThis, false, currentWorld(exec))$passRefPtrHandling, args.at(2).toBoolean(exec));
     return jsUndefined();
 END
     return @GenerateEventListenerImpl;
@@ -1575,8 +1575,8 @@ sub GenerateImplementation
                             push(@implContent, "    // Shadowing a built-in object\n");
                             push(@implContent, "    static_cast<$className*>(thisObject)->putDirect(Identifier(exec, \"$name\"), value);\n");
                         } else {
-                            push(@implContent, "    $className* castedThisObj = static_cast<$className*>(thisObject);\n");
-                            push(@implContent, "    $implType* imp = static_cast<$implType*>(castedThisObj->impl());\n");
+                            push(@implContent, "    $className* castedThis = static_cast<$className*>(thisObject);\n");
+                            push(@implContent, "    $implType* imp = static_cast<$implType*>(castedThis->impl());\n");
                             if ($podType) {
                                 push(@implContent, "    $podType podImp(*imp);\n");
                                 if ($podType eq "float") { # Special case for JSSVGNumber
@@ -1584,7 +1584,7 @@ sub GenerateImplementation
                                 } else {
                                     push(@implContent, "    podImp.set$implSetterFunctionName(" . JSValueToNative($attribute->signature, "value") . ");\n");
                                 }
-                                push(@implContent, "    imp->commitChange(podImp, castedThisObj);\n");
+                                push(@implContent, "    imp->commitChange(podImp, castedThis);\n");
                             } else {
                                 my $nativeValue = JSValueToNative($attribute->signature, "value");
                                 push(@implContent, "    ExceptionCode ec = 0;\n") if @{$attribute->setterExceptions};
@@ -1602,7 +1602,7 @@ sub GenerateImplementation
                                 push(@implContent, ");\n");
                                 push(@implContent, "    setDOMException(exec, ec);\n") if @{$attribute->setterExceptions};
                                 if (IsSVGTypeNeedingContextParameter($implClassName)) {
-                                    push(@implContent, "    JSSVGContextCache::propagateSVGDOMChange(castedThisObj, imp->associatedAttributeName());\n");
+                                    push(@implContent, "    JSSVGContextCache::propagateSVGDOMChange(castedThis, imp->associatedAttributeName());\n");
                                 }
                             }
                         }
@@ -1650,22 +1650,22 @@ sub GenerateImplementation
             $implIncludes{"<runtime/Error.h>"} = 1;
 
             if ($interfaceName eq "DOMWindow") {
-                push(@implContent, "    $className* castedThisObj = toJSDOMWindow(thisValue.toThisObject(exec));\n");
-                push(@implContent, "    if (!castedThisObj)\n");
+                push(@implContent, "    $className* castedThis = toJSDOMWindow(thisValue.toThisObject(exec));\n");
+                push(@implContent, "    if (!castedThis)\n");
                 push(@implContent, "        return throwError(exec, TypeError);\n");
             } elsif ($dataNode->extendedAttributes->{"IsWorkerContext"}) {
-                push(@implContent, "    $className* castedThisObj = to${className}(thisValue.toThisObject(exec));\n");
-                push(@implContent, "    if (!castedThisObj)\n");
+                push(@implContent, "    $className* castedThis = to${className}(thisValue.toThisObject(exec));\n");
+                push(@implContent, "    if (!castedThis)\n");
                 push(@implContent, "        return throwError(exec, TypeError);\n");
             } else {
                 push(@implContent, "    if (!thisValue.inherits(&${className}::s_info))\n");
                 push(@implContent, "        return throwError(exec, TypeError);\n");
-                push(@implContent, "    $className* castedThisObj = static_cast<$className*>(asObject(thisValue));\n");
+                push(@implContent, "    $className* castedThis = static_cast<$className*>(asObject(thisValue));\n");
             }
 
             if ($dataNode->extendedAttributes->{"CheckDomainSecurity"} && 
                 !$function->signature->extendedAttributes->{"DoNotCheckDomainSecurity"}) {
-                push(@implContent, "    if (!castedThisObj->allowsAccessFrom(exec))\n");
+                push(@implContent, "    if (!castedThis->allowsAccessFrom(exec))\n");
                 push(@implContent, "        return jsUndefined();\n");
             }
 
@@ -1685,14 +1685,14 @@ sub GenerateImplementation
             }
 
             if ($function->signature->extendedAttributes->{"Custom"} || $function->signature->extendedAttributes->{"JSCCustom"}) {
-                push(@implContent, "    return castedThisObj->" . $functionImplementationName . "(exec, args);\n");
+                push(@implContent, "    return castedThis->" . $functionImplementationName . "(exec, args);\n");
             } elsif ($svgPODListType) {
                 $implIncludes{"JS${svgPODListType}.h"} = 1;
                 $implIncludes{"JSSVGPODListCustom.h"} = 1;
                 push(@implContent, "    return JSSVGPODListCustom::$functionImplementationName<$className, " . GetNativeType($svgPODListType)
-                                 . ">(castedThisObj, exec, args, to" . $svgPODListType . ");\n");
+                                 . ">(castedThis, exec, args, to" . $svgPODListType . ");\n");
             } else {
-                push(@implContent, "    $implType* imp = static_cast<$implType*>(castedThisObj->impl());\n");
+                push(@implContent, "    $implType* imp = static_cast<$implType*>(castedThis->impl());\n");
                 push(@implContent, "    $podType podImp(*imp);\n") if $podType;
 
                 my $numParameters = @{$function->parameters};
@@ -1912,10 +1912,10 @@ sub GenerateImplementationFunctionCall()
     if ($function->signature->type eq "void") {
         push(@implContent, $indent . "$functionString;\n");
         push(@implContent, $indent . "setDOMException(exec, ec);\n") if @{$function->raisesExceptions};
-        push(@implContent, $indent . "imp->commitChange(podImp, castedThisObj);\n") if $podType;
+        push(@implContent, $indent . "imp->commitChange(podImp, castedThis);\n") if $podType;
         push(@implContent, $indent . "return jsUndefined();\n");
     } else {
-        push(@implContent, "\n" . $indent . "JSC::JSValue result = " . NativeToJSValue($function->signature, 1, $implClassName, "", $functionString, "castedThisObj") . ";\n");
+        push(@implContent, "\n" . $indent . "JSC::JSValue result = " . NativeToJSValue($function->signature, 1, $implClassName, "", $functionString, "castedThis") . ";\n");
         push(@implContent, $indent . "setDOMException(exec, ec);\n") if @{$function->raisesExceptions};
 
         $callWith = $function->signature->extendedAttributes->{"CallWith"};
@@ -1927,7 +1927,7 @@ sub GenerateImplementationFunctionCall()
         if ($podType and not $function->signature->extendedAttributes->{"Immutable"}) {
             # Immutable methods do not commit changes back to the instance, thus producing
             # a new instance rather than mutating existing one.
-            push(@implContent, $indent . "imp->commitChange(podImp, castedThisObj);\n");
+            push(@implContent, $indent . "imp->commitChange(podImp, castedThis);\n");
         }
 
         push(@implContent, $indent . "return result;\n");
