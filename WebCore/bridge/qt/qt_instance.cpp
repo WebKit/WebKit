@@ -171,10 +171,11 @@ QtInstance* QtInstance::getInstance(JSObject* object)
 
 Class* QtInstance::getClass() const
 {
-    if (!m_object)
-        return 0;
-    if (!m_class)
+    if (!m_class) {
+        if (!m_object)
+            return 0;
         m_class = QtClass::classForObject(m_object);
+    }
     return m_class;
 }
 
