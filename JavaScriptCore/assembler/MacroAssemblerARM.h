@@ -753,7 +753,7 @@ public:
 
     bool supportsFloatingPointSqrt() const
     {
-        return false;
+        return s_isVFPPresent;
     }
 
     void loadDouble(ImplicitAddress address, FPRegisterID dest)
@@ -817,9 +817,9 @@ public:
         mulDouble(ARMRegisters::SD0, dest);
     }
 
-    void sqrtDouble(FPRegisterID, FPRegisterID)
+    void sqrtDouble(FPRegisterID src, FPRegisterID dest)
     {
-        ASSERT_NOT_REACHED();
+        m_assembler.fsqrtd_r(dest, src);
     }
 
     void convertInt32ToDouble(RegisterID src, FPRegisterID dest)

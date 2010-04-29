@@ -123,6 +123,7 @@ namespace JSC {
             FSUBD = 0x0e300b40,
             FMULD = 0x0e200b00,
             FCMPD = 0x0eb40b40,
+            FSQRTD = 0x0eb10bc0,
             DTR = 0x05000000,
             LDRH = 0x00100090,
             STRH = 0x00000090,
@@ -424,6 +425,11 @@ namespace JSC {
         void fcmpd_r(int dd, int dm, Condition cc = AL)
         {
             emitInst(static_cast<ARMWord>(cc) | FCMPD, dd, 0, dm);
+        }
+
+        void fsqrtd_r(int dd, int dm, Condition cc = AL)
+        {
+            emitInst(static_cast<ARMWord>(cc) | FSQRTD, dd, 0, dm);
         }
 
         void ldr_imm(int rd, ARMWord imm, Condition cc = AL)
