@@ -1,5 +1,14 @@
 2010-04-29  Fumitoshi Ukai  <ukai@chromium.org>
 
+        Unreviewed, test expectations update.
+
+        r58479 add fast/media/media-query-invalid-value.html, but it misses
+        image expectations.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-04-29  Fumitoshi Ukai  <ukai@chromium.org>
+
         Reviewed by David Levin.
 
         wrong filename: LayoutTests/platform/win/fast/text/international/bold-bengali-actual.txt

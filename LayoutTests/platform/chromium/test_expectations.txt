@@ -2872,3 +2872,6 @@ BUGUKAI WIN MAC : fast/text/international/bold-bengali.html = MISSING
 // We're reverting the patch that fixed this test on Linux due to
 // the perf regression described in the bug.
 BUG42760 LINUX : fast/text/international/bold-bengali.html = FAIL
+
+// WebKit r58479
+BUGWK38315 : fast/media/media-query-invalid-value.html = IMAGE
