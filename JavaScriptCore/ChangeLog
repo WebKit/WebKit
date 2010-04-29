@@ -1,5 +1,14 @@
 2010-04-28  Oliver Hunt  <oliver@apple.com>
 
+        Do an unordered compare so that we don't treat NaN incorrectly.
+
+        RS=Gavin Barraclough
+
+        * jit/ThunkGenerators.cpp:
+        (JSC::powThunkGenerator):
+
+2010-04-28  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Gavin Barraclough.
 
         Add fast paths for Math.pow and Math.sqrt
