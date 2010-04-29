@@ -175,20 +175,21 @@ Node* HTMLFormElement::item(unsigned index)
     return elements()->item(index);
 }
 
-void HTMLFormElement::submitClick(Event* event)
+void HTMLFormElement::submitImplicitly(Event* event, bool fromTextField)
 {
-    bool submitFound = false;
+    int textControlCount = 0;
     for (unsigned i = 0; i < formElements.size(); ++i) {
         if (formElements[i]->hasLocalName(inputTag)) {
             HTMLInputElement* element = static_cast<HTMLInputElement*>(formElements[i]);
             if (element->isSuccessfulSubmitButton() && element->renderer()) {
-                submitFound = true;
                 element->dispatchSimulatedClick(event);
-                break;
-            }
-        }
+                return;
+            } else if (element->isTextField())
+                ++textControlCount;
+        } else if (formElements[i]->hasLocalName(isindexTag))
+            ++textControlCount;
     }
-    if (!submitFound) // submit the form without a submit or image input
+    if (fromTextField && textControlCount == 1)
         prepareSubmit(event);
 }
 

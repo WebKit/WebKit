@@ -1,3 +1,19 @@
+2010-04-28  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        A form without a submit button unexpectedly performs its action when Return is pressed
+        https://bugs.webkit.org/show_bug.cgi?id=9756
+
+        A comprehensive test for various edge cases involving implicit form submission.
+
+        * fast/forms/implicit-submission-expected.txt: Added.
+        * fast/forms/implicit-submission.html: Added.
+        * fast/forms/check-box-enter-key-expected.txt: Removed because it's now part of implicit-submission.html.
+        * fast/forms/check-box-enter-key.html: Ditto.
+        * fast/forms/select-enter-key-expected.txt: Ditto.
+        * fast/forms/select-enter-key.html: Ditto.
+
 2010-04-29  Adam Langley  <agl@chromium.org>
 
         Reviewed by David Levin.

@@ -91,7 +91,7 @@ public:
 
     virtual bool isURLAttribute(Attribute*) const;
     
-    void submitClick(Event*);
+    void submitImplicitly(Event*, bool fromTextField);
     bool formWouldHaveSecureSubmission(const String& url);
 
     String name() const;

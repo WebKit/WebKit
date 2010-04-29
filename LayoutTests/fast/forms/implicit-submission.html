@@ -1,0 +1,129 @@
+<html>
+<head>
+<title>Implicit Form Submission</title>
+<script>
+
+var testResults = [];
+var currentTest = 0;
+
+// match IE and FF unless specified otherwise.
+var allTests = [
+    [ "Single text input", "!text", "y" ],
+    [ "Single text input with submit disabled", "!text,-submit", "y" ],
+    [ "Multiple text inputs", "!text,text,text", "n" ],
+    [ "Multiple text inputs with submit", "!text,text,text,submit", "y" ],
+    [ "Multiple text inputs with submit disabled", "!text,text,text,-submit", "n" ],
+    [ "Multiple text inputs and multiple submits, first submit disabled", "!text,text,text,-submit,submit", "y" ], // match IE, not FF.
+    [ "Text input and text area, text input focused", "!text,textarea", "y" ],
+    [ "Text input and text area and a submit button, text input focused", "!text,textarea,submit", "y" ],
+    [ "Text input and text area and a disabled submit button, text input focused", "!text,textarea,-submit", "y" ], // match IE, not FF.
+    [ "Text input and checkbox, text input focused", "!text,checkbox", "y" ],
+    [ "Text input and radio, text input focused", "!text,radio", "y" ],
+    [ "Text input and text area, textarea focused", "text,!textarea", "n" ],
+    [ "Text input and checkbox, checkbox focused", "text,!checkbox", "n" ], // match IE, not FF.
+    [ "Text input and radio, radio focused", "text,!radio", "n" ], // match IE, not FF.
+    [ "Single radio", "!radio", "n" ], // match IE, not FF.
+    [ "Single checkbox", "!checkbox", "n" ],
+    [ "Single checkbox with a submit button", "!checkbox,submit", "y" ],
+    [ "Single checkbox with a submit disabled", "!checkbox,-submit", "n" ],
+    [ "Single select", "!select", "n" ],
+    [ "Text field and single select, text focused", "!text,select", "y" ],
+    [ "Text field and single select, select focused", "text,!select", "n" ],
+    [ "Isindex", "!isindex", "y"]
+];
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+addEventListener('message', function(e) {
+    testResults.push(e.data);
+    document.getElementById("test").innerHTML = "";
+    if (testResults.length == allTests.length) {
+        publishResults();
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    } else {
+        runNextTest();
+    }
+}, false)
+
+function publishResults()
+{
+    document.getElementById("log").innerHTML = allTests.map(function(manifest, i)
+    {
+        return manifest[0] + " should " + (manifest[2] == 'n' ? "not" : "") + " submit: " + (testResults[i] == manifest[2] ? "PASS" : "FAIL");
+    }).join("<br>");
+}
+
+function runNextTest()
+{
+    ++currentTest;
+    runTest();
+}
+
+function runTestInIframe()
+{
+    var form = document.body.appendChild(document.createElement("form"));
+    form.action = "data:text/html,<script>javascript:parent.postMessage('y', '*')</scri" + "pt>";
+    if (!window.eventSender)
+        form.appendChild(document.createElement("p")).innerHTML = "Press Enter key";
+    manifest.split(",").forEach(function(type, i)
+    {
+        var focused;
+        if (type[0] == '!') {
+            type = type.substr(1);
+            focused = true;
+        }
+        var disabled;
+        if (type[0] == '-') {
+            type = type.substr(1);
+            disabled = true;
+        }
+        var control;
+        if (type == "textarea" || type == "isindex") {
+            control = document.createElement(type);
+        } else if (type == "select") {
+            control = document.createElement(type);
+            control.options.add(new Option("a"));
+        } else {
+            control = document.createElement("input");
+            control.type = type;
+        }
+        control.id = focused ? "focused" : ("input" + i);
+        control.disabled = !!disabled;
+        form.appendChild(control);
+    });
+    var input = document.getElementById("focused");
+    if (input)
+        input.focus();
+    if (window.eventSender) {
+        eventSender.keyDown("\r", []);
+        setTimeout("parent.postMessage('n', '*');", 50);
+    } else {
+        var a = document.createElement("a");
+        a.href = "javascript:parent.postMessage('n', '*')";
+        a.innerText = "Click if didn't submit";
+        document.body.appendChild(a);
+    }
+}
+
+function runTest()
+{
+    var manifest = allTests[currentTest];
+    var test = document.getElementById("test");
+    var iframe = document.createElement("iframe");
+    iframe.src = "data:text/html,<script>var manifest = \"" + manifest[1] + "\";\n" + String(runTestInIframe) + 
+                 "</scri" + "pt><body onload=\"runTestInIframe()\"></body>";
+    test.appendChild(iframe);
+}
+
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests various combinations of form elements and how implicit submission works with them.
+    <div id="test"></div>
+    <div id="log"></div>
+</body>
+</html>

@@ -1,3 +1,37 @@
+2010-04-28  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        A form without a submit button unexpectedly performs its action when Return is pressed
+        https://bugs.webkit.org/show_bug.cgi?id=9756
+
+        Implemented implicit form submission algorithm as defined in HTML5 spec:
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/association-of-controls-and-forms.html#implicit-submission,
+        falling back to match IE's behavior in the edge cases.
+
+        The underlying rules are:
+
+        * If the form has no enabled submit buttons, submit if Enter/Return is pressed on the only single-line text field.
+
+        * Otherwise, submit form using first enabled submit button if Enter/Return is pressed on a field
+          that's not a textarea or a select.
+
+        Test: fast/forms/implicit-submission.html
+
+        * dom/SelectElement.cpp:
+        (WebCore::SelectElement::menuListDefaultEventHandler): Ripped out implicit submission for select elements.
+        (WebCore::SelectElement::listBoxDefaultEventHandler): Ditto.
+        (WebCore::SelectElement::defaultEventHandler): Ditto.
+        * dom/SelectElement.h: Ditto.
+        (WebCore::HTMLFormElement::submitImplicitly): Renamed submitClick to submitImplicitly to better match HTML5 spec
+            language, changed the logic to match the rules above.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::defaultEventHandler): Reamed clickDefaultButton to implicitSubmission to better match
+            HTML5 spec language, made radio element to trigger implicit submission.
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::defaultEventHandler): Removed passing of form() as parameter, because it's no longer
+            necessary.
+
 2010-04-29  Paweł Hajdan, Jr.  <phajdan.jr@chromium.org>
 
         Reviewed by Jeremy Orlow.
