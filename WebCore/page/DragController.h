@@ -67,11 +67,13 @@ namespace WebCore {
         DragOperation sourceDragOperation() const { return m_sourceDragOperation; }
         void setDraggingImageURL(const KURL& url) { m_draggingImageURL = url; }
         const KURL& draggingImageURL() const { return m_draggingImageURL; }
+        void setDragInitiator(Document* initiator) { m_dragInitiator = initiator; m_didInitiateDrag = true; }
+        Document* dragInitiator() const { return m_dragInitiator; }
         void setDragOffset(const IntPoint& offset) { m_dragOffset = offset; }
         const IntPoint& dragOffset() const { return m_dragOffset; }
         DragSourceAction dragSourceAction() const { return m_dragSourceAction; }
 
-        Document* documentUnderMouse() const { return m_documentUnderMouse.get(); }
+        Document* documentUnderMouse() const { return m_documentUnderMouse; }
         DragDestinationAction dragDestinationAction() const { return m_dragDestinationAction; }
         DragSourceAction delegateDragSourceAction(const IntPoint& pagePoint);
         
@@ -112,8 +114,8 @@ namespace WebCore {
         Page* m_page;
         DragClient* m_client;
         
-        RefPtr<Document> m_documentUnderMouse; // The document the mouse was last dragged over.
-        RefPtr<Document> m_dragInitiator; // The Document (if any) that initiated the drag.
+        Document* m_documentUnderMouse; // The document the mouse was last dragged over.
+        Document* m_dragInitiator; // The Document (if any) that initiated the drag.
         
         DragDestinationAction m_dragDestinationAction;
         DragSourceAction m_dragSourceAction;

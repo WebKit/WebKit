@@ -1,3 +1,19 @@
+2010-04-28  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, rolling out r58441.
+        http://trac.webkit.org/changeset/58441
+        https://bugs.webkit.org/show_bug.cgi?id=37618
+
+        Broke 3 test on Qt.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::tryDocumentDrag):
+        (WebCore::DragController::concludeEditDrag):
+        * page/DragController.h:
+        (WebCore::DragController::setDragInitiator):
+        (WebCore::DragController::dragInitiator):
+        (WebCore::DragController::documentUnderMouse):
+
 2010-04-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.
