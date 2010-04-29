@@ -1,3 +1,15 @@
+2010-04-29  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7918086> REGRESSION (r57820): Controller is not displayed in window when opening a MP3 file in browser window
+        https://bugs.webkit.org/show_bug.cgi?id=38350
+
+        * media/audio-only-video-intrinsic-size-expected.txt: Added.
+        * media/audio-only-video-intrinsic-size.html: Added.
+        * media/media-document-audio-size-expected.txt: Added.
+        * media/media-document-audio-size.html: Added.
+
 2010-04-29  Yaar Schnitman  <yaar@chromium.org>
 
         Not Reviewed.

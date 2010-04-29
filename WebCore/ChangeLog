@@ -1,3 +1,19 @@
+2010-04-29  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7918086> REGRESSION (r57820): Controller is not displayed in window when opening a MP3 file in browser window
+        https://bugs.webkit.org/show_bug.cgi?id=38350
+
+        Tests: media/audio-only-video-intrinsic-size.html
+               media/media-document-audio-size.html
+
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::RenderVideo): Until metadata is available, ignore the natural size
+        reported by the player.
+        (WebCore::RenderVideo::videoSizeChanged): Respect a natural size of zero if reported by the
+        player, except in standalone media documents.
+
 2010-04-29  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.
@@ -40170,7 +40186,7 @@
         https://bugs.webkit.org/show_bug.cgi?id=34335
 
         * bindings/js/ScriptCallStack.cpp:
-        (WebCore::ScriptCallStack::ScriptCallStack): If the caller is unknown, the line number and source information is still availble so pass it to the ScriptCallFrame being constructed.
+        (WebCore::ScriptCallStack::ScriptCallStack): If the caller is unknown, the line number and source information is still available so pass it to the ScriptCallFrame being constructed.
 
 2010-02-01  Dirk Schulze  <krit@webkit.org>
 

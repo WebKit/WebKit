@@ -50,7 +50,7 @@ using namespace HTMLNames;
 RenderVideo::RenderVideo(HTMLVideoElement* video)
     : RenderMedia(video)
 {
-    if (video->player())
+    if (video->player() && video->readyState() >= HTMLVideoElement::HAVE_METADATA)
         setIntrinsicSize(video->player()->naturalSize());
     else {
         // When the natural size of the video is unavailable, we use the provided
@@ -101,7 +101,11 @@ void RenderVideo::videoSizeChanged()
     if (!player())
         return;
     IntSize size = player()->naturalSize();
-    if (!size.isEmpty() && size != intrinsicSize()) {
+    if (size.isEmpty()) {
+        if (node()->ownerDocument() && node()->ownerDocument()->isMediaDocument())
+            return;
+    }
+    if (size != intrinsicSize()) {
         setIntrinsicSize(size);
         setPrefWidthsDirty(true);
         setNeedsLayout(true);
