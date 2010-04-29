@@ -1,3 +1,29 @@
+2010-04-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Remove some obsolete scrolling code
+        https://bugs.webkit.org/show_bug.cgi?id=38293
+
+        * page/Chrome.cpp:
+        (WebCore::Chrome::scrollRectIntoView): Removed ScrollView* argument.
+        * page/Chrome.h: Made scrollRectIntoView non-virtual, and removed ScrollView* argument.
+
+        * page/FrameView.cpp: Removed scrollRectIntoViewRecursively.
+        * page/FrameView.h: Removed scrollRectIntoViewRecursively and made
+        setScrollPosition non-virtual, since there is no class derived from
+        this class, and ScrollView's setScrollPosition is non-virtual.
+
+        * platform/HostWindow.h: Removed scrollRectIntoView.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::scrollRectIntoViewRecursively): Updated comment
+        since I was able to do most of the tasks listed here.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollRectToVisible): Removed 0 passed for
+        ScrollView* argument to Chrome::scrollRectIntoView.
+
 2010-04-28  Mike Thole  <mthole@apple.com>
 
         Reviewed by David Kilzer.

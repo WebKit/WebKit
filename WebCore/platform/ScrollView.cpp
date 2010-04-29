@@ -299,17 +299,8 @@ void ScrollView::scrollRectIntoViewRecursively(const IntRect&)
 {
     // FIXME: This function is unused. To clean up further the following can be done:
     //
-    //   1) This function and FrameView::scrollRectIntoViewRecursively
-    //      can be deleted.
-    //   2) The FrameView::setScrollPosition can be made non-virtual,
-    //      since there is no class derived from FrameView. Or the
-    //      ScrollView::setScrollPosition should be made virtual.
-    //   3) The scrollRectIntoView function can be removed from the
-    //      HostWindow class.
-    //   4) The Chrome::scrollRectIntoView function can be made
-    //      non-virtual.
-    //   5) The unused ScrollView* argument can be removed from both
-    //      Chrome::scrollRectIntoView and ChromeClient::scrollRectIntoView.
+    //   1) This function can be deleted.
+    //   2) The unused ScrollView* argument can be removed from ChromeClient::scrollRectIntoView.
     //
     ASSERT_NOT_REACHED();
 }

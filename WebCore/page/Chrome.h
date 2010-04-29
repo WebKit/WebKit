@@ -68,8 +68,9 @@ namespace WebCore {
         virtual IntPoint screenToWindow(const IntPoint&) const;
         virtual IntRect windowToScreen(const IntRect&) const;
         virtual PlatformPageClient platformPageClient() const;
-        virtual void scrollRectIntoView(const IntRect&, const ScrollView*) const;
         virtual void scrollbarsModeDidChange() const;
+
+        void scrollRectIntoView(const IntRect&) const;
 
         void contentsSizeChanged(Frame*, const IntSize&) const;
 

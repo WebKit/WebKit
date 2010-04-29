@@ -984,15 +984,6 @@ void FrameView::maintainScrollPositionAtAnchor(Node* anchorNode)
         scrollToAnchor();
 }
 
-void FrameView::scrollRectIntoViewRecursively(const IntRect& r)
-{
-    bool wasInProgrammaticScroll = m_inProgrammaticScroll;
-    m_inProgrammaticScroll = true;
-    m_maintainScrollPositionAnchor = 0;
-    ScrollView::scrollRectIntoViewRecursively(r);
-    m_inProgrammaticScroll = wasInProgrammaticScroll;
-}
-
 void FrameView::setScrollPosition(const IntPoint& scrollPoint)
 {
     bool wasInProgrammaticScroll = m_inProgrammaticScroll;

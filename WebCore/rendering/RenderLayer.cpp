@@ -1399,7 +1399,7 @@ void RenderLayer::scrollRectToVisible(const IntRect& rect, bool scrollToAnchor, 
                 // The canAutoscroll function in EventHandler also knows about this.
                 if (Frame* frame = frameView->frame()) {
                     if (Page* page = frame->page())
-                        page->chrome()->scrollRectIntoView(rect, 0);
+                        page->chrome()->scrollRectIntoView(rect);
                 }
             }
         }
