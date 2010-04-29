@@ -2796,7 +2796,12 @@ BUG42760 LINUX : fast/text/international/bold-bengali.html = FAIL
 BUGUKAI WIN MAC SKIP : fast/text/international/bold-bengali.html = FAIL
 
 // WebKit roll 58400:58523
-BUGWK38349 MAC : fast/css/font-face-woff.html = IMAGE+TEXT
+BUGWK38349 SKIP : fast/css/font-face-woff.html = IMAGE+TEXT
 
 // We probably don't want to run these massive amount of new ECMA script conformance tests:
 BUG42875 SKIP : fast/js/sputnik = TEXT
+
+BUGWK38360 WIN LINUX SKIP : fast/images/svg-background-partial-redraw.html = TEXT
+BUGWK38360 WIN LINUX SKIP : svg/carto.net/tabgroup.svg = TEXT
+BUGWK38360 SKIP : traversal/node-iterator-prototype.html = TEXT
+

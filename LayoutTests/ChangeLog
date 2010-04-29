@@ -1,3 +1,12 @@
+2010-04-29  Yaar Schnitman  <yaar@chromium.org>
+
+        Not Reviewed.
+
+        Skipping layout tests with bad/missing expectations.
+        https://bugs.webkit.org/show_bug.cgi?id=38361
+
+        * platform/chromium/test_expectations.txt:
+
 2010-04-29  Alexey Proskuryakov  <ap@apple.com>
 
         Not reviewed.
