@@ -1,3 +1,12 @@
+2010-04-29  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by David Levin.
+
+        wrong filename: LayoutTests/platform/win/fast/text/international/bold-bengali-actual.txt
+        https://bugs.webkit.org/show_bug.cgi?id=38310
+
+        * platform/win/fast/text/international/bold-bengali-expected.txt: Renamed from LayoutTests/platform/win/fast/text/international/bold-bengali-actual.txt.
+
 2010-04-28  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Simon Fraser.
