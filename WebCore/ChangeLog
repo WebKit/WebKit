@@ -1,3 +1,22 @@
+2010-04-29  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        WebInspector: If Timeline panel is in recording mode and is not visible and has received
+        new events then these events do not appear in the panel when the panel becomes visible.
+        Timeline popup may appear in the upper left window corner when you switch to another panel.
+        https://bugs.webkit.org/show_bug.cgi?id=38322
+
+        * inspector/front-end/Popover.js:
+        (WebInspector.PopoverHelper.prototype._mouseMove.doHide):
+        (WebInspector.PopoverHelper.prototype._mouseMove):
+        (WebInspector.PopoverHelper.prototype.hidePopup):
+        (WebInspector.PopoverHelper.prototype._hidePopup):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype.show):
+        (WebInspector.TimelinePanel.prototype._scheduleRefresh):
+        (WebInspector.TimelinePanel.prototype._refresh):
+
 2010-04-29  Anton Muhin  <antonm@chromium.org>
 
         Reviewed by Darin Adler.

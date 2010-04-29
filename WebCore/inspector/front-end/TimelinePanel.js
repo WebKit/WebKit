@@ -375,8 +375,7 @@ WebInspector.TimelinePanel.prototype = {
         WebInspector.Panel.prototype.show.call(this);
         if (typeof this._scrollTop === "number")
             this._containerElement.scrollTop = this._scrollTop;
-        else if (this._needsRefresh)
-            this._refresh();
+        this._refresh();
     },
 
     hide: function()
@@ -404,22 +403,20 @@ WebInspector.TimelinePanel.prototype = {
     {
         this._closeRecordDetails();
         this._boundariesAreValid &= preserveBoundaries;
-        if (this._needsRefresh)
-            return;
-        this._needsRefresh = true;
 
-        if (this.visible && !("_refreshTimeout" in this)) {
-            if (preserveBoundaries)
-                this._refresh();
-            else
+        if (!this.visible)
+            return;
+
+        if (preserveBoundaries)
+            this._refresh();
+        else
+            if (!this._refreshTimeout)
                 this._refreshTimeout = setTimeout(this._refresh.bind(this), 100);
-        }
     },
 
     _refresh: function()
     {
-        this._needsRefresh = false;
-        if ("_refreshTimeout" in this) {
+        if (this._refreshTimeout) {
             clearTimeout(this._refreshTimeout);
             delete this._refreshTimeout;
         }

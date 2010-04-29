@@ -175,7 +175,7 @@ WebInspector.PopoverHelper.prototype = {
             var self = this;
             function doHide()
             {
-                self.hidePopup();
+                self._hidePopup();
                 delete self._hidePopupTimer;
             }
             this._hidePopupTimer = setTimeout(doHide, 500);
@@ -205,6 +205,12 @@ WebInspector.PopoverHelper.prototype = {
     },
 
     hidePopup: function()
+    {
+        this._resetHoverTimer();
+        this._hidePopup();
+    },
+
+    _hidePopup: function()
     {
         if (!this._popup)
             return;
