@@ -1,3 +1,27 @@
+2010-04-29  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] GraphicsLayer: flicker when starting an animation before the previous one ended.
+        https://bugs.webkit.org/show_bug.cgi?id=38076
+
+        This was due to the cude in the removeAnimations functions, which called deleteLater() without stopping the
+        animation synchronously. The delay between the call to that function and the actual call to the animation's destructor
+        is when the flicker occured. We fix this by calling stop() synchronously, and making sure that the value is reverted
+        upon stop (updateState) and not upon the object's destruction.
+
+        http://staff.washington.edu/fmf/2009/03/25/iphone-3d-css-transformations/ now doesn't flicker when
+        the animation is toggled frequently.
+
+        * platform/graphics/qt/GraphicsLayerQt.cpp:
+        (WebCore::TransformAnimationQt::~TransformAnimationQt):
+        (WebCore::TransformAnimationQt::applyFrame):
+        (WebCore::TransformAnimationQt::updateState):
+        (WebCore::OpacityAnimationQt::~OpacityAnimationQt):
+        (WebCore::OpacityAnimationQt::updateState):
+        (WebCore::GraphicsLayerQt::removeAnimationsForProperty):
+        (WebCore::GraphicsLayerQt::removeAnimationsForKeyframes):
+
 2010-04-28  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Simon Fraser.
