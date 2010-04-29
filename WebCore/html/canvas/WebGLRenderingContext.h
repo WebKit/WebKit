@@ -369,6 +369,17 @@ class WebKitCSSMatrix;
         WebGLGetInfo getWebGLIntArrayParameter(unsigned long pname);
         WebGLGetInfo getWebGLUnsignedByteArrayParameter(unsigned long pname);
 
+        void texImage2DBase(unsigned target, unsigned level, unsigned internalformat,
+                            unsigned width, unsigned height, unsigned border,
+                            unsigned format, unsigned type, void* pixels, ExceptionCode&);
+        void texImage2D(unsigned target, unsigned level, Image* image,
+                        bool flipY, bool premultiplyAlpha, ExceptionCode&);
+        void texSubImage2DBase(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
+                               unsigned width, unsigned height,
+                               unsigned format, unsigned type, void* pixels, ExceptionCode&);
+        void texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
+                           Image* image, bool flipY, bool premultiplyAlpha, ExceptionCode&);
+
         friend class WebGLStateRestorer;
     };
 

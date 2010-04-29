@@ -1,3 +1,21 @@
+2010-04-29  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Remove the unnecessary texImage2D function with Image as input in GraphicsContext3D
+        https://bugs.webkit.org/show_bug.cgi?id=38235
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::texImage2D): Add extractImageData; add a common entry point for texImage2D with image input.
+        (WebCore::WebGLRenderingContext::texImage2DBase): Add this function as the common entry point for texImage2D.
+        (WebCore::WebGLRenderingContext::texSubImage2D): Add extractImageData; add a common entry point for texSubImage2D with image input.
+        (WebCore::WebGLRenderingContext::texSubImage2DBase): Add this function as the common entry point for texSubImage2D.
+        * html/canvas/WebGLRenderingContext.h: Add tex*Image{Base/Image} function declaration.
+        * platform/graphics/GraphicsContext3D.h: Remove tex*Image declaration with Image input.
+        * platform/graphics/mac/GraphicsContext3DMac.cpp: Remove tex*Image implementation with Image input.
+        (WebCore::GraphicsContext3D::texImage2D):
+        (WebCore::GraphicsContext3D::texSubImage2D):
+
 2010-04-29  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Simon Hausmann.

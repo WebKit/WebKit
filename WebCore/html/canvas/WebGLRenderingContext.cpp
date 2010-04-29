@@ -1766,16 +1766,38 @@ void WebGLRenderingContext::stencilOpSeparate(unsigned long face, unsigned long 
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::texImage2D(unsigned target, unsigned level, unsigned internalformat,
-                                          unsigned width, unsigned height, unsigned border,
-                                          unsigned format, unsigned type, WebGLArray* pixels, ExceptionCode& ec)
+void WebGLRenderingContext::texImage2DBase(unsigned target, unsigned level, unsigned internalformat,
+                                           unsigned width, unsigned height, unsigned border,
+                                           unsigned format, unsigned type, void* pixels, ExceptionCode& ec)
 {
     // FIXME: For now we ignore any errors returned
-    // FIXME: Need to make sure passed buffer has enough bytes to define the texture
     ec = 0;
     m_context->texImage2D(target, level, internalformat, width, height,
-                          border, format, type, pixels ? pixels->baseAddress() : 0);
+                          border, format, type, pixels);
     cleanupAfterGraphicsCall(false);
+}
+
+void WebGLRenderingContext::texImage2D(unsigned target, unsigned level, Image* image,
+                                       bool flipY, bool premultiplyAlpha, ExceptionCode& ec)
+{
+    ec = 0;
+    Vector<uint8_t> data;
+    unsigned int format, internalformat;
+    if (!m_context->extractImageData(image, flipY, premultiplyAlpha, data, &format, &internalformat)) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+        return;
+    }
+    texImage2DBase(target, level, internalformat, image->width(), image->height(), 0,
+                   format, GraphicsContext3D::UNSIGNED_BYTE, data.data(), ec);
+}
+
+void WebGLRenderingContext::texImage2D(unsigned target, unsigned level, unsigned internalformat,
+                                       unsigned width, unsigned height, unsigned border,
+                                       unsigned format, unsigned type, WebGLArray* pixels, ExceptionCode& ec)
+{
+    // FIXME: Need to make sure passed buffer has enough bytes to define the texture
+    texImage2DBase(target, level, internalformat, width, height, border,
+                   format, type, pixels ? pixels->baseAddress() : 0, ec);
 }
 
 void WebGLRenderingContext::texImage2D(unsigned target, unsigned level, ImageData* pixels,
@@ -1793,12 +1815,14 @@ void WebGLRenderingContext::texImage2D(unsigned target, unsigned level, ImageDat
 void WebGLRenderingContext::texImage2D(unsigned target, unsigned level, ImageData* pixels,
                                        bool flipY, bool premultiplyAlpha, ExceptionCode& ec)
 {
-    // FIXME: For now we ignore any errors returned
     ec = 0;
     Vector<uint8_t> data;
-    m_context->extractImageData(pixels, flipY, premultiplyAlpha, data);
-    m_context->texImage2D(target, level, GraphicsContext3D::RGBA, pixels->width(), pixels->height(), 0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, data.data());
-    cleanupAfterGraphicsCall(false);
+    if (!m_context->extractImageData(pixels, flipY, premultiplyAlpha, data)) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+        return;
+    }
+    texImage2DBase(target, level, GraphicsContext3D::RGBA, pixels->width(), pixels->height(), 0,
+                   GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, data.data(), ec);
 }
 
 
@@ -1818,20 +1842,11 @@ void WebGLRenderingContext::texImage2D(unsigned target, unsigned level, HTMLImag
                                        bool flipY, bool premultiplyAlpha, ExceptionCode& ec)
 {
     ec = 0;
-    if (!image) {
+    if (!image || !image->cachedImage()) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
         return;
     }
-
-    CachedImage* cachedImage = image->cachedImage();
-    if (!cachedImage) {
-        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
-        return;
-    }
-
-    // FIXME: For now we ignore any errors returned
-    m_context->texImage2D(target, level, cachedImage->image(), flipY, premultiplyAlpha);
-    cleanupAfterGraphicsCall(false);
+    texImage2D(target, level, image->cachedImage()->image(), flipY, premultiplyAlpha, ec);
 }
 
 void WebGLRenderingContext::texImage2D(unsigned target, unsigned level, HTMLCanvasElement* canvas,
@@ -1850,20 +1865,11 @@ void WebGLRenderingContext::texImage2D(unsigned target, unsigned level, HTMLCanv
                                        bool flipY, bool premultiplyAlpha, ExceptionCode& ec)
 {
     ec = 0;
-    if (!canvas) {
+    if (!canvas || !canvas->buffer()) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
         return;
     }
-
-    ImageBuffer* buffer = canvas->buffer();
-    if (!buffer) {
-        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
-        return;
-    }
-
-    // FIXME: For now we ignore any errors returned
-    m_context->texImage2D(target, level, buffer->image(), flipY, premultiplyAlpha);
-    cleanupAfterGraphicsCall(false);
+    texImage2D(target, level, canvas->buffer()->image(), flipY, premultiplyAlpha, ec);
 }
 
 void WebGLRenderingContext::texImage2D(unsigned target, unsigned level, HTMLVideoElement* video,
@@ -1904,15 +1910,36 @@ void WebGLRenderingContext::texParameteri(unsigned target, unsigned pname, int p
     cleanupAfterGraphicsCall(false);
 }
 
+void WebGLRenderingContext::texSubImage2DBase(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
+                                              unsigned width, unsigned height,
+                                              unsigned format, unsigned type, void* pixels, ExceptionCode& ec)
+{
+    // FIXME: For now we ignore any errors returned
+    ec = 0;
+    m_context->texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
+    cleanupAfterGraphicsCall(false);
+}
+
+void WebGLRenderingContext::texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
+                                          Image* image, bool flipY, bool premultiplyAlpha, ExceptionCode& ec)
+{
+    ec = 0;
+    Vector<uint8_t> data;
+    unsigned int format, internalformat;
+    if (!m_context->extractImageData(image, flipY, premultiplyAlpha, data, &format, &internalformat)) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+        return;
+    }
+    texSubImage2DBase(target, level, xoffset, yoffset, image->width(), image->height(),
+                      format, GraphicsContext3D::UNSIGNED_BYTE, data.data(), ec);
+}
+
 void WebGLRenderingContext::texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
                                           unsigned width, unsigned height,
                                           unsigned format, unsigned type, WebGLArray* pixels, ExceptionCode& ec)
 {
-    // FIXME: For now we ignore any errors returned
     // FIXME: Need to make sure passed buffer has enough bytes to define the texture
-    ec = 0;
-    m_context->texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels ? pixels->baseAddress() : 0);
-    cleanupAfterGraphicsCall(false);
+    texSubImage2DBase(target, level, xoffset, yoffset, width, height, format, type, pixels ? pixels->baseAddress() : 0, ec);
 }
 
 void WebGLRenderingContext::texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
@@ -1930,12 +1957,14 @@ void WebGLRenderingContext::texSubImage2D(unsigned target, unsigned level, unsig
 void WebGLRenderingContext::texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
                                           ImageData* pixels, bool flipY, bool premultiplyAlpha, ExceptionCode& ec)
 {
-    // FIXME: For now we ignore any errors returned
     ec = 0;
     Vector<uint8_t> data;
-    m_context->extractImageData(pixels, flipY, premultiplyAlpha, data);
-    m_context->texSubImage2D(target, level, xoffset, yoffset, pixels->width(), pixels->height(), GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, data.data());
-    cleanupAfterGraphicsCall(false);
+    if (!m_context->extractImageData(pixels, flipY, premultiplyAlpha, data)) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+        return;
+    }
+    texSubImage2DBase(target, level, xoffset, yoffset, pixels->width(), pixels->height(),
+                      GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, data.data(), ec);
 }
 
 void WebGLRenderingContext::texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
@@ -1953,21 +1982,13 @@ void WebGLRenderingContext::texSubImage2D(unsigned target, unsigned level, unsig
 void WebGLRenderingContext::texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
                                           HTMLImageElement* image, bool flipY, bool premultiplyAlpha, ExceptionCode& ec)
 {
-    // FIXME: For now we ignore any errors returned
     ec = 0;
-    if (!image) {
+    if (!image || !image->cachedImage()) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
         return;
     }
-    
-    CachedImage* cachedImage = image->cachedImage();
-    if (!cachedImage) {
-        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
-        return;
-    }
-
-    m_context->texSubImage2D(target, level, xoffset, yoffset, cachedImage->image(), flipY, premultiplyAlpha);
-    cleanupAfterGraphicsCall(false);
+    texSubImage2D(target, level, xoffset, yoffset, image->cachedImage()->image(),
+                  flipY, premultiplyAlpha, ec);
 }
 
 void WebGLRenderingContext::texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
@@ -1986,20 +2007,12 @@ void WebGLRenderingContext::texSubImage2D(unsigned target, unsigned level, unsig
                                           HTMLCanvasElement* canvas, bool flipY, bool premultiplyAlpha, ExceptionCode& ec)
 {
     ec = 0;
-    if (!canvas) {
+    if (!canvas || !canvas->buffer()) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
         return;
     }
-    
-    ImageBuffer* buffer = canvas->buffer();
-    if (!buffer) {
-        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
-        return;
-    }
-    
-    // FIXME: For now we ignore any errors returned
-    m_context->texSubImage2D(target, level, xoffset, yoffset, buffer->image(), flipY, premultiplyAlpha);
-    cleanupAfterGraphicsCall(false);
+    texSubImage2D(target, level, xoffset, yoffset, canvas->buffer()->image(),
+                  flipY, premultiplyAlpha, ec);
 }
 
 void WebGLRenderingContext::texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,

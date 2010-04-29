@@ -1209,40 +1209,9 @@ DELEGATE_TO_INTERNAL_3(stencilOp, unsigned long, unsigned long, unsigned long)
 DELEGATE_TO_INTERNAL_4(stencilOpSeparate, unsigned long, unsigned long, unsigned long, unsigned long)
 
 DELEGATE_TO_INTERNAL_9R(texImage2D, unsigned, unsigned, unsigned, unsigned, unsigned, unsigned, unsigned, unsigned, void*, int)
-
-int GraphicsContext3D::texImage2D(unsigned target, unsigned level, Image* image,
-                                  bool flipY, bool premultiplyAlpha)
-{
-    Vector<uint8_t> imageData;
-    unsigned int format, internalFormat;
-    if (!extractImageData(image, flipY, premultiplyAlpha, imageData, &format, &internalFormat))
-        return -1;
-    return m_internal->texImage2D(target, level, internalFormat,
-                                  image->width(), image->height(), 0,
-                                  format, UNSIGNED_BYTE, imageData.data());
-}
-
 DELEGATE_TO_INTERNAL_3(texParameterf, unsigned, unsigned, float)
 DELEGATE_TO_INTERNAL_3(texParameteri, unsigned, unsigned, int)
-
 DELEGATE_TO_INTERNAL_9R(texSubImage2D, unsigned, unsigned, unsigned, unsigned, unsigned, unsigned, unsigned, unsigned, void*, int)
-
-int GraphicsContext3D::texSubImage2D(unsigned target,
-                                     unsigned level,
-                                     unsigned xoffset,
-                                     unsigned yoffset,
-                                     Image* image,
-                                     bool flipY,
-                                     bool premultiplyAlpha)
-{
-    Vector<uint8_t> imageData;
-    unsigned int format, internalFormat;
-    if (!extractImageData(image, flipY, premultiplyAlpha, imageData, &format, &internalFormat))
-        return -1;
-    return m_internal->texSubImage2D(target, level, xoffset, yoffset,
-                                     image->width(), image->height(),
-                                     format, UNSIGNED_BYTE, imageData.data());
-}
 
 DELEGATE_TO_INTERNAL_2(uniform1f, long, float)
 DELEGATE_TO_INTERNAL_3(uniform1fv, long, float*, int)

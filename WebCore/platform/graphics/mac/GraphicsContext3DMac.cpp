@@ -1295,39 +1295,18 @@ long GraphicsContext3D::getVertexAttribOffset(unsigned long index, unsigned long
 
 int GraphicsContext3D::texImage2D(unsigned target, unsigned level, unsigned internalformat, unsigned width, unsigned height, unsigned border, unsigned format, unsigned type, void* pixels)
 {
-    // FIXME: Need to do bounds checking on the buffer here.
+    ensureContext(m_contextObj);
+
     ::glTexImage2D(target, level, internalformat, width, height, border, format, type, pixels);
     return 0;
 }
 
-int GraphicsContext3D::texImage2D(unsigned target, unsigned level, Image* image, bool flipY, bool premultiplyAlpha)
-{
-    ensureContext(m_contextObj);
-    Vector<uint8_t> imageData;
-    unsigned int format, internalFormat;
-    if (!extractImageData(image, flipY, premultiplyAlpha, imageData, &format, &internalFormat))
-        return -1;
-    ::glTexImage2D(target, level, internalFormat, image->width(), image->height(), 0, format, GL_UNSIGNED_BYTE, imageData.data());
-    return 0;
-}
-    
 int GraphicsContext3D::texSubImage2D(unsigned target, unsigned level, unsigned xoff, unsigned yoff, unsigned width, unsigned height, unsigned format, unsigned type, void* pixels)
 {
-    // FIXME: we will need to deal with PixelStore params when dealing with image buffers that differ from the subimage size
-    // FIXME: Need to do bounds checking on the buffer here.
-    ::glTexSubImage2D(target, level, xoff, yoff, width, height, format, type, pixels);
-    return 0;
-}
-
-int GraphicsContext3D::texSubImage2D(unsigned target, unsigned level, unsigned xoff, unsigned yoff, Image* image, bool flipY, bool premultiplyAlpha)
-{
-    // FIXME: we will need to deal with PixelStore params when dealing with image buffers that differ from the subimage size
     ensureContext(m_contextObj);
-    Vector<uint8_t> imageData;
-    unsigned int format, internalFormat;
-    if (!extractImageData(image, flipY, premultiplyAlpha, imageData, &format, &internalFormat))
-        return -1;
-    ::glTexSubImage2D(target, level, xoff, yoff, image->width(), image->height(), format, GL_UNSIGNED_BYTE, imageData.data());
+
+    // FIXME: we will need to deal with PixelStore params when dealing with image buffers that differ from the subimage size
+    ::glTexSubImage2D(target, level, xoff, yoff, width, height, format, type, pixels);
     return 0;
 }
 
