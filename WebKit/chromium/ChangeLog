@@ -1,3 +1,17 @@
+2010-04-29  Rafael Weinstein  <rafaelw@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Include WindowFeatures in call to WebViewClient::createView.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38301
+
+        * public/WebViewClient.h:
+        (WebKit::WebViewClient::createView):
+        * public/WebWindowFeatures.h:
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::createWindow):
+
 2010-04-29  Garret Kelly  <gdk@chromium.org>
 
         Reviewed by Darin Fisher.
