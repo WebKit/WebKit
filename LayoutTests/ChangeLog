@@ -1,3 +1,120 @@
+2010-04-29  Marcus Bulach  <bulach@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Rebaseline chromium SVG tests
+        This is a follow up to https://bugs.webkit.org/show_bug.cgi?id=37986
+        https://bugs.webkit.org/show_bug.cgi?id=38106
+
+        * platform/chromium-linux/fast/images/svg-background-partial-redraw-expected.checksum: Added.
+        * platform/chromium-linux/fast/images/svg-background-partial-redraw-expected.png: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/masking-mask-01-b-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/masking-mask-01-b-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/pservers-grad-05-b-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/pservers-grad-05-b-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/pservers-grad-19-b-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/pservers-grad-19-b-expected.png:
+        * platform/chromium-linux/svg/batik/paints/patternRegions-expected.txt:
+        * platform/chromium-linux/svg/custom/dominant-baseline-hanging-expected.checksum:
+        * platform/chromium-linux/svg/custom/dominant-baseline-hanging-expected.png:
+        * platform/chromium-linux/svg/custom/gradient-stroke-width-expected.checksum:
+        * platform/chromium-linux/svg/custom/gradient-stroke-width-expected.png:
+        * platform/chromium-linux/svg/custom/inline-svg-in-xhtml-expected.txt:
+        * platform/chromium-mac/fast/images: Added.
+        * platform/chromium-mac/fast/images/svg-background-partial-redraw-expected.checksum: Added.
+        * platform/chromium-mac/fast/images/svg-background-partial-redraw-expected.png: Added.
+        * platform/chromium-mac/traversal: Added.
+        * platform/chromium-mac/traversal/node-iterator-prototype-expected.txt: Added.
+        * platform/chromium-win/fast/images/svg-background-partial-redraw-expected.checksum: Added.
+        * platform/chromium-win/fast/images/svg-background-partial-redraw-expected.png: Added.
+        * platform/chromium-win/fast/images/svg-background-partial-redraw-expected.txt: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-31-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-78-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/color-prop-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/coords-units-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-color-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/masking-mask-01-b-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/masking-mask-01-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/masking-mask-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/painting-render-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-02-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-03-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-04-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-05-b-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-05-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-05-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-07-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-09-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-10-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-11-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-12-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-13-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-14-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-15-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-16-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-17-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-18-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-19-b-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-19-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-19-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-pattern-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/struct-group-03-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/struct-use-05-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/styling-inherit-01-b-expected.txt:
+        * platform/chromium-win/svg/batik/filters/feTile-expected.txt:
+        * platform/chromium-win/svg/batik/masking/maskRegions-expected.txt:
+        * platform/chromium-win/svg/batik/paints/gradientLimit-expected.txt:
+        * platform/chromium-win/svg/batik/paints/patternPreserveAspectRatioA-expected.txt:
+        * platform/chromium-win/svg/batik/paints/patternRegionA-expected.txt:
+        * platform/chromium-win/svg/batik/paints/patternRegions-expected.txt:
+        * platform/chromium-win/svg/batik/text/textEffect-expected.txt:
+        * platform/chromium-win/svg/batik/text/textEffect2-expected.txt:
+        * platform/chromium-win/svg/batik/text/textEffect3-expected.txt:
+        * platform/chromium-win/svg/batik/text/textProperties-expected.txt:
+        * platform/chromium-win/svg/carto.net/colourpicker-expected.txt:
+        * platform/chromium-win/svg/carto.net/tabgroup-expected.txt: Added.
+        * platform/chromium-win/svg/custom/dominant-baseline-hanging-expected.checksum:
+        * platform/chromium-win/svg/custom/dominant-baseline-hanging-expected.png:
+        * platform/chromium-win/svg/custom/dominant-baseline-hanging-expected.txt:
+        * platform/chromium-win/svg/custom/feComponentTransfer-Discrete-expected.txt:
+        * platform/chromium-win/svg/custom/feComponentTransfer-Gamma-expected.txt:
+        * platform/chromium-win/svg/custom/feComponentTransfer-Linear-expected.txt:
+        * platform/chromium-win/svg/custom/feComponentTransfer-Table-expected.txt:
+        * platform/chromium-win/svg/custom/fill-fallback-expected.txt:
+        * platform/chromium-win/svg/custom/gradient-cycle-detection-expected.txt:
+        * platform/chromium-win/svg/custom/gradient-deep-referencing-expected.txt:
+        * platform/chromium-win/svg/custom/gradient-stroke-width-expected.checksum:
+        * platform/chromium-win/svg/custom/gradient-stroke-width-expected.png:
+        * platform/chromium-win/svg/custom/inline-svg-in-xhtml-expected.txt:
+        * platform/chromium-win/svg/custom/invalid-css-expected.txt:
+        * platform/chromium-win/svg/custom/js-late-gradient-and-object-creation-expected.txt:
+        * platform/chromium-win/svg/custom/js-late-gradient-creation-expected.txt:
+        * platform/chromium-win/svg/custom/js-late-pattern-and-object-creation-expected.txt:
+        * platform/chromium-win/svg/custom/js-late-pattern-creation-expected.txt:
+        * platform/chromium-win/svg/custom/js-update-gradient-expected.checksum:
+        * platform/chromium-win/svg/custom/js-update-gradient-expected.png:
+        * platform/chromium-win/svg/custom/pattern-cycle-detection-expected.txt:
+        * platform/chromium-win/svg/custom/pattern-deep-referencing-expected.txt:
+        * platform/chromium-win/svg/custom/pattern-rotate-expected.txt:
+        * platform/chromium-win/svg/custom/pattern-with-transformation-expected.txt:
+        * platform/chromium-win/svg/custom/stroke-fallback-expected.txt:
+        * platform/chromium-win/svg/custom/stroked-pattern-expected.txt:
+        * platform/chromium-win/svg/custom/use-on-symbol-inside-pattern-expected.txt:
+        * platform/chromium-win/svg/hixie/error/003-expected.txt:
+        * platform/chromium-win/svg/hixie/perf/005-expected.txt:
+        * platform/chromium-win/svg/hixie/perf/006-expected.txt:
+        * platform/chromium-win/svg/text/selection-background-color-expected.txt:
+        * platform/chromium-win/svg/text/selection-styles-expected.txt:
+        * platform/chromium-win/svg/text/text-gradient-positioning-expected.txt:
+        * platform/chromium-win/svg/transforms/text-with-pattern-inside-transformed-html-expected.txt:
+        * platform/chromium-win/svg/transforms/text-with-pattern-with-svg-transform-expected.txt:
+        * platform/chromium-win/traversal: Added.
+        * platform/chromium-win/traversal/node-iterator-prototype-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-04-29  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, expectations tweak.

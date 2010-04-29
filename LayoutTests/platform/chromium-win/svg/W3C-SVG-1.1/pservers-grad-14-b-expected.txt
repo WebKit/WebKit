@@ -1,72 +1,64 @@
-KRenderingPaintServer {id="lgSpreadPad" [type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#FFD700)]] [bounding box mode=0] [start=(50,0)] [end=(100,0)]}
-KRenderingPaintServer {id="lgSpreadReflect" [type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#FFD700)]][method=REFLECT] [bounding box mode=0] [start=(50,0)] [end=(100,0)]}
-KRenderingPaintServer {id="lgSpreadRepeat" [type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#FFD700)]][method=REPEAT] [bounding box mode=0] [start=(50,0)] [end=(100,0)]}
-KRenderingPaintServer {id="lgSpreadDefault" [type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#FFD700)]] [bounding box mode=0] [start=(50,0)] [end=(100,0)]}
-KRenderingPaintServer {id="rgSpreadPad" [type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#FFD700)]] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.20]}
-KRenderingPaintServer {id="rgSpreadReflect" [type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#FFD700)]][method=REFLECT] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.20]}
-KRenderingPaintServer {id="rgSpreadRepeat" [type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#FFD700)]][method=REPEAT] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.20]}
-KRenderingPaintServer {id="rgSpreadDefault" [type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#FFD700)]] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.20]}
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-      RenderSVGHiddenContainer {linearGradient} at (0,0) size 0x0
-        RenderSVGGradientStop {stop} at (0,0) size 0x0
-        RenderSVGGradientStop {stop} at (0,0) size 0x0
-      RenderSVGHiddenContainer {linearGradient} at (0,0) size 0x0
-        RenderSVGGradientStop {stop} at (0,0) size 0x0
-        RenderSVGGradientStop {stop} at (0,0) size 0x0
-      RenderSVGHiddenContainer {linearGradient} at (0,0) size 0x0
-        RenderSVGGradientStop {stop} at (0,0) size 0x0
-        RenderSVGGradientStop {stop} at (0,0) size 0x0
-      RenderSVGHiddenContainer {linearGradient} at (0,0) size 0x0
-        RenderSVGGradientStop {stop} at (0,0) size 0x0
-        RenderSVGGradientStop {stop} at (0,0) size 0x0
-      RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
-        RenderSVGGradientStop {stop} at (0,0) size 0x0
-        RenderSVGGradientStop {stop} at (0,0) size 0x0
-      RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
-        RenderSVGGradientStop {stop} at (0,0) size 0x0
-        RenderSVGGradientStop {stop} at (0,0) size 0x0
-      RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
-        RenderSVGGradientStop {stop} at (0,0) size 0x0
-        RenderSVGGradientStop {stop} at (0,0) size 0x0
-      RenderSVGHiddenContainer {radialGradient} at (0,0) size 0x0
-        RenderSVGGradientStop {stop} at (0,0) size 0x0
-        RenderSVGGradientStop {stop} at (0,0) size 0x0
+      RenderSVGResourceLinearGradient {linearGradient} [id="lgSpreadPad"] [gradientUnits=userSpaceOnUse] [start=(50,0)] [end=(100,0)]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#FFD700]
+      RenderSVGResourceLinearGradient {linearGradient} [id="lgSpreadReflect"] [gradientUnits=userSpaceOnUse] [spreadMethod=REFLECT] [start=(50,0)] [end=(100,0)]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#FFD700]
+      RenderSVGResourceLinearGradient {linearGradient} [id="lgSpreadRepeat"] [gradientUnits=userSpaceOnUse] [spreadMethod=REPEAT] [start=(50,0)] [end=(100,0)]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#FFD700]
+      RenderSVGResourceLinearGradient {linearGradient} [id="lgSpreadDefault"] [gradientUnits=userSpaceOnUse] [start=(50,0)] [end=(100,0)]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#FFD700]
+      RenderSVGResourceRadialGradient {radialGradient} [id="rgSpreadPad"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.20]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#FFD700]
+      RenderSVGResourceRadialGradient {radialGradient} [id="rgSpreadReflect"] [gradientUnits=objectBoundingBox] [spreadMethod=REFLECT] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.20]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#FFD700]
+      RenderSVGResourceRadialGradient {radialGradient} [id="rgSpreadRepeat"] [gradientUnits=objectBoundingBox] [spreadMethod=REPEAT] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.20]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#FFD700]
+      RenderSVGResourceRadialGradient {radialGradient} [id="rgSpreadDefault"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.20]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#FFD700]
     RenderSVGText {text} at (114,30) size 252x22 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-17) size 252x22
         chunk 1 (middle anchor) text run 1 at (114.50,30.00) startOffset 0 endOffset 30 width 251.00: "Gradient 'spreadMethod' values"
-    RenderPath {rect} at (10,60) size 225x40 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#FFD700)]] [bounding box mode=0] [start=(50,0)] [end=(100,0)]}] [data="M10.00,60.00 L235.00,60.00 L235.00,100.00 L10.00,100.00 Z"]
+    RenderPath {rect} at (10,60) size 225x40 [fill={[type=LINEAR-GRADIENT] [id="lgSpreadPad"]}] [data="M10.00,60.00 L235.00,60.00 L235.00,100.00 L10.00,100.00 Z"]
     RenderSVGText {text} at (10,55) size 131x19 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-15) size 131x19
         chunk 1 text run 1 at (10.00,55.00) startOffset 0 endOffset 18 width 131.00: "spreadMethod=\"pad\""
-    RenderPath {rect} at (10,130) size 225x40 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#FFD700)]][method=REFLECT] [bounding box mode=0] [start=(50,0)] [end=(100,0)]}] [data="M10.00,130.00 L235.00,130.00 L235.00,170.00 L10.00,170.00 Z"]
+    RenderPath {rect} at (10,130) size 225x40 [fill={[type=LINEAR-GRADIENT] [id="lgSpreadReflect"]}] [data="M10.00,130.00 L235.00,130.00 L235.00,170.00 L10.00,170.00 Z"]
     RenderSVGText {text} at (10,125) size 145x19 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-15) size 145x19
         chunk 1 text run 1 at (10.00,125.00) startOffset 0 endOffset 22 width 145.00: "spreadMethod=\"reflect\""
-    RenderPath {rect} at (10,200) size 225x40 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#FFD700)]][method=REPEAT] [bounding box mode=0] [start=(50,0)] [end=(100,0)]}] [data="M10.00,200.00 L235.00,200.00 L235.00,240.00 L10.00,240.00 Z"]
+    RenderPath {rect} at (10,200) size 225x40 [fill={[type=LINEAR-GRADIENT] [id="lgSpreadRepeat"]}] [data="M10.00,200.00 L235.00,200.00 L235.00,240.00 L10.00,240.00 Z"]
     RenderSVGText {text} at (10,195) size 146x19 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-15) size 146x19
         chunk 1 text run 1 at (10.00,195.00) startOffset 0 endOffset 21 width 146.00: "spreadMethod=\"repeat\""
-    RenderPath {rect} at (10,270) size 225x40 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#FFD700)]] [bounding box mode=0] [start=(50,0)] [end=(100,0)]}] [data="M10.00,270.00 L235.00,270.00 L235.00,310.00 L10.00,310.00 Z"]
+    RenderPath {rect} at (10,270) size 225x40 [fill={[type=LINEAR-GRADIENT] [id="lgSpreadDefault"]}] [data="M10.00,270.00 L235.00,270.00 L235.00,310.00 L10.00,310.00 Z"]
     RenderSVGText {text} at (10,265) size 148x19 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-15) size 148x19
         chunk 1 text run 1 at (10.00,265.00) startOffset 0 endOffset 22 width 148.00: "spreadMethod=\"default\""
-    RenderPath {rect} at (245,60) size 225x40 [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#FFD700)]] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.20]}] [data="M245.00,60.00 L470.00,60.00 L470.00,100.00 L245.00,100.00 Z"]
+    RenderPath {rect} at (245,60) size 225x40 [fill={[type=RADIAL-GRADIENT] [id="rgSpreadPad"]}] [data="M245.00,60.00 L470.00,60.00 L470.00,100.00 L245.00,100.00 Z"]
     RenderSVGText {text} at (245,55) size 131x19 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-15) size 131x19
         chunk 1 text run 1 at (245.00,55.00) startOffset 0 endOffset 18 width 131.00: "spreadMethod=\"pad\""
-    RenderPath {rect} at (245,130) size 225x40 [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#FFD700)]][method=REFLECT] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.20]}] [data="M245.00,130.00 L470.00,130.00 L470.00,170.00 L245.00,170.00 Z"]
+    RenderPath {rect} at (245,130) size 225x40 [fill={[type=RADIAL-GRADIENT] [id="rgSpreadReflect"]}] [data="M245.00,130.00 L470.00,130.00 L470.00,170.00 L245.00,170.00 Z"]
     RenderSVGText {text} at (245,125) size 145x19 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-15) size 145x19
         chunk 1 text run 1 at (245.00,125.00) startOffset 0 endOffset 22 width 145.00: "spreadMethod=\"reflect\""
-    RenderPath {rect} at (245,200) size 225x40 [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#FFD700)]][method=REPEAT] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.20]}] [data="M245.00,200.00 L470.00,200.00 L470.00,240.00 L245.00,240.00 Z"]
+    RenderPath {rect} at (245,200) size 225x40 [fill={[type=RADIAL-GRADIENT] [id="rgSpreadRepeat"]}] [data="M245.00,200.00 L470.00,200.00 L470.00,240.00 L245.00,240.00 Z"]
     RenderSVGText {text} at (245,195) size 146x19 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-15) size 146x19
         chunk 1 text run 1 at (245.00,195.00) startOffset 0 endOffset 21 width 146.00: "spreadMethod=\"repeat\""
-    RenderPath {rect} at (245,270) size 225x40 [fill={[type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#FFD700)]] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.20]}] [data="M245.00,270.00 L470.00,270.00 L470.00,310.00 L245.00,310.00 Z"]
+    RenderPath {rect} at (245,270) size 225x40 [fill={[type=RADIAL-GRADIENT] [id="rgSpreadDefault"]}] [data="M245.00,270.00 L470.00,270.00 L470.00,310.00 L245.00,310.00 Z"]
     RenderSVGText {text} at (245,265) size 148x19 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-15) size 148x19
         chunk 1 text run 1 at (245.00,265.00) startOffset 0 endOffset 22 width 148.00: "spreadMethod=\"default\""

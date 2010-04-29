@@ -2784,86 +2784,8 @@ BUGWK38100 WIN LINUX MAC : editing/inserting/caret-position.html = TEXT
 // New test, may be safe to just rebaseline.
 BUGWK38099 WIN LINUX : svg/custom/broken-internal-references.svg = IMAGE+TEXT
 
-// Rebaselined after r58191.
-
-// Started failing at r58212.
-BUGWK38106 WIN LINUX : svg/W3C-SVG-1.1/animate-elem-31-t.svg = TEXT
-BUGWK38106 WIN LINUX : svg/W3C-SVG-1.1/animate-elem-78-t.svg = TEXT
-BUGWK38106 WIN LINUX : svg/W3C-SVG-1.1/color-prop-01-b.svg = TEXT
-BUGWK38106 WIN LINUX : svg/W3C-SVG-1.1/coords-units-01-b.svg = TEXT
-BUGWK38106 WIN LINUX : svg/W3C-SVG-1.1/filters-color-01-b.svg = TEXT
-BUGWK38106 WIN LINUX : svg/W3C-SVG-1.1/filters-comptran-01-b.svg = TEXT
-BUGWK38106 WIN LINUX : svg/W3C-SVG-1.1/painting-render-01-b.svg = TEXT
-BUGWK38106 WIN LINUX : svg/W3C-SVG-1.1/pservers-grad-01-b.svg = TEXT
-BUGWK38106 WIN LINUX : svg/W3C-SVG-1.1/pservers-grad-02-b.svg = TEXT
-BUGWK38106 WIN LINUX : svg/W3C-SVG-1.1/pservers-grad-03-b.svg = TEXT
-BUGWK38106 WIN LINUX : svg/W3C-SVG-1.1/pservers-grad-04-b.svg = TEXT
-BUGWK38106 WIN LINUX : svg/W3C-SVG-1.1/pservers-grad-06-b.svg = TEXT
-BUGWK38106 WIN LINUX : svg/W3C-SVG-1.1/pservers-grad-07-b.svg = TEXT
-BUGWK38106 WIN LINUX : svg/W3C-SVG-1.1/pservers-grad-09-b.svg = TEXT
-BUGWK38106 WIN : svg/W3C-SVG-1.1/pservers-grad-10-b.svg = TEXT
-BUGWK38106 WIN LINUX : svg/W3C-SVG-1.1/pservers-grad-11-b.svg = TEXT
-BUGWK38106 WIN LINUX : svg/W3C-SVG-1.1/pservers-grad-12-b.svg = TEXT
-BUGWK38106 WIN LINUX : svg/W3C-SVG-1.1/pservers-grad-13-b.svg = TEXT
-BUGWK38106 WIN LINUX : svg/W3C-SVG-1.1/pservers-grad-14-b.svg = TEXT
-BUGWK38106 WIN LINUX : svg/W3C-SVG-1.1/pservers-grad-15-b.svg = TEXT
-BUGWK38106 WIN LINUX : svg/W3C-SVG-1.1/pservers-grad-16-b.svg = TEXT
-BUGWK38106 WIN LINUX : svg/W3C-SVG-1.1/pservers-grad-17-b.svg = TEXT
-BUGWK38106 WIN LINUX : svg/W3C-SVG-1.1/pservers-grad-18-b.svg = TEXT
-BUGWK38106 WIN LINUX : svg/W3C-SVG-1.1/pservers-pattern-01-b.svg = TEXT
-BUGWK38106 WIN LINUX : svg/W3C-SVG-1.1/struct-group-03-t.svg = TEXT
-BUGWK38106 WIN LINUX : svg/W3C-SVG-1.1/struct-use-05-b.svg = TEXT
-BUGWK38106 WIN LINUX : svg/W3C-SVG-1.1/styling-inherit-01-b.svg = TEXT
-BUGWK38106 WIN LINUX : svg/batik/filters/feTile.svg = TEXT
-BUGWK38106 WIN LINUX : svg/batik/masking/maskRegions.svg = TEXT
-BUGWK38106 WIN LINUX RELEASE : svg/batik/paints/gradientLimit.svg = TEXT
-BUGWK38106 WIN : svg/batik/paints/patternPreserveAspectRatioA.svg = TEXT
-BUGWK38106 WIN LINUX : svg/batik/paints/patternRegionA.svg = TEXT
-BUGWK38106 WIN LINUX : svg/batik/paints/patternRegions.svg = TEXT
-BUGWK38106 WIN LINUX : svg/batik/text/textEffect.svg = TEXT
-BUGWK38106 WIN LINUX : svg/batik/text/textEffect2.svg = TEXT
-BUGWK38106 WIN LINUX : svg/batik/text/textEffect3.svg = TEXT
-BUGWK38106 WIN LINUX : svg/batik/text/textProperties.svg = TEXT
-BUGWK38106 WIN : svg/carto.net/colourpicker.svg = TEXT
-BUGWK38106 WIN LINUX : svg/carto.net/tabgroup.svg = TEXT
-BUGWK38106 WIN LINUX : svg/custom/feComponentTransfer-Discrete.svg = TEXT
-BUGWK38106 WIN LINUX : svg/custom/feComponentTransfer-Gamma.svg = TEXT
-BUGWK38106 WIN LINUX : svg/custom/feComponentTransfer-Linear.svg = TEXT
-BUGWK38106 WIN LINUX : svg/custom/feComponentTransfer-Table.svg = TEXT
-BUGWK38106 WIN LINUX : svg/custom/fill-fallback.svg = TEXT
-BUGWK38106 WIN LINUX : svg/custom/gradient-cycle-detection.svg = TEXT
-BUGWK38106 WIN LINUX : svg/custom/gradient-deep-referencing.svg = TEXT
-BUGWK38106 WIN LINUX : svg/custom/inline-svg-in-xhtml.xml = TEXT
-BUGWK38106 WIN LINUX : svg/custom/invalid-css.svg = TEXT
-BUGWK38106 WIN LINUX : svg/custom/js-late-gradient-and-object-creation.svg = TEXT
-BUGWK38106 WIN LINUX : svg/custom/js-late-gradient-creation.svg = TEXT
-BUGWK38106 WIN LINUX : svg/custom/js-late-pattern-and-object-creation.svg = TEXT
-BUGWK38106 WIN LINUX : svg/custom/js-late-pattern-creation.svg = TEXT
-BUGWK38106 WIN LINUX : svg/custom/pattern-cycle-detection.svg = TEXT
-BUGWK38106 WIN LINUX : svg/custom/pattern-deep-referencing.svg = TEXT
-BUGWK38106 WIN : svg/custom/pattern-rotate.svg = TEXT
-BUGWK38106 WIN LINUX : svg/custom/pattern-with-transformation.svg = TEXT
-BUGWK38106 WIN LINUX : svg/custom/stroke-fallback.svg = TEXT
-BUGWK38106 WIN LINUX : svg/custom/stroked-pattern.svg = TEXT
-BUGWK38106 WIN LINUX : svg/custom/use-on-symbol-inside-pattern.svg = TEXT
-BUGWK38106 WIN LINUX : svg/hixie/error/003.xml = TEXT
-BUGWK38106 WIN : svg/hixie/perf/005.xml = TEXT
-BUGWK38106 WIN : svg/hixie/perf/006.xml = TEXT
-BUGWK38106 WIN LINUX : svg/text/selection-background-color.xhtml = TEXT
-BUGWK38106 WIN LINUX : svg/text/selection-styles.xhtml = TEXT
-BUGWK38106 WIN LINUX : svg/text/text-gradient-positioning.svg = TEXT
-BUGWK38106 WIN : svg/transforms/text-with-pattern-inside-transformed-html.xhtml = TEXT
-BUGWK38106 WIN : svg/transforms/text-with-pattern-with-svg-transform.svg = TEXT
-BUGWK38106 WIN LINUX MAC : fast/backgrounds/svg-as-background-2.html = IMAGE
-BUGWK38106 WIN LINUX : svg/custom/gradient-stroke-width.svg = IMAGE
-BUGWK38106 WIN LINUX : svg/custom/js-update-gradient.svg = IMAGE
-BUGWK38106 WIN LINUX : svg/W3C-SVG-1.1/masking-mask-01-b.svg = IMAGE+TEXT
-BUGWK38106 WIN LINUX : svg/W3C-SVG-1.1/pservers-grad-05-b.svg = IMAGE+TEXT
-BUGWK38106 WIN LINUX : svg/W3C-SVG-1.1/pservers-grad-19-b.svg = IMAGE+TEXT
-BUGWK38106 WIN LINUX : svg/custom/dominant-baseline-hanging.svg = IMAGE+TEXT
-BUGWK38106 MAC : svg/custom/dominant-baseline-hanging.svg = IMAGE
-
 // Started failing at 58212
+BUGWK38108 WIN LINUX MAC : fast/backgrounds/svg-as-background-2.html = IMAGE
 BUGWK38108 MAC : fast/backgrounds/size/contain-and-cover.html = IMAGE
 
 // WebKit roll 58304:58400
