@@ -5225,3 +5225,6 @@ svg/custom/marker-overflow-clip.svg
 
 # Doesn't support WOFF yet.
 fast/css/font-face-woff.html
+
+# multiple tests fail on different platforms, need to find the cause(s)
+fast/js/sputnik

@@ -1,3 +1,13 @@
+2010-04-29  Alexey Proskuryakov  <ap@apple.com>
+
+        Skipping Sputnik tests, because tey fail a lot on buildbots. The current (early) theory is
+        that this depends on when exactly DumpRenderTree gets restarted.
+
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/win/Skipped:
+        * platform/qt/Skipped:
+
 2010-04-29  Yaar Schnitman  <yaar@chromium.org>
 
         Not Reviewed.

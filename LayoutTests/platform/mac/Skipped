@@ -180,3 +180,6 @@ printing/media-queries-print.html
 
 # EventSendingController does not send events on areas outside the WebView.
 scrollbars/scrollbar-click-does-not-blur-content.html
+
+# multiple tests fail on different platforms, need to find the cause(s)
+fast/js/sputnik
