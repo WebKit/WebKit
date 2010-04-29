@@ -1,0 +1,7 @@
+S15.5.4.7_A7
+
+TypeError: Result of expression '__FACTORY' [function indexOf() { [native code] }] is not a constructor.
+PASS 
+
+TEST COMPLETE
+

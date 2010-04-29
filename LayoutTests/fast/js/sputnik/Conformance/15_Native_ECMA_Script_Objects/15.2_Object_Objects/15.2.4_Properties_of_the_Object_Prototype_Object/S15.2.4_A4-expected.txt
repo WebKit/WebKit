@@ -1,0 +1,7 @@
+S15.2.4_A4
+
+TypeError: Result of expression 'Object.prototype' [[object Object]] is not a constructor.
+PASS 
+
+TEST COMPLETE
+

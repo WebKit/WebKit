@@ -1,0 +1,6 @@
+S12.9_A1_T7
+
+PASS SyntaxError: Invalid return statement.
+
+TEST COMPLETE
+

@@ -1,0 +1,6 @@
+S12.7_A5_T3
+
+PASS SyntaxError: Undefined label: 'LABEL_IN'.
+
+TEST COMPLETE
+

@@ -1,0 +1,6 @@
+S12.8_A5_T2
+
+PASS SyntaxError: Undefined label: 'IN_DO_FUNC'.
+
+TEST COMPLETE
+

@@ -1,0 +1,6 @@
+S12.6.4_D1
+
+FAIL SputnikError: #1: the newly added properties to be visited in the active enumeration
+
+TEST COMPLETE
+

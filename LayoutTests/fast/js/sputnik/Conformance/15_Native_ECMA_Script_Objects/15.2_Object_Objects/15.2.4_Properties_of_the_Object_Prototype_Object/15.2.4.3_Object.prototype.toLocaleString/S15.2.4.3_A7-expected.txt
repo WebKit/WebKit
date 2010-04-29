@@ -1,0 +1,7 @@
+S15.2.4.3_A7
+
+TypeError: Result of expression 'FACTORY' [function toLocaleString() { [native code] }] is not a constructor.
+PASS 
+
+TEST COMPLETE
+

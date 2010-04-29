@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 79: SyntaxError: Parse error
+S12.14_A16_T1
+
+PASS Expected parsing failure
+
+TEST COMPLETE
+

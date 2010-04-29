@@ -1,0 +1,6 @@
+S11.4.3_A3.6
+
+FAIL SputnikError: #11: typeof new RegExp() === "object". Actual: function
+
+TEST COMPLETE
+

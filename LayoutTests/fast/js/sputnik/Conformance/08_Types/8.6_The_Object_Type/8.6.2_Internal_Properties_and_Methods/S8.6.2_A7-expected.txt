@@ -1,0 +1,6 @@
+S8.6.2_A7
+
+PASS TypeError: Result of expression 'Math' [[object Math]] is not a constructor.
+
+TEST COMPLETE
+

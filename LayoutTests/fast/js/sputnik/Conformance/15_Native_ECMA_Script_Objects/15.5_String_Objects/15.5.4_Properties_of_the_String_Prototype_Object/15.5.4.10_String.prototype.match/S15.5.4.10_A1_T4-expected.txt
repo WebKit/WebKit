@@ -1,0 +1,6 @@
+S15.5.4.10_A1_T4
+
+FAIL TypeError: Result of expression '__matched' [null] is not an object.
+
+TEST COMPLETE
+

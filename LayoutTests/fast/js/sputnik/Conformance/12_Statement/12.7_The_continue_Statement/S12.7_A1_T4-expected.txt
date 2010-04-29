@@ -1,0 +1,6 @@
+S12.7_A1_T4
+
+PASS SyntaxError: Invalid continue statement.
+
+TEST COMPLETE
+

@@ -1,0 +1,6 @@
+S10.2.2_A1.1_T9
+
+FAIL SputnikError: #1: scope chain must contain same objects in the same order as the calling context
+
+TEST COMPLETE
+

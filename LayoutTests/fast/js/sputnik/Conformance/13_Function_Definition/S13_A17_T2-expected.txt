@@ -1,0 +1,7 @@
+S13_A17_T2
+
+TypeError: Result of expression '__func' [undefined] is not a function.
+PASS 
+
+TEST COMPLETE
+

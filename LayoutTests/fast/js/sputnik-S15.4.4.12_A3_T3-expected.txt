@@ -1,9 +1,0 @@
-Sputnik test S15.4.4.12_A3_T3.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

@@ -1,0 +1,6 @@
+S12.8_A8_T2
+
+PASS SyntaxError: Invalid break statement.
+
+TEST COMPLETE
+

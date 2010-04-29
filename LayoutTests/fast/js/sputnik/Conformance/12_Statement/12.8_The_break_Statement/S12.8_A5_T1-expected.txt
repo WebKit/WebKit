@@ -1,0 +1,6 @@
+S12.8_A5_T1
+
+PASS SyntaxError: Undefined label: 'LABEL_ANOTHER_LOOP'.
+
+TEST COMPLETE
+

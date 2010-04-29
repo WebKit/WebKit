@@ -1,0 +1,6 @@
+S12.8_A1_T2
+
+PASS SyntaxError: Undefined label: 'LABEL'.
+
+TEST COMPLETE
+

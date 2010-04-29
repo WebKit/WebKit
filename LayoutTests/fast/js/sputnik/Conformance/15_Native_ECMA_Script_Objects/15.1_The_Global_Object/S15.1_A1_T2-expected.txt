@@ -1,0 +1,6 @@
+S15.1_A1_T2
+
+PASS TypeError: Result of expression 'this' [[object DOMWindow]] is not a constructor.
+
+TEST COMPLETE
+

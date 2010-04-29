@@ -1,0 +1,7 @@
+S15.2.4.6_A7
+
+TypeError: Result of expression 'FACTORY' [function isPrototypeOf() { [native code] }] is not a constructor.
+PASS 
+
+TEST COMPLETE
+
