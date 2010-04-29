@@ -471,7 +471,7 @@
       Extensions to CSS 3 Media Queries
     </h1>
     <h2>
-      19 December 2008
+      29 April 2010
     </h2>
     <dl>
       <dt>
@@ -499,8 +499,7 @@
       This document introduces extensions to the <a
       href="http://www.w3.org/TR/css3-mediaqueries/">CSS 3 Media Queries</a>
       specification. It allows for media queries that can test for CSS Transformations, 
-      Animations and Transitions, and a new DOM interface for evaluating media
-      queries from script.
+      Animations and Transitions.
     </p>
 
     <!-- ======================================================================================================= -->
@@ -670,81 +669,12 @@
       6 DOM Interface
     </h2>
 
-      <dl>
-        <dt>
-          <b>Interface <i><a id = "DOM-Window" name='DOM-Window'>Window</a></i></b>
-        </dt>
-        <dd>
-          <p>
-            The following function is added to the <code>Window</code> interface.
-          </p>
-          <dl>
-
-            <dt>
-              <b>IDL Definition</b>
-            </dt>
-            <dd>
-              <div class='idl-code'>
-                <pre>
-  interface Window {
-    ...
-    boolean evaluateMediaQuery(in DOMString query);
-    ...
-  };</pre>
-              </div>
-            </dd> <!-- IDL -->
-
-            <dt>
-              <b>Methods</b>
-            </dt>
-            <dd>
-              <dl>
-                <!-- ============================================================ -->
-                <dt>
-                  <code class='method-name'><a id="DOM-Window-evaluateMediaQuery" name='DOM-Window-evaluateMediaQuery'>evaluateMediaQuery</a></code>
-                </dt>
-                <dd>
-                  <div class='method'>
-                    The <code>evaluateMediaQuery</code> method evaluates the query parameter as a 
-                    media query and returns the result.
-                    <div class='parameters'>
-                      <b>Parameters</b>
-                      <div class='paramtable'>
-                        <dl>
-                          <dt>
-                            <code class='parameter-name'>query</code> of type <code>DOMString</code>
-                          </dt>
-                          <dd>
-                            The CSS 3 Media Query to evaluate.<br>
-                          </dd>
-                        </dl>
-                      </div>
-                    </div><!-- parameters -->
-                    <div class='return-value'>
-                      <b>Return Value</b>
-                    </div>
-                     <div class='returnvalue'>
-                        <dl>
-                          <dt>
-                            <code>boolean</code>
-                          </dt>
-                          <dd>
-                            True if the query evaluates on the current media, false otherwise.<br>
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
-                    <div>
-                      <b>No Exceptions</b>
-                    </div>
-                  </div>
-                </dd>
-              </dl>
-            </dd> <!-- Methods -->
-          </dl>
-        </dd> <!-- Interface Window -->
-      </dl>
-    
+    <div class="note">
+      This section previously contained a definition for a DOM method that
+      would evaluate media query strings. This has been removed from the
+      proposal. Developers should instead use the <code>matchMedium</code>
+      method defined in the <a href="http://www.w3.org/TR/cssom-view/">CSS View</a> specification.
+    </div>
 
     
   </body>

@@ -1,3 +1,11 @@
+2010-04-29  Dean Jackson  <dino@apple.com>
+
+        Unreviewed. Make a note that we are no longer proposing
+        the evaluateMediaQuery method. Instead, we are following
+        the standard matchMedium method from CSS 3 View.
+
+        * specs/MediaQueriesExtensions.html:
+
 2010-04-18  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.  Update a label of the diagram to better match the
