@@ -125,6 +125,14 @@ void WebFrameLoaderClient::dispatchDidCancelAuthenticationChallenge(DocumentLoad
     notImplemented();
 }
 
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
+bool WebFrameLoaderClient::canAuthenticateAgainstProtectionSpace(DocumentLoader*, unsigned long identifier, const ProtectionSpace&)
+{
+    notImplemented();
+    return false;
+}
+#endif
+
 void WebFrameLoaderClient::dispatchDidReceiveResponse(DocumentLoader*, unsigned long identifier, const ResourceResponse&)
 {
     notImplemented();

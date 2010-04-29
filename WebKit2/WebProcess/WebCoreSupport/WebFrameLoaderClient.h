@@ -62,6 +62,9 @@ private:
     virtual bool shouldUseCredentialStorage(WebCore::DocumentLoader*, unsigned long identifier);
     virtual void dispatchDidReceiveAuthenticationChallenge(WebCore::DocumentLoader*, unsigned long identifier, const WebCore::AuthenticationChallenge&);
     virtual void dispatchDidCancelAuthenticationChallenge(WebCore::DocumentLoader*, unsigned long identifier, const WebCore::AuthenticationChallenge&);        
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
+    virtual bool canAuthenticateAgainstProtectionSpace(WebCore::DocumentLoader*, unsigned long identifier, const WebCore::ProtectionSpace&);
+#endif
     virtual void dispatchDidReceiveResponse(WebCore::DocumentLoader*, unsigned long identifier, const WebCore::ResourceResponse&);
     virtual void dispatchDidReceiveContentLength(WebCore::DocumentLoader*, unsigned long identifier, int lengthReceived);
     virtual void dispatchDidFinishLoading(WebCore::DocumentLoader*, unsigned long identifier);
