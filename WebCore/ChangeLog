@@ -1,3 +1,17 @@
+2010-04-28  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        <rdar://problem/7847573> Safari welcome page logs JavaScript exception during page load
+
+        The Safari welcome page runs afoul of the same-origin restriction on access to stylesheet rules
+        that was added to address <https://bugs.webkit.org/show_bug.cgi?id=20527>. To work around this we're
+        adding a temporary site-specific quirk that relaxes this restriction for the particular cross-origin
+        access that occurs on the Safari welcome page.
+
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::cssRules):
+
 2010-04-28  Mike Thole  <mthole@apple.com>
 
         Reviewed by Mark Rowe.

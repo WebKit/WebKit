@@ -28,7 +28,9 @@
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "Node.h"
+#include "Page.h"
 #include "SecurityOrigin.h"
+#include "Settings.h"
 #include "TextEncoding.h"
 #include <wtf/Deque.h>
 
@@ -137,8 +139,23 @@ int CSSStyleSheet::addRule(const String& selector, const String& style, Exceptio
 
 PassRefPtr<CSSRuleList> CSSStyleSheet::cssRules(bool omitCharsetRules)
 {
-    if (doc() && !doc()->securityOrigin()->canRequest(baseURL()))
-        return 0;
+    if (doc() && !doc()->securityOrigin()->canRequest(baseURL())) {
+
+        // The Safari welcome page runs afoul of the same-origin restriction on access to stylesheet rules
+        // that was added to address <https://bugs.webkit.org/show_bug.cgi?id=20527>. The following site-
+        // specific quirk relaxes this restriction for the particular cross-origin access that occurs on
+        // the Safari welcome page (<rdar://problem/7847573>).
+
+        Settings* settings = doc()->settings();
+        if (!settings || !settings->needsSiteSpecificQuirks())
+            return 0;
+
+        if (!equalIgnoringCase(baseURL().string(), "http://images.apple.com/safari/welcome/styles/safari.css"))
+            return 0;
+
+        if (!doc()->url().string().contains("apple.com/safari/welcome/", false))
+            return 0;
+    }
     return CSSRuleList::create(this, omitCharsetRules);
 }
 
