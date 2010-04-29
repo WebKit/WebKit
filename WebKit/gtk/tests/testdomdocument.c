@@ -29,6 +29,7 @@
 #define HTML_DOCUMENT_TITLE "<html><head><title>This is the title</title></head><body></body></html>"
 #define HTML_DOCUMENT_ELEMENTS "<html><body><ul><li>1</li><li>2</li><li>3</li></ul></body></html>"
 #define HTML_DOCUMENT_ELEMENTS_CLASS "<html><body><div class=\"test\"></div><div class=\"strange\"></div><div class=\"test\"></div></body></html>"
+#define HTML_DOCUMENT_ELEMENTS_ID "<html><body><div id=\"testok\"></div><div id=\"testbad\">first</div><div id=\"testbad\">second</div></body></html>"
 
 typedef struct {
     GtkWidget* webView;
@@ -130,6 +131,26 @@ static void test_dom_document_get_elements_by_class_name(DomDocumentFixture* fix
     }
 }
 
+static void test_dom_document_get_element_by_id(DomDocumentFixture* fixture, gconstpointer data)
+{
+    g_assert(fixture);
+    WebKitWebView* view = (WebKitWebView*)fixture->webView;
+    g_assert(view);
+    WebKitDOMDocument* document = webkit_web_view_get_dom_document(view);
+    g_assert(document);
+    WebKitDOMElement* element = webkit_dom_document_get_element_by_id(document, (gchar*)"testok");
+    g_assert(element);
+    element = webkit_dom_document_get_element_by_id(document, (gchar*)"this-id-does-not-exist");
+    g_assert(element == 0);
+    /* The DOM spec says the return value is undefined when there's
+     * more than one element with the same id; in our case the first
+     * one will be returned */
+    element = webkit_dom_document_get_element_by_id(document, (gchar*)"testbad");
+    g_assert(element);
+    WebKitDOMHTMLElement* htmlElement = (WebKitDOMHTMLElement*)element;
+    g_assert_cmpstr(webkit_dom_html_element_get_inner_text(htmlElement), ==, (gchar*)"first");
+}
+
 int main(int argc, char** argv)
 {
     if (!g_thread_supported())
@@ -155,6 +176,12 @@ int main(int argc, char** argv)
                DomDocumentFixture, HTML_DOCUMENT_ELEMENTS_CLASS,
                dom_document_fixture_setup,
                test_dom_document_get_elements_by_class_name,
+               dom_document_fixture_teardown);
+
+    g_test_add("/webkit/domdocument/test_get_element_by_id",
+               DomDocumentFixture, HTML_DOCUMENT_ELEMENTS_ID,
+               dom_document_fixture_setup,
+               test_dom_document_get_element_by_id,
                dom_document_fixture_teardown);
 
     return g_test_run();
