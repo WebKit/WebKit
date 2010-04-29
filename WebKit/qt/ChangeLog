@@ -1,3 +1,25 @@
+2010-04-29  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Get rid of forceLayout() on FrameView
+        https://bugs.webkit.org/show_bug.cgi?id=38199
+
+        The function FrameView::forceLayout() is missleading
+        because it does not actually force the layout, the call is
+        equivalent to layout().
+
+        This patch replace the call to forceLayout() by layout() in Qt
+        to avoid the misunderstanding/improve readability.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::dynamicPropertyChangeEvent):
+        (QWebPage::setPreferredContentsSize):
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::setMediaType):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::forceLayout):
+
 2010-04-29  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Simon Hausmann.

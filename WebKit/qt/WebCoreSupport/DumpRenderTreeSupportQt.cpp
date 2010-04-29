@@ -347,7 +347,7 @@ void DumpRenderTreeSupportQt::setMediaType(QWebFrame* frame, const QString& type
     WebCore::FrameView* view = coreFrame->view();
     view->setMediaType(type);
     coreFrame->document()->updateStyleSelector();
-    view->forceLayout();
+    view->layout();
 }
 
 void DumpRenderTreeSupportQt::setSmartInsertDeleteEnabled(QWebPage* page, bool enabled)
