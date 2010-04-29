@@ -218,7 +218,7 @@ END
     # Header keys to check
     svnConvertedText =>  <<'END',
 Index: Makefile
-===================================================================
+index f5d5e74..3b6aa92 100644
 --- Makefile
 +++ Makefile
 @@ -1,1 1,1 @@ public:
@@ -246,7 +246,7 @@ END
     # Header keys to check
     svnConvertedText =>  <<'END',
 Index: Makefile
-===================================================================
+index f5d5e74..3b6aa92 100644
 --- Makefile
 +++ Makefile
 @@ -1,1 1,1 @@ public:
@@ -288,19 +288,20 @@ sub testParseDiffAssertionArgs($)
     my $testNameStart = "parseDiff(): [$testCaseHashRef->{diffName}] ";
 
     my @assertionArgsArrayRefs; # Return value
-    my @assertionArgs;
+    my $assertionArgsRef;
+
     foreach my $diffHashRefKey (@diffHashRefKeys) {
         my $testName = "${testNameStart}key=\"$diffHashRefKey\"";
-        @assertionArgs = ($diffHashRef->{$diffHashRefKey}, $testCaseHashRef->{$diffHashRefKey}, $testName);
-        push(@assertionArgsArrayRefs, \@assertionArgs);
+        $assertionArgsRef = [$diffHashRef->{$diffHashRefKey}, $testCaseHashRef->{$diffHashRefKey}, $testName];
+        push(@assertionArgsArrayRefs, $assertionArgsRef);
     }
 
-    @assertionArgs = ($lastReadLine, $testCaseHashRef->{lastReadLine}, "${testNameStart}lastReadLine");
-    push(@assertionArgsArrayRefs, \@assertionArgs);
+    $assertionArgsRef = [$lastReadLine, $testCaseHashRef->{lastReadLine}, "${testNameStart}lastReadLine"];
+    push(@assertionArgsArrayRefs, $assertionArgsRef);
 
     my $nextLine = <$fileHandle>;
-    @assertionArgs = ($nextLine, $testCaseHashRef->{nextLine}, "${testNameStart}nextLine");
-    push(@assertionArgsArrayRefs, \@assertionArgs);
+    $assertionArgsRef = [$nextLine, $testCaseHashRef->{nextLine}, "${testNameStart}nextLine"];
+    push(@assertionArgsArrayRefs, $assertionArgsRef);
 
     return @assertionArgsArrayRefs;
 }

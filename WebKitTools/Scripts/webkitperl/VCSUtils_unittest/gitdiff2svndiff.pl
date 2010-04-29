@@ -60,7 +60,7 @@ END
 
 my $svn_patch = <<END;
 Index: WebCore/rendering/style/StyleFlexibleBoxData.h
-===================================================================
+index f5d5e74..3b6aa92 100644
 --- WebCore/rendering/style/StyleFlexibleBoxData.h
 +++ WebCore/rendering/style/StyleFlexibleBoxData.h
 @@ -47,7 +47,6 @@ public:

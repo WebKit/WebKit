@@ -362,8 +362,13 @@ sub svnStatus($)
     return $svnStatus;
 }
 
-# Convert a line of a git-formatted patch to SVN format, while
+# Convert some lines of a git-formatted patch to SVN format, while
 # preserving any end-of-line characters.
+#
+# Note that this function returns unconverted lines unchanged -- for
+# example Git-specific lines that may not have an SVN analogue.  In
+# particular, applying this function to the lines of a Git patch will not
+# necessarily result in an SVN-formatted patch.
 sub gitdiff2svndiff($)
 {
     $_ = shift @_;
@@ -371,17 +376,13 @@ sub gitdiff2svndiff($)
     if (m#^diff --git \w/(.+) \w/([^\r\n]+)#) {
         return "Index: $1$POSTMATCH";
     }
-    if (m#^index [0-9a-f]{7}\.\.[0-9a-f]{7} [0-9]{6}#) {
-        # FIXME: No need to return dividing line once parseDiffHeader() is used.
-        return "===================================================================$POSTMATCH";
-    }
     if (m#^--- \w/([^\r\n]+)#) {
         return "--- $1$POSTMATCH";
     }
     if (m#^\+\+\+ \w/([^\r\n]+)#) {
         return "+++ $1$POSTMATCH";
     }
-    return $_;
+    return $_; # Allow "unrecognized" lines to pass through.
 }
 
 # Parse the next diff header from the given file handle, and advance
@@ -406,8 +407,8 @@ sub gitdiff2svndiff($)
 #     sourceRevision: the revision number of the source. This is the same
 #                     as the revision number the file was copied from, in
 #                     the case of a file copy.
-#     svnConvertedText: the header text converted to SVN format.
-#                       Unrecognized lines are discarded.
+#     svnConvertedText: the header text with some lines converted to SVN
+#                       format.  Git-specific lines are preserved.
 #   $lastReadLine: the line last read from $fileHandle. This is the first
 #                  line after the header ending.
 sub parseDiffHeader($$)
@@ -455,13 +456,9 @@ sub parseDiffHeader($$)
                         "source revision number \"$sourceRevision\".") if ($2 != $sourceRevision);
                 }
             }
-            $_ = "=" x 67 . "$eol$_"; # Prepend dividing line ===....
         } elsif (s/^\+\+\+ \S+/+++ $indexPath/) {
             # +++
             $foundHeaderEnding = 1;
-        } else {
-            # Skip unrecognized lines.
-            next;
         }
 
         $svnConvertedText .= "$_$eol"; # Also restore end-of-line characters.
@@ -501,7 +498,8 @@ sub parseDiffHeader($$)
 #     sourceRevision: the revision number of the source. This is the same
 #                     as the revision number the file was copied from, in
 #                     the case of a file copy.
-#     svnConvertedText: the diff converted to SVN format.
+#     svnConvertedText: the diff with some lines converted to SVN format.
+#                       Git-specific lines are preserved.
 #   $lastReadLine: the line last read from $fileHandle
 sub parseDiff($$)
 {

@@ -1,3 +1,33 @@
+2010-04-28  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Daniel Bates.
+
+        Removed the dividing line (i.e. "====...") logic from the code
+        called by svn-apply and svn-unapply.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38093
+
+        The dividing line logic is unnecessary.  Removing it simplifies the
+        code and makes some subsequent changes easier.
+
+        * Scripts/VCSUtils.pm:
+          - Removed the logic in gitdiff2svndiff() to convert the git
+            "index" line to an SVN dividing line.
+          - Adjusted the logic similarly in parseDiffHeader().
+
+        * Scripts/webkitperl/VCSUtils_unittest/gitdiff2svndiff.pl:
+          - Updated the unit tests as necessary.
+
+        * Scripts/webkitperl/VCSUtils_unittest/parseDiff.pl:
+          - Updated the unit tests as necessary.
+          - Corrected an error in the unit tests whereby all elements
+            of an array were referencing the same element rather than
+            distinct elements -- causing unit test failures to be masked.
+
+        * Scripts/webkitperl/VCSUtils_unittest/parseDiffHeader.pl:
+          - Updated the unit tests as necessary.
+          - Made the same unit test correction as above for parseDiff.pl.
+
 2010-04-28  Evan Stade  <estade@chromium.org>
 
         Unreviewed.

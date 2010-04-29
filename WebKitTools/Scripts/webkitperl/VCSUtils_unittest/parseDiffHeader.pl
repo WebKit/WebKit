@@ -183,7 +183,7 @@ END
     # Header keys to check
     svnConvertedText => <<'END',
 Index: WebCore/rendering/style/StyleFlexibleBoxData.h
-===================================================================
+index f5d5e74..3b6aa92 100644
 --- WebCore/rendering/style/StyleFlexibleBoxData.h
 +++ WebCore/rendering/style/StyleFlexibleBoxData.h
 END
@@ -196,7 +196,7 @@ END
 },
 {
     # New test
-    diffName => "Git: unrecognized lines",
+    diffName => "Git: new file",
     inputText => <<'END',
 diff --git a/LayoutTests/http/tests/security/listener/xss-inactive-closure.html b/LayoutTests/http/tests/security/listener/xss-inactive-closure.html
 new file mode 100644
@@ -209,7 +209,8 @@ END
     # Header keys to check
     svnConvertedText => <<'END',
 Index: LayoutTests/http/tests/security/listener/xss-inactive-closure.html
-===================================================================
+new file mode 100644
+index 0000000..3c9f114
 --- LayoutTests/http/tests/security/listener/xss-inactive-closure.html
 +++ LayoutTests/http/tests/security/listener/xss-inactive-closure.html
 END
@@ -247,19 +248,20 @@ sub testParseDiffHeaderAssertionArgs($)
     my $testNameStart = "parseDiffHeader(): [$testCaseHashRef->{diffName}] ";
 
     my @assertionArgsArrayRefs; # Return value
-    my @assertionArgs;
+    my $assertionArgsRef;
+
     foreach my $diffHeaderHashRefKey (@diffHeaderHashRefKeys) {
         my $testName = "${testNameStart}key=\"$diffHeaderHashRefKey\"";
-        @assertionArgs = ($headerHashRef->{$diffHeaderHashRefKey}, $testCaseHashRef->{$diffHeaderHashRefKey}, $testName);
-        push(@assertionArgsArrayRefs, \@assertionArgs);
+        $assertionArgsRef = [$headerHashRef->{$diffHeaderHashRefKey}, $testCaseHashRef->{$diffHeaderHashRefKey}, $testName];
+        push(@assertionArgsArrayRefs, $assertionArgsRef);
     }
 
-    @assertionArgs = ($lastReadLine, $testCaseHashRef->{lastReadLine}, "${testNameStart}lastReadLine");
-    push(@assertionArgsArrayRefs, \@assertionArgs);
+    $assertionArgsRef = [$lastReadLine, $testCaseHashRef->{lastReadLine}, "${testNameStart}lastReadLine"];
+    push(@assertionArgsArrayRefs, $assertionArgsRef);
 
     my $nextLine = <$fileHandle>;
-    @assertionArgs = ($nextLine, $testCaseHashRef->{nextLine}, "${testNameStart}nextLine");
-    push(@assertionArgsArrayRefs, \@assertionArgs);
+    $assertionArgsRef = [$nextLine, $testCaseHashRef->{nextLine}, "${testNameStart}nextLine"];
+    push(@assertionArgsArrayRefs, $assertionArgsRef);
 
     return @assertionArgsArrayRefs;
 }
