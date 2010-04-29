@@ -1,3 +1,18 @@
+2010-04-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        First part of
+        https://bugs.webkit.org/show_bug.cgi?id=20784
+        move npapi.h to C99 integer types.
+
+        Add nptypes.h to the build.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/npapi.h:
+        * bridge/npruntime.h:
+        * bridge/nptypes.h: Added.
+
 2010-04-29  Xan Lopez  <xlopez@igalia.com>
 
         Rubber-stamped by Adam Barth.

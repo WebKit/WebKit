@@ -185,6 +185,7 @@ all : \
     $(PUBLIC_HEADERS_DIR)/npapi.h \
     $(PUBLIC_HEADERS_DIR)/npfunctions.h \
     $(PUBLIC_HEADERS_DIR)/npruntime.h \
+    $(PUBLIC_HEADERS_DIR)/nptypes.h \
 #
 
 ifeq ($(findstring ENABLE_SVG_DOM_OBJC_BINDINGS,$(FEATURE_DEFINES)), ENABLE_SVG_DOM_OBJC_BINDINGS)

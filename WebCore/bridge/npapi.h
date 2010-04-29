@@ -43,6 +43,8 @@
 #ifndef _NPAPI_H_
 #define _NPAPI_H_
 
+#include "nptypes.h"
+
 #ifdef INCLUDE_JAVA
 #include "jri.h"                /* Java Runtime Interface */
 #else
