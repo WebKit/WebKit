@@ -1,3 +1,31 @@
+2010-04-29  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        REGRESSION: gradient background of LayoutTests/fast/backgrounds/resources/balloon.svg fails to draw
+        https://bugs.webkit.org/show_bug.cgi?id=38307
+
+        balloon.svg is broken, it contains a <def> section, instead of a <defs> section.
+        We now properly ignored the subtree. s/def/defs/ and the testcase works again.
+
+        fast/backgrounds/svg-as-background-2.html even properly draws the gradient background instead of pure red color.
+        Combined with Simons SVGImage repaint fixes, we have a nice progression in this area.
+
+        Updated some fast/*expected.png files, that showed a 0.01% difference on my system. Probably a CG difference,
+        I can now run those tests with --tolerance 0 without a problem.
+
+        * fast/backgrounds/resources/balloon.svg: s/def/defs/
+        * fast/backgrounds/size/contain-and-cover-expected.checksum: Updated for marginal differences.
+        * fast/backgrounds/size/contain-and-cover-expected.png: Ditto.
+        * platform/mac/fast/backgrounds/svg-as-background-2-expected.checksum: Huge update, no more red, but a nice gradient.
+        * platform/mac/fast/backgrounds/svg-as-background-2-expected.png: Ditto.
+        * platform/mac/fast/backgrounds/svg-as-background-6-expected.checksum: Updated for marginal differences.
+        * platform/mac/fast/backgrounds/svg-as-background-6-expected.png: Ditto.
+        * platform/mac/fast/images/svg-as-tiled-background-expected.checksum: Reflect the current state: it's green now, no more red.
+        * platform/mac/fast/images/svg-as-tiled-background-expected.png: Ditto.
+        * platform/mac/fast/images/svg-background-partial-redraw-expected.checksum: Updated for marginal differences.
+        * platform/mac/fast/images/svg-background-partial-redraw-expected.png: Ditto.
+
 2010-04-29  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed, test expectations update.

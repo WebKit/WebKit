@@ -180,7 +180,7 @@ function color(xr,xg,xb){
 }
 	//]]>
 </script>
-<def>
+<defs>
 <path id="Q" stroke="black" stroke-width="3"/>
 <linearGradient id="backsky" x1="0%" y1="0%" x2="0%" y2="100%">
 	<stop offset="0" stop-color="#888"/>
@@ -219,7 +219,7 @@ function color(xr,xg,xb){
 	<stop offset=".70" stop-color="#c86"/>
 	<stop offset=".90"  stop-color="#bc7"/>
 </linearGradient> 
-</def>
+</defs>
 <rect  height="100%" width="100%" opacity="1" fill="url(#backsky)"/>
 
 <path id="peaks2" d="M 0 500 400 400 800 500 z" fill="url(#peak2)" />
