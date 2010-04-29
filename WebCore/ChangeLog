@@ -1,3 +1,29 @@
+2010-04-25  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Clicking a scrollbar blurs the currently focused element
+        https://bugs.webkit.org/show_bug.cgi?id=16809
+
+        WebKit ports that do not use native (platform) widgets for rendering the scrollbars
+        are currently mismatching a common behaviour of other browser vendors (including
+        Firefox and Opera): clicking on a frame scrollbar *should not* steal focus from content.
+        WebKit browsers based ports that do use WebCore for handling scrollbars, like QtWebKit for
+        instance, can observe the opposite behaviour.
+
+        Patch fixes this behaviour by checking if current MouseDown event targets a frame scrollbar.
+        If that is the case, it bails out and do not change focus behavior at all.
+
+        It is important to note that the given way this is implemented by this patch, non-frame
+        scrollbars (e.g. a vertical scrollbar of an overflowed textareas or divs) will keep working
+        in the same way as it works currently.
+
+        Tests: scrollbars/scrollbar-click-does-not-blur-content.html
+               scrollbars/scrollbar-iframe-click-does-not-blur-content.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchMouseEvent):
+
 2010-04-28  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Maciej Stachowiak.

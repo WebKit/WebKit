@@ -1,3 +1,16 @@
+2010-04-25  Antonio Gomes  <tonikitoo@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Clicking a scrollbar blurs the currently focused element
+        https://bugs.webkit.org/show_bug.cgi?id=16809
+
+        * scrollbars/resources/scrollable-iframe-with-input-field.html: Added.
+        * scrollbars/scrollbar-click-does-not-blur-content-expected.txt:
+        * scrollbars/scrollbar-click-does-not-blur-content.html: Added.
+        * scrollbars/scrollbar-iframe-click-does-not-blur-content-expected.txt:
+        * scrollbars/scrollbar-iframe-click-does-not-blur-content.html: Added.
+
 2010-04-28  Martin Robinson  <mrobinson@webkit.org>
 
         Reviewed by Gustavo Noronha.

@@ -1803,8 +1803,15 @@ bool EventHandler::dispatchMouseEvent(const AtomicString& eventType, Node* targe
 
     if (m_nodeUnderMouse)
         swallowEvent = m_nodeUnderMouse->dispatchMouseEvent(mouseEvent, eventType, clickCount);
-    
+
     if (!swallowEvent && eventType == eventNames().mousedownEvent) {
+
+        // If clicking on a frame scrollbar, do not mess up with content focus.
+        if (FrameView* view = m_frame->view()) {
+            if (view->scrollbarAtPoint(mouseEvent.pos()))
+                return false;
+        }
+
         // The layout needs to be up to date to determine if an element is focusable.
         m_frame->document()->updateLayoutIgnorePendingStylesheets();
 

@@ -5998,3 +5998,6 @@ editing/pasteboard/copy-backslash-with-euc.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=37914
 fast/frames/frame-crash-with-page-cache.html
+
+# document.body.clientWidth includes vertical scrollbar size.
+scrollbars/scrollbar-click-does-not-blur-content.html
