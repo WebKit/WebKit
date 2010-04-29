@@ -1,3 +1,14 @@
+2010-04-29  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Simon Hausmann.
+
+        [WINCE] Export g_stackBase with JS_EXPORTDATA
+        https://bugs.webkit.org/show_bug.cgi?id=37437
+
+        Export g_stackBase with JS_EXPORTDATA as it is used by SharedTimerWince.cpp.
+
+        * runtime/Collector.cpp:
+
 2010-04-28  Oliver Hunt  <oliver@apple.com>
 
         Do an unordered compare so that we don't treat NaN incorrectly.

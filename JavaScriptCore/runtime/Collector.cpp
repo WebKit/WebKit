@@ -449,7 +449,7 @@ void Heap::shrinkBlocks(size_t neededBlocks)
 }
 
 #if OS(WINCE)
-void* g_stackBase = 0;
+JS_EXPORTDATA void* g_stackBase = 0;
 
 inline bool isPageWritable(void* page)
 {
