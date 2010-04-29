@@ -110,7 +110,7 @@ var objectsToTest = [
     [ "document", "allow custom" ],
     [ "document.body", "allow custom" ],
     [ "document.body.attributes", "allow custom" ], // NamedNodeMap
-    [ "document.getElementsByTagName('body')" ], // NodeList
+    [ "document.getElementsByTagName('body')", "allow custom" ], // NodeList
     [ "document.getElementsByTagName('canvas')[0].getContext('2d')", "allow custom" ], // CanvasRenderingContext2D
     [ "document.getElementsByTagName('canvas')[0].getContext('2d').createLinearGradient(0, 0, 0, 0)" ], // CanvasGradient
     [ "document.getElementsByTagName('canvas')[0].getContext('2d').createPattern(new Image(), 'no-repeat')" ], // CanvasPattern

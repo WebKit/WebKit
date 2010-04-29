@@ -98,6 +98,10 @@
 #include "HTMLNoScriptElement.h"
 #endif
 
+#if USE(JSC)
+#include <runtime/JSGlobalData.h>
+#endif
+
 #define DUMP_NODE_STATISTICS 0
 
 using namespace std;
@@ -977,6 +981,39 @@ void Node::notifyNodeListsChildrenChanged()
         n->notifyLocalNodeListsChildrenChanged();
 }
 
+void Node::removeCachedClassNodeList(ClassNodeList* list, const String& className)
+{
+    ASSERT(rareData());
+    ASSERT(rareData()->nodeLists());
+    ASSERT_UNUSED(list, list->hasOwnCaches());
+
+    NodeListsNodeData* data = rareData()->nodeLists();
+    ASSERT_UNUSED(list, list == data->m_classNodeListCache.get(className));
+    data->m_classNodeListCache.remove(className);
+}
+
+void Node::removeCachedNameNodeList(NameNodeList* list, const String& nodeName)
+{
+    ASSERT(rareData());
+    ASSERT(rareData()->nodeLists());
+    ASSERT_UNUSED(list, list->hasOwnCaches());
+
+    NodeListsNodeData* data = rareData()->nodeLists();
+    ASSERT_UNUSED(list, list == data->m_nameNodeListCache.get(nodeName));
+    data->m_nameNodeListCache.remove(nodeName);
+}
+
+void Node::removeCachedTagNodeList(TagNodeList* list, const QualifiedName& name)
+{
+    ASSERT(rareData());
+    ASSERT(rareData()->nodeLists());
+    ASSERT_UNUSED(list, list->hasOwnCaches());
+
+    NodeListsNodeData* data = rareData()->nodeLists();
+    ASSERT_UNUSED(list, list == data->m_tagNodeListCache.get(name));
+    data->m_tagNodeListCache.remove(name);
+}
+
 Node *Node::traverseNextNode(const Node *stayWithin) const
 {
     if (firstChild())
@@ -1607,11 +1644,13 @@ PassRefPtr<NodeList> Node::getElementsByTagNameNS(const AtomicString& namespaceU
     
     AtomicString localNameAtom = name;
         
-    pair<NodeListsNodeData::TagCacheMap::iterator, bool> result = data->nodeLists()->m_tagNodeListCaches.add(QualifiedName(nullAtom, localNameAtom, namespaceURI), 0);
-    if (result.second)
-        result.first->second = DynamicNodeList::Caches::create();
+    pair<NodeListsNodeData::TagNodeListCache::iterator, bool> result = data->nodeLists()->m_tagNodeListCache.add(QualifiedName(nullAtom, localNameAtom, namespaceURI), 0);
+    if (!result.second)
+        return PassRefPtr<TagNodeList>(result.first->second);
     
-    return TagNodeList::create(this, namespaceURI.isEmpty() ? nullAtom : namespaceURI, localNameAtom, result.first->second.get());
+    RefPtr<TagNodeList> list = TagNodeList::create(this, namespaceURI.isEmpty() ? nullAtom : namespaceURI, localNameAtom);
+    result.first->second = list.get();
+    return list.release();
 }
 
 PassRefPtr<NodeList> Node::getElementsByName(const String& elementName)
@@ -1622,11 +1661,13 @@ PassRefPtr<NodeList> Node::getElementsByName(const String& elementName)
         document()->addNodeListCache();
     }
 
-    pair<NodeListsNodeData::CacheMap::iterator, bool> result = data->nodeLists()->m_nameNodeListCaches.add(elementName, 0);
-    if (result.second)
-        result.first->second = DynamicNodeList::Caches::create();
-    
-    return NameNodeList::create(this, elementName, result.first->second.get());
+    pair<NodeListsNodeData::NameNodeListCache::iterator, bool> result = data->nodeLists()->m_nameNodeListCache.add(elementName, 0);
+    if (!result.second)
+        return PassRefPtr<NodeList>(result.first->second);
+
+    RefPtr<NameNodeList> list = NameNodeList::create(this, elementName);
+    result.first->second = list.get();
+    return list.release();
 }
 
 PassRefPtr<NodeList> Node::getElementsByClassName(const String& classNames)
@@ -1637,11 +1678,13 @@ PassRefPtr<NodeList> Node::getElementsByClassName(const String& classNames)
         document()->addNodeListCache();
     }
 
-    pair<NodeListsNodeData::CacheMap::iterator, bool> result = data->nodeLists()->m_classNodeListCaches.add(classNames, 0);
-    if (result.second)
-        result.first->second = DynamicNodeList::Caches::create();
-    
-    return ClassNodeList::create(this, classNames, result.first->second.get());
+    pair<NodeListsNodeData::ClassNodeListCache::iterator, bool> result = data->nodeLists()->m_classNodeListCache.add(classNames, 0);
+    if (!result.second)
+        return PassRefPtr<NodeList>(result.first->second);
+
+    RefPtr<ClassNodeList> list = ClassNodeList::create(this, classNames);
+    result.first->second = list.get();
+    return list.release();
 }
 
 PassRefPtr<Element> Node::querySelector(const String& selectors, ExceptionCode& ec)
@@ -2247,21 +2290,21 @@ void Node::formatForDebugger(char* buffer, unsigned length) const
 void NodeListsNodeData::invalidateCaches()
 {
     m_childNodeListCaches->reset();
-    TagCacheMap::const_iterator tagCachesEnd = m_tagNodeListCaches.end();
-    for (TagCacheMap::const_iterator it = m_tagNodeListCaches.begin(); it != tagCachesEnd; ++it)
-        it->second->reset();
+    TagNodeListCache::const_iterator tagCacheEnd = m_tagNodeListCache.end();
+    for (TagNodeListCache::const_iterator it = m_tagNodeListCache.begin(); it != tagCacheEnd; ++it)
+        it->second->invalidateCache();
     invalidateCachesThatDependOnAttributes();
 }
 
 void NodeListsNodeData::invalidateCachesThatDependOnAttributes()
 {
-    CacheMap::iterator classCachesEnd = m_classNodeListCaches.end();
-    for (CacheMap::iterator it = m_classNodeListCaches.begin(); it != classCachesEnd; ++it)
-        it->second->reset();
+    ClassNodeListCache::iterator classCacheEnd = m_classNodeListCache.end();
+    for (ClassNodeListCache::iterator it = m_classNodeListCache.begin(); it != classCacheEnd; ++it)
+        it->second->invalidateCache();
 
-    CacheMap::iterator nameCachesEnd = m_nameNodeListCaches.end();
-    for (CacheMap::iterator it = m_nameNodeListCaches.begin(); it != nameCachesEnd; ++it)
-        it->second->reset();
+    NameNodeListCache::iterator nameCacheEnd = m_nameNodeListCache.end();
+    for (NameNodeListCache::iterator it = m_nameNodeListCache.begin(); it != nameCacheEnd; ++it)
+        it->second->invalidateCache();
 }
 
 bool NodeListsNodeData::isEmpty() const
@@ -2272,20 +2315,20 @@ bool NodeListsNodeData::isEmpty() const
     if (m_childNodeListCaches->refCount())
         return false;
     
-    TagCacheMap::const_iterator tagCachesEnd = m_tagNodeListCaches.end();
-    for (TagCacheMap::const_iterator it = m_tagNodeListCaches.begin(); it != tagCachesEnd; ++it) {
+    TagNodeListCache::const_iterator tagCacheEnd = m_tagNodeListCache.end();
+    for (TagNodeListCache::const_iterator it = m_tagNodeListCache.begin(); it != tagCacheEnd; ++it) {
         if (it->second->refCount())
             return false;
     }
 
-    CacheMap::const_iterator classCachesEnd = m_classNodeListCaches.end();
-    for (CacheMap::const_iterator it = m_classNodeListCaches.begin(); it != classCachesEnd; ++it) {
+    ClassNodeListCache::const_iterator classCacheEnd = m_classNodeListCache.end();
+    for (ClassNodeListCache::const_iterator it = m_classNodeListCache.begin(); it != classCacheEnd; ++it) {
         if (it->second->refCount())
             return false;
     }
 
-    CacheMap::const_iterator nameCachesEnd = m_nameNodeListCaches.end();
-    for (CacheMap::const_iterator it = m_nameNodeListCaches.begin(); it != nameCachesEnd; ++it) {
+    NameNodeListCache::const_iterator nameCacheEnd = m_nameNodeListCache.end();
+    for (NameNodeListCache::const_iterator it = m_nameNodeListCache.begin(); it != nameCacheEnd; ++it) {
         if (it->second->refCount())
             return false;
     }
@@ -2511,6 +2554,28 @@ EventTargetData* Node::ensureEventTargetData()
 {
     return ensureRareData()->ensureEventTargetData();
 }
+
+#if USE(JSC)
+
+template <class NodeListMap>
+void markNodeLists(const NodeListMap& map, JSC::MarkStack& markStack, JSC::JSGlobalData& globalData)
+{
+    for (typename NodeListMap::const_iterator it = map.begin(); it != map.end(); ++it)
+        markDOMObjectWrapper(markStack, globalData, it->second);
+}
+
+void Node::markCachedNodeListsSlow(JSC::MarkStack& markStack, JSC::JSGlobalData& globalData)
+{
+    NodeListsNodeData* nodeLists = rareData()->nodeLists();
+    if (!nodeLists)
+        return;
+
+    markNodeLists(nodeLists->m_classNodeListCache, markStack, globalData);
+    markNodeLists(nodeLists->m_nameNodeListCache, markStack, globalData);
+    markNodeLists(nodeLists->m_tagNodeListCache, markStack, globalData);
+}
+
+#endif
 
 void Node::handleLocalEvents(Event* event)
 {

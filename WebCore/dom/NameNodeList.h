@@ -34,13 +34,15 @@ namespace WebCore {
     // NodeList which lists all Nodes in a Element with a given "name" attribute
     class NameNodeList : public DynamicNodeList {
     public:
-        static PassRefPtr<NameNodeList> create(PassRefPtr<Node> rootNode, const String& name, Caches* caches)
+        static PassRefPtr<NameNodeList> create(PassRefPtr<Node> rootNode, const String& name)
         {
-            return adoptRef(new NameNodeList(rootNode, name, caches));
+            return adoptRef(new NameNodeList(rootNode, name));
         }
 
+        virtual ~NameNodeList();
+
     private:
-        NameNodeList(PassRefPtr<Node> rootNode, const String& name, Caches*);
+        NameNodeList(PassRefPtr<Node> rootNode, const String& name);
 
         virtual bool nodeMatches(Element*) const;
 

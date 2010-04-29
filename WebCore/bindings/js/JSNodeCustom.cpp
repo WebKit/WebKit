@@ -179,6 +179,7 @@ void JSNode::markChildren(MarkStack& markStack)
 
     Node* node = m_impl.get();
     node->markJSEventListeners(markStack);
+    node->markCachedNodeLists(markStack, *Heap::heap(this)->globalData());
 
     // Nodes in the document are kept alive by JSDocument::mark, so, if we're in
     // the document, we need to mark the document, but we don't need to explicitly

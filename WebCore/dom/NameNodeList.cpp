@@ -31,11 +31,16 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-NameNodeList::NameNodeList(PassRefPtr<Node> rootNode, const String& name, DynamicNodeList::Caches* caches)
-    : DynamicNodeList(rootNode, caches)
+NameNodeList::NameNodeList(PassRefPtr<Node> rootNode, const String& name)
+    : DynamicNodeList(rootNode)
     , m_nodeName(name)
 {
 }
+
+NameNodeList::~NameNodeList()
+{
+    m_rootNode->removeCachedNameNodeList(this, m_nodeName);
+} 
 
 bool NameNodeList::nodeMatches(Element* testNode) const
 {

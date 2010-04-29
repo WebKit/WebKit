@@ -32,10 +32,20 @@
 #include "TreeShared.h"
 #include <wtf/ListHashSet.h>
 
+#if USE(JSC)
+namespace JSC {
+
+    class JSGlobalData;
+    class MarkStack;
+
+}
+#endif
+
 namespace WebCore {
 
 class AtomicString;
 class Attribute;
+class ClassNodeList;
 class ContainerNode;
 class Document;
 class DynamicNodeList;
@@ -48,6 +58,7 @@ class IntRect;
 class KeyboardEvent;
 class NSResolver;
 class NamedNodeMap;
+class NameNodeList;
 class NodeList;
 class NodeRareData;
 class PlatformKeyboardEvent;
@@ -61,6 +72,7 @@ class RenderBoxModelObject;
 class RenderObject;
 class RenderStyle;
 class StringBuilder;
+class TagNodeList;
 
 typedef int ExceptionCode;
 
@@ -502,6 +514,9 @@ public:
     void notifyLocalNodeListsChildrenChanged();
     void notifyNodeListsAttributeChanged();
     void notifyLocalNodeListsAttributeChanged();
+    void removeCachedClassNodeList(ClassNodeList*, const String&);
+    void removeCachedNameNodeList(NameNodeList*, const String&);
+    void removeCachedTagNodeList(TagNodeList*, const QualifiedName&);
     
     PassRefPtr<NodeList> getElementsByTagName(const String&);
     PassRefPtr<NodeList> getElementsByTagNameNS(const AtomicString& namespaceURI, const String& localName);
@@ -564,6 +579,17 @@ public:
     virtual EventTargetData* eventTargetData();
     virtual EventTargetData* ensureEventTargetData();
 
+#if USE(JSC)
+    void markCachedNodeLists(JSC::MarkStack& markStack, JSC::JSGlobalData& globalData)
+    {
+        // NodeLists may be present.  If so, they need to be marked.
+        if (!hasRareData())
+            return;
+
+        markCachedNodeListsSlow(markStack, globalData);
+    }
+#endif
+
 protected:
     // CreateElementZeroRefCount is deprecated and can be removed once we convert all element
     // classes to start with a reference count of 1.
@@ -585,6 +611,10 @@ protected:
     NodeRareData* ensureRareData();
 
 private:
+#if USE(JSC)
+    void markCachedNodeListsSlow(JSC::MarkStack&, JSC::JSGlobalData&);
+#endif
+
     static bool initialRefCount(ConstructionType);
     static bool isContainer(ConstructionType);
     static bool isElement(ConstructionType);

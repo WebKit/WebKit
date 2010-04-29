@@ -22,11 +22,14 @@
 #ifndef NodeRareData_h
 #define NodeRareData_h
 
+#include "ClassNodeList.h"
 #include "DynamicNodeList.h"
 #include "EventListener.h"
+#include "NameNodeList.h"
+#include "QualifiedName.h"
 #include "RegisteredEventListener.h"
 #include "StringHash.h"
-#include "QualifiedName.h"
+#include "TagNodeList.h"
 #include <wtf/HashSet.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/OwnPtr.h>
@@ -39,12 +42,14 @@ struct NodeListsNodeData : Noncopyable {
     
     RefPtr<DynamicNodeList::Caches> m_childNodeListCaches;
     
-    typedef HashMap<String, RefPtr<DynamicNodeList::Caches> > CacheMap;
-    CacheMap m_classNodeListCaches;
-    CacheMap m_nameNodeListCaches;
+    typedef HashMap<String, ClassNodeList*> ClassNodeListCache;
+    ClassNodeListCache m_classNodeListCache;
+
+    typedef HashMap<String, NameNodeList*> NameNodeListCache;
+    NameNodeListCache m_nameNodeListCache;
     
-    typedef HashMap<QualifiedName, RefPtr<DynamicNodeList::Caches> > TagCacheMap;
-    TagCacheMap m_tagNodeListCaches;
+    typedef HashMap<QualifiedName, TagNodeList*> TagNodeListCache;
+    TagNodeListCache m_tagNodeListCache;
 
     static PassOwnPtr<NodeListsNodeData> create()
     {

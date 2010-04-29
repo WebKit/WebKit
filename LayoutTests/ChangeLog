@@ -1,3 +1,15 @@
+2010-04-29  Anton Muhin  <antonm@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Let's cache nodelists instead of DynamicNodeList::Caches
+        https://bugs.webkit.org/show_bug.cgi?id=33696
+
+        * fast/dom/Element/node-list-identity-expected.txt: Added to verify that node lists are indeed cached
+        * fast/dom/Element/node-list-identity.html: Added to verify that node lists are indeed cached
+        * fast/dom/gc-9-expected.txt: Updated to follow changed semantics of caching
+        * fast/dom/gc-9.html: Updated to follow changed semantics of caching
+
 2010-04-29  Marcus Bulach  <bulach@chromium.org>
 
         Reviewed by Jeremy Orlow.

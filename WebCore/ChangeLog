@@ -1,3 +1,45 @@
+2010-04-29  Anton Muhin  <antonm@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Let's cache nodelists instead of DynamicNodeList::Caches
+        https://bugs.webkit.org/show_bug.cgi?id=33696
+
+        Test: fast/dom/Element/node-list-identity.html
+
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::JSNode::markChildren): Mark all cached node lists as well
+        * dom/ClassNodeList.cpp:
+        (WebCore::ClassNodeList::ClassNodeList): Don't need DynamicNodeList::Caches argument any more
+        (WebCore::ClassNodeList::~ClassNodeList): Remove from the cache
+        * dom/ClassNodeList.h: Added a field with original class names to be used as a key for removal from the cache
+        (WebCore::ClassNodeList::create): Don't need DynamicNodeList::Caches argument any more
+        * dom/NameNodeList.cpp:
+        (WebCore::NameNodeList::NameNodeList): Don't need DynamicNodeList::Caches argument any more
+        (WebCore::NameNodeList::~NameNodeList): Remove from the cache
+        * dom/NameNodeList.h:
+        (WebCore::NameNodeList::create): Don't need DynamicNodeList::Caches argument any more
+        * dom/Node.cpp:
+        (WebCore::Node::removeCachedClassNodeList): Remove ClassNodeList from the cache
+        (WebCore::Node::removeCachedNameNodeList): Remove NameNodeList from the cache
+        (WebCore::Node::removeCachedTagNodeList): Remove TagNodeList from the cache
+        (WebCore::Node::getElementsByTagNameNS): Switch to caching node lists themselves, not the data
+        (WebCore::Node::getElementsByName): Switch to caching node lists themselves, not the data
+        (WebCore::Node::getElementsByClassName): Switch to caching node lists themselves, not the data
+        (WebCore::NodeListsNodeData::invalidateCaches): Switch to caching node lists themselves, not the data
+        (WebCore::NodeListsNodeData::invalidateCachesThatDependOnAttributes): Switch to caching node lists themselves, not the data
+        (WebCore::NodeListsNodeData::isEmpty): Switch to caching node lists themselves, not the data
+        (WebCore::markNodeLists): Helper to mark all the node lists in the cache
+        (WebCore::Node::markCachedNodeListsSlow): Mark all the cached node lists if any could be present
+        * dom/Node.h:
+        (WebCore::Node::markCachedNodeLists): Fast-path marking of cached node lists---bails out if there is no rare data
+        * dom/NodeRareData.h: Changed type of caches to hold raw pointers to node lists, not RefPtr's to data
+        * dom/TagNodeList.cpp:
+        (WebCore::TagNodeList::TagNodeList): Don't need DynamicNodeList::Caches argument any more
+        (WebCore::TagNodeList::~TagNodeList): Remove from the cache
+        * dom/TagNodeList.h:
+        (WebCore::TagNodeList::create): Don't need DynamicNodeList::Caches argument any more
+
 2010-04-29  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
