@@ -1,5 +1,14 @@
 2010-04-29  Yaar Schnitman  <yaar@chromium.org>
 
+        Not Reviewed.
+
+        Skip fast/images/svg-nested.html which crashes chromium.py
+        https://bugs.webkit.org/show_bug.cgi?id=38351
+
+        * platform/chromium/test_expectations.txt:
+
+2010-04-29  Yaar Schnitman  <yaar@chromium.org>
+
        Not reviewed.
 
         Adding missing expectations, skipping tests

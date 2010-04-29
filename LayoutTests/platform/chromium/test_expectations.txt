@@ -2796,5 +2796,5 @@ BUG42760 LINUX : fast/text/international/bold-bengali.html = FAIL
 BUGUKAI WIN MAC SKIP : fast/text/international/bold-bengali.html = FAIL
 
 // WebKit roll 58400:58523
-BUGYAAR MAC : fast/css/font-face-woff.html = IMAGE+TEXT
-
+BUGWK38349 MAC : fast/css/font-face-woff.html = IMAGE+TEXT
+BUGWK38347 MAC LINUX SKIP : fast/images/svg-nested.html = FAIL
