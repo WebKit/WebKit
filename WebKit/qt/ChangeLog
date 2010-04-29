@@ -1,3 +1,16 @@
+2010-04-28  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Unreviewed, Qt build fix.
+
+        [Qt] Guard the body of the function instead of the function for
+        exported functions.
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::webInspectorExecuteScript):
+        (DumpRenderTreeSupportQt::webInspectorClose):
+        (DumpRenderTreeSupportQt::webInspectorShow):
+        (DumpRenderTreeSupportQt::setTimelineProfilingEnabled):
+
 2010-04-28  Antonio Gomes  <tonikitoo@webkit.org>, Yi Shen <yi.4.shen@nokia.com>
 
         Reviewed by Simon Hausmann.

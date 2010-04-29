@@ -103,30 +103,36 @@ QString DumpRenderTreeSupportQt::webPageGroupName(QWebPage* page)
     return page->handle()->page->groupName();
 }
 
-#if ENABLE(INSPECTOR)
 void DumpRenderTreeSupportQt::webInspectorExecuteScript(QWebPage* page, long callId, const QString& script)
 {
+#if ENABLE(INSPECTOR)
     if (!page->handle()->page->inspectorController())
         return;
     page->handle()->page->inspectorController()->evaluateForTestInFrontend(callId, script);
+#endif
 }
 
 void DumpRenderTreeSupportQt::webInspectorClose(QWebPage* page)
 {
+#if ENABLE(INSPECTOR)
     if (!page->handle()->page->inspectorController())
         return;
     page->handle()->page->inspectorController()->close();
+#endif
 }
 
 void DumpRenderTreeSupportQt::webInspectorShow(QWebPage* page)
 {
+#if ENABLE(INSPECTOR)
     if (!page->handle()->page->inspectorController())
         return;
     page->handle()->page->inspectorController()->show();
+#endif
 }
 
 void DumpRenderTreeSupportQt::setTimelineProfilingEnabled(QWebPage* page, bool enabled)
 {
+#if ENABLE(INSPECTOR)
     InspectorController* controller = page->handle()->page->inspectorController();
     if (!controller)
         return;
@@ -134,9 +140,8 @@ void DumpRenderTreeSupportQt::setTimelineProfilingEnabled(QWebPage* page, bool e
         controller->startTimelineProfiler();
     else
         controller->stopTimelineProfiler();
-}
-
 #endif
+}
 
 bool DumpRenderTreeSupportQt::hasDocumentElement(QWebFrame* frame)
 {
