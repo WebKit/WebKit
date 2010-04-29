@@ -1,3 +1,14 @@
+2010-04-29  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] GObject DOM bindings
+        https://bugs.webkit.org/show_bug.cgi?id=33590
+
+        Include <webkit/webkitdom.h> in the main webkit.h header.
+
+        * webkit/webkit.h:
+
 2010-04-25  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej Stachowiak.

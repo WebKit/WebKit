@@ -23,6 +23,7 @@
 
 #include <webkit/webkitversion.h>
 #include <webkit/webkitdefines.h>
+#include <webkit/webkitdom.h>
 #include <webkit/webkitdownload.h>
 #include <webkit/webkitgeolocationpolicydecision.h>
 #include <webkit/webkithittestresult.h>
