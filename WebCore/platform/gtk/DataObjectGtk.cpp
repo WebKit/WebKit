@@ -24,6 +24,13 @@
 
 namespace WebCore {
 
+static void replaceNonBreakingSpaceWithSpace(String& str)
+{
+    static const UChar NonBreakingSpaceCharacter = 0xA0;
+    static const UChar SpaceCharacter = ' ';
+    str.replace(NonBreakingSpaceCharacter, SpaceCharacter);
+}
+
 String DataObjectGtk::text()
 {
     if (m_range)
@@ -34,7 +41,7 @@ String DataObjectGtk::text()
 String DataObjectGtk::markup()
 {
     if (m_range)
-        createMarkup(m_range.get(), 0, AnnotateForInterchange);
+        return createMarkup(m_range.get(), 0, AnnotateForInterchange);
     return m_markup;
 }
 
@@ -42,12 +49,25 @@ void DataObjectGtk::setText(const String& newText)
 {
     m_range = 0;
     m_text = newText;
+    replaceNonBreakingSpaceWithSpace(m_text);
 }
 
 void DataObjectGtk::setMarkup(const String& newMarkup)
 {
     m_range = 0;
     m_markup = newMarkup;
+}
+
+void DataObjectGtk::clearText()
+{
+    m_range = 0;
+    m_text = "";
+}
+
+void DataObjectGtk::clearMarkup()
+{
+    m_range = 0;
+    m_markup = "";
 }
 
 Vector<String> DataObjectGtk::files()

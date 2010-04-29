@@ -5,6 +5,50 @@
         [GTK] Enable DOM clipboard and drag-and-drop access
         https://bugs.webkit.org/show_bug.cgi?id=30623
 
+        Make ClipboardGtk a "live" DataTransfer object, able to modify
+        the clipboard when setData(...) is called.
+
+        * platform/gtk/ClipboardGtk.cpp:
+        (WebCore::Editor::newGeneralClipboard): Pass the GtkClipboard into the factory method.
+        (WebCore::ClipboardGtk::ClipboardGtk): Create two separate constructors, one for DnD data and one for clipboard data.
+        (WebCore::dataObjectTypeFromHTMLClipboardType): Added.
+        (WebCore::ClipboardGtk::clearData): Clear the member DataObject, optionally write the clipboard.
+        (WebCore::ClipboardGtk::clearAllData): Ditto.
+        (WebCore::joinURIList): Added.
+        (WebCore::ClipboardGtk::getData): Get the data from the clipboard, if possible.
+        (WebCore::ClipboardGtk::setData): Write data to the DataObject and maybe the clipboard.
+        (WebCore::ClipboardGtk::types): Read the clipboard/DataObject to find applicable types.
+        (WebCore::ClipboardGtk::files): Read the clipboard/DataObject to find the files.
+        (WebCore::ClipboardGtk::writeURL): Write to the DataObject and maybe the clipboard.
+        (WebCore::ClipboardGtk::writeRange): Ditto.
+        (WebCore::ClipboardGtk::writePlainText): Ditto.
+        (WebCore::ClipboardGtk::hasData): Query the clipboard/DataObject.
+        * platform/gtk/ClipboardGtk.h: 
+        (WebCore::ClipboardGtk::create): Added one factory for pasteboard-backed DataObjects and one for DnD-backed objects.
+        * platform/gtk/DataObjectGtk.cpp:
+        (WebCore::replaceNonBreakingSpaceWithSpace): Added this helper function to clean &nbsp; from plain text.
+        (WebCore::DataObjectGtk::markup): Actually return the range if it's set.
+        (WebCore::DataObjectGtk::setText): Clean &nbsp; from plain text.
+        (WebCore::DataObjectGtk::clearText): Added.
+        (WebCore::DataObjectGtk::clearMarkup): Added.
+        * platform/gtk/DataObjectGtk.h:
+        (WebCore::DataObjectGtk::clearURIList): Added.
+        (WebCore::DataObjectGtk::clearImage): Added.
+        * platform/gtk/PasteboardHelper.cpp:
+        (WebCore::PasteboardHelper::initializeTargetList): Added target ID's for URI list and Netscape URL targets.
+        (WebCore::urisToKURLVector): Added.
+        (WebCore::PasteboardHelper::getClipboardContents): Added.
+        (WebCore::PasteboardHelper::fillSelectionData): Added logic for URI lists and Netscape URLs.
+        (WebCore::PasteboardHelper::targetListForDataObject): Ditto.
+        * platform/gtk/PasteboardHelper.h: Added default argument to writeClipboardContents and new method.
+
+2010-04-28  Martin Robinson  <mrobinson@webkit.org>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Enable DOM clipboard and drag-and-drop access
+        https://bugs.webkit.org/show_bug.cgi?id=30623
+
         Use the length of the UTF-8 markup data in bytes when filling GtkSelectionData.
 
         No new tests, because pasteboard DataTransfer tests will be enabled

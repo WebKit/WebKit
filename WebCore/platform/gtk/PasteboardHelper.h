@@ -50,7 +50,8 @@ public:
     GtkClipboard* getPrimarySelectionClipboard(Frame*) const;
     GtkTargetList* targetList() const;
     void fillSelectionData(GtkSelectionData*, guint, DataObjectGtk*);
-    void writeClipboardContents(GtkClipboard*, GClosure*);
+    void writeClipboardContents(GtkClipboard*, GClosure* closure = 0);
+    void getClipboardContents(GtkClipboard*);
 
     enum PasteboardTargetType { TargetTypeText, TargetTypeMarkup, TargetTypeURIList, TargetTypeNetscapeURL, TargetTypeImage, TargetTypeUnknown };
     virtual guint getIdForTargetType(PasteboardTargetType) = 0;

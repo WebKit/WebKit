@@ -740,7 +740,6 @@ editing/deleting/skip-virama-001.html
 editing/deleting/smart-editing-disabled.html
 editing/deleting/type-delete-after-quote-2.html
 editing/execCommand/4128080-2.html
-editing/execCommand/copy-without-selection.html
 editing/execCommand/createLink.html
 editing/execCommand/delete-image-in-anchor.html
 editing/execCommand/enabling-and-selection-2.html
@@ -773,17 +772,11 @@ editing/inserting/space-after-removeformat.html
 editing/inserting/typing-tab-designmode.html
 editing/pasteboard/4744008.html
 editing/pasteboard/5368833.html
-editing/pasteboard/5665299.html
 editing/pasteboard/5780697-2.html
 editing/pasteboard/copy-in-password-field.html
-editing/pasteboard/copy-paste-float.html
 editing/pasteboard/drag-image-in-about-blank-frame.html
 editing/pasteboard/file-input-files-access.html
 editing/pasteboard/get-data-text-plain-drop.html
-editing/pasteboard/get-data-text-plain-paste.html
-editing/pasteboard/onpaste-text-html.html
-editing/pasteboard/paste-blockquote-before-blockquote.html
-editing/pasteboard/paste-double-nested-blockquote-before-blockquote.html
 editing/pasteboard/paste-into-anchor-text.html
 editing/pasteboard/paste-plaintext-user-select-none.html
 editing/pasteboard/paste-table-002.html

@@ -1,3 +1,15 @@
+2010-04-28  Martin Robinson  <mrobinson@webkit.org>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Enable DOM clipboard and drag-and-drop access
+        https://bugs.webkit.org/show_bug.cgi?id=30623
+
+        Make ClipboardGtk a "live" DataTransfer object, able to modify
+        the clipboard when setData(...) is called.
+
+        * platform/gtk/Skipped: Uncomment tests that are now passing.
+
 2010-04-28  Evan Martin  <evan@chromium.org>
 
         Reviewed by David Levin.
