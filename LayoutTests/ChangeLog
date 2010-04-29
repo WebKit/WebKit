@@ -1,3 +1,9 @@
+2010-04-29  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed, test expectations update.
+
+        * platform/chromium/test_expectations.txt: fast/media/media-query-invalid-value.html should be MISSING, not IMAGE.
+
 2010-04-29  Jan Hanssen  <jhanssen@codeaurora.org>
 
         Reviewed by Adam Barth.
