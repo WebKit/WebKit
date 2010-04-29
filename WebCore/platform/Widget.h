@@ -72,6 +72,12 @@ typedef BView* PlatformWidget;
 #include "PlatformWidget.h"
 #endif
 
+#if PLATFORM(EFL)
+#include <Ecore_Evas.h>
+#include <Evas.h>
+typedef Evas_Object* PlatformWidget;
+#endif
+
 #if PLATFORM(QT)
 class QWebPageClient;
 typedef QWebPageClient* PlatformPageClient;
@@ -94,6 +100,9 @@ class GraphicsContext;
 class PlatformMouseEvent;
 class ScrollView;
 class WidgetPrivate;
+#if PLATFORM(EFL)
+class String;
+#endif
 
 // The Widget class serves as a base class for three kinds of objects:
 // (1) Scrollable areas (ScrollView)
@@ -189,7 +198,7 @@ public:
     IntPoint convertToContainingWindow(const IntPoint&) const;
     IntPoint convertFromContainingWindow(const IntPoint&) const;
 
-    virtual void frameRectsChanged() {}
+    virtual void frameRectsChanged();
 
     // Notifies this widget that other widgets on the page have been repositioned.
     virtual void widgetPositionsUpdated() {}
@@ -201,6 +210,20 @@ public:
     static void afterMouseDown(NSView*, Widget*);
 
     void removeFromSuperview();
+#endif
+
+#if PLATFORM(EFL)
+    // FIXME: These should really go to PlatformWidget. They're here currently since
+    // the EFL port considers that Evas_Object (a C object) is a PlatformWidget, but
+    // encapsulating that into a C++ class will make this header clean as it should be.
+    Evas* evas() const;
+
+    void setEvasObject(Evas_Object*);
+    Evas_Object* evasObject() const;
+
+    const String edjeTheme() const;
+    void setEdjeTheme(const String &);
+    const String edjeThemeRecursive() const;
 #endif
 
     // Virtual methods to convert points to/from the containing ScrollView
@@ -231,9 +254,18 @@ private:
 
     IntRect m_frame; // Not used when a native widget exists.
 
-#if PLATFORM(MAC)
+#if PLATFORM(EFL)
+    // FIXME: Please see the previous #if PLATFORM(EFL) block.
+    Ecore_Evas* ecoreEvas() const;
+
+    void applyFallbackCursor();
+    void applyCursor();
+#endif
+
+#if PLATFORM(MAC) || PLATFORM(EFL)
     WidgetPrivate* m_data;
 #endif
+
 #if PLATFORM(HAIKU)
     PlatformWidget m_topLevelPlatformWidget;
 #endif

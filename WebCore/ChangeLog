@@ -1,3 +1,19 @@
+2010-04-29  Gustavo Sverzut Barbieri  <barbieri@profusion.mobi>
+
+        Reviewed by Eric Seidel.
+
+        Add EFL-specific code to Widget.h and move the empty
+        frameRectsChanged() definition to Widget.cpp, since the EFL port
+        needs to override that.
+        http://webkit.org/b/36317
+
+        No new tests required.
+
+        * WebCore.base.exp:
+        * platform/Widget.cpp:
+        (WebCore::Widget::frameRectsChanged):
+        * platform/Widget.h:
+
 2010-04-29  Jarkko Sakkinen  <jarkko.j.sakkinen@gmail.com>
 
         Reviewed by Simon Hausmann.
