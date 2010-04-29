@@ -1,3 +1,16 @@
+2010-04-29  Anton Muhin  <antonm@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Consider implementing addOriginAccessWhitelistEntry method
+        http://trac.webkit.org/changeset/57537 introduced a new method
+        to manage whitelisting of origins.
+        Expose this method in Chromium's bridge.
+        https://bugs.webkit.org/show_bug.cgi?id=37578
+
+        * public/WebSecurityPolicy.h: Start renaming (keep old function names) and add new removeOriginAccessWhitelistEntry method
+        * src/WebSecurityPolicy.cpp: Start renaming (keep old function names) and add new removeOriginAccessWhitelistEntry method
+
 2010-04-29  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r58498.

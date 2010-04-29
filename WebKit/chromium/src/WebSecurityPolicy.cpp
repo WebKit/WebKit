@@ -56,7 +56,8 @@ void WebSecurityPolicy::registerURLSchemeAsSecure(const WebString& scheme)
     SecurityOrigin::registerURLSchemeAsSecure(scheme);
 }
 
-void WebSecurityPolicy::whiteListAccessFromOrigin(const WebURL& sourceOrigin,
+void WebSecurityPolicy::addOriginAccessWhitelistEntry(
+    const WebURL& sourceOrigin,
     const WebString& destinationProtocol,
     const WebString& destinationHost,
     bool allowDestinationSubdomains)
@@ -66,9 +67,36 @@ void WebSecurityPolicy::whiteListAccessFromOrigin(const WebURL& sourceOrigin,
         destinationHost, allowDestinationSubdomains);
 }
 
-void WebSecurityPolicy::resetOriginAccessWhiteLists()
+void WebSecurityPolicy::removeOriginAccessWhitelistEntry(
+    const WebURL& sourceOrigin,
+    const WebString& destinationProtocol,
+    const WebString& destinationHost,
+    bool allowDestinationSubdomains)
+{
+    SecurityOrigin::removeOriginAccessWhitelistEntry(
+        *SecurityOrigin::create(sourceOrigin), destinationProtocol,
+        destinationHost, allowDestinationSubdomains);
+}
+
+void WebSecurityPolicy::resetOriginAccessWhitelists()
 {
     SecurityOrigin::resetOriginAccessWhitelists();
+}
+
+// To be removed when Chromium's test_shell has proper references.
+void WebSecurityPolicy::whiteListAccessFromOrigin(const WebURL& sourceOrigin,
+    const WebString& destinationProtocol,
+    const WebString& destinationHost,
+    bool allowDestinationSubdomains)
+{
+    addOriginAccessWhitelistEntry(sourceOrigin,
+        destinationProtocol, destinationHost,
+        allowDestinationSubdomains);
+}
+
+void WebSecurityPolicy::resetOriginAccessWhiteLists()
+{
+    resetOriginAccessWhitelists();
 }
 
 bool WebSecurityPolicy::shouldHideReferrer(const WebURL& url, const WebString& referrer)
