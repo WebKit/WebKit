@@ -129,10 +129,7 @@ bool PNGImageEncoder::encode(const unsigned char* input, const IntSize& size,
         return false;
     }
 
-    png_struct* pngPtr = png_create_write_struct(PNG_LIBPNG_VER_STRING,
-                                                 png_voidp_NULL,
-                                                 png_error_ptr_NULL,
-                                                 png_error_ptr_NULL);
+    png_struct* pngPtr = png_create_write_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
     if (!pngPtr)
         return false;
 

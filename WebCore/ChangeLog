@@ -1,3 +1,17 @@
+2010-04-29  Paweł Hajdan, Jr.  <phajdan.jr@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Fix building with libpng-1.4.
+        https://bugs.webkit.org/show_bug.cgi?id=33287
+
+        No new tests (no behavior change).
+
+        Original patch by John Bowler <jbowler@acm.org>
+
+        * platform/image-encoders/skia/PNGImageEncoder.cpp:
+        (WebCore::PNGImageEncoder::encode):
+
 2010-04-29  Adam Langley  <agl@chromium.org>
 
         Reviewed by David Levin.
