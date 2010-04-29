@@ -1,3 +1,21 @@
+2010-04-29  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        new-run-webkit-tests can deadlock with Chromium's TestShell
+        https://bugs.webkit.org/show_bug.cgi?id=38298
+
+        Fix _write_command_and_read_line to never send unicode() to
+        test_shell, instead to always encode as utf-8.  This was causing
+        random hangs because if test_shell ever encounters a \0 in the
+        stream it can deadlock with NRWT.
+
+        There is still a deadlock bug to fix in NRWT/test_shell design, however
+        this fix should make the deadlock occur less often.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+
 2010-04-29  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Eric Seidel.

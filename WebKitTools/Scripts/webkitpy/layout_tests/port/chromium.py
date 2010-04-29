@@ -319,6 +319,9 @@ class ChromiumDriver(base.Driver):
         """Returns a tuple: (line, did_crash)"""
         try:
             if input:
+                if isinstance(input, unicode):
+                    # TestShell expects utf-8
+                    input = input.encode("utf-8")
                 self._proc.stdin.write(input)
             # DumpRenderTree text output is always UTF-8.  However some tests
             # (e.g. webarchive) may spit out binary data instead of text so we

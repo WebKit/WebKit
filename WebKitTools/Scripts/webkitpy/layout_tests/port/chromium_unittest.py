@@ -28,6 +28,7 @@
 
 import chromium
 import unittest
+import StringIO
 
 from webkitpy.thirdparty.mock import Mock
 
@@ -44,3 +45,36 @@ class ChromiumDriverTest(unittest.TestCase):
     def test_test_shell_command(self):
         expected_command = "test.html 2 checksum\n"
         self.assertEqual(self.driver._test_shell_command("test.html", 2, "checksum"), expected_command)
+
+    def _assert_write_command_and_read_line(self, input=None, expected_line=None, expected_stdin=None, expected_crash=False):
+        if not expected_stdin:
+            if input:
+                expected_stdin = input
+            else:
+                # We reset stdin, so we should expect stdin.getValue = ""
+                expected_stdin = ""
+        self.driver._proc.stdin = StringIO.StringIO()
+        line, did_crash = self.driver._write_command_and_read_line(input)
+        self.assertEqual(self.driver._proc.stdin.getvalue(), expected_stdin)
+        self.assertEqual(line, expected_line)
+        self.assertEqual(did_crash, expected_crash)
+
+    def test_write_command_and_read_line(self):
+        self.driver._proc = Mock()
+        # Set up to read 3 lines before we get an IOError
+        self.driver._proc.stdout = StringIO.StringIO("first\nsecond\nthird\n")
+
+        unicode_input = u"I \u2661 Unicode"
+        utf8_input = unicode_input.encode("utf-8")
+        # Test unicode input conversion to utf-8
+        self._assert_write_command_and_read_line(input=unicode_input, expected_stdin=utf8_input, expected_line="first\n")
+        # Test str() input.
+        self._assert_write_command_and_read_line(input="foo", expected_line="second\n")
+        # Test input=None
+        self._assert_write_command_and_read_line(expected_line="third\n")
+        # Test reading from a closed/empty stream.
+        # reading from a StringIO does not raise IOError like a real file would, so raise IOError manually.
+        def mock_readline():
+            raise IOError
+        self.driver._proc.stdout.readline = mock_readline
+        self._assert_write_command_and_read_line(expected_crash=True)
