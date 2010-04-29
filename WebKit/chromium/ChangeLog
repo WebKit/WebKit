@@ -1,3 +1,13 @@
+2010-04-29  Adam Langley  <agl@chromium.org>
+
+        Unreviewed, DEPS roll.
+
+        WebKit's r58517 needs OTS's r30 which was rolled into Chromium in
+        r45932.
+
+        * DEPS:
+          Use Chromium r45932.
+
 2010-04-29  Rafael Weinstein  <rafaelw@chromium.org>
 
         Reviewed by Darin Fisher.
