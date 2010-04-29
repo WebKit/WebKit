@@ -1,3 +1,16 @@
+2010-04-29  Gustavo Noronha Silva  <gustavo.noronhaollabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] pointerCursor should use the default cursor set for the window, not GDK_LEFT_PTR
+        https://bugs.webkit.org/show_bug.cgi?id=36963
+
+        Use the default cursor instead of hard-coding left pointer.
+
+        * platform/gtk/CursorGtk.cpp:
+        (WebCore::Cursor::Cursor):
+        (WebCore::pointerCursor):
+
 2010-04-29  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

@@ -88,13 +88,15 @@ Cursor::Cursor(GdkCursor* c)
     : m_impl(c)
 {
     m_impl = c;
-    ASSERT(c);
-    gdk_cursor_ref(c);
+
+    // The GdkCursor may be NULL - the default cursor for the window.
+    if (c)
+        gdk_cursor_ref(c);
 }
 
 const Cursor& pointerCursor()
 {
-    static Cursor c = gdk_cursor_new(GDK_LEFT_PTR);
+    static Cursor c = 0;
     return c;
 }
 
