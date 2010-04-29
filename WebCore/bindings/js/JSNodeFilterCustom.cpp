@@ -41,11 +41,6 @@ void JSNodeFilter::markChildren(MarkStack& markStack)
     impl()->markAggregate(markStack);
 }
 
-JSValue JSNodeFilter::acceptNode(ExecState* exec, const ArgList& args)
-{
-    return jsNumber(exec, impl()->acceptNode(exec, toNode(args.at(0))));
-}
-
 PassRefPtr<NodeFilter> toNodeFilter(JSValue value)
 {
     if (value.inherits(&JSNodeFilter::s_info))

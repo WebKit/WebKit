@@ -1,3 +1,19 @@
+2010-04-29  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Remove custom bindings for NodeFilter.acceptNode
+        https://bugs.webkit.org/show_bug.cgi?id=38309
+
+        This "custom" code was just an instance of the CallWith=ScriptState
+        pattern.  Also, it looks like V8 just had a garbage implemenation that
+        did nothing.
+
+        * WebCore.gypi:
+        * bindings/js/JSNodeFilterCustom.cpp:
+        * bindings/v8/custom/V8NodeFilterCustom.cpp: Removed.
+        * dom/NodeFilter.idl:
+
 2010-04-29  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Laszlo Gombos.
