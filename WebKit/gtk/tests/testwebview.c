@@ -336,41 +336,6 @@ static void test_webkit_web_view_window_features()
     gtk_widget_destroy(window);
 }    
 
-static void test_webkit_web_view_document()
-{
-    GtkWidget* window;
-    GtkWidget* web_view;
-    gchar* title;
-    WebKitDOMDocument* document;
-    
-    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    web_view = webkit_web_view_new();
-    
-    gtk_container_add(GTK_CONTAINER(window), web_view);
-    gtk_widget_show_all(window);
-
-    loop = g_main_loop_new(NULL, TRUE);
-
-    g_signal_connect(window, "map-event",
-                     G_CALLBACK(map_event_cb), loop);
-    g_main_loop_run(loop);
-
-    document = webkit_web_view_get_dom_document(WEBKIT_WEB_VIEW(web_view));
-    g_assert(document);
-    webkit_dom_document_set_title(document, (gchar*)"First title");
-    title = webkit_dom_document_get_title(document);
-    g_assert(title);
-    g_assert_cmpstr(title, ==, "First title");
-    g_free(title);
-    webkit_dom_document_set_title(document, (gchar*)"Title changed by DOM bindings");
-    title = webkit_dom_document_get_title(document);
-    g_assert(title);
-    g_assert_cmpstr(title, ==, "Title changed by DOM bindings");
-    g_free(title);
-    
-    gtk_widget_destroy(window);
-}    
-
 int main(int argc, char** argv)
 {
     SoupServer* server;
@@ -399,7 +364,6 @@ int main(int argc, char** argv)
     g_test_add_func("/webkit/webview/destroy", test_webkit_web_view_destroy);
     g_test_add_func("/webkit/webview/grab_focus", test_webkit_web_view_grab_focus);
     g_test_add_func("/webkit/webview/window-features", test_webkit_web_view_window_features);
-    g_test_add_func("/webkit/webview/document", test_webkit_web_view_document);
 
     return g_test_run ();
 }

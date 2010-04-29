@@ -5,6 +5,23 @@
         [GTK] GObject DOM bindings
         https://bugs.webkit.org/show_bug.cgi?id=33590
 
+        Move WebKitDOMDocument unit tests to their own file.
+
+        * tests/testdomdocument.c: Added.
+        (finish_loading):
+        (dom_document_fixture_setup):
+        (dom_document_fixture_teardown):
+        (test_dom_document_title):
+        (main):
+        * tests/testwebview.c:
+
+2010-04-29  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] GObject DOM bindings
+        https://bugs.webkit.org/show_bug.cgi?id=33590
+
         Include <webkit/webkitdom.h> in the main webkit.h header.
 
         * webkit/webkit.h:

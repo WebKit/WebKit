@@ -1,3 +1,14 @@
+2010-04-29  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] GObject DOM bindings
+        https://bugs.webkit.org/show_bug.cgi?id=33590
+
+        Add WebKitDOMDocument tests to the build.
+
+        * GNUmakefile.am:
+
 2010-04-28  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.

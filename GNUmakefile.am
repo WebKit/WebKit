@@ -622,7 +622,9 @@ webkit_tests_ldflags = \
 	-no-install \
 	-no-fast-install
 
-TEST_PROGS += Programs/unittests/testhttpbackend \
+TEST_PROGS += \
+	Programs/unittests/testdomdocument \
+	Programs/unittests/testhttpbackend \
 	Programs/unittests/testloading \
 	Programs/unittests/testglobals \
 	Programs/unittests/testmimehandling \
@@ -643,6 +645,11 @@ TEST_PROGS += Programs/unittests/testhttpbackend \
 	Programs/unittests/testkeyevents
 
 # Add additional tests here
+Programs_unittests_testdomdocument_SOURCES = WebKit/gtk/tests/testdomdocument.c
+Programs_unittests_testdomdocument_CFLAGS = $(webkit_tests_cflags)
+Programs_unittests_testdomdocument_LDADD = $(webkit_tests_ldadd)
+Programs_unittests_testdomdocument_LDFLAGS = $(webkit_tests_ldflags)
+
 Programs_unittests_testhttpbackend_SOURCES = WebKit/gtk/tests/testhttpbackend.c
 Programs_unittests_testhttpbackend_CFLAGS = $(webkit_tests_cflags)
 Programs_unittests_testhttpbackend_LDADD = $(webkit_tests_ldadd)
