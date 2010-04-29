@@ -1,3 +1,13 @@
+2010-04-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=38277
+        MiniBrowser: -[WebCoreFlippedView currentEditor]: unrecognized selector
+
+        * platform/mac/ThemeMac.mm:
+        (-[WebCoreFlippedView currentEditor]): Added currentEditor nil implementation.
+
 2010-04-29  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

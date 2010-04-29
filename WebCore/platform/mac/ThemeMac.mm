@@ -46,6 +46,11 @@ using namespace std;
     return YES;
 }
 
+- (NSText *)currentEditor
+{
+    return nil;
+}
+
 @end
 
 // FIXME: Default buttons really should be more like push buttons and not like buttons.
