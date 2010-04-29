@@ -241,7 +241,12 @@ void HTMLTextAreaElement::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent*
     unsigned unsignedMaxLength = static_cast<unsigned>(signedMaxLength);
 
     unsigned currentLength = numGraphemeClusters(toRenderTextControl(renderer())->text());
-    unsigned selectionLength = numGraphemeClusters(plainText(document()->frame()->selection()->selection().toNormalizedRange().get()));
+    // selectionLength represents the selection length of this text field to be
+    // removed by this insertion.
+    // If the text field has no focus, we don't need to take account of the
+    // selection length. The selection is the source of text drag-and-drop in
+    // that case, and nothing in the text field will be removed.
+    unsigned selectionLength = focused() ? numGraphemeClusters(plainText(document()->frame()->selection()->selection().toNormalizedRange().get())) : 0;
     ASSERT(currentLength >= selectionLength);
     unsigned baseLength = currentLength - selectionLength;
     unsigned appendableLength = unsignedMaxLength > baseLength ? unsignedMaxLength - baseLength : 0;

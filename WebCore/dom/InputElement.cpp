@@ -172,8 +172,12 @@ void InputElement::handleBeforeTextInsertedEvent(InputElementData& data, InputEl
     // RenderTextControlSingleLine::subtreeHasChanged() in some cases.
     unsigned oldLength = numGraphemeClusters(toRenderTextControlSingleLine(element->renderer())->text());
 
-    // selection() may be a pre-edit text.
-    unsigned selectionLength = numGraphemeClusters(plainText(element->document()->frame()->selection()->selection().toNormalizedRange().get()));
+    // selectionLength represents the selection length of this text field to be
+    // removed by this insertion.
+    // If the text field has no focus, we don't need to take account of the
+    // selection length. The selection is the source of text drag-and-drop in
+    // that case, and nothing in the text field will be removed.
+    unsigned selectionLength = element->focused() ? numGraphemeClusters(plainText(element->document()->frame()->selection()->selection().toNormalizedRange().get())) : 0;
     ASSERT(oldLength >= selectionLength);
 
     // Selected characters will be removed by the next text event.

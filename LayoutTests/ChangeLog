@@ -1,3 +1,13 @@
+2010-04-29  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix a bug that selection drag-and-drop doesn't work for input/textarea.
+        https://bugs.webkit.org/show_bug.cgi?id=38175
+
+        * editing/pasteboard/drag-drop-input-textarea-expected.txt: Added.
+        * editing/pasteboard/drag-drop-input-textarea.html: Added.
+
 2010-04-29  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Rubber-stamped by Maciej Stachowiak.
