@@ -116,8 +116,6 @@ namespace WebCore {
 #endif
 #if OS(LINUX)
         static void getRenderStyleForStrike(const char* family, int sizeAndStyle, FontRenderStyle* result);
-        // This code is currently in the process of getting rejiggered, and though
-        // it is not currently used, it will hopefully be used again soon.
         static String getFontFamilyForCharacters(const UChar*, size_t numCharacters);
 #endif
 
