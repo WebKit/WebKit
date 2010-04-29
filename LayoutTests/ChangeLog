@@ -1,3 +1,43 @@
+2010-04-29  Alexey Proskuryakov  <ap@apple.com>
+
+        Re-enable Sputnik tests on Leopard and Snow Leopard.
+
+        * fast/js/sputnik/Conformance/11_Expressions/11.5_Multiplicative_Operators/11.5.3_Applying_the_percent_Operator/S11.5.3_A4_T2-expected.txt:
+        * fast/js/sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.12_Array_prototype_splice/S15.4.4.12_A2.1_T3-expected.txt:
+        Changed expectation to PASS.
+
+        * platform/mac-snowleopard/Skipped: Skip the above tests, since they fail in 64 bit, and
+        DRT may run 64 bit on Snow Leopard.
+
+        * platform/mac-leopard/fast/js: Added.
+        * platform/mac-leopard/fast/js/sputnik: Added.
+        * platform/mac-leopard/fast/js/sputnik/Unicode: Added.
+        * platform/mac-leopard/fast/js/sputnik/Unicode/Unicode_500: Added.
+        * platform/mac-leopard/fast/js/sputnik/Unicode/Unicode_500/S7.6_A3.1-expected.txt: Added.
+        * platform/mac-leopard/fast/js/sputnik/Unicode/Unicode_500/S7.6_A3.2-expected.txt: Added.
+        * platform/mac-leopard/fast/js/sputnik/Unicode/Unicode_500/S7.6_A5.3_T1-expected.txt: Added.
+        * platform/mac-leopard/fast/js/sputnik/Unicode/Unicode_500/S7.6_A5.3_T2-expected.txt: Added.
+        * platform/mac-leopard/fast/js/sputnik/Unicode/Unicode_510: Added.
+        * platform/mac-leopard/fast/js/sputnik/Unicode/Unicode_510/S15.5.4.16_A1-expected.txt: Added.
+        * platform/mac-leopard/fast/js/sputnik/Unicode/Unicode_510/S15.5.4.18_A1-expected.txt: Added.
+        * platform/mac-leopard/fast/js/sputnik/Unicode/Unicode_510/S7.6_A1.1_T1-expected.txt: Added.
+        * platform/mac-leopard/fast/js/sputnik/Unicode/Unicode_510/S7.6_A1.1_T2-expected.txt: Added.
+        * platform/mac-leopard/fast/js/sputnik/Unicode/Unicode_510/S7.6_A1.1_T4-expected.txt: Added.
+        * platform/mac-leopard/fast/js/sputnik/Unicode/Unicode_510/S7.6_A2.2_T1-expected.txt: Added.
+        * platform/mac-leopard/fast/js/sputnik/Unicode/Unicode_510/S7.6_A2.2_T2-expected.txt: Added.
+        * platform/mac-leopard/fast/js/sputnik/Unicode/Unicode_510/S7.6_A2.3-expected.txt: Added.
+        * platform/mac-leopard/fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.2_T1-expected.txt: Added.
+        * platform/mac-leopard/fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.2_T2-expected.txt: Added.
+        * platform/mac-leopard/fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.2_T4-expected.txt: Added.
+        * platform/mac-leopard/fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.2_T7-expected.txt: Added.
+        * platform/mac-leopard/fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.2_T8-expected.txt: Added.
+        * platform/mac-leopard/fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.2_T9-expected.txt: Added.
+        Added platform specific results for tests that depend on supported Unicode version.
+
+        * platform/mac-tiger/Skipped: Skipped Sputnik on Tiger.
+
+        * platform/mac/Skipped: Unskipped Sputnik.
+
 2010-04-29  Yaar Schnitman  <yaar@chromium.org>
 
         Not Reviewed.

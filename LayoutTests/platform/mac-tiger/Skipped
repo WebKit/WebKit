@@ -146,3 +146,6 @@ http/tests/media/video-play-stall-seek.html
 # LayoutTests/http/tests/xmlhttprequest/access-control-preflight-credential-[a]sync.html fails on Tiger
 http/tests/xmlhttprequest/access-control-preflight-credential-async.html
 http/tests/xmlhttprequest/access-control-preflight-credential-sync.html
+
+# multiple tests fail on different platforms, need to find the cause(s)
+#fast/js/sputnik
