@@ -74,7 +74,6 @@
 #include "WebURLRequest.h"
 #include "WebViewClient.h"
 #include "WebViewImpl.h"
-#include "WebWindowFeatures.h"
 #include "WindowFeatures.h"
 #include "WrappedResourceRequest.h"
 
@@ -234,7 +233,7 @@ Page* ChromeClientImpl::createWindow(
         return 0;
 
     WebViewImpl* newView = static_cast<WebViewImpl*>(
-        m_webView->client()->createView(WebFrameImpl::fromFrame(frame), features));
+        m_webView->client()->createView(WebFrameImpl::fromFrame(frame)));
     if (!newView)
         return 0;
 

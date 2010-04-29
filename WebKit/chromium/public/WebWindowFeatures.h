@@ -32,8 +32,6 @@
 #define WebWindowFeatures_h
 
 #include "WebCommon.h"
-#include "WebString.h"
-#include "WebVector.h"
 
 #if WEBKIT_IMPLEMENTATION
 #include "WindowFeatures.h"
