@@ -1,3 +1,13 @@
+2010-04-29  Jan Hanssen  <jhanssen@codeaurora.org>
+
+        Reviewed by Adam Barth.
+
+        Test whether HTMLOptionElement::ownerSelectElement() is considering the keygen element.
+        https://bugs.webkit.org/show_bug.cgi?id=26016
+
+        * fast/dom/HTMLKeygenElement/keygen-option-select-expected.txt: Added.
+        * fast/dom/HTMLKeygenElement/keygen-option-select.html: Added.
+
 2010-04-29  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Maciej Stachowiak.

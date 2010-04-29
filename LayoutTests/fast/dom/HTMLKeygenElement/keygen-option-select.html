@@ -1,0 +1,40 @@
+<html><head>
+</head><body>
+<keygen id="keys" />
+
+<p>This test verifies that list-box-style select form control for keygen works properly when selecting from option element.
+</p><p>You should see the word "SUCCESS" below</p>
+
+<div id="result">FAILED</div>
+
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function test(elementId)
+{
+    var testKeygenElement = document.getElementById(elementId);
+
+    // Add two option elements here in case the webkit port used doesn't implement the WebCore::getSupportedKeySizes() function
+
+    var testOption1 = document.createElement("option");
+    var testOption1Text = document.createTextNode("foo1");
+    testOption1.appendChild(testOption1Text);
+    testKeygenElement.appendChild(testOption1);
+
+    var testOption2 = document.createElement("option");
+    var testOption2Text = document.createTextNode("foo2");
+    testOption2.appendChild(testOption2Text);
+    testKeygenElement.appendChild(testOption2);
+
+    if (testKeygenElement.options[1].index == 1)
+    {
+        var result = document.getElementById("result");
+        result.innerHTML = "SUCCESS";
+    }
+}
+test("keys");
+</script>
+
+
+</body></html>
