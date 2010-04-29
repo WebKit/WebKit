@@ -1,3 +1,65 @@
+2010-04-29  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Hoist JSVALUE32_64 arithmetic implementations into a separate file.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.pro:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitSlow_op_jnless):
+        (JSC::JIT::emitSlow_op_jless):
+        (JSC::JIT::emitSlow_op_jnlesseq):
+        (JSC::JIT::emit_op_mod):
+        (JSC::JIT::compileBinaryArithOpSlowCase):
+        (JSC::JIT::emit_op_div):
+        (JSC::JIT::compileBinaryArithOp):
+        * jit/JITArithmetic32_64.cpp: Added.
+        (JSC::JIT::emit_op_negate):
+        (JSC::JIT::emitSlow_op_negate):
+        (JSC::JIT::emit_op_jnless):
+        (JSC::JIT::emitSlow_op_jnless):
+        (JSC::JIT::emit_op_jless):
+        (JSC::JIT::emitSlow_op_jless):
+        (JSC::JIT::emit_op_jnlesseq):
+        (JSC::JIT::emitSlow_op_jnlesseq):
+        (JSC::JIT::emit_op_lshift):
+        (JSC::JIT::emitSlow_op_lshift):
+        (JSC::JIT::emit_op_rshift):
+        (JSC::JIT::emitSlow_op_rshift):
+        (JSC::JIT::emit_op_bitand):
+        (JSC::JIT::emitSlow_op_bitand):
+        (JSC::JIT::emit_op_bitor):
+        (JSC::JIT::emitSlow_op_bitor):
+        (JSC::JIT::emit_op_bitxor):
+        (JSC::JIT::emitSlow_op_bitxor):
+        (JSC::JIT::emit_op_bitnot):
+        (JSC::JIT::emitSlow_op_bitnot):
+        (JSC::JIT::emit_op_post_inc):
+        (JSC::JIT::emitSlow_op_post_inc):
+        (JSC::JIT::emit_op_post_dec):
+        (JSC::JIT::emitSlow_op_post_dec):
+        (JSC::JIT::emit_op_pre_inc):
+        (JSC::JIT::emitSlow_op_pre_inc):
+        (JSC::JIT::emit_op_pre_dec):
+        (JSC::JIT::emitSlow_op_pre_dec):
+        (JSC::JIT::emit_op_add):
+        (JSC::JIT::emitAdd32Constant):
+        (JSC::JIT::emitSlow_op_add):
+        (JSC::JIT::emit_op_sub):
+        (JSC::JIT::emitSub32Constant):
+        (JSC::JIT::emitSlow_op_sub):
+        (JSC::JIT::emitBinaryDoubleOp):
+        (JSC::JIT::emit_op_mul):
+        (JSC::JIT::emitSlow_op_mul):
+        (JSC::JIT::emit_op_div):
+        (JSC::JIT::emitSlow_op_div):
+        (JSC::JIT::emit_op_mod):
+        (JSC::JIT::emitSlow_op_mod):
+
 2010-04-29  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Reviewed by Oliver Hunt

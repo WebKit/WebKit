@@ -1669,6 +1669,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\jit\JITArithmetic32_64.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\jit\JITCall.cpp"
 				>
 			</File>

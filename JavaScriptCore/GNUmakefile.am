@@ -89,6 +89,7 @@ javascriptcore_sources += \
 	JavaScriptCore/jit/JITPropertyAccess.cpp \
 	JavaScriptCore/jit/JITPropertyAccess32_64.cpp \
 	JavaScriptCore/jit/JITArithmetic.cpp \
+	JavaScriptCore/jit/JITArithmetic32_64.cpp \
 	JavaScriptCore/jit/ExecutableAllocator.cpp \
 	JavaScriptCore/jit/JIT.h \
 	JavaScriptCore/jit/JITInlineMethods.h \

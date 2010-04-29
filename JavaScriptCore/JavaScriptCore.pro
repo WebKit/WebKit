@@ -99,6 +99,7 @@ SOURCES += \
     jit/ExecutableAllocatorWin.cpp \
     jit/ExecutableAllocator.cpp \
     jit/JITArithmetic.cpp \
+    jit/JITArithmetic32_64.cpp \
     jit/JITCall.cpp \
     jit/JIT.cpp \
     jit/JITOpcodes.cpp \
