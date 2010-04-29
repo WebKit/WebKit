@@ -1,3 +1,9 @@
+2010-04-29  Alexey Proskuryakov  <ap@apple.com>
+
+        Not reviewed.
+
+        * platform/mac-tiger/Skipped: Accidentally committed with a commented out line.
+
 2010-04-29  Yaar Schnitman  <yaar@chromium.org>
 
         Not Reviewed.
