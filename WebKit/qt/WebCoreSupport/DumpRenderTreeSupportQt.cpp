@@ -420,3 +420,85 @@ QVariantList DumpRenderTreeSupportQt::firstRectForCharacterRange(QWebPage* page,
     rect << resultRect.x() << resultRect.y() << resultRect.width() << resultRect.height();
     return rect;
 }
+
+// Provide a backward compatibility with previously exported private symbols as of QtWebKit 4.6 release
+
+void QWEBKIT_EXPORT qt_resumeActiveDOMObjects(QWebFrame* frame)
+{
+    DumpRenderTreeSupportQt::resumeActiveDOMObjects(frame);
+}
+
+void QWEBKIT_EXPORT qt_suspendActiveDOMObjects(QWebFrame* frame)
+{
+    DumpRenderTreeSupportQt::suspendActiveDOMObjects(frame);
+}
+
+void QWEBKIT_EXPORT qt_drt_clearFrameName(QWebFrame* frame)
+{
+    DumpRenderTreeSupportQt::clearFrameName(frame);
+}
+
+void QWEBKIT_EXPORT qt_drt_garbageCollector_collect()
+{
+    DumpRenderTreeSupportQt::garbageCollectorCollect();
+}
+
+void QWEBKIT_EXPORT qt_drt_garbageCollector_collectOnAlternateThread(bool waitUntilDone)
+{
+    DumpRenderTreeSupportQt::garbageCollectorCollectOnAlternateThread(waitUntilDone);
+}
+
+int QWEBKIT_EXPORT qt_drt_javaScriptObjectsCount()
+{
+    return DumpRenderTreeSupportQt::javaScriptObjectsCount();
+}
+
+int QWEBKIT_EXPORT qt_drt_numberOfActiveAnimations(QWebFrame* frame)
+{
+    return DumpRenderTreeSupportQt::numberOfActiveAnimations(frame);
+}
+
+void QWEBKIT_EXPORT qt_drt_overwritePluginDirectories()
+{
+    DumpRenderTreeSupportQt::overwritePluginDirectories();
+}
+
+bool QWEBKIT_EXPORT qt_drt_pauseAnimation(QWebFrame* frame, const QString& animationName, double time, const QString& elementId)
+{
+    return DumpRenderTreeSupportQt::pauseAnimation(frame, animationName, time, elementId);
+}
+
+bool QWEBKIT_EXPORT qt_drt_pauseTransitionOfProperty(QWebFrame* frame, const QString& propertyName, double time, const QString &elementId)
+{
+    return DumpRenderTreeSupportQt::pauseTransitionOfProperty(frame, propertyName, time, elementId);
+}
+
+void QWEBKIT_EXPORT qt_drt_resetOriginAccessWhiteLists()
+{
+    DumpRenderTreeSupportQt::resetOriginAccessWhiteLists();
+}
+
+void QWEBKIT_EXPORT qt_drt_run(bool b)
+{
+    DumpRenderTreeSupportQt::setDumpRenderTreeModeEnabled(b);
+}
+
+void QWEBKIT_EXPORT qt_drt_setJavaScriptProfilingEnabled(QWebFrame* frame, bool enabled)
+{
+    DumpRenderTreeSupportQt::setJavaScriptProfilingEnabled(frame, enabled);
+}
+
+void QWEBKIT_EXPORT qt_drt_whiteListAccessFromOrigin(const QString& sourceOrigin, const QString& destinationProtocol, const QString& destinationHost, bool allowDestinationSubdomains)
+{
+    DumpRenderTreeSupportQt::whiteListAccessFromOrigin(sourceOrigin, destinationProtocol, destinationHost, allowDestinationSubdomains);
+}
+
+QString QWEBKIT_EXPORT qt_webpage_groupName(QWebPage* page)
+{
+    return DumpRenderTreeSupportQt::webPageGroupName(page);
+}
+
+void QWEBKIT_EXPORT qt_webpage_setGroupName(QWebPage* page, const QString& groupName)
+{
+    DumpRenderTreeSupportQt::webPageSetGroupName(page, groupName);
+}
