@@ -79,7 +79,7 @@ namespace JSC {
         MacroAssemblerCodePtr ctiStringLengthTrampoline;
         MacroAssemblerCodePtr ctiVirtualCallLink;
         MacroAssemblerCodePtr ctiVirtualCall;
-        MacroAssemblerCodePtr ctiNativeCallThunk;
+        RefPtr<NativeExecutable> ctiNativeCallThunk;
         MacroAssemblerCodePtr ctiSoftModulo;
     };
 
@@ -275,7 +275,7 @@ namespace JSC {
         MacroAssemblerCodePtr ctiStringLengthTrampoline() { return m_trampolineStructure.ctiStringLengthTrampoline; }
         MacroAssemblerCodePtr ctiVirtualCallLink() { return m_trampolineStructure.ctiVirtualCallLink; }
         MacroAssemblerCodePtr ctiVirtualCall() { return m_trampolineStructure.ctiVirtualCall; }
-        MacroAssemblerCodePtr ctiNativeCallThunk() { return m_trampolineStructure.ctiNativeCallThunk; }
+        NativeExecutable* ctiNativeCallThunk() { return m_trampolineStructure.ctiNativeCallThunk.get(); }
         MacroAssemblerCodePtr ctiSoftModulo() { return m_trampolineStructure.ctiSoftModulo; }
 
         NativeExecutable* specializedThunk(JSGlobalData* globalData, ThunkGenerator generator);

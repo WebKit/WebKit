@@ -722,14 +722,6 @@ ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotJSCell(RegisterID reg, int vReg)
 }
 
 #if USE(JSVALUE64)
-ALWAYS_INLINE JIT::Jump JIT::emitJumpIfImmediateNumber(RegisterID reg)
-{
-    return branchTestPtr(NonZero, reg, tagTypeNumberRegister);
-}
-ALWAYS_INLINE JIT::Jump JIT::emitJumpIfNotImmediateNumber(RegisterID reg)
-{
-    return branchTestPtr(Zero, reg, tagTypeNumberRegister);
-}
 
 inline void JIT::emitLoadDouble(unsigned index, FPRegisterID value)
 {

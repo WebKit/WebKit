@@ -68,6 +68,7 @@ namespace JSC {
         static const FPRegisterID fpRegT0 = X86Registers::xmm0;
         static const FPRegisterID fpRegT1 = X86Registers::xmm1;
         static const FPRegisterID fpRegT2 = X86Registers::xmm2;
+        static const FPRegisterID fpRegT3 = X86Registers::xmm3;
 #elif CPU(X86)
         static const RegisterID returnValueRegister = X86Registers::eax;
         static const RegisterID cachedResultRegister = X86Registers::eax;
@@ -86,6 +87,7 @@ namespace JSC {
         static const FPRegisterID fpRegT0 = X86Registers::xmm0;
         static const FPRegisterID fpRegT1 = X86Registers::xmm1;
         static const FPRegisterID fpRegT2 = X86Registers::xmm2;
+        static const FPRegisterID fpRegT3 = X86Registers::xmm3;
 #elif CPU(ARM_THUMB2)
         static const RegisterID returnValueRegister = ARMRegisters::r0;
         static const RegisterID cachedResultRegister = ARMRegisters::r0;
@@ -102,6 +104,7 @@ namespace JSC {
         static const FPRegisterID fpRegT0 = ARMRegisters::d0;
         static const FPRegisterID fpRegT1 = ARMRegisters::d1;
         static const FPRegisterID fpRegT2 = ARMRegisters::d2;
+        static const FPRegisterID fpRegT3 = ARMRegisters::d3;
 #elif CPU(ARM_TRADITIONAL)
         static const RegisterID returnValueRegister = ARMRegisters::r0;
         static const RegisterID cachedResultRegister = ARMRegisters::r0;
@@ -126,6 +129,7 @@ namespace JSC {
         static const FPRegisterID fpRegT0 = ARMRegisters::d0;
         static const FPRegisterID fpRegT1 = ARMRegisters::d1;
         static const FPRegisterID fpRegT2 = ARMRegisters::d2;
+        static const FPRegisterID fpRegT3 = ARMRegisters::d3;
 #elif CPU(MIPS)
         static const RegisterID returnValueRegister = MIPSRegisters::v0;
         static const RegisterID cachedResultRegister = MIPSRegisters::v0;
@@ -148,21 +152,29 @@ namespace JSC {
         static const FPRegisterID fpRegT0 = MIPSRegisters::f4;
         static const FPRegisterID fpRegT1 = MIPSRegisters::f6;
         static const FPRegisterID fpRegT2 = MIPSRegisters::f8;
+        static const FPRegisterID fpRegT2 = MIPSRegisters::f10;
 #else
 #error "JIT not supported on this platform."
 #endif
 
         inline Jump emitLoadJSCell(unsigned virtualRegisterIndex, RegisterID payload);
         inline Jump emitLoadInt32(unsigned virtualRegisterIndex, RegisterID dst);
+        inline Jump emitLoadDouble(unsigned virtualRegisterIndex, FPRegisterID dst, RegisterID scratch);
 
 #if USE(JSVALUE32_64)
         inline Jump emitJumpIfNotJSCell(unsigned virtualRegisterIndex);
         inline Address tagFor(unsigned index, RegisterID base = callFrameRegister);
 #endif
+
+#if USE(JSVALUE32) || USE(JSVALUE64)
+        Jump emitJumpIfImmediateNumber(RegisterID reg);
+        Jump emitJumpIfNotImmediateNumber(RegisterID reg);
+#endif
+
         inline Address payloadFor(unsigned index, RegisterID base = callFrameRegister);
         inline Address addressFor(unsigned index, RegisterID base = callFrameRegister);
     };
-    
+
 #if USE(JSVALUE32_64)
     inline JSInterfaceJIT::Jump JSInterfaceJIT::emitLoadJSCell(unsigned virtualRegisterIndex, RegisterID payload)
     {
@@ -190,9 +202,31 @@ namespace JSC {
     {
         return Address(base, (index * sizeof(Register)) + OBJECT_OFFSETOF(JSValue, u.asBits.payload));
     }
+
+    inline JSInterfaceJIT::Jump JSInterfaceJIT::emitLoadDouble(unsigned virtualRegisterIndex, FPRegisterID dst, RegisterID scratch)
+    {
+        loadPtr(tagFor(virtualRegisterIndex), scratch);
+        Jump isDouble = branch32(Below, scratch, Imm32(JSValue::LowestTag));
+        Jump notInt = branch32(NotEqual, scratch, Imm32(JSValue::Int32Tag));
+        loadPtr(payloadFor(virtualRegisterIndex), scratch);
+        convertInt32ToDouble(scratch, dst);
+        Jump done = jump();
+        isDouble.link(this);
+        loadDouble(addressFor(virtualRegisterIndex), dst);
+        done.link(this);
+        return notInt;
+    }    
 #endif
 
 #if USE(JSVALUE64)
+    ALWAYS_INLINE JSInterfaceJIT::Jump JSInterfaceJIT::emitJumpIfImmediateNumber(RegisterID reg)
+    {
+        return branchTestPtr(NonZero, reg, tagTypeNumberRegister);
+    }
+    ALWAYS_INLINE JSInterfaceJIT::Jump JSInterfaceJIT::emitJumpIfNotImmediateNumber(RegisterID reg)
+    {
+        return branchTestPtr(Zero, reg, tagTypeNumberRegister);
+    }
     inline JSInterfaceJIT::Jump JSInterfaceJIT::emitLoadJSCell(unsigned virtualRegisterIndex, RegisterID dst)
     {
         loadPtr(addressFor(virtualRegisterIndex), dst);
@@ -206,6 +240,21 @@ namespace JSC {
         zeroExtend32ToPtr(dst, dst);
         return result;
     }
+
+    inline JSInterfaceJIT::Jump JSInterfaceJIT::emitLoadDouble(unsigned virtualRegisterIndex, FPRegisterID dst, RegisterID scratch)
+    {
+        loadPtr(addressFor(virtualRegisterIndex), scratch);
+        Jump notNumber = emitJumpIfNotImmediateNumber(scratch);
+        Jump notInt = branchPtr(Below, scratch, tagTypeNumberRegister);
+        convertInt32ToDouble(scratch, dst);
+        Jump done = jump();
+        notInt.link(this);
+        addPtr(tagTypeNumberRegister, scratch);
+        movePtrToDouble(scratch, dst);
+        done.link(this);
+        return notNumber;
+    }
+
 #endif
 
 #if USE(JSVALUE32)
@@ -221,7 +270,13 @@ namespace JSC {
         Jump result = branchTest32(Zero, dst, Imm32(JSImmediate::TagTypeNumber));
         rshift32(Imm32(JSImmediate::IntegerPayloadShift), dst);
         return result;
-    }    
+    }
+
+    inline JSInterfaceJIT::Jump JSInterfaceJIT::emitLoadDouble(unsigned, FPRegisterID, RegisterID)
+    {
+        ASSERT_NOT_REACHED();
+        return jump();
+    }
 #endif
 
 #if !USE(JSVALUE32_64)

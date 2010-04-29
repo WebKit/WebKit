@@ -400,7 +400,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     *executablePool = finalCode.m_executablePool;
 
     trampolines->ctiVirtualCall = trampolineAt(finalCode, virtualCallBegin);
-    trampolines->ctiNativeCallThunk = trampolineAt(finalCode, nativeCallThunk);
+    trampolines->ctiNativeCallThunk = adoptRef(new NativeExecutable(JITCode(JITCode::HostFunction(trampolineAt(finalCode, nativeCallThunk)))));
 #if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
     trampolines->ctiStringLengthTrampoline = trampolineAt(finalCode, stringLengthBegin);
 #else
@@ -1937,7 +1937,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
 
     trampolines->ctiVirtualCallLink = trampolineAt(finalCode, virtualCallLinkBegin);
     trampolines->ctiVirtualCall = trampolineAt(finalCode, virtualCallBegin);
-    trampolines->ctiNativeCallThunk = trampolineAt(finalCode, nativeCallThunk);
+    trampolines->ctiNativeCallThunk = adoptRef(new NativeExecutable(JITCode(JITCode::HostFunction(trampolineAt(finalCode, nativeCallThunk)))));
 #if ENABLE(JIT_OPTIMIZE_MOD)
     trampolines->ctiSoftModulo = trampolineAt(finalCode, softModBegin);
 #endif

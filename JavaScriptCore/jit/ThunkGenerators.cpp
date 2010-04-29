@@ -94,6 +94,71 @@ PassRefPtr<NativeExecutable> fromCharCodeThunkGenerator(JSGlobalData* globalData
     return jit.finalize();
 }
 
+PassRefPtr<NativeExecutable> sqrtThunkGenerator(JSGlobalData* globalData, ExecutablePool* pool)
+{
+#if USE(JSVALUE64) || USE(JSVALUE32_64)
+    SpecializedThunkJIT jit(1, globalData, pool);
+    if (!jit.supportsFloatingPointSqrt())
+        return globalData->jitStubs.ctiNativeCallThunk();
+
+    jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
+    jit.sqrtDouble(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT0);
+    jit.returnDouble(SpecializedThunkJIT::fpRegT0);
+    return jit.finalize();
+#else
+    UNUSED_PARAM(pool);
+    return globalData->jitStubs.ctiNativeCallThunk();
+#endif
+}
+
+static const double oneConstant = 1.0;
+static const double negativeHalfConstant = -0.5;
+
+PassRefPtr<NativeExecutable> powThunkGenerator(JSGlobalData* globalData, ExecutablePool* pool)
+{
+#if USE(JSVALUE64) || USE(JSVALUE32_64)
+    SpecializedThunkJIT jit(2, globalData, pool);
+    if (!jit.supportsFloatingPoint())
+        return globalData->jitStubs.ctiNativeCallThunk();
+
+    jit.loadDouble(&oneConstant, SpecializedThunkJIT::fpRegT1);
+    jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
+    MacroAssembler::Jump nonIntExponent;
+    jit.loadInt32Argument(1, SpecializedThunkJIT::regT0, nonIntExponent);
+    jit.appendFailure(jit.branch32(MacroAssembler::LessThan, SpecializedThunkJIT::regT0, MacroAssembler::Imm32(0)));
+    
+    MacroAssembler::Jump exponentIsZero = jit.branchTest32(MacroAssembler::Zero, SpecializedThunkJIT::regT0);
+    MacroAssembler::Label startLoop(jit.label());
+
+    MacroAssembler::Jump exponentIsEven = jit.branchTest32(MacroAssembler::Zero, SpecializedThunkJIT::regT0, MacroAssembler::Imm32(1));
+    jit.mulDouble(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT1);
+    exponentIsEven.link(&jit);
+    jit.mulDouble(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT0);
+    jit.rshift32(MacroAssembler::Imm32(1), SpecializedThunkJIT::regT0);
+    jit.branchTest32(MacroAssembler::NonZero, SpecializedThunkJIT::regT0).linkTo(startLoop, &jit);
+
+    exponentIsZero.link(&jit);
+    jit.returnDouble(SpecializedThunkJIT::fpRegT1);
+
+    if (jit.supportsFloatingPointSqrt()) {
+        nonIntExponent.link(&jit);
+        jit.loadDouble(&negativeHalfConstant, SpecializedThunkJIT::fpRegT3);
+        jit.loadDoubleArgument(1, SpecializedThunkJIT::fpRegT2, SpecializedThunkJIT::regT0);
+        jit.appendFailure(jit.branchDouble(MacroAssembler::DoubleLessThanOrEqual, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT1));
+        jit.appendFailure(jit.branchDouble(MacroAssembler::DoubleNotEqual, SpecializedThunkJIT::fpRegT2, SpecializedThunkJIT::fpRegT3));
+        jit.sqrtDouble(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT0);
+        jit.divDouble(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT1);
+        jit.returnDouble(SpecializedThunkJIT::fpRegT1);
+    } else
+        jit.appendFailure(nonIntExponent);
+
+    return jit.finalize();
+#else
+    UNUSED_PARAM(pool);
+    return globalData->jitStubs.ctiNativeCallThunk();
+#endif
+}
+
 }
 
 #endif // ENABLE(JIT)

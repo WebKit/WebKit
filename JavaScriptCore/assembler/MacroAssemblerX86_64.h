@@ -86,7 +86,7 @@ public:
         }
     }
 
-    void loadDouble(void* address, FPRegisterID dest)
+    void loadDouble(const void* address, FPRegisterID dest)
     {
         move(ImmPtr(address), scratchRegister);
         loadDouble(scratchRegister, dest);
@@ -427,6 +427,7 @@ public:
     bool supportsFloatingPoint() const { return true; }
     // See comment on MacroAssemblerARMv7::supportsFloatingPointTruncate()
     bool supportsFloatingPointTruncate() const { return true; }
+    bool supportsFloatingPointSqrt() const { return true; }
 
 private:
     friend class LinkBuffer;

@@ -278,6 +278,12 @@ sub output() {
         if ($key eq "charAt") {
             $thunkGenerator = "charAtThunkGenerator";
         }
+        if ($key eq "sqrt") {
+            $thunkGenerator = "sqrtThunkGenerator";
+        }
+        if ($key eq "pow") {
+            $thunkGenerator = "powThunkGenerator";
+        }
         print "   { \"$key\", $attrs[$i], (intptr_t)" . $castStr . "($firstValue), (intptr_t)$secondValue THUNK_GENERATOR($thunkGenerator) },\n";
         $i++;
     }

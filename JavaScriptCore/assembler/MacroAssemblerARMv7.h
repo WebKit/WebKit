@@ -494,6 +494,11 @@ public:
     // In short, FIXME:.
     bool supportsFloatingPointTruncate() const { return false; }
 
+    bool supportsFloatingPointSqrt() const
+    {
+        return false;
+    }
+
     void loadDouble(ImplicitAddress address, FPRegisterID dest)
     {
         RegisterID base = address.base;
@@ -555,6 +560,11 @@ public:
     {
         loadDouble(src, fpTempRegister);
         mulDouble(fpTempRegister, dest);
+    }
+
+    void sqrtDouble(FPRegisterID, FPRegisterID)
+    {
+        ASSERT_NOT_REACHED();
     }
 
     void convertInt32ToDouble(RegisterID src, FPRegisterID dest)

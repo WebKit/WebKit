@@ -160,7 +160,7 @@ public:
     // in a class requiring explicit construction in order to differentiate
     // from pointers used as absolute addresses to memory operations
     struct ImmPtr {
-        explicit ImmPtr(void* value)
+        explicit ImmPtr(const void* value)
             : m_value(value)
         {
         }
@@ -170,7 +170,7 @@ public:
             return reinterpret_cast<intptr_t>(m_value);
         }
 
-        void* m_value;
+        const void* m_value;
     };
 
     // Imm32:

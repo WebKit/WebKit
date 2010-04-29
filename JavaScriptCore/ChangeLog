@@ -1,3 +1,70 @@
+2010-04-28  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Add fast paths for Math.pow and Math.sqrt
+        https://bugs.webkit.org/show_bug.cgi?id=38294
+
+        Add specialized thunks for Math.pow and Math.sqrt.
+        This requires adding a sqrtDouble function to the MacroAssembler
+        and sqrtsd to the x86 assembler.
+
+        Math.pow is slightly more complicated, in that we have
+        to implement exponentiation ourselves rather than relying
+        on hardware support.  The inline exponentiation is restricted
+        to positive integer exponents on a numeric base.  Exponentiation
+        is finally performed through the "Exponentiation by Squaring"
+        algorithm.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::ImmPtr::ImmPtr):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::supportsFloatingPointSqrt):
+        (JSC::MacroAssemblerARM::loadDouble):
+        (JSC::MacroAssemblerARM::sqrtDouble):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::supportsFloatingPointSqrt):
+        (JSC::MacroAssemblerARMv7::sqrtDouble):
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::loadDouble):
+        (JSC::MacroAssemblerX86::supportsFloatingPointSqrt):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::sqrtDouble):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::loadDouble):
+        (JSC::MacroAssemblerX86_64::supportsFloatingPointSqrt):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::):
+        (JSC::X86Assembler::movsd_mr):
+        (JSC::X86Assembler::sqrtsd_rr):
+        (JSC::X86Assembler::X86InstructionFormatter::twoByteOp):
+        (JSC::X86Assembler::X86InstructionFormatter::memoryModRM):
+        * create_hash_table:
+        * jit/JIT.h:
+        * jit/JITInlineMethods.h:
+        * jit/JITOpcodes.cpp:
+        * jit/JITStubs.h:
+        (JSC::JITThunks::ctiNativeCallThunk):
+        * jit/JSInterfaceJIT.h:
+        (JSC::JSInterfaceJIT::emitLoadDouble):
+        (JSC::JSInterfaceJIT::emitJumpIfImmediateNumber):
+        (JSC::JSInterfaceJIT::emitJumpIfNotImmediateNumber):
+        (JSC::JSInterfaceJIT::emitLoadInt32):
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::loadDoubleArgument):
+        (JSC::SpecializedThunkJIT::loadInt32Argument):
+        (JSC::SpecializedThunkJIT::returnJSValue):
+        (JSC::SpecializedThunkJIT::returnDouble):
+        (JSC::SpecializedThunkJIT::finalize):
+        * jit/ThunkGenerators.cpp:
+        (JSC::sqrtThunkGenerator):
+        (JSC::powThunkGenerator):
+        * jit/ThunkGenerators.h:
+        * runtime/Executable.h:
+        (JSC::NativeExecutable::NativeExecutable):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::JSFunction):
+
 2010-04-28  Mike Thole  <mthole@apple.com>
 
         Reviewed by Mark Rowe.

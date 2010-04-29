@@ -46,6 +46,12 @@ namespace JSC {
             m_failures.append(branch32(NotEqual, Address(callFrameRegister, RegisterFile::ArgumentCount * (int)sizeof(Register)), Imm32(expectedArgCount + 1)));
         }
         
+        void loadDoubleArgument(int argument, FPRegisterID dst, RegisterID scratch)
+        {
+            unsigned src = argumentToVirtualRegister(argument);
+            m_failures.append(emitLoadDouble(src, dst, scratch));
+        }
+        
         void loadCellArgument(int argument, RegisterID dst)
         {
             unsigned src = argumentToVirtualRegister(argument);
@@ -59,17 +65,50 @@ namespace JSC {
             m_failures.append(branchTest32(NonZero, Address(dst, OBJECT_OFFSETOF(JSString, m_fiberCount))));
         }
         
-        void loadInt32Argument(int argument, RegisterID dst)
+        void loadInt32Argument(int argument, RegisterID dst, Jump& failTarget)
         {
             unsigned src = argumentToVirtualRegister(argument);
-            m_failures.append(emitLoadInt32(src, dst));
+            failTarget = emitLoadInt32(src, dst);
+        }
+        
+        void loadInt32Argument(int argument, RegisterID dst)
+        {
+            Jump conversionFailed;
+            loadInt32Argument(argument, dst, conversionFailed);
+            m_failures.append(conversionFailed);
         }
         
         void appendFailure(const Jump& failure)
         {
             m_failures.append(failure);
         }
+
+        void returnJSValue(RegisterID src)
+        {
+            if (src != regT0)
+                move(src, regT0);
+            loadPtr(Address(callFrameRegister, RegisterFile::CallerFrame * (int)sizeof(Register)), callFrameRegister);
+            ret();
+        }
         
+        void returnDouble(FPRegisterID src)
+        {
+#if USE(JSVALUE64)
+            moveDoubleToPtr(src, regT0);
+            subPtr(tagTypeNumberRegister, regT0);
+#elif USE(JSVALUE32_64)
+            storeDouble(src, Address(stackPointerRegister, -(int)sizeof(double)));
+            loadPtr(Address(stackPointerRegister, OBJECT_OFFSETOF(JSValue, u.asBits.tag) - sizeof(double)), regT1);
+            loadPtr(Address(stackPointerRegister, OBJECT_OFFSETOF(JSValue, u.asBits.payload) - sizeof(double)), regT0);
+#else
+            UNUSED_PARAM(src);
+            ASSERT_NOT_REACHED();
+            m_failures.append(jump());
+#endif
+            loadPtr(Address(callFrameRegister, RegisterFile::CallerFrame * (int)sizeof(Register)), callFrameRegister);
+            ret();
+        }
+
         void returnInt32(RegisterID src)
         {
             if (src != regT0)
@@ -91,7 +130,7 @@ namespace JSC {
         PassRefPtr<NativeExecutable> finalize()
         {
             LinkBuffer patchBuffer(this, m_pool.get());
-            patchBuffer.link(m_failures, CodeLocationLabel(m_globalData->jitStubs.ctiNativeCallThunk()));
+            patchBuffer.link(m_failures, CodeLocationLabel(m_globalData->jitStubs.ctiNativeCallThunk()->generatedJITCode().addressForCall()));
             return adoptRef(new NativeExecutable(patchBuffer.finalizeCode()));
         }
         
@@ -114,7 +153,7 @@ namespace JSC {
             addPtr(Imm32(JSImmediate::TagTypeNumber), regT0);
 #endif
         }
-        
+
         void tagReturnAsJSCell()
         {
 #if USE(JSVALUE32_64)

@@ -85,7 +85,7 @@ namespace JSC {
         NativeExecutable(ExecState* exec)
             : ExecutableBase(NUM_PARAMETERS_IS_HOST)
         {
-            m_jitCode = JITCode(JITCode::HostFunction(exec->globalData().jitStubs.ctiNativeCallThunk()));
+            m_jitCode = exec->globalData().jitStubs.ctiNativeCallThunk()->m_jitCode;
         }
         NativeExecutable(JITCode thunk)
             : ExecutableBase(NUM_PARAMETERS_IS_HOST)
