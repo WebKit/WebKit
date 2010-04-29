@@ -1,3 +1,12 @@
+2010-04-29  Alex Milowski  <alex@milowski.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Updates to the Qt build to enable building MathML support.
+
+        * WebCore.pri:
+        * WebCore.pro:
+
 2010-04-29  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

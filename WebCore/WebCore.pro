@@ -188,6 +188,7 @@ INCLUDEPATH = \
     $$PWD/loader/appcache \
     $$PWD/loader/archive \
     $$PWD/loader/icon \
+    $$PWD/mathml \
     $$PWD/notifications \
     $$PWD/page \
     $$PWD/page/animation \
@@ -1483,6 +1484,19 @@ HEADERS += \
     loader/TextResourceDecoder.h \
     loader/ThreadableLoader.h \
     loader/WorkerThreadableLoader.h \
+    mathml/MathMLElement.h \
+    mathml/MathMLInlineContainerElement.h \
+    mathml/MathMLMathElement.h \
+    mathml/MathMLTextElement.h \
+    mathml/RenderMathMLBlock.h \
+    mathml/RenderMathMLFraction.h \
+    mathml/RenderMathMLMath.h \
+    mathml/RenderMathMLOperator.h \
+    mathml/RenderMathMLRoot.h \
+    mathml/RenderMathMLRow.h \
+    mathml/RenderMathMLSquareRoot.h \
+    mathml/RenderMathMLSubSup.h \
+    mathml/RenderMathMLUnderOver.h \
     notifications/Notification.h \
     notifications/NotificationCenter.h \
     notifications/NotificationPresenter.h \
@@ -2465,6 +2479,23 @@ contains(DEFINES, ENABLE_FILTERS=1) {
         platform/graphics/filters/FilterEffect.cpp \
         platform/graphics/filters/SourceAlpha.cpp \
         platform/graphics/filters/SourceGraphic.cpp
+}
+
+contains(DEFINES, ENABLE_MATHML=1) {
+    SOURCES += \
+        mathml/MathMLElement.cpp \
+        mathml/MathMLInlineContainerElement.cpp \
+        mathml/MathMLMathElement.cpp \
+        mathml/MathMLTextElement.cpp \
+        mathml/RenderMathMLBlock.cpp \
+        mathml/RenderMathMLFraction.cpp \
+        mathml/RenderMathMLMath.cpp \
+        mathml/RenderMathMLOperator.cpp \
+        mathml/RenderMathMLRoot.cpp \
+        mathml/RenderMathMLRow.cpp \
+        mathml/RenderMathMLSquareRoot.cpp \
+        mathml/RenderMathMLSubSup.cpp \
+        mathml/RenderMathMLUnderOver.cpp
 }
 
 contains(DEFINES, ENABLE_WML=1) {
