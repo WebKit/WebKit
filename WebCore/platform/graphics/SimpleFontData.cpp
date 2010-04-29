@@ -143,6 +143,8 @@ void SimpleFontData::platformGlyphInit()
         return;
     }
 
+    m_zeroWidthSpaceGlyph = glyphPageZero->glyphDataForCharacter(0).glyph;
+
     // Nasty hack to determine if we should round or ceil space widths.
     // If the font is monospace or fake monospace we ceil to ensure that 
     // every character and the space are the same width.  Otherwise we round.
@@ -157,7 +159,6 @@ void SimpleFontData::platformGlyphInit()
     // See <http://bugs.webkit.org/show_bug.cgi?id=13178>
     // Ask for the glyph for 0 to avoid paging in ZERO WIDTH SPACE. Control characters, including 0,
     // are mapped to the ZERO WIDTH SPACE glyph.
-    m_zeroWidthSpaceGlyph = glyphPageZero->glyphDataForCharacter(0).glyph;
     if (m_zeroWidthSpaceGlyph == m_spaceGlyph) {
         m_zeroWidthSpaceGlyph = 0;
         LOG_ERROR("Font maps SPACE and ZERO WIDTH SPACE to the same glyph. Glyph width will not be overridden.");
