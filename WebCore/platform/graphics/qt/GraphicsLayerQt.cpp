@@ -1178,32 +1178,23 @@ public:
     {
         TransformationMatrix transformMatrix;
 
-        // sometimes the animation values from WebCore are misleading and we have to use the actual matrix as source
-        // The Mac implementation simply doesn't try to accelerate those (e.g. 360deg rotation), but we do.
-        if (progress == 1 || !targetOperations.size() || sourceOperations == targetOperations) {
-            TransformationMatrix sourceMatrix;
-            sourceOperations.apply(m_boxSize, sourceMatrix);
-            transformMatrix = m_sourceMatrix;
-            transformMatrix.blend(sourceMatrix, 1 - progress);
-        } else {
-            bool validTransformLists = true;
-            const int sourceOperationCount = sourceOperations.size();
-            if (sourceOperationCount) {
-                if (targetOperations.size() != sourceOperationCount)
-                    validTransformLists = false;
-                else
-                    for (size_t j = 0; j < sourceOperationCount && validTransformLists; ++j)
-                        if (!sourceOperations.operations()[j]->isSameType(*targetOperations.operations()[j]))
-                            validTransformLists = false;
-            }
+        bool validTransformLists = true;
+        const int sourceOperationCount = sourceOperations.size();
+        if (sourceOperationCount) {
+            if (targetOperations.size() != sourceOperationCount)
+                validTransformLists = false;
+            else
+                for (size_t j = 0; j < sourceOperationCount && validTransformLists; ++j)
+                    if (!sourceOperations.operations()[j]->isSameType(*targetOperations.operations()[j]))
+                        validTransformLists = false;
+        }
 
-            if (validTransformLists) {
-                for (size_t i = 0; i < targetOperations.size(); ++i)
-                    targetOperations.operations()[i]->blend(sourceOperations.at(i), progress)->apply(transformMatrix, m_boxSize);
-            } else {
-                targetOperations.apply(m_boxSize, transformMatrix);
-                transformMatrix.blend(m_sourceMatrix, progress);
-            }
+        if (validTransformLists) {
+            for (size_t i = 0; i < targetOperations.size(); ++i)
+                targetOperations.operations()[i]->blend(sourceOperations.at(i), progress)->apply(transformMatrix, m_boxSize);
+        } else {
+            targetOperations.apply(m_boxSize, transformMatrix);
+            transformMatrix.blend(m_sourceMatrix, progress);
         }
 
         m_layer.data()->setBaseTransform(transformMatrix);

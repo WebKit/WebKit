@@ -1,3 +1,19 @@
+2010-04-29  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Reverse animations don't work in some use cases        
+        https://bugs.webkit.org/show_bug.cgi?id=38075
+
+        This was due to a code path special-casing reverse animations, that became obselete when we aligned our animation code
+        with the CA implementation. That special case code path is now a bug - and this patch removes it.
+
+        http://staff.washington.edu/fmf/2009/03/25/iphone-3d-css-transformations/ now runs the reverse
+        animation correctly.
+
+        * platform/graphics/qt/GraphicsLayerQt.cpp:
+        (WebCore::TransformAnimationQt::applyFrame):
+
 2010-04-29  Jan Hanssen  <jhanssen@codeaurora.org>
 
         Reviewed by Adam Barth.
