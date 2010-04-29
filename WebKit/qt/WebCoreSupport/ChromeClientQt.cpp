@@ -167,8 +167,12 @@ Page* ChromeClientQt::createWindow(Frame*, const FrameLoadRequest& request, cons
     if (!newPage)
         return 0;
 
+    // A call to QWebPage::mainFrame() implicitly creates the main frame.
+    // Make sure it exists, as WebCore expects it when returning from this call.
+    QWebFrame* mainFrame = newPage->mainFrame();
+
     if (!request.isEmpty())
-        newPage->mainFrame()->load(request.resourceRequest().url());
+        mainFrame->load(request.resourceRequest().url());
     return newPage->d->page;
 }
 

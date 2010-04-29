@@ -1,3 +1,16 @@
+2010-04-29  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] REGRESSION(r57982): tst_qwebpage::showModalDialog() crashes
+        https://bugs.webkit.org/show_bug.cgi?id=38314
+
+        Make sure that there's always a main frame when returning from createWindow()
+        to the caller in WebCore.
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::createWindow):
+
 2010-04-28  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Unreviewed, Qt build fix.
