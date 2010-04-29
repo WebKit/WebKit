@@ -55,14 +55,12 @@ unsigned long ScriptProfileNode::lineNumber() const
 
 double ScriptProfileNode::totalTime() const
 {
-    // FIXME: use GetTotalMilliseconds once it is implemented in V8.
-    return m_profileNode->GetTotalSamplesCount();
+    return m_profileNode->GetTotalTime();
 }
 
 double ScriptProfileNode::selfTime() const
 {
-    // FIXME: use GetSelfMilliseconds once it is implemented in V8.
-    return m_profileNode->GetSelfSamplesCount();
+    return m_profileNode->GetSelfTime();
 }
 
 unsigned long ScriptProfileNode::numberOfCalls() const

@@ -1,3 +1,15 @@
+2010-04-29  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        [Chromium] Update ScriptProfileNode to retrieve execution time in milliseconds.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38330
+
+        * bindings/v8/ScriptProfileNode.cpp:
+        (WebCore::ScriptProfileNode::totalTime):
+        (WebCore::ScriptProfileNode::selfTime):
+
 2010-04-28  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.
