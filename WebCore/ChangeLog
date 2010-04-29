@@ -1,3 +1,24 @@
+2010-04-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        More of <rdar://problem/7855777> REGRESSION: Memory usage increase caused by storing glyph bounds in GlyphMetricsMap
+        https://bugs.webkit.org/show_bug.cgi?id=37936
+
+        Assigning zero width and empty bounds to the ZERO WIDTH SPACE glyph often allocates a width map
+        page and a bounds map page for the glyph, each of which pages contains 255 unused entries. Save
+        this space by not storing the zero width and empty bounds in the metrics maps.
+
+        * platform/graphics/SimpleFontData.cpp:
+        (WebCore::SimpleFontData::SimpleFontData): Initialize m_zeroWidthSpaceGlyph.
+        (WebCore::SimpleFontData::platformGlyphInit): Set m_zeroWidthSpaceGlyph. Don’t create entries
+        for the ZERO WIDTH SPACE glyph in the width map and in the bounds map.
+        * platform/graphics/SimpleFontData.h:
+        (WebCore::SimpleFontData::boundsForGlyph): Return empty bounds for the ZERO WIDTH SPACE glyph
+        without consulting the bounds map.
+        (WebCore::SimpleFontData::widthForGlyph): Return zero for the ZERO WIDTH SPACE glyph without
+        consulting the width map.
+
 2010-04-28  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Adele Peterson.

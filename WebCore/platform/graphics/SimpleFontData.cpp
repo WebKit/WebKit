@@ -92,6 +92,7 @@ SimpleFontData::SimpleFontData(const FontPlatformData& f, bool customFont, bool 
 
         // FIXME: is there a way we can get the space glyph from the SVGGlyphIdentifier above?
         m_spaceGlyph = 0;
+        m_zeroWidthSpaceGlyph = 0;
         determinePitch();
         m_adjustedSpaceWidth = roundf(m_spaceWidth);
         m_missingGlyphData.fontData = this;
@@ -136,6 +137,7 @@ void SimpleFontData::platformGlyphInit()
         m_spaceWidth = 0;
         m_adjustedSpaceWidth = 0;
         determinePitch();
+        m_zeroWidthSpaceGlyph = 0;
         m_missingGlyphData.fontData = this;
         m_missingGlyphData.glyph = 0;
         return;
@@ -155,13 +157,10 @@ void SimpleFontData::platformGlyphInit()
     // See <http://bugs.webkit.org/show_bug.cgi?id=13178>
     // Ask for the glyph for 0 to avoid paging in ZERO WIDTH SPACE. Control characters, including 0,
     // are mapped to the ZERO WIDTH SPACE glyph.
-    Glyph zeroWidthSpaceGlyph = glyphPageZero->glyphDataForCharacter(0).glyph;
-    if (zeroWidthSpaceGlyph) {
-        if (zeroWidthSpaceGlyph != m_spaceGlyph) {
-            m_glyphToWidthMap.setMetricsForGlyph(zeroWidthSpaceGlyph, 0);
-            m_glyphToBoundsMap.setMetricsForGlyph(zeroWidthSpaceGlyph, FloatRect());
-        } else
-            LOG_ERROR("Font maps SPACE and ZERO WIDTH SPACE to the same glyph. Glyph width not overridden.");
+    m_zeroWidthSpaceGlyph = glyphPageZero->glyphDataForCharacter(0).glyph;
+    if (m_zeroWidthSpaceGlyph == m_spaceGlyph) {
+        m_zeroWidthSpaceGlyph = 0;
+        LOG_ERROR("Font maps SPACE and ZERO WIDTH SPACE to the same glyph. Glyph width will not be overridden.");
     }
 
     m_missingGlyphData.fontData = this;
