@@ -36,7 +36,7 @@
 #include <windows.h>
 
 namespace JSC {
-extern void* g_stackBase;
+JS_EXPORTDATA extern void* g_stackBase;
 }
 
 namespace WebCore {
