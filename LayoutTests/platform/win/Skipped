@@ -855,3 +855,6 @@ fast/lists/ol-nested-items.html
 fast/lists/ol-nested-list-dynamic-insert.html
 fast/lists/ol-nested-list-dynamic-remove.html
 fast/lists/ol-nested-list.html
+
+# Doesn't support WOFF yet.
+fast/css/font-face-woff.html

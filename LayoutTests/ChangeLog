@@ -1,3 +1,14 @@
+2010-04-29  Adam Langley  <agl@chromium.org>
+
+        Reviewed by David Levin.
+
+        Adding a test which uses a font from a WOFF file.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38217
+
+        * fast/css/font-face-woff.html: Added.
+        * fast/css/resources/Ahem.woff: Added.
+
 2010-04-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         Rubber-stamped by Simon Hausmann.

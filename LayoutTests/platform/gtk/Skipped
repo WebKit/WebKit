@@ -1283,6 +1283,7 @@ fast/css/invalid-percentage-property.html
 fast/css/text-align.html
 fast/css/getComputedStyle/computed-style-without-renderer.html
 fast/css/getComputedStyle/computed-style.html
+fast/css/font-face-woff.html # Doesn't support WOFF yet.
 fast/dom/client-width-height-quirks.html
 fast/dom/client-width-height.html
 fast/dom/cssTarget-crash.html

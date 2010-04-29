@@ -5223,3 +5223,5 @@ svg/custom/clip-path-with-transform.svg
 svg/custom/recursive-clippath.svg
 svg/custom/marker-overflow-clip.svg
 
+# Doesn't support WOFF yet.
+fast/css/font-face-woff.html

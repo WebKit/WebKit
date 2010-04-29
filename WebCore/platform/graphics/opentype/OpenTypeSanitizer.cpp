@@ -52,15 +52,16 @@ PassRefPtr<SharedBuffer> OpenTypeSanitizer::sanitize()
     // A transcoded font is usually smaller than an original font.
     // However, it can be slightly bigger than the original one due to
     // name table replacement and/or padding for glyf table.
-    static const size_t padLen = 20 * 1024; // 20 kB
+    //
+    // With WOFF fonts, however, we'll be decompressing, so the result can be
+    // much larger than the original.
 
-    OwnArrayPtr<unsigned char> transcodeRawBuffer(new unsigned char[m_buffer->size() + padLen]);
-    ots::MemoryStream output(transcodeRawBuffer.get(), m_buffer->size() + padLen);
+    ots::ExpandingMemoryStream output(m_buffer->size(), maxWebFontSize);
     if (!ots::Process(&output, reinterpret_cast<const uint8_t*>(m_buffer->data()), m_buffer->size()))
         return 0;
 
     const size_t transcodeLen = output.Tell();
-    return SharedBuffer::create(transcodeRawBuffer.get(), transcodeLen);
+    return SharedBuffer::create(static_cast<unsigned char*>(output.get()), transcodeLen);
 }
 
 } // namespace WebCore

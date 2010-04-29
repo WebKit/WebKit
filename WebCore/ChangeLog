@@ -1,3 +1,23 @@
+2010-04-29  Adam Langley  <agl@chromium.org>
+
+        Reviewed by David Levin.
+
+        This patch adds support for WOFF in Chromium. Since Chromium
+        already transcodes all OpenType files for security reasons we
+        are adding WOFF support into the transcoder.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38217
+
+        * css/CSSFontFaceSrcValue.cpp:
+        (WebCore::CSSFontFaceSrcValue::isSupportedFormat):
+          Recognise "woff" as a font-face format value (guarded by
+          ENABLE(OPENTYPE_SANITIZER) at this point)
+        * platform/graphics/opentype/OpenTypeSanitizer.cpp:
+        (WebCore::OpenTypeSanitizer::sanitize):
+          Change so that the transcoded font can be larger than the original.
+          (WOFF files are compressed, so the transcoded TTF is typically
+          larger.)
+
 2010-04-29  Alex Milowski  <alex@milowski.com>
 
         Reviewed by Kenneth Rohde Christiansen.

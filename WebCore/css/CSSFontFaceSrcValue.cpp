@@ -49,6 +49,9 @@ bool CSSFontFaceSrcValue::isSupportedFormat() const
     }
 
     return equalIgnoringCase(m_format, "truetype") || equalIgnoringCase(m_format, "opentype")
+#if ENABLE(OPENTYPE_SANITIZER)
+           || equalIgnoringCase(m_format, "woff")
+#endif
 #if ENABLE(SVG_FONTS)
            || isSVGFontFaceSrc()
 #endif

@@ -172,6 +172,9 @@ fast/lists/ol-nested-list.html
 # https://bugs.webkit.org/show_bug.cgi?id=33812
 fast/dom/icon-url-property.html
 
+# Doesn't support WOFF yet.
+fast/css/font-face-woff.html
+
 # It seems this depends on the size of physical screen?
 printing/media-queries-print.html
 
