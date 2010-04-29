@@ -268,6 +268,16 @@ private:
 #else
 #define GET_PROC_ADDRESS(Proc) reinterpret_cast<Proc##Type>(getProcAddress(#Proc));
 #endif
+
+bool GraphicsContext3D::isGLES2Compliant() const
+{
+#if defined (QT_OPENGL_ES_2)
+    return true;
+#else
+    return false;
+#endif
+}
+
  
 GraphicsContext3DInternal::GraphicsContext3DInternal(GraphicsContext3D::Attributes attrs, HostWindow* hostWindow)
     : m_attrs(attrs)

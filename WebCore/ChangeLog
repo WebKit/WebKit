@@ -1,3 +1,17 @@
+2010-04-29  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] QtWebkit doesn't link with 3D canvas
+        https://bugs.webkit.org/show_bug.cgi?id=38299
+
+        Added implementation for GraphicsContext3D::isGLES2Compliant, which returns the correct value based on a Qt #define.
+
+        No new tests: build fix
+
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3D::isGLES2Compliant):
+
 2010-04-29  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Tor Arne Vestbø.
