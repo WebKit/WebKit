@@ -1080,7 +1080,7 @@ on MinGW. See https://bugs.webkit.org/show_bug.cgi?id=29268 */
 #endif
 
 #if (PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)) || PLATFORM(IPHONE)
-#define WTF_USE_PROTECTION_SPACE_AUTH_CALLBACK 1
+#define WTF_USE_PROTECTION_SPACE_AUTH_CALLBACK 0
 #endif
 
 #if COMPILER(GCC)

@@ -1,5 +1,12 @@
 2010-04-28  Mike Thole  <mthole@apple.com>
 
+        Build fix, not reviewed.
+
+        * wtf/Platform.h:
+        Disable WTF_USE_PROTECTION_SPACE_AUTH_CALLBACK until an exports file is created.
+
+2010-04-28  Mike Thole  <mthole@apple.com>
+
         Reviewed by David Kilzer.
 
         Add canAuthenticateAgainstProtectionSpace() to frame loader so that a protection space 
