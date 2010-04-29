@@ -359,10 +359,10 @@ WebInspector.ScriptsPanel.prototype = {
 
     canEditScripts: function()
     {
-        return !!InspectorBackend.editScriptLine;
+        return !!InspectorBackend.editScriptSource;
     },
 
-    editScriptLine: function(sourceID, line, newContent, callback)
+    editScriptSource: function(sourceID, newContent, line, linesCountToShift, callback)
     {
         if (!this.canEditScripts())
             return;
@@ -376,7 +376,6 @@ WebInspector.ScriptsPanel.prototype = {
             newBreakpoints.push(breakpoint);
         }
 
-        var linesCountToShift = newContent.split("\n").length - 1;
         function mycallback(newBody)
         {
             callback(newBody);
@@ -388,7 +387,7 @@ WebInspector.ScriptsPanel.prototype = {
             }
         };
         var callbackId = WebInspector.Callback.wrap(mycallback.bind(this))
-        InspectorBackend.editScriptLine(callbackId, sourceID, line, newContent);
+        InspectorBackend.editScriptSource(callbackId, sourceID, newContent);
     },
 
     selectedCallFrameId: function()
@@ -1004,4 +1003,4 @@ WebInspector.ScriptsPanel.prototype = {
 
 WebInspector.ScriptsPanel.prototype.__proto__ = WebInspector.Panel.prototype;
 
-WebInspector.didEditScriptLine = WebInspector.Callback.processCallback;
+WebInspector.didEditScriptSource = WebInspector.Callback.processCallback;

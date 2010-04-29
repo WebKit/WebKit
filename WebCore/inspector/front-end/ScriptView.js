@@ -77,11 +77,6 @@ WebInspector.ScriptView.prototype = {
         WebInspector.panels.scripts.addBreakpoint(breakpoint);
     },
 
-    _editLine: function(line, newContent)
-    {
-        WebInspector.panels.scripts.editScriptLine(this.script.sourceID, line, newContent, this._editLineComplete.bind(this));
-    },
-
     _editLineComplete: function(newBody)
     {
         this.script.source = newBody;
@@ -107,6 +102,7 @@ WebInspector.ScriptView.prototype = {
     _jumpToSearchResult: WebInspector.SourceView.prototype._jumpToSearchResult,
     _sourceFrameSetupFinished: WebInspector.SourceView.prototype._sourceFrameSetupFinished,
     _removeBreakpoint: WebInspector.SourceView.prototype._removeBreakpoint,
+    _editLine: WebInspector.SourceView.prototype._editLine,
     resize: WebInspector.SourceView.prototype.resize
 }
 

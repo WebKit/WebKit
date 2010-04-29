@@ -1,3 +1,24 @@
+2010-04-28  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Allow editing script resources when resource tracking is enabled.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38269
+
+        * inspector/front-end/ScriptView.js:
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.canEditScripts):
+        (WebInspector.ScriptsPanel.prototype.editScriptSource):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.get textModel):
+        * inspector/front-end/SourceView.js:
+        (WebInspector.SourceView):
+        (WebInspector.SourceView.prototype._addBreakpoint):
+        (WebInspector.SourceView.prototype._editLine):
+        (WebInspector.SourceView.prototype._editLineComplete):
+        (WebInspector.SourceView.prototype._sourceIDForLine):
+
 2010-04-25  Antonio Gomes  <tonikitoo@webkit.org>
 
         Reviewed by Darin Adler.

@@ -309,18 +309,11 @@ devtools.DebuggerAgent.prototype.addBreakpoint = function(sourceId, line, enable
 /**
  * Changes given line of the script. 
  */
-devtools.DebuggerAgent.prototype.editScriptLine = function(sourceId, line, newContent, callback)
+devtools.DebuggerAgent.prototype.editScriptSource = function(sourceId, newContent, callback)
 {
-    var script = this.parsedScripts_[sourceId];
-    if (!script || !script.source)
-        return;
-
-    var lines = script.source.split("\n");
-    lines[line] = newContent;
-
     var commandArguments = {
         "script_id": sourceId,
-        "new_source": lines.join("\n")
+        "new_source": newContent
     };
 
     var cmd = new devtools.DebugCommand("changelive", commandArguments);

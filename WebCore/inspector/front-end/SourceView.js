@@ -32,7 +32,8 @@ WebInspector.SourceView = function(resource)
 
     this.element.addStyleClass("source");
 
-    this.sourceFrame = new WebInspector.SourceFrame(this.contentElement, this._addBreakpoint.bind(this), this._removeBreakpoint.bind(this));
+    var canEditScripts = WebInspector.panels.scripts.canEditScripts() && resource.type === WebInspector.Resource.Type.Script;
+    this.sourceFrame = new WebInspector.SourceFrame(this.contentElement, this._addBreakpoint.bind(this), this._removeBreakpoint.bind(this), canEditScripts ? this._editLine.bind(this) : null);
     resource.addEventListener("finished", this._resourceLoadingFinished, this);
     this._frameNeedsSetup = true;
 }
@@ -105,17 +106,7 @@ WebInspector.SourceView.prototype = {
 
     _addBreakpoint: function(line)
     {
-        var sourceID = null;
-        var closestStartingLine = 0;
-        var scripts = this.resource.scripts;
-        for (var i = 0; i < scripts.length; ++i) {
-            var script = scripts[i];
-            if (script.startingLine <= line && script.startingLine >= closestStartingLine) {
-                closestStartingLine = script.startingLine;
-                sourceID = script.sourceID;
-            }
-        }
-
+        var sourceID = this._sourceIDForLine(line);
         if (WebInspector.panels.scripts) {
             var breakpoint = new WebInspector.Breakpoint(this.resource.url, line, sourceID);
             WebInspector.panels.scripts.addBreakpoint(breakpoint);
@@ -126,6 +117,41 @@ WebInspector.SourceView.prototype = {
     {
         if (WebInspector.panels.scripts)
             WebInspector.panels.scripts.removeBreakpoint(breakpoint);
+    },
+
+    _editLine: function(line, newContent)
+    {
+        var lines = [];
+        var textModel = this.sourceFrame.textModel;
+        for (var i = 0; i < textModel.linesCount; ++i) {
+            if (i === line)
+                lines.push(newContent);
+            else
+                lines.push(textModel.line(i));
+        }
+
+        var linesCountToShift = newContent.split("\n").length - 1;
+        WebInspector.panels.scripts.editScriptSource(this._sourceIDForLine(line), lines.join("\n"), line, linesCountToShift, this._editLineComplete.bind(this));
+    },
+
+    _editLineComplete: function(newBody)
+    {
+        this.sourceFrame.updateContent(newBody);
+    },
+
+    _sourceIDForLine: function(line)
+    {
+        var sourceID = null;
+        var closestStartingLine = 0;
+        var scripts = this.resource.scripts;
+        for (var i = 0; i < scripts.length; ++i) {
+            var script = scripts[i];
+            if (script.startingLine <= line && script.startingLine >= closestStartingLine) {
+                closestStartingLine = script.startingLine;
+                sourceID = script.sourceID;
+            }
+        }
+        return sourceID;
     },
 
     // The rest of the methods in this prototype need to be generic enough to work with a ScriptView.

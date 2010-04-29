@@ -1,3 +1,16 @@
+2010-04-28  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Allow editing script resources when resource tracking is enabled.
+
+        http://bugs.webkit.org/show_bug.cgi?id=38269
+ 
+        * src/js/DebuggerAgent.js:
+        * src/js/InspectorControllerImpl.js:
+        (.devtools.InspectorBackendImpl.prototype.setBreakpoint):
+        (.devtools.InspectorBackendImpl.prototype.editScriptSource):
+
 2010-04-28  Darin Fisher  <darin@chromium.org>
 
         Reviewed by David Levin.

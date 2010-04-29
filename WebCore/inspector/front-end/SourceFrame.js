@@ -152,6 +152,11 @@ WebInspector.SourceFrame.prototype = {
         this._textModel.setText(null, content);
     },
 
+    get textModel()
+    {
+        return this._textModel;
+    },
+
     highlightLine: function(line)
     {
         if (this._textViewer)
