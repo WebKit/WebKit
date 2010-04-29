@@ -28,6 +28,7 @@
 
 #define HTML_DOCUMENT_TITLE "<html><head><title>This is the title</title></head><body></body></html>"
 #define HTML_DOCUMENT_ELEMENTS "<html><body><ul><li>1</li><li>2</li><li>3</li></ul></body></html>"
+#define HTML_DOCUMENT_ELEMENTS_CLASS "<html><body><div class=\"test\"></div><div class=\"strange\"></div><div class=\"test\"></div></body></html>"
 
 typedef struct {
     GtkWidget* webView;
@@ -106,6 +107,29 @@ static void test_dom_document_get_elements_by_tag_name(DomDocumentFixture* fixtu
     }
 }
 
+static void test_dom_document_get_elements_by_class_name(DomDocumentFixture* fixture, gconstpointer data)
+{
+    g_assert(fixture);
+    WebKitWebView* view = (WebKitWebView*)fixture->webView;
+    g_assert(view);
+    WebKitDOMDocument* document = webkit_web_view_get_dom_document(view);
+    g_assert(document);
+    WebKitDOMNodeList* list = webkit_dom_document_get_elements_by_class_name(document, (gchar*)"test");
+    g_assert(list);
+    gulong length = webkit_dom_node_list_get_length(list);
+    g_assert_cmpint(length, ==, 2);
+
+    guint i;
+
+    for (i = 0; i < length; i++) {
+        WebKitDOMNode* item = webkit_dom_node_list_item(list, i);
+        g_assert(item);
+        WebKitDOMElement* element = (WebKitDOMElement*)item;
+        g_assert(element);
+        g_assert_cmpstr(webkit_dom_element_get_tag_name(element), ==, "DIV");
+    }
+}
+
 int main(int argc, char** argv)
 {
     if (!g_thread_supported())
@@ -125,6 +149,12 @@ int main(int argc, char** argv)
                DomDocumentFixture, HTML_DOCUMENT_ELEMENTS,
                dom_document_fixture_setup,
                test_dom_document_get_elements_by_tag_name,
+               dom_document_fixture_teardown);
+
+    g_test_add("/webkit/domdocument/test_get_elements_by_class_name",
+               DomDocumentFixture, HTML_DOCUMENT_ELEMENTS_CLASS,
+               dom_document_fixture_setup,
+               test_dom_document_get_elements_by_class_name,
                dom_document_fixture_teardown);
 
     return g_test_run();

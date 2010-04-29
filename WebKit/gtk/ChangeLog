@@ -5,6 +5,19 @@
         [GTK] GObject DOM bindings
         https://bugs.webkit.org/show_bug.cgi?id=33590
 
+        Test webkit_dom_document_get_elements_by_class_name.
+
+        * tests/testdomdocument.c:
+        (test_dom_document_get_elements_by_class_name):
+        (main):
+
+2010-04-29  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] GObject DOM bindings
+        https://bugs.webkit.org/show_bug.cgi?id=33590
+
         Test webkit_dom_document_get_elements_by_tag_name.
 
         * tests/testdomdocument.c:
