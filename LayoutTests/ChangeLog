@@ -2,6 +2,14 @@
 
         Not reviewed.
 
+        Trying to fix Windows checkout by shortening more paths in Sputnik tests.
+
+        * fast/js/sputnik: Many directories renamed.
+
+2010-04-29  Alexey Proskuryakov  <ap@apple.com>
+
+        Not reviewed.
+
         Trying to fix Windows checkout by shortening paths in Sputnik tests.
 
         * fast/js/sputnik: Many directories renamed.
