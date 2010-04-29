@@ -1,3 +1,15 @@
+2010-04-29  Xan Lopez  <xlopez@igalia.com>
+
+        Rubber-stamped by Adam Barth.
+
+        Update GObject bindings test results. We are actually moving
+        backwards here, but we'll update them again when we figure out
+        what broke.
+
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (webkit_dom_test_obj_set_property):
+        (webkit_dom_test_obj_get_property):
+
 2010-04-29  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
