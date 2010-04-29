@@ -1,3 +1,16 @@
+2010-04-29  Garret Kelly  <gdk@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Expose the RuntimeFeature for touch events through the
+        WebRuntimeFeatures mechanism.
+        https://bugs.webkit.org/show_bug.cgi?id=37486
+
+        * public/WebRuntimeFeatures.h:
+        * src/WebRuntimeFeatures.cpp:
+        (WebKit::WebRuntimeFeatures::enableTouch):
+        (WebKit::WebRuntimeFeatures::isTouchEnabled):
+
 2010-04-29  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Dimitri Glazkov.

@@ -210,4 +210,20 @@ bool WebRuntimeFeatures::isPushStateEnabled(bool enable)
     return RuntimeEnabledFeatures::pushStateEnabled();
 }
 
+void WebRuntimeFeatures::enableTouch(bool enable)
+{
+#if ENABLE(TOUCH_EVENTS)
+    RuntimeEnabledFeatures::setTouchEnabled(enable);
+#endif
+}
+
+bool WebRuntimeFeatures::isTouchEnabled()
+{
+#if ENABLE(TOUCH_EVENTS)
+    return RuntimeEnabledFeatures::touchEnabled();
+#else
+    return false;
+#endif
+}
+
 } // namespace WebKit
