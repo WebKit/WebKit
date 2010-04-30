@@ -40,17 +40,17 @@ extern "C" {
 
 #define WKNVBrowserContainerCheckFuncsVersionHasGetLocation 2
 
-typedef uint32 (*WKN_CheckIfAllowedToLoadURLProcPtr)(NPP npp, const char* url, const char* frame, void (*callbackFunc)(NPP npp, uint32, NPBool allowed, void* context), void* context);
-typedef void  (*WKN_CancelCheckIfAllowedToLoadURLProcPtr)(NPP npp, uint32);
+typedef uint32_t (*WKN_CheckIfAllowedToLoadURLProcPtr)(NPP npp, const char* url, const char* frame, void (*callbackFunc)(NPP npp, uint32_t, NPBool allowed, void* context), void* context);
+typedef void  (*WKN_CancelCheckIfAllowedToLoadURLProcPtr)(NPP npp, uint32_t);
 typedef char* (*WKN_ResolveURLProcPtr)(NPP npp, const char* url, const char* target);
 
-uint32 WKN_CheckIfAllowedToLoadURL(NPP npp, const char* url, const char* frame, void (*callbackFunc)(NPP npp, uint32, NPBool allowed, void* context), void* context);
-void WKN_CancelCheckIfAllowedToLoadURL(NPP npp, uint32);
+uint32_t WKN_CheckIfAllowedToLoadURL(NPP npp, const char* url, const char* frame, void (*callbackFunc)(NPP npp, uint32_t, NPBool allowed, void* context), void* context);
+void WKN_CancelCheckIfAllowedToLoadURL(NPP npp, uint32_t);
 char* WKN_ResolveURL(NPP npp, const char* url, const char* target);
 
 typedef struct _WKNBrowserContainerCheckFuncs {
-    uint16 size;
-    uint16 version;
+    uint16_t size;
+    uint16_t version;
     
     WKN_CheckIfAllowedToLoadURLProcPtr checkIfAllowedToLoadURL;
     WKN_CancelCheckIfAllowedToLoadURLProcPtr cancelCheckIfAllowedToLoadURL;

@@ -697,11 +697,11 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 
 FunctionPointer functionPointerForTVector(TransitionVector tvp)
 {
-    const uint32 temp[6] = {0x3D800000, 0x618C0000, 0x800C0000, 0x804C0004, 0x7C0903A6, 0x4E800420};
-    uint32 *newGlue = NULL;
+    const uint32_t temp[6] = {0x3D800000, 0x618C0000, 0x800C0000, 0x804C0004, 0x7C0903A6, 0x4E800420};
+    uint32_t *newGlue = NULL;
 
     if (tvp != NULL) {
-        newGlue = (uint32 *)malloc(sizeof(temp));
+        newGlue = (uint32_t *)malloc(sizeof(temp));
         if (newGlue != NULL) {
             unsigned i;
             for (i = 0; i < 6; i++) newGlue[i] = temp[i];

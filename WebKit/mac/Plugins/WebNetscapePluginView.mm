@@ -113,9 +113,9 @@ static const double ThrottledTimerInterval = 0.25;
 
 class PluginTimer : public TimerBase {
 public:
-    typedef void (*TimerFunc)(NPP npp, uint32 timerID);
+    typedef void (*TimerFunc)(NPP npp, uint32_t timerID);
     
-    PluginTimer(NPP npp, uint32 timerID, uint32 interval, NPBool repeat, TimerFunc timerFunc)
+    PluginTimer(NPP npp, uint32_t timerID, uint32_t interval, NPBool repeat, TimerFunc timerFunc)
         : m_npp(npp)
         , m_timerID(timerID)
         , m_interval(interval)
@@ -148,8 +148,8 @@ private:
     }
     
     NPP m_npp;
-    uint32 m_timerID;
-    uint32 m_interval;
+    uint32_t m_timerID;
+    uint32_t m_interval;
     NPBool m_repeat;
     TimerFunc m_timerFunc;
 };
@@ -1238,7 +1238,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 }
 
 - (uint32)checkIfAllowedToLoadURL:(const char*)urlCString frame:(const char*)frameNameCString 
-                     callbackFunc:(void (*)(NPP npp, uint32 checkID, NPBool allowed, void* context))callbackFunc 
+                     callbackFunc:(void (*)(NPP npp, uint32_t checkID, NPBool allowed, void* context))callbackFunc 
                            context:(void*)context
 {
     if (!_containerChecksInProgress) 
@@ -2133,7 +2133,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     }
 }
 
-- (uint32)scheduleTimerWithInterval:(uint32)interval repeat:(NPBool)repeat timerFunc:(void (*)(NPP npp, uint32 timerID))timerFunc
+- (uint32)scheduleTimerWithInterval:(uint32_t)interval repeat:(NPBool)repeat timerFunc:(void (*)(NPP npp, uint32_t timerID))timerFunc
 {
     if (!timerFunc)
         return 0;
@@ -2141,7 +2141,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (!timers)
         timers = new HashMap<uint32, PluginTimer*>;
     
-    uint32 timerID;
+    uint32_t timerID;
     
     do {
         timerID = ++currentTimerID;

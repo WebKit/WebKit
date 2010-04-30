@@ -29,7 +29,7 @@
 
 @implementation WebNetscapeContainerCheckContextInfo
 
-- (id)initWithCheckRequestID:(uint32)checkRequestID callbackFunc:(void (*)(NPP npp, uint32 checkID, NPBool allowed, void* context))callbackFunc context:(void*)context
+- (id)initWithCheckRequestID:(uint32)checkRequestID callbackFunc:(void (*)(NPP npp, uint32_t checkID, NPBool allowed, void* context))callbackFunc context:(void*)context
 {
     self = [super init];
     if (!self)

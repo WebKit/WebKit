@@ -1,5 +1,20 @@
 2010-04-30  Anders Carlsson  <andersca@apple.com>
 
+        Fix 32-bit build.
+
+        * Plugins/WebNetscapeContainerCheckContextInfo.h:
+        * Plugins/WebNetscapeContainerCheckContextInfo.mm:
+        (-[WebNetscapeContainerCheckContextInfo initWithCheckRequestID:callbackFunc:context:]):
+        * Plugins/WebNetscapeContainerCheckPrivate.h:
+        * Plugins/WebNetscapePluginPackage.mm:
+        (functionPointerForTVector):
+        * Plugins/WebNetscapePluginView.mm:
+        (PluginTimer::PluginTimer):
+        (-[WebNetscapePluginView checkIfAllowedToLoadURL:frame:callbackFunc:context:]):
+        (-[WebNetscapePluginView scheduleTimerWithInterval:repeat:timerFunc:]):
+
+2010-04-30  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Timothy Hatcher.
 
         Next step towards fixing
