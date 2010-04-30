@@ -1,3 +1,16 @@
+2010-04-30  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Reversed the order of the CSSMatrix.multiply method
+        https://bugs.webkit.org/show_bug.cgi?id=38337
+
+        Test: transforms/svg-vs-css.xhtml
+
+        * css/WebKitCSSMatrix.cpp:
+        (WebCore::WebKitCSSMatrix::multiply):
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+
 2010-04-30  Kevin Ollivier  <kevino@theolliviers.com>
 
         Unreviewed. Attempt to fix the Chromium Mac build after the last commit.

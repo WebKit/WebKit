@@ -1,3 +1,28 @@
+2010-04-30  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Reversed the order of the CSSMatrix.multiply method
+        https://bugs.webkit.org/show_bug.cgi?id=38337
+
+        These are the existing tests for 2D and 3D CSSMatrix and SVGMatrix.
+        I've added tests missing between the two styles and now do tests
+        that confirm that SVGMatrix and CSSMatrix both multiply the same.
+
+        This also adds a new test from Simon which compares SVG to CSS matrixes.
+        This is a pixel test for mac only.
+
+        * platform/mac/transforms/svg-vs-css-expected.checksum: Added.
+        * platform/mac/transforms/svg-vs-css-expected.png: Added.
+        * platform/mac/transforms/svg-vs-css-expected.txt: Added.
+        * svg/dom/SVGMatrix-interface-expected.txt:
+        * svg/dom/SVGMatrix-interface.xhtml:
+        * transforms/cssmatrix-2d-interface-expected.txt:
+        * transforms/cssmatrix-2d-interface.xhtml:
+        * transforms/cssmatrix-3d-interface-expected.txt:
+        * transforms/cssmatrix-3d-interface.xhtml:
+        * transforms/svg-vs-css.xhtml: Added.
+
 2010-04-30  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, expectations update.

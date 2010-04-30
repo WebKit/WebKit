@@ -143,6 +143,14 @@ PASS parseFloat(m.e) is 0
 PASS parseFloat(m.f) is 0
 
 Test multiply
+PASS parseFloat(m3.a) is 31
+PASS parseFloat(m3.b) is 46
+PASS parseFloat(m3.c) is 39
+PASS parseFloat(m3.d) is 58
+PASS parseFloat(m3.e) is 52
+PASS parseFloat(m3.f) is 76
+
+Test that multiply works in the right direction
 PASS m.a is 2
 PASS m.b is 0
 PASS m.c is 0
@@ -184,7 +192,7 @@ PASS parseFloat(m.e) is 10
 PASS parseFloat(m.f) is 20
 
 Test throwing exception from inverse
-PASS m.inverse() threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
+PASS m.inverse() threw exception Error: SVG_MATRIX_NOT_INVERTABLE: DOM SVG Exception 2.
 
 PASS successfullyParsed is true
 

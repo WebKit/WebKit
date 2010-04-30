@@ -54,6 +54,22 @@ namespace WebCore {
 // webmasters - are to be held responsible. Basically, don't be a jerk, and remember that anything free comes 
 // with no guarantee.
 
+// A Note About row-major vs. column major matrixes
+//
+// The clients of this class (CSSMatrix and SVGMatrix) assume a column-major ordering.
+// That means that when the matrix is initialized with 16 values, the first 4 values
+// go in the 4 rows of the first column, etc. And in the dereferencing calls, the first
+// digit is the column (e.g., m23() is column 2 row 3). Because C++ uses row-major arrays 
+// the internal matrix is stored in row-major order, so m[2][0] means row 2, column 0. This
+// has no bearing on how the matrix is viewed on the outside, since all access is done
+// with function calls. But it does help make the code more clear if you know that.
+//
+// FIXME: Multiply calls are named for what they do in the internal, row-major world. 
+// multLeft is actually a multRight in a column-major world, and multiply is a multLeft 
+// in a column-major world. For now I've left it that way to avoid too many confusing 
+// changes to the code. In particular AffineTransform uses these same terms for the
+// opposite operations. So we have to be VERY careful when we change them.
+
 typedef double Vector4[4];
 typedef double Vector3[3];
 

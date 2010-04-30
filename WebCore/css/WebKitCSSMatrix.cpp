@@ -93,14 +93,14 @@ void WebKitCSSMatrix::setMatrixValue(const String& string, ExceptionCode& ec)
         ec = SYNTAX_ERR;
 }
 
-// This is a multRight (this = this * secondMatrix)
+// Perform a concatenation of the matrices (this * secondMatrix)
 PassRefPtr<WebKitCSSMatrix> WebKitCSSMatrix::multiply(WebKitCSSMatrix* secondMatrix) const
 {
     if (!secondMatrix)
         return 0;
 
-    TransformationMatrix tmp(m_matrix);
-    tmp.multiply(secondMatrix->m_matrix);
+    TransformationMatrix tmp(secondMatrix->m_matrix);
+    tmp.multiply(m_matrix);
     return WebKitCSSMatrix::create(tmp);
 }
 

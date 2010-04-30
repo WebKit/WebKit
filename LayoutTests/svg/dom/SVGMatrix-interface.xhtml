@@ -191,6 +191,30 @@ shouldBe('parseFloat(m.f)', '0');
 
 debug("");
 debug("Test multiply");
+m = svgroot.createSVGMatrix();
+m.a = 1;
+m.b = 2;
+m.c = 3;
+m.d = 4;
+m.e = 5;
+m.f = 6;
+m2 = svgroot.createSVGMatrix();
+m2.a = 7;
+m2.b = 8;
+m2.c = 9;
+m2.d = 10;
+m2.e = 11;
+m2.f = 12;
+var m3 = m.multiply(m2);
+shouldBe('parseFloat(m3.a)', '31');
+shouldBe('parseFloat(m3.b)', '46');
+shouldBe('parseFloat(m3.c)', '39');
+shouldBe('parseFloat(m3.d)', '58');
+shouldBe('parseFloat(m3.e)', '52');
+shouldBe('parseFloat(m3.f)', '76');
+
+debug("");
+debug("Test that multiply works in the right direction");
 var tx = svgroot.createSVGMatrix();
 var sx = svgroot.createSVGMatrix();
 tx = tx.translate(100,0);
@@ -251,7 +275,9 @@ shouldBe('parseFloat(m.f)', '20');
 
 debug("");
 debug("Test throwing exception from inverse");
-m = new WebKitCSSMatrix("matrix(0, 0, 0, 0, 0, 0)"); // not invertible
+m = svgroot.createSVGMatrix();
+m.a = 0;
+m.c = 0;
 shouldThrow('m.inverse()');
 
 debug("");

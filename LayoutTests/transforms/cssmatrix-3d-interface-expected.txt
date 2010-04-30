@@ -109,22 +109,22 @@ PASS m.setMatrixValue("translate3d(10em, 20%, 40)") threw exception Error: SYNTA
 PASS m.setMatrixValue("translate3d(10px, 20px, 30px) scale3d()") threw exception Error: SYNTAX_ERR: DOM Exception 12.
 
 Test multiply
-PASS parseFloat(m3.m11) is 250
-PASS parseFloat(m3.m12) is 260
-PASS parseFloat(m3.m13) is 270
-PASS parseFloat(m3.m14) is 280
-PASS parseFloat(m3.m21) is 618
-PASS parseFloat(m3.m22) is 644
-PASS parseFloat(m3.m23) is 670
-PASS parseFloat(m3.m24) is 696
-PASS parseFloat(m3.m31) is 986
-PASS parseFloat(m3.m32) is 1028
-PASS parseFloat(m3.m33) is 1070
-PASS parseFloat(m3.m34) is 1112
-PASS parseFloat(m3.m41) is 1354
-PASS parseFloat(m3.m42) is 1412
-PASS parseFloat(m3.m43) is 1470
-PASS parseFloat(m3.m44) is 1528
+PASS parseFloat(m3.m11) is 538
+PASS parseFloat(m3.m12) is 612
+PASS parseFloat(m3.m13) is 686
+PASS parseFloat(m3.m14) is 760
+PASS parseFloat(m3.m21) is 650
+PASS parseFloat(m3.m22) is 740
+PASS parseFloat(m3.m23) is 830
+PASS parseFloat(m3.m24) is 920
+PASS parseFloat(m3.m31) is 762
+PASS parseFloat(m3.m32) is 868
+PASS parseFloat(m3.m33) is 974
+PASS parseFloat(m3.m34) is 1080
+PASS parseFloat(m3.m41) is 874
+PASS parseFloat(m3.m42) is 996
+PASS parseFloat(m3.m43) is 1118
+PASS parseFloat(m3.m44) is 1240
 
 Test immutability of multiply
 PASS parseFloat(m.m11) is 1
@@ -143,6 +143,42 @@ PASS parseFloat(m.m41) is 13
 PASS parseFloat(m.m42) is 14
 PASS parseFloat(m.m43) is 15
 PASS parseFloat(m.m44) is 16
+
+Test multiply in an affine matrix
+PASS parseFloat(m3.m11) is 31
+PASS parseFloat(m3.m12) is 46
+PASS parseFloat(m3.m13) is 0
+PASS parseFloat(m3.m14) is 0
+PASS parseFloat(m3.m21) is 39
+PASS parseFloat(m3.m22) is 58
+PASS parseFloat(m3.m23) is 0
+PASS parseFloat(m3.m24) is 0
+PASS parseFloat(m3.m31) is 0
+PASS parseFloat(m3.m32) is 0
+PASS parseFloat(m3.m33) is 1
+PASS parseFloat(m3.m34) is 0
+PASS parseFloat(m3.m41) is 52
+PASS parseFloat(m3.m42) is 76
+PASS parseFloat(m3.m43) is 0
+PASS parseFloat(m3.m44) is 1
+
+Test that multiply works in the right direction
+PASS m.m11 is 2
+PASS m.m12 is 0
+PASS m.m13 is 0
+PASS m.m14 is 0
+PASS m.m21 is 0
+PASS m.m22 is 1
+PASS m.m23 is 0
+PASS m.m24 is 0
+PASS m.m31 is 0
+PASS m.m32 is 0
+PASS m.m33 is 1
+PASS m.m34 is 0
+PASS m.m41 is 100
+PASS m.m42 is 0
+PASS m.m43 is 0
+PASS m.m44 is 1
 
 Test inverse
 PASS parseFloat(m2.m11) is 0.5
