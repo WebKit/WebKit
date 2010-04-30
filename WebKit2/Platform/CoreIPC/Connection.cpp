@@ -77,7 +77,7 @@ void Connection::invalidate()
     m_connectionQueue.scheduleWork(WorkItem::create(this, &Connection::platformInvalidate));
 }
 
-bool Connection::sendMessage(unsigned messageID, auto_ptr<ArgumentEncoder> arguments)
+bool Connection::sendMessage(MessageID messageID, auto_ptr<ArgumentEncoder> arguments)
 {
     if (!isValid())
         return false;
@@ -98,8 +98,8 @@ std::auto_ptr<ArgumentDecoder> Connection::waitForMessage(MessageID messageID, u
 
         for (size_t i = 0; i < m_incomingMessages.size(); ++i) {
             const IncomingMessage& message = m_incomingMessages[i];
-    
-            if (message.messageID() == messageID && message.arguments()->destinationID() == destinationID) {
+
+            if (equalIgnoringFlags(message.messageID(), messageID) && message.arguments()->destinationID() == destinationID) {
                 std::auto_ptr<ArgumentDecoder> arguments(message.arguments());
                 
                 // Erase the incoming message.
@@ -150,7 +150,7 @@ std::auto_ptr<ArgumentDecoder> Connection::waitForMessage(MessageID messageID, u
     return std::auto_ptr<ArgumentDecoder>();
 }
 
-std::auto_ptr<ArgumentDecoder> Connection::sendSyncMessage(unsigned messageID, uint64_t syncRequestID, std::auto_ptr<ArgumentEncoder> encoder, double timeout)
+std::auto_ptr<ArgumentDecoder> Connection::sendSyncMessage(MessageID messageID, uint64_t syncRequestID, std::auto_ptr<ArgumentEncoder> encoder, double timeout)
 {
     // First send the message.
     if (!sendMessage(messageID, encoder))
@@ -249,7 +249,7 @@ void Connection::dispatchMessages()
             m_client->didReceiveSyncMessage(this, message.messageID(), arguments, replyEncoder.get());
             
             // Send the reply.
-            sendMessage(MessageID(CoreIPCMessage::SyncMessageReply).toInt(), replyEncoder);
+            sendMessage(MessageID(CoreIPCMessage::SyncMessageReply), replyEncoder);
         } else
             m_client->didReceiveMessage(this, message.messageID(), arguments);
 

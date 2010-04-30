@@ -107,7 +107,7 @@ static inline size_t machMessageSize(size_t bodySize, size_t numberOfPortDescrip
     return round_msg(size);
 }
 
-void Connection::sendOutgoingMessage(unsigned messageID, auto_ptr<ArgumentEncoder> arguments)
+void Connection::sendOutgoingMessage(MessageID messageID, auto_ptr<ArgumentEncoder> arguments)
 {
     Vector<Attachment> attachments = arguments->releaseAttachments();
     
@@ -125,9 +125,15 @@ void Connection::sendOutgoingMessage(unsigned messageID, auto_ptr<ArgumentEncode
     
     char buffer[inlineMessageMaxSize];
 
+    bool messageBodyIsOOL = false;
     if (messageSize > sizeof(buffer)) {
-        // FIXME: The message should be OOL.
-        ASSERT(false);
+        messageBodyIsOOL = true;
+
+        attachments.append(Attachment(arguments->buffer(), arguments->bufferSize(), MACH_MSG_VIRTUAL_COPY, false));
+        numberOfOOLMemoryDescriptors++;
+        messageSize = machMessageSize(0, numberOfPortDescriptors, numberOfOOLMemoryDescriptors);
+
+        messageID = messageID.copyAddingFlags(MessageID::MessageBodyIsOOL);
     }
 
     bool isComplex = (numberOfPortDescriptors + numberOfOOLMemoryDescriptors > 0);
@@ -137,7 +143,7 @@ void Connection::sendOutgoingMessage(unsigned messageID, auto_ptr<ArgumentEncode
     header->msgh_size = messageSize;
     header->msgh_remote_port = m_sendPort;
     header->msgh_local_port = MACH_PORT_NULL;
-    header->msgh_id = messageID;
+    header->msgh_id = messageID.toInt();
 
     uint8_t* messageData;
 
@@ -176,8 +182,9 @@ void Connection::sendOutgoingMessage(unsigned messageID, auto_ptr<ArgumentEncode
     } else
         messageData = (uint8_t*)(header + 1);
 
-    // Copy the data.
-    memcpy(messageData, arguments->buffer(), arguments->bufferSize());
+    // Copy the data if it is not being sent out-of-line.
+    if (!messageBodyIsOOL)
+        memcpy(messageData, arguments->buffer(), arguments->bufferSize());
 
     ASSERT(m_sendPort);
     
@@ -204,6 +211,8 @@ static auto_ptr<ArgumentDecoder> createArgumentDecoder(mach_msg_header_t* header
         return auto_ptr<ArgumentDecoder>(new ArgumentDecoder(body, bodySize));
     }
 
+    MessageID messageID = MessageID::fromInt(header->msgh_id);
+
     mach_msg_body_t* body = reinterpret_cast<mach_msg_body_t*>(header + 1);
     mach_msg_size_t numDescriptors = body->msgh_descriptor_count;
     ASSERT(numDescriptors);
@@ -211,6 +220,12 @@ static auto_ptr<ArgumentDecoder> createArgumentDecoder(mach_msg_header_t* header
     // Build attachment list
     Deque<Attachment> attachments;
     uint8_t* descriptorData = reinterpret_cast<uint8_t*>(body + 1);
+
+    // If the message body was sent out-of-line, don't treat the last descriptor
+    // as an attachment, since it is really the message body.
+    if (messageID.isMessageBodyOOL())
+        --numDescriptors;
+
     for (mach_msg_size_t i = 0; i < numDescriptors; ++i) {
         mach_msg_descriptor_t* descriptor = reinterpret_cast<mach_msg_descriptor_t*>(descriptorData);
 
@@ -227,6 +242,27 @@ static auto_ptr<ArgumentDecoder> createArgumentDecoder(mach_msg_header_t* header
         default:
             ASSERT(false && "Unhandled descriptor type");
         }
+    }
+
+    if (messageID.isMessageBodyOOL()) {
+        mach_msg_descriptor_t* descriptor = reinterpret_cast<mach_msg_descriptor_t*>(descriptorData);
+        ASSERT(descriptor->type.type == MACH_MSG_OOL_DESCRIPTOR);
+        Attachment messageBodyAttachment(descriptor->out_of_line.address, descriptor->out_of_line.size,
+                                         descriptor->out_of_line.copy, descriptor->out_of_line.deallocate);
+
+        uint8_t* messageBody = static_cast<uint8_t*>(messageBodyAttachment.address());
+        size_t messageBodySize = messageBodyAttachment.size();
+
+        ArgumentDecoder* argumentDecoder;
+
+        if (attachments.isEmpty())
+            argumentDecoder = new ArgumentDecoder(messageBody, messageBodySize);
+        else
+            argumentDecoder = new ArgumentDecoder(messageBody, messageBodySize, attachments);
+
+        vm_deallocate(mach_task_self(), reinterpret_cast<vm_address_t>(messageBodyAttachment.address()), messageBodyAttachment.size());
+
+        return auto_ptr<ArgumentDecoder>(argumentDecoder);
     }
 
     uint8_t* messageBody = descriptorData;

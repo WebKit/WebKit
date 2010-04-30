@@ -64,12 +64,13 @@ template<typename> struct MessageKindTraits { };
 class MessageID {
 public:
     enum Flags {
-        SyncMessage = 1
+        SyncMessage = 1 << 0,
+        MessageBodyIsOOL = 1 << 1
     };
 
     template <typename EnumType>
-    explicit MessageID(EnumType messageKind)
-        : m_messageID((MessageKindTraits<EnumType>::messageClass) << 16 | messageKind)
+    explicit MessageID(EnumType messageKind, unsigned char flags = 0)
+        : m_messageID(flags << 24 | (MessageKindTraits<EnumType>::messageClass) << 16 | messageKind)
     {
     }
 
@@ -91,18 +92,17 @@ public:
     {
         return (m_messageID & 0xffffff) == (MessageID(messageKind).m_messageID & 0xffffff);
     }
-    
-    static MessageID fromInt(unsigned i)
+
+    MessageID copyAddingFlags(unsigned char flags)
     {
-        MessageID messageID;
-        
-        messageID.m_messageID = i;
-        return messageID;
+        return MessageID(Encoded, flags << 24 | m_messageID);
     }
-    
-    unsigned toInt(unsigned char flags = 0) const { return (flags << 24) | m_messageID; }
+
+    static MessageID fromInt(unsigned i) { return MessageID(Encoded, i); }
+    unsigned toInt() const { return m_messageID; }
 
     bool isSync() const { return getFlags() & SyncMessage; }
+    bool isMessageBodyOOL() const { return getFlags() & MessageBodyIsOOL; }
 
 private:
     unsigned char getFlags() const { return (m_messageID & 0xff000000) >> 24; }
@@ -112,10 +112,21 @@ private:
         : m_messageID(0)
     {
     }
+
+    enum EncodedTag { Encoded };
+    MessageID(EncodedTag, unsigned messageID)
+        : m_messageID(messageID)
+    {
+    }
     
     unsigned m_messageID;
 };
-    
+
+inline bool equalIgnoringFlags(MessageID a, MessageID b)
+{
+    return (a.toInt() & 0xffffff) == (b.toInt() & 0xffffff);
+}
+
 } // namespace CoreIPC
     
 #endif // MessageID_h

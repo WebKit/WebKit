@@ -86,14 +86,14 @@ private:
     
     bool isValid() const { return m_client; }
     
-    bool sendMessage(unsigned messageID, std::auto_ptr<ArgumentEncoder>);
-    std::auto_ptr<ArgumentDecoder> sendSyncMessage(unsigned messageID, uint64_t syncRequestID, std::auto_ptr<ArgumentEncoder>, double timeout);
-    std::auto_ptr<ArgumentDecoder> waitForMessage(MessageID messageID, uint64_t destinationID, double timeout);
+    bool sendMessage(MessageID, std::auto_ptr<ArgumentEncoder>);
+    std::auto_ptr<ArgumentDecoder> sendSyncMessage(MessageID, uint64_t syncRequestID, std::auto_ptr<ArgumentEncoder>, double timeout);
+    std::auto_ptr<ArgumentDecoder> waitForMessage(MessageID, uint64_t destinationID, double timeout);
     
     // Called on the connection work queue.
     void processIncomingMessage(MessageID, std::auto_ptr<ArgumentDecoder>);
     void sendOutgoingMessages();
-    void sendOutgoingMessage(unsigned messageID, std::auto_ptr<ArgumentEncoder>);
+    void sendOutgoingMessage(MessageID, std::auto_ptr<ArgumentEncoder>);
     void connectionDidClose();
     
     // Called on the listener thread.
@@ -136,13 +136,13 @@ private:
     // Outgoing messages.
     class OutgoingMessage {
     public:
-        OutgoingMessage(unsigned messageID, std::auto_ptr<ArgumentEncoder> arguments)
+        OutgoingMessage(MessageID messageID, std::auto_ptr<ArgumentEncoder> arguments)
             : m_messageID(messageID)
             , m_arguments(arguments.release())
         {
         }
         
-        unsigned messageID() const { return m_messageID; }
+        MessageID messageID() const { return m_messageID; }
         ArgumentEncoder* arguments() const { return m_arguments; }
         
         void destroy()
@@ -151,7 +151,7 @@ private:
         }
         
     private:
-        unsigned m_messageID;
+        MessageID m_messageID;
         ArgumentEncoder* m_arguments;
     };
     
@@ -186,7 +186,7 @@ bool Connection::send(E messageID, uint64_t destinationID, const T& arguments)
     std::auto_ptr<ArgumentEncoder> argumentEncoder(new ArgumentEncoder(destinationID));
     argumentEncoder->encode(arguments);
 
-    return sendMessage(MessageID(messageID).toInt(), argumentEncoder);
+    return sendMessage(MessageID(messageID), argumentEncoder);
 }
 
 template<typename E, typename T, typename U>
@@ -203,7 +203,7 @@ inline bool Connection::sendSync(E messageID, uint64_t destinationID, const T& a
     argumentEncoder->encode(arguments);
     
     // Now send the message and wait for a reply.
-    std::auto_ptr<ArgumentDecoder> replyDecoder = sendSyncMessage(MessageID(messageID).toInt(MessageID::SyncMessage), syncRequestID, argumentEncoder, timeout);
+    std::auto_ptr<ArgumentDecoder> replyDecoder = sendSyncMessage(MessageID(messageID, MessageID::SyncMessage), syncRequestID, argumentEncoder, timeout);
     if (!replyDecoder.get())
         return false;
     
