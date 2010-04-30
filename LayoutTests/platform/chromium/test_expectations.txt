@@ -2584,8 +2584,6 @@ BUG35822 : plugins/netscape-browser-object-identity.html = TEXT
 
 // Started failing during roll from 54848 -> 54898
 // Started failing with 54865. No rebaselines upstream but they don't run pixel tests.
-BUG36019 : fast/borders/svg-as-border-image-2.html = IMAGE
-BUG36019 : fast/borders/svg-as-border-image.html = IMAGE
 BUG36019 WIN LINUX : fast/images/svg-as-tiled-background.html = IMAGE
 
 // WebKit roll 55250 to 55339
