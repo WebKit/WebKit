@@ -699,8 +699,8 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (!timers)
         return;
 
-    HashMap<uint32, PluginTimer*>::const_iterator end = timers->end();
-    for (HashMap<uint32, PluginTimer*>::const_iterator it = timers->begin(); it != end; ++it) {
+    HashMap<uint32_t, PluginTimer*>::const_iterator end = timers->end();
+    for (HashMap<uint32_t, PluginTimer*>::const_iterator it = timers->begin(); it != end; ++it) {
         PluginTimer* timer = it->second;
         timer->stop();
     }    
@@ -717,8 +717,8 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (!timers)
         return;
     
-    HashMap<uint32, PluginTimer*>::const_iterator end = timers->end();
-    for (HashMap<uint32, PluginTimer*>::const_iterator it = timers->begin(); it != end; ++it) {
+    HashMap<uint32_t, PluginTimer*>::const_iterator end = timers->end();
+    for (HashMap<uint32_t, PluginTimer*>::const_iterator it = timers->begin(); it != end; ++it) {
         PluginTimer* timer = it->second;
         ASSERT(!timer->isActive());
         timer->start(_isCompletelyObscured);
@@ -1237,9 +1237,9 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     }
 }
 
-- (uint32)checkIfAllowedToLoadURL:(const char*)urlCString frame:(const char*)frameNameCString 
-                     callbackFunc:(void (*)(NPP npp, uint32_t checkID, NPBool allowed, void* context))callbackFunc 
-                           context:(void*)context
+- (uint32_t)checkIfAllowedToLoadURL:(const char*)urlCString frame:(const char*)frameNameCString 
+                       callbackFunc:(void (*)(NPP npp, uint32_t checkID, NPBool allowed, void* context))callbackFunc 
+                            context:(void*)context
 {
     if (!_containerChecksInProgress) 
         _containerChecksInProgress = [[NSMutableDictionary alloc] init];
@@ -1268,7 +1268,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 - (void)_containerCheckResult:(PolicyAction)policy contextInfo:(id)contextInfo
 {
     ASSERT([contextInfo isKindOfClass:[WebNetscapeContainerCheckContextInfo class]]);
-    void (*pluginCallback)(NPP npp, uint32, NPBool, void*) = [contextInfo callback];
+    void (*pluginCallback)(NPP npp, uint32_t, NPBool, void*) = [contextInfo callback];
     
     if (!pluginCallback) {
         ASSERT_NOT_REACHED();
@@ -1278,7 +1278,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     pluginCallback([self plugin], [contextInfo checkRequestID], (policy == PolicyUse), [contextInfo context]);
 }
 
-- (void)cancelCheckIfAllowedToLoadURL:(uint32)checkID
+- (void)cancelCheckIfAllowedToLoadURL:(uint32_t)checkID
 {
     WebPluginContainerCheck *check = (WebPluginContainerCheck *)[_containerChecksInProgress objectForKey:[NSNumber numberWithInt:checkID]];
     
@@ -2133,13 +2133,13 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     }
 }
 
-- (uint32)scheduleTimerWithInterval:(uint32_t)interval repeat:(NPBool)repeat timerFunc:(void (*)(NPP npp, uint32_t timerID))timerFunc
+- (uint32_t)scheduleTimerWithInterval:(uint32_t)interval repeat:(NPBool)repeat timerFunc:(void (*)(NPP npp, uint32_t timerID))timerFunc
 {
     if (!timerFunc)
         return 0;
     
     if (!timers)
-        timers = new HashMap<uint32, PluginTimer*>;
+        timers = new HashMap<uint32_t, PluginTimer*>;
     
     uint32_t timerID;
     
@@ -2156,7 +2156,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     return timerID;
 }
 
-- (void)unscheduleTimer:(uint32)timerID
+- (void)unscheduleTimer:(uint32_t)timerID
 {
     if (!timers)
         return;
@@ -2177,7 +2177,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     return NPERR_NO_ERROR;
 }
 
-- (NPError)getVariable:(NPNURLVariable)variable forURL:(const char*)url value:(char**)value length:(uint32*)length
+- (NPError)getVariable:(NPNURLVariable)variable forURL:(const char*)url value:(char**)value length:(uint32_t*)length
 {
     switch (variable) {
         case NPNURLVCookie: {
@@ -2229,7 +2229,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     return NPERR_GENERIC_ERROR;
 }
 
-- (NPError)setVariable:(NPNURLVariable)variable forURL:(const char*)url value:(const char*)value length:(uint32)length
+- (NPError)setVariable:(NPNURLVariable)variable forURL:(const char*)url value:(const char*)value length:(uint32_t)length
 {
     switch (variable) {
         case NPNURLVCookie: {
