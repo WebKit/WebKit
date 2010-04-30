@@ -1,5 +1,11 @@
 2010-04-30  Kevin Ollivier  <kevino@theolliviers.com>
 
+        Unreviewed. Attempt to fix the Chromium Mac build after the last commit.
+
+        * WebCore.gypi:
+
+2010-04-30  Kevin Ollivier  <kevino@theolliviers.com>
+
         Reviewed by Dan Bernstein.
 
         Allow other ports to compile ATSUI and CoreText functions in SimpleFontData for Mac.

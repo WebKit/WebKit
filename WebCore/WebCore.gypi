@@ -2162,6 +2162,8 @@
             'platform/graphics/mac/MediaPlayerPrivateQTKit.h',
             'platform/graphics/mac/MediaPlayerPrivateQTKit.mm',
             'platform/graphics/mac/MediaPlayerProxy.h',
+            'platform/graphics/mac/SimpleFontDataATSUI.mm',
+            'platform/graphics/mac/SimpleFontDataCoreText.cpp',
             'platform/graphics/mac/SimpleFontDataMac.mm',
             'platform/graphics/mac/WebLayer.h',
             'platform/graphics/mac/WebLayer.mm',
