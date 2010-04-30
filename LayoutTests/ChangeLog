@@ -1,5 +1,11 @@
 2010-04-29  James Robinson  <jamesr@chromium.org>
 
+        Unreviewed, fix chromium linux test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-04-29  James Robinson  <jamesr@chromium.org>
+
         Reviewed by Dimitri Glazkov.
 
         Update Chromium test expectations and add new SVG baselines

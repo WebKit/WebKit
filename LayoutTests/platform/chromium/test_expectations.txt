@@ -2740,6 +2740,7 @@ BUG42044 WIN : http/tests/security/xss-DENIED-mime-type-execute-as-html.html = P
 
 // might have been flaky
 BUGJAMESR MAC : svg/custom/resource-invalidate-on-target-update.svg = IMAGE PASS
+BUGJAMESR LINUX : svg/custom/resource-invalidate-on-target-update.svg = IMAGE
 BUGJAMESR : svg/filters/filter-clip.svg = IMAGE
 BUGJAMESR : svg/filters/filter-source-position.svg = IMAGE
 BUGJAMESR BUG30048 BUG29737 : svg/filters/shadow-on-rect-with-filter.svg = IMAGE
