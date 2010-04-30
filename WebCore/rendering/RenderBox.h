@@ -308,6 +308,7 @@ protected:
     void paintFillLayer(const PaintInfo&, const Color&, const FillLayer*, int tx, int ty, int width, int height, CompositeOperator op, RenderObject* backgroundObject);
     void paintFillLayers(const PaintInfo&, const Color&, const FillLayer*, int tx, int ty, int width, int height, CompositeOperator = CompositeSourceOver, RenderObject* backgroundObject = 0);
 
+    void paintBoxDecorationsWithSize(PaintInfo&, int tx, int ty, int width, int height);
     void paintMaskImages(const PaintInfo&, int tx, int ty, int width, int height);
 
 #if PLATFORM(MAC)

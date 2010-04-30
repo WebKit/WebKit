@@ -629,34 +629,36 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
         return;
     }
 
-    int w = width();
-    int h = height();
+    return paintBoxDecorationsWithSize(paintInfo, tx, ty, width(), height());
+}
 
+void RenderBox::paintBoxDecorationsWithSize(PaintInfo& paintInfo, int tx, int ty, int width, int height)
+{
     // border-fit can adjust where we paint our border and background.  If set, we snugly fit our line box descendants.  (The iChat
     // balloon layout is an example of this).
-    borderFitAdjust(tx, w);
+    borderFitAdjust(tx, width);
 
     // FIXME: Should eventually give the theme control over whether the box shadow should paint, since controls could have
     // custom shadows of their own.
-    paintBoxShadow(paintInfo.context, tx, ty, w, h, style(), Normal);
+    paintBoxShadow(paintInfo.context, tx, ty, width, height, style(), Normal);
 
     // If we have a native theme appearance, paint that before painting our background.
     // The theme will tell us whether or not we should also paint the CSS background.
-    bool themePainted = style()->hasAppearance() && !theme()->paint(this, paintInfo, IntRect(tx, ty, w, h));
+    bool themePainted = style()->hasAppearance() && !theme()->paint(this, paintInfo, IntRect(tx, ty, width, height));
     if (!themePainted) {
         // The <body> only paints its background if the root element has defined a background
         // independent of the body.  Go through the DOM to get to the root element's render object,
         // since the root could be inline and wrapped in an anonymous block.
         if (!isBody() || document()->documentElement()->renderer()->style()->hasBackground())
-            paintFillLayers(paintInfo, style()->backgroundColor(), style()->backgroundLayers(), tx, ty, w, h);
+            paintFillLayers(paintInfo, style()->backgroundColor(), style()->backgroundLayers(), tx, ty, width, height);
         if (style()->hasAppearance())
-            theme()->paintDecorations(this, paintInfo, IntRect(tx, ty, w, h));
+            theme()->paintDecorations(this, paintInfo, IntRect(tx, ty, width, height));
     }
-    paintBoxShadow(paintInfo.context, tx, ty, w, h, style(), Inset);
+    paintBoxShadow(paintInfo.context, tx, ty, width, height, style(), Inset);
 
     // The theme will tell us whether or not we should also paint the CSS border.
-    if ((!style()->hasAppearance() || (!themePainted && theme()->paintBorderOnly(this, paintInfo, IntRect(tx, ty, w, h)))) && style()->hasBorder())
-        paintBorder(paintInfo.context, tx, ty, w, h, style());
+    if ((!style()->hasAppearance() || (!themePainted && theme()->paintBorderOnly(this, paintInfo, IntRect(tx, ty, width, height)))) && style()->hasBorder())
+        paintBorder(paintInfo.context, tx, ty, width, height, style());
 }
 
 void RenderBox::paintMask(PaintInfo& paintInfo, int tx, int ty)

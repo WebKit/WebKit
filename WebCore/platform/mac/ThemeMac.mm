@@ -82,9 +82,9 @@ static NSControlSize controlSizeForFont(const Font& font)
     return NSMiniControlSize;
 }
 
-static LengthSize sizeFromFont(const Font& font, const LengthSize& zoomedSize, float zoomFactor, const IntSize* sizes)
+static LengthSize sizeFromNSControlSize(NSControlSize nsControlSize, const LengthSize& zoomedSize, float zoomFactor, const IntSize* sizes)
 {
-    IntSize controlSize = sizes[controlSizeForFont(font)];
+    IntSize controlSize = sizes[nsControlSize];
     if (zoomFactor != 1.0f)
         controlSize = IntSize(controlSize.width() * zoomFactor, controlSize.height() * zoomFactor);
     LengthSize result = zoomedSize;
@@ -93,6 +93,11 @@ static LengthSize sizeFromFont(const Font& font, const LengthSize& zoomedSize, f
     if (zoomedSize.height().isIntrinsicOrAuto() && controlSize.height() > 0)
         result.setHeight(Length(controlSize.height(), Fixed));
     return result;
+}
+
+static LengthSize sizeFromFont(const Font& font, const LengthSize& zoomedSize, float zoomFactor, const IntSize* sizes)
+{
+    return sizeFromNSControlSize(controlSizeForFont(font), zoomedSize, zoomFactor, sizes);
 }
 
 static void setControlSize(NSCell* cell, const IntSize* sizes, const IntSize& minZoomedSize, float zoomFactor)
@@ -444,6 +449,65 @@ static void paintButton(ControlPart part, ControlStates states, GraphicsContext*
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
+// Stepper
+
+static const IntSize* stepperSizes()
+{
+    static const IntSize sizes[3] = { IntSize(19, 27), IntSize(15, 22), IntSize(13, 15) };
+    return sizes;
+}
+
+// We don't use controlSizeForFont() for steppers because the stepper height
+// should be equal to or less than the corresponding text field height,
+static NSControlSize stepperControlSizeForFont(const Font& font)
+{
+    int fontSize = font.pixelSize();
+    if (fontSize >= 18)
+        return NSRegularControlSize;
+    if (fontSize >= 13)
+        return NSSmallControlSize;
+    return NSMiniControlSize;
+}
+
+static NSStepperCell* stepper(ControlStates states, const IntRect& zoomedRect, float zoomFactor)
+{
+    static NSStepperCell* cell = [[NSStepperCell alloc] init];
+    setControlSize(cell, stepperSizes(), zoomedRect.size(), zoomFactor);
+
+    updateStates(cell, states);
+    if (states & PressedState && states & SpinUpState) {
+        // FIXME: There is no way to draw a NSSteperCell with the up button hilighted.
+        // Disables the hilight of the down button if the up button is pressed.
+        [cell setHighlighted:NO];
+    }
+    return cell;
+}
+
+static void paintStepper(ControlStates states, GraphicsContext* context, const IntRect& zoomedRect, float zoomFactor, ScrollView* scrollView)
+{
+    NSStepperCell* cell = stepper(states, zoomedRect, zoomFactor);
+
+    context->save();
+    NSControlSize controlSize = [cell controlSize];
+    IntSize zoomedSize = stepperSizes()[controlSize];
+    IntRect rect(zoomedRect);
+
+    if (zoomFactor != 1.0f) {
+        rect.setWidth(rect.width() / zoomFactor);
+        rect.setHeight(rect.height() / zoomFactor);
+        context->translate(rect.x(), rect.y());
+        context->scale(FloatSize(zoomFactor, zoomFactor));
+        context->translate(-rect.x(), -rect.y());
+    }
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    [cell drawWithFrame:NSRect(rect) inView:ThemeMac::ensuredView(scrollView)];
+    [cell setControlView:nil];
+    END_BLOCK_OBJC_EXCEPTIONS
+
+    context->restore();
+}
+
 // This will ensure that we always return a valid NSView, even if ScrollView doesn't have an associated document NSView.
 // If the ScrollView doesn't have an NSView, we will return a fake NSView whose sole purpose is to tell AppKit that it's flipped.
 NSView *ThemeMac::ensuredView(ScrollView* scrollView)
@@ -499,6 +563,13 @@ LengthSize ThemeMac::controlSize(ControlPart part, const Font& font, const Lengt
         case ListButtonPart:
             return sizeFromFont(font, LengthSize(zoomedSize.width(), Length()), zoomFactor, listButtonSizes());
 #endif
+        case InnerSpinButtonPart:
+            // We don't use inner spin buttons on Mac.
+            return LengthSize(Length(Fixed), Length(Fixed));
+        case OuterSpinButtonPart:
+            if (!zoomedSize.width().isIntrinsicOrAuto() && !zoomedSize.height().isIntrinsicOrAuto())
+                return zoomedSize;
+            return sizeFromNSControlSize(stepperControlSizeForFont(font), zoomedSize, zoomFactor, stepperSizes());
         default:
             return zoomedSize;
     }
@@ -512,6 +583,14 @@ LengthSize ThemeMac::minimumControlSize(ControlPart part, const Font& font, floa
         case ButtonPart:
         case ListButtonPart:
             return LengthSize(Length(0, Fixed), Length(static_cast<int>(15 * zoomFactor), Fixed));
+        case InnerSpinButtonPart:
+            // We don't use inner spin buttons on Mac.
+            return LengthSize(Length(Fixed), Length(Fixed));
+        case OuterSpinButtonPart: {
+            IntSize base = stepperSizes()[NSMiniControlSize];
+            return LengthSize(Length(static_cast<int>(base.width() * zoomFactor), Fixed),
+                              Length(static_cast<int>(base.height() * zoomFactor), Fixed));
+        }
         default:
             return Theme::minimumControlSize(part, font, zoomFactor);
     }
@@ -588,6 +667,16 @@ void ThemeMac::inflateControlPaintRect(ControlPart part, ControlStates states, I
             }
             break;
         }
+        case OuterSpinButtonPart: {
+            static const int stepperMargin[4] = { 0, 0, 0, 0};
+            NSCell *cell = stepper(states, zoomedRect, zoomFactor);
+            NSControlSize controlSize = [cell controlSize];
+            IntSize zoomedSize = stepperSizes()[controlSize];
+            zoomedSize.setHeight(zoomedSize.height() * zoomFactor);
+            zoomedSize.setWidth(zoomedSize.width() * zoomFactor);
+            zoomedRect = inflateRect(zoomedRect, zoomedSize, stepperMargin, zoomFactor);
+            break;
+        }
         default:
             break;
     }
@@ -609,6 +698,9 @@ void ThemeMac::paint(ControlPart part, ControlStates states, GraphicsContext* co
         case SquareButtonPart:
         case ListButtonPart:
             paintButton(part, states, context, zoomedRect, zoomFactor, scrollView);
+            break;
+        case OuterSpinButtonPart:
+            paintStepper(states, context, zoomedRect, zoomFactor, scrollView);
             break;
         default:
             break;

@@ -1,3 +1,23 @@
+2010-04-30  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Adele Peterson.
+
+        Mac implementation of outer-spin-button appearance, and anonymous
+        element generation for <input type=number>.
+        https://bugs.webkit.org/show_bug.cgi?id=32813
+
+        input-appearance-spinbutton.html checks the appearances of various
+        sizes of spin-buttons. input-appearance-spinbutton-size.html
+        checks a spin-button height is equal to or less than the
+        corresponding text field height.
+
+        * platform/mac/fast/forms/input-appearance-spinbutton-expected.checksum: Added.
+        * platform/mac/fast/forms/input-appearance-spinbutton-expected.png: Added.
+        * platform/mac/fast/forms/input-appearance-spinbutton-expected.txt: Added.
+        * platform/mac/fast/forms/input-appearance-spinbutton-size-expected.txt: Added.
+        * platform/mac/fast/forms/input-appearance-spinbutton-size.html: Added.
+        * platform/mac/fast/forms/input-appearance-spinbutton.html: Added.
+
 2010-04-29  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed.

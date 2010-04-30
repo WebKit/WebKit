@@ -1,3 +1,67 @@
+2010-04-30  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Adele Peterson.
+
+        Mac implementation of outer-spin-button appearance, and anonymous
+        element generation for <input type=number>.
+        https://bugs.webkit.org/show_bug.cgi?id=32813
+
+        The implementation uses NSStepperCell. Like the other Mac
+        controls, it has only three candidates for sizes.
+
+        The editable block of an input element is shrunk, and the
+        anonymous block for a spin button is put on the right of the
+        editable block.
+
+        Tests: platform/mac/fast/forms/input-appearance-spinbutton-size.html
+               platform/mac/fast/forms/input-appearance-spinbutton.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::pseudoStyleCacheIsInvalid):
+        * dom/InputElement.h:
+        (WebCore::InputElement::hasSpinButton):
+        * html/HTMLInputElement.h:
+        (WebCore::HTMLInputElement::hasSpinButton): Return true for NUMBER type.
+        * platform/mac/ThemeMac.mm:
+        (WebCore::sizeFromNSControlSize): Split the main part of sizeFromFont()
+          to this in order to use stepperControlSizeForFont() instead of
+          controlSizeForFont().
+        (WebCore::sizeFromFont): Just calls sizeFromNSControlSize() with
+          sizeFromFont(). No behavior changes.
+        (WebCore::stepperSizes): Returns sizes for mini, small, and regular.
+        (WebCore::stepperControlSizeForFont):
+          Dedicated version of controlSizeForFont().
+        (WebCore::stepper): Returns NSStepperCell object with specified settings.
+        (WebCore::paintStepper):
+        (WebCore::ThemeMac::controlSize): Support for OuterSpinButton.
+        (WebCore::ThemeMac::minimumControlSize): ditto.
+        (WebCore::ThemeMac::inflateControlPaintRect): ditto.
+        (WebCore::ThemeMac::paint): ditto.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintBoxDecorations):
+          Move the content to paintBoxDecorationsWithSize().
+        (WebCore::RenderBox::paintBoxDecorationsWithSize):
+        * rendering/RenderBox.h: Declare paintBoxDecorationsWithSize().
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::~RenderTextControlSingleLine):
+        (WebCore::RenderTextControlSingleLine::paintBoxDecorations):
+          Call paintBoxDecorationsWithSize() with smaller width by decorationWidthRight().
+        (WebCore::RenderTextControlSingleLine::addFocusRingRects):
+          Add a rectangle of which width is smaller by decorationWidthRight().
+        (WebCore::RenderTextControlSingleLine::layout):
+          Adjust m_outerSpinButton position.
+        (WebCore::RenderTextControlSingleLine::styleDidChange):
+        (WebCore::RenderTextControlSingleLine::textBlockWidth):
+        (WebCore::RenderTextControlSingleLine::decorationWidthRight):
+        (WebCore::RenderTextControlSingleLine::preferredDecorationWidthRight):
+        (WebCore::RenderTextControlSingleLine::createSubtreeIfNeeded):
+          Creates an element for m_outerSpinButton if it is needed.
+        (WebCore::RenderTextControlSingleLine::createInnerTextStyle):
+        (WebCore::RenderTextControlSingleLine::createOuterSpinButtonStyle):
+        * rendering/RenderTextControlSingleLine.h: Declare new methods and m_outerSpinButton.
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::adjustRepaintRect): Support for OuterSpinButton.
+
 2010-04-29  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.  Update JSC CodeGenerator baseline.  Not sure how I missed
