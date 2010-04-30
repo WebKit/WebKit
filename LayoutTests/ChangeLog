@@ -1,3 +1,11 @@
+2010-04-30  Alexey Proskuryakov  <ap@apple.com>
+
+        Not reviewed.
+
+        Enable Sputnik tests on Tiger.
+
+        * platform/mac-tiger/Skipped: Only skip tests that fail for me on Tiger/PPC, and Unicode tests.
+
 2010-04-30  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adele Peterson.
