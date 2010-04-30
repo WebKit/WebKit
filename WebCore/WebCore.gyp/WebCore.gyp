@@ -115,7 +115,6 @@
       '../bindings/v8',
       '../bindings/v8/custom',
       '../bindings/v8/specialization',
-      '../bridge',
       '../css',
       '../dom',
       '../dom/default',
