@@ -77,4 +77,34 @@ bool fileExists(const String& path)
     return ChromiumBridge::fileExists(path);
 }
 
+PlatformFileHandle openFile(const String& path, FileOpenMode mode)
+{
+    return ChromiumBridge::openFile(path, mode);
+}
+
+void closeFile(PlatformFileHandle& handle)
+{
+    return ChromiumBridge::closeFile(handle);
+}
+
+long long seekFile(PlatformFileHandle handle, long long offset, FileSeekOrigin origin)
+{
+    return ChromiumBridge::seekFile(handle, offset, origin);
+}
+
+bool truncateFile(PlatformFileHandle handle, long long offset)
+{
+    return ChromiumBridge::truncateFile(handle, offset);
+}
+
+int readFromFile(PlatformFileHandle handle, char* data, int length)
+{
+    return ChromiumBridge::readFromFile(handle, data, length);
+}
+
+int writeToFile(PlatformFileHandle handle, const char* data, int length)
+{
+    return ChromiumBridge::writeToFile(handle, data, length);
+}
+
 } // namespace WebCore

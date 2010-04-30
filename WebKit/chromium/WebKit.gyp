@@ -121,6 +121,7 @@
                 'public/WebFileChooserCompletion.h',
                 'public/WebFileChooserParams.h',
                 'public/WebFileInfo.h',
+                'public/WebFileSystem.h',
                 'public/WebFindOptions.h',
                 'public/WebFrame.h',
                 'public/WebFrameClient.h',

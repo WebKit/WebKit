@@ -109,6 +109,12 @@ namespace WebCore {
         static String getAbsolutePath(const String&);
         static bool isDirectory(const String&);
         static KURL filePathToURL(const String&);
+        static PlatformFileHandle openFile(const String& path, FileOpenMode);
+        static void closeFile(PlatformFileHandle&);
+        static long long seekFile(PlatformFileHandle, long long offset, FileSeekOrigin);
+        static bool truncateFile(PlatformFileHandle, long long offset);
+        static int readFromFile(PlatformFileHandle, char* data, int length);
+        static int writeToFile(PlatformFileHandle, const char* data, int length);
 
         // Font ---------------------------------------------------------------
 #if OS(WINDOWS)

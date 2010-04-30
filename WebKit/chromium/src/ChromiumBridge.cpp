@@ -40,6 +40,7 @@
 #include "WebCookieJar.h"
 #include "WebCursorInfo.h"
 #include "WebData.h"
+#include "WebFileSystem.h"
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"
 #include "WebImage.h"
@@ -270,61 +271,116 @@ void ChromiumBridge::prefetchDNS(const String& hostname)
 
 bool ChromiumBridge::fileExists(const String& path)
 {
+    if (webKitClient()->fileSystem())
+        return webKitClient()->fileSystem()->fileExists(path);
     return webKitClient()->fileExists(path);
 }
 
 bool ChromiumBridge::deleteFile(const String& path)
 {
+    if (webKitClient()->fileSystem())
+        return webKitClient()->fileSystem()->deleteFile(path);
     return webKitClient()->deleteFile(path);
 }
 
 bool ChromiumBridge::deleteEmptyDirectory(const String& path)
 {
+    if (webKitClient()->fileSystem())
+        return webKitClient()->fileSystem()->deleteEmptyDirectory(path);
     return webKitClient()->deleteEmptyDirectory(path);
 }
 
 bool ChromiumBridge::getFileSize(const String& path, long long& result)
 {
+    if (webKitClient()->fileSystem())
+        return webKitClient()->fileSystem()->getFileSize(path, result);
     return webKitClient()->getFileSize(path, result);
 }
 
 bool ChromiumBridge::getFileModificationTime(const String& path, time_t& result)
 {
     double modificationTime;
-    if (!webKitClient()->getFileModificationTime(path, modificationTime))
-        return false;
+    if (webKitClient()->fileSystem()) {
+        if (!webKitClient()->fileSystem()->getFileModificationTime(path, modificationTime))
+            return false;
+    } else {
+        if (!webKitClient()->getFileModificationTime(path, modificationTime))
+            return false;
+    }
     result = static_cast<time_t>(modificationTime);
     return true;
 }
 
 String ChromiumBridge::directoryName(const String& path)
 {
+    if (webKitClient()->fileSystem())
+        return webKitClient()->fileSystem()->directoryName(path);
     return webKitClient()->directoryName(path);
 }
 
 String ChromiumBridge::pathByAppendingComponent(const String& path, const String& component)
 {
+    if (webKitClient()->fileSystem())
+        return webKitClient()->fileSystem()->pathByAppendingComponent(path, component);
     return webKitClient()->pathByAppendingComponent(path, component);
 }
 
 bool ChromiumBridge::makeAllDirectories(const String& path)
 {
+    if (webKitClient()->fileSystem())
+        return webKitClient()->fileSystem()->makeAllDirectories(path);
     return webKitClient()->makeAllDirectories(path);
 }
 
 String ChromiumBridge::getAbsolutePath(const String& path)
 {
+    if (webKitClient()->fileSystem())
+        return webKitClient()->fileSystem()->getAbsolutePath(path);
     return webKitClient()->getAbsolutePath(path);
 }
 
 bool ChromiumBridge::isDirectory(const String& path)
 {
+    if (webKitClient()->fileSystem())
+        return webKitClient()->fileSystem()->isDirectory(path);
     return webKitClient()->isDirectory(path);
 }
 
 KURL ChromiumBridge::filePathToURL(const String& path)
 {
+    if (webKitClient()->fileSystem())
+        return webKitClient()->fileSystem()->filePathToURL(path);
     return webKitClient()->filePathToURL(path);
+}
+
+PlatformFileHandle ChromiumBridge::openFile(const String& path, FileOpenMode mode)
+{
+    return webKitClient()->fileSystem()->openFile(path, mode);
+}
+
+void ChromiumBridge::closeFile(PlatformFileHandle& handle)
+{
+    webKitClient()->fileSystem()->closeFile(handle);
+}
+
+long long ChromiumBridge::seekFile(PlatformFileHandle handle, long long offset, FileSeekOrigin origin)
+{
+    return webKitClient()->fileSystem()->seekFile(handle, offset, origin);
+}
+
+bool ChromiumBridge::truncateFile(PlatformFileHandle handle, long long offset)
+{
+    return webKitClient()->fileSystem()->truncateFile(handle, offset);
+}
+
+int ChromiumBridge::readFromFile(PlatformFileHandle handle, char* data, int length)
+{
+    return webKitClient()->fileSystem()->readFromFile(handle, data, length);
+}
+
+int ChromiumBridge::writeToFile(PlatformFileHandle handle, const char* data, int length)
+{
+    return webKitClient()->fileSystem()->writeToFile(handle, data, length);
 }
 
 // Font -----------------------------------------------------------------------

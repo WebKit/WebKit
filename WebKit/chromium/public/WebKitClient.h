@@ -49,6 +49,7 @@ class WebApplicationCacheHost;
 class WebApplicationCacheHostClient;
 class WebClipboard;
 class WebCookieJar;
+class WebFileSystem;
 class WebGLES2Context;
 class WebGraphicsContext3D;
 class WebIndexedDatabase;
@@ -69,6 +70,9 @@ public:
 
     // Must return non-null.
     virtual WebMimeRegistry* mimeRegistry() { return 0; }
+
+    // Must return non-null.
+    virtual WebFileSystem* fileSystem() { return 0; }
 
     // May return null if sandbox support is not necessary
     virtual WebSandboxSupport* sandboxSupport() { return 0; }
