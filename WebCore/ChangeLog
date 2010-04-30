@@ -1,3 +1,14 @@
+2010-04-30  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Unreviewed, build fix.
+
+        Fix compiler warning "suggest parentheses around"
+
+        No new tests as there is no new functionality.
+
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::SVGAnimateElement::calculateFromAndToValues):
+
 2010-04-30  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed. Regression fix.

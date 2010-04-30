@@ -178,7 +178,7 @@ bool SVGAnimateElement::calculateFromAndToValues(const String& fromString, const
     if (m_propertyType == ColorProperty) {
         m_fromColor = SVGColor::colorFromRGBColorString(fromString);
         m_toColor = SVGColor::colorFromRGBColorString(toString);
-        if (m_fromColor.isValid() && m_toColor.isValid() || m_toColor.isValid() && animationMode() == ToAnimation)
+        if ((m_fromColor.isValid() && m_toColor.isValid()) || (m_toColor.isValid() && animationMode() == ToAnimation))
             return true;
     } else if (m_propertyType == NumberProperty) {
         m_numberUnit = String();
