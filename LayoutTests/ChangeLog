@@ -1,5 +1,18 @@
 2010-04-30  Fumitoshi Ukai  <ukai@chromium.org>
 
+        Unreviewd, update test expectations.
+        https://bugs.webkit.org/show_bug.cgi?id=38383
+
+        Start failing after WebKit r58563:r58565
+        - fast/forms/search-abs-pos-cancel-button.html
+        - fast/forms/search-cancel-button-mouseup.html
+        - fast/forms/search-rtl.html
+        - fast/forms/search-zoomed.html
+
+        * platform/chromium/test_expectations.txt:
+
+2010-04-30  Fumitoshi Ukai  <ukai@chromium.org>
+
         Unreviewd, test expectations cleanup.
 
         media/video-empty-source.html passes since r58480:r58515 (win), r58489 (linux), r58488:458490 (mac)

@@ -2789,3 +2789,8 @@ BUG42895 : media/audio-only-video-intrinsic-size.html = TIMEOUT
 BUG42895 : media/media-document-audio-size.html = TIMEOUT
 BUGYAAR MAC : svg/custom/dominant-baseline-hanging.svg = MISSING
 
+// WebKit r58563:r58565
+BUGWK38383 WIN LINUX : fast/forms/search-abs-pos-cancel-button.html = TEXT
+BUGWK38383 WIN LINUX : fast/forms/search-cancel-button-mouseup.html = TEXT
+BUGWK38383 WIN LINUX : fast/forms/search-rtl.html = IMAGE+TEXT
+BUGWK38383 WIN LINUX : fast/forms/search-zoomed.html = IMAGE+TEXT
