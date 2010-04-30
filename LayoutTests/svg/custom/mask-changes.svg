@@ -4,31 +4,27 @@
     <rect x="0" y="0" width="800" height="300" fill="red"/>
 </mask>
 
+<g onclick="mouseHandler()">
+    <rect x="0" y="100" width="800" height="100" fill="blue" mask="url(#Mask)"/>
+</g>
+
 <script>
 if (window.layoutTestController)
     layoutTestController.waitUntilDone();
 
-window.setTimeout("clickNow()", 0);
-
-function clickNow() {
-    if (window.eventSender) {
-        eventSender.mouseMoveTo(150, 135);
-        eventSender.mouseDown();
-        eventSender.mouseUp();
-    }
-
-    if (window.layoutTestController) {
-        layoutTestController.notifyDone();
-    }
+if (window.eventSender) {
+    eventSender.mouseMoveTo(150, 135);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
 }
 
 function mouseHandler(evt)
 {
     document.getElementById("Mask").setAttribute("width", "800");
+
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
 }
 </script>
 
-<g onclick="mouseHandler()">
-    <rect x="0" y="100" width="800" height="100" fill="blue" mask="url(#Mask)"/>
-</g>
 </svg>
