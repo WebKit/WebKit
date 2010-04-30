@@ -1,3 +1,31 @@
+2010-04-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/7477071> REGRESSION: Bad flicker when wheel-scrolling Google Maps, iPad gallery and other sites
+
+        Sites that frequently toggle content in and out of compositing layers (like http://www.tumblr.com/boothed)
+        can cause flickering because of unsychronized compositing layer and view-based updates. There were two
+        underlying issues:
+        
+        1. On SnowLeopard, AppKit can throttle window updates, thus breaking an assumption that
+           NSView drawing will happen on the runloop cycle after a repaint. This provided a window
+           for the layerSyncRunLoopObserver to fire and commit layer changes too early.
+           
+           Fix this by having the layerSyncRunLoopObserver in WebView check to see if a display is pending,
+           and not commit layer changes in that case. We'll commit layer changes later when we
+           finally draw.
+           
+        2. The change in r49269 was wrong; it was attempting to fix an issue that was actually caused
+           by -drawRects: coming in for page snapshots. The correct approach is to avoid hitting the
+           synchronization and update disabling code in WebHTMLView for draws that are not to the screen.
+        
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView drawRect:]):
+        * WebView/WebView.mm:
+        (layerSyncRunLoopObserverCallBack):
+        (-[WebView _scheduleCompositingLayerSync]):
+
 2010-04-30  Anders Carlsson  <andersca@apple.com>
 
         Part of the previous part (forgot to save).

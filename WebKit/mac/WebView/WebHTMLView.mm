@@ -3311,16 +3311,14 @@ WEBCORE_COMMAND(yankAndSelect)
 
     if (subviewsWereSetAside)
         [self _setAsideSubviews];
-        
+
 #if USE(ACCELERATED_COMPOSITING)
-    if ([webView _needsOneShotDrawingSynchronization]) {
-        // Disable screen updates so that any layer changes committed here
-        // don't show up on the screen before the window flush at the end
-        // of the current window display, but only if a window flush is actually
-        // going to happen.
-        NSWindow *window = [self window];
-        if ([window viewsNeedDisplay])
-            [window disableScreenUpdatesUntilFlush];
+    // If we're not drawing to the window, we don't want to perturb the delicate synchronization dance.
+    if (!WKCGContextIsBitmapContext(static_cast<CGContextRef>([[NSGraphicsContext currentContext] graphicsPort]))
+        && [webView _needsOneShotDrawingSynchronization]) {
+        // Disable screen updates to minimize the chances of the race between the CA
+        // display link and AppKit drawing causing flashes.
+        [[self window] disableScreenUpdatesUntilFlush];
         
         // Make sure any layer changes that happened as a result of layout
         // via -viewWillDraw are committed.
