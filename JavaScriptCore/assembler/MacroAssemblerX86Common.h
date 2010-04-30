@@ -249,6 +249,33 @@ public:
     {
         m_assembler.sarl_i8r(imm.m_value, dest);
     }
+    
+    void urshift32(RegisterID shift_amount, RegisterID dest)
+    {
+        // On x86 we can only shift by ecx; if asked to shift by another register we'll
+        // need rejig the shift amount into ecx first, and restore the registers afterwards.
+        if (shift_amount != X86Registers::ecx) {
+            swap(shift_amount, X86Registers::ecx);
+            
+            // E.g. transform "shrl %eax, %eax" -> "xchgl %eax, %ecx; shrl %ecx, %ecx; xchgl %eax, %ecx"
+            if (dest == shift_amount)
+                m_assembler.shrl_CLr(X86Registers::ecx);
+            // E.g. transform "shrl %eax, %ecx" -> "xchgl %eax, %ecx; shrl %ecx, %eax; xchgl %eax, %ecx"
+            else if (dest == X86Registers::ecx)
+                m_assembler.shrl_CLr(shift_amount);
+            // E.g. transform "shrl %eax, %ebx" -> "xchgl %eax, %ecx; shrl %ecx, %ebx; xchgl %eax, %ecx"
+            else
+                m_assembler.shrl_CLr(dest);
+            
+            swap(shift_amount, X86Registers::ecx);
+        } else
+            m_assembler.shrl_CLr(dest);
+    }
+    
+    void urshift32(Imm32 imm, RegisterID dest)
+    {
+        m_assembler.shrl_i8r(imm.m_value, dest);
+    }
 
     void sub32(RegisterID src, RegisterID dest)
     {

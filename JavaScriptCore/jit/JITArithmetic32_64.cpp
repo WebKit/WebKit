@@ -314,9 +314,9 @@ void JIT::emitSlow_op_lshift(Instruction* currentInstruction, Vector<SlowCaseEnt
     stubCall.call(dst);
 }
 
-// RightShift (>>)
+// RightShift (>>) and UnsignedRightShift (>>>) helper
 
-void JIT::emit_op_rshift(Instruction* currentInstruction)
+void JIT::emitRightShift(Instruction* currentInstruction, bool isUnsigned)
 {
     unsigned dst = currentInstruction[1].u.operand;
     unsigned op1 = currentInstruction[2].u.operand;
@@ -327,7 +327,18 @@ void JIT::emit_op_rshift(Instruction* currentInstruction)
     if (isOperandConstantImmediateInt(op2)) {
         emitLoad(op1, regT1, regT0);
         addSlowCase(branch32(NotEqual, regT1, Imm32(JSValue::Int32Tag)));
-        rshift32(Imm32(getConstantOperand(op2).asInt32()), regT0);
+        int shift = getConstantOperand(op2).asInt32();
+        if (isUnsigned) {
+            if (shift)
+                urshift32(Imm32(shift & 0x1f), regT0);
+            // unsigned shift < 0 or shift = k*2^32 may result in (essentially)
+            // a toUint conversion, which can result in a value we can represent
+            // as an immediate int.
+            if (shift < 0 || !(shift & 31))
+                addSlowCase(branch32(LessThan, regT0, Imm32(0)));
+        } else if (shift) { // signed right shift by zero is simply toInt conversion
+            rshift32(Imm32(shift & 0x1f), regT0);
+        }
         emitStoreInt32(dst, regT0, dst == op1);
         return;
     }
@@ -336,28 +347,41 @@ void JIT::emit_op_rshift(Instruction* currentInstruction)
     if (!isOperandConstantImmediateInt(op1))
         addSlowCase(branch32(NotEqual, regT1, Imm32(JSValue::Int32Tag)));
     addSlowCase(branch32(NotEqual, regT3, Imm32(JSValue::Int32Tag)));
-    rshift32(regT2, regT0);
+    if (isUnsigned) {
+        urshift32(regT2, regT0);
+        addSlowCase(branch32(LessThan, regT0, Imm32(0)));
+    } else
+        rshift32(regT2, regT0);
     emitStoreInt32(dst, regT0, dst == op1 || dst == op2);
 }
 
-void JIT::emitSlow_op_rshift(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitRightShiftSlowCase(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter, bool isUnsigned)
 {
     unsigned dst = currentInstruction[1].u.operand;
     unsigned op1 = currentInstruction[2].u.operand;
     unsigned op2 = currentInstruction[3].u.operand;
     if (isOperandConstantImmediateInt(op2)) {
+        int shift = getConstantOperand(op2).asInt32();
         // op1 = regT1:regT0
         linkSlowCase(iter); // int32 check
         if (supportsFloatingPointTruncate()) {
-            Jump notDouble = branch32(AboveOrEqual, regT1, Imm32(JSValue::LowestTag));
+            JumpList failures;
+            failures.append(branch32(AboveOrEqual, regT1, Imm32(JSValue::LowestTag)));
             emitLoadDouble(op1, fpRegT0);
-            Jump truncationFailed = branchTruncateDoubleToInt32(fpRegT0, regT0);
-            rshift32(Imm32(getConstantOperand(op2).asInt32()), regT0);
+            failures.append(branchTruncateDoubleToInt32(fpRegT0, regT0));
+            if (isUnsigned) {
+                if (shift)
+                    urshift32(Imm32(shift & 0x1f), regT0);
+                if (shift < 0 || !(shift & 31))
+                    failures.append(branch32(LessThan, regT0, Imm32(0)));
+            } else if (shift)
+                rshift32(Imm32(shift & 0x1f), regT0);
             emitStoreInt32(dst, regT0, dst == op1 || dst == op2);
             emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_rshift));
-            notDouble.link(this);
-            truncationFailed.link(this);
+            failures.link(this);
         }
+        if (isUnsigned && (shift < 0 || !(shift & 31)))
+            linkSlowCase(iter); // failed to box in hot path
     } else {
         // op1 = regT1:regT0
         // op2 = regT3:regT2
@@ -368,7 +392,10 @@ void JIT::emitSlow_op_rshift(Instruction* currentInstruction, Vector<SlowCaseEnt
                 emitLoadDouble(op1, fpRegT0);
                 Jump notInt = branch32(NotEqual, regT3, Imm32(JSValue::Int32Tag)); // op2 is not an int
                 Jump cantTruncate = branchTruncateDoubleToInt32(fpRegT0, regT0);
-                rshift32(regT2, regT0);
+                if (isUnsigned)
+                    urshift32(regT2, regT0);
+                else
+                    rshift32(regT2, regT0);
                 emitStoreInt32(dst, regT0, dst == op1 || dst == op2);
                 emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_rshift));
                 notDouble.link(this);
@@ -378,12 +405,38 @@ void JIT::emitSlow_op_rshift(Instruction* currentInstruction, Vector<SlowCaseEnt
         }
 
         linkSlowCase(iter); // int32 check - op2 is not an int
+        if (isUnsigned)
+            linkSlowCase(iter); // Can't represent unsigned result as an immediate
     }
 
-    JITStubCall stubCall(this, cti_op_rshift);
+    JITStubCall stubCall(this, isUnsigned ? cti_op_urshift : cti_op_rshift);
     stubCall.addArgument(op1);
     stubCall.addArgument(op2);
     stubCall.call(dst);
+}
+
+// RightShift (>>)
+
+void JIT::emit_op_rshift(Instruction* currentInstruction)
+{
+    emitRightShift(currentInstruction, false);
+}
+
+void JIT::emitSlow_op_rshift(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    emitRightShiftSlowCase(currentInstruction, iter, false);
+}
+
+// UnsignedRightShift (>>>)
+
+void JIT::emit_op_urshift(Instruction* currentInstruction)
+{
+    emitRightShift(currentInstruction, true);
+}
+
+void JIT::emitSlow_op_urshift(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    emitRightShiftSlowCase(currentInstruction, iter, true);
 }
 
 // BitAnd (&)

@@ -178,6 +178,20 @@ public:
     {
         m_assembler.movs_r(dest, m_assembler.asr(dest, imm.m_value & 0x1f));
     }
+    
+    void urshift32(RegisterID shift_amount, RegisterID dest)
+    {
+        ARMWord w = ARMAssembler::getOp2(0x1f);
+        ASSERT(w != ARMAssembler::INVALID_IMM);
+        m_assembler.and_r(ARMRegisters::S0, shift_amount, w);
+        
+        m_assembler.movs_r(dest, m_assembler.lsr_r(dest, ARMRegisters::S0));
+    }
+    
+    void urshift32(Imm32 imm, RegisterID dest)
+    {
+        m_assembler.movs_r(dest, m_assembler.lsr(dest, imm.m_value & 0x1f));
+    }
 
     void sub32(RegisterID src, RegisterID dest)
     {

@@ -257,6 +257,21 @@ public:
     {
         m_assembler.asr(dest, dest, imm.m_value & 0x1f);
     }
+    
+    void urshift32(RegisterID shift_amount, RegisterID dest)
+    {
+        // Clamp the shift to the range 0..31
+        ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(0x1f);
+        ASSERT(armImm.isValid());
+        m_assembler.ARM_and(dataTempRegister, shift_amount, armImm);
+        
+        m_assembler.lsr(dest, dest, dataTempRegister);
+    }
+    
+    void urshift32(Imm32 imm, RegisterID dest)
+    {
+        m_assembler.lsr(dest, dest, imm.m_value & 0x1f);
+    }
 
     void sub32(RegisterID src, RegisterID dest)
     {

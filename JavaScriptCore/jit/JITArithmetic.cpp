@@ -187,6 +187,118 @@ void JIT::emitSlow_op_rshift(Instruction* currentInstruction, Vector<SlowCaseEnt
     stubCall.call(result);
 }
 
+void JIT::emit_op_urshift(Instruction* currentInstruction)
+{
+    unsigned dst = currentInstruction[1].u.operand;
+    unsigned op1 = currentInstruction[2].u.operand;
+    unsigned op2 = currentInstruction[3].u.operand;
+
+    // Slow case of urshift makes assumptions about what registers hold the
+    // shift arguments, so any changes must be updated there as well.
+    if (isOperandConstantImmediateInt(op2)) {
+        emitGetVirtualRegister(op1, regT0);
+        emitJumpSlowCaseIfNotImmediateInteger(regT0);
+        emitFastArithImmToInt(regT0);
+        int shift = getConstantOperand(op2).asInt32();
+        if (shift)
+            urshift32(Imm32(shift & 0x1f), regT0);
+        // unsigned shift < 0 or shift = k*2^32 may result in (essentially)
+        // a toUint conversion, which can result in a value we can represent
+        // as an immediate int.
+        if (shift < 0 || !(shift & 31))
+            addSlowCase(branch32(LessThan, regT0, Imm32(0)));
+#if USE(JSVALUE32)
+        addSlowCase(branchAdd32(Overflow, regT0, regT0));
+        signExtend32ToPtr(regT0, regT0);
+#endif
+        emitFastArithReTagImmediate(regT0, regT0);
+        emitPutVirtualRegister(dst, regT0);
+        return;
+    }
+    emitGetVirtualRegisters(op1, regT0, op2, regT1);
+    if (!isOperandConstantImmediateInt(op1))
+        emitJumpSlowCaseIfNotImmediateInteger(regT0);
+    emitJumpSlowCaseIfNotImmediateInteger(regT1);
+    emitFastArithImmToInt(regT0);
+    emitFastArithImmToInt(regT1);
+    urshift32(regT1, regT0);
+    addSlowCase(branch32(LessThan, regT0, Imm32(0)));
+#if USE(JSVALUE32)
+    addSlowCase(branchAdd32(Overflow, regT0, regT0));
+    signExtend32ToPtr(regT0, regT0);
+#endif
+    emitFastArithReTagImmediate(regT0, regT0);
+    emitPutVirtualRegister(dst, regT0);
+}
+
+void JIT::emitSlow_op_urshift(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    unsigned dst = currentInstruction[1].u.operand;
+    unsigned op1 = currentInstruction[2].u.operand;
+    unsigned op2 = currentInstruction[3].u.operand;
+    if (isOperandConstantImmediateInt(op2)) {
+        int shift = getConstantOperand(op2).asInt32();
+        // op1 = regT0
+        linkSlowCase(iter); // int32 check
+#if USE(JSVALUE64)
+        if (supportsFloatingPointTruncate()) {
+            JumpList failures;
+            failures.append(emitJumpIfNotImmediateNumber(regT0)); // op1 is not a double
+            addPtr(tagTypeNumberRegister, regT0);
+            movePtrToDouble(regT0, fpRegT0);
+            failures.append(branchTruncateDoubleToInt32(fpRegT0, regT0));
+            if (shift)
+                urshift32(Imm32(shift & 0x1f), regT0);
+            if (shift < 0 || !(shift & 31))
+                failures.append(branch32(LessThan, regT0, Imm32(0)));
+            emitFastArithReTagImmediate(regT0, regT0);
+            emitPutVirtualRegister(dst, regT0);
+            emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_rshift));
+            failures.link(this);
+        }
+#endif // JSVALUE64
+        if (shift < 0 || !(shift & 31))
+            linkSlowCase(iter); // failed to box in hot path
+#if USE(JSVALUE32)
+        linkSlowCase(iter); // Couldn't box result
+#endif
+    } else {
+        // op1 = regT0
+        // op2 = regT1
+        if (!isOperandConstantImmediateInt(op1)) {
+            linkSlowCase(iter); // int32 check -- op1 is not an int
+#if USE(JSVALUE64)
+            if (supportsFloatingPointTruncate()) {
+                JumpList failures;
+                failures.append(emitJumpIfNotImmediateNumber(regT0)); // op1 is not a double
+                addPtr(tagTypeNumberRegister, regT0);
+                movePtrToDouble(regT0, fpRegT0);
+                failures.append(branchTruncateDoubleToInt32(fpRegT0, regT0));
+                failures.append(emitJumpIfNotImmediateInteger(regT1)); // op2 is not an int
+                emitFastArithImmToInt(regT1);
+                urshift32(regT1, regT0);
+                failures.append(branch32(LessThan, regT0, Imm32(0)));
+                emitFastArithReTagImmediate(regT0, regT0);
+                emitPutVirtualRegister(dst, regT0);
+                emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_rshift));
+                failures.link(this);
+            }
+#endif
+        }
+        
+        linkSlowCase(iter); // int32 check - op2 is not an int
+        linkSlowCase(iter); // Can't represent unsigned result as an immediate
+#if USE(JSVALUE32)
+        linkSlowCase(iter); // Couldn't box result
+#endif
+    }
+    
+    JITStubCall stubCall(this, cti_op_urshift);
+    stubCall.addArgument(op1, regT0);
+    stubCall.addArgument(op2, regT1);
+    stubCall.call(dst);
+}
+
 void JIT::emit_op_jnless(Instruction* currentInstruction)
 {
     unsigned op1 = currentInstruction[1].u.operand;

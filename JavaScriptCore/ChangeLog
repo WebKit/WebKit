@@ -2,6 +2,47 @@
 
         Reviewed by Gavin Barraclough.
 
+        Add codegen support for unsigned right shift
+        https://bugs.webkit.org/show_bug.cgi?id=38375
+
+        Expose unsigned right shift in the macro assembler, and make use of it
+        from the jit.  Currently if the result is outside the range 0..2^31-1
+        we simply fall back to the slow case, even in JSVALUE64 and JSVALUE32_64
+        where technically we could still return an immediate value.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::urshift32):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::urshift32):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::urshift32):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::):
+        (JSC::X86Assembler::shrl_i8r):
+        (JSC::X86Assembler::shrl_CLr):
+           Add unsigned right shift to the x86 assembler
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+           op_rshift no longer simply get thrown to a stub function
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_urshift):
+        (JSC::JIT::emitSlow_op_urshift):
+          JSVALUE32 and JSVALUE64 implementation.  Only supports
+          double lhs in JSVALUE64.
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emit_op_rshift):
+        (JSC::JIT::emitSlow_op_rshift):
+        (JSC::JIT::emit_op_urshift):
+        (JSC::JIT::emitSlow_op_urshift):
+          Refactor right shift code to have shared implementation between signed
+          and unsigned versions.
+
+2010-04-29  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
         Handle double on righthand side of a right shift
         https://bugs.webkit.org/show_bug.cgi?id=38363
 

@@ -734,6 +734,7 @@ namespace JSC {
         void emit_op_to_jsnumber(Instruction*);
         void emit_op_to_primitive(Instruction*);
         void emit_op_unexpected_load(Instruction*);
+        void emit_op_urshift(Instruction*);
 #if ENABLE(JIT_OPTIMIZE_MOD)
         void softModulo();
 #endif
@@ -784,6 +785,11 @@ namespace JSC {
         void emitSlow_op_sub(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_to_jsnumber(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_to_primitive(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_urshift(Instruction*, Vector<SlowCaseEntry>::iterator&);
+
+        
+        void emitRightShift(Instruction*, bool isUnsigned);
+        void emitRightShiftSlowCase(Instruction*, Vector<SlowCaseEntry>::iterator&, bool isUnsigned);
 
         /* These functions are deprecated: Please use JITStubCall instead. */
         void emitPutJITStubArg(RegisterID src, unsigned argumentNumber);
