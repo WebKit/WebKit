@@ -281,6 +281,8 @@
 		15C77094100D3CA8005BA267 /* JSValidityState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15C77092100D3CA8005BA267 /* JSValidityState.cpp */; };
 		15C770A5100D41CD005BA267 /* DOMValidityState.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15C770A3100D41CD005BA267 /* DOMValidityState.mm */; };
 		15C770A6100D41CD005BA267 /* DOMValidityState.h in Headers */ = {isa = PBXBuildFile; fileRef = 15C770A4100D41CD005BA267 /* DOMValidityState.h */; };
+		163E88F7118A39D200ED9231 /* SimpleFontDataCoreText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 163E88F5118A39D200ED9231 /* SimpleFontDataCoreText.cpp */; };
+		163E8B13118B3ADD00ED9231 /* SimpleFontDataATSUI.mm in Sources */ = {isa = PBXBuildFile; fileRef = 163E8B12118B3ADD00ED9231 /* SimpleFontDataATSUI.mm */; };
 		185BCF280F3279CE000EA262 /* ThreadTimers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 185BCF260F3279CE000EA262 /* ThreadTimers.cpp */; };
 		185BCF290F3279CE000EA262 /* ThreadTimers.h in Headers */ = {isa = PBXBuildFile; fileRef = 185BCF270F3279CE000EA262 /* ThreadTimers.h */; };
 		188604B30F2E654A000B6443 /* DOMTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 188604B10F2E654A000B6443 /* DOMTimer.cpp */; };
@@ -5678,6 +5680,8 @@
 		15C77092100D3CA8005BA267 /* JSValidityState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSValidityState.cpp; sourceTree = "<group>"; };
 		15C770A3100D41CD005BA267 /* DOMValidityState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMValidityState.mm; sourceTree = "<group>"; };
 		15C770A4100D41CD005BA267 /* DOMValidityState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMValidityState.h; sourceTree = "<group>"; };
+		163E88F5118A39D200ED9231 /* SimpleFontDataCoreText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleFontDataCoreText.cpp; sourceTree = "<group>"; };
+		163E8B12118B3ADD00ED9231 /* SimpleFontDataATSUI.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SimpleFontDataATSUI.mm; sourceTree = "<group>"; };
 		185BCF260F3279CE000EA262 /* ThreadTimers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadTimers.cpp; sourceTree = "<group>"; };
 		185BCF270F3279CE000EA262 /* ThreadTimers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadTimers.h; sourceTree = "<group>"; };
 		188604B10F2E654A000B6443 /* DOMTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMTimer.cpp; sourceTree = "<group>"; };
@@ -14619,6 +14623,8 @@
 		B27535490B053814002CE64F /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				163E8B12118B3ADD00ED9231 /* SimpleFontDataATSUI.mm */,
+				163E88F5118A39D200ED9231 /* SimpleFontDataCoreText.cpp */,
 				49C7B9FD1042D38C0009D447 /* Canvas3DLayer.h */,
 				49C7B9FE1042D38C0009D447 /* Canvas3DLayer.mm */,
 				EDE3A4FF0C7A430600956A37 /* ColorMac.h */,
@@ -21149,6 +21155,8 @@
 				0FF2859211864054007B7CD6 /* RenderMathMLSquareRoot.cpp in Sources */,
 				B523CF091182675400EBB29C /* SQLTransactionSync.cpp in Sources */,
 				B523CF0A1182675400EBB29C /* DatabaseSync.cpp in Sources */,
+				163E88F7118A39D200ED9231 /* SimpleFontDataCoreText.cpp in Sources */,
+				163E8B13118B3ADD00ED9231 /* SimpleFontDataATSUI.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
