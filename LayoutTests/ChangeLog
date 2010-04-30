@@ -1,5 +1,11 @@
 2010-04-30  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. While I'm at it: Update prototype-inheritance-2-expected.txt result, it's failing since CSSPageRule has been introduced.
+
+        * platform/win/fast/dom/prototype-inheritance-2-expected.txt:
+
+2010-04-30  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Not reviewed. Windows fails on svg/custom/mask-changes.svg. Trying to fix the test which is really flawed. Shows a DRT difference between Mac/Win.
 
         * svg/custom/mask-changes.svg:

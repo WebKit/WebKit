@@ -13,15 +13,18 @@ FAIL Boolean from inner.document.forms.testForm.0.noValidate
 PASS CSSCharsetRule from inner.document.getElementById("dummyStyle").sheet.cssRules.0
 PASS CSSCharsetRuleConstructor from inner.document.getElementById("dummyStyle").sheet.cssRules.0.constructor
 PASS CSSCharsetRulePrototype from inner.document.getElementById("dummyStyle").sheet.cssRules.0.__proto__
-PASS CSSFontFaceRule from inner.document.getElementById("dummyStyle").sheet.cssRules.3
-PASS CSSFontFaceRuleConstructor from inner.document.getElementById("dummyStyle").sheet.cssRules.3.constructor
-PASS CSSFontFaceRulePrototype from inner.document.getElementById("dummyStyle").sheet.cssRules.3.__proto__
+PASS CSSFontFaceRule from inner.document.getElementById("dummyStyle").sheet.cssRules.4
+PASS CSSFontFaceRuleConstructor from inner.document.getElementById("dummyStyle").sheet.cssRules.4.constructor
+PASS CSSFontFaceRulePrototype from inner.document.getElementById("dummyStyle").sheet.cssRules.4.__proto__
 PASS CSSImportRule from inner.document.getElementById("dummyStyle").sheet.cssRules.1
 PASS CSSImportRuleConstructor from inner.document.getElementById("dummyStyle").sheet.cssRules.1.constructor
 PASS CSSImportRulePrototype from inner.document.getElementById("dummyStyle").sheet.cssRules.1.__proto__
-PASS CSSMediaRule from inner.document.getElementById("dummyStyle").sheet.cssRules.2
-PASS CSSMediaRuleConstructor from inner.document.getElementById("dummyStyle").sheet.cssRules.2.constructor
-PASS CSSMediaRulePrototype from inner.document.getElementById("dummyStyle").sheet.cssRules.2.__proto__
+PASS CSSMediaRule from inner.document.getElementById("dummyStyle").sheet.cssRules.3
+PASS CSSMediaRuleConstructor from inner.document.getElementById("dummyStyle").sheet.cssRules.3.constructor
+PASS CSSMediaRulePrototype from inner.document.getElementById("dummyStyle").sheet.cssRules.3.__proto__
+PASS CSSPageRule from inner.document.getElementById("dummyStyle").sheet.cssRules.2
+PASS CSSPageRuleConstructor from inner.document.getElementById("dummyStyle").sheet.cssRules.2.constructor
+PASS CSSPageRulePrototype from inner.document.getElementById("dummyStyle").sheet.cssRules.2.__proto__
 PASS CSSPrimitiveValue from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(background-clip)
 PASS CSSPrimitiveValueConstructor from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(background-clip).constructor
 PASS CSSPrimitiveValuePrototype from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(background-clip).__proto__
@@ -32,9 +35,9 @@ PASS CSSRulePrototype from inner.document.getElementById("dummyStyle").sheet.css
 PASS CSSStyleDeclaration from inner.document.getElementById("styledSpan").style
 PASS CSSStyleDeclarationConstructor from inner.document.forms.testForm.0.style.constructor
 PASS CSSStyleDeclarationPrototype from inner.document.forms.testForm.0.0.style.__proto__
-PASS CSSStyleRule from inner.document.getElementById("dummyStyle").sheet.cssRules.4
-PASS CSSStyleRuleConstructor from inner.document.getElementById("dummyStyle").sheet.cssRules.4.constructor
-PASS CSSStyleRulePrototype from inner.document.getElementById("dummyStyle").sheet.cssRules.4.__proto__
+PASS CSSStyleRule from inner.document.getElementById("dummyStyle").sheet.cssRules.5
+PASS CSSStyleRuleConstructor from inner.document.getElementById("dummyStyle").sheet.cssRules.5.constructor
+PASS CSSStyleRulePrototype from inner.document.getElementById("dummyStyle").sheet.cssRules.5.__proto__
 PASS CSSStyleSheet from inner.document.forms.testForm.0.ownerDocument.styleSheets.0
 PASS CSSStyleSheetConstructor from inner.document.forms.testForm.0.ownerDocument.styleSheets.0.constructor
 PASS CSSStyleSheetPrototype from inner.document.forms.testForm.0.ownerDocument.styleSheets.0.__proto__
@@ -196,17 +199,16 @@ PASS TimeRanges from inner.document.forms.testForm.0.previousElementSibling.play
 PASS TimeRangesPrototype from inner.document.forms.testForm.0.previousElementSibling.played.__proto__
 PASS ValidityState from inner.document.forms.testForm.0.0.validity
 PASS ValidityStatePrototype from inner.document.forms.testForm.0.0.validity.__proto__
-PASS WebKitCSSKeyframeRule from inner.document.getElementById("dummyStyle").sheet.cssRules.5.0
-PASS WebKitCSSKeyframeRuleConstructor from inner.document.getElementById("dummyStyle").sheet.cssRules.5.0.constructor
-PASS WebKitCSSKeyframeRulePrototype from inner.document.getElementById("dummyStyle").sheet.cssRules.5.0.__proto__
-PASS WebKitCSSKeyframesRule from inner.document.getElementById("dummyStyle").sheet.cssRules.5
-PASS WebKitCSSKeyframesRuleConstructor from inner.document.getElementById("dummyStyle").sheet.cssRules.5.constructor
-PASS WebKitCSSKeyframesRulePrototype from inner.document.getElementById("dummyStyle").sheet.cssRules.5.__proto__
+PASS WebKitCSSKeyframeRule from inner.document.getElementById("dummyStyle").sheet.cssRules.6.0
+PASS WebKitCSSKeyframeRuleConstructor from inner.document.getElementById("dummyStyle").sheet.cssRules.6.0.constructor
+PASS WebKitCSSKeyframeRulePrototype from inner.document.getElementById("dummyStyle").sheet.cssRules.6.0.__proto__
+PASS WebKitCSSKeyframesRule from inner.document.getElementById("dummyStyle").sheet.cssRules.6
+PASS WebKitCSSKeyframesRuleConstructor from inner.document.getElementById("dummyStyle").sheet.cssRules.6.constructor
+PASS WebKitCSSKeyframesRulePrototype from inner.document.getElementById("dummyStyle").sheet.cssRules.6.__proto__
 PASS XSLTProcessorConsructor from inner.document.forms.testForm.0.ownerDocument.defaultView.XSLTProcessor
 Never found Audio
 Never found Blob
 Never found CDATASection
-Never found CSSPageRule
 Never found CSSRule
 Never found CSSVariablesDeclaration
 Never found CSSVariablesRule
