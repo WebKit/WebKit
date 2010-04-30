@@ -1,3 +1,14 @@
+2010-04-29  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed.
+
+        Add media/media-document-audio-size.html to Skipped lists.
+        https://bugs.webkit.org/show_bug.cgi?id=38376
+
+        * platform/gtk/Skipped:
+        * platform/mac-tiger/Skipped:
+        * platform/qt/Skipped:
+
 2010-04-29  James Robinson  <jamesr@chromium.org>
 
         Unreviewed, fix chromium linux test expectations.
