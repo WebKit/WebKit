@@ -1,3 +1,21 @@
+2010-04-30  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, expectations updated.
+
+        [Chromium] Add missing pixel results.
+
+        * platform/chromium-linux/fast/borders/svg-as-border-image-2-expected.checksum: Added.
+        * platform/chromium-linux/fast/borders/svg-as-border-image-expected.checksum: Added.
+        * platform/chromium-linux/transforms/svg-vs-css-expected.checksum: Added.
+        * platform/chromium-linux/transforms/svg-vs-css-expected.png: Added.
+        * platform/chromium-mac/svg/custom/mask-changes-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/mask-changes-expected.png: Added.
+        * platform/chromium-mac/transforms/svg-vs-css-expected.checksum: Added.
+        * platform/chromium-win/fast/borders/svg-as-border-image-2-expected.checksum: Added.
+        * platform/chromium-win/fast/borders/svg-as-border-image-2-expected.png: Added.
+        * platform/chromium-win/fast/borders/svg-as-border-image-expected.checksum: Added.
+        * platform/chromium-win/fast/borders/svg-as-border-image-expected.png: Added.
+
 2010-04-30  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/38364> MIME typo in LayoutTests/http/tests/security/xss-DENIED-mime-type-execute-as-html.html
