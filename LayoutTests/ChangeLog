@@ -1,3 +1,17 @@
+2010-04-30  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewd, test expectations cleanup.
+
+        media/video-empty-source.html passes since r58480:r58515 (win), r58489 (linux), r58488:458490 (mac)
+        fast/backround/svg-as-background-6.html passes since r58488:r58490 (mac)
+        fast/repaint/caret-outside-block.html passes since r58414:r58415 (mac)
+        fast/replaced/border-radius-clip.html passes since r58543 (win, linux)
+        fast/images/svg-as-tiled-background.html passes r58488:r58490 (mac)
+        fast/text/line-breaks.html passes since r58480:r58515 (win)
+        fast/backgrounds/svg-as-background-2.html passes since r58480:r58515 (win), r58489 (linux), r58488:r58490 (mac)
+
+        * platform/chromium/test_expectations.txt:
+
 2010-04-30  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Adele Peterson.

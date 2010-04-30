@@ -752,12 +752,6 @@ BUG13907 : media/event-attributes.html = PASS FAIL TIMEOUT
 // The media time display isn't appearing.
 BUG13907 : media/video-zoom-controls.html = PASS FAIL TIMEOUT
 
-// Video has a green background, probably due to Mac repaint debugging code.
-// On Windows and Linux the slider control occasionally isn't rendered.
-//BUG13907 WIN LINUX : media/video-empty-source.html = IMAGE PASS
-// Tests are now completely broken as of 57820. investigating
-BUG42688 BUG13907 : media/video-empty-source.html = IMAGE+TEXT
-
 // The media time display is getting styled when it shouldn't be.
 BUG13907 : media/controls-styling.html = FAIL
 
@@ -936,7 +930,7 @@ BUG3244 WIN LINUX : fast/backgrounds/repeat/mask-negative-offset-repeat.html = F
 // or might be expected and that we should either go with the buildbot output
 // or change the test upstream to specify explicitly what font to use.
 // The mask part of this test is totally wrong.
-BUG3244 : fast/backgrounds/svg-as-background-6.html = FAIL
+BUG3244 WIN LINUX : fast/backgrounds/svg-as-background-6.html = FAIL
 
 BUG10302 LINUX : svg/W3C-SVG-1.1/pservers-grad-10-b.svg = FAIL
 
@@ -1725,6 +1719,7 @@ BUG23473 MAC : fast/repaint/block-selection-gap-stale-cache.html = PASS
 BUG23473 MAC : fast/repaint/block-selection-gap-stale-cache-2.html = PASS
 BUG23473 MAC : fast/repaint/box-shadow-h.html = PASS
 BUG23473 MAC : fast/repaint/box-shadow-v.html = PASS
+BUG23473 MAC : fast/repaint/caret-outside-block.html = PASS
 BUG23473 MAC : fast/repaint/fixed.html = PASS
 BUG23473 MAC : fast/repaint/fixed-tranformed.html = PASS
 BUG23473 MAC : fast/repaint/flexible-box-overflow.html = PASS
@@ -1890,7 +1885,6 @@ BUG27486 WIN LINUX : fast/forms/slider-zoomed.html = FAIL
 
 // See WebKit 41948
 // Regressed further at 57820, jamesr investigating
-BUG10468 WIN LINUX : fast/replaced/border-radius-clip.html = IMAGE+TEXT
 BUG10468 MAC SKIP : fast/replaced/border-radius-clip.html = MISSING
 
 // Mac flaky failures.
@@ -2592,7 +2586,7 @@ BUG35822 : plugins/netscape-browser-object-identity.html = TEXT
 // Started failing with 54865. No rebaselines upstream but they don't run pixel tests.
 BUG36019 : fast/borders/svg-as-border-image-2.html = IMAGE
 BUG36019 : fast/borders/svg-as-border-image.html = IMAGE
-BUG36019 : fast/images/svg-as-tiled-background.html = IMAGE
+BUG36019 WIN LINUX : fast/images/svg-as-tiled-background.html = IMAGE
 
 // WebKit roll 55250 to 55339
 BUG36966 : fast/loader/about-blank-hash-kept.html = FAIL
@@ -2692,10 +2686,6 @@ BUG39904 : svg/animations/animate-keySplines.html = TEXT TIMEOUT
 // This test generate strange result on Linux, the resulted image is too small.
 BUG40027 LINUX : fast/forms/input-file-re-render.html = TEXT IMAGE
 
-// Caused by http://trac.webkit.org/changeset/57215/
-// I think this is due to broken complex text behavior, but I need it investigate more.
-BUGWK37242 WIN : fast/text/line-breaks.html = IMAGE+TEXT
-
 BUGWK37283 : fast/overflow/scrollbar-restored-and-then-locked.html = TEXT
 
 BUGWK37297 : fast/history/nested-visited-test.html = TEXT
@@ -2778,7 +2768,6 @@ BUGWK38100 WIN LINUX MAC : editing/inserting/caret-position.html = TEXT
 BUGWK38099 WIN LINUX : svg/custom/broken-internal-references.svg = IMAGE+TEXT
 
 // Started failing at 58212
-BUGWK38108 WIN LINUX MAC : fast/backgrounds/svg-as-background-2.html = IMAGE
 BUGWK38108 MAC : fast/backgrounds/size/contain-and-cover.html = IMAGE
 
 // WebKit roll 58304:58400
