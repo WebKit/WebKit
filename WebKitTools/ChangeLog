@@ -1,5 +1,11 @@
 2010-04-30  Anders Carlsson  <andersca@apple.com>
 
+        Fix build.
+
+        * DumpRenderTree/unix/TestNetscapePlugin/TestNetscapePlugin.cpp:
+
+2010-04-30  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Timothy Hatcher.
 
         Next step towards fixing
