@@ -1,3 +1,15 @@
+2010-04-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Final part of 
+        
+        https://bugs.webkit.org/show_bug.cgi?id=20784
+        move npapi.h to C99 integer types
+
+        * bridge/npapi.h:
+        Remove the old types.
+
 2010-04-30  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r58569.

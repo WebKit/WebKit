@@ -129,52 +129,6 @@
 /*             Definition of Basic Types                                */
 /*----------------------------------------------------------------------*/
 
-/* QNX sets the _INT16 and friends defines, but does not typedef the types */
-#ifdef __QNXNTO__
-#undef _UINT16
-#undef _INT16
-#undef _UINT32
-#undef _INT32
-#endif
-
-#ifndef _UINT16
-#define _UINT16
-typedef unsigned short uint16;
-#endif
-
-#ifndef _UINT32
-#define _UINT32
-#ifdef __LP64__
-typedef unsigned int uint32;
-#else /* __LP64__ */
-typedef unsigned long uint32;
-#endif /* __LP64__ */
-#endif
-
-#ifndef _INT16
-#define _INT16
-typedef short int16;
-#endif
-
-#ifndef _INT32
-#define _INT32
-#ifdef __LP64__
-typedef int int32;
-#else /* __LP64__ */
-typedef long int32;
-#endif /* __LP64__ */
-#endif
-
-#ifndef FALSE
-#define FALSE (0)
-#endif
-#ifndef TRUE
-#define TRUE (1)
-#endif
-#ifndef NULL
-#define NULL (0L)
-#endif
-
 typedef unsigned char    NPBool;
 typedef int16_t          NPError;
 typedef int16_t          NPReason;
@@ -679,8 +633,8 @@ typedef struct NP_GLContext
 typedef struct NP_Port
 {
     CGrafPtr     port;        /* Grafport */
-    int32        portx;        /* position inside the topmost window */
-    int32        porty;
+    int32_t      portx;        /* position inside the topmost window */
+    int32_t      porty;
 } NP_Port;
 
 #endif /* NP_NO_QUICKDRAW */
