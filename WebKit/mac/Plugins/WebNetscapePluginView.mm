@@ -355,8 +355,8 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             CGrafPtr port = GetWindowPort(windowRef);
             GetPortBounds(port, &portBounds);
             nPort.qdPort.port = port;
-            nPort.qdPort.portx = (int32)-boundsInWindow.origin.x;
-            nPort.qdPort.porty = (int32)-boundsInWindow.origin.y;
+            nPort.qdPort.portx = (int32_t)-boundsInWindow.origin.x;
+            nPort.qdPort.porty = (int32_t)-boundsInWindow.origin.y;
             window.window = &nPort;
 
             PortState_QD *qdPortState = (PortState_QD*)malloc(sizeof(PortState_QD));
@@ -419,8 +419,8 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
                         origin.x = offscreenBounds.left - origin.x * (axisFlip.x - origin.x);
                         origin.y = offscreenBounds.bottom + origin.y * (axisFlip.y - origin.y);
                         
-                        nPort.qdPort.portx = static_cast<int32>(-boundsInWindow.origin.x + origin.x);
-                        nPort.qdPort.porty = static_cast<int32>(-boundsInWindow.origin.y - origin.y);
+                        nPort.qdPort.portx = static_cast<int32_t>(-boundsInWindow.origin.x + origin.x);
+                        nPort.qdPort.porty = static_cast<int32_t>(-boundsInWindow.origin.y - origin.y);
                         window.x = 0;
                         window.y = 0;
                         window.window = &nPort;
