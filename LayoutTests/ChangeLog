@@ -17,7 +17,7 @@
         Reviewed by Adele Peterson.
 
         Implement interactive behavior of spin buttons.
-        https://bugs.webkit.org/show_bug.cgi?id=27968
+        https://bugs.webkit.org/show_bug.cgi?id=35686
 
         * platform/mac/fast/forms/input-number-click-expected.txt: Added.
         * platform/mac/fast/forms/input-number-click.html: Added.

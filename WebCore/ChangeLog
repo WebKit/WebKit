@@ -16,7 +16,7 @@
         Reviewed by Adele Peterson.
 
         Implement interactive behavior of spin buttons.
-        https://bugs.webkit.org/show_bug.cgi?id=27968
+        https://bugs.webkit.org/show_bug.cgi?id=35686
 
         Introduce SpinButtonElement. It is a shadow element class for
         spin buttons. If the upper side of the element is clicked, calls
