@@ -1,5 +1,11 @@
 2010-04-30  Anders Carlsson  <andersca@apple.com>
 
+        Add back TRUE, FALSE and NULL macros. They were not meant to be removed!
+
+        * bridge/npapi.h:
+
+2010-04-30  Anders Carlsson  <andersca@apple.com>
+
         Try to fix the Qt build this time.
 
         * plugins/qt/PluginPackageQt.cpp:
