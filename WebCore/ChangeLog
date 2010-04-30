@@ -1,3 +1,15 @@
+2010-04-30  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed. Regression fix.
+
+        Revert a part of r58564 to be compatible with prior behavior
+        https://bugs.webkit.org/show_bug.cgi?id=38383
+
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::forwardEvent):
+         r58564 made a region check for the cancel button stricter, but it
+         made some tests failing on Chromium. So, relax the check again.
+
 2010-04-29  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Fisher.

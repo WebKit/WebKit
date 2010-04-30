@@ -337,7 +337,7 @@ void RenderTextControlSingleLine::forwardEvent(Event* event)
     int textRight = innerTextRenderer->borderBoxRect().right();
     if (m_resultsButton && localPoint.x() < innerTextRenderer->borderBoxRect().x())
         m_resultsButton->defaultEventHandler(event);
-    else if (m_cancelButton && localPoint.x() > textRight && localPoint.x() < textRight + m_cancelButton->renderBox()->width())
+    else if (m_cancelButton && localPoint.x() > textRight)
         m_cancelButton->defaultEventHandler(event);
     else if (m_outerSpinButton && localPoint.x() > textRight)
         m_outerSpinButton->defaultEventHandler(event);

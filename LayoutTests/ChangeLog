@@ -1,3 +1,12 @@
+2010-04-30  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed.
+
+        Revert a part of r58564 to be compatible with prior behavior
+        https://bugs.webkit.org/show_bug.cgi?id=38383
+
+        * platform/chromium/test_expectations.txt: Remove expectations added by r58568.
+
 2010-04-29  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Fisher.
