@@ -193,10 +193,9 @@ int PrintContext::pageNumberForElement(Element* element, const FloatSize& pageSi
     for (; pageNumber < printContext.pageCount(); pageNumber++) {
         const IntRect& page = printContext.pageRect(pageNumber);
         if (page.x() <= left && left < page.right() && page.y() <= top && top < page.bottom())
-            break;
+            return pageNumber;
     }
-    printContext.end();
-    return (pageNumber < printContext.pageCount() ? pageNumber : -1);
+    return -1;
 }
 
 int PrintContext::numberOfPages(Frame* frame, const FloatSize& pageSizeInPixels)
@@ -207,7 +206,6 @@ int PrintContext::numberOfPages(Frame* frame, const FloatSize& pageSizeInPixels)
     PrintContext printContext(frame);
     printContext.begin(pageRect.width());
     printContext.computePageRectsWithPageSize(pageSizeInPixels, false);
-    printContext.end();
     return printContext.pageCount();
 }
 
