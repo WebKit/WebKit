@@ -220,12 +220,12 @@ enum {
 
 typedef struct
 {
-    int32        type;
+    int32_t      type;
 } NPAnyCallbackStruct;
 
 typedef struct
 {
-    int32           type;
+    int32_t         type;
     Display*        display;
     Visual*         visual;
     Colormap        colormap;
@@ -234,7 +234,7 @@ typedef struct
 
 typedef struct
 {
-    int32            type;
+    int32_t          type;
     FILE*            fp;
 } NPPrintCallbackStruct;
 
