@@ -1,5 +1,13 @@
 2010-04-30  Anders Carlsson  <andersca@apple.com>
 
+        Try to fix the Qt build this time.
+
+        * plugins/qt/PluginPackageQt.cpp:
+        (WebCore::staticPluginQuirkRequiresGtkToolKit_NPN_GetValue):
+        (WebCore::PluginPackage::NPVersion):
+
+2010-04-30  Anders Carlsson  <andersca@apple.com>
+
         Yet another build fix.
 
         * plugins/gtk/PluginPackageGtk.cpp:
