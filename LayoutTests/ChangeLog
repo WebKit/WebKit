@@ -1,3 +1,13 @@
+2010-04-30  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        SHOULD NEVER BE REACHED assertion loading forbes.com
+        https://bugs.webkit.org/show_bug.cgi?id=38272
+
+        * printing/pseudo-class-outside-page-expected.txt: Added.
+        * printing/pseudo-class-outside-page.html: Added.
+
 2010-04-30  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. While I'm at it: Update prototype-inheritance-2-expected.txt result, it's failing since CSSPageRule has been introduced.

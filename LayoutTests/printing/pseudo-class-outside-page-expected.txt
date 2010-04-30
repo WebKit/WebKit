@@ -1,0 +1,5 @@
+Test case for SHOULD NEVER BE REACHED assertion loading forbes.com. Paged media related pseudo-classes should be ignored outside of @page.
+
+You should see a green box.
+
+PASS
