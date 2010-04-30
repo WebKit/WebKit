@@ -1,5 +1,12 @@
 2010-04-30  Anders Carlsson  <andersca@apple.com>
 
+        Another Qt build fix.
+
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::platformGetValueStatic):
+
+2010-04-30  Anders Carlsson  <andersca@apple.com>
+
         Add back TRUE, FALSE and NULL macros. They were not meant to be removed!
 
         * bridge/npapi.h:
