@@ -322,6 +322,8 @@ void JIT::emit_op_rshift(Instruction* currentInstruction)
     unsigned op1 = currentInstruction[2].u.operand;
     unsigned op2 = currentInstruction[3].u.operand;
 
+    // Slow case of rshift makes assumptions about what registers hold the
+    // shift arguments, so any changes must be updated there as well.
     if (isOperandConstantImmediateInt(op2)) {
         emitLoad(op1, regT1, regT0);
         addSlowCase(branch32(NotEqual, regT1, Imm32(JSValue::Int32Tag)));
@@ -343,10 +345,40 @@ void JIT::emitSlow_op_rshift(Instruction* currentInstruction, Vector<SlowCaseEnt
     unsigned dst = currentInstruction[1].u.operand;
     unsigned op1 = currentInstruction[2].u.operand;
     unsigned op2 = currentInstruction[3].u.operand;
-
-    if (!isOperandConstantImmediateInt(op1) && !isOperandConstantImmediateInt(op2))
+    if (isOperandConstantImmediateInt(op2)) {
+        // op1 = regT1:regT0
         linkSlowCase(iter); // int32 check
-    linkSlowCase(iter); // int32 check
+        if (supportsFloatingPointTruncate()) {
+            Jump notDouble = branch32(AboveOrEqual, regT1, Imm32(JSValue::LowestTag));
+            emitLoadDouble(op1, fpRegT0);
+            Jump truncationFailed = branchTruncateDoubleToInt32(fpRegT0, regT0);
+            rshift32(Imm32(getConstantOperand(op2).asInt32()), regT0);
+            emitStoreInt32(dst, regT0, dst == op1 || dst == op2);
+            emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_rshift));
+            notDouble.link(this);
+            truncationFailed.link(this);
+        }
+    } else {
+        // op1 = regT1:regT0
+        // op2 = regT3:regT2
+        if (!isOperandConstantImmediateInt(op1)) {
+            linkSlowCase(iter); // int32 check -- op1 is not an int
+            if (supportsFloatingPointTruncate()) {
+                Jump notDouble = branch32(Above, regT1, Imm32(JSValue::LowestTag)); // op1 is not a double
+                emitLoadDouble(op1, fpRegT0);
+                Jump notInt = branch32(NotEqual, regT3, Imm32(JSValue::Int32Tag)); // op2 is not an int
+                Jump cantTruncate = branchTruncateDoubleToInt32(fpRegT0, regT0);
+                rshift32(regT2, regT0);
+                emitStoreInt32(dst, regT0, dst == op1 || dst == op2);
+                emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_rshift));
+                notDouble.link(this);
+                notInt.link(this);
+                cantTruncate.link(this);
+            }
+        }
+
+        linkSlowCase(iter); // int32 check - op2 is not an int
+    }
 
     JITStubCall stubCall(this, cti_op_rshift);
     stubCall.addArgument(op1);

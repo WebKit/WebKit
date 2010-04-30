@@ -1,5 +1,25 @@
 2010-04-29  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Gavin Barraclough.
+
+        Handle double on righthand side of a right shift
+        https://bugs.webkit.org/show_bug.cgi?id=38363
+
+        In 64-bit we support right shift of a double, and there's no
+        reason not to in 32-bit either.  This is a 1.1% sunspider
+        improvement in 32bit.
+
+        Given high performance javascript code frequently makes
+        use of bit operators to perform double->int conversion i'll
+        follow this patch up with similar patches for bitwise 'and'
+        and 'or'.
+
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emit_op_rshift):
+        (JSC::JIT::emitSlow_op_rshift):
+
+2010-04-29  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Geoff Garen.
 
         Hoist JSVALUE32_64 arithmetic implementations into a separate file.
