@@ -289,7 +289,9 @@ public:
     bool isEnabled(const RenderObject*) const;
     bool isFocused(const RenderObject*) const;
     bool isPressed(const RenderObject*) const;
+    bool isSpinUpButtonPartPressed(const RenderObject*) const;
     bool isHovered(const RenderObject*) const;
+    bool isSpinUpButtonPartHovered(const RenderObject*) const;
     bool isReadOnlyControl(const RenderObject*) const;
     bool isDefault(const RenderObject*) const;
 

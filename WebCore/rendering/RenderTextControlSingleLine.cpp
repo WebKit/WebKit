@@ -281,6 +281,9 @@ bool RenderTextControlSingleLine::nodeAtPoint(const HitTestRequest& request, Hit
     if (result.innerNode()->isDescendantOf(innerTextElement()) || result.innerNode() == node())
         hitInnerTextElement(result, xPos, yPos, tx, ty);
 
+    // If we found a spin button, we're done.
+    if (m_outerSpinButton && result.innerNode() == m_outerSpinButton)
+        return true;
     // If we're not a search field, or we already found the results or cancel buttons, we're done.
     if (!m_innerBlock || result.innerNode() == m_resultsButton || result.innerNode() == m_cancelButton)
         return true;
@@ -331,10 +334,13 @@ void RenderTextControlSingleLine::forwardEvent(Event* event)
     }
 
     FloatPoint localPoint = innerTextRenderer->absoluteToLocal(static_cast<MouseEvent*>(event)->absoluteLocation(), false, true);
+    int textRight = innerTextRenderer->borderBoxRect().right();
     if (m_resultsButton && localPoint.x() < innerTextRenderer->borderBoxRect().x())
         m_resultsButton->defaultEventHandler(event);
-    else if (m_cancelButton && localPoint.x() > innerTextRenderer->borderBoxRect().right())
+    else if (m_cancelButton && localPoint.x() > textRight && localPoint.x() < textRight + m_cancelButton->renderBox()->width())
         m_cancelButton->defaultEventHandler(event);
+    else if (m_outerSpinButton && localPoint.x() > textRight)
+        m_outerSpinButton->defaultEventHandler(event);
     else
         RenderTextControl::forwardEvent(event);
 }
@@ -502,8 +508,7 @@ void RenderTextControlSingleLine::createSubtreeIfNeeded()
     if (!inputElement()->isSearchField()) {
         RenderTextControl::createSubtreeIfNeeded(m_innerBlock.get());
         if (inputElement()->hasSpinButton() && !m_outerSpinButton) {
-            // FIXME: Introduce a dedicated element for spin buttons.
-            m_outerSpinButton = new TextControlInnerElement(document(), node());
+            m_outerSpinButton = new SpinButtonElement(document(), node());
             m_outerSpinButton->attachInnerElement(node(), createOuterSpinButtonStyle(), renderArena());
         }
         return;

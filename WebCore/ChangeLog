@@ -1,3 +1,53 @@
+2010-04-30  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Adele Peterson.
+
+        Implement interactive behavior of spin buttons.
+        https://bugs.webkit.org/show_bug.cgi?id=27968
+
+        Introduce SpinButtonElement. It is a shadow element class for
+        spin buttons. If the upper side of the element is clicked, calls
+        HTMLInputElement::stepUpFromRenderer(1). If the lower button is
+        clicked, calls HTMLInputElement::stepUpFromRenderer(-1).
+
+        SpinButtonElement tracks the mouse pointer position, and
+        RenderTheme sets ControlStates::SpinUpState if the pointer is on
+        the upper side.
+
+        Test: platform/mac/fast/forms/input-number-click.html
+
+        * dom/Element.h:
+        (WebCore::Element::isSpinButtonElement):
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::adjustSelectionToAvoidCrossingEditingBoundaries):
+         Remove an assertion. lastEditablePositionBeforePositionInRoot() can
+         return null in a case that m_end is at a shadow element (a spin button)
+         and baseRoot is another shadow element (inner text block) in the same
+         node (an INPUT element).
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::stepUpFromRenderer):
+        * html/HTMLInputElement.h:
+        (WebCore::HTMLInputElement::hasSpinButton):
+         Add types supporting step attribute except RANGE.
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::nodeAtPoint):
+        (WebCore::RenderTextControlSingleLine::forwardEvent):
+        (WebCore::RenderTextControlSingleLine::preferredContentWidth):
+        (WebCore::RenderTextControlSingleLine::createSubtreeIfNeeded):
+        * rendering/RenderTextControlSingleLine.h:
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::controlStatesForRenderer):
+        (WebCore::RenderTheme::isSpinUpButtonPartPressed):
+        (WebCore::RenderTheme::isSpinUpButtonPartHovered):
+        * rendering/RenderTheme.h:
+        * rendering/TextControlInnerElements.cpp:
+        (WebCore::SpinButtonElement::SpinButtonElement):
+        (WebCore::SpinButtonElement::defaultEventHandler):
+        * rendering/TextControlInnerElements.h:
+        (WebCore::SpinButtonElement::isSpinButtonElement):
+        (WebCore::SpinButtonElement::isEnabledFormControl):
+        (WebCore::SpinButtonElement::onUpButton):
+
 2010-04-30  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -362,12 +362,14 @@ input::-webkit-input-list-button {
 input::-webkit-inner-spin-button {
     -webkit-appearance: inner-spin-button;
     display: inline-block;
+    -webkit-user-select: none;
 }
 
 input::-webkit-outer-spin-button {
     -webkit-appearance: outer-spin-button;
     display: inline-block;
     margin-left: 2px;
+    -webkit-user-select: none;
 }
 
 textarea {

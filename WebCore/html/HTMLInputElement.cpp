@@ -2761,4 +2761,28 @@ HTMLOptionElement* HTMLInputElement::selectedOption() const
 }
 #endif // ENABLE(DATALIST)
 
+void HTMLInputElement::stepUpFromRenderer(int n)
+{
+    // The difference from stepUp()/stepDown() is:
+    // If the current value is invalid, the value will be
+    //  - the minimum value if n > 0
+    //  - the maximum value if n < 0
+
+    ASSERT(hasSpinButton());
+    if (!hasSpinButton())
+        return;
+    ASSERT(n);
+    if (!n)
+        return;
+
+    const double nan = numeric_limits<double>::quiet_NaN();
+    double current = parseToDouble(value(), nan);
+    if (!isfinite(current)) {
+        setValue(serialize(n > 0 ? minimum() : maximum()));
+        return;
+    }
+    ExceptionCode ec;
+    stepUp(n, ec);
+}
+
 } // namespace

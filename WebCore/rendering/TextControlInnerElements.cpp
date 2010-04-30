@@ -211,4 +211,62 @@ void SearchFieldCancelButtonElement::defaultEventHandler(Event* evt)
         HTMLDivElement::defaultEventHandler(evt);
 }
 
+SpinButtonElement::SpinButtonElement(Document* doc, Node* shadowParent)
+    : TextControlInnerElement(doc, shadowParent)
+    , m_capturing(false)
+    , m_onUpButton(false)
+{
+}
+
+void SpinButtonElement::defaultEventHandler(Event* evt)
+{
+    if (!evt->isMouseEvent()) {
+        if (!evt->defaultHandled())
+            HTMLDivElement::defaultEventHandler(evt);
+        return;
+    }
+    const MouseEvent* mevt = static_cast<MouseEvent*>(evt);
+    if (mevt->button() != LeftButton) {
+        if (!evt->defaultHandled())
+            HTMLDivElement::defaultEventHandler(evt);
+        return;
+    }
+
+    HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowAncestorNode());
+    IntPoint local = roundedIntPoint(renderBox()->absoluteToLocal(mevt->absoluteLocation(), false, true));
+    if (evt->type() == eventNames().clickEvent) {
+        if (renderBox()->borderBoxRect().contains(local)) {
+            input->focus();
+            input->select();
+            if (local.y() < renderBox()->y() + renderBox()->height() / 2)
+                input->stepUpFromRenderer(1);
+            else
+                input->stepUpFromRenderer(-1);
+            evt->setDefaultHandled();
+        }
+    } else if (evt->type() == eventNames().mousemoveEvent) {
+        if (renderBox()->borderBoxRect().contains(local)) {
+            if (!m_capturing) {
+                if (Frame* frame = document()->frame()) {
+                    frame->eventHandler()->setCapturingMouseEventsNode(input);
+                    m_capturing = true;
+                }
+            }
+            bool oldOnUpButton = m_onUpButton;
+            m_onUpButton = local.y() < renderBox()->y() + renderBox()->height() / 2;
+            if (m_onUpButton != oldOnUpButton)
+                renderer()->repaint();
+        } else {
+            if (m_capturing) {
+                if (Frame* frame = document()->frame()) {
+                    frame->eventHandler()->setCapturingMouseEventsNode(0);
+                    m_capturing = false;
+                }
+            }
+        }
+    }
+    if (!evt->defaultHandled())
+        HTMLDivElement::defaultEventHandler(evt);
+}
+
 }

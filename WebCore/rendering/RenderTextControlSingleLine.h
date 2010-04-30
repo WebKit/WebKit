@@ -32,6 +32,7 @@ class InputElement;
 class SearchFieldCancelButtonElement;
 class SearchFieldResultsButtonElement;
 class SearchPopupMenu;
+class SpinButtonElement;
 class TextControlInnerElement;
 
 class RenderTextControlSingleLine : public RenderTextControl, private PopupMenuClient {

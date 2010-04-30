@@ -68,6 +68,21 @@ private:
     bool m_capturing;
 };
 
+class SpinButtonElement : public TextControlInnerElement {
+public:
+    SpinButtonElement(Document*, Node*);
+    virtual bool isSpinButtonElement() const { return true; }
+    virtual bool isEnabledFormControl() { return static_cast<Element*>(shadowAncestorNode())->isEnabledFormControl(); }
+    virtual void defaultEventHandler(Event*);
+
+    bool onUpButton() const { return m_onUpButton; }
+    static const AtomicString& spinButtonNodeName();
+
+private:
+    bool m_capturing;
+    bool m_onUpButton;
+};
+
 } //namespace
 
 #endif
