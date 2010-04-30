@@ -39,7 +39,7 @@ WebNetscapePluginView *pluginViewForInstance(NPP instance);
 
 // general plug-in to browser functions
 
-void* NPN_MemAlloc(uint32 size)
+void* NPN_MemAlloc(uint32_t size)
 {
     return malloc(size);
 }
@@ -49,7 +49,7 @@ void NPN_MemFree(void* ptr)
     free(ptr);
 }
 
-uint32 NPN_MemFlush(uint32 size)
+uint32_t NPN_MemFlush(uint32_t size)
 {
     LOG(Plugins, "NPN_MemFlush");
     return size;
@@ -89,12 +89,12 @@ NPError NPN_GetURL(NPP instance, const char* URL, const char* target)
     return [pluginViewForInstance(instance) getURL:URL target:target];
 }
 
-NPError NPN_PostURLNotify(NPP instance, const char* URL, const char* target, uint32 len, const char* buf, NPBool file, void* notifyData)
+NPError NPN_PostURLNotify(NPP instance, const char* URL, const char* target, uint32_t len, const char* buf, NPBool file, void* notifyData)
 {
     return [pluginViewForInstance(instance) postURLNotify:URL target:target len:len buf:buf file:file notifyData:notifyData];
 }
 
-NPError NPN_PostURL(NPP instance, const char* URL, const char* target, uint32 len, const char* buf, NPBool file)
+NPError NPN_PostURL(NPP instance, const char* URL, const char* target, uint32_t len, const char* buf, NPBool file)
 {
     return [pluginViewForInstance(instance) postURL:URL target:target len:len buf:buf file:file];
 }
@@ -104,7 +104,7 @@ NPError NPN_NewStream(NPP instance, NPMIMEType type, const char* target, NPStrea
     return [pluginViewForInstance(instance) newStream:type target:target stream:stream];
 }
 
-int32 NPN_Write(NPP instance, NPStream* stream, int32 len, void* buffer)
+int32_t NPN_Write(NPP instance, NPStream* stream, int32_t len, void* buffer)
 {
     return [pluginViewForInstance(instance) write:stream len:len buffer:buffer];
 }
@@ -176,12 +176,12 @@ void NPN_PluginThreadAsyncCall(NPP instance, void (*func) (void *), void *userDa
     PluginMainThreadScheduler::scheduler().scheduleCall(instance, func, userData);
 }
 
-uint32 NPN_ScheduleTimer(NPP instance, uint32 interval, NPBool repeat, void (*timerFunc)(NPP npp, uint32 timerID))
+uint32_t NPN_ScheduleTimer(NPP instance, uint32_t interval, NPBool repeat, void (*timerFunc)(NPP npp, uint32_t timerID))
 {
     return [pluginViewForInstance(instance) scheduleTimerWithInterval:interval repeat:repeat timerFunc:timerFunc];
 }
 
-void NPN_UnscheduleTimer(NPP instance, uint32 timerID)
+void NPN_UnscheduleTimer(NPP instance, uint32_t timerID)
 {
     [pluginViewForInstance(instance) unscheduleTimer:timerID];
 }
@@ -191,17 +191,17 @@ NPError NPN_PopUpContextMenu(NPP instance, NPMenu *menu)
     return [pluginViewForInstance(instance) popUpContextMenu:menu];
 }
 
-NPError NPN_GetValueForURL(NPP instance, NPNURLVariable variable, const char* url, char** value, uint32* len)
+NPError NPN_GetValueForURL(NPP instance, NPNURLVariable variable, const char* url, char** value, uint32_t* len)
 {
     return [pluginViewForInstance(instance) getVariable:variable forURL:url value:value length:len];
 }
 
-NPError NPN_SetValueForURL(NPP instance, NPNURLVariable variable, const char* url, const char* value, uint32 len)
+NPError NPN_SetValueForURL(NPP instance, NPNURLVariable variable, const char* url, const char* value, uint32_t len)
 {
     return [pluginViewForInstance(instance) setVariable:variable forURL:url value:value length:len];
 }
 
-NPError NPN_GetAuthenticationInfo(NPP instance, const char* protocol, const char* host, int32 port, const char* scheme, const char *realm, char** username, uint32* ulen, char** password, uint32* plen)
+NPError NPN_GetAuthenticationInfo(NPP instance, const char* protocol, const char* host, int32_t port, const char* scheme, const char *realm, char** username, uint32_t* ulen, char** password, uint32_t* plen)
 {
     return [pluginViewForInstance(instance) getAuthenticationInfoWithProtocol:protocol 
                                                                          host:host 
@@ -217,12 +217,12 @@ NPBool NPN_ConvertPoint(NPP instance, double sourceX, double sourceY, NPCoordina
     return [pluginViewForInstance(instance) convertFromX:sourceX andY:sourceY space:sourceSpace toX:destX andY:destY space:destSpace];
 }
 
-uint32 WKN_CheckIfAllowedToLoadURL(NPP instance, const char* url, const char* frame, void (*callbackFunc)(NPP npp, uint32, NPBool, void*), void* context)
+uint32_t WKN_CheckIfAllowedToLoadURL(NPP instance, const char* url, const char* frame, void (*callbackFunc)(NPP npp, uint32_t, NPBool, void*), void* context)
 {
     return [pluginViewForInstance(instance) checkIfAllowedToLoadURL:url frame:frame callbackFunc:callbackFunc context:context];
 }
 
-void WKN_CancelCheckIfAllowedToLoadURL(NPP instance, uint32 checkID)
+void WKN_CancelCheckIfAllowedToLoadURL(NPP instance, uint32_t checkID)
 {
     [pluginViewForInstance(instance) cancelCheckIfAllowedToLoadURL:checkID];
 }

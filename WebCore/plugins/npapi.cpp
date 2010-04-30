@@ -43,7 +43,7 @@ static PluginView* pluginViewForInstance(NPP instance)
     return PluginView::currentPluginView();
 }
 
-void* NPN_MemAlloc(uint32 size)
+void* NPN_MemAlloc(uint32_t size)
 {
     return malloc(size);
 }
@@ -53,7 +53,7 @@ void NPN_MemFree(void* ptr)
     free(ptr);
 }
 
-uint32 NPN_MemFlush(uint32 size)
+uint32_t NPN_MemFlush(uint32_t size)
 {
     // Do nothing
     return 0;
@@ -79,12 +79,12 @@ NPError NPN_GetURL(NPP instance, const char* url, const char* target)
     return pluginViewForInstance(instance)->getURL(url, target);
 }
 
-NPError NPN_PostURLNotify(NPP instance, const char* url, const char* target, uint32 len, const char* buf, NPBool file, void* notifyData)
+NPError NPN_PostURLNotify(NPP instance, const char* url, const char* target, uint32_t len, const char* buf, NPBool file, void* notifyData)
 {
     return pluginViewForInstance(instance)->postURLNotify(url, target, len, buf, file, notifyData);
 }
 
-NPError NPN_PostURL(NPP instance, const char* url, const char* target, uint32 len, const char* buf, NPBool file)
+NPError NPN_PostURL(NPP instance, const char* url, const char* target, uint32_t len, const char* buf, NPBool file)
 {
     return pluginViewForInstance(instance)->postURL(url, target, len, buf, file);
 }
@@ -94,7 +94,7 @@ NPError NPN_NewStream(NPP instance, NPMIMEType type, const char* target, NPStrea
     return pluginViewForInstance(instance)->newStream(type, target, stream);
 }
 
-int32 NPN_Write(NPP instance, NPStream* stream, int32 len, void* buffer)
+int32_t NPN_Write(NPP instance, NPStream* stream, int32_t len, void* buffer)
 {
     return pluginViewForInstance(instance)->write(stream, len, buffer);
 }

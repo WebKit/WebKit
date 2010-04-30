@@ -109,8 +109,8 @@ namespace WebCore {
 
         const NPPluginFuncs* m_pluginFuncs;
         NPP m_instance;
-        uint16 m_transferMode;
-        int32 m_offset;
+        uint16_t m_transferMode;
+        int32_t m_offset;
         WTF::CString m_headers;
         WTF::CString m_path;
         NPReason m_reason;

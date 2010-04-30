@@ -335,7 +335,7 @@ bool PluginPackage::equal(const PluginPackage& a, const PluginPackage& b)
     return true;
 }
 
-uint16 PluginPackage::NPVersion() const
+uint16_t PluginPackage::NPVersion() const
 {
     return NP_VERSION_MINOR;
 }

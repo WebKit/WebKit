@@ -55,7 +55,7 @@ namespace WebCore {
         const String& path() const { return m_path; }
         const String& fileName() const { return m_fileName; }
         const String& parentDirectory() const { return m_parentDirectory; }
-        uint16 NPVersion() const;
+        uint16_t NPVersion() const;
         time_t lastModified() const { return m_lastModified; }
 
         const MIMEToDescriptionsMap& mimeToDescriptions() const { return m_mimeToDescriptions; }

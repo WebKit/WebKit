@@ -357,7 +357,7 @@ static NPIdentifier stringVariantToIdentifier(NPVariant variant)
 static NPIdentifier int32VariantToIdentifier(NPVariant variant)
 {
     assert(NPVARIANT_IS_INT32(variant));
-    int32 integer = NPVARIANT_TO_INT32(variant);
+    int32_t integer = NPVARIANT_TO_INT32(variant);
     return browser->getintidentifier(integer);
 }
 
@@ -366,7 +366,7 @@ static NPIdentifier doubleVariantToIdentifier(NPVariant variant)
     assert(NPVARIANT_IS_DOUBLE(variant));
     double value = NPVARIANT_TO_DOUBLE(variant);
     // Sadly there is no "getdoubleidentifier"
-    int32 integer = static_cast<int32>(value);
+    int32_t integer = static_cast<int32_t>(value);
     return browser->getintidentifier(integer);
 }
 
@@ -402,7 +402,7 @@ static bool testIdentifierToInt(PluginObject*, const NPVariant* args, uint32_t a
     NPIdentifier identifier = variantToIdentifier(args[0]);
     if (!identifier)
         return false;
-    int32 integer = browser->intfromidentifier(identifier);
+    int32_t integer = browser->intfromidentifier(identifier);
     INT32_TO_NPVARIANT(integer, *result);
     return true;
 }
@@ -552,7 +552,7 @@ static bool testGetIntIdentifier(PluginObject*, const NPVariant* args, uint32_t 
         return false;
 
     NPIdentifier identifier = browser->getintidentifier((int)NPVARIANT_TO_DOUBLE(args[0]));
-    INT32_TO_NPVARIANT((int32)(long long)identifier, *result);
+    INT32_TO_NPVARIANT((int32_t)(long long)identifier, *result);
     return true;
 }
 

@@ -1,3 +1,36 @@
+2010-04-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Next step towards fixing
+        
+        https://bugs.webkit.org/show_bug.cgi?id=20784
+        move npapi.h to C99 integer types
+
+        Use the C99 types everywhere. The "old" types are still around but will be removed
+        in a subsequent commit.
+
+        * Plugins/WebBaseNetscapePluginStream.h:
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (WebNetscapePluginStream::deliverData):
+        * Plugins/WebNetscapePluginView.h:
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView saveAndSetNewPortStateForUpdate:]):
+        (-[WebNetscapePluginView getAuthenticationInfoWithProtocol:host:port:scheme:realm:username:usernameLength:password:passwordLength:]):
+        * Plugins/npapi.mm:
+        (NPN_MemAlloc):
+        (NPN_MemFlush):
+        (NPN_PostURLNotify):
+        (NPN_PostURL):
+        (NPN_Write):
+        (NPN_ScheduleTimer):
+        (NPN_UnscheduleTimer):
+        (NPN_GetValueForURL):
+        (NPN_SetValueForURL):
+        (NPN_GetAuthenticationInfo):
+        (WKN_CheckIfAllowedToLoadURL):
+        (WKN_CancelCheckIfAllowedToLoadURL):
+
 2010-04-29  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

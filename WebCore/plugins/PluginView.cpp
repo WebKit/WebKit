@@ -582,12 +582,12 @@ NPError PluginView::getURL(const char* url, const char* target)
     return load(frameLoadRequest, false, 0);
 }
 
-NPError PluginView::postURLNotify(const char* url, const char* target, uint32 len, const char* buf, NPBool file, void* notifyData)
+NPError PluginView::postURLNotify(const char* url, const char* target, uint32_t len, const char* buf, NPBool file, void* notifyData)
 {
     return handlePost(url, target, len, buf, file, notifyData, true, true);
 }
 
-NPError PluginView::postURL(const char* url, const char* target, uint32 len, const char* buf, NPBool file)
+NPError PluginView::postURL(const char* url, const char* target, uint32_t len, const char* buf, NPBool file)
 {
     // As documented, only allow headers to be specified via NPP_PostURL when using a file.
     return handlePost(url, target, len, buf, file, 0, false, file);
@@ -600,7 +600,7 @@ NPError PluginView::newStream(NPMIMEType type, const char* target, NPStream** st
     return NPERR_GENERIC_ERROR;
 }
 
-int32 PluginView::write(NPStream* stream, int32 len, void* buffer)
+int32_t PluginView::write(NPStream* stream, int32_t len, void* buffer)
 {
     notImplemented();
     // Unsupported
@@ -1136,7 +1136,7 @@ static inline HTTPHeaderMap parseRFC822HeaderFields(const Vector<char>& buffer, 
     return headerFields;
 }
 
-NPError PluginView::handlePost(const char* url, const char* target, uint32 len, const char* buf, bool file, void* notifyData, bool sendNotification, bool allowHeaders)
+NPError PluginView::handlePost(const char* url, const char* target, uint32_t len, const char* buf, bool file, void* notifyData, bool sendNotification, bool allowHeaders)
 {
     if (!url || !len || !buf)
         return NPERR_INVALID_PARAM;

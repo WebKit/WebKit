@@ -306,10 +306,10 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 #endif
     
     window.type = NPWindowTypeWindow;
-    window.x = (int32)boundsInWindow.origin.x; 
-    window.y = (int32)boundsInWindow.origin.y;
-    window.width = static_cast<uint32>(NSWidth(boundsInWindow));
-    window.height = static_cast<uint32>(NSHeight(boundsInWindow));
+    window.x = (int32_t)boundsInWindow.origin.x; 
+    window.y = (int32_t)boundsInWindow.origin.y;
+    window.width = static_cast<uint32_t>(NSWidth(boundsInWindow));
+    window.height = static_cast<uint32_t>(NSHeight(boundsInWindow));
     
     // "Clip-out" the plug-in when:
     // 1) it's not really in a window or off-screen or has no height or width.
@@ -2255,9 +2255,9 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     return NPERR_GENERIC_ERROR;
 }
 
-- (NPError)getAuthenticationInfoWithProtocol:(const char*)protocolStr host:(const char*)hostStr port:(int32)port scheme:(const char*)schemeStr realm:(const char*)realmStr
-                                    username:(char**)usernameStr usernameLength:(uint32*)usernameLength 
-                                    password:(char**)passwordStr passwordLength:(uint32*)passwordLength
+- (NPError)getAuthenticationInfoWithProtocol:(const char*)protocolStr host:(const char*)hostStr port:(int32_t)port scheme:(const char*)schemeStr realm:(const char*)realmStr
+                                    username:(char**)usernameStr usernameLength:(uint32_t*)usernameLength 
+                                    password:(char**)passwordStr passwordLength:(uint32_t*)passwordLength
 {
     if (!protocolStr || !hostStr || !schemeStr || !realmStr || !usernameStr || !usernameLength || !passwordStr || !passwordLength)
         return NPERR_GENERIC_ERROR;

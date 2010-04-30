@@ -507,12 +507,12 @@ void WebNetscapePluginStream::deliverData()
 
     RefPtr<WebNetscapePluginStream> protect(this);
 
-    int32 totalBytes = [m_deliveryData.get() length];
-    int32 totalBytesDelivered = 0;
+    int32_t totalBytes = [m_deliveryData.get() length];
+    int32_t totalBytesDelivered = 0;
 
     while (totalBytesDelivered < totalBytes) {
         PluginStopDeferrer deferrer(m_pluginView.get());
-        int32 deliveryBytes = m_pluginFuncs->writeready(m_plugin, &m_stream);
+        int32_t deliveryBytes = m_pluginFuncs->writeready(m_plugin, &m_stream);
         LOG(Plugins, "NPP_WriteReady responseURL=%@ bytes=%d", m_responseURL.get(), deliveryBytes);
 
         if (m_isTerminated)
@@ -533,7 +533,7 @@ void WebNetscapePluginStream::deliverData()
                 cancelLoadAndDestroyStreamWithError(pluginCancelledConnectionError());
                 return;
             }
-            deliveryBytes = min<int32>(deliveryBytes, [subdata length]);
+            deliveryBytes = min<int32_t>(deliveryBytes, [subdata length]);
             m_offset += deliveryBytes;
             totalBytesDelivered += deliveryBytes;
             LOG(Plugins, "NPP_Write responseURL=%@ bytes=%d total-delivered=%d/%d", m_responseURL.get(), deliveryBytes, m_offset, m_stream.end);

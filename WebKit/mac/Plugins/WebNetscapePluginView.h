@@ -89,13 +89,13 @@ typedef union PluginPort {
     BOOL inSetWindow;
     BOOL shouldStopSoon;
 
-    uint32 currentTimerID;
-    HashMap<uint32, PluginTimer*>* timers;
+    uint32_t currentTimerID;
+    HashMap<uint32_t, PluginTimer*>* timers;
 
     unsigned pluginFunctionCallDepth;
     
-    int32 specifiedHeight;
-    int32 specifiedWidth;
+    int32_t specifiedHeight;
+    int32_t specifiedWidth;
             
     HashSet<RefPtr<WebNetscapePluginStream> > streams;
     RetainPtr<NSMutableDictionary> _pendingFrameLoads;
@@ -104,7 +104,7 @@ typedef union PluginPort {
     BOOL _isSilverlight;
     
     NSMutableDictionary *_containerChecksInProgress;
-    uint32 _currentContainerCheckRequestID;
+    uint32_t _currentContainerCheckRequestID;
 }
 
 + (WebNetscapePluginView *)currentPluginView;
@@ -146,8 +146,8 @@ typedef union PluginPort {
 - (void)handleMouseEntered:(NSEvent *)event;
 - (void)handleMouseExited:(NSEvent *)event;
 
-- (uint32)checkIfAllowedToLoadURL:(const char*)urlCString frame:(const char*)frameNameCString callbackFunc:(void (*)(NPP npp, uint32 checkID, NPBool allowed, void* context))callbackFunc context:(void*)context;
-- (void)cancelCheckIfAllowedToLoadURL:(uint32)checkID;
+- (uint32_t)checkIfAllowedToLoadURL:(const char*)urlCString frame:(const char*)frameNameCString callbackFunc:(void (*)(NPP npp, uint32_t checkID, NPBool allowed, void* context))callbackFunc context:(void*)context;
+- (void)cancelCheckIfAllowedToLoadURL:(uint32_t)checkID;
 
 @end
 
@@ -172,14 +172,14 @@ typedef union PluginPort {
 - (void)forceRedraw;
 - (NPError)getVariable:(NPNVariable)variable value:(void *)value;
 - (NPError)setVariable:(NPPVariable)variable value:(void *)value;
-- (uint32)scheduleTimerWithInterval:(uint32)interval repeat:(NPBool)repeat timerFunc:(void (*)(NPP npp, uint32 timerID))timerFunc;
-- (void)unscheduleTimer:(uint32)timerID;
+- (uint32_t)scheduleTimerWithInterval:(uint32_t)interval repeat:(NPBool)repeat timerFunc:(void (*)(NPP npp, uint32_t timerID))timerFunc;
+- (void)unscheduleTimer:(uint32_t)timerID;
 - (NPError)popUpContextMenu:(NPMenu *)menu;
-- (NPError)getVariable:(NPNURLVariable)variable forURL:(const char*)url value:(char**)value length:(uint32*)length;
-- (NPError)setVariable:(NPNURLVariable)variable forURL:(const char*)url value:(const char*)value length:(uint32)length;
-- (NPError)getAuthenticationInfoWithProtocol:(const char*) protocol host:(const char*)host port:(int32)port scheme:(const char*)scheme realm:(const char*)realm
-                                    username:(char**)username usernameLength:(uint32*)usernameLength 
-                                    password:(char**)password passwordLength:(uint32*)passwordLength;
+- (NPError)getVariable:(NPNURLVariable)variable forURL:(const char*)url value:(char**)value length:(uint32_t*)length;
+- (NPError)setVariable:(NPNURLVariable)variable forURL:(const char*)url value:(const char*)value length:(uint32_t)length;
+- (NPError)getAuthenticationInfoWithProtocol:(const char*) protocol host:(const char*)host port:(int32_t)port scheme:(const char*)scheme realm:(const char*)realm
+                                    username:(char**)username usernameLength:(uint32_t*)usernameLength 
+                                    password:(char**)password passwordLength:(uint32_t*)passwordLength;
 - (char*)resolveURL:(const char*)url forTarget:(const char*)target;
 @end
 

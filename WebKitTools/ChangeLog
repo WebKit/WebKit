@@ -1,3 +1,33 @@
+2010-04-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Next step towards fixing
+        
+        https://bugs.webkit.org/show_bug.cgi?id=20784
+        move npapi.h to C99 integer types
+
+        Use the C99 types everywhere. The "old" types are still around but will be removed
+        in a subsequent commit.
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.cpp:
+        (int32VariantToIdentifier):
+        (doubleVariantToIdentifier):
+        (testIdentifierToInt):
+        (testGetIntIdentifier):
+        * DumpRenderTree/TestNetscapePlugIn.subproj/main.cpp:
+        (NPP_New):
+        (NPP_NewStream):
+        (NPP_WriteReady):
+        (NPP_Write):
+        (NPP_HandleEvent):
+        * DumpRenderTree/win/TestNetscapePlugin/main.cpp:
+        (NPP_New):
+        (NPP_NewStream):
+        (NPP_WriteReady):
+        (NPP_Write):
+        (NPP_HandleEvent):
+
 2010-04-30  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.

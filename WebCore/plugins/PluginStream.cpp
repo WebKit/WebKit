@@ -336,20 +336,20 @@ void PluginStream::deliverData()
     if (!m_stream.ndata || m_deliveryData->size() == 0)
         return;
 
-    int32 totalBytes = m_deliveryData->size();
-    int32 totalBytesDelivered = 0;
+    int32_t totalBytes = m_deliveryData->size();
+    int32_t totalBytesDelivered = 0;
 
     if (m_loader)
         m_loader->setDefersLoading(true);
     while (totalBytesDelivered < totalBytes) {
-        int32 deliveryBytes = m_pluginFuncs->writeready(m_instance, &m_stream);
+        int32_t deliveryBytes = m_pluginFuncs->writeready(m_instance, &m_stream);
 
         if (deliveryBytes <= 0) {
             m_delayDeliveryTimer.startOneShot(0);
             break;
         } else {
             deliveryBytes = min(deliveryBytes, totalBytes - totalBytesDelivered);
-            int32 dataLength = deliveryBytes;
+            int32_t dataLength = deliveryBytes;
             char* data = m_deliveryData->data() + totalBytesDelivered;
 
             // Write the data
