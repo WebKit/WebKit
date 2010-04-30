@@ -486,8 +486,8 @@ JSValue JSC_HOST_CALL jsTestObjPrototypeFunctionSerializedValue(ExecState* exec,
     UNUSED_PARAM(args);
     if (!thisValue.inherits(&JSTestObj::s_info))
         return throwError(exec, TypeError);
-    JSTestObj* castedThisObj = static_cast<JSTestObj*>(asObject(thisValue));
-    TestObj* imp = static_cast<TestObj*>(castedThisObj->impl());
+    JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(thisValue));
+    TestObj* imp = static_cast<TestObj*>(castedThis->impl());
     RefPtr<SerializedScriptValue> serializedArg = SerializedScriptValue::create(exec, args.at(0));
 
     imp->serializedValue(serializedArg);
