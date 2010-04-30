@@ -8,6 +8,7 @@
         * platform/gtk/Skipped:
         * platform/mac-tiger/Skipped:
         * platform/qt/Skipped:
+        * platform/win/Skipped:
 
 2010-04-29  James Robinson  <jamesr@chromium.org>
 
