@@ -1,5 +1,13 @@
 2010-04-30  Anders Carlsson  <andersca@apple.com>
 
+        Fix Tiger build.
+
+        * Plugins/WebBaseNetscapePluginStream.h:
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (WebNetscapePluginStream::startStream):
+
+2010-04-30  Anders Carlsson  <andersca@apple.com>
+
         Another 32-bit build fix.
 
         * Plugins/WebNetscapePluginView.mm:

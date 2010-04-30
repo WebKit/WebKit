@@ -220,8 +220,8 @@ void WebNetscapePluginStream::startStream(NSURL *url, long long expectedContentL
     m_stream.url = strdup([m_responseURL.get() _web_URLCString]);
 
     m_stream.ndata = this;
-    m_stream.end = expectedContentLength > 0 ? (uint32)expectedContentLength : 0;
-    m_stream.lastmodified = (uint32)[lastModifiedDate timeIntervalSince1970];
+    m_stream.end = expectedContentLength > 0 ? (uint32_t)expectedContentLength : 0;
+    m_stream.lastmodified = (uint32_t)[lastModifiedDate timeIntervalSince1970];
     m_stream.notifyData = m_notifyData;
 
     if (headers) {
