@@ -1,3 +1,13 @@
+2010-04-30  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Updated results for <rdar://problem/6649734> Text repainting does not account for glyphs which draw outside the typographic bounds of the font
+        https://bugs.webkit.org/show_bug.cgi?id=6274
+
+        * platform/mac/fast/repaint/stacked-diacritics-expected.checksum:
+        * platform/mac/fast/repaint/stacked-diacritics-expected.png:
+
 2010-04-30  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

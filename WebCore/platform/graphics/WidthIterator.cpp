@@ -33,13 +33,14 @@
 
 using namespace WTF;
 using namespace Unicode;
+using namespace std;
 
 namespace WebCore {
 
 // According to http://www.unicode.org/Public/UNIDATA/UCD.html#Canonical_Combining_Class_Values
 static const uint8_t hiraganaKatakanaVoicingMarksCombiningClass = 8;
 
-WidthIterator::WidthIterator(const Font* font, const TextRun& run, HashSet<const SimpleFontData*>* fallbackFonts)
+WidthIterator::WidthIterator(const Font* font, const TextRun& run, HashSet<const SimpleFontData*>* fallbackFonts, bool accountForGlyphBounds)
     : m_font(font)
     , m_run(run)
     , m_end(run.length())
@@ -47,6 +48,11 @@ WidthIterator::WidthIterator(const Font* font, const TextRun& run, HashSet<const
     , m_runWidthSoFar(0)
     , m_finalRoundingWidth(0)
     , m_fallbackFonts(fallbackFonts)
+    , m_accountForGlyphBounds(accountForGlyphBounds)
+    , m_maxGlyphBoundingBoxY(numeric_limits<float>::min())
+    , m_minGlyphBoundingBoxY(numeric_limits<float>::max())
+    , m_firstGlyphOverflow(0)
+    , m_lastGlyphOverflow(0)
 {
     // If the padding is non-zero, count the number of spaces in the run
     // and divide that by the padding for per space addition.
@@ -79,6 +85,7 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
 
     float runWidthSoFar = m_runWidthSoFar;
     float lastRoundingWidth = m_finalRoundingWidth;
+    FloatRect bounds;
 
     const SimpleFontData* primaryFont = m_font->primaryFont();
     const SimpleFontData* lastFontData = primaryFont;
@@ -175,6 +182,12 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
             }
         }
 
+        if (m_accountForGlyphBounds) {
+            bounds = fontData->boundsForGlyph(glyph);
+            if (!currentCharacter)
+                m_firstGlyphOverflow = max<float>(0, -bounds.x());
+        }
+
         // Advance past the character we just dealt with.
         cp += clusterLength;
         currentCharacter += clusterLength;
@@ -205,6 +218,12 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
             glyphBuffer->add(glyph, fontData, (rtl ? oldWidth + lastRoundingWidth : width));
 
         lastRoundingWidth = width - oldWidth;
+
+        if (m_accountForGlyphBounds) {
+            m_maxGlyphBoundingBoxY = max(m_maxGlyphBoundingBoxY, bounds.bottom());
+            m_minGlyphBoundingBoxY = min(m_minGlyphBoundingBoxY, bounds.y());
+            m_lastGlyphOverflow = max<float>(0, bounds.right() - width);
+        }
     }
 
     m_currentCharacter = currentCharacter;

@@ -150,6 +150,10 @@ public:
     static void setShouldUseSmoothing(bool);
     static bool shouldUseSmoothing();
 
+#if USE(FONT_FAST_PATH)
+    enum CodePath { Auto, Simple, Complex, SimpleWithGlyphOverflow };
+#endif
+
 private:
 #if ENABLE(SVG_FONTS)
     void drawTextUsingSVGFont(GraphicsContext*, const TextRun&, const FloatPoint&, int from, int to) const;
@@ -160,11 +164,11 @@ private:
 #endif
 
 #if USE(FONT_FAST_PATH)
-    bool canUseGlyphCache(const TextRun&) const;
+    CodePath codePath(const TextRun&) const;
     void drawSimpleText(GraphicsContext*, const TextRun&, const FloatPoint&, int from, int to) const;
     void drawGlyphs(GraphicsContext*, const SimpleFontData*, const GlyphBuffer&, int from, int to, const FloatPoint&) const;
     void drawGlyphBuffer(GraphicsContext*, const GlyphBuffer&, const TextRun&, const FloatPoint&) const;
-    float floatWidthForSimpleText(const TextRun&, GlyphBuffer*, HashSet<const SimpleFontData*>* fallbackFonts = 0) const;
+    float floatWidthForSimpleText(const TextRun&, GlyphBuffer*, HashSet<const SimpleFontData*>* fallbackFonts = 0, GlyphOverflow* = 0) const;
     int offsetForPositionForSimpleText(const TextRun&, int position, bool includePartialGlyphs) const;
     FloatRect selectionRectForSimpleText(const TextRun&, const IntPoint&, int h, int from, int to) const;
 
@@ -181,7 +185,6 @@ private:
 public:
     // Useful for debugging the different font rendering code paths.
 #if USE(FONT_FAST_PATH)
-    enum CodePath { Auto, Simple, Complex };
     static void setCodePath(CodePath);
     static CodePath codePath();
     static CodePath s_codePath;

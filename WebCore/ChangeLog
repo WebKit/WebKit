@@ -1,3 +1,40 @@
+2010-04-30  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Part of <rdar://problem/6649734> Text repainting does not account for glyphs which draw outside the typographic bounds of the font
+        https://bugs.webkit.org/show_bug.cgi?id=6274
+
+        Account for glyph overflow of characters in the range U+1E00..U+2000, but without sending them
+        through the complex text code path. Instead, introduce a variant of the fast path that tracks
+        glyph overflow.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::drawText): Use codePath().
+        (WebCore::Font::floatWidth): Use codePath(). Pass the GlyphOverflow pointer through to
+        floatWidthForSimpleText() if the code path is SimpleWithGlyphOverflow.
+        (WebCore::Font::selectionRectForText): Use codePath().
+        (WebCore::Font::offsetForPosition): Ditto.
+        * platform/graphics/Font.h: Replaced canUseGlyphCache() with codePath(). Added a GlyphOverflow
+        parameter to floatWidthForSimpleText().
+        * platform/graphics/FontFastPath.cpp:
+        Removed ROMAN_AND_GREEK_DIACRITICS_CAN_USE_GLYPH_CACHE.
+        (WebCore::Font::codePath): Renamed canUseGlyphCache() to this. Where it used to return false,
+        it now returns Complex. Where it used to return true, it now returns Simple, except for
+        the range U+1E00..U+2000, where it now returns SimpleWithGlyphOverflow.
+        (WebCore::Font::floatWidthForSimpleText): Added a GlyphOverflow parameter. If not 0, have the
+        width iterator account for glyph bounds, then update the GlyphOverflow accordingly.
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::WidthIterator): Added boolean parameter telling the width iterator
+        whether to account for glyph bounds. Initialize m_accountForGlyphBounds accordingly. Initialize
+        m_maxGlyphBoundingBoxY, m_minGlyphBoundingBoxY, m_firstGlyphOverflow and m_lastGlyphOverflow.
+        (WebCore::WidthIterator::advance): If accounting for glyph bounds, update the above member variables.
+        * platform/graphics/WidthIterator.h:
+        (WebCore::WidthIterator::maxGlyphBoundingBoxY): Added this accessor.
+        (WebCore::WidthIterator::minGlyphBoundingBoxY): Ditto.
+        (WebCore::WidthIterator::firstGlyphOverflow): Ditto.
+        (WebCore::WidthIterator::lastGlyphOverflow): Ditto.
+
 2010-04-30  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.
