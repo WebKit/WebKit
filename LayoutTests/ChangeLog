@@ -1,3 +1,36 @@
+2010-04-30  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed. Add Chromium expectations for a bunch of repaint tests that we now pass (yay!)
+
+        * platform/chromium-linux/fast/repaint/fixed-child-move-after-scroll-expected.checksum: Added.
+        * platform/chromium-linux/fast/repaint/fixed-child-move-after-scroll-expected.png: Added.
+        * platform/chromium-linux/fast/repaint/fixed-child-of-fixed-move-after-scroll-expected.checksum: Added.
+        * platform/chromium-linux/fast/repaint/fixed-child-of-fixed-move-after-scroll-expected.png: Added.
+        * platform/chromium-linux/fast/repaint/fixed-child-of-transformed-move-after-scroll-expected.checksum: Added.
+        * platform/chromium-linux/fast/repaint/fixed-child-of-transformed-move-after-scroll-expected.png: Added.
+        * platform/chromium-linux/fast/repaint/fixed-move-after-keyboard-scroll-expected.checksum: Added.
+        * platform/chromium-linux/fast/repaint/fixed-move-after-keyboard-scroll-expected.png: Added.
+        * platform/chromium-linux/fast/repaint/fixed-move-after-scroll-expected.checksum: Added.
+        * platform/chromium-linux/fast/repaint/fixed-move-after-scroll-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/fixed-move-after-keyboard-scroll-expected.checksum: Added.
+        * platform/chromium-mac/fast/repaint/fixed-move-after-keyboard-scroll-expected.png: Added.
+        * platform/chromium-win/fast/repaint/fixed-child-move-after-scroll-expected.checksum: Added.
+        * platform/chromium-win/fast/repaint/fixed-child-move-after-scroll-expected.png: Added.
+        * platform/chromium-win/fast/repaint/fixed-child-move-after-scroll-expected.txt: Added.
+        * platform/chromium-win/fast/repaint/fixed-child-of-fixed-move-after-scroll-expected.checksum: Added.
+        * platform/chromium-win/fast/repaint/fixed-child-of-fixed-move-after-scroll-expected.png: Added.
+        * platform/chromium-win/fast/repaint/fixed-child-of-fixed-move-after-scroll-expected.txt: Added.
+        * platform/chromium-win/fast/repaint/fixed-child-of-transformed-move-after-scroll-expected.checksum: Added.
+        * platform/chromium-win/fast/repaint/fixed-child-of-transformed-move-after-scroll-expected.png: Added.
+        * platform/chromium-win/fast/repaint/fixed-child-of-transformed-move-after-scroll-expected.txt: Added.
+        * platform/chromium-win/fast/repaint/fixed-move-after-keyboard-scroll-expected.checksum: Added.
+        * platform/chromium-win/fast/repaint/fixed-move-after-keyboard-scroll-expected.png: Added.
+        * platform/chromium-win/fast/repaint/fixed-move-after-keyboard-scroll-expected.txt: Added.
+        * platform/chromium-win/fast/repaint/fixed-move-after-scroll-expected.checksum: Added.
+        * platform/chromium-win/fast/repaint/fixed-move-after-scroll-expected.png: Added.
+        * platform/chromium-win/fast/repaint/fixed-move-after-scroll-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-04-30  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by David Kilzer.

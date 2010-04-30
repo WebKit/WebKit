@@ -2746,15 +2746,6 @@ BUG42691 : fast/lists/ol-nested-list.html = TEXT
 // New layoutTestController function added at r57993
 BUG42696 : http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html = TIMEOUT
 
-// Need rebaseline due to upstream bugfix r57971
-BUGJAMESR WIN LINUX : fast/repaint/fixed-child-move-after-scroll.html = IMAGE+TEXT
-BUGJAMESR WIN LINUX : fast/repaint/fixed-child-of-fixed-move-after-scroll.html = IMAGE+TEXT
-BUGJAMESR WIN LINUX : fast/repaint/fixed-child-of-transformed-move-after-scroll.html = IMAGE+TEXT
-BUGJAMESR WIN LINUX : fast/repaint/fixed-move-after-scroll.html = IMAGE+TEXT
-
-// Need rebaselines
-BUGJAMESR : fast/repaint/fixed-move-after-keyboard-scroll.html = IMAGE+TEXT
-
 // Started failing at r57969
 BUG8729 MAC : http/tests/multipart/invalid-image-data.html = IMAGE
 
