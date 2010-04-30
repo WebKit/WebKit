@@ -1,3 +1,39 @@
+2010-04-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Update image results for SVG as CSS border image tests
+        https://bugs.webkit.org/show_bug.cgi?id=37028
+        
+        Improve the tests for SVG in border image to use an image that is not a solid color,
+        and by adding comparison elements with PNG-based borders.
+        
+        Remove unused "green rect" SVG files.
+        
+        Update Mac pixel results, and remove Chromium pixel results with the expectation
+        that someone will commit new ones.
+
+        * fast/borders/resources/green-fixed-size-rect.svg: Removed.
+        * fast/borders/resources/green-relative-size-rect.svg: Removed.
+        * fast/borders/resources/large-tiles.png: Added.
+        * fast/borders/resources/tiles-fixed-size.svg: Added.
+        * fast/borders/resources/tiles-relative-size.svg: Added.
+        * fast/borders/resources/tiles.png: Added.
+        * fast/borders/svg-as-border-image-2.html:
+        * fast/borders/svg-as-border-image.html:
+        * platform/chromium-win/fast/borders/svg-as-border-image-2-expected.checksum: Removed.
+        * platform/chromium-win/fast/borders/svg-as-border-image-2-expected.png: Removed.
+        * platform/chromium-win/fast/borders/svg-as-border-image-2-expected.txt: Removed.
+        * platform/chromium-win/fast/borders/svg-as-border-image-expected.checksum: Removed.
+        * platform/chromium-win/fast/borders/svg-as-border-image-expected.png: Removed.
+        * platform/chromium-win/fast/borders/svg-as-border-image-expected.txt: Removed.
+        * platform/mac/fast/borders/svg-as-border-image-2-expected.checksum:
+        * platform/mac/fast/borders/svg-as-border-image-2-expected.png:
+        * platform/mac/fast/borders/svg-as-border-image-2-expected.txt:
+        * platform/mac/fast/borders/svg-as-border-image-expected.checksum:
+        * platform/mac/fast/borders/svg-as-border-image-expected.png:
+        * platform/mac/fast/borders/svg-as-border-image-expected.txt:
+
 2010-04-30  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, expectations tweak.
