@@ -2,6 +2,15 @@
 
         Unreviewed, build fix.
 
+        [Chromium] Added a simple IdentifierRep struct and removed dependency on
+        IdentifierRep.h.
+
+        * bindings/v8/V8NPObject.cpp: Added simple IdentifierRep struct.
+
+2010-04-30  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, build fix.
+
         [Chromium] Remove bridge/ from include paths.
 
         * WebCore.gyp/WebCore.gyp: Removed bridge/ from include path.

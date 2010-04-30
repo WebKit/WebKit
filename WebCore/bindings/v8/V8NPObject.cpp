@@ -33,7 +33,6 @@
 #include "V8NPObject.h"
 
 #include "HTMLPlugInElement.h"
-#include "IdentifierRep.h"
 #include "NPV8Object.h"
 #include "V8DOMMap.h"
 #include "V8HTMLAppletElement.h"
@@ -52,6 +51,17 @@ enum InvokeFunctionType {
     InvokeMethod = 1,
     InvokeConstruct = 2,
     InvokeDefault = 3
+};
+
+struct IdentifierRep {
+    int number() const { return m_isString ? 0 : m_value.m_number; }
+    const char* string() const { return m_isString ? m_value.m_string : 0; }
+
+    union {
+        const char* m_string;
+        int m_number;
+    } m_value;
+    bool m_isString;
 };
 
 // FIXME: need comments.
