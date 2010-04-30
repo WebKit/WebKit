@@ -1,3 +1,34 @@
+2010-04-30  Eric Uhrhane  <ericu@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Add bindings for async DB API in Workers.
+        https://bugs.webkit.org/show_bug.cgi?id=34992
+
+        Tests: storage/change-version-handle-reuse-worker.html
+               storage/execute-sql-args-worker.html
+
+        * bindings/js/JSWorkerContextCustom.cpp: Add openDatabase binding.
+        (WebCore::JSWorkerContext::openDatabase):
+
+        * bindings/v8/custom/V8WorkerContextCustom.cpp: Add openDatabase stub; Chromium will need work both in V8 and in the browser process before we can turn this on there.
+        (WebCore::V8WorkerContext::openDatabaseCallback):
+
+        Add NoStaticTables flags to all objects now shared with workers.
+        * storage/Database.idl:
+        * storage/SQLError.idl:
+        * storage/SQLResultSet.idl:
+        * storage/SQLResultSetRowList.idl:
+        * storage/SQLTransaction.idl:
+        
+        * workers/WorkerContext.h: Add databaseExceededQuota.
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::databaseExceededQuota): Add stub implementation for testing; you just get 5MB for now.
+        (WebCore::WorkerContext::openDatabase): Remove invalid assertion.
+
+        Add the IDL for the call to openDatabase.
+        * workers/WorkerContext.idl:
+
 2010-04-30  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Darin Adler.

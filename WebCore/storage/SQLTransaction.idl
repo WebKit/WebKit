@@ -30,7 +30,8 @@ module storage {
 
     interface [
         Conditional=DATABASE,
-        OmitConstructor
+        OmitConstructor,
+        NoStaticTables
     ] SQLTransaction {
         [Custom] void executeSql(in DOMString sqlStatement, in ObjectArray arguments, in SQLStatementCallback callback, in SQLStatementErrorCallback errorCallback);
     };

@@ -32,6 +32,7 @@
 #include "WorkerContext.h"
 
 #include "ActiveDOMObject.h"
+#include "DatabaseTracker.h"
 #include "DOMTimer.h"
 #include "DOMWindow.h"
 #include "Database.h"
@@ -275,11 +276,19 @@ PassRefPtr<Database> WorkerContext::openDatabase(const String& name, const Strin
         return 0;
     }
 
-    ASSERT(Database::isAvailable());
     if (!Database::isAvailable())
         return 0;
 
     return Database::openDatabase(this, name, version, displayName, estimatedSize, creationCallback, ec);
+}
+
+void WorkerContext::databaseExceededQuota(const String&)
+{
+#if !PLATFORM(CHROMIUM)
+    // FIXME: This needs a real implementation; this is a temporary solution for testing.
+    const unsigned long long defaultQuota = 5 * 1024 * 1024;
+    DatabaseTracker::tracker().setQuota(securityOrigin(), defaultQuota);
+#endif
 }
 #endif
 
