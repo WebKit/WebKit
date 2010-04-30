@@ -1,5 +1,13 @@
 2010-04-30  Anders Carlsson  <andersca@apple.com>
 
+        Fix GTK+ build.
+
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::handlePostReadFile):
+        (WebCore::PluginView::platformGetValueStatic):
+
+2010-04-30  Anders Carlsson  <andersca@apple.com>
+
         Fix Qt build.
 
         * plugins/qt/PluginViewQt.cpp:
