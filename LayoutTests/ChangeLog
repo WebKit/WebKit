@@ -1,3 +1,16 @@
+2010-04-30  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, expectations update.
+
+        [Chromium] Provide expectations for svg/custom/repaint-stroke-width-changes.svg,
+        which was added in http://trac.webkit.org/changeset/58570/.
+
+        * platform/chromium-linux/svg/custom/repaint-stroke-width-changes-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/repaint-stroke-width-changes-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/repaint-stroke-width-changes-expected.png: Added.
+        * platform/chromium-win/svg/custom/repaint-stroke-width-changes-expected.checksum: Added.
+        * platform/chromium-win/svg/custom/repaint-stroke-width-changes-expected.png: Added.
+
 2010-04-30  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Beth Dakin.
