@@ -42,8 +42,6 @@ public:
 private:
     virtual const char* renderName() const { return "RenderSVGText"; }
 
-    virtual const SVGRenderBase* toSVGRenderBase() const { return this; }
-
     virtual bool isSVGText() const { return true; }
 
     virtual const AffineTransform& localToParentTransform() const { return m_localTransform; }

@@ -75,14 +75,10 @@ FloatRect RenderSVGInline::objectBoundingBox() const
 
 FloatRect RenderSVGInline::strokeBoundingBox() const
 {
-    const RenderObject* object = findTextRootObject(this);
-    ASSERT(object);
+    if (const RenderObject* object = findTextRootObject(this))
+        return object->strokeBoundingBox();
 
-    const SVGRenderBase* renderer = object->toSVGRenderBase();
-    if (!renderer)
-        return FloatRect();
-
-    return renderer->strokeBoundingBox();
+    return FloatRect();
 }
 
 FloatRect RenderSVGInline::repaintRectInLocalCoordinates() const

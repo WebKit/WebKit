@@ -1,0 +1,5 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderPath {rect} at (19,19) size 442x322 [stroke={[type=SOLID] [color=#FF0000]}] [data="M20.00,20.00 L460.00,20.00 L460.00,340.00 L20.00,340.00 Z"]

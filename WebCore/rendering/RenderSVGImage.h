@@ -41,7 +41,6 @@ public:
     virtual void setNeedsTransformUpdate() { m_needsTransformUpdate = true; }
 
 private:
-    virtual const SVGRenderBase* toSVGRenderBase() const { return this; }
     virtual const char* renderName() const { return "RenderSVGImage"; }
     virtual bool isSVGImage() const { return true; }
 

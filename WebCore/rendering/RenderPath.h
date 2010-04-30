@@ -50,11 +50,9 @@ private:
     bool fillContains(const FloatPoint&, bool requiresFill = true) const;
     bool strokeContains(const FloatPoint&, bool requiresStroke = true) const;
 
-    virtual FloatRect objectBoundingBox() const;
-    virtual FloatRect strokeBoundingBox() const;
-    virtual FloatRect markerBoundingBox() const;
-    virtual FloatRect repaintRectInLocalCoordinates() const;
-
+    virtual FloatRect objectBoundingBox() const { return m_fillBoundingBox; }
+    virtual FloatRect strokeBoundingBox() const { return m_strokeAndMarkerBoundingBox; }
+    virtual FloatRect repaintRectInLocalCoordinates() const { return m_repaintBoundingBox; }
     virtual const AffineTransform& localToParentTransform() const { return m_localTransform; }
 
     virtual bool isRenderPath() const { return true; }
@@ -67,8 +65,8 @@ private:
     virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction);
     virtual void styleWillChange(StyleDifference, const RenderStyle*);
 
-    void calculateMarkerBoundsIfNeeded() const;
-    void invalidateCachedBoundaries();
+    FloatRect calculateMarkerBoundsIfNeeded();
+    void updateCachedBoundaries();
 
 private:
     virtual AffineTransform localTransform() const { return m_localTransform; }
@@ -78,11 +76,10 @@ private:
     bool m_needsTransformUpdate : 1;
 
     mutable Path m_path;
-    mutable FloatRect m_cachedLocalFillBBox;
-    mutable FloatRect m_cachedLocalStrokeBBox;
-    mutable FloatRect m_cachedLocalRepaintRect;
-    mutable FloatRect m_cachedLocalMarkerBBox;
-    mutable SVGMarkerLayoutInfo m_markerLayoutInfo;
+    FloatRect m_fillBoundingBox;
+    FloatRect m_strokeAndMarkerBoundingBox;
+    FloatRect m_repaintBoundingBox;
+    SVGMarkerLayoutInfo m_markerLayoutInfo;
     AffineTransform m_localTransform;
 };
 

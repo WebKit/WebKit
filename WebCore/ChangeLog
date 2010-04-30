@@ -1,3 +1,52 @@
+2010-04-30  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        REGRESSION: RenderPath does not handle repaints correctly anymore if bounds changed
+        https://bugs.webkit.org/show_bug.cgi?id=38385
+
+        The last SVG performance patch broke repainting if bounds of a RenderPath get smaller.
+        It would only repaint the smaller part, not the original larger bounds.
+
+        Remove all lazy calculation of the repaint rects, instead calculate object/strokeBoundingBox and repaintRectInLocalCoordinates
+        once in layout - after LayoutRepainter grabbed the initial bounds, before calling repaintAfterLayout(). We can now inline
+        all these functions, and save a lot of m_path.isEmpty() checks, which are expensive. No need to store a seperated markerBoundingBox(),
+        combine with strokeBoundingBox() -> save one FloatRect per RenderPath. Move strokeBoundingBox() from SVGRenderBase to RenderObject,
+        right next to objectBoundingBox() - to save unnecessary toSVGRenderBase() calls. Completly remove this method.
+
+        Overall this is a regression fix, a performance improvement and saves memory. Something for everyone.
+
+        Tests: svg/custom/repaint-stroke-width-changes.svg
+
+        * rendering/RenderObject.cpp: Added strokeBoundingBox() here, to avoid the toSVGRenderBase() dance.
+        (WebCore::RenderObject::strokeBoundingBox):
+        * rendering/RenderObject.h: Ditto.
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::RenderPath):
+        (WebCore::RenderPath::layout): Fix regression, do repainting correctly, by recalculating the boundaries, if needed, instead of nulling them.
+        (WebCore::RenderPath::paint): Cache SVGRenderStyle in local variable, remove no longer valid FIXME.
+        (WebCore::RenderPath::calculateMarkerBoundsIfNeeded): Return a FloatRect, to avoid having to store the marker bounding box seperated.
+        (WebCore::RenderPath::styleWillChange): Mark boundaries as dirty.
+        (WebCore::RenderPath::updateCachedBoundaries): New function to (re-)calculate all cached boundaries, only called from layout().
+        * rendering/RenderPath.h: Rename cached rect variables to have more sensible names.
+        (WebCore::RenderPath::objectBoundingBox): Inlined, just returns the cached value - no more lazy creation. Huge speedup as this is hot code.
+        (WebCore::RenderPath::strokeBoundingBox): Ditto.
+        (WebCore::RenderPath::repaintRectInLocalCoordinates): Ditto.
+        * rendering/RenderSVGBlock.h: Remove toSVGRenderBase() method.
+        * rendering/RenderSVGImage.h: Ditto.
+        * rendering/RenderSVGInline.cpp: No need to call toSVGRenderBase() just to get the strokeBoundingBox(). Unifies code to retrieve bounding boxes.
+        (WebCore::RenderSVGInline::strokeBoundingBox):
+        * rendering/RenderSVGInline.h: Remove toSVGRenderBase() method.
+        * rendering/RenderSVGModelObject.h: Ditto.
+        * rendering/RenderSVGResourceFilter.cpp: No need to call toSVGRenderBase() anymore, just grab the strokeBoundingBox() from the RenderObject.
+        (WebCore::RenderSVGResourceFilter::applyResource):
+        * rendering/RenderSVGText.h: Remove toSVGRenderBase() method.
+        * rendering/SVGRenderSupport.h: Ditto. Remove markerBoundingBox() method, now combined with strokeBoundingBox().
+        (WebCore::SVGRenderBase::strokeBoundingBox):
+        * rendering/SVGRootInlineBox.h: Remove toSVGRenderBase() method.
+        * rendering/style/SVGRenderStyle.h: Add hasMarkers() helper method, to avoid doing unnecessary work in RenderPath.
+        (WebCore::SVGRenderStyle::hasMarkers):
+
 2010-04-30  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by Dmitry Titov.

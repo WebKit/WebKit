@@ -108,8 +108,9 @@ public:
     SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(String, inheritedResources, markerEnd, MarkerEndResource, markerEndResource, String())
 
     // convenience
-    bool hasStroke() const { return (strokePaint()->paintType() != SVGPaint::SVG_PAINTTYPE_NONE); }
-    bool hasFill() const { return (fillPaint()->paintType() != SVGPaint::SVG_PAINTTYPE_NONE); }
+    bool hasMarkers() const { return !markerStartResource().isEmpty() || !markerMidResource().isEmpty() || !markerEndResource().isEmpty(); }
+    bool hasStroke() const { return strokePaint()->paintType() != SVGPaint::SVG_PAINTTYPE_NONE; }
+    bool hasFill() const { return fillPaint()->paintType() != SVGPaint::SVG_PAINTTYPE_NONE; }
 
     static float cssPrimitiveToLength(const RenderObject*, CSSValue*, float defaultValue = 0.0f);
 

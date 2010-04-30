@@ -35,8 +35,6 @@ class RenderSVGInline : public RenderInline, protected SVGRenderBase {
 public:
     RenderSVGInline(Node*);
 
-    virtual const SVGRenderBase* toSVGRenderBase() const { return this; }
-
     virtual const char* renderName() const { return "RenderSVGInline"; }
     virtual bool requiresLayer() const { return false; }
 

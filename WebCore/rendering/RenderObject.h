@@ -55,7 +55,6 @@ class TransformState;
 class VisiblePosition;
 #if ENABLE(SVG)
 class RenderSVGResourceContainer;
-class SVGRenderBase;
 #endif
 
 /*
@@ -341,7 +340,6 @@ public:
     virtual bool isSVGResourceContainer() const { return false; }
     virtual bool isSVGShadowTreeRootContainer() const { return false; }
 
-    virtual const SVGRenderBase* toSVGRenderBase() const;
     virtual RenderSVGResourceContainer* toRenderSVGResourceContainer();
 
     // FIXME: Those belong into a SVG specific base-class for all renderers (see above)
@@ -357,6 +355,7 @@ public:
     // objectBoundingBox is returned local coordinates.
     // The name objectBoundingBox is taken from the SVG 1.1 spec.
     virtual FloatRect objectBoundingBox() const;
+    virtual FloatRect strokeBoundingBox() const;
 
     // Returns the smallest rectangle enclosing all of the painted content
     // respecting clipping, masking, filters, opacity, stroke-width and markers

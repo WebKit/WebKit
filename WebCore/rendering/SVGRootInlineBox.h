@@ -51,7 +51,6 @@ public:
         , m_height(0)
     {
     }
-    virtual const SVGRenderBase* toSVGRenderBase() const { return this; }
 
     virtual bool isSVGRootInlineBox() { return true; }
 

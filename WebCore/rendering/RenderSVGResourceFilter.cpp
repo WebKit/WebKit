@@ -161,12 +161,7 @@ bool RenderSVGResourceFilter::applyResource(RenderObject* object, RenderStyle*, 
     if (!filterData->builder)
         return false;
 
-    const SVGRenderBase* renderer = object->toSVGRenderBase();
-    if (!renderer)
-        return false;
-
-    FloatRect paintRect = renderer->strokeBoundingBox();
-    paintRect.unite(renderer->markerBoundingBox());
+    FloatRect paintRect = object->strokeBoundingBox();
 
     // Calculate the scale factor for the use of filterRes.
     // Also see http://www.w3.org/TR/SVG/filters.html#FilterEffectsRegion
