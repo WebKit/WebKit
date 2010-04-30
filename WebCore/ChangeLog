@@ -1,3 +1,15 @@
+2010-04-29  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Dan Bernstein.
+
+        Allow other ports to compile ATSUI and CoreText functions in SimpleFontData for Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=38334
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/mac/SimpleFontDataATSUI.cpp: Copied from WebCore/platform/graphics/mac/SimpleFontDataMac.mm.
+        * platform/graphics/mac/SimpleFontDataCoreText.cpp: Copied from WebCore/platform/graphics/mac/SimpleFontDataMac.mm.
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+
 2010-04-29  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.  Update JSC CodeGenerator baseline.  Not sure how I missed
