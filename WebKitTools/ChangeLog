@@ -1,3 +1,11 @@
+2010-04-30  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Changed Steve Block from committer to reviewer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-04-28  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Eric Seidel.
