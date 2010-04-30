@@ -1,5 +1,14 @@
 2010-04-30  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Use C99 integer types in more places.
+
+        * Plugins/WebNetscapePluginView.mm:
+        (getNPRect):
+
+2010-04-30  Anders Carlsson  <andersca@apple.com>
+
         Fix Tiger build.
 
         * Plugins/WebBaseNetscapePluginStream.h:

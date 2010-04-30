@@ -254,20 +254,20 @@ static UInt32 getQDPixelFormatForBitmapContext(CGContextRef context)
 
 static inline void getNPRect(const CGRect& cgr, NPRect& npr)
 {
-    npr.top = static_cast<uint16>(cgr.origin.y);
-    npr.left = static_cast<uint16>(cgr.origin.x);
-    npr.bottom = static_cast<uint16>(CGRectGetMaxY(cgr));
-    npr.right = static_cast<uint16>(CGRectGetMaxX(cgr));
+    npr.top = static_cast<uint16_t>(cgr.origin.y);
+    npr.left = static_cast<uint16_t>(cgr.origin.x);
+    npr.bottom = static_cast<uint16_t>(CGRectGetMaxY(cgr));
+    npr.right = static_cast<uint16_t>(CGRectGetMaxX(cgr));
 }
 
 #endif
 
 static inline void getNPRect(const NSRect& nr, NPRect& npr)
 {
-    npr.top = static_cast<uint16>(nr.origin.y);
-    npr.left = static_cast<uint16>(nr.origin.x);
-    npr.bottom = static_cast<uint16>(NSMaxY(nr));
-    npr.right = static_cast<uint16>(NSMaxX(nr));
+    npr.top = static_cast<uint16_t>(nr.origin.y);
+    npr.left = static_cast<uint16_t>(nr.origin.x);
+    npr.bottom = static_cast<uint16_t>(NSMaxY(nr));
+    npr.right = static_cast<uint16_t>(NSMaxX(nr));
 }
 
 - (PortState)saveAndSetNewPortStateForUpdate:(BOOL)forUpdate

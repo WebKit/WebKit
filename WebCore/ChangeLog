@@ -1,3 +1,20 @@
+2010-04-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Use C99 integer types in more places.
+
+        * manual-tests/NPN_Invoke/main.c:
+        (NPP_New):
+        (NPP_NewStream):
+        (NPP_WriteReady):
+        (NPP_Write):
+        (NPP_HandleEvent):
+        (functionPointerForTVector):
+        * plugins/mac/PluginViewMac.cpp:
+        (WebCore::PluginView::platformGetValueStatic):
+        (WebCore::PluginView::handlePostReadFile):
+
 2010-04-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver Hunt.
