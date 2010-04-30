@@ -57,6 +57,8 @@ public:
     virtual bool isTypingCommand() const;
     
     virtual bool preservesTypingStyle() const;
+    
+    bool isTopLevelCommand() const { return !m_parent; }
 
 protected:
     EditCommand(Document*);

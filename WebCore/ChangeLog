@@ -1,3 +1,26 @@
+2010-04-29  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Need to updateLayout after typing commands too
+        https://bugs.webkit.org/show_bug.cgi?id=38352
+
+        Replaced !m_parent checks in EditCommand.cpp by the more descriptive isTopLevelCommand().
+        Move the post editing operation updateLayout() call to {un,re}appliedEditing so that text insertions,
+        which don't go through EditCommand::{un,re}apply() can benefit from it too.  No test case possible
+        since most platforms have a layout performed as a side effect of post operation selection code.
+
+        * editing/EditCommand.cpp:
+        (WebCore::EditCommand::apply):
+        (WebCore::EditCommand::unapply):
+        (WebCore::EditCommand::reapply):
+        * editing/EditCommand.h:
+        (WebCore::EditCommand::isTopLevelCommand):
+        * editing/Editor.cpp:
+        (WebCore::Editor::appliedEditing):
+        (WebCore::Editor::unappliedEditing):
+        (WebCore::Editor::reappliedEditing):
+
 2010-04-29  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.

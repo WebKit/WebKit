@@ -867,6 +867,8 @@ static void dispatchEditableContentChangedEvents(const EditCommand& command)
 
 void Editor::appliedEditing(PassRefPtr<EditCommand> cmd)
 {
+    m_frame->document()->updateLayout();
+    
     dispatchEditableContentChangedEvents(*cmd);
     
     VisibleSelection newSelection(cmd->endingSelection());
@@ -891,6 +893,8 @@ void Editor::appliedEditing(PassRefPtr<EditCommand> cmd)
 
 void Editor::unappliedEditing(PassRefPtr<EditCommand> cmd)
 {
+    m_frame->document()->updateLayout();
+    
     dispatchEditableContentChangedEvents(*cmd);
     
     VisibleSelection newSelection(cmd->startingSelection());
@@ -904,6 +908,8 @@ void Editor::unappliedEditing(PassRefPtr<EditCommand> cmd)
 
 void Editor::reappliedEditing(PassRefPtr<EditCommand> cmd)
 {
+    m_frame->document()->updateLayout();
+    
     dispatchEditableContentChangedEvents(*cmd);
     
     VisibleSelection newSelection(cmd->endingSelection());
