@@ -1,3 +1,10 @@
+2010-04-30  Jeremy Orlow  <jorlow@chromium.org>
+
+        Unreviewed.  Fixing a missed test from https://bugs.webkit.org/show_bug.cgi?id=38331
+
+        * fast/events/init-events-expected.txt:
+        * fast/events/script-tests/init-events.js:
+
 2010-04-30  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed.

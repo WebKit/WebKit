@@ -138,8 +138,8 @@ PASS testInitEvent('Storage', '"a", false, false, "b", "c", "d", "e"').oldValue 
 PASS testInitEvent('Storage', '"a", false, false, "b", null, "d", "e"').oldValue is null
 PASS testInitEvent('Storage', '"a", false, false, "b", "c", "d", "e"').newValue is 'd'
 PASS testInitEvent('Storage', '"a", false, false, "b", "c", null, "e"').newValue is null
-PASS testInitEvent('Storage', '"a", false, false, "b", "c", "d", "e"').uri is 'e'
-PASS testInitEvent('Storage', '"a", false, false, "b", "c", "d", null').uri is 'null'
+PASS testInitEvent('Storage', '"a", false, false, "b", "c", "d", "e"').url is 'e'
+PASS testInitEvent('Storage', '"a", false, false, "b", "c", "d", null').url is 'null'
 PASS testInitEvent('Text', '"a", false, false, window, "b"').type is 'a'
 PASS testInitEvent('Text', 'null, false, false, window, "b"').type is 'null'
 PASS testInitEvent('Text', '"a", false, false, window, "b"').bubbles is false

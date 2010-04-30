@@ -157,8 +157,8 @@ shouldBe("testInitEvent('Storage', '\"a\", false, false, \"b\", \"c\", \"d\", \"
 shouldBe("testInitEvent('Storage', '\"a\", false, false, \"b\", null, \"d\", \"e\"').oldValue", "null");
 shouldBe("testInitEvent('Storage', '\"a\", false, false, \"b\", \"c\", \"d\", \"e\"').newValue", "'d'");
 shouldBe("testInitEvent('Storage', '\"a\", false, false, \"b\", \"c\", null, \"e\"').newValue", "null");
-shouldBe("testInitEvent('Storage', '\"a\", false, false, \"b\", \"c\", \"d\", \"e\"').uri", "'e'");
-shouldBe("testInitEvent('Storage', '\"a\", false, false, \"b\", \"c\", \"d\", null').uri", "'null'");
+shouldBe("testInitEvent('Storage', '\"a\", false, false, \"b\", \"c\", \"d\", \"e\"').url", "'e'");
+shouldBe("testInitEvent('Storage', '\"a\", false, false, \"b\", \"c\", \"d\", null').url", "'null'");
 
 shouldBe("testInitEvent('Text', '\"a\", false, false, window, \"b\"').type", "'a'");
 shouldBe("testInitEvent('Text', 'null, false, false, window, \"b\"').type", "'null'");
