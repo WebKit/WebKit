@@ -171,7 +171,7 @@ webkit_test_plugin_new_stream(NPP instance,
                               NPMIMEType /*type*/,
                               NPStream *stream,
                               NPBool /*seekable*/,
-                              uint16* stype)
+                              uint16_t* stype)
 {
     PluginObject* obj = static_cast<PluginObject*>(instance->pdata);
     obj->stream = stream;
