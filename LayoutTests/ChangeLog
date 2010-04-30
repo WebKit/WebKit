@@ -1,3 +1,14 @@
+2010-04-30  Yaar Schnitman  <yaar@chromium.org>
+
+        Not Reviewed.
+
+        Updating expectations for svg-as-border-*
+        https://bugs.webkit.org/show_bug.cgi?id=38398
+
+        * platform/chromium-win/fast/borders/svg-as-border-image-2-expected.txt: Added.
+        * platform/chromium-win/fast/borders/svg-as-border-image-expected.txt: Added.
+        * platform/chromium-win/transforms/svg-vs-css-expected.txt: Added.
+
 2010-04-30  Alexey Proskuryakov  <ap@apple.com>
 
         Not reviewed.
