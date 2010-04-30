@@ -2752,6 +2752,9 @@ BUGJAMESR WIN LINUX : fast/repaint/fixed-child-of-fixed-move-after-scroll.html =
 BUGJAMESR WIN LINUX : fast/repaint/fixed-child-of-transformed-move-after-scroll.html = IMAGE+TEXT
 BUGJAMESR WIN LINUX : fast/repaint/fixed-move-after-scroll.html = IMAGE+TEXT
 
+// Need rebaselines
+BUGJAMESR : fast/repaint/fixed-move-after-keyboard-scroll.html = IMAGE+TEXT
+
 // Started failing at r57969
 BUG8729 MAC : http/tests/multipart/invalid-image-data.html = IMAGE
 

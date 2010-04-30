@@ -1,3 +1,28 @@
+2010-04-29  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Calls FrameView::scrollPositionChanged whenever a ScrollView is scrolled
+        https://bugs.webkit.org/show_bug.cgi?id=38286
+
+        When a ScrollView's  scroll position is changed, we have to call
+        FrameView::scrollPositionChanged to generate repaint invalidation for
+        fixed position elements.  This ends up getting called indirectly when
+        the ScrollView has a platformWidget through the port layer
+        (see WebHTMLView.mm's _frameOrBoundsChanged method for how the mac
+        port does it) but not when there is no platformWidget.
+
+        This is tested by the fast/repaint/fixed-* tests when run in pixel
+        mode.
+
+        Test: fast/repaint/fixed-move-after-keyboard-scroll.html
+
+        * page/FrameView.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::valueChanged):
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::scrollPositionChanged):
+
 2010-04-30  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.
