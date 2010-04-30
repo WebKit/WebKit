@@ -1,3 +1,13 @@
+2010-04-30  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/38364> MIME typo in LayoutTests/http/tests/security/xss-DENIED-mime-type-execute-as-html.html
+
+        Reviewed by David Levin.
+
+        * http/tests/security/xss-DENIED-mime-type-execute-as-html.html:
+        Fixed MIME typo from "application-javascript" to
+        "application/javascript".
+
 2010-04-30  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r58569.
