@@ -57,7 +57,8 @@ namespace WebCore {
 
     private:
         // Decodes the image.  If |onlySize| is true, stops decoding after
-        // calculating the image size.
+        // calculating the image size.  If decoding fails but there is no more
+        // data coming, sets the "decode failure" flag.
         void decode(bool onlySize);
 
         OwnPtr<PNGImageReader> m_reader;

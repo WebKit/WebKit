@@ -54,13 +54,14 @@ namespace WebCore {
         // Callbacks from the GIF reader.
         void decodingHalted(unsigned bytesLeft);
         bool haveDecodedRow(unsigned frameIndex, unsigned char* rowBuffer, unsigned char* rowEnd, unsigned rowNumber, unsigned repeatCount, bool writeTransparentPixels);
-        void frameComplete(unsigned frameIndex, unsigned frameDuration, RGBA32Buffer::FrameDisposalMethod disposalMethod);
+        bool frameComplete(unsigned frameIndex, unsigned frameDuration, RGBA32Buffer::FrameDisposalMethod disposalMethod);
         void gifComplete();
 
     private:
         // If the query is GIFFullQuery, decodes the image up to (but not
         // including) |haltAtFrame|.  Otherwise, decodes as much as is needed to
-        // answer the query, ignoring bitmap data.
+        // answer the query, ignoring bitmap data.  If decoding fails but there
+        // is no more data coming, sets the "decode failure" flag.
         void decode(unsigned haltAtFrame, GIFQuery);
 
         // Called to initialize the frame buffer with the given index, based on

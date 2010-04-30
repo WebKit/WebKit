@@ -290,7 +290,9 @@ bool GIFImageReader::do_lzw(const unsigned char *q)
       /* Check for explicit end-of-stream code */
       if (code == (clear_code + 1)) {
         /* end-of-stream should only appear after all image data */
-        return !rows_remaining;
+        if (!rows_remaining)
+          return true;
+        return clientptr ? clientptr->setFailed() : false;
       }
 
       if (oldcode == -1) {
@@ -308,13 +310,13 @@ bool GIFImageReader::do_lzw(const unsigned char *q)
         code = oldcode;
 
         if (stackp == stack + MAX_BITS)
-          return false;
+          return clientptr ? clientptr->setFailed() : false;
       }
 
       while (code >= clear_code)
       {
         if (code >= MAX_BITS || code == prefix[code])
-          return false;
+          return clientptr ? clientptr->setFailed() : false;
 
         // Even though suffix[] only holds characters through suffix[avail - 1],
         // allowing code >= avail here lets us be more tolerant of malformed
@@ -324,7 +326,7 @@ bool GIFImageReader::do_lzw(const unsigned char *q)
         code = prefix[code];
 
         if (stackp == stack + MAX_BITS)
-          return false;
+          return clientptr ? clientptr->setFailed() : false;
       }
 
       *stackp++ = firstchar = suffix[code];
@@ -415,7 +417,7 @@ bool GIFImageReader::read(const unsigned char *buf, unsigned len,
       bytes_to_consume -= l;
       if (clientptr)
         clientptr->decodingHalted(0);
-      return true;
+      return false;
     }
     // Reset hold buffer count
     bytes_in_hold = 0;
@@ -440,10 +442,9 @@ bool GIFImageReader::read(const unsigned char *buf, unsigned len,
     switch (state)
     {
     case gif_lzw:
-      if (!do_lzw(q)) {
-        state = gif_error;
-        break;
-      }
+      if (!do_lzw(q))
+        return false; // If do_lzw() encountered an error, it has already called
+                      // clientptr->setFailed().
       GETN(1, gif_sub_block);
       break;
 
@@ -454,15 +455,11 @@ bool GIFImageReader::read(const unsigned char *buf, unsigned len,
       // Since we use a codesize of 1 more than the datasize, we need to ensure
       // that our datasize is strictly less than the MAX_LZW_BITS value (12).
       // This sets the largest possible codemask correctly at 4095.
-      if (datasize >= MAX_LZW_BITS) {
-        state = gif_error;
-        break;
-      }
+      if (datasize >= MAX_LZW_BITS)
+        return clientptr ? clientptr->setFailed() : false;
       int clear_code = 1 << datasize;
-      if (clear_code >= MAX_BITS) {
-        state = gif_error;
-        break;
-      }
+      if (clear_code >= MAX_BITS)
+        return clientptr ? clientptr->setFailed() : false;
 
       if (frame_reader) {
         frame_reader->datasize = datasize;
@@ -498,10 +495,8 @@ bool GIFImageReader::read(const unsigned char *buf, unsigned len,
         version = 89;
       else if (!strncmp((char*)q, "GIF87a", 6))
         version = 87;
-      else {
-        state = gif_error;
-        break;
-      }
+      else
+        return clientptr ? clientptr->setFailed() : false;
       GETN(7, gif_global_header);
     }
     break;
@@ -586,7 +581,7 @@ bool GIFImageReader::read(const unsigned char *buf, unsigned len,
           state = gif_done;
         } else {
           /* No images decoded, there is nothing to display. */
-          state = gif_error;
+          return clientptr ? clientptr->setFailed() : false;
         }
         break;
       } else
@@ -714,7 +709,7 @@ bool GIFImageReader::read(const unsigned char *buf, unsigned len,
         GETN(1, gif_netscape_extension_block);
       } else {
         // 0,3-7 are yet to be defined netscape extension codes
-        state = gif_error;
+        return clientptr ? clientptr->setFailed() : false;
       }
 
       break;
@@ -755,10 +750,8 @@ bool GIFImageReader::read(const unsigned char *buf, unsigned len,
       if (!height || !width) {
         height = screen_height;
         width = screen_width;
-        if (!height || !width) {
-          state = gif_error;
-          break;
-        }
+        if (!height || !width)
+          return clientptr ? clientptr->setFailed() : false;
       }
 
       if (query == GIFImageDecoder::GIFSizeQuery || haltAtFrame == images_decoded) {
@@ -794,10 +787,8 @@ bool GIFImageReader::read(const unsigned char *buf, unsigned len,
           frame_reader->rowbuf = new unsigned char[screen_width];
         }
 
-        if (!frame_reader->rowbuf) {
-          state = gif_oom;
-          break;
-        }
+        if (!frame_reader->rowbuf)
+          return clientptr ? clientptr->setFailed() : false;
         if (screen_height < height)
           screen_height = height;
 
@@ -838,10 +829,8 @@ bool GIFImageReader::read(const unsigned char *buf, unsigned len,
         if (frame_reader && (!map || (num_colors > frame_reader->local_colormap_size))) {
           delete []map;
           map = new unsigned char[size];
-          if (!map) {
-            state = gif_oom;
-            break;
-          }
+          if (!map)
+            return clientptr ? clientptr->setFailed() : false;
         }
 
         /* Switch to the new local palette after it loads */
@@ -893,8 +882,9 @@ bool GIFImageReader::read(const unsigned char *buf, unsigned len,
         images_decoded++;
 
         // CALLBACK: The frame is now complete.
-        if (clientptr && frame_reader)
-          clientptr->frameComplete(images_decoded - 1, frame_reader->delay_time, frame_reader->disposal_method);
+        if (clientptr && frame_reader && !clientptr->frameComplete(images_decoded - 1, frame_reader->delay_time, frame_reader->disposal_method))
+          return false; // frameComplete() has already called
+                        // clientptr->setFailed().
 
         /* Clear state from this image */
         if (frame_reader) {
@@ -912,14 +902,6 @@ bool GIFImageReader::read(const unsigned char *buf, unsigned len,
       if (clientptr)
         clientptr->gifComplete();
       return true;
-
-    // Handle out of memory errors
-    case gif_oom:
-      return false;
-
-    // Handle general errors
-    case gif_error:
-      return false;
 
     // We shouldn't ever get here.
     default:
@@ -945,5 +927,5 @@ bool GIFImageReader::read(const unsigned char *buf, unsigned len,
 
   if (clientptr)
     clientptr->decodingHalted(0);
-  return true;
+  return false;
 }

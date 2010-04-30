@@ -69,7 +69,6 @@ enum jstate {
     JPEG_DECOMPRESS_PROGRESSIVE, // Output progressive pixels
     JPEG_DECOMPRESS_SEQUENTIAL,  // Output sequential pixels
     JPEG_DONE,
-    JPEG_SINK_NON_JPEG_TRAILER,  // Some image files have a non-JPEG trailer
     JPEG_ERROR    
 };
 
@@ -169,16 +168,15 @@ public:
         
         // We need to do the setjmp here. Otherwise bad things will happen
         if (setjmp(m_err.setjmp_buffer)) {
-            m_state = JPEG_SINK_NON_JPEG_TRAILER;
             close();
-            return false;
+            return m_decoder->setFailed();
         }
 
         switch (m_state) {
         case JPEG_HEADER:
             // Read file parameters with jpeg_read_header().
             if (jpeg_read_header(&m_info, true) == JPEG_SUSPENDED)
-                return true; // I/O suspension.
+                return false; // I/O suspension.
 
             // Let libjpeg take care of gray->RGB and YCbCr->RGB conversions.
             switch (m_info.jpeg_color_space) {
@@ -194,7 +192,7 @@ public:
                 m_info.out_color_space = JCS_CMYK;
                 break;
             default:
-                return false;
+                return m_decoder->setFailed();
             }
 
             // Don't allocate a giant and superfluous memory buffer when the
@@ -214,7 +212,7 @@ public:
 
             // We can fill in the size now that the header is available.
             if (!m_decoder->setSize(m_info.image_width, m_info.image_height))
-                return false;
+                return m_decoder->setFailed();
 
             if (m_decodingSizeOnly) {
                 // We can stop here.  Reduce our buffer length and available
@@ -237,7 +235,7 @@ public:
 
             // Start decompressor.
             if (!jpeg_start_decompress(&m_info))
-                return true; // I/O suspension.
+                return false; // I/O suspension.
 
             // If this is a progressive JPEG ...
             m_state = (m_info.buffered_image) ? JPEG_DECOMPRESS_PROGRESSIVE : JPEG_DECOMPRESS_SEQUENTIAL;
@@ -247,7 +245,7 @@ public:
             if (m_state == JPEG_DECOMPRESS_SEQUENTIAL) {
   
                 if (!m_decoder->outputScanlines())
-                    return true; // I/O suspension.
+                    return false; // I/O suspension.
   
                 // If we've completed image output...
                 ASSERT(m_info.output_scanline == m_info.output_height);
@@ -273,7 +271,7 @@ public:
                             --scan;
 
                         if (!jpeg_start_output(&m_info, scan))
-                            return true; // I/O suspension.
+                            return false; // I/O suspension.
                     }
 
                     if (m_info.output_scanline == 0xffffff)
@@ -285,12 +283,12 @@ public:
                             // don't call jpeg_start_output() multiple times for
                             // the same scan.
                             m_info.output_scanline = 0xffffff;
-                        return true; // I/O suspension.
+                        return false; // I/O suspension.
                     }
 
                     if (m_info.output_scanline == m_info.output_height) {
                         if (!jpeg_finish_output(&m_info))
-                            return true; // I/O suspension.
+                            return false; // I/O suspension.
 
                         if (jpeg_input_complete(&m_info) && (m_info.input_scan_number == m_info.output_scan_number))
                             break;
@@ -305,15 +303,8 @@ public:
 
         case JPEG_DONE:
             // Finish decompression.
-            if (!jpeg_finish_decompress(&m_info))
-                return true; // I/O suspension.
-
-            m_state = JPEG_SINK_NON_JPEG_TRAILER;
-            break;
+            return jpeg_finish_decompress(&m_info);
         
-        case JPEG_SINK_NON_JPEG_TRAILER:
-            break;
-
         case JPEG_ERROR:
             // We can get here if the constructor failed.
             return m_decoder->setFailed();
@@ -487,7 +478,9 @@ void JPEGImageDecoder::decode(bool onlySize)
     if (!m_reader)
         m_reader.set(new JPEGImageReader(this));
 
-    if (!m_reader->decode(m_data->buffer(), onlySize))
+    // If we couldn't decode the image but we've received all the data, decoding
+    // has failed.
+    if (!m_reader->decode(m_data->buffer(), onlySize) && isAllDataReceived())
         setFailed();
 
     if (failed() || (!m_frameBufferCache.isEmpty() && m_frameBufferCache[0].status() == RGBA32Buffer::FrameComplete))

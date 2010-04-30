@@ -1,3 +1,37 @@
+2010-04-30  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by David Levin.
+
+        Make all image decoders set the "failed" bit if an image could not be
+        completely decoded, but no more data is coming.  The ICO and BMP
+        decoders already did this.
+        https://bugs.webkit.org/show_bug.cgi?id=35411
+
+        "Failed" does not cause the image to not be displayed, it simply causes
+        us to not bother to try to decode again if future requests are made, and
+        for some decoders, lets the decoder clean up some of its temporary
+        objects.
+
+        No layout tests because this does not change the visible output of decoding in any way.
+
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::frameComplete): Return whether the frame could be marked as complete.
+        (WebCore::GIFImageDecoder::decode): Fail if read() needs more data (and thus returns false) and no more is coming.
+        * platform/image-decoders/gif/GIFImageDecoder.h:
+        * platform/image-decoders/gif/GIFImageReader.cpp:
+        (GIFImageReader::do_lzw): Instead of returning true for buffer underrun and false for failure, return false for both and set the failure flag on failure.
+        (GIFImageReader::read): Ditto.
+        * platform/image-decoders/gif/GIFImageReader.h:
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::):
+        (WebCore::JPEGImageReader::decode): See do_lzw() comment above.
+        (WebCore::JPEGImageDecoder::decode): Fail if decode() needs more data (and thus returns false) and no more is coming.
+        * platform/image-decoders/jpeg/JPEGImageDecoder.h:
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageReader::decode): Return true for decode success, false for buffer underrun or decode failure, and set the failure flag on decode failure.
+        (WebCore::PNGImageDecoder::decode): See JPEGImageDecoder::decode() comment above.
+        * platform/image-decoders/png/PNGImageDecoder.h:
+
 2010-04-30  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Eric Carlson.
