@@ -1,3 +1,15 @@
+2010-04-29  Yaar Schnitman  <yaar@chromium.org>
+
+        Not Reviewed.
+
+        Updated expectations for 2 more tests on mac:
+        svg/custom/dominant-baseline-hanging.svg
+        fast/replaced/border-radius-clip.html
+        
+        https://bugs.webkit.org/show_bug.cgi?id=38365
+
+        * platform/chromium/test_expectations.txt:
+
 2010-04-29  Alexey Proskuryakov  <ap@apple.com>
 
         Not reviewed.

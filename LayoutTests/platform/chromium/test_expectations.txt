@@ -1890,7 +1890,8 @@ BUG27486 WIN LINUX : fast/forms/slider-zoomed.html = FAIL
 
 // See WebKit 41948
 // Regressed further at 57820, jamesr investigating
-BUG10468 : fast/replaced/border-radius-clip.html = IMAGE+TEXT
+BUG10468 WIN LINUX : fast/replaced/border-radius-clip.html = IMAGE+TEXT
+BUG10468 MAC SKIP : fast/replaced/border-radius-clip.html = MISSING
 
 // Mac flaky failures.
 BUG10472 MAC DEBUG : svg/css/glyph-orientation-rounding-test.xhtml = FAIL PASS
@@ -2797,11 +2798,13 @@ BUGUKAI WIN MAC SKIP : fast/text/international/bold-bengali.html = FAIL
 
 // WebKit roll 58400:58523
 BUGWK38349 SKIP : fast/css/font-face-woff.html = IMAGE+TEXT
-
 // We probably don't want to run these massive amount of new ECMA script conformance tests:
 BUG42875 SKIP : fast/js/sputnik = TEXT
+// Other failing layout test
 BUGWK38360 WIN LINUX SKIP : fast/images/svg-background-partial-redraw.html = TEXT
 BUGWK38360 WIN LINUX SKIP : svg/carto.net/tabgroup.svg = TEXT
 BUGWK38360 SKIP : traversal/node-iterator-prototype.html = TEXT
 BUG42895 : media/audio-only-video-intrinsic-size.html = TIMEOUT
 BUG42895 : media/media-document-audio-size.html = TIMEOUT
+BUGYAAR MAC : svg/custom/dominant-baseline-hanging.svg = MISSING
+
