@@ -1,4 +1,4 @@
-description("Test that changing documentURI has no effects on the uri passed into storage events.");
+description("Test that changing documentURI has no effects on the url passed into storage events.");
 
 function test(storageString, callback)
 {
@@ -29,8 +29,8 @@ function step1()
 function step2()
 {
     shouldBe("storageEventList.length", "1");
-    debug("Saving URI");
-    window.lastURI = storageEventList[0].uri;
+    debug("Saving url");
+    window.lastURL = storageEventList[0].url;
 
     evalAndLog("document.documentURI = 'abc'");
     shouldBeEqualToString("document.documentURI", "abc");
@@ -42,7 +42,7 @@ function step2()
 function step3()
 {
     shouldBe("storageEventList.length", "2");
-    shouldBeTrue(String(window.lastURI == storageEventList[1].uri));
+    shouldBeTrue(String(window.lastURL == storageEventList[1].url));
 
     completionCallback();
 }

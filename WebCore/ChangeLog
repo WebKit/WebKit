@@ -1,3 +1,26 @@
+2010-04-29  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Change StorageEvent.uri to StorageEvent.url to match the spec
+        https://bugs.webkit.org/show_bug.cgi?id=38331
+
+        As I mentioned in http://www.mail-archive.com/public-webapps@w3.org/msg08495.html
+        WebKit is the only one who places the document's URL in a 'uri' property
+        rather than a 'url' property.  Even though we've shipped several versions of
+        browsers with the old name, we probably should change this to comply with the
+        spec.
+
+        This stuff is covered by existing tests.
+
+        * storage/StorageEvent.cpp:
+        (WebCore::StorageEvent::create):
+        (WebCore::StorageEvent::StorageEvent):
+        (WebCore::StorageEvent::initStorageEvent):
+        * storage/StorageEvent.h:
+        (WebCore::StorageEvent::url):
+        * storage/StorageEvent.idl:
+
 2010-04-30  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

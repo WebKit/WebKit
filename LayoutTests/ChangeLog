@@ -1,3 +1,19 @@
+2010-04-29  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Change StorageEvent.uri to StorageEvent.url to match the spec
+        https://bugs.webkit.org/show_bug.cgi?id=38331
+
+        Change the existing tests to test 'url' rather than 'uri'.
+
+        * storage/domstorage/events/documentURI-expected.txt:
+        * storage/domstorage/events/script-tests/documentURI.js:
+        (step2):
+        (step3):
+        * storage/domstorage/localstorage/resources/iframe-events-second.html:
+        * storage/domstorage/sessionstorage/resources/iframe-events-second.html:
+
 2010-04-30  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

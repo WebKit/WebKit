@@ -1,4 +1,4 @@
-Test that changing documentURI has no effects on the uri passed into storage events.
+Test that changing documentURI has no effects on the url passed into storage events.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
@@ -10,7 +10,7 @@ Reset storage event list
 storageEventList = new Array()
 storage.foo = '123'
 PASS storageEventList.length is 1
-Saving URI
+Saving url
 document.documentURI = 'abc'
 PASS document.documentURI is "abc"
 storage.foo = 'xyz'
@@ -25,7 +25,7 @@ Reset storage event list
 storageEventList = new Array()
 storage.foo = '123'
 PASS storageEventList.length is 1
-Saving URI
+Saving url
 document.documentURI = 'abc'
 PASS document.documentURI is "abc"
 storage.foo = 'xyz'

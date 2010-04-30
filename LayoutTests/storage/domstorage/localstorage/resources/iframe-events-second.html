@@ -7,7 +7,7 @@ function handleStorageEvent(e)
     parent.log("Key           - " + e.key);
     parent.log("New Value     - " + e.newValue);
     parent.log("Old Value     - " + e.oldValue);
-    parent.log("URI           - " + parent.normalizeURL(e.uri));
+    parent.log("url           - " + parent.normalizeURL(e.url));
     parent.log("Storage Area  - " + ((e.storageArea == window.localStorage) ? "This window's window.localStorage" : "Another window's window.localStorage"));
     parent.log("");
 
