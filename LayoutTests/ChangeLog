@@ -1,5 +1,14 @@
 2010-04-30  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Unreviewed, expectations update.
+
+        [Chromium] Add more missing pixel results.
+
+        * platform/chromium-win/transforms/svg-vs-css-expected.checksum: Added.
+        * platform/chromium-win/transforms/svg-vs-css-expected.png: Added.
+
+2010-04-30  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Unreviewed, expectations updated.
 
         [Chromium] Add missing pixel results.
