@@ -362,6 +362,8 @@ private:
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     bool m_needWidgetUpdate : 1;
 #endif
+
+    bool m_dispatchingCanPlayEvent : 1;
 };
 
 } //namespace

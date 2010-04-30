@@ -59,6 +59,7 @@
 #include "RenderVideo.h"
 #include "RenderView.h"
 #include "ScriptEventListener.h"
+#include "Settings.h"
 #include "TimeRanges.h"
 #include <limits>
 #include <wtf/CurrentTime.h>
@@ -127,6 +128,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* doc)
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     , m_needWidgetUpdate(false)
 #endif
+    , m_dispatchingCanPlayEvent(false)
 {
     document()->registerForDocumentActivationCallbacks(this);
     document()->registerForMediaVolumeCallbacks(this);
@@ -359,8 +361,14 @@ void HTMLMediaElement::asyncEventTimerFired(Timer<HTMLMediaElement>*)
 
     m_pendingEvents.swap(pendingEvents);
     unsigned count = pendingEvents.size();
-    for (unsigned ndx = 0; ndx < count; ++ndx) 
-        dispatchEvent(pendingEvents[ndx].release(), ec);
+    for (unsigned ndx = 0; ndx < count; ++ndx) {
+        if (pendingEvents[ndx]->type() == eventNames().canplayEvent) {
+            m_dispatchingCanPlayEvent = true;
+            dispatchEvent(pendingEvents[ndx].release(), ec);
+            m_dispatchingCanPlayEvent = false;
+        } else
+            dispatchEvent(pendingEvents[ndx].release(), ec);
+    }
 }
 
 void HTMLMediaElement::loadTimerFired(Timer<HTMLMediaElement>*)
@@ -1189,6 +1197,17 @@ void HTMLMediaElement::play(bool isUserGesture)
     if (m_restrictions & RequireUserGestureForRateChangeRestriction && !isUserGesture)
         return;
 
+    Document* doc = document();
+    Settings* settings = doc->settings();
+    if (settings && settings->needsSiteSpecificQuirks() && m_dispatchingCanPlayEvent) {
+        // It should be impossible to be processing the canplay event while handling a user gesture
+        // since it is dispatched asynchronously.
+        ASSERT(!isUserGesture);
+        String host = doc->baseURL().host();
+        if (host.endsWith(".npr.org", false) || equalIgnoringCase(host, "npr.org"))
+            return;
+    }
+    
     playInternal();
 }
 

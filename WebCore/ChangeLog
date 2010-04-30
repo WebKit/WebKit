@@ -1,3 +1,19 @@
+2010-04-30  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        <rdar://problem/7902467> - Audio plays upon loading of npr.org but shouldn't
+
+        No new tests. (Currently no way to test such site specific hack behavior)
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::asyncEventTimerFired): If the event to be dispatched is the canplay
+          event, wrap the dispatch with m_dispatchingCanPlayEvent set.
+        (WebCore::HTMLMediaElement::play): If m_dispatchingCanPlayEvent is true and the site is npr.org, 
+          don't perform the play().
+        * html/HTMLMediaElement.h: Add m_dispatchingCanPlayEvent member.
+
 2010-04-30  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adele Peterson.
