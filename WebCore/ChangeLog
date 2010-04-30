@@ -1,3 +1,25 @@
+2010-04-30  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r58569.
+        http://trac.webkit.org/changeset/58569
+        https://bugs.webkit.org/show_bug.cgi?id=38399
+
+        This broke the GTK bots due to bad GC behavior (Requested by
+        ericu on #webkit).
+
+        * bindings/js/JSWorkerContextCustom.cpp:
+        * bindings/v8/custom/V8WorkerContextCustom.cpp:
+        * storage/Database.idl:
+        * storage/SQLError.idl:
+        * storage/SQLResultSet.idl:
+        * storage/SQLResultSetRowList.idl:
+        * storage/SQLTransaction.idl:
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::openDatabase):
+        * workers/WorkerContext.h:
+        (WebCore::WorkerContext::databaseExceededQuota):
+        * workers/WorkerContext.idl:
+
 2010-04-30  Anders Carlsson  <andersca@apple.com>
 
         Fix GTK+ build.

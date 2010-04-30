@@ -30,8 +30,7 @@ module storage {
 
     interface [
         Conditional=DATABASE,
-        OmitConstructor,
-        NoStaticTables
+        OmitConstructor
     ] SQLResultSet {
         readonly attribute SQLResultSetRowList rows;
 
