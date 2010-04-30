@@ -1,5 +1,12 @@
 2010-04-30  Anders Carlsson  <andersca@apple.com>
 
+        Yet another build fix.
+
+        * plugins/gtk/PluginPackageGtk.cpp:
+        (WebCore::PluginPackage::NPVersion):
+
+2010-04-30  Anders Carlsson  <andersca@apple.com>
+
         Fix build.
 
         * bridge/npapi.h:

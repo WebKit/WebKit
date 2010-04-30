@@ -168,7 +168,7 @@ abort:
     return false;
 }
 
-uint16 PluginPackage::NPVersion() const
+uint16_t PluginPackage::NPVersion() const
 {
     return NPVERS_HAS_PLUGIN_THREAD_ASYNC_CALL;
 }
