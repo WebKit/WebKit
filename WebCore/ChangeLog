@@ -1,3 +1,19 @@
+2010-04-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Remove unused scrollRectIntoViewRecursively function
+        https://bugs.webkit.org/show_bug.cgi?id=38403
+
+        * page/Chrome.cpp:
+        (WebCore::Chrome::scrollRectIntoView): Moved comment here that was previously
+        in the scrollRectIntoViewRecursively function.
+
+        * platform/ScrollView.cpp: Get rid scrollRectIntoViewRecursively.
+        * platform/ScrollView.h: Ditto. Fix comment that refers to the two functions.
+        Also correct all uses of the term "method" to use the C++ term "function" and
+        got rid of double spaces after periods.
+
 2010-04-30  Anders Carlsson  <andersca@apple.com>
 
         Another Qt build fix.
