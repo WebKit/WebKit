@@ -1326,12 +1326,19 @@ bool WebView::handleMouseEvent(UINT message, WPARAM wParam, LPARAM lParam)
     static MouseButton globalPrevButton;
     static LONG globalPrevMouseDownTime;
 
+    if (message == WM_CANCELMODE) {
+        m_page->mainFrame()->eventHandler()->lostMouseCapture();
+        return true;
+    }
+
     // Create our event.
     // On WM_MOUSELEAVE we need to create a mouseout event, so we force the position
     // of the event to be at (MINSHORT, MINSHORT).
     LPARAM position = (message == WM_MOUSELEAVE) ? ((MINSHORT << 16) | MINSHORT) : lParam;
     PlatformMouseEvent mouseEvent(m_viewWindow, message, wParam, position, m_mouseActivated);
-   
+
+    setMouseActivated(false);
+
     bool insideThreshold = abs(globalPrevPoint.x() - mouseEvent.pos().x()) < ::GetSystemMetrics(SM_CXDOUBLECLK) &&
                            abs(globalPrevPoint.y() - mouseEvent.pos().y()) < ::GetSystemMetrics(SM_CYDOUBLECLK);
     LONG messageTime = ::GetMessageTime();
@@ -1390,7 +1397,6 @@ bool WebView::handleMouseEvent(UINT message, WPARAM wParam, LPARAM lParam)
             ::TrackMouseEvent(m_mouseOutTracker.get());
         }
     }
-    setMouseActivated(false);
     return handled;
 }
 
@@ -2022,6 +2028,7 @@ LRESULT CALLBACK WebView::WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam,
         case WM_MBUTTONUP:
         case WM_RBUTTONUP:
         case WM_MOUSELEAVE:
+        case WM_CANCELMODE:
             if (Frame* coreFrame = core(mainFrameImpl))
                 if (coreFrame->view()->didFirstLayout())
                     handled = webView->handleMouseEvent(message, wParam, lParam);

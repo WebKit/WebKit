@@ -1,3 +1,21 @@
+2010-04-30  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Caret may fail to blink if a focus handler brings up a modal dialog 
+        https://bugs.webkit.org/show_bug.cgi?id=38372
+
+        Reviewed by Darin Adler.
+
+        * WebView.cpp:
+        (WebView::handleMouseEvent):
+        If the message is WM_CANCELMODE, which indicates that we our capturing
+        of mouse events has been cancelled, tell the EventHandler.
+        It's possible to re-enter this function if handling a mouse event allows
+        the message loop to run; moved up the call to setMouseActivated(), so
+        that if we do re-enter this function, the later mouse event will not be
+        considered as activating the window.
+        (WebView::WebViewWndProc):
+        Handle WM_CANCELMODE by calling handleMouseEvent().
+
 2010-04-29  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

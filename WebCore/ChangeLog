@@ -1,3 +1,27 @@
+2010-04-30  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Caret may fail to blink if a focus handler brings up a modal dialog 
+        https://bugs.webkit.org/show_bug.cgi?id=38372
+
+        Reviewed by Darin Adler.
+
+        * manual-tests/onfocus-alert-blinking-caret.html: Added.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent):
+        Moved the call to setCaretBlinkingSuspended() from here...
+        (WebCore::EventHandler::handleMousePressEvent):
+        ... to here. This makes us suspend caret blinking before dispatching the
+        mouse down event. If dispatching the mouse down event allows the message
+        loop to run, we want mouse up events received in that message loop to be
+        able to resume caret blinking.
+        (WebCore::EventHandler::lostMouseCapture):
+        We've lost mouse capture and won't be notified of mouse up events;
+        resume caret blinking.
+
+        * page/EventHandler.h:
+        Declare lostMouseCapture().
+
 2010-04-30  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, build fix.

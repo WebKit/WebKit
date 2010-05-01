@@ -439,7 +439,6 @@ bool EventHandler::handleMousePressEvent(const MouseEventWithHitTestResults& eve
 #endif
 
     bool swallowEvent = false;
-    m_frame->selection()->setCaretBlinkingSuspended(true);
     m_mousePressed = true;
     m_beganSelectingText = false;
 
@@ -620,7 +619,12 @@ void EventHandler::updateSelectionForMouseDrag(Node* targetNode, const IntPoint&
     }
 }
 #endif // ENABLE(DRAG_SUPPORT)
-    
+
+void EventHandler::lostMouseCapture()
+{
+    m_frame->selection()->setCaretBlinkingSuspended(false);
+}
+
 bool EventHandler::handleMouseUp(const MouseEventWithHitTestResults& event)
 {
     if (eventLoopHandleMouseUp(event))
@@ -1268,6 +1272,8 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
             return true;
         }
     }
+
+    m_frame->selection()->setCaretBlinkingSuspended(true);
 
     bool swallowEvent = dispatchMouseEvent(eventNames().mousedownEvent, mev.targetNode(), true, m_clickCount, mouseEvent, true);
     m_capturesDragging = !swallowEvent;
