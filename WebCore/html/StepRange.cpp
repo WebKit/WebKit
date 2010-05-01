@@ -23,6 +23,7 @@
 
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "HTMLParser.h"
 #include "PlatformString.h"
 #include <wtf/MathExtras.h>
 
@@ -61,7 +62,7 @@ double StepRange::clampValue(double value)
 double StepRange::clampValue(const String& stringValue)
 {
     double value;
-    bool parseSuccess = HTMLInputElement::parseToDoubleForNumberType(stringValue, &value);
+    bool parseSuccess = parseToDoubleForNumberType(stringValue, &value);
     if (!parseSuccess)
         value = (minimum + maximum) / 2;
     return clampValue(value);
@@ -70,7 +71,7 @@ double StepRange::clampValue(const String& stringValue)
 double StepRange::valueFromElement(HTMLInputElement* element, bool* wasClamped)
 {
     double oldValue;
-    bool parseSuccess = HTMLInputElement::parseToDoubleForNumberType(element->value(), &oldValue);
+    bool parseSuccess = parseToDoubleForNumberType(element->value(), &oldValue);
     if (!parseSuccess)
         oldValue = (minimum + maximum) / 2;
     double newValue = clampValue(oldValue);

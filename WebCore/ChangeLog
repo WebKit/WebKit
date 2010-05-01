@@ -1,3 +1,27 @@
+2010-05-01  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Move number parsing code out of HTMLInputElement.
+        https://bugs.webkit.org/show_bug.cgi?id=38203
+
+        The numebr parsing code follows HTML5 parsing rules and should be available outside of HTMLInputElement.
+        No new tests as no new functionality was introduced.
+
+        * html/HTMLInputElement.cpp:
+        * html/HTMLInputElement.h:
+        * html/HTMLParser.cpp:
+        (WebCore::serializeForNumberType):
+        (WebCore::parseToDoubleForNumberType):
+        * html/HTMLParser.h:
+        * html/StepRange.cpp:
+        (WebCore::StepRange::clampValue):
+        (WebCore::StepRange::valueFromElement):
+        * html/ValidityState.cpp:
+        (WebCore::ValidityState::typeMismatch):
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::setValueForPosition):
+
 2010-05-01  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Oliver Hunt.

@@ -30,6 +30,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLDivElement.h"
 #include "HTMLNames.h"
+#include "HTMLParser.h"
 #include "MediaControlElements.h"
 #include "MouseEvent.h"
 #include "RenderLayer.h"
@@ -356,7 +357,7 @@ void RenderSlider::setValueForPosition(int position)
     if (style()->appearance() == SliderVerticalPart || style()->appearance() == MediaVolumeSliderPart)
         fraction = 1 - fraction;
     double value = range.clampValue(range.valueFromProportion(fraction));
-    element->setValueFromRenderer(HTMLInputElement::serializeForNumberType(value));
+    element->setValueFromRenderer(serializeForNumberType(value));
 
     // Also update the position if appropriate.
     if (position != currentPosition()) {

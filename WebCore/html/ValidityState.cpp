@@ -26,6 +26,7 @@
 
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "HTMLParser.h"
 #include "KURL.h"
 #include "LocalizedStrings.h"
 #include "RegularExpression.h"
@@ -80,7 +81,7 @@ bool ValidityState::typeMismatch() const
     case HTMLInputElement::COLOR:
         return !isValidColorString(value);
     case HTMLInputElement::NUMBER:
-        return !HTMLInputElement::parseToDoubleForNumberType(value, 0);
+        return !parseToDoubleForNumberType(value, 0);
     case HTMLInputElement::URL:
         return !KURL(KURL(), value).isValid();
     case HTMLInputElement::EMAIL: {

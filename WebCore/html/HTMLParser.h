@@ -201,6 +201,14 @@ bool shouldCreateImplicitHead(Document*);
 inline bool shouldCreateImplicitHead(Document*) { return true; }
 #endif
 
+// Converts the specified string to a floating number.
+// If the conversion fails, the return value is false. Take care that leading or trailing unnecessary characters make failures.  This returns false for an empty string input.
+// The double* parameter may be 0.
+bool parseToDoubleForNumberType(const String&, double*);
+// Converts the specified number to a string. This is an implementation of
+// HTML5's "algorithm to convert a number to a string" for NUMBER/RANGE types.
+String serializeForNumberType(double);
+
 }
     
 #endif // HTMLParser_h
