@@ -1,5 +1,22 @@
 2010-05-01  Robert Hogan  <robert@webkit.org>
 
+        Unreviewed fix to height/width rendering differences in results added
+        by r58631.
+
+        [Qt] Fix up width/height differences in smart-paste-00* results
+
+        https://bugs.webkit.org/show_bug.cgi?id=38136
+
+        * platform/qt/editing/pasteboard/smart-paste-001-expected.txt:
+        * platform/qt/editing/pasteboard/smart-paste-002-expected.txt:
+        * platform/qt/editing/pasteboard/smart-paste-003-expected.txt:
+        * platform/qt/editing/pasteboard/smart-paste-004-expected.txt:
+        * platform/qt/editing/pasteboard/smart-paste-005-expected.txt:
+        * platform/qt/editing/pasteboard/smart-paste-006-expected.txt:
+        * platform/qt/editing/pasteboard/smart-paste-007-expected.txt:
+
+2010-05-01  Robert Hogan  <robert@webkit.org>
+
         Reviewed by Simon Hausmann.
 
         [Qt] Add smart paste support

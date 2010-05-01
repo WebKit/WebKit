@@ -33,15 +33,15 @@ layer at (0,0) size 800x600
             text run at (0,31) width 715: "Spaces should be added before and after the pasted word. It should"
             text run at (0,61) width 143: "look like this: "
           RenderBR {BR} at (143,84) size 0x0
-          RenderText {#text} at (0,91) size 93x29
-            text run at (0,91) width 93: "te test st"
+          RenderText {#text} at (0,91) size 92x29
+            text run at (0,91) width 92: "te test st"
       RenderBlock {DIV} at (0,250) size 784x34
         RenderBlock {DIV} at (0,0) size 784x34 [border: (2px solid #FF0000)]
-          RenderText {#text} at (2,2) size 21x29
-            text run at (2,2) width 21: "te"
-          RenderText {#text} at (23,2) size 54x29
-            text run at (23,2) width 54: " test "
-          RenderText {#text} at (77,2) size 20x29
-            text run at (77,2) width 20: "st"
+          RenderText {#text} at (2,2) size 20x29
+            text run at (2,2) width 20: "te"
+          RenderText {#text} at (22,2) size 53x29
+            text run at (22,2) width 53: " test "
+          RenderText {#text} at (75,2) size 19x29
+            text run at (75,2) width 19: "st"
         RenderBlock (anonymous) at (0,34) size 784x0
 caret: position 6 of child 1 {#text} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
