@@ -1,3 +1,25 @@
+2010-04-28  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        REGRESSION(r58313): Regression evident in pixel tests: the search icon is always clipped at the bottom.
+        https://bugs.webkit.org/show_bug.cgi?id=38253
+
+        Test: fast/css/input-search-padding.html
+
+        An <input type="search"> contains an inner block, which is explicitly
+        centered in RenderTextControlSingleLine based on the height of the element.
+        However, the clipping rect was not using the set location, and instead
+        calculated off of the top border and padding alone. This also vertically
+        centers the Caps Lock indicator.
+
+        * rendering/RenderTextControl.cpp: moved controlClipRect implementation to RenderTextControlSingleLine
+        * rendering/RenderTextControl.h: allow a subclass implementation of controlClipRect, removed redundant hasControlClip implementation, and moved controlClipRect
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::paint): vertically center the Caps Lock indicator
+        (WebCore::RenderTextControlSingleLine::controlClipRect): use the set location of the anonymous inner block instead
+        * rendering/RenderTextControlSingleLine.h: allow for an implementation of controlClipRect for <input type="search">
+
 2010-04-30  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Caret may fail to blink if a focus handler brings up a modal dialog 
