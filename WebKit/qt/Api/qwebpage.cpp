@@ -290,7 +290,7 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
 #ifndef QT_NO_CONTEXTMENU
     currentContextMenu = 0;
 #endif
-    smartInsertDeleteEnabled = false;
+    smartInsertDeleteEnabled = true;
     selectTrailingWhitespaceEnabled = false;
 
     history.d = new QWebHistoryPrivate(page->backForwardList());

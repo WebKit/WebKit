@@ -1,0 +1,42 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document toDOMRange:range from 5 of #text > DIV > DIV > BODY > HTML > #document to 5 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of #text > DIV > DIV > BODY > HTML > #document to 5 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > DIV > DIV > BODY > HTML > #document to 5 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > DIV > DIV > BODY > HTML > #document to 1 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 5 of #text > DIV > DIV > BODY > HTML > #document to 5 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x226 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x61
+          RenderText {#text} at (0,0) size 77x31
+            text run at (0,0) width 77: "Tests: "
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {#text} at (0,31) size 699x29
+            text run at (0,31) width 699: "Smart paste when pasting at the beginning of a line before a word."
+        RenderBlock {DIV} at (14,91) size 756x121
+          RenderText {#text} at (0,0) size 214x31
+            text run at (0,0) width 214: "Expected Results: "
+          RenderBR {BR} at (214,24) size 0x0
+          RenderText {#text} at (0,31) size 726x59
+            text run at (0,31) width 726: "A space should be added after the pasted word before the preexising"
+            text run at (0,61) width 299: "word. It should like this this: "
+          RenderBR {BR} at (299,84) size 0x0
+          RenderText {#text} at (0,91) size 86x29
+            text run at (0,91) width 86: "test test"
+      RenderBlock {DIV} at (0,250) size 784x34
+        RenderBlock (anonymous) at (0,0) size 784x0
+        RenderBlock {DIV} at (0,0) size 784x34 [border: (2px solid #FF0000)]
+          RenderText {#text} at (2,2) size 47x29
+            text run at (2,2) width 47: "test "
+          RenderText {#text} at (49,2) size 40x29
+            text run at (49,2) width 40: "test"
+caret: position 5 of child 0 {#text} of child 0 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

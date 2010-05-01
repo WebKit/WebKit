@@ -1,6 +1,8 @@
 EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > DIV > DIV > BODY > HTML > #document to 5 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 1 of #text > DIV > DIV > BODY > HTML > #document to 5 of #text > DIV > DIV > BODY > HTML > #document
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
@@ -17,7 +19,7 @@ EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 1 of #text > DIV > DIV > BODY > HTML > #document to 1 of #text > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 4 of #text > DIV > DIV > BODY > HTML > #document to 4 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 5 of #text > DIV > DIV > BODY > HTML > #document to 5 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -30,25 +32,25 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 77x31
             text run at (0,0) width 77: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,31) size 713x29
-            text run at (0,31) width 713: "Smart paste when pasting between smart paste exempt characters."
+          RenderText {#text} at (0,31) size 506x29
+            text run at (0,31) width 506: "Smart paste when pasting between two periods."
         RenderBlock {DIV} at (14,91) size 756x121
           RenderText {#text} at (0,0) size 214x31
             text run at (0,0) width 214: "Expected Results: "
           RenderBR {BR} at (214,24) size 0x0
-          RenderText {#text} at (0,31) size 730x59
-            text run at (0,31) width 730: "No spaces should be added before or after the pasted word. It should"
-            text run at (0,61) width 143: "look like this: "
-          RenderBR {BR} at (143,84) size 0x0
-          RenderText {#text} at (0,91) size 55x29
-            text run at (0,91) width 55: "-test-"
+          RenderText {#text} at (0,31) size 688x59
+            text run at (0,31) width 688: "A space should be added before, but not after the pasted word. It"
+            text run at (0,61) width 219: "should look like this: "
+          RenderBR {BR} at (219,84) size 0x0
+          RenderText {#text} at (0,91) size 60x29
+            text run at (0,91) width 60: ". test."
       RenderBlock {DIV} at (0,250) size 784x34
         RenderBlock {DIV} at (0,0) size 784x34 [border: (2px solid #FF0000)]
-          RenderText {#text} at (2,2) size 8x29
-            text run at (2,2) width 8: "-"
-          RenderText {#text} at (10,2) size 40x29
-            text run at (10,2) width 40: "test"
-          RenderText {#text} at (50,2) size 8x29
-            text run at (50,2) width 8: "-"
+          RenderText {#text} at (2,2) size 7x29
+            text run at (2,2) width 7: "."
+          RenderText {#text} at (9,2) size 47x29
+            text run at (9,2) width 47: " test"
+          RenderText {#text} at (56,2) size 7x29
+            text run at (56,2) width 7: "."
         RenderBlock (anonymous) at (0,34) size 784x0
-caret: position 4 of child 1 {#text} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 5 of child 1 {#text} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

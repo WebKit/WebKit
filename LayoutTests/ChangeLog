@@ -1,3 +1,31 @@
+2010-05-01  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Add smart paste support
+
+        https://bugs.webkit.org/show_bug.cgi?id=38136
+
+        Add platform specific results.
+
+        Unskip tests:
+         editing/pasteboard/smart-paste-001.html
+         editing/pasteboard/smart-paste-002.html
+         editing/pasteboard/smart-paste-003.html
+         editing/pasteboard/smart-paste-004.html
+         editing/pasteboard/smart-paste-005.html
+         editing/pasteboard/smart-paste-006.html
+         editing/pasteboard/smart-paste-007.html
+
+        * platform/qt/Skipped:
+        * platform/qt/editing/pasteboard/smart-paste-001-expected.txt: Added.
+        * platform/qt/editing/pasteboard/smart-paste-002-expected.txt: Added.
+        * platform/qt/editing/pasteboard/smart-paste-003-expected.txt: Added.
+        * platform/qt/editing/pasteboard/smart-paste-004-expected.txt: Added.
+        * platform/qt/editing/pasteboard/smart-paste-005-expected.txt: Added.
+        * platform/qt/editing/pasteboard/smart-paste-006-expected.txt:
+        * platform/qt/editing/pasteboard/smart-paste-007-expected.txt: Added.
+
 2010-04-30  Yoshiki Hayashi  <yhayashi@google.com>
 
         Reviewed by Shinichiro Hamaji.

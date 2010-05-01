@@ -1,3 +1,18 @@
+2010-05-01  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Add smart paste support
+
+        https://bugs.webkit.org/show_bug.cgi?id=38136
+
+        * WebCore.pro:
+        * editing/qt/SmartReplaceQt.cpp: Added.
+        (WebCore::isCharacterSmartReplaceExempt):
+        * platform/qt/PasteboardQt.cpp:
+        (WebCore::Pasteboard::writeSelection):
+        (WebCore::Pasteboard::canSmartReplace):
+
 2010-04-30  Yoshiki Hayashi  <yhayashi@google.com>
 
         Reviewed by Shinichiro Hamaji.
