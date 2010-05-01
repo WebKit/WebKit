@@ -30,6 +30,7 @@
 #define HTML_DOCUMENT_ELEMENTS "<html><body><ul><li>1</li><li>2</li><li>3</li></ul></body></html>"
 #define HTML_DOCUMENT_ELEMENTS_CLASS "<html><body><div class=\"test\"></div><div class=\"strange\"></div><div class=\"test\"></div></body></html>"
 #define HTML_DOCUMENT_ELEMENTS_ID "<html><body><div id=\"testok\"></div><div id=\"testbad\">first</div><div id=\"testbad\">second</div></body></html>"
+#define HTML_DOCUMENT_LINKS "<html><body><a href=\"about:blank\">blank</a><a href=\"http://www.google.com\">google</a><a href=\"http://www.webkit.org\">webkit</a></body></html>"
 
 typedef struct {
     GtkWidget* webView;
@@ -151,6 +152,34 @@ static void test_dom_document_get_element_by_id(DomDocumentFixture* fixture, gco
     g_assert_cmpstr(webkit_dom_html_element_get_inner_text(htmlElement), ==, (gchar*)"first");
 }
 
+static void test_dom_document_get_links(DomDocumentFixture* fixture, gconstpointer data)
+{
+    g_assert(fixture);
+    WebKitWebView* view = (WebKitWebView*)fixture->webView;
+    g_assert(view);
+    WebKitDOMDocument* document = webkit_web_view_get_dom_document(view);
+    g_assert(document);
+    WebKitDOMHTMLCollection *collection = webkit_dom_document_get_links(document);
+    g_assert(collection);
+    gulong length = webkit_dom_html_collection_get_length(collection);
+    g_assert_cmpint(length, ==, 3);
+
+    guint i;
+
+    for (i = 0; i < length; i++) {
+        static const char* names[] = { "blank", "google", "webkit" };
+        static const char* uris[] = { "about:blank", "http://www.google.com/", "http://www.webkit.org/" };
+        WebKitDOMNode *node = webkit_dom_html_collection_item(collection, i);
+        g_assert(node);
+        WebKitDOMElement* element = (WebKitDOMElement*)node;
+        g_assert_cmpstr(webkit_dom_element_get_tag_name(element), ==, "A");
+        WebKitDOMHTMLElement *htmlElement = (WebKitDOMHTMLElement*)element;
+        g_assert_cmpstr(webkit_dom_html_element_get_inner_text(htmlElement), ==, names[i]);
+        WebKitDOMHTMLAnchorElement *anchor = (WebKitDOMHTMLAnchorElement*)element;
+        g_assert_cmpstr(webkit_dom_html_anchor_element_get_href(anchor), ==, uris[i]);
+    }
+}
+
 int main(int argc, char** argv)
 {
     if (!g_thread_supported())
@@ -182,6 +211,12 @@ int main(int argc, char** argv)
                DomDocumentFixture, HTML_DOCUMENT_ELEMENTS_ID,
                dom_document_fixture_setup,
                test_dom_document_get_element_by_id,
+               dom_document_fixture_teardown);
+
+    g_test_add("/webkit/domdocument/test_get_links",
+               DomDocumentFixture, HTML_DOCUMENT_LINKS,
+               dom_document_fixture_setup,
+               test_dom_document_get_links,
                dom_document_fixture_teardown);
 
     return g_test_run();

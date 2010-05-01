@@ -1,3 +1,16 @@
+2010-05-01  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Oliver Hunt.
+
+        [GTK] GObject DOM bindings
+        https://bugs.webkit.org/show_bug.cgi?id=33590
+
+        Test webkit_dom_document_get_links.
+
+        * tests/testdomdocument.c:
+        (test_dom_document_get_links):
+        (main):
+
 2010-04-29  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
