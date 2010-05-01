@@ -1,3 +1,16 @@
+2010-04-30  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Add layoutTestController.setPrinting()
+        https://bugs.webkit.org/show_bug.cgi?id=37203
+
+        Use the renderer's width insteead of screen's width as the width of
+        a screen depends on machines.
+
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::externalRepresentation):
+
 2010-04-30  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Timothy Hatcher.

@@ -29,7 +29,6 @@
 #include "CSSMutableStyleDeclaration.h"
 #include "CharacterNames.h"
 #include "Document.h"
-#include "DOMWindow.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLElement.h"
@@ -45,7 +44,6 @@
 #include "RenderTableCell.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
-#include "Screen.h"
 #include "SelectionController.h"
 #include "TextStream.h"
 #include <wtf/UnusedParam.h>
@@ -621,8 +619,11 @@ static void writeSelection(TextStream& ts, const RenderObject* o)
 String externalRepresentation(Frame* frame, RenderAsTextBehavior behavior)
 {
     PrintContext printContext(frame);
-    if (behavior & RenderAsTextPrintingMode)
-        printContext.begin(frame->domWindow()->screen()->width());
+    if (behavior & RenderAsTextPrintingMode) {
+        if (!frame->contentRenderer())
+            return String();
+        printContext.begin(frame->contentRenderer()->width());
+    }
 
     frame->document()->updateLayout();
 

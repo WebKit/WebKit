@@ -175,8 +175,5 @@ fast/dom/icon-url-property.html
 # Doesn't support WOFF yet.
 fast/css/font-face-woff.html
 
-# It seems this depends on the size of physical screen?
-printing/media-queries-print.html
-
 # EventSendingController does not send events on areas outside the WebView.
 scrollbars/scrollbar-click-does-not-blur-content.html
