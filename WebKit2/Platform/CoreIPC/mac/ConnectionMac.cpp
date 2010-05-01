@@ -28,6 +28,7 @@
 #include "CoreIPCMessageKinds.h"
 #include "MachPort.h"
 #include "RunLoop.h"
+#include <mach/vm_map.h>
 
 using namespace std;
 
