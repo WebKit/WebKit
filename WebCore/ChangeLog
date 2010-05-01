@@ -1,3 +1,17 @@
+2010-04-30  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Missing INSPECTOR Guard in Console::lastWMLErrorMessage
+        https://bugs.webkit.org/show_bug.cgi?id=38366
+
+        Console::lastWMLErrorMessage is only available if WML is enabled, however
+        its implementation only makes sense as long as INSPECTOR is enabled
+        as well. So this adds the ENABLE(INSPECTOR) guard in the function. A
+        browser without ENABLE(INSPECTOR) will always get an empty result.
+
+        * page/Console.cpp:
+
 2010-04-28  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Oliver Hunt.
