@@ -2,6 +2,58 @@
 
         Reviewed by Anders Carlsson.
 
+        https://bugs.webkit.org/show_bug.cgi?id=38413
+        Add callback based API to get the textual representation of the RenderTree.
+
+        - Also ensures that any pending callbacks are invalidated if the WebPage
+          closes (expectedly or unexpectedly).
+        - A follow up patch will unify the callback mechanism with a common base
+          class.
+
+        * Shared/CoreIPCSupport/WebPageMessageKinds.h:
+        (WebPageMessage::):
+        * Shared/CoreIPCSupport/WebPageProxyMessageKinds.h:
+        (WebPageProxyMessage::):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageRunJavaScriptInMainFrame_f):
+        (WKPageRenderTreeExternalRepresentation_f):
+        (callRenderTreeExternalRepresentationBlockAndDispose):
+        (disposeRenderTreeExternalRepresentationBlock):
+        (WKPageRenderTreeExternalRepresentation):
+        * UIProcess/API/C/WKPagePrivate.h: Added.
+        * UIProcess/RenderTreeExternalRepresentationCallback.cpp: Added.
+        (WebKit::generateCallbackID):
+        (WebKit::RenderTreeExternalRepresentationCallback::RenderTreeExternalRepresentationCallback):
+        (WebKit::RenderTreeExternalRepresentationCallback::~RenderTreeExternalRepresentationCallback):
+        (WebKit::RenderTreeExternalRepresentationCallback::performCallbackWithReturnValue):
+        (WebKit::RenderTreeExternalRepresentationCallback::invalidate):
+        * UIProcess/RenderTreeExternalRepresentationCallback.h: Added.
+        (WebKit::RenderTreeExternalRepresentationCallback::create):
+        (WebKit::RenderTreeExternalRepresentationCallback::callbackID):
+        * UIProcess/ScriptReturnValueCallback.cpp:
+        (WebKit::ScriptReturnValueCallback::~ScriptReturnValueCallback):
+        (WebKit::ScriptReturnValueCallback::performCallbackWithReturnValue):
+        (WebKit::ScriptReturnValueCallback::invalidate):
+        * UIProcess/ScriptReturnValueCallback.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::getRenderTreeExternalRepresentation):
+        (WebKit::WebPageProxy::didReceiveMessage):
+        (WebKit::WebPageProxy::didRunJavaScriptInMainFrame):
+        (WebKit::WebPageProxy::didGetRenderTreeExternalRepresentation):
+        (WebKit::WebPageProxy::processDidExit):
+        * UIProcess/WebPageProxy.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::getRenderTreeExternalRepresentation):
+        (WebKit::WebPage::didReceiveMessage):
+        * WebProcess/WebPage/WebPage.h:
+        * win/WebKit2.vcproj:
+
+2010-04-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
         Fix for https://bugs.webkit.org/show_bug.cgi?id=38406
         Add support for sending messages with a size greater than 4096 bytes
 

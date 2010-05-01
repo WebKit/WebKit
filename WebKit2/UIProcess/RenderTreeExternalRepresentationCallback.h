@@ -23,60 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPageProxyMessageKinds_h
-#define WebPageProxyMessageKinds_h
+#ifndef RenderTreeExternalRepresentationCallback_h
+#define RenderTreeExternalRepresentationCallback_h
 
-#include "MessageID.h"
+#include "WKPagePrivate.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 
-// Messages sent from the web process to the WebPageProxy.
-
-namespace WebPageProxyMessage {
-
-enum Kind {
-    CreateNewPage,
-    ShowPage,
-    RunJavaScriptAlert,
-    
-    ClosePage,
-    DecidePolicyForMIMEType,
-    DecidePolicyForNavigationAction,
-    DecidePolicyForNewWindowAction,
-    DidChangeCanGoBack,
-    DidChangeCanGoForward,
-    DidChangeProgress,
-    DidCommitLoadForFrame,
-    DidCreateMainFrame,
-    DidCreateSubFrame,
-    DidFailLoadForFrame,
-    DidFailProvisionalLoadForFrame,
-    DidFinishLoadForFrame,
-    DidFinishProgress,
-    DidFirstLayoutForFrame,
-    DidFirstVisuallyNonEmptyLayoutForFrame,
-    DidGetRenderTreeExternalRepresentation,
-    DidNavigateWithNavigationData,
-    DidPerformClientRedirect,
-    DidPerformServerRedirect,
-    DidReceiveEvent,
-    DidReceiveServerRedirectForProvisionalLoadForFrame,
-    DidReceiveTitleForFrame,
-    DidRunJavaScriptInMainFrame,
-    DidSetFrame,
-    DidStartProgress,
-    DidStartProvisionalLoadForFrame,
-    DidUpdateHistoryTitle,
-    SetToolTip,
-    TakeFocus,
-};
-
+namespace WebCore {
+    class String;
 }
 
-namespace CoreIPC {
+namespace WebKit {
 
-template<> struct MessageKindTraits<WebPageProxyMessage::Kind> { 
-    static const MessageClass messageClass = MessageClassWebPageProxy;
+class RenderTreeExternalRepresentationCallback : public RefCounted<RenderTreeExternalRepresentationCallback> {
+public:
+    static PassRefPtr<RenderTreeExternalRepresentationCallback> create(void* context, WKPageRenderTreeExternalRepresentationFunction callback, WKPageRenderTreeExternalRepresentationDisposeFunction disposeCallback)
+    {
+        return adoptRef(new RenderTreeExternalRepresentationCallback(context, callback, disposeCallback));
+    }
+    ~RenderTreeExternalRepresentationCallback();
+
+    uint64_t callbackID() const { return m_callbackID; }
+
+    void performCallbackWithReturnValue(const WebCore::String&);
+    void invalidate();
+
+private:
+    RenderTreeExternalRepresentationCallback(void*, WKPageRenderTreeExternalRepresentationFunction, WKPageRenderTreeExternalRepresentationDisposeFunction);
+
+    void* m_context;
+    WKPageRenderTreeExternalRepresentationFunction m_callback;
+    WKPageRenderTreeExternalRepresentationDisposeFunction m_disposeCallback;
+    uint64_t m_callbackID;
 };
 
-}
+} // namespace WebKit
 
-#endif // WebPageProxyMessageKinds_h
+#endif // RenderTreeExternalRepresentationCallback_h

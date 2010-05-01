@@ -728,6 +728,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\UIProcess\RenderTreeExternalRepresentationCallback.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\RenderTreeExternalRepresentationCallback.h"
+				>
+			</File>
+			<File
 				RelativePath="..\UIProcess\ResponsivenessTimer.cpp"
 				>
 			</File>
@@ -907,6 +915,10 @@
 					</File>
 					<File
 						RelativePath="..\UIProcess\API\C\WKPage.h"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKPagePrivate.h"
 						>
 					</File>
 					<File

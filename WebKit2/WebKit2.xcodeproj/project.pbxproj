@@ -89,6 +89,9 @@
 		BC111B64112F638300337BAB /* WebPageProxyMessageKinds.h in Headers */ = {isa = PBXBuildFile; fileRef = BC111B61112F638300337BAB /* WebPageProxyMessageKinds.h */; };
 		BC111B65112F638300337BAB /* WebProcessMessageKinds.h in Headers */ = {isa = PBXBuildFile; fileRef = BC111B62112F638300337BAB /* WebProcessMessageKinds.h */; };
 		BC131BC911726C2800B69727 /* CoreIPCMessageKinds.h in Headers */ = {isa = PBXBuildFile; fileRef = BC131BC811726C2800B69727 /* CoreIPCMessageKinds.h */; };
+		BC177465118B9FF4007D9E9A /* WKPagePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BC177464118B9FF4007D9E9A /* WKPagePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC177468118BA086007D9E9A /* RenderTreeExternalRepresentationCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC177466118BA086007D9E9A /* RenderTreeExternalRepresentationCallback.cpp */; };
+		BC177469118BA086007D9E9A /* RenderTreeExternalRepresentationCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = BC177467118BA086007D9E9A /* RenderTreeExternalRepresentationCallback.h */; };
 		BC1A7C581136E19C00FB7167 /* WebProcessLauncher.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A7C571136E19C00FB7167 /* WebProcessLauncher.h */; };
 		BC1DD7B2114DC396005ADAF3 /* WebCoreTypeArgumentMarshalling.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1DD7B1114DC396005ADAF3 /* WebCoreTypeArgumentMarshalling.h */; };
 		BC20EBB0116EEB0800094A50 /* WKString.h in Headers */ = {isa = PBXBuildFile; fileRef = BC20EBAE116EEB0800094A50 /* WKString.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -288,6 +291,9 @@
 		BC111B61112F638300337BAB /* WebPageProxyMessageKinds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPageProxyMessageKinds.h; sourceTree = "<group>"; };
 		BC111B62112F638300337BAB /* WebProcessMessageKinds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessMessageKinds.h; sourceTree = "<group>"; };
 		BC131BC811726C2800B69727 /* CoreIPCMessageKinds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreIPCMessageKinds.h; sourceTree = "<group>"; };
+		BC177464118B9FF4007D9E9A /* WKPagePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPagePrivate.h; sourceTree = "<group>"; };
+		BC177466118BA086007D9E9A /* RenderTreeExternalRepresentationCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeExternalRepresentationCallback.cpp; sourceTree = "<group>"; };
+		BC177467118BA086007D9E9A /* RenderTreeExternalRepresentationCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeExternalRepresentationCallback.h; sourceTree = "<group>"; };
 		BC1A7C571136E19C00FB7167 /* WebProcessLauncher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessLauncher.h; sourceTree = "<group>"; };
 		BC1DD7B1114DC396005ADAF3 /* WebCoreTypeArgumentMarshalling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreTypeArgumentMarshalling.h; sourceTree = "<group>"; };
 		BC20EBAE116EEB0800094A50 /* WKString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKString.h; sourceTree = "<group>"; };
@@ -600,6 +606,8 @@
 				BC2652151182608100243E12 /* DrawingAreaProxyUpdateChunk.h */,
 				BC6EDAA5111271C600E7678B /* PageClient.h */,
 				BC597074116591D000551FCA /* ProcessModel.h */,
+				BC177466118BA086007D9E9A /* RenderTreeExternalRepresentationCallback.cpp */,
+				BC177467118BA086007D9E9A /* RenderTreeExternalRepresentationCallback.h */,
 				BC111B08112F5E3C00337BAB /* ResponsivenessTimer.cpp */,
 				1A30066C1110F4F70031937C /* ResponsivenessTimer.h */,
 				BCD590F31129F55B00EC8C23 /* ScriptReturnValueCallback.cpp */,
@@ -662,6 +670,7 @@
 				BCF69FA71176D1CB00471A52 /* WKNavigationData.h */,
 				BCD597D4112B56DC00EC8C23 /* WKPage.cpp */,
 				BCD597D5112B56DC00EC8C23 /* WKPage.h */,
+				BC177464118B9FF4007D9E9A /* WKPagePrivate.h */,
 				BCEE98CA1133174C006BCC24 /* WKPageNamespace.cpp */,
 				BCEE98CB1133174C006BCC24 /* WKPageNamespace.h */,
 				BCD597CF112B56AC00EC8C23 /* WKPreferences.cpp */,
@@ -912,6 +921,8 @@
 				BC5F7BB51182376C0052C02C /* DrawingAreaUpdateChunk.h in Headers */,
 				BC2652171182608100243E12 /* DrawingAreaProxy.h in Headers */,
 				BC2652191182608100243E12 /* DrawingAreaProxyUpdateChunk.h in Headers */,
+				BC177465118B9FF4007D9E9A /* WKPagePrivate.h in Headers */,
+				BC177469118BA086007D9E9A /* RenderTreeExternalRepresentationCallback.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1066,6 +1077,7 @@
 				BC2651F611825EF800243E12 /* DrawingAreaProxyUpdateChunkMac.mm in Sources */,
 				BC2652161182608100243E12 /* DrawingAreaProxy.cpp in Sources */,
 				BC2652181182608100243E12 /* DrawingAreaProxyUpdateChunk.cpp in Sources */,
+				BC177468118BA086007D9E9A /* RenderTreeExternalRepresentationCallback.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

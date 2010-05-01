@@ -108,6 +108,7 @@ private:
     void wheelEvent(WebCore::PlatformWheelEvent&);
     void keyEvent(const WebCore::PlatformKeyboardEvent&);
     void runJavaScriptInMainFrame(const WebCore::String&, uint64_t callbackID);
+    void getRenderTreeExternalRepresentation(uint64_t callbackID);
     void preferencesDidChange(const WebPreferencesStore&);
 
     void didReceivePolicyDecision(WebFrame*, uint64_t listenerID, WebCore::PolicyAction policyAction);

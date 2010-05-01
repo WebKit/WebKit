@@ -26,6 +26,7 @@
 #include "ScriptReturnValueCallback.h"
 
 #include "WKAPICast.h"
+#include <WebCore/PlatformString.h>
 
 namespace WebKit {
 
@@ -45,16 +46,25 @@ ScriptReturnValueCallback::ScriptReturnValueCallback(void* context, ScriptReturn
 
 ScriptReturnValueCallback::~ScriptReturnValueCallback()
 {
-    if (m_disposeCallback)
-        m_disposeCallback(m_context);
+    ASSERT(!m_callback);
 }
 
-void ScriptReturnValueCallback::performCallbackWithReturnValue(WebCore::StringImpl* returnValue)
+void ScriptReturnValueCallback::performCallbackWithReturnValue(const WebCore::String& returnValue)
 {
     ASSERT(m_callback);
 
-    m_callback(m_context, toRef(returnValue));
+    m_callback(m_context, toRef(returnValue.impl()));
     
+    m_callback = 0;
+    m_disposeCallback = 0;
+}
+
+void ScriptReturnValueCallback::invalidate()
+{
+    ASSERT(m_callback);
+
+    m_disposeCallback(m_context);
+
     m_callback = 0;
     m_disposeCallback = 0;
 }

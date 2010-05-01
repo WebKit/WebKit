@@ -33,8 +33,9 @@
 namespace WebPageMessage {
 
 enum Kind {
-    DidReceivePolicyDecision,
     Close,
+    DidReceivePolicyDecision,
+    GetRenderTreeExternalRepresentation,
     GoBack,
     GoForward,
     KeyEvent,

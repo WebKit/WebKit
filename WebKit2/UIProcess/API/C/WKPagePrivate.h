@@ -23,60 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPageProxyMessageKinds_h
-#define WebPageProxyMessageKinds_h
+#ifndef WKPagePrivate_h
+#define WKPagePrivate_h
 
-#include "MessageID.h"
+#include <WebKit2/WKBase.h>
+#include <WebKit2/WKPage.h>
 
-// Messages sent from the web process to the WebPageProxy.
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-namespace WebPageProxyMessage {
+typedef void (*WKPageRenderTreeExternalRepresentationFunction)(WKStringRef, void*);
+typedef void (*WKPageRenderTreeExternalRepresentationDisposeFunction)(void*);
+WK_EXPORT void WKPageRenderTreeExternalRepresentation_f(WKPageRef page, void *context, WKPageRenderTreeExternalRepresentationFunction function, WKPageRenderTreeExternalRepresentationDisposeFunction disposeFunction);
 
-enum Kind {
-    CreateNewPage,
-    ShowPage,
-    RunJavaScriptAlert,
-    
-    ClosePage,
-    DecidePolicyForMIMEType,
-    DecidePolicyForNavigationAction,
-    DecidePolicyForNewWindowAction,
-    DidChangeCanGoBack,
-    DidChangeCanGoForward,
-    DidChangeProgress,
-    DidCommitLoadForFrame,
-    DidCreateMainFrame,
-    DidCreateSubFrame,
-    DidFailLoadForFrame,
-    DidFailProvisionalLoadForFrame,
-    DidFinishLoadForFrame,
-    DidFinishProgress,
-    DidFirstLayoutForFrame,
-    DidFirstVisuallyNonEmptyLayoutForFrame,
-    DidGetRenderTreeExternalRepresentation,
-    DidNavigateWithNavigationData,
-    DidPerformClientRedirect,
-    DidPerformServerRedirect,
-    DidReceiveEvent,
-    DidReceiveServerRedirectForProvisionalLoadForFrame,
-    DidReceiveTitleForFrame,
-    DidRunJavaScriptInMainFrame,
-    DidSetFrame,
-    DidStartProgress,
-    DidStartProvisionalLoadForFrame,
-    DidUpdateHistoryTitle,
-    SetToolTip,
-    TakeFocus,
-};
+#if __BLOCKS__
+typedef void (^WKPageRenderTreeExternalRepresentationBlock)(WKStringRef);
+WK_EXPORT void WKPageRenderTreeExternalRepresentation(WKPageRef page, WKPageRenderTreeExternalRepresentationBlock block);
+#endif
 
+#ifdef __cplusplus
 }
+#endif
 
-namespace CoreIPC {
-
-template<> struct MessageKindTraits<WebPageProxyMessage::Kind> { 
-    static const MessageClass messageClass = MessageClassWebPageProxy;
-};
-
-}
-
-#endif // WebPageProxyMessageKinds_h
+#endif /* WKPagePrivate_h */

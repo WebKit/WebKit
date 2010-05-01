@@ -31,7 +31,7 @@
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
-    class StringImpl;
+    class String;
 }
 
 namespace WebKit {
@@ -49,7 +49,8 @@ public:
 
     uint64_t callbackID() const { return m_callbackID; }
 
-    void performCallbackWithReturnValue(WebCore::StringImpl*);
+    void performCallbackWithReturnValue(const WebCore::String&);
+    void invalidate();
 
 private:
     ScriptReturnValueCallback(void*, ScriptReturnValueCallbackFunction, ScriptReturnValueCallbackDisposeFunction);

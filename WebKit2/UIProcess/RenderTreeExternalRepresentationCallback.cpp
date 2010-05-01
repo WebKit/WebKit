@@ -23,60 +23,50 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPageProxyMessageKinds_h
-#define WebPageProxyMessageKinds_h
+#include "RenderTreeExternalRepresentationCallback.h"
 
-#include "MessageID.h"
+#include "WKAPICast.h"
+#include <WebCore/PlatformString.h>
 
-// Messages sent from the web process to the WebPageProxy.
+namespace WebKit {
 
-namespace WebPageProxyMessage {
-
-enum Kind {
-    CreateNewPage,
-    ShowPage,
-    RunJavaScriptAlert,
-    
-    ClosePage,
-    DecidePolicyForMIMEType,
-    DecidePolicyForNavigationAction,
-    DecidePolicyForNewWindowAction,
-    DidChangeCanGoBack,
-    DidChangeCanGoForward,
-    DidChangeProgress,
-    DidCommitLoadForFrame,
-    DidCreateMainFrame,
-    DidCreateSubFrame,
-    DidFailLoadForFrame,
-    DidFailProvisionalLoadForFrame,
-    DidFinishLoadForFrame,
-    DidFinishProgress,
-    DidFirstLayoutForFrame,
-    DidFirstVisuallyNonEmptyLayoutForFrame,
-    DidGetRenderTreeExternalRepresentation,
-    DidNavigateWithNavigationData,
-    DidPerformClientRedirect,
-    DidPerformServerRedirect,
-    DidReceiveEvent,
-    DidReceiveServerRedirectForProvisionalLoadForFrame,
-    DidReceiveTitleForFrame,
-    DidRunJavaScriptInMainFrame,
-    DidSetFrame,
-    DidStartProgress,
-    DidStartProvisionalLoadForFrame,
-    DidUpdateHistoryTitle,
-    SetToolTip,
-    TakeFocus,
-};
-
+static uint64_t generateCallbackID()
+{
+    static uint64_t uniqueCallbackID = 1;
+    return uniqueCallbackID++;
 }
 
-namespace CoreIPC {
-
-template<> struct MessageKindTraits<WebPageProxyMessage::Kind> { 
-    static const MessageClass messageClass = MessageClassWebPageProxy;
-};
-
+RenderTreeExternalRepresentationCallback::RenderTreeExternalRepresentationCallback(void* context, WKPageRenderTreeExternalRepresentationFunction callback, WKPageRenderTreeExternalRepresentationDisposeFunction disposeCallback)
+    : m_context(context)
+    , m_callback(callback)
+    , m_disposeCallback(disposeCallback)
+    , m_callbackID(generateCallbackID())
+{
 }
 
-#endif // WebPageProxyMessageKinds_h
+RenderTreeExternalRepresentationCallback::~RenderTreeExternalRepresentationCallback()
+{
+    ASSERT(!m_callback);
+}
+
+void RenderTreeExternalRepresentationCallback::performCallbackWithReturnValue(const WebCore::String& returnValue)
+{
+    ASSERT(m_callback);
+
+    m_callback(toRef(returnValue.impl()), m_context);
+
+    m_callback = 0;
+    m_disposeCallback = 0;
+}
+
+void RenderTreeExternalRepresentationCallback::invalidate()
+{
+    ASSERT(m_callback);
+
+    m_disposeCallback(m_context);
+
+    m_callback = 0;
+    m_disposeCallback = 0;
+}
+
+} // namespace WebKit

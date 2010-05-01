@@ -150,17 +150,30 @@ void WebPageProxy::close()
     if (!isValid())
         return;
 
-    Vector<RefPtr<WebFrameProxy> > frame;
-    copyValuesToVector(m_frameMap, frame);
-    for (size_t i = 0, size = frame.size(); i < size; ++i)
-        frame[i]->disconnect();
+    m_closed = true;
+
+    Vector<RefPtr<WebFrameProxy> > frames;
+    copyValuesToVector(m_frameMap, frames);
+    for (size_t i = 0, size = frames.size(); i < size; ++i)
+        frames[i]->disconnect();
     m_frameMap.clear();
     m_mainFrame = 0;
 
     m_pageTitle = String();
     m_toolTip = String();
 
-    // FIXME: Do something with pending m_scriptReturnValueCallbacks.
+    Vector<RefPtr<ScriptReturnValueCallback> > scriptReturnValueCallbacks;
+    copyValuesToVector(m_scriptReturnValueCallbacks, scriptReturnValueCallbacks);
+    for (size_t i = 0, size = scriptReturnValueCallbacks.size(); i < size; ++i)
+        scriptReturnValueCallbacks[i]->invalidate();
+    m_scriptReturnValueCallbacks.clear();
+
+    Vector<RefPtr<RenderTreeExternalRepresentationCallback> > renderTreeExternalRepresentationCallbacks;
+    copyValuesToVector(m_renderTreeExternalRepresentationCallbacks, renderTreeExternalRepresentationCallbacks);
+    for (size_t i = 0, size = renderTreeExternalRepresentationCallbacks.size(); i < size; ++i)
+        renderTreeExternalRepresentationCallbacks[i]->invalidate();
+    m_renderTreeExternalRepresentationCallbacks.clear();
+
     m_canGoForward = false;
     m_canGoBack = false;
 
@@ -172,8 +185,6 @@ void WebPageProxy::close()
 
     process()->connection()->send(WebPageMessage::Close, m_pageID, CoreIPC::In());
     process()->removeWebPage(m_pageID);
-
-    m_closed = true;
 }
 
 bool WebPageProxy::tryClose()
@@ -287,6 +298,14 @@ void WebPageProxy::runJavaScriptInMainFrame(const String& script, PassRefPtr<Scr
     uint64_t callbackID = callback->callbackID();
     m_scriptReturnValueCallbacks.set(callbackID, callback.get());
     process()->connection()->send(WebPageMessage::RunJavaScriptInMainFrame, m_pageID, CoreIPC::In(script, callbackID));
+}
+
+void WebPageProxy::getRenderTreeExternalRepresentation(PassRefPtr<RenderTreeExternalRepresentationCallback> prpCallback)
+{
+    RefPtr<RenderTreeExternalRepresentationCallback> callback = prpCallback;
+    uint64_t callbackID = callback->callbackID();
+    m_renderTreeExternalRepresentationCallbacks.set(callbackID, callback.get());
+    process()->connection()->send(WebPageMessage::GetRenderTreeExternalRepresentation, m_pageID, callbackID);
 }
 
 void WebPageProxy::preferencesDidChange()
@@ -473,6 +492,14 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
             if (!arguments.decode(CoreIPC::Out(resultString, callbackID)))
                 return;
             didRunJavaScriptInMainFrame(resultString, callbackID);
+            break;
+        }
+        case WebPageProxyMessage::DidGetRenderTreeExternalRepresentation: {
+            String resultString;
+            uint64_t callbackID;
+            if (!arguments.decode(CoreIPC::Out(resultString, callbackID)))
+                return;
+            didGetRenderTreeExternalRepresentation(resultString, callbackID);
             break;
         }
         case WebPageProxyMessage::SetToolTip: {
@@ -755,7 +782,18 @@ void WebPageProxy::didRunJavaScriptInMainFrame(const String& resultString, uint6
         return;
     }
 
-    callback->performCallbackWithReturnValue(resultString.impl());
+    callback->performCallbackWithReturnValue(resultString);
+}
+
+void WebPageProxy::didGetRenderTreeExternalRepresentation(const String& resultString, uint64_t callbackID)
+{
+    RefPtr<RenderTreeExternalRepresentationCallback> callback = m_renderTreeExternalRepresentationCallbacks.take(callbackID);
+    if (!callback) {
+        // FIXME: Log error or assert.
+        return;
+    }
+
+    callback->performCallbackWithReturnValue(resultString);
 }
 
 void WebPageProxy::processDidBecomeUnresponsive()
@@ -772,23 +810,35 @@ void WebPageProxy::processDidExit()
 {
     ASSERT(m_pageClient);
 
+    m_valid = false;
+
     if (m_mainFrame)
         m_urlAtProcessExit = m_mainFrame->url();
 
-    Vector<RefPtr<WebFrameProxy> > frame;
-    copyValuesToVector(m_frameMap, frame);
-    for (size_t i = 0, size = frame.size(); i < size; ++i)
-        frame[i]->disconnect();
+    Vector<RefPtr<WebFrameProxy> > frames;
+    copyValuesToVector(m_frameMap, frames);
+    for (size_t i = 0, size = frames.size(); i < size; ++i)
+        frames[i]->disconnect();
     m_frameMap.clear();
     m_mainFrame = 0;
 
     m_pageTitle = String();
     m_toolTip = String();
 
+    Vector<RefPtr<ScriptReturnValueCallback> > scriptReturnValueCallbacks;
+    copyValuesToVector(m_scriptReturnValueCallbacks, scriptReturnValueCallbacks);
+    for (size_t i = 0, size = scriptReturnValueCallbacks.size(); i < size; ++i)
+        scriptReturnValueCallbacks[i]->invalidate();
+    m_scriptReturnValueCallbacks.clear();
+
+    Vector<RefPtr<RenderTreeExternalRepresentationCallback> > renderTreeExternalRepresentationCallbacks;
+    copyValuesToVector(m_renderTreeExternalRepresentationCallbacks, renderTreeExternalRepresentationCallbacks);
+    for (size_t i = 0, size = renderTreeExternalRepresentationCallbacks.size(); i < size; ++i)
+        renderTreeExternalRepresentationCallbacks[i]->invalidate();
+    m_renderTreeExternalRepresentationCallbacks.clear();
+
     m_canGoForward = false;
     m_canGoBack = false;
-
-    m_valid = false;
 
     m_pageClient->processDidExit();
 }

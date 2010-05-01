@@ -24,6 +24,7 @@
  */
 
 #include "WKPage.h"
+#include "WKPagePrivate.h"
 
 #include "WKAPICast.h"
 #include "WebPageProxy.h"
@@ -128,6 +129,11 @@ void WKPageSetPageHistoryClient(WKPageRef pageRef, WKPageHistoryClient * wkClien
         toWK(pageRef)->initializeHistoryClient(wkClient);
 }
 
+void WKPageRunJavaScriptInMainFrame_f(WKPageRef pageRef, WKStringRef scriptRef, void* context, void (*returnValueCallback)(void*, WKStringRef), void (*disposeContextCallback)(void*))
+{
+    toWK(pageRef)->runJavaScriptInMainFrame(toWK(scriptRef), ScriptReturnValueCallback::create(context, returnValueCallback, disposeContextCallback));
+}
+
 #if __BLOCKS__
 static void callBlockAndRelease(void* context, WKStringRef resultValue)
 {
@@ -148,10 +154,30 @@ void WKPageRunJavaScriptInMainFrame(WKPageRef pageRef, WKStringRef scriptRef, vo
 }
 #endif
 
-void WKPageRunJavaScriptInMainFrame_f(WKPageRef pageRef, WKStringRef scriptRef, void* context, void (*returnValueCallback)(void*, WKStringRef), void (*disposeContextCallback)(void*))
+void WKPageRenderTreeExternalRepresentation_f(WKPageRef pageRef, void *context, WKPageRenderTreeExternalRepresentationFunction callback, WKPageRenderTreeExternalRepresentationDisposeFunction disposeFunction)
 {
-    toWK(pageRef)->runJavaScriptInMainFrame(toWK(scriptRef), ScriptReturnValueCallback::create(context, returnValueCallback, disposeContextCallback));
+    toWK(pageRef)->getRenderTreeExternalRepresentation(RenderTreeExternalRepresentationCallback::create(context, callback, disposeFunction));
 }
+
+#if __BLOCKS__
+static void callRenderTreeExternalRepresentationBlockAndDispose(WKStringRef resultValue, void* context)
+{
+    WKPageRenderTreeExternalRepresentationBlock block = (WKPageRenderTreeExternalRepresentationBlock)context;
+    block(resultValue);
+    Block_release(block);
+}
+
+static void disposeRenderTreeExternalRepresentationBlock(void* context)
+{
+    WKPageRenderTreeExternalRepresentationBlock block = (WKPageRenderTreeExternalRepresentationBlock)context;
+    Block_release(block);
+}
+
+void WKPageRenderTreeExternalRepresentation(WKPageRef pageRef, WKPageRenderTreeExternalRepresentationBlock block)
+{
+    WKPageRenderTreeExternalRepresentation_f(pageRef, Block_copy(block), callRenderTreeExternalRepresentationBlockAndDispose, disposeRenderTreeExternalRepresentationBlock);
+}
+#endif
 
 WKPageRef WKPageRetain(WKPageRef pageRef)
 {

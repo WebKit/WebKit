@@ -27,6 +27,7 @@
 #define WebPageProxy_h
 
 #include "DrawingAreaProxy.h"
+#include "RenderTreeExternalRepresentationCallback.h"
 #include "ScriptReturnValueCallback.h"
 #include "WebEvent.h"
 #include "WebFrameProxy.h"
@@ -115,6 +116,7 @@ public:
     void terminateProcess();
 
     void runJavaScriptInMainFrame(const WebCore::String&, PassRefPtr<ScriptReturnValueCallback>);
+    void getRenderTreeExternalRepresentation(PassRefPtr<RenderTreeExternalRepresentationCallback>);
 
     void receivedPolicyDecision(WebCore::PolicyAction, WebFrameProxy*, uint64_t listenerID);
 
@@ -176,6 +178,7 @@ private:
 
     void didReceiveEvent(WebEvent::Type);
     void didRunJavaScriptInMainFrame(const WebCore::String&, uint64_t);
+    void didGetRenderTreeExternalRepresentation(const WebCore::String&, uint64_t);
 
     OwnPtr<PageClient> m_pageClient;
     WebLoaderClient m_loaderClient;
@@ -191,7 +194,8 @@ private:
     WebCore::String m_pageTitle;
 
     HashMap<uint64_t, RefPtr<ScriptReturnValueCallback> > m_scriptReturnValueCallbacks;
-    
+    HashMap<uint64_t, RefPtr<RenderTreeExternalRepresentationCallback> > m_renderTreeExternalRepresentationCallbacks;
+
     bool m_canGoBack;
     bool m_canGoForward;
 

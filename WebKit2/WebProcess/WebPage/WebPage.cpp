@@ -50,6 +50,7 @@
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/Page.h>
 #include <WebCore/PlatformKeyboardEvent.h>
+#include <WebCore/RenderTreeAsText.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/Settings.h>
 #include <runtime/JSLock.h>
@@ -288,6 +289,12 @@ void WebPage::runJavaScriptInMainFrame(const WebCore::String& script, uint64_t c
     WebProcess::shared().connection()->send(WebPageProxyMessage::DidRunJavaScriptInMainFrame, m_pageID, CoreIPC::In(resultString, callbackID));
 }
 
+void WebPage::getRenderTreeExternalRepresentation(uint64_t callbackID)
+{
+    String resultString = externalRepresentation(m_mainFrame->coreFrame(), RenderAsTextBehaviorNormal);
+    WebProcess::shared().connection()->send(WebPageProxyMessage::DidGetRenderTreeExternalRepresentation, m_pageID, CoreIPC::In(resultString, callbackID));
+}
+
 void WebPage::preferencesDidChange(const WebPreferencesStore& store)
 {
     m_page->settings()->setJavaScriptEnabled(store.javaScriptEnabled);
@@ -411,6 +418,13 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
             if (!arguments.decode(CoreIPC::Out(script, callbackID)))
                 return;
             runJavaScriptInMainFrame(script, callbackID);
+            break;
+        }
+        case WebPageMessage::GetRenderTreeExternalRepresentation: {
+            uint64_t callbackID;
+            if (!arguments.decode(callbackID))
+                return;
+            getRenderTreeExternalRepresentation(callbackID);
             break;
         }
         case WebPageMessage::Close: {
