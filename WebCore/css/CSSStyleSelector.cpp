@@ -806,9 +806,9 @@ void CSSStyleSelector::sortMatchedRules(unsigned start, unsigned end)
         m_matchedRules[i] = rulesMergeBuffer[i - start];
 }
 
-inline void CSSStyleSelector::initElement(Element* e)
+inline void CSSStyleSelector::initElement(Element* e, bool helperCallForVisitedStyle = false)
 {
-    if (m_element != e)
+    if (!helperCallForVisitedStyle)
         m_haveCachedLinkState = false;
 
     m_element = e;
@@ -1134,7 +1134,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForDocument(Document* document)
 // If resolveForRootDefault is true, style based on user agent style sheet only. This is used in media queries, where
 // relative units are interpreted according to document root element style, styled only with UA stylesheet
 
-PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyle* defaultParent, bool allowSharing, bool resolveForRootDefault, bool matchVisitedRules)
+PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyle* defaultParent, bool allowSharing, bool resolveForRootDefault, bool helperCallForVisitedStyle)
 {
     // Once an element has a renderer, we don't try to destroy it, since otherwise the renderer
     // will vanish if a style recalc happens during loading.
@@ -1150,7 +1150,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
         return s_styleNotYetAvailable;
     }
 
-    initElement(e);
+    initElement(e, helperCallForVisitedStyle);
     if (allowSharing) {
         RenderStyle* sharedStyle = locateSharedStyle();
         if (sharedStyle)
@@ -1160,7 +1160,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
 
     // Compute our style allowing :visited to match first.
     RefPtr<RenderStyle> visitedStyle;
-    if (!matchVisitedRules && m_parentStyle && (m_parentStyle->insideLink() || e->isLink()) && e->document()->usesLinkRules()) {
+    if (!helperCallForVisitedStyle && m_parentStyle && (m_parentStyle->insideLink() || e->isLink()) && e->document()->usesLinkRules()) {
         // Fetch our parent style.
         RenderStyle* parentStyle = m_parentStyle;
         if (!e->isLink()) {
@@ -1174,7 +1174,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
         initForStyleResolve(e, defaultParent);
     }
 
-    m_checker.m_matchVisitedPseudoClass = matchVisitedRules;
+    m_checker.m_matchVisitedPseudoClass = helperCallForVisitedStyle;
 
     m_style = RenderStyle::create();
 
@@ -1300,7 +1300,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
     }
 
     // Reset the value back before applying properties, so that -webkit-link knows what color to use.
-    m_checker.m_matchVisitedPseudoClass = matchVisitedRules;
+    m_checker.m_matchVisitedPseudoClass = helperCallForVisitedStyle;
     
     // Now we have all of the matched rules in the appropriate order.  Walk the rules and apply
     // high-priority properties first, i.e., those properties that other properties depend on.
@@ -1447,7 +1447,7 @@ void CSSStyleSelector::keyframeStylesForAnimation(Element* e, const RenderStyle*
         list.clear();
 }
 
-PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo, Element* e, RenderStyle* parentStyle, bool matchVisitedLinks)
+PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo, Element* e, RenderStyle* parentStyle, bool helperCallForVisitedStyle)
 {
     if (!e)
         return 0;
@@ -1455,7 +1455,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo,
     // Compute our :visited style first, so that we know whether or not we'll need to create a normal style just to hang it
     // off of.
     RefPtr<RenderStyle> visitedStyle;
-    if (!matchVisitedLinks && parentStyle && parentStyle->insideLink()) {
+    if (!helperCallForVisitedStyle && parentStyle && parentStyle->insideLink()) {
         // Fetch our parent style with :visited in effect.
         RenderStyle* parentVisitedStyle = parentStyle->getCachedPseudoStyle(VISITED_LINK);
         visitedStyle = pseudoStyleForElement(pseudo, e, parentVisitedStyle ? parentVisitedStyle : parentStyle, true);
@@ -1463,11 +1463,11 @@ PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo,
             visitedStyle->setStyleType(VISITED_LINK);
     }
 
-    initElement(e);
+    initElement(e, helperCallForVisitedStyle);
     initForStyleResolve(e, parentStyle, pseudo);
     m_style = parentStyle;
     
-    m_checker.m_matchVisitedPseudoClass = matchVisitedLinks;
+    m_checker.m_matchVisitedPseudoClass = helperCallForVisitedStyle;
 
     // Since we don't use pseudo-elements in any of our quirk/print user agent rules, don't waste time walking
     // those rules.
@@ -1493,7 +1493,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo,
     m_lineHeightValue = 0;
     
     // Reset the value back before applying properties, so that -webkit-link knows what color to use.
-    m_checker.m_matchVisitedPseudoClass = matchVisitedLinks;
+    m_checker.m_matchVisitedPseudoClass = helperCallForVisitedStyle;
 
     // High-priority properties.
     applyDeclarations(true, false, 0, m_matchedDecls.size() - 1);

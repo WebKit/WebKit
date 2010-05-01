@@ -1,3 +1,27 @@
+2010-05-01  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        REGRESSION (r58273): Visited links do not change color immediately when Cmd-clicked
+        https://bugs.webkit.org/show_bug.cgi?id=38422
+        <rdar://problem/7921778>
+
+        Tests:
+            manual-tests/visited-link-new-window.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::initElement): Only cache the visited link state
+        when invoked as part of a helper call to styleForElement or pseudoStyleForElement,
+        to avoid caching the visited link state beyond the scope of a single style lookup.
+        (WebCore::CSSStyleSelector::styleForElement): Adjust for above change.
+        (WebCore::CSSStyleSelector::pseudoStyleForElement): Adjust for above change.
+        * css/CSSStyleSelector.h:
+        (WebCore::CSSStyleSelector::styleForElement): Change so "visited link helper mode"
+        can't accidentally be called from outside CSSStyleSelector itself.
+        (WebCore::CSSStyleSelector::pseudoStyleForElement): ditto
+        * manual-tests/visited-link-new-window.html: Added. I could not figure out any way
+        to make an automated test that supports visited link coloring.
+
 2010-05-01  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Darin Adler.

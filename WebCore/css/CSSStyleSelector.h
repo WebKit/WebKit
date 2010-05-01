@@ -87,10 +87,10 @@ public:
         ~CSSStyleSelector();
 
         void initForStyleResolve(Element*, RenderStyle* parentStyle = 0, PseudoId = NOPSEUDO);
-        PassRefPtr<RenderStyle> styleForElement(Element*, RenderStyle* parentStyle = 0, bool allowSharing = true, bool resolveForRootDefault = false, bool matchVisitedLinks = false);
+        PassRefPtr<RenderStyle> styleForElement(Element* e, RenderStyle* parentStyle = 0, bool allowSharing = true, bool resolveForRootDefault = false) { return styleForElement(e, parentStyle, allowSharing, resolveForRootDefault, false); }
         void keyframeStylesForAnimation(Element*, const RenderStyle*, KeyframeList& list);
 
-        PassRefPtr<RenderStyle> pseudoStyleForElement(PseudoId, Element*, RenderStyle* parentStyle = 0, bool matchVisitedLinks = false);
+        PassRefPtr<RenderStyle> pseudoStyleForElement(PseudoId pseudo, Element* e, RenderStyle* parentStyle = 0) { return pseudoStyleForElement(pseudo, e, parentStyle, false); }
 
         static PassRefPtr<RenderStyle> styleForDocument(Document*);
 
@@ -101,7 +101,9 @@ public:
 #endif
 
     private:
-        void initElement(Element*);
+        PassRefPtr<RenderStyle> styleForElement(Element*, RenderStyle* parentStyle, bool allowSharing, bool resolveForRootDefault, bool helperCallForVisitedStyle);
+        PassRefPtr<RenderStyle> pseudoStyleForElement(PseudoId, Element*, RenderStyle*, bool helperCallForVisitedStyle);
+        void initElement(Element*, bool);
         RenderStyle* locateSharedStyle();
         Node* locateCousinList(Element* parent, unsigned depth = 1);
         bool canShareStyleWithElement(Node*);
