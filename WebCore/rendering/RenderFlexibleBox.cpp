@@ -1059,7 +1059,7 @@ int RenderFlexibleBox::allowedChildFlex(RenderBox* child, bool expanding, unsign
     } else {
         if (child->style()->minHeight().isFixed()) {
             int minH = child->style()->minHeight().value();
-            int h = child->overrideHeight() - (child->borderLeft() + child->borderRight() + child->paddingLeft() + child->paddingRight());
+            int h = child->overrideHeight() - child->borderAndPaddingHeight();
             int allowedShrinkage = min(0, minH - h);
             return allowedShrinkage;
         }
