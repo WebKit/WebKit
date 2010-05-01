@@ -71,9 +71,6 @@ WEBKIT_API void
 webkit_dom_test_obj_method_with_exception (WebKitDOMTestObj *self, GError **error);
 
 
-/* TODO: custom function webkit_dom_test_obj_custom_args_and_exception */
-
-
 /* TODO: event function webkit_dom_test_obj_add_event_listener */
 
 
