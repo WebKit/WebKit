@@ -97,6 +97,40 @@ sub exitStatus($)
     return WEXITSTATUS($returnvalue);
 }
 
+# Note, this method will not error if the file corresponding to the path does not exist.
+sub scmToggleExecutableBit
+{
+    my ($path, $executableBitDelta) = @_;
+    return if ! -e $path;
+    if ($executableBitDelta == 1) {
+        scmAddExecutableBit($path);
+    } elsif ($executableBitDelta == -1) {
+        scmRemoveExecutableBit($path);
+    }
+}
+
+sub scmAddExecutableBit($)
+{
+    my ($path) = @_;
+
+    if (isSVN()) {
+        system("svn", "propset", "svn:executable", "on", $path) == 0 or die "Failed to run 'svn propset svn:executable on $path'.";
+    } elsif (isGit()) {
+        chmod(0755, $path);
+    }
+}
+
+sub scmRemoveExecutableBit($)
+{
+    my ($path) = @_;
+
+    if (isSVN()) {
+        system("svn", "propdel", "svn:executable", $path) == 0 or die "Failed to run 'svn propdel svn:executable $path'.";
+    } elsif (isGit()) {
+        chmod(0664, $path);
+    }
+}
+
 sub isGitDirectory($)
 {
     my ($dir) = @_;

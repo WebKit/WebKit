@@ -1,3 +1,20 @@
+2010-05-01  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Chris Jerdonek.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38423
+
+        Adds infrastructure to change the file mode of a file using
+        the appropriate SCM-specific routines.
+
+        No functionality was changed, so no new tests.
+
+        * Scripts/VCSUtils.pm: Added subroutines scmToggleExecutableBit,
+        scmAddExecutableBit, and scmRemoveExecutableBit.
+        * Scripts/svn-apply: Check for the hash key executableBitDelta
+        and toggle the executable bit.
+        * Scripts/svn-unapply: Ditto.
+
 2010-04-30  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

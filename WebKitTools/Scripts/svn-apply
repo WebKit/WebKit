@@ -359,6 +359,8 @@ sub patch($)
             system("svn", "stat", "$fullPath.orig") if isSVN() && -e "$fullPath.orig";
         }
     }
+
+    scmToggleExecutableBit($fullPath, $diffHashRef->{executableBitDelta}) if defined($diffHashRef->{executableBitDelta});
 }
 
 sub removeDirectoriesIfNeeded()

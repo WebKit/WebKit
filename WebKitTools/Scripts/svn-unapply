@@ -208,6 +208,8 @@ sub patch($)
             system "svn", "revert", $fullPath;
         }
     }
+
+    scmToggleExecutableBit($fullPath, -1 * $diffHashRef->{executableBitDelta}) if defined($diffHashRef->{executableBitDelta});
 }
 
 sub revertDirectories()
