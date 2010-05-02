@@ -1,5 +1,11 @@
 2010-05-02  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed: Touch inspector controller to kick windows tests.
+
+        * inspector/InspectorController.cpp:
+
+2010-05-02  Pavel Feldman  <pfeldman@chromium.org>
+
         Reviewed by Timothy Hatcher.
 
         Web Inspector: IMG nodes are being added to the DOM tree late, sometimes hiding the revealed element.
