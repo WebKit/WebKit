@@ -1,3 +1,13 @@
+2010-05-02  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Old Style trimWhitespace() should be trim()
+        https://bugs.webkit.org/show_bug.cgi?id=38441
+
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._evalSelectionInCallFrame):
+
 2010-05-02  Tasuku Suzuki  <tasuku.suzuki@nokia.com>
 
         Reviewed by Simon Hausmann.

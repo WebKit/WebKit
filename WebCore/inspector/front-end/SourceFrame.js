@@ -684,7 +684,7 @@ WebInspector.SourceFrame.prototype = {
         if (!selection.rangeCount)
             return;
 
-        var expression = selection.getRangeAt(0).toString().trimWhitespace();
+        var expression = selection.getRangeAt(0).toString().trim();
         WebInspector.panels.scripts.evaluateInSelectedCallFrame(expression, false, "console", function(result, exception) {
             WebInspector.showConsole();
             var commandMessage = new WebInspector.ConsoleCommand(expression);
