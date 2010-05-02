@@ -1,3 +1,15 @@
+2010-05-02  Jarkko Sakkinen  <jarkko.j.sakkinen@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Build error in GraphicsContext3DQt.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=38382
+
+        Removed duplicate implementation of isGLES2Compliant from
+        GraphicsContext3DQt.cpp. Removed deprecated API stuff for
+        texImage2D/texSubImage2D.
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+
 2010-05-02  Garret Kelly  <gdk@chromium.org>
 
         Reviewed by David Levin.

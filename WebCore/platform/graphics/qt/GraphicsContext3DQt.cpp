@@ -572,11 +572,6 @@ void GraphicsContext3D::reshape(int width, int height)
     glFlush();
 }
 
-bool GraphicsContext3D::isGLES2Compliant() const
-{
-    return m_internal->m_glWidget->paintEngine()->type() == QPaintEngine::OpenGL2;
-}
-
 void GraphicsContext3D::activeTexture(unsigned long texture)
 {
     m_internal->m_glWidget->makeCurrent();
@@ -1485,49 +1480,10 @@ int GraphicsContext3D::texImage2D(unsigned target, unsigned level, unsigned inte
     return 0;
 }
 
-int GraphicsContext3D::texImage2D(unsigned target, unsigned level, Image* image, bool flipY, bool premultiplyAlpha)
-{
-    ASSERT(image);
-    
-    m_internal->m_glWidget->makeCurrent();
-
-    Vector<uint8_t> imageData;
-    GLuint format;
-    GLuint internalFormat;
-
-    if (!extractImageData(image, flipY, premultiplyAlpha, imageData, &format, &internalFormat)) {
-        LOG_ERROR("GraphicsContext3D::texImage2D: could not extract Image data");
-        return -1;
-    }
-
-    glTexImage2D(target, level, internalFormat, image->width(), image->height(), 
-                 /* border */ 0, format, GraphicsContext3D::UNSIGNED_BYTE, imageData.data());
-
-    return 0;
-}
-    
+   
 int GraphicsContext3D::texSubImage2D(unsigned target, unsigned level, unsigned xoff, unsigned yoff, unsigned width, unsigned height, unsigned format, unsigned type, void* pixels)
 {
     glTexSubImage2D(target, level, xoff, yoff, width, height, format, type, pixels);
-    return 0;
-}
-
-int GraphicsContext3D::texSubImage2D(unsigned target, unsigned level, unsigned xoff, unsigned yoff, Image* image, bool flipY, bool premultiplyAlpha)
-{
-    ASSERT(image);
-
-    Vector<uint8_t> imageData;
-    GLuint format;
-    GLuint internalFormat;
-
-    if (!extractImageData(image, flipY, premultiplyAlpha, imageData, &format, &internalFormat)) {
-        LOG_ERROR("GraphicsContext3D::texSubImage2D: could not extract Image data");
-        return -1;
-    }
-
-    glTexSubImage2D(target, level, xoff, yoff, image->width(), image->height(), 
-                    format, GraphicsContext3D::UNSIGNED_BYTE, imageData.data());
-
     return 0;
 }
 
