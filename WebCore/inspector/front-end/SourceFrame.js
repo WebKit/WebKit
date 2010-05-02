@@ -39,7 +39,6 @@ WebInspector.SourceFrame = function(parentElement, addBreakpointDelegate, remove
     this._rowMessages = {};
     this._messageBubbles = {};
     this.breakpoints = [];
-    this._shortcuts = {};
 
     this._loaded = false;
 
@@ -172,7 +171,6 @@ WebInspector.SourceFrame.prototype = {
 
         this._textViewer = new WebInspector.TextViewer(this._textModel, WebInspector.platform, this._url);
         var element = this._textViewer.element;
-        element.addEventListener("keydown", this._keyDown.bind(this), true);
         element.addEventListener("contextmenu", this._contextMenu.bind(this), true);
         element.addEventListener("mousedown", this._mouseDown.bind(this), true);
         element.addEventListener("mousemove", this._mouseMove.bind(this), true);
@@ -675,17 +673,6 @@ WebInspector.SourceFrame.prototype = {
         this._conditionEditorElement = editorElement;
 
         return conditionElement;
-    },
-
-    _keyDown: function(event)
-    {
-        var shortcut = WebInspector.KeyboardShortcut.makeKeyFromEvent(event);
-        var handler = this._shortcuts[shortcut];
-        if (handler) {
-            handler(event);
-            event.preventDefault();
-        } else
-            WebInspector.documentKeyDown(event);
     },
 
     _evalSelectionInCallFrame: function(event)
