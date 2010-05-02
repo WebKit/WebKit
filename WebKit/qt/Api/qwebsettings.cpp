@@ -48,9 +48,7 @@
 #include <QUrl>
 #include <QFileInfo>
 
-#if ENABLE(QT_BEARER)
 #include "NetworkStateNotifier.h"
-#endif
 
 void QWEBKIT_EXPORT qt_networkAccessAllowed(bool isAllowed)
 {

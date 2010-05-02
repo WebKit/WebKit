@@ -44,6 +44,15 @@ typedef const struct __SCDynamicStore * SCDynamicStoreRef;
 
 #include <windows.h>
 
+#elif PLATFORM(QT)
+
+#include <QtCore/qglobal.h>
+
+#ifdef QT_NO_BEARERMANAGEMENT
+#undef ENABLE_QT_BEARER
+#define ENABLE_QT_BEARER 0
+#endif
+
 #endif
 
 namespace WebCore {
