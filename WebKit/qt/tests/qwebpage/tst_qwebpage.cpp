@@ -24,6 +24,7 @@
 #include <QDir>
 #include <QGraphicsWidget>
 #include <QLineEdit>
+#include <QLocale>
 #include <QMenu>
 #include <QPushButton>
 #include <QtTest/QtTest>
@@ -107,6 +108,8 @@ private slots:
     void errorPageExtension();
     void errorPageExtensionInIFrames();
     void errorPageExtensionInFrameset();
+    void userAgentApplicationName();
+    void userAgentLocaleChange();
 
     void wrt_viewModes();
 
@@ -1763,6 +1766,38 @@ void tst_QWebPage::errorPageExtensionInFrameset()
     QCOMPARE(page->mainFrame()->childFrames()[1]->toPlainText(), QString("data:text/html,error"));
 
     m_view->setPage(0);
+}
+
+class FriendlyWebPage : public QWebPage
+{
+public:
+    friend class tst_QWebPage;
+};
+
+void tst_QWebPage::userAgentApplicationName()
+{
+    const QString oldApplicationName = QCoreApplication::applicationName();
+    FriendlyWebPage page;
+
+    const QString applicationNameMarker = QString::fromUtf8("StrangeName\342\210\236");
+    QCoreApplication::setApplicationName(applicationNameMarker);
+    QVERIFY(page.userAgentForUrl(QUrl()).contains(applicationNameMarker));
+
+    QCoreApplication::setApplicationName(oldApplicationName);
+}
+
+void tst_QWebPage::userAgentLocaleChange()
+{
+    FriendlyWebPage page;
+    m_view->setPage(&page);
+
+    const QString markerString = QString::fromLatin1(" nn-NO)");
+
+    if (page.userAgentForUrl(QUrl()).contains(markerString))
+        QSKIP("marker string already present", SkipSingle);
+
+    m_view->setLocale(QLocale(QString::fromLatin1("nn_NO")));
+    QVERIFY(page.userAgentForUrl(QUrl()).contains(markerString));
 }
 
 void tst_QWebPage::crashTests_LazyInitializationOfMainFrame()

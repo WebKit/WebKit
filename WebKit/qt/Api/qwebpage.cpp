@@ -3054,233 +3054,255 @@ QWebPluginFactory *QWebPage::pluginFactory() const
     \o %AppVersion% expands to QCoreApplication::applicationName()/QCoreApplication::applicationVersion() if they're set; otherwise defaulting to Qt and the current Qt version.
     \endlist
 */
-QString QWebPage::userAgentForUrl(const QUrl& url) const
+QString QWebPage::userAgentForUrl(const QUrl&) const
 {
-    Q_UNUSED(url)
-    QString ua = QLatin1String("Mozilla/5.0 ("
+    // splitting the string in three and user QStringBuilder is better than using QString::arg()
+    static QString firstPart;
+    static QString secondPart;
+    static QString thirdPart;
+
+    if (firstPart.isNull() || secondPart.isNull() || thirdPart.isNull()) {
+        QString firstPartTemp;
+        firstPartTemp.reserve(150);
+        firstPartTemp += QString::fromLatin1("Mozilla/5.0 ("
 
     // Platform
 #ifdef Q_WS_MAC
-    "Macintosh"
+        "Macintosh"
 #elif defined Q_WS_QWS
-    "QtEmbedded"
+        "QtEmbedded"
 #elif defined Q_WS_WIN
-    "Windows"
+        "Windows"
 #elif defined Q_WS_X11
-    "X11"
+        "X11"
 #elif defined Q_OS_SYMBIAN
-    "SymbianOS"
+        "SymbianOS"
 #else
-    "Unknown"
+        "Unknown"
 #endif
-    // Placeholder for Platform Version
-    "%1; "
+    );
 
-    // Placeholder for security strength (N or U)
-    "%2; "
+        firstPartTemp += QString::fromLatin1("; ");
 
-    // Subplatform"
+        // SSL support
+#if !defined(QT_NO_OPENSSL)
+        // we could check QSslSocket::supportsSsl() here, but this makes
+        // OpenSSL, certificates etc being loaded in all cases were QWebPage
+        // is used. This loading is not needed for non-https.
+        firstPartTemp += QString::fromLatin1("U; ");
+        // this may lead to a false positive: We indicate SSL since it is
+        // compiled in even though supportsSsl() might return false
+#else
+        firstPartTemp += QString::fromLatin1("N; ");
+#endif
+
+        // Operating system
 #ifdef Q_OS_AIX
-    "AIX"
+        firstPartTemp += QString::fromLatin1("AIX");
 #elif defined Q_OS_WIN32
-    "%3"
+
+        switch (QSysInfo::WindowsVersion) {
+        case QSysInfo::WV_32s:
+            firstPartTemp += QString::fromLatin1("Windows 3.1");
+            break;
+        case QSysInfo::WV_95:
+            firstPartTemp += QString::fromLatin1("Windows 95");
+            break;
+        case QSysInfo::WV_98:
+            firstPartTemp += QString::fromLatin1("Windows 98");
+            break;
+        case QSysInfo::WV_Me:
+            firstPartTemp += QString::fromLatin1("Windows 98; Win 9x 4.90");
+            break;
+        case QSysInfo::WV_NT:
+            firstPartTemp += QString::fromLatin1("WinNT4.0");
+            break;
+        case QSysInfo::WV_2000:
+            firstPartTemp += QString::fromLatin1("Windows NT 5.0");
+            break;
+        case QSysInfo::WV_XP:
+            firstPartTemp += QString::fromLatin1("Windows NT 5.1");
+            break;
+        case QSysInfo::WV_2003:
+            firstPartTemp += QString::fromLatin1("Windows NT 5.2");
+            break;
+        case QSysInfo::WV_VISTA:
+            firstPartTemp += QString::fromLatin1("Windows NT 6.0");
+            break;
+         case QSysInfo::WV_WINDOWS7:
+            firstPartTemp += QString::fromLatin1("Windows NT 6.1");
+            break;
+         case QSysInfo::WV_CE:
+            firstPartTemp += QString::fromLatin1("Windows CE");
+            break;
+         case QSysInfo::WV_CENET:
+            firstPartTemp += QString::fromLatin1("Windows CE .NET");
+            break;
+         case QSysInfo::WV_CE_5:
+            firstPartTemp += QString::fromLatin1("Windows CE 5.x");
+            break;
+         case QSysInfo::WV_CE_6:
+            firstPartTemp += QString::fromLatin1("Windows CE 6.x");
+            break;
+        }
+
 #elif defined Q_OS_DARWIN
 #ifdef __i386__ || __x86_64__
-    "Intel Mac OS X"
+        firstPartTemp += QString::fromLatin1("Intel Mac OS X");
 #else
-    "PPC Mac OS X"
+        firstPartTemp += QString::fromLatin1("PPC Mac OS X");
 #endif
 
 #elif defined Q_OS_BSDI
-    "BSD"
+        firstPartTemp += QString::fromLatin1("BSD");
 #elif defined Q_OS_BSD4
-    "BSD Four"
+        firstPartTemp += QString::fromLatin1("BSD Four");
 #elif defined Q_OS_CYGWIN
-    "Cygwin"
+        firstPartTemp += QString::fromLatin1("Cygwin");
 #elif defined Q_OS_DGUX
-    "DG/UX"
+        firstPartTemp += QString::fromLatin1("DG/UX");
 #elif defined Q_OS_DYNIX
-    "DYNIX/ptx"
+        firstPartTemp += QString::fromLatin1("DYNIX/ptx");
 #elif defined Q_OS_FREEBSD
-    "FreeBSD"
+        firstPartTemp += QString::fromLatin1("FreeBSD");
 #elif defined Q_OS_HPUX
-    "HP-UX"
+        firstPartTemp += QString::fromLatin1("HP-UX");
 #elif defined Q_OS_HURD
-    "GNU Hurd"
+        firstPartTemp += QString::fromLatin1("GNU Hurd");
 #elif defined Q_OS_IRIX
-    "SGI Irix"
+        firstPartTemp += QString::fromLatin1("SGI Irix");
 #elif defined Q_OS_LINUX
-    "Linux"
-#elif defined Q_OS_LYNX
-    "LynxOS"
-#elif defined Q_OS_NETBSD
-    "NetBSD"
-#elif defined Q_OS_OS2
-    "OS/2"
-#elif defined Q_OS_OPENBSD
-    "OpenBSD"
-#elif defined Q_OS_OS2EMX
-    "OS/2"
-#elif defined Q_OS_OSF
-    "HP Tru64 UNIX"
-#elif defined Q_OS_QNX6
-    "QNX RTP Six"
-#elif defined Q_OS_QNX
-    "QNX"
-#elif defined Q_OS_RELIANT
-    "Reliant UNIX"
-#elif defined Q_OS_SCO
-    "SCO OpenServer"
-#elif defined Q_OS_SOLARIS
-    "Sun Solaris"
-#elif defined Q_OS_ULTRIX
-    "DEC Ultrix"
-#elif defined Q_WS_S60
-    "Series60"
-#elif defined Q_OS_UNIX
-    "UNIX BSD/SYSV system"
-#elif defined Q_OS_UNIXWARE
-    "UnixWare Seven, Open UNIX Eight"
+
+#if defined(__x86_64__)
+        firstPartTemp += QString::fromLatin1("Linux x86_64");
+#elif defined(__i386__)
+        firstPartTemp += QString::fromLatin1("Linux i686");
 #else
-    "Unknown"
+        firstPartTemp += QString::fromLatin1("Linux");
 #endif
-    // Placeholder for SubPlatform Version
-    "%4; ");
 
-    // Platform Version
-    QString osVer;
-#ifdef Q_OS_SYMBIAN
-    QSysInfo::SymbianVersion symbianVersion = QSysInfo::symbianVersion();
-    switch (symbianVersion) {
-    case QSysInfo::SV_9_2:
-        osVer = "/9.2";
-        break;
-    case QSysInfo::SV_9_3:
-        osVer = "/9.3";
-        break;
-    case QSysInfo::SV_9_4:
-        osVer = "/9.4";
-        break;
-    default: 
-        osVer = "Unknown";
+#elif defined Q_OS_LYNX
+        firstPartTemp += QString::fromLatin1("LynxOS");
+#elif defined Q_OS_NETBSD
+        firstPartTemp += QString::fromLatin1("NetBSD");
+#elif defined Q_OS_OS2
+        firstPartTemp += QString::fromLatin1("OS/2");
+#elif defined Q_OS_OPENBSD
+        firstPartTemp += QString::fromLatin1("OpenBSD");
+#elif defined Q_OS_OS2EMX
+        firstPartTemp += QString::fromLatin1("OS/2");
+#elif defined Q_OS_OSF
+        firstPartTemp += QString::fromLatin1("HP Tru64 UNIX");
+#elif defined Q_OS_QNX6
+        firstPartTemp += QString::fromLatin1("QNX RTP Six");
+#elif defined Q_OS_QNX
+        firstPartTemp += QString::fromLatin1("QNX");
+#elif defined Q_OS_RELIANT
+        firstPartTemp += QString::fromLatin1("Reliant UNIX");
+#elif defined Q_OS_SCO
+        firstPartTemp += QString::fromLatin1("SCO OpenServer");
+#elif defined Q_OS_SOLARIS
+        firstPartTemp += QString::fromLatin1("Sun Solaris");
+#elif defined Q_OS_ULTRIX
+        firstPartTemp += QString::fromLatin1("DEC Ultrix");
+#elif defined Q_OS_SYMBIAN
+        firstPartTemp += QString::fromLatin1("SymbianOS");
+        QSysInfo::SymbianVersion symbianVersion = QSysInfo::symbianVersion();
+        switch (symbianVersion) {
+        case QSysInfo::SV_9_2:
+            firstPartTemp += QString::fromLatin1("/9.2");
+            break;
+        case QSysInfo::SV_9_3:
+            firstPartTemp += QString::fromLatin1("/9.3");
+            break;
+        case QSysInfo::SV_9_4:
+            firstPartTemp += QString::fromLatin1("/9.4");
+            break;
+        default:
+            firstPartTemp += QString::fromLatin1("/Unknown");
+        }
+
+#if defined Q_WS_S60
+        firstPartTemp += QLatin1Char(' ');
+        firstPartTemp += QString::fromLatin1("Series60");
+        QSysInfo::S60Version s60Version = QSysInfo::s60Version();
+        switch (s60Version) {
+        case QSysInfo::SV_S60_3_1:
+            firstPartTemp += QString::fromLatin1("/3.1");
+            break;
+        case QSysInfo::SV_S60_3_2:
+            firstPartTemp += QString::fromLatin1("/3.2");
+            break;
+        case QSysInfo::SV_S60_5_0:
+            firstPartTemp += QString::fromLatin1("/5.0");
+            break;
+        default:
+            firstPartTemp += QString::fromLatin1("/Unknown");
+        }
+#endif
+
+#elif defined Q_OS_UNIX
+        firstPartTemp += QString::fromLatin1("UNIX BSD/SYSV system");
+#elif defined Q_OS_UNIXWARE
+        firstPartTemp += QString::fromLatin1("UnixWare Seven, Open UNIX Eight");
+#else
+        firstPartTemp += QString::fromLatin1("Unknown");
+#endif
+
+        // language is the split
+        firstPartTemp += QString::fromLatin1("; ");
+        firstPartTemp.squeeze();
+        firstPart = firstPartTemp;
+
+        QString secondPartTemp;
+        secondPartTemp.reserve(150);
+        secondPartTemp += QString::fromLatin1(") ");
+
+        // webkit/qt version
+        secondPartTemp += QString::fromLatin1("AppleWebKit/");
+        secondPartTemp += qWebKitVersion();
+        secondPartTemp += QString::fromLatin1(" (KHTML, like Gecko) ");
+
+
+        // Application name split the third part
+        secondPartTemp.squeeze();
+        secondPart = secondPartTemp;
+
+        QString thirdPartTemp;
+        thirdPartTemp.reserve(150);
+#if defined(Q_WS_S60) || defined(Q_WS_MAEMO_5)
+        thirdPartTemp + QLatin1String(" Mobile Safari/");
+#else
+        thirdPartTemp += QLatin1String(" Safari/");
+#endif
+        thirdPartTemp += qWebKitVersion();
+        thirdPartTemp.squeeze();
+        thirdPart = thirdPartTemp;
+        Q_ASSERT(!firstPart.isNull());
+        Q_ASSERT(!secondPart.isNull());
+        Q_ASSERT(!thirdPart.isNull());
     }
-#endif
-    ua = ua.arg(osVer);
-
-    QChar securityStrength(QLatin1Char('N'));
-#if !defined(QT_NO_OPENSSL)
-    // we could check QSslSocket::supportsSsl() here, but this makes
-    // OpenSSL, certificates etc being loaded in all cases were QWebPage
-    // is used. This loading is not needed for non-https.
-    securityStrength = QLatin1Char('U');
-    // this may lead to a false positive: We indicate SSL since it is
-    // compiled in even though supportsSsl() might return false
-#endif
-    ua = ua.arg(securityStrength);
-
-#if defined Q_OS_WIN32
-    QString ver;
-    switch (QSysInfo::WindowsVersion) {
-        case QSysInfo::WV_32s:
-            ver = "Windows 3.1";
-            break;
-        case QSysInfo::WV_95:
-            ver = "Windows 95";
-            break;
-        case QSysInfo::WV_98:
-            ver = "Windows 98";
-            break;
-        case QSysInfo::WV_Me:
-            ver = "Windows 98; Win 9x 4.90";
-            break;
-        case QSysInfo::WV_NT:
-            ver = "WinNT4.0";
-            break;
-        case QSysInfo::WV_2000:
-            ver = "Windows NT 5.0";
-            break;
-        case QSysInfo::WV_XP:
-            ver = "Windows NT 5.1";
-            break;
-        case QSysInfo::WV_2003:
-            ver = "Windows NT 5.2";
-            break;
-        case QSysInfo::WV_VISTA:
-            ver = "Windows NT 6.0";
-            break;
-#if QT_VERSION > 0x040500
-        case QSysInfo::WV_WINDOWS7:
-            ver = "Windows NT 6.1";
-            break;
-#endif
-        case QSysInfo::WV_CE:
-            ver = "Windows CE";
-            break;
-        case QSysInfo::WV_CENET:
-            ver = "Windows CE .NET";
-            break;
-        case QSysInfo::WV_CE_5:
-            ver = "Windows CE 5.x";
-            break;
-        case QSysInfo::WV_CE_6:
-            ver = "Windows CE 6.x";
-            break;
-    }
-    ua = QString(ua).arg(ver);
-#endif
-
-    // SubPlatform Version
-    QString subPlatformVer;
-#ifdef Q_OS_SYMBIAN
-    QSysInfo::S60Version s60Version = QSysInfo::s60Version();
-    switch (s60Version) {
-    case QSysInfo::SV_S60_3_1:
-        subPlatformVer = "/3.1";
-        break;
-    case QSysInfo::SV_S60_3_2:
-        subPlatformVer = "/3.2";
-        break;
-    case QSysInfo::SV_S60_5_0:
-        subPlatformVer = "/5.0";
-        break;
-    default: 
-        subPlatformVer = " Unknown";
-    }
-#endif
-    ua = ua.arg(subPlatformVer);
 
     // Language
-    QLocale locale;
+    QString languageName;
     if (d->client && d->client->ownerWidget())
-        locale = d->client->ownerWidget()->locale();
-    QString name = locale.name();
-    name[2] = QLatin1Char('-');
-    ua.append(name);
-    ua.append(QLatin1String(") "));
-
-    // webkit/qt version
-    ua.append(QString(QLatin1String("AppleWebKit/%1 (KHTML, like Gecko) "))
-                      .arg(QString(qWebKitVersion())));
+        languageName = d->client->ownerWidget()->locale().name();
+    else
+        languageName = QLocale().name();
+    languageName[2] = QLatin1Char('-');
 
     // Application name/version
     QString appName = QCoreApplication::applicationName();
     if (!appName.isEmpty()) {
-        ua.append(appName);
         QString appVer = QCoreApplication::applicationVersion();
         if (!appVer.isEmpty())
-            ua.append(QLatin1Char('/') + appVer);
+            appName.append(QLatin1Char('/') + appVer);
     } else {
         // Qt version
-        ua.append(QLatin1String("Qt/"));
-        ua.append(QLatin1String(qVersion()));
+        appName = QString::fromLatin1("Qt/") + QString::fromLatin1(qVersion());
     }
 
-#if defined(Q_WS_S60) || defined(Q_WS_MAEMO_5)
-    ua.append(QString(QLatin1String(" Mobile Safari/%1")).arg(qWebKitVersion()));
-#else
-    ua.append(QString(QLatin1String(" Safari/%1")).arg(qWebKitVersion()));
-#endif
-    return ua;
+    return firstPart + languageName + secondPart + appName + thirdPart;
 }
 
 
