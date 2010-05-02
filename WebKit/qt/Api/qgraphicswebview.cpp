@@ -292,6 +292,7 @@ void QGraphicsWebViewPrivate::update(const QRect & dirtyRect)
     if (overlay)
         overlay->update(QRectF(dirtyRect));
 #if USE(ACCELERATED_COMPOSITING)
+    updateCompositingScrollPosition();
     syncLayers();
 #endif
 }
