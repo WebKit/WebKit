@@ -1,3 +1,12 @@
+2010-05-01  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Add fast/repaint/fixed-move-after-keyboard-scroll.html to skipped list pending investigation
+        https://bugs.webkit.org/show_bug.cgi?id=38416
+
+        * platform/mac-snowleopard/Skipped:
+
 2010-05-01  David Kilzer  <ddkilzer@apple.com>
 
         Land test case that was supposed to be in r53607.
