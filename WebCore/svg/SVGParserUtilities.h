@@ -23,6 +23,10 @@
 #if ENABLE(SVG)
 
 #include "ParserUtilities.h"
+#include <wtf/HashSet.h>
+
+typedef pair<unsigned, unsigned> UnicodeRange;
+typedef Vector<UnicodeRange> UnicodeRanges;
 
 namespace WebCore {
 
@@ -64,6 +68,8 @@ namespace WebCore {
     bool pathFromSVGData(Path& path, const String& d);
     bool pathSegListFromSVGData(SVGPathSegList* pathSegList, const String& d, bool process = false);
     Vector<String> parseDelimitedString(const String& input, const char seperator);
+    void parseKerningUnicodeString(const String& input, UnicodeRanges&, HashSet<String>& stringList);
+    void parseGlyphName(const String& input, HashSet<String>& values);
 
 } // namespace WebCore
 

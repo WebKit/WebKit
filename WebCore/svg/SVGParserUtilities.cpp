@@ -44,6 +44,7 @@
 #include "SVGPointList.h"
 #include "SVGPathElement.h"
 #include <math.h>
+#include <wtf/ASCIICType.h>
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
@@ -838,6 +839,125 @@ bool pathSegListFromSVGData(SVGPathSegList* path, const String& d, bool process)
 {
     SVGPathSegListBuilder builder;
     return builder.build(path, d, process);
+}
+
+void parseGlyphName(const String& input, HashSet<String>& values)
+{
+    values.clear();
+
+    const UChar* ptr = input.characters();
+    const UChar* end = ptr + input.length();
+    skipOptionalSpaces(ptr, end);
+
+    while (ptr < end) {
+        // Leading and trailing white space, and white space before and after separators, will be ignored.
+        const UChar* inputStart = ptr;
+        while (ptr < end && *ptr != ',')
+            ++ptr;
+
+        if (ptr == inputStart)
+            break;
+
+        // walk backwards from the ; to ignore any whitespace
+        const UChar* inputEnd = ptr - 1;
+        while (inputStart < inputEnd && isWhitespace(*inputEnd))
+            --inputEnd;
+
+        values.add(String(inputStart, inputEnd - inputStart + 1));
+        skipOptionalSpacesOrDelimiter(ptr, end, ',');
+    }
+}
+
+static bool parseUnicodeRange(const UChar* characters, unsigned length, UnicodeRange& range)
+{
+    if (length < 2 || characters[0] != 'U' || characters[1] != '+')
+        return false;
+    
+    // Parse the starting hex number (or its prefix).
+    unsigned startRange = 0;
+    unsigned startLength = 0;
+
+    const UChar* ptr = characters + 2;
+    const UChar* end = characters + length;
+    while (ptr < end) {
+        if (!isASCIIHexDigit(*ptr))
+            break;
+        ++startLength;
+        if (startLength > 6)
+            return false;
+        startRange = (startRange << 4) | toASCIIHexValue(*ptr);
+        ++ptr;
+    }
+    
+    // Handle the case of ranges separated by "-" sign.
+    if (2 + startLength < length && *ptr == '-') {
+        if (!startLength)
+            return false;
+        
+        // Parse the ending hex number (or its prefix).
+        unsigned endRange = 0;
+        unsigned endLength = 0;
+        ++ptr;
+        while (ptr < end) {
+            if (!isASCIIHexDigit(*ptr))
+                break;
+            ++endLength;
+            if (endLength > 6)
+                return false;
+            endRange = (endRange << 4) | toASCIIHexValue(*ptr);
+            ++ptr;
+        }
+        
+        if (!endLength)
+            return false;
+        
+        range.first = startRange;
+        range.second = endRange;
+        return true;
+    }
+    
+    // Handle the case of a number with some optional trailing question marks.
+    unsigned endRange = startRange;
+    while (ptr < end) {
+        if (*ptr != '?')
+            break;
+        ++startLength;
+        if (startLength > 6)
+            return false;
+        startRange <<= 4;
+        endRange = (endRange << 4) | 0xF;
+        ++ptr;
+    }
+    
+    if (!startLength)
+        return false;
+    
+    range.first = startRange;
+    range.second = endRange;
+    return true;
+}
+
+void parseKerningUnicodeString(const String& input, UnicodeRanges& rangeList, HashSet<String>& stringList)
+{
+    const UChar* ptr = input.characters();
+    const UChar* end = ptr + input.length();
+
+    while (ptr < end) {
+        const UChar* inputStart = ptr;
+        while (ptr < end && *ptr != ',')
+            ++ptr;
+
+        if (ptr == inputStart)
+            break;
+
+        // Try to parse unicode range first
+        UnicodeRange range;
+        if (parseUnicodeRange(inputStart, ptr - inputStart, range))
+            rangeList.append(range);
+        else
+            stringList.add(String(inputStart, ptr - inputStart));
+        ++ptr;
+    }
 }
 
 Vector<String> parseDelimitedString(const String& input, const char seperator)

@@ -1,3 +1,14 @@
+2010-05-02  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG hkern implementation incomplete
+        https://bugs.webkit.org/show_bug.cgi?id=38407
+
+        We support hkern now. Mention this in the SVG status page. 
+
+        * projects/svg/status.xml:
+
 2010-04-29  Dean Jackson  <dino@apple.com>
 
         Unreviewed. Make a note that we are no longer proposing

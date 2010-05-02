@@ -23,10 +23,10 @@
 #define SVGHKernElement_h
 
 #if ENABLE(SVG_FONTS)
+#include "SVGParserUtilities.h"
 #include "SVGStyledElement.h"
 
 #include <limits>
-#include "Path.h"
 
 namespace WebCore {
 
@@ -35,11 +35,13 @@ namespace WebCore {
 
     // Describe an SVG <hkern> element
     struct SVGHorizontalKerningPair {
-        String unicode1;
-        String glyphName1;
-        String unicode2;
-        String glyphName2;
-        double kerning;
+        UnicodeRanges unicodeRange1;
+        HashSet<String> unicodeName1;
+        HashSet<String> glyphName1;
+        UnicodeRanges unicodeRange2;
+        HashSet<String> unicodeName2;
+        HashSet<String> glyphName2;
+        float kerning;
         
         SVGHorizontalKerningPair()
             : kerning(0)

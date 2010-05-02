@@ -320,7 +320,7 @@ FloatPoint topLeftPositionOfCharacterRange(Vector<SVGChar>::iterator it, Vector<
 }
 
 // Helper function
-static float calculateKerning(RenderObject* item)
+static float calculateCSSKerning(RenderObject* item)
 {
     const Font& font = item->style()->font();
     const SVGRenderStyle* svgStyle = item->style()->svgStyle();
@@ -334,6 +334,40 @@ static float calculateKerning(RenderObject* item)
     }
 
     return kerning;
+}
+
+static bool applySVGKerning(SVGCharacterLayoutInfo& info, RenderObject* item, LastGlyphInfo& lastGlyph, const String& unicodeString, const String& glyphName)
+{
+#if ENABLE(SVG_FONTS)
+    float kerning = 0.0f;
+    const RenderStyle* style = item->style();
+    SVGFontElement* svgFont = 0;
+    if (style->font().isSVGFont())
+        svgFont = style->font().svgFont();
+
+    if (lastGlyph.isValid && style->font().isSVGFont())
+        kerning = svgFont->getHorizontalKerningPairForStringsAndGlyphs(lastGlyph.unicode, lastGlyph.glyphName, unicodeString, glyphName);
+
+    if (style->font().isSVGFont()) {
+        lastGlyph.unicode = unicodeString;
+        lastGlyph.glyphName = glyphName;
+        lastGlyph.isValid = true;
+        kerning *= style->font().size() / style->font().primaryFont()->unitsPerEm();
+    } else
+        lastGlyph.isValid = false;
+
+    if (kerning != 0.0f) {
+        info.curx -= kerning;
+        return true;
+    }
+#else
+    UNUSED_PARAM(info);
+    UNUSED_PARAM(item);
+    UNUSED_PARAM(lastGlyph);
+    UNUSED_PARAM(unicodeString);
+    UNUSED_PARAM(glyphName);
+#endif
+    return false;
 }
 
 // Helper class for paint()
@@ -1294,7 +1328,7 @@ void SVGRootInlineBox::buildLayoutInformationForTextBox(SVGCharacterLayoutInfo& 
         }
 
         // Take letter & word spacing and kerning into account
-        float spacing = font.letterSpacing() + calculateKerning(textBox->renderer()->node()->renderer());
+        float spacing = font.letterSpacing() + calculateCSSKerning(textBox->renderer()->node()->renderer());
 
         const UChar* currentCharacter = text->characters() + (textBox->direction() == RTL ? textBox->end() - i : textBox->start() + i);
         const UChar* lastCharacter = 0;
@@ -1307,7 +1341,9 @@ void SVGRootInlineBox::buildLayoutInformationForTextBox(SVGCharacterLayoutInfo& 
                 lastCharacter = text->characters() + textBox->start() + i - 1;
         }
 
-        if (info.nextDrawnSeperated || spacing != 0.0f) {
+        // FIXME: SVG Kerning doesn't get applied on texts on path.
+        bool appliedSVGKerning = applySVGKerning(info, textBox->renderer()->node()->renderer(), lastGlyph, unicodeStr, glyphName);
+        if (info.nextDrawnSeperated || spacing != 0.0f || appliedSVGKerning) {
             info.nextDrawnSeperated = false;
             svgChar.drawnSeperated = true;
         }
@@ -1412,35 +1448,12 @@ void SVGRootInlineBox::buildLayoutInformationForTextBox(SVGCharacterLayoutInfo& 
             }
         }
 
-        float kerning = 0.0f;
-#if ENABLE(SVG_FONTS)
-        SVGFontElement* svgFont = 0;
-        if (style->font().isSVGFont())
-            svgFont = style->font().svgFont();
-
-        if (lastGlyph.isValid && style->font().isSVGFont()) {
-            SVGHorizontalKerningPair kerningPair;
-            if (svgFont->getHorizontalKerningPairForStringsAndGlyphs(lastGlyph.unicode, lastGlyph.glyphName, unicodeStr, glyphName, kerningPair))
-                kerning = narrowPrecisionToFloat(kerningPair.kerning);
-        }
-
-        if (style->font().isSVGFont()) {
-            lastGlyph.unicode = unicodeStr;
-            lastGlyph.glyphName = glyphName;
-            lastGlyph.isValid = true;
-            kerning *= style->font().size() / style->font().primaryFont()->unitsPerEm();
-        } else
-            lastGlyph.isValid = false;
-#endif
-
-        svgChar.x -= kerning;
-
         // Advance to new position
         if (isVerticalText) {
             svgChar.drawnSeperated = true;
             info.cury += glyphAdvance + spacing;
         } else
-            info.curx += glyphAdvance + spacing - kerning;
+            info.curx += glyphAdvance + spacing;
 
         // Advance to next character group
         for (int k = 0; k < charsConsumed; ++k) {

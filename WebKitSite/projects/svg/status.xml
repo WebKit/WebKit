@@ -540,7 +540,7 @@
             <element>
                 <name>hkern</name>
                 <url>http://www.w3.org/TR/SVG11/fonts.html#HKernElement</url>
-                <status>Unimplemented</status>
+                <status>Implemented</status>
             </element>
             <element>
                 <name>vkern</name>

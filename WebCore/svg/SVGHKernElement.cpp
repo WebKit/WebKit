@@ -28,7 +28,6 @@
 #include "SVGFontFaceElement.h"
 #include "SVGFontData.h"
 #include "SVGNames.h"
-#include "SVGParserUtilities.h"
 #include "SimpleFontData.h"
 #include "XMLNames.h"
 
@@ -67,11 +66,12 @@ SVGHorizontalKerningPair SVGHKernElement::buildHorizontalKerningPair() const
 {
     SVGHorizontalKerningPair kerningPair;
 
-    kerningPair.unicode1 = getAttribute(u1Attr);
-    kerningPair.glyphName1 = getAttribute(g1Attr);
-    kerningPair.unicode2 = getAttribute(u2Attr);
-    kerningPair.glyphName2 = getAttribute(g2Attr);
-    kerningPair.kerning = getAttribute(kAttr).string().toDouble();
+    // FIXME: KerningPairs shouldn't be created on parsing errors.
+    parseGlyphName(getAttribute(g1Attr), kerningPair.glyphName1);
+    parseGlyphName(getAttribute(g2Attr), kerningPair.glyphName2);
+    parseKerningUnicodeString(getAttribute(u1Attr), kerningPair.unicodeRange1, kerningPair.unicodeName1);
+    parseKerningUnicodeString(getAttribute(u2Attr), kerningPair.unicodeRange2, kerningPair.unicodeName2);
+    kerningPair.kerning = getAttribute(kAttr).string().toFloat();
 
     return kerningPair;
 }

@@ -44,7 +44,7 @@ namespace WebCore {
 
         void getGlyphIdentifiersForString(const String&, Vector<SVGGlyphIdentifier>&) const;
 
-        bool getHorizontalKerningPairForStringsAndGlyphs(const String& u1, const String& g1, const String& u2, const String& g2, SVGHorizontalKerningPair& kerningPair) const;
+        float getHorizontalKerningPairForStringsAndGlyphs(const String& u1, const String& g1, const String& u2, const String& g2) const;
 
         SVGMissingGlyphElement* firstMissingGlyphElement() const;
 
