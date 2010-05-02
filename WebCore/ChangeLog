@@ -1,3 +1,31 @@
+2010-05-02  Michael Nordman  <michaeln@google.com>
+
+        Reviewed by Dmitry Titov.
+
+        Define two new ResourceRequestBase TargetTypes for worker and shared worker
+        main resources. Use the new target types where appropiate. Add logic to marshal
+        the target type specified by requests initiated on a background worker thread.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38295
+
+        No new tests. This doesn't have script visible artifacts.
+
+        * platform/network/ResourceRequestBase.cpp: marshal the values
+        (WebCore::ResourceRequestBase::adopt):
+        (WebCore::ResourceRequestBase::copyData):
+        * platform/network/ResourceRequestBase.h:  define the types
+        (WebCore::ResourceRequestBase::):
+        * workers/DefaultSharedWorkerRepository.cpp: use TargetIsSharedWorker
+        (WebCore::SharedWorkerScriptLoader::load):
+        * workers/Worker.cpp: use TargetIsWorker
+        (WebCore::Worker::Worker):
+        * workers/WorkerContext.cpp: use TargetIsScript for importScripts
+        (WebCore::WorkerContext::importScripts):
+        * workers/WorkerScriptLoader.cpp: add a data member for the target type
+        (WebCore::WorkerScriptLoader::WorkerScriptLoader):
+        (WebCore::WorkerScriptLoader::createResourceRequest):
+        * workers/WorkerScriptLoader.h:
+
 2010-05-02  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Adele Peterson.

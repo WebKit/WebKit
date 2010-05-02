@@ -1,3 +1,16 @@
+2010-05-02  Michael Nordman  <michaeln@google.com>
+
+        Reviewed by Dmitry Titov.
+
+        Define two new ResourceRequestBase TargetTypes for worker and shared worker
+        main resources. Use the new target types where appropiate. Add logic to marshal
+        the target type specified by requests initiated on a background worker thread.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38295
+
+        * src/SharedWorkerRepository.cpp:  use TargetIsSharedWorker
+        (WebCore::SharedWorkerScriptLoader::SharedWorkerScriptLoader):
+
 2010-05-02  Rafael Weinstein  <rafaelw@chromium.org>
 
         Reviewed by Darin Fisher.

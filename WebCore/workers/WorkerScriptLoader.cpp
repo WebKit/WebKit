@@ -43,10 +43,11 @@
 
 namespace WebCore {
 
-WorkerScriptLoader::WorkerScriptLoader()
+WorkerScriptLoader::WorkerScriptLoader(ResourceRequestBase::TargetType targetType)
     : m_client(0)
     , m_failed(false)
     , m_identifier(0)
+    , m_targetType(targetType)
 {
 }
 
@@ -90,7 +91,7 @@ PassOwnPtr<ResourceRequest> WorkerScriptLoader::createResourceRequest()
 {
     OwnPtr<ResourceRequest> request(new ResourceRequest(m_url));
     request->setHTTPMethod("GET");
-
+    request->setTargetType(m_targetType);
     return request.release();
 }
     
