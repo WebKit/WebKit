@@ -60,6 +60,7 @@ struct WebConsoleMessage;
 struct WebContextMenuData;
 struct WebPoint;
 struct WebPopupMenuInfo;
+struct WebWindowFeatures;
 
 // Since a WebView is a WebWidget, a WebViewClient is a WebWidgetClient.
 // Virtual inheritance allows an implementation of WebWidgetClient to be
@@ -71,7 +72,8 @@ public:
     // Create a new related WebView.  This method must clone its session storage
     // so any subsequent calls to createSessionStorageNamespace conform to the
     // WebStorage specification.
-    virtual WebView* createView(WebFrame* creator) { return 0; }
+    virtual WebView* createView(WebFrame* creator,
+                                const WebWindowFeatures& features) { return 0; }
 
     // Create a new WebPopupMenu.  In the second form, the client is
     // responsible for rendering the contents of the popup menu.
