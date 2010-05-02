@@ -1,3 +1,15 @@
+2010-05-02  Kartikaya Gupta  <kagupta@rim.com>
+
+        Reviewed by George Staikos.
+
+        When running the IDL file through the preprocessor, wait for the preprocessor subcommand to fully terminate before continuing. Without this, if multiple IDL files are parsed in a tight loop, the code dies after 64 IDL files because it exhausts the available system resources.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37888
+
+        No new tests. None needed.
+
+        * bindings/scripts/IDLParser.pm:
+
 2010-04-29  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

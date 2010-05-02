@@ -80,10 +80,11 @@ sub Parse
 
     print " | *** Starting to parse $fileName...\n |\n" unless $beQuiet;
 
-    open2(\*PP_OUT, \*PP_IN, split(' ', $preprocessor), (map { "-D$_" } split(' ', $defines)), $fileName);
+    $pid = open2(\*PP_OUT, \*PP_IN, split(' ', $preprocessor), (map { "-D$_" } split(' ', $defines)), $fileName);
     close PP_IN;
     my @documentContent = <PP_OUT>;
     close PP_OUT;
+    waitpid($pid, 0);
 
     my $dataAvailable = 0;
 
