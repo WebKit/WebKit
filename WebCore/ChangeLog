@@ -1,3 +1,18 @@
+2010-05-02  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Adele Peterson.
+
+        Webkit doesn't compile with 3D-canvas enabled and video disabled
+        https://bugs.webkit.org/show_bug.cgi?id=38297
+
+        Added a #ifdef ENABLE(VIDEO) to WebGL code
+
+        No new tests: compile fix.
+
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::JSWebGLRenderingContext::texImage2D):
+        (WebCore::JSWebGLRenderingContext::texSubImage2D):
+
 2010-05-01  Evan Stade  <estade@chromium.org>
 
         Reviewed by David Levin.
