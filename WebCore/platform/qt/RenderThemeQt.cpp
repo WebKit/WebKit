@@ -163,7 +163,9 @@ RenderThemeQt::RenderThemeQt(Page* page)
 RenderThemeQt::~RenderThemeQt()
 {
     delete m_fallbackStyle;
+#ifndef QT_NO_LINEEDIT
     delete m_lineEdit;
+#endif
 }
 
 #ifdef Q_WS_MAEMO_5
@@ -264,11 +266,17 @@ bool RenderThemeQt::supportsControlTints() const
 
 int RenderThemeQt::findFrameLineWidth(QStyle* style) const
 {
+#ifndef QT_NO_LINEEDIT
     if (!m_lineEdit)
         m_lineEdit = new QLineEdit();
+#endif
 
     QStyleOptionFrameV2 opt;
-    return style->pixelMetric(QStyle::PM_DefaultFrameWidth, &opt, m_lineEdit);
+    QWidget* widget = 0;
+#ifndef QT_NO_LINEEDIT
+    widget = m_lineEdit;
+#endif
+    return style->pixelMetric(QStyle::PM_DefaultFrameWidth, &opt, widget);
 }
 
 static QRect inflateButtonRect(const QRect& originalRect, QStyle* style)
