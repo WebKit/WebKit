@@ -1,3 +1,13 @@
+2010-05-02  Marcus Bulach  <bulach@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        [chromium] Upstream test expectations for:
+        http/tests/loading/basic-auth-resend-wrong-credentials.html
+        https://bugs.webkit.org/show_bug.cgi?id=38387
+
+        * platform/chromium/test_expectations.txt:
+
 2010-05-02  Ben Murdoch  <benm@google.com>
 
         Reviewed by Darin Adler.

@@ -430,6 +430,7 @@ WONTFIX : storage/domstorage/sessionstorage/private-browsing-affects-storage.htm
 WONTFIX BUG21840 DEBUG : http/tests/loading/basic-auth-resend-wrong-credentials.html = FAIL
 WONTFIX BUG21840 LINUX RELEASE : http/tests/loading/basic-auth-resend-wrong-credentials.html = FAIL
 WONTFIX BUG21840 SLOW WIN RELEASE : http/tests/loading/basic-auth-resend-wrong-credentials.html = FAIL
+WONTFIX BUG21840 WIN DEBUG : http/tests/loading/basic-auth-resend-wrong-credentials.html = FAIL CRASH
 WONTFIX BUG21840 MAC RELEASE : http/tests/loading/basic-auth-resend-wrong-credentials.html = FAIL TIMEOUT
 
 WONTFIX BUG21840 LINUX : http/tests/loading/basic-credentials-sent-automatically.html = FAIL CRASH
