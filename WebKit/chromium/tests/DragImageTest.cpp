@@ -118,19 +118,29 @@ TEST(DragImageTest, NonNullHandling)
     EXPECT_EQ(1, size.width());
     EXPECT_EQ(1, size.height());
 
-    // This is not implemented, so we don't do any output validation.
     dragImage = dissolveDragImageToFraction(dragImage, 0.5);
     ASSERT_TRUE(dragImage);
 
     deleteDragImage(dragImage);
 }
 
-TEST(DragImageTest, CreateDragImageReturningNull)
+TEST(DragImageTest, CreateDragImage)
 {
-    // Tests that the DrageImage implementation doesn't choke on null values
-    // of nativeImageForCurrentFrame().
-    TestImage testImage((IntSize()));
-    EXPECT_FALSE(createDragImageFromImage(&testImage));
+    {
+        // Tests that the DrageImage implementation doesn't choke on null values
+        // of nativeImageForCurrentFrame().
+        TestImage testImage((IntSize()));
+        EXPECT_FALSE(createDragImageFromImage(&testImage));
+    }
+
+    {
+        // Tests that the drag image is a deep copy.
+        TestImage testImage(IntSize(1, 1));
+        DragImageRef dragImage = createDragImageFromImage(&testImage);
+        ASSERT_TRUE(dragImage);
+        SkAutoLockPixels lock1(*dragImage), lock2(*testImage.nativeImageForCurrentFrame());
+        EXPECT_NE(dragImage->getPixels(), testImage.nativeImageForCurrentFrame()->getPixels());
+    }
 }
 
 } // anonymous namespace

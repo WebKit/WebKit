@@ -1,3 +1,16 @@
+2010-05-01  Evan Stade  <estade@chromium.org>
+
+        Reviewed by David Levin.
+
+        [chromium] Skia needs to fade DragImages
+        https://bugs.webkit.org/show_bug.cgi?id=38008
+
+        tested by DragImageTest
+
+        * platform/chromium/DragImageChromiumSkia.cpp:
+        (WebCore::dissolveDragImageToFraction):implement
+        (WebCore::createDragImageFromImage):deep copy instead of shallow
+
 2010-05-01  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Sam Weinig.
