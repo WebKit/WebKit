@@ -1,3 +1,27 @@
+2010-05-02  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Darin Adler.
+
+        fast/events/touch has non-standard script test wrappers
+        https://bugs.webkit.org/show_bug.cgi?id=38084
+
+        Tidy up the touch event layout tests. Make the script-tests TEMPLATE.html
+        generate asynchronous style tests using js-test-post-function.js and move
+        the non-standard synchronous test into the resources directory.
+
+        * fast/events/touch/basic-multi-touch-events.html: Regenerate from TEMPLATE.html
+        * fast/events/touch/basic-single-touch-events.html: ditto.
+        * fast/events/touch/send-oncancel-event.html: ditto.
+        * fast/events/touch/touch-target.html: ditto.
+        * fast/events/touch/create-touch-event.html: Link to script in resources rather than
+            script-tests as this test is not generated from TEMPLATE.html.
+        * fast/events/touch/resources/create-touch-event.js: Copied from LayoutTests/fast/events/touch/script-tests/create-touch-event.js.
+        * fast/events/touch/script-tests/TEMPLATE.html: Update to generate asynchronous tests.
+        * fast/events/touch/script-tests/create-touch-event.js: Removed.
+        * fast/events/touch/script-tests/touch-target.js: Refactor to work with new wrapper
+            generated from TEMPLATE.html.
+
+
 2010-05-01  Alexey Proskuryakov  <ap@apple.com>
 
         Not reviewed.

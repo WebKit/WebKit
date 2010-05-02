@@ -1,3 +1,6 @@
+var targetsDiv = document.createElement("div");
+targetsDiv.id = "targetsDiv";
+
 var div1 = document.createElement("div");
 div1.id = "targetA";
 div1.style.width = "100px";
@@ -13,9 +16,10 @@ div2.style.backgroundColor = "green";
 var touchStartCount = 0;
 var touchMoveCount = 0;
 
-document.getElementById('targetsDiv').appendChild(div1);
-document.getElementById('targetsDiv').appendChild(document.createElement('br'));
-document.getElementById('targetsDiv').appendChild(div2);
+document.body.insertBefore(targetsDiv, document.getElementById('console'));
+targetsDiv.appendChild(div1);
+targetsDiv.appendChild(document.createElement('br'));
+targetsDiv.appendChild(div2);
 
 function touchStartHandler()
 {
