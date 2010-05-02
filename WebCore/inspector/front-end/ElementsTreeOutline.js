@@ -285,6 +285,10 @@ WebInspector.ElementsTreeOutline.prototype = {
         if (element) {
             element.hovered = true;
             this._previousHoveredElement = element;
+
+            // Lazily compute tag-specific tooltips.
+            if (element.representedObject && !element.tooltip)
+                element._createTooltipForNode();
         }
 
         WebInspector.hoveredDOMNode = (element ? element.representedObject : null);
@@ -424,27 +428,24 @@ WebInspector.ElementsTreeElement.prototype = {
         return this.expandedChildCount > index;
     },
 
-    createTooltipForImageNode: function(node, callback)
+    _createTooltipForNode: function()
     {
-        if (this._elementCloseTag)
+        var node = this.representedObject;
+        if (!node.nodeName || node.nodeName.toLowerCase() !== "img")
             return;
-
-        function createTooltipThenCallback(properties)
+        
+        function setTooltip(properties)
         {
-            if (!properties) {
-                callback();
+            if (!properties)
                 return;
-            }
 
-            var tooltipText = null;
             if (properties.offsetHeight === properties.naturalHeight && properties.offsetWidth === properties.naturalWidth)
-                tooltipText = WebInspector.UIString("%d × %d pixels", properties.offsetWidth, properties.offsetHeight);
+                this.tooltip = WebInspector.UIString("%d × %d pixels", properties.offsetWidth, properties.offsetHeight);
             else
-                tooltipText = WebInspector.UIString("%d × %d pixels (Natural: %d × %d pixels)", properties.offsetWidth, properties.offsetHeight, properties.naturalWidth, properties.naturalHeight);
-            callback(tooltipText);
+                this.tooltip = WebInspector.UIString("%d × %d pixels (Natural: %d × %d pixels)", properties.offsetWidth, properties.offsetHeight, properties.naturalWidth, properties.naturalHeight);
         }
         var objectProxy = new WebInspector.ObjectProxy(node.injectedScriptId, node.id);
-        WebInspector.ObjectProxy.getPropertiesAsync(objectProxy, ["naturalHeight", "naturalWidth", "offsetHeight", "offsetWidth"], createTooltipThenCallback);
+        WebInspector.ObjectProxy.getPropertiesAsync(objectProxy, ["naturalHeight", "naturalWidth", "offsetHeight", "offsetWidth"], setTooltip.bind(this));
     },
 
     updateSelection: function()
@@ -1175,22 +1176,12 @@ WebInspector.ElementsTreeElement.prototype = {
         if (this._editing)
             return;
 
-        var self = this;
-        function callback(tooltipText)
-        {
-            var title = self._nodeTitleInfo(WebInspector.linkifyURL, tooltipText).title;
-            self.title = "<span class=\"highlight\">" + title + "</span>";
-            delete self.selectionElement;
-            self.updateSelection();
-            self._preventFollowingLinksOnDoubleClick();
-            self._highlightSearchResults();
-        };
-
-        // TODO: Replace with InjectedScriptAccess.getBasicProperties(obj, [names]).
-        if (this.representedObject.nodeName.toLowerCase() !== "img")
-            callback();
-        else
-            this.createTooltipForImageNode(this.representedObject, callback);
+        var title = this._nodeTitleInfo(WebInspector.linkifyURL).title;
+        this.title = "<span class=\"highlight\">" + title + "</span>";
+        delete this.selectionElement;
+        this.updateSelection();
+        this._preventFollowingLinksOnDoubleClick();
+        this._highlightSearchResults();
     },
 
     _rewriteAttrHref: function(node, hrefValue)
@@ -1216,7 +1207,7 @@ WebInspector.ElementsTreeElement.prototype = {
         return hrefValue;
     },
 
-    _attributeHTML: function(name, value, node, linkify, tooltipText)
+    _attributeHTML: function(name, value, node, linkify)
     {
         var hasText = (value.length > 0);
         var html = "<span class=\"webkit-html-attribute\"><span class=\"webkit-html-attribute-name\">" + name.escapeHTML() + "</span>";
@@ -1226,7 +1217,7 @@ WebInspector.ElementsTreeElement.prototype = {
 
         if (linkify && (name === "src" || name === "href")) {
             value = value.replace(/([\/;:\)\]\}])/g, "$1\u200B");
-            html += linkify(this._rewriteAttrHref(node, value), value, "webkit-html-attribute-value", node.nodeName.toLowerCase() === "a", tooltipText);
+            html += linkify(this._rewriteAttrHref(node, value), value, "webkit-html-attribute-value", node.nodeName.toLowerCase() === "a");
         } else {
             value = value.escapeHTML().replace(/([\/;:\)\]\}])/g, "$1&#8203;");
             html += "<span class=\"webkit-html-attribute-value\">" + value + "</span>";
@@ -1239,7 +1230,7 @@ WebInspector.ElementsTreeElement.prototype = {
         return html;
     },
 
-    _tagHTML: function(tagName, isClosingTag, isDistinctTreeElement, linkify, tooltipText)
+    _tagHTML: function(tagName, isClosingTag, isDistinctTreeElement, linkify)
     {
         var node = this.representedObject;
         var result = "<span class=\"webkit-html-tag" + (isClosingTag && isDistinctTreeElement ? " close" : "")  + "\">&lt;";
@@ -1247,7 +1238,7 @@ WebInspector.ElementsTreeElement.prototype = {
         if (!isClosingTag && node.hasAttributes()) {
             for (var i = 0; i < node.attributes.length; ++i) {
                 var attr = node.attributes[i];
-                result += " " + this._attributeHTML(attr.name, attr.value, node, linkify, tooltipText);
+                result += " " + this._attributeHTML(attr.name, attr.value, node, linkify);
             }
         }
         result += "&gt;</span>&#8203;";
@@ -1255,7 +1246,7 @@ WebInspector.ElementsTreeElement.prototype = {
         return result;
     },
 
-    _nodeTitleInfo: function(linkify, tooltipText)
+    _nodeTitleInfo: function(linkify)
     {
         var node = this.representedObject;
         var info = {title: "", hasChildren: this.hasChildren};
@@ -1277,7 +1268,7 @@ WebInspector.ElementsTreeElement.prototype = {
                     break;
                 }
 
-                info.title = this._tagHTML(tagName, false, false, linkify, tooltipText);
+                info.title = this._tagHTML(tagName, false, false, linkify);
 
                 var textChild = onlyTextChild.call(node);
                 var showInlineText = textChild && textChild.textContent.length < Preferences.maxInlineTextChildLength;

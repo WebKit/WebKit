@@ -34,11 +34,6 @@ function frontend_dumpTooltip(testController)
 
 function frontend_dumpTooltipContinuation(testController)
 {
-    if (!WebInspector.ElementsTreeElement.prototype.createTooltipForImageNode) {
-        testController.notifyDone();
-        return;
-    }
-
     function callback(tooltipText)
     {
         testController.notifyDone(tooltipText);
@@ -47,8 +42,13 @@ function frontend_dumpTooltipContinuation(testController)
     var innerMapping = WebInspector.domAgent._idToDOMNode;
     for (var nodeId in innerMapping) {
         if (innerMapping[nodeId].nodeName === "IMG") {
-            WebInspector.ElementsTreeElement.prototype.createTooltipForImageNode(innerMapping[nodeId], callback);
-            return;
+            var node = innerMapping[nodeId];
+            var treeElement = WebInspector.panels.elements.treeOutline.findTreeElement(node);
+            treeElement._createTooltipForNode();
+            testController.runAfterPendingDispatches(function() {
+                testController.notifyDone(treeElement.tooltip);
+            });
+            break;
         }
     }
 }
