@@ -1,0 +1,2 @@
+A style sheet's href should be the original URL, not the final URL, of the redirect chain:
+http://localhost:8000/security/resources/redir.php?url=http://localhost:8000/security/resources/cssStyle.css
