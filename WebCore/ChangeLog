@@ -1,3 +1,12 @@
+2010-05-02  Garret Kelly  <gdk@chromium.org>
+
+        Reviewed by David Levin.
+
+        Make the Touch RuntimeEnabledFeature disabled by default.
+        https://bugs.webkit.org/show_bug.cgi?id=38392
+
+        * bindings/generic/RuntimeEnabledFeatures.cpp: Disable the Touch feature by default.
+
 2010-05-02  Michael Nordman  <michaeln@google.com>
 
         Reviewed by Dmitry Titov.
