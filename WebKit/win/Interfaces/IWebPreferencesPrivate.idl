@@ -109,4 +109,7 @@ interface IWebPreferencesPrivate : IUnknown
 
     HRESULT setShowRepaintCounter([in] BOOL);
     HRESULT showRepaintCounter([out, retval] BOOL*);
+
+    HRESULT javaScriptCanAccessClipboard([out, retval] BOOL *enabled);
+    HRESULT setJavaScriptCanAccessClipboard([in] BOOL enabled);
 }

@@ -4667,6 +4667,11 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings->setAllowFileAccessFromFileURLs(!!enabled);
 
+    hr = prefsPrivate->javaScriptCanAccessClipboard(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings->setJavaScriptCanAccessClipboard(!!enabled);
+
     hr = prefsPrivate->isXSSAuditorEnabled(&enabled);
     if (FAILED(hr))
         return hr;

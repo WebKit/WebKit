@@ -325,6 +325,7 @@ static void resetDefaultsToConsistentValues()
                  "enable-html5-local-storage", TRUE,
                  "enable-xss-auditor", FALSE,
                  "enable-spatial-navigation", FALSE,
+                 "javascript-can-access-clipboard", TRUE,
                  "javascript-can-open-windows-automatically", TRUE,
                  "enable-offline-web-application-cache", TRUE,
                  "enable-universal-access-from-file-uris", TRUE,

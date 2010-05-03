@@ -1069,6 +1069,21 @@ static bool supportedFromMenuOrKeyBinding(Frame*, EditorCommandSource source)
     return source == CommandFromMenuOrKeyBinding;
 }
 
+static bool supportedCopyCut(Frame* frame, EditorCommandSource source)
+{
+    switch (source) {
+        case CommandFromMenuOrKeyBinding:
+            return true;
+        case CommandFromDOM:
+        case CommandFromDOMWithUserInterface: {
+            Settings* settings = frame ? frame->settings() : 0;
+            return settings && settings->javaScriptCanAccessClipboard();
+        }
+    }
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 static bool supportedPaste(Frame* frame, EditorCommandSource source)
 {
     switch (source) {
@@ -1077,7 +1092,7 @@ static bool supportedPaste(Frame* frame, EditorCommandSource source)
         case CommandFromDOM:
         case CommandFromDOMWithUserInterface: {
             Settings* settings = frame ? frame->settings() : 0;
-            return settings && settings->isDOMPasteAllowed();
+            return settings && (settings->javaScriptCanAccessClipboard() ? settings->isDOMPasteAllowed() : 0);
         }
     }
     ASSERT_NOT_REACHED();
@@ -1304,9 +1319,9 @@ static const CommandMap& createCommandMap()
         { "BackColor", { executeBackColor, supported, enabledInRichlyEditableText, stateNone, valueBackColor, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "BackwardDelete", { executeDeleteBackward, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } }, // FIXME: remove BackwardDelete when Safari for Windows stops using it.
         { "Bold", { executeToggleBold, supported, enabledInRichlyEditableText, stateBold, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
-        { "Copy", { executeCopy, supported, enabledCopy, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabled } },
+        { "Copy", { executeCopy, supportedCopyCut, enabledCopy, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabled } },
         { "CreateLink", { executeCreateLink, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
-        { "Cut", { executeCut, supported, enabledCut, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabled } },
+        { "Cut", { executeCut, supportedCopyCut, enabledCut, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabled } },
         { "Delete", { executeDelete, supported, enabledDelete, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "DeleteBackward", { executeDeleteBackward, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "DeleteBackwardByDecomposingPreviousCharacter", { executeDeleteBackwardByDecomposingPreviousCharacter, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },

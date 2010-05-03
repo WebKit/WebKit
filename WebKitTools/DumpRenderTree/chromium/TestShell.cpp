@@ -138,6 +138,7 @@ void TestShell::resetWebSettings(WebView& webView)
     settings->setMinimumFontSize(1);
     settings->setMinimumLogicalFontSize(9);
     settings->setJavaScriptCanOpenWindowsAutomatically(true);
+    settings->setJavaScriptCanAccessClipboard(true);
     settings->setDOMPasteAllowed(true);
     settings->setDeveloperExtrasEnabled(false);
     settings->setNeedsSiteSpecificQuirks(true);
