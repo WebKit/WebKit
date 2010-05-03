@@ -1,3 +1,10 @@
+2010-05-03  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Fix build break on Mac OS X
+
+        * plugins/mac/PluginPackageMac.cpp: Use correct type
+        * WebCore.pro: Remove duplicate symbol, we now have a Qt implementation
+
 2010-05-03  Thomas Zander <t.zander@nokia.com>
 
         Reviewed by Simon Hausmann.
