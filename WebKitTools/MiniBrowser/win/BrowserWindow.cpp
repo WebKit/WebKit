@@ -109,7 +109,7 @@ void BrowserWindow::createWindow(int x, int y, int width, int height)
     windowClass.hInstance = MiniBrowser::shared().instance();
     windowClass.hIcon = 0;
     windowClass.hCursor = ::LoadCursor(0, IDC_ARROW);
-    windowClass.hbrBackground = 0;
+    windowClass.hbrBackground = (HBRUSH)::GetStockObject(WHITE_BRUSH);
     windowClass.lpszMenuName = MAKEINTRESOURCE(IDR_MAINFRAME);
     windowClass.lpszClassName = L"MiniBrowser";
     windowClass.hIconSm = 0;
@@ -207,6 +207,17 @@ LRESULT BrowserWindow::onCommand(int commandID, bool& handled)
     case ID_FILE_CLOSE:
         ::PostMessage(m_window, WM_CLOSE, 0, 0);
         break;
+    case ID_DEBUG_SHOW_WEB_VIEW: {
+        HMENU menu = ::GetMenu(m_window);
+        bool shouldHide = ::GetMenuState(menu, ID_DEBUG_SHOW_WEB_VIEW, MF_BYCOMMAND) & MF_CHECKED;
+
+        ::CheckMenuItem(menu, ID_DEBUG_SHOW_WEB_VIEW, MF_BYCOMMAND | (shouldHide ? MF_UNCHECKED : MF_CHECKED));
+
+        // Show or hide the web view.
+        HWND webViewWindow = WKViewGetWindow(m_browserView.webView());
+        ::ShowWindow(webViewWindow, shouldHide ? SW_HIDE : SW_SHOW);
+        break;
+    }
     default:
         handled = false;
     }

@@ -6,6 +6,7 @@
 #define ID_FILE_NEW_WINDOW              32770
 #define ID_FILE_OPEN                    32771
 #define ID_FILE_CLOSE                   32772
+#define ID_DEBUG_SHOW_WEB_VIEW          32773
 
 #define IDR_MAINFRAME                   128
 

@@ -1,3 +1,21 @@
+2010-05-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Maui MiniBrowser: Add an option to show/hide the web view
+        https://bugs.webkit.org/show_bug.cgi?id=38486
+
+        * MiniBrowser/win/BrowserWindow.cpp:
+        (BrowserWindow::createWindow):
+        Set the background brush to something other than null.
+
+        (BrowserWindow::onCommand):
+        Show and hide the web view accordingly.
+        
+        * MiniBrowser/win/MiniBrowser.rc:
+        * MiniBrowser/win/resource.h:
+        Add new menu item.
+
 2010-05-03  Chris Jerdonek  <cjerdonek@webkit.org>
 
         Reviewed by Daniel Bates.
